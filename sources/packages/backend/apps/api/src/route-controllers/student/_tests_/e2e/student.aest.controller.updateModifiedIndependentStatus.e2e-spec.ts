@@ -1,0 +1,192 @@
+import { HttpStatus, INestApplication } from "@nestjs/common";
+import * as request from "supertest";
+import MockDate from "mockdate";
+import {
+  AESTGroups,
+  BEARER_AUTH_TYPE,
+  createTestingAppModule,
+  getAESTToken,
+  getAESTUser,
+} from "../../../../testHelpers";
+import {
+  E2EDataSources,
+  createE2EDataSources,
+  saveFakeStudent,
+} from "@sims/test-utils";
+import { ModifiedIndependentStatus, NoteType } from "@sims/sims-db";
+import { ModifiedIndependentUpdateStatus } from "../../models/student.dto";
+
+describe("StudentAESTController(e2e)-updateModifiedIndependentStatus", () => {
+  let app: INestApplication;
+  let db: E2EDataSources;
+
+  beforeAll(async () => {
+    const { nestApplication, dataSource } = await createTestingAppModule();
+    app = nestApplication;
+    db = createE2EDataSources(dataSource);
+  });
+
+  beforeEach(async () => {
+    MockDate.reset();
+  });
+
+  it(`Should update the student modified independent status as ${ModifiedIndependentStatus.Approved} when the current modified independent status is null.`, async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/student/${student.id}/modified-independent-status`;
+
+    const payload = {
+      modifiedIndependentUpdateStatus: ModifiedIndependentUpdateStatus.Approved,
+      noteDescription: "Some not description.",
+    };
+
+    const now = new Date();
+    MockDate.set(now);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    // Verify the change in the database.
+    const updatedStudent = await db.student.findOne({
+      select: {
+        id: true,
+        modifiedIndependentStatus: true,
+        modifiedIndependentStatusUpdatedBy: { id: true },
+        modifiedIndependentStatusUpdatedOn: true,
+        modifier: { id: true },
+        updatedAt: true,
+        notes: { id: true, description: true, noteType: true },
+      },
+      relations: {
+        modifiedIndependentStatusUpdatedBy: true,
+        modifier: true,
+        notes: true,
+      },
+      loadEagerRelations: false,
+      where: { id: student.id },
+    });
+    // Approving ministry user.
+    const ministryUser = await getAESTUser(
+      db.dataSource,
+      AESTGroups.BusinessAdministrators,
+    );
+    const auditUser = { id: ministryUser.id };
+    expect(updatedStudent).toEqual({
+      id: student.id,
+      modifiedIndependentStatus: ModifiedIndependentStatus.Approved,
+      modifiedIndependentStatusUpdatedBy: auditUser,
+      modifiedIndependentStatusUpdatedOn: now,
+      modifier: auditUser,
+      updatedAt: now,
+      notes: [
+        {
+          id: expect.any(Number),
+          description: payload.noteDescription,
+          noteType: NoteType.General,
+        },
+      ],
+    });
+  });
+
+  it(`Should update the student modified independent status as null when the current modified independent status is ${ModifiedIndependentStatus.Approved}.`, async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource, undefined, {
+      initialValue: {
+        modifiedIndependentStatus: ModifiedIndependentStatus.Approved,
+      },
+    });
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/student/${student.id}/modified-independent-status`;
+
+    const payload = {
+      modifiedIndependentUpdateStatus:
+        ModifiedIndependentUpdateStatus.NotRequested,
+      noteDescription: "Some not description to reset the status.",
+    };
+
+    const now = new Date();
+    MockDate.set(now);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    // Verify the change in the database.
+    const updatedStudent = await db.student.findOne({
+      select: {
+        id: true,
+        modifiedIndependentStatus: true,
+        modifiedIndependentStatusUpdatedBy: { id: true },
+        modifiedIndependentStatusUpdatedOn: true,
+        modifier: { id: true },
+        updatedAt: true,
+        notes: { id: true, description: true, noteType: true },
+      },
+      relations: {
+        modifiedIndependentStatusUpdatedBy: true,
+        modifier: true,
+        notes: true,
+      },
+      loadEagerRelations: false,
+      where: { id: student.id },
+    });
+    // Approving ministry user.
+    const ministryUser = await getAESTUser(
+      db.dataSource,
+      AESTGroups.BusinessAdministrators,
+    );
+    const auditUser = { id: ministryUser.id };
+    expect(updatedStudent).toEqual({
+      id: student.id,
+      modifiedIndependentStatus: null,
+      modifiedIndependentStatusUpdatedBy: auditUser,
+      modifiedIndependentStatusUpdatedOn: now,
+      modifier: auditUser,
+      updatedAt: now,
+      notes: [
+        {
+          id: expect.any(Number),
+          description: payload.noteDescription,
+          noteType: NoteType.General,
+        },
+      ],
+    });
+  });
+
+  it("Should throw forbidden error when the updating user does not have the role to update the student modified independent status.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    // The given group does not have the association to the role to update the modified independent status.
+    const token = await getAESTToken(AESTGroups.MOFOperations);
+    const endpoint = `/aest/student/${student.id}/modified-independent-status`;
+
+    const payload = {
+      modifiedIndependentUpdateStatus: ModifiedIndependentUpdateStatus.Approved,
+      noteDescription: "Some not description.",
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        message: "Forbidden resource",
+        error: "Forbidden",
+        statusCode: HttpStatus.FORBIDDEN,
+      });
+  });
+
+  afterAll(async () => {
+    await app?.close();
+  });
+});

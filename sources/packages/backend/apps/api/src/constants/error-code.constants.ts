@@ -288,3 +288,8 @@ export const RESTRICTION_NOT_FOUND = "RESTRICTION_NOT_FOUND";
  * Attempt to soft-delete a restriction that is already set as deleted.
  */
 export const RESTRICTION_IS_DELETED = "RESTRICTION_IS_DELETED";
+/**
+ * Modified independent status not different from the current status.
+ */
+export const MODIFIED_INDEPENDENT_STATUS_NOT_DIFFERENT =
+  "MODIFIED_INDEPENDENT_STATUS_NOT_DIFFERENT";

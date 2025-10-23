@@ -19,14 +19,7 @@ import {
   SupplierStatus,
   ModifiedIndependentStatus,
 } from "@sims/sims-db";
-import {
-  DataSource,
-  EntityManager,
-  FindOptionsWhere,
-  IsNull,
-  Not,
-  UpdateResult,
-} from "typeorm";
+import { DataSource, EntityManager, UpdateResult } from "typeorm";
 import { LoggerService } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
@@ -39,8 +32,10 @@ import {
 import { SFASIndividualService } from "@sims/services/sfas";
 import * as dayjs from "dayjs";
 import {
+  MODIFIED_INDEPENDENT_STATUS_NOT_DIFFERENT,
   STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
+  STUDENT_NOT_FOUND,
   STUDENT_SIN_CONSENT_NOT_CHECKED,
 } from "../../constants";
 import {
@@ -879,6 +874,24 @@ export class StudentService extends RecordDataModelService<Student> {
     auditUserId: number,
   ): Promise<UpdateResult> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
+      const studentRepo = transactionalEntityManager.getRepository(Student);
+      const student = await studentRepo.findOne({
+        select: { id: true, modifiedIndependentStatus: true },
+        where: { id: studentId },
+      });
+      if (!student) {
+        throw new CustomNamedError(
+          `Student ${studentId} not found.`,
+          STUDENT_NOT_FOUND,
+        );
+      }
+      // Validate the current modified independent status and avoid the update if they are the same.
+      if (student.modifiedIndependentStatus === modifiedIndependentStatus) {
+        throw new CustomNamedError(
+          "Modified independent status to update is not different from the current status.",
+          MODIFIED_INDEPENDENT_STATUS_NOT_DIFFERENT,
+        );
+      }
       await this.noteSharedService.createStudentNote(
         studentId,
         NoteType.General,
@@ -888,20 +901,16 @@ export class StudentService extends RecordDataModelService<Student> {
       );
       const auditUser = { id: auditUserId } as User;
       const now = new Date();
-      const updateCriteria: FindOptionsWhere<Student> = { id: studentId };
-      updateCriteria.modifiedIndependentStatus =
-        modifiedIndependentStatus === null
-          ? Not(IsNull())
-          : Not(modifiedIndependentStatus);
-      return transactionalEntityManager
-        .getRepository(Student)
-        .update(updateCriteria, {
+      return transactionalEntityManager.getRepository(Student).update(
+        { id: studentId },
+        {
           modifiedIndependentStatus,
           modifiedIndependentStatusUpdatedBy: auditUser,
           modifiedIndependentStatusUpdatedOn: now,
           modifier: auditUser,
           updatedAt: now,
-        });
+        },
+      );
     });
   }
 

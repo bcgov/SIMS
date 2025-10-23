@@ -28,7 +28,7 @@ import {
   StudentService,
 } from "../../services";
 import { NotificationActionsService } from "@sims/services/notifications";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -75,8 +75,10 @@ import {
 } from "../models/pagination.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import {
+  MODIFIED_INDEPENDENT_STATUS_NOT_DIFFERENT,
   SIN_VALIDATION_RECORD_INVALID_OPERATION,
   SIN_VALIDATION_RECORD_NOT_FOUND,
+  STUDENT_NOT_FOUND,
 } from "../../constants";
 import { Role } from "../../auth/roles.enum";
 import { EntityManager } from "typeorm";
@@ -552,25 +554,31 @@ export class StudentAESTController extends BaseController {
     @Body() payload: UpdateModifiedIndependentStatusAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    const studentExists = await this.studentService.studentExists(studentId);
-    if (!studentExists) {
-      throw new NotFoundException("Student does not exists.");
-    }
     const modifiedIndependentStatus =
       this.studentControllerService.getModifiedIndependentStatusToUpdate(
         payload.modifiedIndependentUpdateStatus,
       );
-    const updateResult =
+    try {
       await this.studentService.updateModifiedIndependentStatus(
         studentId,
         modifiedIndependentStatus,
         payload.noteDescription,
         userToken.userId,
       );
-    if (!updateResult.affected) {
-      throw new UnprocessableEntityException(
-        "Modified independent status not updated.",
-      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case STUDENT_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case MODIFIED_INDEPENDENT_STATUS_NOT_DIFFERENT:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+          default:
+            throw error;
+        }
+      }
+      throw error;
     }
   }
 }
