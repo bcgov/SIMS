@@ -1,32 +1,34 @@
 <template>
-  <body-header title="Student change requests">
+  <body-header :title="title">
     <template #status-chip>
       <status-chip-requested-assessment :status="appealStatus" />
     </template>
     <template #subtitle>
-      <div class="mb-2">
-        <p>
-          <strong>Instructions:</strong>
-        </p>
-        <ul>
-          <li>
-            View the change request and any supporting documentation on the
-            student application
-          </li>
-          <li>
-            Review the history of Request a Change submissions prior to
-            approving each new one to ensure continuity
-          </li>
-          <li>
-            Review all fields to ensure that information is consistent with the
-            students current circumstances
-          </li>
-          <li>
-            When the review is complete, come back to this page to approve or
-            deny the request
-          </li>
-        </ul>
-      </div>
+      <slot name="instructions">
+        <div class="mb-2">
+          <p>
+            <strong>Instructions:</strong>
+          </p>
+          <ul>
+            <li>
+              View the change request and any supporting documentation on the
+              student application
+            </li>
+            <li>
+              Review the history of Request a Change submissions prior to
+              approving each new one to ensure continuity
+            </li>
+            <li>
+              Review all fields to ensure that information is consistent with
+              the students current circumstances
+            </li>
+            <li>
+              When the review is complete, come back to this page to approve or
+              deny the request
+            </li>
+          </ul>
+        </div>
+      </slot>
     </template>
   </body-header>
   <appeal-requests-approval-form
@@ -90,6 +92,10 @@ export default defineComponent({
     CheckPermissionRole,
   },
   props: {
+    title: {
+      type: String,
+      default: "Student change requests",
+    },
     studentId: {
       type: Number,
       required: false,
