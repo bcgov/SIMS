@@ -13,18 +13,30 @@ import {
   createFakeStudentAppeal,
   createFakeStudentAppealRequest,
   saveFakeApplicationDisbursements,
+  saveFakeStudent,
 } from "@sims/test-utils";
-import { ApplicationStatus, StudentAppealStatus } from "@sims/sims-db";
-import { StudentAppealApprovalAPIInDTO } from "apps/api/src/route-controllers/student-appeal/models/student-appeal.dto";
+import {
+  ApplicationStatus,
+  ModifiedIndependentStatus,
+  StudentAppealActionType,
+  StudentAppealStatus,
+} from "@sims/sims-db";
+import { StudentAppealApprovalAPIInDTO } from "../../../../route-controllers/student-appeal/models/student-appeal.dto";
+import MockDate from "mockdate";
 
 describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => {
   let app: INestApplication;
   let db: E2EDataSources;
+  const MODIFIED_INDEPENDENT_APPEAL = "modifiedindependentappeal";
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+  });
+
+  beforeEach(async () => {
+    MockDate.reset();
   });
 
   it("Should approve student appeal requests and add note when the appeal with appeal requests submitted for approval are in pending status.", async () => {
@@ -96,6 +108,124 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
           note: { description: "Approved" },
         },
       ],
+    });
+  });
+
+  describe("Modified independent appeal", () => {
+    [
+      ModifiedIndependentStatus.Declined,
+      ModifiedIndependentStatus.Approved,
+    ].forEach((modifiedIndependentStatus) => {
+      it(`Should update the student profile modified independent status as ${modifiedIndependentStatus} when a valid modified independent appeal is assessed.`, async () => {
+        // Arrange
+        // Create a completed application to request change.
+        const student = await saveFakeStudent(db.dataSource);
+        // Create pending student appeal.
+        const appealRequest = createFakeStudentAppealRequest(undefined, {
+          initialValues: {
+            appealStatus: StudentAppealStatus.Pending,
+            submittedFormName: MODIFIED_INDEPENDENT_APPEAL,
+            submittedData: {
+              actions: [StudentAppealActionType.UpdateModifiedIndependent],
+            },
+          },
+        });
+        const appeal = createFakeStudentAppeal({
+          student,
+          appealRequests: [appealRequest],
+        });
+        await db.studentAppeal.save(appeal);
+        const [savedAppealRequest] = appeal.appealRequests;
+
+        const endpoint = `/aest/appeal/${appeal.id}/requests`;
+        const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+        const appealStatus =
+          modifiedIndependentStatus === ModifiedIndependentStatus.Approved
+            ? StudentAppealStatus.Approved
+            : StudentAppealStatus.Declined;
+        const noteDescription = `Assessed as ${modifiedIndependentStatus}`;
+        const payload: StudentAppealApprovalAPIInDTO = {
+          requests: [
+            {
+              id: savedAppealRequest.id,
+              appealStatus,
+              noteDescription,
+            },
+          ],
+        };
+        const now = new Date();
+        MockDate.set(now);
+
+        // Act/Assert
+        await request(app.getHttpServer())
+          .patch(endpoint)
+          .send(payload)
+          .auth(token, BEARER_AUTH_TYPE)
+          .expect(HttpStatus.OK)
+          .expect({});
+        // Check for the appeal and appeal requests in the database.
+        const updatedAppeal = await db.studentAppeal.findOne({
+          select: {
+            id: true,
+            student: {
+              id: true,
+              modifiedIndependentStatus: true,
+              modifiedIndependentAppealRequest: { id: true },
+              modifiedIndependentStatusUpdatedBy: { id: true },
+              modifiedIndependentStatusUpdatedOn: true,
+              modifier: { id: true },
+              updatedAt: true,
+            },
+            appealRequests: {
+              id: true,
+              appealStatus: true,
+              assessedBy: { id: true },
+              modifier: { id: true },
+              updatedAt: true,
+              note: { id: true, description: true },
+            },
+          },
+          relations: {
+            student: {
+              modifiedIndependentAppealRequest: true,
+              modifiedIndependentStatusUpdatedBy: true,
+              modifier: true,
+            },
+            appealRequests: { assessedBy: true, note: true, modifier: true },
+          },
+          where: { id: appeal.id },
+          loadEagerRelations: false,
+        });
+        // Approving ministry user.
+        const ministryUser = await getAESTUser(
+          db.dataSource,
+          AESTGroups.BusinessAdministrators,
+        );
+        // Asset updated appeal and appeal request.
+        const auditUser = { id: ministryUser.id };
+        expect(updatedAppeal).toEqual({
+          id: appeal.id,
+          student: {
+            id: student.id,
+            modifiedIndependentStatus,
+            modifiedIndependentAppealRequest: { id: savedAppealRequest.id },
+            modifiedIndependentStatusUpdatedBy: auditUser,
+            modifiedIndependentStatusUpdatedOn: now,
+            modifier: auditUser,
+            updatedAt: now,
+          },
+          appealRequests: [
+            {
+              id: savedAppealRequest.id,
+              appealStatus,
+              assessedBy: auditUser,
+              modifier: auditUser,
+              updatedAt: now,
+              note: { id: expect.any(Number), description: noteDescription },
+            },
+          ],
+        });
+      });
     });
   });
 

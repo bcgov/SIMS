@@ -34,7 +34,7 @@ export function createFakeStudentAppealRequest(
   appealRequest.submittedFormName = "SomeFormioFormName";
   appealRequest.appealStatus =
     options?.initialValues?.appealStatus ?? StudentAppealStatus.Approved;
-  appealRequest.submittedData = {};
+  appealRequest.submittedData = options?.initialValues?.submittedData ?? {};
   appealRequest.assessedDate = null;
   appealRequest.assessedBy = relations?.assessedBy;
   appealRequest.note = null;
