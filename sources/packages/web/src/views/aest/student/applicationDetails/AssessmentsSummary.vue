@@ -3,41 +3,41 @@
     <template #header>
       <header-navigator
         title="Application history"
-        :routeLocation="{
+        :route-location="{
           name: AESTRoutesConst.STUDENT_APPLICATIONS,
           params: { studentId },
         }"
-        subTitle="Assessments"
+        sub-title="Assessments"
       />
       <application-header-title :application-id="applicationId" />
     </template>
     <request-assessment
       class="mb-5"
-      :applicationId="applicationId"
-      @viewStudentAppeal="goToStudentAppeal"
-      @viewStudentApplicationOfferingChange="
+      :application-id="applicationId"
+      @view-student-appeal="goToStudentAppeal"
+      @view-student-application-offering-change="
         goToStudentApplicationOfferingChangeRequest
       "
-      @viewApplicationException="goToApplicationException"
-      @viewOfferingRequest="goToOfferingRequest"
+      @view-application-exception="goToApplicationException"
+      @view-offering-request="goToOfferingRequest"
     />
     <manual-reassessment
       class="mb-5"
-      :applicationId="applicationId"
-      @reassessmentTriggered="reloadHistory"
+      :application-id="applicationId"
+      @reassessment-triggered="reloadHistory"
     />
     <history-assessment
       class="mb-5"
-      :applicationId="applicationId"
-      :viewRequestTypes="assessmentRequestTypes"
-      @viewStudentAppeal="goToStudentAppeal"
-      @viewStudentApplicationOfferingChange="
+      :application-id="applicationId"
+      :view-request-types="assessmentRequestTypes"
+      @view-student-appeal="goToStudentAppeal"
+      @view-student-application-offering-change="
         goToStudentApplicationOfferingChangeRequest
       "
-      @viewAssessment="gotToViewAssessment"
-      @viewOfferingRequest="goToOfferingRequest"
-      @viewApplicationException="goToApplicationException"
-      @viewScholasticStandingChange="goToScholasticStanding"
+      @view-assessment="gotToViewAssessment"
+      @view-offering-request="goToOfferingRequest"
+      @view-application-exception="goToApplicationException"
+      @view-scholastic-standing-change="goToScholasticStanding"
       :key="historyKey"
     />
   </full-page-container>
@@ -85,7 +85,7 @@ export default defineComponent({
 
     const goToStudentAppeal = (appealId: number) => {
       router.push({
-        name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
+        name: AESTRoutesConst.STUDENT_APPLICATION_APPEAL_REQUESTS_APPROVAL,
         params: {
           studentId: props.studentId,
           applicationId: props.applicationId,

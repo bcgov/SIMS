@@ -24,6 +24,10 @@ export interface FormIOForm<T = unknown> extends FormIOComponent {
    */
   resetValue: () => Promise<void>;
   page: WizardNavigationEvent;
+  form: {
+    name: string;
+    path: string;
+  };
 }
 
 /**

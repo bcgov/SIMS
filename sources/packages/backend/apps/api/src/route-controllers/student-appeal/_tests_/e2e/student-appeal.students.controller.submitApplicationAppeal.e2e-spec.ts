@@ -32,7 +32,7 @@ import {
   StudentAppealStatus,
   StudentFile,
 } from "@sims/sims-db";
-import { StudentAppealAPIInDTO } from "../../models/student-appeal.dto";
+import { StudentApplicationAppealAPIInDTO } from "../../models/student-appeal.dto";
 import { AppStudentsModule } from "../../../../app.students.module";
 import { FormService } from "../../../../services";
 import {
@@ -41,7 +41,7 @@ import {
   APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
 } from "../../../../constants";
 
-describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
+describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
   let appModule: TestingModule;
@@ -50,7 +50,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   let studentAppealRequestRepo: Repository<StudentAppealRequest>;
   let studentFileRepo: Repository<StudentFile>;
   const FINANCIAL_INFORMATION_FORM_NAME = "studentfinancialinformationappeal";
-  const DEPENDANT_INFORMATION_FORM_NAME = "studentDependantsAppeal";
+  const DEPENDANT_INFORMATION_FORM_NAME = "studentdependantsappeal";
   const PARTNER_INFORMATION_FORM_NAME = "partnerinformationandincomeappeal";
   const ROOM_AND_BOARD_COSTS_FORM_NAME = "roomandboardcostsappeal";
   let recentActiveProgramYear: ProgramYear;
@@ -94,7 +94,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         haveDaycareCosts12YearsOrOver: "no",
         haveDaycareCosts11YearsOrUnder: "no",
       };
-      const payload: StudentAppealAPIInDTO = {
+      const payload: StudentApplicationAppealAPIInDTO = {
         studentAppealRequests: [
           {
             formName: FINANCIAL_INFORMATION_FORM_NAME,
@@ -199,7 +199,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         haveDaycareCosts12YearsOrOver: "no",
         haveDaycareCosts11YearsOrUnder: "no",
       };
-      const payload: StudentAppealAPIInDTO = {
+      const payload: StudentApplicationAppealAPIInDTO = {
         studentAppealRequests: [
           {
             formName: FINANCIAL_INFORMATION_FORM_NAME,
@@ -237,7 +237,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       hasDependents: "no",
       programYear: "2023-2024",
     };
-    const payload: StudentAppealAPIInDTO = {
+    const payload: StudentApplicationAppealAPIInDTO = {
       studentAppealRequests: [
         {
           formName: DEPENDANT_INFORMATION_FORM_NAME,
@@ -283,7 +283,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     const dependantInformationData = {
       hasDependent: "yes",
     };
-    const payload: StudentAppealAPIInDTO = {
+    const payload: StudentApplicationAppealAPIInDTO = {
       studentAppealRequests: [
         {
           formName: DEPENDANT_INFORMATION_FORM_NAME,
@@ -327,7 +327,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     const dependantInformationData = {
       hasDependent: "yes",
     };
-    const payload: StudentAppealAPIInDTO = {
+    const payload: StudentApplicationAppealAPIInDTO = {
       studentAppealRequests: [
         {
           formName: DEPENDANT_INFORMATION_FORM_NAME,
@@ -438,7 +438,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         },
       ],
     };
-    const payload: StudentAppealAPIInDTO = {
+    const payload: StudentApplicationAppealAPIInDTO = {
       studentAppealRequests: [
         {
           formName: DEPENDANT_INFORMATION_FORM_NAME,
@@ -549,7 +549,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       otherExceptionalPartnerCircumstance: "any",
     };
 
-    const payload: StudentAppealAPIInDTO = {
+    const payload: StudentApplicationAppealAPIInDTO = {
       studentAppealRequests: [
         {
           formName: PARTNER_INFORMATION_FORM_NAME,
@@ -665,7 +665,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
           },
         ],
       };
-      const payload: StudentAppealAPIInDTO = {
+      const payload: StudentApplicationAppealAPIInDTO = {
         studentAppealRequests: [
           {
             formName: ROOM_AND_BOARD_COSTS_FORM_NAME,
@@ -758,7 +758,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         haveDaycareCosts12YearsOrOver: "no",
         haveDaycareCosts11YearsOrUnder: "no",
       };
-      const payload: StudentAppealAPIInDTO = {
+      const payload: StudentApplicationAppealAPIInDTO = {
         studentAppealRequests: [
           {
             formName: FINANCIAL_INFORMATION_FORM_NAME,
@@ -800,7 +800,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         applicationStatus: ApplicationStatus.Completed,
       },
     );
-    const payload: StudentAppealAPIInDTO = {
+    const payload: StudentApplicationAppealAPIInDTO = {
       studentAppealRequests: [
         {
           formName: ROOM_AND_BOARD_COSTS_FORM_NAME,

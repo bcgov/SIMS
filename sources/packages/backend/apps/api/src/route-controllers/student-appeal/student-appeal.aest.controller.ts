@@ -10,7 +10,6 @@ import {
   ParseIntPipe,
 } from "@nestjs/common";
 import {
-  ASSESSMENT_ALREADY_IN_PROGRESS,
   StudentAppealService,
   StudentAppealAssessmentService,
 } from "../../services";
@@ -27,7 +26,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
   DetailedStudentAppealRequestAPIOutDTO,
@@ -118,10 +117,6 @@ export class StudentAppealAESTController extends BaseController {
             throw new NotFoundException(error.message);
           case STUDENT_APPEAL_INVALID_OPERATION:
             throw new UnprocessableEntityException(error.message);
-          case ASSESSMENT_ALREADY_IN_PROGRESS:
-            throw new UnprocessableEntityException(
-              new ApiProcessError(error.message, error.name),
-            );
         }
       }
       throw error;

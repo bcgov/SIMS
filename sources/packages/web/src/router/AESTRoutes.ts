@@ -43,7 +43,8 @@ import SupportingUser from "@/views/aest/SupportingUser.vue";
 import PendingDesignations from "@/views/aest/institution/PendingDesignation.vue";
 import DesignationAESTView from "@/views/aest/institution/DesignationAESTView.vue";
 import AssessmentsSummary from "@/views/aest/student/applicationDetails/AssessmentsSummary.vue";
-import StudentAppealRequestsApproval from "@/views/aest/student/applicationDetails/StudentAppealRequestsApproval.vue";
+import StudentAppealRequestsApproval from "@/views/aest/student/StudentAppealRequestsApproval.vue";
+import StudentApplicationAppealRequestsApproval from "@/views/aest/student/applicationDetails/StudentAppealRequestsApproval.vue";
 import NoticeOfAssessment from "@/views/aest/student/applicationDetails/NoticeOfAssessment.vue";
 import ApplicationExceptionsApproval from "@/views/aest/student/applicationDetails/ApplicationExceptionsApproval.vue";
 import ViewScholasticStanding from "@/views/aest/student/ViewScholasticStanding.vue";
@@ -191,6 +192,15 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         ],
       },
       {
+        path: AppRoutes.StudentAppealRequest,
+        name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
+        props: true,
+        component: StudentAppealRequestsApproval,
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
         path: AppRoutes.ApplicationDetail,
         redirect: { name: AESTRoutesConst.APPLICATION_DETAILS },
         props: true,
@@ -238,11 +248,12 @@ export const aestRoutes: Array<RouteRecordRaw> = [
               clientType: ClientIdType.AEST,
             },
           },
+
           {
             path: AppRoutes.StudentAppealRequest,
-            name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
+            name: AESTRoutesConst.STUDENT_APPLICATION_APPEAL_REQUESTS_APPROVAL,
             props: true,
-            component: StudentAppealRequestsApproval,
+            component: StudentApplicationAppealRequestsApproval,
             meta: {
               clientType: ClientIdType.AEST,
             },

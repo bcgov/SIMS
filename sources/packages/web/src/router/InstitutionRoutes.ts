@@ -773,7 +773,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           },
           {
             path: AppRoutes.StudentAppealRequest,
-            name: InstitutionRoutesConst.STUDENT_APPEAL_REQUEST,
+            name: InstitutionRoutesConst.STUDENT_APPLICATION_APPEAL_REQUESTS_APPROVAL,
             props: true,
             component: StudentAppealRequest,
           },

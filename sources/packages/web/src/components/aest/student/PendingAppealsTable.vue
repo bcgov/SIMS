@@ -41,11 +41,7 @@
           {{ emptyStringFiller(item.applicationNumber) }}
         </template>
         <template #[`item.action`]="{ item }">
-          <v-btn
-            color="primary"
-            @click="gotToAssessmentsSummary(item.applicationId, item.studentId)"
-            >View</v-btn
-          >
+          <v-btn color="primary" @click="goToAppealsApproval(item)">View</v-btn>
         </template>
       </v-data-table-server>
     </toggle-content>
@@ -106,15 +102,23 @@ export default defineComponent({
         : "Appeals that require ministry review.";
     });
 
-    const gotToAssessmentsSummary = (
-      applicationId: number,
-      studentId: number,
+    const goToAppealsApproval = (
+      pendingAppeal: StudentAppealPendingSummaryAPIOutDTO,
     ) => {
+      if (pendingAppeal.applicationId) {
+        router.push({
+          name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
+          params: {
+            applicationId: pendingAppeal.applicationId,
+            studentId: pendingAppeal.studentId,
+          },
+        });
+        return;
+      }
       router.push({
-        name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
+        name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
         params: {
-          applicationId: applicationId,
-          studentId: studentId,
+          appealId: pendingAppeal.appealId,
         },
       });
     };
@@ -163,7 +167,7 @@ export default defineComponent({
     });
 
     return {
-      gotToAssessmentsSummary,
+      goToAppealsApproval,
       applicationAppeals,
       dateOnlyLongString,
       emptyStringFiller,

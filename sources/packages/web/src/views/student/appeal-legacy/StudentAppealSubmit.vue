@@ -28,6 +28,7 @@
       <student-appeal-submit-shared-form
         :appeal-forms="appealRequestsForms"
         :application-id="applicationId"
+        :processing="processing"
         @cancel="canceledSubmission"
         @submitted="submitted"
       >
@@ -54,13 +55,15 @@
 
 <script lang="ts">
 import { computed, ref, defineComponent, watchEffect } from "vue";
-import { FormIOForm } from "@/types";
+import { ApiProcessError, FormIOForm, StudentAppealRequest } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useSnackBar } from "@/composables";
 import { ApplicationProgramYearAPIOutDTO } from "@/services/http/dto";
 import StudentAppealSubmitSharedForm from "@/components/students/StudentAppealSubmitSharedForm.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
+import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "@/constants";
+import { StudentAppealService } from "@/services/StudentAppealService";
 
 /**
  * Model for student request change form.
@@ -122,10 +125,34 @@ export default defineComponent({
       appealRequestsForms.value = [];
     };
 
-    const submitted = () => {
-      router.push({
-        name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
-      });
+    const submitted = async (appealRequests: StudentAppealRequest[]) => {
+      try {
+        processing.value = true;
+        await StudentAppealService.shared.submitApplicationAppeal(
+          props.applicationId,
+          appealRequests,
+        );
+        snackBar.success(
+          "The application change request has been submitted successfully.",
+        );
+        router.push({
+          name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
+        });
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          if (error.errorType === APPLICATION_CHANGE_NOT_ELIGIBLE) {
+            snackBar.warn(error.message);
+          } else {
+            snackBar.error(error.message);
+          }
+          return;
+        }
+        snackBar.error(
+          "An unexpected error happened while submitting the application change request.",
+        );
+      } finally {
+        processing.value = false;
+      }
     };
 
     return {

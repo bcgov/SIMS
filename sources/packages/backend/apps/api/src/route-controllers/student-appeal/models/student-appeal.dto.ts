@@ -4,22 +4,24 @@ import {
   ArrayMinSize,
   IsDefined,
   IsEnum,
+  IsIn,
   IsNotEmpty,
   IsPositive,
-  MaxLength,
   ValidateNested,
 } from "class-validator";
 import { StudentAppealStatus } from "@sims/sims-db";
 import { JsonMaxSize } from "../../../utilities/class-validation";
-import { FORM_NAME_MAX_LENGTH, JSON_10KB } from "../../../constants";
+import { JSON_10KB } from "../../../constants";
+import {
+  CHANGE_REQUEST_APPEAL_FORMS,
+  STUDENT_APPEAL_FORM_NAMES,
+  STUDENT_APPLICATION_APPEAL_FORM_NAMES,
+} from "../../../services";
 
 /**
- * DTO for student appeal request.
+ * Shared validations for appeal requests.
  */
-export class StudentAppealRequestAPIInDTO {
-  @IsNotEmpty()
-  @MaxLength(FORM_NAME_MAX_LENGTH)
-  formName: string;
+export class AppealRequestAPIInDTO {
   @IsDefined()
   @JsonMaxSize(JSON_10KB)
   formData: unknown;
@@ -28,14 +30,33 @@ export class StudentAppealRequestAPIInDTO {
 }
 
 /**
- * DTO for student appeal.
+ * Student-only appeal request.
  */
-export class StudentAppealAPIInDTO {
+export class StudentAppealAPIInDTO extends AppealRequestAPIInDTO {
+  @IsIn(STUDENT_APPEAL_FORM_NAMES)
+  formName: string;
+}
+
+/**
+ * Student application appeal request.
+ */
+export class ApplicationAppealRequestAPIInDTO extends AppealRequestAPIInDTO {
+  @IsIn([
+    ...STUDENT_APPLICATION_APPEAL_FORM_NAMES,
+    ...CHANGE_REQUEST_APPEAL_FORMS,
+  ])
+  formName: string;
+}
+
+/**
+ * Student application appeal.
+ */
+export class StudentApplicationAppealAPIInDTO {
   @ArrayMinSize(1)
   @ArrayMaxSize(50)
   @ValidateNested({ each: true })
-  @Type(() => StudentAppealRequestAPIInDTO)
-  studentAppealRequests: StudentAppealRequestAPIInDTO[];
+  @Type(() => ApplicationAppealRequestAPIInDTO)
+  studentAppealRequests: ApplicationAppealRequestAPIInDTO[];
 }
 
 export class StudentAppealRequestAPIOutDTO {

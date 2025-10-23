@@ -148,7 +148,7 @@ export enum AppRoutes {
   ApplicationView = "view",
   AssessmentSummary = "assessment-summary",
   ApplicationException = "application-exceptions/:exceptionId",
-  StudentAppealRequest = "request-changes/:appealId",
+  StudentAppealRequest = "appeals/:appealId",
   StudentAESTApplicationOfferingChangeRequest = "application-offering-change-request/:applicationOfferingChangeRequestId",
   NoticeOfAssessmentView = "assessment/:assessmentId/notice-of-assessment",
   Reports = "reports",

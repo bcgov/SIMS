@@ -16,9 +16,10 @@ import {
 } from "../../services";
 import {
   EligibleApplicationsForAppealAPIOutDTO,
-  StudentAppealAPIInDTO,
+  StudentApplicationAppealAPIInDTO,
   StudentAppealAPIOutDTO,
   StudentAppealRequestAPIOutDTO,
+  StudentAppealAPIInDTO,
 } from "./models/student-appeal.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -44,11 +45,13 @@ import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_HAS_PENDING_APPEAL,
   APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
+  STUDENT_HAS_PENDING_APPEAL,
 } from "../../constants";
 import { StudentAppealRequestModel } from "../../services/student-appeal/student-appeal.model";
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
 import { StudentAppealServerSideSubmissionData } from "./models/student-appeal.model";
 import { allowApplicationChangeRequest } from "../../utilities";
+import { StudentAppealStatus } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -65,10 +68,9 @@ export class StudentAppealStudentsController extends BaseController {
   }
 
   /**
-   * Submit student appeal.
+   * Submit a student appeal associated with an application.
    * @param applicationId application for which the appeal is submitted.
    * @param payload student appeal with appeal requests.
-   * @param userToken
    */
   @ApiNotFoundResponse({
     description:
@@ -87,9 +89,9 @@ export class StudentAppealStudentsController extends BaseController {
       "Not able to submit change request/appeal due to invalid request.",
   })
   @Post("application/:applicationId")
-  async submitStudentAppeal(
+  async submitApplicationAppeal(
     @Param("applicationId", ParseIntPipe) applicationId: number,
-    @Body() payload: StudentAppealAPIInDTO,
+    @Body() payload: StudentApplicationAppealAPIInDTO,
     @UserToken() userToken: StudentUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     const application =
@@ -144,8 +146,13 @@ export class StudentAppealStudentsController extends BaseController {
       payload.studentAppealRequests.map((request) => request.formName),
     );
 
-    const existingApplicationAppeal =
-      await this.studentAppealService.hasExistingAppeal(applicationId);
+    const existingApplicationAppeal = await this.studentAppealService.hasAppeal(
+      userToken.studentId,
+      {
+        applicationId,
+        appealStatus: StudentAppealStatus.Pending,
+      },
+    );
     if (existingApplicationAppeal) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
@@ -198,12 +205,75 @@ export class StudentAppealStudentsController extends BaseController {
     );
 
     const studentAppeal = await this.studentAppealService.saveStudentAppeals(
-      applicationId,
-      userToken.userId,
       userToken.studentId,
       appealRequests,
+      userToken.userId,
+      applicationId,
     );
 
+    return {
+      id: studentAppeal.id,
+    };
+  }
+
+  /**
+   * Submit a student appeal, not associated with an application.
+   * Only one type of appeal is allowed to be submitted.
+   * @param payload student appeal request.
+   * @return primary identifier of the submitted student appeal.
+   */
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Only one appeal of the same type can be submitted at a time. When your current" +
+      " request is approved or denied by StudentAid BC, you will be able to submit a new one.",
+  })
+  @ApiBadRequestResponse({
+    description:
+      "Not able to submit the student appeal due to an invalid request.",
+  })
+  @Post()
+  async submitStudentAppeal(
+    @Body() payload: StudentAppealAPIInDTO,
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const hasPendingAppeal = await this.studentAppealService.hasAppeal(
+      userToken.studentId,
+      {
+        appealFormName: payload.formName,
+        appealStatus: StudentAppealStatus.Pending,
+        isStudentOnlyAppeal: true,
+      },
+    );
+    if (hasPendingAppeal) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "Only one student appeal of the same type can be submitted at a time. When your current request is approved or denied by StudentAid BC, you will be able to submit a new one.",
+          STUDENT_HAS_PENDING_APPEAL,
+        ),
+      );
+    }
+    // Dry run submission to validate the form data.
+    const submissionResult = await this.formService.dryRunSubmission(
+      payload.formName,
+      payload.formData,
+    );
+    if (!submissionResult.valid) {
+      throw new BadRequestException(
+        "Not able to submit the student appeal due to an invalid request.",
+      );
+    }
+    // Generate the data to be persisted based on the result of the dry run submission.
+    const appealRequest: StudentAppealRequestModel = {
+      formName: payload.formName,
+      formData: submissionResult.data.data,
+      files: payload.files,
+    };
+    // Save the student appeal.
+    const studentAppeal = await this.studentAppealService.saveStudentAppeals(
+      userToken.studentId,
+      [appealRequest],
+      userToken.userId,
+    );
     return {
       id: studentAppeal.id,
     };

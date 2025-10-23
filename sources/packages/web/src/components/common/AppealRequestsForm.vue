@@ -5,9 +5,9 @@
     class="mb-4"
   >
     <formio
-      :formName="appealRequest.formName"
+      :form-name="appealRequest.formName"
       :data="appealRequest.data"
-      :readOnly="readOnly"
+      :read-only="readOnly"
       @loaded="appealFormLoaded"
     ></formio>
     <slot name="approval-form" :approval="appealRequest.approval"></slot>
@@ -20,7 +20,7 @@
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { defineComponent, PropType } from "vue";
 import { useFormioUtils } from "@/composables";
-import { StudentAppealRequest } from "@/types";
+import { FormIOForm, StudentAppealRequest } from "@/types";
 
 export default defineComponent({
   emits: ["submitted"],
@@ -37,20 +37,19 @@ export default defineComponent({
   },
   setup(_props, context) {
     const { checkFormioValidity, getAssociatedFiles } = useFormioUtils();
-    const appealForms: any[] = [];
-    const appealFormLoaded = (form: any) => {
+    const appealForms: FormIOForm[] = [];
+    const appealFormLoaded = (form: FormIOForm) => {
       appealForms.push(form);
     };
 
     const submit = async () => {
       if (await checkFormioValidity(appealForms)) {
-        const formsData = appealForms.map(
-          (appealForm) =>
-            ({
-              formName: appealForm.form.name,
-              data: appealForm.data,
-              files: getAssociatedFiles(appealForm),
-            } as StudentAppealRequest),
+        const formsData = appealForms.map<StudentAppealRequest>(
+          (appealForm) => ({
+            formName: appealForm.form.path,
+            data: appealForm.data,
+            files: getAssociatedFiles(appealForm),
+          }),
         );
         context.emit("submitted", formsData);
       }
