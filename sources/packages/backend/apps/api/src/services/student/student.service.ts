@@ -896,15 +896,17 @@ export class StudentService extends RecordDataModelService<Student> {
         });
       } else {
         // Either modified independent status is null.
-        updateCriteria.push({
-          id: studentId,
-          modifiedIndependentStatus: IsNull(),
-        });
-        // Or modified independent status is different from the provided one.
-        updateCriteria.push({
-          id: studentId,
-          modifiedIndependentStatus: Not(modifiedIndependentStatus),
-        });
+        // or modified independent status is different from the provided one.
+        updateCriteria.push(
+          {
+            id: studentId,
+            modifiedIndependentStatus: IsNull(),
+          },
+          {
+            id: studentId,
+            modifiedIndependentStatus: Not(modifiedIndependentStatus),
+          },
+        );
       }
       return transactionalEntityManager
         .getRepository(Student)
