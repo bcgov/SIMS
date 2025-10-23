@@ -30,9 +30,9 @@
     </template>
   </body-header>
   <appeal-requests-approval-form
-    :studentAppealRequests="studentAppealRequests"
-    :readOnly="readOnly"
-    :showApprovalDetails="showApprovalDetails"
+    :student-appeal-requests="studentAppealRequests"
+    :read-only="readOnly"
+    :show-approval-details="showApprovalDetails"
     @submitted="$emit('submitted', $event)"
   >
     <template #approval-actions="{ submit }" v-if="!readOnly">
@@ -68,10 +68,10 @@ import { RouteLocationRaw, useRouter } from "vue-router";
 import { StudentAppealService } from "@/services/StudentAppealService";
 import { useFormatters } from "@/composables";
 import {
-  StudentAppealRequest,
   StudentAppealStatus,
   Role,
   StudentAppealApproval,
+  StudentAppeal,
 } from "@/types";
 import AppealRequestsApprovalForm from "@/components/aest/AppealRequestsApprovalForm.vue";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
@@ -93,6 +93,7 @@ export default defineComponent({
     studentId: {
       type: Number,
       required: false,
+      default: undefined,
     },
     appealId: {
       type: Number,
@@ -101,6 +102,7 @@ export default defineComponent({
     backRouteLocation: {
       type: Object as PropType<RouteLocationRaw>,
       required: false,
+      default: undefined,
     },
     readOnlyForm: {
       type: Boolean,
@@ -115,12 +117,13 @@ export default defineComponent({
     applicationId: {
       type: Number,
       required: false,
+      default: undefined,
     },
   },
   setup(props) {
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
-    const studentAppealRequests = ref([] as StudentAppealRequest[]);
+    const studentAppealRequests = ref([] as StudentAppeal[]);
     const appealStatus = ref(StudentAppealStatus.Pending);
 
     const readOnly = computed(

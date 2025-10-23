@@ -15,10 +15,13 @@ export interface StudentAppealApproval {
   showAudit: boolean;
 }
 
-export interface StudentAppealRequest {
+export interface StudentAppeal {
   id?: number;
-  data: any;
+  data: unknown;
   formName: string;
   approval?: StudentAppealApproval;
+}
+
+export interface StudentAppealRequest extends StudentAppeal {
   files: string[];
 }
