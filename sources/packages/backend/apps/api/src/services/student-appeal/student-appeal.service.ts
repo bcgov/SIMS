@@ -3,7 +3,6 @@ import {
   Brackets,
   DataSource,
   EntityManager,
-  FindOptionsSelect,
   IsNull,
   MoreThanOrEqual,
   Repository,
@@ -106,73 +105,52 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           { entityManager: entityManager },
         );
       }
-      const notificationPromise = this.createStudentAppealNotification(
-        studentId,
+      await entityManager.getRepository(StudentAppeal).save(studentAppeal);
+      await this.createStudentAppealNotification(
+        studentAppeal.id,
         entityManager,
-        applicationId,
       );
-      const studentAppealPromise = entityManager
-        .getRepository(StudentAppeal)
-        .save(studentAppeal);
-      const [createdStudentAppeal] = await Promise.all([
-        studentAppealPromise,
-        notificationPromise,
-      ]);
-      return createdStudentAppeal;
+      return studentAppeal;
     });
   }
 
   /**
    * Create a notification for the student appeal.
-   * @param studentId student ID to send the notification.
+   * @param appealId appeal ID to send the notification.
    * @param entityManager entity manager to keep DB operations in the same transaction.
-   * @param applicationId application ID related to the appeal, when applicable.
    */
   private async createStudentAppealNotification(
-    studentId: number,
+    appealId: number,
     entityManager: EntityManager,
-    applicationId?: number,
   ): Promise<void> {
-    let student: Student;
-    let application: Application;
-    const studentSelector: FindOptionsSelect<Student> = {
-      id: true,
-      user: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-      },
-      birthDate: true,
-    };
-    if (applicationId) {
-      // Load student and application data, if applicationId is provided.
-      application = await entityManager.getRepository(Application).findOne({
+    const studentAppeal = await entityManager
+      .getRepository(StudentAppeal)
+      .findOne({
         select: {
           id: true,
-          applicationNumber: true,
-          student: studentSelector,
+          student: {
+            id: true,
+            user: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+            birthDate: true,
+          },
+          application: { id: true, applicationNumber: true },
         },
-        relations: { student: { user: true } },
-        where: { id: applicationId },
+        relations: { student: { user: true }, application: true },
+        where: { id: appealId },
         loadEagerRelations: false,
       });
-      student = application.student;
-    } else {
-      // Load only student data.
-      student = await entityManager.getRepository(Student).findOne({
-        select: studentSelector,
-        relations: { user: true },
-        where: { id: studentId },
-        loadEagerRelations: false,
-      });
-    }
     const ministryNotification: StudentSubmittedChangeRequestNotification = {
-      givenNames: student.user.firstName,
-      lastName: student.user.lastName,
-      email: student.user.email,
-      birthDate: student.birthDate,
-      applicationNumber: application?.applicationNumber ?? "not applicable",
+      givenNames: studentAppeal.student.user.firstName,
+      lastName: studentAppeal.student.user.lastName,
+      email: studentAppeal.student.user.email,
+      birthDate: studentAppeal.student.birthDate,
+      applicationNumber:
+        studentAppeal.application?.applicationNumber ?? "not applicable",
     };
     return this.notificationActionsService.saveStudentSubmittedChangeRequestNotification(
       ministryNotification,
