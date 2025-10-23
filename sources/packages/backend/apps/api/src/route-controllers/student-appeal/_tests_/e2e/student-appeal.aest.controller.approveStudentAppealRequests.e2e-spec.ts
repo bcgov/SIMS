@@ -18,6 +18,7 @@ import {
 import {
   ApplicationStatus,
   ModifiedIndependentStatus,
+  NoteType,
   StudentAppealActionType,
   StudentAppealStatus,
 } from "@sims/sims-db";
@@ -86,10 +87,12 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
           id: true,
           appealStatus: true,
           assessedBy: { id: true },
-          note: { description: true },
+          note: { description: true, noteType: true },
         },
       },
-      relations: { appealRequests: { assessedBy: true, note: true } },
+      relations: {
+        appealRequests: { assessedBy: true, note: true },
+      },
       where: { id: appeal.id },
     });
     // Approving ministry user.
@@ -105,7 +108,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
           id: savedAppealRequest.id,
           appealStatus: StudentAppealStatus.Approved,
           assessedBy: { id: ministryUser.id },
-          note: { description: "Approved" },
+          note: { description: "Approved", noteType: NoteType.Application },
         },
       ],
     });
@@ -181,7 +184,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
               assessedBy: { id: true },
               modifier: { id: true },
               updatedAt: true,
-              note: { id: true, description: true },
+              note: { id: true, description: true, noteType: true },
             },
           },
           relations: {
@@ -200,7 +203,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
           db.dataSource,
           AESTGroups.BusinessAdministrators,
         );
-        // Asset updated appeal and appeal request.
+        // Assert updated appeal, appeal request, and student profile.
         const auditUser = { id: ministryUser.id };
         expect(updatedAppeal).toEqual({
           id: appeal.id,
@@ -220,7 +223,11 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
               assessedBy: auditUser,
               modifier: auditUser,
               updatedAt: now,
-              note: { id: expect.any(Number), description: noteDescription },
+              note: {
+                id: expect.any(Number),
+                description: noteDescription,
+                noteType: NoteType.General,
+              },
             },
           ],
         });

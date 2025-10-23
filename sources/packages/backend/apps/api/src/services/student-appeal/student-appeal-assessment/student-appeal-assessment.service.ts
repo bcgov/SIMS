@@ -52,11 +52,15 @@ export class StudentAppealAssessmentService {
       );
       const auditUser = { id: auditUserId } as User;
       const auditDate = new Date();
+      const isStudentOnlyAppeal = appealToUpdate.application === null;
+      const noteType = isStudentOnlyAppeal
+        ? NoteType.General
+        : NoteType.Application;
       for (const approval of approvals) {
         // Create the new note.
         const note = await this.noteSharedService.createStudentNote(
           appealToUpdate.student.id,
-          NoteType.Application,
+          noteType,
           approval.noteDescription,
           auditUserId,
           entityManager,
