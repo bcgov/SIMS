@@ -15,6 +15,7 @@ import {
 } from "@sims/test-utils";
 import { ModifiedIndependentStatus, NoteType } from "@sims/sims-db";
 import { ModifiedIndependentUpdateStatus } from "../../models/student.dto";
+import { MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED } from "../../../../constants";
 
 describe("StudentAESTController(e2e)-updateModifiedIndependentStatus", () => {
   let app: INestApplication;
@@ -35,12 +36,10 @@ describe("StudentAESTController(e2e)-updateModifiedIndependentStatus", () => {
     const student = await saveFakeStudent(db.dataSource);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = `/aest/student/${student.id}/modified-independent-status`;
-
     const payload = {
       modifiedIndependentUpdateStatus: ModifiedIndependentUpdateStatus.Approved,
       noteDescription: "Some not description.",
     };
-
     const now = new Date();
     MockDate.set(now);
 
@@ -102,13 +101,11 @@ describe("StudentAESTController(e2e)-updateModifiedIndependentStatus", () => {
     });
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = `/aest/student/${student.id}/modified-independent-status`;
-
     const payload = {
       modifiedIndependentUpdateStatus:
         ModifiedIndependentUpdateStatus.NotRequested,
       noteDescription: "Some not description to reset the status.",
     };
-
     const now = new Date();
     MockDate.set(now);
 
@@ -161,13 +158,63 @@ describe("StudentAESTController(e2e)-updateModifiedIndependentStatus", () => {
     });
   });
 
+  it("Should throw not found error when student with provided student id does not exist.", async () => {
+    // Arrange
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    // Endpoint with a non-existing student id.
+    const endpoint = `/aest/student/99999/modified-independent-status`;
+    const payload = {
+      modifiedIndependentUpdateStatus: ModifiedIndependentUpdateStatus.Approved,
+      noteDescription: "Some not description.",
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        message: "Student 99999 not found.",
+        error: "Not Found",
+        statusCode: HttpStatus.NOT_FOUND,
+      });
+  });
+
+  it("Should throw unprocessable entity error when the provided modified independent status is not different from the current modified independent status of the student.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource, undefined, {
+      initialValue: {
+        modifiedIndependentStatus: ModifiedIndependentStatus.Approved,
+      },
+    });
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/student/${student.id}/modified-independent-status`;
+    // Payload with the same modified independent status as the current modified independent status.
+    const payload = {
+      modifiedIndependentUpdateStatus: ModifiedIndependentUpdateStatus.Approved,
+      noteDescription: "Some not description.",
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "Modified independent status provided is not different from the current status.",
+        errorType: MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED,
+      });
+  });
+
   it("Should throw forbidden error when the updating user does not have the role to update the student modified independent status.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     // The given group does not have the association to the role to update the modified independent status.
     const token = await getAESTToken(AESTGroups.MOFOperations);
     const endpoint = `/aest/student/${student.id}/modified-independent-status`;
-
     const payload = {
       modifiedIndependentUpdateStatus: ModifiedIndependentUpdateStatus.Approved,
       noteDescription: "Some not description.",
@@ -183,6 +230,31 @@ describe("StudentAESTController(e2e)-updateModifiedIndependentStatus", () => {
         message: "Forbidden resource",
         error: "Forbidden",
         statusCode: HttpStatus.FORBIDDEN,
+      });
+  });
+
+  it("Should throw bad request error when the provided modified independent status is invalid.", async () => {
+    // Arrange
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/student/99999/modified-independent-status`;
+    // Payload with an invalid modified independent status.
+    const payload = {
+      modifiedIndependentUpdateStatus: "SomeInvalidStatus",
+      noteDescription: "Some not description.",
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message: [
+          "modifiedIndependentUpdateStatus must be one of the following values: Approved, Declined, Not requested",
+        ],
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
       });
   });
 

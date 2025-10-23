@@ -547,7 +547,11 @@ export class StudentAESTController extends BaseController {
    */
   @Roles(Role.StudentUpdateModifiedIndependentStatus)
   @Patch(":studentId/modified-independent-status")
-  @ApiNotFoundResponse({ description: "Student does not exists." })
+  @ApiNotFoundResponse({ description: "Student not found." })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Modified independent status provided is not different from the current status.",
+  })
   async updateModifiedIndependentStatus(
     @Param("studentId", ParseIntPipe) studentId: number,
     @Body() payload: UpdateModifiedIndependentStatusAPIInDTO,
