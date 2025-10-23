@@ -112,10 +112,10 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
   });
 
   describe("Modified independent appeal", () => {
-    [
-      ModifiedIndependentStatus.Declined,
+    for (const modifiedIndependentStatus of [
       ModifiedIndependentStatus.Approved,
-    ].forEach((modifiedIndependentStatus) => {
+      ModifiedIndependentStatus.Declined,
+    ]) {
       it(`Should update the student profile modified independent status as ${modifiedIndependentStatus} when a valid modified independent appeal is assessed.`, async () => {
         // Arrange
         // Create a completed application to request change.
@@ -136,7 +136,6 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
         });
         await db.studentAppeal.save(appeal);
         const [savedAppealRequest] = appeal.appealRequests;
-
         const endpoint = `/aest/appeal/${appeal.id}/requests`;
         const token = await getAESTToken(AESTGroups.BusinessAdministrators);
         const appealStatus =
@@ -226,7 +225,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
           ],
         });
       });
-    });
+    }
   });
 
   afterAll(async () => {

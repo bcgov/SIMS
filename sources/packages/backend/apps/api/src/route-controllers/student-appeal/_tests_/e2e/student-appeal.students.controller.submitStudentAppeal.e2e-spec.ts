@@ -20,7 +20,11 @@ import {
 import { TestingModule } from "@nestjs/testing";
 import { AppStudentsModule } from "../../../../app.students.module";
 import { FormService } from "../../../../services";
-import { NotificationMessageType, StudentAppealStatus } from "@sims/sims-db";
+import {
+  NotificationMessageType,
+  StudentAppealActionType,
+  StudentAppealStatus,
+} from "@sims/sims-db";
 import MockDate from "mockdate";
 import {
   getDateOnlyFormat,
@@ -38,7 +42,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   const ENDPOINT = "/students/appeal";
   const MINISTRY_EMAIL_ADDRESS = "dummy@some.domain";
   const MODIFIED_INDEPENDENT_FORM_DATA = {
-    actions: ["UpdateModifiedIndependent"],
+    actions: [StudentAppealActionType.UpdateModifiedIndependent],
     isModifiedIndependent: "no",
   };
   const VALID_PAYLOAD = {
@@ -54,7 +58,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     appDataSource = dataSource;
     appModule = module;
     db = createE2EDataSources(dataSource);
-    // Insert fake email contact to send ministry email.
+    // Update fake email contact to send ministry email.
     await db.notificationMessage.update(
       {
         id: NotificationMessageType.StudentSubmittedChangeRequestNotification,
@@ -69,8 +73,10 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   });
 
   beforeEach(async () => {
-    await resetMockJWTUserInfo(appModule);
     MockDate.reset();
+    await resetMockJWTUserInfo(appModule);
+    // Mark all existing appeals(change request) notifications as sent
+    // to allow it to asserted when a new appeal is submitted.
     await db.notification.update(
       {
         notificationMessage: {
