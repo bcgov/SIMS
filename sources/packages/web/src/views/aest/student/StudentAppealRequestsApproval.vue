@@ -2,15 +2,14 @@
   <full-page-container>
     <template #header>
       <header-navigator
-        title="Assessment"
-        sub-title="View request(s)"
-        :route-location="assessmentsSummaryRoute"
+        title="Appeals"
+        sub-title="Appeal request"
+        :route-location="pendingAppealsRoute"
       />
-      <application-header-title :application-id="applicationId" />
     </template>
     <student-appeal-requests-approval
       :appeal-id="appealId"
-      :back-route-location="assessmentsSummaryRoute"
+      :back-route-location="pendingAppealsRoute"
       :show-approval-details="true"
       @submitted="submitted"
     />
@@ -25,22 +24,12 @@ import { StudentAppealService } from "@/services/StudentAppealService";
 import { useSnackBar } from "@/composables";
 import { StudentAppealApproval, ApiProcessError } from "@/types";
 import StudentAppealRequestsApproval from "@/components/common/students/applicationDetails/StudentAppealRequestsApproval.vue";
-import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 
 export default defineComponent({
   components: {
     StudentAppealRequestsApproval,
-    ApplicationHeaderTitle,
   },
   props: {
-    studentId: {
-      type: Number,
-      required: true,
-    },
-    applicationId: {
-      type: Number,
-      required: true,
-    },
     appealId: {
       type: Number,
       required: true,
@@ -50,13 +39,7 @@ export default defineComponent({
     const router = useRouter();
     const snackBar = useSnackBar();
 
-    const assessmentsSummaryRoute = {
-      name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
-      params: {
-        applicationId: props.applicationId,
-        studentId: props.studentId,
-      },
-    };
+    const pendingAppealsRoute = { name: AESTRoutesConst.STUDENT_APPEALS };
 
     const submitted = async (approvals: StudentAppealApproval[]) => {
       try {
@@ -65,9 +48,9 @@ export default defineComponent({
           approvals,
         );
         snackBar.success(
-          "The student application appeal request was completed with success.",
+          "The student appeal request was completed with success.",
         );
-        router.push(assessmentsSummaryRoute);
+        router.push(pendingAppealsRoute);
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
           snackBar.warn(error.message);
@@ -78,8 +61,9 @@ export default defineComponent({
     };
 
     return {
-      assessmentsSummaryRoute,
+      pendingAppealsRoute,
       submitted,
+      AESTRoutesConst,
     };
   },
 });

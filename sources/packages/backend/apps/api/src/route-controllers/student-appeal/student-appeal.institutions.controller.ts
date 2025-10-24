@@ -11,8 +11,8 @@ import { ClientTypeBaseRoute } from "../../types";
 import {
   StudentAppealAPIOutDTO,
   StudentAppealRequestAPIOutDTO,
-} from "./models/student-appeal.dto";
-import { StudentAppealControllerService } from "..";
+  StudentAppealControllerService,
+} from "..";
 
 /**
  * Student appeal controller for institutions.

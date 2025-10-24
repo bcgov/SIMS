@@ -187,7 +187,7 @@ export default abstract class HttpBaseClient {
    */
   protected handleAPICustomError(error: unknown): never {
     const axiosError = error as AxiosError<ApiProcessError>;
-    if (axiosError.isAxiosError && axiosError.response?.data) {
+    if (axiosError.isAxiosError && axiosError.response?.data?.errorType) {
       throw new ApiProcessError(
         axiosError.response.data.message,
         axiosError.response.data.errorType,

@@ -6,27 +6,13 @@
         <template #subtitle>
           All requested changes will be reviewed by StudentAid BC after you
           submit for review.
-          <slot name="submit-appeal-header">
-            <div class="mt-4">
-              <p class="font-bold">Instructions:</p>
-              <ul>
-                <li>
-                  Select any applicable appeal forms for your application.
-                </li>
-                <li>
-                  Previously approved appeals attached to this application must
-                  be re-entered here.
-                </li>
-                <li>All appeal form questions are mandatory.</li>
-              </ul>
-            </div>
-          </slot>
+          <slot name="submit-appeal-header"> </slot>
         </template>
       </body-header>
     </template>
     <appeal-requests-form
       :student-appeal-requests="appealRequestsForms"
-      @submitted="submitAppeal"
+      @submitted="$emit('submitted', $event)"
     >
       <template #actions="{ submit }">
         <footer-buttons
@@ -43,17 +29,15 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, PropType, computed } from "vue";
-import { ApiProcessError, StudentAppealRequest } from "@/types";
-import { StudentAppealService } from "@/services/StudentAppealService";
+import { defineComponent, PropType, computed } from "vue";
+import { StudentAppealRequest } from "@/types";
 import AppealRequestsForm from "@/components/common/AppealRequestsForm.vue";
-import { useSnackBar } from "@/composables";
-import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "@/constants";
 
 export default defineComponent({
   emits: {
     cancel: null,
-    submitted: null,
+    submitted: (appealRequests: StudentAppealRequest[]) =>
+      !!appealRequests.length,
   },
   components: {
     AppealRequestsForm,
@@ -68,46 +52,21 @@ export default defineComponent({
       default: null,
       required: false,
     },
+    processing: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
   },
-  setup(props, { emit }) {
-    const snackBar = useSnackBar();
-    const processing = ref(false);
+  setup(props) {
     const appealRequestsForms = computed(() =>
       props.appealForms.map(
         (formName) => ({ formName }) as StudentAppealRequest,
       ),
     );
 
-    const submitAppeal = async (appealRequests: StudentAppealRequest[]) => {
-      try {
-        processing.value = true;
-        await StudentAppealService.shared.submitStudentAppeal(
-          props.applicationId,
-          appealRequests,
-        );
-        snackBar.success("The appeal has been submitted successfully.");
-        emit("submitted");
-      } catch (error: unknown) {
-        if (error instanceof ApiProcessError) {
-          if (error.errorType === APPLICATION_CHANGE_NOT_ELIGIBLE) {
-            snackBar.warn(error.message);
-          } else {
-            snackBar.error(error.message);
-          }
-          return;
-        }
-        snackBar.error(
-          "An unexpected error happened while submitting the appeal.",
-        );
-      } finally {
-        processing.value = false;
-      }
-    };
-
     return {
       appealRequestsForms,
-      submitAppeal,
-      processing,
     };
   },
 });

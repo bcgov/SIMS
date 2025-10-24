@@ -2,6 +2,7 @@ import {
   StudentAppeal,
   StudentAppealStatus,
   StudentAppealActionType,
+  StudentAppealRequest,
 } from "@sims/sims-db";
 import { EntityManager } from "typeorm";
 
@@ -45,12 +46,7 @@ export abstract class StudentAppealAction {
    * @returns true if the action is approved, false otherwise.
    */
   protected hasApprovedAction(studentAppeal: StudentAppeal): boolean {
-    // Filter only the requests that are associated with this action.
-    const actionRequests = studentAppeal.appealRequests.filter((request) =>
-      (request.submittedData.actions ?? DEFAULT_ACTION_TYPE).includes(
-        this.actionType,
-      ),
-    );
+    const actionRequests = this.getActionRequests(studentAppeal);
     if (!actionRequests.length) {
       // An action should not be processed if there are no associated requests,
       // which means that at least one request must be present if the action was executed.
@@ -60,6 +56,21 @@ export abstract class StudentAppealAction {
     }
     return actionRequests.some(
       (request) => request.appealStatus === StudentAppealStatus.Approved,
+    );
+  }
+
+  /**
+   * Filter only the requests that are associated with this action.
+   * @param studentAppeal appeal and its requests.
+   * @returns the requests associated with this action.
+   */
+  protected getActionRequests(
+    studentAppeal: StudentAppeal,
+  ): StudentAppealRequest[] {
+    return studentAppeal.appealRequests.filter((request) =>
+      (request.submittedData.actions ?? DEFAULT_ACTION_TYPE).includes(
+        this.actionType,
+      ),
     );
   }
 }

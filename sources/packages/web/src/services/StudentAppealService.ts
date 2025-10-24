@@ -4,7 +4,6 @@ import {
   PaginatedResultsAPIOutDTO,
   StudentAppealAPIOutDTO,
   StudentAppealPendingSummaryAPIOutDTO,
-  StudentAppealRequestAPIInDTO,
   StudentAppealRequestApprovalAPIInDTO,
   DetailedStudentAppealRequestAPIOutDTO,
   StudentAppealRequestAPIOutDTO,
@@ -22,20 +21,35 @@ export class StudentAppealService {
     return this.instance || (this.instance = new this());
   }
 
-  async submitStudentAppeal(
+  /**
+   * Submit a student appeal associated with an application.
+   * @param applicationId application for which the appeal is submitted.
+   * @param payload student appeal with appeal requests.
+   */
+  async submitApplicationAppeal(
     applicationId: number,
-    appealRequests: StudentAppealRequest[],
+    payload: StudentAppealRequest[],
   ): Promise<void> {
-    const studentAppealRequests = appealRequests.map(
-      (request) =>
-        ({
-          formName: request.formName,
-          formData: request.data,
-          files: request.files,
-        }) as StudentAppealRequestAPIInDTO,
-    );
-    await ApiClient.StudentAppealApi.submitStudentAppeal(applicationId, {
+    const studentAppealRequests = payload.map((request) => ({
+      formName: request.formName,
+      formData: request.data,
+      files: request.files,
+    }));
+    await ApiClient.StudentAppealApi.submitApplicationAppeal(applicationId, {
       studentAppealRequests,
+    });
+  }
+
+  /**
+   * Submit a student appeal, not associated with an application.
+   * Only one type of appeal is allowed to be submitted.
+   * @param payload student appeal request.
+   */
+  async submitStudentAppeal(payload: StudentAppealRequest): Promise<void> {
+    await ApiClient.StudentAppealApi.submitStudentAppeal({
+      formName: payload.formName,
+      formData: payload.data,
+      files: payload.files,
     });
   }
 

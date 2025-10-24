@@ -1,38 +1,40 @@
 <template>
-  <body-header title="Student change requests">
+  <body-header :title="title">
     <template #status-chip>
       <status-chip-requested-assessment :status="appealStatus" />
     </template>
     <template #subtitle>
-      <div class="mb-2">
-        <p>
-          <strong>Instructions:</strong>
-        </p>
-        <ul>
-          <li>
-            View the change request and any supporting documentation on the
-            student application
-          </li>
-          <li>
-            Review the history of Request a Change submissions prior to
-            approving each new one to ensure continuity
-          </li>
-          <li>
-            Review all fields to ensure that information is consistent with the
-            students current circumstances
-          </li>
-          <li>
-            When the review is complete, come back to this page to approve or
-            deny the request
-          </li>
-        </ul>
-      </div>
+      <slot name="instructions">
+        <div class="mb-2">
+          <p>
+            <strong>Instructions:</strong>
+          </p>
+          <ul>
+            <li>
+              View the change request and any supporting documentation on the
+              student application
+            </li>
+            <li>
+              Review the history of Request a Change submissions prior to
+              approving each new one to ensure continuity
+            </li>
+            <li>
+              Review all fields to ensure that information is consistent with
+              the students current circumstances
+            </li>
+            <li>
+              When the review is complete, come back to this page to approve or
+              deny the request
+            </li>
+          </ul>
+        </div>
+      </slot>
     </template>
   </body-header>
   <appeal-requests-approval-form
-    :studentAppealRequests="studentAppealRequests"
-    :readOnly="readOnly"
-    :showApprovalDetails="showApprovalDetails"
+    :student-appeal-requests="studentAppealRequests"
+    :read-only="readOnly"
+    :show-approval-details="showApprovalDetails"
     @submitted="$emit('submitted', $event)"
   >
     <template #approval-actions="{ submit }" v-if="!readOnly">
@@ -68,10 +70,10 @@ import { RouteLocationRaw, useRouter } from "vue-router";
 import { StudentAppealService } from "@/services/StudentAppealService";
 import { useFormatters } from "@/composables";
 import {
-  StudentAppealRequest,
   StudentAppealStatus,
   Role,
   StudentAppealApproval,
+  StudentAppeal,
 } from "@/types";
 import AppealRequestsApprovalForm from "@/components/aest/AppealRequestsApprovalForm.vue";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
@@ -90,9 +92,14 @@ export default defineComponent({
     CheckPermissionRole,
   },
   props: {
+    title: {
+      type: String,
+      default: "Student change requests",
+    },
     studentId: {
       type: Number,
       required: false,
+      default: undefined,
     },
     appealId: {
       type: Number,
@@ -101,6 +108,7 @@ export default defineComponent({
     backRouteLocation: {
       type: Object as PropType<RouteLocationRaw>,
       required: false,
+      default: undefined,
     },
     readOnlyForm: {
       type: Boolean,
@@ -115,12 +123,13 @@ export default defineComponent({
     applicationId: {
       type: Number,
       required: false,
+      default: undefined,
     },
   },
   setup(props) {
     const router = useRouter();
     const { dateOnlyLongString } = useFormatters();
-    const studentAppealRequests = ref([] as StudentAppealRequest[]);
+    const studentAppealRequests = ref([] as StudentAppeal[]);
     const appealStatus = ref(StudentAppealStatus.Pending);
 
     const readOnly = computed(

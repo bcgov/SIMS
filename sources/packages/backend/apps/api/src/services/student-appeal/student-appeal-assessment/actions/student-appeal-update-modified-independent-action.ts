@@ -3,6 +3,7 @@ import {
   Student,
   StudentAppeal,
   StudentAppealActionType,
+  StudentAppealStatus,
 } from "@sims/sims-db";
 import { StudentAppealAction } from "./student-appeal-action";
 import { EntityManager } from "typeorm";
@@ -30,15 +31,26 @@ export class StudentAppealUpdateModifiedIndependentAction extends StudentAppealA
     auditDate: Date,
     entityManager: EntityManager,
   ): Promise<void> {
-    const modifiedIndependentStatus = this.hasApprovedAction(studentAppeal)
-      ? ModifiedIndependentStatus.Approved
-      : ModifiedIndependentStatus.Declined;
+    const appealRequests = this.getActionRequests(studentAppeal);
+    if (appealRequests.length !== 1) {
+      throw new Error(
+        `Expected 1 appeal request for action ${this.actionType}, but found ${appealRequests.length}.`,
+      );
+    }
+    const [appealRequest] = appealRequests;
+    const modifiedIndependentStatus =
+      appealRequest.appealStatus === StudentAppealStatus.Approved
+        ? ModifiedIndependentStatus.Approved
+        : ModifiedIndependentStatus.Declined;
+    const auditUser = { id: auditUserId };
     await entityManager.getRepository(Student).update(
       { id: studentAppeal.student.id },
       {
         modifiedIndependentStatus,
-        modifiedIndependentAppealRequest: { id: studentAppeal.id },
-        modifier: { id: auditUserId },
+        modifiedIndependentAppealRequest: { id: appealRequest.id },
+        modifiedIndependentStatusUpdatedBy: auditUser,
+        modifiedIndependentStatusUpdatedOn: auditDate,
+        modifier: auditUser,
         updatedAt: auditDate,
       },
     );

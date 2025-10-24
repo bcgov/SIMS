@@ -228,7 +228,8 @@
                     "multiple": true,
                     "validate": {
                         "required": true,
-                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}."
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
                     },
                     "validateWhenHidden": false,
                     "key": "roomAndBoardSupportingDocuments",

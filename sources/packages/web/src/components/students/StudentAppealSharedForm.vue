@@ -71,9 +71,7 @@
           />
         </template>
         <v-select
-          v-if="
-            selectedAppealType === AppealTypes.Other && isOtherOptionAvailable
-          "
+          v-if="selectedAppealType === AppealTypes.Other"
           hide-details="auto"
           label="Appeal form"
           density="compact"
@@ -85,14 +83,6 @@
           class="mb-4"
           :rules="[(v) => checkNullOrEmptyRule(v, 'Appeal')]"
         />
-        <banner
-          v-if="
-            selectedAppealType === AppealTypes.Other && !isOtherOptionAvailable
-          "
-          class="mb-2"
-          type="info"
-          header="Other appeal types will be available for submission soon."
-        />
       </v-form>
     </content-group>
     <footer-buttons
@@ -101,7 +91,6 @@
       justify="end"
       @primary-click="goToAppealFormsRequests"
       :show-secondary-button="false"
-      :show-primary-button="selectedAppealType === AppealTypes.Application"
     />
   </body-header-container>
 </template>
@@ -133,15 +122,13 @@ export default defineComponent({
     },
   },
   setup(props) {
-    // TODO: Variable to be removed once the "Others" option is implemented.
-    const isOtherOptionAvailable = ref(false);
     const snackBar = useSnackBar();
     const router = useRouter();
     const { checkNullOrEmptyRule } = useRules();
     const appealsSelectionForm = ref({} as VForm);
     const eligibleApplications = ref<EligibleApplicationForAppealAPIOutDTO[]>();
     const loadingEligibleApplications = ref(false);
-    const selectedAppealType = ref<AppealTypes | null>(AppealTypes.Application);
+    const selectedAppealType = ref<AppealTypes | null>();
     const selectedApplicationId = ref<number | null>();
     const selectedApplicationAppeals = ref<string[]>();
     const applicationAppeals = ref<AppealForm[]>([
@@ -153,8 +140,8 @@ export default defineComponent({
     const selectedOtherAppeal = ref<string>();
     const otherAppeals = ref<AppealForm[]>([
       {
-        formName: "not-available",
-        description: "Not available at this moment",
+        formName: "modifiedindependentappeal",
+        description: " Modified independent",
       },
     ]);
 
@@ -175,6 +162,9 @@ export default defineComponent({
       () => props.applicationId,
       () => {
         selectedApplicationId.value = props.applicationId;
+        selectedAppealType.value = props.applicationId
+          ? AppealTypes.Application
+          : null;
       },
       { immediate: true },
     );
@@ -203,7 +193,6 @@ export default defineComponent({
     };
 
     return {
-      isOtherOptionAvailable,
       appealsSelectionForm,
       checkNullOrEmptyRule,
       StudentRoutesConst,
