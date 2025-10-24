@@ -114,9 +114,11 @@ describe("StudentAppealActionsProcessor-processActions", () => {
     // Arrange
     const studentAppeal = new StudentAppeal();
     studentAppeal.id = 456;
-    studentAppeal.appealRequests = JSON.parse(
-      '[{"submittedData":{"actions":["UnknownActionType"]}}]',
-    );
+    (studentAppeal as object)["appealRequests"] = [
+      {
+        submittedData: { actions: ["UnknownActionType"] },
+      },
+    ];
 
     // Act/Assert
 
