@@ -209,7 +209,7 @@ export class StudentProfileAPIOutDTO {
   contact: ContactInformationAPIOutDTO;
   validSin: boolean;
   disabilityStatus: DisabilityStatus;
-  modifiedIndependentStatus?: ModifiedIndependentStatus;
+  modifiedIndependentStatus: ModifiedIndependentStatus;
   /**
    * Temporary property to indicate if the user can access full-time.
    * Created as optional to avoid further changes for institution
@@ -311,15 +311,9 @@ export class UniqueFileNameParamAPIInDTO {
   uniqueFileName: string;
 }
 
-export enum ModifiedIndependentUpdateStatus {
-  Approved = "Approved",
-  Declined = "Declined",
-  NotRequested = "Not requested",
-}
-
 export class UpdateModifiedIndependentStatusAPIInDTO {
-  @IsEnum(ModifiedIndependentUpdateStatus)
-  modifiedIndependentUpdateStatus: ModifiedIndependentUpdateStatus;
+  @IsEnum(ModifiedIndependentStatus)
+  modifiedIndependentStatus: ModifiedIndependentStatus;
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;

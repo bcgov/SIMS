@@ -29,7 +29,6 @@ import {
 import {
   AddressInfo,
   Application,
-  ModifiedIndependentStatus,
   SFASIndividual,
   SpecificIdentityProviders,
   Student,
@@ -45,7 +44,6 @@ import {
   AESTStudentProfileAPIOutDTO,
   AESTStudentFileDetailsAPIOutDTO,
   LegacyStudentProfileAPIOutDTO,
-  ModifiedIndependentUpdateStatus,
 } from "./models/student.dto";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { ApiProcessError } from "../../types";
@@ -442,25 +440,5 @@ export class StudentControllerService {
       student.birthDate,
       student.sinValidation.sin,
     );
-  }
-
-  /**
-   * Get the modified independent status to update based on the update status received.
-   * @param modifiedIndependentUpdateStatus
-   * @returns modified independent status to update.
-   */
-  getModifiedIndependentStatusToUpdate(
-    modifiedIndependentUpdateStatus: ModifiedIndependentUpdateStatus,
-  ): ModifiedIndependentStatus | null {
-    switch (modifiedIndependentUpdateStatus) {
-      case ModifiedIndependentUpdateStatus.Approved:
-        return ModifiedIndependentStatus.Approved;
-      case ModifiedIndependentUpdateStatus.Declined:
-        return ModifiedIndependentStatus.Declined;
-      case ModifiedIndependentUpdateStatus.NotRequested:
-        return null;
-      default:
-        throw new Error("Unknown modified independent update status.");
-    }
   }
 }

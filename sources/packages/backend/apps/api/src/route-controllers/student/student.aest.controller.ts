@@ -561,14 +561,10 @@ export class StudentAESTController extends BaseController {
     if (!studentExist) {
       throw new NotFoundException(`Student ${studentId} not found.`);
     }
-    const modifiedIndependentStatus =
-      this.studentControllerService.getModifiedIndependentStatusToUpdate(
-        payload.modifiedIndependentUpdateStatus,
-      );
     const updateResult =
       await this.studentService.updateModifiedIndependentStatus(
         studentId,
-        modifiedIndependentStatus,
+        payload.modifiedIndependentStatus,
         payload.noteDescription,
         userToken.userId,
       );

@@ -72,7 +72,7 @@ export interface StudentProfileAPIOutDTO {
   contact: ContactInformationAPIOutDTO;
   validSin: boolean;
   disabilityStatus: DisabilityStatus;
-  modifiedIndependentStatus?: ModifiedIndependentStatus;
+  modifiedIndependentStatus: ModifiedIndependentStatus;
   sinConsent: boolean;
   /**
    * Temporary property to indicate if the user can access full-time.

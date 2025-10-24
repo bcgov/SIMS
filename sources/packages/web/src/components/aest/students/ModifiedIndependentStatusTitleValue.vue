@@ -25,7 +25,6 @@ export default defineComponent({
     modifiedIndependentStatus: {
       type: String as PropType<ModifiedIndependentStatus>,
       required: true,
-      default: undefined,
     },
     allowUpdateActions: {
       type: Boolean,

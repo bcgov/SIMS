@@ -14,7 +14,6 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import { ModifiedIndependentStatus, NoteType } from "@sims/sims-db";
-import { ModifiedIndependentUpdateStatus } from "../../models/student.dto";
 import { MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED } from "../../../../constants";
 
 describe("StudentAESTController(e2e)-updateModifiedIndependentStatus", () => {
@@ -31,13 +30,13 @@ describe("StudentAESTController(e2e)-updateModifiedIndependentStatus", () => {
     MockDate.reset();
   });
 
-  it(`Should update the student modified independent status as ${ModifiedIndependentStatus.Approved} when the current modified independent status is null.`, async () => {
+  it(`Should update the student modified independent status as ${ModifiedIndependentStatus.Approved} when the current modified independent status is ${ModifiedIndependentStatus.NotRequested}.`, async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = `/aest/student/${student.id}/modified-independent-status`;
     const payload = {
-      modifiedIndependentUpdateStatus: ModifiedIndependentUpdateStatus.Approved,
+      modifiedIndependentStatus: ModifiedIndependentStatus.Approved,
       noteDescription: "Some not description.",
     };
     const now = new Date();
@@ -92,7 +91,7 @@ describe("StudentAESTController(e2e)-updateModifiedIndependentStatus", () => {
     });
   });
 
-  it(`Should update the student modified independent status as null when the current modified independent status is ${ModifiedIndependentStatus.Approved}.`, async () => {
+  it(`Should update the student modified independent status as ${ModifiedIndependentStatus.NotRequested} when the current modified independent status is ${ModifiedIndependentStatus.Approved}.`, async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource, undefined, {
       initialValue: {
@@ -102,8 +101,7 @@ describe("StudentAESTController(e2e)-updateModifiedIndependentStatus", () => {
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = `/aest/student/${student.id}/modified-independent-status`;
     const payload = {
-      modifiedIndependentUpdateStatus:
-        ModifiedIndependentUpdateStatus.NotRequested,
+      modifiedIndependentStatus: ModifiedIndependentStatus.NotRequested,
       noteDescription: "Some not description to reset the status.",
     };
     const now = new Date();
@@ -143,7 +141,7 @@ describe("StudentAESTController(e2e)-updateModifiedIndependentStatus", () => {
     const auditUser = { id: ministryUser.id };
     expect(updatedStudent).toEqual({
       id: student.id,
-      modifiedIndependentStatus: null,
+      modifiedIndependentStatus: ModifiedIndependentStatus.NotRequested,
       modifiedIndependentStatusUpdatedBy: auditUser,
       modifiedIndependentStatusUpdatedOn: now,
       modifier: auditUser,
@@ -164,7 +162,7 @@ describe("StudentAESTController(e2e)-updateModifiedIndependentStatus", () => {
     // Endpoint with a non-existing student id.
     const endpoint = `/aest/student/99999/modified-independent-status`;
     const payload = {
-      modifiedIndependentUpdateStatus: ModifiedIndependentUpdateStatus.Approved,
+      modifiedIndependentStatus: ModifiedIndependentStatus.Approved,
       noteDescription: "Some not description.",
     };
 
@@ -192,7 +190,7 @@ describe("StudentAESTController(e2e)-updateModifiedIndependentStatus", () => {
     const endpoint = `/aest/student/${student.id}/modified-independent-status`;
     // Payload with the same modified independent status as the current modified independent status.
     const payload = {
-      modifiedIndependentUpdateStatus: ModifiedIndependentUpdateStatus.Approved,
+      modifiedIndependentStatus: ModifiedIndependentStatus.Approved,
       noteDescription: "Some not description.",
     };
 
@@ -216,7 +214,7 @@ describe("StudentAESTController(e2e)-updateModifiedIndependentStatus", () => {
     const token = await getAESTToken(AESTGroups.MOFOperations);
     const endpoint = `/aest/student/${student.id}/modified-independent-status`;
     const payload = {
-      modifiedIndependentUpdateStatus: ModifiedIndependentUpdateStatus.Approved,
+      modifiedIndependentStatus: ModifiedIndependentStatus.Approved,
       noteDescription: "Some not description.",
     };
 
@@ -239,7 +237,7 @@ describe("StudentAESTController(e2e)-updateModifiedIndependentStatus", () => {
     const endpoint = `/aest/student/99999/modified-independent-status`;
     // Payload with an invalid modified independent status.
     const payload = {
-      modifiedIndependentUpdateStatus: "SomeInvalidStatus",
+      modifiedIndependentStatus: "SomeInvalidStatus",
       noteDescription: "Some not description.",
     };
 
@@ -251,7 +249,7 @@ describe("StudentAESTController(e2e)-updateModifiedIndependentStatus", () => {
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
         message: [
-          "modifiedIndependentUpdateStatus must be one of the following values: Approved, Declined, Not requested",
+          "modifiedIndependentStatus must be one of the following values: Not requested, Approved, Declined",
         ],
         error: "Bad Request",
         statusCode: HttpStatus.BAD_REQUEST,

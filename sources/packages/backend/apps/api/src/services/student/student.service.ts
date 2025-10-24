@@ -19,14 +19,7 @@ import {
   SupplierStatus,
   ModifiedIndependentStatus,
 } from "@sims/sims-db";
-import {
-  DataSource,
-  EntityManager,
-  FindOptionsWhere,
-  IsNull,
-  Not,
-  UpdateResult,
-} from "typeorm";
+import { DataSource, EntityManager, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
@@ -874,7 +867,7 @@ export class StudentService extends RecordDataModelService<Student> {
    */
   async updateModifiedIndependentStatus(
     studentId: number,
-    modifiedIndependentStatus: ModifiedIndependentStatus | null,
+    modifiedIndependentStatus: ModifiedIndependentStatus,
     noteDescription: string,
     auditUserId: number,
   ): Promise<UpdateResult> {
@@ -888,35 +881,19 @@ export class StudentService extends RecordDataModelService<Student> {
       );
       const auditUser = { id: auditUserId } as User;
       const now = new Date();
-      const updateCriteria: FindOptionsWhere<Student>[] = [];
-      if (modifiedIndependentStatus === null) {
-        updateCriteria.push({
+      return transactionalEntityManager.getRepository(Student).update(
+        {
           id: studentId,
-          modifiedIndependentStatus: Not(IsNull()),
-        });
-      } else {
-        // Either modified independent status is null.
-        // or modified independent status is different from the provided one.
-        updateCriteria.push(
-          {
-            id: studentId,
-            modifiedIndependentStatus: IsNull(),
-          },
-          {
-            id: studentId,
-            modifiedIndependentStatus: Not(modifiedIndependentStatus),
-          },
-        );
-      }
-      return transactionalEntityManager
-        .getRepository(Student)
-        .update(updateCriteria, {
+          modifiedIndependentStatus: Not(modifiedIndependentStatus),
+        },
+        {
           modifiedIndependentStatus,
           modifiedIndependentStatusUpdatedBy: auditUser,
           modifiedIndependentStatusUpdatedOn: now,
           modifier: auditUser,
           updatedAt: now,
-        });
+        },
+      );
     });
   }
 
