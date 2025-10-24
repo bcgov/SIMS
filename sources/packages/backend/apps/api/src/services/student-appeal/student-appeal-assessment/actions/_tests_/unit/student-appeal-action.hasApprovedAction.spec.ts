@@ -4,41 +4,7 @@ import {
   StudentAppealStatus,
   StudentAppealActionType,
 } from "@sims/sims-db";
-import { EntityManager } from "typeorm";
-import { StudentAppealAction } from "../../student-appeal-action";
-
-/**
- * Concrete action used only for testing the protected method hasApprovedAction.
- */
-class TestStudentAppealAction extends StudentAppealAction {
-  constructor(private readonly type: StudentAppealActionType) {
-    super();
-  }
-
-  get actionType(): StudentAppealActionType {
-    return this.type;
-  }
-
-  // Not used in these tests.
-  async process(
-    studentAppeal: StudentAppeal,
-    auditUserId: number,
-    auditDate: Date,
-    entityManager: EntityManager,
-  ): Promise<void> {
-    // Mark parameters as used to satisfy lint rules.
-    void studentAppeal;
-    void auditUserId;
-    void auditDate;
-    void entityManager;
-  }
-
-  exposedHasApprovedAction(studentAppeal: StudentAppeal): boolean {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore - accessing protected method for test purposes through subclass.
-    return this.hasApprovedAction(studentAppeal);
-  }
-}
+import { TestStudentAppealAction } from "./test-student-appeal-action";
 
 describe("StudentAppealAction-hasApprovedAction", () => {
   beforeEach(() => {

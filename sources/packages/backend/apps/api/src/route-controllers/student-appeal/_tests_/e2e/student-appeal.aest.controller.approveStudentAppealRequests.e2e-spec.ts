@@ -23,7 +23,7 @@ import {
   StudentAppealActionType,
   StudentAppealStatus,
 } from "@sims/sims-db";
-import { StudentAppealApprovalAPIInDTO } from "../../../../route-controllers/student-appeal/models/student-appeal.dto";
+import { StudentAppealApprovalAPIInDTO } from "../../../../route-controllers";
 import MockDate from "mockdate";
 
 describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => {

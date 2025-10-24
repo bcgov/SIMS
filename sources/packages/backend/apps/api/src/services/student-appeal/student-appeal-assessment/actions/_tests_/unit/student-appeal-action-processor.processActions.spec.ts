@@ -38,35 +38,6 @@ describe("StudentAppealActionsProcessor-processActions", () => {
     jest.resetAllMocks();
   });
 
-  it("Should execute actions uniquely when multiple requests with the same actions are part of the same appeal.", async () => {
-    // Arrange
-    const studentAppeal = new StudentAppeal();
-    studentAppeal.appealRequests = [
-      {
-        submittedData: {
-          actions: [createAssessmentAction.actionType],
-        },
-      } as StudentAppealRequest,
-      {
-        submittedData: {
-          actions: [createAssessmentAction.actionType],
-        },
-      } as StudentAppealRequest,
-    ];
-
-    // Act
-    await studentAppealActionsProcessor.processActions(
-      studentAppeal,
-      1,
-      new Date(),
-      null,
-    );
-
-    // Assert
-    expect(createAssessmentAction.process).toHaveBeenCalledTimes(1);
-    expect(updateModifiedIndependentAction.process).toHaveBeenCalledTimes(0);
-  });
-
   it("Should execute multiple actions and pass the parameters as expected when multiple requests with different actions are part of the same appeal.", async () => {
     // Arrange
     const auditUserId = 123;
@@ -110,6 +81,35 @@ describe("StudentAppealActionsProcessor-processActions", () => {
     );
   });
 
+  it("Should execute actions uniquely when multiple requests with the same actions are part of the same appeal.", async () => {
+    // Arrange
+    const studentAppeal = new StudentAppeal();
+    studentAppeal.appealRequests = [
+      {
+        submittedData: {
+          actions: [createAssessmentAction.actionType],
+        },
+      } as StudentAppealRequest,
+      {
+        submittedData: {
+          actions: [createAssessmentAction.actionType],
+        },
+      } as StudentAppealRequest,
+    ];
+
+    // Act
+    await studentAppealActionsProcessor.processActions(
+      studentAppeal,
+      1,
+      new Date(),
+      null,
+    );
+
+    // Assert
+    expect(createAssessmentAction.process).toHaveBeenCalledTimes(1);
+    expect(updateModifiedIndependentAction.process).toHaveBeenCalledTimes(0);
+  });
+
   it("Should throw an error when the appeal request has an unknown action.", async () => {
     // Arrange
     const studentAppeal = new StudentAppeal();
@@ -119,8 +119,6 @@ describe("StudentAppealActionsProcessor-processActions", () => {
         submittedData: { actions: ["UnknownActionType"] },
       },
     ];
-
-    // Act/Assert
 
     // Act/Assert
     await expect(

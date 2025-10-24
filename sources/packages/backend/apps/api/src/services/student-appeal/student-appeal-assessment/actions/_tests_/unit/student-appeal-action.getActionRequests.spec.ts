@@ -3,41 +3,7 @@ import {
   StudentAppealRequest,
   StudentAppealActionType,
 } from "@sims/sims-db";
-import { EntityManager } from "typeorm";
-import { StudentAppealAction } from "../../student-appeal-action";
-
-/**
- * Concrete action used only for testing the protected method getActionRequests.
- */
-class TestStudentAppealAction extends StudentAppealAction {
-  constructor(private readonly type: StudentAppealActionType) {
-    super();
-  }
-
-  get actionType(): StudentAppealActionType {
-    return this.type;
-  }
-
-  // Not used in these tests.
-  async process(
-    studentAppeal: StudentAppeal,
-    auditUserId: number,
-    auditDate: Date,
-    entityManager: EntityManager,
-  ): Promise<void> {
-    // Mark parameters as used to satisfy lint rules.
-    void studentAppeal;
-    void auditUserId;
-    void auditDate;
-    void entityManager;
-  }
-
-  exposedGetActionRequests(
-    studentAppeal: StudentAppeal,
-  ): StudentAppealRequest[] {
-    return this.getActionRequests(studentAppeal);
-  }
-}
+import { TestStudentAppealAction } from "./test-student-appeal-action";
 
 describe("StudentAppealAction-getActionRequests", () => {
   beforeEach(() => {
@@ -66,8 +32,7 @@ describe("StudentAppealAction-getActionRequests", () => {
     const result = action.exposedGetActionRequests(studentAppeal);
 
     // Assert
-    expect(result).toHaveLength(1);
-    expect(result[0]).toBe(requestWithMatch);
+    expect(result).toEqual([requestWithMatch]);
   });
 
   it("Should include requests without actions only when the action type is the DEFAULT one (CreateStudentAppealAssessment).", () => {
@@ -100,8 +65,8 @@ describe("StudentAppealAction-getActionRequests", () => {
 
     // Assert
     // Default action should include the request without actions.
-    expect(resultForDefault).toContain(requestWithoutActions);
+    expect(resultForDefault).toEqual([requestWithoutActions]);
     // Non-default action should NOT include the request without actions.
-    expect(resultForNonDefault).not.toContain(requestWithoutActions);
+    expect(resultForNonDefault).toEqual([requestWithDifferentAction]);
   });
 });
