@@ -59,27 +59,27 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
       appealRequests: [appealRequest],
     });
     await db.studentAppeal.save(appeal);
-    const [savedAppealRequest] = appeal.appealRequests;
 
     const endpoint = `/aest/appeal/${appeal.id}/requests`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const payload: StudentAppealApprovalAPIInDTO = {
       requests: [
         {
-          id: savedAppealRequest.id,
+          id: appealRequest.id,
           appealStatus: StudentAppealStatus.Approved,
           noteDescription: "Approved",
         },
       ],
     };
+    const now = new Date();
+    MockDate.set(now);
 
     // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({});
+      .expect(HttpStatus.OK);
     // Check for the appeal and appeal requests in the database.
     const updatedAppeal = await db.studentAppeal.findOne({
       select: {
@@ -87,6 +87,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
         appealRequests: {
           id: true,
           appealStatus: true,
+          assessedDate: true,
           assessedBy: { id: true },
           note: { description: true, noteType: true },
         },
@@ -112,8 +113,9 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
       },
       appealRequests: [
         {
-          id: savedAppealRequest.id,
+          id: appealRequest.id,
           appealStatus: StudentAppealStatus.Approved,
+          assessedDate: now,
           assessedBy: { id: ministryUser.id },
           note: { description: "Approved", noteType: NoteType.Application },
         },
@@ -145,7 +147,6 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
           appealRequests: [appealRequest],
         });
         await db.studentAppeal.save(appeal);
-        const [savedAppealRequest] = appeal.appealRequests;
         const endpoint = `/aest/appeal/${appeal.id}/requests`;
         const token = await getAESTToken(AESTGroups.BusinessAdministrators);
         const appealStatus =
@@ -156,7 +157,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
         const payload: StudentAppealApprovalAPIInDTO = {
           requests: [
             {
-              id: savedAppealRequest.id,
+              id: appealRequest.id,
               appealStatus,
               noteDescription,
             },
@@ -170,8 +171,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
           .patch(endpoint)
           .send(payload)
           .auth(token, BEARER_AUTH_TYPE)
-          .expect(HttpStatus.OK)
-          .expect({});
+          .expect(HttpStatus.OK);
         // Check for the appeal and appeal requests in the database.
         const updatedAppeal = await db.studentAppeal.findOne({
           select: {
@@ -189,6 +189,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
               id: true,
               appealStatus: true,
               assessedBy: { id: true },
+              assessedDate: true,
               modifier: { id: true },
               updatedAt: true,
               note: { id: true, description: true, noteType: true },
@@ -223,7 +224,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
           student: {
             id: student.id,
             modifiedIndependentStatus,
-            modifiedIndependentAppealRequest: { id: savedAppealRequest.id },
+            modifiedIndependentAppealRequest: { id: appealRequest.id },
             modifiedIndependentStatusUpdatedBy: auditUser,
             modifiedIndependentStatusUpdatedOn: now,
             modifier: auditUser,
@@ -231,8 +232,9 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
           },
           appealRequests: [
             {
-              id: savedAppealRequest.id,
+              id: appealRequest.id,
               appealStatus,
+              assessedDate: now,
               assessedBy: auditUser,
               modifier: auditUser,
               updatedAt: now,

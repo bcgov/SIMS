@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource, IsNull } from "typeorm";
+import { IsNull } from "typeorm";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
@@ -34,7 +34,6 @@ import { STUDENT_HAS_PENDING_APPEAL } from "../../../../constants";
 
 describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   let app: INestApplication;
-  let appDataSource: DataSource;
   let appModule: TestingModule;
   let db: E2EDataSources;
   let formService: FormService;
@@ -55,7 +54,6 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     const { nestApplication, module, dataSource } =
       await createTestingAppModule();
     app = nestApplication;
-    appDataSource = dataSource;
     appModule = module;
     db = createE2EDataSources(dataSource);
     // Update fake email contact to send ministry email.
@@ -90,7 +88,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   it("Should create a student-only appeal and a Ministry notification for modified independent when the submission is valid.", async () => {
     // Arrange
     // Create student to submit application.
-    const student = await saveFakeStudent(appDataSource);
+    const student = await saveFakeStudent(db.dataSource);
     // Get any student user token.
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -195,7 +193,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   it("Should throw an unprocessable entity error for a student-only appeal submission when the same appeal request type is pending review from the Ministry.", async () => {
     // Arrange
     // Create student to submit application.
-    const student = await saveFakeStudent(appDataSource);
+    const student = await saveFakeStudent(db.dataSource);
     // Get any student user token.
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -227,7 +225,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   it("Should throw a bad request error for a student-only appeal submission when the form data is invalid.", async () => {
     // Arrange
     // Create student to submit application.
-    const student = await saveFakeStudent(appDataSource);
+    const student = await saveFakeStudent(db.dataSource);
     const dryRunSubmissionMock = jest.fn().mockResolvedValue({
       valid: false,
     });
