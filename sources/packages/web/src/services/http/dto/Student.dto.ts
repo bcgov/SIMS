@@ -253,3 +253,8 @@ export interface LegacyStudentMatchesAPIInDTO {
   individualId: number;
   noteDescription: string;
 }
+
+export interface UpdateModifiedIndependentStatusAPIInDTO {
+  modifiedIndependentStatus: ModifiedIndependentStatus;
+  noteDescription: string;
+}

@@ -1,8 +1,10 @@
 <template>
-  <title-value propertyTitle="Disability status">
+  <title-value property-title="Disability status">
     <template #value
       >{{ disabilityStatusToDisplay(disabilityStatus) }}
       <v-btn
+        class="p-1"
+        density="compact"
         v-if="allowDisabilityStatusUpdate"
         variant="text"
         color="primary"
@@ -15,7 +17,7 @@
   </title-value>
   <update-disability-status-modal
     ref="updateDisabilityStatusModal"
-    :allowedRole="Role.StudentUpdateDisabilityStatus"
+    :allowed-role="Role.StudentUpdateDisabilityStatus"
   />
 </template>
 
