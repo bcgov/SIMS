@@ -22,7 +22,6 @@ export class TestStudentAppealAction extends StudentAppealAction {
   /**
    * Not used in the tests.
    */
-
   async process(
     _studentAppeal: StudentAppeal,
     _auditUserId: number,
