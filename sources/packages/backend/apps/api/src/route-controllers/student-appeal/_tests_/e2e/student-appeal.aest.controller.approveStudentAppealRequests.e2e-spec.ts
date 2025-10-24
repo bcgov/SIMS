@@ -17,6 +17,7 @@ import {
 } from "@sims/test-utils";
 import {
   ApplicationStatus,
+  AssessmentTriggerType,
   ModifiedIndependentStatus,
   NoteType,
   StudentAppealActionType,
@@ -89,9 +90,11 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
           assessedBy: { id: true },
           note: { description: true, noteType: true },
         },
+        studentAssessment: { id: true, triggerType: true },
       },
       relations: {
         appealRequests: { assessedBy: true, note: true },
+        studentAssessment: true,
       },
       where: { id: appeal.id },
     });
@@ -100,9 +103,13 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
       db.dataSource,
       AESTGroups.BusinessAdministrators,
     );
-    // Asset updated appeal and appeal request.
+    // Assert updated appeal and appeal request.
     expect(updatedAppeal).toEqual({
       id: appeal.id,
+      studentAssessment: {
+        id: expect.any(Number),
+        triggerType: AssessmentTriggerType.StudentAppeal,
+      },
       appealRequests: [
         {
           id: savedAppealRequest.id,
@@ -186,6 +193,8 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
               updatedAt: true,
               note: { id: true, description: true, noteType: true },
             },
+            application: { id: true },
+            studentAssessment: { id: true },
           },
           relations: {
             student: {
@@ -194,6 +203,8 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
               modifier: true,
             },
             appealRequests: { assessedBy: true, note: true, modifier: true },
+            application: true,
+            studentAssessment: true,
           },
           where: { id: appeal.id },
           loadEagerRelations: false,
@@ -207,6 +218,8 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
         const auditUser = { id: ministryUser.id };
         expect(updatedAppeal).toEqual({
           id: appeal.id,
+          application: null,
+          studentAssessment: null,
           student: {
             id: student.id,
             modifiedIndependentStatus,
