@@ -28,7 +28,7 @@ describe("StudentAppealAction-hasApprovedAction", () => {
         },
       } as StudentAppealRequest,
       {
-        // No actions -> defaults to CreateStudentAppealAssessment (not the tested action).
+        // No actions, defaults to CreateStudentAppealAssessment (not the tested action).
         submittedData: {},
       } as StudentAppealRequest,
     ];
