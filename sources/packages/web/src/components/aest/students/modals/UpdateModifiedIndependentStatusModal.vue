@@ -79,8 +79,10 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
-      resolvePromise({ ...formModel });
-      updateModifiedIndependentStatusForm.value.reset();
+      const response = await resolvePromise({ ...formModel });
+      if (response) {
+        updateModifiedIndependentStatusForm.value.reset();
+      }
     };
     return {
       showDialog,

@@ -4,7 +4,6 @@
       >{{ modifiedIndependentDisplayStatus }}
       <v-btn
         class="p-1"
-        density="compact"
         v-if="allowUpdateActions"
         variant="text"
         color="primary"

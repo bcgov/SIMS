@@ -4,7 +4,6 @@
       >{{ disabilityStatusToDisplay(disabilityStatus) }}
       <v-btn
         class="p-1"
-        density="compact"
         v-if="allowDisabilityStatusUpdate"
         variant="text"
         color="primary"
