@@ -5,6 +5,8 @@ import {
   DisbursementSchedule,
   DisbursementValueType,
   EducationProgramOffering,
+  FormYesNoOptions,
+  ModifiedIndependentStatus,
   RestrictionActionType,
   RestrictionBypassBehaviors,
   StudentRestriction,
@@ -131,9 +133,20 @@ export const FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS = [
 ];
 
 /**
- * Represents students Disability status both from application submitted
- * and the student profile disability status verification.
+ * Represents students estranged answer from application submitted
+ * and the student profile modified independent status.
  */
+export interface ModifiedIndependentDetails {
+  /**
+   * Indicates how the student answered the estranged to parent question.
+   */
+  estranged?: FormYesNoOptions;
+  /**
+   * Status of the modified independent associated to the student.
+   */
+  studentProfileModifiedIndependent: ModifiedIndependentStatus;
+}
+
 export interface DisabilityDetails {
   /**
    * Calculated PD/PPD status applied in the application by the student.
@@ -231,6 +244,7 @@ export class EligibleECertDisbursement {
    * program year.
    * @param disabilityDetails students Disability status both from application submitted
    * and the student profile disability status verification.
+   * @param modifiedIndependentDetails students estranged from parents information.
    * @param restrictions all active student restrictions actions. These actions can
    * impact the e-Cert calculations.
    * This is a shared array reference between all the disbursements of a single student.
@@ -250,6 +264,7 @@ export class EligibleECertDisbursement {
     public readonly offering: EligibleECertOffering,
     public readonly maxLifetimeBCLoanAmount: number,
     public readonly disabilityDetails: DisabilityDetails,
+    public readonly modifiedIndependentDetails: ModifiedIndependentDetails,
     private readonly restrictions: StudentActiveRestriction[],
     private readonly restrictionBypass: ApplicationActiveRestrictionBypass[],
   ) {
@@ -348,6 +363,10 @@ export enum ECertFailedValidation {
    * Student disability Status PD/PPD is not verified.
    */
   DisabilityStatusNotConfirmed = "DisabilityStatusNotConfirmed",
+  /**
+   * Student modified independent status is not approved.
+   */
+  ModifiedIndependentStatusNotApproved = "ModifiedIndependentStatusNotApproved",
   /**
    * Student has an active 'StopFullTimeDisbursement' or 'StopPartTimeDisbursement'
    * restriction and the disbursement calculation will not proceed.

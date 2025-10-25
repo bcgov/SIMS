@@ -36,6 +36,7 @@
           <zeebe:header key="offeringCourseLoad" value="offering.courseLoad" />
           <zeebe:header key="offeringWeeks" value="offering.studyBreaks.totalFundedWeeks" />
           <zeebe:header key="studentDataDependantstatus" value="data.dependantstatus" />
+          <zeebe:header key="studentDataEstranged" value="data.estranged" />
           <zeebe:header key="studentDataRelationshipStatus" value="data.relationshipStatus" />
           <zeebe:header key="studentDataTaxReturnIncome" value="data.taxReturnIncome" />
           <zeebe:header key="studentDataCurrentYearPartnerIncome" value="data.currentYearPartnerIncome ?? data.currentYearPartnerIncomeApplicationException.currentYearPartnerIncome" />

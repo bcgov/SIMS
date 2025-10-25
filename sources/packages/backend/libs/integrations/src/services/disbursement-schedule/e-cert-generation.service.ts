@@ -17,6 +17,7 @@ import {
   ApplicationActiveRestrictionBypass,
   DisabilityDetails,
   EligibleECertDisbursement,
+  ModifiedIndependentDetails,
   StudentActiveRestriction,
   mapStudentActiveRestrictions,
 } from "./disbursement-schedule.models";
@@ -199,14 +200,18 @@ export class ECertGenerationService {
     // easier processing along the calculation steps.
     const eligibleDisbursements =
       eligibleApplications.flatMap<EligibleECertDisbursement>((application) => {
+        const workflowData = application.currentAssessment.workflowData;
         return application.currentAssessment.disbursementSchedules.map(
           (disbursement) => {
             const student = application.student;
             const disabilityDetails: DisabilityDetails = {
-              calculatedPDPPDStatus:
-                application.currentAssessment.workflowData.calculatedData
-                  .pdppdStatus,
+              calculatedPDPPDStatus: workflowData.calculatedData.pdppdStatus,
               studentProfileDisabilityStatus: student.disabilityStatus,
+            };
+            const modifiedIndependentDetails: ModifiedIndependentDetails = {
+              estranged: workflowData.studentData.estranged,
+              studentProfileModifiedIndependent:
+                student.modifiedIndependentStatus,
             };
             const restrictionBypasses =
               application.restrictionBypasses.map<ApplicationActiveRestrictionBypass>(
@@ -228,6 +233,7 @@ export class ECertGenerationService {
               application.currentAssessment.offering,
               application.programYear.maxLifetimeBCLoanAmount,
               disabilityDetails,
+              modifiedIndependentDetails,
               groupedStudentRestrictions[student.id],
               restrictionBypasses,
             );
