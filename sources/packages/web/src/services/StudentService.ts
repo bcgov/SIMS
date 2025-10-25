@@ -17,6 +17,7 @@ import {
   AESTStudentFileDetailsAPIOutDTO,
   LegacyStudentMatchesAPIOutDTO,
   LegacyStudentMatchesAPIInDTO,
+  UpdateModifiedIndependentStatusAPIInDTO,
 } from "@/services/http/dto";
 import { AxiosResponse } from "axios";
 
@@ -68,9 +69,8 @@ export class StudentService {
    */
   async getStudentProfile(studentId?: number): Promise<StudentProfile> {
     const { dateOnlyLongString } = useFormatters();
-    const studentProfile = await ApiClient.Students.getStudentProfile(
-      studentId,
-    );
+    const studentProfile =
+      await ApiClient.Students.getStudentProfile(studentId);
     const studentInfoAll: StudentProfile = {
       ...studentProfile,
       birthDateFormatted: dateOnlyLongString(studentProfile.dateOfBirth),
@@ -179,9 +179,8 @@ export class StudentService {
       booleanToYesNo,
       sinDisplayFormat,
     } = useFormatters();
-    const sinValidations = await ApiClient.Students.getStudentSINValidations(
-      studentId,
-    );
+    const sinValidations =
+      await ApiClient.Students.getStudentSINValidations(studentId);
     return sinValidations?.map((sinValidation) => ({
       ...sinValidation,
       sinFormatted: sinDisplayFormat(sinValidation.sin),
@@ -269,5 +268,20 @@ export class StudentService {
     payload: LegacyStudentMatchesAPIInDTO,
   ): Promise<void> {
     await ApiClient.Students.associateLegacyStudent(studentId, payload);
+  }
+
+  /**
+   * Update student modified independent status.
+   * @param studentId student id.
+   * @param payload payload to update modified independent status.
+   */
+  async updateModifiedIndependentStatus(
+    studentId: number,
+    payload: UpdateModifiedIndependentStatusAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.Students.updateModifiedIndependentStatus(
+      studentId,
+      payload,
+    );
   }
 }

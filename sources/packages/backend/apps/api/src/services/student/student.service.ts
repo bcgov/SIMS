@@ -17,8 +17,9 @@ import {
   SFASRestriction,
   CASSupplier,
   SupplierStatus,
+  ModifiedIndependentStatus,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, UpdateResult } from "typeorm";
+import { DataSource, EntityManager, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
@@ -849,6 +850,46 @@ export class StudentService extends RecordDataModelService<Student> {
         {
           disabilityStatus,
           disabilityStatusEffectiveDate: now,
+          modifier: auditUser,
+          updatedAt: now,
+        },
+      );
+    });
+  }
+
+  /**
+   * Update student modified independent status with note.
+   * @param studentId student id.
+   * @param modifiedIndependentStatus modified independent status.
+   * @param noteDescription note description provided for the update.
+   * @param auditUserId audit user id.
+   * @returns update result.
+   */
+  async updateModifiedIndependentStatus(
+    studentId: number,
+    modifiedIndependentStatus: ModifiedIndependentStatus,
+    noteDescription: string,
+    auditUserId: number,
+  ): Promise<UpdateResult> {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      await this.noteSharedService.createStudentNote(
+        studentId,
+        NoteType.General,
+        noteDescription,
+        auditUserId,
+        transactionalEntityManager,
+      );
+      const auditUser = { id: auditUserId } as User;
+      const now = new Date();
+      return transactionalEntityManager.getRepository(Student).update(
+        {
+          id: studentId,
+          modifiedIndependentStatus: Not(modifiedIndependentStatus),
+        },
+        {
+          modifiedIndependentStatus,
+          modifiedIndependentStatusUpdatedBy: auditUser,
+          modifiedIndependentStatusUpdatedOn: now,
           modifier: auditUser,
           updatedAt: now,
         },

@@ -405,14 +405,18 @@ export function useFormatters() {
    * @returns modified independent equivalent status displayed to the user.
    */
   const modifiedIndependentStatusToDisplay = (
-    modifiedIndependentStatus?: ModifiedIndependentStatus,
+    modifiedIndependentStatus: ModifiedIndependentStatus,
   ): ModifiedIndependentDisplayStatus => {
-    if (!modifiedIndependentStatus) {
-      return ModifiedIndependentDisplayStatus.NotRequested;
+    switch (modifiedIndependentStatus) {
+      case ModifiedIndependentStatus.NotRequested:
+        return ModifiedIndependentDisplayStatus.NotRequested;
+      case ModifiedIndependentStatus.Approved:
+        return ModifiedIndependentDisplayStatus.Yes;
+      case ModifiedIndependentStatus.Declined:
+        return ModifiedIndependentDisplayStatus.No;
+      default:
+        return modifiedIndependentStatus;
     }
-    return modifiedIndependentStatus === ModifiedIndependentStatus.Approved
-      ? ModifiedIndependentDisplayStatus.Yes
-      : ModifiedIndependentDisplayStatus.No;
   };
 
   /**

@@ -173,9 +173,8 @@ export class Student extends RecordDataModel {
     type: "enum",
     enum: ModifiedIndependentStatus,
     enumName: "ModifiedIndependentStatus",
-    nullable: true,
   })
-  modifiedIndependentStatus?: ModifiedIndependentStatus;
+  modifiedIndependentStatus: ModifiedIndependentStatus;
 
   /**
    * Reference to the appeal request ID if the student has requested an appeal

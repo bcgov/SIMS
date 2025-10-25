@@ -129,7 +129,7 @@ export class StudentControllerService {
     response: Response,
     uniqueFileName: string,
     studentId?: number,
-  ) {
+  ): Promise<void> {
     const studentFile = await this.fileService.getStudentFile(
       uniqueFileName,
       studentId,
