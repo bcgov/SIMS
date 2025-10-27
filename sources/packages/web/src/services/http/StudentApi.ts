@@ -19,6 +19,7 @@ import {
   AESTStudentFileDetailsAPIOutDTO,
   LegacyStudentMatchesAPIOutDTO,
   LegacyStudentMatchesAPIInDTO,
+  UpdateModifiedIndependentStatusAPIInDTO,
 } from "@/services/http/dto";
 
 export class StudentApi extends HttpBaseClient {
@@ -253,6 +254,21 @@ export class StudentApi extends HttpBaseClient {
   ): Promise<void> {
     await this.patchCall(
       this.addClientRoot(`student/${studentId}/legacy-match`),
+      payload,
+    );
+  }
+
+  /**
+   * Update student modified independent status.
+   * @param studentId student id.
+   * @param payload payload to update modified independent status.
+   */
+  async updateModifiedIndependentStatus(
+    studentId: number,
+    payload: UpdateModifiedIndependentStatusAPIInDTO,
+  ): Promise<void> {
+    await this.patchCall(
+      this.addClientRoot(`student/${studentId}/modified-independent-status`),
       payload,
     );
   }

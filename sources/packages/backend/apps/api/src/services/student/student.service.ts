@@ -17,8 +17,9 @@ import {
   SFASRestriction,
   CASSupplier,
   SupplierStatus,
+  ModifiedIndependentStatus,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, UpdateResult } from "typeorm";
+import { DataSource, EntityManager, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "@sims/utilities/logger";
 import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
@@ -31,6 +32,7 @@ import {
 import { SFASIndividualService } from "@sims/services/sfas";
 import * as dayjs from "dayjs";
 import {
+  MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED,
   STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
   STUDENT_SIN_CONSENT_NOT_CHECKED,
@@ -853,6 +855,55 @@ export class StudentService extends RecordDataModelService<Student> {
           updatedAt: now,
         },
       );
+    });
+  }
+
+  /**
+   * Update student modified independent status with note.
+   * @param studentId student id.
+   * @param modifiedIndependentStatus modified independent status.
+   * @param noteDescription note description provided for the update.
+   * @param auditUserId audit user id.
+   * @returns update result.
+   */
+  async updateModifiedIndependentStatus(
+    studentId: number,
+    modifiedIndependentStatus: ModifiedIndependentStatus,
+    noteDescription: string,
+    auditUserId: number,
+  ): Promise<UpdateResult> {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      await this.noteSharedService.createStudentNote(
+        studentId,
+        NoteType.General,
+        noteDescription,
+        auditUserId,
+        transactionalEntityManager,
+      );
+      const auditUser = { id: auditUserId } as User;
+      const now = new Date();
+      const updateResult = await transactionalEntityManager
+        .getRepository(Student)
+        .update(
+          {
+            id: studentId,
+            modifiedIndependentStatus: Not(modifiedIndependentStatus),
+          },
+          {
+            modifiedIndependentStatus,
+            modifiedIndependentStatusUpdatedBy: auditUser,
+            modifiedIndependentStatusUpdatedOn: now,
+            modifier: auditUser,
+            updatedAt: now,
+          },
+        );
+      if (!updateResult.affected) {
+        throw new CustomNamedError(
+          "Modified independent status provided is not different from the current status.",
+          MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED,
+        );
+      }
+      return updateResult;
     });
   }
 
