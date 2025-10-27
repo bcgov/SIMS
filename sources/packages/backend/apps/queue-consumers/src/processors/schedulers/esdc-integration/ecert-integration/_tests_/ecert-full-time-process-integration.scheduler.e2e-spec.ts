@@ -2084,16 +2084,6 @@ describe(
     });
 
     /**
-     * Helper function to get the uploaded file name.
-     * @returns The uploaded file name
-     */
-    function getUploadedFileName(): string {
-      const fileDate = dayjs().format("YYYYMMDD");
-      const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
-      return uploadedFileName;
-    }
-
-    /**
      * Creates and saves an application with disbursement schedules for e-Cert generation testing.
      * @param options options to customize the application creation.
      * - `modifiedIndependentStatus`: modified independent status to set on the student profile.
@@ -2140,3 +2130,13 @@ describe(
     }
   },
 );
+
+/**
+ * Helper function to get the uploaded file name.
+ * @returns The uploaded file name
+ */
+function getUploadedFileName(): string {
+  const fileDate = dayjs().format("YYYYMMDD");
+  const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
+  return uploadedFileName;
+}
