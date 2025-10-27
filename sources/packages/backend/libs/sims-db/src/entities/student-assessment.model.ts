@@ -343,7 +343,7 @@ export type Assessment = FullTimeAssessment | PartTimeAssessment;
 export interface WorkflowData {
   studentData: {
     dependantStatus: "dependant" | "independant";
-    estranged?: FormYesNoOptions;
+    estrangedFromParents?: FormYesNoOptions;
     relationshipStatus: RelationshipStatus;
     livingWithParents: FormYesNoOptions;
     numberOfParents?: number;

@@ -133,14 +133,14 @@ export const FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS = [
 ];
 
 /**
- * Represents students estranged answer from application submitted
+ * Represents students "estranged from parents"  answer from application submitted
  * and the student profile modified independent status.
  */
 export interface ModifiedIndependentDetails {
   /**
-   * Indicates how the student answered the estranged to parent question.
+   * Indicates how the student answered the estranged from parents question.
    */
-  estranged?: FormYesNoOptions;
+  estrangedFromParents?: FormYesNoOptions;
   /**
    * Status of the modified independent associated to the student.
    */
@@ -244,7 +244,7 @@ export class EligibleECertDisbursement {
    * program year.
    * @param disabilityDetails students Disability status both from application submitted
    * and the student profile disability status verification.
-   * @param modifiedIndependentDetails students estranged from parents information.
+   * @param modifiedIndependentDetails student's "estranged from parents" information.
    * @param restrictions all active student restrictions actions. These actions can
    * impact the e-Cert calculations.
    * This is a shared array reference between all the disbursements of a single student.
@@ -280,7 +280,7 @@ export class EligibleECertDisbursement {
    */
   refreshActiveStudentRestrictions(
     activeRestrictions: StudentActiveRestriction[],
-  ) {
+  ): void {
     this.restrictions.length = 0;
     this.restrictions.push(...activeRestrictions);
   }

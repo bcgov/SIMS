@@ -210,7 +210,8 @@ export class ECertGenerationService {
               studentProfileDisabilityStatus: student.disabilityStatus,
             };
             const modifiedIndependentDetails: ModifiedIndependentDetails = {
-              estranged: workflowData.studentData.estranged,
+              estrangedFromParents:
+                workflowData.studentData.estrangedFromParents,
               studentProfileModifiedIndependent:
                 student.modifiedIndependentStatus,
             };

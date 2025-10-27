@@ -91,7 +91,7 @@ export class ValidateDisbursementFullTimeStep
     );
     // Validate modified independent status when estranged from parents.
     if (
-      eCertDisbursement.modifiedIndependentDetails.estranged ===
+      eCertDisbursement.modifiedIndependentDetails.estrangedFromParents ===
         FormYesNoOptions.Yes &&
       eCertDisbursement.modifiedIndependentDetails
         .studentProfileModifiedIndependent !==
