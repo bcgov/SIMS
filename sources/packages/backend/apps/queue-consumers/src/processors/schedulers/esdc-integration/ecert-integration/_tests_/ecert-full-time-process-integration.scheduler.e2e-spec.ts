@@ -1979,7 +1979,7 @@ describe(
      * Helper function to get the uploaded file name.
      * @returns The uploaded file name
      */
-    function getUploadedFileName() {
+    function getUploadedFileName(): string {
       const fileDate = dayjs().format("YYYYMMDD");
       const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
       return uploadedFileName;
