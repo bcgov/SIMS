@@ -133,7 +133,7 @@ export const FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS = [
 ];
 
 /**
- * Represents student's "estranged from parents" answer from the submitted application
+ * Represents student's "estranged from parents" answer from the submitted application.
  * and the student profile modified independent status, which allows to determine
  * if the e-Cert must be blocked due to modified independent.
  */
