@@ -32,6 +32,7 @@ import {
 import { SFASIndividualService } from "@sims/services/sfas";
 import * as dayjs from "dayjs";
 import {
+  MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED,
   STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
   STUDENT_SIN_CONSENT_NOT_CHECKED,
@@ -881,19 +882,28 @@ export class StudentService extends RecordDataModelService<Student> {
       );
       const auditUser = { id: auditUserId } as User;
       const now = new Date();
-      return transactionalEntityManager.getRepository(Student).update(
-        {
-          id: studentId,
-          modifiedIndependentStatus: Not(modifiedIndependentStatus),
-        },
-        {
-          modifiedIndependentStatus,
-          modifiedIndependentStatusUpdatedBy: auditUser,
-          modifiedIndependentStatusUpdatedOn: now,
-          modifier: auditUser,
-          updatedAt: now,
-        },
-      );
+      const updateResult = await transactionalEntityManager
+        .getRepository(Student)
+        .update(
+          {
+            id: studentId,
+            modifiedIndependentStatus: Not(modifiedIndependentStatus),
+          },
+          {
+            modifiedIndependentStatus,
+            modifiedIndependentStatusUpdatedBy: auditUser,
+            modifiedIndependentStatusUpdatedOn: now,
+            modifier: auditUser,
+            updatedAt: now,
+          },
+        );
+      if (!updateResult.affected) {
+        throw new CustomNamedError(
+          "Modified independent status provided is not different from the current status.",
+          MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED,
+        );
+      }
+      return updateResult;
     });
   }
 

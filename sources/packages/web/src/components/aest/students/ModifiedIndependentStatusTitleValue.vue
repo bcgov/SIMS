@@ -84,7 +84,7 @@ export default defineComponent({
         snackBar.success("Modified independent status updated successfully.");
         emit("modifiedIndependentStatusUpdated");
         return true;
-      } catch (error) {
+      } catch (error: unknown) {
         if (
           error instanceof ApiProcessError &&
           error.errorType === MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED

@@ -285,10 +285,12 @@ export const SCHOLASTIC_STANDING_REVERSAL_NOT_UPDATED =
  * Restriction not found.
  */
 export const RESTRICTION_NOT_FOUND = "RESTRICTION_NOT_FOUND";
+
 /**
  * Attempt to soft-delete a restriction that is already set as deleted.
  */
 export const RESTRICTION_IS_DELETED = "RESTRICTION_IS_DELETED";
+
 /**
  * Modified independent status not updated.
  */

@@ -561,20 +561,23 @@ export class StudentAESTController extends BaseController {
     if (!studentExist) {
       throw new NotFoundException(`Student ${studentId} not found.`);
     }
-    const updateResult =
+    try {
       await this.studentService.updateModifiedIndependentStatus(
         studentId,
         payload.modifiedIndependentStatus,
         payload.noteDescription,
         userToken.userId,
       );
-    if (!updateResult.affected) {
-      throw new UnprocessableEntityException(
-        new ApiProcessError(
-          "Modified independent status provided is not different from the current status.",
-          MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED,
-        ),
-      );
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED
+      ) {
+        throw new UnprocessableEntityException(
+          new ApiProcessError(error.message, error.name),
+        );
+      }
+      throw error;
     }
   }
 }
