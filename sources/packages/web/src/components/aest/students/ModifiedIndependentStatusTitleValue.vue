@@ -2,17 +2,24 @@
   <title-value property-title="Modified independent status">
     <template #value
       >{{ modifiedIndependentDisplayStatus }}
-      <v-btn
-        class="p-1"
-        v-if="allowUpdateActions"
-        variant="text"
-        color="primary"
-        @click="showModifiedIndependentStatusModal"
-        ><span class="text-decoration-underline font-bold"
-          >Update modified independent status</span
-        ></v-btn
-      ></template
-    >
+      <check-permission-role
+        :role="Role.StudentUpdateModifiedIndependentStatus"
+      >
+        <template #="{ notAllowed }">
+          <v-btn
+            class="p-1"
+            v-if="allowUpdateActions"
+            variant="text"
+            color="primary"
+            @click="showModifiedIndependentStatusModal"
+            :disabled="notAllowed"
+            ><span class="text-decoration-underline font-bold"
+              >Update modified independent status</span
+            ></v-btn
+          >
+        </template>
+      </check-permission-role>
+    </template>
   </title-value>
   <update-modified-independent-status-modal
     ref="updateModifiedIndependentStatusModal"
@@ -22,8 +29,9 @@
 <script lang="ts">
 import { computed, defineComponent, PropType, ref } from "vue";
 import { ModalDialog, useFormatters, useSnackBar } from "@/composables";
-import { ApiProcessError, ModifiedIndependentStatus } from "@/types";
+import { Role, ApiProcessError, ModifiedIndependentStatus } from "@/types";
 import UpdateModifiedIndependentStatusModal from "@/components/aest/students/modals/UpdateModifiedIndependentStatusModal.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { UpdateModifiedIndependentStatusAPIInDTO } from "@/services/http/dto";
 import { StudentService } from "@/services/StudentService";
 import { MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED } from "@/constants";
@@ -32,7 +40,7 @@ export default defineComponent({
   emits: {
     modifiedIndependentStatusUpdated: null,
   },
-  components: { UpdateModifiedIndependentStatusModal },
+  components: { CheckPermissionRole, UpdateModifiedIndependentStatusModal },
   props: {
     studentId: {
       type: Number,
@@ -95,6 +103,7 @@ export default defineComponent({
       modifiedIndependentDisplayStatus,
       updateModifiedIndependentStatusModal,
       showModifiedIndependentStatusModal,
+      Role,
     };
   },
 });
