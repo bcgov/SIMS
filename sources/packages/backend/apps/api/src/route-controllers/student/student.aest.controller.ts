@@ -28,7 +28,7 @@ import {
   StudentService,
 } from "../../services";
 import { NotificationActionsService } from "@sims/services/notifications";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -53,6 +53,7 @@ import {
   AESTStudentFileDetailsAPIOutDTO,
   LegacyStudentMatchesAPIOutDTO,
   LegacyStudentMatchesAPIInDTO,
+  UpdateModifiedIndependentStatusAPIInDTO,
 } from "./models/student.dto";
 import { Response } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -74,6 +75,7 @@ import {
 } from "../models/pagination.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import {
+  MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED,
   SIN_VALIDATION_RECORD_INVALID_OPERATION,
   SIN_VALIDATION_RECORD_NOT_FOUND,
 } from "../../constants";
@@ -211,7 +213,9 @@ export class StudentAESTController extends BaseController {
 
     // This method will be executed alongside with the transaction during the
     // execution of the method updateStudentFiles.
-    const saveFileUploadNotification = (entityManager: EntityManager) =>
+    const saveFileUploadNotification = (
+      entityManager: EntityManager,
+    ): Promise<void> =>
       this.notificationActionsService.saveMinistryFileUploadNotification(
         {
           firstName: student.user.firstName,
@@ -534,5 +538,46 @@ export class StudentAESTController extends BaseController {
       payload.noteDescription,
       userToken.userId,
     );
+  }
+
+  /**
+   * Update student modified independent status.
+   * @param studentId student id.
+   * @param payload payload to update modified independent status.
+   */
+  @Roles(Role.StudentUpdateModifiedIndependentStatus)
+  @Patch(":studentId/modified-independent-status")
+  @ApiNotFoundResponse({ description: "Student not found." })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Modified independent status provided is not different from the current status.",
+  })
+  async updateModifiedIndependentStatus(
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Body() payload: UpdateModifiedIndependentStatusAPIInDTO,
+    @UserToken() userToken: IUserToken,
+  ): Promise<void> {
+    const studentExist = await this.studentService.studentExists(studentId);
+    if (!studentExist) {
+      throw new NotFoundException(`Student ${studentId} not found.`);
+    }
+    try {
+      await this.studentService.updateModifiedIndependentStatus(
+        studentId,
+        payload.modifiedIndependentStatus,
+        payload.noteDescription,
+        userToken.userId,
+      );
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED
+      ) {
+        throw new UnprocessableEntityException(
+          new ApiProcessError(error.message, error.name),
+        );
+      }
+      throw error;
+    }
   }
 }

@@ -35,6 +35,10 @@ export enum DisabilityStatus {
  */
 export enum ModifiedIndependentStatus {
   /**
+   * Student not requested for modified independent status.
+   */
+  NotRequested = "Not requested",
+  /**
    * Student approved for modified independent status.
    */
   Approved = "Approved",

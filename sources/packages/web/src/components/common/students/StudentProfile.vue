@@ -69,6 +69,7 @@
               studentDetail.modifiedIndependentStatus
             "
             :allow-update-actions="allowUpdateActions"
+            @modified-independent-status-updated="loadStudentProfile"
           />
         </v-col>
         <v-col cols="8"

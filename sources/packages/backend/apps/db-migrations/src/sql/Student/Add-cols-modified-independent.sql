@@ -1,7 +1,7 @@
 ALTER TABLE
   sims.students
 ADD
-  COLUMN modified_independent_status sims.modified_independent_status,
+  COLUMN modified_independent_status sims.modified_independent_status NOT NULL DEFAULT 'Not requested',
 ADD
   COLUMN modified_independent_appeal_request_id INT REFERENCES sims.student_appeal_requests(id),
 ADD

@@ -16,7 +16,11 @@ import {
   saveFakeStudent,
   saveFakeApplication,
 } from "@sims/test-utils";
-import { Institution, InstitutionLocation } from "@sims/sims-db";
+import {
+  Institution,
+  InstitutionLocation,
+  ModifiedIndependentStatus,
+} from "@sims/sims-db";
 import { getUserFullName } from "../../../../utilities";
 import { getISODateOnlyString } from "@sims/utilities";
 import { saveStudentApplicationForCollegeC } from "./student.institutions.utils";
@@ -84,7 +88,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
           phone: student.contactInfo.phone,
         },
         disabilityStatus: student.disabilityStatus,
-        modifiedIndependentStatus: null,
+        modifiedIndependentStatus: ModifiedIndependentStatus.NotRequested,
         validSin: student.sinValidation.isValidSIN,
         sin: student.sinValidation.sin,
       });
