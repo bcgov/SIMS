@@ -92,6 +92,7 @@ export class ECertGenerationService {
         "offering.aviationCredentialType",
         "student.id",
         "student.disabilityStatus",
+        "student.modifiedIndependentStatus",
         "sinValidation.id",
         "sinValidation.isValidSIN",
         // The student active restrictions are initially loaded along side all the student data but they can

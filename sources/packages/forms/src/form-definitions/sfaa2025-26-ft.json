@@ -2693,7 +2693,7 @@
                   "value": ""
                 }
               ],
-              "content": "<strong> Your account status indicates you have not been approved as a modified independent yet.</strong>\n<br /> If you answer 'yes' to this question, your application will be blocked till a Modified Independent appeal is submitted and approved.\n<br /> To submit an appeal, use the 'Appeals' button at the top menu, select 'Other' appeals, and then 'Modified Independent Appeal'.",
+              "content": "<strong> Your account status indicates you have not been approved as a modified independent yet.</strong>\n<br />If you answer 'yes' to this question, your application will be blocked until a Modified Independent appeal is submitted and approved. To submit an appeal, use the 'Appeals' button at the top menu, select 'Other' appeals, and then 'Modified Independent Appeal'.",
               "refreshOnChange": false,
               "customClass": "banner-warning",
               "key": "html16",
@@ -2713,7 +2713,7 @@
                   "value": ""
                 }
               ],
-              "content": "<strong> Based on a previously submitted modified independent appeal, you have the status validated as modified independent.</strong>\n<br />A previously submitted appeal to determine if you classify as independent was approved, which means that you are eligible to answer this question as 'Yes'.",
+              "content": "<strong> Based on a previously submitted modified independent appeal, you have a modified independent status.</strong>\n<br />A previously submitted appeal to determine if you classify as independent was approved, which means that you are eligible to answer this question as 'Yes'.",
               "refreshOnChange": false,
               "customClass": "banner-info",
               "key": "html51",
