@@ -1,4 +1,5 @@
 import {
+  Application,
   ApplicationStatus,
   Assessment,
   COEStatus,
@@ -8,6 +9,7 @@ import {
   DisbursementScheduleStatus,
   DisbursementValueType,
   FormYesNoOptions,
+  ModifiedIndependentStatus,
   NotificationMessage,
   NotificationMessageType,
   OfferingIntensity,
@@ -15,6 +17,7 @@ import {
   RestrictionActionType,
   RestrictionBypassBehaviors,
   User,
+  WorkflowData,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
@@ -176,10 +179,10 @@ describe(
       );
 
       // Queued job.
-      const { job } = mockBullJob<void>();
+      const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processQueue(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -207,10 +210,10 @@ describe(
 
     it("Should generate an e-cert file with only header and footer when there is no disbursement to be sent.", async () => {
       // Queued job.
-      const { job } = mockBullJob<void>();
+      const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processQueue(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -294,10 +297,10 @@ describe(
       await db.disbursementOveraward.save(fakeCanadaLoanOverawardBalance);
 
       // Queued job.
-      const { job } = mockBullJob<void>();
+      const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processQueue(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -810,10 +813,10 @@ describe(
       );
 
       // Queued job.
-      const { job } = mockBullJob<void>();
+      const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processQueue(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -832,6 +835,111 @@ describe(
         },
       });
       expect(isScheduleNotSent).toBe(true);
+    });
+
+    it("Should not generate disbursement when the Student answered application question 'estranged from the parents' as 'yes' and profile does not have an approved modified independent status.", async () => {
+      // Arrange
+      const modifiedIndependentStatus = ModifiedIndependentStatus.NotRequested;
+      const estrangedFromParents = FormYesNoOptions.Yes;
+      const application = await saveApplicationDisbursementForECertGeneration({
+        modifiedIndependentStatus,
+        estrangedFromParents,
+      });
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
+
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const uploadedFileName = getUploadedFileName();
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+      expect(result).toStrictEqual([
+        `Generated file: ${uploadedFileName}`,
+        "Uploaded records: 0",
+      ]);
+      expect(
+        mockedJob.containLogMessage(
+          `Student answered '${estrangedFromParents}' for estranged from parents but his modified independent status is '${modifiedIndependentStatus}', the disbursement calculation will not proceed.`,
+        ),
+      ).toBe(true);
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const isScheduleNotSent = await db.disbursementSchedule.exists({
+        where: {
+          id: disbursement.id,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+        },
+      });
+      expect(isScheduleNotSent).toBe(true);
+    });
+
+    it("Should generate disbursement when the Student answered application question 'estranged from the parents' as 'yes' and profile has an approved modified independent status.", async () => {
+      // Arrange
+      const modifiedIndependentStatus = ModifiedIndependentStatus.Approved;
+      const application = await saveApplicationDisbursementForECertGeneration({
+        modifiedIndependentStatus,
+        estrangedFromParents: FormYesNoOptions.Yes,
+      });
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
+
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const uploadedFileName = getUploadedFileName();
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+      expect(result).toStrictEqual([
+        `Generated file: ${uploadedFileName}`,
+        "Uploaded records: 1",
+      ]);
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const isScheduleSent = await db.disbursementSchedule.exists({
+        where: {
+          id: disbursement.id,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      });
+      expect(isScheduleSent).toBe(true);
+    });
+
+    it("Should generate disbursement when the Student answered application question 'estranged from the parents' as 'no' and profile has an approved modified independent status.", async () => {
+      // Arrange
+      const modifiedIndependentStatus = ModifiedIndependentStatus.Approved;
+      const application = await saveApplicationDisbursementForECertGeneration({
+        modifiedIndependentStatus,
+        estrangedFromParents: FormYesNoOptions.No,
+      });
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
+
+      // Assert uploaded file.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const uploadedFileName = getUploadedFileName();
+      expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+      expect(result).toStrictEqual([
+        `Generated file: ${uploadedFileName}`,
+        "Uploaded records: 1",
+      ]);
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const isScheduleSent = await db.disbursementSchedule.exists({
+        where: {
+          id: disbursement.id,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      });
+      expect(isScheduleSent).toBe(true);
     });
 
     it("Should generate disbursement if the Student assessment contains PD/PPD application flag is yes and Student profile PD approved or confirmed", async () => {
@@ -886,10 +994,10 @@ describe(
       );
 
       // Queued job.
-      const { job } = mockBullJob<void>();
+      const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processQueue(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -956,10 +1064,10 @@ describe(
       );
 
       // Queued job.
-      const { job } = mockBullJob<void>();
+      const mockedJob = mockBullJob<void>();
 
       // Act
-      const result = await processor.processQueue(job);
+      const result = await processor.processQueue(mockedJob.job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -1983,6 +2091,52 @@ describe(
       const fileDate = dayjs().format("YYYYMMDD");
       const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
       return uploadedFileName;
+    }
+
+    /**
+     * Creates and saves an application with disbursement schedules for e-Cert generation testing.
+     * @param options options to customize the application creation.
+     * - `modifiedIndependentStatus`: modified independent status to set on the student profile.
+     * - `estrangedFromParents`: 'estranged from parents' application question answer.
+     * @returns the saved application with disbursement schedules.
+     */
+    async function saveApplicationDisbursementForECertGeneration(options?: {
+      modifiedIndependentStatus: ModifiedIndependentStatus;
+      estrangedFromParents?: FormYesNoOptions;
+    }): Promise<Application> {
+      const student = await saveFakeStudent(db.dataSource, undefined, {
+        initialValue: {
+          modifiedIndependentStatus: options?.modifiedIndependentStatus,
+        },
+      });
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber({ student }, { msfaaState: MSFAAStates.Signed }),
+      );
+      // Student application eligible for e-Cert.
+      return saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, msfaaNumber },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+            workflowData: {
+              studentData: {
+                estrangedFromParents: options?.estrangedFromParents,
+              },
+              calculatedData: {
+                pdppdStatus: false,
+              },
+            } as WorkflowData,
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
     }
   },
 );
