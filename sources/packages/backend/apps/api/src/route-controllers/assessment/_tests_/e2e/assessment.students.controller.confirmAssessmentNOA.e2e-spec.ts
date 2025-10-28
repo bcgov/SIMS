@@ -242,7 +242,10 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
         {
           initialValue: {
             triggerType: AssessmentTriggerType.RelatedApplicationChanged,
-            workflowData: { calculatedData: {} } as WorkflowData,
+            workflowData: {
+              calculatedData: {},
+              studentData: {},
+            } as WorkflowData,
           },
         },
       ),

@@ -26,6 +26,10 @@ export enum ECertFailedValidation {
    */
   DisabilityStatusNotConfirmed = "DisabilityStatusNotConfirmed",
   /**
+   * Student modified independent status is not approved.
+   */
+  ModifiedIndependentStatusNotApproved = "ModifiedIndependentStatusNotApproved",
+  /**
    * Student has an active 'StopFullTimeDisbursement' or 'StopPartTimeDisbursement'
    * restriction and the disbursement calculation will not proceed.
    */

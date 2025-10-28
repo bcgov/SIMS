@@ -3,8 +3,8 @@
     <template #header>
       <header-navigator
         title="View assessment"
-        subTitle="Assessment"
-        :routeLocation="{
+        sub-title="Assessment"
+        :route-location="{
           name: StudentRoutesConst.ASSESSMENT_AWARD_VIEW,
           params: {
             applicationId: applicationId,
@@ -40,7 +40,7 @@
         v-if="showAcceptAssessmentWarnings"
       >
         <template #content>
-          <ul>
+          <ul class="pl-0">
             <li v-if="eCertValidation.hasEffectiveAviationRestriction">
               You have already been funded for this type of aviation credential
               and are not eligible for additional funding.
@@ -53,6 +53,14 @@
               your application. Please note that once you have received funding
               for this application, additional changes to the disability
               question may not be considered.
+            </li>
+            <li v-if="eCertValidation.modifiedIndependentStatusNotApproved">
+              You have indicated in your application that you should be
+              considered a modified independent; however, the modified
+              independent status on your student profile is not approved. If you
+              have not submitted one yet, please submit a modified independent
+              appeal for review. Please use the 'Appeals' menu to start the
+              appeal process.
             </li>
             <li v-if="eCertValidation.msfaaInvalid">
               Your MSFAA is not valid. Please complete your MSFAA with the
@@ -80,20 +88,20 @@
       </banner>
     </template>
     <notice-of-assessment-form-view
-      :assessmentId="assessmentId"
-      @assessmentDataLoaded="assessmentDataLoaded"
+      :assessment-id="assessmentId"
+      @assessment-data-loaded="assessmentDataLoaded"
     />
     <footer-buttons
       justify="end"
-      primaryLabel="Accept assessment"
-      :showPrimaryButton="assessmentId === currentAssessmentId"
-      :disablePrimaryButton="!canAcceptAssessment"
-      @primaryClick="confirmAssessment"
-      secondaryLabel="Cancel application"
-      :showSecondaryButton="true"
-      @secondaryClick="confirmCancelApplication"
-      secondaryButtonColor="danger"
-      secondaryButtonVariant="elevated"
+      primary-label="Accept assessment"
+      :show-primary-button="assessmentId === currentAssessmentId"
+      :disable-primary-button="!canAcceptAssessment"
+      @primary-click="confirmAssessment"
+      secondary-label="Cancel application"
+      :show-secondary-button="true"
+      @secondary-click="confirmCancelApplication"
+      secondary-button-color="danger"
+      secondary-button-variant="elevated"
       v-if="!viewOnly"
       class="mr-1"
     />
@@ -143,6 +151,7 @@ export default defineComponent({
     const canAcceptAssessment = ref(false);
     const eCertValidation = ref({
       disabilityStatusNotConfirmed: false,
+      modifiedIndependentStatusNotApproved: false,
       msfaaInvalid: false,
       hasStopDisbursementRestriction: false,
       noEstimatedAwardAmounts: false,
@@ -208,6 +217,10 @@ export default defineComponent({
         disabilityStatusNotConfirmed: warnings.eCertFailedValidations.includes(
           ECertFailedValidation.DisabilityStatusNotConfirmed,
         ),
+        modifiedIndependentStatusNotApproved:
+          warnings.eCertFailedValidations.includes(
+            ECertFailedValidation.ModifiedIndependentStatusNotApproved,
+          ),
         msfaaInvalid:
           warnings.eCertFailedValidations.includes(
             ECertFailedValidation.MSFAACanceled,

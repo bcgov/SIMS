@@ -1,4 +1,8 @@
-import { RestrictionActionType } from "@sims/sims-db";
+import {
+  FormYesNoOptions,
+  ModifiedIndependentStatus,
+  RestrictionActionType,
+} from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { EntityManager } from "typeorm";
 import { ECertProcessStep, ValidateDisbursementBase } from ".";
@@ -85,6 +89,21 @@ export class ValidateDisbursementFullTimeStep
       eCertDisbursement.activeRestrictionBypasses,
       log,
     );
+    // Validate modified independent status when estranged from parents.
+    if (
+      eCertDisbursement.modifiedIndependentDetails.estrangedFromParents ===
+        FormYesNoOptions.Yes &&
+      eCertDisbursement.modifiedIndependentDetails
+        .studentProfileModifiedIndependent !==
+        ModifiedIndependentStatus.Approved
+    ) {
+      log.info(
+        `Student answered '${FormYesNoOptions.Yes}' for estranged from parents but the modified independent status is '${eCertDisbursement.modifiedIndependentDetails.studentProfileModifiedIndependent}', the disbursement calculation will not proceed.`,
+      );
+      validationResults.push({
+        resultType: ECertFailedValidation.ModifiedIndependentStatusNotApproved,
+      });
+    }
     return new ECertPreValidatorResult(validationResults);
   }
 }

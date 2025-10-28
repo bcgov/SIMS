@@ -5,6 +5,8 @@ import {
   DisbursementSchedule,
   DisbursementValueType,
   EducationProgramOffering,
+  FormYesNoOptions,
+  ModifiedIndependentStatus,
   RestrictionActionType,
   RestrictionBypassBehaviors,
   StudentRestriction,
@@ -131,9 +133,21 @@ export const FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS = [
 ];
 
 /**
- * Represents students Disability status both from application submitted
- * and the student profile disability status verification.
+ * Represents student's "estranged from parents" answer from the submitted application.
+ * and the student profile modified independent status, which allows to determine
+ * if the e-Cert must be blocked due to modified independent.
  */
+export interface ModifiedIndependentDetails {
+  /**
+   * Indicates how the student answered the estranged from parents question.
+   */
+  estrangedFromParents?: FormYesNoOptions;
+  /**
+   * Modified independent status associated to the student.
+   */
+  studentProfileModifiedIndependent: ModifiedIndependentStatus;
+}
+
 export interface DisabilityDetails {
   /**
    * Calculated PD/PPD status applied in the application by the student.
@@ -231,6 +245,7 @@ export class EligibleECertDisbursement {
    * program year.
    * @param disabilityDetails students Disability status both from application submitted
    * and the student profile disability status verification.
+   * @param modifiedIndependentDetails student's "estranged from parents" information.
    * @param restrictions all active student restrictions actions. These actions can
    * impact the e-Cert calculations.
    * This is a shared array reference between all the disbursements of a single student.
@@ -241,15 +256,16 @@ export class EligibleECertDisbursement {
    * @param restrictionBypass all active restrictions bypasses applied to the student application.
    */
   constructor(
-    public readonly studentId: number,
-    public readonly hasValidSIN: boolean,
-    public readonly assessmentId: number,
-    public readonly applicationId: number,
-    public readonly applicationNumber: string,
-    public readonly disbursement: DisbursementSchedule,
-    public readonly offering: EligibleECertOffering,
-    public readonly maxLifetimeBCLoanAmount: number,
-    public readonly disabilityDetails: DisabilityDetails,
+    readonly studentId: number,
+    readonly hasValidSIN: boolean,
+    readonly assessmentId: number,
+    readonly applicationId: number,
+    readonly applicationNumber: string,
+    readonly disbursement: DisbursementSchedule,
+    readonly offering: EligibleECertOffering,
+    readonly maxLifetimeBCLoanAmount: number,
+    readonly disabilityDetails: DisabilityDetails,
+    readonly modifiedIndependentDetails: ModifiedIndependentDetails,
     private readonly restrictions: StudentActiveRestriction[],
     private readonly restrictionBypass: ApplicationActiveRestrictionBypass[],
   ) {
@@ -265,7 +281,7 @@ export class EligibleECertDisbursement {
    */
   refreshActiveStudentRestrictions(
     activeRestrictions: StudentActiveRestriction[],
-  ) {
+  ): void {
     this.restrictions.length = 0;
     this.restrictions.push(...activeRestrictions);
   }
@@ -348,6 +364,10 @@ export enum ECertFailedValidation {
    * Student disability Status PD/PPD is not verified.
    */
   DisabilityStatusNotConfirmed = "DisabilityStatusNotConfirmed",
+  /**
+   * Student modified independent status is not approved.
+   */
+  ModifiedIndependentStatusNotApproved = "ModifiedIndependentStatusNotApproved",
   /**
    * Student has an active 'StopFullTimeDisbursement' or 'StopPartTimeDisbursement'
    * restriction and the disbursement calculation will not proceed.

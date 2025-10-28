@@ -31,27 +31,27 @@
       </header-navigator>
     </template>
     <StudentApplication
-      :selectedForm="selectedForm"
-      :initialData="initialData"
-      :isReadOnly="isReadOnly"
-      :programYearId="programYearId"
-      @formLoadedCallback="loadForm"
-      @submitApplication="submitApplication"
-      @customEventCallback="customEventCallback"
-      @pageChanged="pageChanged"
-      @wizardSubmit="wizardSubmit"
-      @saveDraft="saveDraft"
+      :selected-form="selectedForm"
+      :initial-data="initialData"
+      :is-read-only="isReadOnly"
+      :program-year-id="programYearId"
+      @form-loaded-callback="loadForm"
+      @submit-application="submitApplication"
+      @custom-event-callback="customEventCallback"
+      @page-changed="pageChanged"
+      @wizard-submit="wizardSubmit"
+      @save-draft="saveDraft"
       :processing="submittingApplication"
-      :savingDraft="savingDraft"
-      :notDraft="notDraft"
+      :saving-draft="savingDraft"
+      :not-draft="notDraft"
       :is-data-ready="isDataReady"
     />
   </student-page-container>
   <confirm-modal
     title="Edit application"
     ref="editApplicationModal"
-    okLabel="Submit"
-    cancelLabel="No"
+    ok-label="Submit"
+    cancel-label="No"
     :disable-primary-button="!conditionsAccepted"
     ><template #content>
       <v-checkbox
@@ -247,6 +247,8 @@ export default defineComponent({
           studentInfo.disabilityStatus,
         ),
         studentProfileDisabilityStatusValue: studentInfo.disabilityStatus,
+        studentProfileModifiedIndependentStatusValue:
+          studentInfo.modifiedIndependentStatus,
       };
       const programYear = {
         programYearStartDate: applicationData.programYearStartDate,

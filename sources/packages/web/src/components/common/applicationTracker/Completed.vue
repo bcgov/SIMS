@@ -68,7 +68,7 @@
     background-color="warning-bg"
     v-if="!!ecertFailedValidationDetails.failedValidations.length"
     ><template #content
-      ><ul>
+      ><ul class="pl-0">
         <!-- Additional information provided when student has already been funded for same type of aviation credential. -->
         <li
           v-if="
