@@ -862,7 +862,7 @@ describe(
       ]);
       expect(
         mockedJob.containLogMessage(
-          `Student answered '${estrangedFromParents}' for estranged from parents but his modified independent status is '${modifiedIndependentStatus}', the disbursement calculation will not proceed.`,
+          `Student answered '${estrangedFromParents}' for estranged from parents but the modified independent status is '${modifiedIndependentStatus}', the disbursement calculation will not proceed.`,
         ),
       ).toBe(true);
       const [disbursement] =
