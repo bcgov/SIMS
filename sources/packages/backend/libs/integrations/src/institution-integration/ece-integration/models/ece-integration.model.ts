@@ -11,6 +11,7 @@ export interface ECEUploadResult {
 }
 
 export interface ECERecord {
+  disbursementId: number;
   institutionCode: string;
   disbursementValues: DisbursementValue[];
   sin: string;

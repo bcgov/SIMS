@@ -43,6 +43,7 @@ export class ECEIntegrationService extends SFTPIntegrationBase<void> {
     // Detail record
     const fileRecords = eceRecords.map((eceRecord) => {
       const eceRequestFileDetail = new ECERequestFileDetail();
+      eceRequestFileDetail.disbursementId = eceRecord.disbursementId;
       eceRequestFileDetail.recordTypeCode = RecordTypeCodes.ECEDetail;
       eceRequestFileDetail.institutionCode = eceRecord.institutionCode;
       eceRequestFileDetail.disbursementValues = eceRecord.disbursementValues;
