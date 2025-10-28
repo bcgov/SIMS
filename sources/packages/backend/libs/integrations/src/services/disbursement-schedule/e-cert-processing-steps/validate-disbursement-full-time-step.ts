@@ -98,7 +98,7 @@ export class ValidateDisbursementFullTimeStep
         ModifiedIndependentStatus.Approved
     ) {
       log.info(
-        `Student answered '${FormYesNoOptions.Yes}' for estranged from parents but his modified independent status is '${eCertDisbursement.modifiedIndependentDetails.studentProfileModifiedIndependent}', the disbursement calculation will not proceed.`,
+        `Student answered '${FormYesNoOptions.Yes}' for estranged from parents but the modified independent status is '${eCertDisbursement.modifiedIndependentDetails.studentProfileModifiedIndependent}', the disbursement calculation will not proceed.`,
       );
       validationResults.push({
         resultType: ECertFailedValidation.ModifiedIndependentStatusNotApproved,
