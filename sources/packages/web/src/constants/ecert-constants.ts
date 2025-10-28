@@ -22,6 +22,11 @@ export const ECERT_FAILED_MESSAGES: EcertFailedValidationDetail[] = [
       "You have applied for disability funding on your application, but your disability status on your student profile has not yet been verified. Only once your status is verified will you be able to receive funding.",
   },
   {
+    failedType: ECertFailedValidation.ModifiedIndependentStatusNotApproved,
+    failedMessage:
+      "You have indicated in your application that you should be considered a modified independent; however, the modified independent status on your student profile is not approved. If you have not submitted one yet, please submit a modified independent appeal for review. Please use the 'Appeals' menu to start the appeal process.",
+  },
+  {
     failedType: ECertFailedValidation.MSFAANotSigned,
     failedMessage:
       "You have not yet signed your MSFAA number with the National Student Loans Service Center. Your MSFAA number was issued on your Notice of Assessment - you must use that number to sign your Master Student Financial Assistance Agreement with NSLSC before you are eligible to receive your funding.",
