@@ -199,7 +199,8 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      const { isFulltimeAllowed } = await AppConfigService.shared.config();
+      const { isFulltimeAllowed, applicationSubmissionDeadlineWeeks } =
+        await AppConfigService.shared.config();
       await checkProgramYear();
       //Get the student information, application information and student restriction.
       const [studentInfo, applicationData] = await Promise.all([
@@ -263,6 +264,7 @@ export default defineComponent({
         ...programYear,
         isReadOnly: isReadOnly.value,
         isFulltimeAllowed,
+        applicationSubmissionDeadlineWeeks,
       };
       existingApplication.value = applicationData;
       isDataReady.value = true;

@@ -64,7 +64,7 @@ describe("DateUtils-isLessThanGivenWeeks", () => {
       expectedResult: true,
     },
   ].forEach(({ weeks, date, referenceDate, expectedResult }) => {
-    it(`Should return ${expectedResult} when the provided date is ${date}, the reference date is ${referenceDate ?? getISODateOnlyString(new Date())}, and the weeks is ${weeks}.`, () => {
+    it(`Should return ${expectedResult} when the provided date is ${getISODateOnlyString(date)} and the reference date is ${referenceDate ?? getISODateOnlyString(new Date())} and the weeks is ${weeks}.`, () => {
       const result = isLessThanGivenWeeks(date, weeks, { referenceDate });
       expect(result).toBe(expectedResult);
     });

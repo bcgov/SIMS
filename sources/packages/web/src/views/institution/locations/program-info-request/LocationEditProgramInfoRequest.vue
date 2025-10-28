@@ -56,7 +56,10 @@ import {
   DenyProgramInfoRequestAPIInDTO,
   ProgramInfoRequestAPIOutDTO,
 } from "@/services/http/dto";
-
+import { AppConfigService } from "@/services/AppConfigService";
+type ProgramInfoRequestFormData = ProgramInfoRequestAPIOutDTO & {
+  applicationSubmissionDeadlineWeeks: number;
+};
 export default defineComponent({
   props: {
     locationId: {
@@ -120,6 +123,8 @@ export default defineComponent({
     };
 
     const formLoaded = async (form: any) => {
+      const { applicationSubmissionDeadlineWeeks } =
+        await AppConfigService.shared.config();
       programRequestData.value =
         await ProgramInfoRequestService.shared.getProgramInfoRequest(
           props.locationId,
@@ -157,6 +162,7 @@ export default defineComponent({
             : programRequestData.value.selectedProgram,
         // Hide the create program button for read-only user.
         isReadOnlyUser: isReadOnlyUser(props.locationId),
+        applicationSubmissionDeadlineWeeks,
       };
 
       // While loading a PIR that is in the some readonly status
