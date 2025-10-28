@@ -1,6 +1,5 @@
 import {
   APPLICATION_NOT_FOUND,
-  APPLICATION_SUBMISSION_DEADLINE_WEEKS,
   INVALID_OPERATION_IN_THE_CURRENT_STATE,
 } from "@sims/services/constants";
 import {
@@ -34,19 +33,26 @@ import {
 import { SystemUsersService } from "@sims/services";
 import MockDate from "mockdate";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
+import { ConfigService } from "@sims/utilities/config";
 
 describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
   let db: E2EDataSources;
   let applicationController: ApplicationController;
   let systemUsersService: SystemUsersService;
+  let configService: ConfigService;
   // Offering with end date more than required weeks from now to apply within deadline.
   let sharedOffering: EducationProgramOffering;
+  // Application submission deadline in weeks from config.
+  let applicationSubmissionDeadlineWeeks: number;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     db = createE2EDataSources(dataSource);
     applicationController = nestApplication.get(ApplicationController);
     systemUsersService = nestApplication.get(SystemUsersService);
+    configService = nestApplication.get(ConfigService);
+    applicationSubmissionDeadlineWeeks =
+      configService.applicationSubmissionDeadlineWeeks;
     sharedOffering = createFakeEducationProgramOffering(
       {
         auditUser: systemUsersService.systemUser,
@@ -406,7 +412,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
     },
   );
 
-  it(`Should create study end date is past application exception when study end date is less than ${APPLICATION_SUBMISSION_DEADLINE_WEEKS} weeks from the application submission date.`, async () => {
+  it(`Should create study end date is past application exception when study end date is less than ${applicationSubmissionDeadlineWeeks} weeks from the application submission date.`, async () => {
     // Arrange
     // Offering with end date less than required weeks from now to apply exceeding the deadline.
     const offeringPastDeadline = createFakeEducationProgramOffering(

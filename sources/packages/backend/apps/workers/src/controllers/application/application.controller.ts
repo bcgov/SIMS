@@ -43,7 +43,6 @@ import {
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { MaxJobsToActivate } from "../../types";
 import {
-  APPLICATION_SUBMISSION_DEADLINE_WEEKS,
   INVALID_OPERATION_IN_THE_CURRENT_STATE,
   Workers,
 } from "@sims/services/constants";
@@ -60,9 +59,11 @@ import {
   ZeebeJob,
 } from "@camunda8/sdk/dist/zeebe/types";
 import { CustomNamedError, isLessThanGivenWeeks } from "@sims/utilities";
+import { ConfigService } from "@sims/utilities/config";
 
 @Controller()
 export class ApplicationController {
+  private readonly applicationSubmissionDeadlineWeeks: number;
   constructor(
     private readonly dataSource: DataSource,
     private readonly applicationService: ApplicationService,
@@ -70,7 +71,11 @@ export class ApplicationController {
     private readonly notificationActionService: NotificationActionsService,
     private readonly applicationExceptionSearchService: ApplicationExceptionSearchService,
     private readonly applicationExceptionHashService: ApplicationExceptionHashService,
-  ) {}
+    configService: ConfigService,
+  ) {
+    this.applicationSubmissionDeadlineWeeks =
+      configService.applicationSubmissionDeadlineWeeks;
+  }
 
   /**
    * Updates the student application status ensuring that the application
@@ -422,7 +427,7 @@ export class ApplicationController {
     const studyEndDate = application.currentAssessment.offering.studyEndDate;
     const isFundingAppliedAfterDeadline = isLessThanGivenWeeks(
       studyEndDate,
-      APPLICATION_SUBMISSION_DEADLINE_WEEKS,
+      this.applicationSubmissionDeadlineWeeks,
       { referenceDate: application.submittedDate },
     );
     if (!isFundingAppliedAfterDeadline) {

@@ -59,6 +59,8 @@ objects:
                   value: "${MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION}"
                 - name: MAXIMUM_IDLE_TIME_FOR_WARNING_AEST
                   value: "${MAXIMUM_IDLE_TIME_FOR_WARNING_AEST}"
+                - name: APPLICATION_SUBMISSION_DEADLINE_WEEKS
+                  value: "${APPLICATION_SUBMISSION_DEADLINE_WEEKS}"
                 - name: APP_ENV
                   value: "${APP_ENV}"
                 - name: ALLOW_BETA_USERS_ONLY
@@ -574,6 +576,8 @@ parameters:
   - name: MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION
     required: true
   - name: MAXIMUM_IDLE_TIME_FOR_WARNING_AEST
+    required: true
+  - name: APPLICATION_SUBMISSION_DEADLINE_WEEKS
     required: true
   - name: APP_ENV
     required: true
