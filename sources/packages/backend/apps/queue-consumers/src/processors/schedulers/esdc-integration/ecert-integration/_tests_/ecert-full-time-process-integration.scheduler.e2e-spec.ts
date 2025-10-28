@@ -2091,7 +2091,7 @@ describe(
      * @returns the saved application with disbursement schedules.
      */
     async function saveApplicationDisbursementForECertGeneration(options?: {
-      modifiedIndependentStatus: ModifiedIndependentStatus;
+      modifiedIndependentStatus?: ModifiedIndependentStatus;
       estrangedFromParents?: FormYesNoOptions;
     }): Promise<Application> {
       const student = await saveFakeStudent(db.dataSource, undefined, {

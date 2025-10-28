@@ -143,7 +143,7 @@ export interface ModifiedIndependentDetails {
    */
   estrangedFromParents?: FormYesNoOptions;
   /**
-   * Status of the modified independent associated to the student.
+   * Modified independent status associated to the student.
    */
   studentProfileModifiedIndependent: ModifiedIndependentStatus;
 }
@@ -256,16 +256,16 @@ export class EligibleECertDisbursement {
    * @param restrictionBypass all active restrictions bypasses applied to the student application.
    */
   constructor(
-    public readonly studentId: number,
-    public readonly hasValidSIN: boolean,
-    public readonly assessmentId: number,
-    public readonly applicationId: number,
-    public readonly applicationNumber: string,
-    public readonly disbursement: DisbursementSchedule,
-    public readonly offering: EligibleECertOffering,
-    public readonly maxLifetimeBCLoanAmount: number,
-    public readonly disabilityDetails: DisabilityDetails,
-    public readonly modifiedIndependentDetails: ModifiedIndependentDetails,
+    readonly studentId: number,
+    readonly hasValidSIN: boolean,
+    readonly assessmentId: number,
+    readonly applicationId: number,
+    readonly applicationNumber: string,
+    readonly disbursement: DisbursementSchedule,
+    readonly offering: EligibleECertOffering,
+    readonly maxLifetimeBCLoanAmount: number,
+    readonly disabilityDetails: DisabilityDetails,
+    readonly modifiedIndependentDetails: ModifiedIndependentDetails,
     private readonly restrictions: StudentActiveRestriction[],
     private readonly restrictionBypass: ApplicationActiveRestrictionBypass[],
   ) {
