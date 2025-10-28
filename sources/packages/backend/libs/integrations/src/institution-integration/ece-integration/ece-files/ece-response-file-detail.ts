@@ -23,9 +23,9 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
   }
 
   /**
-   * Unique index number for disbursement record.
+   * Unique index number for disbursement value record.
    */
-  get disbursementIdentifier(): number {
+  get disbursementValueId(): number {
     return +this.line.substring(5, 15);
   }
 
@@ -65,17 +65,19 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
    * Validate the record detail data.
    * @returns validation error message if validation fails.
    */
-  getInvalidDataMessage(): string | undefined {
+  getInvalidDataMessage(): string[] | undefined {
     const errors: string[] = [];
     if (this.recordType !== RecordTypeCodes.ECEDetail) {
       errors.push(`Invalid record type on detail: ${this.recordType}`);
     }
-    if (isNaN(this.disbursementIdentifier)) {
-      errors.push("Invalid unique index number for the disbursement record");
+    if (isNaN(this.disbursementValueId)) {
+      errors.push(
+        "Invalid unique index number for the disbursement value record",
+      );
     }
     if (!this.applicationNumber?.trim() || isNaN(+this.applicationNumber)) {
       errors.push("Invalid application number");
     }
-    return errors.length ? errors.join(", ") : undefined;
+    return errors.length ? errors : undefined;
   }
 }

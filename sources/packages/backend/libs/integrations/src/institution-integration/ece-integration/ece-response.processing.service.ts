@@ -8,7 +8,10 @@ import {
 } from "@sims/utilities/config";
 import { ProcessSummaryResult } from "@sims/integrations/models";
 import { ECE_RESPONSE_COE_DECLINED_REASON } from "@sims/integrations/constants";
-import { InstitutionLocationService } from "@sims/integrations/services";
+import {
+  DisbursementScheduleService,
+  InstitutionLocationService,
+} from "@sims/integrations/services";
 import {
   COE_DENIED_REASON_OTHER_ID,
   CustomNamedError,
@@ -22,6 +25,7 @@ import {
   DisbursementDetails,
   DisbursementProcessingDetails,
   ECEDisbursements,
+  ECEResponseFileDetailExtended,
   YNOptions,
 } from "./models/ece-integration.model";
 import {
@@ -57,7 +61,8 @@ export class ECEResponseProcessingService {
     private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
     private readonly systemUsersService: SystemUsersService,
     private readonly notificationActionsService: NotificationActionsService,
-    private readonly logger: LoggerService
+    private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly logger: LoggerService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -126,15 +131,18 @@ export class ECEResponseProcessingService {
         await this.integrationService.downloadResponseFile(remoteFilePath);
       // Set the total records count.
       disbursementProcessingDetails.totalRecords = eceFileDetailRecords.length;
+      const eceFileDetailRecordsExtended =
+        await this.createECEResponseFileDetailExtended(eceFileDetailRecords);
       // Sanitize all the ece response detail records.
       this.sanitizeDisbursements(
-        eceFileDetailRecords,
+        eceFileDetailRecordsExtended,
         processSummary,
         disbursementProcessingDetails,
       );
       // Transform ece response detail records to disbursements which could be individually processed.
-      const disbursementsToProcess =
-        this.transformDetailRecordsToDisbursements(eceFileDetailRecords);
+      const disbursementsToProcess = this.transformDetailRecordsToDisbursements(
+        eceFileDetailRecordsExtended,
+      );
       const auditUser = this.systemUsersService.systemUser;
       await this.validateAndUpdateEnrolmentStatus(
         disbursementsToProcess,
@@ -204,7 +212,7 @@ export class ECEResponseProcessingService {
    * @param processSummaryResult process summary result.
    */
   private sanitizeDisbursements(
-    eceFileDetailRecords: ECEResponseFileDetail[],
+    eceFileDetailRecords: ECEResponseFileDetailExtended[],
     processSummaryResult: ProcessSummaryResult,
     disbursementProcessingDetails: DisbursementProcessingDetails,
   ): void {
@@ -215,15 +223,41 @@ export class ECEResponseProcessingService {
         hasErrors = true;
         ++disbursementProcessingDetails.fileParsingErrors;
         processSummaryResult.errors.push(
-          `${errorMessage} at line ${eceDetailRecord.lineNumber}.`,
+          `${errorMessage} at line ${eceDetailRecord.record.lineNumber}.`,
         );
       }
     }
     if (hasErrors) {
       throw new Error(
-        "The file consists invalid data and cannot be processed.",
+        "The file consists of invalid data and cannot be processed.",
       );
     }
+  }
+
+  /**
+   * Created extended detail records with additional information, that is not
+   * present in the file, required for processing.
+   * @param eceFileDetailRecords detail records from ECE response file.
+   * @returns extended detail records with additional information.
+   */
+  private async createECEResponseFileDetailExtended(
+    eceFileDetailRecords: ECEResponseFileDetail[],
+  ): Promise<ECEResponseFileDetailExtended[]> {
+    const disbursementValueIds = eceFileDetailRecords.map(
+      (record) => record.disbursementValueId,
+    );
+    const disbursementScheduleValuesMap =
+      await this.disbursementScheduleService.getDisbursementScheduleValuesMap(
+        disbursementValueIds,
+      );
+    // Associate disbursement schedule ID to each detail record.
+    return eceFileDetailRecords.map(
+      (record) =>
+        new ECEResponseFileDetailExtended(
+          record,
+          disbursementScheduleValuesMap[record.disbursementValueId],
+        ),
+    );
   }
 
   /**
@@ -232,20 +266,19 @@ export class ECEResponseProcessingService {
    * @returns disbursements to be processed.
    */
   private transformDetailRecordsToDisbursements(
-    eceFileDetailRecords: ECEResponseFileDetail[],
+    eceFileDetailRecords: ECEResponseFileDetailExtended[],
   ): ECEDisbursements {
     const disbursements = {} as ECEDisbursements;
-    for (const eceDetailRecord of eceFileDetailRecords) {
-      const disbursement =
-        disbursements[eceDetailRecord.disbursementIdentifier];
-      if (!disbursement) {
-        disbursements[eceDetailRecord.disbursementIdentifier] = {
-          institutionCode: eceDetailRecord.institutionCode,
-          applicationNumber: eceDetailRecord.applicationNumber,
-          awardDetails: [],
-        };
-      }
-      disbursements[eceDetailRecord.disbursementIdentifier].awardDetails.push({
+    for (const extendedRecord of eceFileDetailRecords) {
+      const eceDetailRecord = extendedRecord.record;
+      const disbursement = disbursements[
+        extendedRecord.disbursementValueId
+      ] ?? {
+        institutionCode: eceDetailRecord.institutionCode,
+        applicationNumber: eceDetailRecord.applicationNumber,
+        awardDetails: [],
+      };
+      disbursement.awardDetails.push({
         payToSchoolAmount: eceDetailRecord.payToSchoolAmount,
         enrolmentConfirmationFlag: eceDetailRecord.enrolmentConfirmationFlag,
         enrolmentConfirmationDate: eceDetailRecord.enrolmentConfirmationDate,

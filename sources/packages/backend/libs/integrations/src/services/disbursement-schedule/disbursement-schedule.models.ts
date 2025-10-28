@@ -400,3 +400,10 @@ interface OtherECertFailedValidationResult {
 export type ECertFailedValidationResult =
   | StopDisbursementRestrictionValidationResult
   | OtherECertFailedValidationResult;
+
+/**
+ * Map of disbursement value IDs to disbursement schedule IDs.
+ */
+export interface DisbursementValueMap {
+  [disbursementValueId: number]: number;
+}

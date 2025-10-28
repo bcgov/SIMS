@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { DisbursementValueMap } from "@sims/integrations/services";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
 import {
   RecordDataModelService,
@@ -69,6 +70,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       })
       .getMany();
   }
+
   /**
    * Fetch the COEs which are eligible to confirm enrolment by the institutions.
    * @returns eligible COE.
@@ -90,5 +92,35 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .andWhere("location.hasIntegration = true")
       .orderBy("disbursementSchedule.id", "ASC")
       .getMany();
+  }
+
+  /**
+   * Generates a map associating disbursement value IDs to their
+   * respective disbursement schedule IDs.
+   * @param disbursementValueIds array of disbursement value IDs.
+   * @returns a map of disbursement value IDs to their respective
+   * disbursement schedule IDs.
+   */
+  async getDisbursementScheduleValuesMap(
+    disbursementValueIds: number[],
+  ): Promise<DisbursementValueMap> {
+    const disbursementValues = await this.repo
+      .createQueryBuilder("disbursementSchedule")
+      .distinct()
+      .select("disbursementSchedule.id", "disbursementScheduleId")
+      .addSelect("disbursementValue.id", "disbursementValueId")
+      .innerJoin("disbursementSchedule.disbursementValues", "disbursementValue")
+      .where("disbursementValue.id IN (:...disbursementValueIds)", {
+        disbursementValueIds,
+      })
+      .getRawMany<{
+        disbursementScheduleId: number;
+        disbursementValueId: number;
+      }>();
+    const result: DisbursementValueMap = {};
+    for (const value of disbursementValues) {
+      result[value.disbursementValueId] = value.disbursementScheduleId;
+    }
+    return result;
   }
 }
