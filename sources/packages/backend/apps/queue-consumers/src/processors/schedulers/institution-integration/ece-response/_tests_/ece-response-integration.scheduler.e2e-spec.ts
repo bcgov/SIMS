@@ -44,11 +44,22 @@ import {
   CONR_008_MULT_FILE,
   CONR_008_VALD_FILE,
   CONR_008_DBLO_FILE,
+  AWARD_VALUE_ID_PLACEHOLDER,
+  APP_NUMBER_PLACEHOLDER,
+  ENRL_DATE_PLACEHOLDER,
+  replaceFilePlaceHolder,
+  AWARD_VALUE_ID_PLACEHOLDER_1,
+  AWARD_VALUE_ID_PLACEHOLDER_2,
+  AWARD_VALUE_ID_PLACEHOLDER_3,
+  APP_NUMBER_PLACEHOLDER_1,
+  APP_NUMBER_PLACEHOLDER_2,
+  APP_NUMBER_PLACEHOLDER_3,
+  ENRL_DATE_PLACEHOLDER_1,
+  ENRL_DATE_PLACEHOLDER_2,
+  ENRL_DATE_PLACEHOLDER_3,
 } from "./ece-response-helper";
 import { FILE_PARSING_ERROR } from "@sims/services/constants";
 import { IsNull } from "typeorm";
-
-jest.setTimeout(600000);
 
 describe(
   describeProcessorRootTest(QueueNames.ECEProcessResponseIntegration),
@@ -147,13 +158,17 @@ describe(
         sftpClientMock,
         [CONR_008_CONF_FILE],
         (fileContent: string) => {
-          return fileContent
-            .replace(
-              "DISBNUMBER",
-              referenceDisbursementValue.id.toString().padStart(10, "0"),
-            )
-            .replace("APPLNUMBER", application.applicationNumber)
-            .replace("ENRLDATE", formatDate(new Date(), "YYYYMMDD"));
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: referenceDisbursementValue.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: application.applicationNumber,
+            },
+            { placeholder: ENRL_DATE_PLACEHOLDER },
+          ]);
         },
       );
 
@@ -241,14 +256,12 @@ describe(
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
       const [awardValueID1, awardValueID2, awardValueID3] =
-        disbursement.disbursementValues.map((awardValue) =>
-          awardValue.id.toString().padStart(10, "0"),
-        );
+        disbursement.disbursementValues.map((awardValue) => awardValue.id);
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
       const applicationNumber = application.applicationNumber;
-      const currentDate = formatDate(new Date(), "YYYYMMDD");
+      const currentDate = new Date();
 
       // Modify the data in mock file to have the correct values for
       // disbursement and application number.
@@ -256,21 +269,20 @@ describe(
         sftpClientMock,
         [CONR_008_MULT_FILE],
         (fileContent: string) => {
-          return (
-            fileContent
-              // Set the disbursement number to expected disbursement in multiple detail records.
-              .replace("DISBNUMB01", awardValueID1)
-              .replace("DISBNUMB02", awardValueID2)
-              .replace("DISBNUMB03", awardValueID3)
-              // Set the application number to expected application in multiple detail records.
-              .replace("APPLNUMB01", applicationNumber)
-              .replace("APPLNUMB02", applicationNumber)
-              .replace("APPLNUMB03", applicationNumber)
-              // Set the enrolment confirmation to expected date in multiple detail records.
-              .replace("ENRLDT01", currentDate)
-              .replace("ENRLDT02", currentDate)
-              .replace("ENRLDT03", currentDate)
-          );
+          return replaceFilePlaceHolder(fileContent, [
+            // Set the disbursement number to expected disbursement in multiple detail records.
+            { placeholder: AWARD_VALUE_ID_PLACEHOLDER_1, value: awardValueID1 },
+            { placeholder: AWARD_VALUE_ID_PLACEHOLDER_2, value: awardValueID2 },
+            { placeholder: AWARD_VALUE_ID_PLACEHOLDER_3, value: awardValueID3 },
+            // Set the application number to expected application in multiple detail records.
+            { placeholder: APP_NUMBER_PLACEHOLDER_1, value: applicationNumber },
+            { placeholder: APP_NUMBER_PLACEHOLDER_2, value: applicationNumber },
+            { placeholder: APP_NUMBER_PLACEHOLDER_3, value: applicationNumber },
+            // Set the enrolment confirmation to expected date in multiple detail records.
+            { placeholder: ENRL_DATE_PLACEHOLDER_1, value: currentDate },
+            { placeholder: ENRL_DATE_PLACEHOLDER_2, value: currentDate },
+            { placeholder: ENRL_DATE_PLACEHOLDER_3, value: currentDate },
+          ]);
         },
       );
 
@@ -381,12 +393,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
-      const disbursementValueId = referenceDisbursementValue.id
-        .toString()
-        .padStart(10, "0");
-      const applicationNumber = application.applicationNumber;
-      const currentDate = formatDate(new Date(), "YYYYMMDD");
-
       // Modify the data in mock file to have the correct values for
       // disbursement and application number.
       mockDownloadFiles(
@@ -397,10 +403,17 @@ describe(
           // Force the error code to be wrong in the first record.
           const [record] = file.records;
           file.records = [
-            record
-              .replace("DISBNUMB01", disbursementValueId)
-              .replace("APPLNUMB01", applicationNumber)
-              .replace("ENRLDT01", currentDate),
+            replaceFilePlaceHolder(record, [
+              {
+                placeholder: AWARD_VALUE_ID_PLACEHOLDER_1,
+                value: referenceDisbursementValue.id,
+              },
+              {
+                placeholder: APP_NUMBER_PLACEHOLDER_1,
+                value: application.applicationNumber,
+              },
+              { placeholder: ENRL_DATE_PLACEHOLDER_1 },
+            ]),
           ];
           return createFileFromStructuredRecords(file);
         },
@@ -472,12 +485,16 @@ describe(
         sftpClientMock,
         [CONR_008_DECL_FILE],
         (fileContent: string) => {
-          return fileContent
-            .replace(
-              "DISBNUMBER",
-              referenceDisbursementValue.id.toString().padStart(10, "0"),
-            )
-            .replace("APPLNUMBER", application.applicationNumber);
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: referenceDisbursementValue.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: application.applicationNumber,
+            },
+          ]);
         },
       );
 
@@ -553,13 +570,17 @@ describe(
         sftpClientMock,
         [CONR_008_SKIP_FILE],
         (fileContent: string) => {
-          return fileContent
-            .replace(
-              "DISBNUMBER",
-              referenceDisbursementValue.id.toString().padStart(10, "0"),
-            )
-            .replace("APPLNUMBER", application.applicationNumber)
-            .replace("ENRLDATE", formatDate(new Date(), "YYYYMMDD"));
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: referenceDisbursementValue.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: application.applicationNumber,
+            },
+            { placeholder: ENRL_DATE_PLACEHOLDER },
+          ]);
         },
       );
 
@@ -618,9 +639,16 @@ describe(
         sftpClientMock,
         [CONR_008_SKIP_FILE],
         (fileContent: string) => {
-          return fileContent
-            .replace("DISBNUMBER", fakeDisbursementValueId)
-            .replace("APPLNUMBER", fakeApplicationNumber);
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: fakeDisbursementValueId,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: fakeApplicationNumber,
+            },
+          ]);
         },
       );
 
@@ -692,12 +720,16 @@ describe(
         sftpClientMock,
         [CONR_008_SKIP_FILE],
         (fileContent: string) => {
-          return fileContent
-            .replace(
-              "DISBNUMBER",
-              referenceDisbursementValue.id.toString().padStart(10, "0"),
-            )
-            .replace("APPLNUMBER", fakeApplicationNumber);
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: referenceDisbursementValue.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: fakeApplicationNumber,
+            },
+          ]);
         },
       );
 
@@ -950,12 +982,17 @@ describe(
 
       // Modify the data in mock file to have invalid application number.
       // Note: The disbursement id is already an invalid value in file
-      // due to the placeholder DISBNUMBER.
+      // due to the placeholder AWARD_VALUE_ID_PLACEHOLDER.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_SKIP_FILE],
         (fileContent: string) => {
-          return fileContent.replace("APPLNUMBER", "          ");
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: "INVALID_APP_NUM",
+            },
+          ]);
         },
       );
 
@@ -1025,16 +1062,17 @@ describe(
         sftpClientMock,
         [CONR_008_CONF_FILE],
         (fileContent: string) => {
-          return (
-            fileContent
-              .replace(
-                "DISBNUMBER",
-                referenceDisbursementValue.id.toString().padStart(10, "0"),
-              )
-              .replace("APPLNUMBER", application.applicationNumber)
-              // Replacing Y with K. As Y is present in other places using a pattern.
-              .replace("YENRLDATE", `K${formatDate(new Date(), "YYYYMMDD")}`)
-          );
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: referenceDisbursementValue.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: application.applicationNumber,
+            },
+          ]) // Replacing Y with K. As Y is present in other places using a pattern.
+            .replace("YENRLDATE", `K${formatDate(new Date(), "YYYYMMDD")}`);
         },
       );
 
@@ -1113,24 +1151,32 @@ describe(
         sftpClientMock,
         [CONR_008_DBLO_FILE],
         (fileContent: string) => {
-          return (
-            fileContent
-              .replace(
-                "DISBNUMB01",
-                referenceDisbursement1Value.id.toString().padStart(10, "0"),
-              )
-              .replace("APPLNUMB01", application1.applicationNumber)
-              .replace("ENRLDT01", formatDate(new Date(), "YYYYMMDD"))
-              // Second record with valid disbursement and application number,
-              // but invalid enrolment confirmation date and pay to school amount.
-              .replace(
-                "DISBNUMB02",
-                referenceDisbursement2Value.id.toString().padStart(10, "0"),
-              )
-              .replace("APPLNUMB02", application2.applicationNumber)
-              // Replacing with invalid date a number.
-              .replace("ENRLDT02N000000", "NOTADATENNANNUM")
-          );
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER_1,
+              value: referenceDisbursement1Value.id,
+            },
+
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER_1,
+              value: application1.applicationNumber,
+            },
+
+            { placeholder: ENRL_DATE_PLACEHOLDER_1 },
+
+            // Second record with valid disbursement and application number,
+            // but invalid enrolment confirmation date and pay to school amount.
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER_2,
+              value: referenceDisbursement2Value.id,
+            },
+
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER_2,
+              value: application2.applicationNumber,
+            },
+          ]) // Replacing with invalid date a number.
+            .replace("ENRLDT02N000000", "NOTADATENNANNUM");
         },
       );
 
@@ -1203,19 +1249,20 @@ describe(
         sftpClientMock,
         [CONR_008_CONF_FILE],
         (fileContent: string) => {
-          return fileContent
-            .replace(
-              "DISBNUMBER",
-              referenceDisbursementValue.id.toString().padStart(10, "0"),
-            )
-            .replace("APPLNUMBER", application.applicationNumber)
-            .replace(
-              "ENRLDATE",
-              formatDate(
-                addDays(-(COE_WINDOW + 2), disbursementDate),
-                "YYYYMMDD",
-              ),
-            );
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: referenceDisbursementValue.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: application.applicationNumber,
+            },
+            {
+              placeholder: ENRL_DATE_PLACEHOLDER,
+              value: addDays(-(COE_WINDOW + 2), disbursementDate),
+            },
+          ]);
         },
       );
 
@@ -1277,9 +1324,6 @@ describe(
         application.currentAssessment.disbursementSchedules;
       const [referenceDisbursementValue] = disbursement.disbursementValues;
 
-      const studyPeriodEndDate =
-        application.currentAssessment.offering.studyEndDate;
-
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
@@ -1289,16 +1333,23 @@ describe(
         sftpClientMock,
         [CONR_008_CONF_FILE],
         (fileContent: string) => {
-          return fileContent
-            .replace(
-              "DISBNUMBER",
-              referenceDisbursementValue.id.toString().padStart(10, "0"),
-            )
-            .replace("APPLNUMBER", application.applicationNumber)
-            .replace(
-              "ENRLDATE",
-              formatDate(addDays(2, studyPeriodEndDate), "YYYYMMDD"),
-            );
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: referenceDisbursementValue.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: application.applicationNumber,
+            },
+            {
+              placeholder: ENRL_DATE_PLACEHOLDER,
+              value: addDays(
+                2,
+                application.currentAssessment.offering.studyEndDate,
+              ),
+            },
+          ]);
         },
       );
 

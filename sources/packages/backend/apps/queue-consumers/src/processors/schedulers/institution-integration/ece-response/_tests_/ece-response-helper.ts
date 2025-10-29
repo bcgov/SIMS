@@ -11,6 +11,7 @@ import {
 } from "@sims/test-utils";
 import { faker } from "@faker-js/faker";
 import { IsNull } from "typeorm";
+import { formatDate } from "@sims/utilities/date-utils";
 
 export const CONR_008_CONF_FILE = "CONR-008-CONF-20250502-144027.TXT";
 export const CONR_008_DECL_FILE = "CONR-008-DECL-20250502-144027.TXT";
@@ -19,6 +20,18 @@ export const CONR_008_FAIL_FILE = "CONR-008-FAIL-20250502-144027.TXT";
 export const CONR_008_MULT_FILE = "CONR-008-MULT-20250502-144027.TXT";
 export const CONR_008_VALD_FILE = "CONR-008-VALD-20250502-144027.TXT";
 export const CONR_008_DBLO_FILE = "CONR-008-DBLO-20250502-144027.TXT";
+export const AWARD_VALUE_ID_PLACEHOLDER = "AWDVALUEID";
+export const AWARD_VALUE_ID_PLACEHOLDER_1 = "AWDVALID01";
+export const AWARD_VALUE_ID_PLACEHOLDER_2 = "AWDVALID02";
+export const AWARD_VALUE_ID_PLACEHOLDER_3 = "AWDVALID03";
+export const APP_NUMBER_PLACEHOLDER = "APPLNUMBER";
+export const APP_NUMBER_PLACEHOLDER_1 = "APPLNUMB01";
+export const APP_NUMBER_PLACEHOLDER_2 = "APPLNUMB02";
+export const APP_NUMBER_PLACEHOLDER_3 = "APPLNUMB03";
+export const ENRL_DATE_PLACEHOLDER = "ENRLDATE";
+export const ENRL_DATE_PLACEHOLDER_1 = "ENRLDT01";
+export const ENRL_DATE_PLACEHOLDER_2 = "ENRLDT02";
+export const ENRL_DATE_PLACEHOLDER_3 = "ENRLDT03";
 
 /**
  * Create institution locations to be used for testing.
@@ -159,4 +172,48 @@ export async function getUnsentECEResponseNotifications(
       dateSent: IsNull(),
     },
   });
+}
+
+/**
+ * replace known placeholders in the file content with the given values.
+ * @param fileContent content to be replaced.
+ * @param replaceInfo list of placeholders and their values.
+ * @returns updated file content.
+ */
+export function replaceFilePlaceHolder(
+  fileContent: string,
+  replaceInfo: {
+    placeholder: string;
+    value?: number | string | Date;
+  }[],
+): string {
+  let replacedFileContent = fileContent;
+  for (const { placeholder, value } of replaceInfo) {
+    let valueFormatted: string;
+    switch (placeholder) {
+      case AWARD_VALUE_ID_PLACEHOLDER:
+      case AWARD_VALUE_ID_PLACEHOLDER_1:
+      case AWARD_VALUE_ID_PLACEHOLDER_2:
+      case AWARD_VALUE_ID_PLACEHOLDER_3:
+      case APP_NUMBER_PLACEHOLDER:
+      case APP_NUMBER_PLACEHOLDER_1:
+      case APP_NUMBER_PLACEHOLDER_2:
+      case APP_NUMBER_PLACEHOLDER_3:
+        valueFormatted = (value ?? "").toString().padStart(10, "0");
+        break;
+      case ENRL_DATE_PLACEHOLDER:
+      case ENRL_DATE_PLACEHOLDER_1:
+      case ENRL_DATE_PLACEHOLDER_2:
+      case ENRL_DATE_PLACEHOLDER_3:
+        valueFormatted = formatDate((value ?? new Date()) as Date, "YYYYMMDD");
+        break;
+      default:
+        throw new Error(`Unknown placeholder: ${placeholder}`);
+    }
+    replacedFileContent = replacedFileContent.replace(
+      placeholder,
+      valueFormatted,
+    );
+  }
+  return replacedFileContent;
 }
