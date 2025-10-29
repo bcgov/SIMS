@@ -424,7 +424,7 @@
               "value": ""
             }
           ],
-          "content": "Total income used for assessment purposes: <span class=\"label-bold\">{{ utils.custom.currencyFormatter(data.assessment?.totalFamilyIncome) }}</span>",
+          "content": "Total income used for assessment purposes: <span class=\"label-bold\">{{ utils.custom.currencyFormatter(data.assessment?.totalFamilyIncome, \"XXXXX\") }}</span>",
           "refreshOnChange": true,
           "key": "html7",
           "type": "htmlelement",
