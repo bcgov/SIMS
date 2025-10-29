@@ -175,7 +175,7 @@ export async function getUnsentECEResponseNotifications(
 }
 
 /**
- * replace known placeholders in the file content with the given values.
+ * Replace known placeholders in the file content with the given values.
  * @param fileContent content to be replaced.
  * @param replaceInfo list of placeholders and their values.
  * @returns updated file content.
