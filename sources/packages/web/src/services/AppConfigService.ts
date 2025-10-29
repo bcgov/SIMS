@@ -68,6 +68,8 @@ export class AppConfigService {
       maximumIdleTimeForWarningInstitution:
         config.maximumIdleTimeForWarningInstitution,
       maximumIdleTimeForWarningAEST: config.maximumIdleTimeForWarningAEST,
+      applicationSubmissionDeadlineWeeks:
+        config.applicationSubmissionDeadlineWeeks,
       appEnv: config.appEnv,
       queueDashboardURL: config.queueDashboardURL,
     };
