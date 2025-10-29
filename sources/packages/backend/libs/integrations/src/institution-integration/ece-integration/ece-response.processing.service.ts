@@ -25,7 +25,6 @@ import {
   DisbursementDetails,
   DisbursementProcessingDetails,
   ECEDisbursements,
-  ECEResponseFileDetailExtended,
   YNOptions,
 } from "./models/ece-integration.model";
 import {
@@ -131,18 +130,19 @@ export class ECEResponseProcessingService {
         await this.integrationService.downloadResponseFile(remoteFilePath);
       // Set the total records count.
       disbursementProcessingDetails.totalRecords = eceFileDetailRecords.length;
-      const eceFileDetailRecordsExtended =
-        await this.createECEResponseFileDetailExtended(eceFileDetailRecords);
       // Sanitize all the ece response detail records.
       this.sanitizeDisbursements(
-        eceFileDetailRecordsExtended,
+        eceFileDetailRecords,
         processSummary,
         disbursementProcessingDetails,
       );
-      // Transform ece response detail records to disbursements which could be individually processed.
-      const disbursementsToProcess = this.transformDetailRecordsToDisbursements(
-        eceFileDetailRecordsExtended,
-      );
+      // Transform ECE response detail records to disbursements which could be individually processed.
+      const disbursementsToProcess =
+        await this.transformDetailRecordsToDisbursements(
+          eceFileDetailRecords,
+          processSummary,
+          disbursementProcessingDetails,
+        );
       const auditUser = this.systemUsersService.systemUser;
       await this.validateAndUpdateEnrolmentStatus(
         disbursementsToProcess,
@@ -189,6 +189,9 @@ export class ECEResponseProcessingService {
       `Total detail records found: ${disbursementProcessingDetails.totalRecords}`,
     );
     processSummary.summary.push(
+      `Total detail records skipped: ${disbursementProcessingDetails.totalRecordsSkipped}`,
+    );
+    processSummary.summary.push(
       `Total disbursements found: ${disbursementProcessingDetails.totalDisbursements}`,
     );
     processSummary.summary.push(
@@ -212,7 +215,7 @@ export class ECEResponseProcessingService {
    * @param processSummaryResult process summary result.
    */
   private sanitizeDisbursements(
-    eceFileDetailRecords: ECEResponseFileDetailExtended[],
+    eceFileDetailRecords: ECEResponseFileDetail[],
     processSummaryResult: ProcessSummaryResult,
     disbursementProcessingDetails: DisbursementProcessingDetails,
   ): void {
@@ -223,7 +226,7 @@ export class ECEResponseProcessingService {
         hasErrors = true;
         ++disbursementProcessingDetails.fileParsingErrors;
         processSummaryResult.errors.push(
-          `${errorMessage} at line ${eceDetailRecord.record.lineNumber}.`,
+          `${errorMessage} at line ${eceDetailRecord.lineNumber}.`,
         );
       }
     }
@@ -235,14 +238,15 @@ export class ECEResponseProcessingService {
   }
 
   /**
-   * Created extended detail records with additional information, that is not
-   * present in the file, required for processing.
-   * @param eceFileDetailRecords detail records from ECE response file.
-   * @returns extended detail records with additional information.
+   * Transform the detail records to individual disbursements.
+   * @param eceFileDetailRecords detail records of ece file.
+   * @returns disbursements to be processed.
    */
-  private async createECEResponseFileDetailExtended(
+  private async transformDetailRecordsToDisbursements(
     eceFileDetailRecords: ECEResponseFileDetail[],
-  ): Promise<ECEResponseFileDetailExtended[]> {
+    processSummary: ProcessSummaryResult,
+    disbursementProcessingDetails: DisbursementProcessingDetails,
+  ): Promise<ECEDisbursements> {
     const disbursementValueIds = eceFileDetailRecords.map(
       (record) => record.disbursementValueId,
     );
@@ -250,38 +254,29 @@ export class ECEResponseProcessingService {
       await this.disbursementScheduleService.getDisbursementScheduleValuesMap(
         disbursementValueIds,
       );
-    // Associate disbursement schedule ID to each detail record.
-    return eceFileDetailRecords.map(
-      (record) =>
-        new ECEResponseFileDetailExtended(
-          record,
-          disbursementScheduleValuesMap[record.disbursementValueId],
-        ),
-    );
-  }
-
-  /**
-   * Transform the detail records to individual disbursements.
-   * @param eceFileDetailRecords detail records of ece file.
-   * @returns disbursements to be processed.
-   */
-  private transformDetailRecordsToDisbursements(
-    eceFileDetailRecords: ECEResponseFileDetailExtended[],
-  ): ECEDisbursements {
     const disbursements = {} as ECEDisbursements;
-    for (const extendedRecord of eceFileDetailRecords) {
-      const eceDetailRecord = extendedRecord.record;
-      const disbursement = disbursements[
-        extendedRecord.disbursementValueId
-      ] ?? {
-        institutionCode: eceDetailRecord.institutionCode,
-        applicationNumber: eceDetailRecord.applicationNumber,
-        awardDetails: [],
-      };
-      disbursement.awardDetails.push({
-        payToSchoolAmount: eceDetailRecord.payToSchoolAmount,
-        enrolmentConfirmationFlag: eceDetailRecord.enrolmentConfirmationFlag,
-        enrolmentConfirmationDate: eceDetailRecord.enrolmentConfirmationDate,
+    for (const record of eceFileDetailRecords) {
+      const scheduleId =
+        disbursementScheduleValuesMap[record.disbursementValueId];
+      if (!scheduleId) {
+        // Disbursement schedule not found for the disbursement value ID.
+        processSummary.warnings.push(
+          `Disbursement schedule not found for disbursement value ID: ${record.disbursementValueId}, record at line ${record.lineNumber} skipped.`,
+        );
+        ++disbursementProcessingDetails.totalRecordsSkipped;
+        continue;
+      }
+      if (!disbursements[scheduleId]) {
+        disbursements[scheduleId] = {
+          institutionCode: record.institutionCode,
+          applicationNumber: record.applicationNumber,
+          awardDetails: [],
+        };
+      }
+      disbursements[scheduleId].awardDetails.push({
+        payToSchoolAmount: record.payToSchoolAmount,
+        enrolmentConfirmationFlag: record.enrolmentConfirmationFlag,
+        enrolmentConfirmationDate: record.enrolmentConfirmationDate,
       });
     }
     return disbursements;

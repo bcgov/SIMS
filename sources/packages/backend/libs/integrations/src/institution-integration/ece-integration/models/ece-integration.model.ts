@@ -1,4 +1,3 @@
-import { ECEResponseFileDetail } from "@sims/integrations/institution-integration/ece-integration/ece-files/ece-response-file-detail";
 import { DisabilityStatus, DisbursementValue } from "@sims/sims-db";
 
 export const ECE_SENT_TITLE = "CONFIRMATION REQUEST";
@@ -60,6 +59,7 @@ export interface ECEDisbursements {
 export class DisbursementProcessingDetails {
   fileParsingErrors = 0;
   totalRecords = 0;
+  totalRecordsSkipped = 0;
   totalDisbursements = 0;
   disbursementsSuccessfullyProcessed = 0;
   disbursementsSkipped = 0;
@@ -73,25 +73,4 @@ export class DisbursementProcessingDetails {
 export enum YNOptions {
   Y = "Y",
   N = "N",
-}
-
-export class ECEResponseFileDetailExtended {
-  constructor(
-    readonly record: ECEResponseFileDetail,
-    readonly disbursementValueId?: number,
-  ) {}
-
-  /**
-   * Validate the record detail data.
-   * @returns validation error message if validation fails.
-   */
-  getInvalidDataMessage(): string | undefined {
-    const errors = this.record.getInvalidDataMessage();
-    if (!this.disbursementValueId) {
-      errors.push(
-        "The unique index number for the disbursement value is not associated with a disbursement on SIMS.",
-      );
-    }
-    return errors.length ? errors.join(", ") : undefined;
-  }
 }

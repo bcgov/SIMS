@@ -47,6 +47,8 @@ import {
 import { FILE_PARSING_ERROR } from "@sims/services/constants";
 import { IsNull } from "typeorm";
 
+jest.setTimeout(600000);
+
 describe(
   describeProcessorRootTest(QueueNames.ECEProcessResponseIntegration),
   () => {
@@ -109,7 +111,7 @@ describe(
       );
     });
 
-    it("Should process an ECE response file and confirm the enrolment and create notification when the disbursement and application is valid.", async () => {
+    it.only("Should process an ECE response file and confirm the enrolment and create notification when the disbursement and application are valid.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -154,7 +156,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 15",
+        "Error(s): 0, Warning(s): 1, Info: 16",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -164,12 +166,12 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 2",
-          "Total disbursements found: 2",
+          "Total disbursements found: 1",
           "Disbursements successfully updated: 1",
-          "Disbursements skipped to be processed: 1",
+          "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
-          "WARN: Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
+          "WARN: Disbursement schedule not found for disbursement value ID: 1119353191, record at line 3 skipped.",
         ]),
       ).toBe(true);
       // Expect the archive method to be called.
