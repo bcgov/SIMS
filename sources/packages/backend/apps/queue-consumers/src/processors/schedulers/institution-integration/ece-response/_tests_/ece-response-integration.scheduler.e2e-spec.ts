@@ -43,6 +43,7 @@ import {
   CONR_008_FAIL_FILE,
   CONR_008_MULT_FILE,
   CONR_008_VALD_FILE,
+  CONR_008_DBLO_FILE,
 } from "./ece-response-helper";
 import { FILE_PARSING_ERROR } from "@sims/services/constants";
 import { IsNull } from "typeorm";
@@ -64,6 +65,7 @@ describe(
     // Institution location to test disbursement with multiple detail records.
     let locationMULT: InstitutionLocation;
     let locationVALD: InstitutionLocation;
+    let locationDBLO: InstitutionLocation;
 
     beforeAll(async () => {
       eceResponseMockDownloadFolder = path.join(
@@ -86,6 +88,7 @@ describe(
         institutionLocationFAIL,
         institutionLocationMULT,
         institutionLocationVALD,
+        institutionLocationDBLO,
       } = await createInstitutionLocations(db);
       locationCONF = institutionLocationCONF;
       locationDECL = institutionLocationDECL;
@@ -93,6 +96,7 @@ describe(
       locationFAIL = institutionLocationFAIL;
       locationMULT = institutionLocationMULT;
       locationVALD = institutionLocationVALD;
+      locationDBLO = institutionLocationDBLO;
     });
 
     beforeEach(async () => {
@@ -377,7 +381,7 @@ describe(
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
-      const disbursementId = referenceDisbursementValue.id
+      const disbursementValueId = referenceDisbursementValue.id
         .toString()
         .padStart(10, "0");
       const applicationNumber = application.applicationNumber;
@@ -394,7 +398,7 @@ describe(
           const [record] = file.records;
           file.records = [
             record
-              .replace("DISBNUMB01", disbursementId)
+              .replace("DISBNUMB01", disbursementValueId)
               .replace("APPLNUMB01", applicationNumber)
               .replace("ENRLDT01", currentDate),
           ];
@@ -931,7 +935,7 @@ describe(
       );
     });
 
-    it.skip("Should stop processing the ECE response file and create notification when one of the detail records have invalid data.", async () => {
+    it("Should stop processing the ECE response file and create notification when one of the detail records have invalid data.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -972,7 +976,7 @@ describe(
           "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
-          "ERROR: Invalid unique index number for the disbursement record, Invalid application number at line 2.",
+          "ERROR: Invalid unique index number for the disbursement value record, Invalid application number at line 2.",
           `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists of invalid data and cannot be processed.`,
           "ERROR: File processing aborted.",
         ]),
@@ -1069,31 +1073,36 @@ describe(
       );
     });
 
-    it.skip("Should skip the processing and log error and create notification when detail record with invalid enrolment confirmation date and pay to school amount is present and process other disbursements.", async () => {
+    it("Should skip the processing and log error and create notification when detail record with invalid enrolment confirmation date and pay to school amount is present and process other disbursements.", async () => {
       // Arrange
       // Including a valid disbursement in this test case to ensure that
       // when there is a enrolment data validation error, only that particular disbursement is failed to process
       // and other disbursements are processed.
       // Enable integration for institution location
       // used for test.
-      await enableIntegration(locationCONF, db);
+      await enableIntegration(locationDBLO, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        CONR_008_CONF_FILE,
+        CONR_008_DBLO_FILE,
       );
 
-      // Create disbursement to confirm enrolment.
-      const application = await saveFakeApplicationDisbursements(
-        db.dataSource,
-        undefined,
-        {
+      // Create disbursements to confirm enrolment.
+      const [application1, application2] = await Promise.all([
+        saveFakeApplicationDisbursements(db.dataSource, undefined, {
           applicationStatus: ApplicationStatus.Enrolment,
-        },
-      );
-
-      const [disbursement] =
-        application.currentAssessment.disbursementSchedules;
-      const [referenceDisbursementValue] = disbursement.disbursementValues;
+        }),
+        saveFakeApplicationDisbursements(db.dataSource, undefined, {
+          applicationStatus: ApplicationStatus.Enrolment,
+        }),
+      ]);
+      // First disbursement - valid data.
+      const [disbursement1] =
+        application1.currentAssessment.disbursementSchedules;
+      const [referenceDisbursement1Value] = disbursement1.disbursementValues;
+      // Second disbursement - file will contain invalid enrolment confirmation date and pay to school amount.
+      const [disbursement2] =
+        application2.currentAssessment.disbursementSchedules;
+      const [referenceDisbursement2Value] = disbursement2.disbursementValues;
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -1102,18 +1111,25 @@ describe(
       // disbursement and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [CONR_008_CONF_FILE],
+        [CONR_008_DBLO_FILE],
         (fileContent: string) => {
           return (
             fileContent
               .replace(
-                "DISBNUMBER",
-                referenceDisbursementValue.id.toString().padStart(10, "0"),
+                "DISBNUMB01",
+                referenceDisbursement1Value.id.toString().padStart(10, "0"),
               )
-              .replace("APPLNUMBER", application.applicationNumber)
-              .replace("ENRLDATE", formatDate(new Date(), "YYYYMMDD"))
-              // Replacing date 20230418 and amount 000000 with invalid data.
-              .replace("Y20230418N000000", "YNOTADATENNANNUM")
+              .replace("APPLNUMB01", application1.applicationNumber)
+              .replace("ENRLDT01", formatDate(new Date(), "YYYYMMDD"))
+              // Second record with valid disbursement and application number,
+              // but invalid enrolment confirmation date and pay to school amount.
+              .replace(
+                "DISBNUMB02",
+                referenceDisbursement2Value.id.toString().padStart(10, "0"),
+              )
+              .replace("APPLNUMB02", application2.applicationNumber)
+              // Replacing with invalid date a number.
+              .replace("ENRLDT02N000000", "NOTADATENNANNUM")
           );
         },
       );
@@ -1125,22 +1141,23 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 15",
+        "Error(s): 0, Warning(s): 1, Info: 16",
       ]);
       expect(
         mockedJob.containLogMessages([
           `Starting download of file ${confirmEnrolmentResponseFile}.`,
-          `Disbursement ${disbursement.id}, enrolment confirmed.`,
+          `Disbursement ${disbursement1.id}, enrolment confirmed.`,
           `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 2",
+          "Total detail records skipped: 0",
           "Total disbursements found: 2",
           "Disbursements successfully updated: 1",
           "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 1",
-          "WARN: Disbursement 1119353191, record failed to process due to reason: Invalid enrolment confirmation date, Invalid pay to school amount.",
+          `WARN: Disbursement ${disbursement2.id}, record failed to process due to reason: Invalid enrolment confirmation date, Invalid pay to school amount.`,
         ]),
       ).toBe(true);
       // Expect the archive method to be called.
@@ -1152,7 +1169,7 @@ describe(
       );
     });
 
-    it.skip("Should skip the processing and log error and create notification when enrolment confirmation date is before the approval period.", async () => {
+    it("Should skip the processing and log error and create notification when enrolment confirmation date is before the approval period.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -1218,12 +1235,13 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 2",
-          "Total disbursements found: 2",
+          "Total detail records skipped: 1",
+          "Total disbursements found: 1",
           "Disbursements successfully updated: 0",
-          "Disbursements skipped to be processed: 1",
+          "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 1",
-          "WARN: Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
+          "WARN: Disbursement schedule not found for disbursement value ID: 1119353191, record at line 3 skipped.",
           `WARN: Disbursement ${disbursement.id}, record failed to process due to reason: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
         ]),
       ).toBe(true);
@@ -1236,7 +1254,7 @@ describe(
       );
     });
 
-    it.skip("Should skip the processing and log error and create notification when enrolment confirmation date is after the approval period.", async () => {
+    it("Should skip the processing and log error and create notification when enrolment confirmation date is after the approval period.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -1301,12 +1319,13 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 2",
-          "Total disbursements found: 2",
+          "Total detail records skipped: 1",
+          "Total disbursements found: 1",
           "Disbursements successfully updated: 0",
-          "Disbursements skipped to be processed: 1",
+          "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 1",
-          "WARN: Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
+          "WARN: Disbursement schedule not found for disbursement value ID: 1119353191, record at line 3 skipped.",
           `WARN: Disbursement ${disbursement.id}, record failed to process due to reason: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
         ]),
       ).toBe(true);

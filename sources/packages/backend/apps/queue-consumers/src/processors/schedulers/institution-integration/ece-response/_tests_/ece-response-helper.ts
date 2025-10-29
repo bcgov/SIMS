@@ -18,6 +18,7 @@ export const CONR_008_SKIP_FILE = "CONR-008-SKIP-20250502-144027.TXT";
 export const CONR_008_FAIL_FILE = "CONR-008-FAIL-20250502-144027.TXT";
 export const CONR_008_MULT_FILE = "CONR-008-MULT-20250502-144027.TXT";
 export const CONR_008_VALD_FILE = "CONR-008-VALD-20250502-144027.TXT";
+export const CONR_008_DBLO_FILE = "CONR-008-DBLO-20250502-144027.TXT";
 
 /**
  * Create institution locations to be used for testing.
@@ -33,6 +34,7 @@ export async function createInstitutionLocations(
   institutionLocationFAIL: InstitutionLocation;
   institutionLocationMULT: InstitutionLocation;
   institutionLocationVALD: InstitutionLocation;
+  institutionLocationDBLO: InstitutionLocation;
 }> {
   const institution = await e2eDataSources.institution.save(
     createFakeInstitution(),
@@ -74,6 +76,11 @@ export async function createInstitutionLocations(
       },
     },
   );
+  const institutionLocationDBLO = await findOrCreateInstitutionLocation(
+    institution,
+    "DBLO",
+    e2eDataSources,
+  );
 
   return {
     institutionLocationCONF,
@@ -82,6 +89,7 @@ export async function createInstitutionLocations(
     institutionLocationFAIL,
     institutionLocationMULT,
     institutionLocationVALD,
+    institutionLocationDBLO,
   };
 }
 

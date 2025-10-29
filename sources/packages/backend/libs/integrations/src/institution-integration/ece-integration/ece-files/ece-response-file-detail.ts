@@ -65,7 +65,7 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
    * Validate the record detail data.
    * @returns validation error message if validation fails.
    */
-  getInvalidDataMessage(): string[] | undefined {
+  getInvalidDataMessage(): string | undefined {
     const errors: string[] = [];
     if (this.recordType !== RecordTypeCodes.ECEDetail) {
       errors.push(`Invalid record type on detail: ${this.recordType}`);
@@ -78,6 +78,6 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
     if (!this.applicationNumber?.trim() || isNaN(+this.applicationNumber)) {
       errors.push("Invalid application number");
     }
-    return errors.length ? errors : undefined;
+    return errors.length ? errors.join(", ") : undefined;
   }
 }
