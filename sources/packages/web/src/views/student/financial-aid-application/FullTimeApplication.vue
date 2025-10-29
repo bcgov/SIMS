@@ -450,9 +450,9 @@ export default defineComponent({
       ) {
         isStudyEndDateWithinDeadline.value =
           applicationWizard.submission.data
-            .studyEndDateBeforeSixWeeksFromToday ||
+            .isTodayAfterDeadlineForStudyEndDate ||
           applicationWizard.submission.data
-            .selectedStudyEndDateBeforeSixWeeksFromToday;
+            .isTodayAfterDeadlineForSelectedStudyEndDate;
         await confirmEditApplication();
       } else {
         applicationWizard.submit();
