@@ -184,26 +184,12 @@ export class ECEResponseProcessingService {
     // Populate the process summary count.
     processSummary.summary.push(
       `Total file parsing errors: ${disbursementProcessingDetails.fileParsingErrors}`,
-    );
-    processSummary.summary.push(
       `Total detail records found: ${disbursementProcessingDetails.totalRecords}`,
-    );
-    processSummary.summary.push(
       `Total detail records skipped: ${disbursementProcessingDetails.totalRecordsSkipped}`,
-    );
-    processSummary.summary.push(
       `Total disbursements found: ${disbursementProcessingDetails.totalDisbursements}`,
-    );
-    processSummary.summary.push(
       `Disbursements successfully updated: ${disbursementProcessingDetails.disbursementsSuccessfullyProcessed}`,
-    );
-    processSummary.summary.push(
       `Disbursements skipped to be processed: ${disbursementProcessingDetails.disbursementsSkipped}`,
-    );
-    processSummary.summary.push(
       `Disbursements considered duplicate and skipped: ${disbursementProcessingDetails.duplicateDisbursements}`,
-    );
-    processSummary.summary.push(
       `Disbursements failed to process: ${disbursementProcessingDetails.disbursementsFailedToProcess}`,
     );
     return processSummary;
