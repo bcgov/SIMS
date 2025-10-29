@@ -5,7 +5,7 @@ import {
 } from "@sims/utilities/date-utils";
 
 describe("DateUtils-isLessThanGivenWeeks", () => {
-  [
+  const testInputs = [
     // Happy paths tests which should return false.
     {
       date: "2025-11-25",
@@ -63,10 +63,11 @@ describe("DateUtils-isLessThanGivenWeeks", () => {
       referenceDate: "2025-10-28",
       expectedResult: true,
     },
-  ].forEach(({ weeks, date, referenceDate, expectedResult }) => {
+  ];
+  for (const { date, weeks, referenceDate, expectedResult } of testInputs) {
     it(`Should return ${expectedResult} when the provided date is ${getISODateOnlyString(date)} and the reference date is ${referenceDate ?? getISODateOnlyString(new Date())} and the weeks is ${weeks}.`, () => {
       const result = isLessThanGivenWeeks(date, weeks, { referenceDate });
       expect(result).toBe(expectedResult);
     });
-  });
+  }
 });
