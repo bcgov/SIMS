@@ -37,6 +37,7 @@ import {
   createInstitutionLocations,
   enableIntegration,
   getUnsentECEResponseNotifications,
+  replaceFilePlaceHolder,
   CONR_008_CONF_FILE,
   CONR_008_DECL_FILE,
   CONR_008_SKIP_FILE,
@@ -45,15 +46,14 @@ import {
   CONR_008_VALD_FILE,
   CONR_008_DBLO_FILE,
   AWARD_VALUE_ID_PLACEHOLDER,
-  APP_NUMBER_PLACEHOLDER,
-  ENRL_DATE_PLACEHOLDER,
-  replaceFilePlaceHolder,
   AWARD_VALUE_ID_PLACEHOLDER_1,
   AWARD_VALUE_ID_PLACEHOLDER_2,
   AWARD_VALUE_ID_PLACEHOLDER_3,
+  APP_NUMBER_PLACEHOLDER,
   APP_NUMBER_PLACEHOLDER_1,
   APP_NUMBER_PLACEHOLDER_2,
   APP_NUMBER_PLACEHOLDER_3,
+  ENRL_DATE_PLACEHOLDER,
   ENRL_DATE_PLACEHOLDER_1,
   ENRL_DATE_PLACEHOLDER_2,
   ENRL_DATE_PLACEHOLDER_3,
@@ -128,8 +128,7 @@ describe(
 
     it("Should process an ECE response file and confirm the enrolment and create notification when the disbursement and application are valid.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationCONF, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -153,7 +152,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_CONF_FILE],
@@ -217,8 +216,7 @@ describe(
 
     it("Should process an ECE response file and confirm the enrolment and create notification when a disbursement has multiple detail records.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationMULT, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -264,13 +262,13 @@ describe(
       const currentDate = new Date();
 
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_MULT_FILE],
         (fileContent: string) => {
           return replaceFilePlaceHolder(fileContent, [
-            // Set the disbursement number to expected disbursement in multiple detail records.
+            // Set the disbursement value ID to the expected one in multiple detail records.
             { placeholder: AWARD_VALUE_ID_PLACEHOLDER_1, value: awardValueID1 },
             { placeholder: AWARD_VALUE_ID_PLACEHOLDER_2, value: awardValueID2 },
             { placeholder: AWARD_VALUE_ID_PLACEHOLDER_3, value: awardValueID3 },
@@ -336,8 +334,7 @@ describe(
 
     it("Should validate when tuition remittance is greater than the max tuition remittance considering previous tuition remittance.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationVALD, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -394,7 +391,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_VALD_FILE],
@@ -455,8 +452,7 @@ describe(
 
     it("Should process an ECE response file and decline the enrolment and create notification when the disbursement and application is valid.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationDECL, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -480,7 +476,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_DECL_FILE],
@@ -540,8 +536,7 @@ describe(
 
     it("Should skip the ECE disbursement and create notification when the enrolment is already completed.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationSKIP, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -565,7 +560,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_SKIP_FILE],
@@ -620,8 +615,7 @@ describe(
 
     it("Should skip the ECE disbursement and create notification when disbursement value ID does not belong to the system.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationSKIP, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -634,7 +628,7 @@ describe(
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
-      // Modify the data in mock file to have fake disbursement id.
+      // Modify the data in mock file to have fake disbursement value ID.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_SKIP_FILE],
@@ -688,8 +682,7 @@ describe(
 
     it("Should skip the ECE disbursement and create notification when application does not belong to the system.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationSKIP, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -715,7 +708,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct disbursement
-      // and fake application number.
+      // value ID and fake application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_SKIP_FILE],
@@ -766,8 +759,7 @@ describe(
 
     it("Should stop processing the ECE response file and create notification when the header record is not valid.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationFAIL, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -815,8 +807,7 @@ describe(
 
     it("Should stop processing the ECE response file and create notification when the detail record is not valid.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationFAIL, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -867,8 +858,7 @@ describe(
 
     it("Should stop processing the ECE response file and create notification when the footer record is not valid.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationFAIL, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -918,8 +908,7 @@ describe(
 
     it("Should stop processing the ECE response file and create notification when the count of detail in the footer record is incorrect.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationFAIL, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -969,8 +958,7 @@ describe(
 
     it("Should stop processing the ECE response file and create notification when one of the detail records have invalid data.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationSKIP, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -981,8 +969,8 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have invalid application number.
-      // Note: The disbursement id is already an invalid value in file
-      // due to the placeholder AWARD_VALUE_ID_PLACEHOLDER.
+      // Note: The disbursement value ID is already an invalid value in file
+      // due to the placeholder.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_SKIP_FILE],
@@ -990,7 +978,7 @@ describe(
           return replaceFilePlaceHolder(fileContent, [
             {
               placeholder: APP_NUMBER_PLACEHOLDER,
-              value: "INVALID_APP_NUM",
+              value: "INVALIDAPP",
             },
           ]);
         },
@@ -1032,8 +1020,7 @@ describe(
       // Including a valid disbursement in this test case to ensure that
       // when there is a enrolment data validation error, only that particular disbursement is failed to process
       // and other disbursements are processed.
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationCONF, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -1057,7 +1044,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_CONF_FILE],
@@ -1116,8 +1103,7 @@ describe(
       // Including a valid disbursement in this test case to ensure that
       // when there is a enrolment data validation error, only that particular disbursement is failed to process
       // and other disbursements are processed.
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationDBLO, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -1146,7 +1132,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_DBLO_FILE],
@@ -1156,21 +1142,18 @@ describe(
               placeholder: AWARD_VALUE_ID_PLACEHOLDER_1,
               value: referenceDisbursement1Value.id,
             },
-
             {
               placeholder: APP_NUMBER_PLACEHOLDER_1,
               value: application1.applicationNumber,
             },
 
             { placeholder: ENRL_DATE_PLACEHOLDER_1 },
-
             // Second record with valid disbursement and application number,
             // but invalid enrolment confirmation date and pay to school amount.
             {
               placeholder: AWARD_VALUE_ID_PLACEHOLDER_2,
               value: referenceDisbursement2Value.id,
             },
-
             {
               placeholder: APP_NUMBER_PLACEHOLDER_2,
               value: application2.applicationNumber,
@@ -1217,8 +1200,7 @@ describe(
 
     it("Should skip the processing and log error and create notification when enrolment confirmation date is before the approval period.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationCONF, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -1237,14 +1219,13 @@ describe(
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
       const [referenceDisbursementValue] = disbursement.disbursementValues;
-
       const disbursementDate = disbursement.disbursementDate;
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_CONF_FILE],
@@ -1303,8 +1284,7 @@ describe(
 
     it("Should skip the processing and log error and create notification when enrolment confirmation date is after the approval period.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationCONF, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -1328,7 +1308,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_CONF_FILE],
@@ -1356,7 +1336,6 @@ describe(
       // Act
       const result = await processor.processQueue(mockedJob.job);
 
-      // Assert
       // Assert
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
