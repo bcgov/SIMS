@@ -132,6 +132,7 @@ describe(
 
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
+      const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -143,7 +144,10 @@ describe(
         [CONR_008_CONF_FILE],
         (fileContent: string) => {
           return fileContent
-            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
+            .replace(
+              "DISBNUMBER",
+              referenceDisbursementValue.id.toString().padStart(10, "0"),
+            )
             .replace("APPLNUMBER", application.applicationNumber)
             .replace("ENRLDATE", formatDate(new Date(), "YYYYMMDD"));
         },
@@ -222,11 +226,14 @@ describe(
 
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
+      const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
-      const disbursementId = disbursement.id.toString().padStart(10, "0");
+      const referenceDisbursementValueId = referenceDisbursementValue.id
+        .toString()
+        .padStart(10, "0");
       const applicationNumber = application.applicationNumber;
       const currentDate = formatDate(new Date(), "YYYYMMDD");
 
@@ -239,9 +246,9 @@ describe(
           return (
             fileContent
               // Set the disbursement number to expected disbursement in multiple detail records.
-              .replace("DISBNUMB01", disbursementId)
-              .replace("DISBNUMB02", disbursementId)
-              .replace("DISBNUMB03", disbursementId)
+              .replace("DISBNUMB01", referenceDisbursementValueId)
+              .replace("DISBNUMB02", referenceDisbursementValueId)
+              .replace("DISBNUMB03", referenceDisbursementValueId)
               // Set the application number to expected application in multiple detail records.
               .replace("APPLNUMB01", applicationNumber)
               .replace("APPLNUMB02", applicationNumber)
@@ -518,6 +525,7 @@ describe(
 
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
+      const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -529,7 +537,10 @@ describe(
         [CONR_008_SKIP_FILE],
         (fileContent: string) => {
           return fileContent
-            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
+            .replace(
+              "DISBNUMBER",
+              referenceDisbursementValue.id.toString().padStart(10, "0"),
+            )
             .replace("APPLNUMBER", application.applicationNumber)
             .replace("ENRLDATE", formatDate(new Date(), "YYYYMMDD"));
         },
@@ -1069,6 +1080,7 @@ describe(
 
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
+      const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -1083,7 +1095,7 @@ describe(
             fileContent
               .replace(
                 "DISBNUMBER",
-                disbursement.id.toString().padStart(10, "0"),
+                referenceDisbursementValue.id.toString().padStart(10, "0"),
               )
               .replace("APPLNUMBER", application.applicationNumber)
               .replace("ENRLDATE", formatDate(new Date(), "YYYYMMDD"))
@@ -1148,6 +1160,7 @@ describe(
 
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
+      const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       const disbursementDate = disbursement.disbursementDate;
 
@@ -1161,7 +1174,10 @@ describe(
         [CONR_008_CONF_FILE],
         (fileContent: string) => {
           return fileContent
-            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
+            .replace(
+              "DISBNUMBER",
+              referenceDisbursementValue.id.toString().padStart(10, "0"),
+            )
             .replace("APPLNUMBER", application.applicationNumber)
             .replace(
               "ENRLDATE",
@@ -1228,6 +1244,7 @@ describe(
 
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
+      const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       const studyPeriodEndDate =
         application.currentAssessment.offering.studyEndDate;
@@ -1242,7 +1259,10 @@ describe(
         [CONR_008_CONF_FILE],
         (fileContent: string) => {
           return fileContent
-            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
+            .replace(
+              "DISBNUMBER",
+              referenceDisbursementValue.id.toString().padStart(10, "0"),
+            )
             .replace("APPLNUMBER", application.applicationNumber)
             .replace(
               "ENRLDATE",

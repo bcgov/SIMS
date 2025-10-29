@@ -1,0 +1,5 @@
+{
+    "sonarCloudOrganization": "bcgov-sonarcloud",
+    "projectKey": "bcgov_SIMS",
+    "region": "US"
+}
