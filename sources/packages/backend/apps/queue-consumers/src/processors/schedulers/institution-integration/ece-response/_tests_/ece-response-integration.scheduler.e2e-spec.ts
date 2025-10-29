@@ -215,7 +215,17 @@ describe(
             createFakeDisbursementValue(
               DisbursementValueType.CanadaLoan,
               "CSLF",
-              1000,
+              10,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGT",
+              20,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCLoan,
+              "BCSL",
+              30,
             ),
           ],
         },
@@ -226,14 +236,13 @@ describe(
 
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
-      const [referenceDisbursementValue] = disbursement.disbursementValues;
+      const [awardValueID1, awardValueID2, awardValueID3] =
+        disbursement.disbursementValues.map((awardValue) =>
+          awardValue.id.toString().padStart(10, "0"),
+        );
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
-
-      const referenceDisbursementValueId = referenceDisbursementValue.id
-        .toString()
-        .padStart(10, "0");
       const applicationNumber = application.applicationNumber;
       const currentDate = formatDate(new Date(), "YYYYMMDD");
 
@@ -246,9 +255,9 @@ describe(
           return (
             fileContent
               // Set the disbursement number to expected disbursement in multiple detail records.
-              .replace("DISBNUMB01", referenceDisbursementValueId)
-              .replace("DISBNUMB02", referenceDisbursementValueId)
-              .replace("DISBNUMB03", referenceDisbursementValueId)
+              .replace("DISBNUMB01", awardValueID1)
+              .replace("DISBNUMB02", awardValueID2)
+              .replace("DISBNUMB03", awardValueID3)
               // Set the application number to expected application in multiple detail records.
               .replace("APPLNUMB01", applicationNumber)
               .replace("APPLNUMB02", applicationNumber)
@@ -362,11 +371,15 @@ describe(
       );
       const [, secondDisbursement] =
         application.currentAssessment.disbursementSchedules;
+      const [referenceDisbursementValue] =
+        secondDisbursement.disbursementValues;
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
-      const disbursementId = secondDisbursement.id.toString().padStart(10, "0");
+      const disbursementId = referenceDisbursementValue.id
+        .toString()
+        .padStart(10, "0");
       const applicationNumber = application.applicationNumber;
       const currentDate = formatDate(new Date(), "YYYYMMDD");
 
