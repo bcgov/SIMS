@@ -56,6 +56,13 @@ export interface ECEDisbursements {
   [disbursementScheduleId: string]: DisbursementDetails;
 }
 
+/**
+ * Details about the processing of disbursements from ECE response file.
+ * The term "records" is related to each line in the ECE response file, which represents a single award value.
+ * For example, if a disbursement has 3 award values, there will be 3 records for that disbursement.
+ * The term "disbursement" is related to a group of record details where its award values IDs belong
+ * to the same disbursement schedule.
+ */
 export class DisbursementProcessingDetails {
   fileParsingErrors = 0;
   totalRecords = 0;

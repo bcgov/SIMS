@@ -201,16 +201,36 @@ describe(
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
-      // TODO: When bulk send email is implemented, we must always expect 1 notification
-      // record to be created.
-      expect(notifications).toHaveLength(
-        locationCONF.integrationContacts.length,
-      );
+      expect(notifications).toEqual([
+        {
+          id: expect.any(Number),
+          messagePayload: {
+            email_address: locationCONF.integrationContacts[0],
+            personalisation: {
+              fileParsingErrors: 0,
+              totalRecords: 2,
+              totalRecordsSkipped: 1,
+              totalDisbursements: 1,
+              disbursementsSuccessfullyProcessed: 1,
+              disbursementsSkipped: 0,
+              duplicateDisbursements: 0,
+              disbursementsFailedToProcess: 0,
+              application_file: {
+                file: expect.any(String),
+                filename: "Processing_Summary_Report.txt",
+                sending_method: "attach",
+              },
+              date: expect.any(String),
+            },
+            template_id: "a662979f-07d4-44c0-a38f-ab9fda5671fe",
+          },
+        },
+      ]);
+      // Expect the COE status of the updated disbursement to be completed.
       const updatedDisbursement = await db.disbursementSchedule.findOne({
         select: { coeStatus: true },
         where: { id: disbursement.id },
       });
-      // Expect the COE status of the updated disbursement to be completed.
       expect(updatedDisbursement.coeStatus).toBe(COEStatus.completed);
     });
 
@@ -438,7 +458,7 @@ describe(
           "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 1",
-          `WARN: Disbursement ${secondDisbursement.id}, record failed to process due to reason: Tuition amount provided should be lesser than both (Actual tuition + Program related costs + Mandatory fees - Previous tuition remittance) and (Canada grants + Canada Loan + BC Loan).`,
+          `WARN: Disbursement ${secondDisbursement.id} failed to process due to an error: Tuition amount provided should be lesser than both (Actual tuition + Program related costs + Mandatory fees - Previous tuition remittance) and (Canada grants + Canada Loan + BC Loan).`,
         ]),
       ).toBe(true);
       // Expect the archive method to be called.
@@ -511,6 +531,7 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 2",
+          "Total detail records skipped: 1",
           "Total disbursements found: 1",
           "Disbursements successfully updated: 1",
           "Disbursements skipped to be processed: 0",
@@ -740,6 +761,7 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 1",
+          "Total detail records skipped: 0",
           "Total disbursements found: 1",
           "Disbursements successfully updated: 0",
           "Disbursements skipped to be processed: 1",
@@ -787,6 +809,7 @@ describe(
           `Starting download of file ${confirmEnrolmentResponseFile}.`,
           "Total file parsing errors: 1",
           "Total detail records found: 0",
+          "Total detail records skipped: 0",
           "Total disbursements found: 0",
           "Disbursements successfully updated: 0",
           "Disbursements skipped to be processed: 0",
@@ -837,6 +860,7 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 1",
           "Total detail records found: 1",
+          "Total detail records skipped: 0",
           "Total disbursements found: 0",
           "Disbursements successfully updated: 0",
           "Disbursements skipped to be processed: 0",
@@ -888,6 +912,7 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 1",
           "Total detail records found: 0",
+          "Total detail records skipped: 0",
           "Total disbursements found: 0",
           "Disbursements successfully updated: 0",
           "Disbursements skipped to be processed: 0",
@@ -938,6 +963,7 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 1",
           "Total detail records found: 0",
+          "Total detail records skipped: 0",
           "Total disbursements found: 0",
           "Disbursements successfully updated: 0",
           "Disbursements skipped to be processed: 0",
@@ -1086,7 +1112,7 @@ describe(
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 1",
           "WARN: Disbursement schedule not found for disbursement value ID: 1119353191, record at line 3 skipped.",
-          `WARN: Disbursement ${disbursement.id}, record failed to process due to reason: Invalid enrolment confirmation flag.`,
+          `WARN: Disbursement ${disbursement.id} failed to process due to an error: Invalid enrolment confirmation flag.`,
         ]),
       ).toBe(true);
       // Expect the archive method to be called.
@@ -1186,7 +1212,7 @@ describe(
           "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 1",
-          `WARN: Disbursement ${disbursement2.id}, record failed to process due to reason: Invalid enrolment confirmation date, Invalid pay to school amount.`,
+          `WARN: Disbursement ${disbursement2.id} failed to process due to an error: Invalid enrolment confirmation date, Invalid pay to school amount.`,
         ]),
       ).toBe(true);
       // Expect the archive method to be called.
@@ -1270,7 +1296,7 @@ describe(
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 1",
           "WARN: Disbursement schedule not found for disbursement value ID: 1119353191, record at line 3 skipped.",
-          `WARN: Disbursement ${disbursement.id}, record failed to process due to reason: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
+          `WARN: Disbursement ${disbursement.id} failed to process due to an error: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
         ]),
       ).toBe(true);
       // Expect the archive method to be called.
@@ -1356,7 +1382,7 @@ describe(
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 1",
           "WARN: Disbursement schedule not found for disbursement value ID: 1119353191, record at line 3 skipped.",
-          `WARN: Disbursement ${disbursement.id}, record failed to process due to reason: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
+          `WARN: Disbursement ${disbursement.id} failed to process due to an error: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
         ]),
       ).toBe(true);
       // Expect the archive method to be called.

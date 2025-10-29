@@ -164,7 +164,7 @@ export async function getUnsentECEResponseNotifications(
   e2eDataSources: E2EDataSources,
 ): Promise<Notification[]> {
   return e2eDataSources.notification.find({
-    select: { id: true },
+    select: { id: true, messagePayload: true },
     where: {
       notificationMessage: {
         id: NotificationMessageType.ECEResponseFileProcessing,

@@ -143,6 +143,7 @@ export interface ECEResponseFileProcessingNotification {
   integrationContacts: string[];
   fileParsingErrors: number;
   totalRecords: number;
+  totalRecordsSkipped: number;
   totalDisbursements: number;
   disbursementsSuccessfullyProcessed: number;
   disbursementsSkipped: number;

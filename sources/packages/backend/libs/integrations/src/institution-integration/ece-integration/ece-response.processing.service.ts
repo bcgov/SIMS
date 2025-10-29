@@ -402,7 +402,7 @@ export class ECEResponseProcessingService {
             case ECE_DISBURSEMENT_DATA_NOT_VALID:
               ++disbursementProcessingDetails.disbursementsFailedToProcess;
               processSummary.warnings.push(
-                `Disbursement ${disbursementScheduleId}, record failed to process due to reason: ${error.message}`,
+                `Disbursement ${disbursementScheduleId} failed to process due to an error: ${error.message}`,
               );
               break;
           }
@@ -481,6 +481,8 @@ export class ECEResponseProcessingService {
           integrationContacts: integrationLocation.integrationContacts,
           fileParsingErrors: disbursementProcessingDetails.fileParsingErrors,
           totalRecords: disbursementProcessingDetails.totalRecords,
+          totalRecordsSkipped:
+            disbursementProcessingDetails.totalRecordsSkipped,
           totalDisbursements: disbursementProcessingDetails.totalDisbursements,
           disbursementsSuccessfullyProcessed:
             disbursementProcessingDetails.disbursementsSuccessfullyProcessed,
