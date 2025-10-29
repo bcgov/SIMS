@@ -416,7 +416,7 @@ describe(
       );
     });
 
-    it.skip("Should process an ECE response file and decline the enrolment and create notification when the disbursement and application is valid.", async () => {
+    it("Should process an ECE response file and decline the enrolment and create notification when the disbursement and application is valid.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -437,6 +437,7 @@ describe(
 
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
+      const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -448,7 +449,10 @@ describe(
         [CONR_008_DECL_FILE],
         (fileContent: string) => {
           return fileContent
-            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
+            .replace(
+              "DISBNUMBER",
+              referenceDisbursementValue.id.toString().padStart(10, "0"),
+            )
             .replace("APPLNUMBER", application.applicationNumber);
         },
       );
@@ -460,7 +464,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 15",
+        "Error(s): 0, Warning(s): 1, Info: 16",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -470,12 +474,12 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 2",
-          "Total disbursements found: 2",
+          "Total disbursements found: 1",
           "Disbursements successfully updated: 1",
-          "Disbursements skipped to be processed: 1",
+          "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
-          "WARN: Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
+          "WARN: Disbursement schedule not found for disbursement value ID: 1119353191, record at line 3 skipped.",
         ]),
       ).toBe(true);
       // Expect the archive method to be called.
@@ -749,7 +753,7 @@ describe(
       );
     });
 
-    it.skip("Should stop processing the ECE response file and create notification when the detail record is not valid.", async () => {
+    it("Should stop processing the ECE response file and create notification when the detail record is not valid.", async () => {
       // Arrange
       // Enable integration for institution location
       // used for test.
@@ -788,7 +792,7 @@ describe(
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
           "ERROR: Invalid record type on detail: 3 at line 2.",
-          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists invalid data and cannot be processed.`,
+          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists of invalid data and cannot be processed.`,
           "ERROR: File processing aborted.",
         ]),
       ).toBe(true);
@@ -938,13 +942,14 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 1",
           "Total detail records found: 1",
+          "Total detail records skipped: 0",
           "Total disbursements found: 0",
           "Disbursements successfully updated: 0",
           "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
           "ERROR: Invalid unique index number for the disbursement record, Invalid application number at line 2.",
-          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists invalid data and cannot be processed.`,
+          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists of invalid data and cannot be processed.`,
           "ERROR: File processing aborted.",
         ]),
       ).toBe(true);
