@@ -73,6 +73,8 @@ export class ECEResponseProcessingService {
    */
   async process(): Promise<ProcessSummaryResult[]> {
     // Get all the ECE response files from the SFTP location.
+    // The institution code is expected between 9th and 12th characters in the file name,
+    // and it is required to group the files by institution code for processing.
     const filePaths = await this.integrationService.getResponseFilesFullPath(
       this.institutionIntegrationConfig.ftpResponseFolder,
       /^CONR-008-[A-Z]{4}-\d{8}-\d{6}\.TXT$/i,
@@ -86,13 +88,72 @@ export class ECEResponseProcessingService {
       `Received ${filePaths.length} ece response file(s) to process.`,
     );
 
+    const filesByInstitutions = this.groupFilesByInstitutionCode(filePaths);
+
     // Process all the files in parallel.
-    const result = await processInParallel<ProcessSummaryResult, string>(
-      (remoteFilePath: string) =>
-        this.processDisbursementsInECEResponseFile(remoteFilePath),
-      filePaths,
+    const result = await processInParallel(
+      ([institutionCode, filePaths]) =>
+        this.processInstitutionFiles(institutionCode, filePaths),
+      [...filesByInstitutions],
     );
     return result;
+  }
+
+  /**
+   * Group the files by institution code to allow the parallel processing
+   * of distinct institution files while files of the same institution
+   * are processed sequentially.
+   * @param filePaths all file paths that need to be processed.
+   * @returns a map of file paths grouped by institution code.
+   */
+  private groupFilesByInstitutionCode(
+    filePaths: string[],
+  ): Map<string, string[]> {
+    const filesByInstitution = new Map<string, string[]>();
+    for (const filePath of filePaths) {
+      const fileName = path.basename(filePath);
+      // The file name is expected to match the pattern 'CONR-008-XXXX-....'.
+      // The institution code is the 4 alpha characters after 'CONR-008-'.
+      const institutionCode = fileName.substring(9, 13);
+      if (!filesByInstitution.has(institutionCode)) {
+        filesByInstitution.set(institutionCode, []);
+      }
+      filesByInstitution.get(institutionCode).push(filePath);
+    }
+    return filesByInstitution;
+  }
+
+  /**
+   * Process all the files for a given institution, sequentially.
+   * @param institutionCode institution code.
+   * @param remoteFilePaths remote file paths for a given institution.
+   * @returns process summary result.
+   */
+  private async processInstitutionFiles(
+    institutionCode: string,
+    remoteFilePaths: string[],
+  ): Promise<ProcessSummaryResult> {
+    const processSummary = new ProcessSummaryResult();
+    const integrationLocation =
+      await this.institutionLocationService.getIntegrationLocation(
+        institutionCode,
+      );
+    //If the file does not have integration location hasIntegration flag set to true, skip the file.
+    if (!integrationLocation) {
+      processSummary.warnings.push(
+        `Integration location not found for institution code: ${institutionCode}.`,
+      );
+      return processSummary;
+    }
+    // Process each file for the institution sequentially.
+    for (const filePath of remoteFilePaths) {
+      await this.processDisbursementsInECEResponseFile(
+        integrationLocation,
+        filePath,
+        processSummary,
+      );
+    }
+    return processSummary;
   }
 
   /**
@@ -101,25 +162,10 @@ export class ECEResponseProcessingService {
    * @returns process summary result.
    */
   private async processDisbursementsInECEResponseFile(
+    integrationLocation: InstitutionLocation,
     remoteFilePath: string,
+    processSummary: ProcessSummaryResult,
   ): Promise<ProcessSummaryResult> {
-    const fileName = path.basename(remoteFilePath);
-    const processSummary = new ProcessSummaryResult();
-    // The file name is expected to match the pattern 'CONR-008-XXXX-....'.
-    // The institution code is the 4 alpha characters after 'CONR-008-'.
-    const institutionCode = fileName.substring(9, 13);
-    const integrationLocation =
-      await this.institutionLocationService.getIntegrationLocation(
-        institutionCode,
-      );
-
-    //If the file does not have integration location hasIntegration flag set to true, skip the file.
-    if (!integrationLocation) {
-      processSummary.warnings.push(
-        `Integration location not found for institution code: ${institutionCode}.`,
-      );
-      return processSummary;
-    }
     // Start processing the file.
     processSummary.summary.push(`Starting download of file ${remoteFilePath}.`);
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
