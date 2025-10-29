@@ -208,6 +208,19 @@ export class ConfigService {
   }
 
   /**
+   * Number of weeks before the study end date that an application can be submitted.
+   * If the application is submitted after the deadline, study end date is past exception will be created
+   * and it requires to be approved by the ministry.
+   * @return number of weeks before the study end date that an application can be submitted.
+   */
+  get applicationSubmissionDeadlineWeeks(): number {
+    return this.getCachedConfig(
+      "applicationSubmissionDeadlineWeeksConfig",
+      +process.env.APPLICATION_SUBMISSION_DEADLINE_WEEKS,
+    );
+  }
+
+  /**
    * When defined as true, allows only users registered in beta users table
    * to access full-time features.
    * When defined as false, all users can access full-time features.

@@ -38,6 +38,8 @@ export class ConfigController extends BaseController {
         this.configService.maximumIdleTimeForWarningInstitution,
       maximumIdleTimeForWarningAEST:
         this.configService.maximumIdleTimeForWarningAEST,
+      applicationSubmissionDeadlineWeeks:
+        this.configService.applicationSubmissionDeadlineWeeks,
       appEnv: this.configService.appEnv,
       queueDashboardURL: `${process.env.QUEUE_DASHBOARD_BASE_URL}/${BULL_BOARD_ROUTE}`,
     };

@@ -82,7 +82,7 @@
         class="mt-4"
       >
         <template #content
-          >Please note your application has now passed the six week deadline for
+          >Please note your application has now passed the deadline for
           completed applications to be received by StudentAid BC. All edits to
           your application will require additional review from StudentAid BC to
           be considered for funding. Please see the following link for
@@ -199,7 +199,8 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      const { isFulltimeAllowed } = await AppConfigService.shared.config();
+      const { isFulltimeAllowed, applicationSubmissionDeadlineWeeks } =
+        await AppConfigService.shared.config();
       await checkProgramYear();
       //Get the student information, application information and student restriction.
       const [studentInfo, applicationData] = await Promise.all([
@@ -263,6 +264,7 @@ export default defineComponent({
         ...programYear,
         isReadOnly: isReadOnly.value,
         isFulltimeAllowed,
+        applicationSubmissionDeadlineWeeks,
       };
       existingApplication.value = applicationData;
       isDataReady.value = true;
@@ -448,9 +450,9 @@ export default defineComponent({
       ) {
         isStudyEndDateWithinDeadline.value =
           applicationWizard.submission.data
-            .studyEndDateBeforeSixWeeksFromToday ||
+            .isTodayAfterDeadlineForStudyEndDate ||
           applicationWizard.submission.data
-            .selectedStudyEndDateBeforeSixWeeksFromToday;
+            .isTodayAfterDeadlineForSelectedStudyEndDate;
         await confirmEditApplication();
       } else {
         applicationWizard.submit();
