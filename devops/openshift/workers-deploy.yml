@@ -91,6 +91,8 @@ objects:
                   value: ${BYPASS_CRA_INCOME_VERIFICATION}
                 - name: DISABLE_ORM_CACHE
                   value: ${DISABLE_ORM_CACHE}
+                - name: APPLICATION_SUBMISSION_DEADLINE_WEEKS
+                  value: ${APPLICATION_SUBMISSION_DEADLINE_WEEKS}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -204,3 +206,5 @@ parameters:
     required: true
   - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
     value: "true"
+  - name: APPLICATION_SUBMISSION_DEADLINE_WEEKS
+    required: true

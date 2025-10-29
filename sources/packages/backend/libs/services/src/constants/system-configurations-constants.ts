@@ -95,9 +95,3 @@ export const BLOCKED_DISBURSEMENT_MAXIMUM_NOTIFICATIONS_TO_SEND = 3;
  * Bull Dashboard route.
  */
 export const BULL_BOARD_ROUTE = "admin/queues";
-/**
- * Number of weeks before the study end date that an application can be submitted.
- * If the application is submitted after the deadline, study end date is past exception will be created
- * and it requires to be approved by the ministry.
- */
-export const APPLICATION_SUBMISSION_DEADLINE_WEEKS = 6;

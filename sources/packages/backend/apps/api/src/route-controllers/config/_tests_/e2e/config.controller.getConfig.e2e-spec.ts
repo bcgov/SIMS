@@ -22,6 +22,7 @@ describe("ConfigController(e2e)-getConfig", () => {
     MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER: "270",
     MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION: "3600",
     MAXIMUM_IDLE_TIME_FOR_WARNING_AEST: "3600",
+    APPLICATION_SUBMISSION_DEADLINE_WEEKS: "4",
     APP_ENV: "production",
     QUEUE_DASHBOARD_BASE_URL: "http://some-absolute-url",
   };
@@ -69,6 +70,8 @@ describe("ConfigController(e2e)-getConfig", () => {
           +fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION,
         maximumIdleTimeForWarningAEST:
           +fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_AEST,
+        applicationSubmissionDeadlineWeeks:
+          +fakeEnvVariables.APPLICATION_SUBMISSION_DEADLINE_WEEKS,
         appEnv: fakeEnvVariables.APP_ENV,
         queueDashboardURL: `${fakeEnvVariables.QUEUE_DASHBOARD_BASE_URL}/admin/queues`,
       });

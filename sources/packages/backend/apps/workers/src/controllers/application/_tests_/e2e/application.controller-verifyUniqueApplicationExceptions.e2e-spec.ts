@@ -1,6 +1,5 @@
 import {
   APPLICATION_NOT_FOUND,
-  APPLICATION_SUBMISSION_DEADLINE_WEEKS,
   INVALID_OPERATION_IN_THE_CURRENT_STATE,
 } from "@sims/services/constants";
 import {
@@ -42,8 +41,11 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
   let systemUsersService: SystemUsersService;
   // Offering with end date more than required weeks from now to apply within deadline.
   let sharedOffering: EducationProgramOffering;
+  const APPLICATION_SUBMISSION_DEADLINE_WEEKS = "6";
 
   beforeAll(async () => {
+    // Set the application submission deadline weeks configuration for the test.
+    process.env.APPLICATION_SUBMISSION_DEADLINE_WEEKS = APPLICATION_SUBMISSION_DEADLINE_WEEKS;
     const { nestApplication, dataSource } = await createTestingAppModule();
     db = createE2EDataSources(dataSource);
     applicationController = nestApplication.get(ApplicationController);
