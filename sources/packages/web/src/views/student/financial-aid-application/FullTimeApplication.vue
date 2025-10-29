@@ -82,7 +82,7 @@
         class="mt-4"
       >
         <template #content
-          >Please note your application has now passed the deadline for
+          >Please note your application has now passed the six week deadline for
           completed applications to be received by StudentAid BC. All edits to
           your application will require additional review from StudentAid BC to
           be considered for funding. Please see the following link for
