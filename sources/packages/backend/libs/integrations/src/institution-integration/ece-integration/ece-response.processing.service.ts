@@ -101,7 +101,7 @@ export class ECEResponseProcessingService {
 
   /**
    * Group the files by institution code to allow the parallel processing
-   * of distinct institution files while files of the same institution
+   * of distinct institution while files of the same institution
    * are processed sequentially.
    * @param filePaths all file paths that need to be processed.
    * @returns a map of file paths grouped by institution code.
@@ -162,14 +162,15 @@ export class ECEResponseProcessingService {
 
   /**
    * Process individual ECE response file sent by institution.
+   * @param integrationLocation institution location.
    * @param remoteFilePath remote file path.
-   * @returns process summary result.
+   * @param processSummary process summary.
    */
   private async processDisbursementsInECEResponseFile(
     integrationLocation: InstitutionLocation,
     remoteFilePath: string,
     processSummary: ProcessSummaryResult,
-  ): Promise<ProcessSummaryResult> {
+  ): Promise<void> {
     // Start processing the file.
     processSummary.summary.push(`Starting download of file ${remoteFilePath}.`);
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
@@ -242,7 +243,6 @@ export class ECEResponseProcessingService {
       `Disbursements considered duplicate and skipped: ${disbursementProcessingDetails.duplicateDisbursements}`,
       `Disbursements failed to process: ${disbursementProcessingDetails.disbursementsFailedToProcess}`,
     );
-    return processSummary;
   }
 
   /**
@@ -276,7 +276,10 @@ export class ECEResponseProcessingService {
   /**
    * Transform the detail records to individual disbursements.
    * @param eceFileDetailRecords detail records of ece file.
-   * @returns disbursements to be processed.
+   * @param processSummary process summary.
+   * @param disbursementProcessingDetails disbursement processing count.
+   * @returns disbursements to be processed, and its awards grouped from
+   * the ECE file detail records.
    */
   private async transformDetailRecordsToDisbursements(
     eceFileDetailRecords: ECEResponseFileDetail[],

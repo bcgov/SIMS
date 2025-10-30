@@ -208,7 +208,7 @@ export function replaceFilePlaceHolder(
         valueFormatted = formatDate((value ?? new Date()) as Date, "YYYYMMDD");
         break;
       default:
-        throw new Error(`Unknown placeholder: ${placeholder}`);
+        throw new Error(`Unknown placeholder: ${placeholder}.`);
     }
     replacedFileContent = replacedFileContent.replace(
       placeholder,

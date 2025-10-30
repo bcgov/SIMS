@@ -1172,7 +1172,6 @@ describe(
               placeholder: APP_NUMBER_PLACEHOLDER_1,
               value: application1.applicationNumber,
             },
-
             { placeholder: ENRL_DATE_PLACEHOLDER_1 },
             // Second record with valid disbursement and application number,
             // but invalid enrolment confirmation date and pay to school amount.
@@ -1394,7 +1393,7 @@ describe(
       );
     });
 
-    it("Should order files by name and group files per institution code when multiple files are present for the distinct institutions.", async () => {
+    it("Should order files by name and group files per institution code when multiple files are present for distinct institutions.", async () => {
       // Arrange
       // Queued job.
       const mockedJob = mockBullJob<void>();
