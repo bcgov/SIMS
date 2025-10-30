@@ -1027,7 +1027,7 @@ describe(
           "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
-          "ERROR: Invalid unique index number for the disbursement value record, Invalid application number at line 2.",
+          "ERROR: Invalid unique index number for the disbursement value ID record, Invalid application number at line 2.",
           `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists of invalid data and cannot be processed.`,
           "ERROR: File processing aborted.",
         ]),
