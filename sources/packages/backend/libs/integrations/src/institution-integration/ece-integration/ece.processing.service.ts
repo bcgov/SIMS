@@ -150,6 +150,7 @@ export class ECEProcessingService {
     const sinValidation = student.sinValidation;
     const institutionLocation = offering.institutionLocation;
     return {
+      disbursementId: eligibleCOE.id,
       institutionCode: institutionLocation.institutionCode,
       disbursementValues: eligibleCOE.disbursementValues,
       sin: sinValidation.sin,

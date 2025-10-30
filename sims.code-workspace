@@ -39,7 +39,8 @@
       "ms-vscode.js-debug-nightly",
       "adpyke.vscode-sql-formatter",
       "redhat.vscode-yaml",
-      "mongodb.mongodb-vscode"
+      "mongodb.mongodb-vscode",
+      "sonarsource.sonarlint-vscode"
     ]
   },
   "tasks": {
@@ -161,10 +162,12 @@
       "bcsl",
       "bgpd",
       "Bitnami",
+      "BSFTP",
       "CCRA",
       "Clamav",
       "clamscan",
       "composables",
+      "CONR",
       "CSGD",
       "csgf",
       "csgp",
@@ -173,8 +176,10 @@
       "CSLP",
       "CSPT",
       "DATATABLE",
+      "DBLO",
       "dependants",
       "ecert",
+      "ENRL",
       "enrolment",
       "enrolments",
       "ESDC",
@@ -192,6 +197,7 @@
       "MBAL",
       "modifiedindependentappeal",
       "MSFAA",
+      "MULT",
       "NOAAPI",
       "NSLSC",
       "Overaward",
@@ -227,6 +233,7 @@
       "timestamptz",
       "typeorm",
       "unparse",
+      "VALD",
       "WTHD",
       "Zeebe"
     ],

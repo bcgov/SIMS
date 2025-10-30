@@ -8,7 +8,10 @@ import {
 } from "@sims/utilities/config";
 import { ProcessSummaryResult } from "@sims/integrations/models";
 import { ECE_RESPONSE_COE_DECLINED_REASON } from "@sims/integrations/constants";
-import { InstitutionLocationService } from "@sims/integrations/services";
+import {
+  DisbursementScheduleService,
+  InstitutionLocationService,
+} from "@sims/integrations/services";
 import {
   COE_DENIED_REASON_OTHER_ID,
   CustomNamedError,
@@ -57,7 +60,8 @@ export class ECEResponseProcessingService {
     private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
     private readonly systemUsersService: SystemUsersService,
     private readonly notificationActionsService: NotificationActionsService,
-    private readonly logger: LoggerService
+    private readonly disbursementScheduleService: DisbursementScheduleService,
+    private readonly logger: LoggerService,
   ) {
     this.institutionIntegrationConfig = config.institutionIntegration;
   }
@@ -69,6 +73,8 @@ export class ECEResponseProcessingService {
    */
   async process(): Promise<ProcessSummaryResult[]> {
     // Get all the ECE response files from the SFTP location.
+    // The institution code is expected between 9th and 12th characters in the file name,
+    // and it is required to group the files by institution code for processing.
     const filePaths = await this.integrationService.getResponseFilesFullPath(
       this.institutionIntegrationConfig.ftpResponseFolder,
       /^CONR-008-[A-Z]{4}-\d{8}-\d{6}\.TXT$/i,
@@ -82,33 +88,60 @@ export class ECEResponseProcessingService {
       `Received ${filePaths.length} ece response file(s) to process.`,
     );
 
+    const filesByInstitutions = this.groupFilesByInstitutionCode(filePaths);
+
     // Process all the files in parallel.
-    const result = await processInParallel<ProcessSummaryResult, string>(
-      (remoteFilePath: string) =>
-        this.processDisbursementsInECEResponseFile(remoteFilePath),
-      filePaths,
+    const result = await processInParallel(
+      ([institutionCode, filePaths]) =>
+        this.processInstitutionFiles(institutionCode, filePaths),
+      [...filesByInstitutions],
     );
     return result;
   }
 
   /**
-   * Process individual ECE response file sent by institution.
-   * @param remoteFilePath remote file path.
+   * Group the files by institution code to allow the parallel processing
+   * of distinct institution while files of the same institution
+   * are processed sequentially.
+   * @param filePaths all file paths that need to be processed.
+   * @returns a map of file paths grouped by institution code.
+   */
+  private groupFilesByInstitutionCode(
+    filePaths: string[],
+  ): Map<string, string[]> {
+    const filesByInstitution = new Map<string, string[]>();
+    for (const filePath of filePaths) {
+      const fileName = path.basename(filePath);
+      // The file name is expected to match the pattern 'CONR-008-XXXX-....'.
+      // The institution code is the 4 alpha characters after 'CONR-008-'.
+      const institutionCode = fileName.substring(9, 13);
+      if (!filesByInstitution.has(institutionCode)) {
+        filesByInstitution.set(institutionCode, []);
+      }
+      filesByInstitution.get(institutionCode).push(filePath);
+    }
+    return filesByInstitution;
+  }
+
+  /**
+   * Process all the files for a given institution, sequentially.
+   * @param institutionCode institution code.
+   * @param remoteFilePaths remote file paths for a given institution.
    * @returns process summary result.
    */
-  private async processDisbursementsInECEResponseFile(
-    remoteFilePath: string,
+  private async processInstitutionFiles(
+    institutionCode: string,
+    remoteFilePaths: string[],
   ): Promise<ProcessSummaryResult> {
-    const fileName = path.basename(remoteFilePath);
     const processSummary = new ProcessSummaryResult();
-    // The file name is expected to match the pattern 'CONR-008-XXXX-....'.
-    // The institution code is the 4 alpha characters after 'CONR-008-'.
-    const institutionCode = fileName.substring(9, 13);
+    // Log the files to be processed for the institution.
+    processSummary.summary.push(
+      `Processing file(s) for institution code: ${institutionCode}, files: ${remoteFilePaths.map((filePath) => path.basename(filePath)).join(", ")}.`,
+    );
     const integrationLocation =
       await this.institutionLocationService.getIntegrationLocation(
         institutionCode,
       );
-
     //If the file does not have integration location hasIntegration flag set to true, skip the file.
     if (!integrationLocation) {
       processSummary.warnings.push(
@@ -116,6 +149,28 @@ export class ECEResponseProcessingService {
       );
       return processSummary;
     }
+    // Process each file for the institution sequentially.
+    for (const filePath of remoteFilePaths) {
+      await this.processDisbursementsInECEResponseFile(
+        integrationLocation,
+        filePath,
+        processSummary,
+      );
+    }
+    return processSummary;
+  }
+
+  /**
+   * Process individual ECE response file sent by institution.
+   * @param integrationLocation institution location.
+   * @param remoteFilePath remote file path.
+   * @param processSummary process summary.
+   */
+  private async processDisbursementsInECEResponseFile(
+    integrationLocation: InstitutionLocation,
+    remoteFilePath: string,
+    processSummary: ProcessSummaryResult,
+  ): Promise<void> {
     // Start processing the file.
     processSummary.summary.push(`Starting download of file ${remoteFilePath}.`);
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
@@ -132,9 +187,13 @@ export class ECEResponseProcessingService {
         processSummary,
         disbursementProcessingDetails,
       );
-      // Transform ece response detail records to disbursements which could be individually processed.
+      // Transform ECE response detail records to disbursements which could be individually processed.
       const disbursementsToProcess =
-        this.transformDetailRecordsToDisbursements(eceFileDetailRecords);
+        await this.transformDetailRecordsToDisbursements(
+          eceFileDetailRecords,
+          processSummary,
+          disbursementProcessingDetails,
+        );
       const auditUser = this.systemUsersService.systemUser;
       await this.validateAndUpdateEnrolmentStatus(
         disbursementsToProcess,
@@ -176,26 +235,14 @@ export class ECEResponseProcessingService {
     // Populate the process summary count.
     processSummary.summary.push(
       `Total file parsing errors: ${disbursementProcessingDetails.fileParsingErrors}`,
-    );
-    processSummary.summary.push(
       `Total detail records found: ${disbursementProcessingDetails.totalRecords}`,
-    );
-    processSummary.summary.push(
+      `Total detail records skipped: ${disbursementProcessingDetails.totalRecordsSkipped}`,
       `Total disbursements found: ${disbursementProcessingDetails.totalDisbursements}`,
-    );
-    processSummary.summary.push(
       `Disbursements successfully updated: ${disbursementProcessingDetails.disbursementsSuccessfullyProcessed}`,
-    );
-    processSummary.summary.push(
       `Disbursements skipped to be processed: ${disbursementProcessingDetails.disbursementsSkipped}`,
-    );
-    processSummary.summary.push(
       `Disbursements considered duplicate and skipped: ${disbursementProcessingDetails.duplicateDisbursements}`,
-    );
-    processSummary.summary.push(
       `Disbursements failed to process: ${disbursementProcessingDetails.disbursementsFailedToProcess}`,
     );
-    return processSummary;
   }
 
   /**
@@ -221,7 +268,7 @@ export class ECEResponseProcessingService {
     }
     if (hasErrors) {
       throw new Error(
-        "The file consists invalid data and cannot be processed.",
+        "The file consists of invalid data and cannot be processed.",
       );
     }
   }
@@ -229,26 +276,46 @@ export class ECEResponseProcessingService {
   /**
    * Transform the detail records to individual disbursements.
    * @param eceFileDetailRecords detail records of ece file.
-   * @returns disbursements to be processed.
+   * @param processSummary process summary.
+   * @param disbursementProcessingDetails disbursement processing count.
+   * @returns disbursements to be processed, and its awards grouped from
+   * the ECE file detail records.
    */
-  private transformDetailRecordsToDisbursements(
+  private async transformDetailRecordsToDisbursements(
     eceFileDetailRecords: ECEResponseFileDetail[],
-  ): ECEDisbursements {
+    processSummary: ProcessSummaryResult,
+    disbursementProcessingDetails: DisbursementProcessingDetails,
+  ): Promise<ECEDisbursements> {
+    const disbursementValueIds = eceFileDetailRecords.map(
+      (record) => record.disbursementValueId,
+    );
+    const disbursementScheduleValuesMap =
+      await this.disbursementScheduleService.getDisbursementScheduleValuesMap(
+        disbursementValueIds,
+      );
     const disbursements = {} as ECEDisbursements;
-    for (const eceDetailRecord of eceFileDetailRecords) {
-      const disbursement =
-        disbursements[eceDetailRecord.disbursementIdentifier];
-      if (!disbursement) {
-        disbursements[eceDetailRecord.disbursementIdentifier] = {
-          institutionCode: eceDetailRecord.institutionCode,
-          applicationNumber: eceDetailRecord.applicationNumber,
+    for (const record of eceFileDetailRecords) {
+      const scheduleId =
+        disbursementScheduleValuesMap[record.disbursementValueId];
+      if (!scheduleId) {
+        // Disbursement schedule not found for the disbursement value ID.
+        processSummary.warnings.push(
+          `Disbursement schedule not found for disbursement value ID: ${record.disbursementValueId}, record at line ${record.lineNumber} skipped.`,
+        );
+        ++disbursementProcessingDetails.totalRecordsSkipped;
+        continue;
+      }
+      if (!disbursements[scheduleId]) {
+        disbursements[scheduleId] = {
+          institutionCode: record.institutionCode,
+          applicationNumber: record.applicationNumber,
           awardDetails: [],
         };
       }
-      disbursements[eceDetailRecord.disbursementIdentifier].awardDetails.push({
-        payToSchoolAmount: eceDetailRecord.payToSchoolAmount,
-        enrolmentConfirmationFlag: eceDetailRecord.enrolmentConfirmationFlag,
-        enrolmentConfirmationDate: eceDetailRecord.enrolmentConfirmationDate,
+      disbursements[scheduleId].awardDetails.push({
+        payToSchoolAmount: record.payToSchoolAmount,
+        enrolmentConfirmationFlag: record.enrolmentConfirmationFlag,
+        enrolmentConfirmationDate: record.enrolmentConfirmationDate,
       });
     }
     return disbursements;
@@ -342,7 +409,7 @@ export class ECEResponseProcessingService {
             case ECE_DISBURSEMENT_DATA_NOT_VALID:
               ++disbursementProcessingDetails.disbursementsFailedToProcess;
               processSummary.warnings.push(
-                `Disbursement ${disbursementScheduleId}, record failed to process due to reason: ${error.message}`,
+                `Disbursement ${disbursementScheduleId} failed to process due to an error: ${error.message}`,
               );
               break;
           }
@@ -421,6 +488,8 @@ export class ECEResponseProcessingService {
           integrationContacts: integrationLocation.integrationContacts,
           fileParsingErrors: disbursementProcessingDetails.fileParsingErrors,
           totalRecords: disbursementProcessingDetails.totalRecords,
+          totalRecordsSkipped:
+            disbursementProcessingDetails.totalRecordsSkipped,
           totalDisbursements: disbursementProcessingDetails.totalDisbursements,
           disbursementsSuccessfullyProcessed:
             disbursementProcessingDetails.disbursementsSuccessfullyProcessed,

@@ -4,6 +4,7 @@ import {
   AssessmentTriggerType,
   COEStatus,
   DisabilityStatus,
+  DisbursementSchedule,
   DisbursementValue,
   DisbursementValueType,
   OfferingIntensity,
@@ -160,7 +161,7 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
       const expectedDetailRecord = buildECEFileDetail(
         application,
         disbursementValue,
-        disbursement.disbursementDate,
+        disbursement,
         "NONE",
         YNFlag.N,
       );
@@ -297,7 +298,7 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
       const expectedDetailRecord = buildECEFileDetail(
         application,
         newDisbursementValue,
-        newDisbursement.disbursementDate,
+        newDisbursement,
         "NONE",
         YNFlag.N,
       );
@@ -398,7 +399,7 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
       const expectedDetailRecord = buildECEFileDetail(
         application,
         disbursementValue,
-        disbursement.disbursementDate,
+        disbursement,
         "PDAP",
         YNFlag.Y,
       );
@@ -499,7 +500,7 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
       const expectedDetailRecord = buildECEFileDetail(
         application,
         disbursementValue,
-        disbursement.disbursementDate,
+        disbursement,
         "PPDA",
         YNFlag.Y,
       );
@@ -512,7 +513,7 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
   function buildECEFileDetail(
     application: Application,
     disbursementValue: DisbursementValue,
-    disbursementDate: string,
+    disbursement: DisbursementSchedule,
     studentPDStatusCode: string,
     applicationPDStatusFlag: YNFlag,
   ): string {
@@ -520,7 +521,10 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
     const offering = application.currentAssessment.offering;
     const studyStartDate = formatDate(offering.studyStartDate, DATE_FORMAT);
     const studyEndDate = formatDate(offering.studyEndDate, DATE_FORMAT);
-    const disbursementDateFormatted = formatDate(disbursementDate, DATE_FORMAT);
+    const disbursementDateFormatted = formatDate(
+      disbursement.disbursementDate,
+      DATE_FORMAT,
+    );
     const institutionLocation = offering.institutionLocation;
     const student = application.student;
     const studentFirstName = student.user.firstName?.substring(0, 15) ?? "";
@@ -541,6 +545,6 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
     }${institutionStudentNumber.padEnd(
       12,
       " ",
-    )}100${studyStartDate}${studyEndDate}${disbursementDateFormatted}${studentPDStatusCode}${applicationPDStatusFlag}`;
+    )}100${studyStartDate}${studyEndDate}${disbursementDateFormatted}${studentPDStatusCode}${applicationPDStatusFlag}${disbursement.id.toString().padStart(10, "0")}`;
   }
 });

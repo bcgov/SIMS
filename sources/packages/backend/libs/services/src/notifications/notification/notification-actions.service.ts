@@ -677,6 +677,7 @@ export class NotificationActionsService {
           institutionCode: notification.institutionCode,
           fileParsingErrors: notification.fileParsingErrors,
           totalRecords: notification.totalRecords,
+          totalRecordsSkipped: notification.totalRecordsSkipped,
           totalDisbursements: notification.totalDisbursements,
           disbursementsSuccessfullyProcessed:
             notification.disbursementsSuccessfullyProcessed,

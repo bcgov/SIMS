@@ -37,12 +37,26 @@ import {
   createInstitutionLocations,
   enableIntegration,
   getUnsentECEResponseNotifications,
+  replaceFilePlaceHolder,
   CONR_008_CONF_FILE,
   CONR_008_DECL_FILE,
   CONR_008_SKIP_FILE,
   CONR_008_FAIL_FILE,
   CONR_008_MULT_FILE,
   CONR_008_VALD_FILE,
+  CONR_008_DBLO_FILE,
+  AWARD_VALUE_ID_PLACEHOLDER,
+  AWARD_VALUE_ID_PLACEHOLDER_1,
+  AWARD_VALUE_ID_PLACEHOLDER_2,
+  AWARD_VALUE_ID_PLACEHOLDER_3,
+  APP_NUMBER_PLACEHOLDER,
+  APP_NUMBER_PLACEHOLDER_1,
+  APP_NUMBER_PLACEHOLDER_2,
+  APP_NUMBER_PLACEHOLDER_3,
+  ENRL_DATE_PLACEHOLDER,
+  ENRL_DATE_PLACEHOLDER_1,
+  ENRL_DATE_PLACEHOLDER_2,
+  ENRL_DATE_PLACEHOLDER_3,
 } from "./ece-response-helper";
 import { FILE_PARSING_ERROR } from "@sims/services/constants";
 import { IsNull } from "typeorm";
@@ -62,6 +76,7 @@ describe(
     // Institution location to test disbursement with multiple detail records.
     let locationMULT: InstitutionLocation;
     let locationVALD: InstitutionLocation;
+    let locationDBLO: InstitutionLocation;
 
     beforeAll(async () => {
       eceResponseMockDownloadFolder = path.join(
@@ -84,6 +99,7 @@ describe(
         institutionLocationFAIL,
         institutionLocationMULT,
         institutionLocationVALD,
+        institutionLocationDBLO,
       } = await createInstitutionLocations(db);
       locationCONF = institutionLocationCONF;
       locationDECL = institutionLocationDECL;
@@ -91,6 +107,7 @@ describe(
       locationFAIL = institutionLocationFAIL;
       locationMULT = institutionLocationMULT;
       locationVALD = institutionLocationVALD;
+      locationDBLO = institutionLocationDBLO;
     });
 
     beforeEach(async () => {
@@ -109,10 +126,9 @@ describe(
       );
     });
 
-    it("Should process an ECE response file and confirm the enrolment and create notification when the disbursement and application is valid.", async () => {
+    it("Should process an ECE response file and confirm the enrolment and create notification when the disbursement and application are valid.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationCONF, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -130,20 +146,28 @@ describe(
 
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
+      const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_CONF_FILE],
         (fileContent: string) => {
-          return fileContent
-            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
-            .replace("APPLNUMBER", application.applicationNumber)
-            .replace("ENRLDATE", formatDate(new Date(), "YYYYMMDD"));
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: referenceDisbursementValue.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: application.applicationNumber,
+            },
+            { placeholder: ENRL_DATE_PLACEHOLDER },
+          ]);
         },
       );
 
@@ -154,7 +178,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 15",
+        "Error(s): 0, Warning(s): 1, Info: 17",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -164,35 +188,55 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 2",
-          "Total disbursements found: 2",
+          "Total detail records skipped: 1",
+          "Total disbursements found: 1",
           "Disbursements successfully updated: 1",
-          "Disbursements skipped to be processed: 1",
+          "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
-          "WARN: Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
+          "WARN: Disbursement schedule not found for disbursement value ID: 1119353191, record at line 3 skipped.",
         ]),
       ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
-      // TODO: When bulk send email is implemented, we must always expect 1 notification
-      // record to be created.
-      expect(notifications).toHaveLength(
-        locationCONF.integrationContacts.length,
-      );
+      expect(notifications).toEqual([
+        {
+          id: expect.any(Number),
+          messagePayload: {
+            email_address: locationCONF.integrationContacts[0],
+            personalisation: {
+              fileParsingErrors: 0,
+              totalRecords: 2,
+              totalRecordsSkipped: 1,
+              totalDisbursements: 1,
+              disbursementsSuccessfullyProcessed: 1,
+              disbursementsSkipped: 0,
+              duplicateDisbursements: 0,
+              disbursementsFailedToProcess: 0,
+              application_file: {
+                file: expect.any(String),
+                filename: "Processing_Summary_Report.txt",
+                sending_method: "attach",
+              },
+              date: expect.any(String),
+            },
+            template_id: "a662979f-07d4-44c0-a38f-ab9fda5671fe",
+          },
+        },
+      ]);
+      // Expect the COE status of the updated disbursement to be completed.
       const updatedDisbursement = await db.disbursementSchedule.findOne({
         select: { coeStatus: true },
         where: { id: disbursement.id },
       });
-      // Expect the COE status of the updated disbursement to be completed.
       expect(updatedDisbursement.coeStatus).toBe(COEStatus.completed);
     });
 
     it("Should process an ECE response file and confirm the enrolment and create notification when a disbursement has multiple detail records.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationMULT, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -208,7 +252,17 @@ describe(
             createFakeDisbursementValue(
               DisbursementValueType.CanadaLoan,
               "CSLF",
-              1000,
+              10,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGT",
+              20,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCLoan,
+              "BCSL",
+              30,
             ),
           ],
         },
@@ -219,35 +273,34 @@ describe(
 
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
+      const [awardValueID1, awardValueID2, awardValueID3] =
+        disbursement.disbursementValues.map((awardValue) => awardValue.id);
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
-
-      const disbursementId = disbursement.id.toString().padStart(10, "0");
       const applicationNumber = application.applicationNumber;
-      const currentDate = formatDate(new Date(), "YYYYMMDD");
+      const currentDate = new Date();
 
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_MULT_FILE],
         (fileContent: string) => {
-          return (
-            fileContent
-              // Set the disbursement number to expected disbursement in multiple detail records.
-              .replace("DISBNUMB01", disbursementId)
-              .replace("DISBNUMB02", disbursementId)
-              .replace("DISBNUMB03", disbursementId)
-              // Set the application number to expected application in multiple detail records.
-              .replace("APPLNUMB01", applicationNumber)
-              .replace("APPLNUMB02", applicationNumber)
-              .replace("APPLNUMB03", applicationNumber)
-              // Set the enrolment confirmation to expected date in multiple detail records.
-              .replace("ENRLDT01", currentDate)
-              .replace("ENRLDT02", currentDate)
-              .replace("ENRLDT03", currentDate)
-          );
+          return replaceFilePlaceHolder(fileContent, [
+            // Set the disbursement value ID to the expected one in multiple detail records.
+            { placeholder: AWARD_VALUE_ID_PLACEHOLDER_1, value: awardValueID1 },
+            { placeholder: AWARD_VALUE_ID_PLACEHOLDER_2, value: awardValueID2 },
+            { placeholder: AWARD_VALUE_ID_PLACEHOLDER_3, value: awardValueID3 },
+            // Set the application number to expected application in multiple detail records.
+            { placeholder: APP_NUMBER_PLACEHOLDER_1, value: applicationNumber },
+            { placeholder: APP_NUMBER_PLACEHOLDER_2, value: applicationNumber },
+            { placeholder: APP_NUMBER_PLACEHOLDER_3, value: applicationNumber },
+            // Set the enrolment confirmation to expected date in multiple detail records.
+            { placeholder: ENRL_DATE_PLACEHOLDER_1, value: currentDate },
+            { placeholder: ENRL_DATE_PLACEHOLDER_2, value: currentDate },
+            { placeholder: ENRL_DATE_PLACEHOLDER_3, value: currentDate },
+          ]);
         },
       );
 
@@ -258,7 +311,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 15",
+        "Error(s): 0, Warning(s): 1, Info: 17",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -268,12 +321,13 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 4",
-          "Total disbursements found: 2",
+          "Total detail records skipped: 1",
+          "Total disbursements found: 1",
           "Disbursements successfully updated: 1",
-          "Disbursements skipped to be processed: 1",
+          "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
-          "WARN: Disbursement 1119353191, record skipped due to reason: Enrolment not found",
+          "WARN: Disbursement schedule not found for disbursement value ID: 1119353191, record at line 5 skipped.",
         ]),
       ).toBe(true);
       // Expect the archive method to be called.
@@ -300,8 +354,7 @@ describe(
 
     it("Should validate when tuition remittance is greater than the max tuition remittance considering previous tuition remittance.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationVALD, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -351,16 +404,14 @@ describe(
       );
       const [, secondDisbursement] =
         application.currentAssessment.disbursementSchedules;
+      const [referenceDisbursementValue] =
+        secondDisbursement.disbursementValues;
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
-      const disbursementId = secondDisbursement.id.toString().padStart(10, "0");
-      const applicationNumber = application.applicationNumber;
-      const currentDate = formatDate(new Date(), "YYYYMMDD");
-
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_VALD_FILE],
@@ -369,10 +420,17 @@ describe(
           // Force the error code to be wrong in the first record.
           const [record] = file.records;
           file.records = [
-            record
-              .replace("DISBNUMB01", disbursementId)
-              .replace("APPLNUMB01", applicationNumber)
-              .replace("ENRLDT01", currentDate),
+            replaceFilePlaceHolder(record, [
+              {
+                placeholder: AWARD_VALUE_ID_PLACEHOLDER_1,
+                value: referenceDisbursementValue.id,
+              },
+              {
+                placeholder: APP_NUMBER_PLACEHOLDER_1,
+                value: application.applicationNumber,
+              },
+              { placeholder: ENRL_DATE_PLACEHOLDER_1 },
+            ]),
           ];
           return createFileFromStructuredRecords(file);
         },
@@ -385,7 +443,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 14",
+        "Error(s): 0, Warning(s): 1, Info: 16",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -394,12 +452,13 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 1",
+          "Total detail records skipped: 0",
           "Total disbursements found: 1",
           "Disbursements successfully updated: 0",
           "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 1",
-          `WARN: Disbursement ${secondDisbursement.id}, record failed to process due to reason: Tuition amount provided should be lesser than both (Actual tuition + Program related costs + Mandatory fees - Previous tuition remittance) and (Canada grants + Canada Loan + BC Loan).`,
+          `WARN: Disbursement ${secondDisbursement.id} failed to process due to an error: Tuition amount provided should be lesser than both (Actual tuition + Program related costs + Mandatory fees - Previous tuition remittance) and (Canada grants + Canada Loan + BC Loan).`,
         ]),
       ).toBe(true);
       // Expect the archive method to be called.
@@ -413,8 +472,7 @@ describe(
 
     it("Should process an ECE response file and decline the enrolment and create notification when the disbursement and application is valid.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationDECL, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -432,19 +490,27 @@ describe(
 
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
+      const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_DECL_FILE],
         (fileContent: string) => {
-          return fileContent
-            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
-            .replace("APPLNUMBER", application.applicationNumber);
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: referenceDisbursementValue.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: application.applicationNumber,
+            },
+          ]);
         },
       );
 
@@ -455,7 +521,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 15",
+        "Error(s): 0, Warning(s): 1, Info: 17",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -465,12 +531,13 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 2",
-          "Total disbursements found: 2",
+          "Total detail records skipped: 1",
+          "Total disbursements found: 1",
           "Disbursements successfully updated: 1",
-          "Disbursements skipped to be processed: 1",
+          "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
-          "WARN: Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
+          "WARN: Disbursement schedule not found for disbursement value ID: 1119353191, record at line 3 skipped.",
         ]),
       ).toBe(true);
       // Expect the archive method to be called.
@@ -490,8 +557,7 @@ describe(
 
     it("Should skip the ECE disbursement and create notification when the enrolment is already completed.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationSKIP, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -509,20 +575,28 @@ describe(
 
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
+      const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_SKIP_FILE],
         (fileContent: string) => {
-          return fileContent
-            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
-            .replace("APPLNUMBER", application.applicationNumber)
-            .replace("ENRLDATE", formatDate(new Date(), "YYYYMMDD"));
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: referenceDisbursementValue.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: application.applicationNumber,
+            },
+            { placeholder: ENRL_DATE_PLACEHOLDER },
+          ]);
         },
       );
 
@@ -533,7 +607,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 14",
+        "Error(s): 0, Warning(s): 1, Info: 16",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -542,6 +616,7 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 1",
+          "Total detail records skipped: 0",
           "Total disbursements found: 1",
           "Disbursements successfully updated: 0",
           "Disbursements skipped to be processed: 0",
@@ -559,30 +634,36 @@ describe(
       );
     });
 
-    it("Should skip the ECE disbursement and create notification when disbursement and application does not belong to the system.", async () => {
+    it("Should skip the ECE disbursement and create notification when disbursement value ID does not belong to the system.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationSKIP, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         CONR_008_SKIP_FILE,
       );
 
-      const fakeDisbursementId = "1111111111";
+      const fakeDisbursementValueId = "1111111111";
       const fakeApplicationNumber = "9999999999";
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
-      // Modify the data in mock file to have fake disbursement id.
+      // Modify the data in mock file to have fake disbursement value ID.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_SKIP_FILE],
         (fileContent: string) => {
-          return fileContent
-            .replace("DISBNUMBER", fakeDisbursementId)
-            .replace("APPLNUMBER", fakeApplicationNumber);
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: fakeDisbursementValueId,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: fakeApplicationNumber,
+            },
+          ]);
         },
       );
 
@@ -593,7 +674,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 14",
+        "Error(s): 0, Warning(s): 1, Info: 16",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -602,12 +683,13 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 1",
-          "Total disbursements found: 1",
+          "Total detail records skipped: 1",
+          "Total disbursements found: 0",
           "Disbursements successfully updated: 0",
-          "Disbursements skipped to be processed: 1",
+          "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
-          `WARN: Disbursement ${fakeDisbursementId}, record skipped due to reason: Enrolment not found.`,
+          `WARN: Disbursement schedule not found for disbursement value ID: ${fakeDisbursementValueId}, record at line 2 skipped.`,
         ]),
       ).toBe(true);
       // Expect the archive method to be called.
@@ -621,8 +703,7 @@ describe(
 
     it("Should skip the ECE disbursement and create notification when application does not belong to the system.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationSKIP, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -640,6 +721,7 @@ describe(
 
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
+      const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       const fakeApplicationNumber = "9999999999";
 
@@ -647,14 +729,21 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct disbursement
-      // and fake application number.
+      // value ID and fake application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_SKIP_FILE],
         (fileContent: string) => {
-          return fileContent
-            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
-            .replace("APPLNUMBER", fakeApplicationNumber);
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: referenceDisbursementValue.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: fakeApplicationNumber,
+            },
+          ]);
         },
       );
 
@@ -663,7 +752,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 14",
+        "Error(s): 0, Warning(s): 1, Info: 16",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -672,6 +761,7 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 1",
+          "Total detail records skipped: 0",
           "Total disbursements found: 1",
           "Disbursements successfully updated: 0",
           "Disbursements skipped to be processed: 1",
@@ -691,8 +781,7 @@ describe(
 
     it("Should stop processing the ECE response file and create notification when the header record is not valid.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationFAIL, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -720,6 +809,7 @@ describe(
           `Starting download of file ${confirmEnrolmentResponseFile}.`,
           "Total file parsing errors: 1",
           "Total detail records found: 0",
+          "Total detail records skipped: 0",
           "Total disbursements found: 0",
           "Disbursements successfully updated: 0",
           "Disbursements skipped to be processed: 0",
@@ -740,8 +830,7 @@ describe(
 
     it("Should stop processing the ECE response file and create notification when the detail record is not valid.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationFAIL, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -771,13 +860,14 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 1",
           "Total detail records found: 1",
+          "Total detail records skipped: 0",
           "Total disbursements found: 0",
           "Disbursements successfully updated: 0",
           "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
           "ERROR: Invalid record type on detail: 3 at line 2.",
-          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists invalid data and cannot be processed.`,
+          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists of invalid data and cannot be processed.`,
           "ERROR: File processing aborted.",
         ]),
       ).toBe(true);
@@ -792,8 +882,7 @@ describe(
 
     it("Should stop processing the ECE response file and create notification when the footer record is not valid.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationFAIL, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -823,6 +912,7 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 1",
           "Total detail records found: 0",
+          "Total detail records skipped: 0",
           "Total disbursements found: 0",
           "Disbursements successfully updated: 0",
           "Disbursements skipped to be processed: 0",
@@ -843,8 +933,7 @@ describe(
 
     it("Should stop processing the ECE response file and create notification when the count of detail in the footer record is incorrect.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationFAIL, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -874,6 +963,7 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 1",
           "Total detail records found: 0",
+          "Total detail records skipped: 0",
           "Total disbursements found: 0",
           "Disbursements successfully updated: 0",
           "Disbursements skipped to be processed: 0",
@@ -894,8 +984,7 @@ describe(
 
     it("Should stop processing the ECE response file and create notification when one of the detail records have invalid data.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationSKIP, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -906,13 +995,18 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have invalid application number.
-      // Note: The disbursement id is already an invalid value in file
-      // due to the placeholder DISBNUMBER.
+      // Note: The disbursement value ID is already an invalid value in file
+      // due to the placeholder.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_SKIP_FILE],
         (fileContent: string) => {
-          return fileContent.replace("APPLNUMBER", "          ");
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: "INVALIDAPP",
+            },
+          ]);
         },
       );
 
@@ -927,13 +1021,14 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 1",
           "Total detail records found: 1",
+          "Total detail records skipped: 0",
           "Total disbursements found: 0",
           "Disbursements successfully updated: 0",
           "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
-          "ERROR: Invalid unique index number for the disbursement record, Invalid application number at line 2.",
-          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists invalid data and cannot be processed.`,
+          "ERROR: Invalid unique index number for the disbursement value ID record, Invalid application number at line 2.",
+          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists of invalid data and cannot be processed.`,
           "ERROR: File processing aborted.",
         ]),
       ).toBe(true);
@@ -951,8 +1046,7 @@ describe(
       // Including a valid disbursement in this test case to ensure that
       // when there is a enrolment data validation error, only that particular disbursement is failed to process
       // and other disbursements are processed.
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationCONF, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -970,27 +1064,28 @@ describe(
 
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
+      const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_CONF_FILE],
         (fileContent: string) => {
-          return (
-            fileContent
-              .replace(
-                "DISBNUMBER",
-                disbursement.id.toString().padStart(10, "0"),
-              )
-              .replace("APPLNUMBER", application.applicationNumber)
-              .replace("ENRLDATE", formatDate(new Date(), "YYYYMMDD"))
-              // Replacing Y with K. As Y is present in other places using a pattern.
-              .replace("Y20230418N", "K20230418N")
-          );
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: referenceDisbursementValue.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: application.applicationNumber,
+            },
+          ]) // Replacing Y with K. As Y is present in other places using a pattern.
+            .replace("YENRLDATE", `K${formatDate(new Date(), "YYYYMMDD")}`);
         },
       );
 
@@ -1001,22 +1096,23 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 15",
+        "Error(s): 0, Warning(s): 2, Info: 16",
       ]);
       expect(
         mockedJob.containLogMessages([
           `Starting download of file ${confirmEnrolmentResponseFile}.`,
-          `Disbursement ${disbursement.id}, enrolment confirmed.`,
           `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 2",
-          "Total disbursements found: 2",
-          "Disbursements successfully updated: 1",
+          "Total detail records skipped: 1",
+          "Total disbursements found: 1",
+          "Disbursements successfully updated: 0",
           "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 1",
-          "WARN: Disbursement 1119353191, record failed to process due to reason: Invalid enrolment confirmation flag.",
+          "WARN: Disbursement schedule not found for disbursement value ID: 1119353191, record at line 3 skipped.",
+          `WARN: Disbursement ${disbursement.id} failed to process due to an error: Invalid enrolment confirmation flag.`,
         ]),
       ).toBe(true);
       // Expect the archive method to be called.
@@ -1033,46 +1129,62 @@ describe(
       // Including a valid disbursement in this test case to ensure that
       // when there is a enrolment data validation error, only that particular disbursement is failed to process
       // and other disbursements are processed.
-      // Enable integration for institution location
-      // used for test.
-      await enableIntegration(locationCONF, db);
+      // Enable integration for institution location used for test.
+      await enableIntegration(locationDBLO, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
-        CONR_008_CONF_FILE,
+        CONR_008_DBLO_FILE,
       );
 
-      // Create disbursement to confirm enrolment.
-      const application = await saveFakeApplicationDisbursements(
-        db.dataSource,
-        undefined,
-        {
+      // Create disbursements to confirm enrolment.
+      const [application1, application2] = await Promise.all([
+        saveFakeApplicationDisbursements(db.dataSource, undefined, {
           applicationStatus: ApplicationStatus.Enrolment,
-        },
-      );
-
-      const [disbursement] =
-        application.currentAssessment.disbursementSchedules;
+        }),
+        saveFakeApplicationDisbursements(db.dataSource, undefined, {
+          applicationStatus: ApplicationStatus.Enrolment,
+        }),
+      ]);
+      // First disbursement - valid data.
+      const [disbursement1] =
+        application1.currentAssessment.disbursementSchedules;
+      const [referenceDisbursement1Value] = disbursement1.disbursementValues;
+      // Second disbursement - file will contain invalid enrolment confirmation date and pay to school amount.
+      const [disbursement2] =
+        application2.currentAssessment.disbursementSchedules;
+      const [referenceDisbursement2Value] = disbursement2.disbursementValues;
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
-        [CONR_008_CONF_FILE],
+        [CONR_008_DBLO_FILE],
         (fileContent: string) => {
-          return (
-            fileContent
-              .replace(
-                "DISBNUMBER",
-                disbursement.id.toString().padStart(10, "0"),
-              )
-              .replace("APPLNUMBER", application.applicationNumber)
-              .replace("ENRLDATE", formatDate(new Date(), "YYYYMMDD"))
-              // Replacing date 20230418 and amount 000000 with invalid data.
-              .replace("Y20230418N000000", "YNOTADATENNANNUM")
-          );
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER_1,
+              value: referenceDisbursement1Value.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER_1,
+              value: application1.applicationNumber,
+            },
+            { placeholder: ENRL_DATE_PLACEHOLDER_1 },
+            // Second record with valid disbursement and application number,
+            // but invalid enrolment confirmation date and pay to school amount.
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER_2,
+              value: referenceDisbursement2Value.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER_2,
+              value: application2.applicationNumber,
+            },
+          ]) // Replacing with invalid date a number.
+            .replace("ENRLDT02N000000", "NOTADATENNANNUM");
         },
       );
 
@@ -1083,22 +1195,23 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 15",
+        "Error(s): 0, Warning(s): 1, Info: 17",
       ]);
       expect(
         mockedJob.containLogMessages([
           `Starting download of file ${confirmEnrolmentResponseFile}.`,
-          `Disbursement ${disbursement.id}, enrolment confirmed.`,
+          `Disbursement ${disbursement1.id}, enrolment confirmed.`,
           `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 2",
+          "Total detail records skipped: 0",
           "Total disbursements found: 2",
           "Disbursements successfully updated: 1",
           "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 1",
-          "WARN: Disbursement 1119353191, record failed to process due to reason: Invalid enrolment confirmation date, Invalid pay to school amount.",
+          `WARN: Disbursement ${disbursement2.id} failed to process due to an error: Invalid enrolment confirmation date, Invalid pay to school amount.`,
         ]),
       ).toBe(true);
       // Expect the archive method to be called.
@@ -1112,8 +1225,7 @@ describe(
 
     it("Should skip the processing and log error and create notification when enrolment confirmation date is before the approval period.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationCONF, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -1131,28 +1243,32 @@ describe(
 
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
-
+      const [referenceDisbursementValue] = disbursement.disbursementValues;
       const disbursementDate = disbursement.disbursementDate;
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_CONF_FILE],
         (fileContent: string) => {
-          return fileContent
-            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
-            .replace("APPLNUMBER", application.applicationNumber)
-            .replace(
-              "ENRLDATE",
-              formatDate(
-                addDays(-(COE_WINDOW + 2), disbursementDate),
-                "YYYYMMDD",
-              ),
-            );
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: referenceDisbursementValue.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: application.applicationNumber,
+            },
+            {
+              placeholder: ENRL_DATE_PLACEHOLDER,
+              value: addDays(-(COE_WINDOW + 2), disbursementDate),
+            },
+          ]);
         },
       );
 
@@ -1163,7 +1279,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 2, Info: 14",
+        "Error(s): 0, Warning(s): 2, Info: 16",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1172,13 +1288,14 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 2",
-          "Total disbursements found: 2",
+          "Total detail records skipped: 1",
+          "Total disbursements found: 1",
           "Disbursements successfully updated: 0",
-          "Disbursements skipped to be processed: 1",
+          "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 1",
-          "WARN: Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
-          `WARN: Disbursement ${disbursement.id}, record failed to process due to reason: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
+          "WARN: Disbursement schedule not found for disbursement value ID: 1119353191, record at line 3 skipped.",
+          `WARN: Disbursement ${disbursement.id} failed to process due to an error: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
         ]),
       ).toBe(true);
       // Expect the archive method to be called.
@@ -1192,8 +1309,7 @@ describe(
 
     it("Should skip the processing and log error and create notification when enrolment confirmation date is after the approval period.", async () => {
       // Arrange
-      // Enable integration for institution location
-      // used for test.
+      // Enable integration for institution location used for test.
       await enableIntegration(locationCONF, db);
       const confirmEnrolmentResponseFile = path.join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
@@ -1211,26 +1327,34 @@ describe(
 
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
-
-      const studyPeriodEndDate =
-        application.currentAssessment.offering.studyEndDate;
+      const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
       // Modify the data in mock file to have the correct values for
-      // disbursement and application number.
+      // disbursement value ID and application number.
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_CONF_FILE],
         (fileContent: string) => {
-          return fileContent
-            .replace("DISBNUMBER", disbursement.id.toString().padStart(10, "0"))
-            .replace("APPLNUMBER", application.applicationNumber)
-            .replace(
-              "ENRLDATE",
-              formatDate(addDays(2, studyPeriodEndDate), "YYYYMMDD"),
-            );
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: referenceDisbursementValue.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: application.applicationNumber,
+            },
+            {
+              placeholder: ENRL_DATE_PLACEHOLDER,
+              value: addDays(
+                2,
+                application.currentAssessment.offering.studyEndDate,
+              ),
+            },
+          ]);
         },
       );
 
@@ -1238,11 +1362,10 @@ describe(
       const result = await processor.processQueue(mockedJob.job);
 
       // Assert
-      // Assert
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 2, Info: 14",
+        "Error(s): 0, Warning(s): 2, Info: 16",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1251,13 +1374,14 @@ describe(
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
           "Total detail records found: 2",
-          "Total disbursements found: 2",
+          "Total detail records skipped: 1",
+          "Total disbursements found: 1",
           "Disbursements successfully updated: 0",
-          "Disbursements skipped to be processed: 1",
+          "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 1",
-          "WARN: Disbursement 1119353191, record skipped due to reason: Enrolment not found.",
-          `WARN: Disbursement ${disbursement.id}, record failed to process due to reason: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
+          "WARN: Disbursement schedule not found for disbursement value ID: 1119353191, record at line 3 skipped.",
+          `WARN: Disbursement ${disbursement.id} failed to process due to an error: The enrolment cannot be confirmed as enrolment confirmation date is not within the valid approval period.`,
         ]),
       ).toBe(true);
       // Expect the archive method to be called.
@@ -1267,6 +1391,31 @@ describe(
       expect(notifications).toHaveLength(
         locationCONF.integrationContacts.length,
       );
+    });
+
+    it("Should order files by name and group files per institution code when multiple files are present for distinct institutions.", async () => {
+      // Arrange
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Add a mock download for multiple files, two for each institution code.
+      mockDownloadFiles(sftpClientMock, [
+        CONR_008_VALD_FILE,
+        CONR_008_SKIP_FILE,
+        CONR_008_VALD_FILE,
+        CONR_008_SKIP_FILE,
+      ]);
+
+      // Act
+      await processor.processQueue(mockedJob.job);
+
+      // Assert
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file(s) for institution code: SKIP, files: ${CONR_008_SKIP_FILE}, ${CONR_008_SKIP_FILE}.`,
+          `Processing file(s) for institution code: VALD, files: ${CONR_008_VALD_FILE}, ${CONR_008_VALD_FILE}.`,
+        ]),
+      ).toBe(true);
     });
   },
 );

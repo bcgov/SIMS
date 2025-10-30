@@ -15,6 +15,7 @@ import { YNFlag } from "@sims/integrations/models";
  * 'SIMSSFAS - Institution File layouts In Analysis Folder'.
  */
 export class ECERequestFileDetail implements ECERequestFileLine {
+  disbursementId: number;
   recordTypeCode: RecordTypeCodes;
   institutionCode: string;
   disbursementValues: DisbursementValue[];
@@ -63,6 +64,11 @@ export class ECERequestFileDetail implements ECERequestFileLine {
       record.appendDate(this.disbursementDate, DATE_FORMAT);
       record.append(this.studentPDStatusCode);
       record.append(this.applicationPDStatusFlag);
+      record.appendWithStartFiller(
+        this.disbursementId.toString(),
+        10,
+        NUMBER_FILLER,
+      );
       return record.toString();
     });
     return records.join(END_OF_LINE);
