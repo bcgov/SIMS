@@ -1399,8 +1399,7 @@ describe(
       // Queued job.
       const mockedJob = mockBullJob<void>();
 
-      // Modify the data in mock file to have the correct values for
-      // disbursement value ID and application number.
+      // Add a mock download for multiple files, two for each institution code.
       mockDownloadFiles(sftpClientMock, [
         CONR_008_VALD_FILE,
         CONR_008_SKIP_FILE,
