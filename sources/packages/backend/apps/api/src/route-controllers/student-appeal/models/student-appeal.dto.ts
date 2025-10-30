@@ -79,6 +79,19 @@ export class StudentAppealAPIOutDTO<T> {
   appealRequests: T[];
 }
 
+export class AppealSummaryAPIOutDTO {
+  id: number;
+  appealStatus: StudentAppealStatus;
+  appealRequestNames: string[];
+  applicationId?: number;
+  applicationNumber?: string;
+  assessedDate?: Date;
+}
+
+export class StudentAppealSummaryAPIOutDTO {
+  appeals: AppealSummaryAPIOutDTO[];
+}
+
 export class StudentAppealRequestApprovalAPIInDTO {
   @IsPositive()
   id: number;

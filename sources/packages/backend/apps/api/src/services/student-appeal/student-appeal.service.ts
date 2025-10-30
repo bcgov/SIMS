@@ -497,6 +497,30 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   }
 
   /**
+   * Get all the appeals submitted by a student.
+   * @param studentId student ID.
+   * @returns list of student appeals.
+   */
+  async getAppealsByStudentId(studentId: number): Promise<StudentAppeal[]> {
+    return this.repo.find({
+      select: {
+        id: true,
+        submittedDate: true,
+        appealRequests: {
+          id: true,
+          submittedFormName: true,
+          appealStatus: true,
+          assessedDate: true,
+        },
+        application: { id: true, applicationNumber: true },
+      },
+      relations: { application: true, appealRequests: true },
+      where: { student: { id: studentId } },
+      order: { submittedDate: "DESC" },
+    });
+  }
+
+  /**
    * Transformation to convert the data table column name to database column name.
    * Any changes to the data object (e.g data table) in presentation layer must be adjusted here.
    * @param sortField database fields to be sorted.

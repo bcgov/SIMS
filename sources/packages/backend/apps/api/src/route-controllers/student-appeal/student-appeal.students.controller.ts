@@ -20,6 +20,8 @@ import {
   StudentAppealAPIOutDTO,
   StudentAppealRequestAPIOutDTO,
   StudentAppealAPIInDTO,
+  StudentAppealSummaryAPIOutDTO,
+  AppealSummaryAPIOutDTO,
 } from "./models/student-appeal.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -65,6 +67,35 @@ export class StudentAppealStudentsController extends BaseController {
     private readonly studentAppealControllerService: StudentAppealControllerService,
   ) {
     super();
+  }
+  /**
+   * Get the summary of all the appeals submitted by the student.
+   * @returns summary of student appeals.
+   */
+  async getStudentAppealSummary(
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<StudentAppealSummaryAPIOutDTO> {
+    const studentAppeals =
+      await this.studentAppealService.getAppealsByStudentId(
+        userToken.studentId,
+      );
+    const appeals = studentAppeals.map<AppealSummaryAPIOutDTO>((appeal) => {
+      // Using the first appeal request to get the assessed details of the appeal.
+      const [firstAppealRequest] = appeal.appealRequests;
+      return {
+        id: appeal.id,
+        appealStatus: this.studentAppealControllerService.getAppealStatus(
+          appeal.appealRequests,
+        ),
+        appealRequestNames: appeal.appealRequests.map(
+          (appealRequest) => appealRequest.submittedFormName,
+        ),
+        applicationId: appeal.application?.id,
+        applicationNumber: appeal.application?.applicationNumber,
+        assessedDate: firstAppealRequest.assessedDate,
+      };
+    });
+    return { appeals };
   }
 
   /**
