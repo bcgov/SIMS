@@ -134,6 +134,10 @@ export class ECEResponseProcessingService {
     remoteFilePaths: string[],
   ): Promise<ProcessSummaryResult> {
     const processSummary = new ProcessSummaryResult();
+    // Log the files to be processed for the institution.
+    processSummary.summary.push(
+      `Processing file(s) for institution code: ${institutionCode}, files: ${remoteFilePaths.map((filePath) => path.basename(filePath)).join(", ")}.`,
+    );
     const integrationLocation =
       await this.institutionLocationService.getIntegrationLocation(
         institutionCode,

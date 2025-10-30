@@ -178,7 +178,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 16",
+        "Error(s): 0, Warning(s): 1, Info: 17",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -311,7 +311,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 16",
+        "Error(s): 0, Warning(s): 1, Info: 17",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -443,7 +443,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 15",
+        "Error(s): 0, Warning(s): 1, Info: 16",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -521,7 +521,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 16",
+        "Error(s): 0, Warning(s): 1, Info: 17",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -607,7 +607,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 15",
+        "Error(s): 0, Warning(s): 1, Info: 16",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -674,7 +674,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 15",
+        "Error(s): 0, Warning(s): 1, Info: 16",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -752,7 +752,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 15",
+        "Error(s): 0, Warning(s): 1, Info: 16",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1096,7 +1096,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 2, Info: 15",
+        "Error(s): 0, Warning(s): 2, Info: 16",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1196,7 +1196,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 16",
+        "Error(s): 0, Warning(s): 1, Info: 17",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1280,7 +1280,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 2, Info: 15",
+        "Error(s): 0, Warning(s): 2, Info: 16",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1366,7 +1366,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 2, Info: 15",
+        "Error(s): 0, Warning(s): 2, Info: 16",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1392,6 +1392,32 @@ describe(
       expect(notifications).toHaveLength(
         locationCONF.integrationContacts.length,
       );
+    });
+
+    it("Should order files by name and group files per institution code when multiple files are present for the distinct institutions.", async () => {
+      // Arrange
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Modify the data in mock file to have the correct values for
+      // disbursement value ID and application number.
+      mockDownloadFiles(sftpClientMock, [
+        CONR_008_VALD_FILE,
+        CONR_008_SKIP_FILE,
+        CONR_008_VALD_FILE,
+        CONR_008_SKIP_FILE,
+      ]);
+
+      // Act
+      await processor.processQueue(mockedJob.job);
+
+      // Assert
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file(s) for institution code: SKIP, files: ${CONR_008_SKIP_FILE}, ${CONR_008_SKIP_FILE}.`,
+          `Processing file(s) for institution code: VALD, files: ${CONR_008_VALD_FILE}, ${CONR_008_VALD_FILE}.`,
+        ]),
+      ).toBe(true);
     });
   },
 );
