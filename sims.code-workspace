@@ -39,7 +39,8 @@
       "ms-vscode.js-debug-nightly",
       "adpyke.vscode-sql-formatter",
       "redhat.vscode-yaml",
-      "mongodb.mongodb-vscode"
+      "mongodb.mongodb-vscode",
+      "sonarsource.sonarlint-vscode"
     ]
   },
   "tasks": {
