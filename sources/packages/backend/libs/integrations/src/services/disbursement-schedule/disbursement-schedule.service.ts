@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DisbursementValueMap } from "@sims/integrations/services";
+import { DisbursementValueMap } from "./disbursement-schedule.models";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
 import {
   RecordDataModelService,
