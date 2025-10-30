@@ -72,6 +72,7 @@ export class StudentAppealStudentsController extends BaseController {
    * Get the summary of all the appeals submitted by the student.
    * @returns summary of student appeals.
    */
+  @Get()
   async getStudentAppealSummary(
     @UserToken() userToken: StudentUserToken,
   ): Promise<StudentAppealSummaryAPIOutDTO> {

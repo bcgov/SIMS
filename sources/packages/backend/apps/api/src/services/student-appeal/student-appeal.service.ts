@@ -515,7 +515,18 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         application: { id: true, applicationNumber: true },
       },
       relations: { application: true, appealRequests: true },
-      where: { student: { id: studentId } },
+      where: [
+        { student: { id: studentId }, application: IsNull() },
+        // Exclude the legacy change requests when fetching appeals associated with applications.
+        {
+          student: { id: studentId },
+          application: {
+            programYear: {
+              startDate: MoreThanOrEqual(PROGRAM_YEAR_2025_26_START_DATE),
+            },
+          },
+        },
+      ],
       order: { submittedDate: "DESC" },
     });
   }
