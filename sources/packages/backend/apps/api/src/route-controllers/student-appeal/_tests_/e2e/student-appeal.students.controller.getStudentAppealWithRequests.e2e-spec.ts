@@ -11,8 +11,7 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
-  createFakeStudentAppeal,
-  createFakeStudentAppealRequest,
+  saveFakeAppealWithAppealRequests,
   saveFakeStudent,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
@@ -39,17 +38,10 @@ describe("StudentAppealStudentsController(e2e)-getStudentAppealWithRequests", ()
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const submittedData = { fakeData: "fakeData" };
-    const studentAppealRequest = createFakeStudentAppealRequest(undefined, {
-      initialValues: {
-        appealStatus: StudentAppealStatus.Approved,
-        submittedData,
-      },
-    });
-    const studentAppeal = createFakeStudentAppeal({
-      student,
-      appealRequests: [studentAppealRequest],
-    });
-    await db.studentAppeal.save(studentAppeal);
+    const studentAppeal = await saveFakeAppealWithAppealRequests(db, student, [
+      { appealStatus: StudentAppealStatus.Approved, submittedData },
+    ]);
+    const [studentAppealRequest] = studentAppeal.appealRequests;
     await mockJWTUserInfo(appModule, student.user);
     const endpoint = `/students/appeal/${studentAppeal.id}/requests`;
     const studentToken = await getStudentToken(

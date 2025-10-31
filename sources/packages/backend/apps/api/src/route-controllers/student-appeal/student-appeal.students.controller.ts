@@ -88,9 +88,9 @@ export class StudentAppealStudentsController extends BaseController {
         appealStatus: this.studentAppealControllerService.getAppealStatus(
           appeal.appealRequests,
         ),
-        appealRequestNames: appeal.appealRequests.map(
-          (appealRequest) => appealRequest.submittedFormName,
-        ),
+        appealRequests: appeal.appealRequests.map((appealRequest) => ({
+          submittedFormName: appealRequest.submittedFormName,
+        })),
         applicationId: appeal.application?.id,
         applicationNumber: appeal.application?.applicationNumber,
         assessedDate: firstAppealRequest.assessedDate,

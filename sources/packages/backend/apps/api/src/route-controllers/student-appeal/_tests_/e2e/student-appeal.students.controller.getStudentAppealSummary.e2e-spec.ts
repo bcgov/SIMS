@@ -12,19 +12,11 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
-  createFakeStudentAppeal,
-  createFakeStudentAppealRequest,
-  saveFakeApplication,
+  saveFakeAppealWithAppealRequests,
   saveFakeStudent,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
-import {
-  ProgramYear,
-  Student,
-  StudentAppeal,
-  StudentAppealRequest,
-  StudentAppealStatus,
-} from "@sims/sims-db";
+import { ProgramYear, StudentAppealStatus } from "@sims/sims-db";
 import { PROGRAM_YEAR_2025_26_START_DATE } from "../../../../services/student-appeal/constants";
 
 describe("StudentAppealStudentsController(e2e)-getStudentAppealSummary", () => {
@@ -57,12 +49,13 @@ describe("StudentAppealStudentsController(e2e)-getStudentAppealSummary", () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     // Create an approved student appeal for the student.
-    const studentAppeal = await saveFakeAppealWithAppealRequests(student, [
+    const studentAppeal = await saveFakeAppealWithAppealRequests(db, student, [
       { appealStatus: StudentAppealStatus.Approved, assessedDate: new Date() },
     ]);
     const [studentAppealRequest] = studentAppeal.appealRequests;
     // Create a pending student application appeal for the student.
     const studentApplicationAppeal = await saveFakeAppealWithAppealRequests(
+      db,
       student,
       [
         {
@@ -76,6 +69,7 @@ describe("StudentAppealStudentsController(e2e)-getStudentAppealSummary", () => {
     const application = studentApplicationAppeal.application;
     // Create a legacy change request appeal that should not be returned in the summary.
     await saveFakeAppealWithAppealRequests(
+      db,
       student,
       [
         {
@@ -102,8 +96,11 @@ describe("StudentAppealStudentsController(e2e)-getStudentAppealSummary", () => {
           {
             id: studentApplicationAppeal.id,
             appealStatus: StudentAppealStatus.Pending,
-            appealRequestNames: [
-              studentApplicationAppealRequest.submittedFormName,
+            appealRequests: [
+              {
+                submittedFormName:
+                  studentApplicationAppealRequest.submittedFormName,
+              },
             ],
             applicationId: application.id,
             applicationNumber: application.applicationNumber,
@@ -112,7 +109,11 @@ describe("StudentAppealStudentsController(e2e)-getStudentAppealSummary", () => {
           {
             id: studentAppeal.id,
             appealStatus: StudentAppealStatus.Approved,
-            appealRequestNames: [studentAppealRequest.submittedFormName],
+            appealRequests: [
+              {
+                submittedFormName: studentAppealRequest.submittedFormName,
+              },
+            ],
             assessedDate: studentAppealRequest.assessedDate.toISOString(),
           },
         ],
@@ -129,6 +130,7 @@ describe("StudentAppealStudentsController(e2e)-getStudentAppealSummary", () => {
       // Create an approved student application appeal for the student
       // with 2 appeal requests.
       const studentApplicationAppeal = await saveFakeAppealWithAppealRequests(
+        db,
         student,
         [
           {
@@ -149,6 +151,7 @@ describe("StudentAppealStudentsController(e2e)-getStudentAppealSummary", () => {
       const application = studentApplicationAppeal.application;
       // Create a legacy change request appeal that should not be returned in the summary.
       await saveFakeAppealWithAppealRequests(
+        db,
         student,
         [
           {
@@ -172,9 +175,15 @@ describe("StudentAppealStudentsController(e2e)-getStudentAppealSummary", () => {
             {
               id: studentApplicationAppeal.id,
               appealStatus: StudentAppealStatus.Approved,
-              appealRequestNames: [
-                studentApplicationAppealRequest1.submittedFormName,
-                studentApplicationAppealRequest2.submittedFormName,
+              appealRequests: [
+                {
+                  submittedFormName:
+                    studentApplicationAppealRequest1.submittedFormName,
+                },
+                {
+                  submittedFormName:
+                    studentApplicationAppealRequest2.submittedFormName,
+                },
               ],
               applicationId: application.id,
               applicationNumber: application.applicationNumber,
@@ -202,38 +211,6 @@ describe("StudentAppealStudentsController(e2e)-getStudentAppealSummary", () => {
         appeals: [],
       });
   });
-
-  /**
-   *  Saves a fake student appeal with the given appeal request inputs for the provided student.
-   * @param student student.
-   * @param appealRequestValues appeal request values.
-   * @param options options.
-   * - `isApplicationAppeal` indicates if the appeal is for an application.
-   * - `programYear` application program year.
-   * @returns the saved student appeal.
-   */
-  async function saveFakeAppealWithAppealRequests(
-    student: Student,
-    appealRequestValues: Partial<StudentAppealRequest>[],
-    options?: { isApplicationAppeal?: boolean; programYear?: ProgramYear },
-  ): Promise<StudentAppeal> {
-    const appealRequests = appealRequestValues.map((appealRequestValue) =>
-      createFakeStudentAppealRequest(undefined, {
-        initialValues: appealRequestValue,
-      }),
-    );
-    const studentAppeal = createFakeStudentAppeal({
-      student,
-      appealRequests,
-    });
-    if (options?.isApplicationAppeal) {
-      studentAppeal.application = await saveFakeApplication(db.dataSource, {
-        student,
-        programYear: options?.programYear,
-      });
-    }
-    return db.studentAppeal.save(studentAppeal);
-  }
 
   afterAll(async () => {
     await app?.close();
