@@ -137,8 +137,8 @@ diagnosticMode:
 ## @param image.debug Set to true if you would like to see extra information on logs
 ##
 image:
-  registry: artifacts.developer.gov.bc.ca/docker-remote
-  repository: bitnami/mongodb
+  registry: artifacts.developer.gov.bc.ca
+  repository: s0c2-legacy-bitnami/mongodb
   tag: 8.0.11-debian-12-r0
   digest: ""
   ## Specify a imagePullPolicy
@@ -152,7 +152,8 @@ image:
   ## pullSecrets:
   ##   - myRegistryKeySecretName
   ##
-  pullSecrets: []
+  pullSecrets:
+    - artifactory-secret-credential
   ## Set to true if you would like to see extra information on logs
   ##
   debug: false
@@ -263,8 +264,8 @@ tls:
   ## @param tls.extraDnsNames Add extra dns names to the CA, can solve x509 auth issue for pod clients
   ##
   image:
-    registry: artifacts.developer.gov.bc.ca/docker-remote
-    repository: bitnami/nginx
+    registry: artifacts.developer.gov.bc.ca
+    repository: s0c2-legacy-bitnami/nginx
     tag: 1.29.0-debian-12-r2
     digest: ""
     pullPolicy: IfNotPresent
@@ -275,7 +276,8 @@ tls:
     ## pullSecrets:
     ##   - myRegistryKeySecretName
     ##
-    pullSecrets: []
+    pullSecrets:
+      - artifactory-secret-credential
   ## e.g:
   ## extraDnsNames
   ##   "DNS.6": "$my_host"
@@ -852,8 +854,8 @@ externalAccess:
     ## @param externalAccess.autoDiscovery.image.pullSecrets Init container auto-discovery image pull secrets
     ##
     image:
-      registry: artifacts.developer.gov.bc.ca/docker-remote
-      repository: bitnami/kubectl
+      registry: artifacts.developer.gov.bc.ca
+      repository: s0c2-legacy-bitnami/kubectl
       tag: 1.33.2-debian-12-r3
       digest: ""
       ## Specify a imagePullPolicy
@@ -866,7 +868,8 @@ externalAccess:
       ## pullSecrets:
       ##   - myRegistryKeySecretName
       ##
-      pullSecrets: []
+      pullSecrets:
+        - artifactory-secret-credential
     ## Init Container resource requests and limits
     ## ref: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
     ## We usually recommend not to specify default resources and to leave this as a conscious
@@ -901,8 +904,8 @@ externalAccess:
     ## @param externalAccess.dnsCheck.image.pullSecrets Init container dns-check image pull secrets
     ##
     image:
-      registry: artifacts.developer.gov.bc.ca/docker-remote
-      repository: bitnami/os-shell
+      registry: artifacts.developer.gov.bc.ca
+      repository: s0c2-legacy-bitnami/os-shell
       tag: 12-debian-12-r48
       digest: ""
       ## Specify a imagePullPolicy
@@ -915,7 +918,8 @@ externalAccess:
       ## pullSecrets:
       ##   - myRegistryKeySecretName
       ##
-      pullSecrets: []
+      pullSecrets:
+        - artifactory-secret-credential
     ## Init Container resource requests and limits
     ## ref: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
     ## We usually recommend not to specify default resources and to leave this as a conscious
@@ -1629,8 +1633,8 @@ volumePermissions:
   ## @param volumePermissions.image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: artifacts.developer.gov.bc.ca/docker-remote
-    repository: bitnami/os-shell
+    registry: artifacts.developer.gov.bc.ca
+    repository: s0c2-legacy-bitnami/os-shell
     tag: 12-debian-12-r48
     digest: ""
     ## Specify a imagePullPolicy
@@ -1643,7 +1647,8 @@ volumePermissions:
     ## pullSecrets:
     ##   - myRegistryKeySecretName
     ##
-    pullSecrets: []
+    pullSecrets:
+      - artifactory-secret-credential
   ## Init Container resource requests and limits
   ## ref: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
   ## We usually recommend not to specify default resources and to leave this as a conscious
@@ -2429,8 +2434,8 @@ metrics:
   ## @param metrics.image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: artifacts.developer.gov.bc.ca/docker-remote
-    repository: bitnami/mongodb-exporter
+    registry: artifacts.developer.gov.bc.ca
+    repository: s0c2-legacy-bitnami/mongodb-exporter
     tag: 0.45.0-debian-12-r4
     digest: ""
     pullPolicy: IfNotPresent
@@ -2441,7 +2446,8 @@ metrics:
     ## pullSecrets:
     ##   - myRegistryKeySecretName
     ##
-    pullSecrets: []
+    pullSecrets:
+      - artifactory-secret-credential
   ## @param metrics.username String with username for the metrics exporter
   ## If undefined the root user will be used for the metrics exporter
   ##

@@ -87,8 +87,8 @@ diagnosticMode:
 ## @param image.debug Enable image debug mode
 ##
 image:
-  registry: artifacts.developer.gov.bc.ca/docker-remote
-  repository: bitnami/redis-cluster
+  registry: artifacts.developer.gov.bc.ca
+  repository: s0c2-legacy-bitnami/redis-cluster
   tag: 7.4.2-debian-12-r0
   digest: ""
   ## Specify a imagePullPolicy
@@ -102,7 +102,8 @@ image:
   ## pullSecrets:
   ##   - myRegistryKeySecretName
   ##
-  pullSecrets: []
+  pullSecrets:
+    - artifactory-secret-credential
   ## Enable debug mode
   ##
   debug: false
@@ -440,8 +441,8 @@ volumePermissions:
   ## @param volumePermissions.image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: artifacts.developer.gov.bc.ca/docker-remote
-    repository: bitnami/os-shell
+    registry: artifacts.developer.gov.bc.ca
+    repository: s0c2-legacy-bitnami/os-shell
     tag: 12-debian-12-r34
     digest: ""
     pullPolicy: IfNotPresent
@@ -452,7 +453,8 @@ volumePermissions:
     ## pullSecrets:
     ##   - myRegistryKeySecretName
     ##
-    pullSecrets: []
+    pullSecrets:
+      - artifactory-secret-credential
   ## Containers Security Context
   ## @param volumePermissions.containerSecurityContext.enabled Enable Containers' Security Context
   ## @param volumePermissions.containerSecurityContext.seLinuxOptions [object,nullable] Set SELinux options in container
@@ -945,8 +947,8 @@ metrics:
   ## @param metrics.image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: artifacts.developer.gov.bc.ca/docker-remote
-    repository: bitnami/redis-exporter
+    registry: artifacts.developer.gov.bc.ca
+    repository: s0c2-legacy-bitnami/redis-exporter
     tag: 1.67.0-debian-12-r0
     digest: ""
     pullPolicy: IfNotPresent
@@ -957,7 +959,8 @@ metrics:
     ## pullSecrets:
     ##   - myRegistryKeySecretName
     ##
-    pullSecrets: []
+    pullSecrets:
+      - artifactory-secret-credential
   ## @param metrics.resourcesPreset Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if metrics.resources is set (metrics.resources is recommended for production).
   ## More information: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_resources.tpl#L15
   ##
@@ -1156,8 +1159,8 @@ sysctlImage:
   ## @param sysctlImage.pullPolicy sysctlImage Init container pull policy
   ## @param sysctlImage.pullSecrets Specify docker-registry secret names as an array
   ##
-  registry: artifacts.developer.gov.bc.ca/docker-remote
-  repository: bitnami/os-shell
+  registry: artifacts.developer.gov.bc.ca
+  repository: s0c2-legacy-bitnami/os-shell
   tag: 12-debian-12-r34
   digest: ""
   pullPolicy: IfNotPresent
@@ -1168,7 +1171,8 @@ sysctlImage:
   ## pullSecrets:
   ##   - myRegistryKeySecretName
   ##
-  pullSecrets: []
+  pullSecrets:
+    - artifactory-secret-credential
   ## @param sysctlImage.mountHostSys Mount the host `/sys` folder to `/host-sys`
   ##
   mountHostSys: false
