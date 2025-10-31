@@ -13,6 +13,7 @@ import {
   CHANGE_REQUEST_APPEAL_FORMS,
   StudentAppealService,
 } from "../../services";
+import { StudentAppealRequest, StudentAppealStatus } from "@sims/sims-db";
 
 @Injectable()
 export class StudentAppealControllerService {
@@ -105,5 +106,31 @@ export class StudentAppealControllerService {
         "One or more forms submitted are not valid for change request submission.",
       );
     }
+  }
+
+  /**
+   * Derive the appeal status based on the appeal requests of an appeal.
+   * @param appealRequests appeal requests.
+   * @returns appeal status.
+   */
+  getAppealStatus(appealRequests: StudentAppealRequest[]): StudentAppealStatus {
+    if (!appealRequests.length) {
+      throw new Error("An appeal must have at least one appeal request.");
+    }
+    if (
+      appealRequests.some(
+        (appealRequest) =>
+          appealRequest.appealStatus === StudentAppealStatus.Pending,
+      )
+    ) {
+      return StudentAppealStatus.Pending;
+    }
+    const appealStatus = appealRequests.some(
+      (appealRequest) =>
+        appealRequest.appealStatus === StudentAppealStatus.Approved,
+    )
+      ? StudentAppealStatus.Approved
+      : StudentAppealStatus.Declined;
+    return appealStatus;
   }
 }

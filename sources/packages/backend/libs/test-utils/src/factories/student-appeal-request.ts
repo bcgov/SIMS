@@ -35,7 +35,7 @@ export function createFakeStudentAppealRequest(
   appealRequest.appealStatus =
     options?.initialValues?.appealStatus ?? StudentAppealStatus.Approved;
   appealRequest.submittedData = options?.initialValues?.submittedData ?? {};
-  appealRequest.assessedDate = null;
+  appealRequest.assessedDate = options?.initialValues?.assessedDate;
   appealRequest.assessedBy = relations?.assessedBy;
   appealRequest.note = null;
   return appealRequest;
