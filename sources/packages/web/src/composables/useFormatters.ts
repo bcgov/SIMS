@@ -22,6 +22,7 @@ dayjs.extend(utc);
 const DEFAULT_EMPTY_VALUE = "-";
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 export const DATE_HOUR_MINUTE_ISO_FORMAT = "MMM DD YYYY HH:mm";
+const DEFAULT_MASKED_CHAR_REGEX = /^X+$/;
 
 /**
  * Helpers to adjust how values are shown in the UI.
@@ -447,6 +448,9 @@ export function useFormatters() {
         currency: "CAD",
         roundingMode: "trunc",
       }).format(value);
+    }
+    if (typeof value === "string" && DEFAULT_MASKED_CHAR_REGEX.test(value)) {
+      return value;
     }
     return placeholder;
   };
