@@ -68,6 +68,7 @@ export class StudentAppealStudentsController extends BaseController {
   ) {
     super();
   }
+
   /**
    * Get the summary of all the appeals submitted by the student.
    * @returns summary of student appeals.
