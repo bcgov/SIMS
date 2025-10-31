@@ -25,6 +25,7 @@ export class InstitutionLocationService {
       select: {
         id: true,
         integrationContacts: true,
+        institutionCode: true,
       },
       where: {
         hasIntegration: true,

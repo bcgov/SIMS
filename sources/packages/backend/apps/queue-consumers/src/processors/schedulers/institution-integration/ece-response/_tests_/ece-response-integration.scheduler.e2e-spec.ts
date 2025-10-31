@@ -201,12 +201,14 @@ describe(
       expect(sftpClientMock.rename).toHaveBeenCalled();
       // Expect the notifications to be created.
       const notifications = await getUnsentECEResponseNotifications(db);
+      const [emailAddress] = locationCONF.integrationContacts;
       expect(notifications).toEqual([
         {
           id: expect.any(Number),
           messagePayload: {
-            email_address: locationCONF.integrationContacts[0],
+            email_address: emailAddress,
             personalisation: {
+              institutionCode: locationCONF.institutionCode,
               fileParsingErrors: 0,
               totalRecords: 2,
               totalRecordsSkipped: 1,
