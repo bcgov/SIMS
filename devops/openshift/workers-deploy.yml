@@ -89,6 +89,8 @@ objects:
                   value: ${BYPASS_CRA_INCOME_VERIFICATION}
                 - name: DISABLE_ORM_CACHE
                   value: ${DISABLE_ORM_CACHE}
+                - name: APPLICATION_SUBMISSION_DEADLINE_WEEKS
+                  value: ${APPLICATION_SUBMISSION_DEADLINE_WEEKS}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -199,4 +201,6 @@ parameters:
   - name: PORT
     required: true
   - name: DISABLE_ORM_CACHE
+    required: true
+  - name: APPLICATION_SUBMISSION_DEADLINE_WEEKS
     required: true

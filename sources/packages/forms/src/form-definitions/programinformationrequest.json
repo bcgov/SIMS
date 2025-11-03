@@ -424,7 +424,7 @@
           "key": "institutionEnteredDetailsStudyPeriodWarning",
           "conditional": {
             "show": true,
-            "when": "studyEndDateBeforeSixWeeksFromApplicationSubmission",
+            "when": "isApplicationSubmittedAfterDeadlineForStudyEndDate",
             "eq": "true"
           },
           "type": "htmlelement",
@@ -553,14 +553,22 @@
       "isNew": false
     },
     {
-      "label": "Study end date before six weeks from application submission",
+      "label": "Is application submitted after the deadline for the selected study end date",
       "persistent": "client-only",
-      "calculateValue": "/**\r\n * Checks if the study end date of the offering selected to complete PIR\r\n * is less than six weeks from application submission date.\r\n * \r\n */\r\n\r\nvalue =\r\n  !!data.selectedOfferingEndDate &&\r\n  !!data.applicationSubmittedDate &&\r\n  utils.custom.isLessThanGivenWeeks(data.selectedOfferingEndDate, 6, {referenceDate: data.applicationSubmittedDate});\r\n",
-      "key": "studyEndDateBeforeSixWeeksFromApplicationSubmission",
+      "calculateValue": "/**\r\n * Checks if the study end date of the offering selected to complete PIR\r\n * is less than application submission deadline weeks from application submission date.\r\n * \r\n * Or in other words is application submitted date after the deadline date for the study end date based on deadline weeks.\r\n */\r\n\r\nvalue =\r\n  !!data.selectedOfferingEndDate &&\r\n  !!data.applicationSubmittedDate &&\r\n  !!data.applicationSubmissionDeadlineWeeks &&\r\n  utils.custom.isLessThanGivenWeeks(data.selectedOfferingEndDate, data.applicationSubmissionDeadlineWeeks, {referenceDate: data.applicationSubmittedDate});\r\n",
+      "key": "isApplicationSubmittedAfterDeadlineForStudyEndDate",
       "type": "hidden",
       "input": true,
       "tableView": false,
       "lockKey": true
+    },
+    {
+      "label": "Application submission deadline weeks",
+      "persistent": "client-only",
+      "key": "applicationSubmissionDeadlineWeeks",
+      "type": "hidden",
+      "input": true,
+      "tableView": false
     }
   ]
 }
