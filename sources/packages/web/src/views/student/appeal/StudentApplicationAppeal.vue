@@ -10,7 +10,7 @@
       />
     </template>
     <template #tab-header>
-      <student-appeal-shared-form />
+      <student-appeal-shared-form :application-id="applicationId" />
     </template>
     <router-view />
   </student-page-container>

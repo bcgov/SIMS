@@ -95,7 +95,7 @@
   </body-header-container>
 </template>
 <script lang="ts">
-import { useRules, useSnackBar } from "@/composables";
+import { useRules, useSnackBar, useStudentAppeals } from "@/composables";
 import { defineComponent, onMounted, ref, watch } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { StudentAppealService } from "../../../services/StudentAppealService";
@@ -125,6 +125,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const router = useRouter();
     const { checkNullOrEmptyRule } = useRules();
+    const { mapStudentAppealsFormNames } = useStudentAppeals();
     const appealsSelectionForm = ref({} as VForm);
     const eligibleApplications = ref<EligibleApplicationForAppealAPIOutDTO[]>();
     const loadingEligibleApplications = ref(false);
@@ -134,14 +135,14 @@ export default defineComponent({
     const applicationAppeals = ref<AppealForm[]>([
       {
         formName: "roomandboardcostsappeal",
-        description: "Room and board costs",
+        description: mapStudentAppealsFormNames("roomandboardcostsappeal"),
       },
     ]);
     const selectedOtherAppeal = ref<string>();
     const otherAppeals = ref<AppealForm[]>([
       {
         formName: "modifiedindependentappeal",
-        description: " Modified independent",
+        description: mapStudentAppealsFormNames("modifiedindependentappeal"),
       },
     ]);
 

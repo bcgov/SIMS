@@ -25,13 +25,16 @@
           <template #[`item.submittedDate`]="{ item }">
             {{ dateOnlyLongString(item.submittedDate) }}
           </template>
-          <template #[`item.decisionDate`]="{ item }">
+          <template #[`item.assessedDate`]="{ item }">
             {{
               conditionalEmptyStringFiller(
                 !item.assessedDate,
                 dateOnlyLongString(item.assessedDate),
               )
             }}
+          </template>
+          <template #[`item.appealStatus`]="{ item }">
+            <status-chip-requested-assessment :status="item.appealStatus" />
           </template>
           <template #[`item.applicationNumber`]="{ item }">
             {{
@@ -41,25 +44,46 @@
               )
             }}
           </template>
-
+          <template #[`item.actions`]="{ item }">
+            <v-btn color="primary" variant="text" @click="goToAppeal(item.id)"
+              >View
+              <v-tooltip activator="parent" location="start"
+                >Click to view this appeal request.</v-tooltip
+              >
+            </v-btn>
+          </template>
           <template #expanded-row="{ columns, item }">
             <tr>
               <td :colspan="columns.length">
-                <v-table>
-                  <tbody>
-                    <tr
-                      v-for="appealRequest in item.appealRequests"
-                      :key="appealRequest.submittedFormName"
-                    >
-                      <td headers="submitted-header">
-                        {{ appealRequest.submittedFormName }}
-                      </td>
-                      <td headers="status-header" style="width: 100%">
-                        {{ item.appealStatus }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </v-table>
+                <content-group class="my-2 py-0">
+                  <v-table>
+                    <thead>
+                      <tr>
+                        <th id="status-header">Status</th>
+                        <th id="appeal-header">Appeal</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        v-for="appealRequest in item.appealRequests"
+                        :key="appealRequest.submittedFormName"
+                      >
+                        <td headers="status-header">
+                          <status-chip-requested-assessment
+                            :status="item.appealStatus"
+                          />
+                        </td>
+                        <td headers="appeal-header" class="w-100">
+                          {{
+                            mapStudentAppealsFormNames(
+                              appealRequest.submittedFormName,
+                            )
+                          }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </v-table>
+                </content-group>
               </td>
             </tr>
           </template>
@@ -78,9 +102,14 @@ import {
   StudentAppealsHistoryHeaders,
 } from "@/types";
 import { AppealSummaryAPIOutDTO } from "@/services/http/dto";
-import { useFormatters } from "@/composables";
+import { useFormatters, useStudentAppeals } from "@/composables";
+import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
+import router from "@/router";
 
 export default defineComponent({
+  components: {
+    StatusChipRequestedAssessment,
+  },
   props: {
     applicationId: {
       type: Number,
@@ -88,8 +117,9 @@ export default defineComponent({
       default: undefined,
     },
   },
-  setup() {
+  setup(props) {
     //const router = useRouter();
+    const { mapStudentAppealsFormNames } = useStudentAppeals();
     const { conditionalEmptyStringFiller, dateOnlyLongString } =
       useFormatters();
     const appeals = ref<AppealSummaryAPIOutDTO[]>();
@@ -102,28 +132,24 @@ export default defineComponent({
       expanded.value = appeals.value.map((appeal) => appeal.id);
     });
 
-    // const goToAppealFormsRequests = async (): Promise<void> => {
-    //   const formIsValid = appealsSelectionForm.value.validate();
-    //   if (!formIsValid) {
-    //     return;
-    //   }
-    //   if (selectedAppealType.value === AppealTypes.Application) {
-    //     await router.push({
-    //       name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_SUBMIT,
-    //       params: {
-    //         applicationId: selectedApplicationId.value,
-    //         appealForms: selectedApplicationAppeals.value?.toString(),
-    //       },
-    //     });
-    //     return;
-    //   }
-    //   await router.push({
-    //     name: StudentRoutesConst.STUDENT_APPEAL_SUBMIT,
-    //     params: {
-    //       appealForms: selectedOtherAppeal.value,
-    //     },
-    //   });
-    // };
+    const goToAppeal = async (appealId: number) => {
+      if (props.applicationId) {
+        await router.push({
+          name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_REQUEST,
+          params: {
+            applicationId: props.applicationId,
+            appealId,
+          },
+        });
+        return;
+      }
+      await router.push({
+        name: StudentRoutesConst.STUDENT_APPEAL_REQUEST,
+        params: {
+          appealId,
+        },
+      });
+    };
 
     return {
       StudentRoutesConst,
@@ -133,7 +159,9 @@ export default defineComponent({
       ITEMS_PER_PAGE,
       conditionalEmptyStringFiller,
       dateOnlyLongString,
+      mapStudentAppealsFormNames,
       expanded,
+      goToAppeal,
     };
   },
 });

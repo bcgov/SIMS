@@ -549,3 +549,11 @@ export const COESummaryHeaders = [
   { title: "Status", key: "coeStatus", sortable: true },
   { title: "Action", key: "applicationId", sortable: false },
 ];
+
+export const StudentAppealsHistoryHeaders = [
+  { title: "Submitted Date", key: "submittedDate", sortable: true },
+  { title: "Decision Date", key: "assessedDate", sortable: true },
+  { title: "Decision Status", key: "appealStatus", sortable: false },
+  { title: "Application Number", key: "applicationNumber", sortable: true },
+  { title: "Actions", key: "actions", sortable: false },
+];

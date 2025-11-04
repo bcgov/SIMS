@@ -31,3 +31,4 @@ export * from "./useApplicationOfferingChange";
 export * from "./useSupplierStatus";
 export * from "./useRestrictionBypass";
 export * from "./useInvoiceBatch";
+export * from "./useStudentAppeals";

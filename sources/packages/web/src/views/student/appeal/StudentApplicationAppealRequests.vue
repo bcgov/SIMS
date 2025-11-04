@@ -5,7 +5,7 @@
         title="Application details"
         sub-title="Appeal Request"
         :route-location="{
-          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+          name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_HISTORY,
           params: {
             id: applicationId,
           },
