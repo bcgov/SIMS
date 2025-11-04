@@ -39,7 +39,7 @@ export default defineComponent({
 
     const goToStudentAppeals = () => {
       router.push({
-        name: StudentRoutesConst.STUDENT_APPEAL,
+        name: StudentRoutesConst.STUDENT_APPEAL_HISTORY,
       });
     };
 

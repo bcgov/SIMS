@@ -1,5 +1,5 @@
 <template>
-  <student-page-container>
+  <student-page-container :layout-template="LayoutTemplates.CenteredCardTab">
     <template #header>
       <header-navigator
         title="Applications"
@@ -9,13 +9,17 @@
         }"
       />
     </template>
-    <student-appeal-shared-form :application-id="applicationId" />
+    <template #tab-header>
+      <student-appeal-shared-form />
+    </template>
+    <router-view />
   </student-page-container>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import StudentAppealSharedForm from "@/components/students/StudentAppealSharedForm.vue";
+import { LayoutTemplates } from "@/types";
 
 export default defineComponent({
   components: {
@@ -28,7 +32,7 @@ export default defineComponent({
     },
   },
   setup() {
-    return { StudentRoutesConst };
+    return { StudentRoutesConst, LayoutTemplates };
   },
 });
 </script>

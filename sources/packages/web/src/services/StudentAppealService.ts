@@ -8,6 +8,7 @@ import {
   DetailedStudentAppealRequestAPIOutDTO,
   StudentAppealRequestAPIOutDTO,
   EligibleApplicationsForAppealAPIOutDTO,
+  StudentAppealSummaryAPIOutDTO,
 } from "./http/dto";
 
 /**
@@ -103,5 +104,13 @@ export class StudentAppealService {
    */
   async getEligibleApplicationsForAppeal(): Promise<EligibleApplicationsForAppealAPIOutDTO> {
     return ApiClient.StudentAppealApi.getEligibleApplicationsForAppeal();
+  }
+
+  /**
+   * Get the summary of all the appeals submitted by the student.
+   * @returns summary of student appeals.
+   */
+  async getStudentAppealSummary(): Promise<StudentAppealSummaryAPIOutDTO> {
+    return ApiClient.StudentAppealApi.getStudentAppealSummary();
   }
 }

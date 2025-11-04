@@ -67,3 +67,22 @@ export interface EligibleApplicationForAppealAPIOutDTO {
 export interface EligibleApplicationsForAppealAPIOutDTO {
   applications: EligibleApplicationForAppealAPIOutDTO[];
 }
+
+export interface StudentAppealRequestSummaryAPIOutDTO {
+  submittedFormName: string;
+  appealStatus: StudentAppealStatus;
+}
+
+export interface AppealSummaryAPIOutDTO {
+  id: number;
+  appealStatus: StudentAppealStatus;
+  appealRequests: StudentAppealRequestSummaryAPIOutDTO[];
+  applicationId?: number;
+  applicationNumber?: string;
+  assessedDate?: Date;
+  submittedDate: Date;
+}
+
+export interface StudentAppealSummaryAPIOutDTO {
+  appeals: AppealSummaryAPIOutDTO[];
+}

@@ -39,7 +39,7 @@
           class="nav-item-label"
           variant="text"
           :to="{
-            name: StudentRoutesConst.STUDENT_APPEAL,
+            name: StudentRoutesConst.STUDENT_APPEAL_SUBMISSION,
           }"
           prepend-icon="fa:far fa-folder"
           >Appeals</v-btn

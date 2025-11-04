@@ -91,10 +91,12 @@ export class StudentAppealStudentsController extends BaseController {
         ),
         appealRequests: appeal.appealRequests.map((appealRequest) => ({
           submittedFormName: appealRequest.submittedFormName,
+          appealStatus: appealRequest.appealStatus,
         })),
         applicationId: appeal.application?.id,
         applicationNumber: appeal.application?.applicationNumber,
         assessedDate: firstAppealRequest.assessedDate,
+        submittedDate: appeal.submittedDate,
       };
     });
     return { appeals };

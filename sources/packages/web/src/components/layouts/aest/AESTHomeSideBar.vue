@@ -145,7 +145,7 @@ export default defineComponent({
       {
         title: "Appeals",
         props: {
-          prependIcon: "mdi-folder-open-outline",
+          prependIcon: "mdi-scale-balance",
           to: {
             name: AESTRoutesConst.STUDENT_APPEALS,
           },
