@@ -2,7 +2,7 @@
   <body-header-container>
     <template #header>
       <body-header
-        title="Appeals"
+        title="Submission"
         sub-title="You can submit two types of appeals for Student Aid BC to review. Select the appropriate appeals type below."
       />
     </template>
