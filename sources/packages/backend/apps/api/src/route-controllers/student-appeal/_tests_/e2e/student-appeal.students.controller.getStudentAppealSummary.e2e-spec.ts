@@ -100,11 +100,13 @@ describe("StudentAppealStudentsController(e2e)-getStudentAppealSummary", () => {
               {
                 submittedFormName:
                   studentApplicationAppealRequest.submittedFormName,
+                appealStatus: StudentAppealStatus.Pending,
               },
             ],
             applicationId: application.id,
             applicationNumber: application.applicationNumber,
             assessedDate: null,
+            submittedDate: studentApplicationAppeal.submittedDate.toISOString(),
           },
           {
             id: studentAppeal.id,
@@ -112,9 +114,11 @@ describe("StudentAppealStudentsController(e2e)-getStudentAppealSummary", () => {
             appealRequests: [
               {
                 submittedFormName: studentAppealRequest.submittedFormName,
+                appealStatus: StudentAppealStatus.Approved,
               },
             ],
             assessedDate: studentAppealRequest.assessedDate.toISOString(),
+            submittedDate: studentAppeal.submittedDate.toISOString(),
           },
         ],
       });
@@ -179,15 +183,19 @@ describe("StudentAppealStudentsController(e2e)-getStudentAppealSummary", () => {
                 {
                   submittedFormName:
                     studentApplicationAppealRequest1.submittedFormName,
+                  appealStatus: StudentAppealStatus.Approved,
                 },
                 {
                   submittedFormName:
                     studentApplicationAppealRequest2.submittedFormName,
+                  appealStatus: StudentAppealStatus.Declined,
                 },
               ],
               applicationId: application.id,
               applicationNumber: application.applicationNumber,
               assessedDate: assessedDate.toISOString(),
+              submittedDate:
+                studentApplicationAppeal.submittedDate.toISOString(),
             },
           ],
         });
