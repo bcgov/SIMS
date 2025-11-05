@@ -527,7 +527,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
           },
         },
       ],
-      order: { submittedDate: "DESC" },
+      order: { submittedDate: "DESC", appealRequests: { appealStatus: "ASC" } },
     });
   }
 
