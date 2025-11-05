@@ -28,7 +28,7 @@
           <template #[`item.assessedDate`]="{ item }">
             {{
               conditionalEmptyStringFiller(
-                !item.assessedDate,
+                !!item.assessedDate,
                 dateOnlyLongString(item.assessedDate),
               )
             }}
@@ -37,15 +37,25 @@
             <status-chip-requested-assessment :status="item.appealStatus" />
           </template>
           <template #[`item.applicationNumber`]="{ item }">
-            {{
-              conditionalEmptyStringFiller(
-                !!item.applicationNumber,
-                item.applicationNumber,
-              )
-            }}
+            <RouterLink
+              v-if="item.applicationId"
+              :to="{
+                name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+                params: { id: item.applicationId },
+              }"
+              class="text-decoration-none"
+            >
+              {{ item.applicationNumber }}
+            </RouterLink>
+            <template v-else>
+              {{ DEFAULT_EMPTY_VALUE }}
+            </template>
           </template>
           <template #[`item.actions`]="{ item }">
-            <v-btn color="primary" variant="text" @click="goToAppeal(item.id)"
+            <v-btn
+              color="primary"
+              variant="text"
+              @click="goToAppeal(item.id, item.applicationId)"
               >View
               <v-tooltip activator="parent" location="start"
                 >Click to view this appeal request.</v-tooltip
@@ -70,7 +80,7 @@
                       >
                         <td headers="status-header">
                           <status-chip-requested-assessment
-                            :status="item.appealStatus"
+                            :status="appealRequest.appealStatus"
                           />
                         </td>
                         <td headers="appeal-header" class="w-100">
@@ -102,7 +112,11 @@ import {
   StudentAppealsHistoryHeaders,
 } from "@/types";
 import { AppealSummaryAPIOutDTO } from "@/services/http/dto";
-import { useFormatters, useStudentAppeals } from "@/composables";
+import {
+  useFormatters,
+  useStudentAppeals,
+  DEFAULT_EMPTY_VALUE,
+} from "@/composables";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
 import router from "@/router";
 
@@ -132,12 +146,12 @@ export default defineComponent({
       expanded.value = appeals.value.map((appeal) => appeal.id);
     });
 
-    const goToAppeal = async (appealId: number) => {
-      if (props.applicationId) {
+    const goToAppeal = async (appealId: number, applicationId?: number) => {
+      if (applicationId) {
         await router.push({
           name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_REQUEST,
           params: {
-            applicationId: props.applicationId,
+            applicationId,
             appealId,
           },
         });
@@ -157,6 +171,7 @@ export default defineComponent({
       StudentAppealsHistoryHeaders,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
+      DEFAULT_EMPTY_VALUE,
       conditionalEmptyStringFiller,
       dateOnlyLongString,
       mapStudentAppealsFormNames,

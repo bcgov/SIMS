@@ -84,9 +84,9 @@ export default defineComponent({
           "The application appeal has been submitted successfully.",
         );
         router.push({
-          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+          name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_HISTORY,
           params: {
-            id: props.applicationId,
+            applicationId: props.applicationId,
           },
         });
       } catch (error: unknown) {

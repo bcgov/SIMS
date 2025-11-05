@@ -41,7 +41,7 @@
           :to="{
             name: StudentRoutesConst.STUDENT_APPEAL_SUBMISSION,
           }"
-          prepend-icon="fa:far fa-folder"
+          prepend-icon="fa:fa fa-balance-scale"
           >Appeals</v-btn
         >
         <v-btn

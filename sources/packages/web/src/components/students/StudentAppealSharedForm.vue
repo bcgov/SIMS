@@ -1,5 +1,5 @@
 <template>
-  <v-tabs stacked color="primary" grow>
+  <v-tabs color="primary">
     <v-tab
       :to="{
         name: applicationId
@@ -9,8 +9,10 @@
       }"
       value="appeal-submission"
     >
-      <v-icon start icon="mdi-scale-balance"></v-icon>
-      Appeal Submission
+      <div>
+        <v-icon start icon="mdi-scale-balance"></v-icon>
+        <span class="mx-2 label-bold">Appeal Submission</span>
+      </div>
     </v-tab>
     <v-tab
       :to="{
@@ -21,8 +23,10 @@
       }"
       value="appeal-history"
     >
-      <v-icon start icon="mdi-history"></v-icon>
-      Appeal History
+      <div>
+        <v-icon start icon="mdi-history"></v-icon>
+        <span class="mx-2 label-bold">Appeal History</span>
+      </div>
     </v-tab>
   </v-tabs>
 </template>
