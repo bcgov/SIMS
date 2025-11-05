@@ -19,7 +19,7 @@ import utc from "dayjs/plugin/utc";
 dayjs.extend(customParseFormat);
 dayjs.extend(utc);
 
-export const DEFAULT_EMPTY_VALUE = "-";
+const DEFAULT_EMPTY_VALUE = "-";
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 export const DATE_HOUR_MINUTE_ISO_FORMAT = "MMM DD YYYY HH:mm";
 const DEFAULT_MASKED_CHAR_REGEX = /^X+$/;

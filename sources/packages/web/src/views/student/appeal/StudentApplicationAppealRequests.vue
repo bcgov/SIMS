@@ -7,7 +7,7 @@
         :route-location="{
           name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_HISTORY,
           params: {
-            id: applicationId,
+            applicationId,
           },
         }"
       />
