@@ -268,6 +268,7 @@ export class ApplicationAssessmentStatusDetailsAPIOutDTO {
   originalAssessmentStatus: StudentAssessmentStatus;
   isApplicationArchived: boolean;
   applicationStatus: ApplicationStatus;
+  assessmentDate: Date;
 }
 
 export class ApplicationWarningsAPIOutDTO {

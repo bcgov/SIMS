@@ -222,6 +222,7 @@ export interface ApplicationAssessmentStatusDetailsAPIOutDTO {
   originalAssessmentStatus: StudentAssessmentStatus;
   isApplicationArchived: boolean;
   applicationStatus: ApplicationStatus;
+  assessmentDate: Date;
 }
 
 export interface ApplicationWarningsAPIOutDTO {
