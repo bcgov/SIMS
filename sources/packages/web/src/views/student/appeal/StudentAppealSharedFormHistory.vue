@@ -131,8 +131,7 @@ export default defineComponent({
       default: undefined,
     },
   },
-  setup(props) {
-    //const router = useRouter();
+  setup() {
     const { mapStudentAppealsFormNames } = useStudentAppeals();
     const { conditionalEmptyStringFiller, dateOnlyLongString } =
       useFormatters();
