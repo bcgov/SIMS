@@ -66,6 +66,7 @@ export default defineComponent({
         openModalButtonDisabled.value =
           applicationAssessmentStatusDetails.originalAssessmentStatus !==
             StudentAssessmentStatus.Completed ||
+          applicationAssessmentStatusDetails.assessmentDate === null ||
           applicationAssessmentStatusDetails.isApplicationArchived ||
           [
             ApplicationStatus.Cancelled,

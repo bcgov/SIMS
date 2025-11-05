@@ -195,6 +195,7 @@ export class ApplicationAESTController extends BaseController {
       originalAssessmentStatus: originalAssessment.studentAssessmentStatus,
       isApplicationArchived: application.isArchived,
       applicationStatus: application.applicationStatus,
+      assessmentDate: application.currentAssessment.assessmentDate,
     };
   }
 

@@ -44,6 +44,7 @@ describe("ApplicationAESTController(e2e)-getApplicationAssessmentStatusDetails",
         originalAssessmentStatus: StudentAssessmentStatus.Submitted,
         isApplicationArchived: true,
         applicationStatus: ApplicationStatus.Completed,
+        assessmentDate: application.currentAssessment.assessmentDate,
       });
   });
 
