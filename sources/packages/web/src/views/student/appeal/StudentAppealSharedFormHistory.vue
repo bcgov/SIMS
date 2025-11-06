@@ -99,11 +99,7 @@ import {
   StudentAppealsHistoryHeaders,
 } from "@/types";
 import { AppealSummaryAPIOutDTO } from "@/services/http/dto";
-import {
-  useFormatters,
-  useStudentAppeals,
-  DEFAULT_EMPTY_VALUE,
-} from "@/composables";
+import { useFormatters, useStudentAppeals } from "@/composables";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
 import StatusChipStudentAppeal from "@/components/generic/StatusChipStudentAppeal.vue";
 import router from "@/router";
@@ -165,7 +161,6 @@ export default defineComponent({
       StudentAppealsHistoryHeaders,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
-      DEFAULT_EMPTY_VALUE,
       conditionalEmptyStringFiller,
       dateOnlyLongString,
       emptyStringFiller,
