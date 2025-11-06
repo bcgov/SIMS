@@ -106,7 +106,7 @@ export default defineComponent({
 
     const submitAppeal = async (applicationId: number) => {
       router.push({
-        name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL,
+        name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_SUBMISSION,
         params: {
           applicationId,
         },

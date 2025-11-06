@@ -13,6 +13,9 @@
       <check-valid-s-i-n-banner v-if="hasStudentAccount" />
       <slot name="alerts"></slot>
     </template>
+    <template #tab-header>
+      <slot name="tab-header"></slot>
+    </template>
     <slot></slot>
   </full-page-container>
 </template>

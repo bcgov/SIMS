@@ -27,6 +27,8 @@ export enum AppRoutes {
    * Student appeal initiated from the top-level appeal menu (not tied to a specific application).
    */
   StudentAppeal = "student-appeal",
+  StudentAppealSubmission = "submission",
+  StudentAppealHistory = "history",
   /**
    * Student appeal submission page (not tied to a specific application).
    */

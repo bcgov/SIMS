@@ -5,7 +5,7 @@
         title="Student"
         sub-title="Appeal Request"
         :route-location="{
-          name: StudentRoutesConst.STUDENT_APPEAL,
+          name: StudentRoutesConst.STUDENT_APPEAL_HISTORY,
         }"
       />
     </template>

@@ -6,7 +6,7 @@
         title="Application Appeal"
         sub-title="Submit Appeal(s)"
         :route-location="{
-          name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL,
+          name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_SUBMISSION,
           params: { applicationId },
         }"
       />
@@ -66,7 +66,7 @@ export default defineComponent({
 
     const canceledSubmission = () => {
       router.push({
-        name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL,
+        name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_SUBMISSION,
         params: {
           applicationId: props.applicationId,
         },
@@ -84,9 +84,9 @@ export default defineComponent({
           "The application appeal has been submitted successfully.",
         );
         router.push({
-          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+          name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_HISTORY,
           params: {
-            id: props.applicationId,
+            applicationId: props.applicationId,
           },
         });
       } catch (error: unknown) {

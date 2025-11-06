@@ -23,6 +23,9 @@ import ReportParentInformation from "@/views/student/ReportParentInformation.vue
 import ViewScholasticStanding from "@/views/student/ViewScholasticStanding.vue";
 // Student Appeal
 import StudentAppeal from "@/views/student/appeal/StudentAppeal.vue";
+import StudentAppealSharedFormSubmission from "@/views/student/appeal/StudentAppealSharedFormSubmission.vue";
+import StudentAppealSharedFormHistory from "@/views/student/appeal/StudentAppealSharedFormHistory.vue";
+
 import StudentAppealSubmit from "@/views/student/appeal/StudentAppealSubmit.vue";
 import StudentAppealRequests from "@/views/student/appeal/StudentAppealRequests.vue";
 // Student Application Appeal
@@ -244,6 +247,34 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         meta: {
           clientType: ClientIdType.Student,
         },
+        children: [
+          {
+            path: AppRoutes.StudentAppealSubmission,
+            name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_SUBMISSION,
+            component: StudentAppealSharedFormSubmission,
+            props: (route) => ({
+              applicationId: Number.parseInt(
+                route.params.applicationId as string,
+              ),
+            }),
+            meta: {
+              clientType: ClientIdType.Student,
+            },
+          },
+          {
+            path: AppRoutes.StudentAppealHistory,
+            name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_HISTORY,
+            component: StudentAppealSharedFormHistory,
+            props: (route) => ({
+              applicationId: Number.parseInt(
+                route.params.applicationId as string,
+              ),
+            }),
+            meta: {
+              clientType: ClientIdType.Student,
+            },
+          },
+        ],
       },
       {
         path: AppRoutes.StudentAppeal,
@@ -252,6 +283,24 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         meta: {
           clientType: ClientIdType.Student,
         },
+        children: [
+          {
+            path: AppRoutes.StudentAppealSubmission,
+            name: StudentRoutesConst.STUDENT_APPEAL_SUBMISSION,
+            component: StudentAppealSharedFormSubmission,
+            meta: {
+              clientType: ClientIdType.Student,
+            },
+          },
+          {
+            path: AppRoutes.StudentAppealHistory,
+            name: StudentRoutesConst.STUDENT_APPEAL_HISTORY,
+            component: StudentAppealSharedFormHistory,
+            meta: {
+              clientType: ClientIdType.Student,
+            },
+          },
+        ],
       },
       {
         path: AppRoutes.StudentApplicationAppealSubmit,

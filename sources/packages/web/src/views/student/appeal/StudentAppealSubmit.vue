@@ -7,7 +7,7 @@
     <student-appeal-submit-shared-form
       :appeal-forms="appealForms"
       :processing="processing"
-      @cancel="goToStudentAppeals"
+      @cancel="goToStudentAppealsSubmission"
       @submitted="submitted"
     />
   </student-page-container>
@@ -37,9 +37,9 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const processing = ref(false);
 
-    const goToStudentAppeals = () => {
+    const goToStudentAppealsSubmission = () => {
       router.push({
-        name: StudentRoutesConst.STUDENT_APPEAL,
+        name: StudentRoutesConst.STUDENT_APPEAL_SUBMISSION,
       });
     };
 
@@ -49,7 +49,9 @@ export default defineComponent({
         const [studentAppeal] = appealRequests;
         await StudentAppealService.shared.submitStudentAppeal(studentAppeal);
         snackBar.success("The student appeal has been submitted successfully.");
-        goToStudentAppeals();
+        router.push({
+          name: StudentRoutesConst.STUDENT_APPEAL_HISTORY,
+        });
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
           snackBar.error(error.message);
@@ -64,7 +66,7 @@ export default defineComponent({
     };
 
     return {
-      goToStudentAppeals,
+      goToStudentAppealsSubmission,
       submitted,
       processing,
     };

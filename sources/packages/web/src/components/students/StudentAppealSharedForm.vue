@@ -1,117 +1,39 @@
 <template>
-  <body-header-container>
-    <template #header>
-      <body-header
-        title="Appeals"
-        sub-title="You can submit two types of appeals for Student Aid BC to review. Select the appropriate appeals type below."
-      />
-    </template>
-    <error-summary :errors="appealsSelectionForm.errors" />
-    <content-group>
-      <v-form ref="appealsSelectionForm">
-        <v-radio-group
-          color="primary"
-          density="compact"
-          v-model="selectedAppealType"
-          label="Appeal type"
-          hide-details="auto"
-          class="radio-align-top"
-          :rules="[(v) => checkNullOrEmptyRule(v, 'Appeal type')]"
-        >
-          <v-radio :value="AppealTypes.Application" class="mt-2">
-            <template #label>
-              <div class="ml-1">
-                <strong>Application</strong>
-                <p>
-                  Application specific appeals that will only impact a single
-                  application like income changes, room and board, etc.
-                </p>
-              </div>
-            </template>
-          </v-radio>
-          <v-radio :value="AppealTypes.Other">
-            <template #label>
-              <div class="ml-1">
-                <strong>Other</strong>
-                <p>
-                  Appeals that are student related (restriction or status) that
-                  don't apply to a single application.
-                </p>
-              </div>
-            </template>
-          </v-radio>
-        </v-radio-group>
-        <template v-if="selectedAppealType === AppealTypes.Application">
-          <v-select
-            hide-details="auto"
-            label="Application Number"
-            density="compact"
-            :items="eligibleApplications"
-            v-model="selectedApplicationId"
-            :loading="loadingEligibleApplications"
-            item-value="id"
-            item-title="applicationNumber"
-            variant="outlined"
-            class="mb-4"
-            no-data-text="No eligible applications available"
-            :rules="[(v) => checkNullOrEmptyRule(v, 'Application number')]"
-          />
-          <v-select
-            hide-details="auto"
-            label="Appeal(s)"
-            density="compact"
-            multiple
-            :items="applicationAppeals"
-            item-title="description"
-            item-value="formName"
-            v-model="selectedApplicationAppeals"
-            variant="outlined"
-            class="mb-4"
-            :rules="[(v) => checkNullOrEmptyRule(v, 'Appeal(s)')]"
-          />
-        </template>
-        <v-select
-          v-if="selectedAppealType === AppealTypes.Other"
-          hide-details="auto"
-          label="Appeal form"
-          density="compact"
-          :items="otherAppeals"
-          item-title="description"
-          item-value="formName"
-          v-model="selectedOtherAppeal"
-          variant="outlined"
-          class="mb-4"
-          :rules="[(v) => checkNullOrEmptyRule(v, 'Appeal')]"
-        />
-      </v-form>
-    </content-group>
-    <footer-buttons
-      class="mt-4"
-      primary-label="Next"
-      justify="end"
-      @primary-click="goToAppealFormsRequests"
-      :show-secondary-button="false"
-    />
-  </body-header-container>
+  <v-tabs color="primary">
+    <v-tab
+      :to="{
+        name: applicationId
+          ? StudentRoutesConst.STUDENT_APPLICATION_APPEAL_SUBMISSION
+          : StudentRoutesConst.STUDENT_APPEAL_SUBMISSION,
+        params: applicationId ? { applicationId } : undefined,
+      }"
+      value="appeal-submission"
+    >
+      <div>
+        <v-icon start icon="mdi-scale-balance"></v-icon>
+        <span class="mx-2 label-bold">Appeal Submission</span>
+      </div>
+    </v-tab>
+    <v-tab
+      :to="{
+        name: applicationId
+          ? StudentRoutesConst.STUDENT_APPLICATION_APPEAL_HISTORY
+          : StudentRoutesConst.STUDENT_APPEAL_HISTORY,
+        params: applicationId ? { applicationId } : undefined,
+      }"
+      value="appeal-history"
+    >
+      <div>
+        <v-icon start icon="mdi-history"></v-icon>
+        <span class="mx-2 label-bold">Appeal History</span>
+      </div>
+    </v-tab>
+  </v-tabs>
 </template>
+
 <script lang="ts">
-import { useRules, useSnackBar } from "@/composables";
-import { defineComponent, onMounted, ref, watch } from "vue";
+import { defineComponent } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { StudentAppealService } from "../../services/StudentAppealService";
-import { EligibleApplicationForAppealAPIOutDTO } from "@/services/http/dto";
-import { useRouter } from "vue-router";
-import { VForm } from "@/types";
-
-enum AppealTypes {
-  Application = "Application",
-  Other = "Other",
-}
-
-interface AppealForm {
-  formName: string;
-  description: string;
-}
 
 export default defineComponent({
   props: {
@@ -121,91 +43,9 @@ export default defineComponent({
       default: undefined,
     },
   },
-  setup(props) {
-    const snackBar = useSnackBar();
-    const router = useRouter();
-    const { checkNullOrEmptyRule } = useRules();
-    const appealsSelectionForm = ref({} as VForm);
-    const eligibleApplications = ref<EligibleApplicationForAppealAPIOutDTO[]>();
-    const loadingEligibleApplications = ref(false);
-    const selectedAppealType = ref<AppealTypes | null>();
-    const selectedApplicationId = ref<number | null>();
-    const selectedApplicationAppeals = ref<string[]>();
-    const applicationAppeals = ref<AppealForm[]>([
-      {
-        formName: "roomandboardcostsappeal",
-        description: "Room and board costs",
-      },
-    ]);
-    const selectedOtherAppeal = ref<string>();
-    const otherAppeals = ref<AppealForm[]>([
-      {
-        formName: "modifiedindependentappeal",
-        description: " Modified independent",
-      },
-    ]);
-
-    onMounted(async () => {
-      try {
-        loadingEligibleApplications.value = true;
-        const eligibleApplicationForAppeal =
-          await StudentAppealService.shared.getEligibleApplicationsForAppeal();
-        eligibleApplications.value = eligibleApplicationForAppeal.applications;
-      } catch {
-        snackBar.error("Unexpected error while loading eligible applications.");
-      } finally {
-        loadingEligibleApplications.value = false;
-      }
-    });
-
-    watch(
-      () => props.applicationId,
-      () => {
-        selectedApplicationId.value = props.applicationId;
-        selectedAppealType.value = props.applicationId
-          ? AppealTypes.Application
-          : null;
-      },
-      { immediate: true },
-    );
-
-    const goToAppealFormsRequests = async (): Promise<void> => {
-      const formIsValid = appealsSelectionForm.value.validate();
-      if (!formIsValid) {
-        return;
-      }
-      if (selectedAppealType.value === AppealTypes.Application) {
-        await router.push({
-          name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_SUBMIT,
-          params: {
-            applicationId: selectedApplicationId.value,
-            appealForms: selectedApplicationAppeals.value?.toString(),
-          },
-        });
-        return;
-      }
-      await router.push({
-        name: StudentRoutesConst.STUDENT_APPEAL_SUBMIT,
-        params: {
-          appealForms: selectedOtherAppeal.value,
-        },
-      });
-    };
-
+  setup() {
     return {
-      appealsSelectionForm,
-      checkNullOrEmptyRule,
       StudentRoutesConst,
-      selectedAppealType,
-      eligibleApplications,
-      selectedApplicationId,
-      loadingEligibleApplications,
-      AppealTypes,
-      applicationAppeals,
-      selectedApplicationAppeals,
-      selectedOtherAppeal,
-      otherAppeals,
-      goToAppealFormsRequests,
     };
   },
 });

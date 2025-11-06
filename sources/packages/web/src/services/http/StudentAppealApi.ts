@@ -12,6 +12,7 @@ import {
   StudentAppealRequestApprovalAPIInDTO,
   StudentAppealRequestAPIOutDTO,
   StudentAppealAPIInDTO,
+  StudentAppealSummaryAPIOutDTO,
 } from "./dto";
 
 /**
@@ -97,5 +98,13 @@ export class StudentAppealApi extends HttpBaseClient {
    */
   async getEligibleApplicationsForAppeal(): Promise<EligibleApplicationsForAppealAPIOutDTO> {
     return this.getCall(this.addClientRoot("appeal/eligible-applications"));
+  }
+
+  /**
+   * Get the summary of all the appeals submitted by the student.
+   * @returns summary of student appeals.
+   */
+  async getStudentAppealSummary(): Promise<StudentAppealSummaryAPIOutDTO> {
+    return this.getCall(this.addClientRoot("appeal"));
   }
 }

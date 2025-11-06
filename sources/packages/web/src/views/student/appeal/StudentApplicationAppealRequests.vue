@@ -2,12 +2,12 @@
   <student-page-container>
     <template #header>
       <header-navigator
-        title="Application details"
+        title="Appeal History"
         sub-title="Appeal Request"
         :route-location="{
-          name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+          name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_HISTORY,
           params: {
-            id: applicationId,
+            applicationId,
           },
         }"
       />

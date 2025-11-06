@@ -81,6 +81,7 @@ export class StudentAppealAPIOutDTO<T> {
 
 class StudentAppealRequestSummaryAPIOutDTO {
   submittedFormName: string;
+  appealStatus: StudentAppealStatus;
 }
 
 export class AppealSummaryAPIOutDTO {
@@ -90,6 +91,7 @@ export class AppealSummaryAPIOutDTO {
   applicationId?: number;
   applicationNumber?: string;
   assessedDate?: Date;
+  submittedDate: Date;
 }
 
 export class StudentAppealSummaryAPIOutDTO {
