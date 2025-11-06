@@ -3,7 +3,7 @@
     <template #header>
       <body-header
         title="Submission"
-        sub-title="You can submit two types of appeals for Student Aid BC to review. Select the appropriate appeals type below."
+        sub-title="You can submit two types of appeals for StudentAid BC to review. Select the appropriate appeals type below."
       />
     </template>
     <error-summary :errors="appealsSelectionForm.errors" />
