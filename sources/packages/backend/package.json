@@ -115,7 +115,7 @@
     "@types/node": "^24.9.1",
     "@types/papaparse": "^5.3.16",
     "@types/passport-jwt": "^4.0.1",
-    "@types/pg": "^8.15.5",
+    "@types/pg": "^8.15.6",
     "@types/supertest": "^6.0.3",
     "copy-webpack-plugin": "^13.0.1",
     "cross-env": "^10.1.0",
