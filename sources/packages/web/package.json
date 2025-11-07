@@ -46,7 +46,7 @@
     "jiti": "^2.6.1",
     "prettier": "^3.6.2",
     "reflect-metadata": "^0.2.2",
-    "sass": "^1.93.2",
+    "sass": "^1.93.3",
     "typescript": "^5.9.3",
     "vite": "^7.1.12",
     "vite-plugin-vuetify": "^2.1.2"
