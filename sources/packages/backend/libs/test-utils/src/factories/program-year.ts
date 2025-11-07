@@ -1,4 +1,4 @@
-import { ProgramYear } from "@sims/sims-db";
+import { OfferingIntensity, ProgramYear } from "@sims/sims-db";
 import { E2EDataSources } from "../data-source/e2e-data-source";
 
 /**
@@ -31,13 +31,19 @@ export function createFakeProgramYear(programYearPrefix?: number): ProgramYear {
  * @param db e2e data sources.
  * @param programYearPrefix program year prefix, for instance, a prefix 2000
  * would create a program year 2000-2001.
+ * @param offeringIntensity optional offering intensity to be set
+ * in the created program year.
  * @returns program year with the prefix.
  */
 export async function ensureProgramYearExists(
   db: E2EDataSources,
   programYearPrefix: number,
+  offeringIntensity?: OfferingIntensity[],
 ): Promise<ProgramYear> {
   const fakeProgramYear = createFakeProgramYear(programYearPrefix);
+  if (offeringIntensity) {
+    fakeProgramYear.offeringIntensity = offeringIntensity;
+  }
   const existingProgramYear = await db.programYear.findOneBy({
     programYear: fakeProgramYear.programYear,
   });
@@ -45,4 +51,16 @@ export async function ensureProgramYearExists(
     return existingProgramYear;
   }
   return db.programYear.save(fakeProgramYear);
+}
+
+/**
+ * Uses the year of 1999 to create a part-time only program year for testing purposes.
+ * @param db e2e data sources.
+ * @returns the created part-time only program year.
+ */
+export async function ensureProgramYearExistsForPartTimeOnly(
+  db: E2EDataSources,
+): Promise<ProgramYear> {
+  // Create a part-time only program year for the test.
+  return ensureProgramYearExists(db, 1999, [OfferingIntensity.partTime]);
 }

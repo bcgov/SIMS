@@ -12,6 +12,7 @@ import {
 import {
   createE2EDataSources,
   E2EDataSources,
+  ensureProgramYearExistsForPartTimeOnly,
   saveFakeStudent,
 } from "@sims/test-utils";
 import { OfferingIntensity, ProgramYear } from "@sims/sims-db";
@@ -106,6 +107,40 @@ describe("ApplicationStudentsController(e2e)-createDraftApplication", () => {
         message: "User is not allowed to submit a full-time application.",
         error: "Forbidden",
         statusCode: HttpStatus.FORBIDDEN,
+      });
+  });
+
+  it("Should throw an unprocessable entity error when a full-time application is saved and the program year allows only part-time.", async () => {
+    // Arrange
+    // Create a part-time only program year for the test.
+    const programYearPartTimeOnly =
+      await ensureProgramYearExistsForPartTimeOnly(db);
+    const student = await saveFakeStudent(db.dataSource);
+    const payload = {
+      associatedFiles: [],
+      data: {},
+      programYearId: programYearPartTimeOnly.id,
+      offeringIntensity: OfferingIntensity.fullTime,
+    } as CreateApplicationAPIInDTO;
+
+    const endpoint = `/students/application/draft`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, student.user);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "Offering intensity not allowed for the program year.",
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });
   });
 
