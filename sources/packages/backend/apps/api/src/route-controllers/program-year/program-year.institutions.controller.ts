@@ -4,9 +4,9 @@ import BaseController from "../BaseController";
 import { AllowAuthorizedParty } from "../../auth/decorators/authorized-party.decorator";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiTags } from "@nestjs/swagger";
-import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { IsBCPublicInstitution } from "../../auth/decorators";
 import { ProgramYearControllerService } from "./program-year.controller.service";
+import { ProgramYearApiOutDTO } from "../../route-controllers";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @IsBCPublicInstitution()
@@ -20,11 +20,11 @@ export class ProgramYearInstitutionsController extends BaseController {
   }
 
   /**
-   * Gets a list of program years returned as option items (id/description pair).
-   * @returns an array of program years as id/description objects.
+   * Gets a list of program years.
+   * @returns list of program years.
    */
-  @Get("options-list")
-  async getProgramYears(): Promise<OptionItemAPIOutDTO[]> {
+  @Get()
+  async getProgramYears(): Promise<ProgramYearApiOutDTO[]> {
     return this.programYearControllerService.getProgramYears();
   }
 }

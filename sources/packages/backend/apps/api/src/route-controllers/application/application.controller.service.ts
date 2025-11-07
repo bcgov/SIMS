@@ -935,6 +935,15 @@ export class ApplicationControllerService {
     if (!application.programYear.active) {
       throw new UnprocessableEntityException("Program year is not active.");
     }
+    if (
+      !application.programYear.offeringIntensity.includes(
+        application.offeringIntensity,
+      )
+    ) {
+      throw new UnprocessableEntityException(
+        "Offering intensity not allowed for the program year.",
+      );
+    }
     // Validate the values in the submitted application before submitting.
     await this.validateSubmitApplicationData(payload, application, options);
     const formName = this.getStudentApplicationFormName(

@@ -38,7 +38,7 @@ describe("ProgramYearStudentsController(e2e)-getProgramYears", () => {
 
   it("Should get the list of the available program years when available.", async () => {
     // Arrange
-    const endpoint = "/students/program-year/options-list";
+    const endpoint = "/students/program-year";
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );

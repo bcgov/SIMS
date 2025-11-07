@@ -1,5 +1,5 @@
 import ApiClient from "@/services/http/ApiClient";
-import { OptionItemAPIOutDTO } from "@/services/http/dto";
+import { ProgramYearApiOutDTO } from "@/services/http/dto/ProgramYear.dto";
 
 export class ProgramYearService {
   // Share Instance
@@ -9,7 +9,11 @@ export class ProgramYearService {
     return this.instance || (this.instance = new this());
   }
 
-  async getProgramYearOptions(): Promise<OptionItemAPIOutDTO[]> {
+  /**
+   * Gets a list of program years.
+   * @returns list of program years.
+   */
+  async getProgramYears(): Promise<ProgramYearApiOutDTO[]> {
     return ApiClient.ProgramYear.getProgramYears();
   }
 }

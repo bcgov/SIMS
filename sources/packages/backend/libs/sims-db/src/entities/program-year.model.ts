@@ -2,6 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { numericTransformer } from "../transformers/numeric.transformer";
+import { OfferingIntensity } from "@sims/sims-db/entities/offering-intensity.type";
 
 @Entity({ name: TableNames.ProgramYear })
 export class ProgramYear extends RecordDataModel {
@@ -71,4 +72,15 @@ export class ProgramYear extends RecordDataModel {
     transformer: numericTransformer,
   })
   maxLifetimeBCLoanAmount: number;
+  /**
+   * Offering intensities allowed for the program year.
+   */
+  @Column({
+    name: "offering_intensity",
+    type: "enum",
+    enum: OfferingIntensity,
+    enumName: "OfferingIntensity",
+    array: true,
+  })
+  offeringIntensity: OfferingIntensity[];
 }
