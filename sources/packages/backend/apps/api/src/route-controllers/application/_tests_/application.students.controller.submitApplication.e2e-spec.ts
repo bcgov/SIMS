@@ -20,6 +20,7 @@ import {
   saveFakeStudent,
   saveFakeSFASIndividual,
   RestrictionCode,
+  ensureProgramYearExistsForPartTimeOnly,
 } from "@sims/test-utils";
 import {
   Application,
@@ -1004,11 +1005,51 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       });
   });
 
+  it("Should throw an unprocessable entity error when a full-time application is submitted and the program year allows only part-time.", async () => {
+    // Arrange
+    // Create a part-time only program year for the test.
+    const programYearPartTimeOnly =
+      await ensureProgramYearExistsForPartTimeOnly(db);
+    const { student, draftApplication, payload } =
+      await saveApplicationDraftReadyForSubmission({
+        programYear: programYearPartTimeOnly,
+      });
+    const endpoint = `/students/application/${draftApplication.id}/submit`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.Application,
+      data: { data: payload.data },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, student.user);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "Offering intensity not allowed for the program year.",
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
   /**
    * Save a draft application ready for submission.
+   * @param options optional parameters for saving the application.
+   * - `programYear` the program year to associate with the application.
+   * If not provided, the recent active program year will be used.
    * @returns the student, draft application, and payload.
    */
-  async function saveApplicationDraftReadyForSubmission(): Promise<{
+  async function saveApplicationDraftReadyForSubmission(options?: {
+    programYear?: ProgramYear;
+  }): Promise<{
     student: Student;
     draftApplication: Application;
     payload: SaveApplicationAPIInDTO;
@@ -1017,7 +1058,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     const student = await saveFakeStudent(db.dataSource);
     const draftApplication = await saveFakeApplication(
       db.dataSource,
-      { student, programYear: recentActiveProgramYear },
+      { student, programYear: options?.programYear ?? recentActiveProgramYear },
       {
         applicationData: {} as ApplicationData,
         applicationStatus: ApplicationStatus.Draft,

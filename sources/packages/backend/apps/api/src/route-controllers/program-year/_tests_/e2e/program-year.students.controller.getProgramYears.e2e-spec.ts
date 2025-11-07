@@ -1,5 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import { ProgramYear } from "@sims/sims-db";
+import { OfferingIntensity, ProgramYear } from "@sims/sims-db";
 import { createFakeProgramYear } from "@sims/test-utils";
 import * as request from "supertest";
 import { DataSource } from "typeorm";
@@ -24,6 +24,7 @@ describe("ProgramYearStudentsController(e2e)-getProgramYears", () => {
     programYear2003 = createFakeProgramYear(2003);
     programYear2003.active = false;
     programYear2004 = createFakeProgramYear(2004);
+    programYear2004.offeringIntensity = [OfferingIntensity.partTime];
     programYear2005 = createFakeProgramYear(2005);
     const programYear2003Promise = programYearRepo.save(programYear2003);
     const programYear2004Promise = programYearRepo.save(programYear2004);
@@ -55,10 +56,15 @@ describe("ProgramYearStudentsController(e2e)-getProgramYears", () => {
             expect.objectContaining({
               description:
                 "(2004-2005) - My first day of classes starts between August 01, 2004 and July 31, 2005",
+              offeringIntensity: [OfferingIntensity.partTime],
             }),
             expect.objectContaining({
               description:
                 "(2005-2006) - My first day of classes starts between August 01, 2005 and July 31, 2006",
+              offeringIntensity: [
+                OfferingIntensity.partTime,
+                OfferingIntensity.fullTime,
+              ],
             }),
           ]),
         );
