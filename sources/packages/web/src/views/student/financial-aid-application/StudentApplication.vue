@@ -135,9 +135,8 @@ export default defineComponent({
       }));
       try {
         loadingAvailableProgramYears.value = true;
-        const getProgramYearsResult =
+        programYearsOptions.value =
           await ProgramYearService.shared.getProgramYears();
-        programYearsOptions.value = getProgramYearsResult.programYears;
       } catch {
         snackBar.error("Unexpected error while loading program years.");
       } finally {
@@ -145,6 +144,10 @@ export default defineComponent({
       }
     });
 
+    /**
+     * Program years options available based on the
+     * selected offering intensity.
+     */
     const programYearOptions = computed(() => {
       const yearOptions = [] as SelectItemType[];
       if (!offeringIntensity.value) {
@@ -153,7 +156,7 @@ export default defineComponent({
       for (const yearOption of programYearsOptions.value) {
         if (yearOption.offeringIntensity.includes(offeringIntensity.value)) {
           yearOptions.push({
-            title: `(${yearOption.programYear}) - ${yearOption.description}`,
+            title: yearOption.description,
             value: yearOption.id.toString(),
           });
         }

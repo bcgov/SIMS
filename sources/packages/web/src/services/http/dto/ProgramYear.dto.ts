@@ -1,14 +1,6 @@
+import { OptionItemAPIOutDTO } from "@/services/http/dto/Common.dto";
 import { OfferingIntensity } from "@/types";
 
-export interface ProgramYearApiOutDTO {
-  id: number;
-  programYear: string;
-  description: string;
-  startDate: string;
-  endDate: string;
+export interface ProgramYearApiOutDTO extends OptionItemAPIOutDTO {
   offeringIntensity: OfferingIntensity[];
-}
-
-export interface ProgramYearsApiOutDTO {
-  programYears: ProgramYearApiOutDTO[];
 }

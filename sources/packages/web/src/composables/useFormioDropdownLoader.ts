@@ -150,7 +150,7 @@ export function useFormioDropdownLoader() {
     return loadDropdown(
       form,
       dropdown,
-      ProgramYearService.shared.getProgramYearsOptionsList(),
+      ProgramYearService.shared.getProgramYears(),
     );
   };
 

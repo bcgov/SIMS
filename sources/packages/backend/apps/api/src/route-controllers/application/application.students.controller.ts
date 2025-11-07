@@ -404,6 +404,11 @@ export class ApplicationStudentsController extends BaseController {
         "Program Year is not active, not able to create a draft application.",
       );
     }
+    if (!programYear.offeringIntensity.includes(payload.offeringIntensity)) {
+      throw new UnprocessableEntityException(
+        "Offering intensity not allowed for the program year.",
+      );
+    }
     // The check to validate the value of offeringIntensity can be removed once the toggle for IS_FULL_TIME_ALLOWED is no longer needed
     // and the types are hard-coded again in the form.io definition using the onlyAvailableItems as true.
     if (payload.offeringIntensity === OfferingIntensity.fullTime) {
