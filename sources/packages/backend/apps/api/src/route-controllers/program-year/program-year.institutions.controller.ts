@@ -6,7 +6,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiTags } from "@nestjs/swagger";
 import { IsBCPublicInstitution } from "../../auth/decorators";
 import { ProgramYearControllerService } from "./program-year.controller.service";
-import { ProgramYearApiOutDTO } from "apps/api/src/route-controllers";
+import { ProgramYearApiOutDTO } from "../../route-controllers";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @IsBCPublicInstitution()
