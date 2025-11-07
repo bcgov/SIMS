@@ -24,7 +24,7 @@ export class ProgramYearInstitutionsController extends BaseController {
    * @returns an array of program years as id/description objects.
    */
   @Get("options-list")
-  async getProgramYears(): Promise<OptionItemAPIOutDTO[]> {
-    return this.programYearControllerService.getProgramYears();
+  async getProgramYearsOptionsList(): Promise<OptionItemAPIOutDTO[]> {
+    return this.programYearControllerService.getProgramYearsOptionsList();
   }
 }

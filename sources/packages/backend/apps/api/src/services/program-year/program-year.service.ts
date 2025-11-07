@@ -18,6 +18,7 @@ export class ProgramYearService extends RecordDataModelService<ProgramYear> {
         id: true,
         programYear: true,
         programYearDesc: true,
+        offeringIntensity: true,
       },
       where: { active: true },
       order: { programYear: "DESC" },

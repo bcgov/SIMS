@@ -7,6 +7,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { RequiresStudentAccount } from "../../auth/decorators";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { ProgramYearControllerService } from "./program-year.controller.service";
+import { ProgramYearsApiOutDTO } from "./models/program-year.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -20,11 +21,20 @@ export class ProgramYearStudentsController extends BaseController {
   }
 
   /**
-   * Gets a list of program years returned as option items (id/description pair).
+   * Gets a list of program years returned as option items.
    * @returns an array of program years as id/description objects.
    */
   @Get("options-list")
-  async getProgramYears(): Promise<OptionItemAPIOutDTO[]> {
+  async getProgramYearsOptionsList(): Promise<OptionItemAPIOutDTO[]> {
+    return this.programYearControllerService.getProgramYearsOptionsList();
+  }
+
+  /**
+   * Gets a list of program years.
+   * @returns list of program years.
+   */
+  @Get()
+  async getProgramYears(): Promise<ProgramYearsApiOutDTO> {
     return this.programYearControllerService.getProgramYears();
   }
 }

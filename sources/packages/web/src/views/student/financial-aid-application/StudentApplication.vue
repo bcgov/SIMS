@@ -3,8 +3,8 @@
     <template #header>
       <header-navigator
         title="Applications"
-        subTitle="Start New Application"
-        :routeLocation="{
+        sub-title="Start New Application"
+        :route-location="{
           name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
         }"
       >
@@ -35,6 +35,7 @@
           class="px-2 pb-4"
           :rules="[(v) => checkNullOrEmptyRule(v, 'Offering intensity')]"
           hide-details="auto"
+          @update:model-value="offeringIntensityUpdated"
           required
         ></v-select>
         <p class="px-2">
@@ -51,6 +52,7 @@
           :rules="[(v) => checkNullOrEmptyRule(v, 'Year')]"
           hide-details="auto"
           required
+          :loading="loadingAvailableProgramYears"
         ></v-select>
         <v-btn
           class="ma-2"
@@ -67,14 +69,14 @@
     title="Application already in progress"
     text="There is already a draft of an application in progress. Please continue
         with your draft application or cancel it and start a new application."
-    :showSecondaryButton="false"
+    :show-secondary-button="false"
     ok-label="Close"
     ref="draftApplicationModal"
   >
   </confirm-modal>
 </template>
 <script lang="ts">
-import { onMounted, ref, defineComponent } from "vue";
+import { ref, defineComponent, computed, watchEffect } from "vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import {
   useSnackBar,
@@ -97,7 +99,10 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramYearService } from "@/services/ProgramYearService";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
 import { MORE_THAN_ONE_APPLICATION_DRAFT_ERROR } from "@/types/contracts/ApiProcessError";
-import { PrimaryIdentifierAPIOutDTO } from "@/services/http/dto";
+import {
+  PrimaryIdentifierAPIOutDTO,
+  ProgramYearApiOutDTO,
+} from "@/services/http/dto";
 import { AppConfigService } from "@/services/AppConfigService";
 import { DynamicFormConfigurationService } from "@/services/DynamicFormConfigurationService";
 
@@ -108,7 +113,6 @@ export default defineComponent({
     const initialData = ref({});
     const router = useRouter();
     const snackBar = useSnackBar();
-    const programYearOptions = ref([] as SelectItemType[]);
     const programYearId = ref<number>();
     const offeringIntensity = ref<OfferingIntensity>();
     const startApplicationForm = ref({} as VForm);
@@ -116,8 +120,10 @@ export default defineComponent({
     const { mapOfferingIntensities } = useOffering();
     const draftApplicationModal = ref({} as ModalDialog<boolean>);
     const offeringIntensityOptions = ref([] as SelectItemType[]);
+    const programYearsOptions = ref([] as ProgramYearApiOutDTO[]);
+    const loadingAvailableProgramYears = ref(false);
 
-    onMounted(async () => {
+    watchEffect(async () => {
       const { isFulltimeAllowed } = await AppConfigService.shared.config();
       const intensities = mapOfferingIntensities(
         isFulltimeAllowed,
@@ -127,12 +133,32 @@ export default defineComponent({
         title: intensities[key],
         value: key,
       }));
-      programYearOptions.value = (
-        await ProgramYearService.shared.getProgramYearOptions()
-      ).map((yearOption) => ({
-        title: yearOption.description,
-        value: yearOption.id.toString(),
-      }));
+      try {
+        loadingAvailableProgramYears.value = true;
+        const getProgramYearsResult =
+          await ProgramYearService.shared.getProgramYears();
+        programYearsOptions.value = getProgramYearsResult.programYears;
+      } catch {
+        snackBar.error("Unexpected error while loading program years.");
+      } finally {
+        loadingAvailableProgramYears.value = false;
+      }
+    });
+
+    const programYearOptions = computed(() => {
+      const yearOptions = [] as SelectItemType[];
+      if (!offeringIntensity.value) {
+        return yearOptions;
+      }
+      for (const yearOption of programYearsOptions.value) {
+        if (yearOption.offeringIntensity.includes(offeringIntensity.value)) {
+          yearOptions.push({
+            title: `(${yearOption.programYear}) - ${yearOption.description}`,
+            value: yearOption.id.toString(),
+          });
+        }
+      }
+      return yearOptions;
     });
 
     const startApplication = async () => {
@@ -186,6 +212,13 @@ export default defineComponent({
       }
     };
 
+    /**
+     * Resets the available program years once the intensity changes.
+     */
+    const offeringIntensityUpdated = () => {
+      programYearId.value = undefined;
+    };
+
     return {
       initialData,
       StudentRoutesConst,
@@ -198,6 +231,8 @@ export default defineComponent({
       LayoutTemplates,
       draftApplicationModal,
       offeringIntensityOptions,
+      offeringIntensityUpdated,
+      loadingAvailableProgramYears,
     };
   },
 });

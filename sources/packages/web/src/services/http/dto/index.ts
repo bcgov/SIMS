@@ -35,3 +35,4 @@ export * from "@/services/http/dto/Announcement.dto";
 export * from "@/services/http/dto/Form.dto";
 export * from "@/services/http/dto/ApplicationChangeRequest.dto";
 export * from "@/services/http/dto/DisbursementSchedule.dto";
+export * from "@/services/http/dto/ProgramYear.dto";
