@@ -138,11 +138,12 @@ export default defineComponent({
       applicationOfferingChangeRequestId: number,
     ) => {
       router.push({
-        name: AESTRoutesConst.STUDENT_APPLICATION_OFFERING_CHANGE_REQUEST,
+        name: AESTRoutesConst.STUDENT_APPLICATION_OFFERING_CHANGE_REQUEST_VERSION,
         params: {
-          applicationOfferingChangeRequestId,
-          applicationId: props.applicationId,
           studentId: props.studentId,
+          applicationId: props.applicationId,
+          versionApplicationId: props.versionApplicationId,
+          applicationOfferingChangeRequestId,
         },
       });
     };
