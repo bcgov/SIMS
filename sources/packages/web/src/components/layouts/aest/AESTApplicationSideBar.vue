@@ -5,6 +5,7 @@
       density="compact"
       color="primary"
       bg-color="default"
+      open-strategy="multiple"
     />
   </v-navigation-drawer>
 </template>
@@ -18,7 +19,11 @@ import {
   watchEffect,
 } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { MenuItemModel, SupportingUserType } from "@/types";
+import {
+  ApplicationEditStatus,
+  MenuItemModel,
+  SupportingUserType,
+} from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters, useApplication } from "@/composables";
 import {
@@ -40,6 +45,7 @@ export default defineComponent({
     versionApplicationId: {
       type: Number,
       required: false,
+      default: undefined,
     },
   },
   setup(props) {
@@ -317,35 +323,61 @@ export default defineComponent({
         },
       ];
       versions.forEach((version) => {
+        // Application history children menu.
+        // Initialized with the application itself that always will be present.
+        const children: MenuItemModel[] = [
+          {
+            title: "Application",
+            props: {
+              slim: true,
+              prependIcon: "mdi-school-outline",
+              subtitle: mapApplicationEditStatusForMinistry(
+                version.applicationEditStatus,
+              ),
+              to: {
+                name: AESTRoutesConst.APPLICATION_VERSION_DETAILS,
+                params: {
+                  studentId: props.studentId,
+                  applicationId: props.applicationId,
+                  versionApplicationId: version.id,
+                },
+              },
+            },
+          },
+        ];
+        // Conditionally create the assessment menu.
+        if (
+          version.applicationEditStatus !==
+          ApplicationEditStatus.ChangeCancelled
+        ) {
+          children.push({
+            title: "Assessments",
+            props: {
+              slim: true,
+              prependIcon: "mdi-checkbox-marked-outline",
+              to: {
+                name: AESTRoutesConst.ASSESSMENTS_SUMMARY_DETAILS_VERSION,
+                params: {
+                  studentId: props.studentId,
+                  applicationId: props.applicationId,
+                  versionApplicationId: version.id,
+                },
+              },
+            },
+          });
+        }
+        // Conditionally create the supporting users.
         const versionSupportingUsersMenuItems = createSupportingUsersMenu(
           version.supportingUsers,
         );
+        children.push(...versionSupportingUsersMenuItems);
+        // Application history menu.
         menuItems.push({
           title: `${getISODateHourMinuteString(version.submittedDate)}`,
           props: {
             color: null,
           },
-          children: [
-            {
-              title: "Application",
-              props: {
-                slim: true,
-                prependIcon: "mdi-school-outline",
-                subtitle: mapApplicationEditStatusForMinistry(
-                  version.applicationEditStatus,
-                ),
-                to: {
-                  name: AESTRoutesConst.APPLICATION_VERSION_DETAILS,
-                  params: {
-                    studentId: props.studentId,
-                    applicationId: props.applicationId,
-                    versionApplicationId: version.id,
-                  },
-                },
-              },
-            },
-            ...versionSupportingUsersMenuItems,
-          ],
+          children,
         });
       });
       return menuItems;
