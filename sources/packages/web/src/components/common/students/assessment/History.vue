@@ -4,8 +4,8 @@
       <body-header
         title="Completed changes"
         class="m-1"
-        subTitle="Any events that resulted in a change to the students assessment."
-        :recordsCount="assessmentHistory.length"
+        sub-title="Any events that resulted in a change to the students assessment."
+        :records-count="assessmentHistory.length"
       >
       </body-header>
       <content-group class="mt-4">
@@ -17,8 +17,8 @@
             :value="assessmentHistory"
             :paginator="true"
             :rows="DEFAULT_PAGE_LIMIT"
-            :rowsPerPageOptions="PAGINATION_LIST"
-            :totalRecords="assessmentHistory.length"
+            :rows-per-page-options="PAGINATION_LIST"
+            :total-records="assessmentHistory.length"
           >
             <template #empty>
               <p class="text-center font-weight-bold">No records found.</p>
@@ -64,9 +64,10 @@
                 <v-btn
                   v-if="!data.hasUnsuccessfulWeeks"
                   @click="$emit('viewAssessment', data.assessmentId)"
+                  variant="outlined"
                   color="primary"
                 >
-                  View assessment</v-btn
+                  View</v-btn
                 >
               </template>
             </Column>

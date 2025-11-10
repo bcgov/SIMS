@@ -7,6 +7,7 @@ import StudentAppealRequestsApprovalVersion from "@/views/aest/student/applicati
 import NoticeOfAssessmentVersion from "@/views/aest/student/applicationDetails/NoticeOfAssessmentVersion.vue";
 import ViewScholasticStandingVersion from "@/views/aest/student/applicationDetails/ViewScholasticStandingVersion.vue";
 import AssessmentAwardVersion from "@/views/aest/student/applicationDetails/AssessmentAwardVersion.vue";
+import ApplicationOfferingChangeRequestForm from "@/views/aest/student/applicationDetails/ApplicationOfferingChangeRequestForm.vue";
 
 /**
  * AEST Routes for Application Details views.
@@ -84,8 +85,24 @@ export const AESTRoutesApplicationDetails: Array<RouteRecordRaw> = [
       clientType: ClientIdType.AEST,
     },
   },
+  {
+    path: getVersionRoutePath(
+      AppRoutes.StudentApplicationOfferingChangeRequest,
+    ),
+    name: AESTRoutesConst.STUDENT_APPLICATION_OFFERING_CHANGE_REQUEST_VERSION,
+    props: (route) => ({
+      ...defaultDetailsRoute(route),
+      applicationOfferingChangeRequestId: parseInt(
+        route.params.applicationOfferingChangeRequestId as string,
+      ),
+    }),
+    component: ApplicationOfferingChangeRequestForm,
+    meta: {
+      clientType: ClientIdType.AEST,
+    },
+  },
 ];
-
+//
 /**
  * Convert the default route params in applications details routes.
  * @param route route with the parameters to be converted.

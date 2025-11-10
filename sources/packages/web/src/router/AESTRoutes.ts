@@ -58,7 +58,7 @@ import ViewPendingOfferingChangeRequests from "@/views/aest/institution/ViewPend
 import LegacyChangeRequests from "@/views/aest/student/LegacyChangeRequests.vue";
 import ApplicationChangeRequests from "@/views/aest/student/ApplicationChangeRequests.vue";
 import StudentAppeals from "@/views/aest/student/StudentAppeals.vue";
-import ApplicationOfferingChangeRequestForm from "@/views/aest/institution/ApplicationOfferingChangeRequestForm.vue";
+import ApplicationOfferingChangeRequestForm from "@/views/aest/student/applicationDetails/ApplicationOfferingChangeRequestForm.vue";
 import StudentAccountApplications from "@/views/aest/student/StudentAccountApplications.vue";
 import StudentAccountApplicationsApproval from "@/views/aest/student/StudentAccountApplicationsApproval.vue";
 import AssessmentAward from "@/views/aest/student/applicationDetails/AssessmentAward.vue";
