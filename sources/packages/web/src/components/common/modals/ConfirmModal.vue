@@ -1,21 +1,21 @@
 <template>
   <modal-dialog-base
     :title="title"
-    dialogType="warning"
-    :showDialog="showDialog"
-    :maxWidth="maxWidth"
+    dialog-type="warning"
+    :show-dialog="showDialog"
+    :max-width="maxWidth"
   >
     <template #content>
       <slot name="content">{{ text }}</slot>
     </template>
     <template #footer>
       <footer-buttons
-        :primaryLabel="okLabel"
-        :secondaryLabel="cancelLabel"
-        @primaryClick="resolvePromise(true)"
-        @secondaryClick="resolvePromise(false)"
-        :disablePrimaryButton="disablePrimaryButton"
-        :showSecondaryButton="showSecondaryButton"
+        :primary-label="okLabel"
+        :secondary-label="cancelLabel"
+        @primary-click="resolvePromise(true)"
+        @secondary-click="resolvePromise(false)"
+        :disable-primary-button="disablePrimaryButton"
+        :show-secondary-button="showSecondaryButton"
         :processing="loading"
       />
     </template>
@@ -39,6 +39,7 @@ export default defineComponent({
     text: {
       type: String,
       required: false,
+      default: undefined,
     },
     okLabel: {
       type: String,
@@ -47,12 +48,13 @@ export default defineComponent({
     },
     cancelLabel: {
       type: String,
-      required: true,
+      required: false,
       default: "Cancel",
     },
     maxWidth: {
       type: Number,
       required: false,
+      default: undefined,
     },
     disablePrimaryButton: {
       type: Boolean,

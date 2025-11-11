@@ -114,6 +114,7 @@ export default defineComponent({
     studentId: {
       type: Number,
       required: false,
+      default: undefined,
     },
   },
   setup(props, context) {

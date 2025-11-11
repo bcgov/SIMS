@@ -88,7 +88,7 @@ export const AESTRoutesApplicationDetails: Array<RouteRecordRaw> = [
   },
   {
     path: getVersionRoutePath(
-      AppRoutes.StudentApplicationOfferingChangeRequest,
+      AppRoutes.StudentAESTApplicationOfferingChangeRequest,
     ),
     name: AESTRoutesConst.STUDENT_APPLICATION_OFFERING_CHANGE_REQUEST_VERSION,
     props: (route) => ({
