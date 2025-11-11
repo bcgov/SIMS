@@ -93,10 +93,11 @@ export default defineComponent({
 
     const goToApplicationException = (exceptionId: number) => {
       router.push({
-        name: AESTRoutesConst.APPLICATION_EXCEPTIONS_APPROVAL,
+        name: AESTRoutesConst.APPLICATION_EXCEPTIONS_APPROVAL_VERSION,
         params: {
           studentId: props.studentId,
           applicationId: props.applicationId,
+          versionApplicationId: props.versionApplicationId,
           exceptionId,
         },
       });

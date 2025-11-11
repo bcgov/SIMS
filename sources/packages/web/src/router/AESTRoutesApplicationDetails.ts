@@ -8,6 +8,7 @@ import NoticeOfAssessmentVersion from "@/views/aest/student/applicationDetails/N
 import ViewScholasticStandingVersion from "@/views/aest/student/applicationDetails/ViewScholasticStandingVersion.vue";
 import AssessmentAwardVersion from "@/views/aest/student/applicationDetails/AssessmentAwardVersion.vue";
 import ApplicationOfferingChangeRequestForm from "@/views/aest/student/applicationDetails/ApplicationOfferingChangeRequestForm.vue";
+import ApplicationExceptionsApprovalVersion from "@/views/aest/student/applicationDetails/ApplicationExceptionsApprovalVersion.vue";
 
 /**
  * AEST Routes for Application Details views.
@@ -40,7 +41,7 @@ export const AESTRoutesApplicationDetails: Array<RouteRecordRaw> = [
     name: AESTRoutesConst.ASSESSMENT_AWARD_VIEW_VERSION,
     props: (route) => ({
       ...defaultDetailsRoute(route),
-      assessmentId: parseInt(route.params.assessmentId as string),
+      assessmentId: Number.parseInt(route.params.assessmentId as string),
     }),
     component: AssessmentAwardVersion,
     meta: {
@@ -52,7 +53,7 @@ export const AESTRoutesApplicationDetails: Array<RouteRecordRaw> = [
     name: AESTRoutesConst.NOTICE_OF_ASSESSMENT_VIEW_VERSION,
     props: (route) => ({
       ...defaultDetailsRoute(route),
-      assessmentId: parseInt(route.params.assessmentId as string),
+      assessmentId: Number.parseInt(route.params.assessmentId as string),
     }),
     component: NoticeOfAssessmentVersion,
     meta: {
@@ -64,7 +65,7 @@ export const AESTRoutesApplicationDetails: Array<RouteRecordRaw> = [
     name: AESTRoutesConst.STUDENT_APPLICATION_APPEAL_REQUESTS_APPROVAL_VERSION,
     props: (route) => ({
       ...defaultDetailsRoute(route),
-      appealId: parseInt(route.params.appealId as string),
+      appealId: Number.parseInt(route.params.appealId as string),
     }),
     component: StudentAppealRequestsApprovalVersion,
     meta: {
@@ -76,7 +77,7 @@ export const AESTRoutesApplicationDetails: Array<RouteRecordRaw> = [
     name: AESTRoutesConst.SCHOLASTIC_STANDING_VIEW_VERSION,
     props: (route) => ({
       ...defaultDetailsRoute(route),
-      scholasticStandingId: parseInt(
+      scholasticStandingId: Number.parseInt(
         route.params.scholasticStandingId as string,
       ),
     }),
@@ -92,7 +93,7 @@ export const AESTRoutesApplicationDetails: Array<RouteRecordRaw> = [
     name: AESTRoutesConst.STUDENT_APPLICATION_OFFERING_CHANGE_REQUEST_VERSION,
     props: (route) => ({
       ...defaultDetailsRoute(route),
-      applicationOfferingChangeRequestId: parseInt(
+      applicationOfferingChangeRequestId: Number.parseInt(
         route.params.applicationOfferingChangeRequestId as string,
       ),
     }),
@@ -101,8 +102,17 @@ export const AESTRoutesApplicationDetails: Array<RouteRecordRaw> = [
       clientType: ClientIdType.AEST,
     },
   },
+  {
+    path: getVersionRoutePath(AppRoutes.ApplicationException),
+    name: AESTRoutesConst.APPLICATION_EXCEPTIONS_APPROVAL_VERSION,
+    props: true,
+    component: ApplicationExceptionsApprovalVersion,
+    meta: {
+      clientType: ClientIdType.AEST,
+    },
+  },
 ];
-//
+
 /**
  * Convert the default route params in applications details routes.
  * @param route route with the parameters to be converted.
@@ -110,9 +120,11 @@ export const AESTRoutesApplicationDetails: Array<RouteRecordRaw> = [
  */
 function defaultDetailsRoute(route: RouteLocationNormalizedGeneric) {
   return {
-    studentId: parseInt(route.params.studentId as string),
-    applicationId: parseInt(route.params.applicationId as string),
-    versionApplicationId: parseInt(route.params.versionApplicationId as string),
+    studentId: Number.parseInt(route.params.studentId as string),
+    applicationId: Number.parseInt(route.params.applicationId as string),
+    versionApplicationId: Number.parseInt(
+      route.params.versionApplicationId as string,
+    ),
   };
 }
 
