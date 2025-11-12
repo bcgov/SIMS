@@ -9,7 +9,7 @@
         />
       </slot>
     </v-row>
-    <v-row justify="center mt-5">
+    <v-row justify="center" class="mt-5">
       <slot name="message">
         <h5 class="muted-content-strong">{{ message }}</h5>
       </slot>

@@ -1,7 +1,7 @@
 <template>
   <formio-container
-    formName="reportScholasticStandingChange"
-    :formData="formData"
+    form-name="reportScholasticStandingChange"
+    :form-data="formData"
     :is-data-ready="isDataReady || isParentDataReady"
     @submitted="submitted"
   >
@@ -9,10 +9,10 @@
       <footer-buttons
         v-if="showFooter"
         :processing="processing"
-        @primaryClick="submit"
-        primaryLabel="Submit update"
-        @secondaryClick="cancel"
-        :disablePrimaryButton="readOnly"
+        @primary-click="submit"
+        primary-label="Submit update"
+        @secondary-click="cancel"
+        :disable-primary-button="readOnly"
       />
     </template>
   </formio-container>
@@ -31,14 +31,13 @@ import { ScholasticStandingService } from "@/services/ScholasticStandingService"
 /**
  * Represents the scholastic standing details.
  */
-type ScholasticStandingData =
-  | (
-      | ScholasticStandingSubmittedDetailsAPIOutDTO
-      | ActiveApplicationDataAPIOutDTO
-    ) & {
-      showCompleteInfo?: boolean;
-      readOnly: boolean;
-    };
+type ScholasticStandingData = (
+  | ScholasticStandingSubmittedDetailsAPIOutDTO
+  | ActiveApplicationDataAPIOutDTO
+) & {
+  showCompleteInfo?: boolean;
+  readOnly: boolean;
+};
 
 export default defineComponent({
   emits: ["submit", "cancel", "dataLoaded"],
@@ -46,6 +45,7 @@ export default defineComponent({
     scholasticStandingId: {
       type: Number,
       required: false,
+      default: undefined,
     },
     showFooter: {
       type: Boolean,
@@ -60,6 +60,7 @@ export default defineComponent({
     initialData: {
       type: Object as PropType<ActiveApplicationDataAPIOutDTO>,
       required: false,
+      default: undefined,
     },
     readOnly: {
       type: Boolean,
@@ -68,7 +69,7 @@ export default defineComponent({
     },
     processing: {
       type: Boolean,
-      required: true,
+      required: false,
       default: false,
     },
     // This indicator is used to determine if the parent data is ready

@@ -1,7 +1,7 @@
 <template>
   <formio-container
-    formName="educationProgramOffering"
-    :formData="formData"
+    form-name="educationProgramOffering"
+    :form-data="formData"
     @loaded="$emit('loaded', $event)"
     @changed="(form, event) => $emit('changed', form, event)"
     @submitted="submitOffering"
@@ -13,7 +13,7 @@
       <footer-buttons
         justify="space-between"
         :processing="processing"
-        @secondaryClick="cancel"
+        @secondary-click="cancel"
         class="mx-0"
       >
         <template #primary-buttons="{ disabled }">
@@ -74,16 +74,18 @@ export default defineComponent({
     offeringId: {
       type: Number,
       required: false,
+      default: undefined,
     },
     data: {
       type: Object as PropType<
         OfferingFormModel | EducationProgramOfferingAPIOutDTO
       >,
       required: false,
+      default: undefined,
     },
     formMode: {
       type: String as PropType<OfferingFormModes>,
-      required: true,
+      required: false,
       default: OfferingFormModes.Readonly,
     },
     submitLabel: {
@@ -93,7 +95,7 @@ export default defineComponent({
     },
     processing: {
       type: Boolean,
-      required: true,
+      required: false,
       default: false,
     },
   },

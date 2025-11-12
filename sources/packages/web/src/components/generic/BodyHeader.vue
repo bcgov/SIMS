@@ -1,24 +1,26 @@
 <template>
-  <v-row no-gutters>
-    <v-col cols="auto" class="mr-2">
-      <dynamic-header
-        :title="fullTitleMessage"
-        :level="titleHeaderLevel"
-        class="category-header-large color-blue"
-      />
-    </v-col>
-    <v-col cols="auto" class="mr-2">
-      <slot name="status-chip"></slot>
-    </v-col>
-    <v-col>
-      <slot name="actions"></slot>
-    </v-col>
-  </v-row>
-  <v-row no-gutters class="mb-2">
-    <v-col>
-      <slot name="subtitle">{{ subTitle }}</slot>
-    </v-col>
-  </v-row>
+  <div>
+    <v-row no-gutters>
+      <v-col cols="auto" class="mr-2">
+        <dynamic-header
+          :title="fullTitleMessage"
+          :level="titleHeaderLevel"
+          class="category-header-large color-blue"
+        />
+      </v-col>
+      <v-col cols="auto" class="mr-2">
+        <slot name="status-chip"></slot>
+      </v-col>
+      <v-col>
+        <slot name="actions"></slot>
+      </v-col>
+    </v-row>
+    <v-row no-gutters class="mb-2">
+      <v-col>
+        <slot name="subtitle">{{ subTitle }}</slot>
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script lang="ts">
@@ -29,7 +31,8 @@ export default defineComponent({
   props: {
     title: {
       type: String,
-      required: true,
+      required: false,
+      default: "",
     },
     titleHeaderLevel: {
       type: Number,
@@ -38,10 +41,12 @@ export default defineComponent({
     subTitle: {
       type: String,
       required: false,
+      default: undefined,
     },
     recordsCount: {
       type: Number,
       required: false,
+      default: undefined,
     },
   },
   setup(props) {

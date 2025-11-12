@@ -20,7 +20,7 @@ import Restrictions from "@/views/aest/institution/Restrictions.vue";
 import FileUploads from "@/views/aest/student/FileUploads.vue";
 import InstitutionNotes from "@/views/aest/institution/InstitutionNotes.vue";
 import ApplicationDetails from "@/views/aest/ApplicationDetails.vue";
-import StudentApplicationView from "@/views/aest/StudentApplicationView.vue";
+import StudentApplicationView from "@/views/aest/student/applicationDetails/StudentApplicationView.vue";
 import AESTHomeSideBar from "@/components/layouts/aest/AESTHomeSideBar.vue";
 import StudentNotes from "@/views/aest/student/StudentNotes.vue";
 import StudentRestrictions from "@/views/aest/student/StudentRestrictions.vue";
@@ -47,7 +47,7 @@ import StudentAppealRequestsApproval from "@/views/aest/student/StudentAppealReq
 import StudentApplicationAppealRequestsApproval from "@/views/aest/student/applicationDetails/StudentAppealRequestsApproval.vue";
 import NoticeOfAssessment from "@/views/aest/student/applicationDetails/NoticeOfAssessment.vue";
 import ApplicationExceptionsApproval from "@/views/aest/student/applicationDetails/ApplicationExceptionsApproval.vue";
-import ViewScholasticStanding from "@/views/aest/student/ViewScholasticStanding.vue";
+import ViewScholasticStanding from "@/views/aest/student/applicationDetails/ViewScholasticStanding.vue";
 import SINManagement from "@/views/aest/student/SINManagement.vue";
 import CASSupplierInformation from "@/views/aest/student/CASSupplierInformation.vue";
 import Balances from "@/views/aest/student/Balances.vue";
@@ -58,12 +58,13 @@ import ViewPendingOfferingChangeRequests from "@/views/aest/institution/ViewPend
 import LegacyChangeRequests from "@/views/aest/student/LegacyChangeRequests.vue";
 import ApplicationChangeRequests from "@/views/aest/student/ApplicationChangeRequests.vue";
 import StudentAppeals from "@/views/aest/student/StudentAppeals.vue";
-import ApplicationOfferingChangeRequestForm from "@/views/aest/institution/ApplicationOfferingChangeRequestForm.vue";
+import ApplicationOfferingChangeRequestForm from "@/views/aest/student/applicationDetails/ApplicationOfferingChangeRequestForm.vue";
 import StudentAccountApplications from "@/views/aest/student/StudentAccountApplications.vue";
 import StudentAccountApplicationsApproval from "@/views/aest/student/StudentAccountApplicationsApproval.vue";
 import AssessmentAward from "@/views/aest/student/applicationDetails/AssessmentAward.vue";
 import ApplicationRestrictionsManagement from "@/views/aest/student/applicationDetails/ApplicationRestrictionsManagement.vue";
 import ApplicationStatusTracker from "@/views/aest/student/applicationDetails/ApplicationStatusTracker.vue";
+import { AESTRoutesApplicationVersionsDetails } from "@/router/AESTRoutesApplicationVersionsDetails";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -173,7 +174,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             path: AppRoutes.CASSupplierManagement,
             name: AESTRoutesConst.CAS_SUPPLIER_MANAGEMENT,
             props: (route) => ({
-              studentId: parseInt(route.params.studentId as string),
+              studentId: Number.parseInt(route.params.studentId as string),
             }),
             component: CASSupplierInformation,
             meta: {
@@ -203,7 +204,20 @@ export const aestRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.ApplicationDetail,
         redirect: { name: AESTRoutesConst.APPLICATION_DETAILS },
-        props: true,
+        props: {
+          default: (route) => ({
+            studentId: Number.parseInt(route.params.studentId as string),
+            applicationId: Number.parseInt(
+              route.params.applicationId as string,
+            ),
+          }),
+          sidebar: (route) => ({
+            studentId: Number.parseInt(route.params.studentId as string),
+            applicationId: Number.parseInt(
+              route.params.applicationId as string,
+            ),
+          }),
+        },
         components: {
           default: ApplicationDetails,
           sidebar: AESTApplicationSideBar,
@@ -248,7 +262,6 @@ export const aestRoutes: Array<RouteRecordRaw> = [
               clientType: ClientIdType.AEST,
             },
           },
-
           {
             path: AppRoutes.StudentAppealRequest,
             name: AESTRoutesConst.STUDENT_APPLICATION_APPEAL_REQUESTS_APPROVAL,
@@ -263,11 +276,13 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             name: AESTRoutesConst.STUDENT_APPLICATION_OFFERING_CHANGE_REQUEST,
             component: ApplicationOfferingChangeRequestForm,
             props: (route) => ({
-              applicationOfferingChangeRequestId: parseInt(
+              applicationOfferingChangeRequestId: Number.parseInt(
                 route.params.applicationOfferingChangeRequestId as string,
               ),
-              applicationId: parseInt(route.params.applicationId as string),
-              studentId: parseInt(route.params.studentId as string),
+              applicationId: Number.parseInt(
+                route.params.applicationId as string,
+              ),
+              studentId: Number.parseInt(route.params.studentId as string),
             }),
             meta: {
               clientType: ClientIdType.AEST,
@@ -312,21 +327,17 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           {
             path: AppRoutes.ApplicationStatusTracker,
             name: AESTRoutesConst.APPLICATION_STATUS_TRACKER,
-            props: true,
+            props: (route) => ({
+              applicationId: Number.parseInt(
+                route.params.applicationId as string,
+              ),
+            }),
             component: ApplicationStatusTracker,
             meta: {
               clientType: ClientIdType.AEST,
             },
           },
-          {
-            path: AppRoutes.ApplicationVersionDetail,
-            name: AESTRoutesConst.APPLICATION_VERSION_DETAILS,
-            props: true,
-            component: StudentApplicationView,
-            meta: {
-              clientType: ClientIdType.AEST,
-            },
-          },
+          ...AESTRoutesApplicationVersionsDetails,
         ],
       },
       {

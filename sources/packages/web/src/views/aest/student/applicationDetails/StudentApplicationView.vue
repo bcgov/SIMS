@@ -3,11 +3,11 @@
     <template #header>
       <header-navigator
         title="Back to student applications"
-        :routeLocation="{
+        :route-location="{
           name: AESTRoutesConst.STUDENT_APPLICATIONS,
           params: { studentId },
         }"
-        subTitle="Financial Aid Application"
+        sub-title="Financial Aid Application"
         ><template
           #buttons
           v-if="
@@ -49,10 +49,10 @@
     <h2 class="color-blue pb-4">Student Application Details</h2>
     <StudentApplication
       @render="formRender"
-      :selectedForm="selectedForm"
-      :initialData="initialData"
-      :programYearId="applicationDetail.applicationProgramYearID"
-      :isReadOnly="true"
+      :selected-form="selectedForm"
+      :initial-data="initialData"
+      :program-year-id="applicationDetail.applicationProgramYearID"
+      :is-read-only="true"
       :is-data-ready="isDataReady"
     />
     <assess-application-change-request-modal
@@ -109,6 +109,7 @@ export default defineComponent({
     versionApplicationId: {
       type: Number,
       required: false,
+      default: undefined,
     },
   },
   setup(props) {
@@ -143,9 +144,8 @@ export default defineComponent({
     onMounted(async () => {
       // When the application version is present load the given application version instead of the current application version.
       const applicationId = props.versionApplicationId ?? props.applicationId;
-      const application = await ApplicationService.shared.getApplicationDetail(
-        applicationId,
-      );
+      const application =
+        await ApplicationService.shared.getApplicationDetail(applicationId);
       applicationDetail.value =
         application as ApplicationSupplementalDataAPIOutDTO;
       selectedForm.value = applicationDetail.value.applicationFormName;

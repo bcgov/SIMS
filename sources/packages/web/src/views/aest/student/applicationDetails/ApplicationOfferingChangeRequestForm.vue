@@ -3,14 +3,15 @@
     <template #header>
       <header-navigator
         title="Assessments"
-        :routeLocation="goBackRouteParams"
-        subTitle="View Request"
+        :route-location="goBackRouteParams"
+        sub-title="View Request"
       >
         <template
           #buttons
           v-if="
+            !isRequestFromApplicationVersion &&
             applicationOfferingChangeRequestDetails.status ===
-            ApplicationOfferingChangeRequestStatus.InProgressWithSABC
+              ApplicationOfferingChangeRequestStatus.InProgressWithSABC
           "
           ><check-permission-role
             :role="
@@ -45,14 +46,15 @@
         </template>
       </header-navigator>
       <application-offering-change-details-header
-        :headerDetails="headerDetails"
+        :header-details="headerDetails"
       />
     </template>
     <template
       #alerts
       v-if="
+        !isRequestFromApplicationVersion &&
         applicationOfferingChangeRequestDetails.status ===
-        ApplicationOfferingChangeRequestStatus.InProgressWithStudent
+          ApplicationOfferingChangeRequestStatus.InProgressWithStudent
       "
       ><banner
         class="mb-2"
@@ -64,7 +66,7 @@
     <template #tab-header>
       <student-application-offering-change-details
         class="mb-6"
-        :applicationOfferingChangeDetails="studentApplicationOfferingDetails"
+        :application-offering-change-details="studentApplicationOfferingDetails"
       />
       <v-tabs stacked v-model="tab" color="primary">
         <v-tab value="requested-change" :ripple="false">Requested Change</v-tab>
@@ -74,14 +76,16 @@
     <v-window v-model="tab">
       <v-window-item value="requested-change"
         ><offering-form
-          :offeringId="
+          :offering-id="
             applicationOfferingChangeRequestDetails.requestedOfferingId
           "
         />
       </v-window-item>
       <v-window-item value="active-offering">
         <offering-form
-          :offeringId="applicationOfferingChangeRequestDetails.activeOfferingId"
+          :offering-id="
+            applicationOfferingChangeRequestDetails.activeOfferingId
+          "
         />
       </v-window-item>
     </v-window>
@@ -93,7 +97,7 @@
 
 <script lang="ts">
 import { ref, defineComponent, computed, onMounted } from "vue";
-import { useRouter, RouteLocationRaw } from "vue-router";
+import { useRouter } from "vue-router";
 import {
   ApplicationOfferingChangeRequestHeader,
   ApplicationOfferingChangeRequestStatus,
@@ -131,6 +135,11 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    versionApplicationId: {
+      type: Number,
+      required: false,
+      default: undefined,
+    },
     applicationOfferingChangeRequestId: {
       type: Number,
       required: true,
@@ -151,6 +160,11 @@ export default defineComponent({
     );
     const snackBar = useSnackBar();
     const router = useRouter();
+
+    const isRequestFromApplicationVersion = computed(
+      () => !!props.versionApplicationId,
+    );
+
     onMounted(async () => {
       applicationOfferingChangeRequestDetails.value =
         await ApplicationOfferingChangeRequestService.shared.getApplicationOfferingDetailsForReview(
@@ -189,6 +203,7 @@ export default defineComponent({
         ),
       };
     });
+
     const assessApplicationOfferingChangeRequest = async (
       applicationOfferingChangeRequestStatus: ApplicationOfferingChangeRequestStatus,
     ) => {
@@ -218,16 +233,27 @@ export default defineComponent({
         }
       }
     };
-    const goBackRouteParams = computed(
-      () =>
-        ({
-          name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
+
+    const goBackRouteParams = computed(() => {
+      if (props.versionApplicationId) {
+        return {
+          name: AESTRoutesConst.ASSESSMENTS_SUMMARY_VERSION,
           params: {
-            applicationId: props.applicationId,
             studentId: props.studentId,
+            applicationId: props.applicationId,
+            versionApplicationId: props.versionApplicationId,
           },
-        } as RouteLocationRaw),
-    );
+        };
+      }
+      return {
+        name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
+        params: {
+          applicationId: props.applicationId,
+          studentId: props.studentId,
+        },
+      };
+    });
+
     return {
       Role,
       headerDetails,
@@ -240,6 +266,7 @@ export default defineComponent({
       applicationOfferingChangeRequestDetails,
       assessApplicationOfferingChangeRequest,
       assessApplicationOfferingChangeRequestModal,
+      isRequestFromApplicationVersion,
     };
   },
 });
