@@ -5,7 +5,7 @@
         title="Assessments"
         sub-title="View Assessment"
         :route-location="{
-          name: AESTRoutesConst.ASSESSMENTS_SUMMARY_DETAILS_VERSION,
+          name: AESTRoutesConst.ASSESSMENTS_SUMMARY_VERSION,
           params: { applicationId, studentId, versionApplicationId },
         }"
       />
@@ -41,8 +41,7 @@ export default defineComponent({
     },
     versionApplicationId: {
       type: Number,
-      required: false,
-      default: undefined,
+      required: true,
     },
     assessmentId: {
       type: Number,

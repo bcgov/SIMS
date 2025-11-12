@@ -36,7 +36,7 @@ export default defineComponent({
   },
   setup(props) {
     const assessmentsSummaryRoute = {
-      name: AESTRoutesConst.ASSESSMENTS_SUMMARY_DETAILS_VERSION,
+      name: AESTRoutesConst.ASSESSMENTS_SUMMARY_VERSION,
       params: {
         studentId: props.studentId,
         applicationId: props.applicationId,

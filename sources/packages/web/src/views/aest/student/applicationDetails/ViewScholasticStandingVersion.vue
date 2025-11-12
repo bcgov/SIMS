@@ -5,7 +5,7 @@
         title="Assessments"
         sub-title="View Submission"
         :route-location="{
-          name: AESTRoutesConst.ASSESSMENTS_SUMMARY_DETAILS_VERSION,
+          name: AESTRoutesConst.ASSESSMENTS_SUMMARY_VERSION,
           params: {
             studentId,
             applicationId,

@@ -39,8 +39,7 @@ export default defineComponent({
     },
     versionApplicationId: {
       type: Number,
-      required: false,
-      default: undefined,
+      required: true,
     },
     appealId: {
       type: Number,
@@ -49,7 +48,7 @@ export default defineComponent({
   },
   setup(props) {
     const assessmentsSummaryRoute = {
-      name: AESTRoutesConst.ASSESSMENTS_SUMMARY_DETAILS_VERSION,
+      name: AESTRoutesConst.ASSESSMENTS_SUMMARY_VERSION,
       params: {
         studentId: props.studentId,
         applicationId: props.applicationId,

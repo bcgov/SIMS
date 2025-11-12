@@ -64,7 +64,7 @@ import StudentAccountApplicationsApproval from "@/views/aest/student/StudentAcco
 import AssessmentAward from "@/views/aest/student/applicationDetails/AssessmentAward.vue";
 import ApplicationRestrictionsManagement from "@/views/aest/student/applicationDetails/ApplicationRestrictionsManagement.vue";
 import ApplicationStatusTracker from "@/views/aest/student/applicationDetails/ApplicationStatusTracker.vue";
-import { AESTRoutesApplicationDetails } from "@/router/AESTRoutesApplicationDetails";
+import { AESTRoutesApplicationVersionsDetails } from "@/router/AESTRoutesApplicationVersionsDetails";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -337,7 +337,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
               clientType: ClientIdType.AEST,
             },
           },
-          ...AESTRoutesApplicationDetails,
+          ...AESTRoutesApplicationVersionsDetails,
         ],
       },
       {

@@ -356,7 +356,7 @@ export default defineComponent({
               slim: true,
               prependIcon: "mdi-checkbox-marked-outline",
               to: {
-                name: AESTRoutesConst.ASSESSMENTS_SUMMARY_DETAILS_VERSION,
+                name: AESTRoutesConst.ASSESSMENTS_SUMMARY_VERSION,
                 params: {
                   studentId: props.studentId,
                   applicationId: props.applicationId,

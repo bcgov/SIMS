@@ -11,9 +11,9 @@ import ApplicationOfferingChangeRequestForm from "@/views/aest/student/applicati
 import ApplicationExceptionsApprovalVersion from "@/views/aest/student/applicationDetails/ApplicationExceptionsApprovalVersion.vue";
 
 /**
- * AEST Routes for Application Details views.
+ * AEST Routes for application version details views.
  */
-export const AESTRoutesApplicationDetails: Array<RouteRecordRaw> = [
+export const AESTRoutesApplicationVersionsDetails: Array<RouteRecordRaw> = [
   {
     path: getVersionRoutePath(AppRoutes.ApplicationView),
     name: AESTRoutesConst.APPLICATION_VERSION_DETAILS,
@@ -27,7 +27,7 @@ export const AESTRoutesApplicationDetails: Array<RouteRecordRaw> = [
   },
   {
     path: getVersionRoutePath(AppRoutes.AssessmentSummary),
-    name: AESTRoutesConst.ASSESSMENTS_SUMMARY_DETAILS_VERSION,
+    name: AESTRoutesConst.ASSESSMENTS_SUMMARY_VERSION,
     props: (route) => ({
       ...defaultDetailsRoute(route),
     }),

@@ -237,7 +237,7 @@ export default defineComponent({
     const goBackRouteParams = computed(() => {
       if (props.versionApplicationId) {
         return {
-          name: AESTRoutesConst.ASSESSMENTS_SUMMARY_DETAILS_VERSION,
+          name: AESTRoutesConst.ASSESSMENTS_SUMMARY_VERSION,
           params: {
             studentId: props.studentId,
             applicationId: props.applicationId,
