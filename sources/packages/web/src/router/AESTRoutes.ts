@@ -174,7 +174,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             path: AppRoutes.CASSupplierManagement,
             name: AESTRoutesConst.CAS_SUPPLIER_MANAGEMENT,
             props: (route) => ({
-              studentId: parseInt(route.params.studentId as string),
+              studentId: Number.parseInt(route.params.studentId as string),
             }),
             component: CASSupplierInformation,
             meta: {
@@ -206,12 +206,16 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         redirect: { name: AESTRoutesConst.APPLICATION_DETAILS },
         props: {
           default: (route) => ({
-            studentId: parseInt(route.params.studentId as string),
-            applicationId: parseInt(route.params.applicationId as string),
+            studentId: Number.parseInt(route.params.studentId as string),
+            applicationId: Number.parseInt(
+              route.params.applicationId as string,
+            ),
           }),
           sidebar: (route) => ({
-            studentId: parseInt(route.params.studentId as string),
-            applicationId: parseInt(route.params.applicationId as string),
+            studentId: Number.parseInt(route.params.studentId as string),
+            applicationId: Number.parseInt(
+              route.params.applicationId as string,
+            ),
           }),
         },
         components: {
@@ -272,11 +276,13 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             name: AESTRoutesConst.STUDENT_APPLICATION_OFFERING_CHANGE_REQUEST,
             component: ApplicationOfferingChangeRequestForm,
             props: (route) => ({
-              applicationOfferingChangeRequestId: parseInt(
+              applicationOfferingChangeRequestId: Number.parseInt(
                 route.params.applicationOfferingChangeRequestId as string,
               ),
-              applicationId: parseInt(route.params.applicationId as string),
-              studentId: parseInt(route.params.studentId as string),
+              applicationId: Number.parseInt(
+                route.params.applicationId as string,
+              ),
+              studentId: Number.parseInt(route.params.studentId as string),
             }),
             meta: {
               clientType: ClientIdType.AEST,
@@ -322,7 +328,9 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             path: AppRoutes.ApplicationStatusTracker,
             name: AESTRoutesConst.APPLICATION_STATUS_TRACKER,
             props: (route) => ({
-              applicationId: parseInt(route.params.applicationId as string),
+              applicationId: Number.parseInt(
+                route.params.applicationId as string,
+              ),
             }),
             component: ApplicationStatusTracker,
             meta: {
