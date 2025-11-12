@@ -105,7 +105,10 @@ export const AESTRoutesApplicationDetails: Array<RouteRecordRaw> = [
   {
     path: getVersionRoutePath(AppRoutes.ApplicationException),
     name: AESTRoutesConst.APPLICATION_EXCEPTIONS_APPROVAL_VERSION,
-    props: true,
+    props: (route) => ({
+      ...defaultDetailsRoute(route),
+      exceptionId: Number.parseInt(route.params.exceptionId as string),
+    }),
     component: ApplicationExceptionsApprovalVersion,
     meta: {
       clientType: ClientIdType.AEST,
