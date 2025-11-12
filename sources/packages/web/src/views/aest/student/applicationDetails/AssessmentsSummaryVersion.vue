@@ -78,13 +78,17 @@ export default defineComponent({
       AssessmentTriggerType.ApplicationOfferingChange,
     ];
 
+    const getDefaultVersionParameters = () => ({
+      studentId: props.studentId,
+      applicationId: props.applicationId,
+      versionApplicationId: props.versionApplicationId,
+    });
+
     const goToStudentAppeal = (appealId: number) => {
       router.push({
         name: AESTRoutesConst.STUDENT_APPLICATION_APPEAL_REQUESTS_APPROVAL_VERSION,
         params: {
-          studentId: props.studentId,
-          applicationId: props.applicationId,
-          versionApplicationId: props.versionApplicationId,
+          ...getDefaultVersionParameters(),
           appealId,
         },
       });
@@ -94,9 +98,7 @@ export default defineComponent({
       router.push({
         name: AESTRoutesConst.APPLICATION_EXCEPTIONS_APPROVAL_VERSION,
         params: {
-          studentId: props.studentId,
-          applicationId: props.applicationId,
-          versionApplicationId: props.versionApplicationId,
+          ...getDefaultVersionParameters(),
           exceptionId,
         },
       });
@@ -106,9 +108,7 @@ export default defineComponent({
       router.push({
         name: AESTRoutesConst.ASSESSMENT_AWARD_VIEW_VERSION,
         params: {
-          studentId: props.studentId,
-          applicationId: props.applicationId,
-          versionApplicationId: props.versionApplicationId,
+          ...getDefaultVersionParameters(),
           assessmentId,
         },
       });
@@ -118,13 +118,12 @@ export default defineComponent({
       router.push({
         name: AESTRoutesConst.SCHOLASTIC_STANDING_VIEW_VERSION,
         params: {
-          studentId: props.studentId,
-          applicationId: props.applicationId,
-          versionApplicationId: props.versionApplicationId,
+          ...getDefaultVersionParameters(),
           scholasticStandingId,
         },
       });
     };
+
     const goToOfferingRequest = (offeringId: number, programId: number) => {
       router.push({
         name: AESTRoutesConst.OFFERING_CHANGE_REQUEST_VIEW,
@@ -134,15 +133,14 @@ export default defineComponent({
         },
       });
     };
+
     const goToStudentApplicationOfferingChangeRequest = (
       applicationOfferingChangeRequestId: number,
     ) => {
       router.push({
         name: AESTRoutesConst.STUDENT_APPLICATION_OFFERING_CHANGE_REQUEST_VERSION,
         params: {
-          studentId: props.studentId,
-          applicationId: props.applicationId,
-          versionApplicationId: props.versionApplicationId,
+          ...getDefaultVersionParameters(),
           applicationOfferingChangeRequestId,
         },
       });

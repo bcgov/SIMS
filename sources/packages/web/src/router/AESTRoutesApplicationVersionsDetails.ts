@@ -117,7 +117,7 @@ export const AESTRoutesApplicationVersionsDetails: Array<RouteRecordRaw> = [
 ];
 
 /**
- * Convert the default route params in applications details routes.
+ * Convert the default route params in applications details version routes.
  * @param route route with the parameters to be converted.
  * @returns studentId, applicationId and versionApplicationId as numbers.
  */
