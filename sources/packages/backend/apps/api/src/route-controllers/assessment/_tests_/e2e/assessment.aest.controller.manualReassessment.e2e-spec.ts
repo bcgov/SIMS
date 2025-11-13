@@ -32,7 +32,9 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
 
   it("Should create a manual reassessment when requested.", async () => {
     // Arrange
-    const application = await saveFakeApplication(db.dataSource);
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      currentAssessmentInitialValues: { assessmentDate: new Date() },
+    });
     application.currentAssessment.studentAssessmentStatus =
       StudentAssessmentStatus.Completed;
     const originalAssessment = application.currentAssessment;
@@ -112,6 +114,32 @@ describe("AssessmentAESTController(e2e)-manualReassessment", () => {
         createdAt: expect.any(Date),
       },
     ]);
+  });
+
+  it("Should throw an unprocessable entity when the current assessment was never calculated.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      currentAssessmentInitialValues: {
+        assessmentDate: null,
+        studentAssessmentStatus: StudentAssessmentStatus.Completed,
+      },
+    });
+    const endpoint = `/aest/assessment/application/${application.id}/manual-reassessment`;
+    const payload = { note: "Testing manual reassessment note." };
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "The assessment must have been completed to allow its reassessment.",
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
   });
 
   it(`Should throw unprocessable entity when the original assessment does not have ${StudentAssessmentStatus.Completed} status.`, async () => {

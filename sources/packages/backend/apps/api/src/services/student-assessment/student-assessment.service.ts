@@ -336,10 +336,9 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           INVALID_OPERATION_IN_THE_CURRENT_STATUS,
         );
       }
-      // Even if the original assessment is in completed status,
-      // check if the assessment date is populated to ensure
+      // Check if the current assessment date is populated to ensure
       // the assessment had its calculations completed.
-      if (!originalAssessment.assessmentDate) {
+      if (!application.currentAssessment.assessmentDate) {
         throw new CustomNamedError(
           "The assessment must have been completed to allow its reassessment.",
           INVALID_OPERATION_IN_THE_CURRENT_STATUS,

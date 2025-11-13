@@ -36,11 +36,11 @@ import { NoteSharedService } from "@sims/services";
 /**
  * Invalid application statuses for bypass creation or removal.
  */
-const INVALID_STATUSES_FOR_BYPASS_OPERATION = [
+const INVALID_STATUSES_FOR_BYPASS_OPERATION = new Set([
   ApplicationStatus.Draft,
   ApplicationStatus.Cancelled,
   ApplicationStatus.Edited,
-];
+]);
 
 /**
  * Service layer for application restriction bypasses.
@@ -330,9 +330,7 @@ export class ApplicationRestrictionBypassService {
       },
     });
     if (
-      INVALID_STATUSES_FOR_BYPASS_OPERATION.includes(
-        application.applicationStatus,
-      )
+      INVALID_STATUSES_FOR_BYPASS_OPERATION.has(application.applicationStatus)
     ) {
       throw new CustomNamedError(
         "Cannot create a bypass when application is in invalid state.",
@@ -445,7 +443,7 @@ export class ApplicationRestrictionBypassService {
       );
     }
     if (
-      INVALID_STATUSES_FOR_BYPASS_OPERATION.includes(
+      INVALID_STATUSES_FOR_BYPASS_OPERATION.has(
         applicationRestrictionBypass.application.applicationStatus,
       )
     ) {
