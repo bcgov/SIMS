@@ -464,7 +464,7 @@ export class ApplicationOfferingChangeRequestService {
     offeringId: number,
     studentId: number,
   ): Promise<boolean> {
-    return this.applicationOfferingChangeRequestRepo.exist({
+    return this.applicationOfferingChangeRequestRepo.exists({
       where: [
         {
           application: { student: { id: studentId } },
