@@ -39,6 +39,7 @@ import { CustomNamedError } from "@sims/utilities";
 import {
   ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
   APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION,
+  APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_REMOVAL,
   APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
   APPLICATION_RESTRICTION_BYPASS_NOT_FOUND,
   STUDENT_RESTRICTION_IS_NOT_ACTIVE,
@@ -229,6 +230,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
             throw new NotFoundException(error.message);
           case STUDENT_RESTRICTION_IS_NOT_ACTIVE:
           case APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE:
+          case APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_REMOVAL:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );

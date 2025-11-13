@@ -25,12 +25,22 @@ import {
   STUDENT_RESTRICTION_IS_NOT_ACTIVE,
   APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
   STUDENT_RESTRICTION_NOT_FOUND,
+  APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_REMOVAL,
 } from "../../constants";
 import {
   AvailableStudentRestrictionData,
   BypassRestrictionData,
 } from "../../services/";
 import { NoteSharedService } from "@sims/services";
+
+/**
+ * Invalid applications statuses for bypass creation or removal.
+ */
+const INVALID_STATUSES_FOR_BYPASS_OPERATION = [
+  ApplicationStatus.Draft,
+  ApplicationStatus.Cancelled,
+  ApplicationStatus.Edited,
+];
 
 /**
  * Service layer for application restriction bypasses.
@@ -320,11 +330,9 @@ export class ApplicationRestrictionBypassService {
       },
     });
     if (
-      [
-        ApplicationStatus.Draft,
-        ApplicationStatus.Cancelled,
-        ApplicationStatus.Edited,
-      ].includes(application.applicationStatus)
+      INVALID_STATUSES_FOR_BYPASS_OPERATION.includes(
+        application.applicationStatus,
+      )
     ) {
       throw new CustomNamedError(
         "Cannot create a bypass when application is in invalid state.",
@@ -414,6 +422,7 @@ export class ApplicationRestrictionBypassService {
           application: {
             id: true,
             student: { id: true },
+            applicationStatus: true,
           },
         },
         relations: {
@@ -433,6 +442,16 @@ export class ApplicationRestrictionBypassService {
       throw new CustomNamedError(
         "Cannot remove a bypass when application restriction bypass is not active.",
         APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
+      );
+    }
+    if (
+      INVALID_STATUSES_FOR_BYPASS_OPERATION.includes(
+        applicationRestrictionBypass.application.applicationStatus,
+      )
+    ) {
+      throw new CustomNamedError(
+        "Cannot remove a bypass when application is in invalid state.",
+        APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_REMOVAL,
       );
     }
     return this.dataSource.transaction(async (transactionalEntityManager) => {
