@@ -220,13 +220,13 @@ export const STUDENT_RESTRICTION_IS_NOT_ACTIVE =
 export const STUDENT_RESTRICTION_NOT_FOUND = "STUDENT_RESTRICTION_NOT_FOUND";
 
 /**
- * Student application is invalid state for application restriction bypass creation.
+ * Student application is in invalid state for application restriction bypass creation.
  */
 export const APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION =
   "APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION";
 
 /**
- * Student application is invalid state for application restriction bypass removal.
+ * Student application is in invalid state for application restriction bypass removal.
  */
 export const APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_REMOVAL =
   "APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_REMOVAL";

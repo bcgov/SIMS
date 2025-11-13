@@ -123,7 +123,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
     });
   });
 
-  it("Should thrown an unprocessable entity error when the application associated with the appeal is not in completed status.", async () => {
+  it("Should throw an unprocessable entity error when the application associated with the appeal is not in completed status.", async () => {
     // Arrange
     // Create an edited application to be associated with the appeal.
     const application = await saveFakeApplicationDisbursements(
