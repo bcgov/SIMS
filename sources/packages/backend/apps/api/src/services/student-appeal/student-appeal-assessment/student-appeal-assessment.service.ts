@@ -170,7 +170,7 @@ export class StudentAppealAssessmentService {
     // If there is an application associated with the appeal, validate its status.
     if (
       appealToUpdate.application &&
-      appealToUpdate.application?.applicationStatus !==
+      appealToUpdate.application.applicationStatus !==
         ApplicationStatus.Completed
     ) {
       throw new CustomNamedError(
