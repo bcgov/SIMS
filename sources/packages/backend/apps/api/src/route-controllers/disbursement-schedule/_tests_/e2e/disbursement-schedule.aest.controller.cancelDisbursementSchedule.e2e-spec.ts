@@ -13,9 +13,17 @@ import {
   saveFakeApplicationDisbursements,
   saveFakeDisbursementReceiptsFromDisbursementSchedule,
 } from "@sims/test-utils";
-import { DisbursementScheduleStatus, NoteType, User } from "@sims/sims-db";
+import {
+  ApplicationStatus,
+  DisbursementScheduleStatus,
+  NoteType,
+  User,
+} from "@sims/sims-db";
 import MockDate from "mockdate";
-import { DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED } from "@sims/services/constants";
+import {
+  DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+} from "@sims/services/constants";
 
 describe("DisbursementScheduleAESTController(e2e)-cancelDisbursementSchedule", () => {
   let app: INestApplication;
@@ -45,6 +53,7 @@ describe("DisbursementScheduleAESTController(e2e)-cancelDisbursementSchedule", (
       db.dataSource,
       undefined,
       {
+        applicationStatus: ApplicationStatus.Completed,
         firstDisbursementInitialValues: {
           disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
         },
@@ -124,6 +133,7 @@ describe("DisbursementScheduleAESTController(e2e)-cancelDisbursementSchedule", (
       db.dataSource,
       undefined,
       {
+        applicationStatus: ApplicationStatus.Completed,
         firstDisbursementInitialValues: {
           disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
         },
@@ -159,6 +169,7 @@ describe("DisbursementScheduleAESTController(e2e)-cancelDisbursementSchedule", (
       db.dataSource,
       undefined,
       {
+        applicationStatus: ApplicationStatus.Completed,
         firstDisbursementInitialValues: {
           disbursementScheduleStatus: DisbursementScheduleStatus.Rejected,
         },
@@ -180,6 +191,37 @@ describe("DisbursementScheduleAESTController(e2e)-cancelDisbursementSchedule", (
         message:
           "Disbursement schedule expected to be 'Sent' to allow it to be rejected.",
         errorType: DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED,
+      });
+  });
+
+  it("Should throw an UnprocessableEntityException when trying to cancel a disbursement that is associated with an edited application.", async () => {
+    // Arrange
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      undefined,
+      {
+        applicationStatus: ApplicationStatus.Edited,
+        firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      },
+    );
+    const [firstDisbursement] =
+      application.currentAssessment.disbursementSchedules;
+    const payload = { note: "Some random note." };
+    const endpoint = `/aest/disbursement-schedule/${firstDisbursement.id}/cancel`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "Disbursement schedule cannot be rejected as the application is no longer in completed status.",
+        errorType: INVALID_OPERATION_IN_THE_CURRENT_STATUS,
       });
   });
 

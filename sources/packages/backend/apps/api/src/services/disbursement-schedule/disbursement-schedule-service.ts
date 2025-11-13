@@ -24,6 +24,7 @@ import {
 import {
   DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED,
   DISBURSEMENT_SCHEDULE_NOT_FOUND,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
 
 /**
@@ -224,6 +225,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
             application: {
               id: true,
               student: { id: true },
+              applicationStatus: true,
             },
           },
           disbursementScheduleStatus: true,
@@ -247,6 +249,15 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         throw new CustomNamedError(
           `Disbursement schedule ID ${disbursementScheduleId} not found.`,
           DISBURSEMENT_SCHEDULE_NOT_FOUND,
+        );
+      }
+      if (
+        disbursementSchedule.studentAssessment.application.applicationStatus !==
+        ApplicationStatus.Completed
+      ) {
+        throw new CustomNamedError(
+          `Disbursement schedule cannot be rejected as the application is no longer in completed status.`,
+          INVALID_OPERATION_IN_THE_CURRENT_STATUS,
         );
       }
       if (

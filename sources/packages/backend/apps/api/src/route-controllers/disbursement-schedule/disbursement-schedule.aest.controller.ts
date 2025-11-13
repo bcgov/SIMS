@@ -28,6 +28,7 @@ import {
   DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED,
   DISBURSEMENT_SCHEDULE_NOT_FOUND,
   DISBURSEMENT_SCHEDULE_NOT_UPDATED,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
 import { DisbursementScheduleStatus } from "@sims/sims-db";
 
@@ -74,6 +75,7 @@ export class DisbursementScheduleAESTController extends BaseController {
             throw new NotFoundException(error.message);
           case DISBURSEMENT_SCHEDULE_NOT_UPDATED:
           case DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED:
+          case INVALID_OPERATION_IN_THE_CURRENT_STATUS:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );

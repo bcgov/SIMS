@@ -15,12 +15,16 @@ import {
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import {
+  ApplicationStatus,
   NoteType,
   OfferingIntensity,
   RestrictionActionType,
   User,
 } from "@sims/sims-db";
-import { APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE } from "../../../../constants";
+import {
+  APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_REMOVAL,
+  APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
+} from "../../../../constants";
 
 describe("ApplicationRestrictionBypassAESTController(e2e)-removeBypassRestriction", () => {
   let app: INestApplication;
@@ -134,6 +138,44 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-removeBypassRestrictio
         message:
           "Cannot remove a bypass when application restriction bypass is not active.",
         errorType: APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
+      });
+  });
+
+  it("Should throw an HTTP error while removing a bypass when the application is no longer in the expected status.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      offeringIntensity: OfferingIntensity.partTime,
+      applicationStatus: ApplicationStatus.Edited,
+    });
+    const restrictionBypass = await saveFakeApplicationRestrictionBypass(
+      db,
+      {
+        application,
+        bypassCreatedBy: sharedMinistryUser,
+        creator: sharedMinistryUser,
+      },
+      {
+        restrictionActionType: RestrictionActionType.StopPartTimeDisbursement,
+        restrictionCode: RestrictionCode.PTSSR,
+        isRemoved: false,
+      },
+    );
+    const payload = {
+      note: "Removal note",
+    };
+    const endpoint = `/aest/application-restriction-bypass/${restrictionBypass.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "Cannot remove a bypass when application is in invalid state.",
+        errorType:
+          APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_REMOVAL,
       });
   });
 
