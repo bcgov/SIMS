@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource, EntityManager } from "typeorm";
 import {
+  ApplicationStatus,
   NoteType,
   StudentAppeal,
   StudentAppealStatus,
@@ -132,6 +133,7 @@ export class StudentAppealAssessmentService {
         "appealRequest.id",
         "appealRequest.submittedData",
         "application.id",
+        "application.applicationStatus",
         "student.id",
         "user.id",
         "user.firstName",
@@ -162,6 +164,18 @@ export class StudentAppealAssessmentService {
       throw new CustomNamedError(
         `Not able to find the appeal or the appeal has requests different from '${StudentAppealStatus.Pending}'.`,
         STUDENT_APPEAL_NOT_FOUND,
+      );
+    }
+
+    // If there is an application associated with the appeal, validate its status.
+    if (
+      !!appealToUpdate.application &&
+      appealToUpdate.application?.applicationStatus !==
+        ApplicationStatus.Completed
+    ) {
+      throw new CustomNamedError(
+        `The application associated with the appeal is expected to be in '${ApplicationStatus.Completed}' status.`,
+        STUDENT_APPEAL_INVALID_OPERATION,
       );
     }
 

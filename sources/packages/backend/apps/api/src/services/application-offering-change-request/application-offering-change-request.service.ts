@@ -442,7 +442,7 @@ export class ApplicationOfferingChangeRequestService {
       applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
     },
   ): Promise<boolean> {
-    return this.applicationOfferingChangeRequestRepo.exist({
+    return this.applicationOfferingChangeRequestRepo.exists({
       where: {
         id: applicationOfferingChangeId,
         applicationOfferingChangeRequestStatus:

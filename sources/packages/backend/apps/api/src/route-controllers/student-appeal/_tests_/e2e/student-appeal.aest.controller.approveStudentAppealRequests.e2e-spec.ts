@@ -123,6 +123,51 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
     });
   });
 
+  it("Should thrown an unprocessable entity error when the application associated with the appeal is not in completed status.", async () => {
+    // Arrange
+    // Create an edited application to be associated with the appeal.
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      undefined,
+      { applicationStatus: ApplicationStatus.Edited },
+    );
+    // Create pending student appeal.
+    const appealRequest = createFakeStudentAppealRequest(
+      { application },
+      { initialValues: { appealStatus: StudentAppealStatus.Pending } },
+    );
+    const appeal = createFakeStudentAppeal({
+      application,
+      appealRequests: [appealRequest],
+    });
+    await db.studentAppeal.save(appeal);
+
+    const endpoint = `/aest/appeal/${appeal.id}/requests`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const payload: StudentAppealApprovalAPIInDTO = {
+      requests: [
+        {
+          id: appealRequest.id,
+          appealStatus: StudentAppealStatus.Approved,
+          noteDescription: "Approved",
+        },
+      ],
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "The application associated with the appeal is expected to be in 'Completed' status.",
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
   describe("Modified independent appeal", () => {
     for (const modifiedIndependentStatus of [
       ModifiedIndependentStatus.Approved,
