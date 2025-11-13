@@ -141,7 +141,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-removeBypassRestrictio
       });
   });
 
-  it("Should throw an HTTP error while removing a bypass when the application in no longer in the expected status.", async () => {
+  it("Should throw an HTTP error while removing a bypass when the application is no longer in the expected status.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       offeringIntensity: OfferingIntensity.partTime,

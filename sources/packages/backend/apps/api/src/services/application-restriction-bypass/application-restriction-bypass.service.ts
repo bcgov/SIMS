@@ -34,7 +34,7 @@ import {
 import { NoteSharedService } from "@sims/services";
 
 /**
- * Invalid applications statuses for bypass creation or removal.
+ * Invalid application statuses for bypass creation or removal.
  */
 const INVALID_STATUSES_FOR_BYPASS_OPERATION = [
   ApplicationStatus.Draft,
