@@ -20,6 +20,8 @@ import {
   DisbursementScheduleStatus,
   OfferingIntensity,
 } from "@sims/sims-db";
+import MockDate from "mockdate";
+import { getISODateOnlyString } from "@sims/utilities";
 
 describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
   let app: INestApplication;
@@ -33,6 +35,7 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
 
   beforeEach(async () => {
     process.env.BYPASS_MSFAA_SIGNING = "false";
+    MockDate.reset();
   });
 
   it("Should reissue an MSFAA and associate with both disbursements when both disbursements are pending and the current MSFAA is signed but canceled.", async () => {
@@ -144,7 +147,8 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
         applicationStatus: ApplicationStatus.Assessment,
       },
     );
-
+    const now = new Date();
+    MockDate.set(now);
     const endpoint = `/aest/application/${application.id}/reissue-msfaa`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     let createdMSFAAId: number;
@@ -163,8 +167,10 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
       },
       where: { id: createdMSFAAId },
     });
-    expect(createdMSFAA.dateRequested).toBeDefined();
-    expect(createdMSFAA.dateSigned).toBeDefined();
+    expect(createdMSFAA).toEqual({
+      dateRequested: now,
+      dateSigned: getISODateOnlyString(now),
+    });
   });
 
   it(
