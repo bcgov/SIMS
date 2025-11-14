@@ -29,9 +29,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, computed } from "vue";
+import { defineComponent, PropType, ref, watchEffect } from "vue";
 import { StudentAppealRequest } from "@/types";
 import AppealRequestsForm from "@/components/common/AppealRequestsForm.vue";
+import { ApplicationService } from "@/services/ApplicationService";
+import { useSnackBar } from "@/composables";
+import { ApplicationProgramYearAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   emits: {
@@ -59,11 +62,29 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const appealRequestsForms = computed(() =>
-      props.appealForms.map(
-        (formName) => ({ formName }) as StudentAppealRequest,
-      ),
-    );
+    const snackBar = useSnackBar();
+    const appealRequestsForms = ref([] as StudentAppealRequest[]);
+
+    watchEffect(async () => {
+      let application: ApplicationProgramYearAPIOutDTO;
+      if (props.applicationId) {
+        try {
+          application =
+            await ApplicationService.shared.getApplicationForRequestChange(
+              props.applicationId,
+            );
+        } catch {
+          snackBar.error(
+            "An unexpected error happened while retrieving the application to submit the request for change.",
+          );
+        }
+      }
+      appealRequestsForms.value = props.appealForms.map((formName) => ({
+        formName,
+        data: { programYear: application?.programYear },
+        files: [],
+      }));
+    });
 
     return {
       appealRequestsForms,
