@@ -31,6 +31,10 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
     db = createE2EDataSources(dataSource);
   });
 
+  beforeEach(async () => {
+    process.env.BYPASS_MSFAA_SIGNING = "false";
+  });
+
   it("Should reissue an MSFAA and associate with both disbursements when both disbursements are pending and the current MSFAA is signed but canceled.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
@@ -121,6 +125,47 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
       ]);
     },
   );
+
+  it("Should reissue an MSFAA and and sign it when the BYPASS_MSFAA_SIGNING environment variable is true and a new MSFAA must be created.", async () => {
+    // Arrange
+    process.env.BYPASS_MSFAA_SIGNING = "true";
+    const student = await saveFakeStudent(db.dataSource);
+    const currentMSFAA = createFakeMSFAANumber(
+      { student },
+      {
+        msfaaState: MSFAAStates.CancelledOtherProvince,
+      },
+    );
+    await db.msfaaNumber.save(currentMSFAA);
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student, msfaaNumber: currentMSFAA },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+      },
+    );
+
+    const endpoint = `/aest/application/${application.id}/reissue-msfaa`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    let createdMSFAAId: number;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => (createdMSFAAId = +response.body.id));
+    // Validate DB changes.
+    const createdMSFAA = await db.msfaaNumber.findOne({
+      select: {
+        dateRequested: true,
+        dateSigned: true,
+      },
+      where: { id: createdMSFAAId },
+    });
+    expect(createdMSFAA.dateRequested).toBeDefined();
+    expect(createdMSFAA.dateSigned).toBeDefined();
+  });
 
   it(
     "Should reissue an MSFAA and associate with only pending disbursements across multiple applications for the same offering intensity and same student " +
