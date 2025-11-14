@@ -258,6 +258,20 @@ export class ConfigService {
   }
 
   /**
+   * When defined as true, bypasses the MSFAA signing process.
+   * The MSFAA process will execute all steps expected trying to
+   * finding an available MSFAA to be reused.
+   * If no MSFAA is available, a new one will be created and signed.
+   * Only for non-production environments where MSFAA signing can be bypassed.
+   */
+  get bypassMSFAASigning(): boolean {
+    return this.getCachedConfig(
+      "bypassMSFAASigningConfig",
+      process.env.BYPASS_MSFAA_SIGNING === "true",
+    );
+  }
+
+  /**
    * Application archive days.
    */
   get applicationArchiveDays(): number {

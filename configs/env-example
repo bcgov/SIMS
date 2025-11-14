@@ -84,6 +84,11 @@ ZONE_B_SFTP_PRIVATE_KEY=
 # disabled, and should be enabled only for DEV purposes on local developer
 # machine or on an environment where the CRA process is not enabled.
 BYPASS_CRA_INCOME_VERIFICATION=false
+# When defined as true, bypasses the MSFAA signing process.
+# The MSFAA process will execute all steps expected trying to
+# finding an available MSFAA to be reused.
+# If no MSFAA is available, a new one will be created and signed.
+BYPASS_MSFAA_SIGNING=false
 #ESDC Integration
 ESDC_REQUEST_FOLDER=
 ESDC_RESPONSE_FOLDER=

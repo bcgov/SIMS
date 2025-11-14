@@ -89,6 +89,8 @@ objects:
                       name: ${WORKERS_SECRET_NAME}
                 - name: BYPASS_CRA_INCOME_VERIFICATION
                   value: ${BYPASS_CRA_INCOME_VERIFICATION}
+                - name: BYPASS_MSFAA_SIGNING
+                  value: ${BYPASS_MSFAA_SIGNING}
                 - name: DISABLE_ORM_CACHE
                   value: ${DISABLE_ORM_CACHE}
                 - name: APPLICATION_SUBMISSION_DEADLINE_WEEKS
@@ -193,6 +195,8 @@ parameters:
   - name: ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS_KEY
     value: zeebe-grpc-worker-longpoll-seconds
   - name: BYPASS_CRA_INCOME_VERIFICATION
+    value: "false"
+  - name: BYPASS_MSFAA_SIGNING
     value: "false"
   - name: REDIS_SERVICE
     value: redis-cluster
