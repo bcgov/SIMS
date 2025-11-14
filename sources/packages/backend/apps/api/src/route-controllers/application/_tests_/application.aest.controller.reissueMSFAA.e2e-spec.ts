@@ -22,20 +22,23 @@ import {
 } from "@sims/sims-db";
 import MockDate from "mockdate";
 import { getISODateOnlyString } from "@sims/utilities";
+import { ConfigService } from "@sims/utilities/config/config.service";
 
 describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
   let app: INestApplication;
   let db: E2EDataSources;
+  let configService: ConfigService;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    configService = app.get<ConfigService>(ConfigService);
   });
 
   beforeEach(async () => {
-    process.env.BYPASS_MSFAA_SIGNING = "false";
     MockDate.reset();
+    bypassMSFAASigning(false);
   });
 
   it("Should reissue an MSFAA and associate with both disbursements when both disbursements are pending and the current MSFAA is signed but canceled.", async () => {
@@ -131,7 +134,7 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
 
   it("Should reissue an MSFAA and and sign it when the BYPASS_MSFAA_SIGNING environment variable is true and a new MSFAA must be created.", async () => {
     // Arrange
-    process.env.BYPASS_MSFAA_SIGNING = "true";
+    bypassMSFAASigning(true);
     const student = await saveFakeStudent(db.dataSource);
     const currentMSFAA = createFakeMSFAANumber(
       { student },
@@ -418,6 +421,17 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
         error: "Forbidden",
       });
   });
+
+  /**
+   * Mock the bypassMSFAASigning config value to allow changing the behavior
+   * of the MSFAA signing authorization between tests.
+   * @param bypass true to bypass MSFAA signing.
+   */
+  function bypassMSFAASigning(bypass: boolean): void {
+    jest
+      .spyOn(configService, "bypassMSFAASigning", "get")
+      .mockReturnValue(bypass);
+  }
 
   afterAll(async () => {
     await app?.close();
