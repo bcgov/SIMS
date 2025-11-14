@@ -66,7 +66,7 @@ export default defineComponent({
     const appealRequestsForms = ref([] as StudentAppealRequest[]);
 
     watchEffect(async () => {
-      let application: ApplicationProgramYearAPIOutDTO;
+      let application: ApplicationProgramYearAPIOutDTO | undefined = undefined;
       if (props.applicationId) {
         try {
           application =
