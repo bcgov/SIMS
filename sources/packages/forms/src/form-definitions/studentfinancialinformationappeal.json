@@ -90,6 +90,7 @@
           "requireDecimal": false,
           "inputFormat": "plain",
           "truncateMultipleSpaces": false,
+          "redrawOn": "calculatedTaxYear",
           "validate": {
             "required": true,
             "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
