@@ -77,6 +77,7 @@ export default defineComponent({
           snackBar.error(
             "An unexpected error happened while retrieving the application to submit the request for change.",
           );
+          return;
         }
       }
       appealRequestsForms.value = props.appealForms.map((formName) => ({
