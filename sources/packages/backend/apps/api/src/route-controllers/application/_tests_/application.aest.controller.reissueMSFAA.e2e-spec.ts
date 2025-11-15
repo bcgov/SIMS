@@ -22,13 +22,11 @@ import {
 } from "@sims/sims-db";
 import MockDate from "mockdate";
 import { getISODateOnlyString } from "@sims/utilities";
-import { ConfigService } from "@sims/utilities/config/config.service";
 import { ConfigServiceMockHelper } from "@sims/test-utils/mocks";
 
 describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let configService: ConfigService;
   let configServiceMockHelper: ConfigServiceMockHelper;
 
   beforeAll(async () => {
