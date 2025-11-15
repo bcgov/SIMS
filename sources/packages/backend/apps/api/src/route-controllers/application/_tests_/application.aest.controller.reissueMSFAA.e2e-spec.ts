@@ -134,7 +134,7 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
     },
   );
 
-  it("Should reissue an MSFAA and and sign it when the BYPASS_MSFAA_SIGNING environment variable is true and a new MSFAA must be created.", async () => {
+  it("Should reissue an MSFAA and sign it when the BYPASS_MSFAA_SIGNING environment variable is true and a new MSFAA must be created.", async () => {
     // Arrange
     configServiceMockHelper.bypassMSFAASigning(true);
     const student = await saveFakeStudent(db.dataSource);
