@@ -54,8 +54,6 @@ on:
         required: true
       BYPASS_CRA_INCOME_VERIFICATION:
         required: true
-      BYPASS_MSFAA_SIGNING:
-        required: true
       OPENSHIFT_SIMS_CREDS_NAME:
         required: true
       FORMS_SECRET_NAME:
