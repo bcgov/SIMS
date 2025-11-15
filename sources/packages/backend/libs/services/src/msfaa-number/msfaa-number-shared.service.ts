@@ -22,6 +22,7 @@ import {
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "../constants";
+import { ConfigService } from "@sims/utilities/config";
 
 /**
  * Service layer for MSFAA (Master Student Financial Aid Agreement)
@@ -35,6 +36,7 @@ export class MSFAANumberSharedService {
     private readonly dataSource: DataSource,
     private readonly sequenceService: SequenceControlService,
     private readonly systemUsersService: SystemUsersService,
+    private readonly configService: ConfigService,
   ) {}
 
   /**
@@ -195,9 +197,8 @@ export class MSFAANumberSharedService {
       if (!options?.existingMSFAA) {
         // Create the new MSFAA record for the student.
         newActiveMSFAA = new MSFAANumber();
-        newActiveMSFAA.msfaaNumber = await this.consumeNextSequence(
-          offeringIntensity,
-        );
+        newActiveMSFAA.msfaaNumber =
+          await this.consumeNextSequence(offeringIntensity);
         newActiveMSFAA.student = { id: studentId } as Student;
         newActiveMSFAA.referenceApplication = {
           id: referenceApplicationId,
@@ -205,6 +206,12 @@ export class MSFAANumberSharedService {
         newActiveMSFAA.offeringIntensity = offeringIntensity;
         newActiveMSFAA.creator = { id: auditUserId } as User;
         newActiveMSFAA.createdAt = now;
+        if (this.configService.bypassMSFAASigning) {
+          // Only for non-production environments where MSFAA signing can be bypassed.
+          // When bypassing MSFAA signing, set the date requested and signed to now.
+          newActiveMSFAA.dateRequested = now;
+          newActiveMSFAA.dateSigned = nowISODate;
+        }
         await entityManager.getRepository(MSFAANumber).save(newActiveMSFAA);
       } else {
         // Reactivate this msfaa record.

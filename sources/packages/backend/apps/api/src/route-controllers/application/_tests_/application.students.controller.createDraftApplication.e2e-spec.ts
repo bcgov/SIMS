@@ -16,15 +16,15 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import { OfferingIntensity, ProgramYear } from "@sims/sims-db";
-import { ConfigService } from "@sims/utilities/config";
 import { CreateApplicationAPIInDTO } from "../../../route-controllers/application/models/application.dto";
+import { ConfigServiceMockHelper } from "@sims/test-utils/mocks";
 
 describe("ApplicationStudentsController(e2e)-createDraftApplication", () => {
   let app: INestApplication;
   let appModule: TestingModule;
   let db: E2EDataSources;
   let recentActiveProgramYear: ProgramYear;
-  let configService: ConfigService;
+  let configServiceMockHelper: ConfigServiceMockHelper;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -32,7 +32,7 @@ describe("ApplicationStudentsController(e2e)-createDraftApplication", () => {
     app = nestApplication;
     appModule = module;
     db = createE2EDataSources(dataSource);
-    configService = appModule.get(ConfigService);
+    configServiceMockHelper = new ConfigServiceMockHelper(app);
     // Program Year for the following tests.
     recentActiveProgramYear = await db.programYear.findOne({
       select: { id: true, startDate: true, endDate: true },
@@ -43,12 +43,12 @@ describe("ApplicationStudentsController(e2e)-createDraftApplication", () => {
 
   beforeEach(() => {
     resetMockJWTUserInfo(appModule);
-    allowBetaUsersOnly(false);
+    configServiceMockHelper.allowBetaUsersOnly(false);
   });
 
   it("Should create an application when the user is a beta user and allowBetaUsersOnly is true.", async () => {
     // Arrange
-    allowBetaUsersOnly(true);
+    configServiceMockHelper.allowBetaUsersOnly(true);
     const student = await saveFakeStudent(db.dataSource);
     // Register the student as a beta user for full-time.
     await db.betaUsersAuthorizations.save({
@@ -80,7 +80,7 @@ describe("ApplicationStudentsController(e2e)-createDraftApplication", () => {
 
   it("Should throw a forbidden error when a full-time application is saved and the user is not a beta user and allowBetaUsersOnly is true.", async () => {
     // Arrange
-    allowBetaUsersOnly(true);
+    configServiceMockHelper.allowBetaUsersOnly(true);
     const student = await saveFakeStudent(db.dataSource);
     const payload = {
       associatedFiles: [],
@@ -143,17 +143,6 @@ describe("ApplicationStudentsController(e2e)-createDraftApplication", () => {
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });
   });
-
-  /**
-   * Mock the allowBetaUsersOnly config value to allow changing the behavior
-   * of the beta users authorization between tests.
-   * @param allow true to allow beta users only, false to allow all users.
-   */
-  function allowBetaUsersOnly(allow: boolean): void {
-    jest
-      .spyOn(configService, "allowBetaUsersOnly", "get")
-      .mockReturnValue(allow);
-  }
 
   afterAll(async () => {
     await app?.close();

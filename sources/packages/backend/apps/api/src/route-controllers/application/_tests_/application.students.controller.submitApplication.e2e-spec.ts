@@ -37,7 +37,7 @@ import { FormNames, FormService } from "../../../services";
 import { AppStudentsModule } from "../../../app.students.module";
 import { createFakeSFASPartTimeApplication } from "@sims/test-utils/factories/sfas-part-time-application";
 import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
-import { ConfigService } from "@sims/utilities/config";
+import { ConfigServiceMockHelper } from "@sims/test-utils/mocks";
 
 describe("ApplicationStudentsController(e2e)-submitApplication", () => {
   let app: INestApplication;
@@ -46,7 +46,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
   let db: E2EDataSources;
   let formService: FormService;
   let recentActiveProgramYear: ProgramYear;
-  let configService: ConfigService;
+  let configServiceMockHelper: ConfigServiceMockHelper;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -55,7 +55,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     appModule = module;
     appDataSource = dataSource;
     db = createE2EDataSources(dataSource);
-    configService = appModule.get(ConfigService);
+    configServiceMockHelper = new ConfigServiceMockHelper(app);
     // Program Year for the following tests.
     formService = await getProviderInstanceForModule(
       appModule,
@@ -73,7 +73,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
 
   beforeEach(() => {
     resetMockJWTUserInfo(appModule);
-    allowBetaUsersOnly(false);
+    configServiceMockHelper.allowBetaUsersOnly(false);
   });
 
   it("Should throw study dates overlap error when an application submitted for a student via the SIMS system has overlapping study start or study end dates with another application.", async () => {
@@ -944,7 +944,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
 
   it("Should submit a full-time application when the student is configured as a beta user.", async () => {
     // Arrange
-    allowBetaUsersOnly(true);
+    configServiceMockHelper.allowBetaUsersOnly(true);
     const { student, draftApplication, payload } =
       await saveApplicationDraftReadyForSubmission();
     // Register the student as a beta user for full-time.
@@ -976,7 +976,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
 
   it("Should throw a forbidden error when a full-time application is submitted and the user is not a beta user.", async () => {
     // Arrange
-    allowBetaUsersOnly(true);
+    configServiceMockHelper.allowBetaUsersOnly(true);
     const { student, draftApplication, payload } =
       await saveApplicationDraftReadyForSubmission();
     const endpoint = `/students/application/${draftApplication.id}/submit`;
@@ -1090,17 +1090,6 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       draftApplication,
       payload,
     };
-  }
-
-  /**
-   * Mock the allowBetaUsersOnly config value to allow changing the behavior
-   * of the beta users authorization between tests.
-   * @param allow true to allow beta users only, false to allow all users.
-   */
-  function allowBetaUsersOnly(allow: boolean): void {
-    jest
-      .spyOn(configService, "allowBetaUsersOnly", "get")
-      .mockReturnValue(allow);
   }
 
   afterAll(async () => {
