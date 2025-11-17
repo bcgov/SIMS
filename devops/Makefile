@@ -357,6 +357,7 @@ deploy-api:
 	test -n "$(SITE_MINDER_LOGOUT_URL)"
 	test -n "$(ATBC_LOGIN_ENDPOINT)"
 	test -n "$(ATBC_ENDPOINT)"
+	test -n "$(BYPASS_MSFAA_SIGNING)"
 	test -n "$(API)"
 	test -n "$(API_SECRET_NAME)"
 	test -n "$(HOST)"
@@ -370,7 +371,6 @@ deploy-api:
 	test -n "$(API_MEMORY_LIMIT)"
 	test -n "$(API_REPLICAS)"
 	test -n "$(EXTERNAL_IP_WHITELIST)"
-	test -n "$(BYPASS_MSFAA_SIGNING)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
