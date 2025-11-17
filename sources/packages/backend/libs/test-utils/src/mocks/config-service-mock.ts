@@ -23,7 +23,7 @@ export class ConfigServiceMockHelper {
 
   /**
    * Mock the bypassMSFAASigning config value to allow changing the behavior
-   * of the MSFAA signing authorization between tests.
+   * of the MSFAA signing process between tests.
    * @param bypass true to bypass MSFAA signing.
    */
   bypassMSFAASigning(bypass: boolean): void {
