@@ -55,7 +55,7 @@
     "@golevelup/nestjs-discovery": "^5.0.0",
     "@nestjs/axios": "^4.0.1",
     "@nestjs/bull": "^11.0.4",
-    "@nestjs/common": "^11.1.6",
+    "@nestjs/common": "^11.1.8",
     "@nestjs/core": "^11.1.6",
     "@nestjs/jwt": "^11.0.1",
     "@nestjs/mapped-types": "^2.1.0",
