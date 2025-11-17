@@ -833,7 +833,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_1ki3afc" name="Eligibility SBSD">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if (institutionType = &#34;BC Public&#34; or institutionType = &#34;BC Private&#34;) &#10;  and (calculatedDataTotalAssessedNeed &#62;= 1) &#10;  and calculatedDataPDPPDStatus = true&#10;  and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardSBSDThresholdIncome)&#10;then true &#10;else false" target="awardEligibilitySBSD" />
+          <zeebe:output source="=if (calculatedDataTotalAssessedNeed &#62;= 1)&#10;  and calculatedDataPDPPDStatus = true&#10;  and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardSBSDThresholdIncome)&#10;then true &#10;else false" target="awardEligibilitySBSD" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_157t178</bpmn:incoming>
