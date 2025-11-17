@@ -861,7 +861,7 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     );
   });
 
-  it("Should create an MSFAA and sign it when the BYPASS_MSFAA_SIGNING environment variable is true and a new MSFAA must be created.", async () => {
+  it("Should create an MSFAA and sign it when the bypassMSFAASigning config is true and a new MSFAA must be created.", async () => {
     // Arrange
     configServiceMockHelper.bypassMSFAASigning(true);
     const application = await saveFakeApplicationDisbursements(
@@ -900,7 +900,7 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
         student: { id: application.student.id },
       },
       order: {
-        id: { direction: "DESC" },
+        id: "DESC",
       },
     });
     expect(createdMSFAA).toEqual({
