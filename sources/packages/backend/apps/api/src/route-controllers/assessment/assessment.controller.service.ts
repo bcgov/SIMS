@@ -606,14 +606,13 @@ export class AssessmentControllerService {
         studentScholasticStandingId: assessment.studentScholasticStanding?.id,
       }),
     );
-    // For unsuccessful scholastic standing, status is always "completed" and
-    // "createdAt" is "submittedDate".
     const unsuccessfulScholasticStandingHistory =
-      unsuccessfulScholasticStandings.map((standing) => ({
-        submittedDate: standing.createdAt,
+      unsuccessfulScholasticStandings.map((scholasticStanding) => ({
+        submittedDate: scholasticStanding.submittedDate,
         triggerType: AssessmentTriggerType.ScholasticStandingChange,
+        // For unsuccessful scholastic standing, status is always "completed".
         status: StudentAssessmentStatus.Completed,
-        studentScholasticStandingId: standing.id,
+        studentScholasticStandingId: scholasticStanding.id,
         hasUnsuccessfulWeeks: true,
       }));
     history.push(...unsuccessfulScholasticStandingHistory);

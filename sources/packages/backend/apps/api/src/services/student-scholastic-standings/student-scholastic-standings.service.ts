@@ -498,7 +498,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       .createQueryBuilder("studentScholasticStanding")
       .select([
         "studentScholasticStanding.id",
-        "studentScholasticStanding.createdAt",
+        "studentScholasticStanding.submittedDate",
       ])
       .innerJoin("studentScholasticStanding.application", "application")
       .where("application.id = :applicationId", { applicationId })
