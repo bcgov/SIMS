@@ -32,6 +32,16 @@ import {
 } from "@/services/http/dto";
 import useEmitterEvents from "@/composables/useEmitterEvents";
 
+/**
+ * Applications edit statuses where the assessment history
+ * menu item should be displayed.
+ */
+const ALLOWED_ASSESSMENT_HISTORY_STATUSES = new Set([
+  ApplicationEditStatus.Original,
+  ApplicationEditStatus.Edited,
+  ApplicationEditStatus.ChangedWithApproval,
+]);
+
 export default defineComponent({
   props: {
     studentId: {
@@ -347,8 +357,7 @@ export default defineComponent({
         ];
         // Conditionally create the assessment menu.
         if (
-          version.applicationEditStatus !==
-          ApplicationEditStatus.ChangeCancelled
+          ALLOWED_ASSESSMENT_HISTORY_STATUSES.has(version.applicationEditStatus)
         ) {
           children.push({
             title: "Assessments",
