@@ -426,8 +426,8 @@ deploy-workers:
 	test -n "$(BYPASS_MSFAA_SIGNING)"
 	test -n "$(WORKERS_CPU_REQUEST)"
 	test -n "$(WORKERS_MEMORY_REQUEST)"
-	test -n "${WORKERS_MEMORY_LIMIT}"
-	test -n "${WORKERS_REPLICAS}"
+	test -n "$(WORKERS_MEMORY_LIMIT)"
+	test -n "$(WORKERS_REPLICAS)"
 	@echo "+\n++ Deploying Workers with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/workers-deploy.yml \
 		-p NAME=$(WORKERS) \
@@ -525,7 +525,7 @@ deploy-web:
 	test -n "$(WEB_CPU_REQUEST)"
 	test -n "$(WEB_MEMORY_REQUEST)"
 	test -n "$(WEB_MEMORY_LIMIT)"
-	test -n "${WEB_REPLICAS}"
+	test -n "$(WEB_REPLICAS)"
 	@echo "+\n++ Deploying WEB with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml \
 	-p NAME=$(WEB) \
@@ -564,8 +564,8 @@ deploy-forms:
 	test -n "$(MONGODB_URI)"
 	test -n "$(FORMIO_CPU_REQUEST)"
 	test -n "$(FORMIO_MEMORY_REQUEST)"
-	test -n "${FORMIO_MEMORY_LIMIT}"
-	test -n "${FORMIO_REPLICAS}"
+	test -n "$(FORMIO_MEMORY_LIMIT)"
+	test -n "$(FORMIO_REPLICAS)"
 	@echo "+\n++ Deploying forms with tag: $(FORMIO_SOURCE_REPO_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/forms-deploy.yml \
 	-p NAME=$(FORMS_NAME) \
