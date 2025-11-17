@@ -99,7 +99,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentHistorySummary", ()
       .expect(HttpStatus.OK)
       .expect([
         {
-          submittedDate: scholasticStanding.createdAt.toISOString(),
+          submittedDate: scholasticStanding.submittedDate.toISOString(),
           triggerType: AssessmentTriggerType.ScholasticStandingChange,
           status: StudentAssessmentStatus.Completed,
           studentScholasticStandingId: scholasticStanding.id,
