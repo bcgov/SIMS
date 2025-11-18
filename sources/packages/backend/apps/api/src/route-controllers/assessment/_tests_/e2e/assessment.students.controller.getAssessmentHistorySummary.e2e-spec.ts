@@ -98,7 +98,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentHistorySummary", () => 
           submittedDate: twoDaysAgo.toISOString(),
           triggerType: AssessmentTriggerType.OriginalAssessment,
           assessmentDate: originalAssessment.assessmentDate,
-          status: "Submitted",
+          status: StudentAssessmentStatus.Submitted,
           offeringId: originalAssessment.offering.id,
           programId: originalAssessment.offering.educationProgram.id,
         },
