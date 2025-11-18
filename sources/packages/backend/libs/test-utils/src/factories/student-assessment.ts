@@ -43,7 +43,7 @@ export function createFakeStudentAssessment(
   const assessment = new StudentAssessment();
   assessment.application =
     relations?.application ?? createFakeApplication(relations);
-  assessment.submittedDate = now;
+  assessment.submittedDate = options?.initialValue?.submittedDate ?? now;
   assessment.submittedBy = relations?.auditUser;
   assessment.assessmentWorkflowId = null;
   assessment.assessmentData =

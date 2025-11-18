@@ -573,7 +573,7 @@ export class AssessmentControllerService {
 
   /**
    * Get history of approved assessment requests and
-   * unsuccessful scholastic standing change requests(which will not create new assessment)
+   * unsuccessful scholastic standings change requests(which will not create new assessment)
    * for an application.
    * @param applicationId, application id.
    * @param studentId applicant student.
@@ -583,7 +583,7 @@ export class AssessmentControllerService {
     applicationId: number,
     studentId?: number,
   ): Promise<AssessmentHistorySummaryAPIOutDTO[]> {
-    const [assessments, unsuccessfulScholasticStanding] = await Promise.all([
+    const [assessments, unsuccessfulScholasticStandings] = await Promise.all([
       this.assessmentService.assessmentHistorySummary(applicationId, studentId),
       this.studentScholasticStandingsService.getUnsuccessfulScholasticStandings(
         applicationId,
@@ -606,19 +606,17 @@ export class AssessmentControllerService {
         studentScholasticStandingId: assessment.studentScholasticStanding?.id,
       }),
     );
-    // Add unsuccessful scholastic standing to the top of the list, if present.
-    // For unsuccessful scholastic standing, status is always "completed" and
-    // "createdAt" is "submittedDate".
-    if (unsuccessfulScholasticStanding) {
-      history.unshift({
-        submittedDate: unsuccessfulScholasticStanding.createdAt,
+    const unsuccessfulScholasticStandingHistory =
+      unsuccessfulScholasticStandings.map((scholasticStanding) => ({
+        submittedDate: scholasticStanding.submittedDate,
         triggerType: AssessmentTriggerType.ScholasticStandingChange,
+        // For unsuccessful scholastic standing, status is always "completed".
         status: StudentAssessmentStatus.Completed,
-        studentScholasticStandingId: unsuccessfulScholasticStanding.id,
+        studentScholasticStandingId: scholasticStanding.id,
         hasUnsuccessfulWeeks: true,
-      });
-    }
-
+      }));
+    history.push(...unsuccessfulScholasticStandingHistory);
+    history.sort(this.sortAssessmentHistory);
     return history;
   }
 
