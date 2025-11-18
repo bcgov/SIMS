@@ -15,6 +15,7 @@ export NEW_DB := $(or $(NEW_DB), $$NEW_DB)
 export JOB_NAME := $(or $(JOB_NAME), $$JN)
 export SITE_MINDER_LOGOUT_URL := $(or $(SITE_MINDER_LOGOUT_URL), https://logontest7.gov.bc.ca/clp-cgi/logoff.cgi)
 export BYPASS_CRA_INCOME_VERIFICATION := $(or $(BYPASS_CRA_INCOME_VERIFICATION), false)
+export BYPASS_MSFAA_SIGNING := $(or $(BYPASS_MSFAA_SIGNING), false)
 export IS_FULLTIME_ALLOWED := $(or $(IS_FULLTIME_ALLOWED), false)
 export BYPASS_APPLICATION_SUBMIT_VALIDATIONS := $(or $(BYPASS_APPLICATION_SUBMIT_VALIDATIONS), false)
 export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
@@ -356,6 +357,7 @@ deploy-api:
 	test -n "$(SITE_MINDER_LOGOUT_URL)"
 	test -n "$(ATBC_LOGIN_ENDPOINT)"
 	test -n "$(ATBC_ENDPOINT)"
+	test -n "$(BYPASS_MSFAA_SIGNING)"
 	test -n "$(API)"
 	test -n "$(API_SECRET_NAME)"
 	test -n "$(HOST)"
@@ -366,9 +368,9 @@ deploy-api:
 	test -n "$(APPLICATION_ARCHIVE_DAYS)"
 	test -n "$(API_CPU_REQUEST)"
 	test -n "$(API_MEMORY_REQUEST)"
-	test -n "${API_MEMORY_LIMIT}"
-	test -n "${API_REPLICAS}"
-	test -n "${EXTERNAL_IP_WHITELIST}"
+	test -n "$(API_MEMORY_LIMIT)"
+	test -n "$(API_REPLICAS)"
+	test -n "$(EXTERNAL_IP_WHITELIST)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
@@ -386,6 +388,7 @@ deploy-api:
 		-p ATBC_LOGIN_ENDPOINT=$(ATBC_LOGIN_ENDPOINT) \
 		-p ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
 		-p BYPASS_APPLICATION_SUBMIT_VALIDATIONS=$(BYPASS_APPLICATION_SUBMIT_VALIDATIONS) \
+		-p BYPASS_MSFAA_SIGNING=$(BYPASS_MSFAA_SIGNING) \
 		-p IS_FULLTIME_ALLOWED=$(IS_FULLTIME_ALLOWED) \
 		-p SWAGGER_ENABLED=$(SWAGGER_ENABLED) \
 		-p SWAGGER_NAME=$(SWAGGER_NAME) \
@@ -420,10 +423,11 @@ deploy-workers:
 	test -n "$(WORKERS)"
 	test -n "$(WORKERS_PORT)"
 	test -n "$(BYPASS_CRA_INCOME_VERIFICATION)"
+	test -n "$(BYPASS_MSFAA_SIGNING)"
 	test -n "$(WORKERS_CPU_REQUEST)"
 	test -n "$(WORKERS_MEMORY_REQUEST)"
-	test -n "${WORKERS_MEMORY_LIMIT}"
-	test -n "${WORKERS_REPLICAS}"
+	test -n "$(WORKERS_MEMORY_LIMIT)"
+	test -n "$(WORKERS_REPLICAS)"
 	@echo "+\n++ Deploying Workers with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/workers-deploy.yml \
 		-p NAME=$(WORKERS) \
@@ -433,6 +437,7 @@ deploy-workers:
 		-p IMAGE_STREAM_TAG="$(WORKERS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p BYPASS_CRA_INCOME_VERIFICATION=$(BYPASS_CRA_INCOME_VERIFICATION) \
+		-p BYPASS_MSFAA_SIGNING=$(BYPASS_MSFAA_SIGNING) \
 		-p DISABLE_ORM_CACHE=$(DISABLE_ORM_CACHE) \
 		-p APPLICATION_SUBMISSION_DEADLINE_WEEKS=$(APPLICATION_SUBMISSION_DEADLINE_WEEKS) \
 		-p CPU_REQUEST=$(WORKERS_CPU_REQUEST) \
@@ -520,7 +525,7 @@ deploy-web:
 	test -n "$(WEB_CPU_REQUEST)"
 	test -n "$(WEB_MEMORY_REQUEST)"
 	test -n "$(WEB_MEMORY_LIMIT)"
-	test -n "${WEB_REPLICAS}"
+	test -n "$(WEB_REPLICAS)"
 	@echo "+\n++ Deploying WEB with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml \
 	-p NAME=$(WEB) \
@@ -559,8 +564,8 @@ deploy-forms:
 	test -n "$(MONGODB_URI)"
 	test -n "$(FORMIO_CPU_REQUEST)"
 	test -n "$(FORMIO_MEMORY_REQUEST)"
-	test -n "${FORMIO_MEMORY_LIMIT}"
-	test -n "${FORMIO_REPLICAS}"
+	test -n "$(FORMIO_MEMORY_LIMIT)"
+	test -n "$(FORMIO_REPLICAS)"
 	@echo "+\n++ Deploying forms with tag: $(FORMIO_SOURCE_REPO_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/forms-deploy.yml \
 	-p NAME=$(FORMS_NAME) \

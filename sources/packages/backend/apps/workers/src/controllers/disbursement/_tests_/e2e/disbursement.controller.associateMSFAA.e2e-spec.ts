@@ -27,15 +27,24 @@ import {
   MockedZeebeJobResult,
 } from "../../../../../test/utils/worker-job-mock";
 import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
+import MockDate from "mockdate";
+import { ConfigServiceMockHelper } from "@sims/test-utils/mocks";
 
 describe("DisbursementController(e2e)-associateMSFAA", () => {
   let db: E2EDataSources;
   let disbursementController: DisbursementController;
+  let configServiceMockHelper: ConfigServiceMockHelper;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     db = createE2EDataSources(dataSource);
     disbursementController = nestApplication.get(DisbursementController);
+    configServiceMockHelper = new ConfigServiceMockHelper(nestApplication);
+  });
+
+  beforeEach(async () => {
+    MockDate.reset();
+    configServiceMockHelper.bypassMSFAASigning(false);
   });
 
   it("Should reuse a part-time MSFAA number for a part-time application if the MSFAA is signed and the signed date is within the valid period.", async () => {
@@ -850,6 +859,55 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     expect(secondDisbursementSchedule.msfaaNumber.id).toBe(
       createdMSFAANumber.id,
     );
+  });
+
+  it("Should create an MSFAA and sign it when the bypassMSFAASigning config is true and a new MSFAA must be created.", async () => {
+    // Arrange
+    configServiceMockHelper.bypassMSFAASigning(true);
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      undefined,
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      },
+    );
+    const now = new Date();
+    MockDate.set(now);
+
+    // Act
+    const associateMSFAAPayload = createFakeAssociateMSFAAPayload({
+      assessmentId: application.currentAssessment.id,
+    });
+    const saveResult = await disbursementController.associateMSFAA(
+      associateMSFAAPayload,
+    );
+
+    // Asserts
+    expect(FakeWorkerJobResult.getResultType(saveResult)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    // Fetch MSFAA Number for the student in SIMS.
+    const createdMSFAA = await db.msfaaNumber.findOne({
+      select: {
+        id: true,
+        dateRequested: true,
+        dateSigned: true,
+      },
+      where: {
+        student: { id: application.student.id },
+      },
+      order: {
+        id: "DESC",
+      },
+    });
+    expect(createdMSFAA).toEqual({
+      id: expect.any(Number),
+      dateRequested: now,
+      dateSigned: getISODateOnlyString(now),
+    });
   });
 
   it("Should throw Disbursement not found exception when MSFAA Number is tried to be created before disbursement.", async () => {

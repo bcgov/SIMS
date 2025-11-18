@@ -20,15 +20,25 @@ import {
   DisbursementScheduleStatus,
   OfferingIntensity,
 } from "@sims/sims-db";
+import MockDate from "mockdate";
+import { getISODateOnlyString } from "@sims/utilities";
+import { ConfigServiceMockHelper } from "@sims/test-utils/mocks";
 
 describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
   let app: INestApplication;
   let db: E2EDataSources;
+  let configServiceMockHelper: ConfigServiceMockHelper;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    configServiceMockHelper = new ConfigServiceMockHelper(app);
+  });
+
+  beforeEach(async () => {
+    MockDate.reset();
+    configServiceMockHelper.bypassMSFAASigning(false);
   });
 
   it("Should reissue an MSFAA and associate with both disbursements when both disbursements are pending and the current MSFAA is signed but canceled.", async () => {
@@ -121,6 +131,50 @@ describe("ApplicationAESTController(e2e)-reissueMSFAA", () => {
       ]);
     },
   );
+
+  it("Should reissue an MSFAA and sign it when the bypassMSFAASigning config is true and a new MSFAA must be created.", async () => {
+    // Arrange
+    configServiceMockHelper.bypassMSFAASigning(true);
+    const student = await saveFakeStudent(db.dataSource);
+    const currentMSFAA = createFakeMSFAANumber(
+      { student },
+      {
+        msfaaState: MSFAAStates.CancelledOtherProvince,
+      },
+    );
+    await db.msfaaNumber.save(currentMSFAA);
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student, msfaaNumber: currentMSFAA },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+      },
+    );
+    const now = new Date();
+    MockDate.set(now);
+    const endpoint = `/aest/application/${application.id}/reissue-msfaa`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    let createdMSFAAId: number;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => (createdMSFAAId = +response.body.id));
+    // Validate DB changes.
+    const createdMSFAA = await db.msfaaNumber.findOne({
+      select: {
+        dateRequested: true,
+        dateSigned: true,
+      },
+      where: { id: createdMSFAAId },
+    });
+    expect(createdMSFAA).toEqual({
+      dateRequested: now,
+      dateSigned: getISODateOnlyString(now),
+    });
+  });
 
   it(
     "Should reissue an MSFAA and associate with only pending disbursements across multiple applications for the same offering intensity and same student " +

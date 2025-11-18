@@ -16,15 +16,15 @@ import {
 import { getUserFullName } from "../../../../utilities";
 import { TestingModule } from "@nestjs/testing";
 import { addDays } from "@sims/utilities";
-import { ConfigService } from "@sims/utilities/config/config.service";
 import { ModifiedIndependentStatus } from "@sims/sims-db";
+import { ConfigServiceMockHelper } from "@sims/test-utils/mocks";
 
 describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
   let app: INestApplication;
   let appModule: TestingModule;
   let db: E2EDataSources;
-  let configService: ConfigService;
   const endpoint = "/students/student";
+  let configServiceMockHelper: ConfigServiceMockHelper;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -32,12 +32,12 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
     app = nestApplication;
     appModule = module;
     db = createE2EDataSources(dataSource);
-    configService = appModule.get(ConfigService);
+    configServiceMockHelper = new ConfigServiceMockHelper(app);
   });
 
   beforeEach(() => {
     resetMockJWTUserInfo(appModule);
-    allowBetaUsersOnly(false);
+    configServiceMockHelper.allowBetaUsersOnly(false);
   });
 
   it("Should get the student profile when a student account exists.", async () => {
@@ -179,7 +179,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
 
   it("Should get the student profile with the hasFulltimeAccess as true user when the student was added to the beta users table and allowBetaUsersOnly is true.", async () => {
     // Arrange
-    allowBetaUsersOnly(true);
+    configServiceMockHelper.allowBetaUsersOnly(true);
     const student = await saveFakeStudent(db.dataSource);
     // Register the student as a beta user for full-time.
     await db.betaUsersAuthorizations.save({
@@ -206,7 +206,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
 
   it("Should get the student profile with hasFulltimeAccess as false when the student was added to the beta users table with a future date and allowBetaUsersOnly is true.", async () => {
     // Arrange
-    allowBetaUsersOnly(true);
+    configServiceMockHelper.allowBetaUsersOnly(true);
     const student = await saveFakeStudent(db.dataSource);
     // Register the student as a beta user for full-time.
     await db.betaUsersAuthorizations.save({
@@ -235,7 +235,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
 
   it("Should get the student profile with hasFulltimeAccess as false when the student was not added to the beta users table and allowBetaUsersOnly is true.", async () => {
     // Arrange
-    allowBetaUsersOnly(true);
+    configServiceMockHelper.allowBetaUsersOnly(true);
     const student = await saveFakeStudent(db.dataSource);
 
     // Mock the user received in the token.
@@ -255,17 +255,6 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
         expect(response.body.hasFulltimeAccess).toBe(false),
       );
   });
-
-  /**
-   * Mock the allowBetaUsersOnly config value to allow changing the behavior
-   * of the beta users authorization between tests.
-   * @param allow true to allow beta users only, false to allow all users.
-   */
-  function allowBetaUsersOnly(allow: boolean): void {
-    jest
-      .spyOn(configService, "allowBetaUsersOnly", "get")
-      .mockReturnValue(allow);
-  }
 
   afterAll(async () => {
     await app?.close();
