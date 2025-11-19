@@ -350,6 +350,19 @@ export class IER12ProcessingService {
         extraLocalTransportationCosts:
           workflowData.calculatedData.totalAdditionalTransportationAllowance,
         extraShelterCosts: assessmentData.secondResidenceCost,
+        interfacePolicyApplies:
+          workflowData.calculatedData.interfacePolicyApplies,
+        interfaceNeed: workflowData.calculatedData.interfaceNeed,
+        interfaceChildCareCosts:
+          workflowData.calculatedData.interfaceChildCareCosts,
+        interfaceEducationCosts:
+          workflowData.calculatedData.interfaceEducationCosts,
+        interfaceTransportationAmount:
+          workflowData.calculatedData.interfaceTransportationAmount,
+        interfaceAdditionalTransportationAmount:
+          workflowData.calculatedData.interfaceAdditionalTransportationAmount,
+        totalRoomAndBoardAmount:
+          workflowData.calculatedData.totalRoomAndBoardAmount,
       };
       ier12Records.push(ier12Record);
     }

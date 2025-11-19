@@ -113,6 +113,13 @@ export interface IER12Record {
   returnTransportationCosts?: number;
   extraLocalTransportationCosts?: number;
   extraShelterCosts?: number;
+  interfacePolicyApplies?: boolean;
+  interfaceNeed?: number;
+  interfaceChildCareCosts?: number;
+  interfaceEducationCosts?: number;
+  interfaceTransportationAmount?: number;
+  interfaceAdditionalTransportationAmount?: number;
+  totalRoomAndBoardAmount?: number;
 }
 
 export enum ApplicationStatusCode {
