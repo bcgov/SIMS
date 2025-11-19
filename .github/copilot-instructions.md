@@ -1,3 +1,22 @@
+# Copilot PR Review Checklist
+
+Use this checklist to guide Copilot PR Reviews and human reviewers. For full rules, see:
+
+- TypeScript style: [.github/instructions/style-typescript.instructions.md](./instructions/style-typescript.instructions.md)
+- Vue style: [.github/instructions/style-vue.instructions.md](./instructions/style-vue.instructions.md)
+- API controllers: [.github/instructions/api-controllers.instructions.md](./instructions/api-controllers.instructions.md)
+- API DTOs: [.github/instructions/api-dto.instructions.md](./instructions/api-dto.instructions.md)
+- API e2e tests: [.github/instructions/api-test-e2e.instructions.md](./instructions/api-test-e2e.instructions.md)
+
+## Quick Checks
+
+- Comments/JSDoc: Sentences start with a capital letter and end with a period; exported/public APIs have JSDoc with business context, `@param` and `@returns` descriptions ending with periods. (See TS/Vue style.)
+- Vue Composition: Uses `<script setup>`, favors `async/await`, early returns, and `const` over `let` when not reassigned. (See Vue style.)
+- Controllers (NestJS): Correct file naming, tags, and decorators by client type; map domain errors to proper `HttpException`s; avoid passing DTOs beyond controller layer. (See API controllers.)
+- DTOs: Class-based only, correct naming (`*APIInDTO` / `*APIOutDTO`), appropriate `class-validator` usage, and not exposing repository/service models directly. (See API DTOs.)
+- E2E Coverage: New/changed endpoints have e2e tests with proper setup, auth, assertions (success and common failures), and isolation. (See API e2e tests.)
+- Client Types: Endpoints/tags align with one of `aest | institution | student | supporting-user | external`. (See Client Types in this file.)
+
 # Project Overview
 
 This project is a web application to allow students to apply for loans and grants for provincial and federal government programs. The backend is built using Nestjs Monorepo while the frontend is built Vue.
@@ -35,7 +54,17 @@ When a `client-type` is mentioned in the code or documentation, the possible val
 
 ## Coding Standards
 
-- Comments should be in English and using proper grammar, including punctuation.
+- Comments should be in English and using proper grammar, including punctuation, for instance, starting with a capital letter and ending with a period.
+- Use `async/await` for asynchronous operations instead of `.then()` and `.catch()`.
+- Use early returns to reduce code complexity.
+- Use `const` for variables that are not reassigned.
+- Use `let` only for variables that will be reassigned.
+- Use `private` and `readonly` modifiers for class properties whenever possible.
+- Use `PascalCase` for class names, including acronyms (e.g., `MyClassWithACRONYM`).
+- Use `camelCase` for variable and method names.
+- Use `UPPER_SNAKE_CASE` for constants.
+- Use TypeScript types and interfaces to define data structures.
+- In NestJS, use decorators for dependency injection and routing.
 - In Vue, use the Composition API with `<script setup>`.
 - Follow NestJS and Vue.js best practices.
 
