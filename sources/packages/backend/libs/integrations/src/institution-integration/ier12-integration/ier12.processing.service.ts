@@ -349,7 +349,7 @@ export class IER12ProcessingService {
           workflowData.calculatedData.returnTransportationCost,
         extraLocalTransportationCosts:
           workflowData.calculatedData.totalAdditionalTransportationAllowance,
-        extraShelterCosts: assessmentData.secondResidenceCost,
+        extraShelterCosts: workflowData.calculatedData.totalRoomAndBoardAmount,
         interfacePolicyApplies:
           workflowData.calculatedData.interfacePolicyApplies,
         interfaceNeed: workflowData.calculatedData.interfaceNeed,

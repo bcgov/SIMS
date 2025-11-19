@@ -113,7 +113,7 @@ export interface IER12Record {
   returnTransportationCosts?: number;
   extraLocalTransportationCosts?: number;
   extraShelterCosts?: number;
-  interfacePolicyApplies?: boolean;
+  interfacePolicyApplies: boolean;
   interfaceNeed?: number;
   interfaceChildCareCosts?: number;
   interfaceEducationCosts?: number;
