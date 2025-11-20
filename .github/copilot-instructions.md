@@ -20,7 +20,7 @@ Use this checklist to guide Copilot PR Reviews and human reviewers. For full rul
 
 # Project Overview
 
-This project is a web application to allow students to apply for loans and grants for provincial and federal government programs. The backend is built using Nestjs Monorepo while the frontend is built Vue.
+This project is a web application to allow students to apply for loans and grants for provincial and federal government programs. The backend is built using Nestjs Monorepo while the frontend is built using Vue.
 
 ## Folder Structure
 
