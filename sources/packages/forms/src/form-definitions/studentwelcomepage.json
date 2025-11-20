@@ -163,8 +163,34 @@
                       "action": "event",
                       "showValidations": false,
                       "leftIcon": "fa fa-edit",
+                      "disabled": true,
                       "tableView": false,
                       "key": "startApplication",
+                      "logic": [
+                        {
+                          "name": "Enable when SIN is Valid",
+                          "trigger": {
+                            "type": "simple",
+                            "simple": {
+                              "show": true,
+                              "when": "sinValidStatus.sinStatus",
+                              "eq": "1"
+                            }
+                          },
+                          "actions": [
+                            {
+                              "name": "Enable Start Application",
+                              "type": "property",
+                              "property": {
+                                "label": "Disabled",
+                                "value": "disabled",
+                                "type": "boolean"
+                              },
+                              "state": false
+                            }
+                          ]
+                        }
+                      ],
                       "type": "button",
                       "input": true
                     }
@@ -355,6 +381,13 @@
           "tableView": false
         }
       ]
+    },
+    {
+      "label": "SIN Valid Status",
+      "key": "sinValidStatus.sinStatus",
+      "type": "hidden",
+      "input": true,
+      "tableView": false
     }
   ]
 }
