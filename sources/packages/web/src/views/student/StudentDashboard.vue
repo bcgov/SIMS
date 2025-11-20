@@ -4,9 +4,9 @@
       <announcement-banner dashboard="student-dashboard"
     /></template>
     <formio-container
-      formName="studentWelcomePage"
-      :formData="studentDetails"
-      @customEvent="goToStudentApplication"
+      form-name="studentWelcomePage"
+      :form-data="studentDetails"
+      @custom-event="goToStudentApplication"
     />
   </student-page-container>
 </template>
