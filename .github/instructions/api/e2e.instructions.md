@@ -8,23 +8,23 @@ Every API endpoint must have a corresponding end-to-end (e2e) test to validate i
 
 ### File Naming and Location
 
--   **Convention**: `[feature-name].[client-type].controller.[method-name].e2e-spec.ts`
--   **Location**: Place test files in the `e2e` subdirectory under the `_tests_` subdirectory of the controller's feature folder.
-    ```
-    /route-controllers
-    └── [feature-name]
-        └── _tests_
-            └── e2e
-              └── [feature-name].[client-type].controller.[method-name].e2e-spec.ts
-    ```
+- **Convention**: `[feature-name].[client-type].controller.[method-name].e2e-spec.ts`
+- **Location**: Place test files in the `e2e` subdirectory under the `_tests_` subdirectory of the controller's feature folder.
+  ```
+  /route-controllers
+  └── [feature-name]
+      └── _tests_
+          └── e2e
+            └── [feature-name].[client-type].controller.[method-name].e2e-spec.ts
+  ```
 
 ### Core Principles
 
--  **Isolation**: Each test should be independent, setting up its own data and ensuring its data will not affect other tests.
--  **Data Setup**: Use `saveFake...` helpers (e.g., `saveFakeStudent`, `saveFakeApplication`) to create a predictable state for each test.
--   **Authentication**: Use `get...Token` helpers (e.g., `getAESTToken`) to simulate authenticated users.
--   **Assertions**: Always validate the HTTP status code, the response body, and any changes to the database state.
--   **Scenarios**: Test for both success and common failure cases (e.g., 403 Forbidden, 404 Not Found).
+- **Isolation**: Each test should be independent, setting up its own data and ensuring its data will not affect other tests.
+- **Data Setup**: Use `saveFake...` helpers (e.g., `saveFakeStudent`, `saveFakeApplication`) to create a predictable state for each test.
+- **Authentication**: Use `get...Token` helpers (e.g., `getAESTToken`) to simulate authenticated users.
+- **Assertions**: Always validate the HTTP status code, the response body, and any changes to the database state.
+- **Scenarios**: Test for both success and common failure cases (e.g., 403 Forbidden, 404 Not Found).
 
 ### Boilerplate Code Example for Client Type AEST
 
@@ -51,7 +51,7 @@ describe("ApplicationAESTController(e2e)-getCompletedApplicationDetails", () => 
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should [so something] when [conditions are].", async () => {
+  it("Should [do something] when [conditions are met].", async () => {
     // Arrange
     const endpoint = "/aest/application/99999999/completed";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);

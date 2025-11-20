@@ -2,14 +2,15 @@
 
 Use this checklist to guide Copilot PR Reviews and human reviewers. For full rules, see:
 
-- TypeScript style: [.github/instructions/style-typescript.instructions.md](./instructions/style-typescript.instructions.md)
-- Vue style: [.github/instructions/style-vue.instructions.md](./instructions/style-vue.instructions.md)
-- API controllers: [.github/instructions/api-controllers.instructions.md](./instructions/api-controllers.instructions.md)
-- API DTOs: [.github/instructions/api-dto.instructions.md](./instructions/api-dto.instructions.md)
-- API e2e tests: [.github/instructions/api-test-e2e.instructions.md](./instructions/api-test-e2e.instructions.md)
+- TypeScript style: [style-typescript.instructions.md](./instructions/style-typescript.instructions.md)
+- Vue style: [style-vue.instructions.md](./instructions/style-vue.instructions.md)
+- API controllers: [api-controllers.instructions.md](./instructions/api/controllers.instructions.md)
+- API DTOs: [api-dto.instructions.md](./instructions/api/dto.instructions.md)
+- API e2e tests: [api-test-e2e.instructions.md](./instructions/api/e2e.instructions.md)
 
 ## Quick Checks
 
+- PR title must follow the pattern "#[Ticket_number] - [Title]".
 - Comments/JSDoc: Sentences start with a capital letter and end with a period; exported/public APIs have JSDoc with business context, `@param` and `@returns` descriptions ending with periods. (See TS/Vue style.)
 - Vue Composition: Uses `<script setup>`, favors `async/await`, early returns, and `const` over `let` when not reassigned. (See Vue style.)
 - Controllers (NestJS): Correct file naming, tags, and decorators by client type; map domain errors to proper `HttpException`s; avoid passing DTOs beyond controller layer. (See API controllers.)
@@ -55,11 +56,13 @@ When a `client-type` is mentioned in the code or documentation, the possible val
 ## Coding Standards
 
 - Comments should be in English and using proper grammar, including punctuation, for instance, starting with a capital letter and ending with a period.
+- @param descriptions and @returns in JSDoc must be complete sentences ending with a period and can start with lowercase if continuing the sentence.
 - Use `async/await` for asynchronous operations instead of `.then()` and `.catch()`.
 - Use early returns to reduce code complexity.
 - Use `const` for variables that are not reassigned.
 - Use `let` only for variables that will be reassigned.
 - Use `private` and `readonly` modifiers for class properties whenever possible.
+- Do not use `public` modifier for class properties; it is the default visibility (except for db-migrations under the db-migrations folder).
 - Use `PascalCase` for class names, including acronyms (e.g., `MyClassWithACRONYM`).
 - Use `camelCase` for variable and method names.
 - Use `UPPER_SNAKE_CASE` for constants.
@@ -98,7 +101,7 @@ export class MyClassWithACRONYM {
    * For instance, for the below 'if' condition, instead of saying
    * 'If THIS_IS_A_CONST is equal to myNumber then do something we can explain why
    * do we need to check it from a business perspective.
-   * @param myNumber my number that we need for this and that,
+   * @param myNumber my number that we need for this and that.
    * @param myOptionalParameter used in the case A and B when X is needed.
    */
   async myPublicMethod(
@@ -151,7 +154,6 @@ export enum NoteType {
 ## PR review
 
 - Before raising the PR, review technical and business ACs.
-- PR title must follow the pattern "#[Ticket_number] - [Title]".
 - Add appropriate labels that also indicate the applications being impacted by the PR, for instance, SIMS Api or Queue-Consumers.
 - Connect the issue using the button "Connect Issue", if not available install the Chrome Extension ZenHub for GitHub or similar.
 - If you are the author of the PR avoid resolving the comments, instead reply to them to let the reviewer be aware of your thoughts.

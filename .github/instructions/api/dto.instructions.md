@@ -16,10 +16,11 @@ This document outlines the established patterns for creating Data Transfer Objec
         └── models
             └── [feature-name].dto.ts
     ```
-3. DTOs are placed on files with the suffix dto.ts; no other suffixes are used.
-4. The DTO names should be kept the same when mapped on the client application.
-5. All data returned from the API should be mapped to a DTO and then returned. Do not expose data in the API directly from Business Services Layer or Repository Layer;
-6. All DTOs must be defined as classes to allow the Swagger documentation to be generated with the automatically out-of-box features as much as possible;
+3.  DTOs are placed on files with the suffix dto.ts; no other suffixes are used.
+4.  The DTO names should be kept the same when mapped on the client application.
+5.  All data returned from the API should be mapped to a DTO and then returned. Do not expose data in the API directly from Business Services Layer or Repository Layer.
+6.  All DTOs must be defined as classes to allow the Swagger documentation to be generated with the automatically out-of-box features as much as possible.
+
 ---
 
 ### 1. Input DTOs (for `@Body` and `@Query`)
@@ -27,9 +28,11 @@ This document outlines the established patterns for creating Data Transfer Objec
 These DTOs define the contract and validation rules for incoming data.
 
 **Naming Convention:**
+
 - **Class:** `[Action][Subject]APIInDTO` (e.g., `CreateApplicationAPIInDTO`, `SaveApplicationAPIInDTO`, `AppealRequestAPIInDTO`, `StudentApplicationAppealAPIInDTO`, etc.).
 
 **Pattern:**
+
 - Use `class-validator` decorators (`@IsOptional`, `@IsPositive`, `@IsEnum`, etc.) for all properties to enforce validation.
 - Use custom validation decorators like `@JsonMaxSize`, and `IsValidSIN` where applicable, or create new ones if required.
 - When data received in a DTO will later be validated by a form.io dry run, the validators must be present and execute as much validation as possible at this stage.
@@ -78,9 +81,11 @@ export class StudentAppealRequestAPIOutDTO {
 These DTOs define the exact shape of the data returned by an endpoint, they are typically plain classes without transformation decorators.
 
 **Naming Convention:**
+
 - **Class:** `[Subject][Details]APIOutDTO` (e.g., `ApplicationDataAPIOutDTO`, `ApplicationProgressDetailsAPIOutDTO`, `StudentAppealRequestSummaryAPIOutDTO`, `AppealSummaryAPIOutDTO`, etc.).
 
 **Pattern:**
+
 - Define properties as public members of the class.
 - Nest other `APIOutDTO` classes for complex objects.
 

@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from "@nestjs/common";
+import { Controller, Get, Param, Query } from "@nestjs/common";
 import BaseController from "../BaseController";
 import { AnnouncementService } from "../../services";
 import {
@@ -20,15 +20,16 @@ export class AnnouncementController extends BaseController {
    * @param systemAnnouncementOptions target for the announcement
    * @returns sistem announcement list
    */
-  @Get()
+  @Get(":id")
   async getAnnouncements(
     @Query() systemAnnouncementOptions: StudentAnnouncementsAPIInDTO,
+    @Param("applicationId") id: number,
   ): Promise<AnnouncementsAPIOutDTO> {
     const announcements = await this.announcementService.getAnnouncements(
       systemAnnouncementOptions.target,
     );
     const announcementsResponse = announcements.map((announcement) => ({
-      messageTitle: announcement.messageTitle,
+      messageTitle: announcement.messageTitle + id,
       message: announcement.message,
       startDate: announcement.startDate,
       endDate: announcement.endDate,

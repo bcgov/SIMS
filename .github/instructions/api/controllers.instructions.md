@@ -18,6 +18,7 @@ This document provides instructions for generating NestJS controllers in the SIM
 3.  **API Documentation**: Use `@ApiTags` to group endpoints in the OpenAPI (Swagger) documentation. The tag should correspond to the client type (e.g., `aest`, `student`).
 4.  **DTOs**: see [DTO Instructions](./api-dto.instructions.md) for specific patterns on using Input and Output DTOs in controllers.
 5. Avoid passing DTOs directly to services other than controllers services (services appended with `controller.service.ts`). Instead, map DTOs to domain models within the controller before passing them to service methods.
+6. All parameters received in controller methods must be properly validated using NestJS Pipes (e.g., `ParseIntPipe`, `ValidationPipe`, etc.), custom pipes, have DTOs with validation decorators, or a combination of these.
 
 **Error Handling:**
 
@@ -25,7 +26,7 @@ This document provides instructions for generating NestJS controllers in the SIM
 2. `error` should be defined as unknown in catch blocks, and proper type checking should be performed before accessing its properties.
 3. Use specific HttpExceptions (e.g., `NotFoundException`, `BadRequestException`, `ForbiddenException`, `UnprocessableEntityException` etc.) to provide meaningful error responses to API consumers.
   - `NotFoundException` should be used when a requested resource is not found, which means, some of the elements in the URL path do not exist. For instance, a student ID provided in the URL does not correspond to any student in the system.
-  - `BadRequestException` should be used when the request made by the client is invalid or malformed. This could be due to missing required parameters, invalid data formats, or failing validation rules defined in the DTOs. The DTOs for the body and query parameters should have proper validation decorators to ensure that incoming data adheres to expected formats and constraints (see [DTO Instructions](./api-dto.instructions.md)), but later validations may also fail, for instance, form.io dry run validations.
+  - `BadRequestException` should be used when the request made by the client is invalid or malformed. This could be due to missing required parameters, invalid data formats, or failing validation rules defined in the DTOs. The DTOs for the body and query parameters should have proper validation decorators to ensure that incoming data adheres to expected formats and constraints (see [DTO Instructions](./dto.instructions.md)), but later validations may also fail, for instance, form.io dry run validations.
   - `ForbiddenException` should be used when the authenticated user does not have the necessary permissions to access a resource or perform an action. In general the access is already validated by guards and decorators, but there may be specific business rules that prevent access to certain resources.
   - `UnprocessableEntityException` should be used when the request is well-formed but cannot be processed due to semantic errors. This is often used when the request data is valid but violates business rules or constraints.
 4. HttpExceptions should be thrown from controllers or controllers services only. Other layers (services, repositories) should throw custom exceptions that the controller layer can catch and translate into appropriate HttpExceptions.
