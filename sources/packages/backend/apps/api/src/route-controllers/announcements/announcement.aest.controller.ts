@@ -1,29 +1,35 @@
-import { Controller, Get, Param, Query } from "@nestjs/common";
+import { Controller, Get, Query } from "@nestjs/common";
 import BaseController from "../BaseController";
+import { ApiTags } from "@nestjs/swagger";
 import { AnnouncementService } from "../../services";
 import {
-  AESTAnnouncementsAPIInDTO,
   AnnouncementsAPIOutDTO,
-} from "./models/announcement.dto";
-import { AllowAuthorizedParty } from "../../auth/decorators";
+  StudentAnnouncementsAPIInDTO,
+} from "../../route-controllers/announcements/models/announcement.dto";
+import {
+  AllowAuthorizedParty,
+  RequiresStudentAccount,
+} from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth";
+import { ClientTypeBaseRoute } from "../../types";
 
-@AllowAuthorizedParty(AuthorizedParties.aest)
+@AllowAuthorizedParty(AuthorizedParties.student)
+@RequiresStudentAccount()
 @Controller("announcements")
-export class AnnouncementController extends BaseController {
+@ApiTags(`${ClientTypeBaseRoute.Student}-announcements`)
+export class AnnouncementStudentsController extends BaseController {
   constructor(private readonly announcementService: AnnouncementService) {
     super();
   }
 
   /**
-   * Get system announcements
-   * @param systemAnnouncementOptions target for the announcement
-   * @returns sistem announcement list
+   * Get system announcements.
+   * @param systemAnnouncementOptions target for the announcement.
+   * @returns system announcements list.
    */
-  @Get(":id")
+  @Get()
   async getAnnouncements(
-    @Query() systemAnnouncementOptions: AESTAnnouncementsAPIInDTO,
-    @Param("id") id: number,
+    @Query() systemAnnouncementOptions: StudentAnnouncementsAPIInDTO,
   ): Promise<AnnouncementsAPIOutDTO> {
     const announcements = await this.announcementService.getAnnouncements(
       systemAnnouncementOptions.target,
