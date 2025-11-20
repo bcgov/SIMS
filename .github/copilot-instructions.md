@@ -4,9 +4,9 @@ Use this checklist to guide Copilot PR Reviews and human reviewers. For full rul
 
 - TypeScript style: [style-typescript.instructions.md](./instructions/style-typescript.instructions.md)
 - Vue style: [style-vue.instructions.md](./instructions/style-vue.instructions.md)
-- API controllers: [api-controllers.instructions.md](./instructions/api/controllers.instructions.md)
-- API DTOs: [api-dto.instructions.md](./instructions/api/dto.instructions.md)
-- API e2e tests: [api-test-e2e.instructions.md](./instructions/api/e2e.instructions.md)
+- API controllers: [controllers.instructions.md](./instructions/api/controllers.instructions.md)
+- API DTOs: [dto.instructions.md](./instructions/api/dto.instructions.md)
+- API e2e tests: [e2e.instructions.md](./instructions/api/e2e.instructions.md)
 
 ## Quick Checks
 
