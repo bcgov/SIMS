@@ -59,6 +59,7 @@
           variant="elevated"
           data-cy="primaryFooterButton"
           color="primary"
+          :disabled="sinValidStatus !== SINStatusEnum.VALID"
           @click="startApplication"
           >Start Application</v-btn
         >
@@ -85,6 +86,7 @@ import {
   useOffering,
   useStudentStore,
 } from "@/composables";
+import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import {
   VForm,
@@ -105,6 +107,7 @@ import {
 } from "@/services/http/dto";
 import { AppConfigService } from "@/services/AppConfigService";
 import { DynamicFormConfigurationService } from "@/services/DynamicFormConfigurationService";
+import { SINStatusEnum } from "@/types";
 
 export default defineComponent({
   components: { ConfirmModal, ContentGroup },
@@ -112,6 +115,7 @@ export default defineComponent({
     const { hasFulltimeAccess } = useStudentStore();
     const initialData = ref({});
     const router = useRouter();
+    const store = useStore();
     const snackBar = useSnackBar();
     const programYearId = ref<number>();
     const offeringIntensity = ref<OfferingIntensity>();
@@ -163,6 +167,10 @@ export default defineComponent({
       }
       return yearOptions;
     });
+
+    const sinValidStatus = computed(
+      () => store.state.student.sinValidStatus.sinStatus,
+    ).value;
 
     const startApplication = async () => {
       try {
@@ -236,6 +244,8 @@ export default defineComponent({
       offeringIntensityOptions,
       offeringIntensityUpdated,
       loadingAvailableProgramYears,
+      SINStatusEnum,
+      sinValidStatus,
     };
   },
 });
