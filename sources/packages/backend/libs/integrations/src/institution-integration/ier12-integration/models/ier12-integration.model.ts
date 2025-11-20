@@ -119,7 +119,6 @@ export interface IER12Record {
   interfaceEducationCosts?: number;
   interfaceTransportationAmount?: number;
   interfaceAdditionalTransportationAmount?: number;
-  totalRoomAndBoardAmount?: number;
 }
 
 export enum ApplicationStatusCode {

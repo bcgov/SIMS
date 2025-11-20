@@ -361,8 +361,6 @@ export class IER12ProcessingService {
           workflowData.calculatedData.interfaceTransportationAmount,
         interfaceAdditionalTransportationAmount:
           workflowData.calculatedData.interfaceAdditionalTransportationAmount,
-        totalRoomAndBoardAmount:
-          workflowData.calculatedData.totalRoomAndBoardAmount,
       };
       ier12Records.push(ier12Record);
     }
