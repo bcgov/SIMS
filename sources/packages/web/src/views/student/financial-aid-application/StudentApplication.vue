@@ -95,6 +95,7 @@ import {
   ApiProcessError,
   OfferingIntensity,
   DynamicFormType,
+  SINStatusEnum
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -107,7 +108,6 @@ import {
 } from "@/services/http/dto";
 import { AppConfigService } from "@/services/AppConfigService";
 import { DynamicFormConfigurationService } from "@/services/DynamicFormConfigurationService";
-import { SINStatusEnum } from "@/types";
 
 export default defineComponent({
   components: { ConfirmModal, ContentGroup },
