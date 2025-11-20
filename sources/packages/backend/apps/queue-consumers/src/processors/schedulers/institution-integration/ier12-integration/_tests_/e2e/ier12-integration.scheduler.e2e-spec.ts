@@ -1025,8 +1025,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
   });
 
-  it("Should generate an IER12 file with one record with interface policy calculated values for a married student with dependents when the interface policy applies to the application.", async () => {
+  it("Should generate an IER12 file with one record and with interface policy calculated values for a married student with dependents when the interface policy applies to the application.", async () => {
     // Arrange
+    // Create workflow data with interface policy values.
     const workflowCalculatedDataWithInterfacePolicy = {
       ...WORKFLOW_DATA_MARRIED_WITH_DEPENDENTS.calculatedData,
       interfacePolicyApplies: true,
@@ -1116,6 +1117,95 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(line1.length).toBe(IER_RECORD_EXPECTED_LENGTH);
     expect(line1).toBe(
       `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}12345679    242963189Jane With Really Long Mon               19980113B   MA  NONENSome Foreign Street Addre                         New York                     SOME POSTAL CODEProgram name                                                               undergraduateCertificate 0001    8   0512123401234ADR1                         6${currentOfferingId}${parentOfferingId}                              2000081620001010000033330000004444000000555500000066660019100F2000060120002001ASMT20000601000010000000006000000004800000NNNNN            20000602        000002850000000000000000400000006002001003000003005NNY000000000000000000000000000000000000000000000000000000000000NY0000000000000144430000000000000000000000000000000000007777000000150056000000000000000000000000000000000000000000003000000000050000000065430000001700000005500000Y0000703100000000000000001000000000541800000000000000000375000000023800ASMT20000601        Completed Pending   20000816                        CSLF0000100000BCSL0000600000CSGP0000200000CSGD0000300000CSGF0000400000CSGT0000500000BCAG0000700000SBSD0000900000BGPD0000800000    0000000000`,
+    );
+  });
+
+  it("Should generate an IER12 file with one record for a single student with no dependents when the application has approved room and board costs appeal.", async () => {
+    // Arrange
+    // Create workflow data with room and board appeal values.
+    const calculatedDataWithRoomAndBoardAppeal = {
+      ...WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS.calculatedData,
+      totalRoomAndBoardAmount: 1300,
+    };
+    const workflowData: IER12WorkflowData = {
+      ...WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS,
+      calculatedData: calculatedDataWithRoomAndBoardAppeal,
+    };
+    const testInputData = {
+      student: JOHN_DOE_FROM_CANADA,
+      application: {
+        applicationNumber: defaultApplicationNumber,
+        studentNumber: "1",
+        relationshipStatus: RelationshipStatus.Single,
+        applicationStatus: ApplicationStatus.Completed,
+        applicationStatusUpdatedOn: undefined,
+      },
+      assessment: {
+        triggerType: AssessmentTriggerType.OriginalAssessment,
+        assessmentDate: undefined,
+        workflowData,
+        assessmentData: ASSESSMENT_DATA_SINGLE_INDEPENDENT,
+        disbursementSchedules: [
+          {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+            disbursementDate: undefined,
+            updatedAt: undefined,
+            dateSent: undefined,
+            disbursementValues: AWARDS_SINGLE_DISBURSEMENT,
+          },
+        ],
+      },
+      educationProgram: PROGRAM_GRADUATE_DIPLOMA_WITH_INSTITUTION_PROGRAM_CODE,
+      offering: OFFERING_FULL_TIME,
+    };
+    const application = await saveIER12TestInputData(
+      db,
+      testInputData,
+      { institutionLocation: locationB },
+      {
+        programYearPrefix: sharedProgramYearPrefix,
+        submittedDate: referenceSubmissionDate,
+      },
+    );
+
+    // Queued job.
+    const mockedJob = createIER12SchedulerJobMock(
+      application.currentAssessment.assessmentDate,
+    );
+
+    // Act
+    const ier12Results = await processor.processQueue(mockedJob.job);
+
+    // Assert
+    // Assert process result.
+    expect(ier12Results).toBeDefined();
+    // File timestamp.
+    const [timestampResult] = getFileNameAsCurrentTimestampMock.mock.results;
+    expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
+    expect(ier12Results).toStrictEqual([
+      getSuccessSummaryMessages(timestampResult.value, {
+        institutionCode: locationB.institutionCode,
+      }),
+    ]);
+    // Assert file output.
+    const uploadedFile = getUploadedFile(sftpClientMock);
+    expect(uploadedFile.fileLines?.length).toBe(1);
+    const [line1] = uploadedFile.fileLines;
+    const [firstDisbursement] =
+      application.currentAssessment.disbursementSchedules;
+    const assessmentId = numberToText(application.currentAssessment.id);
+    const currentOfferingId = numberToText(
+      application.currentAssessment.offering.id,
+    );
+    const parentOfferingId = numberToText(
+      application.currentAssessment.offering.parentOffering.id,
+    );
+    // Line 1 validations.
+    expect(line1.length).toBe(IER_RECORD_EXPECTED_LENGTH);
+    const firstDisbursementId = numberToText(firstDisbursement.id);
+    expect(line1).toBe(
+      `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}1           242963189Doe                      John           19980113B   SI  NONENAddress Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program with long name to ensure the program name space of 75 characters isgraduateDiploma          0001    5   0512123401234ADR2XYZ                      6${currentOfferingId}${parentOfferingId}                              2000081620001010000033330000004444000000555500000066660050100F2000060120002001COMP20000601000010000000006000000004800000NNNNN            20000602        000002100000000000000000200000000000000000000000001NNN000000000000000000000000000000000000000000000000000000000000NN0000000000000144430000000115000000130000000000000000007777000000336667000009874600000000000000017500000000000000000000000000002200000120000100001500000005500000N0000000000000000000000000000000000000000000000000000000000000000000000COEA20000601        Completed Pending   20000816                        CSLF0000100000BCSL0000600000CSGP0000200000CSGD0000300000CSGF0000400000CSGT0000500000BCAG0000700000SBSD0000900000BGPD0000800000    0000000000`,
     );
   });
 });
