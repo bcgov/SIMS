@@ -112,10 +112,9 @@ import { SINStatusEnum } from "@/types";
 export default defineComponent({
   components: { ConfirmModal, ContentGroup },
   setup() {
-    const { hasFulltimeAccess } = useStudentStore();
+    const { hasFulltimeAccess, sinValidStatus } = useStudentStore();
     const initialData = ref({});
     const router = useRouter();
-    const store = useStore();
     const snackBar = useSnackBar();
     const programYearId = ref<number>();
     const offeringIntensity = ref<OfferingIntensity>();
