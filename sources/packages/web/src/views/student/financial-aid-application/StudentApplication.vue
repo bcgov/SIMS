@@ -86,7 +86,6 @@ import {
   useOffering,
   useStudentStore,
 } from "@/composables";
-import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import {
   VForm,
