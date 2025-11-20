@@ -8,17 +8,19 @@ This document provides instructions for generating NestJS controllers in the SIM
 
 ### General Principles
 
-1.  **File Naming**: Controller files must follow the pattern `[feature-name].[client-type].controller.ts`, where the `client-type` should be one of the following described in [Client Types](../copilot-instructions.md/#client-types):   
-2.  **File Location**: Controllers are located in a directory named after the feature they represent.
+1.  **File Naming**: Controller files must follow the pattern `[feature-name].[client-type].controller.ts`, where the `client-type` should 
+be one of the following described in [Client Types](../../copilot-instructions.md#client-types).
+2. New endpoints must have corresponding e2e tests as per [E2E Instructions](./e2e.instructions.md).
+3.  **DTOs**: see [DTO Instructions](./dto.instructions.md) for specific patterns on using Input and Output DTOs in controllers.
+4. All parameters received in controller methods must be properly validated using NestJS Pipes (e.g., `ParseIntPipe`, `ValidationPipe`, etc.), custom pipes, have DTOs with validation decorators, or a combination of these.
+5. Avoid passing DTOs directly to services other than controllers services (services appended with `controller.service.ts`). Instead, map DTOs to domain models within the controller before passing them to service methods.
+6.  **File Location**: Controllers are located in a directory named after the feature they represent.
     ```
     /route-controllers
     └── [feature-name]
         └── [feature-name].[client-type].controller.ts
     ```
-3.  **API Documentation**: Use `@ApiTags` to group endpoints in the OpenAPI (Swagger) documentation. The tag should correspond to the client type (e.g., `aest`, `student`).
-4.  **DTOs**: see [DTO Instructions](./api-dto.instructions.md) for specific patterns on using Input and Output DTOs in controllers.
-5. Avoid passing DTOs directly to services other than controllers services (services appended with `controller.service.ts`). Instead, map DTOs to domain models within the controller before passing them to service methods.
-6. All parameters received in controller methods must be properly validated using NestJS Pipes (e.g., `ParseIntPipe`, `ValidationPipe`, etc.), custom pipes, have DTOs with validation decorators, or a combination of these.
+7.  **API Documentation**: Use `@ApiTags` to group endpoints in the OpenAPI (Swagger) documentation. The tag should correspond to the client type (e.g., `aest`, `student`).
 
 **Error Handling:**
 

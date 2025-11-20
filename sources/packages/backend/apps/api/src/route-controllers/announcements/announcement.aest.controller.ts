@@ -23,13 +23,13 @@ export class AnnouncementController extends BaseController {
   @Get(":id")
   async getAnnouncements(
     @Query() systemAnnouncementOptions: AESTAnnouncementsAPIInDTO,
-    @Param("applicationId") id: number,
+    @Param("id") id: number,
   ): Promise<AnnouncementsAPIOutDTO> {
     const announcements = await this.announcementService.getAnnouncements(
       systemAnnouncementOptions.target,
     );
     const announcementsResponse = announcements.map((announcement) => ({
-      messageTitle: announcement.messageTitle + id,
+      messageTitle: announcement.messageTitle,
       message: announcement.message,
       startDate: announcement.startDate,
       endDate: announcement.endDate,
