@@ -2,7 +2,7 @@
 applyTo: "sources/packages/backend/apps/**/_tests_/**/*.e2e-spec.ts"
 ---
 
-## E2E Testing Boilerplate
+## GitHub Copilot PR Review: E2E Testing Boilerplate
 
 Every application consumer method must have a corresponding end-to-end (e2e) test to validate its behavior, including security, data transformations, and database interactions.
 

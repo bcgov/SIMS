@@ -2,7 +2,7 @@
 applyTo: "sources/packages/web/src/**/*.vue"
 ---
 
-## Copilot PR Review: Vue Component Style Checks
+## GitHub Copilot PR Review: Vue Component Style Checks
 
 When reviewing Vue SFCs, ensure comment and doc quality and basic readability patterns.
 

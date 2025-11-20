@@ -2,7 +2,7 @@
 applyTo: "sources/packages/backend/apps/api/src/route-controllers/**/*.dto.ts"
 ---
 
-# API DTO Patterns for the SIMS API
+## GitHub Copilot PR Review: API DTO Patterns for the SIMS API
 
 This document outlines the established patterns for creating Data Transfer Objects (DTOs) in the SIMS NestJS backend. Following these conventions is crucial for maintaining consistency and ensuring proper validation.
 

@@ -2,7 +2,7 @@
 applyTo: "sources/packages/backend/apps/api/src/route-controllers/**/*.controller.ts"
 ---
 
-## GitHub Copilot Instructions: API Controller Patterns
+## GitHub Copilot PR Review: API Controller Patterns
 
 This document provides instructions for generating NestJS controllers in the SIMS API. Adhering to these patterns is essential for security, consistency, and maintainability.
 

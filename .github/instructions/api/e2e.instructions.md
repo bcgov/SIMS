@@ -2,7 +2,7 @@
 applyTo: "sources/packages/backend/apps/api/src/route-controllers/**/_tests_/**/*.e2e-spec.ts"
 ---
 
-## E2E Testing Boilerplate
+## GitHub Copilot PR Review: E2E Testing Patterns for the SIMS API
 
 Every API endpoint must have a corresponding end-to-end (e2e) test to validate its behavior, including security, data transformations, and database interactions.
 

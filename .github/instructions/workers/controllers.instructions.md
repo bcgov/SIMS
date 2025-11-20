@@ -2,9 +2,27 @@
 applyTo: "sources/packages/backend/apps/workers/src/controllers/**/*.controller.ts"
 ---
 
-## GitHub Copilot Instructions: Camunda Workers Controller Patterns
+## GitHub Copilot PR Review: Camunda Workers Controller Patterns
 
 This guide defines the review checklist and implementation patterns for Camunda (Zeebe) worker controllers inside `apps/workers`. Use it during PR reviews to ensure consistency, idempotency, observability, and safe workflow interactions.
+
+### Copilot PR Review Checklist
+1. File naming matches `[feature].controller.ts` and DTO file present.
+2. Every worker method has `@ZeebeWorker` with correct `Workers` constant and appropriate `maxJobsToActivate`.
+3. Generics order in `ZeebeJob<In, Headers, Out>` correct; return type is `Promise<MustReturnJobActionAcknowledgement>`.
+4. Logger instantiated per method (`new Logger(job.type)`).
+5. Idempotency guard present before mutating state; duplicate runs return `job.complete()` early.
+6. Transaction used where multiple writes must be atomic; completion returned inside transaction block.
+7. Expected domain errors mapped via `job.error(code, message)`; duplicate/benign conditions complete instead of error.
+8. All unknown errors routed to `createUnexpectedJobFail` (no silent swallow, no raw throw).
+9. `fetchVariable` lists only the variables used; no extras.
+10. Output variables minimal and free of raw entities/PII; dynamic variable names deterministic.
+11. No full dynamic application data leaked unless filtered (check for `filterObjectProperties` usage if large DTO).
+12. Status/association updates check `affected` or pre-existence to guarantee idempotency.
+13. Domain constants used for error codes (no magic strings).
+14. Concurrency/race condition errors (e.g. already associated) handled and logged with safe completion.
+15. JSDoc descriptions follow style: capitalized first letter, ending period, business context present.
+16. No blocking sequential awaits when `Promise.all` could be safely used.
 
 ### Scope & Location
 Workers live under:
@@ -110,24 +128,5 @@ async someTask(
 	}
 }
 ```
-
-### Copilot PR Review Checklist (Use These Bullets)
-1. File naming matches `[feature].controller.ts` and DTO file present.
-2. Every worker method has `@ZeebeWorker` with correct `Workers` constant and appropriate `maxJobsToActivate`.
-3. Generics order in `ZeebeJob<In, Headers, Out>` correct; return type is `Promise<MustReturnJobActionAcknowledgement>`.
-4. Logger instantiated per method (`new Logger(job.type)`).
-5. Idempotency guard present before mutating state; duplicate runs return `job.complete()` early.
-6. Transaction used where multiple writes must be atomic; completion returned inside transaction block.
-7. Expected domain errors mapped via `job.error(code, message)`; duplicate/benign conditions complete instead of error.
-8. All unknown errors routed to `createUnexpectedJobFail` (no silent swallow, no raw throw).
-9. `fetchVariable` lists only the variables used; no extras.
-10. Output variables minimal and free of raw entities/PII; dynamic variable names deterministic.
-11. No full dynamic application data leaked unless filtered (check for `filterObjectProperties` usage if large DTO).
-12. Status/association updates check `affected` or pre-existence to guarantee idempotency.
-13. Domain constants used for error codes (no magic strings).
-14. Concurrency/race condition errors (e.g. already associated) handled and logged with safe completion.
-15. JSDoc descriptions follow style: capitalized first letter, ending period, business context present.
-16. No blocking sequential awaits when `Promise.all` could be safely used.
-
 ---
 Ensure new workers adhere to all above. Raise comments referencing file & line with concise fix suggestions.
