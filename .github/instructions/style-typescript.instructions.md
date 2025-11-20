@@ -2,7 +2,7 @@
 applyTo: "sources/packages/**/*.ts"
 ---
 
-## Copilot PR Review: TypeScript Style Checks
+## GitHub Copilot PR Review: TypeScript Style Checks
 
 When reviewing TypeScript changes, apply these checks and raise comments with specific file/line references and a short fix suggestion.
 
