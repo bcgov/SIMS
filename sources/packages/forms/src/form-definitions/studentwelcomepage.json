@@ -37,7 +37,8 @@
                   "key": "html",
                   "type": "htmlelement",
                   "input": false,
-                  "tableView": false
+                  "tableView": false,
+                  "hideLabel": true
                 },
                 {
                   "label": "HTML",
@@ -53,7 +54,9 @@
                   "key": "html1",
                   "type": "htmlelement",
                   "input": false,
-                  "tableView": false
+                  "tableView": false,
+                  "hideLabel": true,
+                  "tag": "p"
                 }
               ],
               "width": 8,
@@ -83,7 +86,8 @@
                   "key": "html9",
                   "type": "htmlelement",
                   "input": false,
-                  "tableView": false
+                  "tableView": false,
+                  "hideLabel": true
                 }
               ],
               "width": 4,
@@ -97,9 +101,11 @@
           "key": "columns",
           "type": "columns",
           "input": false,
-          "tableView": false
+          "tableView": false,
+          "hideLabel": true
         }
-      ]
+      ],
+      "title": ""
     },
     {
       "label": "Columns",
@@ -140,7 +146,8 @@
                       "key": "html3",
                       "type": "htmlelement",
                       "input": false,
-                      "tableView": false
+                      "tableView": false,
+                      "hideLabel": true
                     },
                     {
                       "label": "HTML",
@@ -156,7 +163,8 @@
                       "key": "html5",
                       "type": "htmlelement",
                       "input": false,
-                      "tableView": false
+                      "tableView": false,
+                      "hideLabel": true
                     },
                     {
                       "label": "Start application",
@@ -194,9 +202,11 @@
                       "type": "button",
                       "input": true
                     }
-                  ]
+                  ],
+                  "title": ""
                 }
-              ]
+              ],
+              "title": ""
             }
           ],
           "width": 6,
@@ -242,7 +252,8 @@
                       "key": "html4",
                       "type": "htmlelement",
                       "input": false,
-                      "tableView": false
+                      "tableView": false,
+                      "hideLabel": true
                     },
                     {
                       "label": "HTML",
@@ -258,7 +269,8 @@
                       "key": "html6",
                       "type": "htmlelement",
                       "input": false,
-                      "tableView": false
+                      "tableView": false,
+                      "hideLabel": true
                     },
                     {
                       "label": "Visit NSLSC",
@@ -271,9 +283,11 @@
                       "custom": "window.open(\"https://protege-secure.csnpe-nslsc.canada.ca/en/public/sign-in-method\", \"noreferrer noopener\");",
                       "input": true
                     }
-                  ]
+                  ],
+                  "title": ""
                 }
-              ]
+              ],
+              "title": ""
             }
           ],
           "width": 6,
@@ -288,7 +302,8 @@
       "key": "columns1",
       "type": "columns",
       "input": false,
-      "tableView": false
+      "tableView": false,
+      "hideLabel": true
     },
     {
       "collapsible": false,
@@ -320,22 +335,24 @@
                   "type": "htmlelement",
                   "input": false,
                   "tableView": false,
-                  "isNew": false
+                  "hideLabel": true
                 },
                 {
                   "label": "HTML",
+                  "tag": "p",
                   "attrs": [
                     {
                       "attr": "",
                       "value": ""
                     }
                   ],
-                  "content": "<p>\n      For more information, visit the \n        <a\n          href=\"https://studentaidbc.ca/sabc-home-page\"\n          target=\"_blank\"\n          class=\"formio-href\"\n          rel=\"noopener noreferrer\"\n          >StudentAid BC website</a\n        >.\n    </p>",
+                  "content": "For more information, visit the \n  <a\n    href=\"https://studentaidbc.ca/sabc-home-page\"\n    target=\"_blank\"\n    class=\"formio-href\"\n    rel=\"noopener noreferrer\"\n    >StudentAid BC website</a\n  >.\n",
                   "refreshOnChange": false,
                   "key": "html8",
                   "type": "htmlelement",
                   "input": false,
-                  "tableView": false
+                  "tableView": false,
+                  "hideLabel": true
                 }
               ],
               "width": 8,
@@ -364,7 +381,9 @@
                   "key": "html2",
                   "type": "htmlelement",
                   "input": false,
-                  "tableView": false
+                  "tableView": false,
+                  "hideLabel": true,
+                  "tag": "p"
                 }
               ],
               "width": 4,
@@ -378,9 +397,11 @@
           "key": "columns2",
           "type": "columns",
           "input": false,
-          "tableView": false
+          "tableView": false,
+          "hideLabel": true
         }
-      ]
+      ],
+      "title": ""
     },
     {
       "label": "SIN Valid Status",
