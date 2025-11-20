@@ -58,6 +58,7 @@ When a `client-type` is mentioned in the code or documentation, the possible val
 - Comments should be in English and using proper grammar, including punctuation, for instance, starting with a capital letter and ending with a period.
 - @param descriptions and @returns in JSDoc must be complete sentences ending with a period and can start with lowercase if continuing the sentence.
 - Use `async/await` for asynchronous operations instead of `.then()` and `.catch()`.
+- Use `Promise.all` or `Promise.allSettled` for concurrent asynchronous operations when applicable.
 - Use early returns to reduce code complexity.
 - Use `const` for variables that are not reassigned.
 - Use `let` only for variables that will be reassigned.
@@ -83,7 +84,7 @@ const THIS_IS_A_CONST = 123456;
  * My comment with a proper sentence that starts usually with a
  * capital letter and finishes with a period.
  * Try to add comments that make it better to understand the
- * business logic does not only describes the method itself.
+ * business logic, not only describing the method itself.
  */
 export class MyClassWithACRONYM {
   /**
@@ -99,7 +100,7 @@ export class MyClassWithACRONYM {
    * Try to give a comment that provides some business context instead
    * of only describing what we can read from the code itself.
    * For instance, for the below 'if' condition, instead of saying
-   * 'If THIS_IS_A_CONST is equal to myNumber then do something we can explain why
+   * If THIS_IS_A_CONST is equal to myNumber then do something we can explain why
    * do we need to check it from a business perspective.
    * @param myNumber my number that we need for this and that.
    * @param myOptionalParameter used in the case A and B when X is needed.

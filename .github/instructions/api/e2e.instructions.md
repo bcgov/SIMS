@@ -25,6 +25,7 @@ Every API endpoint must have a corresponding end-to-end (e2e) test to validate i
 - **Authentication**: Use `get...Token` helpers (e.g., `getAESTToken`) to simulate authenticated users.
 - **Assertions**: Always validate the HTTP status code, the response body, and any changes to the database state.
 - **Scenarios**: Test for both success and common failure cases (e.g., 403 Forbidden, 404 Not Found).
+- **Code Section**: Structure tests with clear Arrange, Act, and Assert sections for readability.
 
 ### Boilerplate Code Example for Client Type AEST
 

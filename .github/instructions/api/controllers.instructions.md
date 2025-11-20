@@ -8,9 +8,9 @@ This document provides instructions for generating NestJS controllers in the SIM
 
 ### General Principles
 
-1.  **File Naming**: Controller files must follow the pattern `[feature-name].[client-type].controller.ts`, where the `client-type` should 
+1. New endpoints must have corresponding e2e tests as per [E2E Instructions](./e2e.instructions.md). Ensure a review comment will remind to add these tests, if a file following the pattern [feature-name].[client-type].controller.[method-name].e2e-spec.ts is not found in the appropriate `_tests_/e2e` directory.
+2.  **File Naming**: Controller files must follow the pattern `[feature-name].[client-type].controller.ts`, where the `client-type` should 
 be one of the following described in [Client Types](../../copilot-instructions.md#client-types).
-2. New endpoints must have corresponding e2e tests as per [E2E Instructions](./e2e.instructions.md).
 3.  **DTOs**: see [DTO Instructions](./dto.instructions.md) for specific patterns on using Input and Output DTOs in controllers.
 4. All parameters received in controller methods must be properly validated using NestJS Pipes (e.g., `ParseIntPipe`, `ValidationPipe`, etc.), custom pipes, have DTOs with validation decorators, or a combination of these.
 5. Avoid passing DTOs directly to services other than controllers services (services appended with `controller.service.ts`). Instead, map DTOs to domain models within the controller before passing them to service methods.
