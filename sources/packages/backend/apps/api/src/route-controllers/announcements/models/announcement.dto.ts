@@ -11,8 +11,12 @@ export class AnnouncementAPIOutDTO {
   target: string[];
 }
 
-export class AnnouncementsAPIOutDTO {
+export interface AnnouncementsAPIOutDTO {
   announcements: AnnouncementAPIOutDTO[];
+}
+
+export interface AESTAnnouncementsAPIInDTO {
+  target: string;
 }
 
 export class StudentAnnouncementsAPIInDTO {

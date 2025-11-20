@@ -2,8 +2,8 @@ import { Controller, Get, Param, Query } from "@nestjs/common";
 import BaseController from "../BaseController";
 import { AnnouncementService } from "../../services";
 import {
+  AESTAnnouncementsAPIInDTO,
   AnnouncementsAPIOutDTO,
-  StudentAnnouncementsAPIInDTO,
 } from "./models/announcement.dto";
 import { AllowAuthorizedParty } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth";
@@ -22,7 +22,7 @@ export class AnnouncementController extends BaseController {
    */
   @Get(":id")
   async getAnnouncements(
-    @Query() systemAnnouncementOptions: StudentAnnouncementsAPIInDTO,
+    @Query() systemAnnouncementOptions: AESTAnnouncementsAPIInDTO,
     @Param("applicationId") id: number,
   ): Promise<AnnouncementsAPIOutDTO> {
     const announcements = await this.announcementService.getAnnouncements(
