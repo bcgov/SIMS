@@ -59,7 +59,7 @@
           variant="elevated"
           data-cy="primaryFooterButton"
           color="primary"
-          :disabled="sinValidStatus !== SINStatusEnum.VALID"
+          :disabled="sinValidStatus.sinStatus !== SINStatusEnum.VALID"
           @click="startApplication"
           >Start Application</v-btn
         >
