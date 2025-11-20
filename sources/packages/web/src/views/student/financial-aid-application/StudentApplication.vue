@@ -167,10 +167,6 @@ export default defineComponent({
       return yearOptions;
     });
 
-    const sinValidStatus = computed(
-      () => store.state.student.sinValidStatus.sinStatus,
-    ).value;
-
     const startApplication = async () => {
       try {
         const validationResult = await startApplicationForm.value.validate();
