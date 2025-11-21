@@ -25,7 +25,7 @@ export default defineComponent({
 
     const welcomeFormData = computed(() => {
       return {
-        studentDetails: studentDetails.value,
+        ...studentDetails.value,
         hasValidSIN: hasValidSIN.value,
       };
     });

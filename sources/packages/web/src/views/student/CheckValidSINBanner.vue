@@ -15,12 +15,12 @@ import { SINStatusEnum } from "@/types";
 import { BannerTypes } from "@/types/contracts/Banner";
 export default defineComponent({
   setup() {
-    const { sinValidStatus, hasStudentAccount } = useStudentStore();
+    const { sinValidStatus, hasValidSIN, hasStudentAccount } = useStudentStore();
 
     const showBanner = computed(() => {
       return (
         hasStudentAccount.value &&
-        sinValidStatus.value.sinStatus !== SINStatusEnum.VALID
+        !hasValidSIN.value
       );
     });
 
