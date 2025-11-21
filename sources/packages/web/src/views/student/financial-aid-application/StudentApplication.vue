@@ -59,7 +59,7 @@
           variant="elevated"
           data-cy="primaryFooterButton"
           color="primary"
-          :disabled="sinValidStatus.sinStatus !== SINStatusEnum.VALID"
+          :disabled="!hasValidSIN"
           @click="startApplication"
           >Start Application</v-btn
         >
@@ -93,8 +93,7 @@ import {
   LayoutTemplates,
   ApiProcessError,
   OfferingIntensity,
-  DynamicFormType,
-  SINStatusEnum
+  DynamicFormType
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -111,7 +110,7 @@ import { DynamicFormConfigurationService } from "@/services/DynamicFormConfigura
 export default defineComponent({
   components: { ConfirmModal, ContentGroup },
   setup() {
-    const { hasFulltimeAccess, sinValidStatus } = useStudentStore();
+    const { hasFulltimeAccess, hasValidSIN } = useStudentStore();
     const initialData = ref({});
     const router = useRouter();
     const snackBar = useSnackBar();
@@ -238,8 +237,7 @@ export default defineComponent({
       offeringIntensityOptions,
       offeringIntensityUpdated,
       loadingAvailableProgramYears,
-      SINStatusEnum,
-      sinValidStatus,
+      hasValidSIN
     };
   },
 });

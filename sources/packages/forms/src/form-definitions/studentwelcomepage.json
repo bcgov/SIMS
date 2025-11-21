@@ -180,8 +180,8 @@
                             "type": "simple",
                             "simple": {
                               "show": true,
-                              "when": "sinValidStatus.sinStatus",
-                              "eq": "1"
+                              "when": "hasValidSIN",
+                              "eq": "true"
                             }
                           },
                           "actions": [
@@ -402,9 +402,9 @@
       "title": ""
     },
     {
-      "label": "SIN Valid Status",
+      "label": "Has Valid SIN",
       "persistent": false,
-      "key": "sinValidStatus.sinStatus",
+      "key": "hasValidSIN",
       "type": "hidden",
       "input": true,
       "tableView": false
