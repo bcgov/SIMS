@@ -156,8 +156,8 @@ import {
   DEFAULT_PAGE_LIMIT,
   DataTableSortOrder,
   StudentApplicationFields,
-  SINStatusEnum,
   StudentApplicationsExtendedSummaryHeaders,
+  
   ITEMS_PER_PAGE,
   DataTableOptions,
   PaginationOptions,
