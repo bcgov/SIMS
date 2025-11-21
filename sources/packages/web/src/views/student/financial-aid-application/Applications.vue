@@ -15,7 +15,6 @@
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { useSnackBar, useStudentStore } from "@/composables";
-import { SINStatusEnum } from "@/types";
 import { defineComponent } from "vue";
 
 export default defineComponent({
