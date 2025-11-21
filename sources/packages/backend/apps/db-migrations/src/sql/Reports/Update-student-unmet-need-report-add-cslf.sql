@@ -55,7 +55,8 @@ SET
         INNER JOIN sims.institution_locations institution_locations ON institution_locations.id = applications.location_id
       WHERE
         applications.application_status IN (''Assessment'', ''Enrolment'', ''Completed'')
-        AND applications.is_archived = FALSE --AND education_programs_offerings.offering_intensity = ANY(:offeringIntensity)
+        AND applications.is_archived = FALSE
+        AND education_programs_offerings.offering_intensity = ANY(:offeringIntensity)
         AND applications.program_year_id = :programYear
         AND institution_locations.institution_id = :institutionId;
       GROUP BY
