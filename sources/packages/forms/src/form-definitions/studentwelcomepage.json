@@ -405,6 +405,7 @@
     },
     {
       "label": "SIN Valid Status",
+      "persistent": false,
       "key": "sinValidStatus.sinStatus",
       "type": "hidden",
       "input": true,
