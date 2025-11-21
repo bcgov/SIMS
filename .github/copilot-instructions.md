@@ -16,7 +16,7 @@ Use this checklist to guide Copilot PR Reviews and human reviewers. For full rul
 - Controllers (NestJS): Correct file naming, tags, and decorators by client type; map domain errors to proper `HttpException`s; avoid passing DTOs beyond controller layer. (See API controllers.)
 - DTOs: Class-based only, correct naming (`*APIInDTO` / `*APIOutDTO`), appropriate `class-validator` usage, and not exposing repository/service models directly. (See API DTOs.)
 - E2E Coverage: New/changed endpoints have e2e tests with proper setup, auth, assertions (success and common failures), and isolation. (See API e2e tests.)
-- Client Types: Endpoints/tags align with one of `aest | institution | student | supporting-user | external`. (See Client Types in this file.)
+- Client Types: Endpoints/tags align with one of `aest | institutions | students | supporting-users | external`. (See Client Types in this file.)
 
 # Project Overview
 
@@ -48,9 +48,9 @@ The SIMS project is a monorepo with a clear separation of concerns:
 When a `client-type` is mentioned in the code or documentation, the possible values should be one of the following:
 
 - `aest` for Ministry users (PSFS was formerly known as AEST)
-- `institution` for Institution users
-- `student` for Student users
-- `supporting-user` for Supporting Users (e.g., parents, partners)
+- `institutions` for Institution users
+- `students` for Student users
+- `supporting-users` for Supporting Users (e.g., parents, partners)
 - `external` for External systems (e.g., other government services)
 
 ## Coding Standards
