@@ -11,7 +11,6 @@ export const ASSESSMENT_DATA_SINGLE_INDEPENDENT: IER12FullTimeAssessment = {
   totalAssessedCost: 12000.01,
   totalAssessmentNeed: 23789.65,
   weeks: 50,
-  secondResidenceCost: 215.15,
   provincialAssessmentNeed: 1500,
 };
 
@@ -27,7 +26,6 @@ export const ASSESSMENT_DATA_SINGLE_DEPENDENT: IER12FullTimeAssessment = {
   totalAssessmentNeed: 45999.9999,
   weeks: 19,
   parentalDiscretionaryContribution: 200.15,
-  secondResidenceCost: undefined,
   provincialAssessmentNeed: 1600,
 };
 
@@ -42,6 +40,5 @@ export const ASSESSMENT_DATA_MARRIED: IER12FullTimeAssessment = {
   totalAssessedCost: 6543,
   totalAssessmentNeed: 9876.1223,
   weeks: 19,
-  secondResidenceCost: 215.15,
   provincialAssessmentNeed: 1700,
 };

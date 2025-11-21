@@ -383,6 +383,13 @@ export interface WorkflowData {
     totalSpouseContribution?: number;
     totalTargetedResources?: number;
     totalAdditionalTransportationAllowance?: number;
+    interfacePolicyApplies?: boolean;
+    interfaceNeed?: number;
+    interfaceChildCareCosts?: number;
+    interfaceEducationCosts?: number;
+    interfaceTransportationAmount?: number;
+    interfaceAdditionalTransportationAmount?: number;
+    totalRoomAndBoardAmount?: number;
   };
 }
 

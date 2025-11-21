@@ -73,7 +73,6 @@ export type IER12FullTimeAssessment = Pick<
   | "weeks"
   | "totalProvincialContribution"
   | "parentalDiscretionaryContribution"
-  | "secondResidenceCost"
   | "provincialAssessmentNeed"
 >;
 
@@ -111,6 +110,13 @@ export interface IER12WorkflowData {
     partnerStudyWeeks?: number;
     returnTransportationCost?: number;
     totalAdditionalTransportationAllowance?: number;
+    interfacePolicyApplies: boolean;
+    interfaceNeed?: number;
+    interfaceChildCareCosts?: number;
+    interfaceEducationCosts?: number;
+    interfaceTransportationAmount?: number;
+    interfaceAdditionalTransportationAmount?: number;
+    totalRoomAndBoardAmount?: number;
   };
 }
 
