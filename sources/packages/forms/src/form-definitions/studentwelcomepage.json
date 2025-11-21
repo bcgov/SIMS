@@ -55,8 +55,7 @@
                   "type": "htmlelement",
                   "input": false,
                   "tableView": false,
-                  "hideLabel": true,
-                  "tag": "p"
+                  "hideLabel": true
                 }
               ],
               "width": 8,
@@ -339,14 +338,13 @@
                 },
                 {
                   "label": "HTML",
-                  "tag": "p",
                   "attrs": [
                     {
                       "attr": "",
                       "value": ""
                     }
                   ],
-                  "content": "For more information, visit the \n  <a\n    href=\"https://studentaidbc.ca/sabc-home-page\"\n    target=\"_blank\"\n    class=\"formio-href\"\n    rel=\"noopener noreferrer\"\n    >StudentAid BC website</a\n  >.\n",
+                  "content": "<p>For more information, visit the \n  <a\n    href=\"https://studentaidbc.ca/sabc-home-page\"\n    target=\"_blank\"\n    class=\"formio-href\"\n    rel=\"noopener noreferrer\"\n    >StudentAid BC website</a\n  >.\n</p>\n",
                   "refreshOnChange": false,
                   "key": "html8",
                   "type": "htmlelement",
