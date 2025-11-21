@@ -12,5 +12,5 @@ Every application consumer method must have a corresponding end-to-end (e2e) tes
 - **Data Setup**: Use `saveFake...` helpers (e.g., `saveFakeStudent`, `saveFakeApplication`) to create a predictable state for each test.
 - **Data Assertion**: Ensure that any changes to the database state are asserted after the action is performed.
 - **Code Section**: Structure tests with clear Arrange, Act, and Assert sections for readability.
-- **Data Manipulation**: Declare a global variable `db: E2EDataSources` and use it all DB related operations.
+- **Data Manipulation**: Declare a global variable `db: E2EDataSources` and use it for all DB related operations.
 
