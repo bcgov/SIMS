@@ -4,14 +4,14 @@
       <announcement-banner dashboard="student-dashboard"
     /></template>
     <formio-container
-      formName="studentWelcomePage"
-      :formData="studentDetails"
-      @customEvent="goToStudentApplication"
+      form-name="studentWelcomePage"
+      :form-data="welcomeFormData"
+      @custom-event="goToStudentApplication"
     />
   </student-page-container>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { useStudentStore } from "@/composables";
@@ -20,8 +20,15 @@ import AnnouncementBanner from "@/components/common/AnnouncementBanner.vue";
 export default defineComponent({
   components: { AnnouncementBanner },
   setup() {
-    const { studentDetails } = useStudentStore();
+    const { studentDetails, hasValidSIN } = useStudentStore();
     const router = useRouter();
+
+    const welcomeFormData = computed(() => {
+      return {
+        ...studentDetails.value,
+        hasValidSIN: hasValidSIN.value,
+      };
+    });
 
     const goToStudentApplication = async () => {
       await router.push({
@@ -32,7 +39,7 @@ export default defineComponent({
     return {
       StudentRoutesConst,
       goToStudentApplication,
-      studentDetails,
+      welcomeFormData,
     };
   },
 });

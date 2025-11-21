@@ -56,7 +56,7 @@
               </v-btn>
               <v-btn
                 v-if="canDisplayEditOrCancel(item)"
-                :disabled="!hasSINValidStatus || item.isArchived"
+                :disabled="!hasValidSIN || item.isArchived"
                 color="primary"
                 @click="$emit('editApplicationAction', item.status, item.id)"
                 append-icon="mdi-pencil-outline"
@@ -67,7 +67,7 @@
               </v-btn>
               <v-btn
                 v-if="canDisplayChangeRequest(item)"
-                :disabled="!hasSINValidStatus || item.isArchived"
+                :disabled="!hasValidSIN || item.isArchived"
                 color="primary"
                 @click="
                   $emit(
@@ -84,7 +84,7 @@
               </v-btn>
               <v-btn
                 v-if="canDisplaySubmitAppeal(item)"
-                :disabled="!hasSINValidStatus || item.isArchived"
+                :disabled="!hasValidSIN || item.isArchived"
                 color="primary"
                 @click="$emit('submitAppeal', item.id)"
                 append-icon="mdi-pencil-outline"
@@ -95,7 +95,7 @@
               </v-btn>
               <v-btn
                 v-if="canDisplayEditOrCancel(item)"
-                :disabled="!hasSINValidStatus || item.isArchived"
+                :disabled="!hasValidSIN || item.isArchived"
                 color="primary"
                 @click="emitCancel(item.id)"
                 >Cancel
@@ -150,24 +150,23 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, computed, defineComponent } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import {
   ApplicationStatus,
   DEFAULT_PAGE_LIMIT,
   DataTableSortOrder,
   StudentApplicationFields,
-  SINStatusEnum,
   StudentApplicationsExtendedSummaryHeaders,
+  
   ITEMS_PER_PAGE,
   DataTableOptions,
   PaginationOptions,
   OfferingIntensity,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
-import { useFormatters } from "@/composables";
+import { useFormatters, useStudentStore } from "@/composables";
 import StatusChipApplication from "@/components/generic/StatusChipApplication.vue";
 import StudentApplicationsVersion from "@/components/students/StudentApplicationsVersion.vue";
-import { useStore } from "vuex";
 import {
   ApplicationSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
@@ -208,7 +207,7 @@ export default defineComponent({
       getISODateHourMinuteString,
       emptyStringFiller,
     } = useFormatters();
-    const store = useStore();
+    const { hasValidSIN } = useStudentStore();
 
     const DEFAULT_SORT_FIELD = StudentApplicationFields.Status;
     const currentPagination = ref<PaginationOptions>({
@@ -217,11 +216,6 @@ export default defineComponent({
       sortField: DEFAULT_SORT_FIELD,
       sortOrder: DataTableSortOrder.DESC,
     });
-
-    const hasSINValidStatus = computed(
-      () =>
-        store.state.student.sinValidStatus.sinStatus === SINStatusEnum.VALID,
-    );
 
     const getStudentApplications = async () => {
       try {
@@ -331,7 +325,7 @@ export default defineComponent({
       ITEMS_PER_PAGE,
       loading,
       StudentApplicationFields,
-      hasSINValidStatus,
+      hasValidSIN,
       emitCancel,
       StudentApplicationsExtendedSummaryHeaders,
       isMobile,

@@ -3,7 +3,7 @@
     <v-btn
       color="primary"
       class="float-right"
-      :disabled="sinValidStatus !== SINStatusEnum.VALID"
+      :disabled="!hasValidSIN"
       @click="goToStudentApplication()"
       prepend-icon="fa:fa fa-edit"
     >
@@ -14,20 +14,14 @@
 <script lang="ts">
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
-import { useSnackBar } from "@/composables";
-import { useStore } from "vuex";
-import { SINStatusEnum } from "@/types";
-import { computed, defineComponent } from "vue";
+import { useSnackBar, useStudentStore } from "@/composables";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   setup() {
     const router = useRouter();
     const snackBar = useSnackBar();
-    const store = useStore();
-
-    const sinValidStatus = computed(
-      () => store.state.student.sinValidStatus.sinStatus,
-    ).value;
+    const { hasValidSIN } = useStudentStore();
 
     const goToStudentApplication = async () => {
       try {
@@ -43,8 +37,7 @@ export default defineComponent({
     return {
       StudentRoutesConst,
       goToStudentApplication,
-      SINStatusEnum,
-      sinValidStatus,
+      hasValidSIN,
     };
   },
 });

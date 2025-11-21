@@ -48,6 +48,10 @@ export function useStudentStore(rootStore?: Store<any>) {
     return store.getters["student/studentDetails"];
   });
 
+  const hasValidSIN = computed<boolean>(() => {
+    return store.getters["student/hasValidSIN"];
+  });
+
   return {
     updateProfileData,
     sinValidStatus,
@@ -59,5 +63,6 @@ export function useStudentStore(rootStore?: Store<any>) {
     activeRestrictions,
     studentDetails,
     hasFulltimeAccess,
+    hasValidSIN,
   };
 }
