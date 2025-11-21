@@ -56,24 +56,6 @@ export class MySampleClassAPIInDTO {
 }
 ```
 
-```typescript
-// DTO with a nested DTO example.
-export class StudentApplicationAppealAPIInDTO {
-  @ArrayMinSize(1)
-  @ArrayMaxSize(50)
-  @ValidateNested({ each: true })
-  @Type(() => ApplicationAppealRequestAPIInDTO)
-  studentAppealRequests: ApplicationAppealRequestAPIInDTO[];
-}
-
-export class StudentAppealRequestAPIOutDTO {
-  id: number;
-  submittedData: unknown;
-  submittedFormName: string;
-  appealStatus: StudentAppealStatus;
-}
-```
-
 ---
 
 ### 2. Output DTOs (for return types)

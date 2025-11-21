@@ -10,7 +10,7 @@ Use this checklist to guide Copilot PR Reviews and human reviewers. For full rul
 
 ## Quick Checks
 
-- PR title must follow the pattern "#[Ticket_number] - [Title]".
+- PR title must follow the pattern "#[ticket_number] - [Title]".
 - Comments/JSDoc: Sentences start with a capital letter and end with a period; exported/public APIs have JSDoc with business context, `@param` and `@returns` descriptions ending with periods. (See TS/Vue style.)
 - Vue Composition: Uses `<script setup>`, favors `async/await`, early returns, and `const` over `let` when not reassigned. (See Vue style.)
 - Controllers (NestJS): Correct file naming, tags, and decorators by client type; map domain errors to proper `HttpException`s; avoid passing DTOs beyond controller layer. (See API controllers.)
@@ -103,11 +103,17 @@ export class MyClassWithACRONYM {
    * If THIS_IS_A_CONST is equal to myNumber then do something we can explain why
    * do we need to check it from a business perspective.
    * @param myNumber my number that we need for this and that.
-   * @param myOptionalParameter used in the case A and B when X is needed.
+   * @param options my optional parameters.
+   * - `myOptionalParameter` an optional parameter for case A and B.
+   * - `myOtherOptionalParameter` another optional parameter for case C.
+   * @returns the resulting number after doing this and that.
    */
   async myPublicMethod(
     myNumber: number,
-    myOptionalParameter?: string
+    options?: {
+      myOptionalParameter?: string;
+      myOtherOptionalParameter?: string;
+    }
   ): Promise<number> {
     if (myNumber === THIS_IS_A_CONST) {
       // Use early return when possible to reduce code complexity.
@@ -120,7 +126,7 @@ export class MyClassWithACRONYM {
   /**
    * Add nice comments as described before.
    */
-  private myPrivateMethod() {
+  private myPrivateMethod(): void {
     // Do something.
   }
 }
@@ -141,14 +147,6 @@ export enum NoteType {
    * Note type Restriction.
    */
   Restriction = "Restriction",
-  /**
-   * Note type System.
-   */
-  System = "System actions",
-  /**
-   * Note type Program.
-   */
-  Program = "Program",
 }
 ```
 
