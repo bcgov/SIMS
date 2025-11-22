@@ -58,7 +58,7 @@ SET
         AND applications.is_archived = FALSE
         AND education_programs_offerings.offering_intensity = ANY(:offeringIntensity)
         AND applications.program_year_id = :programYear
-        AND institution_locations.institution_id = :institutionId;
+        AND institution_locations.institution_id = :institutionId
       GROUP BY
         student_assessments.id
     )
@@ -110,6 +110,7 @@ SET
       student_assessments.assessment_data ->> ''totalProvincialAssessedResources'' AS "Provincial Assessed Resources",
       student_assessments.assessment_data ->> ''provincialAssessmentNeed'' AS "Provincial assessed need",
       disbursement_awards_total_amounts.total_assistance AS "Total assistance",
+      disbursement_awards_total_amounts.estimated_cslf AS "Estimated CSLF",
       disbursement_awards_total_amounts.estimated_csgp AS "Estimated CSGP",
       disbursement_awards_total_amounts.estimated_cspt AS "Estimated CSPT",
       disbursement_awards_total_amounts.estimated_csgd AS "Estimated CSGD",

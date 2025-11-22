@@ -131,9 +131,8 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       },
       { initialValues: { studyStartDate: "2010-09-01" } },
     );
-    const firstSavedOffering = await db.educationProgramOffering.save(
-      firstFakeOffering,
-    );
+    const firstSavedOffering =
+      await db.educationProgramOffering.save(firstFakeOffering);
     // 2nd offering: with an application belonging to the location of the institution for which the report is generated.
     const secondFakeOffering = createFakeEducationProgramOffering(
       {
@@ -148,9 +147,8 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         },
       },
     );
-    const secondSavedOffering = await db.educationProgramOffering.save(
-      secondFakeOffering,
-    );
+    const secondSavedOffering =
+      await db.educationProgramOffering.save(secondFakeOffering);
     await saveFakeApplication(
       db.dataSource,
       {
@@ -173,9 +171,8 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       },
       { initialValues: { studyStartDate: "2010-09-01" } },
     );
-    const thirdSavedOffering = await db.educationProgramOffering.save(
-      thirdFakeOffering,
-    );
+    const thirdSavedOffering =
+      await db.educationProgramOffering.save(thirdFakeOffering);
     await saveFakeApplication(
       db.dataSource,
       {
@@ -298,6 +295,44 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         institution: collegeF,
         institutionLocation: collegeFLocation,
         programYear,
+        firstDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            12,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaGrant,
+            "CSGP",
+            13,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaGrant,
+            "CSGD",
+            14,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "BCAG",
+            15,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "SBSD",
+            16,
+          ),
+          createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 17),
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaGrant,
+            "CSGF",
+            18,
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.BCGrant,
+            "BGPD",
+            19,
+          ),
+        ],
       },
       {
         currentAssessmentInitialValues: {
@@ -313,14 +348,6 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
             federalAssessmentNeed: 3,
             totalProvincialAssessedResources: 5,
             provincialAssessmentNeed: 11,
-            finalAwardTotal: 20,
-            finalFederalAwardNetCSGPAmount: 13,
-            finalFederalAwardNetCSGDAmount: 14,
-            finalProvincialAwardNetBCAGAmount: 15,
-            finalProvincialAwardNetSBSDAmount: 16,
-            finalProvincialAwardNetBCSLAmount: 17,
-            finalFederalAwardNetCSGFAmount: 18,
-            finalProvincialAwardNetBGPDAmount: 19,
             totalAssessedCost: 50,
           } as Assessment,
         },
@@ -360,6 +387,62 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     const savedLocation = savedApplication.location;
     const savedStudent = savedApplication.student;
     const savedUser = savedStudent.user;
+    const expectRecord = {
+      "Student First Name": savedUser.firstName,
+      "Student Last Name": savedUser.lastName,
+      SIN: savedStudent.sinValidation.sin,
+      "Student Number": "",
+      "Student Email Address": savedUser.email,
+      "Student Phone Number": savedStudent.contactInfo.phone,
+      "Institution Location Code": savedLocation.institutionCode,
+      "Institution Location Name": savedLocation.name,
+      "Application Number": savedApplication.applicationNumber,
+      "Assessment Date": getISODateOnlyString(
+        savedApplication.currentAssessment.assessmentDate,
+      ),
+      "Study Intensity (PT or FT)": savedOffering.offeringIntensity,
+      "Profile Disability Status": savedStudent.disabilityStatus,
+      "Application Disability Status": "no",
+      "Study Start Date": savedOffering.studyStartDate,
+      "Study End Date": savedOffering.studyEndDate,
+      "Program Name": savedEducationProgram.name,
+      "Program Credential Type": savedEducationProgram.credentialType,
+      "CIP Code": savedEducationProgram.cipCode,
+      "Program Length": savedEducationProgram.completionYears,
+      "SABC Program Code": "",
+      "Offering Name": savedOffering.name,
+      "Year of Study": savedOffering.yearOfStudy.toString(),
+      "Indigenous person status": applicationData.indigenousStatus,
+      "Citizenship Status": applicationData.citizenship,
+      "Youth in Care Flag": applicationData.youthInCare,
+      "Youth in Care beyond age 19": "",
+      "Marital Status":
+        savedApplication.currentAssessment.application.relationshipStatus,
+      "Independant/Dependant": applicationData.dependantstatus,
+      "Number of Eligible Dependants Total":
+        savedApplication.currentAssessment.workflowData.calculatedData.totalEligibleDependents.toString(),
+      "Federal/Provincial Assessed Costs":
+        assessmentData.totalAssessedCost.toString(),
+      "Federal Assessed Resources":
+        assessmentData.totalFederalAssessedResources.toString(),
+      "Federal assessed need": assessmentData.federalAssessmentNeed.toString(),
+      "Provincial Assessed Resources":
+        assessmentData.totalProvincialAssessedResources.toString(),
+      "Provincial assessed need":
+        assessmentData.provincialAssessmentNeed.toString(),
+      "Total assistance": "124.00",
+      "Estimated CSLF": "12.00",
+      "Estimated CSGP": "13.00",
+      "Estimated CSPT": "",
+      "Estimated CSGD": "14.00",
+      "Estimated BCAG": "15.00",
+      "Estimated SBSD": "16.00",
+      "Estimated CSLP": "",
+      "Estimated BCSL": "17.00",
+      "Estimated CSGF": "18.00",
+      "Estimated BGPD": "19.00",
+    };
+
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
@@ -372,71 +455,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
           header: true,
         });
         expect(parsedResult.data).toEqual(
-          expect.arrayContaining([
-            {
-              "Application Disability Status": "no",
-              "Application Number": savedApplication.applicationNumber,
-              "Assessment Date": getISODateOnlyString(
-                savedApplication.currentAssessment.assessmentDate,
-              ),
-              "CIP Code": savedEducationProgram.cipCode,
-              "Citizenship Status": applicationData.citizenship,
-              "Estimated BCAG":
-                assessmentData.finalProvincialAwardNetBCAGAmount.toString(),
-              "Estimated BCSL":
-                assessmentData.finalProvincialAwardNetBCSLAmount.toString(),
-              "Estimated BGPD":
-                assessmentData.finalProvincialAwardNetBGPDAmount.toString(),
-              "Estimated CSGD":
-                assessmentData.finalFederalAwardNetCSGDAmount.toString(),
-              "Estimated CSGF":
-                assessmentData.finalFederalAwardNetCSGFAmount.toString(),
-              "Estimated CSGP":
-                assessmentData.finalFederalAwardNetCSGPAmount.toString(),
-              "Estimated CSLP": "",
-              "Estimated CSPT": "",
-              "Estimated SBSD":
-                assessmentData.finalProvincialAwardNetSBSDAmount.toString(),
-              "Federal Assessed Resources":
-                assessmentData.totalFederalAssessedResources.toString(),
-              "Federal assessed need":
-                assessmentData.federalAssessmentNeed.toString(),
-              "Federal/Provincial Assessed Costs":
-                assessmentData.totalAssessedCost.toString(),
-              "Independant/Dependant": applicationData.dependantstatus,
-              "Indigenous person status": applicationData.indigenousStatus,
-              "Institution Location Code": savedLocation.institutionCode,
-              "Institution Location Name": savedLocation.name,
-              "Marital Status":
-                savedApplication.currentAssessment.application
-                  .relationshipStatus,
-              "Number of Eligible Dependants Total":
-                savedApplication.currentAssessment.workflowData.calculatedData.totalEligibleDependents.toString(),
-              "Offering Name": savedOffering.name,
-              "Profile Disability Status": savedStudent.disabilityStatus,
-              "Program Credential Type": savedEducationProgram.credentialType,
-              "Program Length": savedEducationProgram.completionYears,
-              "Program Name": savedEducationProgram.name,
-              "Provincial Assessed Resources":
-                assessmentData.totalProvincialAssessedResources.toString(),
-              "Provincial assessed need":
-                assessmentData.provincialAssessmentNeed.toString(),
-              "SABC Program Code": "",
-              SIN: savedStudent.sinValidation.sin,
-              "Student Email Address": savedUser.email,
-              "Student First Name": savedUser.firstName,
-              "Student Last Name": savedUser.lastName,
-              "Student Number": "",
-              "Student Phone Number": savedStudent.contactInfo.phone,
-              "Study End Date": savedOffering.studyEndDate,
-              "Study Intensity (PT or FT)": savedOffering.offeringIntensity,
-              "Study Start Date": savedOffering.studyStartDate,
-              "Total assistance": assessmentData.finalAwardTotal.toString(),
-              "Year of Study": savedOffering.yearOfStudy.toString(),
-              "Youth in Care Flag": applicationData.youthInCare,
-              "Youth in Care beyond age 19": "",
-            },
-          ]),
+          expect.arrayContaining([expectRecord]),
         );
       });
   });
