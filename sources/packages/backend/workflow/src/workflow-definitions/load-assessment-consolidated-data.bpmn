@@ -117,13 +117,13 @@
           <zeebe:header key="studentDataPartnerEmploymentInsurance" value="data.partnerEmploymentInsurance" />
           <zeebe:header key="studentDataPartnerFedralProvincialPDReceiptCost" value="data.partnerFedralProvincialPDReceiptCost" />
           <zeebe:header key="studentDataEstimatedSpouseIncome" value="data.estimatedSpouseIncome" />
-          <zeebe:header key="appealsStudentDisabilityAppealData" value="appeals.studentDisabilityAppeal.submittedData" />
-          <zeebe:header key="appealsStudentFinancialInformationAppealData" value="appeals.studentFinancialInformationAppeal.submittedData" />
-          <zeebe:header key="appealsStudentAdditionalTransportationAppealData" value="appeals.studentAdditionalTransportationAppeal.submittedData" />
-          <zeebe:header key="appealsPartnerInformationAndIncomeAppealData" value="appeals.partnerInformationAndIncomeAppeal.submittedData" />
-          <zeebe:header key="appealsStudentDependantsAppealData" value="appeals.studentDependantsAppeal.submittedData.dependants[].{&#10;  &#34;dateOfBirth&#34;: dateOfBirth,&#10;  &#34;declaredOnTaxes&#34;: declaredOnTaxes,&#10;  &#34;attendingPostSecondarySchool&#34;: attendingPostSecondarySchool&#10;}" />
-          <zeebe:header key="appealsStudentHasDependentsAppealData" value="appeals.studentDependantsAppeal.submittedData.hasDependents" />
-          <zeebe:header key="appealsRoomAndBoardCostsAppealData" value="appeals.roomAndBoardCostsAppeal.submittedData" />
+          <zeebe:header key="appealsStudentDisabilityAppealData" value="appeals.studentdisabilityappeal.submittedData" />
+          <zeebe:header key="appealsStudentFinancialInformationAppealData" value="appeals.studentfinancialinformationappeal.submittedData" />
+          <zeebe:header key="appealsStudentAdditionalTransportationAppealData" value="appeals.studentadditionaltransportationappeal.submittedData" />
+          <zeebe:header key="appealsPartnerInformationAndIncomeAppealData" value="appeals.partnerinformationandincomeappeal.submittedData" />
+          <zeebe:header key="appealsStudentDependantsAppealData" value="appeals.studentdependantsappeal.submittedData.dependants[].{&#10;  &#34;dateOfBirth&#34;: dateOfBirth,&#10;  &#34;declaredOnTaxes&#34;: declaredOnTaxes,&#10;  &#34;attendingPostSecondarySchool&#34;: attendingPostSecondarySchool&#10;}" />
+          <zeebe:header key="appealsStudentHasDependentsAppealData" value="appeals.studentdependantsappeal.submittedData.hasDependents" />
+          <zeebe:header key="appealsRoomAndBoardCostsAppealData" value="appeals.roomandboardcostsappeal.submittedData" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>
