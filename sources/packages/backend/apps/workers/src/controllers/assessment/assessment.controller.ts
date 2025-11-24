@@ -662,7 +662,15 @@ export class AssessmentController {
       StudentAppealRequestJobOutDTO
     >;
     appealRequests.forEach((appealRequest) => {
-      flattenedAppealRequests[appealRequest.submittedFormName] = {
+      // The submitted form name for the appeals contains the form path of the submitted appeal form.
+      // But the legacy change requests which are using the same appeals framework
+      // contain the form name instead of the form path as the submitted form name.
+      // Form name and form path are the same string in legacy change requests except for the casing
+      // where form name is in camel case and form path is in lower case.
+      // To ensure the backward compatibility for legacy change requests
+      // the submitted form name is converted to lower case to obtain the form path of the form.
+      const submittedFormName = appealRequest.submittedFormName.toLowerCase();
+      flattenedAppealRequests[submittedFormName] = {
         submittedData: appealRequest.submittedData,
       };
     });
