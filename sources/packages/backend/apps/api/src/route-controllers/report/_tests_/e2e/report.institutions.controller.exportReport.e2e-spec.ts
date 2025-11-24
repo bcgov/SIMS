@@ -1,11 +1,13 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
+  Application,
   ApplicationData,
   ApplicationStatus,
   Assessment,
   COEStatus,
   DisbursementSchedule,
   DisbursementScheduleStatus,
+  DisbursementValue,
   DisbursementValueType,
   FullTimeAssessment,
   Institution,
@@ -285,180 +287,250 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       });
   });
 
-  it("Should generate the Student Unmet Need Report when a report generation request is made with the appropriate filters.", async () => {
-    // Arrange
-    const student = await saveFakeStudent(db.dataSource);
-    const savedApplication = await saveFakeApplicationDisbursements(
-      db.dataSource,
-      {
-        student,
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
-        programYear,
-        firstDisbursementValues: [
-          createFakeDisbursementValue(
-            DisbursementValueType.CanadaLoan,
-            "CSLF",
-            12,
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.CanadaGrant,
-            "CSGP",
-            13,
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.CanadaGrant,
-            "CSGD",
-            14,
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.BCGrant,
-            "BCAG",
-            15,
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.BCGrant,
-            "SBSD",
-            16,
-          ),
-          createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 17),
-          createFakeDisbursementValue(
-            DisbursementValueType.CanadaGrant,
-            "CSGF",
-            18,
-          ),
-          createFakeDisbursementValue(
-            DisbursementValueType.BCGrant,
-            "BGPD",
-            19,
-          ),
-        ],
-      },
-      {
-        currentAssessmentInitialValues: {
-          workflowData: {
-            calculatedData: {
-              totalEligibleDependents: 2,
-              pdppdStatus: false,
-            },
-          } as WorkflowData,
-          assessmentDate: new Date(),
-          assessmentData: {
-            totalFederalAssessedResources: 10,
-            federalAssessmentNeed: 3,
-            totalProvincialAssessedResources: 5,
-            provincialAssessmentNeed: 11,
-            totalAssessedCost: 50,
-          } as Assessment,
+  it(
+    "Should generate the Student Unmet Need Report for a full-time and part-time applications " +
+      "when full-time has a single disbursement and part-time has two disbursements that should be summed.",
+    async () => {
+      // Arrange
+      const student = await saveFakeStudent(db.dataSource);
+      const fullTimeSavedApplication = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          institution: collegeF,
+          institutionLocation: collegeFLocation,
+          programYear,
+          firstDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLF",
+              10,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGP",
+              11,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGD",
+              12,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGF",
+              13,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCLoan,
+              "BCSL",
+              14,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "BCAG",
+              15,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "BGPD",
+              16,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "SBSD",
+              17,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "BCSG",
+              18,
+            ),
+          ],
         },
-        applicationData: {
-          indigenousStatus: "no",
-          citizenship: "canadianCitizen",
-          youthInCare: "no",
-          dependantstatus: "independant",
-        } as ApplicationData,
-      },
-    );
-    const payload = {
-      reportName: "Student_Unmet_Need_Report",
-      params: {
-        offeringIntensity: {
-          "Full Time": true,
-          "Part Time": true,
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          currentAssessmentInitialValues: {
+            workflowData: {
+              calculatedData: {
+                totalEligibleDependents: 2,
+                pdppdStatus: false,
+              },
+            } as WorkflowData,
+            assessmentDate: new Date(),
+            assessmentData: {
+              totalFederalAssessedResources: 10,
+              federalAssessmentNeed: 3,
+              totalProvincialAssessedResources: 5,
+              provincialAssessmentNeed: 11,
+              totalAssessedCost: 50,
+            } as Assessment,
+          },
+          applicationData: {
+            indigenousStatus: "no",
+            citizenship: "canadianCitizen",
+            youthInCare: "no",
+            dependantstatus: "independant",
+          } as ApplicationData,
         },
-        programYear: programYear.id,
-      },
-    };
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: FormNames.ExportFinancialReports,
-      data: { data: payload },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
-    const endpoint = "/institutions/report";
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
-    const assessmentData = savedApplication.currentAssessment
-      .assessmentData as FullTimeAssessment;
-    const applicationData = savedApplication.currentAssessment.application.data;
-    const savedOffering = savedApplication.currentAssessment.offering;
-    const savedEducationProgram = savedOffering.educationProgram;
-    const savedLocation = savedApplication.location;
-    const savedStudent = savedApplication.student;
-    const savedUser = savedStudent.user;
-    const expectRecord = {
-      "Student First Name": savedUser.firstName,
-      "Student Last Name": savedUser.lastName,
-      SIN: savedStudent.sinValidation.sin,
-      "Student Number": "",
-      "Student Email Address": savedUser.email,
-      "Student Phone Number": savedStudent.contactInfo.phone,
-      "Institution Location Code": savedLocation.institutionCode,
-      "Institution Location Name": savedLocation.name,
-      "Application Number": savedApplication.applicationNumber,
-      "Assessment Date": getISODateOnlyString(
-        savedApplication.currentAssessment.assessmentDate,
-      ),
-      "Study Intensity (PT or FT)": savedOffering.offeringIntensity,
-      "Profile Disability Status": savedStudent.disabilityStatus,
-      "Application Disability Status": "no",
-      "Study Start Date": savedOffering.studyStartDate,
-      "Study End Date": savedOffering.studyEndDate,
-      "Program Name": savedEducationProgram.name,
-      "Program Credential Type": savedEducationProgram.credentialType,
-      "CIP Code": savedEducationProgram.cipCode,
-      "Program Length": savedEducationProgram.completionYears,
-      "SABC Program Code": "",
-      "Offering Name": savedOffering.name,
-      "Year of Study": savedOffering.yearOfStudy.toString(),
-      "Indigenous person status": applicationData.indigenousStatus,
-      "Citizenship Status": applicationData.citizenship,
-      "Youth in Care Flag": applicationData.youthInCare,
-      "Youth in Care beyond age 19": "",
-      "Marital Status":
-        savedApplication.currentAssessment.application.relationshipStatus,
-      "Independant/Dependant": applicationData.dependantstatus,
-      "Number of Eligible Dependants Total":
-        savedApplication.currentAssessment.workflowData.calculatedData.totalEligibleDependents.toString(),
-      "Federal/Provincial Assessed Costs":
-        assessmentData.totalAssessedCost.toString(),
-      "Federal Assessed Resources":
-        assessmentData.totalFederalAssessedResources.toString(),
-      "Federal assessed need": assessmentData.federalAssessmentNeed.toString(),
-      "Provincial Assessed Resources":
-        assessmentData.totalProvincialAssessedResources.toString(),
-      "Provincial assessed need":
-        assessmentData.provincialAssessmentNeed.toString(),
-      "Total assistance": "124.00",
-      "Estimated CSLF": "12.00",
-      "Estimated CSGP": "13.00",
-      "Estimated CSPT": "",
-      "Estimated CSGD": "14.00",
-      "Estimated BCAG": "15.00",
-      "Estimated SBSD": "16.00",
-      "Estimated CSLP": "",
-      "Estimated BCSL": "17.00",
-      "Estimated CSGF": "18.00",
-      "Estimated BGPD": "19.00",
-    };
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .post(endpoint)
-      .send(payload)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
-      .then((response) => {
-        const fileContent = response.request.res["text"];
-        const parsedResult = parse(fileContent, {
-          header: true,
-        });
-        expect(parsedResult.data).toEqual(
-          expect.arrayContaining([expectRecord]),
-        );
+      );
+      const partTimeSavedApplication = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          institution: collegeF,
+          institutionLocation: collegeFLocation,
+          programYear,
+          firstDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              100,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGP",
+              200,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSPT",
+              300,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGD",
+              400,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "BCAG",
+              500,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "SBSD",
+              600,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "BCSG",
+              700,
+            ),
+          ],
+          secondDisbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLP",
+              101,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGP",
+              201,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSPT",
+              301,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGD",
+              401,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "BCAG",
+              501,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "SBSD",
+              601,
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "BCSG",
+              701,
+            ),
+          ],
+        },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          createSecondDisbursement: true,
+          currentAssessmentInitialValues: {
+            workflowData: {
+              calculatedData: {
+                totalEligibleDependents: 1,
+                pdppdStatus: true,
+              },
+            } as WorkflowData,
+            assessmentDate: new Date(),
+            assessmentData: {
+              totalFederalAssessedResources: 12,
+              federalAssessmentNeed: 34,
+              totalProvincialAssessedResources: 56,
+              provincialAssessmentNeed: 78,
+              totalAssessmentNeed: 910,
+            } as Assessment,
+          },
+          applicationData: {
+            indigenousStatus: "yes",
+            citizenship: "canadianCitizen",
+            youthInCare: "no",
+            dependantstatus: "independant",
+          } as ApplicationData,
+        },
+      );
+      const payload = {
+        reportName: "Student_Unmet_Need_Report",
+        params: {
+          offeringIntensity: {
+            "Full Time": true,
+            "Part Time": true,
+          },
+          programYear: programYear.id,
+        },
+      };
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ExportFinancialReports,
+        data: { data: payload },
       });
-  });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+      const endpoint = "/institutions/report";
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      // Expected report records.
+      const expectedFullTimeRecord = buildUnmetNeedReportData(
+        fullTimeSavedApplication,
+      );
+      const expectedPartTimeRecord = buildUnmetNeedReportData(
+        partTimeSavedApplication,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          const fileContent = response.request.res["text"];
+          const parsedResult = parse(fileContent, {
+            header: true,
+          });
+          expect(parsedResult.data).toEqual(
+            expect.arrayContaining([
+              expectedFullTimeRecord,
+              expectedPartTimeRecord,
+            ]),
+          );
+        });
+    },
+  );
 
   it("Should throw forbidden error when the institution type is not BC Public.", async () => {
     // Arrange
@@ -962,5 +1034,113 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       "Estimated Disbursement Amount": expectedDisbursementAmount,
       "Disbursement Date": expectedDisbursementDate,
     };
+  }
+
+  /**
+   * Build Unmet Need Report report data.
+   * @param application application to generated the expected report record.
+   * @returns report data.
+   */
+  function buildUnmetNeedReportData(
+    application: Application,
+  ): Record<string, string> {
+    const assessmentData = application.currentAssessment
+      .assessmentData as FullTimeAssessment;
+    const applicationData = application.currentAssessment.application.data;
+    const savedOffering = application.currentAssessment.offering;
+    const savedEducationProgram = savedOffering.educationProgram;
+    const savedLocation = application.location;
+    const savedStudent = application.student;
+    const savedUser = savedStudent.user;
+    const disbursementValues =
+      application.currentAssessment.disbursementSchedules.flatMap(
+        (ds) => ds.disbursementValues,
+      );
+    const unmetNeedReportData = {
+      "Student First Name": savedUser.firstName,
+      "Student Last Name": savedUser.lastName,
+      SIN: savedStudent.sinValidation.sin,
+      "Student Number": "",
+      "Student Email Address": savedUser.email,
+      "Student Phone Number": savedStudent.contactInfo.phone,
+      "Institution Location Code": savedLocation.institutionCode,
+      "Institution Location Name": savedLocation.name,
+      "Application Number": application.applicationNumber,
+      "Assessment Date": getISODateOnlyString(
+        application.currentAssessment.assessmentDate,
+      ),
+      "Study Intensity (PT or FT)": savedOffering.offeringIntensity,
+      "Profile Disability Status": savedStudent.disabilityStatus,
+      "Application Disability Status": application.currentAssessment
+        .workflowData.calculatedData.pdppdStatus
+        ? "yes"
+        : "no",
+      "Study Start Date": savedOffering.studyStartDate,
+      "Study End Date": savedOffering.studyEndDate,
+      "Program Name": savedEducationProgram.name,
+      "Program Credential Type": savedEducationProgram.credentialType,
+      "CIP Code": savedEducationProgram.cipCode,
+      "Program Length": savedEducationProgram.completionYears,
+      "SABC Program Code": "",
+      "Offering Name": savedOffering.name,
+      "Year of Study": savedOffering.yearOfStudy.toString(),
+      "Indigenous person status": applicationData.indigenousStatus,
+      "Citizenship Status": applicationData.citizenship,
+      "Youth in Care Flag": applicationData.youthInCare,
+      "Youth in Care beyond age 19": "",
+      "Marital Status":
+        application.currentAssessment.application.relationshipStatus,
+      "Independant/Dependant": applicationData.dependantstatus,
+      "Number of Eligible Dependants Total":
+        application.currentAssessment.workflowData.calculatedData.totalEligibleDependents.toString(),
+      "Federal/Provincial Assessed Costs": (
+        assessmentData.totalAssessedCost ?? assessmentData.totalAssessmentNeed
+      ).toString(),
+      "Federal Assessed Resources":
+        assessmentData.totalFederalAssessedResources.toString(),
+      "Federal assessed need": assessmentData.federalAssessmentNeed.toString(),
+      "Provincial Assessed Resources":
+        assessmentData.totalProvincialAssessedResources.toString(),
+      "Provincial assessed need":
+        assessmentData.provincialAssessmentNeed.toString(),
+      "Total assistance": sumAwardAmounts(disbursementValues),
+    };
+    const expectedValueCodes = [
+      "CSLF",
+      "CSGP",
+      "CSPT",
+      "CSGD",
+      "BCAG",
+      "SBSD",
+      "CSLP",
+      "BCSL",
+      "CSGF",
+      "BGPD",
+    ];
+    // Ensure all expected value codes are present in the report data, even if the sum is zero.
+    for (const valueCode of expectedValueCodes) {
+      const key = `Estimated ${valueCode}`;
+      unmetNeedReportData[key] = sumAwardAmounts(disbursementValues, valueCode);
+    }
+    return unmetNeedReportData;
+  }
+
+  /**
+   * Sum disbursement value amounts, optionally filtering by value code.
+   * When not filtering by value code, sums all disbursement value amounts,
+   * which should represent the total assistance amount.
+   * @param disbursementValues disbursement values to sum.
+   * @param valueCode optional value code to filter by.
+   * @returns formatted sum as string, or empty string if sum is zero. Decimals fixed to two
+   * places as expected by the generated report, but values will always be whole numbers.
+   */
+  function sumAwardAmounts(
+    disbursementValues: DisbursementValue[],
+    valueCode?: string,
+  ): string {
+    const total = disbursementValues
+      .filter((award) => !valueCode || award.valueCode === valueCode)
+      .reduce((sum, award) => sum + award.valueAmount, 0);
+    return total ? `${total}.00` : "";
   }
 });
