@@ -21,4 +21,5 @@ When reviewing Vue SFCs, ensure comment and doc quality and basic readability pa
 
 - Inline comments or JSDoc-like blocks missing terminal periods or not starting with a capital letter.
 - Non-`script setup` usage unless there is a clear reason.
+- Refrain from using `<style>` blocks without scoped styles. Prefer to create or update existing CSS/SCSS modules.
 - Unclear component intent where a brief comment would help future readers.
