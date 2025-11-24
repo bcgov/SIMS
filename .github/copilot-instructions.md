@@ -155,8 +155,8 @@ export enum NoteType {
 - Before raising the PR, review technical and business ACs.
 - Add appropriate labels that also indicate the applications being impacted by the PR, for instance, SIMS Api or Queue-Consumers.
 - Connect the issue using the button "Connect Issue", if not available install the Chrome Extension ZenHub for GitHub or similar.
-- If you are the author of the PR avoid resolving the comments, instead reply to them to let the reviewer be aware of your thoughts.
-- If you are a reviewer try to mark the comments as resolved to help the PR author to identify easily what is still missing.
+- If you are the author of the PR avoid resolving the conversations, instead reply to them to let the reviewer be aware of your thoughts.
+- If you are a reviewer try to mark the conversations as resolved to help the PR author to identify easily what is still missing.
 - Comments and conversations on the PR are good to let everyone be aware of what is happening but a quick call can also save a lot of time.
 - Even if the ticket demands too many file changes, try to create small PRs to make it easier for reviewers to understand the changes. It also makes the PR review quicker.
 - Once a review is raised, two reviewers are expected to be assigned to provide feedback and approve it.
