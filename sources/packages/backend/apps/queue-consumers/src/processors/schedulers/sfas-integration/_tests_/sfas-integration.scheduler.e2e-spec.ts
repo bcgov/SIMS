@@ -19,6 +19,7 @@ import {
   createFakeSFASRestrictionMaps,
   createFakeUser,
   createFakeRestriction,
+  findAndSaveRestriction,
 } from "@sims/test-utils";
 import { mockDownloadFiles } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
@@ -32,7 +33,6 @@ import {
   SFASApplicationDisbursement,
   SFASIndividual,
   Student,
-  StudentRestriction,
 } from "@sims/sims-db";
 import { In, IsNull, Not } from "typeorm";
 import {
@@ -235,10 +235,16 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       "and it should insert a restriction after mapping it to SIMS restriction when it is either inactive or is not at all present in the SIMS student restrictions, ",
     async () => {
       // Arrange
-      await findAndSaveRestriction(RestrictionCode.B6B);
-      await findAndSaveRestriction(RestrictionCode.LGCY);
+      await findAndSaveRestriction(db, RestrictionCode.B6B, {
+        student: sharedStudent,
+      });
+      await findAndSaveRestriction(db, RestrictionCode.LGCY, {
+        student: sharedStudent,
+      });
       const studentRestrictionSSR = await findAndSaveRestriction(
+        db,
         RestrictionCode.SSR,
+        { student: sharedStudent },
       );
       studentRestrictionSSR.isActive = false;
       await db.studentRestriction.save(studentRestrictionSSR);
@@ -328,11 +334,18 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     async () => {
       // Arrange
       const [studentRestrictionSSR] = await Promise.all([
-        findAndSaveRestriction(RestrictionCode.SSR),
-        // Deleted SSRN restriction should be ignored.
-        findAndSaveRestriction(RestrictionCode.SSRN, {
-          deletedAt: new Date(),
+        findAndSaveRestriction(db, RestrictionCode.SSR, {
+          student: sharedStudent,
         }),
+        // Deleted SSRN restriction should be ignored.
+        findAndSaveRestriction(
+          db,
+          RestrictionCode.SSRN,
+          {
+            student: sharedStudent,
+          },
+          { deletedAt: new Date() },
+        ),
       ]);
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -1145,30 +1158,5 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       db.sfasApplicationDependant.createQueryBuilder().delete().execute(),
       db.sfasApplicationDisbursement.createQueryBuilder().delete().execute(),
     ]);
-  }
-
-  /**
-   * Gets the restriction by the restriction code and saves the student restriction.
-   * @param restrictionCode restriction code to find and then save the student restriction.
-   * @param options related to student restriction.
-   * - `isActive` option for specifying if the student restriction is active.
-   * - `deletedAt` option for specifying if the student restriction is deleted.
-   * @returns the saved student restriction.
-   */
-  async function findAndSaveRestriction(
-    restrictionCode: RestrictionCode | string,
-    options?: { isActive?: boolean; deletedAt?: Date },
-  ): Promise<StudentRestriction> {
-    const restriction = await db.restriction.findOne({
-      where: { restrictionCode },
-    });
-    return saveFakeStudentRestriction(
-      db.dataSource,
-      {
-        student: sharedStudent,
-        restriction,
-      },
-      options,
-    );
   }
 });

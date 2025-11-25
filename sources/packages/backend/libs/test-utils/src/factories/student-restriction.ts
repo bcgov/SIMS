@@ -10,6 +10,7 @@ import {
 import { DataSource } from "typeorm";
 import { createFakeNote, saveFakeStudentNotes } from "./note";
 import { createFakeUser } from "./user";
+import { E2EDataSources, RestrictionCode } from "@sims/test-utils";
 
 /**
  * Create and save fake student restriction.
@@ -94,4 +95,36 @@ export async function saveFakeStudentRestriction(
   const studentRestrictionRepo = dataSource.getRepository(StudentRestriction);
   const studentRestriction = createFakeStudentRestriction(relations, options);
   return studentRestrictionRepo.save(studentRestriction);
+}
+
+/**
+ * Gets the restriction by the restriction code and saves the student restriction.
+ * @param db data sources for e2e tests.
+ * @param restrictionCode restriction code to find and then save the student restriction.
+ * @param relations entity relations.
+ * - `student` related student.
+ * @param options related to student restriction.
+ * - `isActive` option for specifying if the student restriction is active.
+ * - `deletedAt` option for specifying if the student restriction is deleted.
+ * @returns the saved student restriction.
+ */
+export async function findAndSaveRestriction(
+  db: E2EDataSources,
+  restrictionCode: RestrictionCode | string,
+  relations: {
+    student: Student;
+  },
+  options?: { isActive?: boolean; deletedAt?: Date },
+): Promise<StudentRestriction> {
+  const restriction = await db.restriction.findOne({
+    where: { restrictionCode },
+  });
+  return saveFakeStudentRestriction(
+    db.dataSource,
+    {
+      student: relations.student,
+      restriction,
+    },
+    options,
+  );
 }
