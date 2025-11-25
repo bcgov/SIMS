@@ -124,6 +124,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         "user.email",
         "application.id",
         "programYear.id",
+        "programYear.startDate",
       ])
       .leftJoin("supportingUser.user", "user")
       .innerJoin("supportingUser.application", "application")
