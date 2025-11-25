@@ -71,45 +71,41 @@
     <body-header title="Results" />
     <content-group>
       <toggle-content :toggled="!students?.length">
-        <DataTable :value="students">
-          <Column field="sin" header="SIN" :sortable="true">
-            <template #body="slotProps">
-              {{ sinDisplayFormat(slotProps.data.sin) }}
-            </template>
-          </Column>
-          <Column field="firstName" header="Given name" :sortable="true">
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ slotProps.data.firstName }}
-              </div>
-            </template>
-          </Column>
-          <Column field="lastName" header="Last name" :sortable="true">
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ slotProps.data.lastName }}
-              </div>
-            </template>
-          </Column>
-          <Column field="birthDate" header="Date of birth">
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ dateOnlyLongString(slotProps.data.birthDate) }}
-              </div>
-            </template>
-          </Column>
-          <Column header="Action">
-            <template #body="slotProps">
-              <v-btn
-                color="primary"
-                class="p-button-raised"
-                data-cy="viewStudent"
-                @click="$emit('goToStudentView', slotProps.data.id)"
-                >View</v-btn
-              >
-            </template>
-          </Column>
-        </DataTable>
+        <v-data-table
+          :headers="SearchStudentsHeaders"
+          :items="students"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+        >
+          <template #loading>
+            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+          </template>
+          <template #[`item.sin`]="{ item }">
+            {{ sinDisplayFormat(item.sin) }}
+          </template>
+          <template #[`item.firstName`]="{ item }">
+            <div class="p-text-capitalize">
+              {{ item.firstName }}
+            </div>
+          </template>
+          <template #[`item.lastName`]="{ item }">
+            <div class="p-text-capitalize">
+              {{ item.lastName }}
+            </div>
+          </template>
+          <template #[`item.birthDate`]="{ item }">
+            {{ dateOnlyLongString(item.birthDate) }}
+          </template>
+          <template #[`item.action`]="{ item }">
+            <v-btn
+              color="primary"
+              class="p-button-raised"
+              data-cy="viewStudent"
+              @click="$emit('goToStudentView', item.id)"
+              >View</v-btn
+            >
+          </template>
+        </v-data-table>
       </toggle-content>
     </content-group>
   </template>
@@ -122,8 +118,11 @@ import {
   SearchStudentAPIOutDTO,
 } from "@/services/http/dto";
 import { useFormatters, useSnackBar, useValidators } from "@/composables";
-import { VForm } from "@/types";
-
+import {
+  DEFAULT_PAGE_LIMIT,
+  ITEMS_PER_PAGE,
+  SearchStudentsHeaders,
+} from "@/types";
 export default defineComponent({
   emits: ["goToStudentView"],
   setup() {
@@ -180,6 +179,9 @@ export default defineComponent({
       isSINValid,
       searchStudentsForm,
       isValidSearch,
+      SearchStudentsHeaders,
+      DEFAULT_PAGE_LIMIT,
+      ITEMS_PER_PAGE,
     };
   },
 });

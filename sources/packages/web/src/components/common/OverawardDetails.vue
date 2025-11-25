@@ -1,63 +1,49 @@
 <template>
-  <body-header-container :enableCardView="true">
+  <body-header-container :enable-card-view="true">
     <template #header>
       <body-header
         title="Overawards"
-        subTitle="Overaward amounts generated due to application reassessments"
+        sub-title="Overaward amounts generated due to application reassessments"
       />
     </template>
     <content-group>
-      <toggle-content :toggled="!overawards.length">
-        <DataTable
-          :value="overawards"
-          class="p-m-4"
-          :paginator="true"
-          :rows="pageLimit"
-          :rowsPerPageOptions="PAGINATION_LIST"
+      <toggle-content :toggled="!overawards.length" message="hello">
+        <v-data-table
+          :headers="OverawardsHeaders"
+          :items="overawards"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
         >
-          <Column field="dateAdded" header="Date added">
-            <template #body="slotProps">
-              <span>
-                {{
-                  slotProps.data.dateAdded
-                    ? dateOnlyLongString(slotProps.data.dateAdded)
-                    : dateOnlyLongString(slotProps.data.createdAt)
-                }}
-              </span>
-            </template>
-          </Column>
-          <Column field="applicationNumber" header="Application #"
-            ><template #body="slotProps">
-              <span>
-                {{ emptyStringFiller(slotProps.data.applicationNumber) }}
-              </span>
-            </template></Column
-          >
-          <Column field="overawardOrigin" header="Origin"></Column>
-          <Column field="assessmentTriggerType" header="Type"
-            ><template #body="slotProps">
-              <span>
-                {{ emptyStringFiller(slotProps.data.assessmentTriggerType) }}
-              </span>
-            </template></Column
-          >
-          <Column field="awardValueCode" header="Award"></Column>
-          <Column field="overawardValue" header="Overaward amount">
-            <template #body="slotProps">
-              <span>
-                {{ formatCurrency(slotProps.data.overawardValue) }}
-              </span>
-            </template></Column
-          >
-        </DataTable>
+          <template #loading>
+            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+          </template>
+          <template #[`item.dateAdded`]="{ item }">
+            {{ formatDateAdded(item) }}
+          </template>
+          <template #[`item.applicationNumber`]="{ item }">
+            {{ emptyStringFiller(item.applicationNumber) }}
+          </template>
+          <template #[`item.overawardOrigin`]="{ item }">
+            {{ item.overawardOrigin }}
+          </template>
+          <template #[`item.assessmentTriggerType`]="{ item }">
+            {{ emptyStringFiller(item.assessmentTriggerType) }}
+          </template>
+          <template #[`item.awardValueCode`]="{ item }">
+            {{ item.awardValueCode }}
+          </template>
+          <template #[`item.overawardValue`]="{ item }">
+            {{ formatCurrency(item.overawardValue) }}
+          </template>
+        </v-data-table>
       </toggle-content>
     </content-group>
   </body-header-container>
-  <body-header-container :enableCardView="true">
+  <body-header-container :enable-card-view="true">
     <template #header>
       <body-header
         title="Overaward deductions"
-        subTitle="History of money that was deducted from one or more applications to pay back what is owed"
+        sub-title="History of money that was deducted from one or more applications to pay back what is owed"
       >
         <template #actions v-if="allowManualOverawardDeduction">
           <check-permission-role :role="Role.StudentAddOverawardManual">
@@ -78,54 +64,37 @@
     </template>
     <content-group>
       <toggle-content :toggled="!overawardDeductions.length">
-        <DataTable
-          :value="overawardDeductions"
-          class="p-m-4"
-          :paginator="true"
-          :rows="pageLimit"
-          :rowsPerPageOptions="PAGINATION_LIST"
+        <v-data-table
+          :headers="OverawardDeductionsHeaders"
+          :items="overawardDeductions"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
         >
-          <Column field="dateAdded" header="Date added">
-            <template #body="slotProps">
-              <span>
-                {{
-                  slotProps.data.dateAdded
-                    ? dateOnlyLongString(slotProps.data.dateAdded)
-                    : dateOnlyLongString(slotProps.data.createdAt)
-                }}
-              </span>
-            </template>
-          </Column>
-          <Column field="applicationNumber" header="Application #">
-            <template #body="slotProps">
-              <span>
-                {{ emptyStringFiller(slotProps.data.applicationNumber) }}
-              </span>
-            </template></Column
-          >
-          <Column field="overawardOrigin" header="Origin"></Column>
-          <Column v-if="showAddedBy" field="addedByUser" header="Added By"
-            ><template #body="slotProps">
-              <span>
-                {{ emptyStringFiller(slotProps.data.addedByUser) }}
-              </span>
-            </template></Column
-          >
-          <Column field="awardValueCode" header="Award"></Column>
-          <Column field="overawardValue" header="Amount deducted">
-            <template #body="slotProps">
-              <span>
-                {{ formatCurrency(slotProps.data.overawardValue) }}
-              </span>
-            </template></Column
-          >
-        </DataTable>
+          <template #loading>
+            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+          </template>
+          <template #[`item.dateAdded`]="{ item }">
+            {{ formatDateAdded(item) }}
+          </template>
+          <template #[`item.applicationNumber`]="{ item }">
+            {{ emptyStringFiller(item.applicationNumber) }}
+          </template>
+          <template #[`item.overawardOrigin`]="{ item }">
+            {{ item.overawardOrigin }}
+          </template>
+          <template #[`item.awardValueCode`]="{ item }">
+            {{ item.awardValueCode }}
+          </template>
+          <template #[`item.overawardValue`]="{ item }">
+            {{ formatCurrency(item.overawardValue) }}
+          </template>
+        </v-data-table>
       </toggle-content>
     </content-group>
 
     <add-manual-overaward-deduction
       ref="addManualOverawardDeduction"
-      :allowedRole="Role.StudentAddOverawardManual"
+      :allowed-role="Role.StudentAddOverawardManual"
     />
   </body-header-container>
 </template>
@@ -134,10 +103,13 @@ import { ref, onMounted, defineComponent, computed } from "vue";
 import { OverawardService } from "@/services/OverawardService";
 import {
   DEFAULT_PAGE_LIMIT,
+  ITEMS_PER_PAGE,
   PAGINATION_LIST,
   DEFAULT_PAGE_NUMBER,
   DisbursementOverawardOriginType,
   Role,
+  OverawardDeductionsHeaders,
+  OverawardsHeaders,
 } from "@/types";
 import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
 import {
@@ -156,6 +128,7 @@ export default defineComponent({
     studentId: {
       type: Number,
       required: false,
+      default: undefined,
     },
     showAddedBy: {
       type: Boolean,
@@ -178,20 +151,20 @@ export default defineComponent({
     const addManualOverawardDeduction = ref(
       {} as ModalDialog<OverawardManualRecordAPIInDTO | boolean>,
     );
-    const overawardDeductionOriginTypes = [
+    const overawardDeductionOriginTypes = new Set([
       DisbursementOverawardOriginType.AwardDeducted,
       DisbursementOverawardOriginType.ManualRecord,
-    ];
+    ]);
     const overawards = computed(() =>
       overawardDetails.value.filter(
         (overaward) =>
-          !overawardDeductionOriginTypes.includes(overaward.overawardOrigin),
+          !overawardDeductionOriginTypes.has(overaward.overawardOrigin),
       ),
     );
 
     const overawardDeductions = computed(() =>
       overawardDetails.value.filter((overaward) =>
-        overawardDeductionOriginTypes.includes(overaward.overawardOrigin),
+        overawardDeductionOriginTypes.has(overaward.overawardOrigin),
       ),
     );
 
@@ -220,11 +193,19 @@ export default defineComponent({
         await OverawardService.shared.getStudentOverawards(props.studentId);
     };
 
+    const formatDateAdded = (overaward: OverawardAPIOutDTO): string => {
+      return overaward.dateAdded
+        ? dateOnlyLongString(overaward.dateAdded)
+        : dateOnlyLongString(overaward.createdAt);
+    };
+
     onMounted(loadOverawardDetails);
 
     return {
       page,
       pageLimit,
+      DEFAULT_PAGE_LIMIT,
+      ITEMS_PER_PAGE,
       PAGINATION_LIST,
       dateOnlyLongString,
       overawards,
@@ -234,6 +215,9 @@ export default defineComponent({
       addManualOverawardDeduction,
       addManualOveraward,
       emptyStringFiller,
+      formatDateAdded,
+      OverawardsHeaders,
+      OverawardDeductionsHeaders,
     };
   },
 });

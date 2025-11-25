@@ -557,3 +557,37 @@ export const StudentAppealsHistoryHeaders = [
   { title: "Application Number", key: "applicationNumber", sortable: true },
   { title: "Actions", key: "actions", sortable: false },
 ];
+
+/**
+ * Overawards header.
+ */
+export const OverawardsHeaders = [
+  { title: "Date Added", sortable: false, key: "dateAdded" },
+  { title: "Application #", sortable: false, key: "applicationNumber" },
+  { title: "Origin", sortable: false, key: "overawardOrigin" },
+  { title: "Type", sortable: false, key: "assessmentTriggerType" },
+  { title: "Award", sortable: false, key: "awardValueCode" },
+  { title: "Overaward Amount", sortable: false, key: "overawardValue" },
+];
+
+/**
+ * Overawards Deductions header.
+ */
+export const OverawardDeductionsHeaders = [
+  { title: "Date Added", sortable: false, key: "dateAdded" },
+  { title: "Application #", sortable: false, key: "applicationNumber" },
+  { title: "Origin", sortable: false, key: "overawardOrigin" },
+  { title: "Award", sortable: false, key: "awardValueCode" },
+  { title: "Overaward Amount", sortable: false, key: "overawardValue" },
+];
+
+/**
+ * Search Students header.
+ */
+export const SearchStudentsHeaders = [
+  { title: "SIN", sortable: true, key: "sin" },
+  { title: "Given name", sortable: true, key: "firstName" },
+  { title: "Last name", sortable: true, key: "lastName" },
+  { title: "Date of birth", sortable: false, key: "birthDate" },
+  { title: "Action", sortable: false, key: "action" },
+];
