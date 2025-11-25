@@ -4,13 +4,19 @@
 -- The student may have multiple resolved restrictions, but only one is required for each code,
 -- that is why the DISTINCT clause is used.
 INSERT INTO
-  sims.student_restrictions (student_id, restriction_id, is_active, creator, created_at)
-SELECT DISTINCT
-  sfas_individuals.student_id,
+  sims.student_restrictions (
+    student_id,
+    restriction_id,
+    is_active,
+    creator,
+    created_at
+  )
+SELECT
+  DISTINCT sfas_individuals.student_id,
   restrictions.id,
   false,
-  $1::INT,
-  $2::TIMESTAMPTZ
+  $ 1 :: INT,
+  $ 2 :: TIMESTAMPTZ
 FROM
   (
     -- select sfas_restrictions records with mapped restriction (from SFAS to SIMS) codes
@@ -35,6 +41,7 @@ FROM
   INNER JOIN sims.restrictions restrictions ON mapped_restrictions.mapped_code = restrictions.restriction_code
   LEFT JOIN sims.student_restrictions student_restrictions ON student_restrictions.student_id = sfas_individuals.student_id
   AND student_restrictions.restriction_id = restrictions.id
+  AND student_restrictions.deleted_at IS NULL
 WHERE
   -- Multiple restrictions can be mapped to SSR or SSRN based in the sfas_restriction_maps table,
   -- so filtering by the mapped codes (instead of limiting the subquery) will ensure that changes
