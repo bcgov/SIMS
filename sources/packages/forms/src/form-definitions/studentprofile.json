@@ -400,6 +400,11 @@
           "persistent": false,
           "validateWhenHidden": false,
           "key": "modifiedIndependentStatus",
+          "conditional": {
+            "show": true,
+            "when": "mode",
+            "eq": "student-edit"
+          },
           "type": "textfield",
           "input": true
         },

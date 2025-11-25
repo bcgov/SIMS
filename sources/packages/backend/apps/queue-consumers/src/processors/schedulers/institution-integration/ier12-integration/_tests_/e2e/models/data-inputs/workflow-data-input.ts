@@ -32,6 +32,7 @@ export const WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS: IER12WorkflowD
       totalTargetedResources: 100,
       returnTransportationCost: 175,
       totalAdditionalTransportationAllowance: 115,
+      interfacePolicyApplies: false,
     },
   };
 
@@ -64,6 +65,7 @@ export const WORKFLOW_DATA_MARRIED_WITH_DEPENDENTS: IER12WorkflowData = {
     totalProvincialFSC: 110,
     totalTargetedResources: 100,
     totalSpouseContribution: 75,
+    interfacePolicyApplies: false,
   },
 };
 
@@ -96,5 +98,6 @@ export const WORKFLOW_DATA_DEPENDANT_RELATIONSHIP_OTHER_LIVING_WITH_PARENTS: IER
       partnerStudyWeeks: undefined,
       totalProvincialFSC: 110,
       totalTargetedResources: 100,
+      interfacePolicyApplies: false,
     },
   };

@@ -116,21 +116,15 @@ export class IER12FileDetail implements IER12FileLine {
   totalExpenses: number;
   assessedNeed: number;
   studentEligibleAward: number;
-  // Analysis pending for the field.
-  mssAssessedNeedFlag?: string;
-  // Analysis pending for the field.
+  mssAssessedNeedFlag: YNFlag;
   mssAssessedNeed?: number;
   // Analysis pending for the field.
   mssAssessedNeedNormalOrAppeal?: number;
-  // Analysis pending for the field.
   mssChildcareCosts?: number;
-  // Analysis pending for the field.
   mssTuitionAndSupplies?: number;
   // Analysis pending for the field.
   mssMiscCostsAllowance?: number;
-  // Analysis pending for the field.
   mssTransportCostsAllowance?: number;
-  // Analysis pending for the field.
   mssExtraTransportCosts?: number;
   applicationEventCode: ApplicationEventCode;
   applicationEventDate: Date;
@@ -277,7 +271,7 @@ export class IER12FileDetail implements IER12FileLine {
     record.appendNumberWithFiller(this.totalExpenses, 10);
     record.appendNumberWithFiller(this.assessedNeed, 10);
     record.appendNumberWithFiller(this.studentEligibleAward, 10);
-    record.appendOptionalStringWithFiller(this.mssAssessedNeedFlag, 1);
+    record.append(this.mssAssessedNeedFlag);
     record.appendOptionalNumberWithFiller(this.mssAssessedNeed, 10);
     record.appendOptionalNumberWithFiller(
       this.mssAssessedNeedNormalOrAppeal,

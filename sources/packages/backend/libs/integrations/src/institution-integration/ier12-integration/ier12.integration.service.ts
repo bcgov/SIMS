@@ -235,6 +235,25 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
           awardTypeExclusions: [DisbursementValueType.BCTotalGrant],
         },
       );
+      ierFileDetail.mssAssessedNeedFlag = this.convertToYNFlag(
+        ierRecord.interfacePolicyApplies,
+      );
+      ierFileDetail.mssAssessedNeed = this.combineDecimalPlacesOptional(
+        ierRecord.interfaceNeed,
+      );
+      ierFileDetail.mssChildcareCosts = this.combineDecimalPlacesOptional(
+        ierRecord.interfaceChildCareCosts,
+      );
+      ierFileDetail.mssTuitionAndSupplies = this.combineDecimalPlacesOptional(
+        ierRecord.interfaceEducationCosts,
+      );
+      ierFileDetail.mssTransportCostsAllowance =
+        this.combineDecimalPlacesOptional(
+          ierRecord.interfaceTransportationAmount,
+        );
+      ierFileDetail.mssExtraTransportCosts = this.combineDecimalPlacesOptional(
+        ierRecord.interfaceAdditionalTransportationAmount,
+      );
       ierFileDetail.coeStatus = ierRecord.coeStatus;
       ierFileDetail.disbursementScheduleStatus =
         ierRecord.disbursementScheduleStatus;
