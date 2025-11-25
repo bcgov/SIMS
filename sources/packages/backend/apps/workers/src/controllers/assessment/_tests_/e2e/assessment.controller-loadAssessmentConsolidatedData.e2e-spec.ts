@@ -72,7 +72,11 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
       const programYear = application.programYear;
       const program = offering.educationProgram;
 
-      const customHeaders = createBaseCustomHeaders();
+      const customHeaders = {
+        ...createBaseCustomHeaders(),
+        studentDataCRAReportedIncome: "student.craReportedIncome",
+        studentTaxYear: "student.taxYear",
+      };
 
       // Act
       const result = await assessmentController.loadAssessmentConsolidatedData(
@@ -176,6 +180,8 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
 
       const customHeaders = {
         ...createBaseCustomHeaders(),
+        studentDataCRAReportedIncome: "student.craReportedIncome",
+        studentTaxYear: "student.taxYear",
         partner1SupportingUserId: "supportingUsers.Partner1.id",
         partner1CRAReportedIncome: "supportingUsers.Partner1.craReportedIncome",
         partner1TotalIncome:
@@ -232,7 +238,7 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
     },
   );
 
-  it("Should load assessment consolidated data with the appeal data when the application consists of an appeal that is approved.", async () => {
+  it("Should load assessment consolidated data with the appeal data when a full-time application has an approved appeal.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       applicationData: {
@@ -241,14 +247,16 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
         taxReturnIncome: 1000,
         workflowName: "dummy",
       } as ApplicationData,
-      offeringIntensity: OfferingIntensity.partTime,
+      offeringIntensity: OfferingIntensity.fullTime,
     });
+    // Create appeal requests for the student appeal.
     const appealFormName = "somestudentappealformname";
+    const submittedAppealData = { someAppealProperty: "someAppealValue" };
     const approvedAppealRequest = createFakeStudentAppealRequest(undefined, {
       initialValues: {
         submittedFormName: appealFormName,
         appealStatus: StudentAppealStatus.Approved,
-        submittedData: { someAppealProperty: "someAppealValue" },
+        submittedData: submittedAppealData,
       },
     });
     // Create student appeal and re-assessment with the approved appeal.
@@ -310,7 +318,7 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
       institutionType: "BC Private",
       programLength: program.completionYears,
       programCredentialType: program.credentialType,
-      offeringIntensity: OfferingIntensity.partTime,
+      offeringIntensity: OfferingIntensity.fullTime,
       offeringDelivered: offering.offeringDelivered,
       offeringStudyEndDate: offering.studyEndDate,
       offeringStudyStartDate: offering.studyStartDate,
@@ -323,11 +331,110 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
       applicationStatus: application.applicationStatus,
       applicationEditStatus: application.applicationEditStatus,
       applicationHasNOAApproval: false,
-      studentDataCRAReportedIncome: null,
-      studentTaxYear: null,
-      appealsSomeAppealData: { someAppealProperty: "someAppealValue" },
+      appealsSomeAppealData: submittedAppealData,
     });
   });
+
+  it(
+    "Should load assessment consolidated data with the appeal data when a full-time application has an approved appeal and the submitted form name of the appeal" +
+      " saved in database has different casing from the one in the custom header and form name in custom header is lower case.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplication(db.dataSource, undefined, {
+        applicationData: {
+          relationshipStatus: RelationshipStatus.Single,
+          dependantstatus: "independant",
+          taxReturnIncome: 1000,
+          workflowName: "dummy",
+        } as ApplicationData,
+        offeringIntensity: OfferingIntensity.fullTime,
+      });
+      // Create appeal requests for the student appeal.
+      const appealSubmittedFormName = "someStudentAppealFormName";
+      const submittedAppealData = { someAppealProperty: "someAppealValue" };
+      const approvedAppealRequest = createFakeStudentAppealRequest(undefined, {
+        initialValues: {
+          submittedFormName: appealSubmittedFormName,
+          appealStatus: StudentAppealStatus.Approved,
+          submittedData: submittedAppealData,
+        },
+      });
+      // Create student appeal and re-assessment with the approved appeal.
+      const studentAppeal = createFakeStudentAppeal({
+        application,
+        appealRequests: [approvedAppealRequest],
+      });
+      await db.studentAppeal.save(studentAppeal);
+      const studentAppealAssessment = createFakeStudentAssessment(
+        {
+          auditUser,
+          application,
+          studentAppeal,
+          offering: application.currentAssessment.offering,
+        },
+        {
+          initialValue: {
+            triggerType: AssessmentTriggerType.StudentAppeal,
+          },
+        },
+      );
+      application.currentAssessment = studentAppealAssessment;
+      await db.application.save(application);
+
+      const assessment = application.currentAssessment;
+      const offering = assessment.offering;
+      const programYear = application.programYear;
+      const program = offering.educationProgram;
+
+      const customHeaders = {
+        ...createBaseCustomHeaders(),
+        appealsSomeAppealData: `appeals.${appealSubmittedFormName.toLowerCase()}.submittedData`,
+      };
+
+      // Act
+      const result = await assessmentController.loadAssessmentConsolidatedData(
+        createFakeLoadAssessmentConsolidatedDataPayload(
+          assessment.id,
+          customHeaders,
+        ),
+      );
+
+      // Asserts
+      expect(result).toHaveProperty(
+        FAKE_WORKER_JOB_RESULT_PROPERTY,
+        MockedZeebeJobResult.Complete,
+      );
+      // Validate the output variables.
+      expect(FakeWorkerJobResult.getOutputVariables(result)).toEqual({
+        assessmentTriggerType: AssessmentTriggerType.StudentAppeal,
+        programYearStartDate: programYear.startDate,
+        studentDataRelationshipStatus: RelationshipStatus.Single,
+        studentDataTaxReturnIncome: 1000,
+        studentDataDependantstatus: "independant",
+        applicationId: application.id,
+        programYear: programYear.programYear,
+        institutionLocationProvince:
+          offering.institutionLocation?.data.address?.provinceState,
+        institutionType: "BC Private",
+        programLength: program.completionYears,
+        programCredentialType: program.credentialType,
+        offeringIntensity: OfferingIntensity.fullTime,
+        offeringDelivered: offering.offeringDelivered,
+        offeringStudyEndDate: offering.studyEndDate,
+        offeringStudyStartDate: offering.studyStartDate,
+        offeringProgramRelatedCosts: offering.programRelatedCosts,
+        offeringActualTuitionCosts: offering.actualTuitionCosts,
+        offeringMandatoryFees: offering.mandatoryFees,
+        offeringExceptionalExpenses: offering.exceptionalExpenses,
+        offeringCourseLoad: offering.courseLoad,
+        offeringWeeks: offering.studyBreaks.totalFundedWeeks,
+        applicationStatus: application.applicationStatus,
+        applicationEditStatus: application.applicationEditStatus,
+        applicationHasNOAApproval: false,
+        appealsSomeAppealData: submittedAppealData,
+      });
+    },
+  );
 
   /**
    * Creates base custom headers.
@@ -359,8 +466,6 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
       applicationStatus: "applicationStatus",
       applicationEditStatus: "applicationEditStatus",
       applicationHasNOAApproval: "hasNOAApproval",
-      studentDataCRAReportedIncome: "student.craReportedIncome",
-      studentTaxYear: "student.taxYear",
     };
   }
 });
