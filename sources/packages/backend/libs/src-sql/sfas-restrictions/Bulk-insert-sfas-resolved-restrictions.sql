@@ -4,15 +4,9 @@
 -- The student may have multiple resolved restrictions, but only one is required for each code,
 -- that is why the DISTINCT clause is used.
 INSERT INTO
-  sims.student_restrictions (
-    student_id,
-    restriction_id,
-    is_active,
-    creator,
-    created_at
-  )
-SELECT
-  DISTINCT sfas_individuals.student_id,
+  sims.student_restrictions (student_id, restriction_id, is_active, creator, created_at)
+SELECT DISTINCT
+  sfas_individuals.student_id,
   restrictions.id,
   false,
   $1::INT,
