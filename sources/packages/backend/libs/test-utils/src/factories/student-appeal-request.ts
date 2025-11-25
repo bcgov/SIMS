@@ -31,7 +31,8 @@ export function createFakeStudentAppealRequest(
 ): StudentAppealRequest {
   const appealRequest = new StudentAppealRequest();
   appealRequest.studentAppeal = relations?.studentAppeal;
-  appealRequest.submittedFormName = "SomeFormioFormName";
+  appealRequest.submittedFormName =
+    options?.initialValues?.submittedFormName ?? "SomeFormioFormName";
   appealRequest.appealStatus =
     options?.initialValues?.appealStatus ?? StudentAppealStatus.Approved;
   appealRequest.submittedData = options?.initialValues?.submittedData ?? {};
