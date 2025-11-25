@@ -15,11 +15,13 @@ import {
 } from "../../../../../test/helpers";
 import {
   E2EDataSources,
+  RestrictionCode,
   createE2EDataSources,
   createFakeCASSupplier,
   createFakeDisbursementValue,
   createFakeRestriction,
   createFakeUser,
+  findAndSaveRestriction,
   saveFakeApplication,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
@@ -153,13 +155,27 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
           restriction: legacyRestriction,
         },
       );
-
       await db.studentRestriction.update(
         {
           id: legacyStudentRestriction.id,
         },
         {
           updatedAt: simsDataUpdatedDate,
+        },
+      );
+
+      // Student has a deleted restriction that should included.
+      const deletedStudentRestriction = await findAndSaveRestriction(
+        db,
+        RestrictionCode.AF,
+        {
+          student,
+        },
+        {
+          isActive: false,
+          // Ensure this will be the last restriction record in the file.
+          updatedAt: addMilliSeconds(1, simsDataUpdatedDate),
+          deletedAt: new Date(),
         },
       );
 
@@ -181,7 +197,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
         "Process finalized with success.",
         "Student records sent: 1.",
         "Application records sent: 1.",
-        "Restriction records sent: 1.",
+        "Restriction records sent: 2.",
         `Uploaded file name: ${expectedFileName}.`,
       ]);
       expect(
@@ -198,13 +214,17 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
         studentRecord,
         applicationRecord,
         restrictionRecord,
+        deletedRestrictionRecord,
         footer,
       ] = uploadedFile.fileLines;
       expect(header).toBe(buildHeader(mockedCurrentDate));
-      expect(footer).toBe("999000000003");
+      expect(footer).toBe("999000000004");
       expect(studentRecord).toBe(buildStudentRecord(student));
       expect(applicationRecord).toBe(buildApplicationRecord(application));
       expect(restrictionRecord).toBe(buildRestrictionRecord(restriction));
+      expect(deletedRestrictionRecord).toBe(
+        buildRestrictionRecord(deletedStudentRestriction),
+      );
       // Check the database for creation of SFAS bridge log.
       const uploadedFileLog = await db.sfasBridgeLog.existsBy({
         generatedFileName: expectedFileName,

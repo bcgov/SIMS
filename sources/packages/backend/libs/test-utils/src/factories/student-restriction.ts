@@ -24,6 +24,7 @@ import { E2EDataSources, RestrictionCode } from "@sims/test-utils";
  * - `creator` related user relation.
  * @param options options for student restriction.
  * - `isActive` option for specifying if the student restriction is active.
+ * - `updatedAt` option for specifying the updated date of the student restriction.
  * - `deletedAt` option for specifying if the student restriction is deleted.
  * @returns persisted student restriction.
  */
@@ -36,7 +37,7 @@ export function createFakeStudentRestriction(
     resolutionNote?: Note;
     creator?: User;
   },
-  options?: { isActive?: boolean; deletedAt?: Date },
+  options?: { isActive?: boolean; updatedAt?: Date; deletedAt?: Date },
 ): StudentRestriction {
   const studentRestriction = new StudentRestriction();
   studentRestriction.student = relations.student;
@@ -46,6 +47,7 @@ export function createFakeStudentRestriction(
   studentRestriction.resolutionNote = relations.resolutionNote;
   studentRestriction.isActive = options?.isActive ?? true;
   studentRestriction.creator = relations?.creator;
+  studentRestriction.updatedAt = options?.updatedAt;
   studentRestriction.deletedAt = options?.deletedAt;
   return studentRestriction;
 }
@@ -62,6 +64,7 @@ export function createFakeStudentRestriction(
  * - `creator` related user relation. If not provided, one will be created.
  * @param options related to student restriction.
  * - `isActive` option for specifying if the student restriction is active.
+ * - `updatedAt` option for specifying the updated date of the student restriction.
  * - `deletedAt` option for specifying if the student restriction is deleted.
  * @returns a persisted fake student restriction.
  */
@@ -75,7 +78,7 @@ export async function saveFakeStudentRestriction(
     resolutionNote?: Note;
     creator?: User;
   },
-  options?: { isActive?: boolean; deletedAt?: Date },
+  options?: { isActive?: boolean; updatedAt?: Date; deletedAt?: Date },
 ): Promise<StudentRestriction> {
   const [restrictionNote, resolutionNote] = await saveFakeStudentNotes(
     dataSource,
@@ -114,7 +117,7 @@ export async function findAndSaveRestriction(
   relations: {
     student: Student;
   },
-  options?: { isActive?: boolean; deletedAt?: Date },
+  options?: { isActive?: boolean; updatedAt?: Date; deletedAt?: Date },
 ): Promise<StudentRestriction> {
   const restriction = await db.restriction.findOne({
     where: { restrictionCode },
