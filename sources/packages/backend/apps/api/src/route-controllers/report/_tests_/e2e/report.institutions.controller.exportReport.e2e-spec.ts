@@ -341,8 +341,9 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
               "SBSD",
               17,
             ),
+            // BCSG should be ignored since it represents the SUM of disbursements.
             createFakeDisbursementValue(
-              DisbursementValueType.BCGrant,
+              DisbursementValueType.BCTotalGrant,
               "BCSG",
               18,
             ),
@@ -412,8 +413,9 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
               "SBSD",
               600,
             ),
+            // BCSG should be ignored since it represents the SUM of disbursements.
             createFakeDisbursementValue(
-              DisbursementValueType.BCGrant,
+              DisbursementValueType.BCTotalGrant,
               "BCSG",
               700,
             ),
@@ -449,8 +451,9 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
               "SBSD",
               601,
             ),
+            // BCSG should be ignored since it represents the SUM of disbursements.
             createFakeDisbursementValue(
-              DisbursementValueType.BCGrant,
+              DisbursementValueType.BCTotalGrant,
               "BCSG",
               701,
             ),
@@ -1139,7 +1142,11 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     valueCode?: string,
   ): string {
     const total = disbursementValues
-      .filter((award) => !valueCode || award.valueCode === valueCode)
+      .filter(
+        (award) =>
+          award.valueType !== DisbursementValueType.BCTotalGrant &&
+          (!valueCode || award.valueCode === valueCode),
+      )
       .reduce((sum, award) => sum + award.valueAmount, 0);
     return total ? `${total}.00` : "";
   }

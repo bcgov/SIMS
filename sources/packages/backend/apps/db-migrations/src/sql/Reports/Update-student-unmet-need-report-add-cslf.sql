@@ -5,7 +5,10 @@ SET
     'WITH disbursement_awards_total_amounts AS (
       SELECT
         student_assessments.id AS student_assessment_id,
-        SUM(disbursement_values.value_amount) AS total_assistance,
+        SUM(disbursement_values.value_amount) FILTER (
+          WHERE
+            disbursement_values.value_type != ''BC Total Grant''
+        ) AS total_assistance,
         SUM(disbursement_values.value_amount) FILTER (
           WHERE
             disbursement_values.value_code = ''CSLF''
