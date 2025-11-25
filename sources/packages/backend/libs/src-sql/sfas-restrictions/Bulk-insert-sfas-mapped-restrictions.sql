@@ -11,8 +11,8 @@ INSERT INTO
 SELECT
   sfas_individuals.student_id,
   restrictions.id,
-  $ 1,
-  $ 2
+  $1,
+  $2
 FROM
   (
     -- select sfas_restrictions records with mapped restriction (from SFAS to SIMS) codes

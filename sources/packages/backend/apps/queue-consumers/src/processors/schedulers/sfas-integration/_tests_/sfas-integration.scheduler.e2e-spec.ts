@@ -18,6 +18,7 @@ import {
   RestrictionCode,
   createFakeSFASRestrictionMaps,
   createFakeUser,
+  createFakeRestriction,
 } from "@sims/test-utils";
 import { mockDownloadFiles } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
@@ -127,20 +128,41 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     await deleteSFASData(db);
   });
 
-  it("Should create missing legacy restrictions, import two student restrictions, and send a single notification when new mapped legacy restrictions are present in the file.", async () => {
+  it("Should create missing legacy restrictions, import two student restrictions, ignoring deleted ones, and send a single notification when new mapped legacy restrictions are present in the file.", async () => {
     // Arrange
     // Create the new custom legacy restrictions.
+    const LGCY_M1 = "LGCY_M1";
+    // LGCY_B4 will be added as deleted to the student.
+    const LGCY_B4 = "LGCY_B4";
     // Two are created to ensure only one notification is sent for the student.
     const customRestrictionMapM1 = createFakeSFASRestrictionMaps({
-      initialValues: { legacyCode: "M1", code: "LGCY_M1" },
+      initialValues: { legacyCode: "M1", code: LGCY_M1 },
     });
     const customRestrictionMapB4 = createFakeSFASRestrictionMaps({
-      initialValues: { legacyCode: "B4", code: "LGCY_B4" },
+      initialValues: { legacyCode: "B4", code: LGCY_B4 },
     });
     await db.sfasRestrictionMap.save([
       customRestrictionMapM1,
       customRestrictionMapB4,
     ]);
+    const lgcyB4Restriction = await db.restriction.save(
+      createFakeRestriction({
+        initialValues: {
+          isLegacy: true,
+          restrictionCode: LGCY_B4,
+        },
+      }),
+    );
+    // Student has a deleted restriction that should be ignored.
+    const legacyB4DeletedStudentRestriction = await saveFakeStudentRestriction(
+      db.dataSource,
+      {
+        student: sharedStudent,
+        restriction: lgcyB4Restriction,
+      },
+      { deletedAt: new Date() },
+    );
+
     // Queued job.
     const mockedJob = mockBullJob<void>();
     mockDownloadFiles(sftpClientMock, [SFAS_ALL_RESTRICTIONS_FILENAME]);
@@ -160,16 +182,18 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         isActive: true,
       },
       relations: { restriction: true },
-      where: { student: { id: sharedStudent.id }, isActive: true },
+      where: {
+        student: { id: sharedStudent.id },
+        isActive: true,
+        id: Not(legacyB4DeletedStudentRestriction.id),
+      },
     });
     // Check if all mapped restriction in the file were imported.
     expect(studentRestrictions.length).toBe(7);
     // Check if all legacy restrictions were added to the student account as active.
     const legacyStudentRestrictions = studentRestrictions.filter(
       (restriction) =>
-        ["LGCY_M1", "LGCY_B4"].includes(
-          restriction.restriction.restrictionCode,
-        ),
+        [LGCY_M1, LGCY_B4].includes(restriction.restriction.restrictionCode),
     );
     expect(legacyStudentRestrictions).toHaveLength(2);
     legacyStudentRestrictions.forEach((legacyStudentRestriction) =>
@@ -300,12 +324,16 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
 
   it(
     "Should import a resolved SSRN and do not import the SSD and SSR resolved restrictions " +
-      "when the student already has a SSR restriction and does not have a SSRN restriction in his account.",
+      "when the student already has a SSR restriction and have a deleted SSRN restriction in his account.",
     async () => {
       // Arrange
-      const studentRestrictionSSR = await findAndSaveRestriction(
-        RestrictionCode.SSR,
-      );
+      const [studentRestrictionSSR] = await Promise.all([
+        findAndSaveRestriction(RestrictionCode.SSR),
+        // Deleted SSRN restriction should be ignored.
+        findAndSaveRestriction(RestrictionCode.SSRN, {
+          deletedAt: new Date(),
+        }),
+      ]);
       // Queued job.
       const mockedJob = mockBullJob<void>();
       mockDownloadFiles(sftpClientMock, [
@@ -1122,17 +1150,25 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   /**
    * Gets the restriction by the restriction code and saves the student restriction.
    * @param restrictionCode restriction code to find and then save the student restriction.
+   * @param options related to student restriction.
+   * - `isActive` option for specifying if the student restriction is active.
+   * - `deletedAt` option for specifying if the student restriction is deleted.
    * @returns the saved student restriction.
    */
   async function findAndSaveRestriction(
-    restrictionCode: RestrictionCode,
+    restrictionCode: RestrictionCode | string,
+    options?: { isActive?: boolean; deletedAt?: Date },
   ): Promise<StudentRestriction> {
     const restriction = await db.restriction.findOne({
       where: { restrictionCode },
     });
-    return saveFakeStudentRestriction(db.dataSource, {
-      student: sharedStudent,
-      restriction,
-    });
+    return saveFakeStudentRestriction(
+      db.dataSource,
+      {
+        student: sharedStudent,
+        restriction,
+      },
+      options,
+    );
   }
 });
