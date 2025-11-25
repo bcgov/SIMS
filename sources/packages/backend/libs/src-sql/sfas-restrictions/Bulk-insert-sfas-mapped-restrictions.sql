@@ -39,4 +39,4 @@ FROM
   AND student_restrictions.deleted_at IS NULL
 WHERE
   sfas_individuals.student_id IS NOT NULL
-  AND student_restrictions.restriction_id IS NULL
+  AND student_restrictions.restriction_id IS NULL;

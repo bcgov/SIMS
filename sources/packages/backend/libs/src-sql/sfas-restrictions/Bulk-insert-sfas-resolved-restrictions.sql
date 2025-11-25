@@ -15,8 +15,8 @@ SELECT
   DISTINCT sfas_individuals.student_id,
   restrictions.id,
   false,
-  $1 :: INT,
-  $2 :: TIMESTAMPTZ
+  $1::INT,
+  $2::TIMESTAMPTZ
 FROM
   (
     -- select sfas_restrictions records with mapped restriction (from SFAS to SIMS) codes
