@@ -120,6 +120,7 @@ export class ApplicationAPIOutDTO {
 export class SupportingUserFormDataAPIOutDTO {
   formName: string;
   isAbleToReport: boolean;
+  programYearStartDate: string;
   supportingData: unknown;
   contactInfo: ContactInfo;
   sin: string;
