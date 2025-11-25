@@ -79,6 +79,7 @@ describe("SupportingUserAESTController(e2e)-getIdentifiableSupportingUser", () =
       .expect({
         formName: recentPYParentForm.formDefinitionName,
         isAbleToReport: false,
+        programYearStartDate: recentPYParentForm.programYear.startDate,
         parentFullName: parentFullName,
         supportingData: null,
         contactInfo: null,
