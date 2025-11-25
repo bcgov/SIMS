@@ -145,7 +145,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       customRestrictionMapM1,
       customRestrictionMapB4,
     ]);
-    const lgcyB4Restriction = await db.restriction.save(
+    // Student has a deleted restriction that should be ignored.
+    const legacyB4DeletedRestriction = await db.restriction.save(
       createFakeRestriction({
         initialValues: {
           isLegacy: true,
@@ -153,12 +154,11 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         },
       }),
     );
-    // Student has a deleted restriction that should be ignored.
     const legacyB4DeletedStudentRestriction = await saveFakeStudentRestriction(
       db.dataSource,
       {
         student: sharedStudent,
-        restriction: lgcyB4Restriction,
+        restriction: legacyB4DeletedRestriction,
       },
       { deletedAt: new Date() },
     );
@@ -235,19 +235,20 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       "and it should insert a restriction after mapping it to SIMS restriction when it is either inactive or is not at all present in the SIMS student restrictions, ",
     async () => {
       // Arrange
-      await findAndSaveRestriction(db, RestrictionCode.B6B, {
-        student: sharedStudent,
-      });
-      await findAndSaveRestriction(db, RestrictionCode.LGCY, {
-        student: sharedStudent,
-      });
-      const studentRestrictionSSR = await findAndSaveRestriction(
-        db,
-        RestrictionCode.SSR,
-        { student: sharedStudent },
-      );
-      studentRestrictionSSR.isActive = false;
-      await db.studentRestriction.save(studentRestrictionSSR);
+      await Promise.all([
+        findAndSaveRestriction(db, RestrictionCode.B6B, {
+          student: sharedStudent,
+        }),
+        findAndSaveRestriction(db, RestrictionCode.LGCY, {
+          student: sharedStudent,
+        }),
+        findAndSaveRestriction(
+          db,
+          RestrictionCode.SSR,
+          { student: sharedStudent },
+          { isActive: false },
+        ),
+      ]);
       // Queued job.
       const mockedJob = mockBullJob<void>();
       mockDownloadFiles(sftpClientMock, [SFAS_ALL_RESTRICTIONS_FILENAME]);
