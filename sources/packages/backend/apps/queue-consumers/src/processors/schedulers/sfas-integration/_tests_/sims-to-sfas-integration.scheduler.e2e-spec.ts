@@ -164,7 +164,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
         },
       );
 
-      // Student has a deleted restriction that should included.
+      // Student has a deleted restriction that should be included.
       const deletedStudentRestriction = await findAndSaveRestriction(
         db,
         RestrictionCode.AF,

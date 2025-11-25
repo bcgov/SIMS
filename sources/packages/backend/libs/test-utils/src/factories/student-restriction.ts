@@ -108,6 +108,7 @@ export async function saveFakeStudentRestriction(
  * - `student` related student.
  * @param options related to student restriction.
  * - `isActive` option for specifying if the student restriction is active.
+ * - `updatedAt` option for specifying the updated date of the student restriction.
  * - `deletedAt` option for specifying if the student restriction is deleted.
  * @returns the saved student restriction.
  */
