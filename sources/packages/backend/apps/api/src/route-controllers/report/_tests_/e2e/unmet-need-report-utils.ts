@@ -8,9 +8,9 @@ import {
   Institution,
   InstitutionLocation,
   ProgramYear,
+  Application,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
-import { Application } from "@sims/sims-db";
 import {
   saveFakeStudent,
   saveFakeApplicationDisbursements,
