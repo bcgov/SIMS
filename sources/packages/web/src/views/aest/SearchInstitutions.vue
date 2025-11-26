@@ -2,7 +2,7 @@
   <full-page-container>
     <body-header
       title="Search Institution"
-      subTitle="Look up an institution by entering their information below."
+      sub-title="Look up an institution by entering their information below."
     >
     </body-header>
     <v-form ref="searchInstitutionsForm">
@@ -45,49 +45,35 @@
     <template v-if="institutionsFound">
       <body-header title="Results" />
       <content-group>
-        <DataTable
+        <v-data-table
           v-if="institutionsFound"
-          class="mt-4"
-          :autoLayout="true"
-          :scrollable="true"
-          :value="institutions"
+          :headers="SearchInstitutionsHeaders"
+          :items="institutions"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          :mobile="isMobile"
         >
-          <Column
-            field="operatingName"
-            header="Operating Name"
-            :sortable="true"
-          >
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ slotProps.data.operatingName }}
-              </div>
-            </template>
-          </Column>
-          <Column field="legalName" header="Legal Name" :sortable="true">
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ slotProps.data.legalName }}
-              </div>
-            </template>
-          </Column>
-          <Column field="address" header="Address">
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ getFormattedAddress(slotProps.data.address) }}
-              </div>
-            </template>
-          </Column>
-          <Column header="Action">
-            <template #body="slotProps">
-              <v-btn
-                color="primary"
-                data-cy="viewInstitution"
-                @click="goToViewInstitution(slotProps.data.id)"
-                >View</v-btn
-              >
-            </template>
-          </Column>
-        </DataTable>
+          <template #loading>
+            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+          </template>
+          <template #[`item.operatingName`]="{ item }">
+            {{ item.operatingName }}
+          </template>
+          <template #[`item.legalName`]="{ item }">
+            {{ item.legalName }}
+          </template>
+          <template #[`item.address`]="{ item }">
+            {{ getFormattedAddress(item.address) }}
+          </template>
+          <template #[`item.action`]="{ item }">
+            <v-btn
+              color="primary"
+              data-cy="viewInstitution"
+              @click="goToViewInstitution(item.id)"
+              >View</v-btn
+            >
+          </template>
+        </v-data-table>
       </content-group>
     </template>
   </full-page-container>
@@ -95,15 +81,23 @@
 <script lang="ts">
 import { ref, computed, defineComponent } from "vue";
 import { useRouter } from "vue-router";
+import { useDisplay } from "vuetify";
+
 import { InstitutionService } from "@/services/InstitutionService";
 import { SearchInstitutionAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar, useFormatters } from "@/composables";
-import { VForm } from "@/types";
+import {
+  DEFAULT_PAGE_LIMIT,
+  ITEMS_PER_PAGE,
+  SearchInstitutionsHeaders,
+  VForm,
+} from "@/types";
 
 export default defineComponent({
   setup() {
     const searchInstitutionsForm = ref({} as VForm);
+    const { mobile: isMobile } = useDisplay();
     const snackBar = useSnackBar();
     const router = useRouter();
     const legalName = ref("");
@@ -151,6 +145,10 @@ export default defineComponent({
       goToViewInstitution,
       getFormattedAddress,
       searchInstitutionsForm,
+      DEFAULT_PAGE_LIMIT,
+      ITEMS_PER_PAGE,
+      SearchInstitutionsHeaders,
+      isMobile,
     };
   },
 });

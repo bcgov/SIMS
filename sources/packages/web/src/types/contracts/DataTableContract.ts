@@ -622,3 +622,11 @@ export const SocialInsuranceNumberHeaders = [
   { title: "Expiry date", sortable: false, key: "sinExpiryDateFormatted" },
   { title: "Action", sortable: false, key: "action" },
 ];
+
+/**
+ * Part Time Monthly Balance header.
+ */
+export const PartTimeMonthlyBalanceHeaders = [
+  { title: "Date", sortable: false, key: "balanceDate" },
+  { title: "CSLP Balance", sortable: false, key: "cslBalance" },
+];
