@@ -35,6 +35,7 @@ FROM
   INNER JOIN sims.restrictions restrictions ON mapped_restrictions.mapped_code = restrictions.restriction_code
   LEFT JOIN sims.student_restrictions student_restrictions ON student_restrictions.student_id = sfas_individuals.student_id
   AND student_restrictions.restriction_id = restrictions.id
+  AND student_restrictions.deleted_at IS NULL
 WHERE
   -- Multiple restrictions can be mapped to SSR or SSRN based in the sfas_restriction_maps table,
   -- so filtering by the mapped codes (instead of limiting the subquery) will ensure that changes

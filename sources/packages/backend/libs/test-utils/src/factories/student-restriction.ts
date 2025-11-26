@@ -10,6 +10,7 @@ import {
 import { DataSource } from "typeorm";
 import { createFakeNote, saveFakeStudentNotes } from "./note";
 import { createFakeUser } from "./user";
+import { E2EDataSources, RestrictionCode } from "@sims/test-utils";
 
 /**
  * Create and save fake student restriction.
@@ -23,6 +24,7 @@ import { createFakeUser } from "./user";
  * - `creator` related user relation.
  * @param options options for student restriction.
  * - `isActive` option for specifying if the student restriction is active.
+ * - `updatedAt` option for specifying the updated date of the student restriction.
  * - `deletedAt` option for specifying if the student restriction is deleted.
  * @returns persisted student restriction.
  */
@@ -35,7 +37,7 @@ export function createFakeStudentRestriction(
     resolutionNote?: Note;
     creator?: User;
   },
-  options?: { isActive?: boolean; deletedAt?: Date },
+  options?: { isActive?: boolean; updatedAt?: Date; deletedAt?: Date },
 ): StudentRestriction {
   const studentRestriction = new StudentRestriction();
   studentRestriction.student = relations.student;
@@ -45,6 +47,7 @@ export function createFakeStudentRestriction(
   studentRestriction.resolutionNote = relations.resolutionNote;
   studentRestriction.isActive = options?.isActive ?? true;
   studentRestriction.creator = relations?.creator;
+  studentRestriction.updatedAt = options?.updatedAt;
   studentRestriction.deletedAt = options?.deletedAt;
   return studentRestriction;
 }
@@ -61,6 +64,7 @@ export function createFakeStudentRestriction(
  * - `creator` related user relation. If not provided, one will be created.
  * @param options related to student restriction.
  * - `isActive` option for specifying if the student restriction is active.
+ * - `updatedAt` option for specifying the updated date of the student restriction.
  * - `deletedAt` option for specifying if the student restriction is deleted.
  * @returns a persisted fake student restriction.
  */
@@ -74,7 +78,7 @@ export async function saveFakeStudentRestriction(
     resolutionNote?: Note;
     creator?: User;
   },
-  options?: { isActive?: boolean; deletedAt?: Date },
+  options?: { isActive?: boolean; updatedAt?: Date; deletedAt?: Date },
 ): Promise<StudentRestriction> {
   const [restrictionNote, resolutionNote] = await saveFakeStudentNotes(
     dataSource,
@@ -94,4 +98,37 @@ export async function saveFakeStudentRestriction(
   const studentRestrictionRepo = dataSource.getRepository(StudentRestriction);
   const studentRestriction = createFakeStudentRestriction(relations, options);
   return studentRestrictionRepo.save(studentRestriction);
+}
+
+/**
+ * Gets the restriction by the restriction code and saves the student restriction.
+ * @param db data sources for e2e tests.
+ * @param restrictionCode restriction code to find and then save the student restriction.
+ * @param relations entity relations.
+ * - `student` related student.
+ * @param options related to student restriction.
+ * - `isActive` option for specifying if the student restriction is active.
+ * - `updatedAt` option for specifying the updated date of the student restriction.
+ * - `deletedAt` option for specifying if the student restriction is deleted.
+ * @returns the saved student restriction.
+ */
+export async function findAndSaveRestriction(
+  db: E2EDataSources,
+  restrictionCode: RestrictionCode | string,
+  relations: {
+    student: Student;
+  },
+  options?: { isActive?: boolean; updatedAt?: Date; deletedAt?: Date },
+): Promise<StudentRestriction> {
+  const restriction = await db.restriction.findOne({
+    where: { restrictionCode },
+  });
+  return saveFakeStudentRestriction(
+    db.dataSource,
+    {
+      student: relations.student,
+      restriction,
+    },
+    options,
+  );
 }

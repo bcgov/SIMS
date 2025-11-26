@@ -201,6 +201,7 @@ export class SIMSToSFASService {
         .addGroupBy("student.id")
         .addGroupBy("offering.id")
         .orderBy("offering.offeringIntensity")
+        .addOrderBy("application.updatedAt")
         .getRawMany<ApplicationRecord>()
     );
   }
@@ -235,6 +236,8 @@ export class SIMSToSFASService {
         },
         updatedAt: And(MoreThan(modifiedSince), LessThanOrEqual(modifiedUntil)),
       },
+      order: { updatedAt: "ASC" },
+      withDeleted: true,
     });
   }
 
@@ -279,6 +282,7 @@ export class SIMSToSFASService {
       .addGroupBy("sinValidation.id")
       .addGroupBy("casSupplier.id")
       .where("student.id IN (:...studentIds)")
+      .orderBy("student.updatedAt")
       .setParameters({
         cslfAwardCode: CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
         bcslAwardCode: BC_STUDENT_LOAN_AWARD_CODE,
