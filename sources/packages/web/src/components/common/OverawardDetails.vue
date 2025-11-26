@@ -13,6 +13,7 @@
           :items="overawards"
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
+          :mobile="isMobile"
         >
           <template #loading>
             <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
@@ -69,6 +70,7 @@
           :items="overawardDeductions"
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
+          :mobile="isMobile"
         >
           <template #loading>
             <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
@@ -100,12 +102,12 @@
 </template>
 <script lang="ts">
 import { ref, onMounted, defineComponent, computed } from "vue";
+import { useDisplay } from "vuetify";
+
 import { OverawardService } from "@/services/OverawardService";
 import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
-  PAGINATION_LIST,
-  DEFAULT_PAGE_NUMBER,
   DisbursementOverawardOriginType,
   Role,
   OverawardDeductionsHeaders,
@@ -142,8 +144,7 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const page = ref(DEFAULT_PAGE_NUMBER);
-    const pageLimit = ref(DEFAULT_PAGE_LIMIT);
+    const { mobile: isMobile } = useDisplay();
     const { dateOnlyLongString, formatCurrency, emptyStringFiller } =
       useFormatters();
     const snackBar = useSnackBar();
@@ -202,11 +203,8 @@ export default defineComponent({
     onMounted(loadOverawardDetails);
 
     return {
-      page,
-      pageLimit,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
-      PAGINATION_LIST,
       dateOnlyLongString,
       overawards,
       overawardDeductions,
@@ -218,6 +216,7 @@ export default defineComponent({
       formatDateAdded,
       OverawardsHeaders,
       OverawardDeductionsHeaders,
+      isMobile,
     };
   },
 });

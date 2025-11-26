@@ -591,3 +591,34 @@ export const SearchStudentsHeaders = [
   { title: "Date of birth", sortable: false, key: "birthDate" },
   { title: "Action", sortable: false, key: "action" },
 ];
+
+/**
+ * Search Institutions header.
+ */
+export const SearchInstitutionsHeaders = [
+  { title: "Operating Name", sortable: true, key: "operatingName" },
+  { title: "Legal Name", sortable: true, key: "legalName" },
+  { title: "Address", sortable: false, key: "address" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/**
+ * Social Insurance Number header.
+ */
+export const SocialInsuranceNumberHeaders = [
+  { title: "Date created", sortable: false, key: "createdAtFormatted" },
+  { title: "SIN", sortable: false, key: "sinFormatted" },
+  { title: "SIN validated", sortable: false, key: "isValidSINFormatted" },
+  { title: "Response code", sortable: false, key: "sinStatus" },
+  { title: "SIN accepted", sortable: false, key: "validSINCheckFormatted" },
+  { title: "First name", sortable: false, key: "validFirstNameCheckFormatted" },
+  { title: "Last name", sortable: false, key: "validLastNameCheckFormatted" },
+  {
+    title: "Date of birth",
+    sortable: false,
+    key: "validBirthdateCheckFormatted",
+  },
+  { title: "Gender", sortable: false, key: "validGenderCheckFormatted" },
+  { title: "Expiry date", sortable: false, key: "sinExpiryDateFormatted" },
+  { title: "Action", sortable: false, key: "action" },
+];

@@ -76,6 +76,7 @@
           :items="students"
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
+          :mobile="isMobile"
         >
           <template #loading>
             <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
@@ -112,6 +113,8 @@
 </template>
 <script lang="ts">
 import { ref, computed, defineComponent } from "vue";
+import { useDisplay } from "vuetify";
+
 import { StudentService } from "@/services/StudentService";
 import {
   SearchStudentAPIInDTO,
@@ -122,10 +125,13 @@ import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   SearchStudentsHeaders,
+  VForm,
 } from "@/types";
+
 export default defineComponent({
   emits: ["goToStudentView"],
   setup() {
+    const { mobile: isMobile } = useDisplay();
     const searchStudentsForm = ref({} as VForm);
     const snackBar = useSnackBar();
     const { dateOnlyLongString, sinDisplayFormat } = useFormatters();
@@ -182,6 +188,7 @@ export default defineComponent({
       SearchStudentsHeaders,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
+      isMobile,
     };
   },
 });
