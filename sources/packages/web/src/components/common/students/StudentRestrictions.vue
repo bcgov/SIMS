@@ -1,5 +1,5 @@
 <template>
-  <body-header-container :enableCardView="true">
+  <body-header-container :enable-card-view="true">
     <template #header>
       <body-header title="All restrictions">
         <template #actions v-if="canAddRestrictions">
@@ -24,95 +24,86 @@
         :toggled="!studentRestrictions?.length"
         message="No records found."
       >
-        <DataTable
-          :value="studentRestrictions"
-          :paginator="true"
-          :rows="DEFAULT_PAGE_LIMIT"
-          :rowsPerPageOptions="PAGINATION_LIST"
+        <v-data-table
+          :headers="StudentRestrictionsHeaders"
+          :items="studentRestrictions"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          :mobile="isMobile"
         >
-          <Column
-            field="restrictionCategory"
-            header="Category"
-            :sortable="true"
-          ></Column>
-          <Column field="description" header="Reason">
-            <template #body="slotProps">{{
-              `${slotProps.data.restrictionCode} - ${slotProps.data.description}`
-            }}</template></Column
-          >
-          <Column field="createdAt" header="Added"
-            ><template #body="slotProps">{{
-              dateOnlyLongString(slotProps.data.createdAt)
-            }}</template></Column
-          >
-          <Column field="updatedAt" header="Resolved">
-            <template #body="slotProps">{{
+          <template #loading>
+            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+          </template>
+          <template #[`item.restrictionCategory`]="{ item }">
+            {{ item.restrictionCategory }}
+          </template>
+          <template #[`item.description`]="{ item }">
+            {{ item.restrictionCode }} - {{ item.description }}
+          </template>
+          <template #[`item.createdAt`]="{ item }">
+            {{ dateOnlyLongString(item.createdAt) }}
+          </template>
+          <template #[`item.updatedAt`]="{ item }">
+            {{
               conditionalEmptyStringFiller(
-                slotProps.data.resolvedAt,
-                dateOnlyLongString(slotProps.data.resolvedAt),
+                !!item.resolvedAt,
+                dateOnlyLongString(item.resolvedAt),
               )
-            }}</template></Column
-          >
-          <Column field="isActive" header="Status">
-            <template #body="slotProps">
-              <status-chip-restriction
-                :is-active="slotProps.data.isActive"
-                :deleted-at="slotProps.data.deletedAt"
-              />
-            </template>
-          </Column>
-          <Column field="restrictionId" header="Actions">
-            <template #body="slotProps">
-              <div class="d-flex">
-                <v-btn
-                  color="primary"
-                  variant="outlined"
-                  class="mr-2"
-                  @click="viewStudentRestriction(slotProps.data.restrictionId)"
-                  >View</v-btn
-                >
-                <check-permission-role
-                  :role="Role.StudentDeleteRestriction"
-                  v-if="
-                    canDeleteRestriction &&
-                    slotProps.data.restrictionType ===
-                      RestrictionType.Provincial
-                  "
-                >
-                  <template #="{ notAllowed }">
-                    <v-btn
-                      color="primary"
-                      variant="outlined"
-                      :disabled="notAllowed || !!slotProps.data.deletedAt"
-                      @click="
-                        deleteStudentRestriction(slotProps.data.restrictionId)
-                      "
-                      >Delete</v-btn
-                    ></template
-                  ></check-permission-role
-                >
-              </div>
-            </template></Column
-          >
-        </DataTable>
+            }}
+          </template>
+          <template #[`item.isActive`]="{ item }">
+            <status-chip-restriction
+              :is-active="item.isActive"
+              :deleted-at="item.deletedAt"
+            />
+          </template>
+          <template #[`item.restrictionId`]="{ item }">
+            <div class="d-flex">
+              <v-btn
+                color="primary"
+                variant="outlined"
+                class="mr-2"
+                @click="viewStudentRestriction(item.restrictionId)"
+                >View</v-btn
+              >
+              <check-permission-role
+                :role="Role.StudentDeleteRestriction"
+                v-if="
+                  canDeleteRestriction &&
+                  item.restrictionType === RestrictionType.Provincial
+                "
+              >
+                <template #="{ notAllowed }">
+                  <v-btn
+                    color="primary"
+                    variant="outlined"
+                    :disabled="notAllowed || !!item.deletedAt"
+                    @click="deleteStudentRestriction(item.restrictionId)"
+                    >Delete</v-btn
+                  ></template
+                ></check-permission-role
+              >
+            </div>
+          </template>
+        </v-data-table>
       </toggle-content>
     </content-group>
     <view-restriction-modal
       ref="viewRestriction"
-      :restrictionData="studentRestriction"
-      :allowedRole="Role.StudentResolveRestriction"
-      :canResolveRestriction="canResolveRestriction"
+      :restriction-data="studentRestriction"
+      :allowed-role="Role.StudentResolveRestriction"
+      :can-resolve-restriction="canResolveRestriction"
     />
     <add-student-restriction-modal
       v-if="canAddRestrictions"
       ref="addRestriction"
-      :entityType="RestrictionEntityType.Student"
-      :allowedRole="Role.StudentAddRestriction"
+      :entity-type="RestrictionEntityType.Student"
+      :allowed-role="Role.StudentAddRestriction"
     />
     <user-note-confirm-modal
       title="Delete restriction"
       ref="deleteRestriction"
-      okLabel="Delete restriction"
+      ok-label="Delete restriction"
     >
       <template #content>
         <p>
@@ -131,6 +122,8 @@
 
 <script lang="ts">
 import { onMounted, ref, defineComponent } from "vue";
+import { useDisplay } from "vuetify";
+
 import { RestrictionService } from "@/services/RestrictionService";
 import ViewRestrictionModal from "@/components/common/restriction/ViewRestriction.vue";
 import AddStudentRestrictionModal from "@/components/common/restriction/AddRestriction.vue";
@@ -138,12 +131,13 @@ import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
 import {
   RestrictionStatus,
   DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
+  ITEMS_PER_PAGE,
   RestrictionEntityType,
   LayoutTemplates,
   Role,
   ApiProcessError,
   RestrictionType,
+  StudentRestrictionsHeaders,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -190,6 +184,7 @@ export default defineComponent({
   },
   setup(props) {
     const studentRestrictions = ref<RestrictionSummaryAPIOutDTO[]>([]);
+    const { mobile: isMobile } = useDisplay();
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
     const viewRestriction = ref(
@@ -311,7 +306,7 @@ export default defineComponent({
       studentRestrictions,
       RestrictionStatus,
       DEFAULT_PAGE_LIMIT,
-      PAGINATION_LIST,
+      ITEMS_PER_PAGE,
       studentRestriction,
       viewStudentRestriction,
       deleteRestriction,
@@ -326,6 +321,8 @@ export default defineComponent({
       emptyStringFiller,
       conditionalEmptyStringFiller,
       RestrictionType,
+      StudentRestrictionsHeaders,
+      isMobile,
     };
   },
 });

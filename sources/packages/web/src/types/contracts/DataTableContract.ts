@@ -630,3 +630,26 @@ export const PartTimeMonthlyBalanceHeaders = [
   { title: "Date", sortable: false, key: "balanceDate" },
   { title: "CSLP Balance", sortable: false, key: "cslBalance" },
 ];
+
+/**
+ * Student Restrictions header.
+ */
+export const StudentRestrictionsHeaders = [
+  { title: "Category", sortable: true, key: "restrictionCategory" },
+  { title: "Reason", sortable: false, key: "description" },
+  { title: "Added", sortable: false, key: "createdAt" },
+  { title: "Resolved", sortable: false, key: "updatedAt" },
+  { title: "Status", sortable: false, key: "isActive" },
+  { title: "Actions", sortable: false, key: "restrictionId" },
+];
+
+/**
+ * Student File Uploads header.
+ */
+export const StudentFileUploadsHeaders = [
+  { title: "Document Purpose", sortable: true, key: "groupName" },
+  { title: "Uploaded by", sortable: false, key: "uploadedBy" },
+  { title: "Application #", sortable: false, key: "applicationNumber" },
+  { title: "Date Submitted", sortable: false, key: "createdAt" },
+  { title: "File", sortable: false, key: "fileName" },
+];
