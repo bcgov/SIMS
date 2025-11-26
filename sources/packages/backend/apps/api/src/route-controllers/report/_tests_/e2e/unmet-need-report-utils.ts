@@ -223,7 +223,7 @@ export async function createApplicationsDataSetup(
 
 /**
  * Build Unmet Need Report report data.
- * @param application application to generated the expected report record.
+ * @param application application to generate the expected report record.
  * @returns report data.
  */
 export function buildUnmetNeedReportData(
