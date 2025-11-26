@@ -28,7 +28,7 @@ import { sumAwardAmounts } from "@sims/test-utils/utils";
  * - `institution`: institution to associate with the applications.
  * - `institutionLocation`: institution location to associate with the applications.
  * - `programYear`: program year to associate with the applications.
- * - `referenceNowDate`: date to use as reference for "now" date in the setup, if not provided
+ * - `referenceNowDate`: date to use as reference for "now" date in the setup. If not provided,
  * current date will be used. Useful when date filtering is required in the tests.
  * @returns created applications.
  */
