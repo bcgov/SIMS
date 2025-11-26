@@ -25,22 +25,18 @@ import { FormNames, FormService } from "../../../../services";
 import { AppAESTModule } from "../../../../app.aest.module";
 import { TestingModule } from "@nestjs/testing";
 import {
-  ApplicationData,
   ApplicationStatus,
-  Assessment,
   COEStatus,
   DisbursementScheduleStatus,
   DisbursementValueType,
   EducationProgram,
   EducationProgramOffering,
-  FullTimeAssessment,
   IdentityProviders,
   InstitutionLocation,
   OfferingIntensity,
   ProgramIntensity,
   Student,
   SupplierStatus,
-  WorkflowData,
 } from "@sims/sims-db";
 import {
   addDays,
@@ -50,7 +46,11 @@ import {
 import { DataSource } from "typeorm";
 import { createFakeEducationProgram } from "@sims/test-utils/factories/education-program";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
-import { MinistryReportsFilterAPIInDTO } from "apps/api/src/route-controllers/report/models/report.dto";
+import { MinistryReportsFilterAPIInDTO } from "../../models/report.dto";
+import {
+  buildUnmetNeedReportData,
+  createApplicationsDataSetup,
+} from "./unmet-need-report-utils";
 
 describe("ReportAestController(e2e)-exportReport", () => {
   let app: INestApplication;
@@ -1064,48 +1064,9 @@ describe("ReportAestController(e2e)-exportReport", () => {
 
   it("Should generate the Student Unmet Need Report for ministry when a report generation request is made with the appropriate filters.", async () => {
     // Arrange
-    const student = await saveFakeStudent(db.dataSource);
     const now = new Date();
-    const savedApplication = await saveFakeApplicationDisbursements(
-      db.dataSource,
-      { student },
-      {
-        currentAssessmentInitialValues: {
-          workflowData: {
-            calculatedData: {
-              totalEligibleDependents: 2,
-              pdppdStatus: false,
-            },
-          } as WorkflowData,
-          assessmentDate: now,
-          assessmentData: {
-            totalFederalAssessedResources: 10,
-            federalAssessmentNeed: 3,
-            totalProvincialAssessedResources: 5,
-            provincialAssessmentNeed: 11,
-            finalAwardTotal: 20,
-            finalFederalAwardNetCSGPAmount: 13,
-            finalFederalAwardNetCSGDAmount: 14,
-            finalProvincialAwardNetBCAGAmount: 15,
-            finalProvincialAwardNetSBSDAmount: 16,
-            finalProvincialAwardNetBCSLAmount: 17,
-            finalFederalAwardNetCSGFAmount: 18,
-            finalProvincialAwardNetBGPDAmount: 19,
-            totalAssessedCost: 50,
-          } as Assessment,
-        },
-        applicationData: {
-          indigenousStatus: "no",
-          citizenship: "canadianCitizen",
-          youthInCare: "no",
-          dependantstatus: "independant",
-        } as ApplicationData,
-        offeringInitialValues: {
-          studyStartDate: getISODateOnlyString(now),
-          studyEndDate: getISODateOnlyString(addDays(30, now)),
-        },
-      },
-    );
+    const { fullTimeApplication, partTimeApplication } =
+      await createApplicationsDataSetup(db, { referenceNowDate: now });
     const payload = {
       reportName: "Ministry_Student_Unmet_Need_Report",
       params: {
@@ -1129,14 +1090,12 @@ describe("ReportAestController(e2e)-exportReport", () => {
     const ministryUserToken = await getAESTToken(
       AESTGroups.BusinessAdministrators,
     );
-    const assessmentData = savedApplication.currentAssessment
-      .assessmentData as FullTimeAssessment;
-    const applicationData = savedApplication.currentAssessment.application.data;
-    const savedOffering = savedApplication.currentAssessment.offering;
-    const savedEducationProgram = savedOffering.educationProgram;
-    const savedLocation = savedApplication.location;
-    const savedStudent = savedApplication.student;
-    const savedUser = savedStudent.user;
+    // Expected report records.
+    const expectedFullTimeRecord =
+      buildUnmetNeedReportData(fullTimeApplication);
+    const expectedPartTimeRecord =
+      buildUnmetNeedReportData(partTimeApplication);
+
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
@@ -1150,69 +1109,8 @@ describe("ReportAestController(e2e)-exportReport", () => {
         });
         expect(parsedResult.data).toEqual(
           expect.arrayContaining([
-            {
-              "Application Disability Status": "no",
-              "Application Number": savedApplication.applicationNumber,
-              "Assessment Date": getISODateOnlyString(
-                savedApplication.currentAssessment.assessmentDate,
-              ),
-              "CIP Code": savedEducationProgram.cipCode,
-              "Citizenship Status": applicationData.citizenship,
-              "Estimated BCAG":
-                assessmentData.finalProvincialAwardNetBCAGAmount.toString(),
-              "Estimated BCSL":
-                assessmentData.finalProvincialAwardNetBCSLAmount.toString(),
-              "Estimated BGPD":
-                assessmentData.finalProvincialAwardNetBGPDAmount.toString(),
-              "Estimated CSGD":
-                assessmentData.finalFederalAwardNetCSGDAmount.toString(),
-              "Estimated CSGF":
-                assessmentData.finalFederalAwardNetCSGFAmount.toString(),
-              "Estimated CSGP":
-                assessmentData.finalFederalAwardNetCSGPAmount.toString(),
-              "Estimated CSLP": "",
-              "Estimated CSPT": "",
-              "Estimated SBSD":
-                assessmentData.finalProvincialAwardNetSBSDAmount.toString(),
-              "Federal Assessed Resources":
-                assessmentData.totalFederalAssessedResources.toString(),
-              "Federal assessed need":
-                assessmentData.federalAssessmentNeed.toString(),
-              "Federal/Provincial Assessed Costs":
-                assessmentData.totalAssessedCost.toString(),
-              "Independant/Dependant": applicationData.dependantstatus,
-              "Indigenous person status": applicationData.indigenousStatus,
-              "Institution Location Code": savedLocation.institutionCode,
-              "Institution Location Name": savedLocation.name,
-              "Marital Status":
-                savedApplication.currentAssessment.application
-                  .relationshipStatus,
-              "Number of Eligible Dependants Total":
-                savedApplication.currentAssessment.workflowData.calculatedData.totalEligibleDependents.toString(),
-              "Offering Name": savedOffering.name,
-              "Profile Disability Status": savedStudent.disabilityStatus,
-              "Program Credential Type": savedEducationProgram.credentialType,
-              "Program Length": savedEducationProgram.completionYears,
-              "Program Name": savedEducationProgram.name,
-              "Provincial Assessed Resources":
-                assessmentData.totalProvincialAssessedResources.toString(),
-              "Provincial assessed need":
-                assessmentData.provincialAssessmentNeed.toString(),
-              "SABC Program Code": "",
-              SIN: savedStudent.sinValidation.sin,
-              "Student Email Address": savedUser.email,
-              "Student First Name": savedUser.firstName,
-              "Student Last Name": savedUser.lastName,
-              "Student Number": "",
-              "Student Phone Number": savedStudent.contactInfo.phone,
-              "Study End Date": savedOffering.studyEndDate,
-              "Study Intensity (PT or FT)": savedOffering.offeringIntensity,
-              "Study Start Date": savedOffering.studyStartDate,
-              "Total assistance": assessmentData.finalAwardTotal.toString(),
-              "Year of Study": savedOffering.yearOfStudy.toString(),
-              "Youth in Care Flag": applicationData.youthInCare,
-              "Youth in Care beyond age 19": "",
-            },
+            expectedFullTimeRecord,
+            expectedPartTimeRecord,
           ]),
         );
       });
