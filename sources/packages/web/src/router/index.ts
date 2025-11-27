@@ -49,7 +49,6 @@ const router = createRouter({
 async function isMaintenanceActiveForRoute(
   to: RouteLocationNormalized,
 ): Promise<boolean> {
-  // Avoid running validations for the maintenance page itself to prevent redirect loops.
   const config = await AppConfigService.shared.config();
 
   // Do not apply maintenance checks to the maintenance page itself.
