@@ -396,7 +396,7 @@ export class ConfigService {
 
   /**
    * Maintenance Mode Student Configuration.
-   * @returns maintenance mode student true if maintenance mode is enabled, otherwise false.
+   * @returns True if maintenance mode is enabled for students, otherwise false.
    */
   get maintenanceModeStudent(): boolean {
     return this.getCachedConfig(
