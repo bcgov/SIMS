@@ -429,7 +429,7 @@ export class ConfigService {
 
   /**
    * Maintenance Mode Supporting User Configuration.
-   * @returns maintenance mode supporting user true if maintenance mode is enabled, otherwise false.
+   * @returns True if maintenance mode is enabled for supporting users, otherwise false.
    */
   get maintenanceModeSupportingUser(): boolean {
     return this.getCachedConfig(
