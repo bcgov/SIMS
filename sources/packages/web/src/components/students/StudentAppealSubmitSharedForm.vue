@@ -34,7 +34,7 @@ import { StudentAppealRequest } from "@/types";
 import AppealRequestsForm from "@/components/common/AppealRequestsForm.vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useSnackBar } from "@/composables";
-import { ApplicationProgramYearAPIOutDTO } from "@/services/http/dto";
+import { AppealApplicationDetailsAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   emits: {
@@ -66,7 +66,8 @@ export default defineComponent({
     const appealRequestsForms = ref([] as StudentAppealRequest[]);
 
     watchEffect(async () => {
-      let application: ApplicationProgramYearAPIOutDTO | undefined = undefined;
+      let application: AppealApplicationDetailsAPIOutDTO | undefined =
+        undefined;
       if (props.applicationId) {
         try {
           application =

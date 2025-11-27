@@ -32,7 +32,6 @@ import {
   SaveApplicationAPIInDTO,
   ApplicationDataAPIOutDTO,
   ApplicationWithProgramYearAPIOutDTO,
-  ApplicationProgramYearAPIOutDTO,
   InProgressApplicationDetailsAPIOutDTO,
   ApplicationProgressDetailsAPIOutDTO,
   EnrolmentApplicationDetailsAPIOutDTO,
@@ -40,6 +39,7 @@ import {
   ApplicationWarningsAPIOutDTO,
   ApplicationOverallDetailsAPIOutDTO,
   CreateApplicationAPIInDTO,
+  AppealApplicationDetailsAPIOutDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -64,7 +64,11 @@ import {
 import { ApplicationControllerService } from "./application.controller.service";
 import { CustomNamedError } from "@sims/utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { ApplicationStatus, OfferingIntensity } from "@sims/sims-db";
+import {
+  ApplicationStatus,
+  OfferingIntensity,
+  SupportingUserType,
+} from "@sims/sims-db";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
@@ -577,7 +581,7 @@ export class ApplicationStudentsController extends BaseController {
   async getApplicationToRequestAppeal(
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: IUserToken,
-  ): Promise<ApplicationProgramYearAPIOutDTO> {
+  ): Promise<AppealApplicationDetailsAPIOutDTO> {
     const application =
       await this.applicationService.getApplicationToRequestAppeal(
         applicationId,
@@ -588,10 +592,18 @@ export class ApplicationStudentsController extends BaseController {
         "Given application either does not exist or is not complete to request change.",
       );
     }
+    // Build supporting user parents.
+    const supportingUserParents = application.supportingUsers
+      .filter(
+        (supportingUser) =>
+          supportingUser.supportingUserType === SupportingUserType.Parent,
+      )
+      .map((parent) => ({ id: parent.id, fullName: parent.fullName }));
     return {
       id: application.id,
       applicationNumber: application.applicationNumber,
       programYear: application.programYear.programYear,
+      supportingUserParents,
     };
   }
 

@@ -137,6 +137,10 @@ export default defineComponent({
         formName: "roomandboardcostsappeal",
         description: mapStudentAppealsFormNames("roomandboardcostsappeal"),
       },
+      {
+        formName: "stepparentwaiverappeal",
+        description: mapStudentAppealsFormNames("stepparentwaiverappeal"),
+      },
     ]);
     const selectedOtherAppeal = ref<string>();
     const otherAppeals = ref<AppealForm[]>([

@@ -16,6 +16,7 @@ export const FormNames = {
   ModifiedIndependentAppeal: "modifiedindependentappeal",
   // Student application appeal forms.
   RoomAndBoardCostsAppeal: "roomandboardcostsappeal",
+  StepParentWaiverAppeal: "stepparentwaiverappeal",
   // Change request appeal forms (legacy).
   StudentDependantsAppeal: "studentdependantsappeal",
   StudentAdditionalTransportationAppeal:
@@ -35,6 +36,7 @@ export const STUDENT_APPEAL_FORM_NAMES = [FormNames.ModifiedIndependentAppeal];
  */
 export const STUDENT_APPLICATION_APPEAL_FORM_NAMES = [
   FormNames.RoomAndBoardCostsAppeal,
+  FormNames.StepParentWaiverAppeal,
 ];
 
 /**
