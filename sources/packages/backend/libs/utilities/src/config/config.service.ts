@@ -441,8 +441,9 @@ export class ConfigService {
   }
 
   /**
-   * Maintenance Mode External Configuration.
-   * @returns maintenance mode external true if maintenance mode is enabled, otherwise false.
+   * Indicates whether maintenance mode is enabled for External API consumers.
+   * When enabled, external systems will be unable to access the API.
+   * @returns True if maintenance mode is enabled for external systems, otherwise false.
    */
   get maintenanceModeExternal(): boolean {
     return this.getCachedConfig(
