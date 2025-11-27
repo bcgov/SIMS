@@ -42,6 +42,6 @@ COMMENT ON COLUMN sims.institution_restrictions.created_at IS 'Record creation t
 
 COMMENT ON COLUMN sims.institution_restrictions.updated_at IS 'Record update timestamp.';
 
-COMMENT ON COLUMN sims.institution_restrictions.creator IS 'Creator of the record. Null specified the record is created by system.';
+COMMENT ON COLUMN sims.institution_restrictions.creator IS 'Creator of the record. Null specifies the record is created by system.';
 
-COMMENT ON COLUMN sims.institution_restrictions.modifier IS 'Modifier of the record. Null specified the record is modified by system.';
+COMMENT ON COLUMN sims.institution_restrictions.modifier IS 'Modifier of the record. Null specifies the record is modified by system.';
