@@ -18,7 +18,7 @@ export abstract class BaseRestrictionModel extends RecordDataModel {
   restriction: Restriction;
 
   /**
-   * Active flag which decides if the restriction is active
+   * Active flag which decides if the restriction is active.
    */
   @Column({
     name: "is_active",

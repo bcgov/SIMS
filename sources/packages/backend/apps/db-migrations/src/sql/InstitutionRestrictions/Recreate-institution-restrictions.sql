@@ -51,9 +51,9 @@ COMMENT ON COLUMN sims.institution_restrictions.created_at IS 'Record creation t
 
 COMMENT ON COLUMN sims.institution_restrictions.updated_at IS 'Record update timestamp.';
 
-COMMENT ON COLUMN sims.institution_restrictions.creator IS 'Creator of the record. Null specifies the record is created by system.';
+COMMENT ON COLUMN sims.institution_restrictions.creator IS 'Creator of the record.';
 
-COMMENT ON COLUMN sims.institution_restrictions.modifier IS 'Modifier of the record. Null specifies the record is modified by system.';
+COMMENT ON COLUMN sims.institution_restrictions.modifier IS 'Modifier of the record.';
 
 CREATE UNIQUE INDEX institution_id_location_id_program_id_restriction_id_is_active_unique ON sims.institution_restrictions (
     institution_id,
@@ -64,4 +64,4 @@ CREATE UNIQUE INDEX institution_id_location_id_program_id_restriction_id_is_acti
 WHERE
     is_active = TRUE;
 
-COMMENT ON INDEX institution_id_location_id_program_id_restriction_id_is_active_unique IS 'Ensures only one active restriction per institution, location, program, and restriction combination.';
+COMMENT ON INDEX institution_id_location_id_program_id_restriction_id_is_active_unique IS 'Ensures only one active restriction per institution, location, program, and restriction combination for active restrictions.';

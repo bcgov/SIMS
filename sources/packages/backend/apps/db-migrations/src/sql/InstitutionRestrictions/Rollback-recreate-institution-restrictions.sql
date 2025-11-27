@@ -4,7 +4,7 @@
  */
 DROP TABLE sims.institution_restrictions;
 
--- Create Table sims.institution_restrictions as in the original script.
+-- Create table sims.institution_restrictions as in the original script.
 CREATE TABLE sims.institution_restrictions(
     id SERIAL PRIMARY KEY,
     institution_id INT NOT NULL REFERENCES sims.institutions(id),
@@ -24,7 +24,7 @@ CREATE TABLE sims.institution_restrictions(
 );
 
 -- Comments for table and column.
-COMMENT ON TABLE sims.institution_restrictions IS 'Table that has restriction details for an institution.';
+COMMENT ON TABLE sims.institution_restrictions IS 'Restriction details for an institution.';
 
 COMMENT ON COLUMN sims.institution_restrictions.id IS 'Auto-generated sequential primary key column.';
 

@@ -4,7 +4,9 @@ import { BaseRestrictionModel } from "./base-restriction.model";
 import { EducationProgram, Institution, InstitutionLocation } from ".";
 
 /**
- * Entity for institution restrictions.
+ * Restriction details for an institution.
+ * Institution restrictions are applied to specific programs and locations within an institution,
+ * being configured by the same restriction that is used for student restrictions.
  */
 @Entity({ name: TableNames.InstitutionRestrictions })
 export class InstitutionRestriction extends BaseRestrictionModel {
