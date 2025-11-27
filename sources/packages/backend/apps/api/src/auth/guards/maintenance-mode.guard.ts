@@ -28,9 +28,9 @@ export class MaintenanceModeGuard implements CanActivate {
   }
 
   /**
-   * Determines if the authorized party is allowed under maintenance mode.
-   * @param authorizedParty authorized party type to be checked.
-   * @returns true if maintenance mode is on for authorized party.
+   * Determines if maintenance mode is enabled for the specified authorized party.
+   * @param authorizedParty Authorized party type to be checked.
+   * @returns True if maintenance mode is enabled for the authorized party, otherwise false.
    */
   private isMaintenanceMode(authorizedParty: AuthorizedParties): boolean {
     // global maintenance mode
