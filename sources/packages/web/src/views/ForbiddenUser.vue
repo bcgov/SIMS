@@ -8,7 +8,6 @@
           If you think this is an error, try returning to the home page or
           contact support.
         </p>
-        <button class="back-btn" @click="goHome">Back home</button>
       </div>
       <div class="right" aria-hidden="false">
         <img
@@ -21,13 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from "vue-router";
 import illustration from "../assets/images/lost-in-space.svg";
-
-const router = useRouter();
-function goHome() {
-  router.push("/");
-}
 </script>
 
 <style scoped>
