@@ -3,11 +3,15 @@
  */
 export enum RestrictionType {
   /**
-   * Federal restriction type
+   * Federal restriction type.
    */
   Federal = "Federal",
   /**
-   * Provincial restriction type
+   * Provincial restriction type.
    */
   Provincial = "Provincial",
+  /**
+   * Institution restriction type.
+   */
+  Institution = "Institution",
 }

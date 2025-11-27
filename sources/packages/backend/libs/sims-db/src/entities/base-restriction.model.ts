@@ -1,7 +1,7 @@
 import { JoinColumn, ManyToOne, Column, OneToOne } from "typeorm";
 import { ColumnNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { Restriction, Note } from ".";
+import { Restriction, Note, User } from ".";
 /**
  * Abstract model for Student/Institution restriction as most of their properties are common.
  */
@@ -41,4 +41,22 @@ export abstract class BaseRestrictionModel extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   resolutionNote: Note;
+  /**
+   * Date when the restriction was resolved.
+   */
+  @Column({
+    name: "resolved_at",
+    type: "timestamptz",
+    nullable: true,
+  })
+  resolvedAt?: Date;
+  /**
+   * User who resolved the restriction.
+   */
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({
+    name: "resolved_by",
+    referencedColumnName: ColumnNames.ID,
+  })
+  resolvedBy?: User;
 }

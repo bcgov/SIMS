@@ -37,9 +37,9 @@ COMMENT ON COLUMN sims.institution_restrictions.location_id IS 'Specific locatio
 
 COMMENT ON COLUMN sims.institution_restrictions.restriction_id IS 'Assigned restriction.';
 
-COMMENT ON COLUMN sims.institution_restrictions.restriction_note_id IS 'Note added during restriction creation.';
+COMMENT ON COLUMN sims.institution_restrictions.restriction_note_id IS 'Note entered during restriction creation.';
 
-COMMENT ON COLUMN sims.institution_restrictions.resolution_note_id IS 'Note added during restriction resolution.';
+COMMENT ON COLUMN sims.institution_restrictions.resolution_note_id IS 'Note entered during restriction resolution.';
 
 COMMENT ON COLUMN sims.institution_restrictions.resolved_at IS 'Date when the restriction was resolved.';
 
