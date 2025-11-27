@@ -25,6 +25,12 @@ describe("ConfigController(e2e)-getConfig", () => {
     APPLICATION_SUBMISSION_DEADLINE_WEEKS: "4",
     APP_ENV: "production",
     QUEUE_DASHBOARD_BASE_URL: "http://some-absolute-url",
+    MAINTENANCE_MODE: "true",
+    MAINTENANCE_MODE_STUDENT: "false",
+    MAINTENANCE_MODE_INSTITUTION: "false",
+    MAINTENANCE_MODE_MINISTRY: "false",
+    MAINTENANCE_MODE_SUPPORTING_USER: "false",
+    MAINTENANCE_MODE_EXTERNAL: "false",
   };
 
   beforeAll(async () => {
@@ -74,6 +80,17 @@ describe("ConfigController(e2e)-getConfig", () => {
           +fakeEnvVariables.APPLICATION_SUBMISSION_DEADLINE_WEEKS,
         appEnv: fakeEnvVariables.APP_ENV,
         queueDashboardURL: `${fakeEnvVariables.QUEUE_DASHBOARD_BASE_URL}/admin/queues`,
+        maintenanceMode: fakeEnvVariables.MAINTENANCE_MODE === "false",
+        maintenanceModeStudent:
+          fakeEnvVariables.MAINTENANCE_MODE_STUDENT === "false",
+        maintenanceModeInstitution:
+          fakeEnvVariables.MAINTENANCE_MODE_INSTITUTION === "false",
+        maintenanceModeMinistry:
+          fakeEnvVariables.MAINTENANCE_MODE_MINISTRY === "false",
+        maintenanceModeSupportingUser:
+          fakeEnvVariables.MAINTENANCE_MODE_SUPPORTING_USER === "false",
+        maintenanceModeExternal:
+          fakeEnvVariables.MAINTENANCE_MODE_EXTERNAL === "false",
       });
   });
 

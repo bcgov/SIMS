@@ -19,7 +19,6 @@ import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtStrategy } from "./jwt.strategy";
 import {
   InstitutionLocationGuard,
-  AuthorizedPartiesGuard,
   InstitutionAdminGuard,
   ActiveUserGuard,
   GroupsGuard,
@@ -40,6 +39,8 @@ import {
 } from "@sims/services";
 import { KeycloakService } from "@sims/auth/services";
 import { KeycloakConfig } from "@sims/auth/config";
+import { MaintenanceModeGuard } from "apps/api/src/auth/guards/maintenance-mode.guard";
+import { AuthorizedPartiesGuard } from "apps/api/src/auth/guards/authorized-parties.guard";
 
 const jwtModule = JwtModule.register({
   publicKey: KeycloakConfig.PEM_PublicKey,
@@ -68,6 +69,10 @@ const jwtModule = JwtModule.register({
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: MaintenanceModeGuard,
     },
     {
       provide: APP_GUARD,
@@ -108,6 +113,10 @@ const jwtModule = JwtModule.register({
     {
       provide: APP_GUARD,
       useClass: InstitutionStudentDataAccessGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RequiresUserAccountGuard,
     },
     {
       provide: APP_GUARD,

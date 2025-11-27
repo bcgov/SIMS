@@ -384,6 +384,72 @@ export class ConfigService {
   }
 
   /**
+   * Maintenance mode Configuration.
+   * @returns maintenance mode true if maintenance mode is enabled, otherwise false.
+   */
+  get maintenanceMode(): boolean {
+    return this.getCachedConfig(
+      "maintenanceModeConfig",
+      process.env.MAINTENANCE_MODE === "true",
+    );
+  }
+
+  /**
+   * Maintenance Mode Student Configuration.
+   * @returns maintenance mode student true if maintenance mode is enabled, otherwise false.
+   */
+  get maintenanceModeStudent(): boolean {
+    return this.getCachedConfig(
+      "maintenanceModeStudentConfig",
+      process.env.MAINTENANCE_MODE_STUDENT === "true",
+    );
+  }
+
+  /**
+   * Maintenance Mode Ministry Configuration.
+   * @returns maintenance mode ministry true if maintenance mode is enabled, otherwise false.
+   */
+  get maintenanceModeMinistry(): boolean {
+    return this.getCachedConfig(
+      "maintenanceModeMinistryConfig",
+      process.env.MAINTENANCE_MODE_MINISTRY === "true",
+    );
+  }
+
+  /**
+   * Maintenance Mode Institution Configuration.
+   * @returns maintenance mode institution true if maintenance mode is enabled, otherwise false.
+   */
+  get maintenanceModeInstitution(): boolean {
+    return this.getCachedConfig(
+      "maintenanceModeInstitutionConfig",
+      process.env.MAINTENANCE_MODE_INSTITUTION === "true",
+    );
+  }
+
+  /**
+   * Maintenance Mode Supporting User Configuration.
+   * @returns maintenance mode supporting user true if maintenance mode is enabled, otherwise false.
+   */
+  get maintenanceModeSupportingUser(): boolean {
+    return this.getCachedConfig(
+      "maintenanceModeSupportingUserConfig",
+      process.env.MAINTENANCE_MODE_SUPPORTING_USER === "true",
+    );
+  }
+
+  /**
+   * Maintenance Mode External Configuration.
+   * @returns maintenance mode external true if maintenance mode is enabled, otherwise false.
+   */
+  get maintenanceModeExternal(): boolean {
+    return this.getCachedConfig(
+      "maintenanceModeExternalConfig",
+      process.env.MAINTENANCE_MODE_EXTERNAL === "true",
+    );
+  }
+
+  /**
    * Avoids reading the env configuration every time and creates
    * a property to store the value and keep reading from it.
    * @param key cache key.

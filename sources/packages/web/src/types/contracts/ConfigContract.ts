@@ -27,4 +27,10 @@ export interface AppConfig {
   applicationSubmissionDeadlineWeeks: number;
   appEnv: string;
   queueDashboardURL: string;
+  maintenanceMode: boolean;
+  maintenanceModeStudent: boolean;
+  maintenanceModeInstitution: boolean;
+  maintenanceModeMinistry: boolean;
+  maintenanceModeSupportingUser: boolean;
+  maintenanceModeExternal: boolean;
 }

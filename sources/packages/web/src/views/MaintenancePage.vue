@@ -1,19 +1,22 @@
 <template>
-  <div class="forbidden-page">
+  <div class="maintenance-page">
     <div class="error-card">
       <div class="left">
-        <h2 class="title">Access denied</h2>
-        <p class="heading">You don't have permission to view this page.</p>
+        <h2 class="title">Service temporarily unavailable</h2>
+        <p class="heading">We're performing maintenance.</p>
         <br />
         <p class="description">
-          If you think this is an error, try returning to the home page or
-          contact support.
+          The Student Information Management System is currently unavailable for
+          maintenance. Please try again later.
+        </p>
+        <p class="muted">
+          We apologize for the inconvenience and appreciate your patience.
         </p>
       </div>
-      <div class="right" aria-hidden="false">
+      <div class="right" aria-hidden="true">
         <img
           :src="illustration"
-          alt="An illustration of an astronaut lost in space."
+          alt="An illustration of two people holding an unplugged cord. Illustration by storyset."
         />
       </div>
     </div>
@@ -21,11 +24,11 @@
 </template>
 
 <script setup lang="ts">
-import illustration from "../assets/images/lost-in-space.svg";
+import illustration from "../assets/images/person-unplugged.svg";
 </script>
 
 <style scoped>
-.forbidden-page {
+.maintenance-page {
   min-height: 72vh;
   display: flex;
   align-items: center;
@@ -60,32 +63,22 @@ import illustration from "../assets/images/lost-in-space.svg";
 .title {
   margin: 0 0 8px 0;
   color: #0b5ed7;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 600;
 }
 .heading {
   margin: 0 0 12px 0;
   color: #0f1724;
-  font-size: 1.05rem;
+  font-size: 1.125rem;
   font-weight: 600;
 }
 .description {
-  margin: 0 0 20px 0;
+  margin: 0 0 14px 0;
   color: #475569;
 }
-.back-btn {
-  display: inline-block;
-  background: #1f6feb;
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  align-self: start;
-}
-.back-btn:focus {
-  outline: 3px solid rgba(31, 111, 235, 0.25);
+.muted {
+  margin: 0;
+  color: #6b7280;
 }
 .right img {
   max-width: 360px;
@@ -102,9 +95,6 @@ import illustration from "../assets/images/lost-in-space.svg";
   .left,
   .right {
     padding: 28px;
-  }
-  .back-btn {
-    align-self: center;
   }
   .right img {
     max-width: 260px;

@@ -3,6 +3,7 @@ import { RouteRecordRaw } from "vue-router";
 import PageNotFound from "../views/PageNotFound.vue";
 import ForbiddenUser from "../views/ForbiddenUser.vue";
 import { AppRoutes } from "../types";
+import MaintenancePage from "@/views/MaintenancePage.vue";
 
 export const sharedRoutes: Array<RouteRecordRaw> = [
   {
@@ -14,5 +15,10 @@ export const sharedRoutes: Array<RouteRecordRaw> = [
     path: AppRoutes.ForbiddenUser,
     name: SharedRouteConst.FORBIDDEN_USER,
     component: ForbiddenUser,
+  },
+  {
+    path: AppRoutes.MaintenancePage,
+    name: SharedRouteConst.MAINTENANCE_PAGE,
+    component: MaintenancePage,
   },
 ];
