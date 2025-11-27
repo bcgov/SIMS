@@ -43,7 +43,8 @@ const router = createRouter({
 
 /**
  * Encapsulates maintenance mode checks for a given route and app config.
- * Returns true when the route should be redirected to the maintenance page.
+ * @param to The route to check for maintenance mode.
+ * @returns True if the route should be redirected to the maintenance page, otherwise false.
  */
 async function isMaintenanceActiveForRoute(
   to: RouteLocationNormalized,
