@@ -653,3 +653,26 @@ export const StudentFileUploadsHeaders = [
   { title: "Date Submitted", sortable: false, key: "createdAt" },
   { title: "File", sortable: false, key: "fileName" },
 ];
+
+/**
+ * Designation Requests header.
+ */
+export const DesignationRequestsHeaders = [
+  { title: "Date submitted", sortable: false, key: "submittedDate" },
+  { title: "Start date", sortable: false, key: "startDate" },
+  { title: "Expiry date", sortable: false, key: "endDate" },
+  { title: "Status", sortable: false, key: "designationStatus" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/**
+ * Institutions Restrictions header.
+ */
+export const InstitutionRestrictionsHeaders = [
+  { title: "Category", sortable: true, key: "restrictionCategory" },
+  { title: "Reason", sortable: false, key: "description" },
+  { title: "Added", sortable: false, key: "createdAt" },
+  { title: "Resolved", sortable: false, key: "updatedAt" },
+  { title: "Status", sortable: false, key: "isActive" },
+  { title: "Action", sortable: false, key: "action" },
+];

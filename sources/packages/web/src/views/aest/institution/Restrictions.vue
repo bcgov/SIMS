@@ -20,67 +20,58 @@
         </body-header>
       </template>
       <content-group>
-        <DataTable
-          :value="institutionRestrictions"
-          :paginator="true"
-          :rows="DEFAULT_PAGE_LIMIT"
-          :rowsPerPageOptions="PAGINATION_LIST"
+        <toggle-content
+          :toggled="!institutionRestrictions?.length"
+          message="No records found."
         >
-          <template #empty>
-            <p class="text-center font-weight-bold">No records found.</p>
-          </template>
-          <Column
-            field="restrictionCategory"
-            header="Category"
-            :sortable="true"
-          ></Column>
-          <Column field="description" header="Reason">
-            <template #body="slotProps">{{
-              `${slotProps.data.restrictionCode} - ${slotProps.data.description}`
-            }}</template></Column
+          <v-data-table
+            :headers="InstitutionRestrictionsHeaders"
+            :items="institutionRestrictions"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            :mobile="isMobile"
           >
-          <Column field="createdAt" header="Added"
-            ><template #body="slotProps">{{
-              dateOnlyLongString(slotProps.data.createdAt)
-            }}</template></Column
-          >
-          <Column field="updatedAt" header="Resolved">
-            <template #body="slotProps">{{
-              slotProps.data.isActive
-                ? "-"
-                : dateOnlyLongString(slotProps.data.updatedAt)
-            }}</template></Column
-          >
-          <Column field="isActive" header="Status">
-            <template #body="slotProps">
-              <status-chip-restriction :is-active="slotProps.data.isActive" />
+            <template #loading>
+              <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
             </template>
-          </Column>
-          <Column field="restrictionId" header="">
-            <template #body="slotProps">
+            <template #[`item.restrictionCategory`]="{ item }">
+              {{ item.restrictionCategory }}
+            </template>
+            <template #[`item.description`]="{ item }">
+              {{ `${item.restrictionCode} - ${item.description}` }}
+            </template>
+            <template #[`item.createdAt`]="{ item }">
+              {{ dateOnlyLongString(item.createdAt) }}
+            </template>
+            <template #[`item.updatedAt`]="{ item }">
+              {{ item.isActive ? "-" : dateOnlyLongString(item.updatedAt) }}
+            </template>
+            <template #[`item.isActive`]="{ item }">
+              <status-chip-restriction :is-active="item.isActive" />
+            </template>
+            <template #[`item.action`]="{ item }">
               <v-btn
                 color="primary"
                 variant="outlined"
-                @click="
-                  viewIInstitutionRestriction(slotProps.data.restrictionId)
-                "
-                >View</v-btn
+                @click="viewIInstitutionRestriction(item.restrictionId)"
               >
-            </template></Column
-          >
-        </DataTable>
+                View
+              </v-btn>
+            </template>
+          </v-data-table>
+        </toggle-content>
       </content-group>
       <ViewRestrictionModal
         ref="viewRestriction"
-        :restrictionData="institutionRestriction"
-        @submitResolutionData="resolveRestriction"
-        :allowedRole="Role.InstitutionResolveRestriction"
+        :restriction-data="institutionRestriction"
+        @submit-resolution-data="resolveRestriction"
+        :allowed-role="Role.InstitutionResolveRestriction"
       />
       <AddInstitutionRestrictionModal
         ref="addRestriction"
-        :entityType="RestrictionEntityType.Institution"
-        @submitRestrictionData="createNewRestriction"
-        :allowedRole="Role.InstitutionAddRestriction"
+        :entity-type="RestrictionEntityType.Institution"
+        @submit-restriction-data="createNewRestriction"
+        :allowed-role="Role.InstitutionAddRestriction"
       />
     </body-header-container>
   </tab-container>
@@ -88,6 +79,8 @@
 
 <script lang="ts">
 import { onMounted, ref, defineComponent } from "vue";
+import { useDisplay } from "vuetify";
+
 import { RestrictionService } from "@/services/RestrictionService";
 import ViewRestrictionModal from "@/components/common/restriction/ViewRestriction.vue";
 import AddInstitutionRestrictionModal from "@/components/common/restriction/AddRestriction.vue";
@@ -95,10 +88,11 @@ import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
 import {
   RestrictionStatus,
   DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
+  ITEMS_PER_PAGE,
   RestrictionEntityType,
   LayoutTemplates,
   Role,
+  InstitutionRestrictionsHeaders,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -106,6 +100,7 @@ import {
   AssignRestrictionAPIInDTO,
   ResolveRestrictionAPIInDTO,
   RestrictionDetailAPIOutDTO,
+  RestrictionSummaryAPIOutDTO,
 } from "@/services/http/dto";
 
 export default defineComponent({
@@ -122,13 +117,14 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const institutionRestrictions = ref();
+    const institutionRestrictions = ref([] as RestrictionSummaryAPIOutDTO[]);
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
     const viewRestriction = ref({} as ModalDialog<void>);
     const addRestriction = ref({} as ModalDialog<void>);
     const institutionRestriction = ref();
     const snackBar = useSnackBar();
+    const { mobile: isMobile } = useDisplay();
 
     const loadInstitutionRestrictions = async () => {
       institutionRestrictions.value =
@@ -199,7 +195,7 @@ export default defineComponent({
       institutionRestrictions,
       RestrictionStatus,
       DEFAULT_PAGE_LIMIT,
-      PAGINATION_LIST,
+      ITEMS_PER_PAGE,
       institutionRestriction,
       viewIInstitutionRestriction,
       viewRestriction,
@@ -211,6 +207,8 @@ export default defineComponent({
       RestrictionEntityType,
       LayoutTemplates,
       Role,
+      InstitutionRestrictionsHeaders,
+      isMobile,
     };
   },
 });

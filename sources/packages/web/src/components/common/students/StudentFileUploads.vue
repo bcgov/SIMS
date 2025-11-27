@@ -23,57 +23,10 @@
       </body-header>
     </template>
     <content-group>
-      <toggle-content :toggled="!studentFileUploads.length">
-        <DataTable
-          :value="studentFileUploads"
-          :paginator="true"
-          :total-records="studentFileUploads?.length"
-          :rows="DEFAULT_PAGE_LIMIT"
-          :rows-per-page-options="PAGINATION_LIST"
-        >
-          <Column
-            field="groupName"
-            header="Document Purpose"
-            :sortable="true"
-          ></Column>
-          <Column
-            v-if="canViewUploadedBy"
-            field="uploadedBy"
-            header="Uploaded by"
-          >
-          </Column>
-          <Column field="metadata" header="Application #">
-            <template #body="slotProps">{{
-              emptyStringFiller(slotProps.data.metadata?.applicationNumber)
-            }}</template></Column
-          >
-          <Column field="createdAt" header="Date Submitted"
-            ><template #body="slotProps">{{
-              getISODateHourMinuteString(slotProps.data.createdAt)
-            }}</template></Column
-          >
-          <Column header="File">
-            <template #body="slotProps">
-              <div
-                v-if="canDownloadFiles"
-                class="file-label"
-                @click="fileUtils.downloadStudentDocument(slotProps.data)"
-              >
-                <span class="mr-4">
-                  <v-icon icon="fa:far fa-file-alt" size="20"></v-icon
-                ></span>
-                <span>{{ slotProps.data.fileName }}</span>
-              </div>
-              <div v-else>
-                <span class="mr-4">
-                  <v-icon icon="fa:far fa-file-alt" size="20"></v-icon
-                ></span>
-                <span>{{ slotProps.data.fileName }}</span>
-              </div>
-            </template></Column
-          >
-        </DataTable>
-
+      <toggle-content
+        :toggled="!studentFileUploads.length"
+        message="No records found."
+      >
         <v-data-table
           :headers="StudentFileUploadsHeaders"
           :items="studentFileUploads"
