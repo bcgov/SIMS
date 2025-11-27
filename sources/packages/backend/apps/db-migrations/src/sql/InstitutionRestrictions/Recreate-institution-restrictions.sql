@@ -29,7 +29,7 @@ COMMENT ON TABLE sims.institution_restrictions IS 'Institution-level restriction
 
 COMMENT ON COLUMN sims.institution_restrictions.id IS 'Auto-generated sequential primary key column.';
 
-COMMENT ON COLUMN sims.institution_restrictions.institution_id IS 'Institutions that owns the restriction.';
+COMMENT ON COLUMN sims.institution_restrictions.institution_id IS 'Institution that owns the restriction.';
 
 COMMENT ON COLUMN sims.institution_restrictions.program_id IS 'Specific program the restriction applies to.';
 
@@ -51,9 +51,9 @@ COMMENT ON COLUMN sims.institution_restrictions.created_at IS 'Record creation t
 
 COMMENT ON COLUMN sims.institution_restrictions.updated_at IS 'Record update timestamp.';
 
-COMMENT ON COLUMN sims.institution_restrictions.creator IS 'Creator of the record. Null specified the record is created by system.';
+COMMENT ON COLUMN sims.institution_restrictions.creator IS 'Creator of the record. Null specifies the record is created by system.';
 
-COMMENT ON COLUMN sims.institution_restrictions.modifier IS 'Modifier of the record. Null specified the record is modified by system.';
+COMMENT ON COLUMN sims.institution_restrictions.modifier IS 'Modifier of the record. Null specifies the record is modified by system.';
 
 CREATE UNIQUE INDEX institution_id_location_id_program_id_restriction_id_is_active_unique ON sims.institution_restrictions (
     institution_id,

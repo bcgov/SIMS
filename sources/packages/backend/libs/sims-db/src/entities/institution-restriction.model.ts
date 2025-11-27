@@ -15,7 +15,7 @@ export class InstitutionRestriction extends BaseRestrictionModel {
   id: number;
 
   /**
-   * Institutions that owns the restriction.
+   * Institution that owns the restriction.
    */
   @ManyToOne(() => Institution, { nullable: false })
   @JoinColumn({
