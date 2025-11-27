@@ -8,7 +8,9 @@ import { AuthorizedParties, IUserToken } from "..";
 import { ConfigService } from "@sims/utilities/config";
 
 /**
- * Inspect the configuration and token to check if the system is in maintenance mode for the authorized party.
+ * Guard that prevents access to the API when the system or a specific client portal is in maintenance mode.
+ * Maintenance mode is used during planned system upgrades, emergency fixes, or other periods when access must be restricted to ensure data integrity and user safety.
+ * The guard checks both global maintenance mode and client-type-specific maintenance flags, and when triggered, throws a ServiceUnavailableException to inform users that the system is temporarily unavailable.
  */
 @Injectable()
 export class MaintenanceModeGuard implements CanActivate {
