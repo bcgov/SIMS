@@ -24,13 +24,13 @@ CREATE TABLE sims.institution_restrictions(
 );
 
 -- Comments for table and column.
-COMMENT ON TABLE sims.institution_restrictions IS 'Table that has restriction details for an institution';
+COMMENT ON TABLE sims.institution_restrictions IS 'Table that has restriction details for an institution.';
 
-COMMENT ON COLUMN sims.institution_restrictions.id IS 'Auto-generated sequential primary key column';
+COMMENT ON COLUMN sims.institution_restrictions.id IS 'Auto-generated sequential primary key column.';
 
-COMMENT ON COLUMN sims.institution_restrictions.institution_id IS 'Foreign key reference to institutions table';
+COMMENT ON COLUMN sims.institution_restrictions.institution_id IS 'Foreign key reference to institutions table.';
 
-COMMENT ON COLUMN sims.institution_restrictions.restriction_id IS 'Foreign key reference to restrictions table';
+COMMENT ON COLUMN sims.institution_restrictions.restriction_id IS 'Foreign key reference to restrictions table.';
 
 COMMENT ON COLUMN sims.institution_restrictions.restriction_note_id IS 'Note added during restriction creation.';
 
@@ -42,6 +42,6 @@ COMMENT ON COLUMN sims.institution_restrictions.created_at IS 'Record creation t
 
 COMMENT ON COLUMN sims.institution_restrictions.updated_at IS 'Record update timestamp.';
 
-COMMENT ON COLUMN sims.institution_restrictions.creator IS 'Creator of the record. Null specified the record is created by system';
+COMMENT ON COLUMN sims.institution_restrictions.creator IS 'Creator of the record. Null specified the record is created by system.';
 
-COMMENT ON COLUMN sims.institution_restrictions.modifier IS 'Modifier of the record. Null specified the record is modified by system';
+COMMENT ON COLUMN sims.institution_restrictions.modifier IS 'Modifier of the record. Null specified the record is modified by system.';

@@ -13,6 +13,7 @@ export class InstitutionRestriction extends BaseRestrictionModel {
    */
   @PrimaryGeneratedColumn()
   id: number;
+
   /**
    * Institutions that owns the restriction.
    */
@@ -26,20 +27,20 @@ export class InstitutionRestriction extends BaseRestrictionModel {
   /**
    * Specific program the restriction applies to.
    */
-  @ManyToOne(() => EducationProgram, { nullable: true })
+  @ManyToOne(() => EducationProgram)
   @JoinColumn({
     name: "program_id",
     referencedColumnName: ColumnNames.ID,
   })
-  program?: EducationProgram;
+  program: EducationProgram;
 
   /**
-   * Specific program the restriction applies to.
+   * Specific location the restriction applies to.
    */
-  @ManyToOne(() => InstitutionLocation, { nullable: true })
+  @ManyToOne(() => InstitutionLocation)
   @JoinColumn({
     name: "location_id",
     referencedColumnName: ColumnNames.ID,
   })
-  location?: InstitutionLocation;
+  location: InstitutionLocation;
 }
