@@ -384,8 +384,10 @@ export class ConfigService {
   }
 
   /**
-   * Maintenance mode Configuration.
-   * @returns maintenance mode true if maintenance mode is enabled, otherwise false.
+   * Indicates whether the entire system is in maintenance mode.
+   * When enabled, all user portals are inaccessible and users will be redirected to the maintenance page.
+   * This is typically used during scheduled upgrades or critical maintenance windows to prevent user access.
+   * @returns True if global maintenance mode is enabled, otherwise false.
    */
   get maintenanceMode(): boolean {
     return this.getCachedConfig(
