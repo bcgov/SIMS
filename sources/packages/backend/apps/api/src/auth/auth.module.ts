@@ -118,10 +118,6 @@ const jwtModule = JwtModule.register({
       provide: APP_GUARD,
       useClass: RequiresUserAccountGuard,
     },
-    {
-      provide: APP_GUARD,
-      useClass: RequiresUserAccountGuard,
-    },
   ],
   exports: [jwtModule, KeycloakService],
 })
