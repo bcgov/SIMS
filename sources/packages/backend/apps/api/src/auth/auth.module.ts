@@ -27,6 +27,8 @@ import {
   InstitutionBCPublicGuard,
   InstitutionStudentDataAccessGuard,
   RequiresUserAccountGuard,
+  MaintenanceModeGuard,
+  AuthorizedPartiesGuard,
 } from "./guards";
 import { RolesGuard } from "./guards/roles.guard";
 import { ConfigModule } from "@sims/utilities/config";
@@ -39,8 +41,6 @@ import {
 } from "@sims/services";
 import { KeycloakService } from "@sims/auth/services";
 import { KeycloakConfig } from "@sims/auth/config";
-import { MaintenanceModeGuard } from "apps/api/src/auth/guards/maintenance-mode.guard";
-import { AuthorizedPartiesGuard } from "apps/api/src/auth/guards/authorized-parties.guard";
 
 const jwtModule = JwtModule.register({
   publicKey: KeycloakConfig.PEM_PublicKey,
