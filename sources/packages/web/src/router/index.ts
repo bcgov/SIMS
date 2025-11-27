@@ -82,7 +82,7 @@ async function isMaintenanceActiveForRoute(
 // when vue-router version is upgraded, usage of next must be replaced
 // with returning either true or route location.
 // When tried to return true or route location instead of next with current version of vue-router
-// results in router not working as expected on page refresh.
+// Results in router not working as expected on page refresh.
 router.beforeResolve(async (to, _from, next) => {
   // Use centralized helper to decide if this route should go to maintenance.
   if (await isMaintenanceActiveForRoute(to)) {
