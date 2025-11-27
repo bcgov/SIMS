@@ -419,8 +419,9 @@ export class ConfigService {
   }
 
   /**
-   * Maintenance Mode Institution Configuration.
-   * @returns maintenance mode institution true if maintenance mode is enabled, otherwise false.
+   * Indicates whether maintenance mode is enabled for Institution users.
+   * When enabled, institution users will be unable to access the institution portal.
+   * @returns True if maintenance mode is enabled for institutions, otherwise false.
    */
   get maintenanceModeInstitution(): boolean {
     return this.getCachedConfig(
