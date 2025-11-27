@@ -17,7 +17,7 @@ export class InstitutionRestriction extends BaseRestrictionModel {
   /**
    * Institutions that owns the restriction.
    */
-  @ManyToOne(() => Institution)
+  @ManyToOne(() => Institution, { nullable: false })
   @JoinColumn({
     name: "institution_id",
     referencedColumnName: ColumnNames.ID,
@@ -27,7 +27,7 @@ export class InstitutionRestriction extends BaseRestrictionModel {
   /**
    * Specific program the restriction applies to.
    */
-  @ManyToOne(() => EducationProgram)
+  @ManyToOne(() => EducationProgram, { nullable: false })
   @JoinColumn({
     name: "program_id",
     referencedColumnName: ColumnNames.ID,
@@ -37,7 +37,7 @@ export class InstitutionRestriction extends BaseRestrictionModel {
   /**
    * Specific location the restriction applies to.
    */
-  @ManyToOne(() => InstitutionLocation)
+  @ManyToOne(() => InstitutionLocation, { nullable: false })
   @JoinColumn({
     name: "location_id",
     referencedColumnName: ColumnNames.ID,
