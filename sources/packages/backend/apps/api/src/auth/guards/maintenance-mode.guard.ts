@@ -17,7 +17,7 @@ export class MaintenanceModeGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const { user } = context.switchToHttp().getRequest();
     const userToken = user as IUserToken;
-    const isMaintenanceMode = this.isMaintenanceMode(userToken.azp);
+    const isMaintenanceMode = this.isMaintenanceMode(userToken?.azp);
     if (isMaintenanceMode) {
       throw new ServiceUnavailableException(
         "Service temporarily unavailable for maintenance. Please try again later or contact support if the issue persists.",
