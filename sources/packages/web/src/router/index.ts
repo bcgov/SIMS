@@ -56,7 +56,7 @@ async function isMaintenanceActiveForRoute(
     return false;
   }
 
-  // global maintenance mode check
+  // Global maintenance mode check.
   if (config.maintenanceMode) {
     return true;
   }
@@ -70,9 +70,9 @@ async function isMaintenanceActiveForRoute(
     case ClientIdType.AEST:
       return !!config.maintenanceModeMinistry;
     case ClientIdType.SupportingUsers:
-      return !!(
-        config.maintenanceModeSupportingUser || config.maintenanceModeExternal
-      );
+      return !!config.maintenanceModeSupportingUser;
+    case ClientIdType.External:
+      return !!config.maintenanceModeExternal;
     default:
       return false;
   }

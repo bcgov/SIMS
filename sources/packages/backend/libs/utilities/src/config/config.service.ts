@@ -408,8 +408,9 @@ export class ConfigService {
   }
 
   /**
-   * Maintenance Mode Ministry Configuration.
-   * @returns maintenance mode ministry true if maintenance mode is enabled, otherwise false.
+   * Indicates whether maintenance mode is enabled for Ministry (AEST) users.
+   * When enabled, Ministry users will be unable to access the AEST portal.
+   * @returns True if maintenance mode is enabled for Ministry users, otherwise false.
    */
   get maintenanceModeMinistry(): boolean {
     return this.getCachedConfig(

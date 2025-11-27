@@ -9,7 +9,7 @@
           Try refreshing the page or check the webpage URL for typos.
         </p>
       </div>
-      <div class="right" aria-hidden="false">
+      <div class="right" aria-hidden="true">
         <img :src="illustration" alt="An illustration of a 404 error." />
       </div>
     </div>

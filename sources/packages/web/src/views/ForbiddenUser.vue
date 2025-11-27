@@ -9,7 +9,7 @@
           contact support.
         </p>
       </div>
-      <div class="right" aria-hidden="false">
+      <div class="right" aria-hidden="true">
         <img
           :src="illustration"
           alt="An illustration of an astronaut lost in space."
