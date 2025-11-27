@@ -25,7 +25,7 @@ describe("ConfigController(e2e)-getConfig", () => {
     APPLICATION_SUBMISSION_DEADLINE_WEEKS: "4",
     APP_ENV: "production",
     QUEUE_DASHBOARD_BASE_URL: "http://some-absolute-url",
-    MAINTENANCE_MODE: "true",
+    MAINTENANCE_MODE: "false",
     MAINTENANCE_MODE_STUDENT: "false",
     MAINTENANCE_MODE_INSTITUTION: "false",
     MAINTENANCE_MODE_MINISTRY: "false",
@@ -80,17 +80,17 @@ describe("ConfigController(e2e)-getConfig", () => {
           +fakeEnvVariables.APPLICATION_SUBMISSION_DEADLINE_WEEKS,
         appEnv: fakeEnvVariables.APP_ENV,
         queueDashboardURL: `${fakeEnvVariables.QUEUE_DASHBOARD_BASE_URL}/admin/queues`,
-        maintenanceMode: fakeEnvVariables.MAINTENANCE_MODE === "false",
+        maintenanceMode: fakeEnvVariables.MAINTENANCE_MODE === "true",
         maintenanceModeStudent:
-          fakeEnvVariables.MAINTENANCE_MODE_STUDENT === "false",
+          fakeEnvVariables.MAINTENANCE_MODE_STUDENT === "true",
         maintenanceModeInstitution:
-          fakeEnvVariables.MAINTENANCE_MODE_INSTITUTION === "false",
+          fakeEnvVariables.MAINTENANCE_MODE_INSTITUTION === "true",
         maintenanceModeMinistry:
-          fakeEnvVariables.MAINTENANCE_MODE_MINISTRY === "false",
+          fakeEnvVariables.MAINTENANCE_MODE_MINISTRY === "true",
         maintenanceModeSupportingUser:
-          fakeEnvVariables.MAINTENANCE_MODE_SUPPORTING_USER === "false",
+          fakeEnvVariables.MAINTENANCE_MODE_SUPPORTING_USER === "true",
         maintenanceModeExternal:
-          fakeEnvVariables.MAINTENANCE_MODE_EXTERNAL === "false",
+          fakeEnvVariables.MAINTENANCE_MODE_EXTERNAL === "true",
       });
   });
 
