@@ -29,7 +29,7 @@ COMMENT ON TABLE sims.institution_restrictions IS 'Institution-level restriction
 
 COMMENT ON COLUMN sims.institution_restrictions.id IS 'Auto-generated sequential primary key column.';
 
-COMMENT ON COLUMN sims.institution_restrictions.institution_id IS 'Institution that owns the restriction.';
+COMMENT ON COLUMN sims.institution_restrictions.institution_id IS 'Institution that the restriction applies to.';
 
 COMMENT ON COLUMN sims.institution_restrictions.program_id IS 'Specific program the restriction applies to.';
 
