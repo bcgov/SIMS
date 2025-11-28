@@ -3,7 +3,10 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { KeycloakConfig } from "@sims/auth/config";
 import { createE2EDataSources, E2EDataSources } from "@sims/test-utils";
-import { createZeebeModuleMock } from "@sims/test-utils/mocks";
+import {
+  createZeebeModuleMock,
+  ConfigServiceMockHelper,
+} from "@sims/test-utils/mocks";
 import { AppModule } from "../../../app.module";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { DataSource } from "typeorm";
@@ -19,7 +22,6 @@ import {
 } from "../../../testHelpers";
 import { AuthTestController } from "../../../testHelpers/controllers/auth-test/auth-test.controller";
 import { InstitutionUserTypes } from "@sims/sims-db";
-import { ConfigServiceMockHelper } from "@sims/test-utils/mocks";
 
 describe("MaintenanceModeGuard (e2e)", () => {
   // Nest application to be shared for all e2e tests
@@ -32,7 +34,7 @@ describe("MaintenanceModeGuard (e2e)", () => {
   let db: E2EDataSources;
   let configServiceMockHelper: ConfigServiceMockHelper;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     await KeycloakConfig.load();
     moduleFixture = await Test.createTestingModule({
       imports: [AppModule, createZeebeModuleMock(), DiscoveryModule],

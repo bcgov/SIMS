@@ -7,7 +7,7 @@ import {
 import { Reflector } from "@nestjs/core";
 import { AuthorizedParties, IUserToken } from "..";
 import { ConfigService } from "@sims/utilities/config";
-import { ALLOW_DURING_MAINTENANCE_MODE_KEY } from "../decorators/allow-during-maintenance-mode.decorator";
+import { ALLOW_DURING_MAINTENANCE_MODE_KEY } from "../decorators";
 
 /**
  * Guard that prevents access to the API when the system or a specific client portal is in maintenance mode.

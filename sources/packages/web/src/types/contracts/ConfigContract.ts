@@ -5,6 +5,7 @@ export enum ClientIdType {
   Institution = "institution",
   AEST = "aest",
   SupportingUsers = "supportingUsers",
+  External = "external",
 }
 
 export enum ClientTypeBaseRoute {
