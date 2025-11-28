@@ -47,7 +47,7 @@ export class MaintenanceModeGuard implements CanActivate {
 
   /**
    * Determines if maintenance mode is enabled for the specified authorized party.
-   * Checks global first, then client-type-specific flags.
+   * Checks global maintenance mode first, then client-type-specific maintenance flags.
    * @param authorizedParty authorized party type to be checked.
    * @returns True if maintenance mode is enabled, otherwise false.
    */

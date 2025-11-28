@@ -33,9 +33,15 @@ export class ConfigServiceMockHelper {
   }
 
   /**
-   * Mock the maintenanceMode config value to allow changing the behavior
-   * of the maintenance mode between tests.
-   * @param value true to enable maintenance mode.
+   * Mocks the maintenance mode configuration values to control maintenance mode behavior during tests.
+   * Each property in the parameter allows setting global or portal-specific maintenance modes independently.
+   * @param value An object containing maintenance mode flags to override.
+   * - `maintenanceMode`: If true, enables global maintenance mode for all portals. If false, disables it.
+   * - `maintenanceModeStudent`: If true, enables maintenance mode for the Student portal only. If false, disables it.
+   * - `maintenanceModeInstitution`: If true, enables maintenance mode for the Institution portal only. If false, disables it.
+   * - `maintenanceModeMinistry`: If true, enables maintenance mode for the Ministry portal only. If false, disables it.
+   * - `maintenanceModeSupportingUser`: If true, enables maintenance mode for the Supporting User portal only. If false, disables it.
+   * - `maintenanceModeExternal`: If true, enables maintenance mode for the External portal only. If false, disables it.
    */
   setMaintenanceMode(value: {
     maintenanceMode?: boolean;

@@ -45,12 +45,21 @@ export class ConfigController extends BaseController {
         this.configService.applicationSubmissionDeadlineWeeks,
       appEnv: this.configService.appEnv,
       queueDashboardURL: `${process.env.QUEUE_DASHBOARD_BASE_URL}/${BULL_BOARD_ROUTE}`,
+      ...this.getMaintenanceModeConfig(),
+    };
+  }
+
+  /**
+   * Returns an object containing all maintenance mode properties.
+   * @returns maintenance mode configuration properties.
+   */
+  private getMaintenanceModeConfig() {
+    return {
       maintenanceMode: this.configService.maintenanceMode,
       maintenanceModeStudent: this.configService.maintenanceModeStudent,
       maintenanceModeInstitution: this.configService.maintenanceModeInstitution,
       maintenanceModeMinistry: this.configService.maintenanceModeMinistry,
-      maintenanceModeSupportingUser:
-        this.configService.maintenanceModeSupportingUser,
+      maintenanceModeSupportingUser: this.configService.maintenanceModeSupportingUser,
       maintenanceModeExternal: this.configService.maintenanceModeExternal,
     };
   }
