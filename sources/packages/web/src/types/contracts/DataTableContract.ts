@@ -676,3 +676,14 @@ export const InstitutionRestrictionsHeaders = [
   { title: "Status", sortable: false, key: "isActive" },
   { title: "Action", sortable: false, key: "action" },
 ];
+
+/** Offerings Upload header. */
+export const OfferingsUploadHeaders = [
+  { title: "Line", sortable: false, key: "recordLineNumber" },
+  { title: "Location", sortable: false, key: "locationCode" },
+  { title: "Program code", sortable: false, key: "sabcProgramCode" },
+  { title: "Start date", sortable: false, key: "startDateFormatted" },
+  { title: "End date", sortable: false, key: "endDateFormatted" },
+  { title: "Status", sortable: false, key: "offeringStatus" },
+  { title: "Validations", sortable: false, key: "validations" },
+];
