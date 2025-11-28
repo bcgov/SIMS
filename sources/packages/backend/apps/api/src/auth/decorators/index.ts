@@ -11,3 +11,4 @@ export * from "./groups.decorator";
 export * from "./student/check-sin-status.decorator";
 export * from "./student/requires-student-account.decorator";
 export * from "./common.decorator";
+export * from "./allow-during-maintenance-mode.decorator";
