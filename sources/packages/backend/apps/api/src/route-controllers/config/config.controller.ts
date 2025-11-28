@@ -5,7 +5,9 @@ import { ConfigService } from "@sims/utilities/config";
 import BaseController from "../BaseController";
 import { ConfigAPIOutDTO } from "./models/config.dto";
 import { BULL_BOARD_ROUTE } from "@sims/services/constants";
+import { AllowDuringMaintenanceMode } from "apps/api/src/auth/decorators/allow-during-maintenance-mode";
 
+@AllowDuringMaintenanceMode()
 @Controller("config")
 @ApiTags("config")
 export class ConfigController extends BaseController {
