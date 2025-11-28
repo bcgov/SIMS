@@ -15,7 +15,7 @@ CREATE TABLE sims.institution_restrictions(
     restriction_id INT NOT NULL REFERENCES sims.restrictions(id),
     restriction_note_id INT NOT NULL REFERENCES sims.notes(id),
     resolution_note_id INT REFERENCES sims.notes(id),
-    resolved_at TIMESTAMP WITH TIME ZONE NULL,
+    resolved_at TIMESTAMP WITH TIME ZONE,
     resolved_by INT REFERENCES sims.users(id),
     is_active BOOLEAN NOT NULL,
     -- Audit columns
