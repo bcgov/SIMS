@@ -1,5 +1,4 @@
 import {
-  Column,
   DeleteDateColumn,
   Entity,
   JoinColumn,
@@ -57,26 +56,6 @@ export class StudentRestriction extends BaseRestrictionModel {
     },
   )
   applicationRestrictionBypasses?: ApplicationRestrictionBypass[];
-
-  /**
-   * Date when the restriction was resolved.
-   */
-  @Column({
-    name: "resolved_at",
-    type: "timestamptz",
-    nullable: true,
-  })
-  resolvedAt?: Date;
-
-  /**
-   * User who resolved the restriction.
-   */
-  @ManyToOne(() => User, { nullable: true })
-  @JoinColumn({
-    name: "resolved_by",
-    referencedColumnName: ColumnNames.ID,
-  })
-  resolvedBy?: User;
 
   /**
    * Note added during restriction deletion.
