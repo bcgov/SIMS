@@ -83,7 +83,10 @@ export default defineComponent({
       }
       appealRequestsForms.value = props.appealForms.map((formName) => ({
         formName,
-        data: { programYear: application?.programYear },
+        data: {
+          programYear: application?.programYear,
+          parents: application?.supportingUserParents,
+        },
         files: [],
       }));
     });
