@@ -2,9 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { KeycloakConfig } from "@sims/auth/config";
-import { KeycloakService } from "@sims/auth/services";
 import { createE2EDataSources, E2EDataSources } from "@sims/test-utils";
-import { UserPasswordCredential } from "@sims/utilities/config";
 import { createZeebeModuleMock } from "@sims/test-utils/mocks";
 import { AppModule } from "../../../app.module";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
@@ -21,33 +19,21 @@ import {
 } from "../../../testHelpers";
 import { AuthTestController } from "../../../testHelpers/controllers/auth-test/auth-test.controller";
 import { InstitutionUserTypes } from "@sims/sims-db";
+import { ConfigServiceMockHelper } from "@sims/test-utils/mocks";
 
 describe("MaintenanceModeGuard (e2e)", () => {
-  const originalEnv = process.env;
   // Nest application to be shared for all e2e tests
   // that need execute a HTTP request.
   let app: INestApplication;
-  // Token to be used for student e2e tests that need test
-  // the authentication endpoints.
-  // This token is retrieved from KeyCloak.
-  let studentAccessToken: string;
   // Token to be used for AEST e2e tests that need test
   // the authentication endpoints.
   // This token is retrieved from KeyCloak.
   let moduleFixture: TestingModule;
   let db: E2EDataSources;
+  let configServiceMockHelper: ConfigServiceMockHelper;
 
   beforeEach(async () => {
     await KeycloakConfig.load();
-    const userPasswordCredentialStudent: UserPasswordCredential = {
-      userName: process.env.E2E_TEST_STUDENT_USERNAME,
-      password: process.env.E2E_TEST_STUDENT_PASSWORD,
-    };
-    const studentToken = await KeycloakService.shared.getToken("student", {
-      userPasswordCredential: userPasswordCredentialStudent,
-    });
-    studentAccessToken = studentToken.access_token;
-
     moduleFixture = await Test.createTestingModule({
       imports: [AppModule, createZeebeModuleMock(), DiscoveryModule],
       // AuthTestController is used only for e2e tests and could be
@@ -55,30 +41,28 @@ describe("MaintenanceModeGuard (e2e)", () => {
       controllers: [AuthTestController],
     }).compile();
     app = moduleFixture.createNestApplication();
-    await app.init();
+    app.init();
     const dataSource = moduleFixture.get(DataSource);
     db = createE2EDataSources(dataSource);
-  });
-
-  afterEach(() => {
-    process.env = originalEnv;
-    app.close();
+    configServiceMockHelper = new ConfigServiceMockHelper(app);
   });
 
   describe("AllowDuringMaintenanceMode decorator", () => {
     it("Should allow @AllowDuringMaintenanceMode route when global maintenance is ON", async () => {
-      process.env.MAINTENANCE_MODE = "true";
+      configServiceMockHelper.setMaintenanceMode({ maintenanceMode: true });
       await request(app.getHttpServer()).get("/config").expect(HttpStatus.OK);
       await app.close();
     });
 
     it("Should allow @Public route when all maintenance flags are ON", async () => {
-      process.env.MAINTENANCE_MODE = "false";
-      process.env.MAINTENANCE_MODE_STUDENT = "true";
-      process.env.MAINTENANCE_MODE_INSTITUTION = "true";
-      process.env.MAINTENANCE_MODE_MINISTRY = "true";
-      process.env.MAINTENANCE_MODE_SUPPORTING_USER = "true";
-      process.env.MAINTENANCE_MODE_EXTERNAL = "true";
+      configServiceMockHelper.setMaintenanceMode({
+        maintenanceMode: false,
+        maintenanceModeStudent: true,
+        maintenanceModeInstitution: true,
+        maintenanceModeMinistry: true,
+        maintenanceModeSupportingUser: true,
+        maintenanceModeExternal: true,
+      });
       await request(app.getHttpServer())
         .get("/auth-test/public-route")
         .expect(HttpStatus.OK);
@@ -88,7 +72,9 @@ describe("MaintenanceModeGuard (e2e)", () => {
 
   describe("Student maintenance mode", () => {
     it("Should block Student when MAINTENANCE_MODE_STUDENT is ON", async () => {
-      process.env.MAINTENANCE_MODE_STUDENT = "true";
+      configServiceMockHelper.setMaintenanceMode({
+        maintenanceModeStudent: true,
+      });
       const studentToken = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
@@ -106,10 +92,16 @@ describe("MaintenanceModeGuard (e2e)", () => {
     });
 
     it("Should allow Student when MAINTENANCE_MODE_STUDENT is OFF", async () => {
-      process.env.MAINTENANCE_MODE_STUDENT = "false";
+      configServiceMockHelper.setMaintenanceMode({
+        maintenanceModeStudent: false,
+      });
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
       await request(app.getHttpServer())
         .get("/auth-test/user-not-required-route")
-        .auth(studentAccessToken, BEARER_AUTH_TYPE)
+        .auth(studentToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK);
       await app.close();
     });
@@ -117,7 +109,9 @@ describe("MaintenanceModeGuard (e2e)", () => {
 
   describe("Institution maintenance mode", () => {
     it("Should block Institution when MAINTENANCE_MODE_INSTITUTION is ON", async () => {
-      process.env.MAINTENANCE_MODE_INSTITUTION = "true";
+      configServiceMockHelper.setMaintenanceMode({
+        maintenanceModeInstitution: true,
+      });
       const institutionToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeCUser,
       );
@@ -142,7 +136,9 @@ describe("MaintenanceModeGuard (e2e)", () => {
     });
 
     it("Should allow Institution when MAINTENANCE_MODE_INSTITUTION is OFF", async () => {
-      process.env.MAINTENANCE_MODE_INSTITUTION = "false";
+      configServiceMockHelper.setMaintenanceMode({
+        maintenanceModeInstitution: false,
+      });
       const institutionToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeCUser,
       );
@@ -156,7 +152,9 @@ describe("MaintenanceModeGuard (e2e)", () => {
 
   describe("AEST (Ministry) maintenance mode", () => {
     it("Should block AEST when MAINTENANCE_MODE_MINISTRY is ON", async () => {
-      process.env.MAINTENANCE_MODE_MINISTRY = "true";
+      configServiceMockHelper.setMaintenanceMode({
+        maintenanceModeMinistry: true,
+      });
       const aestToken = await getAESTToken();
       await request(app.getHttpServer())
         .get("/auth-test/user-not-required-route")
@@ -172,7 +170,9 @@ describe("MaintenanceModeGuard (e2e)", () => {
     });
 
     it("Should allow AEST when MAINTENANCE_MODE_MINISTRY is OFF", async () => {
-      process.env.MAINTENANCE_MODE_MINISTRY = "false";
+      configServiceMockHelper.setMaintenanceMode({
+        maintenanceModeMinistry: false,
+      });
       const aestToken = await getAESTToken();
       await request(app.getHttpServer())
         .get("/auth-test/user-not-required-route")
@@ -184,7 +184,9 @@ describe("MaintenanceModeGuard (e2e)", () => {
 
   describe("External maintenance mode", () => {
     it("Should block External when MAINTENANCE_MODE_EXTERNAL is ON", async () => {
-      process.env.MAINTENANCE_MODE_EXTERNAL = "true";
+      configServiceMockHelper.setMaintenanceMode({
+        maintenanceModeExternal: true,
+      });
       const externalToken = await getExternalUserToken();
       await request(app.getHttpServer())
         .get("/auth-test/user-not-required-route")
@@ -200,7 +202,9 @@ describe("MaintenanceModeGuard (e2e)", () => {
     });
 
     it("Should allow External when MAINTENANCE_MODE_EXTERNAL is OFF", async () => {
-      process.env.MAINTENANCE_MODE_EXTERNAL = "false";
+      configServiceMockHelper.setMaintenanceMode({
+        maintenanceModeExternal: false,
+      });
       const externalToken = await getExternalUserToken();
       await request(app.getHttpServer())
         .get("/auth-test/user-not-required-route")
@@ -212,7 +216,7 @@ describe("MaintenanceModeGuard (e2e)", () => {
 
   describe("Global maintenance mode", () => {
     it("Should block all authenticated parties when MAINTENANCE_MODE (global) is ON", async () => {
-      process.env.MAINTENANCE_MODE = "true";
+      configServiceMockHelper.setMaintenanceMode({ maintenanceMode: true });
       const studentToken = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
@@ -224,7 +228,7 @@ describe("MaintenanceModeGuard (e2e)", () => {
     });
 
     it("Should allow all parties when MAINTENANCE_MODE (global) is OFF", async () => {
-      process.env.MAINTENANCE_MODE = "false";
+      configServiceMockHelper.setMaintenanceMode({ maintenanceMode: false });
       const studentToken = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
@@ -238,8 +242,10 @@ describe("MaintenanceModeGuard (e2e)", () => {
 
   describe("Mixed scenarios", () => {
     it("Should block Student when global maintenance is OFF but MAINTENANCE_MODE_STUDENT is ON", async () => {
-      process.env.MAINTENANCE_MODE = "false";
-      process.env.MAINTENANCE_MODE_STUDENT = "true";
+      configServiceMockHelper.setMaintenanceMode({
+        maintenanceMode: false,
+        maintenanceModeStudent: true,
+      });
       const studentToken = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
@@ -251,8 +257,10 @@ describe("MaintenanceModeGuard (e2e)", () => {
     });
 
     it("Should allow Institution when only MAINTENANCE_MODE_STUDENT is ON", async () => {
-      process.env.MAINTENANCE_MODE_STUDENT = "true";
-      process.env.MAINTENANCE_MODE_INSTITUTION = "false";
+      configServiceMockHelper.setMaintenanceMode({
+        maintenanceModeStudent: true,
+        maintenanceModeInstitution: false,
+      });
       const institutionToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeCUser,
       );
