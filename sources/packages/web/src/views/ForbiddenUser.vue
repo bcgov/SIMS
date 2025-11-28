@@ -2,7 +2,7 @@
   <v-card max-width="730" elevation="2" class="mx-auto mt-15 p-3">
     <v-card-text>
       <v-row align="center">
-        <v-col cols="12" md="9" order="1" class="text-center text-md-left">
+        <v-col cols="12" md="8" order="1" class="text-center text-md-left">
           <h1 class="category-header-large primary-color">Access denied</h1>
           <p class="mb-5">You don't have permission to view this page.</p>
           <p>
@@ -12,7 +12,7 @@
         </v-col>
         <v-col
           cols="12"
-          md="3"
+          md="4"
           order="2"
           class="d-flex justify-center align-center"
         >

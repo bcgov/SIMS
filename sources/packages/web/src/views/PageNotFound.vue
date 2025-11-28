@@ -2,14 +2,14 @@
   <v-card elevation="2" class="mx-auto mt-15 p-3">
     <v-card-text>
       <v-row align="center">
-        <v-col cols="12" md="9" order="1" class="text-center text-md-left">
+        <v-col cols="12" md="8" order="1" class="text-center text-md-left">
           <h1 class="category-header-large primary-color">Error 404</h1>
           <p class="mb-5">We couldn't find the webpage</p>
           <p>Try refreshing the page or check the webpage URL for typos.</p>
         </v-col>
         <v-col
           cols="12"
-          md="3"
+          md="4"
           order="2"
           class="d-flex justify-center align-center"
         >
