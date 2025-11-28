@@ -49,6 +49,10 @@ describe("MaintenanceModeGuard (e2e)", () => {
     configServiceMockHelper = new ConfigServiceMockHelper(app);
   });
 
+  afterAll(async () => {
+    await app.close();
+  });
+
   describe("AllowDuringMaintenanceMode decorator", () => {
     it("Should allow @AllowDuringMaintenanceMode route when global maintenance is ON", async () => {
       configServiceMockHelper.setMaintenanceMode({ maintenanceMode: true });
