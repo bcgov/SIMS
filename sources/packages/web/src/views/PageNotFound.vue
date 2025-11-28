@@ -4,7 +4,7 @@
       <v-row align="center">
         <v-col cols="12" md="8" order="1" class="text-center text-md-left">
           <h1 class="category-header-large primary-color">Error 404</h1>
-          <p class="mb-5">We couldn't find the webpage</p>
+          <p class="mb-5">We couldn't find the webpage.</p>
           <p>Try refreshing the page or check the webpage URL for typos.</p>
         </v-col>
         <v-col
