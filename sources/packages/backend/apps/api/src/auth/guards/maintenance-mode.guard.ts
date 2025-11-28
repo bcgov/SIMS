@@ -4,8 +4,10 @@ import {
   ExecutionContext,
   ServiceUnavailableException,
 } from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
 import { AuthorizedParties, IUserToken } from "..";
 import { ConfigService } from "@sims/utilities/config";
+import { ALLOW_DURING_MAINTENANCE_MODE_KEY } from "apps/api/src/auth/decorators/allow-during-maintenance-mode";
 
 /**
  * Guard that prevents access to the API when the system or a specific client portal is in maintenance mode.
@@ -14,13 +16,27 @@ import { ConfigService } from "@sims/utilities/config";
  */
 @Injectable()
 export class MaintenanceModeGuard implements CanActivate {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly reflector: Reflector,
+  ) {}
 
   canActivate(context: ExecutionContext): boolean {
+    const allowDuringMaintenanceMode =
+      this.reflector.getAllAndOverride<boolean>(
+        ALLOW_DURING_MAINTENANCE_MODE_KEY,
+        [context.getHandler(), context.getClass()],
+      );
+
+    // If the route has the allowed during maintenance mode decorator, bypass the guard.
+    if (allowDuringMaintenanceMode) {
+      return true;
+    }
+
+    // Get authorized party from the user token to determine maintenance mode status.
     const { user } = context.switchToHttp().getRequest();
     const userToken = user as IUserToken;
-    const isMaintenanceMode = this.isMaintenanceMode(userToken?.azp);
-    if (isMaintenanceMode) {
+    if (this.isMaintenanceModeEnabled(userToken?.azp)) {
       throw new ServiceUnavailableException(
         "Service temporarily unavailable for maintenance. Please try again later or contact support if the issue persists.",
       );
@@ -31,27 +47,28 @@ export class MaintenanceModeGuard implements CanActivate {
 
   /**
    * Determines if maintenance mode is enabled for the specified authorized party.
-   * @param authorizedParty Authorized party type to be checked.
-   * @returns True if maintenance mode is enabled for the authorized party, otherwise false.
+   * Checks global first, then client-type-specific flags.
+   * @param authorizedParty authorized party type to be checked.
+   * @returns True if maintenance mode is enabled, otherwise false.
    */
-  private isMaintenanceMode(authorizedParty: AuthorizedParties): boolean {
-    // global maintenance mode
-    if (this.configService.maintenanceMode) {
-      return true;
-    }
-    switch (authorizedParty) {
-      case AuthorizedParties.student:
-        return this.configService.maintenanceModeStudent;
-      case AuthorizedParties.supportingUsers:
-        return this.configService.maintenanceModeSupportingUser;
-      case AuthorizedParties.institution:
-        return this.configService.maintenanceModeInstitution;
-      case AuthorizedParties.aest:
-        return this.configService.maintenanceModeMinistry;
-      case AuthorizedParties.external:
-        return this.configService.maintenanceModeExternal;
-      default:
-        return false;
-    }
+  private isMaintenanceModeEnabled(
+    authorizedParty?: AuthorizedParties,
+  ): boolean {
+    // Check global maintenance mode first.
+    if (this.configService.maintenanceMode) return true;
+    // If no authorized party is provided, maintenance mode cannot be determined.
+    if (!authorizedParty) return false;
+
+    const partyFlags: Record<AuthorizedParties, boolean> = {
+      [AuthorizedParties.student]: this.configService.maintenanceModeStudent,
+      [AuthorizedParties.supportingUsers]:
+        this.configService.maintenanceModeSupportingUser,
+      [AuthorizedParties.institution]:
+        this.configService.maintenanceModeInstitution,
+      [AuthorizedParties.aest]: this.configService.maintenanceModeMinistry,
+      [AuthorizedParties.external]: this.configService.maintenanceModeExternal,
+    };
+
+    return partyFlags[authorizedParty] ?? false;
   }
 }
