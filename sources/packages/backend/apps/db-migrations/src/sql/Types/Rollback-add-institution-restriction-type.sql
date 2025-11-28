@@ -1,6 +1,6 @@
--- Postgres allows adding new types to an enum but it causes issues when the new types added are
--- used in another query in the same transaction, hence the team decision was to recreate the enums
--- types when a new item must be added following the same approach already used for rollbacks.
+-- Postgres does not allow the removal of items of an enum, only add or rename.
+-- To remove the previously added items, a temporary enum will be created to
+-- allow the creation of the enum as it was before.
 CREATE TYPE sims.restriction_types_to_be_updated AS ENUM ('Provincial', 'Federal');
 
 -- Update the dependent column to start using the new enum with the expected values.
