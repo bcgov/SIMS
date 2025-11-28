@@ -687,3 +687,13 @@ export const OfferingsUploadHeaders = [
   { title: "Status", sortable: false, key: "offeringStatus" },
   { title: "Validations", sortable: false, key: "validations" },
 ];
+
+/**
+ * Pendings Designations header.
+ */
+export const PendingDesignationsHeaders = [
+  { title: "Institution Name", sortable: false, key: "legalOperatingName" },
+  { title: "Submitted on", sortable: false, key: "submittedDate" },
+  { title: "Status", sortable: false, key: "designationStatus" },
+  { title: "Action", sortable: false, key: "designationId" },
+];
