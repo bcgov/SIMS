@@ -16,13 +16,13 @@ CREATE TABLE sims.institution_restrictions(
     restriction_note_id INT NOT NULL REFERENCES sims.notes(id),
     resolution_note_id INT REFERENCES sims.notes(id),
     resolved_at TIMESTAMP WITH TIME ZONE NULL,
-    resolved_by INT NULL DEFAULT NULL REFERENCES sims.users(id),
+    resolved_by INT REFERENCES sims.users(id),
     is_active BOOLEAN NOT NULL,
     -- Audit columns
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     creator INT NOT NULL REFERENCES sims.users(id),
-    modifier INT NULL DEFAULT NULL REFERENCES sims.users(id)
+    modifier INT REFERENCES sims.users(id)
 );
 
 COMMENT ON TABLE sims.institution_restrictions IS 'Institution-level restrictions.';
