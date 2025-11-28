@@ -53,7 +53,6 @@ describe("MaintenanceModeGuard (e2e)", () => {
     it("Should allow @AllowDuringMaintenanceMode route when global maintenance is ON", async () => {
       configServiceMockHelper.setMaintenanceMode({ maintenanceMode: true });
       await request(app.getHttpServer()).get("/config").expect(HttpStatus.OK);
-      await app.close();
     });
 
     it("Should allow @Public route when all maintenance flags are ON", async () => {
@@ -68,7 +67,6 @@ describe("MaintenanceModeGuard (e2e)", () => {
       await request(app.getHttpServer())
         .get("/auth-test/public-route")
         .expect(HttpStatus.OK);
-      await app.close();
     });
   });
 
@@ -90,7 +88,6 @@ describe("MaintenanceModeGuard (e2e)", () => {
             "Service temporarily unavailable for maintenance. Please try again later or contact support if the issue persists.",
           error: "Service Unavailable",
         });
-      await app.close();
     });
 
     it("Should allow Student when MAINTENANCE_MODE_STUDENT is OFF", async () => {
@@ -105,7 +102,6 @@ describe("MaintenanceModeGuard (e2e)", () => {
         .get("/auth-test/user-not-required-route")
         .auth(studentToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK);
-      await app.close();
     });
   });
 
@@ -134,7 +130,6 @@ describe("MaintenanceModeGuard (e2e)", () => {
             "Service temporarily unavailable for maintenance. Please try again later or contact support if the issue persists.",
           error: "Service Unavailable",
         });
-      await app.close();
     });
 
     it("Should allow Institution when MAINTENANCE_MODE_INSTITUTION is OFF", async () => {
@@ -148,7 +143,6 @@ describe("MaintenanceModeGuard (e2e)", () => {
         .get("/auth-test/user-not-required-route")
         .auth(institutionToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK);
-      await app.close();
     });
   });
 
@@ -168,7 +162,6 @@ describe("MaintenanceModeGuard (e2e)", () => {
             "Service temporarily unavailable for maintenance. Please try again later or contact support if the issue persists.",
           error: "Service Unavailable",
         });
-      await app.close();
     });
 
     it("Should allow AEST when MAINTENANCE_MODE_MINISTRY is OFF", async () => {
@@ -180,7 +173,6 @@ describe("MaintenanceModeGuard (e2e)", () => {
         .get("/auth-test/user-not-required-route")
         .auth(aestToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK);
-      await app.close();
     });
   });
 
@@ -200,7 +192,6 @@ describe("MaintenanceModeGuard (e2e)", () => {
             "Service temporarily unavailable for maintenance. Please try again later or contact support if the issue persists.",
           error: "Service Unavailable",
         });
-      await app.close();
     });
 
     it("Should allow External when MAINTENANCE_MODE_EXTERNAL is OFF", async () => {
@@ -212,7 +203,6 @@ describe("MaintenanceModeGuard (e2e)", () => {
         .get("/auth-test/user-not-required-route")
         .auth(externalToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK);
-      await app.close();
     });
   });
 
@@ -226,7 +216,6 @@ describe("MaintenanceModeGuard (e2e)", () => {
         .get("/auth-test/user-not-required-route")
         .auth(studentToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.SERVICE_UNAVAILABLE);
-      await app.close();
     });
 
     it("Should allow all parties when MAINTENANCE_MODE (global) is OFF", async () => {
@@ -238,7 +227,6 @@ describe("MaintenanceModeGuard (e2e)", () => {
         .get("/auth-test/user-not-required-route")
         .auth(studentToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK);
-      await app.close();
     });
   });
 
@@ -255,7 +243,6 @@ describe("MaintenanceModeGuard (e2e)", () => {
         .get("/auth-test/user-not-required-route")
         .auth(studentToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.SERVICE_UNAVAILABLE);
-      await app.close();
     });
 
     it("Should allow Institution when only MAINTENANCE_MODE_STUDENT is ON", async () => {
@@ -270,7 +257,6 @@ describe("MaintenanceModeGuard (e2e)", () => {
         .get("/auth-test/user-not-required-route")
         .auth(institutionToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK);
-      await app.close();
     });
   });
 });
