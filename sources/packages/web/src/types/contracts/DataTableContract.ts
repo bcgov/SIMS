@@ -577,6 +577,7 @@ export const OverawardDeductionsHeaders = [
   { title: "Date Added", sortable: false, key: "dateAdded" },
   { title: "Application #", sortable: false, key: "applicationNumber" },
   { title: "Origin", sortable: false, key: "overawardOrigin" },
+  { title: "Added By", sortable: false, key: "addedByUser" },
   { title: "Award", sortable: false, key: "awardValueCode" },
   { title: "Overaward Amount", sortable: false, key: "overawardValue" },
 ];
@@ -689,7 +690,7 @@ export const OfferingsUploadHeaders = [
 ];
 
 /**
- * Pendings Designations header.
+ * Pending Designations header.
  */
 export const PendingDesignationsHeaders = [
   { title: "Institution Name", sortable: false, key: "legalOperatingName" },

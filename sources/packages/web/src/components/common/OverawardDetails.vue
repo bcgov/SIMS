@@ -72,7 +72,7 @@
         message="No overaward deductions found."
       >
         <v-data-table
-          :headers="OverawardDeductionsHeaders"
+          :headers="overawardDeductionsHeaders"
           :items="overawardDeductions"
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
@@ -89,6 +89,9 @@
           </template>
           <template #[`item.overawardOrigin`]="{ item }">
             {{ item.overawardOrigin }}
+          </template>
+          <template v-if="showAddedBy" #[`item.addedByUser`]="{ item }">
+            {{ emptyStringFiller(item.addedByUser) }}
           </template>
           <template #[`item.awardValueCode`]="{ item }">
             {{ item.awardValueCode }}
@@ -207,6 +210,14 @@ export default defineComponent({
         : dateOnlyLongString(overaward.createdAt);
     };
 
+    const overawardDeductionsHeaders = computed(() => {
+      return props.showAddedBy
+        ? OverawardDeductionsHeaders
+        : OverawardDeductionsHeaders.filter(
+            (header) => header.key !== "addedByUser",
+          );
+    });
+
     onMounted(loadOverawardDetails);
 
     return {
@@ -222,7 +233,7 @@ export default defineComponent({
       emptyStringFiller,
       formatDateAdded,
       OverawardsHeaders,
-      OverawardDeductionsHeaders,
+      overawardDeductionsHeaders,
       isMobile,
     };
   },

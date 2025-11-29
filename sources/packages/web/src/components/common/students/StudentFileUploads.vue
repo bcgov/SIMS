@@ -28,7 +28,7 @@
         message="No file uploads found."
       >
         <v-data-table
-          :headers="StudentFileUploadsHeaders"
+          :headers="studentFileUploadHeaders"
           :items="studentFileUploads"
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
@@ -101,7 +101,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, defineComponent } from "vue";
+import { onMounted, ref, defineComponent, computed } from "vue";
 import { useDisplay } from "vuetify";
 
 import {
@@ -181,6 +181,14 @@ export default defineComponent({
       }
     };
 
+    const studentFileUploadHeaders = computed(() => {
+      return props.canViewUploadedBy
+        ? StudentFileUploadsHeaders
+        : StudentFileUploadsHeaders.filter(
+            (header) => header.key !== "uploadedBy",
+          );
+    });
+
     onMounted(loadStudentFileUploads);
 
     return {
@@ -194,7 +202,7 @@ export default defineComponent({
       studentFileUploads,
       fileUploadModal,
       initialData,
-      StudentFileUploadsHeaders,
+      studentFileUploadHeaders,
       isMobile,
     };
   },

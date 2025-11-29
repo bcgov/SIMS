@@ -44,12 +44,7 @@
             {{ dateOnlyLongString(item.createdAt) }}
           </template>
           <template #[`item.updatedAt`]="{ item }">
-            {{
-              conditionalEmptyStringFiller(
-                !!item.resolvedAt,
-                dateOnlyLongString(item.resolvedAt),
-              )
-            }}
+            {{ item.isActive ? "-" : dateOnlyLongString(item.resolvedAt) }}
           </template>
           <template #[`item.isActive`]="{ item }">
             <status-chip-restriction

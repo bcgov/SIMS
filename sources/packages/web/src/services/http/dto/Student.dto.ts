@@ -133,6 +133,7 @@ export interface StudentFileDetailsAPIOutDTO
   metadata: StudentFileMetadataAPIOutDTO;
   groupName: string;
   createdAt: Date;
+  uploadedBy?: string;
 }
 
 /**
