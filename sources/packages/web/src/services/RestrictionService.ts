@@ -1,8 +1,10 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
+  AssignInstitutionRestrictionAPIInDTO,
   AssignRestrictionAPIInDTO,
   DeleteRestrictionAPIInDTO,
   OptionItemAPIOutDTO,
+  PrimaryIdentifierAPIOutDTO,
   ResolveRestrictionAPIInDTO,
   RestrictionDetailAPIOutDTO,
   RestrictionSummaryAPIOutDTO,
@@ -111,11 +113,17 @@ export class RestrictionService {
     );
   }
 
+  /**
+   * Add a new restriction to an Institution.
+   * @param institutionId ID of the institution to add a restriction.
+   * @param payload restriction details.
+   * @returns Identifier of the created institution restriction.
+   */
   async addInstitutionRestriction(
     institutionId: number,
-    payload: AssignRestrictionAPIInDTO,
-  ): Promise<void> {
-    await ApiClient.RestrictionApi.addInstitutionRestriction(
+    payload: AssignInstitutionRestrictionAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return ApiClient.RestrictionApi.addInstitutionRestriction(
       institutionId,
       payload,
     );

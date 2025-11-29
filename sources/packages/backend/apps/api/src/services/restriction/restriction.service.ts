@@ -4,7 +4,7 @@ import {
   Restriction,
   RestrictionType,
 } from "@sims/sims-db";
-import { DataSource } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 
 /**
  * Service layer for restrictions.
@@ -53,26 +53,18 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
   }
 
   /**
-   * Returns a provincial restriction by Id.
-   * @param restrictionId
+   * Checks if a restriction exists for the given restriction ID and type.
+   * @param restrictionId restriction ID.
+   * @param restrictionType restriction type.
    * @returns provincial restriction.
    */
-  async getProvincialRestrictionById(
+  async restrictionExists(
     restrictionId: number,
-    isInstitutionRestriction?: boolean,
-  ): Promise<Restriction> {
-    const restrictionQuery = this.repo
-      .createQueryBuilder("restriction")
-      .select(["restriction.id"])
-      .where("restriction.id = :restrictionId", { restrictionId })
-      .andWhere("restriction.restrictionType = :restrictionType", {
-        restrictionType: RestrictionType.Provincial,
-      });
-    if (isInstitutionRestriction) {
-      restrictionQuery.andWhere(
-        "restriction.restrictionCategory = 'Designation'",
-      );
-    }
-    return restrictionQuery.getOne();
+    restrictionType: RestrictionType,
+    options?: { entityManager?: EntityManager },
+  ): Promise<boolean> {
+    const repo =
+      options?.entityManager?.getRepository(Restriction) ?? this.repo;
+    return repo.exists({ where: { id: restrictionId, restrictionType } });
   }
 }

@@ -1,0 +1,327 @@
+import { HttpStatus, INestApplication } from "@nestjs/common";
+import {
+  E2EDataSources,
+  RestrictionCode,
+  createE2EDataSources,
+  createFakeInstitution,
+  createFakeUser,
+  findAndSaveInstitutionRestriction,
+} from "@sims/test-utils";
+import {
+  AESTGroups,
+  BEARER_AUTH_TYPE,
+  createFakeLocation,
+  createTestingAppModule,
+  getAESTToken,
+  getAESTUser,
+} from "../../../../testHelpers";
+import * as request from "supertest";
+import {
+  EducationProgram,
+  Institution,
+  InstitutionLocation,
+  NoteType,
+  Restriction,
+  User,
+} from "@sims/sims-db";
+import { createFakeEducationProgram } from "@sims/test-utils/factories/education-program";
+
+describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
+  let app: INestApplication;
+  let db: E2EDataSources;
+  let sharedAuditUser: User;
+  let susRestriction: Restriction;
+
+  beforeAll(async () => {
+    const { nestApplication, dataSource } = await createTestingAppModule();
+    app = nestApplication;
+    db = createE2EDataSources(dataSource);
+    sharedAuditUser = await db.user.save(createFakeUser());
+    // Find a restriction.
+    susRestriction = await db.restriction.findOne({
+      select: { id: true },
+      where: {
+        restrictionCode: RestrictionCode.SUS,
+      },
+    });
+  });
+
+  it("Should add an institution restriction when a valid payload is submitted.", async () => {
+    // Arrange
+    const institution = createFakeInstitution();
+    await db.institution.save(institution);
+    const location = createFakeLocation(institution);
+    await db.institutionLocation.save(location);
+    const educationProgram = createFakeEducationProgram({
+      auditUser: sharedAuditUser,
+      institution,
+    });
+    await db.educationProgram.save(educationProgram);
+    const ministryUser = await getAESTUser(
+      db.dataSource,
+      AESTGroups.BusinessAdministrators,
+    );
+    const endpoint = `/aest/restriction/institution/${institution.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    let createdInstitutionRestrictionId: number;
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({
+        restrictionId: susRestriction.id,
+        programId: educationProgram.id,
+        locationId: location.id,
+        noteDescription: "Add institution restriction note.",
+      })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .expect(({ body }) => {
+        expect(body).toHaveProperty("id");
+        expect(body.id).toBeGreaterThan(0);
+        createdInstitutionRestrictionId = +body.id;
+      });
+
+    // Assert DB changes.
+    const createdInstitutionRestriction =
+      await db.institutionRestriction.findOne({
+        select: {
+          id: true,
+          institution: { id: true },
+          restriction: { id: true },
+          location: { id: true },
+          program: { id: true },
+          creator: { id: true },
+          restrictionNote: {
+            id: true,
+            noteType: true,
+            description: true,
+            creator: { id: true },
+          },
+          isActive: true,
+        },
+        relations: {
+          institution: true,
+          restriction: true,
+          location: true,
+          program: true,
+          creator: true,
+          restrictionNote: { creator: true },
+        },
+        where: { id: createdInstitutionRestrictionId },
+        loadEagerRelations: false,
+      });
+    const ministryUserAudit = { id: ministryUser.id };
+    expect(createdInstitutionRestriction).toEqual({
+      id: createdInstitutionRestrictionId,
+      institution: { id: institution.id },
+      restriction: { id: susRestriction.id },
+      location: { id: location.id },
+      program: { id: educationProgram.id },
+      creator: ministryUserAudit,
+      restrictionNote: {
+        id: expect.any(Number),
+        noteType: NoteType.Restriction,
+        description: "Add institution restriction note.",
+        creator: ministryUserAudit,
+      },
+      isActive: true,
+    });
+  });
+
+  it("Should create the institution restriction when there is already an institution restriction but it is inactive.", async () => {
+    // Arrange
+    const { institution, location, program } =
+      await createInstitutionProgramLocation();
+    await db.educationProgram.save(program);
+    await findAndSaveInstitutionRestriction(
+      db,
+      RestrictionCode.SUS,
+      {
+        institution,
+        program,
+        location,
+        creator: sharedAuditUser,
+      },
+      { initialValues: { isActive: false } },
+    );
+    const endpoint = `/aest/restriction/institution/${institution.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({
+        restrictionId: susRestriction.id,
+        programId: program.id,
+        locationId: location.id,
+        noteDescription: "Add institution restriction note.",
+      })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED);
+  });
+
+  it("Should throw an unprocessable entity exception when an active institution restriction already exists.", async () => {
+    // Arrange
+    const { institution, location, program } =
+      await createInstitutionProgramLocation();
+    const institutionRestriction = await findAndSaveInstitutionRestriction(
+      db,
+      RestrictionCode.SUS,
+      {
+        institution,
+        program,
+        location,
+        creator: sharedAuditUser,
+      },
+    );
+    const endpoint = `/aest/restriction/institution/${institution.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({
+        restrictionId: institutionRestriction.restriction.id,
+        programId: program.id,
+        locationId: location.id,
+        noteDescription: "Add institution restriction note.",
+      })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: `The restriction ID ${institutionRestriction.restriction.id} is already assigned and active to the institution for the specified location ID ${location.id} and program ID ${program.id}.`,
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
+  it("Should throw an not found exception when the provided institution was not found.", async () => {
+    // Arrange
+    const endpoint = `/aest/restriction/institution/999999`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({
+        restrictionId: 1,
+        programId: 1,
+        locationId: 1,
+        noteDescription: "Add institution restriction note.",
+      })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        message: "Institution ID 999999 not found.",
+        error: "Not Found",
+        statusCode: HttpStatus.NOT_FOUND,
+      });
+  });
+
+  it("Should throw an unprocessable entity exception when the location does not exists associated with the institution.", async () => {
+    // Arrange
+    const { institution, program } = await createInstitutionProgramLocation({
+      skipLocationCreation: true,
+    });
+    const endpoint = `/aest/restriction/institution/${institution.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({
+        restrictionId: susRestriction.id,
+        programId: program.id,
+        locationId: 999999,
+        noteDescription: "Add institution restriction note.",
+      })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: `The specified location ID 999999 or program ID ${program.id} does not belong to the institution.`,
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
+  it("Should throw an unprocessable entity exception when the restriction ID does not exist.", async () => {
+    // Arrange
+    const { institution, program, location } =
+      await createInstitutionProgramLocation({});
+    const endpoint = `/aest/restriction/institution/${institution.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({
+        restrictionId: 999999,
+        programId: program.id,
+        locationId: location.id,
+        noteDescription: "Add institution restriction note.",
+      })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "Restriction ID 999999 not found.",
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
+  it("Should throw a forbidden exception when the user does not have permission.", async () => {
+    // Arrange
+    const endpoint = "/aest/restriction/institution/999999";
+    const token = await getAESTToken(AESTGroups.Operations);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({
+        restrictionId: 1,
+        programId: 1,
+        locationId: 1,
+        noteDescription: "Add institution restriction note.",
+      })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        message: "Forbidden resource",
+        error: "Forbidden",
+        statusCode: HttpStatus.FORBIDDEN,
+      });
+  });
+
+  async function createInstitutionProgramLocation(options?: {
+    skipProgramCreation?: boolean;
+    skipLocationCreation?: boolean;
+  }): Promise<{
+    institution: Institution;
+    location: InstitutionLocation;
+    program: EducationProgram;
+  }> {
+    const institution = createFakeInstitution();
+    await db.institution.save(institution);
+    let location: InstitutionLocation;
+    let program: EducationProgram;
+    if (!options?.skipLocationCreation) {
+      location = await db.institutionLocation.save(
+        createFakeLocation(institution),
+      );
+    }
+    if (!options?.skipProgramCreation) {
+      program = await db.educationProgram.save(
+        createFakeEducationProgram({
+          auditUser: sharedAuditUser,
+          institution,
+        }),
+      );
+    }
+    return { institution, location, program };
+  }
+
+  afterAll(async () => {
+    await app?.close();
+  });
+});

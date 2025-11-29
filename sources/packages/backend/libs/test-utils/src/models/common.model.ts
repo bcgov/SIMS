@@ -149,4 +149,8 @@ export enum RestrictionCode {
    * for the credential endorsements again in the future.
    */
   AVEN = "AVEN",
+  /**
+   * Institution suspension restriction.
+   */
+  SUS = "SUS",
 }

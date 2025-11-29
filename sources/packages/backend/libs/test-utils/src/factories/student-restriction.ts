@@ -3,11 +3,12 @@ import {
   Note,
   NoteType,
   Restriction,
+  RestrictionType,
   Student,
   StudentRestriction,
   User,
 } from "@sims/sims-db";
-import { DataSource } from "typeorm";
+import { DataSource, In } from "typeorm";
 import { createFakeNote, saveFakeStudentNotes } from "./note";
 import { createFakeUser } from "./user";
 import { E2EDataSources, RestrictionCode } from "@sims/test-utils";
@@ -121,7 +122,13 @@ export async function findAndSaveRestriction(
   options?: { isActive?: boolean; updatedAt?: Date; deletedAt?: Date },
 ): Promise<StudentRestriction> {
   const restriction = await db.restriction.findOne({
-    where: { restrictionCode },
+    where: {
+      restrictionCode,
+      restrictionType: In([
+        RestrictionType.Provincial,
+        RestrictionType.Federal,
+      ]),
+    },
   });
   return saveFakeStudentRestriction(
     db.dataSource,

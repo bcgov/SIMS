@@ -76,11 +76,21 @@ export class DeleteRestrictionAPIInDTO {
 }
 
 /**
- * DTO to add restriction to a student/institution.
+ * DTO to add restriction to a student.
  */
 export class AssignRestrictionAPIInDTO extends ResolveRestrictionAPIInDTO {
   @IsPositive()
   restrictionId: number;
+}
+
+/**
+ * Add restriction to an institution.
+ */
+export class AssignInstitutionRestrictionAPIInDTO extends AssignRestrictionAPIInDTO {
+  @IsPositive()
+  locationId: number;
+  @IsPositive()
+  programId: number;
 }
 
 /**

@@ -1,8 +1,10 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
+  AssignInstitutionRestrictionAPIInDTO,
   AssignRestrictionAPIInDTO,
   DeleteRestrictionAPIInDTO,
   OptionItemAPIOutDTO,
+  PrimaryIdentifierAPIOutDTO,
   ResolveRestrictionAPIInDTO,
   RestrictionDetailAPIOutDTO,
   RestrictionSummaryAPIOutDTO,
@@ -118,11 +120,17 @@ export class RestrictionApi extends HttpBaseClient {
     );
   }
 
+  /**
+   * Add a new restriction to an Institution.
+   * @param institutionId ID of the institution to add a restriction.
+   * @param payload restriction details.
+   * @returns Identifier of the created institution restriction.
+   */
   async addInstitutionRestriction(
     institutionId: number,
-    payload: AssignRestrictionAPIInDTO,
-  ): Promise<void> {
-    await this.postCall<AssignRestrictionAPIInDTO>(
+    payload: AssignInstitutionRestrictionAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return this.postCall(
       this.addClientRoot(`restriction/institution/${institutionId}`),
       payload,
     );

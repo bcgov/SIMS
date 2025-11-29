@@ -10,7 +10,7 @@
           label="Reason"
           density="compact"
           :items="reasons"
-          v-model="selectedReason"
+          v-model="formModel.restrictionId"
           variant="outlined"
           :rules="[(v) => !!v || 'Reason is required.']"
           :loading="processing"
@@ -22,7 +22,7 @@
           label="Program"
           density="compact"
           :items="programs"
-          v-model="selectedProgram"
+          v-model="formModel.programId"
           variant="outlined"
           :rules="[(v) => !!v || 'Program is required.']"
           :loading="processing"
@@ -35,7 +35,7 @@
           label="Location"
           density="compact"
           :items="locations"
-          v-model="selectedLocation"
+          v-model="formModel.locationId"
           variant="outlined"
           :rules="[(v) => !!v || 'Location is required.']"
           :loading="processing"
@@ -65,7 +65,7 @@ import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useRules, useSnackBar } from "@/composables";
 import { Role, VForm, RestrictionType } from "@/types";
 import {
-  AssignRestrictionAPIInDTO,
+  AssignInstitutionRestrictionAPIInDTO,
   InstitutionLocationAPIOutDTO,
   OptionItemAPIOutDTO,
 } from "@/services/http/dto";
@@ -98,10 +98,10 @@ export default defineComponent({
     const processing = ref(false);
 
     const { showDialog, showModal, resolvePromise } = useModalDialog<
-      AssignRestrictionAPIInDTO | false
+      AssignInstitutionRestrictionAPIInDTO | false
     >();
     const addRestrictionForm = ref({} as VForm);
-    const formModel = reactive({} as AssignRestrictionAPIInDTO);
+    const formModel = reactive({} as AssignInstitutionRestrictionAPIInDTO);
 
     watchEffect(async () => {
       try {
@@ -134,10 +134,7 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
-      // Copying the payload, as reset is making the formModel properties null.
-      const payload = { ...formModel };
-      resolvePromise(payload);
-      addRestrictionForm.value.reset();
+      resolvePromise(formModel);
     };
 
     const cancel = () => {
