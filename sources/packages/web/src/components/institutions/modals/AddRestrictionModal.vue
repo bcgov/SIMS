@@ -104,6 +104,7 @@ export default defineComponent({
     const formModel = reactive({} as AssignInstitutionRestrictionAPIInDTO);
 
     watchEffect(async () => {
+      // TODO: Move to load data only when modal is shown.
       try {
         processing.value = true;
         const [reasonsResponse, locationsResponse, programsResponse] =

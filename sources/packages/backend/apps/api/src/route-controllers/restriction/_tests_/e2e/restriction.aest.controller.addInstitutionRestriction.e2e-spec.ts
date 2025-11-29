@@ -129,7 +129,7 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
     });
   });
 
-  it("Should create the institution restriction when there is already an institution restriction but it is inactive.", async () => {
+  it("Should create the institution restriction when there is already an institution restriction, but it is inactive.", async () => {
     // Arrange
     const { institution, location, program } =
       await createInstitutionProgramLocation();
@@ -196,7 +196,7 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
       });
   });
 
-  it("Should throw an not found exception when the provided institution was not found.", async () => {
+  it("Should throw a not found exception when the provided institution is not found.", async () => {
     // Arrange
     const endpoint = `/aest/restriction/institution/999999`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -219,7 +219,7 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
       });
   });
 
-  it("Should throw an unprocessable entity exception when the location does not exists associated with the institution.", async () => {
+  it("Should throw an unprocessable entity exception when the location does not exist associated with the institution.", async () => {
     // Arrange
     const { institution, program } = await createInstitutionProgramLocation({
       skipLocationCreation: true,
