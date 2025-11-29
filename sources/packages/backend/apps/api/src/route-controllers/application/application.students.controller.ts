@@ -49,7 +49,10 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { STUDY_DATE_OVERLAP_ERROR } from "../../utilities";
+import {
+  getSupportingUserParents,
+  STUDY_DATE_OVERLAP_ERROR,
+} from "../../utilities";
 import {
   INSTITUTION_LOCATION_NOT_VALID,
   OFFERING_NOT_VALID,
@@ -64,11 +67,7 @@ import {
 import { ApplicationControllerService } from "./application.controller.service";
 import { CustomNamedError } from "@sims/utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import {
-  ApplicationStatus,
-  OfferingIntensity,
-  SupportingUserType,
-} from "@sims/sims-db";
+import { ApplicationStatus, OfferingIntensity } from "@sims/sims-db";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
@@ -592,18 +591,13 @@ export class ApplicationStudentsController extends BaseController {
         "Given application either does not exist or is not complete to request change.",
       );
     }
-    // Build supporting user parents.
-    const supportingUserParents = application.supportingUsers
-      .filter(
-        (supportingUser) =>
-          supportingUser.supportingUserType === SupportingUserType.Parent,
-      )
-      .map((parent) => ({ id: parent.id, fullName: parent.fullName }));
     return {
       id: application.id,
       applicationNumber: application.applicationNumber,
       programYear: application.programYear.programYear,
-      supportingUserParents,
+      supportingUserParents: getSupportingUserParents(
+        application.supportingUsers,
+      ),
     };
   }
 

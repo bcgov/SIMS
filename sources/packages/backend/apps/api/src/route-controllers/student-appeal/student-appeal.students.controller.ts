@@ -11,6 +11,7 @@ import {
 } from "@nestjs/common";
 import {
   ApplicationService,
+  FormNames,
   FormService,
   StudentAppealService,
 } from "../../services";
@@ -51,8 +52,11 @@ import {
 } from "../../constants";
 import { StudentAppealRequestModel } from "../../services/student-appeal/student-appeal.model";
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
-import { allowApplicationChangeRequest } from "../../utilities";
-import { StudentAppealStatus, SupportingUserType } from "@sims/sims-db";
+import {
+  allowApplicationChangeRequest,
+  getSupportingUserParents,
+} from "../../utilities";
+import { StudentAppealStatus } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -196,12 +200,18 @@ export class StudentAppealStudentsController extends BaseController {
       );
     }
     let dryRunSubmissionResults: DryRunSubmissionResult[] = [];
-    const parents = application.supportingUsers
-      .filter(
-        (supportingUser) =>
-          supportingUser.supportingUserType === SupportingUserType.Parent,
-      )
-      .map((parent) => ({ id: parent.id, fullName: parent.fullName }));
+    const parents = getSupportingUserParents(application.supportingUsers);
+    const hasStepParentWaiverAppealSubmission =
+      payload.studentAppealRequests.some(
+        (appealRequest) =>
+          appealRequest.formName === FormNames.StepParentWaiverAppeal,
+      );
+    // Validate the number of parents for step parent waiver appeal.
+    if (hasStepParentWaiverAppealSubmission && parents.length !== 2) {
+      throw new UnprocessableEntityException(
+        "Step parent waiver appeal can only be submitted for applications with both parents.",
+      );
+    }
     try {
       const dryRunPromise: Promise<DryRunSubmissionResult>[] =
         payload.studentAppealRequests.map((appeal) => {
