@@ -384,6 +384,77 @@ export class ConfigService {
   }
 
   /**
+   * Indicates whether the entire system is in maintenance mode.
+   * When enabled, all user portals are inaccessible and users will be redirected to the maintenance page.
+   * This is typically used during scheduled upgrades or critical maintenance windows to prevent user access.
+   * @returns True if global maintenance mode is enabled, otherwise false.
+   */
+  get maintenanceMode(): boolean {
+    return this.getCachedConfig(
+      "maintenanceModeConfig",
+      process.env.MAINTENANCE_MODE === "true",
+    );
+  }
+
+  /**
+   * Maintenance Mode Student Configuration.
+   * @returns True if maintenance mode is enabled for students, otherwise false.
+   */
+  get maintenanceModeStudent(): boolean {
+    return this.getCachedConfig(
+      "maintenanceModeStudentConfig",
+      process.env.MAINTENANCE_MODE_STUDENT === "true",
+    );
+  }
+
+  /**
+   * Indicates whether maintenance mode is enabled for Ministry (AEST) users.
+   * When enabled, Ministry users will be unable to access the AEST portal.
+   * @returns True if maintenance mode is enabled for Ministry users, otherwise false.
+   */
+  get maintenanceModeMinistry(): boolean {
+    return this.getCachedConfig(
+      "maintenanceModeMinistryConfig",
+      process.env.MAINTENANCE_MODE_MINISTRY === "true",
+    );
+  }
+
+  /**
+   * Indicates whether maintenance mode is enabled for Institution users.
+   * When enabled, institution users will be unable to access the institution portal.
+   * @returns True if maintenance mode is enabled for institutions, otherwise false.
+   */
+  get maintenanceModeInstitution(): boolean {
+    return this.getCachedConfig(
+      "maintenanceModeInstitutionConfig",
+      process.env.MAINTENANCE_MODE_INSTITUTION === "true",
+    );
+  }
+
+  /**
+   * Maintenance Mode Supporting User Configuration.
+   * @returns True if maintenance mode is enabled for supporting users, otherwise false.
+   */
+  get maintenanceModeSupportingUser(): boolean {
+    return this.getCachedConfig(
+      "maintenanceModeSupportingUserConfig",
+      process.env.MAINTENANCE_MODE_SUPPORTING_USER === "true",
+    );
+  }
+
+  /**
+   * Indicates whether maintenance mode is enabled for External API consumers.
+   * When enabled, external systems will be unable to access the API.
+   * @returns True if maintenance mode is enabled for external systems, otherwise false.
+   */
+  get maintenanceModeExternal(): boolean {
+    return this.getCachedConfig(
+      "maintenanceModeExternalConfig",
+      process.env.MAINTENANCE_MODE_EXTERNAL === "true",
+    );
+  }
+
+  /**
    * Avoids reading the env configuration every time and creates
    * a property to store the value and keep reading from it.
    * @param key cache key.

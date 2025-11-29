@@ -19,7 +19,6 @@ import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { JwtStrategy } from "./jwt.strategy";
 import {
   InstitutionLocationGuard,
-  AuthorizedPartiesGuard,
   InstitutionAdminGuard,
   ActiveUserGuard,
   GroupsGuard,
@@ -28,6 +27,8 @@ import {
   InstitutionBCPublicGuard,
   InstitutionStudentDataAccessGuard,
   RequiresUserAccountGuard,
+  MaintenanceModeGuard,
+  AuthorizedPartiesGuard,
 } from "./guards";
 import { RolesGuard } from "./guards/roles.guard";
 import { ConfigModule } from "@sims/utilities/config";
@@ -68,6 +69,10 @@ const jwtModule = JwtModule.register({
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: MaintenanceModeGuard,
     },
     {
       provide: APP_GUARD,

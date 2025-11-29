@@ -3,11 +3,16 @@
     <v-card-text>
       <v-row align="center">
         <v-col cols="12" md="8" order="1" class="text-center text-md-left">
-          <h1 class="category-header-large primary-color">Access denied</h1>
-          <p class="mb-5">You don't have permission to view this page.</p>
+          <h1 class="category-header-large primary-color">
+            Service temporarily unavailable
+          </h1>
+          <p class="mb-5">We're performing maintenance.</p>
+          <p class="mb-3">
+            The Student Information Management System is currently unavailable
+            for maintenance. Please try again later.
+          </p>
           <p>
-            If you think this is an error, try returning to the home page or
-            contact support.
+            We apologize for the inconvenience and appreciate your patience.
           </p>
         </v-col>
         <v-col
@@ -20,7 +25,7 @@
             width="260"
             height="260"
             class="mt-md-8"
-            alt="An illustration of an astronaut lost in space."
+            alt="An illustration of two people holding an unplugged cord. Illustration by storyset."
             :src="illustration"
           />
         </v-col>
@@ -30,5 +35,5 @@
 </template>
 
 <script setup lang="ts">
-import illustration from "../assets/images/lost-in-space.svg";
+import illustration from "../assets/images/person-unplugged.svg";
 </script>

@@ -72,6 +72,12 @@ export class AppConfigService {
         config.applicationSubmissionDeadlineWeeks,
       appEnv: config.appEnv,
       queueDashboardURL: config.queueDashboardURL,
+      maintenanceMode: config.maintenanceMode,
+      maintenanceModeStudent: config.maintenanceModeStudent,
+      maintenanceModeInstitution: config.maintenanceModeInstitution,
+      maintenanceModeMinistry: config.maintenanceModeMinistry,
+      maintenanceModeSupportingUser: config.maintenanceModeSupportingUser,
+      maintenanceModeExternal: config.maintenanceModeExternal,
     };
     return appConfig;
   }
