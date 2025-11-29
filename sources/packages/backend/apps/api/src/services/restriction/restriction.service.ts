@@ -29,25 +29,27 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
   }
 
   /**
-   * Returns all restriction reasons(description) for a given category.
-   * @param restrictionCategory
-   * @returns restriction reasons.
+   * Returns restriction reasons(descriptions) for a
+   * given restriction type and category.
+   * @param restrictionType Type of the restriction.
+   * @param restrictionCategory Category of the restriction.
+   * @returns Restriction reasons.
    */
   async getRestrictionReasonsByCategory(
+    restrictionType: RestrictionType.Provincial | RestrictionType.Institution,
     restrictionCategory: string,
   ): Promise<Restriction[]> {
-    return this.repo
-      .createQueryBuilder("restriction")
-      .select([
-        "restriction.id",
-        "restriction.restrictionCode",
-        "restriction.description",
-      ])
-      .where("restriction.restrictionCategory = :restrictionCategory", {
+    return this.repo.find({
+      select: {
+        id: true,
+        restrictionCode: true,
+        description: true,
+      },
+      where: {
+        restrictionType,
         restrictionCategory,
-      })
-      .andWhere("restriction.restrictionCategory != 'Federal'")
-      .getMany();
+      },
+    });
   }
 
   /**

@@ -24,7 +24,7 @@
           :value="institutionRestrictions"
           :paginator="true"
           :rows="DEFAULT_PAGE_LIMIT"
-          :rowsPerPageOptions="PAGINATION_LIST"
+          :rows-per-page-options="PAGINATION_LIST"
         >
           <template #empty>
             <p class="text-center font-weight-bold">No records found.</p>
@@ -70,17 +70,18 @@
           >
         </DataTable>
       </content-group>
-      <ViewRestrictionModal
+      <view-restriction-modal
         ref="viewRestriction"
-        :restrictionData="institutionRestriction"
-        @submitResolutionData="resolveRestriction"
-        :allowedRole="Role.InstitutionResolveRestriction"
+        :restriction-data="institutionRestriction"
+        @submit-resolution-data="resolveRestriction"
+        :allowed-role="Role.InstitutionResolveRestriction"
       />
-      <AddInstitutionRestrictionModal
+      <add-restriction-modal
         ref="addRestriction"
-        :entityType="RestrictionEntityType.Institution"
-        @submitRestrictionData="createNewRestriction"
-        :allowedRole="Role.InstitutionAddRestriction"
+        :institution-id="institutionId"
+        :entity-type="RestrictionEntityType.Institution"
+        @submit-restriction-data="createNewRestriction"
+        :allowed-role="Role.InstitutionAddRestriction"
       />
     </body-header-container>
   </tab-container>
@@ -90,7 +91,7 @@
 import { onMounted, ref, defineComponent } from "vue";
 import { RestrictionService } from "@/services/RestrictionService";
 import ViewRestrictionModal from "@/components/common/restriction/ViewRestriction.vue";
-import AddInstitutionRestrictionModal from "@/components/common/restriction/AddRestriction.vue";
+import AddRestrictionModal from "@/components/institutions/modals/AddRestrictionModal.vue";
 import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
 import {
   RestrictionStatus,
@@ -112,7 +113,7 @@ export default defineComponent({
   components: {
     StatusChipRestriction,
     ViewRestrictionModal,
-    AddInstitutionRestrictionModal,
+    AddRestrictionModal,
     CheckPermissionRole,
   },
   props: {

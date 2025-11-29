@@ -9,6 +9,7 @@ import {
   NotFoundException,
   InternalServerErrorException,
   ParseIntPipe,
+  Query,
 } from "@nestjs/common";
 import {
   StudentRestrictionService,
@@ -32,8 +33,8 @@ import {
   ResolveRestrictionAPIInDTO,
   AssignRestrictionAPIInDTO,
   RestrictionStatusAPIOutDTO,
-  RestrictionCategoryParamAPIInDTO,
   DeleteRestrictionAPIInDTO,
+  RestrictionReasonsOptionsAPIInDTO,
 } from "./models/restriction.dto";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
@@ -105,13 +106,14 @@ export class RestrictionAESTController extends BaseController {
    * @param restrictionCategory Selected category from category list.
    * @returns Reasons option list.
    */
-  @Get("category/:restrictionCategory/reasons")
+  @Get("reasons")
   async getReasonsOptionsList(
-    @Param() restrictionCategoryParam: RestrictionCategoryParamAPIInDTO,
+    @Query() options: RestrictionReasonsOptionsAPIInDTO,
   ): Promise<OptionItemAPIOutDTO[]> {
     const reasons =
       await this.restrictionService.getRestrictionReasonsByCategory(
-        restrictionCategoryParam.restrictionCategory,
+        options.type,
+        options.category,
       );
     return reasons.map((reason) => ({
       id: reason.id,

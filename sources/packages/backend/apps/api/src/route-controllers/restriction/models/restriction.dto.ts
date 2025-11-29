@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsPositive, MaxLength } from "class-validator";
+import { IsIn, IsNotEmpty, IsPositive, MaxLength } from "class-validator";
 import {
   RestrictionNotificationType,
   NOTE_DESCRIPTION_MAX_LENGTH,
@@ -108,4 +108,11 @@ export class StudentRestrictionAPIOutDTO {
 export class RestrictionCategoryParamAPIInDTO {
   @MaxLength(RESTRICTION_CATEGORY_MAX_LENGTH)
   restrictionCategory: string;
+}
+
+export class RestrictionReasonsOptionsAPIInDTO {
+  @IsIn([RestrictionType.Provincial, RestrictionType.Institution])
+  type: RestrictionType.Provincial | RestrictionType.Institution;
+  @MaxLength(RESTRICTION_CATEGORY_MAX_LENGTH)
+  category: string;
 }

@@ -10,6 +10,10 @@ export enum RestrictionType {
    * Provincial restriction type
    */
   Provincial = "Provincial",
+  /**
+   * Institution restriction type.
+   */
+  Institution = "Institution",
 }
 /**
  * Enumeration for restriction entity
