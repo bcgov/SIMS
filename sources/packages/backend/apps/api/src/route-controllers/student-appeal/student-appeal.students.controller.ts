@@ -11,6 +11,7 @@ import {
 } from "@nestjs/common";
 import {
   ApplicationService,
+  FormNames,
   FormService,
   StudentAppealService,
 } from "../../services";
@@ -51,8 +52,10 @@ import {
 } from "../../constants";
 import { StudentAppealRequestModel } from "../../services/student-appeal/student-appeal.model";
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
-import { StudentAppealServerSideSubmissionData } from "./models/student-appeal.model";
-import { allowApplicationChangeRequest } from "../../utilities";
+import {
+  allowApplicationChangeRequest,
+  getSupportingUserParents,
+} from "../../utilities";
 import { StudentAppealStatus } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
@@ -197,15 +200,28 @@ export class StudentAppealStudentsController extends BaseController {
       );
     }
     let dryRunSubmissionResults: DryRunSubmissionResult[] = [];
+    const parents = getSupportingUserParents(application.supportingUsers);
+    const hasStepParentWaiverAppealSubmission =
+      payload.studentAppealRequests.some(
+        (appealRequest) =>
+          appealRequest.formName === FormNames.StepParentWaiverAppeal,
+      );
+    // Validate the number of parents for step parent waiver appeal.
+    if (hasStepParentWaiverAppealSubmission && parents.length !== 2) {
+      throw new UnprocessableEntityException(
+        "Step parent waiver appeal can only be submitted for applications with both parents.",
+      );
+    }
     try {
       const dryRunPromise: Promise<DryRunSubmissionResult>[] =
         payload.studentAppealRequests.map((appeal) => {
-          // Check if the form has any data which is not persisted but required for validation
-          // which needs to be populated at the server side for dry run submission.
-          if (
-            appeal.formData instanceof StudentAppealServerSideSubmissionData
-          ) {
+          // Check if the form has any inputs which is required to be populated at the server side
+          // during the dry run submission.
+          if (appeal.formData.programYear) {
             appeal.formData.programYear = application.programYear.programYear;
+          }
+          if (appeal.formData.parents) {
+            appeal.formData.parents = parents;
           }
           return this.formService.dryRunSubmission(
             appeal.formName,

@@ -1,4 +1,9 @@
-import { Application, DisbursementSchedule } from "@sims/sims-db";
+import {
+  Application,
+  DisbursementSchedule,
+  SupportingUser,
+  SupportingUserType,
+} from "@sims/sims-db";
 import { PIR_DENIED_REASON_OTHER_ID } from ".";
 import { COE_DENIED_REASON_OTHER_ID } from "@sims/utilities";
 export const STUDY_DATE_OVERLAP_ERROR = "STUDY_DATE_OVERLAP_ERROR";
@@ -26,4 +31,20 @@ export function getCOEDeniedReason(
   return disbursementSchedule.coeDeniedReason?.id === COE_DENIED_REASON_OTHER_ID
     ? disbursementSchedule.coeDeniedOtherDesc
     : disbursementSchedule.coeDeniedReason?.reason;
+}
+
+/**
+ * Get details of the supporting users who are parents.
+ * @param supportingUsers supporting users.
+ * @returns parent details with id and full name.
+ */
+export function getSupportingUserParents(
+  supportingUsers: SupportingUser[],
+): { id: number; fullName: string }[] {
+  return supportingUsers
+    .filter(
+      (supportingUser) =>
+        supportingUser.supportingUserType === SupportingUserType.Parent,
+    )
+    .map((parent) => ({ id: parent.id, fullName: parent.fullName }));
 }

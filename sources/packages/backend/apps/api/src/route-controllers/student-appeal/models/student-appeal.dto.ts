@@ -24,7 +24,10 @@ import {
 export class AppealRequestAPIInDTO {
   @IsDefined()
   @JsonMaxSize(JSON_10KB)
-  formData: unknown;
+  formData: {
+    programYear?: string;
+    parents?: { id: number; fullName: string }[];
+  } & Record<string, unknown>;
   @IsDefined()
   files: string[];
 }

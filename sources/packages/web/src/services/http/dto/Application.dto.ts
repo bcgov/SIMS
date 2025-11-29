@@ -74,14 +74,19 @@ export interface ApplicationWithProgramYearAPIOutDTO {
   active: boolean;
 }
 
+interface SupportingUserParent {
+  id: number;
+  fullName: string;
+}
+
 /**
- * Application and program year base
- * information.
+ * Application details for an appeal.
  */
-export interface ApplicationProgramYearAPIOutDTO {
+export interface AppealApplicationDetailsAPIOutDTO {
   id: number;
   applicationNumber: string;
   programYear: string;
+  supportingUserParents: SupportingUserParent[];
 }
 
 /**

@@ -12,6 +12,8 @@ export function useStudentAppeals() {
         return "Room and board costs";
       case "modifiedindependentappeal":
         return "Modified independent";
+      case "stepparentwaiverappeal":
+        return "Step parent waiver";
       default:
         return formName;
     }

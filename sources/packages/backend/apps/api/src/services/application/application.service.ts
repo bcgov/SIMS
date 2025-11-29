@@ -1792,8 +1792,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         isArchived: true,
         offeringIntensity: true,
         programYear: { id: true, programYear: true },
+        supportingUsers: { id: true, fullName: true, supportingUserType: true },
       },
-      relations: { programYear: true },
+      relations: { programYear: true, supportingUsers: true },
       where: {
         student: { user: { id: userId } },
         applicationStatus: ApplicationStatus.Completed,
