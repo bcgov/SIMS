@@ -4,6 +4,7 @@ export * from "./factories/institution-location";
 export * from "./factories/user";
 export * from "./factories/institution-user";
 export * from "./factories/institution-user-auth";
+export * from "./factories/institution-restriction";
 export * from "./factories/application";
 export * from "./factories/student";
 export * from "./factories/program-year";

@@ -9,6 +9,7 @@ import {
   NotFoundException,
   InternalServerErrorException,
   ParseIntPipe,
+  Query,
 } from "@nestjs/common";
 import {
   StudentRestrictionService,
@@ -32,8 +33,9 @@ import {
   ResolveRestrictionAPIInDTO,
   AssignRestrictionAPIInDTO,
   RestrictionStatusAPIOutDTO,
-  RestrictionCategoryParamAPIInDTO,
   DeleteRestrictionAPIInDTO,
+  RestrictionReasonsOptionsAPIInDTO,
+  AssignInstitutionRestrictionAPIInDTO,
 } from "./models/restriction.dto";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
@@ -47,11 +49,18 @@ import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { RestrictionControllerService } from "./restriction.controller.service";
 import { CustomNamedError } from "@sims/utilities";
-import { RESTRICTION_NOT_FOUND, RESTRICTION_IS_DELETED } from "../../constants";
+import {
+  RESTRICTION_NOT_FOUND,
+  RESTRICTION_IS_DELETED,
+  INSTITUTION_NOT_FOUND,
+  INSTITUTION_PROGRAM_LOCATION_ASSOCIATION_NOT_FOUND,
+  INSTITUTION_RESTRICTION_ALREADY_ACTIVE,
+} from "../../constants";
 import {
   RESTRICTION_NOT_ACTIVE,
   RESTRICTION_NOT_PROVINCIAL,
 } from "@sims/services/constants";
+import { RestrictionType } from "@sims/sims-db";
 
 /**
  * Controller for AEST Restrictions.
@@ -105,13 +114,14 @@ export class RestrictionAESTController extends BaseController {
    * @param restrictionCategory Selected category from category list.
    * @returns Reasons option list.
    */
-  @Get("category/:restrictionCategory/reasons")
+  @Get("reasons")
   async getReasonsOptionsList(
-    @Param() restrictionCategoryParam: RestrictionCategoryParamAPIInDTO,
+    @Query() options: RestrictionReasonsOptionsAPIInDTO,
   ): Promise<OptionItemAPIOutDTO[]> {
     const reasons =
       await this.restrictionService.getRestrictionReasonsByCategory(
-        restrictionCategoryParam.restrictionCategory,
+        options.type,
+        options.category,
       );
     return reasons.map((reason) => ({
       id: reason.id,
@@ -159,10 +169,10 @@ export class RestrictionAESTController extends BaseController {
     @Param("studentId", ParseIntPipe) studentId: number,
     @Body() payload: AssignRestrictionAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    const restriction =
-      await this.restrictionService.getProvincialRestrictionById(
-        payload.restrictionId,
-      );
+    const restriction = await this.restrictionService.restrictionExists(
+      payload.restrictionId,
+      RestrictionType.Provincial,
+    );
     if (!restriction) {
       throw new UnprocessableEntityException(
         "The given restriction type is not Provincial. Only provincial restrictions can be added.",
@@ -338,48 +348,51 @@ export class RestrictionAESTController extends BaseController {
   }
 
   /**
-   * Add a new provincial restriction to Institution.
-   * * Note: Only provincial restriction of category Designation can be added to institution.
-   * @param institutionId id of the institution to get a restriction.
+   * Add a new restriction to an Institution.
+   * @param institutionId ID of the institution to add a restriction.
    * @param payload restriction details.
+   * @returns Identifier of the created institution restriction.
    */
   @Roles(Role.InstitutionAddRestriction)
+  @ApiNotFoundResponse({
+    description: "Institution not found.",
+  })
   @ApiUnprocessableEntityResponse({
     description:
-      "The given restriction type is either not Provincial or not Institution.",
+      "Restriction not found or " +
+      "the specified location or program does not belong to the institution or " +
+      "an active restriction already exists for the institution.",
   })
   @Post("institution/:institutionId")
-  async addInstitutionProvincialRestriction(
+  async addInstitutionRestriction(
     @UserToken() userToken: IUserToken,
     @Param("institutionId", ParseIntPipe) institutionId: number,
-    @Body() payload: AssignRestrictionAPIInDTO,
+    @Body() payload: AssignInstitutionRestrictionAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    const restriction =
-      await this.restrictionService.getProvincialRestrictionById(
-        payload.restrictionId,
-        true,
-      );
-    if (!restriction) {
-      throw new UnprocessableEntityException(
-        "The given restriction type is either not Provincial or not Institution.",
-      );
+    try {
+      const updatedRestriction =
+        await this.institutionRestrictionService.addInstitutionRestriction(
+          institutionId,
+          payload.restrictionId,
+          payload.locationId,
+          payload.programId,
+          payload.noteDescription,
+          userToken.userId,
+        );
+      return { id: updatedRestriction.id };
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case INSTITUTION_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case RESTRICTION_NOT_FOUND:
+          case INSTITUTION_PROGRAM_LOCATION_ASSOCIATION_NOT_FOUND:
+          case INSTITUTION_RESTRICTION_ALREADY_ACTIVE:
+            throw new UnprocessableEntityException(error.message);
+        }
+      }
+      throw error;
     }
-    // TODO:Modify this method to add restriction and note in a transaction.
-    const updatedRestriction =
-      await this.institutionRestrictionService.addProvincialRestriction(
-        institutionId,
-        userToken.userId,
-        payload.restrictionId,
-        payload.noteDescription,
-      );
-    // Mapping the note added for restriction to institution notes
-    if (updatedRestriction.restrictionNote) {
-      await this.institutionService.saveInstitutionNote(
-        institutionId,
-        updatedRestriction.restrictionNote,
-      );
-    }
-    return { id: updatedRestriction.id };
   }
 
   /**

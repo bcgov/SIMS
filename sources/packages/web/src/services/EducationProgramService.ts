@@ -147,11 +147,14 @@ export class EducationProgramService {
   /**
    * Get a key/value pair list of all approved programs.
    * @param options method options:
+   * - `institutionId`: if provided, programs list for that institution is returned.
+   * Used to get programs for a particular institution from the ministry side.
    * - `isIncludeInActiveProgram`: if isIncludeInActiveProgram, then both active
    * and not active education program is considered.
    * @returns key/value pair list of all approved programs.
    */
   async getProgramsListForInstitutions(options?: {
+    institutionId?: number;
     isIncludeInActiveProgram?: boolean;
   }): Promise<OptionItemAPIOutDTO[]> {
     return ApiClient.EducationProgram.getProgramsListForInstitutions(options);

@@ -12,7 +12,12 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { InstitutionUser } from "./institution-user.model";
 import { InstitutionType } from "./institution-type.model";
-import { Note } from ".";
+import {
+  EducationProgram,
+  InstitutionLocation,
+  InstitutionRestriction,
+  Note,
+} from ".";
 import { AddressInfo } from "./address.type";
 import { PrimaryContact } from "./primary-contact.type";
 
@@ -115,4 +120,25 @@ export class Institution extends RecordDataModel {
     inverseJoinColumn: { name: ColumnNames.NoteId },
   })
   notes: Note[];
+
+  /**
+   * Locations associated with the institution.
+   */
+  @OneToMany(() => InstitutionLocation, (location) => location.institution)
+  locations: InstitutionLocation[];
+
+  /**
+   * Programs associated with the institution.
+   */
+  @OneToMany(() => EducationProgram, (program) => program.institution)
+  programs: EducationProgram[];
+
+  /**
+   * Restrictions associated with the institution.
+   */
+  @OneToMany(
+    () => InstitutionRestriction,
+    (restriction) => restriction.institution,
+  )
+  restrictions: InstitutionRestriction[];
 }

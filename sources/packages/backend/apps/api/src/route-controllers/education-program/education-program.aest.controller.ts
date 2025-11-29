@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   Param,
+  ParseBoolPipe,
   ParseIntPipe,
   Patch,
   Query,
@@ -37,6 +39,7 @@ import {
 } from "../models/pagination.dto";
 import { EducationProgramControllerService } from "./education-program.controller.service";
 import { Role } from "../../auth/roles.enum";
+import { OptionItemAPIOutDTO } from "apps/api/src/route-controllers/models/common.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -82,6 +85,31 @@ export class EducationProgramAESTController extends BaseController {
       institutionId,
       paginationOptions,
     );
+  }
+
+  /**
+   * Get a key/value pair list of all approved programs.
+   * @param isIncludeInActiveProgram if true, only education programs with active
+   * are considered else both active and inactive programs are considered.
+   * @returns key/value pair list of all approved programs.
+   */
+  @Get("institution/:institutionId/programs-list")
+  async getProgramsListForInstitutions(
+    @Param("institutionId", ParseIntPipe) institutionId: number,
+    @Query(
+      "isIncludeInActiveProgram",
+      new DefaultValuePipe(false),
+      ParseBoolPipe,
+    )
+    isIncludeInActiveProgram: boolean,
+  ): Promise<OptionItemAPIOutDTO[]> {
+    const programs = await this.programService.getPrograms(institutionId, {
+      isIncludeInActiveProgram,
+    });
+    return programs.map((program) => ({
+      id: program.id,
+      description: program.name,
+    }));
   }
 
   /**
