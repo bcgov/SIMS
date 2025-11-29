@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator
         title="Manage institution"
-        subTitle="Offerings Upload"
+        sub-title="Offerings Upload"
       />
     </template>
     <content-group>
@@ -140,7 +140,7 @@
       <content-group v-if="validationResults.length">
         <body-header
           title="Validation summary"
-          :recordsCount="validationResults.length"
+          :records-count="validationResults.length"
         ></body-header>
         <banner
           class="mb-2"
@@ -155,72 +155,61 @@
           summary="Warning! Offerings created as 'Creation Pending' will require StudentAid BC approval. Please review the warnings below."
         />
         <content-group>
-          <DataTable
-            :value="validationResults"
-            :paginator="true"
-            :rows="DEFAULT_PAGE_LIMIT"
-            :rowsPerPageOptions="PAGINATION_LIST"
-            :loading="loading"
-            breakpoint="1250px"
+          <v-data-table
+            :headers="OfferingsUploadHeaders"
+            :items="validationResults"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            :mobile="isMobile"
           >
-            <Column header="Line" field="recordLineNumber"></Column>
-            <Column header="Location" field="locationCode"></Column>
-            <Column header="Program code" field="sabcProgramCode"></Column>
-            <Column
-              header="Start date"
-              field="startDateFormatted"
-              bodyClass="text-no-wrap"
-            ></Column>
-            <Column
-              header="End date"
-              field="endDateFormatted"
-              bodyClass="text-no-wrap"
-            ></Column>
-            <Column header="Status"
-              ><template #body="slotProps">
-                <status-chip-offering
-                  v-if="slotProps.data.offeringStatus"
-                  :status="slotProps.data.offeringStatus"
-                /> </template
-            ></Column>
-            <Column header="Validations"
-              ><template #body="slotProps">
-                <div
-                  class="alert alert-danger"
-                  v-if="slotProps.data.errors.length"
-                >
-                  <ul class="m-2">
-                    <li v-for="error in slotProps.data.errors" :key="error">
-                      {{ error }}
-                    </li>
-                  </ul>
-                </div>
-                <div
-                  class="alert alert-warning"
-                  v-if="slotProps.data.warnings.length"
-                >
-                  <ul class="m-2">
-                    <li
-                      v-for="warning in slotProps.data.warnings"
-                      :key="warning"
-                    >
-                      {{ warning.message }}
-                    </li>
-                  </ul>
-                </div>
-                <div
-                  class="alert alert-info"
-                  v-if="slotProps.data.infos.length"
-                >
-                  <ul class="m-2">
-                    <li v-for="info in slotProps.data.infos" :key="info">
-                      {{ info.message }}
-                    </li>
-                  </ul>
-                </div>
-              </template></Column
-            >
-          </DataTable>
+            <template #loading>
+              <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+            </template>
+            <template #[`item.recordLineNumber`]="{ item }">
+              {{ item.recordLineNumber }}
+            </template>
+            <template #[`item.locationCode`]="{ item }">
+              {{ item.locationCode }}
+            </template>
+            <template #[`item.sabcProgramCode`]="{ item }">
+              {{ item.sabcProgramCode }}
+            </template>
+            <template #[`item.startDateFormatted`]="{ item }">
+              {{ item.startDateFormatted }}
+            </template>
+            <template #[`item.endDateFormatted`]="{ item }">
+              {{ item.endDateFormatted }}
+            </template>
+            <template #[`item.offeringStatus`]="{ item }">
+              <status-chip-offering
+                v-if="item.offeringStatus"
+                :status="item.offeringStatus"
+              />
+            </template>
+            <template #[`item.validations`]="{ item }">
+              <div class="alert alert-danger mt-4" v-if="item.errors.length">
+                <ul class="m-2">
+                  <li v-for="error in item.errors" :key="error">
+                    {{ error }}
+                  </li>
+                </ul>
+              </div>
+              <div class="alert alert-warning" v-if="item.warnings.length">
+                <ul class="m-2">
+                  <li v-for="warning in item.warnings" :key="warning.message">
+                    {{ warning.message }}
+                  </li>
+                </ul>
+              </div>
+              <div class="alert alert-info" v-if="item.infos.length">
+                <ul class="m-2">
+                  <li v-for="info in item.infos" :key="info.message">
+                    {{ info.message }}
+                  </li>
+                </ul>
+              </div>
+            </template>
+          </v-data-table>
         </content-group>
       </content-group>
     </content-group>
@@ -229,15 +218,18 @@
 
 <script lang="ts">
 import { ref, computed, defineComponent } from "vue";
+import { useDisplay } from "vuetify";
+
 import {
   OfferingsUploadBulkInsert,
   DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
+  ITEMS_PER_PAGE,
   OfferingStatus,
   BannerTypes,
   VForm,
   InputFile,
   ApiProcessError,
+  OfferingsUploadHeaders,
 } from "@/types";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
@@ -254,6 +246,7 @@ export default defineComponent({
   },
   setup() {
     const snackBar = useSnackBar();
+    const { mobile: isMobile } = useDisplay();
     const validationProcessing = ref(false);
     const creationProcessing = ref(false);
     // If multiple prop is undefined or false for VFileInput the component returns now a File object.
@@ -360,7 +353,7 @@ export default defineComponent({
       validationProcessing,
       creationProcessing,
       DEFAULT_PAGE_LIMIT,
-      PAGINATION_LIST,
+      ITEMS_PER_PAGE,
       offeringFile,
       uploadFile,
       validationResults,
@@ -374,6 +367,8 @@ export default defineComponent({
       csvFileUploadKey,
       showPossibleFileChangeError,
       uploadProgress,
+      OfferingsUploadHeaders,
+      isMobile,
     };
   },
 });

@@ -15,6 +15,7 @@ export interface OverawardAPIOutDTO {
   addedByUser?: string;
   applicationNumber?: string;
   assessmentTriggerType?: AssessmentTriggerType;
+  createdAt: Date;
 }
 
 export interface OverawardManualRecordAPIInDTO {
