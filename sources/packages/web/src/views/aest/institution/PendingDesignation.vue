@@ -24,7 +24,7 @@
     <content-group>
       <toggle-content
         :toggled="!designations.length"
-        message="No results found."
+        message="No pending designation requests found."
       >
         <v-data-table
           :headers="PendingDesignationsHeaders"

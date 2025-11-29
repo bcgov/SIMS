@@ -22,7 +22,7 @@
       <content-group>
         <toggle-content
           :toggled="!institutionRestrictions?.length"
-          message="No records found."
+          message="No restrictions found."
         >
           <v-data-table
             :headers="InstitutionRestrictionsHeaders"

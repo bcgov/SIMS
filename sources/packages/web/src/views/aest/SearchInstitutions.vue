@@ -97,9 +97,9 @@ import {
 export default defineComponent({
   setup() {
     const searchInstitutionsForm = ref({} as VForm);
-    const { mobile: isMobile } = useDisplay();
     const snackBar = useSnackBar();
     const router = useRouter();
+    const { mobile: isMobile } = useDisplay();
     const legalName = ref("");
     const operatingName = ref("");
     const institutions = ref([] as SearchInstitutionAPIOutDTO[]);

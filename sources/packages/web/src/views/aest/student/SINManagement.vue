@@ -25,7 +25,10 @@
         </body-header>
       </template>
       <content-group>
-        <toggle-content :toggled="!studentSINValidations?.length">
+        <toggle-content
+          :toggled="!studentSINValidations?.length"
+          message="No social insurance numbers found."
+        >
           <v-data-table
             :headers="SocialInsuranceNumberHeaders"
             :items="studentSINValidations"
@@ -133,7 +136,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { mobile: isMobile } = useDisplay();
     const showModal = ref(false);
     const studentSINValidations = ref([] as SINValidations[]);
     const addNewSINModal = ref(
@@ -144,6 +146,8 @@ export default defineComponent({
     );
     const snackBar = useSnackBar();
     const fileUtils = useFileUtils();
+    const { mobile: isMobile } = useDisplay();
+
     const initialData = ref({ studentId: props.studentId });
     const processingNewSIN = ref(false);
     const processingEditExpiryDate = ref(false);
