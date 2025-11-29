@@ -9,7 +9,10 @@
       />
     </template>
     <content-group>
-      <toggle-content :toggled="!studentLoanBalanceDetails.length">
+      <toggle-content
+        :toggled="!studentLoanBalanceDetails.length"
+        message="No part-time monthly loan balances found."
+      >
         <v-data-table
           :headers="PartTimeMonthlyBalanceHeaders"
           :items="studentLoanBalanceDetails"
@@ -52,8 +55,9 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { mobile: isMobile } = useDisplay();
     const { dateOnlyLongString, formatCurrency } = useFormatters();
+    const { mobile: isMobile } = useDisplay();
+
     const studentLoanBalanceDetails = ref(
       [] as StudentLoanBalanceDetailAPIOutDTO[],
     );

@@ -7,7 +7,10 @@
       />
     </template>
     <content-group>
-      <toggle-content :toggled="!overawards.length" message="hello">
+      <toggle-content
+        :toggled="!overawards.length"
+        message="No overawards found."
+      >
         <v-data-table
           :headers="OverawardsHeaders"
           :items="overawards"
@@ -64,7 +67,10 @@
       >
     </template>
     <content-group>
-      <toggle-content :toggled="!overawardDeductions.length">
+      <toggle-content
+        :toggled="!overawardDeductions.length"
+        message="No overaward deductions found."
+      >
         <v-data-table
           :headers="OverawardDeductionsHeaders"
           :items="overawardDeductions"
@@ -144,10 +150,11 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const { mobile: isMobile } = useDisplay();
     const { dateOnlyLongString, formatCurrency, emptyStringFiller } =
       useFormatters();
     const snackBar = useSnackBar();
+    const { mobile: isMobile } = useDisplay();
+
     const overawardDetails = ref([] as OverawardAPIOutDTO[]);
     const addManualOverawardDeduction = ref(
       {} as ModalDialog<OverawardManualRecordAPIInDTO | boolean>,

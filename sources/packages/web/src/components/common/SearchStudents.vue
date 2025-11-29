@@ -70,7 +70,7 @@
   <template v-if="studentsFound">
     <body-header title="Results" />
     <content-group>
-      <toggle-content :toggled="!students?.length">
+      <toggle-content :toggled="!students?.length" message="No students found.">
         <v-data-table
           :headers="SearchStudentsHeaders"
           :items="students"
@@ -131,11 +131,12 @@ import {
 export default defineComponent({
   emits: ["goToStudentView"],
   setup() {
-    const { mobile: isMobile } = useDisplay();
     const searchStudentsForm = ref({} as VForm);
     const snackBar = useSnackBar();
     const { dateOnlyLongString, sinDisplayFormat } = useFormatters();
     const { isSINValid } = useValidators();
+    const { mobile: isMobile } = useDisplay();
+
     const appNumber = ref("");
     const firstName = ref("");
     const lastName = ref("");

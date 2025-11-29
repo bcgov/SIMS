@@ -22,7 +22,7 @@
     <content-group>
       <toggle-content
         :toggled="!studentRestrictions?.length"
-        message="No records found."
+        message="No restrictions found."
       >
         <v-data-table
           :headers="StudentRestrictionsHeaders"
@@ -184,7 +184,6 @@ export default defineComponent({
   },
   setup(props) {
     const studentRestrictions = ref<RestrictionSummaryAPIOutDTO[]>([]);
-    const { mobile: isMobile } = useDisplay();
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
     const viewRestriction = ref(
@@ -196,6 +195,7 @@ export default defineComponent({
     const deleteRestriction = ref({} as ModalDialog<UserNoteModal<number>>);
     const studentRestriction = ref();
     const snackBar = useSnackBar();
+    const { mobile: isMobile } = useDisplay();
 
     const loadStudentRestrictions = async () => {
       studentRestrictions.value =

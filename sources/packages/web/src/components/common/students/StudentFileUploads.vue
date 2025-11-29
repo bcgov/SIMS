@@ -25,7 +25,7 @@
     <content-group>
       <toggle-content
         :toggled="!studentFileUploads.length"
-        message="No records found."
+        message="No file uploads found."
       >
         <v-data-table
           :headers="StudentFileUploadsHeaders"
@@ -106,8 +106,8 @@ import { useDisplay } from "vuetify";
 
 import {
   DEFAULT_PAGE_LIMIT,
-  FormIOForm,
   ITEMS_PER_PAGE,
+  FormIOForm,
   Role,
   StudentFileUploadsHeaders,
 } from "@/types";
