@@ -754,28 +754,25 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
         },
       );
       // Create supporting user parents for the application.
-      const parent1 = await db.supportingUser.save(
-        createFakeSupportingUser(
-          { application },
-          {
-            initialValues: {
-              supportingUserType: SupportingUserType.Parent,
-              fullName: "Parent One",
-            },
+      const parent1 = createFakeSupportingUser(
+        { application },
+        {
+          initialValues: {
+            supportingUserType: SupportingUserType.Parent,
+            fullName: "Parent One",
           },
-        ),
+        },
       );
-      const parent2 = await db.supportingUser.save(
-        createFakeSupportingUser(
-          { application },
-          {
-            initialValues: {
-              supportingUserType: SupportingUserType.Parent,
-              fullName: "Parent Two",
-            },
+      const parent2 = createFakeSupportingUser(
+        { application },
+        {
+          initialValues: {
+            supportingUserType: SupportingUserType.Parent,
+            fullName: "Parent Two",
           },
-        ),
+        },
       );
+      await db.supportingUser.save([parent1, parent2]);
 
       // Part of the payload data that will be re-populated by the server.
       // This re-populated data is provided to form.io to execute dry run submission.

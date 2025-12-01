@@ -1800,6 +1800,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatus: ApplicationStatus.Completed,
         id: applicationId,
       },
+      order: { supportingUsers: { id: "ASC" } },
     });
   }
 
