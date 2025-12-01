@@ -69,7 +69,7 @@
             "tableView": true,
             "validate": {
                 "required": true,
-                "custom": "const allowedValues = data.parents.map((parent) => parent.value);\n\nvalid = data.allowedValues.includes(input) ? true : \"Invalid value for selected parent\";"
+                "custom": "const allowedValues = !!data.parents\n  ? data.parents.map((parent) => parent.value)\n  : [];\n\nvalid = allowedValues.includes(input) ? true : \"Invalid value for selected parent\";"
             },
             "validateWhenHidden": false,
             "key": "selectedParent",
@@ -176,7 +176,7 @@
                         "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
                     },
                     "validateWhenHidden": false,
-                    "key": "file",
+                    "key": "stepParentWaiverSupportingDocuments",
                     "type": "file",
                     "url": "student/files",
                     "input": true

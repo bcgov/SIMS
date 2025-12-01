@@ -207,9 +207,9 @@ export class StudentAppealStudentsController extends BaseController {
           appealRequest.formName === FormNames.StepParentWaiverAppeal,
       );
     // Validate the number of parents for step parent waiver appeal.
-    if (hasStepParentWaiverAppealSubmission && parents.length !== 2) {
+    if (hasStepParentWaiverAppealSubmission && parents.length < 2) {
       throw new UnprocessableEntityException(
-        "Step parent waiver appeal can only be submitted for applications with both parents.",
+        "Step parent waiver appeal can only be submitted for applications reported with both parents.",
       );
     }
     try {
