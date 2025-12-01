@@ -557,3 +557,17 @@ export const StudentAppealsHistoryHeaders = [
   { title: "Application Number", key: "applicationNumber", sortable: true },
   { title: "Actions", key: "actions", sortable: false },
 ];
+
+/**
+ * Offering Summary header.
+ */
+export const OfferingSummaryHeaders = [
+  { title: "Name", sortable: true, key: "name" },
+  { title: "Year of Study", sortable: false, key: "yearOfStudy" },
+  { title: "Study Dates", sortable: false, key: "studyDates" },
+  { title: "Intensity", sortable: false, key: "offeringIntensity" },
+  { title: "Offering type", sortable: false, key: "offeringType" },
+  { title: "Study delivery", sortable: false, key: "offeringDelivered" },
+  { title: "Status", sortable: false, key: "offeringStatus" },
+  { title: "Action", sortable: false, key: "action" },
+];
