@@ -120,6 +120,14 @@ BYPASS_APPLICATION_SUBMIT_VALIDATIONS=
 #Fulltime programs and offering are allowed.
 IS_FULLTIME_ALLOWED=true
 
+#Maintenance Mode Config
+MAINTENANCE_MODE=false
+MAINTENANCE_MODE_STUDENT=false
+MAINTENANCE_MODE_INSTITUTION=false
+MAINTENANCE_MODE_MINISTRY=false
+MAINTENANCE_MODE_SUPPORTING_USER=false
+MAINTENANCE_MODE_EXTERNAL=false
+
 #cypress credentials
 FILE_NAME= cypress.env.json
 FILE_PATH= SIMS\testing\functional\tests\cypress.env.json
