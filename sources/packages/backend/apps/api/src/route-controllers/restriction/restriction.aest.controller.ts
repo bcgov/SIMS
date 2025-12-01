@@ -350,7 +350,7 @@ export class RestrictionAESTController extends BaseController {
   /**
    * Add a new restriction to an Institution.
    * @param institutionId ID of the institution to add a restriction.
-   * @param payload restriction details.
+   * @param payload Restriction details.
    * @returns Identifier of the created institution restriction.
    */
   @Roles(Role.InstitutionAddRestriction)
@@ -387,8 +387,11 @@ export class RestrictionAESTController extends BaseController {
             throw new NotFoundException(error.message);
           case RESTRICTION_NOT_FOUND:
           case INSTITUTION_PROGRAM_LOCATION_ASSOCIATION_NOT_FOUND:
-          case INSTITUTION_RESTRICTION_ALREADY_ACTIVE:
             throw new UnprocessableEntityException(error.message);
+          case INSTITUTION_RESTRICTION_ALREADY_ACTIVE:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
         }
       }
       throw error;

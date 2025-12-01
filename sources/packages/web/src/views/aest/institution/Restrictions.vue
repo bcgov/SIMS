@@ -101,6 +101,7 @@ import {
   RestrictionEntityType,
   LayoutTemplates,
   Role,
+  ApiProcessError,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -109,6 +110,7 @@ import {
   ResolveRestrictionAPIInDTO,
   RestrictionDetailAPIOutDTO,
 } from "@/services/http/dto";
+import { INSTITUTION_RESTRICTION_ALREADY_ACTIVE } from "@/constants";
 
 export default defineComponent({
   components: {
@@ -190,7 +192,7 @@ export default defineComponent({
      * Allow adding the new restriction using the modal's provided data.
      * @param modalResult Modal result. False if the user cancel the modal,
      * otherwise the validated data to be used to create the restriction.
-     * @returns True if the modal should closed, false if there was some error
+     * @returns True if the modal should be closed, false if there was some error
      * that required the modal to remain open.
      */
     const createNewRestriction = async (
@@ -208,7 +210,13 @@ export default defineComponent({
         await loadInstitutionRestrictions();
         snackBar.success("Restriction was successfully added.");
         return true;
-      } catch {
+      } catch (error: unknown) {
+        if (
+          error instanceof ApiProcessError &&
+          error.errorType === INSTITUTION_RESTRICTION_ALREADY_ACTIVE
+        ) {
+          snackBar.warn("An active restriction is already present.");
+        }
         snackBar.error("Unexpected error while adding the restriction.");
         return false;
       } finally {

@@ -178,9 +178,10 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       restriction.creator = { id: auditUserId } as User;
       restriction.restrictionNote = note;
       restriction.isActive = true;
-      return entityManager
+      await entityManager
         .getRepository(InstitutionRestriction)
-        .save(restriction);
+        .insert(restriction);
+      return restriction;
     });
   }
 
@@ -243,7 +244,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       institutionPromise,
       restrictionExistsPromise,
     ]);
-    // Execute validations inspecting the resulting of the above queries.
+    // Execute validations inspecting the results of the above queries.
     if (!institution) {
       throw new CustomNamedError(
         `Institution ID ${institutionId} not found.`,

@@ -5,7 +5,7 @@ import {
   createE2EDataSources,
   createFakeInstitution,
   createFakeUser,
-  findAndSaveInstitutionRestriction,
+  saveFakeInstitutionRestriction,
 } from "@sims/test-utils";
 import {
   AESTGroups,
@@ -24,7 +24,7 @@ import {
   Restriction,
   User,
 } from "@sims/sims-db";
-import { createFakeEducationProgram } from "@sims/test-utils/factories/education-program";
+import { createFakeEducationProgram } from "@sims/test-utils";
 
 describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
   let app: INestApplication;
@@ -37,7 +37,7 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
     app = nestApplication;
     db = createE2EDataSources(dataSource);
     sharedAuditUser = await db.user.save(createFakeUser());
-    // Find a restriction.
+    // Find the SUS restriction to be used as an example of a valid restriction.
     susRestriction = await db.restriction.findOne({
       select: { id: true },
       where: {
@@ -48,15 +48,8 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
 
   it("Should add an institution restriction when a valid payload is submitted.", async () => {
     // Arrange
-    const institution = createFakeInstitution();
-    await db.institution.save(institution);
-    const location = createFakeLocation(institution);
-    await db.institutionLocation.save(location);
-    const educationProgram = createFakeEducationProgram({
-      auditUser: sharedAuditUser,
-      institution,
-    });
-    await db.educationProgram.save(educationProgram);
+    const { institution, location, program } =
+      await createInstitutionProgramLocation();
     const ministryUser = await getAESTUser(
       db.dataSource,
       AESTGroups.BusinessAdministrators,
@@ -70,7 +63,7 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
       .post(endpoint)
       .send({
         restrictionId: susRestriction.id,
-        programId: educationProgram.id,
+        programId: program.id,
         locationId: location.id,
         noteDescription: "Add institution restriction note.",
       })
@@ -117,7 +110,7 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
       institution: { id: institution.id },
       restriction: { id: susRestriction.id },
       location: { id: location.id },
-      program: { id: educationProgram.id },
+      program: { id: program.id },
       creator: ministryUserAudit,
       restrictionNote: {
         id: expect.any(Number),
@@ -133,14 +126,13 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
     // Arrange
     const { institution, location, program } =
       await createInstitutionProgramLocation();
-    await db.educationProgram.save(program);
-    await findAndSaveInstitutionRestriction(
+    await saveFakeInstitutionRestriction(
       db,
-      RestrictionCode.SUS,
       {
         institution,
         program,
         location,
+        restriction: susRestriction,
         creator: sharedAuditUser,
       },
       { initialValues: { isActive: false } },
@@ -165,16 +157,13 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
     // Arrange
     const { institution, location, program } =
       await createInstitutionProgramLocation();
-    const institutionRestriction = await findAndSaveInstitutionRestriction(
-      db,
-      RestrictionCode.SUS,
-      {
-        institution,
-        program,
-        location,
-        creator: sharedAuditUser,
-      },
-    );
+    await saveFakeInstitutionRestriction(db, {
+      institution,
+      program,
+      location,
+      restriction: susRestriction,
+      creator: sharedAuditUser,
+    });
     const endpoint = `/aest/restriction/institution/${institution.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -182,7 +171,7 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
     await request(app.getHttpServer())
       .post(endpoint)
       .send({
-        restrictionId: institutionRestriction.restriction.id,
+        restrictionId: susRestriction.id,
         programId: program.id,
         locationId: location.id,
         noteDescription: "Add institution restriction note.",
@@ -190,7 +179,7 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        message: `The restriction ID ${institutionRestriction.restriction.id} is already assigned and active to the institution for the specified location ID ${location.id} and program ID ${program.id}.`,
+        message: `The restriction ID ${susRestriction.id} is already assigned and active to the institution for the specified location ID ${location.id} and program ID ${program.id}.`,
         error: "Unprocessable Entity",
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });
@@ -293,6 +282,11 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
       });
   });
 
+  /**
+   * Creates an institution with a location and a program as expected by the E2E tests.
+   * @param options options to skip the creation of program or location.
+   * @returns created institution, location, and program.
+   */
   async function createInstitutionProgramLocation(options?: {
     skipProgramCreation?: boolean;
     skipLocationCreation?: boolean;

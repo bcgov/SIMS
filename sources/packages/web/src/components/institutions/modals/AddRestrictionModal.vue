@@ -140,7 +140,6 @@ export default defineComponent({
 
     const cancel = () => {
       addRestrictionForm.value.reset();
-      addRestrictionForm.value.resetValidation();
       resolvePromise(false);
     };
 

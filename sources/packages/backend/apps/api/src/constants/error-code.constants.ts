@@ -309,7 +309,7 @@ export const MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED =
 export const INSTITUTION_NOT_FOUND = "INSTITUTION_NOT_FOUND";
 
 /**
- * An institution program location association was not found.
+ * An institution, program, and location association was not found.
  */
 export const INSTITUTION_PROGRAM_LOCATION_ASSOCIATION_NOT_FOUND =
   "INSTITUTION_PROGRAM_LOCATION_ASSOCIATION_NOT_FOUND";

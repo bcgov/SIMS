@@ -49,14 +49,15 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
         restrictionType,
         restrictionCategory,
       },
+      order: { restrictionCode: "ASC" },
     });
   }
 
   /**
    * Checks if a restriction exists for the given restriction ID and type.
-   * @param restrictionId restriction ID.
-   * @param restrictionType restriction type.
-   * @returns provincial restriction.
+   * @param restrictionId Restriction ID.
+   * @param restrictionType Restriction type.
+   * @returns Provincial restriction.
    */
   async restrictionExists(
     restrictionId: number,
