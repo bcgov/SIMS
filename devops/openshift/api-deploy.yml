@@ -532,17 +532,17 @@ parameters:
   - name: IS_FULLTIME_ALLOWED
     required: true
   - name: MAINTENANCE_MODE
-    value: false
+    value: "false"
   - name: MAINTENANCE_MODE_STUDENT
-    value: false
+    value: "false"
   - name: MAINTENANCE_MODE_INSTITUTION
-    value: false
+    value: "false"
   - name: MAINTENANCE_MODE_MINISTRY
-    value: false
+    value: "false"
   - name: MAINTENANCE_MODE_SUPPORTING_USER
-    value: false
+    value: "false"
   - name: MAINTENANCE_MODE_EXTERNAL
-    value: false
+    value: "false"
   - name: FILE_UPLOAD_MAX_FILE_SIZE
     value: "15728640"
   - name: FILE_UPLOAD_ALLOWED_EXTENSIONS
