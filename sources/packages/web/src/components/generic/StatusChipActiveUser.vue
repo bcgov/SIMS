@@ -8,7 +8,7 @@ import { StatusChipTypes } from "@/types";
 export default defineComponent({
   props: {
     isActive: {
-      type: String,
+      type: Boolean,
       required: true,
     },
   },

@@ -571,3 +571,16 @@ export const OfferingSummaryHeaders = [
   { title: "Status", sortable: false, key: "offeringStatus" },
   { title: "Action", sortable: false, key: "action" },
 ];
+
+/**
+ * Institution Users header.
+ */
+export const InstitutionUsersHeaders = [
+  { title: "Name", sortable: true, key: "displayName" },
+  { title: "Email", sortable: true, key: "email" },
+  { title: "User Type", sortable: false, key: "userType" },
+  { title: "Role", sortable: false, key: "roles" },
+  { title: "Locations", sortable: false, key: "locations" },
+  { title: "Status", sortable: false, key: "isActive" },
+  { title: "Action", sortable: false, key: "action" },
+];

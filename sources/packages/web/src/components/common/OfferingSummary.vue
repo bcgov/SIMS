@@ -42,6 +42,7 @@
         item-value="id"
         :items-per-page="DEFAULT_PAGE_LIMIT"
         :items-per-page-options="ITEMS_PER_PAGE"
+        :mobile="isMobile"
         @update:options="paginationAndSortEvent"
       >
         <template #[`item.offeringName`]="{ item }">
@@ -78,6 +79,8 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { onMounted, ref, computed, defineComponent } from "vue";
+import { useDisplay } from "vuetify";
+
 import {
   InstitutionRoutesConst,
   AESTRoutesConst,
@@ -88,7 +91,6 @@ import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   DEFAULT_DATATABLE_PAGE_NUMBER,
-  DEFAULT_PAGE_NUMBER,
   PaginatedResults,
   OfferingSummaryHeaders,
   DataTableSortByOrder,
@@ -130,6 +132,8 @@ export default defineComponent({
     const currentPageLimit = ref();
     const { dateOnlyLongString } = useFormatters();
     const { isReadOnlyUser } = useInstitutionAuth();
+
+    const { mobile: isMobile } = useDisplay();
     const clientType = computed(() => AuthService.shared.authClientType);
 
     const isInstitutionUser = computed(() => {
@@ -250,8 +254,8 @@ export default defineComponent({
     // Search offering table.
     const searchOfferingTable = async () => {
       await getEducationProgramAndOffering(
-        currentPage.value ?? DEFAULT_PAGE_NUMBER,
-        currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
+        currentPage.value ?? currentPage.value,
+        currentPageLimit.value ?? DEFAULT_DATATABLE_PAGE_NUMBER,
       );
     };
 
@@ -271,6 +275,7 @@ export default defineComponent({
       dateOnlyLongString,
       allowOfferingEdit,
       OfferingSummaryHeaders,
+      isMobile,
     };
   },
 });

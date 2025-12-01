@@ -39,7 +39,7 @@ export class InstitutionUserApi extends HttpBaseClient {
         ? `/institution/${institutionId}`
         : ""
     }?`;
-    url += getPaginationQueryString(paginationOptions);
+    url += getPaginationQueryString(paginationOptions, true);
     return this.getCall<PaginatedResults<InstitutionUserAPIOutDTO>>(
       this.addClientRoot(url),
     );

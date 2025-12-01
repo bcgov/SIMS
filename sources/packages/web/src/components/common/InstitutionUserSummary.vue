@@ -2,7 +2,7 @@
 <template>
   <body-header-container>
     <template #header>
-      <body-header title="All users" :recordsCount="usersListAndCount.count">
+      <body-header title="All users" :records-count="usersListAndCount.count">
         <template #subtitle>
           <ul>
             <li>
@@ -53,7 +53,7 @@
             <check-permission-role :role="Role.InstitutionAddNewUser">
               <template #="{ notAllowed }">
                 <v-btn
-                  v-if="hasBusinessGuid || allowBasicBCeIDCreation"
+                  v-if="true"
                   class="ml-2"
                   color="primary"
                   :disabled="notAllowed"
@@ -70,68 +70,50 @@
       </body-header>
     </template>
     <content-group>
-      <DataTable
-        :value="usersListAndCount.results"
-        :lazy="true"
-        :paginator="true"
-        :rows="DEFAULT_PAGE_LIMIT"
-        :rowsPerPageOptions="PAGINATION_LIST"
-        :totalRecords="usersListAndCount.count"
-        @page="paginationAndSortEvent($event)"
-        @sort="paginationAndSortEvent($event)"
-        :loading="loading"
-        breakpoint="1250px"
-        data-cy="usersList"
+      <toggle-content
+        :toggled="!usersListAndCount.count && !loading"
+        message="No users found."
       >
-        <template #empty>
-          <p class="text-center font-weight-bold">No records found.</p>
-        </template>
-        <Column
-          :field="UserFields.DisplayName"
-          header="Name"
-          :sortable="true"
-        ></Column>
-        <Column
-          :field="UserFields.Email"
-          header="Email"
-          :sortable="true"
-          data-cy="userEmail"
-        ></Column>
-        <Column :field="UserFields.UserType" header="User Type">
-          <template #body="slotProps">
-            <span data-cy="userType" class="text-capitalize">{{
-              slotProps.data.userType
-            }}</span>
-          </template></Column
+        <v-data-table-server
+          v-if="usersListAndCount?.count"
+          :headers="InstitutionUsersHeaders"
+          :items="usersListAndCount?.results"
+          :items-length="usersListAndCount?.count"
+          :loading="loading"
+          item-value="id"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          :mobile="isMobile"
+          @update:options="paginationAndSortEvent"
         >
-        <Column :field="UserFields.Roles" header="Role">
-          <template #body="slotProps">
-            <span class="text-capitalize"
-              >{{ institutionUserRoleToDisplay(slotProps.data.roles[0]) }}
+          <template #[`item.displayName`]="{ item }">
+            {{ item.displayName }}
+          </template>
+          <template #[`item.email`]="{ item }">
+            {{ item.email }}
+          </template>
+          <template #[`item.userType`]="{ item }">
+            <span class="text-capitalize">{{ item.userType }}</span>
+          </template>
+          <template #[`item.roles`]="{ item }">
+            <span class="text-capitalize">
+              {{ institutionUserRoleToDisplay(item.roles[0]) }}
             </span>
           </template>
-        </Column>
-        <Column :field="UserFields.Locations" header="Locations"
-          ><template #body="slotProps">
-            <ul v-for="location in slotProps.data.locations" :key="location">
+          <template #[`item.locations`]="{ item }">
+            <ul v-for="location in item.locations" :key="location">
               <li>{{ location }}</li>
-            </ul></template
-          ></Column
-        >
-        <Column :field="UserFields.IsActive" header="Status"
-          ><template #body="slotProps">
-            <status-chip-active-user
-              :is-active="slotProps.data.isActive"
-              data-cy="userStatus"
-            /> </template
-        ></Column>
-        <Column header="Action"
-          ><template #body="slotProps">
+            </ul>
+          </template>
+          <template #[`item.isActive`]="{ item }">
+            <status-chip-active-user :is-active="item.isActive" />
+          </template>
+          <template #[`item.action`]="{ item }">
             <check-permission-role :role="Role.InstitutionEditUser">
               <template #="{ notAllowed }">
                 <v-btn
-                  :disabled="!slotProps.data.isActive || notAllowed"
-                  @click="openEditUserModal(slotProps.data)"
+                  :disabled="!item.isActive || notAllowed"
+                  @click="openEditUserModal(item)"
                   variant="text"
                   color="primary"
                   append-icon="mdi-pencil-outline"
@@ -146,8 +128,8 @@
             <check-permission-role :role="Role.InstitutionEnableDisableUser">
               <template #="{ notAllowed }">
                 <v-btn
-                  :disabled="slotProps.data.disableRemove || notAllowed"
-                  @click="updateUserStatus(slotProps.data)"
+                  :disabled="item.disableRemove || notAllowed"
+                  @click="updateUserStatus(item)"
                   variant="text"
                   color="primary"
                   append-icon="fa:far fa-user"
@@ -155,34 +137,36 @@
                 >
                   <span class="text-decoration-underline"
                     ><strong>{{
-                      slotProps.data.isActive ? "Disable" : "Enable"
+                      item.isActive ? "Disable" : "Enable"
                     }}</strong></span
                   >
                 </v-btn>
               </template>
             </check-permission-role>
           </template>
-        </Column>
-      </DataTable>
+        </v-data-table-server>
+      </toggle-content>
     </content-group>
     <!-- Add user. -->
     <add-institution-user
       ref="addInstitutionUserModal"
-      :institutionId="institutionId"
-      :hasBusinessGuid="hasBusinessGuid"
-      :canSearchBCeIDUsers="canSearchBCeIDUsers"
+      :institution-id="institutionId"
+      :has-business-guid="hasBusinessGuid"
+      :can-search-b-ce-i-d-users="canSearchBCeIDUsers"
     />
     <!-- Edit user. -->
     <edit-institution-user
       ref="editInstitutionUserModal"
-      :institutionId="institutionId"
-      :hasBusinessGuid="hasBusinessGuid"
+      :institution-id="institutionId"
+      :has-business-guid="hasBusinessGuid"
     />
   </body-header-container>
 </template>
 
 <script lang="ts">
 import { ref, watch, defineComponent } from "vue";
+import { useDisplay } from "vuetify";
+
 import AddInstitutionUser from "@/components/institutions/modals/AddInstitutionUserModal.vue";
 import EditInstitutionUser from "@/components/institutions/modals/EditInstitutionUserModal.vue";
 import { ModalDialog, useFormatters, useSnackBar } from "@/composables";
@@ -190,13 +174,14 @@ import StatusChipActiveUser from "@/components/generic/StatusChipActiveUser.vue"
 import {
   InstitutionUserViewModel,
   InstitutionUserSummary,
-  UserFields,
   DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
-  DataTableSortOrder,
-  PAGINATION_LIST,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
+  ITEMS_PER_PAGE,
+  DataTableSortByOrder,
   ApiProcessError,
   Role,
+  InstitutionUsersHeaders,
+  DataTableOptions,
 } from "@/types";
 import { INSTITUTION_MUST_HAVE_AN_ADMIN } from "@/constants";
 import { InstitutionUserService } from "@/services/InstitutionUserService";
@@ -213,6 +198,7 @@ export default defineComponent({
     institutionId: {
       type: Number,
       required: false,
+      default: undefined,
     },
     hasBusinessGuid: {
       type: Boolean,
@@ -232,6 +218,8 @@ export default defineComponent({
   setup(props) {
     const snackBar = useSnackBar();
     const { institutionUserRoleToDisplay } = useFormatters();
+    const { mobile: isMobile } = useDisplay();
+
     const usersListAndCount = ref({} as InstitutionUserSummary);
     const loading = ref(false);
     const searchBox = ref("");
@@ -243,31 +231,32 @@ export default defineComponent({
     );
 
     /**
-     * Function to load usersListAndCount respective to the client type.
-     * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER.
-     * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT.
-     * @param sortField sort field, if nothing passed then UserFields.DisplayName.
-     * @param sortOrder sort oder, if nothing passed then DataTableSortOrder.DESC.
+     * Loads Users for the Institution.
+     * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.
+     * @param pageCount page limit, if nothing passed then {@link DEFAULT_PAGE_LIMIT}.
+     * @param sortField sort field, if nothing passed then api sorts with application number.
+     * @param sortOrder sort order, if nothing passed then {@link DataTableSortByOrder.ASC}.
      */
     const getAllInstitutionUsers = async (
-      page = DEFAULT_PAGE_NUMBER,
+      page = DEFAULT_DATATABLE_PAGE_NUMBER,
       pageCount = DEFAULT_PAGE_LIMIT,
-      sortField = UserFields.DisplayName,
-      sortOrder = DataTableSortOrder.ASC,
+      sortField?: string,
+      sortOrder = DataTableSortByOrder.ASC,
     ) => {
       loading.value = true;
       try {
         usersListAndCount.value =
           await InstitutionUserService.shared.institutionUserSummary(
             {
-              page: page,
+              page,
               pageLimit: pageCount,
               searchCriteria: searchBox.value,
-              sortField: sortField,
-              sortOrder: sortOrder,
+              sortField,
+              sortOrder,
             },
             props.institutionId,
           );
+        console.log("user", usersListAndCount.value);
       } finally {
         loading.value = false;
       }
@@ -299,21 +288,22 @@ export default defineComponent({
     };
 
     // Pagination sort event callback.
-    const paginationAndSortEvent = async (event: any) => {
+    const paginationAndSortEvent = async (event: DataTableOptions) => {
       currentPage.value = event?.page;
-      currentPageLimit.value = event?.rows;
+      currentPageLimit.value = event.itemsPerPage;
+      const [sortByOptions] = event.sortBy;
       await getAllInstitutionUsers(
         event.page,
-        event.rows,
-        event.sortField,
-        event.sortOrder,
+        event.itemsPerPage,
+        sortByOptions?.key,
+        sortByOptions?.order,
       );
     };
 
     // Search user table.
     const searchUserTable = async () => {
       await getAllInstitutionUsers(
-        currentPage.value ?? DEFAULT_PAGE_NUMBER,
+        currentPage.value ?? DEFAULT_DATATABLE_PAGE_NUMBER,
         currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
       );
     };
@@ -335,9 +325,8 @@ export default defineComponent({
     };
 
     const openEditUserModal = async (userDetails: InstitutionUserViewModel) => {
-      const modalResult = await editInstitutionUserModal.value.showModal(
-        userDetails,
-      );
+      const modalResult =
+        await editInstitutionUserModal.value.showModal(userDetails);
       if (modalResult) {
         // Refresh the list to display the updated user.
         await getAllInstitutionUsers();
@@ -356,11 +345,13 @@ export default defineComponent({
       loading,
       searchUserTable,
       searchBox,
-      UserFields,
       usersListAndCount,
       DEFAULT_PAGE_LIMIT,
-      PAGINATION_LIST,
+      DEFAULT_DATATABLE_PAGE_NUMBER,
+      ITEMS_PER_PAGE,
       Role,
+      InstitutionUsersHeaders,
+      isMobile,
     };
   },
 });
