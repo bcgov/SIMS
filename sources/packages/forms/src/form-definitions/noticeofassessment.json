@@ -2757,7 +2757,7 @@
                       {
                         "components": [
                           {
-                            "label": "Canada Student Loan (CSL)",
+                            "label": "Canada Student Loan for Full-time Students (CSL-FT)",
                             "tag": "p",
                             "attrs": [
                               {
@@ -2765,7 +2765,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "Canada Student Loan (CSL)",
+                            "content": "Canada Student Loan for Full-time Students (CSL-FT)",
                             "refreshOnChange": false,
                             "key": "canadaStudentLoan",
                             "type": "htmlelement",
@@ -2917,7 +2917,7 @@
                       {
                         "components": [
                           {
-                            "label": "Canada Student Grant Program for Full-time Students (CSG-FT)",
+                            "label": "Canada Student Grant for Full-time Students (CSG-FT)",
                             "tag": "p",
                             "attrs": [
                               {
@@ -2925,7 +2925,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "Canada Student Grant Program for Full-time Students (CSG-FT)",
+                            "content": "Canada Student Grant for Full-time Students (CSG-FT)",
                             "refreshOnChange": false,
                             "key": "csgFt",
                             "type": "htmlelement",
@@ -2995,7 +2995,7 @@
                       {
                         "components": [
                           {
-                            "label": "Canada Student Grant for Persons with Dependents (CSG-FTDEP)",
+                            "label": "Canada Student Grant for Full-time Students with Dependants (CSG-FTDEP)",
                             "tag": "p",
                             "attrs": [
                               {
@@ -3003,7 +3003,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "Canada Student Grant for Persons with Dependents (CSG-FTDEP)",
+                            "content": "Canada Student Grant for Full-time Students with Dependants (CSG-FTDEP)",
                             "refreshOnChange": false,
                             "key": "csgd",
                             "type": "htmlelement",
@@ -3073,7 +3073,7 @@
                       {
                         "components": [
                           {
-                            "label": "B.C. Access Grant for Full-Time Students (BCAG)",
+                            "label": "B.C. Access Grant for Full-time Students (BCAG-FT)",
                             "tag": "p",
                             "attrs": [
                               {
@@ -3081,7 +3081,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "B.C. Access Grant for Full-Time Students (BCAG)",
+                            "content": "B.C. Access Grant for Full-time Students (BCAG-FT)",
                             "refreshOnChange": false,
                             "key": "bcag",
                             "type": "htmlelement",
@@ -3308,7 +3308,7 @@
                       {
                         "components": [
                           {
-                            "label": "B.C. Supplemental Bursary for Students with a Disability (SBSD)",
+                            "label": "B.C. Supplemental Bursary for Students with Disabilities (SBSD)",
                             "tag": "p",
                             "attrs": [
                               {
@@ -3316,7 +3316,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "B.C. Supplemental Bursary for Students with a Disability (SBSD)",
+                            "content": "B.C. Supplemental Bursary for Students with Disabilities (SBSD)",
                             "refreshOnChange": false,
                             "key": "sbsd",
                             "type": "htmlelement",
