@@ -69,7 +69,7 @@
             "tableView": true,
             "validate": {
                 "required": true,
-                "custom": "const allowedValues = !!data.parents\n  ? data.parents.map((parent) => parent.value)\n  : [];\n\nvalid = allowedValues.includes(input) ? true : \"Invalid value for selected parent\";"
+                "custom": "const allowedValues = !!data.parents\n  ? data.parents.map((parent) => parent.id)\n  : [];\n  \nvalid = allowedValues.includes(input) ? true : \"Invalid value for selected parent\";"
             },
             "validateWhenHidden": false,
             "key": "selectedParent",
