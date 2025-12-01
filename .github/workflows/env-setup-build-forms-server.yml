@@ -31,7 +31,7 @@ jobs:
           echo OC CLI Version: $(oc version)
       # Checkout the PR branch
       - name: Checkout Target Branch
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.ref_name }}
       # Log in to OpenShift.
