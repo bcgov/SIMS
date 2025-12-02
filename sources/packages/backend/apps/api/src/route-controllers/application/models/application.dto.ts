@@ -108,6 +108,7 @@ class SupportingUserParentAPIOutDTO {
   id: number;
   fullName: string;
 }
+
 /**
  * Application details for an appeal.
  */
