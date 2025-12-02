@@ -4,8 +4,8 @@
       <template #header>
         <body-header
           title="Social Insurance Number"
-          subTitle="The first row will always be the student's current active SIN."
-          :recordsCount="studentSINValidations?.length"
+          sub-title="The first row will always be the student's current active SIN."
+          :records-count="studentSINValidations?.length"
         >
           <template #actions>
             <check-permission-role :role="Role.StudentAddNewSIN">
@@ -25,56 +25,74 @@
         </body-header>
       </template>
       <content-group>
-        <toggle-content :toggled="!studentSINValidations?.length">
-          <DataTable
-            :value="studentSINValidations"
-            :paginator="true"
-            :rows="DEFAULT_PAGE_LIMIT"
-            :rowsPerPageOptions="PAGINATION_LIST"
-            breakpoint="1380px"
+        <toggle-content
+          :toggled="!studentSINValidations?.length"
+          message="No social insurance numbers found."
+        >
+          <v-data-table
+            :headers="SocialInsuranceNumberHeaders"
+            :items="studentSINValidations"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            :mobile="isMobile"
           >
-            <Column field="createdAtFormatted" header="Date created" />
-            <Column field="sinFormatted" header="SIN" bodyClass="text-nowrap" />
-            <Column field="isValidSINFormatted" header="SIN validated" />
-            <Column field="sinStatus" header="Response code"></Column>
-            <Column field="validSINCheckFormatted" header="SIN accepted" />
-            <Column field="validFirstNameCheckFormatted" header="First name" />
-            <Column field="validLastNameCheckFormatted" header="Last name" />
-            <Column
-              field="validBirthdateCheckFormatted"
-              header="Date of birth"
-            />
-            <Column field="validGenderCheckFormatted" header="Gender" />
-            <Column field="sinExpiryDateFormatted" header="Expiry date" />
-            <Column header="Action">
-              <template #body="slotProps">
-                <check-permission-role :role="Role.StudentAddSINExpiry">
-                  <template #="{ notAllowed }">
-                    <v-btn
-                      color="primary"
-                      :disabled="
-                        !slotProps.data.temporarySIN ||
-                        !!slotProps.data.sinExpiryDate ||
-                        processingEditExpiryDate ||
-                        notAllowed
-                      "
-                      @click="addExpiryDate(slotProps.data.id)"
-                      >Add expiry date</v-btn
-                    >
-                  </template>
-                </check-permission-role>
-              </template></Column
-            >
-          </DataTable>
+            <template #[`item.createdAtFormatted`]="{ item }">
+              {{ item.createdAtFormatted }}
+            </template>
+            <template #[`item.sinFormatted`]="{ item }">
+              <span class="text-nowrap">{{ item.sinFormatted }}</span>
+            </template>
+            <template #[`item.isValidSINFormatted`]="{ item }">
+              {{ item.isValidSINFormatted }}
+            </template>
+            <template #[`item.sinStatus`]="{ item }">
+              {{ item.sinStatus }}
+            </template>
+            <template #[`item.validSINCheckFormatted`]="{ item }">
+              {{ item.validSINCheckFormatted }}
+            </template>
+            <template #[`item.validFirstNameCheckFormatted`]="{ item }">
+              {{ item.validFirstNameCheckFormatted }}
+            </template>
+            <template #[`item.validLastNameCheckFormatted`]="{ item }">
+              {{ item.validLastNameCheckFormatted }}
+            </template>
+            <template #[`item.validBirthdateCheckFormatted`]="{ item }">
+              {{ item.validBirthdateCheckFormatted }}
+            </template>
+            <template #[`item.validGenderCheckFormatted`]="{ item }">
+              {{ item.validGenderCheckFormatted }}
+            </template>
+            <template #[`item.sinExpiryDateFormatted`]="{ item }">
+              {{ item.sinExpiryDateFormatted }}
+            </template>
+            <template #[`item.action`]="{ item }">
+              <check-permission-role :role="Role.StudentAddSINExpiry">
+                <template #="{ notAllowed }">
+                  <v-btn
+                    color="primary"
+                    :disabled="
+                      !item.temporarySIN ||
+                      !!item.sinExpiryDate ||
+                      processingEditExpiryDate ||
+                      notAllowed
+                    "
+                    @click="addExpiryDate(item.id)"
+                    >Add expiry date</v-btn
+                  >
+                </template>
+              </check-permission-role>
+            </template>
+          </v-data-table>
         </toggle-content>
       </content-group>
       <add-new-s-i-n
         ref="addNewSINModal"
-        :allowedRole="Role.StudentAddNewSIN"
+        :allowed-role="Role.StudentAddNewSIN"
       />
       <add-expiry-date
         ref="addExpiryDateModal"
-        :allowedRole="Role.StudentAddSINExpiry"
+        :allowed-role="Role.StudentAddSINExpiry"
       />
     </body-header-container>
   </tab-container>
@@ -82,12 +100,15 @@
 
 <script lang="ts">
 import { ref, watch, defineComponent } from "vue";
+import { useDisplay } from "vuetify";
+
 import {
   DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
+  ITEMS_PER_PAGE,
   SINValidations,
   LayoutTemplates,
   Role,
+  SocialInsuranceNumberHeaders,
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
 import { useFileUtils, ModalDialog, useSnackBar } from "@/composables";
@@ -122,6 +143,8 @@ export default defineComponent({
     );
     const snackBar = useSnackBar();
     const fileUtils = useFileUtils();
+    const { mobile: isMobile } = useDisplay();
+
     const initialData = ref({ studentId: props.studentId });
     const processingNewSIN = ref(false);
     const processingEditExpiryDate = ref(false);
@@ -177,7 +200,7 @@ export default defineComponent({
       studentSINValidations,
       fileUtils,
       DEFAULT_PAGE_LIMIT,
-      PAGINATION_LIST,
+      ITEMS_PER_PAGE,
       addNewSIN,
       addNewSINModal,
       addExpiryDateModal,
@@ -188,6 +211,8 @@ export default defineComponent({
       LayoutTemplates,
       Role,
       showModal,
+      SocialInsuranceNumberHeaders,
+      isMobile,
     };
   },
 });

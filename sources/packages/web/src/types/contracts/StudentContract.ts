@@ -128,3 +128,16 @@ export enum ModifiedIndependentDisplayStatus {
   No = "No",
   NotRequested = "Not requested",
 }
+
+/**
+ * Interface for StudentFileUploads component.
+ */
+export interface StudentFileUploadsDetails {
+  fileName: string;
+  uniqueFileName: string;
+  fileOrigin: FileOriginType;
+  metadata: { applicationNumber?: string };
+  groupName: string;
+  createdAt: Date;
+  uploadedBy?: string;
+}
