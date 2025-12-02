@@ -584,3 +584,14 @@ export const InstitutionUsersHeaders = [
   { title: "Status", sortable: false, key: "isActive" },
   { title: "Action", sortable: false, key: "action" },
 ];
+
+/**
+ * Student Account Requests header.
+ */
+export const StudentAccountRequestsHeaders = [
+  { title: "Date submitted", sortable: false, key: "submittedDate" },
+  { title: "Given names", sortable: false, key: "givenNames" },
+  { title: "Last name", sortable: false, key: "lastName" },
+  { title: "Date of birth", sortable: false, key: "dateOfBirth" },
+  { title: "Action", sortable: false, key: "action" },
+];
