@@ -1,4 +1,5 @@
 import {
+  ArrayMaxSize,
   ArrayMinSize,
   IsIn,
   IsNotEmpty,
@@ -11,6 +12,13 @@ import {
   RestrictionType,
   RESTRICTION_CATEGORY_MAX_LENGTH,
 } from "@sims/sims-db";
+
+/**
+ * Maximum allowed locations while assigning institution restriction.
+ * Added a non-real-world limit to avoid leaving the API open to
+ * receive a very large payloads.
+ */
+const MAX_ALLOWED_LOCATIONS = 100;
 
 /**
  * Base DTO for restriction.
@@ -94,6 +102,7 @@ export class AssignRestrictionAPIInDTO extends ResolveRestrictionAPIInDTO {
  */
 export class AssignInstitutionRestrictionAPIInDTO extends AssignRestrictionAPIInDTO {
   @ArrayMinSize(1)
+  @ArrayMaxSize(MAX_ALLOWED_LOCATIONS)
   @IsPositive({ each: true })
   locationIds: number[];
   @IsPositive()

@@ -341,6 +341,52 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
       });
   });
 
+  it("Should throw a bad request exception when no locations were provided.", async () => {
+    // Arrange
+    const endpoint = "/aest/restriction/institution/999999";
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({
+        restrictionId: 1,
+        programId: 1,
+        locationIds: [],
+        noteDescription: "Add institution restriction note.",
+      })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message: ["locationIds must contain at least 1 elements"],
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
+  });
+
+  it("Should throw a bad request exception when too many locations are provided.", async () => {
+    // Arrange
+    const endpoint = "/aest/restriction/institution/999999";
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({
+        restrictionId: 1,
+        programId: 1,
+        locationIds: Array(101).fill(1),
+        noteDescription: "Add institution restriction note.",
+      })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message: ["locationIds must contain no more than 100 elements"],
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
+  });
+
   /**
    * Creates an institution with program and locations as expected by the E2E tests.
    * @param options Options to skip the creation of program or location.
