@@ -69,7 +69,7 @@
             "tableView": true,
             "validate": {
                 "required": true,
-                "custom": "const allowedValues = !!data.parents\n  ? data.parents.map((parent) => parent.id)\n  : [];\n  \nvalid = allowedValues.includes(input) ? true : \"Invalid value for selected parent\";"
+                "custom": "let validationErrorMessage;\n\n// Get allowed values from injected property 'parents'.\nconst allowedValues = !!data.parents\n    ? data.parents.map((parent) => parent.id)\n    : [];\n// Validate and populate the validation error message.\nif (allowedValues.length < 2) {\n  validationErrorMessage = \"Invalid number of parents in the application.\";\n} else if (!allowedValues.includes(input)) {\n  validationErrorMessage = \"Invalid value for the selected parent.\";\n}\n\n// When validation error message is missing it is considered as successful validation.\nvalid = validationErrorMessage || true;\n  "
             },
             "validateWhenHidden": false,
             "key": "selectedParent",

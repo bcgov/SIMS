@@ -17,6 +17,7 @@ import {
   STUDENT_APPEAL_FORM_NAMES,
   STUDENT_APPLICATION_APPEAL_FORM_NAMES,
 } from "../../../services";
+import { Parent } from "../../../types";
 
 /**
  * Shared validations for appeal requests.
@@ -26,7 +27,7 @@ export class AppealRequestAPIInDTO {
   @JsonMaxSize(JSON_10KB)
   formData: {
     programYear?: string;
-    parents?: { id: number; fullName: string }[];
+    parents?: Parent[];
   } & Record<string, unknown>;
   @IsDefined()
   files: string[];
