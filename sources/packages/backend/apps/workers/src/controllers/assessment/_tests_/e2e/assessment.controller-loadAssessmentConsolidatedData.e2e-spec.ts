@@ -252,7 +252,7 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
         } as ApplicationData,
         offeringIntensity: OfferingIntensity.fullTime,
       });
-      // Create supporting user partner.
+      // Create supporting user parents.
       const parents = [
         {
           supportingUserType: SupportingUserType.Parent,

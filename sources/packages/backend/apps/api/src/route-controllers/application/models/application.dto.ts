@@ -103,7 +103,8 @@ export interface ApplicationFormData extends ApplicationData {
     name?: string;
   };
 }
-class SupportingUserParent {
+
+class SupportingUserParentAPIOutDTO {
   id: number;
   fullName: string;
 }
@@ -114,7 +115,7 @@ export class AppealApplicationDetailsAPIOutDTO {
   id: number;
   applicationNumber: string;
   programYear: string;
-  supportingUserParents: SupportingUserParent[];
+  supportingUserParents: SupportingUserParentAPIOutDTO[];
 }
 
 /**

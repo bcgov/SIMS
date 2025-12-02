@@ -914,7 +914,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
           },
         ),
       );
-      // Prepare the data to request a change of financial information which is not an eligible appeal.
+      // Prepare the data to submit step parent waiver appeal for validation testing.
       const stepParentWaiverAppealData = {
         parents: [],
         selectedParent: 1,

@@ -55,6 +55,7 @@ import { StudentAppealControllerService } from "./student-appeal.controller.serv
 import {
   allowApplicationChangeRequest,
   getSupportingUserParents,
+  STEP_PARENT_WAIVER_APPEAL_REQUIRED_PARENTS,
 } from "../../utilities";
 import { StudentAppealStatus } from "@sims/sims-db";
 
@@ -207,7 +208,10 @@ export class StudentAppealStudentsController extends BaseController {
           appealRequest.formName === FormNames.StepParentWaiverAppeal,
       );
     // Validate the number of parents for step parent waiver appeal.
-    if (hasStepParentWaiverAppealSubmission && parents.length < 2) {
+    if (
+      hasStepParentWaiverAppealSubmission &&
+      parents.length < STEP_PARENT_WAIVER_APPEAL_REQUIRED_PARENTS
+    ) {
       throw new UnprocessableEntityException(
         "Step parent waiver appeal can only be submitted for applications reported with both parents.",
       );
