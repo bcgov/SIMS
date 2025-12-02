@@ -1,68 +1,51 @@
 <template>
   <content-group>
     <toggle-content :toggled="!designations.length" :message="toggleMessage">
-      <DataTable
-        :value="designations"
-        :paginator="true"
-        :rows="DEFAULT_PAGE_LIMIT"
-        :rowsPerPageOptions="PAGINATION_LIST"
-        :totalRecords="designations.length"
-        data-cy="designationsList"
+      <v-data-table
+        :headers="DesignationRequestsHeaders"
+        :items="designations"
+        :items-per-page="DEFAULT_PAGE_LIMIT"
+        :items-per-page-options="ITEMS_PER_PAGE"
+        :mobile="isMobile"
       >
-        <Column header="Date submitted"
-          ><template #body="slotProps">
-            <span data-cy="designationSubmittedDate">{{
-              dateOnlyLongString(slotProps.data.submittedDate)
-            }}</span>
-          </template>
-        </Column>
-        <Column header="Start date"
-          ><template #body="slotProps">
-            <span data-cy="designationStartDate">{{
-              dateOnlyLongString(slotProps.data.startDate)
-            }}</span>
-          </template>
-        </Column>
-        <Column header="Expiry date"
-          ><template #body="slotProps">
-            <span data-cy="designationEndDate">{{
-              dateOnlyLongString(slotProps.data.endDate)
-            }}</span>
-          </template>
-        </Column>
-        <Column header="Status"
-          ><template #body="slotProps">
-            <status-chip-designation
-              :status="slotProps.data.designationStatus"
-              data-cy="designationStatus"
-            /> </template
-        ></Column>
-        <Column header="Action">
-          <template #body="slotProps">
-            <v-btn
-              color="primary"
-              data-cy="viewDesignation"
-              @click="goToViewDesignation(slotProps.data.designationId)"
-            >
-              View
-            </v-btn>
-          </template>
-        </Column>
-      </DataTable>
+        <template #[`item.submittedDate`]="{ item }">
+          {{ dateOnlyLongString(item.submittedDate) }}
+        </template>
+        <template #[`item.startDate`]="{ item }">
+          {{ dateOnlyLongString(item.startDate) }}
+        </template>
+        <template #[`item.endDate`]="{ item }">
+          {{ dateOnlyLongString(item.endDate) }}
+        </template>
+        <template #[`item.designationStatus`]="{ item }">
+          <status-chip-designation :status="item.designationStatus" />
+        </template>
+        <template #[`item.action`]="{ item }">
+          <v-btn
+            color="primary"
+            @click="goToViewDesignation(item.designationId)"
+          >
+            View
+          </v-btn>
+        </template>
+      </v-data-table>
     </toggle-content>
   </content-group>
 </template>
 
 <script lang="ts">
+import { defineComponent, PropType } from "vue";
+import { useDisplay } from "vuetify";
+
 import {
   DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
-  PAGINATION_LIST,
+  ITEMS_PER_PAGE,
+  DesignationRequestsHeaders,
 } from "@/types";
 import { useFormatters, useInstitutionAuth } from "@/composables";
 import ToggleContent from "@/components/generic/ToggleContent.vue";
 import StatusChipDesignation from "@/components/generic/StatusChipDesignation.vue";
-import { defineComponent } from "vue";
+import { DesignationAgreementDetailsAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   emits: ["viewDesignation"],
@@ -72,7 +55,7 @@ export default defineComponent({
   },
   props: {
     designations: {
-      type: Object,
+      type: Object as PropType<DesignationAgreementDetailsAPIOutDTO[]>,
       required: true,
     },
     toggleMessage: {
@@ -83,6 +66,7 @@ export default defineComponent({
   setup(_props, context) {
     const { isLegalSigningAuthority } = useInstitutionAuth();
     const { dateOnlyLongString } = useFormatters();
+    const { mobile: isMobile } = useDisplay();
 
     const goToViewDesignation = (id: number) => {
       context.emit("viewDesignation", id);
@@ -93,8 +77,9 @@ export default defineComponent({
       isLegalSigningAuthority,
       dateOnlyLongString,
       DEFAULT_PAGE_LIMIT,
-      DEFAULT_PAGE_NUMBER,
-      PAGINATION_LIST,
+      ITEMS_PER_PAGE,
+      DesignationRequestsHeaders,
+      isMobile,
     };
   },
 });

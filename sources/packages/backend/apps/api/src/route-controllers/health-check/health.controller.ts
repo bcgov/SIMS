@@ -5,8 +5,9 @@ import {
   HealthCheckService,
   TypeOrmHealthIndicator,
 } from "@nestjs/terminus";
-import { Public } from "../../auth/decorators";
+import { AllowDuringMaintenanceMode, Public } from "../../auth/decorators";
 
+@AllowDuringMaintenanceMode()
 @Controller("health")
 export class HealthController {
   constructor(

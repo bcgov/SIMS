@@ -67,7 +67,7 @@
                                   "value": ""
                                 }
                               ],
-                              "content": "Get started on your application to explore your funding options. Your completed application will be assessed to determine your loan and grant eligibility.\n<br><br>\n<strong>Before you begin, you may need to gather the following:</strong>\n<ul>\n  <li>Your institution and program information</li>\n  <li>Your previous years tax return information</li>\n  <li>Your spouse/dependent information, if applicable</li>\n  <li>Your citizenship documentation, if applicable</li>\n</ul>",
+                              "content": "Get started on your application to explore your funding options. Your completed application will be assessed to determine your loan and grant eligibility.\n<br><br>\n<strong>Before you begin, you may need to gather the following:</strong>\n<ul>\n  <li>Your institution and program information</li>\n  <li>Your previous years tax return information</li>\n  <li>Your parent(s) information, if applicable</li>\n  <li>Your spouse/dependent information, if applicable</li>\n  <li>Your citizenship documentation, if applicable</li>\n</ul>",
                               "refreshOnChange": false,
                               "customClass": "align-bullets",
                               "key": "html110",

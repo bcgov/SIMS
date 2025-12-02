@@ -21,55 +21,43 @@
         </body-header>
       </template>
       <content-group>
-        <DataTable
-          :value="institutionRestrictions"
-          :paginator="true"
-          :rows="DEFAULT_PAGE_LIMIT"
-          :rows-per-page-options="PAGINATION_LIST"
+        <toggle-content
+          :toggled="!institutionRestrictions?.length"
+          message="No restrictions found."
         >
-          <template #empty>
-            <p class="text-center font-weight-bold">No records found.</p>
-          </template>
-          <Column
-            field="restrictionCategory"
-            header="Category"
-            :sortable="true"
-          ></Column>
-          <Column field="description" header="Reason">
-            <template #body="slotProps">{{
-              `${slotProps.data.restrictionCode} - ${slotProps.data.description}`
-            }}</template></Column
+          <v-data-table
+            :headers="InstitutionRestrictionsHeaders"
+            :items="institutionRestrictions"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            :mobile="isMobile"
           >
-          <Column field="createdAt" header="Added"
-            ><template #body="slotProps">{{
-              dateOnlyLongString(slotProps.data.createdAt)
-            }}</template></Column
-          >
-          <Column field="updatedAt" header="Resolved">
-            <template #body="slotProps">{{
-              slotProps.data.isActive
-                ? "-"
-                : dateOnlyLongString(slotProps.data.updatedAt)
-            }}</template></Column
-          >
-          <Column field="isActive" header="Status">
-            <template #body="slotProps">
-              <status-chip-restriction :is-active="slotProps.data.isActive" />
+            <template #[`item.restrictionCategory`]="{ item }">
+              {{ item.restrictionCategory }}
             </template>
-          </Column>
-          <Column field="restrictionId" header="">
-            <template #body="slotProps">
+            <template #[`item.description`]="{ item }">
+              {{ `${item.restrictionCode} - ${item.description}` }}
+            </template>
+            <template #[`item.createdAt`]="{ item }">
+              {{ dateOnlyLongString(item.createdAt) }}
+            </template>
+            <template #[`item.updatedAt`]="{ item }">
+              {{ item.isActive ? "-" : dateOnlyLongString(item.updatedAt) }}
+            </template>
+            <template #[`item.isActive`]="{ item }">
+              <status-chip-restriction :is-active="item.isActive" />
+            </template>
+            <template #[`item.action`]="{ item }">
               <v-btn
                 color="primary"
                 variant="outlined"
-                @click="
-                  viewIInstitutionRestriction(slotProps.data.restrictionId)
-                "
-                >View</v-btn
+                @click="viewIInstitutionRestriction(item.restrictionId)"
               >
-            </template></Column
-          >
-        </DataTable>
+                View
+              </v-btn>
+            </template>
+          </v-data-table>
+        </toggle-content>
       </content-group>
       <view-restriction-modal
         ref="viewRestriction"
@@ -90,6 +78,8 @@
 
 <script lang="ts">
 import { ref, defineComponent, watchEffect } from "vue";
+import { useDisplay } from "vuetify";
+
 import { RestrictionService } from "@/services/RestrictionService";
 import ViewRestrictionModal from "@/components/common/restriction/ViewRestriction.vue";
 import AddRestrictionModal from "@/components/institutions/modals/AddRestrictionModal.vue";
@@ -97,10 +87,11 @@ import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
 import {
   RestrictionStatus,
   DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
+  ITEMS_PER_PAGE,
   RestrictionEntityType,
   LayoutTemplates,
   Role,
+  InstitutionRestrictionsHeaders,
   ApiProcessError,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
@@ -109,6 +100,7 @@ import {
   AssignInstitutionRestrictionAPIInDTO,
   ResolveRestrictionAPIInDTO,
   RestrictionDetailAPIOutDTO,
+  RestrictionSummaryAPIOutDTO,
 } from "@/services/http/dto";
 import { INSTITUTION_RESTRICTION_ALREADY_ACTIVE } from "@/constants";
 
@@ -126,7 +118,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const institutionRestrictions = ref();
+    const institutionRestrictions = ref([] as RestrictionSummaryAPIOutDTO[]);
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
     const viewRestriction = ref({} as ModalDialog<void>);
@@ -136,6 +128,7 @@ export default defineComponent({
     const processingAddingRestriction = ref(false);
     const institutionRestriction = ref();
     const snackBar = useSnackBar();
+    const { mobile: isMobile } = useDisplay();
 
     const loadInstitutionRestrictions = async () => {
       institutionRestrictions.value =
@@ -234,7 +227,7 @@ export default defineComponent({
       institutionRestrictions,
       RestrictionStatus,
       DEFAULT_PAGE_LIMIT,
-      PAGINATION_LIST,
+      ITEMS_PER_PAGE,
       institutionRestriction,
       viewIInstitutionRestriction,
       viewRestriction,
@@ -247,6 +240,8 @@ export default defineComponent({
       RestrictionEntityType,
       LayoutTemplates,
       Role,
+      InstitutionRestrictionsHeaders,
+      isMobile,
     };
   },
 });

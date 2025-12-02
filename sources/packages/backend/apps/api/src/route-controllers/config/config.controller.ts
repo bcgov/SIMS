@@ -5,7 +5,9 @@ import { ConfigService } from "@sims/utilities/config";
 import BaseController from "../BaseController";
 import { ConfigAPIOutDTO } from "./models/config.dto";
 import { BULL_BOARD_ROUTE } from "@sims/services/constants";
+import { AllowDuringMaintenanceMode } from "../../auth/decorators";
 
+@AllowDuringMaintenanceMode()
 @Controller("config")
 @ApiTags("config")
 export class ConfigController extends BaseController {
@@ -43,6 +45,13 @@ export class ConfigController extends BaseController {
         this.configService.applicationSubmissionDeadlineWeeks,
       appEnv: this.configService.appEnv,
       queueDashboardURL: `${process.env.QUEUE_DASHBOARD_BASE_URL}/${BULL_BOARD_ROUTE}`,
+      maintenanceMode: this.configService.maintenanceMode,
+      maintenanceModeStudent: this.configService.maintenanceModeStudent,
+      maintenanceModeInstitution: this.configService.maintenanceModeInstitution,
+      maintenanceModeMinistry: this.configService.maintenanceModeMinistry,
+      maintenanceModeSupportingUser:
+        this.configService.maintenanceModeSupportingUser,
+      maintenanceModeExternal: this.configService.maintenanceModeExternal,
     };
   }
 }

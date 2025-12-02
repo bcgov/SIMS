@@ -70,59 +70,62 @@
   <template v-if="studentsFound">
     <body-header title="Results" />
     <content-group>
-      <toggle-content :toggled="!students?.length">
-        <DataTable :value="students">
-          <Column field="sin" header="SIN" :sortable="true">
-            <template #body="slotProps">
-              {{ sinDisplayFormat(slotProps.data.sin) }}
-            </template>
-          </Column>
-          <Column field="firstName" header="Given name" :sortable="true">
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ slotProps.data.firstName }}
-              </div>
-            </template>
-          </Column>
-          <Column field="lastName" header="Last name" :sortable="true">
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ slotProps.data.lastName }}
-              </div>
-            </template>
-          </Column>
-          <Column field="birthDate" header="Date of birth">
-            <template #body="slotProps">
-              <div class="p-text-capitalize">
-                {{ dateOnlyLongString(slotProps.data.birthDate) }}
-              </div>
-            </template>
-          </Column>
-          <Column header="Action">
-            <template #body="slotProps">
-              <v-btn
-                color="primary"
-                class="p-button-raised"
-                data-cy="viewStudent"
-                @click="$emit('goToStudentView', slotProps.data.id)"
-                >View</v-btn
-              >
-            </template>
-          </Column>
-        </DataTable>
+      <toggle-content :toggled="!students?.length" message="No students found.">
+        <v-data-table
+          :headers="SearchStudentsHeaders"
+          :items="students"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          :mobile="isMobile"
+        >
+          <template #[`item.sin`]="{ item }">
+            {{ sinDisplayFormat(item.sin) }}
+          </template>
+          <template #[`item.firstName`]="{ item }">
+            <div class="p-text-capitalize">
+              {{ item.firstName }}
+            </div>
+          </template>
+          <template #[`item.lastName`]="{ item }">
+            <div class="p-text-capitalize">
+              {{ item.lastName }}
+            </div>
+          </template>
+          <template #[`item.birthDate`]="{ item }">
+            <div class="p-text-capitalize">
+              {{ dateOnlyLongString(item.birthDate) }}
+            </div>
+          </template>
+          <template #[`item.action`]="{ item }">
+            <v-btn
+              color="primary"
+              class="p-button-raised"
+              data-cy="viewStudent"
+              @click="$emit('goToStudentView', item.id)"
+              >View</v-btn
+            >
+          </template>
+        </v-data-table>
       </toggle-content>
     </content-group>
   </template>
 </template>
 <script lang="ts">
 import { ref, computed, defineComponent } from "vue";
+import { useDisplay } from "vuetify";
+
 import { StudentService } from "@/services/StudentService";
 import {
   SearchStudentAPIInDTO,
   SearchStudentAPIOutDTO,
 } from "@/services/http/dto";
 import { useFormatters, useSnackBar, useValidators } from "@/composables";
-import { VForm } from "@/types";
+import {
+  DEFAULT_PAGE_LIMIT,
+  ITEMS_PER_PAGE,
+  SearchStudentsHeaders,
+  VForm,
+} from "@/types";
 
 export default defineComponent({
   emits: ["goToStudentView"],
@@ -131,6 +134,8 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const { dateOnlyLongString, sinDisplayFormat } = useFormatters();
     const { isSINValid } = useValidators();
+    const { mobile: isMobile } = useDisplay();
+
     const appNumber = ref("");
     const firstName = ref("");
     const lastName = ref("");
@@ -180,6 +185,10 @@ export default defineComponent({
       isSINValid,
       searchStudentsForm,
       isValidSearch,
+      SearchStudentsHeaders,
+      DEFAULT_PAGE_LIMIT,
+      ITEMS_PER_PAGE,
+      isMobile,
     };
   },
 });
