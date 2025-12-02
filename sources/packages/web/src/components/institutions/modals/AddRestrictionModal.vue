@@ -107,8 +107,9 @@ export default defineComponent({
     } = useModalDialog<AssignInstitutionRestrictionAPIInDTO | false>();
 
     /**
-     * Overrides the showModal method to allow loading the data
-     * only if the modal is invoked.
+     * Overrides the showModal method to allow loading the data only if the modal is invoked.
+     * @param params Optional params not used for this modal.
+     * @param canResolvePromise indicates when the modal have its promise resolved.
      */
     const showModal = async (
       params: unknown,
