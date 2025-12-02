@@ -79,7 +79,6 @@
 <script lang="ts">
 import { ref, defineComponent, watchEffect } from "vue";
 import { useDisplay } from "vuetify";
-
 import { RestrictionService } from "@/services/RestrictionService";
 import ViewRestrictionModal from "@/components/common/restriction/ViewRestriction.vue";
 import AddRestrictionModal from "@/components/institutions/modals/AddRestrictionModal.vue";
