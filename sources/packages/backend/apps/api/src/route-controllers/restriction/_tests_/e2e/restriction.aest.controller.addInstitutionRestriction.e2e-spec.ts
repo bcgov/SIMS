@@ -375,7 +375,7 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
       .send({
         restrictionId: 1,
         programId: 1,
-        locationIds: Array(101).fill(1),
+        locationIds: new Array(101).fill(1),
         noteDescription: "Add institution restriction note.",
       })
       .auth(token, BEARER_AUTH_TYPE)
