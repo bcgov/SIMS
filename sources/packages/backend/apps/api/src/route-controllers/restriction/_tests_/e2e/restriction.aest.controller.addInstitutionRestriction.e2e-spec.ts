@@ -25,6 +25,7 @@ import {
   Restriction,
   User,
 } from "@sims/sims-db";
+import { INSTITUTION_RESTRICTION_ALREADY_ACTIVE } from "../../../../constants";
 
 describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
   let app: INestApplication;
@@ -180,8 +181,7 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message: `The restriction ID ${susRestriction.id} is already assigned and active to the institution for the specified location ID ${location.id} and program ID ${program.id}.`,
-        error: "Unprocessable Entity",
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        errorType: INSTITUTION_RESTRICTION_ALREADY_ACTIVE,
       });
   });
 
