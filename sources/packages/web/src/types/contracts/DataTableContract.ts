@@ -595,3 +595,15 @@ export const StudentAccountRequestsHeaders = [
   { title: "Date of birth", sortable: false, key: "dateOfBirth" },
   { title: "Action", sortable: false, key: "action" },
 ];
+
+/**
+ * Assessment History header.
+ */
+export const AssessmentHistoryHeaders = [
+  { title: "Submitted date", sortable: true, key: "submittedDate" },
+  { title: "Type", sortable: true, key: "triggerType" },
+  { title: "Request form", sortable: false, key: "requestForm" },
+  { title: "Status", sortable: true, key: "status" },
+  { title: "Assessment date", sortable: true, key: "assessmentDate" },
+  { title: "Assessment", sortable: false, key: "assessment" },
+];

@@ -13,65 +13,53 @@
           :toggled="!assessmentHistory.length"
           message="No assessments found."
         >
-          <DataTable
-            :value="assessmentHistory"
-            :paginator="true"
-            :rows="DEFAULT_PAGE_LIMIT"
-            :rows-per-page-options="PAGINATION_LIST"
-            :total-records="assessmentHistory.length"
+          <v-data-table
+            :headers="AssessmentHistoryHeaders"
+            :items="assessmentHistory"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            :mobile="isMobile"
           >
-            <template #empty>
-              <p class="text-center font-weight-bold">No records found.</p>
+            <template #[`item.submittedDate`]="{ item }">
+              {{ dateOnlyLongString(item.submittedDate) }}
             </template>
-            <Column
-              field="submittedDate"
-              header="Submitted date"
-              :sortable="true"
-              ><template #body="slotProps">{{
-                dateOnlyLongString(slotProps.data.submittedDate)
-              }}</template></Column
-            ><Column field="triggerType" header="Type" :sortable="true"></Column
-            ><Column header="Request form">
-              <template #body="{ data }">
-                <template v-if="canShowViewRequest(data)">
-                  <v-btn
-                    @click="viewRequest(data)"
-                    color="primary"
-                    variant="text"
-                    class="text-decoration-underline"
-                    prepend-icon="fa:far fa-file-alt"
-                  >
-                    {{ getViewRequestLabel(data) }}</v-btn
-                  >
-                </template>
-              </template></Column
-            ><Column field="status" header="Status" :sortable="true"
-              ><template #body="slotProps"
-                ><status-chip-assessment-history
-                  :status="slotProps.data.status" /></template></Column
-            ><Column
-              field="assessmentDate"
-              header="Assessment date"
-              :sortable="true"
-              ><template #body="slotProps">
-                <span v-if="slotProps.data.assessmentDate">{{
-                  getISODateHourMinuteString(slotProps.data.assessmentDate)
-                }}</span
-                ><span v-else>-</span></template
-              ></Column
-            ><Column header="Assessment">
-              <template #body="{ data }">
+            <template #[`item.triggerType`]="{ item }">
+              {{ item.triggerType }}
+            </template>
+            <template #[`item.requestForm`]="{ item }">
+              <template v-if="canShowViewRequest(item)">
                 <v-btn
-                  v-if="!data.hasUnsuccessfulWeeks"
-                  @click="$emit('viewAssessment', data.assessmentId)"
-                  variant="outlined"
+                  @click="viewRequest(item)"
                   color="primary"
+                  variant="text"
+                  class="text-decoration-underline"
+                  prepend-icon="fa:far fa-file-alt"
                 >
-                  View</v-btn
+                  {{ getViewRequestLabel(item) }}</v-btn
                 >
               </template>
-            </Column>
-          </DataTable>
+            </template>
+            <template #[`item.status`]="{ item }">
+              <status-chip-assessment-history :status="item.status" />
+            </template>
+            <template #[`item.assessmentDate`]="{ item }">
+              {{
+                emptyStringFiller(
+                  getISODateHourMinuteString(item.assessmentDate),
+                )
+              }}
+            </template>
+            <template #[`item.assessment`]="{ item }">
+              <v-btn
+                v-if="!item.hasUnsuccessfulWeeks"
+                @click="$emit('viewAssessment', item.assessmentId)"
+                variant="outlined"
+                color="primary"
+              >
+                View</v-btn
+              >
+            </template>
+          </v-data-table>
         </toggle-content>
       </content-group>
     </v-container>
@@ -80,10 +68,13 @@
 <script lang="ts">
 import {
   DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
+  ITEMS_PER_PAGE,
   AssessmentTriggerType,
+  AssessmentHistoryHeaders,
 } from "@/types";
 import { ref, PropType, defineComponent, watchEffect } from "vue";
+import { useDisplay } from "vuetify";
+
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipAssessmentHistory from "@/components/generic/StatusChipAssessmentHistory.vue";
@@ -118,7 +109,13 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const { dateOnlyLongString, getISODateHourMinuteString } = useFormatters();
+    const {
+      dateOnlyLongString,
+      emptyStringFiller,
+      getISODateHourMinuteString,
+    } = useFormatters();
+    const { mobile: isMobile } = useDisplay();
+
     const assessmentHistory = ref([] as AssessmentHistorySummaryAPIOutDTO[]);
 
     // Adding watch effect instead of onMounted because
@@ -189,13 +186,16 @@ export default defineComponent({
 
     return {
       DEFAULT_PAGE_LIMIT,
-      PAGINATION_LIST,
+      ITEMS_PER_PAGE,
       assessmentHistory,
       dateOnlyLongString,
       getISODateHourMinuteString,
       viewRequest,
       canShowViewRequest,
       getViewRequestLabel,
+      emptyStringFiller,
+      AssessmentHistoryHeaders,
+      isMobile,
     };
   },
 });
