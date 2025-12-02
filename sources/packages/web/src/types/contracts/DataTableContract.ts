@@ -559,6 +559,147 @@ export const StudentAppealsHistoryHeaders = [
 ];
 
 /**
+ * Overawards header.
+ */
+export const OverawardsHeaders = [
+  { title: "Date Added", sortable: false, key: "dateAdded" },
+  { title: "Application #", sortable: false, key: "applicationNumber" },
+  { title: "Origin", sortable: false, key: "overawardOrigin" },
+  { title: "Type", sortable: false, key: "assessmentTriggerType" },
+  { title: "Award", sortable: false, key: "awardValueCode" },
+  { title: "Overaward Amount", sortable: false, key: "overawardValue" },
+];
+
+/**
+ * Overawards Deductions header.
+ */
+export const OverawardDeductionsHeaders = [
+  { title: "Date Added", sortable: false, key: "dateAdded" },
+  { title: "Application #", sortable: false, key: "applicationNumber" },
+  { title: "Origin", sortable: false, key: "overawardOrigin" },
+  { title: "Added By", sortable: false, key: "addedByUser" },
+  { title: "Award", sortable: false, key: "awardValueCode" },
+  { title: "Amount Deducted", sortable: false, key: "overawardValue" },
+];
+
+/**
+ * Search Students header.
+ */
+export const SearchStudentsHeaders = [
+  { title: "SIN", sortable: true, key: "sin" },
+  { title: "Given name", sortable: true, key: "firstName" },
+  { title: "Last name", sortable: true, key: "lastName" },
+  { title: "Date of birth", sortable: false, key: "birthDate" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/**
+ * Search Institutions header.
+ */
+export const SearchInstitutionsHeaders = [
+  { title: "Operating Name", sortable: true, key: "operatingName" },
+  { title: "Legal Name", sortable: true, key: "legalName" },
+  { title: "Address", sortable: false, key: "address" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/**
+ * Social Insurance Number header.
+ */
+export const SocialInsuranceNumberHeaders = [
+  { title: "Date created", sortable: false, key: "createdAtFormatted" },
+  { title: "SIN", sortable: false, key: "sinFormatted" },
+  { title: "SIN validated", sortable: false, key: "isValidSINFormatted" },
+  { title: "Response code", sortable: false, key: "sinStatus" },
+  { title: "SIN accepted", sortable: false, key: "validSINCheckFormatted" },
+  { title: "First name", sortable: false, key: "validFirstNameCheckFormatted" },
+  { title: "Last name", sortable: false, key: "validLastNameCheckFormatted" },
+  {
+    title: "Date of birth",
+    sortable: false,
+    key: "validBirthdateCheckFormatted",
+  },
+  { title: "Gender", sortable: false, key: "validGenderCheckFormatted" },
+  { title: "Expiry date", sortable: false, key: "sinExpiryDateFormatted" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/**
+ * Part Time Monthly Balance header.
+ */
+export const PartTimeMonthlyBalanceHeaders = [
+  { title: "Date", sortable: false, key: "balanceDate" },
+  { title: "CSLP Balance", sortable: false, key: "cslBalance" },
+];
+
+/**
+ * Student Restrictions header.
+ */
+export const StudentRestrictionsHeaders = [
+  { title: "Category", sortable: true, key: "restrictionCategory" },
+  { title: "Reason", sortable: false, key: "description" },
+  { title: "Added", sortable: false, key: "createdAt" },
+  { title: "Resolved", sortable: false, key: "resolvedAt" },
+  { title: "Status", sortable: false, key: "isActive" },
+  { title: "Actions", sortable: false, key: "restrictionId" },
+];
+
+/**
+ * Student File Uploads header.
+ */
+export const StudentFileUploadsHeaders = [
+  { title: "Document Purpose", sortable: true, key: "groupName" },
+  { title: "Uploaded by", sortable: false, key: "uploadedBy" },
+  { title: "Application #", sortable: false, key: "applicationNumber" },
+  { title: "Date Submitted", sortable: false, key: "createdAt" },
+  { title: "File", sortable: false, key: "fileName" },
+];
+
+/**
+ * Designation Requests header.
+ */
+export const DesignationRequestsHeaders = [
+  { title: "Date submitted", sortable: false, key: "submittedDate" },
+  { title: "Start date", sortable: false, key: "startDate" },
+  { title: "Expiry date", sortable: false, key: "endDate" },
+  { title: "Status", sortable: false, key: "designationStatus" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/**
+ * Institutions Restrictions header.
+ */
+export const InstitutionRestrictionsHeaders = [
+  { title: "Category", sortable: true, key: "restrictionCategory" },
+  { title: "Reason", sortable: false, key: "description" },
+  { title: "Added", sortable: false, key: "createdAt" },
+  { title: "Resolved", sortable: false, key: "updatedAt" },
+  { title: "Status", sortable: false, key: "isActive" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/** Offerings Upload header. */
+export const OfferingsUploadHeaders = [
+  { title: "Line", sortable: false, key: "recordLineNumber" },
+  { title: "Location", sortable: false, key: "locationCode" },
+  { title: "Program code", sortable: false, key: "sabcProgramCode" },
+  { title: "Start date", sortable: false, key: "startDateFormatted" },
+  { title: "End date", sortable: false, key: "endDateFormatted" },
+  { title: "Status", sortable: false, key: "offeringStatus" },
+  { title: "Validations", sortable: false, key: "validations" },
+];
+
+/**
+ * Pending Designations header.
+ */
+export const PendingDesignationsHeaders = [
+  { title: "Institution Name", sortable: false, key: "legalOperatingName" },
+  { title: "Submitted on", sortable: false, key: "submittedDate" },
+  { title: "Status", sortable: false, key: "designationStatus" },
+  { title: "Action", sortable: false, key: "designationId" },
+];
+
+/**
  * Offering Summary header.
  */
 export const OfferingSummaryHeaders = [
@@ -569,7 +710,6 @@ export const OfferingSummaryHeaders = [
   { title: "Offering type", sortable: false, key: "offeringType" },
   { title: "Study delivery", sortable: false, key: "offeringDelivered" },
   { title: "Status", sortable: false, key: "offeringStatus" },
-  { title: "Action", sortable: false, key: "action" },
 ];
 
 /**
@@ -581,8 +721,6 @@ export const InstitutionUsersHeaders = [
   { title: "User Type", sortable: false, key: "userType" },
   { title: "Role", sortable: false, key: "roles" },
   { title: "Locations", sortable: false, key: "locations" },
-  { title: "Status", sortable: false, key: "isActive" },
-  { title: "Action", sortable: false, key: "action" },
 ];
 
 /**

@@ -3,7 +3,7 @@
     <template #header>
       <body-header
         title="File Uploads"
-        :recordsCount="studentFileUploads?.length"
+        :records-count="studentFileUploads?.length"
       >
         <template #actions v-if="canUploadFiles">
           <check-permission-role :role="Role.StudentUploadFile">
@@ -23,63 +23,56 @@
       </body-header>
     </template>
     <content-group>
-      <toggle-content :toggled="!studentFileUploads.length">
-        <DataTable
-          :value="studentFileUploads"
-          :paginator="true"
-          :totalRecords="studentFileUploads?.length"
-          :rows="DEFAULT_PAGE_LIMIT"
-          :rowsPerPageOptions="PAGINATION_LIST"
+      <toggle-content
+        :toggled="!studentFileUploads.length"
+        message="No file uploads found."
+      >
+        <v-data-table
+          :headers="studentFileUploadHeaders"
+          :items="studentFileUploads"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          :mobile="isMobile"
         >
-          <Column
-            field="groupName"
-            header="Document Purpose"
-            :sortable="true"
-          ></Column>
-          <Column
-            v-if="canViewUploadedBy"
-            field="uploadedBy"
-            header="Uploaded by"
-          >
-          </Column>
-          <Column field="metadata" header="Application #">
-            <template #body="slotProps">{{
-              emptyStringFiller(slotProps.data.metadata?.applicationNumber)
-            }}</template></Column
-          >
-          <Column field="createdAt" header="Date Submitted"
-            ><template #body="slotProps">{{
-              getISODateHourMinuteString(slotProps.data.createdAt)
-            }}</template></Column
-          >
-          <Column header="File">
-            <template #body="slotProps">
+          <template #[`item.groupName`]="{ item }">
+            {{ item.groupName }}
+          </template>
+          <template #[`item.uploadedBy`]="{ item }">
+            {{ item.uploadedBy }}
+          </template>
+          <template #[`item.applicationNumber`]="{ item }">
+            {{ emptyStringFiller(item.metadata?.applicationNumber) }}
+          </template>
+          <template #[`item.createdAt`]="{ item }">
+            {{ getISODateHourMinuteString(item.createdAt) }}
+          </template>
+          <template #[`item.fileName`]="{ item }">
+            <div v-if="canDownloadFiles">
               <div
-                v-if="canDownloadFiles"
                 class="file-label"
-                @click="fileUtils.downloadStudentDocument(slotProps.data)"
+                @click="fileUtils.downloadStudentDocument(item)"
               >
                 <span class="mr-4">
                   <v-icon icon="fa:far fa-file-alt" size="20"></v-icon
                 ></span>
-                <span>{{ slotProps.data.fileName }}</span>
+                <span>{{ item.fileName }}</span>
               </div>
-              <div v-else>
-                <span class="mr-4">
-                  <v-icon icon="fa:far fa-file-alt" size="20"></v-icon
-                ></span>
-                <span>{{ slotProps.data.fileName }}</span>
-              </div>
-            </template></Column
-          >
-        </DataTable>
+            </div>
+            <div v-else>
+              <span class="mr-4">
+                <v-icon icon="fa:far fa-file-alt" size="20"></v-icon
+              ></span>
+              <span>{{ item.fileName }}</span>
+            </div>
+          </template>
+        </v-data-table>
       </toggle-content>
     </content-group>
     <formio-modal-dialog
       ref="fileUploadModal"
       title="Upload file"
-      :formData="initialData"
-      formName="uploadStudentDocumentsAEST"
+      :form-data="initialData"
+      form-name="uploadStudentDocumentsAEST"
     >
       <template #actions="{ cancel, submit }">
         <v-row class="m-0 p-0">
@@ -105,8 +98,17 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, defineComponent } from "vue";
-import { DEFAULT_PAGE_LIMIT, FormIOForm, PAGINATION_LIST, Role } from "@/types";
+import { onMounted, ref, defineComponent, computed } from "vue";
+import { useDisplay } from "vuetify";
+
+import {
+  DEFAULT_PAGE_LIMIT,
+  ITEMS_PER_PAGE,
+  FormIOForm,
+  Role,
+  StudentFileUploadsHeaders,
+  StudentFileUploadsDetails,
+} from "@/types";
 import { StudentService } from "@/services/StudentService";
 import {
   useFormatters,
@@ -117,7 +119,6 @@ import {
 } from "@/composables";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { StudentUploadFileAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 export default defineComponent({
   emits: ["uploadFile"],
@@ -147,13 +148,14 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const studentFileUploads = ref([] as StudentUploadFileAPIOutDTO[]);
+    const studentFileUploads = ref([] as StudentFileUploadsDetails[]);
     const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
     const { getISODateHourMinuteString, emptyStringFiller } = useFormatters();
     const fileUtils = useFileUtils();
     const initialData = ref({ studentId: props.studentId });
     const formioUtils = useFormioUtils();
     const snackBar = useSnackBar();
+    const { mobile: isMobile } = useDisplay();
 
     const loadStudentFileUploads = async () => {
       studentFileUploads.value =
@@ -162,7 +164,7 @@ export default defineComponent({
 
     const uploadFile = async () => {
       const modalResult = await fileUploadModal.value.showModal();
-      if (!modalResult) {
+      if (!modalResult || typeof modalResult === "boolean") {
         return;
       }
 
@@ -176,12 +178,20 @@ export default defineComponent({
       }
     };
 
+    const studentFileUploadHeaders = computed(() => {
+      return props.canViewUploadedBy
+        ? StudentFileUploadsHeaders
+        : StudentFileUploadsHeaders.filter(
+            (header) => header.key !== "uploadedBy",
+          );
+    });
+
     onMounted(loadStudentFileUploads);
 
     return {
       fileUtils,
       DEFAULT_PAGE_LIMIT,
-      PAGINATION_LIST,
+      ITEMS_PER_PAGE,
       getISODateHourMinuteString,
       emptyStringFiller,
       uploadFile,
@@ -189,6 +199,8 @@ export default defineComponent({
       studentFileUploads,
       fileUploadModal,
       initialData,
+      studentFileUploadHeaders,
+      isMobile,
     };
   },
 });

@@ -1,45 +1,46 @@
 <template>
-  <body-header-container :enableCardView="true">
+  <body-header-container :enable-card-view="true">
     <template #header>
       <body-header
         title="Part-Time monthly loan balance"
-        subTitle="Balance of part-time Canada Student Loan outstanding between the student and NSLSC at any given time.
+        sub-title="Balance of part-time Canada Student Loan outstanding between the student and NSLSC at any given time.
         This amount is updated once per month, and affects a student's eligibility for future funding, as a student 
         cannot exceed the maximum limit in total outstanding balance."
       />
     </template>
     <content-group>
-      <toggle-content :toggled="!studentLoanBalanceDetails.length">
-        <DataTable
-          :value="studentLoanBalanceDetails"
-          class="p-m-4"
-          :paginator="true"
-          :rows="pageLimit"
-          :rowsPerPageOptions="PAGINATION_LIST"
+      <toggle-content
+        :toggled="!studentLoanBalanceDetails.length"
+        message="No part-time monthly loan balances found."
+      >
+        <v-data-table
+          :headers="PartTimeMonthlyBalanceHeaders"
+          :items="studentLoanBalanceDetails"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          :mobile="isMobile"
         >
-          <Column field="balanceDate" header="Date">
-            <template #body="slotProps">
-              <span>
-                {{ dateOnlyLongString(slotProps.data.balanceDate) }}
-              </span>
-            </template>
-          </Column>
-          <Column field="cslBalance" header="CSLP Balance">
-            <template #body="slotProps">
-              <span>
-                {{ formatCurrency(slotProps.data.cslBalance) }}
-              </span>
-            </template></Column
-          >
-        </DataTable>
+          <template #[`item.balanceDate`]="{ item }">
+            {{ dateOnlyLongString(item.balanceDate) }}
+          </template>
+          <template #[`item.cslBalance`]="{ item }">
+            {{ formatCurrency(item.cslBalance) }}
+          </template>
+        </v-data-table>
       </toggle-content>
     </content-group>
   </body-header-container>
 </template>
 <script lang="ts">
 import { ref, onMounted, defineComponent } from "vue";
+import { useDisplay } from "vuetify";
+
 import { StudentLoanBalanceService } from "@/services/StudentLoanBalanceService";
-import { DEFAULT_PAGE_LIMIT, PAGINATION_LIST } from "@/types";
+import {
+  DEFAULT_PAGE_LIMIT,
+  ITEMS_PER_PAGE,
+  PartTimeMonthlyBalanceHeaders,
+} from "@/types";
 import { useFormatters } from "@/composables";
 import { StudentLoanBalanceDetailAPIOutDTO } from "@/services/http/dto";
 
@@ -51,8 +52,9 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const pageLimit = ref(DEFAULT_PAGE_LIMIT);
     const { dateOnlyLongString, formatCurrency } = useFormatters();
+    const { mobile: isMobile } = useDisplay();
+
     const studentLoanBalanceDetails = ref(
       [] as StudentLoanBalanceDetailAPIOutDTO[],
     );
@@ -67,11 +69,13 @@ export default defineComponent({
     });
 
     return {
-      pageLimit,
-      PAGINATION_LIST,
+      DEFAULT_PAGE_LIMIT,
+      ITEMS_PER_PAGE,
       studentLoanBalanceDetails,
       dateOnlyLongString,
       formatCurrency,
+      PartTimeMonthlyBalanceHeaders,
+      isMobile,
     };
   },
 });

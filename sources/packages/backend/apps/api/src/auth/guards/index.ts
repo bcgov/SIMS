@@ -9,3 +9,4 @@ export * from "./groups.guard";
 export * from "./student/sin-validation.guard";
 export * from "./student/requires-student-account.guard";
 export * from "./requires-user-account.guard";
+export * from "./maintenance-mode.guard";
