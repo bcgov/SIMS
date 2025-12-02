@@ -381,18 +381,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     };
   }
 
-  async getUser(id: number): Promise<InstitutionUser> {
-    return this.institutionUserRepo
-      .createQueryBuilder("institutionUser")
-      .leftJoinAndSelect("institutionUser.user", "user")
-      .leftJoinAndSelect("institutionUser.institution", "institution")
-      .leftJoinAndSelect("institutionUser.authorizations", "authorizations")
-      .leftJoinAndSelect("authorizations.location", "location")
-      .leftJoinAndSelect("authorizations.authType", "authType")
-      .where("institutionUser.id = :id", { id })
-      .getOne();
-  }
-
   /**
    * Get the user and institution details, including locations,
    * by the institution user id or user id only.
@@ -920,7 +908,10 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * @param userId user id.
    * @param bceidUserName user name on BCeID.
    */
-  async syncBCeIDInformation(userId: number, bceidUserName: string) {
+  async syncBCeIDInformation(
+    userId: number,
+    bceidUserName: string,
+  ): Promise<void> {
     const institutionUser = await this.getInstitutionUserByUserId(userId);
 
     const accountType = institutionUser.institution.businessGuid
@@ -1006,5 +997,13 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       select: { id: true, operatingName: true },
       order: { operatingName: "ASC" },
     });
+  }
+
+  /**
+   * Checks if an institution exists with the given ID.
+   * @returns True if the institution exists, false otherwise.
+   */
+  async institutionExists(id: number): Promise<boolean> {
+    return this.repo.exists({ where: { id } });
   }
 }

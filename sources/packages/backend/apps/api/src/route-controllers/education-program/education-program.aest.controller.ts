@@ -1,10 +1,9 @@
 import {
   Body,
   Controller,
-  DefaultValuePipe,
   Get,
+  NotFoundException,
   Param,
-  ParseBoolPipe,
   ParseIntPipe,
   Patch,
   Query,
@@ -24,7 +23,7 @@ import {
   EducationProgramsSummaryAPIOutDTO,
   DeactivateProgramAPIInDTO,
 } from "./models/education-program.dto";
-import { EducationProgramService } from "../../services";
+import { EducationProgramService, InstitutionService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
@@ -39,7 +38,7 @@ import {
 } from "../models/pagination.dto";
 import { EducationProgramControllerService } from "./education-program.controller.service";
 import { Role } from "../../auth/roles.enum";
-import { OptionItemAPIOutDTO } from "apps/api/src/route-controllers/models/common.dto";
+import { OptionItemAPIOutDTO } from "..";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -49,6 +48,7 @@ export class EducationProgramAESTController extends BaseController {
   constructor(
     private readonly programService: EducationProgramService,
     private readonly educationProgramControllerService: EducationProgramControllerService,
+    private readonly institutionService: InstitutionService,
   ) {
     super();
   }
@@ -88,24 +88,22 @@ export class EducationProgramAESTController extends BaseController {
   }
 
   /**
-   * Get a key/value pair list of all approved programs.
-   * @param isIncludeInActiveProgram if true, only education programs with active
-   * are considered else both active and inactive programs are considered.
+   * Get a key/value pair list of all approved programs and active programs.
    * @returns key/value pair list of all approved programs.
    */
+  @ApiNotFoundResponse({
+    description: "Not able to find the institution.",
+  })
   @Get("institution/:institutionId/programs-list")
   async getProgramsListForInstitutions(
     @Param("institutionId", ParseIntPipe) institutionId: number,
-    @Query(
-      "isIncludeInActiveProgram",
-      new DefaultValuePipe(false),
-      ParseBoolPipe,
-    )
-    isIncludeInActiveProgram: boolean,
   ): Promise<OptionItemAPIOutDTO[]> {
-    const programs = await this.programService.getPrograms(institutionId, {
-      isIncludeInActiveProgram,
-    });
+    const institutionExists =
+      await this.institutionService.institutionExists(institutionId);
+    if (!institutionExists) {
+      throw new NotFoundException(`Institution ID ${institutionId} not found.`);
+    }
+    const programs = await this.programService.getPrograms(institutionId);
     return programs.map((program) => ({
       id: program.id,
       description: program.name,

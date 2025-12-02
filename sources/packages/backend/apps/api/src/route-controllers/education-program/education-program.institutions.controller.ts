@@ -163,8 +163,8 @@ export class EducationProgramInstitutionsController extends BaseController {
 
   /**
    * Get a key/value pair list of all approved programs.
-   * @param isIncludeInActiveProgram if true, only education programs with active
-   * are considered else both active and inactive programs are considered.
+   * @param isIncludeInActiveProgram if true, then both active
+   * and not active education program is considered.
    * @returns key/value pair list of all approved programs.
    */
   @Get("programs-list")
