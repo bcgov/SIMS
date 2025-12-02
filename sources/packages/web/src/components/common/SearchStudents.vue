@@ -78,9 +78,6 @@
           :items-per-page-options="ITEMS_PER_PAGE"
           :mobile="isMobile"
         >
-          <template #loading>
-            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
-          </template>
           <template #[`item.sin`]="{ item }">
             {{ sinDisplayFormat(item.sin) }}
           </template>

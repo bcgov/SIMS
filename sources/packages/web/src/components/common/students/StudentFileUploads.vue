@@ -34,13 +34,10 @@
           :items-per-page-options="ITEMS_PER_PAGE"
           :mobile="isMobile"
         >
-          <template #loading>
-            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
-          </template>
           <template #[`item.groupName`]="{ item }">
             {{ item.groupName }}
           </template>
-          <template v-if="canViewUploadedBy" #[`item.uploadedBy`]="{ item }">
+          <template #[`item.uploadedBy`]="{ item }">
             {{ item.uploadedBy }}
           </template>
           <template #[`item.applicationNumber`]="{ item }">
@@ -110,6 +107,7 @@ import {
   FormIOForm,
   Role,
   StudentFileUploadsHeaders,
+  StudentFileUploadsDetails,
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
 import {
@@ -121,7 +119,6 @@ import {
 } from "@/composables";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { StudentFileDetailsAPIOutDTO } from "@/services/http/dto/Student.dto";
 
 export default defineComponent({
   emits: ["uploadFile"],
@@ -151,7 +148,7 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const studentFileUploads = ref([] as StudentFileDetailsAPIOutDTO[]);
+    const studentFileUploads = ref([] as StudentFileUploadsDetails[]);
     const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
     const { getISODateHourMinuteString, emptyStringFiller } = useFormatters();
     const fileUtils = useFileUtils();
@@ -167,7 +164,7 @@ export default defineComponent({
 
     const uploadFile = async () => {
       const modalResult = await fileUploadModal.value.showModal();
-      if (!modalResult) {
+      if (!modalResult || typeof modalResult === "boolean") {
         return;
       }
 

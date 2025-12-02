@@ -31,9 +31,6 @@
           :items-per-page-options="ITEMS_PER_PAGE"
           :mobile="isMobile"
         >
-          <template #loading>
-            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
-          </template>
           <template #[`item.restrictionCategory`]="{ item }">
             {{ item.restrictionCategory }}
           </template>
@@ -43,8 +40,13 @@
           <template #[`item.createdAt`]="{ item }">
             {{ dateOnlyLongString(item.createdAt) }}
           </template>
-          <template #[`item.updatedAt`]="{ item }">
-            {{ item.isActive ? "-" : dateOnlyLongString(item.resolvedAt) }}
+          <template #[`item.resolvedAt`]="{ item }">
+            {{
+              conditionalEmptyStringFiller(
+                !!item.resolvedAt,
+                dateOnlyLongString(item.resolvedAt),
+              )
+            }}
           </template>
           <template #[`item.isActive`]="{ item }">
             <status-chip-restriction

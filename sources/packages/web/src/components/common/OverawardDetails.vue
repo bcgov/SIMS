@@ -18,9 +18,6 @@
           :items-per-page-options="ITEMS_PER_PAGE"
           :mobile="isMobile"
         >
-          <template #loading>
-            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
-          </template>
           <template #[`item.dateAdded`]="{ item }">
             {{ formatDateAdded(item) }}
           </template>
@@ -78,9 +75,6 @@
           :items-per-page-options="ITEMS_PER_PAGE"
           :mobile="isMobile"
         >
-          <template #loading>
-            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
-          </template>
           <template #[`item.dateAdded`]="{ item }">
             {{ formatDateAdded(item) }}
           </template>
@@ -90,7 +84,7 @@
           <template #[`item.overawardOrigin`]="{ item }">
             {{ item.overawardOrigin }}
           </template>
-          <template v-if="showAddedBy" #[`item.addedByUser`]="{ item }">
+          <template #[`item.addedByUser`]="{ item }">
             {{ emptyStringFiller(item.addedByUser) }}
           </template>
           <template #[`item.awardValueCode`]="{ item }">
