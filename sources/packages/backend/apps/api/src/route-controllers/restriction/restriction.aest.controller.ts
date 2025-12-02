@@ -46,7 +46,10 @@ import {
 } from "@nestjs/swagger";
 import { Role } from "../../auth/roles.enum";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
-import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import {
+  PrimaryIdentifierAPIOutDTO,
+  PrimaryIdentifiersAPIOutDTO,
+} from "../models/primary.identifier.dto";
 import { RestrictionControllerService } from "./restriction.controller.service";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -368,18 +371,18 @@ export class RestrictionAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
     @Param("institutionId", ParseIntPipe) institutionId: number,
     @Body() payload: AssignInstitutionRestrictionAPIInDTO,
-  ): Promise<PrimaryIdentifierAPIOutDTO> {
+  ): Promise<PrimaryIdentifiersAPIOutDTO> {
     try {
-      const updatedRestriction =
+      const updatedRestrictions =
         await this.institutionRestrictionService.addInstitutionRestriction(
           institutionId,
           payload.restrictionId,
-          payload.locationId,
+          payload.locationIds,
           payload.programId,
           payload.noteDescription,
           userToken.userId,
         );
-      return { id: updatedRestriction.id };
+      return { ids: updatedRestrictions.map((r) => r.id) };
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {

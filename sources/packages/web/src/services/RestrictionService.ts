@@ -4,7 +4,6 @@ import {
   AssignRestrictionAPIInDTO,
   DeleteRestrictionAPIInDTO,
   OptionItemAPIOutDTO,
-  PrimaryIdentifierAPIOutDTO,
   ResolveRestrictionAPIInDTO,
   RestrictionDetailAPIOutDTO,
   RestrictionSummaryAPIOutDTO,
@@ -122,8 +121,8 @@ export class RestrictionService {
   async addInstitutionRestriction(
     institutionId: number,
     payload: AssignInstitutionRestrictionAPIInDTO,
-  ): Promise<PrimaryIdentifierAPIOutDTO> {
-    return ApiClient.RestrictionApi.addInstitutionRestriction(
+  ): Promise<void> {
+    await ApiClient.RestrictionApi.addInstitutionRestriction(
       institutionId,
       payload,
     );

@@ -60,7 +60,7 @@ export interface AssignRestrictionAPIInDTO extends ResolveRestrictionAPIInDTO {
  */
 export interface AssignInstitutionRestrictionAPIInDTO
   extends AssignRestrictionAPIInDTO {
-  locationId: number;
+  locationIds: number[];
   programId: number;
 }
 

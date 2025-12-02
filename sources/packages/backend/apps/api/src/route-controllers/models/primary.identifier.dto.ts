@@ -6,3 +6,10 @@
 export class PrimaryIdentifierAPIOutDTO {
   id: number;
 }
+
+/**
+ * Common primary identifiers when multiple resources are created.
+ */
+export class PrimaryIdentifiersAPIOutDTO {
+  ids: number[];
+}

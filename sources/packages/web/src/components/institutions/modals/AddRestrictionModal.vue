@@ -35,10 +35,13 @@
           label="Location"
           density="compact"
           :items="locations"
-          v-model="formModel.locationId"
+          v-model="formModel.locationIds"
           variant="outlined"
-          :rules="[(v) => !!v || 'Location is required.']"
+          :rules="[(v) => !!v.length || 'Location is required.']"
           :loading="loadingData"
+          clearable
+          multiple
+          chips
           hide-details="auto" />
         <v-textarea
           label="Notes"

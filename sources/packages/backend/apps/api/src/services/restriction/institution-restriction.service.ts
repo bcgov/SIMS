@@ -136,28 +136,28 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
   }
 
   /**
-   * Creates a new institution restriction.
+   * Creates a new institution restrictions.
    * @param institutionId ID of the institution to add a restriction.
    * @param restrictionId ID of the restriction to be assigned.
-   * @param locationId ID of the location to be assigned.
+   * @param locationIds IDs of the locations to be assigned.
    * @param programId ID of the program to be assigned.
    * @param noteDescription Note description for the restriction assignment.
    * @param auditUserId ID of the user performing the action.
-   * @returns Created institution restriction.
+   * @returns Created institution restrictions.
    */
   async addInstitutionRestriction(
     institutionId: number,
     restrictionId: number,
-    locationId: number,
+    locationIds: number[],
     programId: number,
     noteDescription: string,
     auditUserId: number,
-  ): Promise<InstitutionRestriction> {
+  ): Promise<InstitutionRestriction[]> {
     return this.dataSource.transaction(async (entityManager) => {
       await this.validateInstitutionRestrictionCreation(
         institutionId,
         restrictionId,
-        locationId,
+        locationIds,
         programId,
         entityManager,
       );
@@ -170,18 +170,21 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
         entityManager,
       );
       // New institution restriction creation.
-      const restriction = new InstitutionRestriction();
-      restriction.institution = { id: institutionId } as Institution;
-      restriction.restriction = { id: restrictionId } as Restriction;
-      restriction.location = { id: locationId } as InstitutionLocation;
-      restriction.program = { id: programId } as EducationProgram;
-      restriction.creator = { id: auditUserId } as User;
-      restriction.restrictionNote = note;
-      restriction.isActive = true;
+      const newRestrictions = locationIds.map((locationId) => {
+        const restriction = new InstitutionRestriction();
+        restriction.institution = { id: institutionId } as Institution;
+        restriction.restriction = { id: restrictionId } as Restriction;
+        restriction.location = { id: locationId } as InstitutionLocation;
+        restriction.program = { id: programId } as EducationProgram;
+        restriction.creator = { id: auditUserId } as User;
+        restriction.restrictionNote = note;
+        restriction.isActive = true;
+        return restriction;
+      });
       await entityManager
         .getRepository(InstitutionRestriction)
-        .insert(restriction);
-      return restriction;
+        .insert(newRestrictions);
+      return newRestrictions;
     });
   }
 
@@ -190,7 +193,8 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
    * association and restriction existence.
    * @param institutionId Institution ID.
    * @param restrictionId Restriction ID.
-   * @param locationId Location ID.
+   * @param locationIds Location IDs. All locations must be associated with the institution
+   * and all locations must not have the same restriction already active.
    * @param programId Program ID.
    * @param entityManager Entity manager for transaction.
    * @throws CustomNamedError when any of the validations fail.
@@ -198,7 +202,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
   private async validateInstitutionRestrictionCreation(
     institutionId: number,
     restrictionId: number,
-    locationId: number,
+    locationIds: number[],
     programId: number,
     entityManager: EntityManager,
   ): Promise<void> {
@@ -218,8 +222,8 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       .leftJoin(
         "institution.locations",
         "location",
-        "location.id = :locationId",
-        { locationId },
+        "location.id IN (:...locationIds)",
+        { locationIds },
       )
       // Check if the program belongs to the institution.
       .leftJoin("institution.programs", "program", "program.id = :programId", {
@@ -229,8 +233,8 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       .leftJoin(
         "institution.restrictions",
         "institutionRestriction",
-        "institutionRestriction.isActive = :isActive AND institutionRestriction.location.id = :locationId AND institutionRestriction.program.id = :programId AND institutionRestriction.restriction.id = :restrictionId",
-        { isActive: true, locationId, programId, restrictionId },
+        "institutionRestriction.isActive = :isActive AND institutionRestriction.location.id IN (:...locationIds) AND institutionRestriction.program.id = :programId AND institutionRestriction.restriction.id = :restrictionId",
+        { isActive: true, locationIds, programId, restrictionId },
       )
       .where("institution.id = :institutionId", { institutionId })
       .getOne();
@@ -253,13 +257,19 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
     }
     if (institution.restrictions.length > 0) {
       throw new CustomNamedError(
-        `The restriction ID ${restrictionId} is already assigned and active to the institution for the specified location ID ${locationId} and program ID ${programId}.`,
+        `The restriction ID ${restrictionId} is already assigned and active to the institution, program ID ${programId}, and at least one of the location ID(s) ${locationIds}.`,
         INSTITUTION_RESTRICTION_ALREADY_ACTIVE,
       );
     }
-    if (!institution.locations.length || !institution.programs.length) {
+    if (institution.locations.length !== locationIds.length) {
       throw new CustomNamedError(
-        `The specified location ID ${locationId} or program ID ${programId} does not belong to the institution.`,
+        `At least one of the location ID(s) ${locationIds} were not associated with the institution.`,
+        INSTITUTION_PROGRAM_LOCATION_ASSOCIATION_NOT_FOUND,
+      );
+    }
+    if (!institution.programs.length) {
+      throw new CustomNamedError(
+        `The specified program ID ${programId} is not associated with the institution.`,
         INSTITUTION_PROGRAM_LOCATION_ASSOCIATION_NOT_FOUND,
       );
     }

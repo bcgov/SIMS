@@ -61,7 +61,7 @@ export default defineComponent({
     minWidth: {
       type: Number,
       required: false,
-      default: 600,
+      default: 730,
     },
     subTitle: {
       type: String,

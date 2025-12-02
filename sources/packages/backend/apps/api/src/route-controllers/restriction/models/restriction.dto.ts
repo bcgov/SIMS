@@ -1,4 +1,10 @@
-import { IsIn, IsNotEmpty, IsPositive, MaxLength } from "class-validator";
+import {
+  ArrayMinSize,
+  IsIn,
+  IsNotEmpty,
+  IsPositive,
+  MaxLength,
+} from "class-validator";
 import {
   RestrictionNotificationType,
   NOTE_DESCRIPTION_MAX_LENGTH,
@@ -87,8 +93,9 @@ export class AssignRestrictionAPIInDTO extends ResolveRestrictionAPIInDTO {
  * Add restriction to an institution.
  */
 export class AssignInstitutionRestrictionAPIInDTO extends AssignRestrictionAPIInDTO {
-  @IsPositive()
-  locationId: number;
+  @ArrayMinSize(1)
+  @IsPositive({ each: true })
+  locationIds: number[];
   @IsPositive()
   programId: number;
 }
