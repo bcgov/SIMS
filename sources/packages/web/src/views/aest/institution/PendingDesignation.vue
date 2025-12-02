@@ -13,7 +13,6 @@
           label="Search Designations"
           density="compact"
           v-model="searchCriteria"
-          data-cy="searchDesignations"
           variant="outlined"
           @keyup.enter="searchDesignations"
           prepend-inner-icon="mdi-magnify"
@@ -47,7 +46,6 @@
               variant="outlined"
               color="primary"
               @click="goToViewDesignation(item.designationId)"
-              data-cy="viewPendingDesignation"
             >
               View
             </v-btn>

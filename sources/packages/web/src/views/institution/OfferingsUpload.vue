@@ -172,10 +172,14 @@
               {{ item.sabcProgramCode }}
             </template>
             <template #[`item.startDateFormatted`]="{ item }">
-              {{ item.startDateFormatted }}
+              <span class="text-no-wrap">
+                {{ item.startDateFormatted }}
+              </span>
             </template>
             <template #[`item.endDateFormatted`]="{ item }">
-              {{ item.endDateFormatted }}
+              <span class="text-no-wrap">
+                {{ item.endDateFormatted }}
+              </span>
             </template>
             <template #[`item.offeringStatus`]="{ item }">
               <status-chip-offering

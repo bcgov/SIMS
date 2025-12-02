@@ -19,7 +19,7 @@ export interface RestrictionSummaryAPIOutDTO extends RestrictionBaseDTO {
   createdAt: Date;
   resolvedAt?: Date;
   deletedAt?: Date;
-  updatedAt: Date;
+  updatedAt?: Date;
 }
 
 /**

@@ -23,7 +23,6 @@
         <template #[`item.action`]="{ item }">
           <v-btn
             color="primary"
-            data-cy="viewDesignation"
             @click="goToViewDesignation(item.designationId)"
           >
             View

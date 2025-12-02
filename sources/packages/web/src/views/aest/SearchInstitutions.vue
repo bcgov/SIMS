@@ -54,13 +54,19 @@
           :mobile="isMobile"
         >
           <template #[`item.operatingName`]="{ item }">
-            {{ item.operatingName }}
+            <div class="p-text-capitalize">
+              {{ item.operatingName }}
+            </div>
           </template>
           <template #[`item.legalName`]="{ item }">
-            {{ item.legalName }}
+            <div class="p-text-capitalize">
+              {{ item.legalName }}
+            </div>
           </template>
           <template #[`item.address`]="{ item }">
-            {{ getFormattedAddress(item.address) }}
+            <div class="p-text-capitalize">
+              {{ getFormattedAddress(item.address) }}
+            </div>
           </template>
           <template #[`item.action`]="{ item }">
             <v-btn

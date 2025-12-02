@@ -92,7 +92,9 @@
             </div>
           </template>
           <template #[`item.birthDate`]="{ item }">
-            {{ dateOnlyLongString(item.birthDate) }}
+            <div class="p-text-capitalize">
+              {{ dateOnlyLongString(item.birthDate) }}
+            </div>
           </template>
           <template #[`item.action`]="{ item }">
             <v-btn
