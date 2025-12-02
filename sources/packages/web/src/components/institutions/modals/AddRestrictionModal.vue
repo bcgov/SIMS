@@ -6,7 +6,7 @@
         <v-select
           item-value="id"
           item-title="description"
-          class="my-2"
+          class="my-4"
           label="Reason"
           density="compact"
           :items="reasons"
@@ -18,7 +18,7 @@
         <v-autocomplete
           item-value="id"
           item-title="description"
-          class="mb-2"
+          class="mb-4"
           label="Program"
           density="compact"
           :items="programs"
@@ -31,7 +31,7 @@
         <v-select
           item-value="id"
           item-title="name"
-          class="mb-2"
+          class="mb-4"
           label="Location"
           density="compact"
           :items="locations"
