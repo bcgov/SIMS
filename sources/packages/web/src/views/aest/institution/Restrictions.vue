@@ -216,8 +216,9 @@ export default defineComponent({
           error.errorType === INSTITUTION_RESTRICTION_ALREADY_ACTIVE
         ) {
           snackBar.warn("An active restriction is already present.");
+        } else {
+          snackBar.error("Unexpected error while adding the restriction.");
         }
-        snackBar.error("Unexpected error while adding the restriction.");
         return false;
       } finally {
         processingAddingRestriction.value = false;

@@ -1,55 +1,56 @@
 <template>
-  <v-form ref="addRestrictionForm" validate-on="submit">
+  <v-form ref="addRestrictionForm">
     <modal-dialog-base title="Add new restriction" :show-dialog="showDialog">
       <template #content>
         <error-summary :errors="addRestrictionForm.errors" />
         <v-select
           item-value="id"
           item-title="description"
-          class="my-4"
+          class="my-2"
           label="Reason"
           density="compact"
           :items="reasons"
           v-model="formModel.restrictionId"
           variant="outlined"
           :rules="[(v) => !!v || 'Reason is required.']"
-          :loading="processing"
-          hide-details />
+          :loading="loadingData"
+          hide-details="auto" />
         <v-autocomplete
           item-value="id"
           item-title="description"
-          class="mb-4"
+          class="mb-2"
           label="Program"
           density="compact"
           :items="programs"
           v-model="formModel.programId"
           variant="outlined"
           :rules="[(v) => !!v || 'Program is required.']"
-          :loading="processing"
+          :loading="loadingData"
           :clearable="true"
-          hide-details />
+          hide-details="auto" />
         <v-select
           item-value="id"
           item-title="name"
-          class="mb-4"
+          class="mb-2"
           label="Location"
           density="compact"
           :items="locations"
           v-model="formModel.locationId"
           variant="outlined"
           :rules="[(v) => !!v || 'Location is required.']"
-          :loading="processing"
-          hide-details />
+          :loading="loadingData"
+          hide-details="auto" />
         <v-textarea
           label="Notes"
           v-model="formModel.noteDescription"
           variant="outlined"
           :rules="[checkNotesLengthRule]"
-          hide-details
+          hide-details="auto"
       /></template>
       <template #footer>
         <footer-buttons
-          :processing="processing"
+          :disable-primary-button="loadingData"
+          :processing="submittingData"
           primary-label="Add Restriction"
           @primary-click="submit"
           @secondary-click="cancel"
@@ -59,7 +60,7 @@
   </v-form>
 </template>
 <script lang="ts">
-import { ref, reactive, defineComponent, watchEffect } from "vue";
+import { ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useRules, useSnackBar } from "@/composables";
@@ -95,18 +96,41 @@ export default defineComponent({
     const selectedReason = ref<number>();
     const selectedLocation = ref<number>();
     const selectedProgram = ref<number>();
-    const processing = ref(false);
+    const loadingData = ref(false);
+    const submittingData = ref(false);
 
-    const { showDialog, showModal, resolvePromise } = useModalDialog<
-      AssignInstitutionRestrictionAPIInDTO | false
-    >();
+    const {
+      showDialog,
+      showModal: showModalInternal,
+      resolvePromise,
+    } = useModalDialog<AssignInstitutionRestrictionAPIInDTO | false>();
     const addRestrictionForm = ref({} as VForm);
     const formModel = reactive({} as AssignInstitutionRestrictionAPIInDTO);
 
-    watchEffect(async () => {
-      // TODO: Move to load data only when modal is shown.
+    /**
+     * Overrides the showModal method to allow loading the data
+     * only if the modal is invoked.
+     */
+    const showModal = async (
+      params: unknown,
+      canResolvePromise: (
+        value: AssignInstitutionRestrictionAPIInDTO | false,
+      ) => Promise<boolean>,
+    ) => {
+      // Show the modal right away to allow the UI to display the loading states.
+      showModalInternal(params, canResolvePromise);
+      if (
+        reasons.value.length &&
+        locations.value.length &&
+        programs.value.length
+      ) {
+        // Data is already loaded.
+        // All data is expected to have items to be displayed.
+        // In case some fail, it will retry if modal is shown again.
+        return;
+      }
       try {
-        processing.value = true;
+        loadingData.value = true;
         const [reasonsResponse, locationsResponse, programsResponse] =
           await Promise.all([
             RestrictionService.shared.getRestrictionReasons(
@@ -126,16 +150,24 @@ export default defineComponent({
       } catch {
         snackBar.error("Unexpected error while loading data.");
       } finally {
-        processing.value = false;
+        loadingData.value = false;
       }
-    });
+    };
 
     const submit = async () => {
       const validationResult = await addRestrictionForm.value.validate();
       if (!validationResult.valid) {
         return;
       }
-      resolvePromise(formModel);
+      submittingData.value = true;
+      try {
+        const modalClosed = await resolvePromise(formModel);
+        if (modalClosed) {
+          addRestrictionForm.value.reset();
+        }
+      } finally {
+        submittingData.value = false;
+      }
     };
 
     const cancel = () => {
@@ -144,7 +176,8 @@ export default defineComponent({
     };
 
     return {
-      processing,
+      loadingData,
+      submittingData,
       showDialog,
       showModal,
       cancel,
