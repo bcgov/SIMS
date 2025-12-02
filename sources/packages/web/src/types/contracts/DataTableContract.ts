@@ -735,13 +735,23 @@ export const StudentAccountRequestsHeaders = [
 ];
 
 /**
- * Assessment History header.
+ * Completed Changes header.
  */
-export const AssessmentHistoryHeaders = [
+export const CompletedChangesHeaders = [
   { title: "Submitted date", sortable: true, key: "submittedDate" },
   { title: "Type", sortable: true, key: "triggerType" },
   { title: "Request form", sortable: false, key: "requestForm" },
   { title: "Status", sortable: true, key: "status" },
   { title: "Assessment date", sortable: true, key: "assessmentDate" },
   { title: "Assessment", sortable: false, key: "assessment" },
+];
+
+/**
+ * Unapproved Changes header.
+ */
+export const UnapprovedChangesHeaders = [
+  { title: "Submitted date", sortable: true, key: "submittedDate" },
+  { title: "Type", sortable: true, key: "requestType" },
+  { title: "Request form", sortable: false, key: "requestForm" },
+  { title: "Status", sortable: true, key: "status" },
 ];

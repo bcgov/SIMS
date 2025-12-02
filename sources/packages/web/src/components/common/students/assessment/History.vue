@@ -14,7 +14,7 @@
           message="No assessments found."
         >
           <v-data-table
-            :headers="AssessmentHistoryHeaders"
+            :headers="CompletedChangesHeaders"
             :items="assessmentHistory"
             :items-per-page="DEFAULT_PAGE_LIMIT"
             :items-per-page-options="ITEMS_PER_PAGE"
@@ -70,7 +70,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   AssessmentTriggerType,
-  AssessmentHistoryHeaders,
+  CompletedChangesHeaders,
 } from "@/types";
 import { ref, PropType, defineComponent, watchEffect } from "vue";
 import { useDisplay } from "vuetify";
@@ -194,7 +194,7 @@ export default defineComponent({
       canShowViewRequest,
       getViewRequestLabel,
       emptyStringFiller,
-      AssessmentHistoryHeaders,
+      CompletedChangesHeaders,
       isMobile,
     };
   },
