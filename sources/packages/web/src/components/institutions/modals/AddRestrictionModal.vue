@@ -64,7 +64,7 @@ import { ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useRules, useSnackBar } from "@/composables";
-import { Role, VForm, RestrictionType } from "@/types";
+import { VForm, RestrictionType } from "@/types";
 import {
   AssignInstitutionRestrictionAPIInDTO,
   InstitutionLocationAPIOutDTO,
@@ -93,19 +93,15 @@ export default defineComponent({
     const reasons = ref([] as OptionItemAPIOutDTO[]);
     const locations = ref([] as InstitutionLocationAPIOutDTO[]);
     const programs = ref([] as OptionItemAPIOutDTO[]);
-    const selectedReason = ref<number>();
-    const selectedLocation = ref<number>();
-    const selectedProgram = ref<number>();
+    const formModel = reactive({} as AssignInstitutionRestrictionAPIInDTO);
     const loadingData = ref(false);
     const submittingData = ref(false);
-
+    const addRestrictionForm = ref({} as VForm);
     const {
       showDialog,
       showModal: showModalInternal,
       resolvePromise,
     } = useModalDialog<AssignInstitutionRestrictionAPIInDTO | false>();
-    const addRestrictionForm = ref({} as VForm);
-    const formModel = reactive({} as AssignInstitutionRestrictionAPIInDTO);
 
     /**
      * Overrides the showModal method to allow loading the data
@@ -182,15 +178,11 @@ export default defineComponent({
       showModal,
       cancel,
       submit,
-      Role,
       addRestrictionForm,
       formModel,
       reasons,
       locations,
       programs,
-      selectedReason,
-      selectedLocation,
-      selectedProgram,
       checkNotesLengthRule,
     };
   },

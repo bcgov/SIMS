@@ -205,7 +205,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
     // Check institution, location, program association and institution restriction existence.
     // Execute left joins to allow the validations in a single query and the generation
     // of more precise error messages.
-    const institutionPromise = await entityManager
+    const institutionPromise = entityManager
       .getRepository(Institution)
       .createQueryBuilder("institution")
       .select([

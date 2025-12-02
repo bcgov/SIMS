@@ -6,6 +6,7 @@ import {
   createFakeInstitution,
   createFakeUser,
   saveFakeInstitutionRestriction,
+  createFakeEducationProgram,
 } from "@sims/test-utils";
 import {
   AESTGroups,
@@ -24,7 +25,6 @@ import {
   Restriction,
   User,
 } from "@sims/sims-db";
-import { createFakeEducationProgram } from "@sims/test-utils";
 
 describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
   let app: INestApplication;

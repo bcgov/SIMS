@@ -57,7 +57,7 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
    * Checks if a restriction exists for the given restriction ID and type.
    * @param restrictionId Restriction ID.
    * @param restrictionType Restriction type.
-   * @returns Provincial restriction.
+   * @returns True if the restriction exists, otherwise false.
    */
   async restrictionExists(
     restrictionId: number,
