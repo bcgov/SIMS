@@ -215,7 +215,9 @@ export default defineComponent({
           error instanceof ApiProcessError &&
           error.errorType === INSTITUTION_RESTRICTION_ALREADY_ACTIVE
         ) {
-          snackBar.warn("An active restriction is already present.");
+          snackBar.warn(
+            "At least one location already has an active restriction.",
+          );
         } else {
           snackBar.error("Unexpected error while adding the restriction.");
         }

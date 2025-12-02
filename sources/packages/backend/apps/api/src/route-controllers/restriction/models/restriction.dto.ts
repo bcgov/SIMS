@@ -101,10 +101,17 @@ export class AssignRestrictionAPIInDTO extends ResolveRestrictionAPIInDTO {
  * Add restriction to an institution.
  */
 export class AssignInstitutionRestrictionAPIInDTO extends AssignRestrictionAPIInDTO {
+  /**
+   * List of location IDs where the restriction is applicable.
+   * A new restriction will be created for each location ID provided.
+   */
   @ArrayMinSize(1)
   @ArrayMaxSize(MAX_ALLOWED_LOCATIONS)
   @IsPositive({ each: true })
   locationIds: number[];
+  /**
+   * Program ID where the restriction is applicable.
+   */
   @IsPositive()
   programId: number;
 }
@@ -136,9 +143,18 @@ export class RestrictionCategoryParamAPIInDTO {
   restrictionCategory: string;
 }
 
+/**
+ * Query string options for filtering the restriction reasons.
+ */
 export class RestrictionReasonsOptionsAPIInDTO {
+  /**
+   * Type of the restriction expected to be filtered.
+   */
   @IsIn([RestrictionType.Provincial, RestrictionType.Institution])
   type: RestrictionType.Provincial | RestrictionType.Institution;
+  /**
+   * Category of the restriction expected to be filtered.
+   */
   @MaxLength(RESTRICTION_CATEGORY_MAX_LENGTH)
   category: string;
 }
