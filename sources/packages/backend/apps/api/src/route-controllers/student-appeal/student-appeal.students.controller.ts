@@ -202,7 +202,7 @@ export class StudentAppealStudentsController extends BaseController {
     try {
       const dryRunPromise: Promise<DryRunSubmissionResult>[] =
         payload.studentAppealRequests.map((appeal) => {
-          // Check if the form has any inputs which is required to be populated at the server side
+          // Check if the form has any inputs which are required to be populated at the server side
           // during the dry run submission.
           if (appeal.formData.programYear) {
             appeal.formData.programYear = application.programYear.programYear;

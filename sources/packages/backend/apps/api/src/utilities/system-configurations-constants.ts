@@ -146,9 +146,3 @@ export const AVIATION_RESTRICTION_CODES: RestrictionCode[] = [
   RestrictionCode.AVIR,
   RestrictionCode.SFAS_AV,
 ];
-
-/**
- * Number of parents required to be reported in the application
- * to submit the step parent waiver appeal.
- */
-export const STEP_PARENT_WAIVER_APPEAL_REQUIRED_PARENTS = 2;
