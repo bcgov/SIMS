@@ -154,10 +154,11 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
     auditUserId: number,
   ): Promise<InstitutionRestriction[]> {
     return this.dataSource.transaction(async (entityManager) => {
+      const uniqueLocationIds = Array.from(new Set(locationIds));
       await this.validateInstitutionRestrictionCreation(
         institutionId,
         restrictionId,
-        locationIds,
+        uniqueLocationIds,
         programId,
         entityManager,
       );
