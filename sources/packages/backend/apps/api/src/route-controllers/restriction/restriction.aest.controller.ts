@@ -373,7 +373,7 @@ export class RestrictionAESTController extends BaseController {
     @Body() payload: AssignInstitutionRestrictionAPIInDTO,
   ): Promise<PrimaryIdentifiersAPIOutDTO> {
     try {
-      const updatedRestrictions =
+      const createdRestrictions =
         await this.institutionRestrictionService.addInstitutionRestriction(
           institutionId,
           payload.restrictionId,
@@ -382,7 +382,7 @@ export class RestrictionAESTController extends BaseController {
           payload.noteDescription,
           userToken.userId,
         );
-      return { ids: updatedRestrictions.map((r) => r.id) };
+      return { ids: createdRestrictions.map((r) => r.id) };
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
