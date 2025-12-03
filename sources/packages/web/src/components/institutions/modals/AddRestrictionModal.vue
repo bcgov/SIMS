@@ -32,12 +32,12 @@
           item-value="id"
           item-title="name"
           class="mb-4"
-          label="Location"
+          label="Location(s)"
           density="compact"
           :items="locations"
           v-model="formModel.locationIds"
           variant="outlined"
-          :rules="[(v) => checkNullOrEmptyRule(v, 'Location')]"
+          :rules="[(v) => checkNullOrEmptyRule(v, 'Location(s)')]"
           :loading="loadingData"
           clearable
           multiple
