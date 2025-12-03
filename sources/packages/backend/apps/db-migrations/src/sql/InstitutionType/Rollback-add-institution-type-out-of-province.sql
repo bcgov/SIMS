@@ -6,7 +6,7 @@ SET
 WHERE
     institution_type_id = 7;
 
--- Rollback script to remove "Out of Province" institution type and update existing institutions
+-- Rollback script to remove "Out of Province Public" institution type
 DELETE FROM
     institution_type
 WHERE
