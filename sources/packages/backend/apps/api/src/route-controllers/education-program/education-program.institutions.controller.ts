@@ -177,14 +177,10 @@ export class EducationProgramInstitutionsController extends BaseController {
     )
     isIncludeInActiveProgram: boolean,
   ): Promise<OptionItemAPIOutDTO[]> {
-    const programs = await this.programService.getPrograms(
+    return this.educationProgramControllerService.getProgramsListForInstitutions(
       userToken.authorizations.institutionId,
       { isIncludeInActiveProgram },
     );
-    return programs.map((program) => ({
-      id: program.id,
-      description: program.name,
-    }));
   }
 
   /**

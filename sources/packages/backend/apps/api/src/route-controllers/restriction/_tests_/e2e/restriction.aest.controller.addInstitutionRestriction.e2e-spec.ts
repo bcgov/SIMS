@@ -236,7 +236,7 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
       });
   });
 
-  it("Should throw an unprocessable entity exception when the location does not exist associated with the institution.", async () => {
+  it("Should throw an unprocessable entity exception when the location is not associated with the institution.", async () => {
     // Arrange
     const [institution, program] = await createInstitutionProgramLocations({
       numberLocationsToCreate: 0,
@@ -390,6 +390,8 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
   /**
    * Creates an institution with program and locations as expected by the E2E tests.
    * @param options Options to skip the creation of program or location.
+   * - `skipProgramCreation` When true, the program creation is skipped.
+   * - `numberLocationsToCreate` Number of locations to be created. Zero can be provided to not create locations.
    * @returns Created institution, program, location, locationsIds, and locations objects.
    * Returned as a array to simplify destructuring in the tests.
    */

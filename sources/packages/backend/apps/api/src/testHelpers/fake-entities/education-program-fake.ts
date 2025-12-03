@@ -20,7 +20,7 @@ import { createFakeInstitution } from "@sims/test-utils";
 export function createFakeEducationProgram(
   relations?: {
     institution?: Institution;
-    user?: User;
+    user: User;
   },
   options?: {
     initialValue?: Partial<EducationProgram>;

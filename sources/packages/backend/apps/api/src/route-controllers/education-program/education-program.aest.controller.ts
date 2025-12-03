@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -98,16 +97,9 @@ export class EducationProgramAESTController extends BaseController {
   async getProgramsListForInstitutions(
     @Param("institutionId", ParseIntPipe) institutionId: number,
   ): Promise<OptionItemAPIOutDTO[]> {
-    const institutionExists =
-      await this.institutionService.institutionExists(institutionId);
-    if (!institutionExists) {
-      throw new NotFoundException(`Institution ID ${institutionId} not found.`);
-    }
-    const programs = await this.programService.getPrograms(institutionId);
-    return programs.map((program) => ({
-      id: program.id,
-      description: program.name,
-    }));
+    return this.educationProgramControllerService.getProgramsListForInstitutions(
+      institutionId,
+    );
   }
 
   /**

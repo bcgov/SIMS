@@ -148,7 +148,9 @@ export default defineComponent({
         locations.value = locationsResponse;
         programs.value = programsResponse;
       } catch {
-        snackBar.error("Unexpected error while loading data.");
+        snackBar.error(
+          "Unexpected error while loading institution restriction-related information.",
+        );
       } finally {
         loadingData.value = false;
       }
