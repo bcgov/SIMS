@@ -195,7 +195,7 @@ export class ApplicationApi extends HttpBaseClient {
   async getApplicationForRequestChange(
     applicationId: number,
   ): Promise<AppealApplicationDetailsAPIOutDTO> {
-    return this.getCall<AppealApplicationDetailsAPIOutDTO>(
+    return this.getCall(
       this.addClientRoot(`application/${applicationId}/appeal`),
     );
   }
