@@ -18,7 +18,7 @@ import { createFakeInstitution } from "@sims/test-utils";
  * @returns returns fake education program.
  */
 export function createFakeEducationProgram(
-  relations?: {
+  relations: {
     institution?: Institution;
     user: User;
   },
