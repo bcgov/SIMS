@@ -208,7 +208,7 @@ export default defineComponent({
           error.errorType === INSTITUTION_RESTRICTION_ALREADY_ACTIVE
         ) {
           snackBar.warn(
-            "At least one location already has an active restriction.",
+            "At least one restriction is already active for the selected items.",
           );
         } else {
           snackBar.error("Unexpected error while adding the restriction.");
