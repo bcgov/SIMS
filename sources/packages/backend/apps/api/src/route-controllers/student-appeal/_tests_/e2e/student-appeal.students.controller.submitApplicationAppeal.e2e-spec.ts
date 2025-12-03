@@ -15,6 +15,7 @@ import {
   createE2EDataSources,
   createFakeStudentAppeal,
   createFakeStudentAppealRequest,
+  createFakeSupportingUser,
   getProviderInstanceForModule,
   saveFakeApplication,
   saveFakeApplicationDisbursements,
@@ -31,10 +32,11 @@ import {
   StudentAppealRequest,
   StudentAppealStatus,
   StudentFile,
+  SupportingUserType,
 } from "@sims/sims-db";
 import { StudentApplicationAppealAPIInDTO } from "../../models/student-appeal.dto";
 import { AppStudentsModule } from "../../../../app.students.module";
-import { FormService } from "../../../../services";
+import { FormNames, FormService } from "../../../../services";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_HAS_PENDING_APPEAL,
@@ -728,6 +730,155 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
       expect(dryRunSubmissionMock).toHaveBeenCalledWith(
         ROOM_AND_BOARD_COSTS_FORM_NAME,
         roomAndBoardAppealData,
+      );
+    },
+  );
+
+  it(
+    "Should create step parent waiver appeal for an application" +
+      " when student submit the appeal for a full-time application reported with both the parents.",
+    async () => {
+      // Arrange
+      // Create student to submit application.
+      const student = await saveFakeStudent(appDataSource);
+      // Create application to submit appeal with eligible program year.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          programYear: recentActiveProgramYear,
+        },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+        },
+      );
+      // Create supporting user parents for the application.
+      const parent1 = createFakeSupportingUser(
+        { application },
+        {
+          initialValues: {
+            supportingUserType: SupportingUserType.Parent,
+            fullName: "Parent One",
+          },
+        },
+      );
+      const parent2 = createFakeSupportingUser(
+        { application },
+        {
+          initialValues: {
+            supportingUserType: SupportingUserType.Parent,
+            fullName: "Parent Two",
+          },
+        },
+      );
+      await db.supportingUser.save([parent1, parent2]);
+
+      // Part of the payload data that will be re-populated by the server.
+      // This re-populated data is provided to form.io to execute dry run submission.
+      const payloadDataToBeRePopulatedByServer = {
+        parents: [
+          { id: parent1.id, fullName: parent1.fullName },
+          // Expect the API to re-populate the parent details with correct id and name.
+          { id: 1, fullName: "Some manipulated name" },
+        ],
+      };
+      // Create a temporary file for step parent waiver appeal.
+      const stepParentWaiverSupportingFile = await saveFakeStudentFileUpload(
+        appDataSource,
+        {
+          student,
+          creator: student.user,
+        },
+        { fileOrigin: FileOriginType.Temporary },
+      );
+      // Prepare the data to submit step parent waiver appeal.
+      const stepParentWaiverAppealData = {
+        ...payloadDataToBeRePopulatedByServer,
+        selectedParent: parent1.id,
+        stepParentWaiverSupportingDocuments: [
+          {
+            url: `student/files/${stepParentWaiverSupportingFile.uniqueFileName}`,
+            hash: "",
+            name: stepParentWaiverSupportingFile.uniqueFileName,
+            size: 4,
+            type: "text/plain",
+            storage: "url",
+            originalName: stepParentWaiverSupportingFile.fileName,
+          },
+        ],
+      };
+      const payload: StudentApplicationAppealAPIInDTO = {
+        studentAppealRequests: [
+          {
+            formName: FormNames.StepParentWaiverAppeal,
+            formData: stepParentWaiverAppealData,
+            files: [stepParentWaiverSupportingFile.uniqueFileName],
+          },
+        ],
+      };
+      // Expected submitted data after the server re-populates the correct parent details.
+      const expectedSubmittedData = {
+        ...stepParentWaiverAppealData,
+        parents: [
+          { id: parent1.id, fullName: parent1.fullName },
+          { id: parent2.id, fullName: parent2.fullName },
+        ],
+      };
+      // Mock JWT user to return the saved student from token.
+      await mockJWTUserInfo(appModule, student.user);
+      // Get any student user token.
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      // Mock the form service to validate the dry-run submission result.
+      // and this mock must be removed.
+      const formService = await getProviderInstanceForModule(
+        appModule,
+        AppStudentsModule,
+        FormService,
+      );
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.StepParentWaiverAppeal,
+        data: { data: expectedSubmittedData },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+      const endpoint = `/students/appeal/application/${application.id}`;
+
+      // Act/Assert
+      let createdAppealId: number;
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then((response) => {
+          expect(response.body.id).toBeGreaterThan(0);
+          createdAppealId = +response.body.id;
+        });
+      const studentAppeal = await db.studentAppeal.findOne({
+        select: {
+          id: true,
+          appealRequests: {
+            id: true,
+            submittedFormName: true,
+            submittedData: true,
+          },
+        },
+        relations: { appealRequests: true },
+        where: { application: { id: application.id } },
+      });
+      const [appealRequest] = studentAppeal.appealRequests;
+      expect(studentAppeal.id).toBe(createdAppealId);
+      expect(appealRequest.submittedFormName).toBe(
+        FormNames.StepParentWaiverAppeal,
+      );
+      expect(appealRequest.submittedData).toStrictEqual(expectedSubmittedData);
+      // Expect to call the dry run submission.
+      expect(dryRunSubmissionMock).toHaveBeenCalledWith(
+        FormNames.StepParentWaiverAppeal,
+        expectedSubmittedData,
       );
     },
   );

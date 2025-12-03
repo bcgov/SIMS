@@ -238,6 +238,143 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
     },
   );
 
+  it(
+    "Should load assessment consolidated data when the student is single and a dependant" +
+      " with both parents reported in the application and the application offering intensity is full-time.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplication(db.dataSource, undefined, {
+        applicationData: {
+          relationshipStatus: RelationshipStatus.Single,
+          dependantstatus: "dependant",
+          taxReturnIncome: 1000,
+          workflowName: "dummy",
+        } as ApplicationData,
+        offeringIntensity: OfferingIntensity.fullTime,
+      });
+      // Create supporting user parents.
+      const parents = [
+        {
+          supportingUserType: SupportingUserType.Parent,
+          fullName: "Parent One",
+          supportingData: { totalIncome: 5000 },
+        },
+        {
+          supportingUserType: SupportingUserType.Parent,
+          fullName: "Parent Two",
+          supportingData: { totalIncome: 6000 },
+        },
+      ].map((parentInitialValues) =>
+        createFakeSupportingUser(
+          { application },
+          { initialValues: parentInitialValues },
+        ),
+      );
+      const [parent1, parent2] = await db.supportingUser.save(parents);
+      // Create student income verification.
+      const studentCRAIncomeVerification = createFakeCRAIncomeVerification(
+        {
+          application,
+        },
+        {
+          initialValues: { dateReceived: new Date(), craReportedIncome: 900 },
+        },
+      );
+      // Create parents income verifications.
+      const [parent1CRAIncomeVerification, parent2CRAIncomeVerification] =
+        parents.map((parent) =>
+          createFakeCRAIncomeVerification(
+            {
+              application,
+              supportingUser: parent,
+            },
+            {
+              initialValues: {
+                dateReceived: new Date(),
+                craReportedIncome: 5000,
+              },
+            },
+          ),
+        );
+      await db.craIncomeVerification.save([
+        studentCRAIncomeVerification,
+        parent1CRAIncomeVerification,
+        parent2CRAIncomeVerification,
+      ]);
+
+      const assessment = application.currentAssessment;
+      const offering = assessment.offering;
+      const programYear = application.programYear;
+      const program = offering.educationProgram;
+      // For supporting user parents consolidated data, validated only some of them.
+      // When required to validate more input data, it can be added later.
+      const customHeaders = {
+        ...createBaseCustomHeaders(),
+        studentDataCRAReportedIncome: "student.craReportedIncome",
+        studentTaxYear: "student.taxYear",
+        parent1SupportingUserId: "supportingUsers.Parent1.id",
+        parent2SupportingUserId: "supportingUsers.Parent2.id",
+        parent1TotalIncome:
+          "supportingUsers.Parent1.supportingData.totalIncome",
+        parent2TotalIncome:
+          "supportingUsers.Parent2.supportingData.totalIncome",
+        parent1CRAReportedIncome: "supportingUsers.Parent1.craReportedIncome",
+        parent2CRAReportedIncome: "supportingUsers.Parent2.craReportedIncome",
+      };
+
+      // Act
+      const result = await assessmentController.loadAssessmentConsolidatedData(
+        createFakeLoadAssessmentConsolidatedDataPayload(
+          assessment.id,
+          customHeaders,
+        ),
+      );
+
+      // Asserts
+      expect(result).toHaveProperty(
+        FAKE_WORKER_JOB_RESULT_PROPERTY,
+        MockedZeebeJobResult.Complete,
+      );
+
+      // Validate the output variables.
+      expect(FakeWorkerJobResult.getOutputVariables(result)).toEqual({
+        assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+        programYearStartDate: programYear.startDate,
+        studentDataRelationshipStatus: RelationshipStatus.Single,
+        studentDataTaxReturnIncome: 1000,
+        studentDataDependantstatus: "dependant",
+        applicationId: application.id,
+        programYear: programYear.programYear,
+        institutionLocationProvince:
+          offering.institutionLocation?.data.address?.provinceState,
+        institutionType: "BC Private",
+        programLength: program.completionYears,
+        programCredentialType: program.credentialType,
+        offeringIntensity: OfferingIntensity.fullTime,
+        offeringDelivered: offering.offeringDelivered,
+        offeringStudyEndDate: offering.studyEndDate,
+        offeringStudyStartDate: offering.studyStartDate,
+        offeringProgramRelatedCosts: offering.programRelatedCosts,
+        offeringActualTuitionCosts: offering.actualTuitionCosts,
+        offeringMandatoryFees: offering.mandatoryFees,
+        offeringExceptionalExpenses: offering.exceptionalExpenses,
+        offeringCourseLoad: offering.courseLoad,
+        offeringWeeks: offering.studyBreaks.totalFundedWeeks,
+        applicationStatus: application.applicationStatus,
+        applicationEditStatus: application.applicationEditStatus,
+        applicationHasNOAApproval: false,
+        studentDataCRAReportedIncome: 900,
+        studentTaxYear: studentCRAIncomeVerification.taxYear,
+        parent1SupportingUserId: parent1.id,
+        parent2SupportingUserId: parent2.id,
+        parent1TotalIncome: 5000,
+        parent2TotalIncome: 6000,
+        parent1CRAReportedIncome: 5000,
+        parent2CRAReportedIncome: 5000,
+      });
+    },
+  );
+
   it("Should load assessment consolidated data with the appeal data when a full-time application has an approved appeal.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {

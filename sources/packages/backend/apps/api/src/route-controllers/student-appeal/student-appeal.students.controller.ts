@@ -51,8 +51,10 @@ import {
 } from "../../constants";
 import { StudentAppealRequestModel } from "../../services/student-appeal/student-appeal.model";
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
-import { StudentAppealServerSideSubmissionData } from "./models/student-appeal.model";
-import { allowApplicationChangeRequest } from "../../utilities";
+import {
+  allowApplicationChangeRequest,
+  getSupportingUserParents,
+} from "../../utilities";
 import { StudentAppealStatus } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
@@ -200,12 +202,16 @@ export class StudentAppealStudentsController extends BaseController {
     try {
       const dryRunPromise: Promise<DryRunSubmissionResult>[] =
         payload.studentAppealRequests.map((appeal) => {
-          // Check if the form has any data which is not persisted but required for validation
-          // which needs to be populated at the server side for dry run submission.
-          if (
-            appeal.formData instanceof StudentAppealServerSideSubmissionData
-          ) {
+          // Check if the form has any inputs which are required to be populated at the server side
+          // during the dry run submission.
+          if (appeal.formData.programYear) {
             appeal.formData.programYear = application.programYear.programYear;
+          }
+          if (appeal.formData.parents) {
+            const parents = getSupportingUserParents(
+              application.supportingUsers,
+            );
+            appeal.formData.parents = parents;
           }
           return this.formService.dryRunSubmission(
             appeal.formName,

@@ -183,6 +183,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .where("assessment.id = :assessmentId", {
         assessmentId,
       })
+      .orderBy("supportingUser.id", "ASC")
       .getOne();
   }
 

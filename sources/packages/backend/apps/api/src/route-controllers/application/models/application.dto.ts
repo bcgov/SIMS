@@ -103,14 +103,20 @@ export interface ApplicationFormData extends ApplicationData {
     name?: string;
   };
 }
+
+class SupportingUserParentAPIOutDTO {
+  id: number;
+  fullName: string;
+}
+
 /**
- * Application and program year base
- * information.
+ * Application details for an appeal.
  */
-export class ApplicationProgramYearAPIOutDTO {
+export class AppealApplicationDetailsAPIOutDTO {
   id: number;
   applicationNumber: string;
   programYear: string;
+  supportingUserParents: SupportingUserParentAPIOutDTO[];
 }
 
 /**
