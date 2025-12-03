@@ -22,7 +22,7 @@ import {
   EducationProgramsSummaryAPIOutDTO,
   DeactivateProgramAPIInDTO,
 } from "./models/education-program.dto";
-import { EducationProgramService, InstitutionService } from "../../services";
+import { EducationProgramService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
@@ -47,7 +47,6 @@ export class EducationProgramAESTController extends BaseController {
   constructor(
     private readonly programService: EducationProgramService,
     private readonly educationProgramControllerService: EducationProgramControllerService,
-    private readonly institutionService: InstitutionService,
   ) {
     super();
   }

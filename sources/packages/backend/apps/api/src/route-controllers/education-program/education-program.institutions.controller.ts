@@ -30,7 +30,6 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { EducationProgramService } from "../../services";
 import {
   PaginatedResultsAPIOutDTO,
   ProgramsPaginationOptionsAPIInDTO,
@@ -44,7 +43,6 @@ import { OptionItemAPIOutDTO } from "../models/common.dto";
 @ApiTags(`${ClientTypeBaseRoute.Institution}-education-program`)
 export class EducationProgramInstitutionsController extends BaseController {
   constructor(
-    private readonly programService: EducationProgramService,
     private readonly educationProgramControllerService: EducationProgramControllerService,
   ) {
     super();
