@@ -12,7 +12,7 @@
           :items="reasons"
           v-model="formModel.restrictionId"
           variant="outlined"
-          :rules="[(v) => !!v || 'Reason is required.']"
+          :rules="[(v) => checkNullOrEmptyRule(v, 'Reason')]"
           :loading="loadingData"
           hide-details="auto" />
         <v-autocomplete
@@ -24,7 +24,7 @@
           :items="programs"
           v-model="formModel.programId"
           variant="outlined"
-          :rules="[(v) => !!v || 'Program is required.']"
+          :rules="[(v) => checkNullOrEmptyRule(v, 'Program')]"
           :loading="loadingData"
           :clearable="true"
           hide-details="auto" />
@@ -37,7 +37,7 @@
           :items="locations"
           v-model="formModel.locationIds"
           variant="outlined"
-          :rules="[(v) => !!v.length || 'Location is required.']"
+          :rules="[(v) => checkNullOrEmptyRule(v, 'Location')]"
           :loading="loadingData"
           clearable
           multiple
@@ -92,7 +92,7 @@ export default defineComponent({
   },
   setup(props) {
     const snackBar = useSnackBar();
-    const { checkNotesLengthRule } = useRules();
+    const { checkNotesLengthRule, checkNullOrEmptyRule } = useRules();
     const reasons = ref([] as OptionItemAPIOutDTO[]);
     const locations = ref([] as InstitutionLocationAPIOutDTO[]);
     const programs = ref([] as OptionItemAPIOutDTO[]);
@@ -190,6 +190,7 @@ export default defineComponent({
       locations,
       programs,
       checkNotesLengthRule,
+      checkNullOrEmptyRule,
     };
   },
 });
