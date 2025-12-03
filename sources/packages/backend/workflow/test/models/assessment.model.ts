@@ -89,6 +89,7 @@ export enum InstitutionTypes {
   UnitedStates = "United States",
   International = "International",
   InternationalMedical = "International Medical",
+  OutOfProvincePublic = "Out of Province Public",
 }
 
 /**
