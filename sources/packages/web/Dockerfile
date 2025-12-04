@@ -24,6 +24,8 @@ RUN npm run build
 
 FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:1.29-alpine AS deployer
 
+USER nginx
+
 # Copy the app built on builder stage to the resulting container.
 COPY --from=builder /app/dist /usr/share/nginx/html
 
