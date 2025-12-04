@@ -52,13 +52,7 @@ import { PropType, ref, onMounted, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useRules } from "@/composables";
-import {
-  Role,
-  VForm,
-  RestrictionEntityType,
-  SelectItemType,
-  RestrictionType,
-} from "@/types";
+import { Role, VForm, SelectItemType, RestrictionType } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { AssignRestrictionAPIInDTO } from "@/services/http/dto";
 import { RestrictionService } from "@/services/RestrictionService";
@@ -67,17 +61,14 @@ export const CATEGORY_KEY = "category";
 export default defineComponent({
   components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
   props: {
-    entityType: {
-      type: String,
-      required: true,
-    },
     allowedRole: {
       type: String as PropType<Role>,
       required: true,
     },
   },
-  setup(props) {
+  setup() {
     const { checkNotesLengthRule } = useRules();
+    const processing = ref(false);
     const restrictionCategories = ref([] as SelectItemType[]);
     const restrictionReasons = ref([] as SelectItemType[]);
     const selectedCategory = ref("");
@@ -90,20 +81,10 @@ export default defineComponent({
     const categoryItems = async () => {
       const categories =
         await RestrictionService.shared.getRestrictionCategories();
-      // Restriction category Designation is exclusively for Institution. Rest of them are for Student.
-      if (props.entityType === RestrictionEntityType.Student) {
-        categories.forEach((category) => {
-          restrictionCategories.value.push({
-            title: category.description,
-            value: category.description,
-          });
-        });
-      } else {
-        restrictionCategories.value.push({
-          title: "Designation",
-          value: "Designation",
-        });
-      }
+      restrictionCategories.value = categories.map((category) => ({
+        title: category.description,
+        value: category.description,
+      }));
     };
 
     onMounted(categoryItems);
@@ -114,17 +95,10 @@ export default defineComponent({
         RestrictionType.Provincial,
         selectedCategory.value,
       );
-      const restrictionReasonsArray: SelectItemType[] = [];
-      // Restriction category Designation is exclusively for Institution. Rest of them are for Student.
-      reasons.forEach((reason) => {
-        {
-          restrictionReasonsArray.push({
-            title: reason.description,
-            value: reason.id,
-          });
-        }
-      });
-      restrictionReasons.value = restrictionReasonsArray;
+      restrictionReasons.value = reasons.map((reason) => ({
+        title: reason.description,
+        value: reason.id,
+      }));
     };
 
     const submit = async () => {
@@ -132,21 +106,27 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
-      // Copying the payload, as reset is making the formModel properties null.
-      const payload = { ...formModel };
-      resolvePromise(payload);
-      addRestrictionForm.value.reset();
+      try {
+        processing.value = true;
+        const modalResult = await resolvePromise(formModel);
+        if (modalResult) {
+          // Indicates the modal will be closed and the form can be reset.
+          addRestrictionForm.value.reset();
+        }
+      } finally {
+        processing.value = false;
+      }
     };
 
     const cancel = () => {
       addRestrictionForm.value.reset();
-      addRestrictionForm.value.resetValidation();
       resolvePromise(false);
     };
 
     return {
       showDialog,
       showModal,
+      processing,
       cancel,
       submit,
       Role,

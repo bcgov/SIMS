@@ -29,7 +29,7 @@ jobs:
     steps:
       # Create the branch.
       - name: Create branch
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.gitRef }}
       - run: |

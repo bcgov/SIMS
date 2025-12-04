@@ -40,13 +40,24 @@ export class RestrictionInstitutionSummaryAPIOutDTO extends RestrictionBaseAPIOu
 }
 
 /**
- * DTO class for student/institution restriction summary.
+ * DTO class for student restriction summary.
  */
 export class RestrictionSummaryAPIOutDTO extends RestrictionBaseAPIOutDTO {
   createdAt: Date;
   isActive: boolean;
   resolvedAt?: Date;
   deletedAt?: Date;
+}
+
+/**
+ * Institution restriction summary.
+ */
+export class InstitutionRestrictionSummaryAPIOutDTO extends RestrictionBaseAPIOutDTO {
+  locationName: string;
+  programName: string;
+  createdAt: Date;
+  isActive: boolean;
+  resolvedAt?: Date;
 }
 
 /**
@@ -138,11 +149,6 @@ export class StudentRestrictionAPIOutDTO {
   type: RestrictionNotificationType;
 }
 
-export class RestrictionCategoryParamAPIInDTO {
-  @MaxLength(RESTRICTION_CATEGORY_MAX_LENGTH)
-  restrictionCategory: string;
-}
-
 /**
  * Query string options for filtering the restriction reasons.
  */
@@ -155,6 +161,7 @@ export class RestrictionReasonsOptionsAPIInDTO {
   /**
    * Category of the restriction expected to be filtered.
    */
+  @IsNotEmpty()
   @MaxLength(RESTRICTION_CATEGORY_MAX_LENGTH)
   category: string;
 }

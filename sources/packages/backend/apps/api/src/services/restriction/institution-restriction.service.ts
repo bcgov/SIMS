@@ -48,17 +48,23 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       .select([
         "institutionRestrictions.id",
         "institutionRestrictions.isActive",
-        "institutionRestrictions.updatedAt",
+        "institutionRestrictions.resolvedAt",
         "institutionRestrictions.createdAt",
         "restriction.restrictionType",
         "restriction.restrictionCategory",
         "restriction.restrictionCode",
         "restriction.description",
+        "location.name",
+        "program.name",
       ])
       .innerJoin("institutionRestrictions.restriction", "restriction")
       .innerJoin("institutionRestrictions.institution", "institution")
+      .innerJoin("institutionRestrictions.location", "location")
+      .innerJoin("institutionRestrictions.program", "program")
       .where("institution.id = :institutionId", { institutionId })
       .orderBy("institutionRestrictions.isActive", "DESC")
+      .addOrderBy("location.name", "ASC")
+      .addOrderBy("program.name", "ASC")
       .getMany();
   }
 
@@ -276,7 +282,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
     }
     if (!restrictionExists) {
       throw new CustomNamedError(
-        `Restriction ID ${restrictionId} not found.`,
+        `Institution restriction ID ${restrictionId} not found.`,
         RESTRICTION_NOT_FOUND,
       );
     }

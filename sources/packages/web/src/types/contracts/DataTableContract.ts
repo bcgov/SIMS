@@ -670,11 +670,12 @@ export const DesignationRequestsHeaders = [
  * Institutions Restrictions header.
  */
 export const InstitutionRestrictionsHeaders = [
-  { title: "Category", sortable: true, key: "restrictionCategory" },
+  { title: "Location", sortable: true, key: "locationName" },
+  { title: "Program", sortable: true, key: "programName" },
   { title: "Reason", sortable: false, key: "description" },
   { title: "Added", sortable: false, key: "createdAt" },
-  { title: "Resolved", sortable: false, key: "updatedAt" },
-  { title: "Status", sortable: false, key: "isActive" },
+  { title: "Resolved", sortable: false, key: "resolvedAt" },
+  { title: "Status", sortable: true, key: "isActive" },
   { title: "Action", sortable: false, key: "action" },
 ];
 

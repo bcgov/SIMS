@@ -3,6 +3,7 @@ import {
   AssignInstitutionRestrictionAPIInDTO,
   AssignRestrictionAPIInDTO,
   DeleteRestrictionAPIInDTO,
+  InstitutionRestrictionSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
   ResolveRestrictionAPIInDTO,
   RestrictionDetailAPIOutDTO,
@@ -96,9 +97,14 @@ export class RestrictionService {
     );
   }
 
+  /**
+   * Get restrictions for an institution.
+   * @param institutionId ID of the institution to retrieve its restrictions.
+   * @returns Institution restrictions.
+   */
   async getInstitutionRestrictions(
     institutionId: number,
-  ): Promise<RestrictionSummaryAPIOutDTO[]> {
+  ): Promise<InstitutionRestrictionSummaryAPIOutDTO[]> {
     return ApiClient.RestrictionApi.getInstitutionRestrictions(institutionId);
   }
 
