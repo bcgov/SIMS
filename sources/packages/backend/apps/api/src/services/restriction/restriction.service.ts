@@ -4,7 +4,7 @@ import {
   Restriction,
   RestrictionType,
 } from "@sims/sims-db";
-import { DataSource } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 
 /**
  * Service layer for restrictions.
@@ -29,48 +29,43 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
   }
 
   /**
-   * Returns all restriction reasons(description) for a given category.
-   * @param restrictionCategory
-   * @returns restriction reasons.
+   * Returns restriction reasons(descriptions) for a
+   * given restriction type and category.
+   * @param restrictionType Type of the restriction.
+   * @param restrictionCategory Category of the restriction.
+   * @returns Restriction reasons.
    */
   async getRestrictionReasonsByCategory(
+    restrictionType: RestrictionType.Provincial | RestrictionType.Institution,
     restrictionCategory: string,
   ): Promise<Restriction[]> {
-    return this.repo
-      .createQueryBuilder("restriction")
-      .select([
-        "restriction.id",
-        "restriction.restrictionCode",
-        "restriction.description",
-      ])
-      .where("restriction.restrictionCategory = :restrictionCategory", {
+    return this.repo.find({
+      select: {
+        id: true,
+        restrictionCode: true,
+        description: true,
+      },
+      where: {
+        restrictionType,
         restrictionCategory,
-      })
-      .andWhere("restriction.restrictionCategory != 'Federal'")
-      .getMany();
+      },
+      order: { restrictionCode: "ASC" },
+    });
   }
 
   /**
-   * Returns a provincial restriction by Id.
-   * @param restrictionId
-   * @returns provincial restriction.
+   * Checks if a restriction exists for the given restriction ID and type.
+   * @param restrictionId Restriction ID.
+   * @param restrictionType Restriction type.
+   * @returns True if the restriction exists, otherwise false.
    */
-  async getProvincialRestrictionById(
+  async restrictionExists(
     restrictionId: number,
-    isInstitutionRestriction?: boolean,
-  ): Promise<Restriction> {
-    const restrictionQuery = this.repo
-      .createQueryBuilder("restriction")
-      .select(["restriction.id"])
-      .where("restriction.id = :restrictionId", { restrictionId })
-      .andWhere("restriction.restrictionType = :restrictionType", {
-        restrictionType: RestrictionType.Provincial,
-      });
-    if (isInstitutionRestriction) {
-      restrictionQuery.andWhere(
-        "restriction.restrictionCategory = 'Designation'",
-      );
-    }
-    return restrictionQuery.getOne();
+    restrictionType: RestrictionType,
+    options?: { entityManager?: EntityManager },
+  ): Promise<boolean> {
+    const repo =
+      options?.entityManager?.getRepository(Restriction) ?? this.repo;
+    return repo.exists({ where: { id: restrictionId, restrictionType } });
   }
 }

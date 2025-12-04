@@ -7,7 +7,12 @@
     scrollable
     :fullscreen="showFullScreen"
   >
-    <v-card elevation="10" :max-width="maxWidth" class="modal-height">
+    <v-card
+      elevation="10"
+      :max-width="showFullScreen ? undefined : maxWidth"
+      :min-width="showFullScreen ? undefined : minWidth"
+      class="modal-height"
+    >
       <v-card-title>
         <slot name="header">
           <h2 v-if="title" class="category-header-large primary-color mt-3">
@@ -49,6 +54,11 @@ export default defineComponent({
       required: true,
     },
     maxWidth: {
+      type: Number,
+      required: false,
+      default: 730,
+    },
+    minWidth: {
       type: Number,
       required: false,
       default: 730,

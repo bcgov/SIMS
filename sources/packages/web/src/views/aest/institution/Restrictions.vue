@@ -11,6 +11,7 @@
                   class="float-right"
                   color="primary"
                   prepend-icon="fa:fa fa-plus-circle"
+                  :loading="processingAddingRestriction"
                   :disabled="notAllowed"
                   >Add restriction</v-btn
                 ></template
@@ -58,14 +59,15 @@
           </v-data-table>
         </toggle-content>
       </content-group>
-      <ViewRestrictionModal
+      <view-restriction-modal
         ref="viewRestriction"
         :restriction-data="institutionRestriction"
         @submit-resolution-data="resolveRestriction"
         :allowed-role="Role.InstitutionResolveRestriction"
       />
-      <AddInstitutionRestrictionModal
+      <add-restriction-modal
         ref="addRestriction"
+        :institution-id="institutionId"
         :entity-type="RestrictionEntityType.Institution"
         @submit-restriction-data="createNewRestriction"
         :allowed-role="Role.InstitutionAddRestriction"
@@ -75,12 +77,11 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, defineComponent } from "vue";
+import { ref, defineComponent, watchEffect } from "vue";
 import { useDisplay } from "vuetify";
-
 import { RestrictionService } from "@/services/RestrictionService";
 import ViewRestrictionModal from "@/components/common/restriction/ViewRestriction.vue";
-import AddInstitutionRestrictionModal from "@/components/common/restriction/AddRestriction.vue";
+import AddRestrictionModal from "@/components/institutions/modals/AddRestrictionModal.vue";
 import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
 import {
   RestrictionStatus,
@@ -90,21 +91,23 @@ import {
   LayoutTemplates,
   Role,
   InstitutionRestrictionsHeaders,
+  ApiProcessError,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import {
-  AssignRestrictionAPIInDTO,
+  AssignInstitutionRestrictionAPIInDTO,
   ResolveRestrictionAPIInDTO,
   RestrictionDetailAPIOutDTO,
   RestrictionSummaryAPIOutDTO,
 } from "@/services/http/dto";
+import { INSTITUTION_RESTRICTION_ALREADY_ACTIVE } from "@/constants";
 
 export default defineComponent({
   components: {
     StatusChipRestriction,
     ViewRestrictionModal,
-    AddInstitutionRestrictionModal,
+    AddRestrictionModal,
     CheckPermissionRole,
   },
   props: {
@@ -118,7 +121,10 @@ export default defineComponent({
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
     const viewRestriction = ref({} as ModalDialog<void>);
-    const addRestriction = ref({} as ModalDialog<void>);
+    const addRestriction = ref(
+      {} as ModalDialog<AssignInstitutionRestrictionAPIInDTO | false>,
+    );
+    const processingAddingRestriction = ref(false);
     const institutionRestriction = ref();
     const snackBar = useSnackBar();
     const { mobile: isMobile } = useDisplay();
@@ -167,26 +173,54 @@ export default defineComponent({
       }
     };
 
+    /**
+     * Show the modal to collect the data to create the restriction.
+     */
     const addInstitutionRestriction = async () => {
-      await addRestriction.value.showModal();
+      await addRestriction.value.showModal(undefined, createNewRestriction);
     };
 
-    const createNewRestriction = async (data: AssignRestrictionAPIInDTO) => {
+    /**
+     * Allow adding the new restriction using the modal's provided data.
+     * @param modalResult Modal result. False if the user cancel the modal,
+     * otherwise the validated data to be used to create the restriction.
+     * @returns True if the modal should be closed, false if there was some error
+     * that required the modal to remain open.
+     */
+    const createNewRestriction = async (
+      modalResult: AssignInstitutionRestrictionAPIInDTO | false,
+    ): Promise<boolean> => {
+      if (modalResult === false) {
+        return true;
+      }
       try {
+        processingAddingRestriction.value = true;
         await RestrictionService.shared.addInstitutionRestriction(
           props.institutionId,
-          data,
+          modalResult,
         );
         await loadInstitutionRestrictions();
-        snackBar.success("The restriction has been added to institution.");
-      } catch {
-        snackBar.error("Unexpected error while adding the restriction.");
+        snackBar.success("Restriction was successfully added.");
+        return true;
+      } catch (error: unknown) {
+        if (
+          error instanceof ApiProcessError &&
+          error.errorType === INSTITUTION_RESTRICTION_ALREADY_ACTIVE
+        ) {
+          snackBar.warn(
+            "At least one restriction is already active for the selected items.",
+          );
+        } else {
+          snackBar.error("Unexpected error while adding the restriction.");
+        }
+        return false;
+      } finally {
+        processingAddingRestriction.value = false;
       }
     };
 
-    onMounted(async () => {
-      await loadInstitutionRestrictions();
-    });
+    watchEffect(loadInstitutionRestrictions);
+
     return {
       dateOnlyLongString,
       institutionRestrictions,
@@ -201,6 +235,7 @@ export default defineComponent({
       addRestriction,
       addInstitutionRestriction,
       createNewRestriction,
+      processingAddingRestriction,
       RestrictionEntityType,
       LayoutTemplates,
       Role,

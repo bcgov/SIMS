@@ -2,7 +2,7 @@
   <v-form ref="addRestrictionForm">
     <modal-dialog-base
       title="Add new restriction"
-      :showDialog="showDialog"
+      :show-dialog="showDialog"
       min-width="730"
     >
       <template #content>
@@ -15,7 +15,7 @@
           :items="restrictionCategories"
           v-model="selectedCategory"
           variant="outlined"
-          @update:modelValue="categoryReasonItems()"
+          @update:model-value="categoryReasonItems()"
           :rules="[(v) => !!v || 'Category is required.']" />
         <v-select
           label="Reason"
@@ -36,10 +36,10 @@
           <template #="{ notAllowed }">
             <footer-buttons
               :processing="processing"
-              primaryLabel="Add Restriction"
-              @primaryClick="submit"
-              @secondaryClick="cancel"
-              :disablePrimaryButton="notAllowed"
+              primary-label="Add Restriction"
+              @primary-click="submit"
+              @secondary-click="cancel"
+              :disable-primary-button="notAllowed"
             />
           </template>
         </check-permission-role>
@@ -52,7 +52,13 @@ import { PropType, ref, onMounted, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useRules } from "@/composables";
-import { Role, VForm, RestrictionEntityType, SelectItemType } from "@/types";
+import {
+  Role,
+  VForm,
+  RestrictionEntityType,
+  SelectItemType,
+  RestrictionType,
+} from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { AssignRestrictionAPIInDTO } from "@/services/http/dto";
 import { RestrictionService } from "@/services/RestrictionService";
@@ -105,6 +111,7 @@ export default defineComponent({
     const categoryReasonItems = async () => {
       restrictionReasons.value = [];
       const reasons = await RestrictionService.shared.getRestrictionReasons(
+        RestrictionType.Provincial,
         selectedCategory.value,
       );
       const restrictionReasonsArray: SelectItemType[] = [];

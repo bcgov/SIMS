@@ -37,6 +37,7 @@ import {
 } from "../models/pagination.dto";
 import { EducationProgramControllerService } from "./education-program.controller.service";
 import { Role } from "../../auth/roles.enum";
+import { OptionItemAPIOutDTO } from "..";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -81,6 +82,22 @@ export class EducationProgramAESTController extends BaseController {
     return this.educationProgramControllerService.getProgramsSummary(
       institutionId,
       paginationOptions,
+    );
+  }
+
+  /**
+   * Get a key/value pair list of all approved programs and active programs.
+   * @returns key/value pair list of all approved programs.
+   */
+  @ApiNotFoundResponse({
+    description: "Not able to find the institution.",
+  })
+  @Get("institution/:institutionId/programs-list")
+  async getProgramsListForInstitutions(
+    @Param("institutionId", ParseIntPipe) institutionId: number,
+  ): Promise<OptionItemAPIOutDTO[]> {
+    return this.educationProgramControllerService.getProgramsListForInstitutions(
+      institutionId,
     );
   }
 

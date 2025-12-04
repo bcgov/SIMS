@@ -30,7 +30,6 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { EducationProgramService } from "../../services";
 import {
   PaginatedResultsAPIOutDTO,
   ProgramsPaginationOptionsAPIInDTO,
@@ -44,7 +43,6 @@ import { OptionItemAPIOutDTO } from "../models/common.dto";
 @ApiTags(`${ClientTypeBaseRoute.Institution}-education-program`)
 export class EducationProgramInstitutionsController extends BaseController {
   constructor(
-    private readonly programService: EducationProgramService,
     private readonly educationProgramControllerService: EducationProgramControllerService,
   ) {
     super();
@@ -163,8 +161,8 @@ export class EducationProgramInstitutionsController extends BaseController {
 
   /**
    * Get a key/value pair list of all approved programs.
-   * @param isIncludeInActiveProgram if true, only education programs with active
-   * are considered else both active and inactive programs are considered.
+   * @param isIncludeInActiveProgram if true, then both active
+   * and not active education program is considered.
    * @returns key/value pair list of all approved programs.
    */
   @Get("programs-list")
@@ -177,14 +175,10 @@ export class EducationProgramInstitutionsController extends BaseController {
     )
     isIncludeInActiveProgram: boolean,
   ): Promise<OptionItemAPIOutDTO[]> {
-    const programs = await this.programService.getPrograms(
+    return this.educationProgramControllerService.getProgramsListForInstitutions(
       userToken.authorizations.institutionId,
       { isIncludeInActiveProgram },
     );
-    return programs.map((program) => ({
-      id: program.id,
-      description: program.name,
-    }));
   }
 
   /**

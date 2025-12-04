@@ -27,7 +27,7 @@ export function createFakeEducationProgram(
   },
 ): EducationProgram {
   const program = new EducationProgram();
-  program.name = faker.person.jobArea();
+  program.name = options?.initialValue?.name ?? faker.person.jobArea();
   program.description = "description";
   program.credentialType = "credentialType";
   program.cipCode = "cipCode";

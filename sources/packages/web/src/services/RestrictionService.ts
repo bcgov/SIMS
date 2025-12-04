@@ -1,5 +1,6 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
+  AssignInstitutionRestrictionAPIInDTO,
   AssignRestrictionAPIInDTO,
   DeleteRestrictionAPIInDTO,
   OptionItemAPIOutDTO,
@@ -8,6 +9,7 @@ import {
   RestrictionSummaryAPIOutDTO,
   StudentRestrictionAPIOutDTO,
 } from "@/services/http/dto";
+import { RestrictionType } from "@/types/contracts/RestrictionContract";
 
 /**
  * Client service layer for Restrictions.
@@ -40,10 +42,21 @@ export class RestrictionService {
     return ApiClient.RestrictionApi.getRestrictionCategories();
   }
 
+  /**
+   * Returns restriction reasons(descriptions) for a
+   * given restriction type and category.
+   * @param restrictionType Type of the restriction.
+   * @param restrictionCategory Category of the restriction.
+   * @returns Restriction reasons.
+   */
   async getRestrictionReasons(
+    restrictionType: RestrictionType.Provincial | RestrictionType.Institution,
     restrictionCategory: string,
   ): Promise<OptionItemAPIOutDTO[]> {
-    return ApiClient.RestrictionApi.getRestrictionReasons(restrictionCategory);
+    return ApiClient.RestrictionApi.getRestrictionReasons(
+      restrictionType,
+      restrictionCategory,
+    );
   }
 
   async addStudentRestriction(
@@ -99,9 +112,15 @@ export class RestrictionService {
     );
   }
 
+  /**
+   * Add a new restriction to an Institution.
+   * @param institutionId ID of the institution to add a restriction.
+   * @param payload restriction details.
+   * @returns Identifier of the created institution restriction.
+   */
   async addInstitutionRestriction(
     institutionId: number,
-    payload: AssignRestrictionAPIInDTO,
+    payload: AssignInstitutionRestrictionAPIInDTO,
   ): Promise<void> {
     await ApiClient.RestrictionApi.addInstitutionRestriction(
       institutionId,
