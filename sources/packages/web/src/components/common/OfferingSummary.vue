@@ -214,7 +214,7 @@ export default defineComponent({
      * Current state of the pagination.
      */
     const currentPagination: PaginationOptions = {
-      page: 1,
+      page: DEFAULT_DATATABLE_PAGE_NUMBER,
       pageLimit: DEFAULT_PAGE_LIMIT,
       sortField: DEFAULT_SORT_FIELD,
       sortOrder: DataTableSortByOrder.ASC,
@@ -223,7 +223,7 @@ export default defineComponent({
     /**
      * Loads study period offerings for the Institution Program.
      */
-    const loadEducationProgramAndOfferings = async () => {
+    const getEducationProgramAndOffering = async () => {
       try {
         loading.value = true;
         offeringsAndCount.value =
@@ -242,7 +242,7 @@ export default defineComponent({
       }
     };
 
-    onMounted(loadEducationProgramAndOfferings);
+    onMounted(getEducationProgramAndOffering);
 
     const pageSortEvent = async (event: DataTableOptions) => {
       currentPagination.page = event.page;
@@ -256,14 +256,12 @@ export default defineComponent({
         currentPagination.sortField = DEFAULT_SORT_FIELD;
         currentPagination.sortOrder = DataTableSortByOrder.ASC;
       }
-      await loadEducationProgramAndOfferings();
+      await getEducationProgramAndOffering();
     };
 
     // Search offering table.
     const searchOfferingTable = async () => {
-      // Reset to first page when searching.
-      currentPagination.page = DEFAULT_DATATABLE_PAGE_NUMBER;
-      await loadEducationProgramAndOfferings();
+      await getEducationProgramAndOffering();
     };
 
     return {

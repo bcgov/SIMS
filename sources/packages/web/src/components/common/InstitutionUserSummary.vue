@@ -236,7 +236,7 @@ export default defineComponent({
      * Current state of the pagination.
      */
     const currentPagination: PaginationOptions = {
-      page: 1,
+      page: DEFAULT_DATATABLE_PAGE_NUMBER,
       pageLimit: DEFAULT_PAGE_LIMIT,
       sortField: DEFAULT_SORT_FIELD,
       sortOrder: DataTableSortByOrder.ASC,
@@ -305,8 +305,6 @@ export default defineComponent({
 
     // Search user table.
     const searchUserTable = async () => {
-      // Reset to first page when searching.
-      currentPagination.page = DEFAULT_DATATABLE_PAGE_NUMBER;
       await getAllInstitutionUsers();
     };
 
