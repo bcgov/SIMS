@@ -1,5 +1,5 @@
 # "builder" stage, based on Node.js, to build and compile the frontend.
-FROM artifacts.developer.gov.bc.ca/docker-remote/node:24.11.0-alpine3.22 AS builder
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:25.2.1-alpine3.22 AS builder
 
 # Application Port.
 ENV PORT=3030
@@ -22,9 +22,9 @@ RUN sed 's/${PORT}/'"${PORT}"'/g' nginx/default.conf.template > default.conf
 # Building app
 RUN npm run build
 
-FROM artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/nginx-122 AS deployer
+FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:1.29-alpine AS deployer
 
-USER default
+USER nginx
 
 RUN mkdir -p /opt/app-root/src \
  && mkdir -p /etc/nginx/conf.d
