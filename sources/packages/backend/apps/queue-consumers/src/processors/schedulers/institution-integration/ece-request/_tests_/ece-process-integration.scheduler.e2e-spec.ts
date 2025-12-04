@@ -30,6 +30,7 @@ import { INestApplication } from "@nestjs/common";
 import {
   addDays,
   COE_WINDOW,
+  combineDecimalPlaces,
   formatDate,
   getISODateOnlyString,
   QueueNames,
@@ -37,10 +38,7 @@ import {
 import { DeepMocked } from "@golevelup/ts-jest";
 import { ECEProcessIntegrationScheduler } from "../ece-process-integration.scheduler";
 import { getUploadedFile } from "@sims/test-utils/mocks";
-import {
-  NUMBER_FILLER,
-  RecordTypeCodes,
-} from "@sims/integrations/institution-integration/ece-integration";
+import { RecordTypeCodes } from "@sims/integrations/institution-integration/ece-integration";
 import * as Client from "ssh2-sftp-client";
 import * as dayjs from "dayjs";
 import { YNFlag } from "@sims/integrations/models";
@@ -512,78 +510,42 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
       expect(footer).toBe("3000001");
     },
   );
+
+  function buildECEFileDetail(
+    application: Application,
+    disbursementValue: DisbursementValue,
+    disbursement: DisbursementSchedule,
+    studentPDStatusCode: string,
+    applicationPDStatusFlag: YNFlag,
+  ): string {
+    const DATE_FORMAT = "YYYYMMDD";
+    const offering = application.currentAssessment.offering;
+    const studyStartDate = formatDate(offering.studyStartDate, DATE_FORMAT);
+    const studyEndDate = formatDate(offering.studyEndDate, DATE_FORMAT);
+    const disbursementDateFormatted = formatDate(
+      disbursement.disbursementDate,
+      DATE_FORMAT,
+    );
+    const institutionLocation = offering.institutionLocation;
+    const student = application.student;
+    const studentFirstName = student.user.firstName?.substring(0, 15) ?? "";
+    const studentLastName = student.user.lastName.substring(0, 25);
+    const studentBirthDate = formatDate(student.birthDate, DATE_FORMAT);
+    const institutionStudentNumber = application.studentNumber;
+    return `${RecordTypeCodes.ECEDetail}${
+      institutionLocation.institutionCode
+    }${disbursementValue.id.toString().padStart(10, "0")}${
+      disbursementValue.valueCode
+    }${combineDecimalPlaces(disbursementValue.valueAmount).toString().padStart(9, "0")}${
+      student.sinValidation.sin
+    }${studentLastName.padEnd(25, " ")}${studentFirstName.padEnd(
+      15,
+      " ",
+    )}${studentBirthDate}${
+      application.applicationNumber
+    }${institutionStudentNumber.padEnd(
+      12,
+      " ",
+    )}100${studyStartDate}${studyEndDate}${disbursementDateFormatted}${studentPDStatusCode}${applicationPDStatusFlag}${disbursement.id.toString().padStart(10, "0")}`;
+  }
 });
-
-function buildECEFileDetail(
-  application: Application,
-  disbursementValue: DisbursementValue,
-  disbursement: DisbursementSchedule,
-  studentPDStatusCode: string,
-  applicationPDStatusFlag: YNFlag,
-): string {
-  const DATE_FORMAT = "YYYYMMDD";
-  const offering = application.currentAssessment.offering;
-  const studyStartDate = formatDate(offering.studyStartDate, DATE_FORMAT);
-  const studyEndDate = formatDate(offering.studyEndDate, DATE_FORMAT);
-  const disbursementDateFormatted = formatDate(
-    disbursement.disbursementDate,
-    DATE_FORMAT,
-  );
-  const institutionLocation = offering.institutionLocation;
-  const student = application.student;
-  const studentFirstName = student.user.firstName?.substring(0, 15) ?? "";
-  const studentLastName = student.user.lastName.substring(0, 25);
-  const studentBirthDate = formatDate(student.birthDate, DATE_FORMAT);
-  const institutionStudentNumber = application.studentNumber;
-  return `${RecordTypeCodes.ECEDetail}${
-    institutionLocation.institutionCode
-  }${disbursementValue.id.toString().padStart(10, "0")}${
-    disbursementValue.valueCode
-  }${appendWithStartAndEndFiller(
-    disbursementValue.valueAmount.toString(),
-    9,
-    2,
-    NUMBER_FILLER,
-  )}${
-    student.sinValidation.sin
-  }${studentLastName.padEnd(25, " ")}${studentFirstName.padEnd(
-    15,
-    " ",
-  )}${studentBirthDate}${
-    application.applicationNumber
-  }${institutionStudentNumber.padEnd(
-    12,
-    " ",
-  )}100${studyStartDate}${studyEndDate}${disbursementDateFormatted}${studentPDStatusCode}${applicationPDStatusFlag}${disbursement.id.toString().padStart(10, "0")}`;
-}
-
-/**
- * Appends a fixed size string to the current content.
- * If the string is longer than the specified length, it will be truncated.
- * The string will be padded with the specified filler string to the specified length.
- * The padding is applied in two stages: first the end of the string is padded with the specified
- * end pad length, and then the start of the string is padded with the remaining length.
- * @param s String to be appended.
- * @param length Fixed string length.
- * @param endPadLength The length of the padding to be applied at the end of the string.
- * @param filler The string to pad the string being appended.
- */
-function appendWithStartAndEndFiller(
-  s: string,
-  length: number,
-  endPadLength: number,
-  filler: string,
-): string {
-  if (s.length > length) {
-    s = s.substring(0, length);
-  }
-  const totalPadLength = length - s.length;
-  // Pad the end first with the specified end pad length.
-  if (totalPadLength <= endPadLength) {
-    s = s.padEnd(length, filler);
-  } else {
-    const startPadLength = totalPadLength - endPadLength;
-    s = s.padStart(s.length + startPadLength, filler).padEnd(length, filler);
-  }
-  return s;
-}

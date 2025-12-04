@@ -61,37 +61,6 @@ export class StringBuilder {
   }
 
   /**
-   * Appends a fixed size string to the current content.
-   * If the string is longer than the specified length, it will be truncated.
-   * The string will be padded with the specified filler string to the specified length.
-   * The padding is applied in two stages: first the end of the string is padded with the specified
-   * end pad length, and then the start of the string is padded with the remaining length.
-   * @param s String to be appended.
-   * @param length Fixed string length.
-   * @param endPadLength The length of the padding to be applied at the end of the string.
-   * @param filler The string to pad the string being appended.
-   */
-  public appendWithStartAndEndFiller(
-    s: string,
-    length: number,
-    endPadLength: number,
-    filler: string,
-  ) {
-    if (s.length > length) {
-      s = s.substring(0, length);
-    }
-    const totalPadLength = length - s.length;
-    // Pad the end first with the specified end pad length.
-    if (totalPadLength <= endPadLength) {
-      s = s.padEnd(length, filler);
-    } else {
-      const startPadLength = totalPadLength - endPadLength;
-      s = s.padStart(s.length + startPadLength, filler).padEnd(length, filler);
-    }
-    this.append(s);
-  }
-
-  /**
    * Appends a repeated string to the current content.
    * @param s String to be appended.
    * @param length Fixed string length.

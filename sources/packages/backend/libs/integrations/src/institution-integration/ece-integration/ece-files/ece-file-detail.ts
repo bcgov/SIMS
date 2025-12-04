@@ -1,5 +1,9 @@
 import { DisbursementValue } from "@sims/sims-db";
-import { END_OF_LINE, StringBuilder } from "@sims/utilities";
+import {
+  combineDecimalPlaces,
+  END_OF_LINE,
+  StringBuilder,
+} from "@sims/utilities";
 import {
   DATE_FORMAT,
   NUMBER_FILLER,
@@ -43,10 +47,9 @@ export class ECERequestFileDetail implements ECERequestFileLine {
         NUMBER_FILLER,
       );
       record.append(disbursementValue.valueCode, 4);
-      record.appendWithStartAndEndFiller(
-        disbursementValue.valueAmount.toString(),
+      record.appendWithStartFiller(
+        combineDecimalPlaces(disbursementValue.valueAmount).toString(),
         9,
-        2,
         NUMBER_FILLER,
       );
       record.append(this.sin, 9);
