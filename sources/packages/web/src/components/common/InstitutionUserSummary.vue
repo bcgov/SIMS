@@ -288,6 +288,10 @@ export default defineComponent({
       }
     };
 
+    /**
+     * Page/Sort event handler.
+     * @param event The data table page/sort event.
+     */
     const pageSortEvent = async (event: DataTableOptions) => {
       currentPagination.page = event.page;
       currentPagination.pageLimit = event.itemsPerPage;

@@ -30,9 +30,8 @@
             :items="applicationsListAndCount?.results"
             :items-length="applicationsListAndCount?.count"
             :loading="loading"
-            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page="1"
             :items-per-page-options="ITEMS_PER_PAGE"
-            :sort-by="sortBy"
             @update:options="pageSortEvent"
           >
             <template #loading>
@@ -95,9 +94,10 @@ import {
   DataTableOptions,
   DataTableSortByOrder,
   ITEMS_PER_PAGE,
+  PaginationOptions,
 } from "@/types";
 import { ActiveApplicationSummaryAPIOutDTO } from "@/services/http/dto";
-import { useFormatters } from "@/composables";
+import { useFormatters, useSnackBar } from "@/composables";
 import StatusChipActiveApplication from "@/components/generic/StatusChipActiveApplication.vue";
 
 const DEFAULT_SORT_FIELD = "applicationNumber";
@@ -126,15 +126,17 @@ export default defineComponent({
       {} as PaginatedResults<ActiveApplicationSummaryAPIOutDTO>,
     );
     const loading = ref(false);
-    const currentPage = ref();
-    const currentPageLimit = ref();
-    // Shows the default sort arrows in the data table.
-    const sortBy = ref([
-      {
-        key: DEFAULT_SORT_FIELD,
-        order: DataTableSortByOrder.ASC,
-      },
-    ]);
+    const snackBar = useSnackBar();
+
+    /**
+     * Current state of the pagination.
+     */
+    const currentPagination: PaginationOptions = {
+      page: DEFAULT_DATATABLE_PAGE_NUMBER,
+      pageLimit: DEFAULT_PAGE_LIMIT,
+      sortField: DEFAULT_SORT_FIELD,
+      sortOrder: DataTableSortByOrder.ASC,
+    };
 
     const goToViewApplication = (applicationId: number) => {
       router.push({
@@ -152,64 +154,54 @@ export default defineComponent({
 
     /**
      * Loads Application Summaries for the given location.
-     * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.
-     * @param pageCount page limit, if nothing passed then {@link DEFAULT_PAGE_LIMIT}.
-     * @param sortField sort field, if nothing passed then api sorts with application number.
-     * @param sortOrder sort order, if nothing passed then {@link DataTableSortByOrder.ASC}.
      */
-    const getApplicationSummaryList = async (
-      locationId: number,
-      page = DEFAULT_DATATABLE_PAGE_NUMBER,
-      pageCount = DEFAULT_PAGE_LIMIT,
-      sortField = DEFAULT_SORT_FIELD,
-      sortOrder = DataTableSortByOrder.ASC,
-    ) => {
+    const getApplicationSummaryList = async () => {
       loading.value = true;
       try {
         applicationsListAndCount.value =
           await InstitutionService.shared.getActiveApplicationsSummary(
-            locationId,
+            props.locationId,
             {
-              page,
-              pageLimit: pageCount,
-              sortField,
-              sortOrder,
+              ...currentPagination,
               searchCriteria: searchCriteria.value,
             },
             props.archived,
           );
+      } catch {
+        snackBar.error("Unexpected error while loading Applications.");
       } finally {
         loading.value = false;
       }
     };
 
+    /**
+     * Page/Sort event handler.
+     * @param event The data table page/sort event.
+     */
     const pageSortEvent = async (event: DataTableOptions) => {
-      currentPage.value = event?.page;
-      currentPageLimit.value = event.itemsPerPage;
-      const [sortByOptions] = event.sortBy;
-      await getApplicationSummaryList(
-        props.locationId,
-        event.page,
-        event.itemsPerPage,
-        sortByOptions?.key,
-        sortByOptions?.order,
-      );
+      currentPagination.page = event.page;
+      currentPagination.pageLimit = event.itemsPerPage;
+      if (event.sortBy.length) {
+        const [sortBy] = event.sortBy;
+        currentPagination.sortField = sortBy.key;
+        currentPagination.sortOrder = sortBy.order;
+      } else {
+        // Sorting was removed, reset to default.
+        currentPagination.sortField = DEFAULT_SORT_FIELD;
+        currentPagination.sortOrder = DataTableSortByOrder.ASC;
+      }
+      await getApplicationSummaryList();
     };
 
     const searchActiveApplications = async () => {
-      // TODO: reset to first page on new search
-      await getApplicationSummaryList(
-        props.locationId,
-        currentPage.value ?? DEFAULT_DATATABLE_PAGE_NUMBER,
-        currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
-      );
+      await getApplicationSummaryList();
     };
 
     watch(
       () => props.locationId,
-      async (currValue) => {
+      async () => {
         //update the list
-        await getApplicationSummaryList(currValue);
+        await getApplicationSummaryList();
       },
       { immediate: true },
     );
@@ -227,7 +219,6 @@ export default defineComponent({
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
       loading,
-      sortBy,
       ReportAChangeApplicationsHeaders,
       isMobile,
     };
