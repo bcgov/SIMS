@@ -79,7 +79,9 @@
           :mobile="isMobile"
         >
           <template #[`item.sin`]="{ item }">
-            {{ sinDisplayFormat(item.sin) }}
+            <div class="text-no-wrap">
+              {{ sinDisplayFormat(item.sin) }}
+            </div>
           </template>
           <template #[`item.firstName`]="{ item }">
             <div class="p-text-capitalize">
@@ -92,7 +94,7 @@
             </div>
           </template>
           <template #[`item.birthDate`]="{ item }">
-            <div class="p-text-capitalize">
+            <div class="p-text-capitalize text-no-wrap">
               {{ dateOnlyLongString(item.birthDate) }}
             </div>
           </template>
