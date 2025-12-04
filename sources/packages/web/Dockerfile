@@ -22,14 +22,14 @@ RUN sed 's/${PORT}/'"${PORT}"'/g' nginx/default.conf.template > default.conf
 # Building app
 RUN npm run build
 
-FROM artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/nginx-122 AS deployer
+FROM nginx:1.29-alpine AS deployer
 
 USER default
 
 RUN mkdir -p /opt/app-root/src \
  && mkdir -p /etc/nginx/conf.d
 
-# Copy the app built on builder stage to the resulting container.
+ # Copy the app built on builder stage to the resulting container.
 COPY --from=builder /app/dist /opt/app-root/src
 
 # Copy the default.conf to /etc/nginx/conf.d
