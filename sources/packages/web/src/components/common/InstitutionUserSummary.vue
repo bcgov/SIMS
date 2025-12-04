@@ -256,7 +256,6 @@ export default defineComponent({
             },
             props.institutionId,
           );
-        console.log("user", usersListAndCount.value);
       } finally {
         loading.value = false;
       }

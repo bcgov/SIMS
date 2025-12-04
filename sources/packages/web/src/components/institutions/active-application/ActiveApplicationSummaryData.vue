@@ -3,7 +3,7 @@
     <v-container :fluid="true">
       <body-header
         title="Applications"
-        :recordsCount="applications.results?.length"
+        :records-count="applicationsListAndCount.count"
       >
         <template #actions>
           <v-text-field
@@ -20,65 +20,58 @@
         </template>
       </body-header>
       <content-group>
-        <toggle-content :toggled="!applications.results?.length">
-          <DataTable
-            :value="applications.results"
-            :lazy="true"
-            :paginator="true"
-            :rows="pageLimit"
-            :rowsPerPageOptions="PAGINATION_LIST"
-            :totalRecords="applications.count"
-            @page="pageEvent"
-            @sort="sortEvent"
+        <toggle-content
+          :toggled="!applicationsListAndCount.count && !loading"
+          message="No applications found."
+        >
+          <v-data-table-server
+            v-if="applicationsListAndCount?.count"
+            :headers="ReportAChangeApplicationsHeaders"
+            :items="applicationsListAndCount?.results"
+            :items-length="applicationsListAndCount?.count"
+            :loading="loading"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            :sort-by="sortBy"
+            @update:options="pageSortEvent"
           >
-            <Column field="fullName" header="Name" :sortable="true"> </Column>
-            <Column field="studyStartPeriod" header="Study dates">
-              <template #body="slotProps">
-                <span>
-                  {{ dateOnlyLongString(slotProps.data.studyStartPeriod) }} -
-                  {{ dateOnlyLongString(slotProps.data.studyEndPeriod) }}
-                </span>
-              </template>
-            </Column>
-            <Column
-              field="applicationNumber"
-              header="Application #"
-              :sortable="true"
-            ></Column>
-            <Column field="applicationStatus" header="Status">
-              <template #body="slotProps">
-                <status-chip-active-application
-                  :status="slotProps.data.applicationScholasticStandingStatus"
-                />
-              </template>
-            </Column>
-            <Column header="Action">
-              <template #body="slotProps">
-                <v-btn
-                  v-if="
-                    slotProps.data.applicationScholasticStandingStatus ===
-                    ApplicationScholasticStandingStatus.Available
-                  "
-                  color="primary"
-                  @click="goToViewApplication(slotProps.data.applicationId)"
-                  >Report a change</v-btn
-                >
-                <v-btn
-                  v-if="
-                    slotProps.data.applicationScholasticStandingStatus ===
-                    ApplicationScholasticStandingStatus.Completed
-                  "
-                  color="primary"
-                  @click="
-                    goToViewScholasticStanding(
-                      slotProps.data.scholasticStandingId,
-                    )
-                  "
-                  >View</v-btn
-                >
-              </template>
-            </Column>
-          </DataTable>
+            <template #loading>
+              <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+            </template>
+            <template #[`item.studyDates`]="{ item }">
+              {{ dateOnlyLongString(item.studyStartPeriod) }} -
+              {{ dateOnlyLongString(item.studyEndPeriod) }}
+            </template>
+            <template #[`item.applicationNumber`]="{ item }">
+              {{ item.applicationNumber }}
+            </template>
+            <template #[`item.applicationStatus`]="{ item }">
+              <status-chip-active-application
+                :status="item.applicationScholasticStandingStatus"
+              />
+            </template>
+            <template #[`item.action`]="{ item }">
+              <v-btn
+                v-if="
+                  item.applicationScholasticStandingStatus ===
+                  ApplicationScholasticStandingStatus.Available
+                "
+                color="primary"
+                @click="goToViewApplication(item.applicationId)"
+                >Report a change</v-btn
+              >
+              <v-btn
+                v-if="
+                  item.applicationScholasticStandingStatus ===
+                    ApplicationScholasticStandingStatus.Completed &&
+                  item.scholasticStandingId
+                "
+                color="primary"
+                @click="goToViewScholasticStanding(item.scholasticStandingId)"
+                >View</v-btn
+              >
+            </template>
+          </v-data-table-server>
         </toggle-content>
       </content-group>
     </v-container>
@@ -88,17 +81,20 @@
 <script lang="ts">
 import { ref, watch, defineComponent } from "vue";
 import { useRouter } from "vue-router";
+import { useDisplay } from "vuetify";
+
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import {
   DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
-  DataTableSortOrder,
-  DEFAULT_PAGE_NUMBER,
-  PageAndSortEvent,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
   PaginatedResults,
   ApplicationScholasticStandingStatus,
   LayoutTemplates,
+  ReportAChangeApplicationsHeaders,
+  DataTableOptions,
+  DataTableSortByOrder,
+  ITEMS_PER_PAGE,
 } from "@/types";
 import { ActiveApplicationSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
@@ -123,15 +119,22 @@ export default defineComponent({
 
   setup(props) {
     const router = useRouter();
-    const page = ref(DEFAULT_PAGE_NUMBER);
-    const pageLimit = ref(DEFAULT_PAGE_LIMIT);
-    const sortField = ref(DEFAULT_SORT_FIELD);
-    const sortOrder = ref(DataTableSortOrder.ASC);
     const searchCriteria = ref();
     const { dateOnlyLongString } = useFormatters();
-    const applications = ref(
+    const { mobile: isMobile } = useDisplay();
+    const applicationsListAndCount = ref(
       {} as PaginatedResults<ActiveApplicationSummaryAPIOutDTO>,
     );
+    const loading = ref(false);
+    const currentPage = ref();
+    const currentPageLimit = ref();
+    // Shows the default sort arrows in the data table.
+    const sortBy = ref([
+      {
+        key: DEFAULT_SORT_FIELD,
+        order: DataTableSortByOrder.ASC,
+      },
+    ]);
 
     const goToViewApplication = (applicationId: number) => {
       router.push({
@@ -147,63 +150,86 @@ export default defineComponent({
       });
     };
 
-    const getSummaryList = async (locationId: number) => {
-      applications.value =
-        await InstitutionService.shared.getActiveApplicationsSummary(
-          locationId,
-          {
-            page: page.value,
-            pageLimit: pageLimit.value,
-            sortField: sortField.value,
-            sortOrder: sortOrder.value,
-            searchCriteria: searchCriteria.value,
-          },
-          props.archived,
-        );
+    /**
+     * Loads Application Summaries for the given location.
+     * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.
+     * @param pageCount page limit, if nothing passed then {@link DEFAULT_PAGE_LIMIT}.
+     * @param sortField sort field, if nothing passed then api sorts with application number.
+     * @param sortOrder sort order, if nothing passed then {@link DataTableSortByOrder.ASC}.
+     */
+    const getApplicationSummaryList = async (
+      locationId: number,
+      page = DEFAULT_DATATABLE_PAGE_NUMBER,
+      pageCount = DEFAULT_PAGE_LIMIT,
+      sortField = DEFAULT_SORT_FIELD,
+      sortOrder = DataTableSortByOrder.ASC,
+    ) => {
+      loading.value = true;
+      try {
+        applicationsListAndCount.value =
+          await InstitutionService.shared.getActiveApplicationsSummary(
+            locationId,
+            {
+              page,
+              pageLimit: pageCount,
+              sortField,
+              sortOrder,
+              searchCriteria: searchCriteria.value,
+            },
+            props.archived,
+          );
+      } finally {
+        loading.value = false;
+      }
     };
 
-    const pageEvent = async (event: PageAndSortEvent) => {
-      page.value = event?.page;
-      pageLimit.value = event?.rows;
-      await getSummaryList(props.locationId);
-    };
-
-    const sortEvent = async (event: PageAndSortEvent) => {
-      page.value = DEFAULT_PAGE_NUMBER;
-      pageLimit.value = DEFAULT_PAGE_LIMIT;
-      sortField.value = event.sortField;
-      sortOrder.value = event.sortOrder;
-      await getSummaryList(props.locationId);
+    const pageSortEvent = async (event: DataTableOptions) => {
+      currentPage.value = event?.page;
+      currentPageLimit.value = event.itemsPerPage;
+      const [sortByOptions] = event.sortBy;
+      await getApplicationSummaryList(
+        props.locationId,
+        event.page,
+        event.itemsPerPage,
+        sortByOptions?.key,
+        sortByOptions?.order,
+      );
     };
 
     const searchActiveApplications = async () => {
-      page.value = DEFAULT_PAGE_NUMBER;
-      pageLimit.value = DEFAULT_PAGE_LIMIT;
-      await getSummaryList(props.locationId);
+      // TODO: reset to first page on new search
+      await getApplicationSummaryList(
+        props.locationId,
+        currentPage.value ?? DEFAULT_DATATABLE_PAGE_NUMBER,
+        currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
+      );
     };
 
     watch(
       () => props.locationId,
       async (currValue) => {
         //update the list
-        await getSummaryList(currValue);
+        await getApplicationSummaryList(currValue);
       },
       { immediate: true },
     );
 
     return {
       ApplicationScholasticStandingStatus,
-      applications,
+      applicationsListAndCount,
       dateOnlyLongString,
       goToViewApplication,
-      pageEvent,
-      sortEvent,
+      pageSortEvent,
       searchActiveApplications,
-      pageLimit,
       searchCriteria,
       goToViewScholasticStanding,
-      PAGINATION_LIST,
       LayoutTemplates,
+      DEFAULT_PAGE_LIMIT,
+      ITEMS_PER_PAGE,
+      loading,
+      sortBy,
+      ReportAChangeApplicationsHeaders,
+      isMobile,
     };
   },
 });

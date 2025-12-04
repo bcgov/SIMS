@@ -755,3 +755,25 @@ export const UnapprovedChangesHeaders = [
   { title: "Request form", sortable: false, key: "requestForm" },
   { title: "Status", sortable: true, key: "status" },
 ];
+
+/**
+ * Report a Change Applications header.
+ */
+export const ReportAChangeApplicationsHeaders = [
+  { title: "Name", sortable: true, key: "fullName" },
+  { title: "Study dates", sortable: false, key: "studyDates" },
+  { title: "Application #", sortable: true, key: "applicationNumber" },
+  { title: "Status", sortable: false, key: "applicationStatus" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/**
+ * Exception requests header.
+ */
+export const ExceptionRequestsHeaders = [
+  { title: "Date submitted", sortable: true, key: "submittedDate" },
+  { title: "Given names", sortable: true, key: "givenNames" },
+  { title: "Last name", sortable: true, key: "lastName" },
+  { title: "Application #", sortable: true, key: "applicationNumber" },
+  { title: "Action", sortable: false, key: "action" },
+];

@@ -1,4 +1,4 @@
-import { addPaginationOptions, addSortOptions } from "@/helpers";
+import { getPaginationQueryString } from "@/helpers";
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   ApplicationExceptionAPIOutDTO,
@@ -7,7 +7,7 @@ import {
   PaginatedResultsAPIOutDTO,
   UpdateApplicationExceptionAPIInDTO,
 } from "@/services/http/dto";
-import { PaginatedResults, PaginationOptions, PaginationParams } from "@/types";
+import { PaginatedResults, PaginationOptions } from "@/types";
 
 /**
  * Http API client for the student application exceptions, for instance, when a
@@ -61,26 +61,8 @@ export class ApplicationExceptionApi extends HttpBaseClient {
   async getPendingExceptions(
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResultsAPIOutDTO<ApplicationExceptionSummaryAPIOutDTO>> {
-    let url = `application-exception`;
-    // Adding pagination params. There is always a default page and pageLimit for paginated APIs.
-    url = addPaginationOptions(
-      url,
-      paginationOptions.page,
-      paginationOptions.pageLimit,
-      "?",
-    );
-
-    //Adding Sort params. There is always a default sortField and sortOrder for Active Applications.
-    url = addSortOptions(
-      url,
-      paginationOptions.sortField,
-      paginationOptions.sortOrder,
-    );
-
-    // Search criteria is populated only when search box has search text in it.
-    if (paginationOptions.searchCriteria) {
-      url = `${url}&${PaginationParams.SearchCriteria}=${paginationOptions.searchCriteria}`;
-    }
+    let url = `application-exception?`;
+    url += getPaginationQueryString(paginationOptions, true);
     return this.getCall<PaginatedResults<ApplicationExceptionSummaryAPIOutDTO>>(
       this.addClientRoot(url),
     );

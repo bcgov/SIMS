@@ -1,12 +1,12 @@
 <template>
   <full-page-container :full-width="true">
     <template #header>
-      <header-navigator title="Student requests" subTitle="Exceptions" />
+      <header-navigator title="Student requests" sub-title="Exceptions" />
     </template>
     <body-header
       title="Pending exception requests"
-      :recordsCount="applicationExceptions.count"
-      subTitle="Exception requests that require ministry review."
+      :records-count="applicationExceptions.count"
+      sub-title="Exception requests that require ministry review."
     >
       <template #actions>
         <v-text-field
@@ -23,51 +23,43 @@
       </template>
     </body-header>
     <content-group>
-      <toggle-content :toggled="!applicationExceptions.results?.length">
-        <DataTable
-          :value="applicationExceptions.results"
-          :lazy="true"
-          class="p-m-4"
-          :paginator="true"
-          :rows="pageLimit"
-          :rowsPerPageOptions="PAGINATION_LIST"
-          :totalRecords="applicationExceptions.count"
-          @page="pageEvent"
-          @sort="sortEvent"
+      <toggle-content
+        :toggled="!applicationExceptions.results?.length && !loading"
+        message="No pending exception requests."
+      >
+        <v-data-table-server
+          v-if="applicationExceptions?.count"
+          :headers="ExceptionRequestsHeaders"
+          :items="applicationExceptions?.results"
+          :items-length="applicationExceptions?.count"
+          :loading="loading"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          :sort-by="sortBy"
+          @update:options="pageSortEvent"
         >
-          <Column
-            field="submittedDate"
-            :sortable="true"
-            header="Date submitted"
-          >
-            <template #body="slotProps">
-              <span>
-                {{ dateOnlyLongString(slotProps.data.submittedDate) }}
-              </span>
-            </template>
-          </Column>
-          <Column field="givenNames" header="Given names" :sortable="true" />
-          <Column field="lastName" header="Last name" :sortable="true" />
-          <Column
-            field="applicationNumber"
-            :sortable="true"
-            header="Application #"
-          ></Column>
-          <Column header="Action">
-            <template #body="slotProps">
-              <v-btn
-                color="primary"
-                @click="
-                  gotToAssessmentsSummary(
-                    slotProps.data.applicationId,
-                    slotProps.data.studentId,
-                  )
-                "
-                >View</v-btn
-              >
-            </template>
-          </Column>
-        </DataTable>
+          <template #loading>
+            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+          </template>
+          <template #[`item.submittedDate`]="{ item }">
+            {{ dateOnlyLongString(item.submittedDate) }}
+          </template>
+          <template #[`item.givenNames`]="{ item }">
+            {{ item.givenNames }}
+          </template>
+          <template #[`item.lastName`]="{ item }">
+            {{ item.lastName }}
+          </template>
+          <template #[`item.action`]="{ item }">
+            <v-btn
+              color="primary"
+              @click="
+                gotToAssessmentsSummary(item.applicationId, item.studentId)
+              "
+              >View</v-btn
+            >
+          </template>
+        </v-data-table-server>
       </toggle-content>
     </content-group>
   </full-page-container>
@@ -76,14 +68,17 @@
 <script lang="ts">
 import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
+import { useDisplay } from "vuetify";
+
 import { ApplicationExceptionService } from "@/services/ApplicationExceptionService";
 import {
   DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
-  DataTableSortOrder,
-  DEFAULT_PAGE_NUMBER,
-  PageAndSortEvent,
+  ITEMS_PER_PAGE,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
   PaginatedResults,
+  ExceptionRequestsHeaders,
+  DataTableSortByOrder,
+  DataTableOptions,
 } from "@/types";
 import { useFormatters } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
@@ -94,15 +89,19 @@ const DEFAULT_SORT_FIELD = "submittedDate";
 export default defineComponent({
   setup() {
     const router = useRouter();
-    const page = ref(DEFAULT_PAGE_NUMBER);
-    const pageLimit = ref(DEFAULT_PAGE_LIMIT);
-    const sortField = ref(DEFAULT_SORT_FIELD);
-    const sortOrder = ref(DataTableSortOrder.ASC);
+    const currentPage = ref();
+    const currentPageLimit = ref();
+    // Shows the default sort arrows in the data table.
+    const sortBy = ref([
+      { key: DEFAULT_SORT_FIELD, order: DataTableSortByOrder.ASC },
+    ]);
     const searchCriteria = ref();
     const { dateOnlyLongString } = useFormatters();
     const applicationExceptions = ref(
       {} as PaginatedResults<ApplicationExceptionSummaryAPIOutDTO>,
     );
+    const loading = ref(false);
+    const { mobile: isMobile } = useDisplay();
 
     const gotToAssessmentsSummary = (
       applicationId: number,
@@ -117,35 +116,49 @@ export default defineComponent({
       });
     };
 
-    const getExceptionList = async () => {
+    /**
+     * Loads Pending Exception Requests.
+     * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.
+     * @param pageCount page limit, if nothing passed then {@link DEFAULT_PAGE_LIMIT}.
+     * @param sortField sort field, if nothing passed then api sorts with application number.
+     * @param sortOrder sort order, if nothing passed then {@link DataTableSortByOrder.ASC}.
+     */
+    const getExceptionList = async (
+      page = DEFAULT_DATATABLE_PAGE_NUMBER,
+      pageCount = DEFAULT_PAGE_LIMIT,
+      sortField = DEFAULT_SORT_FIELD,
+      sortOrder = DataTableSortByOrder.ASC,
+    ) => {
       applicationExceptions.value =
         await ApplicationExceptionService.shared.getPendingExceptions({
-          page: page.value,
-          pageLimit: pageLimit.value,
-          sortField: sortField.value,
-          sortOrder: sortOrder.value,
+          page,
+          pageLimit: pageCount,
+          sortField,
+          sortOrder,
           searchCriteria: searchCriteria.value,
         });
     };
 
-    const pageEvent = async (event: PageAndSortEvent) => {
-      page.value = event?.page;
-      pageLimit.value = event?.rows;
-      await getExceptionList();
-    };
-
-    const sortEvent = async (event: PageAndSortEvent) => {
-      page.value = DEFAULT_PAGE_NUMBER;
-      pageLimit.value = DEFAULT_PAGE_LIMIT;
-      sortField.value = event.sortField;
-      sortOrder.value = event.sortOrder;
-      await getExceptionList();
+    const pageSortEvent = async (event: DataTableOptions) => {
+      currentPage.value = event?.page;
+      currentPageLimit.value = event.itemsPerPage;
+      const [sortByOptions] = event.sortBy;
+      await getExceptionList(
+        event.page,
+        event.itemsPerPage,
+        sortByOptions?.key,
+        sortByOptions?.order,
+      );
     };
 
     const searchExceptions = async () => {
-      page.value = DEFAULT_PAGE_NUMBER;
-      pageLimit.value = DEFAULT_PAGE_LIMIT;
-      await getExceptionList();
+      // TODO: reset to first page on new search
+      currentPage.value = DEFAULT_DATATABLE_PAGE_NUMBER;
+      currentPageLimit.value = DEFAULT_PAGE_LIMIT;
+      await getExceptionList(
+        currentPage.value ?? DEFAULT_DATATABLE_PAGE_NUMBER,
+        currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
+      );
     };
 
     onMounted(async () => {
@@ -156,12 +169,15 @@ export default defineComponent({
       gotToAssessmentsSummary,
       applicationExceptions,
       dateOnlyLongString,
-      pageEvent,
-      sortEvent,
+      pageSortEvent,
       searchExceptions,
-      pageLimit,
       searchCriteria,
-      PAGINATION_LIST,
+      DEFAULT_PAGE_LIMIT,
+      ITEMS_PER_PAGE,
+      loading,
+      sortBy,
+      ExceptionRequestsHeaders,
+      isMobile,
     };
   },
 });
