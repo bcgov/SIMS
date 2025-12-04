@@ -735,7 +735,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
   );
 
   it(
-    "Should create step parent waiver appeal for an application" +
+    "Should create step-parent waiver appeal for an application" +
       " when student submit the appeal for a full-time application reported with both the parents.",
     async () => {
       // Arrange
@@ -783,7 +783,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
           { id: 1, fullName: "Some manipulated name" },
         ],
       };
-      // Create a temporary file for step parent waiver appeal.
+      // Create a temporary file for step-parent waiver appeal.
       const stepParentWaiverSupportingFile = await saveFakeStudentFileUpload(
         appDataSource,
         {
@@ -792,7 +792,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
         },
         { fileOrigin: FileOriginType.Temporary },
       );
-      // Prepare the data to submit step parent waiver appeal.
+      // Prepare the data to submit step-parent waiver appeal.
       const stepParentWaiverAppealData = {
         ...payloadDataToBeRePopulatedByServer,
         selectedParent: parent1.id,
