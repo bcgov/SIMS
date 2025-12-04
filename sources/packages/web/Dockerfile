@@ -24,13 +24,8 @@ RUN npm run build
 
 FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:1.29-alpine AS deployer
 
-USER nginx
-
-RUN mkdir -p /opt/app-root/src \
- && mkdir -p /etc/nginx/conf.d
-
 # Copy the app built on builder stage to the resulting container.
-COPY --from=builder /app/dist /opt/app-root/src
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Copy the default.conf to /etc/nginx/conf.d
 COPY --from=builder /app/default.conf /etc/nginx/conf.d/default.conf
