@@ -24,7 +24,7 @@ RUN npm run build
 
 FROM nginx:1.29-alpine AS deployer
 
-USER default
+USER nginx
 
 RUN mkdir -p /opt/app-root/src \
  && mkdir -p /etc/nginx/conf.d
