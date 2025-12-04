@@ -53,7 +53,7 @@
             <check-permission-role :role="Role.InstitutionAddNewUser">
               <template #="{ notAllowed }">
                 <v-btn
-                  v-if="true"
+                  v-if="hasBusinessGuid || allowBasicBCeIDCreation"
                   class="ml-2"
                   color="primary"
                   :disabled="notAllowed"
