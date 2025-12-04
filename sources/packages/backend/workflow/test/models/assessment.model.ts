@@ -85,11 +85,11 @@ export enum ProgramLengthOptions {
 export enum InstitutionTypes {
   BCPublic = "BC Public",
   BCPrivate = "BC Private",
-  OutOfProvince = "Out of Province",
+  OutOfProvincePublic = "Out of Province Public",
   UnitedStates = "United States",
   International = "International",
   InternationalMedical = "International Medical",
-  OutOfProvincePublic = "Out of Province Public",
+  OutOfProvincePrivate = "Out of Province Private",
 }
 
 /**

@@ -2,12 +2,12 @@
 INSERT INTO
     institution_type(id, name)
 VALUES
-    (7, 'Out of Province Public');
+    (7, 'Out of Province Private');
 
--- Migrate existing institutions with "Out of Province" type to "Out of Province Public"
+-- Update existing "Out of Province" institution type to "Out of Province Public"
 UPDATE
-    institutions
+    institution_type
 SET
-    institution_type_id = 7
+    NAME = 'Out of Province Public'
 WHERE
-    institution_type_id = 3;
+    id = 3;
