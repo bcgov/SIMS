@@ -99,9 +99,9 @@ import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vu
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import {
   AssignInstitutionRestrictionAPIInDTO,
+  InstitutionRestrictionSummaryAPIOutDTO,
   ResolveRestrictionAPIInDTO,
   RestrictionDetailAPIOutDTO,
-  RestrictionSummaryAPIOutDTO,
 } from "@/services/http/dto";
 import { INSTITUTION_RESTRICTION_ALREADY_ACTIVE } from "@/constants";
 
@@ -119,7 +119,9 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const institutionRestrictions = ref([] as RestrictionSummaryAPIOutDTO[]);
+    const institutionRestrictions = ref(
+      [] as InstitutionRestrictionSummaryAPIOutDTO[],
+    );
     const { dateOnlyLongString, conditionalEmptyStringFiller } =
       useFormatters();
     const showModal = ref(false);

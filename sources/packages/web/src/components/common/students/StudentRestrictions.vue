@@ -253,7 +253,7 @@ export default defineComponent({
       modalResult: AssignRestrictionAPIInDTO | false,
     ): Promise<boolean> => {
       if (modalResult === false) {
-        // Modal was cancelled an should be closed.
+        // Modal was cancelled and should be closed.
         return true;
       }
       try {

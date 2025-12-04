@@ -13,6 +13,10 @@ import {
 import * as request from "supertest";
 import { RestrictionType } from "@sims/sims-db";
 
+/**
+ * E2E test restriction category used for tests.
+ * Allows to isolate test data.
+ */
 const E2E_RESTRICTION_CATEGORY = "E2E Test Category";
 
 describe("RestrictionAESTController(e2e)-getReasonsOptionsList.", () => {
