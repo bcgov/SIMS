@@ -84,7 +84,7 @@
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
           :mobile="isMobile"
-          @update:options="paginationAndSortEvent"
+          @update:options="pageSortEvent"
         >
           <template #[`item.displayName`]="{ item }">
             {{ item.displayName }}
@@ -182,10 +182,13 @@ import {
   Role,
   InstitutionUsersHeaders,
   DataTableOptions,
+  PaginationOptions,
 } from "@/types";
 import { INSTITUTION_MUST_HAVE_AN_ADMIN } from "@/constants";
 import { InstitutionUserService } from "@/services/InstitutionUserService";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+
+const DEFAULT_SORT_FIELD = "displayName";
 
 export default defineComponent({
   components: {
@@ -223,39 +226,38 @@ export default defineComponent({
     const usersListAndCount = ref({} as InstitutionUserSummary);
     const loading = ref(false);
     const searchBox = ref("");
-    const currentPage = ref();
-    const currentPageLimit = ref();
+
     const addInstitutionUserModal = ref({} as ModalDialog<boolean>);
     const editInstitutionUserModal = ref(
       {} as ModalDialog<boolean, InstitutionUserViewModel>,
     );
 
     /**
-     * Loads Users for the Institution.
-     * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.
-     * @param pageCount page limit, if nothing passed then {@link DEFAULT_PAGE_LIMIT}.
-     * @param sortField sort field, if nothing passed then api sorts with application number.
-     * @param sortOrder sort order, if nothing passed then {@link DataTableSortByOrder.ASC}.
+     * Current state of the pagination.
      */
-    const getAllInstitutionUsers = async (
-      page = DEFAULT_DATATABLE_PAGE_NUMBER,
-      pageCount = DEFAULT_PAGE_LIMIT,
-      sortField?: string,
-      sortOrder = DataTableSortByOrder.ASC,
-    ) => {
-      loading.value = true;
+    const currentPagination: PaginationOptions = {
+      page: 1,
+      pageLimit: DEFAULT_PAGE_LIMIT,
+      sortField: DEFAULT_SORT_FIELD,
+      sortOrder: DataTableSortByOrder.ASC,
+    };
+
+    /**
+     * Loads Users for the Institution.
+     */
+    const getAllInstitutionUsers = async () => {
       try {
+        loading.value = true;
         usersListAndCount.value =
           await InstitutionUserService.shared.institutionUserSummary(
             {
-              page,
-              pageLimit: pageCount,
               searchCriteria: searchBox.value,
-              sortField,
-              sortOrder,
+              ...currentPagination,
             },
             props.institutionId,
           );
+      } catch {
+        snackBar.error("Unexpected error while loading Institution Users.");
       } finally {
         loading.value = false;
       }
@@ -286,25 +288,26 @@ export default defineComponent({
       }
     };
 
-    // Pagination sort event callback.
-    const paginationAndSortEvent = async (event: DataTableOptions) => {
-      currentPage.value = event?.page;
-      currentPageLimit.value = event.itemsPerPage;
-      const [sortByOptions] = event.sortBy;
-      await getAllInstitutionUsers(
-        event.page,
-        event.itemsPerPage,
-        sortByOptions?.key,
-        sortByOptions?.order,
-      );
+    const pageSortEvent = async (event: DataTableOptions) => {
+      currentPagination.page = event.page;
+      currentPagination.pageLimit = event.itemsPerPage;
+      if (event.sortBy.length) {
+        const [sortBy] = event.sortBy;
+        currentPagination.sortField = sortBy.key;
+        currentPagination.sortOrder = sortBy.order;
+      } else {
+        // Sorting was removed, reset to default.
+        currentPagination.sortField = DEFAULT_SORT_FIELD;
+        currentPagination.sortOrder = DataTableSortByOrder.ASC;
+      }
+      await getAllInstitutionUsers();
     };
 
     // Search user table.
     const searchUserTable = async () => {
-      await getAllInstitutionUsers(
-        currentPage.value ?? DEFAULT_DATATABLE_PAGE_NUMBER,
-        currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
-      );
+      // Reset to first page when searching.
+      currentPagination.page = DEFAULT_DATATABLE_PAGE_NUMBER;
+      await getAllInstitutionUsers();
     };
 
     watch(
@@ -340,7 +343,7 @@ export default defineComponent({
       getAllInstitutionUsers,
       institutionUserRoleToDisplay,
       updateUserStatus,
-      paginationAndSortEvent,
+      pageSortEvent,
       loading,
       searchUserTable,
       searchBox,

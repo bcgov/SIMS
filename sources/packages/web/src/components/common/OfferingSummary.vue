@@ -236,7 +236,7 @@ export default defineComponent({
             },
           );
       } catch {
-        snackBar.error("Unexpected error while loading CAS invoices.");
+        snackBar.error("Unexpected error while loading Offerings.");
       } finally {
         loading.value = false;
       }
