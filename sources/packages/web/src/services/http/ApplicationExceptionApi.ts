@@ -62,7 +62,7 @@ export class ApplicationExceptionApi extends HttpBaseClient {
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResultsAPIOutDTO<ApplicationExceptionSummaryAPIOutDTO>> {
     let url = `application-exception?`;
-    url += getPaginationQueryString(paginationOptions, true);
+    url += getPaginationQueryString(paginationOptions);
     return this.getCall<PaginatedResults<ApplicationExceptionSummaryAPIOutDTO>>(
       this.addClientRoot(url),
     );

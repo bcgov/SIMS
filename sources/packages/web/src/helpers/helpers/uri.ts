@@ -51,17 +51,13 @@ export const addPaginationOptions = (
 /**
  * Builds the query string parameters for pagination.
  * @param paginationOptions pagination options.
- * @param enableZeroPage enabling this will make the page staring from 0 instead of 1,
- * enableZeroPage is a temporary solution.
  * @returns the URL query string in a format like parameter1=value1&parameter2=value2.
  */
 export const getPaginationQueryString = (
   paginationOptions: PaginationOptions,
-  enableZeroPage = false,
 ) => {
-  if (enableZeroPage) {
-    paginationOptions.page = paginationOptions.page - 1;
-  }
+  // Convert Vuetify Data Table one-based page index to support API zero-based page index.
+  paginationOptions.page = paginationOptions.page - 1;
 
   const parameters: string[] = [];
   // Pagination parameters.

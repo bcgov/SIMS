@@ -80,7 +80,6 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   > {
     const url = `education-program-offering/location/${locationId}/education-program/${programId}?${getPaginationQueryString(
       paginationOptions,
-      true,
     )}`;
     return this.getCall<
       PaginatedResultsAPIOutDTO<EducationProgramOfferingSummaryAPIOutDTO>

@@ -172,7 +172,7 @@ export class ApplicationApi extends HttpBaseClient {
     let url = studentId
       ? `student/${studentId}/application-summary?`
       : "student/application-summary?";
-    url += getPaginationQueryString(paginationOptions, true);
+    url += getPaginationQueryString(paginationOptions);
     return this.getCall<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>>(
       this.addClientRoot(url),
     );

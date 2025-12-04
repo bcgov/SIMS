@@ -32,7 +32,7 @@ export class ApplicationChangeRequestApi extends HttpBaseClient {
     PaginatedResultsAPIOutDTO<ApplicationChangeRequestPendingSummaryAPIOutDTO>
   > {
     let url = "application-change-request/pending?";
-    url += getPaginationQueryString(paginationOptions, true);
+    url += getPaginationQueryString(paginationOptions);
     return this.getCall(this.addClientRoot(url));
   }
 }

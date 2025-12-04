@@ -107,7 +107,7 @@ export class InstitutionApi extends HttpBaseClient {
     archived: boolean,
   ): Promise<PaginatedResultsAPIOutDTO<ActiveApplicationSummaryAPIOutDTO>> {
     let url = `location/${locationId}/active-applications?archived=${archived}&`;
-    url += getPaginationQueryString(paginationOptions, true);
+    url += getPaginationQueryString(paginationOptions);
 
     return this.getCall<PaginatedResults<ActiveApplicationSummaryAPIOutDTO>>(
       this.addClientRoot(url),

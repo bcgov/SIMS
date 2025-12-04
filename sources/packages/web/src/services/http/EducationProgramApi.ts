@@ -26,7 +26,6 @@ export class EducationProgramApi extends HttpBaseClient {
   ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
     const url = `education-program/location/${locationId}/summary?${getPaginationQueryString(
       paginationOptions,
-      true,
     )}`;
 
     return this.getCall<
@@ -46,7 +45,6 @@ export class EducationProgramApi extends HttpBaseClient {
   ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
     const url = `education-program/institution/${institutionId}/summary?${getPaginationQueryString(
       paginationOptions,
-      true,
     )}`;
 
     return this.getCall<
