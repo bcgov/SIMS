@@ -216,12 +216,11 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
 
   it("Should throw an unprocessable entity exception when trying to add a provincial restriction.", async () => {
     // Arrange
-    // First location will have an active restriction while the second location will not.
     const [institution, program, locationIds] =
       await createInstitutionProgramLocations({ numberLocationsToCreate: 1 });
     const endpoint = `/aest/restriction/institution/${institution.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-
+    // Find a provincial restriction.
     const provincialRestriction = await db.restriction.findOne({
       where: { restrictionType: RestrictionType.Provincial },
     });
