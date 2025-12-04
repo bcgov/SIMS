@@ -16,14 +16,16 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
   }
 
   /**
-   * Returns all distinct restriction categories
-   * @returns
+   * Returns all distinct restriction categories.
+   * @returns Restriction categories.
    */
   async getAllRestrictionCategories(): Promise<Restriction[]> {
     return this.repo
       .createQueryBuilder("restriction")
       .select(["restriction.id", "restriction.restrictionCategory"])
-      .where("restriction.restrictionCategory NOT IN ('Federal','Designation')")
+      .where("restriction.restrictionType = :restrictionType", {
+        restrictionType: RestrictionType.Provincial,
+      })
       .distinctOn(["restriction.restrictionCategory"])
       .getMany();
   }

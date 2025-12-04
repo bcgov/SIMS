@@ -23,6 +23,7 @@ import {
   InstitutionLocation,
   NoteType,
   Restriction,
+  RestrictionType,
   User,
 } from "@sims/sims-db";
 import { In } from "typeorm";
@@ -213,6 +214,35 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
       });
   });
 
+  it("Should throw an unprocessable entity exception when trying to add a provincial restriction.", async () => {
+    // Arrange
+    const [institution, program, locationIds] =
+      await createInstitutionProgramLocations({ numberLocationsToCreate: 1 });
+    const endpoint = `/aest/restriction/institution/${institution.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    // Find a provincial restriction.
+    const provincialRestriction = await db.restriction.findOne({
+      where: { restrictionType: RestrictionType.Provincial },
+    });
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({
+        restrictionId: provincialRestriction.id,
+        programId: program.id,
+        locationIds,
+        noteDescription: "Add institution restriction note.",
+      })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: `Institution restriction ID ${provincialRestriction.id} not found.`,
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
   it("Should throw a not found exception when the provided institution is not found.", async () => {
     // Arrange
     const endpoint = `/aest/restriction/institution/999999`;
@@ -312,7 +342,7 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        message: "Restriction ID 999999 not found.",
+        message: "Institution restriction ID 999999 not found.",
         error: "Unprocessable Entity",
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });
