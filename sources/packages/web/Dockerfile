@@ -24,8 +24,6 @@ RUN npm run build
 
 FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:1.29-alpine AS deployer
 
-USER nginx
-
 # Copy the app built on builder stage to the resulting container.
 COPY --from=builder /app/dist /usr/share/nginx/html
 
@@ -34,6 +32,15 @@ COPY --from=builder /app/default.conf /etc/nginx/conf.d/default.conf
 
 # Copying the main configuration file.
 COPY --from=builder /app/nginx/nginx.conf /etc/nginx/nginx.conf
+
+# Change ownership of required directories for nginx user
+RUN chown -R nginx:nginx /usr/share/nginx/html /var/cache/nginx /var/run /etc/nginx/conf.d \
+    && chmod -R 755 /usr/share/nginx/html \
+    && touch /var/run/nginx.pid \
+    && chown nginx:nginx /var/run/nginx.pid
+
+# Switch to non-root user
+USER nginx
 
 # Daemon off makes nginx to run on the foreground with only one process.
 # Docker will kill the container if the process dies.

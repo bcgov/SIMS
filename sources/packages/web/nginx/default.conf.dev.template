@@ -14,7 +14,7 @@ server {
   
   listen       ${PORT};
   location / {
-    root   /opt/app-root/src;
+    root   /usr/share/nginx/html;
     index  index.html;
     try_files $uri $uri/ /index.html;
   }
