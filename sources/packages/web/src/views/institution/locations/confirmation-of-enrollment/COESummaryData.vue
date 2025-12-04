@@ -1,7 +1,7 @@
 <template>
   <v-card class="mt-5">
     <v-container :fluid="true">
-      <body-header :title="header" :recordsCount="disbursements.count">
+      <body-header :title="header" :records-count="disbursements.count">
         <template #subtitle>
           <slot name="coeSummarySubtitle">{{ coeSummarySubtitle }}</slot>
         </template>
@@ -105,7 +105,7 @@
 </template>
 
 <script lang="ts">
-import { ref, watch, computed, defineComponent, PropType } from "vue";
+import { ref, watch, defineComponent, PropType } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
@@ -113,7 +113,6 @@ import {
   DataTableSortOrder,
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
-  PAGINATION_LIST,
   LayoutTemplates,
   EnrollmentPeriod,
   COESummaryHeaders,
@@ -165,9 +164,6 @@ export default defineComponent({
     const searchQuery = ref("");
     const enrollmentsLoading = ref(false);
     const intensityFilter = ref(IntensityFilter.All);
-    const rowsPerPageOptions = computed(() =>
-      disbursements.value.results?.length > 10 ? PAGINATION_LIST : undefined,
-    );
     /**
      * Current state of the pagination.
      */
@@ -261,7 +257,6 @@ export default defineComponent({
       disbursements,
       dateOnlyLongString,
       goToViewApplication,
-      rowsPerPageOptions,
       searchQuery,
       intensityFilter,
       IntensityFilter,

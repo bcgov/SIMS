@@ -1,10 +1,5 @@
-import { addPaginationOptions, addSortOptions } from "@/helpers";
-import {
-  DEFAULT_PAGE_NUMBER,
-  DEFAULT_PAGE_LIMIT,
-  StudentApplicationFields,
-  DataTableSortOrder,
-} from "@/types";
+import { getPaginationQueryString } from "@/helpers";
+import { PaginationOptions } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
   ApplicationSummaryAPIOutDTO,
@@ -166,27 +161,18 @@ export class ApplicationApi extends HttpBaseClient {
 
   /**
    * Get the list of applications that belongs to a student on a summary view format.
-   * @param page page number.
-   * @param pageCount limit of the page.
-   * @param sortField field to be sorted.
-   * @param sortOrder order to be sorted.
+   * @param paginationOptions options to execute the pagination.
    * @param studentId student id. Used only for AEST.
    * @returns student application list with total count.
    */
   async getStudentApplicationSummary(
-    page = DEFAULT_PAGE_NUMBER,
-    pageCount = DEFAULT_PAGE_LIMIT,
-    sortField?: StudentApplicationFields,
-    sortOrder?: DataTableSortOrder,
+    paginationOptions: PaginationOptions,
     studentId?: number,
   ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
     let url = studentId
-      ? `student/${studentId}/application-summary`
-      : "student/application-summary";
-    // Adding pagination params. There is always a default page and pageCount for paginated APIs.
-    url = addPaginationOptions(url, page, pageCount, "?");
-    //Adding Sort params. There is always a default sortField and sortOrder for COE.
-    url = addSortOptions(url, sortField, sortOrder);
+      ? `student/${studentId}/application-summary?`
+      : "student/application-summary?";
+    url += getPaginationQueryString(paginationOptions, true);
     return this.getCall<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>>(
       this.addClientRoot(url),
     );

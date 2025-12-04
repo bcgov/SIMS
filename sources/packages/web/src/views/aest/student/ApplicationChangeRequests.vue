@@ -3,13 +3,13 @@
     <template #header>
       <header-navigator
         title="Student requests"
-        subTitle="Change Requests (2025-2026 and later)"
+        sub-title="Change Requests (2025-2026 and later)"
       />
     </template>
     <body-header
       title="Pending change requests"
-      :recordsCount="changeRequests.count"
-      subTitle="Change requests that require ministry review."
+      :records-count="changeRequests.count"
+      sub-title="Change requests that require ministry review."
     >
       <template #actions>
         <v-text-field
@@ -31,10 +31,10 @@
           :items-length="changeRequests.count"
           :loading="isLoading"
           :items-per-page="DEFAULT_PAGE_LIMIT"
-          :items-per-page-options="PAGINATION_LIST"
+          :items-per-page-options="ITEMS_PER_PAGE"
           @update:options="paginationAndSortEvent"
         >
-          <template v-slot:loading>
+          <template #loading>
             <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
           </template>
           <template #[`item.submittedDate`]="{ item }">
@@ -68,7 +68,6 @@ import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import {
   DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
   DEFAULT_DATATABLE_PAGE_NUMBER,
   DataTableOptions,
   DataTableSortByOrder,
@@ -77,7 +76,10 @@ import { useFormatters, useSnackBar } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { ApplicationChangeRequestService } from "@/services/ApplicationChangeRequestService";
 import { ApplicationChangeRequestPendingSummaryAPIOutDTO } from "@/services/http/dto/ApplicationChangeRequest.dto";
-import { PendingChangeRequestsTableHeaders } from "@/types/contracts/DataTableContract";
+import {
+  ITEMS_PER_PAGE,
+  PendingChangeRequestsTableHeaders,
+} from "@/types/contracts/DataTableContract";
 import { PaginatedResultsAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
@@ -164,7 +166,7 @@ export default defineComponent({
       navigateToApplicationVersion,
       dateOnlyLongString,
       emptyStringFiller,
-      PAGINATION_LIST,
+      ITEMS_PER_PAGE,
       DEFAULT_PAGE_LIMIT,
     };
   },

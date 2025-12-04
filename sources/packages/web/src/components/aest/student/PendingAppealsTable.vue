@@ -25,7 +25,7 @@
         :items-length="applicationAppeals.count"
         :loading="isLoading"
         :items-per-page="DEFAULT_PAGE_LIMIT"
-        :items-per-page-options="PAGINATION_LIST"
+        :items-per-page-options="ITEMS_PER_PAGE"
         @update:options="pageSortEvent"
       >
         <template #loading>
@@ -53,7 +53,7 @@ import { ref, onMounted, defineComponent, computed } from "vue";
 import { useRouter } from "vue-router";
 import {
   DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
+  ITEMS_PER_PAGE,
   DataTableSortOrder,
   PaginatedResults,
   PendingChangeRequestsTableHeaders,
@@ -174,7 +174,7 @@ export default defineComponent({
       isLoading,
       PendingChangeRequestsTableHeaders,
       DEFAULT_PAGE_LIMIT,
-      PAGINATION_LIST,
+      ITEMS_PER_PAGE,
       searchAppeals,
       pageSortEvent,
       searchCriteria,

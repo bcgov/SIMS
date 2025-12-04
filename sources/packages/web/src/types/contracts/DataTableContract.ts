@@ -32,6 +32,7 @@ export enum StudentApplicationFields {
 /**
  * SORT ORDER  of DataTable
  */
+// TODO: Refactor DataTables to use {@link DataTableSortByOrder} and remove this enum.
 export enum DataTableSortOrder {
   DESC = -1,
   ASC = 1,
@@ -44,9 +45,6 @@ export const ITEMS_PER_PAGE = [
   { value: 50, title: "50" },
   { value: 100, title: "100" },
 ];
-// TODO: Remove DEFAULT_PAGE_NUMBER when all primevue datatable removed.
-export const DEFAULT_PAGE_NUMBER = 0;
-export const PAGINATION_LIST = [10, 20, 50];
 
 /**
  * Enum for Program offering DataTable
@@ -122,7 +120,7 @@ export enum PaginationParams {
  * @param searchCriteria search criteria can be a single criterion
  * or it can be an object with multiple search criteria (for eg. search of
  * programs on the basis of program name, location name, status etc.)
- * todo: remove sortOrder: DataTableSortOrder when all primevue datatables are removed.
+ * TODO: remove sortOrder: DataTableSortOrder when all references are migrated to DataTableSortByOrder
  */
 export interface PaginationOptions {
   searchCriteria?: string | Record<string, string | string[] | boolean>;
@@ -130,18 +128,6 @@ export interface PaginationOptions {
   sortOrder?: DataTableSortOrder | DataTableSortByOrder;
   page: number;
   pageLimit: number;
-}
-
-/**
- * Interface for data returned by
- * page and sort event of PrimeVue data table.
- * TODO:This must be modified when migrating to Vuetify3 accordingly.
- */
-export interface PageAndSortEvent {
-  page: number;
-  rows: number;
-  sortField: string;
-  sortOrder: number;
 }
 
 /**

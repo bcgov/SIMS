@@ -4,7 +4,7 @@
     <template #header>
       <body-header
         title="Applications"
-        :recordsCount="applicationsAndCount.count"
+        :records-count="applicationsAndCount.count"
       ></body-header>
     </template>
     <content-group>
@@ -65,6 +65,7 @@ import {
   ITEMS_PER_PAGE,
   DataTableOptions,
   PaginationOptions,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters } from "@/composables";
@@ -86,6 +87,7 @@ export default defineComponent({
     studentId: {
       type: Number,
       required: false,
+      default: undefined,
     },
   },
   setup(props) {
@@ -100,22 +102,19 @@ export default defineComponent({
       emptyStringFiller,
     } = useFormatters();
     const DEFAULT_SORT_FIELD = StudentApplicationFields.Status;
-    const currentPagination = ref<PaginationOptions>({
-      page: 1,
+    const currentPagination: PaginationOptions = {
+      page: DEFAULT_DATATABLE_PAGE_NUMBER,
       pageLimit: DEFAULT_PAGE_LIMIT,
       sortField: DEFAULT_SORT_FIELD,
-      sortOrder: DataTableSortOrder.DESC,
-    });
+      sortOrder: DataTableSortOrder.ASC,
+    };
 
     const getStudentApplications = async () => {
       try {
         loading.value = true;
         applicationsAndCount.value =
           await ApplicationService.shared.getStudentApplicationSummary(
-            currentPagination.value.page - 1,
-            currentPagination.value.pageLimit,
-            currentPagination.value.sortField as StudentApplicationFields,
-            currentPagination.value.sortOrder as DataTableSortOrder,
+            currentPagination,
             props.studentId,
           );
       } finally {
@@ -125,21 +124,21 @@ export default defineComponent({
 
     onMounted(getStudentApplications);
 
+    /**
+     * Page/Sort event handler.
+     * @param event The data table page/sort event.
+     */
     const paginationAndSortEvent = async (event: DataTableOptions) => {
-      currentPagination.value.page = event.page;
-      currentPagination.value.pageLimit = event.itemsPerPage;
+      currentPagination.page = event.page;
+      currentPagination.pageLimit = event.itemsPerPage;
       if (event.sortBy.length) {
         const [sortBy] = event.sortBy;
-        currentPagination.value.sortField =
-          sortBy.key as StudentApplicationFields;
-        currentPagination.value.sortOrder =
-          sortBy.order === "desc"
-            ? DataTableSortOrder.DESC
-            : DataTableSortOrder.ASC;
+        currentPagination.sortField = sortBy.key;
+        currentPagination.sortOrder = sortBy.order;
       } else {
         // Sorting was removed, reset to default
-        currentPagination.value.sortField = DEFAULT_SORT_FIELD;
-        currentPagination.value.sortOrder = DataTableSortOrder.ASC;
+        currentPagination.sortField = DEFAULT_SORT_FIELD;
+        currentPagination.sortOrder = DataTableSortOrder.ASC;
       }
       await getStudentApplications();
     };
