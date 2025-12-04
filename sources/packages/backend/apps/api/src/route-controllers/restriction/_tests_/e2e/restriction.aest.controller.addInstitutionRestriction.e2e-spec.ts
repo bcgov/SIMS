@@ -23,6 +23,7 @@ import {
   InstitutionLocation,
   NoteType,
   Restriction,
+  RestrictionType,
   User,
 } from "@sims/sims-db";
 import { In } from "typeorm";
@@ -210,6 +211,36 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
       .expect({
         message: `The restriction ID ${susRestriction.id} is already assigned and active to the institution, program ID ${program.id}, and at least one of the location ID(s) ${locationIds}.`,
         errorType: INSTITUTION_RESTRICTION_ALREADY_ACTIVE,
+      });
+  });
+
+  it("Should throw an unprocessable entity exception when trying to add a provincial restriction.", async () => {
+    // Arrange
+    // First location will have an active restriction while the second location will not.
+    const [institution, program, locationIds] =
+      await createInstitutionProgramLocations({ numberLocationsToCreate: 1 });
+    const endpoint = `/aest/restriction/institution/${institution.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    const provincialRestriction = await db.restriction.findOne({
+      where: { restrictionType: RestrictionType.Provincial },
+    });
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({
+        restrictionId: provincialRestriction.id,
+        programId: program.id,
+        locationIds,
+        noteDescription: "Add institution restriction note.",
+      })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: `Institution restriction ID ${provincialRestriction.id} not found.`,
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });
   });
 

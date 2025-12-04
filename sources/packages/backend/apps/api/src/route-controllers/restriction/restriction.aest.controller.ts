@@ -36,6 +36,7 @@ import {
   DeleteRestrictionAPIInDTO,
   RestrictionReasonsOptionsAPIInDTO,
   AssignInstitutionRestrictionAPIInDTO,
+  InstitutionRestrictionSummaryAPIOutDTO,
 } from "./models/restriction.dto";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
@@ -278,13 +279,13 @@ export class RestrictionAESTController extends BaseController {
 
   /**
    * Get restrictions for an institution.
-   * @param institutionId id of the institution to retrieve its restrictions.
-   * @returns Institution Restrictions.
+   * @param institutionId ID of the institution to retrieve its restrictions.
+   * @returns Institution restrictions.
    */
   @Get("institution/:institutionId")
   async getInstitutionRestrictions(
     @Param("institutionId", ParseIntPipe) institutionId: number,
-  ): Promise<RestrictionSummaryAPIOutDTO[]> {
+  ): Promise<InstitutionRestrictionSummaryAPIOutDTO[]> {
     const institutionRestrictions =
       await this.institutionRestrictionService.getInstitutionRestrictionsById(
         institutionId,
@@ -297,7 +298,9 @@ export class RestrictionAESTController extends BaseController {
       restrictionCode: institutionRestriction.restriction.restrictionCode,
       description: institutionRestriction.restriction.description,
       createdAt: institutionRestriction.createdAt,
-      updatedAt: institutionRestriction.updatedAt,
+      locationName: institutionRestriction.location.name,
+      programName: institutionRestriction.program.name,
+      resolvedAt: institutionRestriction.resolvedAt,
       isActive: institutionRestriction.isActive,
     }));
   }
@@ -362,7 +365,7 @@ export class RestrictionAESTController extends BaseController {
   })
   @ApiUnprocessableEntityResponse({
     description:
-      "Restriction not found or " +
+      "Institution restriction ID not found or " +
       "the specified location or program does not belong to the institution or " +
       "an active restriction already exists for the institution.",
   })

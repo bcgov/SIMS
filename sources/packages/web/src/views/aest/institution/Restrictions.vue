@@ -32,17 +32,19 @@
             :items-per-page-options="ITEMS_PER_PAGE"
             :mobile="isMobile"
           >
-            <template #[`item.restrictionCategory`]="{ item }">
-              {{ item.restrictionCategory }}
-            </template>
             <template #[`item.description`]="{ item }">
               {{ `${item.restrictionCode} - ${item.description}` }}
             </template>
             <template #[`item.createdAt`]="{ item }">
               {{ dateOnlyLongString(item.createdAt) }}
             </template>
-            <template #[`item.updatedAt`]="{ item }">
-              {{ item.isActive ? "-" : dateOnlyLongString(item.updatedAt) }}
+            <template #[`item.resolvedAt`]="{ item }">
+              {{
+                conditionalEmptyStringFiller(
+                  !!item.resolvedAt,
+                  dateOnlyLongString(item.resolvedAt),
+                )
+              }}
             </template>
             <template #[`item.isActive`]="{ item }">
               <status-chip-restriction :is-active="item.isActive" />
@@ -118,7 +120,8 @@ export default defineComponent({
   },
   setup(props) {
     const institutionRestrictions = ref([] as RestrictionSummaryAPIOutDTO[]);
-    const { dateOnlyLongString } = useFormatters();
+    const { dateOnlyLongString, conditionalEmptyStringFiller } =
+      useFormatters();
     const showModal = ref(false);
     const viewRestriction = ref({} as ModalDialog<void>);
     const addRestriction = ref(
@@ -223,6 +226,7 @@ export default defineComponent({
 
     return {
       dateOnlyLongString,
+      conditionalEmptyStringFiller,
       institutionRestrictions,
       RestrictionStatus,
       DEFAULT_PAGE_LIMIT,
