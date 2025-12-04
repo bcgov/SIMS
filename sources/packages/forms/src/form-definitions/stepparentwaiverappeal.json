@@ -1,5 +1,5 @@
 {
-    "title": "Appeals - Step Parent Waiver",
+    "title": "Appeals - Step-parent Waiver",
     "name": "stepParentWaiverAppeal",
     "path": "stepparentwaiverappeal",
     "type": "form",
@@ -36,7 +36,7 @@
                     "value": ""
                 }
             ],
-            "content": "Step parent waiver appeal",
+            "content": "Step-parent waiver appeal",
             "refreshOnChange": false,
             "key": "header",
             "type": "htmlelement",
@@ -158,7 +158,7 @@
                     "hideLabel": true,
                     "tableView": false,
                     "storage": "url",
-                    "dir": "Step parent waiver appeal - Supporting Documents",
+                    "dir": "Step-parent waiver appeal - Supporting Documents",
                     "webcam": false,
                     "capture": false,
                     "fileTypes": [

@@ -13,7 +13,7 @@ export function useStudentAppeals() {
       case "modifiedindependentappeal":
         return "Modified independent";
       case "stepparentwaiverappeal":
-        return "Step parent waiver";
+        return "Step-parent waiver";
       default:
         return formName;
     }
