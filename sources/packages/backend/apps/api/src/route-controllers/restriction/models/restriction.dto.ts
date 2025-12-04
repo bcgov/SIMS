@@ -166,6 +166,7 @@ export class RestrictionReasonsOptionsAPIInDTO {
   /**
    * Category of the restriction expected to be filtered.
    */
+  @IsNotEmpty()
   @MaxLength(RESTRICTION_CATEGORY_MAX_LENGTH)
   category: string;
 }

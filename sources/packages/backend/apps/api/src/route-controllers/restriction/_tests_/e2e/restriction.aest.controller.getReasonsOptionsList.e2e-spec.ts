@@ -98,7 +98,10 @@ describe("RestrictionAESTController(e2e)-getReasonsOptionsList.", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
-        message: ["category must be shorter than or equal to 50 characters"],
+        message: [
+          "category must be shorter than or equal to 50 characters",
+          "category should not be empty",
+        ],
         error: "Bad Request",
         statusCode: HttpStatus.BAD_REQUEST,
       });
