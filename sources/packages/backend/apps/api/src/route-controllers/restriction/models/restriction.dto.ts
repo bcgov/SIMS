@@ -149,11 +149,6 @@ export class StudentRestrictionAPIOutDTO {
   type: RestrictionNotificationType;
 }
 
-export class RestrictionCategoryParamAPIInDTO {
-  @MaxLength(RESTRICTION_CATEGORY_MAX_LENGTH)
-  restrictionCategory: string;
-}
-
 /**
  * Query string options for filtering the restriction reasons.
  */
