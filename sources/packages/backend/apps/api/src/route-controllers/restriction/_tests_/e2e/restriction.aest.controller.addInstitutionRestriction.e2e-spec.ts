@@ -343,7 +343,7 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        message: "Restriction ID 999999 not found.",
+        message: "Institution restriction ID 999999 not found.",
         error: "Unprocessable Entity",
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });
