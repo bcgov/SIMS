@@ -43,7 +43,7 @@
         :items-per-page="DEFAULT_PAGE_LIMIT"
         :items-per-page-options="ITEMS_PER_PAGE"
         :mobile="isMobile"
-        @update:options="paginationAndSortEvent"
+        @update:options="pageSortEvent"
       >
         <template #[`item.offeringName`]="{ item }">
           {{ item.name }}
@@ -95,11 +95,14 @@ import {
   OfferingSummaryHeaders,
   DataTableSortByOrder,
   DataTableOptions,
+  PaginationOptions,
 } from "@/types";
 import { EducationProgramOfferingSummaryAPIOutDTO } from "@/services/http/dto";
-import { useFormatters, useInstitutionAuth } from "@/composables";
+import { useFormatters, useInstitutionAuth, useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
+
+const DEFAULT_SORT_FIELD = "name";
 
 export default defineComponent({
   components: {
@@ -128,12 +131,12 @@ export default defineComponent({
     const router = useRouter();
     const loading = ref(false);
     const searchBox = ref("");
-    const currentPage = ref();
-    const currentPageLimit = ref();
     const { dateOnlyLongString } = useFormatters();
     const { isReadOnlyUser } = useInstitutionAuth();
 
     const { mobile: isMobile } = useDisplay();
+    const snackBar = useSnackBar();
+
     const clientType = computed(() => AuthService.shared.authClientType);
 
     const isInstitutionUser = computed(() => {
@@ -208,55 +211,59 @@ export default defineComponent({
     );
 
     /**
-     * Loads study period offerings for the Institution Program.
-     * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.
-     * @param pageCount page limit, if nothing passed then {@link DEFAULT_PAGE_LIMIT}.
-     * @param sortField sort field, if nothing passed then api sorts with application number.
-     * @param sortOrder sort order, if nothing passed then {@link DataTableSortByOrder.ASC}.
+     * Current state of the pagination.
      */
-    const getEducationProgramAndOffering = async (
-      page = DEFAULT_DATATABLE_PAGE_NUMBER,
-      pageCount = DEFAULT_PAGE_LIMIT,
-      sortField?: string,
-      sortOrder = DataTableSortByOrder.ASC,
-    ) => {
-      loading.value = true;
-      offeringsAndCount.value =
-        await EducationProgramOfferingService.shared.getOfferingsSummary(
-          props.locationId,
-          props.programId,
-          {
-            searchCriteria: searchBox.value,
-            sortField,
-            sortOrder,
-            page,
-            pageLimit: pageCount,
-          },
-        );
-      loading.value = false;
+    const currentPagination: PaginationOptions = {
+      page: 1,
+      pageLimit: DEFAULT_PAGE_LIMIT,
+      sortField: DEFAULT_SORT_FIELD,
+      sortOrder: DataTableSortByOrder.ASC,
     };
 
-    onMounted(getEducationProgramAndOffering);
+    /**
+     * Loads study period offerings for the Institution Program.
+     */
+    const loadEducationProgramAndOfferings = async () => {
+      try {
+        loading.value = true;
+        offeringsAndCount.value =
+          await EducationProgramOfferingService.shared.getOfferingsSummary(
+            props.locationId,
+            props.programId,
+            {
+              searchCriteria: searchBox.value,
+              ...currentPagination,
+            },
+          );
+      } catch {
+        snackBar.error("Unexpected error while loading CAS invoices.");
+      } finally {
+        loading.value = false;
+      }
+    };
 
-    // Pagination sort event callback.
-    const paginationAndSortEvent = async (event: DataTableOptions) => {
-      currentPage.value = event?.page;
-      currentPageLimit.value = event.itemsPerPage;
-      const [sortByOptions] = event.sortBy;
-      await getEducationProgramAndOffering(
-        event.page,
-        event.itemsPerPage,
-        sortByOptions?.key,
-        sortByOptions?.order,
-      );
+    onMounted(loadEducationProgramAndOfferings);
+
+    const pageSortEvent = async (event: DataTableOptions) => {
+      currentPagination.page = event.page;
+      currentPagination.pageLimit = event.itemsPerPage;
+      if (event.sortBy.length) {
+        const [sortBy] = event.sortBy;
+        currentPagination.sortField = sortBy.key;
+        currentPagination.sortOrder = sortBy.order;
+      } else {
+        // Sorting was removed, reset to default.
+        currentPagination.sortField = DEFAULT_SORT_FIELD;
+        currentPagination.sortOrder = DataTableSortByOrder.ASC;
+      }
+      await loadEducationProgramAndOfferings();
     };
 
     // Search offering table.
     const searchOfferingTable = async () => {
-      await getEducationProgramAndOffering(
-        currentPage.value ?? currentPage.value,
-        currentPageLimit.value ?? DEFAULT_DATATABLE_PAGE_NUMBER,
-      );
+      // Reset to first page when searching.
+      currentPagination.page = DEFAULT_DATATABLE_PAGE_NUMBER;
+      await loadEducationProgramAndOfferings();
     };
 
     return {
@@ -266,7 +273,7 @@ export default defineComponent({
       isInstitutionUser,
       isAESTUser,
       offeringActionLabel,
-      paginationAndSortEvent,
+      pageSortEvent,
       loading,
       searchOfferingTable,
       searchBox,
