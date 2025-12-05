@@ -34,14 +34,9 @@ COPY --from=builder /app/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/nginx/nginx.conf /etc/nginx/nginx.conf
 
 # Set proper permissions for OpenShift (arbitrary UIDs with root group)
-RUN chmod -R g+rwx /usr/share/nginx/html \
-    && chmod -R g+rwx /var/cache/nginx \
-    && chmod -R g+rwx /var/run \
-    && chmod -R g+rwx /etc/nginx \
-    && chgrp -R 0 /usr/share/nginx/html /var/cache/nginx /var/run /etc/nginx
-
-# Switch to non-root user
-USER nginx
+# Make required files/directories writable by GID 0 (root group).
+RUN chgrp -R 0 /usr/share/nginx/html /var/cache/nginx /var/run /etc/nginx \
+    chmod -R g=u /usr/share/nginx/html /var/cache/nginx /var/run /etc/nginx /var/log/nginx
 
 # Daemon off makes nginx to run on the foreground with only one process.
 # Docker will kill the container if the process dies.
