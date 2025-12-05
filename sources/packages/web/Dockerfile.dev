@@ -45,4 +45,4 @@ USER nginx
 
 # Daemon off makes nginx to run on the foreground with only one process.
 # Docker will kill the container if the process dies.
-CMD ["nginx", "-g", "daemon off;"]  
+CMD ["nginx", "-g", "daemon off;"]

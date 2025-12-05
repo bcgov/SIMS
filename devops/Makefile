@@ -597,7 +597,7 @@ deploy-web-dev:
 	-p MEMORY_LIMIT=$(WEB_MEMORY_LIMIT) \
 	-p REPLICAS=$(WEB_REPLICAS) \
 	| oc -n $(DEV_NAMESPACE) apply -f -
-	@oc -n $(DEV_NAMESPACE) rollout status deployment/$(WEB) 
+	@oc -n $(DEV_NAMESPACE) rollout status deployment/$(WEB)
 
 build-forms:
 	test -n "$(BUILD_NAMESPACE)"
