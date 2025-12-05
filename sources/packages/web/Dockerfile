@@ -33,11 +33,12 @@ COPY --from=builder /app/default.conf /etc/nginx/conf.d/default.conf
 # Copying the main configuration file.
 COPY --from=builder /app/nginx/nginx.conf /etc/nginx/nginx.conf
 
-# Set proper permissions for nginx user
-RUN chown nginx /usr/share/nginx/html -R \
-    && chown nginx /var/cache/nginx/ -R \
-    && chown nginx /var/run -R \
-    && chown nginx /etc/nginx/ -R
+# Set proper permissions for OpenShift (arbitrary UIDs with root group)
+RUN chmod -R g+rwx /usr/share/nginx/html \
+    && chmod -R g+rwx /var/cache/nginx \
+    && chmod -R g+rwx /var/run \
+    && chmod -R g+rwx /etc/nginx \
+    && chgrp -R 0 /usr/share/nginx/html /var/cache/nginx /var/run /etc/nginx
 
 # Switch to non-root user
 USER nginx
