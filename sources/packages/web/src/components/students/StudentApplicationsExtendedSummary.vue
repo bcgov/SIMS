@@ -154,7 +154,7 @@ import { onMounted, ref, defineComponent } from "vue";
 import {
   ApplicationStatus,
   DEFAULT_PAGE_LIMIT,
-  DataTableSortOrder,
+  DataTableSortByOrder,
   StudentApplicationFields,
   StudentApplicationsExtendedSummaryHeaders,
   ITEMS_PER_PAGE,
@@ -214,7 +214,7 @@ export default defineComponent({
       page: DEFAULT_DATATABLE_PAGE_NUMBER,
       pageLimit: DEFAULT_PAGE_LIMIT,
       sortField: DEFAULT_SORT_FIELD,
-      sortOrder: DataTableSortOrder.ASC,
+      sortOrder: DataTableSortByOrder.ASC,
     };
 
     const getStudentApplications = async () => {
@@ -247,7 +247,7 @@ export default defineComponent({
       } else {
         // Sorting was removed, reset to default
         currentPagination.sortField = DEFAULT_SORT_FIELD;
-        currentPagination.sortOrder = DataTableSortOrder.ASC;
+        currentPagination.sortOrder = DataTableSortByOrder.ASC;
       }
       await getStudentApplications();
     };

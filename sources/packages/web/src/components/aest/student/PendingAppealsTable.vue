@@ -54,11 +54,12 @@ import { useRouter } from "vue-router";
 import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
-  DataTableSortOrder,
+  DataTableSortByOrder,
   PaginatedResults,
   PendingChangeRequestsTableHeaders,
   DataTableOptions,
   PaginationOptions,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
 } from "@/types";
 import { useFormatters, useSnackBar } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
@@ -84,10 +85,10 @@ export default defineComponent({
 
     const DEFAULT_SORT_FIELD = "submittedDate";
     const currentPagination: PaginationOptions = {
-      page: 1,
+      page: DEFAULT_DATATABLE_PAGE_NUMBER,
       pageLimit: DEFAULT_PAGE_LIMIT,
       sortField: DEFAULT_SORT_FIELD,
-      sortOrder: DataTableSortOrder.DESC,
+      sortOrder: DataTableSortByOrder.DESC,
     };
 
     const pageTitle = computed(() => {
@@ -157,7 +158,7 @@ export default defineComponent({
         currentPagination.sortOrder = sortBy.order;
       } else {
         currentPagination.sortField = DEFAULT_SORT_FIELD;
-        currentPagination.sortOrder = DataTableSortOrder.DESC;
+        currentPagination.sortOrder = DataTableSortByOrder.DESC;
       }
       await loadAppeals();
     };

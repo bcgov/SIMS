@@ -29,15 +29,6 @@ export enum StudentApplicationFields {
   Actions = "id",
 }
 
-/**
- * SORT ORDER  of DataTable
- */
-// TODO: Refactor DataTables to use {@link DataTableSortByOrder} and remove this enum.
-export enum DataTableSortOrder {
-  DESC = -1,
-  ASC = 1,
-}
-
 export const DEFAULT_PAGE_LIMIT = 10;
 export const ITEMS_PER_PAGE = [
   { value: 10, title: "10" },
@@ -119,13 +110,12 @@ export enum PaginationParams {
  * Pagination Options.
  * @param searchCriteria search criteria can be a single criterion
  * or it can be an object with multiple search criteria (for eg. search of
- * programs on the basis of program name, location name, status etc.)
- * TODO: remove sortOrder: DataTableSortOrder when all references are migrated to DataTableSortByOrder
+ * programs on the basis of program name, location name, status etc.).
  */
 export interface PaginationOptions {
   searchCriteria?: string | Record<string, string | string[] | boolean>;
   sortField?: string;
-  sortOrder?: DataTableSortOrder | DataTableSortByOrder;
+  sortOrder?: DataTableSortByOrder;
   page: number;
   pageLimit: number;
 }

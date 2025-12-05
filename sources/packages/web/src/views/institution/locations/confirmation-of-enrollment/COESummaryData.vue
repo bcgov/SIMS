@@ -110,7 +110,6 @@ import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import {
-  DataTableSortOrder,
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   LayoutTemplates,
@@ -119,6 +118,8 @@ import {
   OfferingIntensity,
   PaginationOptions,
   DataTableOptions,
+  DataTableSortByOrder,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
 } from "@/types";
 import { useFormatters, useOffering, useSnackBar } from "@/composables";
 import StatusChipCOE from "@/components/generic/StatusChipCOE.vue";
@@ -147,6 +148,7 @@ export default defineComponent({
     coeSummarySubtitle: {
       type: String,
       required: false,
+      default: "",
     },
     enrollmentPeriod: {
       type: String as PropType<EnrollmentPeriod>,
@@ -168,10 +170,10 @@ export default defineComponent({
      * Current state of the pagination.
      */
     const currentPagination: PaginationOptions = {
-      page: 1,
+      page: DEFAULT_DATATABLE_PAGE_NUMBER,
       pageLimit: DEFAULT_PAGE_LIMIT,
       sortField: DEFAULT_SORT_FIELD,
-      sortOrder: DataTableSortOrder.DESC,
+      sortOrder: DataTableSortByOrder.DESC,
     };
 
     const goToViewApplication = (disbursementScheduleId: number) => {
@@ -235,7 +237,7 @@ export default defineComponent({
       } else {
         // Sorting was removed, reset to default.
         currentPagination.sortField = DEFAULT_SORT_FIELD;
-        currentPagination.sortOrder = DataTableSortOrder.DESC;
+        currentPagination.sortOrder = DataTableSortByOrder.DESC;
       }
       await updateSummaryList(props.locationId);
     };
