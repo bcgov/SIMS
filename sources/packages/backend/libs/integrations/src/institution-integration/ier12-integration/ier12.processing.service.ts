@@ -14,7 +14,10 @@ import {
   ConfigService,
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
-import { getFileNameAsExtendedCurrentTimestamp } from "@sims/utilities";
+import {
+  addDays,
+  getFileNameAsExtendedCurrentTimestamp,
+} from "@sims/utilities";
 import { IER12IntegrationService } from "./ier12.integration.service";
 import {
   IER12Record,
@@ -69,9 +72,19 @@ export class IER12ProcessingService {
     generatedDate?: string,
   ): Promise<IER12UploadResult[]> {
     processSummary.info("Retrieving pending assessment for IER 12.");
+    // Processing date is the date(day) for which the IER 12 file is generated.
+    // By default, the processing date is the previous day from today.
+    const processingDate = generatedDate
+      ? new Date(generatedDate)
+      : addDays(-1);
+    const { startDate, endDate } = this.getStartAndEndDate(processingDate);
+    processSummary.info(
+      `Retrieving records created or updated between ${startDate} and ${endDate}.`,
+    );
     const pendingApplications =
       await this.studentAssessmentService.getPendingApplicationsCurrentAssessment(
-        generatedDate,
+        startDate,
+        endDate,
       );
     if (!pendingApplications.length) {
       return [];
@@ -432,5 +445,11 @@ export class IER12ProcessingService {
     return studentOverawardsBalance
       ? studentOverawardsBalance[awardType] > 0
       : false;
+  }
+  private getStartAndEndDate(date: Date): { startDate: Date; endDate: Date } {
+    const startDate = new Date(date);
+    startDate.setHours(0, 0, 0, 0);
+    const endDate = addDays(1, startDate);
+    return { startDate, endDate };
   }
 }
