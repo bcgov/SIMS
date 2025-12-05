@@ -35,10 +35,10 @@ COPY --from=builder /app/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/nginx/nginx.conf /etc/nginx/nginx.conf
 
 
-# Set necessary directories to be owned by the nginx user
+# Set necessary directories to be owned by the nginx user.
 RUN chown -R nginx:nginx /var/cache/nginx /var/log/nginx /etc/nginx/conf.d
 
-# Switch to the nginx
+# Switch to the nginx.
 USER nginx
 
 # Do not set any permissions for this local dockerfile, only on OpenShift (arbitrary UIDs with root group).
