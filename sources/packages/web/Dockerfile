@@ -22,21 +22,25 @@ RUN sed 's/${PORT}/'"${PORT}"'/g' nginx/default.conf.template > default.conf
 # Building app
 RUN npm run build
 
-FROM artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/nginx-122 AS deployer
-
-USER default
-
-RUN mkdir -p /opt/app-root/src \
- && mkdir -p /etc/nginx/conf.d
+FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:1.29-alpine AS deployer
 
 # Copy the app built on builder stage to the resulting container.
-COPY --from=builder /app/dist /opt/app-root/src
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Copy the default.conf to /etc/nginx/conf.d
 COPY --from=builder /app/default.conf /etc/nginx/conf.d/default.conf
 
 # Copying the main configuration file.
 COPY --from=builder /app/nginx/nginx.conf /etc/nginx/nginx.conf
+
+# Set proper permissions for nginx user
+RUN chown nginx /usr/share/nginx/html -R \
+    && chown nginx /var/cache/nginx/ -R \
+    && chown nginx /var/run -R \
+    && chown nginx /etc/nginx/ -R
+
+# Switch to non-root user
+USER nginx
 
 # Daemon off makes nginx to run on the foreground with only one process.
 # Docker will kill the container if the process dies.
