@@ -56,8 +56,7 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
    * to the educational institution.
    */
   get payToSchoolAmount(): number {
-    const schoolAmount = this.line.substring(144, 148);
-    return +`${schoolAmount}`;
+    return +this.line.substring(144, 148);
   }
 
   /**

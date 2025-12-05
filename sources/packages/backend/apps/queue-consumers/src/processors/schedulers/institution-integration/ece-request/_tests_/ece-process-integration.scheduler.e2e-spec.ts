@@ -30,7 +30,6 @@ import { INestApplication } from "@nestjs/common";
 import {
   addDays,
   COE_WINDOW,
-  combineDecimalPlaces,
   formatDate,
   getISODateOnlyString,
   QueueNames,
@@ -536,7 +535,7 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
       institutionLocation.institutionCode
     }${disbursementValue.id.toString().padStart(10, "0")}${
       disbursementValue.valueCode
-    }${combineDecimalPlaces(disbursementValue.valueAmount).toString().padStart(9, "0")}${
+    }${disbursementValue.valueAmount.toFixed(2).padStart(9, "0")}${
       student.sinValidation.sin
     }${studentLastName.padEnd(25, " ")}${studentFirstName.padEnd(
       15,
