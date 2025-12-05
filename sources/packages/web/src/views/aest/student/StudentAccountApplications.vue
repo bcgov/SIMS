@@ -1,49 +1,48 @@
 <template>
   <full-page-container :full-width="true">
     <template #header>
-      <header-navigator title="Student requests" subTitle="Accounts" />
+      <header-navigator title="Student requests" sub-title="Accounts" />
     </template>
     <body-header
       title="Pending account requests"
-      subTitle="Basic BCeID account requests that require ministry review."
-      :recordsCount="accountApplications?.length"
+      sub-title="Basic BCeID account requests that require ministry review."
+      :records-count="accountApplications?.length"
     >
     </body-header>
     <content-group>
-      <toggle-content :toggled="!accountApplications.length">
-        <DataTable
-          :value="accountApplications"
-          :paginator="true"
-          :rows="DEFAULT_PAGE_LIMIT"
-          :rowsPerPageOptions="PAGINATION_LIST"
-          :totalRecords="accountApplications.length"
+      <toggle-content
+        :toggled="!accountApplications.length"
+        message="No pending account requests found."
+      >
+        <v-data-table
+          :headers="StudentAccountRequestsHeaders"
+          :items="accountApplications"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          :mobile="isMobile"
         >
-          <Column header="Date submitted" headerClass="text-no-wrap"
-            ><template #body="slotProps">
-              <span>{{
-                dateOnlyLongString(slotProps.data.submittedDate)
-              }}</span>
-            </template>
-          </Column>
-          <Column header="Given names" field="givenNames"></Column>
-          <Column header="Last name" field="lastName"></Column>
-          <Column header="Date of birth" headerClass="text-no-wrap"
-            ><template #body="slotProps">
-              <span>{{ dateOnlyLongString(slotProps.data.dateOfBirth) }}</span>
-            </template>
-          </Column>
-          <Column header="Action">
-            <template #body="slotProps">
-              <v-btn
-                color="primary"
-                @click="goToStudentAccountApplication(slotProps.data.id)"
-                data-cy="viewStudentAccountApplication"
-              >
-                View
-              </v-btn>
-            </template>
-          </Column>
-        </DataTable>
+          <template #[`item.submittedDate`]="{ item }">
+            {{ dateOnlyLongString(item.submittedDate) }}
+          </template>
+          <template #[`item.givenNames`]="{ item }">
+            {{ item.givenNames }}
+          </template>
+          <template #[`item.lastName`]="{ item }">
+            {{ item.lastName }}
+          </template>
+          <template #[`item.dateOfBirth`]="{ item }">
+            {{ dateOnlyLongString(item.dateOfBirth) }}
+          </template>
+          <template #[`item.action`]="{ item }">
+            <v-btn
+              color="primary"
+              @click="goToStudentAccountApplication(item.id)"
+              data-cy="viewStudentAccountApplicationMobile"
+            >
+              View
+            </v-btn>
+          </template>
+        </v-data-table>
       </toggle-content>
     </content-group>
   </full-page-container>
@@ -52,10 +51,12 @@
 <script lang="ts">
 import { onMounted, ref, defineComponent } from "vue";
 import { useRouter } from "vue-router";
+import { useDisplay } from "vuetify";
+
 import {
   DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
-  PAGINATION_LIST,
+  ITEMS_PER_PAGE,
+  StudentAccountRequestsHeaders,
 } from "@/types";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormatters } from "@/composables";
@@ -69,6 +70,7 @@ export default defineComponent({
       [] as StudentAccountApplicationSummaryAPIOutDTO[],
     );
     const { dateOnlyLongString } = useFormatters();
+    const { mobile: isMobile } = useDisplay();
 
     const goToStudentAccountApplication = (
       studentAccountApplicationId: number,
@@ -88,9 +90,10 @@ export default defineComponent({
       accountApplications,
       goToStudentAccountApplication,
       DEFAULT_PAGE_LIMIT,
-      DEFAULT_PAGE_NUMBER,
-      PAGINATION_LIST,
+      ITEMS_PER_PAGE,
       dateOnlyLongString,
+      StudentAccountRequestsHeaders,
+      isMobile,
     };
   },
 });

@@ -18,10 +18,7 @@ export class CASInvoiceApi extends HttpBaseClient {
   async getInvoices(
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResultsAPIOutDTO<CASInvoiceAPIOutDTO>> {
-    const url = `cas-invoice?${getPaginationQueryString(
-      paginationOptions,
-      true,
-    )}`;
+    const url = `cas-invoice?${getPaginationQueryString(paginationOptions)}`;
     return this.getCall(this.addClientRoot(url));
   }
 

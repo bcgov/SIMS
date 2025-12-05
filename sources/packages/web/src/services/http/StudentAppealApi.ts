@@ -86,7 +86,7 @@ export class StudentAppealApi extends HttpBaseClient {
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResultsAPIOutDTO<StudentAppealPendingSummaryAPIOutDTO>> {
     let url = "appeal/pending?";
-    url += getPaginationQueryString(paginationOptions, true);
+    url += getPaginationQueryString(paginationOptions);
     return this.getCall<
       PaginatedResultsAPIOutDTO<StudentAppealPendingSummaryAPIOutDTO>
     >(this.addClientRoot(url));

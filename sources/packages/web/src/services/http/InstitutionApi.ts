@@ -1,5 +1,5 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { PaginatedResults, PaginationOptions, PaginationParams } from "@/types";
+import { PaginatedResults, PaginationOptions } from "@/types";
 import {
   ActiveApplicationSummaryAPIOutDTO,
   InstitutionDetailAPIOutDTO,
@@ -14,7 +14,7 @@ import {
   PrimaryIdentifierAPIOutDTO,
   OptionItemAPIOutDTO,
 } from "@/services/http/dto";
-import { addPaginationOptions, addSortOptions } from "@/helpers";
+import { getPaginationQueryString } from "@/helpers";
 
 export class InstitutionApi extends HttpBaseClient {
   /**
@@ -106,27 +106,8 @@ export class InstitutionApi extends HttpBaseClient {
     paginationOptions: PaginationOptions,
     archived: boolean,
   ): Promise<PaginatedResultsAPIOutDTO<ActiveApplicationSummaryAPIOutDTO>> {
-    let url = `location/${locationId}/active-applications?archived=${archived}`;
-
-    // Adding pagination params. There is always a default page and pageLimit for paginated APIs.
-    url = addPaginationOptions(
-      url,
-      paginationOptions.page,
-      paginationOptions.pageLimit,
-      "&",
-    );
-
-    //Adding Sort params. There is always a default sortField and sortOrder for Active Applications.
-    url = addSortOptions(
-      url,
-      paginationOptions.sortField,
-      paginationOptions.sortOrder,
-    );
-
-    // Search criteria is populated only when search box has search text in it.
-    if (paginationOptions.searchCriteria) {
-      url = `${url}&${PaginationParams.SearchCriteria}=${paginationOptions.searchCriteria}`;
-    }
+    let url = `location/${locationId}/active-applications?archived=${archived}&`;
+    url += getPaginationQueryString(paginationOptions);
 
     return this.getCall<PaginatedResults<ActiveApplicationSummaryAPIOutDTO>>(
       this.addClientRoot(url),

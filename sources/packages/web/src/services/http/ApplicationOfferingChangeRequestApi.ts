@@ -33,7 +33,7 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
     PaginatedResultsAPIOutDTO<ApplicationOfferingChangeSummaryAPIOutDTO>
   > {
     let url = `location/${locationId}/application-offering-change-request/available?`;
-    url += getPaginationQueryString(paginationOptions, true);
+    url += getPaginationQueryString(paginationOptions);
     return this.getCall<
       PaginatedResultsAPIOutDTO<ApplicationOfferingChangeSummaryAPIOutDTO>
     >(this.addClientRoot(url));
@@ -69,7 +69,7 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
     PaginatedResultsAPIOutDTO<InProgressApplicationOfferingChangesAPIOutDTO>
   > {
     let url = `location/${locationId}/application-offering-change-request/in-progress?`;
-    url += getPaginationQueryString(paginationOptions, true);
+    url += getPaginationQueryString(paginationOptions);
     return this.getCall<
       PaginatedResultsAPIOutDTO<InProgressApplicationOfferingChangesAPIOutDTO>
     >(this.addClientRoot(url));
@@ -86,7 +86,7 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
     PaginatedResultsAPIOutDTO<AllInProgressApplicationOfferingChangesAPIOutDTO>
   > {
     let url = "application-offering-change-request/in-progress?";
-    url += getPaginationQueryString(paginationOptions, true);
+    url += getPaginationQueryString(paginationOptions);
     return this.getCall<
       PaginatedResultsAPIOutDTO<AllInProgressApplicationOfferingChangesAPIOutDTO>
     >(this.addClientRoot(url));
@@ -105,7 +105,7 @@ export class ApplicationOfferingChangeRequestApi extends HttpBaseClient {
     PaginatedResultsAPIOutDTO<CompletedApplicationOfferingChangesAPIOutDTO>
   > {
     let url = `location/${locationId}/application-offering-change-request/completed?`;
-    url += getPaginationQueryString(paginationOptions, true);
+    url += getPaginationQueryString(paginationOptions);
     return this.getCall<
       PaginatedResultsAPIOutDTO<CompletedApplicationOfferingChangesAPIOutDTO>
     >(this.addClientRoot(url));

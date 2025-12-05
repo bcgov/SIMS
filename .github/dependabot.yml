@@ -10,10 +10,6 @@ updates:
       - "Dependencies"
       - "Web portal"
       - "npm"
-    ignore:
-      - dependency-name: "primeflex"
-      - dependency-name: "primeicons"
-      - dependency-name: "primevue"
     groups:
       web-major-updates:
         patterns:

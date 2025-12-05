@@ -1,10 +1,10 @@
 <template>
-  <body-header-container :enableCardView="true">
+  <body-header-container :enable-card-view="true">
     <template #header>
       <body-header
         title="Manual Intervention Invoices"
-        subTitle="Please see below the list of manual intervention invoices."
-        :recordsCount="paginatedInvoices.count"
+        sub-title="Please see below the list of manual intervention invoices."
+        :records-count="paginatedInvoices.count"
       />
     </template>
     <content-group>
@@ -47,7 +47,7 @@
               </template>
             </check-permission-role>
           </template>
-          <template v-slot:expanded-row="{ item, columns }">
+          <template #expanded-row="{ item, columns }">
             <tr>
               <td :colspan="columns.length">
                 <ul>
@@ -59,7 +59,7 @@
             </tr>
           </template>
           <template
-            v-slot:[`item.data-table-expand`]="{
+            #[`item.data-table-expand`]="{
               item,
               internalItem,
               isExpanded,
@@ -84,8 +84,8 @@
   <confirm-modal
     title="Resolve invoice"
     ref="resolveInvoiceModal"
-    okLabel="Resolve invoice"
-    cancelLabel="Cancel"
+    ok-label="Resolve invoice"
+    cancel-label="Cancel"
     text="Are you sure you want to resolve the invoice?"
   />
 </template>
@@ -96,7 +96,8 @@ import {
   CASInvoiceHeaders,
   CASInvoiceStatus,
   DataTableOptions,
-  DataTableSortOrder,
+  DataTableSortByOrder,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   PaginationOptions,
@@ -132,10 +133,10 @@ export default defineComponent({
      * Current state of the pagination.
      */
     const currentPagination: PaginationOptions = {
-      page: 1,
+      page: DEFAULT_DATATABLE_PAGE_NUMBER,
       pageLimit: DEFAULT_PAGE_LIMIT,
       sortField: DEFAULT_SORT_FIELD,
-      sortOrder: DataTableSortOrder.ASC,
+      sortOrder: DataTableSortByOrder.ASC,
     };
 
     onMounted(async () => {
@@ -168,7 +169,7 @@ export default defineComponent({
       } else {
         // Sorting was removed, reset to default.
         currentPagination.sortField = DEFAULT_SORT_FIELD;
-        currentPagination.sortOrder = DataTableSortOrder.ASC;
+        currentPagination.sortOrder = DataTableSortByOrder.ASC;
       }
       await loadManualInterventionInvoices();
     };

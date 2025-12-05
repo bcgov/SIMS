@@ -4,10 +4,10 @@
       <header-navigator
         :title="locationName"
         data-cy="programsHeader"
-        subTitle="Programs"
+        sub-title="Programs"
       />
     </template>
-    <body-header title="All programs" :recordsCount="programAndCount?.count">
+    <body-header title="All programs" :records-count="programAndCount?.count">
       <template #actions>
         <v-row class="m-0 p-0">
           <v-text-field
@@ -89,7 +89,6 @@ import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   DEFAULT_DATATABLE_PAGE_NUMBER,
-  PAGINATION_LIST,
   ProgramSummaryFields,
   EducationProgramsSummary,
   PaginatedResults,
@@ -223,7 +222,6 @@ export default defineComponent({
       DEFAULT_PAGE_LIMIT,
       DEFAULT_DATATABLE_PAGE_NUMBER,
       ITEMS_PER_PAGE,
-      PAGINATION_LIST,
       paginationAndSortEvent,
       searchProgramTable,
       loading,

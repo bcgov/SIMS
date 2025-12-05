@@ -1,7 +1,7 @@
 <template>
   <v-card class="mt-5">
     <v-container :fluid="true">
-      <body-header :title="header" :recordsCount="disbursements.count">
+      <body-header :title="header" :records-count="disbursements.count">
         <template #subtitle>
           <slot name="coeSummarySubtitle">{{ coeSummarySubtitle }}</slot>
         </template>
@@ -105,21 +105,21 @@
 </template>
 
 <script lang="ts">
-import { ref, watch, computed, defineComponent, PropType } from "vue";
+import { ref, watch, defineComponent, PropType } from "vue";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ConfirmationOfEnrollmentService } from "@/services/ConfirmationOfEnrollmentService";
 import {
-  DataTableSortOrder,
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
-  PAGINATION_LIST,
   LayoutTemplates,
   EnrollmentPeriod,
   COESummaryHeaders,
   OfferingIntensity,
   PaginationOptions,
   DataTableOptions,
+  DataTableSortByOrder,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
 } from "@/types";
 import { useFormatters, useOffering, useSnackBar } from "@/composables";
 import StatusChipCOE from "@/components/generic/StatusChipCOE.vue";
@@ -148,6 +148,7 @@ export default defineComponent({
     coeSummarySubtitle: {
       type: String,
       required: false,
+      default: "",
     },
     enrollmentPeriod: {
       type: String as PropType<EnrollmentPeriod>,
@@ -165,17 +166,14 @@ export default defineComponent({
     const searchQuery = ref("");
     const enrollmentsLoading = ref(false);
     const intensityFilter = ref(IntensityFilter.All);
-    const rowsPerPageOptions = computed(() =>
-      disbursements.value.results?.length > 10 ? PAGINATION_LIST : undefined,
-    );
     /**
      * Current state of the pagination.
      */
     const currentPagination: PaginationOptions = {
-      page: 1,
+      page: DEFAULT_DATATABLE_PAGE_NUMBER,
       pageLimit: DEFAULT_PAGE_LIMIT,
       sortField: DEFAULT_SORT_FIELD,
-      sortOrder: DataTableSortOrder.DESC,
+      sortOrder: DataTableSortByOrder.DESC,
     };
 
     const goToViewApplication = (disbursementScheduleId: number) => {
@@ -239,7 +237,7 @@ export default defineComponent({
       } else {
         // Sorting was removed, reset to default.
         currentPagination.sortField = DEFAULT_SORT_FIELD;
-        currentPagination.sortOrder = DataTableSortOrder.DESC;
+        currentPagination.sortOrder = DataTableSortByOrder.DESC;
       }
       await updateSummaryList(props.locationId);
     };
@@ -261,7 +259,6 @@ export default defineComponent({
       disbursements,
       dateOnlyLongString,
       goToViewApplication,
-      rowsPerPageOptions,
       searchQuery,
       intensityFilter,
       IntensityFilter,

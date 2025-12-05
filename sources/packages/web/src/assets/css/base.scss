@@ -55,14 +55,6 @@ strong {
   border-radius: 8px;
 }
 
-/**
-* Overwrite the default margin
-* for PrimeVue components.
-*/
-.p-md-4 {
-  padding: 0.5rem !important;
-}
-
 // Specific styles for the outlined v-chip.
 .v-chip--variant-outlined {
   border: 2px solid !important;
@@ -88,34 +80,6 @@ strong {
 // Error v-chip.
 .v-chip--variant-outlined.status-chip-error {
   border-color: $badge-border-error !important;
-}
-
-/**
-* Todo: when datatable is updated, remove this class.
-* Style to align records per page with arrows in data table.
-*/
-.p-paginator .p-dropdown .p-dropdown-label {
-  margin-top: 8px;
-}
-
-// Todo: when datatable is updated, remove this class.
-.p-datatable.p-paginator-bottom {
-  border-bottom: 0;
-}
-
-// Todo: when datatable is updated, remove this class.
-.p-column-title {
-  font-family: $font-bold;
-  font-weight: $font-weight-bold; // Fallback
-  color: $brand-grey;
-}
-
-/**
-* Todo: when datatable is updated, remove this class.
-* Reset initial styles.
-*/
-.p-paginator .p-dropdown.p-inputwrapper {
-  height: auto;
 }
 
 /** muted heading **/

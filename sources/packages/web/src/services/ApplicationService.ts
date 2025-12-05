@@ -1,9 +1,4 @@
-import {
-  DataTableSortOrder,
-  StudentApplicationFields,
-  DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
-} from "@/types";
+import { PaginationOptions } from "@/types";
 import ApiClient from "../services/http/ApiClient";
 import {
   ApplicationSummaryAPIOutDTO,
@@ -162,17 +157,11 @@ export class ApplicationService {
    * @returns student application list with total count.
    */
   async getStudentApplicationSummary(
-    page = DEFAULT_PAGE_NUMBER,
-    pageCount = DEFAULT_PAGE_LIMIT,
-    sortField?: StudentApplicationFields,
-    sortOrder?: DataTableSortOrder,
+    paginationOptions: PaginationOptions,
     studentId?: number,
   ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
     return ApiClient.Application.getStudentApplicationSummary(
-      page,
-      pageCount,
-      sortField,
-      sortOrder,
+      paginationOptions,
       studentId,
     );
   }

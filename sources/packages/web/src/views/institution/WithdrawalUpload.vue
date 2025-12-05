@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator
         title="Manage institution"
-        subTitle="Withdrawal Upload"
+        sub-title="Withdrawal Upload"
       />
     </template>
     <content-group>
@@ -101,7 +101,7 @@
       <content-group v-if="validationResults.length">
         <body-header
           title="Validation summary"
-          :recordsCount="validationResults.length"
+          :records-count="validationResults.length"
         ></body-header>
         <banner
           class="mb-2"
@@ -161,7 +161,6 @@ import { ref, computed, defineComponent } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
-  PAGINATION_LIST,
   BannerTypes,
   VForm,
   InputFile,
@@ -276,7 +275,6 @@ export default defineComponent({
       creationProcessing,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
-      PAGINATION_LIST,
       withdrawalFile,
       uploadFile,
       validationResults,

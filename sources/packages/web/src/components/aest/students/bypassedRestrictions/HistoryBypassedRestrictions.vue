@@ -91,7 +91,6 @@
 <script lang="ts">
 import {
   DEFAULT_PAGE_LIMIT,
-  PAGINATION_LIST,
   ITEMS_PER_PAGE,
   ApplicationRestrictionManagementHeaders,
   RestrictionStatus,
@@ -184,7 +183,6 @@ export default defineComponent({
     return {
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
-      PAGINATION_LIST,
       RestrictionStatus,
       bypassedRestrictions,
       getRemoveBypassLabel,

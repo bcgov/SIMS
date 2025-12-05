@@ -2,12 +2,7 @@ import "@bcgov/bc-sans/css/BCSans.css";
 import "./assets/css/base.scss";
 import "./assets/css/formio-shared.scss";
 import "./assets/css/vuetify.scss";
-import "primevue/resources/themes/md-light-indigo/theme.css";
-import "primevue/resources/primevue.min.css";
-import "primeicons/primeicons.css";
-import "primeflex/primeflex.css";
 import "@formio/js/dist/formio.full.min.css";
-import "./assets/css/primevue-override.scss";
 
 import "reflect-metadata";
 import { createApp } from "vue";
@@ -15,9 +10,6 @@ import vuetify from "./plugins/vuetify";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-import PrimeVue from "primevue/config";
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
 import { AppConfigService } from "./services/AppConfigService";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
@@ -49,9 +41,6 @@ AppConfigService.shared.init().then(() => {
     .use(vuetify)
     .use(store)
     .use(router)
-    .use(PrimeVue)
-    .component("DataTable", DataTable)
-    .component("Column", Column)
     .component("BodyHeader", BodyHeader)
     .component("ContentGroup", ContentGroup)
     .component("ContentGroupInfo", ContentGroupInfo)

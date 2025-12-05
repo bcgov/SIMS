@@ -6,15 +6,15 @@
     <template #header
       ><header-navigator
         title="Corporate Accounting Services"
-        subTitle="Invoices"
+        sub-title="Invoices"
       />
     </template>
-    <body-header-container :enableCardView="true">
+    <body-header-container :enable-card-view="true">
       <template #header>
         <body-header
           title="Accounts payable invoicing"
-          subTitle="Please see below the list of invoices batches."
-          :recordsCount="paginatedBatches.count"
+          sub-title="Please see below the list of invoices batches."
+          :records-count="paginatedBatches.count"
         >
           <template #actions>
             <v-btn-toggle
@@ -130,15 +130,15 @@
   <confirm-modal
     title="Approve invoice batch"
     ref="approveBatchModal"
-    okLabel="Approve batch"
-    cancelLabel="Cancel"
+    ok-label="Approve batch"
+    cancel-label="Cancel"
     text="Are you sure you want to confirm the approval of the batch?"
   />
   <confirm-modal
     title="Reject invoice batch"
     ref="rejectBatchModal"
-    okLabel="Reject batch"
-    cancelLabel="Cancel"
+    ok-label="Reject batch"
+    cancel-label="Cancel"
     text="Are you sure you want to confirm the rejection of the batch?"
   />
 </template>
@@ -155,12 +155,13 @@ import {
   CASInvoiceBatchApprovalStatus,
   CASInvoicesBatchesHeaders,
   DataTableOptions,
-  DataTableSortOrder,
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   PaginationOptions,
   Role,
   LayoutTemplates,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
+  DataTableSortByOrder,
 } from "@/types";
 import { defineComponent, onMounted, ref } from "vue";
 import StatusInvoiceBatchApproval from "@/components/generic/StatusInvoiceBatchApproval.vue";
@@ -202,10 +203,10 @@ export default defineComponent({
      * Current state of the pagination.
      */
     const currentPagination: PaginationOptions = {
-      page: 1,
+      page: DEFAULT_DATATABLE_PAGE_NUMBER,
       pageLimit: DEFAULT_PAGE_LIMIT,
       sortField: DEFAULT_SORT_FIELD,
-      sortOrder: DataTableSortOrder.DESC,
+      sortOrder: DataTableSortByOrder.DESC,
     };
 
     onMounted(async () => {
@@ -286,7 +287,7 @@ export default defineComponent({
       } else {
         // Sorting was removed, reset to default.
         currentPagination.sortField = DEFAULT_SORT_FIELD;
-        currentPagination.sortOrder = DataTableSortOrder.DESC;
+        currentPagination.sortOrder = DataTableSortByOrder.DESC;
       }
       await loadInvoiceBatches();
     };
