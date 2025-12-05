@@ -535,7 +535,7 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
       institutionLocation.institutionCode
     }${disbursementValue.id.toString().padStart(10, "0")}${
       disbursementValue.valueCode
-    }${disbursementValue.valueAmount.toFixed(2).padStart(9, "0")}${
+    }${disbursementValue.valueAmount.toString().padStart(7, "0")}00${
       student.sinValidation.sin
     }${studentLastName.padEnd(25, " ")}${studentFirstName.padEnd(
       15,
