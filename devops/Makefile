@@ -563,9 +563,10 @@ deploy-web:
 	$(call rollout_and_wait,deployment/$(WEB))
 
 deploy-web-dev:
-	export PROJECT_NAME := sims
-	export HOST_PREFIX := dev-
-	export DOMAIN_PREFIX := dev.
+	$(eval PROJECT_NAME := sims)
+	$(eval HOST_PREFIX := dev-)
+	$(eval DOMAIN_PREFIX := dev.)
+	$(eval WEB := dev-web-sims)
 
 	test -n "$(PROJECT_NAME)"
 	test -n "$(DEV_NAMESPACE)"
@@ -595,8 +596,8 @@ deploy-web-dev:
 	-p MEMORY_REQUEST=$(WEB_MEMORY_REQUEST) \
 	-p MEMORY_LIMIT=$(WEB_MEMORY_LIMIT) \
 	-p REPLICAS=$(WEB_REPLICAS) \
-	| oc -n $(NAMESPACE) apply -f -
-	$(call rollout_and_wait,deployment/$(WEB))
+	| oc -n $(DEV_NAMESPACE) apply -f -
+	@oc -n $(DEV_NAMESPACE) rollout status deployment/$(WEB) 
 
 build-forms:
 	test -n "$(BUILD_NAMESPACE)"
