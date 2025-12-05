@@ -687,6 +687,7 @@ export const OfferingSummaryHeaders = [
   { title: "Offering type", sortable: false, key: "offeringType" },
   { title: "Study delivery", sortable: false, key: "offeringDelivered" },
   { title: "Status", sortable: false, key: "offeringStatus" },
+  { title: "Action", sortable: false, key: "action" },
 ];
 
 /**
@@ -698,6 +699,8 @@ export const InstitutionUsersHeaders = [
   { title: "User Type", sortable: false, key: "userType" },
   { title: "Role", sortable: false, key: "roles" },
   { title: "Locations", sortable: false, key: "locations" },
+  { title: "Status", sortable: false, key: "isActive" },
+  { title: "Action", sortable: false, key: "action" },
 ];
 
 /**

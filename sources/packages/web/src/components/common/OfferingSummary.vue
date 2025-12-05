@@ -45,7 +45,7 @@
         :mobile="isMobile"
         @update:options="pageSortEvent"
       >
-        <template #[`item.offeringName`]="{ item }">
+        <template #[`item.name`]="{ item }">
           {{ item.name }}
         </template>
         <template #[`item.yearOfStudy`]="{ item }">

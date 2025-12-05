@@ -53,7 +53,7 @@
             <v-btn
               color="primary"
               @click="
-                gotToAssessmentsSummary(item.applicationId, item.studentId)
+                goToAssessmentsSummary(item.applicationId, item.studentId)
               "
               >View</v-btn
             >
@@ -98,7 +98,7 @@ export default defineComponent({
     const { mobile: isMobile } = useDisplay();
     const snackBar = useSnackBar();
 
-    const gotToAssessmentsSummary = (
+    const goToAssessmentsSummary = (
       applicationId: number,
       studentId: number,
     ) => {
@@ -128,9 +128,10 @@ export default defineComponent({
       try {
         loading.value = true;
         applicationExceptions.value =
-          await ApplicationExceptionService.shared.getPendingExceptions(
-            currentPagination,
-          );
+          await ApplicationExceptionService.shared.getPendingExceptions({
+            ...currentPagination,
+            searchCriteria: searchCriteria.value,
+          });
       } catch {
         snackBar.error("Unexpected error while loading Exceptions.");
       } finally {
@@ -166,7 +167,7 @@ export default defineComponent({
     });
 
     return {
-      gotToAssessmentsSummary,
+      goToAssessmentsSummary,
       applicationExceptions,
       dateOnlyLongString,
       pageSortEvent,

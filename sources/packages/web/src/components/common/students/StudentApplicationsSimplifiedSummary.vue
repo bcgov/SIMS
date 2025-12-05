@@ -136,7 +136,7 @@ export default defineComponent({
         currentPagination.sortField = sortBy.key;
         currentPagination.sortOrder = sortBy.order;
       } else {
-        // Sorting was removed, reset to default
+        // Sorting was removed, reset to default.
         currentPagination.sortField = DEFAULT_SORT_FIELD;
         currentPagination.sortOrder = DataTableSortByOrder.ASC;
       }

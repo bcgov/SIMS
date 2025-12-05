@@ -7,18 +7,18 @@ import {
 
 /**
  * Builds the query string parameters for pagination.
- * @param paginationOptions pagination options.
+ * @param paginationOptions Pagination options.
  * @returns the URL query string in a format like parameter1=value1&parameter2=value2.
  */
 export const getPaginationQueryString = (
   paginationOptions: PaginationOptions,
 ) => {
   // Convert Vuetify Data Table one-based page index to support API zero-based page index.
-  paginationOptions.page = paginationOptions.page - 1;
+  const page = paginationOptions.page - 1;
 
   const parameters: string[] = [];
   // Pagination parameters.
-  parameters.push(`${PaginationParams.Page}=${paginationOptions.page}`);
+  parameters.push(`${PaginationParams.Page}=${page}`);
   parameters.push(
     `${PaginationParams.PageLimit}=${paginationOptions.pageLimit}`,
   );

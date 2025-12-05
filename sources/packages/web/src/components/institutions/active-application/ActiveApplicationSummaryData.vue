@@ -30,7 +30,7 @@
             :items="applicationsListAndCount?.results"
             :items-length="applicationsListAndCount?.count"
             :loading="loading"
-            :items-per-page="1"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
             :items-per-page-options="ITEMS_PER_PAGE"
             @update:options="pageSortEvent"
           >
@@ -200,7 +200,6 @@ export default defineComponent({
     watch(
       () => props.locationId,
       async () => {
-        //update the list
         await getApplicationSummaryList();
       },
       { immediate: true },
