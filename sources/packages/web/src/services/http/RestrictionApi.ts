@@ -1,13 +1,16 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
+  AssignInstitutionRestrictionAPIInDTO,
   AssignRestrictionAPIInDTO,
   DeleteRestrictionAPIInDTO,
+  InstitutionRestrictionSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
   ResolveRestrictionAPIInDTO,
   RestrictionDetailAPIOutDTO,
   RestrictionSummaryAPIOutDTO,
   StudentRestrictionAPIOutDTO,
 } from "@/services/http/dto";
+import { RestrictionType } from "@/types/contracts/RestrictionContract";
 
 /**
  * Http API client for Restrictions.
@@ -27,11 +30,21 @@ export class RestrictionApi extends HttpBaseClient {
     );
   }
 
+  /**
+   * Returns restriction reasons(descriptions) for a
+   * given restriction type and category.
+   * @param restrictionType Type of the restriction.
+   * @param restrictionCategory Category of the restriction.
+   * @returns Restriction reasons.
+   */
   async getRestrictionReasons(
+    restrictionType: RestrictionType.Provincial | RestrictionType.Institution,
     restrictionCategory: string,
   ): Promise<OptionItemAPIOutDTO[]> {
     return this.getCall<OptionItemAPIOutDTO[]>(
-      this.addClientRoot(`restriction/category/${restrictionCategory}/reasons`),
+      this.addClientRoot(
+        `restriction/reasons?type=${restrictionType}&category=${restrictionCategory}`,
+      ),
     );
   }
 
@@ -88,10 +101,15 @@ export class RestrictionApi extends HttpBaseClient {
     );
   }
 
+  /**
+   * Get restrictions for an institution.
+   * @param institutionId ID of the institution to retrieve its restrictions.
+   * @returns Institution restrictions.
+   */
   async getInstitutionRestrictions(
     institutionId: number,
-  ): Promise<RestrictionSummaryAPIOutDTO[]> {
-    return this.getCall<RestrictionSummaryAPIOutDTO[]>(
+  ): Promise<InstitutionRestrictionSummaryAPIOutDTO[]> {
+    return this.getCall(
       this.addClientRoot(`restriction/institution/${institutionId}`),
     );
   }
@@ -107,11 +125,16 @@ export class RestrictionApi extends HttpBaseClient {
     );
   }
 
+  /**
+   * Add a new restriction to an Institution.
+   * @param institutionId ID of the institution to add a restriction.
+   * @param payload restriction details.
+   */
   async addInstitutionRestriction(
     institutionId: number,
-    payload: AssignRestrictionAPIInDTO,
+    payload: AssignInstitutionRestrictionAPIInDTO,
   ): Promise<void> {
-    await this.postCall<AssignRestrictionAPIInDTO>(
+    await this.postCall(
       this.addClientRoot(`restriction/institution/${institutionId}`),
       payload,
     );

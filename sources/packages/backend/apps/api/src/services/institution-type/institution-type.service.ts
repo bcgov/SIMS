@@ -22,10 +22,14 @@ export class InstitutionTypeService extends RecordDataModelService<InstitutionTy
 
   /**
    * Get all institution types (e.g. Public, Private, etc.).
-   * @returns all institution types.
+   * @returns all institution types sorted by name.
    */
   async getAllInstitutionTypes(): Promise<Partial<InstitutionType>[]> {
-    return this.repo.find();
+    return this.repo.find({
+      order: {
+        name: "ASC",
+      },
+    });
   }
 
   /**

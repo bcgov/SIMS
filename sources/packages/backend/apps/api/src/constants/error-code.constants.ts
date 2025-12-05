@@ -302,3 +302,20 @@ export const RESTRICTION_IS_DELETED = "RESTRICTION_IS_DELETED";
  */
 export const MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED =
   "MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED";
+
+/**
+ * Institution not found.
+ */
+export const INSTITUTION_NOT_FOUND = "INSTITUTION_NOT_FOUND";
+
+/**
+ * An institution, program, and location association was not found.
+ */
+export const INSTITUTION_PROGRAM_LOCATION_ASSOCIATION_NOT_FOUND =
+  "INSTITUTION_PROGRAM_LOCATION_ASSOCIATION_NOT_FOUND";
+
+/**
+ * An institution restriction is already active.
+ */
+export const INSTITUTION_RESTRICTION_ALREADY_ACTIVE =
+  "INSTITUTION_RESTRICTION_ALREADY_ACTIVE";

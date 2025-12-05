@@ -1,10 +1,24 @@
-import { IsNotEmpty, IsPositive, MaxLength } from "class-validator";
+import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsIn,
+  IsNotEmpty,
+  IsPositive,
+  MaxLength,
+} from "class-validator";
 import {
   RestrictionNotificationType,
   NOTE_DESCRIPTION_MAX_LENGTH,
   RestrictionType,
   RESTRICTION_CATEGORY_MAX_LENGTH,
 } from "@sims/sims-db";
+
+/**
+ * Maximum allowed locations while assigning institution restriction.
+ * Added a non-real-world limit to avoid leaving the API open to
+ * receive a very large payloads.
+ */
+const MAX_ALLOWED_LOCATIONS = 100;
 
 /**
  * Base DTO for restriction.
@@ -26,13 +40,24 @@ export class RestrictionInstitutionSummaryAPIOutDTO extends RestrictionBaseAPIOu
 }
 
 /**
- * DTO class for student/institution restriction summary.
+ * DTO class for student restriction summary.
  */
 export class RestrictionSummaryAPIOutDTO extends RestrictionBaseAPIOutDTO {
   createdAt: Date;
   isActive: boolean;
   resolvedAt?: Date;
   deletedAt?: Date;
+}
+
+/**
+ * Institution restriction summary.
+ */
+export class InstitutionRestrictionSummaryAPIOutDTO extends RestrictionBaseAPIOutDTO {
+  locationName: string;
+  programName: string;
+  createdAt: Date;
+  isActive: boolean;
+  resolvedAt?: Date;
 }
 
 /**
@@ -76,11 +101,30 @@ export class DeleteRestrictionAPIInDTO {
 }
 
 /**
- * DTO to add restriction to a student/institution.
+ * DTO to add restriction to a student.
  */
 export class AssignRestrictionAPIInDTO extends ResolveRestrictionAPIInDTO {
   @IsPositive()
   restrictionId: number;
+}
+
+/**
+ * Add restriction to an institution.
+ */
+export class AssignInstitutionRestrictionAPIInDTO extends AssignRestrictionAPIInDTO {
+  /**
+   * List of location IDs where the restriction is applicable.
+   * A new restriction will be created for each location ID provided.
+   */
+  @ArrayMinSize(1)
+  @ArrayMaxSize(MAX_ALLOWED_LOCATIONS)
+  @IsPositive({ each: true })
+  locationIds: number[];
+  /**
+   * Program ID where the restriction is applicable.
+   */
+  @IsPositive()
+  programId: number;
 }
 
 /**
@@ -105,7 +149,19 @@ export class StudentRestrictionAPIOutDTO {
   type: RestrictionNotificationType;
 }
 
-export class RestrictionCategoryParamAPIInDTO {
+/**
+ * Query string options for filtering the restriction reasons.
+ */
+export class RestrictionReasonsOptionsAPIInDTO {
+  /**
+   * Type of the restriction expected to be filtered.
+   */
+  @IsIn([RestrictionType.Provincial, RestrictionType.Institution])
+  type: RestrictionType.Provincial | RestrictionType.Institution;
+  /**
+   * Category of the restriction expected to be filtered.
+   */
+  @IsNotEmpty()
   @MaxLength(RESTRICTION_CATEGORY_MAX_LENGTH)
-  restrictionCategory: string;
+  category: string;
 }

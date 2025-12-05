@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import {
   RecordDataModelService,
   InstitutionRestriction,
@@ -8,16 +8,30 @@ import {
   Note,
   NoteType,
   Institution,
+  EducationProgram,
+  InstitutionLocation,
+  RestrictionType,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import { RESTRICTION_NOT_ACTIVE } from "@sims/services/constants";
+import { InstitutionService, RestrictionService } from "../../services";
+import {
+  INSTITUTION_NOT_FOUND,
+  INSTITUTION_PROGRAM_LOCATION_ASSOCIATION_NOT_FOUND,
+  INSTITUTION_RESTRICTION_ALREADY_ACTIVE,
+  RESTRICTION_NOT_FOUND,
+} from "../../constants";
 
 /**
  * Service layer for institution Restriction.
  */
 @Injectable()
 export class InstitutionRestrictionService extends RecordDataModelService<InstitutionRestriction> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly institutionService: InstitutionService,
+    private readonly restrictionService: RestrictionService,
+  ) {
     super(dataSource.getRepository(InstitutionRestriction));
   }
 
@@ -34,17 +48,23 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       .select([
         "institutionRestrictions.id",
         "institutionRestrictions.isActive",
-        "institutionRestrictions.updatedAt",
+        "institutionRestrictions.resolvedAt",
         "institutionRestrictions.createdAt",
         "restriction.restrictionType",
         "restriction.restrictionCategory",
         "restriction.restrictionCode",
         "restriction.description",
+        "location.name",
+        "program.name",
       ])
       .innerJoin("institutionRestrictions.restriction", "restriction")
       .innerJoin("institutionRestrictions.institution", "institution")
+      .innerJoin("institutionRestrictions.location", "location")
+      .innerJoin("institutionRestrictions.program", "program")
       .where("institution.id = :institutionId", { institutionId })
       .orderBy("institutionRestrictions.isActive", "DESC")
+      .addOrderBy("location.name", "ASC")
+      .addOrderBy("program.name", "ASC")
       .getMany();
   }
 
@@ -119,6 +139,153 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       } as Note;
     }
     return this.repo.save(institutionRestriction);
+  }
+
+  /**
+   * Creates a new institution restrictions.
+   * @param institutionId ID of the institution to add a restriction.
+   * @param restrictionId ID of the restriction to be assigned.
+   * @param locationIds IDs of the locations to be assigned.
+   * @param programId ID of the program to be assigned.
+   * @param noteDescription Note description for the restriction assignment.
+   * @param auditUserId ID of the user performing the action.
+   * @returns Created institution restrictions.
+   */
+  async addInstitutionRestriction(
+    institutionId: number,
+    restrictionId: number,
+    locationIds: number[],
+    programId: number,
+    noteDescription: string,
+    auditUserId: number,
+  ): Promise<InstitutionRestriction[]> {
+    return this.dataSource.transaction(async (entityManager) => {
+      const uniqueLocationIds = Array.from(new Set(locationIds));
+      await this.validateInstitutionRestrictionCreation(
+        institutionId,
+        restrictionId,
+        uniqueLocationIds,
+        programId,
+        entityManager,
+      );
+      // New note creation.
+      const note = await this.institutionService.createInstitutionNote(
+        institutionId,
+        NoteType.Restriction,
+        noteDescription,
+        auditUserId,
+        entityManager,
+      );
+      // New institution restriction creation.
+      const newRestrictions = locationIds.map((locationId) => {
+        const restriction = new InstitutionRestriction();
+        restriction.institution = { id: institutionId } as Institution;
+        restriction.restriction = { id: restrictionId } as Restriction;
+        restriction.location = { id: locationId } as InstitutionLocation;
+        restriction.program = { id: programId } as EducationProgram;
+        restriction.creator = { id: auditUserId } as User;
+        restriction.restrictionNote = note;
+        restriction.isActive = true;
+        return restriction;
+      });
+      await entityManager
+        .getRepository(InstitutionRestriction)
+        .insert(newRestrictions);
+      return newRestrictions;
+    });
+  }
+
+  /**
+   * Execute validations for institution, location, program
+   * association and restriction existence.
+   * @param institutionId Institution ID.
+   * @param restrictionId Restriction ID.
+   * @param locationIds Location IDs. All locations must be associated with the institution
+   * and all locations must not have the same restriction already active.
+   * @param programId Program ID.
+   * @param entityManager Entity manager for transaction.
+   * @throws CustomNamedError when any of the validations fail.
+   */
+  private async validateInstitutionRestrictionCreation(
+    institutionId: number,
+    restrictionId: number,
+    locationIds: number[],
+    programId: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    // Check institution, location, program association and institution restriction existence.
+    // Execute left joins to allow the validations in a single query and the generation
+    // of more precise error messages.
+    const institutionPromise = entityManager
+      .getRepository(Institution)
+      .createQueryBuilder("institution")
+      .select([
+        "institution.id",
+        "location.id",
+        "program.id",
+        "institutionRestriction.id",
+      ])
+      // Check if the location belongs to the institution.
+      .leftJoin(
+        "institution.locations",
+        "location",
+        "location.id IN (:...locationIds)",
+        { locationIds },
+      )
+      // Check if the program belongs to the institution.
+      .leftJoin("institution.programs", "program", "program.id = :programId", {
+        programId,
+      })
+      // Check if an active restriction already exists for the institution.
+      .leftJoin(
+        "institution.restrictions",
+        "institutionRestriction",
+        "institutionRestriction.isActive = :isActive AND institutionRestriction.location.id IN (:...locationIds) AND institutionRestriction.program.id = :programId AND institutionRestriction.restriction.id = :restrictionId",
+        { isActive: true, locationIds, programId, restrictionId },
+      )
+      .where("institution.id = :institutionId", { institutionId })
+      .getOne();
+    // Check the restriction existence.
+    const restrictionExistsPromise = this.restrictionService.restrictionExists(
+      restrictionId,
+      RestrictionType.Institution,
+      { entityManager },
+    );
+    const [institution, restrictionExists] = await Promise.all([
+      institutionPromise,
+      restrictionExistsPromise,
+    ]);
+    // Execute validations inspecting the results of the above queries.
+    if (!institution) {
+      throw new CustomNamedError(
+        `Institution ID ${institutionId} not found.`,
+        INSTITUTION_NOT_FOUND,
+      );
+    }
+    if (institution.restrictions.length > 0) {
+      throw new CustomNamedError(
+        `The restriction ID ${restrictionId} is already assigned and active to the institution, program ID ${programId}, and at least one of the location ID(s) ${locationIds}.`,
+        INSTITUTION_RESTRICTION_ALREADY_ACTIVE,
+      );
+    }
+    if (institution.locations.length !== locationIds.length) {
+      throw new CustomNamedError(
+        `At least one of the location ID(s) ${locationIds} were not associated with the institution.`,
+        INSTITUTION_PROGRAM_LOCATION_ASSOCIATION_NOT_FOUND,
+      );
+    }
+    if (!institution.programs.length) {
+      throw new CustomNamedError(
+        `The specified program ID ${programId} is not associated with the institution.`,
+        INSTITUTION_PROGRAM_LOCATION_ASSOCIATION_NOT_FOUND,
+      );
+    }
+    if (!restrictionExists) {
+      throw new CustomNamedError(
+        `Institution restriction ID ${restrictionId} not found.`,
+        RESTRICTION_NOT_FOUND,
+      );
+    }
   }
 
   /**

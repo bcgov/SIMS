@@ -3,7 +3,7 @@ import { RestrictionNotificationType, RestrictionType } from "@/types";
 /**
  * Base DTO for restriction
  */
-export interface RestrictionBaseDTO {
+export interface RestrictionBaseAPIOutDTO {
   restrictionId: number;
   restrictionType: RestrictionType;
   restrictionCategory: string;
@@ -12,14 +12,26 @@ export interface RestrictionBaseDTO {
 }
 
 /**
- * DTO interface for student/institution restriction summary.
+ * DTO interface for student restriction summary.
  */
-export interface RestrictionSummaryAPIOutDTO extends RestrictionBaseDTO {
+export interface RestrictionSummaryAPIOutDTO extends RestrictionBaseAPIOutDTO {
   isActive: boolean;
   createdAt: Date;
   resolvedAt?: Date;
   deletedAt?: Date;
   updatedAt?: Date;
+}
+
+/**
+ * Institution restriction summary.
+ */
+export interface InstitutionRestrictionSummaryAPIOutDTO
+  extends RestrictionBaseAPIOutDTO {
+  locationName: string;
+  programName: string;
+  createdAt: Date;
+  isActive: boolean;
+  resolvedAt?: Date;
 }
 
 /**
@@ -54,6 +66,15 @@ export interface DeleteRestrictionAPIInDTO {
  */
 export interface AssignRestrictionAPIInDTO extends ResolveRestrictionAPIInDTO {
   restrictionId: number;
+}
+
+/**
+ * Add restriction to an institution.
+ */
+export interface AssignInstitutionRestrictionAPIInDTO
+  extends AssignRestrictionAPIInDTO {
+  locationIds: number[];
+  programId: number;
 }
 
 /**

@@ -58,7 +58,7 @@ import { computed, ref, defineComponent, watchEffect } from "vue";
 import { ApiProcessError, FormIOForm, StudentAppealRequest } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useSnackBar } from "@/composables";
-import { ApplicationProgramYearAPIOutDTO } from "@/services/http/dto";
+import { AppealApplicationDetailsAPIOutDTO } from "@/services/http/dto";
 import StudentAppealSubmitSharedForm from "@/components/students/StudentAppealSubmitSharedForm.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
@@ -89,7 +89,7 @@ export default defineComponent({
     const processing = ref(false);
     const appealRequestsForms = ref<string[]>([]);
     const initialData = ref({} as StudentRequestSelectedForms);
-    let applicationAppealData: ApplicationProgramYearAPIOutDTO;
+    let applicationAppealData: AppealApplicationDetailsAPIOutDTO;
     const showRequestForAppeal = computed(
       () => appealRequestsForms.value.length === 0,
     );

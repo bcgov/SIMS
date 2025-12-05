@@ -1,5 +1,5 @@
 # "builder" stage, based on Node.js, to build and compile the frontend.
-FROM artifacts.developer.gov.bc.ca/docker-remote/node:24.9.0-alpine3.22 AS builder
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:24.11.0-alpine3.22 AS builder
 
 # Application Port.
 ENV PORT=3030
@@ -22,21 +22,26 @@ RUN sed 's/${PORT}/'"${PORT}"'/g' nginx/default.conf.template > default.conf
 # Building app
 RUN npm run build
 
-FROM artifacts.developer.gov.bc.ca/redhat-access-docker-remote/ubi8/nginx-122 AS deployer
-
-USER default
-
-RUN mkdir -p /opt/app-root/src \
- && mkdir -p /etc/nginx/conf.d
+FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:1.29-alpine AS deployer
 
 # Copy the app built on builder stage to the resulting container.
-COPY --from=builder /app/dist /opt/app-root/src
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Copy the default.conf to /etc/nginx/conf.d
 COPY --from=builder /app/default.conf /etc/nginx/conf.d/default.conf
 
 # Copying the main configuration file.
 COPY --from=builder /app/nginx/nginx.conf /etc/nginx/nginx.conf
+
+# Set proper permissions for OpenShift (arbitrary UIDs with root group)
+RUN chmod -R g+rwx /usr/share/nginx/html \
+    && chmod -R g+rwx /var/cache/nginx \
+    && chmod -R g+rwx /var/run \
+    && chmod -R g+rwx /etc/nginx \
+    && chgrp -R 0 /usr/share/nginx/html /var/cache/nginx /var/run /etc/nginx
+
+# Switch to non-root user
+USER nginx
 
 # Daemon off makes nginx to run on the foreground with only one process.
 # Docker will kill the container if the process dies.

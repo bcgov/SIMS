@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0yotgp9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.37.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0yotgp9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.41.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
   <bpmn:process id="load-assessment-consolidated-data" name="Load Assessment Consolidated Data" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:extensionElements />
@@ -63,6 +63,8 @@
           <zeebe:header key="studentDataNonGovernmentFundingCosts" value="data.nonGovernmentFundingCosts" />
           <zeebe:header key="studentDataParentVoluntaryContributionsCosts" value="data.parentvoluntarycontributionsCosts" />
           <zeebe:header key="studentDataPartTimeAwardTypesToBeConsidered" value="data.partTimeAwardTypesToBeConsidered" />
+          <zeebe:header key="parent1SupportingUserId" value="supportingUsers.Parent1.id" />
+          <zeebe:header key="parent2SupportingUserId" value="supportingUsers.Parent2.id" />
           <zeebe:header key="parent1TotalIncome" value="supportingUsers.Parent1.supportingData.totalIncome" />
           <zeebe:header key="parent2TotalIncome" value="supportingUsers.Parent2.supportingData.totalIncome" />
           <zeebe:header key="parent1CRAReportedIncome" value="supportingUsers.Parent1.craReportedIncome" />
@@ -89,7 +91,7 @@
           <zeebe:header key="studentDataAdditionalTransportPlacement" value="data.additionalTransportPlacement ?? data.transportationApplicationException.additionalTransportPlacement" />
           <zeebe:header key="studentDataCurrentYearIncome" value="data.currentYearIncome ?? data.currentYearIncomeApplicationException.currentYearIncome" />
           <zeebe:header key="studentDataExceptionalExpenseAmount" value="data.exceptionalExpenseAmount ?? data.exceptionalExpensesApplicationException.exceptionalExpenseAmount" />
-          <zeebe:header key="studentDataParents" value="data.parents[].{&#10;  &#34;parentIsAbleToReport&#34;: parentIsAbleToReport,&#10;  &#34;currentYearParentIncome&#34;: currentYearParentIncome ?? currentYearParentIncomeApplicationException.currentYearParentIncome &#10;}" />   
+          <zeebe:header key="studentDataParents" value="data.parents[].{&#10;  &#34;parentIsAbleToReport&#34;: parentIsAbleToReport,&#10;  &#34;currentYearParentIncome&#34;: currentYearParentIncome ?? currentYearParentIncomeApplicationException.currentYearParentIncome &#10;}" />
           <zeebe:header key="studentDataIsYourPartnerAbleToReport" value="data.isYourPartnerAbleToReport" />
           <zeebe:header key="partner1SupportingUserId" value="supportingUsers.Partner1.id" />
           <zeebe:header key="partner1TotalIncome" value="supportingUsers.Partner1.supportingData.totalIncome" />
@@ -123,6 +125,7 @@
           <zeebe:header key="appealsPartnerInformationAndIncomeAppealData" value="appeals.partnerinformationandincomeappeal.submittedData" />
           <zeebe:header key="appealsStudentDependantsAppealData" value="appeals.studentdependantsappeal.submittedData.dependants[].{&#10;  &#34;dateOfBirth&#34;: dateOfBirth,&#10;  &#34;declaredOnTaxes&#34;: declaredOnTaxes,&#10;  &#34;attendingPostSecondarySchool&#34;: attendingPostSecondarySchool&#10;}" />
           <zeebe:header key="appealsStudentHasDependentsAppealData" value="appeals.studentdependantsappeal.submittedData.hasDependents" />
+          <zeebe:header key="appealsStepParentWaiverAppealData" value="appeals.stepparentwaiverappeal.submittedData.{&#34;selectedParent&#34;: selectedParent}" />
           <zeebe:header key="appealsRoomAndBoardCostsAppealData" value="appeals.roomandboardcostsappeal.submittedData" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>

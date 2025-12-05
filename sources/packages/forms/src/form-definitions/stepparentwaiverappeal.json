@@ -1,0 +1,197 @@
+{
+    "title": "Appeals - Step-parent Waiver",
+    "name": "stepParentWaiverAppeal",
+    "path": "stepparentwaiverappeal",
+    "type": "form",
+    "display": "form",
+    "tags": [
+        "common"
+    ],
+    "components": [
+        {
+            "input": true,
+            "tableView": true,
+            "key": "maxUploadedFiles",
+            "label": "maxUploadedFiles",
+            "persistent": false,
+            "type": "hidden",
+            "lockKey": true,
+            "calculateValue": "value = 25;",
+            "calculateServer": true
+        },
+        {
+            "label": "Parents",
+            "key": "parents",
+            "type": "hidden",
+            "input": true,
+            "tableView": false
+        },
+        {
+            "label": "HTML",
+            "tag": "h3",
+            "className": "category-header-medium primary-color",
+            "attrs": [
+                {
+                    "attr": "",
+                    "value": ""
+                }
+            ],
+            "content": "Step-parent waiver appeal",
+            "refreshOnChange": false,
+            "key": "header",
+            "type": "htmlelement",
+            "input": false,
+            "tableView": false,
+            "hideLabel": true
+        },
+        {
+            "label": "HTML",
+            "tag": "p",
+            "attrs": [
+                {
+                    "attr": "",
+                    "value": ""
+                }
+            ],
+            "content": "Important: You can appeal to waive your step-parent’s fixed contribution if your parent has had a recent (within the past 5 years) marriage or common-law relationship with a step-parent, where the step-parent has not assumed financial responsibility for you and does not claim you as a dependent on their taxes.",
+            "refreshOnChange": false,
+            "key": "subHeader",
+            "type": "htmlelement",
+            "input": false,
+            "tableView": false,
+            "hideLabel": true,
+            "isNew": false
+        },
+        {
+            "label": "Please indicate which parent should be waived from the application",
+            "optionsLabelPosition": "right",
+            "inline": false,
+            "tableView": true,
+            "validate": {
+                "required": true,
+                "custom": "let validationErrorMessage;\n\n// Get allowed values from injected property 'parents'.\nconst allowedValues = !!data.parents\n    ? data.parents.map((parent) => parent.id)\n    : [];\n// Validate and populate the validation error message.\nif (allowedValues.length !== 2) {\n  validationErrorMessage = \"Invalid number of parents in the application.\";\n} else if (!allowedValues.includes(input)) {\n  validationErrorMessage = \"Invalid value for the selected parent.\";\n}\n\n// When validation error message is missing it is considered as successful validation.\nvalid = validationErrorMessage || true;\n  "
+            },
+            "validateWhenHidden": false,
+            "key": "selectedParent",
+            "logic": [
+                {
+                    "name": "Populate parent radio options",
+                    "trigger": {
+                        "type": "javascript",
+                        "javascript": "result = !!data.parents;"
+                    },
+                    "actions": [
+                        {
+                            "name": "Populate parent dropdown",
+                            "type": "customAction",
+                            "customAction": "component.values = data.parents.map((parent) => ({\r\n  value: parent.id,\r\n  label: parent.fullName,\r\n}));"
+                        }
+                    ]
+                }
+            ],
+            "type": "radio",
+            "input": true,
+            "lockKey": true
+        },
+        {
+            "title": "Upload supporting documents",
+            "collapsible": false,
+            "hideLabel": true,
+            "key": "panel",
+            "type": "panel",
+            "label": "Panel",
+            "input": false,
+            "tableView": false,
+            "components": [
+                {
+                    "label": "HTML",
+                    "tag": "h3",
+                    "className": "category-header-medium primary-color",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "Upload supporting documents",
+                    "refreshOnChange": false,
+                    "key": "supportingDocumentSectionHeader",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "HTML",
+                    "tag": "h4",
+                    "className": "category-header-medium-small",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "Provide all of the following documents:",
+                    "refreshOnChange": false,
+                    "key": "html4",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "HTML",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "<ul>\n  <li>A letter which explains the circumstances that meet the appeal criteria (see above).</li>\n  <li>Marriage certificate or CRA documentation showing start date of the common-law relationship.</li>\n  <li>All relevant supporting documentation to support circumstances outlined in letter. Separation agreement, divorce agreement, child support arrangements, pre-nuptial agreements or any other supporting documentation.</li>\n</ul>",
+                    "refreshOnChange": false,
+                    "customClass": "align-bullets",
+                    "key": "html",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "Upload supporting documents",
+                    "hideLabel": true,
+                    "tableView": false,
+                    "storage": "url",
+                    "dir": "Step-parent waiver appeal - Supporting Documents",
+                    "webcam": false,
+                    "capture": false,
+                    "fileTypes": [
+                        {
+                            "label": "",
+                            "value": ""
+                        }
+                    ],
+                    "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
+                    "fileMaxSize": "15MB",
+                    "multiple": true,
+                    "validate": {
+                        "required": true,
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
+                    },
+                    "validateWhenHidden": false,
+                    "key": "stepParentWaiverSupportingDocuments",
+                    "type": "file",
+                    "url": "student/files",
+                    "input": true
+                },
+                {
+                    "label": "Content",
+                    "input": false,
+                    "className": "file-upload-info-container",
+                    "content": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n<p>15MB file limit each</p>",
+                    "type": "htmlelement",
+                    "hideLabel": true,
+                    "tableView": false,
+                    "key": "content"
+                }
+            ]
+        }
+    ]
+}

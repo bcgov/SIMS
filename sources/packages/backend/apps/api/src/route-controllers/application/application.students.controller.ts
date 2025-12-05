@@ -32,7 +32,6 @@ import {
   SaveApplicationAPIInDTO,
   ApplicationDataAPIOutDTO,
   ApplicationWithProgramYearAPIOutDTO,
-  ApplicationProgramYearAPIOutDTO,
   InProgressApplicationDetailsAPIOutDTO,
   ApplicationProgressDetailsAPIOutDTO,
   EnrolmentApplicationDetailsAPIOutDTO,
@@ -40,6 +39,7 @@ import {
   ApplicationWarningsAPIOutDTO,
   ApplicationOverallDetailsAPIOutDTO,
   CreateApplicationAPIInDTO,
+  AppealApplicationDetailsAPIOutDTO,
 } from "./models/application.dto";
 import {
   AllowAuthorizedParty,
@@ -49,7 +49,10 @@ import {
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { STUDY_DATE_OVERLAP_ERROR } from "../../utilities";
+import {
+  getSupportingUserParents,
+  STUDY_DATE_OVERLAP_ERROR,
+} from "../../utilities";
 import {
   INSTITUTION_LOCATION_NOT_VALID,
   OFFERING_NOT_VALID,
@@ -577,7 +580,7 @@ export class ApplicationStudentsController extends BaseController {
   async getApplicationToRequestAppeal(
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: IUserToken,
-  ): Promise<ApplicationProgramYearAPIOutDTO> {
+  ): Promise<AppealApplicationDetailsAPIOutDTO> {
     const application =
       await this.applicationService.getApplicationToRequestAppeal(
         applicationId,
@@ -592,6 +595,9 @@ export class ApplicationStudentsController extends BaseController {
       id: application.id,
       applicationNumber: application.applicationNumber,
       programYear: application.programYear.programYear,
+      supportingUserParents: getSupportingUserParents(
+        application.supportingUsers,
+      ),
     };
   }
 

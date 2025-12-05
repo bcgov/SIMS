@@ -39,6 +39,7 @@ import {
 } from "../../services/education-program/education-program.service.models";
 import { InstitutionService } from "../../services/institution/institution.service";
 import { InstitutionUserTypes } from "../../auth";
+import { OptionItemAPIOutDTO } from "apps/api/src/route-controllers/models/common.dto";
 
 @Injectable()
 export class EducationProgramControllerService {
@@ -319,7 +320,7 @@ export class EducationProgramControllerService {
    */
   checkInstitutionAuthorization(
     institutionUserAuthorizations: InstitutionUserAuthorizations,
-  ) {
+  ): void {
     const isAuthorized = institutionUserAuthorizations.hasUserTypeAtAnyLocation(
       InstitutionUserTypes.user,
     );
@@ -328,5 +329,32 @@ export class EducationProgramControllerService {
         "You are not authorized to create or modify a program.",
       );
     }
+  }
+
+  /**
+   * Get programs for a particular institution.
+   * @param institutionId ID of the institution.
+   * @param options Method options:
+   * - `isIncludeInActiveProgram`: If isIncludeInActiveProgram, then both active
+   * and not active education program is considered.
+   * @returns Programs under the specified institution.
+   */
+  async getProgramsListForInstitutions(
+    institutionId: number,
+    options?: { isIncludeInActiveProgram?: boolean },
+  ): Promise<OptionItemAPIOutDTO[]> {
+    const institutionExists =
+      await this.institutionService.institutionExists(institutionId);
+    if (!institutionExists) {
+      throw new NotFoundException(`Institution ID ${institutionId} not found.`);
+    }
+    const programs = await this.programService.getPrograms(
+      institutionId,
+      options,
+    );
+    return programs.map((program) => ({
+      id: program.id,
+      description: program.name,
+    }));
   }
 }

@@ -94,7 +94,6 @@
     <add-student-restriction-modal
       v-if="canAddRestrictions"
       ref="addRestriction"
-      :entity-type="RestrictionEntityType.Student"
       :allowed-role="Role.StudentAddRestriction"
     />
     <user-note-confirm-modal
@@ -187,7 +186,7 @@ export default defineComponent({
       {} as ModalDialog<RestrictionDetailAPIOutDTO | boolean>,
     );
     const addRestriction = ref(
-      {} as ModalDialog<AssignRestrictionAPIInDTO | boolean>,
+      {} as ModalDialog<AssignRestrictionAPIInDTO | false>,
     );
     const deleteRestriction = ref({} as ModalDialog<UserNoteModal<number>>);
     const studentRestriction = ref();
@@ -242,24 +241,32 @@ export default defineComponent({
     };
 
     const addStudentRestriction = async () => {
-      const addStudentRestrictionData = await addRestriction.value.showModal();
-      if (addStudentRestrictionData) {
-        await createNewRestriction(
-          addStudentRestrictionData as AssignRestrictionAPIInDTO,
-        );
-      }
+      await addRestriction.value.showModal(undefined, createNewRestriction);
     };
 
-    const createNewRestriction = async (data: AssignRestrictionAPIInDTO) => {
+    /**
+     * Creates the new restriction if required.
+     * @param modalResult Restriction data to be created, otherwise false.
+     * @returns True if the modal should be closed, otherwise false.
+     */
+    const createNewRestriction = async (
+      modalResult: AssignRestrictionAPIInDTO | false,
+    ): Promise<boolean> => {
+      if (modalResult === false) {
+        // Modal was cancelled and should be closed.
+        return true;
+      }
       try {
         await RestrictionService.shared.addStudentRestriction(
           props.studentId,
-          data,
+          modalResult,
         );
         await loadStudentRestrictions();
         snackBar.success("The restriction has been added to student.");
+        return true;
       } catch {
         snackBar.error("Unexpected error while adding the restriction.");
+        return false;
       }
     };
 
