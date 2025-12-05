@@ -7,6 +7,7 @@ export NAMESPACE := $(or $(NAMESPACE), $$NS)
 export APP_NAME := $(or $(PROJECT_NAME), sims)
 export TEMPLATE_FILE_NAME := $(or $(TEMPLATE_FILE_NAME), $$FILE)
 export BUILD_REF := $(or $(BUILD_REF), $(GIT_LOCAL_BRANCH))
+export DEV_NAMESPACE := $(or $(DEV_NAMESPACE), 0c27fb-dev)
 export BUILD_NAMESPACE := $(or $(BUILD_NAMESPACE), 0c27fb-tools)
 export DOMAIN := $(or $(DOMAIN), sims.studentaidbc.ca)
 export DOMAIN_PREFIX := $(or $(DOMAIN_PREFIX),)
@@ -546,6 +547,42 @@ deploy-web:
 	test -n "$(WEB_REPLICAS)"
 	@echo "+\n++ Deploying WEB with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/web-deploy.yml \
+	-p NAME=$(WEB) \
+	-p PORT=$(WEB_PORT) \
+	-p HOST_NAME=$(HOST) \
+	-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
+	-p IMAGE_STREAM_TAG="$(WEB_BUILD_REF):$(BUILD_REF)"  \
+	-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
+	-p TLS_KEY=$(TLS_KEY) \
+	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
+	-p CPU_REQUEST=$(WEB_CPU_REQUEST) \
+	-p MEMORY_REQUEST=$(WEB_MEMORY_REQUEST) \
+	-p MEMORY_LIMIT=$(WEB_MEMORY_LIMIT) \
+	-p REPLICAS=$(WEB_REPLICAS) \
+	| oc -n $(NAMESPACE) apply -f -
+	$(call rollout_and_wait,deployment/$(WEB))
+
+deploy-web-dev:
+	export PROJECT_NAME := sims
+	export HOST_PREFIX := dev-
+	export DOMAIN_PREFIX := dev.
+
+	test -n "$(PROJECT_NAME)"
+	test -n "$(DEV_NAMESPACE)"
+	test -n "$(HOST_PREFIX)"
+	test -n "$(DOMAIN_PREFIX)"
+	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(WEB)"
+	test -n "$(WEB_BUILD_REF)"
+	test -n "$(BUILD_REF)"
+	test -n "$(WEB_PORT)"
+	test -n "$(WEB_CPU_REQUEST)"
+	test -n "$(WEB_MEMORY_REQUEST)"
+	test -n "$(WEB_MEMORY_LIMIT)"
+	test -n "$(WEB_REPLICAS)"
+	@echo "+\n++ Make sure you have the route certificates configured in your environment (TLS_CERTIFICATE, TLS_CA_CERTIFICATE, TLS_KEY)\n+"
+	@echo "+\n++ Deploying WEB with tag: $(BUILD_REF)\n+"
+	@oc -n $(DEV_NAMESPACE) process -f openshift/web-deploy.yml \
 	-p NAME=$(WEB) \
 	-p PORT=$(WEB_PORT) \
 	-p HOST_NAME=$(HOST) \
