@@ -22,13 +22,15 @@ export class StudentAssessmentService {
   ) {}
 
   /**
-   * Get the pending current assessment for the institutions which have integration true for the particular date.
-   * @param generatedDate date in which the assessment for particular institution is generated.
-   * @returns pending application and its current assessment for the institution location.
+   * Get application details for current assessment that belongs to the integration enabled institutions
+   * between the given period.
+   * @param modifiedSince date since the application or student data was modified.
+   * @param modifiedUntil date until the application or student data was modified.
+   * @returns application details for current assessment.
    */
   async getPendingApplicationsCurrentAssessment(
-    startDate: Date,
-    endDate: Date,
+    modifiedSince: Date,
+    modifiedUntil: Date,
   ): Promise<Application[]> {
     return this.applicationRepo
       .createQueryBuilder("application")
@@ -139,25 +141,27 @@ export class StudentAssessmentService {
       .andWhere(
         new Brackets((qb) => {
           qb.where(
-            "currentAssessment.assessmentDate >= :startDate AND currentAssessment.assessmentDate < :endDate",
+            "currentAssessment.assessmentDate >= :modifiedSince AND currentAssessment.assessmentDate < :modifiedUntil",
           )
             .orWhere(
-              "disbursementSchedule.updatedAt >= :startDate AND disbursementSchedule.updatedAt < :endDate",
+              "disbursementSchedule.updatedAt >= :modifiedSince AND disbursementSchedule.updatedAt < :modifiedUntil",
             )
             .orWhere(
-              "disbursementFeedbackError.updatedAt >= :startDate AND disbursementFeedbackError.updatedAt < :endDate",
+              "disbursementFeedbackError.updatedAt >= :modifiedSince AND disbursementFeedbackError.updatedAt < :modifiedUntil",
             )
             .orWhere(
-              "student.updatedAt >= :startDate AND student.updatedAt < :endDate",
+              "student.updatedAt >= :modifiedSince AND student.updatedAt < :modifiedUntil",
             );
         }),
       )
       .setParameters({
         offeringIntensityFullTime: OfferingIntensity.fullTime,
         applicationStatusEdited: ApplicationStatus.Edited,
-        startDate,
-        endDate,
+        modifiedSince,
+        modifiedUntil,
       })
+      .orderBy("currentAssessment.assessmentDate", "ASC")
+      .addOrderBy("disbursementSchedule.disbursementDate", "ASC")
       .getMany();
   }
 
