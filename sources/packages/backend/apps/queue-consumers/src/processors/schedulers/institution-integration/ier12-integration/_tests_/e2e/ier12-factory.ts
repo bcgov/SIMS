@@ -178,10 +178,17 @@ async function saveIER12StudentFromTestInput(
   const sinValidation = createFakeSINValidation({ student: fakeStudent });
   sinValidation.sin = testInputStudent.sin;
   // Student
-  return saveFakeStudent(db.dataSource, {
+  const student = await saveFakeStudent(db.dataSource, {
     student: fakeStudent,
     sinValidation,
   });
+  // Retain the updatedAt(which will affected by persisting the record in the DB) from the test input if provided.
+  if (testInputStudent.updatedAt) {
+    await db.student.update(student.id, {
+      updatedAt: testInputStudent.updatedAt,
+    });
+  }
+  return student;
 }
 
 /**
