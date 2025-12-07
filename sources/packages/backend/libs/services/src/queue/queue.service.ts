@@ -39,7 +39,7 @@ export class QueueService {
    * @param queueName queue name
    * @returns queue configuration.
    */
-  private async queueConfigurationDetails(
+  async queueConfigurationDetails(
     queueName: QueueNames,
   ): Promise<QueueConfiguration> {
     const queues = await this.getAllQueueConfigurations();

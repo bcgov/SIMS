@@ -35,4 +35,6 @@ export enum QueueNames {
   StudentApplicationNotifications = "student-application-notifications",
   SIMSToSFASIntegration = "sims-to-sfas-integration",
   ECertCancellationResponseIntegration = "e-cert-cancellation-response-integration",
+  T4AUploadEnqueuer = "t4a-upload-enqueuer",
+  T4AUpload = "t4a-upload",
 }

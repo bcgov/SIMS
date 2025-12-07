@@ -1,6 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource, EntityManager, Repository } from "typeorm";
-import { RecordDataModelService, SINValidation, User } from "@sims/sims-db";
+import {
+  RecordDataModelService,
+  SINValidation,
+  Student,
+  User,
+} from "@sims/sims-db";
 import { SINValidationFileResponse } from "@sims/integrations/esdc-integration";
 import {
   SINValidationRecord,
@@ -268,5 +273,20 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       auditUserId,
       transactionalEntityManager,
     );
+  }
+
+  async getStudentByValidSIN(sin: string): Promise<Student | null> {
+    const sinValidationRecord = await this.repo.findOne({
+      select: {
+        id: true,
+        student: { id: true },
+      },
+      relations: { student: true },
+      where: {
+        sin,
+        isValidSIN: true,
+      },
+    });
+    return sinValidationRecord ? sinValidationRecord.student : null;
   }
 }

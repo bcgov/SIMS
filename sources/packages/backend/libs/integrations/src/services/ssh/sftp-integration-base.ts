@@ -195,6 +195,60 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     }
   }
 
+  async downloadFile(
+    remoteFilePath: string,
+    options?: { client?: Client },
+  ): Promise<Buffer | false> {
+    this.logger.log(`Downloading file ${remoteFilePath}.`);
+    let client: Client;
+    try {
+      if (!options?.client) {
+        client = await this.getClient();
+      } else {
+        client = options.client;
+      }
+      const fileContent = await client.get(remoteFilePath);
+      return fileContent as Buffer;
+    } catch (error) {
+      this.logger.error(`Error downloading file ${remoteFilePath}`, error);
+      throw error;
+    } finally {
+      if (!options?.client) {
+        await this.ensureClientClosed(
+          `downloading file ${remoteFilePath}`,
+          client,
+        );
+      }
+    }
+  }
+
+  async renameFileA(
+    remoteFilePath: string,
+    newRemoteFilePath: string,
+    options?: { client?: Client },
+  ): Promise<void> {
+    this.logger.log(`Downloading file ${remoteFilePath}.`);
+    let client: Client;
+    try {
+      if (!options?.client) {
+        client = await this.getClient();
+      } else {
+        client = options.client;
+      }
+      await client.posixRename(remoteFilePath, newRemoteFilePath);
+    } catch (error) {
+      this.logger.error(`Error downloading file ${remoteFilePath}`, error);
+      throw error;
+    } finally {
+      if (!options?.client) {
+        await this.ensureClientClosed(
+          `downloading file ${remoteFilePath}`,
+          client,
+        );
+      }
+    }
+  }
+
   /**
    * When overridden in a derived class, transform the text lines
    * in parsed objects specific to the integration process.
@@ -254,7 +308,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * Generates a new connected SFTP client ready to be used.
    * @returns client
    */
-  public async getClient(): Promise<Client> {
+  async getClient(): Promise<Client> {
     return this.sshService.createClient(this.sftpConfig);
   }
 
@@ -264,10 +318,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * @param context string to log with the context of the action.
    * @param client SFTP client to be finalized.
    */
-  private async ensureClientClosed(
-    context: string,
-    client?: Client,
-  ): Promise<void> {
+  async ensureClientClosed(context: string, client?: Client): Promise<void> {
     if (client) {
       this.logger.log(`Finalizing SFTP client. Context: ${context}.`);
       await SshService.closeQuietly(client);
