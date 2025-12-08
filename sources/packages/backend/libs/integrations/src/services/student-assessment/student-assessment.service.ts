@@ -141,16 +141,36 @@ export class StudentAssessmentService {
       .andWhere(
         new Brackets((qb) => {
           qb.where(
-            "currentAssessment.assessmentDate >= :modifiedSince AND currentAssessment.assessmentDate < :modifiedUntil",
+            new Brackets((qbInner) => {
+              qbInner
+                .where("currentAssessment.assessmentDate >= :modifiedSince")
+                .andWhere("currentAssessment.assessmentDate < :modifiedUntil");
+            }),
           )
             .orWhere(
-              "disbursementSchedule.updatedAt >= :modifiedSince AND disbursementSchedule.updatedAt < :modifiedUntil",
+              new Brackets((qbInner) => {
+                qbInner
+                  .where("disbursementSchedule.updatedAt >= :modifiedSince")
+                  .andWhere("disbursementSchedule.updatedAt < :modifiedUntil");
+              }),
             )
             .orWhere(
-              "disbursementFeedbackError.updatedAt >= :modifiedSince AND disbursementFeedbackError.updatedAt < :modifiedUntil",
+              new Brackets((qbInner) => {
+                qbInner
+                  .where(
+                    "disbursementFeedbackError.updatedAt >= :modifiedSince",
+                  )
+                  .andWhere(
+                    "disbursementFeedbackError.updatedAt < :modifiedUntil",
+                  );
+              }),
             )
             .orWhere(
-              "student.updatedAt >= :modifiedSince AND student.updatedAt < :modifiedUntil",
+              new Brackets((qbInner) => {
+                qbInner
+                  .where("student.updatedAt >= :modifiedSince")
+                  .andWhere("student.updatedAt < :modifiedUntil");
+              }),
             );
         }),
       )

@@ -74,13 +74,13 @@ export class IER12ProcessingService {
     processSummary.info(
       "Retrieving application current assessment details for IER 12.",
     );
-    // By default, the processing start date is the previous day from today.
+    // By default, the generation start date is the previous day from today.
     const modifiedSinceDate = generatedDate
       ? new Date(generatedDate)
       : addDays(-1, getISODateOnlyString(new Date()));
     const modifiedUntilDate = addDays(1, modifiedSinceDate);
     processSummary.info(
-      `Retrieving data created or modified between ${modifiedSinceDate} and ${modifiedUntilDate}.`,
+      `Retrieving data related to IER 12 created or modified between ${modifiedSinceDate} and ${modifiedUntilDate}.`,
     );
     const pendingApplications =
       await this.studentAssessmentService.getPendingApplicationsCurrentAssessment(
