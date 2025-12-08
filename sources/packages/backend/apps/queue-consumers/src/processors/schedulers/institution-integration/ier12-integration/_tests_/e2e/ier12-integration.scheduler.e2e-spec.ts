@@ -74,6 +74,10 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
    */
   const referenceSubmissionDate = new Date("2000-06-01");
   /**
+   * An old date to fall outside the default IER file generation range matching the shared program year prefix.
+   */
+  const dateOutsideDefaultIERFileGenerationRange = new Date("2000-08-01");
+  /**
    * Default application number.
    */
   const defaultApplicationNumber = "9900000001";
@@ -146,8 +150,6 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       const defaultIERFileGenerationStartDate = new Date(
         dateUtils.getISODateOnlyString(dateUtils.addDays(-1)),
       );
-      //An old date to fall outside the default IER file generation range matching the shared program year prefix.
-      const dateOutsideDefaultIERFileGenerationRange = new Date("2000-08-01");
       const testInputData = {
         student: {
           ...JOHN_DOE_FROM_CANADA,
@@ -245,86 +247,98 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     },
   );
 
-  it("Should generate an IER12 file with one record for a married student (mononymous) with dependents when there are applications still in assessment, and one pending disbursement.", async () => {
-    // Arrange
-    const testInputData = {
-      student: JANE_MONONYMOUS_FROM_OTHER_COUNTRY,
-      application: {
-        applicationNumber: defaultApplicationNumber,
-        studentNumber: "12345679",
-        relationshipStatus: RelationshipStatus.Married,
-        applicationStatus: ApplicationStatus.Assessment,
-        applicationStatusUpdatedOn: undefined,
-      },
-      assessment: {
-        triggerType: AssessmentTriggerType.OriginalAssessment,
-        assessmentDate: undefined,
-        workflowData: WORKFLOW_DATA_MARRIED_WITH_DEPENDENTS,
-        assessmentData: ASSESSMENT_DATA_MARRIED,
-        disbursementSchedules: [
-          {
-            coeStatus: COEStatus.completed,
-            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
-            disbursementDate: undefined,
-            updatedAt: undefined,
-            dateSent: undefined,
-            disbursementValues: AWARDS_SINGLE_DISBURSEMENT,
-          },
-        ],
-      },
-      educationProgram:
-        PROGRAM_UNDERGRADUATE_CERTIFICATE_WITHOUT_INSTITUTION_PROGRAM_CODE,
-      offering: OFFERING_FULL_TIME,
-    };
-    const application = await saveIER12TestInputData(
-      db,
-      testInputData,
-      { institutionLocation: locationB },
-      {
-        programYearPrefix: sharedProgramYearPrefix,
-        submittedDate: referenceSubmissionDate,
-      },
-    );
+  it(
+    "Should generate an IER12 file with one record for a married student (mononymous) with dependents due to the update in student user data" +
+      " when there are applications still in assessment, and one pending disbursement.",
+    async () => {
+      // Arrange
+      const defaultIERFileGenerationStartDate = new Date(
+        dateUtils.getISODateOnlyString(dateUtils.addDays(-1)),
+      );
+      const testInputData = {
+        student: {
+          ...JANE_MONONYMOUS_FROM_OTHER_COUNTRY,
+          updatedAt: dateOutsideDefaultIERFileGenerationRange,
+          userUpdatedAt: dateUtils.addHours(
+            1,
+            defaultIERFileGenerationStartDate,
+          ),
+        },
+        application: {
+          applicationNumber: defaultApplicationNumber,
+          studentNumber: "12345679",
+          relationshipStatus: RelationshipStatus.Married,
+          applicationStatus: ApplicationStatus.Assessment,
+          applicationStatusUpdatedOn: undefined,
+        },
+        assessment: {
+          triggerType: AssessmentTriggerType.OriginalAssessment,
+          assessmentDate: dateOutsideDefaultIERFileGenerationRange,
+          workflowData: WORKFLOW_DATA_MARRIED_WITH_DEPENDENTS,
+          assessmentData: ASSESSMENT_DATA_MARRIED,
+          disbursementSchedules: [
+            {
+              coeStatus: COEStatus.completed,
+              disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+              disbursementDate: undefined,
+              updatedAt: dateOutsideDefaultIERFileGenerationRange,
+              dateSent: undefined,
+              disbursementValues: AWARDS_SINGLE_DISBURSEMENT,
+            },
+          ],
+        },
+        educationProgram:
+          PROGRAM_UNDERGRADUATE_CERTIFICATE_WITHOUT_INSTITUTION_PROGRAM_CODE,
+        offering: OFFERING_FULL_TIME,
+      };
+      const application = await saveIER12TestInputData(
+        db,
+        testInputData,
+        { institutionLocation: locationB },
+        {
+          programYearPrefix: sharedProgramYearPrefix,
+          submittedDate: referenceSubmissionDate,
+        },
+      );
 
-    // Queued job.
-    const mockedJob = createIER12SchedulerJobMock(
-      application.currentAssessment.assessmentDate,
-    );
+      // Queued job.
+      const mockedJob = createIER12SchedulerJobMock();
 
-    // Act
-    const ier12Results = await processor.processQueue(mockedJob.job);
+      // Act
+      const ier12Results = await processor.processQueue(mockedJob.job);
 
-    // Assert
-    // Assert process result.
-    expect(ier12Results).toBeDefined();
-    // File timestamp.
-    const [timestampResult] = getFileNameAsCurrentTimestampMock.mock.results;
-    expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
-    expect(ier12Results).toStrictEqual([
-      getSuccessSummaryMessages(timestampResult.value, {
-        institutionCode: locationB.institutionCode,
-      }),
-    ]);
-    // Assert file output.
-    const uploadedFile = getUploadedFile(sftpClientMock);
-    expect(uploadedFile.fileLines?.length).toBe(1);
-    const [line1] = uploadedFile.fileLines;
-    const [firstDisbursement] =
-      application.currentAssessment.disbursementSchedules;
-    const assessmentId = numberToText(application.currentAssessment.id);
-    const currentOfferingId = numberToText(
-      application.currentAssessment.offering.id,
-    );
-    const parentOfferingId = numberToText(
-      application.currentAssessment.offering.parentOffering.id,
-    );
-    // Line 1 validations.
-    const firstDisbursementId = numberToText(firstDisbursement.id);
-    expect(line1.length).toBe(IER_RECORD_EXPECTED_LENGTH);
-    expect(line1).toBe(
-      `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}12345679    242963189Jane With Really Long Mon               19980113B   MA  NONENSome Foreign Street Addre                         New York                     SOME POSTAL CODEProgram name                                                               undergraduateCertificate 0001    8   0512123401234ADR1                         6${currentOfferingId}${parentOfferingId}                              2000081620001010000033330000004444000000555500000066660019100F2000060120002001ASMT20000601000010000000006000000004800000NNNNN            20000602        000002850000000000000000400000006002001003000003005NNY000000000000000000000000000000000000000000000000000000000000NY0000000000000144430000000000000000000000000000000000007777000000150056000000000000000000000000000000000000000000003000000000050000000065430000001700000005500000N0000000000000000000000000000000000000000000000000000000000000000000000ASMT20000601        Completed Pending   20000816                        CSLF0000100000BCSL0000600000CSGP0000200000CSGD0000300000CSGF0000400000CSGT0000500000BCAG0000700000SBSD0000900000BGPD0000800000    0000000000`,
-    );
-  });
+      // Assert
+      // Assert process result.
+      expect(ier12Results).toBeDefined();
+      // File timestamp.
+      const [timestampResult] = getFileNameAsCurrentTimestampMock.mock.results;
+      expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
+      expect(ier12Results).toStrictEqual([
+        getSuccessSummaryMessages(timestampResult.value, {
+          institutionCode: locationB.institutionCode,
+        }),
+      ]);
+      // Assert file output.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      expect(uploadedFile.fileLines?.length).toBe(1);
+      const [line1] = uploadedFile.fileLines;
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const assessmentId = numberToText(application.currentAssessment.id);
+      const currentOfferingId = numberToText(
+        application.currentAssessment.offering.id,
+      );
+      const parentOfferingId = numberToText(
+        application.currentAssessment.offering.parentOffering.id,
+      );
+      // Line 1 validations.
+      const firstDisbursementId = numberToText(firstDisbursement.id);
+      expect(line1.length).toBe(IER_RECORD_EXPECTED_LENGTH);
+      expect(line1).toBe(
+        `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}12345679    242963189Jane With Really Long Mon               19980113B   MA  NONENSome Foreign Street Addre                         New York                     SOME POSTAL CODEProgram name                                                               undergraduateCertificate 0001    8   0512123401234ADR1                         6${currentOfferingId}${parentOfferingId}                              2000081620001010000033330000004444000000555500000066660019100F2000060120002001ASMT20000601000010000000006000000004800000NNNNN            20000801        000002850000000000000000400000006002001003000003005NNY000000000000000000000000000000000000000000000000000000000000NY0000000000000144430000000000000000000000000000000000007777000000150056000000000000000000000000000000000000000000003000000000050000000065430000001700000005500000N0000000000000000000000000000000000000000000000000000000000000000000000ASMT20000801        Completed Pending   20000816                        CSLF0000100000BCSL0000600000CSGP0000200000CSGD0000300000CSGF0000400000CSGT0000500000BCAG0000700000SBSD0000900000BGPD0000800000    0000000000`,
+      );
+    },
+  );
 
   it(
     "Should generate an IER12 file with one record for a married student with dependents when there is an application still in assessment requested with PD awards, one pending disbursement" +

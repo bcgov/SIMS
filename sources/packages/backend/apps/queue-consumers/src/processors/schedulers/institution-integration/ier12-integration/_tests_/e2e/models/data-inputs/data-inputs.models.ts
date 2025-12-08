@@ -32,6 +32,7 @@ export interface IER12Student {
   addressInfo: IERAddressInfo;
   disabilityStatus: DisabilityStatus;
   updatedAt?: Date;
+  userUpdatedAt?: Date;
 }
 
 /**

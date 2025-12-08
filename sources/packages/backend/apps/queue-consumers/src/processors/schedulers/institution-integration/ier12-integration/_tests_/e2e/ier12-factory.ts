@@ -182,11 +182,16 @@ async function saveIER12StudentFromTestInput(
     student: fakeStudent,
     sinValidation,
   });
-  // Ensure that if an updatedAt is provided in the test input, it is the last update otherwise
-  // it would be overridden by the persistence operation.
+  // Ensure that if 'updatedAt' is provided in the test input, it is the last update otherwise
+  // it will be overridden by the persistence operation.
   if (testInputStudent.updatedAt) {
     await db.student.update(student.id, {
       updatedAt: testInputStudent.updatedAt,
+    });
+  }
+  if (testInputStudent.userUpdatedAt) {
+    await db.user.update(student.user.id, {
+      updatedAt: testInputStudent.userUpdatedAt,
     });
   }
   return student;

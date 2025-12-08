@@ -24,8 +24,8 @@ export class StudentAssessmentService {
   /**
    * Get application details for current assessment that belongs to the integration enabled institutions
    * between the given period.
-   * @param modifiedSince date since the application or student data was modified.
-   * @param modifiedUntil date until the application or student data was modified.
+   * @param modifiedSince Inclusive date since the application or student data was modified.
+   * @param modifiedUntil Exclusive date until the application or student data was modified.
    * @returns application details for current assessment.
    */
   async getPendingApplicationsCurrentAssessment(
@@ -48,9 +48,9 @@ export class StudentAssessmentService {
         "student.disabilityStatus",
         "sinValidation.id",
         "sinValidation.sin",
-        "studentUser.id",
-        "studentUser.lastName",
-        "studentUser.firstName",
+        "user.id",
+        "user.lastName",
+        "user.firstName",
         "studentRestriction.id",
         "studentRestriction.isActive",
         "restriction.id",
@@ -105,7 +105,7 @@ export class StudentAssessmentService {
       ])
       .innerJoin("application.student", "student")
       .innerJoin("student.sinValidation", "sinValidation")
-      .innerJoin("student.user", "studentUser")
+      .innerJoin("student.user", "user")
       .leftJoin("student.studentRestrictions", "studentRestriction")
       .leftJoin("studentRestriction.restriction", "restriction")
       .innerJoin("application.programYear", "programYear")
@@ -170,6 +170,13 @@ export class StudentAssessmentService {
                 qbInner
                   .where("student.updatedAt >= :modifiedSince")
                   .andWhere("student.updatedAt < :modifiedUntil");
+              }),
+            )
+            .orWhere(
+              new Brackets((qbInner) => {
+                qbInner
+                  .where("user.updatedAt >= :modifiedSince")
+                  .andWhere("user.updatedAt < :modifiedUntil");
               }),
             );
         }),
