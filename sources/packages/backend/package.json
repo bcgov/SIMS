@@ -96,7 +96,7 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "@aws-sdk/types": "^3.901.0",
+    "@aws-sdk/types": "^3.936.0",
     "@faker-js/faker": "^10.1.0",
     "@golevelup/ts-jest": "^0.7.0",
     "@nestjs/cli": "^11.0.10",
