@@ -149,10 +149,7 @@ export class ApplicationService {
 
   /**
    * Get the list of applications that belongs to a student on a summary view format.
-   * @param page page number.
-   * @param pageCount limit of the page.
-   * @param sortField field to be sorted.
-   * @param sortOrder order to be sorted.
+   * @param paginationOptions pagination options.
    * @param studentId student id. Used only for AEST.
    * @returns student application list with total count.
    */

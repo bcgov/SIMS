@@ -25,7 +25,6 @@
           message="No applications found."
         >
           <v-data-table-server
-            v-if="applicationsListAndCount?.count"
             :headers="ReportAChangeApplicationsHeaders"
             :items="applicationsListAndCount?.results"
             :items-length="applicationsListAndCount?.count"
@@ -38,8 +37,12 @@
               <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
             </template>
             <template #[`item.studyDates`]="{ item }">
-              {{ dateOnlyLongString(item.studyStartPeriod) }} -
-              {{ dateOnlyLongString(item.studyEndPeriod) }}
+              {{
+                dateOnlyLongPeriodString(
+                  item.studyStartPeriod,
+                  item.studyEndPeriod,
+                )
+              }}
             </template>
             <template #[`item.applicationNumber`]="{ item }">
               {{ item.applicationNumber }}
@@ -120,7 +123,7 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const searchCriteria = ref();
-    const { dateOnlyLongString } = useFormatters();
+    const { dateOnlyLongPeriodString } = useFormatters();
     const { mobile: isMobile } = useDisplay();
     const applicationsListAndCount = ref(
       {} as PaginatedResults<ActiveApplicationSummaryAPIOutDTO>,
@@ -208,7 +211,7 @@ export default defineComponent({
     return {
       ApplicationScholasticStandingStatus,
       applicationsListAndCount,
-      dateOnlyLongString,
+      dateOnlyLongPeriodString,
       goToViewApplication,
       pageSortEvent,
       searchActiveApplications,
