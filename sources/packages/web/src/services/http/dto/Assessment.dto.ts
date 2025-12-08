@@ -8,6 +8,7 @@ import {
   OfferingIntensity,
   StudentAppealStatus,
   StudentAssessmentStatus,
+  StudentScholasticStandingChangeType,
 } from "@/types";
 
 export const ASSESSMENT_ALREADY_IN_PROGRESS = "ASSESSMENT_ALREADY_IN_PROGRESS";
@@ -42,6 +43,8 @@ export interface AssessmentHistorySummaryAPIOutDTO {
   applicationOfferingChangeRequestId?: number;
   applicationExceptionId?: number;
   studentScholasticStandingId?: number;
+  scholasticStandingChangeType?: StudentScholasticStandingChangeType;
+  scholasticStandingReversalDate?: Date;
   // This flag decides, the row is unsuccessful week or not.
   hasUnsuccessfulWeeks?: boolean;
 }
