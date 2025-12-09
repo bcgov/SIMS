@@ -25,10 +25,20 @@ export class T4AUploadProcessor extends BaseQueue<T4AUploadQueueInDTO> {
     processSummary.info(
       `Processing T4A upload for files: ${job.data.remoteFiles}.`,
     );
+    performance.mark("Start process");
     await this.t4aUploadProcessingService.process(
       job.data.remoteFiles,
       job.data.referenceDate,
       processSummary,
+    );
+    performance.mark("End process");
+    const fileProcessMeasure = performance.measure(
+      "T4A File Upload",
+      "Start process",
+      "End process",
+    );
+    processSummary.info(
+      `T4A uploads processed in ${(fileProcessMeasure.duration / 1000).toFixed(2)}s.`,
     );
     return "T4A uploads processed.";
   }

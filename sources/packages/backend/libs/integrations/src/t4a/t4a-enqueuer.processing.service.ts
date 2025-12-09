@@ -55,7 +55,6 @@ export class T4AEnqueuerProcessingService {
         processSummary.info(
           `Added file(s) to ${QueueNames.T4AUpload}, queue ID ${queue.id}.`,
         );
-        break;
       }
       const enqueueElapsedMs = performance.now() - enqueueStart;
       processSummary.info(
