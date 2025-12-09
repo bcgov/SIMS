@@ -4,4 +4,5 @@ export interface T4AUploadEnqueuerQueueInDTO {
 
 export interface T4AUploadQueueInDTO {
   remoteFiles: string[];
+  referenceDate: Date;
 }

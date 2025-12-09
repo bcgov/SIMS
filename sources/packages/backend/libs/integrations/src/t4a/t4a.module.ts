@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@sims/utilities/config";
-import { T4AIntegrationProcessingService } from ".";
+import { T4AEnqueuerProcessingService, T4AUploadProcessingService } from ".";
 import { T4AIntegrationService } from "@sims/integrations/t4a/t4a.integration.service";
 import {
   SINValidationService,
@@ -19,8 +19,9 @@ import { ObjectStorageModule } from "@sims/integrations/object-storage";
     StudentService,
     SINValidationService,
     T4AIntegrationService,
-    T4AIntegrationProcessingService,
+    T4AEnqueuerProcessingService,
+    T4AUploadProcessingService,
   ],
-  exports: [T4AIntegrationProcessingService],
+  exports: [T4AEnqueuerProcessingService, T4AUploadProcessingService],
 })
 export class T4AModule {}

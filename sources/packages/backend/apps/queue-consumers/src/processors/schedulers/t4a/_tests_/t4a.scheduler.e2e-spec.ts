@@ -6,19 +6,20 @@ import {
   mockBullJob,
 } from "../../../../../test/helpers";
 import MockDate from "mockdate";
-import { T4UploaderScheduler } from "../t4a-upload-enqueuer.scheduler";
+import { T4AUploadEnqueuerScheduler } from "../../../../processors";
+import { T4AUploadEnqueuerQueueInDTO } from "@sims/services/queue";
 
 describe(
   describeProcessorRootTest(QueueNames.CASInvoicesBatchesCreation),
   () => {
     let app: INestApplication;
-    let processor: T4UploaderScheduler;
+    let processor: T4AUploadEnqueuerScheduler;
 
     beforeAll(async () => {
       const { nestApplication } = await createTestingAppModule();
       app = nestApplication;
       // Processor under test.
-      processor = app.get(T4UploaderScheduler);
+      processor = app.get(T4AUploadEnqueuerScheduler);
     });
 
     beforeEach(async () => {
@@ -28,7 +29,9 @@ describe(
     it("Should download the files from the SFTP and create then in the student account when files are available in the SFTP with expected name convention.", async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullJob<T4AUploadEnqueuerQueueInDTO>({
+        maxFileUploadsPerBatch: 100,
+      });
 
       // Act
       const result = await processor.processQueue(mockedJob.job);

@@ -198,7 +198,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
   async downloadFile(
     remoteFilePath: string,
     options?: { client?: Client },
-  ): Promise<Buffer | false> {
+  ): Promise<Buffer> {
     this.logger.log(`Downloading file ${remoteFilePath}.`);
     let client: Client;
     try {

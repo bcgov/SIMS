@@ -7,7 +7,7 @@ import { QueueNames } from "@sims/utilities";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
-import { T4AIntegrationProcessingService } from "@sims/integrations/t4a/t4a.processing.service";
+import { T4AEnqueuerProcessingService } from "@sims/integrations/t4a";
 
 const DEFAULT_MAX_FILE_UPLOADS_PER_BATCH = 100;
 
@@ -21,7 +21,7 @@ export class T4AUploadEnqueuerScheduler extends BaseScheduler<T4AUploadEnqueuerQ
     @InjectQueue(QueueNames.T4AUploadEnqueuer)
     schedulerQueue: Queue<T4AUploadEnqueuerQueueInDTO>,
     queueService: QueueService,
-    private readonly t4aIntegrationProcessingService: T4AIntegrationProcessingService,
+    private readonly t4aEnqueuerProcessingService: T4AEnqueuerProcessingService,
     logger: LoggerService,
   ) {
     super(schedulerQueue, queueService, logger);
@@ -39,18 +39,11 @@ export class T4AUploadEnqueuerScheduler extends BaseScheduler<T4AUploadEnqueuerQ
       `Max file uploads per batch configured as ${maxFileUploadsPerBatch}.`,
     );
     try {
-      await this.t4aIntegrationProcessingService.process(
+      //await this.t4aEnqueuerProcessingService.createLoadTestFiles();
+      await this.t4aEnqueuerProcessingService.process(
         maxFileUploadsPerBatch,
         processSummary,
       );
-      // } catch (error: unknown) {
-      //   if (
-      //     error instanceof CustomNamedError &&
-      //     error.name === DATABASE_TRANSACTION_CANCELLATION
-      //   ) {
-      //     return "No batch was generated.";
-      //   }
-      //   throw error;
       return "T4A files check process completed.";
     } finally {
       processSummary.info("Checking T4A files process executed.");
