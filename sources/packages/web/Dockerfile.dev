@@ -23,7 +23,7 @@ RUN sed 's/${PORT}/'"${PORT}"'/g' nginx/default.conf.dev.template > default.conf
 RUN npm run build-local
 
 # Get a nginx image to have only the compiled app in the resulting image.
-FROM nginx:1.29-alpine AS deployer
+FROM nginx:1.29.3-alpine3.22 AS deployer
 
 # Copy the app built on builder stage to the resulting container.
 COPY --from=builder /app/dist /usr/share/nginx/html
@@ -34,15 +34,14 @@ COPY --from=builder /app/default.conf /etc/nginx/conf.d/default.conf
 # Copying the main configuration file.
 COPY --from=builder /app/nginx/nginx.conf /etc/nginx/nginx.conf
 
-# Set proper permissions for OpenShift (arbitrary UIDs with root group)
-RUN chmod -R g+rwx /usr/share/nginx/html \
-    && chmod -R g+rwx /var/cache/nginx \
-    && chmod -R g+rwx /var/run \
-    && chmod -R g+rwx /etc/nginx \
-    && chgrp -R 0 /usr/share/nginx/html /var/cache/nginx /var/run /etc/nginx
 
-# Switch to non-root user
+# Set necessary directories to be owned by the nginx user.
+RUN chown -R nginx:nginx /var/cache/nginx /var/log/nginx /etc/nginx/conf.d
+
+# Switch to the nginx user.
 USER nginx
+
+# Do not set any permissions for this local dockerfile, only on OpenShift (arbitrary UIDs with root group).
 
 # Daemon off makes nginx to run on the foreground with only one process.
 # Docker will kill the container if the process dies.

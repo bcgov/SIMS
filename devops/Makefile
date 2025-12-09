@@ -561,6 +561,22 @@ deploy-web:
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(WEB))
 
+deploy-web-dev:
+	@echo "+\n++ Deploying DEV WEB SIMS with branch/tag: $(BUILD_REF)\n+"
+	@test -n "$(TLS_CERTIFICATE)" || (echo "Error: TLS_CERTIFICATE is not set" && exit 1)
+	@test -n "$(TLS_KEY)" || (echo "Error: TLS_KEY is not set" && exit 1)
+	@test -n "$(TLS_CA_CERTIFICATE)" || (echo "Error: TLS_CA_CERTIFICATE is not set" && exit 1)
+	$(MAKE) deploy-web \
+		NAMESPACE=0c27fb-dev \
+		WEB_BUILD_REF=web-sims \
+		PROJECT_NAME=sims \
+		WEB=dev-web-sims \
+		HOST_PREFIX=dev- \
+		DOMAIN_PREFIX=dev. \
+		TLS_CERTIFICATE="$(TLS_CERTIFICATE)" \
+		TLS_KEY="$(TLS_KEY)" \
+		TLS_CA_CERTIFICATE="$(TLS_CA_CERTIFICATE)"
+
 build-forms:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
