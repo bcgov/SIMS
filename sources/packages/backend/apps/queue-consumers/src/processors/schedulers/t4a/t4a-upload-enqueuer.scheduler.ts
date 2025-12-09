@@ -39,11 +39,11 @@ export class T4AUploadEnqueuerScheduler extends BaseScheduler<T4AUploadEnqueuerQ
       `Max file uploads per batch configured as ${maxFileUploadsPerBatch}.`,
     );
     try {
-      //await this.t4aEnqueuerProcessingService.createLoadTestFiles();
-      await this.t4aEnqueuerProcessingService.process(
-        maxFileUploadsPerBatch,
-        processSummary,
-      );
+      await this.t4aEnqueuerProcessingService.createLoadTestFiles();
+      // await this.t4aEnqueuerProcessingService.process(
+      //   maxFileUploadsPerBatch,
+      //   processSummary,
+      // );
       return "T4A files check process completed.";
     } finally {
       processSummary.info("Checking T4A files process executed.");

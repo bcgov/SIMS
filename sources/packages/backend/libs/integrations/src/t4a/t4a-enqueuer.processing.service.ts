@@ -46,16 +46,18 @@ export class T4AEnqueuerProcessingService {
       // Create batches of files to be processed.
       const enqueueStart = performance.now();
       const referenceDate = new Date();
+      // Queues in the format required by addBulk, splitted by max files per batch.
+      const queues: { data: T4AUploadQueueInDTO }[] = [];
       while (remoteFilePaths.length > 0) {
         const filesBatch = remoteFilePaths.splice(0, maxFileUploadsPerBatch);
-        const queue = await this.t4aUploadQueue.add({
-          remoteFiles: filesBatch,
-          referenceDate,
+        queues.push({
+          data: {
+            remoteFiles: filesBatch,
+            referenceDate,
+          },
         });
-        processSummary.info(
-          `Added file(s) to ${QueueNames.T4AUpload}, queue ID ${queue.id}.`,
-        );
       }
+      await this.t4aUploadQueue.addBulk(queues);
       const enqueueElapsedMs = performance.now() - enqueueStart;
       processSummary.info(
         `Time to queue ${remoteFilePaths.length} files: ${enqueueElapsedMs.toFixed(2)} ms.`,
@@ -68,12 +70,14 @@ export class T4AEnqueuerProcessingService {
     const sourceFilePath = "/IN/T4A/LOAD-TEST/000000000.pdf";
     try {
       sftpClient = await this.t4aIntegrationService.getClient();
-      for (let i = 1; i <= 1000; i++) {
+      for (let i = 21260; i <= 40000; i++) {
         await sftpClient.rcopy(
           sourceFilePath,
           `/IN/T4A/LOAD-TEST/${i.toString().padStart(9, "0")}.pdf`,
         );
       }
+    } catch (error) {
+      console.error(error);
     } finally {
       await this.t4aIntegrationService.ensureClientClosed(
         "Upload T4A files process completed.",
