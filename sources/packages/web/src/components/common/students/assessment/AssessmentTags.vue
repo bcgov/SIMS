@@ -2,7 +2,7 @@
   <!-- Reversed takes precedence over Unsuccessful Completion and Withdrawal -->
   <chip-tag
     v-if="!!assessment.scholasticStandingReversalDate"
-    :type="TableTagType.Red"
+    :type="ChipTagTypes.Red"
     label="Reversed"
   />
   <chip-tag
@@ -10,7 +10,7 @@
       assessment.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
     "
-    :type="TableTagType.Black"
+    :type="ChipTagTypes.Black"
     label="Unsuccessful Completion"
   />
   <chip-tag
@@ -18,7 +18,7 @@
       assessment.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentWithdrewFromProgram
     "
-    :type="TableTagType.Black"
+    :type="ChipTagTypes.Black"
     label="Withdrawal"
   />
 </template>
@@ -39,7 +39,7 @@ export default defineComponent({
   setup() {
     return {
       StudentScholasticStandingChangeType,
-      TableTagType: ChipTagTypes,
+      ChipTagTypes,
     };
   },
 });

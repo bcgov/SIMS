@@ -8,11 +8,6 @@
         :records-count="assessmentHistory.length"
       >
       </body-header>
-      <banner
-        v-if="hasReversal"
-        :type="BannerTypes.Success"
-        summary="Scholastic Standing event previously reported for this application was reversed by StudentAid BC and no longer has any impact on your application."
-      />
       <content-group class="mt-4">
         <toggle-content
           :toggled="!assessmentHistory.length"
@@ -80,17 +75,15 @@ import {
   AssessmentTriggerType,
   CompletedChangesHeaders,
   StudentScholasticStandingChangeType,
-  BannerTypes,
 } from "@/types";
-import { ref, PropType, defineComponent, watchEffect, computed } from "vue";
+import { ref, PropType, defineComponent, watchEffect } from "vue";
 import { useDisplay } from "vuetify";
 
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipAssessmentHistory from "@/components/generic/StatusChipAssessmentHistory.vue";
 import { AssessmentHistorySummaryAPIOutDTO } from "@/services/http/dto/Assessment.dto";
-import Banner from "@/components/generic/Banner.vue";
-import AssessmentTags from "@/components/generic/AssessmentTags.vue";
+import AssessmentTags from "@/components/common/students/assessment/AssessmentTags.vue";
 
 export default defineComponent({
   emits: [
@@ -103,7 +96,6 @@ export default defineComponent({
   ],
   components: {
     AssessmentTags,
-    Banner,
     StatusChipAssessmentHistory,
   },
   props: {
@@ -198,14 +190,6 @@ export default defineComponent({
       return "View request";
     };
 
-    const hasReversal = computed(() => {
-      return assessmentHistory.value.some(
-        (assessment) =>
-          assessment.triggerType ===
-          AssessmentTriggerType.ScholasticStandingReversal,
-      );
-    });
-
     return {
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
@@ -219,8 +203,6 @@ export default defineComponent({
       CompletedChangesHeaders,
       isMobile,
       StudentScholasticStandingChangeType,
-      BannerTypes,
-      hasReversal,
     };
   },
 });
