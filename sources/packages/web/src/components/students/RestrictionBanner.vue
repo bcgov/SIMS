@@ -31,7 +31,6 @@ import { useRouter } from "vue-router";
 import { useStudentStore } from "@/composables";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
-
 export default defineComponent({
   setup() {
     const router = useRouter();
