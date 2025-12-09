@@ -32,10 +32,6 @@ export function useStudentStore(rootStore?: Store<any>) {
     await store.dispatch("student/updateStudentRestrictions");
   };
 
-  const hasAccountClosedRestriction = computed<boolean>(() => {
-    return store.getters["student/hasAccountClosedRestriction"];
-  });
-
   const hasRestrictionError = computed<boolean>(() => {
     return store.getters["student/hasRestrictionError"];
   });
@@ -62,7 +58,6 @@ export function useStudentStore(rootStore?: Store<any>) {
     setHasStudentAccount,
     hasStudentAccount,
     updateRestrictions,
-    hasAccountClosedRestriction,
     hasRestrictionError,
     hasRestrictionWarning,
     activeRestrictions,

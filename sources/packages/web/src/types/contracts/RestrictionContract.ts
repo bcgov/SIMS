@@ -63,10 +63,3 @@ export enum RestrictionStatus {
   Resolved = "Resolved",
   Deleted = "Deleted",
 }
-
-/**
- *   * Restriction code types.
- */
-export enum RestrictionCodeType {
-  PTD = "PTD",
-}

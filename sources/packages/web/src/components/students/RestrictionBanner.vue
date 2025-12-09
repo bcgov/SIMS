@@ -35,12 +35,8 @@ import { BannerTypes } from "@/types/contracts/Banner";
 export default defineComponent({
   setup() {
     const router = useRouter();
-    const {
-      updateRestrictions,
-      hasAccountClosedRestriction,
-      hasRestrictionError,
-      hasRestrictionWarning,
-    } = useStudentStore();
+    const { updateRestrictions, hasRestrictionError, hasRestrictionWarning } =
+      useStudentStore();
 
     const viewStudentAccountActivity = () => {
       router.push({ name: StudentRoutesConst.STUDENT_ACCOUNT_ACTIVITY });
@@ -52,7 +48,6 @@ export default defineComponent({
 
     return {
       BannerTypes,
-      hasAccountClosedRestriction,
       hasRestrictionError,
       hasRestrictionWarning,
       viewStudentAccountActivity,
