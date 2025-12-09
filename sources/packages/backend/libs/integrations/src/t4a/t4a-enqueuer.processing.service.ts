@@ -71,7 +71,7 @@ export class T4AEnqueuerProcessingService {
     const sourceFilePath = "/IN/T4A/LOAD-TEST/000000000.pdf";
     try {
       sftpClient = await this.t4aIntegrationService.getClient();
-      for (let i = 21260; i <= 40000; i++) {
+      for (let i = 23067; i <= 40000; i++) {
         await sftpClient.rcopy(
           sourceFilePath,
           `/IN/T4A/LOAD-TEST/${i.toString().padStart(9, "0")}.pdf`,
