@@ -531,6 +531,28 @@
           ]
         },
         {
+          "title": "Code PTD - Account Closed by Province",
+          "customClass": "collapsible",
+          "collapsible": true,
+          "key": "codePTDTitle",
+          "type": "panel",
+          "label": "Panel",
+          "collapsed": true,
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "html": "<p>A restriction has been placed on your file by StudentAid BC which disqualifies you from receiving further funding. For further information please contact StudentAid BC at 1-800-561-1818 (within North America) or 1-778-309-4621 (outside North America).</p>",
+              "label": "Content",
+              "refreshOnChange": false,
+              "key": "contentPTD",
+              "type": "content",
+              "input": false,
+              "tableView": false
+            }
+          ]
+        },
+        {
           "label": "HTML",
           "tag": "h3",
           "className": "category-header-medium primary-color mt-5",
