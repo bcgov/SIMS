@@ -9,7 +9,6 @@ import * as dayOfYear from "dayjs/plugin/dayOfYear";
 import * as isBetween from "dayjs/plugin/isBetween";
 import * as customParseFormat from "dayjs/plugin/customParseFormat";
 import * as isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-import { And, FindOperator, LessThan, MoreThanOrEqual } from "typeorm";
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
 dayjs.extend(timezone);
@@ -248,19 +247,6 @@ export function addToDateOnlyString(
     return getISODateOnlyString(dayjs(date).add(toAdd, unit).toDate());
   }
   return undefined;
-}
-
-/**
- * Creates the find operator to filter an entire day from the
- * midnight(inclusive) till the next day midnight (exclusive).
- * @param date day to be selected.
- * @returns typeorm {@see FindOperator} to execute the select.
- */
-export function dateEqualTo(date: Date): FindOperator<Date> {
-  const startDate = new Date(date);
-  startDate.setHours(0, 0, 0, 0);
-  const endDate = addDays(1, startDate);
-  return And(MoreThanOrEqual(startDate), LessThan(endDate));
 }
 
 /**
