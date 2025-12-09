@@ -563,41 +563,20 @@ deploy-web:
 	$(call rollout_and_wait,deployment/$(WEB))
 
 deploy-web-dev:
-	$(eval PROJECT_NAME := sims)
-	$(eval HOST_PREFIX := dev-)
-	$(eval DOMAIN_PREFIX := dev.)
-	$(eval WEB := dev-web-sims)
-
-	test -n "$(PROJECT_NAME)"
-	test -n "$(DEV_NAMESPACE)"
-	test -n "$(HOST_PREFIX)"
-	test -n "$(DOMAIN_PREFIX)"
-	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(WEB)"
-	test -n "$(WEB_BUILD_REF)"
-	test -n "$(BUILD_REF)"
-	test -n "$(WEB_PORT)"
-	test -n "$(WEB_CPU_REQUEST)"
-	test -n "$(WEB_MEMORY_REQUEST)"
-	test -n "$(WEB_MEMORY_LIMIT)"
-	test -n "$(WEB_REPLICAS)"
-	@echo "+\n++ Make sure you have the route certificates configured in your environment (TLS_CERTIFICATE, TLS_CA_CERTIFICATE, TLS_KEY)\n+"
-	@echo "+\n++ Deploying WEB with tag: $(BUILD_REF)\n+"
-	@oc -n $(DEV_NAMESPACE) process -f openshift/web-deploy.yml \
-	-p NAME=$(WEB) \
-	-p PORT=$(WEB_PORT) \
-	-p HOST_NAME=$(HOST) \
-	-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-	-p IMAGE_STREAM_TAG="$(WEB_BUILD_REF):$(BUILD_REF)"  \
-	-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
-	-p TLS_KEY=$(TLS_KEY) \
-	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
-	-p CPU_REQUEST=$(WEB_CPU_REQUEST) \
-	-p MEMORY_REQUEST=$(WEB_MEMORY_REQUEST) \
-	-p MEMORY_LIMIT=$(WEB_MEMORY_LIMIT) \
-	-p REPLICAS=$(WEB_REPLICAS) \
-	| oc -n $(DEV_NAMESPACE) apply -f -
-	@oc -n $(DEV_NAMESPACE) rollout status deployment/$(WEB)
+	@echo "+\n++ Deploying DEV WEB SIMS with branch/tag: $(BUILD_REF)\n+"
+	@test -n "$(TLS_CERTIFICATE)" || (echo "Error: TLS_CERTIFICATE is not set" && exit 1)
+	@test -n "$(TLS_KEY)" || (echo "Error: TLS_KEY is not set" && exit 1)
+	@test -n "$(TLS_CA_CERTIFICATE)" || (echo "Error: TLS_CA_CERTIFICATE is not set" && exit 1)
+	$(MAKE) deploy-web \
+		NAMESPACE=$(DEV_NAMESPACE) \
+		WEB_BUILD_REF=web-sims \
+		PROJECT_NAME=sims \
+		WEB=dev-web-sims \
+		HOST_PREFIX=dev- \
+		DOMAIN_PREFIX=dev. \
+		TLS_CERTIFICATE="$(TLS_CERTIFICATE)" \
+		TLS_KEY="$(TLS_KEY)" \
+		TLS_CA_CERTIFICATE="$(TLS_CA_CERTIFICATE)"
 
 build-forms:
 	test -n "$(BUILD_NAMESPACE)"
