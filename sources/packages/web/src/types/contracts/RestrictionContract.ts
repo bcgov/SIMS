@@ -63,3 +63,10 @@ export enum RestrictionStatus {
   Resolved = "Resolved",
   Deleted = "Deleted",
 }
+
+/**
+ *  Student restriction badge.
+ */
+export enum RestrictionCodeType {
+  PTD = "PTD",
+}
