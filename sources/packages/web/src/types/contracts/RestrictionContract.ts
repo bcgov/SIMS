@@ -65,7 +65,7 @@ export enum RestrictionStatus {
 }
 
 /**
- *  Student restriction badge.
+ *   * Restriction code types.
  */
 export enum RestrictionCodeType {
   PTD = "PTD",

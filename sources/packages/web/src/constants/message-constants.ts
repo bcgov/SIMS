@@ -8,7 +8,7 @@ export const PENDING_SIN_MESSAGE =
  * Restriction Messages
  */
 export const ACCOUNT_CLOSED_RESTRICTION =
-  "A restriction has been placed on your file by StudentAid BC which disqualifies you from receiving further funding. For further information please contact StudentAid BC at 1-800-561-1818 (within North America) 1-778-309-4621 (outside North America).";
+  "A restriction has been placed on your file by StudentAid BC which disqualifies you from receiving further funding. For further information please contact StudentAid BC at 1-800-561-1818 (within North America) or 1-778-309-4621 (outside North America).";
 
 export const ERROR_RESTRICTION =
   "You have a restriction on your account that must be resolved to continue with your student financial aid. Please view the message and resolve the items to minimize disruption and impact.";
