@@ -588,6 +588,7 @@ export class StudentService extends RecordDataModelService<Student> {
           transactionalEntityManager,
         );
         studentToSync.modifier = { id: auditUserId } as User;
+        studentToSync.user.modifier = { id: auditUserId } as User;
         await transactionalEntityManager
           .getRepository(Student)
           .save(studentToSync);

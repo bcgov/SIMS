@@ -34,7 +34,6 @@
       message="No study period offerings found."
     >
       <v-data-table-server
-        v-if="offeringsAndCount?.count"
         :headers="OfferingSummaryHeaders"
         :items="offeringsAndCount?.results"
         :items-length="offeringsAndCount?.count"
@@ -55,8 +54,7 @@
           {{ item.offeringIntensity }}
         </template>
         <template #[`item.studyDates`]="{ item }">
-          {{ dateOnlyLongString(item.studyStartDate) }} -
-          {{ dateOnlyLongString(item.studyEndDate) }}
+          {{ dateOnlyLongPeriodString(item.studyStartDate, item.studyEndDate) }}
         </template>
         <template #[`item.offeringStatus`]="{ item }">
           <status-chip-offering :status="item.offeringStatus" />
@@ -131,7 +129,7 @@ export default defineComponent({
     const router = useRouter();
     const loading = ref(false);
     const searchBox = ref("");
-    const { dateOnlyLongString } = useFormatters();
+    const { dateOnlyLongPeriodString } = useFormatters();
     const { isReadOnlyUser } = useInstitutionAuth();
 
     const { mobile: isMobile } = useDisplay();
@@ -281,7 +279,7 @@ export default defineComponent({
       searchBox,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
-      dateOnlyLongString,
+      dateOnlyLongPeriodString,
       allowOfferingEdit,
       OfferingSummaryHeaders,
       isMobile,

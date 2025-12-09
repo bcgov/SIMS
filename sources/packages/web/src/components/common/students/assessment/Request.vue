@@ -54,7 +54,6 @@ import {
 } from "@/types";
 import { ref, defineComponent, watchEffect } from "vue";
 import { useDisplay } from "vuetify";
-
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
 import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
