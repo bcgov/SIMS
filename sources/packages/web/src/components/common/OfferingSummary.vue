@@ -1,7 +1,7 @@
 <template>
   <body-header
     title="Study period offerings"
-    :recordsCount="offeringsAndCount.count"
+    :records-count="offeringsAndCount.count"
   >
     <template #actions>
       <v-row class="m-0 p-0">
@@ -29,62 +29,47 @@
     </template>
   </body-header>
   <content-group>
-    <toggle-content :toggled="!offeringsAndCount.count">
-      <DataTable
-        :value="offeringsAndCount.results"
-        :lazy="true"
-        :paginator="true"
-        :rows="DEFAULT_PAGE_LIMIT"
-        :rowsPerPageOptions="PAGINATION_LIST"
-        :totalRecords="offeringsAndCount.count"
-        @page="paginationAndSortEvent($event)"
-        @sort="paginationAndSortEvent($event)"
+    <toggle-content
+      :toggled="!offeringsAndCount.count && !loading"
+      message="No study period offerings found."
+    >
+      <v-data-table-server
+        :headers="OfferingSummaryHeaders"
+        :items="offeringsAndCount?.results"
+        :items-length="offeringsAndCount?.count"
         :loading="loading"
+        item-value="id"
+        :items-per-page="DEFAULT_PAGE_LIMIT"
+        :items-per-page-options="ITEMS_PER_PAGE"
+        :mobile="isMobile"
+        @update:options="pageSortEvent"
       >
-        <Column
-          :field="OfferingSummaryFields.OfferingName"
-          header="Name"
-          :sortable="true"
-        ></Column>
-        <Column
-          :field="OfferingSummaryFields.YearOfStudy"
-          header="Year of Study"
-        ></Column>
-        <Column :field="OfferingSummaryFields.StudyDates" header="Study Dates">
-          <template #body="slotProps">
-            {{ dateOnlyLongString(slotProps.data.studyStartDate) }} -
-            {{ dateOnlyLongString(slotProps.data.studyEndDate) }}
-          </template></Column
-        >
-        <Column
-          :field="OfferingSummaryFields.OfferingIntensity"
-          header="Intensity"
-        >
-        </Column>
-        <Column field="offeringType" header="Offering type" />
-        <Column
-          :field="OfferingSummaryFields.OfferingDelivered"
-          header="Study delivery"
-        />
-        <Column header="Status"
-          ><template #body="slotProps">
-            <status-chip-offering
-              :status="slotProps.data.offeringStatus"
-            /> </template
-        ></Column>
-        <Column header="Action">
-          <template #body="slotProps">
-            <v-btn
-              color="primary"
-              variant="text"
-              @click="offeringButtonAction(slotProps.data.id)"
-              append-icon="mdi-pencil-outline"
-            >
-              {{ offeringActionLabel }}
-            </v-btn>
-          </template>
-        </Column>
-      </DataTable>
+        <template #[`item.name`]="{ item }">
+          {{ item.name }}
+        </template>
+        <template #[`item.yearOfStudy`]="{ item }">
+          {{ item.yearOfStudy }}
+        </template>
+        <template #[`item.offeringIntensity`]="{ item }">
+          {{ item.offeringIntensity }}
+        </template>
+        <template #[`item.studyDates`]="{ item }">
+          {{ dateOnlyLongPeriodString(item.studyStartDate, item.studyEndDate) }}
+        </template>
+        <template #[`item.offeringStatus`]="{ item }">
+          <status-chip-offering :status="item.offeringStatus" />
+        </template>
+        <template #[`item.action`]="{ item }">
+          <v-btn
+            color="primary"
+            variant="text"
+            @click="offeringButtonAction(item.id)"
+            append-icon="mdi-pencil-outline"
+          >
+            {{ offeringActionLabel }}
+          </v-btn>
+        </template>
+      </v-data-table-server>
     </toggle-content>
   </content-group>
 </template>
@@ -92,6 +77,8 @@
 <script lang="ts">
 import { useRouter } from "vue-router";
 import { onMounted, ref, computed, defineComponent } from "vue";
+import { useDisplay } from "vuetify";
+
 import {
   InstitutionRoutesConst,
   AESTRoutesConst,
@@ -99,17 +86,21 @@ import {
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import {
   ClientIdType,
-  OfferingSummaryFields,
   DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
-  DataTableSortOrder,
-  PAGINATION_LIST,
+  ITEMS_PER_PAGE,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
   PaginatedResults,
+  OfferingSummaryHeaders,
+  DataTableSortByOrder,
+  DataTableOptions,
+  PaginationOptions,
 } from "@/types";
 import { EducationProgramOfferingSummaryAPIOutDTO } from "@/services/http/dto";
-import { useFormatters, useInstitutionAuth } from "@/composables";
+import { useFormatters, useInstitutionAuth, useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
+
+const DEFAULT_SORT_FIELD = "name";
 
 export default defineComponent({
   components: {
@@ -138,10 +129,12 @@ export default defineComponent({
     const router = useRouter();
     const loading = ref(false);
     const searchBox = ref("");
-    const currentPage = ref();
-    const currentPageLimit = ref();
-    const { dateOnlyLongString } = useFormatters();
+    const { dateOnlyLongPeriodString } = useFormatters();
     const { isReadOnlyUser } = useInstitutionAuth();
+
+    const { mobile: isMobile } = useDisplay();
+    const snackBar = useSnackBar();
+
     const clientType = computed(() => AuthService.shared.authClientType);
 
     const isInstitutionUser = computed(() => {
@@ -216,54 +209,61 @@ export default defineComponent({
     );
 
     /**
-     * function to load offeringsAndCount respective to the client type
-     * @param page page number, if nothing passed then DEFAULT_PAGE_NUMBER
-     * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT
-     * @param sortField sort field, if nothing passed then UserFields.DisplayName
-     * @param sortOrder sort oder, if nothing passed then DataTableSortOrder.DESC
+     * Current state of the pagination.
      */
-    const getEducationProgramAndOffering = async (
-      page = DEFAULT_PAGE_NUMBER,
-      pageCount = DEFAULT_PAGE_LIMIT,
-      sortField = OfferingSummaryFields.OfferingName,
-      sortOrder = DataTableSortOrder.ASC,
-    ) => {
-      loading.value = true;
-      offeringsAndCount.value =
-        await EducationProgramOfferingService.shared.getOfferingsSummary(
-          props.locationId,
-          props.programId,
-          {
-            searchCriteria: searchBox.value,
-            sortField,
-            sortOrder,
-            page,
-            pageLimit: pageCount,
-          },
-        );
-      loading.value = false;
+    const currentPagination: PaginationOptions = {
+      page: DEFAULT_DATATABLE_PAGE_NUMBER,
+      pageLimit: DEFAULT_PAGE_LIMIT,
+      sortField: DEFAULT_SORT_FIELD,
+      sortOrder: DataTableSortByOrder.ASC,
+    };
+
+    /**
+     * Loads study period offerings for the Institution Program.
+     */
+    const getEducationProgramAndOffering = async () => {
+      try {
+        loading.value = true;
+        offeringsAndCount.value =
+          await EducationProgramOfferingService.shared.getOfferingsSummary(
+            props.locationId,
+            props.programId,
+            {
+              searchCriteria: searchBox.value,
+              ...currentPagination,
+            },
+          );
+      } catch {
+        snackBar.error("Unexpected error while loading Offerings.");
+      } finally {
+        loading.value = false;
+      }
     };
 
     onMounted(getEducationProgramAndOffering);
 
-    // pagination sort event callback
-    const paginationAndSortEvent = async (event: any) => {
-      currentPage.value = event?.page;
-      currentPageLimit.value = event?.rows;
-      await getEducationProgramAndOffering(
-        event.page,
-        event.rows,
-        event.sortField,
-        event.sortOrder,
-      );
+    /**
+     * Page/Sort event handler.
+     * @param event The data table page/sort event.
+     */
+    const pageSortEvent = async (event: DataTableOptions) => {
+      currentPagination.page = event.page;
+      currentPagination.pageLimit = event.itemsPerPage;
+      if (event.sortBy.length) {
+        const [sortBy] = event.sortBy;
+        currentPagination.sortField = sortBy.key;
+        currentPagination.sortOrder = sortBy.order;
+      } else {
+        // Sorting was removed, reset to default.
+        currentPagination.sortField = DEFAULT_SORT_FIELD;
+        currentPagination.sortOrder = DataTableSortByOrder.ASC;
+      }
+      await getEducationProgramAndOffering();
     };
 
-    // search offering table
+    // Search offering table.
     const searchOfferingTable = async () => {
-      await getEducationProgramAndOffering(
-        currentPage.value ?? DEFAULT_PAGE_NUMBER,
-        currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
-      );
+      await getEducationProgramAndOffering();
     };
 
     return {
@@ -273,15 +273,16 @@ export default defineComponent({
       isInstitutionUser,
       isAESTUser,
       offeringActionLabel,
-      paginationAndSortEvent,
+      pageSortEvent,
       loading,
       searchOfferingTable,
       searchBox,
-      OfferingSummaryFields,
       DEFAULT_PAGE_LIMIT,
-      PAGINATION_LIST,
-      dateOnlyLongString,
+      ITEMS_PER_PAGE,
+      dateOnlyLongPeriodString,
       allowOfferingEdit,
+      OfferingSummaryHeaders,
+      isMobile,
     };
   },
 });

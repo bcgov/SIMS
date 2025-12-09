@@ -1,9 +1,4 @@
-import {
-  DataTableSortOrder,
-  StudentApplicationFields,
-  DEFAULT_PAGE_LIMIT,
-  DEFAULT_PAGE_NUMBER,
-} from "@/types";
+import { PaginationOptions } from "@/types";
 import ApiClient from "../services/http/ApiClient";
 import {
   ApplicationSummaryAPIOutDTO,
@@ -154,25 +149,16 @@ export class ApplicationService {
 
   /**
    * Get the list of applications that belongs to a student on a summary view format.
-   * @param page page number.
-   * @param pageCount limit of the page.
-   * @param sortField field to be sorted.
-   * @param sortOrder order to be sorted.
+   * @param paginationOptions pagination options.
    * @param studentId student id. Used only for AEST.
    * @returns student application list with total count.
    */
   async getStudentApplicationSummary(
-    page = DEFAULT_PAGE_NUMBER,
-    pageCount = DEFAULT_PAGE_LIMIT,
-    sortField?: StudentApplicationFields,
-    sortOrder?: DataTableSortOrder,
+    paginationOptions: PaginationOptions,
     studentId?: number,
   ): Promise<PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>> {
     return ApiClient.Application.getStudentApplicationSummary(
-      page,
-      pageCount,
-      sortField,
-      sortOrder,
+      paginationOptions,
       studentId,
     );
   }

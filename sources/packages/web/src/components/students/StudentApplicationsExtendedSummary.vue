@@ -4,7 +4,7 @@
     <template #header>
       <body-header
         title="Applications"
-        :recordsCount="applicationsAndCount.count"
+        :records-count="applicationsAndCount.count"
       ></body-header>
     </template>
     <content-group>
@@ -24,7 +24,7 @@
           show-expand
           v-model:expanded="expandedItems"
         >
-          <template v-slot:loading>
+          <template #loading>
             <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
           </template>
           <template #[`item.applicationNumber`]="{ item }">
@@ -128,14 +128,14 @@
               "
             ></v-btn>
           </template>
-          <template v-slot:expanded-row="{ columns, item }">
+          <template #expanded-row="{ columns, item }">
             <tr>
               <td :colspan="columns.length" class="py-4">
                 <content-group>
                   <student-applications-version
                     :versions="item.versions"
                     :loading="item.loadingVersions"
-                    @viewApplicationVersion="
+                    @view-application-version="
                       $emit('viewApplicationVersion', $event)
                     "
                   />
@@ -154,14 +154,14 @@ import { onMounted, ref, defineComponent } from "vue";
 import {
   ApplicationStatus,
   DEFAULT_PAGE_LIMIT,
-  DataTableSortOrder,
+  DataTableSortByOrder,
   StudentApplicationFields,
   StudentApplicationsExtendedSummaryHeaders,
-  
   ITEMS_PER_PAGE,
   DataTableOptions,
   PaginationOptions,
   OfferingIntensity,
+  DEFAULT_DATATABLE_PAGE_NUMBER,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { useFormatters, useStudentStore } from "@/composables";
@@ -210,12 +210,12 @@ export default defineComponent({
     const { hasValidSIN } = useStudentStore();
 
     const DEFAULT_SORT_FIELD = StudentApplicationFields.Status;
-    const currentPagination = ref<PaginationOptions>({
-      page: 1,
+    const currentPagination: PaginationOptions = {
+      page: DEFAULT_DATATABLE_PAGE_NUMBER,
       pageLimit: DEFAULT_PAGE_LIMIT,
       sortField: DEFAULT_SORT_FIELD,
-      sortOrder: DataTableSortOrder.DESC,
-    });
+      sortOrder: DataTableSortByOrder.ASC,
+    };
 
     const getStudentApplications = async () => {
       try {
@@ -224,10 +224,7 @@ export default defineComponent({
         expandedItems.value = [];
         applicationsAndCount.value =
           await ApplicationService.shared.getStudentApplicationSummary(
-            currentPagination.value.page - 1,
-            currentPagination.value.pageLimit,
-            currentPagination.value.sortField as StudentApplicationFields,
-            currentPagination.value.sortOrder as DataTableSortOrder,
+            currentPagination,
           );
       } finally {
         loading.value = false;
@@ -236,21 +233,21 @@ export default defineComponent({
 
     onMounted(getStudentApplications);
 
+    /**
+     * Page/Sort event handler.
+     * @param event The data table page/sort event.
+     */
     const paginationAndSortEvent = async (event: DataTableOptions) => {
-      currentPagination.value.page = event.page;
-      currentPagination.value.pageLimit = event.itemsPerPage;
+      currentPagination.page = event.page;
+      currentPagination.pageLimit = event.itemsPerPage;
       if (event.sortBy.length) {
         const [sortBy] = event.sortBy;
-        currentPagination.value.sortField =
-          sortBy.key as StudentApplicationFields;
-        currentPagination.value.sortOrder =
-          sortBy.order === "desc"
-            ? DataTableSortOrder.DESC
-            : DataTableSortOrder.ASC;
+        currentPagination.sortField = sortBy.key;
+        currentPagination.sortOrder = sortBy.order;
       } else {
-        // Sorting was removed, reset to default
-        currentPagination.value.sortField = DEFAULT_SORT_FIELD;
-        currentPagination.value.sortOrder = DataTableSortOrder.ASC;
+        // Sorting was removed, reset to default.
+        currentPagination.sortField = DEFAULT_SORT_FIELD;
+        currentPagination.sortOrder = DataTableSortByOrder.ASC;
       }
       await getStudentApplications();
     };

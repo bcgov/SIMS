@@ -29,14 +29,6 @@ export enum StudentApplicationFields {
   Actions = "id",
 }
 
-/**
- * SORT ORDER  of DataTable
- */
-export enum DataTableSortOrder {
-  DESC = -1,
-  ASC = 1,
-}
-
 export const DEFAULT_PAGE_LIMIT = 10;
 export const ITEMS_PER_PAGE = [
   { value: 10, title: "10" },
@@ -44,9 +36,6 @@ export const ITEMS_PER_PAGE = [
   { value: 50, title: "50" },
   { value: 100, title: "100" },
 ];
-// TODO: Remove DEFAULT_PAGE_NUMBER when all primevue datatable removed.
-export const DEFAULT_PAGE_NUMBER = 0;
-export const PAGINATION_LIST = [10, 20, 50];
 
 /**
  * Enum for Program offering DataTable
@@ -121,27 +110,14 @@ export enum PaginationParams {
  * Pagination Options.
  * @param searchCriteria search criteria can be a single criterion
  * or it can be an object with multiple search criteria (for eg. search of
- * programs on the basis of program name, location name, status etc.)
- * todo: remove sortOrder: DataTableSortOrder when all primevue datatables are removed.
+ * programs on the basis of program name, location name, status etc.).
  */
 export interface PaginationOptions {
   searchCriteria?: string | Record<string, string | string[] | boolean>;
   sortField?: string;
-  sortOrder?: DataTableSortOrder | DataTableSortByOrder;
+  sortOrder?: DataTableSortByOrder;
   page: number;
   pageLimit: number;
-}
-
-/**
- * Interface for data returned by
- * page and sort event of PrimeVue data table.
- * TODO:This must be modified when migrating to Vuetify3 accordingly.
- */
-export interface PageAndSortEvent {
-  page: number;
-  rows: number;
-  sortField: string;
-  sortOrder: number;
 }
 
 /**
@@ -698,4 +674,86 @@ export const PendingDesignationsHeaders = [
   { title: "Submitted on", sortable: false, key: "submittedDate" },
   { title: "Status", sortable: false, key: "designationStatus" },
   { title: "Action", sortable: false, key: "designationId" },
+];
+
+/**
+ * Offering Summary header.
+ */
+export const OfferingSummaryHeaders = [
+  { title: "Name", sortable: true, key: "name" },
+  { title: "Year of Study", sortable: false, key: "yearOfStudy" },
+  { title: "Study Dates", sortable: false, key: "studyDates" },
+  { title: "Intensity", sortable: false, key: "offeringIntensity" },
+  { title: "Offering type", sortable: false, key: "offeringType" },
+  { title: "Study delivery", sortable: false, key: "offeringDelivered" },
+  { title: "Status", sortable: false, key: "offeringStatus" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/**
+ * Institution Users header.
+ */
+export const InstitutionUsersHeaders = [
+  { title: "Name", sortable: true, key: "displayName" },
+  { title: "Email", sortable: true, key: "email" },
+  { title: "User Type", sortable: false, key: "userType" },
+  { title: "Role", sortable: false, key: "roles" },
+  { title: "Locations", sortable: false, key: "locations" },
+  { title: "Status", sortable: false, key: "isActive" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/**
+ * Student Account Requests header.
+ */
+export const StudentAccountRequestsHeaders = [
+  { title: "Date submitted", sortable: false, key: "submittedDate" },
+  { title: "Given names", sortable: false, key: "givenNames" },
+  { title: "Last name", sortable: false, key: "lastName" },
+  { title: "Date of birth", sortable: false, key: "dateOfBirth" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/**
+ * Completed Changes header.
+ */
+export const CompletedChangesHeaders = [
+  { title: "Submitted date", sortable: true, key: "submittedDate" },
+  { title: "Type", sortable: true, key: "triggerType" },
+  { title: "Request form", sortable: false, key: "requestForm" },
+  { title: "Status", sortable: true, key: "status" },
+  { title: "Assessment date", sortable: true, key: "assessmentDate" },
+  { title: "Assessment", sortable: false, key: "assessment" },
+];
+
+/**
+ * Unapproved Changes header.
+ */
+export const UnapprovedChangesHeaders = [
+  { title: "Submitted date", sortable: true, key: "submittedDate" },
+  { title: "Type", sortable: true, key: "requestType" },
+  { title: "Request form", sortable: false, key: "requestForm" },
+  { title: "Status", sortable: true, key: "status" },
+];
+
+/**
+ * Report a Change Applications header.
+ */
+export const ReportAChangeApplicationsHeaders = [
+  { title: "Name", sortable: true, key: "fullName" },
+  { title: "Study dates", sortable: false, key: "studyDates" },
+  { title: "Application #", sortable: true, key: "applicationNumber" },
+  { title: "Status", sortable: false, key: "applicationStatus" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/**
+ * Exception requests header.
+ */
+export const ExceptionRequestsHeaders = [
+  { title: "Date submitted", sortable: true, key: "submittedDate" },
+  { title: "Given names", sortable: true, key: "givenNames" },
+  { title: "Last name", sortable: true, key: "lastName" },
+  { title: "Application #", sortable: true, key: "applicationNumber" },
+  { title: "Action", sortable: false, key: "action" },
 ];

@@ -22,7 +22,6 @@ export class CASInvoiceBatchApi extends HttpBaseClient {
   ): Promise<PaginatedResultsAPIOutDTO<CASInvoiceBatchAPIOutDTO>> {
     const url = `cas-invoice-batch?${getPaginationQueryString(
       paginationOptions,
-      true,
     )}`;
     return this.getCall(this.addClientRoot(url));
   }
