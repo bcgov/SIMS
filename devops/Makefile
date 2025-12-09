@@ -7,7 +7,6 @@ export NAMESPACE := $(or $(NAMESPACE), $$NS)
 export APP_NAME := $(or $(PROJECT_NAME), sims)
 export TEMPLATE_FILE_NAME := $(or $(TEMPLATE_FILE_NAME), $$FILE)
 export BUILD_REF := $(or $(BUILD_REF), $(GIT_LOCAL_BRANCH))
-export DEV_NAMESPACE := $(or $(DEV_NAMESPACE), 0c27fb-dev)
 export BUILD_NAMESPACE := $(or $(BUILD_NAMESPACE), 0c27fb-tools)
 export DOMAIN := $(or $(DOMAIN), sims.studentaidbc.ca)
 export DOMAIN_PREFIX := $(or $(DOMAIN_PREFIX),)
@@ -568,7 +567,7 @@ deploy-web-dev:
 	@test -n "$(TLS_KEY)" || (echo "Error: TLS_KEY is not set" && exit 1)
 	@test -n "$(TLS_CA_CERTIFICATE)" || (echo "Error: TLS_CA_CERTIFICATE is not set" && exit 1)
 	$(MAKE) deploy-web \
-		NAMESPACE=$(DEV_NAMESPACE) \
+		NAMESPACE=0c27fb-dev \
 		WEB_BUILD_REF=web-sims \
 		PROJECT_NAME=sims \
 		WEB=dev-web-sims \
