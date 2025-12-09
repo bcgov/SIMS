@@ -66,6 +66,7 @@ export class T4AEnqueuerProcessingService {
   }
 
   async createLoadTestFiles(): Promise<void> {
+    console.info("Starting to create load test files.");
     let sftpClient: Client;
     const sourceFilePath = "/IN/T4A/LOAD-TEST/000000000.pdf";
     try {
