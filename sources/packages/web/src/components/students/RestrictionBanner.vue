@@ -1,17 +1,10 @@
 <template>
   <banner
     class="mb-2"
-    v-if="hasAccountClosedRestriction"
+    v-if="hasRestrictionError"
     :type="BannerTypes.Error"
     header="Your account has a restriction"
-    :summary="ACCOUNT_CLOSED_RESTRICTION"
-  />
-  <banner
-    class="mb-2"
-    v-if="!hasAccountClosedRestriction && hasRestrictionError"
-    :type="BannerTypes.Error"
-    header="Your account has a restriction"
-    :summary="ERROR_RESTRICTION"
+    summary="You have a restriction on your account that must be resolved to continue with your student financial aid. Please view the message and resolve the items to minimize disruption and impact."
   >
     <template #actions>
       <v-btn color="error" @click="viewStudentAccountActivity">
@@ -24,7 +17,7 @@
     v-if="hasRestrictionWarning"
     :type="BannerTypes.Warning"
     header="Warning"
-    :summary="RESTRICTION_WARNING"
+    summary="Check your account activity page for important updates regarding your account."
     ><template #actions>
       <v-btn color="warning" @click="viewStudentAccountActivity">
         View account activity
@@ -38,11 +31,6 @@ import { useRouter } from "vue-router";
 import { useStudentStore } from "@/composables";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { BannerTypes } from "@/types/contracts/Banner";
-import {
-  ACCOUNT_CLOSED_RESTRICTION,
-  ERROR_RESTRICTION,
-  RESTRICTION_WARNING,
-} from "@/constants";
 
 export default defineComponent({
   setup() {
@@ -67,9 +55,6 @@ export default defineComponent({
       hasAccountClosedRestriction,
       hasRestrictionError,
       hasRestrictionWarning,
-      ACCOUNT_CLOSED_RESTRICTION,
-      ERROR_RESTRICTION,
-      RESTRICTION_WARNING,
       viewStudentAccountActivity,
     };
   },
