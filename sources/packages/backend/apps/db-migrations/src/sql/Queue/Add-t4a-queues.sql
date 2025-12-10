@@ -2,7 +2,7 @@ INSERT INTO
     sims.queue_configurations(queue_name, queue_configuration, queue_settings)
 VALUES
     (
-        -- The scheduler is set to run at 5 PM PST, on Monday, from February to May.
+        -- The scheduler is set to run at 5 PM PST, every day, from February to May.
         't4a-upload-enqueuer',
         '{
             "cron": "0 13 * 2-5 *",
