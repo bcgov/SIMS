@@ -1,6 +1,6 @@
 <template>
   <chip-tag
-    v-if="!!assessment.scholasticStandingReversalDate"
+    v-if="assessment.scholasticStandingReversalDate"
     color="error"
     label="Reversed"
   />

@@ -71,7 +71,9 @@ export class AssessmentHistorySummaryAPIOutDTO {
   applicationOfferingChangeRequestId?: number;
   applicationExceptionId?: number;
   studentScholasticStandingId?: number;
+  // Type of the change in the scholastic standing.
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
+  // Date and time when the scholastic standing was reversed.
   scholasticStandingReversalDate?: Date;
   // This flag decides, the row is unsuccessful week or not.
   hasUnsuccessfulWeeks?: boolean;
