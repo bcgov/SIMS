@@ -8,12 +8,11 @@ import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { T4AEnqueuerProcessingService } from "@sims/integrations/t4a";
-
-const DEFAULT_MAX_FILE_UPLOADS_PER_BATCH = 100;
+import { DEFAULT_MAX_FILE_UPLOADS_PER_BATCH } from "@sims/integrations/constants";
 
 /**
  * Scheduler to check the existence of T4A files for students on the SFTP,
- * downloads them and makes them available for student download.
+ * downloads them and enqueue them for processing.
  */
 @Processor(QueueNames.T4AUploadEnqueuer)
 export class T4AUploadEnqueuerScheduler extends BaseScheduler<T4AUploadEnqueuerQueueInDTO> {
@@ -27,6 +26,12 @@ export class T4AUploadEnqueuerScheduler extends BaseScheduler<T4AUploadEnqueuerQ
     super(schedulerQueue, queueService, logger);
   }
 
+  /**
+   * Process the job to check for T4A files and enqueue them for processing.
+   * @param job The job containing the data for processing.
+   * @param processSummary Summary object to log the process details.
+   * @returns A message indicating the result of the process.
+   */
   protected async process(
     job: Job<T4AUploadEnqueuerQueueInDTO>,
     processSummary: ProcessSummary,
@@ -35,21 +40,22 @@ export class T4AUploadEnqueuerScheduler extends BaseScheduler<T4AUploadEnqueuerQ
     const maxFileUploadsPerBatch = await this.definedMaxFileUploadsPerBatch(
       job.data?.maxFileUploadsPerBatch,
     );
+    job.progress(50);
     processSummary.info(
       `Max file uploads per batch configured as ${maxFileUploadsPerBatch}.`,
     );
-    try {
-      await this.t4aEnqueuerProcessingService.createLoadTestFiles();
-      // await this.t4aEnqueuerProcessingService.process(
-      //   maxFileUploadsPerBatch,
-      //   processSummary,
-      // );
-      return "T4A files check process completed.";
-    } finally {
-      processSummary.info("Checking T4A files process executed.");
-    }
+    //await this.t4aEnqueuerProcessingService.createLoadTestFiles();
+    await this.t4aEnqueuerProcessingService.process(
+      maxFileUploadsPerBatch,
+      processSummary,
+    );
+    return "T4A files check process completed.";
   }
 
+  /**
+   * Job configuration payload retrieval.
+   * @returns Configuration payload for the scheduler job.
+   */
   protected async payload(): Promise<T4AUploadEnqueuerQueueInDTO> {
     const queueConfig = await this.queueService.queueConfigurationDetails(
       this.schedulerQueue.name as QueueNames,
@@ -60,6 +66,14 @@ export class T4AUploadEnqueuerScheduler extends BaseScheduler<T4AUploadEnqueuerQ
     };
   }
 
+  /**
+   * Determine the maximum number of file uploads per batch to be processed.
+   * Priority is given to the value provided in the job data, if available.
+   * Otherwise, the value from the queue configuration in the database is used.
+   * If neither is provided, a default value is used.
+   * @param jobMaxFileUploadsPerBatch Maximum file uploads per batch provided in the job data.
+   * @returns The determined maximum number of file uploads per batch.
+   */
   private async definedMaxFileUploadsPerBatch(
     jobMaxFileUploadsPerBatch?: number,
   ): Promise<number> {

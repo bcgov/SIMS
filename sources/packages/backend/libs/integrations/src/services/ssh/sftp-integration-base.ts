@@ -195,60 +195,6 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     }
   }
 
-  async downloadFile(
-    remoteFilePath: string,
-    options?: { client?: Client },
-  ): Promise<Buffer> {
-    this.logger.log(`Downloading file ${remoteFilePath}.`);
-    let client: Client;
-    try {
-      if (!options?.client) {
-        client = await this.getClient();
-      } else {
-        client = options.client;
-      }
-      const fileContent = await client.get(remoteFilePath);
-      return fileContent as Buffer;
-    } catch (error) {
-      this.logger.error(`Error downloading file ${remoteFilePath}`, error);
-      throw error;
-    } finally {
-      if (!options?.client) {
-        await this.ensureClientClosed(
-          `downloading file ${remoteFilePath}`,
-          client,
-        );
-      }
-    }
-  }
-
-  async renameFileA(
-    remoteFilePath: string,
-    newRemoteFilePath: string,
-    options?: { client?: Client },
-  ): Promise<void> {
-    this.logger.log(`Downloading file ${remoteFilePath}.`);
-    let client: Client;
-    try {
-      if (!options?.client) {
-        client = await this.getClient();
-      } else {
-        client = options.client;
-      }
-      await client.posixRename(remoteFilePath, newRemoteFilePath);
-    } catch (error) {
-      this.logger.error(`Error downloading file ${remoteFilePath}`, error);
-      throw error;
-    } finally {
-      if (!options?.client) {
-        await this.ensureClientClosed(
-          `downloading file ${remoteFilePath}`,
-          client,
-        );
-      }
-    }
-  }
-
   /**
    * When overridden in a derived class, transform the text lines
    * in parsed objects specific to the integration process.

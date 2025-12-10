@@ -10,6 +10,7 @@ import * as path from "path";
 import { FILE_HASH_DUPLICATION_ERROR } from "@sims/services/constants";
 import { T4A_FILE_PREFIX } from "@sims/integrations/constants";
 import { T4AUploadFileQueueInDTO } from "@sims/services/queue/dto/t4a-upload.dto";
+import { Job } from "bull";
 
 /**
  * Service to process the upload of T4A files to student accounts.
@@ -34,12 +35,14 @@ export class T4AUploadProcessingService {
     files: T4AUploadFileQueueInDTO[],
     referenceDate: Date,
     processSummary: ProcessSummary,
+    job: Job,
   ): Promise<void> {
     let sftpClient: Client;
     try {
       processSummary.info("Creating SFTP client and starting process.");
       sftpClient = await this.t4aIntegrationService.getClient();
       const formattedReferenceDate = getISODateOnlyString(referenceDate);
+      let processedFilesCount = 0;
       for (const file of files) {
         const fileProcessSummary = new ProcessSummary();
         processSummary.children(fileProcessSummary);
@@ -49,6 +52,9 @@ export class T4AUploadProcessingService {
           formattedReferenceDate,
           fileProcessSummary,
         );
+        processedFilesCount++;
+        const progress = Math.round((processedFilesCount / files.length) * 100);
+        await job.progress(progress);
       }
     } catch (error: unknown) {
       processSummary.error("Error uploading file.", error);
@@ -97,12 +103,7 @@ export class T4AUploadProcessingService {
       // Download the file from the SFTP.
       processSummary.info("Start download from the SFTP.");
       const startDownloadTime = performance.now();
-      const fileBuffer = await this.t4aIntegrationService.downloadFile(
-        file.remoteFilePath,
-        {
-          client: sftpClient,
-        },
-      );
+      const fileBuffer = await sftpClient.get(file.remoteFilePath);
       const endDownloadTime = performance.now();
       processSummary.info(
         `File downloaded in ${(endDownloadTime - startDownloadTime).toFixed(2)}ms.`,
@@ -113,21 +114,24 @@ export class T4AUploadProcessingService {
       const directory = path.basename(path.dirname(file.remoteFilePath));
       const extension = path.extname(file.remoteFilePath);
       const userFriendlyFileName = `${directory}-T4A-${formattedReferenceDate}`;
-      const fileName = `${userFriendlyFileName}.${extension}`;
-      const uniqueFileName = `${userFriendlyFileName}-${file.uniqueID}.${extension}`;
+      const fileName = `${userFriendlyFileName}${extension}`;
+      const uniqueFileName = `${userFriendlyFileName}-${file.uniqueID}${extension}`;
+      const fileUploadProcessSummary = new ProcessSummary();
+      processSummary.children(fileUploadProcessSummary);
       try {
         await this.studentFileSharedService.createFile(
           {
             fileName,
             uniqueFileName,
             mimeType: "application/pdf",
-            fileContent: fileBuffer,
+            fileContent: fileBuffer as Buffer,
             groupName: T4A_FILE_PREFIX,
             fileOrigin: FileOriginType.Ministry,
           },
           student.id,
           this.systemUsersService.systemUser.id,
-          processSummary,
+          fileUploadProcessSummary,
+          { preventFileHashDuplication: true },
         );
       } catch (error: unknown) {
         if (

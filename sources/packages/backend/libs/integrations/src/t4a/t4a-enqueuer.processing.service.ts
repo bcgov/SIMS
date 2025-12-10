@@ -35,13 +35,15 @@ export class T4AEnqueuerProcessingService {
     // For each directory, get the list of T4A files and queue them for processing.
     for (const directoryPath of t4aDirectories) {
       processSummary.info(`Processing T4A files in ${directoryPath}.`);
+      const startListFiles = performance.now();
       const remoteFilePaths =
         await this.t4aIntegrationService.getResponseFilesFullPath(
           directoryPath,
           /[\d]{9}\.pdf/i,
         );
+      const listFilesElapsedMs = performance.now() - startListFiles;
       processSummary.info(
-        `Found ${remoteFilePaths.length} files in ${directoryPath}.`,
+        `Found ${remoteFilePaths.length} files in ${directoryPath}, in ${listFilesElapsedMs.toFixed(2)}ms.`,
       );
       // Create batches of files to be processed.
       const enqueueStart = performance.now();
@@ -57,7 +59,7 @@ export class T4AEnqueuerProcessingService {
       await this.t4aUploadQueue.addBulk(queues);
       const enqueueElapsedMs = performance.now() - enqueueStart;
       processSummary.info(
-        `Time to queue ${remoteFilePaths.length} files: ${enqueueElapsedMs.toFixed(2)} ms.`,
+        `Time to queue files, ${enqueueElapsedMs.toFixed(2)}ms.`,
       );
     }
   }

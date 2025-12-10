@@ -37,6 +37,9 @@ export class StudentFileSharedService {
    * If there is a high concurrency on saving files with the same content for the same student,
    * this may not be enough to prevent duplication and some DB unique constraints should be in place.
    * @returns saved student file record.
+   * @throws `FILE_HASH_DUPLICATION_ERROR` when trying to save a file with a hash that already
+   * exists for the student and `preventFileHashDuplication` option is set to true.
+   * @throws `FILE_SAVE_ERROR` when there is an unexpected error during the file save process.
    */
   async createFile(
     createFile: CreateFile,

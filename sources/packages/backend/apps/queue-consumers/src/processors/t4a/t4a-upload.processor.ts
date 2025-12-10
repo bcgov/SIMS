@@ -40,8 +40,8 @@ export class T4AUploadProcessor extends BaseQueue<T4AUploadQueueInDTO> {
       job.data.files,
       job.data.referenceDate,
       processSummary,
+      job,
     );
-    const endProcess = performance.now();
-    return `T4A uploads processed in ${((endProcess - startProcess) / 1000).toFixed(2)}s.`;
+    return `T4A uploads processed in ${((performance.now() - startProcess) / 1000).toFixed(2)}s.`;
   }
 }
