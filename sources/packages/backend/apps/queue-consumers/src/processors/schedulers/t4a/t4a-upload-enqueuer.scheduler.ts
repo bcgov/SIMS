@@ -36,20 +36,18 @@ export class T4AUploadEnqueuerScheduler extends BaseScheduler<T4AUploadEnqueuerQ
     job: Job<T4AUploadEnqueuerQueueInDTO>,
     processSummary: ProcessSummary,
   ): Promise<string[] | string> {
-    processSummary.info("Checking T4A files.");
+    processSummary.info("Checking T4A files to be enqueued for processing.");
     const maxFileUploadsPerBatch = await this.definedMaxFileUploadsPerBatch(
       job.data?.maxFileUploadsPerBatch,
     );
-    job.progress(50);
     processSummary.info(
       `Max file uploads per batch configured as ${maxFileUploadsPerBatch}.`,
     );
-    //await this.t4aEnqueuerProcessingService.createLoadTestFiles();
     await this.t4aEnqueuerProcessingService.process(
       maxFileUploadsPerBatch,
       processSummary,
     );
-    return "T4A files check process completed.";
+    return "T4A files process completed.";
   }
 
   /**

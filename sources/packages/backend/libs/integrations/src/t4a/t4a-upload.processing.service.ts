@@ -8,9 +8,11 @@ import { StudentFileSharedService, SystemUsersService } from "@sims/services";
 import { FileOriginType } from "@sims/sims-db";
 import * as path from "path";
 import { FILE_HASH_DUPLICATION_ERROR } from "@sims/services/constants";
-import { T4A_FILE_PREFIX } from "@sims/integrations/constants";
+import {
+  T4A_FILE_PREFIX,
+  T4A_SFTP_IN_FOLDER,
+} from "@sims/integrations/constants";
 import { T4AUploadFileQueueInDTO } from "@sims/services/queue/dto/t4a-upload.dto";
-import { Job } from "bull";
 
 /**
  * Service to process the upload of T4A files to student accounts.
@@ -35,14 +37,12 @@ export class T4AUploadProcessingService {
     files: T4AUploadFileQueueInDTO[],
     referenceDate: Date,
     processSummary: ProcessSummary,
-    job: Job,
   ): Promise<void> {
     let sftpClient: Client;
     try {
       processSummary.info("Creating SFTP client and starting process.");
       sftpClient = await this.t4aIntegrationService.getClient();
       const formattedReferenceDate = getISODateOnlyString(referenceDate);
-      let processedFilesCount = 0;
       for (const file of files) {
         const fileProcessSummary = new ProcessSummary();
         processSummary.children(fileProcessSummary);
@@ -52,9 +52,6 @@ export class T4AUploadProcessingService {
           formattedReferenceDate,
           fileProcessSummary,
         );
-        processedFilesCount++;
-        const progress = Math.round((processedFilesCount / files.length) * 100);
-        await job.progress(progress);
       }
     } catch (error: unknown) {
       processSummary.error("Error uploading file.", error);
@@ -80,7 +77,7 @@ export class T4AUploadProcessingService {
     formattedReferenceDate: string,
     processSummary: ProcessSummary,
   ): Promise<void> {
-    processSummary.info(`Processing file ${file.uniqueID}.`);
+    processSummary.info(`Processing file unique ID ${file.uniqueID}.`);
     try {
       // Find the student associate with the SIN in the file name.
       // Get the file name, expected to be the SIN of the student.
@@ -89,13 +86,13 @@ export class T4AUploadProcessingService {
         await this.sinValidationService.getStudentsByValidSIN("485867568");
       if (students.length > 1) {
         processSummary.warn(
-          `The SIN associated with the file ${file.uniqueID} has more than one student associated.`,
+          `The SIN associated with the file unique ID ${file.uniqueID} has more than one student associated.`,
         );
         return;
       }
       if (!students.length) {
         processSummary.warn(
-          `No student associated with the SIN for the file ${file.uniqueID}.`,
+          `No student associated with the SIN for the file unique ID ${file.uniqueID}.`,
         );
       }
       const [student] = students;
@@ -103,7 +100,9 @@ export class T4AUploadProcessingService {
       // Download the file from the SFTP.
       processSummary.info("Start download from the SFTP.");
       const startDownloadTime = performance.now();
-      const fileBuffer = await sftpClient.get(file.remoteFilePath);
+      const fileBuffer = await sftpClient.get(
+        `${T4A_SFTP_IN_FOLDER}/${file.relativeFilePath}`,
+      );
       const endDownloadTime = performance.now();
       processSummary.info(
         `File downloaded in ${(endDownloadTime - startDownloadTime).toFixed(2)}ms.`,
@@ -111,9 +110,9 @@ export class T4AUploadProcessingService {
       const startUploadTime = performance.now();
       // Upload the file to the student account.
       processSummary.info(`Start upload to the student account.`);
-      const directory = path.basename(path.dirname(file.remoteFilePath));
-      const extension = path.extname(file.remoteFilePath);
-      const userFriendlyFileName = `${directory}-T4A-${formattedReferenceDate}`;
+      const directory = path.basename(path.dirname(file.relativeFilePath));
+      const extension = path.extname(file.relativeFilePath);
+      const userFriendlyFileName = `${directory}-${T4A_FILE_PREFIX}-${formattedReferenceDate}`;
       const fileName = `${userFriendlyFileName}${extension}`;
       const uniqueFileName = `${userFriendlyFileName}-${file.uniqueID}${extension}`;
       const fileUploadProcessSummary = new ProcessSummary();
@@ -125,7 +124,7 @@ export class T4AUploadProcessingService {
             uniqueFileName,
             mimeType: "application/pdf",
             fileContent: fileBuffer as Buffer,
-            groupName: T4A_FILE_PREFIX,
+            groupName: `${directory}-${T4A_FILE_PREFIX}`,
             fileOrigin: FileOriginType.Ministry,
           },
           student.id,
@@ -152,7 +151,7 @@ export class T4AUploadProcessingService {
     } catch (error: unknown) {
       // Register the error but continue processing other files.
       processSummary.error(
-        `Error while processing file ${file.remoteFilePath}.`,
+        `Error while processing file unique ID ${file.uniqueID}.`,
         error,
       );
     }

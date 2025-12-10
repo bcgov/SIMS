@@ -45,3 +45,9 @@ export const T4A_FILE_PREFIX = "T4A";
  * Default maximum number of file uploads per batch for a T4A upload enqueuer job.
  */
 export const DEFAULT_MAX_FILE_UPLOADS_PER_BATCH = 100;
+
+/**
+ * Temporary configuration for the T4A SFTP IN folder.
+ * TODO: Move to an environment variable.
+ */
+export const T4A_SFTP_IN_FOLDER = "IN/T4A";
