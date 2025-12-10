@@ -23,6 +23,11 @@ export interface QueueConfigurationDetails {
    */
   pollingRecordLimit?: number;
   /**
+   * Indicates if completed jobs should be removed automatically.
+   * This takes precedence over cleanUpPeriod.
+   */
+  removeOnComplete?: boolean;
+  /**
    * Cleans all jobs that completed over given period in milliseconds.
    */
   cleanUpPeriod?: number;

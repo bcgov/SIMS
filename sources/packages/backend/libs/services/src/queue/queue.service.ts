@@ -78,7 +78,9 @@ export class QueueService {
         cron: queueConfig.queueConfiguration.cron,
       };
     }
-    if (queueConfig.queueConfiguration.cleanUpPeriod) {
+    if (queueConfig.queueConfiguration.removeOnComplete === true) {
+      config.removeOnComplete = true;
+    } else if (queueConfig.queueConfiguration.cleanUpPeriod) {
       config.removeOnComplete = {
         age: queueConfig.queueConfiguration.cleanUpPeriod / 1000,
       };
