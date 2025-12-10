@@ -5,7 +5,7 @@ VALUES
         -- The scheduler is set to run at 5 PM PST, on Monday, from February to May.
         't4a-upload-enqueuer',
         '{
-            "cron": "0 13 * 2-5 1",
+            "cron": "0 13 * 2-5 *",
             "retry": 3,
             "cleanUpPeriod": 2592000000,
             "retryInterval": 180000,
@@ -22,7 +22,7 @@ VALUES
         't4a-upload',
         '{
             "retry": 3,
-            "cleanUpPeriod": 86400000,
+            "removeOnComplete": true,
             "retryInterval": 180000,
             "dashboardReadonly": false
         }' :: jsonb,
