@@ -2048,7 +2048,7 @@ Priority to loan reported by partner directly, then by student. Otherwise will b
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=max(0,dmnFullTimeProgramYearMaximums.limitProgramYearReturnTransportation - programYearTotalReturnTransportationCost)" target="calculatedDataRemainingReturnTransportation" />
-          <zeebe:output source="=if offeringDelivered = &#34;onsite&#34; and studentDataReturnTripHomeCost != null&#10;then&#10;min(dmnFullTimeApplicationReturnTransportation, calculatedDataRemainingReturnTransportation)&#10;else &#10;  0" target="calculatedDataReturnTransportationCost" />
+          <zeebe:output source="=if offeringDelivered != &#34;online&#34; and (studentDataLivingWithPartner = &#34;no&#34; or dmnFullTimeLivingCategory = &#34;SDA&#34; or dmnFullTimeLivingCategory = &#34;SIA&#34;)&#10;then&#10;max(min(dmnFullTimeApplicationReturnTransportation, calculatedDataRemainingReturnTransportation, studentDataReturnTripHomeCost*2),0)&#10;else &#10;  0" target="calculatedDataReturnTransportationCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_03tcdoz</bpmn:incoming>
