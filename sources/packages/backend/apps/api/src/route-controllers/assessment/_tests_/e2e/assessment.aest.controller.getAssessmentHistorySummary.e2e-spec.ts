@@ -97,7 +97,7 @@ describe("AssessmentAestController(e2e)-getAssessmentHistorySummary", () => {
       .expect(HttpStatus.OK)
       .expect([
         {
-          // Scholastic Standing Reversal Assessment
+          // Scholastic Standing Reversal Assessment.
           assessmentId: reversalAssessment.id,
           submittedDate: today.toISOString(),
           triggerType: AssessmentTriggerType.ScholasticStandingReversal,
@@ -107,7 +107,7 @@ describe("AssessmentAestController(e2e)-getAssessmentHistorySummary", () => {
           programId: offering.educationProgram.id,
         },
         {
-          // Unsuccessful Completion Scholastic Standing Change
+          // Unsuccessful Completion Scholastic Standing Change.
           submittedDate: yesterday.toISOString(),
           triggerType: AssessmentTriggerType.ScholasticStandingChange,
           status: StudentAssessmentStatus.Completed,
@@ -119,7 +119,7 @@ describe("AssessmentAestController(e2e)-getAssessmentHistorySummary", () => {
           scholasticStandingReversalDate: today.toISOString(),
         },
         {
-          // Original Assessment
+          // Original Assessment.
           assessmentId: originalAssessment.id,
           submittedDate: twoDaysAgo.toISOString(),
           triggerType: AssessmentTriggerType.OriginalAssessment,
