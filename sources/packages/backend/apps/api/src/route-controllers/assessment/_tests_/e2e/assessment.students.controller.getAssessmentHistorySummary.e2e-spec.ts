@@ -114,7 +114,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentHistorySummary", () => 
         },
       ]);
   });
-  it("Should get the student assessment history summary including a Withdrawal and reversed Withdrawal.", async () => {
+  it("Should get the student assessment history summary including Original Assessment, Scholastic Change Event (Withdrawal) and Scholastic Change Reversal.", async () => {
     // Arrange
     // Define the actual study period dates.
     const studyStartDate = getISODateOnlyString(new Date());
@@ -150,7 +150,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentHistorySummary", () => 
     );
     await db.educationProgramOffering.save(withdrawalOffering);
 
-    // Create a new assessment using the withdrawal offering.
+    // Create a Scholastic Standing Change (Withdrawal) assessment using the withdrawal offering.
     const withdrawalAssessment = createFakeStudentAssessment(
       {
         auditUser: institutionUser,
@@ -166,7 +166,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentHistorySummary", () => 
       },
     );
 
-    // Create a Withdrawal scholastic standing that has been reversed.
+    // Create a Withdrawal scholastic standing change that has been reversed.
     const withdrawalScholasticStanding = createFakeStudentScholasticStanding(
       {
         submittedBy: institutionUser,
@@ -184,7 +184,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentHistorySummary", () => 
     );
     await db.studentScholasticStanding.save(withdrawalScholasticStanding);
 
-    // Create an assessment for the Withdrawal scholastic standing reversal.
+    // Create Scholastic Change Reversal assessment.
     const reversalAssessment = createFakeStudentAssessment(
       {
         auditUser: institutionUser,
@@ -215,6 +215,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentHistorySummary", () => 
       .expect(HttpStatus.OK)
       .expect([
         {
+          // Scholastic Standing Reversal Assessment.
           assessmentId: reversalAssessment.id,
           submittedDate: today.toISOString(),
           triggerType: AssessmentTriggerType.ScholasticStandingReversal,
@@ -224,6 +225,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentHistorySummary", () => 
           programId: offeringBeforeWithdrawal.educationProgram.id,
         },
         {
+          // Scholastic Standing Change (Withdrawal) Assessment.
           assessmentId: withdrawalAssessment.id,
           submittedDate: yesterday.toISOString(),
           triggerType: AssessmentTriggerType.ScholasticStandingChange,
@@ -237,6 +239,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentHistorySummary", () => 
           scholasticStandingReversalDate: today.toISOString(),
         },
         {
+          // Original Assessment.
           assessmentId: originalAssessment.id,
           submittedDate: twoDaysAgo.toISOString(),
           triggerType: AssessmentTriggerType.OriginalAssessment,
