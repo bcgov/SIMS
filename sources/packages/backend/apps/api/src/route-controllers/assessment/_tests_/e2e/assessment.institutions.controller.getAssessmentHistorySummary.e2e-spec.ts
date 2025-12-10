@@ -27,6 +27,7 @@ import {
   Institution,
   InstitutionLocation,
   StudentAssessmentStatus,
+  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/student.institutions.utils";
 
@@ -104,6 +105,9 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentHistorySummary", ()
           status: StudentAssessmentStatus.Completed,
           studentScholasticStandingId: scholasticStanding.id,
           hasUnsuccessfulWeeks: true,
+          scholasticStandingChangeType:
+            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+          scholasticStandingReversalDate: null,
         },
         {
           assessmentId: originalAssessment.id,
