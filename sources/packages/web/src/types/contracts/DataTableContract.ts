@@ -720,7 +720,7 @@ export const StudentAccountRequestsHeaders = [
 export const CompletedChangesHeaders = [
   { title: "Submitted date", sortable: true, key: "submittedDate" },
   { title: "Type", sortable: true, key: "triggerType" },
-  { title: "", sortable: false, key: "tags" },
+  { title: "Tags", sortable: false, key: "tags" },
   { title: "Request form", sortable: false, key: "requestForm" },
   { title: "Status", sortable: true, key: "status" },
   { title: "Assessment date", sortable: true, key: "assessmentDate" },

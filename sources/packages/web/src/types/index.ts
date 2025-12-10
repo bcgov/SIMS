@@ -51,4 +51,3 @@ export * from "@/types/contracts/CASInvoiceBatchContracts";
 export * from "@/types/contracts/CASInvoiceStatus";
 export * from "@/types/contracts/DynamicFormConfigurationContracts";
 export * from "@/types/contracts/ApplicationExceptionRequestStatus";
-export * from "@/types/contracts/ChipTag";

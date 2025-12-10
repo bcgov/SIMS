@@ -1,8 +1,7 @@
 <template>
-  <!-- Reversed takes precedence over Unsuccessful Completion and Withdrawal -->
   <chip-tag
     v-if="!!assessment.scholasticStandingReversalDate"
-    :type="ChipTagTypes.Red"
+    color="error"
     label="Reversed"
   />
   <chip-tag
@@ -10,7 +9,7 @@
       assessment.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
     "
-    :type="ChipTagTypes.Black"
+    color="black"
     label="Unsuccessful Completion"
   />
   <chip-tag
@@ -18,7 +17,7 @@
       assessment.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentWithdrewFromProgram
     "
-    :type="ChipTagTypes.Black"
+    color="black"
     label="Withdrawal"
   />
 </template>
@@ -26,7 +25,7 @@
 import { defineComponent, PropType } from "vue";
 import ChipTag from "@/components/generic/ChipTag.vue";
 import { AssessmentHistorySummaryAPIOutDTO } from "@/services/http/dto";
-import { StudentScholasticStandingChangeType, ChipTagTypes } from "@/types";
+import { StudentScholasticStandingChangeType } from "@/types";
 
 export default defineComponent({
   components: { ChipTag },
@@ -39,7 +38,6 @@ export default defineComponent({
   setup() {
     return {
       StudentScholasticStandingChangeType,
-      ChipTagTypes,
     };
   },
 });
