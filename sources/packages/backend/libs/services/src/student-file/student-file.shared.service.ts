@@ -7,7 +7,7 @@ import { InjectQueue } from "@nestjs/bull";
 import { CustomNamedError, hashObjectToHex, QueueNames } from "@sims/utilities";
 import { Queue } from "bull";
 import { VirusScanQueueInDTO } from "@sims/services/queue";
-import { FILE_SAVE_ERROR } from "../constants";
+import { FILE_HASH_DUPLICATION_ERROR, FILE_SAVE_ERROR } from "../constants";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
 import { InjectRepository } from "@nestjs/typeorm";
 
@@ -22,7 +22,7 @@ export class StudentFileSharedService {
   ) {}
 
   /**
-   * Saves the file metadata to db and the file contents
+   * Saves the file metadata to DB and the file contents
    * to the S3 file storage and associates it with the student.
    * Subsequently, adds the file to the virus scan queue
    * to scan for any viruses.
@@ -31,6 +31,11 @@ export class StudentFileSharedService {
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
    * @param summary process summary logger.
+   * @param options additional options for file creation.
+   * - `preventFileHashDuplication`: if true, prevents saving a file with a hash that
+   * already exists for the student. A simple check will be done before saving the file.
+   * If there is a high concurrency on saving files with the same content for the same student,
+   * this may not be enough to prevent duplication and some DB unique constraints should be in place.
    * @returns saved student file record.
    */
   async createFile(
@@ -38,7 +43,24 @@ export class StudentFileSharedService {
     studentId: number,
     auditUserId: number,
     summary: ProcessSummary,
+    options?: { preventFileHashDuplication?: boolean },
   ): Promise<StudentFile> {
+    // Generate the file hash.
+    const fileHash = hashObjectToHex(createFile.fileContent);
+    if (options?.preventFileHashDuplication) {
+      const existingFile = await this.studentFileRepo.exists({
+        where: {
+          student: { id: studentId },
+          fileHash,
+        },
+      });
+      if (existingFile) {
+        throw new CustomNamedError(
+          `File hash ${fileHash} already exists for student ID ${studentId}.`,
+          FILE_HASH_DUPLICATION_ERROR,
+        );
+      }
+    }
     try {
       summary.info(`Uploading file ${createFile.fileName} to S3 storage.`);
       await this.objectStorageService.putObject({
@@ -61,8 +83,7 @@ export class StudentFileSharedService {
     newFile.student = { id: studentId } as Student;
     newFile.creator = { id: auditUserId } as User;
     newFile.virusScanStatus = VirusScanStatus.InProgress;
-    // Generate the file hash.
-    newFile.fileHash = hashObjectToHex(createFile.fileContent);
+    newFile.fileHash = fileHash;
     newFile.fileOrigin = createFile.fileOrigin;
 
     summary.info(`Saving the file ${createFile.fileName} to database.`);

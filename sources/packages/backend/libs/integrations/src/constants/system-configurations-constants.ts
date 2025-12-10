@@ -35,3 +35,8 @@ export const SFTP_ARCHIVE_DIRECTORY = "Archive";
  * Initial date for the SIMS to SFAS bridge first ever execution.
  */
 export const SIMS_TO_SFAS_BRIDGE_FILE_INITIAL_DATE = new Date("2024-01-01");
+
+/**
+ * Group name used to store T4A files into the student account.
+ */
+export const T4A_FILE_PREFIX = "T4A";

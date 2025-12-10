@@ -6,9 +6,14 @@ import * as Client from "ssh2-sftp-client";
 import { SINValidationService } from "@sims/integrations/services";
 import { StudentFileSharedService, SystemUsersService } from "@sims/services";
 import { FileOriginType } from "@sims/sims-db";
-import { v4 as uuid } from "uuid";
 import * as path from "path";
+import { FILE_HASH_DUPLICATION_ERROR } from "@sims/services/constants";
+import { T4A_FILE_PREFIX } from "@sims/integrations/constants";
+import { T4AUploadFileQueueInDTO } from "@sims/services/queue/dto/t4a-upload.dto";
 
+/**
+ * Service to process the upload of T4A files to student accounts.
+ */
 @Injectable()
 export class T4AUploadProcessingService {
   constructor(
@@ -18,101 +23,132 @@ export class T4AUploadProcessingService {
     private readonly sinValidationService: SINValidationService,
   ) {}
 
+  /**
+   * Process the upload of a T4A files batch.
+   * @param files Array of files to be processed.
+   * @param referenceDate The reference date for processing. Received from
+   * the enqueuer to ensure all files in the batches have the same reference date.
+   * @param processSummary Summary object to log the process details.
+   */
   async process(
-    remoteFiles: string[],
+    files: T4AUploadFileQueueInDTO[],
     referenceDate: Date,
     processSummary: ProcessSummary,
   ): Promise<void> {
     let sftpClient: Client;
     try {
+      processSummary.info("Creating SFTP client and starting process.");
       sftpClient = await this.t4aIntegrationService.getClient();
       const formattedReferenceDate = getISODateOnlyString(referenceDate);
-      for (const remoteFilePath of remoteFiles) {
+      for (const file of files) {
+        const fileProcessSummary = new ProcessSummary();
+        processSummary.children(fileProcessSummary);
         await this.processT4AFile(
           sftpClient,
-          remoteFilePath,
+          file,
           formattedReferenceDate,
-          processSummary,
+          fileProcessSummary,
         );
       }
     } catch (error: unknown) {
-      processSummary.error("Error uploading T4A file", error);
+      processSummary.error("Error uploading file.", error);
     } finally {
       await this.t4aIntegrationService.ensureClientClosed(
-        "Upload T4A files process completed.",
+        "Upload process completed.",
         sftpClient,
       );
     }
   }
 
+  /**
+   * Process a single T4A file: download from SFTP and upload to student account.
+   * @param sftpClient Shared SFTP client to be used for file download. Creating
+   * a new client for each file would be inefficient.
+   * @param file File to be processed.
+   * @param formattedReferenceDate Reference date formatted as string for file naming.
+   * @param processSummary Summary object to log the process details.
+   */
   private async processT4AFile(
     sftpClient: Client,
-    remoteFilePath: string,
+    file: T4AUploadFileQueueInDTO,
     formattedReferenceDate: string,
     processSummary: ProcessSummary,
   ): Promise<void> {
-    processSummary.info(`Downloading T4A file ${remoteFilePath}.`);
+    processSummary.info(`Processing file ${file.uniqueID}.`);
     try {
-      const directory = path.basename(path.dirname(remoteFilePath));
-      const userFriendlyFileName = `${directory}-T4A-${formattedReferenceDate}`;
-      processSummary.info(`Processing T4A file: ${remoteFilePath}.`);
+      // Find the student associate with the SIN in the file name.
       // Get the file name, expected to be the SIN of the student.
-      const sin = path.basename(remoteFilePath, path.extname(remoteFilePath));
-      const student =
-        await this.sinValidationService.getStudentByValidSIN("485867568");
-      if (!student) {
+      //const sin = path.basename(remoteFilePath, path.extname(remoteFilePath));
+      const students =
+        await this.sinValidationService.getStudentsByValidSIN("485867568");
+      if (students.length > 1) {
         processSummary.warn(
-          `No student found for SIN ${sin} for T4A file ${remoteFilePath}.`,
+          `The SIN associated with the file ${file.uniqueID} has more than one student associated.`,
         );
         return;
       }
-      performance.mark("Start Download");
+      if (!students.length) {
+        processSummary.warn(
+          `No student associated with the SIN for the file ${file.uniqueID}.`,
+        );
+      }
+      const [student] = students;
+      processSummary.info(`Found student ID ${student.id}.`);
+      // Download the file from the SFTP.
+      processSummary.info("Start download from the SFTP.");
+      const startDownloadTime = performance.now();
       const fileBuffer = await this.t4aIntegrationService.downloadFile(
-        remoteFilePath,
+        file.remoteFilePath,
         {
           client: sftpClient,
         },
       );
-      performance.mark("End Download");
-      performance.mark("Start Upload");
-      await this.studentFileSharedService.createFile(
-        {
-          fileName: `${userFriendlyFileName}.pdf`,
-          uniqueFileName: `${userFriendlyFileName}-${uuid()}.pdf`,
-          mimeType: " application/pdf",
-          fileContent: fileBuffer,
-          groupName: `${directory}-T4A`,
-          fileOrigin: FileOriginType.Student,
-        },
-        student.id,
-        this.systemUsersService.systemUser.id,
-        processSummary,
-      );
-      performance.mark("End Upload");
-      const fileDownloadMeasure = performance.measure(
-        "T4A File Download",
-        "Start Download",
-        "End Download",
-      );
-      const fileUploadMeasure = performance.measure(
-        "T4A File Upload",
-        "Start Upload",
-        "End Upload",
-      );
+      const endDownloadTime = performance.now();
       processSummary.info(
-        `T4A file downloaded in ${fileDownloadMeasure.duration.toFixed(2)}ms.`,
+        `File downloaded in ${(endDownloadTime - startDownloadTime).toFixed(2)}ms.`,
       );
+      const startUploadTime = performance.now();
+      // Upload the file to the student account.
+      processSummary.info(`Start upload to the student account.`);
+      const directory = path.basename(path.dirname(file.remoteFilePath));
+      const extension = path.extname(file.remoteFilePath);
+      const userFriendlyFileName = `${directory}-T4A-${formattedReferenceDate}`;
+      const fileName = `${userFriendlyFileName}.${extension}`;
+      const uniqueFileName = `${userFriendlyFileName}-${file.uniqueID}.${extension}`;
+      try {
+        await this.studentFileSharedService.createFile(
+          {
+            fileName,
+            uniqueFileName,
+            mimeType: "application/pdf",
+            fileContent: fileBuffer,
+            groupName: T4A_FILE_PREFIX,
+            fileOrigin: FileOriginType.Ministry,
+          },
+          student.id,
+          this.systemUsersService.systemUser.id,
+          processSummary,
+        );
+      } catch (error: unknown) {
+        if (
+          error instanceof Error &&
+          error.name === FILE_HASH_DUPLICATION_ERROR
+        ) {
+          processSummary.info(
+            `T4A file for student ID ${student.id} already exists: ${error.message}`,
+          );
+          return;
+        }
+        throw error;
+      }
+      const endUploadTime = performance.now();
       processSummary.info(
-        `T4A file uploaded in ${fileUploadMeasure.duration.toFixed(2)}ms.`,
+        `File uploaded in ${(endUploadTime - startUploadTime).toFixed(2)}ms.`,
       );
-      processSummary.info(
-        `Total T4A file process time: ${(fileDownloadMeasure.duration + fileUploadMeasure.duration).toFixed(2)}ms.`,
-      );
-      processSummary.info(`Created T4A file record for ${remoteFilePath}.`);
     } catch (error: unknown) {
       // Register the error but continue processing other files.
       processSummary.error(
-        `Error while processing T4A file ${remoteFilePath}.`,
+        `Error while processing file ${file.remoteFilePath}.`,
         error,
       );
     }

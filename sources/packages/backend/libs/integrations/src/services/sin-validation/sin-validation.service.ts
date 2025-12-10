@@ -275,8 +275,16 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
     );
   }
 
-  async getStudentByValidSIN(sin: string): Promise<Student | null> {
-    const sinValidationRecord = await this.repo.findOne({
+  /**
+   * Get students associated with a valid SIN. A student may have multiple
+   * SIN number associated with his account, for instance, temporary and
+   * permanent numbers. This method returns all students that have the provided
+   * SIN associated and marked as valid.
+   * @param sin SIN number to be searched.
+   * @returns List of students associated with the valid SIN.
+   */
+  async getStudentsByValidSIN(sin: string): Promise<Student[]> {
+    const sinValidationRecord = await this.repo.find({
       select: {
         id: true,
         student: { id: true },
@@ -287,6 +295,8 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
         isValidSIN: true,
       },
     });
-    return sinValidationRecord ? sinValidationRecord.student : null;
+    return sinValidationRecord
+      ? sinValidationRecord.map((record) => record.student)
+      : [];
   }
 }

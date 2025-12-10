@@ -51,10 +51,7 @@ export class T4AEnqueuerProcessingService {
       while (remoteFilePaths.length > 0) {
         const filesBatch = remoteFilePaths.splice(0, maxFileUploadsPerBatch);
         queues.push({
-          data: {
-            remoteFiles: filesBatch,
-            referenceDate,
-          },
+          data: new T4AUploadQueueInDTO(referenceDate, filesBatch),
         });
       }
       await this.t4aUploadQueue.addBulk(queues);

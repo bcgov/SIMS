@@ -18,28 +18,30 @@ export class T4AUploadProcessor extends BaseQueue<T4AUploadQueueInDTO> {
     super(logger);
   }
 
+  /**
+   * Queue for processing T4A file uploads batches.
+   * Files are read from the SFTP and uploaded to student accounts
+   * during a specific time of the year.
+   * @param job Job information containing the files to be processed.
+   * @param processSummary Summary object to log the process details.
+   * @returns A message indicating the processing result and its duration.
+   * The duration is useful for performance monitoring and can help identify
+   * potential bottlenecks in the processing workflow.
+   */
   protected async process(
     job: Job<T4AUploadQueueInDTO>,
     processSummary: ProcessSummary,
   ): Promise<string> {
     processSummary.info(
-      `Processing T4A upload for files: ${job.data.remoteFiles}.`,
+      `Processing T4A upload for ${job.data.files.length} file(s).`,
     );
-    performance.mark("Start process");
+    const startProcess = performance.now();
     await this.t4aUploadProcessingService.process(
-      job.data.remoteFiles,
+      job.data.files,
       job.data.referenceDate,
       processSummary,
     );
-    performance.mark("End process");
-    const fileProcessMeasure = performance.measure(
-      "T4A File Upload",
-      "Start process",
-      "End process",
-    );
-    processSummary.info(
-      `T4A uploads processed in ${(fileProcessMeasure.duration / 1000).toFixed(2)}s.`,
-    );
-    return "T4A uploads processed.";
+    const endProcess = performance.now();
+    return `T4A uploads processed in ${((endProcess - startProcess) / 1000).toFixed(2)}s.`;
   }
 }
