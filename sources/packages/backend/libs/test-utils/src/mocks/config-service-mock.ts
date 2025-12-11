@@ -93,6 +93,10 @@ export class ConfigServiceMockHelper {
       );
   }
 
+  /**
+   * Returns the underlying ConfigService instance.
+   * @returns The ConfigService instance.
+   */
   getConfigService(): ConfigService {
     return this.configService;
   }
