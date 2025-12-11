@@ -114,6 +114,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentHistorySummary", () => 
         },
       ]);
   });
+
   it("Should get the student assessment history summary including Original Assessment, Scholastic Change Event (Withdrawal) and Scholastic Change Reversal.", async () => {
     // Arrange
     // Define the actual study period dates.
