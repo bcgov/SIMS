@@ -8,6 +8,7 @@ import {
 import { Response } from "express";
 import {
   ApplicationService,
+  StudentFileService,
   StudentRestrictionService,
   StudentService,
 } from "../../services";
@@ -59,6 +60,7 @@ import {
 @Injectable()
 export class StudentControllerService {
   constructor(
+    private readonly fileService: StudentFileService,
     private readonly studentFileSharedService: StudentFileSharedService,
     private readonly studentService: StudentService,
     private readonly studentRestrictionService: StudentRestrictionService,
