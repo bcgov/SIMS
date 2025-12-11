@@ -200,9 +200,8 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * in parsed objects specific to the integration process.
    * It can also download raw content file when no parse is needed.
    * @param remoteFilePath full remote file path with file name.
-   * - `options`: Optional parameters including SFTP client.
-   * - `client`: SFTP client to be used in the operation when the same
-   * client is used for multiple operations.
+   * @param options Optional parameters including SFTP client.
+   * - `client`: SFTP client to be shared and allow multiple operations.
    * @returns The parsed download object or raw content.
    */
   async downloadResponseFile(
