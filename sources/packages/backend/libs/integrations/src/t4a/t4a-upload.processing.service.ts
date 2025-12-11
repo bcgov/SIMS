@@ -89,6 +89,7 @@ export class T4AUploadProcessingService {
       // Find the student associate with the SIN in the file name.
       const student = await this.getAssociatedStudent(
         t4aFileInfo,
+        file.uniqueID,
         processSummary,
       );
       if (!student) {
@@ -133,11 +134,13 @@ export class T4AUploadProcessingService {
    * Get the student associated with the given T4A file information
    * producing necessary logs in the process summary.
    * @param t4aFileInfo T4A file information to get the SIN and find the student.
+   * @param uniqueID Unique ID of the file being processed.
    * @param processSummary Process summary to log information and warnings.
    * @returns The associated student or false if not found or multiple found.
    */
   private async getAssociatedStudent(
     t4aFileInfo: T4AFileInfo,
+    uniqueID: string,
     processSummary: ProcessSummary,
   ): Promise<Student | false> {
     const students = await this.studentService.getStudentsByValidSIN(
@@ -145,13 +148,13 @@ export class T4AUploadProcessingService {
     );
     if (students.length > 1) {
       processSummary.warn(
-        `The SIN associated with the file unique ID ${t4aFileInfo.sin} has more than one student associated.`,
+        `The SIN associated with the file unique ID ${uniqueID} has more than one student associated.`,
       );
       return false;
     }
     if (!students.length) {
       processSummary.warn(
-        `No student associated with the SIN for the file unique ID ${t4aFileInfo.sin}.`,
+        `No student associated with the SIN for the file unique ID ${uniqueID}.`,
       );
       return false;
     }

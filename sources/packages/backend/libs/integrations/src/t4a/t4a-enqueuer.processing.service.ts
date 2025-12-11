@@ -56,8 +56,8 @@ export class T4AEnqueuerProcessingService {
       const referenceDate = new Date();
       // Queues in the format required by addBulk, splitted by max files per batch.
       const queues: { data: T4AUploadQueueInDTO }[] = [];
-      while (remoteFilePaths.length > 0) {
-        const filesBatch = remoteFilePaths.splice(0, maxFileUploadsPerBatch);
+      for (let i = 0; i < remoteFilePaths.length; i += maxFileUploadsPerBatch) {
+        const filesBatch = remoteFilePaths.slice(i, i + maxFileUploadsPerBatch);
         queues.push({
           data: new T4AUploadQueueInDTO(referenceDate, filesBatch),
         });

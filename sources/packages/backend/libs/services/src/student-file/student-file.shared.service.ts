@@ -121,7 +121,6 @@ export class StudentFileSharedService {
       summary.info(
         `File ${newFile.fileName} has been added to the virus scan queue.`,
       );
-      return savedFile;
     } catch (error: unknown) {
       // If adding the file to the virus scanning queue fails,
       // then revert the file virus scan status in the database to pending.
@@ -134,5 +133,6 @@ export class StudentFileSharedService {
         { virusScanStatus: VirusScanStatus.Pending },
       );
     }
+    return savedFile;
   }
 }
