@@ -308,6 +308,7 @@ export interface AssessmentModel {
 
 export interface CalculatedAssessmentModel {
   calculatedDataRemainingScholarshipsBursariesLimit: number;
+  calculatedDataRemainingReturnTransportation: number;
   calculatedDataRelationshipStatus: RelationshipStatusType;
   calculatedDataPartner1TotalIncome: number;
   calculatedDataAdditionalTransportRequested: YesNoOptions;
