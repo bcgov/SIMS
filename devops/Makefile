@@ -66,6 +66,8 @@ export QUEUE_CONSUMERS_CPU_REQUEST := $(or ${QUEUE_CONSUMERS_CPU_REQUEST}, 200m)
 export QUEUE_CONSUMERS_MEMORY_REQUEST := $(or ${QUEUE_CONSUMERS_MEMORY_REQUEST}, 768Mi)
 export QUEUE_CONSUMERS_MEMORY_LIMIT := $(or ${QUEUE_CONSUMERS_MEMORY_LIMIT}, 1024Mi)
 export QUEUE_CONSUMERS_REPLICAS := $(or ${QUEUE_CONSUMERS_REPLICAS}, 2)
+export THROTTLE_TIME := $(or $(THROTTLE_TIME), 10000)
+export THROTTLE_LIMIT := $(or $(THROTTLE_LIMIT), 10)
 
 export MAX_WAIT=300 # Maximum wait time in seconds.
 export WAIT_TIME=0  # Initialize wait time to zero.
@@ -383,6 +385,9 @@ deploy-api:
 	test -n "$(API_MEMORY_LIMIT)"
 	test -n "$(API_REPLICAS)"
 	test -n "$(EXTERNAL_IP_WHITELIST)"
+	test -n "$(THROTTLE_TIME)"
+	test -n "$(THROTTLE_LIMIT)"
+
 	@echo "+\n++ Deploying API with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
@@ -429,6 +434,8 @@ deploy-api:
 		-p MEMORY_REQUEST=$(API_MEMORY_REQUEST) \
 		-p MEMORY_LIMIT=$(API_MEMORY_LIMIT) \
 		-p REPLICAS=$(API_REPLICAS) \
+		-p THROTTLE_TIME=$(THROTTLE_TIME) \
+		-p THROTTLE_LIMIT=$(THROTTLE_LIMIT) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(API))
 

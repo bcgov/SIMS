@@ -482,4 +482,26 @@ export class ConfigService {
   get apiVersion(): string {
     return this.getCachedConfig("apiVersionConfig", process.env.VERSION);
   }
+
+  /**
+   * Gets the throttle time in milliseconds.
+   * @returns throttle time in milliseconds.
+   */
+  get throttleTime(): number {
+    return this.getCachedConfig(
+      "throttleTimeConfig",
+      +process.env.THROTTLE_TIME || 100,
+    );
+  }
+
+  /**
+   * Gets the throttle requests limit.
+   * @returns throttle requests limit.
+   */
+  get throttleLimit(): number {
+    return this.getCachedConfig(
+      "throttleLimitConfig",
+      +process.env.THROTTLE_LIMIT || 10,
+    );
+  }
 }

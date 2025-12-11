@@ -92,4 +92,8 @@ export class ConfigServiceMockHelper {
           this.configService.maintenanceModeExternal,
       );
   }
+
+  getConfigService(): ConfigService {
+    return this.configService;
+  }
 }

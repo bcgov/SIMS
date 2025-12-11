@@ -79,6 +79,10 @@ objects:
                   value: "${ALLOW_BETA_USERS_ONLY}"
                 - name: ALLOW_BETA_INSTITUTIONS_ONLY
                   value: "${ALLOW_BETA_INSTITUTIONS_ONLY}"
+                - name: THROTTLE_TIME
+                  value: "${THROTTLE_TIME}"
+                - name: THROTTLE_LIMIT
+                  value: "${THROTTLE_LIMIT}"
                 - name: POSTGRES_HOST
                   valueFrom:
                     secretKeyRef:
@@ -630,3 +634,7 @@ parameters:
     required: true
   - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
     value: "true"
+  - name: THROTTLE_TIME
+    value: "10000"
+  - name: THROTTLE_LIMIT
+    value: "10"

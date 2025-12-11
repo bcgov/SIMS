@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { AppService } from "./app.service";
-import { APP_FILTER, RouterModule } from "@nestjs/core";
+import { APP_FILTER, APP_GUARD, RouterModule } from "@nestjs/core";
 import {
   UserService,
   BCeIDServiceProvider,
@@ -27,7 +27,7 @@ import {
   ZeebeModule,
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
-import { ConfigModule } from "@sims/utilities/config";
+import { ConfigModule, ConfigService } from "@sims/utilities/config";
 import { DatabaseModule } from "@sims/sims-db";
 import { NotificationsModule } from "@sims/services/notifications";
 import { QueueModule } from "@sims/services/queue";
@@ -38,6 +38,7 @@ import { DynamicFormConfigurationModule } from "./dynamic-form-configuration.mod
 import { json } from "express";
 import { JSON_300KB } from "./constants";
 import { AppAllExceptionsFilter } from "./app.exception.filter";
+import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 
 @Module({
   imports: [
@@ -79,6 +80,16 @@ import { AppAllExceptionsFilter } from "./app.exception.filter";
         module: AppExternalModule,
       },
     ]),
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => [
+        {
+          ttl: config.throttleTime,
+          limit: config.throttleLimit,
+        },
+      ],
+    }),
   ],
   controllers: [
     HealthController,
@@ -96,6 +107,10 @@ import { AppAllExceptionsFilter } from "./app.exception.filter";
     {
       provide: APP_FILTER,
       useClass: AppAllExceptionsFilter,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })
