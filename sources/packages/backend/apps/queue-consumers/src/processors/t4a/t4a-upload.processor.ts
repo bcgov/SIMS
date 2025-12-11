@@ -24,9 +24,7 @@ export class T4AUploadProcessor extends BaseQueue<T4AUploadQueueInDTO> {
    * during a specific time of the year.
    * @param job Job information containing the files to be processed.
    * @param processSummary Summary object to log the process details.
-   * @returns A message indicating the processing result and its duration.
-   * The duration is useful for performance monitoring and can help identify
-   * potential bottlenecks in the processing workflow.
+   * @returns A message indicating the processing result.
    */
   protected async process(
     job: Job<T4AUploadQueueInDTO>,

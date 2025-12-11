@@ -18,13 +18,12 @@ export class T4AIntegrationService extends SFTPIntegrationBase<Buffer> {
   }
 
   /**
-   * When overridden in a derived class, transform the text lines
-   * in parsed objects specific to the integration process.
-   * @param remoteFilePath full remote file path with file name.
-   * @param options Optional parameters including SFTP client.
+   * Download the file content from the SFTP.
+   * @param remoteFilePath Full remote file path.
+   * @param options Method options.
    * - `client`: SFTP client to be used in the operation when the same
    * client is used for multiple operations.
-   * @returns The parsed download object.
+   * @returns The downloaded raw file content.
    */
   async downloadResponseFile(
     remoteFilePath: string,
