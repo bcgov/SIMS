@@ -193,7 +193,7 @@ export class T4AUploadProcessingService {
             fileName,
             uniqueFileName,
             mimeType: "application/pdf",
-            fileContent: t4aFileContent as Buffer,
+            fileContent: t4aFileContent,
             groupName,
             fileOrigin: FileOriginType.Ministry,
           },

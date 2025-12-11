@@ -45,7 +45,7 @@ export class T4AEnqueuerProcessingService {
       const remoteFilePaths =
         await this.t4aIntegrationService.getResponseFilesFullPath(
           directoryPath,
-          /[\d]{9}\.pdf/i,
+          /\d{9}\.pdf/i,
         );
       const listFilesElapsedMs = performance.now() - startListFiles;
       processSummary.info(
