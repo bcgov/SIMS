@@ -66,7 +66,7 @@ import {
   ECertCancellationResponseIntegrationModule,
 } from "@sims/integrations/esdc-integration";
 import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-integration.module";
-import { T4AModule } from "@sims/integrations/t4a";
+import { T4AIntegrationModule } from "@sims/integrations/t4a";
 import {
   StudentAssessmentService,
   ApplicationService,
@@ -121,7 +121,7 @@ import { LoggerModule } from "@sims/utilities/logger";
     TerminusModule,
     ApplicationChangesReportIntegrationModule,
     ECertCancellationResponseIntegrationModule,
-    T4AModule,
+    T4AIntegrationModule,
   ],
   providers: [
     VirusScanProcessor,

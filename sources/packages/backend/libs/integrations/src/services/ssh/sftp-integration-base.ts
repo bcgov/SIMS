@@ -198,9 +198,18 @@ export abstract class SFTPIntegrationBase<DownloadType> {
   /**
    * When overridden in a derived class, transform the text lines
    * in parsed objects specific to the integration process.
+   * It can also download raw content file when no parse is needed.
    * @param remoteFilePath full remote file path with file name.
+   * - `options`: Optional parameters including SFTP client.
+   * - `client`: SFTP client to be used in the operation when the same
+   * client is used for multiple operations.
+   * @returns The parsed download object or raw content.
    */
-  downloadResponseFile(remoteFilePath: string): Promise<DownloadType> {
+  async downloadResponseFile(
+    remoteFilePath: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _options?: { client: Client },
+  ): Promise<DownloadType> {
     throw new Error(`Method not implemented, ${remoteFilePath} not used.`);
   }
 

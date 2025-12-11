@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Repository } from "typeorm";
+import { EntityManager, Repository } from "typeorm";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { StudentFile, Student, User, VirusScanStatus } from "@sims/sims-db";
 import { CreateFile } from "./models/student-file-shared.models";
@@ -32,6 +32,9 @@ export class StudentFileSharedService {
    * causing the changes.
    * @param summary process summary logger.
    * @param options additional options for file creation.
+   * - `entityManager`: optional repository that can be provided, for instance,
+   * to execute the command as part of an existing transaction. If not provided
+   * the local repository will be used instead.
    * - `preventFileHashDuplication`: if true, prevents saving a file with a hash that
    * already exists for the student. A simple check will be done before saving the file.
    * If there is a high concurrency on saving files with the same content for the same student,
@@ -46,12 +49,18 @@ export class StudentFileSharedService {
     studentId: number,
     auditUserId: number,
     summary: ProcessSummary,
-    options?: { preventFileHashDuplication?: boolean },
+    options?: {
+      entityManager?: EntityManager;
+      preventFileHashDuplication?: boolean;
+    },
   ): Promise<StudentFile> {
+    const fileRepo = options?.entityManager
+      ? options.entityManager.getRepository(StudentFile)
+      : this.studentFileRepo;
     // Generate the file hash.
     const fileHash = hashObjectToHex(createFile.fileContent);
     if (options?.preventFileHashDuplication) {
-      const existingFile = await this.studentFileRepo.exists({
+      const existingFile = await fileRepo.exists({
         where: {
           student: { id: studentId },
           fileHash,
@@ -92,7 +101,7 @@ export class StudentFileSharedService {
     summary.info(`Saving the file ${createFile.fileName} to database.`);
     let savedFile: StudentFile;
     try {
-      savedFile = await this.studentFileRepo.save(newFile);
+      savedFile = await fileRepo.save(newFile);
     } catch (error: unknown) {
       summary.error("Error saving the file.", error);
       throw new CustomNamedError(
@@ -120,7 +129,7 @@ export class StudentFileSharedService {
         `Error while enqueueing the file ${newFile.fileName} for virus scanning.`,
         error,
       );
-      await this.studentFileRepo.update(
+      await fileRepo.update(
         { uniqueFileName: newFile.uniqueFileName },
         { virusScanStatus: VirusScanStatus.Pending },
       );

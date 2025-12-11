@@ -24,4 +24,4 @@ import { ObjectStorageModule } from "@sims/integrations/object-storage";
   ],
   exports: [T4AEnqueuerProcessingService, T4AUploadProcessingService],
 })
-export class T4AModule {}
+export class T4AIntegrationModule {}

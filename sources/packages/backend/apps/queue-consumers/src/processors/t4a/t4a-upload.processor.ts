@@ -19,7 +19,7 @@ export class T4AUploadProcessor extends BaseQueue<T4AUploadQueueInDTO> {
   }
 
   /**
-   * Queue for processing T4A file uploads batches.
+   * Process T4A file uploads batches.
    * Files are read from the SFTP and uploaded to student accounts
    * during a specific time of the year.
    * @param job Job information containing the files to be processed.
@@ -35,13 +35,11 @@ export class T4AUploadProcessor extends BaseQueue<T4AUploadQueueInDTO> {
     processSummary.info(
       `Processing T4A upload for ${job.data.files.length} file(s).`,
     );
-    const startProcess = performance.now();
     await this.t4aUploadProcessingService.process(
       job.data.files,
       job.data.referenceDate,
       processSummary,
-      job,
     );
-    return `T4A uploads processed in ${((performance.now() - startProcess) / 1000).toFixed(2)}s.`;
+    return "T4A uploads processed.";
   }
 }

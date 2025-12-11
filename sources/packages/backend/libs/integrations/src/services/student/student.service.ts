@@ -147,4 +147,25 @@ export class StudentService {
       { disabilityStatus, studentPDUpdateAt: disabilityStatusUpdatedDate },
     );
   }
+
+  /**
+   * Get students associated with a valid SIN. A student may have multiple
+   * SIN number associated with his account, for instance, temporary and
+   * permanent numbers. This method returns all students that have the provided
+   * SIN associated and marked as valid.
+   * @param sin SIN number to be searched.
+   * @returns List of students associated with the valid SIN.
+   */
+  async getStudentsByValidSIN(sin: string): Promise<Student[]> {
+    return this.studentRepo.find({
+      select: {
+        id: true,
+        user: { id: true, firstName: true, lastName: true, email: true },
+      },
+      relations: { user: true },
+      where: {
+        sinValidation: { sin, isValidSIN: true },
+      },
+    });
+  }
 }

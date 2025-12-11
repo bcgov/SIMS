@@ -8,7 +8,6 @@ import {
 import { Response } from "express";
 import {
   ApplicationService,
-  StudentFileService,
   StudentRestrictionService,
   StudentService,
 } from "../../services";
@@ -29,6 +28,7 @@ import {
 import {
   AddressInfo,
   Application,
+  FileOriginType,
   SFASIndividual,
   SpecificIdentityProviders,
   Student,
@@ -51,12 +51,15 @@ import { FILE_HAS_NOT_BEEN_SCANNED_YET, VIRUS_DETECTED } from "../../constants";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
 import { NoSuchKey } from "@aws-sdk/client-s3";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
-import { SFASIndividualService } from "@sims/services";
+import {
+  SFASIndividualService,
+  StudentFileSharedService,
+} from "@sims/services";
 
 @Injectable()
 export class StudentControllerService {
   constructor(
-    private readonly fileService: StudentFileService,
+    private readonly studentFileSharedService: StudentFileSharedService,
     private readonly studentService: StudentService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly applicationService: ApplicationService,
@@ -85,13 +88,14 @@ export class StudentControllerService {
   ): Promise<FileCreateAPIOutDTO> {
     const summary = new ProcessSummary();
     try {
-      await this.fileService.createFile(
+      await this.studentFileSharedService.createFile(
         {
           fileName: file.originalname,
           uniqueFileName: uniqueFileName,
           mimeType: file.mimetype,
           fileContent: file.buffer,
           groupName: groupName,
+          fileOrigin: FileOriginType.Temporary,
         },
         studentId,
         auditUserId,

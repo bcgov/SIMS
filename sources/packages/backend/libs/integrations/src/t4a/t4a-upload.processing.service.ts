@@ -3,16 +3,18 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import { T4AIntegrationService } from "@sims/integrations/t4a/t4a.integration.service";
 import { getISODateOnlyString } from "@sims/utilities";
 import * as Client from "ssh2-sftp-client";
-import { SINValidationService } from "@sims/integrations/services";
-import { StudentFileSharedService, SystemUsersService } from "@sims/services";
-import { FileOriginType } from "@sims/sims-db";
-import * as path from "path";
-import { FILE_HASH_DUPLICATION_ERROR } from "@sims/services/constants";
+import { StudentService } from "@sims/integrations/services";
 import {
-  T4A_FILE_PREFIX,
-  T4A_SFTP_IN_FOLDER,
-} from "@sims/integrations/constants";
+  NotificationActionsService,
+  StudentFileSharedService,
+  SystemUsersService,
+} from "@sims/services";
+import { FileOriginType, Student } from "@sims/sims-db";
+import { FILE_HASH_DUPLICATION_ERROR } from "@sims/services/constants";
+import { T4A_FILE_PREFIX } from "@sims/integrations/constants";
 import { T4AUploadFileQueueInDTO } from "@sims/services/queue/dto/t4a-upload.dto";
+import { T4AFileInfo } from "@sims/integrations/t4a/models/t4a.models";
+import { DataSource } from "typeorm";
 
 /**
  * Service to process the upload of T4A files to student accounts.
@@ -20,10 +22,12 @@ import { T4AUploadFileQueueInDTO } from "@sims/services/queue/dto/t4a-upload.dto
 @Injectable()
 export class T4AUploadProcessingService {
   constructor(
+    private readonly dataSource: DataSource,
     private readonly t4aIntegrationService: T4AIntegrationService,
     private readonly studentFileSharedService: StudentFileSharedService,
     private readonly systemUsersService: SystemUsersService,
-    private readonly sinValidationService: SINValidationService,
+    private readonly studentService: StudentService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {}
 
   /**
@@ -79,74 +83,42 @@ export class T4AUploadProcessingService {
   ): Promise<void> {
     processSummary.info(`Processing file unique ID ${file.uniqueID}.`);
     try {
+      const t4aFileInfo = this.t4aIntegrationService.getT4FileInfo(
+        file.relativeFilePath,
+      );
       // Find the student associate with the SIN in the file name.
-      // Get the file name, expected to be the SIN of the student.
-      //const sin = path.basename(remoteFilePath, path.extname(remoteFilePath));
-      const students =
-        await this.sinValidationService.getStudentsByValidSIN("485867568");
-      if (students.length > 1) {
-        processSummary.warn(
-          `The SIN associated with the file unique ID ${file.uniqueID} has more than one student associated.`,
-        );
+      const student = await this.getAssociatedStudent(
+        t4aFileInfo,
+        processSummary,
+      );
+      if (!student) {
+        // No student found, skip the file processing.
         return;
       }
-      if (!students.length) {
-        processSummary.warn(
-          `No student associated with the SIN for the file unique ID ${file.uniqueID}.`,
-        );
-      }
-      const [student] = students;
-      processSummary.info(`Found student ID ${student.id}.`);
       // Download the file from the SFTP.
       processSummary.info("Start download from the SFTP.");
       const startDownloadTime = performance.now();
-      const fileBuffer = await sftpClient.get(
-        `${T4A_SFTP_IN_FOLDER}/${file.relativeFilePath}`,
-      );
+      const t4aFileContent =
+        await this.t4aIntegrationService.downloadResponseFile(
+          t4aFileInfo.remoteFileFullPath,
+          { client: sftpClient },
+        );
       const endDownloadTime = performance.now();
       processSummary.info(
         `File downloaded in ${(endDownloadTime - startDownloadTime).toFixed(2)}ms.`,
       );
-      const startUploadTime = performance.now();
       // Upload the file to the student account.
-      processSummary.info(`Start upload to the student account.`);
-      const directory = path.basename(path.dirname(file.relativeFilePath));
-      const extension = path.extname(file.relativeFilePath);
-      const userFriendlyFileName = `${directory}-${T4A_FILE_PREFIX}-${formattedReferenceDate}`;
-      const fileName = `${userFriendlyFileName}${extension}`;
-      const uniqueFileName = `${userFriendlyFileName}-${file.uniqueID}${extension}`;
-      const fileUploadProcessSummary = new ProcessSummary();
-      processSummary.children(fileUploadProcessSummary);
-      try {
-        await this.studentFileSharedService.createFile(
-          {
-            fileName,
-            uniqueFileName,
-            mimeType: "application/pdf",
-            fileContent: fileBuffer as Buffer,
-            groupName: `${directory}-${T4A_FILE_PREFIX}`,
-            fileOrigin: FileOriginType.Ministry,
-          },
-          student.id,
-          this.systemUsersService.systemUser.id,
-          fileUploadProcessSummary,
-          { preventFileHashDuplication: true },
-        );
-      } catch (error: unknown) {
-        if (
-          error instanceof Error &&
-          error.name === FILE_HASH_DUPLICATION_ERROR
-        ) {
-          processSummary.info(
-            `T4A file for student ID ${student.id} already exists: ${error.message}`,
-          );
-          return;
-        }
-        throw error;
-      }
-      const endUploadTime = performance.now();
+      const startFileCreationTime = performance.now();
+      await this.createStudentFile(
+        student,
+        t4aFileInfo,
+        formattedReferenceDate,
+        file.uniqueID,
+        t4aFileContent,
+        processSummary,
+      );
       processSummary.info(
-        `File uploaded in ${(endUploadTime - startUploadTime).toFixed(2)}ms.`,
+        `File created in ${(performance.now() - startFileCreationTime).toFixed(2)}ms.`,
       );
     } catch (error: unknown) {
       // Register the error but continue processing other files.
@@ -154,6 +126,112 @@ export class T4AUploadProcessingService {
         `Error while processing file unique ID ${file.uniqueID}.`,
         error,
       );
+    }
+  }
+
+  /**
+   * Get the student associated with the given T4A file information
+   * producing necessary logs in the process summary.
+   * @param t4aFileInfo T4A file information to get the SIN and find the student.
+   * @param processSummary Process summary to log information and warnings.
+   * @returns The associated student or false if not found or multiple found.
+   */
+  private async getAssociatedStudent(
+    t4aFileInfo: T4AFileInfo,
+    processSummary: ProcessSummary,
+  ): Promise<Student | false> {
+    const students = await this.studentService.getStudentsByValidSIN(
+      t4aFileInfo.sin,
+    );
+    if (students.length > 1) {
+      processSummary.warn(
+        `The SIN associated with the file unique ID ${t4aFileInfo.sin} has more than one student associated.`,
+      );
+      return false;
+    }
+    if (!students.length) {
+      processSummary.warn(
+        `No student associated with the SIN for the file unique ID ${t4aFileInfo.sin}.`,
+      );
+      return false;
+    }
+    const [student] = students;
+    processSummary.info(`Found student ID ${student.id}.`);
+    return student;
+  }
+
+  /**
+   * Create the student file record, upload the file content to object storage,
+   * and send the notification to the student.
+   * @param student Student to whom the file will be associated with enough
+   * information to generate the notification.
+   * @param t4aFileInfo T4A file information to generate the file names and group.
+   * @param formattedReferenceDate Reference date to be included in the file name.
+   * @param fileUniqueID Unique ID to be included in the file name.
+   * @param t4aFileContent Content of the T4A file to be uploaded.
+   * @param processSummary Process summary to log the process details.
+   */
+  private async createStudentFile(
+    student: Student,
+    t4aFileInfo: T4AFileInfo,
+    formattedReferenceDate: string,
+    fileUniqueID: string,
+    t4aFileContent: Buffer,
+    processSummary: ProcessSummary,
+  ): Promise<void> {
+    processSummary.info(`Start upload to the student account.`);
+    const userFriendlyFileName = `${t4aFileInfo.directory}-${T4A_FILE_PREFIX}-${formattedReferenceDate}`;
+    const fileName = `${userFriendlyFileName}${t4aFileInfo.fileExtension}`;
+    const uniqueFileName = `${userFriendlyFileName}-${fileUniqueID}${t4aFileInfo.fileExtension}`;
+    const groupName = `${t4aFileInfo.directory}-${T4A_FILE_PREFIX}`;
+    const fileUploadProcessSummary = new ProcessSummary();
+    processSummary.children(fileUploadProcessSummary);
+    try {
+      await this.dataSource.manager.transaction(async (entityManager) => {
+        const createdFilePromise = this.studentFileSharedService.createFile(
+          {
+            fileName,
+            uniqueFileName,
+            mimeType: "application/pdf",
+            fileContent: t4aFileContent as Buffer,
+            groupName,
+            fileOrigin: FileOriginType.Ministry,
+          },
+          student.id,
+          this.systemUsersService.systemUser.id,
+          fileUploadProcessSummary,
+          { entityManager, preventFileHashDuplication: true },
+        );
+        const saveNotificationPromise =
+          this.notificationActionsService.saveMinistryFileUploadNotification(
+            {
+              firstName: student.user.firstName,
+              lastName: student.user.lastName,
+              toAddress: student.user.email,
+              userId: student.user.id,
+            },
+            this.systemUsersService.systemUser.id,
+            entityManager,
+          );
+        const [createdFile] = await Promise.all([
+          createdFilePromise,
+          saveNotificationPromise,
+        ]);
+        processSummary.info(
+          `Student file ID ${createdFile.id} created and notification saved.`,
+        );
+      });
+    } catch (error: unknown) {
+      if (
+        error instanceof Error &&
+        error.name === FILE_HASH_DUPLICATION_ERROR
+      ) {
+        processSummary.info(
+          `T4A file for student ID ${student.id} already exists: ${error.message}`,
+        );
+        return;
+      }
+      throw error;
     }
   }
 }
