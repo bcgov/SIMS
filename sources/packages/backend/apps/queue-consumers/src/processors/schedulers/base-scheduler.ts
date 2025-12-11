@@ -89,10 +89,10 @@ export abstract class BaseScheduler<T>
       try {
         this.logger.log(`Check if current job state is paused.`);
         // Check if the job is paused to avoid creating new delayed jobs.
-        const isPaused = await this.schedulerQueue.isPaused();
-        if (isPaused) {
-          return;
-        }
+        // const isPaused = await this.schedulerQueue.isPaused();
+        // if (isPaused) {
+        //   return;
+        // }
         await this.ensureNextDelayedJobCreation();
       } catch (error: unknown) {
         this.logger.error(`Error while ensuring next delayed job.`, error);
