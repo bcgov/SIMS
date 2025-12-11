@@ -381,6 +381,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataParent1IncomeDeductions: number;
   calculatedDataTotalParentDeductions: number;
   calculatedDataTotalNetFamilyIncome: number;
+  dmnFullTimeLivingCategory: string;
 
   // Common variables used in both full-time and part-time.
   // CSGP
