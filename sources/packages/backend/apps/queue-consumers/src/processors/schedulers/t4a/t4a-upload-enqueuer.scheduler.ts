@@ -37,14 +37,11 @@ export class T4AUploadEnqueuerScheduler extends BaseScheduler<T4AUploadEnqueuerQ
     processSummary: ProcessSummary,
   ): Promise<string[] | string> {
     processSummary.info("Checking T4A files to be enqueued for processing.");
-    const maxFileUploadsPerBatch = await this.definedMaxFileUploadsPerBatch(
-      job.data?.maxFileUploadsPerBatch,
-    );
     processSummary.info(
-      `Max file uploads per batch configured as ${maxFileUploadsPerBatch}.`,
+      `Max file uploads per batch configured as ${job.data.maxFileUploadsPerBatch}.`,
     );
     await this.t4aEnqueuerProcessingService.process(
-      maxFileUploadsPerBatch,
+      job.data.maxFileUploadsPerBatch,
       processSummary,
     );
     return "T4A files process completed.";
@@ -60,32 +57,8 @@ export class T4AUploadEnqueuerScheduler extends BaseScheduler<T4AUploadEnqueuerQ
     );
     return {
       maxFileUploadsPerBatch:
-        queueConfig.queueConfiguration.maxFileUploadsPerBatch,
+        queueConfig.queueConfiguration.maxFileUploadsPerBatch ??
+        DEFAULT_MAX_FILE_UPLOADS_PER_BATCH,
     };
-  }
-
-  /**
-   * Determine the maximum number of file uploads per batch to be processed.
-   * Priority is given to the value provided in the job data, if available.
-   * Otherwise, the value from the queue configuration in the database is used.
-   * If neither is provided, a default value is used.
-   * @param jobMaxFileUploadsPerBatch Maximum file uploads per batch provided in the job data.
-   * @returns The determined maximum number of file uploads per batch.
-   */
-  private async definedMaxFileUploadsPerBatch(
-    jobMaxFileUploadsPerBatch?: number,
-  ): Promise<number> {
-    let maxFileUploadsPerBatch = DEFAULT_MAX_FILE_UPLOADS_PER_BATCH;
-    if (jobMaxFileUploadsPerBatch) {
-      // Use the value provided for the job if available, as a priority.
-      maxFileUploadsPerBatch = jobMaxFileUploadsPerBatch;
-    } else {
-      // Otherwise, get the value from the queue configuration on DB, if available.
-      const payload = await this.payload();
-      if (payload.maxFileUploadsPerBatch) {
-        maxFileUploadsPerBatch = payload.maxFileUploadsPerBatch;
-      }
-    }
-    return maxFileUploadsPerBatch;
   }
 }
