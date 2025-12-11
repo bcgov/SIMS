@@ -3,7 +3,7 @@ import { ConfigService } from "@sims/utilities/config";
 import { Injectable } from "@nestjs/common";
 import { LoggerService } from "@sims/utilities/logger";
 import { T4AFileInfo } from "./models/t4a.models";
-import * as path from "path";
+import { basename, dirname, extname } from "node:path";
 import { T4A_SFTP_IN_FOLDER } from "@sims/integrations/constants";
 import * as Client from "ssh2-sftp-client";
 
@@ -44,10 +44,10 @@ export class T4AIntegrationService extends SFTPIntegrationBase<Buffer> {
    * @returns The T4A file information including content and metadata.
    */
   getT4FileInfo(relativeFilePath: string): T4AFileInfo {
-    const directory = path.basename(path.dirname(relativeFilePath));
-    const fileExtension = path.extname(relativeFilePath);
+    const directory = basename(dirname(relativeFilePath));
+    const fileExtension = extname(relativeFilePath);
     const remoteFileFullPath = `${T4A_SFTP_IN_FOLDER}/${relativeFilePath}`;
-    const sin = path.basename(relativeFilePath, fileExtension);
+    const sin = basename(relativeFilePath, fileExtension);
     return {
       directory,
       remoteFileFullPath,
