@@ -17,7 +17,7 @@ export interface InstitutionUserViewModel {
   displayName: string;
   locations: string[];
   userType: string;
-  roles: string[];
+  roles: InstitutionUserRoles[];
   isActive: boolean;
   disableRemove: boolean;
 }

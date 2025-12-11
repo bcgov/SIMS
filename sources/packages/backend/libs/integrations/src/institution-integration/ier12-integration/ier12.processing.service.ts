@@ -14,7 +14,11 @@ import {
   ConfigService,
   InstitutionIntegrationConfig,
 } from "@sims/utilities/config";
-import { getFileNameAsExtendedCurrentTimestamp } from "@sims/utilities";
+import {
+  addDays,
+  getFileNameAsExtendedCurrentTimestamp,
+  getISODateOnlyString,
+} from "@sims/utilities";
 import { IER12IntegrationService } from "./ier12.integration.service";
 import {
   IER12Record,
@@ -60,20 +64,31 @@ export class IER12ProcessingService {
    * for the IER 12 sent File.
    * 4. Upload the content to the zoneB SFTP server.
    * @param processSummary process summary for logging.
-   * @param generatedDate date in which the assessment for
-   * particular institution is generated.
+   * @param generatedDate date for which the IER 12 file is generated.
    * @returns processing IER 12 result.
    */
   async processIER12File(
     processSummary: ProcessSummary,
     generatedDate?: string,
   ): Promise<IER12UploadResult[]> {
-    processSummary.info("Retrieving pending assessment for IER 12.");
+    processSummary.info(
+      "Retrieving application current assessment details for IER 12.",
+    );
+    // By default, the generation start date is the previous day from today.
+    const modifiedSinceDate = generatedDate
+      ? new Date(generatedDate)
+      : addDays(-1, getISODateOnlyString(new Date()));
+    const modifiedUntilDate = addDays(1, modifiedSinceDate);
+    processSummary.info(
+      `Retrieving data related to IER 12 created or modified between ${modifiedSinceDate} and ${modifiedUntilDate}.`,
+    );
     const pendingApplications =
       await this.studentAssessmentService.getPendingApplicationsCurrentAssessment(
-        generatedDate,
+        modifiedSinceDate,
+        modifiedUntilDate,
       );
     if (!pendingApplications.length) {
+      processSummary.info("No assessments found for IER 12.");
       return [];
     }
     processSummary.info(`Found ${pendingApplications.length} assessment(s).`);
