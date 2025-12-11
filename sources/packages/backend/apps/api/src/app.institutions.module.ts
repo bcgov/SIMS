@@ -91,6 +91,7 @@ import {
   AssessmentSequentialProcessingService,
   ReportService,
   DisbursementScheduleSharedService,
+  StudentFileSharedService,
 } from "@sims/services";
 import {
   SFASIndividualService,
@@ -143,6 +144,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     ApplicationService,
     SequenceControlService,
     StudentFileService,
+    StudentFileSharedService,
     StudentRestrictionService,
     ApplicationRestrictionBypassService,
     RestrictionService,

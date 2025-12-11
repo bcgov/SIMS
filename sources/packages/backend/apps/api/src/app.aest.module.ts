@@ -112,6 +112,7 @@ import {
   AssessmentSequentialProcessingService,
   CASSupplierSharedService,
   DisbursementScheduleSharedService,
+  StudentFileSharedService,
 } from "@sims/services";
 import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
 
@@ -157,6 +158,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     ApplicationService,
     SequenceControlService,
     StudentFileService,
+    StudentFileSharedService,
     DesignationAgreementService,
     DesignationAgreementControllerService,
     FormService,
