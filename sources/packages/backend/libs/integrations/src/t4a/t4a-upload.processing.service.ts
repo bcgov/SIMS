@@ -11,10 +11,15 @@ import {
 } from "@sims/services";
 import { FileOriginType, Student } from "@sims/sims-db";
 import { FILE_HASH_DUPLICATION_ERROR } from "@sims/services/constants";
-import { T4A_FILE_PREFIX } from "@sims/integrations/constants";
+import {
+  T4A_FILE_GROUP_NAME,
+  T4A_FILE_PART,
+} from "@sims/integrations/constants";
 import { T4AUploadFileQueueInDTO } from "@sims/services/queue/dto/t4a-upload.dto";
 import { T4AFileInfo } from "@sims/integrations/t4a/models/t4a.models";
 import { DataSource } from "typeorm";
+
+const SIN_REGEX = /^\d{9}$/;
 
 /**
  * Service to process the upload of T4A files to student accounts.
@@ -53,7 +58,15 @@ export class T4AUploadProcessingService {
         const t4aFileInfo = this.t4aIntegrationService.getT4FileInfo(
           file.relativeFilePath,
         );
-        sinNumbers.push(t4aFileInfo.sin);
+        if (SIN_REGEX.test(t4aFileInfo.sin)) {
+          sinNumbers.push(t4aFileInfo.sin);
+        } else {
+          // Execute a basic format validation before searching the students, since this value is received
+          // through the queue payload and could be not in the expected format.
+          processSummary.warn(
+            `The SIN associated with the file unique ID ${file.uniqueID} is not valid: ${t4aFileInfo.sin}.`,
+          );
+        }
         t4aFileInfosMap.set(file.relativeFilePath, t4aFileInfo);
       }
       // Get all students associated with the SINs in the files to be
@@ -240,10 +253,9 @@ export class T4AUploadProcessingService {
     processSummary: ProcessSummary,
   ): Promise<void> {
     processSummary.info(`Start upload to the student account.`);
-    const userFriendlyFileName = `${t4aFileInfo.directory}-${T4A_FILE_PREFIX}-${formattedReferenceDate}`;
+    const userFriendlyFileName = `${t4aFileInfo.directory}-${T4A_FILE_PART}-${formattedReferenceDate}`;
     const fileName = `${userFriendlyFileName}${t4aFileInfo.fileExtension}`;
     const uniqueFileName = `${userFriendlyFileName}-${fileUniqueID}${t4aFileInfo.fileExtension}`;
-    const groupName = `${t4aFileInfo.directory}-${T4A_FILE_PREFIX}`;
     const fileUploadProcessSummary = new ProcessSummary();
     processSummary.children(fileUploadProcessSummary);
     try {
@@ -254,7 +266,7 @@ export class T4AUploadProcessingService {
             uniqueFileName,
             mimeType: "application/pdf",
             fileContent: t4aFileContent,
-            groupName,
+            groupName: T4A_FILE_GROUP_NAME,
             fileOrigin: FileOriginType.Ministry,
           },
           student.id,

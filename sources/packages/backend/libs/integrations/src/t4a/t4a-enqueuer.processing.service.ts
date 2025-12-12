@@ -5,8 +5,8 @@ import { InjectQueue } from "@nestjs/bull";
 import { T4AUploadQueueInDTO } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { Queue } from "bull";
-import { T4A_SFTP_IN_FOLDER } from "@sims/integrations/constants";
 import { SFTPItemType } from "@sims/integrations/services/ssh";
+import { ConfigService } from "@sims/utilities/config";
 
 /**
  * Scan the T4A SFTP IN folder to find all T4A available to be
@@ -18,6 +18,7 @@ export class T4AEnqueuerProcessingService {
     private readonly t4aIntegrationService: T4AIntegrationService,
     @InjectQueue(QueueNames.T4AUpload)
     private readonly t4aUploadQueue: Queue<T4AUploadQueueInDTO>,
+    private readonly configService: ConfigService,
   ) {}
 
   /**
@@ -35,7 +36,7 @@ export class T4AEnqueuerProcessingService {
     // Expected format starting with 4 digits (e.g., 2025, 2025-1, 2025-Some-Other-Text, etc).
     const t4aDirectories =
       await this.t4aIntegrationService.getResponseFilesFullPath(
-        T4A_SFTP_IN_FOLDER,
+        this.configService.t4aIntegration.folder,
         /^\d{4}[\w-]*/i,
         { itemType: SFTPItemType.Directory },
       );
@@ -50,17 +51,30 @@ export class T4AEnqueuerProcessingService {
           /\d{9}\.pdf/i,
           { itemType: SFTPItemType.File },
         );
+      // The path is relative to the T4A IN folder to ensure the consumer
+      // queue will look only into the configured folder, not allowing it
+      // to receive files from other locations.
+      const relativeFilePaths = remoteFilePaths.map((fullPath) =>
+        fullPath.substring(this.configService.t4aIntegration.folder.length + 1),
+      );
       const listFilesElapsedMs = performance.now() - startListFiles;
       processSummary.info(
-        `Found ${remoteFilePaths.length} files in ${directoryPath}, in ${listFilesElapsedMs.toFixed(2)}ms.`,
+        `Found ${relativeFilePaths.length} files in ${directoryPath}, in ${listFilesElapsedMs.toFixed(2)}ms.`,
       );
       // Create batches of files to be processed.
       const enqueueStart = performance.now();
       const referenceDate = new Date();
       // Queues in the format required by addBulk, splitted by max files per batch.
       const queues: { data: T4AUploadQueueInDTO }[] = [];
-      for (let i = 0; i < remoteFilePaths.length; i += maxFileUploadsPerBatch) {
-        const filesBatch = remoteFilePaths.slice(i, i + maxFileUploadsPerBatch);
+      for (
+        let i = 0;
+        i < relativeFilePaths.length;
+        i += maxFileUploadsPerBatch
+      ) {
+        const filesBatch = relativeFilePaths.slice(
+          i,
+          i + maxFileUploadsPerBatch,
+        );
         queues.push({
           data: new T4AUploadQueueInDTO(referenceDate, filesBatch),
         });

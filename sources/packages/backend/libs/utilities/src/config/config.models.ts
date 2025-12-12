@@ -76,6 +76,10 @@ export interface CRAIntegrationConfig {
   environmentCode: string;
 }
 
+export interface T4AIntegrationConfig {
+  folder: string;
+}
+
 export interface ATBCIntegrationConfig {
   ATBCLoginEndpoint: string;
   ATBCUserName: string;

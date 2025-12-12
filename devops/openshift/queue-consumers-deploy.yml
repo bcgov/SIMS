@@ -176,6 +176,11 @@ objects:
                     secretKeyRef:
                       key: ${CRA_ENVIRONMENT_CODE_NAME_KEY}
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: T4A_FOLDER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${T4A_FOLDER_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: ESDC_REQUEST_FOLDER
                   valueFrom:
                     secretKeyRef:
@@ -476,6 +481,8 @@ parameters:
     value: cra-program-area-code
   - name: CRA_ENVIRONMENT_CODE_NAME_KEY
     value: cra-environment-code
+  - name: T4A_FOLDER_NAME_KEY
+    value: t4a-folder
   - name: ESDC_REQUEST_FOLDER_NAME_KEY
     value: esdc-request-folder
   - name: ESDC_RESPONSE_FOLDER_NAME_KEY
