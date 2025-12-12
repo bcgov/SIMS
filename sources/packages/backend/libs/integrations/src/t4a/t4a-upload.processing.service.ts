@@ -44,15 +44,34 @@ export class T4AUploadProcessingService {
   ): Promise<void> {
     let sftpClient: Client;
     try {
+      processSummary.info("Extracting T4A file information.");
+      // Identify all SINs in the files to be processed.
+      const sinNumbers: string[] = [];
+      // Map of file path to T4A file info for quick access later.
+      const t4aFileInfosMap: Map<string, T4AFileInfo> = new Map();
+      for (const file of files) {
+        const t4aFileInfo = this.t4aIntegrationService.getT4FileInfo(
+          file.relativeFilePath,
+        );
+        sinNumbers.push(t4aFileInfo.sin);
+        t4aFileInfosMap.set(file.relativeFilePath, t4aFileInfo);
+      }
+      // Get all students associated with the SINs in the files to be
+      // processed to avoid querying the database for each file.
+      const batchStudents =
+        await this.studentService.getStudentsByValidSIN(sinNumbers);
       processSummary.info("Creating SFTP client and starting process.");
       sftpClient = await this.t4aIntegrationService.getClient();
       const formattedReferenceDate = getISODateOnlyString(referenceDate);
       for (const file of files) {
         const fileProcessSummary = new ProcessSummary();
         processSummary.children(fileProcessSummary);
+        const t4aFileInfo = t4aFileInfosMap.get(file.relativeFilePath);
         await this.processT4AFile(
           sftpClient,
+          batchStudents,
           file,
+          t4aFileInfo,
           formattedReferenceDate,
           fileProcessSummary,
         );
@@ -71,23 +90,24 @@ export class T4AUploadProcessingService {
    * Process a single T4A file: download from SFTP and upload to student account.
    * @param sftpClient Shared SFTP client to be used for file download. Creating
    * a new client for each file would be inefficient.
+   * @param batchStudents Students in the current batch to search the SIN.
    * @param file File to be processed.
    * @param formattedReferenceDate Reference date formatted as string for file naming.
    * @param processSummary Summary object to log the process details.
    */
   private async processT4AFile(
     sftpClient: Client,
+    batchStudents: Student[],
     file: T4AUploadFileQueueInDTO,
+    t4aFileInfo: T4AFileInfo,
     formattedReferenceDate: string,
     processSummary: ProcessSummary,
   ): Promise<void> {
     processSummary.info(`Processing file unique ID ${file.uniqueID}.`);
     try {
-      const t4aFileInfo = this.t4aIntegrationService.getT4FileInfo(
-        file.relativeFilePath,
-      );
       // Find the student associate with the SIN in the file name.
       const student = await this.getAssociatedStudent(
+        batchStudents,
         t4aFileInfo,
         file.uniqueID,
         processSummary,
@@ -133,22 +153,27 @@ export class T4AUploadProcessingService {
   /**
    * Get the student associated with the given T4A file information
    * producing necessary logs in the process summary.
+   * @param batchStudents Students in the current batch to search the SIN.
    * @param t4aFileInfo T4A file information to get the SIN and find the student.
    * @param uniqueID Unique ID of the file being processed.
    * @param processSummary Process summary to log information and warnings.
    * @returns The associated student or false if not found or multiple found.
    */
   private async getAssociatedStudent(
+    batchStudents: Student[],
     t4aFileInfo: T4AFileInfo,
     uniqueID: string,
     processSummary: ProcessSummary,
   ): Promise<Student | false> {
-    const students = await this.studentService.getStudentsByValidSIN(
-      t4aFileInfo.sin,
+    const students = batchStudents.filter((student) =>
+      student.sinValidations.some(
+        (sinValidation) => sinValidation.sin === t4aFileInfo.sin,
+      ),
     );
     if (students.length > 1) {
+      const studentIds = students.map((s) => s.id);
       processSummary.warn(
-        `The SIN associated with the file unique ID ${uniqueID} has more than one student associated.`,
+        `The SIN associated with the file unique ID ${uniqueID} has more than one student IDS associated: ${studentIds}.`,
       );
       return false;
     }

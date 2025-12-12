@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DisabilityStatus, SINValidation, Student, User } from "@sims/sims-db";
-import { EntityManager, Raw, Repository, UpdateResult } from "typeorm";
+import { EntityManager, In, Raw, Repository, UpdateResult } from "typeorm";
 
 @Injectable()
 export class StudentService {
@@ -153,18 +153,19 @@ export class StudentService {
    * SIN number associated with his account, for instance, temporary and
    * permanent numbers. This method returns all students that have the provided
    * SIN associated and marked as valid.
-   * @param sin SIN number to be searched.
+   * @param sinNumbers SIN numbers to be searched.
    * @returns List of students associated with the valid SIN.
    */
-  async getStudentsByValidSIN(sin: string): Promise<Student[]> {
+  async getStudentsByValidSIN(sinNumbers: string[]): Promise<Student[]> {
     return this.studentRepo.find({
       select: {
         id: true,
         user: { id: true, firstName: true, lastName: true, email: true },
+        sinValidations: { id: true, sin: true },
       },
-      relations: { user: true },
+      relations: { sinValidations: true, user: true },
       where: {
-        sinValidation: { sin, isValidSIN: true },
+        sinValidations: { sin: In(sinNumbers), isValidSIN: true },
       },
     });
   }
