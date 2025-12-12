@@ -637,4 +637,4 @@ parameters:
   - name: THROTTLE_TIME
     value: "10000"
   - name: THROTTLE_LIMIT
-    value: "10"
+    value: "30"
