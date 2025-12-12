@@ -501,7 +501,7 @@ export class ConfigService {
   get throttleLimit(): number {
     return this.getCachedConfig(
       "throttleLimitConfig",
-      +process.env.THROTTLE_LIMIT || 10,
+      +process.env.THROTTLE_LIMIT || 30,
     );
   }
 }
