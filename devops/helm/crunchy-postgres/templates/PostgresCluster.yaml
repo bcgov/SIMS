@@ -162,19 +162,19 @@ spec:
         pgbackrest:
           resources:
             requests:
-              cpu: {{ .Values.pgBackRest.sidecars.requests.cpu }}
-              memory: {{ .Values.pgBackRest.sidecars.requests.memory }}
+              cpu: {{ .Values.pgBackRest.sidecars.pgbackrest.requests.cpu }}
+              memory: {{ .Values.pgBackRest.sidecars.pgbackrest.requests.memory }}
             limits:
-              cpu: {{ .Values.pgBackRest.sidecars.limits.cpu }}
-              memory: {{ .Values.pgBackRest.sidecars.limits.memory }}
+              cpu: {{ .Values.pgBackRest.sidecars.pgbackrest.limits.cpu }}
+              memory: {{ .Values.pgBackRest.sidecars.pgbackrest.limits.memory }}
         pgbackrestConfig:
           resources:
             requests:
-              cpu: {{ .Values.pgBackRest.sidecars.requests.cpu }}
-              memory: {{ .Values.pgBackRest.sidecars.requests.memory }}
+              cpu: {{ .Values.pgBackRest.sidecars.pgbackrestConfig.requests.cpu }}
+              memory: {{ .Values.pgBackRest.sidecars.pgbackrestConfig.requests.memory }}
             limits:
-              cpu: {{ .Values.pgBackRest.sidecars.limits.cpu }}
-              memory: {{ .Values.pgBackRest.sidecars.limits.memory }}
+              cpu: {{ .Values.pgBackRest.sidecars.pgbackrestConfig.limits.cpu }}
+              memory: {{ .Values.pgBackRest.sidecars.pgbackrestConfig.limits.memory }}
   standby:
     enabled: {{ .Values.standby.enabled }}
     repoName: {{ .Values.standby.repoName }}
