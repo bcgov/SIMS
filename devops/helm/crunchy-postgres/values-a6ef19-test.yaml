@@ -64,12 +64,14 @@ pgBackRest:
         cpu: 50m
         memory: 256Mi
       limits:
+        cpu: 50m
         memory: 512Mi
     pgbackrestConfig:
       requests:
         cpu: 10m
         memory: 64Mi
       limits:
+        cpu: 10m
         memory: 128Mi
   s3:
     bucket: "sims-staging-database-backups"

@@ -65,11 +65,13 @@ pgBackRest:
         memory: 256Mi
       limits:
         memory: 512Mi
+        cpu: 50m
     pgbackrestConfig:
       requests:
         cpu: 10m
         memory: 64Mi
       limits:
+        cpu: 10m
         memory: 128Mi
 
 patroni:
