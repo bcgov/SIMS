@@ -295,15 +295,16 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * Updates assessment status and save workflow data ensuring
    * that the data will be updated only once.
    * @param assessmentId updated assessment.
-   * @param isOnlyAssessmentStatusUpdate update only assessment status during the wrap up.
+   * @param isAssessmentStatusUpdateOnly update only assessment status during the wrap up.
    * @param entityManager used to execute the commands in the same transaction.
    * @param options options to be updated.
    * - `workflowData` data to be saved in the workflowData field.
+   * - `eligibleApplicationAppeals` eligible application appeals to be saved.
    * @returns true if the update was executed or false in case the data was already present.
    */
   async updateAssessmentWrapUpData(
     assessmentId: number,
-    isOnlyAssessmentStatusUpdate: boolean,
+    isAssessmentStatusUpdateOnly: boolean,
     entityManager: EntityManager,
     options?: {
       workflowData?: WorkflowData;
@@ -324,8 +325,9 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     const auditUser = this.systemUsersService.systemUser;
     const now = new Date();
     if (workflowIsCancelled) {
-      if (isOnlyAssessmentStatusUpdate) {
-        // No update is executed because the workflow was cancelled.
+      if (isAssessmentStatusUpdateOnly) {
+        // No update is executed because the workflow was cancelled requiring no assessment status update
+        // and there is no wrap-up data to be saved.
         return false;
       }
       // If the workflow was cancelled and the wrap-up is not only assessment status update,

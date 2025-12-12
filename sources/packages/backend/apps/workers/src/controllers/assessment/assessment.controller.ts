@@ -272,7 +272,7 @@ export class AssessmentController {
       jobLogger.log(
         `Workflow wrap-up type requested: ${job.customHeaders.wrapUpType}.`,
       );
-      const isOnlyAssessmentStatusUpdate =
+      const isAssessmentStatusUpdateOnly =
         job.customHeaders.wrapUpType ===
         WorkflowWrapUpType.AssessmentStatusOnly;
       // The updateAssessmentStatusAndSaveWorkflowData and assessImpactedApplicationReassessmentNeeded are executed in the same transaction
@@ -283,7 +283,7 @@ export class AssessmentController {
           const updated =
             await this.studentAssessmentService.updateAssessmentWrapUpData(
               job.variables.assessmentId,
-              isOnlyAssessmentStatusUpdate,
+              isAssessmentStatusUpdateOnly,
               entityManager,
               {
                 workflowData: job.variables.workflowData,
@@ -299,7 +299,7 @@ export class AssessmentController {
             );
             return job.complete();
           }
-          if (isOnlyAssessmentStatusUpdate) {
+          if (isAssessmentStatusUpdateOnly) {
             return job.complete();
           }
           const application = assessment.application;

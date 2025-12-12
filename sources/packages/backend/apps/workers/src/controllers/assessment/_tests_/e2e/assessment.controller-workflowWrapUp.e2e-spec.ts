@@ -33,7 +33,7 @@ import {
   SystemUsersService,
   WorkflowClientService,
 } from "@sims/services";
-import { addDays, getISODateOnlyString } from "@sims/utilities";
+import { addDays, getISODateOnlyString, isAfter } from "@sims/utilities";
 import { StudentAssessmentService } from "../../../../services";
 import { WorkflowWrapUpType } from "../../assessment.dto";
 
@@ -132,20 +132,17 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
         {
           offeringIntensity: OfferingIntensity.fullTime,
           currentAssessmentInitialValues: {
-            workflowData,
-            eligibleApplicationAppeals,
+            studentAssessmentStatus: StudentAssessmentStatus.InProgress,
           },
         },
       );
 
-      savedApplication.currentAssessment.studentAssessmentStatus =
-        StudentAssessmentStatus.InProgress;
-      await db.studentAssessment.save(savedApplication.currentAssessment);
-
+      const referenceDateToValidateUpdate = new Date();
       // Act
       const result = await assessmentController.workflowWrapUp(
         createFakeWorkflowWrapUpPayload(savedApplication.currentAssessment.id, {
           workflowData,
+          eligibleApplicationAppeals,
         }),
       );
 
@@ -178,6 +175,13 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
         modifier: auditUser,
         updatedAt: expect.any(Date),
       });
+      // Validate that the assessment updated date is after the reference date.
+      expect(
+        isAfter(
+          referenceDateToValidateUpdate,
+          expectedAssessment.studentAssessmentStatusUpdatedOn,
+        ),
+      ).toBe(true);
     },
   );
 
