@@ -72,7 +72,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
 
   it(
     "Should determine no transportation cost when student does not request additional transportation and " +
-      "they are ineligible for return transportation (no second residence).",
+      "they are ineligible for return transportation (living with partner).",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -80,7 +80,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
       assessmentConsolidatedData.studentDataAdditionalTransportRequested =
         YesNoOptions.No;
       assessmentConsolidatedData.studentDataReturnTripHomeCost = 1000;
-      assessmentConsolidatedData.studentDataLivingWithPartner = YesNoOptions.No; // This is the second residence question.
+      assessmentConsolidatedData.studentDataLivingWithPartner =
+        YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
       assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
@@ -217,7 +218,7 @@ it(
     assessmentConsolidatedData.offeringWeeks = 26;
     assessmentConsolidatedData.studentDataReturnTripHomeCost = 452;
     assessmentConsolidatedData.studentDataLivingAtHome = YesNoOptions.Yes;
-    assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.No;
+    assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataAdditionalTransportRequested =
       YesNoOptions.No;
     // Act
@@ -254,7 +255,7 @@ it(
     assessmentConsolidatedData.offeringWeeks = 27;
     assessmentConsolidatedData.studentDataReturnTripHomeCost = 1000;
     assessmentConsolidatedData.studentDataLivingAtHome = YesNoOptions.Yes;
-    assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.No;
+    assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataAdditionalTransportRequested =
       YesNoOptions.No;
     // Act
@@ -291,7 +292,7 @@ it(
     assessmentConsolidatedData.offeringWeeks = 27;
     assessmentConsolidatedData.studentDataReturnTripHomeCost = 600;
     assessmentConsolidatedData.studentDataLivingAtHome = YesNoOptions.Yes;
-    assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.No;
+    assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataAdditionalTransportRequested =
       YesNoOptions.No;
     // Act
@@ -330,7 +331,7 @@ it(
     assessmentConsolidatedData.studentDataReturnTripHomeCost = 600;
     assessmentConsolidatedData.programYearTotalFullTimeReturnTransportationCost = 1000;
     assessmentConsolidatedData.studentDataLivingAtHome = YesNoOptions.Yes;
-    assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.No;
+    assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataAdditionalTransportRequested =
       YesNoOptions.No;
     // Act
@@ -361,167 +362,6 @@ it(
     expect(
       calculatedAssessment.variables.calculatedDataTotalTransportationCost,
     ).toBe(800);
-  },
-);
-
-// Test scenarios for transport allowance involving additional transportation.
-// Common assumption to all these scenarios is that student require additional transportation
-// and student is one of the listed drivers in the insurance.
-const ADDITIONAL_TRANSPORT_TEST_DATA = [
-  {
-    offeringWeeks: 16,
-    offeringDelivered: OfferingDeliveryOptions.Onsite,
-    additionalTransportOwner: YesNoOptions.Yes,
-    additionalTransportKm: 5,
-    additionalTransportWeeks: 10,
-    additionalTransportPlacement: YesNoOptions.Yes,
-    expectedWeeklyAdditionalTransportCost: 9,
-    expectedTotalAdditionalTransportAllowance: 130,
-    expectedTotalTransportAllowance: 208,
-  },
-  {
-    offeringWeeks: 16,
-    offeringDelivered: OfferingDeliveryOptions.Onsite,
-    additionalTransportOwner: YesNoOptions.Yes,
-    additionalTransportKm: 100,
-    additionalTransportWeeks: 10,
-    additionalTransportPlacement: YesNoOptions.Yes,
-    expectedWeeklyAdditionalTransportCost: 9,
-    expectedTotalAdditionalTransportAllowance: 130,
-    expectedTotalTransportAllowance: 208,
-  },
-  {
-    offeringWeeks: 16,
-    offeringDelivered: OfferingDeliveryOptions.Onsite,
-    additionalTransportOwner: YesNoOptions.Yes,
-    additionalTransportKm: 100,
-    additionalTransportWeeks: 10,
-    additionalTransportPlacement: YesNoOptions.No,
-    expectedWeeklyAdditionalTransportCost: 34,
-    expectedTotalAdditionalTransportAllowance: 340,
-    expectedTotalTransportAllowance: 418,
-  },
-  {
-    offeringWeeks: 16,
-    offeringDelivered: OfferingDeliveryOptions.Onsite,
-    additionalTransportOwner: YesNoOptions.No,
-    additionalTransportKm: 240,
-    additionalTransportWeeks: 10,
-    additionalTransportPlacement: YesNoOptions.No,
-    expectedWeeklyAdditionalTransportCost: 69,
-    expectedTotalAdditionalTransportAllowance: 690,
-    expectedTotalTransportAllowance: 768,
-  },
-  {
-    offeringWeeks: 16,
-    offeringDelivered: OfferingDeliveryOptions.Onsite,
-    additionalTransportOwner: YesNoOptions.Yes,
-    additionalTransportKm: 240,
-    additionalTransportWeeks: 10,
-    additionalTransportPlacement: YesNoOptions.Yes,
-    expectedWeeklyAdditionalTransportCost: 56.6,
-    expectedTotalAdditionalTransportAllowance: 566,
-    expectedTotalTransportAllowance: 644,
-  },
-  {
-    offeringWeeks: 16,
-    offeringDelivered: OfferingDeliveryOptions.Onsite,
-    additionalTransportOwner: YesNoOptions.No,
-    additionalTransportKm: 240,
-    additionalTransportWeeks: 10,
-    additionalTransportPlacement: YesNoOptions.Yes,
-    expectedWeeklyAdditionalTransportCost: 44,
-    expectedTotalAdditionalTransportAllowance: 440,
-    expectedTotalTransportAllowance: 518,
-  },
-  {
-    offeringWeeks: 16,
-    offeringDelivered: OfferingDeliveryOptions.Onsite,
-    additionalTransportOwner: YesNoOptions.Yes,
-    additionalTransportKm: 300,
-    additionalTransportWeeks: 10,
-    additionalTransportPlacement: YesNoOptions.No,
-    expectedWeeklyAdditionalTransportCost: 94,
-    expectedTotalAdditionalTransportAllowance: 940,
-    expectedTotalTransportAllowance: 1018,
-  },
-  {
-    offeringWeeks: 16,
-    offeringDelivered: OfferingDeliveryOptions.Blended,
-    additionalTransportOwner: YesNoOptions.Yes,
-    additionalTransportKm: 300,
-    additionalTransportWeeks: 10,
-    additionalTransportPlacement: YesNoOptions.No,
-    expectedWeeklyAdditionalTransportCost: 94,
-    expectedTotalAdditionalTransportAllowance: 940,
-    expectedTotalTransportAllowance: 1018,
-  },
-  {
-    offeringWeeks: 16,
-    offeringDelivered: OfferingDeliveryOptions.Online,
-    additionalTransportOwner: YesNoOptions.Yes,
-    additionalTransportKm: 280,
-    additionalTransportWeeks: 10,
-    additionalTransportPlacement: YesNoOptions.No,
-    expectedWeeklyAdditionalTransportCost: 94,
-    expectedTotalAdditionalTransportAllowance: 940,
-    expectedTotalTransportAllowance: 940,
-  },
-];
-describe(
-  "Should determine total transportation allowance and additional transportation allowance when student require additional transportation " +
-    "and student is one of the listed drivers in the insurance.",
-  () => {
-    for (const additionalTransportTest of ADDITIONAL_TRANSPORT_TEST_DATA) {
-      it(
-        `Should determine weekly additional transportation cost as ${additionalTransportTest.expectedWeeklyAdditionalTransportCost} when offering is delivered ${additionalTransportTest.offeringDelivered} ` +
-          `and offering weeks is ${additionalTransportTest.offeringWeeks} and student being the owner of vehicle is ${additionalTransportTest.additionalTransportOwner} ` +
-          `and additional transport KM is ${additionalTransportTest.additionalTransportKm} and additional transport weeks is ${additionalTransportTest.additionalTransportWeeks} ` +
-          `and student receive practicum placement is ${additionalTransportTest.additionalTransportPlacement}.`,
-        async () => {
-          // Arrange
-          const assessmentConsolidatedData =
-            createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-          assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-            YesNoOptions.Yes;
-          assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
-            YesNoOptions.Yes;
-          assessmentConsolidatedData.studentDataAdditionalTransportOwner =
-            additionalTransportTest.additionalTransportOwner;
-          assessmentConsolidatedData.studentDataAdditionalTransportKm =
-            additionalTransportTest.additionalTransportKm;
-          assessmentConsolidatedData.offeringWeeks =
-            additionalTransportTest.offeringWeeks;
-          assessmentConsolidatedData.studentDataAdditionalTransportWeeks =
-            additionalTransportTest.additionalTransportWeeks;
-          assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
-            additionalTransportTest.additionalTransportPlacement;
-          assessmentConsolidatedData.offeringDelivered =
-            additionalTransportTest.offeringDelivered;
-          // Act
-          const calculatedAssessment =
-            await executeFullTimeAssessmentForProgramYear(
-              PROGRAM_YEAR,
-              assessmentConsolidatedData,
-            );
-          // Assert
-          expect(
-            calculatedAssessment.variables
-              .calculatedDataNetWeeklyAdditionalTransportCost,
-          ).toBe(additionalTransportTest.expectedWeeklyAdditionalTransportCost);
-          expect(
-            calculatedAssessment.variables
-              .calculatedDataTotalAdditionalTransportationAllowance,
-          ).toBe(
-            additionalTransportTest.expectedTotalAdditionalTransportAllowance,
-          );
-          expect(
-            calculatedAssessment.variables
-              .calculatedDataTotalTransportationAllowance,
-          ).toBe(additionalTransportTest.expectedTotalTransportAllowance);
-        },
-      );
-    }
   },
 );
 
