@@ -12,6 +12,7 @@ import { IOutputVariables, ZeebeJob } from "@camunda8/sdk/dist/zeebe/types";
  * @param assessmentId assessment id.
  * @param options customize the payload.
  * - `workflowData` workflow data.
+ * - `eligibleApplicationAppeals` eligible application appeals.
  * - `wrapUpType` wrap-up type, default {@link WorkflowWrapUpType.CompleteWrapUp} if not provided.
  * @returns fake workflow wrap up payload.
  */
@@ -19,6 +20,7 @@ export function createFakeWorkflowWrapUpPayload(
   assessmentId: number,
   options: {
     workflowData?: WorkflowData;
+    eligibleApplicationAppeals?: string[];
     wrapUpType?: WorkflowWrapUpType;
   },
 ): Readonly<
@@ -29,7 +31,11 @@ export function createFakeWorkflowWrapUpPayload(
     WorkflowWrapUpJobHeaderDTO,
     IOutputVariables
   >({
-    variables: { assessmentId, workflowData: options.workflowData },
+    variables: {
+      assessmentId,
+      workflowData: options.workflowData,
+      eligibleApplicationAppeals: options.eligibleApplicationAppeals,
+    },
     customHeaders: {
       wrapUpType: options.wrapUpType ?? WorkflowWrapUpType.CompleteWrapUp,
     },

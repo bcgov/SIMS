@@ -1,6 +1,7 @@
 import {
   ASSESSMENT_DATA,
   ASSESSMENT_ID,
+  ELIGIBLE_APPLICATION_APPEALS,
   WORKFLOW_DATA,
 } from "@sims/services/workflow/variables/assessment-gateway";
 import {
@@ -157,7 +158,8 @@ export interface UpdateNOAStatusHeaderDTO {
 
 export interface WorkflowWrapUpJobInDTO {
   [ASSESSMENT_ID]: number;
-  [WORKFLOW_DATA]: WorkflowData;
+  [WORKFLOW_DATA]?: WorkflowData;
+  [ELIGIBLE_APPLICATION_APPEALS]?: string[];
 }
 
 /**

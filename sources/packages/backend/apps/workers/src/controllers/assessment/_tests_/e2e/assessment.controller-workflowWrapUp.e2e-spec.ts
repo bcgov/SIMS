@@ -33,7 +33,7 @@ import {
   SystemUsersService,
   WorkflowClientService,
 } from "@sims/services";
-import { addDays, getISODateOnlyString } from "@sims/utilities";
+import { addDays, getISODateOnlyString, isAfter } from "@sims/utilities";
 import { StudentAssessmentService } from "../../../../services";
 import { WorkflowWrapUpType } from "../../assessment.dto";
 
@@ -112,6 +112,78 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     expect(expectedAssessment.modifier).toEqual(auditUser);
     expect(expectedAssessment.updatedAt).toBeInstanceOf(Date);
   });
+
+  it(
+    `Should update assessment status to ${StudentAssessmentStatus.Completed} and update the wrap-up data` +
+      ` when the student assessment is currently in status ${StudentAssessmentStatus.InProgress}` +
+      ` and the application offering intensity is full-time.`,
+    async () => {
+      // Arrange
+      // Wrap-up data.
+      const workflowData = {
+        studentData: {
+          dependantStatus: "independant",
+        },
+      } as WorkflowData;
+      const eligibleApplicationAppeals = ["someEligibleAppeal"];
+      const savedApplication = await saveFakeApplication(
+        db.dataSource,
+        undefined,
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          currentAssessmentInitialValues: {
+            studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+          },
+        },
+      );
+
+      const referenceDateToValidateUpdate = new Date();
+      // Act
+      const result = await assessmentController.workflowWrapUp(
+        createFakeWorkflowWrapUpPayload(savedApplication.currentAssessment.id, {
+          workflowData,
+          eligibleApplicationAppeals,
+        }),
+      );
+
+      // Asserts
+      expect(FakeWorkerJobResult.getResultType(result)).toBe(
+        MockedZeebeJobResult.Complete,
+      );
+
+      // Asserts that the student assessment status has changed to completed.
+      const expectedAssessment = await db.studentAssessment.findOne({
+        select: {
+          id: true,
+          studentAssessmentStatus: true,
+          workflowData: true as unknown,
+          eligibleApplicationAppeals: true,
+          studentAssessmentStatusUpdatedOn: true,
+          modifier: { id: true },
+          updatedAt: true,
+        },
+        relations: { modifier: true },
+        where: { id: savedApplication.currentAssessment.id },
+        loadEagerRelations: false,
+      });
+      expect(expectedAssessment).toEqual({
+        id: savedApplication.currentAssessment.id,
+        studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        workflowData,
+        eligibleApplicationAppeals,
+        studentAssessmentStatusUpdatedOn: expect.any(Date),
+        modifier: auditUser,
+        updatedAt: expect.any(Date),
+      });
+      // Validate that the assessment updated date is after the reference date.
+      expect(
+        isAfter(
+          referenceDateToValidateUpdate,
+          expectedAssessment.studentAssessmentStatusUpdatedOn,
+        ),
+      ).toBe(true);
+    },
+  );
 
   it("Should find the next impacted assessment and create a reassessment when there is an application for the same student and program year in the future.", async () => {
     // Arrange
@@ -1008,9 +1080,8 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
         },
       },
     );
-    const savedOffering = await db.educationProgramOffering.save(
-      updatedOffering,
-    );
+    const savedOffering =
+      await db.educationProgramOffering.save(updatedOffering);
     const offeringChangeAssessment = createFakeStudentAssessment(
       {
         application: savedApplication,

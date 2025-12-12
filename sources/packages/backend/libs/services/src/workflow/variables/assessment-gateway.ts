@@ -42,6 +42,10 @@ export const DISBURSEMENT_SCHEDULES = "disbursementSchedules";
  */
 export const WORKFLOW_DATA = "workflowData";
 /**
+ * Application appeal names which are eligible for the application.
+ */
+export const ELIGIBLE_APPLICATION_APPEALS = "eligibleApplicationAppeals";
+/**
  * Edit status of a Student Application executing a edit post-COE which
  * requires Ministry approval.
  */

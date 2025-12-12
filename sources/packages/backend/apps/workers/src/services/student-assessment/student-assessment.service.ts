@@ -295,15 +295,21 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * Updates assessment status and save workflow data ensuring
    * that the data will be updated only once.
    * @param assessmentId updated assessment.
+   * @param isAssessmentStatusUpdateOnly update only assessment status during the wrap up.
    * @param entityManager used to execute the commands in the same transaction.
    * @param options options to be updated.
    * - `workflowData` data to be saved in the workflowData field.
+   * - `eligibleApplicationAppeals` eligible application appeals to be saved.
    * @returns true if the update was executed or false in case the data was already present.
    */
   async updateAssessmentWrapUpData(
     assessmentId: number,
+    isAssessmentStatusUpdateOnly: boolean,
     entityManager: EntityManager,
-    options?: { workflowData?: WorkflowData },
+    options?: {
+      workflowData?: WorkflowData;
+      eligibleApplicationAppeals?: string[];
+    },
   ): Promise<boolean> {
     const studentAssessmentRepo =
       entityManager.getRepository(StudentAssessment);
@@ -319,16 +325,20 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     const auditUser = this.systemUsersService.systemUser;
     const now = new Date();
     if (workflowIsCancelled) {
-      if (!options?.workflowData) {
-        // No update is executed because the data was already present or the workflow was cancelled.
+      if (isAssessmentStatusUpdateOnly) {
+        // No update is executed because the workflow was cancelled requiring no assessment status update
+        // and there is no wrap-up data to be saved.
         return false;
       }
-      // If the workflow was cancelled and there is a workflowData to be saved,
-      // save the data without updating the status.
+      // If the workflow was cancelled and the wrap-up is not only assessment status update,
+      // save the wrap-up data without updating the status.
       const updateResult = await studentAssessmentRepo.update(
+        // For idempotency to check if the wrap-up data was already updated, checking only workflow data
+        // alone is enough as all the wrap-up data is updated at the same time.
         { id: assessmentId, workflowData: IsNull() },
         {
-          workflowData: options.workflowData,
+          workflowData: options?.workflowData,
+          eligibleApplicationAppeals: options?.eligibleApplicationAppeals,
           modifier: auditUser,
           updatedAt: now,
         },
@@ -345,6 +355,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         studentAssessmentStatus: StudentAssessmentStatus.Completed,
         studentAssessmentStatusUpdatedOn: now,
         workflowData: options?.workflowData,
+        eligibleApplicationAppeals: options?.eligibleApplicationAppeals,
         modifier: auditUser,
         updatedAt: now,
       },
