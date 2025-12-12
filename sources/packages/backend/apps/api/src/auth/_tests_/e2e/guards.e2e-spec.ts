@@ -477,7 +477,7 @@ describe("Guards and Decorators - Authentication, Maintenance Mode, Throttler (e
 
   describe("Throttler Guard", () => {
     it("Should allow requests within the rate limit.", async () => {
-      const endpoint = "/auth-test/authenticated-student";
+      const endpoint = "/auth-test/throttle-test/success";
 
       // Act and Assert - Make requests up to the limit, all should pass
       for (let i = 0; i < throttleLimit - 1; i++) {
@@ -498,7 +498,7 @@ describe("Guards and Decorators - Authentication, Maintenance Mode, Throttler (e
 
     it("Should block requests exceeding the rate limit (429 Too Many Requests).", async () => {
       // Arrange
-      const endpoint = "/auth-test/authenticated-student";
+      const endpoint = "/auth-test/throttle-test/failure";
 
       // Act - Exhaust the rate limit (it may have already been exhausted by previous tests)
       for (let i = 0; i < throttleLimit; i++) {
@@ -506,13 +506,14 @@ describe("Guards and Decorators - Authentication, Maintenance Mode, Throttler (e
       }
 
       // Assert - Next request should be throttled
-      await request(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .get(endpoint)
-        .expect(HttpStatus.TOO_MANY_REQUESTS)
-        .expect((res) => {
-          expect(res.body.statusCode).toBe(HttpStatus.TOO_MANY_REQUESTS);
-          expect(res.body.message).toContain("ThrottlerException");
-        });
+        .expect(HttpStatus.TOO_MANY_REQUESTS);
+
+      expect(response.body).toStrictEqual({
+        statusCode: HttpStatus.TOO_MANY_REQUESTS,
+        message: "ThrottlerException: Too Many Requests",
+      });
     });
   });
 
