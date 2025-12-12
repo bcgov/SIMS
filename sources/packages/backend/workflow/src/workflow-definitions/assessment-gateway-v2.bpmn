@@ -897,7 +897,7 @@ Note: the workflow process should continue its execution as a regular reassessme
         <zeebe:script expression="=if (offeringIntensity = &#34;Full Time&#34;)&#10;then &#10;[&#10;  {&#10;    formName: &#34;stepparentwaiverappeal&#34;,&#10;    isEligible: isEligibleForStepParentWaiverAppeal&#10;  },&#10;  {&#10;    formName: &#34;roomandboardcostsappeal&#34;,&#10;    isEligible: isEligibleForRoomAndBoardAppeal&#10;  }&#10;]&#10;else []" resultVariable="applicationAppealsEligibilityDetails" />
         <zeebe:ioMapping>
           <zeebe:output source="=applicationAppealsEligibilityDetails" target="applicationAppealsEligibilityDetails" />
-          <zeebe:output source="=(applicationAppealEligibilityConfigurations [isEligible = true]).formName" target="eligibleApplicationAppeals" />
+          <zeebe:output source="=(applicationAppealsEligibilityDetails [isEligible = true]).formName" target="eligibleApplicationAppeals" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1txrz77</bpmn:incoming>
@@ -1145,23 +1145,6 @@ Note: the workflow process should continue its execution as a regular reassessme
         <dc:Bounds x="1587" y="440" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0mtgfbi_di" bpmnElement="Event_0mtgfbi" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
-        <dc:Bounds x="4842" y="1332" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0dcydtn_di" bpmnElement="workflow-wrap-up-task" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
-        <dc:Bounds x="4690" y="1310" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0w0bgro_di" bpmnElement="Event_0w0bgro">
-        <dc:Bounds x="4612" y="1332" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="4601" y="1375" width="67" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_19280gw_di" bpmnElement="Activity_122mg53">
-        <dc:Bounds x="4470" y="1310" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1r28emd_di" bpmnElement="identifiable-parents-creation" isExpanded="true">
         <dc:Bounds x="2060" y="790" width="580" height="200" />
       </bpmndi:BPMNShape>
@@ -1243,6 +1226,23 @@ Note: the workflow process should continue its execution as a regular reassessme
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1mj2hkh_di" bpmnElement="Event_1mj2hkh" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
         <dc:Bounds x="1132" y="572" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0mtgfbi_di" bpmnElement="Event_0mtgfbi" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
+        <dc:Bounds x="4842" y="1332" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0dcydtn_di" bpmnElement="workflow-wrap-up-task" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
+        <dc:Bounds x="4690" y="1310" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0w0bgro_di" bpmnElement="Event_0w0bgro">
+        <dc:Bounds x="4612" y="1332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4601" y="1375" width="67" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_19280gw_di" bpmnElement="Activity_122mg53">
+        <dc:Bounds x="4470" y="1310" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0bza37i_di" bpmnElement="Flow_0bza37i">
         <di:waypoint x="2695" y="1480" />

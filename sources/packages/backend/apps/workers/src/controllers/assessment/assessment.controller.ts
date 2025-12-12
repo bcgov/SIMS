@@ -48,6 +48,7 @@ import {
 import {
   ASSESSMENT_DATA,
   ASSESSMENT_ID,
+  ELIGIBLE_APPLICATION_APPEALS,
   WORKFLOW_DATA,
 } from "@sims/services/workflow/variables/assessment-gateway";
 import { CustomNamedError } from "@sims/utilities";
@@ -245,7 +246,7 @@ export class AssessmentController {
    * Worker to be executed at very end of the workflow responsible for latest tasks before the `end event`.
    */
   @ZeebeWorker(Workers.WorkflowWrapUp, {
-    fetchVariable: [ASSESSMENT_ID, WORKFLOW_DATA],
+    fetchVariable: [ASSESSMENT_ID, WORKFLOW_DATA, ELIGIBLE_APPLICATION_APPEALS],
     maxJobsToActivate: MaxJobsToActivate.Normal,
   })
   async workflowWrapUp(
@@ -271,6 +272,9 @@ export class AssessmentController {
       jobLogger.log(
         `Workflow wrap-up type requested: ${job.customHeaders.wrapUpType}.`,
       );
+      const isOnlyAssessmentStatusUpdate =
+        job.customHeaders.wrapUpType ===
+        WorkflowWrapUpType.AssessmentStatusOnly;
       // The updateAssessmentStatusAndSaveWorkflowData and assessImpactedApplicationReassessmentNeeded are executed in the same transaction
       // to force then to be successfully executed together or to fail together. In this way the worker can be safely retried from Camunda.
       const jobActionAcknowledgement = await this.dataSource.transaction(
@@ -279,8 +283,13 @@ export class AssessmentController {
           const updated =
             await this.studentAssessmentService.updateAssessmentWrapUpData(
               job.variables.assessmentId,
+              isOnlyAssessmentStatusUpdate,
               entityManager,
-              { workflowData: job.variables.workflowData },
+              {
+                workflowData: job.variables.workflowData,
+                eligibleApplicationAppeals:
+                  job.variables.eligibleApplicationAppeals,
+              },
             );
           if (!updated) {
             // If no rows were updated it means that the data is already updated and the worker was already executed before.
@@ -290,10 +299,7 @@ export class AssessmentController {
             );
             return job.complete();
           }
-          if (
-            job.customHeaders.wrapUpType ===
-            WorkflowWrapUpType.AssessmentStatusOnly
-          ) {
+          if (isOnlyAssessmentStatusUpdate) {
             return job.complete();
           }
           const application = assessment.application;
