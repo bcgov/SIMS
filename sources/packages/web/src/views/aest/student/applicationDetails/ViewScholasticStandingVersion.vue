@@ -14,7 +14,9 @@
         }"
       />
     </template>
-    <scholastic-standing-reversal-banner v-if="hasReversal" />
+    <template #alerts>
+      <scholastic-standing-reversal-banner v-if="hasReversal" />
+    </template>
     <scholastic-standing-form
       :scholastic-standing-id="scholasticStandingId"
       :read-only="true"

@@ -1,28 +1,14 @@
 <template>
+  <chip-tag v-if="showReversed" color="error" label="Reversed" />
   <chip-tag
-    v-if="assessment.scholasticStandingReversalDate"
-    color="error"
-    label="Reversed"
-  />
-  <chip-tag
-    v-else-if="
-      assessment.scholasticStandingChangeType ===
-      StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
-    "
+    v-if="showUnsuccessfulCompletion"
     color="black"
     label="Unsuccessful Completion"
   />
-  <chip-tag
-    v-else-if="
-      assessment.scholasticStandingChangeType ===
-      StudentScholasticStandingChangeType.StudentWithdrewFromProgram
-    "
-    color="black"
-    label="Withdrawal"
-  />
+  <chip-tag v-if="showWithdrawal" color="black" label="Withdrawal" />
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import ChipTag from "@/components/generic/ChipTag.vue";
 import { AssessmentHistorySummaryAPIOutDTO } from "@/services/http/dto";
 import { StudentScholasticStandingChangeType } from "@/types";
@@ -35,8 +21,28 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
+  setup(props) {
+    const showReversed = computed(() => {
+      return !!props.assessment.scholasticStandingReversalDate;
+    });
+    const showUnsuccessfulCompletion = computed(() => {
+      return (
+        props.assessment.scholasticStandingChangeType ===
+          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram &&
+        !props.assessment.scholasticStandingReversalDate
+      );
+    });
+    const showWithdrawal = computed(() => {
+      return (
+        props.assessment.scholasticStandingChangeType ===
+          StudentScholasticStandingChangeType.StudentWithdrewFromProgram &&
+        !props.assessment.scholasticStandingReversalDate
+      );
+    });
     return {
+      showReversed,
+      showUnsuccessfulCompletion,
+      showWithdrawal,
       StudentScholasticStandingChangeType,
     };
   },
