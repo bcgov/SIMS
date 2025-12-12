@@ -3,7 +3,10 @@ import { SshService } from "./ssh.service";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
 import { SFTPConfig } from "@sims/utilities/config";
-import { FixedFormatFileLine } from "./sftp-integration-base.models";
+import {
+  FixedFormatFileLine,
+  SFTPItemType,
+} from "./sftp-integration-base.models";
 import {
   END_OF_LINE,
   getFileNameAsExtendedCurrentTimestamp,
@@ -77,11 +80,16 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * Get the list of all files waiting to be downloaded from the
    * SFTP filtering by the the regex pattern.
    * The files will be ordered by file name.
+   * @param remoteDownloadFolder Remote folder to list the files.
+   * @param fileRegexSearch Regex pattern to filter the files to be processed.
+   * @param options Optional parameters.
+   * - `itemType`: filter by item type when specified.
    * @returns file names for all response files present on SFTP.
    */
   async getResponseFilesFullPath(
     remoteDownloadFolder: string,
     fileRegexSearch: RegExp,
+    options?: { itemType?: SFTPItemType },
   ): Promise<string[]> {
     this.logger.log(
       `Listing files from the remote folder ${remoteDownloadFolder}.`,
@@ -92,7 +100,9 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       client = await this.getClient();
       filesToProcess = await client.list(
         remoteDownloadFolder,
-        (item: Client.FileInfo) => fileRegexSearch.test(item.name),
+        (item: Client.FileInfo) =>
+          fileRegexSearch.test(item.name) &&
+          (!options?.itemType || item.type === options.itemType),
       );
       return filesToProcess
         .map((file) => path.join(remoteDownloadFolder, file.name))

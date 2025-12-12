@@ -6,6 +6,7 @@ import { T4AUploadQueueInDTO } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { Queue } from "bull";
 import { T4A_SFTP_IN_FOLDER } from "@sims/integrations/constants";
+import { SFTPItemType } from "@sims/integrations/services/ssh";
 
 /**
  * Scan the T4A SFTP IN folder to find all T4A available to be
@@ -36,6 +37,7 @@ export class T4AEnqueuerProcessingService {
       await this.t4aIntegrationService.getResponseFilesFullPath(
         T4A_SFTP_IN_FOLDER,
         /^\d{4}[\w-]*/i,
+        { itemType: SFTPItemType.Directory },
       );
     processSummary.info(`Found T4A directories: ${t4aDirectories}.`);
     // For each directory, get the list of T4A files and queue them for processing.
@@ -46,6 +48,7 @@ export class T4AEnqueuerProcessingService {
         await this.t4aIntegrationService.getResponseFilesFullPath(
           directoryPath,
           /\d{9}\.pdf/i,
+          { itemType: SFTPItemType.File },
         );
       const listFilesElapsedMs = performance.now() - startListFiles;
       processSummary.info(
