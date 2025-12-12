@@ -37,34 +37,35 @@ A chart to provision a [Crunchy Postgres](https://www.crunchydata.com/) cluster.
 [pgBackRest site](https://pgbackrest.org/)
 [Crunchy pgBackRest docs](https://access.crunchydata.com/documentation/pgbackrest/latest/)
 
-| Parameter                                            | Description                                                   | Default                |
-| ---------------------------------------------------- | ------------------------------------------------------------- | ---------------------- |
-| `pgBackRest.image`                                   | Crunchy pgBackRest                                            |                        |
-| `pgBackRest.retention`                               | Number of backups/days to keep depending on retentionFullType | `2`                    |
-| `pgBackRest.retentionFullType`                       | Either 'count' or 'time'                                      | `count`                |
-| `pgBackRest.repos.schedules.full`                    | Full backup schedule                                          | `0 8 * * *`            |
-| `pgBackRest.repos.schedules.incremental`             | Incremental backup schedule                                   | `0 0,4,12,16,20 * * *` |
-| `pgBackRest.repos.schedules.volume.addessModes`      | Access modes                                                  | `ReadWriteOnce`        |
-| `pgBackRest.repos.schedules.volume.storage`          | Access modes                                                  | `64Mi`                 |
-| `pgBackRest.repos.schedules.volume.storageClassName` | Storage class name modes                                      | `netapp-file-backup`   |
-| `pgBackRest.repoHost.requests.cpu`                   | CPU requests                                                  | `1m`                   |
-| `pgBackRest.repoHost.requests.memory`                | Memory requests                                               | `64Mi`                 |
-| `pgBackRest.repoHost.limits.cpu`                     | CPU limits                                                    | `50m`                  |
-| `pgBackRest.repoHost.limits.memory`                  | Memory limits                                                 | `128Mi`                |
-| `pgBackRest.sidecars.requests.cpu`                   | sidecars CPU requests                                         | `1m`                   |
-| `pgBackRest.sidecars.requests.memory`                | sidecars Memory requests                                      | `64Mi`                 |
-| `pgBackRest.sidecars.limits.cpu`                     | sidecars CPU limits                                           | `50m`                  |
-| `pgBackRest.sidecars.limits.memory`                  | sidecars Memory limits                                        | `128Mi`                |
-| `pgBackRest.s3.enabled`                  | Enables the s3 repo backups                                        | `false`                 |
-| `pgBackRest.s3.createS3Secret`                  | Creates the s3 secret based on key and keySecret                                        | `true`                 |
-| `pgBackRest.s3.s3Secret`                  | The secret name to be created or read from                                       | `s3-pgbackrest`                 |
-| `pgBackRest.s3.s3Path`                  | The path inside the bucket where the backups will be saved to, set it to `/` to use the root of the bucket.                                        | `/dbbackup`                 |
-| `pgBackRest.s3.s3UriStyle`                  | Style of URL to use for S3 communication. [More Info](https://pgbackrest.org/configuration.html#section-repository/option-repo-s3-uri-style)                                       | `path`                 |
-| `pgBackRest.s3.bucket`                  | The bucket to use for backups                                        | `bucketName`                 |
-| `pgBackRest.s3.endpoint`                  | The endpoint to use, for example s3.ca-central-1.amazonaws.com                                       | `endpointName`                 |
-| `pgBackRest.s3.region`                  | The region to use, not necessary if your S3 system does not specify one                                       | `ca-central-1`                 |
-| `pgBackRest.s3.key`                  | The key to use to access the bucket. MUST BE KEPT SECRET                                        | `s3KeyValue`                 |
-| `pgBackRest.s3.keySecret`                  | The key secret for the key set above. MUST BE KEPT SECRET                                        | `s3SecretValue`                 |
+| Parameter                                            | Description                                                                                                                                  | Default                |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| `pgBackRest.image`                                   | Crunchy pgBackRest                                                                                                                           |                        |
+| `pgBackRest.retention`                               | Number of backups/days to keep depending on retentionFullType                                                                                | `2`                    |
+| `pgBackRest.retentionFullType`                       | Either 'count' or 'time'                                                                                                                     | `count`                |
+| `pgBackRest.repos.schedules.full`                    | Full backup schedule                                                                                                                         | `0 8 * * *`            |
+| `pgBackRest.repos.schedules.incremental`             | Incremental backup schedule                                                                                                                  | `0 0,4,12,16,20 * * *` |
+| `pgBackRest.repos.schedules.volume.addessModes`      | Access modes                                                                                                                                 | `ReadWriteOnce`        |
+| `pgBackRest.repos.schedules.volume.storage`          | Access modes                                                                                                                                 | `64Mi`                 |
+| `pgBackRest.repos.schedules.volume.storageClassName` | Storage class name modes                                                                                                                     | `netapp-file-backup`   |
+| `pgBackRest.repoHost.requests.cpu`                   | CPU requests                                                                                                                                 | `1m`                   |
+| `pgBackRest.repoHost.requests.memory`                | Memory requests                                                                                                                              | `64Mi`                 |
+| `pgBackRest.repoHost.limits.cpu`                     | CPU limits                                                                                                                                   | `50m`                  |
+| `pgBackRest.repoHost.limits.memory`                  | Memory limits                                                                                                                                | `128Mi`                |
+| `pgBackRest.sidecars.requests.cpu`                   | sidecars CPU requests                                                                                                                        | `1m`                   |
+| `pgBackRest.sidecars.requests.memory`                | sidecars Memory requests                                                                                                                     | `256Mi`                |
+| `pgBackRest.sidecars.limits.cpu`                     | sidecars CPU limits                                                                                                                          | `50m`                  |
+| `pgBackRest.sidecars.limits.memory`                  | sidecars Memory limits                                                                                                                       | `512Mi`                |
+| `pgBackRest.s3.enabled`                              | Enables the s3 repo backups                                                                                                                  | `false`                |
+| `pgBackRest.s3.createS3Secret`                       | Creates the s3 secret based on key and keySecret                                                                                             | `true`                 |
+| `pgBackRest.s3.s3Secret`                             | The secret name to be created or read from                                                                                                   | `s3-pgbackrest`        |
+| `pgBackRest.s3.s3Path`                               | The path inside the bucket where the backups will be saved to, set it to `/` to use the root of the bucket.                                  | `/dbbackup`            |
+| `pgBackRest.s3.s3UriStyle`                           | Style of URL to use for S3 communication. [More Info](https://pgbackrest.org/configuration.html#section-repository/option-repo-s3-uri-style) | `path`                 |
+| `pgBackRest.s3.bucket`                               | The bucket to use for backups                                                                                                                | `bucketName`           |
+| `pgBackRest.s3.endpoint`                             | The endpoint to use, for example s3.ca-central-1.amazonaws.com                                                                               | `endpointName`         |
+| `pgBackRest.s3.region`                               | The region to use, not necessary if your S3 system does not specify one                                                                      | `ca-central-1`         |
+| `pgBackRest.s3.key`                                  | The key to use to access the bucket. MUST BE KEPT SECRET                                                                                     | `s3KeyValue`           |
+| `pgBackRest.s3.keySecret`                            | The key secret for the key set above. MUST BE KEPT SECRET                                                                                    | `s3SecretValue`        |
+
 ---
 
 ### Patroni
