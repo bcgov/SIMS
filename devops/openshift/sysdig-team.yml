@@ -24,7 +24,7 @@ objects:
             role: ROLE_TEAM_EDIT
           - name: tiago.graf@quartech.com
             role: ROLE_TEAM_EDIT
-          - name: wes.kubo.psfs@cgi.com
+          - name: wesley.kubo@cgi.com
             role: ROLE_TEAM_EDIT
 parameters:
   - name: LICENSE_PLATE
