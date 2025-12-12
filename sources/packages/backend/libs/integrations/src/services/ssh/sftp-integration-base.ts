@@ -226,15 +226,19 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * Renames a file on SFTP .
    * @param remoteFilePath full remote file path with file name.
    * @param newRemoteFilePath new full remote file path with file name.
+   * @param options Method options.
+   * - `client`: SFTP client to be used in the operation when the same
+   * client is used for multiple operations.
    */
   async renameFile(
     remoteFilePath: string,
     newRemoteFilePath: string,
+    options?: { client?: Client },
   ): Promise<void> {
     this.logger.log(`Renaming file ${remoteFilePath} to ${newRemoteFilePath}.`);
     let client: Client;
     try {
-      client = await this.getClient();
+      client = options?.client ?? (await this.getClient());
       await client.rename(remoteFilePath, newRemoteFilePath);
     } catch (error) {
       this.logger.error(
@@ -243,29 +247,36 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       );
       throw error;
     } finally {
-      await this.ensureClientClosed(`renaming file ${remoteFilePath}`, client);
+      if (!options?.client) {
+        // Only close the client when it was not provided in the options.
+        await this.ensureClientClosed(
+          `renaming file ${remoteFilePath}`,
+          client,
+        );
+      }
     }
   }
 
   /**
    * Archives a file on SFTP .
    * @param remoteFilePath full remote file path with file name.
-   * @param archiveDirectory directory name to archive the file.
-   * A default value of {@link SFTP_ARCHIVE_DIRECTORY} will be used if not specified.
+   * @param options Method options.
+   * - `client`: SFTP client to be used in the operation when the same
+   * client is used for multiple operations.
    */
   async archiveFile(
     remoteFilePath: string,
-    archiveDirectory = SFTP_ARCHIVE_DIRECTORY,
+    options?: { client?: Client },
   ): Promise<void> {
     const fileInfo = path.parse(remoteFilePath);
     const timestamp = getFileNameAsExtendedCurrentTimestamp();
     const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
     const newRemoteFilePath = path.join(
       fileInfo.dir,
-      archiveDirectory,
+      SFTP_ARCHIVE_DIRECTORY,
       fileBaseName,
     );
-    await this.renameFile(remoteFilePath, newRemoteFilePath);
+    await this.renameFile(remoteFilePath, newRemoteFilePath, options);
   }
 
   /**

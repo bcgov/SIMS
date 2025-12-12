@@ -114,6 +114,12 @@ export class T4AUploadProcessingService {
       );
       if (!student) {
         // No student found, skip the file processing.
+        await this.archiveFile(
+          sftpClient,
+          file.uniqueID,
+          t4aFileInfo.remoteFileFullPath,
+          processSummary,
+        );
         return;
       }
       // Download the file from the SFTP.
@@ -141,6 +147,12 @@ export class T4AUploadProcessingService {
       processSummary.info(
         `File created in ${(performance.now() - startFileCreationTime).toFixed(2)}ms.`,
       );
+      await this.archiveFile(
+        sftpClient,
+        file.uniqueID,
+        t4aFileInfo.remoteFileFullPath,
+        processSummary,
+      );
     } catch (error: unknown) {
       // Register the error but continue processing other files.
       processSummary.error(
@@ -148,6 +160,26 @@ export class T4AUploadProcessingService {
         error,
       );
     }
+  }
+
+  /**
+   * Archive the processed T4A file on the SFTP.
+   * @param sftpClient SFTP client to be used for the operation.
+   * @param file File to be archived.
+   * @param t4aFileInfo T4A file information.
+   * @param processSummary Summary object to log the process details.
+   */
+  private async archiveFile(
+    sftpClient: Client,
+    uniqueID: string,
+    remoteFileFullPath: string,
+    processSummary: ProcessSummary,
+  ): Promise<void> {
+    processSummary.info(`Archiving file unique ID ${uniqueID}.`);
+    await this.t4aIntegrationService.archiveFile(remoteFileFullPath, {
+      client: sftpClient,
+    });
+    processSummary.info(`File unique ID ${uniqueID} archived.`);
   }
 
   /**
@@ -178,7 +210,7 @@ export class T4AUploadProcessingService {
       return false;
     }
     if (!students.length) {
-      processSummary.warn(
+      processSummary.info(
         `No student associated with the SIN for the file unique ID ${uniqueID}.`,
       );
       return false;
