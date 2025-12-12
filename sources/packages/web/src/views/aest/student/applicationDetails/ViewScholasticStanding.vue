@@ -3,8 +3,8 @@
     <template #header>
       <header-navigator
         title="Assessments"
-        subTitle="View Submission"
-        :routeLocation="goToAssessmentSummary"
+        sub-title="View Submission"
+        :route-location="goToAssessmentSummary"
       >
         <template #buttons v-if="showScholasticStandingReversalAction">
           <check-permission-role :role="Role.StudentReverseScholasticStanding">
@@ -20,11 +20,14 @@
         </template></header-navigator
       >
     </template>
+    <template #alerts>
+      <scholastic-standing-reversal-banner v-if="hasReversal" />
+    </template>
     <scholastic-standing-form
-      :scholasticStandingId="scholasticStandingId"
-      :readOnly="true"
-      :showFooter="true"
-      :showCompleteInfo="true"
+      :scholastic-standing-id="scholasticStandingId"
+      :read-only="true"
+      :show-footer="true"
+      :show-complete-info="true"
       :processing="false"
       @data-loaded="dataLoaded"
     />
@@ -38,6 +41,7 @@ import { RouteLocationRaw, useRouter } from "vue-router";
 import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import ReverseScholasticStandingModal from "@/components/aest/students/modals/ReverseScholasticStandingModal.vue";
+import ScholasticStandingReversalBanner from "@/components/common/students/applicationDetails/ScholasticStandingReversalBanner.vue";
 import {
   AssessmentTriggerType,
   Role,
@@ -53,10 +57,10 @@ import { ScholasticStandingService } from "@/services/ScholasticStandingService"
 /**
  * List of current assessment trigger types that allow scholastic standing reversal.
  */
-const SCHOLASTIC_STANDING_REVERSAL_ALLOWED_TRIGGER_TYPES = [
+const SCHOLASTIC_STANDING_REVERSAL_ALLOWED_TRIGGER_TYPES = new Set([
   AssessmentTriggerType.ScholasticStandingChange,
   AssessmentTriggerType.RelatedApplicationChanged,
-];
+]);
 
 export default {
   name: "ViewScholasticStanding",
@@ -64,6 +68,7 @@ export default {
     ScholasticStandingForm,
     CheckPermissionRole,
     ReverseScholasticStandingModal,
+    ScholasticStandingReversalBanner,
   },
   props: {
     studentId: {
@@ -95,7 +100,7 @@ export default {
     const showScholasticStandingReversalAction = computed(
       () =>
         !scholasticStandingDetails.value.reversalDate &&
-        (SCHOLASTIC_STANDING_REVERSAL_ALLOWED_TRIGGER_TYPES.includes(
+        (SCHOLASTIC_STANDING_REVERSAL_ALLOWED_TRIGGER_TYPES.has(
           scholasticStandingDetails.value.currentAssessmentTriggerType,
         ) ||
           scholasticStandingDetails.value.scholasticStandingChangeType ===
@@ -109,7 +114,7 @@ export default {
             applicationId: props.applicationId,
             studentId: props.studentId,
           },
-        } as RouteLocationRaw),
+        }) as RouteLocationRaw,
     );
     const showReverseScholasticStandingModal = async () => {
       await reverseScholasticStandingModal.value.showModal(
@@ -141,6 +146,10 @@ export default {
       scholasticStandingDetails.value = data;
     };
 
+    const hasReversal = computed(
+      () => !!scholasticStandingDetails.value.reversalDate,
+    );
+
     return {
       goToAssessmentSummary,
       Role,
@@ -148,6 +157,7 @@ export default {
       showReverseScholasticStandingModal,
       dataLoaded,
       showScholasticStandingReversalAction,
+      hasReversal,
     };
   },
 };

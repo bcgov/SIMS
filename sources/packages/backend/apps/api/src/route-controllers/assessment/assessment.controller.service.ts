@@ -604,6 +604,10 @@ export class AssessmentControllerService {
           assessment.applicationOfferingChangeRequest?.id,
         applicationExceptionId: assessment.application.applicationException?.id,
         studentScholasticStandingId: assessment.studentScholasticStanding?.id,
+        scholasticStandingChangeType:
+          assessment.studentScholasticStanding?.changeType,
+        scholasticStandingReversalDate:
+          assessment.studentScholasticStanding?.reversalDate,
       }),
     );
     const unsuccessfulScholasticStandingHistory =
@@ -614,6 +618,8 @@ export class AssessmentControllerService {
         status: StudentAssessmentStatus.Completed,
         studentScholasticStandingId: scholasticStanding.id,
         hasUnsuccessfulWeeks: true,
+        scholasticStandingChangeType: scholasticStanding.changeType,
+        scholasticStandingReversalDate: scholasticStanding.reversalDate,
       }));
     history.push(...unsuccessfulScholasticStandingHistory);
     history.sort(this.sortAssessmentHistory);

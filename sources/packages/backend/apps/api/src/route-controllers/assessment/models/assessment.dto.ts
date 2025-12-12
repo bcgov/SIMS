@@ -10,6 +10,7 @@ import {
   OfferingStatus,
   StudentAppealStatus,
   StudentAssessmentStatus,
+  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, MaxLength } from "class-validator";
@@ -70,7 +71,17 @@ export class AssessmentHistorySummaryAPIOutDTO {
   applicationOfferingChangeRequestId?: number;
   applicationExceptionId?: number;
   studentScholasticStandingId?: number;
-  // This flag decides, the row is unsuccessful week or not.
+  /**
+   * Type of the change in the scholastic standing.
+   */
+  scholasticStandingChangeType?: StudentScholasticStandingChangeType;
+  /**
+   * Date and time when the scholastic standing was reversed.
+   */
+  scholasticStandingReversalDate?: Date;
+  /**
+   * This flag decides, the row is unsuccessful week or not.
+   */
   hasUnsuccessfulWeeks?: boolean;
 }
 

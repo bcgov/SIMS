@@ -243,6 +243,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "studentAppeal.id",
         "applicationOfferingChangeRequest.id",
         "studentScholasticStanding.id",
+        "studentScholasticStanding.changeType",
+        "studentScholasticStanding.reversalDate",
         "application.id",
         "applicationException.id",
         "assessment.studentAssessmentStatus",

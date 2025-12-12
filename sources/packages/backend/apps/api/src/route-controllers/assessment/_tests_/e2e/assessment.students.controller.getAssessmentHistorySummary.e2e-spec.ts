@@ -10,6 +10,8 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeEducationProgramOffering,
+  createFakeStudentAssessment,
   createFakeStudentScholasticStanding,
   createFakeUser,
   saveFakeApplication,
@@ -17,10 +19,12 @@ import {
 import {
   ApplicationStatus,
   AssessmentTriggerType,
+  OfferingTypes,
   StudentAssessmentStatus,
+  StudentScholasticStandingChangeType,
   User,
 } from "@sims/sims-db";
-import { addDays } from "@sims/utilities";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { TestingModule } from "@nestjs/testing";
 
 describe("AssessmentStudentsController(e2e)-getAssessmentHistorySummary", () => {
@@ -85,6 +89,9 @@ describe("AssessmentStudentsController(e2e)-getAssessmentHistorySummary", () => 
           status: StudentAssessmentStatus.Completed,
           studentScholasticStandingId: todayScholasticStanding.id,
           hasUnsuccessfulWeeks: true,
+          scholasticStandingChangeType:
+            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+          scholasticStandingReversalDate: null,
         },
         {
           submittedDate: yesterday.toISOString(),
@@ -92,8 +99,148 @@ describe("AssessmentStudentsController(e2e)-getAssessmentHistorySummary", () => 
           status: StudentAssessmentStatus.Completed,
           studentScholasticStandingId: yesterdayScholasticStanding.id,
           hasUnsuccessfulWeeks: true,
+          scholasticStandingChangeType:
+            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+          scholasticStandingReversalDate: null,
         },
         {
+          assessmentId: originalAssessment.id,
+          submittedDate: twoDaysAgo.toISOString(),
+          triggerType: AssessmentTriggerType.OriginalAssessment,
+          assessmentDate: originalAssessment.assessmentDate,
+          status: StudentAssessmentStatus.Submitted,
+          offeringId: originalAssessment.offering.id,
+          programId: originalAssessment.offering.educationProgram.id,
+        },
+      ]);
+  });
+
+  it("Should get the student assessment history summary including Original Assessment, Scholastic Change Event (Withdrawal) and Scholastic Change Reversal.", async () => {
+    // Arrange
+    // Define the actual study period dates.
+    const studyStartDate = getISODateOnlyString(new Date());
+    const studyEndDate = getISODateOnlyString(addDays(60));
+
+    const [twoDaysAgo, yesterday, today] = [-2, -1, 0].map((increment) =>
+      addDays(increment),
+    );
+
+    // Create the application and original assessment.
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      applicationStatus: ApplicationStatus.Completed,
+      currentAssessmentInitialValues: { submittedDate: twoDaysAgo },
+      offeringInitialValues: { studyStartDate, studyEndDate },
+    });
+    const originalAssessment = application.currentAssessment;
+    const offeringBeforeWithdrawal = application.currentAssessment.offering;
+
+    // Create an offering for withdrawal.
+    const withdrawalDate = getISODateOnlyString(addDays(-10, studyEndDate));
+    const withdrawalOffering = createFakeEducationProgramOffering(
+      {
+        auditUser: institutionUser,
+      },
+      {
+        initialValues: {
+          studyStartDate,
+          studyEndDate: withdrawalDate,
+          parentOffering: offeringBeforeWithdrawal.parentOffering,
+          offeringType: OfferingTypes.ScholasticStanding,
+        },
+      },
+    );
+    await db.educationProgramOffering.save(withdrawalOffering);
+
+    // Create a Scholastic Standing Change (Withdrawal) assessment using the withdrawal offering.
+    const withdrawalAssessment = createFakeStudentAssessment(
+      {
+        auditUser: institutionUser,
+        application,
+        offering: withdrawalOffering,
+      },
+      {
+        initialValue: {
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          submittedDate: yesterday,
+          triggerType: AssessmentTriggerType.ScholasticStandingChange,
+        },
+      },
+    );
+
+    // Create a Withdrawal scholastic standing change that has been reversed.
+    const withdrawalScholasticStanding = createFakeStudentScholasticStanding(
+      {
+        submittedBy: institutionUser,
+        application,
+        studentAssessment: withdrawalAssessment,
+      },
+      {
+        initialValues: {
+          submittedDate: yesterday,
+          changeType:
+            StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+          reversalDate: today,
+        },
+      },
+    );
+    await db.studentScholasticStanding.save(withdrawalScholasticStanding);
+
+    // Create Scholastic Change Reversal assessment.
+    const reversalAssessment = createFakeStudentAssessment(
+      {
+        auditUser: institutionUser,
+        application,
+        offering: offeringBeforeWithdrawal,
+      },
+      {
+        initialValue: {
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          submittedDate: today,
+          triggerType: AssessmentTriggerType.ScholasticStandingReversal,
+        },
+      },
+    );
+    await db.studentAssessment.save(reversalAssessment);
+
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, application.student);
+    const endpoint = `/students/assessment/application/${application.id}/history`;
+    const studentUserToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(studentUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect([
+        {
+          // Scholastic Standing Reversal Assessment.
+          assessmentId: reversalAssessment.id,
+          submittedDate: today.toISOString(),
+          triggerType: AssessmentTriggerType.ScholasticStandingReversal,
+          assessmentDate: reversalAssessment.assessmentDate,
+          status: StudentAssessmentStatus.Completed,
+          offeringId: offeringBeforeWithdrawal.id,
+          programId: offeringBeforeWithdrawal.educationProgram.id,
+        },
+        {
+          // Scholastic Standing Change (Withdrawal) Assessment.
+          assessmentId: withdrawalAssessment.id,
+          submittedDate: yesterday.toISOString(),
+          triggerType: AssessmentTriggerType.ScholasticStandingChange,
+          assessmentDate: withdrawalAssessment.assessmentDate,
+          status: StudentAssessmentStatus.Completed,
+          offeringId: withdrawalOffering.id,
+          programId: withdrawalOffering.educationProgram.id,
+          studentScholasticStandingId: withdrawalScholasticStanding.id,
+          scholasticStandingChangeType:
+            StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+          scholasticStandingReversalDate: today.toISOString(),
+        },
+        {
+          // Original Assessment.
           assessmentId: originalAssessment.id,
           submittedDate: twoDaysAgo.toISOString(),
           triggerType: AssessmentTriggerType.OriginalAssessment,
