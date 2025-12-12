@@ -3,7 +3,10 @@ import { SshService } from "./ssh.service";
 import * as Client from "ssh2-sftp-client";
 import * as path from "path";
 import { SFTPConfig } from "@sims/utilities/config";
-import { FixedFormatFileLine } from "./sftp-integration-base.models";
+import {
+  FixedFormatFileLine,
+  SFTPItemType,
+} from "./sftp-integration-base.models";
 import {
   END_OF_LINE,
   getFileNameAsExtendedCurrentTimestamp,
@@ -77,11 +80,16 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * Get the list of all files waiting to be downloaded from the
    * SFTP filtering by the the regex pattern.
    * The files will be ordered by file name.
+   * @param remoteDownloadFolder Remote folder to list the files.
+   * @param fileRegexSearch Regex pattern to filter the files to be processed.
+   * @param options Optional parameters.
+   * - `itemType`: filter by item type when specified.
    * @returns file names for all response files present on SFTP.
    */
   async getResponseFilesFullPath(
     remoteDownloadFolder: string,
     fileRegexSearch: RegExp,
+    options?: { itemType?: SFTPItemType },
   ): Promise<string[]> {
     this.logger.log(
       `Listing files from the remote folder ${remoteDownloadFolder}.`,
@@ -92,7 +100,9 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       client = await this.getClient();
       filesToProcess = await client.list(
         remoteDownloadFolder,
-        (item: Client.FileInfo) => fileRegexSearch.test(item.name),
+        (item: Client.FileInfo) =>
+          fileRegexSearch.test(item.name) &&
+          (!options?.itemType || item.type === options.itemType),
       );
       return filesToProcess
         .map((file) => path.join(remoteDownloadFolder, file.name))
@@ -198,9 +208,17 @@ export abstract class SFTPIntegrationBase<DownloadType> {
   /**
    * When overridden in a derived class, transform the text lines
    * in parsed objects specific to the integration process.
+   * It can also download raw content file when no parse is needed.
    * @param remoteFilePath full remote file path with file name.
+   * @param options Optional parameters including SFTP client.
+   * - `client`: SFTP client to be shared and allow multiple operations.
+   * @returns The parsed download object or raw content.
    */
-  downloadResponseFile(remoteFilePath: string): Promise<DownloadType> {
+  async downloadResponseFile(
+    remoteFilePath: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _options?: { client: Client },
+  ): Promise<DownloadType> {
     throw new Error(`Method not implemented, ${remoteFilePath} not used.`);
   }
 
@@ -254,7 +272,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * Generates a new connected SFTP client ready to be used.
    * @returns client
    */
-  public async getClient(): Promise<Client> {
+  async getClient(): Promise<Client> {
     return this.sshService.createClient(this.sftpConfig);
   }
 
@@ -264,10 +282,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * @param context string to log with the context of the action.
    * @param client SFTP client to be finalized.
    */
-  private async ensureClientClosed(
-    context: string,
-    client?: Client,
-  ): Promise<void> {
+  async ensureClientClosed(context: string, client?: Client): Promise<void> {
     if (client) {
       this.logger.log(`Finalizing SFTP client. Context: ${context}.`);
       await SshService.closeQuietly(client);

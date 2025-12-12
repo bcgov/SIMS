@@ -33,6 +33,8 @@ import {
   CASInvoicesBatchesCreationScheduler,
   CASSendInvoicesScheduler,
   ECertCancellationResponseIntegrationScheduler,
+  T4AUploadEnqueuerScheduler,
+  T4AUploadProcessor,
 } from "./processors";
 import {
   DisbursementScheduleSharedService,
@@ -64,6 +66,7 @@ import {
   ECertCancellationResponseIntegrationModule,
 } from "@sims/integrations/esdc-integration";
 import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-integration.module";
+import { T4AIntegrationModule } from "@sims/integrations/t4a";
 import {
   StudentAssessmentService,
   ApplicationService,
@@ -92,7 +95,6 @@ import { ObjectStorageService } from "@sims/integrations/object-storage";
 import { BullBoardQueuesModule } from "./bull-board/bull-board-queues.module";
 import { QueuesMetricsModule } from "./queues-metrics.module.module";
 import { LoggerModule } from "@sims/utilities/logger";
-
 // TODO: Removed ATBCResponseIntegrationScheduler in providers, the queuename from enum and the decorators of the processor as part of #2539.
 @Module({
   imports: [
@@ -119,6 +121,7 @@ import { LoggerModule } from "@sims/utilities/logger";
     TerminusModule,
     ApplicationChangesReportIntegrationModule,
     ECertCancellationResponseIntegrationModule,
+    T4AIntegrationModule,
   ],
   providers: [
     VirusScanProcessor,
@@ -186,6 +189,8 @@ import { LoggerModule } from "@sims/utilities/logger";
     CASInvoicesBatchesCreationScheduler,
     CASSendInvoicesScheduler,
     ECertCancellationResponseIntegrationScheduler,
+    T4AUploadEnqueuerScheduler,
+    T4AUploadProcessor,
   ],
   controllers: [HealthController, MetricsController],
 })

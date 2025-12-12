@@ -76,12 +76,22 @@ export class Student extends RecordDataModel {
   })
   notes: Note[];
 
+  /**
+   * Current SIN validation associated with the student.
+   */
   @OneToOne(() => SINValidation, { eager: false, cascade: true })
   @JoinColumn({
     name: "sin_validation_id",
     referencedColumnName: ColumnNames.ID,
   })
   sinValidation: SINValidation;
+
+  /**
+   * SIN validations complete history.
+   */
+  @OneToMany(() => SINValidation, (sinValidation) => sinValidation.student)
+  sinValidations: SINValidation[];
+
   /**
    * Indicates consent of the student to terms and conditions of the studentAid BC declaration of SIN.
    */
@@ -89,6 +99,7 @@ export class Student extends RecordDataModel {
     name: "sin_consent",
   })
   sinConsent: boolean;
+
   /**
    * List of all student restrictions.
    */

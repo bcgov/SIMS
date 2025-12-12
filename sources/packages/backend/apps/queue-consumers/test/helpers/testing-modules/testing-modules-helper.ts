@@ -4,7 +4,6 @@ import { DataSource } from "typeorm";
 import { QueueConsumersModule } from "../../../src/queue-consumers.module";
 import { BullBoardQueuesModule } from "../../../src/bull-board/bull-board-queues.module";
 import { SshService } from "@sims/integrations/services";
-import { overrideImportsMetadata } from "@sims/test-utils";
 import {
   QueueModuleMock,
   createObjectStorageServiceMock,
@@ -21,6 +20,7 @@ import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 import { createCASServiceMock } from "../mock-utils/cas-service.mock";
 import { CASService } from "@sims/integrations/cas/cas.service";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
+import { overrideImportsMetadata } from "@sims/test-utils";
 
 /**
  * Result from a createTestingModule to support E2E tests creation.
@@ -41,21 +41,10 @@ export class CreateTestingModuleResult {
  * @returns creation results with objects to support E2E tests.
  */
 export async function createTestingAppModule(): Promise<CreateTestingModuleResult> {
-  overrideImportsMetadata(
-    QueueConsumersModule,
-    {
-      replace: QueueModule,
-      by: QueueModuleMock,
-    },
-    {
-      replace: BullBoardQueuesModule,
-      by: BullBoardQueuesModuleMock,
-    },
-    {
-      replace: ZeebeModule,
-      by: createZeebeModuleMock(),
-    },
-  );
+  overrideImportsMetadata(QueueConsumersModule, {
+    replace: ZeebeModule,
+    by: createZeebeModuleMock(),
+  });
   const sshClientMock = createMock<Client>();
   const casServiceMock = createCASServiceMock();
   const clamAVServiceMock = createClamAVServiceMock();
@@ -64,6 +53,10 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
   const module: TestingModule = await Test.createTestingModule({
     imports: [QueueConsumersModule, DiscoveryModule],
   })
+    .overrideModule(QueueModule)
+    .useModule(QueueModuleMock)
+    .overrideModule(BullBoardQueuesModule)
+    .useModule(BullBoardQueuesModuleMock)
     .overrideProvider(SshService)
     .useValue(createSSHServiceMock(sshClientMock))
     .overrideProvider(CASService)
