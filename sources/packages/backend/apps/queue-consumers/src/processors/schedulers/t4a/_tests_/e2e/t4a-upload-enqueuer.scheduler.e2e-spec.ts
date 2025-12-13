@@ -16,6 +16,7 @@ import { Queue } from "bull";
 import { getQueueProviderName } from "@sims/test-utils/mocks";
 import MockDate from "mockdate";
 import { uuidV4Matcher } from "@sims/test-utils/matchers";
+import { join } from "node:path";
 
 describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
   let app: INestApplication;
@@ -128,7 +129,7 @@ function createT4AUploadQueueInDTO(
 ): unknown {
   const startingIndex = options.startingIndex ?? 0;
   const files = Array.from({ length: options.numberOfFiles }, (_, i) => ({
-    relativeFilePath: `${folderName}\\${createT4AFileName(i + startingIndex)}`,
+    relativeFilePath: join(folderName, createT4AFileName(i + startingIndex)),
     uniqueID: uuidV4Matcher,
   }));
   return {
