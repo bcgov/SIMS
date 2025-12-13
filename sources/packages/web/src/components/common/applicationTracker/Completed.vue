@@ -108,10 +108,7 @@
   </application-status-tracker-banner>
   <!-- Scholastic standing changed - student did not complete the program -->
   <application-status-tracker-banner
-    v-if="
-      assessmentDetails.scholasticStandingChangeType ===
-      StudentScholasticStandingChangeType.StudentDidNotCompleteProgram
-    "
+    v-if="assessmentDetails.hasActiveUnsuccessfulCompletionWeeks"
     label="Your institution reported an unsuccessful completion of studies for your application"
     icon="fa:fas fa-exclamation-triangle"
     icon-color="warning"

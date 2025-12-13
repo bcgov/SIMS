@@ -252,7 +252,7 @@ export class ECertFailedValidationsInfoAPIOutDTO {
 
 export class CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDetailsAPIOutDTO {
   appealStatus?: StudentAppealStatus;
-  scholasticStandingChangeType?: StudentScholasticStandingChangeType;
+  hasActiveUnsuccessfulCompletionWeeks: boolean;
   applicationOfferingChangeRequestId?: number;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
   hasBlockFundingFeedbackError: boolean;

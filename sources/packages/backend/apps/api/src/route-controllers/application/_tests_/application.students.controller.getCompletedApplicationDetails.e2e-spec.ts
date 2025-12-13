@@ -183,6 +183,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         },
         assessmentTriggerType: application.currentAssessment.triggerType,
         hasBlockFundingFeedbackError: false,
+        hasActiveUnsuccessfulCompletionWeeks: false,
         eCertFailedValidations: [],
       });
   });
@@ -223,8 +224,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
             firstDisbursement.disbursementScheduleStatus,
         },
         assessmentTriggerType: application.currentAssessment.triggerType,
-        scholasticStandingChangeType:
-          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+        hasActiveUnsuccessfulCompletionWeeks: true,
         hasBlockFundingFeedbackError: false,
         eCertFailedValidations: [],
       });
@@ -305,6 +305,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           pendingApplicationOfferingChangeRequest.id,
         applicationOfferingChangeRequestStatus:
           ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
+        hasActiveUnsuccessfulCompletionWeeks: false,
         hasBlockFundingFeedbackError: false,
         eCertFailedValidations: [],
       });
@@ -353,6 +354,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
         },
         assessmentTriggerType: AssessmentTriggerType.RelatedApplicationChanged,
         hasBlockFundingFeedbackError: false,
+        hasActiveUnsuccessfulCompletionWeeks: false,
         eCertFailedValidations: [],
       });
   });
@@ -406,6 +408,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
+          hasActiveUnsuccessfulCompletionWeeks: false,
           eCertFailedValidations: [],
         });
     },
@@ -460,6 +463,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: true,
+          hasActiveUnsuccessfulCompletionWeeks: false,
           eCertFailedValidations: [],
         });
     },
@@ -523,6 +527,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: true,
+          hasActiveUnsuccessfulCompletionWeeks: false,
           eCertFailedValidations: [],
         });
     },
@@ -577,6 +582,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: true,
+          hasActiveUnsuccessfulCompletionWeeks: false,
           eCertFailedValidations: [],
         });
     },
@@ -623,8 +629,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
       const [firstDisbursement] =
         application.currentAssessment.disbursementSchedules;
 
-      application.currentAssessment.workflowData.calculatedData.pdppdStatus =
-        true;
+      application.currentAssessment.workflowData.calculatedData.pdppdStatus = true;
       await db.studentAssessment.save(application.currentAssessment);
 
       const endpoint = `/students/application/${application.id}/completed`;
@@ -645,6 +650,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
+          hasActiveUnsuccessfulCompletionWeeks: false,
           eCertFailedValidations: [
             ECertFailedValidation.DisabilityStatusNotConfirmed,
           ],
@@ -709,6 +715,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
               firstDisbursement.disbursementScheduleStatus,
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
+          hasActiveUnsuccessfulCompletionWeeks: false,
           hasBlockFundingFeedbackError: false,
           eCertFailedValidations: [
             ECertFailedValidation.MSFAACanceled,
@@ -787,6 +794,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
               firstDisbursement.disbursementScheduleStatus,
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
+          hasActiveUnsuccessfulCompletionWeeks: false,
           hasBlockFundingFeedbackError: false,
           eCertFailedValidations: [
             ECertFailedValidation.HasStopDisbursementRestriction,
@@ -869,6 +877,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
               firstDisbursement.disbursementScheduleStatus,
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
+          hasActiveUnsuccessfulCompletionWeeks: false,
           hasBlockFundingFeedbackError: false,
           eCertFailedValidations: [
             ECertFailedValidation.HasStopDisbursementRestriction,
@@ -949,6 +958,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
               firstDisbursement.disbursementScheduleStatus,
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
+          hasActiveUnsuccessfulCompletionWeeks: false,
           hasBlockFundingFeedbackError: false,
           eCertFailedValidations: [],
         });
@@ -1009,6 +1019,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
               firstDisbursement.disbursementScheduleStatus,
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
+          hasActiveUnsuccessfulCompletionWeeks: false,
           hasBlockFundingFeedbackError: false,
           eCertFailedValidations: [ECertFailedValidation.InvalidSIN],
           eCertFailedValidationsInfo: {
@@ -1080,6 +1091,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
               firstDisbursement.disbursementScheduleStatus,
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
+          hasActiveUnsuccessfulCompletionWeeks: false,
           hasBlockFundingFeedbackError: false,
           eCertFailedValidations: [ECertFailedValidation.LifetimeMaximumCSLP],
           eCertFailedValidationsInfo: {
@@ -1129,6 +1141,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
             firstDisbursement.disbursementScheduleStatus,
         },
         assessmentTriggerType: application.currentAssessment.triggerType,
+        hasActiveUnsuccessfulCompletionWeeks: false,
         hasBlockFundingFeedbackError: false,
         eCertFailedValidations: [],
         changeRequestInProgress: {
@@ -1194,6 +1207,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
             firstDisbursement.disbursementScheduleStatus,
         },
         assessmentTriggerType: application.currentAssessment.triggerType,
+        hasActiveUnsuccessfulCompletionWeeks: false,
         hasBlockFundingFeedbackError: false,
         eCertFailedValidations: [],
         changeRequestInProgress: {
@@ -1284,6 +1298,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
             firstDisbursement.disbursementScheduleStatus,
         },
         assessmentTriggerType: application.currentAssessment.triggerType,
+        hasActiveUnsuccessfulCompletionWeeks: false,
         hasBlockFundingFeedbackError: false,
         eCertFailedValidations: [],
         changeRequestInProgress: {

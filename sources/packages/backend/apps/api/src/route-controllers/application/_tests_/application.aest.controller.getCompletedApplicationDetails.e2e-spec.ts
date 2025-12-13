@@ -79,6 +79,7 @@ describe("ApplicationAESTController(e2e)-getCompletedApplicationDetails", () => 
           },
           assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
           hasBlockFundingFeedbackError: false,
+          hasActiveUnsuccessfulCompletionWeeks: false,
           eCertFailedValidations: [],
         });
     },

@@ -200,9 +200,9 @@ export interface CompletedApplicationDetailsAPIOutDTO
   firstDisbursement: DisbursementDetailsAPIOutDTO;
   secondDisbursement?: DisbursementDetailsAPIOutDTO;
   appealStatus?: StudentAppealStatus;
-  scholasticStandingChangeType?: StudentScholasticStandingChangeType;
   applicationOfferingChangeRequestId?: number;
   applicationOfferingChangeRequestStatus?: ApplicationOfferingChangeRequestStatus;
+  hasActiveUnsuccessfulCompletionWeeks: boolean;
   hasBlockFundingFeedbackError: boolean;
   eCertFailedValidations: ECertFailedValidation[];
   eCertFailedValidationsInfo?: ECertFailedValidationsInfoAPIOutDTO;

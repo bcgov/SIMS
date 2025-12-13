@@ -1985,6 +1985,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         studentScholasticStandings: {
           id: true,
           changeType: true,
+          reversalDate: true,
         },
       },
       relations: {
