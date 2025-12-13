@@ -3,15 +3,19 @@
  */
 export enum COEStatus {
   /**
-   * Confirmation of Enrollment is required
+   * Confirmation of Enrollment is Required.
    */
   required = "Required",
   /**
-   * Confirmation of Enrollment is Completed
+   * Confirmation of Enrollment is Completed.
    */
   completed = "Completed",
   /**
-   * Confirmation of Enrollment is Declined,  not used in our current workflow but having it as an placeholder
+   * Confirmation of Enrollment is Declined.
    */
   declined = "Declined",
+  /**
+   * Confirmation of Enrollment is Not Required.
+   */
+  notRequired = "Not Required",
 }

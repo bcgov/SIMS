@@ -12,6 +12,8 @@ import {
   Student,
   configureIdleTransactionSessionTimeout,
   User,
+  AssessmentTriggerType,
+  COEStatus,
 } from "@sims/sims-db";
 import { DisbursementSaveModel } from "./disbursement-schedule.models";
 import { CustomNamedError, MIN_CANADA_LOAN_OVERAWARD } from "@sims/utilities";
@@ -138,6 +140,16 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
           0,
         );
         newDisbursement.hasEstimatedAwards = totalEstimatedAwards > 0;
+        // Disbursements as a result of a 'Scholastic Standing Change' should
+        // be automatically set to COE status 'Not Required'.
+        // 'Required' is the default at the DB level
+        // TODO Revisit whether Not Required or Completed will be used.
+        if (
+          assessment.triggerType ===
+          AssessmentTriggerType.ScholasticStandingChange
+        ) {
+          newDisbursement.coeStatus = COEStatus.notRequired;
+        }
         disbursementSchedules.push(newDisbursement);
       }
       assessment.disbursementSchedules = disbursementSchedules;
@@ -828,7 +840,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
           createdAt: now,
           addedBy: auditUser,
           addedDate: now,
-        } as DisbursementOveraward),
+        }) as DisbursementOveraward,
     );
     const result = await overawardsRepo.insert(reversalOverawards);
     return result.identifiers.map((identifier) => identifier.id as number);
