@@ -19,6 +19,9 @@ import {
   createSFTPListFilesResult,
   createT4AUploadQueueInDTO,
 } from "./t4a-upload-enqueuer-utils";
+import { join } from "node:path";
+
+const T4A_E2E_TEST_FOLDER = "T4A_E2E_TEST_FOLDER";
 
 describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
   let app: INestApplication;
@@ -27,7 +30,7 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
   let t4aUploadQueueMock: Queue<T4AUploadQueueInDTO>;
 
   beforeAll(async () => {
-    process.env.T4A_FOLDER = "T4A_E2E_TEST_FOLDER";
+    process.env.T4A_FOLDER = T4A_E2E_TEST_FOLDER;
     const { nestApplication, sshClientMock } = await createTestingAppModule();
     app = nestApplication;
     sftpClientMock = sshClientMock;
@@ -61,6 +64,8 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
     sftpClientMock.list.mockResolvedValueOnce(createSFTPListFilesResult(101));
     const now = new Date();
     MockDate.set(now);
+    const FOLDER_A_FULL_PATH = join(T4A_E2E_TEST_FOLDER, "2024-A");
+    const FOLDER_B_FULL_PATH = join(T4A_E2E_TEST_FOLDER, "2024-B");
 
     // Act
     const result = await processor.processQueue(mockedJob.job);
@@ -70,12 +75,12 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
     expect(
       mockedJob.containLogMessages([
         "Max file uploads per batch configured as 100.",
-        "Found T4A directories: T4A_E2E_TEST_FOLDER\\2024-A,T4A_E2E_TEST_FOLDER\\2024-B.",
-        "Processing T4A files in T4A_E2E_TEST_FOLDER\\2024-A.",
-        "Found 100 files in T4A_E2E_TEST_FOLDER\\2024-A",
+        `Found T4A directories: ${FOLDER_A_FULL_PATH},${FOLDER_B_FULL_PATH}.`,
+        `Processing T4A files in ${FOLDER_A_FULL_PATH}.`,
+        `Found 100 files in ${FOLDER_A_FULL_PATH}`,
         "Time to queue files",
-        "Processing T4A files in T4A_E2E_TEST_FOLDER\\2024-B.",
-        "Found 101 files in T4A_E2E_TEST_FOLDER\\2024-B",
+        `Processing T4A files in ${FOLDER_B_FULL_PATH}.`,
+        `Found 101 files in ${FOLDER_B_FULL_PATH}`,
         "Time to queue files",
       ]),
     ).toBe(true);
