@@ -34,7 +34,7 @@ import { AuthTestController } from "../../../testHelpers/controllers/auth-test/a
 import { SIMS2_COLLE_USER } from "@sims/test-utils/constants";
 import { InstitutionUserTypes } from "../../user-types.enum";
 
-describe("Guards and Decorators - Authentication and Maintenance Mode (e2e)", () => {
+describe("Guards and Decorators - Authentication, Maintenance Mode, Throttler (e2e)", () => {
   // Nest application to be shared for all e2e tests
   // that need execute a HTTP request.
   let app: INestApplication;
@@ -50,6 +50,7 @@ describe("Guards and Decorators - Authentication and Maintenance Mode (e2e)", ()
   let moduleFixture: TestingModule;
   let collegEInstitutionReadOnlyUserAccessToken: string;
   let configServiceMockHelper: ConfigServiceMockHelper;
+  let throttleLimit: number;
 
   beforeAll(async () => {
     await KeycloakConfig.load();
@@ -86,6 +87,7 @@ describe("Guards and Decorators - Authentication and Maintenance Mode (e2e)", ()
     const dataSource = moduleFixture.get(DataSource);
     db = createE2EDataSources(dataSource);
     configServiceMockHelper = new ConfigServiceMockHelper(app);
+    throttleLimit = configServiceMockHelper.getConfigService().throttleLimit;
   });
 
   beforeEach(async () => {
@@ -469,6 +471,48 @@ describe("Guards and Decorators - Authentication and Maintenance Mode (e2e)", ()
           .get("/auth-test/user-not-required-route")
           .auth(institutionToken, BEARER_AUTH_TYPE)
           .expect(HttpStatus.OK);
+      });
+    });
+  });
+
+  describe("Throttler Guard", () => {
+    it("Should allow requests within the rate limit.", async () => {
+      const endpoint = "/auth-test/throttle-test/success";
+
+      // Act and Assert - Make requests up to the limit, all should pass
+      for (let i = 0; i < throttleLimit - 1; i++) {
+        await request(app.getHttpServer())
+          .get(endpoint)
+          .expect(HttpStatus.UNAUTHORIZED);
+      }
+    });
+
+    it("Should allow requests exceeding the rate limit when a controller is decorated with @SkipThrottle.", async () => {
+      const endpoint = "/health";
+
+      // Act and Assert - Make requests that exceeds the limit, all should pass
+      for (let i = 0; i < throttleLimit + 1; i++) {
+        await request(app.getHttpServer()).get(endpoint).expect(HttpStatus.OK);
+      }
+    });
+
+    it("Should block requests exceeding the rate limit (429 Too Many Requests).", async () => {
+      // Arrange
+      const endpoint = "/auth-test/throttle-test/failure";
+
+      // Act - Exhaust the rate limit (it may have already been exhausted by previous tests)
+      for (let i = 0; i < throttleLimit; i++) {
+        await request(app.getHttpServer()).get(endpoint);
+      }
+
+      // Assert - Next request should be throttled
+      const response = await request(app.getHttpServer())
+        .get(endpoint)
+        .expect(HttpStatus.TOO_MANY_REQUESTS);
+
+      expect(response.body).toStrictEqual({
+        statusCode: HttpStatus.TOO_MANY_REQUESTS,
+        message: "ThrottlerException: Too Many Requests",
       });
     });
   });

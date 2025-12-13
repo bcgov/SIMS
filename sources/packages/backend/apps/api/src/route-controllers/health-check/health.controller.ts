@@ -6,7 +6,9 @@ import {
   TypeOrmHealthIndicator,
 } from "@nestjs/terminus";
 import { AllowDuringMaintenanceMode, Public } from "../../auth/decorators";
+import { SkipThrottle } from "@nestjs/throttler";
 
+@SkipThrottle()
 @AllowDuringMaintenanceMode()
 @Controller("health")
 export class HealthController {

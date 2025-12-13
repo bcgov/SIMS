@@ -57,6 +57,9 @@ jobs:
       E2E_TEST_AEST_READ_ONLY_USER: ministry-user-read-only@e2e-tests
       E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
       E2E_TEST_EXTERNAL_USER_CLIENT_SECRET: ${{ secrets.E2E_TEST_EXTERNAL_USER_CLIENT_SECRET }}
+      # Throttling settings for tests use a shorter time window to allow the throttle window to expire quickly between test cases, making tests run faster.
+      THROTTLE_TIME: 100 # in milliseconds
+      THROTTLE_LIMIT: 10
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch
