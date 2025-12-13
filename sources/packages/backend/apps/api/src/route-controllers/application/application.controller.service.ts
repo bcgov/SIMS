@@ -68,6 +68,7 @@ import {
   ApplicationEditStatusInProgress,
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
   DynamicFormType,
+  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
@@ -289,7 +290,13 @@ export class ApplicationControllerService {
       this.transformToEnrolmentApplicationDetailsAPIOutDTO(
         application.currentAssessment.disbursementSchedules,
       );
-    const [scholasticStandingChange] = application.studentScholasticStandings;
+    const hasActiveUnsuccessfulCompletionWeeks =
+      application.studentScholasticStandings.some(
+        (scholasticStanding) =>
+          scholasticStanding.changeType ===
+            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram &&
+          !scholasticStanding.reversalDate,
+      );
     const changeRequestInProgress =
       await this.getInProgressChangeRequestDetails(application.id, options);
     const eCertFailedValidations = eCertValidationResult.failedValidations.map(
@@ -301,10 +308,10 @@ export class ApplicationControllerService {
       secondDisbursement: enrolmentDetails.secondDisbursement,
       assessmentTriggerType: application.currentAssessment.triggerType,
       appealStatus: appeal?.status,
-      scholasticStandingChangeType: scholasticStandingChange?.changeType,
       applicationOfferingChangeRequestId: applicationOfferingChangeRequest?.id,
       applicationOfferingChangeRequestStatus:
         applicationOfferingChangeRequest?.applicationOfferingChangeRequestStatus,
+      hasActiveUnsuccessfulCompletionWeeks,
       hasBlockFundingFeedbackError,
       eCertFailedValidations,
       eCertFailedValidationsInfo: this.buildECertFailedValidationsInfo(
