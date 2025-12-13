@@ -15,8 +15,10 @@ import * as Client from "ssh2-sftp-client";
 import { Queue } from "bull";
 import { getQueueProviderName } from "@sims/test-utils/mocks";
 import MockDate from "mockdate";
-import { uuidV4Matcher } from "@sims/test-utils/matchers";
-import { join } from "node:path";
+import {
+  createSFTPListFilesResult,
+  createT4AUploadQueueInDTO,
+} from "./t4a-upload-enqueuer-utils";
 
 describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
   let app: INestApplication;
@@ -65,6 +67,18 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
 
     // Assert
     expect(result).toStrictEqual(["T4A files process completed."]);
+    expect(
+      mockedJob.containLogMessages([
+        "Max file uploads per batch configured as 100.",
+        "Found T4A directories: T4A_E2E_TEST_FOLDER\\2024-A,T4A_E2E_TEST_FOLDER\\2024-B.",
+        "Processing T4A files in T4A_E2E_TEST_FOLDER\\2024-A.",
+        "Found 100 files in T4A_E2E_TEST_FOLDER\\2024-A",
+        "Time to queue files",
+        "Processing T4A files in T4A_E2E_TEST_FOLDER\\2024-B.",
+        "Found 101 files in T4A_E2E_TEST_FOLDER\\2024-B",
+        "Time to queue files",
+      ]),
+    ).toBe(true);
     expect(t4aUploadQueueMock.addBulk).toHaveBeenCalledTimes(2);
     expect(t4aUploadQueueMock.addBulk).toHaveBeenNthCalledWith(1, [
       createT4AUploadQueueInDTO(now, "2024-A", { numberOfFiles: 100 }),
@@ -80,62 +94,52 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
     ]);
   });
 
+  it("Should log that no directories were found when no directories were listed from the SFTP.", async () => {
+    // Arrange
+    // Queued job.
+    const mockedJob = mockBullJob<T4AUploadEnqueuerQueueInDTO>({
+      // Ensure the default batch size defined on DB configuration is used.
+      maxFileUploadsPerBatch: 100,
+    });
+    sftpClientMock.list.mockResolvedValueOnce([]);
+
+    // Act
+    const result = await processor.processQueue(mockedJob.job);
+
+    // Assert
+    expect(result).toStrictEqual(["T4A files process completed."]);
+    expect(
+      mockedJob.containLogMessages(["No T4A directories found to process."]),
+    ).toBe(true);
+  });
+
+  it("Should not try to add bulk jobs when a directory was found from the SFTP, but no files were found.", async () => {
+    // Arrange
+    // Queued job.
+    const mockedJob = mockBullJob<T4AUploadEnqueuerQueueInDTO>({
+      // Ensure the default batch size defined on DB configuration is used.
+      maxFileUploadsPerBatch: 100,
+    });
+    sftpClientMock.list.mockResolvedValueOnce([
+      { name: "9999" },
+    ] as Client.FileInfo[]);
+    // Mock an empty list of files available in the first directory: 9999.
+    sftpClientMock.list.mockResolvedValueOnce([]);
+
+    // Act
+    const result = await processor.processQueue(mockedJob.job);
+
+    // Assert
+    expect(result).toStrictEqual(["T4A files process completed."]);
+    expect(
+      mockedJob.containLogMessages([
+        "No T4A files found in directory T4A_E2E_TEST_FOLDER\\9999.",
+      ]),
+    ).toBe(true);
+    expect(t4aUploadQueueMock.addBulk).not.toHaveBeenCalled();
+  });
+
   afterAll(async () => {
     await app?.close();
   });
 });
-
-/**
- * Create a T4A file name based on the number of files and the file number.
- * For example, for fileNumber 5, it will return 000000005.pdf
- * @param fileNumber File number to create the name.
- * @returns T4A file name.
- */
-function createT4AFileName(fileNumber: number): string {
-  return `${fileNumber.toString().padStart(9, "0")}.pdf`;
-}
-
-/**
- * Creates a list of SFTP file info objects to be returned by the SFTP mock.
- * @param numberOfFiles Number of files to be created in the result.
- * @returns An array of SFTP FileInfo objects.
- */
-function createSFTPListFilesResult(numberOfFiles: number): Client.FileInfo[] {
-  return Array.from(
-    { length: numberOfFiles },
-    (_, i) =>
-      ({
-        name: createT4AFileName(i),
-      }) as Client.FileInfo,
-  );
-}
-
-/**
- * Creates a T4AUploadQueueInDTO for test validation using jest matchers.
- * @param referenceDate Reference date expected to be the same for all files.
- * @param folderName Folder name where the files are located.
- * @param options Additional options for file creation.
- * - `numberOfFiles` - Number of files to be created.
- * - `startingIndex` - Index to start the file numbering (default: 0).
- * @returns Object for validation.
- */
-function createT4AUploadQueueInDTO(
-  referenceDate: Date,
-  folderName: string,
-  options: {
-    numberOfFiles: number;
-    startingIndex?: number;
-  },
-): unknown {
-  const startingIndex = options.startingIndex ?? 0;
-  const files = Array.from({ length: options.numberOfFiles }, (_, i) => ({
-    relativeFilePath: join(folderName, createT4AFileName(i + startingIndex)),
-    uniqueID: uuidV4Matcher,
-  }));
-  return {
-    data: {
-      referenceDate,
-      files,
-    },
-  };
-}

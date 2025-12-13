@@ -40,6 +40,10 @@ export class T4AEnqueuerProcessingService {
         /^\d{4}[\w-]*/i,
         { itemType: SFTPItemType.Directory },
       );
+    if (!t4aDirectories.length) {
+      processSummary.info("No T4A directories found to process.");
+      return;
+    }
     processSummary.info(`Found T4A directories: ${t4aDirectories}.`);
     // For each directory, get the list of T4A files and queue them for processing.
     for (const directoryPath of t4aDirectories) {
@@ -78,6 +82,12 @@ export class T4AEnqueuerProcessingService {
         queues.push({
           data: new T4AUploadQueueInDTO(referenceDate, filesBatch),
         });
+      }
+      if (!queues.length) {
+        processSummary.info(
+          `No T4A files found in directory ${directoryPath}.`,
+        );
+        return;
       }
       await this.t4aUploadQueue.addBulk(queues);
       const enqueueElapsedMs = performance.now() - enqueueStart;
