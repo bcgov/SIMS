@@ -190,8 +190,8 @@ export class T4AUploadProcessingService {
   /**
    * Archive the processed T4A file on the SFTP.
    * @param sftpClient SFTP client to be used for the operation.
-   * @param file File to be archived.
-   * @param t4aFileInfo T4A file information.
+   * @param uniqueID Unique ID of the file to be archived, used for logging.
+   * @param remoteFileFullPath Full remote file path of the T4A file.
    * @param processSummary Summary object to log the process details.
    */
   private async archiveFile(
