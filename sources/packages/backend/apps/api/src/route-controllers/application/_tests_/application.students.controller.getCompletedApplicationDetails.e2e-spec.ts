@@ -224,8 +224,6 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
             firstDisbursement.disbursementScheduleStatus,
         },
         assessmentTriggerType: application.currentAssessment.triggerType,
-        scholasticStandingChangeType:
-          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
         hasActiveUnsuccessfulCompletionWeeks: true,
         hasBlockFundingFeedbackError: false,
         eCertFailedValidations: [],
@@ -652,6 +650,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
           hasBlockFundingFeedbackError: false,
+          hasActiveUnsuccessfulCompletionWeeks: false,
           eCertFailedValidations: [
             ECertFailedValidation.DisabilityStatusNotConfirmed,
           ],
@@ -716,6 +715,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
               firstDisbursement.disbursementScheduleStatus,
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
+          hasActiveUnsuccessfulCompletionWeeks: false,
           hasBlockFundingFeedbackError: false,
           eCertFailedValidations: [
             ECertFailedValidation.MSFAACanceled,
@@ -794,6 +794,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
               firstDisbursement.disbursementScheduleStatus,
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
+          hasActiveUnsuccessfulCompletionWeeks: false,
           hasBlockFundingFeedbackError: false,
           eCertFailedValidations: [
             ECertFailedValidation.HasStopDisbursementRestriction,
@@ -876,6 +877,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
               firstDisbursement.disbursementScheduleStatus,
           },
           assessmentTriggerType: application.currentAssessment.triggerType,
+          hasActiveUnsuccessfulCompletionWeeks: false,
           hasBlockFundingFeedbackError: false,
           eCertFailedValidations: [
             ECertFailedValidation.HasStopDisbursementRestriction,
