@@ -107,6 +107,7 @@ export class ConfigService {
   get t4aIntegration(): T4AIntegrationConfig {
     return this.getCachedConfig("t4aIntegrationConfig", {
       folder: process.env.T4A_FOLDER,
+      archiveFolder: process.env.T4A_ARCHIVE_FOLDER,
     });
   }
 

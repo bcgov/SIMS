@@ -3,7 +3,7 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import { T4AIntegrationService } from "@sims/integrations/t4a/t4a.integration.service";
 import { getISODateOnlyString } from "@sims/utilities";
 import * as Client from "ssh2-sftp-client";
-import { StudentService } from "@sims/integrations/services";
+import { SshService, StudentService } from "@sims/integrations/services";
 import {
   NotificationActionsService,
   StudentFileSharedService,
@@ -18,6 +18,7 @@ import {
 import { T4AUploadFileQueueInDTO } from "@sims/services/queue/dto/t4a-upload.dto";
 import { T4AFileInfo } from "@sims/integrations/t4a/models/t4a.models";
 import { DataSource } from "typeorm";
+import { SSHErrorCodes } from "@sims/integrations/services/ssh";
 
 const SIN_REGEX = /^\d{9}$/;
 
@@ -58,11 +59,11 @@ export class T4AUploadProcessingService {
         const t4aFileInfo = this.t4aIntegrationService.getT4FileInfo(
           file.relativeFilePath,
         );
+        // Execute a basic format validation before searching the students, since this value is received
+        // through the queue payload and could be not in the expected format.
         if (SIN_REGEX.test(t4aFileInfo.sin)) {
           sinNumbers.push(t4aFileInfo.sin);
         } else {
-          // Execute a basic format validation before searching the students, since this value is received
-          // through the queue payload and could be not in the expected format.
           processSummary.warn(
             `The SIN associated with the file unique ID ${file.uniqueID} is not valid: ${t4aFileInfo.sin}.`,
           );
@@ -90,6 +91,11 @@ export class T4AUploadProcessingService {
         );
       }
     } catch (error: unknown) {
+      // Stops processing if some error occurs.
+      // The method processT4AFile handles errors for each file individually
+      // and decides if the processing should continue or not.
+      // Errors caught here should stop the entire processing, for instance,
+      // SFTP connection errors during sftpClient creation process.
       processSummary.error("Error uploading file.", error);
     } finally {
       await this.t4aIntegrationService.ensureClientClosed(
@@ -167,6 +173,12 @@ export class T4AUploadProcessingService {
         processSummary,
       );
     } catch (error: unknown) {
+      if (SshService.hasError(error, SSHErrorCodes.NotConnected)) {
+        // Stops processing as the SFTP client is disconnected.
+        throw new Error("SFTP client disconnected unexpectedly.", {
+          cause: error,
+        });
+      }
       // Register the error but continue processing other files.
       processSummary.error(
         `Error while processing file unique ID ${file.uniqueID}.`,

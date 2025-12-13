@@ -263,19 +263,28 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * @param options Method options.
    * - `client`: SFTP client to be used in the operation when the same
    * client is used for multiple operations.
+   * - `absoluteArchiveDirectory`: absolute archive directory to move the file to.
    */
   async archiveFile(
     remoteFilePath: string,
-    options?: { client?: Client },
+    options?: { client?: Client; absoluteArchiveDirectory?: string },
   ): Promise<void> {
     const fileInfo = path.parse(remoteFilePath);
     const timestamp = getFileNameAsExtendedCurrentTimestamp();
     const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
-    const newRemoteFilePath = path.join(
-      fileInfo.dir,
-      SFTP_ARCHIVE_DIRECTORY,
-      fileBaseName,
-    );
+    let newRemoteFilePath: string;
+    if (options?.absoluteArchiveDirectory) {
+      newRemoteFilePath = path.join(
+        options.absoluteArchiveDirectory,
+        fileBaseName,
+      );
+    } else {
+      newRemoteFilePath = path.join(
+        fileInfo.dir,
+        SFTP_ARCHIVE_DIRECTORY,
+        fileBaseName,
+      );
+    }
     await this.renameFile(remoteFilePath, newRemoteFilePath, options);
   }
 

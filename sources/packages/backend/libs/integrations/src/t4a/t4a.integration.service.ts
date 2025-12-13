@@ -57,4 +57,21 @@ export class T4AIntegrationService extends SFTPIntegrationBase<Buffer> {
       sin,
     };
   }
+
+  /**
+   * Archives a file on SFTP .
+   * @param remoteFilePath full remote file path with file name.
+   * @param options Method options.
+   * - `client`: SFTP client to be used in the operation when the same
+   * client is used for multiple operations.
+   */
+  async archiveFile(
+    remoteFilePath: string,
+    options?: { client?: Client },
+  ): Promise<void> {
+    await super.archiveFile(remoteFilePath, {
+      client: options?.client,
+      absoluteArchiveDirectory: this.configService.t4aIntegration.archiveFolder,
+    });
+  }
 }

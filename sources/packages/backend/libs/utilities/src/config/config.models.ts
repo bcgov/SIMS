@@ -78,6 +78,7 @@ export interface CRAIntegrationConfig {
 
 export interface T4AIntegrationConfig {
   folder: string;
+  archiveFolder: string;
 }
 
 export interface ATBCIntegrationConfig {
