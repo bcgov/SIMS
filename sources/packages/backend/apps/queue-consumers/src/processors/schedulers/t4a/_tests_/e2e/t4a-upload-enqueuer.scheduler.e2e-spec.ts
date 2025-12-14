@@ -138,7 +138,7 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
     expect(result).toStrictEqual(["T4A files process completed."]);
     expect(
       mockedJob.containLogMessages([
-        "No T4A files found in directory T4A_E2E_TEST_FOLDER\\9999.",
+        `No T4A files found in directory ${join(T4A_E2E_TEST_FOLDER, "9999")}.`,
       ]),
     ).toBe(true);
     expect(t4aUploadQueueMock.addBulk).not.toHaveBeenCalled();
