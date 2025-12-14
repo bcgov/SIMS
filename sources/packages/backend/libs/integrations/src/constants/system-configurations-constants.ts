@@ -37,17 +37,17 @@ export const SFTP_ARCHIVE_DIRECTORY = "Archive";
 export const SIMS_TO_SFAS_BRIDGE_FILE_INITIAL_DATE = new Date("2024-01-01");
 
 /**
- * Group name used to store T4A files into the student account.
+ * File name part used to store T4A files into the student account.
  */
-export const T4A_FILE_PREFIX = "T4A";
+export const T4A_FILE_PART = "T4A";
+
+/**
+ * File group name used to store T4A files into the student account.
+ * Also known as category 'Document purpose' for the Ministry users.
+ */
+export const T4A_FILE_GROUP_NAME = "Tax Documents";
 
 /**
  * Default maximum number of file uploads per batch for a T4A upload enqueuer job.
  */
 export const DEFAULT_MAX_FILE_UPLOADS_PER_BATCH = 100;
-
-/**
- * Temporary configuration for the T4A SFTP IN folder.
- * TODO: Move to an environment variable.
- */
-export const T4A_SFTP_IN_FOLDER = "IN/T4A";

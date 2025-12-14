@@ -1,4 +1,3 @@
-import { T4A_SFTP_IN_FOLDER } from "@sims/integrations/constants";
 import { v4 as uuid } from "uuid";
 
 /**
@@ -16,21 +15,14 @@ export interface T4AUploadEnqueuerQueueInDTO {
 export class T4AUploadFileQueueInDTO {
   /**
    * Initializes the T4A upload file queue DTO.
-   * @param remoteFilePath The remote file path to be uploaded.
-   */
-  constructor(remoteFileFullPath: string) {
-    this.relativeFilePath = remoteFileFullPath.substring(
-      T4A_SFTP_IN_FOLDER.length + 1,
-    );
-    this.uniqueID = uuid();
-  }
-  /**
-   * Relative file path on the SFTP T4A IN folder.
+   * @param relativeFilePath Relative file path on the SFTP T4A IN folder.
    * The path is relative to the T4A IN folder to ensure the consumer
    * queue will look only into the configured folder, not allowing it
    * to receive files from other locations.
    */
-  readonly relativeFilePath: string;
+  constructor(readonly relativeFilePath: string) {
+    this.uniqueID = uuid();
+  }
   /**
    * File unique ID to allow its identification in logs and processing,
    * avoiding use of file names which may contain sensitive information.
@@ -47,7 +39,7 @@ export class T4AUploadQueueInDTO {
    * @param referenceDate The reference date for the upload. Allows all
    * the created files to have the same reference date, independent of
    * when they are processed.
-   * @param remoteFiles The list of remote file full paths to be uploaded.
+   * @param remoteFiles The list of remote relative file paths to be uploaded.
    * A UUID will be associated with each file for identification during processing.
    */
   constructor(
