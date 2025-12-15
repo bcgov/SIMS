@@ -141,14 +141,15 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
         );
         newDisbursement.hasEstimatedAwards = totalEstimatedAwards > 0;
         // Disbursements as a result of a 'Scholastic Standing Change' should
-        // be automatically set to COE status 'Not Required'.
-        // 'Required' is the default at the DB level
-        // TODO Revisit whether Not Required or Completed will be used.
+        // be automatically set to COE status 'Completed'.
+        // 'Required' is defaulted in the database.
         if (
           assessment.triggerType ===
           AssessmentTriggerType.ScholasticStandingChange
         ) {
-          newDisbursement.coeStatus = COEStatus.notRequired;
+          newDisbursement.coeStatus = COEStatus.completed;
+          newDisbursement.coeUpdatedAt = new Date();
+          newDisbursement.coeUpdatedBy = auditUser;
         }
         disbursementSchedules.push(newDisbursement);
       }

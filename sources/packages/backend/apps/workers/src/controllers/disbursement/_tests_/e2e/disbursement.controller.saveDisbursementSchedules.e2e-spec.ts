@@ -8,6 +8,7 @@ import {
   DisbursementScheduleStatus,
   DisbursementValueType,
   OfferingIntensity,
+  User,
 } from "@sims/sims-db";
 import {
   createE2EDataSources,
@@ -29,15 +30,18 @@ import {
   MockedZeebeJobResult,
 } from "../../../../../test/utils/worker-job-mock";
 import { createTestingAppModule } from "../../../../../test/helpers";
+import { SystemUsersService } from "@sims/services";
 
 describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
   let db: E2EDataSources;
   let disbursementController: DisbursementController;
+  let systemUser: User;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     db = createE2EDataSources(dataSource);
     disbursementController = nestApplication.get(DisbursementController);
+    systemUser = nestApplication.get(SystemUsersService).systemUser;
   });
 
   it("Should generate an overaward when a reassessment happens and the student is entitled to less money", async () => {
@@ -720,38 +724,169 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     },
   );
 
-  function assertAwardDeduction(
-    createdDisbursement: DisbursementSchedule,
-    valueType: DisbursementValueType,
-    assertValues: {
-      valueAmount: number;
-      disbursedAmountSubtracted?: number;
-    },
-  ) {
-    const award = createdDisbursement.disbursementValues.find(
-      (scheduleValue) => scheduleValue.valueType === valueType,
+  it.only("Should set the COE Status to 'Completed' and populate COE Updated fields when the trigger type is 'Scholastic Standing Change'.", async () => {
+    // Arrange
+    const savedUser = await db.user.save(createFakeUser());
+    const savedStudent = await db.student.save(createFakeStudent(savedUser));
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        student: savedStudent,
+      },
+      { applicationNumber: "OA_TEST001" },
     );
-    expect(award).toBeDefined();
-    expect(award.valueAmount).toBe(+assertValues.valueAmount);
-    expect(award.disbursedAmountSubtracted).toBe(
-      assertValues.disbursedAmountSubtracted,
+    // Original assessment.
+    const fakeOriginalAssessment = createFakeStudentAssessment({
+      auditUser: savedUser,
+      applicationEditStatusUpdatedBy: savedUser,
+    });
+    fakeOriginalAssessment.application = savedApplication;
+    await db.studentAssessment.save(fakeOriginalAssessment);
+    // Original assessment - first disbursement (Sent).
+    const firstSchedule = createFakeDisbursementSchedule({
+      disbursementValues: [
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaLoan,
+          "CSLF",
+          1250,
+          { effectiveAmount: 1250 },
+        ),
+        createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 800, {
+          disbursedAmountSubtracted: 50,
+          effectiveAmount: 750,
+        }),
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaGrant,
+          "CSGP",
+          1500,
+          { effectiveAmount: 1500 },
+        ),
+      ],
+    });
+    firstSchedule.disbursementScheduleStatus = DisbursementScheduleStatus.Sent;
+    // Original assessment - second disbursement (Pending).
+    const secondSchedule = createFakeDisbursementSchedule({
+      disbursementValues: [
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaGrant,
+          "CSLF",
+          1000,
+        ),
+        createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 500),
+      ],
+    });
+    secondSchedule.disbursementScheduleStatus =
+      DisbursementScheduleStatus.Pending;
+    fakeOriginalAssessment.disbursementSchedules = [
+      firstSchedule,
+      secondSchedule,
+    ];
+    // Scholastic Standing Change - Withdrawal.
+    const withdrawalOffering = await db.educationProgramOffering.save(
+      createFakeEducationProgramOffering({ auditUser: savedUser }),
     );
-  }
+    const scholasticStandingChangeAssessment = createFakeStudentAssessment({
+      auditUser: savedUser,
+      offering: withdrawalOffering,
+      applicationEditStatusUpdatedBy: savedUser,
+    });
+    scholasticStandingChangeAssessment.triggerType =
+      AssessmentTriggerType.ScholasticStandingChange;
+    scholasticStandingChangeAssessment.application = savedApplication;
+    const savedScholasticStandingChangeAssessment =
+      await db.studentAssessment.save(scholasticStandingChangeAssessment);
+    savedApplication.currentAssessment = scholasticStandingChangeAssessment;
+    savedApplication.applicationStatus = ApplicationStatus.Completed;
+    await db.application.save(savedApplication);
 
-  function assertOveraward(
-    overawards: DisbursementOveraward[],
-    awardCode: string,
-    awardValue: number,
-  ) {
-    expect(overawards).toBeDefined();
-    const awardOverawards = overawards.filter(
-      (overaward) => overaward.disbursementValueCode === awardCode,
+    // Act
+    const saveDisbursementSchedulesPayload =
+      createFakeSaveDisbursementSchedulesPayload({
+        assessmentId: savedScholasticStandingChangeAssessment.id,
+        createSecondDisbursement: true,
+      });
+    const saveResult = await disbursementController.saveDisbursementSchedules(
+      saveDisbursementSchedulesPayload,
     );
-    expect(awardOverawards).toHaveLength(1);
-    const [overaward] = awardOverawards;
-    expect(overaward.overawardValue).toBe(awardValue);
-    expect(overaward.originType).toBe(
-      DisbursementOverawardOriginType.ReassessmentOveraward,
+
+    // Asserts
+    expect(saveResult).toHaveProperty(
+      FAKE_WORKER_JOB_RESULT_PROPERTY,
+      MockedZeebeJobResult.Complete,
     );
-  }
+
+    const createdDisbursements = await db.disbursementSchedule.find({
+      select: {
+        id: true,
+        coeStatus: true,
+        coeUpdatedAt: true,
+      },
+      relations: {
+        disbursementValues: true,
+        coeUpdatedBy: true,
+      },
+      where: {
+        studentAssessment: { id: savedScholasticStandingChangeAssessment.id },
+      },
+    });
+
+    // Assert disbursements created
+    expect(createdDisbursements).toBeDefined();
+    expect(createdDisbursements).toHaveLength(2);
+    const [firstDisbursement, secondDisbursement] = createdDisbursements;
+
+    // Assert coeStatus is set to Completed
+    expect(firstDisbursement.coeStatus).toEqual(COEStatus.completed);
+    expect(secondDisbursement.coeStatus).toEqual(COEStatus.completed);
+
+    // Assert coeUpdatedAt is set to the current time.
+    // Allow a difference of 100 milliseconds between record creation and test assertion.
+    const currentDate = new Date();
+    const precisionInMs = 100;
+    expect(
+      currentDate.getTime() - firstDisbursement.coeUpdatedAt.getTime(),
+    ).toBeLessThanOrEqual(precisionInMs);
+    expect(
+      currentDate.getTime() - secondDisbursement.coeUpdatedAt.getTime(),
+    ).toBeLessThanOrEqual(precisionInMs);
+
+    // Assert that the coeUpdatedBy is set to the systemUser.
+    expect(firstDisbursement.coeUpdatedBy.id).toEqual(systemUser.id);
+    expect(secondDisbursement.coeUpdatedBy.id).toEqual(systemUser.id);
+  });
 });
+
+function assertAwardDeduction(
+  createdDisbursement: DisbursementSchedule,
+  valueType: DisbursementValueType,
+  assertValues: {
+    valueAmount: number;
+    disbursedAmountSubtracted?: number;
+  },
+): void {
+  const award = createdDisbursement.disbursementValues.find(
+    (scheduleValue) => scheduleValue.valueType === valueType,
+  );
+  expect(award).toBeDefined();
+  expect(award.valueAmount).toBe(+assertValues.valueAmount);
+  expect(award.disbursedAmountSubtracted).toBe(
+    assertValues.disbursedAmountSubtracted,
+  );
+}
+
+function assertOveraward(
+  overawards: DisbursementOveraward[],
+  awardCode: string,
+  awardValue: number,
+): void {
+  expect(overawards).toBeDefined();
+  const awardOverawards = overawards.filter(
+    (overaward) => overaward.disbursementValueCode === awardCode,
+  );
+  expect(awardOverawards).toHaveLength(1);
+  const [overaward] = awardOverawards;
+  expect(overaward.overawardValue).toBe(awardValue);
+  expect(overaward.originType).toBe(
+    DisbursementOverawardOriginType.ReassessmentOveraward,
+  );
+}

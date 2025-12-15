@@ -14,8 +14,4 @@ export enum COEStatus {
    * Confirmation of Enrollment is Declined.
    */
   declined = "Declined",
-  /**
-   * Confirmation of Enrollment is Not Required.
-   */
-  notRequired = "Not Required",
 }
