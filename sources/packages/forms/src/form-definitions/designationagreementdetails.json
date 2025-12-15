@@ -273,8 +273,7 @@
       ],
       "validate": {
         "required": true,
-        "customMessage": "at least one location must be selected",
-        "custom": "valid = data.locations.filter(row => row.requestForDesignation).length > 0;"
+        "customMessage": "At least one location must be selected for designation"
       },
       "key": "locations",
       "type": "datagrid",
@@ -347,6 +346,19 @@
         }
       ],
       "persistent": ""
+    },
+    {
+      "label": "",
+      "key": "locationsValidation",
+      "type": "hidden",
+      "input": true,
+      "tableView": false,
+      "hideLabel": true,
+      "calculateValue": "hasRequestedDesignationSelected = data.locations && data.locations.some(row => row.requestForDesignation);",
+      "validate": {
+        "custom": "valid = hasRequestedDesignationSelected;",
+        "customMessage": "At least one location must be selected for designation"
+      }
     },
     {
       "label": "HTML",
