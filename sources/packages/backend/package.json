@@ -114,7 +114,7 @@
     "@types/jest": "^30.0.0",
     "@types/multer": "^2.0.0",
     "@types/node": "^24.9.1",
-    "@types/papaparse": "^5.5.1",
+    "@types/papaparse": "^5.5.2",
     "@types/passport-jwt": "^4.0.1",
     "@types/pg": "^8.15.6",
     "@types/supertest": "^6.0.3",
