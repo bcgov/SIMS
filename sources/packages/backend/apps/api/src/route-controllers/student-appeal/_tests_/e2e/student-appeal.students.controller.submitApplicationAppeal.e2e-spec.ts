@@ -634,6 +634,9 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
         {
           offeringIntensity: OfferingIntensity.fullTime,
           applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            eligibleApplicationAppeals: [FormNames.RoomAndBoardCostsAppeal],
+          },
         },
       );
       // Create a temporary file for room and board costs appeal.
@@ -751,6 +754,9 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
         {
           offeringIntensity: OfferingIntensity.fullTime,
           applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            eligibleApplicationAppeals: [FormNames.StepParentWaiverAppeal],
+          },
         },
       );
       // Create supporting user parents for the application.

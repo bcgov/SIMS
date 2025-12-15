@@ -1778,12 +1778,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Retrieves the application to request an appeal.
    * @param applicationId application ID.
-   * @param userId user id.
+   * @param studentId student id.
    * @returns application details for an appeal.
    */
   async getApplicationToRequestAppeal(
     applicationId: number,
-    userId: number,
+    studentId: number,
   ): Promise<Application> {
     return this.repo.findOne({
       select: {
@@ -1791,12 +1791,17 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationNumber: true,
         isArchived: true,
         offeringIntensity: true,
+        currentAssessment: { id: true, eligibleApplicationAppeals: true },
         programYear: { id: true, programYear: true },
         supportingUsers: { id: true, fullName: true, supportingUserType: true },
       },
-      relations: { programYear: true, supportingUsers: true },
+      relations: {
+        currentAssessment: true,
+        programYear: true,
+        supportingUsers: true,
+      },
       where: {
-        student: { user: { id: userId } },
+        student: { id: studentId },
         applicationStatus: ApplicationStatus.Completed,
         id: applicationId,
       },

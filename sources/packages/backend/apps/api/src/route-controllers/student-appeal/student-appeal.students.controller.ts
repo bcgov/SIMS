@@ -134,7 +134,7 @@ export class StudentAppealStudentsController extends BaseController {
     const application =
       await this.applicationService.getApplicationToRequestAppeal(
         applicationId,
-        userToken.userId,
+        userToken.studentId,
       );
     if (!application) {
       throw new NotFoundException(
