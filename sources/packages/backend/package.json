@@ -109,7 +109,7 @@
     "@types/adm-zip": "^0.5.7",
     "@types/clamscan": "^2.4.1",
     "@types/cookie-parser": "^1.4.9",
-    "@types/express": "^5.0.3",
+    "@types/express": "^5.0.6",
     "@types/find-config": "^1.0.4",
     "@types/jest": "^30.0.0",
     "@types/multer": "^2.0.0",
