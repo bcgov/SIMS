@@ -96,7 +96,7 @@
 </template>
 <script lang="ts">
 import { useRules, useSnackBar, useStudentAppeals } from "@/composables";
-import { defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { StudentAppealService } from "../../../services/StudentAppealService";
 import { EligibleApplicationForAppealAPIOutDTO } from "@/services/http/dto";
@@ -132,16 +132,23 @@ export default defineComponent({
     const selectedAppealType = ref<AppealTypes | null>();
     const selectedApplicationId = ref<number | null>();
     const selectedApplicationAppeals = ref<string[]>();
-    const applicationAppeals = ref<AppealForm[]>([
-      {
-        formName: "roomandboardcostsappeal",
-        description: mapStudentAppealsFormNames("roomandboardcostsappeal"),
-      },
-      {
-        formName: "stepparentwaiverappeal",
-        description: mapStudentAppealsFormNames("stepparentwaiverappeal"),
-      },
-    ]);
+    const applicationAppeals = computed(() => {
+      if (eligibleApplications.value && selectedApplicationId.value) {
+        // Find application by selected application id.
+        const application = eligibleApplications.value.find(
+          (application) => application.id === selectedApplicationId.value,
+        );
+        // Map eligible appeals for the selected application.
+        const eligibleApplicationAppeals = application
+          ? application.eligibleApplicationAppeals.map((eligibleAppeal) => ({
+              formName: eligibleAppeal,
+              description: mapStudentAppealsFormNames(eligibleAppeal),
+            }))
+          : [];
+        return eligibleApplicationAppeals;
+      }
+      return [];
+    });
     const selectedOtherAppeal = ref<string>();
     const otherAppeals = ref<AppealForm[]>([
       {
@@ -172,6 +179,14 @@ export default defineComponent({
           : null;
       },
       { immediate: true },
+    );
+
+    // Clear selected appeals when selected application changes.
+    watch(
+      () => selectedApplicationId.value,
+      () => {
+        selectedApplicationAppeals.value = undefined;
+      },
     );
 
     const goToAppealFormsRequests = async (): Promise<void> => {

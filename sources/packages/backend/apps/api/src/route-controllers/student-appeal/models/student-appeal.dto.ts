@@ -131,6 +131,7 @@ export class StudentAppealPendingSummaryAPIOutDTO {
 export class EligibleApplicationForAppealAPIOutDTO {
   id: number;
   applicationNumber: string;
+  eligibleApplicationAppeals: string[];
 }
 
 export class EligibleApplicationsForAppealAPIOutDTO {

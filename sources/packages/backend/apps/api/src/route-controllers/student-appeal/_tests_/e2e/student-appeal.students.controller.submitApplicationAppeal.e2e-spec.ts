@@ -755,7 +755,10 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
           offeringIntensity: OfferingIntensity.fullTime,
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
-            eligibleApplicationAppeals: [FormNames.StepParentWaiverAppeal],
+            eligibleApplicationAppeals: [
+              FormNames.RoomAndBoardCostsAppeal,
+              FormNames.StepParentWaiverAppeal,
+            ],
           },
         },
       );
@@ -890,8 +893,8 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
   );
 
   it(
-    "Should throw unprocessable entity exception when student submit an appeal with a change request form" +
-      " which is not eligible for the appeal submission.",
+    "Should throw unprocessable entity exception when student submit an appeal" +
+      ` for a full-time application in status ${ApplicationStatus.Completed} but is not eligible for any appeal submission.`,
     async () => {
       // Arrange
       // Create student to submit application.
@@ -906,20 +909,14 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
         {
           offeringIntensity: OfferingIntensity.fullTime,
           applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: { eligibleApplicationAppeals: [] },
         },
       );
-      // Prepare the data to request a change of financial information which is not an eligible appeal.
-      const financialInformationData = {
-        programYear: application.programYear.programYear,
-        taxReturnIncome: 8000,
-        haveDaycareCosts12YearsOrOver: "no",
-        haveDaycareCosts11YearsOrUnder: "no",
-      };
       const payload: StudentApplicationAppealAPIInDTO = {
         studentAppealRequests: [
           {
-            formName: FINANCIAL_INFORMATION_FORM_NAME,
-            formData: financialInformationData,
+            formName: FormNames.RoomAndBoardCostsAppeal,
+            formData: {},
             files: [],
           },
         ],
@@ -939,10 +936,8 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
         .auth(studentToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.UNPROCESSABLE_ENTITY)
         .expect({
-          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-          message:
-            "One or more forms submitted are not valid for appeal submission.",
-          error: "Unprocessable Entity",
+          message: "The application is not eligible to submit an appeal.",
+          errorType: APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
         });
     },
   );
@@ -983,6 +978,53 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
       .expect({
         message: "The application is not eligible to submit an appeal.",
         errorType: APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
+      });
+  });
+
+  it("Should throw unprocessable entity exception when student submit an appeal with an appeal request which is not eligible for the application.", async () => {
+    // Arrange
+    // Create student to submit application.
+    const student = await saveFakeStudent(appDataSource);
+    const application = await saveFakeApplication(
+      db.dataSource,
+      { programYear: recentActiveProgramYear, student },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: ApplicationStatus.Completed,
+        // The application is only eligible for room and board costs appeal.
+        currentAssessmentInitialValues: {
+          eligibleApplicationAppeals: [FormNames.RoomAndBoardCostsAppeal],
+        },
+      },
+    );
+    // The submitted appeal has the appeal request step-parent waiver which is not eligible for the application.
+    const payload: StudentApplicationAppealAPIInDTO = {
+      studentAppealRequests: [
+        {
+          formName: FormNames.StepParentWaiverAppeal,
+          formData: {},
+          files: [],
+        },
+      ],
+    };
+    // Mock JWT user to return the saved student from token.
+    await mockJWTUserInfo(appModule, student.user);
+    // Get any student user token.
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const endpoint = `/students/appeal/application/${application.id}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        message: `The appeal form(s) ${FormNames.StepParentWaiverAppeal} is/are not eligible for the application.`,
+        error: "Unprocessable Entity",
       });
   });
 

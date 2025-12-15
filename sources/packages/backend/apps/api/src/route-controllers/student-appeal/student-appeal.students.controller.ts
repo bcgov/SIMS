@@ -158,16 +158,18 @@ export class StudentAppealStudentsController extends BaseController {
         ),
       );
     }
-
+    const submittedFormNames = payload.studentAppealRequests.map(
+      (request) => request.formName,
+    );
     if (operation === "appeal") {
       // Ensures the appeals are validated based on the eligibility criteria used for fetching the
       // eligible applications for appeal using getEligibleApplicationsForAppeal endpoint.
-      const eligibleApplicationsForAppeal =
+      const [eligibleApplication] =
         await this.studentAppealService.getEligibleApplicationsForAppeal(
           userToken.studentId,
           { applicationId },
         );
-      if (!eligibleApplicationsForAppeal.length) {
+      if (!eligibleApplication) {
         throw new UnprocessableEntityException(
           new ApiProcessError(
             "The application is not eligible to submit an appeal.",
@@ -175,13 +177,17 @@ export class StudentAppealStudentsController extends BaseController {
           ),
         );
       }
+      // Validate if all the submitted forms are eligible appeals for the application.
+      this.studentAppealControllerService.validateAppealFormNames(
+        submittedFormNames,
+        eligibleApplication.currentAssessment.eligibleApplicationAppeals,
+      );
+    } else {
+      // Validate the form names for legacy change request submission.
+      this.studentAppealControllerService.validateLegacyChangeRequestFormNames(
+        submittedFormNames,
+      );
     }
-
-    // Validate the submitted form names for the operation.
-    this.studentAppealControllerService.validateSubmittedFormNames(
-      operation,
-      payload.studentAppealRequests.map((request) => request.formName),
-    );
 
     const existingApplicationAppeal = await this.studentAppealService.hasAppeal(
       userToken.studentId,
@@ -355,6 +361,8 @@ export class StudentAppealStudentsController extends BaseController {
       applications: eligibleApplications.map((application) => ({
         id: application.id,
         applicationNumber: application.applicationNumber,
+        eligibleApplicationAppeals:
+          application.currentAssessment.eligibleApplicationAppeals,
       })),
     };
   }

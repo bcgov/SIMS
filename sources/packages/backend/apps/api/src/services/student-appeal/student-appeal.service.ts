@@ -5,6 +5,7 @@ import {
   EntityManager,
   IsNull,
   MoreThanOrEqual,
+  Raw,
   Repository,
 } from "typeorm";
 import {
@@ -18,7 +19,6 @@ import {
   getUserFullNameLikeSearch,
   FileOriginType,
   ApplicationStatus,
-  OfferingIntensity,
   Student,
 } from "@sims/sims-db";
 import {
@@ -330,15 +330,22 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     options?: { applicationId?: number },
   ): Promise<Application[]> {
     return this.applicationRepo.find({
-      select: { id: true, applicationNumber: true },
+      select: {
+        id: true,
+        applicationNumber: true,
+        currentAssessment: { id: true, eligibleApplicationAppeals: true },
+      },
+      relations: { currentAssessment: true },
       where: {
         id: options?.applicationId,
         student: { id: studentId, sinValidation: { isValidSIN: true } },
         applicationStatus: ApplicationStatus.Completed,
-        offeringIntensity: OfferingIntensity.fullTime,
         isArchived: false,
-        programYear: {
-          startDate: MoreThanOrEqual(PROGRAM_YEAR_2025_26_START_DATE),
+        currentAssessment: {
+          eligibleApplicationAppeals: Raw(
+            (columnAlias) =>
+              `${columnAlias} IS NOT NULL AND CARDINALITY(${columnAlias}) > 0`,
+          ),
         },
       },
       order: { applicationNumber: "ASC" },

@@ -170,6 +170,7 @@ describe("StudentAppealStudentsController(e2e)-getEligibleApplicationsForAppeal"
     isValidSIN?: boolean;
     isArchived?: boolean;
     student?: Student;
+    eligibleApplicationAppeals?: string[];
   }): Promise<Application> {
     const student =
       options?.student ??
@@ -189,6 +190,9 @@ describe("StudentAppealStudentsController(e2e)-getEligibleApplicationsForAppeal"
         offeringIntensity:
           options?.offeringIntensity ?? OfferingIntensity.fullTime,
         isArchived: options?.isArchived ?? false,
+        currentAssessmentInitialValues: {
+          eligibleApplicationAppeals: options?.eligibleApplicationAppeals,
+        },
       },
     );
   }
