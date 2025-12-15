@@ -724,7 +724,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     },
   );
 
-  it.only("Should set the COE Status to 'Completed' and populate COE Updated fields when the trigger type is 'Scholastic Standing Change'.", async () => {
+  it("Should set the COE Status to 'Completed' and populate COE Updated fields when the trigger type is 'Scholastic Standing Change'.", async () => {
     // Arrange
     const savedUser = await db.user.save(createFakeUser());
     const savedStudent = await db.student.save(createFakeStudent(savedUser));
