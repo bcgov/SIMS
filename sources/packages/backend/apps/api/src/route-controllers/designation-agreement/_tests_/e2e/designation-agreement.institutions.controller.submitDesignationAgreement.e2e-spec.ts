@@ -24,6 +24,7 @@ import * as request from "supertest";
 import { FormService } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
+import { NO_LOCATION_SELECTED_FOR_DESIGNATION } from "../../../../constants/error-code.constants";
 
 describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgreement", () => {
   let app: INestApplication;
@@ -204,8 +205,8 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect((response) => {
-        expect(response.body.message).toContain(
-          "At least one location must be selected for designation.",
+        expect(response.body.errorType).toBe(
+          NO_LOCATION_SELECTED_FOR_DESIGNATION,
         );
       });
   });
@@ -246,8 +247,8 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect((response) => {
-        expect(response.body.message).toContain(
-          "At least one location must be selected for designation.",
+        expect(response.body.errorType).toBe(
+          NO_LOCATION_SELECTED_FOR_DESIGNATION,
         );
       });
   });
