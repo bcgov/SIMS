@@ -28,6 +28,7 @@ import {
 } from "./models/designation-agreement.dto";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
 import { FormNames } from "../../services/form/constants";
+import { ClientTypeBaseRoute } from "../../types";
 import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
 import {
   ApiBadRequestResponse,
@@ -36,8 +37,9 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { ClientTypeBaseRoute } from "../../types";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { CustomNamedError } from "@sims/utilities";
+import { NO_LOCATION_SELECTED_FOR_DESIGNATION } from "apps/api/src/constants";
 
 /***
  * Designation agreement dedicated controller for Institution.
@@ -95,6 +97,19 @@ export class DesignationAgreementInstitutionsController extends BaseController {
         userToken.authorizations.institutionId,
       );
     payload.isBCPrivate = institutionType.isBCPrivate;
+
+    // Validate that at least one location is selected for designation.
+    const hasSelectedLocation = payload.locations.some(
+      (location) => location.requestForDesignation,
+    );
+    if (!hasSelectedLocation) {
+      throw new UnprocessableEntityException(
+        new CustomNamedError(
+          "At least one location must be selected for designation.",
+          NO_LOCATION_SELECTED_FOR_DESIGNATION,
+        ),
+      );
+    }
 
     // Validate the dynamic data submission.
     const submissionResult = await this.formService.dryRunSubmission(

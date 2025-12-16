@@ -273,7 +273,8 @@
       ],
       "validate": {
         "required": true,
-        "customMessage": "at least one location must be selected",
+        "custom": "valid = data.locations && data.locations.some(row => row.requestForDesignation);",
+        "customMessage": "At least one location must be selected for designation."
       },
       "key": "locations",
       "type": "datagrid",
@@ -323,10 +324,6 @@
           "attributes": {
             "data-cy": "requestForDesignationCheckBox"
           },
-          "validate": {
-            "custom": "valid = data.locations && data.locations.some(row => row.requestForDesignation);",
-            "customMessage": "At least one location must be selected for designation"
-          },
           "type": "checkbox",
           "input": true,
           "inDataGrid": true
@@ -348,8 +345,7 @@
           "input": true,
           "inDataGrid": true
         }
-      ],
-      "persistent": ""
+      ]
     },
     {
       "label": "HTML",

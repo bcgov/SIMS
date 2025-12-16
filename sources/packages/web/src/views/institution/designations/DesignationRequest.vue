@@ -3,14 +3,14 @@
     <template #header>
       <header-navigator
         title="Manage designations"
-        :routeLocation="goBackRouteParams"
-        subTitle="Request Designation"
+        :route-location="goBackRouteParams"
+        sub-title="Request Designation"
         data-cy="manageDesignationHeader"
       />
     </template>
     <designation-agreement-form
       :model="designationModel"
-      @submitDesignation="submitDesignation"
+      @submit-designation="submitDesignation"
       @cancel="goBack"
       :processing="processing"
     ></designation-agreement-form>
@@ -36,7 +36,8 @@ import {
 import { DesignationAgreementService } from "@/services/DesignationAgreementService";
 import { SubmitDesignationAgreementAPIInDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { FormIOForm } from "@/types";
+import { ApiProcessError, FormIOForm } from "@/types";
+import { NO_LOCATION_SELECTED_FOR_DESIGNATION } from "@/constants";
 
 export default defineComponent({
   components: { DesignationAgreementForm },
@@ -67,7 +68,7 @@ export default defineComponent({
               location.data.address,
             ),
             requestForDesignation: false,
-          } as DesignationLocationsListItem),
+          }) as DesignationLocationsListItem,
       );
 
       designationModel.value = {
@@ -106,10 +107,19 @@ export default defineComponent({
         } as SubmitDesignationAgreementAPIInDTO);
         snackBar.success("Designation agreement submitted.");
         goBack();
-      } catch {
-        snackBar.error(
-          "An unexpected error happened during the designation agreement submission.",
-        );
+      } catch (error: unknown) {
+        if (
+          error instanceof ApiProcessError &&
+          error.errorType === NO_LOCATION_SELECTED_FOR_DESIGNATION
+        ) {
+          snackBar.error(
+            "At least one location must be selected for designation.",
+          );
+        } else {
+          snackBar.error(
+            "An unexpected error happened during the designation agreement submission.",
+          );
+        }
       } finally {
         processing.value = false;
       }
