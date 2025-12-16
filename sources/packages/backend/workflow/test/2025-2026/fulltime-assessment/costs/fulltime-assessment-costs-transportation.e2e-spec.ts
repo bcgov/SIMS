@@ -37,7 +37,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
 
   it(
     "Should determine no transportation cost when student does not request additional transportation and " +
-      "they are ineligible for return transportation (online delivery).",
+      "they are ineligible for return transportation due to online delivery.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -72,7 +72,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
 
   it(
     "Should determine no transportation cost when student does not request additional transportation and " +
-      "they are ineligible for return transportation (living with partner).",
+      "they are ineligible for return transportation due to living with partner.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -116,7 +116,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
 
   it(
     "Should determine no transportation cost when student does not request additional transportation and " +
-      "they are ineligible for return transportation (Single independant at home).",
+      "they are ineligible for return transportation due to being a Single independant student at home.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -156,7 +156,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
 
   it(
     "Should determine no transportation cost when student does not request additional transportation and " +
-      "they are ineligible for return transportation (Single dependant at home).",
+      "they are ineligible for return transportation due to being a Single dependant living at home.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
@@ -229,7 +229,7 @@ it(
     // Assert
     // Expect the return transportation cost to be $900 as the max for offerings up to 26 weeks.
     // Student declared cost would be $452 x 2 (allowable round trips) = $904.
-    // Max is $900 for offerings 27 weeks or longer.
+    // Max is $900 for offerings 26 weeks or less.
     expect(
       calculatedAssessment.variables.calculatedDataReturnTransportationCost,
     ).toBe(900);
