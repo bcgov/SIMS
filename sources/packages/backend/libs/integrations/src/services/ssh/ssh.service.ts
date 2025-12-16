@@ -17,9 +17,8 @@ export class SshService {
   }
 
   /**
-   * Force the connection to be closed ensuring the an
-   * exception will not be raised in the process.
-   * @param client
+   * Force the connection to be closed ensuring an exception will not be raised in the process.
+   * @param client Connected client to be closed.
    */
   static async closeQuietly(client: Client): Promise<void> {
     try {
