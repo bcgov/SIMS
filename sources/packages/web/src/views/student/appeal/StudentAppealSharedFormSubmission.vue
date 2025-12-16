@@ -46,6 +46,7 @@
             hide-details="auto"
             label="Application Number"
             density="compact"
+            color="primary"
             :items="eligibleApplications"
             v-model="selectedApplicationId"
             :loading="loadingEligibleApplications"
@@ -59,6 +60,7 @@
           <v-select
             hide-details="auto"
             color="primary"
+            chips
             label="Appeal(s)"
             density="compact"
             multiple

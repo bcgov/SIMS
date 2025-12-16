@@ -84,8 +84,9 @@ export class StudentAppealControllerService {
     formNames: string[],
     eligibleApplicationAppeals: string[],
   ): void {
+    const eligibleAppealForms = new Set(eligibleApplicationAppeals);
     const ineligibleFormNames = formNames.filter(
-      (formName) => !new Set(eligibleApplicationAppeals).has(formName),
+      (formName) => !eligibleAppealForms.has(formName),
     );
     if (ineligibleFormNames.length) {
       throw new UnprocessableEntityException(

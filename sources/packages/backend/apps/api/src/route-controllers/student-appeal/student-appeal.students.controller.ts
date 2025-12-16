@@ -117,7 +117,7 @@ export class StudentAppealStudentsController extends BaseController {
     description:
       "Only one change request/appeal can be submitted at a time for each application. " +
       "When your current request is approved or denied by StudentAid BC, you will be able to submit a new one or " +
-      "the submitted appeal form(s) forms are not eligible for the application or " +
+      "the submitted appeal form(s) are not eligible for the application or " +
       "the application is not eligible to submit an appeal or " +
       "the application is no longer eligible to submit change request/appeal.",
   })

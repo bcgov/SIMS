@@ -13,7 +13,6 @@ import {
   E2EDataSources,
   createE2EDataSources,
   saveFakeApplication,
-  saveFakeStudent,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
 import { ApplicationStatus, ProgramYear } from "@sims/sims-db";
@@ -39,13 +38,11 @@ describe("StudentStudentsController(e2e)-getStudentApplicationSummary", () => {
 
   it(`Should get student application summary when the student has an application in status ${ApplicationStatus.Submitted}.`, async () => {
     // Arrange
-    const student = await saveFakeStudent(db.dataSource);
     const savedApplication = await saveFakeApplication(db.dataSource, {
-      student,
       programYear: recentActiveProgramYear,
     });
     // Mock the user received in the token.
-    await mockJWTUserInfo(appModule, student.user);
+    await mockJWTUserInfo(appModule, savedApplication.student.user);
 
     // Get any student user token.
     const studentToken = await getStudentToken(
@@ -84,11 +81,9 @@ describe("StudentStudentsController(e2e)-getStudentApplicationSummary", () => {
       " and the application is eligible for application appeals.",
     async () => {
       // Arrange
-      const student = await saveFakeStudent(db.dataSource);
       const savedApplication = await saveFakeApplication(
         db.dataSource,
         {
-          student,
           programYear: recentActiveProgramYear,
         },
         {
@@ -100,7 +95,7 @@ describe("StudentStudentsController(e2e)-getStudentApplicationSummary", () => {
       );
 
       // Mock the user received in the token.
-      await mockJWTUserInfo(appModule, student.user);
+      await mockJWTUserInfo(appModule, savedApplication.student.user);
 
       // Get any student user token.
       const studentToken = await getStudentToken(
