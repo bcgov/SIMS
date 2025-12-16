@@ -42,7 +42,6 @@
           clearable
           multiple
           chips
-          color="primary"
           hide-details="auto" />
         <v-textarea
           label="Notes"
