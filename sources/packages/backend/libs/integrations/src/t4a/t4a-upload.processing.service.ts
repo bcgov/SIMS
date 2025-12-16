@@ -20,6 +20,11 @@ import { T4AFileInfo } from "@sims/integrations/t4a/models/t4a.models";
 import { DataSource } from "typeorm";
 import { SSHErrorCodes } from "@sims/integrations/services/ssh";
 
+/**
+ * Basic regex to validate a SIN format (9 digits).
+ * Note: this regex does not validate if the SIN is actually valid,
+ * just if it has the correct format.
+ */
 const SIN_REGEX = /^\d{9}$/;
 
 /**
@@ -228,7 +233,7 @@ export class T4AUploadProcessingService {
       ),
     );
     if (students.length > 1) {
-      const studentIds = students.map((s) => s.id);
+      const studentIds = students.map((s) => s.id).toSorted();
       processSummary.warn(
         `The SIN associated with the file unique ID ${uniqueID} has more than one student IDS associated: ${studentIds}.`,
       );

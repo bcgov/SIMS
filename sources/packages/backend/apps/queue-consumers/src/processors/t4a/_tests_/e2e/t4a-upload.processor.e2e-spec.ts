@@ -26,8 +26,7 @@ import {
   VirusScanStatus,
 } from "@sims/sims-db";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
-
-jest.setTimeout(300000);
+import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 
 const SIN_NUMBER = "696098482";
 const T4A_FOLDER = "T4A_E2E_TEST_FOLDER";
@@ -70,7 +69,7 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
   });
 
   it(
-    "Should download a T4A file from the SFTP, create a file into student account, upload the file to S3 storage, " +
+    "Should download a T4A file from the SFTP, create a file in the student account, upload the file to S3 storage, " +
       "queue a virus scan, send a notification to the student, and archive the processed file on success " +
       "when the student has the current SIN valid, and matching the file name.",
     async () => {
@@ -177,7 +176,6 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
           `Processing file unique ID ${uniqueID}.`,
           `Found student ID ${student.id}.`,
           "Start download from the SFTP.",
-          "File downloaded in",
           "Start upload to the student account.",
           `Uploading file ${fileName} to S3 storage.`,
           `File ${fileName} uploaded to S3 storage.`,
@@ -185,7 +183,6 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
           `Adding the file: ${fileName} to the virus scan queue.`,
           `File ${fileName} has been added to the virus scan queue.`,
           `Student file ID ${studentFile.id} created and notification saved.`,
-          `File created in`,
           `Archiving file unique ID ${uniqueID}.`,
           `File unique ID ${uniqueID} archived.`,
         ]),
@@ -198,7 +195,70 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
     },
   );
 
-  it("Should log an error and archive the file with a not found student when an invalid SIN is found in the T4A file name.", async () => {
+  it("Should find a student match when the SIN is valid for one of the SIN validations entries when the student has multiple valid SIN numbers.", async () => {
+    // Arrange
+    // Create a student with the current SIN as valid.
+    const student = await saveFakeStudent(db.dataSource, undefined, {
+      sinValidationInitialValue: { sin: "999999999", isValidSIN: true },
+    });
+    await db.sinValidation.insert(
+      createFakeSINValidation(
+        { student },
+        { initialValue: { isValidSIN: true, sin: SIN_NUMBER } },
+      ),
+    );
+    const now = new Date();
+    const t4aSubFolder = now.getFullYear().toString();
+    const formattedReferenceDate = getISODateOnlyString(now);
+    const uniqueID = uuid();
+    const fileContentBuffer = Buffer.from("PDF FILE CONTENT");
+    const mockedJob = mockBullJob<T4AUploadQueueInDTO>({
+      referenceDate: now,
+      files: [
+        {
+          relativeFilePath: join(t4aSubFolder, `${SIN_NUMBER}.pdf`),
+          uniqueID,
+        },
+      ],
+    });
+    sftpClientMock.get.mockResolvedValueOnce(fileContentBuffer);
+    const fileName = `${t4aSubFolder}-T4A-${formattedReferenceDate}.pdf`;
+
+    // Act
+    const result = await processor.processQueue(mockedJob.job);
+
+    // Assert
+    // Assert expected result message.
+    expect(result).toEqual(["T4A uploads processed."]);
+    // Assert DB changes.
+    const studentFiles = await db.studentFile.find({
+      select: {
+        id: true,
+      },
+      where: { student: { id: student.id } },
+    });
+    expect(studentFiles).toHaveLength(1);
+    const [studentFile] = studentFiles;
+    // Assert expected logs.
+    expect(
+      mockedJob.containLogMessages([
+        `Processing file unique ID ${uniqueID}.`,
+        `Found student ID ${student.id}.`,
+        "Start download from the SFTP.",
+        "Start upload to the student account.",
+        `Uploading file ${fileName} to S3 storage.`,
+        `File ${fileName} uploaded to S3 storage.`,
+        `Saving the file ${fileName} to database.`,
+        `Adding the file: ${fileName} to the virus scan queue.`,
+        `File ${fileName} has been added to the virus scan queue.`,
+        `Student file ID ${studentFile.id} created and notification saved.`,
+        `Archiving file unique ID ${uniqueID}.`,
+        `File unique ID ${uniqueID} archived.`,
+      ]),
+    ).toBe(true);
+  });
+
+  it("Should log a warning and archive the file with a not found student when an invalid SIN is found in the T4A file name.", async () => {
     // Arrange
     // Create a student with the current SIN as valid.
     const invalidSIN = "SOME_INVALID_SIN";
@@ -245,6 +305,60 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
     expect(sftpClientMock.rename).toHaveBeenCalledWith(
       join(T4A_FOLDER, t4aSubFolder, `${invalidSIN}.pdf`),
       expect.stringContaining(join(T4A_ARCHIVE_FOLDER, invalidSIN)),
+    );
+  });
+
+  it("Should log a warning and archive the file when multiple student accounts have the same valid SIN.", async () => {
+    // Arrange
+    const students = await Promise.all([
+      saveFakeStudent(db.dataSource, undefined, {
+        sinValidationInitialValue: { sin: SIN_NUMBER, isValidSIN: true },
+      }),
+      saveFakeStudent(db.dataSource, undefined, {
+        sinValidationInitialValue: { sin: SIN_NUMBER, isValidSIN: true },
+      }),
+    ]);
+    const studentIds = students.map((s) => s.id).toSorted();
+    // Create a student with the current SIN as valid.
+    const now = new Date();
+    const t4aSubFolder = now.getFullYear().toString();
+    const uniqueID = uuid();
+    const mockedJob = mockBullJob<T4AUploadQueueInDTO>({
+      referenceDate: now,
+      files: [
+        {
+          relativeFilePath: join(t4aSubFolder, `${SIN_NUMBER}.pdf`),
+          uniqueID,
+        },
+      ],
+    });
+
+    // Act
+    const result = await processor.processQueue(mockedJob.job);
+
+    // Assert
+    // Assert expected result message.
+    expect(result).toEqual([
+      "T4A uploads processed.",
+      "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+      "Error(s): 0, Warning(s): 1, Info: 10",
+    ]);
+    // Assert expected logs.
+    expect(
+      mockedJob.containLogMessages([
+        "Processing T4A upload for 1 file(s).",
+        "Extracting T4A file information.",
+        "Creating SFTP client and starting process.",
+        `Processing file unique ID ${uniqueID}.`,
+        `The SIN associated with the file unique ID ${uniqueID} has more than one student IDS associated: ${studentIds}.`,
+        `Archiving file unique ID ${uniqueID}.`,
+        `File unique ID ${uniqueID} archived.`,
+      ]),
+    ).toBe(true);
+    // Assert archive call.
+    expect(sftpClientMock.rename).toHaveBeenCalledWith(
+      join(T4A_FOLDER, t4aSubFolder, `${SIN_NUMBER}.pdf`),
+      expect.stringContaining(join(T4A_ARCHIVE_FOLDER, SIN_NUMBER)),
     );
   });
 });
