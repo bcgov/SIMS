@@ -38,7 +38,7 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { NO_LOCATION_SELECTED_FOR_DESIGNATION } from "apps/api/src/constants";
+import { NO_LOCATION_SELECTED_FOR_DESIGNATION } from "../../constants";
 
 /***
  * Designation agreement dedicated controller for Institution.
