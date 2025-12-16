@@ -10,8 +10,10 @@ import {
   createE2EDataSources,
   E2EDataSources,
   saveFakeStudent,
+  createFakeSINValidation,
+  saveFakeStudentFileUpload,
 } from "@sims/test-utils";
-import { T4AUploadProcessor } from "../../t4a-upload.processor";
+import { T4AUploadProcessor } from "../../../";
 import { join } from "node:path";
 import { v4 as uuid } from "uuid";
 import * as Client from "ssh2-sftp-client";
@@ -26,7 +28,6 @@ import {
   VirusScanStatus,
 } from "@sims/sims-db";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
-import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
 
 const SIN_NUMBER = "696098482";
 const T4A_FOLDER = "T4A_E2E_TEST_FOLDER";
@@ -258,6 +259,66 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
     ).toBe(true);
   });
 
+  it("Should skip the file upload when a file with the same hash was already uploaded for the same student.", async () => {
+    // Arrange
+    // Create a student with the current SIN as valid.
+    const student = await saveFakeStudent(db.dataSource, undefined, {
+      sinValidationInitialValue: { sin: SIN_NUMBER, isValidSIN: true },
+    });
+    // Create an existing student file upload with a specific hash.
+    const hash =
+      "905ec7b4e5527ffe2f028992de7fb0e4488acb49fe1e5388abc7ecd1e2f20e92";
+    const existingStudentFileUpload = await saveFakeStudentFileUpload(
+      db.dataSource,
+      { student },
+      { hash },
+    );
+    const now = new Date();
+    const t4aSubFolder = now.getFullYear().toString();
+    const uniqueID = uuid();
+    const fileContentBuffer = Buffer.from("PDF FILE CONTENT");
+    const mockedJob = mockBullJob<T4AUploadQueueInDTO>({
+      referenceDate: now,
+      files: [
+        {
+          relativeFilePath: join(t4aSubFolder, `${SIN_NUMBER}.pdf`),
+          uniqueID,
+        },
+      ],
+    });
+    sftpClientMock.get.mockResolvedValueOnce(fileContentBuffer);
+
+    // Act
+    const result = await processor.processQueue(mockedJob.job);
+
+    // Assert
+    // Assert expected result message.
+    expect(result).toEqual(["T4A uploads processed."]);
+    // Assert DB changes.
+    const studentFiles = await db.studentFile.find({
+      select: {
+        id: true,
+      },
+      where: { student: { id: student.id } },
+    });
+    // Assert that no new file was created.
+    expect(studentFiles).toHaveLength(1);
+    const [studentFile] = studentFiles;
+    expect(studentFile.id).toEqual(existingStudentFileUpload.id);
+    // Assert expected logs.
+    expect(
+      mockedJob.containLogMessages([
+        `Processing file unique ID ${uniqueID}.`,
+        `Found student ID ${student.id}.`,
+        "Start download from the SFTP.",
+        "Start upload to the student account.",
+        `T4A file for student ID ${student.id} already exists: File hash ${hash} already exists for student ID ${student.id}.`,
+        `Archiving file unique ID ${uniqueID}.`,
+        `File unique ID ${uniqueID} archived.`,
+      ]),
+    ).toBe(true);
+  });
+
   it("Should log a warning and archive the file with a not found student when an invalid SIN is found in the T4A file name.", async () => {
     // Arrange
     // Create a student with the current SIN as valid.
@@ -319,7 +380,6 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
       }),
     ]);
     const studentIds = students.map((s) => s.id).toSorted((a, b) => a - b);
-    // Create a student with the current SIN as valid.
     const now = new Date();
     const t4aSubFolder = now.getFullYear().toString();
     const uniqueID = uuid();

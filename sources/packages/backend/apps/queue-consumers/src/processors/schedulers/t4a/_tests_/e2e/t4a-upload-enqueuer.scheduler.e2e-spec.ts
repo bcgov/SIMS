@@ -5,7 +5,7 @@ import {
   describeProcessorRootTest,
   mockBullJob,
 } from "../../../../../../test/helpers";
-import { T4AUploadEnqueuerScheduler } from "../../t4a-upload-enqueuer.scheduler";
+import { T4AUploadEnqueuerScheduler } from "../../../../";
 import {
   T4AUploadEnqueuerQueueInDTO,
   T4AUploadQueueInDTO,
@@ -21,7 +21,7 @@ import {
 } from "./t4a-upload-enqueuer-utils";
 import { join } from "node:path";
 
-const T4A_E2E_TEST_FOLDER = "T4A_E2E_TEST_FOLDER";
+const T4A_FOLDER = "T4A_FOLDER";
 
 describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
   let app: INestApplication;
@@ -30,7 +30,7 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
   let t4aUploadQueueMock: Queue<T4AUploadQueueInDTO>;
 
   beforeAll(async () => {
-    process.env.T4A_FOLDER = T4A_E2E_TEST_FOLDER;
+    process.env.T4A_FOLDER = T4A_FOLDER;
     const { nestApplication, sshClientMock } = await createTestingAppModule();
     app = nestApplication;
     sftpClientMock = sshClientMock;
@@ -45,7 +45,7 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
     MockDate.reset();
   });
 
-  it("Should enqueue 3 batches when the batch size is default 100 and there are 2 folders, one with 100 files and the other with 101 files.", async () => {
+  it("Should enqueue 3 batches when the batch size is 100, and there are 2 folders, one with 100 files and the other with 101 files.", async () => {
     // Arrange
     // Queued job.
     const mockedJob = mockBullJob<T4AUploadEnqueuerQueueInDTO>({
@@ -64,8 +64,8 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
     sftpClientMock.list.mockResolvedValueOnce(createSFTPListFilesResult(101));
     const now = new Date();
     MockDate.set(now);
-    const FOLDER_A_FULL_PATH = join(T4A_E2E_TEST_FOLDER, "2024-A");
-    const FOLDER_B_FULL_PATH = join(T4A_E2E_TEST_FOLDER, "2024-B");
+    const FOLDER_A_FULL_PATH = join(T4A_FOLDER, "2024-A");
+    const FOLDER_B_FULL_PATH = join(T4A_FOLDER, "2024-B");
 
     // Act
     const result = await processor.processQueue(mockedJob.job);
@@ -78,14 +78,13 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
         `Found T4A directories: ${FOLDER_A_FULL_PATH},${FOLDER_B_FULL_PATH}.`,
         `Processing T4A files in ${FOLDER_A_FULL_PATH}.`,
         `Found 100 files in ${FOLDER_A_FULL_PATH}`,
-        "Time to queue files",
         `Processing T4A files in ${FOLDER_B_FULL_PATH}.`,
         `Found 101 files in ${FOLDER_B_FULL_PATH}`,
-        "Time to queue files",
       ]),
     ).toBe(true);
     expect(t4aUploadQueueMock.addBulk).toHaveBeenCalledTimes(2);
     expect(t4aUploadQueueMock.addBulk).toHaveBeenNthCalledWith(1, [
+      // First batch created with 100 files in 2024-A.
       createT4AUploadQueueInDTO(now, "2024-A", { numberOfFiles: 100 }),
     ]);
     expect(t4aUploadQueueMock.addBulk).toHaveBeenNthCalledWith(2, [
@@ -138,7 +137,7 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
     expect(result).toStrictEqual(["T4A files process completed."]);
     expect(
       mockedJob.containLogMessages([
-        `No T4A files found in directory ${join(T4A_E2E_TEST_FOLDER, "9999")}.`,
+        `No T4A files found in directory ${join(T4A_FOLDER, "9999")}.`,
       ]),
     ).toBe(true);
     expect(t4aUploadQueueMock.addBulk).not.toHaveBeenCalled();

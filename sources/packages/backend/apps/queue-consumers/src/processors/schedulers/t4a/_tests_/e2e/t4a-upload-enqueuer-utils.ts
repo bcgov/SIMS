@@ -30,7 +30,7 @@ export function createSFTPListFilesResult(
 }
 
 /**
- * Creates a T4AUploadQueueInDTO for test validation using jest matchers.
+ * Creates the object expected by the queue bulk add method for test validation.
  * @param referenceDate Reference date expected to be the same for all files.
  * @param folderName Folder name where the files are located.
  * @param options Additional options for file creation.
