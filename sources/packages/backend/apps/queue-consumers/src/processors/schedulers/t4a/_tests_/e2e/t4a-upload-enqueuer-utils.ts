@@ -1,6 +1,6 @@
 import * as Client from "ssh2-sftp-client";
 import { uuidV4Matcher } from "@sims/test-utils/matchers";
-import { join } from "path";
+import { join } from "node:path";
 
 /**
  * Create a T4A file name based on the number of files and the file number.
