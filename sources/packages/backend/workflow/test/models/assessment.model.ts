@@ -408,7 +408,7 @@ export interface CalculatedAssessmentModel {
   // CSGF
   awardEligibilityCSGF: number;
   federalAwardNetCSGFAmount: number;
-  provincialAwardNetCSGFAmount: number;.
+  provincialAwardNetCSGFAmount: number;
   // CSGT
   awardEligibilityCSGT: boolean;
   federalAwardNetCSGTAmount: number;
