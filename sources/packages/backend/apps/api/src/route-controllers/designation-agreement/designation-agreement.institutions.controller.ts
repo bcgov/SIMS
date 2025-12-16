@@ -28,7 +28,7 @@ import {
 } from "./models/designation-agreement.dto";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
 import { FormNames } from "../../services/form/constants";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
 import {
   ApiBadRequestResponse,
@@ -38,7 +38,6 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { CustomNamedError } from "@sims/utilities";
 import { NO_LOCATION_SELECTED_FOR_DESIGNATION } from "apps/api/src/constants";
 
 /***
@@ -104,7 +103,7 @@ export class DesignationAgreementInstitutionsController extends BaseController {
     );
     if (!hasSelectedLocation) {
       throw new UnprocessableEntityException(
-        new CustomNamedError(
+        new ApiProcessError(
           "At least one location must be selected for designation.",
           NO_LOCATION_SELECTED_FOR_DESIGNATION,
         ),
