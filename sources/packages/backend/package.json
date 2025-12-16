@@ -113,7 +113,7 @@
     "@types/find-config": "^1.0.4",
     "@types/jest": "^30.0.0",
     "@types/multer": "^2.0.0",
-    "@types/node": "^24.9.1",
+    "@types/node": "^25.0.2",
     "@types/papaparse": "^5.5.1",
     "@types/passport-jwt": "^4.0.1",
     "@types/pg": "^8.15.6",
