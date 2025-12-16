@@ -402,7 +402,7 @@ export class StudentControllerService {
         application.programYear,
       ),
       offeringIntensity: application.offeringIntensity,
-      hasEligibleApplicationAppeals:
+      isEligibleForApplicationAppeals:
         !!application.currentAssessment?.eligibleApplicationAppeals?.length,
     };
   };

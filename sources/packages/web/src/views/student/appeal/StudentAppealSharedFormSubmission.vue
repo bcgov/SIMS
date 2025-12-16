@@ -58,6 +58,7 @@
           />
           <v-select
             hide-details="auto"
+            color="primary"
             label="Appeal(s)"
             density="compact"
             multiple

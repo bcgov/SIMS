@@ -260,7 +260,7 @@ export class ApplicationSummaryAPIOutDTO {
   /**
    *  Indicates if the application is eligible for any application appeal.
    */
-  hasEligibleApplicationAppeals: boolean;
+  isEligibleForApplicationAppeals: boolean;
 }
 
 /**

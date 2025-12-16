@@ -84,7 +84,7 @@
               </v-btn>
               <v-btn
                 v-if="canDisplaySubmitAppeal(item)"
-                :disabled="!hasValidSIN || item.isArchived"
+                :disabled="shouldDisableSubmitAppeal(item)"
                 color="primary"
                 @click="$emit('submitAppeal', item.id)"
                 append-icon="mdi-pencil-outline"
@@ -309,6 +309,20 @@ export default defineComponent({
       );
     };
 
+    /**
+     * Validate if the submit appeal button should be disabled.
+     * @param application application.
+     */
+    const shouldDisableSubmitAppeal = (
+      application: ApplicationSummaryAPIOutDTO,
+    ) => {
+      return (
+        !hasValidSIN.value ||
+        application.isArchived ||
+        !application.isEligibleForApplicationAppeals
+      );
+    };
+
     return {
       dateOnlyLongString,
       getISODateHourMinuteString,
@@ -316,6 +330,7 @@ export default defineComponent({
       canDisplayEditOrCancel,
       canDisplayChangeRequest,
       canDisplaySubmitAppeal,
+      shouldDisableSubmitAppeal,
       ApplicationStatus,
       applicationsAndCount,
       DEFAULT_PAGE_LIMIT,

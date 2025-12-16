@@ -343,8 +343,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         isArchived: false,
         currentAssessment: {
           eligibleApplicationAppeals: Raw(
-            (columnAlias) =>
-              `${columnAlias} IS NOT NULL AND CARDINALITY(${columnAlias}) > 0`,
+            (columnAlias) => `CARDINALITY(${columnAlias}) > 0`,
           ),
         },
       },
