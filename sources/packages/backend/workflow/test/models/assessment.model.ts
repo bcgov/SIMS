@@ -308,6 +308,7 @@ export interface AssessmentModel {
 
 export interface CalculatedAssessmentModel {
   calculatedDataRemainingScholarshipsBursariesLimit: number;
+  calculatedDataRemainingReturnTransportation: number;
   calculatedDataRelationshipStatus: RelationshipStatusType;
   calculatedDataPartner1TotalIncome: number;
   calculatedDataAdditionalTransportRequested: YesNoOptions;
@@ -381,6 +382,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataParent1IncomeDeductions: number;
   calculatedDataTotalParentDeductions: number;
   calculatedDataTotalNetFamilyIncome: number;
+  dmnFullTimeLivingCategory: string;
   isEligibleForRoomAndBoardAppeal?: boolean;
   isEligibleForStepParentWaiverAppeal?: boolean;
   // Common variables used in both full-time and part-time.
