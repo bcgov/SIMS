@@ -260,6 +260,16 @@ export class StudentAssessment extends RecordDataModel {
     nullable: true,
   })
   reportedDate?: Date;
+  /**
+   * Application appeal names which are eligible for the application.
+   */
+  @Column({
+    name: "eligible_application_appeals",
+    nullable: true,
+    array: true,
+    type: "varchar",
+  })
+  eligibleApplicationAppeals?: string[];
 }
 
 /**

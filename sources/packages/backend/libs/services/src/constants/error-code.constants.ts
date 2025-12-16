@@ -68,3 +68,14 @@ export const DISBURSEMENT_SCHEDULE_NOT_FOUND =
  */
 export const DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED =
   "DISBURSEMENT_SCHEDULE_INVALID_STATE_TO_BE_UPDATED";
+
+/**
+ * Unable to save file.
+ */
+export const FILE_SAVE_ERROR = "FILE_SAVE_ERROR";
+/**
+ * File hash duplication error.
+ * For some scenarios the same file should not be saved more than once for the same student,
+ * for instance, T4A files.
+ */
+export const FILE_HASH_DUPLICATION_ERROR = "FILE_HASH_DUPLICATION_ERROR";

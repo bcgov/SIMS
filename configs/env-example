@@ -192,5 +192,9 @@ ALLOW_BETA_USERS_ONLY=
 # Allow full-time application submissions only for beta institution locations if true.
 ALLOW_BETA_INSTITUTIONS_ONLY=
 
+# Throttling Configuration: time window in milliseconds (THROTTLE_TIME) and request limit per window (THROTTLE_LIMIT).
+THROTTLE_TIME=10000
+THROTTLE_LIMIT=30
+
 # App Environment
 APP_ENV=

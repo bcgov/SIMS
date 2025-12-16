@@ -23,6 +23,11 @@ export interface QueueConfigurationDetails {
    */
   pollingRecordLimit?: number;
   /**
+   * Indicates if completed jobs should be removed automatically.
+   * This takes precedence over cleanUpPeriod.
+   */
+  removeOnComplete?: boolean;
+  /**
    * Cleans all jobs that completed over given period in milliseconds.
    */
   cleanUpPeriod?: number;
@@ -30,4 +35,8 @@ export interface QueueConfigurationDetails {
    * Amount of hours the assessment should be retried in case of getting stuck without processing.
    */
   amountHoursAssessmentRetry?: number;
+  /**
+   * Maximum number of file uploads to be processed per batch in a T4A upload process.
+   */
+  maxFileUploadsPerBatch?: number;
 }

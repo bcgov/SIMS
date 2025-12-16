@@ -76,5 +76,7 @@ export function createFakeStudentAssessment(
   if (options?.isPIRPending) {
     assessment.offering = null;
   }
+  assessment.eligibleApplicationAppeals =
+    options?.initialValue?.eligibleApplicationAppeals ?? null;
   return assessment;
 }

@@ -499,6 +499,8 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       .select([
         "studentScholasticStanding.id",
         "studentScholasticStanding.submittedDate",
+        "studentScholasticStanding.changeType",
+        "studentScholasticStanding.reversalDate",
       ])
       .innerJoin("studentScholasticStanding.application", "application")
       .where("application.id = :applicationId", { applicationId })

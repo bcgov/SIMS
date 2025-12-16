@@ -25,7 +25,6 @@ export class AuthTestController {
    */
   @Public()
   @Get("/public-route")
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   publicRoute(): void {
     // Intentionally blank. The goal is to test the
     // decorator and the HTTP response only.
@@ -49,7 +48,6 @@ export class AuthTestController {
    */
   @Roles(Role.AESTReports)
   @Get("/authenticated-route-by-role")
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   authenticatedRouteByRole(): void {
     // Intentionally blank. The goal is to test the
     // decorator and the HTTP response only.
@@ -61,7 +59,6 @@ export class AuthTestController {
    */
   @Roles()
   @Get("/authenticated-route-by-non-existing-role")
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   authenticatedRouteByNonExistingRole(): void {
     // Intentionally blank. The goal is to test the
     // decorator and the HTTP response only.
@@ -72,7 +69,6 @@ export class AuthTestController {
    */
   @Groups(UserGroups.AESTUser)
   @Get("/authenticated-route-by-group")
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   authenticatedRouteByGroup(): void {
     // Intentionally blank. The goal is to test the
     // decorator and the HTTP response only.
@@ -84,7 +80,6 @@ export class AuthTestController {
    */
   @Groups()
   @Get("/authenticated-route-by-non-existing-group")
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   authenticatedRouteByNonExistingGroup(): void {
     // Intentionally blank. The goal is to test the
     // decorator and the HTTP response only.
@@ -95,7 +90,6 @@ export class AuthTestController {
    */
   @RequiresStudentAccount()
   @Get("/authenticated-student")
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   authenticatedStudent(): void {
     // Intentionally blank. The goal is to test the
     // decorator and the HTTP response only.
@@ -133,6 +127,24 @@ export class AuthTestController {
   @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @Get("/institution-location-modifying-route/:locationId")
   institutionLocationModifyingRoute(): void {
+    return;
+  }
+
+  /**
+   * Test route used exclusively to test the Throttler Guard limits (success case)
+   * it avoids tests failing due to exceeding the rate limits by other requests.
+   */
+  @Get("/throttle-test/success")
+  throttleTestSuccess(): void {
+    return;
+  }
+
+  /**
+   * Test route used exclusively to test the Throttler Guard limits (failure case)
+   * it avoids tests failing due to exceeding the rate limits by other requests.
+   */
+  @Get("/throttle-test/failure")
+  throttleTest(): void {
     return;
   }
 }

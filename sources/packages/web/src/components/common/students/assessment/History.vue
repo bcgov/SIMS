@@ -26,6 +26,9 @@
             <template #[`item.triggerType`]="{ item }">
               {{ item.triggerType }}
             </template>
+            <template #[`item.tags`]="{ item }">
+              <assessment-tags :assessment="item" />
+            </template>
             <template #[`item.requestForm`]="{ item }">
               <template v-if="canShowViewRequest(item)">
                 <v-btn
@@ -71,6 +74,7 @@ import {
   ITEMS_PER_PAGE,
   AssessmentTriggerType,
   CompletedChangesHeaders,
+  StudentScholasticStandingChangeType,
 } from "@/types";
 import { ref, PropType, defineComponent, watchEffect } from "vue";
 import { useDisplay } from "vuetify";
@@ -78,6 +82,7 @@ import { StudentAssessmentsService } from "@/services/StudentAssessmentsService"
 import { useFormatters } from "@/composables";
 import StatusChipAssessmentHistory from "@/components/generic/StatusChipAssessmentHistory.vue";
 import { AssessmentHistorySummaryAPIOutDTO } from "@/services/http/dto/Assessment.dto";
+import AssessmentTags from "@/components/common/students/assessment/AssessmentTags.vue";
 
 export default defineComponent({
   emits: [
@@ -89,6 +94,7 @@ export default defineComponent({
     "viewOfferingRequest",
   ],
   components: {
+    AssessmentTags,
     StatusChipAssessmentHistory,
   },
   props: {
@@ -195,6 +201,7 @@ export default defineComponent({
       emptyStringFiller,
       CompletedChangesHeaders,
       isMobile,
+      StudentScholasticStandingChangeType,
     };
   },
 });

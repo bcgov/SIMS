@@ -12,26 +12,20 @@ objects:
         users:
           - name: nino.samson@gov.bc.ca
             role: ROLE_TEAM_EDIT
-          - name: bidyashish.kumar@gov.bc.ca
-            role: ROLE_TEAM_EDIT
           - name: shashank.x.shekhar@gov.bc.ca
             role: ROLE_TEAM_EDIT
           - name: carly.cotton@gov.bc.ca
             role: ROLE_TEAM_EDIT
           - name: joshua.lakusta@gov.bc.ca
             role: ROLE_TEAM_STANDARD
-          - name: jason.tang@gov.bc.ca
-            role: ROLE_TEAM_EDIT
-          - name: gurumoorthy.mohan@aot-technologies.com
-            role: ROLE_TEAM_EDIT
           - name: dheepak.rr@aot-technologies.com
             role: ROLE_TEAM_EDIT
           - name: andrew.signori@aot-technologies.com
             role: ROLE_TEAM_EDIT
-          - name: andre.pestana@aot-technologies.com
-            role: ROLE_TEAM_STANDARD
-          - name: lewis.chen@aot-technologies.com
-            role: ROLE_TEAM_STANDARD
+          - name: tiago.graf@quartech.com
+            role: ROLE_TEAM_EDIT
+          - name: wesley.kubo@cgi.com
+            role: ROLE_TEAM_EDIT
 parameters:
   - name: LICENSE_PLATE
     description: |

@@ -7,3 +7,25 @@
 export interface FixedFormatFileLine {
   getFixedFormat(): string;
 }
+
+/**
+ * Enumeration for SSH2 SFTP item types.
+ */
+export enum SFTPItemType {
+  /**
+   * Regular File: This is a standard data file. SFTP clients can perform typical
+   * file operations on regular files such as reading, writing, creating, and deleting.
+   */
+  File = "-",
+  /**
+   * Symbolic Link: This is a special type of file that acts as a reference or pointer
+   * to another file or directory. It allows multiple references to the same file or
+   * directory without duplicating the actual data.
+   */
+  SymbolicLink = "l",
+  /**
+   * Directory: This represents a folder or directory in the file system. Directories can
+   * contain files and other directories, allowing for hierarchical organization of data.
+   */
+  Directory = "d",
+}

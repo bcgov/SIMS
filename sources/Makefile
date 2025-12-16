@@ -87,6 +87,10 @@ export CAS_BASE_URL := $(or $(CAS_BASE_URL), )
 export CAS_CLIENT_ID := $(or $(CAS_CLIENT_ID), )
 export CAS_CLIENT_SECRET := $(or $(CAS_CLIENT_SECRET), )
 
+# Throttling Time in milliseconds.
+export THROTTLE_TIME := $(or $(THROTTLE_TIME), 10000)
+export THROTTLE_LIMIT := $(or $(THROTTLE_LIMIT), 30)
+
 # Logged Out due to inactivity in seconds.
 export MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT :=  $(or $(MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT), 270)
 export MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER :=  $(or $(MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER), 270)

@@ -153,7 +153,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataChildSupportAndOrSpousalSupport?: number;
   studentDataDaycareCosts11YearsOrUnder?: number;
   studentDataDaycareCosts12YearsOrOver?: number;
-  studentDataLivingathomeRent?: number;
+  studentDataLivingAtHomeRent?: YesNoOptions;
   studentDataCurrentYearIncome?: number;
   studentDataReturnTripHomeCost?: number;
   studentDataIncomeAssistanceAmount?: number;
@@ -383,7 +383,8 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalParentDeductions: number;
   calculatedDataTotalNetFamilyIncome: number;
   dmnFullTimeLivingCategory: string;
-
+  isEligibleForRoomAndBoardAppeal?: boolean;
+  isEligibleForStepParentWaiverAppeal?: boolean;
   // Common variables used in both full-time and part-time.
   // CSGP
   awardEligibilityCSGP: boolean;
@@ -407,7 +408,7 @@ export interface CalculatedAssessmentModel {
   // CSGF
   awardEligibilityCSGF: number;
   federalAwardNetCSGFAmount: number;
-  provincialAwardNetCSGFAmount: number;
+  provincialAwardNetCSGFAmount: number;.
   // CSGT
   awardEligibilityCSGT: boolean;
   federalAwardNetCSGTAmount: number;

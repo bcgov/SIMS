@@ -69,6 +69,7 @@ import {
   ConfirmationOfEnrollmentService,
   AssessmentSequentialProcessingService,
   DisbursementScheduleSharedService,
+  StudentFileSharedService,
 } from "@sims/services";
 import {
   SFASIndividualService,
@@ -118,6 +119,7 @@ import { ObjectStorageModule } from "@sims/integrations/object-storage";
     EducationProgramService,
     SequenceControlService,
     StudentFileService,
+    StudentFileSharedService,
     SFASIndividualService,
     SFASApplicationService,
     SFASPartTimeApplicationsService,
