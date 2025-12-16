@@ -172,6 +172,86 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
       .expect(HttpStatus.UNPROCESSABLE_ENTITY);
   });
 
+  it("Should return an unprocessable entity when no location is selected for designation.", async () => {
+    // Arrange
+    const payload = {
+      dynamicData: {
+        eligibilityOfficers: [],
+        enrolmentOfficers: [],
+        scheduleA: false,
+        scheduleB: false,
+        scheduleD: false,
+        legalAuthorityName: "SIMS COLLF",
+        legalAuthorityEmailAddress: "test@gov.bc.ca",
+        agreementAccepted: false,
+      },
+      locations: [
+        {
+          locationId: collegeFLocation.id,
+          requestForDesignation: false,
+        },
+      ],
+    };
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+    );
+    const endpoint = "/institutions/designation-agreement";
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect((response) => {
+        expect(response.body.message).toContain(
+          "At least one location must be selected for designation.",
+        );
+      });
+  });
+
+  it("Should return an unprocessable entity when all locations have requestForDesignation set to false.", async () => {
+    // Arrange
+    const payload = {
+      dynamicData: {
+        eligibilityOfficers: [],
+        enrolmentOfficers: [],
+        scheduleA: false,
+        scheduleB: false,
+        scheduleD: false,
+        legalAuthorityName: "SIMS COLLF",
+        legalAuthorityEmailAddress: "test@gov.bc.ca",
+        agreementAccepted: false,
+      },
+      locations: [
+        {
+          locationId: collegeFLocation.id,
+          requestForDesignation: false,
+        },
+        {
+          locationId: collegeFLocation.id,
+          requestForDesignation: false,
+        },
+      ],
+    };
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+    );
+    const endpoint = "/institutions/designation-agreement";
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect((response) => {
+        expect(response.body.message).toContain(
+          "At least one location must be selected for designation.",
+        );
+      });
+  });
+
   afterAll(async () => {
     await app?.close();
   });
