@@ -56,7 +56,7 @@ When a `client-type` is mentioned in the code or documentation, the possible val
 ## Coding Standards
 
 - Comments should be in English and using proper grammar, including punctuation, for instance, starting with a capital letter and ending with a period.
-- Comments in JSDoc can have extra formatting, and they can start with some JSDOc special characters like `@param` or `-` for lists, but the sentences must still follow the proper grammar rules. Example of a valid JSDoc comment:
+- Comments in JSDoc can have multiple lines and extra formatting, and they can start with some JSDOc special characters like `@param` or `-` for lists, but the sentences must still follow the proper grammar rules. Example of a valid JSDoc comment:
   ```
   /**
    * This is my comment that provides business context.
@@ -66,6 +66,9 @@ When a `client-type` is mentioned in the code or documentation, the possible val
    * - Use lists when applicable.
    * - Each list item should also start with a capital letter and end with a period.
    * @param myParameter This is my parameter description that also ends with a period.
+   * @param options Method options.
+   * - `optionA` Description for option A.
+   * - `optionB` Description for option B.
    * @returns This is the return description that also ends with a period.
    */
   ```
