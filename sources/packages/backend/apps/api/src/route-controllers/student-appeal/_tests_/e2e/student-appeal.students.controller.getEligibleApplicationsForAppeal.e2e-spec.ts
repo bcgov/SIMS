@@ -65,7 +65,7 @@ describe("StudentAppealStudentsController(e2e)-getEligibleApplicationsForAppeal"
     await saveEligibleApplicationForAppeal({
       applicationNumber: "0000000003",
       student,
-      offeringIntensity: OfferingIntensity.partTime,
+      eligibleApplicationAppeals: [],
     });
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -82,10 +82,12 @@ describe("StudentAppealStudentsController(e2e)-getEligibleApplicationsForAppeal"
           {
             id: applicationB.id,
             applicationNumber: applicationB.applicationNumber,
+            eligibleApplicationAppeals: ["someEligibleAppeal"],
           },
           {
             id: applicationA.id,
             applicationNumber: applicationA.applicationNumber,
+            eligibleApplicationAppeals: ["someEligibleAppeal"],
           },
         ],
       });
@@ -157,16 +159,15 @@ describe("StudentAppealStudentsController(e2e)-getEligibleApplicationsForAppeal"
    * @param options options to create the application.
    * - `applicationNumber` application number to be assigned.
    * - `applicationStatus` application status to be assigned.
-   * - `offeringIntensity` offering intensity to be assigned.
    * - `isValidSIN` if the student should have a valid SIN.
    * - `isArchived` if the application is archived.
    * - `student` student to be associated with the application.
+   * - `eligibleApplicationAppeals` eligible appeals to be assigned to the application.
    * @returns the saved application.
    */
   async function saveEligibleApplicationForAppeal(options?: {
     applicationNumber?: string;
     applicationStatus?: ApplicationStatus;
-    offeringIntensity?: OfferingIntensity;
     isValidSIN?: boolean;
     isArchived?: boolean;
     student?: Student;
@@ -187,11 +188,12 @@ describe("StudentAppealStudentsController(e2e)-getEligibleApplicationsForAppeal"
         applicationNumber: options?.applicationNumber,
         applicationStatus:
           options?.applicationStatus ?? ApplicationStatus.Completed,
-        offeringIntensity:
-          options?.offeringIntensity ?? OfferingIntensity.fullTime,
+        offeringIntensity: OfferingIntensity.fullTime,
         isArchived: options?.isArchived ?? false,
         currentAssessmentInitialValues: {
-          eligibleApplicationAppeals: options?.eligibleApplicationAppeals,
+          eligibleApplicationAppeals: options?.eligibleApplicationAppeals ?? [
+            "someEligibleAppeal",
+          ],
         },
       },
     );
