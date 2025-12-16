@@ -290,7 +290,7 @@ export class ApplicationControllerService {
         application.currentAssessment.disbursementSchedules,
       );
     const hasActiveUnsuccessfulCompletionWeeks =
-      !!application.studentScholasticStandings;
+      !!application.studentScholasticStandings.length;
     const changeRequestInProgress =
       await this.getInProgressChangeRequestDetails(application.id, options);
     const eCertFailedValidations = eCertValidationResult.failedValidations.map(
