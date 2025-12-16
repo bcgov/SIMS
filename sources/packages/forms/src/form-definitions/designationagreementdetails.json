@@ -274,7 +274,6 @@
       "validate": {
         "required": true,
         "customMessage": "at least one location must be selected",
-        "custom": "valid = data.locations.filter(row => row.requestForDesignation).length > 0;"
       },
       "key": "locations",
       "type": "datagrid",
@@ -323,6 +322,10 @@
           "key": "requestForDesignation",
           "attributes": {
             "data-cy": "requestForDesignationCheckBox"
+          },
+          "validate": {
+            "custom": "valid = data.locations && data.locations.some(row => row.requestForDesignation);",
+            "customMessage": "At least one location must be selected for designation"
           },
           "type": "checkbox",
           "input": true,
