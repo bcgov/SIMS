@@ -12,7 +12,7 @@ VALUES
     'Institution' :: sims.restriction_types,
     'SUS',
     'Program suspended.',
-    'Other',
+    'Program',
     ARRAY ['Stop part time disbursement', 'Stop full time disbursement'] :: sims.restriction_action_types [],
     'Error' :: sims.restriction_notification_types
   );
