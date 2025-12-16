@@ -55,6 +55,12 @@ export class T4AEnqueuerProcessingService {
           /\d{9}\.pdf/i,
           { itemType: SFTPItemType.File },
         );
+      if (!remoteFilePaths.length) {
+        processSummary.info(
+          `No T4A files found in directory ${directoryPath}.`,
+        );
+        continue;
+      }
       // The path is relative to the T4A IN folder to ensure the consumer
       // queue will look only into the configured folder, not allowing it
       // to receive files from other locations.
@@ -83,12 +89,7 @@ export class T4AEnqueuerProcessingService {
           data: new T4AUploadQueueInDTO(referenceDate, filesBatch),
         });
       }
-      if (!queues.length) {
-        processSummary.info(
-          `No T4A files found in directory ${directoryPath}.`,
-        );
-        continue;
-      }
+
       await this.t4aUploadQueue.addBulk(queues);
       const enqueueElapsedMs = performance.now() - enqueueStart;
       processSummary.info(

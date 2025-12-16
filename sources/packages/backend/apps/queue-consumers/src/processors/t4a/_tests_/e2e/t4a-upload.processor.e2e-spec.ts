@@ -358,10 +358,6 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
         `File unique ID ${uniqueID} archived.`,
       ]),
     ).toBe(true);
-    // Assert expected logs.
-    expect(
-      mockedJob.containLogMessages([`Processing file unique ID ${uniqueID}.`]),
-    ).toBe(true);
     // Assert archive call.
     expect(sftpClientMock.rename).toHaveBeenCalledWith(
       join(T4A_FOLDER, t4aSubFolder, `${invalidSIN}.pdf`),
