@@ -78,7 +78,7 @@ export class StudentAppealControllerService {
    * Validates if the submitted appeal forms are eligible for the application.
    * @param formNames submitted form names.
    * @param eligibleApplicationAppeals eligible appeal form names for the application.
-   * @throws UnprocessableEntityException if the form names are not valid for the submission operation.
+   * @throws UnprocessableEntityException if any form names are not valid for the submission operation.
    */
   validateAppealFormNames(
     formNames: string[],

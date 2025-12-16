@@ -893,7 +893,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
   );
 
   it(
-    "Should throw unprocessable entity exception when student submit an appeal" +
+    "Should throw unprocessable entity exception when student submits an appeal" +
       ` for a full-time application in status ${ApplicationStatus.Completed} but is not eligible for any appeal submission.`,
     async () => {
       // Arrange
