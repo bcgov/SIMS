@@ -345,7 +345,8 @@
           "input": true,
           "inDataGrid": true
         }
-      ]
+      ],
+      "persistent": ""
     },
     {
       "label": "HTML",
