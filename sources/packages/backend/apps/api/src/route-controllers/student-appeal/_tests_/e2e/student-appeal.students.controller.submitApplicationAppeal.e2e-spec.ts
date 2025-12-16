@@ -1023,7 +1023,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-        message: `The appeal form(s) ${FormNames.StepParentWaiverAppeal} is/are not eligible for the application.`,
+        message: `The submitted appeal form(s) ${FormNames.StepParentWaiverAppeal} is/are not eligible for the application.`,
         error: "Unprocessable Entity",
       });
   });

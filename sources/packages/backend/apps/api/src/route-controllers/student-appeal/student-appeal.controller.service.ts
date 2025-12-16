@@ -77,7 +77,7 @@ export class StudentAppealControllerService {
   /**
    * Validates if the submitted appeal forms are eligible for the application.
    * @param formNames submitted form names.
-   * @param eligibleApplicationAppeals eligible appeals for the application.
+   * @param eligibleApplicationAppeals eligible appeal form names for the application.
    * @throws UnprocessableEntityException if the form names are not valid for the submission operation.
    */
   validateAppealFormNames(
@@ -89,7 +89,7 @@ export class StudentAppealControllerService {
     );
     if (ineligibleFormNames.length) {
       throw new UnprocessableEntityException(
-        `The appeal form(s) ${ineligibleFormNames.join(", ")} is/are not eligible for the application.`,
+        `The submitted appeal form(s) ${ineligibleFormNames.join(", ")} is/are not eligible for the application.`,
       );
     }
   }
