@@ -233,7 +233,7 @@ export class T4AUploadProcessingService {
       ),
     );
     if (students.length > 1) {
-      const studentIds = students.map((s) => s.id).toSorted();
+      const studentIds = students.map((s) => s.id).toSorted((a, b) => a - b);
       processSummary.warn(
         `The SIN associated with the file unique ID ${uniqueID} has more than one student IDS associated: ${studentIds}.`,
       );

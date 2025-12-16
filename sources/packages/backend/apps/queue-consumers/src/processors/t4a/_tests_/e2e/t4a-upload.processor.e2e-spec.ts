@@ -318,7 +318,7 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
         sinValidationInitialValue: { sin: SIN_NUMBER, isValidSIN: true },
       }),
     ]);
-    const studentIds = students.map((s) => s.id).toSorted();
+    const studentIds = students.map((s) => s.id).toSorted((a, b) => a - b);
     // Create a student with the current SIN as valid.
     const now = new Date();
     const t4aSubFolder = now.getFullYear().toString();
