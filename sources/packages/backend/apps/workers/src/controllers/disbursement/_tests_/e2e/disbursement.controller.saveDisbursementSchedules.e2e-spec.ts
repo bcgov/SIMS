@@ -924,6 +924,12 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
   });
 });
 
+/**
+ * Asserts that the Award Deduction of the specified value type matches the provided values.
+ * @param createdDisbursement The disbursement schedule containing the award.
+ * @param valueType The type of disbursement to assert.
+ * @param assertValues The expected values for the award.
+ */
 function assertAwardDeduction(
   createdDisbursement: DisbursementSchedule,
   valueType: DisbursementValueType,
@@ -942,6 +948,12 @@ function assertAwardDeduction(
   );
 }
 
+/**
+ * Asserts that the Overaward of the specified value code matches the provided values.
+ * @param overawards The disbursement overawards.
+ * @param awardCode The disbursement value code to assert.
+ * @param awardValue The expected value for the award.
+ */
 function assertOveraward(
   overawards: DisbursementOveraward[],
   awardCode: string,
