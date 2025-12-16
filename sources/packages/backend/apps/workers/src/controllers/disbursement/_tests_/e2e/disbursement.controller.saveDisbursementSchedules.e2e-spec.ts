@@ -724,6 +724,74 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     },
   );
 
+  it("Should use the default coeStatus of 'Required' when creating the original assessment.", async () => {
+    // Arrange
+    const savedUser = await db.user.save(createFakeUser());
+    const savedStudent = await db.student.save(createFakeStudent(savedUser));
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        student: savedStudent,
+      },
+      {
+        applicationStatus: ApplicationStatus.InProgress,
+        applicationNumber: "OA_TEST003",
+      },
+    );
+    // Original assessment.
+    const fakeOriginalAssessment = createFakeStudentAssessment({
+      auditUser: savedUser,
+      applicationEditStatusUpdatedBy: savedUser,
+    });
+    fakeOriginalAssessment.application = savedApplication;
+    const savedOriginalAssessment = await db.studentAssessment.save(
+      fakeOriginalAssessment,
+    );
+    const saveDisbursementSchedulesPayload =
+      createFakeSaveDisbursementSchedulesPayload({
+        assessmentId: savedOriginalAssessment.id,
+        createSecondDisbursement: true,
+      });
+
+    // Act
+    const saveResult = await disbursementController.saveDisbursementSchedules(
+      saveDisbursementSchedulesPayload,
+    );
+
+    // Asserts
+    expect(saveResult).toHaveProperty(
+      FAKE_WORKER_JOB_RESULT_PROPERTY,
+      MockedZeebeJobResult.Complete,
+    );
+
+    const createdDisbursements = await db.disbursementSchedule.find({
+      select: {
+        id: true,
+        coeStatus: true,
+        coeUpdatedAt: true,
+      },
+      relations: {
+        coeUpdatedBy: true,
+      },
+      where: {
+        studentAssessment: { id: savedOriginalAssessment.id },
+      },
+    });
+    // Assert disbursements created.
+    expect(createdDisbursements).toHaveLength(2);
+    const [firstDisbursement, secondDisbursement] = createdDisbursements;
+
+    // Assert coeStatus is set to Not Required.
+    expect(firstDisbursement.coeStatus).toBe(COEStatus.required);
+    expect(secondDisbursement.coeStatus).toBe(COEStatus.required);
+
+    // Assert coeUpdatedAt and coeUpdatedBy are null.
+    expect(firstDisbursement.coeUpdatedAt).toBeNull();
+    expect(secondDisbursement.coeUpdatedAt).toBeNull();
+    expect(firstDisbursement.coeUpdatedBy).toBeNull();
+    expect(secondDisbursement.coeUpdatedBy).toBeNull();
+  });
+
   it("Should set the COE Status to 'Completed' and populate COE Updated fields when the trigger type is 'Scholastic Standing Change'.", async () => {
     // Arrange
     const savedUser = await db.user.save(createFakeUser());

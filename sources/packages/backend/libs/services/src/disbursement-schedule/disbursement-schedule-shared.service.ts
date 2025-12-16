@@ -142,7 +142,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
         newDisbursement.hasEstimatedAwards = totalEstimatedAwards > 0;
         // Disbursements as a result of a 'Scholastic Standing Change' should
         // be automatically set to COE status 'Completed'.
-        // 'Required' is defaulted in the database.
+        // 'Required' is defaulted in the database for other trigger types.
         if (
           assessment.triggerType ===
           AssessmentTriggerType.ScholasticStandingChange
