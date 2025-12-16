@@ -223,7 +223,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
   }
 
   /**
-   * Renames a file on SFTP .
+   * Renames a file on SFTP.
    * @param remoteFilePath full remote file path with file name.
    * @param newRemoteFilePath new full remote file path with file name.
    * @param options Method options.
@@ -258,7 +258,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
   }
 
   /**
-   * Archives a file on SFTP .
+   * Archives a file on SFTP.
    * @param remoteFilePath full remote file path with file name.
    * @param options Method options.
    * - `client`: SFTP client to be used in the operation when the same

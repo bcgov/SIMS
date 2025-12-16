@@ -87,7 +87,7 @@ export class T4AEnqueuerProcessingService {
         processSummary.info(
           `No T4A files found in directory ${directoryPath}.`,
         );
-        return;
+        continue;
       }
       await this.t4aUploadQueue.addBulk(queues);
       const enqueueElapsedMs = performance.now() - enqueueStart;

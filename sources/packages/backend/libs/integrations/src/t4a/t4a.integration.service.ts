@@ -59,7 +59,7 @@ export class T4AIntegrationService extends SFTPIntegrationBase<Buffer> {
   }
 
   /**
-   * Archives a file on SFTP .
+   * Archives a file on SFTP.
    * @param remoteFilePath full remote file path with file name.
    * @param options Method options.
    * - `client`: SFTP client to be used in the operation when the same

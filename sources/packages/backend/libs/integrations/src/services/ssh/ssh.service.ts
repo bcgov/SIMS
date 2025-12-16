@@ -38,6 +38,6 @@ export class SshService {
    * @returns True if the error is an SSH error with the given code, false otherwise.
    */
   static hasError(error: unknown, errorCode: SSHErrorCodes): boolean {
-    return error && (error as SSHError).code === errorCode;
+    return !!error && (error as SSHError).code === errorCode;
   }
 }
