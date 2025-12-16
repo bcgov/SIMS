@@ -31,6 +31,7 @@ import {
   InstitutionLocation,
   StudentAppeal,
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
+  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -1966,47 +1967,60 @@ export class ApplicationService extends RecordDataModelService<Application> {
       ApplicationStatus.Enrolment,
       ApplicationStatus.Completed,
     ];
-    return this.repo.findOne({
-      select: {
-        id: true,
-        applicationEditStatus: true,
-        currentAssessment: {
-          id: true,
-          triggerType: true,
-          disbursementSchedules: {
-            id: true,
-            coeStatus: true,
-            disbursementDate: true,
-            disbursementScheduleStatus: true,
-            coeDeniedReason: { id: true, reason: true },
-            coeDeniedOtherDesc: true,
-          },
-        },
-        studentScholasticStandings: {
-          id: true,
-          changeType: true,
-          reversalDate: true,
-        },
-      },
-      relations: {
-        currentAssessment: {
-          disbursementSchedules: { coeDeniedReason: true },
-        },
-        studentScholasticStandings: true,
-      },
-      where: {
-        id: applicationId,
-        applicationStatus: In(applicationStatuses),
-        student: {
-          id: options?.studentId,
-        },
-      },
-      order: {
-        currentAssessment: {
-          disbursementSchedules: { disbursementDate: "ASC" },
-        },
-      },
-    });
+    const query = this.repo
+      .createQueryBuilder("application")
+      .select([
+        "application.id",
+        "application.applicationEditStatus",
+        "currentAssessment.id",
+        "currentAssessment.triggerType",
+        "disbursementSchedules.id",
+        "disbursementSchedules.coeStatus",
+        "disbursementSchedules.disbursementDate",
+        "disbursementSchedules.disbursementScheduleStatus",
+        "coeDeniedReason.id",
+        "coeDeniedReason.reason",
+        "disbursementSchedules.coeDeniedOtherDesc",
+        "studentScholasticStandings.id",
+        "studentScholasticStandings.changeType",
+        "studentScholasticStandings.reversalDate",
+      ])
+      .leftJoin("application.currentAssessment", "currentAssessment")
+      .leftJoin(
+        "currentAssessment.disbursementSchedules",
+        "disbursementSchedules",
+      )
+      .leftJoin("disbursementSchedules.coeDeniedReason", "coeDeniedReason")
+      .leftJoin(
+        "application.studentScholasticStandings",
+        "studentScholasticStandings",
+      )
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere("application.applicationStatus IN (:...applicationStatuses)", {
+        applicationStatuses,
+      })
+      .andWhere("application.student.id = :studentId", {
+        studentId: options?.studentId,
+      })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where("studentScholasticStandings.id IS NULL").orWhere(
+            new Brackets((qb2) => {
+              qb2
+                .where("studentScholasticStandings.reversalDate IS NULL")
+                .andWhere(
+                  "studentScholasticStandings.changeType = :changeType",
+                  {
+                    changeType:
+                      StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+                  },
+                );
+            }),
+          );
+        }),
+      )
+      .orderBy("disbursementSchedules.disbursementDate", "ASC");
+    return query.getOne();
   }
 
   /**

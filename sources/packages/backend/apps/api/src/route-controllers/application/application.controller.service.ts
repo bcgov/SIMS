@@ -68,7 +68,6 @@ import {
   ApplicationEditStatusInProgress,
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
   DynamicFormType,
-  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
@@ -291,12 +290,7 @@ export class ApplicationControllerService {
         application.currentAssessment.disbursementSchedules,
       );
     const hasActiveUnsuccessfulCompletionWeeks =
-      application.studentScholasticStandings.some(
-        (scholasticStanding) =>
-          scholasticStanding.changeType ===
-            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram &&
-          !scholasticStanding.reversalDate,
-      );
+      !!application.studentScholasticStandings;
     const changeRequestInProgress =
       await this.getInProgressChangeRequestDetails(application.id, options);
     const eCertFailedValidations = eCertValidationResult.failedValidations.map(
