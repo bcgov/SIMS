@@ -22,7 +22,7 @@ import { SSHErrorCodes } from "@sims/integrations/services/ssh";
 
 /**
  * Basic regex to validate a SIN format (9 digits).
- * Note: this regex does not validate if the SIN is actually valid,
+ * Please note that this regex does not validate if the SIN is actually valid,
  * just if it has the correct format.
  */
 const SIN_REGEX = /^\d{9}$/;
