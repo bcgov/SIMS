@@ -91,7 +91,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
               submittedDate: savedApplication.submittedDate.toISOString(),
               isChangeRequestAllowedForPY: false,
               offeringIntensity: savedApplication.offeringIntensity,
-              hasEligibleApplicationAppeals: false,
+              isEligibleForApplicationAppeals: false,
             },
           ],
           count: 1,
