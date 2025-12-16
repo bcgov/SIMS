@@ -29,3 +29,23 @@ export enum SFTPItemType {
    */
   Directory = "d",
 }
+
+/**
+ * Enumeration for SSH error codes.
+ */
+export enum SSHErrorCodes {
+  /**
+   * Error code indicating that the client is not connected.
+   * This error typically occurs when an operation is attempted
+   * without an active connection to the SSH server, either because
+   * one was never established or has been lost.
+   */
+  NotConnected = "ERR_NOT_CONNECTED",
+}
+
+/**
+ * SSH error thrown by the SSH2 SFTP client.
+ */
+export interface SSHError extends Error {
+  code: SSHErrorCodes;
+}

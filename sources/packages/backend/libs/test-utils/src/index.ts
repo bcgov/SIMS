@@ -48,3 +48,4 @@ export * from "./factories/sfas-application-dependant";
 export * from "./factories/sfas-application-disbursement";
 export * from "./factories/dynamic-form-configuration";
 export * from "./factories/sfas-restriction";
+export * from "./factories/sin-validation";

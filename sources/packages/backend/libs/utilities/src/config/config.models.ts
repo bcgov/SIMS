@@ -76,6 +76,26 @@ export interface CRAIntegrationConfig {
   environmentCode: string;
 }
 
+/**
+ * T4A integration configuration.
+ */
+export interface T4AIntegrationConfig {
+  /**
+   * SFTP root folder where T4A files are located.
+   * Expected to have one to many subfolders representing the year
+   * the T4A files are for.
+   */
+  folder: string;
+  /**
+   * SFTP folder where processed T4A files must be archived.
+   * Expected to be an absolute path where all T4A files
+   * for all subfolders are moved after processing.
+   * No file name conflict expected as the files are moved
+   * from their original location with an appended timestamp.
+   */
+  archiveFolder: string;
+}
+
 export interface ATBCIntegrationConfig {
   ATBCLoginEndpoint: string;
   ATBCUserName: string;

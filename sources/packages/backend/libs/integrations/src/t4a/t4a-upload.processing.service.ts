@@ -3,7 +3,7 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import { T4AIntegrationService } from "@sims/integrations/t4a/t4a.integration.service";
 import { getISODateOnlyString } from "@sims/utilities";
 import * as Client from "ssh2-sftp-client";
-import { StudentService } from "@sims/integrations/services";
+import { SshService, StudentService } from "@sims/integrations/services";
 import {
   NotificationActionsService,
   StudentFileSharedService,
@@ -11,10 +11,21 @@ import {
 } from "@sims/services";
 import { FileOriginType, Student } from "@sims/sims-db";
 import { FILE_HASH_DUPLICATION_ERROR } from "@sims/services/constants";
-import { T4A_FILE_PREFIX } from "@sims/integrations/constants";
+import {
+  T4A_FILE_GROUP_NAME,
+  T4A_FILE_PART,
+} from "@sims/integrations/constants";
 import { T4AUploadFileQueueInDTO } from "@sims/services/queue/dto/t4a-upload.dto";
 import { T4AFileInfo } from "@sims/integrations/t4a/models/t4a.models";
 import { DataSource } from "typeorm";
+import { SSHErrorCodes } from "@sims/integrations/services/ssh";
+
+/**
+ * Basic regex to validate a SIN format (9 digits).
+ * Please note that this regex does not validate if the SIN is actually valid,
+ * just if it has the correct format.
+ */
+const SIN_REGEX = /^\d{9}$/;
 
 /**
  * Service to process the upload of T4A files to student accounts.
@@ -53,7 +64,15 @@ export class T4AUploadProcessingService {
         const t4aFileInfo = this.t4aIntegrationService.getT4FileInfo(
           file.relativeFilePath,
         );
-        sinNumbers.push(t4aFileInfo.sin);
+        // Execute a basic format validation before searching the students, since this value is received
+        // through the queue payload and could be not in the expected format.
+        if (SIN_REGEX.test(t4aFileInfo.sin)) {
+          sinNumbers.push(t4aFileInfo.sin);
+        } else {
+          processSummary.warn(
+            `The SIN associated with the file unique ID ${file.uniqueID} is not valid: ${t4aFileInfo.sin}.`,
+          );
+        }
         t4aFileInfosMap.set(file.relativeFilePath, t4aFileInfo);
       }
       // Get all students associated with the SINs in the files to be
@@ -77,6 +96,11 @@ export class T4AUploadProcessingService {
         );
       }
     } catch (error: unknown) {
+      // Stops processing if some error occurs.
+      // The method processT4AFile handles errors for each file individually
+      // and decides if the processing should continue or not.
+      // Errors caught here should stop the entire processing, for instance,
+      // SFTP connection errors during sftpClient creation process.
       processSummary.error("Error uploading file.", error);
     } finally {
       await this.t4aIntegrationService.ensureClientClosed(
@@ -114,6 +138,12 @@ export class T4AUploadProcessingService {
       );
       if (!student) {
         // No student found, skip the file processing.
+        await this.archiveFile(
+          sftpClient,
+          file.uniqueID,
+          t4aFileInfo.remoteFileFullPath,
+          processSummary,
+        );
         return;
       }
       // Download the file from the SFTP.
@@ -141,13 +171,45 @@ export class T4AUploadProcessingService {
       processSummary.info(
         `File created in ${(performance.now() - startFileCreationTime).toFixed(2)}ms.`,
       );
+      await this.archiveFile(
+        sftpClient,
+        file.uniqueID,
+        t4aFileInfo.remoteFileFullPath,
+        processSummary,
+      );
     } catch (error: unknown) {
+      if (SshService.hasError(error, SSHErrorCodes.NotConnected)) {
+        // Stops processing as the SFTP client is disconnected.
+        throw new Error("SFTP client disconnected unexpectedly.", {
+          cause: error,
+        });
+      }
       // Register the error but continue processing other files.
       processSummary.error(
         `Error while processing file unique ID ${file.uniqueID}.`,
         error,
       );
     }
+  }
+
+  /**
+   * Archive the processed T4A file on the SFTP.
+   * @param sftpClient SFTP client to be used for the operation.
+   * @param uniqueID Unique ID of the file to be archived, used for logging.
+   * @param remoteFileFullPath Full remote file path of the T4A file.
+   * @param processSummary Summary object to log the process details.
+   */
+  private async archiveFile(
+    sftpClient: Client,
+    uniqueID: string,
+    remoteFileFullPath: string,
+    processSummary: ProcessSummary,
+  ): Promise<void> {
+    processSummary.info(`Archiving file unique ID ${uniqueID}.`);
+    await this.t4aIntegrationService.archiveFile(remoteFileFullPath, {
+      client: sftpClient,
+    });
+    processSummary.info(`File unique ID ${uniqueID} archived.`);
   }
 
   /**
@@ -171,14 +233,14 @@ export class T4AUploadProcessingService {
       ),
     );
     if (students.length > 1) {
-      const studentIds = students.map((s) => s.id);
+      const studentIds = students.map((s) => s.id).toSorted((a, b) => a - b);
       processSummary.warn(
         `The SIN associated with the file unique ID ${uniqueID} has more than one student IDS associated: ${studentIds}.`,
       );
       return false;
     }
     if (!students.length) {
-      processSummary.warn(
+      processSummary.info(
         `No student associated with the SIN for the file unique ID ${uniqueID}.`,
       );
       return false;
@@ -208,10 +270,9 @@ export class T4AUploadProcessingService {
     processSummary: ProcessSummary,
   ): Promise<void> {
     processSummary.info(`Start upload to the student account.`);
-    const userFriendlyFileName = `${t4aFileInfo.directory}-${T4A_FILE_PREFIX}-${formattedReferenceDate}`;
+    const userFriendlyFileName = `${t4aFileInfo.directory}-${T4A_FILE_PART}-${formattedReferenceDate}`;
     const fileName = `${userFriendlyFileName}${t4aFileInfo.fileExtension}`;
     const uniqueFileName = `${userFriendlyFileName}-${fileUniqueID}${t4aFileInfo.fileExtension}`;
-    const groupName = `${t4aFileInfo.directory}-${T4A_FILE_PREFIX}`;
     const fileUploadProcessSummary = new ProcessSummary();
     processSummary.children(fileUploadProcessSummary);
     try {
@@ -222,7 +283,7 @@ export class T4AUploadProcessingService {
             uniqueFileName,
             mimeType: "application/pdf",
             fileContent: t4aFileContent,
-            groupName,
+            groupName: T4A_FILE_GROUP_NAME,
             fileOrigin: FileOriginType.Ministry,
           },
           student.id,

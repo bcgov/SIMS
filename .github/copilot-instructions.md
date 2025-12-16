@@ -56,6 +56,22 @@ When a `client-type` is mentioned in the code or documentation, the possible val
 ## Coding Standards
 
 - Comments should be in English and using proper grammar, including punctuation, for instance, starting with a capital letter and ending with a period.
+- Comments in JSDoc can have multiple lines and extra formatting, and they can start with some JSDoc special characters like `@param` or `-` for lists, but the sentences must still follow the proper grammar rules. Example of a valid JSDoc comment:
+  ```
+  /**
+   * This is my comment that provides business context.
+   * It usually starts with a capital letter and ends with a period.
+   * Try to add comments that make it better to understand the
+   * business logic, not only describing the method itself.
+   * - Use lists when applicable.
+   * - Each list item should also start with a capital letter and end with a period.
+   * @param myParameter This is my parameter description that also ends with a period.
+   * @param options Method options.
+   * - `optionA` Description for option A.
+   * - `optionB` Description for option B.
+   * @returns This is the return description that also ends with a period.
+   */
+  ```
 - @param descriptions and @returns in JSDoc must be complete sentences ending with a period and can start with lowercase if continuing the sentence.
 - Use `async/await` for asynchronous operations instead of `.then()` and `.catch()`.
 - Use `Promise.all` or `Promise.allSettled` for concurrent asynchronous operations when applicable.

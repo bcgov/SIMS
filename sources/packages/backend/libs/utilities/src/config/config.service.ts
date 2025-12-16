@@ -15,6 +15,7 @@ import {
   CASIntegrationConfig,
   S3Configuration,
   QueueDashboardAccess,
+  T4AIntegrationConfig,
 } from "./config.models";
 
 @Injectable()
@@ -97,6 +98,16 @@ export class ConfigService {
       ftpResponseFolder: process.env.CRA_RESPONSE_FOLDER,
       programAreaCode: process.env.CRA_PROGRAM_AREA_CODE,
       environmentCode: process.env.CRA_ENVIRONMENT_CODE,
+    });
+  }
+
+  /**
+   * T4A integration configuration.
+   */
+  get t4aIntegration(): T4AIntegrationConfig {
+    return this.getCachedConfig("t4aIntegrationConfig", {
+      folder: process.env.T4A_FOLDER,
+      archiveFolder: process.env.T4A_ARCHIVE_FOLDER,
     });
   }
 
