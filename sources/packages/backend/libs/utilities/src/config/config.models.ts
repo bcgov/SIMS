@@ -81,7 +81,7 @@ export interface CRAIntegrationConfig {
  */
 export interface T4AIntegrationConfig {
   /**
-   * SFTP folder root folder where T4A files are located.
+   * SFTP root folder where T4A files are located.
    * Expected to have one to many subfolders representing the year
    * the T4A files are for.
    */

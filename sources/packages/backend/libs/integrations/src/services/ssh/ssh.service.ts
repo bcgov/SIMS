@@ -7,7 +7,7 @@ import * as Client from "ssh2-sftp-client";
 export class SshService {
   /**
    * Creates a connected server ready to execute commands.
-   * @param config
+   * @param config SFTP connection configuration.
    * @returns Connected client.
    */
   async createClient(config: SFTPConfig): Promise<Client> {
