@@ -42,6 +42,7 @@
           clearable
           multiple
           chips
+          color="primary"
           hide-details="auto" />
         <v-textarea
           label="Notes"
@@ -80,7 +81,7 @@ import { EducationProgramService } from "@/services/EducationProgramService";
 /**
  * Default category to be displayed for institution restrictions.
  */
-export const CATEGORY = "Other";
+export const CATEGORY = "Program";
 
 export default defineComponent({
   components: { ModalDialogBase, ErrorSummary },
