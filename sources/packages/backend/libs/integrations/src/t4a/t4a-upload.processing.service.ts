@@ -160,7 +160,7 @@ export class T4AUploadProcessingService {
       );
       // Upload the file to the student account.
       const startFileCreationTime = performance.now();
-      await this.createStudentFile(
+      const fileCreated = await this.createStudentFile(
         student,
         t4aFileInfo,
         formattedReferenceDate,
@@ -168,8 +168,11 @@ export class T4AUploadProcessingService {
         t4aFileContent,
         processSummary,
       );
+      const fileProcessLogMessage = fileCreated
+        ? "created"
+        : "skipped due to duplication";
       processSummary.info(
-        `File created in ${(performance.now() - startFileCreationTime).toFixed(2)}ms.`,
+        `File ${fileProcessLogMessage}, time taken ${(performance.now() - startFileCreationTime).toFixed(2)}ms.`,
       );
       await this.archiveFile(
         sftpClient,
@@ -260,6 +263,7 @@ export class T4AUploadProcessingService {
    * @param fileUniqueID Unique ID to be included in the file name.
    * @param t4aFileContent Content of the T4A file to be uploaded.
    * @param processSummary Process summary to log the process details.
+   * @returns True if the file was created, false if it was skipped due to duplication.
    */
   private async createStudentFile(
     student: Student,
@@ -268,7 +272,7 @@ export class T4AUploadProcessingService {
     fileUniqueID: string,
     t4aFileContent: Buffer,
     processSummary: ProcessSummary,
-  ): Promise<void> {
+  ): Promise<boolean> {
     processSummary.info(`Start upload to the student account.`);
     const userFriendlyFileName = `${t4aFileInfo.directory}-${T4A_FILE_PART}-${formattedReferenceDate}`;
     const fileName = `${userFriendlyFileName}${t4aFileInfo.fileExtension}`;
@@ -276,40 +280,43 @@ export class T4AUploadProcessingService {
     const fileUploadProcessSummary = new ProcessSummary();
     processSummary.children(fileUploadProcessSummary);
     try {
-      await this.dataSource.manager.transaction(async (entityManager) => {
-        const createdFilePromise = this.studentFileSharedService.createFile(
-          {
-            fileName,
-            uniqueFileName,
-            mimeType: "application/pdf",
-            fileContent: t4aFileContent,
-            groupName: T4A_FILE_GROUP_NAME,
-            fileOrigin: FileOriginType.Ministry,
-          },
-          student.id,
-          this.systemUsersService.systemUser.id,
-          fileUploadProcessSummary,
-          { entityManager, preventFileHashDuplication: true },
-        );
-        const saveNotificationPromise =
-          this.notificationActionsService.saveMinistryFileUploadNotification(
+      return await this.dataSource.manager.transaction(
+        async (entityManager) => {
+          const createdFilePromise = this.studentFileSharedService.createFile(
             {
-              firstName: student.user.firstName,
-              lastName: student.user.lastName,
-              toAddress: student.user.email,
-              userId: student.user.id,
+              fileName,
+              uniqueFileName,
+              mimeType: "application/pdf",
+              fileContent: t4aFileContent,
+              groupName: T4A_FILE_GROUP_NAME,
+              fileOrigin: FileOriginType.Ministry,
             },
+            student.id,
             this.systemUsersService.systemUser.id,
-            entityManager,
+            fileUploadProcessSummary,
+            { entityManager, preventFileHashDuplication: true },
           );
-        const [createdFile] = await Promise.all([
-          createdFilePromise,
-          saveNotificationPromise,
-        ]);
-        processSummary.info(
-          `Student file ID ${createdFile.id} created and notification saved.`,
-        );
-      });
+          const saveNotificationPromise =
+            this.notificationActionsService.saveMinistryFileUploadNotification(
+              {
+                firstName: student.user.firstName,
+                lastName: student.user.lastName,
+                toAddress: student.user.email,
+                userId: student.user.id,
+              },
+              this.systemUsersService.systemUser.id,
+              entityManager,
+            );
+          const [createdFile] = await Promise.all([
+            createdFilePromise,
+            saveNotificationPromise,
+          ]);
+          processSummary.info(
+            `Student file ID ${createdFile.id} created and notification saved.`,
+          );
+          return true;
+        },
+      );
     } catch (error: unknown) {
       if (
         error instanceof Error &&
@@ -318,7 +325,7 @@ export class T4AUploadProcessingService {
         processSummary.info(
           `T4A file for student ID ${student.id} already exists: ${error.message}`,
         );
-        return;
+        return false;
       }
       throw error;
     }
