@@ -22,7 +22,7 @@ VALUES
         't4a-upload',
         '{
             "retry": 3,
-            "removeOnComplete": true,
+            "cleanUpPeriod": 604800000,
             "retryInterval": 180000,
             "dashboardReadonly": false
         }' :: jsonb,

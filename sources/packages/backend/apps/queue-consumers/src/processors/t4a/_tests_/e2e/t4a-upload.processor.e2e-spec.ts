@@ -313,6 +313,7 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
         "Start download from the SFTP.",
         "Start upload to the student account.",
         `T4A file for student ID ${student.id} already exists: File hash ${hash} already exists for student ID ${student.id}.`,
+        "File skipped due to duplication",
         `Archiving file unique ID ${uniqueID}.`,
         `File unique ID ${uniqueID} archived.`,
       ]),
