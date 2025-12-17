@@ -24,10 +24,7 @@ import * as request from "supertest";
 import { FormService } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
-import {
-  LOCATION_NOT_AUTHORIZED_FOR_DESIGNATION,
-  NO_LOCATION_SELECTED_FOR_DESIGNATION,
-} from "../../../../constants/error-code.constants";
+import { NO_LOCATION_SELECTED_FOR_DESIGNATION } from "../../../../constants/error-code.constants";
 
 describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgreement", () => {
   let app: INestApplication;
@@ -285,11 +282,10 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
       .post(endpoint)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.FORBIDDEN)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message:
-          "User is not authorized to access one or more locations in the request.",
-        errorType: LOCATION_NOT_AUTHORIZED_FOR_DESIGNATION,
+          "One or more locations provided do not belong to designation institution.",
       });
   });
 

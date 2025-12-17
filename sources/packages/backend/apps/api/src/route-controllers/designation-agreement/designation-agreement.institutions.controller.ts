@@ -38,10 +38,7 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import {
-  LOCATION_NOT_AUTHORIZED_FOR_DESIGNATION,
-  NO_LOCATION_SELECTED_FOR_DESIGNATION,
-} from "../../constants";
+import { NO_LOCATION_SELECTED_FOR_DESIGNATION } from "../../constants";
 
 /***
  * Designation agreement dedicated controller for Institution.
@@ -79,6 +76,10 @@ export class DesignationAgreementInstitutionsController extends BaseController {
     description:
       "Your institution already has one pending designation request; you cannot submit another one until the first has been approved or denied.",
   })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "One or more locations provided do not belong to designation institution.",
+  })
   async submitDesignationAgreement(
     @UserToken() userToken: IInstitutionUserToken,
     @Body() payload: SubmitDesignationAgreementAPIInDTO,
@@ -93,17 +94,14 @@ export class DesignationAgreementInstitutionsController extends BaseController {
       );
     }
 
-    // Validate that all locations in the payload are authorized for the user.
+    // Validate that all locations in the payload are part of the authorized for the user.
     const authorizedLocationsIds = userToken.authorizations.getLocationsIds();
     const unauthorizedLocation = payload.locations.some(
       (location) => !authorizedLocationsIds.includes(location.locationId),
     );
     if (unauthorizedLocation) {
-      throw new ForbiddenException(
-        new ApiProcessError(
-          "User is not authorized to access one or more locations in the request.",
-          LOCATION_NOT_AUTHORIZED_FOR_DESIGNATION,
-        ),
+      throw new UnprocessableEntityException(
+        "One or more locations provided do not belong to designation institution.",
       );
     }
 
