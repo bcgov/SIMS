@@ -8,7 +8,9 @@ import {
   DisbursementScheduleStatus,
   DisbursementValueType,
   OfferingIntensity,
+  User,
 } from "@sims/sims-db";
+import MockDate from "mockdate";
 import {
   createE2EDataSources,
   createFakeDisbursementOveraward,
@@ -29,15 +31,22 @@ import {
   MockedZeebeJobResult,
 } from "../../../../../test/utils/worker-job-mock";
 import { createTestingAppModule } from "../../../../../test/helpers";
+import { SystemUsersService } from "@sims/services";
 
 describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
   let db: E2EDataSources;
   let disbursementController: DisbursementController;
+  let systemUser: User;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     db = createE2EDataSources(dataSource);
     disbursementController = nestApplication.get(DisbursementController);
+    systemUser = nestApplication.get(SystemUsersService).systemUser;
+  });
+
+  beforeEach(async () => {
+    MockDate.reset();
   });
 
   it("Should generate an overaward when a reassessment happens and the student is entitled to less money", async () => {
@@ -720,38 +729,180 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     },
   );
 
-  function assertAwardDeduction(
-    createdDisbursement: DisbursementSchedule,
-    valueType: DisbursementValueType,
-    assertValues: {
-      valueAmount: number;
-      disbursedAmountSubtracted?: number;
-    },
-  ) {
-    const award = createdDisbursement.disbursementValues.find(
-      (scheduleValue) => scheduleValue.valueType === valueType,
+  it("Should use the default coeStatus of 'Required' when creating the original assessment.", async () => {
+    // Arrange
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      undefined,
+      {
+        applicationStatus: ApplicationStatus.InProgress,
+      },
     );
-    expect(award).toBeDefined();
-    expect(award.valueAmount).toBe(+assertValues.valueAmount);
-    expect(award.disbursedAmountSubtracted).toBe(
-      assertValues.disbursedAmountSubtracted,
-    );
-  }
+    const originalAssessmentId = savedApplication.currentAssessment.id;
 
-  function assertOveraward(
-    overawards: DisbursementOveraward[],
-    awardCode: string,
-    awardValue: number,
-  ) {
-    expect(overawards).toBeDefined();
-    const awardOverawards = overawards.filter(
-      (overaward) => overaward.disbursementValueCode === awardCode,
+    const saveDisbursementSchedulesPayload =
+      createFakeSaveDisbursementSchedulesPayload({
+        assessmentId: originalAssessmentId,
+        createSecondDisbursement: true,
+      });
+
+    // Act
+    const saveResult = await disbursementController.saveDisbursementSchedules(
+      saveDisbursementSchedulesPayload,
     );
-    expect(awardOverawards).toHaveLength(1);
-    const [overaward] = awardOverawards;
-    expect(overaward.overawardValue).toBe(awardValue);
-    expect(overaward.originType).toBe(
-      DisbursementOverawardOriginType.ReassessmentOveraward,
+
+    // Asserts
+    expect(saveResult).toHaveProperty(
+      FAKE_WORKER_JOB_RESULT_PROPERTY,
+      MockedZeebeJobResult.Complete,
     );
-  }
+
+    const createdDisbursements = await db.disbursementSchedule.find({
+      select: {
+        id: true,
+        coeStatus: true,
+        coeUpdatedAt: true,
+        coeUpdatedBy: { id: true },
+      },
+      relations: {
+        coeUpdatedBy: true,
+      },
+      where: {
+        studentAssessment: { id: originalAssessmentId },
+      },
+      loadEagerRelations: false,
+    });
+    // Assert disbursements created.
+    expect(createdDisbursements).toHaveLength(2);
+    const [firstDisbursement, secondDisbursement] = createdDisbursements;
+
+    // Assert coeStatus is set to 'Required', coeUpdatedAt is null, coeUpdatedBy is null.
+    expect(firstDisbursement).toEqual({
+      id: expect.any(Number),
+      coeStatus: COEStatus.required,
+      coeUpdatedAt: null,
+      coeUpdatedBy: null,
+    });
+    expect(secondDisbursement).toEqual({
+      id: expect.any(Number),
+      coeStatus: COEStatus.required,
+      coeUpdatedAt: null,
+      coeUpdatedBy: null,
+    });
+  });
+
+  it("Should set the COE Status to 'Completed' and populate COE Updated fields when the trigger type is 'Scholastic Standing Change'.", async () => {
+    // Arrange
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      undefined,
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          triggerType: AssessmentTriggerType.ScholasticStandingChange,
+        },
+      },
+    );
+    const assessmentId = savedApplication.currentAssessment.id;
+    const now = new Date();
+    MockDate.set(now);
+
+    // Act
+    const saveDisbursementSchedulesPayload =
+      createFakeSaveDisbursementSchedulesPayload({
+        assessmentId: assessmentId,
+        createSecondDisbursement: true,
+      });
+    const saveResult = await disbursementController.saveDisbursementSchedules(
+      saveDisbursementSchedulesPayload,
+    );
+
+    // Asserts
+    expect(saveResult).toHaveProperty(
+      FAKE_WORKER_JOB_RESULT_PROPERTY,
+      MockedZeebeJobResult.Complete,
+    );
+
+    const createdDisbursements = await db.disbursementSchedule.find({
+      select: {
+        id: true,
+        coeStatus: true,
+        coeUpdatedAt: true,
+        coeUpdatedBy: { id: true },
+      },
+      relations: {
+        coeUpdatedBy: true,
+      },
+      where: {
+        studentAssessment: { id: assessmentId },
+      },
+      loadEagerRelations: false,
+    });
+
+    // Assert disbursements created
+    expect(createdDisbursements).toBeDefined();
+    expect(createdDisbursements).toHaveLength(2);
+    const [firstDisbursement, secondDisbursement] = createdDisbursements;
+
+    // Assert coeStatus is set to 'Completed ', coeUpdatedAt is set to now and coeUpdatedBy is set to system user.
+    expect(firstDisbursement).toEqual({
+      id: expect.any(Number),
+      coeStatus: COEStatus.completed,
+      coeUpdatedAt: now,
+      coeUpdatedBy: { id: systemUser.id },
+    });
+    expect(secondDisbursement).toEqual({
+      id: expect.any(Number),
+      coeStatus: COEStatus.completed,
+      coeUpdatedAt: now,
+      coeUpdatedBy: { id: systemUser.id },
+    });
+  });
 });
+
+/**
+ * Asserts that the Award Deduction of the specified value type matches the provided values.
+ * @param createdDisbursement The disbursement schedule containing the award.
+ * @param valueType The type of disbursement to assert.
+ * @param assertValues The expected values for the award.
+ */
+function assertAwardDeduction(
+  createdDisbursement: DisbursementSchedule,
+  valueType: DisbursementValueType,
+  assertValues: {
+    valueAmount: number;
+    disbursedAmountSubtracted?: number;
+  },
+): void {
+  const award = createdDisbursement.disbursementValues.find(
+    (scheduleValue) => scheduleValue.valueType === valueType,
+  );
+  expect(award).toBeDefined();
+  expect(award.valueAmount).toBe(+assertValues.valueAmount);
+  expect(award.disbursedAmountSubtracted).toBe(
+    assertValues.disbursedAmountSubtracted,
+  );
+}
+
+/**
+ * Asserts that the Overaward of the specified value code matches the provided values.
+ * @param overawards The disbursement overawards.
+ * @param awardCode The disbursement value code to assert.
+ * @param awardValue The expected value for the award.
+ */
+function assertOveraward(
+  overawards: DisbursementOveraward[],
+  awardCode: string,
+  awardValue: number,
+): void {
+  expect(overawards).toBeDefined();
+  const awardOverawards = overawards.filter(
+    (overaward) => overaward.disbursementValueCode === awardCode,
+  );
+  expect(awardOverawards).toHaveLength(1);
+  const [overaward] = awardOverawards;
+  expect(overaward.overawardValue).toBe(awardValue);
+  expect(overaward.originType).toBe(
+    DisbursementOverawardOriginType.ReassessmentOveraward,
+  );
+}
