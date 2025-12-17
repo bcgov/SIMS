@@ -286,6 +286,8 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
       .expect({
         message:
           "One or more locations provided do not belong to designation institution.",
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });
   });
 
