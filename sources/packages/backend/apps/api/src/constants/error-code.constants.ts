@@ -325,3 +325,8 @@ export const INSTITUTION_RESTRICTION_ALREADY_ACTIVE =
  */
 export const NO_LOCATION_SELECTED_FOR_DESIGNATION =
   "NO_LOCATION_SELECTED_FOR_DESIGNATION";
+/**
+ * User is not authorized to access the locations in the designation request.
+ */
+export const LOCATION_NOT_AUTHORIZED_FOR_DESIGNATION =
+  "LOCATION_NOT_AUTHORIZED_FOR_DESIGNATION";

@@ -272,9 +272,7 @@
         }
       ],
       "validate": {
-        "required": true,
-        "custom": "valid = data.locations && data.locations.some(row => row.requestForDesignation);",
-        "customMessage": "At least one location must be selected for designation."
+        "required": true
       },
       "key": "locations",
       "type": "datagrid",

@@ -38,7 +38,10 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { NO_LOCATION_SELECTED_FOR_DESIGNATION } from "../../constants";
+import {
+  LOCATION_NOT_AUTHORIZED_FOR_DESIGNATION,
+  NO_LOCATION_SELECTED_FOR_DESIGNATION,
+} from "../../constants";
 
 /***
  * Designation agreement dedicated controller for Institution.
@@ -87,6 +90,20 @@ export class DesignationAgreementInstitutionsController extends BaseController {
     if (!isLegalSigningAuthority) {
       throw new ForbiddenException(
         "User does not have the rights to create a designation agreement.",
+      );
+    }
+
+    // Validate that all locations in the payload are authorized for the user.
+    const authorizedLocationsIds = userToken.authorizations.getLocationsIds();
+    const unauthorizedLocation = payload.locations.some(
+      (location) => !authorizedLocationsIds.includes(location.locationId),
+    );
+    if (unauthorizedLocation) {
+      throw new ForbiddenException(
+        new ApiProcessError(
+          "User is not authorized to access one or more locations in the request.",
+          LOCATION_NOT_AUTHORIZED_FOR_DESIGNATION,
+        ),
       );
     }
 

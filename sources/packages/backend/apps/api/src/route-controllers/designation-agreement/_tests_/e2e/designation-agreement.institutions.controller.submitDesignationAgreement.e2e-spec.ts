@@ -24,7 +24,10 @@ import * as request from "supertest";
 import { FormService } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
-import { NO_LOCATION_SELECTED_FOR_DESIGNATION } from "../../../../constants/error-code.constants";
+import {
+  LOCATION_NOT_AUTHORIZED_FOR_DESIGNATION,
+  NO_LOCATION_SELECTED_FOR_DESIGNATION,
+} from "../../../../constants/error-code.constants";
 
 describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgreement", () => {
   let app: INestApplication;
@@ -204,10 +207,9 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-      .expect((response) => {
-        expect(response.body.errorType).toBe(
-          NO_LOCATION_SELECTED_FOR_DESIGNATION,
-        );
+      .expect({
+        message: "At least one location must be selected for designation.",
+        errorType: NO_LOCATION_SELECTED_FOR_DESIGNATION,
       });
   });
 
@@ -246,10 +248,48 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-      .expect((response) => {
-        expect(response.body.errorType).toBe(
-          NO_LOCATION_SELECTED_FOR_DESIGNATION,
-        );
+      .expect({
+        message: "At least one location must be selected for designation.",
+        errorType: NO_LOCATION_SELECTED_FOR_DESIGNATION,
+      });
+  });
+
+  it("Should return forbidden when user attempts to submit designation for an unauthorized location.", async () => {
+    // Arrange
+    const payload = {
+      dynamicData: {
+        eligibilityOfficers: [],
+        enrolmentOfficers: [],
+        scheduleA: false,
+        scheduleB: false,
+        scheduleD: false,
+        legalAuthorityName: "SIMS COLLF",
+        legalAuthorityEmailAddress: "test@gov.bc.ca",
+        agreementAccepted: false,
+      },
+      locations: [
+        {
+          // Using College C location with College F user token.
+          locationId: collegeCLocation.id,
+          requestForDesignation: true,
+        },
+      ],
+    };
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+    );
+    const endpoint = "/institutions/designation-agreement";
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        message:
+          "User is not authorized to access one or more locations in the request.",
+        errorType: LOCATION_NOT_AUTHORIZED_FOR_DESIGNATION,
       });
   });
 
