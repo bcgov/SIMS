@@ -579,12 +579,12 @@ export class ApplicationStudentsController extends BaseController {
   @Get(":applicationId/appeal")
   async getApplicationToRequestAppeal(
     @Param("applicationId", ParseIntPipe) applicationId: number,
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: StudentUserToken,
   ): Promise<AppealApplicationDetailsAPIOutDTO> {
     const application =
       await this.applicationService.getApplicationToRequestAppeal(
         applicationId,
-        userToken.userId,
+        userToken.studentId,
       );
     if (!application) {
       throw new NotFoundException(

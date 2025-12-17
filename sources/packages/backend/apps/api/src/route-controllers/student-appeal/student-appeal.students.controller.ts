@@ -117,7 +117,7 @@ export class StudentAppealStudentsController extends BaseController {
     description:
       "Only one change request/appeal can be submitted at a time for each application. " +
       "When your current request is approved or denied by StudentAid BC, you will be able to submit a new one or " +
-      "one or more forms submitted are not valid for appeal submission or " +
+      "the submitted appeal form(s) are not eligible for the application or " +
       "the application is not eligible to submit an appeal or " +
       "the application is no longer eligible to submit change request/appeal.",
   })
@@ -134,7 +134,7 @@ export class StudentAppealStudentsController extends BaseController {
     const application =
       await this.applicationService.getApplicationToRequestAppeal(
         applicationId,
-        userToken.userId,
+        userToken.studentId,
       );
     if (!application) {
       throw new NotFoundException(
@@ -158,16 +158,18 @@ export class StudentAppealStudentsController extends BaseController {
         ),
       );
     }
-
+    const submittedFormNames = payload.studentAppealRequests.map(
+      (request) => request.formName,
+    );
     if (operation === "appeal") {
       // Ensures the appeals are validated based on the eligibility criteria used for fetching the
       // eligible applications for appeal using getEligibleApplicationsForAppeal endpoint.
-      const eligibleApplicationsForAppeal =
+      const [eligibleApplication] =
         await this.studentAppealService.getEligibleApplicationsForAppeal(
           userToken.studentId,
           { applicationId },
         );
-      if (!eligibleApplicationsForAppeal.length) {
+      if (!eligibleApplication) {
         throw new UnprocessableEntityException(
           new ApiProcessError(
             "The application is not eligible to submit an appeal.",
@@ -175,13 +177,17 @@ export class StudentAppealStudentsController extends BaseController {
           ),
         );
       }
+      // Validate if all the submitted forms are eligible appeals for the application.
+      this.studentAppealControllerService.validateAppealFormNames(
+        submittedFormNames,
+        eligibleApplication.currentAssessment.eligibleApplicationAppeals,
+      );
+    } else {
+      // Validate the form names for legacy change request submission.
+      this.studentAppealControllerService.validateLegacyChangeRequestFormNames(
+        submittedFormNames,
+      );
     }
-
-    // Validate the submitted form names for the operation.
-    this.studentAppealControllerService.validateSubmittedFormNames(
-      operation,
-      payload.studentAppealRequests.map((request) => request.formName),
-    );
 
     const existingApplicationAppeal = await this.studentAppealService.hasAppeal(
       userToken.studentId,
@@ -355,6 +361,8 @@ export class StudentAppealStudentsController extends BaseController {
       applications: eligibleApplications.map((application) => ({
         id: application.id,
         applicationNumber: application.applicationNumber,
+        eligibleApplicationAppeals:
+          application.currentAssessment.eligibleApplicationAppeals,
       })),
     };
   }

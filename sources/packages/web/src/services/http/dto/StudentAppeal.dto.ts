@@ -9,8 +9,7 @@ export interface StudentAppealAPIInDTO extends AppealRequestAPIInDTO {
   formName: string;
 }
 
-export interface ApplicationAppealRequestAPIInDTO
-  extends AppealRequestAPIInDTO {
+export interface ApplicationAppealRequestAPIInDTO extends AppealRequestAPIInDTO {
   formName: string;
 }
 
@@ -25,8 +24,7 @@ export interface StudentAppealRequestAPIOutDTO {
   appealStatus: StudentAppealStatus;
 }
 
-export interface DetailedStudentAppealRequestAPIOutDTO
-  extends StudentAppealRequestAPIOutDTO {
+export interface DetailedStudentAppealRequestAPIOutDTO extends StudentAppealRequestAPIOutDTO {
   assessedDate?: Date;
   assessedByUserName?: string;
   noteDescription?: string;
@@ -62,6 +60,7 @@ export interface StudentAppealPendingSummaryAPIOutDTO {
 export interface EligibleApplicationForAppealAPIOutDTO {
   id: number;
   applicationNumber: string;
+  eligibleApplicationAppeals: string[];
 }
 
 export interface EligibleApplicationsForAppealAPIOutDTO {

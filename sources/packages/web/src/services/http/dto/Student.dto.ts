@@ -82,13 +82,11 @@ export interface StudentProfileAPIOutDTO {
   hasFulltimeAccess?: boolean;
 }
 
-export interface InstitutionStudentProfileAPIOutDTO
-  extends StudentProfileAPIOutDTO {
+export interface InstitutionStudentProfileAPIOutDTO extends StudentProfileAPIOutDTO {
   sin: string;
 }
 
-export interface AESTStudentProfileAPIOutDTO
-  extends InstitutionStudentProfileAPIOutDTO {
+export interface AESTStudentProfileAPIOutDTO extends InstitutionStudentProfileAPIOutDTO {
   hasRestriction: boolean;
   identityProvider: SpecificIdentityProviders;
   legacyProfile?: LegacyStudentProfileAPIOutDTO;
@@ -128,8 +126,7 @@ export interface StudentUploadFileAPIOutDTO {
 /**
  *  AEST / Institution user to view student uploaded documents.
  */
-export interface StudentFileDetailsAPIOutDTO
-  extends StudentUploadFileAPIOutDTO {
+export interface StudentFileDetailsAPIOutDTO extends StudentUploadFileAPIOutDTO {
   metadata: StudentFileMetadataAPIOutDTO;
   groupName: string;
   createdAt: Date;
@@ -138,8 +135,7 @@ export interface StudentFileDetailsAPIOutDTO
 /**
  *  AEST student file upload details.
  */
-export interface AESTStudentFileDetailsAPIOutDTO
-  extends StudentFileDetailsAPIOutDTO {
+export interface AESTStudentFileDetailsAPIOutDTO extends StudentFileDetailsAPIOutDTO {
   uploadedBy: string;
 }
 
@@ -192,6 +188,10 @@ export interface ApplicationSummaryAPIOutDTO {
    * Application offering intensity.
    */
   offeringIntensity: OfferingIntensity;
+  /**
+   *  Indicates if the application is eligible for any application appeal.
+   */
+  isEligibleForApplicationAppeals: boolean;
 }
 
 /**

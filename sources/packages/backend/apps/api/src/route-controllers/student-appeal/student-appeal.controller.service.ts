@@ -75,33 +75,38 @@ export class StudentAppealControllerService {
   }
 
   /**
-   * Validates the submitted form names for the submission operation.
-   * @param operation operation(change request | appeal).
+   * Validates if the submitted appeal forms are eligible for the application.
    * @param formNames submitted form names.
-   * @throws UnprocessableEntityException if the form names are not valid for the submission operation.
+   * @param eligibleApplicationAppeals eligible appeal form names for the application.
+   * @throws UnprocessableEntityException if any form names are not valid for the submission operation.
    */
-  validateSubmittedFormNames(
-    operation: "appeal" | "change request",
+  validateAppealFormNames(
     formNames: string[],
+    eligibleApplicationAppeals: string[],
   ): void {
-    if (operation === "appeal") {
-      const hasChangeRequestForm = formNames.some((formName) =>
-        CHANGE_REQUEST_APPEAL_FORMS.includes(formName.toLowerCase()),
+    const eligibleAppealForms = new Set(eligibleApplicationAppeals);
+    const ineligibleFormNames = formNames.filter(
+      (formName) => !eligibleAppealForms.has(formName),
+    );
+    if (ineligibleFormNames.length) {
+      throw new UnprocessableEntityException(
+        `The submitted appeal form(s) ${ineligibleFormNames.join(", ")} is/are not eligible for the application.`,
       );
-
-      if (hasChangeRequestForm) {
-        throw new UnprocessableEntityException(
-          "One or more forms submitted are not valid for appeal submission.",
-        );
-      }
-      return;
     }
+  }
+
+  /**
+   * Validates the submitted legacy change request form names.
+   * @param formNames submitted form names.
+   * @throws UnprocessableEntityException if the form names are not valid for the change request submission.
+   */
+  validateLegacyChangeRequestFormNames(formNames: string[]): void {
     // Validate for change request submission.
-    const hasAppealForm = formNames.some(
+    const hasNonChangeRequestForm = formNames.some(
       (formName) =>
         !CHANGE_REQUEST_APPEAL_FORMS.includes(formName.toLowerCase()),
     );
-    if (hasAppealForm) {
+    if (hasNonChangeRequestForm) {
       throw new UnprocessableEntityException(
         "One or more forms submitted are not valid for change request submission.",
       );
