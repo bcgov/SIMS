@@ -10,6 +10,7 @@ import {
   OfferingIntensity,
   User,
 } from "@sims/sims-db";
+import MockDate from "mockdate";
 import {
   createE2EDataSources,
   createFakeDisbursementOveraward,
@@ -42,6 +43,10 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     db = createE2EDataSources(dataSource);
     disbursementController = nestApplication.get(DisbursementController);
     systemUser = nestApplication.get(SystemUsersService).systemUser;
+  });
+
+  beforeEach(async () => {
+    MockDate.reset();
   });
 
   it("Should generate an overaward when a reassessment happens and the student is entitled to less money", async () => {
@@ -726,30 +731,18 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
 
   it("Should use the default coeStatus of 'Required' when creating the original assessment.", async () => {
     // Arrange
-    const savedUser = await db.user.save(createFakeUser());
-    const savedStudent = await db.student.save(createFakeStudent(savedUser));
     const savedApplication = await saveFakeApplication(
       db.dataSource,
-      {
-        student: savedStudent,
-      },
+      undefined,
       {
         applicationStatus: ApplicationStatus.InProgress,
-        applicationNumber: "OA_TEST003",
       },
     );
-    // Original assessment.
-    const fakeOriginalAssessment = createFakeStudentAssessment({
-      auditUser: savedUser,
-      applicationEditStatusUpdatedBy: savedUser,
-    });
-    fakeOriginalAssessment.application = savedApplication;
-    const savedOriginalAssessment = await db.studentAssessment.save(
-      fakeOriginalAssessment,
-    );
+    const originalAssessmentId = savedApplication.currentAssessment.id;
+
     const saveDisbursementSchedulesPayload =
       createFakeSaveDisbursementSchedulesPayload({
-        assessmentId: savedOriginalAssessment.id,
+        assessmentId: originalAssessmentId,
         createSecondDisbursement: true,
       });
 
@@ -769,108 +762,55 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
         id: true,
         coeStatus: true,
         coeUpdatedAt: true,
+        coeUpdatedBy: { id: true },
       },
       relations: {
         coeUpdatedBy: true,
       },
       where: {
-        studentAssessment: { id: savedOriginalAssessment.id },
+        studentAssessment: { id: originalAssessmentId },
       },
+      loadEagerRelations: false,
     });
     // Assert disbursements created.
     expect(createdDisbursements).toHaveLength(2);
     const [firstDisbursement, secondDisbursement] = createdDisbursements;
 
-    // Assert coeStatus is set to Not Required.
-    expect(firstDisbursement.coeStatus).toBe(COEStatus.required);
-    expect(secondDisbursement.coeStatus).toBe(COEStatus.required);
-
-    // Assert coeUpdatedAt and coeUpdatedBy are null.
-    expect(firstDisbursement.coeUpdatedAt).toBeNull();
-    expect(secondDisbursement.coeUpdatedAt).toBeNull();
-    expect(firstDisbursement.coeUpdatedBy).toBeNull();
-    expect(secondDisbursement.coeUpdatedBy).toBeNull();
+    // Assert coeStatus is set to 'Required', coeUpdatedAt is null, coeUpdatedBy is null.
+    expect(firstDisbursement).toEqual({
+      id: expect.any(Number),
+      coeStatus: COEStatus.required,
+      coeUpdatedAt: null,
+      coeUpdatedBy: null,
+    });
+    expect(secondDisbursement).toEqual({
+      id: expect.any(Number),
+      coeStatus: COEStatus.required,
+      coeUpdatedAt: null,
+      coeUpdatedBy: null,
+    });
   });
 
   it("Should set the COE Status to 'Completed' and populate COE Updated fields when the trigger type is 'Scholastic Standing Change'.", async () => {
     // Arrange
-    const savedUser = await db.user.save(createFakeUser());
-    const savedStudent = await db.student.save(createFakeStudent(savedUser));
     const savedApplication = await saveFakeApplication(
       db.dataSource,
+      undefined,
       {
-        student: savedStudent,
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          triggerType: AssessmentTriggerType.ScholasticStandingChange,
+        },
       },
-      { applicationNumber: "OA_TEST001" },
     );
-    // Original assessment.
-    const fakeOriginalAssessment = createFakeStudentAssessment({
-      auditUser: savedUser,
-      applicationEditStatusUpdatedBy: savedUser,
-    });
-    fakeOriginalAssessment.application = savedApplication;
-    await db.studentAssessment.save(fakeOriginalAssessment);
-    // Original assessment - first disbursement (Sent).
-    const firstSchedule = createFakeDisbursementSchedule({
-      disbursementValues: [
-        createFakeDisbursementValue(
-          DisbursementValueType.CanadaLoan,
-          "CSLF",
-          1250,
-          { effectiveAmount: 1250 },
-        ),
-        createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 800, {
-          disbursedAmountSubtracted: 50,
-          effectiveAmount: 750,
-        }),
-        createFakeDisbursementValue(
-          DisbursementValueType.CanadaGrant,
-          "CSGP",
-          1500,
-          { effectiveAmount: 1500 },
-        ),
-      ],
-    });
-    firstSchedule.disbursementScheduleStatus = DisbursementScheduleStatus.Sent;
-    // Original assessment - second disbursement (Pending).
-    const secondSchedule = createFakeDisbursementSchedule({
-      disbursementValues: [
-        createFakeDisbursementValue(
-          DisbursementValueType.CanadaGrant,
-          "CSLF",
-          1000,
-        ),
-        createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 500),
-      ],
-    });
-    secondSchedule.disbursementScheduleStatus =
-      DisbursementScheduleStatus.Pending;
-    fakeOriginalAssessment.disbursementSchedules = [
-      firstSchedule,
-      secondSchedule,
-    ];
-    // Scholastic Standing Change - Withdrawal.
-    const withdrawalOffering = await db.educationProgramOffering.save(
-      createFakeEducationProgramOffering({ auditUser: savedUser }),
-    );
-    const scholasticStandingChangeAssessment = createFakeStudentAssessment({
-      auditUser: savedUser,
-      offering: withdrawalOffering,
-      applicationEditStatusUpdatedBy: savedUser,
-    });
-    scholasticStandingChangeAssessment.triggerType =
-      AssessmentTriggerType.ScholasticStandingChange;
-    scholasticStandingChangeAssessment.application = savedApplication;
-    const savedScholasticStandingChangeAssessment =
-      await db.studentAssessment.save(scholasticStandingChangeAssessment);
-    savedApplication.currentAssessment = scholasticStandingChangeAssessment;
-    savedApplication.applicationStatus = ApplicationStatus.Completed;
-    await db.application.save(savedApplication);
+    const assessmentId = savedApplication.currentAssessment.id;
+    const now = new Date();
+    MockDate.set(now);
 
     // Act
     const saveDisbursementSchedulesPayload =
       createFakeSaveDisbursementSchedulesPayload({
-        assessmentId: savedScholasticStandingChangeAssessment.id,
+        assessmentId: assessmentId,
         createSecondDisbursement: true,
       });
     const saveResult = await disbursementController.saveDisbursementSchedules(
@@ -888,14 +828,15 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
         id: true,
         coeStatus: true,
         coeUpdatedAt: true,
+        coeUpdatedBy: { id: true },
       },
       relations: {
-        disbursementValues: true,
         coeUpdatedBy: true,
       },
       where: {
-        studentAssessment: { id: savedScholasticStandingChangeAssessment.id },
+        studentAssessment: { id: assessmentId },
       },
+      loadEagerRelations: false,
     });
 
     // Assert disbursements created
@@ -903,24 +844,19 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     expect(createdDisbursements).toHaveLength(2);
     const [firstDisbursement, secondDisbursement] = createdDisbursements;
 
-    // Assert coeStatus is set to Completed
-    expect(firstDisbursement.coeStatus).toEqual(COEStatus.completed);
-    expect(secondDisbursement.coeStatus).toEqual(COEStatus.completed);
-
-    // Assert coeUpdatedAt is set to the current time.
-    // Allow a difference of 100 milliseconds between record creation and test assertion.
-    const currentDate = new Date();
-    const precisionInMs = 100;
-    expect(
-      currentDate.getTime() - firstDisbursement.coeUpdatedAt.getTime(),
-    ).toBeLessThanOrEqual(precisionInMs);
-    expect(
-      currentDate.getTime() - secondDisbursement.coeUpdatedAt.getTime(),
-    ).toBeLessThanOrEqual(precisionInMs);
-
-    // Assert that the coeUpdatedBy is set to the systemUser.
-    expect(firstDisbursement.coeUpdatedBy.id).toEqual(systemUser.id);
-    expect(secondDisbursement.coeUpdatedBy.id).toEqual(systemUser.id);
+    // Assert coeStatus is set to 'Completed ', coeUpdatedAt is set to now and coeUpdatedBy is set to system user.
+    expect(firstDisbursement).toEqual({
+      id: expect.any(Number),
+      coeStatus: COEStatus.completed,
+      coeUpdatedAt: now,
+      coeUpdatedBy: { id: systemUser.id },
+    });
+    expect(secondDisbursement).toEqual({
+      id: expect.any(Number),
+      coeStatus: COEStatus.completed,
+      coeUpdatedAt: now,
+      coeUpdatedBy: { id: systemUser.id },
+    });
   });
 });
 
