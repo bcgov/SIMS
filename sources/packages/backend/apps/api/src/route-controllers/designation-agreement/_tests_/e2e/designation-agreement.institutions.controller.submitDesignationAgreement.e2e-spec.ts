@@ -24,6 +24,7 @@ import * as request from "supertest";
 import { FormService } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 import { AppInstitutionsModule } from "../../../../app.institutions.module";
+import { NO_LOCATION_SELECTED_FOR_DESIGNATION } from "../../../../constants/error-code.constants";
 
 describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgreement", () => {
   let app: INestApplication;
@@ -170,6 +171,124 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY);
+  });
+
+  it("Should return an unprocessable entity when no location is selected for designation.", async () => {
+    // Arrange
+    const payload = {
+      dynamicData: {
+        eligibilityOfficers: [],
+        enrolmentOfficers: [],
+        scheduleA: false,
+        scheduleB: false,
+        scheduleD: false,
+        legalAuthorityName: "SIMS COLLF",
+        legalAuthorityEmailAddress: "test@gov.bc.ca",
+        agreementAccepted: false,
+      },
+      locations: [
+        {
+          locationId: collegeFLocation.id,
+          requestForDesignation: false,
+        },
+      ],
+    };
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+    );
+    const endpoint = "/institutions/designation-agreement";
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "At least one location must be selected for designation.",
+        errorType: NO_LOCATION_SELECTED_FOR_DESIGNATION,
+      });
+  });
+
+  it("Should return an unprocessable entity when all locations have requestForDesignation set to false.", async () => {
+    // Arrange
+    const payload = {
+      dynamicData: {
+        eligibilityOfficers: [],
+        enrolmentOfficers: [],
+        scheduleA: false,
+        scheduleB: false,
+        scheduleD: false,
+        legalAuthorityName: "SIMS COLLF",
+        legalAuthorityEmailAddress: "test@gov.bc.ca",
+        agreementAccepted: false,
+      },
+      locations: [
+        {
+          locationId: collegeFLocation.id,
+          requestForDesignation: false,
+        },
+        {
+          locationId: collegeFLocation.id,
+          requestForDesignation: false,
+        },
+      ],
+    };
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+    );
+    const endpoint = "/institutions/designation-agreement";
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "At least one location must be selected for designation.",
+        errorType: NO_LOCATION_SELECTED_FOR_DESIGNATION,
+      });
+  });
+
+  it("Should return forbidden when user attempts to submit designation for an unauthorized location.", async () => {
+    // Arrange
+    const payload = {
+      dynamicData: {
+        eligibilityOfficers: [],
+        enrolmentOfficers: [],
+        scheduleA: false,
+        scheduleB: false,
+        scheduleD: false,
+        legalAuthorityName: "SIMS COLLF",
+        legalAuthorityEmailAddress: "test@gov.bc.ca",
+        agreementAccepted: false,
+      },
+      locations: [
+        {
+          // Using College C location with College F user token.
+          locationId: collegeCLocation.id,
+          requestForDesignation: true,
+        },
+      ],
+    };
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+    );
+    const endpoint = "/institutions/designation-agreement";
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "One or more locations provided do not belong to designation institution.",
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
   });
 
   afterAll(async () => {

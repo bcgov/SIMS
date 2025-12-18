@@ -28,6 +28,7 @@ import {
 } from "./models/designation-agreement.dto";
 import { InstitutionUserRoles } from "../../auth/user-types.enum";
 import { FormNames } from "../../services/form/constants";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { DesignationAgreementControllerService } from "./designation-agreement.controller.service";
 import {
   ApiBadRequestResponse,
@@ -36,8 +37,8 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { ClientTypeBaseRoute } from "../../types";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { NO_LOCATION_SELECTED_FOR_DESIGNATION } from "../../constants";
 
 /***
  * Designation agreement dedicated controller for Institution.
@@ -75,6 +76,10 @@ export class DesignationAgreementInstitutionsController extends BaseController {
     description:
       "Your institution already has one pending designation request; you cannot submit another one until the first has been approved or denied.",
   })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "One or more locations provided do not belong to designation institution.",
+  })
   async submitDesignationAgreement(
     @UserToken() userToken: IInstitutionUserToken,
     @Body() payload: SubmitDesignationAgreementAPIInDTO,
@@ -89,12 +94,36 @@ export class DesignationAgreementInstitutionsController extends BaseController {
       );
     }
 
+    // Validate that all locations in the payload are part of the authorized for the user.
+    const authorizedLocationsIds = userToken.authorizations.getLocationsIds();
+    const unauthorizedLocation = payload.locations.some(
+      (location) => !authorizedLocationsIds.includes(location.locationId),
+    );
+    if (unauthorizedLocation) {
+      throw new UnprocessableEntityException(
+        "One or more locations provided do not belong to designation institution.",
+      );
+    }
+
     // Check if institution is private and append it to the payload.
     const { institutionType } =
       await this.institutionService.getInstitutionTypeById(
         userToken.authorizations.institutionId,
       );
     payload.isBCPrivate = institutionType.isBCPrivate;
+
+    // Validate that at least one location is selected for designation.
+    const hasSelectedLocation = payload.locations.some(
+      (location) => location.requestForDesignation,
+    );
+    if (!hasSelectedLocation) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "At least one location must be selected for designation.",
+          NO_LOCATION_SELECTED_FOR_DESIGNATION,
+        ),
+      );
+    }
 
     // Validate the dynamic data submission.
     const submissionResult = await this.formService.dryRunSubmission(
