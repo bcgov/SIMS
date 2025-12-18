@@ -229,4 +229,8 @@ export enum NotificationMessageType {
    * Parent Information Required From Student Notification.
    */
   ParentInformationRequiredFromStudentNotification = 33,
+  /**
+   * Scholastic Standing Reversal Notification.
+   */
+  ScholasticStandingReversalNotification = 34,
 }

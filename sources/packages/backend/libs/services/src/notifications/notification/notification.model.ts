@@ -225,3 +225,11 @@ export interface StudentSecondDisbursementNotification {
   lastName: string;
   email: string;
 }
+
+export interface ScholasticStandingReversalNotification {
+  givenNames: string;
+  lastName: string;
+  toAddress: string;
+  userId: number;
+  applicationNumber: string;
+}

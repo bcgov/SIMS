@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { NoteSharedService } from "@sims/services";
+import { NoteSharedService, NotificationActionsService } from "@sims/services";
 import {
   Application,
   AssessmentTriggerType,
@@ -31,6 +31,7 @@ export class ScholasticStandingReversalService {
     @InjectRepository(StudentScholasticStanding)
     private readonly scholasticStandingRepo: Repository<StudentScholasticStanding>,
     private readonly noteSharedService: NoteSharedService,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {}
 
   /**
@@ -49,7 +50,12 @@ export class ScholasticStandingReversalService {
           "scholasticStanding.changeType",
           "scholasticStanding.reversalDate",
           "application.id",
+          "application.applicationNumber",
           "student.id",
+          "user.id",
+          "user.email",
+          "user.firstName",
+          "user.lastName",
           "currentAssessment.id",
           "currentAssessment.triggerType",
           "studentAppeal.id",
@@ -59,6 +65,7 @@ export class ScholasticStandingReversalService {
         ])
         .innerJoin("scholasticStanding.application", "application")
         .innerJoin("application.student", "student")
+        .innerJoin("student.user", "user")
         .innerJoin("application.currentAssessment", "currentAssessment")
         .leftJoin("currentAssessment.studentAppeal", "studentAppeal")
         .leftJoin(
@@ -100,9 +107,8 @@ export class ScholasticStandingReversalService {
     reversalNote: string,
     auditUserId: number,
   ): Promise<void> {
-    const scholasticStanding = await this.getScholasticStanding(
-      scholasticStandingId,
-    );
+    const scholasticStanding =
+      await this.getScholasticStanding(scholasticStandingId);
     if (!scholasticStanding) {
       throw new CustomNamedError(
         `Scholastic standing ${scholasticStandingId} not found.`,
@@ -190,6 +196,17 @@ export class ScholasticStandingReversalService {
           SCHOLASTIC_STANDING_REVERSAL_NOT_UPDATED,
         );
       }
+      // Send an email notification to the student about the reversal.
+      await this.notificationActionsService.saveScholasticStandingReversalNotification(
+        {
+          givenNames: application.student.user.firstName,
+          lastName: application.student.user.lastName,
+          applicationNumber: application.applicationNumber,
+          toAddress: application.student.user.email,
+          userId: application.student.user.id,
+        },
+        transactionalEntityManager,
+      );
     });
   }
 }

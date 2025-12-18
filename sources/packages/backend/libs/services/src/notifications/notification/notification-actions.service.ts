@@ -35,6 +35,7 @@ import {
   StudentSecondDisbursementNotification,
   ParentInformationRequiredFromParentNotification,
   ParentInformationRequiredFromStudentNotification,
+  ScholasticStandingReversalNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { LoggerService } from "@sims/utilities/logger";
@@ -1237,6 +1238,41 @@ export class NotificationActionsService {
     };
     await this.notificationService.saveNotifications(
       [supportingUserInformationNotification],
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Create scholastic standing reversal notification for student.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveScholasticStandingReversalNotification(
+    notification: ScholasticStandingReversalNotification,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId } =
+      await this.notificationMessageService.getNotificationMessageDetails(
+        NotificationMessageType.ScholasticStandingReversalNotification,
+      );
+    const scholasticStandingReversalNotification = {
+      userId: notification.userId,
+      messageType:
+        NotificationMessageType.ScholasticStandingReversalNotification,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          applicationNumber: notification.applicationNumber,
+        },
+      },
+    };
+    await this.notificationService.saveNotifications(
+      [scholasticStandingReversalNotification],
       auditUser.id,
       { entityManager },
     );
