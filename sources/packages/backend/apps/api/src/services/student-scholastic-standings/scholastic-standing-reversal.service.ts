@@ -204,6 +204,7 @@ export class ScholasticStandingReversalService {
           applicationNumber: application.applicationNumber,
           toAddress: application.student.user.email,
           userId: application.student.user.id,
+          scholasticStandingId: scholasticStanding.id,
         },
         transactionalEntityManager,
       );

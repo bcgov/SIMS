@@ -232,4 +232,5 @@ export interface ScholasticStandingReversalNotification {
   toAddress: string;
   userId: number;
   applicationNumber: string;
+  scholasticStandingId: number;
 }
