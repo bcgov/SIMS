@@ -15,7 +15,10 @@ import {
   AssessmentTriggerType,
   COEStatus,
 } from "@sims/sims-db";
-import { DisbursementSaveModel } from "./disbursement-schedule.models";
+import {
+  DisbursementSaveModel,
+  TotalDisbursedAwards,
+} from "./disbursement-schedule.models";
 import { CustomNamedError, MIN_CANADA_LOAN_OVERAWARD } from "@sims/utilities";
 import {
   ASSESSMENT_NOT_FOUND,
@@ -412,7 +415,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     studentId: number,
     applicationNumber: string,
     entityManager: EntityManager,
-  ) {
+  ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     // Get all pending awards that must be cancelled.
     const pendingDisbursements = await this.getDisbursementsForOverawards(
@@ -439,24 +442,24 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
   /**
    * Sum all the disbursed Canada/BC loans and grants per loan/grant value code.
    * The result object will be as the one in the example below
-   * where CSLF and BCSL are the valueCode in the disbursement value.
-   * @param studentId student id.
+   * where CSLF, BCSL, CSGP, and BGPD are the valueCode in the disbursement value.
+   * @param studentId student ID.
    * @param applicationNumber application number to have the money already disbursed calculated.
    * @param entityManager used to execute the commands in the same transaction.
-   * @returns sum of all the disbursed Canada/BC loans (CSLF, CSPT, BCSL).
+   * @returns sum of all the disbursed Canada/BC loans and grants.
    * @example
    * {
-   *    CSLF: 5532,
-   *    BCSL: 1256,
-   *    CSGP: 5555,
-   *    BGPD: 1234
+   *    CSLF: {overawardAmount: 200, effectiveAmount: 1056, totalDisbursed: 1256},
+   *    BCSL: {overawardAmount: 100, effectiveAmount: 1156, totalDisbursed: 1256},
+   *    CSGP: {overawardAmount: 300, effectiveAmount: 5255, totalDisbursed: 5555},
+   *    BGPD: {overawardAmount: 234, effectiveAmount: 1000, totalDisbursed: 1234}
    * }
    */
-  private async sumDisbursedValuesPerValueCode(
+  async sumDisbursedValuesPerValueCode(
     studentId: number,
     applicationNumber: string,
     entityManager: EntityManager,
-  ): Promise<Record<string, number>> {
+  ): Promise<TotalDisbursedAwards> {
     // Get ready to send or sent (disbursed) values to know the amount that the student already received.
     const disbursementSchedules = await this.getDisbursementsForOverawards(
       studentId,
@@ -464,13 +467,12 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       DISBURSED_STATUSES,
       entityManager,
     );
-
-    const totalPerValueCode: Record<string, number> = {};
+    const totalPerValueCode: TotalDisbursedAwards = {};
     // While calculating the total amount paid to the student, the overawardAmountSubtracted is added to the
     // effectiveAmount because it should be considered part of what the student received.
     // The overawardAmountSubtracted is money that the student is being paid but before e-Cert generation
     // it is used to deduct student debt, and the deduction is made with "student money".
-    disbursementSchedules
+    const disbursementValues = disbursementSchedules
       .filter((disbursementSchedule) =>
         DISBURSED_STATUSES.includes(
           disbursementSchedule.disbursementScheduleStatus,
@@ -478,13 +480,20 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       )
       .flatMap(
         (disbursementSchedule) => disbursementSchedule.disbursementValues,
-      )
-      .forEach((disbursementValue) => {
-        totalPerValueCode[disbursementValue.valueCode] =
-          (totalPerValueCode[disbursementValue.valueCode] ?? 0) +
-          (disbursementValue.overawardAmountSubtracted ?? 0) +
-          (disbursementValue.effectiveAmount ?? 0);
+      );
+    for (const disbursementValue of disbursementValues) {
+      const totalAward = (totalPerValueCode[disbursementValue.valueCode] ??= {
+        overawardAmount: 0,
+        effectiveAmount: 0,
+        totalDisbursed: 0,
       });
+      totalAward.overawardAmount +=
+        disbursementValue.overawardAmountSubtracted ?? 0;
+      totalAward.effectiveAmount += disbursementValue.effectiveAmount ?? 0;
+      totalAward.totalDisbursed +=
+        disbursementValue.overawardAmountSubtracted +
+        disbursementValue.effectiveAmount;
+    }
     return totalPerValueCode;
   }
 
@@ -502,7 +511,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    */
   private applyGrantsAlreadyDisbursedValues(
     disbursementSchedules: DisbursementSchedule[],
-    totalAlreadyDisbursedValues: Record<string, number>,
+    totalAlreadyDisbursedValues: TotalDisbursedAwards,
   ): void {
     const grantsAwards = this.getAwardsByAwardType(
       disbursementSchedules,
@@ -516,7 +525,8 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
         (grantAward) => grantAward.valueCode === valueCode,
       );
       // Total value already received by the student for this grant for this application.
-      const alreadyDisbursed = totalAlreadyDisbursedValues[valueCode] ?? 0;
+      const alreadyDisbursed =
+        totalAlreadyDisbursedValues[valueCode]?.totalDisbursed ?? 0;
       // Subtract the debt from the current grant in the current assessment.
       this.subtractPreviousDisbursementDebit(grants, alreadyDisbursed);
       // If there is some remaining student debit for grants it will be just
@@ -542,7 +552,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     assessmentId: number,
     studentId: number,
     disbursementSchedules: DisbursementSchedule[],
-    totalAlreadyDisbursedValues: Record<string, number>,
+    totalAlreadyDisbursedValues: TotalDisbursedAwards,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
@@ -561,7 +571,8 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
         (loanAward) => loanAward.valueCode === valueCode,
       );
       // Total value already received by the student for this loan for this application.
-      const alreadyDisbursed = totalAlreadyDisbursedValues[valueCode] ?? 0;
+      const alreadyDisbursed =
+        totalAlreadyDisbursedValues[valueCode]?.totalDisbursed ?? 0;
       // Subtract the debit from the current awards in the current assessment.
       const remainingStudentDebit = this.subtractPreviousDisbursementDebit(
         loans,
