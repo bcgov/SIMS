@@ -4,6 +4,7 @@ import {
   DisbursementOverawardService,
   DisbursementScheduleSharedService,
   SystemUsersService,
+  TotalDisbursedAwards,
 } from "@sims/services";
 import {
   DisbursementValue,
@@ -21,7 +22,7 @@ import { shouldStopBCFunding } from "./e-cert-steps-utils";
  * Check overaward balances and apply award credit or deduction if needed.
  */
 @Injectable()
-export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
+export class ApplyOverawardsBalanceStep implements ECertProcessStep {
   constructor(
     private readonly disbursementOverawardService: DisbursementOverawardService,
     private readonly disbursementScheduleSharedService: DisbursementScheduleSharedService,
@@ -86,6 +87,7 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
         LOAN_TYPES.includes(award.valueType) &&
         !shouldStopBCFunding(eCertDisbursement, award),
     );
+    let totalDisbursedValues: TotalDisbursedAwards | null = null;
     for (const loan of loanAwards) {
       // Total overaward balance for the student for this particular award.
       const overawardBalance = studentOverawardBalance[loan.valueCode] ?? 0;
@@ -94,8 +96,19 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
         continue;
       }
       if (overawardBalance < 0) {
+        if (!totalDisbursedValues) {
+          // Ensure to get the total disbursed values only once per disbursement,
+          // since all awards can be retrieved from the same query.
+          totalDisbursedValues =
+            await this.disbursementScheduleSharedService.sumDisbursedValuesPerValueCode(
+              eCertDisbursement.studentId,
+              eCertDisbursement.applicationNumber,
+              entityManager,
+            );
+        }
         await this.handleStudentOverawardCredit(
           eCertDisbursement,
+          totalDisbursedValues,
           loan,
           overawardBalance,
           entityManager,
@@ -117,24 +130,20 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
    * to the Student and this credit must be given back to the student by adjusting the awards
    * if some overaward was subtracted in a previous disbursement of this application.
    * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param totalDisbursedValues total disbursed values per value code for the application.
    * @param loan specific loan award being adjusted (e.g CSLF, BCSL).
    * @param overawardBalance total overaward balance be deducted.
    * @param entityManager used to execute the commands in the same transaction.
    */
   private async handleStudentOverawardCredit(
     eCertDisbursement: EligibleECertDisbursement,
+    totalDisbursedValues: TotalDisbursedAwards,
     loan: DisbursementValue,
     overawardBalance: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const disbursedValues =
-      await this.disbursementScheduleSharedService.sumDisbursedValuesPerValueCode(
-        eCertDisbursement.studentId,
-        eCertDisbursement.applicationNumber,
-        entityManager,
-      );
-    const disbursedValue = disbursedValues[loan.valueCode];
-    if (!disbursedValue.overawardAmount) {
+    const disbursedValue = totalDisbursedValues[loan.valueCode];
+    if (!disbursedValue?.overawardAmount) {
       // No overaward was subtracted for this award in previous disbursements
       // of this application, so no credit can be applied.
       return;
@@ -149,8 +158,9 @@ export class ApplyOverawardsDeductionsStep implements ECertProcessStep {
       // No credit can be applied.
       return;
     }
-    // Prepare to update the overaward balance with any credit
-    // that was applied to any award on the method addOverawardBalance.
+    // Adjust the loan award by crediting back the overaward amount.
+    loan.overawardAmountSubtracted = -availableCreditAmount;
+    // Update the student overaward balance with the credit applied.
     const disbursementOverawardRepo = entityManager.getRepository(
       DisbursementOveraward,
     );

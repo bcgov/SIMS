@@ -30,7 +30,7 @@ import { SystemUserModule } from "@sims/services/system-users";
 import { SFASApplicationService } from "@sims/services/sfas";
 import {
   AddAviationCredentialRestrictionStep,
-  ApplyOverawardsDeductionsStep,
+  ApplyOverawardsBalanceStep,
   ApplyStopBCFundingRestrictionStep,
   AssertLifeTimeMaximumFullTimeStep,
   CalculateEffectiveValueStep,
@@ -81,7 +81,7 @@ import {
     // e-Cert calculation steps.
     ValidateDisbursementFullTimeStep,
     ValidateDisbursementPartTimeStep,
-    ApplyOverawardsDeductionsStep,
+    ApplyOverawardsBalanceStep,
     CalculateEffectiveValueStep,
     ApplyStopBCFundingRestrictionStep,
     AssertLifeTimeMaximumFullTimeStep,

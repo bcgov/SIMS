@@ -14,13 +14,6 @@ export interface DisbursementSaveModel {
 
 /**
  * Total disbursed award information.
- * A disbursed award is an award that was added to an e-Cert
- * and it is considered as paid to the student.
- * During the e-Cert calculation, overawards balances will be considered
- * to adjust the effective amount disbursed to the student.
- * When some awards have overawards, the total disbursed amount
- * considered as paid to the student will be the effective amount (money the student will receive)
- * plus the overaward amount (money the student is repaying to the Ministry).
  */
 export interface TotalDisbursedAward {
   /**
@@ -42,7 +35,14 @@ export interface TotalDisbursedAward {
 }
 
 /**
- * Total disbursed awards information mapped by award code.
+ * Total disbursed awards information.
+ * A disbursed award is an award that was added to an e-Cert
+ * and it is considered as paid to the student.
+ * During the e-Cert calculation, overawards balances will be considered
+ * to adjust the effective amount disbursed to the student.
+ * When some awards have overawards, the total disbursed amount
+ * considered as paid to the student will be the effective amount (money the student will receive)
+ * plus the overaward amount (money the student is repaying to the Ministry).
  */
 export type TotalDisbursedAwards = {
   /**
