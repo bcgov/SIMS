@@ -5,5 +5,4 @@ export interface NotificationMetadata {
   disbursementId?: number;
   applicationNumber?: string;
   assessmentId?: number;
-  scholasticStandingId?: number;
 }

@@ -24,14 +24,12 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   NoteType,
-  NotificationMessageType,
   OfferingStatus,
   OfferingTypes,
   StudentScholasticStandingChangeType,
   User,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
-import { IsNull } from "typeorm";
 
 describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStanding.", () => {
   let app: INestApplication;
@@ -46,29 +44,14 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
     sharedUser = await db.user.save(createFakeUser());
   });
 
-  beforeEach(async () => {
-    await db.notification.update(
-      {
-        dateSent: IsNull(),
-        notificationMessage: {
-          id: NotificationMessageType.ScholasticStandingReversalNotification,
-        },
-      },
-      {
-        dateSent: new Date(),
-      },
-    );
-  });
-
   afterEach(async () => {
     // Reset the current date mock.
     MockDate.reset();
   });
 
   it(
-    "Should reverse an active scholastic standing change and create a student note" +
-      ` when the scholastic standing change type is ${StudentScholasticStandingChangeType.StudentDidNotCompleteProgram}` +
-      " and send an email notification to the student for the same.",
+    "Should reverse an active scholastic standing change, create a student note and send an email notification to the student for the same" +
+      ` when the scholastic standing change type is ${StudentScholasticStandingChangeType.StudentDidNotCompleteProgram}`,
     async () => {
       // Arrange
       // Create an application with a completed status to have a scholastic standing associated with it.
@@ -127,11 +110,6 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
           },
           where: {
             user: { id: application.student.user.id },
-            notificationMessage: {
-              id: NotificationMessageType.ScholasticStandingReversalNotification,
-            },
-            metadata: { scholasticStandingId: scholasticStanding.id },
-            dateSent: IsNull(),
           },
           relations: { notificationMessage: true },
         });

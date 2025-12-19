@@ -227,10 +227,9 @@ export interface StudentSecondDisbursementNotification {
 }
 
 export interface ScholasticStandingReversalNotification {
-  givenNames: string;
+  givenNames?: string;
   lastName: string;
   toAddress: string;
   userId: number;
   applicationNumber: string;
-  scholasticStandingId: number;
 }

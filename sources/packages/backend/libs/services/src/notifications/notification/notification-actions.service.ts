@@ -1270,7 +1270,6 @@ export class NotificationActionsService {
           applicationNumber: notification.applicationNumber,
         },
       },
-      metadata: { scholasticStandingId: notification.scholasticStandingId },
     };
     await this.notificationService.saveNotifications(
       [scholasticStandingReversalNotification],
