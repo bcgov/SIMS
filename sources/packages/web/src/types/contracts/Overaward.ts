@@ -26,3 +26,8 @@ export enum DisbursementOverawardOriginType {
    */
   AwardRejectedDeducted = "Award rejected deducted",
 }
+
+export enum AddRemoveOverawardType {
+  Add = "Add",
+  Remove = "Remove",
+}

@@ -1,11 +1,10 @@
 <template>
   <v-form ref="addManualOverawardForm">
-    <modal-dialog-base title="Add manual record" :showDialog="showDialog">
+    <modal-dialog-base :title="title" :show-dialog="showDialog">
       <template #content>
         <error-summary :errors="addManualOverawardForm.errors" />
         <p class="label-value">
-          Add a record to capture that the student paid back their loans through
-          the National Student Loans Service Centre (NSLSC).
+          {{ description }}
         </p>
         <v-select
           label="Award"
@@ -17,7 +16,6 @@
         />
         <v-text-field
           hide-details="auto"
-          hint="You can also include a negative value to remove a data entry error (e.g. -200)"
           persistent-hint
           density="compact"
           label="Add the dollar amount"
@@ -26,13 +24,13 @@
           type="number"
           prefix="$"
           :rules="[
-            (v) => checkNullOrEmptyRule(v, 'Overaward deduction amount'),
+            (v) => checkNullOrEmptyRule(v, 'Overaward amount'),
             (v) =>
               numberRangeRule(
                 v,
-                -MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
+                0,
                 MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
-                'Overaward deduction amount',
+                'Overaward amount',
                 formatCurrency,
               ),
           ]"
@@ -51,10 +49,10 @@
         <check-permission-role :role="allowedRole">
           <template #="{ notAllowed }">
             <footer-buttons
-              primaryLabel="Add record now"
-              @secondaryClick="cancel"
-              @primaryClick="submit"
-              :disablePrimaryButton="notAllowed"
+              primary-label="Add record now"
+              @secondary-click="cancel"
+              @primary-click="submit"
+              :disable-primary-button="notAllowed"
             />
           </template>
         </check-permission-role>
@@ -63,9 +61,9 @@
   </v-form>
 </template>
 <script lang="ts">
-import { PropType, ref, reactive, defineComponent } from "vue";
+import { PropType, ref, reactive, defineComponent, computed } from "vue";
 import { useModalDialog, useRules, useFormatters } from "@/composables";
-import { Role, VForm } from "@/types";
+import { AddRemoveOverawardType, Role, VForm } from "@/types";
 import { OverawardManualRecordAPIInDTO } from "@/services/http/dto";
 import { BannerTypes } from "@/types/contracts/Banner";
 import {
@@ -85,8 +83,12 @@ export default defineComponent({
       type: String as PropType<Role>,
       required: true,
     },
+    addRemoveType: {
+      type: String as PropType<AddRemoveOverawardType>,
+      required: true,
+    },
   },
-  setup() {
+  setup(props) {
     const { numberRangeRule, checkNullOrEmptyRule, checkNotesLengthRule } =
       useRules();
     const { formatCurrency } = useFormatters();
@@ -114,6 +116,7 @@ export default defineComponent({
       // Copying the payload, as reset is making the formModel properties null.
       const payload = { ...formModel };
       resolvePromise(payload);
+      console.log("payload", payload);
       addManualOverawardForm.value.reset();
     };
 
@@ -122,6 +125,13 @@ export default defineComponent({
       addManualOverawardForm.value.resetValidation();
       resolvePromise(false);
     };
+
+    const title = computed(() => `${props.addRemoveType} overawards`);
+    const description = computed(() => {
+      return props.addRemoveType === AddRemoveOverawardType.Add
+        ? "Add a record to capture that the student owes money on their loans."
+        : " Add a record to capture that the student paid back their loans through the National Student Loans Service Centre (NSLSC).";
+    });
 
     return {
       showDialog,
@@ -137,6 +147,8 @@ export default defineComponent({
       formatCurrency,
       awardTypeItems,
       MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
+      title,
+      description,
     };
   },
 });

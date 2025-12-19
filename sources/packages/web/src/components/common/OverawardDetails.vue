@@ -1,76 +1,43 @@
 <template>
   <body-header-container :enable-card-view="true">
     <template #header>
-      <body-header
-        title="Overawards"
-        sub-title="Overaward amounts generated due to application reassessments"
-      />
-    </template>
-    <content-group>
-      <toggle-content
-        :toggled="!overawards.length"
-        message="No overawards found."
-      >
-        <v-data-table
-          :headers="OverawardsHeaders"
-          :items="overawards"
-          :items-per-page="DEFAULT_PAGE_LIMIT"
-          :items-per-page-options="ITEMS_PER_PAGE"
-          :mobile="isMobile"
-        >
-          <template #[`item.dateAdded`]="{ item }">
-            {{ formatDateAdded(item) }}
-          </template>
-          <template #[`item.applicationNumber`]="{ item }">
-            {{ emptyStringFiller(item.applicationNumber) }}
-          </template>
-          <template #[`item.overawardOrigin`]="{ item }">
-            {{ item.overawardOrigin }}
-          </template>
-          <template #[`item.assessmentTriggerType`]="{ item }">
-            {{ emptyStringFiller(item.assessmentTriggerType) }}
-          </template>
-          <template #[`item.awardValueCode`]="{ item }">
-            {{ item.awardValueCode }}
-          </template>
-          <template #[`item.overawardValue`]="{ item }">
-            {{ formatCurrency(item.overawardValue) }}
-          </template>
-        </v-data-table>
-      </toggle-content>
-    </content-group>
-  </body-header-container>
-  <body-header-container :enable-card-view="true">
-    <template #header>
-      <body-header
-        title="Overaward deductions"
-        sub-title="History of money that was deducted from one or more applications to pay back what is owed"
-      >
-        <template #actions v-if="allowManualOverawardDeduction">
+      <body-header title="Overaward adjustments">
+        <template #actions v-if="allowManualOveraward">
           <check-permission-role :role="Role.StudentAddOverawardManual">
             <template #="{ notAllowed }">
-              <v-btn
-                class="ml-2 float-right"
-                color="primary"
-                :disabled="notAllowed"
-                prepend-icon="fa:fa fa-plus-circle"
-                @click="addManualOveraward"
-              >
-                Add manual record
-              </v-btn>
+              <div class="d-flex justify-end">
+                <v-btn
+                  class="ml-2"
+                  color="primary"
+                  :disabled="notAllowed"
+                  prepend-icon="fa:fa fa-plus-circle"
+                  @click="addOverawards"
+                >
+                  Add overawards
+                </v-btn>
+                <v-btn
+                  class="ml-2"
+                  color="primary"
+                  :disabled="notAllowed"
+                  prepend-icon="fa:fa fa-minus-circle"
+                  @click="removeOverawards"
+                >
+                  Remove overawards
+                </v-btn>
+              </div>
             </template>
           </check-permission-role>
-        </template></body-header
-      >
+        </template>
+      </body-header>
     </template>
     <content-group>
       <toggle-content
-        :toggled="!overawardDeductions.length"
-        message="No overaward deductions found."
+        :toggled="!overawardDetails.length"
+        message="No overaward adjustments found."
       >
         <v-data-table
-          :headers="overawardDeductionsHeaders"
-          :items="overawardDeductions"
+          :headers="overawardAdjustmentsHeaders"
+          :items="overawardDetails"
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
           :mobile="isMobile"
@@ -82,7 +49,7 @@
             {{ emptyStringFiller(item.applicationNumber) }}
           </template>
           <template #[`item.overawardOrigin`]="{ item }">
-            {{ item.overawardOrigin }}
+            {{ origin(item) }}
           </template>
           <template #[`item.addedByUser`]="{ item }">
             {{ emptyStringFiller(item.addedByUser) }}
@@ -97,8 +64,9 @@
       </toggle-content>
     </content-group>
 
-    <add-manual-overaward-deduction
-      ref="addManualOverawardDeduction"
+    <add-manual-overaward
+      ref="addManualOveraward"
+      :add-remove-type="addRemoveType"
       :allowed-role="Role.StudentAddOverawardManual"
     />
   </body-header-container>
@@ -111,10 +79,10 @@ import { OverawardService } from "@/services/OverawardService";
 import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
-  DisbursementOverawardOriginType,
   Role,
-  OverawardDeductionsHeaders,
-  OverawardsHeaders,
+  OverawardAdjustmentsHeaders,
+  DisbursementOverawardOriginType,
+  AddRemoveOverawardType,
 } from "@/types";
 import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
 import {
@@ -122,10 +90,10 @@ import {
   OverawardManualRecordAPIInDTO,
 } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import AddManualOverawardDeduction from "@/components/aest/students/modals/AddManualOverawardDeduction.vue";
+import AddManualOveraward from "@/components/aest/students/modals/AddManualOveraward.vue";
 
 export default defineComponent({
-  components: { CheckPermissionRole, AddManualOverawardDeduction },
+  components: { CheckPermissionRole, AddManualOveraward },
   emits: {
     manualOverawardAdded: null,
   },
@@ -140,7 +108,7 @@ export default defineComponent({
       required: false,
       default: false,
     },
-    allowManualOverawardDeduction: {
+    allowManualOveraward: {
       type: Boolean,
       required: false,
       default: false,
@@ -151,45 +119,51 @@ export default defineComponent({
       useFormatters();
     const snackBar = useSnackBar();
     const { mobile: isMobile } = useDisplay();
+    const addRemoveType = ref({} as AddRemoveOverawardType);
 
     const overawardDetails = ref([] as OverawardAPIOutDTO[]);
-    const addManualOverawardDeduction = ref(
+    const addManualOveraward = ref(
       {} as ModalDialog<OverawardManualRecordAPIInDTO | boolean>,
     );
-    const overawardDeductionOriginTypes = new Set([
-      DisbursementOverawardOriginType.AwardDeducted,
-      DisbursementOverawardOriginType.ManualRecord,
-    ]);
-    const overawards = computed(() =>
-      overawardDetails.value.filter(
-        (overaward) =>
-          !overawardDeductionOriginTypes.has(overaward.overawardOrigin),
-      ),
-    );
+    const addOverawards = async () => {
+      addRemoveType.value = AddRemoveOverawardType.Add;
+      const addRemoveOveraward = await addManualOveraward.value.showModal();
+      if (!addRemoveOveraward || typeof addRemoveOveraward === "boolean") {
+        return;
+      }
+      try {
+        await OverawardService.shared.addManualOveraward(
+          props.studentId as number,
+          addRemoveOveraward,
+        );
+        snackBar.success("Overaward added successfully.");
+        context.emit("manualOverawardAdded");
+        await loadOverawardDetails();
+      } catch {
+        snackBar.error("An error happened while adding overaward.");
+      }
+    };
 
-    const overawardDeductions = computed(() =>
-      overawardDetails.value.filter((overaward) =>
-        overawardDeductionOriginTypes.has(overaward.overawardOrigin),
-      ),
-    );
-
-    const addManualOveraward = async () => {
-      const manualOveraward =
-        await addManualOverawardDeduction.value.showModal();
-      if (manualOveraward) {
-        try {
-          await OverawardService.shared.addManualOverawardDeduction(
-            props.studentId as number,
-            manualOveraward as OverawardManualRecordAPIInDTO,
-          );
-          snackBar.success("Overaward deduction added successfully.");
-          context.emit("manualOverawardAdded");
-          await loadOverawardDetails();
-        } catch {
-          snackBar.error(
-            "An error happened while adding manual overaward deduction.",
-          );
-        }
+    const removeOverawards = async () => {
+      addRemoveType.value = AddRemoveOverawardType.Remove;
+      const addRemoveOveraward = await addManualOveraward.value.showModal();
+      if (!addRemoveOveraward || typeof addRemoveOveraward === "boolean") {
+        return;
+      }
+      try {
+        const removeOveraward = {
+          ...addRemoveOveraward,
+          overawardValue: -Math.abs(addRemoveOveraward.overawardValue),
+        };
+        await OverawardService.shared.addManualOveraward(
+          props.studentId as number,
+          removeOveraward,
+        );
+        snackBar.success("Overaward removed successfully.");
+        context.emit("manualOverawardAdded");
+        await loadOverawardDetails();
+      } catch {
+        snackBar.error("An error happened while removing overaward.");
       }
     };
 
@@ -204,13 +178,20 @@ export default defineComponent({
         : dateOnlyLongString(overaward.createdAt);
     };
 
-    const overawardDeductionsHeaders = computed(() => {
+    const overawardAdjustmentsHeaders = computed(() => {
       return props.showAddedBy
-        ? OverawardDeductionsHeaders
-        : OverawardDeductionsHeaders.filter(
+        ? OverawardAdjustmentsHeaders
+        : OverawardAdjustmentsHeaders.filter(
             (header) => header.key !== "addedByUser",
           );
     });
+
+    const origin = (overaward: OverawardAPIOutDTO): string => {
+      return overaward.overawardOrigin ===
+        DisbursementOverawardOriginType.ReassessmentOveraward
+        ? (overaward.assessmentTriggerType ?? "")
+        : overaward.overawardOrigin;
+    };
 
     onMounted(loadOverawardDetails);
 
@@ -218,17 +199,18 @@ export default defineComponent({
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
       dateOnlyLongString,
-      overawards,
-      overawardDeductions,
+      overawardDetails,
       formatCurrency,
       Role,
-      addManualOverawardDeduction,
       addManualOveraward,
+      addRemoveType,
+      addOverawards,
+      removeOverawards,
       emptyStringFiller,
       formatDateAdded,
-      OverawardsHeaders,
-      overawardDeductionsHeaders,
+      overawardAdjustmentsHeaders,
       isMobile,
+      origin,
     };
   },
 });
