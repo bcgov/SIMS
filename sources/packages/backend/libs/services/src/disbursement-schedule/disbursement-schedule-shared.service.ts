@@ -304,6 +304,8 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * @param applicationNumber application number to have the disbursements retrieved.
    * @param status disbursement schedule status.
    * @param entityManager used to execute the commands in the same transaction.
+   * @param options Method options parameters.
+   * - `valueCode`: when provided, only disbursement values with this value code will be retrieved.
    * @returns disbursement schedules relevant to overaward calculation.
    */
   private async getDisbursementsForOverawards(
@@ -311,6 +313,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     applicationNumber: string,
     status: DisbursementScheduleStatus[],
     entityManager: EntityManager,
+    options?: { valueCode?: string },
   ): Promise<DisbursementSchedule[]> {
     const disbursementScheduleRepo =
       entityManager.getRepository(DisbursementSchedule);
@@ -355,6 +358,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
           },
         },
         disbursementScheduleStatus: In(status),
+        disbursementValues: { valueCode: options?.valueCode },
       },
     });
   }
@@ -446,6 +450,8 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * @param studentId student ID.
    * @param applicationNumber application number to have the money already disbursed calculated.
    * @param entityManager used to execute the commands in the same transaction.
+   * @param options Method options parameters.
+   * - `valueCode`: when provided, only disbursement values with this value code will be considered.
    * @returns sum of all the disbursed Canada/BC loans and grants.
    * @example
    * {
@@ -459,6 +465,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     studentId: number,
     applicationNumber: string,
     entityManager: EntityManager,
+    options?: { valueCode?: string },
   ): Promise<TotalDisbursedAwards> {
     // Get ready to send or sent (disbursed) values to know the amount that the student already received.
     const disbursementSchedules = await this.getDisbursementsForOverawards(
@@ -466,6 +473,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       applicationNumber,
       DISBURSED_STATUSES,
       entityManager,
+      options,
     );
     const totalPerValueCode: TotalDisbursedAwards = {};
     // While calculating the total amount paid to the student, the overawardAmountSubtracted is added to the

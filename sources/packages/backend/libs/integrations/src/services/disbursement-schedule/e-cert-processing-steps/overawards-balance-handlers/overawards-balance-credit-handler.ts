@@ -44,13 +44,14 @@ export class OverawardsBalanceCreditHandler extends OverawardsBalanceHandler {
     entityManager: EntityManager,
     log: ProcessSummary,
   ): Promise<void> {
-    const totalDisbursedValues =
+    const loanTotalDisbursedValue =
       await this.disbursementScheduleSharedService.sumDisbursedValuesPerValueCode(
         eCertDisbursement.studentId,
         eCertDisbursement.applicationNumber,
         entityManager,
+        { valueCode: loan.valueCode },
       );
-    const disbursedValue = totalDisbursedValues[loan.valueCode];
+    const disbursedValue = loanTotalDisbursedValue[loan.valueCode];
     if (!disbursedValue?.overawardAmount) {
       // No overaward was subtracted for this award in previous disbursements
       // of this application, so no credit can be applied.
