@@ -30,6 +30,7 @@ import {
   User,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
+import { IsNull } from "typeorm";
 
 describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStanding.", () => {
   let app: INestApplication;
@@ -110,6 +111,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
           },
           where: {
             user: { id: application.student.user.id },
+            dateSent: IsNull(),
           },
           relations: { notificationMessage: true },
         });
