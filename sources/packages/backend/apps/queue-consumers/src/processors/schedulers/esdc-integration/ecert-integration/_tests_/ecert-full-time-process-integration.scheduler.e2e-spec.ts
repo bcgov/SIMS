@@ -36,7 +36,7 @@ import {
   saveFakeStudentRestriction,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
-import { ArrayContains, IsNull, Like, Not } from "typeorm";
+import { ArrayContains, In, IsNull, Like, Not } from "typeorm";
 import {
   createTestingAppModule,
   describeQueueProcessorRootTest,
@@ -360,62 +360,52 @@ describe(
           effectiveAmount: true,
         },
         where: { disbursementSchedule: { id: firstSchedule.id } },
+        order: { valueCode: "ASC" },
       });
-      // Assert CSLF.
-      const hasExpectedCSLF = awards.filter(
-        (award) =>
-          award.valueCode === "CSLF" &&
-          award.disbursedAmountSubtracted === 1000 &&
-          award.overawardAmountSubtracted === 4000 &&
-          award.effectiveAmount === 0,
-      );
-      expect(hasExpectedCSLF.length).toBe(1);
-      // Assert BCSL.
-      const hasExpectedBCSL = awards.filter(
-        (award) =>
-          award.valueCode === "BCSL" &&
-          award.disbursedAmountSubtracted === 500 &&
-          !award.overawardAmountSubtracted &&
-          award.effectiveAmount === 3500,
-      );
-      expect(hasExpectedBCSL.length).toBe(1);
-      // Assert CSGP.
-      const hasExpectedCSGP = awards.filter(
-        (award) =>
-          award.valueCode === "CSGP" &&
-          !award.disbursedAmountSubtracted &&
-          !award.overawardAmountSubtracted &&
-          award.effectiveAmount === 2000,
-      );
-      expect(hasExpectedCSGP.length).toBe(1);
-      // Assert BCAG.
-      const hasExpectedBCAG = awards.filter(
-        (award) =>
-          award.valueCode === "BCAG" &&
-          award.disbursedAmountSubtracted === 500 &&
-          !award.overawardAmountSubtracted &&
-          award.effectiveAmount === 1000,
-      );
-      expect(hasExpectedBCAG.length).toBe(1);
-      // Assert BGPD.
-      const hasExpectedBGPD = awards.filter(
-        (award) =>
-          award.valueCode === "BGPD" &&
-          !award.disbursedAmountSubtracted &&
-          !award.overawardAmountSubtracted &&
-          award.effectiveAmount === 2500,
-      );
-      expect(hasExpectedBGPD.length).toBe(1);
-      // The BC total grant (BCSG) will be generated and
-      // inserted during the e-Cert process.
-      const hasExpectedBCSG = awards.filter(
-        (award) =>
-          award.valueCode === "BCSG" &&
-          !award.disbursedAmountSubtracted &&
-          !award.overawardAmountSubtracted &&
-          award.effectiveAmount === 3500,
-      );
-      expect(hasExpectedBCSG.length).toBe(1);
+      expect(awards).toEqual([
+        {
+          id: expect.any(Number),
+          valueCode: "BCAG",
+          disbursedAmountSubtracted: 500,
+          overawardAmountSubtracted: null,
+          effectiveAmount: 1000,
+        },
+        {
+          id: expect.any(Number),
+          valueCode: "BCSG",
+          disbursedAmountSubtracted: null,
+          overawardAmountSubtracted: null,
+          effectiveAmount: 3500,
+        },
+        {
+          id: expect.any(Number),
+          valueCode: "BCSL",
+          disbursedAmountSubtracted: 500,
+          overawardAmountSubtracted: null,
+          effectiveAmount: 3500,
+        },
+        {
+          id: expect.any(Number),
+          valueCode: "BGPD",
+          disbursedAmountSubtracted: null,
+          overawardAmountSubtracted: null,
+          effectiveAmount: 2500,
+        },
+        {
+          id: expect.any(Number),
+          valueCode: "CSGP",
+          disbursedAmountSubtracted: null,
+          overawardAmountSubtracted: null,
+          effectiveAmount: 2000,
+        },
+        {
+          id: expect.any(Number),
+          valueCode: "CSLF",
+          disbursedAmountSubtracted: 1000,
+          overawardAmountSubtracted: 4000,
+          effectiveAmount: 0,
+        },
+      ]);
     });
 
     it(
@@ -582,26 +572,28 @@ describe(
             overawardAmountSubtracted: true,
             effectiveAmount: true,
           },
-          where: { disbursementSchedule: { id: firstSchedule.id } },
+          where: {
+            disbursementSchedule: { id: firstSchedule.id },
+            valueCode: In(["CSLF", "BCSL"]),
+          },
+          order: { valueCode: "ASC" },
         });
-        // Assert CSLF.
-        const hasExpectedCSLF = awards.filter(
-          (award) =>
-            award.valueCode === "CSLF" &&
-            award.disbursedAmountSubtracted === 5000 &&
-            award.overawardAmountSubtracted === -500 &&
-            award.effectiveAmount === 500,
-        );
-        expect(hasExpectedCSLF.length).toBe(1);
-        // Assert BCSL.
-        const hasExpectedBCSL = awards.filter(
-          (award) =>
-            award.valueCode === "BCSL" &&
-            award.disbursedAmountSubtracted === 4000 &&
-            award.overawardAmountSubtracted === -700 &&
-            award.effectiveAmount === 700,
-        );
-        expect(hasExpectedBCSL.length).toBe(1);
+        expect(awards).toEqual([
+          {
+            id: expect.any(Number),
+            valueCode: "BCSL",
+            disbursedAmountSubtracted: 4000,
+            overawardAmountSubtracted: -700,
+            effectiveAmount: 700,
+          },
+          {
+            id: expect.any(Number),
+            valueCode: "CSLF",
+            disbursedAmountSubtracted: 5000,
+            overawardAmountSubtracted: -500,
+            effectiveAmount: 500,
+          },
+        ]);
       },
     );
 
@@ -705,9 +697,8 @@ describe(
           },
         });
         expect(createdOverawards).toBe(false);
-        // Assert awards
-        // Select all awards generated for the schedule.
-        const awards = await db.disbursementValue.find({
+        // Assert CSLF award.
+        const award = await db.disbursementValue.findOne({
           select: {
             id: true,
             valueCode: true,
@@ -715,17 +706,19 @@ describe(
             overawardAmountSubtracted: true,
             effectiveAmount: true,
           },
-          where: { disbursementSchedule: { id: firstSchedule.id } },
+          where: {
+            disbursementSchedule: { id: firstSchedule.id },
+            valueCode: "CSLF",
+          },
         });
         // Assert CSLF.
-        const hasExpectedCSLF = awards.filter(
-          (award) =>
-            award.valueCode === "CSLF" &&
-            award.disbursedAmountSubtracted === 1000 &&
-            !award.overawardAmountSubtracted &&
-            award.effectiveAmount === 0,
-        );
-        expect(hasExpectedCSLF.length).toBe(1);
+        expect(award).toEqual({
+          id: expect.any(Number),
+          valueCode: "CSLF",
+          disbursedAmountSubtracted: 1000,
+          overawardAmountSubtracted: null,
+          effectiveAmount: 0,
+        });
       },
     );
 
