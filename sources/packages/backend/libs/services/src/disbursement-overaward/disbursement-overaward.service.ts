@@ -133,8 +133,8 @@ export class DisbursementOverawardService {
   /**
    * Add a manual overaward.
    * @param awardValueCode award value code.
-   * @param overawardValue overaward deducted value.
-   * @param studentId student for whom overaward is deducted.
+   * @param overawardValue overaward value. Overaward value can be negative or positive.
+   * @param studentId student for whom overaward is applied.
    * @param overawardNotes notes for the manual overaward.
    * @param auditUserId user who added overaward deduction.
    * @returns overaward record created.

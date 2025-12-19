@@ -63,7 +63,7 @@
 <script lang="ts">
 import { PropType, ref, reactive, defineComponent, computed } from "vue";
 import { useModalDialog, useRules, useFormatters } from "@/composables";
-import { AddSubtractOverawardType, Role, VForm } from "@/types";
+import { Role, VForm } from "@/types";
 import { OverawardManualRecordAPIInDTO } from "@/services/http/dto";
 import { BannerTypes } from "@/types/contracts/Banner";
 import {
@@ -85,8 +85,8 @@ export default defineComponent({
       type: String as PropType<Role>,
       required: true,
     },
-    addSubtractType: {
-      type: String as PropType<AddSubtractOverawardType>,
+    isAddition: {
+      type: Boolean,
       required: true,
     },
   },
@@ -128,11 +128,15 @@ export default defineComponent({
       resolvePromise(false);
     };
 
-    const title = computed(() => `${props.addSubtractType} overawards`);
+    const title = computed(
+      () => `${props.isAddition ? "Add" : "Subtract"} overawards`,
+    );
     const description = computed(() => {
-      return props.addSubtractType === AddSubtractOverawardType.Add
-        ? "Add a record to capture that the student owes money on their loans."
-        : " Add a record to capture that the student paid back their loans through the National Student Loans Service Centre (NSLSC).";
+      return `Add a record to capture that the student ${
+        props.isAddition
+          ? "owes money on their loans."
+          : "paid back their loans through the National Student Loans Service Centre (NSLSC)."
+      }`;
     });
 
     return {

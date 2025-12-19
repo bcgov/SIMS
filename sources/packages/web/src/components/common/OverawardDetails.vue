@@ -13,7 +13,7 @@
                   prepend-icon="fa:fa fa-plus-circle"
                   @click="addOverawards"
                 >
-                  Add overawards
+                  Add Overawards
                 </v-btn>
                 <v-btn
                   class="ml-2"
@@ -22,7 +22,7 @@
                   prepend-icon="fa:fa fa-minus-circle"
                   @click="subtractOverawards"
                 >
-                  Subtract overawards
+                  Subtract Overawards
                 </v-btn>
               </div>
             </template>
@@ -66,7 +66,7 @@
 
     <add-manual-overaward
       ref="addManualOveraward"
-      :add-subtract-type="addSubtractType"
+      :is-addition="isAddition"
       :allowed-role="Role.StudentAddOverawardManual"
     />
   </body-header-container>
@@ -82,7 +82,6 @@ import {
   Role,
   OverawardAdjustmentsHeaders,
   DisbursementOverawardOriginType,
-  AddSubtractOverawardType,
 } from "@/types";
 import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
 import {
@@ -119,14 +118,14 @@ export default defineComponent({
       useFormatters();
     const snackBar = useSnackBar();
     const { mobile: isMobile } = useDisplay();
-    const addSubtractType = ref({} as AddSubtractOverawardType);
+    const isAddition = ref();
 
     const overawardDetails = ref([] as OverawardAPIOutDTO[]);
     const addManualOveraward = ref(
       {} as ModalDialog<OverawardManualRecordAPIInDTO | boolean>,
     );
     const addOverawards = async () => {
-      addSubtractType.value = AddSubtractOverawardType.Add;
+      isAddition.value = true;
       const manualOveraward = await addManualOveraward.value.showModal();
       if (!manualOveraward || typeof manualOveraward === "boolean") {
         return;
@@ -145,7 +144,7 @@ export default defineComponent({
     };
 
     const subtractOverawards = async () => {
-      addSubtractType.value = AddSubtractOverawardType.Subtract;
+      isAddition.value = false;
       const manualOveraward = await addManualOveraward.value.showModal();
       if (!manualOveraward || typeof manualOveraward === "boolean") {
         return;
@@ -203,13 +202,13 @@ export default defineComponent({
       formatCurrency,
       Role,
       addManualOveraward,
-      addSubtractType,
       addOverawards,
       subtractOverawards,
       emptyStringFiller,
       formatDateAdded,
       overawardAdjustmentsHeaders,
       isMobile,
+      isAddition,
       origin,
     };
   },
