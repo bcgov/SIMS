@@ -426,6 +426,7 @@ describe(
           ),
         );
         // Created a Federal and Provincial loans.
+        // This assessment is sent and will not have its values updated.
         const originalAssessmentDisbursementValues = [
           createFakeDisbursementValue(
             DisbursementValueType.CanadaLoan,
@@ -448,6 +449,7 @@ describe(
             },
           ),
         ];
+        // This will be the current assessment and it will have overaward credits applied.
         const reassessmentDisbursementValues = [
           createFakeDisbursementValue(
             DisbursementValueType.CanadaLoan,

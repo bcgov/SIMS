@@ -10,7 +10,7 @@ import {
 } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { EligibleECertDisbursement } from "../../disbursement-schedule.models";
-import { OverawardsBalanceHandler } from "@sims/integrations/services/disbursement-schedule/e-cert-processing-steps/overawards-balance-handlers/overawards-balance-handler";
+import { OverawardsBalanceHandler } from "@sims/integrations/services/disbursement-schedule/e-cert-processing-steps";
 import { Injectable } from "@nestjs/common";
 
 /**
