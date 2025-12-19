@@ -36,6 +36,8 @@ import {
   CalculateEffectiveValueStep,
   CalculateTuitionRemittanceEffectiveAmountStep,
   CreateBCTotalGrantsStep,
+  OverawardsBalanceCreditHandler,
+  OverawardsBalanceDebitHandler,
   PersistCalculationsStep,
   RestrictionBypassesResolutionStep,
   ValidateDisbursementFullTimeStep,
@@ -81,6 +83,8 @@ import {
     // e-Cert calculation steps.
     ValidateDisbursementFullTimeStep,
     ValidateDisbursementPartTimeStep,
+    OverawardsBalanceCreditHandler,
+    OverawardsBalanceDebitHandler,
     ApplyOverawardsBalanceStep,
     CalculateEffectiveValueStep,
     ApplyStopBCFundingRestrictionStep,
