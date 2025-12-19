@@ -352,6 +352,13 @@ describe(
 
       // Select all awards generated for the schedule.
       const awards = await db.disbursementValue.find({
+        select: {
+          id: true,
+          valueCode: true,
+          disbursedAmountSubtracted: true,
+          overawardAmountSubtracted: true,
+          effectiveAmount: true,
+        },
         where: { disbursementSchedule: { id: firstSchedule.id } },
       });
       // Assert CSLF.
@@ -412,7 +419,7 @@ describe(
     });
 
     it(
-      "Should execute overawards credits and calculate awards effective value, crediting a CSLF and BCSL amounts up to the max awarded amount " +
+      "Should execute overawards credits and calculate awards effective value, crediting a CSLF and BCSL amounts up to the max deducted overaward amount in previous assessments " +
         "when there was a previous deducted CSLF and BCSL overawards for an original assessment, and a negative overaward balance for the reassessment.",
       async () => {
         // Arrange
@@ -568,6 +575,13 @@ describe(
         // Assert awards
         // Select all awards generated for the schedule.
         const awards = await db.disbursementValue.find({
+          select: {
+            id: true,
+            valueCode: true,
+            disbursedAmountSubtracted: true,
+            overawardAmountSubtracted: true,
+            effectiveAmount: true,
+          },
           where: { disbursementSchedule: { id: firstSchedule.id } },
         });
         // Assert CSLF.
@@ -694,6 +708,13 @@ describe(
         // Assert awards
         // Select all awards generated for the schedule.
         const awards = await db.disbursementValue.find({
+          select: {
+            id: true,
+            valueCode: true,
+            disbursedAmountSubtracted: true,
+            overawardAmountSubtracted: true,
+            effectiveAmount: true,
+          },
           where: { disbursementSchedule: { id: firstSchedule.id } },
         });
         // Assert CSLF.
