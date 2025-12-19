@@ -20,9 +20,9 @@
                   color="primary"
                   :disabled="notAllowed"
                   prepend-icon="fa:fa fa-minus-circle"
-                  @click="removeOverawards"
+                  @click="subtractOverawards"
                 >
-                  Remove overawards
+                  Subtract overawards
                 </v-btn>
               </div>
             </template>
@@ -66,7 +66,7 @@
 
     <add-manual-overaward
       ref="addManualOveraward"
-      :add-remove-type="addRemoveType"
+      :add-subtract-type="addSubtractType"
       :allowed-role="Role.StudentAddOverawardManual"
     />
   </body-header-container>
@@ -82,7 +82,7 @@ import {
   Role,
   OverawardAdjustmentsHeaders,
   DisbursementOverawardOriginType,
-  AddRemoveOverawardType,
+  AddSubtractOverawardType,
 } from "@/types";
 import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
 import {
@@ -119,22 +119,22 @@ export default defineComponent({
       useFormatters();
     const snackBar = useSnackBar();
     const { mobile: isMobile } = useDisplay();
-    const addRemoveType = ref({} as AddRemoveOverawardType);
+    const addSubtractType = ref({} as AddSubtractOverawardType);
 
     const overawardDetails = ref([] as OverawardAPIOutDTO[]);
     const addManualOveraward = ref(
       {} as ModalDialog<OverawardManualRecordAPIInDTO | boolean>,
     );
     const addOverawards = async () => {
-      addRemoveType.value = AddRemoveOverawardType.Add;
-      const addRemoveOveraward = await addManualOveraward.value.showModal();
-      if (!addRemoveOveraward || typeof addRemoveOveraward === "boolean") {
+      addSubtractType.value = AddSubtractOverawardType.Add;
+      const manualOveraward = await addManualOveraward.value.showModal();
+      if (!manualOveraward || typeof manualOveraward === "boolean") {
         return;
       }
       try {
         await OverawardService.shared.addManualOveraward(
           props.studentId as number,
-          addRemoveOveraward,
+          manualOveraward,
         );
         snackBar.success("Overaward added successfully.");
         context.emit("manualOverawardAdded");
@@ -144,20 +144,20 @@ export default defineComponent({
       }
     };
 
-    const removeOverawards = async () => {
-      addRemoveType.value = AddRemoveOverawardType.Remove;
-      const addRemoveOveraward = await addManualOveraward.value.showModal();
-      if (!addRemoveOveraward || typeof addRemoveOveraward === "boolean") {
+    const subtractOverawards = async () => {
+      addSubtractType.value = AddSubtractOverawardType.Subtract;
+      const manualOveraward = await addManualOveraward.value.showModal();
+      if (!manualOveraward || typeof manualOveraward === "boolean") {
         return;
       }
       try {
-        const removeOveraward = {
-          ...addRemoveOveraward,
-          overawardValue: -Math.abs(addRemoveOveraward.overawardValue),
+        const subtractOveraward = {
+          ...manualOveraward,
+          overawardValue: -manualOveraward.overawardValue,
         };
         await OverawardService.shared.addManualOveraward(
           props.studentId as number,
-          removeOveraward,
+          subtractOveraward,
         );
         snackBar.success("Overaward removed successfully.");
         context.emit("manualOverawardAdded");
@@ -203,9 +203,9 @@ export default defineComponent({
       formatCurrency,
       Role,
       addManualOveraward,
-      addRemoveType,
+      addSubtractType,
       addOverawards,
-      removeOverawards,
+      subtractOverawards,
       emptyStringFiller,
       formatDateAdded,
       overawardAdjustmentsHeaders,

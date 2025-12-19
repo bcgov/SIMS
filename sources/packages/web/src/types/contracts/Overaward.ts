@@ -27,7 +27,13 @@ export enum DisbursementOverawardOriginType {
   AwardRejectedDeducted = "Award rejected deducted",
 }
 
-export enum AddRemoveOverawardType {
+export enum AddSubtractOverawardType {
+  /**
+   * Add an overaward value, bringing the balance up.
+   */
   Add = "Add",
-  Remove = "Remove",
+  /**
+   * Subtract an overaward value, bringing the balance up.
+   */
+  Subtract = "Subtract",
 }

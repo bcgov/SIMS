@@ -12,7 +12,7 @@
           :items="awardTypeItems"
           v-model="formModel.awardValueCode"
           variant="outlined"
-          :rules="[(v) => checkNullOrEmptyRule(v, 'Award Type')]"
+          :rules="[(v) => checkNullOrEmptyRule(v, 'Award')]"
         />
         <v-text-field
           hide-details="auto"
@@ -28,8 +28,8 @@
             (v) =>
               numberRangeRule(
                 v,
-                0,
-                MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
+                MINIMUM_AWARD_AMOUNT,
+                MAXIMUM_AWARD_AMOUNT,
                 'Overaward amount',
                 formatCurrency,
               ),
@@ -63,7 +63,7 @@
 <script lang="ts">
 import { PropType, ref, reactive, defineComponent, computed } from "vue";
 import { useModalDialog, useRules, useFormatters } from "@/composables";
-import { AddRemoveOverawardType, Role, VForm } from "@/types";
+import { AddSubtractOverawardType, Role, VForm } from "@/types";
 import { OverawardManualRecordAPIInDTO } from "@/services/http/dto";
 import { BannerTypes } from "@/types/contracts/Banner";
 import {
@@ -71,10 +71,12 @@ import {
   FullTimeAwardTypes,
   PartTimeAwardTypes,
 } from "@/constants/award-constants";
-import { MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE } from "@/constants/system-constants";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+
+const MINIMUM_AWARD_AMOUNT = 0.01;
+const MAXIMUM_AWARD_AMOUNT = 100000;
 
 export default defineComponent({
   components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
@@ -83,8 +85,8 @@ export default defineComponent({
       type: String as PropType<Role>,
       required: true,
     },
-    addRemoveType: {
-      type: String as PropType<AddRemoveOverawardType>,
+    addSubtractType: {
+      type: String as PropType<AddSubtractOverawardType>,
       required: true,
     },
   },
@@ -126,9 +128,9 @@ export default defineComponent({
       resolvePromise(false);
     };
 
-    const title = computed(() => `${props.addRemoveType} overawards`);
+    const title = computed(() => `${props.addSubtractType} overawards`);
     const description = computed(() => {
-      return props.addRemoveType === AddRemoveOverawardType.Add
+      return props.addSubtractType === AddSubtractOverawardType.Add
         ? "Add a record to capture that the student owes money on their loans."
         : " Add a record to capture that the student paid back their loans through the National Student Loans Service Centre (NSLSC).";
     });
@@ -146,9 +148,10 @@ export default defineComponent({
       checkNotesLengthRule,
       formatCurrency,
       awardTypeItems,
-      MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
       title,
       description,
+      MINIMUM_AWARD_AMOUNT,
+      MAXIMUM_AWARD_AMOUNT,
     };
   },
 });
