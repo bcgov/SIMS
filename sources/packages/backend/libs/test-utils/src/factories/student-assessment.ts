@@ -85,11 +85,29 @@ export function createFakeStudentAssessment(
   return assessment;
 }
 
+/**
+ * Saves a new assessment associated with an application.
+ * Useful to create scenarios where an application has multiple assessments.
+ * @param db E2E data sources.
+ * @param relations Assessment relations.
+ * - `application` Application to which the assessment will be associated.
+ * - `auditUser` User that created the record. If it is not provided,
+ * the user from the application will be used, if available.
+ * - `offering` Offering to which the assessment will be associated. If not provided,
+ * the offering from the application current assessment will be used.
+ * @param options Additional options.
+ * - `initialValue` Initial values for the assessment.
+ * - `firstDisbursementScheduleInitialValue` Initial values for the first
+ * disbursement schedule to be created along with the assessment.
+ * - `firstDisbursementValues` Disbursement values to be added to the first
+ * disbursement schedule.
+ * @returns The saved student assessment associated with the application.
+ */
 export function saveFakeStudentAssessment(
   db: E2EDataSources,
   relations: {
+    application: Application;
     auditUser?: User;
-    application?: Application;
     offering?: EducationProgramOffering;
   },
   options?: {
@@ -102,7 +120,7 @@ export function saveFakeStudentAssessment(
     auditUser: relations.auditUser ?? relations.application.student.user,
     application: relations.application,
     offering:
-      relations.offering ?? relations.application?.currentAssessment.offering,
+      relations.offering ?? relations.application.currentAssessment.offering,
     ...options?.initialValue,
   });
   assessment.disbursementSchedules = [

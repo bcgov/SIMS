@@ -5,13 +5,13 @@ import {
   DisbursementScheduleSharedService,
   SystemUsersService,
   TotalDisbursedAwards,
+  AwardOverawardBalance,
 } from "@sims/services";
 import {
   DisbursementValue,
   DisbursementOveraward,
   DisbursementOverawardOriginType,
 } from "@sims/sims-db";
-import { AwardOverawardBalance } from "@sims/services/disbursement-overaward/disbursement-overaward.models";
 import { LOAN_TYPES } from "@sims/services/constants";
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { ProcessSummary } from "@sims/utilities/logger";

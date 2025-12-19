@@ -46,7 +46,7 @@ export interface TotalDisbursedAward {
  */
 export type TotalDisbursedAwards = {
   /**
-   * The award code (e.g., CSLF, BCSL, CSGP, and BGPD),
+   * The award code (e.g., CSLF, BCSL, CSGP, BGPD, etc.),
    * and its total disbursed information, if present in
    * any disbursement schedules for the application.
    */
