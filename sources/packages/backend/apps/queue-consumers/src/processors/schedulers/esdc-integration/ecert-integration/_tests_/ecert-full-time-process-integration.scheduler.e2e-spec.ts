@@ -1653,7 +1653,7 @@ describe(
 
     it(
       "Should prevent an e-Cert generation and keep the bypass active when " +
-        `multiple '${RestrictionActionType.StopFullTimeDisbursement}' restrictions exists and only one is bypassed and it is bypassed with behavior '${RestrictionBypassBehaviors.NextDisbursementOnly}'.`,
+        `multiple '${RestrictionActionType.StopFullTimeDisbursement}' restrictions exist and only one is bypassed and it is bypassed with behavior '${RestrictionBypassBehaviors.NextDisbursementOnly}'.`,
       async () => {
         // Arrange
         // Student with valid SIN.

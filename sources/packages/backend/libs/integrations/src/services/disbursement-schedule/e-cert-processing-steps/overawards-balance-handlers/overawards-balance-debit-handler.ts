@@ -22,7 +22,7 @@ export class OverawardsBalanceDebitHandler extends OverawardsBalanceHandler {
 
   /**
    * Handle the overaward debit for a student.
-   * The student has a positive overaward balance, which means that he owns money
+   * The student has a positive overaward balance, which means that he owes money
    * to the Ministry and this debit must be repaid by deducting it
    * from the current award.
    * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.

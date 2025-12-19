@@ -28,7 +28,7 @@ export class OverawardsBalanceCreditHandler extends OverawardsBalanceHandler {
 
   /**
    * Handle the overaward credit for a student.
-   * The student has a negative overaward balance, which means that Ministry owns money
+   * The student has a negative overaward balance, which means that Ministry owes money
    * to the Student and this credit must be given back to the student by adjusting the awards
    * if some overaward was subtracted in a previous disbursement of this application.
    * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
