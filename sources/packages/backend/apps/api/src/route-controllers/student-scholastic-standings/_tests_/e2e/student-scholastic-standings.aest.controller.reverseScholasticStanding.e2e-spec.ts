@@ -30,6 +30,7 @@ import {
   User,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
+import { IsNull } from "typeorm";
 
 describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStanding.", () => {
   let app: INestApplication;
@@ -50,8 +51,8 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
   });
 
   it(
-    "Should reverse an active scholastic standing change and create a student note" +
-      ` when the scholastic standing change type is ${StudentScholasticStandingChangeType.StudentDidNotCompleteProgram}.`,
+    "Should reverse an active scholastic standing change, create a student note and send an email notification to the student for the same" +
+      ` when the scholastic standing change type is ${StudentScholasticStandingChangeType.StudentDidNotCompleteProgram}`,
     async () => {
       // Arrange
       // Create an application with a completed status to have a scholastic standing associated with it.
@@ -89,7 +90,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
         .expect(HttpStatus.OK)
         .expect({});
 
-      // Assert the scholastic standing reversal.
+      // Assert the scholastic standing reversal and the scholastic standing reversal student notification.
       const reversedScholasticStanding =
         await db.studentScholasticStanding.findOne({
           select: {
@@ -101,7 +102,19 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
           relations: { reversalBy: true, reversalNote: true },
           where: { id: scholasticStanding.id },
         });
-
+      const scholasticStandingReversalNotification =
+        await db.notification.findOne({
+          select: {
+            id: true,
+            messagePayload: true,
+            notificationMessage: { id: true, templateId: true },
+          },
+          where: {
+            user: { id: application.student.user.id },
+            dateSent: IsNull(),
+          },
+          relations: { notificationMessage: true },
+        });
       const ministryUser = await getAESTUser(
         db.dataSource,
         AESTGroups.BusinessAdministrators,
@@ -114,6 +127,16 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
           id: expect.any(Number),
           noteType: NoteType.Application,
           description: payload.note,
+        },
+      });
+      expect(scholasticStandingReversalNotification.messagePayload).toEqual({
+        email_address: application.student.user.email,
+        template_id:
+          scholasticStandingReversalNotification.notificationMessage.templateId,
+        personalisation: {
+          givenNames: application.student.user.firstName,
+          lastName: application.student.user.lastName,
+          applicationNumber: application.applicationNumber,
         },
       });
 
