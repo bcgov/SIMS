@@ -2,7 +2,12 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { createFakeStudent } from "@sims/test-utils";
 import { Repository } from "typeorm";
-import { DisbursementOveraward, NoteType, Student } from "@sims/sims-db";
+import {
+  DisbursementOveraward,
+  DisbursementOverawardOriginType,
+  NoteType,
+  Student,
+} from "@sims/sims-db";
 
 import {
   AESTGroups,
@@ -17,7 +22,7 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
   let studentRepo: Repository<Student>;
   let disbursementOverawardRepo: Repository<DisbursementOveraward>;
 
-  const manualOverawardPayload: OverawardManualRecordAPIInDTO = {
+  const manualOverawardDeductionPayload: OverawardManualRecordAPIInDTO = {
     awardValueCode: "CSLF",
     overawardValue: -300,
     overawardNotes: "Overaward notes...",
@@ -30,15 +35,15 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
     disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
   });
 
-  it("Should create manual overaward when AEST user belong to business-administrators group", async () => {
+  it("Should create manual overaward (deduction) when AEST user belong to business-administrators group", async () => {
     // Arrange
     const student = await studentRepo.save(createFakeStudent());
     const endpoint = `/aest/overaward/student/${student.id}`;
 
-    // Act/Assert
+    // Act
     const overawardResponse = await request(app.getHttpServer())
       .post(endpoint)
-      .send(manualOverawardPayload)
+      .send(manualOverawardDeductionPayload)
       .auth(
         await getAESTToken(AESTGroups.BusinessAdministrators),
         BEARER_AUTH_TYPE,
@@ -48,16 +53,31 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
     const overawardCreated = await disbursementOverawardRepo.findOne({
       select: {
         id: true,
+        disbursementValueCode: true,
+        originType: true,
         overawardNotes: { noteType: true, description: true },
+        overawardValue: true,
+        student: { id: true },
       },
-      relations: { overawardNotes: true },
+      relations: { overawardNotes: true, student: true },
       where: { id: overawardResponse.body.id },
+      loadEagerRelations: false,
     });
 
-    expect(overawardCreated.overawardNotes.noteType).toBe(NoteType.Overaward);
-    expect(overawardCreated.overawardNotes.description).toBe(
-      manualOverawardPayload.overawardNotes,
-    );
+    // Assert
+    expect(overawardCreated).toEqual({
+      id: expect.any(Number),
+      disbursementValueCode: manualOverawardDeductionPayload.awardValueCode,
+      originType: DisbursementOverawardOriginType.ManualRecord,
+      overawardNotes: {
+        noteType: NoteType.Overaward,
+        description: manualOverawardDeductionPayload.overawardNotes,
+      },
+      overawardValue: manualOverawardDeductionPayload.overawardValue,
+      student: {
+        id: student.id,
+      },
+    });
   });
 
   it("Should throw forbidden error when AEST user does not belong to business-administrators group", async () => {
@@ -68,7 +88,7 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
-      .send(manualOverawardPayload)
+      .send(manualOverawardDeductionPayload)
       .auth(await getAESTToken(AESTGroups.Operations), BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN);
   });
@@ -80,7 +100,7 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
-      .send(manualOverawardPayload)
+      .send(manualOverawardDeductionPayload)
       .auth(
         await getAESTToken(AESTGroups.BusinessAdministrators),
         BEARER_AUTH_TYPE,
