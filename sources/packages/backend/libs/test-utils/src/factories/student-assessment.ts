@@ -4,12 +4,16 @@ import {
   Application,
   Assessment,
   AssessmentTriggerType,
+  DisbursementSchedule,
+  DisbursementValue,
   EducationProgramOffering,
   StudentAppeal,
   StudentAssessment,
   StudentAssessmentStatus,
   User,
 } from "@sims/sims-db";
+import { createFakeDisbursementSchedule } from "@sims/test-utils/factories/disbursement-schedule";
+import { E2EDataSources } from "@sims/test-utils/data-source/e2e-data-source";
 
 /**
  * Creates a fake {@link StudentAssessment} object for testing purposes.
@@ -79,4 +83,37 @@ export function createFakeStudentAssessment(
   assessment.eligibleApplicationAppeals =
     options?.initialValue?.eligibleApplicationAppeals ?? null;
   return assessment;
+}
+
+export function saveFakeStudentAssessment(
+  db: E2EDataSources,
+  relations: {
+    auditUser?: User;
+    application?: Application;
+    offering?: EducationProgramOffering;
+  },
+  options?: {
+    initialValue?: Partial<StudentAssessment>;
+    firstDisbursementScheduleInitialValue?: Partial<DisbursementSchedule>;
+    firstDisbursementValues?: DisbursementValue[];
+  },
+): Promise<StudentAssessment> {
+  const assessment = createFakeStudentAssessment({
+    auditUser: relations.auditUser ?? relations.application.student.user,
+    application: relations.application,
+    offering:
+      relations.offering ?? relations.application?.currentAssessment.offering,
+    ...options?.initialValue,
+  });
+  assessment.disbursementSchedules = [
+    createFakeDisbursementSchedule(
+      {
+        disbursementValues: options?.firstDisbursementValues,
+      },
+      {
+        initialValues: options?.firstDisbursementScheduleInitialValue,
+      },
+    ),
+  ];
+  return db.studentAssessment.save(assessment);
 }

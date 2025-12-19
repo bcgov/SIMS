@@ -52,11 +52,12 @@ export class ApplyOverawardsBalanceStep implements ECertProcessStep {
     // Check is some adjustment is needed.
     if (studentBalance) {
       // Adjust the overawards for every student that has some balance (positive or negative).
-      log.info("Found overaward balance.");
+      log.info("Found overaward balance for the student.");
       await this.adjustOverawards(
         eCertDisbursement,
         studentBalance,
         entityManager,
+        log,
       );
     } else {
       log.info("No overaward adjustments are needed.");
@@ -71,11 +72,13 @@ export class ApplyOverawardsBalanceStep implements ECertProcessStep {
    * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param studentOverawardBalance overaward balance for the student.
    * @param entityManager used to execute the commands in the same transaction.
+   * @param log cumulative log summary.
    */
   private async adjustOverawards(
     eCertDisbursement: EligibleECertDisbursement,
     studentOverawardBalance: AwardOverawardBalance,
     entityManager: EntityManager,
+    log: ProcessSummary,
   ): Promise<void> {
     // List of loan awards with the associated disbursement schedule.
     // Filter possible awards that will not be disbursed due to a restriction.
@@ -93,6 +96,7 @@ export class ApplyOverawardsBalanceStep implements ECertProcessStep {
       const overawardBalance = studentOverawardBalance[loan.valueCode] ?? 0;
       if (!overawardBalance) {
         // There are no overawards to be subtracted for this award.
+        log.info(`No overaward adjustments needed for ${loan.valueCode}.`);
         continue;
       }
       if (overawardBalance < 0) {
@@ -112,14 +116,17 @@ export class ApplyOverawardsBalanceStep implements ECertProcessStep {
           loan,
           overawardBalance,
           entityManager,
+          log,
         );
         continue;
       }
+
       await this.handleStudentOverawardDebit(
         eCertDisbursement,
         loan,
         overawardBalance,
         entityManager,
+        log,
       );
     }
   }
@@ -134,6 +141,7 @@ export class ApplyOverawardsBalanceStep implements ECertProcessStep {
    * @param loan specific loan award being adjusted (e.g CSLF, BCSL).
    * @param overawardBalance total overaward balance be deducted.
    * @param entityManager used to execute the commands in the same transaction.
+   * @param log cumulative log summary.
    */
   private async handleStudentOverawardCredit(
     eCertDisbursement: EligibleECertDisbursement,
@@ -141,13 +149,18 @@ export class ApplyOverawardsBalanceStep implements ECertProcessStep {
     loan: DisbursementValue,
     overawardBalance: number,
     entityManager: EntityManager,
+    log: ProcessSummary,
   ): Promise<void> {
     const disbursedValue = totalDisbursedValues[loan.valueCode];
     if (!disbursedValue?.overawardAmount) {
       // No overaward was subtracted for this award in previous disbursements
       // of this application, so no credit can be applied.
+      log.info(
+        `An overaward credit was found, but there are no overawards deductions in previous disbursements for ${loan.valueCode}.`,
+      );
       return;
     }
+    log.info(`Applying overaward credit for ${loan.valueCode}.`);
     // The award had some overaward subtracted in a previous disbursement of this application.
     // Calculate how much can be credited back to the student.
     const availableCreditAmount = Math.min(
@@ -184,13 +197,16 @@ export class ApplyOverawardsBalanceStep implements ECertProcessStep {
    * @param loan specific loan award being adjusted (e.g CSLF, BCSL).
    * @param overawardBalance total overaward balance be deducted.
    * @param entityManager used to execute the commands in the same transaction.
+   * @param log cumulative log summary.
    */
   private async handleStudentOverawardDebit(
     eCertDisbursement: EligibleECertDisbursement,
     loan: DisbursementValue,
     overawardBalance: number,
     entityManager: EntityManager,
+    log: ProcessSummary,
   ): Promise<void> {
+    log.info(`Applying overaward debit for ${loan.valueCode}.`);
     // Subtract the debit from the current awards in the current assessment.
     this.subtractOverawardBalance(loan, overawardBalance);
     if (loan.overawardAmountSubtracted) {

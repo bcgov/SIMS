@@ -16,7 +16,6 @@ import {
   RelationshipStatus,
   RestrictionActionType,
   RestrictionBypassBehaviors,
-  StudentAssessmentStatus,
   User,
   WorkflowData,
 } from "@sims/sims-db";
@@ -25,16 +24,15 @@ import {
   MSFAAStates,
   createE2EDataSources,
   createFakeDisbursementOveraward,
-  createFakeDisbursementSchedule,
   createFakeDisbursementValue,
   createFakeMSFAANumber,
   createFakeNotification,
-  createFakeStudentAssessment,
   createFakeUser,
   saveFakeApplicationDisbursements,
   saveFakeApplicationRestrictionBypass,
   saveFakeSFASIndividual,
   saveFakeStudent,
+  saveFakeStudentAssessment,
   saveFakeStudentRestriction,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
@@ -235,7 +233,7 @@ describe(
       expect(footer.substring(0, 3)).toBe("999");
     });
 
-    it("Should execute overawards deductions and calculate awards effective value", async () => {
+    it("Should execute overawards deductions and calculate awards effective value when student has overawards to be deducted.", async () => {
       // Arrange
 
       // Student with valid SIN.
@@ -313,10 +311,19 @@ describe(
         `Generated file: ${uploadedFileName}`,
         "Uploaded records: 1",
       ]);
+      // Assert some log messages related to overaward processing.
+      expect(
+        mockedJob.containLogMessages([
+          "Checking if overaward adjustments are needed.",
+          "Found overaward balance for the student.",
+          "Applying overaward debit for CSLF.",
+          "No overaward adjustments needed for BCSL.",
+        ]),
+      ).toBe(true);
 
       // Assert Canada Loan overawards were deducted.
       const hasCanadaLoanOverawardDeduction =
-        await db.disbursementOveraward.exist({
+        await db.disbursementOveraward.exists({
           where: {
             student: {
               id: student.id,
@@ -332,7 +339,7 @@ describe(
         application.currentAssessment.disbursementSchedules;
 
       // Assert schedule is updated to 'sent' with the dateSent defined.
-      const scheduleIsSent = await db.disbursementSchedule.exist({
+      const scheduleIsSent = await db.disbursementSchedule.exists({
         where: {
           id: firstSchedule.id,
           dateSent: Not(IsNull()),
@@ -404,7 +411,7 @@ describe(
       expect(hasExpectedBCSG.length).toBe(1);
     });
 
-    it.only(
+    it(
       "Should execute overawards credits and calculate awards effective value, crediting a CSLF and BCSL amounts up to the max awarded amount " +
         "when there was a previous deducted CSLF and BCSL overawards for an original assessment, and a negative overaward balance for the reassessment.",
       async () => {
@@ -479,28 +486,18 @@ describe(
             },
           },
         );
-        const originalAssessment = createFakeStudentAssessment({
-          auditUser: application.student.user,
-          application,
-          offering: application.currentAssessment.offering,
-        });
-        originalAssessment.studentAssessmentStatus =
-          StudentAssessmentStatus.Completed;
-        originalAssessment.disbursementSchedules = [
-          createFakeDisbursementSchedule(
-            {
-              disbursementValues: originalAssessmentDisbursementValues,
+        // Save the original assessment as the previous assessment of the current one.
+        await saveFakeStudentAssessment(
+          db,
+          { application },
+          {
+            firstDisbursementScheduleInitialValue: {
+              disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+              coeStatus: COEStatus.completed,
             },
-            {
-              initialValues: {
-                disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
-                coeStatus: COEStatus.completed,
-                dateSent: dayjs().subtract(10, "day").toDate(),
-              },
-            },
-          ),
-        ];
-        await db.studentAssessment.save(originalAssessment);
+            firstDisbursementValues: originalAssessmentDisbursementValues,
+          },
+        );
         // Create fake overaward for CSLF.
         // The value is greater than the deducted amount in the original assessment
         // to ensure the credit will be applied up to the maximum awarded amount.
@@ -526,16 +523,17 @@ describe(
         const mockedJob = mockBullJob<void>();
 
         // Act
-        const result = await processor.processQueue(mockedJob.job);
+        await processor.processQueue(mockedJob.job);
 
-        // Assert uploaded file.
-        const uploadedFile = getUploadedFile(sftpClientMock);
-        const uploadedFileName = getUploadedFileName();
-        expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
-        expect(result).toStrictEqual([
-          `Generated file: ${uploadedFileName}`,
-          "Uploaded records: 1",
-        ]);
+        // Assert some log messages related to overaward processing.
+        expect(
+          mockedJob.containLogMessages([
+            "Checking if overaward adjustments are needed.",
+            "Found overaward balance for the student.",
+            "Applying overaward credit for CSLF.",
+            "Applying overaward credit for BCSL.",
+          ]),
+        ).toBe(true);
         // Assert overawards were credited.
         const [firstSchedule] =
           application.currentAssessment.disbursementSchedules;
@@ -588,6 +586,123 @@ describe(
             award.effectiveAmount === 700,
         );
         expect(hasExpectedBCSL.length).toBe(1);
+      },
+    );
+
+    it(
+      "Should execute overawards credits verifications for CSLF, but not apply any credits " +
+        "when there was no previous deducted CSLF overawards for a previous assessment.",
+      async () => {
+        // Arrange
+        // Student with valid SIN.
+        const student = await saveFakeStudent(db.dataSource);
+        // Valid MSFAA Number.
+        const msfaaNumber = await db.msfaaNumber.save(
+          createFakeMSFAANumber(
+            { student },
+            { msfaaState: MSFAAStates.Signed },
+          ),
+        );
+        const originalAssessmentDisbursementValues = [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1000,
+            { effectiveAmount: 1000 },
+          ),
+        ];
+        const reassessmentDisbursementValues = [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1000,
+            {
+              disbursedAmountSubtracted: 1000,
+              effectiveAmount: 0,
+            },
+          ),
+        ];
+        // Student application eligible for e-Cert.
+        // Create a reassessment as a current assessment and
+        // an original assessment right afterwards.
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          {
+            student,
+            msfaaNumber,
+            disbursementValues: reassessmentDisbursementValues,
+          },
+          {
+            offeringIntensity: OfferingIntensity.fullTime,
+            applicationStatus: ApplicationStatus.Completed,
+            currentAssessmentInitialValues: {
+              assessmentData: { weeks: 5 } as Assessment,
+              assessmentDate: new Date(),
+            },
+            firstDisbursementInitialValues: {
+              coeStatus: COEStatus.completed,
+              disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+            },
+          },
+        );
+        // Create an original assessment for the same application.
+        // This will be considered the previous assessment when processing overawards.
+        await saveFakeStudentAssessment(
+          db,
+          { application },
+          {
+            firstDisbursementScheduleInitialValue: {
+              disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+              coeStatus: COEStatus.completed,
+            },
+            firstDisbursementValues: originalAssessmentDisbursementValues,
+          },
+        );
+        // Create fake overaward for CSLF.
+        const fakeCanadaLoanOverawardBalance = createFakeDisbursementOveraward({
+          student,
+        });
+        fakeCanadaLoanOverawardBalance.disbursementValueCode = "CSLF";
+        fakeCanadaLoanOverawardBalance.overawardValue = -100;
+        await db.disbursementOveraward.save(fakeCanadaLoanOverawardBalance);
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await processor.processQueue(mockedJob.job);
+
+        // Assert some log messages related to overaward processing.
+        expect(
+          mockedJob.containLogMessages([
+            "Checking if overaward adjustments are needed.",
+            "Found overaward balance for the student.",
+            "An overaward credit was found, but there are no overawards deductions in previous disbursements for CSLF.",
+          ]),
+        ).toBe(true);
+        // Assert overawards were credited.
+        const [firstSchedule] =
+          application.currentAssessment.disbursementSchedules;
+        const createdOverawards = await db.disbursementOveraward.exists({
+          where: {
+            disbursementSchedule: { id: firstSchedule.id },
+          },
+        });
+        expect(createdOverawards).toBe(false);
+        // Assert awards
+        // Select all awards generated for the schedule.
+        const awards = await db.disbursementValue.find({
+          where: { disbursementSchedule: { id: firstSchedule.id } },
+        });
+        // Assert CSLF.
+        const hasExpectedCSLF = awards.filter(
+          (award) =>
+            award.valueCode === "CSLF" &&
+            award.disbursedAmountSubtracted === 1000 &&
+            !award.overawardAmountSubtracted &&
+            award.effectiveAmount === 0,
+        );
+        expect(hasExpectedCSLF.length).toBe(1);
       },
     );
 
@@ -1018,7 +1133,7 @@ describe(
       ]);
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
-      const isScheduleNotSent = await db.disbursementSchedule.exist({
+      const isScheduleNotSent = await db.disbursementSchedule.exists({
         where: {
           id: disbursement.id,
           disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
@@ -1538,7 +1653,7 @@ describe(
 
     it(
       "Should prevent an e-Cert generation and keep the bypass active when " +
-        `multiple '${RestrictionActionType.StopFullTimeDisbursement}' restrictions exist and only one is bypassed and it is bypassed with behavior '${RestrictionBypassBehaviors.NextDisbursementOnly}'.`,
+        `multiple '${RestrictionActionType.StopFullTimeDisbursement}' restrictions exists and only one is bypassed and it is bypassed with behavior '${RestrictionBypassBehaviors.NextDisbursementOnly}'.`,
       async () => {
         // Arrange
         // Student with valid SIN.
