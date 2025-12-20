@@ -26,6 +26,18 @@ interface SecondDisbursementStillPending {
   email: string;
 }
 
+/**
+ * Represents a student with COE required near their study end date.
+ */
+interface COERequiredNearEndDate {
+  assessmentId: number;
+  userId: number;
+  givenNames: string;
+  lastName: string;
+  email: string;
+  applicationNumber: string;
+}
+
 @Injectable()
 export class ApplicationService {
   /**
@@ -329,6 +341,64 @@ export class ApplicationService {
         coeStatus: [COEStatus.completed, COEStatus.required],
         coeStatusRequired: COEStatus.required,
         disbursementScheduleStatusPending: DisbursementScheduleStatus.Pending,
+      })
+      .getRawMany();
+  }
+
+  /**
+   * Retrieves applications with at least one COE required on the most recent assessment
+   * where the study end date is within 10 calendar days. This method applies several
+   * criteria to filter eligible applications:
+   * - Application status is Enrolment or Completed.
+   * - At least one disbursement with COE status 'required'.
+   * - Study end date is within 10 days from today.
+   * - No notification of this type has been sent for this assessment.
+   * @returns An array of eligible applications with relevant details for notification.
+   */
+  async getCOERequiredNearEndDate(): Promise<COERequiredNearEndDate[]> {
+    // Sub query to check if a notification was already sent for the current assessment.
+    const notificationExistsQuery = this.notificationRepo
+      .createQueryBuilder("notification")
+      .select("1")
+      .where("notification.notificationMessage.id = :messageId")
+      .andWhere(
+        "notification.metadata->>'assessmentId' = assessment.id :: text",
+      )
+      .getQuery();
+
+    // Main query to retrieve applications with COE required near study end date.
+    return this.disbursementScheduleRepo
+      .createQueryBuilder("disbursement")
+      .select("assessment.id", "assessmentId")
+      .addSelect("user.id", "userId")
+      .addSelect("user.firstName", "givenNames")
+      .addSelect("user.lastName", "lastName")
+      .addSelect("user.email", "email")
+      .addSelect("application.applicationNumber", "applicationNumber")
+      .innerJoin("disbursement.studentAssessment", "assessment")
+      .innerJoin("assessment.application", "application")
+      .innerJoin("assessment.offering", "offering")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .where(`NOT EXISTS (${notificationExistsQuery})`)
+      .andWhere("assessment.id = application.currentAssessment.id")
+      .andWhere("application.applicationStatus IN (:...applicationStatuses)")
+      .andWhere("application.isArchived = false")
+      .andWhere("disbursement.coeStatus = :coeStatusRequired")
+      .andWhere(
+        "offering.studyEndDate BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '10 days'",
+      )
+      .groupBy("assessment.id")
+      .addGroupBy("user.id")
+      .addGroupBy("application.applicationNumber")
+      .setParameters({
+        messageId:
+          NotificationMessageType.StudentCOERequiredNearEndDateNotification,
+        applicationStatuses: [
+          ApplicationStatus.Enrolment,
+          ApplicationStatus.Completed,
+        ],
+        coeStatusRequired: COEStatus.required,
       })
       .getRawMany();
   }

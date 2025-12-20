@@ -233,3 +233,15 @@ export interface ScholasticStandingReversalNotification {
   userId: number;
   applicationNumber: string;
 }
+
+/**
+ * Notification data for students with COE required near study end date.
+ */
+export interface StudentCOERequiredNearEndDateNotification {
+  userId: number;
+  assessmentId: number;
+  givenNames: string;
+  lastName: string;
+  email: string;
+  applicationNumber: string;
+}

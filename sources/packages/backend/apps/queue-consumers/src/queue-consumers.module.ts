@@ -80,6 +80,7 @@ import {
   StudentApplicationNotificationService,
   StudentPDPPDReminderNotification,
   StudentSecondDisbursementReminderNotification,
+  StudentCOERequiredNearEndDateReminderNotification,
   CASInvoiceBatchService,
   CASInvoiceService,
 } from "./services";
@@ -184,6 +185,7 @@ import { LoggerModule } from "@sims/utilities/logger";
     CASSupplierSharedService,
     StudentPDPPDReminderNotification,
     StudentSecondDisbursementReminderNotification,
+    StudentCOERequiredNearEndDateReminderNotification,
     CASInvoiceBatchService,
     CASInvoiceService,
     CASInvoicesBatchesCreationScheduler,
