@@ -466,7 +466,7 @@ describe(
           {
             applicationStatus: ApplicationStatus.Enrolment,
             offeringInitialValues: {
-              studyStartDate: getISODateOnlyString(addDays(0)),
+              studyStartDate: getISODateOnlyString(addDays(-30)),
               studyEndDate: getISODateOnlyString(addDays(7)),
             },
             firstDisbursementInitialValues: {
@@ -520,16 +520,20 @@ describe(
       async () => {
         // Arrange
         // Create an application with study end date within 10 days but all COEs completed.
-        await saveFakeApplicationDisbursements(db.dataSource, undefined, {
-          applicationStatus: ApplicationStatus.Completed,
-          offeringInitialValues: {
-            studyStartDate: getISODateOnlyString(addDays(-30)),
-            studyEndDate: getISODateOnlyString(addDays(7)),
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          undefined,
+          {
+            applicationStatus: ApplicationStatus.Completed,
+            offeringInitialValues: {
+              studyStartDate: getISODateOnlyString(addDays(-30)),
+              studyEndDate: getISODateOnlyString(addDays(7)),
+            },
+            firstDisbursementInitialValues: {
+              coeStatus: COEStatus.completed,
+            },
           },
-          firstDisbursementInitialValues: {
-            coeStatus: COEStatus.completed,
-          },
-        });
+        );
 
         // Queued job.
         const mockedJob = mockBullJob<void>();
@@ -543,6 +547,20 @@ describe(
             "No applications found with COE required near study end date.",
           ]),
         ).toBe(true);
+
+        const notificationExists = await db.notification.exists({
+          relations: { notificationMessage: true },
+          where: {
+            notificationMessage: {
+              id: NotificationMessageType.StudentCOERequiredNearEndDateNotification,
+            },
+            metadata: { assessmentId: application.currentAssessment.id },
+            user: { id: application.student.user.id },
+            dateSent: IsNull(),
+          },
+        });
+
+        expect(notificationExists).toBe(false);
       },
     );
 
@@ -601,16 +619,20 @@ describe(
     it("Should not generate a notification for a student when the study end date is more than 10 days away.", async () => {
       // Arrange
       // Create an application with study end date more than 10 days away.
-      await saveFakeApplicationDisbursements(db.dataSource, undefined, {
-        applicationStatus: ApplicationStatus.Enrolment,
-        offeringInitialValues: {
-          studyStartDate: getISODateOnlyString(addDays(-30)),
-          studyEndDate: getISODateOnlyString(addDays(15)),
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        undefined,
+        {
+          applicationStatus: ApplicationStatus.Enrolment,
+          offeringInitialValues: {
+            studyStartDate: getISODateOnlyString(addDays(-30)),
+            studyEndDate: getISODateOnlyString(addDays(15)),
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.required,
+          },
         },
-        firstDisbursementInitialValues: {
-          coeStatus: COEStatus.required,
-        },
-      });
+      );
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -624,6 +646,20 @@ describe(
           "No applications found with COE required near study end date.",
         ]),
       ).toBe(true);
+
+      const notificationExists = await db.notification.exists({
+        relations: { notificationMessage: true },
+        where: {
+          notificationMessage: {
+            id: NotificationMessageType.StudentCOERequiredNearEndDateNotification,
+          },
+          metadata: { assessmentId: application.currentAssessment.id },
+          user: { id: application.student.user.id },
+          dateSent: IsNull(),
+        },
+      });
+
+      expect(notificationExists).toBe(false);
     });
   },
 );
