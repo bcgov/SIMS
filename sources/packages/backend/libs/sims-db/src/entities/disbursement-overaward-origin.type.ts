@@ -8,9 +8,18 @@ export enum DisbursementOverawardOriginType {
    */
   ReassessmentOveraward = "Reassessment overaward",
   /**
-   * Part of an overaward balance was used to change an award value.
+   * Part of a positive overaward balance was used to change an award value.
+   * Positive overaward balance means that the student owes money to the Ministry,
+   * and this overaward was used to reduce an award value.
    */
   AwardDeducted = "Award deducted",
+  /**
+   * Part of a negative overaward balance was used to change an award value.
+   * Negative overaward balance means that the student has a credit balance
+   * (the Ministry owes money to the student), and this credit
+   * was used to increase an award value.
+   */
+  AwardCredited = "Award credited",
   /**
    * Entry manually added by the Ministry user.
    */
