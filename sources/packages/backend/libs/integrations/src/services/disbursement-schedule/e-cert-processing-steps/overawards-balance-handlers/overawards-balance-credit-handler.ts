@@ -33,7 +33,7 @@ export class OverawardsBalanceCreditHandler extends OverawardsBalanceHandler {
    * if some overaward was subtracted in a previous disbursement of this application.
    * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param loan specific loan award being adjusted (e.g CSLF, BCSL).
-   * @param overawardBalance total overaward balance be deducted.
+   * @param overawardBalance total overaward balance be credited.
    * @param entityManager used to execute the commands in the same transaction.
    * @param log cumulative log summary.
    */
