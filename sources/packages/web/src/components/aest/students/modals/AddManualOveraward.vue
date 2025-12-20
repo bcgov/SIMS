@@ -118,7 +118,6 @@ export default defineComponent({
       // Copying the payload, as reset is making the formModel properties null.
       const payload = { ...formModel };
       resolvePromise(payload);
-      console.log("payload", payload);
       addManualOverawardForm.value.reset();
     };
 
