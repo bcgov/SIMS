@@ -118,7 +118,7 @@ export default defineComponent({
       useFormatters();
     const snackBar = useSnackBar();
     const { mobile: isMobile } = useDisplay();
-    const isAddition = ref();
+    const isAddition = ref(true);
 
     const overawardDetails = ref([] as OverawardAPIOutDTO[]);
     const addManualOveraward = ref(
