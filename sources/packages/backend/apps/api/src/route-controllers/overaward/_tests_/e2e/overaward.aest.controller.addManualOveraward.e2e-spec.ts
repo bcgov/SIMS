@@ -22,7 +22,7 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
   let studentRepo: Repository<Student>;
   let disbursementOverawardRepo: Repository<DisbursementOveraward>;
 
-  const manualOverawardDeductionPayload: OverawardManualRecordAPIInDTO = {
+  const manualOverawardPayload: OverawardManualRecordAPIInDTO = {
     awardValueCode: "CSLF",
     overawardValue: -300,
     overawardNotes: "Overaward notes...",
@@ -43,7 +43,7 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
     // Act
     const overawardResponse = await request(app.getHttpServer())
       .post(endpoint)
-      .send(manualOverawardDeductionPayload)
+      .send(manualOverawardPayload)
       .auth(
         await getAESTToken(AESTGroups.BusinessAdministrators),
         BEARER_AUTH_TYPE,
@@ -67,13 +67,13 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
     // Assert
     expect(overawardCreated).toEqual({
       id: expect.any(Number),
-      disbursementValueCode: manualOverawardDeductionPayload.awardValueCode,
+      disbursementValueCode: manualOverawardPayload.awardValueCode,
       originType: DisbursementOverawardOriginType.ManualRecord,
       overawardNotes: {
         noteType: NoteType.Overaward,
-        description: manualOverawardDeductionPayload.overawardNotes,
+        description: manualOverawardPayload.overawardNotes,
       },
-      overawardValue: manualOverawardDeductionPayload.overawardValue,
+      overawardValue: manualOverawardPayload.overawardValue,
       student: {
         id: student.id,
       },
@@ -88,7 +88,7 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
-      .send(manualOverawardDeductionPayload)
+      .send(manualOverawardPayload)
       .auth(await getAESTToken(AESTGroups.Operations), BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN);
   });
@@ -100,7 +100,7 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
-      .send(manualOverawardDeductionPayload)
+      .send(manualOverawardPayload)
       .auth(
         await getAESTToken(AESTGroups.BusinessAdministrators),
         BEARER_AUTH_TYPE,
