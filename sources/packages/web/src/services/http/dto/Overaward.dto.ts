@@ -4,7 +4,7 @@ import {
 } from "@/types";
 
 export interface OverawardBalanceAPIOutDTO {
-  overawardBalanceValues: Record<string, number>;
+  overawardBalanceValues: Record<string, number | undefined>;
 }
 
 export interface OverawardAPIOutDTO {

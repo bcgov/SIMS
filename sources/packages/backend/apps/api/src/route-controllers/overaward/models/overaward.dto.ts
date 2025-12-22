@@ -17,7 +17,7 @@ import {
 } from "class-validator";
 
 export class OverawardBalanceAPIOutDTO {
-  overawardBalanceValues: Record<string, number>;
+  overawardBalanceValues: Record<string, number | undefined>;
 }
 
 export class StudentsOverawardAPIOutDTO {
