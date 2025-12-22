@@ -43,11 +43,12 @@ export class DisbursementOverawardService {
   }
 
   /**
-   * Sum the total overawards per value code (e.g. CSLF, BCSL) for the student.
+   * Sum the total overawards per value code (e.g. CSLF, BCSL) for the student,
+   * and returns any positive or negative balance found.
    * @param studentId student to get the balance.
    * @param entityManager optionally used to execute the queries in the same transaction.
    * @returns the sum of the overawards grouped by the award type and them by
-   * the student id.
+   * the student ID. Only students with a non-zero balance will be returned.
    */
   async getOverawardBalance(
     studentIds: number[],
@@ -70,7 +71,7 @@ export class DisbursementOverawardService {
       .groupBy("student.id")
       .addGroupBy("disbursementOveraward.disbursementValueCode")
       .having("SUM(disbursementOveraward.overawardValue) <> 0")
-      // The total is returned from DB as string, need to converted to a number,
+      // The total is returned from DB as string, needs to be converted to a number,
       // since overawardValue is defined as numeric in the DB.
       .getRawMany<{ studentId: number; valueCode: string; total: string }>();
     const result: StudentOverawardBalance = {};
