@@ -388,7 +388,6 @@ export class ApplicationService {
       .andWhere(
         `offering.studyEndDate BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '${STUDENT_COE_REQUIRED_NOTIFICATION_END_DATE_DAYS} days'`,
       )
-      .groupBy("assessment.id")
       .distinct(true)
       .setParameters({
         messageId:
