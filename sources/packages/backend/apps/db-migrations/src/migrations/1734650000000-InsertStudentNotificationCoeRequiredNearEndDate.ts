@@ -1,9 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class InsertStudentNotificationCoeRequiredNearEndDate1734650000000
-  implements MigrationInterface
-{
+export class InsertStudentNotificationCoeRequiredNearEndDate1766342400000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
