@@ -158,11 +158,11 @@ export default defineComponent({
           props.studentId as number,
           subtractOveraward,
         );
-        snackBar.success("Overaward removed successfully.");
+        snackBar.success("Overaward subtracted successfully.");
         context.emit("manualOverawardAdded");
         await loadOverawardDetails();
       } catch {
-        snackBar.error("An error happened while removing overaward.");
+        snackBar.error("An error happened while subtracting overaward.");
       }
     };
 
