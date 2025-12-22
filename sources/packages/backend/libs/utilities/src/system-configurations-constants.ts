@@ -1,3 +1,4 @@
+
 /**
  * Maximum allowed number of days that an MSFAA is considered
  * valid and could be reused for a new Student Application.
@@ -69,3 +70,8 @@ export const DISABILITY_NOTIFICATION_DAYS_LIMIT = 56;
  * latin1 default encoding for files.
  */
 export const FILE_DEFAULT_ENCODING = "latin1";
+
+/**
+ * Number of days before the offering study end date to send the COE required notification to students.
+ */
+export const STUDENT_COE_REQUIRED_NOTIFICATION_END_DATE_DAYS = 10;
