@@ -240,7 +240,7 @@ export interface ScholasticStandingReversalNotification {
 export interface StudentCOERequiredNearEndDateNotification {
   userId: number;
   assessmentId: number;
-  givenNames: string;
+  givenNames?: string;
   lastName: string;
   email: string;
   applicationNumber: string;

@@ -32,7 +32,7 @@ interface SecondDisbursementStillPending {
 interface COERequiredNearEndDate {
   assessmentId: number;
   userId: number;
-  givenNames: string;
+  givenNames?: string;
   lastName: string;
   email: string;
   applicationNumber: string;
