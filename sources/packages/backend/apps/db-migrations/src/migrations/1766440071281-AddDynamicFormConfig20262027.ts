@@ -1,5 +1,5 @@
-import { getSQLFileData } from "@sims/utilities";
 import { MigrationInterface, QueryRunner } from "typeorm";
+import { getSQLFileData } from "../utilities/sqlLoader";
 
 export class AddDynamicFormConfig202620271766440071281
   implements MigrationInterface
