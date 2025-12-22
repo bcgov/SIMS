@@ -1437,7 +1437,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   async getPendingOfferings(
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<EducationProgramOffering>> {
-    const DEFAULT_SORT_FIELD = "name";
+    const DEFAULT_SORT_FIELD = "submittedDate";
     const offeringsQuery = this.repo
       .createQueryBuilder("offerings")
       .select([
@@ -1480,7 +1480,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       // default sort and order
       offeringsQuery.orderBy(
         sortOfferingsColumnMap(DEFAULT_SORT_FIELD),
-        FieldSortOrder.ASC,
+        FieldSortOrder.DESC,
       );
     }
     // pagination

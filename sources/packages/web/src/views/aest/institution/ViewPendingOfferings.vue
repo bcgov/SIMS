@@ -30,6 +30,7 @@
           item-value="applicationId"
           v-model:items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
+          :mobile="isMobile"
           @update:options="paginationAndSortEvent"
         >
           <template #[`item.submittedDate`]="{ item }">
@@ -49,8 +50,8 @@
               dateOnlyLongPeriodString(item.studyStartDate, item.studyEndDate)
             }}
           </template>
-          <template #[`item.status`]="{ item }">
-            <status-chip-application-offering-change :status="item.status" />
+          <template #[`item.offeringStatus`]="{ item }">
+            <status-chip-offering :status="item.offeringStatus" />
           </template>
           <template #[`item.actions`]="{ item }">
             <v-btn color="primary" @click="viewOffering(item)">View</v-btn>
@@ -67,6 +68,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import router from "@/router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramOfferingPendingAPIOutDTO } from "@/services/http/dto";
+import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
 import {
   PaginatedResults,
   DEFAULT_DATATABLE_PAGE_NUMBER,
@@ -77,8 +79,12 @@ import {
   PendingOfferingsHeaders,
 } from "@/types";
 import { defineComponent, onMounted, ref } from "vue";
+import { useDisplay } from "vuetify";
 
 export default defineComponent({
+  components: {
+    StatusChipOffering,
+  },
   setup() {
     const loading = ref(false);
     const searchCriteria = ref("");
@@ -86,6 +92,7 @@ export default defineComponent({
     const offerings = ref(
       {} as PaginatedResults<EducationProgramOfferingPendingAPIOutDTO>,
     );
+    const { mobile: isMobile } = useDisplay();
     let currentPage = DEFAULT_DATATABLE_PAGE_NUMBER;
     let currentPageLimit = DEFAULT_PAGE_LIMIT;
 
@@ -166,6 +173,7 @@ export default defineComponent({
       searchCriteria,
       searchOfferings,
       viewOffering,
+      isMobile,
     };
   },
 });
