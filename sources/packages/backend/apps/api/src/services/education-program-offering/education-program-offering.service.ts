@@ -1429,6 +1429,71 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
+   * Gets a list of Program Offerings with status 'Creation Pending' where the Program is not deactivated.
+   * Pagination, sort and search are available on results.
+   * @param paginationOptions pagination options.
+   * @returns pending offerings.
+   */
+  async getPendingOfferings(
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<EducationProgramOffering>> {
+    const DEFAULT_SORT_FIELD = "name";
+    const offeringsQuery = this.repo
+      .createQueryBuilder("offerings")
+      .select([
+        "offerings.id",
+        "offerings.name",
+        "offerings.studyStartDate",
+        "offerings.studyEndDate",
+        "offerings.offeringDelivered",
+        "offerings.offeringIntensity",
+        "offerings.offeringType",
+        "offerings.offeringStatus",
+        "offerings.submittedDate",
+        "educationProgram.id",
+        "educationProgram.name",
+        "institutionLocation.id",
+        "institutionLocation.name",
+        "institution.id",
+      ])
+      //Date Submitted, Location Name, Program Name, Offering Name, Study Dates, Intensity, Offering Type, Study delivery, Status,
+      .innerJoin("offerings.educationProgram", "educationProgram")
+      .innerJoin("offerings.institutionLocation", "institutionLocation")
+      .innerJoin("institutionLocation.institution", "institution")
+      .where("offerings.offeringStatus = :offeringStatus", {
+        offeringStatus: OfferingStatus.CreationPending,
+      })
+      .andWhere("educationProgram.isActive = true");
+    // search offering name
+    if (paginationOptions.searchCriteria) {
+      offeringsQuery.andWhere("offerings.name Ilike :searchCriteria", {
+        searchCriteria: `%${paginationOptions.searchCriteria}%`,
+      });
+    }
+    // sorting
+    if (paginationOptions.sortField && paginationOptions.sortOrder) {
+      offeringsQuery.orderBy(
+        sortOfferingsColumnMap(paginationOptions.sortField),
+        paginationOptions.sortOrder,
+      );
+    } else {
+      // default sort and order
+      offeringsQuery.orderBy(
+        sortOfferingsColumnMap(DEFAULT_SORT_FIELD),
+        FieldSortOrder.ASC,
+      );
+    }
+    // pagination
+    offeringsQuery
+      .skip(paginationOptions.page * paginationOptions.pageLimit)
+      .take(paginationOptions.pageLimit);
+
+    // result
+    const [records, count] = await offeringsQuery.getManyAndCount();
+    return { results: records, count: count };
+  }
+
+  /**
    * Calculate and assign study breaks.
    * @param calculatedBreaks newly calculated breaks.
    * @returns adjusted study break as per the calculatedBreaks.

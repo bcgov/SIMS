@@ -47,6 +47,9 @@ export const sortApplicationsColumnMap = (fieldName: string): string => {
 export const sortOfferingsColumnMap = (fieldName: string): string => {
   const offeringSortOptions = {
     name: "offerings.name",
+    submittedDate: "offerings.submittedDate",
+    offeringIntensity: "offerings.offeringIntensity",
+    offeringType: "offerings.offeringType",
   };
   return offeringSortOptions[fieldName] ?? null;
 };

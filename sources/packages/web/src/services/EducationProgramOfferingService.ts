@@ -12,6 +12,7 @@ import {
   OfferingChangeRequestAPIOutDTO,
   PrecedingOfferingSummaryAPIOutDTO,
   EducationProgramOfferingAPIOutDTO,
+  EducationProgramOfferingPendingAPIOutDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
   EducationProgramOfferingAPIInDTO,
   OfferingDetailsAPIOutDTO,
@@ -380,6 +381,20 @@ export class EducationProgramOfferingService {
     return ApiClient.EducationProgramOffering.getOfferingSummaryDetailsById(
       offeringId,
       options,
+    );
+  }
+
+  /**
+   * Gets a list of Program Offerings with status 'Creation Pending' where the Program is not deactivated.
+   * Pagination, sort and search are available on results.
+   * @param paginationOptions pagination options.
+   * @returns pending offerings.
+   */
+  async getPendingOfferings(
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<EducationProgramOfferingPendingAPIOutDTO>> {
+    return ApiClient.EducationProgramOffering.getPendingOfferings(
+      paginationOptions,
     );
   }
 }

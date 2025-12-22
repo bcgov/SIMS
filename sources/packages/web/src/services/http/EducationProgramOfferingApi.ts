@@ -1,5 +1,9 @@
 import HttpBaseClient from "./common/HttpBaseClient";
-import { OfferingIntensity, PaginationOptions } from "@/types";
+import {
+  OfferingIntensity,
+  PaginatedResults,
+  PaginationOptions,
+} from "@/types";
 import { getPaginationQueryString } from "@/helpers";
 import {
   OfferingAssessmentAPIInDTO,
@@ -15,6 +19,7 @@ import {
   OfferingValidationResultAPIOutDTO,
   EducationProgramOfferingBasicDataAPIInDTO,
   EducationProgramOfferingSummaryViewAPIOutDTO,
+  EducationProgramOfferingPendingAPIOutDTO,
 } from "@/services/http/dto";
 import { AxiosProgressEvent, AxiosRequestConfig } from "axios";
 import ApiClient from "./ApiClient";
@@ -323,5 +328,19 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
     return this.getCall<EducationProgramOfferingSummaryViewAPIOutDTO>(
       this.addClientRoot(url),
     );
+  }
+
+  /**
+   * Gets a list of Program Offerings with status 'Creation Pending' where the Program is not deactivated.
+   * * @param paginationOptions pagination options.
+   * @returns pending offerings.
+   */
+  async getPendingOfferings(
+    paginationOptions,
+  ): Promise<PaginatedResults<EducationProgramOfferingPendingAPIOutDTO>> {
+    const url = `education-program-offering/pending?${getPaginationQueryString(
+      paginationOptions,
+    )}`;
+    return this.getCall(this.addClientRoot(url));
   }
 }

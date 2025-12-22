@@ -56,7 +56,6 @@ export class EducationProgramOfferingControllerService {
   constructor(
     private readonly offeringService: EducationProgramOfferingService,
     private readonly programService: EducationProgramService,
-    private readonly programOfferingService: EducationProgramOfferingService,
     private readonly institutionLocationService: InstitutionLocationService,
   ) {}
 
@@ -410,10 +409,9 @@ export class EducationProgramOfferingControllerService {
       locationId?: number;
     },
   ): Promise<EducationProgramOfferingSummaryViewAPIOutDTO> {
-    const offering = await this.programOfferingService.getOfferingById(
-      offeringId,
-      { locationId: options?.locationId },
-    );
+    const offering = await this.offeringService.getOfferingById(offeringId, {
+      locationId: options?.locationId,
+    });
     if (!offering) {
       throw new NotFoundException(
         "Not able to find the Education Program offering.",
@@ -445,6 +443,42 @@ export class EducationProgramOfferingControllerService {
         program.deliveredOnline,
         program.deliveredOnSite,
       ),
+    };
+  }
+
+  /**
+   * Gets a list of Program Offerings with status 'Creation Pending' where the Program is not deactivated.
+   * Pagination, sort and search are available on results.
+   * @param paginationOptions pagination options.
+   * @returns pending offerings.
+   */
+  async getPendingOfferings(
+    paginationOptions: OfferingsPaginationOptionsAPIInDTO,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<EducationProgramOfferingSummaryAPIOutDTO>
+  > {
+    const offerings =
+      await this.offeringService.getPendingOfferings(paginationOptions);
+
+    return {
+      results: offerings.results.map((offering) => ({
+        id: offering.id,
+        name: offering.name,
+        yearOfStudy: offering.yearOfStudy,
+        studyStartDate: offering.studyStartDate,
+        studyEndDate: offering.studyEndDate,
+        offeringDelivered: offering.offeringDelivered,
+        offeringIntensity: offering.offeringIntensity,
+        offeringType: offering.offeringType,
+        offeringStatus: offering.offeringStatus,
+        submittedDate: offering.submittedDate,
+        locationId: offering.institutionLocation.id,
+        locationName: offering.institutionLocation.name,
+        programId: offering.educationProgram.id,
+        programName: offering.educationProgram.name,
+        institutionId: offering.institutionLocation.institution.id,
+      })),
+      count: offerings.count,
     };
   }
 }
