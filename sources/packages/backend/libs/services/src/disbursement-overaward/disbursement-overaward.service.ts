@@ -70,7 +70,8 @@ export class DisbursementOverawardService {
       .groupBy("student.id")
       .addGroupBy("disbursementOveraward.disbursementValueCode")
       .having("SUM(disbursementOveraward.overawardValue) <> 0")
-      // The total is returned from DB as string, need to converted to a number.
+      // The total is returned from DB as string, need to converted to a number,
+      // since overawardValue is defined as numeric in the DB.
       .getRawMany<{ studentId: number; valueCode: string; total: string }>();
     const result: StudentOverawardBalance = {};
     for (const totalAward of totalAwards) {

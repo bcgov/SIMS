@@ -79,7 +79,7 @@ describe("OverawardStudentsController(e2e)-getOverawardBalance", () => {
       .get(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({ overawardBalanceValues: { CSLF: "400.00", CSLP: "99.00" } });
+      .expect({ overawardBalanceValues: { CSLF: 400, CSLP: 99 } });
   });
 
   afterAll(async () => {
