@@ -52,9 +52,9 @@ export class StudentCOERequiredNearEndDateReminderNotification {
     );
 
     notificationLog.info(
-      `Applications with COE required near end date that generated notifications: ${eligibleApplications
-        .map((application) => application.applicationNumber)
-        .join(", ")}`,
+      `Assessments with COE required near end date that generated notifications: ${eligibleApplications
+        .map((application) => application.assessmentId)
+        .join(", ")}.`,
     );
   }
 }

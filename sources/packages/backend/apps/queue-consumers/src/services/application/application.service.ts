@@ -17,6 +17,7 @@ import {
 import { ConfigService } from "@sims/utilities/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { addDays, DISABILITY_NOTIFICATION_DAYS_LIMIT } from "@sims/utilities";
+import { STUDENT_COE_REQUIRED_NOTIFICATION_END_DATE_DAYS } from "apps/api/src/utilities/system-configurations-constants";
 
 interface SecondDisbursementStillPending {
   assessmentId: number;
@@ -386,11 +387,10 @@ export class ApplicationService {
       .andWhere("application.isArchived = false")
       .andWhere("disbursement.coeStatus = :coeStatusRequired")
       .andWhere(
-        "offering.studyEndDate BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '10 days'",
+        `offering.studyEndDate BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '${STUDENT_COE_REQUIRED_NOTIFICATION_END_DATE_DAYS} days'`,
       )
       .groupBy("assessment.id")
-      .addGroupBy("user.id")
-      .addGroupBy("application.applicationNumber")
+      .distinct(true)
       .setParameters({
         messageId:
           NotificationMessageType.StudentCOERequiredNearEndDateNotification,

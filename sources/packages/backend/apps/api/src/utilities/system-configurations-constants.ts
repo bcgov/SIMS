@@ -146,3 +146,8 @@ export const AVIATION_RESTRICTION_CODES: RestrictionCode[] = [
   RestrictionCode.AVIR,
   RestrictionCode.SFAS_AV,
 ];
+
+/**
+ * Number of days before the offering study end date to send the COE required notification to students.
+ */
+export const STUDENT_COE_REQUIRED_NOTIFICATION_END_DATE_DAYS = 10;

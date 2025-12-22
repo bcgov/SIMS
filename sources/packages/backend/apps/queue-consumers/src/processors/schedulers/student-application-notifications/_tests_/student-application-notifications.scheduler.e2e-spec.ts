@@ -484,7 +484,7 @@ describe(
         // Assert
         expect(
           mockedJob.containLogMessages([
-            `Applications with COE required near end date that generated notifications: ${application.applicationNumber}`,
+            `Assessments with COE required near end date that generated notifications: ${application.currentAssessment.id}.`,
           ]),
         ).toBe(true);
         const notification = await db.notification.findOne({
@@ -618,7 +618,7 @@ describe(
 
     it("Should not generate a notification for a student when the study end date is more than 10 days away.", async () => {
       // Arrange
-      // Create an application with study end date more than 10 days away.
+      // Create an application with study end date more than 10 days away (11 days).
       const application = await saveFakeApplicationDisbursements(
         db.dataSource,
         undefined,
@@ -626,7 +626,7 @@ describe(
           applicationStatus: ApplicationStatus.Enrolment,
           offeringInitialValues: {
             studyStartDate: getISODateOnlyString(addDays(-30)),
-            studyEndDate: getISODateOnlyString(addDays(15)),
+            studyEndDate: getISODateOnlyString(addDays(11)),
           },
           firstDisbursementInitialValues: {
             coeStatus: COEStatus.required,
