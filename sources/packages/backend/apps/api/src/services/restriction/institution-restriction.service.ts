@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager } from "typeorm";
+import { DataSource, EntityManager, Equal, Not } from "typeorm";
 import {
   RecordDataModelService,
   InstitutionRestriction,
@@ -11,6 +11,7 @@ import {
   EducationProgram,
   InstitutionLocation,
   RestrictionType,
+  RestrictionNotificationType,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import { RESTRICTION_NOT_ACTIVE } from "@sims/services/constants";
@@ -353,5 +354,44 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       .groupBy("institutionRestrictions.institution.id")
       .addGroupBy("restriction.id")
       .getRawMany();
+  }
+
+  /**
+   * Get institution restrictions by location and program.
+   * @param locationId institution location.
+   * @param programId institution program.
+   * @param options Options.
+   * - `isActive` Indicates whether to select only active restrictions.
+   * - `excludeNoEffectRestrictions` Indicates whether to exclude restrictions with no effect.
+   * @returns Institution restrictions.
+   */
+  async getInstitutionRestrictionsByLocationAndProgram(
+    locationId: number,
+    programId: number,
+    options?: { isActive?: boolean; excludeNoEffectRestrictions?: boolean },
+  ): Promise<InstitutionRestriction[]> {
+    return this.repo.find({
+      select: {
+        id: true,
+        restriction: {
+          id: true,
+          restrictionCode: true,
+          actionType: true,
+        },
+      },
+      relations: {
+        restriction: true,
+      },
+      where: {
+        location: { id: locationId },
+        program: { id: programId },
+        restriction: {
+          notificationType: options?.excludeNoEffectRestrictions
+            ? Not(Equal(RestrictionNotificationType.NoEffect))
+            : undefined,
+        },
+        isActive: options?.isActive,
+      },
+    });
   }
 }

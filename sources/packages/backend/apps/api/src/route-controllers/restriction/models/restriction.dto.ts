@@ -11,8 +11,8 @@ import {
   NOTE_DESCRIPTION_MAX_LENGTH,
   RestrictionType,
   RESTRICTION_CATEGORY_MAX_LENGTH,
+  RestrictionActionType,
 } from "@sims/sims-db";
-import { RestrictionCode } from "@sims/services";
 
 /**
  * Maximum allowed locations while assigning institution restriction.
@@ -151,8 +151,8 @@ export class StudentRestrictionAPIOutDTO {
 }
 
 export class InstitutionRestrictionAPIOutDTO {
-  restrictionCode: RestrictionCode;
-  restrictionActions: string[];
+  restrictionCode: string;
+  restrictionActions: RestrictionActionType[];
 }
 
 export class InstitutionRestrictionsAPIOutDTO {

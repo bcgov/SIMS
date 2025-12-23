@@ -43,15 +43,17 @@ describe("RestrictionStudentsController(e2e)-getStudentRestrictions", () => {
         .get(endpoint)
         .auth(studentToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
-        .expect([
-          {
-            restrictionCode: RestrictionCode.SUS,
-            restrictionActions: [
-              RestrictionActionType.StopPartTimeDisbursement,
-              RestrictionActionType.StopFullTimeDisbursement,
-            ],
-          },
-        ]);
+        .expect({
+          institutionRestrictions: [
+            {
+              restrictionCode: RestrictionCode.SUS,
+              restrictionActions: [
+                RestrictionActionType.StopPartTimeDisbursement,
+                RestrictionActionType.StopFullTimeDisbursement,
+              ],
+            },
+          ],
+        });
     },
   );
 

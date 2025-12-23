@@ -10,7 +10,11 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { StudentUserToken } from "../../auth/userToken.interface";
-import { InstitutionService, StudentRestrictionService } from "../../services";
+import {
+  InstitutionRestrictionService,
+  InstitutionService,
+  StudentRestrictionService,
+} from "../../services";
 import BaseController from "../BaseController";
 import {
   InstitutionRestrictionsAPIOutDTO,
@@ -38,6 +42,7 @@ const NOTIFICATION_PRIORITY_ORDER_MAP = {
 export class RestrictionStudentsController extends BaseController {
   constructor(
     private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly institutionRestrictionService: InstitutionRestrictionService,
     private readonly institutionService: InstitutionService,
   ) {
     super();
@@ -110,6 +115,17 @@ export class RestrictionStudentsController extends BaseController {
         "Institution with the program and location not found.",
       );
     }
-    return { institutionRestrictions: [] };
+    const institutionRestrictions =
+      await this.institutionRestrictionService.getInstitutionRestrictionsByLocationAndProgram(
+        locationId,
+        programId,
+        { isActive: true, excludeNoEffectRestrictions: true },
+      );
+    return {
+      institutionRestrictions: institutionRestrictions.map((restriction) => ({
+        restrictionCode: restriction.restriction.restrictionCode,
+        restrictionActions: restriction.restriction.actionType,
+      })),
+    };
   }
 }
