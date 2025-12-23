@@ -46,15 +46,16 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOEDeniedReason
 
   it("Should get COE denial reasons list when part-time intensity is provided.", async () => {
     // Arrange
+    const userToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCUser,
+    );
     const endpoint =
       "/institutions/location/confirmation-of-enrollment/denial-reasons?offeringIntensity=Part Time";
+
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
-      .auth(
-        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
-        BEARER_AUTH_TYPE,
-      )
+      .auth(userToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect((response) => {
         expect(response.body).toStrictEqual([
@@ -70,15 +71,16 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOEDeniedReason
 
   it("Should get COE denial reasons list when full-time intensity is provided.", async () => {
     // Arrange
+    const userToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCUser,
+    );
     const endpoint =
       "/institutions/location/confirmation-of-enrollment/denial-reasons?offeringIntensity=Full Time";
+
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
-      .auth(
-        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
-        BEARER_AUTH_TYPE,
-      )
+      .auth(userToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect((response) => {
         expect(response.body).toStrictEqual([
@@ -89,6 +91,46 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOEDeniedReason
           },
           ...COE_COMMON_DENIAL_REASONS,
         ]);
+      });
+  });
+
+  it("Should throw a bad request error when no offering intensity is provided.", async () => {
+    // Arrange
+    const userToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCUser,
+    );
+    const endpoint =
+      "/institutions/location/confirmation-of-enrollment/denial-reasons";
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(userToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message: "Validation failed (enum string is expected)",
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
+  });
+
+  it("Should throw a bad request error when an invalid offering intensity is provided.", async () => {
+    // Arrange
+    const userToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCUser,
+    );
+    const endpoint =
+      "/institutions/location/confirmation-of-enrollment/denial-reasons?offeringIntensity=notValidIntensity";
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(userToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message: "Validation failed (enum string is expected)",
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
       });
   });
 

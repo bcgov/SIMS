@@ -63,7 +63,6 @@ import {
   ENROLMENT_NOT_FOUND,
 } from "@sims/services/constants";
 import { InstitutionUserTypes } from "../../auth";
-import { ParseEnumQueryPipe } from "../utils";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("location")
@@ -334,7 +333,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
    */
   @Get("confirmation-of-enrollment/denial-reasons")
   async getCOEDeniedReason(
-    @Query("offeringIntensity", new ParseEnumQueryPipe(OfferingIntensity))
+    @Query("offeringIntensity", new ParseEnumPipe(OfferingIntensity))
     offeringIntensity: OfferingIntensity,
   ): Promise<COEDeniedReasonAPIOutDTO[]> {
     const deniedReasons =
