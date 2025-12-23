@@ -59,7 +59,6 @@ import {
 } from "@sims/services";
 import {
   ENROLMENT_ALREADY_COMPLETED,
-  ENROLMENT_DECLINED_INVALID_REASON,
   ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ENROLMENT_NOT_FOUND,
 } from "@sims/services/constants";
@@ -321,7 +320,6 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
             throw new NotFoundException(error.message);
           case ENROLMENT_ALREADY_COMPLETED:
           case ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
-          case ENROLMENT_DECLINED_INVALID_REASON:
             throw new UnprocessableEntityException(error.message);
         }
       }
