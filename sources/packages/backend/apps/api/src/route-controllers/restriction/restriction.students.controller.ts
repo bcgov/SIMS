@@ -17,6 +17,7 @@ import {
 } from "../../services";
 import BaseController from "../BaseController";
 import {
+  InstitutionRestrictionAPIOutDTO,
   InstitutionRestrictionsAPIOutDTO,
   StudentRestrictionAPIOutDTO,
 } from "./models/restriction.dto";
@@ -101,7 +102,7 @@ export class RestrictionStudentsController extends BaseController {
    * @returns institution restrictions.
    */
   @Get("institution/location/:locationId/program/:programId")
-  async getInstitutionRestrictions(
+  async getLocationProgramInstitutionRestrictions(
     @Param("locationId", ParseIntPipe) locationId: number,
     @Param("programId", ParseIntPipe) programId: number,
   ): Promise<InstitutionRestrictionsAPIOutDTO> {
@@ -122,10 +123,12 @@ export class RestrictionStudentsController extends BaseController {
         { isActive: true, excludeNoEffectRestrictions: true },
       );
     return {
-      institutionRestrictions: institutionRestrictions.map((restriction) => ({
-        restrictionCode: restriction.restriction.restrictionCode,
-        restrictionActions: restriction.restriction.actionType,
-      })),
+      institutionRestrictions:
+        institutionRestrictions.map<InstitutionRestrictionAPIOutDTO>(
+          (restriction) => ({
+            restrictionActions: restriction.restriction.actionType,
+          }),
+        ),
     };
   }
 }

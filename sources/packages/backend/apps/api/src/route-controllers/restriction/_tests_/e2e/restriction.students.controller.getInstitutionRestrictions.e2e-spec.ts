@@ -46,7 +46,6 @@ describe("RestrictionStudentsController(e2e)-getStudentRestrictions", () => {
         .expect({
           institutionRestrictions: [
             {
-              restrictionCode: RestrictionCode.SUS,
               restrictionActions: [
                 RestrictionActionType.StopPartTimeDisbursement,
                 RestrictionActionType.StopFullTimeDisbursement,

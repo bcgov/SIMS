@@ -375,7 +375,6 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
         id: true,
         restriction: {
           id: true,
-          restrictionCode: true,
           actionType: true,
         },
       },

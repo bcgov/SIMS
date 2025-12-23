@@ -150,11 +150,16 @@ export class StudentRestrictionAPIOutDTO {
   type: RestrictionNotificationType;
 }
 
+/**
+ * Institution restriction details.
+ */
 export class InstitutionRestrictionAPIOutDTO {
-  restrictionCode: string;
   restrictionActions: RestrictionActionType[];
 }
 
+/**
+ * Institution restrictions.
+ */
 export class InstitutionRestrictionsAPIOutDTO {
   institutionRestrictions: InstitutionRestrictionAPIOutDTO[];
 }

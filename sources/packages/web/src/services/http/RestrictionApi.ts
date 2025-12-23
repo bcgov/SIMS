@@ -162,4 +162,21 @@ export class RestrictionApi extends HttpBaseClient {
       this.addClientRoot("restriction"),
     );
   }
+
+  /**
+   * Get institution restrictions effective for the given program and institution location.
+   * @param locationId institution location.
+   * @param programId institution program.
+   * @returns institution restrictions.
+   */
+  async getLocationProgramInstitutionRestrictions(
+    locationId: number,
+    programId: number,
+  ): Promise<StudentRestrictionAPIOutDTO[]> {
+    return this.getCall(
+      this.addClientRoot(
+        `restriction/institution/location/${locationId}/program/${programId}`,
+      ),
+    );
+  }
 }
