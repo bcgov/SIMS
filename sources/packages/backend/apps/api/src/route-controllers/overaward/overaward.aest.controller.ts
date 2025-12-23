@@ -83,9 +83,9 @@ export class OverawardAESTController extends BaseController {
   }
 
   /**
-   * Add a manual overaward deduction for a student.
-   * @param studentId student for whom overaward deduction is being added.
-   * @param payload overaward deduction payload.
+   * Add a manual overaward for a student.
+   * @param studentId student for whom overaward amount is being applied.
+   * @param payload overaward payload. Overaward value can be negative or positive.
    * @returns primary identifier of the resource created.
    */
   @ApiNotFoundResponse({
@@ -102,7 +102,7 @@ export class OverawardAESTController extends BaseController {
     if (!studentExist) {
       throw new NotFoundException("Student not found.");
     }
-    const addedOverawardDeduction =
+    const addedManualOveraward =
       await this.disbursementOverawardService.addManualOveraward(
         payload.awardValueCode,
         payload.overawardValue,
@@ -111,7 +111,7 @@ export class OverawardAESTController extends BaseController {
         userToken.userId,
       );
     return {
-      id: addedOverawardDeduction.id,
+      id: addedManualOveraward.id,
     };
   }
 }
