@@ -49,7 +49,6 @@ import {
   AssessmentSequentialProcessingService,
   SystemUsersService,
 } from "@sims/services";
-import { COEDeniedReasonService } from "../confirmation-of-enrollment/";
 
 /**
  * Types of awards considered for the max tuition remittance calculation.
@@ -70,7 +69,6 @@ export class ConfirmationOfEnrollmentService {
     private readonly notificationActionsService: NotificationActionsService,
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
     private readonly systemUserService: SystemUsersService,
-    private readonly coeDeniedReasonService: COEDeniedReasonService,
     private readonly logger: LoggerService,
   ) {}
 
