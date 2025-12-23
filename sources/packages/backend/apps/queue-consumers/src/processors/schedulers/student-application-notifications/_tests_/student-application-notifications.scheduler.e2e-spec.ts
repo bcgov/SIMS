@@ -453,5 +453,213 @@ describe(
         ).toBe(true);
       },
     );
+
+    it(
+      "Should generate a notification for a student when the study end date is within 10 days " +
+        "and at least one COE is required on the most recent assessment.",
+      async () => {
+        // Arrange
+        // Create an application with study end date within 10 days and COE required.
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          undefined,
+          {
+            applicationStatus: ApplicationStatus.Enrolment,
+            offeringInitialValues: {
+              studyStartDate: getISODateOnlyString(addDays(-30)),
+              studyEndDate: getISODateOnlyString(addDays(7)),
+            },
+            firstDisbursementInitialValues: {
+              coeStatus: COEStatus.required,
+            },
+          },
+        );
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await processor.processQueue(mockedJob.job);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            `Assessments with COE required near end date that generated notifications: ${application.currentAssessment.id}.`,
+          ]),
+        ).toBe(true);
+        const notification = await db.notification.findOne({
+          select: {
+            id: true,
+            messagePayload: true,
+          },
+          relations: { notificationMessage: true },
+          where: {
+            notificationMessage: {
+              id: NotificationMessageType.StudentCOERequiredNearEndDateNotification,
+            },
+            dateSent: IsNull(),
+            user: { id: application.student.user.id },
+          },
+        });
+        expect(notification).toBeDefined();
+        expect(notification.messagePayload).toStrictEqual({
+          email_address: application.student.user.email,
+          template_id: "4da67f87-ec53-4d9b-809c-4610e1c76362",
+          personalisation: {
+            lastName: application.student.user.lastName,
+            givenNames: application.student.user.firstName,
+            applicationNumber: application.applicationNumber,
+          },
+        });
+      },
+    );
+
+    it(
+      "Should not generate a notification for a student when the study end date is within 10 days " +
+        "and all COEs are completed.",
+      async () => {
+        // Arrange
+        // Create an application with study end date within 10 days but all COEs completed.
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          undefined,
+          {
+            applicationStatus: ApplicationStatus.Completed,
+            offeringInitialValues: {
+              studyStartDate: getISODateOnlyString(addDays(-30)),
+              studyEndDate: getISODateOnlyString(addDays(7)),
+            },
+            firstDisbursementInitialValues: {
+              coeStatus: COEStatus.completed,
+            },
+          },
+        );
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await processor.processQueue(mockedJob.job);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            "No applications found with COE required near study end date.",
+          ]),
+        ).toBe(true);
+
+        const notificationExists = await db.notification.exists({
+          relations: { notificationMessage: true },
+          where: {
+            notificationMessage: {
+              id: NotificationMessageType.StudentCOERequiredNearEndDateNotification,
+            },
+            metadata: { assessmentId: application.currentAssessment.id },
+            user: { id: application.student.user.id },
+            dateSent: IsNull(),
+          },
+        });
+
+        expect(notificationExists).toBe(false);
+      },
+    );
+
+    it(
+      "Should not generate a notification for a student when a notification has already been sent " +
+        "for the current assessment with COE required near study end date.",
+      async () => {
+        // Arrange
+        // Create an application with study end date within 10 days and COE required.
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          undefined,
+          {
+            applicationStatus: ApplicationStatus.Enrolment,
+            offeringInitialValues: {
+              studyStartDate: getISODateOnlyString(addDays(-30)),
+              studyEndDate: getISODateOnlyString(addDays(7)),
+            },
+            firstDisbursementInitialValues: {
+              coeStatus: COEStatus.required,
+            },
+          },
+        );
+
+        // Create a notification for the assessment.
+        const notification = createFakeNotification(
+          {
+            user: application.student.user,
+            notificationMessage: {
+              id: NotificationMessageType.StudentCOERequiredNearEndDateNotification,
+            } as NotificationMessage,
+          },
+          {
+            initialValue: {
+              metadata: { assessmentId: application.currentAssessment.id },
+            },
+          },
+        );
+        await db.notification.save(notification);
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await processor.processQueue(mockedJob.job);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            "No applications found with COE required near study end date.",
+          ]),
+        ).toBe(true);
+      },
+    );
+
+    it("Should not generate a notification for a student when the study end date is more than 10 days away.", async () => {
+      // Arrange
+      // Create an application with study end date more than 10 days away (11 days).
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        undefined,
+        {
+          applicationStatus: ApplicationStatus.Enrolment,
+          offeringInitialValues: {
+            studyStartDate: getISODateOnlyString(addDays(-30)),
+            studyEndDate: getISODateOnlyString(addDays(11)),
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.required,
+          },
+        },
+      );
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      await processor.processQueue(mockedJob.job);
+
+      // Assert
+      expect(
+        mockedJob.containLogMessages([
+          "No applications found with COE required near study end date.",
+        ]),
+      ).toBe(true);
+
+      const notificationExists = await db.notification.exists({
+        relations: { notificationMessage: true },
+        where: {
+          notificationMessage: {
+            id: NotificationMessageType.StudentCOERequiredNearEndDateNotification,
+          },
+          metadata: { assessmentId: application.currentAssessment.id },
+          user: { id: application.student.user.id },
+          dateSent: IsNull(),
+        },
+      });
+
+      expect(notificationExists).toBe(false);
+    });
   },
 );
