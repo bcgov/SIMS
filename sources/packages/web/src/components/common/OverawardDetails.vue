@@ -91,6 +91,11 @@ import {
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import AddManualOveraward from "@/components/aest/students/modals/AddManualOveraward.vue";
 
+const ADD_SUCCESS_MESSAGE = "Overaward added successfully.";
+const SUBTRACT_SUCCESS_MESSAGE = "Overaward subtracted successfully.";
+const ADD_ERROR_MESSAGE = "An error happened while adding overaward.";
+const SUBTRACT_ERROR_MESSAGE = "An error happened while subtracting overaward.";
+
 export default defineComponent({
   components: { CheckPermissionRole, AddManualOveraward },
   emits: {
@@ -136,18 +141,12 @@ export default defineComponent({
           manualOveraward as OverawardManualRecordAPIInDTO,
         );
         snackBar.success(
-          isAddition
-            ? "Overaward added successfully."
-            : "Overaward subtracted successfully.",
+          isAddition ? ADD_SUCCESS_MESSAGE : SUBTRACT_SUCCESS_MESSAGE,
         );
         context.emit("manualOverawardAdded");
         await loadOverawardDetails();
       } catch {
-        snackBar.error(
-          isAddition
-            ? "An error happened while adding overaward."
-            : "An error happened while subtracting overaward.",
-        );
+        snackBar.error(isAddition ? ADD_ERROR_MESSAGE : SUBTRACT_ERROR_MESSAGE);
       }
     };
 
