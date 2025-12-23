@@ -81,6 +81,7 @@ import {
   Role,
   OverawardAdjustmentsHeaders,
   DisbursementOverawardOriginType,
+  AssessmentTriggerType,
 } from "@/types";
 import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
 import {
@@ -174,13 +175,16 @@ export default defineComponent({
     });
 
     /**
-     * When origin is "Reassessment overaward" instead display the "Type" associated with it in Origin column.
+     * When the origin is "Reassessment overaward", instead display the assessment trigger type
+     * to provide additional context on re-assessment overawards.
      * @param overaward The Overaward.
      */
-    const origin = (overaward: OverawardAPIOutDTO): string => {
+    const origin = (
+      overaward: OverawardAPIOutDTO,
+    ): DisbursementOverawardOriginType | AssessmentTriggerType => {
       return overaward.overawardOrigin ===
         DisbursementOverawardOriginType.ReassessmentOveraward
-        ? (overaward.assessmentTriggerType ?? "")
+        ? (overaward.assessmentTriggerType as AssessmentTriggerType)
         : overaward.overawardOrigin;
     };
 
