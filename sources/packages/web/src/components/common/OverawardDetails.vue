@@ -11,7 +11,7 @@
                   color="primary"
                   :disabled="notAllowed"
                   prepend-icon="fa:fa fa-plus-circle"
-                  @click="addOverawards"
+                  @click="addSubtractOverawards(true)"
                 >
                   Add Overawards
                 </v-btn>
@@ -20,7 +20,7 @@
                   color="primary"
                   :disabled="notAllowed"
                   prepend-icon="fa:fa fa-minus-circle"
-                  @click="subtractOverawards"
+                  @click="addSubtractOverawards(false)"
                 >
                   Subtract Overawards
                 </v-btn>
@@ -66,7 +66,6 @@
 
     <add-manual-overaward
       ref="addManualOveraward"
-      :is-addition="isAddition"
       :allowed-role="Role.StudentAddOverawardManual"
     />
   </body-header-container>
@@ -118,15 +117,15 @@ export default defineComponent({
       useFormatters();
     const snackBar = useSnackBar();
     const { mobile: isMobile } = useDisplay();
-    const isAddition = ref(true);
 
     const overawardDetails = ref([] as OverawardAPIOutDTO[]);
     const addManualOveraward = ref(
       {} as ModalDialog<OverawardManualRecordAPIInDTO | boolean>,
     );
-    const addOverawards = async () => {
-      isAddition.value = true;
-      const manualOveraward = await addManualOveraward.value.showModal();
+
+    const addSubtractOverawards = async (isAddition: boolean) => {
+      const manualOveraward =
+        await addManualOveraward.value.showModal(isAddition);
       if (!manualOveraward || typeof manualOveraward === "boolean") {
         return;
       }
@@ -135,34 +134,19 @@ export default defineComponent({
           props.studentId as number,
           manualOveraward,
         );
-        snackBar.success("Overaward added successfully.");
-        context.emit("manualOverawardAdded");
-        await loadOverawardDetails();
-      } catch {
-        snackBar.error("An error happened while adding overaward.");
-      }
-    };
-
-    const subtractOverawards = async () => {
-      isAddition.value = false;
-      const manualOveraward = await addManualOveraward.value.showModal();
-      if (!manualOveraward || typeof manualOveraward === "boolean") {
-        return;
-      }
-      try {
-        const subtractOveraward = {
-          ...manualOveraward,
-          overawardValue: -manualOveraward.overawardValue,
-        };
-        await OverawardService.shared.addManualOveraward(
-          props.studentId as number,
-          subtractOveraward,
+        snackBar.success(
+          isAddition
+            ? "Overaward added successfully."
+            : "Overaward subtracted successfully.",
         );
-        snackBar.success("Overaward subtracted successfully.");
         context.emit("manualOverawardAdded");
         await loadOverawardDetails();
       } catch {
-        snackBar.error("An error happened while subtracting overaward.");
+        snackBar.error(
+          isAddition
+            ? "An error happened while adding overaward."
+            : "An error happened while subtracting overaward.",
+        );
       }
     };
 
@@ -185,6 +169,10 @@ export default defineComponent({
           );
     });
 
+    /**
+     * When origin is "Reassessment overaward" instead display the "Type" associated with it in Origin column.
+     * @param overaward The Overaward.
+     */
     const origin = (overaward: OverawardAPIOutDTO): string => {
       return overaward.overawardOrigin ===
         DisbursementOverawardOriginType.ReassessmentOveraward
@@ -202,13 +190,11 @@ export default defineComponent({
       formatCurrency,
       Role,
       addManualOveraward,
-      addOverawards,
-      subtractOverawards,
+      addSubtractOverawards,
       emptyStringFiller,
       formatDateAdded,
       overawardAdjustmentsHeaders,
       isMobile,
-      isAddition,
       origin,
     };
   },

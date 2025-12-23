@@ -1,7 +1,8 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { createFakeStudent } from "@sims/test-utils";
+import { createFakeStudent, E2EDataSources } from "@sims/test-utils";
 import { Repository } from "typeorm";
+import MockDate from "mockdate";
 import {
   DisbursementOveraward,
   DisbursementOverawardOriginType,
@@ -13,12 +14,14 @@ import {
   AESTGroups,
   BEARER_AUTH_TYPE,
   getAESTToken,
+  getAESTUser,
   createTestingAppModule,
 } from "../../../../testHelpers";
 import { OverawardManualRecordAPIInDTO } from "../../models/overaward.dto";
 
 describe("OverawardAESTController(e2e)-addManualOveraward", () => {
   let app: INestApplication;
+  let db: E2EDataSources;
   let studentRepo: Repository<Student>;
   let disbursementOverawardRepo: Repository<DisbursementOveraward>;
 
@@ -35,12 +38,22 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
     disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
   });
 
+  beforeEach(async () => {
+    MockDate.reset();
+  });
+
   it("Should create manual overaward (deduction) when AEST user belong to business-administrators group", async () => {
     // Arrange
     const student = await studentRepo.save(createFakeStudent());
     const endpoint = `/aest/overaward/student/${student.id}`;
+    const ministryUser = await getAESTUser(
+      db.dataSource,
+      AESTGroups.BusinessAdministrators,
+    );
+    const now = new Date();
+    MockDate.set(now);
 
-    // Act
+    // Act/Assert
     const overawardResponse = await request(app.getHttpServer())
       .post(endpoint)
       .send(manualOverawardPayload)
@@ -58,8 +71,10 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
         overawardNotes: { noteType: true, description: true },
         overawardValue: true,
         student: { id: true },
+        addedBy: { id: true },
+        addedDate: true,
       },
-      relations: { overawardNotes: true, student: true },
+      relations: { overawardNotes: true, student: true, addedBy: true },
       where: { id: overawardResponse.body.id },
       loadEagerRelations: false,
     });
@@ -77,6 +92,10 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
       student: {
         id: student.id,
       },
+      addedBy: {
+        id: ministryUser.id,
+      },
+      addedDate: now,
     });
   });
 

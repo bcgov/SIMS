@@ -85,18 +85,14 @@ export default defineComponent({
       type: String as PropType<Role>,
       required: true,
     },
-    isAddition: {
-      type: Boolean,
-      required: true,
-    },
   },
-  setup(props) {
+  setup() {
     const { numberRangeRule, checkNullOrEmptyRule, checkNotesLengthRule } =
       useRules();
     const { formatCurrency } = useFormatters();
-    const { showDialog, showModal, resolvePromise } = useModalDialog<
-      OverawardManualRecordAPIInDTO | boolean
-    >();
+    // showParameter represents whether the modal is in Add mode (true) or Subtract mode (false)
+    const { showDialog, showModal, showParameter, resolvePromise } =
+      useModalDialog<OverawardManualRecordAPIInDTO | boolean, boolean>();
     const addManualOverawardForm = ref({} as VForm);
     const formModel = reactive({} as OverawardManualRecordAPIInDTO);
     const awardTypeItems = AWARDS.filter((award) =>
@@ -117,6 +113,10 @@ export default defineComponent({
       }
       // Copying the payload, as reset is making the formModel properties null.
       const payload = { ...formModel };
+      if (!showParameter.value) {
+        // When the modal is in Subtract mode, the entered overaward value must be made be negative.
+        payload.overawardValue = -payload.overawardValue;
+      }
       resolvePromise(payload);
       addManualOverawardForm.value.reset();
     };
@@ -127,15 +127,13 @@ export default defineComponent({
       resolvePromise(false);
     };
 
-    const title = computed(
-      () => `${props.isAddition ? "Add" : "Subtract"} overawards`,
-    );
+    const title = computed(() => {
+      return showParameter.value ? "Add overawards" : "Subtract overawards";
+    });
     const description = computed(() => {
-      return `Add a record to capture that the student ${
-        props.isAddition
-          ? "owes money on their loans."
-          : "paid back their loans through the National Student Loans Service Centre (NSLSC)."
-      }`;
+      return showParameter.value
+        ? "Add a record to capture that the student owes money on their loans."
+        : "Add a record to capture that the student paid back their loans through the National Student Loans Service Centre (NSLSC).";
     });
 
     return {
