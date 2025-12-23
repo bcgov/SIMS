@@ -1006,4 +1006,17 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   async institutionExists(id: number): Promise<boolean> {
     return this.repo.exists({ where: { id } });
   }
+
+  /**
+   * Checks if an institution exists with the given location and program.
+   * @returns True if the institution exists, false otherwise.
+   */
+  async institutionWithLocationAndProgramExists(
+    locationId: number,
+    programId: number,
+  ): Promise<boolean> {
+    return this.repo.exists({
+      where: { locations: { id: locationId }, programs: { id: programId } },
+    });
+  }
 }

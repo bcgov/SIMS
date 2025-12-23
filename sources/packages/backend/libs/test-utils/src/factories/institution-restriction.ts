@@ -9,7 +9,13 @@ import {
   User,
 } from "@sims/sims-db";
 import { createFakeNote, saveFakeInstitutionNotes } from "./note";
-import { E2EDataSources } from "@sims/test-utils";
+import {
+  createFakeEducationProgram,
+  createFakeInstitution,
+  createFakeInstitutionLocation,
+  createFakeUser,
+  E2EDataSources,
+} from "@sims/test-utils";
 
 /**
  * Create a fake institution restriction to be persisted.
@@ -51,10 +57,10 @@ export function createFakeInstitutionRestriction(
  * Saves a fake institution restriction.
  * @param db Data sources for e2e tests.
  * @param relations Entity relations.
+ * - `restriction` Restriction associated with the institution. If not provided, one will be created.
  * - `institution` Related institution.
  * - `program` Program associated with the institution.
  * - `location` Location associated with the institution.
- * - `restriction` Restriction associated with the institution. If not provided, one will be created.
  * - `restrictionNote` Note for restriction. If not provided, one will be created.
  * - `creator` Record creator.
  * @param options Options for institution restriction.
@@ -64,24 +70,47 @@ export function createFakeInstitutionRestriction(
 export async function saveFakeInstitutionRestriction(
   db: E2EDataSources,
   relations: {
-    institution: Institution;
+    restriction: Restriction;
+    institution?: Institution;
     program?: EducationProgram;
     location?: InstitutionLocation;
-    restriction: Restriction;
     restrictionNote?: Note;
     creator?: User;
   },
   options?: { initialValues: Partial<InstitutionRestriction> },
 ): Promise<InstitutionRestriction> {
+  const creator = relations.creator ?? (await db.user.save(createFakeUser()));
+  const institution =
+    relations.institution ??
+    (await db.institution.save(createFakeInstitution()));
   const [restrictionNote] = await saveFakeInstitutionNotes(
     db.dataSource,
     [createFakeNote(NoteType.Restriction)],
-    relations.institution.id,
+    institution.id,
+    creator,
   );
+  const program =
+    relations.program ??
+    (await db.educationProgram.save(
+      createFakeEducationProgram({
+        auditUser: creator,
+        institution,
+      }),
+    ));
+
+  const location =
+    relations.location ??
+    (await db.institutionLocation.save(
+      createFakeInstitutionLocation({ institution }),
+    ));
   const institutionRestriction = createFakeInstitutionRestriction(
     {
-      ...relations,
-      restrictionNote,
+      restriction: relations.restriction,
+      institution,
+      program,
+      location,
+      restrictionNote: relations.restrictionNote ?? restrictionNote,
+      creator: relations.creator ?? creator,
     },
     options,
   );
