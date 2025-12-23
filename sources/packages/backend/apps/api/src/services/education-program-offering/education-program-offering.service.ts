@@ -1480,7 +1480,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       // default sort and order
       offeringsQuery.orderBy(
         sortOfferingsColumnMap(DEFAULT_SORT_FIELD),
-        FieldSortOrder.DESC,
+        FieldSortOrder.ASC,
       );
     }
     // pagination

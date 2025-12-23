@@ -35,6 +35,7 @@ import {
   EducationProgramOfferingAPIOutDTO,
   OfferingChangeAssessmentAPIInDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
+  EducationProgramOfferingPendingAPIOutDTO,
 } from "./models/education-program-offering.dto";
 import {
   OfferingsPaginationOptionsAPIInDTO,
@@ -113,7 +114,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
   async getPendingOfferings(
     @Query() paginationOptions: OfferingsPaginationOptionsAPIInDTO,
   ): Promise<
-    PaginatedResultsAPIOutDTO<EducationProgramOfferingSummaryAPIOutDTO>
+    PaginatedResultsAPIOutDTO<EducationProgramOfferingPendingAPIOutDTO>
   > {
     return this.educationProgramOfferingControllerService.getPendingOfferings(
       paginationOptions,

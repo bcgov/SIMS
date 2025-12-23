@@ -46,6 +46,7 @@ import {
 import {
   EducationProgramOfferingAPIInDTO,
   EducationProgramOfferingAPIOutDTO,
+  EducationProgramOfferingPendingAPIOutDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
   EducationProgramOfferingSummaryViewAPIOutDTO,
   OfferingBulkInsertValidationResultAPIOutDTO,
@@ -455,7 +456,7 @@ export class EducationProgramOfferingControllerService {
   async getPendingOfferings(
     paginationOptions: OfferingsPaginationOptionsAPIInDTO,
   ): Promise<
-    PaginatedResultsAPIOutDTO<EducationProgramOfferingSummaryAPIOutDTO>
+    PaginatedResultsAPIOutDTO<EducationProgramOfferingPendingAPIOutDTO>
   > {
     const offerings =
       await this.offeringService.getPendingOfferings(paginationOptions);
@@ -464,7 +465,6 @@ export class EducationProgramOfferingControllerService {
       results: offerings.results.map((offering) => ({
         id: offering.id,
         name: offering.name,
-        yearOfStudy: offering.yearOfStudy,
         studyStartDate: offering.studyStartDate,
         studyEndDate: offering.studyEndDate,
         offeringDelivered: offering.offeringDelivered,
