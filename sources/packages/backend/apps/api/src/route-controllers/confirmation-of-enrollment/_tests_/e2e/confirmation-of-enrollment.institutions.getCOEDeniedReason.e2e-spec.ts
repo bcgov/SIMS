@@ -6,6 +6,7 @@ import {
   getInstitutionToken,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
+import { OfferingIntensity } from "@sims/sims-db";
 
 const COE_COMMON_DENIAL_REASONS = [
   {
@@ -49,8 +50,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOEDeniedReason
     const userToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
-    const endpoint =
-      "/institutions/location/confirmation-of-enrollment/denial-reasons?offeringIntensity=Part Time";
+    const endpoint = `/institutions/location/confirmation-of-enrollment/denial-reasons?offeringIntensity=${OfferingIntensity.partTime}`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -74,8 +74,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getCOEDeniedReason
     const userToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
-    const endpoint =
-      "/institutions/location/confirmation-of-enrollment/denial-reasons?offeringIntensity=Full Time";
+    const endpoint = `/institutions/location/confirmation-of-enrollment/denial-reasons?offeringIntensity=${OfferingIntensity.fullTime}`;
 
     // Act/Assert
     await request(app.getHttpServer())

@@ -27,7 +27,7 @@
             </div>
           </template>
           <v-radio
-            v-for="reason in COEDenialReasons"
+            v-for="reason in coeDenialReasons"
             :key="reason.value"
             :label="reason.label"
             :value="reason.value"
@@ -80,7 +80,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const COEDenialReasons = ref([] as COEDeniedReasonAPIOutDTO[]);
+    const coeDenialReasons = ref([] as COEDeniedReasonAPIOutDTO[]);
     const { showDialog, resolvePromise, showModal } = useModalDialog<
       DenyConfirmationOfEnrollmentAPIInDTO | boolean
     >();
@@ -105,10 +105,10 @@ export default defineComponent({
 
     watchEffect(async () => {
       if (!props.offeringIntensity) {
-        COEDenialReasons.value = [];
+        coeDenialReasons.value = [];
         return;
       }
-      COEDenialReasons.value =
+      coeDenialReasons.value =
         await ConfirmationOfEnrollmentService.shared.getCOEDenialReasons(
           props.offeringIntensity,
         );
@@ -121,7 +121,7 @@ export default defineComponent({
       cancel,
       formModel,
       showModal,
-      COEDenialReasons,
+      coeDenialReasons,
     };
   },
 });
