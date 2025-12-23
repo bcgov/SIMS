@@ -1,6 +1,10 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { createFakeStudent, E2EDataSources } from "@sims/test-utils";
+import {
+  createE2EDataSources,
+  createFakeStudent,
+  E2EDataSources,
+} from "@sims/test-utils";
 import { Repository } from "typeorm";
 import MockDate from "mockdate";
 import {
@@ -36,6 +40,7 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
     app = nestApplication;
     studentRepo = dataSource.getRepository(Student);
     disbursementOverawardRepo = dataSource.getRepository(DisbursementOveraward);
+    db = createE2EDataSources(dataSource);
   });
 
   beforeEach(async () => {
