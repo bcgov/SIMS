@@ -21,7 +21,7 @@ import {
   COEDeniedReasonService,
   DisbursementScheduleService,
 } from "../../services";
-import { DisbursementSchedule } from "@sims/sims-db";
+import { DisbursementSchedule, OfferingIntensity } from "@sims/sims-db";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
   getCOEDeniedReason,
@@ -59,10 +59,12 @@ import {
 } from "@sims/services";
 import {
   ENROLMENT_ALREADY_COMPLETED,
+  ENROLMENT_DECLINED_INVALID_REASON,
   ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ENROLMENT_NOT_FOUND,
 } from "@sims/services/constants";
 import { InstitutionUserTypes } from "../../auth";
+import { ParseEnumQueryPipe } from "../utils";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("location")
@@ -319,6 +321,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
             throw new NotFoundException(error.message);
           case ENROLMENT_ALREADY_COMPLETED:
           case ENROLMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+          case ENROLMENT_DECLINED_INVALID_REASON:
             throw new UnprocessableEntityException(error.message);
         }
       }
@@ -327,16 +330,20 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
   }
 
   /**
-   * Get all COE denied reasons, which are active.
-   * @returns COE denied reason list.
+   * List of possible COE denied reasons.
+   * @param offeringIntensity Used to filter the denied reasons based on offering intensity.
+   * @returns List of COE denied reasons, active, generic, intensity specific ones.
    */
   @Get("confirmation-of-enrollment/denial-reasons")
-  async getCOEDeniedReason(): Promise<COEDeniedReasonAPIOutDTO[]> {
-    const coeDeniedReason =
-      await this.deniedCOEReasonService.getCOEDeniedReasons();
-    return coeDeniedReason.map((eachCOEDeniedReason) => ({
-      value: eachCOEDeniedReason.id,
-      label: eachCOEDeniedReason.reason,
+  async getCOEDeniedReason(
+    @Query("offeringIntensity", new ParseEnumQueryPipe(OfferingIntensity))
+    offeringIntensity: OfferingIntensity,
+  ): Promise<COEDeniedReasonAPIOutDTO[]> {
+    const deniedReasons =
+      await this.deniedCOEReasonService.getCOEDeniedReasons(offeringIntensity);
+    return deniedReasons.map((deniedReason) => ({
+      value: deniedReason.id,
+      label: deniedReason.reason,
     }));
   }
 }

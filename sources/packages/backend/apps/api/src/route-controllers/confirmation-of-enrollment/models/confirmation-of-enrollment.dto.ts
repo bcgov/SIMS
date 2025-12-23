@@ -14,7 +14,7 @@ export class ApplicationDetailsForCOEAPIOutDTO {
   applicationProgramName: string;
   applicationProgramDescription: string;
   applicationOfferingName: string;
-  applicationOfferingIntensity: string;
+  applicationOfferingIntensity: OfferingIntensity;
   applicationOfferingStartDate: string;
   applicationOfferingEndDate: string;
   applicationOfferingHasStudyBreak: boolean;

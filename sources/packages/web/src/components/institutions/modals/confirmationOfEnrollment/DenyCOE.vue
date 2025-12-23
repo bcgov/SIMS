@@ -1,10 +1,6 @@
 <template>
   <v-form ref="denyCOE">
-    <modal-dialog-base
-      :showDialog="showDialog"
-      @dialogClosed="dialogClosed"
-      title="Decline enrolment"
-    >
+    <modal-dialog-base :show-dialog="showDialog" title="Decline enrolment">
       <template #content>
         <error-summary :errors="denyCOE.errors" />
         <div class="pb-2">
@@ -35,7 +31,8 @@
             :key="reason.value"
             :label="reason.label"
             :value="reason.value"
-            class="my-2"
+            class="mt-2"
+            hide-details
           ></v-radio>
         </v-radio-group>
         <!-- The value of other is 1, so we are showing the Other Reason, when the Institution user selects Other.-->
@@ -49,10 +46,9 @@
       </template>
       <template #footer>
         <footer-buttons
-          :processing="processing"
-          primaryLabel="Decline enrolment now"
-          @primaryClick="submit"
-          @secondaryClick="cancel"
+          primary-label="Decline enrolment now"
+          @primary-click="submit"
+          @secondary-click="cancel"
         />
       </template>
     </modal-dialog-base>
@@ -60,9 +56,9 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive, onMounted, defineComponent } from "vue";
+import { ref, reactive, defineComponent, PropType, watchEffect } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { VForm } from "@/types";
+import { OfferingIntensity, VForm } from "@/types";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog } from "@/composables";
 import {
@@ -76,8 +72,15 @@ export default defineComponent({
     ModalDialogBase,
     ErrorSummary,
   },
-  setup() {
-    const COEDenialReasons = ref({} as COEDeniedReasonAPIOutDTO);
+  props: {
+    offeringIntensity: {
+      type: String as PropType<OfferingIntensity>,
+      required: false,
+      default: undefined,
+    },
+  },
+  setup(props) {
+    const COEDenialReasons = ref([] as COEDeniedReasonAPIOutDTO[]);
     const { showDialog, resolvePromise, showModal } = useModalDialog<
       DenyConfirmationOfEnrollmentAPIInDTO | boolean
     >();
@@ -100,9 +103,15 @@ export default defineComponent({
       resolvePromise(false);
     };
 
-    onMounted(async () => {
+    watchEffect(async () => {
+      if (!props.offeringIntensity) {
+        COEDenialReasons.value = [];
+        return;
+      }
       COEDenialReasons.value =
-        await ConfirmationOfEnrollmentService.shared.getCOEDenialReasons();
+        await ConfirmationOfEnrollmentService.shared.getCOEDenialReasons(
+          props.offeringIntensity,
+        );
     });
 
     return {
