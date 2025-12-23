@@ -4927,6 +4927,57 @@
       <output id="OutputClause_18fg3u5" label="limitAnnualFlatAmount" name="limitAnnualFlatAmount" typeRef="string" />
       <output id="OutputClause_1204p4x" label="limitAnnualRate" name="limitAnnualRate" typeRef="string" />
       <output id="OutputClause_04b5pmd" label="limitIncomeReduction" name="limitIncomeReduction" typeRef="string" />
+      <rule id="DecisionRule_0262m1d">
+        <inputEntry id="UnaryTests_0ndiphz">
+          <text>"2022-2023"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0iyo3js">
+          <text>[0..7000]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1unu9ok">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0b1t1hu">
+          <text>0.15</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1sa7s1g">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0vm0doj">
+        <inputEntry id="UnaryTests_1k5zs0e">
+          <text>"2022-2023"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0526v58">
+          <text>[7001..14000]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0h4vdx2">
+          <text>1050</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_00wlnc6">
+          <text>0.20</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0i4mlch">
+          <text>7000</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1nophil">
+        <inputEntry id="UnaryTests_0k1vpm0">
+          <text>"2022-2023"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_09m9nuw">
+          <text>&gt;14000</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1kprukv">
+          <text>2450</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0qy862e">
+          <text>0.40</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_00uisci">
+          <text>14000</text>
+        </outputEntry>
+      </rule>
       <rule id="DecisionRule_1ssfz22">
         <inputEntry id="UnaryTests_0zoy7u4">
           <text>"2023-2024"</text>
