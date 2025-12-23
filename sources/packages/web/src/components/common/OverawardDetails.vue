@@ -126,13 +126,13 @@ export default defineComponent({
     const addSubtractOverawards = async (isAddition: boolean) => {
       const manualOveraward =
         await addManualOveraward.value.showModal(isAddition);
-      if (!manualOveraward || typeof manualOveraward === "boolean") {
+      if (!manualOveraward) {
         return;
       }
       try {
         await OverawardService.shared.addManualOveraward(
           props.studentId as number,
-          manualOveraward,
+          manualOveraward as OverawardManualRecordAPIInDTO,
         );
         snackBar.success(
           isAddition
@@ -151,8 +151,12 @@ export default defineComponent({
     };
 
     const loadOverawardDetails = async () => {
-      overawardDetails.value =
-        await OverawardService.shared.getStudentOverawards(props.studentId);
+      try {
+        overawardDetails.value =
+          await OverawardService.shared.getStudentOverawards(props.studentId);
+      } catch {
+        snackBar.error("Unexpected error while loading Overaward adjustments.");
+      }
     };
 
     const formatDateAdded = (overaward: OverawardAPIOutDTO): string => {
