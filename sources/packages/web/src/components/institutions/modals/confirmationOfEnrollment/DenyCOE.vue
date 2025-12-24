@@ -75,7 +75,7 @@ export default defineComponent({
   props: {
     offeringIntensity: {
       type: String as PropType<OfferingIntensity>,
-      required: false,
+      required: true,
       default: undefined,
     },
   },

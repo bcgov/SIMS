@@ -14,7 +14,7 @@ export class COEDeniedReasonService extends RecordDataModelService<COEDeniedReas
 
   /**
    * List of possible COE denied reasons.
-   * @param offeringIntensity Used to filter the denied reasons based on offering intensity.
+   * @param offeringIntensity Offering intensity to filter the denied reasons.
    * @returns List of COE denied reasons, active, generic, intensity specific ones.
    */
   async getCOEDeniedReasons(
