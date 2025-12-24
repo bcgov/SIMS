@@ -1,9 +1,9 @@
 <template>
-  <tab-container :enableCardView="false">
+  <tab-container :enable-card-view="false">
     <student-overaward-details
-      :studentId="studentId"
-      :showAddedBy="true"
-      :allowManualOverawardDeduction="true"
+      :student-id="studentId"
+      :show-added-by="true"
+      :allow-manual-overaward="true"
     />
     <student-loan-balance-part-time :student-id="studentId" />
   </tab-container>

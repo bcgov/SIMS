@@ -3,16 +3,16 @@
     <template #header>
       <header-navigator
         title="Confirm enrolment"
-        :routeLocation="{
+        :route-location="{
           name: InstitutionRoutesConst.COE_SUMMARY,
           params: {
             locationId: locationId,
           },
         }"
-        subTitle="View Financial Aid Application"
+        sub-title="View Financial Aid Application"
         ><template #buttons>
           <v-menu v-if="showApplicationActions">
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props }">
               <v-btn
                 color="primary"
                 v-bind="props"
@@ -46,21 +46,24 @@
     <template #alerts>
       <approval-disabled-banner
         v-if="initialData.applicationCOEStatus === COEStatus.required"
-        :coeApprovalPeriodStatus="initialData.coeApprovalPeriodStatus"
+        :coe-approval-period-status="initialData.coeApprovalPeriodStatus"
       />
     </template>
     <formio-container
-      formName="confirmsStudentEnrollment"
-      :formData="initialData"
+      form-name="confirmsStudentEnrollment"
+      :form-data="initialData"
     />
     <!-- Approve modal -->
     <approve-c-o-e
       ref="confirmCOEModal"
-      :maxTuitionRemittance="initialData.maxTuitionRemittanceAllowed"
-      :hasOverawards="initialData.hasOverawardBalance"
+      :max-tuition-remittance="initialData.maxTuitionRemittanceAllowed"
+      :has-overawards="initialData.hasOverawardBalance"
     />
     <!-- Deny modal -->
-    <deny-c-o-e ref="denyCOEModal" />
+    <deny-c-o-e
+      ref="denyCOEModal"
+      :offering-intensity="initialData.applicationOfferingIntensity"
+    />
   </full-page-container>
 </template>
 <script lang="ts">

@@ -1,4 +1,8 @@
-import { EnrollmentPeriod, PaginationOptions } from "@/types";
+import {
+  EnrollmentPeriod,
+  OfferingIntensity,
+  PaginationOptions,
+} from "@/types";
 import ApiClient from "./http/ApiClient";
 import {
   ApplicationDetailsForCOEAPIOutDTO,
@@ -76,11 +80,16 @@ export class ConfirmationOfEnrollmentService {
   }
 
   /**
-   * Get all COE denied reasons, which are active.
-   * @returns COE denied reason list.
+   * List of possible COE denied reasons.
+   * @param offeringIntensity Offering intensity to filter the denied reasons.
+   * @returns List of COE denied reasons, active, generic, intensity specific ones.
    */
-  async getCOEDenialReasons(): Promise<COEDeniedReasonAPIOutDTO> {
-    return ApiClient.ConfirmationOfEnrollment.getCOEDenialReasons();
+  async getCOEDenialReasons(
+    offeringIntensity: OfferingIntensity,
+  ): Promise<COEDeniedReasonAPIOutDTO[]> {
+    return ApiClient.ConfirmationOfEnrollment.getCOEDenialReasons(
+      offeringIntensity,
+    );
   }
 
   /**
