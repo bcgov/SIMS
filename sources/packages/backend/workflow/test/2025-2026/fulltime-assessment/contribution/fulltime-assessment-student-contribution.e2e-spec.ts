@@ -386,6 +386,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
 

@@ -92,6 +92,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-al
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
     // Act
@@ -124,9 +125,11 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-al
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
+        { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
     // Act
