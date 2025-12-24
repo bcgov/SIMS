@@ -137,7 +137,7 @@ export class ProgramsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO
 
 export class OfferingsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
-  @IsIn(["name"])
+  @IsIn(["name", "submittedDate", "offeringIntensity", "offeringType"])
   sortField?: string;
 }
 

@@ -165,6 +165,15 @@ export default defineComponent({
         },
       },
       {
+        title: "Offerings",
+        props: {
+          prependIcon: "mdi-check-circle-outline",
+          to: {
+            name: AESTRoutesConst.PENDING_OFFERINGS,
+          },
+        },
+      },
+      {
         title: "Offering change requests",
         props: {
           prependIcon: "mdi-view-list-outline",

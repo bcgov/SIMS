@@ -259,3 +259,21 @@ export interface EducationProgramOfferingSummaryViewAPIOutDTO {
   programCredentialTypeToDisplay: string;
   programDelivery: string;
 }
+
+export interface EducationProgramOfferingPendingAPIOutDTO {
+  id: number;
+  name: string;
+  studyStartDate: string;
+  studyEndDate: string;
+  offeringDelivered: string;
+  offeringIntensity: OfferingIntensity;
+  yearOfStudy: number;
+  offeringStatus: OfferingStatus;
+  offeringType: OfferingTypes;
+  submittedDate: Date;
+  locationId: number;
+  locationName: string;
+  institutionId: number;
+  programId: number;
+  programName: string;
+}

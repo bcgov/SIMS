@@ -115,6 +115,7 @@ export enum AppRoutes {
   StudentAccountApplicationsApproval = "student-account-applications/:studentAccountApplicationId/approval",
   AssessmentAwardView = "assessment-award-details/:assessmentId",
   PendingApplicationOfferingChangeRequests = "institution/application-offering-change-request/in-progress",
+  PendingOfferings = "institution/offering/pending",
   // program
   Programs = "programs",
   ViewProgram = "institution/:institutionId/location/:locationId/program/:programId",
