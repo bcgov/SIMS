@@ -393,6 +393,7 @@ export class ApplicationService {
         messageId:
           NotificationMessageType.StudentCOERequiredNearEndDateNotification,
         applicationStatuses: [
+          ApplicationStatus.Assessment,
           ApplicationStatus.Enrolment,
           ApplicationStatus.Completed,
         ],
