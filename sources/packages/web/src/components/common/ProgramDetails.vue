@@ -10,7 +10,7 @@
     </template>
     <template #actions>
       <v-menu class="label-bold-menu">
-        <template v-slot:activator="{ props }">
+        <template #activator="{ props }">
           <v-btn
             color="primary"
             v-bind="props"
@@ -42,18 +42,28 @@
           </check-permission-role>
         </v-list>
       </v-menu>
+      <v-btn
+        v-if="isOfferingEditAllowed"
+        class="mr-4 float-right"
+        @click="goToAddNewOffering()"
+        color="primary"
+        prepend-icon="fa:fa fa-plus-circle"
+        data-cy="addNewOfferingButton"
+      >
+        Add offering
+      </v-btn>
     </template>
   </body-header>
   <v-row>
     <v-col md="5">
       <title-value
-        propertyTitle="Description"
-        :propertyValue="educationProgram.description"
+        property-title="Description"
+        :property-value="educationProgram.description"
         data-cy="programDescription"
       />
     </v-col>
     <v-col md="4">
-      <title-value propertyTitle="Offering" data-cy="programOffering" />
+      <title-value property-title="Offering" data-cy="programOffering" />
       <p class="label-value muted-content clearfix">
         <span
           v-if="
@@ -61,7 +71,7 @@
               ProgramIntensity.fullTimePartTime ||
             educationProgram.programIntensity === ProgramIntensity.fullTime
           "
-          >Full Time</span
+          >Full-Time</span
         >
         <br />
         <span
@@ -69,14 +79,14 @@
             educationProgram.programIntensity ===
             ProgramIntensity.fullTimePartTime
           "
-          >Part Time
+          >Part-Time
         </span>
       </p>
     </v-col>
     <v-col>
       <title-value
-        propertyTitle="Credential Type"
-        :propertyValue="educationProgram.credentialTypeToDisplay"
+        property-title="Credential Type"
+        :property-value="educationProgram.credentialTypeToDisplay"
         data-cy="programCredential"
       />
     </v-col>
@@ -84,22 +94,22 @@
   <v-row>
     <v-col md="5">
       <title-value
-        propertyTitle="Classification of Instructional Programs (CIP)"
-        :propertyValue="educationProgram.cipCode"
+        property-title="Classification of Instructional Programs (CIP)"
+        :property-value="educationProgram.cipCode"
         data-cy="programCIP"
       />
     </v-col>
     <v-col md="4"
       ><title-value
-        propertyTitle="National Occupational Classification (NOC)"
-        :propertyValue="educationProgram.nocCode"
+        property-title="National Occupational Classification (NOC)"
+        :property-value="educationProgram.nocCode"
         data-cy="programNOCCode"
       />
     </v-col>
     <v-col
       ><title-value
-        propertyTitle="Institution Program Code"
-        :propertyValue="educationProgram.institutionProgramCode"
+        property-title="Institution Program Code"
+        :property-value="educationProgram.institutionProgramCode"
         data-cy="programCode"
       />
     </v-col>
@@ -153,6 +163,11 @@ export default defineComponent({
       required: true,
       default: {} as EducationProgramAPIOutDTO,
     },
+    isOfferingEditAllowed: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const snackBar = useSnackBar();
@@ -200,6 +215,19 @@ export default defineComponent({
       });
     };
 
+    const goToAddNewOffering = () => {
+      if (AuthService.shared.authClientType === ClientIdType.Institution) {
+        router.push({
+          name: InstitutionRoutesConst.ADD_LOCATION_OFFERINGS,
+          params: {
+            locationId: props.locationId,
+            programId: props.programId,
+            clientType: ClientIdType.Institution,
+          },
+        });
+      }
+    };
+
     const notesRequired = computed(
       () => AuthService.shared.authClientType === ClientIdType.AEST,
     );
@@ -234,6 +262,7 @@ export default defineComponent({
     return {
       isProgramDeactivationDisabled,
       goToProgram,
+      goToAddNewOffering,
       ProgramIntensity,
       programActionLabel,
       deactivateEducationProgramModal,

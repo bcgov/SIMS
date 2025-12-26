@@ -670,7 +670,8 @@ export const PendingDesignationsHeaders = [
 export const OfferingSummaryHeaders = [
   { title: "Name", sortable: true, key: "name" },
   { title: "Year of Study", sortable: false, key: "yearOfStudy" },
-  { title: "Study Dates", sortable: false, key: "studyDates" },
+  { title: "Study Start Date", sortable: false, key: "studyStartDate" },
+  { title: "Study End Date", sortable: false, key: "studyEndDate" },
   { title: "Intensity", sortable: false, key: "offeringIntensity" },
   { title: "Offering type", sortable: false, key: "offeringType" },
   { title: "Study delivery", sortable: false, key: "offeringDelivered" },

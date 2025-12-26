@@ -4,28 +4,73 @@
     :records-count="offeringsAndCount.count"
   >
     <template #actions>
-      <v-row class="m-0 p-0">
-        <v-text-field
-          density="compact"
-          label="Search Offering Name"
-          variant="outlined"
-          v-model="searchBox"
-          data-cy="searchBox"
-          @keyup.enter="searchOfferingTable"
-          prepend-inner-icon="mdi-magnify"
-          hide-details="auto"
-        />
-        <v-btn
-          v-if="allowOfferingEdit"
-          class="ml-2 float-right"
-          @click="goToAddNewOffering()"
-          color="primary"
-          prepend-icon="fa:fa fa-plus-circle"
-          data-cy="addNewOfferingButton"
-        >
-          Add offering
-        </v-btn>
-      </v-row>
+      <v-form ref="searchOfferingsForm">
+        <v-row class="m-0 p-0 align-center">
+          <v-text-field
+            density="compact"
+            label="Search Offering Name"
+            variant="outlined"
+            v-model="searchBox"
+            data-cy="searchBox"
+            @keyup.enter="searchOfferingTable"
+            prepend-inner-icon="mdi-magnify"
+            hide-details="auto"
+            class="ml-2 mr-2"
+          />
+          <v-date-input
+            density="compact"
+            variant="outlined"
+            label="Study Start Date (From)"
+            class="mr-2"
+            hide-details="auto"
+            prepend-icon=""
+            append-inner-icon="mdi-calendar"
+            v-model="startDate"
+          />
+          <v-date-input
+            density="compact"
+            variant="outlined"
+            label="Study Start Date (To)"
+            class="mr-2"
+            hide-details="auto"
+            prepend-icon=""
+            append-inner-icon="mdi-calendar"
+            v-model="endDate"
+          />
+          <tooltip-icon>
+            This date range allows you to filter by the study start date. To
+            show offerings for a specific program year enter August 1st 20XX in
+            the first entry field and then enter July 31st 20YY where program
+            year is 20XX - 20YY.
+          </tooltip-icon>
+          <v-btn-toggle
+            v-model="intensityFilter"
+            density="compact"
+            class="btn-toggle"
+            selected-class="selected-btn-toggle"
+            mandatory
+          >
+            <v-btn rounded="xl" color="primary" value="all" class="ml-2 mr-2"
+              >All</v-btn
+            >
+            <v-btn rounded="xl" color="primary" value="fullTime" class="mr-2"
+              >Full-time</v-btn
+            >
+            <v-btn rounded="xl" color="primary" value="partTime" class="mr-2"
+              >Part-time</v-btn
+            >
+          </v-btn-toggle>
+          <v-btn
+            color="primary"
+            class="p-button-raised"
+            data-cy="searchOfferings"
+            @click="searchOfferingTable()"
+          >
+            Search
+          </v-btn>
+        </v-row>
+        <v-input :rules="[isValidSearch()]" hide-details="auto" error />
+      </v-form>
     </template>
   </body-header>
   <content-group>
@@ -50,11 +95,17 @@
         <template #[`item.yearOfStudy`]="{ item }">
           {{ item.yearOfStudy }}
         </template>
-        <template #[`item.offeringIntensity`]="{ item }">
-          {{ item.offeringIntensity }}
+        <template #[`item.studyStartDate`]="{ item }">
+          {{ item.studyStartDate }}
         </template>
-        <template #[`item.studyDates`]="{ item }">
-          {{ dateOnlyLongPeriodString(item.studyStartDate, item.studyEndDate) }}
+        <template #[`item.studyEndDate`]="{ item }">
+          {{ item.studyEndDate }}
+        </template>
+        <template #[`item.offeringIntensity`]="{ item }">
+          {{ getOfferingIntensityText(item) }}
+        </template>
+        <template #[`item.offeringDelivered`]="{ item }">
+          {{ capitalizeFirstWord(item.offeringDelivered) }}
         </template>
         <template #[`item.offeringStatus`]="{ item }">
           <status-chip-offering :status="item.offeringStatus" />
@@ -94,6 +145,8 @@ import {
   DataTableSortByOrder,
   DataTableOptions,
   PaginationOptions,
+  VForm,
+  OfferingIntensity,
 } from "@/types";
 import { EducationProgramOfferingSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters, useInstitutionAuth, useSnackBar } from "@/composables";
@@ -130,6 +183,17 @@ export default defineComponent({
     const loading = ref(false);
     const searchBox = ref("");
     const { dateOnlyLongPeriodString } = useFormatters();
+    const intensityFilter = ref("all");
+    const startDate = ref("");
+    const endDate = ref("");
+    const startDateMenu = ref(false);
+    const endDateMenu = ref(false);
+    const searchOfferingsForm = ref({} as VForm);
+
+    function capitalizeFirstWord(str: string) {
+      if (!str) return "";
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
     const { isReadOnlyUser } = useInstitutionAuth();
 
     const { mobile: isMobile } = useDisplay();
@@ -155,19 +219,6 @@ export default defineComponent({
     const offeringActionLabel = computed(() => {
       return allowOfferingEdit.value ? "Edit" : "View";
     });
-
-    const goToAddNewOffering = () => {
-      if (isInstitutionUser.value) {
-        router.push({
-          name: InstitutionRoutesConst.ADD_LOCATION_OFFERINGS,
-          params: {
-            locationId: props.locationId,
-            programId: props.programId,
-            clientType: ClientIdType.Institution,
-          },
-        });
-      }
-    };
 
     const offeringButtonAction = (offeringId: number) => {
       if (isInstitutionUser.value) {
@@ -229,7 +280,12 @@ export default defineComponent({
             props.locationId,
             props.programId,
             {
-              searchCriteria: searchBox.value,
+              searchCriteria: {
+                searchCriteria: searchBox.value,
+                intensity: intensityFilter.value,
+                startDate: startDate.value,
+                endDate: endDate.value,
+              },
               ...currentPagination,
             },
           );
@@ -258,16 +314,41 @@ export default defineComponent({
         currentPagination.sortField = DEFAULT_SORT_FIELD;
         currentPagination.sortOrder = DataTableSortByOrder.ASC;
       }
-      await getEducationProgramAndOffering();
+      await searchOfferingTable();
     };
 
     // Search offering table.
     const searchOfferingTable = async () => {
+      const validationResult = await searchOfferingsForm.value.validate();
+      if (!validationResult.valid) {
+        return;
+      }
       await getEducationProgramAndOffering();
     };
 
+    const isValidSearch = () => {
+      if (!endDate.value && !startDate.value) {
+        return true;
+      } else if (
+        (startDate.value && !endDate.value) ||
+        (!startDate.value && endDate.value) ||
+        new Date(endDate.value) <= new Date(startDate.value)
+      ) {
+        return "Both dates are required and must be valid.";
+      }
+      return true;
+    };
+
+    const getOfferingIntensityText = (item) => {
+      if (item.offeringIntensity === OfferingIntensity.fullTime) {
+        return "Full-Time";
+      } else if (item.offeringIntensity === OfferingIntensity.partTime) {
+        return "Part-Time";
+      }
+      return "";
+    };
+
     return {
-      goToAddNewOffering,
       offeringsAndCount,
       offeringButtonAction,
       isInstitutionUser,
@@ -283,6 +364,15 @@ export default defineComponent({
       allowOfferingEdit,
       OfferingSummaryHeaders,
       isMobile,
+      intensityFilter,
+      startDate,
+      endDate,
+      startDateMenu,
+      endDateMenu,
+      capitalizeFirstWord,
+      searchOfferingsForm,
+      isValidSearch,
+      getOfferingIntensityText,
     };
   },
 });
