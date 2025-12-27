@@ -49,14 +49,15 @@
             class="btn-toggle"
             selected-class="selected-btn-toggle"
             mandatory
+            @click="searchOfferingTable()"
           >
-            <v-btn rounded="xl" color="primary" value="all" class="ml-2 mr-2"
+            <v-btn rounded="xl" color="primary" value="" class="ml-2 mr-2"
               >All</v-btn
             >
-            <v-btn rounded="xl" color="primary" value="fullTime" class="mr-2"
+            <v-btn rounded="xl" color="primary" value="Full Time" class="mr-2"
               >Full-time</v-btn
             >
-            <v-btn rounded="xl" color="primary" value="partTime" class="mr-2"
+            <v-btn rounded="xl" color="primary" value="Part Time" class="mr-2"
               >Part-time</v-btn
             >
           </v-btn-toggle>
@@ -183,7 +184,7 @@ export default defineComponent({
     const loading = ref(false);
     const searchBox = ref("");
     const { dateOnlyLongPeriodString } = useFormatters();
-    const intensityFilter = ref("all");
+    const intensityFilter = ref("");
     const startDate = ref("");
     const endDate = ref("");
     const startDateMenu = ref(false);
@@ -275,17 +276,21 @@ export default defineComponent({
     const getEducationProgramAndOffering = async () => {
       try {
         loading.value = true;
+        const searchCriteria: Record<string, string> = {};
+        if (searchBox.value) searchCriteria.searchCriteria = searchBox.value;
+        if (intensityFilter.value)
+          searchCriteria.intensityFilter = intensityFilter.value;
+        if (startDate.value)
+          searchCriteria.studyStartDateFromFilter = startDate.value;
+        if (endDate.value)
+          searchCriteria.studyStartDateToFilter = endDate.value;
+
         offeringsAndCount.value =
           await EducationProgramOfferingService.shared.getOfferingsSummary(
             props.locationId,
             props.programId,
             {
-              searchCriteria: {
-                searchCriteria: searchBox.value,
-                intensity: intensityFilter.value,
-                startDate: startDate.value,
-                endDate: endDate.value,
-              },
+              searchCriteria,
               ...currentPagination,
             },
           );
