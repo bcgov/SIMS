@@ -137,7 +137,24 @@ export class ProgramsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO
 
 export class OfferingsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
-  @IsIn(["name"])
+  @IsEnum(OfferingIntensity)
+  intensityFilter?: OfferingIntensity;
+
+  @IsOptional()
+  studyStartDateFromFilter?: Date;
+
+  @IsOptional()
+  studyStartDateToFilter?: Date;
+
+  @IsOptional()
+  @IsIn([
+    "name",
+    "offeringIntensity",
+    "offeringDelivered",
+    "offeringStatus",
+    "studyStartDate",
+    "studyEndDate",
+  ])
   sortField?: string;
 }
 
