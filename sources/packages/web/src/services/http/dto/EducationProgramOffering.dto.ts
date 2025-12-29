@@ -267,7 +267,6 @@ export interface EducationProgramOfferingPendingAPIOutDTO {
   studyEndDate: string;
   offeringDelivered: string;
   offeringIntensity: OfferingIntensity;
-  yearOfStudy: number;
   offeringStatus: OfferingStatus;
   offeringType: OfferingTypes;
   submittedDate: Date;

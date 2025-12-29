@@ -331,7 +331,7 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
   }
 
   /**
-   * Gets a list of Program Offerings with status 'Creation Pending' where the Program is not deactivated.
+   * Gets a list of Program Offerings with status 'Creation Pending' where the Program is active/not expired.
    * @param paginationOptions pagination options.
    * @returns pending offerings.
    */

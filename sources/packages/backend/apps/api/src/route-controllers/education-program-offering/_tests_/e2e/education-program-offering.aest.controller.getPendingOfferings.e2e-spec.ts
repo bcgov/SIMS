@@ -84,60 +84,42 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
     assertPendingOffering(offeringResult2, newerOffering);
   });
 
-  it("Should return two pending offerings for an active Program with a custom sort (name DESC) applied.", async () => {
+  it("Should return two pending offerings for an active Program with a custom sort (submittedDate DESC) applied.", async () => {
     // Arrange
 
     // Custom dates are used to avoid collisions with other test data.
-    const biologyOffering = createFakeEducationProgramOffering(
+    const newerOffering = createFakeEducationProgramOffering(
       {
         auditUser: savedUser,
       },
       {
         initialValues: {
-          name: "Biology 101",
           offeringStatus: OfferingStatus.CreationPending,
           submittedDate: FUTURE_SUBMITTED_DATE,
         },
       },
     );
 
-    const chemistryOffering = createFakeEducationProgramOffering(
+    const olderOffering = createFakeEducationProgramOffering(
       {
         auditUser: savedUser,
       },
       {
         initialValues: {
-          name: "Chemistry 101",
           offeringStatus: OfferingStatus.CreationPending,
-          submittedDate: FUTURE_SUBMITTED_DATE,
+          submittedDate: addDays(-1, FUTURE_SUBMITTED_DATE),
         },
       },
     );
 
-    const physicsOffering = createFakeEducationProgramOffering(
-      {
-        auditUser: savedUser,
-      },
-      {
-        initialValues: {
-          name: "Physics 101",
-          offeringStatus: OfferingStatus.CreationPending,
-          submittedDate: FUTURE_SUBMITTED_DATE,
-        },
-      },
-    );
-    // Create the offerings in arbitrary order to ensure that our custom
+    // Create the older offering before the newer offering to ensure that our default
     // sort works and that we're not just getting default DB ordering.
-    await db.educationProgramOffering.save([
-      biologyOffering,
-      physicsOffering,
-      chemistryOffering,
-    ]);
+    await db.educationProgramOffering.save([olderOffering, newerOffering]);
 
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    // Include a search criteria that matches all three offerings to avoid test data collisions.
-    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10&sortField=name&sortOrder=DESC&searchCriteria=101`;
+
+    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10&sortField=submittedDate&sortOrder=DESC`;
 
     // Act/Assert
     const response = await request(app.getHttpServer())
@@ -152,11 +134,8 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       response.body.results[0];
     const offeringResult2: EducationProgramOfferingPendingAPIOutDTO =
       response.body.results[1];
-    const offeringResult3: EducationProgramOfferingPendingAPIOutDTO =
-      response.body.results[2];
-    assertPendingOffering(offeringResult1, physicsOffering);
-    assertPendingOffering(offeringResult2, chemistryOffering);
-    assertPendingOffering(offeringResult3, biologyOffering);
+    assertPendingOffering(offeringResult1, newerOffering);
+    assertPendingOffering(offeringResult2, olderOffering);
   });
 
   it("Should return a single pending offering based on offering name search", async () => {
@@ -213,7 +192,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
     assertPendingOffering(offeringResult, fortranOffering);
   });
 
-  it("Should return no offerings when the Program is inactive", async () => {
+  it("Should return no offerings when the Program is inactive.", async () => {
     // Arrange
 
     // Create an inactive Program.
@@ -225,7 +204,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
     );
     await db.educationProgram.save(inactiveProgram);
 
-    // Create two offerings for the inactive Program.
+    // Create an offering for the inactive Program.
     // Custom dates/names are used to avoid collisions with other test data.
     const psych101Offering = createFakeEducationProgramOffering(
       {
@@ -241,23 +220,56 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       },
     );
 
-    const psych102Offering = createFakeEducationProgramOffering(
+    await db.educationProgramOffering.save([psych101Offering]);
+
+    // Ministry token.
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    // Include a search criteria that matches both offerings to avoid test data collisions.
+    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10&searchCriteria=Psychology`;
+
+    // Act/Assert
+    const response = await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    // No results are expected since the Program is inactive and we are searching on a specific name.
+    expect(response.body.count).toEqual(0);
+  });
+
+  it("Should return no offerings when the Program is expired.", async () => {
+    // Arrange
+
+    // Create an expired Program.
+    const expiredProgram = createFakeEducationProgram(
       {
         auditUser: savedUser,
-        program: inactiveProgram,
       },
       {
         initialValues: {
-          name: "Psychology 102",
-          offeringStatus: OfferingStatus.CreationPending,
-          submittedDate: addDays(-1, PAST_SUBMITTED_DATE),
+          effectiveEndDate: addDays(-1, new Date()).toISOString(),
         },
       },
     );
-    await db.educationProgramOffering.save([
-      psych101Offering,
-      psych102Offering,
-    ]);
+    await db.educationProgram.save(expiredProgram);
+
+    // Create an offering for the expired Program.
+    // Custom dates/names are used to avoid collisions with other test data.
+    const psych101Offering = createFakeEducationProgramOffering(
+      {
+        auditUser: savedUser,
+        program: expiredProgram,
+      },
+      {
+        initialValues: {
+          name: "Psychology 101",
+          offeringStatus: OfferingStatus.CreationPending,
+          submittedDate: PAST_SUBMITTED_DATE,
+        },
+      },
+    );
+
+    await db.educationProgramOffering.save([psych101Offering]);
 
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);

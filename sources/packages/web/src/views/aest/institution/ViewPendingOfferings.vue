@@ -27,7 +27,7 @@
           :items="offerings?.results"
           :items-length="offerings?.count"
           :loading="loading"
-          item-value="applicationId"
+          item-value="id"
           v-model:items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
           :mobile="isMobile"
@@ -106,8 +106,8 @@ export default defineComponent({
     const getOfferings = async (
       page = DEFAULT_DATATABLE_PAGE_NUMBER,
       pageCount = DEFAULT_PAGE_LIMIT,
-      sortField = "name",
-      sortOrder = DataTableSortByOrder.DESC,
+      sortField?: string,
+      sortOrder?: DataTableSortByOrder,
     ) => {
       loading.value = true;
       offerings.value =

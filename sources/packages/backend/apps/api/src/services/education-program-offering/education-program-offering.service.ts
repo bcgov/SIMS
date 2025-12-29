@@ -23,6 +23,7 @@ import {
   isDatabaseConstraintError,
 } from "@sims/sims-db";
 import {
+  Brackets,
   DataSource,
   EntityManager,
   In,
@@ -1462,7 +1463,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .where("offerings.offeringStatus = :offeringStatus", {
         offeringStatus: OfferingStatus.CreationPending,
       })
-      .andWhere("educationProgram.isActive = true");
+      .andWhere("educationProgram.isActive = true")
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where("educationProgram.effectiveEndDate is null").orWhere(
+            "educationProgram.effectiveEndDate > CURRENT_DATE",
+          );
+        }),
+      );
     // Search by offering name.
     if (paginationOptions.searchCriteria) {
       offeringsQuery.andWhere("offerings.name Ilike :searchCriteria", {
