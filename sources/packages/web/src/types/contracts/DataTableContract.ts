@@ -769,8 +769,8 @@ export const PendingOfferingsHeaders = [
   { title: "Offering Name", sortable: false, key: "name" },
   { title: "Study Dates", sortable: false, key: "studyDates" },
   { title: "Intensity", sortable: true, key: "offeringIntensity" },
-  { title: "Offering Type", sortable: true, key: "offeringType" },
-  { title: "Study Delivery", sortable: false, key: "offeringDelivered" },
+  { title: "Offering type", sortable: true, key: "offeringType" },
+  { title: "Study delivery", sortable: false, key: "offeringDelivered" },
   { title: "Status", sortable: false, key: "offeringStatus" },
   { title: "Action", sortable: false, key: "actions" },
 ];
