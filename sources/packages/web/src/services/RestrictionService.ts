@@ -3,6 +3,7 @@ import {
   AssignInstitutionRestrictionAPIInDTO,
   AssignRestrictionAPIInDTO,
   DeleteRestrictionAPIInDTO,
+  InstitutionRestrictionsAPIOutDTO,
   InstitutionRestrictionSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
   ResolveRestrictionAPIInDTO,
@@ -163,7 +164,7 @@ export class RestrictionService {
   async getLocationProgramInstitutionRestrictions(
     locationId: number,
     programId: number,
-  ): Promise<StudentRestrictionAPIOutDTO[]> {
+  ): Promise<InstitutionRestrictionsAPIOutDTO> {
     return ApiClient.RestrictionApi.getLocationProgramInstitutionRestrictions(
       locationId,
       programId,
