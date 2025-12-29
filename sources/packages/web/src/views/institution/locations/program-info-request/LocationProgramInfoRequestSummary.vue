@@ -3,20 +3,21 @@
     <template #header>
       <header-navigator
         :title="locationName"
-        subTitle="Program Information Requests"
+        sub-title="Program Information Requests"
         data-cy="programInformationRequestsHeader"
       />
     </template>
     <body-header
       title="Active applications"
       data-cy="activeApplicationsTab"
-      :recordsCount="applications.count"
+      :records-count="applications.count"
     >
       <template #actions>
         <v-row class="justify-end">
           <v-col cols="auto">
             <v-btn-toggle
               v-model="intensityFilter"
+              density="compact"
               class="btn-toggle"
               selected-class="selected-btn-toggle"
               @update:model-value="resetPageAndLoadApplications"

@@ -5,6 +5,7 @@
         <template #actions>
           <v-btn-toggle
             v-model="toggleNotes"
+            density="compact"
             mandatory
             class="float-right btn-toggle"
             selected-class="selected-btn-toggle"
@@ -34,11 +35,11 @@
     </template>
     <notes
       title="Past Notes"
-      :entityType="NoteEntityType.Student"
+      :entity-type="NoteEntityType.Student"
       :notes="notes"
-      @submitData="addNote"
-      :allowedRole="Role.StudentCreateNote"
-      :allowAddingNotes="allowAddingNotes"
+      @submit-data="addNote"
+      :allowed-role="Role.StudentCreateNote"
+      :allow-adding-notes="allowAddingNotes"
     ></notes>
   </body-header-container>
 </template>

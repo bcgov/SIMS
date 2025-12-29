@@ -5,6 +5,7 @@
         <body-header title="Notes">
           <template #actions>
             <v-btn-toggle
+              density="compact"
               v-model="toggleNotes"
               mandatory
               class="float-right btn-toggle"
@@ -35,11 +36,11 @@
       </template>
       <notes
         title="Past Notes"
-        :entityType="NoteEntityType.Institution"
+        :entity-type="NoteEntityType.Institution"
         :notes="notes"
-        @submitData="addNote"
-        :allowedRole="Role.InstitutionCreateNote"
-        :allowAddingNotes="true"
+        @submit-data="addNote"
+        :allowed-role="Role.InstitutionCreateNote"
+        :allow-adding-notes="true"
       ></notes>
     </body-header-container>
   </tab-container>

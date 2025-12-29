@@ -19,6 +19,7 @@
           <template #actions>
             <v-btn-toggle
               mandatory
+              density="compact"
               v-model="approvalStatusFilter"
               class="float-right btn-toggle"
               selected-class="selected-btn-toggle"
