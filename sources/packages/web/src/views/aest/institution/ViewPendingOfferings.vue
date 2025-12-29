@@ -121,8 +121,9 @@ export default defineComponent({
       loading.value = false;
     };
 
-    // TODO Switch to watch/watchEffect
-    onMounted(getOfferings);
+    onMounted(async () => {
+      await getOfferings();
+    });
 
     // Pagination sort event callback.
     const paginationAndSortEvent = async (event: DataTableOptions) => {

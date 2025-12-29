@@ -1456,7 +1456,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "institutionLocation.name",
         "institution.id",
       ])
-      //Date Submitted, Location Name, Program Name, Offering Name, Study Dates, Intensity, Offering Type, Study delivery, Status,
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
       .innerJoin("institutionLocation.institution", "institution")
@@ -1464,31 +1463,28 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         offeringStatus: OfferingStatus.CreationPending,
       })
       .andWhere("educationProgram.isActive = true");
-    // search offering name
+    // Search by offering name.
     if (paginationOptions.searchCriteria) {
       offeringsQuery.andWhere("offerings.name Ilike :searchCriteria", {
         searchCriteria: `%${paginationOptions.searchCriteria}%`,
       });
     }
-    // sorting
     if (paginationOptions.sortField && paginationOptions.sortOrder) {
       offeringsQuery.orderBy(
         sortOfferingsColumnMap(paginationOptions.sortField),
         paginationOptions.sortOrder,
       );
     } else {
-      // default sort and order
+      // Apply default sort/order if not specified.
       offeringsQuery.orderBy(
         sortOfferingsColumnMap(DEFAULT_SORT_FIELD),
         FieldSortOrder.ASC,
       );
     }
-    // pagination
     offeringsQuery
       .skip(paginationOptions.page * paginationOptions.pageLimit)
       .take(paginationOptions.pageLimit);
 
-    // result
     const [records, count] = await offeringsQuery.getManyAndCount();
     return { results: records, count: count };
   }

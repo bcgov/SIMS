@@ -332,11 +332,11 @@ export class EducationProgramOfferingApi extends HttpBaseClient {
 
   /**
    * Gets a list of Program Offerings with status 'Creation Pending' where the Program is not deactivated.
-   * * @param paginationOptions pagination options.
+   * @param paginationOptions pagination options.
    * @returns pending offerings.
    */
   async getPendingOfferings(
-    paginationOptions,
+    paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<EducationProgramOfferingPendingAPIOutDTO>> {
     const url = `education-program-offering/pending?${getPaginationQueryString(
       paginationOptions,
