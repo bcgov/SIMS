@@ -196,6 +196,13 @@ export default defineComponent({
       return "Edit";
     });
 
+    const notesRequired = computed(
+      () => AuthService.shared.authClientType === ClientIdType.AEST,
+    );
+
+    /**
+     * Navigates to the program details page.
+     */
     const goToProgram = () => {
       if (AuthService.shared.authClientType === ClientIdType.Institution) {
         return router.push({
@@ -215,6 +222,9 @@ export default defineComponent({
       });
     };
 
+    /**
+     * Navigates to the add new offering page.
+     */
     const goToAddNewOffering = () => {
       if (AuthService.shared.authClientType === ClientIdType.Institution) {
         router.push({
@@ -228,10 +238,9 @@ export default defineComponent({
       }
     };
 
-    const notesRequired = computed(
-      () => AuthService.shared.authClientType === ClientIdType.AEST,
-    );
-
+    /**
+     * Deactivates the education program.
+     */
     const deactivate = async () => {
       await deactivateEducationProgramModal.value.showModal(
         undefined,
@@ -239,6 +248,11 @@ export default defineComponent({
       );
     };
 
+    /**
+     * Resolves the promise returned by the modal dialog.
+     * @param modalResult The result from the modal dialog.
+     * @returns A boolean indicating whether the promise was resolved successfully.
+     */
     const canResolvePromise = async (
       modalResult: DeactivateProgramAPIInDTO | boolean,
     ): Promise<boolean> => {

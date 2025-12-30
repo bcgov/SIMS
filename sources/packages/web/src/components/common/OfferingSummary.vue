@@ -5,71 +5,98 @@
   >
     <template #actions>
       <v-form ref="searchOfferingsForm">
-        <v-row class="m-0 p-0 align-center">
-          <v-text-field
-            density="compact"
-            label="Search Offering Name"
-            variant="outlined"
-            v-model="searchBox"
-            data-cy="searchBox"
-            @keyup.enter="searchOfferingTable"
-            prepend-inner-icon="mdi-magnify"
-            hide-details="auto"
-            class="ml-2 mr-2"
-          />
-          <v-date-input
-            density="compact"
-            variant="outlined"
-            label="Study Start Date (From)"
-            class="mr-2"
-            hide-details="auto"
-            prepend-icon=""
-            append-inner-icon="mdi-calendar"
-            v-model="startDate"
-          />
-          <v-date-input
-            density="compact"
-            variant="outlined"
-            label="Study Start Date (To)"
-            class="mr-2"
-            hide-details="auto"
-            prepend-icon=""
-            append-inner-icon="mdi-calendar"
-            v-model="endDate"
-          />
-          <tooltip-icon>
-            This date range allows you to filter by the study start date. To
-            show offerings for a specific program year enter August 1st 20XX in
-            the first entry field and then enter July 31st 20YY where program
-            year is 20XX - 20YY.
-          </tooltip-icon>
-          <v-btn-toggle
-            v-model="intensityFilter"
-            density="compact"
-            class="btn-toggle"
-            selected-class="selected-btn-toggle"
-            mandatory
-            @click="searchOfferingTable()"
-          >
-            <v-btn rounded="xl" color="primary" value="" class="ml-2 mr-2"
-              >All</v-btn
+        <v-container fluid class="pa-0">
+          <v-row class="align-center">
+            <!-- Search and Date Filters Row -->
+            <v-col
+              cols="12"
+              lg="8"
+              class="d-flex flex-wrap align-center ga-2 pa-2"
             >
-            <v-btn rounded="xl" color="primary" value="Full Time" class="mr-2"
-              >Full-time</v-btn
+              <v-text-field
+                density="compact"
+                label="Search Offering Name"
+                variant="outlined"
+                v-model="searchBox"
+                data-cy="searchBox"
+                @update:model-value="debouncedSearch"
+                @keyup.enter="searchOfferingTable"
+                prepend-inner-icon="mdi-magnify"
+                hide-details="auto"
+                class="flex-grow-1"
+              />
+              <v-date-input
+                density="compact"
+                variant="outlined"
+                label="From"
+                hide-details="auto"
+                prepend-icon=""
+                append-inner-icon="mdi-calendar"
+                v-model="startDate"
+                @update:model-value="debouncedSearch"
+              />
+              <v-date-input
+                density="compact"
+                variant="outlined"
+                label="To"
+                hide-details="auto"
+                prepend-icon=""
+                append-inner-icon="mdi-calendar"
+                v-model="endDate"
+                @update:model-value="debouncedSearch"
+              />
+              <tooltip-icon>
+                This date range allows you to filter by the study start date.
+                <br />
+                To show offerings for a specific program year enter
+                <br />
+                August 1st 20XX in the first entry field and then enter <br />
+                July 31st 20YY where program year is 20XX - 20YY.
+              </tooltip-icon>
+            </v-col>
+
+            <!-- Intensity Filter and Search Button Row -->
+            <v-col
+              cols="12"
+              lg="4"
+              class="d-flex flex-wrap align-center justify-end ga-2 pa-2"
             >
-            <v-btn rounded="xl" color="primary" value="Part Time" class="mr-2"
-              >Part-time</v-btn
-            >
-          </v-btn-toggle>
-          <v-btn
-            color="primary"
-            class="p-button-raised"
-            data-cy="searchOfferings"
-            @click="searchOfferingTable()"
-          >
-            Search
-          </v-btn>
-        </v-row>
+              <v-btn-toggle
+                v-model="intensityFilter"
+                density="compact"
+                class="btn-toggle"
+                selected-class="selected-btn-toggle"
+                mandatory
+                @click="searchOfferingTable()"
+              >
+                <v-btn
+                  rounded="xl"
+                  class="mr-1"
+                  color="primary"
+                  value=""
+                  size="small"
+                  >All</v-btn
+                >
+                <v-btn
+                  rounded="xl"
+                  color="primary"
+                  value="Full Time"
+                  class="mr-1"
+                  size="small"
+                  >Full-time</v-btn
+                >
+                <v-btn
+                  rounded="xl"
+                  color="primary"
+                  value="Part Time"
+                  class="mr-1"
+                  size="small"
+                  >Part-time</v-btn
+                >
+              </v-btn-toggle>
+            </v-col>
+          </v-row>
+        </v-container>
         <v-input :rules="[isValidSearch()]" hide-details="auto" error />
       </v-form>
     </template>
@@ -153,6 +180,7 @@ import { EducationProgramOfferingSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters, useInstitutionAuth, useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
+import { debounce } from "lodash";
 
 const DEFAULT_SORT_FIELD = "name";
 
@@ -181,20 +209,18 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter();
+    const { capitalizeFirstWord } = useFormatters();
     const loading = ref(false);
     const searchBox = ref("");
     const { dateOnlyLongPeriodString } = useFormatters();
     const intensityFilter = ref("");
     const startDate = ref("");
     const endDate = ref("");
-    const startDateMenu = ref(false);
-    const endDateMenu = ref(false);
     const searchOfferingsForm = ref({} as VForm);
+    const offeringsAndCount = ref(
+      {} as PaginatedResults<EducationProgramOfferingSummaryAPIOutDTO>,
+    );
 
-    function capitalizeFirstWord(str: string) {
-      if (!str) return "";
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    }
     const { isReadOnlyUser } = useInstitutionAuth();
 
     const { mobile: isMobile } = useDisplay();
@@ -221,6 +247,17 @@ export default defineComponent({
       return allowOfferingEdit.value ? "Edit" : "View";
     });
 
+    /**
+     * Debounced version of the search function with a 2000ms (2 second) delay
+     * */
+    const debouncedSearch = debounce(() => {
+      searchOfferingTable();
+    }, 2000); // 2000 milliseconds delay
+
+    /**
+     * Handles the action when the offering button is clicked.
+     * @param offeringId The ID of the offering.
+     */
     const offeringButtonAction = (offeringId: number) => {
       if (isInstitutionUser.value) {
         if (props.isEditAllowed) {
@@ -256,10 +293,6 @@ export default defineComponent({
       }
     };
 
-    const offeringsAndCount = ref(
-      {} as PaginatedResults<EducationProgramOfferingSummaryAPIOutDTO>,
-    );
-
     /**
      * Current state of the pagination.
      */
@@ -276,21 +309,20 @@ export default defineComponent({
     const getEducationProgramAndOffering = async () => {
       try {
         loading.value = true;
-        const searchCriteria: Record<string, string> = {};
-        if (searchBox.value) searchCriteria.searchCriteria = searchBox.value;
+        const filterOptions: Record<string, string> = {};
+        if (searchBox.value) filterOptions.searchCriteria = searchBox.value;
         if (intensityFilter.value)
-          searchCriteria.intensityFilter = intensityFilter.value;
+          filterOptions.intensityFilter = intensityFilter.value;
         if (startDate.value)
-          searchCriteria.studyStartDateFromFilter = startDate.value;
-        if (endDate.value)
-          searchCriteria.studyStartDateToFilter = endDate.value;
+          filterOptions.studyStartDateFromFilter = startDate.value;
+        if (endDate.value) filterOptions.studyStartDateToFilter = endDate.value;
 
         offeringsAndCount.value =
           await EducationProgramOfferingService.shared.getOfferingsSummary(
             props.locationId,
             props.programId,
             {
-              searchCriteria,
+              searchCriteria: filterOptions,
               ...currentPagination,
             },
           );
@@ -322,7 +354,9 @@ export default defineComponent({
       await searchOfferingTable();
     };
 
-    // Search offering table.
+    /**
+     * Search offering table.
+     * */
     const searchOfferingTable = async () => {
       const validationResult = await searchOfferingsForm.value.validate();
       if (!validationResult.valid) {
@@ -331,26 +365,42 @@ export default defineComponent({
       await getEducationProgramAndOffering();
     };
 
+    /**
+     * Validates the search date range.
+     * @returns True if valid, error message string otherwise.
+     */
     const isValidSearch = () => {
-      if (!endDate.value && !startDate.value) {
+      // If no dates provided, it's valid.
+      if (!startDate.value && !endDate.value) {
         return true;
-      } else if (
-        (startDate.value && !endDate.value) ||
-        (!startDate.value && endDate.value) ||
+      }
+
+      // If only one date is provided or end date is not after start date.
+      if (
+        !startDate.value ||
+        !endDate.value ||
         new Date(endDate.value) <= new Date(startDate.value)
       ) {
         return "Both dates are required and must be valid.";
       }
+
       return true;
     };
 
+    /**
+     * Gets the text representation of the offering intensity.
+     * @param item The offering item.
+     * @returns The text representation of the offering intensity.
+     */
     const getOfferingIntensityText = (item) => {
-      if (item.offeringIntensity === OfferingIntensity.fullTime) {
-        return "Full-Time";
-      } else if (item.offeringIntensity === OfferingIntensity.partTime) {
-        return "Part-Time";
+      switch (item.offeringIntensity) {
+        case OfferingIntensity.fullTime:
+          return "Full-Time";
+        case OfferingIntensity.partTime:
+          return "Part-Time";
+        default:
+          return "";
       }
-      return "";
     };
 
     return {
@@ -362,6 +412,7 @@ export default defineComponent({
       pageSortEvent,
       loading,
       searchOfferingTable,
+      debouncedSearch,
       searchBox,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
@@ -372,8 +423,6 @@ export default defineComponent({
       intensityFilter,
       startDate,
       endDate,
-      startDateMenu,
-      endDateMenu,
       capitalizeFirstWord,
       searchOfferingsForm,
       isValidSearch,

@@ -17,24 +17,16 @@ import {
   createFakeUser,
 } from "@sims/test-utils";
 import {
-  Institution,
-  InstitutionLocation,
-  EducationProgram,
   OfferingIntensity,
   OfferingStatus,
   InstitutionUserTypes,
   EducationProgramOffering,
-  User,
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let sharedUser: User;
-  let collegeC: Institution;
-  let collegeCLocation: InstitutionLocation;
-  let program: EducationProgram;
   let fullTimeOffering: EducationProgramOffering;
   let partTimeOffering: EducationProgramOffering;
   let baseEndpoint: string;
@@ -44,7 +36,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
     app = nestApplication;
     db = createE2EDataSources(dataSource);
 
-    sharedUser = createFakeUser();
+    const sharedUser = createFakeUser();
     await db.user.save(sharedUser);
 
     // Get College C institution and location.
@@ -52,14 +44,14 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
       db.dataSource,
       InstitutionTokenTypes.CollegeCUser,
     );
-    collegeC = institution;
-    collegeCLocation = await getAuthorizedLocation(
+    const collegeC = institution;
+    const collegeCLocation = await getAuthorizedLocation(
       db,
       InstitutionTokenTypes.CollegeCUser,
       InstitutionUserTypes.admin,
     );
 
-    program = createFakeEducationProgram({
+    const program = createFakeEducationProgram({
       institution: collegeC,
       auditUser: sharedUser,
     });
@@ -280,6 +272,45 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
           },
         ],
         count: 1,
+      });
+  });
+
+  it("Should return results sorted by name in ascending order.", async () => {
+    // Arrange
+    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
+    const endpoint = `${baseEndpoint}&sortField=name&sortOrder=asc`;
+
+    // Act & Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        results: [
+          {
+            id: fullTimeOffering.id,
+            name: fullTimeOffering.name,
+            yearOfStudy: fullTimeOffering.yearOfStudy,
+            studyStartDate: fullTimeOffering.studyStartDate,
+            studyEndDate: fullTimeOffering.studyEndDate,
+            offeringDelivered: fullTimeOffering.offeringDelivered,
+            offeringIntensity: fullTimeOffering.offeringIntensity,
+            offeringType: fullTimeOffering.offeringType,
+            offeringStatus: fullTimeOffering.offeringStatus,
+          },
+          {
+            id: partTimeOffering.id,
+            name: partTimeOffering.name,
+            yearOfStudy: partTimeOffering.yearOfStudy,
+            studyStartDate: partTimeOffering.studyStartDate,
+            studyEndDate: partTimeOffering.studyEndDate,
+            offeringDelivered: partTimeOffering.offeringDelivered,
+            offeringIntensity: partTimeOffering.offeringIntensity,
+            offeringType: partTimeOffering.offeringType,
+            offeringStatus: partTimeOffering.offeringStatus,
+          },
+        ],
+        count: 2,
       });
   });
 

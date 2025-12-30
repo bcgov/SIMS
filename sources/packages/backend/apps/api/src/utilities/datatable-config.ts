@@ -76,11 +76,19 @@ export interface StudentAppealPaginationOptions extends PaginationOptions {
 }
 
 /**
- *  Offering Pagination option.
+ *  Offering Pagination options.
  */
-export interface OfferingPaginationOptions extends BasePaginationOptions {
-  searchCriteria?: string;
+export interface OfferingPaginationOptions extends PaginationOptions {
+  /**
+   * Offering intensity to filter the offerings.
+   */
   intensityFilter?: OfferingIntensity;
+  /**
+   * Study start date from filter.
+   */
   studyStartDateFromFilter?: Date;
+  /**
+   * Study start date to filter.
+   */
   studyStartDateToFilter?: Date;
 }

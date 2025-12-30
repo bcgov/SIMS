@@ -341,13 +341,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
-   * This is to fetch all the Education Offering
-   * that are associated with the Location and Program
-   * @param locationId location id
-   * @param programId program id
-   * @param offeringTypes offering type
-   * @param paginationOptions pagination options
-   * @returns offering summary and total offering count
+   * Fetches all the Education Offering
+   * that are associated with the Location and Program.
+   * @param locationId the offering location id to be fetched.
+   * @param programId the program id to be fetched.
+   * @param paginationOptions the pagination and filter options.
+   * @param offeringTypes the offering types to be filtered.
+   * @returns offering summary and total offering count.
    */
   async getAllEducationProgramOffering(
     locationId: number,
