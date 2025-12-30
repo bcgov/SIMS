@@ -338,6 +338,25 @@
             {
               "key": "panelContent",
               "conditional": {
+                "show": true
+              },
+              "label": "Content",
+              "input": false,
+              "tag": "p",
+              "attrs": [
+                {
+                  "value": "",
+                  "attr": ""
+                }
+              ],
+              "content": "<b>Please note that the funding you receive may differ from the eligible amount.</b>",
+              "type": "htmlelement",
+              "hideLabel": true,
+              "tableView": false
+            },
+            {
+              "key": "panelContent",
+              "conditional": {
                 "show": true,
                 "when": "offeringIntensity",
                 "eq": "Full Time"
@@ -351,7 +370,7 @@
                   "attr": ""
                 }
               ],
-              "content": "<b>Please note that the funding you receive may differ from the eligible amount.</b>/n Adjustments may occur due to overawards on your account, as a result of tuition remittance requested by your institution, or due to restrictions applied to your account following the initial assessment.",
+              "content": "Adjustments may occur due to overawards on your account, as a result of tuition remittance requested by your institution, or due to restrictions applied to your account following the initial assessment.",
               "type": "htmlelement",
               "hideLabel": true,
               "tableView": false
@@ -372,7 +391,7 @@
                   "attr": ""
                 }
               ],
-              "content": "<b>Please note that the funding you receive may differ from the eligible amount.</b>/n Adjustments may occur once confirmation of your outstanding principal balance of Part-time Canada Student loans and grants is received, as a result of tuition remittance requested by your institution, or due to restrictions applied to your account following the initial assessment.",
+              "content": "Adjustments may occur once confirmation of your outstanding principal balance of Part-time Canada Student loans and grants is received, as a result of tuition remittance requested by your institution, or due to restrictions applied to your account following the initial assessment.",
               "type": "htmlelement",
               "hideLabel": true,
               "tableView": false
