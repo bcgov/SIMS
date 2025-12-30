@@ -14,7 +14,7 @@ import {
 } from "@sims/test-utils";
 import { InstitutionRestriction, RestrictionActionType } from "@sims/sims-db";
 
-describe("RestrictionStudentsController(e2e)-getStudentRestrictions", () => {
+describe("RestrictionStudentsController(e2e)-getLocationProgramInstitutionRestrictions", () => {
   let app: INestApplication;
   let db: E2EDataSources;
 

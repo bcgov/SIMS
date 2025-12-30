@@ -319,6 +319,12 @@ export default defineComponent({
         }
       }
       if (event.changed?.component.key === PROGRAMS_DROPDOWN_KEY) {
+        // Reset the location program institution restrictions when program changes.
+        formioUtils.setComponentValue(
+          form,
+          SELECTED_LOCATION_PROGRAM_RESTRICTIONS_KEY,
+          [],
+        );
         const updatedProgramId = +event.changed.value;
         if (updatedProgramId > 0) {
           const loadSelectedLocationProgramRestrictions =
