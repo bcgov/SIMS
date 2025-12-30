@@ -275,7 +275,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
   it("Should return results sorted by name in ascending order.", async () => {
     // Arrange
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
-    const endpoint = `${baseEndpoint}&sortField=name`;
+    const sortField = "name";
+    const endpoint = `${baseEndpoint}&sortField=${sortField}`;
 
     // Act & Assert
     await request(app.getHttpServer())
