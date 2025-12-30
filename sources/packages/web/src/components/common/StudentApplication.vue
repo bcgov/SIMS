@@ -119,7 +119,8 @@ export default defineComponent({
     const OFFERING_INTENSITY_KEY = "howWillYouBeAttendingTheProgram";
     const PROGRAM_NOT_LISTED = "myProgramNotListed";
     const OFFERING_NOT_LISTED = "myStudyPeriodIsntListed";
-    const INSTITUTION_RESTRICTIONS_KEY = "institutionRestrictions";
+    const SELECTED_LOCATION_PROGRAM_RESTRICTIONS_KEY =
+      "selectedLocationProgramRestrictions";
     let formInstance: any;
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
@@ -188,22 +189,35 @@ export default defineComponent({
           );
 
           if (selectedProgramId) {
-            await formioComponentLoader.loadProgramDesc(
+            const loadProgramDesc = formioComponentLoader.loadProgramDesc(
               formInstance,
               selectedProgramId,
               SELECTED_PROGRAM_DESC_KEY,
             );
+            const loadSelectedLocationProgramRestrictions =
+              formioComponentLoader.loadSelectedLocationProgramRestrictions(
+                formInstance,
+                selectedLocationId,
+                selectedProgramId,
+                SELECTED_LOCATION_PROGRAM_RESTRICTIONS_KEY,
+              );
             // when isReadOnly.value is true, then consider
             // both active and inactive program year.
-            await formioDataLoader.loadOfferingsForLocation(
-              formInstance,
-              selectedProgramId,
-              selectedLocationId,
-              OFFERINGS_DROPDOWN_KEY,
-              props.programYearId,
-              offeringIntensity,
-              props.isReadOnly,
-            );
+            const loadOfferingsForLocation =
+              formioDataLoader.loadOfferingsForLocation(
+                formInstance,
+                selectedProgramId,
+                selectedLocationId,
+                OFFERINGS_DROPDOWN_KEY,
+                props.programYearId,
+                offeringIntensity,
+                props.isReadOnly,
+              );
+            await Promise.all([
+              loadProgramDesc,
+              loadSelectedLocationProgramRestrictions,
+              loadOfferingsForLocation,
+            ]);
           }
         }
       }
@@ -307,17 +321,22 @@ export default defineComponent({
       if (event.changed?.component.key === PROGRAMS_DROPDOWN_KEY) {
         const updatedProgramId = +event.changed.value;
         if (updatedProgramId > 0) {
-          await formioComponentLoader.loadProgramDesc(
+          const loadSelectedLocationProgramRestrictions =
+            formioComponentLoader.loadSelectedLocationProgramRestrictions(
+              form,
+              locationId,
+              updatedProgramId,
+              SELECTED_LOCATION_PROGRAM_RESTRICTIONS_KEY,
+            );
+          const loadProgramDesc = formioComponentLoader.loadProgramDesc(
             form,
             updatedProgramId,
             SELECTED_PROGRAM_DESC_KEY,
           );
-          await formioComponentLoader.loadInstitutionRestrictions(
-            form,
-            locationId,
-            updatedProgramId,
-            INSTITUTION_RESTRICTIONS_KEY,
-          );
+          await Promise.all([
+            loadProgramDesc,
+            loadSelectedLocationProgramRestrictions,
+          ]);
         }
 
         /*

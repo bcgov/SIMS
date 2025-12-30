@@ -632,6 +632,23 @@
                   "lockKey": true
                 },
                 {
+                  "label": "HTML",
+                  "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
+                  "content": "<span class=\"ml-2\">Your program was restricted by StudentAid BC and is no longer eligible for funding.</span>",
+                  "refreshOnChange": false,
+                  "customClass": "banner-warning",
+                  "key": "html",
+                  "type": "htmlelement",
+                  "input": false,
+                  "tableView": false
+                },
+                {
                   "label": "Your program is not listed.",
                   "optionsLabelPosition": "right",
                   "hideLabel": true,
@@ -1329,6 +1346,22 @@
           "calculateValue": "value = [\r\n  \"selectedLocation\",\r\n  \"mySchoolIsNotListed\",\r\n  \"selectedProgram\",\r\n  \"myProgramNotListed\",\r\n  \"programName\",\r\n  \"programDescription\",\r\n  \"studystartDate\",\r\n  \"studyendDate\",\r\n  \"selectedOffering\",\r\n  \"myStudyPeriodIsntListed\",\r\n  \"studentNumber\",\r\n];",
           "calculateServer": true,
           "key": "programPersistentProperties",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
+        },
+        {
+          "label": "Selected location program institution restrictions",
+          "key": "selectedLocationProgramRestrictions",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
+        },
+        {
+          "label": "Is selected location program restricted (Selected location and program is not eligible for funding)",
+          "persistent": false,
+          "calculateValue": "const selectedLocationProgramRestrictions =  data.selectedLocationProgramRestrictions || [];\n\nvalue = selectedLocationProgramRestrictions.some((restriction) =>\n  restriction.restrictionActions.includes(\"Stop full time disbursement\")\n);",
+          "key": "isSelectedLocationProgramRestricted",
           "type": "hidden",
           "input": true,
           "tableView": false
