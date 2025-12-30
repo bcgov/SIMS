@@ -1,4 +1,8 @@
-import { EnrollmentPeriod, PaginationOptions } from "@/types";
+import {
+  EnrollmentPeriod,
+  OfferingIntensity,
+  PaginationOptions,
+} from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 import { getPaginationQueryString } from "@/helpers";
 import {
@@ -73,12 +77,17 @@ export class ConfirmationOfEnrollmentApi extends HttpBaseClient {
   }
 
   /**
-   * Get all COE denied reasons, which are active.
-   * @returns COE denied reason list.
+   * List of possible COE denied reasons.
+   * @param offeringIntensity Offering intensity to filter the denied reasons.
+   * @returns List of COE denied reasons, active, generic, intensity specific ones.
    */
-  async getCOEDenialReasons(): Promise<COEDeniedReasonAPIOutDTO> {
-    return this.getCall<COEDeniedReasonAPIOutDTO>(
-      this.addClientRoot("location/confirmation-of-enrollment/denial-reasons"),
+  async getCOEDenialReasons(
+    offeringIntensity: OfferingIntensity,
+  ): Promise<COEDeniedReasonAPIOutDTO[]> {
+    return this.getCall(
+      this.addClientRoot(
+        `location/confirmation-of-enrollment/denial-reasons?offeringIntensity=${offeringIntensity}`,
+      ),
     );
   }
 

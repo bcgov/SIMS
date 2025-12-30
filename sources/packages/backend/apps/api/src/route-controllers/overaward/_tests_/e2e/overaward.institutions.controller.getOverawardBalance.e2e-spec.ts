@@ -55,7 +55,7 @@ describe("OverawardInstitutionsController(e2e)-getOverawardBalance", () => {
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({ overawardBalanceValues: { BCSL: "300.00" } });
+      .expect({ overawardBalanceValues: { BCSL: 300 } });
   });
 
   afterAll(async () => {

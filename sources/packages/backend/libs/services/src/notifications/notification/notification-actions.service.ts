@@ -36,6 +36,7 @@ import {
   ParentInformationRequiredFromParentNotification,
   ParentInformationRequiredFromStudentNotification,
   ScholasticStandingReversalNotification,
+  StudentCOERequiredNearEndDateNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { LoggerService } from "@sims/utilities/logger";
@@ -1437,6 +1438,43 @@ export class NotificationActionsService {
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
+        },
+      },
+      metadata: { assessmentId: notification.assessmentId },
+    }));
+    // Save notifications to be sent to the students into the notification table.
+    await this.notificationService.saveNotifications(
+      notificationsToSend,
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates student application notification for students with COE required near study end date.
+   * @param notifications notification details array.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveStudentCOERequiredNearEndDateNotification(
+    notifications: StudentCOERequiredNearEndDateNotification[],
+    entityManager?: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId } =
+      await this.notificationMessageService.getNotificationMessageDetails(
+        NotificationMessageType.StudentCOERequiredNearEndDateNotification,
+      );
+    const notificationsToSend = notifications.map((notification) => ({
+      userId: notification.userId,
+      messageType:
+        NotificationMessageType.StudentCOERequiredNearEndDateNotification,
+      messagePayload: {
+        email_address: notification.email,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          applicationNumber: notification.applicationNumber,
         },
       },
       metadata: { assessmentId: notification.assessmentId },

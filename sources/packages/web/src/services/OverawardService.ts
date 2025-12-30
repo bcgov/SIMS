@@ -39,22 +39,15 @@ export class OverawardService {
   }
 
   /**
-   * Add a manual overaward deduction for a student.
+   * Add a manual overaward for a student.
    * @param studentId student for whom overaward deduction is being added.
-   * @param payload overaward deduction payload.
+   * @param payload overaward payload. The overawardValue can be a negative or positive value.
    * @returns primary identifier of the resource created.
    */
-  async addManualOverawardDeduction(
+  async addManualOveraward(
     studentId: number,
     payload: OverawardManualRecordAPIInDTO,
   ): Promise<void> {
-    // When a manual record is added, it must be added as deduction.
-    // Hence overaward value her is negative value of the actual value provided.
-    const payloadDeducted: OverawardManualRecordAPIInDTO = {
-      awardValueCode: payload.awardValueCode,
-      overawardValue: payload.overawardValue * -1,
-      overawardNotes: payload.overawardNotes,
-    };
-    await ApiClient.OverawardApi.addManualOveraward(studentId, payloadDeducted);
+    await ApiClient.OverawardApi.addManualOveraward(studentId, payload);
   }
 }
