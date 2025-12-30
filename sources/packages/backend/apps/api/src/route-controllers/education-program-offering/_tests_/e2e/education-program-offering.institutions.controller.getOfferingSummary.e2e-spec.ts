@@ -130,7 +130,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
   it("Should filter offerings by Full-time intensity.", async () => {
     // Arrange
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
-    const endpoint = `${baseEndpoint}&intensityFilter=Full Time`;
+    const intensityFilter = encodeURIComponent(OfferingIntensity.fullTime);
+    const endpoint = `${baseEndpoint}&intensityFilter=${intensityFilter}`;
 
     // Act & Assert
     await request(app.getHttpServer())
@@ -158,7 +159,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
   it("Should filter offerings by Part-time intensity.", async () => {
     // Arrange
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
-    const endpoint = `${baseEndpoint}&intensityFilter=Part Time`;
+    const intensityFilter = encodeURIComponent(OfferingIntensity.partTime);
+    const endpoint = `${baseEndpoint}&intensityFilter=${intensityFilter}`;
 
     // Act & Assert
     await request(app.getHttpServer())
@@ -247,7 +249,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
     // Arrange
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
     const searchableName = encodeURIComponent(fullTimeOffering.name);
-    const endpoint = `${baseEndpoint}&searchCriteria=${searchableName}&intensityFilter=Full Time`;
+    const intensityFilter = encodeURIComponent(OfferingIntensity.fullTime);
+    const endpoint = `${baseEndpoint}&searchCriteria=${searchableName}&intensityFilter=${intensityFilter}`;
 
     // Act & Assert
     await request(app.getHttpServer())
