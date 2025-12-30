@@ -1,25 +1,25 @@
 <template>
   <formio
-    :formName="selectedForm"
+    :form-name="selectedForm"
     :data="initialData"
-    :readOnly="isReadOnly"
+    :read-only="isReadOnly"
     @loaded="formLoaded"
     @changed="formChanged"
     @submitted="submitted"
     @render="formRender"
-    @customEvent="customEvent"
+    @custom-event="customEvent"
     :is-data-ready="isDataReady"
   ></formio>
   <footer-buttons
     v-if="isDataReady && isFormLoaded"
     justify="space-between"
     :processing="processing"
-    @primaryClick="wizardGoNext"
-    @secondaryClick="wizardGoPrevious"
-    :showPrimaryButton="!isLastPage"
-    :showSecondaryButton="!isFirstPage"
-    :primaryLabel="wizardPrimaryLabel"
-    secondaryLabel="Previous section"
+    @primary-click="wizardGoNext"
+    @secondary-click="wizardGoPrevious"
+    :show-primary-button="!isLastPage"
+    :show-secondary-button="!isFirstPage"
+    :primary-label="wizardPrimaryLabel"
+    secondary-label="Previous section"
     class="mx-0"
   >
     <template #primary-buttons v-if="!isReadOnly && isLastPage">
@@ -119,6 +119,7 @@ export default defineComponent({
     const OFFERING_INTENSITY_KEY = "howWillYouBeAttendingTheProgram";
     const PROGRAM_NOT_LISTED = "myProgramNotListed";
     const OFFERING_NOT_LISTED = "myStudyPeriodIsntListed";
+    const INSTITUTION_RESTRICTIONS_KEY = "institutionRestrictions";
     let formInstance: any;
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
@@ -304,11 +305,18 @@ export default defineComponent({
         }
       }
       if (event.changed?.component.key === PROGRAMS_DROPDOWN_KEY) {
-        if (+event.changed.value > 0) {
+        const updatedProgramId = +event.changed.value;
+        if (updatedProgramId > 0) {
           await formioComponentLoader.loadProgramDesc(
             form,
-            +event.changed.value,
+            updatedProgramId,
             SELECTED_PROGRAM_DESC_KEY,
+          );
+          await formioComponentLoader.loadInstitutionRestrictions(
+            form,
+            locationId,
+            updatedProgramId,
+            INSTITUTION_RESTRICTIONS_KEY,
           );
         }
 

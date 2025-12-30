@@ -95,7 +95,7 @@ export function useFormioComponentLoader() {
    * @param programId program.
    * @param formIOComponentKey form.io component key.
    */
-  const institutionRestrictions = async (
+  const loadInstitutionRestrictions = async (
     form: FormIOForm,
     locationId: number,
     programId: number,
@@ -114,6 +114,6 @@ export function useFormioComponentLoader() {
     loadProgramDesc,
     loadSelectedOfferingDetails,
     loadSelectedOfferingDetailsByLocationAndProgram,
-    institutionRestrictions,
+    loadInstitutionRestrictions,
   };
 }
