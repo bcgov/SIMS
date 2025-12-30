@@ -644,6 +644,11 @@
                   "refreshOnChange": false,
                   "customClass": "banner-warning",
                   "key": "html",
+                  "conditional": {
+                    "show": true,
+                    "when": "isSelectedLocationProgramRestricted",
+                    "eq": "true"
+                  },
                   "type": "htmlelement",
                   "input": false,
                   "tableView": false
