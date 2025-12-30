@@ -4,7 +4,7 @@ export const PROGRAM_YEAR = "2026-2027";
  * with previous program years assessment ids, supporting users ids, income
  * verifications ids and so on.
  */
-export const PROGRAM_YEAR_BASE_ID = 2000;
+export const PROGRAM_YEAR_BASE_ID = 2100;
 /**
  * assessment-gateway to be used as default for this program year.
  */

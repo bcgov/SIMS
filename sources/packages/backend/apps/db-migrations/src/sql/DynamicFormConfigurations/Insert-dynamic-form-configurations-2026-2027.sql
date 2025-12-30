@@ -18,7 +18,7 @@ VALUES
                 program_year = '2026-2027'
         ),
         'Full Time',
-        'SFAA2026-27-FT'
+        'sfaa2026-27-ft'
     ),
     (
         'Student financial aid application',
@@ -31,7 +31,7 @@ VALUES
                 program_year = '2026-2027'
         ),
         'Part Time',
-        'SFAA2026-27-PT'
+        'sfaa2026-27-pt'
     );
 
 -- Insert configurations for supporting users parent form type.
