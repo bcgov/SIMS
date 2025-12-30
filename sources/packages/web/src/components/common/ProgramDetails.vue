@@ -43,7 +43,7 @@
         </v-list>
       </v-menu>
       <v-btn
-        v-if="isOfferingEditAllowed"
+        v-if="isAddOfferingAllowed"
         class="mr-4 float-right"
         @click="goToAddNewOffering()"
         color="primary"
@@ -163,7 +163,7 @@ export default defineComponent({
       required: true,
       default: {} as EducationProgramAPIOutDTO,
     },
-    isOfferingEditAllowed: {
+    isAddOfferingAllowed: {
       type: Boolean,
       required: false,
       default: false,

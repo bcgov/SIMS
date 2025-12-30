@@ -131,7 +131,7 @@
           {{ item.studyEndDate }}
         </template>
         <template #[`item.offeringIntensity`]="{ item }">
-          {{ getOfferingIntensityText(item) }}
+          {{ mapOfferingIntensity(item.offeringIntensity) }}
         </template>
         <template #[`item.offeringDelivered`]="{ item }">
           {{ capitalizeFirstWord(item.offeringDelivered) }}
@@ -175,10 +175,9 @@ import {
   DataTableOptions,
   PaginationOptions,
   VForm,
-  OfferingIntensity,
 } from "@/types";
 import { EducationProgramOfferingSummaryAPIOutDTO } from "@/services/http/dto";
-import { useFormatters, useInstitutionAuth, useSnackBar } from "@/composables";
+import { useFormatters, useOffering, useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
 import { debounce } from "lodash";
@@ -202,9 +201,9 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    isEditAllowed: {
+    isOfferingEditAllowed: {
       type: Boolean,
-      required: true,
+      required: false,
       default: false,
     },
   },
@@ -221,8 +220,7 @@ export default defineComponent({
     const offeringsAndCount = ref(
       {} as PaginatedResults<EducationProgramOfferingSummaryAPIOutDTO>,
     );
-
-    const { isReadOnlyUser } = useInstitutionAuth();
+    const { mapOfferingIntensity } = useOffering();
 
     const { mobile: isMobile } = useDisplay();
     const snackBar = useSnackBar();
@@ -233,24 +231,16 @@ export default defineComponent({
       return clientType.value === ClientIdType.Institution;
     });
 
-    const allowOfferingEdit = computed(() => {
-      return (
-        isInstitutionUser.value &&
-        props.isEditAllowed &&
-        !isReadOnlyUser(props.locationId)
-      );
-    });
-
     const isAESTUser = computed(() => {
       return clientType.value === ClientIdType.AEST;
     });
     const offeringActionLabel = computed(() => {
-      return allowOfferingEdit.value ? "Edit" : "View";
+      return props.isOfferingEditAllowed ? "Edit" : "View";
     });
 
     /**
      * Debounced version of the search function with a 2000ms (2 second) delay
-     * */
+     */
     const debouncedSearch = debounce(() => {
       searchOfferingTable();
     }, 2000); // 2000 milliseconds delay
@@ -260,36 +250,30 @@ export default defineComponent({
      * @param offeringId The ID of the offering.
      */
     const offeringButtonAction = (offeringId: number) => {
-      if (isInstitutionUser.value) {
-        if (props.isEditAllowed) {
-          router.push({
-            name: InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS,
-            params: {
-              offeringId: offeringId,
-              programId: props.programId,
-              locationId: props.locationId,
-            },
-          });
-        } else {
-          router.push({
-            name: InstitutionRoutesConst.VIEW_LOCATION_OFFERINGS,
-            params: {
-              offeringId: offeringId,
-              programId: props.programId,
-              locationId: props.locationId,
-            },
-          });
-        }
-      }
+      const params = {
+        offeringId,
+        programId: props.programId,
+        locationId: props.locationId,
+      };
+
+      // Navigate based on user type.
       if (isAESTUser.value) {
+        // Ministry user has a different route / parameters.
         router.push({
           name: AESTRoutesConst.VIEW_OFFERING,
           params: {
-            offeringId: offeringId,
-            programId: props.programId,
-            locationId: props.locationId,
+            ...params,
             institutionId: props.institutionId,
           },
+        });
+      } else {
+        const routeName = props.isOfferingEditAllowed
+          ? InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS
+          : InstitutionRoutesConst.VIEW_LOCATION_OFFERINGS;
+
+        router.push({
+          name: routeName,
+          params: params,
         });
       }
     };
@@ -388,27 +372,10 @@ export default defineComponent({
       return true;
     };
 
-    /**
-     * Gets the text representation of the offering intensity.
-     * @param item The offering item.
-     * @returns The text representation of the offering intensity.
-     */
-    const getOfferingIntensityText = (item) => {
-      switch (item.offeringIntensity) {
-        case OfferingIntensity.fullTime:
-          return "Full-Time";
-        case OfferingIntensity.partTime:
-          return "Part-Time";
-        default:
-          return "";
-      }
-    };
-
     return {
       offeringsAndCount,
       offeringButtonAction,
       isInstitutionUser,
-      isAESTUser,
       offeringActionLabel,
       pageSortEvent,
       loading,
@@ -418,7 +385,6 @@ export default defineComponent({
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
       dateOnlyLongPeriodString,
-      allowOfferingEdit,
       OfferingSummaryHeaders,
       isMobile,
       intensityFilter,
@@ -427,7 +393,7 @@ export default defineComponent({
       capitalizeFirstWord,
       searchOfferingsForm,
       isValidSearch,
-      getOfferingIntensityText,
+      mapOfferingIntensity,
     };
   },
 });

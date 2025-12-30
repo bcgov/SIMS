@@ -5,7 +5,7 @@
         :program-id="programId"
         :location-id="locationId"
         :education-program="educationProgram"
-        :is-offering-edit-allowed="allowOfferingEdit"
+        :is-add-offering-allowed="allowOfferingEdit"
         @program-data-updated="$emit('programDataUpdated')"
       />
       <hr class="horizontal-divider" />
@@ -13,7 +13,6 @@
         :program-id="programId"
         :location-id="locationId"
         :is-offering-edit-allowed="allowOfferingEdit"
-        :is-edit-allowed="allowEdit"
         :institution-id="institutionId"
       />
     </v-container>
@@ -21,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import ProgramDetails from "@/components/common/ProgramDetails.vue";
 import OfferingSummary from "@/components/common/OfferingSummary.vue";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
@@ -44,7 +43,7 @@ export default defineComponent({
       required: true,
     },
     educationProgram: {
-      type: Object,
+      type: Object as PropType<EducationProgramAPIOutDTO>,
       required: true,
       default: {} as EducationProgramAPIOutDTO,
     },
@@ -56,28 +55,22 @@ export default defineComponent({
   setup(props) {
     const { isReadOnlyUser } = useInstitutionAuth();
 
-    const clientType = computed(() => AuthService.shared.authClientType);
+    const isProgramEditable =
+      props.educationProgram.isActive && !props.educationProgram.isExpired;
 
-    const allowEdit = computed(
-      () =>
-        props.educationProgram.isActive && !props.educationProgram.isExpired,
-    );
-
-    const isInstitutionUser = computed(() => {
-      return clientType.value === ClientIdType.Institution;
-    });
+    const isInstitutionUser =
+      AuthService.shared.authClientType === ClientIdType.Institution;
 
     const allowOfferingEdit = computed(() => {
       return (
-        isInstitutionUser.value &&
-        allowEdit.value &&
+        isInstitutionUser &&
+        isProgramEditable &&
         !isReadOnlyUser(props.locationId)
       );
     });
 
     return {
       allowOfferingEdit,
-      allowEdit,
     };
   },
 });
