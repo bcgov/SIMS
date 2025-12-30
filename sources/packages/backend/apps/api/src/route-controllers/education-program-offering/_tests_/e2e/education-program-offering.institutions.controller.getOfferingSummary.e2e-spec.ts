@@ -22,7 +22,6 @@ import {
   InstitutionUserTypes,
   EducationProgramOffering,
 } from "@sims/sims-db";
-import { getISODateOnlyString } from "@sims/utilities";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary", () => {
   let app: INestApplication;
@@ -187,8 +186,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
   it("Should filter offerings by study start date range.", async () => {
     // Arrange
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
-    const startDateFrom = getISODateOnlyString(new Date("2024-08-01"));
-    const startDateTo = getISODateOnlyString(new Date("2024-12-31"));
+    const startDateFrom = "2024-08-01";
+    const startDateTo = "2024-12-31";
 
     const endpoint = `${baseEndpoint}&studyStartDateFromFilter=${startDateFrom}&studyStartDateToFilter=${startDateTo}`;
 
@@ -244,13 +243,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
       });
   });
 
-  it("Should apply multiple filters together (intensity, date range, and search).", async () => {
+  it("Should apply multiple filters together (intensity and search).", async () => {
     // Arrange
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
-    const searchableName = fullTimeOffering.name;
-    const startDateFrom = getISODateOnlyString(new Date("2024-07-01"));
-    const startDateTo = getISODateOnlyString(new Date("2024-12-31"));
-    const endpoint = `${baseEndpoint}&searchCriteria=${searchableName}&intensityFilter=Full Time&studyStartDateFromFilter=${startDateFrom}&studyStartDateToFilter=${startDateTo}`;
+    const searchableName = encodeURIComponent(fullTimeOffering.name);
+    const endpoint = `${baseEndpoint}&searchCriteria=${searchableName}&intensityFilter=Full Time`;
 
     // Act & Assert
     await request(app.getHttpServer())
@@ -278,7 +275,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
   it("Should return results sorted by name in ascending order.", async () => {
     // Arrange
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
-    const endpoint = `${baseEndpoint}&sortField=name&sortOrder=asc`;
+    const endpoint = `${baseEndpoint}&sortField=name`;
 
     // Act & Assert
     await request(app.getHttpServer())

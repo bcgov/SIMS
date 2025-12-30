@@ -1,7 +1,6 @@
 import {
   IsArray,
   IsBoolean,
-  IsDateString,
   IsEnum,
   IsIn,
   IsOptional,
@@ -142,11 +141,9 @@ export class OfferingsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDT
   intensityFilter?: OfferingIntensity;
 
   @IsOptional()
-  @IsDateString()
   studyStartDateFromFilter?: Date;
 
   @IsOptional()
-  @IsDateString()
   studyStartDateToFilter?: Date;
 
   @IsOptional()

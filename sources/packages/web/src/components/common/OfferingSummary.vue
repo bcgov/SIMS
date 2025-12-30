@@ -5,98 +5,99 @@
   >
     <template #actions>
       <v-form ref="searchOfferingsForm">
-        <v-container fluid class="pa-0">
-          <v-row class="align-center">
-            <!-- Search and Date Filters Row -->
-            <v-col
-              cols="12"
-              lg="8"
-              class="d-flex flex-wrap align-center ga-2 pa-2"
-            >
-              <v-text-field
-                density="compact"
-                label="Search Offering Name"
-                variant="outlined"
-                v-model="searchBox"
-                data-cy="searchBox"
-                @update:model-value="debouncedSearch"
-                @keyup.enter="searchOfferingTable"
-                prepend-inner-icon="mdi-magnify"
-                hide-details="auto"
-                class="flex-grow-1"
-              />
-              <v-date-input
-                density="compact"
-                variant="outlined"
-                label="From"
-                hide-details="auto"
-                prepend-icon=""
-                append-inner-icon="mdi-calendar"
-                v-model="startDate"
-                @update:model-value="debouncedSearch"
-              />
-              <v-date-input
-                density="compact"
-                variant="outlined"
-                label="To"
-                hide-details="auto"
-                prepend-icon=""
-                append-inner-icon="mdi-calendar"
-                v-model="endDate"
-                @update:model-value="debouncedSearch"
-              />
-              <tooltip-icon>
-                This date range allows you to filter by the study start date.
-                <br />
-                To show offerings for a specific program year enter
-                <br />
-                August 1st 20XX in the first entry field and then enter <br />
-                July 31st 20YY where program year is 20XX - 20YY.
-              </tooltip-icon>
-            </v-col>
+        <div class="d-flex flex-wrap align-center ga-3">
+          <!-- Search Field -->
+          <v-text-field
+            density="compact"
+            label="Search Offering Name"
+            variant="outlined"
+            v-model="searchBox"
+            data-cy="searchBox"
+            @update:model-value="debouncedSearch"
+            @keyup.enter="searchOfferingTable"
+            prepend-inner-icon="mdi-magnify"
+            hide-details="auto"
+            class="flex-grow-1"
+          />
 
-            <!-- Intensity Filter and Search Button Row -->
-            <v-col
-              cols="12"
-              lg="4"
-              class="d-flex flex-wrap align-center justify-end ga-2 pa-2"
+          <!-- Date Range Group - stays together -->
+          <div class="d-flex align-center ga-2 flex-grow-1">
+            <v-date-input
+              density="compact"
+              variant="outlined"
+              label="From (Study Start Date)"
+              hide-details="auto"
+              prepend-icon=""
+              append-inner-icon="mdi-calendar"
+              v-model="startDate"
+              @update:model-value="debouncedSearch"
+            />
+            <v-date-input
+              density="compact"
+              variant="outlined"
+              label="To (Study Start Date)"
+              hide-details="auto"
+              prepend-icon=""
+              append-inner-icon="mdi-calendar"
+              v-model="endDate"
+              @update:model-value="debouncedSearch"
+            />
+            <tooltip-icon>
+              This date range allows you to filter by the study start date.
+              <br />
+              To show offerings for a specific program year enter
+              <br />
+              August 1st 20XX in the first entry field and then enter <br />
+              July 31st 20YY where program year is 20XX - 20YY.
+            </tooltip-icon>
+          </div>
+
+          <!-- Intensity Filter Group -->
+          <v-btn-toggle
+            v-model="intensityFilter"
+            density="compact"
+            class="btn-toggle"
+            selected-class="selected-btn-toggle"
+            mandatory
+            @click="searchOfferingTable()"
+          >
+            <v-btn
+              rounded="xl"
+              color="primary"
+              value=""
+              size="small"
+              class="mr-1"
+              >All</v-btn
             >
-              <v-btn-toggle
-                v-model="intensityFilter"
-                density="compact"
-                class="btn-toggle"
-                selected-class="selected-btn-toggle"
-                mandatory
-                @click="searchOfferingTable()"
-              >
-                <v-btn
-                  rounded="xl"
-                  class="mr-1"
-                  color="primary"
-                  value=""
-                  size="small"
-                  >All</v-btn
-                >
-                <v-btn
-                  rounded="xl"
-                  color="primary"
-                  value="Full Time"
-                  class="mr-1"
-                  size="small"
-                  >Full-time</v-btn
-                >
-                <v-btn
-                  rounded="xl"
-                  color="primary"
-                  value="Part Time"
-                  class="mr-1"
-                  size="small"
-                  >Part-time</v-btn
-                >
-              </v-btn-toggle>
-            </v-col>
-          </v-row>
-        </v-container>
+            <v-btn
+              rounded="xl"
+              color="primary"
+              value="Full Time"
+              size="small"
+              class="mr-1"
+              >Full-time</v-btn
+            >
+            <v-btn
+              rounded="xl"
+              color="primary"
+              value="Part Time"
+              size="small"
+              class="mr-1"
+              >Part-time</v-btn
+            >
+          </v-btn-toggle>
+
+          <!-- Search Button - always at the end -->
+          <v-btn
+            color="primary"
+            data-cy="searchOfferings"
+            @click="searchOfferingTable()"
+            prepend-icon="mdi-magnify"
+            style="margin-left: auto; flex-shrink: 0"
+          >
+            Search
+          </v-btn>
+        </div>
         <v-input :rules="[isValidSearch()]" hide-details="auto" error />
       </v-form>
     </template>
