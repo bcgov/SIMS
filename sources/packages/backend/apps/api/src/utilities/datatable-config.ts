@@ -86,9 +86,9 @@ export interface OfferingPaginationOptions extends PaginationOptions {
   /**
    * Study start date from filter.
    */
-  studyStartDateFromFilter?: Date;
+  studyStartDateFromFilter?: string;
   /**
    * Study start date to filter.
    */
-  studyStartDateToFilter?: Date;
+  studyStartDateToFilter?: string;
 }
