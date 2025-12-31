@@ -119,7 +119,9 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10&sortField=submittedDate&sortOrder=DESC`;
+    const sortField = "submittedDate";
+    const sortOrder = "DESC";
+    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10&sortField=${sortField}&sortOrder=${sortOrder}`;
 
     // Act/Assert
     const response = await request(app.getHttpServer())
@@ -175,7 +177,8 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
 
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10&searchCriteria=Programming`;
+    const searchCriteria = "Programming";
+    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10&searchCriteria=${searchCriteria}`;
 
     // Act/Assert
     const response = await request(app.getHttpServer())
@@ -225,16 +228,16 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     // Include a search criteria that matches both offerings to avoid test data collisions.
-    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10&searchCriteria=Psychology`;
+    const searchCriteria = "Psychology";
+    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10&searchCriteria=${searchCriteria}`;
 
     // Act/Assert
-    const response = await request(app.getHttpServer())
+    // No results are expected since the Program is inactive and we are searching on a specific name.
+    await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-
-    // No results are expected since the Program is inactive and we are searching on a specific name.
-    expect(response.body.count).toEqual(0);
+      .expect(HttpStatus.OK)
+      .expect({ results: [], count: 0 });
   });
 
   it("Should return no offerings when the Program is expired.", async () => {
@@ -274,16 +277,16 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     // Include a search criteria that matches both offerings to avoid test data collisions.
-    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10&searchCriteria=Psychology`;
+    const searchCriteria = "Psychology";
+    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10&searchCriteria=${searchCriteria}`;
 
     // Act/Assert
-    const response = await request(app.getHttpServer())
+    // No results are expected since the Program is inactive and we are searching on a specific name.
+    await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-
-    // No results are expected since the Program is inactive and we are searching on a specific name.
-    expect(response.body.count).toEqual(0);
+      .expect(HttpStatus.OK)
+      .expect({ results: [], count: 0 });
   });
 
   afterAll(async () => {
