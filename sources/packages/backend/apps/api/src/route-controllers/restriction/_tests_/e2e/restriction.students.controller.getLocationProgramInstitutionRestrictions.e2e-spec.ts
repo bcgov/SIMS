@@ -127,7 +127,7 @@ describe("RestrictionStudentsController(e2e)-getLocationProgramInstitutionRestri
 
   /**
    * Create institution restriction.
-   * @returns institution restriction.
+   * @returns Institution restriction.
    */
   async function createInstitutionRestriction(): Promise<InstitutionRestriction> {
     const restriction = await db.restriction.findOne({

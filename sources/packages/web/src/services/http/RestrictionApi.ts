@@ -166,9 +166,9 @@ export class RestrictionApi extends HttpBaseClient {
 
   /**
    * Get institution restrictions effective for the given program and institution location.
-   * @param locationId institution location.
-   * @param programId institution program.
-   * @returns institution restrictions.
+   * @param locationId Institution location.
+   * @param programId Institution program.
+   * @returns Institution restrictions.
    */
   async getLocationProgramInstitutionRestrictions(
     locationId: number,

@@ -358,8 +358,8 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
 
   /**
    * Get institution restrictions by location and program.
-   * @param locationId institution location.
-   * @param programId institution program.
+   * @param locationId Institution location.
+   * @param programId Institution program.
    * @param options Options.
    * - `isActive` Indicates whether to select only active restrictions.
    * - `excludeNoEffectRestrictions` Indicates whether to exclude restrictions with no effect.

@@ -90,10 +90,10 @@ export function useFormioComponentLoader() {
   /**
    * Load institution restrictions for the given location and program
    * to the provided form.io component.
-   * @param form form to update the component.
-   * @param locationId location.
-   * @param programId program.
-   * @param formIOComponentKey form.io component key.
+   * @param form Form to update the component.
+   * @param locationId Location.
+   * @param programId Program.
+   * @param formIOComponentKey Form.io component key.
    */
   const loadSelectedLocationProgramRestrictions = async (
     form: FormIOForm,
