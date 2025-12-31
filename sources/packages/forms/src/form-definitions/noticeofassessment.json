@@ -337,9 +337,6 @@
             },
             {
               "key": "panelContent",
-              "conditional": {
-                "show": true
-              },
               "label": "Content",
               "input": false,
               "tag": "p",
