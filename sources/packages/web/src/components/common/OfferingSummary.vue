@@ -13,7 +13,6 @@
             variant="outlined"
             v-model="searchBox"
             data-cy="searchBox"
-            @update:model-value="debouncedSearch"
             @keyup.enter="searchOfferingTable"
             prepend-inner-icon="mdi-magnify"
             hide-details="auto"
@@ -31,7 +30,6 @@
               prepend-icon=""
               append-inner-icon="mdi-calendar"
               v-model="startDate"
-              @update:model-value="debouncedSearch"
             />
             <v-date-input
               density="compact"
@@ -42,7 +40,6 @@
               prepend-icon=""
               append-inner-icon="mdi-calendar"
               v-model="endDate"
-              @update:model-value="debouncedSearch"
             />
             <tooltip-icon>
               This date range allows you to filter by the study start date.
@@ -59,8 +56,6 @@
             color="primary"
             data-cy="searchOfferings"
             @click="searchOfferingTable()"
-            prepend-icon="mdi-magnify"
-            style="margin-left: auto; flex-shrink: 0"
           >
             Search
           </v-btn>
@@ -184,7 +179,6 @@ import { EducationProgramOfferingSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters, useOffering, useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
-import { debounce } from "lodash";
 
 const DEFAULT_SORT_FIELD = "name";
 
@@ -251,13 +245,6 @@ export default defineComponent({
     const offeringActionLabel = computed(() => {
       return props.isOfferingEditAllowed ? "Edit" : "View";
     });
-
-    /**
-     * Debounced version of the search function with a 2000ms (2 second) delay
-     */
-    const debouncedSearch = debounce(() => {
-      searchOfferingTable();
-    }, 2000); // 2000 milliseconds delay
 
     /**
      * Handles the action when the offering button is clicked.
@@ -400,7 +387,6 @@ export default defineComponent({
       pageSortEvent,
       loading,
       searchOfferingTable,
-      debouncedSearch,
       searchBox,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,

@@ -163,14 +163,7 @@ export class OfferingsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDT
   studyStartDateToFilter?: string;
 
   @IsOptional()
-  @IsIn([
-    "name",
-    "offeringIntensity",
-    "offeringDelivered",
-    "offeringStatus",
-    "studyStartDate",
-    "studyEndDate",
-  ])
+  @IsIn(["name", "offeringDelivered", "studyStartDate", "studyEndDate"])
   sortField?: string;
 }
 

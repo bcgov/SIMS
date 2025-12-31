@@ -98,9 +98,12 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
       OfferingIntensity.partTime,
       program,
     );
-    const sortField = "offeringIntensity";
+    const sortField = "name";
     const sortOrder = "DESC";
     const endpoint = `${baseEndpoint}/education-program/${program.id}?page=0&pageLimit=10&sortField=${sortField}&sortOrder=${sortOrder}`;
+    const sortedOfferings = [fullTimeOffering, partTimeOffering].sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -110,26 +113,26 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
       .expect({
         results: [
           {
-            id: fullTimeOffering.id,
-            name: fullTimeOffering.name,
-            yearOfStudy: fullTimeOffering.yearOfStudy,
-            studyStartDate: fullTimeOffering.studyStartDate,
-            studyEndDate: fullTimeOffering.studyEndDate,
-            offeringDelivered: fullTimeOffering.offeringDelivered,
-            offeringIntensity: fullTimeOffering.offeringIntensity,
-            offeringType: fullTimeOffering.offeringType,
-            offeringStatus: fullTimeOffering.offeringStatus,
+            id: sortedOfferings[0].id,
+            name: sortedOfferings[0].name,
+            yearOfStudy: sortedOfferings[0].yearOfStudy,
+            studyStartDate: sortedOfferings[0].studyStartDate,
+            studyEndDate: sortedOfferings[0].studyEndDate,
+            offeringDelivered: sortedOfferings[0].offeringDelivered,
+            offeringIntensity: sortedOfferings[0].offeringIntensity,
+            offeringType: sortedOfferings[0].offeringType,
+            offeringStatus: sortedOfferings[0].offeringStatus,
           },
           {
-            id: partTimeOffering.id,
-            name: partTimeOffering.name,
-            yearOfStudy: partTimeOffering.yearOfStudy,
-            studyStartDate: partTimeOffering.studyStartDate,
-            studyEndDate: partTimeOffering.studyEndDate,
-            offeringDelivered: partTimeOffering.offeringDelivered,
-            offeringIntensity: partTimeOffering.offeringIntensity,
-            offeringType: partTimeOffering.offeringType,
-            offeringStatus: partTimeOffering.offeringStatus,
+            id: sortedOfferings[1].id,
+            name: sortedOfferings[1].name,
+            yearOfStudy: sortedOfferings[1].yearOfStudy,
+            studyStartDate: sortedOfferings[1].studyStartDate,
+            studyEndDate: sortedOfferings[1].studyEndDate,
+            offeringDelivered: sortedOfferings[1].offeringDelivered,
+            offeringIntensity: sortedOfferings[1].offeringIntensity,
+            offeringType: sortedOfferings[1].offeringType,
+            offeringStatus: sortedOfferings[1].offeringStatus,
           },
         ],
         count: 2,

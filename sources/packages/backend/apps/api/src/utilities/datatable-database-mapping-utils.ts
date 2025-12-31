@@ -47,9 +47,7 @@ export const sortApplicationsColumnMap = (fieldName: string): string => {
 export const sortOfferingsColumnMap = (fieldName: string): string => {
   const offeringSortOptions = {
     name: "offerings.name",
-    offeringIntensity: "offerings.offeringIntensity",
     offeringDelivered: "offerings.offeringDelivered",
-    offeringStatus: "offerings.offeringStatus",
     studyStartDate: "offerings.studyStartDate",
     studyEndDate: "offerings.studyEndDate",
   };
