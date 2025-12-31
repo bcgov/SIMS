@@ -245,3 +245,17 @@ export type StudentApplicationFormData = {
   applicationOfferingIntensityValue: OfferingIntensity;
 } & ApplicationData &
   Record<string, unknown>;
+
+/**
+ * Valid Intensity of the Application in the friendly format.
+ */
+export enum ApplicationIntensity {
+  /**
+   * Application with offering_intensity = Part Time, will be Part-time
+   */
+  partTime = "Part-time",
+  /**
+   *  Application with offering_intensity = Full Time, will be Full-time
+   */
+  fullTime = "Full-time",
+}

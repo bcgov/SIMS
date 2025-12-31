@@ -21,6 +21,7 @@ export default defineComponent({
     const applicationData = ref<ApplicationSupplementalDataAPIOutDTO>();
     const headerMap = ref<Record<string, string | undefined>>({});
     const { dateOnlyLongPeriodString } = useFormatters();
+    const { intensityFriendly } = useFormatters();
 
     const mapApplicationHeader = (
       application: ApplicationSupplementalDataAPIOutDTO,
@@ -33,7 +34,7 @@ export default defineComponent({
           application.applicationStartDate,
           application.applicationEndDate,
         ),
-        Type: application.applicationOfferingIntensity,
+        Type: intensityFriendly(application.applicationOfferingIntensity),
       };
     };
 

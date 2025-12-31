@@ -10,6 +10,7 @@ import {
   InstitutionUserRoles,
   ModifiedIndependentDisplayStatus,
   ModifiedIndependentStatus,
+  OfferingIntensity,
   SINStatusEnum,
 } from "@/types";
 import dayjs, { QUnitType, OpUnitType } from "dayjs";
@@ -456,6 +457,22 @@ export function useFormatters() {
   };
 
   /**
+   * Formats the intensity of an application in a user friendly format.
+   * @param offering or application intensity to be formatted.
+   * @returns the friendly formatted intensity value.
+   */
+  const intensityFriendly = (intensity: OfferingIntensity): string => {
+    switch (intensity) {
+      case OfferingIntensity.fullTime:
+        return "Full-time";
+      case OfferingIntensity.partTime:
+        return "Part-time";
+      default:
+        return intensity;
+    }
+  };
+
+  /**
    * Checks if the date provided is less than given number of weeks from current date
    * or a reference date.
    * @param date date provided.
@@ -498,6 +515,7 @@ export function useFormatters() {
     modifiedIndependentStatusToDisplay,
     applicationDisabilityStatusToDisplay,
     currencyFormatter,
+    intensityFriendly,
     isLessThanGivenWeeks,
   };
 }
