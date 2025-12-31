@@ -7,7 +7,7 @@ import { defineComponent, ref, watchEffect } from "vue";
 import { ApplicationSupplementalDataAPIOutDTO } from "@/services/http/dto";
 import { ApplicationService } from "@/services/ApplicationService";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
-import { useFormatters } from "@/composables";
+import { useFormatters, useOffering } from "@/composables";
 
 export default defineComponent({
   components: { DetailHeader },
@@ -21,6 +21,7 @@ export default defineComponent({
     const applicationData = ref<ApplicationSupplementalDataAPIOutDTO>();
     const headerMap = ref<Record<string, string | undefined>>({});
     const { dateOnlyLongPeriodString } = useFormatters();
+    const { mapOfferingIntensity } = useOffering();
 
     const mapApplicationHeader = (
       application: ApplicationSupplementalDataAPIOutDTO,
@@ -33,7 +34,7 @@ export default defineComponent({
           application.applicationStartDate,
           application.applicationEndDate,
         ),
-        Type: application.applicationOfferingIntensity,
+        Type: mapOfferingIntensity(application.applicationOfferingIntensity),
       };
     };
 
