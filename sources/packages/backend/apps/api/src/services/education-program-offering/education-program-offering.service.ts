@@ -21,6 +21,7 @@ import {
   StudentAssessmentStatus,
   StudyBreaksAndWeeks,
   isDatabaseConstraintError,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import {
   Brackets,
@@ -28,6 +29,7 @@ import {
   EntityManager,
   In,
   Repository,
+  SelectQueryBuilder,
   UpdateResult,
 } from "typeorm";
 import {
@@ -42,7 +44,6 @@ import {
   PaginatedResults,
   OFFERING_STUDY_BREAK_MAX_DAYS,
   OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD,
-  sortPendingOfferingsColumnMap,
 } from "../../utilities";
 import {
   CustomNamedError,
@@ -1478,24 +1479,55 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         searchCriteria: `%${paginationOptions.searchCriteria}%`,
       });
     }
-    if (paginationOptions.sortField && paginationOptions.sortOrder) {
-      offeringsQuery.orderBy(
-        sortPendingOfferingsColumnMap(paginationOptions.sortField),
-        paginationOptions.sortOrder,
-      );
-    } else {
-      // Apply default sort/order if not specified.
-      offeringsQuery.orderBy(
-        sortPendingOfferingsColumnMap(DEFAULT_SORT_FIELD),
-        FieldSortOrder.ASC,
-      );
-    }
+    const sortField = paginationOptions.sortField ?? DEFAULT_SORT_FIELD;
+    const sortOrder = paginationOptions.sortOrder ?? FieldSortOrder.ASC;
+    this.addOfferingsSort(offeringsQuery, sortField, sortOrder);
+
     offeringsQuery
       .skip(paginationOptions.page * paginationOptions.pageLimit)
       .take(paginationOptions.pageLimit);
 
     const [records, count] = await offeringsQuery.getManyAndCount();
     return { results: records, count: count };
+  }
+
+  private addOfferingsSort(
+    query: SelectQueryBuilder<EducationProgramOffering>,
+    sortField?: string,
+    sortOrder?: FieldSortOrder,
+  ): void {
+    switch (sortField) {
+      case "submittedDate":
+        query.orderBy("offerings.submittedDate", sortOrder);
+        break;
+      case "offeringIntensity":
+        // The extra select is needed to avoid TypeORM parsing errors with CASE in the orderBy.
+        // Instead add a temporary field 'offering_intensity_sort' to sort by.
+        query.addSelect(
+          `(CASE
+           WHEN offerings.offering_intensity = '${OfferingIntensity.fullTime}' THEN 1
+           WHEN offerings.offering_intensity = '${OfferingIntensity.partTime}' THEN 2
+           ELSE 3
+         END)`,
+          "offering_intensity_sort",
+        );
+        query.orderBy("offering_intensity_sort", sortOrder);
+        break;
+      case "offeringType":
+        // The extra select is needed to avoid TypeORM parsing errors with CASE in the orderBy.
+        // Instead add a temporary field 'offering_type_sort' to sort by.
+        query.addSelect(
+          `CASE 
+          WHEN offerings.offering_type = '${OfferingTypes.Private}' THEN 1          
+          WHEN offerings.offering_type = '${OfferingTypes.Public}' THEN 2
+          WHEN offerings.offering_type = '${OfferingTypes.ScholasticStanding}' THEN 3
+          ELSE 4
+        END`,
+          "offering_type_sort",
+        );
+        query.orderBy("offering_type_sort", sortOrder);
+        break;
+    }
   }
 
   /**

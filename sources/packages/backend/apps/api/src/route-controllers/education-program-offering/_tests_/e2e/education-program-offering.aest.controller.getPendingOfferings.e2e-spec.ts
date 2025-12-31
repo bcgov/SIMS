@@ -12,7 +12,13 @@ import {
   createFakeEducationProgramOffering,
   createFakeUser,
 } from "@sims/test-utils";
-import { EducationProgramOffering, OfferingStatus, User } from "@sims/sims-db";
+import {
+  EducationProgramOffering,
+  OfferingIntensity,
+  OfferingStatus,
+  OfferingTypes,
+  User,
+} from "@sims/sims-db";
 import * as request from "supertest";
 import { EducationProgramOfferingPendingAPIOutDTO } from "apps/api/src/route-controllers/education-program-offering/models/education-program-offering.dto";
 import { addDays } from "@sims/utilities";
@@ -138,6 +144,154 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       response.body.results[1];
     assertPendingOffering(offeringResult1, newerOffering);
     assertPendingOffering(offeringResult2, olderOffering);
+  });
+
+  it("Should return three pending offerings for an active Program with a custom sort (offeringType ASC) applied.", async () => {
+    // Arrange
+
+    // Custom dates are used to avoid collisions with other test data.
+    const publicOffering = createFakeEducationProgramOffering(
+      {
+        auditUser: savedUser,
+      },
+      {
+        initialValues: {
+          name: "Chemistry 101",
+          offeringStatus: OfferingStatus.CreationPending,
+          offeringType: OfferingTypes.Public,
+          submittedDate: FUTURE_SUBMITTED_DATE,
+        },
+      },
+    );
+
+    const privateOffering = createFakeEducationProgramOffering(
+      {
+        auditUser: savedUser,
+      },
+      {
+        initialValues: {
+          name: "Chemistry 201",
+          offeringStatus: OfferingStatus.CreationPending,
+          offeringType: OfferingTypes.Private,
+          submittedDate: FUTURE_SUBMITTED_DATE,
+        },
+      },
+    );
+
+    const scholasticStandingOffering = createFakeEducationProgramOffering(
+      {
+        auditUser: savedUser,
+      },
+      {
+        initialValues: {
+          name: "Chemistry 301",
+          offeringStatus: OfferingStatus.CreationPending,
+          offeringType: OfferingTypes.ScholasticStanding,
+          submittedDate: FUTURE_SUBMITTED_DATE,
+        },
+      },
+    );
+
+    // Create the offerings in non alphabetical order for offeringType to ensure that our default
+    // sort works and that we're not just getting default DB ordering.
+    await db.educationProgramOffering.save([
+      publicOffering,
+      privateOffering,
+      scholasticStandingOffering,
+    ]);
+
+    // Ministry token.
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    const sortField = "offeringType";
+    const sortOrder = "ASC";
+    // Include a search criteria that matches both offerings to avoid test data collisions.
+    const searchCriteria = "Chemistry";
+    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10&sortField=${sortField}&sortOrder=${sortOrder}&searchCriteria=${searchCriteria}`;
+
+    // Act/Assert
+    const response = await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    expect(response.body.count).toBeGreaterThanOrEqual(2);
+
+    // Assert the offerings are returned in the correct order.
+    const offeringResult1: EducationProgramOfferingPendingAPIOutDTO =
+      response.body.results[0];
+    const offeringResult2: EducationProgramOfferingPendingAPIOutDTO =
+      response.body.results[1];
+    const offeringResult3: EducationProgramOfferingPendingAPIOutDTO =
+      response.body.results[2];
+    assertPendingOffering(offeringResult1, privateOffering);
+    assertPendingOffering(offeringResult2, publicOffering);
+    assertPendingOffering(offeringResult3, scholasticStandingOffering);
+  });
+
+  it("Should return two pending offerings for an active Program with a custom sort (offeringIntensity ASC) applied.", async () => {
+    // Arrange
+
+    // Custom dates are used to avoid collisions with other test data.
+    const partTimeOffering = createFakeEducationProgramOffering(
+      {
+        auditUser: savedUser,
+      },
+      {
+        initialValues: {
+          name: "Physics 101",
+          offeringIntensity: OfferingIntensity.partTime,
+          offeringStatus: OfferingStatus.CreationPending,
+          submittedDate: FUTURE_SUBMITTED_DATE,
+        },
+      },
+    );
+
+    const fullTimeOffering = createFakeEducationProgramOffering(
+      {
+        auditUser: savedUser,
+      },
+      {
+        initialValues: {
+          name: "Physics 201",
+          offeringStatus: OfferingStatus.CreationPending,
+          offeringIntensity: OfferingIntensity.fullTime,
+          submittedDate: FUTURE_SUBMITTED_DATE,
+        },
+      },
+    );
+
+    // Create the offerings in non alphabetical order for offeringIntensity to ensure that our default
+    // sort works and that we're not just getting default DB ordering.
+    await db.educationProgramOffering.save([
+      partTimeOffering,
+      fullTimeOffering,
+    ]);
+
+    // Ministry token.
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    const sortField = "offeringIntensity";
+    const sortOrder = "ASC";
+    // Include a search criteria that matches both offerings to avoid test data collisions.
+    const searchCriteria = "Physics";
+    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10&sortField=${sortField}&sortOrder=${sortOrder}&searchCriteria=${searchCriteria}`;
+
+    // Act/Assert
+    const response = await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    expect(response.body.count).toBeGreaterThanOrEqual(2);
+
+    // Assert the offerings are returned in the correct order.
+    const offeringResult1: EducationProgramOfferingPendingAPIOutDTO =
+      response.body.results[0];
+    const offeringResult2: EducationProgramOfferingPendingAPIOutDTO =
+      response.body.results[1];
+    assertPendingOffering(offeringResult1, fullTimeOffering);
+    assertPendingOffering(offeringResult2, partTimeOffering);
   });
 
   it("Should return a single pending offering based on offering name search", async () => {
