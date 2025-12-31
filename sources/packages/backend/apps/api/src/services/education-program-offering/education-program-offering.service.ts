@@ -21,12 +21,15 @@ import {
   StudentAssessmentStatus,
   StudyBreaksAndWeeks,
   isDatabaseConstraintError,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import {
+  Brackets,
   DataSource,
   EntityManager,
   In,
   Repository,
+  SelectQueryBuilder,
   UpdateResult,
 } from "typeorm";
 import {
@@ -1426,6 +1429,105 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         .andWhere("student.id = :studentId", { studentId });
     }
     return offeringRequest.getOne();
+  }
+
+  /**
+   * Gets a list of Program Offerings with status 'Creation Pending' where the Program is active/not expired.
+   * Pagination, sort and search are available on results.
+   * @param paginationOptions pagination options.
+   * @returns pending offerings.
+   */
+  async getPendingOfferings(
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<EducationProgramOffering>> {
+    const DEFAULT_SORT_FIELD = "submittedDate";
+    const offeringsQuery = this.repo
+      .createQueryBuilder("offerings")
+      .select([
+        "offerings.id",
+        "offerings.name",
+        "offerings.studyStartDate",
+        "offerings.studyEndDate",
+        "offerings.offeringDelivered",
+        "offerings.offeringIntensity",
+        "offerings.offeringType",
+        "offerings.offeringStatus",
+        "offerings.submittedDate",
+        "educationProgram.id",
+        "educationProgram.name",
+        "institutionLocation.id",
+        "institutionLocation.name",
+        "institution.id",
+      ])
+      .innerJoin("offerings.educationProgram", "educationProgram")
+      .innerJoin("offerings.institutionLocation", "institutionLocation")
+      .innerJoin("institutionLocation.institution", "institution")
+      .where("offerings.offeringStatus = :offeringStatus", {
+        offeringStatus: OfferingStatus.CreationPending,
+      })
+      .andWhere("educationProgram.isActive = true")
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where("educationProgram.effectiveEndDate is null").orWhere(
+            "educationProgram.effectiveEndDate > CURRENT_DATE",
+          );
+        }),
+      );
+    // Search by offering name.
+    if (paginationOptions.searchCriteria) {
+      offeringsQuery.andWhere("offerings.name Ilike :searchCriteria", {
+        searchCriteria: `%${paginationOptions.searchCriteria}%`,
+      });
+    }
+    const sortField = paginationOptions.sortField ?? DEFAULT_SORT_FIELD;
+    const sortOrder = paginationOptions.sortOrder ?? FieldSortOrder.ASC;
+    this.addOfferingsSort(offeringsQuery, sortField, sortOrder);
+
+    offeringsQuery
+      .skip(paginationOptions.page * paginationOptions.pageLimit)
+      .take(paginationOptions.pageLimit);
+
+    const [records, count] = await offeringsQuery.getManyAndCount();
+    return { results: records, count: count };
+  }
+
+  private addOfferingsSort(
+    query: SelectQueryBuilder<EducationProgramOffering>,
+    sortField?: string,
+    sortOrder?: FieldSortOrder,
+  ): void {
+    switch (sortField) {
+      case "submittedDate":
+        query.orderBy("offerings.submittedDate", sortOrder);
+        break;
+      case "offeringIntensity":
+        // The extra select is needed to avoid TypeORM parsing errors with CASE in the orderBy.
+        // Instead add a temporary field 'offering_intensity_sort' to sort by.
+        query.addSelect(
+          `(CASE
+           WHEN offerings.offering_intensity = '${OfferingIntensity.fullTime}' THEN 1
+           WHEN offerings.offering_intensity = '${OfferingIntensity.partTime}' THEN 2
+           ELSE 3
+         END)`,
+          "offering_intensity_sort",
+        );
+        query.orderBy("offering_intensity_sort", sortOrder);
+        break;
+      case "offeringType":
+        // The extra select is needed to avoid TypeORM parsing errors with CASE in the orderBy.
+        // Instead add a temporary field 'offering_type_sort' to sort by.
+        query.addSelect(
+          `CASE 
+          WHEN offerings.offering_type = '${OfferingTypes.Private}' THEN 1          
+          WHEN offerings.offering_type = '${OfferingTypes.Public}' THEN 2
+          WHEN offerings.offering_type = '${OfferingTypes.ScholasticStanding}' THEN 3
+          ELSE 4
+        END`,
+          "offering_type_sort",
+        );
+        query.orderBy("offering_type_sort", sortOrder);
+        break;
+    }
   }
 
   /**

@@ -473,6 +473,16 @@ export function useFormatters() {
     return dayjs(date).isBefore(dayjs(referenceDate).add(weeks, "week"));
   };
 
+  /**
+   * Capitalizes the first word of a string.
+   * @param str The string to capitalize.
+   * @returns The string with the first word capitalized.
+   */
+  const capitalizeFirstWord = (str: string): string => {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
   return {
     dateOnlyLongString,
     dateOnlyLongPeriodString,
@@ -499,5 +509,6 @@ export function useFormatters() {
     applicationDisabilityStatusToDisplay,
     currencyFormatter,
     isLessThanGivenWeeks,
+    capitalizeFirstWord,
   };
 }

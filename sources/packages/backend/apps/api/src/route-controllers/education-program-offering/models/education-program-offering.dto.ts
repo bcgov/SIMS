@@ -276,3 +276,23 @@ class ValidationResultAPIOutDTO {
   typeCode: string;
   message: string;
 }
+
+/**
+ * DTO to display pending education program offerings.
+ */
+export interface EducationProgramOfferingPendingAPIOutDTO {
+  id: number;
+  name: string;
+  studyStartDate: string;
+  studyEndDate: string;
+  offeringDelivered: string;
+  offeringIntensity: OfferingIntensity;
+  offeringStatus: OfferingStatus;
+  offeringType: OfferingTypes;
+  submittedDate: Date;
+  locationId: number;
+  locationName: string;
+  institutionId: number;
+  programId: number;
+  programName: string;
+}

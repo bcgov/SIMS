@@ -141,6 +141,12 @@ export class OfferingsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDT
   sortField?: string;
 }
 
+export class PendingOfferingsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["submittedDate", "offeringIntensity", "offeringType"])
+  sortField?: string;
+}
+
 export class CASInvoicePaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
   @IsIn(["invoiceStatusUpdatedOn"])

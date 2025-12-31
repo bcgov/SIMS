@@ -35,10 +35,12 @@ import {
   EducationProgramOfferingAPIOutDTO,
   OfferingChangeAssessmentAPIInDTO,
   EducationProgramOfferingSummaryAPIOutDTO,
+  EducationProgramOfferingPendingAPIOutDTO,
 } from "./models/education-program-offering.dto";
 import {
   OfferingsPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
+  PendingOfferingsPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
 import { CustomNamedError } from "@sims/utilities";
 import { Role } from "../../auth/roles.enum";
@@ -104,6 +106,23 @@ export class EducationProgramOfferingAESTController extends BaseController {
   }
 
   /**
+   * Gets a list of Program Offerings with status 'Creation Pending' where the Program is not deactivated.
+   * Pagination, sort and search are available on results.
+   * @param paginationOptions pagination options.
+   * @returns pending offerings.
+   */
+  @Get("pending")
+  async getPendingOfferings(
+    @Query() paginationOptions: PendingOfferingsPaginationOptionsAPIInDTO,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<EducationProgramOfferingPendingAPIOutDTO>
+  > {
+    return this.educationProgramOfferingControllerService.getPendingOfferings(
+      paginationOptions,
+    );
+  }
+
+  /**
    * Get offering details.
    * @param offeringId offering id
    * @returns offering details.
@@ -113,9 +132,8 @@ export class EducationProgramOfferingAESTController extends BaseController {
   async getOfferingDetails(
     @Param("offeringId", ParseIntPipe) offeringId: number,
   ): Promise<EducationProgramOfferingAPIOutDTO> {
-    const offering = await this.programOfferingService.getOfferingById(
-      offeringId,
-    );
+    const offering =
+      await this.programOfferingService.getOfferingById(offeringId);
     if (!offering) {
       throw new NotFoundException("Offering not found.");
     }
@@ -140,9 +158,8 @@ export class EducationProgramOfferingAESTController extends BaseController {
     @Body() payload: OfferingAssessmentAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    const offering = await this.programOfferingService.getOfferingById(
-      offeringId,
-    );
+    const offering =
+      await this.programOfferingService.getOfferingById(offeringId);
     if (!offering) {
       throw new NotFoundException("Offering not found.");
     }
