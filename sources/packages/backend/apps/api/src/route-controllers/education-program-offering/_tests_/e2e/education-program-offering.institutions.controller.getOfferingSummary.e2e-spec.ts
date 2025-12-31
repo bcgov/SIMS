@@ -99,7 +99,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
       program,
     );
     const sortField = "name";
-    const sortOrder = "DESC";
+    const sortOrder = "ASC";
     const endpoint = `${baseEndpoint}/education-program/${program.id}?page=0&pageLimit=10&sortField=${sortField}&sortOrder=${sortOrder}`;
     const sortedOfferings = [fullTimeOffering, partTimeOffering].sort((a, b) =>
       a.name.localeCompare(b.name),
