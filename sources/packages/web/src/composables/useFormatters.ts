@@ -478,8 +478,10 @@ export function useFormatters() {
    * @param str The string to capitalize.
    * @returns The string with the first word capitalized.
    */
-  const capitalizeFirstWord = (str: string): string => {
-    if (!str) return "";
+  const capitalizeFirstWord = (str?: string): string => {
+    if (!str) {
+      return "";
+    }
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 

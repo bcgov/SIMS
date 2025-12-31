@@ -55,8 +55,10 @@ export default defineComponent({
   setup(props) {
     const { isReadOnlyUser } = useInstitutionAuth();
 
-    const isProgramEditable =
-      props.educationProgram.isActive && !props.educationProgram.isExpired;
+    const isProgramEditable = computed(
+      () =>
+        props.educationProgram.isActive && !props.educationProgram.isExpired,
+    );
 
     const isInstitutionUser =
       AuthService.shared.authClientType === ClientIdType.Institution;
@@ -64,7 +66,7 @@ export default defineComponent({
     const allowOfferingEdit = computed(() => {
       return (
         isInstitutionUser &&
-        isProgramEditable &&
+        isProgramEditable.value &&
         !isReadOnlyUser(props.locationId)
       );
     });

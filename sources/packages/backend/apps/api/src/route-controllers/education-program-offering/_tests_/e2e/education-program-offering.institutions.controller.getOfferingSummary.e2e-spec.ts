@@ -20,6 +20,7 @@ import {
   InstitutionUserTypes,
   EducationProgram,
   InstitutionLocation,
+  EducationProgramOffering,
 } from "@sims/sims-db";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary", () => {
@@ -29,7 +30,14 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
   let program: EducationProgram;
   let institutionLocation: InstitutionLocation;
 
-  const createFakeFullTimeOffering = async () => {
+  /**
+   * Creates a fake full-time education program offering with an optional custom name.
+   * @param offeringCustomName Optional custom name for the offering.
+   * @returns The saved full-time education program offering.
+   */
+  const createFakeFullTimeOffering = async (
+    offeringCustomName?: string,
+  ): Promise<EducationProgramOffering> => {
     const fullTimeOffering = createFakeEducationProgramOffering(
       program,
       institutionLocation,
@@ -38,23 +46,28 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
     fullTimeOffering.offeringIntensity = OfferingIntensity.fullTime;
     fullTimeOffering.studyStartDate = "2024-08-01";
     fullTimeOffering.studyEndDate = "2024-12-31";
-    fullTimeOffering.name = "Full-Time Test Offering";
+    fullTimeOffering.name = offeringCustomName ?? "Full-Time Test Offering";
 
     return await db.educationProgramOffering.save(fullTimeOffering);
   };
 
-  const createFakePartTimeOffering = async () => {
-    const partTimeOffering = createFakeEducationProgramOffering(
-      program,
-      institutionLocation,
-    );
+  /**
+   * Creates a fake part-time education program offering.
+   * @returns The saved part-time education program offering.
+   */
+  const createFakePartTimeOffering =
+    async (): Promise<EducationProgramOffering> => {
+      const partTimeOffering = createFakeEducationProgramOffering(
+        program,
+        institutionLocation,
+      );
 
-    partTimeOffering.offeringIntensity = OfferingIntensity.partTime;
-    partTimeOffering.studyStartDate = "2025-01-01";
-    partTimeOffering.studyEndDate = "2025-05-31";
-    partTimeOffering.name = "Part-Time Test Offering";
-    return await db.educationProgramOffering.save(partTimeOffering);
-  };
+      partTimeOffering.offeringIntensity = OfferingIntensity.partTime;
+      partTimeOffering.studyStartDate = "2025-01-01";
+      partTimeOffering.studyEndDate = "2025-05-31";
+      partTimeOffering.name = "Part-Time Test Offering";
+      return await db.educationProgramOffering.save(partTimeOffering);
+    };
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -81,7 +94,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
     });
     program = await db.educationProgram.save(program);
 
-    baseEndpoint = `/institutions/education-program-offering/location/${collegeCLocation.id}/education-program/${program.id}?page=0&pageLimit=10`;
+    baseEndpoint = `/institutions/education-program-offering/location/${institutionLocation.id}/education-program/${program.id}?page=0&pageLimit=10`;
   });
 
   it("Should return all offerings when no filters are applied.", async () => {
@@ -250,6 +263,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
     // Arrange
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
     const fullTimeOffering = await createFakeFullTimeOffering();
+    await createFakeFullTimeOffering("fake other name");
     const searchableName = encodeURIComponent(fullTimeOffering.name);
     const intensityFilter = encodeURIComponent(OfferingIntensity.fullTime);
     const endpoint = `${baseEndpoint}&searchCriteria=${searchableName}&intensityFilter=${intensityFilter}`;

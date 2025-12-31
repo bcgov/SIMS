@@ -673,8 +673,8 @@ export const OfferingSummaryHeaders = [
   { title: "Study Start Date", sortable: true, key: "studyStartDate" },
   { title: "Study End Date", sortable: true, key: "studyEndDate" },
   { title: "Intensity", sortable: true, key: "offeringIntensity" },
-  { title: "Offering type", sortable: false, key: "offeringType" },
-  { title: "Study delivery", sortable: true, key: "offeringDelivered" },
+  { title: "Offering Type", sortable: false, key: "offeringType" },
+  { title: "Study Delivery", sortable: true, key: "offeringDelivered" },
   { title: "Status", sortable: true, key: "offeringStatus" },
   { title: "Action", sortable: false, key: "action" },
 ];

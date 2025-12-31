@@ -26,6 +26,7 @@
               density="compact"
               variant="outlined"
               label="From (Study Start Date)"
+              input-format="yyyy-mm-dd"
               hide-details="auto"
               prepend-icon=""
               append-inner-icon="mdi-calendar"
@@ -36,6 +37,7 @@
               density="compact"
               variant="outlined"
               label="To (Study Start Date)"
+              input-format="yyyy-mm-dd"
               hide-details="auto"
               prepend-icon=""
               append-inner-icon="mdi-calendar"
@@ -52,6 +54,17 @@
             </tooltip-icon>
           </div>
 
+          <!-- Search Button -->
+          <v-btn
+            color="primary"
+            data-cy="searchOfferings"
+            @click="searchOfferingTable()"
+            prepend-icon="mdi-magnify"
+            style="margin-left: auto; flex-shrink: 0"
+          >
+            Search
+          </v-btn>
+
           <!-- Intensity Filter Group -->
           <v-btn-toggle
             v-model="intensityFilter"
@@ -64,7 +77,7 @@
             <v-btn
               rounded="xl"
               color="primary"
-              value=""
+              value="All"
               size="small"
               class="mr-1"
               >All</v-btn
@@ -86,18 +99,8 @@
               >Part-time</v-btn
             >
           </v-btn-toggle>
-
-          <!-- Search Button - always at the end -->
-          <v-btn
-            color="primary"
-            data-cy="searchOfferings"
-            @click="searchOfferingTable()"
-            prepend-icon="mdi-magnify"
-            style="margin-left: auto; flex-shrink: 0"
-          >
-            Search
-          </v-btn>
         </div>
+        <!-- Error display at bottom -->
         <v-input :rules="[isValidSearch()]" hide-details="auto" error />
       </v-form>
     </template>
@@ -175,6 +178,7 @@ import {
   DataTableOptions,
   PaginationOptions,
   VForm,
+  OfferingIntensity,
 } from "@/types";
 import { EducationProgramOfferingSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters, useOffering, useSnackBar } from "@/composables";
@@ -183,6 +187,16 @@ import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
 import { debounce } from "lodash";
 
 const DEFAULT_SORT_FIELD = "name";
+
+/**
+ * Interface for offering filter options.
+ */
+interface OfferingFilterOptions {
+  searchCriteria?: string;
+  intensityFilter?: string;
+  studyStartDateFromFilter?: string;
+  studyStartDateToFilter?: string;
+}
 
 export default defineComponent({
   components: {
@@ -210,12 +224,12 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const { capitalizeFirstWord } = useFormatters();
-    const loading = ref(false);
-    const searchBox = ref("");
+    const loading = ref<boolean>(false);
+    const searchBox = ref<string>();
     const { dateOnlyLongPeriodString } = useFormatters();
-    const intensityFilter = ref("");
-    const startDate = ref("");
-    const endDate = ref("");
+    const intensityFilter = ref<OfferingIntensity | "All">("All");
+    const startDate = ref<string>();
+    const endDate = ref<string>();
     const searchOfferingsForm = ref({} as VForm);
     const offeringsAndCount = ref(
       {} as PaginatedResults<EducationProgramOfferingSummaryAPIOutDTO>,
@@ -294,20 +308,26 @@ export default defineComponent({
     const getEducationProgramAndOffering = async () => {
       try {
         loading.value = true;
-        const filterOptions: Record<string, string> = {};
-        if (searchBox.value) filterOptions.searchCriteria = searchBox.value;
-        if (intensityFilter.value)
+        const filterOptions: OfferingFilterOptions = {};
+        if (searchBox.value) {
+          filterOptions.searchCriteria = searchBox.value;
+        }
+        if (intensityFilter.value && intensityFilter.value !== "All") {
           filterOptions.intensityFilter = intensityFilter.value;
-        if (startDate.value)
+        }
+        if (startDate.value) {
           filterOptions.studyStartDateFromFilter = startDate.value;
-        if (endDate.value) filterOptions.studyStartDateToFilter = endDate.value;
+        }
+        if (endDate.value) {
+          filterOptions.studyStartDateToFilter = endDate.value;
+        }
 
         offeringsAndCount.value =
           await EducationProgramOfferingService.shared.getOfferingsSummary(
             props.locationId,
             props.programId,
             {
-              searchCriteria: filterOptions,
+              searchCriteria: filterOptions as Record<string, string>,
               ...currentPagination,
             },
           );
