@@ -50,23 +50,7 @@ export const sortOfferingsColumnMap = (fieldName: string): string => {
   };
   return offeringSortOptions[fieldName] ?? null;
 };
-/**
- * Util to get the list of database field
- * with respective to Pending program offering dataTable
- * field names that need to be sorted.
- * When a new sort need to be implemented,
- * Add dataTable field name as its respective database
- * @param fieldName
- * @returns fieldName
- */
-export const sortPendingOfferingsColumnMap = (fieldName: string): string => {
-  const offeringSortOptions = {
-    submittedDate: "offerings.submittedDate",
-    offeringIntensity: "offerings.offeringIntensity",
-    offeringType: "offerings.offeringType",
-  };
-  return offeringSortOptions[fieldName] ?? null;
-};
+
 /**
  * Util to get the list of database field
  * with respective to program summary dataTable
