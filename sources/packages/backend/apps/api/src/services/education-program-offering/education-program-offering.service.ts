@@ -42,6 +42,7 @@ import {
   PaginatedResults,
   OFFERING_STUDY_BREAK_MAX_DAYS,
   OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD,
+  sortPendingOfferingsColumnMap,
 } from "../../utilities";
 import {
   CustomNamedError,
@@ -1479,13 +1480,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     }
     if (paginationOptions.sortField && paginationOptions.sortOrder) {
       offeringsQuery.orderBy(
-        sortOfferingsColumnMap(paginationOptions.sortField),
+        sortPendingOfferingsColumnMap(paginationOptions.sortField),
         paginationOptions.sortOrder,
       );
     } else {
       // Apply default sort/order if not specified.
       offeringsQuery.orderBy(
-        sortOfferingsColumnMap(DEFAULT_SORT_FIELD),
+        sortPendingOfferingsColumnMap(DEFAULT_SORT_FIELD),
         FieldSortOrder.ASC,
       );
     }

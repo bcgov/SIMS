@@ -40,6 +40,7 @@ import {
 import {
   OfferingsPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
+  PendingOfferingsPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
 import { CustomNamedError } from "@sims/utilities";
 import { Role } from "../../auth/roles.enum";
@@ -112,7 +113,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
    */
   @Get("pending")
   async getPendingOfferings(
-    @Query() paginationOptions: OfferingsPaginationOptionsAPIInDTO,
+    @Query() paginationOptions: PendingOfferingsPaginationOptionsAPIInDTO,
   ): Promise<
     PaginatedResultsAPIOutDTO<EducationProgramOfferingPendingAPIOutDTO>
   > {

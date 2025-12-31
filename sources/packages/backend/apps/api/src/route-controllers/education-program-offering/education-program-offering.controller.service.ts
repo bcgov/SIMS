@@ -42,6 +42,7 @@ import { OptionItemAPIOutDTO } from "../models/common.dto";
 import {
   OfferingsPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
+  PendingOfferingsPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
 import {
   EducationProgramOfferingAPIInDTO,
@@ -454,7 +455,7 @@ export class EducationProgramOfferingControllerService {
    * @returns pending offerings.
    */
   async getPendingOfferings(
-    paginationOptions: OfferingsPaginationOptionsAPIInDTO,
+    paginationOptions: PendingOfferingsPaginationOptionsAPIInDTO,
   ): Promise<
     PaginatedResultsAPIOutDTO<EducationProgramOfferingPendingAPIOutDTO>
   > {
