@@ -11,6 +11,7 @@ import {
   NOTE_DESCRIPTION_MAX_LENGTH,
   RestrictionType,
   RESTRICTION_CATEGORY_MAX_LENGTH,
+  RestrictionActionType,
 } from "@sims/sims-db";
 
 /**
@@ -147,6 +148,20 @@ export class StudentRestrictionAPIOutDTO {
    * Notification type.
    */
   type: RestrictionNotificationType;
+}
+
+/**
+ * Institution restriction details.
+ */
+export class InstitutionRestrictionAPIOutDTO {
+  restrictionActions: RestrictionActionType[];
+}
+
+/**
+ * Institution restrictions.
+ */
+export class InstitutionRestrictionsAPIOutDTO {
+  institutionRestrictions: InstitutionRestrictionAPIOutDTO[];
 }
 
 /**

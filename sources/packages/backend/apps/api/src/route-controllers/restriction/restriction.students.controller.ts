@@ -1,12 +1,26 @@
-import { Controller, Get } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+} from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import { StudentUserToken } from "../../auth/userToken.interface";
-import { StudentRestrictionService } from "../../services";
+import {
+  InstitutionRestrictionService,
+  InstitutionService,
+  StudentRestrictionService,
+} from "../../services";
 import BaseController from "../BaseController";
-import { StudentRestrictionAPIOutDTO } from "./models/restriction.dto";
+import {
+  InstitutionRestrictionAPIOutDTO,
+  InstitutionRestrictionsAPIOutDTO,
+  StudentRestrictionAPIOutDTO,
+} from "./models/restriction.dto";
 import { RestrictionNotificationType, StudentRestriction } from "@sims/sims-db";
 import { DEFAULT_LEGACY_RESTRICTION_CODE } from "@sims/services/constants";
 
@@ -29,6 +43,8 @@ const NOTIFICATION_PRIORITY_ORDER_MAP = {
 export class RestrictionStudentsController extends BaseController {
   constructor(
     private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly institutionRestrictionService: InstitutionRestrictionService,
+    private readonly institutionService: InstitutionService,
   ) {
     super();
   }
@@ -77,5 +93,42 @@ export class RestrictionStudentsController extends BaseController {
       });
     }
     return results;
+  }
+
+  /**
+   * Get institution restrictions effective for the given program and institution location.
+   * @param locationId institution location.
+   * @param programId institution program.
+   * @returns institution restrictions.
+   */
+  @Get("institution/location/:locationId/program/:programId")
+  async getLocationProgramInstitutionRestrictions(
+    @Param("locationId", ParseIntPipe) locationId: number,
+    @Param("programId", ParseIntPipe) programId: number,
+  ): Promise<InstitutionRestrictionsAPIOutDTO> {
+    const institutionExists =
+      await this.institutionService.institutionWithLocationAndProgramExists(
+        locationId,
+        programId,
+      );
+    if (!institutionExists) {
+      throw new NotFoundException(
+        "Institution with the program and location not found.",
+      );
+    }
+    const institutionRestrictions =
+      await this.institutionRestrictionService.getInstitutionRestrictionsByLocationAndProgram(
+        locationId,
+        programId,
+        { isActive: true, excludeNoEffectRestrictions: true },
+      );
+    return {
+      institutionRestrictions:
+        institutionRestrictions.map<InstitutionRestrictionAPIOutDTO>(
+          (restriction) => ({
+            restrictionActions: restriction.restriction.actionType,
+          }),
+        ),
+    };
   }
 }
