@@ -50,6 +50,15 @@
               dateOnlyLongPeriodString(item.studyStartDate, item.studyEndDate)
             }}
           </template>
+          <template #[`item.offeringIntensity`]="{ item }">
+            {{ mapOfferingIntensity(item.offeringIntensity) }}
+          </template>
+          <template #[`item.offeringType`]="{ item }">
+            {{ item.offeringType }}
+          </template>
+          <template #[`item.offeringDelivered`]="{ item }">
+            <span class="text-capitalize">{{ item.offeringDelivered }}</span>
+          </template>
           <template #[`item.offeringStatus`]="{ item }">
             <status-chip-offering :status="item.offeringStatus" />
           </template>
@@ -80,6 +89,7 @@ import {
 } from "@/types";
 import { defineComponent, onMounted, ref } from "vue";
 import { useDisplay } from "vuetify";
+import { useOffering } from "@/composables/useOffering";
 
 export default defineComponent({
   components: {
@@ -89,6 +99,7 @@ export default defineComponent({
     const loading = ref(false);
     const searchCriteria = ref("");
     const { dateOnlyLongString, dateOnlyLongPeriodString } = useFormatters();
+    const { mapOfferingIntensity } = useOffering();
     const offerings = ref(
       {} as PaginatedResults<EducationProgramOfferingPendingAPIOutDTO>,
     );
@@ -175,6 +186,7 @@ export default defineComponent({
       searchOfferings,
       viewOffering,
       isMobile,
+      mapOfferingIntensity,
     };
   },
 });
