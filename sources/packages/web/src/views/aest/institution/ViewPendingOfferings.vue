@@ -57,7 +57,7 @@
             {{ item.offeringType }}
           </template>
           <template #[`item.offeringDelivered`]="{ item }">
-            <span class="text-capitalize">{{ item.offeringDelivered }}</span>
+            {{ capitalizeFirstWord(item.offeringDelivered) }}
           </template>
           <template #[`item.offeringStatus`]="{ item }">
             <status-chip-offering :status="item.offeringStatus" />
@@ -98,7 +98,11 @@ export default defineComponent({
   setup() {
     const loading = ref(false);
     const searchCriteria = ref("");
-    const { dateOnlyLongString, dateOnlyLongPeriodString } = useFormatters();
+    const {
+      capitalizeFirstWord,
+      dateOnlyLongString,
+      dateOnlyLongPeriodString,
+    } = useFormatters();
     const { mapOfferingIntensity } = useOffering();
     const offerings = ref(
       {} as PaginatedResults<EducationProgramOfferingPendingAPIOutDTO>,
@@ -187,6 +191,7 @@ export default defineComponent({
       viewOffering,
       isMobile,
       mapOfferingIntensity,
+      capitalizeFirstWord,
     };
   },
 });
