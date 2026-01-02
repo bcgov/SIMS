@@ -90,6 +90,16 @@ export class ECertGenerationService {
         "offering.programRelatedCosts",
         "offering.mandatoryFees",
         "offering.aviationCredentialType",
+        "educationProgram.id",
+        "institutionLocation.id",
+        "institution.id",
+        "institutionRestriction.id",
+        "institutionRestrictionProgram.id",
+        "institutionRestrictionLocation.id",
+        // The property restrictionInstitution is the restriction added to the institution account.
+        "restrictionInstitution.id",
+        "restrictionInstitution.restrictionCode",
+        "restrictionInstitution.actionType",
         "student.id",
         "student.disabilityStatus",
         "student.modifiedIndependentStatus",
@@ -119,6 +129,9 @@ export class ECertGenerationService {
       .leftJoin("disbursementSchedule.disbursementValues", "disbursementValue")
       .leftJoin("disbursementSchedule.msfaaNumber", "msfaaNumber")
       .innerJoin("currentAssessment.offering", "offering")
+      .innerJoin("offering.educationProgram", "educationProgram")
+      .innerJoin("offering.institutionLocation", "institutionLocation")
+      .innerJoin("institutionLocation.institution", "institution")
       .innerJoin("application.programYear", "programYear")
       .innerJoin("application.student", "student")
       .innerJoin("student.sinValidation", "sinValidation")
@@ -140,6 +153,20 @@ export class ECertGenerationService {
       .leftJoin(
         "restrictionBypassStudentRestriction.restriction",
         "restrictionBypassStudentRestrictionRestriction",
+      )
+      .leftJoin(
+        "institution.restrictions",
+        "institutionRestriction",
+        "institutionRestriction.isActive = true",
+      )
+      .leftJoin("institutionRestriction.restriction", "restrictionInstitution")
+      .leftJoin(
+        "institutionRestriction.program",
+        "institutionRestrictionProgram",
+      )
+      .leftJoin(
+        "institutionRestriction.location",
+        "institutionRestrictionLocation",
       )
       .where(
         "disbursementSchedule.disbursementScheduleStatus = :disbursementScheduleStatus",

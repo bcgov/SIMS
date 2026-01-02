@@ -4,8 +4,10 @@ import {
   DisabilityStatus,
   DisbursementSchedule,
   DisbursementValueType,
+  EducationProgram,
   EducationProgramOffering,
   FormYesNoOptions,
+  InstitutionLocation,
   ModifiedIndependentStatus,
   RestrictionActionType,
   RestrictionBypassBehaviors,
@@ -187,6 +189,36 @@ export interface StudentActiveRestriction {
 }
 
 /**
+ * Represents an active institution restriction.
+ */
+export interface InstitutionActiveRestriction {
+  /**
+   * Restriction id.
+   */
+  id: number;
+  /**
+   * Association between the institution and
+   * the active restriction on institution account.
+   */
+  institutionRestrictionId: number;
+  /**
+   * Specific program the restriction applies to.
+   */
+  program: EducationProgram;
+  /**
+   * Specific location the restriction applies to.
+   */
+  location: InstitutionLocation;
+  /**
+   * Restriction code.
+   */
+  code: RestrictionCode;
+  /**
+   * Actions associated with the restriction.
+   */
+  actions: RestrictionActionType[];
+}
+/**
  * Restriction bypass active for the application.
  */
 export interface ApplicationActiveRestrictionBypass {
@@ -219,6 +251,8 @@ export type EligibleECertOffering = Pick<
   | "programRelatedCosts"
   | "mandatoryFees"
   | "aviationCredentialType"
+  | "educationProgram"
+  | "institutionLocation"
 >;
 
 /**
@@ -268,6 +302,7 @@ export class EligibleECertDisbursement {
     readonly modifiedIndependentDetails: ModifiedIndependentDetails,
     private readonly restrictions: StudentActiveRestriction[],
     private readonly restrictionBypass: ApplicationActiveRestrictionBypass[],
+    private readonly restrictionsInstitution: InstitutionActiveRestriction[],
   ) {
     this.studentRestrictionsBypassedIds = this.restrictionBypass.map(
       (bypass) => bypass.studentRestrictionId,
@@ -287,10 +322,29 @@ export class EligibleECertDisbursement {
   }
 
   /**
+   * Refresh the complete list of institution restrictions.
+   * @param activeRestrictionsInstitution represents the most updated
+   * snapshot of all institution active restrictions.
+   */
+  refreshActiveInstitutionRestrictions(
+    activeRestrictionsInstitution: InstitutionActiveRestriction[],
+  ): void {
+    this.restrictionsInstitution.length = 0;
+    this.restrictionsInstitution.push(...activeRestrictionsInstitution);
+  }
+
+  /**
    * All student active restrictions.
    */
   get activeRestrictions(): ReadonlyArray<StudentActiveRestriction> {
     return this.restrictions;
+  }
+
+  /**
+   * All institution active restrictions.
+   */
+  get activeInstitutionRestrictions(): ReadonlyArray<InstitutionActiveRestriction> {
+    return this.restrictionsInstitution;
   }
 
   /**
@@ -312,6 +366,20 @@ export class EligibleECertDisbursement {
         !this.studentRestrictionsBypassedIds.includes(
           restriction.studentRestrictionId,
         ),
+    );
+  }
+
+  /**
+   * List the effective institution restrictions for the given disbursement.
+   * @returns Effective institution restrictions.
+   */
+  getEffectiveInstitutionRestrictions(): ReadonlyArray<InstitutionActiveRestriction> {
+    const programId = this.offering.educationProgram.id;
+    const locationId = this.offering.institutionLocation.id;
+    return this.restrictionsInstitution.filter(
+      (restriction) =>
+        restriction.program.id === programId &&
+        restriction.location.id === locationId,
     );
   }
 }
