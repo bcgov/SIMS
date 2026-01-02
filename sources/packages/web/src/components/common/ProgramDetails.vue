@@ -189,7 +189,7 @@ export default defineComponent({
     );
 
     const programActionLabel = computed(() => {
-      if (props.allowEdit) {
+      if (!props.allowEdit) {
         return "View Program";
       }
       return "Edit";
