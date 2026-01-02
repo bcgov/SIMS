@@ -10,6 +10,7 @@
             <v-col cols="auto">
               <v-btn-toggle
                 v-model="intensityFilter"
+                density="compact"
                 class="btn-toggle"
                 selected-class="selected-btn-toggle"
                 @update:model-value="resetPageAndLoadEnrollments"

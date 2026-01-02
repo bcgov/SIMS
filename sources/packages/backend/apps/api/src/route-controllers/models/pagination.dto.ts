@@ -1,6 +1,7 @@
 import {
   IsArray,
   IsBoolean,
+  IsDateString,
   IsEnum,
   IsIn,
   IsOptional,
@@ -19,7 +20,7 @@ import {
 import { Transform } from "class-transformer";
 import { ToBoolean } from "../../utilities/class-transform";
 import { AppealType } from "../../services";
-
+import { AllowIf, IsDateAfter } from "../../utilities/class-validation";
 /**
  * Common parameters used when an API result
  * must enable pagination and search options.
@@ -137,7 +138,34 @@ export class ProgramsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO
 
 export class OfferingsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
-  @IsIn(["name"])
+  @IsEnum(OfferingIntensity)
+  intensityFilter?: OfferingIntensity;
+
+  @IsOptional()
+  @IsDateString()
+  @AllowIf(
+    (paginationOptions: OfferingsPaginationOptionsAPIInDTO) =>
+      !!paginationOptions.studyStartDateToFilter,
+    "studyStartDateFromFilter",
+  )
+  studyStartDateFromFilter?: string;
+
+  @IsOptional()
+  @IsDateString()
+  @AllowIf(
+    (paginationOptions: OfferingsPaginationOptionsAPIInDTO) =>
+      !!paginationOptions.studyStartDateFromFilter,
+    "studyStartDateToFilter",
+  )
+  @IsDateAfter(
+    (paginationOptions: OfferingsPaginationOptionsAPIInDTO) =>
+      paginationOptions.studyStartDateFromFilter,
+    "studyStartDateToFilter",
+  )
+  studyStartDateToFilter?: string;
+
+  @IsOptional()
+  @IsIn(["name", "offeringDelivered", "studyStartDate", "studyEndDate"])
   sortField?: string;
 }
 

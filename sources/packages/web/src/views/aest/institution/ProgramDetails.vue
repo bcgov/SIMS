@@ -2,11 +2,11 @@
   <v-container>
     <header-navigator
       title="Back all programs"
-      :routeLocation="{
+      :route-location="{
         name: AESTRoutesConst.INSTITUTION_PROGRAMS,
         params: { institutionId: institutionId },
       }"
-      subTitle="View program"
+      sub-title="View program"
     >
       <template #buttons>
         <v-row class="p-0 m-0" v-if="isPendingProgram">
@@ -33,16 +33,18 @@
     </header-navigator>
     <program-offering-detail-header
       class="m-4"
-      :headerDetails="{
+      :header-details="{
         ...educationProgram,
         status: educationProgram.programStatus,
       }"
     />
     <manage-program-and-offering-summary
-      :programId="programId"
-      :locationId="locationId"
-      :educationProgram="educationProgram"
-      :institutionId="institutionId"
+      :program-id="programId"
+      :location-id="locationId"
+      :education-program="educationProgram"
+      :institution-id="institutionId"
+      :allow-edit="false"
+      :allow-deactivate="true"
       @program-data-updated="programDataUpdated"
     />
     <!-- approve program modal -->

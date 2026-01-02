@@ -3,26 +3,28 @@
     <template #header>
       <header-navigator
         title="Programs"
-        :routeLocation="{
+        :route-location="{
           name: InstitutionRoutesConst.LOCATION_PROGRAMS,
           params: { locationId: locationId },
         }"
-        subTitle="Program Detail"
+        sub-title="Program Detail"
         data-cy="programDetailHeader"
       />
     </template>
     <template #details-header>
       <program-offering-detail-header
-        :headerDetails="{
+        :header-details="{
           ...educationProgram,
           status: educationProgram.programStatus,
         }"
       />
     </template>
     <manage-program-and-offering-summary
-      :programId="programId"
-      :locationId="locationId"
-      :educationProgram="educationProgram"
+      :program-id="programId"
+      :location-id="locationId"
+      :education-program="educationProgram"
+      :allow-edit="!isReadOnly"
+      :allow-deactivate="!isReadOnly"
       @program-data-updated="programDataUpdated"
     />
   </full-page-container>
@@ -31,10 +33,11 @@
 <script lang="ts">
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import ManageProgramAndOfferingSummary from "@/components/common/ManageProgramAndOfferingSummary.vue";
-import { ref, onMounted, defineComponent } from "vue";
+import { ref, onMounted, defineComponent, computed } from "vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
+import { useInstitutionAuth } from "@/composables";
 
 export default defineComponent({
   components: { ManageProgramAndOfferingSummary, ProgramOfferingDetailHeader },
@@ -49,6 +52,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { isReadOnlyUser } = useInstitutionAuth();
     const educationProgram = ref({} as EducationProgramAPIOutDTO);
     const getEducationProgramAndOffering = async () => {
       educationProgram.value =
@@ -56,6 +60,10 @@ export default defineComponent({
           props.programId,
         );
     };
+
+    const isReadOnly = computed(() => {
+      return !isReadOnlyUser(props.locationId);
+    });
 
     onMounted(getEducationProgramAndOffering);
 
@@ -65,6 +73,7 @@ export default defineComponent({
       educationProgram,
       InstitutionRoutesConst,
       programDataUpdated,
+      isReadOnly,
     };
   },
 });
