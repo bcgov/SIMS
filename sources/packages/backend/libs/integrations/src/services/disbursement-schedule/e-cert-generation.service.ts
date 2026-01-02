@@ -17,8 +17,10 @@ import {
   ApplicationActiveRestrictionBypass,
   DisabilityDetails,
   EligibleECertDisbursement,
+  InstitutionActiveRestriction,
   ModifiedIndependentDetails,
   StudentActiveRestriction,
+  mapInstitutionActiveRestrictions,
   mapStudentActiveRestrictions,
 } from "./disbursement-schedule.models";
 import { ConfigService } from "@sims/utilities/config";
@@ -100,6 +102,7 @@ export class ECertGenerationService {
         "restrictionInstitution.id",
         "restrictionInstitution.restrictionCode",
         "restrictionInstitution.actionType",
+        "restrictionInstitution.actionEffectiveConditions",
         "student.id",
         "student.disabilityStatus",
         "student.modifiedIndependentStatus",
@@ -224,6 +227,11 @@ export class ECertGenerationService {
     // across all disbursements.
     const groupedStudentRestrictions =
       this.getGroupedStudentRestrictions(eligibleApplications);
+    // Grouped institution restrictions grouped by institution id.
+    const groupedInstitutionRestrictions: Record<
+      number,
+      InstitutionActiveRestriction[]
+    > = {};
     // Convert the application records to be returned as disbursements to allow
     // easier processing along the calculation steps.
     const eligibleDisbursements =
@@ -232,6 +240,16 @@ export class ECertGenerationService {
         return application.currentAssessment.disbursementSchedules.map(
           (disbursement) => {
             const student = application.student;
+            const institutionId =
+              application.currentAssessment.offering.institutionLocation
+                .institution.id;
+            if (!groupedInstitutionRestrictions[institutionId]) {
+              const institutionRestrictions =
+                application.currentAssessment.offering.institutionLocation
+                  .institution.restrictions;
+              groupedInstitutionRestrictions[institutionId] =
+                mapInstitutionActiveRestrictions(institutionRestrictions);
+            }
             const disabilityDetails: DisabilityDetails = {
               calculatedPDPPDStatus: workflowData.calculatedData.pdppdStatus,
               studentProfileDisabilityStatus: student.disabilityStatus,
@@ -255,6 +273,7 @@ export class ECertGenerationService {
             return new EligibleECertDisbursement(
               student.id,
               !!student.sinValidation.isValidSIN,
+              institutionId,
               application.currentAssessment.id,
               application.id,
               application.applicationNumber,
@@ -265,6 +284,7 @@ export class ECertGenerationService {
               modifiedIndependentDetails,
               groupedStudentRestrictions[student.id],
               restrictionBypasses,
+              groupedInstitutionRestrictions[institutionId],
             );
           },
         );

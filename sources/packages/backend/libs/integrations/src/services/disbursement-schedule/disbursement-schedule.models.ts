@@ -8,6 +8,7 @@ import {
   EducationProgramOffering,
   FormYesNoOptions,
   InstitutionLocation,
+  InstitutionRestriction,
   ModifiedIndependentStatus,
   RestrictionActionType,
   RestrictionBypassBehaviors,
@@ -217,6 +218,10 @@ export interface InstitutionActiveRestriction {
    * Actions associated with the restriction.
    */
   actions: RestrictionActionType[];
+  /**
+   * Action effective conditions associated with the restriction.
+   */
+  actionEffectiveConditions?: ActionEffectiveCondition[];
 }
 /**
  * Restriction bypass active for the application.
@@ -266,6 +271,7 @@ export class EligibleECertDisbursement {
    * Creates a new instance of a eligible e-Cert to be calculated.
    * @param studentId student id.
    * @param hasValidSIN indicates if the student has a validated SIN.
+   * @param institutionId institution id.
    * @param assessmentId assessment id.
    * @param applicationId application id.
    * @param applicationNumber application number. Intended to be used
@@ -288,10 +294,12 @@ export class EligibleECertDisbursement {
    * be updated using the method {@link refreshActiveStudentRestrictions} to allow all
    * steps to have access to the most updated data.
    * @param restrictionBypass all active restrictions bypasses applied to the student application.
+   * @param institutionRestrictions all active institution restrictions for the application institution.
    */
   constructor(
     readonly studentId: number,
     readonly hasValidSIN: boolean,
+    readonly institutionId: number,
     readonly assessmentId: number,
     readonly applicationId: number,
     readonly applicationNumber: string,
@@ -302,7 +310,7 @@ export class EligibleECertDisbursement {
     readonly modifiedIndependentDetails: ModifiedIndependentDetails,
     private readonly restrictions: StudentActiveRestriction[],
     private readonly restrictionBypass: ApplicationActiveRestrictionBypass[],
-    private readonly restrictionsInstitution: InstitutionActiveRestriction[],
+    private readonly institutionRestrictions: InstitutionActiveRestriction[],
   ) {
     this.studentRestrictionsBypassedIds = this.restrictionBypass.map(
       (bypass) => bypass.studentRestrictionId,
@@ -323,14 +331,14 @@ export class EligibleECertDisbursement {
 
   /**
    * Refresh the complete list of institution restrictions.
-   * @param activeRestrictionsInstitution represents the most updated
+   * @param activeInstitutionRestrictions represents the most updated
    * snapshot of all institution active restrictions.
    */
   refreshActiveInstitutionRestrictions(
-    activeRestrictionsInstitution: InstitutionActiveRestriction[],
+    activeInstitutionRestrictions: InstitutionActiveRestriction[],
   ): void {
-    this.restrictionsInstitution.length = 0;
-    this.restrictionsInstitution.push(...activeRestrictionsInstitution);
+    this.institutionRestrictions.length = 0;
+    this.institutionRestrictions.push(...activeInstitutionRestrictions);
   }
 
   /**
@@ -344,7 +352,7 @@ export class EligibleECertDisbursement {
    * All institution active restrictions.
    */
   get activeInstitutionRestrictions(): ReadonlyArray<InstitutionActiveRestriction> {
-    return this.restrictionsInstitution;
+    return this.institutionRestrictions;
   }
 
   /**
@@ -376,7 +384,7 @@ export class EligibleECertDisbursement {
   getEffectiveInstitutionRestrictions(): ReadonlyArray<InstitutionActiveRestriction> {
     const programId = this.offering.educationProgram.id;
     const locationId = this.offering.institutionLocation.id;
-    return this.restrictionsInstitution.filter(
+    return this.institutionRestrictions.filter(
       (restriction) =>
         restriction.program.id === programId &&
         restriction.location.id === locationId,
@@ -401,6 +409,30 @@ export function mapStudentActiveRestrictions(
       actions: studentRestriction.restriction.actionType,
       actionEffectiveConditions:
         studentRestriction.restriction.actionEffectiveConditions,
+    }),
+  );
+}
+
+/**
+ * Map institution restrictions to the representation of active
+ * restrictions used along e-Cert calculations.
+ * @param institutionRestrictions institution active restrictions to be mapped.
+ * @returns simplified institution active restrictions.
+ */
+export function mapInstitutionActiveRestrictions(
+  institutionRestrictions: InstitutionRestriction[],
+): InstitutionActiveRestriction[] {
+  return institutionRestrictions.map<InstitutionActiveRestriction>(
+    (institutionRestriction) => ({
+      institutionRestrictionId: institutionRestriction.id,
+      id: institutionRestriction.restriction.id,
+      code: institutionRestriction.restriction
+        .restrictionCode as RestrictionCode,
+      actions: institutionRestriction.restriction.actionType,
+      program: institutionRestriction.program,
+      location: institutionRestriction.location,
+      actionEffectiveConditions:
+        institutionRestriction.restriction.actionEffectiveConditions,
     }),
   );
 }

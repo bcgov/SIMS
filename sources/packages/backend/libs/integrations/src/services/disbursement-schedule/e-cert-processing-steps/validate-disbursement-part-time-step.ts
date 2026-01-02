@@ -8,6 +8,7 @@ import {
   EligibleECertDisbursement,
 } from "../disbursement-schedule.models";
 import {
+  getInstitutionRestrictionsByActionType,
   getRestrictionsByActionType,
   logActiveRestrictionsBypasses,
 } from "./e-cert-steps-utils";
@@ -74,18 +75,18 @@ export class ValidateDisbursementPartTimeStep
     log.info("Executing part-time disbursement validations.");
     const validationResults = super.validate(eCertDisbursement, log);
     // Validate stop part-time disbursement restrictions.
-    const stopPartTimeDisbursementRestrictions = getRestrictionsByActionType(
+    const stopDisbursementRestrictions = getRestrictionsByActionType(
       eCertDisbursement,
       RestrictionActionType.StopPartTimeDisbursement,
     );
-    if (stopPartTimeDisbursementRestrictions.length) {
+    if (stopDisbursementRestrictions.length) {
       log.info(
         `Student has an active '${RestrictionActionType.StopPartTimeDisbursement}' restriction and the disbursement calculation will not proceed.`,
       );
       validationResults.push({
         resultType: ECertFailedValidation.HasStopDisbursementRestriction,
         additionalInfo: {
-          restrictionCodes: stopPartTimeDisbursementRestrictions.map(
+          restrictionCodes: stopDisbursementRestrictions.map(
             (restriction) => restriction.code,
           ),
         },
@@ -95,6 +96,28 @@ export class ValidateDisbursementPartTimeStep
       eCertDisbursement.activeRestrictionBypasses,
       log,
     );
+    // Validate stop part-time disbursement restrictions on the institution.
+    const stopDisbursementInstitutionRestrictions =
+      getInstitutionRestrictionsByActionType(
+        eCertDisbursement,
+        RestrictionActionType.StopPartTimeDisbursement,
+      );
+    if (stopDisbursementInstitutionRestrictions.length) {
+      const program = eCertDisbursement.offering.educationProgram;
+      const location = eCertDisbursement.offering.institutionLocation;
+      log.info(
+        `Institution ${eCertDisbursement.institutionId} has an effective '${RestrictionActionType.StopPartTimeDisbursement}' restriction` +
+          ` for program ${program.id} and location ${location.id} and the disbursement calculation will not proceed.`,
+      );
+      validationResults.push({
+        resultType: ECertFailedValidation.HasStopDisbursementRestriction,
+        additionalInfo: {
+          restrictionCodes: stopDisbursementInstitutionRestrictions.map(
+            (restriction) => restriction.code,
+          ),
+        },
+      });
+    }
     // Validate CSLP.
     const validateLifetimeMaximumCSLP = await this.validateCSLPLifetimeMaximum(
       eCertDisbursement,
@@ -119,7 +142,7 @@ export class ValidateDisbursementPartTimeStep
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
     log: ProcessSummary,
-  ) {
+  ): Promise<boolean> {
     log.info("Validate CSLP Lifetime Maximum.");
     // Get the disbursed value for the CSLP in the current disbursement.
     const disbursementCSLP =
