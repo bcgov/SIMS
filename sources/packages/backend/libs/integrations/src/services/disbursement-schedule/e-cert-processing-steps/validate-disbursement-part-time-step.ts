@@ -74,19 +74,19 @@ export class ValidateDisbursementPartTimeStep
   ): Promise<ECertPreValidatorResult> {
     log.info("Executing part-time disbursement validations.");
     const validationResults = super.validate(eCertDisbursement, log);
-    // Validate stop part-time disbursement restrictions.
-    const stopDisbursementRestrictions = getRestrictionsByActionType(
+    // Validate stop part-time disbursement restrictions on the student.
+    const stopDisbursementStudentRestrictions = getRestrictionsByActionType(
       eCertDisbursement,
       RestrictionActionType.StopPartTimeDisbursement,
     );
-    if (stopDisbursementRestrictions.length) {
+    if (stopDisbursementStudentRestrictions.length) {
       log.info(
         `Student has an active '${RestrictionActionType.StopPartTimeDisbursement}' restriction and the disbursement calculation will not proceed.`,
       );
       validationResults.push({
         resultType: ECertFailedValidation.HasStopDisbursementRestriction,
         additionalInfo: {
-          restrictionCodes: stopDisbursementRestrictions.map(
+          restrictionCodes: stopDisbursementStudentRestrictions.map(
             (restriction) => restriction.code,
           ),
         },
@@ -110,12 +110,8 @@ export class ValidateDisbursementPartTimeStep
           ` for program ${program.id} and location ${location.id} and the disbursement calculation will not proceed.`,
       );
       validationResults.push({
-        resultType: ECertFailedValidation.HasStopDisbursementRestriction,
-        additionalInfo: {
-          restrictionCodes: stopDisbursementInstitutionRestrictions.map(
-            (restriction) => restriction.code,
-          ),
-        },
+        resultType:
+          ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
       });
     }
     // Validate CSLP.

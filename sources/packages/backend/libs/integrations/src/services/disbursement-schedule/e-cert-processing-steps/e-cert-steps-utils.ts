@@ -1,5 +1,6 @@
 import { BC_FUNDING_TYPES } from "@sims/services/constants";
 import {
+  ActionEffectiveCondition,
   DisbursementValue,
   OfferingIntensity,
   RestrictionActionType,
@@ -28,13 +29,8 @@ export function getRestrictionsByActionType(
 ): StudentActiveRestriction[] {
   return eCertDisbursement
     .getEffectiveRestrictions()
-    .filter(
-      (restriction) =>
-        restriction.actions.includes(actionType) &&
-        isRestrictionActionEffective(
-          restriction.actionEffectiveConditions,
-          eCertDisbursement,
-        ),
+    .filter((restriction) =>
+      hasEffectiveRestrictionAction(eCertDisbursement, actionType, restriction),
     );
 }
 
@@ -50,14 +46,33 @@ export function getInstitutionRestrictionsByActionType(
 ): InstitutionActiveRestriction[] {
   return eCertDisbursement
     .getEffectiveInstitutionRestrictions()
-    .filter(
-      (restriction) =>
-        restriction.actions.includes(actionType) &&
-        isRestrictionActionEffective(
-          restriction.actionEffectiveConditions,
-          eCertDisbursement,
-        ),
+    .filter((restriction) =>
+      hasEffectiveRestrictionAction(eCertDisbursement, actionType, restriction),
     );
+}
+
+/**
+ * Check if a restriction has an effective action of the given action type.
+ * @param eCertDisbursement disbursement to check restriction conditions.
+ * @param actionType action type.
+ * @param restriction restriction to be checked.
+ * @returns true if the restriction has the effective action, otherwise, false.
+ */
+function hasEffectiveRestrictionAction(
+  eCertDisbursement: EligibleECertDisbursement,
+  actionType: RestrictionActionType,
+  restriction: {
+    actions: RestrictionActionType[];
+    actionEffectiveConditions?: ActionEffectiveCondition[];
+  },
+): boolean {
+  return (
+    restriction.actions.includes(actionType) &&
+    isRestrictionActionEffective(
+      restriction.actionEffectiveConditions,
+      eCertDisbursement,
+    )
+  );
 }
 
 /**

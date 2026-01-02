@@ -74,17 +74,3 @@ export enum RestrictionCode {
    */
   SFAS_AV = "SFAS_AV",
 }
-
-/**
- * The party that is restricted by an active restriction.
- */
-export enum RestrictedParty {
-  /**
-   * Student.
-   */
-  Student = "Student",
-  /**
-   * Institution.
-   */
-  Institution = "Institution",
-}
