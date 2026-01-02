@@ -212,9 +212,10 @@ export default defineComponent({
     },
     institutionId: {
       type: Number,
-      required: true,
+      required: false,
+      default: undefined,
     },
-    isOfferingEditAllowed: {
+    allowEdit: {
       type: Boolean,
       required: false,
       default: false,
@@ -248,7 +249,7 @@ export default defineComponent({
       return clientType.value === ClientIdType.AEST;
     });
     const offeringActionLabel = computed(() => {
-      return props.isOfferingEditAllowed ? "Edit" : "View";
+      return props.allowEdit ? "Edit" : "View";
     });
 
     /**
@@ -273,7 +274,7 @@ export default defineComponent({
           },
         });
       } else {
-        const routeName = props.isOfferingEditAllowed
+        const routeName = props.allowEdit
           ? InstitutionRoutesConst.EDIT_LOCATION_OFFERINGS
           : InstitutionRoutesConst.VIEW_LOCATION_OFFERINGS;
 

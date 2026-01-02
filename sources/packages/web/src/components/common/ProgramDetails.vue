@@ -33,7 +33,7 @@
           >
             <template #="{ notAllowed }">
               <v-list-item
-                :disabled="isProgramDeactivationDisabled || notAllowed"
+                :disabled="!allowDeactivate || notAllowed"
                 base-color="danger"
                 @click="deactivate"
                 title="Deactivate"
@@ -43,7 +43,7 @@
         </v-list>
       </v-menu>
       <v-btn
-        v-if="isAddOfferingAllowed"
+        v-if="allowEdit"
         class="mr-4 float-right"
         @click="goToAddNewOffering()"
         color="primary"
@@ -129,7 +129,12 @@ import {
   InstitutionRoutesConst,
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
-import { ProgramIntensity, ClientIdType, OfferingIntensity } from "@/types";
+import {
+  ProgramIntensity,
+  ClientIdType,
+  OfferingIntensity,
+  Role,
+} from "@/types";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 import { AuthService } from "@/services/AuthService";
 import {
@@ -137,15 +142,9 @@ import {
   EducationProgramAPIOutDTO,
 } from "@/services/http/dto";
 import EducationProgramDeactivationModal from "@/components/common/modals/EducationProgramDeactivationModal.vue";
-import {
-  ModalDialog,
-  useInstitutionAuth,
-  useOffering,
-  useSnackBar,
-} from "@/composables";
+import { ModalDialog, useOffering, useSnackBar } from "@/composables";
 import ApiClient from "@/services/http/ApiClient";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { Role } from "@/types";
 
 export default defineComponent({
   emits: {
@@ -170,7 +169,12 @@ export default defineComponent({
       required: true,
       default: {} as EducationProgramAPIOutDTO,
     },
-    isAddOfferingAllowed: {
+    allowEdit: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    allowDeactivate: {
       type: Boolean,
       required: false,
       default: false,
@@ -179,26 +183,13 @@ export default defineComponent({
   setup(props, { emit }) {
     const snackBar = useSnackBar();
     const router = useRouter();
-    const { isReadOnlyUser } = useInstitutionAuth();
     const { mapOfferingIntensity } = useOffering();
     const deactivateEducationProgramModal = ref(
       {} as ModalDialog<DeactivateProgramAPIInDTO | boolean>,
     );
 
-    const isProgramDeactivationDisabled = computed<boolean>(
-      () =>
-        !props.educationProgram.isActive ||
-        props.educationProgram.isExpired ||
-        (AuthService.shared.authClientType === ClientIdType.Institution &&
-          isReadOnlyUser(props.locationId)),
-    );
-
     const programActionLabel = computed(() => {
-      if (
-        !props.educationProgram.isActive ||
-        props.educationProgram.isExpired ||
-        AuthService.shared.authClientType === ClientIdType.AEST
-      ) {
+      if (props.allowEdit) {
         return "View Program";
       }
       return "Edit";
@@ -282,7 +273,6 @@ export default defineComponent({
     };
 
     return {
-      isProgramDeactivationDisabled,
       goToProgram,
       goToAddNewOffering,
       ProgramIntensity,
