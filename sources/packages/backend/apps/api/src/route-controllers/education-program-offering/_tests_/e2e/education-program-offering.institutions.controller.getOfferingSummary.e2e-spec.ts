@@ -24,6 +24,7 @@ import {
   User,
   Institution,
 } from "@sims/sims-db";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary", () => {
   let app: INestApplication;
@@ -39,8 +40,17 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
    */
   const createFakeOffering = async (
     offeringIntensity: OfferingIntensity,
-    program: EducationProgram,
+    program?: EducationProgram,
   ): Promise<EducationProgramOffering> => {
+    if (!program) {
+      program = await db.educationProgram.save(
+        createFakeEducationProgram({
+          institution: institution,
+          auditUser: sharedUser,
+        }),
+      );
+    }
+
     const fullTimeOffering = createFakeEducationProgramOffering(
       {
         auditUser: sharedUser,
@@ -83,24 +93,16 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
   it("Should return all offerings when no filters are applied.", async () => {
     // Arrange
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
-    const program = await db.educationProgram.save(
-      createFakeEducationProgram({
-        institution: institution,
-        auditUser: sharedUser,
-      }),
-    );
-
     const fullTimeOffering = await createFakeOffering(
       OfferingIntensity.fullTime,
-      program,
     );
     const partTimeOffering = await createFakeOffering(
       OfferingIntensity.partTime,
-      program,
+      fullTimeOffering.educationProgram,
     );
     const sortField = "name";
     const sortOrder = "ASC";
-    const endpoint = `${baseEndpoint}/education-program/${program.id}?page=0&pageLimit=10&sortField=${sortField}&sortOrder=${sortOrder}`;
+    const endpoint = `${baseEndpoint}/education-program/${fullTimeOffering.educationProgram.id}?page=0&pageLimit=10&sortField=${sortField}&sortOrder=${sortOrder}`;
     const sortedOfferings = [fullTimeOffering, partTimeOffering].sort((a, b) =>
       a.name.localeCompare(b.name),
     );
@@ -143,18 +145,10 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
     // Arrange
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
     const intensityFilter = encodeURIComponent(OfferingIntensity.fullTime);
-    const program = await db.educationProgram.save(
-      createFakeEducationProgram({
-        institution: institution,
-        auditUser: sharedUser,
-      }),
-    );
-
     const fullTimeOffering = await createFakeOffering(
       OfferingIntensity.fullTime,
-      program,
     );
-    const endpoint = `${baseEndpoint}/education-program/${program.id}?page=0&pageLimit=10&intensityFilter=${intensityFilter}`;
+    const endpoint = `${baseEndpoint}/education-program/${fullTimeOffering.educationProgram.id}?page=0&pageLimit=10&intensityFilter=${intensityFilter}`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -183,18 +177,10 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
     // Arrange
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
     const intensityFilter = encodeURIComponent(OfferingIntensity.partTime);
-    const program = await db.educationProgram.save(
-      createFakeEducationProgram({
-        institution: institution,
-        auditUser: sharedUser,
-      }),
-    );
-
     const partTimeOffering = await createFakeOffering(
       OfferingIntensity.partTime,
-      program,
     );
-    const endpoint = `${baseEndpoint}/education-program/${program.id}?page=0&pageLimit=10&intensityFilter=${intensityFilter}`;
+    const endpoint = `${baseEndpoint}/education-program/${partTimeOffering.educationProgram.id}?page=0&pageLimit=10&intensityFilter=${intensityFilter}`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -222,28 +208,18 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
   it("Should filter offerings by study start date range.", async () => {
     // Arrange
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
-    const program = await db.educationProgram.save(
-      createFakeEducationProgram({
-        institution: institution,
-        auditUser: sharedUser,
-      }),
-    );
-
     const fullTimeOffering = await createFakeOffering(
       OfferingIntensity.fullTime,
-      program,
     );
 
-    const baseDate = new Date(fullTimeOffering.studyStartDate);
-    const startDateFrom = new Date(baseDate);
-    startDateFrom.setDate(baseDate.getDate() - 15);
-    const startDateTo = new Date(baseDate);
-    startDateTo.setDate(baseDate.getDate() + 15);
+    const startDateFrom = getISODateOnlyString(
+      addDays(-15, fullTimeOffering.studyStartDate),
+    );
+    const startDateTo = getISODateOnlyString(
+      addDays(15, fullTimeOffering.studyStartDate),
+    );
 
-    const startDateFromStr = startDateFrom.toISOString().split("T")[0];
-    const startDateToStr = startDateTo.toISOString().split("T")[0];
-
-    const endpoint = `${baseEndpoint}/education-program/${program.id}?page=0&pageLimit=10&studyStartDateFromFilter=${startDateFromStr}&studyStartDateToFilter=${startDateToStr}`;
+    const endpoint = `${baseEndpoint}/education-program/${fullTimeOffering.educationProgram.id}?page=0&pageLimit=10&studyStartDateFromFilter=${startDateFrom}&studyStartDateToFilter=${startDateTo}`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -271,19 +247,16 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
   it("Should filter offerings by offering name search.", async () => {
     // Arrange
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
-    const program = await db.educationProgram.save(
-      createFakeEducationProgram({
-        institution: institution,
-        auditUser: sharedUser,
-      }),
-    );
-
     const fullTimeOffering = await createFakeOffering(
       OfferingIntensity.fullTime,
-      program,
+    );
+    // Second offering to ensure only the searched one is returned.
+    await createFakeOffering(
+      OfferingIntensity.fullTime,
+      fullTimeOffering.educationProgram,
     );
     const searchableName = fullTimeOffering.name;
-    const endpoint = `${baseEndpoint}/education-program/${program.id}?page=0&pageLimit=10&searchCriteria=${searchableName}`;
+    const endpoint = `${baseEndpoint}/education-program/${fullTimeOffering.educationProgram.id}?page=0&pageLimit=10&searchCriteria=${searchableName}`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -311,22 +284,16 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
   it("Should apply multiple filters together (intensity and search).", async () => {
     // Arrange
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
-    const program = await db.educationProgram.save(
-      createFakeEducationProgram({
-        institution: institution,
-        auditUser: sharedUser,
-      }),
-    );
-
     const fullTimeOffering = await createFakeOffering(
       OfferingIntensity.fullTime,
-      program,
     );
-    await createFakeOffering(OfferingIntensity.fullTime, program);
+    await createFakeOffering(
+      OfferingIntensity.fullTime,
+      fullTimeOffering.educationProgram,
+    );
     const searchableName = encodeURIComponent(fullTimeOffering.name);
     const intensityFilter = encodeURIComponent(OfferingIntensity.fullTime);
-    const endpoint = `${baseEndpoint}/education-program/${program.id}?page=0&pageLimit=10&searchCriteria=${searchableName}&intensityFilter=${intensityFilter}`;
-
+    const endpoint = `${baseEndpoint}/education-program/${fullTimeOffering.educationProgram.id}?page=0&pageLimit=10&searchCriteria=${searchableName}&intensityFilter=${intensityFilter}`;
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
@@ -353,24 +320,16 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
   it("Should return results sorted by name in ascending order.", async () => {
     // Arrange
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
-    const program = await db.educationProgram.save(
-      createFakeEducationProgram({
-        institution: institution,
-        auditUser: sharedUser,
-      }),
-    );
-
     const sortField = "name";
     const sortOrder = "ASC";
-    const endpoint = `${baseEndpoint}/education-program/${program.id}?page=0&pageLimit=10&sortField=${sortField}&sortOrder=${sortOrder}`;
     const fullTimeOffering = await createFakeOffering(
       OfferingIntensity.fullTime,
-      program,
     );
     const partTimeOffering = await createFakeOffering(
       OfferingIntensity.partTime,
-      program,
+      fullTimeOffering.educationProgram,
     );
+    const endpoint = `${baseEndpoint}/education-program/${fullTimeOffering.educationProgram.id}?page=0&pageLimit=10&sortField=${sortField}&sortOrder=${sortOrder}`;
 
     const sortedOfferings = [fullTimeOffering, partTimeOffering].sort((a, b) =>
       a.name.localeCompare(b.name),
@@ -413,16 +372,12 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
   it("Should return empty results when filters do not match any offerings.", async () => {
     // Arrange
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeCUser);
-    const program = await db.educationProgram.save(
-      createFakeEducationProgram({
-        institution: institution,
-        auditUser: sharedUser,
-      }),
+    const fullTimeOffering = await createFakeOffering(
+      OfferingIntensity.fullTime,
     );
-    await createFakeOffering(OfferingIntensity.fullTime, program);
 
     const nonExistentName = `NonExistentOffering_${Date.now()}`;
-    const endpoint = `${baseEndpoint}/education-program/${program.id}?page=0&pageLimit=10&searchCriteria=${nonExistentName}`;
+    const endpoint = `${baseEndpoint}/education-program/${fullTimeOffering.educationProgram.id}?page=0&pageLimit=10&searchCriteria=${nonExistentName}`;
 
     // Act/Assert
     await request(app.getHttpServer())

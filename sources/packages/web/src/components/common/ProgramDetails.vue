@@ -71,15 +71,17 @@
               ProgramIntensity.fullTimePartTime ||
             educationProgram.programIntensity === ProgramIntensity.fullTime
           "
-          >Full-Time</span
         >
+          {{ mapOfferingIntensity(OfferingIntensity.fullTime) }}
+        </span>
         <br />
         <span
           v-if="
             educationProgram.programIntensity ===
             ProgramIntensity.fullTimePartTime
           "
-          >Part-Time
+        >
+          {{ mapOfferingIntensity(OfferingIntensity.partTime) }}
         </span>
       </p>
     </v-col>
@@ -127,7 +129,7 @@ import {
   InstitutionRoutesConst,
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
-import { ProgramIntensity, ClientIdType } from "@/types";
+import { ProgramIntensity, ClientIdType, OfferingIntensity } from "@/types";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 import { AuthService } from "@/services/AuthService";
 import {
@@ -135,7 +137,12 @@ import {
   EducationProgramAPIOutDTO,
 } from "@/services/http/dto";
 import EducationProgramDeactivationModal from "@/components/common/modals/EducationProgramDeactivationModal.vue";
-import { ModalDialog, useInstitutionAuth, useSnackBar } from "@/composables";
+import {
+  ModalDialog,
+  useInstitutionAuth,
+  useOffering,
+  useSnackBar,
+} from "@/composables";
 import ApiClient from "@/services/http/ApiClient";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role } from "@/types";
@@ -173,6 +180,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const router = useRouter();
     const { isReadOnlyUser } = useInstitutionAuth();
+    const { mapOfferingIntensity } = useOffering();
     const deactivateEducationProgramModal = ref(
       {} as ModalDialog<DeactivateProgramAPIInDTO | boolean>,
     );
@@ -283,6 +291,8 @@ export default defineComponent({
       deactivate,
       notesRequired,
       Role,
+      mapOfferingIntensity,
+      OfferingIntensity,
     };
   },
 });

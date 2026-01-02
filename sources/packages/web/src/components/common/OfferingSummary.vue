@@ -25,7 +25,7 @@
               density="compact"
               variant="outlined"
               label="From (Study Start Date)"
-              input-format="yyyy-mm-dd"
+              :input-format="DATE_ONLY_ISO_FORMAT"
               hide-details="auto"
               prepend-icon=""
               append-inner-icon="mdi-calendar"
@@ -35,7 +35,7 @@
               density="compact"
               variant="outlined"
               label="To (Study Start Date)"
-              input-format="yyyy-mm-dd"
+              :input-format="DATE_ONLY_ISO_FORMAT"
               hide-details="auto"
               prepend-icon=""
               append-inner-icon="mdi-calendar"
@@ -176,7 +176,12 @@ import {
   OfferingIntensity,
 } from "@/types";
 import { EducationProgramOfferingSummaryAPIOutDTO } from "@/services/http/dto";
-import { useFormatters, useOffering, useSnackBar } from "@/composables";
+import {
+  DATE_ONLY_ISO_FORMAT,
+  useFormatters,
+  useOffering,
+  useSnackBar,
+} from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
 
@@ -187,7 +192,7 @@ const DEFAULT_SORT_FIELD = "name";
  */
 interface OfferingFilterOptions {
   searchCriteria?: string;
-  intensityFilter?: string;
+  intensityFilter?: OfferingIntensity;
   studyStartDateFromFilter?: string;
   studyStartDateToFilter?: string;
 }
@@ -400,6 +405,7 @@ export default defineComponent({
       searchOfferingsForm,
       isValidSearch,
       mapOfferingIntensity,
+      DATE_ONLY_ISO_FORMAT,
     };
   },
 });

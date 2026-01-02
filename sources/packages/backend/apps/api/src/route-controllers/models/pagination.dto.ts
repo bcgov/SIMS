@@ -145,7 +145,8 @@ export class OfferingsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDT
   @IsDateString()
   @AllowIf(
     (paginationOptions: OfferingsPaginationOptionsAPIInDTO) =>
-      !!paginationOptions.studyStartDateFromFilter,
+      !!paginationOptions.studyStartDateToFilter,
+    "studyStartDateFromFilter",
   )
   studyStartDateFromFilter?: string;
 
@@ -153,7 +154,8 @@ export class OfferingsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDT
   @IsDateString()
   @AllowIf(
     (paginationOptions: OfferingsPaginationOptionsAPIInDTO) =>
-      !!paginationOptions.studyStartDateToFilter,
+      !!paginationOptions.studyStartDateFromFilter,
+    "studyStartDateToFilter",
   )
   @IsDateAfter(
     (paginationOptions: OfferingsPaginationOptionsAPIInDTO) =>
