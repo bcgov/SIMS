@@ -96,6 +96,10 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
     const fullTimeOffering = await createFakeOffering(
       OfferingIntensity.fullTime,
     );
+    const fullTimeOffering2 = await createFakeOffering(
+      OfferingIntensity.fullTime,
+      fullTimeOffering.educationProgram,
+    );
     const partTimeOffering = await createFakeOffering(
       OfferingIntensity.partTime,
       fullTimeOffering.educationProgram,
@@ -103,9 +107,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
     const sortField = "name";
     const sortOrder = "ASC";
     const endpoint = `${baseEndpoint}/education-program/${fullTimeOffering.educationProgram.id}?page=0&pageLimit=10&sortField=${sortField}&sortOrder=${sortOrder}`;
-    const sortedOfferings = [fullTimeOffering, partTimeOffering].sort((a, b) =>
-      a.name.localeCompare(b.name),
-    );
+    const sortedOfferings = [
+      fullTimeOffering,
+      fullTimeOffering2,
+      partTimeOffering,
+    ].sort((a, b) => a.name.localeCompare(b.name));
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -135,6 +141,17 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
             offeringIntensity: sortedOfferings[1].offeringIntensity,
             offeringType: sortedOfferings[1].offeringType,
             offeringStatus: sortedOfferings[1].offeringStatus,
+          },
+          {
+            id: sortedOfferings[2].id,
+            name: sortedOfferings[2].name,
+            yearOfStudy: sortedOfferings[2].yearOfStudy,
+            studyStartDate: sortedOfferings[2].studyStartDate,
+            studyEndDate: sortedOfferings[2].studyEndDate,
+            offeringDelivered: sortedOfferings[2].offeringDelivered,
+            offeringIntensity: sortedOfferings[2].offeringIntensity,
+            offeringType: sortedOfferings[2].offeringType,
+            offeringStatus: sortedOfferings[2].offeringStatus,
           },
         ],
         count: 2,
