@@ -154,7 +154,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
             offeringStatus: sortedOfferings[2].offeringStatus,
           },
         ],
-        count: 2,
+        count: sortedOfferings.length,
       });
   });
 
