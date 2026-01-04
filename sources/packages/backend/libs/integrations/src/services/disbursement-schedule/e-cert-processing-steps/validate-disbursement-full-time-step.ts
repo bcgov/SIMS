@@ -100,7 +100,7 @@ export class ValidateDisbursementFullTimeStep
       const program = eCertDisbursement.offering.educationProgram;
       const location = eCertDisbursement.offering.institutionLocation;
       log.info(
-        `Institution ${eCertDisbursement.institutionId} has an effective '${RestrictionActionType.StopFullTimeDisbursement}' restriction` +
+        `Institution has an effective '${RestrictionActionType.StopFullTimeDisbursement}' restriction` +
           ` for program ${program.id} and location ${location.id} and the disbursement calculation will not proceed.`,
       );
       validationResults.push({

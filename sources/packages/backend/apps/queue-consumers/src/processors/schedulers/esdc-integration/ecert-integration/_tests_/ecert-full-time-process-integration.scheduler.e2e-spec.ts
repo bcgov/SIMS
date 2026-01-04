@@ -16,6 +16,7 @@ import {
   RelationshipStatus,
   RestrictionActionType,
   RestrictionBypassBehaviors,
+  RestrictionType,
   User,
   WorkflowData,
 } from "@sims/sims-db";
@@ -30,6 +31,7 @@ import {
   createFakeUser,
   saveFakeApplicationDisbursements,
   saveFakeApplicationRestrictionBypass,
+  saveFakeInstitutionRestriction,
   saveFakeSFASIndividual,
   saveFakeStudent,
   saveFakeStudentAssessment,
@@ -1915,6 +1917,116 @@ describe(
       ]);
     });
 
+    it(
+      "Should block the disbursement and log the information when the institution" +
+        " has an effective institution restriction for the application location and program" +
+        ` with action type ${RestrictionActionType.StopFullTimeDisbursement}.`,
+      async () => {
+        // Arrange
+        // Eligible COE basic properties.
+        const eligibleDisbursement: Partial<DisbursementSchedule> = {
+          coeStatus: COEStatus.completed,
+          coeUpdatedAt: new Date(),
+        };
+        // Student with valid SIN.
+        const student = await saveFakeStudent(db.dataSource);
+        // Valid MSFAA Number.
+        const msfaaNumber = await db.msfaaNumber.save(
+          createFakeMSFAANumber(
+            { student },
+            { msfaaState: MSFAAStates.Signed },
+          ),
+        );
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          {
+            student,
+            msfaaNumber,
+            firstDisbursementValues: [
+              createFakeDisbursementValue(
+                DisbursementValueType.CanadaLoan,
+                "CSLP",
+                100,
+              ),
+              createFakeDisbursementValue(
+                DisbursementValueType.BCLoan,
+                "CSPT",
+                150,
+              ),
+            ],
+          },
+          {
+            offeringIntensity: OfferingIntensity.fullTime,
+            applicationStatus: ApplicationStatus.Completed,
+            currentAssessmentInitialValues: {
+              assessmentData: { weeks: 5 } as Assessment,
+              assessmentDate: new Date(),
+            },
+            firstDisbursementInitialValues: {
+              ...eligibleDisbursement,
+              disbursementDate: getISODateOnlyString(addDays(1)),
+            },
+          },
+        );
+        // Institution restriction that blocks disbursement.
+        const restriction = await db.restriction.findOne({
+          select: { id: true },
+          where: {
+            restrictionType: RestrictionType.Institution,
+            actionType: ArrayContains([
+              RestrictionActionType.StopFullTimeDisbursement,
+            ]),
+          },
+        });
+        const location =
+          application.currentAssessment.offering.institutionLocation;
+        const program = application.currentAssessment.offering.educationProgram;
+        const institution = location.institution;
+        // Add institution restriction for the application location and program.
+        await saveFakeInstitutionRestriction(db, {
+          restriction,
+          institution,
+          program,
+          location,
+        });
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        const result = await processor.processQueue(mockedJob.job);
+
+        // Assert
+        // Assert uploaded file.
+        const uploadedFile = getUploadedFile(sftpClientMock);
+        const uploadedFileName = getUploadedFileName();
+        expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+        // No records should be sent.
+        expect(result).toStrictEqual([
+          `Generated file: ${uploadedFileName}`,
+          "Uploaded records: 0",
+        ]);
+        // Assert log messages for the blocked disbursement.
+        expect(
+          mockedJob.containLogMessages([
+            `Institution has an effective '${RestrictionActionType.StopFullTimeDisbursement}' restriction` +
+              ` for program ${program.id} and location ${location.id} and the disbursement calculation will not proceed.`,
+            "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
+          ]),
+        ).toBe(true);
+        const [disbursement] =
+          application.currentAssessment.disbursementSchedules;
+        // Assert that the disbursement is still in status 'Pending' with date sent null.
+        const scheduleIsPending = await db.disbursementSchedule.exists({
+          where: {
+            id: disbursement.id,
+            dateSent: IsNull(),
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        });
+        expect(scheduleIsPending).toBe(true);
+      },
+    );
+
     describe("Aviation credential full-time applications e-Cert generation", () => {
       for (const {
         aviationCredentialType,
@@ -1936,7 +2048,12 @@ describe(
             const msfaaNumber = await db.msfaaNumber.save(
               createFakeMSFAANumber(
                 { student },
-                { msfaaState: MSFAAStates.Signed },
+                {
+                  msfaaState: MSFAAStates.Signed,
+                  msfaaInitialValues: {
+                    offeringIntensity: OfferingIntensity.fullTime,
+                  },
+                },
               ),
             );
             const aviationCredentialApplication =
