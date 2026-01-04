@@ -35,8 +35,8 @@ export enum ECertFailedValidation {
    */
   HasStopDisbursementRestriction = "HasStopDisbursementRestriction",
   /**
-   * Institution has an active 'StopFullTimeDisbursement' or 'StopPartTimeDisbursement'
-   * restriction and the disbursement calculation will not proceed.
+   * Institution has an effective 'StopFullTimeDisbursement' or 'StopPartTimeDisbursement'
+   * restriction for the application location and program and the disbursement calculation will not proceed.
    */
   HasStopDisbursementInstitutionRestriction = "HasStopDisbursementInstitutionRestriction",
   /**

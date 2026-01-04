@@ -1934,7 +1934,12 @@ describe(
         const msfaaNumber = await db.msfaaNumber.save(
           createFakeMSFAANumber(
             { student },
-            { msfaaState: MSFAAStates.Signed },
+            {
+              msfaaState: MSFAAStates.Signed,
+              msfaaInitialValues: {
+                offeringIntensity: OfferingIntensity.fullTime,
+              },
+            },
           ),
         );
         const application = await saveFakeApplicationDisbursements(
