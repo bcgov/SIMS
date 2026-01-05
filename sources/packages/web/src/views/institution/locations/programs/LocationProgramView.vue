@@ -62,7 +62,7 @@ export default defineComponent({
     };
 
     const isReadOnly = computed(() => {
-      return !isReadOnlyUser(props.locationId);
+      return isReadOnlyUser(props.locationId);
     });
 
     onMounted(getEducationProgramAndOffering);
