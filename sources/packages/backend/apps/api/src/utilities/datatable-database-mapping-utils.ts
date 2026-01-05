@@ -47,8 +47,15 @@ export const sortApplicationsColumnMap = (fieldName: string): string => {
 export const sortOfferingsColumnMap = (fieldName: string): string => {
   const offeringSortOptions = {
     name: "offerings.name",
+    offeringDelivered: "offerings.offeringDelivered",
+    studyStartDate: "offerings.studyStartDate",
+    studyEndDate: "offerings.studyEndDate",
   };
-  return offeringSortOptions[fieldName] ?? null;
+
+  if (!offeringSortOptions[fieldName]) {
+    throw new Error(`Sorting by ${fieldName} is not supported.`);
+  }
+  return offeringSortOptions[fieldName];
 };
 
 /**

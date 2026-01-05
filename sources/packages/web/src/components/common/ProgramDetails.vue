@@ -10,7 +10,7 @@
     </template>
     <template #actions>
       <v-menu class="label-bold-menu">
-        <template v-slot:activator="{ props }">
+        <template #activator="{ props }">
           <v-btn
             color="primary"
             v-bind="props"
@@ -33,7 +33,7 @@
           >
             <template #="{ notAllowed }">
               <v-list-item
-                :disabled="isProgramDeactivationDisabled || notAllowed"
+                :disabled="!allowDeactivate || notAllowed"
                 base-color="danger"
                 @click="deactivate"
                 title="Deactivate"
@@ -42,18 +42,28 @@
           </check-permission-role>
         </v-list>
       </v-menu>
+      <v-btn
+        v-if="allowEdit"
+        class="mr-4 float-right"
+        @click="goToAddNewOffering()"
+        color="primary"
+        prepend-icon="fa:fa fa-plus-circle"
+        data-cy="addNewOfferingButton"
+      >
+        Add offering
+      </v-btn>
     </template>
   </body-header>
   <v-row>
     <v-col md="5">
       <title-value
-        propertyTitle="Description"
-        :propertyValue="educationProgram.description"
+        property-title="Description"
+        :property-value="educationProgram.description"
         data-cy="programDescription"
       />
     </v-col>
     <v-col md="4">
-      <title-value propertyTitle="Offering" data-cy="programOffering" />
+      <title-value property-title="Offering" data-cy="programOffering" />
       <p class="label-value muted-content clearfix">
         <span
           v-if="
@@ -61,22 +71,24 @@
               ProgramIntensity.fullTimePartTime ||
             educationProgram.programIntensity === ProgramIntensity.fullTime
           "
-          >Full Time</span
         >
+          {{ mapOfferingIntensity(OfferingIntensity.fullTime) }}
+        </span>
         <br />
         <span
           v-if="
             educationProgram.programIntensity ===
             ProgramIntensity.fullTimePartTime
           "
-          >Part Time
+        >
+          {{ mapOfferingIntensity(OfferingIntensity.partTime) }}
         </span>
       </p>
     </v-col>
     <v-col>
       <title-value
-        propertyTitle="Credential Type"
-        :propertyValue="educationProgram.credentialTypeToDisplay"
+        property-title="Credential Type"
+        :property-value="educationProgram.credentialTypeToDisplay"
         data-cy="programCredential"
       />
     </v-col>
@@ -84,22 +96,22 @@
   <v-row>
     <v-col md="5">
       <title-value
-        propertyTitle="Classification of Instructional Programs (CIP)"
-        :propertyValue="educationProgram.cipCode"
+        property-title="Classification of Instructional Programs (CIP)"
+        :property-value="educationProgram.cipCode"
         data-cy="programCIP"
       />
     </v-col>
     <v-col md="4"
       ><title-value
-        propertyTitle="National Occupational Classification (NOC)"
-        :propertyValue="educationProgram.nocCode"
+        property-title="National Occupational Classification (NOC)"
+        :property-value="educationProgram.nocCode"
         data-cy="programNOCCode"
       />
     </v-col>
     <v-col
       ><title-value
-        propertyTitle="Institution Program Code"
-        :propertyValue="educationProgram.institutionProgramCode"
+        property-title="Institution Program Code"
+        :property-value="educationProgram.institutionProgramCode"
         data-cy="programCode"
       />
     </v-col>
@@ -117,7 +129,12 @@ import {
   InstitutionRoutesConst,
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
-import { ProgramIntensity, ClientIdType } from "@/types";
+import {
+  ProgramIntensity,
+  ClientIdType,
+  OfferingIntensity,
+  Role,
+} from "@/types";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 import { AuthService } from "@/services/AuthService";
 import {
@@ -125,10 +142,9 @@ import {
   EducationProgramAPIOutDTO,
 } from "@/services/http/dto";
 import EducationProgramDeactivationModal from "@/components/common/modals/EducationProgramDeactivationModal.vue";
-import { ModalDialog, useInstitutionAuth, useSnackBar } from "@/composables";
+import { ModalDialog, useOffering, useSnackBar } from "@/composables";
 import ApiClient from "@/services/http/ApiClient";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { Role } from "@/types";
 
 export default defineComponent({
   emits: {
@@ -153,34 +169,39 @@ export default defineComponent({
       required: true,
       default: {} as EducationProgramAPIOutDTO,
     },
+    allowEdit: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    allowDeactivate: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const snackBar = useSnackBar();
     const router = useRouter();
-    const { isReadOnlyUser } = useInstitutionAuth();
+    const { mapOfferingIntensity } = useOffering();
     const deactivateEducationProgramModal = ref(
       {} as ModalDialog<DeactivateProgramAPIInDTO | boolean>,
     );
 
-    const isProgramDeactivationDisabled = computed<boolean>(
-      () =>
-        !props.educationProgram.isActive ||
-        props.educationProgram.isExpired ||
-        (AuthService.shared.authClientType === ClientIdType.Institution &&
-          isReadOnlyUser(props.locationId)),
-    );
-
     const programActionLabel = computed(() => {
-      if (
-        !props.educationProgram.isActive ||
-        props.educationProgram.isExpired ||
-        AuthService.shared.authClientType === ClientIdType.AEST
-      ) {
+      if (!props.allowEdit) {
         return "View Program";
       }
       return "Edit";
     });
 
+    const notesRequired = computed(
+      () => AuthService.shared.authClientType === ClientIdType.AEST,
+    );
+
+    /**
+     * Navigates to the program details page.
+     */
     const goToProgram = () => {
       if (AuthService.shared.authClientType === ClientIdType.Institution) {
         return router.push({
@@ -200,10 +221,25 @@ export default defineComponent({
       });
     };
 
-    const notesRequired = computed(
-      () => AuthService.shared.authClientType === ClientIdType.AEST,
-    );
+    /**
+     * Navigates to the add new offering page.
+     */
+    const goToAddNewOffering = () => {
+      if (AuthService.shared.authClientType === ClientIdType.Institution) {
+        router.push({
+          name: InstitutionRoutesConst.ADD_LOCATION_OFFERINGS,
+          params: {
+            locationId: props.locationId,
+            programId: props.programId,
+            clientType: ClientIdType.Institution,
+          },
+        });
+      }
+    };
 
+    /**
+     * Deactivates the education program.
+     */
     const deactivate = async () => {
       await deactivateEducationProgramModal.value.showModal(
         undefined,
@@ -211,6 +247,11 @@ export default defineComponent({
       );
     };
 
+    /**
+     * Resolves the promise returned by the modal dialog.
+     * @param modalResult The result from the modal dialog.
+     * @returns A boolean indicating whether the promise was resolved successfully.
+     */
     const canResolvePromise = async (
       modalResult: DeactivateProgramAPIInDTO | boolean,
     ): Promise<boolean> => {
@@ -232,14 +273,16 @@ export default defineComponent({
     };
 
     return {
-      isProgramDeactivationDisabled,
       goToProgram,
+      goToAddNewOffering,
       ProgramIntensity,
       programActionLabel,
       deactivateEducationProgramModal,
       deactivate,
       notesRequired,
       Role,
+      mapOfferingIntensity,
+      OfferingIntensity,
     };
   },
 });

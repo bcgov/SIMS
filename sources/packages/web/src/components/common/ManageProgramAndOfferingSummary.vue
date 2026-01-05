@@ -2,26 +2,26 @@
   <v-card>
     <v-container :fluid="true">
       <program-details
-        :programId="programId"
-        :locationId="locationId"
-        :educationProgram="educationProgram"
+        :program-id="programId"
+        :location-id="locationId"
+        :education-program="educationProgram"
+        :allow-edit="allowEdit && isProgramEditable"
+        :allow-deactivate="allowDeactivate && isProgramEditable"
         @program-data-updated="$emit('programDataUpdated')"
       />
       <hr class="horizontal-divider" />
       <offering-summary
-        :programId="programId"
-        :locationId="locationId"
-        :isEditAllowed="
-          educationProgram.isActive && !educationProgram.isExpired
-        "
-        :institutionId="institutionId"
+        :program-id="programId"
+        :location-id="locationId"
+        :allow-edit="allowEdit && isProgramEditable"
+        :institution-id="institutionId"
       />
     </v-container>
   </v-card>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import ProgramDetails from "@/components/common/ProgramDetails.vue";
 import OfferingSummary from "@/components/common/OfferingSummary.vue";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
@@ -41,14 +41,34 @@ export default defineComponent({
       required: true,
     },
     educationProgram: {
-      type: Object,
+      type: Object as PropType<EducationProgramAPIOutDTO>,
       required: true,
       default: {} as EducationProgramAPIOutDTO,
     },
     institutionId: {
       type: Number,
       required: false,
+      default: undefined,
     },
+    allowEdit: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+    allowDeactivate: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+  },
+  setup(props) {
+    const isProgramEditable = computed(
+      () =>
+        props.educationProgram.isActive && !props.educationProgram.isExpired,
+    );
+    return {
+      isProgramEditable,
+    };
   },
 });
 </script>
