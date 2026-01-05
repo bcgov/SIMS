@@ -267,7 +267,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
 
   it(
     "Should return a failed ecert validations array with stop disbursement institution restriction when" +
-      " there are is an effective restriction on institution account for the application location and program" +
+      " there is an effective restriction on institution account for the application location and program" +
       " and the offering intensity is part-time.",
     async () => {
       // Arrange

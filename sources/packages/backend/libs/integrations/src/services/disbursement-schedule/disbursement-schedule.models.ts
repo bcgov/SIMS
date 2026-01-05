@@ -223,6 +223,7 @@ export interface InstitutionActiveRestriction {
    */
   actionEffectiveConditions?: ActionEffectiveCondition[];
 }
+
 /**
  * Restriction bypass active for the application.
  */

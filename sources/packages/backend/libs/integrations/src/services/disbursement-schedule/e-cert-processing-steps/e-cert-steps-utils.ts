@@ -38,7 +38,7 @@ export function getRestrictionsByActionType(
  * Check active institution restrictions by its action type in an eligible disbursement.
  * @param eCertDisbursement disbursement to check institution restrictions.
  * @param actionType action type.
- * @returns the all the effective restrictions of the requested action type.
+ * @returns all the effective restrictions of the requested action type.
  */
 export function getInstitutionRestrictionsByActionType(
   eCertDisbursement: EligibleECertDisbursement,

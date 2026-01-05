@@ -810,7 +810,7 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
 
   it(
     "Should get application details with ecert failed validations array having stop disbursement institution restriction when" +
-      " there are is an effective restriction on institution account for the application location and program" +
+      " there is an effective restriction on institution account for the application location and program" +
       " and the offering intensity is part-time.",
     async () => {
       // Arrange

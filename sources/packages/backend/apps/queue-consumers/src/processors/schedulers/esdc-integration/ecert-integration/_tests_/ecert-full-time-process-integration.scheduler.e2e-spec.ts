@@ -1948,18 +1948,6 @@ describe(
           {
             student,
             msfaaNumber,
-            firstDisbursementValues: [
-              createFakeDisbursementValue(
-                DisbursementValueType.CanadaLoan,
-                "CSLP",
-                100,
-              ),
-              createFakeDisbursementValue(
-                DisbursementValueType.BCLoan,
-                "CSPT",
-                150,
-              ),
-            ],
           },
           {
             offeringIntensity: OfferingIntensity.fullTime,
@@ -1984,9 +1972,9 @@ describe(
             ]),
           },
         });
-        const location =
-          application.currentAssessment.offering.institutionLocation;
-        const program = application.currentAssessment.offering.educationProgram;
+        const offering = application.currentAssessment.offering;
+        const location = offering.institutionLocation;
+        const program = offering.educationProgram;
         const institution = location.institution;
         // Add institution restriction for the application location and program.
         await saveFakeInstitutionRestriction(db, {
@@ -2580,8 +2568,8 @@ describe(
  * @returns The uploaded file name
  */
 function getUploadedFileName(): string {
-  const esdcConfig = new ConfigService().esdcIntegration;
+  const ftpRequestFolder = new ConfigService().esdcIntegration.ftpRequestFolder;
   const fileDate = dayjs().format("YYYYMMDD");
-  const uploadedFileName = `${esdcConfig.ftpRequestFolder}\\DPBC.EDU.FTECERTS.${fileDate}.001`;
+  const uploadedFileName = `${ftpRequestFolder}\\DPBC.EDU.FTECERTS.${fileDate}.001`;
   return uploadedFileName;
 }
