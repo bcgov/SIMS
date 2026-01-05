@@ -30,7 +30,7 @@
     "uuid": "^13.0.0",
     "vue": "^3.5.26",
     "vue-router": "^4.6.4",
-    "vuetify": "^3.11.5",
+    "vuetify": "^3.11.6",
     "vuex": "^4.1.0"
   },
   "devDependencies": {
