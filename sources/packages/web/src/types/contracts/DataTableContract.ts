@@ -763,11 +763,11 @@ export const ExceptionRequestsHeaders = [
  * Pending offerings header.
  */
 export const PendingOfferingsHeaders = [
-  { title: "Date Submitted", sortable: true, key: "submittedDate" },
-  { title: "Location Name", sortable: false, key: "locationName" },
-  { title: "Program Name", sortable: false, key: "programName" },
-  { title: "Offering Name", sortable: false, key: "name" },
-  { title: "Study Dates", sortable: false, key: "studyDates" },
+  { title: "Date submitted", sortable: true, key: "submittedDate" },
+  { title: "Location name", sortable: false, key: "locationName" },
+  { title: "Program name", sortable: false, key: "programName" },
+  { title: "Offering name", sortable: false, key: "name" },
+  { title: "Study dates", sortable: false, key: "studyDates" },
   { title: "Intensity", sortable: true, key: "offeringIntensity" },
   { title: "Offering type", sortable: true, key: "offeringType" },
   { title: "Study delivery", sortable: false, key: "offeringDelivered" },

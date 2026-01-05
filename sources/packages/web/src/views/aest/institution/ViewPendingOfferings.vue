@@ -3,14 +3,17 @@
     <template #header>
       <header-navigator title="Institution requests" sub-title="Offerings" />
     </template>
-    <body-header title="Pending offerings" :records-count="offerings?.count">
+    <body-header
+      title="Pending offerings"
+      :records-count="offeringsAndCount?.count"
+    >
       <template #subtitle>
         Offering requests that require Ministry review.
       </template>
       <template #actions>
         <v-text-field
           density="compact"
-          label="Search Offering Name"
+          label="Search offering name"
           variant="outlined"
           v-model="searchCriteria"
           @keyup.enter="searchOfferings"
@@ -21,17 +24,17 @@
       </template>
     </body-header>
     <content-group>
-      <toggle-content :toggled="!offerings?.count">
+      <toggle-content :toggled="!offeringsAndCount?.count">
         <v-data-table-server
           :headers="PendingOfferingsHeaders"
-          :items="offerings?.results"
-          :items-length="offerings?.count"
+          :items="offeringsAndCount?.results"
+          :items-length="offeringsAndCount?.count"
           :loading="loading"
           item-value="id"
-          v-model:items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
           :mobile="isMobile"
-          @update:options="paginationAndSortEvent"
+          @update:options="pageSortEvent"
         >
           <template #[`item.submittedDate`]="{ item }">
             {{ dateOnlyLongString(item.submittedDate) }}
@@ -72,7 +75,7 @@
 </template>
 
 <script lang="ts">
-import { useFormatters } from "@/composables";
+import { useFormatters, useSnackBar } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import router from "@/router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
@@ -86,10 +89,13 @@ import {
   DataTableOptions,
   ITEMS_PER_PAGE,
   PendingOfferingsHeaders,
+  PaginationOptions,
 } from "@/types";
 import { defineComponent, onMounted, ref } from "vue";
 import { useDisplay } from "vuetify";
 import { useOffering } from "@/composables/useOffering";
+
+const DEFAULT_SORT_FIELD = "submittedDate";
 
 export default defineComponent({
   components: {
@@ -104,61 +110,67 @@ export default defineComponent({
       dateOnlyLongPeriodString,
     } = useFormatters();
     const { mapOfferingIntensity } = useOffering();
-    const offerings = ref(
+    const { mobile: isMobile } = useDisplay();
+    const snackBar = useSnackBar();
+
+    const offeringsAndCount = ref(
       {} as PaginatedResults<EducationProgramOfferingPendingAPIOutDTO>,
     );
-    const { mobile: isMobile } = useDisplay();
-    let currentPage = DEFAULT_DATATABLE_PAGE_NUMBER;
-    let currentPageLimit = DEFAULT_PAGE_LIMIT;
 
     /**
-     * Load pending offerings.
-     * @param page page number, if nothing passed then {@link DEFAULT_DATATABLE_PAGE_NUMBER}.
-     * @param pageCount page limit, if nothing passed then {@link DEFAULT_PAGE_LIMIT}.
-     * @param sortField sort field, if nothing passed then api sorts with status.
-     * @param sortOrder sort oder, if nothing passed then {@link DataTableSortByOrder.DESC}.
+     * Current state of the pagination.
      */
-    const getOfferings = async (
-      page = DEFAULT_DATATABLE_PAGE_NUMBER,
-      pageCount = DEFAULT_PAGE_LIMIT,
-      sortField?: string,
-      sortOrder?: DataTableSortByOrder,
-    ) => {
-      loading.value = true;
-      offerings.value =
-        await EducationProgramOfferingService.shared.getPendingOfferings({
-          page,
-          sortField,
-          sortOrder,
-          pageLimit: pageCount,
-          searchCriteria: searchCriteria.value,
-        });
-      loading.value = false;
+    const currentPagination: PaginationOptions = {
+      page: DEFAULT_DATATABLE_PAGE_NUMBER,
+      pageLimit: DEFAULT_PAGE_LIMIT,
+      sortField: DEFAULT_SORT_FIELD,
+      sortOrder: DataTableSortByOrder.ASC,
+    };
+
+    /**
+     * Loads study period offerings for the Institution Program.
+     */
+    const getOfferings = async () => {
+      try {
+        loading.value = true;
+        offeringsAndCount.value =
+          await EducationProgramOfferingService.shared.getPendingOfferings({
+            searchCriteria: searchCriteria.value,
+            ...currentPagination,
+          });
+      } catch {
+        snackBar.error("Unexpected error while loading Offerings.");
+      } finally {
+        loading.value = false;
+      }
     };
 
     onMounted(async () => {
       await getOfferings();
     });
 
-    // Pagination sort event callback.
-    const paginationAndSortEvent = async (event: DataTableOptions) => {
-      currentPage = event.page;
-      currentPageLimit = event.itemsPerPage;
-      const [sortByOptions] = event.sortBy;
-      await getOfferings(
-        event.page,
-        event.itemsPerPage,
-        sortByOptions?.key,
-        sortByOptions?.order,
-      );
+    /**
+     * Page/Sort event handler.
+     * @param event The data table page/sort event.
+     */
+    const pageSortEvent = async (event: DataTableOptions) => {
+      currentPagination.page = event.page;
+      currentPagination.pageLimit = event.itemsPerPage;
+      if (event.sortBy.length) {
+        const [sortBy] = event.sortBy;
+        currentPagination.sortField = sortBy.key;
+        currentPagination.sortOrder = sortBy.order;
+      } else {
+        // Sorting was removed, reset to default.
+        currentPagination.sortField = DEFAULT_SORT_FIELD;
+        currentPagination.sortOrder = DataTableSortByOrder.ASC;
+      }
+      await getOfferings();
     };
 
-    // Search table.
+    // Search offering table.
     const searchOfferings = async () => {
-      await getOfferings(
-        currentPage ?? DEFAULT_DATATABLE_PAGE_NUMBER,
-        currentPageLimit ?? DEFAULT_PAGE_LIMIT,
-      );
+      await getOfferings();
     };
 
     /**
@@ -183,8 +195,8 @@ export default defineComponent({
       PendingOfferingsHeaders,
       dateOnlyLongString,
       dateOnlyLongPeriodString,
-      paginationAndSortEvent,
-      offerings,
+      pageSortEvent,
+      offeringsAndCount,
       loading,
       searchCriteria,
       searchOfferings,
