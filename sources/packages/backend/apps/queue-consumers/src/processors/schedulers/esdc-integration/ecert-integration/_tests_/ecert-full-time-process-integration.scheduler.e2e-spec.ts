@@ -65,6 +65,7 @@ import {
 } from "./e-cert-utils";
 import { RestrictionCode, SystemUsersService } from "@sims/services";
 import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
+import { ConfigService } from "@sims/utilities/config";
 
 describe(
   describeQueueProcessorRootTest(QueueNames.FullTimeECertIntegration),
@@ -2579,7 +2580,8 @@ describe(
  * @returns The uploaded file name
  */
 function getUploadedFileName(): string {
+  const esdcConfig = new ConfigService().esdcIntegration;
   const fileDate = dayjs().format("YYYYMMDD");
-  const uploadedFileName = `MSFT-Request\\DPBC.EDU.FTECERTS.${fileDate}.001`;
+  const uploadedFileName = `${esdcConfig.ftpRequestFolder}\\DPBC.EDU.FTECERTS.${fileDate}.001`;
   return uploadedFileName;
 }

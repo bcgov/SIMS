@@ -59,6 +59,7 @@ import {
 import { SystemUsersService } from "@sims/services";
 import { faker } from "@faker-js/faker";
 import { ECERT_PART_TIME_SENT_FILE_SEQUENCE_GROUP } from "@sims/integrations/esdc-integration";
+import { ConfigService } from "@sims/utilities/config";
 
 describe(
   describeQueueProcessorRootTest(QueueNames.PartTimeECertIntegration),
@@ -2278,8 +2279,9 @@ describe(
      * @returns The uploaded file name
      */
     function getUploadedFileName(): string {
+      const esdcConfig = new ConfigService().esdcIntegration;
       const fileDate = dayjs().format("YYYYMMDD");
-      const uploadedFileName = `MSFT-Request\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
+      const uploadedFileName = `${esdcConfig.ftpRequestFolder}\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
       return uploadedFileName;
     }
   },
