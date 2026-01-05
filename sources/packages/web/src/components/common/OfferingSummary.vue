@@ -229,8 +229,8 @@ export default defineComponent({
     const loading = ref<boolean>(false);
     const searchBox = ref<string>();
     const intensityFilter = ref<OfferingIntensity | "All">("All");
-    const startDate = ref<Date | string>();
-    const endDate = ref<Date | string>();
+    const startDate = ref<string>();
+    const endDate = ref<string>();
     const searchOfferingsForm = ref({} as VForm);
     const offeringsAndCount = ref(
       {} as PaginatedResults<EducationProgramOfferingSummaryAPIOutDTO>,
