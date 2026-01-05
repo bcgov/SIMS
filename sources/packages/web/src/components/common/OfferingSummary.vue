@@ -224,17 +224,17 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const { capitalizeFirstWord } = useFormatters();
+    const { mapOfferingIntensity } = useOffering();
+    const { getISODateOnlyString } = useFormatters();
     const loading = ref<boolean>(false);
     const searchBox = ref<string>();
-    const { dateOnlyLongPeriodString } = useFormatters();
     const intensityFilter = ref<OfferingIntensity | "All">("All");
-    const startDate = ref<string>();
-    const endDate = ref<string>();
+    const startDate = ref<Date | string>();
+    const endDate = ref<Date | string>();
     const searchOfferingsForm = ref({} as VForm);
     const offeringsAndCount = ref(
       {} as PaginatedResults<EducationProgramOfferingSummaryAPIOutDTO>,
     );
-    const { mapOfferingIntensity } = useOffering();
 
     const { mobile: isMobile } = useDisplay();
     const snackBar = useSnackBar();
@@ -309,10 +309,14 @@ export default defineComponent({
           filterOptions.intensityFilter = intensityFilter.value;
         }
         if (startDate.value) {
-          filterOptions.studyStartDateFromFilter = startDate.value;
+          filterOptions.studyStartDateFromFilter = getISODateOnlyString(
+            startDate.value,
+          );
         }
         if (endDate.value) {
-          filterOptions.studyStartDateToFilter = endDate.value;
+          filterOptions.studyStartDateToFilter = getISODateOnlyString(
+            endDate.value,
+          );
         }
 
         offeringsAndCount.value =
@@ -396,7 +400,6 @@ export default defineComponent({
       searchBox,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
-      dateOnlyLongPeriodString,
       OfferingSummaryHeaders,
       isMobile,
       intensityFilter,
