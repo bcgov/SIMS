@@ -56,6 +56,7 @@ export class EducationProgramOfferingControllerService {
   constructor(
     private readonly offeringService: EducationProgramOfferingService,
     private readonly programService: EducationProgramService,
+    private readonly programOfferingService: EducationProgramOfferingService,
     private readonly institutionLocationService: InstitutionLocationService,
   ) {}
 
@@ -409,9 +410,10 @@ export class EducationProgramOfferingControllerService {
       locationId?: number;
     },
   ): Promise<EducationProgramOfferingSummaryViewAPIOutDTO> {
-    const offering = await this.offeringService.getOfferingById(offeringId, {
-      locationId: options?.locationId,
-    });
+    const offering = await this.programOfferingService.getOfferingById(
+      offeringId,
+      { locationId: options?.locationId },
+    );
     if (!offering) {
       throw new NotFoundException(
         "Not able to find the Education Program offering.",
