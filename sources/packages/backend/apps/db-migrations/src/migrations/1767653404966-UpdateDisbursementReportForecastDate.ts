@@ -11,10 +11,7 @@ export class UpdateDisbursementReportForecastDate1767653404966 implements Migrat
    */
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      getSQLFileData(
-        "Update-disbursements-report-forecast-date.sql",
-        "Reports",
-      ),
+      getSQLFileData("Update-disbursement-report-forecast-date.sql", "Reports"),
     );
   }
 
@@ -25,7 +22,7 @@ export class UpdateDisbursementReportForecastDate1767653404966 implements Migrat
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Rollback-update-disbursements-report-forecast-date.sql",
+        "Rollback-update-disbursement-report-forecast-date.sql",
         "Reports",
       ),
     );

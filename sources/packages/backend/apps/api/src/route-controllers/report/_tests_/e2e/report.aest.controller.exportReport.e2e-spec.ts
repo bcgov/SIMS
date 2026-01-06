@@ -47,7 +47,10 @@ import {
 import { DataSource } from "typeorm";
 import { createFakeEducationProgram } from "@sims/test-utils/factories/education-program";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
-import { MinistryReportsFilterAPIInDTO } from "../../models/report.dto";
+import {
+  MinistryReportNames,
+  MinistryReportsFilterAPIInDTO,
+} from "../../models/report.dto";
 import {
   buildUnmetNeedReportData,
   createApplicationsDataSetup,
@@ -1341,7 +1344,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
       });
   });
 
-  it("Should generate the Disbursement report when a report generation request is made with the appropriate offering intensity and date range.", async () => {
+  it("Should generate the Disbursement report when a report generation request is made for full time offering intensity and date range.", async () => {
     // Arrange
     // Use a unique historical date to avoid conflicts with other tests.
     const disburseDate = "2025-01-15";
@@ -1383,7 +1386,8 @@ describe("ReportAestController(e2e)-exportReport", () => {
       },
     );
 
-    // Part time application with disbursement values. Not used but to ensure filtering works.
+    // Part time application with disbursement values.
+    // This data is not used, its only created to ensure filtering works.
     const partTimeApplication = await saveFakeApplicationDisbursements(
       appDataSource,
       {
@@ -1424,7 +1428,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
     await db.disbursementReceipt.save([federal, provincial]);
 
     const payload = {
-      reportName: "Disbursement_Report",
+      reportName: MinistryReportNames.Disbursements,
       params: {
         startDate: disburseDate,
         endDate: getISODateOnlyString(addDays(1, disburseDate)),
