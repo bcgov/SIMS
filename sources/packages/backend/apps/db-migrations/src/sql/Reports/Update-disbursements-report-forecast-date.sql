@@ -73,6 +73,7 @@ SET
   )
 ORDER BY
   "Date of Disbursement",
-  "Certificate Number" $$
+  "Certificate Number",
+  "Funding Code" $$
 WHERE
   report_name = 'Disbursement_Report';
