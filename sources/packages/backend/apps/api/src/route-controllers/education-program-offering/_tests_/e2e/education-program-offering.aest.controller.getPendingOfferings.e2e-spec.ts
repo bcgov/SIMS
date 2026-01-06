@@ -20,8 +20,8 @@ import {
   User,
 } from "@sims/sims-db";
 import * as request from "supertest";
-import { EducationProgramOfferingPendingAPIOutDTO } from "apps/api/src/route-controllers/education-program-offering/models/education-program-offering.dto";
-import { addDays } from "@sims/utilities";
+import { EducationProgramOfferingPendingAPIOutDTO } from "../../models/education-program-offering.dto";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 
 const PAST_SUBMITTED_DATE = new Date("2000-01-01");
 const FUTURE_SUBMITTED_DATE = new Date("2050-01-01");
@@ -42,7 +42,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
     // Arrange
 
     // Custom dates are used to avoid collisions with other test data.
-    const newerOffering = createFakeEducationProgramOffering(
+    const oldOffering = createFakeEducationProgramOffering(
       {
         auditUser: savedUser,
       },
@@ -65,13 +65,30 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
         },
       },
     );
+
+    const oldestOffering = createFakeEducationProgramOffering(
+      {
+        auditUser: savedUser,
+      },
+      {
+        initialValues: {
+          offeringStatus: OfferingStatus.CreationPending,
+          submittedDate: addDays(-2, PAST_SUBMITTED_DATE),
+        },
+      },
+    );
+
     // Create the newer offering before the older offering to ensure that our default
     // sort works and that we're not just getting default DB ordering.
-    await db.educationProgramOffering.save([newerOffering, olderOffering]);
+    await db.educationProgramOffering.save([
+      oldOffering,
+      oldestOffering,
+      olderOffering,
+    ]);
 
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10`;
+    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=2`;
 
     // Act/Assert
     const response = await request(app.getHttpServer())
@@ -79,15 +96,14 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
-    expect(response.body.count).toBeGreaterThanOrEqual(2);
+    // There are three offerings but only 2 should be returned based on the page limit.
+    expect(response.body.count).toEqual(3);
+    expect(response.body.results.length).toEqual(2);
 
     // Assert the two oldest Pending Offerings are returned in the correct order.
-    const offeringResult1: EducationProgramOfferingPendingAPIOutDTO =
-      response.body.results[0];
-    const offeringResult2: EducationProgramOfferingPendingAPIOutDTO =
-      response.body.results[1];
-    assertPendingOffering(offeringResult1, olderOffering);
-    assertPendingOffering(offeringResult2, newerOffering);
+    const [offeringResult1, offeringResult2] = response.body.results;
+    assertPendingOffering(offeringResult1, oldestOffering);
+    assertPendingOffering(offeringResult2, olderOffering);
   });
 
   it("Should return two pending offerings for an active Program with a custom sort (submittedDate DESC) applied.", async () => {
@@ -100,6 +116,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       },
       {
         initialValues: {
+          name: "Math 101",
           offeringStatus: OfferingStatus.CreationPending,
           submittedDate: FUTURE_SUBMITTED_DATE,
         },
@@ -112,6 +129,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       },
       {
         initialValues: {
+          name: "Math 201",
           offeringStatus: OfferingStatus.CreationPending,
           submittedDate: addDays(-1, FUTURE_SUBMITTED_DATE),
         },
@@ -127,21 +145,19 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
 
     const sortField = "submittedDate";
     const sortOrder = "DESC";
-    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10&sortField=${sortField}&sortOrder=${sortOrder}`;
-
+    // Include a search criteria that matches both offerings to avoid test data collisions.
+    const searchCriteria = "Math";
+    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=2&sortField=${sortField}&sortOrder=${sortOrder}&searchCriteria=${searchCriteria}`;
     // Act/Assert
     const response = await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
-    expect(response.body.count).toBeGreaterThanOrEqual(2);
+    expect(response.body.count).toEqual(2);
 
-    // Assert the offerings are returned in the correct order.
-    const offeringResult1: EducationProgramOfferingPendingAPIOutDTO =
-      response.body.results[0];
-    const offeringResult2: EducationProgramOfferingPendingAPIOutDTO =
-      response.body.results[1];
+    // Assert the two newest Pending Offerings are returned in the correct order.
+    const [offeringResult1, offeringResult2] = response.body.results;
     assertPendingOffering(offeringResult1, newerOffering);
     assertPendingOffering(offeringResult2, olderOffering);
   });
@@ -207,7 +223,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
     const sortOrder = "ASC";
     // Include a search criteria that matches both offerings to avoid test data collisions.
     const searchCriteria = "Chemistry";
-    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10&sortField=${sortField}&sortOrder=${sortOrder}&searchCriteria=${searchCriteria}`;
+    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=3&sortField=${sortField}&sortOrder=${sortOrder}&searchCriteria=${searchCriteria}`;
 
     // Act/Assert
     const response = await request(app.getHttpServer())
@@ -215,15 +231,12 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
-    expect(response.body.count).toBeGreaterThanOrEqual(2);
+    // Three matches are expected based on the search criteria.
+    expect(response.body.count).toEqual(3);
 
     // Assert the offerings are returned in the correct order.
-    const offeringResult1: EducationProgramOfferingPendingAPIOutDTO =
-      response.body.results[0];
-    const offeringResult2: EducationProgramOfferingPendingAPIOutDTO =
-      response.body.results[1];
-    const offeringResult3: EducationProgramOfferingPendingAPIOutDTO =
-      response.body.results[2];
+    const [offeringResult1, offeringResult2, offeringResult3] =
+      response.body.results;
     assertPendingOffering(offeringResult1, privateOffering);
     assertPendingOffering(offeringResult2, publicOffering);
     assertPendingOffering(offeringResult3, scholasticStandingOffering);
@@ -275,7 +288,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
     const sortOrder = "ASC";
     // Include a search criteria that matches both offerings to avoid test data collisions.
     const searchCriteria = "Physics";
-    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10&sortField=${sortField}&sortOrder=${sortOrder}&searchCriteria=${searchCriteria}`;
+    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=2&sortField=${sortField}&sortOrder=${sortOrder}&searchCriteria=${searchCriteria}`;
 
     // Act/Assert
     const response = await request(app.getHttpServer())
@@ -283,13 +296,11 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
-    expect(response.body.count).toBeGreaterThanOrEqual(2);
+    // Two matches are expected based on the search criteria.
+    expect(response.body.count).toEqual(2);
 
     // Assert the offerings are returned in the correct order.
-    const offeringResult1: EducationProgramOfferingPendingAPIOutDTO =
-      response.body.results[0];
-    const offeringResult2: EducationProgramOfferingPendingAPIOutDTO =
-      response.body.results[1];
+    const [offeringResult1, offeringResult2] = response.body.results;
     assertPendingOffering(offeringResult1, fullTimeOffering);
     assertPendingOffering(offeringResult2, partTimeOffering);
   });
@@ -340,12 +351,11 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
-    // Only a single match is expected based on the search criteria.
+    // One match is expected based on the search criteria.
     expect(response.body.count).toEqual(1);
 
     // Assert the correct offering is returned.
-    const offeringResult: EducationProgramOfferingPendingAPIOutDTO =
-      response.body.results[0];
+    const [offeringResult] = response.body.results;
     assertPendingOffering(offeringResult, fortranOffering);
   });
 
@@ -404,7 +414,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       },
       {
         initialValues: {
-          effectiveEndDate: addDays(-1, new Date()).toISOString(),
+          effectiveEndDate: getISODateOnlyString(addDays(-1)),
         },
       },
     );
@@ -449,23 +459,23 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
 });
 
 function assertPendingOffering(
-  expectedOffering: EducationProgramOfferingPendingAPIOutDTO,
-  actualOffering: EducationProgramOffering,
+  actualOffering: EducationProgramOfferingPendingAPIOutDTO,
+  expectedOffering: EducationProgramOffering,
 ): void {
-  expect(expectedOffering).toEqual({
-    id: actualOffering.id,
-    name: actualOffering.name,
-    studyStartDate: actualOffering.studyStartDate,
-    studyEndDate: actualOffering.studyEndDate,
-    offeringDelivered: actualOffering.offeringDelivered,
-    offeringIntensity: actualOffering.offeringIntensity,
-    offeringType: actualOffering.offeringType,
-    offeringStatus: actualOffering.offeringStatus,
-    submittedDate: actualOffering.submittedDate.toISOString(),
-    locationId: actualOffering.institutionLocation.id,
-    locationName: actualOffering.institutionLocation.name,
-    programId: actualOffering.educationProgram.id,
-    programName: actualOffering.educationProgram.name,
-    institutionId: actualOffering.institutionLocation.institution.id,
+  expect(actualOffering).toEqual({
+    id: expectedOffering.id,
+    name: expectedOffering.name,
+    studyStartDate: expectedOffering.studyStartDate,
+    studyEndDate: expectedOffering.studyEndDate,
+    offeringDelivered: expectedOffering.offeringDelivered,
+    offeringIntensity: expectedOffering.offeringIntensity,
+    offeringType: expectedOffering.offeringType,
+    offeringStatus: expectedOffering.offeringStatus,
+    submittedDate: expectedOffering.submittedDate.toISOString(),
+    locationId: expectedOffering.institutionLocation.id,
+    locationName: expectedOffering.institutionLocation.name,
+    programId: expectedOffering.educationProgram.id,
+    programName: expectedOffering.educationProgram.name,
+    institutionId: expectedOffering.institutionLocation.institution.id,
   });
 }

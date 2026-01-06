@@ -1432,15 +1432,16 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
-   * Gets a list of Program Offerings with status 'Creation Pending' where the Program is active/not expired.
+   * Gets a list of Program Offerings with the specified statuses where the Program is active/not expired.
    * Pagination, sort and search are available on results.
+   * @param statuses list of statuses that need to be included in the query.
    * @param paginationOptions pagination options.
    * @returns pending offerings.
    */
-  async getPendingOfferings(
+  async getOfferingsByStatus(
+    statuses: OfferingStatus[],
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<EducationProgramOffering>> {
-    const DEFAULT_SORT_FIELD = "submittedDate";
     const offeringsQuery = this.repo
       .createQueryBuilder("offerings")
       .select([
@@ -1462,8 +1463,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
       .innerJoin("institutionLocation.institution", "institution")
-      .where("offerings.offeringStatus = :offeringStatus", {
-        offeringStatus: OfferingStatus.CreationPending,
+      .where("offerings.offeringStatus IN (:...statuses)", {
+        statuses,
       })
       .andWhere("educationProgram.isActive = true")
       .andWhere(
@@ -1479,53 +1480,49 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         searchCriteria: `%${paginationOptions.searchCriteria}%`,
       });
     }
-    const sortField = paginationOptions.sortField ?? DEFAULT_SORT_FIELD;
-    const sortOrder = paginationOptions.sortOrder ?? FieldSortOrder.ASC;
-    this.addOfferingsSort(offeringsQuery, sortField, sortOrder);
+    this.addOfferingsSort(offeringsQuery, paginationOptions);
 
     offeringsQuery
-      .skip(paginationOptions.page * paginationOptions.pageLimit)
-      .take(paginationOptions.pageLimit);
+      .offset(paginationOptions.page * paginationOptions.pageLimit)
+      .limit(paginationOptions.pageLimit);
 
-    const [records, count] = await offeringsQuery.getManyAndCount();
-    return { results: records, count: count };
+    const [results, count] = await offeringsQuery.getManyAndCount();
+
+    return { results, count };
   }
 
   private addOfferingsSort(
     query: SelectQueryBuilder<EducationProgramOffering>,
-    sortField?: string,
-    sortOrder?: FieldSortOrder,
+    paginationOptions: PaginationOptions,
   ): void {
-    switch (sortField) {
+    const sortOrder = paginationOptions.sortOrder ?? FieldSortOrder.ASC;
+    switch (paginationOptions.sortField) {
       case "submittedDate":
         query.orderBy("offerings.submittedDate", sortOrder);
         break;
       case "offeringIntensity":
-        // The extra select is needed to avoid TypeORM parsing errors with CASE in the orderBy.
-        // Instead add a temporary field 'offering_intensity_sort' to sort by.
-        query.addSelect(
-          `(CASE
-           WHEN offerings.offering_intensity = '${OfferingIntensity.fullTime}' THEN 1
-           WHEN offerings.offering_intensity = '${OfferingIntensity.partTime}' THEN 2
-           ELSE 3
-         END)`,
-          "offering_intensity_sort",
+        query.orderBy(
+          `CASE offerings.offering_intensity
+             WHEN '${OfferingIntensity.fullTime}' THEN 1
+             WHEN '${OfferingIntensity.partTime}' THEN 2
+             ELSE 3
+           END`,
+          sortOrder,
         );
-        query.orderBy("offering_intensity_sort", sortOrder);
         break;
       case "offeringType":
-        // The extra select is needed to avoid TypeORM parsing errors with CASE in the orderBy.
-        // Instead add a temporary field 'offering_type_sort' to sort by.
-        query.addSelect(
-          `CASE 
-          WHEN offerings.offering_type = '${OfferingTypes.Private}' THEN 1          
-          WHEN offerings.offering_type = '${OfferingTypes.Public}' THEN 2
-          WHEN offerings.offering_type = '${OfferingTypes.ScholasticStanding}' THEN 3
-          ELSE 4
-        END`,
-          "offering_type_sort",
+        query.orderBy(
+          `CASE offerings.offering_type
+             WHEN '${OfferingTypes.Private}' THEN 1
+             WHEN '${OfferingTypes.Public}' THEN 2
+             WHEN '${OfferingTypes.ScholasticStanding}' THEN 3
+             ELSE 4
+           END`,
+          sortOrder,
         );
-        query.orderBy("offering_type_sort", sortOrder);
+        break;
+      default:
+        query.orderBy("offerings.submittedDate", sortOrder);
         break;
     }
   }

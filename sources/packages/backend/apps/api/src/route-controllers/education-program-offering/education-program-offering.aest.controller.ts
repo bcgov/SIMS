@@ -106,7 +106,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
   }
 
   /**
-   * Gets a list of Program Offerings with status 'Creation Pending' where the Program is not deactivated.
+   * Gets a list of Program Offerings with status 'Creation Pending' where the Program is active/not expired.
    * Pagination, sort and search are available on results.
    * @param paginationOptions pagination options.
    * @returns pending offerings.
@@ -117,9 +117,30 @@ export class EducationProgramOfferingAESTController extends BaseController {
   ): Promise<
     PaginatedResultsAPIOutDTO<EducationProgramOfferingPendingAPIOutDTO>
   > {
-    return this.educationProgramOfferingControllerService.getPendingOfferings(
+    const offerings = await this.programOfferingService.getOfferingsByStatus(
+      [OfferingStatus.CreationPending],
       paginationOptions,
     );
+
+    return {
+      results: offerings.results.map((offering) => ({
+        id: offering.id,
+        name: offering.name,
+        studyStartDate: offering.studyStartDate,
+        studyEndDate: offering.studyEndDate,
+        offeringDelivered: offering.offeringDelivered,
+        offeringIntensity: offering.offeringIntensity,
+        offeringType: offering.offeringType,
+        offeringStatus: offering.offeringStatus,
+        submittedDate: offering.submittedDate,
+        locationId: offering.institutionLocation.id,
+        locationName: offering.institutionLocation.name,
+        programId: offering.educationProgram.id,
+        programName: offering.educationProgram.name,
+        institutionId: offering.institutionLocation.institution.id,
+      })),
+      count: offerings.count,
+    };
   }
 
   /**

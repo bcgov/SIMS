@@ -280,7 +280,7 @@ class ValidationResultAPIOutDTO {
 /**
  * DTO to display pending education program offerings.
  */
-export interface EducationProgramOfferingPendingAPIOutDTO {
+export class EducationProgramOfferingPendingAPIOutDTO {
   id: number;
   name: string;
   studyStartDate: string;
