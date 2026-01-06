@@ -1,4 +1,4 @@
-import { RestrictionCode } from "@sims/services";
+import { RestrictedParty, RestrictionCode } from "@sims/services";
 import {
   ActionEffectiveCondition,
   DisabilityStatus,
@@ -163,18 +163,13 @@ export interface DisabilityDetails {
 }
 
 /**
- * Represents an active student restriction.
+ * Represents an active restriction which can be student or institution restriction.
  */
-export interface StudentActiveRestriction {
+export interface ActiveRestriction {
   /**
    * Restriction id.
    */
   id: number;
-  /**
-   * Association between the student and
-   * the active restriction on his account.
-   */
-  studentRestrictionId: number;
   /**
    * Restriction code.
    */
@@ -187,16 +182,31 @@ export interface StudentActiveRestriction {
    * Action effective conditions associated with the restriction.
    */
   actionEffectiveConditions?: ActionEffectiveCondition[];
+  /**
+   * The party (student or institution) who is restricted.
+   */
+  restrictedParty?: RestrictedParty;
+}
+
+/**
+ * Represents an active student restriction.
+ */
+export interface StudentActiveRestriction extends ActiveRestriction {
+  /**
+   * Association between the student and
+   * the active restriction on his account.
+   */
+  studentRestrictionId: number;
+  /**
+   * Restriction is applied to a student.
+   */
+  restrictedParty: RestrictedParty.Student;
 }
 
 /**
  * Represents an active institution restriction.
  */
-export interface InstitutionActiveRestriction {
-  /**
-   * Restriction id.
-   */
-  id: number;
+export interface InstitutionActiveRestriction extends ActiveRestriction {
   /**
    * Association between the institution and
    * the active restriction on institution account.
@@ -211,17 +221,9 @@ export interface InstitutionActiveRestriction {
    */
   location: InstitutionLocation;
   /**
-   * Restriction code.
+   * Restriction is applied to a student.
    */
-  code: RestrictionCode;
-  /**
-   * Actions associated with the restriction.
-   */
-  actions: RestrictionActionType[];
-  /**
-   * Action effective conditions associated with the restriction.
-   */
-  actionEffectiveConditions?: ActionEffectiveCondition[];
+  restrictedParty: RestrictedParty.Institution;
 }
 
 /**
@@ -364,9 +366,9 @@ export class EligibleECertDisbursement {
   }
 
   /**
-   * List of restrictions not bypassed that will be applied to the application.
+   * List of student restrictions not bypassed that will be applied to the application.
    */
-  getEffectiveRestrictions(): ReadonlyArray<StudentActiveRestriction> {
+  private getEffectiveStudentRestrictions(): ReadonlyArray<StudentActiveRestriction> {
     // The restrictions list can be updated as the e-Cert is calculated.
     // That is why the effective list should be calculated using the most
     // recent values.
@@ -382,7 +384,7 @@ export class EligibleECertDisbursement {
    * List the effective institution restrictions for the given disbursement.
    * @returns Effective institution restrictions.
    */
-  getEffectiveInstitutionRestrictions(): ReadonlyArray<InstitutionActiveRestriction> {
+  private getEffectiveInstitutionRestrictions(): ReadonlyArray<InstitutionActiveRestriction> {
     const programId = this.offering.educationProgram.id;
     const locationId = this.offering.institutionLocation.id;
     return this.institutionRestrictions.filter(
@@ -390,6 +392,18 @@ export class EligibleECertDisbursement {
         restriction.program.id === programId &&
         restriction.location.id === locationId,
     );
+  }
+
+  /**
+   * Get all effective restrictions from student and application institution.
+   * @returns effective restrictions.
+   */
+  getEffectiveRestrictions(): ReadonlyArray<ActiveRestriction> {
+    const allEffectiveRestrictions = [
+      ...this.getEffectiveStudentRestrictions(),
+      ...this.getEffectiveInstitutionRestrictions(),
+    ];
+    return allEffectiveRestrictions;
   }
 }
 
@@ -410,6 +424,7 @@ export function mapStudentActiveRestrictions(
       actions: studentRestriction.restriction.actionType,
       actionEffectiveConditions:
         studentRestriction.restriction.actionEffectiveConditions,
+      restrictedParty: RestrictedParty.Student,
     }),
   );
 }
@@ -434,6 +449,7 @@ export function mapInstitutionActiveRestrictions(
       location: institutionRestriction.location,
       actionEffectiveConditions:
         institutionRestriction.restriction.actionEffectiveConditions,
+      restrictedParty: RestrictedParty.Institution,
     }),
   );
 }

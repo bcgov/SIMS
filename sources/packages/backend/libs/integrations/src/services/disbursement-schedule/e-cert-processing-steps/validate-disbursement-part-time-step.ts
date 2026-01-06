@@ -7,11 +7,6 @@ import {
   ECertFailedValidation,
   EligibleECertDisbursement,
 } from "../disbursement-schedule.models";
-import {
-  getInstitutionRestrictionsByActionType,
-  getRestrictionsByActionType,
-  logActiveRestrictionsBypasses,
-} from "./e-cert-steps-utils";
 import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
 import { ECertGenerationService } from "../e-cert-generation.service";
 import { StudentLoanBalanceSharedService } from "@sims/services";
@@ -74,46 +69,14 @@ export class ValidateDisbursementPartTimeStep
   ): Promise<ECertPreValidatorResult> {
     log.info("Executing part-time disbursement validations.");
     const validationResults = super.validate(eCertDisbursement, log);
-    // Validate stop part-time disbursement restrictions on the student.
-    const stopDisbursementStudentRestrictions = getRestrictionsByActionType(
+    // Validate stop part-time disbursement restrictions.
+    this.validateStopDisbursementRestriction(
       eCertDisbursement,
       RestrictionActionType.StopPartTimeDisbursement,
-    );
-    if (stopDisbursementStudentRestrictions.length) {
-      log.info(
-        `Student has an active '${RestrictionActionType.StopPartTimeDisbursement}' restriction and the disbursement calculation will not proceed.`,
-      );
-      validationResults.push({
-        resultType: ECertFailedValidation.HasStopDisbursementRestriction,
-        additionalInfo: {
-          restrictionCodes: stopDisbursementStudentRestrictions.map(
-            (restriction) => restriction.code,
-          ),
-        },
-      });
-    }
-    logActiveRestrictionsBypasses(
-      eCertDisbursement.activeRestrictionBypasses,
+      validationResults,
       log,
     );
-    // Validate stop part-time disbursement restrictions on the institution.
-    const stopDisbursementInstitutionRestrictions =
-      getInstitutionRestrictionsByActionType(
-        eCertDisbursement,
-        RestrictionActionType.StopPartTimeDisbursement,
-      );
-    if (stopDisbursementInstitutionRestrictions.length) {
-      const program = eCertDisbursement.offering.educationProgram;
-      const location = eCertDisbursement.offering.institutionLocation;
-      log.info(
-        `Institution has an effective '${RestrictionActionType.StopPartTimeDisbursement}' restriction` +
-          ` for program ${program.id} and location ${location.id} and the disbursement calculation will not proceed.`,
-      );
-      validationResults.push({
-        resultType:
-          ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
-      });
-    }
+
     // Validate CSLP.
     const validateLifetimeMaximumCSLP = await this.validateCSLPLifetimeMaximum(
       eCertDisbursement,

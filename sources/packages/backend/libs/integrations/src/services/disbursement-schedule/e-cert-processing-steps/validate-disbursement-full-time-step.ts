@@ -12,11 +12,6 @@ import {
   EligibleECertDisbursement,
 } from "../disbursement-schedule.models";
 import {
-  getInstitutionRestrictionsByActionType,
-  getRestrictionsByActionType,
-  logActiveRestrictionsBypasses,
-} from "./e-cert-steps-utils";
-import {
   ECertPreValidator,
   ECertPreValidatorResult,
 } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation/e-cert-pre-validation-service-models";
@@ -68,46 +63,13 @@ export class ValidateDisbursementFullTimeStep
   ): Promise<ECertPreValidatorResult> {
     log.info("Executing full-time disbursement validations.");
     const validationResults = super.validate(eCertDisbursement, log);
-    // Validate stop full-time disbursement restrictions on the student.
-    const stopDisbursementStudentRestrictions = getRestrictionsByActionType(
+    // Validate stop full-time disbursement restrictions.
+    this.validateStopDisbursementRestriction(
       eCertDisbursement,
       RestrictionActionType.StopFullTimeDisbursement,
-    );
-    if (stopDisbursementStudentRestrictions.length) {
-      log.info(
-        `Student has an active '${RestrictionActionType.StopFullTimeDisbursement}' restriction and the disbursement calculation will not proceed.`,
-      );
-      validationResults.push({
-        resultType: ECertFailedValidation.HasStopDisbursementRestriction,
-        additionalInfo: {
-          restrictionCodes: stopDisbursementStudentRestrictions.map(
-            (restriction) => restriction.code,
-          ),
-        },
-      });
-    }
-    logActiveRestrictionsBypasses(
-      eCertDisbursement.activeRestrictionBypasses,
+      validationResults,
       log,
     );
-    // Validate stop full-time disbursement restrictions on the institution.
-    const stopDisbursementInstitutionRestrictions =
-      getInstitutionRestrictionsByActionType(
-        eCertDisbursement,
-        RestrictionActionType.StopFullTimeDisbursement,
-      );
-    if (stopDisbursementInstitutionRestrictions.length) {
-      const program = eCertDisbursement.offering.educationProgram;
-      const location = eCertDisbursement.offering.institutionLocation;
-      log.info(
-        `Institution has an effective '${RestrictionActionType.StopFullTimeDisbursement}' restriction` +
-          ` for program ${program.id} and location ${location.id} and the disbursement calculation will not proceed.`,
-      );
-      validationResults.push({
-        resultType:
-          ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
-      });
-    }
     // Validate modified independent status when estranged from parents.
     if (
       eCertDisbursement.modifiedIndependentDetails.estrangedFromParents ===
