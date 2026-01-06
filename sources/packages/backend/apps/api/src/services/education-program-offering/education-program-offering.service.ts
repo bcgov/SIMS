@@ -1453,14 +1453,14 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
-   * Gets a list of Program Offerings with the specified statuses where the Program is active/not expired.
+   * Gets a list of Program Offerings with the specified status where the Program is active/not expired.
    * Pagination, sort and search are available on results.
-   * @param statuses list of statuses that need to be included in the query.
+   * @param status the status to filter on.
    * @param paginationOptions pagination options.
    * @returns pending offerings.
    */
   async getOfferingsByStatus(
-    statuses: OfferingStatus[],
+    status: OfferingStatus,
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResults<EducationProgramOffering>> {
     const offeringsQuery = this.repo
@@ -1484,9 +1484,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
       .innerJoin("institutionLocation.institution", "institution")
-      .where("offerings.offeringStatus IN (:...statuses)", {
-        statuses,
-      })
+      .where("offerings.offeringStatus = :status", { status })
       .andWhere("educationProgram.isActive = true")
       .andWhere(
         new Brackets((qb) => {
@@ -1512,6 +1510,11 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     return { results, count };
   }
 
+  /**
+   * Applies a sort to the offerings query including custom logic for specific fields.
+   * @param query the query builder.
+   * @param paginationOptions pagination options.
+   */
   private addOfferingsSort(
     query: SelectQueryBuilder<EducationProgramOffering>,
     paginationOptions: PaginationOptions,

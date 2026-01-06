@@ -118,7 +118,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
     PaginatedResultsAPIOutDTO<EducationProgramOfferingPendingAPIOutDTO>
   > {
     const offerings = await this.programOfferingService.getOfferingsByStatus(
-      [OfferingStatus.CreationPending],
+      OfferingStatus.CreationPending,
       paginationOptions,
     );
 
