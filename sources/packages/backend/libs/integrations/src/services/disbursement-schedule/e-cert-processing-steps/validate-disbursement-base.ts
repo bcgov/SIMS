@@ -105,56 +105,48 @@ export abstract class ValidateDisbursementBase {
       restrictionActionType,
     );
     if (stopDisbursementRestrictions.length) {
-      const isStudentRestricted = stopDisbursementRestrictions.some(
+      const studentRestrictions = stopDisbursementRestrictions.filter(
         (restriction) =>
           restriction.restrictedParty === RestrictedParty.Student,
       );
-      const isInstitutionRestricted = stopDisbursementRestrictions.some(
+      const institutionRestrictions = stopDisbursementRestrictions.filter(
         (restriction) =>
           restriction.restrictedParty === RestrictedParty.Institution,
       );
-      if (!isStudentRestricted && !isInstitutionRestricted) {
+      if (!studentRestrictions.length && !institutionRestrictions.length) {
         throw new Error(
-          "The stop disbursement restricted party is neither student nor institution.",
+          "The stop disbursement restrictions are neither student nor institution restrictions.",
         );
       }
-      if (isStudentRestricted) {
+      if (studentRestrictions.length) {
         log.info(
           `Student has an active '${restrictionActionType}' restriction and the disbursement calculation will not proceed.`,
         );
-        // Gather restriction codes for additional info.
-        const restrictionCodes = stopDisbursementRestrictions
-          .filter(
-            (restriction) =>
-              restriction.restrictedParty === RestrictedParty.Student,
-          )
-          .map((restriction) => restriction.code);
+
         validationResults.push({
           resultType: ECertFailedValidation.HasStopDisbursementRestriction,
           additionalInfo: {
-            restrictionCodes,
+            restrictionCodes: studentRestrictions.map(
+              (restriction) => restriction.code,
+            ),
           },
         });
       }
-      if (isInstitutionRestricted) {
+      if (institutionRestrictions.length) {
         const program = eCertDisbursement.offering.educationProgram;
         const location = eCertDisbursement.offering.institutionLocation;
         log.info(
           `Institution has an effective '${restrictionActionType}' restriction` +
             ` for program ${program.id} and location ${location.id} and the disbursement calculation will not proceed.`,
         );
-        // Gather restriction codes for additional info.
-        const restrictionCodes = stopDisbursementRestrictions
-          .filter(
-            (restriction) =>
-              restriction.restrictedParty === RestrictedParty.Institution,
-          )
-          .map((restriction) => restriction.code);
+
         validationResults.push({
           resultType:
             ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
           additionalInfo: {
-            restrictionCodes,
+            restrictionCodes: institutionRestrictions.map(
+              (restriction) => restriction.code,
+            ),
           },
         });
       }

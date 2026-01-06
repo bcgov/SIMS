@@ -165,13 +165,14 @@ export interface DisabilityDetails {
 /**
  * Represents an active restriction which can be student or institution restriction.
  */
-export abstract class ActiveRestriction {
-  constructor(
-    /**
-     * The party (student or institution) who is restricted.
-     */
-    readonly restrictedParty: RestrictedParty,
-  ) {}
+export type ActiveRestriction =
+  | StudentActiveRestriction
+  | InstitutionActiveRestriction;
+
+/**
+ * Base class for active restrictions.
+ */
+abstract class BaseActiveRestriction {
   /**
    * Restriction id.
    */
@@ -193,9 +194,11 @@ export abstract class ActiveRestriction {
 /**
  * Represents an active student restriction.
  */
-export class StudentActiveRestriction extends ActiveRestriction {
+export class StudentActiveRestriction extends BaseActiveRestriction {
+  readonly restrictedParty: RestrictedParty.Student;
   constructor() {
-    super(RestrictedParty.Student);
+    super();
+    this.restrictedParty = RestrictedParty.Student;
   }
   /**
    * Association between the student and
@@ -207,9 +210,11 @@ export class StudentActiveRestriction extends ActiveRestriction {
 /**
  * Represents an active institution restriction.
  */
-export class InstitutionActiveRestriction extends ActiveRestriction {
+export class InstitutionActiveRestriction extends BaseActiveRestriction {
+  readonly restrictedParty: RestrictedParty.Institution;
   constructor() {
-    super(RestrictedParty.Institution);
+    super();
+    this.restrictedParty = RestrictedParty.Institution;
   }
   /**
    * Association between the institution and
