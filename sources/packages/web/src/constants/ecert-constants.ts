@@ -42,6 +42,11 @@ export const ECERT_FAILED_MESSAGES: EcertFailedValidationDetail[] = [
       "You have a restriction on your account making you ineligible to receive funding. Please contact StudentAid BC if you still require assistance in identifying the cause of this issue and help resolving the issue.",
   },
   {
+    failedType: ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
+    failedMessage:
+      "A restriction at your institution makes your application ineligible for funding at this time.",
+  },
+  {
     failedType: ECertFailedValidation.LifetimeMaximumCSLP,
     failedMessage:
       "Your current funding assessment would exceed your allowable lifetime limit for Part-Time Canada Student Loan. Your assessment must be adjusted to stay within your lifetime limit. Contact StudentAid BC for assistance.",

@@ -17,8 +17,10 @@ import {
   ApplicationActiveRestrictionBypass,
   DisabilityDetails,
   EligibleECertDisbursement,
+  InstitutionActiveRestriction,
   ModifiedIndependentDetails,
   StudentActiveRestriction,
+  mapInstitutionActiveRestrictions,
   mapStudentActiveRestrictions,
 } from "./disbursement-schedule.models";
 import { ConfigService } from "@sims/utilities/config";
@@ -90,6 +92,17 @@ export class ECertGenerationService {
         "offering.programRelatedCosts",
         "offering.mandatoryFees",
         "offering.aviationCredentialType",
+        "educationProgram.id",
+        "institutionLocation.id",
+        "institution.id",
+        "institutionRestriction.id",
+        "institutionRestrictionProgram.id",
+        "institutionRestrictionLocation.id",
+        // The property restrictionInstitution is the restriction added to the institution account.
+        "restrictionInstitution.id",
+        "restrictionInstitution.restrictionCode",
+        "restrictionInstitution.actionType",
+        "restrictionInstitution.actionEffectiveConditions",
         "student.id",
         "student.disabilityStatus",
         "student.modifiedIndependentStatus",
@@ -119,6 +132,9 @@ export class ECertGenerationService {
       .leftJoin("disbursementSchedule.disbursementValues", "disbursementValue")
       .leftJoin("disbursementSchedule.msfaaNumber", "msfaaNumber")
       .innerJoin("currentAssessment.offering", "offering")
+      .innerJoin("offering.educationProgram", "educationProgram")
+      .innerJoin("offering.institutionLocation", "institutionLocation")
+      .innerJoin("institutionLocation.institution", "institution")
       .innerJoin("application.programYear", "programYear")
       .innerJoin("application.student", "student")
       .innerJoin("student.sinValidation", "sinValidation")
@@ -140,6 +156,20 @@ export class ECertGenerationService {
       .leftJoin(
         "restrictionBypassStudentRestriction.restriction",
         "restrictionBypassStudentRestrictionRestriction",
+      )
+      .leftJoin(
+        "institution.restrictions",
+        "institutionRestriction",
+        "institutionRestriction.isActive = true",
+      )
+      .leftJoin("institutionRestriction.restriction", "restrictionInstitution")
+      .leftJoin(
+        "institutionRestriction.program",
+        "institutionRestrictionProgram",
+      )
+      .leftJoin(
+        "institutionRestriction.location",
+        "institutionRestrictionLocation",
       )
       .where(
         "disbursementSchedule.disbursementScheduleStatus = :disbursementScheduleStatus",
@@ -197,6 +227,11 @@ export class ECertGenerationService {
     // across all disbursements.
     const groupedStudentRestrictions =
       this.getGroupedStudentRestrictions(eligibleApplications);
+    // Grouped institution restrictions grouped by institution id.
+    const groupedInstitutionRestrictions: Record<
+      number,
+      InstitutionActiveRestriction[]
+    > = {};
     // Convert the application records to be returned as disbursements to allow
     // easier processing along the calculation steps.
     const eligibleDisbursements =
@@ -205,6 +240,16 @@ export class ECertGenerationService {
         return application.currentAssessment.disbursementSchedules.map(
           (disbursement) => {
             const student = application.student;
+            const institutionId =
+              application.currentAssessment.offering.institutionLocation
+                .institution.id;
+            if (!groupedInstitutionRestrictions[institutionId]) {
+              const institutionRestrictions =
+                application.currentAssessment.offering.institutionLocation
+                  .institution.restrictions;
+              groupedInstitutionRestrictions[institutionId] =
+                mapInstitutionActiveRestrictions(institutionRestrictions);
+            }
             const disabilityDetails: DisabilityDetails = {
               calculatedPDPPDStatus: workflowData.calculatedData.pdppdStatus,
               studentProfileDisabilityStatus: student.disabilityStatus,
@@ -228,6 +273,7 @@ export class ECertGenerationService {
             return new EligibleECertDisbursement(
               student.id,
               !!student.sinValidation.isValidSIN,
+              institutionId,
               application.currentAssessment.id,
               application.id,
               application.applicationNumber,
@@ -238,6 +284,7 @@ export class ECertGenerationService {
               modifiedIndependentDetails,
               groupedStudentRestrictions[student.id],
               restrictionBypasses,
+              groupedInstitutionRestrictions[institutionId],
             );
           },
         );

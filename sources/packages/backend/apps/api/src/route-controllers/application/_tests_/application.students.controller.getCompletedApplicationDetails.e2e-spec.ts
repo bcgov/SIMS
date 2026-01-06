@@ -28,6 +28,7 @@ import {
   createFakeCRAIncomeVerification,
   createFakeSupportingUser,
   RestrictionCode,
+  saveFakeInstitutionRestriction,
 } from "@sims/test-utils";
 import {
   Application,
@@ -43,6 +44,7 @@ import {
   MSFAANumber,
   OfferingIntensity,
   RestrictionActionType,
+  RestrictionType,
   Student,
   StudentAppeal,
   StudentAppealStatus,
@@ -798,6 +800,93 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           hasBlockFundingFeedbackError: false,
           eCertFailedValidations: [
             ECertFailedValidation.HasStopDisbursementRestriction,
+          ],
+          eCertFailedValidationsInfo: {
+            hasEffectiveAviationRestriction: false,
+          },
+        });
+    },
+  );
+
+  it(
+    "Should get application details with ecert failed validations array having stop disbursement institution restriction when" +
+      " there is an effective restriction on institution account for the application location and program" +
+      " and the offering intensity is part-time.",
+    async () => {
+      // Arrange
+      const student = await saveFakeStudent(db.dataSource);
+      const msfaaNumber = createFakeMSFAANumber(
+        {
+          student,
+        },
+        {
+          msfaaState: MSFAAStates.Signed,
+          msfaaInitialValues: { offeringIntensity: OfferingIntensity.partTime },
+        },
+      );
+      await db.msfaaNumber.save(msfaaNumber);
+
+      // Mock user services to return the saved student.
+      await mockUserLoginInfo(appModule, student);
+
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        { student, msfaaNumber },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.partTime,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        },
+      );
+      const [firstDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+
+      // Institution restriction.
+      const restriction = await db.restriction.findOne({
+        select: { id: true },
+        where: {
+          restrictionType: RestrictionType.Institution,
+          actionType: ArrayContains([
+            RestrictionActionType.StopPartTimeDisbursement,
+          ]),
+        },
+      });
+      const location =
+        application.currentAssessment.offering.institutionLocation;
+      const program = application.currentAssessment.offering.educationProgram;
+      const institution =
+        application.currentAssessment.offering.institutionLocation.institution;
+      await saveFakeInstitutionRestriction(db, {
+        restriction,
+        institution,
+        location,
+        program,
+      });
+
+      const endpoint = `/students/application/${application.id}/completed`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          firstDisbursement: {
+            coeStatus: firstDisbursement.coeStatus,
+            disbursementScheduleStatus:
+              firstDisbursement.disbursementScheduleStatus,
+          },
+          assessmentTriggerType: application.currentAssessment.triggerType,
+          hasActiveUnsuccessfulCompletionWeeks: false,
+          hasBlockFundingFeedbackError: false,
+          eCertFailedValidations: [
+            ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
           ],
           eCertFailedValidationsInfo: {
             hasEffectiveAviationRestriction: false,

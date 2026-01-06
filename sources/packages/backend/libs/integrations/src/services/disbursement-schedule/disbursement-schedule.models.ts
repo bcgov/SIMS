@@ -1,11 +1,14 @@
-import { RestrictionCode } from "@sims/services";
+import { RestrictedParty, RestrictionCode } from "@sims/services";
 import {
   ActionEffectiveCondition,
   DisabilityStatus,
   DisbursementSchedule,
   DisbursementValueType,
+  EducationProgram,
   EducationProgramOffering,
   FormYesNoOptions,
+  InstitutionLocation,
+  InstitutionRestriction,
   ModifiedIndependentStatus,
   RestrictionActionType,
   RestrictionBypassBehaviors,
@@ -160,18 +163,20 @@ export interface DisabilityDetails {
 }
 
 /**
- * Represents an active student restriction.
+ * Represents an active restriction which can be student or institution restriction.
  */
-export interface StudentActiveRestriction {
+export type ActiveRestriction =
+  | StudentActiveRestriction
+  | InstitutionActiveRestriction;
+
+/**
+ * Base class for active restrictions.
+ */
+abstract class BaseActiveRestriction {
   /**
    * Restriction id.
    */
   id: number;
-  /**
-   * Association between the student and
-   * the active restriction on his account.
-   */
-  studentRestrictionId: number;
   /**
    * Restriction code.
    */
@@ -184,6 +189,46 @@ export interface StudentActiveRestriction {
    * Action effective conditions associated with the restriction.
    */
   actionEffectiveConditions?: ActionEffectiveCondition[];
+}
+
+/**
+ * Represents an active student restriction.
+ */
+export class StudentActiveRestriction extends BaseActiveRestriction {
+  readonly restrictedParty: RestrictedParty.Student;
+  constructor() {
+    super();
+    this.restrictedParty = RestrictedParty.Student;
+  }
+  /**
+   * Association between the student and
+   * the active restriction on his account.
+   */
+  studentRestrictionId: number;
+}
+
+/**
+ * Represents an active institution restriction.
+ */
+export class InstitutionActiveRestriction extends BaseActiveRestriction {
+  readonly restrictedParty: RestrictedParty.Institution;
+  constructor() {
+    super();
+    this.restrictedParty = RestrictedParty.Institution;
+  }
+  /**
+   * Association between the institution and
+   * the active restriction on institution account.
+   */
+  institutionRestrictionId: number;
+  /**
+   * Specific program the restriction applies to.
+   */
+  program: EducationProgram;
+  /**
+   * Specific location the restriction applies to.
+   */
+  location: InstitutionLocation;
 }
 
 /**
@@ -219,6 +264,8 @@ export type EligibleECertOffering = Pick<
   | "programRelatedCosts"
   | "mandatoryFees"
   | "aviationCredentialType"
+  | "educationProgram"
+  | "institutionLocation"
 >;
 
 /**
@@ -232,6 +279,7 @@ export class EligibleECertDisbursement {
    * Creates a new instance of a eligible e-Cert to be calculated.
    * @param studentId student id.
    * @param hasValidSIN indicates if the student has a validated SIN.
+   * @param institutionId institution id.
    * @param assessmentId assessment id.
    * @param applicationId application id.
    * @param applicationNumber application number. Intended to be used
@@ -254,10 +302,12 @@ export class EligibleECertDisbursement {
    * be updated using the method {@link refreshActiveStudentRestrictions} to allow all
    * steps to have access to the most updated data.
    * @param restrictionBypass all active restrictions bypasses applied to the student application.
+   * @param institutionRestrictions all active institution restrictions for the application institution.
    */
   constructor(
     readonly studentId: number,
     readonly hasValidSIN: boolean,
+    readonly institutionId: number,
     readonly assessmentId: number,
     readonly applicationId: number,
     readonly applicationNumber: string,
@@ -268,6 +318,7 @@ export class EligibleECertDisbursement {
     readonly modifiedIndependentDetails: ModifiedIndependentDetails,
     private readonly restrictions: StudentActiveRestriction[],
     private readonly restrictionBypass: ApplicationActiveRestrictionBypass[],
+    private readonly institutionRestrictions: InstitutionActiveRestriction[],
   ) {
     this.studentRestrictionsBypassedIds = this.restrictionBypass.map(
       (bypass) => bypass.studentRestrictionId,
@@ -287,10 +338,29 @@ export class EligibleECertDisbursement {
   }
 
   /**
+   * Refresh the complete list of institution restrictions.
+   * @param activeInstitutionRestrictions represents the most updated
+   * snapshot of all institution active restrictions.
+   */
+  refreshActiveInstitutionRestrictions(
+    activeInstitutionRestrictions: InstitutionActiveRestriction[],
+  ): void {
+    this.institutionRestrictions.length = 0;
+    this.institutionRestrictions.push(...activeInstitutionRestrictions);
+  }
+
+  /**
    * All student active restrictions.
    */
   get activeRestrictions(): ReadonlyArray<StudentActiveRestriction> {
     return this.restrictions;
+  }
+
+  /**
+   * All institution active restrictions.
+   */
+  get activeInstitutionRestrictions(): ReadonlyArray<InstitutionActiveRestriction> {
+    return this.institutionRestrictions;
   }
 
   /**
@@ -301,9 +371,9 @@ export class EligibleECertDisbursement {
   }
 
   /**
-   * List of restrictions not bypassed that will be applied to the application.
+   * List of student restrictions not bypassed that will be applied to the application.
    */
-  getEffectiveRestrictions(): ReadonlyArray<StudentActiveRestriction> {
+  private getEffectiveStudentRestrictions(): ReadonlyArray<StudentActiveRestriction> {
     // The restrictions list can be updated as the e-Cert is calculated.
     // That is why the effective list should be calculated using the most
     // recent values.
@@ -313,6 +383,32 @@ export class EligibleECertDisbursement {
           restriction.studentRestrictionId,
         ),
     );
+  }
+
+  /**
+   * List the effective institution restrictions for the given disbursement.
+   * @returns Effective institution restrictions.
+   */
+  private getEffectiveInstitutionRestrictions(): ReadonlyArray<InstitutionActiveRestriction> {
+    const programId = this.offering.educationProgram.id;
+    const locationId = this.offering.institutionLocation.id;
+    return this.institutionRestrictions.filter(
+      (restriction) =>
+        restriction.program.id === programId &&
+        restriction.location.id === locationId,
+    );
+  }
+
+  /**
+   * Get all effective restrictions from student and application institution.
+   * @returns effective restrictions.
+   */
+  getEffectiveRestrictions(): ReadonlyArray<ActiveRestriction> {
+    const allEffectiveRestrictions = [
+      ...this.getEffectiveStudentRestrictions(),
+      ...this.getEffectiveInstitutionRestrictions(),
+    ];
+    return allEffectiveRestrictions;
   }
 }
 
@@ -326,14 +422,43 @@ export function mapStudentActiveRestrictions(
   studentRestrictions: StudentRestriction[],
 ): StudentActiveRestriction[] {
   return studentRestrictions.map<StudentActiveRestriction>(
-    (studentRestriction) => ({
-      studentRestrictionId: studentRestriction.id,
-      id: studentRestriction.restriction.id,
-      code: studentRestriction.restriction.restrictionCode as RestrictionCode,
-      actions: studentRestriction.restriction.actionType,
-      actionEffectiveConditions:
-        studentRestriction.restriction.actionEffectiveConditions,
-    }),
+    (studentRestriction) => {
+      const activeRestriction = new StudentActiveRestriction();
+      activeRestriction.studentRestrictionId = studentRestriction.id;
+      activeRestriction.id = studentRestriction.restriction.id;
+      activeRestriction.code = studentRestriction.restriction
+        .restrictionCode as RestrictionCode;
+      activeRestriction.actions = studentRestriction.restriction.actionType;
+      activeRestriction.actionEffectiveConditions =
+        studentRestriction.restriction.actionEffectiveConditions;
+      return activeRestriction;
+    },
+  );
+}
+
+/**
+ * Map institution restrictions to the representation of active
+ * restrictions used along e-Cert calculations.
+ * @param institutionRestrictions institution active restrictions to be mapped.
+ * @returns simplified institution active restrictions.
+ */
+export function mapInstitutionActiveRestrictions(
+  institutionRestrictions: InstitutionRestriction[],
+): InstitutionActiveRestriction[] {
+  return institutionRestrictions.map<InstitutionActiveRestriction>(
+    (institutionRestriction) => {
+      const activeRestriction = new InstitutionActiveRestriction();
+      activeRestriction.institutionRestrictionId = institutionRestriction.id;
+      activeRestriction.id = institutionRestriction.restriction.id;
+      activeRestriction.code = institutionRestriction.restriction
+        .restrictionCode as RestrictionCode;
+      activeRestriction.actions = institutionRestriction.restriction.actionType;
+      activeRestriction.program = institutionRestriction.program;
+      activeRestriction.location = institutionRestriction.location;
+      activeRestriction.actionEffectiveConditions =
+        institutionRestriction.restriction.actionEffectiveConditions;
+      return activeRestriction;
+    },
   );
 }
 
@@ -374,6 +499,11 @@ export enum ECertFailedValidation {
    */
   HasStopDisbursementRestriction = "HasStopDisbursementRestriction",
   /**
+   * Institution has an effective 'StopFullTimeDisbursement' or 'StopPartTimeDisbursement'
+   * restriction for the application location and program and the disbursement calculation will not proceed.
+   */
+  HasStopDisbursementInstitutionRestriction = "HasStopDisbursementInstitutionRestriction",
+  /**
    * Lifetime maximum CSLP is reached.
    * Affects only part-time disbursements.
    */
@@ -386,14 +516,17 @@ export enum ECertFailedValidation {
 }
 
 interface StopDisbursementRestrictionValidationResult {
-  resultType: ECertFailedValidation.HasStopDisbursementRestriction;
+  resultType:
+    | ECertFailedValidation.HasStopDisbursementRestriction
+    | ECertFailedValidation.HasStopDisbursementInstitutionRestriction;
   additionalInfo: { restrictionCodes: RestrictionCode[] };
 }
 
 interface OtherECertFailedValidationResult {
   resultType: Exclude<
     ECertFailedValidation,
-    ECertFailedValidation.HasStopDisbursementRestriction
+    | ECertFailedValidation.HasStopDisbursementRestriction
+    | ECertFailedValidation.HasStopDisbursementInstitutionRestriction
   >;
 }
 

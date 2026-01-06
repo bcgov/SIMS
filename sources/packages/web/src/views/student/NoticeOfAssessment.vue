@@ -72,6 +72,12 @@
               You have restrictions that block funding on your account. Please
               resolve them in order to move forward with your application.
             </li>
+            <li
+              v-if="eCertValidation.hasStopDisbursementInstitutionRestriction"
+            >
+              A restriction at your institution makes your application
+              ineligible for funding at this time.
+            </li>
             <li v-if="eCertValidation.noEstimatedAwardAmounts">
               Your application has been assessed and no funding has been
               awarded. If you believe this is an error, please review your
@@ -154,6 +160,7 @@ export default defineComponent({
       modifiedIndependentStatusNotApproved: false,
       msfaaInvalid: false,
       hasStopDisbursementRestriction: false,
+      hasStopDisbursementInstitutionRestriction: false,
       noEstimatedAwardAmounts: false,
       hasEffectiveAviationRestriction: false,
     });
@@ -231,6 +238,10 @@ export default defineComponent({
         hasStopDisbursementRestriction:
           warnings.eCertFailedValidations.includes(
             ECertFailedValidation.HasStopDisbursementRestriction,
+          ),
+        hasStopDisbursementInstitutionRestriction:
+          warnings.eCertFailedValidations.includes(
+            ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
           ),
         noEstimatedAwardAmounts: warnings.eCertFailedValidations.includes(
           ECertFailedValidation.NoEstimatedAwardAmounts,

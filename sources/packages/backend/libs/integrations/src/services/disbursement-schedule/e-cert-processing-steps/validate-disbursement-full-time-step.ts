@@ -12,10 +12,6 @@ import {
   EligibleECertDisbursement,
 } from "../disbursement-schedule.models";
 import {
-  getRestrictionsByActionType,
-  logActiveRestrictionsBypasses,
-} from "./e-cert-steps-utils";
-import {
   ECertPreValidator,
   ECertPreValidatorResult,
 } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation/e-cert-pre-validation-service-models";
@@ -68,25 +64,10 @@ export class ValidateDisbursementFullTimeStep
     log.info("Executing full-time disbursement validations.");
     const validationResults = super.validate(eCertDisbursement, log);
     // Validate stop full-time disbursement restrictions.
-    const stopFullTimeDisbursementRestrictions = getRestrictionsByActionType(
+    super.validateStopDisbursementRestriction(
       eCertDisbursement,
       RestrictionActionType.StopFullTimeDisbursement,
-    );
-    if (stopFullTimeDisbursementRestrictions.length) {
-      log.info(
-        `Student has an active '${RestrictionActionType.StopFullTimeDisbursement}' restriction and the disbursement calculation will not proceed.`,
-      );
-      validationResults.push({
-        resultType: ECertFailedValidation.HasStopDisbursementRestriction,
-        additionalInfo: {
-          restrictionCodes: stopFullTimeDisbursementRestrictions.map(
-            (restriction) => restriction.code,
-          ),
-        },
-      });
-    }
-    logActiveRestrictionsBypasses(
-      eCertDisbursement.activeRestrictionBypasses,
+      validationResults,
       log,
     );
     // Validate modified independent status when estranged from parents.

@@ -1,10 +1,19 @@
-import { COEStatus, DisabilityStatus } from "@sims/sims-db";
+import {
+  COEStatus,
+  DisabilityStatus,
+  RestrictionActionType,
+} from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import {
   ECertFailedValidation,
   ECertFailedValidationResult,
   EligibleECertDisbursement,
 } from "../disbursement-schedule.models";
+import {
+  getRestrictionsByActionType,
+  logActiveRestrictionsBypasses,
+} from "./e-cert-steps-utils";
+import { RestrictedParty } from "@sims/services";
 
 /**
  * Common e-Cert validations for full-time and part-time.
@@ -73,5 +82,78 @@ export abstract class ValidateDisbursementBase {
       });
     }
     return validationResults;
+  }
+
+  /**
+   * Validate effective stop disbursement restrictions on student and institution.
+   * @param eCertDisbursement eligible disbursement.
+   * @param restrictionActionType restriction action type to be validated.
+   * @param validationResults list of failed validations to be updated.
+   * @param log cumulative log summary.
+   */
+  protected validateStopDisbursementRestriction(
+    eCertDisbursement: EligibleECertDisbursement,
+    restrictionActionType:
+      | RestrictionActionType.StopFullTimeDisbursement
+      | RestrictionActionType.StopPartTimeDisbursement,
+    validationResults: ECertFailedValidationResult[],
+    log: ProcessSummary,
+  ): void {
+    // Validate stop disbursement restrictions.
+    const stopDisbursementRestrictions = getRestrictionsByActionType(
+      eCertDisbursement,
+      restrictionActionType,
+    );
+    if (stopDisbursementRestrictions.length) {
+      const studentRestrictions = stopDisbursementRestrictions.filter(
+        (restriction) =>
+          restriction.restrictedParty === RestrictedParty.Student,
+      );
+      const institutionRestrictions = stopDisbursementRestrictions.filter(
+        (restriction) =>
+          restriction.restrictedParty === RestrictedParty.Institution,
+      );
+      if (!studentRestrictions.length && !institutionRestrictions.length) {
+        throw new Error(
+          "The stop disbursement restrictions are neither student nor institution restrictions.",
+        );
+      }
+      if (studentRestrictions.length) {
+        log.info(
+          `Student has an active '${restrictionActionType}' restriction and the disbursement calculation will not proceed.`,
+        );
+
+        validationResults.push({
+          resultType: ECertFailedValidation.HasStopDisbursementRestriction,
+          additionalInfo: {
+            restrictionCodes: studentRestrictions.map(
+              (restriction) => restriction.code,
+            ),
+          },
+        });
+      }
+      if (institutionRestrictions.length) {
+        const program = eCertDisbursement.offering.educationProgram;
+        const location = eCertDisbursement.offering.institutionLocation;
+        log.info(
+          `Institution has an effective '${restrictionActionType}' restriction` +
+            ` for program ${program.id} and location ${location.id} and the disbursement calculation will not proceed.`,
+        );
+
+        validationResults.push({
+          resultType:
+            ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
+          additionalInfo: {
+            restrictionCodes: institutionRestrictions.map(
+              (restriction) => restriction.code,
+            ),
+          },
+        });
+      }
+    }
+    logActiveRestrictionsBypasses(
+      eCertDisbursement.activeRestrictionBypasses,
+      log,
+    );
   }
 }

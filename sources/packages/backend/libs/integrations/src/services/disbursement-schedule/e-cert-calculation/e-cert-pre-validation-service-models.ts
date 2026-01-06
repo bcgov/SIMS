@@ -11,6 +11,7 @@ const ACCEPT_ASSESSMENT_BLOCKING_VALIDATIONS = [
   ECertFailedValidation.MSFAACanceled,
   ECertFailedValidation.MSFAANotSigned,
   ECertFailedValidation.HasStopDisbursementRestriction,
+  ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
   ECertFailedValidation.NoEstimatedAwardAmounts,
   ECertFailedValidation.ModifiedIndependentStatusNotApproved,
 ];

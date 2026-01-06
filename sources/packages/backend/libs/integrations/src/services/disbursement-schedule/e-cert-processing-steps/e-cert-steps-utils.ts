@@ -5,6 +5,7 @@ import {
   RestrictionActionType,
 } from "@sims/sims-db";
 import {
+  ActiveRestriction,
   ApplicationActiveRestrictionBypass,
   EligibleECertDisbursement,
   StudentActiveRestriction,
@@ -24,7 +25,7 @@ import { isRestrictionActionEffective } from "./e-cert-steps-restriction-utils";
 export function getRestrictionsByActionType(
   eCertDisbursement: EligibleECertDisbursement,
   actionType: RestrictionActionType,
-): StudentActiveRestriction[] {
+): ActiveRestriction[] {
   return eCertDisbursement
     .getEffectiveRestrictions()
     .filter(

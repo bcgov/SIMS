@@ -7,10 +7,6 @@ import {
   ECertFailedValidation,
   EligibleECertDisbursement,
 } from "../disbursement-schedule.models";
-import {
-  getRestrictionsByActionType,
-  logActiveRestrictionsBypasses,
-} from "./e-cert-steps-utils";
 import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
 import { ECertGenerationService } from "../e-cert-generation.service";
 import { StudentLoanBalanceSharedService } from "@sims/services";
@@ -74,27 +70,13 @@ export class ValidateDisbursementPartTimeStep
     log.info("Executing part-time disbursement validations.");
     const validationResults = super.validate(eCertDisbursement, log);
     // Validate stop part-time disbursement restrictions.
-    const stopPartTimeDisbursementRestrictions = getRestrictionsByActionType(
+    super.validateStopDisbursementRestriction(
       eCertDisbursement,
       RestrictionActionType.StopPartTimeDisbursement,
-    );
-    if (stopPartTimeDisbursementRestrictions.length) {
-      log.info(
-        `Student has an active '${RestrictionActionType.StopPartTimeDisbursement}' restriction and the disbursement calculation will not proceed.`,
-      );
-      validationResults.push({
-        resultType: ECertFailedValidation.HasStopDisbursementRestriction,
-        additionalInfo: {
-          restrictionCodes: stopPartTimeDisbursementRestrictions.map(
-            (restriction) => restriction.code,
-          ),
-        },
-      });
-    }
-    logActiveRestrictionsBypasses(
-      eCertDisbursement.activeRestrictionBypasses,
+      validationResults,
       log,
     );
+
     // Validate CSLP.
     const validateLifetimeMaximumCSLP = await this.validateCSLPLifetimeMaximum(
       eCertDisbursement,
@@ -119,7 +101,7 @@ export class ValidateDisbursementPartTimeStep
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
     log: ProcessSummary,
-  ) {
+  ): Promise<boolean> {
     log.info("Validate CSLP Lifetime Maximum.");
     // Get the disbursed value for the CSLP in the current disbursement.
     const disbursementCSLP =
