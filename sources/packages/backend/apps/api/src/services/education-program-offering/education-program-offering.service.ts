@@ -40,10 +40,10 @@ import {
 } from "./education-program-offering.service.models";
 import {
   sortOfferingsColumnMap,
-  PaginationOptions,
   PaginatedResults,
   OFFERING_STUDY_BREAK_MAX_DAYS,
   OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD,
+  OfferingPaginationOptions,
 } from "../../utilities";
 import {
   CustomNamedError,
@@ -344,18 +344,18 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
-   * This is to fetch all the Education Offering
-   * that are associated with the Location and Program
-   * @param locationId location id
-   * @param programId program id
-   * @param offeringTypes offering type
-   * @param paginationOptions pagination options
-   * @returns offering summary and total offering count
+   * Fetches all the Education Offering
+   * that are associated with the Location and Program.
+   * @param locationId the offering location id to be fetched.
+   * @param programId the program id to be fetched.
+   * @param paginationOptions the pagination and filter options.
+   * @param offeringTypes the offering types to be filtered.
+   * @returns offering summary and total offering count.
    */
   async getAllEducationProgramOffering(
     locationId: number,
     programId: number,
-    paginationOptions: PaginationOptions,
+    paginationOptions: OfferingPaginationOptions,
     offeringTypes?: OfferingTypes[],
   ): Promise<PaginatedResults<EducationProgramOffering>> {
     const DEFAULT_SORT_FIELD = "name";
@@ -386,6 +386,26 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       offeringsQuery.andWhere("offerings.name Ilike :searchCriteria", {
         searchCriteria: `%${paginationOptions.searchCriteria}%`,
       });
+    }
+    if (paginationOptions.intensityFilter) {
+      offeringsQuery.andWhere(
+        "offerings.offeringIntensity = :intensityFilter",
+        {
+          intensityFilter: paginationOptions.intensityFilter,
+        },
+      );
+    }
+    if (
+      paginationOptions.studyStartDateFromFilter &&
+      paginationOptions.studyStartDateToFilter
+    ) {
+      offeringsQuery.andWhere(
+        "offerings.studyStartDate BETWEEN :startDate AND :endDate",
+        {
+          startDate: paginationOptions.studyStartDateFromFilter,
+          endDate: paginationOptions.studyStartDateToFilter,
+        },
+      );
     }
     // sorting
     if (paginationOptions.sortField && paginationOptions.sortOrder) {

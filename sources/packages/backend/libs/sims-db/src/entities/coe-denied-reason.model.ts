@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
+import { OfferingIntensity } from "@sims/sims-db/entities/offering-intensity.type";
 
 @Entity({ name: TableNames.COEDeniedReason })
 export class COEDeniedReason extends RecordDataModel {
@@ -28,4 +29,16 @@ export class COEDeniedReason extends RecordDataModel {
     nullable: false,
   })
   isActive: boolean;
+  /**
+   * Define if the message is specific to full-time or part-time.
+   * If null, the message is applicable for both intensities.
+   */
+  @Column({
+    name: "offering_intensity",
+    type: "enum",
+    enum: OfferingIntensity,
+    enumName: "OfferingIntensity",
+    nullable: true,
+  })
+  offeringIntensity?: OfferingIntensity;
 }

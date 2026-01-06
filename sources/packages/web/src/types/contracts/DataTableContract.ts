@@ -535,27 +535,15 @@ export const StudentAppealsHistoryHeaders = [
 ];
 
 /**
- * Overawards header.
+ * Overawards Adjustments header.
  */
-export const OverawardsHeaders = [
-  { title: "Date Added", sortable: false, key: "dateAdded" },
-  { title: "Application #", sortable: false, key: "applicationNumber" },
-  { title: "Origin", sortable: false, key: "overawardOrigin" },
-  { title: "Type", sortable: false, key: "assessmentTriggerType" },
-  { title: "Award", sortable: false, key: "awardValueCode" },
-  { title: "Overaward Amount", sortable: false, key: "overawardValue" },
-];
-
-/**
- * Overawards Deductions header.
- */
-export const OverawardDeductionsHeaders = [
+export const OverawardAdjustmentsHeaders = [
   { title: "Date Added", sortable: false, key: "dateAdded" },
   { title: "Application #", sortable: false, key: "applicationNumber" },
   { title: "Origin", sortable: false, key: "overawardOrigin" },
   { title: "Added By", sortable: false, key: "addedByUser" },
   { title: "Award", sortable: false, key: "awardValueCode" },
-  { title: "Amount Deducted", sortable: false, key: "overawardValue" },
+  { title: "Amount", sortable: false, key: "overawardValue" },
 ];
 
 /**
@@ -681,11 +669,12 @@ export const PendingDesignationsHeaders = [
  */
 export const OfferingSummaryHeaders = [
   { title: "Name", sortable: true, key: "name" },
-  { title: "Year of Study", sortable: false, key: "yearOfStudy" },
-  { title: "Study Dates", sortable: false, key: "studyDates" },
+  { title: "Year of study", sortable: false, key: "yearOfStudy" },
+  { title: "Study start date", sortable: true, key: "studyStartDate" },
+  { title: "Study end date", sortable: true, key: "studyEndDate" },
   { title: "Intensity", sortable: false, key: "offeringIntensity" },
   { title: "Offering type", sortable: false, key: "offeringType" },
-  { title: "Study delivery", sortable: false, key: "offeringDelivered" },
+  { title: "Study delivery", sortable: true, key: "offeringDelivered" },
   { title: "Status", sortable: false, key: "offeringStatus" },
   { title: "Action", sortable: false, key: "action" },
 ];

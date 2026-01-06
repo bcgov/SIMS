@@ -233,4 +233,8 @@ export enum NotificationMessageType {
    * Scholastic Standing Reversal Notification.
    */
   ScholasticStandingReversalNotification = 34,
+  /**
+   * Student COE required near study end date.
+   */
+  StudentCOERequiredNearEndDateNotification = 35,
 }

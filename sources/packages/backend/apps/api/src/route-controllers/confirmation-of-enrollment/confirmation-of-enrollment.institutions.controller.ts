@@ -21,7 +21,7 @@ import {
   COEDeniedReasonService,
   DisbursementScheduleService,
 } from "../../services";
-import { DisbursementSchedule } from "@sims/sims-db";
+import { DisbursementSchedule, OfferingIntensity } from "@sims/sims-db";
 import { getUserFullName } from "../../utilities/auth-utils";
 import {
   getCOEDeniedReason,
@@ -327,16 +327,20 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
   }
 
   /**
-   * Get all COE denied reasons, which are active.
-   * @returns COE denied reason list.
+   * List of possible COE denied reasons.
+   * @param offeringIntensity Offering intensity to filter the denied reasons.
+   * @returns List of COE denied reasons, active, generic, intensity specific ones.
    */
   @Get("confirmation-of-enrollment/denial-reasons")
-  async getCOEDeniedReason(): Promise<COEDeniedReasonAPIOutDTO[]> {
-    const coeDeniedReason =
-      await this.deniedCOEReasonService.getCOEDeniedReasons();
-    return coeDeniedReason.map((eachCOEDeniedReason) => ({
-      value: eachCOEDeniedReason.id,
-      label: eachCOEDeniedReason.reason,
+  async getCOEDeniedReason(
+    @Query("offeringIntensity", new ParseEnumPipe(OfferingIntensity))
+    offeringIntensity: OfferingIntensity,
+  ): Promise<COEDeniedReasonAPIOutDTO[]> {
+    const deniedReasons =
+      await this.deniedCOEReasonService.getCOEDeniedReasons(offeringIntensity);
+    return deniedReasons.map((deniedReason) => ({
+      value: deniedReason.id,
+      label: deniedReason.reason,
     }));
   }
 }

@@ -1,6 +1,8 @@
 import { EducationProgramService } from "../services/EducationProgramService";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { useFormioUtils } from ".";
+import { FormIOForm } from "@/types";
+import { RestrictionService } from "@/services/RestrictionService";
 
 /**
  * Common methods to load components data on Form.IO that could
@@ -85,9 +87,33 @@ export function useFormioComponentLoader() {
     formioUtils.setComponentValue(form, fieldId, valueToBeLoaded);
   };
 
+  /**
+   * Load institution restrictions for the given location and program
+   * to the provided form.io component.
+   * @param form Form to update the component.
+   * @param locationId Location.
+   * @param programId Program.
+   * @param formIOComponentKey Form.io component key.
+   */
+  const loadSelectedLocationProgramRestrictions = async (
+    form: FormIOForm,
+    locationId: number,
+    programId: number,
+    formIOComponentKey: string,
+  ): Promise<void> => {
+    const institutionRestrictions =
+      await RestrictionService.shared.getLocationProgramInstitutionRestrictions(
+        locationId,
+        programId,
+      );
+    const componentValue = institutionRestrictions.institutionRestrictions;
+    formioUtils.setComponentValue(form, formIOComponentKey, componentValue);
+  };
+
   return {
     loadProgramDesc,
     loadSelectedOfferingDetails,
     loadSelectedOfferingDetailsByLocationAndProgram,
+    loadSelectedLocationProgramRestrictions,
   };
 }

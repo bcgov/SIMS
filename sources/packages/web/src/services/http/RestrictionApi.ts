@@ -3,6 +3,7 @@ import {
   AssignInstitutionRestrictionAPIInDTO,
   AssignRestrictionAPIInDTO,
   DeleteRestrictionAPIInDTO,
+  InstitutionRestrictionsAPIOutDTO,
   InstitutionRestrictionSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
   ResolveRestrictionAPIInDTO,
@@ -160,6 +161,23 @@ export class RestrictionApi extends HttpBaseClient {
   async getStudentRestriction(): Promise<StudentRestrictionAPIOutDTO[]> {
     return this.getCall<StudentRestrictionAPIOutDTO[]>(
       this.addClientRoot("restriction"),
+    );
+  }
+
+  /**
+   * Get institution restrictions effective for the given program and institution location.
+   * @param locationId Institution location.
+   * @param programId Institution program.
+   * @returns Institution restrictions.
+   */
+  async getLocationProgramInstitutionRestrictions(
+    locationId: number,
+    programId: number,
+  ): Promise<InstitutionRestrictionsAPIOutDTO> {
+    return this.getCall(
+      this.addClientRoot(
+        `restriction/institution/location/${locationId}/program/${programId}`,
+      ),
     );
   }
 }

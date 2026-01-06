@@ -29,6 +29,7 @@ import {
   UserService,
   AnnouncementService,
   ApplicationRestrictionBypassService,
+  InstitutionRestrictionService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -158,6 +159,7 @@ import { ObjectStorageModule } from "@sims/integrations/object-storage";
     UserService,
     SupportingUserControllerService,
     DisbursementScheduleSharedService,
+    InstitutionRestrictionService,
   ],
 })
 export class AppStudentsModule {}

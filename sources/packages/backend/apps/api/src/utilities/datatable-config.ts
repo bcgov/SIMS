@@ -44,8 +44,7 @@ export interface CASInvoicePaginationOptions extends BasePaginationOptions {
 /**
  * CAS invoice batches specific parameters.
  */
-export interface CASInvoiceBatchesPaginationOptions
-  extends BasePaginationOptions {
+export interface CASInvoiceBatchesPaginationOptions extends BasePaginationOptions {
   approvalStatusSearch?: CASInvoiceBatchApprovalStatus[];
 }
 
@@ -74,4 +73,22 @@ export interface COEPaginationOptions extends PaginationOptions {
 
 export interface StudentAppealPaginationOptions extends PaginationOptions {
   appealType: AppealType;
+}
+
+/**
+ *  Offering Pagination options.
+ */
+export interface OfferingPaginationOptions extends PaginationOptions {
+  /**
+   * Offering intensity to filter the offerings.
+   */
+  intensityFilter?: OfferingIntensity;
+  /**
+   * Study start date from filter.
+   */
+  studyStartDateFromFilter?: string;
+  /**
+   * Study start date to filter.
+   */
+  studyStartDateToFilter?: string;
 }

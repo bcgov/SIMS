@@ -1,15 +1,15 @@
 <template>
-  <body-header-container :enableCardView="true">
+  <body-header-container :enable-card-view="true">
     <template #header>
       <body-header
         title="Overaward balances"
-        subTitle="A balance of overawards broken down by award type"
+        sub-title="A balance of overawards broken down by award type"
       />
     </template>
     <v-row>
       <v-col>
         <title-value
-          :propertyValue="
+          :property-value="
             formatCurrency(overawardBalance.overawardBalanceValues?.CSLF)
           "
         >
@@ -23,7 +23,7 @@
       </v-col>
       <v-col>
         <title-value
-          :propertyValue="
+          :property-value="
             formatCurrency(overawardBalance.overawardBalanceValues?.CSLP)
           "
         >
@@ -37,7 +37,7 @@
       </v-col>
       <v-col>
         <title-value
-          :propertyValue="
+          :property-value="
             formatCurrency(overawardBalance.overawardBalanceValues?.BCSL)
           "
         >
@@ -53,10 +53,10 @@
   </body-header-container>
 
   <overaward-details
-    :studentId="studentId"
-    :showAddedBy="showAddedBy"
-    :allowManualOverawardDeduction="allowManualOverawardDeduction"
-    @manualOverawardAdded="loadOverawardBalance"
+    :student-id="studentId"
+    :show-added-by="showAddedBy"
+    :allow-manual-overaward="allowManualOveraward"
+    @manual-overaward-added="loadOverawardBalance"
   />
 </template>
 
@@ -78,13 +78,14 @@ export default defineComponent({
     studentId: {
       type: Number,
       required: false,
+      default: undefined,
     },
     showAddedBy: {
       type: Boolean,
       required: false,
       default: false,
     },
-    allowManualOverawardDeduction: {
+    allowManualOveraward: {
       type: Boolean,
       required: false,
       default: false,
