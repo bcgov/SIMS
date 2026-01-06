@@ -21,12 +21,15 @@ import {
   StudentAssessmentStatus,
   StudyBreaksAndWeeks,
   isDatabaseConstraintError,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import {
+  Brackets,
   DataSource,
   EntityManager,
   In,
   Repository,
+  SelectQueryBuilder,
   UpdateResult,
 } from "typeorm";
 import {
@@ -41,6 +44,7 @@ import {
   OFFERING_STUDY_BREAK_MAX_DAYS,
   OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD,
   OfferingPaginationOptions,
+  PaginationOptions,
 } from "../../utilities";
 import {
   CustomNamedError,
@@ -1446,6 +1450,105 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         .andWhere("student.id = :studentId", { studentId });
     }
     return offeringRequest.getOne();
+  }
+
+  /**
+   * Gets a list of Program Offerings with the specified status where the Program is active/not expired.
+   * Pagination, sort and search are available on results.
+   * @param status the status to filter on.
+   * @param paginationOptions pagination options.
+   * @returns pending offerings.
+   */
+  async getOfferingsByStatus(
+    status: OfferingStatus,
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<EducationProgramOffering>> {
+    const offeringsQuery = this.repo
+      .createQueryBuilder("offerings")
+      .select([
+        "offerings.id",
+        "offerings.name",
+        "offerings.studyStartDate",
+        "offerings.studyEndDate",
+        "offerings.offeringDelivered",
+        "offerings.offeringIntensity",
+        "offerings.offeringType",
+        "offerings.offeringStatus",
+        "offerings.submittedDate",
+        "educationProgram.id",
+        "educationProgram.name",
+        "institutionLocation.id",
+        "institutionLocation.name",
+        "institution.id",
+      ])
+      .innerJoin("offerings.educationProgram", "educationProgram")
+      .innerJoin("offerings.institutionLocation", "institutionLocation")
+      .innerJoin("institutionLocation.institution", "institution")
+      .where("offerings.offeringStatus = :status", { status })
+      .andWhere("educationProgram.isActive = true")
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where("educationProgram.effectiveEndDate is null").orWhere(
+            "educationProgram.effectiveEndDate > CURRENT_DATE",
+          );
+        }),
+      );
+    // Search by offering name.
+    if (paginationOptions.searchCriteria) {
+      offeringsQuery.andWhere("offerings.name Ilike :searchCriteria", {
+        searchCriteria: `%${paginationOptions.searchCriteria}%`,
+      });
+    }
+    this.addOfferingsSort(offeringsQuery, paginationOptions);
+
+    offeringsQuery
+      .offset(paginationOptions.page * paginationOptions.pageLimit)
+      .limit(paginationOptions.pageLimit);
+
+    const [results, count] = await offeringsQuery.getManyAndCount();
+
+    return { results, count };
+  }
+
+  /**
+   * Applies a sort to the offerings query including custom logic for specific fields.
+   * @param query the query builder.
+   * @param paginationOptions pagination options.
+   */
+  private addOfferingsSort(
+    query: SelectQueryBuilder<EducationProgramOffering>,
+    paginationOptions: PaginationOptions,
+  ): void {
+    const sortOrder = paginationOptions.sortOrder ?? FieldSortOrder.ASC;
+    switch (paginationOptions.sortField) {
+      case "submittedDate":
+        query.orderBy("offerings.submittedDate", sortOrder);
+        break;
+      case "offeringIntensity":
+        query.orderBy(
+          `CASE offerings.offering_intensity
+             WHEN '${OfferingIntensity.fullTime}' THEN 1
+             WHEN '${OfferingIntensity.partTime}' THEN 2
+             ELSE 3
+           END`,
+          sortOrder,
+        );
+        break;
+      case "offeringType":
+        query.orderBy(
+          `CASE offerings.offering_type
+             WHEN '${OfferingTypes.Private}' THEN 1
+             WHEN '${OfferingTypes.Public}' THEN 2
+             WHEN '${OfferingTypes.ScholasticStanding}' THEN 3
+             ELSE 4
+           END`,
+          sortOrder,
+        );
+        break;
+      default:
+        query.orderBy("offerings.submittedDate", sortOrder);
+        break;
+    }
   }
 
   /**

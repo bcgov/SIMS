@@ -41,7 +41,7 @@ export function createFakeEducationProgramOffering(
   const institution =
     relations?.institutionLocation?.institution ?? relations.institution;
   const offering = new EducationProgramOffering();
-  offering.name = faker.lorem.word();
+  offering.name = options?.initialValues?.name ?? faker.lorem.word();
   offering.actualTuitionCosts = faker.number.int(1000);
   offering.programRelatedCosts = faker.number.int(1000);
   offering.mandatoryFees = faker.number.int(1000);
@@ -91,6 +91,7 @@ export function createFakeEducationProgramOffering(
     options?.initialValues?.offeringStatus ?? OfferingStatus.Approved;
   offering.parentOffering = options?.initialValues?.parentOffering ?? offering;
   offering.precedingOffering = options?.initialValues?.precedingOffering;
+  offering.submittedDate = options?.initialValues?.submittedDate ?? undefined;
   return offering;
 }
 

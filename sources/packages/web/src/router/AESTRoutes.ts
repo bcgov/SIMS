@@ -65,6 +65,7 @@ import AssessmentAward from "@/views/aest/student/applicationDetails/AssessmentA
 import ApplicationRestrictionsManagement from "@/views/aest/student/applicationDetails/ApplicationRestrictionsManagement.vue";
 import ApplicationStatusTracker from "@/views/aest/student/applicationDetails/ApplicationStatusTracker.vue";
 import { AESTRoutesApplicationVersionsDetails } from "@/router/AESTRoutesApplicationVersionsDetails";
+import ViewPendingOfferings from "@/views/aest/institution/ViewPendingOfferings.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -654,6 +655,17 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         name: AESTRoutesConst.REQUEST_CHANGE_OFFERINGS,
         components: {
           default: ViewPendingOfferingChangeRequests,
+          sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.PendingOfferings,
+        name: AESTRoutesConst.PENDING_OFFERINGS,
+        components: {
+          default: ViewPendingOfferings,
           sidebar: AESTHomeSideBar,
         },
         meta: {
