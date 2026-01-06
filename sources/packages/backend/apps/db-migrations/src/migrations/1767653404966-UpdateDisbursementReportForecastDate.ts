@@ -7,7 +7,7 @@ import { getSQLFileData } from "../utilities/sqlLoader";
 export class UpdateDisbursementReportForecastDate1767653404966 implements MigrationInterface {
   /**
    * Update the disbursement reports to include the "Forecast Date" column.
-   * @param queryRunner  the query runner.
+   * @param queryRunner the query runner.
    */
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -20,7 +20,7 @@ export class UpdateDisbursementReportForecastDate1767653404966 implements Migrat
 
   /**
    * Rollback the disbursement reports update that included the "Forecast Date" column.
-   * @param queryRunner  the query runner.
+   * @param queryRunner the query runner.
    */
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
