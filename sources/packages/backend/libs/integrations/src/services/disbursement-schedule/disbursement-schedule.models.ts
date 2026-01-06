@@ -165,7 +165,13 @@ export interface DisabilityDetails {
 /**
  * Represents an active restriction which can be student or institution restriction.
  */
-export interface ActiveRestriction {
+export abstract class ActiveRestriction {
+  constructor(
+    /**
+     * The party (student or institution) who is restricted.
+     */
+    readonly restrictedParty: RestrictedParty,
+  ) {}
   /**
    * Restriction id.
    */
@@ -182,31 +188,29 @@ export interface ActiveRestriction {
    * Action effective conditions associated with the restriction.
    */
   actionEffectiveConditions?: ActionEffectiveCondition[];
-  /**
-   * The party (student or institution) who is restricted.
-   */
-  restrictedParty?: RestrictedParty;
 }
 
 /**
  * Represents an active student restriction.
  */
-export interface StudentActiveRestriction extends ActiveRestriction {
+export class StudentActiveRestriction extends ActiveRestriction {
+  constructor() {
+    super(RestrictedParty.Student);
+  }
   /**
    * Association between the student and
    * the active restriction on his account.
    */
   studentRestrictionId: number;
-  /**
-   * Restriction is applied to a student.
-   */
-  restrictedParty: RestrictedParty.Student;
 }
 
 /**
  * Represents an active institution restriction.
  */
-export interface InstitutionActiveRestriction extends ActiveRestriction {
+export class InstitutionActiveRestriction extends ActiveRestriction {
+  constructor() {
+    super(RestrictedParty.Institution);
+  }
   /**
    * Association between the institution and
    * the active restriction on institution account.
@@ -220,10 +224,6 @@ export interface InstitutionActiveRestriction extends ActiveRestriction {
    * Specific location the restriction applies to.
    */
   location: InstitutionLocation;
-  /**
-   * Restriction is applied to a student.
-   */
-  restrictedParty: RestrictedParty.Institution;
 }
 
 /**
@@ -417,15 +417,17 @@ export function mapStudentActiveRestrictions(
   studentRestrictions: StudentRestriction[],
 ): StudentActiveRestriction[] {
   return studentRestrictions.map<StudentActiveRestriction>(
-    (studentRestriction) => ({
-      studentRestrictionId: studentRestriction.id,
-      id: studentRestriction.restriction.id,
-      code: studentRestriction.restriction.restrictionCode as RestrictionCode,
-      actions: studentRestriction.restriction.actionType,
-      actionEffectiveConditions:
-        studentRestriction.restriction.actionEffectiveConditions,
-      restrictedParty: RestrictedParty.Student,
-    }),
+    (studentRestriction) => {
+      const activeRestriction = new StudentActiveRestriction();
+      activeRestriction.studentRestrictionId = studentRestriction.id;
+      activeRestriction.id = studentRestriction.restriction.id;
+      activeRestriction.code = studentRestriction.restriction
+        .restrictionCode as RestrictionCode;
+      activeRestriction.actions = studentRestriction.restriction.actionType;
+      activeRestriction.actionEffectiveConditions =
+        studentRestriction.restriction.actionEffectiveConditions;
+      return activeRestriction;
+    },
   );
 }
 
@@ -439,18 +441,19 @@ export function mapInstitutionActiveRestrictions(
   institutionRestrictions: InstitutionRestriction[],
 ): InstitutionActiveRestriction[] {
   return institutionRestrictions.map<InstitutionActiveRestriction>(
-    (institutionRestriction) => ({
-      institutionRestrictionId: institutionRestriction.id,
-      id: institutionRestriction.restriction.id,
-      code: institutionRestriction.restriction
-        .restrictionCode as RestrictionCode,
-      actions: institutionRestriction.restriction.actionType,
-      program: institutionRestriction.program,
-      location: institutionRestriction.location,
-      actionEffectiveConditions:
-        institutionRestriction.restriction.actionEffectiveConditions,
-      restrictedParty: RestrictedParty.Institution,
-    }),
+    (institutionRestriction) => {
+      const activeRestriction = new InstitutionActiveRestriction();
+      activeRestriction.institutionRestrictionId = institutionRestriction.id;
+      activeRestriction.id = institutionRestriction.restriction.id;
+      activeRestriction.code = institutionRestriction.restriction
+        .restrictionCode as RestrictionCode;
+      activeRestriction.actions = institutionRestriction.restriction.actionType;
+      activeRestriction.program = institutionRestriction.program;
+      activeRestriction.location = institutionRestriction.location;
+      activeRestriction.actionEffectiveConditions =
+        institutionRestriction.restriction.actionEffectiveConditions;
+      return activeRestriction;
+    },
   );
 }
 
@@ -508,14 +511,17 @@ export enum ECertFailedValidation {
 }
 
 interface StopDisbursementRestrictionValidationResult {
-  resultType: ECertFailedValidation.HasStopDisbursementRestriction;
+  resultType:
+    | ECertFailedValidation.HasStopDisbursementRestriction
+    | ECertFailedValidation.HasStopDisbursementInstitutionRestriction;
   additionalInfo: { restrictionCodes: RestrictionCode[] };
 }
 
 interface OtherECertFailedValidationResult {
   resultType: Exclude<
     ECertFailedValidation,
-    ECertFailedValidation.HasStopDisbursementRestriction
+    | ECertFailedValidation.HasStopDisbursementRestriction
+    | ECertFailedValidation.HasStopDisbursementInstitutionRestriction
   >;
 }
 

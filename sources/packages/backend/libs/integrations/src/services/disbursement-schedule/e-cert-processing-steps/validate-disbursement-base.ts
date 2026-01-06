@@ -122,12 +122,17 @@ export abstract class ValidateDisbursementBase {
         log.info(
           `Student has an active '${restrictionActionType}' restriction and the disbursement calculation will not proceed.`,
         );
+        // Gather restriction codes for additional info.
+        const restrictionCodes = stopDisbursementRestrictions
+          .filter(
+            (restriction) =>
+              restriction.restrictedParty === RestrictedParty.Student,
+          )
+          .map((restriction) => restriction.code);
         validationResults.push({
           resultType: ECertFailedValidation.HasStopDisbursementRestriction,
           additionalInfo: {
-            restrictionCodes: stopDisbursementRestrictions.map(
-              (restriction) => restriction.code,
-            ),
+            restrictionCodes,
           },
         });
       }
@@ -138,9 +143,19 @@ export abstract class ValidateDisbursementBase {
           `Institution has an effective '${restrictionActionType}' restriction` +
             ` for program ${program.id} and location ${location.id} and the disbursement calculation will not proceed.`,
         );
+        // Gather restriction codes for additional info.
+        const restrictionCodes = stopDisbursementRestrictions
+          .filter(
+            (restriction) =>
+              restriction.restrictedParty === RestrictedParty.Institution,
+          )
+          .map((restriction) => restriction.code);
         validationResults.push({
           resultType:
             ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
+          additionalInfo: {
+            restrictionCodes,
+          },
         });
       }
     }
