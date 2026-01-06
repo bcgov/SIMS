@@ -1938,7 +1938,9 @@ If distance education/blended learning program or if married and claiming separa
       <bpmn:incoming>Flow_1n0fvde</bpmn:incoming>
       <bpmn:outgoing>Flow_1h5070o</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="Flow_1jupz9a" name="Yes" sourceRef="Gateway_1rcjnlh" targetRef="Event_0xrdftx" />
+    <bpmn:sequenceFlow id="Flow_1jupz9a" name="Yes" sourceRef="Gateway_1rcjnlh" targetRef="Event_0xrdftx">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=appealsStepParentWaiverAppealData != null</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1m2uh8r" sourceRef="Event_0uhvwrj" targetRef="Event_0a904fx" />
     <bpmn:sequenceFlow id="Flow_0ppgeb9" sourceRef="Event_0a904fx" targetRef="Event_1dwurzq" />
     <bpmn:sequenceFlow id="Flow_1n0fvde" sourceRef="Event_1dwurzq" targetRef="Event_1y2o7o9" />
@@ -2292,7 +2294,7 @@ Map the correct 1 or 2 values for each of the values used to calculate income, d
           <zeebe:output source="=if calculatedDataWaivedParent = 1&#10;  then &#10;  // Parent 1 is waived = use parent 2&#10;  parent2DependentTable&#10;  else &#10;    // Parent 2 is waived = use parent 1&#10;  parent1DependentTable" target="appealDataParentDependentTable" />
           <zeebe:output source="=if calculatedDataWaivedParent = 1&#10;  then &#10;  // Parent 1 is waived = use parent 2&#10;  parent2NetAssests&#10;  else &#10;    // Parent 2 is waived = use parent 1&#10;  parent1NetAssests" target="appealDataParentNetAssets" />
           <zeebe:output source="=if calculatedDataWaivedParent = 1&#10;  then &#10;  // Parent 1 is waived = use parent 2&#10;  parent2Contributions&#10;  else &#10;    // Parent 2 is waived = use parent 1&#10;  parent1Contributions" target="appealDataParentContributions" />
-          <zeebe:output source="=if calculatedDataWaivedParent = 1&#10;  then &#10;  // Parent 1 is waived = use parent 2&#10;  calculatedDataParent2NetIncome&#10;  else &#10;    // Parent 2 is waived = use parent 1&#10;  calculatedDataParent1TotalIncome" target="appealDataParentIncome" />
+          <zeebe:output source="=if calculatedDataWaivedParent = 1&#10;  then &#10;  // Parent 1 is waived = use parent 2&#10;  calculatedDataParent2TotalIncome&#10;  else &#10;    // Parent 2 is waived = use parent 1&#10;  calculatedDataParent1TotalIncome" target="appealDataParentIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jupz9a</bpmn:incoming>
