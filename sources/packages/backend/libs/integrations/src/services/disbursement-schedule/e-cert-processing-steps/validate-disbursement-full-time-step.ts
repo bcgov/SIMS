@@ -64,7 +64,7 @@ export class ValidateDisbursementFullTimeStep
     log.info("Executing full-time disbursement validations.");
     const validationResults = super.validate(eCertDisbursement, log);
     // Validate stop full-time disbursement restrictions.
-    this.validateStopDisbursementRestriction(
+    super.validateStopDisbursementRestriction(
       eCertDisbursement,
       RestrictionActionType.StopFullTimeDisbursement,
       validationResults,

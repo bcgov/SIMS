@@ -12,7 +12,7 @@ import {
 import {
   getRestrictionsByActionType,
   logActiveRestrictionsBypasses,
-} from "@sims/integrations/services/disbursement-schedule/e-cert-processing-steps/e-cert-steps-utils";
+} from "./e-cert-steps-utils";
 import { RestrictedParty } from "@sims/services";
 
 /**
@@ -85,7 +85,7 @@ export abstract class ValidateDisbursementBase {
   }
 
   /**
-   * Validate stop disbursement restrictions on student and institution.
+   * Validate effective stop disbursement restrictions on student and institution.
    * @param eCertDisbursement eligible disbursement.
    * @param restrictionActionType restriction action type to be validated.
    * @param validationResults list of failed validations to be updated.
@@ -99,7 +99,7 @@ export abstract class ValidateDisbursementBase {
     validationResults: ECertFailedValidationResult[],
     log: ProcessSummary,
   ): void {
-    // Validate stop part-time disbursement restrictions.
+    // Validate stop disbursement restrictions.
     const stopDisbursementRestrictions = getRestrictionsByActionType(
       eCertDisbursement,
       restrictionActionType,

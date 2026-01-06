@@ -70,7 +70,7 @@ export class ValidateDisbursementPartTimeStep
     log.info("Executing part-time disbursement validations.");
     const validationResults = super.validate(eCertDisbursement, log);
     // Validate stop part-time disbursement restrictions.
-    this.validateStopDisbursementRestriction(
+    super.validateStopDisbursementRestriction(
       eCertDisbursement,
       RestrictionActionType.StopPartTimeDisbursement,
       validationResults,
