@@ -36,269 +36,290 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
     savedUser = await db.user.save(createFakeUser());
   });
 
-  it("Should return two pending offerings for an active Program with the default sort (submittedDate ASC) applied.", async () => {
-    // Arrange
+  it(
+    "Should return two pending offerings for an active Program with search criteria (Biology)" +
+      "and the default sort (submittedDate ASC) applied.",
+    async () => {
+      // Arrange
 
-    // Custom dates are used to avoid collisions with other test data.
-    const oldOffering = createFakeEducationProgramOffering(
-      {
-        auditUser: savedUser,
-      },
-      {
-        initialValues: {
-          offeringStatus: OfferingStatus.CreationPending,
-          submittedDate: PAST_SUBMITTED_DATE,
+      // Custom dates are used to avoid collisions with other test data.
+      const oldOffering = createFakeEducationProgramOffering(
+        {
+          auditUser: savedUser,
         },
-      },
-    );
-
-    const olderOffering = createFakeEducationProgramOffering(
-      {
-        auditUser: savedUser,
-      },
-      {
-        initialValues: {
-          offeringStatus: OfferingStatus.CreationPending,
-          submittedDate: addDays(-1, PAST_SUBMITTED_DATE),
+        {
+          initialValues: {
+            name: "Biology 101",
+            offeringStatus: OfferingStatus.CreationPending,
+            submittedDate: PAST_SUBMITTED_DATE,
+          },
         },
-      },
-    );
+      );
 
-    const oldestOffering = createFakeEducationProgramOffering(
-      {
-        auditUser: savedUser,
-      },
-      {
-        initialValues: {
-          offeringStatus: OfferingStatus.CreationPending,
-          submittedDate: addDays(-2, PAST_SUBMITTED_DATE),
+      const olderOffering = createFakeEducationProgramOffering(
+        {
+          auditUser: savedUser,
         },
-      },
-    );
-
-    // Create the newer offering before the older offering to ensure that our default
-    // sort works and that we're not just getting default DB ordering.
-    await db.educationProgramOffering.save([
-      oldOffering,
-      oldestOffering,
-      olderOffering,
-    ]);
-
-    // Ministry token.
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=2`;
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({
-        results: [
-          buildExpectedOffering(oldestOffering),
-          buildExpectedOffering(olderOffering),
-        ],
-        count: 3,
-      });
-  });
-
-  it("Should return two pending offerings for an active Program with a custom sort (submittedDate DESC) applied.", async () => {
-    // Arrange
-
-    // Custom dates are used to avoid collisions with other test data.
-    const newerOffering = createFakeEducationProgramOffering(
-      {
-        auditUser: savedUser,
-      },
-      {
-        initialValues: {
-          name: "Math 101",
-          offeringStatus: OfferingStatus.CreationPending,
-          submittedDate: PAST_SUBMITTED_DATE,
+        {
+          initialValues: {
+            name: "Biology 201",
+            offeringStatus: OfferingStatus.CreationPending,
+            submittedDate: addDays(-1, PAST_SUBMITTED_DATE),
+          },
         },
-      },
-    );
+      );
 
-    const olderOffering = createFakeEducationProgramOffering(
-      {
-        auditUser: savedUser,
-      },
-      {
-        initialValues: {
-          name: "Math 201",
-          offeringStatus: OfferingStatus.CreationPending,
-          submittedDate: addDays(-1, PAST_SUBMITTED_DATE),
+      const oldestOffering = createFakeEducationProgramOffering(
+        {
+          auditUser: savedUser,
         },
-      },
-    );
-
-    // Create the older offering before the newer offering to ensure that our default
-    // sort works and that we're not just getting default DB ordering.
-    await db.educationProgramOffering.save([olderOffering, newerOffering]);
-
-    // Ministry token.
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-
-    const sortField = "submittedDate";
-    const sortOrder = "DESC";
-    // Include a search criteria that matches both offerings to avoid test data collisions.
-    const searchCriteria = "Math";
-    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=2&sortField=${sortField}&sortOrder=${sortOrder}&searchCriteria=${searchCriteria}`;
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({
-        results: [
-          buildExpectedOffering(newerOffering),
-          buildExpectedOffering(olderOffering),
-        ],
-        count: 2,
-      });
-  });
-
-  it("Should return three pending offerings for an active Program with a custom sort (offeringType ASC) applied.", async () => {
-    // Arrange
-
-    // Custom dates are used to avoid collisions with other test data.
-    const publicOffering = createFakeEducationProgramOffering(
-      {
-        auditUser: savedUser,
-      },
-      {
-        initialValues: {
-          name: "Chemistry 101",
-          offeringStatus: OfferingStatus.CreationPending,
-          offeringType: OfferingTypes.Public,
-          submittedDate: PAST_SUBMITTED_DATE,
+        {
+          initialValues: {
+            name: "Biology 301",
+            offeringStatus: OfferingStatus.CreationPending,
+            submittedDate: addDays(-2, PAST_SUBMITTED_DATE),
+          },
         },
-      },
-    );
+      );
 
-    const privateOffering = createFakeEducationProgramOffering(
-      {
-        auditUser: savedUser,
-      },
-      {
-        initialValues: {
-          name: "Chemistry 201",
-          offeringStatus: OfferingStatus.CreationPending,
-          offeringType: OfferingTypes.Private,
-          submittedDate: PAST_SUBMITTED_DATE,
+      // Create the newer offering before the older offering to ensure that our default
+      // sort works and that we're not just getting default DB ordering.
+      await db.educationProgramOffering.save([
+        oldOffering,
+        oldestOffering,
+        olderOffering,
+      ]);
+
+      // Ministry token.
+      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+      // Include a search criteria that matches both offerings to avoid test data collisions.
+      const searchCriteria = "Biology";
+      const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=2&searchCriteria=${searchCriteria}`;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          results: [
+            buildExpectedOffering(oldestOffering),
+            buildExpectedOffering(olderOffering),
+          ],
+          count: 3,
+        });
+    },
+  );
+
+  it(
+    "Should return two pending offerings for an active Program with search criteria (Math) " +
+      "and a custom sort (submittedDate DESC) applied.",
+    async () => {
+      // Arrange
+
+      // Custom dates are used to avoid collisions with other test data.
+      const newerOffering = createFakeEducationProgramOffering(
+        {
+          auditUser: savedUser,
         },
-      },
-    );
-
-    const scholasticStandingOffering = createFakeEducationProgramOffering(
-      {
-        auditUser: savedUser,
-      },
-      {
-        initialValues: {
-          name: "Chemistry 301",
-          offeringStatus: OfferingStatus.CreationPending,
-          offeringType: OfferingTypes.ScholasticStanding,
-          submittedDate: PAST_SUBMITTED_DATE,
+        {
+          initialValues: {
+            name: "Math 101",
+            offeringStatus: OfferingStatus.CreationPending,
+            submittedDate: PAST_SUBMITTED_DATE,
+          },
         },
-      },
-    );
+      );
 
-    // Create the offerings in non alphabetical order for offeringType to ensure that our default
-    // sort works and that we're not just getting default DB ordering.
-    await db.educationProgramOffering.save([
-      publicOffering,
-      privateOffering,
-      scholasticStandingOffering,
-    ]);
-
-    // Ministry token.
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-
-    const sortField = "offeringType";
-    const sortOrder = "ASC";
-    // Include a search criteria that matches both offerings to avoid test data collisions.
-    const searchCriteria = "Chemistry";
-    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=3&sortField=${sortField}&sortOrder=${sortOrder}&searchCriteria=${searchCriteria}`;
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({
-        results: [
-          buildExpectedOffering(privateOffering),
-          buildExpectedOffering(publicOffering),
-          buildExpectedOffering(scholasticStandingOffering),
-        ],
-        count: 3,
-      });
-  });
-
-  it("Should return two pending offerings for an active Program with a custom sort (offeringIntensity ASC) applied.", async () => {
-    // Arrange
-
-    // Custom dates are used to avoid collisions with other test data.
-    const partTimeOffering = createFakeEducationProgramOffering(
-      {
-        auditUser: savedUser,
-      },
-      {
-        initialValues: {
-          name: "Physics 101",
-          offeringIntensity: OfferingIntensity.partTime,
-          offeringStatus: OfferingStatus.CreationPending,
-          submittedDate: PAST_SUBMITTED_DATE,
+      const olderOffering = createFakeEducationProgramOffering(
+        {
+          auditUser: savedUser,
         },
-      },
-    );
-
-    const fullTimeOffering = createFakeEducationProgramOffering(
-      {
-        auditUser: savedUser,
-      },
-      {
-        initialValues: {
-          name: "Physics 201",
-          offeringStatus: OfferingStatus.CreationPending,
-          offeringIntensity: OfferingIntensity.fullTime,
-          submittedDate: PAST_SUBMITTED_DATE,
+        {
+          initialValues: {
+            name: "Math 201",
+            offeringStatus: OfferingStatus.CreationPending,
+            submittedDate: addDays(-1, PAST_SUBMITTED_DATE),
+          },
         },
-      },
-    );
+      );
 
-    // Create the offerings in non alphabetical order for offeringIntensity to ensure that our default
-    // sort works and that we're not just getting default DB ordering.
-    await db.educationProgramOffering.save([
-      partTimeOffering,
-      fullTimeOffering,
-    ]);
+      // Create the older offering before the newer offering to ensure that our default
+      // sort works and that we're not just getting default DB ordering.
+      await db.educationProgramOffering.save([olderOffering, newerOffering]);
 
-    // Ministry token.
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+      // Ministry token.
+      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    const sortField = "offeringIntensity";
-    const sortOrder = "ASC";
-    // Include a search criteria that matches both offerings to avoid test data collisions.
-    const searchCriteria = "Physics";
-    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=2&sortField=${sortField}&sortOrder=${sortOrder}&searchCriteria=${searchCriteria}`;
+      const sortField = "submittedDate";
+      const sortOrder = "DESC";
+      // Include a search criteria that matches both offerings to avoid test data collisions.
+      const searchCriteria = "Math";
+      const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=2&sortField=${sortField}&sortOrder=${sortOrder}&searchCriteria=${searchCriteria}`;
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          results: [
+            buildExpectedOffering(newerOffering),
+            buildExpectedOffering(olderOffering),
+          ],
+          count: 2,
+        });
+    },
+  );
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({
-        results: [
-          buildExpectedOffering(fullTimeOffering),
-          buildExpectedOffering(partTimeOffering),
-        ],
-        count: 2,
-      });
-  });
+  it(
+    "Should return three pending offerings for an active Program with search criteria (Chemistry) " +
+      "and a custom sort (offeringType ASC) applied.",
+    async () => {
+      // Arrange
 
-  it("Should return a single pending offering based on offering name search", async () => {
+      // Custom dates are used to avoid collisions with other test data.
+      const publicOffering = createFakeEducationProgramOffering(
+        {
+          auditUser: savedUser,
+        },
+        {
+          initialValues: {
+            name: "Chemistry 101",
+            offeringStatus: OfferingStatus.CreationPending,
+            offeringType: OfferingTypes.Public,
+            submittedDate: PAST_SUBMITTED_DATE,
+          },
+        },
+      );
+
+      const privateOffering = createFakeEducationProgramOffering(
+        {
+          auditUser: savedUser,
+        },
+        {
+          initialValues: {
+            name: "Chemistry 201",
+            offeringStatus: OfferingStatus.CreationPending,
+            offeringType: OfferingTypes.Private,
+            submittedDate: PAST_SUBMITTED_DATE,
+          },
+        },
+      );
+
+      const scholasticStandingOffering = createFakeEducationProgramOffering(
+        {
+          auditUser: savedUser,
+        },
+        {
+          initialValues: {
+            name: "Chemistry 301",
+            offeringStatus: OfferingStatus.CreationPending,
+            offeringType: OfferingTypes.ScholasticStanding,
+            submittedDate: PAST_SUBMITTED_DATE,
+          },
+        },
+      );
+
+      // Create the offerings in non alphabetical order for offeringType to ensure that our default
+      // sort works and that we're not just getting default DB ordering.
+      await db.educationProgramOffering.save([
+        publicOffering,
+        privateOffering,
+        scholasticStandingOffering,
+      ]);
+
+      // Ministry token.
+      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+      const sortField = "offeringType";
+      const sortOrder = "ASC";
+      // Include a search criteria that matches both offerings to avoid test data collisions.
+      const searchCriteria = "Chemistry";
+      const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=3&sortField=${sortField}&sortOrder=${sortOrder}&searchCriteria=${searchCriteria}`;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          results: [
+            buildExpectedOffering(privateOffering),
+            buildExpectedOffering(publicOffering),
+            buildExpectedOffering(scholasticStandingOffering),
+          ],
+          count: 3,
+        });
+    },
+  );
+
+  it(
+    "Should return two pending offerings for an active Program with search criteria (Physics) " +
+      "and a  custom sort (offeringIntensity ASC) applied.",
+    async () => {
+      // Arrange
+
+      // Custom dates are used to avoid collisions with other test data.
+      const partTimeOffering = createFakeEducationProgramOffering(
+        {
+          auditUser: savedUser,
+        },
+        {
+          initialValues: {
+            name: "Physics 101",
+            offeringIntensity: OfferingIntensity.partTime,
+            offeringStatus: OfferingStatus.CreationPending,
+            submittedDate: PAST_SUBMITTED_DATE,
+          },
+        },
+      );
+
+      const fullTimeOffering = createFakeEducationProgramOffering(
+        {
+          auditUser: savedUser,
+        },
+        {
+          initialValues: {
+            name: "Physics 201",
+            offeringStatus: OfferingStatus.CreationPending,
+            offeringIntensity: OfferingIntensity.fullTime,
+            submittedDate: PAST_SUBMITTED_DATE,
+          },
+        },
+      );
+
+      // Create the offerings in non alphabetical order for offeringIntensity to ensure that our default
+      // sort works and that we're not just getting default DB ordering.
+      await db.educationProgramOffering.save([
+        partTimeOffering,
+        fullTimeOffering,
+      ]);
+
+      // Ministry token.
+      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+      const sortField = "offeringIntensity";
+      const sortOrder = "ASC";
+      // Include a search criteria that matches both offerings to avoid test data collisions.
+      const searchCriteria = "Physics";
+      const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=2&sortField=${sortField}&sortOrder=${sortOrder}&searchCriteria=${searchCriteria}`;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          results: [
+            buildExpectedOffering(fullTimeOffering),
+            buildExpectedOffering(partTimeOffering),
+          ],
+          count: 2,
+        });
+    },
+  );
+
+  it("Should return a single pending offering for an active program with search criteria (Fortran)", async () => {
     // Arrange
 
     // Create two offerings where only one matches the search criteria.
