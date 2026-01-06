@@ -1344,7 +1344,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
   it("Should generate the Disbursement report when a report generation request is made with the appropriate offering intensity and date range.", async () => {
     // Arrange
     // Use a unique historical date to avoid conflicts with other tests.
-    const disburseDate = "2024-12-15";
+    const disburseDate = "2025-01-15";
 
     const bcGrantBCAG = createFakeDisbursementValue(
       DisbursementValueType.BCGrant,
@@ -1364,11 +1364,13 @@ describe("ReportAestController(e2e)-exportReport", () => {
       500,
     );
 
+    const student = await saveFakeStudent(appDataSource);
     // Full time application with disbursement values.
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
       {
         firstDisbursementValues: [bcLoanBCSL, canadaLoanCSL, bcGrantBCAG],
+        student: student,
       },
       {
         applicationStatus: ApplicationStatus.Completed,
@@ -1402,15 +1404,6 @@ describe("ReportAestController(e2e)-exportReport", () => {
       db,
       partTimeApplication.currentAssessment.disbursementSchedules[0],
     );
-
-    // Set valid SIN for the student.
-    const student = application.student;
-    const sinValidation = createFakeSINValidation({
-      student,
-    });
-    student.sinValidation = sinValidation;
-    await db.student.save(student);
-    await db.sinValidation.save(sinValidation);
 
     // Create disbursement receipts for the report using the utility method.
     const [firstDisbursement] =
