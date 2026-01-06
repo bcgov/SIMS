@@ -44,6 +44,7 @@ import {
   OFFERING_STUDY_BREAK_MAX_DAYS,
   OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD,
   OfferingPaginationOptions,
+  PaginationOptions,
 } from "../../utilities";
 import {
   CustomNamedError,
