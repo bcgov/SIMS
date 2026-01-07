@@ -11,6 +11,7 @@ import {
   saveFakeApplicationDisbursements,
   saveFakeCASSupplier,
   saveFakeDesignationAgreementLocation,
+  saveFakeDisbursementReceiptsFromDisbursementSchedule,
   saveFakeStudent,
 } from "@sims/test-utils";
 import {
@@ -46,7 +47,10 @@ import {
 import { DataSource } from "typeorm";
 import { createFakeEducationProgram } from "@sims/test-utils/factories/education-program";
 import { createFakeSINValidation } from "@sims/test-utils/factories/sin-validation";
-import { MinistryReportsFilterAPIInDTO } from "../../models/report.dto";
+import {
+  MinistryReportNames,
+  MinistryReportsFilterAPIInDTO,
+} from "../../models/report.dto";
 import {
   buildUnmetNeedReportData,
   createApplicationsDataSetup,
@@ -1335,6 +1339,148 @@ describe("ReportAestController(e2e)-exportReport", () => {
             Province: student2.contactInfo.address.provinceState,
             SBSD: "150.00",
             SIN: student2.sinValidation.sin,
+          },
+        ]);
+      });
+  });
+
+  it("Should generate the Disbursement report when a report generation request is made for full time offering intensity and date range.", async () => {
+    // Arrange
+    // Use a unique historical date to avoid conflicts with other tests.
+    const disburseDate = "2025-01-15";
+
+    const bcGrantBCAG = createFakeDisbursementValue(
+      DisbursementValueType.BCGrant,
+      "BCAG",
+      300,
+    );
+
+    const canadaLoanCSL = createFakeDisbursementValue(
+      DisbursementValueType.CanadaLoan,
+      "CSL",
+      1000,
+    );
+
+    const bcLoanBCSL = createFakeDisbursementValue(
+      DisbursementValueType.BCLoan,
+      "BCSL",
+      500,
+    );
+
+    const student = await saveFakeStudent(appDataSource);
+    // Full time application with disbursement values.
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        firstDisbursementValues: [bcLoanBCSL, canadaLoanCSL, bcGrantBCAG],
+        student: student,
+      },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.fullTime,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          disbursementDate: disburseDate,
+        },
+      },
+    );
+
+    // Part time application with disbursement values.
+    // This data is not used, its only created to ensure filtering works.
+    const partTimeApplication = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        firstDisbursementValues: [bcLoanBCSL, canadaLoanCSL, bcGrantBCAG],
+      },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.partTime,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          disbursementDate: disburseDate,
+        },
+      },
+    );
+    // Create disbursement receipts for the part-time application using the utility method.
+    await saveFakeDisbursementReceiptsFromDisbursementSchedule(
+      db,
+      partTimeApplication.currentAssessment.disbursementSchedules[0],
+    );
+
+    // Create disbursement receipts for the report using the utility method.
+    const [firstDisbursement] =
+      application.currentAssessment.disbursementSchedules;
+    const { federal, provincial } =
+      await saveFakeDisbursementReceiptsFromDisbursementSchedule(
+        db,
+        firstDisbursement,
+      );
+
+    // Update receipt dates to match the unique test date to ensure proper filtering.
+    federal.disburseDate = disburseDate;
+    federal.batchRunDate = disburseDate;
+    federal.fileDate = disburseDate;
+    provincial.disburseDate = disburseDate;
+    provincial.batchRunDate = disburseDate;
+    provincial.fileDate = disburseDate;
+    await db.disbursementReceipt.save([federal, provincial]);
+
+    const payload = {
+      reportName: MinistryReportNames.Disbursements,
+      params: {
+        startDate: disburseDate,
+        endDate: getISODateOnlyString(addDays(1, disburseDate)),
+        offeringIntensity: {
+          "Full Time": true, // Filter to include only full time disbursements.
+          "Part Time": false,
+        },
+      },
+    };
+
+    // Mock the formio service dry run submission to return the payload.
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.ExportFinancialReports,
+      data: { data: payload },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+
+    const endpoint = "/aest/report";
+    const ministryUserToken = await getAESTToken(
+      AESTGroups.BusinessAdministrators,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(ministryUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        const fileContent = response.request.res["text"];
+        const parsedResult = parse(fileContent, {
+          header: true,
+        });
+        expect(parsedResult.data).toStrictEqual([
+          {
+            "Forecast Date": disburseDate,
+            "Date of Disbursement": disburseDate,
+            SIN: student.sinValidation.sin,
+            "Application Number": application.applicationNumber,
+            "Certificate Number": firstDisbursement.documentNumber.toString(),
+            "Funding Code": bcLoanBCSL.valueCode,
+            "Disbursement Amount": bcLoanBCSL.valueAmount.toFixed(2),
+          },
+          {
+            "Forecast Date": disburseDate,
+            "Date of Disbursement": disburseDate,
+            SIN: student.sinValidation.sin,
+            "Application Number": application.applicationNumber,
+            "Certificate Number": firstDisbursement.documentNumber.toString(),
+            "Funding Code": canadaLoanCSL.valueCode,
+            "Disbursement Amount": canadaLoanCSL.valueAmount.toFixed(2),
           },
         ]);
       });

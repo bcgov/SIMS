@@ -15,7 +15,7 @@ enum InstitutionReportNames {
   COERequests = "COE_Requests",
 }
 
-enum MinistryReportNames {
+export enum MinistryReportNames {
   ForecastDisbursements = "Disbursement_Forecast_Report",
   Disbursements = "Disbursement_Report",
   DisbursementsWithoutValidSupplier = "Disbursements_Without_Valid_Supplier_Report",
