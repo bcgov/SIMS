@@ -3,7 +3,7 @@
     <body-header
       title="Search for application"
       title-header-level="1"
-      subTitle="To provide your supporting information, please search for the application
+      sub-title="To provide your supporting information, please search for the application
       by entering the requested information below. All fields are mandatory and
       must match exactly with the information provided on the student
       application."
@@ -51,6 +51,7 @@
               label="Student's date of birth"
               variant="outlined"
               v-model="studentsDateOfBirth"
+              :input-format="DATE_ONLY_ISO_FORMAT"
               :rules="[(v) => checkNullOrEmptyRule(v, 'Date of birth')]"
               hide-details="auto"
             />
@@ -65,9 +66,9 @@
     </v-form>
     <formio
       v-if="formName"
-      :formName="formName"
+      :form-name="formName"
       :data="initialData"
-      :readOnly="submitting"
+      :read-only="submitting"
       @submitted="submitted"
       @loaded="formLoaded"
     ></formio>
@@ -113,6 +114,7 @@ import {
   useSnackBar,
   useFormioUtils,
   useRules,
+  DATE_ONLY_ISO_FORMAT,
 } from "@/composables";
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
@@ -341,6 +343,7 @@ export default defineComponent({
       studentsDateOfBirth,
       SupportingUserType,
       getISODateOnlyString,
+      DATE_ONLY_ISO_FORMAT,
     };
   },
 });
