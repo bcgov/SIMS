@@ -1470,8 +1470,8 @@ describe("ReportAestController(e2e)-exportReport", () => {
             SIN: student.sinValidation.sin,
             "Application Number": application.applicationNumber,
             "Certificate Number": firstDisbursement.documentNumber.toString(),
-            "Funding Code": bcLoanBCSL.valueCode,
-            "Disbursement Amount": bcLoanBCSL.valueAmount.toFixed(2),
+            "Funding Code": canadaLoanCSL.valueCode,
+            "Disbursement Amount": canadaLoanCSL.valueAmount.toFixed(2),
           },
           {
             "Forecast Date": disburseDate,
@@ -1479,8 +1479,8 @@ describe("ReportAestController(e2e)-exportReport", () => {
             SIN: student.sinValidation.sin,
             "Application Number": application.applicationNumber,
             "Certificate Number": firstDisbursement.documentNumber.toString(),
-            "Funding Code": canadaLoanCSL.valueCode,
-            "Disbursement Amount": canadaLoanCSL.valueAmount.toFixed(2),
+            "Funding Code": bcLoanBCSL.valueCode,
+            "Disbursement Amount": bcLoanBCSL.valueAmount.toFixed(2),
           },
         ]);
       });
