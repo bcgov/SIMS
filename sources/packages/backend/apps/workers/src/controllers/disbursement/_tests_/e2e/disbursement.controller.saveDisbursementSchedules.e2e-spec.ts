@@ -735,7 +735,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     },
   );
 
-  it("Should use the default coeStatus of 'Required' when creating the original assessment.", async () => {
+  it("Should use the default coeStatus of 'Required' and not assign document number when creating the original assessment.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(
       db.dataSource,
