@@ -91,7 +91,10 @@ export function createFakeEducationProgramOffering(
     options?.initialValues?.offeringStatus ?? OfferingStatus.Approved;
   offering.parentOffering = options?.initialValues?.parentOffering ?? offering;
   offering.precedingOffering = options?.initialValues?.precedingOffering;
+  offering.creator = relations.auditUser;
+  offering.submittedBy = relations.auditUser;
   offering.submittedDate = options?.initialValues?.submittedDate ?? undefined;
+
   return offering;
 }
 

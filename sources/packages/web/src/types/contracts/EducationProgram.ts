@@ -60,6 +60,7 @@ export interface ProgramOfferingHeader {
   institutionId: number;
   institutionName: string;
   submittedDate: Date;
+  submittedBy?: string;
   status: ProgramStatus | OfferingStatus;
   assessedBy?: string;
   assessedDate?: Date;
@@ -77,7 +78,6 @@ export interface ProgramOfferingApprovalLabels {
  * Summary list view of programs shared between
  * the Ministry and the institutions.
  */
-export interface EducationProgramsSummary
-  extends EducationProgramsSummaryAPIOutDTO {
+export interface EducationProgramsSummary extends EducationProgramsSummaryAPIOutDTO {
   submittedDateFormatted: string;
 }

@@ -108,6 +108,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     );
     programOffering.offeringStatus = offeringValidation.offeringStatus;
     programOffering.creator = { id: userId } as User;
+    programOffering.submittedBy = { id: userId } as User;
     // When creating a new offering, parent id and the primary id are the same.
     programOffering.parentOffering = programOffering;
     const educationProgramOfferingNotificationData = {
@@ -314,6 +315,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     );
     programOffering.offeringStatus = validatedOffering.offeringStatus;
     programOffering.creator = { id: auditUserId } as User;
+    programOffering.submittedBy = { id: auditUserId } as User;
     try {
       const insertResult = await offeringRepo.insert(programOffering);
       const [createdIdentifier] = insertResult.identifiers;
@@ -483,6 +485,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "offerings.minimumOnlineDuration",
         "assessedBy.firstName",
         "assessedBy.lastName",
+        "submittedBy.firstName",
+        "submittedBy.lastName",
         "institutionLocation.name",
         "institution.legalOperatingName",
         "institution.operatingName",
@@ -495,6 +499,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .innerJoin("institutionLocation.institution", "institution")
       .innerJoin("institution.institutionType", "institutionType")
       .leftJoin("offerings.assessedBy", "assessedBy")
+      .leftJoin("offerings.submittedBy", "submittedBy")
       .innerJoin("offerings.parentOffering", "parentOffering")
       .andWhere("offerings.id= :offeringId", {
         offeringId: offeringId,
@@ -915,6 +920,8 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "precedingOffering.id",
         "assessedBy.firstName",
         "assessedBy.lastName",
+        "submittedBy.firstName",
+        "submittedBy.lastName",
         "institutionLocation.name",
         "institution.id",
         "institution.legalOperatingName",
@@ -935,6 +942,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .innerJoin("institutionLocation.institution", "institution")
       .innerJoin("institution.institutionType", "institutionType")
       .leftJoin("offering.assessedBy", "assessedBy")
+      .leftJoin("offering.submittedBy", "submittedBy")
       .leftJoin("offering.precedingOffering", "precedingOffering")
       .innerJoin("offering.parentOffering", "parentOffering")
       .where("offering.id = :offeringId", {
@@ -1102,6 +1110,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     requestedOffering.precedingOffering = precedingOffering;
     requestedOffering.creator = auditUser;
     requestedOffering.createdAt = now;
+    requestedOffering.submittedBy = auditUser;
 
     //Update the status and audit details of current offering.
     const underReviewOffering = new EducationProgramOffering();

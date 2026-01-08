@@ -2,14 +2,7 @@
   <div>
     <!-- Basic details -->
     <div class="row">
-      <header-title-value
-        title="Submitted"
-        :value="
-          headerDetails.submittedDate
-            ? dateOnlyLongString(headerDetails.submittedDate)
-            : '-'
-        "
-      />
+      <header-title-value title="Submitted" :value="submitted" />
       <v-divider-vertical-opaque class="mx-2 my-0" />
       <header-title-value title="Institution name"
         ><template #value
@@ -93,7 +86,7 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter();
-    const { dateOnlyLongString } = useFormatters();
+    const { dateOnlyLongString, emptyStringFiller } = useFormatters();
     const showApprovalDetails = computed(
       () =>
         props.headerDetails.assessedBy &&
@@ -140,12 +133,22 @@ export default defineComponent({
         });
       }
     };
+
+    const submitted = computed(() => {
+      const submittedDate = emptyStringFiller(
+        dateOnlyLongString(props.headerDetails.submittedDate),
+      );
+      const submittedBy = emptyStringFiller(props.headerDetails.submittedBy);
+      return `${submittedDate} | ${submittedBy}`;
+    });
+
     return {
       ProgramStatus,
       goToInstitutionProfile,
       dateOnlyLongString,
       approvalLabel,
       showApprovalDetails,
+      submitted,
     };
   },
 });
