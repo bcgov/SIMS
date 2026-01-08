@@ -28,6 +28,7 @@ import {
   LOAN_TYPES,
 } from "../constants";
 import { SystemUsersService } from "@sims/services/system-users";
+import { ConfirmationOfEnrollmentService } from "..";
 
 // Timeout to handle the worst-case scenario where the commit/rollback
 // was not executed due to a possible catastrophic failure.
@@ -83,6 +84,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
   constructor(
     private readonly dataSource: DataSource,
     private readonly systemUsersService: SystemUsersService,
+    private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
   ) {
     super(dataSource.getRepository(DisbursementSchedule));
   }
@@ -144,13 +146,19 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
         );
         newDisbursement.hasEstimatedAwards = totalEstimatedAwards > 0;
         // Disbursements as a result of a 'Scholastic Standing Change' should
-        // be automatically set to COE status 'Completed'.
+        // be automatically set to COE status 'Completed' with the document number generated.
         // 'Required' is defaulted in the database for other trigger types.
         if (
           assessment.triggerType ===
           AssessmentTriggerType.ScholasticStandingChange
         ) {
+          const documentNumber =
+            await this.confirmationOfEnrollmentService.getNextDocumentNumber(
+              assessment.application.offeringIntensity,
+              transactionEntityManager,
+            );
           newDisbursement.coeStatus = COEStatus.completed;
+          newDisbursement.documentNumber = documentNumber;
           newDisbursement.coeUpdatedAt = new Date();
           newDisbursement.coeUpdatedBy = auditUser;
         }
@@ -210,6 +218,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
           id: true,
           applicationStatus: true,
           applicationNumber: true,
+          offeringIntensity: true,
           student: {
             id: true,
           },
