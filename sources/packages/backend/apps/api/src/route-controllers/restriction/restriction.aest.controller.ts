@@ -15,7 +15,6 @@ import {
   StudentRestrictionService,
   InstitutionRestrictionService,
   RestrictionService,
-  InstitutionService,
 } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -62,7 +61,7 @@ import {
 } from "../../constants";
 import {
   RESTRICTION_NOT_ACTIVE,
-  RESTRICTION_NOT_PROVINCIAL,
+  RESTRICTION_TYPE_NOT_EXPECTED,
 } from "@sims/services/constants";
 import { RestrictionType } from "@sims/sims-db";
 
@@ -80,7 +79,6 @@ export class RestrictionAESTController extends BaseController {
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly restrictionService: RestrictionService,
     private readonly institutionRestrictionService: InstitutionRestrictionService,
-    private readonly institutionService: InstitutionService,
   ) {
     super();
   }
@@ -201,8 +199,10 @@ export class RestrictionAESTController extends BaseController {
    */
   @Roles(Role.StudentResolveRestriction)
   @ApiUnprocessableEntityResponse({
+    description: "Resolution Notes are mandatory to resolve the restriction.",
+  })
+  @ApiNotFoundResponse({
     description:
-      "Resolution Notes are mandatory to resolve the restriction." +
       "The restriction neither assigned to student nor active. Only active restrictions can be resolved." +
       "The given restriction type is not Provincial. Only provincial restrictions can be resolved by application user.",
   })
@@ -223,9 +223,9 @@ export class RestrictionAESTController extends BaseController {
     } catch (error) {
       if (
         error.name === RESTRICTION_NOT_ACTIVE ||
-        error.name === RESTRICTION_NOT_PROVINCIAL
+        error.name === RESTRICTION_TYPE_NOT_EXPECTED
       ) {
-        throw new UnprocessableEntityException(error.message);
+        throw new NotFoundException(error.message);
       }
       throw new InternalServerErrorException(
         "Unexpected error while resolving restriction",
@@ -412,9 +412,12 @@ export class RestrictionAESTController extends BaseController {
    */
   @Roles(Role.InstitutionResolveRestriction)
   @ApiUnprocessableEntityResponse({
+    description: "Resolution Notes are mandatory to resolve the restriction.",
+  })
+  @ApiNotFoundResponse({
     description:
-      "Resolution Notes are mandatory to resolve the restriction." +
-      "The restriction neither assigned to student nor active. Only active restrictions can be resolved.",
+      "The restriction was either not assigned to the institution or inactive. Only active restrictions can be resolved." +
+      "The given restriction type is not Institution. Only institution restrictions can be resolved by application user.",
   })
   @Patch(
     "institution/:institutionId/institutionRestriction/:institutionRestrictionId/resolve",
@@ -426,28 +429,19 @@ export class RestrictionAESTController extends BaseController {
     institutionRestrictionId: number,
     @Body() payload: ResolveRestrictionAPIInDTO,
   ): Promise<void> {
-    if (!payload.noteDescription) {
-      throw new UnprocessableEntityException(
-        "Resolution Notes are mandatory to resolve the restriction.",
-      );
-    }
     try {
-      const updatedRestriction =
-        await this.institutionRestrictionService.resolveProvincialRestriction(
-          institutionId,
-          institutionRestrictionId,
-          userToken.userId,
-          payload.noteDescription,
-        );
-
-      /**mapping the note added for resolution to student notes**/
-      await this.institutionService.saveInstitutionNote(
+      await this.institutionRestrictionService.resolveInstitutionRestriction(
         institutionId,
-        updatedRestriction.resolutionNote,
+        institutionRestrictionId,
+        userToken.userId,
+        payload.noteDescription,
       );
     } catch (error) {
-      if (error.name === RESTRICTION_NOT_ACTIVE) {
-        throw new UnprocessableEntityException(error.message);
+      if (
+        error.name === RESTRICTION_NOT_ACTIVE ||
+        error.name === RESTRICTION_TYPE_NOT_EXPECTED
+      ) {
+        throw new NotFoundException(error.message);
       }
       throw new InternalServerErrorException(
         "Unexpected error while resolving restriction",

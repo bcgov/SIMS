@@ -66,6 +66,7 @@
         :restriction-data="institutionRestriction"
         @submit-resolution-data="resolveRestriction"
         :allowed-role="Role.InstitutionResolveRestriction"
+        :can-resolve-restriction="true"
       />
       <add-restriction-modal
         ref="addRestriction"
@@ -125,7 +126,9 @@ export default defineComponent({
     const { dateOnlyLongString, conditionalEmptyStringFiller } =
       useFormatters();
     const showModal = ref(false);
-    const viewRestriction = ref({} as ModalDialog<void>);
+    const viewRestriction = ref(
+      {} as ModalDialog<RestrictionDetailAPIOutDTO | boolean>,
+    );
     const addRestriction = ref(
       {} as ModalDialog<AssignInstitutionRestrictionAPIInDTO | false>,
     );
@@ -155,8 +158,13 @@ export default defineComponent({
           institutionRestriction.value.updatedAt,
         );
       }
-
-      await viewRestriction.value.showModal();
+      const viewInstitutionRestrictionData =
+        await viewRestriction.value.showModal();
+      if (viewInstitutionRestrictionData) {
+        await resolveRestriction(
+          viewInstitutionRestrictionData as RestrictionDetailAPIOutDTO,
+        );
+      }
     };
 
     const resolveRestriction = async (data: RestrictionDetailAPIOutDTO) => {
