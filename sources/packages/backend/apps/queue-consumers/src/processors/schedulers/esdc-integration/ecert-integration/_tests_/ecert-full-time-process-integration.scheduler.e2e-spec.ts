@@ -772,7 +772,7 @@ describe(
               "BCSL",
               750,
             ),
-            // BC Grants should still be disbursed since BCSL has some value.
+            // BC Grants should always be disbursed if BCLM restriction is applied.
             createFakeDisbursementValue(
               DisbursementValueType.BCGrant,
               "BCAG",
@@ -823,7 +823,7 @@ describe(
               "BCSL",
               399,
             ),
-            // Should not be disbursed due to BCLM restriction.
+            // BC Grants should always be disbursed if BCLM restriction is applied.
             createFakeDisbursementValue(
               DisbursementValueType.BCGrant,
               "BCAG",
@@ -861,10 +861,13 @@ describe(
       expect(
         mockedJob.containLogMessages([
           "New BCLM restriction was added to the student account.",
-          "Applying restriction for BCAG.",
+          "Checking stop funding restriction.",
           "Applying restriction for BCSL.",
         ]),
       ).toBe(true);
+      expect(
+        mockedJob.containLogMessages(["Applying restriction for BCAG."]),
+      ).toBe(false);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -914,9 +917,10 @@ describe(
       // Keep federal funding.
       expect(record3Parsed.cslfAmount).toBe(199);
       expect(record3Parsed.grantAmount("CSGP")).toBe(299);
-      // Withhold provincial funding.
+      // Withhold provincial funding only for loan when BCLM restriction is applied.
       expect(record3Parsed.bcslAmount).toBe(0);
-      expect(record3Parsed.grantAmount("BCSG")).toBeUndefined();
+      // Grants should still be disbursed when BCLM restriction is applied.
+      expect(record3Parsed.grantAmount("BCSG")).toBe(499);
       // Select the BCSL/BCAG to validate the values impacted by the restriction.
       const [applicationBDisbursement1] =
         applicationB.currentAssessment.disbursementSchedules;
@@ -935,8 +939,8 @@ describe(
       expect(
         awardAssert(record3Awards, "BCAG", {
           valueAmount: 499,
-          restrictionAmountSubtracted: 499,
-          effectiveAmount: 0,
+          restrictionAmountSubtracted: 0,
+          effectiveAmount: 499,
         }),
       ).toBe(true);
     });

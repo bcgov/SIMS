@@ -1404,7 +1404,7 @@ describe(
       expect(nonUpdatedCSLPOveraward).toBe(true);
     });
 
-    it("Should stop disbursing BC funding for a part-time application when a 'Stop part time BC funding' restriction is applied.", async () => {
+    it(`Should stop disbursing BC funding for a part-time application when a '${RestrictionActionType.StopPartTimeBCGrants}' restriction is applied.`, async () => {
       // Arrange
       // Eligible COE basic properties.
       const eligibleDisbursement: Partial<DisbursementSchedule> = {
@@ -1416,7 +1416,7 @@ describe(
       const restriction = await db.restriction.findOne({
         where: {
           actionType: ArrayContains([
-            RestrictionActionType.StopPartTimeBCFunding,
+            RestrictionActionType.StopPartTimeBCGrants,
           ]),
         },
       });
