@@ -1740,6 +1740,8 @@ describe(
         // making the bypass not be resolved.
         const restriction = await db.restriction.findOne({
           where: {
+            restrictionType: RestrictionType.Provincial,
+            actionEffectiveConditions: IsNull(),
             actionType: ArrayContains([
               RestrictionActionType.StopFullTimeDisbursement,
             ]),
