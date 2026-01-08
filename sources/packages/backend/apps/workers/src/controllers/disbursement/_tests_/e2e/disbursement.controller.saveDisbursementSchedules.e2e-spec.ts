@@ -49,7 +49,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
   beforeEach(async () => {
     // Reset sequence number to control the document number generated.
     await db.sequenceControl.update(
-      { sequenceName: Like("%DISBURSEMENT_DOCUMENT_NUMBER%") },
+      { sequenceName: Like("%DISBURSEMENT_DOCUMENT_NUMBER") },
       { sequenceNumber: "0" },
     );
     MockDate.reset();
