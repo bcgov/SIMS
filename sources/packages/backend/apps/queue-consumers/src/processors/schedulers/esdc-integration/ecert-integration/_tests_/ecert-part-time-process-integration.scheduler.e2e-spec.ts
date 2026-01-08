@@ -1487,7 +1487,7 @@ describe(
       // Assert
       expect(
         mockedJob.containLogMessages([
-          "Checking 'Stop part time BC funding' restriction.",
+          "Checking stop funding restriction.",
           "Applying restriction for SBSD.",
           "Applying restriction for BCAG.",
         ]),
@@ -1498,7 +1498,7 @@ describe(
       const record3Awards = await loadAwardValues(
         db,
         applicationBDisbursement1.id,
-        { valueCode: ["SBSD", "BCAG"] },
+        { valueCode: ["SBSD", "BCAG", "BCSG"] },
       );
       expect(
         awardAssert(record3Awards, "SBSD", {
@@ -1511,6 +1511,13 @@ describe(
         awardAssert(record3Awards, "BCAG", {
           valueAmount: 499,
           restrictionAmountSubtracted: 499,
+          effectiveAmount: 0,
+        }),
+      ).toBe(true);
+      expect(
+        awardAssert(record3Awards, "BCSG", {
+          valueAmount: 0,
+          restrictionAmountSubtracted: 0,
           effectiveAmount: 0,
         }),
       ).toBe(true);
