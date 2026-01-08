@@ -783,7 +783,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     expect(createdDisbursements).toHaveLength(2);
     const [firstDisbursement, secondDisbursement] = createdDisbursements;
 
-    // Assert coeStatus is set to 'Required', coeUpdatedAt is null, coeUpdatedBy is null.
+    // Assert coeStatus is set to 'Required', coeUpdatedAt is null, coeUpdatedBy is null and documentNumber is null.
     expect(firstDisbursement).toEqual({
       id: expect.any(Number),
       documentNumber: null,
@@ -855,7 +855,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     expect(createdDisbursements).toHaveLength(2);
     const [firstDisbursement, secondDisbursement] = createdDisbursements;
 
-    // Assert coeStatus is set to 'Completed ', coeUpdatedAt is set to now and coeUpdatedBy is set to system user.
+    // Assert coeStatus is set to 'Completed', coeUpdatedAt is set to now, coeUpdatedBy is set to system user and documentNumber is set.
     expect(firstDisbursement).toEqual({
       id: expect.any(Number),
       documentNumber: 1,
