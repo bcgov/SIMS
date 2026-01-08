@@ -32,6 +32,7 @@ import {
 } from "../../../../../test/utils/worker-job-mock";
 import { createTestingAppModule } from "../../../../../test/helpers";
 import { SystemUsersService } from "@sims/services";
+import { Like } from "typeorm";
 
 describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
   let db: E2EDataSources;
@@ -46,6 +47,11 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
   });
 
   beforeEach(async () => {
+    // Reset sequence number to control the document number generated.
+    await db.sequenceControl.update(
+      { sequenceName: Like("%DISBURSEMENT_DOCUMENT_NUMBER%") },
+      { sequenceNumber: "0" },
+    );
     MockDate.reset();
   });
 
@@ -760,6 +766,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     const createdDisbursements = await db.disbursementSchedule.find({
       select: {
         id: true,
+        documentNumber: true,
         coeStatus: true,
         coeUpdatedAt: true,
         coeUpdatedBy: { id: true },
@@ -779,19 +786,21 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     // Assert coeStatus is set to 'Required', coeUpdatedAt is null, coeUpdatedBy is null.
     expect(firstDisbursement).toEqual({
       id: expect.any(Number),
+      documentNumber: null,
       coeStatus: COEStatus.required,
       coeUpdatedAt: null,
       coeUpdatedBy: null,
     });
     expect(secondDisbursement).toEqual({
       id: expect.any(Number),
+      documentNumber: null,
       coeStatus: COEStatus.required,
       coeUpdatedAt: null,
       coeUpdatedBy: null,
     });
   });
 
-  it("Should set the COE Status to 'Completed' and populate COE Updated fields when the trigger type is 'Scholastic Standing Change'.", async () => {
+  it("Should set the COE Status to 'Completed' and assign the document number and populate COE Updated fields when the trigger type is 'Scholastic Standing Change'.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(
       db.dataSource,
@@ -826,6 +835,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     const createdDisbursements = await db.disbursementSchedule.find({
       select: {
         id: true,
+        documentNumber: true,
         coeStatus: true,
         coeUpdatedAt: true,
         coeUpdatedBy: { id: true },
@@ -837,6 +847,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
         studentAssessment: { id: assessmentId },
       },
       loadEagerRelations: false,
+      order: { id: "ASC" },
     });
 
     // Assert disbursements created
@@ -847,12 +858,14 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     // Assert coeStatus is set to 'Completed ', coeUpdatedAt is set to now and coeUpdatedBy is set to system user.
     expect(firstDisbursement).toEqual({
       id: expect.any(Number),
+      documentNumber: 1,
       coeStatus: COEStatus.completed,
       coeUpdatedAt: now,
       coeUpdatedBy: { id: systemUser.id },
     });
     expect(secondDisbursement).toEqual({
       id: expect.any(Number),
+      documentNumber: 2,
       coeStatus: COEStatus.completed,
       coeUpdatedAt: now,
       coeUpdatedBy: { id: systemUser.id },
