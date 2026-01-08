@@ -31,7 +31,7 @@ import { SFASApplicationService } from "@sims/services/sfas";
 import {
   AddAviationCredentialRestrictionStep,
   ApplyOverawardsBalanceStep,
-  ApplyStopBCFundingRestrictionStep,
+  ApplyStopFundingTypeRestrictionStep,
   AssertLifeTimeMaximumFullTimeStep,
   CalculateEffectiveValueStep,
   CalculateTuitionRemittanceEffectiveAmountStep,
@@ -87,7 +87,7 @@ import {
     OverawardsBalanceDebitHandler,
     ApplyOverawardsBalanceStep,
     CalculateEffectiveValueStep,
-    ApplyStopBCFundingRestrictionStep,
+    ApplyStopFundingTypeRestrictionStep,
     AssertLifeTimeMaximumFullTimeStep,
     CalculateTuitionRemittanceEffectiveAmountStep,
     CreateBCTotalGrantsStep,

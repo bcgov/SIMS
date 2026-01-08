@@ -102,7 +102,7 @@ export abstract class ValidateDisbursementBase {
     // Validate stop disbursement restrictions.
     const stopDisbursementRestrictions = getRestrictionsByActionType(
       eCertDisbursement,
-      restrictionActionType,
+      [restrictionActionType],
     );
     if (stopDisbursementRestrictions.length) {
       const studentRestrictions = stopDisbursementRestrictions.filter(

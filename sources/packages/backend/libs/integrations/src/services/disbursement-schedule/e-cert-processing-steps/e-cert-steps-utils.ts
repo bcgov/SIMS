@@ -1,6 +1,5 @@
-import { BC_FUNDING_TYPES } from "@sims/services/constants";
 import {
-  DisbursementValue,
+  DisbursementValueType,
   OfferingIntensity,
   RestrictionActionType,
 } from "@sims/sims-db";
@@ -14,23 +13,41 @@ import { RestrictionCode } from "@sims/services";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { isRestrictionActionEffective } from "./e-cert-steps-restriction-utils";
 
+const RESTRICTION_ACTION_TYPE_INTENSITY_MAP = new Map([
+  [
+    OfferingIntensity.fullTime,
+    [
+      RestrictionActionType.StopFullTimeBCLoan,
+      RestrictionActionType.StopFullTimeBCGrants,
+    ],
+  ],
+  [OfferingIntensity.partTime, [RestrictionActionType.StopPartTimeBCGrants]],
+]);
+
+const BC_GRANTS_RESTRICTION_ACTIONS = [
+  RestrictionActionType.StopFullTimeBCGrants,
+  RestrictionActionType.StopPartTimeBCGrants,
+];
+
 /**
  * Check active student restrictions by its action type in an eligible disbursement.
  * An active bypassed restriction or a restriction which does not satisfy its action effective conditions
  * will not be included in the result.
  * @param eCertDisbursement student disbursement to check student restrictions.
- * @param actionType action type.
+ * @param actionTypes action types.
  * @returns the all the effective restrictions of the requested action type.
  */
 export function getRestrictionsByActionType(
   eCertDisbursement: EligibleECertDisbursement,
-  actionType: RestrictionActionType,
+  actionTypes: RestrictionActionType[],
 ): ActiveRestriction[] {
   return eCertDisbursement
     .getEffectiveRestrictions()
     .filter(
       (restriction) =>
-        restriction.actions.includes(actionType) &&
+        actionTypes.some((actionType) =>
+          restriction.actions.includes(actionType),
+        ) &&
         isRestrictionActionEffective(
           restriction.actionEffectiveConditions,
           eCertDisbursement,
@@ -78,26 +95,44 @@ export function getRestrictionByCode(
 }
 
 /**
- * Determine when BC funding should not be disbursed.
- * In this case the e-Cert can still be generated with the federal funding.
- * @param eCertDisbursement student disbursement that is part of one e-Cert.
- * @param disbursementValue award to be checked.
- * @returns true if the funding should not be disbursed, otherwise, false.
+ * Inspects all the active restrictions in the e-Cert disbursement and builds a map
+ * of disbursement value types that should not be disbursed due to an active restriction.
+ * A student disbursement can have multiple active restrictions where many can block the same
+ * funding type. In this case, all restrictions will be listed for the funding type.
+ * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
+ * @returns map of disbursement value types that should not be disbursed and the associated restrictions.
  */
-export function shouldStopBCFunding(
+export function getStopFundingTypesAndRestrictionsMap(
   eCertDisbursement: EligibleECertDisbursement,
-  disbursementValue: DisbursementValue,
-): boolean {
-  const restrictionType =
-    eCertDisbursement.offering.offeringIntensity === OfferingIntensity.fullTime
-      ? RestrictionActionType.StopFullTimeBCFunding
-      : RestrictionActionType.StopPartTimeBCFunding;
-  const [stopBCFundingRestriction] = getRestrictionsByActionType(
+): Map<DisbursementValueType, ActiveRestriction[]> {
+  const restrictionTypes = RESTRICTION_ACTION_TYPE_INTENSITY_MAP.get(
+    eCertDisbursement.offering.offeringIntensity,
+  );
+  // Find restrictions associated with the offering intensity.
+  const stopFundingTypeRestrictions = getRestrictionsByActionType(
     eCertDisbursement,
-    restrictionType,
+    restrictionTypes,
   );
-  return (
-    stopBCFundingRestriction &&
-    BC_FUNDING_TYPES.includes(disbursementValue.valueType)
-  );
+  const resultMap = new Map<DisbursementValueType, ActiveRestriction[]>();
+  for (const restriction of stopFundingTypeRestrictions) {
+    if (
+      restriction.actions.includes(RestrictionActionType.StopFullTimeBCLoan)
+    ) {
+      resultMap.set(DisbursementValueType.BCLoan, [
+        ...(resultMap.get(DisbursementValueType.BCLoan) || []),
+        restriction,
+      ]);
+    }
+    if (
+      BC_GRANTS_RESTRICTION_ACTIONS.some((action) =>
+        restriction.actions.includes(action),
+      )
+    ) {
+      resultMap.set(DisbursementValueType.BCGrant, [
+        ...(resultMap.get(DisbursementValueType.BCGrant) || []),
+        restriction,
+      ]);
+    }
+  }
+  return resultMap;
 }

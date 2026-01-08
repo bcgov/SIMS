@@ -73,27 +73,31 @@ export enum RestrictionActionType {
    */
   NoEffect = "No effect",
   /**
-   * Stop full time BC funding.
+   * Stop full-time BC loan (BCSL).
    */
-  StopFullTimeBCFunding = "Stop full time BC funding",
+  StopFullTimeBCLoan = "Stop full-time BC loan",
   /**
-   * Stop part time BC funding.
+   * Stop full-time BC grants (BCAG, BGPD, SBSD).
    */
-  StopPartTimeBCFunding = "Stop part time BC funding",
+  StopFullTimeBCGrants = "Stop full-time BC grants",
+  /**
+   * Stop part-time BC grants (BCAG, SBSD).
+   */
+  StopPartTimeBCGrants = "Stop part-time BC grants",
   /**
    * Stop student from applying part time applications.
    */
-  StopPartTimeApply = "Stop part time apply",
+  StopPartTimeApply = "Stop part-time apply",
   /**
    * Stop student from applying full time applications.
    */
-  StopFullTimeApply = "Stop full time apply",
+  StopFullTimeApply = "Stop full-time apply",
   /**
    * Stop all part time disbursements of the student.
    */
-  StopPartTimeDisbursement = "Stop part time disbursement",
+  StopPartTimeDisbursement = "Stop part-time disbursement",
   /**
    * Stop all full time disbursements of the student.
    */
-  StopFullTimeDisbursement = "Stop full time disbursement",
+  StopFullTimeDisbursement = "Stop full-time disbursement",
 }
