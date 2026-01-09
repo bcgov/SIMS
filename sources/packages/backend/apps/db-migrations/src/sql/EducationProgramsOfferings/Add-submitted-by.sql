@@ -22,11 +22,46 @@ COMMENT ON COLUMN sims.education_programs_offerings_history.submitted_by IS 'Edu
 UPDATE
     sims.education_programs_offerings
 SET
-    submitted_by = creator;
+    submitted_by = CASE
+        WHEN creator IS NOT NULL THEN creator
+        ELSE (
+            SELECT
+                id
+            FROM
+                sims.users
+            WHERE
+                -- System user.
+                user_name = '8fb44f70-6ce6-11ed-b307-8743a2da47ef@system'
+        )
+    END;
 
 UPDATE
     sims.education_programs_offerings_history
 SET
-    submitted_by = creator;
+    submitted_by = CASE
+        WHEN creator IS NOT NULL THEN creator
+        ELSE (
+            SELECT
+                id
+            FROM
+                sims.users
+            WHERE
+                -- System user.
+                user_name = '8fb44f70-6ce6-11ed-b307-8743a2da47ef@system'
+        )
+    END;
 
--- Since creator is nullable don't add a NULL constraint to either table.
+-- Set submitted_by as NOT NULL.
+ALTER TABLE
+    sims.education_programs_offerings
+ALTER COLUMN
+    submitted_by
+SET
+    NOT NULL;
+
+ALTER TABLE
+    sims.education_programs_offerings_history
+ALTER COLUMN
+    submitted_by
+SET
+    NOT NULL;

@@ -134,6 +134,9 @@ export default defineComponent({
       }
     };
 
+    /**
+     * Display in the following format: "Date | First Name Last Name".
+     */
     const submitted = computed(() => {
       const submittedDate = emptyStringFiller(
         dateOnlyLongString(props.headerDetails.submittedDate),

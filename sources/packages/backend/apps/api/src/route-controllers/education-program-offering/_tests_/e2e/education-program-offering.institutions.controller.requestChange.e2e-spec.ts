@@ -214,7 +214,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-requestChange", ()
       offeringStatus: OfferingStatus.ChangeAwaitingApproval,
       submittedBy: { id: collegeFUser.id },
       creator: { id: collegeFUser.id },
-      // TODO Discuss how to handle this better. Mock doesn't work as this is a DB default.
       submittedDate: expect.any(Date),
     });
 

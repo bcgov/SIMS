@@ -575,7 +575,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
           unfundedStudyPeriodDays: 0,
         },
         submittedBy: { id: collegeFUser.id },
-        // TODO Discuss how to handle this better. Mock doesn't work as this is a DB default.
         submittedDate: expect.any(Date),
       });
       expect(offeringSBC2).toEqual({
@@ -599,7 +598,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
           ],
         },
         submittedBy: { id: collegeFUser.id },
-        // TODO Discuss how to handle this better. Mock doesn't work as this is a DB default.
         submittedDate: expect.any(Date),
       });
     },

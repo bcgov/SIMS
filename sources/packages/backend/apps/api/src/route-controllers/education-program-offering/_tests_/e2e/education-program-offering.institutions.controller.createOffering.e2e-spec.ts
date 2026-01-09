@@ -275,7 +275,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       offeringDeclaration: payload.offeringDeclaration,
       offeringStatus: OfferingStatus.CreationPending,
       submittedBy: { id: collegeFUser.id },
-      // TODO Discuss how to handle this better. Mock doesn't work as this is a DB default.
       submittedDate: expect.any(Date),
     });
   });
