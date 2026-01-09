@@ -12,6 +12,6 @@ export * from "./validate-disbursement-base";
 export * from "./validate-disbursement-full-time-step";
 export * from "./validate-disbursement-part-time-step";
 export * from "./restriction-bypasses-resolution-step";
-export * from "./apply-stop-BC-funding-restriction-step";
+export * from "./apply-stop-bc-funding-restriction-step";
 export * from "./add-aviation-credential-restriction-step";
 export * from "./e-cert-steps-restriction-utils";
