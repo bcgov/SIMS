@@ -32,6 +32,10 @@ export interface StudentRoomAndBoardAppealData extends JSONDoc {
   roomAndBoardAmount: number;
 }
 
+export interface StepParentWaiverAppealData extends JSONDoc {
+  selectedParent: number;
+}
+
 export enum TransportationCostSituation {
   NoLimit = "noLimit",
   EducationPlacement = "educationPlacement",
@@ -128,6 +132,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsStudentAdditionalTransportationAppealData?: StudentAdditionalTransportationAppealData;
   appealsPartnerInformationAndIncomeAppealData?: PartnerInformationAndIncomeAppealData;
   appealsRoomAndBoardCostsAppealData?: StudentRoomAndBoardAppealData;
+  appealsStepParentWaiverAppealData?: StepParentWaiverAppealData;
   appealsStudentDependantsAppealData?: StudentDependent[];
   appealsStudentHasDependentsAppealData?: YesNoOptions;
   studentDataIsYourPartnerAbleToReport?: boolean;
@@ -163,13 +168,13 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   parent1NetAssests?: number;
   parent1Tax?: number;
   parent1TotalIncome?: number;
-  parent1DependentTable?: [];
+  parent1DependentTable?: StudentDependent[];
   parent1CRAReportedIncome?: number;
   parent1CppEmployment?: number;
   parent1CppSelfemploymentOther?: number;
   parent2Contributions?: number;
   parent2CppSelfemploymentOther?: number;
-  parent2DependentTable?: [];
+  parent2DependentTable?: StudentDependent[];
   parent2Ei?: number;
   parent2NetAssests?: number;
   parent2Tax?: number;
@@ -250,8 +255,7 @@ interface ConfigureDisbursementData extends JSONDoc {
 /**
  * Data required to configure the disbursements for full-time students.
  */
-export interface ConfigureDisbursementDataFullTime
-  extends ConfigureDisbursementData {
+export interface ConfigureDisbursementDataFullTime extends ConfigureDisbursementData {
   awardEligibilityBCSL?: boolean;
   awardEligibilityBCTopup?: boolean;
   awardEligibilityCSLF?: boolean;
@@ -267,8 +271,7 @@ export interface ConfigureDisbursementDataFullTime
 /**
  * Data required to configure the disbursements for part-time students.
  */
-export interface ConfigureDisbursementDataPartTime
-  extends ConfigureDisbursementData {
+export interface ConfigureDisbursementDataPartTime extends ConfigureDisbursementData {
   awardEligibilityCSLP?: boolean;
   awardEligibilityCSPT?: boolean;
   finalFederalAwardNetCSLPAmount?: number;
@@ -341,6 +344,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataFederalAssessedNeed: number;
   offeringExceptionalExpenses: number;
   calculatedDataProvincialAssessedNeed: number;
+  calculatedDataParentalContribution?: number;
   calculatedDataTotalParentalContribution: number;
   calculatedDataSpousalContributionExempt?: boolean;
   calculatedDataSpouseContributionWeeks?: number;
@@ -361,6 +365,10 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalEligibleDependentsForChildCare: number;
   calculatedDataTotalChildcareDependants: number;
   calculatedDataTotalRoomAndBoardAmount: number;
+  calculatedDataTotalEligibleParent1Dependants?: number;
+  calculatedDataTotalEligibleParent2Dependants?: number;
+  calculatedDataTotalParentEligibleDependants?: number;
+  calculatedDataTotalParentEligibleContributionDependants?: number;
   calculatedDataFamilySize: number;
   totalFederalContribution: number;
   totalProvincialContribution: number;
@@ -379,9 +387,10 @@ export interface CalculatedAssessmentModel {
   calculatedDataInterfaceNonEducationCosts?: number;
   calculatedDataInterfaceAdditionalTransportationAmount?: number;
   calculatedDataTotalParentIncome: number;
-  calculatedDataParent1IncomeDeductions: number;
-  calculatedDataTotalParentDeductions: number;
-  calculatedDataTotalNetFamilyIncome: number;
+  calculatedDataParent1IncomeDeductions?: number;
+  calculatedDataParent2IncomeDeductions?: number;
+  calculatedDataTotalParentDeductions?: number;
+  calculatedDataTotalNetFamilyIncome?: number;
   dmnFullTimeLivingCategory: string;
   isEligibleForRoomAndBoardAppeal?: boolean;
   isEligibleForStepParentWaiverAppeal?: boolean;
