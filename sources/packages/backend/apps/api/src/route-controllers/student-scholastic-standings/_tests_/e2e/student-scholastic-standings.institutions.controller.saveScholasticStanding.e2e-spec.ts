@@ -579,7 +579,6 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       submittedBy: {
         id: collegeFUser.id,
       },
-      // TODO Discuss how to handle this better. Mock doesn't work as this is a DB default.
       submittedDate: expect.any(Date),
       name: existingOffering.name,
       studyStartDate: existingOffering.studyStartDate,

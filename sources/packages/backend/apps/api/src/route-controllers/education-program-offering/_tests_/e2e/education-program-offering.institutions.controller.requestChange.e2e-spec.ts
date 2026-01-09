@@ -142,7 +142,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-requestChange", ()
         educationProgramOfferingId = response.body.id;
       });
 
-    // Assert the offering change awaiting approval
     const createdEducationProgramOffering =
       await db.educationProgramOffering.findOne({
         select: {
@@ -179,6 +178,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-requestChange", ()
         where: { id: educationProgramOfferingId },
       });
 
+    // Assert the offering change awaiting approval
     expect(createdEducationProgramOffering).toEqual({
       id: educationProgramOfferingId,
       name: payload.offeringName,
@@ -217,7 +217,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-requestChange", ()
       submittedDate: expect.any(Date),
     });
 
-    // Assert changed values for current offering under review
     const underReviewOffering = await db.educationProgramOffering.findOne({
       select: {
         id: true,
@@ -232,6 +231,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-requestChange", ()
       },
       where: { id: savedOffering.id },
     });
+
+    // Assert changed values for current offering under review
     expect(underReviewOffering).toEqual({
       id: savedOffering.id,
       offeringStatus: OfferingStatus.ChangeUnderReview,

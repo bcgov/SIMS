@@ -988,6 +988,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       const savedFakeEducationProgram =
         await db.educationProgram.save(fakeEducationProgram);
       const existingOffering = createFakeEducationProgramOffering(
+        collegeFUser,
         savedFakeEducationProgram,
         collegeFLocation,
       );

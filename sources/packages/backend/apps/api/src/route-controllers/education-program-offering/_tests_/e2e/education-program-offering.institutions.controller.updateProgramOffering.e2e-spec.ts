@@ -100,6 +100,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     const savedFakeEducationProgram =
       await db.educationProgram.save(fakeEducationProgram);
     const newOffering = createFakeEducationProgramOffering(
+      collegeFUser,
       savedFakeEducationProgram,
       collegeFLocation,
     );
@@ -207,6 +208,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       const savedFakeEducationProgram =
         await db.educationProgram.save(fakeEducationProgram);
       const newOffering = createFakeEducationProgramOffering(
+        collegeFUser,
         savedFakeEducationProgram,
         collegeFLocation,
       );
@@ -334,6 +336,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       const savedFakeEducationProgram =
         await db.educationProgram.save(fakeEducationProgram);
       const newOffering = createFakeEducationProgramOffering(
+        collegeFUser,
         savedFakeEducationProgram,
         collegeCLocation,
       );
@@ -494,6 +497,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     const savedFakeEducationProgram =
       await db.educationProgram.save(fakeEducationProgram);
     const newOffering = createFakeEducationProgramOffering(
+      collegeFUser,
       savedFakeEducationProgram,
       collegeFLocation,
     );
@@ -564,6 +568,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       const savedFakeEducationProgram =
         await db.educationProgram.save(fakeEducationProgram);
       const newOffering = createFakeEducationProgramOffering(
+        collegeFUser,
         savedFakeEducationProgram,
         collegeFLocation,
       );
@@ -642,6 +647,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       const savedFakeEducationProgram =
         await db.educationProgram.save(fakeEducationProgram);
       const newOffering = createFakeEducationProgramOffering(
+        collegeFUser,
         savedFakeEducationProgram,
         collegeFLocation,
       );
@@ -759,6 +765,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       const savedFakeEducationProgram =
         await db.educationProgram.save(fakeEducationProgram);
       const newOffering = createFakeEducationProgramOffering(
+        collegeFUser,
         savedFakeEducationProgram,
         collegeFLocation,
       );
@@ -860,6 +867,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     const savedFakeEducationProgram =
       await db.educationProgram.save(fakeEducationProgram);
     const newOffering = createFakeEducationProgramOffering(
+      collegeFUser,
       savedFakeEducationProgram,
       collegeFLocation,
     );
