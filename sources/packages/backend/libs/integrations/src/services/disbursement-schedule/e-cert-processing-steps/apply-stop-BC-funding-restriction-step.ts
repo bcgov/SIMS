@@ -11,7 +11,7 @@ import { getStopFundingTypesAndRestrictionsMap } from "./e-cert-steps-utils";
  * Applies restrictions that stop some funding types from being disbursed.
  */
 @Injectable()
-export class ApplyStopFundingTypeRestrictionStep implements ECertProcessStep {
+export class ApplyStopBCFundingRestrictionStep implements ECertProcessStep {
   /**
    * Check active student restriction that should stop some funding type from being disbursed.
    * In case some is present, awards will be updated to not be disbursed.
