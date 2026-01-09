@@ -16,7 +16,7 @@ import { isRestrictionActionEffective } from "./e-cert-steps-restriction-utils";
 /**
  * Map of restriction action types associated with the offering intensity.
  */
-const RESTRICTION_ACTION_TYPE_INTENSITY_MAP = new Map([
+const STOP_FUNDING_ACTION_INTENSITY_MAP = new Map([
   [
     OfferingIntensity.fullTime,
     [
@@ -111,7 +111,7 @@ export function getRestrictionByCode(
 export function getStopFundingTypesAndRestrictionsMap(
   eCertDisbursement: EligibleECertDisbursement,
 ): Map<DisbursementValueType, ActiveRestriction[]> {
-  const restrictionTypes = RESTRICTION_ACTION_TYPE_INTENSITY_MAP.get(
+  const restrictionTypes = STOP_FUNDING_ACTION_INTENSITY_MAP.get(
     eCertDisbursement.offering.offeringIntensity,
   );
   // Find restrictions associated with the offering intensity.
