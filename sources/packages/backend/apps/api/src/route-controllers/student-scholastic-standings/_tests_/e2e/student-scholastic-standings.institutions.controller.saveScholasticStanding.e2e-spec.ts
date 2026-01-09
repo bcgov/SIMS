@@ -27,6 +27,7 @@ import {
   InstitutionLocation,
   NotificationMessageType,
   OfferingIntensity,
+  OfferingTypes,
   Restriction,
   StudentRestriction,
   StudentScholasticStandingChangeType,
@@ -504,6 +505,106 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
         user: { id: application.student.user.id },
       },
     ]);
+
+    const { user: collegeFUser } = await getAuthRelatedEntities(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const existingOffering = application.currentAssessment.offering;
+
+    // Assert that the related Scholastic Standing offering is created with the correct values
+    const offering = await db.educationProgramOffering.findOne({
+      select: {
+        id: true,
+        creator: {
+          id: true,
+        },
+        educationProgram: {
+          id: true,
+        },
+        institutionLocation: {
+          id: true,
+        },
+        parentOffering: {
+          id: true,
+        },
+        submittedBy: {
+          id: true,
+        },
+        submittedDate: true,
+        name: true,
+        studyStartDate: true,
+        studyEndDate: true,
+        actualTuitionCosts: true,
+        programRelatedCosts: true,
+        mandatoryFees: true,
+        exceptionalExpenses: true,
+        offeringDelivered: true,
+        lacksStudyBreaks: true,
+        offeringType: true,
+        offeringIntensity: true,
+        yearOfStudy: true,
+        hasOfferingWILComponent: true,
+        studyBreaks: true,
+        offeringDeclaration: true,
+        offeringStatus: true,
+        courseLoad: true,
+        isAviationOffering: true,
+      },
+      relations: {
+        creator: true,
+        educationProgram: true,
+        institutionLocation: true,
+        parentOffering: true,
+        submittedBy: true,
+      },
+      where: {
+        offeringType: OfferingTypes.ScholasticStanding,
+        parentOffering: { id: existingOffering.id },
+      },
+      order: { id: "DESC" },
+    });
+    expect(offering).toEqual({
+      id: expect.any(Number),
+      creator: {
+        id: collegeFUser.id,
+      },
+      educationProgram: {
+        id: existingOffering.educationProgram.id,
+      },
+      institutionLocation: {
+        id: existingOffering.institutionLocation.id,
+      },
+      parentOffering: { id: existingOffering.parentOffering.id },
+      submittedBy: {
+        id: collegeFUser.id,
+      },
+      // TODO Discuss how to handle this better. Mock doesn't work as this is a DB default.
+      submittedDate: expect.any(Date),
+      name: existingOffering.name,
+      studyStartDate: existingOffering.studyStartDate,
+      studyEndDate: payload.data.dateOfWithdrawal,
+      actualTuitionCosts: existingOffering.actualTuitionCosts,
+      programRelatedCosts: existingOffering.programRelatedCosts,
+      mandatoryFees: existingOffering.mandatoryFees,
+      exceptionalExpenses: existingOffering.exceptionalExpenses,
+      offeringDelivered: existingOffering.offeringDelivered,
+      lacksStudyBreaks: existingOffering.lacksStudyBreaks,
+      offeringType: OfferingTypes.ScholasticStanding,
+      offeringIntensity: existingOffering.offeringIntensity,
+      yearOfStudy: existingOffering.yearOfStudy,
+      hasOfferingWILComponent: existingOffering.hasOfferingWILComponent,
+      studyBreaks: {
+        totalDays: 1,
+        totalFundedWeeks: 1,
+        fundedStudyPeriodDays: 1,
+        unfundedStudyPeriodDays: 0,
+      },
+      offeringDeclaration: existingOffering.offeringDeclaration,
+      offeringStatus: existingOffering.offeringStatus,
+      courseLoad: existingOffering.courseLoad,
+      isAviationOffering: existingOffering.isAviationOffering,
+    });
   });
 
   it("Should create a new scholastic standing 'Student completed program early' for a part-time application when the institution user requests.", async () => {
