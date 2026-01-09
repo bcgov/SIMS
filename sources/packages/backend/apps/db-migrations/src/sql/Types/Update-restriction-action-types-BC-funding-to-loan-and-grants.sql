@@ -1,6 +1,7 @@
 -- Postgres allows adding new types to an enum but it causes issues when the new types added are
 -- used in another query in the same transaction, hence the team decision was to recreate the enums
 -- types when a new item must be added following the same approach already used for rollbacks.
+-- Please note, part-time does not include loans as they are not offered for part-time students.
 CREATE TYPE sims.restriction_action_types_to_be_updated AS ENUM (
     'No effect',
     'Stop full-time BC loan',

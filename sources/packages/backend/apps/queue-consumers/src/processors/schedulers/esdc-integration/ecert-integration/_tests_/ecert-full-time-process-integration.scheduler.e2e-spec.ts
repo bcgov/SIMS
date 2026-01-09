@@ -1171,14 +1171,16 @@ describe(
           },
         },
       );
-      await saveFakeStudentRestriction(db.dataSource, {
-        student,
-        restriction: stopFullTimeBCLoanRestriction,
-      });
-      await saveFakeStudentRestriction(db.dataSource, {
-        student,
-        restriction: stopFullTimeBCGrantRestriction,
-      });
+      await Promise.all([
+        saveFakeStudentRestriction(db.dataSource, {
+          student,
+          restriction: stopFullTimeBCLoanRestriction,
+        }),
+        saveFakeStudentRestriction(db.dataSource, {
+          student,
+          restriction: stopFullTimeBCGrantRestriction,
+        }),
+      ]);
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -1195,7 +1197,7 @@ describe(
         ]),
       ).toBe(true);
 
-      // Assert uploaded file.
+      // Assert uploaded records.
       const uploadedFile = getUploadedFile(sftpClientMock);
       const [, record1] = uploadedFile.fileLines;
       // Check record 1 values.
@@ -1210,7 +1212,7 @@ describe(
       // Validate DB values.
       const [currentApplicationDisbursement] =
         application.currentAssessment.disbursementSchedules;
-      // Select the BCSL to validate the values impacted by the restriction.
+      // Select the BCSL, BCAG, and BCSG to validate the values impacted by the restriction.
       const record1Awards = await loadAwardValues(
         db,
         currentApplicationDisbursement.id,

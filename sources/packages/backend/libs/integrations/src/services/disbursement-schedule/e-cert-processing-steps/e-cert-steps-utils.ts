@@ -13,6 +13,9 @@ import { RestrictionCode } from "@sims/services";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { isRestrictionActionEffective } from "./e-cert-steps-restriction-utils";
 
+/**
+ * Map of restriction action types associated with the offering intensity.
+ */
 const RESTRICTION_ACTION_TYPE_INTENSITY_MAP = new Map([
   [
     OfferingIntensity.fullTime,
@@ -24,6 +27,9 @@ const RESTRICTION_ACTION_TYPE_INTENSITY_MAP = new Map([
   [OfferingIntensity.partTime, [RestrictionActionType.StopPartTimeBCGrants]],
 ]);
 
+/**
+ * List of restriction actions that block BC grants.
+ */
 const BC_GRANTS_RESTRICTION_ACTIONS = [
   RestrictionActionType.StopFullTimeBCGrants,
   RestrictionActionType.StopPartTimeBCGrants,
