@@ -3,7 +3,7 @@ import { getSQLFileData } from "../utilities/sqlLoader";
 
 /**
  * Migration to update restriction action types from "BC Funding" to a more granular options
- * were loans and grants are separated, and also update existing restrictions to use the new types.
+ * where loans and grants are separated, and also update existing restrictions to use the new types.
  * Minor naming adjustments were also made to include the missing dashes in part-time and full-time.
  */
 export class UpdateBCFundingToLoanAndGrants1767817093895 implements MigrationInterface {

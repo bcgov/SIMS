@@ -41,7 +41,7 @@ const BC_GRANTS_RESTRICTION_ACTIONS = [
  * will not be included in the result.
  * @param eCertDisbursement student disbursement to check student restrictions.
  * @param actionTypes action types.
- * @returns the all the effective restrictions of the requested action type.
+ * @returns all the effective restrictions of the requested action type.
  */
 export function getRestrictionsByActionType(
   eCertDisbursement: EligibleECertDisbursement,
