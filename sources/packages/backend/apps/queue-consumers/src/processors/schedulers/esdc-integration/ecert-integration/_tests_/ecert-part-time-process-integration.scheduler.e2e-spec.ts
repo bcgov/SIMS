@@ -1183,7 +1183,9 @@ describe(
         // This restriction will not be bypassed and should block the disbursement,
         // making the bypass not be resolved.
         const restriction = await db.restriction.findOne({
+          select: { id: true },
           where: {
+            restrictionType: RestrictionType.Provincial,
             actionType: ArrayContains([
               RestrictionActionType.StopPartTimeDisbursement,
             ]),
@@ -1414,7 +1416,10 @@ describe(
 
       // Find one restriction to be associated with the student.
       const restriction = await db.restriction.findOne({
+        select: { id: true },
         where: {
+          restrictionType: RestrictionType.Provincial,
+          actionEffectiveConditions: IsNull(),
           actionType: ArrayContains([
             RestrictionActionType.StopPartTimeBCGrants,
           ]),
@@ -1443,13 +1448,13 @@ describe(
               "CSGP",
               299,
             ),
-            // Should not be disbursed due to B6A restriction.
+            // Should not be disbursed due to StopPartTimeBCGrants restriction.
             createFakeDisbursementValue(
               DisbursementValueType.BCLoan,
               "SBSD",
               399,
             ),
-            // Should not be disbursed due to BCLM restriction.
+            // Should not be disbursed due to StopPartTimeBCGrants restriction.
             createFakeDisbursementValue(
               DisbursementValueType.BCGrant,
               "BCAG",
@@ -1492,7 +1497,9 @@ describe(
           "Applying restriction for BCAG.",
         ]),
       ).toBe(true);
-      // Select the SBSD/BCAG to validate the values impacted by the restriction.
+      // Select the SBSD, BCAG, and BCSG to validate the values impacted by the restriction.
+      // BCSG is created as the SUM of all BC grants and it must be 0(zero) when there is a
+      // StopPartTimeBCGrants restriction.
       const [applicationBDisbursement1] =
         applicationB.currentAssessment.disbursementSchedules;
       const record3Awards = await loadAwardValues(
