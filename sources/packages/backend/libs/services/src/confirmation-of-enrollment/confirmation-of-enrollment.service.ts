@@ -368,11 +368,14 @@ export class ConfirmationOfEnrollmentService {
     offeringIntensity: OfferingIntensity,
     enrolmentConfirmationDate?: Date,
   ): Promise<void> {
-    const documentNumber = await this.getNextDocumentNumber(offeringIntensity);
     const auditUser = { id: userId } as User;
     const coeConfirmationDate = enrolmentConfirmationDate ?? new Date();
 
     await this.dataSource.transaction(async (transactionalEntityManager) => {
+      const documentNumber = await this.getNextDocumentNumber(
+        offeringIntensity,
+        transactionalEntityManager,
+      );
       await transactionalEntityManager
         .getRepository(DisbursementSchedule)
         .createQueryBuilder()
@@ -868,15 +871,18 @@ export class ConfirmationOfEnrollmentService {
    * Generates the next document number to be associated
    * with a disbursement.
    * @param offeringIntensity offering intensity.
+   * @param entityManager entity manager to execute in transaction.
    * @returns sequence number for disbursement document number.
    */
-  private async getNextDocumentNumber(
+  async getNextDocumentNumber(
     offeringIntensity: OfferingIntensity,
+    entityManager: EntityManager,
   ): Promise<number> {
     const sequenceGroupName = `${offeringIntensity}_DISBURSEMENT_DOCUMENT_NUMBER`;
     let nextDocumentNumber: number;
-    await this.sequenceService.consumeNextSequence(
+    await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
       sequenceGroupName,
+      entityManager,
       async (nextSequenceNumber) => {
         nextDocumentNumber = nextSequenceNumber;
       },
