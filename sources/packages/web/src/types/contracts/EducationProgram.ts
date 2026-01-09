@@ -60,7 +60,7 @@ export interface ProgramOfferingHeader {
   institutionId: number;
   institutionName: string;
   submittedDate: Date;
-  submittedBy?: string;
+  submittedBy: string;
   status: ProgramStatus | OfferingStatus;
   assessedBy?: string;
   assessedDate?: Date;

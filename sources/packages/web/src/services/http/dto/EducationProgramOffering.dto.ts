@@ -152,7 +152,7 @@ export interface EducationProgramOfferingAPIOutDTO {
   studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
   assessedBy?: string;
   assessedDate?: Date;
-  submittedBy?: string;
+  submittedBy: string;
   submittedDate: Date;
   courseLoad?: number;
   hasExistingApplication?: boolean;
