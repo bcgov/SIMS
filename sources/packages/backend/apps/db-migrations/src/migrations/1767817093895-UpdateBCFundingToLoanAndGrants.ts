@@ -9,9 +9,18 @@ export class UpdateBCFundingToLoanAndGrants1767817093895 implements MigrationInt
         "Types",
       ),
     );
+    await queryRunner.query(
+      getSQLFileData("Update-stop-funding-loan-and-grants.sql", "Restrictions"),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      getSQLFileData(
+        "Rollback-update-stop-funding-loan-and-grants.sql",
+        "Restrictions",
+      ),
+    );
     await queryRunner.query(
       getSQLFileData(
         "Rollback-update-restriction-action-types-BC-funding-to-loan-and-grants.sql",
