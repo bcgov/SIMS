@@ -197,10 +197,8 @@ export class RestrictionAESTController extends BaseController {
    */
   @Roles(Role.StudentResolveRestriction)
   @ApiUnprocessableEntityResponse({
-    description: "Resolution Notes are mandatory to resolve the restriction.",
-  })
-  @ApiNotFoundResponse({
     description:
+      "Resolution Notes are mandatory to resolve the restriction." +
       "The restriction neither assigned to student nor active. Only active restrictions can be resolved." +
       "The given restriction type is not Provincial. Only provincial restrictions can be resolved by application user.",
   })
