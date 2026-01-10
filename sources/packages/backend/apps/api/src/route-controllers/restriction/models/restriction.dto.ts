@@ -87,9 +87,7 @@ export class RestrictionDetailAPIOutDTO extends RestrictionSummaryAPIOutDTO {
  * DTO to resolve restriction to a student/institution.
  */
 export class ResolveRestrictionAPIInDTO {
-  @IsNotEmpty({
-    message: "Resolution Notes are mandatory to resolve the restriction.",
-  })
+  @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;
 }

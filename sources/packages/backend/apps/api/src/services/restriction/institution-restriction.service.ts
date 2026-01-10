@@ -14,10 +14,7 @@ import {
   RestrictionNotificationType,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
-import {
-  RESTRICTION_NOT_ACTIVE,
-  RESTRICTION_TYPE_NOT_EXPECTED,
-} from "@sims/services/constants";
+import { RESTRICTION_NOT_ACTIVE } from "@sims/services/constants";
 import { RestrictionService } from "../../services";
 import {
   INSTITUTION_NOT_FOUND,
@@ -310,27 +307,21 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       where: {
         id: institutionRestrictionId,
         institution: { id: institutionId },
-        isActive: true,
       },
       relations: { restriction: true },
     });
-
     if (!institutionRestrictionEntity) {
       throw new CustomNamedError(
-        "The restriction was either not assigned to the institution or inactive. Only active restrictions can be resolved.",
+        "The restriction is not assigned to the institution.",
+        RESTRICTION_NOT_FOUND,
+      );
+    }
+    if (!institutionRestrictionEntity.isActive) {
+      throw new CustomNamedError(
+        "The restriction is already resolved.",
         RESTRICTION_NOT_ACTIVE,
       );
     }
-    if (
-      institutionRestrictionEntity.restriction.restrictionType !==
-      RestrictionType.Institution
-    ) {
-      throw new CustomNamedError(
-        "The given restriction type is not Institution. Only institution restrictions can be resolved by application user.",
-        RESTRICTION_TYPE_NOT_EXPECTED,
-      );
-    }
-
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       const note = await this.noteSharedService.createInstitutionNote(
         institutionId,

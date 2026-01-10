@@ -22,11 +22,9 @@ import {
   RESTRICTION_NOT_FOUND,
   RESTRICTION_IS_DELETED,
   APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
-} from "../../constants";
-import {
   RESTRICTION_NOT_ACTIVE,
-  RESTRICTION_TYPE_NOT_EXPECTED,
-} from "@sims/services/constants";
+  RESTRICTION_NOT_PROVINCIAL,
+} from "../../constants";
 import { ApplicationRestrictionBypassService } from "../../services";
 
 /**
@@ -241,7 +239,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
     ) {
       throw new CustomNamedError(
         "The given restriction type is not Provincial. Only provincial restrictions can be resolved by application user.",
-        RESTRICTION_TYPE_NOT_EXPECTED,
+        RESTRICTION_NOT_PROVINCIAL,
       );
     }
     return this.dataSource.transaction(async (transactionalEntityManager) => {

@@ -181,7 +181,11 @@ export default defineComponent({
         snackBar.success(
           "The given restriction has been resolved and resolution notes added.",
         );
-      } catch {
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          snackBar.error(error.message);
+          return;
+        }
         snackBar.error("Unexpected error while resolving the restriction.");
       }
     };
