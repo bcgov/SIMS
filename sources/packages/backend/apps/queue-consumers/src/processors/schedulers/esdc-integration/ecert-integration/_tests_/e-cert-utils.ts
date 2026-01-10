@@ -78,6 +78,7 @@ export async function loadAwardValues(
  * - `effectiveAmount` value calculated to be added to the e-Cert.
  * - `restrictionAmountSubtracted` amount subtracted from the eligible award
  * value due to a restriction.
+ * - `restrictionSubtractedId` restriction ID that caused the amount to be subtracted.
  * @returns true if all assertions were successful.
  */
 export function awardAssert(
@@ -87,6 +88,7 @@ export function awardAssert(
     valueAmount?: number;
     effectiveAmount?: number;
     restrictionAmountSubtracted?: number;
+    restrictionSubtractedId?: number;
   },
 ): boolean {
   const award = awards.find((award) => award.valueCode === valueCode);
@@ -109,6 +111,12 @@ export function awardAssert(
       !award.restrictionSubtracted.id)
   ) {
     // If a restriction is expected, a restriction id should also be present.
+    return false;
+  }
+  if (
+    options.restrictionSubtractedId &&
+    options.restrictionSubtractedId !== award.restrictionSubtracted.id
+  ) {
     return false;
   }
   return true;

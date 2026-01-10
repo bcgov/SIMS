@@ -198,9 +198,10 @@ export class ApplicationRestrictionBypassService {
             isActive: true,
             restriction: {
               actionType: ArrayOverlap([
-                RestrictionActionType.StopFullTimeBCFunding,
+                RestrictionActionType.StopFullTimeBCLoan,
+                RestrictionActionType.StopFullTimeBCGrants,
                 RestrictionActionType.StopFullTimeDisbursement,
-                RestrictionActionType.StopPartTimeBCFunding,
+                RestrictionActionType.StopPartTimeBCGrants,
                 RestrictionActionType.StopPartTimeDisbursement,
               ]),
             },
@@ -216,11 +217,12 @@ export class ApplicationRestrictionBypassService {
       application.currentAssessment.offering.offeringIntensity ===
       OfferingIntensity.fullTime
         ? [
-            RestrictionActionType.StopFullTimeBCFunding,
+            RestrictionActionType.StopFullTimeBCLoan,
+            RestrictionActionType.StopFullTimeBCGrants,
             RestrictionActionType.StopFullTimeDisbursement,
           ]
         : [
-            RestrictionActionType.StopPartTimeBCFunding,
+            RestrictionActionType.StopPartTimeBCGrants,
             RestrictionActionType.StopPartTimeDisbursement,
           ];
 

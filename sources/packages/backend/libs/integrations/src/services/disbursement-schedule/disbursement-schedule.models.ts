@@ -21,16 +21,6 @@ export interface DisbursementValue {
   valueAmount: number;
 }
 
-export interface Disbursement {
-  disbursementDate: Date;
-  negotiatedExpiryDate: Date;
-  disbursements: DisbursementValue[];
-}
-
-export interface ECertDisbursementSchedule extends DisbursementSchedule {
-  stopFullTimeBCFunding: boolean;
-}
-
 /**
  * Full time disbursement feedback errors, there are 96 FT feedback errors.
  * Todo:  As part of this ticket plan is to keep it as a const, In future we will

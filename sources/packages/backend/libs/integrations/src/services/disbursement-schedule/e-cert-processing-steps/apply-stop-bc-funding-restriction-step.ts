@@ -1,17 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { EntityManager } from "typeorm";
-import {
-  Restriction,
-  RestrictionActionType,
-  OfferingIntensity,
-} from "@sims/sims-db";
+import { Restriction } from "@sims/sims-db";
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
-import {
-  shouldStopBCFunding,
-  getRestrictionsByActionType,
-} from "./e-cert-steps-utils";
+import { getStopFundingTypesAndRestrictionsMap } from "./e-cert-steps-utils";
 
 /**
  * Handles BC funding restrictions for both full-time and part-time students.
@@ -19,12 +12,6 @@ import {
  */
 @Injectable()
 export class ApplyStopBCFundingRestrictionStep implements ECertProcessStep {
-  // Mapping of offering intensity to corresponding restriction action type.
-  private readonly restrictionMap = {
-    [OfferingIntensity.fullTime]: RestrictionActionType.StopFullTimeBCFunding,
-    [OfferingIntensity.partTime]: RestrictionActionType.StopPartTimeBCFunding,
-  };
-
   /**
    * Check active student restriction that should stop any BC funding from being disbursed.
    * In case some is present, BC awards will be updated to not be disbursed.
@@ -37,24 +24,18 @@ export class ApplyStopBCFundingRestrictionStep implements ECertProcessStep {
     _entityManager: EntityManager,
     log: ProcessSummary,
   ): boolean {
-    const offeringIntensity = eCertDisbursement.offering.offeringIntensity;
-    const restrictionType = this.restrictionMap[offeringIntensity];
-    log.info(`Checking '${restrictionType}' restriction.`);
-
-    // Get the appropriate restriction based on offering intensity
-    const [restriction] = getRestrictionsByActionType(
-      eCertDisbursement,
-      restrictionType,
-    );
-    if (!restriction) {
+    log.info("Checking stop funding restriction.");
+    const stopFundingMap =
+      getStopFundingTypesAndRestrictionsMap(eCertDisbursement);
+    if (!stopFundingMap.size) {
+      log.info("No active restrictions found.");
       return true;
     }
-
     for (const disbursementValue of eCertDisbursement.disbursement
       .disbursementValues) {
-      if (shouldStopBCFunding(eCertDisbursement, disbursementValue)) {
+      if (stopFundingMap.has(disbursementValue.valueType)) {
         log.info(`Applying restriction for ${disbursementValue.valueCode}.`);
-
+        const [restriction] = stopFundingMap.get(disbursementValue.valueType);
         disbursementValue.restrictionAmountSubtracted =
           disbursementValue.valueAmount -
           (disbursementValue.disbursedAmountSubtracted ?? 0) -

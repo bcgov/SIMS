@@ -14,6 +14,7 @@ import {
   NotificationMessageType,
   OfferingIntensity,
   RelationshipStatus,
+  Restriction,
   RestrictionActionType,
   RestrictionBypassBehaviors,
   RestrictionType,
@@ -28,6 +29,7 @@ import {
   createFakeDisbursementValue,
   createFakeMSFAANumber,
   createFakeNotification,
+  createFakeRestriction,
   createFakeUser,
   saveFakeApplicationDisbursements,
   saveFakeApplicationRestrictionBypass,
@@ -76,6 +78,8 @@ describe(
     let sftpClientMock: DeepMocked<Client>;
     let systemUsersService: SystemUsersService;
     let sharedMinistryUser: User;
+    let stopFullTimeBCLoanRestriction: Restriction;
+    let stopFullTimeBCGrantRestriction: Restriction;
     const MAX_LIFE_TIME_BC_LOAN_AMOUNT = 50000;
 
     beforeAll(async () => {
@@ -98,6 +102,23 @@ describe(
         },
         { emailContacts: ["dummy@some.domain"] },
       );
+      // Create common restrictions used on tests having distinct action types
+      // to ensure the proper restrictions are applied during e-Cert generation.
+      [stopFullTimeBCLoanRestriction, stopFullTimeBCGrantRestriction] =
+        await db.restriction.save([
+          createFakeRestriction({
+            initialValues: {
+              restrictionType: RestrictionType.Provincial,
+              actionType: [RestrictionActionType.StopFullTimeBCLoan],
+            },
+          }),
+          createFakeRestriction({
+            initialValues: {
+              restrictionType: RestrictionType.Provincial,
+              actionType: [RestrictionActionType.StopFullTimeBCGrants],
+            },
+          }),
+        ]);
     });
 
     beforeEach(async () => {
@@ -772,7 +793,7 @@ describe(
               "BCSL",
               750,
             ),
-            // BC Grants should still be disbursed since BCSL has some value.
+            // BC Grants should always be disbursed if BCLM restriction is applied.
             createFakeDisbursementValue(
               DisbursementValueType.BCGrant,
               "BCAG",
@@ -823,7 +844,7 @@ describe(
               "BCSL",
               399,
             ),
-            // Should not be disbursed due to BCLM restriction.
+            // BC Grants should always be disbursed if BCLM restriction is applied.
             createFakeDisbursementValue(
               DisbursementValueType.BCGrant,
               "BCAG",
@@ -861,10 +882,13 @@ describe(
       expect(
         mockedJob.containLogMessages([
           "New BCLM restriction was added to the student account.",
-          "Applying restriction for BCAG.",
+          "Checking stop funding restriction.",
           "Applying restriction for BCSL.",
         ]),
       ).toBe(true);
+      expect(
+        mockedJob.containLogMessages(["Applying restriction for BCAG."]),
+      ).toBe(false);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -914,9 +938,10 @@ describe(
       // Keep federal funding.
       expect(record3Parsed.cslfAmount).toBe(199);
       expect(record3Parsed.grantAmount("CSGP")).toBe(299);
-      // Withhold provincial funding.
+      // Withhold provincial funding only for loan when BCLM restriction is applied.
       expect(record3Parsed.bcslAmount).toBe(0);
-      expect(record3Parsed.grantAmount("BCSG")).toBeUndefined();
+      // Grants should still be disbursed when BCLM restriction is applied.
+      expect(record3Parsed.grantAmount("BCSG")).toBe(499);
       // Select the BCSL/BCAG to validate the values impacted by the restriction.
       const [applicationBDisbursement1] =
         applicationB.currentAssessment.disbursementSchedules;
@@ -935,8 +960,8 @@ describe(
       expect(
         awardAssert(record3Awards, "BCAG", {
           valueAmount: 499,
-          restrictionAmountSubtracted: 499,
-          effectiveAmount: 0,
+          restrictionAmountSubtracted: 0,
+          effectiveAmount: 499,
         }),
       ).toBe(true);
     });
@@ -1091,6 +1116,132 @@ describe(
         ).toBe(true);
       },
     );
+
+    it(`Should block all BC funding for a full-time application when the student has multiple restrictions with actions defined as '${RestrictionActionType.StopFullTimeBCLoan}' and '${RestrictionActionType.StopFullTimeBCGrants}'.`, async () => {
+      // Arrange
+      // Student with valid SIN.
+      const student = await saveFakeStudent(db.dataSource);
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber({ student }, { msfaaState: MSFAAStates.Signed }),
+      );
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student,
+          msfaaNumber,
+          firstDisbursementValues: [
+            // Canada Loan should be disbursed.
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLF",
+              199,
+            ),
+            // Canada Grant should be disbursed.
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaGrant,
+              "CSGP",
+              299,
+            ),
+            // BC Loan should be blocked.
+            createFakeDisbursementValue(
+              DisbursementValueType.BCLoan,
+              "BCSL",
+              399,
+            ),
+            // BC Grant should be blocked.
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "BCAG",
+              200,
+            ),
+          ],
+        },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+          currentAssessmentInitialValues: {
+            assessmentData: { weeks: 5 } as Assessment,
+            assessmentDate: new Date(),
+          },
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            coeUpdatedAt: new Date(),
+            disbursementDate: getISODateOnlyString(addDays(1)),
+          },
+        },
+      );
+      await Promise.all([
+        saveFakeStudentRestriction(db.dataSource, {
+          student,
+          restriction: stopFullTimeBCLoanRestriction,
+        }),
+        saveFakeStudentRestriction(db.dataSource, {
+          student,
+          restriction: stopFullTimeBCGrantRestriction,
+        }),
+      ]);
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      await processor.processQueue(mockedJob.job);
+
+      // Assert
+      expect(
+        mockedJob.containLogMessages([
+          "Checking stop funding restriction.",
+          "Applying restriction for BCSL.",
+          "Applying restriction for BCAG.",
+        ]),
+      ).toBe(true);
+
+      // Assert uploaded records.
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      const [, record1] = uploadedFile.fileLines;
+      // Check record 1 values.
+      const record1Parsed = new FullTimeCertRecordParser(record1);
+      // Ensure federal funding is disbursed.
+      expect(record1Parsed.cslfAmount).toBe(199);
+      expect(record1Parsed.grantAmount("CSGP")).toBe(299);
+      // Ensure BC funding is blocked.
+      expect(record1Parsed.bcslAmount).toBe(0);
+      expect(record1Parsed.grantAmount("BCAG")).toBeUndefined();
+      expect(record1Parsed.grantAmount("BCSG")).toBeUndefined();
+      // Validate DB values.
+      const [currentApplicationDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+      // Select the BCSL, BCAG, and BCSG to validate the values impacted by the restriction.
+      const record1Awards = await loadAwardValues(
+        db,
+        currentApplicationDisbursement.id,
+        { valueCode: ["BCSL", "BCAG", "BCSG"] },
+      );
+      expect(
+        awardAssert(record1Awards, "BCSL", {
+          valueAmount: 399,
+          restrictionAmountSubtracted: 399,
+          effectiveAmount: 0,
+          restrictionSubtractedId: stopFullTimeBCLoanRestriction.id,
+        }),
+      ).toBe(true);
+      expect(
+        awardAssert(record1Awards, "BCAG", {
+          valueAmount: 200,
+          restrictionAmountSubtracted: 200,
+          effectiveAmount: 0,
+          restrictionSubtractedId: stopFullTimeBCGrantRestriction.id,
+        }),
+      ).toBe(true);
+      expect(
+        awardAssert(record1Awards, "BCSG", {
+          valueAmount: 0,
+          restrictionAmountSubtracted: 0,
+          effectiveAmount: 0,
+        }),
+      ).toBe(true);
+    });
 
     it("Should not generate disbursement if the Student assessment contains PD/PPD application flag is yes and Student profile PD/PPD missing approval", async () => {
       // Arrange
@@ -1735,7 +1886,10 @@ describe(
         // This restriction will not be bypassed and should block the disbursement,
         // making the bypass not be resolved.
         const restriction = await db.restriction.findOne({
+          select: { id: true },
           where: {
+            restrictionType: RestrictionType.Provincial,
+            actionEffectiveConditions: IsNull(),
             actionType: ArrayContains([
               RestrictionActionType.StopFullTimeDisbursement,
             ]),

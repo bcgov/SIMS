@@ -6,6 +6,7 @@ import {
   Restriction,
   RestrictionActionType,
   RestrictionBypassBehaviors,
+  RestrictionType,
   StudentRestriction,
   User,
 } from "@sims/sims-db";
@@ -109,6 +110,7 @@ export async function saveFakeApplicationRestrictionBypass(
       ? { where: { restrictionCode: options.restrictionCode } }
       : {
           where: {
+            restrictionType: RestrictionType.Provincial,
             actionType: ArrayContains([options.restrictionActionType]),
             actionEffectiveConditions: IsNull(),
           },
