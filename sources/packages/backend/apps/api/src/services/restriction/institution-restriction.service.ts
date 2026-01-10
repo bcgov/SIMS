@@ -14,12 +14,12 @@ import {
   RestrictionNotificationType,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
-import { RESTRICTION_NOT_ACTIVE } from "@sims/services/constants";
 import { RestrictionService } from "../../services";
 import {
   INSTITUTION_NOT_FOUND,
   INSTITUTION_PROGRAM_LOCATION_ASSOCIATION_NOT_FOUND,
   INSTITUTION_RESTRICTION_ALREADY_ACTIVE,
+  RESTRICTION_NOT_ACTIVE,
   RESTRICTION_NOT_FOUND,
 } from "../../constants";
 import { NoteSharedService } from "@sims/services";
