@@ -545,9 +545,16 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
             studyStartDate: true,
             studyEndDate: true,
             studyBreaks: true as unknown,
+            submittedDate: true,
+            submittedBy: {
+              id: true,
+            },
           },
           where: {
             id: In([responseOfferingSBC1.id, responseOfferingSBC2.id]),
+          },
+          relations: {
+            submittedBy: true,
           },
           order: {
             name: "ASC",
@@ -567,6 +574,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
           fundedStudyPeriodDays: 77,
           unfundedStudyPeriodDays: 0,
         },
+        submittedBy: { id: collegeFUser.id },
+        submittedDate: expect.any(Date),
       });
       expect(offeringSBC2).toEqual({
         name: "Test offering 42",
@@ -588,6 +597,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
             },
           ],
         },
+        submittedBy: { id: collegeFUser.id },
+        submittedDate: expect.any(Date),
       });
     },
   );

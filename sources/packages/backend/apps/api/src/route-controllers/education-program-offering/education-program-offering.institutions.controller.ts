@@ -444,9 +444,9 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
   }
 
   /**
-   * Request a change to offering to modify it's
+   * Request a change to offering to modify its
    * properties that affect the assessment of student application.
-   ** During this process a new offering is created by copying the existing
+   * During this process a new offering is created by copying the existing
    * offering and modifying the properties required.
    * @param offeringId offering to which change is requested.
    * @param payload offering data to create

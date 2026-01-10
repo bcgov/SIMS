@@ -239,6 +239,16 @@ export class EducationProgramOffering extends RecordDataModel {
   submittedDate: Date;
 
   /**
+   * Institution user that submitted the offering.
+   */
+  @ManyToOne(() => User, { eager: false, cascade: false, nullable: false })
+  @JoinColumn({
+    name: "submitted_by",
+    referencedColumnName: "id",
+  })
+  submittedBy: User;
+
+  /**
    * Represents the current status of an offering.
    */
   @Column({

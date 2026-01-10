@@ -126,7 +126,7 @@ export async function saveIER12TestInputData(
     ? await db.educationProgramOffering.save(
         createFakeEducationProgramOffering({
           institutionLocation: assessment.offering.institutionLocation,
-          auditUser: assessment.offering.educationProgram.submittedBy,
+          auditUser: assessment.offering.submittedBy,
           program: assessment.offering.educationProgram,
         }),
       )

@@ -144,6 +144,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         offering.updatedAt = undefined;
         offering.creator = auditUser;
         offering.createdAt = now;
+        offering.submittedBy = auditUser;
 
         const newStudyEndDate =
           scholasticStandingData.dateOfChange ??

@@ -362,6 +362,7 @@ export class EducationProgramOfferingControllerService {
         unfundedStudyPeriodDays: offering.studyBreaks?.unfundedStudyPeriodDays,
       },
       offeringDeclaration: offering.offeringDeclaration,
+      submittedBy: getUserFullName(offering.submittedBy),
       submittedDate: offering.submittedDate,
       offeringStatus: offering.offeringStatus,
       precedingOfferingId: offering.precedingOffering?.id,
