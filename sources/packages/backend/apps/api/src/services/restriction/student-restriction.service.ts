@@ -22,11 +22,9 @@ import {
   RESTRICTION_NOT_FOUND,
   RESTRICTION_IS_DELETED,
   APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
-} from "../../constants";
-import {
   RESTRICTION_NOT_ACTIVE,
   RESTRICTION_NOT_PROVINCIAL,
-} from "@sims/services/constants";
+} from "../../constants";
 import { ApplicationRestrictionBypassService } from "../../services";
 
 /**

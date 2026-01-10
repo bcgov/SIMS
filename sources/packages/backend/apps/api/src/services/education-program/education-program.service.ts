@@ -55,6 +55,7 @@ import {
 } from "../../services";
 import {
   InstitutionAddsPendingProgramNotification,
+  NoteSharedService,
   NotificationActionsService,
 } from "@sims/services";
 import {
@@ -67,6 +68,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   private readonly offeringsRepo: Repository<EducationProgramOffering>;
   constructor(
     private readonly dataSource: DataSource,
+    private readonly noteSharedService: NoteSharedService,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly institutionService: InstitutionService,
     private readonly notificationActionsService: NotificationActionsService,
@@ -815,7 +817,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     }
     return this.dataSource.transaction(async (entityManager) => {
       if (options?.notes) {
-        await this.institutionService.createInstitutionNote(
+        await this.noteSharedService.createInstitutionNote(
           program.institution.id,
           NoteType.Program,
           options.notes,
