@@ -1244,8 +1244,8 @@ describe(
     });
 
     it(
-      "Should block all BC funding for a full-time application, skipping awards already with zero amount when" +
-        " the student has BC funding restriction for grants and some grant will be subtracted to zero before restriction subtraction be applied.",
+      "Should block BC funding for a full-time application while skipping awards with zero effective amount" +
+        " when the student has BC funding restrictions and some awards are already subtracted to zero.",
       async () => {
         // Arrange
         // Student with valid SIN.
