@@ -1263,16 +1263,16 @@ describe(
             student,
             msfaaNumber,
             firstDisbursementValues: [
-              // BC Grant should be blocked.
+              // BC Grant should be blocked but its effective amount
+              // will be calculated as zero due to disbursedAmountSubtracted,
+              // so when applying the restriction it should skip this award.
               createFakeDisbursementValue(
                 DisbursementValueType.BCGrant,
                 "BGPD",
                 275,
                 { disbursedAmountSubtracted: 275 },
               ),
-              // BC Grant should be blocked but its effective amount
-              // will be calculated as zero due to disbursedAmountSubtracted,
-              // so when applying the restriction it should skip this award.
+              // BC Grant should be blocked.
               createFakeDisbursementValue(
                 DisbursementValueType.BCGrant,
                 "BCAG",
@@ -1318,7 +1318,7 @@ describe(
         // Validate DB values.
         const [currentApplicationDisbursement] =
           application.currentAssessment.disbursementSchedules;
-        // Select the BCSL, BCAG, and BCSG to validate the values impacted by the restriction.
+        // Select the BGPD, BCAG, and BCSG to validate the values impacted by the restriction.
         const record1Awards = await loadAwardValues(
           db,
           currentApplicationDisbursement.id,
