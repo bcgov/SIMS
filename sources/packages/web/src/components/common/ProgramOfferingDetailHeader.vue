@@ -67,7 +67,7 @@ import {
 } from "@/types";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 import { useFormatters } from "@/composables";
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { useRouter } from "vue-router";
 import {
   AESTRoutesConst,
@@ -79,14 +79,14 @@ export default defineComponent({
   components: { HeaderTitleValue },
   props: {
     headerDetails: {
-      type: Object,
+      type: Object as PropType<ProgramOfferingHeader>,
       required: true,
       default: {} as ProgramOfferingHeader,
     },
   },
   setup(props) {
     const router = useRouter();
-    const { dateOnlyLongString, emptyStringFiller } = useFormatters();
+    const { dateOnlyLongString } = useFormatters();
     const showApprovalDetails = computed(
       () =>
         props.headerDetails.assessedBy &&
@@ -138,11 +138,7 @@ export default defineComponent({
      * Display in the following format: "Date | First Name Last Name".
      */
     const submitted = computed(() => {
-      const submittedDate = emptyStringFiller(
-        dateOnlyLongString(props.headerDetails.submittedDate),
-      );
-      const submittedBy = emptyStringFiller(props.headerDetails.submittedBy);
-      return `${submittedDate} | ${submittedBy}`;
+      return `${dateOnlyLongString(props.headerDetails.submittedDate)} | ${props.headerDetails.submittedBy}`;
     });
 
     return {
