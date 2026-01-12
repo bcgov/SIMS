@@ -107,8 +107,9 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       offeringValidation.offeringModel,
     );
     programOffering.offeringStatus = offeringValidation.offeringStatus;
-    programOffering.creator = { id: userId } as User;
-    programOffering.submittedBy = { id: userId } as User;
+    const auditUser = { id: userId } as User;
+    programOffering.creator = auditUser;
+    programOffering.submittedBy = auditUser;
     // When creating a new offering, parent id and the primary id are the same.
     programOffering.parentOffering = programOffering;
     const educationProgramOfferingNotificationData = {
@@ -499,7 +500,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .innerJoin("institutionLocation.institution", "institution")
       .innerJoin("institution.institutionType", "institutionType")
       .leftJoin("offerings.assessedBy", "assessedBy")
-      .leftJoin("offerings.submittedBy", "submittedBy")
+      .innerJoin("offerings.submittedBy", "submittedBy")
       .innerJoin("offerings.parentOffering", "parentOffering")
       .andWhere("offerings.id= :offeringId", {
         offeringId: offeringId,

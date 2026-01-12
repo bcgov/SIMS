@@ -512,7 +512,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     );
     const existingOffering = application.currentAssessment.offering;
 
-    // Assert that the related Scholastic Standing offering is created with the correct values
+    // Assert that the related Scholastic Standing offering is created with the correct values.
     const offering = await db.educationProgramOffering.findOne({
       select: {
         id: true,

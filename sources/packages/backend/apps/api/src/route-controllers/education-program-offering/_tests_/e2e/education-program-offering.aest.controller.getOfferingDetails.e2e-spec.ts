@@ -27,7 +27,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getOfferingDetails", () =>
     savedUser = await db.user.save(createFakeUser());
   });
 
-  it("Should return the requested offering by id", async () => {
+  it("Should return the requested offering by ID when it exists.", async () => {
     // Arrange
     const offering = createFakeEducationProgramOffering(
       {

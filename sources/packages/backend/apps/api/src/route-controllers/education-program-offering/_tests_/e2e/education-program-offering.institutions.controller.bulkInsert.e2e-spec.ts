@@ -550,11 +550,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
               id: true,
             },
           },
-          where: {
-            id: In([responseOfferingSBC1.id, responseOfferingSBC2.id]),
-          },
           relations: {
             submittedBy: true,
+          },
+          where: {
+            id: In([responseOfferingSBC1.id, responseOfferingSBC2.id]),
           },
           order: {
             name: "ASC",

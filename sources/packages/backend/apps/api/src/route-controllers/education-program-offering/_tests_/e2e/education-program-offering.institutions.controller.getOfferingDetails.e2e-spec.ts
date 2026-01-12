@@ -1,6 +1,7 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   createE2EDataSources,
+  createFakeEducationProgram,
   createFakeEducationProgramOffering,
   createFakeInstitutionLocation,
   E2EDataSources,
@@ -43,7 +44,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingDetails
     );
   });
 
-  it("Should return the requested offering by id", async () => {
+  it("Should return the requested offering by ID when it exists.", async () => {
     // Arrange
     const offering = createFakeEducationProgramOffering(
       {
@@ -119,20 +120,16 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingDetails
   });
 
   it("Should throw a HttpStatus Not Found (404) error when the offering doesn't exist.", async () => {
-    const offering = createFakeEducationProgramOffering(
-      {
-        auditUser: collegeFUser,
-        institution: collegeF,
-      },
-      {
-        initialValues: { submittedDate: new Date() },
-      },
-    );
-    const savedOffering = await db.educationProgramOffering.save(offering);
+    const educationProgram = createFakeEducationProgram({
+      auditUser: collegeFUser,
+      institution: collegeF,
+    });
+    const savedEducationProgram =
+      await db.educationProgram.save(educationProgram);
 
     // Institution token.
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
-    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedOffering.educationProgram.id}/offering/99999999`;
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedEducationProgram.id}/offering/99999999`;
 
     // Act/Assert
     await request(app.getHttpServer())

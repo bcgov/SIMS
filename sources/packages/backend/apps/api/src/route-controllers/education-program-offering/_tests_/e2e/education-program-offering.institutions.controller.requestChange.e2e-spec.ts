@@ -241,7 +241,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-requestChange", ()
     });
   });
 
-  it("Should throw an UNPROCESSABLE ENTITY (422) exception when the program is inactive.", async () => {
+  it("Should throw UnprocessableEntityException error when the program is inactive.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -319,7 +319,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-requestChange", ()
       });
   });
 
-  it("Should throw an UNPROCESSABLE ENTITY (422) exception when the offering is not in Approved status.", async () => {
+  it("Should throw UnprocessableEntityException error when the offering is not in Approved status.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
