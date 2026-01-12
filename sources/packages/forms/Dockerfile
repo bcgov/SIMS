@@ -1,5 +1,5 @@
 # Use Node image, maintained by Docker: hub.docker.com/r/_/node.
-FROM artifacts.developer.gov.bc.ca/docker-remote/node:20-alpine3.20
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:24-alpine
 
 ARG FORMIO_SOURCE_REPO_URL
 ARG FORMIO_SOURCE_REPO_TAG
