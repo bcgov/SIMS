@@ -1245,7 +1245,7 @@ describe(
 
     it(
       "Should block all BC funding for a full-time application, skipping awards already with zero amount when" +
-        " the student has BC funding restriction for loan and grants and some awards will be subtracted to zero before restriction subtraction be applied.",
+        " the student has BC funding restriction for grants and some grant will be subtracted to zero before restriction subtraction be applied.",
       async () => {
         // Arrange
         // Student with valid SIN.
