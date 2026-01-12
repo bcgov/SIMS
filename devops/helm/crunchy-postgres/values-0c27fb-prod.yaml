@@ -61,10 +61,10 @@ pgBackRest:
   sidecars:
     pgbackrest:
       requests:
-        cpu: 50m
+        cpu: 100m
         memory: 256Mi
       limits:
-        cpu: 50m
+        cpu: 100m
         memory: 512Mi
     pgbackrestConfig:
       requests:
