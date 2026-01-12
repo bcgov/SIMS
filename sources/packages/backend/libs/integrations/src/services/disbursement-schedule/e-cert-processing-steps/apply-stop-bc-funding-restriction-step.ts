@@ -36,10 +36,18 @@ export class ApplyStopBCFundingRestrictionStep implements ECertProcessStep {
       if (stopFundingMap.has(disbursementValue.valueType)) {
         log.info(`Applying restriction for ${disbursementValue.valueCode}.`);
         const [restriction] = stopFundingMap.get(disbursementValue.valueType);
-        disbursementValue.restrictionAmountSubtracted =
+        const restrictionAmountSubtracted =
           disbursementValue.valueAmount -
           (disbursementValue.disbursedAmountSubtracted ?? 0) -
           (disbursementValue.overawardAmountSubtracted ?? 0);
+        if (!restrictionAmountSubtracted) {
+          log.info(
+            `No amount left to be restricted for ${disbursementValue.valueCode}.`,
+          );
+          continue;
+        }
+        disbursementValue.restrictionAmountSubtracted =
+          restrictionAmountSubtracted;
         disbursementValue.effectiveAmount = 0;
         disbursementValue.restrictionSubtracted = {
           id: restriction.id,
