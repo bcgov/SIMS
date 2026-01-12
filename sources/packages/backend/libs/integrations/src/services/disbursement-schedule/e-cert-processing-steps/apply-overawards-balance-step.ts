@@ -8,7 +8,7 @@ import { LOAN_TYPES } from "@sims/services/constants";
 import { ECertProcessStep } from "./e-cert-steps-models";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
-import { shouldStopBCFunding } from "./e-cert-steps-utils";
+import { getStopFundingTypesAndRestrictionsMap } from "./e-cert-steps-utils";
 import {
   OverawardsBalanceCreditHandler,
   OverawardsBalanceDebitHandler,
@@ -76,6 +76,8 @@ export class ApplyOverawardsBalanceStep implements ECertProcessStep {
     entityManager: EntityManager,
     log: ProcessSummary,
   ): Promise<void> {
+    const stopFundingMap =
+      getStopFundingTypesAndRestrictionsMap(eCertDisbursement);
     // List of loan awards with the associated disbursement schedule.
     // Filter possible awards that will not be disbursed due to a restriction.
     // If the award will not be disbursed the overaward should not be deducted
@@ -84,7 +86,7 @@ export class ApplyOverawardsBalanceStep implements ECertProcessStep {
     const loanAwards = eCertDisbursement.disbursement.disbursementValues.filter(
       (award) =>
         LOAN_TYPES.includes(award.valueType) &&
-        !shouldStopBCFunding(eCertDisbursement, award),
+        !stopFundingMap.has(award.valueType),
     );
     for (const loan of loanAwards) {
       // Total overaward balance for the student for this particular award.

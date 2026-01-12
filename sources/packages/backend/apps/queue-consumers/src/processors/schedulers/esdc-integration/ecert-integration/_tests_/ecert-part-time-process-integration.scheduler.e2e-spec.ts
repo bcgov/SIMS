@@ -1183,7 +1183,9 @@ describe(
         // This restriction will not be bypassed and should block the disbursement,
         // making the bypass not be resolved.
         const restriction = await db.restriction.findOne({
+          select: { id: true },
           where: {
+            restrictionType: RestrictionType.Provincial,
             actionType: ArrayContains([
               RestrictionActionType.StopPartTimeDisbursement,
             ]),
@@ -1404,7 +1406,7 @@ describe(
       expect(nonUpdatedCSLPOveraward).toBe(true);
     });
 
-    it("Should stop disbursing BC funding for a part-time application when a 'Stop part time BC funding' restriction is applied.", async () => {
+    it(`Should stop disbursing BC funding for a part-time application when a '${RestrictionActionType.StopPartTimeBCGrants}' restriction is applied.`, async () => {
       // Arrange
       // Eligible COE basic properties.
       const eligibleDisbursement: Partial<DisbursementSchedule> = {
@@ -1414,9 +1416,12 @@ describe(
 
       // Find one restriction to be associated with the student.
       const restriction = await db.restriction.findOne({
+        select: { id: true },
         where: {
+          restrictionType: RestrictionType.Provincial,
+          actionEffectiveConditions: IsNull(),
           actionType: ArrayContains([
-            RestrictionActionType.StopPartTimeBCFunding,
+            RestrictionActionType.StopPartTimeBCGrants,
           ]),
         },
       });
@@ -1443,13 +1448,13 @@ describe(
               "CSGP",
               299,
             ),
-            // Should not be disbursed due to B6A restriction.
+            // Should not be disbursed due to StopPartTimeBCGrants restriction.
             createFakeDisbursementValue(
               DisbursementValueType.BCLoan,
               "SBSD",
               399,
             ),
-            // Should not be disbursed due to BCLM restriction.
+            // Should not be disbursed due to StopPartTimeBCGrants restriction.
             createFakeDisbursementValue(
               DisbursementValueType.BCGrant,
               "BCAG",
@@ -1487,18 +1492,20 @@ describe(
       // Assert
       expect(
         mockedJob.containLogMessages([
-          "Checking 'Stop part time BC funding' restriction.",
+          "Checking stop funding restriction.",
           "Applying restriction for SBSD.",
           "Applying restriction for BCAG.",
         ]),
       ).toBe(true);
-      // Select the SBSD/BCAG to validate the values impacted by the restriction.
+      // Select the SBSD, BCAG, and BCSG to validate the values impacted by the restriction.
+      // BCSG is created as the SUM of all BC grants and it must be 0(zero) when there is a
+      // StopPartTimeBCGrants restriction.
       const [applicationBDisbursement1] =
         applicationB.currentAssessment.disbursementSchedules;
       const record3Awards = await loadAwardValues(
         db,
         applicationBDisbursement1.id,
-        { valueCode: ["SBSD", "BCAG"] },
+        { valueCode: ["SBSD", "BCAG", "BCSG"] },
       );
       expect(
         awardAssert(record3Awards, "SBSD", {
@@ -1511,6 +1518,13 @@ describe(
         awardAssert(record3Awards, "BCAG", {
           valueAmount: 499,
           restrictionAmountSubtracted: 499,
+          effectiveAmount: 0,
+        }),
+      ).toBe(true);
+      expect(
+        awardAssert(record3Awards, "BCSG", {
+          valueAmount: 0,
+          restrictionAmountSubtracted: 0,
           effectiveAmount: 0,
         }),
       ).toBe(true);
