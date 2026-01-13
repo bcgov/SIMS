@@ -163,6 +163,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataReturnTripHomeCost?: number;
   studentDataIncomeAssistanceAmount?: number;
   offeringCourseLoad?: number;
+  parent1SupportingUserId?: number;
   parent1Contributions?: number;
   parent1Ei?: number;
   parent1NetAssests?: number;
@@ -172,6 +173,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   parent1CRAReportedIncome?: number;
   parent1CppEmployment?: number;
   parent1CppSelfemploymentOther?: number;
+  parent2SupportingUserId?: number;
   parent2Contributions?: number;
   parent2CppSelfemploymentOther?: number;
   parent2DependentTable?: StudentDependent[];
@@ -280,6 +282,7 @@ export interface ConfigureDisbursementDataPartTime extends ConfigureDisbursement
 
 export interface IdentifiableParentData extends JSONDoc {
   parentIsAbleToReport: YesNoOptions;
+
   currentYearParentIncome?: number;
 }
 
@@ -394,6 +397,7 @@ export interface CalculatedAssessmentModel {
   dmnFullTimeLivingCategory: string;
   isEligibleForRoomAndBoardAppeal?: boolean;
   isEligibleForStepParentWaiverAppeal?: boolean;
+  calculatedDataWaivedParent?: number;
   // Common variables used in both full-time and part-time.
   // CSGP
   awardEligibilityCSGP: boolean;
