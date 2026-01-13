@@ -22,8 +22,6 @@ import { IInstitutionUserToken } from "../../auth";
  * This consists of all Rest APIs for Institution restrictions.
  */
 @AllowAuthorizedParty(AuthorizedParties.institution)
-@IsBCPublicInstitution()
-@HasStudentDataAccess("studentId")
 @Controller("restriction")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-restriction`)
 export class RestrictionInstitutionsController extends BaseController {
@@ -38,6 +36,8 @@ export class RestrictionInstitutionsController extends BaseController {
    * @param studentId id of the student to retrieve restrictions.
    * @returns Student restrictions.
    */
+  @IsBCPublicInstitution()
+  @HasStudentDataAccess("studentId")
   @Get("student/:studentId")
   async getStudentRestrictions(
     @Param("studentId", ParseIntPipe) studentId: number,
@@ -53,6 +53,8 @@ export class RestrictionInstitutionsController extends BaseController {
    * @param studentRestrictionId id of the student restriction.
    * @returns Student restriction detail view.
    */
+  @IsBCPublicInstitution()
+  @HasStudentDataAccess("studentId")
   @Get("student/:studentId/student-restriction/:studentRestrictionId")
   @ApiNotFoundResponse({
     description: "The student restriction does not exist.",
@@ -74,7 +76,7 @@ export class RestrictionInstitutionsController extends BaseController {
    * Get active institution restrictions.
    * @returns active institution restrictions.
    */
-  @Get()
+  @Get("active")
   async getActiveInstitutionRestrictions(
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<InstitutionActiveRestrictionsAPIOutDTO> {

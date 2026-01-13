@@ -169,6 +169,8 @@ export class InstitutionRestrictionsAPIOutDTO {
  * Active institution restriction details.
  */
 export class InstitutionActiveRestrictionAPIOutDTO {
+  programId: number;
+  locationId: number;
   restrictionCode: RestrictionCode;
   restrictionActions: RestrictionActionType[];
 }

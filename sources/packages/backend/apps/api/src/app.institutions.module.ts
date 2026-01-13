@@ -35,6 +35,7 @@ import {
   CRAIncomeVerificationService,
   SupportingUserService,
   ApplicationRestrictionBypassService,
+  InstitutionRestrictionService,
 } from "./services";
 import {
   ApplicationControllerService,
@@ -196,6 +197,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     CRAIncomeVerificationService,
     SupportingUserService,
     DisbursementScheduleSharedService,
+    InstitutionRestrictionService,
   ],
 })
 export class AppInstitutionsModule {}

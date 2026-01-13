@@ -64,6 +64,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
         "restriction.restrictionCategory",
         "restriction.restrictionCode",
         "restriction.description",
+        "restriction.actionType",
         "location.id",
         "location.name",
         "program.id",

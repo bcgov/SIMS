@@ -202,6 +202,8 @@ export class RestrictionControllerService {
     return {
       institutionRestrictions: institutionRestrictions.map(
         (institutionRestriction) => ({
+          programId: institutionRestriction.program.id,
+          locationId: institutionRestriction.location.id,
           restrictionActions: institutionRestriction.restriction.actionType,
           restrictionCode: institutionRestriction.restriction
             .restrictionCode as RestrictionCode,
