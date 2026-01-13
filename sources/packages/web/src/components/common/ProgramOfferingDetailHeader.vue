@@ -2,14 +2,7 @@
   <div>
     <!-- Basic details -->
     <div class="row">
-      <header-title-value
-        title="Submitted"
-        :value="
-          headerDetails.submittedDate
-            ? dateOnlyLongString(headerDetails.submittedDate)
-            : '-'
-        "
-      />
+      <header-title-value title="Submitted" :value="submitted" />
       <v-divider-vertical-opaque class="mx-2 my-0" />
       <header-title-value title="Institution name"
         ><template #value
@@ -74,7 +67,7 @@ import {
 } from "@/types";
 import HeaderTitleValue from "@/components/generic/HeaderTitleValue.vue";
 import { useFormatters } from "@/composables";
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { useRouter } from "vue-router";
 import {
   AESTRoutesConst,
@@ -86,7 +79,7 @@ export default defineComponent({
   components: { HeaderTitleValue },
   props: {
     headerDetails: {
-      type: Object,
+      type: Object as PropType<ProgramOfferingHeader>,
       required: true,
       default: {} as ProgramOfferingHeader,
     },
@@ -140,12 +133,21 @@ export default defineComponent({
         });
       }
     };
+
+    /**
+     * Display in the following format: "Date | First Name Last Name".
+     */
+    const submitted = computed(() => {
+      return `${dateOnlyLongString(props.headerDetails.submittedDate)} | ${props.headerDetails.submittedBy}`;
+    });
+
     return {
       ProgramStatus,
       goToInstitutionProfile,
       dateOnlyLongString,
       approvalLabel,
       showApprovalDetails,
+      submitted,
     };
   },
 });

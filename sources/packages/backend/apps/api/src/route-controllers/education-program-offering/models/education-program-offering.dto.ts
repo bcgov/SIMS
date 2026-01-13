@@ -134,6 +134,7 @@ export class EducationProgramOfferingAPIOutDTO {
   studyPeriodBreakdown: StudyPeriodBreakdownAPIOutDTO;
   assessedBy?: string;
   assessedDate?: Date;
+  submittedBy: string;
   submittedDate: Date;
   courseLoad?: number;
   hasExistingApplication?: boolean;

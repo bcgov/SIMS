@@ -212,6 +212,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     const createdEducationProgramOffering =
       await db.educationProgramOffering.findOne({
         select: {
+          id: true,
           name: true,
           studyStartDate: true,
           studyEndDate: true,
@@ -229,10 +230,19 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
           studyBreaks: true as unknown,
           offeringDeclaration: true,
           offeringStatus: true,
+          submittedBy: {
+            id: true,
+          },
+          submittedDate: true,
+        },
+        relations: {
+          submittedBy: true,
         },
         where: { id: educationProgramOfferingId },
       });
+
     expect(createdEducationProgramOffering).toEqual({
+      id: educationProgramOfferingId,
       name: payload.offeringName,
       studyStartDate: payload.studyStartDate,
       studyEndDate: payload.studyEndDate,
@@ -264,6 +274,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       },
       offeringDeclaration: payload.offeringDeclaration,
       offeringStatus: OfferingStatus.CreationPending,
+      submittedBy: { id: collegeFUser.id },
+      submittedDate: expect.any(Date),
     });
   });
 
@@ -976,6 +988,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       const savedFakeEducationProgram =
         await db.educationProgram.save(fakeEducationProgram);
       const existingOffering = createFakeEducationProgramOffering(
+        collegeFUser,
         savedFakeEducationProgram,
         collegeFLocation,
       );
