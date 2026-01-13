@@ -37,11 +37,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-stepparent-waive
         { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
       createFakeStudentDependentEligible(
-        DependentEligibility.Eligible0To18YearsOld,
+        DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
         { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
-    //Parent 2 data
+    // Parent 2 data
     assessmentConsolidatedData.parent2SupportingUserId = 600;
     assessmentConsolidatedData.parent2TotalIncome = 70000;
     assessmentConsolidatedData.parent2CppEmployment = 5000;
@@ -93,12 +93,17 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-stepparent-waive
       calculatedAssessment.variables
         .calculatedDataTotalEligibleParent2Dependants,
     ).toBe(1);
-    // We take the maximum of both parents' dependants to calculate total parent dependants (only one should report)
+    // We take the maximum of both parents' dependants to calculate total parent dependants (only one should report).
     expect(
       calculatedAssessment.variables
         .calculatedDataTotalParentEligibleDependants,
     ).toBe(2);
-    // Family size is student + parents + dependants = 1 + 2 + 2 = 5
+    // Contribution dependants are a subset of eligible dependants and includes the applicant.
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataTotalParentEligibleContributionDependants,
+    ).toBe(2);
+    // Family size is student + parents + total dependants = 1 + 2 + 2 = 5
     expect(calculatedAssessment.variables.calculatedDataFamilySize).toBe(5);
     // Parental contribution calculation is the higher of: Student declared amount ($0), or the sum of both parents' declared amounts ($550).
     expect(
@@ -134,11 +139,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-stepparent-waive
         { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
       createFakeStudentDependentEligible(
-        DependentEligibility.Eligible0To18YearsOld,
+        DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
         { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
-    //Parent 2 data
+    // Parent 2 data
     assessmentConsolidatedData.parent2SupportingUserId = 601;
     assessmentConsolidatedData.parent2TotalIncome = 70000;
     assessmentConsolidatedData.parent2CppEmployment = 5000;
@@ -181,6 +186,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-stepparent-waive
       calculatedAssessment.variables
         .calculatedDataTotalParentEligibleDependants,
     ).toBe(1); // Only parent 2's dependants are considered
+    // Contribution dependants are a subset of eligible dependants and includes the applicant.
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataTotalParentEligibleContributionDependants,
+    ).toBe(1);
     // Family size is student + parent + dependants = 1 + 1 + 1 = 3
     expect(calculatedAssessment.variables.calculatedDataFamilySize).toBe(3);
     // Parental contribution calculation is the higher of: Student declared amount ($0), or the sum of both parents' declared amounts ($550).
@@ -217,11 +227,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-stepparent-waive
         { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
       createFakeStudentDependentEligible(
-        DependentEligibility.Eligible0To18YearsOld,
+        DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
         { referenceDate: assessmentConsolidatedData.offeringStudyStartDate },
       ),
     ];
-    //Parent 2 data
+    // Parent 2 data
     assessmentConsolidatedData.parent2SupportingUserId = 602; // Parent with step parent waiver appeal
     assessmentConsolidatedData.parent2TotalIncome = 70000;
     assessmentConsolidatedData.parent2CppEmployment = 5000;
@@ -265,6 +275,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-stepparent-waive
       calculatedAssessment.variables
         .calculatedDataTotalParentEligibleDependants,
     ).toBe(2); // Only parent 1's dependants are considered
+    // Contribution dependants are a subset of eligible dependants and includes the applicant.
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataTotalParentEligibleContributionDependants,
+    ).toBe(2);
     // Family size is student + parent + dependants = 1 + 1 + 2 = 4
     expect(calculatedAssessment.variables.calculatedDataFamilySize).toBe(4);
     // Parental contribution calculation is the higher of: Student declared amount ($0), or the sum of both parents' declared amounts ($550).
