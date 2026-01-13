@@ -287,7 +287,7 @@ export class RestrictionAESTController extends BaseController {
     @Param("institutionId", ParseIntPipe) institutionId: number,
   ): Promise<InstitutionRestrictionSummaryAPIOutDTO[]> {
     const institutionRestrictions =
-      await this.institutionRestrictionService.getInstitutionRestrictionsById(
+      await this.institutionRestrictionService.getInstitutionRestrictions(
         institutionId,
       );
     return institutionRestrictions.map((institutionRestriction) => ({

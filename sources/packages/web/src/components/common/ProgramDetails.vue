@@ -1,8 +1,4 @@
 <template>
-  <banner
-    :type="BannerTypes.Error"
-    header="This program is currently restricted"
-  ></banner>
   <body-header :title="educationProgram.name" data-cy="programName">
     <template #status-chip>
       <status-chip-program
@@ -138,7 +134,6 @@ import {
   ClientIdType,
   OfferingIntensity,
   Role,
-  BannerTypes,
 } from "@/types";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 import { AuthService } from "@/services/AuthService";
@@ -288,7 +283,6 @@ export default defineComponent({
       Role,
       mapOfferingIntensity,
       OfferingIntensity,
-      BannerTypes,
     };
   },
 });

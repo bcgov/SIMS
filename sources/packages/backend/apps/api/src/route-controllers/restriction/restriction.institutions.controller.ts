@@ -1,6 +1,7 @@
 import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
 import BaseController from "../BaseController";
 import {
+  InstitutionActiveRestrictionsAPIOutDTO,
   RestrictionInstitutionDetailAPIOutDTO,
   RestrictionInstitutionSummaryAPIOutDTO,
 } from "./models/restriction.dto";
@@ -9,10 +10,12 @@ import {
   AllowAuthorizedParty,
   HasStudentDataAccess,
   IsBCPublicInstitution,
+  UserToken,
 } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { RestrictionControllerService } from "./restriction.controller.service";
+import { IInstitutionUserToken } from "../../auth";
 
 /**
  * Controller for Institution Restrictions.
@@ -64,6 +67,22 @@ export class RestrictionInstitutionsController extends BaseController {
       {
         filterNoEffectRestrictions: true,
       },
+    );
+  }
+
+  /**
+   * Get active institution restrictions.
+   * @returns active institution restrictions.
+   */
+  @Get()
+  async getActiveInstitutionRestrictions(
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<InstitutionActiveRestrictionsAPIOutDTO> {
+    const institutionId = userToken.authorizations.institutionId;
+    const authorizedLocationIds = userToken.authorizations.getLocationsIds();
+    return this.restrictionControllerService.getActiveInstitutionRestrictions(
+      institutionId,
+      { authorizedLocationIds, excludeNoEffectRestrictions: true },
     );
   }
 }

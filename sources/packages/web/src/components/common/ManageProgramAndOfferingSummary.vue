@@ -1,5 +1,9 @@
 <template>
   <v-card>
+    <banner
+      :type="BannerTypes.Error"
+      header="This program is currently restricted"
+    ></banner>
     <v-container :fluid="true">
       <program-details
         :program-id="programId"
@@ -25,6 +29,7 @@ import { computed, defineComponent, PropType } from "vue";
 import ProgramDetails from "@/components/common/ProgramDetails.vue";
 import OfferingSummary from "@/components/common/OfferingSummary.vue";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
+import { BannerTypes } from "@/types";
 
 export default defineComponent({
   emits: {
@@ -68,6 +73,7 @@ export default defineComponent({
     );
     return {
       isProgramEditable,
+      BannerTypes,
     };
   },
 });

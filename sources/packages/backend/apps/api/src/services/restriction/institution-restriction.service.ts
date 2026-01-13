@@ -37,14 +37,23 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
   }
 
   /**
-   * Service method to get all restrictions as a summary for an institution.
-   * @param institutionId
+   * Get institution restrictions.
+   * @param institutionId institution id.
+   * @param options Options.
+   * - `isActive` indicates whether to select only active restrictions.
+   * - `locationIds` location ids.
+   * - `excludeNoEffectRestrictions` indicates whether to exclude restrictions with no effect.
    * @returns Institution restrictions.
    */
-  async getInstitutionRestrictionsById(
+  async getInstitutionRestrictions(
     institutionId: number,
+    options?: {
+      isActive?: boolean;
+      locationIds?: number[];
+      excludeNoEffectRestrictions?: boolean;
+    },
   ): Promise<InstitutionRestriction[]> {
-    return this.repo
+    const restrictionsQuery = this.repo
       .createQueryBuilder("institutionRestrictions")
       .select([
         "institutionRestrictions.id",
@@ -55,14 +64,34 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
         "restriction.restrictionCategory",
         "restriction.restrictionCode",
         "restriction.description",
+        "location.id",
         "location.name",
+        "program.id",
         "program.name",
       ])
       .innerJoin("institutionRestrictions.restriction", "restriction")
       .innerJoin("institutionRestrictions.institution", "institution")
       .innerJoin("institutionRestrictions.location", "location")
       .innerJoin("institutionRestrictions.program", "program")
-      .where("institution.id = :institutionId", { institutionId })
+      .where("institution.id = :institutionId", { institutionId });
+    if (options?.isActive !== undefined && options.isActive !== null) {
+      restrictionsQuery.andWhere(
+        "institutionRestrictions.isActive = :isActive",
+        { isActive: options.isActive },
+      );
+    }
+    if (options?.locationIds?.length) {
+      restrictionsQuery.andWhere("location.id IN (:...locationIds)", {
+        locationIds: options.locationIds,
+      });
+    }
+    if (options?.excludeNoEffectRestrictions) {
+      restrictionsQuery.andWhere(
+        "restriction.notificationType != :noEffectNotificationType",
+        { noEffectNotificationType: RestrictionNotificationType.NoEffect },
+      );
+    }
+    return restrictionsQuery
       .orderBy("institutionRestrictions.isActive", "DESC")
       .addOrderBy("location.name", "ASC")
       .addOrderBy("program.name", "ASC")
