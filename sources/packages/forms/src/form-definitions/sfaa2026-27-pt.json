@@ -1961,7 +1961,7 @@
                       "hideLabel": true,
                       "tableView": false,
                       "storage": "url",
-                      "dir": "Proof of Citizenship",
+                      "dir": "Proof of Citizenship - Permanent resident",
                       "webcam": false,
                       "capture": false,
                       "fileTypes": [
@@ -2119,7 +2119,7 @@
                       "hideLabel": true,
                       "tableView": false,
                       "storage": "url",
-                      "dir": "Proof of Citizenship",
+                      "dir": "Proof of Citizenship - Protected person",
                       "webcam": false,
                       "capture": false,
                       "fileTypes": [
