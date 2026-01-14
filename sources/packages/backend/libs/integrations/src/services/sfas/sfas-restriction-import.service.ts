@@ -10,15 +10,20 @@ import {
   RestrictionActionType,
   RestrictionNotificationType,
   StudentRestriction,
+  SFASApplication,
 } from "@sims/sims-db";
 import { getUTC, getISODateOnlyString, getSQLFileData } from "@sims/utilities";
 import { SFASDataImporter } from "./sfas-data-importer";
 import { SFASRecordIdentification } from "../../sfas-integration/sfas-files/sfas-record-identification";
 import { SFASRestrictionRecord } from "../../sfas-integration/sfas-files/sfas-restriction-record";
-import { NotificationActionsService, SystemUsersService } from "@sims/services";
+import {
+  NotificationActionsService,
+  RestrictionCode,
+  SystemUsersService,
+} from "@sims/services";
 import { InjectRepository } from "@nestjs/typeorm";
 
-const SFAS_RESTRICTIONS_RAW_SQL_FOLDER = "sfas-restrictions";
+export const SFAS_RESTRICTIONS_RAW_SQL_FOLDER = "sfas-restrictions";
 
 /**
  * Manages the data related to student’s Provincial Restrictions in SFAS.
@@ -32,6 +37,7 @@ export class SFASRestrictionImportService
 {
   private readonly bulkInsertSFASMappedRestrictionsSQL: string;
   private readonly bulkInsertSFASResolvedRestrictionsSQL: string;
+  private readonly bulkInsertSFASWTHDRestrictionsSQL: string;
   constructor(
     private readonly dataSource: DataSource,
     private readonly systemUsersService: SystemUsersService,
@@ -48,6 +54,10 @@ export class SFASRestrictionImportService
     );
     this.bulkInsertSFASResolvedRestrictionsSQL = getSQLFileData(
       "Bulk-insert-sfas-resolved-restrictions.sql",
+      SFAS_RESTRICTIONS_RAW_SQL_FOLDER,
+    );
+    this.bulkInsertSFASWTHDRestrictionsSQL = getSQLFileData(
+      "Bulk-insert-sfas-wthd-restrictions.sql",
       SFAS_RESTRICTIONS_RAW_SQL_FOLDER,
     );
   }
@@ -120,18 +130,39 @@ export class SFASRestrictionImportService
           this.bulkInsertSFASResolvedRestrictionsSQL,
           [creator.id, referenceDate],
         );
-        const processedUpdatePromise = transactionalEntityManager
+        // Insert WTHD restrictions for students who have an active withdrawal
+        // application but do not have the WTHD restriction already applied.
+        const wthdRestriction = await this.restrictionRepo.findOne({
+          select: { id: true },
+          where: { restrictionCode: RestrictionCode.WTHD },
+        });
+        await transactionalEntityManager.query(
+          this.bulkInsertSFASWTHDRestrictionsSQL,
+          [wthdRestriction.id, creator.id, referenceDate],
+        );
+        const restrictionsProcessedUpdatePromise = transactionalEntityManager
           .getRepository(SFASRestriction)
           .update(
             { processed: false },
             { processed: true, updatedAt: referenceDate },
           );
+        const applicationWTHDRestrictionProcessedUpdatePromise =
+          transactionalEntityManager
+            .getRepository(SFASApplication)
+            .update(
+              { wthdProcessed: false },
+              { wthdProcessed: true, updatedAt: referenceDate },
+            );
         const notificationsPromise =
           this.generateLegacyRestrictionNotifications(
             transactionalEntityManager,
             referenceDate,
           );
-        await Promise.all([processedUpdatePromise, notificationsPromise]);
+        await Promise.all([
+          restrictionsProcessedUpdatePromise,
+          applicationWTHDRestrictionProcessedUpdatePromise,
+          notificationsPromise,
+        ]);
       });
     } catch (error) {
       throw new Error(

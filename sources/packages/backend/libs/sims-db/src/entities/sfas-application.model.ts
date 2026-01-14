@@ -416,4 +416,12 @@ export class SFASApplication extends BaseSFASApplicationModel {
     referencedColumnName: "institutionCode",
   })
   institutionLocation?: InstitutionLocation;
+  /**
+   * Indicates whether a withdrawal restriction (WTHD) was already evaluated.
+   */
+  @Column({
+    name: "wthd_processed",
+    nullable: false,
+  })
+  wthdProcessed: boolean;
 }

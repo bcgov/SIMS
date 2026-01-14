@@ -1,6 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { Brackets, DataSource, IsNull, Repository } from "typeorm";
-import { NoteType, SFASIndividual, SFASRestriction } from "@sims/sims-db";
+import {
+  NoteType,
+  SFASApplication,
+  SFASIndividual,
+  SFASRestriction,
+} from "@sims/sims-db";
 import { SFASIndividualDataSummary } from "./sfas-individual.model";
 import { InjectRepository } from "@nestjs/typeorm";
 import { NoteSharedService } from "@sims/services";
@@ -157,9 +162,22 @@ export class SFASIndividualService {
           `Error while associating student ID ${studentId} to legacy individual ID ${individualId}. The individual was not found or a student ID is already associated with it.`,
         );
       }
+      // Reset the processed status of restrictions to allow them to be
+      // re-processed when the SFAS Integration Scheduler runs again,
+      // thus causing the restrictions imported from SFAS to be
+      // applied to the newly associated student account.
       const updateRestrictionsPromise = entityManager
         .getRepository(SFASRestriction)
         .update({ individualId, processed: true }, { processed: false });
+      // Also, update the WTHD processed status in the SFAS Applications table
+      // to false for the newly associated student, following the same reasoning
+      // as above for the SFAS Restrictions.
+      const updateWTHDApplicationsPromise = entityManager
+        .getRepository(SFASApplication)
+        .update(
+          { individualId, wthdProcessed: true },
+          { wthdProcessed: false },
+        );
       const createNotePromise = this.noteSharedService.createStudentNote(
         studentId,
         NoteType.General,
@@ -167,7 +185,11 @@ export class SFASIndividualService {
         auditUserId,
         entityManager,
       );
-      await Promise.all([updateRestrictionsPromise, createNotePromise]);
+      await Promise.all([
+        updateRestrictionsPromise,
+        updateWTHDApplicationsPromise,
+        createNotePromise,
+      ]);
     });
   }
 

@@ -18,6 +18,7 @@ import {
   CASSupplier,
   SupplierStatus,
   ModifiedIndependentStatus,
+  SFASApplication,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "@sims/utilities/logger";
@@ -245,10 +246,22 @@ export class StudentService extends RecordDataModelService<Student> {
         // processed to be re-processed when the SFAS Integration Scheduler
         // runs again, thus causing the restrictions imported from SFAS to be
         // applied to the newly created student account.
-        await entityManager
+        const updateProcessedRestrictionsPromise = entityManager
           .getRepository(SFASRestriction)
           .update({ individualId: sfasIndividual.id }, { processed: false });
-
+        // Also, update the WTHD processed status in the SFAS Applications table
+        // to false for the newly created student, following the same reasoning
+        // as above for the SFAS Restrictions.
+        const updateProcessedWTHDApplicationsPromise = entityManager
+          .getRepository(SFASApplication)
+          .update(
+            { individualId: sfasIndividual.id },
+            { wthdProcessed: false },
+          );
+        await Promise.all([
+          updateProcessedRestrictionsPromise,
+          updateProcessedWTHDApplicationsPromise,
+        ]);
         // If there is a match in SFAS, record that information is available from legacy system with a note attached to the student.
         await this.noteSharedService.createStudentNote(
           student.id,

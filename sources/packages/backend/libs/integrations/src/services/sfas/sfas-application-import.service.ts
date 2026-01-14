@@ -86,6 +86,7 @@ export class SFASApplicationImportService
     );
     application.withdrawalReason = sfasApplication.withdrawalReason;
     application.withdrawalActiveFlag = sfasApplication.withdrawalActiveFlag;
+    application.wthdProcessed = false;
     await this.repo.save(application, { reload: false, transaction: false });
   }
 }
