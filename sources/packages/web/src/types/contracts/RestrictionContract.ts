@@ -97,3 +97,22 @@ export enum RestrictionActionType {
    */
   StopFullTimeDisbursement = "Stop full time disbursement",
 }
+
+export interface RestrictionDetail {
+  restrictionId: number;
+  restrictionType: RestrictionType;
+  restrictionCategory: string;
+  restrictionCode: string;
+  description: string;
+  isActive: boolean;
+  createdAt: Date;
+  resolvedAt?: Date;
+  deletedAt?: Date;
+  updatedAt?: Date;
+  createdBy: string;
+  resolvedBy: string;
+  deletedBy?: string;
+  restrictionNote?: string;
+  resolutionNote?: string;
+  deletionNote?: string;
+}

@@ -134,6 +134,7 @@ import {
   ApiProcessError,
   RestrictionType,
   StudentRestrictionsHeaders,
+  RestrictionDetail,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -182,9 +183,7 @@ export default defineComponent({
     const studentRestrictions = ref<RestrictionSummaryAPIOutDTO[]>([]);
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
-    const viewRestriction = ref(
-      {} as ModalDialog<RestrictionDetailAPIOutDTO | boolean>,
-    );
+    const viewRestriction = ref({} as ModalDialog<RestrictionDetail | false>);
     const addRestriction = ref(
       {} as ModalDialog<AssignRestrictionAPIInDTO | false>,
     );
@@ -215,9 +214,7 @@ export default defineComponent({
       const viewStudentRestrictionData =
         await viewRestriction.value.showModal();
       if (viewStudentRestrictionData) {
-        await resolveRestriction(
-          viewStudentRestrictionData as RestrictionDetailAPIOutDTO,
-        );
+        await resolveRestriction(viewStudentRestrictionData);
       }
     };
 

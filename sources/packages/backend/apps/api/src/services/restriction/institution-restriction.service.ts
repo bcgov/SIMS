@@ -312,7 +312,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
     });
     if (!institutionRestrictionEntity) {
       throw new CustomNamedError(
-        "The restriction is not assigned to the institution.",
+        "The restriction for the institution was not found.",
         RESTRICTION_NOT_FOUND,
       );
     }

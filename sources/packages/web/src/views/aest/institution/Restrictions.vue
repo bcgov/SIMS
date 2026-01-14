@@ -95,6 +95,7 @@ import {
   Role,
   InstitutionRestrictionsHeaders,
   ApiProcessError,
+  RestrictionDetail,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -126,9 +127,7 @@ export default defineComponent({
     const { dateOnlyLongString, conditionalEmptyStringFiller } =
       useFormatters();
     const showModal = ref(false);
-    const viewRestriction = ref(
-      {} as ModalDialog<RestrictionDetailAPIOutDTO | boolean>,
-    );
+    const viewRestriction = ref({} as ModalDialog<RestrictionDetail | false>);
     const addRestriction = ref(
       {} as ModalDialog<AssignInstitutionRestrictionAPIInDTO | false>,
     );
@@ -161,9 +160,7 @@ export default defineComponent({
       const viewInstitutionRestrictionData =
         await viewRestriction.value.showModal();
       if (viewInstitutionRestrictionData) {
-        await resolveRestriction(
-          viewInstitutionRestrictionData as RestrictionDetailAPIOutDTO,
-        );
+        await resolveRestriction(viewInstitutionRestrictionData);
       }
     };
 

@@ -1,9 +1,8 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   E2EDataSources,
-  RestrictionCode,
   createE2EDataSources,
-  saveFakeApplication,
+  createFakeEducationProgramOffering,
   saveFakeInstitutionRestriction,
 } from "@sims/test-utils";
 import {
@@ -11,33 +10,38 @@ import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
+  getAESTUser,
 } from "../../../../testHelpers";
 import * as request from "supertest";
-import { RestrictionType } from "@sims/sims-db";
-import { Not } from "typeorm";
+import { NoteType, RestrictionType, User } from "@sims/sims-db";
 
 describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => {
   let app: INestApplication;
   let db: E2EDataSources;
+  let auditUser: User;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    auditUser = await getAESTUser(
+      db.dataSource,
+      AESTGroups.BusinessAdministrators,
+    );
   });
 
-  it("Should resolve an institution restriction for the provided institution restriction identifier.", async () => {
+  it("Should resolve the institution restriction when the provided institution restriction is active.", async () => {
     // Arrange
-    const application = await saveFakeApplication(db.dataSource);
+    const offering = await db.educationProgramOffering.save(
+      createFakeEducationProgramOffering({ auditUser }),
+    );
     // Institution restriction that blocks disbursement.
     const restriction = await db.restriction.findOne({
       select: { id: true },
       where: {
         restrictionType: RestrictionType.Institution,
-        restrictionCode: RestrictionCode.SUS,
       },
     });
-    const offering = application.currentAssessment.offering;
     const location = offering.institutionLocation;
     const program = offering.educationProgram;
     const institution = location.institution;
@@ -58,15 +62,15 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
       })
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
-
     // Find the institution restriction and validate if it is resolved.
     const resolvedInstitutionRestriction =
       await db.institutionRestriction.findOne({
         select: {
           id: true,
-          resolutionNote: { id: true, description: true },
+          resolutionNote: { id: true, description: true, noteType: true },
           resolvedAt: true,
           resolvedBy: { id: true },
+          isActive: true,
         },
         relations: {
           resolutionNote: true,
@@ -74,25 +78,33 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
         },
         where: { id: institutionRestriction.id },
       });
-    expect(resolvedInstitutionRestriction.resolvedAt).toBeDefined();
-    expect(resolvedInstitutionRestriction.resolvedBy).toBeDefined();
-    expect(resolvedInstitutionRestriction.resolutionNote.description).toBe(
-      "Note for resolved institution restriction.",
-    );
+    expect(resolvedInstitutionRestriction).toEqual({
+      id: institutionRestriction.id,
+      isActive: false,
+      resolutionNote: {
+        id: expect.any(Number),
+        description: "Note for resolved institution restriction.",
+        noteType: NoteType.Restriction,
+      },
+      resolvedAt: expect.any(Date),
+      resolvedBy: {
+        id: auditUser.id,
+      },
+    });
   });
 
-  it("Should throw a not found exception when the provided institution restriction is inactive.", async () => {
+  it("Should throw an unprocessable entity exception when the provided institution restriction is inactive.", async () => {
     // Arrange
-    const application = await saveFakeApplication(db.dataSource);
+    const offering = await db.educationProgramOffering.save(
+      createFakeEducationProgramOffering({ auditUser }),
+    );
     // Institution restriction that blocks disbursement.
     const restriction = await db.restriction.findOne({
       select: { id: true },
       where: {
         restrictionType: RestrictionType.Institution,
-        restrictionCode: RestrictionCode.SUS,
       },
     });
-    const offering = application.currentAssessment.offering;
     const location = offering.institutionLocation;
     const program = offering.educationProgram;
     const institution = location.institution;
@@ -120,31 +132,18 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
         noteDescription: "Note for resolved institution restriction.",
       })
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY);
-
-    // Find the institution restriction and validate it to not be resolved.
-    const unresolvedInstitutionRestriction =
-      await db.institutionRestriction.findOne({
-        select: {
-          id: true,
-          resolutionNote: { id: true, description: true },
-          resolvedAt: true,
-          resolvedBy: { id: true },
-        },
-        relations: {
-          resolutionNote: true,
-          resolvedBy: true,
-        },
-        where: { id: institutionRestriction.id },
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "The restriction is already resolved.",
+        errorType: "RESTRICTION_NOT_ACTIVE",
       });
-    expect(unresolvedInstitutionRestriction.resolvedAt).toBeNull();
-    expect(unresolvedInstitutionRestriction.resolvedBy).toBeNull();
-    expect(unresolvedInstitutionRestriction.resolutionNote).toBeNull();
   });
 
   it("Should throw a not found exception when the provided restriction does not belong to the institution.", async () => {
     // Arrange
-    const application = await saveFakeApplication(db.dataSource);
+    const offering = await db.educationProgramOffering.save(
+      createFakeEducationProgramOffering({ auditUser }),
+    );
     // Institution restriction that blocks disbursement.
     const restriction = await db.restriction.findOne({
       select: { id: true },
@@ -152,15 +151,9 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
         restrictionType: RestrictionType.Institution,
       },
     });
-    const offering = application.currentAssessment.offering;
     const location = offering.institutionLocation;
     const program = offering.educationProgram;
     const institution = location.institution;
-    // Get a different institution to which the above restriction does not belong.
-    const differentInstitution = await db.institution.findOne({
-      select: { id: true },
-      where: { id: Not(institution.id) },
-    });
     // Add institution restriction for the application location and program.
     const institutionRestriction = await saveFakeInstitutionRestriction(
       db,
@@ -176,7 +169,7 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
         },
       },
     );
-    const endpoint = `/aest/restriction/institution/${differentInstitution.id}/institutionRestriction/${institutionRestriction.id}/resolve`;
+    const endpoint = `/aest/restriction/institution/99999/institutionRestriction/${institutionRestriction.id}/resolve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     // Assert
     await request(app.getHttpServer())
@@ -185,26 +178,59 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
         noteDescription: "Note for resolved institution restriction.",
       })
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.NOT_FOUND);
-
-    // Find the institution restriction and validate it to not be resolved.
-    const unresolvedInstitutionRestriction =
-      await db.institutionRestriction.findOne({
-        select: {
-          id: true,
-          resolutionNote: { id: true, description: true },
-          resolvedAt: true,
-          resolvedBy: { id: true },
-        },
-        relations: {
-          resolutionNote: true,
-          resolvedBy: true,
-        },
-        where: { id: institutionRestriction.id },
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        message: "The restriction for the institution was not found.",
+        error: "Not Found",
+        statusCode: HttpStatus.NOT_FOUND,
       });
-    expect(unresolvedInstitutionRestriction.resolvedAt).toBeNull();
-    expect(unresolvedInstitutionRestriction.resolvedBy).toBeNull();
-    expect(unresolvedInstitutionRestriction.resolutionNote).toBeNull();
+  });
+
+  it("Should throw an forbidden exception when the user does not have the required permission.", async () => {
+    // Arrange
+    const offering = await db.educationProgramOffering.save(
+      createFakeEducationProgramOffering({ auditUser }),
+    );
+    // Institution restriction that blocks disbursement.
+    const restriction = await db.restriction.findOne({
+      select: { id: true },
+      where: {
+        restrictionType: RestrictionType.Institution,
+      },
+    });
+    const location = offering.institutionLocation;
+    const program = offering.educationProgram;
+    const institution = location.institution;
+    // Add institution restriction for the application location and program.
+    const institutionRestriction = await saveFakeInstitutionRestriction(
+      db,
+      {
+        restriction,
+        institution,
+        program,
+        location,
+      },
+      {
+        initialValues: {
+          isActive: false,
+        },
+      },
+    );
+    const endpoint = `/aest/restriction/institution/99999/institutionRestriction/${institutionRestriction.id}/resolve`;
+    const token = await getAESTToken(AESTGroups.Operations);
+    // Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send({
+        noteDescription: "Note for resolved institution restriction.",
+      })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        message: "Forbidden resource",
+        error: "Forbidden",
+        statusCode: HttpStatus.FORBIDDEN,
+      });
   });
 
   afterAll(async () => {
