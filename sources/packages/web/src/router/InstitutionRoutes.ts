@@ -505,8 +505,8 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
         component: LocationProgramAddEdit,
         props: (route) => ({
-          locationId: parseInt(route.params.locationId as string),
-          programId: parseInt(route.params.programId as string),
+          locationId: Number.parseInt(route.params.locationId as string),
+          programId: Number.parseInt(route.params.programId as string),
         }),
         meta: {
           clientType: ClientIdType.Institution,

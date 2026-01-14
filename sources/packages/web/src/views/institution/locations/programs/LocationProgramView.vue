@@ -21,7 +21,7 @@
     </template>
     <institution-restriction-banner
       :is-data-loaded-externally="true"
-      :restriction-status="institutionRestrictionStatus"
+      :effective-restriction-status="institutionRestrictionStatus"
     />
     <manage-program-and-offering-summary
       :program-id="programId"

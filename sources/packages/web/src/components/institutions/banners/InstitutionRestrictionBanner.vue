@@ -33,7 +33,7 @@ export default defineComponent({
       required: false,
       default: false,
     },
-    restrictionStatus: {
+    effectiveRestrictionStatus: {
       type: Object as PropType<EffectiveRestrictionStatus>,
       required: false,
       default: undefined,
@@ -46,7 +46,7 @@ export default defineComponent({
     );
     watchEffect(async () => {
       if (props.isDataLoadedExternally) {
-        restrictionStatus.value = props.restrictionStatus;
+        restrictionStatus.value = props.effectiveRestrictionStatus;
         return;
       }
       if (props.locationId && props.programId) {
@@ -56,7 +56,6 @@ export default defineComponent({
             props.programId,
             { institutionId: props.institutionId },
           );
-        return;
       }
     });
     return {
