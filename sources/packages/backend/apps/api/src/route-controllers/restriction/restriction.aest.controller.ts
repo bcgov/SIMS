@@ -37,6 +37,7 @@ import {
   RestrictionReasonsOptionsAPIInDTO,
   AssignInstitutionRestrictionAPIInDTO,
   InstitutionRestrictionSummaryAPIOutDTO,
+  InstitutionActiveRestrictionsAPIOutDTO,
 } from "./models/restriction.dto";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
@@ -303,6 +304,28 @@ export class RestrictionAESTController extends BaseController {
       resolvedAt: institutionRestriction.resolvedAt,
       isActive: institutionRestriction.isActive,
     }));
+  }
+
+  /**
+   * Get active institution restrictions.
+   * @param institutionId institution id.
+   * @returns active institution restrictions.
+   */
+  @ApiNotFoundResponse({
+    description: "Institution not found.",
+  })
+  @Get("institution/:institutionId/active")
+  async getActiveInstitutionRestrictions(
+    @Param("institutionId", ParseIntPipe) institutionId: number,
+  ): Promise<InstitutionActiveRestrictionsAPIOutDTO> {
+    const institutionExists =
+      await this.institutionService.institutionExists(institutionId);
+    if (!institutionExists) {
+      throw new NotFoundException("Institution not found.");
+    }
+    return this.restrictionControllerService.getActiveInstitutionRestrictions(
+      institutionId,
+    );
   }
 
   /**

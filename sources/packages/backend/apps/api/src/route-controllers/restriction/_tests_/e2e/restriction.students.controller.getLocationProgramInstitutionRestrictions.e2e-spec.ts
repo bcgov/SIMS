@@ -53,6 +53,7 @@ describe("RestrictionStudentsController(e2e)-getLocationProgramInstitutionRestri
               restrictionActions: [
                 RestrictionActionType.StopPartTimeDisbursement,
                 RestrictionActionType.StopFullTimeDisbursement,
+                RestrictionActionType.StopOfferingCreate,
               ],
             },
           ],
