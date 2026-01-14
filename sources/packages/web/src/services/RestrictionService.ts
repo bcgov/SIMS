@@ -177,9 +177,11 @@ export class RestrictionService {
 
   /**
    * Get effective institution restriction status for the given program and institution location.
+   * @param locationId institution location id.
+   * @param programId program id.
    * @param options options.
    * - `institutionId` institution id.
-   * @returns active institution restrictions.
+   * @returns effective institution restriction status.
    */
   async getEffectiveInstitutionRestrictionStatus(
     locationId: number,

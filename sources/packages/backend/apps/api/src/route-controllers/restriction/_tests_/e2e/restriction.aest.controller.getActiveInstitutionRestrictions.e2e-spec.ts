@@ -27,7 +27,7 @@ import {
  */
 const TEST_INSTITUTION_RESTRICTION_CODE = "INST001M";
 
-describe("RestrictionAESTController(e2e)-getReasonsOptionsList.", () => {
+describe("RestrictionAESTController(e2e)-getActiveInstitutionRestrictions.", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let restriction: Restriction;
