@@ -3,6 +3,7 @@ import {
   AssignInstitutionRestrictionAPIInDTO,
   AssignRestrictionAPIInDTO,
   DeleteRestrictionAPIInDTO,
+  InstitutionActiveRestrictionsAPIOutDTO,
   InstitutionRestrictionsAPIOutDTO,
   InstitutionRestrictionSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
@@ -179,5 +180,20 @@ export class RestrictionApi extends HttpBaseClient {
         `restriction/institution/location/${locationId}/program/${programId}`,
       ),
     );
+  }
+
+  /**
+   * Get active institution restrictions.
+   * @param options options.
+   * - `institutionId` institution id.
+   * @returns active institution restrictions.
+   */
+  async getActiveInstitutionRestrictions(options?: {
+    institutionId?: number;
+  }): Promise<InstitutionActiveRestrictionsAPIOutDTO> {
+    const url = options?.institutionId
+      ? `restriction/institution/${options.institutionId}/active`
+      : `restriction/active`;
+    return this.getCall(this.addClientRoot(url));
   }
 }

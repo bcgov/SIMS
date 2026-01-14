@@ -11,7 +11,6 @@ import {
   RestrictionSummaryAPIOutDTO,
 } from "./models/restriction.dto";
 import { getUserFullName } from "../../utilities";
-import { RestrictionCode } from "@sims/services";
 
 @Injectable()
 export class RestrictionControllerService {
@@ -205,8 +204,7 @@ export class RestrictionControllerService {
           programId: institutionRestriction.program.id,
           locationId: institutionRestriction.location.id,
           restrictionActions: institutionRestriction.restriction.actionType,
-          restrictionCode: institutionRestriction.restriction
-            .restrictionCode as RestrictionCode,
+          restrictionCode: institutionRestriction.restriction.restrictionCode,
         }),
       ),
     };

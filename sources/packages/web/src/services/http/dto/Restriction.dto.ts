@@ -106,3 +106,20 @@ export interface InstitutionRestrictionAPIOutDTO {
 export interface InstitutionRestrictionsAPIOutDTO {
   institutionRestrictions: InstitutionRestrictionAPIOutDTO[];
 }
+
+/**
+ * Active institution restriction details.
+ */
+export interface InstitutionActiveRestrictionAPIOutDTO {
+  programId: number;
+  locationId: number;
+  restrictionCode: string;
+  restrictionActions: RestrictionActionType[];
+}
+
+/**
+ * Active institution restrictions.
+ */
+export interface InstitutionActiveRestrictionsAPIOutDTO {
+  institutionRestrictions: InstitutionActiveRestrictionAPIOutDTO[];
+}
