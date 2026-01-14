@@ -35,7 +35,6 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
     const offering = await db.educationProgramOffering.save(
       createFakeEducationProgramOffering({ auditUser }),
     );
-    // Institution restriction that blocks disbursement.
     const restriction = await db.restriction.findOne({
       select: { id: true },
       where: {
@@ -98,7 +97,6 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
     const offering = await db.educationProgramOffering.save(
       createFakeEducationProgramOffering({ auditUser }),
     );
-    // Institution restriction that blocks disbursement.
     const restriction = await db.restriction.findOne({
       select: { id: true },
       where: {
@@ -144,7 +142,6 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
     const offering = await db.educationProgramOffering.save(
       createFakeEducationProgramOffering({ auditUser }),
     );
-    // Institution restriction that blocks disbursement.
     const restriction = await db.restriction.findOne({
       select: { id: true },
       where: {
@@ -191,7 +188,6 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
     const offering = await db.educationProgramOffering.save(
       createFakeEducationProgramOffering({ auditUser }),
     );
-    // Institution restriction that blocks disbursement.
     const restriction = await db.restriction.findOne({
       select: { id: true },
       where: {
