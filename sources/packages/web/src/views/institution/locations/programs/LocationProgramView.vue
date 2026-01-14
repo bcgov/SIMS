@@ -19,12 +19,17 @@
         }"
       />
     </template>
+    <institution-restriction-banner
+      :is-data-loaded-externally="true"
+      :restriction-status="institutionRestrictionStatus"
+    />
     <manage-program-and-offering-summary
       :program-id="programId"
       :location-id="locationId"
       :education-program="educationProgram"
       :allow-edit="!isReadOnly"
       :allow-deactivate="!isReadOnly"
+      :can-create-offering="canCreateOffering"
       @program-data-updated="programDataUpdated"
     />
   </full-page-container>
@@ -37,10 +42,17 @@ import { ref, onMounted, defineComponent, computed } from "vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
+import InstitutionRestrictionBanner from "@/components/institutions/banners/InstitutionRestrictionBanner.vue";
 import { useInstitutionAuth } from "@/composables";
+import { EffectiveRestrictionStatus } from "@/types";
+import { RestrictionService } from "@/services/RestrictionService";
 
 export default defineComponent({
-  components: { ManageProgramAndOfferingSummary, ProgramOfferingDetailHeader },
+  components: {
+    ManageProgramAndOfferingSummary,
+    ProgramOfferingDetailHeader,
+    InstitutionRestrictionBanner,
+  },
   props: {
     programId: {
       type: Number,
@@ -54,9 +66,22 @@ export default defineComponent({
   setup(props) {
     const { isReadOnlyUser } = useInstitutionAuth();
     const educationProgram = ref({} as EducationProgramAPIOutDTO);
+    const institutionRestrictionStatus = ref<EffectiveRestrictionStatus>();
+    const canCreateOffering = computed(
+      () => !!institutionRestrictionStatus.value?.canCreateOffering,
+    );
     const getEducationProgramAndOffering = async () => {
       educationProgram.value =
         await EducationProgramService.shared.getEducationProgram(
+          props.programId,
+        );
+    };
+
+    const loadInitialData = async () => {
+      await getEducationProgramAndOffering();
+      institutionRestrictionStatus.value =
+        await RestrictionService.shared.getEffectiveInstitutionRestrictionStatus(
+          props.locationId,
           props.programId,
         );
     };
@@ -65,7 +90,7 @@ export default defineComponent({
       return isReadOnlyUser(props.locationId);
     });
 
-    onMounted(getEducationProgramAndOffering);
+    onMounted(loadInitialData);
 
     const programDataUpdated = () => getEducationProgramAndOffering();
 
@@ -74,6 +99,8 @@ export default defineComponent({
       InstitutionRoutesConst,
       programDataUpdated,
       isReadOnly,
+      canCreateOffering,
+      institutionRestrictionStatus,
     };
   },
 });

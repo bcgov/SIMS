@@ -38,6 +38,11 @@
         status: educationProgram.programStatus,
       }"
     />
+    <institution-restriction-banner
+      :location-id="locationId"
+      :program-id="programId"
+      :institution-id="institutionId"
+    />
     <manage-program-and-offering-summary
       :program-id="programId"
       :location-id="locationId"
@@ -63,6 +68,7 @@ import { EducationProgramService } from "@/services/EducationProgramService";
 import ApproveProgramModal from "@/components/aest/institution/modals/ApproveProgramModal.vue";
 import { ModalDialog, useSnackBar } from "@/composables";
 import DeclineProgramModal from "@/components/aest/institution/modals/DeclineProgramModal.vue";
+import InstitutionRestrictionBanner from "@/components/institutions/banners/InstitutionRestrictionBanner.vue";
 import {
   ApproveProgramAPIInDTO,
   DeclineProgramAPIInDTO,
@@ -78,6 +84,7 @@ export default defineComponent({
     DeclineProgramModal,
     CheckPermissionRole,
     ProgramOfferingDetailHeader,
+    InstitutionRestrictionBanner,
   },
   props: {
     programId: {
