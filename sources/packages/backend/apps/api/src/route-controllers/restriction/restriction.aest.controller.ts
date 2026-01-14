@@ -15,6 +15,7 @@ import {
   StudentRestrictionService,
   InstitutionRestrictionService,
   RestrictionService,
+  InstitutionService,
 } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -78,6 +79,7 @@ export class RestrictionAESTController extends BaseController {
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly restrictionService: RestrictionService,
     private readonly institutionRestrictionService: InstitutionRestrictionService,
+    private readonly institutionService: InstitutionService,
   ) {
     super();
   }
