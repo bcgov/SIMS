@@ -8,6 +8,7 @@
         :education-program="educationProgram"
         :allow-edit="allowEdit && isProgramEditable"
         :allow-deactivate="allowDeactivate && isProgramEditable"
+        :can-create-offering="canCreateOffering"
         @program-data-updated="$emit('programDataUpdated')"
       />
       <hr class="horizontal-divider" />
@@ -66,6 +67,7 @@ export default defineComponent({
   },
   setup(props) {
     const hasEffectiveRestriction = ref(false);
+    const canCreateOffering = ref(false);
     watchEffect(async () => {
       if (props.locationId && props.programId) {
         const effectiveRestrictionStatus =
@@ -76,6 +78,7 @@ export default defineComponent({
           );
         hasEffectiveRestriction.value =
           effectiveRestrictionStatus.hasEffectiveRestriction;
+        canCreateOffering.value = effectiveRestrictionStatus.canCreateOffering;
       }
     });
     const isProgramEditable = computed(
@@ -85,6 +88,7 @@ export default defineComponent({
     return {
       isProgramEditable,
       hasEffectiveRestriction,
+      canCreateOffering,
     };
   },
 });

@@ -49,6 +49,7 @@
         color="primary"
         prepend-icon="fa:fa fa-plus-circle"
         data-cy="addNewOfferingButton"
+        :disabled="!canCreateOffering"
       >
         Add offering
       </v-btn>
@@ -175,6 +176,11 @@ export default defineComponent({
       default: false,
     },
     allowDeactivate: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    canCreateOffering: {
       type: Boolean,
       required: false,
       default: false,
