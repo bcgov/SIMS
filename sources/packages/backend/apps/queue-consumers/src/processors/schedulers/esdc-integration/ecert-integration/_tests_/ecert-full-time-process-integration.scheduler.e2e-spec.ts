@@ -1243,6 +1243,115 @@ describe(
       ).toBe(true);
     });
 
+    it(
+      "Should block BC funding for a full-time application while skipping awards with zero effective amount" +
+        " when the student has BC funding restrictions and some awards are already subtracted to zero.",
+      async () => {
+        // Arrange
+        // Student with valid SIN.
+        const student = await saveFakeStudent(db.dataSource);
+        // Valid MSFAA Number.
+        const msfaaNumber = await db.msfaaNumber.save(
+          createFakeMSFAANumber(
+            { student },
+            { msfaaState: MSFAAStates.Signed },
+          ),
+        );
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          {
+            student,
+            msfaaNumber,
+            firstDisbursementValues: [
+              // BC Grant should be blocked but its effective amount
+              // will be calculated as zero due to disbursedAmountSubtracted,
+              // so when applying the restriction it should skip this award.
+              createFakeDisbursementValue(
+                DisbursementValueType.BCGrant,
+                "BGPD",
+                275,
+                { disbursedAmountSubtracted: 275 },
+              ),
+              // BC Grant should be blocked.
+              createFakeDisbursementValue(
+                DisbursementValueType.BCGrant,
+                "BCAG",
+                200,
+              ),
+            ],
+          },
+          {
+            offeringIntensity: OfferingIntensity.fullTime,
+            applicationStatus: ApplicationStatus.Completed,
+            currentAssessmentInitialValues: {
+              assessmentData: { weeks: 5 } as Assessment,
+              assessmentDate: new Date(),
+            },
+            firstDisbursementInitialValues: {
+              coeStatus: COEStatus.completed,
+              coeUpdatedAt: new Date(),
+              disbursementDate: getISODateOnlyString(addDays(1)),
+            },
+          },
+        );
+        await saveFakeStudentRestriction(db.dataSource, {
+          student,
+          restriction: stopFullTimeBCGrantRestriction,
+        });
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await processor.processQueue(mockedJob.job);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            "Checking stop funding restriction.",
+            "Applying restriction for BGPD.",
+            "No amount left to be restricted for BGPD.",
+            "Applying restriction for BCAG.",
+          ]),
+        ).toBe(true);
+
+        // Validate DB values.
+        const [currentApplicationDisbursement] =
+          application.currentAssessment.disbursementSchedules;
+        // Select the BGPD, BCAG, and BCSG to validate the values impacted by the restriction.
+        const record1Awards = await loadAwardValues(
+          db,
+          currentApplicationDisbursement.id,
+          { valueCode: ["BGPD", "BCAG", "BCSG"] },
+        );
+        // Ensure BGPD is not associated with restriction since its effective amount is zero.
+        expect(
+          awardAssert(record1Awards, "BGPD", {
+            valueAmount: 275,
+            restrictionAmountSubtracted: null,
+            effectiveAmount: 0,
+            restrictionSubtractedId: null,
+          }),
+        ).toBe(true);
+        // Ensure other grants are blocked as expected.
+        expect(
+          awardAssert(record1Awards, "BCAG", {
+            valueAmount: 200,
+            restrictionAmountSubtracted: 200,
+            effectiveAmount: 0,
+            restrictionSubtractedId: stopFullTimeBCGrantRestriction.id,
+          }),
+        ).toBe(true);
+        expect(
+          awardAssert(record1Awards, "BCSG", {
+            valueAmount: 0,
+            restrictionAmountSubtracted: 0,
+            effectiveAmount: 0,
+          }),
+        ).toBe(true);
+      },
+    );
+
     it("Should not generate disbursement if the Student assessment contains PD/PPD application flag is yes and Student profile PD/PPD missing approval", async () => {
       // Arrange
 

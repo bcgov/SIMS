@@ -142,6 +142,12 @@ export class RestrictionApi extends HttpBaseClient {
     );
   }
 
+  /**
+   * Resolve an institution restriction.
+   * @param institutionId institution id.
+   * @param institutionRestrictionId institution restriction id.
+   * @param payload payload to resolve the restriction.
+   */
   async resolveInstitutionRestriction(
     institutionId: number,
     institutionRestrictionId: number,

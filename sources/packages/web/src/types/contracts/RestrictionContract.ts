@@ -110,3 +110,22 @@ export interface EffectiveRestrictionStatus {
   hasEffectiveRestriction: boolean;
   canCreateOffering: boolean;
 }
+
+export interface RestrictionDetail {
+  restrictionId: number;
+  restrictionType: RestrictionType;
+  restrictionCategory: string;
+  restrictionCode: string;
+  description: string;
+  isActive: boolean;
+  createdAt: Date;
+  resolvedAt?: Date;
+  deletedAt?: Date;
+  updatedAt?: Date;
+  createdBy: string;
+  resolvedBy: string;
+  deletedBy?: string;
+  restrictionNote?: string;
+  resolutionNote?: string;
+  deletionNote?: string;
+}

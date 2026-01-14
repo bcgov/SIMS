@@ -14,14 +14,15 @@ import {
   RestrictionNotificationType,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
-import { RESTRICTION_NOT_ACTIVE } from "@sims/services/constants";
-import { InstitutionService, RestrictionService } from "../../services";
+import { RestrictionService } from "../../services";
 import {
   INSTITUTION_NOT_FOUND,
   INSTITUTION_PROGRAM_LOCATION_ASSOCIATION_NOT_FOUND,
   INSTITUTION_RESTRICTION_ALREADY_ACTIVE,
+  RESTRICTION_NOT_ACTIVE,
   RESTRICTION_NOT_FOUND,
 } from "../../constants";
+import { NoteSharedService } from "@sims/services";
 
 /**
  * Service layer for institution Restriction.
@@ -30,7 +31,7 @@ import {
 export class InstitutionRestrictionService extends RecordDataModelService<InstitutionRestriction> {
   constructor(
     private readonly dataSource: DataSource,
-    private readonly institutionService: InstitutionService,
+    private readonly noteSharedService: NoteSharedService,
     private readonly restrictionService: RestrictionService,
   ) {
     super(dataSource.getRepository(InstitutionRestriction));
@@ -200,7 +201,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
         entityManager,
       );
       // New note creation.
-      const note = await this.institutionService.createInstitutionNote(
+      const note = await this.noteSharedService.createInstitutionNote(
         institutionId,
         NoteType.Restriction,
         noteDescription,
@@ -320,48 +321,59 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
   }
 
   /**
-   * Resolve provincial restriction.
-   * @param institutionId
-   * @param institutionRestrictionId
-   * @param userId
-   * @param noteDescription
-   * @returns resolved institution restriction.
+   * Resolve an institution restriction.
+   * @param institutionId institution id.
+   * @param institutionRestrictionId institution restriction id.
+   * @param userId user id.
+   * @param noteDescription note description.
    */
-  async resolveProvincialRestriction(
+  async resolveInstitutionRestriction(
     institutionId: number,
     institutionRestrictionId: number,
     userId: number,
     noteDescription: string,
-  ): Promise<InstitutionRestriction> {
+  ): Promise<void> {
     const institutionRestrictionEntity = await this.repo.findOne({
+      select: { id: true, isActive: true },
       where: {
         id: institutionRestrictionId,
         institution: { id: institutionId },
-        isActive: true,
       },
-      relations: { resolutionNote: true, modifier: true, restriction: true },
     });
-
     if (!institutionRestrictionEntity) {
       throw new CustomNamedError(
-        "The restriction neither assigned to institution nor active. Only active restrictions can be resolved.",
+        "The restriction for the institution was not found.",
+        RESTRICTION_NOT_FOUND,
+      );
+    }
+    if (!institutionRestrictionEntity.isActive) {
+      throw new CustomNamedError(
+        "The restriction is already resolved.",
         RESTRICTION_NOT_ACTIVE,
       );
     }
-
-    const now = new Date();
-    institutionRestrictionEntity.isActive = false;
-    institutionRestrictionEntity.modifier = { id: userId } as User;
-    institutionRestrictionEntity.updatedAt = now;
-    institutionRestrictionEntity.resolutionNote = {
-      description: noteDescription,
-      noteType: NoteType.Restriction,
-      creator: {
-        id: institutionRestrictionEntity.modifier.id,
-      } as User,
-      createdAt: now,
-    } as Note;
-    return this.repo.save(institutionRestrictionEntity);
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      const note = await this.noteSharedService.createInstitutionNote(
+        institutionId,
+        NoteType.Restriction,
+        noteDescription,
+        userId,
+        transactionalEntityManager,
+      );
+      const now = new Date();
+      const auditUser = { id: userId } as User;
+      const institutionRestriction = new InstitutionRestriction();
+      institutionRestriction.id = institutionRestrictionId;
+      institutionRestriction.modifier = auditUser;
+      institutionRestriction.updatedAt = now;
+      institutionRestriction.isActive = false;
+      institutionRestriction.resolutionNote = note;
+      institutionRestriction.resolvedBy = auditUser;
+      institutionRestriction.resolvedAt = now;
+      await transactionalEntityManager
+        .getRepository(InstitutionRestriction)
+        .save(institutionRestriction);
+    });
   }
 
   /**

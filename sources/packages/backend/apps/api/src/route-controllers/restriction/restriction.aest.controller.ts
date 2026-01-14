@@ -15,7 +15,6 @@ import {
   StudentRestrictionService,
   InstitutionRestrictionService,
   RestrictionService,
-  InstitutionService,
 } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -56,15 +55,13 @@ import { RestrictionControllerService } from "./restriction.controller.service";
 import { CustomNamedError } from "@sims/utilities";
 import {
   RESTRICTION_NOT_FOUND,
+  RESTRICTION_NOT_ACTIVE,
   RESTRICTION_IS_DELETED,
   INSTITUTION_NOT_FOUND,
   INSTITUTION_PROGRAM_LOCATION_ASSOCIATION_NOT_FOUND,
   INSTITUTION_RESTRICTION_ALREADY_ACTIVE,
-} from "../../constants";
-import {
-  RESTRICTION_NOT_ACTIVE,
   RESTRICTION_NOT_PROVINCIAL,
-} from "@sims/services/constants";
+} from "../../constants";
 import { RestrictionType } from "@sims/sims-db";
 
 /**
@@ -81,7 +78,6 @@ export class RestrictionAESTController extends BaseController {
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly restrictionService: RestrictionService,
     private readonly institutionRestrictionService: InstitutionRestrictionService,
-    private readonly institutionService: InstitutionService,
   ) {
     super();
   }
@@ -435,46 +431,40 @@ export class RestrictionAESTController extends BaseController {
    */
   @Roles(Role.InstitutionResolveRestriction)
   @ApiUnprocessableEntityResponse({
-    description:
-      "Resolution Notes are mandatory to resolve the restriction." +
-      "The restriction neither assigned to student nor active. Only active restrictions can be resolved.",
+    description: "The restriction is already resolved.",
+  })
+  @ApiNotFoundResponse({
+    description: "The restriction is not assigned to the institution.",
   })
   @Patch(
     "institution/:institutionId/institutionRestriction/:institutionRestrictionId/resolve",
   )
-  async resolveInstitutionProvincialRestriction(
+  async resolveInstitutionRestriction(
     @UserToken() userToken: IUserToken,
     @Param("institutionId", ParseIntPipe) institutionId: number,
     @Param("institutionRestrictionId", ParseIntPipe)
     institutionRestrictionId: number,
     @Body() payload: ResolveRestrictionAPIInDTO,
   ): Promise<void> {
-    if (!payload.noteDescription) {
-      throw new UnprocessableEntityException(
-        "Resolution Notes are mandatory to resolve the restriction.",
-      );
-    }
     try {
-      const updatedRestriction =
-        await this.institutionRestrictionService.resolveProvincialRestriction(
-          institutionId,
-          institutionRestrictionId,
-          userToken.userId,
-          payload.noteDescription,
-        );
-
-      /**mapping the note added for resolution to student notes**/
-      await this.institutionService.saveInstitutionNote(
+      await this.institutionRestrictionService.resolveInstitutionRestriction(
         institutionId,
-        updatedRestriction.resolutionNote,
+        institutionRestrictionId,
+        userToken.userId,
+        payload.noteDescription,
       );
-    } catch (error) {
-      if (error.name === RESTRICTION_NOT_ACTIVE) {
-        throw new UnprocessableEntityException(error.message);
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case RESTRICTION_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case RESTRICTION_NOT_ACTIVE:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+        }
       }
-      throw new InternalServerErrorException(
-        "Unexpected error while resolving restriction",
-      );
+      throw error;
     }
   }
 

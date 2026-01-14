@@ -3,8 +3,8 @@
     <template #header>
       <header-navigator
         title="Study period offerings"
-        :routeLocation="{ name: AESTRoutesConst.OFFERING_CHANGE_REQUESTS }"
-        subTitle="View Request"
+        :route-location="{ name: AESTRoutesConst.OFFERING_CHANGE_REQUESTS }"
+        sub-title="View Request"
       >
         <template #buttons>
           <check-permission-role
@@ -31,12 +31,12 @@
       </header-navigator>
       <program-offering-detail-header
         class="m-4"
-        :headerDetails="headerDetails"
+        :header-details="{ ...offering, status: offering.offeringStatus }"
       />
     </template>
     <template #alerts
       ><offering-application-banner
-        :offeringId="offeringId"
+        :offering-id="offeringId"
       ></offering-application-banner>
     </template>
     <template #tab-header>
@@ -47,10 +47,10 @@
     </template>
     <v-window v-model="tab">
       <v-window-item value="requested-change"
-        ><offering-form :offeringId="offeringId" />
+        ><offering-form :offering-id="offeringId" />
       </v-window-item>
       <v-window-item value="active-offering">
-        <offering-form :offeringId="offering.precedingOfferingId" />
+        <offering-form :offering-id="offering.precedingOfferingId" />
       </v-window-item>
     </v-window>
     <assess-offering-change-modal ref="assessOfferingChangeModalRef" />
@@ -62,7 +62,6 @@ import { ref, defineComponent, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import {
   OfferingStatus,
-  ProgramOfferingHeader,
   OfferingRelationType,
   Role,
   ApiProcessError,
@@ -101,7 +100,6 @@ export default defineComponent({
 
   setup(props) {
     const tab = ref("requested-change");
-    const headerDetails = ref({} as ProgramOfferingHeader);
     const offering = ref({} as EducationProgramOfferingAPIOutDTO);
     const assessOfferingChangeModalRef = ref(
       {} as ModalDialog<OfferingChangeAssessmentAPIInDTO | boolean>,
@@ -114,21 +112,11 @@ export default defineComponent({
         await EducationProgramOfferingService.shared.getOfferingDetails(
           props.offeringId,
         );
-      headerDetails.value = {
-        institutionId: offering.value.institutionId,
-        institutionName: offering.value.institutionName,
-        submittedDate: offering.value.submittedDate,
-        status: offering.value.offeringStatus,
-        assessedBy: offering.value.assessedBy,
-        assessedDate: offering.value.assessedDate,
-        locationName: offering.value.locationName,
-      };
     });
 
     const assessOfferingChange = async (offeringStatus: OfferingStatus) => {
-      const responseData = await assessOfferingChangeModalRef.value.showModal(
-        offeringStatus,
-      );
+      const responseData =
+        await assessOfferingChangeModalRef.value.showModal(offeringStatus);
       if (responseData) {
         try {
           await EducationProgramOfferingService.shared.assessOfferingChangeRequest(
@@ -157,7 +145,6 @@ export default defineComponent({
     };
 
     return {
-      headerDetails,
       OfferingStatus,
       AESTRoutesConst,
       tab,
