@@ -152,20 +152,12 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
     const program = offering.educationProgram;
     const institution = location.institution;
     // Add institution restriction for the application location and program.
-    const institutionRestriction = await saveFakeInstitutionRestriction(
-      db,
-      {
-        restriction,
-        institution,
-        program,
-        location,
-      },
-      {
-        initialValues: {
-          isActive: true,
-        },
-      },
-    );
+    const institutionRestriction = await saveFakeInstitutionRestriction(db, {
+      restriction,
+      institution,
+      program,
+      location,
+    });
     const endpoint = `/aest/restriction/institution/99999/institutionRestriction/${institutionRestriction.id}/resolve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     // Assert
@@ -198,20 +190,12 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
     const program = offering.educationProgram;
     const institution = location.institution;
     // Add institution restriction for the application location and program.
-    const institutionRestriction = await saveFakeInstitutionRestriction(
-      db,
-      {
-        restriction,
-        institution,
-        program,
-        location,
-      },
-      {
-        initialValues: {
-          isActive: true,
-        },
-      },
-    );
+    const institutionRestriction = await saveFakeInstitutionRestriction(db, {
+      restriction,
+      institution,
+      program,
+      location,
+    });
     const endpoint = `/aest/restriction/institution/99999/institutionRestriction/${institutionRestriction.id}/resolve`;
     const token = await getAESTToken(AESTGroups.Operations);
     // Assert
