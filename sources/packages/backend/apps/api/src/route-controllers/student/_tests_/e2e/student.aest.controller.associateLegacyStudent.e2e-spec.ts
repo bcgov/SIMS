@@ -73,7 +73,6 @@ describe("StudentAESTController(e2e)-associateLegacyStudent", () => {
           processed: true,
         },
       });
-      await db.sfasRestriction.save(processedSFASRestriction);
       // Create SFAS application with wthdProcessed true to validate update.
       const processedSFASApplication = createFakeSFASApplication(
         { individual: legacyProfileMatch },
