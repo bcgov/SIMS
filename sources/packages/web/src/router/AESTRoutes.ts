@@ -386,7 +386,15 @@ export const aestRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.ViewProgram,
         name: AESTRoutesConst.VIEW_PROGRAM,
-        props: true,
+        props: {
+          default: (route) => ({
+            locationId: Number.parseInt(route.params.locationId as string),
+            programId: Number.parseInt(route.params.programId as string),
+            institutionId: Number.parseInt(
+              route.params.institutionId as string,
+            ),
+          }),
+        },
         components: {
           default: LocationProgramAddEdit,
           sidebar: AESTHomeSideBar,

@@ -504,7 +504,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.LocationProgramsCreate,
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
         component: LocationProgramAddEdit,
-        props: true,
+        props: (route) => ({
+          locationId: parseInt(route.params.locationId as string),
+          programId: parseInt(route.params.programId as string),
+        }),
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [

@@ -25,7 +25,11 @@
           </v-btn>
         </template>
       </banner>
-      <institution-restriction-banner />
+      <institution-restriction-banner
+        :location-id="locationId"
+        :program-id="programId"
+        :institution-id="institutionId"
+      />
     </template>
     <formio-container
       form-name="educationProgram"
@@ -73,6 +77,11 @@ export default defineComponent({
       required: true,
     },
     programId: {
+      type: Number,
+      required: false,
+      default: undefined,
+    },
+    institutionId: {
       type: Number,
       required: false,
       default: undefined,
