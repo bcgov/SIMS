@@ -487,7 +487,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.LocationProgramsView,
         name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
         component: LocationProgramView,
-        props: true,
+        props: (route) => ({
+          locationId: Number.parseInt(route.params.locationId as string),
+          programId: Number.parseInt(route.params.programId as string),
+        }),
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [

@@ -3,7 +3,6 @@ import {
   AssignInstitutionRestrictionAPIInDTO,
   AssignRestrictionAPIInDTO,
   DeleteRestrictionAPIInDTO,
-  InstitutionActiveRestrictionsAPIOutDTO,
   InstitutionRestrictionsAPIOutDTO,
   InstitutionRestrictionSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
@@ -12,7 +11,11 @@ import {
   RestrictionSummaryAPIOutDTO,
   StudentRestrictionAPIOutDTO,
 } from "@/services/http/dto";
-import { RestrictionType } from "@/types/contracts/RestrictionContract";
+import {
+  EffectiveRestrictionStatus,
+  RestrictionActionType,
+  RestrictionType,
+} from "@/types/contracts/RestrictionContract";
 
 /**
  * Client service layer for Restrictions.
@@ -173,14 +176,32 @@ export class RestrictionService {
   }
 
   /**
-   * Get active institution restrictions.
+   * Get effective institution restriction status for the given program and institution location.
    * @param options options.
    * - `institutionId` institution id.
    * @returns active institution restrictions.
    */
-  async getActiveInstitutionRestrictions(options?: {
-    institutionId?: number;
-  }): Promise<InstitutionActiveRestrictionsAPIOutDTO> {
-    return ApiClient.RestrictionApi.getActiveInstitutionRestrictions(options);
+  async getEffectiveInstitutionRestrictionStatus(
+    locationId: number,
+    programId: number,
+    options?: {
+      institutionId?: number;
+    },
+  ): Promise<EffectiveRestrictionStatus> {
+    const { institutionRestrictions } =
+      await ApiClient.RestrictionApi.getActiveInstitutionRestrictions(options);
+    const effectiveRestrictions = institutionRestrictions.filter(
+      (institutionRestriction) =>
+        institutionRestriction.locationId === locationId &&
+        institutionRestriction.programId === programId,
+    );
+    return {
+      hasEffectiveRestriction: !!effectiveRestrictions.length,
+      canCreateOffering: !effectiveRestrictions.some((effectiveRestriction) =>
+        effectiveRestriction.restrictionActions.includes(
+          RestrictionActionType.StopOfferingCreate,
+        ),
+      ),
+    };
   }
 }

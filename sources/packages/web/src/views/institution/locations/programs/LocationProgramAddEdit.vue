@@ -3,8 +3,8 @@
     <template #header>
       <header-navigator
         title="Programs"
-        :routeLocation="getRouteLocation"
-        :subTitle="subTitle"
+        :route-location="getRouteLocation"
+        :sub-title="subTitle"
       />
     </template>
     <template #alerts>
@@ -25,17 +25,18 @@
           </v-btn>
         </template>
       </banner>
+      <institution-restriction-banner />
     </template>
     <formio-container
-      formName="educationProgram"
-      :formData="programData"
+      form-name="educationProgram"
+      :form-data="programData"
       @submitted="submitted"
       ><template #actions="{ submit }" v-if="!programData.isReadonly">
         <footer-buttons
           :processing="processing"
-          primaryLabel="Submit"
-          @primaryClick="submit"
-          @secondaryClick="goBack"
+          primary-label="Submit"
+          @primary-click="submit"
+          @secondary-click="goBack"
         /> </template
     ></formio-container>
   </full-page-container>
@@ -58,12 +59,14 @@ import {
   EducationProgramAPIOutDTO,
 } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
+import InstitutionRestrictionBanner from "@/components/institutions/banners/InstitutionRestrictionBanner.vue";
 
 type EducationProgramFormData = EducationProgramAPIOutDTO & {
   isReadonly: boolean;
 };
 
 export default defineComponent({
+  components: { InstitutionRestrictionBanner },
   props: {
     locationId: {
       type: Number,
@@ -72,6 +75,7 @@ export default defineComponent({
     programId: {
       type: Number,
       required: false,
+      default: undefined,
     },
   },
   setup(props) {
