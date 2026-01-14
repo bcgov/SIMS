@@ -190,7 +190,7 @@ export class RestrictionService {
       institutionId?: number;
     },
   ): Promise<EffectiveRestrictionStatus> {
-    const { institutionRestrictions } =
+    const { items: institutionRestrictions } =
       await ApiClient.RestrictionApi.getActiveInstitutionRestrictions(options);
     const effectiveRestrictions = institutionRestrictions.filter(
       (institutionRestriction) =>

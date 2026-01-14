@@ -109,7 +109,7 @@ describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestriction
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
         .expect({
-          institutionRestrictions: [
+          items: [
             {
               programId: program.id,
               locationId: location.id,
@@ -166,7 +166,7 @@ describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestriction
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
         .expect({
-          institutionRestrictions: [
+          items: [
             {
               programId: program.id,
               locationId: authorizedLocation.id,
@@ -193,7 +193,7 @@ describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestriction
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
-        institutionRestrictions: [],
+        items: [],
       });
   });
 
@@ -222,9 +222,8 @@ describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestriction
     const program = await db.educationProgram.save(
       createFakeEducationProgram({ auditUser: user, institution }),
     );
-    const institutionRestrictionPromises = [];
-    for (const restrictionInput of restrictionInputs) {
-      institutionRestrictionPromises.push(
+    const institutionRestrictionPromises = restrictionInputs.map(
+      (restrictionInput) =>
         saveFakeInstitutionRestriction(
           db,
           {
@@ -235,8 +234,7 @@ describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestriction
           },
           { initialValues: { isActive: restrictionInput.isActive } },
         ),
-      );
-    }
+    );
     const institutionRestrictions = await Promise.all(
       institutionRestrictionPromises,
     );

@@ -2,9 +2,7 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   E2EDataSources,
   createE2EDataSources,
-  createFakeEducationProgramOffering,
   createFakeRestriction,
-  createFakeUser,
   saveFakeInstitutionRestriction,
 } from "@sims/test-utils";
 import {
@@ -19,7 +17,6 @@ import {
   RestrictionActionType,
   RestrictionNotificationType,
   RestrictionType,
-  User,
 } from "@sims/sims-db";
 
 /**
@@ -31,7 +28,6 @@ describe("RestrictionAESTController(e2e)-getActiveInstitutionRestrictions.", () 
   let app: INestApplication;
   let db: E2EDataSources;
   let restriction: Restriction;
-  let user: User;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -51,24 +47,16 @@ describe("RestrictionAESTController(e2e)-getActiveInstitutionRestrictions.", () 
         },
       }),
     );
-    user = await db.user.save(createFakeUser());
   });
 
   it("Should return active institution restrictions for the institution when institution has one or more active restrictions.", async () => {
     // Arrange
-    // Using the offering factory to create institution, location and program.
-    const offering = await db.educationProgramOffering.save(
-      createFakeEducationProgramOffering({ auditUser: user }),
-    );
-    const location = offering.institutionLocation;
-    const institution = location.institution;
-    const program = offering.educationProgram;
-    await saveFakeInstitutionRestriction(db, {
+    const institutionRestriction = await saveFakeInstitutionRestriction(db, {
       restriction,
-      institution,
-      location,
-      program,
     });
+    const location = institutionRestriction.location;
+    const institution = institutionRestriction.institution;
+    const program = institutionRestriction.program;
     const endpoint = `/aest/restriction/institution/${institution.id}/active`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -78,7 +66,7 @@ describe("RestrictionAESTController(e2e)-getActiveInstitutionRestrictions.", () 
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
-        institutionRestrictions: [
+        items: [
           {
             programId: program.id,
             locationId: location.id,
