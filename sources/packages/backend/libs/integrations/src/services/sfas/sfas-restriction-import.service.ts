@@ -23,7 +23,7 @@ import {
 } from "@sims/services";
 import { InjectRepository } from "@nestjs/typeorm";
 
-export const SFAS_RESTRICTIONS_RAW_SQL_FOLDER = "sfas-restrictions";
+const SFAS_RESTRICTIONS_RAW_SQL_FOLDER = "sfas-restrictions";
 
 /**
  * Manages the data related to student’s Provincial Restrictions in SFAS.
