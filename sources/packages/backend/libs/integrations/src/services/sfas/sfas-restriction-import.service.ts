@@ -132,10 +132,12 @@ export class SFASRestrictionImportService
         );
         // Insert WTHD restrictions for students who have an active withdrawal
         // application but do not have the WTHD restriction already applied.
-        const wthdRestriction = await this.restrictionRepo.findOne({
-          select: { id: true },
-          where: { restrictionCode: RestrictionCode.WTHD },
-        });
+        const wthdRestriction = await transactionalEntityManager
+          .getRepository(Restriction)
+          .findOne({
+            select: { id: true },
+            where: { restrictionCode: RestrictionCode.WTHD },
+          });
         await transactionalEntityManager.query(
           this.bulkInsertSFASWTHDRestrictionsSQL,
           [wthdRestriction.id, creator.id, referenceDate],

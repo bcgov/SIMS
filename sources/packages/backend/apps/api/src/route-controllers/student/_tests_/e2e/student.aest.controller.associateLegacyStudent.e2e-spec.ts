@@ -14,11 +14,11 @@ import {
   createE2EDataSources,
   createFakeUser,
   createFakeSFASRestriction,
+  createFakeSFASApplication,
 } from "@sims/test-utils";
 import { faker } from "@faker-js/faker";
 import { getISODateOnlyString } from "@sims/utilities";
 import { NoteType } from "@sims/sims-db";
-import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
 
 /**
  * Creates a random SIN with the intention to be unique and not interfere in other tests
