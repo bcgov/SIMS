@@ -66,6 +66,7 @@
         :restriction-data="institutionRestriction"
         @submit-resolution-data="resolveRestriction"
         :allowed-role="Role.InstitutionResolveRestriction"
+        :can-resolve-restriction="true"
       />
       <add-restriction-modal
         ref="addRestriction"
@@ -94,6 +95,7 @@ import {
   Role,
   InstitutionRestrictionsHeaders,
   ApiProcessError,
+  RestrictionDetail,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -125,7 +127,7 @@ export default defineComponent({
     const { dateOnlyLongString, conditionalEmptyStringFiller } =
       useFormatters();
     const showModal = ref(false);
-    const viewRestriction = ref({} as ModalDialog<void>);
+    const viewRestriction = ref({} as ModalDialog<RestrictionDetail | false>);
     const addRestriction = ref(
       {} as ModalDialog<AssignInstitutionRestrictionAPIInDTO | false>,
     );
@@ -155,8 +157,11 @@ export default defineComponent({
           institutionRestriction.value.updatedAt,
         );
       }
-
-      await viewRestriction.value.showModal();
+      const viewInstitutionRestrictionData =
+        await viewRestriction.value.showModal();
+      if (viewInstitutionRestrictionData) {
+        await resolveRestriction(viewInstitutionRestrictionData);
+      }
     };
 
     const resolveRestriction = async (data: RestrictionDetailAPIOutDTO) => {
@@ -173,7 +178,11 @@ export default defineComponent({
         snackBar.success(
           "The given restriction has been resolved and resolution notes added.",
         );
-      } catch {
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          snackBar.error(error.message);
+          return;
+        }
         snackBar.error("Unexpected error while resolving the restriction.");
       }
     };

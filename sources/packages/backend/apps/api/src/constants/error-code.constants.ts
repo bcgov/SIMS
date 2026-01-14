@@ -293,6 +293,16 @@ export const SCHOLASTIC_STANDING_REVERSAL_NOT_UPDATED =
 export const RESTRICTION_NOT_FOUND = "RESTRICTION_NOT_FOUND";
 
 /**
+ * Restriction is not active.
+ */
+export const RESTRICTION_NOT_ACTIVE = "RESTRICTION_NOT_ACTIVE";
+
+/**
+ * Restriction is not provincial.
+ */
+export const RESTRICTION_NOT_PROVINCIAL = "RESTRICTION_NOT_PROVINCIAL";
+
+/**
  * Attempt to soft-delete a restriction that is already set as deleted.
  */
 export const RESTRICTION_IS_DELETED = "RESTRICTION_IS_DELETED";
