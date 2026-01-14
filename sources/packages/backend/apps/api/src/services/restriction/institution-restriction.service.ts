@@ -304,6 +304,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
     noteDescription: string,
   ): Promise<void> {
     const institutionRestrictionEntity = await this.repo.findOne({
+      select: { id: true, isActive: true },
       where: {
         id: institutionRestrictionId,
         institution: { id: institutionId },

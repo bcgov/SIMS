@@ -165,7 +165,7 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
       },
       {
         initialValues: {
-          isActive: false,
+          isActive: true,
         },
       },
     );
@@ -212,7 +212,7 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
       },
       {
         initialValues: {
-          isActive: false,
+          isActive: true,
         },
       },
     );

@@ -51,7 +51,7 @@ export class NoteSharedService {
    * @param noteDescription note description.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param entityManager transactional entity manager.
-   * @return saved Note.
+   * @returns saved Note.
    */
   async createInstitutionNote(
     institutionId: number,
@@ -85,7 +85,7 @@ export class NoteSharedService {
    * @param noteDescription note description.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param entityManager transactional entity manager.
-   * @return saved Note.
+   * @returns saved Note.
    */
   private async createNote(
     noteType: NoteType,
