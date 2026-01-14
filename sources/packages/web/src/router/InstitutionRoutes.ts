@@ -506,7 +506,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: LocationProgramAddEdit,
         props: (route) => ({
           locationId: Number.parseInt(route.params.locationId as string),
-          programId: Number.parseInt(route.params.programId as string),
         }),
         meta: {
           clientType: ClientIdType.Institution,
@@ -520,7 +519,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.LocationProgramsEdit,
         name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
         component: LocationProgramAddEdit,
-        props: true,
+        props: (route) => ({
+          locationId: Number.parseInt(route.params.locationId as string),
+          programId: Number.parseInt(route.params.programId as string),
+        }),
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [
