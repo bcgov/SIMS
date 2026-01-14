@@ -309,7 +309,6 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
         id: institutionRestrictionId,
         institution: { id: institutionId },
       },
-      relations: { restriction: true },
     });
     if (!institutionRestrictionEntity) {
       throw new CustomNamedError(
