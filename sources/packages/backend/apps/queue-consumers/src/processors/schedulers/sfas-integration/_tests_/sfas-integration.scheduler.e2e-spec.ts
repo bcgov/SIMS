@@ -69,6 +69,14 @@ const SFAS_INDIVIDUAL_AND_APPLICATION_ALL_VALUES_FILENAME =
  */
 const SFAS_TO_SIMS_INDIVIDUAL_AND_APPLICATION_WTHD_RESTRICTIONS =
   "SFAS-TO-SIMS-INDIVIDUAL_AND_APPLICATION_WTHD_RESTRICTIONS.txt";
+/**
+ * SFAS individual ID used in the withdrawal restrictions test file.
+ */
+const WTHD_RESTRICTIONS_SFAS_INDIVIDUAL_ID = 1010101010;
+/**
+ * SFAS application IDs used in the withdrawal restrictions test file.
+ */
+const WTHD_RESTRICTIONS_SFAS_APPLICATION_IDS = [14541, 14542, 14543, 14544];
 
 describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let app: INestApplication;
@@ -1196,6 +1204,18 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
           restrictionCode: RestrictionCode.WTHD,
         },
       });
+      // Assert the SFAS application wthdProcessed flag is set to true.
+      const sfasApplications = await db.sfasApplication.find({
+        select: { id: true, wthdProcessed: true },
+        where: { individual: { id: WTHD_RESTRICTIONS_SFAS_INDIVIDUAL_ID } },
+        order: { id: "ASC" },
+      });
+      expect(sfasApplications).toEqual(
+        WTHD_RESTRICTIONS_SFAS_APPLICATION_IDS.map((id) => ({
+          id,
+          wthdProcessed: true,
+        })),
+      );
     },
   );
 
