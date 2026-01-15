@@ -450,7 +450,7 @@
               "value": ""
             }
           ],
-          "content": "Your application was subject to federal and provincial assessment calculations based on Canada Student Financial Assistance Program and StudentAid BC policies. Your assessment is based on total family income as reflected in the previous year's tax return (including spouse/common-law partner, if applicable), or as reported on your application if no tax return was available.",
+          "content": "Your application was subject to federal and provincial assessment calculations based on Canada Student Financial Assistance Program and StudentAid BC policies. Your assessment is based on total family income as reflected in the previous year's tax return (including spouse/common-law partner or parents, if applicable), or as reported on your application if no tax return was available.",
           "refreshOnChange": false,
           "key": "html134",
           "type": "htmlelement",
@@ -4260,7 +4260,40 @@
               "value": ""
             }
           ],
-          "content": "Before we can issue your Canada – BC integrated student financial assistance, you must first submit your master student financial assistance agreement (MSFAA) unless you have already submitted your MSFAA for a previous application. You will receive a 'Welcome Email' from the National Student Loans Service Centre (NSLSC) that includes a URL to register for an online account with the NSLSC where you will complete and submit your MSFAA using the 10 digit MSFAA number provided on this Notice of Assessment.",
+          "content": "Before we can issue your Canada – BC integrated student financial assistance, you must first submit your master student financial assistance agreement (MSFAA) unless you have already submitted your MSFAA for a previous application.",
+          "refreshOnChange": false,
+          "key": "html53",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "tag": "p"
+        },
+        {
+          "label": "HTML",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Please note that separate agreements are required for part-time and full-time applications.",
+          "refreshOnChange": false,
+          "key": "html53",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "tag": "p",
+          "className": "font-bold"
+        },
+        {
+          "label": "HTML",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "You will receive a \"Welcome Email\" from the National Student Loans Service Centre (NSLSC). This email will contain a secure URL to register for an online NSLSC account, where you will complete and submit your MSFAA using the 10‑digit MSFAA number provided in this Notice of Assessment.",
           "refreshOnChange": false,
           "key": "html53",
           "type": "htmlelement",
