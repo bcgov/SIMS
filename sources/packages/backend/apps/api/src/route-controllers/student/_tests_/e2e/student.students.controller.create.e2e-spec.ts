@@ -18,7 +18,7 @@ import {
   saveFakeSFASIndividual,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
-import { CreateStudentAPIInDTO } from "../../../../route-controllers/student/models/student.dto";
+import { CreateStudentAPIInDTO } from "../../../../route-controllers";
 import { IdentityProviders } from "@sims/sims-db";
 import { FormNames, FormService } from "../../../../services";
 import { AppStudentsModule } from "../../../../app.students.module";
@@ -69,10 +69,10 @@ describe("StudentStudentsController(e2e)-create", () => {
       data: { data: payload },
     });
     formService.dryRunSubmission = dryRunSubmissionMock;
-
     // Mock the user received in the token.
     await mockJWTUserInfo(appModule, { ...user, birthDate: birthDate });
-    // Get any student user token.
+    // Get any student user token. The properties required for student creation
+    // are provided by the mocked user info and overridden using mockJWTUserInfo.
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -168,7 +168,8 @@ describe("StudentStudentsController(e2e)-create", () => {
     ]);
     // Mock the user received in the token.
     await mockJWTUserInfo(appModule, { ...user, birthDate: birthDate });
-    // Get any student user token.
+    // Get any student user token. The properties required for student creation
+    // are provided by the mocked user info and overridden using mockJWTUserInfo.
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
