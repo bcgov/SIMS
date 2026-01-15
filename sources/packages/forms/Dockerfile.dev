@@ -1,5 +1,5 @@
 # Use Node image, maintained by Docker: hub.docker.com/r/_/node.
-FROM node:24-alpine
+FROM node:21-alpine3.19
 
 ARG FORMIO_SOURCE_REPO_URL
 ARG FORMIO_SOURCE_REPO_TAG
@@ -7,22 +7,37 @@ ARG FORMIO_SOURCE_REPO_TAG
 # "bcrypt" requires python/make/g++, all must be installed in alpine.
 # Note: using pinned versions to ensure immutable build environment.
 RUN apk update && \
-  apk upgrade && \
-  apk add make && \
-  apk add python3 && \
-  apk add g++ && \
-  apk add git && \
-  apk cache clean
+    apk upgrade && \
+    apk add make && \
+    apk add python3 && \
+    apk add g++ && \
+    apk add git && \
+    apk cache clean
 
 # Clone code into formio folder, by default.
-RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch
+#RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch
 
-RUN apk del git
+RUN git clone ${FORMIO_SOURCE_REPO_URL} --single-branch
 
 WORKDIR /formio
 
+# This requires the FORMIO_SOURCE_REPO_TAG entry in .env
+# Commit 01e1a21067f640610d414ea7d97a582cf325f60a is currently being used
+# so that value can be added to .env or hardcoded here for testing
+RUN git checkout -b ${FORMIO_SOURCE_REPO_TAG} 
+
+
+RUN apk del git
+
+#WORKDIR /formio
+
 # Use install as-is from package.json.
 RUN npm i
+
+# install dependencies
+#RUN npm install
+# build the client application
+#RUN npm run build:portal
 
 # Set this to inspect more from the application. Examples:
 #   DEBUG=formio:db (see index.js for more)
