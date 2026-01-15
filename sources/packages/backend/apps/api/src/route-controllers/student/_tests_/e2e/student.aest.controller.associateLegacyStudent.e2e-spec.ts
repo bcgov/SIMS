@@ -14,6 +14,7 @@ import {
   createE2EDataSources,
   createFakeUser,
   createFakeSFASRestriction,
+  createFakeSFASApplication,
 } from "@sims/test-utils";
 import { faker } from "@faker-js/faker";
 import { getISODateOnlyString } from "@sims/utilities";
@@ -48,7 +49,7 @@ describe("StudentAESTController(e2e)-associateLegacyStudent", () => {
   });
 
   it(
-    "Should associate a student to a legacy profile, create a note, and set restriction as processed false" +
+    "Should associate a student to a legacy profile, create a note, set restriction as processed false, and set SFAS applications wthdProcessed as false" +
       " when the student is not associated yet to a legacy profile and a legacy profile is a potential match.",
     async () => {
       // Arrange.
@@ -64,6 +65,7 @@ describe("StudentAESTController(e2e)-associateLegacyStudent", () => {
       const legacyProfileMatch = await saveFakeSFASIndividual(db.dataSource, {
         initialValues: { lastName: userLastName, birthDate },
       });
+      // Create processed SFAS restriction to validate update.
       const processedSFASRestriction = createFakeSFASRestriction({
         initialValues: {
           id: UNIQUE_SFAS_RESTRICTION_ID,
@@ -71,7 +73,17 @@ describe("StudentAESTController(e2e)-associateLegacyStudent", () => {
           processed: true,
         },
       });
-      await db.sfasRestriction.save(processedSFASRestriction);
+      // Create SFAS application with wthdProcessed true to validate update.
+      const processedSFASApplication = createFakeSFASApplication(
+        { individual: legacyProfileMatch },
+        {
+          initialValues: { wthdProcessed: true },
+        },
+      );
+      await Promise.all([
+        db.sfasApplication.save(processedSFASApplication),
+        db.sfasRestriction.save(processedSFASRestriction),
+      ]);
 
       const aestUserToken = await getAESTToken(
         AESTGroups.BusinessAdministrators,
@@ -117,6 +129,17 @@ describe("StudentAESTController(e2e)-associateLegacyStudent", () => {
         },
       });
       expect(updatedSFASRestriction.processed).toBe(false);
+      // Validates SFAS applications wthdProcessed update.
+      const updatedSFASApplication = await db.sfasApplication.findOne({
+        select: {
+          id: true,
+          wthdProcessed: true,
+        },
+        where: {
+          id: processedSFASApplication.id,
+        },
+      });
+      expect(updatedSFASApplication.wthdProcessed).toBe(false);
       // Validates student note creation.
       const studentNote = await db.student.findOne({
         select: {

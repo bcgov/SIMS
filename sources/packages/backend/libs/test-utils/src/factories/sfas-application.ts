@@ -99,5 +99,7 @@ export function createFakeSFASApplication(
       options?.initialValues?.marriageDate ??
       getISODateOnlyString(faker.date.past({ years: 18 }));
   }
+  sfasApplication.wthdProcessed =
+    options?.initialValues?.wthdProcessed ?? false;
   return sfasApplication;
 }

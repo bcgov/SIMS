@@ -23,7 +23,7 @@ import {
 } from "@sims/test-utils";
 import { mockDownloadFiles } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
-import * as path from "path";
+import * as path from "node:path";
 import { SFASIntegrationScheduler } from "../sfas-integration.scheduler";
 import {
   DisbursementOverawardOriginType,
@@ -61,6 +61,23 @@ const INVALID_RECORD_TYPE_FILENAME =
   "SFAS-TO-SIMS-INVALID_RECORD_TYPE-RECORD.txt";
 const SFAS_INDIVIDUAL_AND_APPLICATION_ALL_VALUES_FILENAME =
   "SFAS-TO-SIMS-INDIVIDUAL_AND_APPLICATION_ALL_VALUES-RECORDS.txt";
+/**
+ * SFAS file that contains individual and application records with withdrawal
+ * columns variations to test the different scenarios.
+ * The values for withdrawal_date, withdrawal_reason, and withdrawal_active_flag
+ * are set to test the logic for determining withdrawal restrictions.
+ */
+const SFAS_TO_SIMS_INDIVIDUAL_AND_APPLICATION_WTHD_RESTRICTIONS =
+  "SFAS-TO-SIMS-INDIVIDUAL_AND_APPLICATION_WTHD_RESTRICTIONS.txt";
+/**
+ * SFAS individual ID used in the withdrawal restrictions test file.
+ */
+const WTHD_RESTRICTIONS_SFAS_INDIVIDUAL_ID = 1010101010;
+/**
+ * SFAS application IDs used in the withdrawal restrictions test file.
+ */
+const WTHD_RESTRICTIONS_SFAS_APPLICATION_IDS = [14541, 14542, 14543, 14544];
+
 describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let app: INestApplication;
   let processor: SFASIntegrationScheduler;
@@ -1146,11 +1163,157 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     },
   );
 
+  it(
+    "Should import one active WTHD restriction and ignore three other SFAS applications for withdrawal import" +
+      " when the SFAS applications have different withdrawal data for withdrawal_date, withdrawal_reason, and withdrawal_active_flag.",
+    async () => {
+      // Arrange
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+      mockDownloadFiles(sftpClientMock, [
+        SFAS_TO_SIMS_INDIVIDUAL_AND_APPLICATION_WTHD_RESTRICTIONS,
+      ]);
+
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
+
+      // Assert
+      expect(result).toStrictEqual([
+        "Completed processing SFAS integration files.",
+      ]);
+      // Expect a total of 1 restrictions to be inserted.
+      const studentRestrictions = await db.studentRestriction.find({
+        select: {
+          id: true,
+          isActive: true,
+          restriction: {
+            restrictionCode: true,
+          },
+        },
+        relations: { restriction: true },
+        where: {
+          student: { id: sharedStudent.id },
+        },
+      });
+      expect(studentRestrictions.length).toBe(1);
+      const [expectedRestriction] = studentRestrictions;
+      expect(expectedRestriction).toEqual({
+        id: expect.any(Number),
+        isActive: true,
+        restriction: {
+          restrictionCode: RestrictionCode.WTHD,
+        },
+      });
+      // Assert the SFAS application wthdProcessed flag is set to true.
+      const sfasApplications = await db.sfasApplication.find({
+        select: { id: true, wthdProcessed: true },
+        where: { individual: { id: WTHD_RESTRICTIONS_SFAS_INDIVIDUAL_ID } },
+        order: { id: "ASC" },
+      });
+      expect(sfasApplications).toEqual(
+        WTHD_RESTRICTIONS_SFAS_APPLICATION_IDS.map((id) => ({
+          id,
+          wthdProcessed: true,
+        })),
+      );
+    },
+  );
+
+  it(
+    "Should import one active WTHD restriction and ignore the deleted WTHD in the student account " +
+      " when there is at least one application that would generate a WTHD restriction and the restriction is marked as active but deleted.",
+    async () => {
+      // Arrange
+      const existingActiveDeletedWTHD = await findAndSaveRestriction(
+        db,
+        RestrictionCode.WTHD,
+        {
+          student: sharedStudent,
+        },
+        {
+          isActive: true,
+          deletedAt: new Date(),
+        },
+      );
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+      mockDownloadFiles(sftpClientMock, [
+        SFAS_TO_SIMS_INDIVIDUAL_AND_APPLICATION_WTHD_RESTRICTIONS,
+      ]);
+
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
+
+      // Assert
+      expect(result).toStrictEqual([
+        "Completed processing SFAS integration files.",
+      ]);
+      // Expect a total of 1 restrictions to be inserted.
+      const studentRestrictions = await db.studentRestriction.find({
+        select: {
+          id: true,
+          isActive: true,
+          restriction: {
+            restrictionCode: true,
+          },
+        },
+        relations: { restriction: true },
+        where: {
+          id: Not(existingActiveDeletedWTHD.id),
+          student: { id: sharedStudent.id },
+        },
+      });
+      expect(studentRestrictions.length).toBe(1);
+      const [expectedRestriction] = studentRestrictions;
+      expect(expectedRestriction).toEqual({
+        id: expect.any(Number),
+        isActive: true,
+        restriction: {
+          restrictionCode: RestrictionCode.WTHD,
+        },
+      });
+    },
+  );
+
+  it("Should not import the WTHD restriction when the student already has an active WTHD restriction.", async () => {
+    // Arrange
+    const existingActiveWTHD = await findAndSaveRestriction(
+      db,
+      RestrictionCode.WTHD,
+      {
+        student: sharedStudent,
+      },
+    );
+
+    // Queued job.
+    const mockedJob = mockBullJob<void>();
+    mockDownloadFiles(sftpClientMock, [
+      SFAS_TO_SIMS_INDIVIDUAL_AND_APPLICATION_WTHD_RESTRICTIONS,
+    ]);
+
+    // Act
+    const result = await processor.processQueue(mockedJob.job);
+
+    // Assert
+    expect(result).toStrictEqual([
+      "Completed processing SFAS integration files.",
+    ]);
+    // Expect no restrictions to be inserted.
+    const studentRestrictionExists = await db.studentRestriction.exists({
+      where: {
+        student: { id: sharedStudent.id },
+        id: Not(existingActiveWTHD.id),
+      },
+    });
+    expect(studentRestrictionExists).toBe(false);
+  });
+
   /**
    * Delete all the legacy data for clean data execution.
    * @param db data source.
    */
-  async function deleteSFASData(db: E2EDataSources) {
+  async function deleteSFASData(db: E2EDataSources): Promise<void> {
     await Promise.all([
       db.sfasIndividual.createQueryBuilder().delete().execute(),
       db.sfasApplication.createQueryBuilder().delete().execute(),
