@@ -11,7 +11,11 @@ import {
   RestrictionSummaryAPIOutDTO,
   StudentRestrictionAPIOutDTO,
 } from "@/services/http/dto";
-import { RestrictionType } from "@/types/contracts/RestrictionContract";
+import {
+  EffectiveRestrictionStatus,
+  RestrictionActionType,
+  RestrictionType,
+} from "@/types/contracts/RestrictionContract";
 
 /**
  * Client service layer for Restrictions.
@@ -175,5 +179,37 @@ export class RestrictionService {
       locationId,
       programId,
     );
+  }
+
+  /**
+   * Get effective institution restriction status for the given program and institution location.
+   * @param locationId institution location id.
+   * @param programId program id.
+   * @param options options.
+   * - `institutionId` institution id.
+   * @returns effective institution restriction status.
+   */
+  async getEffectiveInstitutionRestrictionStatus(
+    locationId: number,
+    programId: number,
+    options?: {
+      institutionId?: number;
+    },
+  ): Promise<EffectiveRestrictionStatus> {
+    const { items: institutionRestrictions } =
+      await ApiClient.RestrictionApi.getActiveInstitutionRestrictions(options);
+    const effectiveRestrictions = institutionRestrictions.filter(
+      (institutionRestriction) =>
+        institutionRestriction.locationId === locationId &&
+        institutionRestriction.programId === programId,
+    );
+    return {
+      hasEffectiveRestriction: !!effectiveRestrictions.length,
+      canCreateOffering: !effectiveRestrictions.some((effectiveRestriction) =>
+        effectiveRestriction.restrictionActions.includes(
+          RestrictionActionType.StopOfferingCreate,
+        ),
+      ),
+    };
   }
 }

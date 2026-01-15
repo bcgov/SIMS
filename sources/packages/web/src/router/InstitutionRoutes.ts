@@ -487,7 +487,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.LocationProgramsView,
         name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
         component: LocationProgramView,
-        props: true,
+        props: (route) => ({
+          locationId: Number.parseInt(route.params.locationId as string),
+          programId: Number.parseInt(route.params.programId as string),
+        }),
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [
@@ -501,7 +504,9 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.LocationProgramsCreate,
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
         component: LocationProgramAddEdit,
-        props: true,
+        props: (route) => ({
+          locationId: Number.parseInt(route.params.locationId as string),
+        }),
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [
@@ -514,7 +519,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.LocationProgramsEdit,
         name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
         component: LocationProgramAddEdit,
-        props: true,
+        props: (route) => ({
+          locationId: Number.parseInt(route.params.locationId as string),
+          programId: Number.parseInt(route.params.programId as string),
+        }),
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [

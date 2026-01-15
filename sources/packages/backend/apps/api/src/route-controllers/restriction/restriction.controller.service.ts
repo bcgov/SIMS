@@ -1,6 +1,10 @@
 import { NotFoundException, Injectable } from "@nestjs/common";
-import { StudentRestrictionService } from "../../services";
 import {
+  InstitutionRestrictionService,
+  StudentRestrictionService,
+} from "../../services";
+import {
+  InstitutionActiveRestrictionsAPIOutDTO,
   RestrictionDetailAPIOutDTO,
   RestrictionInstitutionDetailAPIOutDTO,
   RestrictionInstitutionSummaryAPIOutDTO,
@@ -12,6 +16,7 @@ import { getUserFullName } from "../../utilities";
 export class RestrictionControllerService {
   constructor(
     private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly institutionRestrictionService: InstitutionRestrictionService,
   ) {}
 
   /**
@@ -167,5 +172,39 @@ export class RestrictionControllerService {
       };
     }
     return restrictionDetail;
+  }
+
+  /**
+   * Get active institution restrictions.
+   * @param institutionId institution id.
+   * @param options options for filtering restrictions.
+   * - `authorizedLocationIds` authorized locations for the user.
+   * - `excludeNoEffectRestrictions` indicates whether to exclude no effect restrictions.
+   * @returns active institution restrictions.
+   */
+  async getActiveInstitutionRestrictions(
+    institutionId: number,
+    options?: {
+      authorizedLocationIds?: number[];
+      excludeNoEffectRestrictions?: boolean;
+    },
+  ): Promise<InstitutionActiveRestrictionsAPIOutDTO> {
+    const institutionRestrictions =
+      await this.institutionRestrictionService.getInstitutionRestrictions(
+        institutionId,
+        {
+          locationIds: options?.authorizedLocationIds,
+          isActive: true,
+          excludeNoEffectRestrictions: options?.excludeNoEffectRestrictions,
+        },
+      );
+    return {
+      items: institutionRestrictions.map((institutionRestriction) => ({
+        programId: institutionRestriction.program.id,
+        locationId: institutionRestriction.location.id,
+        restrictionActions: institutionRestriction.restriction.actionType,
+        restrictionCode: institutionRestriction.restriction.restrictionCode,
+      })),
+    };
   }
 }

@@ -1,6 +1,7 @@
 import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
 import BaseController from "../BaseController";
 import {
+  InstitutionActiveRestrictionsAPIOutDTO,
   RestrictionInstitutionDetailAPIOutDTO,
   RestrictionInstitutionSummaryAPIOutDTO,
 } from "./models/restriction.dto";
@@ -9,18 +10,18 @@ import {
   AllowAuthorizedParty,
   HasStudentDataAccess,
   IsBCPublicInstitution,
+  UserToken,
 } from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { RestrictionControllerService } from "./restriction.controller.service";
+import { IInstitutionUserToken } from "../../auth";
 
 /**
  * Controller for Institution Restrictions.
  * This consists of all Rest APIs for Institution restrictions.
  */
 @AllowAuthorizedParty(AuthorizedParties.institution)
-@IsBCPublicInstitution()
-@HasStudentDataAccess("studentId")
 @Controller("restriction")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-restriction`)
 export class RestrictionInstitutionsController extends BaseController {
@@ -35,6 +36,8 @@ export class RestrictionInstitutionsController extends BaseController {
    * @param studentId id of the student to retrieve restrictions.
    * @returns Student restrictions.
    */
+  @IsBCPublicInstitution()
+  @HasStudentDataAccess("studentId")
   @Get("student/:studentId")
   async getStudentRestrictions(
     @Param("studentId", ParseIntPipe) studentId: number,
@@ -50,6 +53,8 @@ export class RestrictionInstitutionsController extends BaseController {
    * @param studentRestrictionId id of the student restriction.
    * @returns Student restriction detail view.
    */
+  @IsBCPublicInstitution()
+  @HasStudentDataAccess("studentId")
   @Get("student/:studentId/student-restriction/:studentRestrictionId")
   @ApiNotFoundResponse({
     description: "The student restriction does not exist.",
@@ -64,6 +69,22 @@ export class RestrictionInstitutionsController extends BaseController {
       {
         filterNoEffectRestrictions: true,
       },
+    );
+  }
+
+  /**
+   * Get active institution restrictions.
+   * @returns active institution restrictions.
+   */
+  @Get("active")
+  async getActiveInstitutionRestrictions(
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<InstitutionActiveRestrictionsAPIOutDTO> {
+    const institutionId = userToken.authorizations.institutionId;
+    const authorizedLocationIds = userToken.authorizations.getLocationsIds();
+    return this.restrictionControllerService.getActiveInstitutionRestrictions(
+      institutionId,
+      { authorizedLocationIds, excludeNoEffectRestrictions: true },
     );
   }
 }

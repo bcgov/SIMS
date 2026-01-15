@@ -100,6 +100,15 @@ export enum RestrictionActionType {
    * Stop all full-time disbursements of the student.
    */
   StopFullTimeDisbursement = "Stop full-time disbursement",
+  /**
+   * Stop the creation of new offerings for the institution.
+   */
+  StopOfferingCreate = "Stop offering create",
+}
+
+export interface EffectiveRestrictionStatus {
+  hasEffectiveRestriction: boolean;
+  canCreateOffering: boolean;
 }
 
 export interface RestrictionDetail {

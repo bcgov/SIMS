@@ -15,6 +15,7 @@ import {
   StudentRestrictionService,
   InstitutionRestrictionService,
   RestrictionService,
+  InstitutionService,
 } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -36,6 +37,7 @@ import {
   RestrictionReasonsOptionsAPIInDTO,
   AssignInstitutionRestrictionAPIInDTO,
   InstitutionRestrictionSummaryAPIOutDTO,
+  InstitutionActiveRestrictionsAPIOutDTO,
 } from "./models/restriction.dto";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
@@ -77,6 +79,7 @@ export class RestrictionAESTController extends BaseController {
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly restrictionService: RestrictionService,
     private readonly institutionRestrictionService: InstitutionRestrictionService,
+    private readonly institutionService: InstitutionService,
   ) {
     super();
   }
@@ -283,7 +286,7 @@ export class RestrictionAESTController extends BaseController {
     @Param("institutionId", ParseIntPipe) institutionId: number,
   ): Promise<InstitutionRestrictionSummaryAPIOutDTO[]> {
     const institutionRestrictions =
-      await this.institutionRestrictionService.getInstitutionRestrictionsById(
+      await this.institutionRestrictionService.getInstitutionRestrictions(
         institutionId,
       );
     return institutionRestrictions.map((institutionRestriction) => ({
@@ -299,6 +302,28 @@ export class RestrictionAESTController extends BaseController {
       resolvedAt: institutionRestriction.resolvedAt,
       isActive: institutionRestriction.isActive,
     }));
+  }
+
+  /**
+   * Get active institution restrictions.
+   * @param institutionId institution id.
+   * @returns active institution restrictions.
+   */
+  @ApiNotFoundResponse({
+    description: "Institution not found.",
+  })
+  @Get("institution/:institutionId/active")
+  async getActiveInstitutionRestrictions(
+    @Param("institutionId", ParseIntPipe) institutionId: number,
+  ): Promise<InstitutionActiveRestrictionsAPIOutDTO> {
+    const institutionExists =
+      await this.institutionService.institutionExists(institutionId);
+    if (!institutionExists) {
+      throw new NotFoundException("Institution not found.");
+    }
+    return this.restrictionControllerService.getActiveInstitutionRestrictions(
+      institutionId,
+    );
   }
 
   /**
