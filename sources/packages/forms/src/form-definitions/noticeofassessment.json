@@ -450,7 +450,7 @@
               "value": ""
             }
           ],
-          "content": "Your application was subject to federal and provincial assessment calculations based on Canada Student Financial Assistance Program and StudentAid BC policies. Your assessment is based on total family income as reflected in the previous year's tax return (including spouse/common-law partner, if applicable), or as reported on your application if no tax return was available.",
+          "content": "Your application was subject to federal and provincial assessment calculations based on Canada Student Financial Assistance Program and StudentAid BC policies. Your assessment is based on total family income as reflected in the previous year's tax return (including spouse/common-law partner or parents, if applicable), or as reported on your application if no tax return was available.",
           "refreshOnChange": false,
           "key": "html134",
           "type": "htmlelement",
