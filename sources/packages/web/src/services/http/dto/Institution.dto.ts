@@ -102,6 +102,7 @@ export interface InstitutionBasicAPIOutDTO {
    * associated with, if not it is a basic BCeID institution.
    */
   hasBusinessGuid: boolean;
+  hasRestrictions: boolean;
 }
 
 export class CreateInstitution {

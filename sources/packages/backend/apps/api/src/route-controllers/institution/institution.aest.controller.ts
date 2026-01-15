@@ -9,7 +9,10 @@ import {
   Post,
   Query,
 } from "@nestjs/common";
-import { InstitutionService } from "../../services";
+import {
+  InstitutionRestrictionService,
+  InstitutionService,
+} from "../../services";
 import { AddressInfo, Institution } from "@sims/sims-db";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -49,6 +52,7 @@ import { Role } from "../../auth/roles.enum";
 export class InstitutionAESTController extends BaseController {
   constructor(
     private readonly institutionService: InstitutionService,
+    private readonly institutionRestrictionService: InstitutionRestrictionService,
     private readonly institutionControllerService: InstitutionControllerService,
     private readonly locationControllerService: InstitutionLocationControllerService,
   ) {
@@ -151,6 +155,13 @@ export class InstitutionAESTController extends BaseController {
       await this.institutionService.getBasicInstitutionDetailById(
         institutionId,
       );
+    const restrictions =
+      await this.institutionRestrictionService.getInstitutionRestrictions(
+        institutionId,
+        {
+          isActive: true,
+        },
+      );
     const designationStatus =
       await this.locationControllerService.getInstitutionDesignationStatus(
         institutionId,
@@ -159,6 +170,7 @@ export class InstitutionAESTController extends BaseController {
       operatingName: institutionDetail.operatingName,
       designationStatus: designationStatus,
       hasBusinessGuid: !!institutionDetail.businessGuid,
+      hasRestrictions: !!restrictions.length,
     };
   }
 

@@ -11,6 +11,14 @@
             class="ml-4 mt-1"
             :status="institutionBasicDetail.designationStatus"
           />
+          <student-restriction-chip
+            class="ml-4 mt-1"
+            :status="
+              institutionBasicDetail.hasRestrictions
+                ? StudentRestrictionStatus.Restriction
+                : StudentRestrictionStatus.NoRestriction
+            "
+          />
         </template>
       </header-navigator>
     </template>
@@ -39,9 +47,11 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionBasicAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StatusChipDesignationAgreement from "@/components/generic/StatusChipDesignationAgreement.vue";
+import { StudentRestrictionStatus } from "@/types";
+import StudentRestrictionChip from "@/components/generic/StudentRestrictionChip.vue";
 
 export default defineComponent({
-  components: { StatusChipDesignationAgreement },
+  components: { StatusChipDesignationAgreement, StudentRestrictionChip },
   props: {
     institutionId: {
       type: Number,
@@ -128,6 +138,7 @@ export default defineComponent({
       AESTRoutesConst,
       items,
       tab,
+      StudentRestrictionStatus,
     };
   },
 });
