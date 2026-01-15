@@ -13,7 +13,12 @@ export function createFakeSFASRestriction(options?: {
 }): SFASRestriction {
   const now = new Date();
   const restriction = new SFASRestriction();
-  restriction.id = options?.initialValues.id;
+  restriction.id =
+    options?.initialValues.id ??
+    faker.number.int({
+      min: 100000000,
+      max: 999999999,
+    });
   restriction.individualId = options?.initialValues.individualId;
   restriction.code =
     options?.initialValues.code ??

@@ -27,6 +27,7 @@ export * from "./assessment/assessment.controller.service";
 export * from "./institution/institution.aest.controller";
 export * from "./institution/institution.institutions.controller";
 export * from "./institution/institution.controller.service";
+export * from "./student/models/student.dto";
 export * from "./student/student.controller.service";
 export * from "./student/student.aest.controller";
 export * from "./student/student.students.controller";

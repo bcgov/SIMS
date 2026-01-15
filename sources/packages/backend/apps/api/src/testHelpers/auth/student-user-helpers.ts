@@ -7,6 +7,17 @@ import { JwtStrategy } from "../../auth/jwt.strategy";
 import { IUserToken } from "../../auth";
 
 /**
+ * Type used to mock user info in the JWT token.
+ */
+export type JWTUserMock = Pick<User, "userName" | "lastName" | "firstName"> & {
+  /**
+   * Optional birth date to be set in the JWT token, if provided,
+   * otherwise the original birth date in the token will be kept.
+   */
+  birthDate?: string;
+};
+
+/**
  * Mocks user log info from student service to return the passed student.
  * Please use the method {@link mockUserLoginInfo} instead, which mocks only
  * the user info in the JWT token to allow the user to be retrieved from the DB
@@ -37,11 +48,11 @@ export async function mockUserLoginInfo(
  * Mocks the user login info, replacing the user info by the mocked one, to allow
  * it to be retrieved from the DB during the validation of the JWT token.
  * @param testingModule nest testing module.
- * @param user mocked user.
+ * @param user user information to be overridden in the payload.
  */
 export async function mockJWTUserInfo(
   testingModule: TestingModule,
-  user: User,
+  user: JWTUserMock,
 ): Promise<jest.SpyInstance> {
   const jwtStrategy = await getProviderInstanceForModule(
     testingModule,
@@ -56,6 +67,9 @@ export async function mockJWTUserInfo(
       payload.userName = user.userName;
       payload.lastName = user.lastName;
       payload.givenNames = user.firstName;
+      if (user.birthDate) {
+        payload.birthdate = user.birthDate;
+      }
       return originalValidate(payload);
     });
 }
@@ -65,7 +79,9 @@ export async function mockJWTUserInfo(
  * This could used to reset the mock after each test.
  * @param testingModule testing module.
  */
-export async function resetMockUserLoginInfo(testingModule: TestingModule) {
+export async function resetMockUserLoginInfo(
+  testingModule: TestingModule,
+): Promise<void> {
   const userService = await getProviderInstanceForModule(
     testingModule,
     AuthModule,
@@ -79,7 +95,9 @@ export async function resetMockUserLoginInfo(testingModule: TestingModule) {
  * This could used to reset the mock after each test.
  * @param testingModule testing module.
  */
-export async function resetMockJWTUserInfo(testingModule: TestingModule) {
+export async function resetMockJWTUserInfo(
+  testingModule: TestingModule,
+): Promise<void> {
   const jwtStrategy = await getProviderInstanceForModule(
     testingModule,
     AuthModule,
