@@ -421,7 +421,6 @@ export class SFASApplication extends BaseSFASApplicationModel {
    */
   @Column({
     name: "wthd_processed",
-    nullable: false,
   })
   wthdProcessed: boolean;
 }

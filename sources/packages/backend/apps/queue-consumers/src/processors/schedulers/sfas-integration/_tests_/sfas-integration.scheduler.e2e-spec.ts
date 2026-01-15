@@ -1164,7 +1164,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   );
 
   it(
-    "Should import one active WTHD restriction and ignore three other SFAS application withdrawal data variations" +
+    "Should import one active WTHD restriction and ignore three other SFAS applications for withdrawal import" +
       " when the SFAS applications have different withdrawal data for withdrawal_date, withdrawal_reason, and withdrawal_active_flag.",
     async () => {
       // Arrange
