@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsBoolean,
   IsDateString,
   IsEnum,
@@ -23,6 +24,7 @@ import {
   OFFERING_WIL_TYPE_MAX_LENGTH,
   StudyBreaksAndWeeks,
   InstitutionType,
+  RestrictionActionType,
 } from "@sims/sims-db";
 import {
   IsPeriodStartDate,
@@ -815,6 +817,11 @@ export class OfferingValidationModel {
     message: "Not able to find the institution of the offering.",
   })
   institutionContext?: InstitutionValidationContext;
+  /**
+   * Effective restriction actions for the local and program.
+   */
+  @IsArray()
+  effectiveRestrictionActions: RestrictionActionType[];
   /**
    * Offering mode(s) of online instruction.
    */
