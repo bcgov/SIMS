@@ -62,7 +62,7 @@ pgBackRest:
     pgbackrest:
       requests:
         cpu: 500m
-        memory: 524Mi
+        memory: 550Mi
       limits:
         cpu: 500m
         memory: 768Mi
