@@ -122,8 +122,8 @@ export class EducationProgramOfferingImportCSVService {
       offeringValidationModel.effectiveRestrictionActions =
         this.getEffectiveRestrictionActions(
           institutionRestrictions,
-          location.id,
-          program.id,
+          location?.id,
+          program?.id,
         );
       offeringValidationModel.actionType = OfferingActionType.Create;
       return offeringValidationModel;
@@ -289,9 +289,12 @@ export class EducationProgramOfferingImportCSVService {
    */
   private getEffectiveRestrictionActions(
     institutionRestrictions: InstitutionRestriction[],
-    locationId: number,
-    programId: number,
+    locationId: number | undefined,
+    programId: number | undefined,
   ): RestrictionActionType[] {
+    if (!locationId || !programId) {
+      return [];
+    }
     return institutionRestrictions
       .filter(
         (institutionRestriction) =>

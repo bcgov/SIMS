@@ -39,7 +39,11 @@ class IsActionAllowedConstraint implements ValidatorConstraintInterface {
 
   defaultMessage(args: ValidationArguments): string {
     const [propertyDisplayName] = args.constraints;
-    return `${propertyDisplayName ?? args.property} is not allowed due to a restriction on the program and location.`;
+    if (args.value === OfferingActionType.Create) {
+      return "This program is restricted and no new offerings can be created for this program.";
+    }
+    // Generic message for other actions.
+    return `The ${propertyDisplayName ?? args.property} is not allowed due to a restriction on the program and location.`;
   }
 }
 
