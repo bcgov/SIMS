@@ -1,0 +1,66 @@
+import {
+  ValidatorConstraintInterface,
+  ValidatorConstraint,
+  registerDecorator,
+  ValidationOptions,
+  ValidationArguments,
+} from "class-validator";
+import {
+  OfferingActionType,
+  OfferingValidationModel,
+} from "../education-program-offering-validation.models";
+import { RestrictionActionType } from "@sims/sims-db";
+
+/**
+ * Executes a validation to ensure the offering action is allowed
+ * and not restricted by an effective restriction action.
+ */
+@ValidatorConstraint()
+class IsActionAllowedConstraint implements ValidatorConstraintInterface {
+  validate(actionType: OfferingActionType, args: ValidationArguments): boolean {
+    const offeringModel = args.object as OfferingValidationModel;
+    if (!offeringModel.effectiveRestrictionActions.length) {
+      // No effective restriction actions.
+      return true;
+    }
+    const blockingRestrictionActionMap = new Map([
+      [OfferingActionType.Create, RestrictionActionType.StopOfferingCreate],
+    ]);
+    if (
+      blockingRestrictionActionMap.has(actionType) &&
+      offeringModel.effectiveRestrictionActions.includes(
+        blockingRestrictionActionMap.get(actionType),
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  defaultMessage(args: ValidationArguments): string {
+    const [propertyDisplayName] = args.constraints;
+    return `${propertyDisplayName ?? args.property} is not allowed due to a restriction on the program and location.`;
+  }
+}
+
+/**
+ * Executes a validation to ensure the offering action is allowed
+ * and not restricted by an effective restriction action.
+ * @param propertyDisplayName user-friendly property name.
+ * @param validationOptions validation options.
+ */
+export function IsActionAllowed(
+  propertyDisplayName?: string,
+  validationOptions?: ValidationOptions,
+) {
+  return (object: unknown, propertyName: string): void => {
+    registerDecorator({
+      name: "IsActionAllowed",
+      target: object.constructor,
+      propertyName,
+      options: validationOptions,
+      constraints: [propertyDisplayName],
+      validator: IsActionAllowedConstraint,
+    });
+  };
+}
