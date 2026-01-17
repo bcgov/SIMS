@@ -4,12 +4,17 @@ import {
   Institution,
   InstitutionLocation,
   OfferingStatus,
+  Restriction,
+  RestrictionActionType,
+  RestrictionType,
   User,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
   createE2EDataSources,
   createFakeInstitutionLocation,
+  createFakeRestriction,
+  saveFakeInstitutionRestriction,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -38,10 +43,20 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
   let collegeFUser: User;
   let institutionUserToken: string;
   let endpoint: string;
-  let csvLocationCodeYESK: string;
+  // Location code in the single and multiple CSV files.
+  const csvLocationCodeYESK = "YESK";
+  // SABC code in the single and multiple CSV files.
+  const csvProgramSABCCodeSBC1 = "SBC1";
+  // SABC code in the single CSV files, where offering cost exceeds maximum.
+  const csvProgramSABCCodeSBC9 = "SBC9";
+  const csvLocationCodeKSEY = "KSEY";
+  const csvProgramSABCCodeSBC2 = "SBC2";
+  const csvLocationCodeSEYK = "SEYK";
+  const csvProgramSABCCodeSBC4 = "SBC4";
+  let educationProgramSBC2: EducationProgram;
+  let stopOfferingCreateRestriction: Restriction;
+  let collegeFLocationKSEY: InstitutionLocation;
   let collegeFLocationYESK: InstitutionLocation;
-  let csvProgramSABCCodeSBC1: string;
-  let csvProgramSABCCodeSBC9: string;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -53,13 +68,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     );
     collegeF = institution;
     collegeFUser = institutionUser;
-
-    // Location code in the single and multiple CSV files.
-    csvLocationCodeYESK = "YESK";
-    // SABC code in the single and multiple CSV files.
-    csvProgramSABCCodeSBC1 = "SBC1";
-    // SABC code in the single CSV files, where offering cost exceeds maximum.
-    csvProgramSABCCodeSBC9 = "SBC9";
 
     institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -75,7 +83,24 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         } as Partial<EducationProgram>,
       },
     );
-    await db.educationProgram.save(educationProgramSBC1);
+
+    // Create a program for the institution with the same SABC code as that of the
+    // second row of the multiple CSV file.
+    // Setting deliveredOnSite as true, as that of the CSV, so that it will create an approved offering.
+    educationProgramSBC2 = createFakeEducationProgram(
+      { institution: collegeF, user: collegeFUser },
+      {
+        initialValue: {
+          sabcCode: csvProgramSABCCodeSBC2,
+          deliveredOnSite: true,
+        } as Partial<EducationProgram>,
+      },
+    );
+
+    await db.educationProgram.save([
+      educationProgramSBC1,
+      educationProgramSBC2,
+    ]);
     // Create a program for the institution with the same SABC code as that of the
     // CSV file where offering cost exceeds maximum.
     const educationProgramSBC9 = createFakeEducationProgram(
@@ -105,11 +130,46 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       },
     );
 
-    await authorizeUserTokenForLocation(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
-      collegeFLocationYESK,
+    // Creating an institution location with same location code as that of the
+    // second row in the CSV file.
+    collegeFLocationKSEY = createFakeInstitutionLocation(
+      {
+        institution: collegeF,
+      },
+      {
+        initialValue: {
+          institutionCode: csvLocationCodeKSEY,
+        } as Partial<InstitutionLocation>,
+      },
     );
+
+    await Promise.all([
+      authorizeUserTokenForLocation(
+        db.dataSource,
+        InstitutionTokenTypes.CollegeFUser,
+        collegeFLocationYESK,
+      ),
+      authorizeUserTokenForLocation(
+        db.dataSource,
+        InstitutionTokenTypes.CollegeFUser,
+        collegeFLocationKSEY,
+      ),
+    ]);
+
+    stopOfferingCreateRestriction = await db.restriction.save(
+      createFakeRestriction({
+        initialValues: {
+          restrictionType: RestrictionType.Institution,
+          actionType: [RestrictionActionType.StopOfferingCreate],
+        },
+      }),
+    );
+  });
+
+  beforeEach(async () => {
+    await db.institutionRestriction.delete({
+      restriction: { id: stopOfferingCreateRestriction.id },
+    });
   });
 
   it(
@@ -118,43 +178,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       " same delivery method and another with different delivery method is uploaded.",
     async () => {
       // Arrange
-      // Second location code in the multiple CSV.
-      const csvLocationCodeKSEY = "KSEY";
-      // SABC code in the second row of the multiple CSV.
-      const csvProgramSABCCodeSBC2 = "SBC2";
-
-      // Creating an institution location with same location code as that of the
-      // second row in the CSV file.
-      const collegeFLocationKSEY = createFakeInstitutionLocation(
-        {
-          institution: collegeF,
-        },
-        {
-          initialValue: {
-            institutionCode: csvLocationCodeKSEY,
-          } as Partial<InstitutionLocation>,
-        },
-      );
-      // Create a program for the institution with the same SABC code as that of the
-      // second row of the multiple CSV file.
-      // Setting deliveredOnSite as true, as that of the CSV, so that it will create an approved offering.
-      const educationProgramSBC2 = createFakeEducationProgram(
-        { institution: collegeF, user: collegeFUser },
-        {
-          initialValue: {
-            sabcCode: csvProgramSABCCodeSBC2,
-            deliveredOnSite: true,
-          } as Partial<EducationProgram>,
-        },
-      );
-
-      await db.educationProgram.save(educationProgramSBC2);
-
-      await authorizeUserTokenForLocation(
-        db.dataSource,
-        InstitutionTokenTypes.CollegeFUser,
-        collegeFLocationKSEY,
-      );
 
       const multipleOfferingFilePath = path.join(
         __dirname,
@@ -476,10 +499,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       " without study breaks and another with study breaks is uploaded.",
     async () => {
       // Arrange
-      // Second location code in the multiple CSV.
-      const csvLocationCodeSEYK = "SEYK";
-      // SABC code in the second row of the multiple CSV.
-      const csvProgramSABCCodeSBC4 = "SBC4";
 
       // Creating an institution location with same location code as that of the
       // second row in the CSV file.
@@ -600,6 +619,50 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         submittedBy: { id: collegeFUser.id },
         submittedDate: expect.any(Date),
       });
+    },
+  );
+
+  it(
+    "Should return validation error when one or more records have effective restriction on location and program" +
+      ` with action type ${RestrictionActionType.StopOfferingCreate}.`,
+    async () => {
+      // Arrange
+      // Creating effective restriction for location KSEY and program SBC2.
+      await saveFakeInstitutionRestriction(db, {
+        restriction: stopOfferingCreateRestriction,
+        institution: collegeF,
+        location: collegeFLocationKSEY,
+        program: educationProgramSBC2,
+      });
+      const multipleOfferingFilePath = path.join(
+        __dirname,
+        "bulk-insert/multiple-upload.csv",
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .attach("file", multipleOfferingFilePath)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+        .expect({
+          message: "An offering has invalid data.",
+          errorType: OFFERING_VALIDATION_CRITICAL_ERROR,
+          objectInfo: [
+            {
+              recordIndex: 1,
+              locationCode: csvLocationCodeKSEY,
+              sabcProgramCode: csvProgramSABCCodeSBC2,
+              startDate: "2023-09-06",
+              endDate: "2024-08-15",
+              errors: [
+                "This program is restricted and no new offerings can be created for this program.",
+              ],
+              infos: [],
+              warnings: [],
+            },
+          ],
+        });
     },
   );
 
