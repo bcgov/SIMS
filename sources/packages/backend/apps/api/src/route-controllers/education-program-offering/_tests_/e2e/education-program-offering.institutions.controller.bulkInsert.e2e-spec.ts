@@ -43,17 +43,15 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
   let collegeFUser: User;
   let institutionUserToken: string;
   let endpoint: string;
-  // Location code in the single and multiple CSV files.
+  // Location and program codes from the CSV files used in the tests.
   const csvLocationCodeYESK = "YESK";
-  // SABC code in the single and multiple CSV files.
   const csvProgramSABCCodeSBC1 = "SBC1";
-  // SABC code in the single CSV files, where offering cost exceeds maximum.
   const csvProgramSABCCodeSBC9 = "SBC9";
   const csvLocationCodeKSEY = "KSEY";
   const csvProgramSABCCodeSBC2 = "SBC2";
   const csvLocationCodeSEYK = "SEYK";
   const csvProgramSABCCodeSBC4 = "SBC4";
-  let educationProgramSBC2: EducationProgram;
+  let educationProgramDeliveredOnSiteSBC2: EducationProgram;
   let stopOfferingCreateRestriction: Restriction;
   let collegeFLocationKSEY: InstitutionLocation;
   let collegeFLocationYESK: InstitutionLocation;
@@ -73,8 +71,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    // Create a program for the institution with the same SABC code as that of the
-    // CSV file.
     const educationProgramSBC1 = createFakeEducationProgram(
       { institution: collegeF, user: collegeFUser },
       {
@@ -84,10 +80,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       },
     );
 
-    // Create a program for the institution with the same SABC code as that of the
-    // second row of the multiple CSV file.
-    // Setting deliveredOnSite as true, as that of the CSV, so that it will create an approved offering.
-    educationProgramSBC2 = createFakeEducationProgram(
+    educationProgramDeliveredOnSiteSBC2 = createFakeEducationProgram(
       { institution: collegeF, user: collegeFUser },
       {
         initialValue: {
@@ -99,11 +92,10 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
 
     await db.educationProgram.save([
       educationProgramSBC1,
-      educationProgramSBC2,
+      educationProgramDeliveredOnSiteSBC2,
     ]);
-    // Create a program for the institution with the same SABC code as that of the
-    // CSV file where offering cost exceeds maximum.
-    const educationProgramSBC9 = createFakeEducationProgram(
+
+    const educationProgramDeliveredOnsiteSBC9 = createFakeEducationProgram(
       { institution: collegeF, user: collegeFUser },
       {
         initialValue: {
@@ -112,7 +104,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         } as Partial<EducationProgram>,
       },
     );
-    await db.educationProgram.save(educationProgramSBC9);
+    await db.educationProgram.save(educationProgramDeliveredOnsiteSBC9);
 
     endpoint = "/institutions/education-program-offering/bulk-insert";
 
@@ -178,7 +170,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       " same delivery method and another with different delivery method is uploaded.",
     async () => {
       // Arrange
-
+      // Upload file with 2 lines.
+      // The upload file line 1 has location code YESK and program SABC code SBC1.
+      // The upload file line 2 has location code KSEY and program SABC code SBC2.
       const multipleOfferingFilePath = path.join(
         __dirname,
         "bulk-insert/multiple-upload.csv",
@@ -234,6 +228,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       " is uploaded.",
     async () => {
       // Arrange
+      // Upload file with 1 line.
+      // The upload file line 1 has location code YESK and program SABC code SBC1.
       const singleOfferingWithValidationErrorsFilePath = path.join(
         __dirname,
         "bulk-insert/single-upload-with-validation-errors.csv",
@@ -282,7 +278,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
 
   it("Should return program related validation error when bulk offering CSV file with a non existing program SABC code is uploaded. ", async () => {
     // Arrange
-
+    // Upload file with 1 line.
+    // The upload file line 1 has location code YESK and program SABC code SBC3.
     const singleOfferingFilePath = path.join(
       __dirname,
       "bulk-insert/single-upload-example1.csv",
@@ -324,6 +321,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       // Arrange
       // Location code from the CSV, that doesn't exists in DB.
       const csvLocationCodeAESK = "AESK";
+      // Upload file with 1 line.
+      // The upload file line 1 has location code AESK and program SABC code SBC1.
       const singleOfferingFilePath = path.join(
         __dirname,
         "bulk-insert/single-upload-example2.csv",
@@ -373,6 +372,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       "is uploaded.",
     async () => {
       // Arrange
+      // Upload file with 1 line.
+      // The upload file line 1 has location code YESK and program SABC code SBC9.
       const singleOfferingWithMaxExceedingOfferingCost = path.join(
         __dirname,
         "bulk-insert/single-upload-warning-when-max-exceeding-offering-cost.csv",
@@ -416,6 +417,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       `code with mandatory fees greater than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE} is uploaded.`,
     async () => {
       // Arrange
+      // Upload file with 1 line.
+      // The upload file line 1 has location code YESK and program SABC code SBC9.
       const singleOfferingErrorWhenOfferingCostExceedMax = path.join(
         __dirname,
         "bulk-insert/single-upload-error-when-offering-cost-exceed-max.csv",
@@ -455,12 +458,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
 
   it("Should validate duplication error when there are 2 records with the same name, year of study, start date and end date.", async () => {
     // Arrange
-    await authorizeUserTokenForLocation(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
-      collegeFLocationYESK,
-    );
 
+    // Upload file with 2 lines.
+    // The upload file line 1 and 2 has location code YESK and program SABC code SBC1.
     const multipleOfferingWithDuplicateValidationErrorsFilePath = path.join(
       __dirname,
       "bulk-insert/multiple-upload-with-duplicate-offering-validation-errors.csv",
@@ -532,7 +532,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         InstitutionTokenTypes.CollegeFUser,
         collegeFLocationSEYK,
       );
-
+      // Upload file with 2 lines.
+      // The upload file line 1 has and line 2 has location code SEYK and program SABC code SBC4.
       const multipleOfferingFilePath = path.join(
         __dirname,
         "bulk-insert/multiple-upload-with-total-funded-weeks-less-than-minimum-allowed-weeks.csv",
@@ -627,17 +628,22 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       ` with action type ${RestrictionActionType.StopOfferingCreate}.`,
     async () => {
       // Arrange
+
+      // Upload file with 2 lines.
+      // The upload file line 1 has location code YESK and program SABC code SBC1.
+      // The upload file line 2 has location code KSEY and program SABC code SBC2.
+      const multipleOfferingFilePath = path.join(
+        __dirname,
+        "bulk-insert/multiple-upload.csv",
+      );
+
       // Creating effective restriction for location KSEY and program SBC2.
       await saveFakeInstitutionRestriction(db, {
         restriction: stopOfferingCreateRestriction,
         institution: collegeF,
         location: collegeFLocationKSEY,
-        program: educationProgramSBC2,
+        program: educationProgramDeliveredOnSiteSBC2,
       });
-      const multipleOfferingFilePath = path.join(
-        __dirname,
-        "bulk-insert/multiple-upload.csv",
-      );
 
       // Act/Assert
       await request(app.getHttpServer())
