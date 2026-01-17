@@ -5,6 +5,9 @@ import {
   OfferingIntensity,
   OfferingStatus,
   OfferingTypes,
+  Restriction,
+  RestrictionActionType,
+  RestrictionType,
   User,
 } from "@sims/sims-db";
 import {
@@ -12,6 +15,8 @@ import {
   createE2EDataSources,
   createFakeInstitutionLocation,
   OfferingDeliveryOptions,
+  createFakeRestriction,
+  saveFakeInstitutionRestriction,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -59,6 +64,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
   let institutionCollegeD: Institution;
   let collegeDLocation: InstitutionLocation;
   let institutionCollegeDUser: User;
+  let stopOfferingCreateRestriction: Restriction;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -146,6 +152,20 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       mandatoryFees: 456,
       exceptionalExpenses: 555,
     };
+    stopOfferingCreateRestriction = await db.restriction.save(
+      createFakeRestriction({
+        initialValues: {
+          restrictionType: RestrictionType.Institution,
+          actionType: [RestrictionActionType.StopOfferingCreate],
+        },
+      }),
+    );
+  });
+
+  beforeEach(async () => {
+    await db.institutionRestriction.delete({
+      restriction: { id: stopOfferingCreateRestriction.id },
+    });
   });
 
   it("Should create a new offering when passed valid data.", async () => {
@@ -458,6 +478,76 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
             "Online instruction mode is not allowed for provided institution type or offering delivery type and offering online delivery inputs.",
           ],
           error: "The validated offerings have critical errors.",
+        });
+    },
+  );
+
+  it(
+    "Should throw bad request error on create new offering when the offering location and program has effective restriction" +
+      ` with action type ${RestrictionActionType.StopOfferingCreate}.`,
+    async () => {
+      // Arrange
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      const fakeEducationProgram = createFakeEducationProgram({
+        institution: collegeF,
+        user: collegeFUser,
+      });
+      fakeEducationProgram.sabcCode = faker.string.alpha({
+        length: 4,
+        casing: "upper",
+      });
+      const savedFakeEducationProgram =
+        await db.educationProgram.save(fakeEducationProgram);
+      const studyBreak = {
+        breakStartDate: "2023-12-01",
+        breakEndDate: "2024-01-01",
+      };
+      // Create an effective institution restriction with action type StopOfferingCreate.
+      await saveFakeInstitutionRestriction(db, {
+        restriction: stopOfferingCreateRestriction,
+        institution: collegeF,
+        location: collegeFLocation,
+        program: savedFakeEducationProgram,
+      });
+      const payload = {
+        offeringName: "Offering 1",
+        yearOfStudy: 1,
+        offeringIntensity: OfferingIntensity.fullTime,
+        offeringDelivered: OfferingDeliveryOptions.Onsite,
+        isAviationOffering: OfferingYesNoOptions.No,
+        hasOfferingWILComponent: "no",
+        studyStartDate: "2023-09-01",
+        studyEndDate: "2024-06-30",
+        lacksStudyBreaks: false,
+        studyBreaks: [
+          {
+            breakStartDate: studyBreak.breakStartDate,
+            breakEndDate: studyBreak.breakEndDate,
+          },
+        ],
+        offeringType: OfferingTypes.Public,
+        offeringDeclaration: true,
+        actualTuitionCosts: 1234,
+        programRelatedCosts: 3211,
+        mandatoryFees: 456,
+        exceptionalExpenses: 555,
+      };
+      const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect({
+          message: [
+            "This program is restricted and no new offerings can be created for this program.",
+          ],
+          error: "The validated offerings have critical errors.",
+          statusCode: HttpStatus.BAD_REQUEST,
         });
     },
   );

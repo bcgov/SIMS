@@ -5,6 +5,9 @@ import {
   OfferingIntensity,
   OfferingStatus,
   OfferingTypes,
+  Restriction,
+  RestrictionActionType,
+  RestrictionType,
   User,
 } from "@sims/sims-db";
 import {
@@ -12,6 +15,8 @@ import {
   createE2EDataSources,
   createFakeInstitutionLocation,
   OfferingDeliveryOptions,
+  createFakeRestriction,
+  saveFakeInstitutionRestriction,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -30,7 +35,7 @@ import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
 } from "../../../../utilities";
-import { getISODateOnlyString } from "@sims/utilities";
+import { getISODateOnlyString, isAfter } from "@sims/utilities";
 import { InstitutionUserTypes } from "../../../../auth";
 import { EducationProgramOfferingAPIInDTO } from "apps/api/src/route-controllers/education-program-offering/models/education-program-offering.dto";
 import {
@@ -48,6 +53,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
   let institutionCollegeC: Institution;
   let institutionCollegeCUser: User;
   let collegeCLocation: InstitutionLocation;
+  let stopOfferingCreateRestriction: Restriction;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -82,6 +88,20 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       collegeCLocation,
     );
     await Promise.all([authorizeCollegeFPromise, authorizeCollegeCPromise]);
+    stopOfferingCreateRestriction = await db.restriction.save(
+      createFakeRestriction({
+        initialValues: {
+          restrictionType: RestrictionType.Institution,
+          actionType: [RestrictionActionType.StopOfferingCreate],
+        },
+      }),
+    );
+  });
+
+  beforeEach(async () => {
+    await db.institutionRestriction.delete({
+      restriction: { id: stopOfferingCreateRestriction.id },
+    });
   });
 
   it("Should update a new offering when passed valid data.", async () => {
@@ -192,6 +212,86 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       }),
     );
   });
+
+  it(
+    "Should update an existing offering without any restriction impact when the offering location and program" +
+      ` have effective restriction with action type ${RestrictionActionType.StopOfferingCreate}.`,
+    async () => {
+      // Arrange
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      const fakeEducationProgram = createFakeEducationProgram({
+        institution: collegeF,
+        user: collegeFUser,
+      });
+      fakeEducationProgram.sabcCode = faker.string.alpha({
+        length: 4,
+        casing: "upper",
+      });
+      const savedFakeEducationProgram =
+        await db.educationProgram.save(fakeEducationProgram);
+      const newOffering = createFakeEducationProgramOffering(
+        collegeFUser,
+        savedFakeEducationProgram,
+        collegeFLocation,
+      );
+      newOffering.parentOffering = newOffering;
+      const savedEducationProgramOffering =
+        await db.educationProgramOffering.save(newOffering);
+      // Create an effective restriction with action type StopOfferingCreate.
+      await saveFakeInstitutionRestriction(db, {
+        restriction: stopOfferingCreateRestriction,
+        institution: collegeF,
+        location: collegeFLocation,
+        program: savedFakeEducationProgram,
+      });
+      const studyBreak = {
+        breakStartDate: "2023-12-01",
+        breakEndDate: "2024-01-01",
+      };
+      const payload = {
+        offeringName: "Updated offering name",
+        yearOfStudy: 1,
+        offeringIntensity: OfferingIntensity.fullTime,
+        offeringDelivered: OfferingDeliveryOptions.Onsite,
+        isAviationOffering: OfferingYesNoOptions.No,
+        hasOfferingWILComponent: "no",
+        studyStartDate: "2023-09-01",
+        studyEndDate: "2024-06-30",
+        lacksStudyBreaks: false,
+        studyBreaks: [
+          {
+            breakStartDate: studyBreak.breakStartDate,
+            breakEndDate: studyBreak.breakEndDate,
+          },
+        ],
+        offeringType: OfferingTypes.Public,
+        offeringDeclaration: true,
+        actualTuitionCosts: 1234,
+        programRelatedCosts: 3211,
+        mandatoryFees: 456,
+        exceptionalExpenses: 555,
+      };
+      const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}/offering/${savedEducationProgramOffering.id}`;
+      const referenceDate = new Date();
+      // Act/Assert
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({});
+      const updatedEducationProgramOffering =
+        await db.educationProgramOffering.findOne({
+          select: { id: true, updatedAt: true },
+          where: { id: savedEducationProgramOffering.id },
+        });
+      expect(
+        isAfter(referenceDate, updatedEducationProgramOffering.updatedAt),
+      ).toBe(true);
+    },
+  );
 
   it(
     "Should update an existing offering for a BC Public institution when the delivery mode is online" +
