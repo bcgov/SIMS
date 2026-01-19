@@ -49,7 +49,7 @@ import { HasValidOfferingPeriodForFundedWeeks } from "./custom-validators/has-va
 import { ProgramAllowsAviation } from "./custom-validators/program-allows-aviation";
 import { ProgramAllowsAviationCredential } from "./custom-validators/program-allows-aviation-credential";
 import { HasFundedWeeksWithinMaximumLimit } from "./custom-validators/has-funded-weeks-within-maximum-limit";
-import { IsActionAllowed } from "./custom-validators/is-action-allowed";
+import { IsOfferingActionAllowed } from "./custom-validators/is-offering-action-allowed";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -102,6 +102,7 @@ export const userFriendlyNames = {
   totalOnlineDuration: "Total online duration",
   minimumOnlineDuration: "Minimum online duration",
   maximumOnlineDuration: "Maximum online duration",
+  actionType: "Action type",
 };
 
 /**
@@ -843,7 +844,7 @@ export class OfferingValidationModel {
   })
   institutionContext?: InstitutionValidationContext;
   /**
-   * Effective restriction actions for the local and program.
+   * Effective restriction actions for the location and program.
    */
   // The effective restriction actions may not be provided for non-persistent validations.
   @IsOptional()
@@ -1056,7 +1057,7 @@ export class OfferingValidationModel {
       !!offering.effectiveRestrictionActions?.length,
   )
   @IsEnum(OfferingActionType)
-  @IsActionAllowed("Action type")
+  @IsOfferingActionAllowed(userFriendlyNames.actionType)
   actionType: OfferingActionType;
 }
 

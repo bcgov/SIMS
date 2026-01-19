@@ -16,7 +16,7 @@ import { RestrictionActionType } from "@sims/sims-db";
  * and not restricted by an effective restriction action.
  */
 @ValidatorConstraint()
-class IsActionAllowedConstraint implements ValidatorConstraintInterface {
+class IsOfferingActionAllowedConstraint implements ValidatorConstraintInterface {
   validate(actionType: OfferingActionType, args: ValidationArguments): boolean {
     const offeringModel = args.object as OfferingValidationModel;
     if (!offeringModel.effectiveRestrictionActions.length) {
@@ -53,18 +53,18 @@ class IsActionAllowedConstraint implements ValidatorConstraintInterface {
  * @param propertyDisplayName user-friendly property name.
  * @param validationOptions validation options.
  */
-export function IsActionAllowed(
+export function IsOfferingActionAllowed(
   propertyDisplayName?: string,
   validationOptions?: ValidationOptions,
 ) {
   return (object: unknown, propertyName: string): void => {
     registerDecorator({
-      name: "IsActionAllowed",
+      name: "IsOfferingActionAllowed",
       target: object.constructor,
       propertyName,
       options: validationOptions,
       constraints: [propertyDisplayName],
-      validator: IsActionAllowedConstraint,
+      validator: IsOfferingActionAllowedConstraint,
     });
   };
 }
