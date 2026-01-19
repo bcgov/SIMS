@@ -42,6 +42,11 @@ import {
 } from "@sims/utilities";
 
 /**
+ * Estimated award value dynamic identifier prefix.
+ */
+const DISBURSEMENT_PREFIX = "disbursement";
+
+/**
  * Final award value dynamic identifier prefix.
  */
 const DISBURSEMENT_RECEIPT_PREFIX = "disbursementReceipt";
@@ -59,10 +64,10 @@ const RESTRICTION_SUBTRACTED_SUFFIX = "RestrictionAmountSubtracted";
  * Either way, both status are considered as subjected to check for receipts since an
  * e-Cert was produced.
  */
-const HAS_POTENTIAL_RECEIPT_STATUSES = [
+const HAS_POTENTIAL_RECEIPT_STATUSES = new Set([
   DisbursementScheduleStatus.Sent,
   DisbursementScheduleStatus.Rejected,
-];
+]);
 
 @Injectable()
 export class AssessmentControllerService {
@@ -186,7 +191,7 @@ export class AssessmentControllerService {
     const maskMSFAA = options?.maskMSFAA ?? true;
     const disbursementDetails = {};
     disbursementSchedules.forEach((schedule, index) => {
-      const disbursementIdentifier = `disbursement${index + 1}`;
+      const disbursementIdentifier = `${DISBURSEMENT_PREFIX}${index + 1}`;
       disbursementDetails[`${disbursementIdentifier}Date`] =
         getDateOnlyFullMonthFormat(schedule.disbursementDate);
       disbursementDetails[`${disbursementIdentifier}Status`] =
@@ -222,22 +227,8 @@ export class AssessmentControllerService {
           // BC Total grants are not part of the students grants and should not be part of the summary.
           return;
         }
-
-        // Populate values.
-        const disbursementValueCode = disbursement.valueCode.toLowerCase();
-        const disbursementValueKey = `${disbursementIdentifier}${disbursementValueCode}`;
+        const disbursementValueKey = `${disbursementIdentifier}${disbursement.valueCode.toLowerCase()}`;
         disbursementDetails[disbursementValueKey] = disbursement.valueAmount;
-
-        // Populate subtracted amounts.
-        const disbursedAmountSubtractedKey = `${disbursementValueKey}${DISBURSED_SUBTRACTED_SUFFIX}`;
-        disbursementDetails[disbursedAmountSubtractedKey] =
-          disbursement.disbursedAmountSubtracted;
-        const overawardAmountSubtractedKey = `${disbursementValueKey}${OVERAWARD_SUBTRACTED_SUFFIX}`;
-        disbursementDetails[overawardAmountSubtractedKey] =
-          disbursement.overawardAmountSubtracted;
-        const restrictionAmountSubtractedKey = `${disbursementValueKey}${RESTRICTION_SUBTRACTED_SUFFIX}`;
-        disbursementDetails[restrictionAmountSubtractedKey] =
-          disbursement.restrictionAmountSubtracted;
       });
     });
     return disbursementDetails;
@@ -320,7 +311,7 @@ export class AssessmentControllerService {
   ): Promise<DynamicAwardValue | undefined> {
     const [firstDisbursement] = assessment.disbursementSchedules;
     if (
-      !HAS_POTENTIAL_RECEIPT_STATUSES.includes(
+      !HAS_POTENTIAL_RECEIPT_STATUSES.has(
         firstDisbursement.disbursementScheduleStatus,
       )
     ) {
@@ -328,6 +319,7 @@ export class AssessmentControllerService {
       return undefined;
     }
     let finalAward: DynamicAwardValue = {};
+    // TODO: Update comment
     // Full-time receipts are expected to contains all information about awards disbursed to students
     // but specific BC grants. Receipts should be used as a source of the information for full-time application.
     // Part-time receipts will not contain all the awards value hence the e-Cert effective
@@ -376,9 +368,7 @@ export class AssessmentControllerService {
     let index = 1;
     for (const schedule of assessment.disbursementSchedules) {
       if (
-        !HAS_POTENTIAL_RECEIPT_STATUSES.includes(
-          schedule.disbursementScheduleStatus,
-        )
+        !HAS_POTENTIAL_RECEIPT_STATUSES.has(schedule.disbursementScheduleStatus)
       ) {
         break;
       }
@@ -429,13 +419,13 @@ export class AssessmentControllerService {
     finalAwards[identifier] = flag;
   }
 
-  // /**
-  //  * Populate final awards values from disbursements receipts for full-time.
-  //  * @param disbursementReceipts disbursement receipts.
-  //  * @param disbursementSchedule disbursement schedules.
-  //  * @param identifier identifier which is used to create dynamic data by appending award code to it.
-  //  * @returns dynamic award data of disbursement receipts of a given disbursement.
-  //  */
+  /**
+   * Populate final awards values from disbursements receipts for full-time.
+   * @param disbursementReceipts disbursement receipts.
+   * @param disbursementSchedule disbursement schedules.
+   * @param identifier identifier which is used to create dynamic data by appending award code to it.
+   * @returns dynamic award data of disbursement receipts of a given disbursement.
+   */
   // private populateDisbursementReceiptAwardValues(
   //   disbursementReceipts: DisbursementReceipt[],
   //   disbursementSchedule: DisbursementSchedule,
@@ -551,13 +541,13 @@ export class AssessmentControllerService {
       // Populate subtracted amounts.
       const disbursedAmountSubtractedKey = `${disbursementValueKey}${DISBURSED_SUBTRACTED_SUFFIX}`;
       finalAward[disbursedAmountSubtractedKey] =
-        award.disbursedAmountSubtracted;
+        award.disbursedAmountSubtracted ?? undefined;
       const overawardAmountSubtractedKey = `${disbursementValueKey}${OVERAWARD_SUBTRACTED_SUFFIX}`;
       finalAward[overawardAmountSubtractedKey] =
-        award.overawardAmountSubtracted;
+        award.overawardAmountSubtracted ?? undefined;
       const restrictionAmountSubtractedKey = `${disbursementValueKey}${RESTRICTION_SUBTRACTED_SUFFIX}`;
       finalAward[restrictionAmountSubtractedKey] =
-        award.restrictionAmountSubtracted;
+        award.restrictionAmountSubtracted ?? undefined;
     });
     return finalAward;
   }
