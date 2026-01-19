@@ -41,7 +41,7 @@
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "jiti": "^2.6.1",
-    "prettier": "^3.7.4",
+    "prettier": "^3.8.0",
     "reflect-metadata": "^0.2.2",
     "sass": "^1.97.2",
     "typescript": "^5.9.3",
