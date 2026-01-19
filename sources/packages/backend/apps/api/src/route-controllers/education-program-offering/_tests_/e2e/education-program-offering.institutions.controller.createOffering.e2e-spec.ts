@@ -494,10 +494,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         institution: collegeF,
         user: collegeFUser,
       });
-      fakeEducationProgram.sabcCode = faker.string.alpha({
-        length: 4,
-        casing: "upper",
-      });
       const savedFakeEducationProgram =
         await db.educationProgram.save(fakeEducationProgram);
       const studyBreak = {

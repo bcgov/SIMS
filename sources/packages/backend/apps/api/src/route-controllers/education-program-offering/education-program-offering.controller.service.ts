@@ -206,6 +206,10 @@ export class EducationProgramOfferingControllerService {
         institutionLocationPromise,
         effectiveInstitutionRestrictionsPromise,
       ]);
+    const effectiveRestrictionActions =
+      effectiveInstitutionRestrictions.flatMap(
+        (restriction) => restriction.restriction.actionType,
+      );
     return {
       ...payload,
       locationId,
@@ -220,10 +224,7 @@ export class EducationProgramOfferingControllerService {
           institutionLocation.institution.institutionType.isBCPrivate,
         isBCPublic: institutionLocation.institution.institutionType.isBCPublic,
       },
-      effectiveRestrictionActions: effectiveInstitutionRestrictions.flatMap(
-        (institutionRestriction) =>
-          institutionRestriction.restriction.actionType,
-      ),
+      effectiveRestrictionActions: [...new Set(effectiveRestrictionActions)],
       actionType,
     };
   }
