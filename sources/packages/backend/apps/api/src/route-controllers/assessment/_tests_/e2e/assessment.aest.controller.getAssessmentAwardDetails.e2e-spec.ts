@@ -83,7 +83,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
         DisbursementValueType.CanadaGrant,
         "CSGF",
         40,
-        // Final amount has been reduced by a $10 overaward amount and $5 restriction amount.
+        // Final amount has been reduced by a $10 overaward amount and a $5 restriction amount.
         {
           effectiveAmount: 25,
           overawardAmountSubtracted: 10,
