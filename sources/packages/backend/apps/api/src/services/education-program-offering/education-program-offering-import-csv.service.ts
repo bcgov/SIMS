@@ -26,7 +26,10 @@ import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import { flattenErrorMessages } from "../../utilities/class-validation";
 import { parse } from "papaparse";
-import { CustomNamedError } from "@sims/utilities";
+import {
+  CustomNamedError,
+  getEffectiveInstitutionRestrictions,
+} from "@sims/utilities";
 import { OFFERING_VALIDATION_CSV_PARSE_ERROR } from "../../constants";
 import { LoggerService } from "@sims/utilities/logger";
 
@@ -295,15 +298,13 @@ export class EducationProgramOfferingImportCSVService {
     if (!locationId || !programId) {
       return [];
     }
-    return institutionRestrictions
-      .filter(
-        (institutionRestriction) =>
-          institutionRestriction.location.id === locationId &&
-          institutionRestriction.program.id === programId,
-      )
-      .flatMap(
-        (institutionRestriction) =>
-          institutionRestriction.restriction.actionType,
-      );
+    const actionTypes = getEffectiveInstitutionRestrictions(
+      institutionRestrictions,
+      locationId,
+      programId,
+    ).flatMap(
+      (institutionRestriction) => institutionRestriction.restriction.actionType,
+    );
+    return [...new Set(actionTypes)]; // Remove duplicate actions.
   }
 }

@@ -52,6 +52,7 @@ class IsOfferingActionAllowedConstraint implements ValidatorConstraintInterface 
  * and not restricted by an effective restriction action.
  * @param propertyDisplayName user-friendly property name.
  * @param validationOptions validation options.
+ * @returns property decorator that registers the validation constraint.
  */
 export function IsOfferingActionAllowed(
   propertyDisplayName?: string,

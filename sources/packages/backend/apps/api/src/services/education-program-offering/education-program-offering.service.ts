@@ -51,6 +51,7 @@ import {
   dateDifference,
   decimalRound,
   FieldSortOrder,
+  getEffectiveInstitutionRestrictions,
   isBeforeDate,
   isBetweenPeriod,
   processInParallel,
@@ -704,6 +705,16 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     if (!offering) {
       throw new Error("Offering was not found.");
     }
+    const location = offering.institutionLocation;
+    const institution = location.institution;
+    const programId = offering.educationProgram.id;
+    const locationId = location.id;
+    const effectiveRestrictionActions = getEffectiveInstitutionRestrictions(
+      institution.restrictions,
+      locationId,
+      programId,
+      { checkIsActive: true },
+    ).flatMap((restriction) => restriction.restriction.actionType);
     const offeringValidationModel = new OfferingValidationModel();
     offeringValidationModel.offeringName = offering.name;
     offeringValidationModel.studyStartDate = offering.studyStartDate;
@@ -727,6 +738,9 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringValidationModel.offeringType = offering.offeringType;
     offeringValidationModel.courseLoad = offering.courseLoad;
     offeringValidationModel.studyBreaks = offering.studyBreaks?.studyBreaks;
+    offeringValidationModel.effectiveRestrictionActions = [
+      ...new Set(effectiveRestrictionActions),
+    ];
     offeringValidationModel.actionType = OfferingActionType.Validate;
     return offeringValidationModel;
   }
@@ -762,6 +776,17 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         },
         institutionLocation: {
           id: true,
+          institution: {
+            id: true,
+            restrictions: {
+              id: true,
+              isActive: true,
+              restriction: {
+                id: true,
+                actionType: true,
+              },
+            },
+          },
         },
         offeringIntensity: true,
         yearOfStudy: true,
@@ -775,7 +800,9 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         },
       },
       relations: {
-        institutionLocation: true,
+        institutionLocation: {
+          institution: { restrictions: { restriction: true } },
+        },
         educationProgram: true,
       },
       where: {

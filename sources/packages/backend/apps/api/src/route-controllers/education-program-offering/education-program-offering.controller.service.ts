@@ -160,6 +160,7 @@ export class EducationProgramOfferingControllerService {
    * @param programId program id.
    * @param payload information to generate the model to perform the offering
    * validation and persistence.
+   * @param actionType offering action type.
    * @returns offering model to be validated and saved.
    */
   async buildOfferingValidationModel(

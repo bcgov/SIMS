@@ -846,8 +846,6 @@ export class OfferingValidationModel {
   /**
    * Effective restriction actions for the location and program.
    */
-  // The effective restriction actions may not be provided for non-persistent validations.
-  @IsOptional()
   @IsArray()
   effectiveRestrictionActions: RestrictionActionType[];
   /**
@@ -1050,12 +1048,6 @@ export class OfferingValidationModel {
   /**
    * Offering action type.
    */
-  // The effective restriction actions may not be provided for non-persistent operations
-  // and in those cases the action type validation is not required.
-  @ValidateIf(
-    (offering: OfferingValidationModel) =>
-      !!offering.effectiveRestrictionActions?.length,
-  )
   @IsEnum(OfferingActionType)
   @IsOfferingActionAllowed(userFriendlyNames.actionType)
   actionType: OfferingActionType;
