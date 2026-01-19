@@ -15,9 +15,10 @@
           </h3>
           <!-- Estimated award table. -->
           <award-table
-            :awardDetails="assessmentAwardData.estimatedAward"
-            :offeringIntensity="assessmentAwardData.offeringIntensity"
+            :award-details="assessmentAwardData.estimatedAward"
+            :offering-intensity="assessmentAwardData.offeringIntensity"
             identifier="disbursement1"
+            :award-table-type="AwardTableType.Estimated"
           />
           <content-group-info>
             <div>
@@ -40,23 +41,26 @@
           </content-group-info>
           <div class="my-3">
             <status-info-enrolment
-              :coeStatus="
-                assessmentAwardData.estimatedAward.disbursement1COEStatus as COEStatus
+              :coe-status="
+                assessmentAwardData.estimatedAward
+                  .disbursement1COEStatus as COEStatus
               "
-              :enrolmentDate="
-                assessmentAwardData.estimatedAward.disbursement1EnrolmentDate as Date
+              :enrolment-date="
+                assessmentAwardData.estimatedAward
+                  .disbursement1EnrolmentDate as Date
               "
             />
             <confirm-enrolment
               v-if="allowConfirmEnrolment"
-              :coeStatus="
-                assessmentAwardData.estimatedAward.disbursement1COEStatus as COEStatus
+              :coe-status="
+                assessmentAwardData.estimatedAward
+                  .disbursement1COEStatus as COEStatus
               "
-              :applicationStatus="assessmentAwardData.applicationStatus"
-              :disbursementId="
+              :application-status="assessmentAwardData.applicationStatus"
+              :disbursement-id="
                 assessmentAwardData.estimatedAward.disbursement1Id as number
               "
-              @confirmEnrolment="$emit('confirmEnrolment', $event)"
+              @confirm-enrolment="$emit('confirmEnrolment', $event)"
             />
           </div>
           <div
@@ -87,9 +91,10 @@
           <!-- Final award table. -->
           <template v-if="showFirstFinalAward">
             <award-table
-              :awardDetails="assessmentAwardData.finalAward"
-              :offeringIntensity="assessmentAwardData.offeringIntensity"
+              :award-details="assessmentAwardData.finalAward"
+              :offering-intensity="assessmentAwardData.offeringIntensity"
               identifier="disbursementReceipt1"
+              :award-table-type="AwardTableType.Final"
             />
             <!-- Part-time final awards are retrieved from e-Cert generated values and requires further explanation.  -->
             <p
@@ -147,8 +152,8 @@
             <cancel-disbursement-schedule
               v-if="canCancelFirstDisbursement"
               :disbursement-id="
-            assessmentAwardData.estimatedAward.disbursement1Id as number
-            "
+                assessmentAwardData.estimatedAward.disbursement1Id as number
+              "
               @disbursement-cancelled="$emit('disbursementCancelled')"
             />
             <status-info-disbursement-cancellation
@@ -179,9 +184,10 @@
           </div>
           <!-- Estimated award table. -->
           <award-table
-            :awardDetails="assessmentAwardData.estimatedAward"
-            :offeringIntensity="assessmentAwardData.offeringIntensity"
+            :award-details="assessmentAwardData.estimatedAward"
+            :offering-intensity="assessmentAwardData.offeringIntensity"
             identifier="disbursement2"
+            :award-table-type="AwardTableType.Estimated"
           />
           <content-group-info>
             <div>
@@ -204,23 +210,26 @@
           </content-group-info>
           <div class="my-3">
             <status-info-enrolment
-              :coeStatus="
-                assessmentAwardData.estimatedAward.disbursement2COEStatus as COEStatus
+              :coe-status="
+                assessmentAwardData.estimatedAward
+                  .disbursement2COEStatus as COEStatus
               "
-              :enrolmentDate="
-                assessmentAwardData.estimatedAward.disbursement2EnrolmentDate as Date
+              :enrolment-date="
+                assessmentAwardData.estimatedAward
+                  .disbursement2EnrolmentDate as Date
               "
             />
             <confirm-enrolment
               v-if="allowConfirmEnrolment"
-              :coeStatus="
-                assessmentAwardData.estimatedAward.disbursement2COEStatus as COEStatus
+              :coe-status="
+                assessmentAwardData.estimatedAward
+                  .disbursement2COEStatus as COEStatus
               "
-              :applicationStatus="assessmentAwardData.applicationStatus"
-              :disbursementId="
+              :application-status="assessmentAwardData.applicationStatus"
+              :disbursement-id="
                 assessmentAwardData.estimatedAward.disbursement2Id as number
               "
-              @confirmEnrolment="$emit('confirmEnrolment', $event)"
+              @confirm-enrolment="$emit('confirmEnrolment', $event)"
             />
           </div>
           <div class="my-3">
@@ -265,9 +274,10 @@
           <!-- Final award table. -->
           <template v-if="showSecondFinalAward">
             <award-table
-              :awardDetails="assessmentAwardData.finalAward"
-              :offeringIntensity="assessmentAwardData.offeringIntensity"
+              :award-details="assessmentAwardData.finalAward"
+              :offering-intensity="assessmentAwardData.offeringIntensity"
               identifier="disbursementReceipt2"
+              :award-table-type="AwardTableType.Final"
             />
             <!-- Part-time final awards are retrieved from e-Cert generated values and requires further explanation.  -->
             <p
@@ -347,7 +357,11 @@
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { AwardDetailsAPIOutDTO, DynamicAwardValue } from "@/services/http/dto";
+import {
+  AwardDetailsAPIOutDTO,
+  AwardTableType,
+  DynamicAwardValue,
+} from "@/services/http/dto";
 import {
   COEStatus,
   OfferingIntensity,
@@ -493,6 +507,7 @@ export default defineComponent({
       DisbursementScheduleStatus,
       canCancelFirstDisbursement,
       canCancelSecondDisbursement,
+      AwardTableType,
     };
   },
 });

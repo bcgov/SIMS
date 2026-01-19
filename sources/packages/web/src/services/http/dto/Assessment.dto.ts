@@ -114,3 +114,20 @@ export interface AwardDetailsAPIOutDTO {
 export interface ManualReassessmentAPIInDTO {
   note: string;
 }
+
+/**
+ * Type of award to be displayed in the awards table.
+ */
+export enum AwardTableType {
+  Estimated = "Estimated",
+  Final = "Final",
+}
+
+/**
+ * Adjustments that were made to an award.
+ */
+export interface AwardAdjustmentAmounts {
+  disbursedAmountSubtracted: number;
+  overawardAmountSubtracted: number;
+  restrictionAmountSubtracted: number;
+}

@@ -1,13 +1,10 @@
 import {
   DisbursementSchedule,
-  DisbursementReceipt,
   AssessmentTriggerType,
   ApplicationExceptionStatus,
   StudentAssessmentStatus,
   ApplicationOfferingChangeRequestStatus,
   DisbursementValueType,
-  RECEIPT_FUNDING_TYPE_FEDERAL,
-  OfferingIntensity,
   StudentAssessment,
   DisbursementValue,
   DisbursementScheduleStatus,
@@ -43,12 +40,19 @@ import {
   getDateOnlyFullMonthFormat,
   getTotalDisbursementAmountFromSchedules,
 } from "@sims/utilities";
-import { BC_TOTAL_GRANT_AWARD_CODE } from "@sims/services/constants";
 
 /**
  * Final award value dynamic identifier prefix.
  */
 const DISBURSEMENT_RECEIPT_PREFIX = "disbursementReceipt";
+
+/**
+ * Suffixes for dynamic fields to track subtracted amounts.
+ */
+const DISBURSED_SUBTRACTED_SUFFIX = "DisbursedAmountSubtracted";
+const OVERAWARD_SUBTRACTED_SUFFIX = "OverawardAmountSubtracted";
+const RESTRICTION_SUBTRACTED_SUFFIX = "RestrictionAmountSubtracted";
+
 /**
  * Indicates which disbursement schedule statuses are expected to have receipts generated.
  * When 'Sent' and later 'Rejected', the receipt should not be received in a usual situation.
@@ -218,8 +222,22 @@ export class AssessmentControllerService {
           // BC Total grants are not part of the students grants and should not be part of the summary.
           return;
         }
-        const disbursementValueKey = `${disbursementIdentifier}${disbursement.valueCode.toLowerCase()}`;
+
+        // Populate values.
+        const disbursementValueCode = disbursement.valueCode.toLowerCase();
+        const disbursementValueKey = `${disbursementIdentifier}${disbursementValueCode}`;
         disbursementDetails[disbursementValueKey] = disbursement.valueAmount;
+
+        // Populate subtracted amounts.
+        const disbursedAmountSubtractedKey = `${disbursementValueKey}${DISBURSED_SUBTRACTED_SUFFIX}`;
+        disbursementDetails[disbursedAmountSubtractedKey] =
+          disbursement.disbursedAmountSubtracted;
+        const overawardAmountSubtractedKey = `${disbursementValueKey}${OVERAWARD_SUBTRACTED_SUFFIX}`;
+        disbursementDetails[overawardAmountSubtractedKey] =
+          disbursement.overawardAmountSubtracted;
+        const restrictionAmountSubtractedKey = `${disbursementValueKey}${RESTRICTION_SUBTRACTED_SUFFIX}`;
+        disbursementDetails[restrictionAmountSubtractedKey] =
+          disbursement.restrictionAmountSubtracted;
       });
     });
     return disbursementDetails;
@@ -328,31 +346,31 @@ export class AssessmentControllerService {
       this.setReceiptReceivedFlag(finalAward, index + 1, hasReceipt);
     });
 
-    if (assessment.offering.offeringIntensity === OfferingIntensity.fullTime) {
-      let index = 1;
-      if (!disbursementReceipts.length) {
-        // If the receipts are not available no additional processing is needed.
-        this.setHasAwardsFlag(finalAward, index, false);
-        return finalAward;
-      }
-      for (const schedule of assessment.disbursementSchedules) {
-        if (
-          !HAS_POTENTIAL_RECEIPT_STATUSES.includes(
-            schedule.disbursementScheduleStatus,
-          )
-        ) {
-          break;
-        }
-        const awards = this.populateDisbursementReceiptAwardValues(
-          disbursementReceipts,
-          schedule,
-          index,
-        );
-        finalAward = { ...finalAward, ...awards };
-        index++;
-      }
-      return finalAward;
-    }
+    // if (assessment.offering.offeringIntensity === OfferingIntensity.fullTime) {
+    //   let index = 1;
+    //   if (!disbursementReceipts.length) {
+    //     // If the receipts are not available no additional processing is needed.
+    //     this.setHasAwardsFlag(finalAward, index, false);
+    //     return finalAward;
+    //   }
+    //   for (const schedule of assessment.disbursementSchedules) {
+    //     if (
+    //       !HAS_POTENTIAL_RECEIPT_STATUSES.includes(
+    //         schedule.disbursementScheduleStatus,
+    //       )
+    //     ) {
+    //       break;
+    //     }
+    //     const awards = this.populateDisbursementReceiptAwardValues(
+    //       disbursementReceipts,
+    //       schedule,
+    //       index,
+    //     );
+    //     finalAward = { ...finalAward, ...awards };
+    //     index++;
+    //   }
+    //   return finalAward;
+    // }
     // Part-time receipts will not contain all the awards value hence the e-Cert effective
     // values are used instead to provide the best information as possible.
     let index = 1;
@@ -411,102 +429,102 @@ export class AssessmentControllerService {
     finalAwards[identifier] = flag;
   }
 
-  /**
-   * Populate final awards values from disbursements receipts for full-time.
-   * @param disbursementReceipts disbursement receipts.
-   * @param disbursementSchedule disbursement schedules.
-   * @param identifier identifier which is used to create dynamic data by appending award code to it.
-   * @returns dynamic award data of disbursement receipts of a given disbursement.
-   */
-  private populateDisbursementReceiptAwardValues(
-    disbursementReceipts: DisbursementReceipt[],
-    disbursementSchedule: DisbursementSchedule,
-    index: number,
-  ): DynamicAwardValue {
-    const identifier = `${DISBURSEMENT_RECEIPT_PREFIX}${index}`;
-    const finalAward: DynamicAwardValue = {};
-    // Check if a receipt was received for the disbursement schedule.
-    const hasReceipt = disbursementReceipts.some(
-      (receipt) => receipt.disbursementSchedule.id === disbursementSchedule.id,
-    );
-    this.setHasAwardsFlag(finalAward, index, hasReceipt);
-    // Add all estimated awards to the list of receipts returned.
-    // Ensure that every estimated disbursement will be part of the summary.
-    disbursementSchedule.disbursementValues.forEach((award) => {
-      if (award.valueType === DisbursementValueType.BCTotalGrant) {
-        // BC Total grants are not part of the students grants and should not be part of the summary.
-        return;
-      }
-      const disbursementValueKey = this.createReceiptFullIdentifier(
-        identifier,
-        award.valueCode,
-      );
-      finalAward[disbursementValueKey] = null;
-    });
-    // Process the two expected receipts records for federal(FE) and the other for provincial(BC) awards.
-    disbursementReceipts
-      .filter(
-        (receipt) =>
-          receipt.disbursementSchedule.id === disbursementSchedule.id,
-      )
-      .forEach((receipt) => {
-        // Check if a loan is part of the receipt (e.g. part-time provincial loans shouldn't be available).
-        const loanType = DisbursementReceiptService.getLoanAwardCode(
-          receipt.fundingType,
-          receipt.disbursementSchedule.studentAssessment.offering
-            .offeringIntensity,
-        );
-        if (loanType) {
-          // Add the loan to the list of awards returned.
-          const disbursementLoanKey = `${identifier}${loanType.toLowerCase()}`;
-          finalAward[disbursementLoanKey] = receipt.totalDisbursedAmount;
-        }
-        if (receipt.fundingType === RECEIPT_FUNDING_TYPE_FEDERAL) {
-          // Populate the receipt amount in the receipt awards.
-          // If an estimated disbursement award has no equivalent receipt its value will be left as null.
-          receipt.disbursementReceiptValues.forEach((receiptValue) => {
-            const disbursementValueKey = this.createReceiptFullIdentifier(
-              identifier,
-              receiptValue.grantType,
-            );
-            finalAward[disbursementValueKey] = receiptValue.grantAmount;
-          });
-        } else {
-          // BC receipts will contains only the BC total grant(BCSG) value.
-          // Create individual BC grants values from BC total grants(BCSG) receipt.
-          // Federal receipts do not contain individual BC grants.
-          const bcTotalGrantAward =
-            disbursementSchedule.disbursementValues.find(
-              (award) => award.valueCode === BC_TOTAL_GRANT_AWARD_CODE,
-            );
-          // If the BC total grants award is not present consider that BC grants were
-          // not eligible and do not need to be returned.
-          if (bcTotalGrantAward) {
-            const bcTotalGrantsReceipt = receipt.disbursementReceiptValues.find(
-              (receipt) => receipt.grantType === BC_TOTAL_GRANT_AWARD_CODE,
-            );
-            // Check if the BC total grants and the receipt have the some total hence.
-            // If the values match the award values from the BC grants can be copied to the summary.
-            const bcGrantsReceiptMatch =
-              bcTotalGrantAward.valueAmount ===
-              bcTotalGrantsReceipt?.grantAmount;
-            const bcGrants = disbursementSchedule.disbursementValues.filter(
-              (award) => award.valueType === DisbursementValueType.BCGrant,
-            );
-            bcGrants.forEach((bcGrant) => {
-              const disbursementValueKey = this.createReceiptFullIdentifier(
-                identifier,
-                bcGrant.valueCode,
-              );
-              finalAward[disbursementValueKey] = bcGrantsReceiptMatch
-                ? bcGrant.valueAmount
-                : null;
-            });
-          }
-        }
-      });
-    return finalAward;
-  }
+  // /**
+  //  * Populate final awards values from disbursements receipts for full-time.
+  //  * @param disbursementReceipts disbursement receipts.
+  //  * @param disbursementSchedule disbursement schedules.
+  //  * @param identifier identifier which is used to create dynamic data by appending award code to it.
+  //  * @returns dynamic award data of disbursement receipts of a given disbursement.
+  //  */
+  // private populateDisbursementReceiptAwardValues(
+  //   disbursementReceipts: DisbursementReceipt[],
+  //   disbursementSchedule: DisbursementSchedule,
+  //   index: number,
+  // ): DynamicAwardValue {
+  //   const identifier = `${DISBURSEMENT_RECEIPT_PREFIX}${index}`;
+  //   const finalAward: DynamicAwardValue = {};
+  //   // Check if a receipt was received for the disbursement schedule.
+  //   const hasReceipt = disbursementReceipts.some(
+  //     (receipt) => receipt.disbursementSchedule.id === disbursementSchedule.id,
+  //   );
+  //   this.setHasAwardsFlag(finalAward, index, hasReceipt);
+  //   // Add all estimated awards to the list of receipts returned.
+  //   // Ensure that every estimated disbursement will be part of the summary.
+  //   disbursementSchedule.disbursementValues.forEach((award) => {
+  //     if (award.valueType === DisbursementValueType.BCTotalGrant) {
+  //       // BC Total grants are not part of the students grants and should not be part of the summary.
+  //       return;
+  //     }
+  //     const disbursementValueKey = this.createReceiptFullIdentifier(
+  //       identifier,
+  //       award.valueCode,
+  //     );
+  //     finalAward[disbursementValueKey] = null;
+  //   });
+  //   // Process the two expected receipts records for federal(FE) and the other for provincial(BC) awards.
+  //   disbursementReceipts
+  //     .filter(
+  //       (receipt) =>
+  //         receipt.disbursementSchedule.id === disbursementSchedule.id,
+  //     )
+  //     .forEach((receipt) => {
+  //       // Check if a loan is part of the receipt (e.g. part-time provincial loans shouldn't be available).
+  //       const loanType = DisbursementReceiptService.getLoanAwardCode(
+  //         receipt.fundingType,
+  //         receipt.disbursementSchedule.studentAssessment.offering
+  //           .offeringIntensity,
+  //       );
+  //       if (loanType) {
+  //         // Add the loan to the list of awards returned.
+  //         const disbursementLoanKey = `${identifier}${loanType.toLowerCase()}`;
+  //         finalAward[disbursementLoanKey] = receipt.totalDisbursedAmount;
+  //       }
+  //       if (receipt.fundingType === RECEIPT_FUNDING_TYPE_FEDERAL) {
+  //         // Populate the receipt amount in the receipt awards.
+  //         // If an estimated disbursement award has no equivalent receipt its value will be left as null.
+  //         receipt.disbursementReceiptValues.forEach((receiptValue) => {
+  //           const disbursementValueKey = this.createReceiptFullIdentifier(
+  //             identifier,
+  //             receiptValue.grantType,
+  //           );
+  //           finalAward[disbursementValueKey] = receiptValue.grantAmount;
+  //         });
+  //       } else {
+  //         // BC receipts will contains only the BC total grant(BCSG) value.
+  //         // Create individual BC grants values from BC total grants(BCSG) receipt.
+  //         // Federal receipts do not contain individual BC grants.
+  //         const bcTotalGrantAward =
+  //           disbursementSchedule.disbursementValues.find(
+  //             (award) => award.valueCode === BC_TOTAL_GRANT_AWARD_CODE,
+  //           );
+  //         // If the BC total grants award is not present consider that BC grants were
+  //         // not eligible and do not need to be returned.
+  //         if (bcTotalGrantAward) {
+  //           const bcTotalGrantsReceipt = receipt.disbursementReceiptValues.find(
+  //             (receipt) => receipt.grantType === BC_TOTAL_GRANT_AWARD_CODE,
+  //           );
+  //           // Check if the BC total grants and the receipt have the some total hence.
+  //           // If the values match the award values from the BC grants can be copied to the summary.
+  //           const bcGrantsReceiptMatch =
+  //             bcTotalGrantAward.valueAmount ===
+  //             bcTotalGrantsReceipt?.grantAmount;
+  //           const bcGrants = disbursementSchedule.disbursementValues.filter(
+  //             (award) => award.valueType === DisbursementValueType.BCGrant,
+  //           );
+  //           bcGrants.forEach((bcGrant) => {
+  //             const disbursementValueKey = this.createReceiptFullIdentifier(
+  //               identifier,
+  //               bcGrant.valueCode,
+  //             );
+  //             finalAward[disbursementValueKey] = bcGrantsReceiptMatch
+  //               ? bcGrant.valueAmount
+  //               : null;
+  //           });
+  //         }
+  //       }
+  //     });
+  //   return finalAward;
+  // }
 
   /**
    * Populate final awards values from e-Cert effective values.
@@ -529,6 +547,17 @@ export class AssessmentControllerService {
         award.valueCode,
       );
       finalAward[disbursementValueKey] = award.effectiveAmount;
+
+      // Populate subtracted amounts.
+      const disbursedAmountSubtractedKey = `${disbursementValueKey}${DISBURSED_SUBTRACTED_SUFFIX}`;
+      finalAward[disbursedAmountSubtractedKey] =
+        award.disbursedAmountSubtracted;
+      const overawardAmountSubtractedKey = `${disbursementValueKey}${OVERAWARD_SUBTRACTED_SUFFIX}`;
+      finalAward[overawardAmountSubtractedKey] =
+        award.overawardAmountSubtracted;
+      const restrictionAmountSubtractedKey = `${disbursementValueKey}${RESTRICTION_SUBTRACTED_SUFFIX}`;
+      finalAward[restrictionAmountSubtractedKey] =
+        award.restrictionAmountSubtracted;
     });
     return finalAward;
   }
