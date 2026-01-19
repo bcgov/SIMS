@@ -848,7 +848,7 @@ export class OfferingValidationModel {
   // The effective restriction actions may not be provided for non-persistent validations.
   @IsOptional()
   @IsArray()
-  effectiveRestrictionActions?: RestrictionActionType[];
+  effectiveRestrictionActions: RestrictionActionType[];
   /**
    * Offering mode(s) of online instruction.
    */
@@ -1049,6 +1049,12 @@ export class OfferingValidationModel {
   /**
    * Offering action type.
    */
+  // The effective restriction actions may not be provided for non-persistent operations
+  // and in those cases the action type validation is not required.
+  @ValidateIf(
+    (offering: OfferingValidationModel) =>
+      !!offering.effectiveRestrictionActions?.length,
+  )
   @IsEnum(OfferingActionType)
   @IsActionAllowed("Action type")
   actionType: OfferingActionType;
