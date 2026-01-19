@@ -19,7 +19,7 @@ import { RestrictionActionType } from "@sims/sims-db";
 class IsOfferingActionAllowedConstraint implements ValidatorConstraintInterface {
   validate(actionType: OfferingActionType, args: ValidationArguments): boolean {
     const offeringModel = args.object as OfferingValidationModel;
-    if (!offeringModel.effectiveRestrictionActions.length) {
+    if (!offeringModel.effectiveRestrictionActions?.length) {
       // No effective restriction actions.
       return true;
     }
