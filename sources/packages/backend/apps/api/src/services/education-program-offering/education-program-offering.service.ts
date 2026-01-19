@@ -69,6 +69,7 @@ import {
   OfferingValidationModel,
   OfferingDeliveryOptions,
   OfferingYesNoOptions,
+  OfferingActionType,
 } from "./education-program-offering-validation.models";
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
 import { LoggerService } from "@sims/utilities/logger";
@@ -726,6 +727,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringValidationModel.offeringType = offering.offeringType;
     offeringValidationModel.courseLoad = offering.courseLoad;
     offeringValidationModel.studyBreaks = offering.studyBreaks?.studyBreaks;
+    offeringValidationModel.actionType = OfferingActionType.Validate;
     return offeringValidationModel;
   }
 

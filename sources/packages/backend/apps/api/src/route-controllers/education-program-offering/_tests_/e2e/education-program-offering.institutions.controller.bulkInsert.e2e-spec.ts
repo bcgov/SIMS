@@ -51,10 +51,13 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
   const csvProgramSABCCodeSBC2 = "SBC2";
   const csvLocationCodeSEYK = "SEYK";
   const csvProgramSABCCodeSBC4 = "SBC4";
+  let educationProgramSBC1: EducationProgram;
   let educationProgramDeliveredOnSiteSBC2: EducationProgram;
+  let educationProgramSBC4: EducationProgram;
   let stopOfferingCreateRestriction: Restriction;
   let collegeFLocationKSEY: InstitutionLocation;
   let collegeFLocationYESK: InstitutionLocation;
+  let collegeFLocationSEYK: InstitutionLocation;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -71,7 +74,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    const educationProgramSBC1 = createFakeEducationProgram(
+    educationProgramSBC1 = createFakeEducationProgram(
       { institution: collegeF, user: collegeFUser },
       {
         initialValue: {
@@ -89,11 +92,15 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         } as Partial<EducationProgram>,
       },
     );
-
-    await db.educationProgram.save([
-      educationProgramSBC1,
-      educationProgramDeliveredOnSiteSBC2,
-    ]);
+    educationProgramSBC4 = createFakeEducationProgram(
+      { institution: collegeF, user: collegeFUser },
+      {
+        initialValue: {
+          sabcCode: csvProgramSABCCodeSBC4,
+          deliveredOnSite: true,
+        } as Partial<EducationProgram>,
+      },
+    );
 
     const educationProgramDeliveredOnsiteSBC9 = createFakeEducationProgram(
       { institution: collegeF, user: collegeFUser },
@@ -104,12 +111,18 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         } as Partial<EducationProgram>,
       },
     );
-    await db.educationProgram.save(educationProgramDeliveredOnsiteSBC9);
+
+    await db.educationProgram.save([
+      educationProgramSBC1,
+      educationProgramDeliveredOnSiteSBC2,
+      educationProgramSBC4,
+      educationProgramDeliveredOnsiteSBC9,
+    ]);
 
     endpoint = "/institutions/education-program-offering/bulk-insert";
 
     // Arrange
-    // Creating an institution location with same location code as that of the
+    // Creating an institution location with same location codes as that of the
     // CSV file.
     collegeFLocationYESK = createFakeInstitutionLocation(
       {
@@ -121,9 +134,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         } as Partial<InstitutionLocation>,
       },
     );
-
-    // Creating an institution location with same location code as that of the
-    // second row in the CSV file.
     collegeFLocationKSEY = createFakeInstitutionLocation(
       {
         institution: collegeF,
@@ -132,6 +142,16 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         initialValue: {
           institutionCode: csvLocationCodeKSEY,
         } as Partial<InstitutionLocation>,
+      },
+    );
+    collegeFLocationSEYK = createFakeInstitutionLocation(
+      {
+        institution: collegeF,
+      },
+      {
+        initialValue: {
+          institutionCode: csvLocationCodeSEYK,
+        },
       },
     );
 
@@ -145,6 +165,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         db.dataSource,
         InstitutionTokenTypes.CollegeFUser,
         collegeFLocationKSEY,
+      ),
+      authorizeUserTokenForLocation(
+        db.dataSource,
+        InstitutionTokenTypes.CollegeFUser,
+        collegeFLocationSEYK,
       ),
     ]);
 
@@ -500,38 +525,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     async () => {
       // Arrange
 
-      // Creating an institution location with same location code as that of the
-      // second row in the CSV file.
-      const collegeFLocationSEYK = createFakeInstitutionLocation(
-        {
-          institution: collegeF,
-        },
-        {
-          initialValue: {
-            institutionCode: csvLocationCodeSEYK,
-          },
-        },
-      );
-      // Create a program for the institution with the same SABC code as that of the
-      // second row of the multiple CSV file.
-      // Setting deliveredOnSite as true, as that of the CSV, so that it will create an approved offering.
-      const educationProgramSBC4 = createFakeEducationProgram(
-        { institution: collegeF, user: collegeFUser },
-        {
-          initialValue: {
-            sabcCode: csvProgramSABCCodeSBC4,
-            deliveredOnSite: true,
-          } as Partial<EducationProgram>,
-        },
-      );
-
-      await db.educationProgram.save(educationProgramSBC4);
-
-      await authorizeUserTokenForLocation(
-        db.dataSource,
-        InstitutionTokenTypes.CollegeFUser,
-        collegeFLocationSEYK,
-      );
       // Upload file with 2 lines.
       // The upload file line 1 has and line 2 has location code SEYK and program SABC code SBC4.
       const multipleOfferingFilePath = path.join(
