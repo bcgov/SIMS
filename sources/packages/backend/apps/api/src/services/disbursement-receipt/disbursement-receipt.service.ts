@@ -42,20 +42,12 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
     return this.repo.find({
       select: {
         id: true,
-        fundingType: true,
-        totalDisbursedAmount: true,
         disbursementSchedule: {
           id: true,
-          studentAssessment: {
-            id: true,
-            offering: { id: true, offeringIntensity: true },
-          },
         },
-        disbursementReceiptValues: { grantType: true, grantAmount: true },
       },
       relations: {
-        disbursementReceiptValues: true,
-        disbursementSchedule: { studentAssessment: { offering: true } },
+        disbursementSchedule: true,
       },
       where: {
         disbursementSchedule: {

@@ -42,11 +42,6 @@ import {
 } from "@sims/utilities";
 
 /**
- * Estimated award value dynamic identifier prefix.
- */
-const DISBURSEMENT_PREFIX = "disbursement";
-
-/**
  * Final award value dynamic identifier prefix.
  */
 const DISBURSEMENT_RECEIPT_PREFIX = "disbursementReceipt";
@@ -191,7 +186,7 @@ export class AssessmentControllerService {
     const maskMSFAA = options?.maskMSFAA ?? true;
     const disbursementDetails = {};
     disbursementSchedules.forEach((schedule, index) => {
-      const disbursementIdentifier = `${DISBURSEMENT_PREFIX}${index + 1}`;
+      const disbursementIdentifier = `disbursement${index + 1}`;
       disbursementDetails[`${disbursementIdentifier}Date`] =
         getDateOnlyFullMonthFormat(schedule.disbursementDate);
       disbursementDetails[`${disbursementIdentifier}Status`] =
@@ -321,7 +316,6 @@ export class AssessmentControllerService {
     let finalAward: DynamicAwardValue = {};
     // Final award values come from the e-Cert effective amounts but the disbursement receipts
     // are still required to determine to determine if a student disbursement can be cancelled.
-    // TODO Should this change to an exist query by disbursement schedule ids since we don't need the actual receipts?
     const disbursementReceipts =
       await this.disbursementReceiptService.getDisbursementReceiptByAssessment(
         assessment.id,
