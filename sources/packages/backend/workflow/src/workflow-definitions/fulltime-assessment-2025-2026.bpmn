@@ -2397,6 +2397,7 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
           <zeebe:output source="=if calculatedDataParent1EstimatedIncomeDeductions = null &#10;then calculatedDataParent1IncomeDeductions&#10;else calculatedDataParent1EstimatedIncomeDeductions" target="calculatedDataParent1IncomeDeductions" />
           <zeebe:output source="=if calculatedDataParent2EstimatedIncomeDeductions = null &#10;then calculatedDataParent2IncomeDeductions&#10;else calculatedDataParent2EstimatedIncomeDeductions" target="calculatedDataParent2IncomeDeductions" />
           <zeebe:output source="=round half up( sum([calculatedDataParent1IncomeDeductions,calculatedDataParent2IncomeDeductions][item!=null]),0)" target="calculatedDataTotalParentDeductions" />
+          <zeebe:output source="=round half up( sum([calculatedDataParent1TotalIncome,calculatedDataParent2TotalIncome][item!=null]),0)" target="calculatedDataTotalParentIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1vzc3in</bpmn:incoming>

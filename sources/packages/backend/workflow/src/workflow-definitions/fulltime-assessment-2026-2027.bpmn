@@ -2397,6 +2397,7 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
           <zeebe:output source="=if calculatedDataParent1EstimatedIncomeDeductions = null &#10;then calculatedDataParent1IncomeDeductions&#10;else calculatedDataParent1EstimatedIncomeDeductions" target="calculatedDataParent1IncomeDeductions" />
           <zeebe:output source="=if calculatedDataParent2EstimatedIncomeDeductions = null &#10;then calculatedDataParent2IncomeDeductions&#10;else calculatedDataParent2EstimatedIncomeDeductions" target="calculatedDataParent2IncomeDeductions" />
           <zeebe:output source="=round half up( sum([calculatedDataParent1IncomeDeductions,calculatedDataParent2IncomeDeductions][item!=null]),0)" target="calculatedDataTotalParentDeductions" />
+          <zeebe:output source="=round half up( sum([calculatedDataParent1TotalIncome,calculatedDataParent2TotalIncome][item!=null]),0)" target="calculatedDataTotalParentIncome" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1vzc3in</bpmn:incoming>
@@ -4954,6 +4955,15 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
           <dc:Bounds x="308" y="136" width="64" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_011wwsv_di" bpmnElement="Gateway_011wwsv" isMarkerVisible="true">
+        <dc:Bounds x="695" y="165" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0oby2kl_di" bpmnElement="Gateway_0216e6j">
+        <dc:Bounds x="775" y="245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0s75uyc_di" bpmnElement="Event_0s75uyc">
+        <dc:Bounds x="882" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_05kwuqx" bpmnElement="Activity_09y0uzj">
         <dc:Bounds x="480" y="330" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -4963,15 +4973,6 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
         <bpmndi:BPMNLabel>
           <dc:Bounds x="308" y="386" width="64" height="27" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0s75uyc_di" bpmnElement="Event_0s75uyc">
-        <dc:Bounds x="882" y="252" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0oby2kl_di" bpmnElement="Gateway_0216e6j">
-        <dc:Bounds x="775" y="245" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_011wwsv_di" bpmnElement="Gateway_011wwsv" isMarkerVisible="true">
-        <dc:Bounds x="695" y="165" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1l6uvah" bpmnElement="Gateway_1h29ib6" isMarkerVisible="true">
         <dc:Bounds x="695" y="345" width="50" height="50" />
@@ -5028,6 +5029,20 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
           <dc:Bounds x="558" y="82" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hdhlmr_di" bpmnElement="Flow_0hdhlmr">
+        <di:waypoint x="745" y="190" />
+        <di:waypoint x="800" y="190" />
+        <di:waypoint x="800" y="245" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0eb5h9x_di" bpmnElement="Flow_0eb5h9x">
+        <di:waypoint x="745" y="370" />
+        <di:waypoint x="800" y="370" />
+        <di:waypoint x="800" y="295" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pfvlss_di" bpmnElement="Flow_1pfvlss">
+        <di:waypoint x="825" y="270" />
+        <di:waypoint x="882" y="270" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_158q215" bpmnElement="Flow_16bjcrt">
         <di:waypoint x="435" y="370" />
         <di:waypoint x="480" y="370" />
@@ -5047,20 +5062,6 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
         <bpmndi:BPMNLabel>
           <dc:Bounds x="427" y="432" width="15" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1pfvlss_di" bpmnElement="Flow_1pfvlss">
-        <di:waypoint x="825" y="270" />
-        <di:waypoint x="882" y="270" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0hdhlmr_di" bpmnElement="Flow_0hdhlmr">
-        <di:waypoint x="745" y="190" />
-        <di:waypoint x="800" y="190" />
-        <di:waypoint x="800" y="245" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0eb5h9x_di" bpmnElement="Flow_0eb5h9x">
-        <di:waypoint x="745" y="370" />
-        <di:waypoint x="800" y="370" />
-        <di:waypoint x="800" y="295" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0jqvb6n_di" bpmnElement="Flow_0jqvb6n">
         <di:waypoint x="658" y="190" />

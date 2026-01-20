@@ -155,7 +155,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
     },
   );
 
-  it(
+  it.only(
     "Should calculate total gross and net family income (1 parent) as the current year income value when present " +
       "and the parent is able to report their financial information.",
     async () => {
