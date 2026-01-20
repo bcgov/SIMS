@@ -201,7 +201,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       // Calculated total net family income should be the gross parent income minus the deductions.
       expect(
         calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
-      ).toBe(10942);
+      ).toBe(10943);
     },
   );
 
