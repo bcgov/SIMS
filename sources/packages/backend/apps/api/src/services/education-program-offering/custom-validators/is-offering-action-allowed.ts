@@ -11,6 +11,10 @@ import {
 } from "../education-program-offering-validation.models";
 import { RestrictionActionType } from "@sims/sims-db";
 
+const BLOCKING_RESTRICTION_ACTION_MAP = new Map([
+  [OfferingActionType.Create, RestrictionActionType.StopOfferingCreate],
+]);
+
 /**
  * Executes a validation to ensure the offering action is allowed
  * and not restricted by an effective restriction action.
@@ -19,17 +23,14 @@ import { RestrictionActionType } from "@sims/sims-db";
 class IsOfferingActionAllowedConstraint implements ValidatorConstraintInterface {
   validate(actionType: OfferingActionType, args: ValidationArguments): boolean {
     const offeringModel = args.object as OfferingValidationModel;
-    if (!offeringModel.effectiveRestrictionActions?.length) {
+    if (!offeringModel.effectiveRestrictionActions.length) {
       // No effective restriction actions.
       return true;
     }
-    const blockingRestrictionActionMap = new Map([
-      [OfferingActionType.Create, RestrictionActionType.StopOfferingCreate],
-    ]);
     if (
-      blockingRestrictionActionMap.has(actionType) &&
+      BLOCKING_RESTRICTION_ACTION_MAP.has(actionType) &&
       offeringModel.effectiveRestrictionActions.includes(
-        blockingRestrictionActionMap.get(actionType),
+        BLOCKING_RESTRICTION_ACTION_MAP.get(actionType),
       )
     ) {
       return false;
