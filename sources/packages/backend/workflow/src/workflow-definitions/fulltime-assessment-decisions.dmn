@@ -5417,7 +5417,7 @@
     </decisionTable>
   </decision>
   <decision id="dmnFullTimeParentsIncomeTaxRate" name="dmnFullTimeParentsIncomeTaxRate">
-    <decisionTable id="DecisionTable_1x26nw1" hitPolicy="COLLECT" aggregation="MAX">
+    <decisionTable id="DecisionTable_1x26nw1" hitPolicy="COLLECT" aggregation="MIN">
       <input id="InputClause_1p5ffvj" label="programYear">
         <inputExpression id="LiteralExpression_1elrqmf" typeRef="string">
           <text>programYear</text>

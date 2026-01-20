@@ -2390,11 +2390,13 @@ studentDataParents[2].currentYearParentIncome != null</bpmn:conditionExpression>
     </bpmn:intermediateThrowEvent>
     <bpmn:subProcess id="Activity_0bitz9q" name="Parent Current Year Income Deductions">
       <bpmn:documentation>Calculate the tax rate based on monthly income for parents who have a current year income exception
-Based on their estimated current year income tax rate, we calculate estimated deductions.</bpmn:documentation>
+Based on their estimated current year income tax rate, we calculate estimated deductions.
+The total parent deductions are rounded half up (5.5 = 6) to align with our whole dollar amount process with regular income values.</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if calculatedDataParent1EstimatedIncomeDeductions = null &#10;then calculatedDataParent1IncomeDeductions&#10;else calculatedDataParent1EstimatedIncomeDeductions" target="calculatedDataParent1IncomeDeductions" />
           <zeebe:output source="=if calculatedDataParent2EstimatedIncomeDeductions = null &#10;then calculatedDataParent2IncomeDeductions&#10;else calculatedDataParent2EstimatedIncomeDeductions" target="calculatedDataParent2IncomeDeductions" />
+          <zeebe:output source="=round half up( sum([calculatedDataParent1IncomeDeductions,calculatedDataParent2IncomeDeductions][item!=null]),0)" target="calculatedDataTotalParentDeductions" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1vzc3in</bpmn:incoming>
@@ -2412,8 +2414,8 @@ Based on their estimated current year income tax rate, we calculate estimated de
           <zeebe:calledDecision decisionId="dmnFullTimeParentsIncomeTaxRate" resultVariable="dmnFullTimeParentsIncomeTaxRate" />
           <zeebe:ioMapping>
             <zeebe:input source="=if studentDataParents[1].currentYearParentIncome = 0&#10;then studentDataParents[1].currentYearParentIncome&#10;else studentDataParents[1].currentYearParentIncome / 12" target="monthlyIncome" />
-            <zeebe:output source="=get value(dmnFullTimeParentsIncomeTaxRate, monthlyIncome)" target="calculatedDataParent1TaxRate" />
-            <zeebe:output source="=if studentDataParents[1].currentYearParentIncome = 0&#10;then 0&#10;else studentDataParents[1].currentYearParentIncome * (1-calculatedDataParent1TaxRate)" target="calculatedDataParent1EstimatedIncomeDeductions" />
+            <zeebe:output source="=dmnFullTimeParentsIncomeTaxRate" target="calculatedDataParent1TaxRate" />
+            <zeebe:output source="=if studentDataParents[1].currentYearParentIncome = 0&#10;then 0&#10;else studentDataParents[1].currentYearParentIncome * calculatedDataParent1TaxRate" target="calculatedDataParent1EstimatedIncomeDeductions" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_1xjxkdh</bpmn:incoming>
@@ -2442,8 +2444,8 @@ Based on their estimated current year income tax rate, we calculate estimated de
           <zeebe:calledDecision decisionId="dmnFullTimeParentsIncomeTaxRate" resultVariable="dmnFullTimeParentsIncomeTaxRate" />
           <zeebe:ioMapping>
             <zeebe:input source="=if studentDataParents[2].currentYearParentIncome = 0&#10;then studentDataParents[2].currentYearParentIncome&#10;else studentDataParents[2].currentYearParentIncome / 12" target="monthlyIncome" />
-            <zeebe:output source="=get value(dmnFullTimeParentsIncomeTaxRate, monthlyIncome)" target="calculatedDataParent2TaxRate" />
-            <zeebe:output source="=if studentDataParents[2].currentYearParentIncome = 0&#10;then 0&#10;else studentDataParents[2].currentYearParentIncome * (1-calculatedDataParent1TaxRate)" target="calculatedDataParent1EstimatedIncomeDeductions" />
+            <zeebe:output source="=dmnFullTimeParentsIncomeTaxRate" target="calculatedDataParent2TaxRate" />
+            <zeebe:output source="=if studentDataParents[2].currentYearParentIncome = 0&#10;then 0&#10;else studentDataParents[2].currentYearParentIncome * calculatedDataParent2TaxRate" target="calculatedDataParent2EstimatedIncomeDeductions" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_16bjcrt</bpmn:incoming>
@@ -4913,118 +4915,118 @@ Based on their estimated current year income tax rate, we calculate estimated de
   <bpmndi:BPMNDiagram id="BPMNDiagram_0mb1wqk">
     <bpmndi:BPMNPlane id="BPMNPlane_1181ade" bpmnElement="Activity_0bitz9q">
       <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="Event_0vkca2w">
-        <dc:Bounds x="232" y="332" width="36" height="36" />
+        <dc:Bounds x="172" y="252" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="213" y="375" width="74" height="40" />
+          <dc:Bounds x="153" y="295" width="74" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_05e36pq_di" bpmnElement="Gateway_09wgcw7">
-        <dc:Bounds x="325" y="325" width="50" height="50" />
+        <dc:Bounds x="265" y="245" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0gxw113_di" bpmnElement="Gateway_0gxw113" isMarkerVisible="true">
-        <dc:Bounds x="445" y="245" width="50" height="50" />
+        <dc:Bounds x="385" y="165" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="368" y="216" width="64" height="27" />
+          <dc:Bounds x="308" y="136" width="64" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_011wwsv_di" bpmnElement="Gateway_011wwsv" isMarkerVisible="true">
-        <dc:Bounds x="695" y="245" width="50" height="50" />
+        <dc:Bounds x="635" y="165" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0oby2kl_di" bpmnElement="Gateway_0216e6j">
-        <dc:Bounds x="775" y="325" width="50" height="50" />
+        <dc:Bounds x="715" y="245" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0s75uyc_di" bpmnElement="Event_0s75uyc">
-        <dc:Bounds x="882" y="332" width="36" height="36" />
+        <dc:Bounds x="822" y="252" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_05kwuqx" bpmnElement="Activity_09y0uzj">
-        <dc:Bounds x="540" y="410" width="100" height="80" />
+        <dc:Bounds x="480" y="330" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_01qxbrj" bpmnElement="Gateway_19fn11k" isMarkerVisible="true">
-        <dc:Bounds x="445" y="425" width="50" height="50" />
+        <dc:Bounds x="385" y="345" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="368" y="466" width="64" height="27" />
+          <dc:Bounds x="308" y="386" width="64" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1l6uvah" bpmnElement="Gateway_1h29ib6" isMarkerVisible="true">
-        <dc:Bounds x="695" y="425" width="50" height="50" />
+        <dc:Bounds x="635" y="345" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1hehu3g_di" bpmnElement="Activity_0fsbs94">
-        <dc:Bounds x="540" y="230" width="100" height="80" />
+        <dc:Bounds x="480" y="150" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1vxy9lh_di" bpmnElement="Flow_1vxy9lh">
-        <di:waypoint x="268" y="350" />
-        <di:waypoint x="325" y="350" />
+        <di:waypoint x="208" y="270" />
+        <di:waypoint x="265" y="270" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1efbcbh_di" bpmnElement="Flow_1efbcbh">
-        <di:waypoint x="350" y="325" />
-        <di:waypoint x="350" y="270" />
-        <di:waypoint x="445" y="270" />
+        <di:waypoint x="290" y="245" />
+        <di:waypoint x="290" y="190" />
+        <di:waypoint x="385" y="190" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="299" y="303" width="42" height="14" />
+          <dc:Bounds x="239" y="223" width="42" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ff53d7_di" bpmnElement="Flow_0ff53d7">
-        <di:waypoint x="350" y="375" />
-        <di:waypoint x="350" y="450" />
-        <di:waypoint x="445" y="450" />
+        <di:waypoint x="290" y="295" />
+        <di:waypoint x="290" y="370" />
+        <di:waypoint x="385" y="370" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="299" y="410" width="42" height="14" />
+          <dc:Bounds x="239" y="330" width="42" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1xjxkdh_di" bpmnElement="Flow_1xjxkdh">
-        <di:waypoint x="495" y="270" />
-        <di:waypoint x="540" y="270" />
+        <di:waypoint x="435" y="190" />
+        <di:waypoint x="480" y="190" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="509" y="252" width="18" height="14" />
+          <dc:Bounds x="449" y="172" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04cifrb_di" bpmnElement="Flow_04cifrb">
+        <di:waypoint x="410" y="165" />
+        <di:waypoint x="410" y="100" />
+        <di:waypoint x="660" y="100" />
+        <di:waypoint x="660" y="165" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="528" y="82" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_077ex8v_di" bpmnElement="Flow_077ex8v">
-        <di:waypoint x="640" y="270" />
-        <di:waypoint x="695" y="270" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_04cifrb_di" bpmnElement="Flow_04cifrb">
-        <di:waypoint x="470" y="245" />
-        <di:waypoint x="470" y="180" />
-        <di:waypoint x="720" y="180" />
-        <di:waypoint x="720" y="245" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="588" y="162" width="15" height="14" />
-        </bpmndi:BPMNLabel>
+        <di:waypoint x="580" y="190" />
+        <di:waypoint x="635" y="190" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0hdhlmr_di" bpmnElement="Flow_0hdhlmr">
-        <di:waypoint x="745" y="270" />
-        <di:waypoint x="800" y="270" />
-        <di:waypoint x="800" y="325" />
+        <di:waypoint x="685" y="190" />
+        <di:waypoint x="740" y="190" />
+        <di:waypoint x="740" y="245" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0eb5h9x_di" bpmnElement="Flow_0eb5h9x">
-        <di:waypoint x="745" y="450" />
-        <di:waypoint x="800" y="450" />
-        <di:waypoint x="800" y="375" />
+        <di:waypoint x="685" y="370" />
+        <di:waypoint x="740" y="370" />
+        <di:waypoint x="740" y="295" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1pfvlss_di" bpmnElement="Flow_1pfvlss">
-        <di:waypoint x="825" y="350" />
-        <di:waypoint x="882" y="350" />
+        <di:waypoint x="765" y="270" />
+        <di:waypoint x="822" y="270" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_158q215" bpmnElement="Flow_16bjcrt">
-        <di:waypoint x="495" y="450" />
-        <di:waypoint x="540" y="450" />
+        <di:waypoint x="435" y="370" />
+        <di:waypoint x="480" y="370" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="509" y="432" width="18" height="14" />
+          <dc:Bounds x="449" y="352" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0ipp2qc" bpmnElement="Flow_1uqzlo0">
-        <di:waypoint x="640" y="450" />
-        <di:waypoint x="695" y="450" />
+        <di:waypoint x="580" y="370" />
+        <di:waypoint x="635" y="370" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1ag6ysf" bpmnElement="Flow_0am0aoy">
-        <di:waypoint x="470" y="475" />
-        <di:waypoint x="470" y="530" />
-        <di:waypoint x="720" y="530" />
-        <di:waypoint x="720" y="475" />
+        <di:waypoint x="410" y="395" />
+        <di:waypoint x="410" y="450" />
+        <di:waypoint x="660" y="450" />
+        <di:waypoint x="660" y="395" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="482" y="512" width="15" height="14" />
+          <dc:Bounds x="422" y="432" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
