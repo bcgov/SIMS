@@ -5417,7 +5417,7 @@
     </decisionTable>
   </decision>
   <decision id="dmnFullTimeParentsIncomeTaxRate" name="dmnFullTimeParentsIncomeTaxRate">
-    <decisionTable id="DecisionTable_1x26nw1" hitPolicy="COLLECT" aggregation="MIN">
+    <decisionTable id="DecisionTable_1x26nw1">
       <input id="InputClause_1p5ffvj" label="programYear">
         <inputExpression id="LiteralExpression_1elrqmf" typeRef="string">
           <text>programYear</text>
@@ -5435,7 +5435,7 @@
           <text>"2025-2026"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_142wrmc">
-          <text>&lt;1000</text>
+          <text>[0..999]</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_02h2wdv">
           <text>0.0585</text>
@@ -5447,7 +5447,7 @@
           <text>"2025-2026"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1m0a9nh">
-          <text>&lt;2000</text>
+          <text>[1000..1999]</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0bbxhlt">
           <text>0.0882</text>
@@ -5459,7 +5459,7 @@
           <text>"2025-2026"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1xfrf2t">
-          <text>&lt;3000</text>
+          <text>[2000..2999]</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0mwdp7r">
           <text>0.1241</text>
@@ -5471,7 +5471,7 @@
           <text>"2025-2026"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_15ghc2c">
-          <text>&lt;5000</text>
+          <text>[3000..4999]</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1v1jz5z">
           <text>0.1954</text>
@@ -5483,7 +5483,7 @@
           <text>"2025-2026"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1w6onic">
-          <text>&lt;7000</text>
+          <text>[5000..6999]</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0pqk3vf">
           <text>0.2406</text>
@@ -5495,7 +5495,7 @@
           <text>"2025-2026"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_03iwgh7">
-          <text>&lt;9000</text>
+          <text>[7000..8999]</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_10lr410">
           <text>0.2450</text>
@@ -5507,7 +5507,7 @@
           <text>"2025-2026"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1dm9x8o">
-          <text>&lt;11000</text>
+          <text>[9000..10999]</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0u3vuwh">
           <text>0.2517</text>
@@ -5531,7 +5531,7 @@
           <text>"2026-2027"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_03oj510">
-          <text>&lt;1000</text>
+          <text>[0..999]</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0bewakc">
           <text>0.0584</text>
@@ -5543,7 +5543,7 @@
           <text>"2026-2027"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1lgjmoj">
-          <text>&lt;2000</text>
+          <text>[1000..1999]</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_02d28q5">
           <text>0.0881</text>
@@ -5555,7 +5555,7 @@
           <text>"2026-2027"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1dlzb67">
-          <text>&lt;3000</text>
+          <text>[2000..2999]</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1xmoyjr">
           <text>0.1240</text>
@@ -5567,7 +5567,7 @@
           <text>"2026-2027"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_0kp32oy">
-          <text>&lt;5000</text>
+          <text>[3000..4999]</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1nu82yy">
           <text>0.1953</text>
@@ -5579,7 +5579,7 @@
           <text>"2026-2027"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_02qudzq">
-          <text>&lt;7000</text>
+          <text>[5000..6999]</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_002pozr">
           <text>0.2432</text>
@@ -5591,7 +5591,7 @@
           <text>"2026-2027"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_0rftmy1">
-          <text>&lt;9000</text>
+          <text>[7000..8999]</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0xngusm">
           <text>0.2474</text>
@@ -5603,7 +5603,7 @@
           <text>"2026-2027"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_01b69bh">
-          <text>&lt;11000</text>
+          <text>[9000..10999]</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0l9ecpv">
           <text>0.2537</text>
