@@ -127,7 +127,17 @@ export enum AwardTableType {
  * Adjustments that were made to an award.
  */
 export interface AwardAdjustmentAmounts {
+  /**
+   * Value amount already disbursed for the same application and
+   * the same award that was subtracted from the calculated award.
+   */
   disbursedAmountSubtracted: number;
+  /**
+   * Overaward amount value subtracted from the award calculated.
+   */
   overawardAmountSubtracted: number;
+  /**
+   * Restriction amount value subtracted from the award calculated.
+   */
   restrictionAmountSubtracted: number;
 }

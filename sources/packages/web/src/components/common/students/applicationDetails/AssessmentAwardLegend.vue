@@ -33,7 +33,7 @@
     </v-row>
     <v-row>
       <v-col cols="3" md="2"
-        ><chip-tag color="error" label="Restrictions"
+        ><chip-tag color="error" label="Restriction"
       /></v-col>
       <v-col
         >Restrictions on your account have resulted in funding that is lower

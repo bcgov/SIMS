@@ -125,7 +125,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
       ),
     ];
 
-    // Student has a a Full-time application to the institution with award details.
+    // Student has a Full-time application to the institution with award details.
     const application = await saveFakeApplicationDisbursements(
       db.dataSource,
       {

@@ -315,7 +315,7 @@ export class AssessmentControllerService {
     }
     let finalAward: DynamicAwardValue = {};
     // Final award values come from the e-Cert effective amounts but the disbursement receipts
-    // are still required to determine to determine if a student disbursement can be cancelled.
+    // are still required to determine if a student disbursement can be cancelled.
     const disbursementReceipts =
       await this.disbursementReceiptService.getDisbursementReceiptByAssessment(
         assessment.id,

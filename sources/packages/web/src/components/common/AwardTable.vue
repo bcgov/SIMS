@@ -90,15 +90,18 @@ export default defineComponent({
       awardType: string,
     ): AwardAdjustmentAmounts => {
       const disbursementValueKey = `${props.identifier}${awardType.toLowerCase()}`;
-      const disbursedAmountSubtracted = props.awardDetails[
-        `${disbursementValueKey}${DISBURSED_SUBTRACTED_SUFFIX}`
-      ] as number;
-      const overawardAmountSubtracted = props.awardDetails[
-        `${disbursementValueKey}${OVERAWARD_SUBTRACTED_SUFFIX}`
-      ] as number;
-      const restrictionAmountSubtracted = props.awardDetails[
-        `${disbursementValueKey}${RESTRICTION_SUBTRACTED_SUFFIX}`
-      ] as number;
+      const disbursedAmountSubtracted =
+        (props.awardDetails[
+          `${disbursementValueKey}${DISBURSED_SUBTRACTED_SUFFIX}`
+        ] as number) ?? 0;
+      const overawardAmountSubtracted =
+        (props.awardDetails[
+          `${disbursementValueKey}${OVERAWARD_SUBTRACTED_SUFFIX}`
+        ] as number) ?? 0;
+      const restrictionAmountSubtracted =
+        (props.awardDetails[
+          `${disbursementValueKey}${RESTRICTION_SUBTRACTED_SUFFIX}`
+        ] as number) ?? 0;
       return {
         disbursedAmountSubtracted,
         overawardAmountSubtracted,
