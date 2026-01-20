@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsBoolean,
   IsDateString,
   IsEnum,
@@ -23,6 +24,7 @@ import {
   OFFERING_WIL_TYPE_MAX_LENGTH,
   StudyBreaksAndWeeks,
   InstitutionType,
+  RestrictionActionType,
 } from "@sims/sims-db";
 import {
   IsPeriodStartDate,
@@ -47,6 +49,7 @@ import { HasValidOfferingPeriodForFundedWeeks } from "./custom-validators/has-va
 import { ProgramAllowsAviation } from "./custom-validators/program-allows-aviation";
 import { ProgramAllowsAviationCredential } from "./custom-validators/program-allows-aviation-credential";
 import { HasFundedWeeksWithinMaximumLimit } from "./custom-validators/has-funded-weeks-within-maximum-limit";
+import { IsOfferingActionAllowed } from "./custom-validators/is-offering-action-allowed";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
@@ -99,6 +102,7 @@ export const userFriendlyNames = {
   totalOnlineDuration: "Total online duration",
   minimumOnlineDuration: "Minimum online duration",
   maximumOnlineDuration: "Maximum online duration",
+  actionType: "Action type",
 };
 
 /**
@@ -106,7 +110,7 @@ export const userFriendlyNames = {
  * @param propertyDisplayName property display name.
  * @returns friendly message to the field the that needs date validation.
  */
-function getDateFormatMessage(propertyDisplayName: string) {
+function getDateFormatMessage(propertyDisplayName: string): string {
   return `${propertyDisplayName} must be in the format ${DATE_ONLY_ISO_FORMAT}`;
 }
 
@@ -115,7 +119,7 @@ function getDateFormatMessage(propertyDisplayName: string) {
  * @param propertyDisplayName property display name.
  * @returns friendly message to the field the that needs min number validation.
  */
-function getMinFormatMessage(propertyDisplayName: string, min = 0) {
+function getMinFormatMessage(propertyDisplayName: string, min = 0): string {
   return `${propertyDisplayName} must be at least ${min}.`;
 }
 
@@ -124,7 +128,7 @@ function getMinFormatMessage(propertyDisplayName: string, min = 0) {
  * @param propertyDisplayName property display name.
  * @returns friendly message to the field the that needs max number validation.
  */
-function getMaxFormatMessage(propertyDisplayName: string, max: number) {
+function getMaxFormatMessage(propertyDisplayName: string, max: number): string {
   return `${propertyDisplayName} must be not greater than ${max}.`;
 }
 
@@ -133,7 +137,7 @@ function getMaxFormatMessage(propertyDisplayName: string, max: number) {
  * @param propertyDisplayName property display name.
  * @returns friendly message to the field the that needs currency validation.
  */
-export function getCurrencyFormatMessage(propertyDisplayName: string) {
+export function getCurrencyFormatMessage(propertyDisplayName: string): string {
   return `${propertyDisplayName} must be a number without a group separator or decimals.`;
 }
 
@@ -145,7 +149,7 @@ export function getCurrencyFormatMessage(propertyDisplayName: string) {
 export function getEnumFormatMessage(
   propertyDisplayName: string,
   enumObject: unknown,
-) {
+): string {
   return `${propertyDisplayName} must be one of the following options: ${Object.values(
     enumObject,
   ).join()}`;
@@ -159,7 +163,7 @@ export function getEnumFormatMessage(
 export function getMaxLengthFormatMessage(
   propertyDisplayName: string,
   maxLength: number,
-) {
+): string {
   return `${propertyDisplayName} should not be longer than ${maxLength} characters.`;
 }
 
@@ -275,6 +279,28 @@ export enum OnlineInstructionModeOptions {
 }
 
 /**
+ * Offering action types.
+ */
+export enum OfferingActionType {
+  /**
+   * Create offering.
+   */
+  Create = "create",
+  /**
+   * Update offering.
+   */
+  Update = "update",
+  /**
+   * Request a change to an existing offering.
+   */
+  RequestChange = "request change",
+  /**
+   * Validate offering data.
+   */
+  Validate = "validate",
+}
+
+/**
  * Institution context conditions.
  */
 enum InstitutionContextConditions {
@@ -340,12 +366,12 @@ export class StudyBreak {
 /**
  * Study start date property used as parameters in some validators.
  */
-const studyStartDateProperty = (offering: OfferingValidationModel) =>
+const studyStartDateProperty = (offering: OfferingValidationModel): string =>
   offering.studyStartDate;
 /**
  * Study end date property used as parameters in some validators.
  */
-const studyEndDateProperty = (offering: OfferingValidationModel) =>
+const studyEndDateProperty = (offering: OfferingValidationModel): string =>
   offering.studyEndDate;
 
 /**
@@ -353,7 +379,9 @@ const studyEndDateProperty = (offering: OfferingValidationModel) =>
  * @param offering offering.
  * @returns minimum study period length in number of weeks.
  */
-const studyPeriodMinFundedWeeks = (offering: OfferingValidationModel) => {
+const studyPeriodMinFundedWeeks = (
+  offering: OfferingValidationModel,
+): number => {
   if (offering.offeringIntensity === OfferingIntensity.fullTime) {
     return OFFERING_STUDY_PERIOD_MIN_FUNDED_WEEKS_FULL_TIME;
   }
@@ -816,6 +844,11 @@ export class OfferingValidationModel {
   })
   institutionContext?: InstitutionValidationContext;
   /**
+   * Effective restriction actions for the location and program.
+   */
+  @IsArray()
+  effectiveRestrictionActions: RestrictionActionType[];
+  /**
    * Offering mode(s) of online instruction.
    */
   @ValidateIf(
@@ -1012,6 +1045,12 @@ export class OfferingValidationModel {
     },
   )
   maximumOnlineDuration?: number;
+  /**
+   * Offering action type.
+   */
+  @IsEnum(OfferingActionType)
+  @IsOfferingActionAllowed(userFriendlyNames.actionType)
+  actionType: OfferingActionType;
 }
 
 /**

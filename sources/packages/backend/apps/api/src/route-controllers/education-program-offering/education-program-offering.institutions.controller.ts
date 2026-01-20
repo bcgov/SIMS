@@ -36,6 +36,7 @@ import { OfferingIntensity, OfferingTypes } from "@sims/sims-db";
 import {
   CreateFromValidatedOfferingError,
   EducationProgramOfferingService,
+  OfferingActionType,
 } from "../../services";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
@@ -124,6 +125,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
         locationId,
         programId,
         payload,
+        OfferingActionType.Validate,
       );
 
     const offeringValidation =
@@ -187,6 +189,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
           locationId,
           programId,
           payload,
+          OfferingActionType.Create,
         );
       const createdProgramOffering =
         await this.programOfferingService.createEducationProgramOffering(
@@ -267,6 +270,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
           locationId,
           programId,
           payload,
+          OfferingActionType.Update,
         );
       await this.programOfferingService.updateEducationProgramOffering(
         offeringId,
@@ -487,6 +491,7 @@ export class EducationProgramOfferingInstitutionsController extends BaseControll
           locationId,
           programId,
           payload,
+          OfferingActionType.RequestChange,
         );
       const requestedOffering = await this.programOfferingService.requestChange(
         locationId,

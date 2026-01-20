@@ -17,6 +17,7 @@ import {
   BCeIDService,
   InstitutionUserAuthService,
   ApplicationRestrictionBypassService,
+  InstitutionRestrictionService,
 } from "./services";
 import {
   DisbursementOverawardService,
@@ -68,6 +69,7 @@ import { AuthModule } from "./auth/auth.module";
     InstitutionLocationService,
     DesignationAgreementLocationService,
     SupportingUserControllerService,
+    InstitutionRestrictionService,
   ],
 })
 export class AppSupportingUsersModule {}

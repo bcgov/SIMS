@@ -1,7 +1,17 @@
 import { Injectable } from "@nestjs/common";
-import { EducationProgram, OfferingTypes } from "@sims/sims-db";
-import { EducationProgramService, InstitutionLocationService } from "..";
 import {
+  EducationProgram,
+  InstitutionRestriction,
+  OfferingTypes,
+  RestrictionActionType,
+} from "@sims/sims-db";
+import {
+  EducationProgramService,
+  InstitutionLocationService,
+  InstitutionRestrictionService,
+} from "..";
+import {
+  OfferingActionType,
   OfferingValidationModel,
   OfferingYesNoOptions,
 } from "./education-program-offering-validation.models";
@@ -16,7 +26,10 @@ import { plainToClass } from "class-transformer";
 import { validateSync } from "class-validator";
 import { flattenErrorMessages } from "../../utilities/class-validation";
 import { parse } from "papaparse";
-import { CustomNamedError } from "@sims/utilities";
+import {
+  CustomNamedError,
+  getEffectiveInstitutionRestrictions,
+} from "@sims/utilities";
 import { OFFERING_VALIDATION_CSV_PARSE_ERROR } from "../../constants";
 import { LoggerService } from "@sims/utilities/logger";
 
@@ -39,6 +52,7 @@ export class EducationProgramOfferingImportCSVService {
   constructor(
     private readonly institutionLocationService: InstitutionLocationService,
     private readonly educationProgramService: EducationProgramService,
+    private readonly institutionRestrictionService: InstitutionRestrictionService,
     private readonly logger: LoggerService,
   ) {}
 
@@ -54,51 +68,69 @@ export class EducationProgramOfferingImportCSVService {
     institutionId: number,
     csvModels: OfferingCSVModel[],
   ): Promise<OfferingValidationModel[]> {
-    // Locations and programs information to be associated with the offering models.
-    const [locationsMap, programsMap] = await Promise.all([
-      this.getLocationsMaps(institutionId),
-      this.getProgramsMaps(institutionId, csvModels),
-    ]);
-    return csvModels.map((csvModel) => ({
+    // Locations, programs and restrictions information to be associated with the offering models.
+    const [locationsMap, programsMap, institutionRestrictions] =
+      await Promise.all([
+        this.getLocationsMaps(institutionId),
+        this.getProgramsMaps(institutionId, csvModels),
+        this.institutionRestrictionService.getInstitutionRestrictions(
+          institutionId,
+          { isActive: true },
+        ),
+      ]);
+    return csvModels.map<OfferingValidationModel>((csvModel) => {
+      const offeringValidationModel = new OfferingValidationModel();
+      const location = locationsMap[csvModel.institutionLocationCode];
+      const program = programsMap[csvModel.sabcProgramCode];
       // Bulk upload will not have aviation offering.
-      isAviationOffering: OfferingYesNoOptions.No,
-      aviationCredentialType: null,
-      offeringName: csvModel.offeringName,
-      yearOfStudy: csvModel.yearOfStudy,
-      offeringIntensity: csvModel.offeringIntensity,
-      offeringDelivered: csvModel.offeringDelivered,
-      hasOfferingWILComponent:
+      offeringValidationModel.isAviationOffering = OfferingYesNoOptions.No;
+      offeringValidationModel.aviationCredentialType = null;
+      offeringValidationModel.offeringName = csvModel.offeringName;
+      offeringValidationModel.yearOfStudy = csvModel.yearOfStudy;
+      offeringValidationModel.offeringIntensity = csvModel.offeringIntensity;
+      offeringValidationModel.offeringDelivered = csvModel.offeringDelivered;
+      offeringValidationModel.hasOfferingWILComponent =
         csvModel.WILComponent === YesNoOptions.Yes
           ? OfferingYesNoOptions.Yes
-          : OfferingYesNoOptions.No,
-      offeringWILComponentType: csvModel.WILComponentType,
-      studyStartDate: csvModel.studyStartDate,
-      studyEndDate: csvModel.studyEndDate,
-      lacksStudyBreaks: csvModel.hasStudyBreaks === YesNoOptions.No,
-      studyBreaks:
+          : OfferingYesNoOptions.No;
+      offeringValidationModel.offeringWILComponentType =
+        csvModel.WILComponentType;
+      offeringValidationModel.studyStartDate = csvModel.studyStartDate;
+      offeringValidationModel.studyEndDate = csvModel.studyEndDate;
+      offeringValidationModel.lacksStudyBreaks =
+        csvModel.hasStudyBreaks === YesNoOptions.No;
+      offeringValidationModel.studyBreaks =
         csvModel.hasStudyBreaks === YesNoOptions.Yes
           ? csvModel.studyBreaks
-          : null,
-      actualTuitionCosts: csvModel.actualTuitionCosts,
-      programRelatedCosts: csvModel.programRelatedCosts,
-      mandatoryFees: csvModel.mandatoryFees,
-      exceptionalExpenses: csvModel.exceptionalExpenses,
-      offeringType:
+          : null;
+      offeringValidationModel.actualTuitionCosts = csvModel.actualTuitionCosts;
+      offeringValidationModel.programRelatedCosts =
+        csvModel.programRelatedCosts;
+      offeringValidationModel.mandatoryFees = csvModel.mandatoryFees;
+      offeringValidationModel.exceptionalExpenses =
+        csvModel.exceptionalExpenses;
+      offeringValidationModel.offeringType =
         csvModel.publicOffering === YesNoOptions.Yes
           ? OfferingTypes.Public
-          : OfferingTypes.Private,
-      offeringDeclaration: csvModel.consent === YesNoOptions.Yes,
-      courseLoad: csvModel.courseLoad,
-      locationId: locationsMap[csvModel.institutionLocationCode]?.id,
-      locationName: locationsMap[csvModel.institutionLocationCode]?.name,
-      operatingName:
-        locationsMap[csvModel.institutionLocationCode]?.operatingName,
-      legalOperatingName:
-        locationsMap[csvModel.institutionLocationCode]?.legalOperatingName,
-      primaryEmail:
-        locationsMap[csvModel.institutionLocationCode]?.primaryEmail,
-      programContext: programsMap[csvModel.sabcProgramCode],
-    }));
+          : OfferingTypes.Private;
+      offeringValidationModel.offeringDeclaration =
+        csvModel.consent === YesNoOptions.Yes;
+      offeringValidationModel.courseLoad = csvModel.courseLoad;
+      offeringValidationModel.locationId = location?.id;
+      offeringValidationModel.locationName = location?.name;
+      offeringValidationModel.operatingName = location?.operatingName;
+      offeringValidationModel.legalOperatingName = location?.legalOperatingName;
+      offeringValidationModel.primaryEmail = location?.primaryEmail;
+      offeringValidationModel.programContext = program;
+      offeringValidationModel.effectiveRestrictionActions =
+        this.getEffectiveRestrictionActions(
+          institutionRestrictions,
+          location?.id,
+          program?.id,
+        );
+      offeringValidationModel.actionType = OfferingActionType.Create;
+      return offeringValidationModel;
+    });
   }
 
   /**
@@ -249,5 +281,30 @@ export class EducationProgramOfferingImportCSVService {
         errors: flattenedErrors,
       };
     });
+  }
+
+  /**
+   * Get the effective restriction actions for the given location and program.
+   * @param institutionRestrictions institution restrictions.
+   * @param locationId location id.
+   * @param programId program id.
+   * @returns effective restriction actions for the location and program.
+   */
+  private getEffectiveRestrictionActions(
+    institutionRestrictions: InstitutionRestriction[],
+    locationId: number | undefined,
+    programId: number | undefined,
+  ): RestrictionActionType[] {
+    if (!locationId || !programId) {
+      return [];
+    }
+    const actionTypes = getEffectiveInstitutionRestrictions(
+      institutionRestrictions,
+      locationId,
+      programId,
+    ).flatMap(
+      (institutionRestriction) => institutionRestriction.restriction.actionType,
+    );
+    return [...new Set(actionTypes)]; // Remove duplicate actions.
   }
 }
