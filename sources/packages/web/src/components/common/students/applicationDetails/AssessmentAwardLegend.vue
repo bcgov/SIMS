@@ -4,6 +4,16 @@
       What does this page mean?
     </h3>
     <v-row>
+      <v-col cols="3" md="2"
+        ><chip-tag color="error" label="Restriction"
+      /></v-col>
+      <v-col
+        >Restrictions on your account have resulted in funding that is lower
+        than the initial estimated award. For further clarification, please
+        contact StudentAid BC.</v-col
+      >
+    </v-row>
+    <v-row>
       <v-col cols="3" md="2"><chip-tag color="error" label="Funded" /></v-col>
       <v-col
         >Your actual funding amounts received are different than the amounts
@@ -29,16 +39,6 @@
       <v-col
         >Previously deducted overawards were applied to this payment. For
         further clarification, please contact StudentAid BC.</v-col
-      >
-    </v-row>
-    <v-row>
-      <v-col cols="3" md="2"
-        ><chip-tag color="error" label="Restriction"
-      /></v-col>
-      <v-col
-        >Restrictions on your account have resulted in funding that is lower
-        than the initial estimated award. For further clarification, please
-        contact StudentAid BC.</v-col
       >
     </v-row>
   </content-group>
