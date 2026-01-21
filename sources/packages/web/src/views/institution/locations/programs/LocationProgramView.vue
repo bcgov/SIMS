@@ -20,8 +20,8 @@
       />
     </template>
     <institution-restriction-banner
-      :is-data-loaded-externally="true"
-      :effective-restriction-status="institutionRestrictionStatus"
+      :location-id="locationId"
+      :program-id="programId"
     />
     <manage-program-and-offering-summary
       :program-id="programId"
@@ -29,7 +29,7 @@
       :education-program="educationProgram"
       :allow-edit="!isReadOnly"
       :allow-deactivate="!isReadOnly"
-      :can-create-offering="canCreateOffering"
+      :can-create-offering="effectiveRestrictionStatus.canCreateOffering"
       @program-data-updated="programDataUpdated"
     />
   </full-page-container>
@@ -43,9 +43,10 @@ import { EducationProgramService } from "@/services/EducationProgramService";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
 import InstitutionRestrictionBanner from "@/components/institutions/banners/InstitutionRestrictionBanner.vue";
-import { useInstitutionAuth } from "@/composables";
-import { EffectiveRestrictionStatus } from "@/types";
-import { RestrictionService } from "@/services/RestrictionService";
+import {
+  useInstitutionAuth,
+  useInstitutionRestrictionState,
+} from "@/composables";
 
 export default defineComponent({
   components: {
@@ -65,10 +66,11 @@ export default defineComponent({
   },
   setup(props) {
     const { isReadOnlyUser } = useInstitutionAuth();
+    const { getEffectiveRestrictionStatus } = useInstitutionRestrictionState();
     const educationProgram = ref({} as EducationProgramAPIOutDTO);
-    const institutionRestrictionStatus = ref<EffectiveRestrictionStatus>();
-    const canCreateOffering = computed(
-      () => !!institutionRestrictionStatus.value?.canCreateOffering,
+    const effectiveRestrictionStatus = getEffectiveRestrictionStatus(
+      props.locationId,
+      props.programId,
     );
     const getEducationProgramAndOffering = async () => {
       educationProgram.value =
@@ -79,11 +81,6 @@ export default defineComponent({
 
     const loadInitialData = async () => {
       await getEducationProgramAndOffering();
-      institutionRestrictionStatus.value =
-        await RestrictionService.shared.getEffectiveInstitutionRestrictionStatus(
-          props.locationId,
-          props.programId,
-        );
     };
 
     const isReadOnly = computed(() => {
@@ -99,8 +96,7 @@ export default defineComponent({
       InstitutionRoutesConst,
       programDataUpdated,
       isReadOnly,
-      canCreateOffering,
-      institutionRestrictionStatus,
+      effectiveRestrictionStatus,
     };
   },
 });

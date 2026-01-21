@@ -179,6 +179,7 @@ export class InstitutionActiveRestrictionAPIOutDTO {
  */
 export class InstitutionActiveRestrictionsAPIOutDTO {
   items: InstitutionActiveRestrictionAPIOutDTO[];
+  institutionId: number;
 }
 
 /**
