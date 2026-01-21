@@ -11,7 +11,7 @@
       label="Overawards"
     />
     <chip-tag
-      v-if="amounts.overawardAmountSubtracted < 0"
+      v-else-if="amounts.overawardAmountSubtracted < 0"
       color="success"
       label="Overawards"
     />
