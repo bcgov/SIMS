@@ -31,6 +31,7 @@ import StatusInfoLabel from "@/components/generic/StatusInfoLabel.vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import ChipStatus from "@/components/generic/ChipStatus.vue";
+import ChipTag from "@/components/generic/ChipTag.vue";
 // Form.io Bootstrap Templates (see https://github.com/formio/bootstrap).
 import bootstrap5 from "@formio/bootstrap/bootstrap5";
 import { Formio } from "@formio/js";
@@ -61,5 +62,6 @@ AppConfigService.shared.init().then(() => {
     .component("ModalDialogBase", ModalDialogBase)
     .component("ErrorSummary", ErrorSummary)
     .component("ChipStatus", ChipStatus)
+    .component("ChipTag", ChipTag)
     .mount("#app");
 });
