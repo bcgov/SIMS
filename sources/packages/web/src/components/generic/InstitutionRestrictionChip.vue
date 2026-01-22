@@ -2,27 +2,30 @@
   <chip-label :status="chipStatus" :label="chipLabel" />
 </template>
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import ChipLabel from "@/components/generic/ChipLabel.vue";
-import { useRestriction } from "@/composables";
+import { useInstitutionRestrictionState, useRestriction } from "@/composables";
 
 export default defineComponent({
   components: { ChipLabel },
   props: {
-    hasActiveRestriction: {
-      type: Boolean,
+    institutionId: {
+      type: Number,
       required: true,
     },
   },
   setup(props) {
+    const { updateInstitutionRestrictionState, hasActiveRestriction } =
+      useInstitutionRestrictionState(props.institutionId);
     const { mapRestrictionBadgeLabel, mapRestrictionBadgeStatus } =
       useRestriction();
     const chipStatus = computed(() =>
-      mapRestrictionBadgeStatus(props.hasActiveRestriction),
+      mapRestrictionBadgeStatus(hasActiveRestriction.value),
     );
     const chipLabel = computed(() =>
-      mapRestrictionBadgeLabel(props.hasActiveRestriction),
+      mapRestrictionBadgeLabel(hasActiveRestriction.value),
     );
+    onMounted(updateInstitutionRestrictionState);
     return { chipStatus, chipLabel };
   },
 });

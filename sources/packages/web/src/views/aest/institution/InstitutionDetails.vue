@@ -1,15 +1,19 @@
 <template>
-  <full-page-container layout-template="centered-tab" :fullWidth="true"
+  <full-page-container layout-template="centered-tab" :full-width="true"
     ><template #header>
       <header-navigator
         title="Institution Details"
-        :subTitle="institutionBasicDetail.operatingName"
+        :sub-title="institutionBasicDetail.operatingName"
       >
         <template #sub-title-details>
           <status-chip-designation-agreement
             v-if="institutionBasicDetail.designationStatus"
-            class="ml-4 mt-1"
+            class="m-2"
             :status="institutionBasicDetail.designationStatus"
+          />
+          <institution-restriction-chip
+            class="m-2"
+            :institution-id="institutionId"
           />
         </template>
       </header-navigator>
@@ -39,9 +43,10 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionBasicAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StatusChipDesignationAgreement from "@/components/generic/StatusChipDesignationAgreement.vue";
+import InstitutionRestrictionChip from "@/components/generic/InstitutionRestrictionChip.vue";
 
 export default defineComponent({
-  components: { StatusChipDesignationAgreement },
+  components: { StatusChipDesignationAgreement, InstitutionRestrictionChip },
   props: {
     institutionId: {
       type: Number,

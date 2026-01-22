@@ -1,4 +1,8 @@
-import { RestrictionStatus, StatusChipTypes } from "@/types";
+import {
+  RestrictionBadgeLabel,
+  RestrictionStatus,
+  StatusChipTypes,
+} from "@/types";
 
 export interface RestrictionStatusInfo {
   isActive: boolean;
@@ -30,5 +34,19 @@ export function useRestriction() {
           restrictionStatus: RestrictionStatus.Resolved,
         };
   };
-  return { mapRestrictionChipStatus };
+  const mapRestrictionBadgeStatus = (isActive: boolean): StatusChipTypes => {
+    return isActive ? StatusChipTypes.Warning : StatusChipTypes.Success;
+  };
+  const mapRestrictionBadgeLabel = (
+    isActive: boolean,
+  ): RestrictionBadgeLabel => {
+    return isActive
+      ? RestrictionBadgeLabel.Restriction
+      : RestrictionBadgeLabel.NoRestriction;
+  };
+  return {
+    mapRestrictionChipStatus,
+    mapRestrictionBadgeStatus,
+    mapRestrictionBadgeLabel,
+  };
 }

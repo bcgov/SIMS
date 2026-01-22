@@ -85,7 +85,12 @@ import { useDisplay } from "vuetify";
 import { RestrictionService } from "@/services/RestrictionService";
 import ViewRestrictionModal from "@/components/common/restriction/ViewRestriction.vue";
 import AddRestrictionModal from "@/components/institutions/modals/AddRestrictionModal.vue";
-import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
+import {
+  useFormatters,
+  ModalDialog,
+  useSnackBar,
+  useInstitutionRestrictionState,
+} from "@/composables";
 import {
   RestrictionStatus,
   DEFAULT_PAGE_LIMIT,
@@ -126,6 +131,8 @@ export default defineComponent({
     );
     const { dateOnlyLongString, conditionalEmptyStringFiller } =
       useFormatters();
+    const { updateInstitutionRestrictionState } =
+      useInstitutionRestrictionState(props.institutionId);
     const showModal = ref(false);
     const viewRestriction = ref({} as ModalDialog<RestrictionDetail | false>);
     const addRestriction = ref(
@@ -141,6 +148,16 @@ export default defineComponent({
         await RestrictionService.shared.getInstitutionRestrictions(
           props.institutionId,
         );
+    };
+    /**
+     * Reload institution restrictions and update institution restriction state.
+     */
+    const loadRestrictionsAndUpdateState = async () => {
+      // Reload restrictions and update institution restriction state.
+      await Promise.all([
+        loadInstitutionRestrictions(),
+        updateInstitutionRestrictionState(),
+      ]);
     };
 
     const viewIInstitutionRestriction = async (restrictionId: number) => {
@@ -174,7 +191,7 @@ export default defineComponent({
           data.restrictionId,
           payload,
         );
-        await loadInstitutionRestrictions();
+        await loadRestrictionsAndUpdateState();
         snackBar.success(
           "The given restriction has been resolved and resolution notes added.",
         );
@@ -213,7 +230,7 @@ export default defineComponent({
           props.institutionId,
           modalResult,
         );
-        await loadInstitutionRestrictions();
+        await loadRestrictionsAndUpdateState();
         snackBar.success("Restriction was successfully added.");
         return true;
       } catch (error: unknown) {

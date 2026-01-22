@@ -64,8 +64,7 @@ export function useInstitutionRestrictionState(institutionId?: number) {
     programId: number,
   ): ComputedRef<EffectiveRestrictionStatus> => {
     return computed(() => {
-      const restrictions = getInstitutionRestrictions();
-      const effectiveRestrictions = restrictions.filter(
+      const effectiveRestrictions = getInstitutionRestrictions().filter(
         (institutionRestriction) =>
           institutionRestriction.locationId === locationId &&
           institutionRestriction.programId === programId,

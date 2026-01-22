@@ -24,7 +24,6 @@ export * from "./useProgram";
 export * from "./useRestriction";
 export * from "./useCOE";
 export * from "./usePIR";
-export * from "./useStudentRestriction";
 export * from "./useApplication";
 export * from "./useRules";
 export * from "./useApplicationOfferingChange";
