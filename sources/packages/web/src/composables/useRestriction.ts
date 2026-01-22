@@ -34,19 +34,21 @@ export function useRestriction() {
           restrictionStatus: RestrictionStatus.Resolved,
         };
   };
-  const mapRestrictionBadgeStatus = (isActive: boolean): StatusChipTypes => {
-    return isActive ? StatusChipTypes.Warning : StatusChipTypes.Success;
-  };
-  const mapRestrictionBadgeLabel = (
+  const mapRestrictionBadgeDetails = (
     isActive: boolean,
-  ): RestrictionBadgeLabel => {
+  ): { label: RestrictionBadgeLabel; status: StatusChipTypes } => {
     return isActive
-      ? RestrictionBadgeLabel.Restriction
-      : RestrictionBadgeLabel.NoRestriction;
+      ? {
+          label: RestrictionBadgeLabel.Restriction,
+          status: StatusChipTypes.Warning,
+        }
+      : {
+          label: RestrictionBadgeLabel.NoRestriction,
+          status: StatusChipTypes.Success,
+        };
   };
   return {
     mapRestrictionChipStatus,
-    mapRestrictionBadgeStatus,
-    mapRestrictionBadgeLabel,
+    mapRestrictionBadgeDetails,
   };
 }

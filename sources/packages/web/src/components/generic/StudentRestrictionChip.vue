@@ -1,5 +1,5 @@
 <template>
-  <chip-label :status="chipStatus" :label="chipLabel" />
+  <chip-label :status="badgeDetails.status" :label="badgeDetails.label" />
 </template>
 <script lang="ts">
 import { computed, defineComponent } from "vue";
@@ -15,15 +15,11 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { mapRestrictionBadgeLabel, mapRestrictionBadgeStatus } =
-      useRestriction();
-    const chipStatus = computed(() =>
-      mapRestrictionBadgeStatus(props.hasActiveRestriction),
+    const { mapRestrictionBadgeDetails } = useRestriction();
+    const badgeDetails = computed(() =>
+      mapRestrictionBadgeDetails(props.hasActiveRestriction),
     );
-    const chipLabel = computed(() =>
-      mapRestrictionBadgeLabel(props.hasActiveRestriction),
-    );
-    return { chipStatus, chipLabel };
+    return { badgeDetails };
   },
 });
 </script>
