@@ -9,12 +9,10 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
-import ChipTag from "@/components/generic/ChipTag.vue";
 import { AssessmentHistorySummaryAPIOutDTO } from "@/services/http/dto";
 import { StudentScholasticStandingChangeType } from "@/types";
 
 export default defineComponent({
-  components: { ChipTag },
   props: {
     assessment: {
       type: Object as PropType<AssessmentHistorySummaryAPIOutDTO>,

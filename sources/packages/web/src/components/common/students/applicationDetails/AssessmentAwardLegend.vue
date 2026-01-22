@@ -43,11 +43,3 @@
     </v-row>
   </content-group>
 </template>
-<script lang="ts">
-import ChipTag from "@/components/generic/ChipTag.vue";
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  components: { ChipTag },
-});
-</script>

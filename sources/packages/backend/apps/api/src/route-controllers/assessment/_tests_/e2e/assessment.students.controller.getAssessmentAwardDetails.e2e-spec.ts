@@ -57,7 +57,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
 
   it(
     "Should get the student assessment summary containing loan and all grants values from e-Cert effective amount " +
-      " for a part-time application with a single disbursement (including subtracted amounts) when the e-Cert was sent.",
+      "for a part-time application with a single disbursement (including subtracted amounts) when the e-Cert was sent.",
     async () => {
       // Arrange
       const enrolmentDate1 = addDays(1);

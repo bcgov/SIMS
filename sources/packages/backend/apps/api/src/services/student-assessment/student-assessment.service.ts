@@ -97,6 +97,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "disbursementValue.disbursedAmountSubtracted",
         "disbursementValue.overawardAmountSubtracted",
         "disbursementValue.restrictionAmountSubtracted",
+        "disbursementReceipt.id",
       ])
       .innerJoin("assessment.application", "application")
       .innerJoin("application.student", "student")
@@ -109,6 +110,10 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .innerJoin("assessment.disbursementSchedules", "disbursementSchedule")
       .innerJoin("disbursementSchedule.msfaaNumber", "msfaaNumber")
       .leftJoin("disbursementSchedule.disbursementValues", "disbursementValue")
+      .leftJoin(
+        "disbursementSchedule.disbursementReceipts",
+        "disbursementReceipt",
+      )
       .where("assessment.id = :assessmentId", { assessmentId })
       .orderBy("disbursementSchedule.disbursementDate");
 

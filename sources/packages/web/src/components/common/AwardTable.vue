@@ -27,13 +27,13 @@
 </template>
 <script lang="ts">
 import { PropType, defineComponent, computed } from "vue";
-import { OfferingIntensity } from "@/types";
-import { AWARDS, AwardDetail } from "@/constants/award-constants";
 import {
   AwardAdjustmentAmounts,
   AwardTableType,
-  DynamicAwardValue,
-} from "@/services/http/dto";
+  OfferingIntensity,
+} from "@/types";
+import { AWARDS, AwardDetail } from "@/constants/award-constants";
+import { DynamicAwardValue } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
 import AssessmentAwardAdjustments from "@/components/common/students/applicationDetails/AssessmentAwardAdjustments.vue";
 

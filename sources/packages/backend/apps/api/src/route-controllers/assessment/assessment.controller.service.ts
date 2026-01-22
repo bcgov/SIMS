@@ -16,7 +16,6 @@ import {
 } from "@nestjs/common";
 import {
   StudentAssessmentService,
-  DisbursementReceiptService,
   StudentAppealService,
   StudentScholasticStandingsService,
   EducationProgramOfferingService,
@@ -68,7 +67,6 @@ const HAS_POTENTIAL_RECEIPT_STATUSES = new Set([
 export class AssessmentControllerService {
   constructor(
     private readonly assessmentService: StudentAssessmentService,
-    private readonly disbursementReceiptService: DisbursementReceiptService,
     private readonly studentAppealService: StudentAppealService,
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
@@ -269,10 +267,8 @@ export class AssessmentControllerService {
       assessment.disbursementSchedules,
       { includeDocumentNumber, includeDateSent, maskMSFAA },
     );
-    const finalAward = await this.populateDisbursementFinalAwardsValues(
-      assessment,
-      options,
-    );
+    const finalAward =
+      await this.populateDisbursementFinalAwardsValues(assessment);
     return {
       applicationNumber: assessment.application.applicationNumber,
       applicationStatus: assessment.application.applicationStatus,
@@ -299,10 +295,6 @@ export class AssessmentControllerService {
    */
   private async populateDisbursementFinalAwardsValues(
     assessment: StudentAssessment,
-    options?: {
-      studentId?: number;
-      applicationId?: number;
-    },
   ): Promise<DynamicAwardValue | undefined> {
     const [firstDisbursement] = assessment.disbursementSchedules;
     if (
@@ -314,18 +306,9 @@ export class AssessmentControllerService {
       return undefined;
     }
     let finalAward: DynamicAwardValue = {};
-    // Final award values come from the e-Cert effective amounts but the disbursement receipts
-    // are still required to determine if a student disbursement can be cancelled.
-    const disbursementReceipts =
-      await this.disbursementReceiptService.getDisbursementReceiptByAssessment(
-        assessment.id,
-        options,
-      );
     // Populate the disbursementReceipt[n]Received flags for each disbursement schedule.
     assessment.disbursementSchedules.forEach((schedule, index) => {
-      const hasReceipt = disbursementReceipts.some(
-        (receipt) => receipt.disbursementSchedule.id === schedule.id,
-      );
+      const hasReceipt = schedule.disbursementReceipts?.length > 0;
       this.setReceiptReceivedFlag(finalAward, index + 1, hasReceipt);
     });
 

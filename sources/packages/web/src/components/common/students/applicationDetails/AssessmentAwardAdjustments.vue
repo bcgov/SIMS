@@ -23,12 +23,10 @@
   </div>
 </template>
 <script lang="ts">
-import ChipTag from "@/components/generic/ChipTag.vue";
-import { AwardAdjustmentAmounts } from "@/services/http/dto";
+import { AwardAdjustmentAmounts } from "@/types";
 import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
-  components: { ChipTag },
   props: {
     amounts: {
       type: Object as PropType<AwardAdjustmentAmounts>,

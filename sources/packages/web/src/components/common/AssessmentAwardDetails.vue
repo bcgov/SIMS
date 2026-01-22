@@ -357,12 +357,9 @@
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import { AwardDetailsAPIOutDTO, DynamicAwardValue } from "@/services/http/dto";
 import {
-  AwardDetailsAPIOutDTO,
   AwardTableType,
-  DynamicAwardValue,
-} from "@/services/http/dto";
-import {
   COEStatus,
   OfferingIntensity,
   StatusInfo,

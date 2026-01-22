@@ -22,50 +22,6 @@ export class DisbursementReceiptService extends RecordDataModelService<Disbursem
   }
 
   /**
-   * Get the disbursement receipt details for
-   * given assessment.
-   * @param assessmentId assessment to which disbursement
-   * receipt belongs to.
-   * @param options options for the query:
-   * - `studentId` student to whom the disbursement
-   * receipt belongs to.
-   * - `applicationId` application id.
-   * @returns disbursement receipt details.
-   */
-  async getDisbursementReceiptByAssessment(
-    assessmentId: number,
-    options?: {
-      studentId?: number;
-      applicationId?: number;
-    },
-  ): Promise<DisbursementReceipt[]> {
-    return this.repo.find({
-      select: {
-        id: true,
-        disbursementSchedule: {
-          id: true,
-        },
-      },
-      relations: {
-        disbursementSchedule: true,
-      },
-      where: {
-        disbursementSchedule: {
-          studentAssessment: {
-            id: assessmentId,
-            application: {
-              id: options?.applicationId,
-              student: {
-                id: options?.studentId,
-              },
-            },
-          },
-        },
-      },
-    });
-  }
-
-  /**
    * Get the related loan award code based in the receipt.
    * Provincial loans are not present for part-time disbursements.
    * @param fundingType defines if the receipt is for a federal or provincial
