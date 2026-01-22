@@ -114,3 +114,6 @@ export * from "./sfas-bridge-log.model";
 export * from "./application-edit-status.type";
 export * from "./dynamic-form-type";
 export * from "./dynamic-form-configuration.model";
+export * from "./form-submission-grouping.type";
+export * from "./form-category.type";
+export * from "./form-submission.model";

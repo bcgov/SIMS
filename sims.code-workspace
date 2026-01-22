@@ -2,32 +2,32 @@
   "folders": [
     {
       "name": "Web UI",
-      "path": "./sources/packages/web"
+      "path": "./sources/packages/web",
     },
     {
       "name": "Backend",
-      "path": "./sources/packages/backend"
+      "path": "./sources/packages/backend",
     },
     {
       "name": "Forms",
-      "path": "./sources/packages/forms"
+      "path": "./sources/packages/forms",
     },
     {
       "name": "DevOps",
-      "path": "./devops"
+      "path": "./devops",
     },
     {
       "name": "Load Tests",
-      "path": "./sources/packages/load-test"
+      "path": "./sources/packages/load-test",
     },
     {
       "name": "Sources",
-      "path": "./sources"
+      "path": "./sources",
     },
     {
       "name": "All",
-      "path": "."
-    }
+      "path": ".",
+    },
   ],
   "extensions": {
     "recommendations": [
@@ -40,8 +40,8 @@
       "adpyke.vscode-sql-formatter",
       "redhat.vscode-yaml",
       "mongodb.mongodb-vscode",
-      "sonarsource.sonarlint-vscode"
-    ]
+      "sonarsource.sonarlint-vscode",
+    ],
   },
   "tasks": {
     "version": "2.0.0",
@@ -51,83 +51,83 @@
         "type": "shell",
         "command": "make deploy-camunda-definitions",
         "options": {
-          "cwd": "${workspaceFolder:Sources}"
+          "cwd": "${workspaceFolder:Sources}",
         },
-        "problemMatcher": []
+        "problemMatcher": [],
       },
       {
         "label": "Deploy Form Definitions",
         "type": "shell",
         "command": "make deploy-form-definitions",
         "options": {
-          "cwd": "${workspaceFolder:Sources}"
+          "cwd": "${workspaceFolder:Sources}",
         },
-        "problemMatcher": []
+        "problemMatcher": [],
       },
       {
         "label": "Database - Run Migrations",
         "type": "shell",
         "command": "npm run migration:run",
         "options": {
-          "cwd": "${workspaceFolder:Backend}"
+          "cwd": "${workspaceFolder:Backend}",
         },
-        "problemMatcher": []
+        "problemMatcher": [],
       },
       {
         "label": "Database - Clean E2E Test DB",
         "type": "shell",
         "command": "npm run db:seed:test:clean",
         "options": {
-          "cwd": "${workspaceFolder:Backend}"
+          "cwd": "${workspaceFolder:Backend}",
         },
-        "problemMatcher": []
+        "problemMatcher": [],
       },
       {
         "label": "Database - Reset for API E2E Tests",
         "type": "shell",
         "command": "npm run db:seed:test:clean && npm run test:e2e:api:seed",
         "options": {
-          "cwd": "${workspaceFolder:Backend}"
+          "cwd": "${workspaceFolder:Backend}",
         },
-        "problemMatcher": []
+        "problemMatcher": [],
       },
       {
         "label": "Database - Reset for Queue-consumers E2E Tests",
         "type": "shell",
         "command": "npm run db:seed:test:clean && npm run test:e2e:queue-consumers:seed",
         "options": {
-          "cwd": "${workspaceFolder:Backend}"
+          "cwd": "${workspaceFolder:Backend}",
         },
-        "problemMatcher": []
+        "problemMatcher": [],
       },
       {
         "label": "View Outdated Web Packages",
         "type": "shell",
         "command": "npm outdated",
         "options": {
-          "cwd": "${workspaceFolder:Web UI}"
+          "cwd": "${workspaceFolder:Web UI}",
         },
-        "problemMatcher": []
+        "problemMatcher": [],
       },
       {
         "label": "View Outdated Backend Packages",
         "type": "shell",
         "command": "npm outdated",
         "options": {
-          "cwd": "${workspaceFolder:Backend}"
+          "cwd": "${workspaceFolder:Backend}",
         },
-        "problemMatcher": []
+        "problemMatcher": [],
       },
       {
         "label": "View Outdated Forms Packages",
         "type": "shell",
         "command": "npm outdated",
         "options": {
-          "cwd": "${workspaceFolder:Forms}"
+          "cwd": "${workspaceFolder:Forms}",
         },
-        "problemMatcher": []
-      }
-    ]
+        "problemMatcher": [],
+      },
+    ],
   },
   "settings": {
     "eslint.workingDirectories": [{ "mode": "auto" }],
@@ -135,7 +135,7 @@
       "**/bin": true,
       "**/obj": true,
       "**/dist": true,
-      "**/node_modules": true
+      "**/node_modules": true,
     },
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
@@ -145,8 +145,8 @@
       "editor.codeActionsOnSave": {
         "source.addMissingImports": "explicit",
         "source.fixAll.eslint": "explicit",
-        "source.removeUnusedImports": "always"
-      }
+        "source.removeUnusedImports": "always",
+      },
     },
     "typescript.preferences.importModuleSpecifier": "non-relative",
     "cSpell.words": [
@@ -200,6 +200,7 @@
       "MSFAA",
       "MULT",
       "NOAAPI",
+      "nonpunitivewithdrawalform",
       "NSLSC",
       "Overaward",
       "overawards",
@@ -217,12 +218,12 @@
       "PTSSR",
       "PTWTHD",
       "roomandboardcostsappeal",
-      "stepparentwaiverappeal",
       "SABC",
       "sbsd",
       "SFAS",
       "siteprotected",
       "SSRN",
+      "stepparentwaiverappeal",
       "studentadditionaltransportationappeal",
       "studentdependantsappeal",
       "studentdisabilityappeal",
@@ -237,14 +238,14 @@
       "unparse",
       "VALD",
       "WTHD",
-      "Zeebe"
+      "Zeebe",
     ],
     "[json]": {
-      "editor.defaultFormatter": "vscode.json-language-features"
+      "editor.defaultFormatter": "vscode.json-language-features",
     },
     "[sql]": {
-      "editor.defaultFormatter": "adpyke.vscode-sql-formatter"
+      "editor.defaultFormatter": "adpyke.vscode-sql-formatter",
     },
-    "sql-formatter.uppercase": true
-  }
+    "sql-formatter.uppercase": true,
+  },
 }

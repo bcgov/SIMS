@@ -8,3 +8,36 @@ ADD
 COMMENT ON COLUMN sims.dynamic_form_configurations.form_category IS 'Indicates the category of the form.';
 
 COMMENT ON COLUMN sims.dynamic_form_configurations.form_submission_grouping_type IS 'Indicates how the form submissions are grouped, such as part of an application bundle, standalone application, or standalone student form.';
+
+INSERT INTO
+    sims.dynamic_form_configurations (
+        form_type,
+        form_definition_name,
+        form_category,
+        form_submission_grouping_type
+    )
+VALUES
+    (
+        'Room and board costs',
+        'roomandboardcostsappeal',
+        'Student appeal',
+        'Application bundle'
+    ),
+    (
+        'Step-parent waiver',
+        'stepparentwaiverappeal',
+        'Student appeal',
+        'Application bundle'
+    ),
+    (
+        'Modified independent',
+        'modifiedindependentappeal',
+        'Student appeal',
+        'Student standalone'
+    ),
+    (
+        'Non-punitive withdrawal',
+        'nonpunitivewithdrawalform',
+        'Student form',
+        'Student standalone'
+    );

@@ -19,12 +19,12 @@ CREATE TYPE sims.form_submission_status AS ENUM(
     'Declined'
 );
 
-COMMENT ON TYPE sims.form_submission_status IS 'Status of a form submission, indicating whether it is pending, approved, or declined. A form submission may have one to many items that are assessed individually, but the overall submission status provides the final decision status.';
+COMMENT ON TYPE sims.form_submission_status IS 'Status for form submission that contains one to many forms to be assessed and have a decision assigned.';
 
-CREATE TYPE sims.form_submission_item_status AS ENUM(
+CREATE TYPE sims.form_submission_decision_status AS ENUM(
     'Pending',
     'Approved',
     'Declined'
 );
 
-COMMENT ON TYPE sims.form_submission_item_status IS 'Status of a form submission item, indicating whether it is pending, approved, or declined. Each item within a form submission may be assessed individually, and this status reflects the decision for that specific item. A declined item may be part of an approved submission when some other items were approved.';
+COMMENT ON TYPE sims.form_submission_decision_status IS 'Status of a form submission item (individual decision), indicating whether it is pending, approved, or declined. Each item within a form submission may be assessed individually, and this status reflects the decision for that specific item. A declined item may be part of an approved submission when some other items were approved.';

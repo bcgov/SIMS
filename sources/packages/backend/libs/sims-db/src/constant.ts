@@ -72,6 +72,7 @@ export const TableNames = {
   BetaUsersAuthorizations: "beta_users_authorizations",
   SFASBridgeLogs: "sfas_bridge_logs",
   DynamicFormConfigurations: "dynamic_form_configurations",
+  FormSubmissions: "form_submissions",
 };
 
 export const INSTITUTION_TYPE_BC_PUBLIC = 1;
