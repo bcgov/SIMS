@@ -109,6 +109,7 @@ describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestriction
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
         .expect({
+          institutionId: institution.id,
           items: [
             {
               programId: program.id,
@@ -166,6 +167,7 @@ describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestriction
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
         .expect({
+          institutionId: institution.id,
           items: [
             {
               programId: program.id,
@@ -184,6 +186,10 @@ describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestriction
 
   it("Should return no active institution restrictions when there are no institution restrictions present for the institution.", async () => {
     // Arrange
+    const { institution } = await getAuthRelatedEntities(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeCUser,
+    );
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
@@ -193,6 +199,7 @@ describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestriction
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
+        institutionId: institution.id,
         items: [],
       });
   });
