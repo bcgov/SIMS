@@ -109,7 +109,6 @@ describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestriction
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
         .expect({
-          institutionId: institution.id,
           items: [
             {
               programId: program.id,
