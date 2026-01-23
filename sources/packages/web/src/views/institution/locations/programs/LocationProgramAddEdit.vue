@@ -53,7 +53,7 @@ import {
   InstitutionRoutesConst,
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
-import { ref, computed, defineComponent, isReadonly, onMounted } from "vue";
+import { ref, computed, defineComponent, isReadonly, watchEffect } from "vue";
 import { ApiProcessError, ClientIdType, FormIOForm } from "@/types";
 import { useFormioUtils, useInstitutionAuth, useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
@@ -128,7 +128,7 @@ export default defineComponent({
       }
     };
 
-    onMounted(async () => {
+    watchEffect(async () => {
       await loadFormData();
     });
 
