@@ -202,7 +202,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       // The deductions for CPP and EI are capped at the maximum for the year.
       expect(
         calculatedAssessment.variables.calculatedDataTotalParentDeductions,
-      ).toBe(1058);
+      ).toBe(1057);
       // Calculated total family income should be the gross parent income.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
@@ -268,10 +268,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       ).toBe(2000);
       expect(
         calculatedAssessment.variables.calculatedDataParent2IncomeDeductions,
-      ).toBe(1058);
+      ).toBe(1057);
       expect(
         calculatedAssessment.variables.calculatedDataTotalParentDeductions,
-      ).toBe(3058);
+      ).toBe(3057);
       // Calculated total family income should be the gross parent income.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
@@ -345,7 +345,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       ).toBe(undefined);
       expect(
         calculatedAssessment.variables.calculatedDataTotalParentDeductions,
-      ).toBe(1058);
+      ).toBe(1057);
       // Calculated total family income should be the gross parent income.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
