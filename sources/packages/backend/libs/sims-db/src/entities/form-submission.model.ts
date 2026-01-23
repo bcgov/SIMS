@@ -3,28 +3,36 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import {
   Application,
-  FormCategoryType,
-  FormSubmissionGroupingType,
+  FormCategory,
+  FormSubmissionGrouping,
+  FormSubmissionStatus,
+  Note,
   Student,
+  User,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { FormSubmissionStatus } from "@sims/sims-db/entities/form-submission-status.type";
 
 /**
- *
+ * Form submissions for Ministry evaluation and decision. Each submission can
+ * contain one or more forms where each form is assessed individually.
  */
 @Entity({ name: TableNames.FormSubmissions })
 export class FormSubmission extends RecordDataModel {
+  /**
+   * Primary key identifier.
+   */
   @PrimaryGeneratedColumn()
   id: number;
   /**
    * Student related to this form submission.
-   * A form submission may or may not be linked to an application, but it must be linked to a student.
+   * A form submission may or may not be linked to an application,
+   * but it must be linked to a student.
    */
   @ManyToOne(() => Student)
   @JoinColumn({
@@ -33,11 +41,10 @@ export class FormSubmission extends RecordDataModel {
   })
   student: Student;
   /**
-   * Application related to this form submission
-   * when the submission is regarding an application.
+   * Application associated with the submission when the grouping
+   * requires it (e.g., Application bundle).
    */
   @ManyToOne(() => Application, {
-    cascade: ["update"],
     nullable: true,
   })
   @JoinColumn({
@@ -46,7 +53,7 @@ export class FormSubmission extends RecordDataModel {
   })
   application?: Application;
   /**
-   * Date that the student submitted the form.
+   * Date and time when the submission was received.
    */
   @Column({
     name: "submitted_date",
@@ -55,27 +62,30 @@ export class FormSubmission extends RecordDataModel {
   })
   submittedDate: Date;
   /**
-   *
+   * Category of the form. All forms for the submission must share the same category.
+   * This column is denormalized from the form items for easier querying.
    */
   @Column({
     name: "form_category",
     type: "enum",
-    enum: FormCategoryType,
-    enumName: "FormCategoryType",
+    enum: FormCategory,
+    enumName: "FormCategory",
   })
-  formCategory: FormCategoryType;
+  formCategory: FormCategory;
   /**
-   *
+   * Grouping type of the submission. All forms within a submission share the same
+   * grouping type. This column is denormalized from the form items for easier querying.
    */
   @Column({
     name: "submission_grouping_type",
     type: "enum",
-    enum: FormSubmissionGroupingType,
-    enumName: "FormSubmissionGroupingType",
+    enum: FormSubmissionGrouping,
+    enumName: "FormSubmissionGrouping",
   })
-  submissionGrouping: FormSubmissionGroupingType;
+  submissionGrouping: FormSubmissionGrouping;
   /**
-   *
+   * Current status of the submission. A submission will be considered completed when all
+   * individual form items have been assessed and are no longer in pending state.
    */
   @Column({
     name: "submission_status",
@@ -84,18 +94,32 @@ export class FormSubmission extends RecordDataModel {
     enumName: "FormSubmissionStatus",
   })
   submissionStatus: FormSubmissionStatus;
-
   /**
-   * Individual appeals that belongs to the same request.
+   * Date and time when the submission was assessed. When assessed, the status must be
+   * either Completed or Declined.
    */
-  // @OneToMany(
-  //   () => StudentAppealRequest,
-  //   (studentAppealRequest) => studentAppealRequest.studentAppeal,
-  //   {
-  //     eager: false,
-  //     cascade: true,
-  //     nullable: false,
-  //   },
-  // )
-  // appealRequests: StudentAppealRequest[];
+  @Column({
+    name: "assessed_date",
+    type: "timestamptz",
+    nullable: true,
+  })
+  assessedDate?: Date;
+  /**
+   * User who assessed the submission.
+   */
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({
+    name: "assessed_by",
+    referencedColumnName: ColumnNames.ID,
+  })
+  assessedBy?: User;
+  /**
+   * Ministry note associated with the submission assessment.
+   */
+  @OneToOne(() => Note, { nullable: true })
+  @JoinColumn({
+    name: "assessed_note_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  assessedNote?: Note;
 }

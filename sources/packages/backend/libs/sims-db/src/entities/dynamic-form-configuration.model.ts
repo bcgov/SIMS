@@ -5,7 +5,14 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { BaseModel, DynamicFormType, OfferingIntensity, ProgramYear } from ".";
+import {
+  BaseModel,
+  DynamicFormType,
+  FormCategory,
+  FormSubmissionGrouping,
+  OfferingIntensity,
+  ProgramYear,
+} from ".";
 import { ColumnNames, TableNames } from "../constant";
 
 /**
@@ -59,4 +66,27 @@ export class DynamicFormConfiguration extends BaseModel {
     name: "form_definition_name",
   })
   formDefinitionName: string;
+
+  /**
+   * Indicates the category of the form.
+   */
+  @Column({
+    name: "form_category",
+    type: "enum",
+    enum: FormCategory,
+    enumName: "FormCategory",
+  })
+  formCategory: FormCategory;
+
+  /**
+   * Indicates how the form submissions are grouped, such as part
+   * of an application bundle or standalone student form.
+   */
+  @Column({
+    name: "form_submission_grouping_type",
+    type: "enum",
+    enum: FormSubmissionGrouping,
+    enumName: "FormSubmissionGrouping",
+  })
+  formSubmissionGroupingType: FormSubmissionGrouping;
 }

@@ -38,14 +38,14 @@ CREATE TABLE sims.form_submissions(
     )
 );
 
--- Table and column comments for sims.form_submissions.
+-- Table and columns comments.
 COMMENT ON TABLE sims.form_submissions IS 'Form submissions for Ministry evaluation and decision. Each submission can contain one or more forms where each form is assessed individually.';
 
 COMMENT ON COLUMN sims.form_submissions.id IS 'Primary key of the form submission.';
 
 COMMENT ON COLUMN sims.form_submissions.student_id IS 'Student associated with the form submission.';
 
-COMMENT ON COLUMN sims.form_submissions.application_id IS 'Application associated with the submission when the grouping requires it (e.g.,Application bundle).';
+COMMENT ON COLUMN sims.form_submissions.application_id IS 'Application associated with the submission when the grouping requires it (e.g., Application bundle).';
 
 COMMENT ON COLUMN sims.form_submissions.submitted_date IS 'Date and time when the submission was received.';
 
@@ -53,19 +53,23 @@ COMMENT ON COLUMN sims.form_submissions.form_category IS 'Category of the form. 
 
 COMMENT ON COLUMN sims.form_submissions.submission_grouping_type IS 'Grouping type of the submission. All forms within a submission share the same grouping type. This column is denormalized from the form items for easier querying.';
 
-COMMENT ON COLUMN sims.form_submissions.submission_status IS 'Current status of the submission.';
+COMMENT ON COLUMN sims.form_submissions.submission_status IS 'Current status of the submission. A submission will be considered completed when all individual form items have been assessed and are no longer in pending state.';
 
 COMMENT ON COLUMN sims.form_submissions.assessed_date IS 'Date and time when the submission was assessed. When assessed, the status must be either Completed or Declined.';
 
 COMMENT ON COLUMN sims.form_submissions.assessed_by IS 'User who assessed the submission.';
 
-COMMENT ON COLUMN sims.form_submissions.created_at IS 'Timestamp when the record was created.';
+COMMENT ON COLUMN sims.form_submissions.assessed_note_id IS 'Ministry note associated with the submission assessment.';
 
-COMMENT ON COLUMN sims.form_submissions.updated_at IS 'Timestamp when the record was last updated.';
+COMMENT ON COLUMN sims.form_submissions.created_at IS 'Record creation timestamp.';
 
---creator
---modifier
--- Optional: document constraints for clarity.
-COMMENT ON CONSTRAINT form_submissions_application_id_constraint ON sims.form_submissions IS 'Ensures application_id is present when submission_grouping_type is Application bundle or Application standalone.';
+COMMENT ON COLUMN sims.form_submissions.updated_at IS 'Record update timestamp.';
+
+COMMENT ON COLUMN sims.form_submissions.creator IS 'Creator of the record.';
+
+COMMENT ON COLUMN sims.form_submissions.modifier IS 'Modifier of the record.';
+
+-- Constraints comments.
+COMMENT ON CONSTRAINT form_submissions_application_id_constraint ON sims.form_submissions IS 'Ensures application_id is present when submission_grouping_type is application-related.';
 
 COMMENT ON CONSTRAINT form_submissions_assessed_fields_required_constraint ON sims.form_submissions IS 'Requires assessed_date, assessed_by, and assessed_student_note_id when submission_status is not Pending.';
