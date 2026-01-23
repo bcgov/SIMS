@@ -206,7 +206,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
   );
 
   it(
-    "Should calculate total gross and net family income (2 parents) as the current year income value when present for parent 2 " +
+    "Should calculate total gross and net family income (2 parents) using the current year income value when present for parent 2 " +
       "and both parents are able to report their financial information.",
     async () => {
       // Arrange
@@ -256,7 +256,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       ).toBe(2000);
       expect(
         calculatedAssessment.variables.calculatedDataParent2IncomeDeductions,
-      ).toBe(1057.2);
+      ).toBe(1057);
       expect(
         calculatedAssessment.variables.calculatedDataTotalParentDeductions,
       ).toBe(3057);
@@ -268,6 +268,77 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       expect(
         calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
       ).toBe(62000 - 3057);
+    },
+  );
+
+  it(
+    "Should calculate total gross and net family income (2 parents) using the current year income value when present for parent 2 " +
+      "and parent 1 is waived through step-parent appeal.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.appealsStepParentWaiverAppealData = {
+        selectedParent: 10,
+      };
+      assessmentConsolidatedData.studentDataDependantstatus = "dependant";
+      assessmentConsolidatedData.parent1SupportingUserId = 10;
+      assessmentConsolidatedData.parent1CRAReportedIncome = 50000;
+      assessmentConsolidatedData.parent1TotalIncome = 99999;
+      assessmentConsolidatedData.parent1CppEmployment = 500;
+      assessmentConsolidatedData.parent1CppSelfemploymentOther = 200;
+      assessmentConsolidatedData.parent1Ei = 600;
+      assessmentConsolidatedData.parent1Tax = 700;
+      assessmentConsolidatedData.parent1Contributions = 0;
+      assessmentConsolidatedData.parent2SupportingUserId = 20;
+      assessmentConsolidatedData.parent2CRAReportedIncome = 40000;
+      assessmentConsolidatedData.parent2TotalIncome = 99999;
+      assessmentConsolidatedData.parent2CppEmployment = 500;
+      assessmentConsolidatedData.parent2CppSelfemploymentOther = 200;
+      assessmentConsolidatedData.parent2Ei = 600;
+      assessmentConsolidatedData.parent2Tax = 700;
+      assessmentConsolidatedData.parent2Contributions = 0;
+      assessmentConsolidatedData.studentDataVoluntaryContributions = 0;
+      assessmentConsolidatedData.studentDataParents = [
+        {
+          parentIsAbleToReport: YesNoOptions.Yes,
+        },
+        {
+          parentIsAbleToReport: YesNoOptions.Yes,
+          currentYearParentIncome: 12000,
+        },
+      ];
+
+      // Act
+      const calculatedAssessment =
+        await executeFullTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      // Calculated total parent income must be consistent with the current year income when present.
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalParentIncome,
+      ).toBe(12000);
+      // Calculated total parent deductions must combine total CPP, EI and Income Tax.
+      // The deductions for CPP and EI are capped at the maximum for the year.
+      expect(
+        calculatedAssessment.variables.calculatedDataParent1IncomeDeductions,
+      ).toBe(undefined);
+      expect(
+        calculatedAssessment.variables.calculatedDataParent2IncomeDeductions,
+      ).toBe(undefined);
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalParentDeductions,
+      ).toBe(1057);
+      // Calculated total family income should be the gross parent income.
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
+      ).toBe(12000);
+      // Calculated total net family income should be the gross parent income minus the deductions.
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
+      ).toBe(12000 - 1057);
     },
   );
 
