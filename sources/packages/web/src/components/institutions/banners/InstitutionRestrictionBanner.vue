@@ -7,7 +7,7 @@
   />
 </template>
 <script lang="ts">
-import { computed, defineComponent, onMounted } from "vue";
+import { defineComponent, onMounted } from "vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 import { useInstitutionRestrictionState } from "@/composables";
 export default defineComponent({
@@ -29,13 +29,11 @@ export default defineComponent({
   setup(props) {
     const { getEffectiveRestrictionStatus, updateInstitutionRestrictionState } =
       useInstitutionRestrictionState();
-    const effectiveRestrictionStatus = computed(() =>
-      getEffectiveRestrictionStatus(
-        props.locationId,
-        props.programId,
-        props.institutionId,
-      ),
-    );
+    const effectiveRestrictionStatus = getEffectiveRestrictionStatus(() => ({
+      locationId: props.locationId,
+      programId: props.programId,
+      institutionId: props.institutionId,
+    }));
     onMounted(
       async () => await updateInstitutionRestrictionState(props.institutionId),
     );

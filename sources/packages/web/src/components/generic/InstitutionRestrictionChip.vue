@@ -2,7 +2,7 @@
   <chip-label :status="badgeDetails.status" :label="badgeDetails.label" />
 </template>
 <script lang="ts">
-import { computed, defineComponent, onMounted } from "vue";
+import { computed, defineComponent, watchEffect } from "vue";
 import ChipLabel from "@/components/generic/ChipLabel.vue";
 import { useInstitutionRestrictionState, useRestriction } from "@/composables";
 
@@ -18,10 +18,13 @@ export default defineComponent({
     const { updateInstitutionRestrictionState, hasActiveRestriction } =
       useInstitutionRestrictionState();
     const { mapRestrictionBadgeDetails } = useRestriction();
+    const hasRestriction = hasActiveRestriction(() => ({
+      institutionId: props.institutionId,
+    }));
     const badgeDetails = computed(() =>
-      mapRestrictionBadgeDetails(hasActiveRestriction(props.institutionId)),
+      mapRestrictionBadgeDetails(hasRestriction.value),
     );
-    onMounted(async () => {
+    watchEffect(async () => {
       await updateInstitutionRestrictionState(props.institutionId);
     });
     return { badgeDetails };
