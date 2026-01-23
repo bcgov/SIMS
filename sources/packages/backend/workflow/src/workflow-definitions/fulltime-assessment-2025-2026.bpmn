@@ -2397,7 +2397,7 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
           <zeebe:ioMapping>
             <zeebe:input source="=calculatedDataParent1TotalIncome / 12" target="monthlyIncome" />
             <zeebe:output source="=dmnFullTimeParentsIncomeTaxRate" target="calculatedDataParent1TaxRate" />
-            <zeebe:output source="=round half up(studentDataParents[1].currentYearParentIncome * calculatedDataParent1TaxRate,0)" target="calculatedDataParent1EstimatedIncomeDeductions" />
+            <zeebe:output source="=round half up(calculatedDataParent1TotalIncome * calculatedDataParent1TaxRate,0)" target="calculatedDataParent1EstimatedIncomeDeductions" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_1jorfd9</bpmn:incoming>
@@ -2428,7 +2428,7 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
           <zeebe:ioMapping>
             <zeebe:input source="=calculatedDataParent2TotalIncome / 12" target="monthlyIncome" />
             <zeebe:output source="=dmnFullTimeParentsIncomeTaxRate" target="calculatedDataParent2TaxRate" />
-            <zeebe:output source="=round half up(studentDataParents[2].currentYearParentIncome * calculatedDataParent2TaxRate,0)" target="calculatedDataParent2EstimatedIncomeDeductions" />
+            <zeebe:output source="=round half up(calculatedDataParent2TotalIncome * calculatedDataParent2TaxRate,0)" target="calculatedDataParent2EstimatedIncomeDeductions" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_00mbfuq</bpmn:incoming>
@@ -4938,6 +4938,10 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
       <bpmndi:BPMNShape id="BPMNShape_18n1ybq" bpmnElement="Gateway_15onx49">
         <dc:Bounds x="292" y="243" width="50" height="50" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_133o6ep" bpmnElement="Activity_0i6f22s">
+        <dc:Bounds x="590" y="148" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1eg7zx9" bpmnElement="Gateway_0zn0cny" isMarkerVisible="true">
         <dc:Bounds x="412" y="163" width="50" height="50" />
         <bpmndi:BPMNLabel>
@@ -4953,6 +4957,10 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
       <bpmndi:BPMNShape id="BPMNShape_03njh6z" bpmnElement="Event_1c5l0qr">
         <dc:Bounds x="909" y="250" width="36" height="36" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0pikl8h" bpmnElement="Activity_0mjsezc">
+        <dc:Bounds x="590" y="328" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0u3uedd" bpmnElement="Gateway_09wstv9" isMarkerVisible="true">
         <dc:Bounds x="412" y="343" width="50" height="50" />
         <bpmndi:BPMNLabel>
@@ -4961,6 +4969,12 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0equkrf" bpmnElement="Gateway_0hxlh9y" isMarkerVisible="true">
         <dc:Bounds x="722" y="343" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0za2wdw" bpmnElement="Event_0sjmtg8">
+        <dc:Bounds x="522" y="430" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="511" y="479" width="59" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_13k1rpk" bpmnElement="Event_0yefgn7">
         <dc:Bounds x="522" y="80" width="36" height="36" />
@@ -4974,24 +4988,10 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
           <dc:Bounds x="506" y="213" width="69" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0pikl8h" bpmnElement="Activity_0mjsezc">
-        <dc:Bounds x="590" y="328" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1ynuvjr" bpmnElement="Event_1rmxf0z">
         <dc:Bounds x="522" y="350" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="506" y="393" width="69" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_133o6ep" bpmnElement="Activity_0i6f22s">
-        <dc:Bounds x="590" y="148" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0za2wdw" bpmnElement="Event_0sjmtg8">
-        <dc:Bounds x="522" y="430" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="511" y="479" width="59" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_024wclr" bpmnElement="Flow_0vaf3t5">
