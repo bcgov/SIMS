@@ -121,6 +121,5 @@ export interface InstitutionActiveRestrictionAPIOutDTO {
  * Active institution restrictions.
  */
 export interface InstitutionActiveRestrictionsAPIOutDTO {
-  institutionId: number;
   items: InstitutionActiveRestrictionAPIOutDTO[];
 }

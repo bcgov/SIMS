@@ -16,12 +16,14 @@ export default defineComponent({
   },
   setup(props) {
     const { updateInstitutionRestrictionState, hasActiveRestriction } =
-      useInstitutionRestrictionState(props.institutionId);
+      useInstitutionRestrictionState();
     const { mapRestrictionBadgeDetails } = useRestriction();
     const badgeDetails = computed(() =>
-      mapRestrictionBadgeDetails(hasActiveRestriction.value),
+      mapRestrictionBadgeDetails(hasActiveRestriction(props.institutionId)),
     );
-    onMounted(updateInstitutionRestrictionState);
+    onMounted(async () => {
+      await updateInstitutionRestrictionState(props.institutionId);
+    });
     return { badgeDetails };
   },
 });

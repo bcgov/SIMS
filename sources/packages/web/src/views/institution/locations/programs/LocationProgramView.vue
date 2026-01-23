@@ -68,9 +68,8 @@ export default defineComponent({
     const { isReadOnlyUser } = useInstitutionAuth();
     const { getEffectiveRestrictionStatus } = useInstitutionRestrictionState();
     const educationProgram = ref({} as EducationProgramAPIOutDTO);
-    const effectiveRestrictionStatus = getEffectiveRestrictionStatus(
-      props.locationId,
-      props.programId,
+    const effectiveRestrictionStatus = computed(() =>
+      getEffectiveRestrictionStatus(props.locationId, props.programId),
     );
     const getEducationProgramAndOffering = async () => {
       educationProgram.value =

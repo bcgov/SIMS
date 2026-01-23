@@ -178,7 +178,6 @@ export class InstitutionActiveRestrictionAPIOutDTO {
  * Active institution restrictions.
  */
 export class InstitutionActiveRestrictionsAPIOutDTO {
-  institutionId: number;
   items: InstitutionActiveRestrictionAPIOutDTO[];
 }
 

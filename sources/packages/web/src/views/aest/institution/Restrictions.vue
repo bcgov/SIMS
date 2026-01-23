@@ -132,7 +132,7 @@ export default defineComponent({
     const { dateOnlyLongString, conditionalEmptyStringFiller } =
       useFormatters();
     const { updateInstitutionRestrictionState } =
-      useInstitutionRestrictionState(props.institutionId);
+      useInstitutionRestrictionState();
     const showModal = ref(false);
     const viewRestriction = ref({} as ModalDialog<RestrictionDetail | false>);
     const addRestriction = ref(
@@ -156,7 +156,7 @@ export default defineComponent({
       // Reload restrictions and update institution restriction state.
       await Promise.all([
         loadInstitutionRestrictions(),
-        updateInstitutionRestrictionState(),
+        updateInstitutionRestrictionState(props.institutionId),
       ]);
     };
 

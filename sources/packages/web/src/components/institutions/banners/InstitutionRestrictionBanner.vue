@@ -1,13 +1,13 @@
 <template>
   <banner
-    v-if="hasEffectiveRestrictionStatus.hasEffectiveRestriction"
+    v-if="effectiveRestrictionStatus.hasEffectiveRestriction"
     class="my-2"
     :type="BannerTypes.Error"
     header="This program is currently restricted"
   />
 </template>
 <script lang="ts">
-import { defineComponent, onMounted } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 import { useInstitutionRestrictionState } from "@/composables";
 export default defineComponent({
@@ -28,15 +28,20 @@ export default defineComponent({
   },
   setup(props) {
     const { getEffectiveRestrictionStatus, updateInstitutionRestrictionState } =
-      useInstitutionRestrictionState(props.institutionId);
-    const hasEffectiveRestrictionStatus = getEffectiveRestrictionStatus(
-      props.locationId,
-      props.programId,
+      useInstitutionRestrictionState();
+    const effectiveRestrictionStatus = computed(() =>
+      getEffectiveRestrictionStatus(
+        props.locationId,
+        props.programId,
+        props.institutionId,
+      ),
     );
-    onMounted(updateInstitutionRestrictionState);
+    onMounted(
+      async () => await updateInstitutionRestrictionState(props.institutionId),
+    );
     return {
       BannerTypes,
-      hasEffectiveRestrictionStatus,
+      effectiveRestrictionStatus,
     };
   },
 });
