@@ -142,12 +142,16 @@ export class AssessmentControllerService {
       assessment.workflowData.calculatedData.interfaceNeed;
     assessmentDTO.studentDataGovernmentFundingCosts =
       assessment.workflowData.studentData.governmentFundingCosts;
-    assessmentDTO.calculatedDataInterfaceTotalAssessedCost =
+    const interfaceTotalAssessedCost =
       assessment.workflowData.calculatedData.interfaceEducationCosts +
       assessment.workflowData.calculatedData.interfaceChildCareCosts +
       assessment.workflowData.calculatedData.interfaceTransportationAmount +
       assessment.workflowData.calculatedData
         .interfaceAdditionalTransportationAmount;
+    if (interfaceTotalAssessedCost != null) {
+      assessmentDTO.calculatedDataInterfaceTotalAssessedCost =
+        interfaceTotalAssessedCost;
+    }
 
     return {
       assessment: assessmentDTO,
