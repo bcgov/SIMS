@@ -34,14 +34,6 @@
       "lockKey": true
     },
     {
-      "label": "Calculated Data Interface Policy Applies",
-      "persistent": false,
-      "key": "calculatedDataInterfacePolicyApplies",
-      "type": "hidden",
-      "input": true,
-      "tableView": false
-    },
-    {
       "input": true,
       "components": [
         {
@@ -562,7 +554,7 @@
               "collapsible": false,
               "hideLabel": true,
               "key": "panel5",
-              "customConditional": "show = data.offeringIntensity === \"Full Time\" && data.calculatedDataInterfacePolicyApplies !== \"yes\";",
+              "customConditional": "show = data.offeringIntensity === \"Full Time\" && !data.assessment?.calculatedDataInterfacePolicyApplies;",
               "type": "panel",
               "label": "Panel",
               "input": false,
@@ -2288,7 +2280,7 @@
               "collapsible": false,
               "hideLabel": true,
               "key": "panel2",
-              "customConditional": "show = data.offeringIntensity === \"Full Time\" && data.assessment?.calculatedDataInterfacePolicyApplies === \"yes\";",
+              "customConditional": "show = data.offeringIntensity === \"Full Time\" && data.assessment?.calculatedDataInterfacePolicyApplies;",
               "type": "panel",
               "label": "Panel",
               "input": false,
@@ -2319,7 +2311,7 @@
                   "condensed": true,
                   "key": "table6",
                   "type": "table",
-                  "numRows": 9,
+                  "numRows": 10,
                   "input": false,
                   "tableView": false,
                   "rows": [
@@ -2797,7 +2789,7 @@
                             "persistent": false,
                             "inputFormat": "html",
                             "clearOnHide": false,
-                            "calculateValue": "var interfaceTotalAssessedCosts = \n  (data.assessment?.calculatedDataInterfaceEducationCosts || 0) + \n  (data.assessment?.calculatedDataInterfaceChildCareCosts || 0) + \n  (data.assessment?.calculatedDataInterfaceTransportationAmount || 0) + \n  (data.assessment?.calculatedDataInterfaceAdditionalTransportationAmount || 0);\nvalue = utils.custom.currencyFormatter(interfaceTotalAssessedCosts, '(Not eligible)');",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.calculatedDataInterfaceTotalAssessedCost, '(Not eligible)');",
                             "validateWhenHidden": false,
                             "key": "table2Text50",
                             "type": "textfield",
@@ -2819,9 +2811,74 @@
                             "persistent": false,
                             "inputFormat": "html",
                             "clearOnHide": false,
-                            "calculateValue": "var interfaceTotalAssessedCosts = \n  (data.assessment?.calculatedDataInterfaceEducationCosts || 0) + \n  (data.assessment?.calculatedDataInterfaceChildCareCosts || 0) + \n  (data.assessment?.calculatedDataInterfaceTransportationAmount || 0) + \n  (data.assessment?.calculatedDataInterfaceAdditionalTransportationAmount || 0);\nvalue = utils.custom.currencyFormatter(interfaceTotalAssessedCosts, '(Not eligible)');",
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.calculatedDataInterfaceTotalAssessedCost, '(Not eligible)');",
                             "validateWhenHidden": false,
                             "key": "table2Text51",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "Targeted resources",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "Targeted resources",
+                            "refreshOnChange": false,
+                            "key": "targetedResources",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "hideOnChildrenHidden": false,
+                            "tag": "p"
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.studentDataGovernmentFundingCosts, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "targetedResourcesFederal",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.studentDataGovernmentFundingCosts, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "targetedResourcesProvincial",
                             "type": "textfield",
                             "input": true,
                             "isNew": false

@@ -129,6 +129,26 @@ export class AssessmentControllerService {
     assessmentDTO.calculatedDataLivingCategory =
       assessment.workflowData.dmnValues?.livingCategory;
 
+    // Set interface policy related calculated data.
+    assessmentDTO.calculatedDataInterfacePolicyApplies =
+      assessment.workflowData.calculatedData.interfacePolicyApplies;
+    assessmentDTO.calculatedDataInterfaceChildCareCosts =
+      assessment.workflowData.calculatedData.interfaceChildCareCosts;
+    assessmentDTO.calculatedDataInterfaceTransportationAmount =
+      assessment.workflowData.calculatedData.interfaceTransportationAmount;
+    assessmentDTO.calculatedDataInterfaceAdditionalTransportationAmount =
+      assessment.workflowData.calculatedData.interfaceAdditionalTransportationAmount;
+    assessmentDTO.calculatedDataInterfaceNeed =
+      assessment.workflowData.calculatedData.interfaceNeed;
+    assessmentDTO.studentDataGovernmentFundingCosts =
+      assessment.workflowData.studentData.governmentFundingCosts;
+    assessmentDTO.calculatedDataInterfaceTotalAssessedCost =
+      assessment.workflowData.calculatedData.interfaceEducationCosts +
+      assessment.workflowData.calculatedData.interfaceChildCareCosts +
+      assessment.workflowData.calculatedData.interfaceTransportationAmount +
+      assessment.workflowData.calculatedData
+        .interfaceAdditionalTransportationAmount;
+
     return {
       assessment: assessmentDTO,
       applicationId: assessment.application.id,
