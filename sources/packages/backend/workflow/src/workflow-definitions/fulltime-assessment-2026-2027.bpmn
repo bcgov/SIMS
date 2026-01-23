@@ -155,7 +155,11 @@ dmnFullTimeIncomeThreshold</bpmn:text>
     <bpmn:association id="Association_0dshwlo" sourceRef="Activity_08reh45" targetRef="TextAnnotation_124efbc" />
     <bpmn:textAnnotation id="TextAnnotation_0acv2yp">
       <bpmn:text>calculatedDataParent1TotalIncome
-calculatedDataParent2TotalIncome</bpmn:text>
+calculatedDataParent2TotalIncome
+
+If CY Income Exception:
+calculatedDataParent2EstimatedIncomeDeductions
+calculatedDataParent1TaxRate</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_013h80t" associationDirection="None" sourceRef="Activity_17g355h" targetRef="TextAnnotation_0acv2yp" />
   </bpmn:collaboration>
@@ -4640,8 +4644,8 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
         <di:waypoint x="804" y="458" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_013h80t_di" bpmnElement="Association_013h80t">
-        <di:waypoint x="1260" y="351" />
-        <di:waypoint x="1239" y="270" />
+        <di:waypoint x="1261" y="351" />
+        <di:waypoint x="1235" y="240" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_0lerduq_di" bpmnElement="Group_0lerduq">
         <dc:Bounds x="5200" y="1180" width="870" height="760" />
@@ -4918,7 +4922,7 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
         <di:waypoint x="2918" y="474" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="TextAnnotation_0acv2yp_di" bpmnElement="TextAnnotation_0acv2yp">
-        <dc:Bounds x="1180" y="220" width="210" height="50" />
+        <dc:Bounds x="1165" y="140" width="305" height="100" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
@@ -5033,6 +5037,11 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
         <di:waypoint x="685" y="188" />
         <di:waypoint x="722" y="188" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nl81b8_di" bpmnElement="Flow_1nl81b8">
+        <di:waypoint x="685" y="98" />
+        <di:waypoint x="747" y="98" />
+        <di:waypoint x="747" y="163" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1h86ykx" bpmnElement="Flow_0siqrfp">
         <di:waypoint x="772" y="188" />
         <di:waypoint x="827" y="188" />
@@ -5074,11 +5083,6 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
         <di:waypoint x="685" y="448" />
         <di:waypoint x="747" y="448" />
         <di:waypoint x="747" y="393" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1nl81b8_di" bpmnElement="Flow_1nl81b8">
-        <di:waypoint x="685" y="98" />
-        <di:waypoint x="747" y="98" />
-        <di:waypoint x="747" y="163" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
