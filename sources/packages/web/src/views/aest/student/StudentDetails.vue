@@ -3,16 +3,12 @@
     <template #header>
       <header-navigator
         title="Student Details"
-        :subTitle="studentDetails.fullName"
+        :sub-title="studentDetails.fullName"
       >
         <template #sub-title-details>
           <student-restriction-chip
-            class="ml-4 mt-1"
-            :status="
-              studentDetails.hasRestriction
-                ? StudentRestrictionStatus.Restriction
-                : StudentRestrictionStatus.NoRestriction
-            "
+            class="mx-4"
+            :has-active-restriction="studentDetails.hasRestriction"
           />
         </template>
       </header-navigator>
@@ -40,7 +36,6 @@ import { onMounted, ref, defineComponent } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StudentRestrictionChip from "@/components/generic/StudentRestrictionChip.vue";
-import { StudentRestrictionStatus } from "@/types";
 import { AESTStudentProfileAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
@@ -129,7 +124,6 @@ export default defineComponent({
     return {
       items,
       studentDetails,
-      StudentRestrictionStatus,
     };
   },
 });

@@ -48,9 +48,9 @@ export enum RestrictionNotificationType {
 }
 
 /**
- *  Student restriction badge.
+ *  Restriction badge label.
  */
-export enum StudentRestrictionStatus {
+export enum RestrictionBadgeLabel {
   NoRestriction = "No restrictions",
   Restriction = "Active restrictions",
 }

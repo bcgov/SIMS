@@ -427,7 +427,13 @@ export const aestRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.InstitutionDetail,
         name: AESTRoutesConst.INSTITUTION_DETAILS,
-        props: true,
+        props: {
+          default: (route) => ({
+            institutionId: Number.parseInt(
+              route.params.institutionId as string,
+            ),
+          }),
+        },
         components: {
           default: InstitutionDetails,
           sidebar: AESTHomeSideBar,
@@ -484,7 +490,11 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           {
             path: AppRoutes.Restrictions,
             name: AESTRoutesConst.INSTITUTION_RESTRICTIONS,
-            props: true,
+            props: (route) => ({
+              institutionId: Number.parseInt(
+                route.params.institutionId as string,
+              ),
+            }),
             component: Restrictions,
             meta: {
               clientType: ClientIdType.AEST,
