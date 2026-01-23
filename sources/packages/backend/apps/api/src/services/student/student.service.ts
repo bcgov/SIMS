@@ -639,6 +639,7 @@ export class StudentService extends RecordDataModelService<Student> {
       lastName?: string;
       appNumber?: string;
       sin?: string;
+      email?: string;
     },
     institutionId?: number,
   ): Promise<Student[]> {
@@ -699,6 +700,11 @@ export class StudentService extends RecordDataModelService<Student> {
     if (searchCriteria.appNumber) {
       searchQuery.andWhere("application.applicationNumber Ilike :appNumber", {
         appNumber: `%${searchCriteria.appNumber}%`,
+      });
+    }
+    if (searchCriteria.email) {
+      searchQuery.andWhere("user.email = :email", {
+        email: searchCriteria.email,
       });
     }
     return searchQuery.getMany();

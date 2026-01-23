@@ -3,8 +3,18 @@
     <content-group class="mb-8">
       <v-row>
         <v-col cols="12" lg="11">
-          <v-row
-            ><v-col cols="12" lg="3">
+          <v-row>
+            <v-col cols="12" lg="3">
+              <v-text-field
+                label="Email address"
+                density="compact"
+                variant="outlined"
+                v-model.trim="email"
+                @keyup.enter="searchStudents"
+                hide-details
+              />
+            </v-col>
+            <v-col cols="12" lg="3">
               <v-text-field
                 label="Application number"
                 density="compact"
@@ -143,9 +153,14 @@ export default defineComponent({
     const lastName = ref("");
     const students = ref([] as SearchStudentAPIOutDTO[]);
     const sin = ref("");
+    const email = ref("");
     const isValidSearch = () => {
       const hasNoInput =
-        !appNumber.value && !firstName.value && !sin.value && !lastName.value;
+        !appNumber.value &&
+        !firstName.value &&
+        !sin.value &&
+        !lastName.value &&
+        !email.value;
       if (hasNoInput) {
         return "Please provide at least one search parameter.";
       }
@@ -164,6 +179,7 @@ export default defineComponent({
         firstName: firstName.value,
         lastName: lastName.value,
         sin: sin.value,
+        email: email.value,
       };
       students.value = await StudentService.shared.searchStudents(payload);
       if (students.value.length === 0) {
@@ -179,6 +195,7 @@ export default defineComponent({
       appNumber,
       firstName,
       lastName,
+      email,
       studentsFound,
       searchStudents,
       students,

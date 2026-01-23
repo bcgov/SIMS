@@ -64,6 +64,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       firstName: "",
       lastName: "",
       sin: "",
+      email: "",
     };
 
     // Act/Assert
@@ -93,6 +94,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       firstName: "",
       lastName: student.user.lastName,
       sin: "",
+      email: "",
     };
 
     // Act/Assert
@@ -130,6 +132,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       firstName: "",
       lastName: "EF1C3BD5-4E8D-4AC4-ADCB-3507A1CC7D43",
       sin: "",
+      email: "",
     };
 
     // Act/Assert
@@ -159,6 +162,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       firstName: student.user.firstName,
       lastName: "",
       sin: "",
+      email: "",
     };
 
     // Act/Assert
@@ -195,6 +199,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       firstName: "77B83122-35A9-4492-8A27-C1E5CF4514CF",
       lastName: "",
       sin: "",
+      email: "",
     };
 
     // Act/Assert
@@ -224,6 +229,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       firstName: "",
       lastName: "",
       sin: student.sinValidation.sin,
+      email: "",
     };
 
     // Act/Assert
@@ -257,6 +263,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       firstName: "",
       lastName: "",
       sin: "",
+      email: "",
     };
 
     // Act/Assert
@@ -277,6 +284,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       firstName: "",
       lastName: "",
       sin: "",
+      email: "",
     };
 
     // Act/Assert
@@ -308,6 +316,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       firstName: "",
       lastName: "",
       sin: "",
+      email: "",
     };
 
     // Act/Assert
@@ -337,6 +346,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       firstName: "",
       lastName: "",
       sin: "",
+      email: "",
     };
 
     // Act/Assert
@@ -358,6 +368,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       firstName: "",
       lastName: "",
       sin: "",
+      email: "",
     };
 
     // Act/Assert
@@ -376,6 +387,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       firstName: "",
       lastName: "search last name",
       sin: "",
+      email: "",
     };
 
     // College C is not a BC Public institution.
@@ -394,6 +406,37 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
         message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
         error: "Forbidden",
       });
+  });
+
+  it("Should find the student by email address when there is an exact match.", async () => {
+    // Arrange
+    const { student, application } =
+      await saveStudentWithApplicationForCollegeF(ApplicationStatus.Submitted);
+    student.user.email = "student@collegef.com";
+    await studentRepo.save(student);
+    const searchPayload = {
+      appNumber: application.applicationNumber,
+      firstName: "",
+      lastName: "",
+      sin: "",
+      email: "student@collegef.com",
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(searchPayload)
+      .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect([
+        {
+          id: student.id,
+          firstName: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: student.birthDate,
+          sin: student.sinValidation.sin,
+        },
+      ]);
   });
 
   /**
