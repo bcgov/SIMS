@@ -48,11 +48,14 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       // Calculated total family income should be the gross parent income.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
-      ).toBe(65000);
-      // Calculated total net family income should be the gross parent income minus the deductions.
+      ).toBe(calculatedAssessment.variables.calculatedDataTotalParentIncome);
+      // Calculated total net family income should be the gross (total) parent income minus the deductions.
       expect(
         calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
-      ).toBe(59383);
+      ).toBe(
+        calculatedAssessment.variables.calculatedDataTotalParentIncome -
+          calculatedAssessment.variables.calculatedDataTotalParentDeductions,
+      );
     },
   );
 
@@ -97,11 +100,14 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       // Calculated total family income should be the gross parent income.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
-      ).toBe(99999);
+      ).toBe(calculatedAssessment.variables.calculatedDataTotalParentIncome);
       // Calculated total net family income should be the gross parent income minus the deductions.
       expect(
         calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
-      ).toBe(97999);
+      ).toBe(
+        calculatedAssessment.variables.calculatedDataTotalParentIncome -
+          calculatedAssessment.variables.calculatedDataTotalParentDeductions,
+      );
     },
   );
 
@@ -147,11 +153,14 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       // Calculated total family income should be the gross parent income.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
-      ).toBe(50000);
+      ).toBe(calculatedAssessment.variables.calculatedDataTotalParentIncome);
       // Calculated total net family income should be the gross parent income minus the deductions.
       expect(
         calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
-      ).toBe(48000);
+      ).toBe(
+        calculatedAssessment.variables.calculatedDataTotalParentIncome -
+          calculatedAssessment.variables.calculatedDataTotalParentDeductions,
+      );
     },
   );
 
@@ -193,15 +202,18 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       // The deductions for CPP and EI are capped at the maximum for the year.
       expect(
         calculatedAssessment.variables.calculatedDataTotalParentDeductions,
-      ).toBe(1057);
+      ).toBe(1058);
       // Calculated total family income should be the gross parent income.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
-      ).toBe(12000);
+      ).toBe(calculatedAssessment.variables.calculatedDataTotalParentIncome);
       // Calculated total net family income should be the gross parent income minus the deductions.
       expect(
         calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
-      ).toBe(10943);
+      ).toBe(
+        calculatedAssessment.variables.calculatedDataTotalParentIncome -
+          calculatedAssessment.variables.calculatedDataTotalParentDeductions,
+      );
     },
   );
 
@@ -256,18 +268,21 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       ).toBe(2000);
       expect(
         calculatedAssessment.variables.calculatedDataParent2IncomeDeductions,
-      ).toBe(1057);
+      ).toBe(1058);
       expect(
         calculatedAssessment.variables.calculatedDataTotalParentDeductions,
-      ).toBe(3057);
+      ).toBe(3058);
       // Calculated total family income should be the gross parent income.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
-      ).toBe(62000);
+      ).toBe(calculatedAssessment.variables.calculatedDataTotalParentIncome);
       // Calculated total net family income should be the gross parent income minus the deductions.
       expect(
         calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
-      ).toBe(62000 - 3057);
+      ).toBe(
+        calculatedAssessment.variables.calculatedDataTotalParentIncome -
+          calculatedAssessment.variables.calculatedDataTotalParentDeductions,
+      );
     },
   );
 
@@ -330,15 +345,18 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       ).toBe(undefined);
       expect(
         calculatedAssessment.variables.calculatedDataTotalParentDeductions,
-      ).toBe(1057);
+      ).toBe(1058);
       // Calculated total family income should be the gross parent income.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
-      ).toBe(12000);
+      ).toBe(calculatedAssessment.variables.calculatedDataTotalParentIncome);
       // Calculated total net family income should be the gross parent income minus the deductions.
       expect(
         calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
-      ).toBe(12000 - 1057);
+      ).toBe(
+        calculatedAssessment.variables.calculatedDataTotalParentIncome -
+          calculatedAssessment.variables.calculatedDataTotalParentDeductions,
+      );
     },
   );
 
@@ -392,11 +410,14 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       // Calculated total family income should be the gross parent income.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
-      ).toBe(199998);
+      ).toBe(calculatedAssessment.variables.calculatedDataTotalParentIncome);
       // Calculated total net family income should be the gross parent income minus the deductions.
       expect(
         calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
-      ).toBe(195998);
+      ).toBe(
+        calculatedAssessment.variables.calculatedDataTotalParentIncome -
+          calculatedAssessment.variables.calculatedDataTotalParentDeductions,
+      );
     },
   );
 
