@@ -7,8 +7,10 @@ ADD
 
 COMMENT ON COLUMN sims.dynamic_form_configurations.form_category IS 'Indicates the category of the form.';
 
-COMMENT ON COLUMN sims.dynamic_form_configurations.form_submission_grouping_type IS 'Indicates how the form submissions are grouped, such as part of an application bundle, standalone application, or standalone student form.';
+COMMENT ON COLUMN sims.dynamic_form_configurations.form_submission_grouping_type IS 'Indicates how the form submissions are grouped, such as part of an application bundle or standalone student form.';
 
+-- Insert new dynamic form configurations with appropriate categories and grouping types
+-- for existing appeals and the new 'Non-punitive withdrawal' form.
 INSERT INTO
     sims.dynamic_form_configurations (
         form_type,
