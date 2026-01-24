@@ -154,7 +154,7 @@ export type AssessmentAPIOutDTO = Omit<Assessment, "totalFamilyIncome"> & {
   /**
    * Interface total assessed cost calculated by the workflow.
    */
-  calculatedDataInterfaceTotalAssessedCost?: number;
+  interfaceTotalAssessedCost?: number;
 };
 
 export class AssessmentNOAAPIOutDTO {
