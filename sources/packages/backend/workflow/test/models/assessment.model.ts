@@ -382,6 +382,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataStudentTotalIncome: number;
   calculatedDataCurrentYearPartnerIncome: number;
   partner1CRAReportedIncome?: number;
+  studentDataGovernmentFundingCosts?: number;
   calculatedDataPartnerBCEAIncomeAssistanceAmount?: number;
   calculatedDataInterfacePolicyApplies: boolean;
   calculatedDataInterfaceEducationCosts?: number;
@@ -511,7 +512,7 @@ export interface CalculatedAssessmentModel {
   };
   // DMN Full Time Program Year Maximums
   dmnFullTimeProgramYearMaximums?: {
-    limitWeeklytransportationAllowance: number;
+    limitWeeklyTransportationAllowance: number;
   };
   // Disbursement schedules
   disbursementSchedules: Array<unknown>;

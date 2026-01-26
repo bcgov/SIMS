@@ -140,7 +140,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
     ).toBe(true);
   });
 
-  it("Should apply interface policy need when a single student qualifies for interface policy.", async () => {
+  it("Should calculate interface policy need when a single student qualifies for interface policy.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeAssessmentConsolidatedData(PROGRAM_YEAR);
@@ -158,6 +158,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
     ).toBe(true);
 
     // Education costs for interface policy is the sum of exceptional expenses, tuition and book costs.
+    // No additional transformation or validation beyond what was already calculated for each individual value.
     expect(
       calculatedAssessment.variables.calculatedDataInterfaceEducationCosts,
     ).toBe(
@@ -167,19 +168,33 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
     );
 
     // Non-educational costs for interface policy include child care costs, transportation and additional transportation costs.
+    // No additional transformation or validation beyond what was already calculated for each individual value.
     expect(
       calculatedAssessment.variables.calculatedDataInterfaceChildCareCosts,
     ).toBe(calculatedAssessment.variables.calculatedDataTotalChildCareCost);
+
     // No additional transportation requested, so amount is $0.
     expect(
       calculatedAssessment.variables
         .calculatedDataInterfaceAdditionalTransportationAmount,
     ).toBe(0);
+
     // Transportation costs calculation: 16 weeks * $13 (amount per week).
     expect(
       calculatedAssessment.variables
         .calculatedDataInterfaceTransportationAmount,
-    ).toBe(13 * 16);
+    ).toBe(16 * 13);
+
+    // Total interface need calculation.
+    expect(calculatedAssessment.variables.calculatedDataInterfaceNeed).toBe(
+      calculatedAssessment.variables.calculatedDataInterfaceEducationCosts +
+        calculatedAssessment.variables.calculatedDataInterfaceChildCareCosts +
+        calculatedAssessment.variables
+          .calculatedDataInterfaceTransportationAmount +
+        calculatedAssessment.variables
+          .calculatedDataInterfaceAdditionalTransportationAmount -
+        calculatedAssessment.variables.studentDataGovernmentFundingCosts,
+    );
   });
 
   afterAll(async () => {
