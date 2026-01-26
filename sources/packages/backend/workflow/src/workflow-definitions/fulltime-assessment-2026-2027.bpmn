@@ -84,9 +84,9 @@ OUT
 limitWeeklyChildCare
 limitWeeklyAlimonyChildSupport
 limitWeeklySecondResidence
-limitWeeklyTransportationAllownace
-limitWeeklyCPPperParent
-limitWeeklyEIPerParent</bpmn:text>
+limitWeeklyTransportationAllowance
+limitParentCPPAmount
+limitParentEIAmount</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_1myp6tg">
       <bpmn:text>partner1CalculatedTotalIncome
