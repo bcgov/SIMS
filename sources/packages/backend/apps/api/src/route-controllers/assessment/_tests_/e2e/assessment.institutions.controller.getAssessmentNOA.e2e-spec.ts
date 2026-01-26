@@ -178,7 +178,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
       });
   });
 
-  it("Should return interface policy properties when interface policy applies to full time application.", async () => {
+  it("Should return interface policy properties when interface policy applies to full-time application.", async () => {
     // Arrange
     const [enrolmentDate1, enrolmentDate2] = [addDays(1), addDays(30)];
     const [statusUpdatedOn1, statusUpdatedOn2] = [addDays(2), addDays(31)];
