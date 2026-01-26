@@ -17,7 +17,7 @@
     "@formio/js": "^5.0.2",
     "@mdi/font": "^7.4.47",
     "@mdi/js": "^7.4.47",
-    "axios": "^1.13.2",
+    "axios": "^1.13.3",
     "bootstrap": "^5.3.6",
     "bootstrap-icons": "^1.10.5",
     "class-transformer": "^0.5.1",
