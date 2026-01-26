@@ -14,7 +14,7 @@
       </header-navigator>
     </template>
     <template #tab-header>
-      <v-tabs stacked grow show-arrows="always">
+      <v-tabs color="primary" stacked grow show-arrows="always">
         <v-tab
           v-for="item in items"
           :text="item.label"
