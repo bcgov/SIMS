@@ -14,17 +14,16 @@
       </header-navigator>
     </template>
     <template #tab-header>
-      <v-tabs stacked color="primary"
-        ><v-tab
+      <v-tabs stacked grow show-arrows="always">
+        <v-tab
           v-for="item in items"
+          :text="item.label"
           :key="item.label"
           :to="item.command()"
+          :prepend-icon="item.icon"
           :ripple="false"
-          ><div>
-            <v-icon start :icon="item.icon" class="px-1"></v-icon>
-            <span class="mx-2 label-bold"> {{ item.label }} </span>
-          </div>
-        </v-tab>
+          class="font-weight-bold"
+        />
       </v-tabs>
     </template>
     <router-view />
