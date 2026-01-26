@@ -213,8 +213,8 @@
                 "value": "dqab"
               },
               {
-                "label": "PTIB",
-                "value": "ptib"
+                "label": "PTIRU",
+                "value": "ptiru"
               },
               {
                 "label": "Skilled Trades BC",
@@ -234,6 +234,7 @@
             "required": true,
             "onlyAvailableItems": true
           },
+          "validateWhenHidden": false,
           "key": "regulatingBody",
           "attributes": {
             "data-cy": "regulatingBody"
