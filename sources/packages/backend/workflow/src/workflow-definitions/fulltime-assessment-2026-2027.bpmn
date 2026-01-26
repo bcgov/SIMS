@@ -814,7 +814,7 @@ calculatedDataParent1TaxRate</bpmn:text>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=calculatedDataTotalChildCareCost" target="calculatedDataInterfaceChildCareCosts" />
-          <zeebe:output source="=dmnFullTimeProgramYearMaximums.limitWeeklytransportationAllowance*offeringWeeks" target="calculatedDataInterfaceTransportationAmount" />
+          <zeebe:output source="=dmnFullTimeProgramYearMaximums.limitWeeklyTransportationAllowance*offeringWeeks" target="calculatedDataInterfaceTransportationAmount" />
           <zeebe:output source="=// This may not be calculated (resulting in a null value) if the student did not request it.&#10;if calculatedDataTotalAdditionalTransportationAllowance = null&#10;then 0&#10;else &#10;  calculatedDataTotalAdditionalTransportationAllowance" target="calculatedDataInterfaceAdditionalTransportationAmount" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
