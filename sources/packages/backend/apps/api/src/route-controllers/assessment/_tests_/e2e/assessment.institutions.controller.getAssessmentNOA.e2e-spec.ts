@@ -22,9 +22,11 @@ import {
 import {
   AssessmentStatus,
   DisbursementSchedule,
+  FormYesNoOptions,
   Institution,
   InstitutionLocation,
   OfferingIntensity,
+  RelationshipStatus,
 } from "@sims/sims-db";
 import { MASKED_MSFAA_NUMBER } from "../../../../../src/services";
 import { saveStudentApplicationForCollegeC } from "../../../student/_tests_/e2e/student.institutions.utils";
@@ -120,6 +122,167 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
           totalFamilyIncome: "XXXXX",
           studentDataDependantstatus: "dependant",
           calculatedDataFamilySize: 2,
+        },
+        disbursement: {
+          disbursement1COEStatus: firstDisbursementSchedule.coeStatus,
+          disbursement1Date: getDateOnlyFullMonthFormat(
+            firstDisbursementSchedule.disbursementDate,
+          ),
+          disbursement1Id: firstDisbursementSchedule.id,
+          disbursement1StatusUpdatedOn: statusUpdatedOn1.toISOString(),
+          disbursement1MSFAACancelledDate:
+            firstDisbursementSchedule.msfaaNumber?.cancelledDate,
+          disbursement1MSFAADateSigned:
+            firstDisbursementSchedule.msfaaNumber?.dateSigned,
+          disbursement1MSFAAId: firstDisbursementSchedule.msfaaNumber?.id,
+          disbursement1MSFAANumber: MASKED_MSFAA_NUMBER,
+          disbursement1Status:
+            firstDisbursementSchedule.disbursementScheduleStatus,
+          disbursement1TuitionRemittance:
+            firstDisbursementSchedule.tuitionRemittanceRequestedAmount,
+          ...firstDisbursementScheduleAwards,
+          disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
+          disbursement2COEStatus: secondDisbursementSchedule.coeStatus,
+          disbursement2Date: getDateOnlyFullMonthFormat(
+            secondDisbursementSchedule.disbursementDate,
+          ),
+          disbursement2Id: secondDisbursementSchedule.id,
+          disbursement2StatusUpdatedOn: statusUpdatedOn2.toISOString(),
+          disbursement2MSFAACancelledDate:
+            secondDisbursementSchedule.msfaaNumber?.cancelledDate,
+          disbursement2MSFAADateSigned:
+            secondDisbursementSchedule.msfaaNumber?.dateSigned,
+          disbursement2MSFAAId: secondDisbursementSchedule.msfaaNumber?.id,
+          disbursement2MSFAANumber: MASKED_MSFAA_NUMBER,
+          disbursement2Status:
+            secondDisbursementSchedule.disbursementScheduleStatus,
+          disbursement2TuitionRemittance:
+            secondDisbursementSchedule.tuitionRemittanceRequestedAmount,
+          ...secondDisbursementScheduleAwards,
+          disbursement2EnrolmentDate: enrolmentDate2.toISOString(),
+        },
+        eligibleAmount: 2,
+        fullName: getUserFullName(application.student.user),
+        locationName: assessment.offering.institutionLocation.name,
+        noaApprovalStatus: assessment.noaApprovalStatus,
+        applicationCurrentAssessmentId: application.currentAssessment.id,
+        offeringIntensity: assessment.offering.offeringIntensity,
+        offeringStudyEndDate: getDateOnlyFullMonthFormat(
+          assessment.offering.studyEndDate,
+        ),
+        offeringStudyStartDate: getDateOnlyFullMonthFormat(
+          assessment.offering.studyStartDate,
+        ),
+        programName: assessment.offering.educationProgram.name,
+        offeringName: assessment.offering.name,
+      });
+  });
+
+  it("Should return interface policy properties when interface policy applies to full-time application.", async () => {
+    // Arrange
+    const [enrolmentDate1, enrolmentDate2] = [addDays(1), addDays(30)];
+    const [statusUpdatedOn1, statusUpdatedOn2] = [addDays(2), addDays(31)];
+    // Student has an application to the institution eligible for NOA.
+    const student = await saveFakeStudent(db.dataSource);
+
+    const currentMSFAA = createFakeMSFAANumber(
+      { student },
+      {
+        msfaaState: MSFAAStates.Signed,
+      },
+    );
+    await db.msfaaNumber.save(currentMSFAA);
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        student,
+        msfaaNumber: currentMSFAA,
+      },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        createSecondDisbursement: true,
+        firstDisbursementInitialValues: {
+          coeUpdatedAt: enrolmentDate1,
+          disbursementScheduleStatusUpdatedOn: statusUpdatedOn1,
+        },
+        secondDisbursementInitialValues: {
+          coeUpdatedAt: enrolmentDate2,
+          disbursementScheduleStatusUpdatedOn: statusUpdatedOn2,
+        },
+        currentAssessmentInitialValues: {
+          workflowData: {
+            studentData: {
+              dependantStatus: "dependant",
+              relationshipStatus: RelationshipStatus.Single,
+              livingWithParents: FormYesNoOptions.Yes,
+              numberOfParents: 2,
+              citizenship: "Canadian",
+              taxReturnIncome: 20000,
+              governmentFundingCosts: 5000,
+            },
+            calculatedData: {
+              familySize: 2,
+              totalEligibleDependents: 1,
+              studentMSOLAllowance: 7777,
+              totalNonEducationalCost: 22,
+              studentMaritalStatusCode: "SI",
+              pdppdStatus: false,
+              interfacePolicyApplies: true,
+              interfaceChildCareCosts: 1200,
+              interfaceEducationCosts: 3500,
+              interfaceTransportationAmount: 800,
+              interfaceAdditionalTransportationAmount: 200,
+              interfaceNeed: 5700,
+            },
+            dmnValues: {
+              livingCategory: "M",
+            },
+          },
+        },
+      },
+    );
+    const assessment = application.currentAssessment;
+    const [firstDisbursementSchedule, secondDisbursementSchedule] =
+      assessment.disbursementSchedules;
+
+    const firstDisbursementScheduleAwards = createNOADisbursementScheduleAwards(
+      firstDisbursementSchedule,
+      1,
+    );
+
+    const secondDisbursementScheduleAwards =
+      createNOADisbursementScheduleAwards(secondDisbursementSchedule, 2);
+
+    const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/assessment/${assessment.id}/noa`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        applicationId: application.id,
+        applicationNumber: application.applicationNumber,
+        applicationStatus: application.applicationStatus,
+        assessment: {
+          ...assessment.assessmentData,
+          totalFamilyIncome: "XXXXX",
+          studentDataDependantstatus: "dependant",
+          calculatedDataFamilySize: 2,
+          calculatedDataTotalEligibleDependants: 1,
+          calculatedDataLivingCategory: "M",
+          calculatedDataInterfacePolicyApplies: true,
+          calculatedDataInterfaceChildCareCosts: 1200,
+          calculatedDataInterfaceTransportationAmount: 800,
+          calculatedDataInterfaceAdditionalTransportationAmount: 200,
+          calculatedDataInterfaceNeed: 5700,
+          interfaceTotalAssessedCost: 5700,
+          studentDataGovernmentFundingCosts: 5000,
         },
         disbursement: {
           disbursement1COEStatus: firstDisbursementSchedule.coeStatus,

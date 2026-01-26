@@ -131,6 +131,30 @@ export class AssessmentControllerService {
     assessmentDTO.calculatedDataLivingCategory =
       assessment.workflowData.dmnValues?.livingCategory;
 
+    // Set interface policy related calculated data.
+    assessmentDTO.calculatedDataInterfacePolicyApplies =
+      assessment.workflowData.calculatedData.interfacePolicyApplies;
+    assessmentDTO.calculatedDataInterfaceChildCareCosts =
+      assessment.workflowData.calculatedData.interfaceChildCareCosts;
+    assessmentDTO.calculatedDataInterfaceTransportationAmount =
+      assessment.workflowData.calculatedData.interfaceTransportationAmount;
+    assessmentDTO.calculatedDataInterfaceAdditionalTransportationAmount =
+      assessment.workflowData.calculatedData.interfaceAdditionalTransportationAmount;
+    assessmentDTO.calculatedDataInterfaceNeed =
+      assessment.workflowData.calculatedData.interfaceNeed;
+    assessmentDTO.studentDataGovernmentFundingCosts =
+      assessment.workflowData.studentData.governmentFundingCosts;
+    if (assessmentDTO.calculatedDataInterfacePolicyApplies) {
+      const interfaceTotalAssessedCost =
+        (assessment.workflowData.calculatedData.interfaceEducationCosts ?? 0) +
+        (assessment.workflowData.calculatedData.interfaceChildCareCosts ?? 0) +
+        (assessment.workflowData.calculatedData.interfaceTransportationAmount ??
+          0) +
+        (assessment.workflowData.calculatedData
+          .interfaceAdditionalTransportationAmount ?? 0);
+      assessmentDTO.interfaceTotalAssessedCost = interfaceTotalAssessedCost;
+    }
+
     return {
       assessment: assessmentDTO,
       applicationId: assessment.application.id,
