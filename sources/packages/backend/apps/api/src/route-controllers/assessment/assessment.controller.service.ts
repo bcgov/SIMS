@@ -142,13 +142,14 @@ export class AssessmentControllerService {
       assessment.workflowData.calculatedData.interfaceNeed;
     assessmentDTO.studentDataGovernmentFundingCosts =
       assessment.workflowData.studentData.governmentFundingCosts;
-    const interfaceTotalAssessedCost =
-      assessment.workflowData.calculatedData.interfaceEducationCosts +
-      assessment.workflowData.calculatedData.interfaceChildCareCosts +
-      assessment.workflowData.calculatedData.interfaceTransportationAmount +
-      assessment.workflowData.calculatedData
-        .interfaceAdditionalTransportationAmount;
-    if (!Number.isNaN(interfaceTotalAssessedCost)) {
+    if (assessmentDTO.calculatedDataInterfacePolicyApplies) {
+      const interfaceTotalAssessedCost =
+        (assessment.workflowData.calculatedData.interfaceEducationCosts ?? 0) +
+        (assessment.workflowData.calculatedData.interfaceChildCareCosts ?? 0) +
+        (assessment.workflowData.calculatedData.interfaceTransportationAmount ??
+          0) +
+        (assessment.workflowData.calculatedData
+          .interfaceAdditionalTransportationAmount ?? 0);
       assessmentDTO.interfaceTotalAssessedCost = interfaceTotalAssessedCost;
     }
 
