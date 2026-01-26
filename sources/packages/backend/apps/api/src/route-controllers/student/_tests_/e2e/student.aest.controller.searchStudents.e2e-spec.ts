@@ -93,8 +93,39 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
       appNumber: "",
       firstName: "",
       lastName: "",
-      sin: student.sinValidation.sin,
+      sin: "",
       email: student.user.email,
+    };
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(searchPayload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect([
+        {
+          id: student.id,
+          firstName: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: student.birthDate,
+          sin: student.sinValidation.sin,
+        },
+      ]);
+  });
+
+  it("Should find the student by email where there is an exact match regardless of case.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
+    student.user.email = "student@hotmail.com";
+    await studentRepo.save(student);
+    const searchPayload = {
+      appNumber: "",
+      firstName: "",
+      lastName: "",
+      sin: "",
+      email: "StUdEnT@hOtMaIl.cOm",
     };
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -118,14 +149,14 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
   it("Should not find the student by email where there is only a partial match.", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
-    student.user.email = "student@mail.com";
+    student.user.email = "student@icloud.com";
     await studentRepo.save(student);
     const searchPayload = {
       appNumber: "",
       firstName: "",
       lastName: "",
-      sin: student.sinValidation.sin,
-      email: "student@mail",
+      sin: "",
+      email: "student@icloud",
     };
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -141,14 +172,14 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
   it("Should not find the student by email where the email doesn't match.", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
-    student.user.email = "student@mail.com";
+    student.user.email = "student@gmail.com";
     await studentRepo.save(student);
     const searchPayload = {
       appNumber: "",
       firstName: "",
       lastName: "",
       sin: student.sinValidation.sin,
-      email: "test@example.com",
+      email: "student@example.com",
     };
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 

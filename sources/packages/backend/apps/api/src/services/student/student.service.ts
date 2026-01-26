@@ -703,8 +703,8 @@ export class StudentService extends RecordDataModelService<Student> {
       });
     }
     if (searchCriteria.email) {
-      searchQuery.andWhere("user.email = :email", {
-        email: searchCriteria.email,
+      searchQuery.andWhere("lower(user.email) = :email", {
+        email: searchCriteria.email.toLowerCase(),
       });
     }
     return searchQuery.getMany();

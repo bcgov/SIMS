@@ -18,7 +18,7 @@
             density="compact"
             data-cy="appNumber"
             variant="outlined"
-            v-model="appNumber"
+            v-model.trim="appNumber"
             @keyup.enter="searchStudents"
             hide-details
           />
@@ -29,7 +29,7 @@
             density="compact"
             data-cy="sin"
             variant="outlined"
-            v-model="sin"
+            v-model.trim="sin"
             @keyup.enter="searchStudents"
             hide-details
           />
@@ -40,7 +40,7 @@
             density="compact"
             data-cy="firstName"
             variant="outlined"
-            v-model="firstName"
+            v-model.trim="firstName"
             @keyup.enter="searchStudents"
             hide-details
           /> </v-col
@@ -50,7 +50,7 @@
             density="compact"
             data-cy="lastName"
             variant="outlined"
-            v-model="lastName"
+            v-model.trim="lastName"
             @keyup.enter="searchStudents"
             hide-details
           />

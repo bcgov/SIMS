@@ -410,12 +410,13 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
 
   it("Should find the student by email address when there is an exact match.", async () => {
     // Arrange
-    const { student, application } =
-      await saveStudentWithApplicationForCollegeF(ApplicationStatus.Submitted);
+    const { student } = await saveStudentWithApplicationForCollegeF(
+      ApplicationStatus.Submitted,
+    );
     student.user.email = "student@collegef.com";
     await studentRepo.save(student);
     const searchPayload = {
-      appNumber: application.applicationNumber,
+      appNumber: "",
       firstName: "",
       lastName: "",
       sin: "",
