@@ -84,7 +84,7 @@ OUT
 limitWeeklyChildCare
 limitWeeklyAlimonyChildSupport
 limitWeeklySecondResidence
-limitWeeklytransportationAllownace
+limitWeeklyTransportationAllownace
 limitWeeklyCPPperParent
 limitWeeklyEIPerParent</bpmn:text>
     </bpmn:textAnnotation>
@@ -4636,7 +4636,7 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
         <di:waypoint x="1355" y="391" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1o4g869_di" bpmnElement="Association_1o4g869">
-        <di:waypoint x="949" y="406" />
+        <di:waypoint x="948" y="404" />
         <di:waypoint x="967" y="570" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0yc2t6b_di" bpmnElement="Association_0yc2t6b">
@@ -4784,7 +4784,7 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_10pqvkj_di" bpmnElement="TextAnnotation_10pqvkj">
-        <dc:Bounds x="820" y="250" width="241" height="156" />
+        <dc:Bounds x="820" y="250" width="241" height="154" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1myp6tg_di" bpmnElement="TextAnnotation_1myp6tg">
