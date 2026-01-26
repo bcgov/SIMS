@@ -1,26 +1,25 @@
 <template>
-  <chip-label :status="chipStatus" :label="status" />
+  <chip-label :status="badgeDetails.status" :label="badgeDetails.label" />
 </template>
 <script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
+import { computed, defineComponent } from "vue";
 import ChipLabel from "@/components/generic/ChipLabel.vue";
-import { useStudentRestriction } from "@/composables";
-import { StudentRestrictionStatus } from "@/types";
+import { useRestriction } from "@/composables";
 
 export default defineComponent({
   components: { ChipLabel },
   props: {
-    status: {
-      type: String as PropType<StudentRestrictionStatus>,
+    hasActiveRestriction: {
+      type: Boolean,
       required: true,
     },
   },
   setup(props) {
-    const { mapStudentRestrictionChipStatus } = useStudentRestriction();
-    const chipStatus = computed(() =>
-      mapStudentRestrictionChipStatus(props.status),
+    const { mapRestrictionBadgeDetails } = useRestriction();
+    const badgeDetails = computed(() =>
+      mapRestrictionBadgeDetails(props.hasActiveRestriction),
     );
-    return { chipStatus };
+    return { badgeDetails };
   },
 });
 </script>
