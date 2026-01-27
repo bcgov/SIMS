@@ -34,7 +34,6 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
       firstName: "77B83122-35A9-4492-8A27-C1E5CF4587DQ",
       lastName: "",
       sin: "",
-      email: "",
     };
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -63,7 +62,6 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
       firstName: "",
       lastName: "",
       sin: student.sinValidation.sin,
-      email: "",
     };
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -87,13 +85,8 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
   it("Should find the student by email where there is an exact match.", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
-    student.user.email = "student@mail.com";
     await studentRepo.save(student);
     const searchPayload = {
-      appNumber: "",
-      firstName: "",
-      lastName: "",
-      sin: "",
       email: student.user.email,
     };
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -121,10 +114,6 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
     student.user.email = "student@hotmail.com";
     await studentRepo.save(student);
     const searchPayload = {
-      appNumber: "",
-      firstName: "",
-      lastName: "",
-      sin: "",
       email: "StUdEnT@hOtMaIl.cOm",
     };
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -152,10 +141,6 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
     student.user.email = "student@icloud.com";
     await studentRepo.save(student);
     const searchPayload = {
-      appNumber: "",
-      firstName: "",
-      lastName: "",
-      sin: "",
       email: "student@icloud",
     };
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -175,10 +160,6 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
     student.user.email = "student@gmail.com";
     await studentRepo.save(student);
     const searchPayload = {
-      appNumber: "",
-      firstName: "",
-      lastName: "",
-      sin: student.sinValidation.sin,
       email: "student@example.com",
     };
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -197,13 +178,7 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
     const student = await saveFakeStudent(appDataSource);
     student.user.email = "student@mail.com";
     await studentRepo.save(student);
-    const searchPayload = {
-      appNumber: "",
-      firstName: "",
-      lastName: "",
-      sin: "",
-      email: "",
-    };
+    const searchPayload = {};
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
