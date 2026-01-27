@@ -1,4 +1,4 @@
--- Replace regulatory_body 'ptib' to 'ptiru'
+-- Rename regulatory_body 'ptib' to 'ptiru'.
 UPDATE
     sims.education_programs
 SET

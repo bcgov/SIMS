@@ -1,4 +1,4 @@
--- Revert regulating_body 'ptiru' back to 'ptib'
+-- Revert regulating_body 'ptiru' back to 'ptib'.
 UPDATE
     sims.institutions
 SET
