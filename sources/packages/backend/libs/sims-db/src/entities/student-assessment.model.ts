@@ -360,6 +360,7 @@ export interface WorkflowData {
     citizenship: string;
     taxReturnIncome: number;
     bcResident?: FormYesNoOptions;
+    governmentFundingCosts?: number;
   };
   dmnValues?: {
     lifetimeMaximumCSLP?: number;

@@ -35,17 +35,17 @@
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^6.5.2",
-    "@types/node": "^25.0.6",
+    "@types/node": "^25.0.9",
     "@vitejs/plugin-vue": "^6.0.3",
     "@vue/eslint-config-typescript": "^14.6.0",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "jiti": "^2.6.1",
-    "prettier": "^3.7.4",
+    "prettier": "^3.8.0",
     "reflect-metadata": "^0.2.2",
     "sass": "^1.97.2",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
-    "vite-plugin-vuetify": "^2.1.2"
+    "vite-plugin-vuetify": "^2.1.3"
   }
 }

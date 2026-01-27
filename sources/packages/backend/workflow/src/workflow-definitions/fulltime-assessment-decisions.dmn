@@ -10,7 +10,7 @@
       <output id="OutputClause_01j97oq" label="limitWeeklyChildCare" name="limitWeeklyChildCare" typeRef="string" />
       <output id="OutputClause_05wibwn" label="limitWeeklyAlimonyChildSupport" name="limitWeeklyAlimonyChildSupport" typeRef="string" />
       <output id="OutputClause_0o0ynbc" label="limitWeeklySecondResidence" name="limitWeeklySecondResidence" typeRef="string" />
-      <output id="OutputClause_0pshgc9" label="limitWeeklytransportationAllowance" name="limitWeeklytransportationAllowance" typeRef="string" />
+      <output id="OutputClause_0pshgc9" label="limitWeeklyTransportationAllowance" name="limitWeeklyTransportationAllowance" typeRef="string" />
       <output id="OutputClause_1h99wa8" label="limitProgramYearBooks" name="limitProgramYearBooks" typeRef="string" />
       <output id="OutputClause_0bix300" label="limitProgramYearScholarshipBursaries" name="limitProgramYearScholarshipBursaries" typeRef="string" />
       <output id="OutputClause_1c5j7zc" label="limitParentCPPAmount" name="limitParentCPPAmount" typeRef="string" />
@@ -35,7 +35,7 @@
           <text>213</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1atose5">
-          <text>24</text>
+          <text>13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1y60x6f">
           <text>3000</text>
@@ -82,7 +82,7 @@
           <text>232</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_09tbz8c">
-          <text>25</text>
+          <text>13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0yycvlu">
           <text>3000</text>
@@ -129,7 +129,7 @@
           <text>241</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1u0w6zl">
-          <text>25</text>
+          <text>13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_130sxpz">
           <text>3000</text>
@@ -176,7 +176,7 @@
           <text>357</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1vadz5u">
-          <text>25</text>
+          <text>13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0bczwac">
           <text>3000</text>
@@ -223,7 +223,7 @@
           <text>357</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1qjhx8l">
-          <text>25</text>
+          <text>13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_16wtie4">
           <text>3000</text>
@@ -5416,6 +5416,213 @@
       </rule>
     </decisionTable>
   </decision>
+  <decision id="dmnFullTimeParentsIncomeTaxRate" name="dmnFullTimeParentsIncomeTaxRate">
+    <decisionTable id="DecisionTable_1x26nw1">
+      <input id="InputClause_1p5ffvj" label="programYear">
+        <inputExpression id="LiteralExpression_1elrqmf" typeRef="string">
+          <text>programYear</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0lsbxrp" label="monthlyIncome">
+        <inputExpression id="LiteralExpression_0i3fo74" typeRef="string">
+          <text>monthlyIncome</text>
+        </inputExpression>
+      </input>
+      <output id="OutputClause_0v1qa2w" label="taxRate" name="taxRate" typeRef="string" />
+      <rule id="DecisionRule_0euxhiu">
+        <description>Monthly Income $1 to $999</description>
+        <inputEntry id="UnaryTests_1efksv7">
+          <text>"2025-2026"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_142wrmc">
+          <text>[0..999]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_02h2wdv">
+          <text>0.0585</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0lfbe1s">
+        <description>Monthly Income $1,000 to $1,999</description>
+        <inputEntry id="UnaryTests_0v0yir1">
+          <text>"2025-2026"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1m0a9nh">
+          <text>[1000..1999]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0bbxhlt">
+          <text>0.0882</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_13a9gsv">
+        <description>Monthly Income $2,000 to $2,999</description>
+        <inputEntry id="UnaryTests_0z6ip51">
+          <text>"2025-2026"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1xfrf2t">
+          <text>[2000..2999]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0mwdp7r">
+          <text>0.1241</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1wvy1au">
+        <description>Monthly Income $3,000 to $4,999</description>
+        <inputEntry id="UnaryTests_1ckqug7">
+          <text>"2025-2026"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_15ghc2c">
+          <text>[3000..4999]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1v1jz5z">
+          <text>0.1954</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1kauuzz">
+        <description>Monthly Income $5,000 to $6,999</description>
+        <inputEntry id="UnaryTests_08lqo9z">
+          <text>"2025-2026"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1w6onic">
+          <text>[5000..6999]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0pqk3vf">
+          <text>0.2406</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1yey9h0">
+        <description>Monthly Income $7,000 to $8,999</description>
+        <inputEntry id="UnaryTests_0vivtkz">
+          <text>"2025-2026"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_03iwgh7">
+          <text>[7000..8999]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_10lr410">
+          <text>0.2450</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0xewpif">
+        <description>Monthly Income $9,000 to $10,999</description>
+        <inputEntry id="UnaryTests_1qj75n0">
+          <text>"2025-2026"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1dm9x8o">
+          <text>[9000..10999]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0u3vuwh">
+          <text>0.2517</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0xhibzm">
+        <description>Monthly Income $11,000 and over</description>
+        <inputEntry id="UnaryTests_1c1pu97">
+          <text>"2025-2026"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1t2xdq7">
+          <text>&gt;=11000</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_01a8s1b">
+          <text>0.2927</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_16fl379">
+        <description>Monthly Income $1 to $999</description>
+        <inputEntry id="UnaryTests_14tetnd">
+          <text>"2026-2027"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_03oj510">
+          <text>[0..999]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0bewakc">
+          <text>0.0584</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_15vr57m">
+        <description>Monthly Income $1,000 to $1,999</description>
+        <inputEntry id="UnaryTests_0kragje">
+          <text>"2026-2027"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1lgjmoj">
+          <text>[1000..1999]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_02d28q5">
+          <text>0.0881</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1eqas8o">
+        <description>Monthly Income $2,000 to $2,999</description>
+        <inputEntry id="UnaryTests_1do8d9y">
+          <text>"2026-2027"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1dlzb67">
+          <text>[2000..2999]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1xmoyjr">
+          <text>0.1240</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0wf2wi3">
+        <description>Monthly Income $3,000 to $4,999</description>
+        <inputEntry id="UnaryTests_12a1qzl">
+          <text>"2026-2027"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0kp32oy">
+          <text>[3000..4999]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1nu82yy">
+          <text>0.1953</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_08rqamv">
+        <description>Monthly Income $5,000 to $6,999</description>
+        <inputEntry id="UnaryTests_1ess0h4">
+          <text>"2026-2027"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_02qudzq">
+          <text>[5000..6999]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_002pozr">
+          <text>0.2432</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_18c67gd">
+        <description>Monthly Income $7,000 to $8,999</description>
+        <inputEntry id="UnaryTests_1iy70zl">
+          <text>"2026-2027"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0rftmy1">
+          <text>[7000..8999]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0xngusm">
+          <text>0.2474</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0y38nag">
+        <description>Monthly Income $9,000 to $10,999</description>
+        <inputEntry id="UnaryTests_0czs1e8">
+          <text>"2026-2027"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_01b69bh">
+          <text>[9000..10999]</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0l9ecpv">
+          <text>0.2537</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0riieap">
+        <description>Monthly Income $11,000 and over</description>
+        <inputEntry id="UnaryTests_1ul8kcf">
+          <text>"2026-2027"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_11t5pid">
+          <text>&gt;=11000</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_06aqvz5">
+          <text>0.2947</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
   <textAnnotation id="TextAnnotation_1y5ofpb">
     <text>Determines status of student:
 SP, SDA, SIA, SDH, SIH, M</text>
@@ -5601,6 +5808,9 @@ Parent Assets &amp; Rates</text>
         <di:waypoint x="790" y="620" />
         <di:waypoint x="730" y="620" />
       </dmndi:DMNEdge>
+      <dmndi:DMNShape id="DMNShape_0btzg1g" dmnElementRef="dmnFullTimeParentsIncomeTaxRate">
+        <dc:Bounds height="80" width="180" x="1030" y="400" />
+      </dmndi:DMNShape>
     </dmndi:DMNDiagram>
   </dmndi:DMNDI>
 </definitions>

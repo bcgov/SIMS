@@ -1,7 +1,7 @@
 <template>
   <body-header
     title="Funding summary"
-    subTitle="Below is the summary from your assessment. To view your Notice of Assessment, click on view assessment."
+    sub-title="Below is the summary from your assessment. To view your Notice of Assessment, click on view assessment."
   >
     <template #actions>
       <v-btn
@@ -21,6 +21,7 @@
     @confirm-enrolment="$emit('confirmEnrolment', $event)"
     @disbursement-cancelled="$emit('disbursementCancelled')"
   />
+  <assessment-award-legend />
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
@@ -28,6 +29,7 @@ import { RouteLocationRaw, useRouter } from "vue-router";
 import { defineComponent, PropType } from "vue";
 import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
 import AssessmentAwardDetails from "@/components/common/AssessmentAwardDetails.vue";
+import AssessmentAwardLegend from "@/components/common/students/applicationDetails/AssessmentAwardLegend.vue";
 
 export default defineComponent({
   emits: {
@@ -36,7 +38,7 @@ export default defineComponent({
     },
     disbursementCancelled: null,
   },
-  components: { AssessmentAwardDetails },
+  components: { AssessmentAwardDetails, AssessmentAwardLegend },
   props: {
     assessmentAwardData: {
       type: Object as PropType<AwardDetailsAPIOutDTO>,

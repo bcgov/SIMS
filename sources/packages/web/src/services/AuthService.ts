@@ -18,7 +18,12 @@ import {
 } from "@/constants/routes/RouteConstants";
 import { RENEW_AUTH_TOKEN_TIMER } from "@/constants/system-constants";
 import { StudentService } from "@/services/StudentService";
-import { useStudentStore, useInstitutionState, useAuth } from "@/composables";
+import {
+  useStudentStore,
+  useInstitutionState,
+  useAuth,
+  useInstitutionRestrictionState,
+} from "@/composables";
 import { InstitutionUserService } from "@/services/InstitutionUserService";
 import { MISSING_STUDENT_ACCOUNT } from "@/constants";
 import { StudentAccountApplicationService } from "./StudentAccountApplicationService";
@@ -203,6 +208,8 @@ export class AuthService {
    */
   private async processInstitutionLogin(): Promise<void> {
     const institutionStore = useInstitutionState(store);
+    const { updateInstitutionRestrictionState } =
+      useInstitutionRestrictionState();
     const userStatus =
       await InstitutionUserService.shared.getInstitutionUserStatus();
     if (userStatus.isActiveUser === true) {
@@ -212,8 +219,11 @@ export class AuthService {
       await InstitutionUserService.shared.syncBCeIDInformation();
       // User is active so just proceed.
       // The BCeID sync must happen prior to this method to ensure that the most
-      // updated information will be loaded into the store.
-      await institutionStore.initialize();
+      // updated information will be loaded into the store and institution restriction state updated as well.
+      await Promise.all([
+        institutionStore.initialize(),
+        updateInstitutionRestrictionState(),
+      ]);
       return;
     }
 

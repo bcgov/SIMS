@@ -3,6 +3,7 @@ import {
   AssignInstitutionRestrictionAPIInDTO,
   AssignRestrictionAPIInDTO,
   DeleteRestrictionAPIInDTO,
+  InstitutionActiveRestrictionsAPIOutDTO,
   InstitutionRestrictionsAPIOutDTO,
   InstitutionRestrictionSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
@@ -11,11 +12,7 @@ import {
   RestrictionSummaryAPIOutDTO,
   StudentRestrictionAPIOutDTO,
 } from "@/services/http/dto";
-import {
-  EffectiveRestrictionStatus,
-  RestrictionActionType,
-  RestrictionType,
-} from "@/types/contracts/RestrictionContract";
+import { RestrictionType } from "@/types/contracts/RestrictionContract";
 
 /**
  * Client service layer for Restrictions.
@@ -182,34 +179,14 @@ export class RestrictionService {
   }
 
   /**
-   * Get effective institution restriction status for the given program and institution location.
-   * @param locationId institution location id.
-   * @param programId program id.
+   * Get active institution restrictions.
    * @param options options.
    * - `institutionId` institution id.
-   * @returns effective institution restriction status.
+   * @returns active institution restrictions.
    */
-  async getEffectiveInstitutionRestrictionStatus(
-    locationId: number,
-    programId: number,
-    options?: {
-      institutionId?: number;
-    },
-  ): Promise<EffectiveRestrictionStatus> {
-    const { items: institutionRestrictions } =
-      await ApiClient.RestrictionApi.getActiveInstitutionRestrictions(options);
-    const effectiveRestrictions = institutionRestrictions.filter(
-      (institutionRestriction) =>
-        institutionRestriction.locationId === locationId &&
-        institutionRestriction.programId === programId,
-    );
-    return {
-      hasEffectiveRestriction: !!effectiveRestrictions.length,
-      canCreateOffering: !effectiveRestrictions.some((effectiveRestriction) =>
-        effectiveRestriction.restrictionActions.includes(
-          RestrictionActionType.StopOfferingCreate,
-        ),
-      ),
-    };
+  async getActiveInstitutionRestrictions(options?: {
+    institutionId?: number;
+  }): Promise<InstitutionActiveRestrictionsAPIOutDTO> {
+    return ApiClient.RestrictionApi.getActiveInstitutionRestrictions(options);
   }
 }

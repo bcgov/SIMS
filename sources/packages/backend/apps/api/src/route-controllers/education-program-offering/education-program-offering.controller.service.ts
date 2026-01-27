@@ -31,6 +31,8 @@ import {
   InstitutionLocationService,
   OnlineInstructionModeOptions,
   OfferingYesNoOptions,
+  InstitutionRestrictionService,
+  OfferingActionType,
 } from "../../services";
 import {
   credentialTypeToDisplay,
@@ -58,6 +60,7 @@ export class EducationProgramOfferingControllerService {
     private readonly programService: EducationProgramService,
     private readonly programOfferingService: EducationProgramOfferingService,
     private readonly institutionLocationService: InstitutionLocationService,
+    private readonly institutionRestrictionService: InstitutionRestrictionService,
   ) {}
 
   /**
@@ -157,6 +160,7 @@ export class EducationProgramOfferingControllerService {
    * @param programId program id.
    * @param payload information to generate the model to perform the offering
    * validation and persistence.
+   * @param actionType offering action type.
    * @returns offering model to be validated and saved.
    */
   async buildOfferingValidationModel(
@@ -164,6 +168,7 @@ export class EducationProgramOfferingControllerService {
     locationId: number,
     programId: number,
     payload: EducationProgramOfferingAPIInDTO,
+    actionType: OfferingActionType,
   ): Promise<OfferingValidationModel> {
     // Program information required to perform the offering validations.
     const program = await this.programService.getEducationProgramDetails(
@@ -188,8 +193,23 @@ export class EducationProgramOfferingControllerService {
       );
     }
     // Get institution location details.
-    const institutionLocation =
-      await this.institutionLocationService.getInstitutionLocation(locationId);
+    const institutionLocationPromise =
+      this.institutionLocationService.getInstitutionLocation(locationId);
+    const effectiveInstitutionRestrictionsPromise =
+      this.institutionRestrictionService.getInstitutionRestrictionsByLocationAndProgram(
+        locationId,
+        programId,
+        { isActive: true },
+      );
+    const [institutionLocation, effectiveInstitutionRestrictions] =
+      await Promise.all([
+        institutionLocationPromise,
+        effectiveInstitutionRestrictionsPromise,
+      ]);
+    const effectiveRestrictionActions =
+      effectiveInstitutionRestrictions.flatMap(
+        (restriction) => restriction.restriction.actionType,
+      );
     return {
       ...payload,
       locationId,
@@ -204,6 +224,8 @@ export class EducationProgramOfferingControllerService {
           institutionLocation.institution.institutionType.isBCPrivate,
         isBCPublic: institutionLocation.institution.institutionType.isBCPublic,
       },
+      effectiveRestrictionActions: [...new Set(effectiveRestrictionActions)],
+      actionType,
     };
   }
 
@@ -212,7 +234,9 @@ export class EducationProgramOfferingControllerService {
    * a BadRequestException in case of some failure.
    * @param csvValidations validations to be verified.
    */
-  assertCSVValidationsAreValid(csvValidations: OfferingCSVValidationResult[]) {
+  assertCSVValidationsAreValid(
+    csvValidations: OfferingCSVValidationResult[],
+  ): void {
     const csvValidationsErrors = csvValidations.filter(
       (csvValidation) => csvValidation.errors.length,
     );
@@ -252,7 +276,7 @@ export class EducationProgramOfferingControllerService {
     offeringValidations: OfferingValidationResult[],
     csvModels: OfferingCSVModel[],
     considerWarningsAsErrors = false,
-  ) {
+  ): void {
     const offeringValidationsErrors = offeringValidations.filter(
       (offering) =>
         offering.errors.length ||
@@ -300,7 +324,7 @@ export class EducationProgramOfferingControllerService {
   throwFromCreationError(
     error: CreateFromValidatedOfferingError,
     csvModels: OfferingCSVModel[],
-  ) {
+  ): void {
     const csvModel = csvModels[error.validatedOffering.index];
     const validationResults: OfferingBulkInsertValidationResultAPIOutDTO[] = [
       {

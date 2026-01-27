@@ -450,7 +450,7 @@
               "value": ""
             }
           ],
-          "content": "Your application was subject to federal and provincial assessment calculations based on Canada Student Financial Assistance Program and StudentAid BC policies. Your assessment is based on total family income as reflected in the previous year's tax return (including spouse/common-law partner, if applicable), or as reported on your application if no tax return was available.",
+          "content": "Your application was subject to federal and provincial assessment calculations based on Canada Student Financial Assistance Program and StudentAid BC policies. Your assessment is based on total family income as reflected in the previous year's tax return (including spouse/common-law partner or parents, if applicable), or as reported on your application if no tax return was available.",
           "refreshOnChange": false,
           "key": "html134",
           "type": "htmlelement",
@@ -550,15 +550,11 @@
           "components": [
             {
               "title": "Full time Panel",
-              "customClass": "formio-panel-unset",
+              "customClass": "pt-3",
               "collapsible": false,
               "hideLabel": true,
               "key": "panel5",
-              "conditional": {
-                "show": true,
-                "when": "offeringIntensity",
-                "eq": "Full Time"
-              },
+              "customConditional": "show = data.offeringIntensity === \"Full Time\" && !data.assessment?.calculatedDataInterfacePolicyApplies;",
               "type": "panel",
               "label": "Panel",
               "input": false,
@@ -2269,6 +2265,689 @@
                             "disabled": true,
                             "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.provincialAssessmentNeed, '(Not eligible)');",
                             "customClass": "font-weight-bold",
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "Full time Interface Policy Panel",
+              "customClass": "pt-3",
+              "collapsible": false,
+              "hideLabel": true,
+              "key": "panel2",
+              "customConditional": "show = data.offeringIntensity === \"Full Time\" && data.assessment?.calculatedDataInterfacePolicyApplies;",
+              "type": "panel",
+              "label": "Panel",
+              "input": false,
+              "tableView": false,
+              "components": [
+                {
+                  "label": "HTML",
+                  "tag": "h3",
+                  "className": "category-header-medium primary-color",
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
+                  "content": "Assessed costs and need",
+                  "refreshOnChange": false,
+                  "key": "html49",
+                  "type": "htmlelement",
+                  "input": false,
+                  "tableView": false
+                },
+                {
+                  "label": "Table",
+                  "cellAlignment": "left",
+                  "customClass": "formio-bordered formio-table-last-col-background extra-small pb-5",
+                  "hover": true,
+                  "condensed": true,
+                  "key": "table6",
+                  "type": "table",
+                  "numRows": 10,
+                  "input": false,
+                  "tableView": false,
+                  "rows": [
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "Assessed costs",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "<strong>Assessed costs</strong>",
+                            "refreshOnChange": false,
+                            "key": "assessedCosts1",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "hideOnChildrenHidden": false,
+                            "tag": "p"
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Federal",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "<strong>Federal</strong>",
+                            "refreshOnChange": false,
+                            "key": "federal1",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "hideOnChildrenHidden": false,
+                            "tag": "p"
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Provincial",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "<strong>Provincial</strong>",
+                            "refreshOnChange": false,
+                            "key": "provincial1",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "hideOnChildrenHidden": false,
+                            "tag": "p"
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "Tuition and fees",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "Tuition and fees",
+                            "refreshOnChange": false,
+                            "key": "tuitionAndFees2",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "hideOnChildrenHidden": false,
+                            "tag": "p"
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table2Text27",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.tuitionCost, '(Not eligible)');",
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table2Text1",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.tuitionCost, '(Not eligible)');",
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "Books and supplies",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "Books and supplies",
+                            "refreshOnChange": false,
+                            "key": "booksAndSupplies2",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "hideOnChildrenHidden": false,
+                            "tag": "p"
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table2Text28",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.booksAndSuppliesCost, '(Not eligible)');",
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table2Text29",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.booksAndSuppliesCost, '(Not eligible)');",
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "HTML",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "Exceptional education costs",
+                            "refreshOnChange": false,
+                            "key": "html22",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "tag": "p"
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table2Text30",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.exceptionalEducationCost, '(Not eligible)');",
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table2Text31",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.exceptionalEducationCost, '(Not eligible)');",
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "HTML",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "Child care costs",
+                            "refreshOnChange": false,
+                            "key": "html23",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "tag": "p"
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.calculatedDataInterfaceChildCareCosts, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text36",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.calculatedDataInterfaceChildCareCosts, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text37",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "Transportation",
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "Transportation",
+                            "refreshOnChange": false,
+                            "key": "returnTransportationCosts2",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.calculatedDataInterfaceTransportationAmount, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text34",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.calculatedDataInterfaceTransportationAmount, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text35",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "HTML",
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "Additional transportation allowance",
+                            "refreshOnChange": false,
+                            "key": "html27",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.calculatedDataInterfaceAdditionalTransportationAmount, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text44",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.calculatedDataInterfaceAdditionalTransportationAmount, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text45",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "Total assessed costs",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "<strong>Total assessed costs</strong>",
+                            "refreshOnChange": false,
+                            "key": "totalAssessedCosts1",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "hideOnChildrenHidden": false,
+                            "tag": "p"
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "customClass": "font-weight-bold",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.interfaceTotalAssessedCost, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text50",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "customClass": "font-weight-bold",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.interfaceTotalAssessedCost, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text51",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "Targeted resources",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "Targeted resources",
+                            "refreshOnChange": false,
+                            "key": "targetedResources",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "hideOnChildrenHidden": false,
+                            "tag": "p"
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.studentDataGovernmentFundingCosts, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "targetedResourcesFederal",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.studentDataGovernmentFundingCosts, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "targetedResourcesProvincial",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "Total assessed need",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "<strong>Total assessed need</strong>",
+                            "refreshOnChange": false,
+                            "key": "totalAssessedNeed1",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "hideOnChildrenHidden": false,
+                            "tag": "p"
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "customClass": "font-weight-bold",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.calculatedDataInterfaceNeed, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text52",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "customClass": "font-weight-bold",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.calculatedDataInterfaceNeed, '(Not eligible)');",
+                            "validateWhenHidden": false,
+                            "key": "table2Text53",
+                            "type": "textfield",
+                            "input": true,
                             "isNew": false
                           }
                         ]
@@ -4260,7 +4939,40 @@
               "value": ""
             }
           ],
-          "content": "Before we can issue your Canada – BC integrated student financial assistance, you must first submit your master student financial assistance agreement (MSFAA) unless you have already submitted your MSFAA for a previous application. You will receive a 'Welcome Email' from the National Student Loans Service Centre (NSLSC) that includes a URL to register for an online account with the NSLSC where you will complete and submit your MSFAA using the 10 digit MSFAA number provided on this Notice of Assessment.",
+          "content": "Before we can issue your Canada – BC integrated student financial assistance, you must first submit your master student financial assistance agreement (MSFAA) unless you have already submitted your MSFAA for a previous application.",
+          "refreshOnChange": false,
+          "key": "html53",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "tag": "p"
+        },
+        {
+          "label": "HTML",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Please note that separate agreements are required for part-time and full-time applications.",
+          "refreshOnChange": false,
+          "key": "html53",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "tag": "p",
+          "className": "font-bold"
+        },
+        {
+          "label": "HTML",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "You will receive a \"Welcome Email\" from the National Student Loans Service Centre (NSLSC). This email will contain a secure URL to register for an online NSLSC account, where you will complete and submit your MSFAA using the 10‑digit MSFAA number provided in this Notice of Assessment.",
           "refreshOnChange": false,
           "key": "html53",
           "type": "htmlelement",

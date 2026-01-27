@@ -6,7 +6,7 @@
       </div>
     </template>
     <student-profile-form
-      :formModel="initialData"
+      :form-model="initialData"
       @submitted="submitted"
       :processing="processing"
       :is-data-ready="isDataReady"
@@ -70,7 +70,9 @@ export default defineComponent({
       data.city = bcscParsedToken.address.locality;
       if (bcscParsedToken.address.country === CANADA_COUNTRY_CODE) {
         data.provinceState = bcscParsedToken.address.region;
-        data.canadaPostalCode = bcscParsedToken.address.postal_code;
+        // Remove spaces from postal code.
+        data.canadaPostalCode =
+          bcscParsedToken.address.postal_code?.replaceAll(/\s+/g, "") ?? "";
       }
       data.country = bcscParsedToken.address.country;
       data.selectedCountry =

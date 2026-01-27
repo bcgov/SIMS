@@ -127,6 +127,34 @@ export type AssessmentAPIOutDTO = Omit<Assessment, "totalFamilyIncome"> & {
    * Values: "M", "SP", "SIA", "SIH", "SDA", "SDH"
    */
   calculatedDataLivingCategory?: string;
+  /**
+   * Government funding costs from student data.
+   */
+  studentDataGovernmentFundingCosts?: number;
+  /**
+   * Indicates whether the interface policy applies to the assessment.
+   */
+  calculatedDataInterfacePolicyApplies?: boolean;
+  /**
+   * Interface child care costs calculated by the workflow.
+   */
+  calculatedDataInterfaceChildCareCosts?: number;
+  /**
+   * Interface transportation amount calculated by the workflow.
+   */
+  calculatedDataInterfaceTransportationAmount?: number;
+  /**
+   * Interface additional transportation amount calculated by the workflow.
+   */
+  calculatedDataInterfaceAdditionalTransportationAmount?: number;
+  /**
+   * Interface need amount calculated by the workflow.
+   */
+  calculatedDataInterfaceNeed?: number;
+  /**
+   * Interface total assessed cost calculated by the workflow.
+   */
+  interfaceTotalAssessedCost?: number;
 };
 
 export class AssessmentNOAAPIOutDTO {

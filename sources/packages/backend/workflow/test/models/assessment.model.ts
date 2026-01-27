@@ -325,6 +325,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataAdditionalTransportPlacement: YesNoOptions;
   offeringWeeks: number;
   calculatedDataTotalTutionCost: number;
+  calculatedDataExceptionalExpenses: number;
   calculatedDataDaycareCosts11YearsOrUnder: number;
   calculatedDataDaycareCosts12YearsOrOver: number;
   calculatedDataDependantTotalMSOLAllowance: number;
@@ -381,6 +382,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataStudentTotalIncome: number;
   calculatedDataCurrentYearPartnerIncome: number;
   partner1CRAReportedIncome?: number;
+  studentDataGovernmentFundingCosts?: number;
   calculatedDataPartnerBCEAIncomeAssistanceAmount?: number;
   calculatedDataInterfacePolicyApplies: boolean;
   calculatedDataInterfaceEducationCosts?: number;
@@ -507,6 +509,10 @@ export interface CalculatedAssessmentModel {
   // DMN Part Time Program Year Maximums
   dmnPartTimeProgramYearMaximums?: {
     limitTransportationAllowance: number;
+  };
+  // DMN Full Time Program Year Maximums
+  dmnFullTimeProgramYearMaximums?: {
+    limitWeeklyTransportationAllowance: number;
   };
   // Disbursement schedules
   disbursementSchedules: Array<unknown>;

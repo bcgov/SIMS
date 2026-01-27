@@ -19,14 +19,17 @@ import {
   E2EDataSources,
   createE2EDataSources,
   createFakeDisbursementReceipt,
-  createFakeDisbursementReceiptValue,
+  createFakeDisbursementValue,
 } from "@sims/test-utils";
 import {
   ApplicationStatus,
-  DisbursementReceiptValue,
   DisbursementScheduleStatus,
+  DisbursementValueType,
   Institution,
   InstitutionLocation,
+  MSFAANumber,
+  OfferingIntensity,
+  Student,
 } from "@sims/sims-db";
 import {
   addDays,
@@ -41,6 +44,8 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
   let db: E2EDataSources;
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
+  let sharedStudent: Student;
+  let sharedMSFAANumber: MSFAANumber;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -57,148 +62,193 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
+    // Shared student to be used for tests that would not need further student customization.
+    sharedStudent = await saveFakeStudent(db.dataSource);
+    // Valid MSFAA Number that will be part of the expected returned values.
+    sharedMSFAANumber = await db.msfaaNumber.save(
+      createFakeMSFAANumber(
+        { student: sharedStudent },
+        { msfaaState: MSFAAStates.Signed },
+      ),
+    );
   });
 
-  it("Should get the student award details for an eligible application when an eligible public institution user tries to access it.", async () => {
-    // Arrange
-    const enrolmentDate1 = addDays(1);
-    const statusUpdatedOn = new Date();
-    // Student has an application to the institution with award details.
-    const student = await saveFakeStudent(db.dataSource);
+  it(
+    "Should get the student award details (including subtracted amounts) for an eligible Part-time application " +
+      "when the e-Cert was sent and an eligible public institution user tries to access it.",
+    async () => {
+      // Arrange
+      const enrolmentDate1 = addDays(1);
+      const statusUpdatedOn = new Date();
 
-    const currentMSFAA = createFakeMSFAANumber(
-      { student },
-      {
-        msfaaState: MSFAAStates.Signed,
-      },
-    );
-    await db.msfaaNumber.save(currentMSFAA);
-    const application = await saveFakeApplicationDisbursements(
-      db.dataSource,
-      {
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
-        student,
-        msfaaNumber: currentMSFAA,
-      },
-      {
-        applicationStatus: ApplicationStatus.Completed,
-        firstDisbursementInitialValues: {
-          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
-          coeUpdatedAt: enrolmentDate1,
-          disbursementScheduleStatusUpdatedOn: statusUpdatedOn,
-        },
-      },
-    );
-    const assessment = application.currentAssessment;
-    const [firstDisbursementSchedule] =
-      application.currentAssessment.disbursementSchedules;
-
-    const disbursementReceipt = createFakeDisbursementReceipt({
-      disbursementSchedule: firstDisbursementSchedule,
-      institutionLocation: collegeFLocation,
-    });
-    await db.disbursementReceipt.save(disbursementReceipt);
-
-    const awards = {};
-    const disbursementReceiptsValues = [] as DisbursementReceiptValue[];
-    firstDisbursementSchedule.disbursementValues.forEach((disbursement) => {
-      awards[`disbursement1${disbursement.valueCode.toLowerCase()}`] =
-        disbursement.valueAmount;
-      disbursementReceiptsValues.push(
-        createFakeDisbursementReceiptValue(
+      // First disbursement values.
+      const firstDisbursementValues = [
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaLoan,
+          "CSLP",
+          100,
+          { effectiveAmount: 100 },
+        ),
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaGrant,
+          "CSGP",
+          200,
+          // Final amount has been reduced by a $5 disbursed amount.
+          { effectiveAmount: 195, disbursedAmountSubtracted: 5 },
+        ),
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaGrant,
+          "CSPT",
+          300,
+          { effectiveAmount: 300 },
+        ),
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaGrant,
+          "CSGD",
+          400,
+          // Final amount has been modified by a $-15 overaward amount and a $10 restriction amount.
           {
-            grantType: disbursement.valueCode,
-            grantAmount: disbursement.valueAmount,
+            effectiveAmount: 405,
+            overawardAmountSubtracted: 15,
+            restrictionAmountSubtracted: 10,
           },
-          { disbursementReceipt },
         ),
-      );
-    });
-    await db.disbursementReceiptValue.save(disbursementReceiptsValues);
-
-    const finalAwards = {
-      disbursementReceipt1Received: true,
-      disbursementReceipt1HasAwards: true,
-    };
-
-    disbursementReceiptsValues.forEach((disbursementReceiptsValue) => {
-      finalAwards[
-        `disbursementReceipt1${disbursementReceiptsValue.grantType.toLowerCase()}`
-      ] = disbursementReceiptsValue.grantAmount;
-    });
-
-    const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/assessment/${assessment.id}/award`;
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({
-        applicationNumber: application.applicationNumber,
-        applicationStatus: application.applicationStatus,
-        institutionName:
-          assessment.offering.educationProgram.institution.operatingName,
-        offeringIntensity: assessment.offering.offeringIntensity,
-        offeringStudyStartDate: getDateOnlyFormat(
-          assessment.offering.studyStartDate,
+        createFakeDisbursementValue(
+          DisbursementValueType.BCGrant,
+          "BCAG",
+          500,
+          {
+            effectiveAmount: 500,
+          },
         ),
-        offeringStudyEndDate: getDateOnlyFormat(
-          assessment.offering.studyEndDate,
+        createFakeDisbursementValue(
+          DisbursementValueType.BCGrant,
+          "SBSD",
+          600,
+          {
+            effectiveAmount: 600,
+          },
         ),
-        estimatedAward: {
-          disbursement1Date: getDateOnlyFullMonthFormat(
-            firstDisbursementSchedule.disbursementDate,
-          ),
-          disbursement1Status:
-            firstDisbursementSchedule.disbursementScheduleStatus,
-          disbursement1COEStatus: firstDisbursementSchedule.coeStatus,
-          disbursement1MSFAANumber: MASKED_MSFAA_NUMBER,
-          disbursement1MSFAAId: firstDisbursementSchedule.msfaaNumber.id,
-          disbursement1MSFAACancelledDate:
-            firstDisbursementSchedule.msfaaNumber.cancelledDate,
-          disbursement1MSFAADateSigned:
-            firstDisbursementSchedule.msfaaNumber.dateSigned,
-          disbursement1TuitionRemittance:
-            firstDisbursementSchedule.tuitionRemittanceRequestedAmount,
-          disbursement1Id: firstDisbursementSchedule.id,
-          disbursement1DocumentNumber: firstDisbursementSchedule.documentNumber,
-          disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
-          disbursement1StatusUpdatedOn: statusUpdatedOn.toISOString(),
-          ...awards,
+        // Must be ignored in the result even being present with an effective value.
+        createFakeDisbursementValue(
+          DisbursementValueType.BCTotalGrant,
+          "BCSG",
+          500 + 600,
+          { effectiveAmount: 500 + 600 },
+        ),
+      ];
+
+      // Student has a Full-time application to the institution with award details.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          institution: collegeF,
+          institutionLocation: collegeFLocation,
+          student: sharedStudent,
+          msfaaNumber: sharedMSFAANumber,
+          firstDisbursementValues,
         },
-        finalAward: finalAwards,
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+          firstDisbursementInitialValues: {
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            dateSent: new Date(),
+            coeUpdatedAt: enrolmentDate1,
+            disbursementScheduleStatusUpdatedOn: statusUpdatedOn,
+          },
+        },
+      );
+      // Add a Disbursement Receipt for the first disbursement schedule.
+      const assessment = application.currentAssessment;
+      const [firstDisbursementSchedule] = assessment.disbursementSchedules;
+      const disbursementReceipt = createFakeDisbursementReceipt({
+        disbursementSchedule: firstDisbursementSchedule,
+        institutionLocation: collegeFLocation,
       });
-  });
+      await db.disbursementReceipt.save(disbursementReceipt);
+
+      const endpoint = `/institutions/assessment/student/${sharedStudent.id}/application/${application.id}/assessment/${assessment.id}/award`;
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          applicationNumber: application.applicationNumber,
+          applicationStatus: application.applicationStatus,
+          institutionName:
+            assessment.offering.educationProgram.institution.operatingName,
+          offeringIntensity: assessment.offering.offeringIntensity,
+          offeringStudyStartDate: getDateOnlyFormat(
+            assessment.offering.studyStartDate,
+          ),
+          offeringStudyEndDate: getDateOnlyFormat(
+            assessment.offering.studyEndDate,
+          ),
+          estimatedAward: {
+            disbursement1Date: getDateOnlyFullMonthFormat(
+              firstDisbursementSchedule.disbursementDate,
+            ),
+            disbursement1Status:
+              firstDisbursementSchedule.disbursementScheduleStatus,
+            disbursement1COEStatus: firstDisbursementSchedule.coeStatus,
+            disbursement1MSFAANumber: MASKED_MSFAA_NUMBER,
+            disbursement1MSFAAId: firstDisbursementSchedule.msfaaNumber.id,
+            disbursement1MSFAACancelledDate:
+              firstDisbursementSchedule.msfaaNumber.cancelledDate,
+            disbursement1MSFAADateSigned:
+              firstDisbursementSchedule.msfaaNumber.dateSigned,
+            disbursement1TuitionRemittance:
+              firstDisbursementSchedule.tuitionRemittanceRequestedAmount,
+            disbursement1Id: firstDisbursementSchedule.id,
+            disbursement1DocumentNumber:
+              firstDisbursementSchedule.documentNumber,
+            disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
+            disbursement1StatusUpdatedOn: statusUpdatedOn.toISOString(),
+            disbursement1cslp: 100,
+            disbursement1csgp: 200,
+            disbursement1cspt: 300,
+            disbursement1csgd: 400,
+            disbursement1bcag: 500,
+            disbursement1sbsd: 600,
+          },
+          finalAward: {
+            disbursementReceipt1Received: true,
+            disbursementReceipt1HasAwards: true,
+            disbursementReceipt1cslp: 100,
+            disbursementReceipt1csgp: 195,
+            disbursementReceipt1csgpDisbursedAmountSubtracted: 5,
+            disbursementReceipt1cspt: 300,
+            disbursementReceipt1csgd: 405,
+            disbursementReceipt1csgdOverawardAmountSubtracted: 15,
+            disbursementReceipt1csgdRestrictionAmountSubtracted: 10,
+            disbursementReceipt1bcag: 500,
+            disbursementReceipt1sbsd: 600,
+          },
+        });
+    },
+  );
 
   it("Should throw not found exception when assessment is not found.", async () => {
     // Arrange
 
-    // Student.
-    const student = await saveFakeStudent(db.dataSource);
-    const currentMSFAA = createFakeMSFAANumber(
-      { student },
-      {
-        msfaaState: MSFAAStates.Signed,
-      },
-    );
-    await db.msfaaNumber.save(currentMSFAA);
     const application = await saveFakeApplicationDisbursements(db.dataSource, {
       institution: collegeF,
       institutionLocation: collegeFLocation,
-      student,
-      msfaaNumber: currentMSFAA,
+      student: sharedStudent,
+      msfaaNumber: sharedMSFAANumber,
     });
 
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    const endpoint = `/institutions/assessment/student/${student.id}/application/${application.id}/assessment/9999999/award`;
+    const endpoint = `/institutions/assessment/student/${sharedStudent.id}/application/${application.id}/assessment/9999999/award`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -244,14 +294,13 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
 
   it("Should throw forbidden error when student does not have at least one application submitted for the institution.", async () => {
     // Arrange
-    const student = await saveFakeStudent(db.dataSource);
 
     // College F is a BC Public institution.
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    const endpoint = `/institutions/assessment/student/${student.id}/application/9999999/assessment/9999999/award`;
+    const endpoint = `/institutions/assessment/student/${sharedStudent.id}/application/9999999/assessment/9999999/award`;
 
     // Act/Assert
     await request(app.getHttpServer())

@@ -3,32 +3,27 @@
     <template #header>
       <header-navigator
         title="Student Details"
-        :subTitle="studentDetails.fullName"
+        :sub-title="studentDetails.fullName"
       >
         <template #sub-title-details>
           <student-restriction-chip
-            class="ml-4 mt-1"
-            :status="
-              studentDetails.hasRestriction
-                ? StudentRestrictionStatus.Restriction
-                : StudentRestrictionStatus.NoRestriction
-            "
+            class="mx-4"
+            :has-active-restriction="studentDetails.hasRestriction"
           />
         </template>
       </header-navigator>
     </template>
     <template #tab-header>
-      <v-tabs stacked color="primary"
-        ><v-tab
+      <v-tabs color="primary" stacked grow show-arrows="always">
+        <v-tab
           v-for="item in items"
+          :text="item.label"
           :key="item.label"
           :to="item.command()"
+          :prepend-icon="item.icon"
           :ripple="false"
-          ><div>
-            <v-icon start :icon="item.icon" class="px-1"></v-icon>
-            <span class="mx-2 label-bold"> {{ item.label }} </span>
-          </div>
-        </v-tab>
+          class="font-weight-bold"
+        />
       </v-tabs>
     </template>
     <router-view />
@@ -40,7 +35,6 @@ import { onMounted, ref, defineComponent } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StudentRestrictionChip from "@/components/generic/StudentRestrictionChip.vue";
-import { StudentRestrictionStatus } from "@/types";
 import { AESTStudentProfileAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
@@ -129,7 +123,6 @@ export default defineComponent({
     return {
       items,
       studentDetails,
-      StudentRestrictionStatus,
     };
   },
 });

@@ -69,6 +69,7 @@ import {
   OfferingValidationModel,
   OfferingDeliveryOptions,
   OfferingYesNoOptions,
+  OfferingActionType,
 } from "./education-program-offering-validation.models";
 import { EducationProgramOfferingValidationService } from "./education-program-offering-validation.service";
 import { LoggerService } from "@sims/utilities/logger";
@@ -76,6 +77,7 @@ import {
   InstitutionAddsPendingOfferingNotification,
   NotificationActionsService,
 } from "@sims/services";
+import { InstitutionRestrictionService } from "../../services";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -83,6 +85,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     private readonly dataSource: DataSource,
     private readonly offeringValidationService: EducationProgramOfferingValidationService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly institutionRestrictionService: InstitutionRestrictionService,
     private readonly logger: LoggerService,
   ) {
     super(dataSource.getRepository(EducationProgramOffering));
@@ -703,6 +706,17 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     if (!offering) {
       throw new Error("Offering was not found.");
     }
+    const locationId = offering.institutionLocation.id;
+    const programId = offering.educationProgram.id;
+    const effectiveRestrictions =
+      await this.institutionRestrictionService.getInstitutionRestrictionsByLocationAndProgram(
+        locationId,
+        programId,
+        { isActive: true },
+      );
+    const effectiveRestrictionActions = effectiveRestrictions.flatMap(
+      (restriction) => restriction.restriction.actionType,
+    );
     const offeringValidationModel = new OfferingValidationModel();
     offeringValidationModel.offeringName = offering.name;
     offeringValidationModel.studyStartDate = offering.studyStartDate;
@@ -726,6 +740,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     offeringValidationModel.offeringType = offering.offeringType;
     offeringValidationModel.courseLoad = offering.courseLoad;
     offeringValidationModel.studyBreaks = offering.studyBreaks?.studyBreaks;
+    offeringValidationModel.effectiveRestrictionActions = [
+      ...new Set(effectiveRestrictionActions),
+    ];
+    offeringValidationModel.actionType = OfferingActionType.Validate;
     return offeringValidationModel;
   }
 

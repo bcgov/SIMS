@@ -104,28 +104,34 @@ export class UpdateStudentAPIInDTO
 export class StudentSearchAPIInDTO {
   @ValidateIf(
     (input: StudentSearchAPIInDTO) =>
-      !input.lastName && !input.appNumber && !input.sin,
+      !input.lastName && !input.appNumber && !input.sin && !input.email,
   )
   @IsNotEmpty()
   firstName: string;
   @ValidateIf(
     (input: StudentSearchAPIInDTO) =>
-      !input.firstName && !input.appNumber && !input.sin,
+      !input.firstName && !input.appNumber && !input.sin && !input.email,
   )
   @IsNotEmpty()
   lastName: string;
   @ValidateIf(
     (input: StudentSearchAPIInDTO) =>
-      !input.firstName && !input.lastName && !input.sin,
+      !input.firstName && !input.lastName && !input.sin && !input.email,
   )
   @IsNotEmpty()
   appNumber: string;
   @ValidateIf(
     (input: StudentSearchAPIInDTO) =>
-      !input.firstName && !input.lastName && !input.appNumber,
+      !input.firstName && !input.lastName && !input.appNumber && !input.email,
   )
   @IsNotEmpty()
   sin: string;
+  @ValidateIf(
+    (input: StudentSearchAPIInDTO) =>
+      !input.firstName && !input.lastName && !input.appNumber && !input.sin,
+  )
+  @IsNotEmpty()
+  email: string;
 }
 
 export class SearchStudentAPIOutDTO {
