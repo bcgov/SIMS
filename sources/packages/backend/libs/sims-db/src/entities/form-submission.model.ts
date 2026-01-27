@@ -3,6 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -10,6 +11,7 @@ import {
   Application,
   FormCategory,
   FormSubmissionGrouping,
+  FormSubmissionItem,
   FormSubmissionStatus,
   Note,
   Student,
@@ -122,4 +124,15 @@ export class FormSubmission extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   assessedNote?: Note;
+  /**
+   * Submission items containing the individual forms submitted for a decision.
+   */
+  @OneToMany(
+    () => FormSubmissionItem,
+    (formSubmissionItem) => formSubmissionItem.formSubmission,
+    {
+      cascade: ["insert"],
+    },
+  )
+  formSubmissionItems: FormSubmissionItem[];
 }

@@ -14,10 +14,4 @@ export enum FormSubmissionStatus {
    * process is completed.
    */
   Completed = "Completed",
-  /**
-   * None of the forms within the submission were approved.
-   * The submission process is completed, but this entire
-   * submission was declined and can have its actions ignored.
-   */
-  Declined = "Declined",
 }

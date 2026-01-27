@@ -103,3 +103,5 @@ export * from "./application-change-request/application-change-request.aest.cont
 export * from "./supporting-user/supporting-user.students.controller";
 export * from "./disbursement-schedule/disbursement-schedule.aest.controller";
 export * from "./disbursement-schedule/models/disbursement-schedule.dto";
+export * from "./form-submission/models/form-submission.dto";
+export * from "./form-submission/form-submission.students.controller";

@@ -88,5 +88,5 @@ export class DynamicFormConfiguration extends BaseModel {
     enum: FormSubmissionGrouping,
     enumName: "FormSubmissionGrouping",
   })
-  formSubmissionGroupingType: FormSubmissionGrouping;
+  formSubmissionGrouping: FormSubmissionGrouping;
 }

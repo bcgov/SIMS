@@ -30,6 +30,7 @@ import {
   AnnouncementService,
   ApplicationRestrictionBypassService,
   InstitutionRestrictionService,
+  FormSubmissionService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -80,6 +81,7 @@ import {
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
 import { ObjectStorageModule } from "@sims/integrations/object-storage";
+import { FormSubmissionStudentsController } from "apps/api/src/route-controllers/form-submission/form-submission.students.controller";
 
 @Module({
   imports: [
@@ -105,6 +107,7 @@ import { ObjectStorageModule } from "@sims/integrations/object-storage";
     ScholasticStandingStudentsController,
     AnnouncementStudentsController,
     SupportingUserStudentsController,
+    FormSubmissionStudentsController,
   ],
   providers: [
     AnnouncementService,
@@ -160,6 +163,7 @@ import { ObjectStorageModule } from "@sims/integrations/object-storage";
     SupportingUserControllerService,
     DisbursementScheduleSharedService,
     InstitutionRestrictionService,
+    FormSubmissionService,
   ],
 })
 export class AppStudentsModule {}

@@ -65,9 +65,9 @@
             density="compact"
             multiple
             :items="applicationAppeals"
-            item-title="description"
-            item-value="formName"
-            v-model="selectedApplicationAppeals"
+            item-title="formType"
+            item-value="formDefinitionName"
+            v-model="selectedApplicationAppealsForms"
             variant="outlined"
             class="mb-4"
             :rules="[(v) => checkNullOrEmptyRule(v, 'Appeal(s)')]"
@@ -78,10 +78,10 @@
           hide-details="auto"
           label="Appeal form"
           density="compact"
-          :items="otherAppeals"
-          item-title="description"
-          item-value="formName"
-          v-model="selectedOtherAppeal"
+          :items="standaloneAppealsForms"
+          item-title="formType"
+          item-value="formDefinitionName"
+          v-model="selectedStandaloneAppealsForm"
           variant="outlined"
           class="mb-4"
           :rules="[(v) => checkNullOrEmptyRule(v, 'Appeal')]"
@@ -98,23 +98,27 @@
   </body-header-container>
 </template>
 <script lang="ts">
-import { useRules, useSnackBar, useStudentAppeals } from "@/composables";
+import { useRules, useSnackBar } from "@/composables";
 import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { StudentAppealService } from "../../../services/StudentAppealService";
-import { EligibleApplicationForAppealAPIOutDTO } from "@/services/http/dto";
+import {
+  DynamicFormConfigurationAPIOutDTO,
+  EligibleApplicationForAppealAPIOutDTO,
+} from "@/services/http/dto";
 import { useRouter } from "vue-router";
-import { VForm } from "@/types";
+import { FormCategory, FormSubmissionGrouping, VForm } from "@/types";
+import { DynamicFormConfigurationService } from "@/services/DynamicFormConfigurationService";
 
 enum AppealTypes {
   Application = "Application",
   Other = "Other",
 }
 
-interface AppealForm {
-  formName: string;
-  description: string;
-}
+type Form = Pick<
+  DynamicFormConfigurationAPIOutDTO,
+  "formDefinitionName" | "formType"
+>;
 
 export default defineComponent({
   props: {
@@ -128,13 +132,21 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const router = useRouter();
     const { checkNullOrEmptyRule } = useRules();
-    const { mapStudentAppealsFormNames } = useStudentAppeals();
     const appealsSelectionForm = ref({} as VForm);
-    const eligibleApplications = ref<EligibleApplicationForAppealAPIOutDTO[]>();
-    const loadingEligibleApplications = ref(false);
+    // Forms Categories
+    const bundleApplicationAppealsForms = ref<Form[]>([]);
+    const standaloneAppealsForms = ref<Form[]>([]);
+    const standaloneForms = ref<Form[]>([]);
+    // Selected form(s)
+    const selectedApplicationAppealsForms = ref<string[]>();
+    const selectedStandaloneAppealsForm = ref<string>();
+    const selectedStandaloneForm = ref<string>();
+    // Appeal type (Applications or Others).
     const selectedAppealType = ref<AppealTypes | null>();
+    // Eligible applications
+    const eligibleApplications = ref<EligibleApplicationForAppealAPIOutDTO[]>();
     const selectedApplicationId = ref<number | null>();
-    const selectedApplicationAppeals = ref<string[]>();
+    const loadingEligibleApplications = ref(false);
     const applicationAppeals = computed(() => {
       if (eligibleApplications.value && selectedApplicationId.value) {
         // Find application by selected application id.
@@ -144,16 +156,17 @@ export default defineComponent({
         // Map eligible appeals for the selected application.
         const eligibleApplicationAppeals = application
           ? application.eligibleApplicationAppeals.map((eligibleAppeal) => ({
-              formName: eligibleAppeal,
-              description: mapStudentAppealsFormNames(eligibleAppeal),
+              formDefinitionName: eligibleAppeal,
+              formType:
+                bundleApplicationAppealsForms.value.find(
+                  (form) => form.formDefinitionName === eligibleAppeal,
+                )?.formType ?? eligibleAppeal,
             }))
           : [];
         return eligibleApplicationAppeals;
       }
       return [];
     });
-    const selectedOtherAppeal = ref<string>();
-    const otherAppeals = ref<AppealForm[]>([]);
 
     onMounted(async () => {
       try {
@@ -161,6 +174,27 @@ export default defineComponent({
         const eligibleApplicationForAppeal =
           await StudentAppealService.shared.getEligibleApplicationsForAppeal();
         eligibleApplications.value = eligibleApplicationForAppeal.applications;
+        // Load form options.
+        const forms =
+          await DynamicFormConfigurationService.shared.getDynamicFormConfigurationsByCategory();
+        // Appeals
+        const appeals = forms.configurations.filter(
+          (form) => form.formCategory === FormCategory.StudentAppeal,
+        );
+        bundleApplicationAppealsForms.value = forms.configurations.filter(
+          (form) =>
+            form.formSubmissionGrouping ===
+            FormSubmissionGrouping.ApplicationBundle,
+        );
+        standaloneAppealsForms.value = appeals.filter(
+          (form) =>
+            form.formSubmissionGrouping ===
+            FormSubmissionGrouping.StudentStandalone,
+        );
+        // Forms
+        standaloneForms.value = forms.configurations.filter(
+          (form) => form.formCategory === FormCategory.StudentForm,
+        );
       } catch {
         snackBar.error("Unexpected error while loading eligible applications.");
       } finally {
@@ -183,7 +217,7 @@ export default defineComponent({
     watch(
       () => selectedApplicationId.value,
       () => {
-        selectedApplicationAppeals.value = undefined;
+        selectedApplicationAppealsForms.value = undefined;
       },
     );
 
@@ -197,7 +231,7 @@ export default defineComponent({
           name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_SUBMIT,
           params: {
             applicationId: selectedApplicationId.value,
-            appealForms: selectedApplicationAppeals.value?.toString(),
+            appealForms: selectedApplicationAppealsForms.value?.toString(),
           },
         });
         return;
@@ -205,7 +239,7 @@ export default defineComponent({
       await router.push({
         name: StudentRoutesConst.STUDENT_APPEAL_SUBMIT,
         params: {
-          appealForms: selectedOtherAppeal.value,
+          appealForms: selectedStandaloneAppealsForm.value,
         },
       });
     };
@@ -220,10 +254,15 @@ export default defineComponent({
       loadingEligibleApplications,
       AppealTypes,
       applicationAppeals,
-      selectedApplicationAppeals,
-      selectedOtherAppeal,
-      otherAppeals,
       goToAppealFormsRequests,
+      // Forms Categories
+      bundleApplicationAppealsForms,
+      standaloneAppealsForms,
+      standaloneForms,
+      // Selected form(s)
+      selectedApplicationAppealsForms,
+      selectedStandaloneAppealsForm,
+      selectedStandaloneForm,
     };
   },
 });

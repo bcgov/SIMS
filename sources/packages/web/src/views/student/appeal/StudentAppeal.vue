@@ -1,7 +1,7 @@
 <template>
   <student-page-container :layout-template="LayoutTemplates.CenteredCardTab">
     <template #header>
-      <header-navigator title="Student" sub-title="Appeals" />
+      <header-navigator title="Student" sub-title="Forms library" />
     </template>
     <template #tab-header>
       <student-appeal-shared-form />

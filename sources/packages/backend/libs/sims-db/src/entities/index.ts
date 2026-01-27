@@ -118,3 +118,4 @@ export * from "./form-submission-grouping.type";
 export * from "./form-category.type";
 export * from "./form-submission-status.type";
 export * from "./form-submission.model";
+export * from "./form-submission-item.model";
