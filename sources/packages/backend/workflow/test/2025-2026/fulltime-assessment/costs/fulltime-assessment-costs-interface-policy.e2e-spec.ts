@@ -22,6 +22,9 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
     expect(
       calculatedAssessment.variables.calculatedDataInterfacePolicyApplies,
     ).toBe(true);
+    expect(
+      calculatedAssessment.variables.calculatedDataInterfaceNeed,
+    ).toBeGreaterThanOrEqual(0);
   });
 
   it("Should show interface policy applies when a married student who declares less than $1500 income assistance and has a partner that will receive BCEA income assistance of $1500 or more.", async () => {
@@ -49,6 +52,9 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
     expect(
       calculatedAssessment.variables.calculatedDataInterfacePolicyApplies,
     ).toBe(true);
+    expect(
+      calculatedAssessment.variables.calculatedDataInterfaceNeed,
+    ).toBeGreaterThanOrEqual(0);
   });
 
   it("Should show interface policy does not apply when a student declares income assistance of less than $1500.", async () => {
@@ -66,6 +72,9 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
     expect(
       calculatedAssessment.variables.calculatedDataInterfacePolicyApplies,
     ).toBe(false);
+    expect(calculatedAssessment.variables.calculatedDataInterfaceNeed).toBe(
+      undefined,
+    );
   });
 
   it("Should show interface policy does not apply when a student declares no income assistance amount.", async () => {
@@ -82,6 +91,9 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
     expect(
       calculatedAssessment.variables.calculatedDataInterfacePolicyApplies,
     ).toBe(false);
+    expect(calculatedAssessment.variables.calculatedDataInterfaceNeed).toBe(
+      undefined,
+    );
   });
 
   it("Should show interface policy does not apply when a married student declares income assistance of less than $1500 and has a partner that will receive BCEA income assistance of less than $1500.", async () => {
@@ -99,6 +111,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
       YesNoOptions.No;
     assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
     assessmentConsolidatedData.studentDataPartnerBCEAIncomeAssistanceAmount = 1000;
+    assessmentConsolidatedData.studentDataGovernmentFundingCosts = 100;
 
     // Act
     const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
@@ -109,6 +122,9 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
     expect(
       calculatedAssessment.variables.calculatedDataInterfacePolicyApplies,
     ).toBe(false);
+    expect(calculatedAssessment.variables.calculatedDataInterfaceNeed).toBe(
+      undefined,
+    );
   });
 
   it("Should calculate a lower need amount when interface policy applies.", async () => {
@@ -127,25 +143,36 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
     expect(
       calculatedAssessment.variables.calculatedDataInterfaceEducationCosts,
     ).toBe(22500);
+
     // Student has no eligible dependants or child care costs, so this should be 0.
     expect(
       calculatedAssessment.variables.calculatedDataInterfaceChildCareCosts,
     ).toBe(0);
+
     // Interface policy applies, so this should be the limit for weekly transportation costs * offering weeks.
     expect(
       calculatedAssessment.variables
         .calculatedDataInterfaceTransportationAmount,
-    ).toBe(400);
+    ).toBe(13 * 16);
+
     // If no additional transportation costs are provided, this should be 0.
     expect(
       calculatedAssessment.variables
         .calculatedDataInterfaceAdditionalTransportationAmount,
     ).toBe(0);
-    // Interface need should be the sum of the education costs, child care costs, transportation amount, and additional transportation amount.
+
+    // Interface need should be the sum of the education costs, child care costs, transportation amount, and additional transportation amount less any Government Funding.
     expect(calculatedAssessment.variables.calculatedDataInterfaceNeed).toBe(
-      22500 + 400 + 0,
+      calculatedAssessment.variables.calculatedDataInterfaceEducationCosts +
+        calculatedAssessment.variables.calculatedDataInterfaceChildCareCosts +
+        calculatedAssessment.variables
+          .calculatedDataInterfaceTransportationAmount +
+        calculatedAssessment.variables
+          .calculatedDataInterfaceAdditionalTransportationAmount -
+        calculatedAssessment.variables.studentDataGovernmentFundingCosts,
     );
-    // The provincial assessed need should be the same as the interface need.
+
+    // The provincial and federal assessed need should be the same as the interface need.
     expect(
       calculatedAssessment.variables.calculatedDataProvincialAssessedNeed,
     ).toBe(calculatedAssessment.variables.calculatedDataInterfaceNeed);

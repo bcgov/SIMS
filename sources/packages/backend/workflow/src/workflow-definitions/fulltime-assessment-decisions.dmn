@@ -10,7 +10,7 @@
       <output id="OutputClause_01j97oq" label="limitWeeklyChildCare" name="limitWeeklyChildCare" typeRef="string" />
       <output id="OutputClause_05wibwn" label="limitWeeklyAlimonyChildSupport" name="limitWeeklyAlimonyChildSupport" typeRef="string" />
       <output id="OutputClause_0o0ynbc" label="limitWeeklySecondResidence" name="limitWeeklySecondResidence" typeRef="string" />
-      <output id="OutputClause_0pshgc9" label="limitWeeklytransportationAllowance" name="limitWeeklytransportationAllowance" typeRef="string" />
+      <output id="OutputClause_0pshgc9" label="limitWeeklyTransportationAllowance" name="limitWeeklyTransportationAllowance" typeRef="string" />
       <output id="OutputClause_1h99wa8" label="limitProgramYearBooks" name="limitProgramYearBooks" typeRef="string" />
       <output id="OutputClause_0bix300" label="limitProgramYearScholarshipBursaries" name="limitProgramYearScholarshipBursaries" typeRef="string" />
       <output id="OutputClause_1c5j7zc" label="limitParentCPPAmount" name="limitParentCPPAmount" typeRef="string" />
@@ -35,7 +35,7 @@
           <text>213</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1atose5">
-          <text>24</text>
+          <text>13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1y60x6f">
           <text>3000</text>
@@ -82,7 +82,7 @@
           <text>232</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_09tbz8c">
-          <text>25</text>
+          <text>13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0yycvlu">
           <text>3000</text>
@@ -129,7 +129,7 @@
           <text>241</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1u0w6zl">
-          <text>25</text>
+          <text>13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_130sxpz">
           <text>3000</text>
@@ -176,7 +176,7 @@
           <text>357</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1vadz5u">
-          <text>25</text>
+          <text>13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0bczwac">
           <text>3000</text>
@@ -223,7 +223,7 @@
           <text>357</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1qjhx8l">
-          <text>25</text>
+          <text>13</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_16wtie4">
           <text>3000</text>
