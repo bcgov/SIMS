@@ -23,7 +23,7 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
     studentRepo = dataSource.getRepository(Student);
   });
 
-  it("Should find the student by part of first name.", async () => {
+  it("Should find the student by part of first name when there is a partial match.", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
     student.user.firstName =
@@ -54,7 +54,7 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
       ]);
   });
 
-  it("Should find the student by sin.", async () => {
+  it("Should find the student by sin when there is an exact match.", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
     const searchPayload = {
@@ -80,6 +80,124 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
           sin: student.sinValidation.sin,
         },
       ]);
+  });
+
+  it("Should find the student by email where there is an exact match.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
+    await studentRepo.save(student);
+    const searchPayload = {
+      email: student.user.email,
+    };
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(searchPayload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect([
+        {
+          id: student.id,
+          firstName: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: student.birthDate,
+          sin: student.sinValidation.sin,
+        },
+      ]);
+  });
+
+  it("Should find the student by email where there is an exact match regardless of case.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
+    student.user.email = "student@hotmail.com";
+    await studentRepo.save(student);
+    const searchPayload = {
+      email: "StUdEnT@hOtMaIl.cOm",
+    };
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(searchPayload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect([
+        {
+          id: student.id,
+          firstName: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: student.birthDate,
+          sin: student.sinValidation.sin,
+        },
+      ]);
+  });
+
+  it("Should not find the student by email where there is only a partial match.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
+    student.user.email = "student@icloud.com";
+    await studentRepo.save(student);
+    const searchPayload = {
+      email: "student@icloud",
+    };
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(searchPayload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect([]);
+  });
+
+  it("Should not find the student by email where the email doesn't match.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
+    student.user.email = "student@gmail.com";
+    await studentRepo.save(student);
+    const searchPayload = {
+      email: "student@example.com",
+    };
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(searchPayload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect([]);
+  });
+
+  it("Should throw a bad request error when no search parameters are provided.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
+    student.user.email = "student@mail.com";
+    await studentRepo.save(student);
+    const searchPayload = {};
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(searchPayload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message: [
+          "firstName should not be empty",
+          "lastName should not be empty",
+          "appNumber should not be empty",
+          "sin should not be empty",
+          "email should not be empty",
+        ],
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
   });
 
   afterAll(async () => {

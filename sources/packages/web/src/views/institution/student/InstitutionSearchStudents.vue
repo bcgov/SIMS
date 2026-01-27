@@ -1,5 +1,5 @@
 <template>
-  <full-page-container>
+  <full-page-container :full-width="true">
     <body-header-container>
       <template #header>
         <body-header title="Search Students">

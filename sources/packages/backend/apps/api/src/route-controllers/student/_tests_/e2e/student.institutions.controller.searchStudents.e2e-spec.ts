@@ -396,6 +396,32 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       });
   });
 
+  it("Should find the student by email address when there is an exact match.", async () => {
+    // Arrange
+    const { student } = await saveStudentWithApplicationForCollegeF(
+      ApplicationStatus.Submitted,
+    );
+    const searchPayload = {
+      email: student.user.email,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(searchPayload)
+      .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect([
+        {
+          id: student.id,
+          firstName: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: student.birthDate,
+          sin: student.sinValidation.sin,
+        },
+      ]);
+  });
+
   /**
    * Saves a student and an application for the student for College F.
    * @param applicationStatus application status.
