@@ -2,7 +2,7 @@
   <v-form ref="searchStudentsForm">
     <content-group class="mb-8">
       <v-row>
-        <v-col cols="12" lg="">
+        <v-col cols="12" lg="2">
           <v-text-field
             label="Email address"
             density="compact"
@@ -12,7 +12,7 @@
             hide-details
           />
         </v-col>
-        <v-col cols="12" lg="">
+        <v-col cols="12" lg="2">
           <v-text-field
             label="Application number"
             density="compact"
@@ -23,7 +23,7 @@
             hide-details
           />
         </v-col>
-        <v-col cols="12" lg="">
+        <v-col cols="12" lg="2">
           <v-text-field
             label="SIN"
             density="compact"
@@ -34,7 +34,7 @@
             hide-details
           />
         </v-col>
-        <v-col cols="12" lg="">
+        <v-col cols="12" lg="2">
           <v-text-field
             label="Given names"
             density="compact"
@@ -44,7 +44,7 @@
             @keyup.enter="searchStudents"
             hide-details
           /> </v-col
-        ><v-col cols="12" lg="">
+        ><v-col cols="12" lg="2">
           <v-text-field
             label="Last name"
             density="compact"
@@ -55,7 +55,7 @@
             hide-details
           />
         </v-col>
-        <v-col cols="12" lg="1">
+        <v-col cols="12" lg="2">
           <v-btn
             color="primary"
             class="p-button-raised"
