@@ -773,12 +773,13 @@
             {
               "label": "Which regulatory body does this program belong to?",
               "widget": "html5",
+              "hideLabel": true,
               "tableView": true,
               "data": {
                 "values": [
                   {
-                    "label": "PTIB",
-                    "value": "ptib"
+                    "label": "PTIRU",
+                    "value": "ptiru"
                   },
                   {
                     "label": "DQAB",
@@ -809,14 +810,14 @@
               "validate": {
                 "required": true
               },
+              "validateWhenHidden": false,
               "key": "regulatoryBody",
               "attributes": {
                 "data-cy": "regulatoryBody"
               },
               "type": "select",
               "input": true,
-              "searchThreshold": 0.3,
-              "hideLabel": true
+              "searchThreshold": 0.3
             },
             {
               "input": true,
