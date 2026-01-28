@@ -2667,6 +2667,7 @@
               "validateWhenHidden": false,
               "errorLabel": "Dependent",
               "key": "spouseIsDependant",
+              "customConditional": "show = data.relationshipStatus === \"married\";",
               "type": "radio",
               "input": true,
               "lockKey": true
