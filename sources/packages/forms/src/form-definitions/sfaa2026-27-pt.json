@@ -3840,7 +3840,7 @@
                         "onlyAvailableItems": true
                       },
                       "validateWhenHidden": false,
-                      "key": "attendingPostSecondarySchool1",
+                      "key": "dependantRelationship",
                       "type": "radio",
                       "input": true
                     },
