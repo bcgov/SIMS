@@ -42,7 +42,7 @@
             name: StudentRoutesConst.STUDENT_APPEAL_SUBMISSION,
           }"
           prepend-icon="fa:fa fa-balance-scale"
-          >Appeals</v-btn
+          >Forms</v-btn
         >
         <v-btn
           v-if="hasAuthenticatedStudentAccount"

@@ -23,7 +23,8 @@ import ReportParentInformation from "@/views/student/ReportParentInformation.vue
 import ViewScholasticStanding from "@/views/student/ViewScholasticStanding.vue";
 // Student Appeal
 import StudentAppeal from "@/views/student/appeal/StudentAppeal.vue";
-import StudentAppealSharedFormSubmission from "@/views/student/appeal/StudentAppealSharedFormSubmission.vue";
+//import StudentAppealSharedFormSubmission from "@/views/student/appeal/StudentAppealSharedFormSubmission.vue";
+import StudentAppealSharedFormSubmission from "@/views/student/forms/StudentFormsSelector.vue";
 import StudentAppealSharedFormHistory from "@/views/student/appeal/StudentAppealSharedFormHistory.vue";
 
 import StudentAppealSubmit from "@/views/student/appeal/StudentAppealSubmit.vue";
