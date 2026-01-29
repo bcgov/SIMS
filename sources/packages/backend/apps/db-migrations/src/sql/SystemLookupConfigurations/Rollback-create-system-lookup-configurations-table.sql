@@ -1,0 +1,1 @@
+DROP TABLE sims.system_lookup_configurations;
