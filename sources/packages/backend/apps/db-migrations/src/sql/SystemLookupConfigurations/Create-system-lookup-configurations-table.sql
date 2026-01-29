@@ -7,8 +7,8 @@ CREATE TABLE sims.system_lookup_configurations(
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     creator INT NOT NULL REFERENCES sims.users(id),
-    modifier INT NULL DEFAULT NULL REFERENCES sims.users(id),
-    CONSTRAINT lookup_category_key_value_unique UNIQUE (lookup_category, lookup_key, lookup_value)
+    modifier INT REFERENCES sims.users(id),
+    CONSTRAINT lookup_category_key_unique UNIQUE (lookup_category, lookup_key)
 );
 
 -- Comments.
@@ -30,4 +30,4 @@ COMMENT ON COLUMN sims.system_lookup_configurations.creator IS 'Creator of the r
 
 COMMENT ON COLUMN sims.system_lookup_configurations.modifier IS 'Modifier of the record.';
 
-COMMENT ON CONSTRAINT lookup_category_key_value_unique ON sims.system_lookup_configurations IS 'Ensure that configuration is unique based on lookup category, lookup key and lookup value.';
+COMMENT ON CONSTRAINT lookup_category_key_unique ON sims.system_lookup_configurations IS 'Ensure that the lookup key is unique within a lookup category.';

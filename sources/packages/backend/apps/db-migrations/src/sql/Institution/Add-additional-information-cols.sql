@@ -1,9 +1,13 @@
 ALTER TABLE
     sims.institutions
 ADD
-    COLUMN country CHAR(2),
+    COLUMN country CHAR(2) CHECK (
+        sims.is_valid_system_lookup_key(country :: TEXT, 'Country' :: TEXT)
+    ),
 ADD
-    COLUMN province CHAR(2),
+    COLUMN province CHAR(2) CHECK (
+        sims.is_valid_system_lookup_key(province :: TEXT, 'Province' :: TEXT)
+    ),
 ADD
     COLUMN classification VARCHAR(50),
 ADD
@@ -74,4 +78,14 @@ SET
         WHEN institution_type_id = 6 THEN 'Yes'
         WHEN institution_type_id = 5 THEN 'No'
         ELSE NULL
-    END;
+    END,
+    updated_at = NOW(),
+    modifier = (
+        SELECT
+            id
+        FROM
+            sims.users
+        WHERE
+            -- System user.
+            user_name = '8fb44f70-6ce6-11ed-b307-8743a2da47ef@system'
+    );
