@@ -21,6 +21,7 @@ import {
   EducationProgramAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
   DeactivateProgramAPIInDTO,
+  EducationProgramPendingAPIOutDTO,
 } from "./models/education-program.dto";
 import { EducationProgramService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
@@ -34,6 +35,7 @@ import BaseController from "../BaseController";
 import {
   PaginatedResultsAPIOutDTO,
   ProgramsPaginationOptionsAPIInDTO,
+  PendingProgramsPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
 import { EducationProgramControllerService } from "./education-program.controller.service";
 import { Role } from "../../auth/roles.enum";
@@ -49,6 +51,32 @@ export class EducationProgramAESTController extends BaseController {
     private readonly educationProgramControllerService: EducationProgramControllerService,
   ) {
     super();
+  }
+
+  /**
+   * Gets a list of Education Programs with status 'Pending' where the Program is active/not expired.
+   * Pagination, sort and search are available on results.
+   * @param paginationOptions pagination options.
+   * @returns pending programs.
+   */
+  @Get("pending")
+  async getPendingPrograms(
+    @Query() paginationOptions: PendingProgramsPaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramPendingAPIOutDTO>> {
+    const programs =
+      await this.programService.getPendingPrograms(paginationOptions);
+
+    return {
+      results: programs.results.map((program) => ({
+        id: program.id,
+        programName: program.name,
+        institutionOperatingName: program.institution.operatingName,
+        submittedDate: program.submittedDate,
+        institutionId: program.institution.id,
+        locationId: 0,
+      })),
+      count: programs.count,
+    };
   }
 
   /**

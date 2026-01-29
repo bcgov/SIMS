@@ -174,6 +174,15 @@ export default defineComponent({
         },
       },
       {
+        title: "Programs",
+        props: {
+          prependIcon: "mdi-school-outline",
+          to: {
+            name: AESTRoutesConst.PENDING_PROGRAMS,
+          },
+        },
+      },
+      {
         title: "Offering change requests",
         props: {
           prependIcon: "mdi-view-list-outline",

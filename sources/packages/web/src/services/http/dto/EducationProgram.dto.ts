@@ -177,3 +177,12 @@ export interface DeclineProgramAPIInDTO {
 export interface DeactivateProgramAPIInDTO {
   note: string;
 }
+
+export interface EducationProgramPendingAPIOutDTO {
+  id: number;
+  programName: string;
+  institutionOperatingName: string;
+  submittedDate: Date;
+  institutionId: number;
+  locationId: number;
+}

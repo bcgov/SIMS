@@ -7,6 +7,7 @@ import {
   DeclineProgramAPIInDTO,
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
+  EducationProgramPendingAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
   PaginatedResultsAPIOutDTO,
@@ -194,5 +195,21 @@ export class EducationProgramApi extends HttpBaseClient {
       this.addClientRoot(`education-program/${programId}/deactivate`),
       payload,
     );
+  }
+
+  /**
+   * Gets a list of Programs with status 'Pending' where the Program is active/not expired.
+   * @param paginationOptions pagination options.
+   * @returns pending programs.
+   */
+  async getPendingPrograms(
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramPendingAPIOutDTO>> {
+    const url = `education-program/pending?${getPaginationQueryString(
+      paginationOptions,
+    )}`;
+    return this.getCall<
+      PaginatedResultsAPIOutDTO<EducationProgramPendingAPIOutDTO>
+    >(this.addClientRoot(url));
   }
 }

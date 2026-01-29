@@ -41,6 +41,7 @@ import {
 } from "../../utilities";
 import {
   CustomNamedError,
+  FieldSortOrder,
   getISODateOnlyString,
   isSameOrAfterDate,
 } from "@sims/utilities";
@@ -962,6 +963,89 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       results: programSummary,
       count: totalCount,
     };
+  }
+
+  /**
+   * Gets a list of Education Programs with status 'Pending' where the Program is active/not expired.
+   * Pagination, sort and search are available on results.
+   * @param paginationOptions pagination options.
+   * @returns pending programs.
+   */
+  async getPendingPrograms(
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<EducationProgram>> {
+    const programsQuery = this.repo
+      .createQueryBuilder("programs")
+      .select([
+        "programs.id",
+        "programs.name",
+        "programs.submittedDate",
+        "institution.id",
+        "institution.legalOperatingName",
+        "institution.operatingName",
+        "location.id",
+      ])
+      .innerJoin("programs.institution", "institution")
+      .innerJoin(
+        InstitutionLocation,
+        "location",
+        "institution.id = location.institution.id",
+      )
+      .where("programs.programStatus = :status", {
+        status: ProgramStatus.Pending,
+      })
+      .andWhere("programs.isActive = true")
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where("programs.effectiveEndDate is null").orWhere(
+            "programs.effectiveEndDate > CURRENT_DATE",
+          );
+        }),
+      );
+    // Search by program name or institution operating name.
+    if (paginationOptions.searchCriteria) {
+      programsQuery.andWhere(
+        new Brackets((qb) => {
+          qb.where("programs.name Ilike :searchCriteria", {
+            searchCriteria: `%${paginationOptions.searchCriteria}%`,
+          }).orWhere("institution.operatingName Ilike :searchCriteria", {
+            searchCriteria: `%${paginationOptions.searchCriteria}%`,
+          });
+        }),
+      );
+    }
+    this.addProgramsSort(programsQuery, paginationOptions);
+
+    programsQuery
+      .offset(paginationOptions.page * paginationOptions.pageLimit)
+      .limit(paginationOptions.pageLimit);
+
+    const [results, count] = await programsQuery.getManyAndCount();
+
+    return { results, count };
+  }
+
+  /**
+   * Adds sort to the programs query.
+   * @param programsQuery programs query.
+   * @param paginationOptions pagination options.
+   */
+  private addProgramsSort(
+    programsQuery: SelectQueryBuilder<EducationProgram>,
+    paginationOptions: PaginationOptions,
+  ): void {
+    const sortField = paginationOptions.sortField || "submittedDate";
+    const sortOrder = paginationOptions.sortOrder || FieldSortOrder.ASC;
+
+    // Map the sort field to the correct column.
+    const sortColumnMap: Record<string, string> = {
+      submittedDate: "programs.submittedDate",
+      programName: "programs.name",
+      institutionOperatingName: "institution.operatingName",
+    };
+
+    const sortColumn = sortColumnMap[sortField] || sortColumnMap.submittedDate;
+    programsQuery.orderBy(sortColumn, sortOrder);
   }
 
   /**

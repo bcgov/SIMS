@@ -763,3 +763,17 @@ export const PendingOfferingsHeaders = [
   { title: "Status", sortable: false, key: "offeringStatus" },
   { title: "Action", sortable: false, key: "actions" },
 ];
+
+/**
+ * Pending programs header.
+ */
+export const PendingProgramsHeaders = [
+  { title: "Date submitted", sortable: true, key: "submittedDate" },
+  {
+    title: "Institution Operating Name",
+    sortable: true,
+    key: "institutionOperatingName",
+  },
+  { title: "Program name", sortable: true, key: "programName" },
+  { title: "Action", sortable: false, key: "actions" },
+];

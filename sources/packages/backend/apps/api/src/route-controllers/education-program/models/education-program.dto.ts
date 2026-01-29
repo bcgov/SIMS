@@ -195,3 +195,15 @@ export class DeactivateProgramAPIInDTO {
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   note: string;
 }
+
+/**
+ * DTO to display pending education programs.
+ */
+export class EducationProgramPendingAPIOutDTO {
+  id: number;
+  programName: string;
+  institutionOperatingName: string;
+  submittedDate: Date;
+  institutionId: number;
+  locationId: number;
+}

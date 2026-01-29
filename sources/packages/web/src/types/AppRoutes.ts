@@ -116,6 +116,7 @@ export enum AppRoutes {
   AssessmentAwardView = "assessment-award-details/:assessmentId",
   PendingApplicationOfferingChangeRequests = "institution/application-offering-change-request/in-progress",
   PendingOfferings = "institution/offering/pending",
+  PendingPrograms = "institution/program/pending",
   // program
   Programs = "programs",
   ViewProgram = "institution/:institutionId/location/:locationId/program/:programId",
