@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0yotgp9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.41.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0yotgp9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.43.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
   <bpmn:process id="load-assessment-consolidated-data" name="Load Assessment Consolidated Data" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:extensionElements />
@@ -58,7 +58,7 @@
           <zeebe:header key="studentDataIncomeAssistanceAmount" value="data.incomeAssistanceAmount" />
           <zeebe:header key="studentDataLivingWithPartner" value="data.livingWithPartner" />
           <zeebe:header key="studentDataCRAReportedIncome" value="student.craReportedIncome" />
-          <zeebe:header key="studentDataDependants" value="data.dependants[].{&#10;  &#34;dateOfBirth&#34;: dateOfBirth,&#10;  &#34;declaredOnTaxes&#34;: declaredOnTaxes,&#10;  &#34;attendingPostSecondarySchool&#34;: attendingPostSecondarySchool&#10;}" />
+          <zeebe:header key="studentDataDependants" value="data.dependants[].{&#10;  &#34;dateOfBirth&#34;: dateOfBirth,&#10;  &#34;declaredOnTaxes&#34;: declaredOnTaxes,&#10;  &#34;attendingPostSecondarySchool&#34;: attendingPostSecondarySchool,&#10;  &#34;dependantRelationship&#34;: dependantRelationship&#10;}" />
           <zeebe:header key="studentDataGovernmentFundingCosts" value="data.governmentFundingCosts" />
           <zeebe:header key="studentDataNonGovernmentFundingCosts" value="data.nonGovernmentFundingCosts" />
           <zeebe:header key="studentDataParentVoluntaryContributionsCosts" value="data.parentvoluntarycontributionsCosts" />
