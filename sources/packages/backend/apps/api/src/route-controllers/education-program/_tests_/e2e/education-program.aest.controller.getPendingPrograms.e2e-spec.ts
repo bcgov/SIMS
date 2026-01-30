@@ -308,6 +308,9 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
     institution.operatingName = uniqueInstitutionName;
     await db.institution.save(institution);
 
+    const location = createFakeLocation(institution);
+    await db.institutionLocation.save(location);
+
     const program = createFakeEducationProgram(
       {
         auditUser: savedUser,
