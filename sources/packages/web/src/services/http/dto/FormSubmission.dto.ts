@@ -1,7 +1,6 @@
 import {
   FormCategory,
   FormSubmissionDecisionStatus,
-  FormSubmissionGrouping,
   FormSubmissionStatus,
 } from "@/types";
 
@@ -28,12 +27,10 @@ export interface FormSubmissionsAPIOutDTO {
 export interface FormSubmissionItemAPIInDTO {
   dynamicConfigurationId: number;
   formData: unknown;
-  files: string[];
+  files?: string[];
 }
 
 export interface FormSubmissionAPIInDTO {
-  formCategory: FormCategory;
-  submissionGrouping: FormSubmissionGrouping;
   applicationId?: number;
   items: FormSubmissionItemAPIInDTO[];
 }

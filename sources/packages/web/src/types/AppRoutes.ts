@@ -49,6 +49,16 @@ export enum AppRoutes {
    * Student appeal requests list (tied to a specific application).
    */
   StudentApplicationAppealRequests = "application/:applicationId/appeal/:appealId",
+  /**
+   * Student forms.
+   */
+  StudentForms = "forms",
+  StudentFormsSelector = "selector",
+  StudentFormsHistory = "history",
+  /**
+   * Student forms submission page.
+   */
+  StudentFormsSubmit = "forms/:formDefinitions",
 
   // Institution
   InstitutionRoot = "/institution",

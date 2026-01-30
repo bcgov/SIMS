@@ -1,10 +1,13 @@
-import { FormCategory, FormSubmissionGrouping } from "@/types";
+import { FormCategory } from "@/types";
 
 export interface DynamicFormConfigurationAPIOutDTO {
+  id: number;
   formDefinitionName: string;
   formType: string;
   formCategory: FormCategory;
-  formSubmissionGrouping?: FormSubmissionGrouping;
+  formDescription: string;
+  allowBundledSubmission: boolean;
+  hasApplicationScope: boolean;
 }
 
 export class DynamicFormConfigurationsAPIOutDTO {

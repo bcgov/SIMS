@@ -40,7 +40,7 @@ export default defineComponent({
     changed: (form: FormIOForm, event: FormIOChangeEvent) => {
       return !!form && !!event;
     },
-    loaded: (form: FormIOForm) => {
+    loaded: (form: FormIOForm, formKey: string) => {
       return !!form;
     },
     customEvent: (form: FormIOForm, event: FormIOCustomEvent) => {
@@ -70,6 +70,11 @@ export default defineComponent({
     isDataReady: {
       type: Boolean,
       default: true,
+      required: false,
+    },
+    formKey: {
+      type: String,
+      default: null,
       required: false,
     },
   },
@@ -199,7 +204,7 @@ export default defineComponent({
         // To visually hide the form until the rendering to be completed, a delay is set.
         setTimeout(() => {
           isFormCreated.value = true;
-          context.emit("loaded", form);
+          context.emit("loaded", form, props.formKey);
         }, FORMIO_LOAD_DATA_PROCESSING_VIEW_DELAY);
       } finally {
         createFormInProgress = false;

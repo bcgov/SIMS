@@ -4,7 +4,6 @@ CREATE TABLE sims.form_submissions(
     application_id INT REFERENCES sims.applications(id),
     submitted_date TIMESTAMP WITH TIME ZONE NOT NULL,
     form_category sims.form_category_types NOT NULL,
-    submission_grouping_type sims.form_submission_grouping_types NOT NULL,
     submission_status sims.form_submission_status NOT NULL,
     assessed_date TIMESTAMP WITH TIME ZONE,
     assessed_by INT REFERENCES sims.users (id),
@@ -14,16 +13,6 @@ CREATE TABLE sims.form_submissions(
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     creator INT NOT NULL REFERENCES sims.users(id) NOT NULL,
     modifier INT NULL DEFAULT NULL REFERENCES sims.users(id),
-    -- Ensure application related submissions have an application ID.
-    CONSTRAINT form_submissions_application_id_constraint CHECK (
-        (
-            submission_grouping_type = 'Application bundle' :: sims.form_submission_grouping_types
-            AND application_id IS NOT NULL
-        )
-        OR (
-            submission_grouping_type != 'Application bundle' :: sims.form_submission_grouping_types
-        )
-    ),
     -- Ensure assessed fields are all provided when submission status is not pending.
     CONSTRAINT form_submissions_assessed_fields_required_constraint CHECK (
         (
@@ -51,8 +40,6 @@ COMMENT ON COLUMN sims.form_submissions.submitted_date IS 'Date and time when th
 
 COMMENT ON COLUMN sims.form_submissions.form_category IS 'Category of the form. All forms for the submission must share the same category. This column is denormalized from the form items for easier querying.';
 
-COMMENT ON COLUMN sims.form_submissions.submission_grouping_type IS 'Grouping type of the submission. All forms within a submission share the same grouping type. This column is denormalized from the form items for easier querying.';
-
 COMMENT ON COLUMN sims.form_submissions.submission_status IS 'Current status of the submission. A submission will be considered completed when all individual form items have been assessed and are no longer in pending state.';
 
 COMMENT ON COLUMN sims.form_submissions.assessed_date IS 'Date and time when the submission was assessed. When assessed, the status must be either Completed or Declined.';
@@ -70,6 +57,4 @@ COMMENT ON COLUMN sims.form_submissions.creator IS 'Creator of the record.';
 COMMENT ON COLUMN sims.form_submissions.modifier IS 'Modifier of the record.';
 
 -- Constraints comments.
-COMMENT ON CONSTRAINT form_submissions_application_id_constraint ON sims.form_submissions IS 'Ensures application_id is present when submission_grouping_type is application-related.';
-
-COMMENT ON CONSTRAINT form_submissions_assessed_fields_required_constraint ON sims.form_submissions IS 'Requires assessed_date, assessed_by, and assessed_student_note_id when submission_status is not Pending.';
+COMMENT ON CONSTRAINT form_submissions_assessed_fields_required_constraint ON sims.form_submissions IS 'Requires assessed_date, assessed_by, and assessed_note_id when submission_status is not Pending.';

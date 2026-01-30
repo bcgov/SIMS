@@ -4,7 +4,6 @@ import {
   DynamicFormConfiguration,
   DynamicFormType,
   FormCategory,
-  FormSubmissionGrouping,
   OfferingIntensity,
 } from "@sims/sims-db";
 import { Repository } from "typeorm";
@@ -38,7 +37,9 @@ export class DynamicFormConfigurationService {
           offeringIntensity: true,
           formDefinitionName: true,
           formCategory: true,
-          formSubmissionGrouping: true,
+          formDescription: true,
+          allowBundledSubmission: true,
+          hasApplicationScope: true,
         },
         relations: {
           programYear: true,
@@ -94,23 +95,6 @@ export class DynamicFormConfigurationService {
   getDynamicStudentForms(): DynamicFormConfiguration[] {
     return this.dynamicFormConfigurations.filter((dynamicFormConfiguration) =>
       STUDENT_FORM_CATEGORIES.has(dynamicFormConfiguration.formCategory),
-    );
-  }
-
-  configurationExists(configurationId: number): boolean {
-    return !!this.getDynamicFormById(configurationId);
-  }
-
-  hasGroupContext(
-    configurationId: number,
-    formCategory: FormCategory,
-    formSubmissionGrouping: FormSubmissionGrouping,
-  ): boolean {
-    const configuration = this.getDynamicFormById(configurationId);
-
-    return (
-      configuration.formCategory === formCategory &&
-      configuration.formSubmissionGrouping === formSubmissionGrouping
     );
   }
 }

@@ -39,7 +39,7 @@
           class="nav-item-label"
           variant="text"
           :to="{
-            name: StudentRoutesConst.STUDENT_APPEAL_SUBMISSION,
+            name: StudentRoutesConst.STUDENT_FORMS_SELECTOR,
           }"
           prepend-icon="fa:fa fa-balance-scale"
           >Forms</v-btn

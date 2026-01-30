@@ -9,7 +9,6 @@ import {
 } from "@nestjs/common";
 import {
   ApplicationService,
-  DynamicFormConfigurationService,
   FormService,
   FormSubmissionModel,
   FormSubmissionService,
@@ -45,7 +44,7 @@ import {
   APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
 } from "../../constants";
 import { getSupportingUserParents } from "../../utilities";
-import { Application } from "@sims/sims-db";
+import { Application, FormCategory } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -57,7 +56,6 @@ export class FormSubmissionStudentsController extends BaseController {
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
     private readonly formSubmissionService: FormSubmissionService,
-    private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
   ) {
     super();
   }
@@ -116,6 +114,50 @@ export class FormSubmissionStudentsController extends BaseController {
     @Body() payload: FormSubmissionAPIInDTO,
     @UserToken() userToken: StudentUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const submissionConfigs =
+      this.formSubmissionService.convertToFormSubmissionConfigs(payload.items);
+    // Validate the form configurations in the submission items.
+    this.formSubmissionService.validatedFormConfiguration(
+      submissionConfigs,
+      payload.applicationId,
+    );
+    const [referenceConfig] = submissionConfigs;
+    if (
+      referenceConfig.formCategory === FormCategory.StudentAppeal &&
+      payload.applicationId
+    ) {
+      // Ensures the appeals are validated based on the eligibility criteria used for fetching the
+      // eligible applications for appeal using getEligibleApplicationsForAppeal endpoint.
+      const [eligibleApplication] =
+        await this.studentAppealService.getEligibleApplicationsForAppeal(
+          userToken.studentId,
+          { applicationId: payload.applicationId },
+        );
+      if (!eligibleApplication) {
+        throw new UnprocessableEntityException(
+          new ApiProcessError(
+            "The application is not eligible to submit an appeal.",
+            APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
+          ),
+        );
+      }
+      // Validate if all the submitted forms are eligible appeals for the application.
+      const eligibleAppealForms = new Set(
+        eligibleApplication.currentAssessment.eligibleApplicationAppeals,
+      );
+      const formNames = submissionConfigs.map(
+        (config) => config.formDefinitionName,
+      );
+      const ineligibleFormNames = formNames.filter(
+        (formName) => !eligibleAppealForms.has(formName),
+      );
+      if (ineligibleFormNames.length) {
+        throw new UnprocessableEntityException(
+          `The submitted appeal form(s) ${ineligibleFormNames.join(", ")} is/are not eligible for the application.`,
+        );
+      }
+    }
+
     let application: Application;
     if (payload.applicationId) {
       // Execute application validations.
@@ -137,64 +179,12 @@ export class FormSubmissionStudentsController extends BaseController {
         );
       }
     }
-    // Validate that all the forms in the submission are
-    // recognized and share the same grouping context.
-    for (const submissionItem of payload.items) {
-      if (
-        !this.dynamicFormConfigurationService.configurationExists(
-          submissionItem.dynamicConfigurationId,
-        )
-      ) {
-        throw new UnprocessableEntityException(
-          "One or more forms in the submission are not recognized.",
-          "UNKNOWN_FORM_CONFIGURATION",
-        );
-      }
-      const hasSameGroupContext =
-        this.dynamicFormConfigurationService.hasGroupContext(
-          submissionItem.dynamicConfigurationId,
-          payload.formCategory,
-          payload.submissionGrouping,
-        );
-      if (!hasSameGroupContext) {
-        throw new UnprocessableEntityException(
-          "All forms in the submission must share the same grouping context.",
-          "MISMATCHED_FORM_GROUPING_CONTEXT",
-        );
-      }
-    }
-
-    // const submittedFormNames = payload.studentAppealRequests.map(
-    //   (request) => request.formName,
-    // );
-
-    // Ensures the appeals are validated based on the eligibility criteria used for fetching the
-    // eligible applications for appeal using getEligibleApplicationsForAppeal endpoint.
-    const [eligibleApplication] =
-      await this.studentAppealService.getEligibleApplicationsForAppeal(
-        userToken.studentId,
-        { applicationId: payload.applicationId },
-      );
-    if (!eligibleApplication) {
-      throw new UnprocessableEntityException(
-        new ApiProcessError(
-          "The application is not eligible to submit an appeal.",
-          APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
-        ),
-      );
-    }
-    // Validate if all the submitted forms are eligible appeals for the application.
-    // this.studentAppealControllerService.validateAppealFormNames(
-    //   submittedFormNames,
-    //   eligibleApplication.currentAssessment.eligibleApplicationAppeals,
-    // );
 
     const existingFormSubmission =
       await this.formSubmissionService.hasPendingFormSubmission(
         userToken.studentId,
         payload.applicationId,
-        payload.formCategory,
-        payload.submissionGrouping,
+        referenceConfig.formCategory,
       );
     if (existingFormSubmission) {
       throw new UnprocessableEntityException(
@@ -204,10 +194,11 @@ export class FormSubmissionStudentsController extends BaseController {
         ),
       );
     }
+
     let dryRunSubmissionResults: DryRunSubmissionResult[] = [];
     try {
       const dryRunPromise: Promise<DryRunSubmissionResult>[] =
-        payload.items.map((submissionItem) => {
+        submissionConfigs.map((submissionItem) => {
           // Check if the form has any inputs which are required to be populated at the server side
           // during the dry run submission.
           if (submissionItem.formData.programYear) {
@@ -220,13 +211,10 @@ export class FormSubmissionStudentsController extends BaseController {
             );
             submissionItem.formData.parents = parents;
           }
-          const formConfiguration =
-            this.dynamicFormConfigurationService.getDynamicFormById(
-              submissionItem.dynamicConfigurationId,
-            );
           return this.formService.dryRunSubmission(
-            formConfiguration.formDefinitionName,
+            submissionItem.formDefinitionName,
             submissionItem.formData,
+            { dynamicConfigurationId: submissionItem.dynamicConfigurationId },
           );
         });
       dryRunSubmissionResults = await Promise.all(dryRunPromise);
@@ -245,30 +233,22 @@ export class FormSubmissionStudentsController extends BaseController {
     }
 
     // Generate the data to be persisted based on the result of the dry run submission.
-    const formItems = dryRunSubmissionResults.map(
-      (itemSubmissionResult) =>
-        ({
-          dynamicConfigurationId: payload.items.find(
-            (item) =>
-              this.dynamicFormConfigurationService.getDynamicFormById(
-                item.dynamicConfigurationId,
-              ).formType === itemSubmissionResult.formName,
-          ).dynamicConfigurationId,
-          formData: itemSubmissionResult.data.data,
-          files: payload.items.find(
-            (item) =>
-              this.dynamicFormConfigurationService.getDynamicFormById(
-                item.dynamicConfigurationId,
-              ).formType === itemSubmissionResult.formName,
-          ).files,
-        }) as FormSubmissionModel,
-    );
+    const formItems = dryRunSubmissionResults.map((dryRunResult) => {
+      const submissionConfig = submissionConfigs.find(
+        (config) =>
+          config.dynamicConfigurationId === dryRunResult.dynamicConfigurationId,
+      );
+      return {
+        dynamicConfigurationId: dryRunResult.dynamicConfigurationId,
+        formData: dryRunResult.data.data,
+        files: submissionConfig.files,
+      } as FormSubmissionModel;
+    });
 
     const studentAppeal = await this.formSubmissionService.saveFormSubmission(
       userToken.studentId,
       payload.applicationId,
-      payload.formCategory,
-      payload.submissionGrouping,
+      referenceConfig.formCategory,
       formItems,
       userToken.userId,
     );

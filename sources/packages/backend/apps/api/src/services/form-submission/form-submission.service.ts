@@ -7,15 +7,19 @@ import {
   Student,
   FormSubmission,
   FormCategory,
-  FormSubmissionGrouping,
   FormSubmissionStatus,
   FormSubmissionItem,
   DynamicFormConfiguration,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FormSubmissionModel } from "apps/api/src/services/form-submission/form-submission.models";
+import {
+  FormSubmissionConfig,
+  FormSubmissionModel,
+} from "./form-submission.models";
 import { FormSubmissionDecisionStatus } from "@sims/sims-db/entities/form-submission-decision-status.type";
+import { DynamicFormConfigurationService } from "../../services";
+import { CustomNamedError } from "@sims/utilities";
 
 /**
  * Service layer for Student appeals.
@@ -25,6 +29,7 @@ export class FormSubmissionService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly studentFileService: StudentFileService,
+    private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
     @InjectRepository(FormSubmission)
     private readonly formSubmissionRepo: Repository<FormSubmission>,
   ) {}
@@ -33,7 +38,6 @@ export class FormSubmissionService {
     studentId: number,
     applicationId: number | undefined,
     formCategory: FormCategory,
-    submissionGrouping: FormSubmissionGrouping,
     submissionItems: FormSubmissionModel[],
     auditUserId: number,
   ): Promise<FormSubmission> {
@@ -46,7 +50,6 @@ export class FormSubmissionService {
       formSubmission.submittedDate = now;
       formSubmission.submissionStatus = FormSubmissionStatus.Pending;
       formSubmission.formCategory = formCategory;
-      formSubmission.submissionGrouping = submissionGrouping;
       formSubmission.creator = creator;
       formSubmission.createdAt = now;
       formSubmission.formSubmissionItems = submissionItems.map(
@@ -94,14 +97,12 @@ export class FormSubmissionService {
     studentId: number,
     applicationId: number | undefined,
     formCategory: FormCategory,
-    submissionGrouping: FormSubmissionGrouping,
   ): Promise<boolean> {
     return this.formSubmissionRepo.exists({
       where: {
         student: { id: studentId },
         application: applicationId ? { id: applicationId } : IsNull(),
         formCategory: formCategory,
-        submissionGrouping: submissionGrouping,
         submissionStatus: FormSubmissionStatus.Pending,
       },
     });
@@ -134,5 +135,68 @@ export class FormSubmissionService {
       where: [{ student: { id: studentId } }],
       order: { submittedDate: "DESC", formSubmissionItems: { id: "ASC" } },
     });
+  }
+
+  convertToFormSubmissionConfigs(
+    submissionItems: FormSubmissionModel[],
+  ): FormSubmissionConfig[] {
+    return submissionItems.map((submissionItem) => {
+      const config = this.dynamicFormConfigurationService.getDynamicFormById(
+        submissionItem.dynamicConfigurationId,
+      );
+      if (!config) {
+        throw new CustomNamedError(
+          "One or more forms in the submission are not recognized.",
+          "UNKNOWN_FORM_CONFIGURATION",
+        );
+      }
+      return {
+        ...submissionItem,
+        ...config,
+      };
+    });
+  }
+
+  validatedFormConfiguration(
+    submissionItems: FormSubmissionConfig[],
+    applicationId: number | undefined,
+  ): void {
+    const validationModels =
+      this.convertToFormSubmissionConfigs(submissionItems);
+    // Validate if all forms share the same scope.
+    if (applicationId) {
+      const hasApplicationScope = validationModels.every(
+        (validationModel) => validationModel.hasApplicationScope,
+      );
+      if (!hasApplicationScope) {
+        throw new CustomNamedError(
+          "All forms in the submission must have application scope if an application ID is provided.",
+          "MIXED_FORM_APPLICATION_SCOPE",
+        );
+      }
+    }
+    // Validate if the forms allow bundled submissions when there are multiple items.
+    const hasAllowedItemsQuantity =
+      validationModels.length === 1 ||
+      (validationModels.length > 1 &&
+        validationModels.every((item) => item.allowBundledSubmission));
+    if (!hasAllowedItemsQuantity) {
+      throw new CustomNamedError(
+        "One or more forms in the submission do not allow bundled submissions.",
+        "BUNDLED_SUBMISSION_FORMS_NOT_ALLOWED",
+      );
+    }
+    // Validate if all forms share the same category.
+    const [referenceForm] = validationModels;
+    const allSameCategory = validationModels.every(
+      (validationModel) =>
+        validationModel.formCategory === referenceForm.formCategory,
+    );
+    if (!allSameCategory) {
+      throw new CustomNamedError(
+        "All forms in the submission must share the same form category.",
+        "MIXED_FORM_CATEGORIES",
+      );
+    }
   }
 }

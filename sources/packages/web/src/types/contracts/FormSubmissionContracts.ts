@@ -1,21 +1,4 @@
 /**
- * Defines how forms can be grouped when submitted.
- */
-export enum FormSubmissionGrouping {
-  /**
-   * An application bundle groups multiple forms together
-   * as part of a single application process.
-   */
-  ApplicationBundle = "Application bundle",
-  /**
-   * A student standalone refers to forms that are submitted
-   * independently and are associated directly with a student,
-   * rather than an application.
-   */
-  StudentStandalone = "Student standalone",
-}
-
-/**
  * Defines the category of forms.
  */
 export enum FormCategory {
@@ -67,4 +50,29 @@ export enum FormSubmissionDecisionStatus {
    * The form submission item has been declined.
    */
   Declined = "Declined",
+}
+
+export interface FormSubmissionItemApproval {
+  id: number;
+  status: FormSubmissionDecisionStatus;
+  noteDescription: string;
+  assessedDate?: string;
+  assessedByUserName?: string;
+  showAudit: boolean;
+}
+
+export interface FormSubmissionItem {
+  dynamicConfigurationId: number;
+  category: FormCategory;
+  formName: string;
+  formData: unknown;
+  files?: string[];
+  approval?: FormSubmissionItemApproval;
+}
+
+export interface FormSubmissionItemSubmitted {
+  dynamicConfigurationId: number;
+  formData: unknown;
+  files?: string[];
+  approval?: FormSubmissionItemApproval;
 }

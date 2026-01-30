@@ -53,7 +53,7 @@ export class FormSubmissionItem extends RecordDataModel {
    * Current decision status for this item.
    */
   @Column({
-    name: "submission_status",
+    name: "decision_status",
     type: "enum",
     enum: FormSubmissionDecisionStatus,
     enumName: "FormSubmissionDecisionStatus",

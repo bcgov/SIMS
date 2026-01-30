@@ -10,7 +10,6 @@ import {
 import {
   Application,
   FormCategory,
-  FormSubmissionGrouping,
   FormSubmissionItem,
   FormSubmissionStatus,
   Note,
@@ -74,17 +73,6 @@ export class FormSubmission extends RecordDataModel {
     enumName: "FormCategory",
   })
   formCategory: FormCategory;
-  /**
-   * Grouping type of the submission. All forms within a submission share the same
-   * grouping type. This column is denormalized from the form items for easier querying.
-   */
-  @Column({
-    name: "submission_grouping_type",
-    type: "enum",
-    enum: FormSubmissionGrouping,
-    enumName: "FormSubmissionGrouping",
-  })
-  submissionGrouping: FormSubmissionGrouping;
   /**
    * Current status of the submission. A submission will be considered completed when all
    * individual form items have been assessed and are no longer in pending state.

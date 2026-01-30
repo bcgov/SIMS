@@ -6,13 +6,11 @@ CREATE TYPE sims.form_category_types AS ENUM(
 
 COMMENT ON TYPE sims.form_category_types IS 'Defines the category of forms.';
 
-CREATE TYPE sims.form_submission_grouping_types AS ENUM(
-    'Application bundle',
-    'Student standalone'
-);
-
-COMMENT ON TYPE sims.form_submission_grouping_types IS 'Defines how forms can be grouped when submitted. An application bundle groups multiple forms together as part of a single application process. A student standalone refers to forms that are submitted independently and are associated directly with a student, rather than an application.';
-
+-- CREATE TYPE sims.form_submission_grouping_types AS ENUM(
+--     'Application bundle',
+--     'Student standalone'
+-- );
+-- COMMENT ON TYPE sims.form_submission_grouping_types IS 'Defines how forms can be grouped when submitted. An application bundle groups multiple forms together as part of a single application process. A student standalone refers to forms that are submitted independently and are associated directly with a student, rather than an application.';
 CREATE TYPE sims.form_submission_status AS ENUM('Pending', 'Completed');
 
 COMMENT ON TYPE sims.form_submission_status IS 'Status for form submission that contains one to many forms to be assessed and have a decision assigned. Once all forms within the submission have been assessed, the status is marked as Completed.';

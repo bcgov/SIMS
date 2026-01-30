@@ -9,7 +9,6 @@ import {
   BaseModel,
   DynamicFormType,
   FormCategory,
-  FormSubmissionGrouping,
   OfferingIntensity,
   ProgramYear,
 } from ".";
@@ -79,14 +78,26 @@ export class DynamicFormConfiguration extends BaseModel {
   formCategory: FormCategory;
 
   /**
-   * Indicates how the form submissions are grouped, such as part
-   * of an application bundle or standalone student form.
+   * Provides a description of the form to be shown to the student.
    */
   @Column({
-    name: "form_submission_grouping_type",
-    type: "enum",
-    enum: FormSubmissionGrouping,
-    enumName: "FormSubmissionGrouping",
+    name: "form_description",
   })
-  formSubmissionGrouping: FormSubmissionGrouping;
+  formDescription: string;
+
+  /**
+   * Indicates whether the form must be associated with a Student Application.
+   */
+  @Column({
+    name: "has_application_scope",
+  })
+  hasApplicationScope: boolean;
+
+  /**
+   * Indicates whether this form can be part of submission that would included multiple forms.
+   */
+  @Column({
+    name: "allow_bundled_submission",
+  })
+  allowBundledSubmission: boolean;
 }

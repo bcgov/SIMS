@@ -3,19 +3,14 @@ import {
   ArrayMaxSize,
   ArrayMinSize,
   IsDefined,
-  IsEnum,
-  IsIn,
+  IsOptional,
   IsPositive,
-  ValidateIf,
   ValidateNested,
 } from "class-validator";
 import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_10KB } from "../../../constants";
 import { Parent } from "../../../types";
-import {
-  FormSubmissionGrouping,
-  FormSubmissionStatus,
-} from "@sims/sims-db/entities";
+import { FormSubmissionStatus } from "@sims/sims-db/entities";
 import { FormCategory } from "@sims/sims-db";
 import { FormSubmissionDecisionStatus } from "@sims/sims-db/entities/form-submission-decision-status.type";
 
@@ -53,15 +48,7 @@ export class FormSubmissionItemAPIInDTO {
 }
 
 export class FormSubmissionAPIInDTO {
-  @IsIn([FormCategory.StudentAppeal, FormCategory.StudentForm])
-  formCategory: FormCategory;
-  @IsEnum(FormSubmissionGrouping)
-  submissionGrouping: FormSubmissionGrouping;
-  @ValidateIf(
-    (submission) =>
-      submission.submissionGrouping ===
-      FormSubmissionGrouping.ApplicationBundle,
-  )
+  @IsOptional()
   @IsPositive()
   applicationId?: number;
   @ArrayMinSize(1)

@@ -80,10 +80,13 @@ export class DynamicFormConfigurationController extends BaseController {
       );
     }
     return {
+      id: dynamicForm.id,
       formDefinitionName: dynamicForm.formDefinitionName,
       formType: dynamicForm.formType,
       formCategory: dynamicForm.formCategory,
-      formSubmissionGrouping: dynamicForm.formSubmissionGrouping,
+      formDescription: dynamicForm.formDescription,
+      allowBundledSubmission: dynamicForm.allowBundledSubmission,
+      hasApplicationScope: dynamicForm.hasApplicationScope,
     };
   }
 
@@ -93,10 +96,13 @@ export class DynamicFormConfigurationController extends BaseController {
       this.dynamicFormConfigurationService.getDynamicStudentForms();
     return {
       configurations: formsConfigurations.map((configuration) => ({
+        id: configuration.id,
         formDefinitionName: configuration.formDefinitionName,
         formType: configuration.formType,
         formCategory: configuration.formCategory,
-        formSubmissionGrouping: configuration.formSubmissionGrouping,
+        formDescription: configuration.formDescription,
+        allowBundledSubmission: configuration.allowBundledSubmission,
+        hasApplicationScope: configuration.hasApplicationScope,
       })),
     };
   }

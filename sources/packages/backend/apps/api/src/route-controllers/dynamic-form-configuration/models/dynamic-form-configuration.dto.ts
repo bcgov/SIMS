@@ -1,15 +1,14 @@
-import {
-  FormCategory,
-  FormSubmissionGrouping,
-  OfferingIntensity,
-} from "@sims/sims-db";
+import { FormCategory, OfferingIntensity } from "@sims/sims-db";
 import { IsEnum, IsOptional, IsPositive } from "class-validator";
 
 export class DynamicFormConfigurationAPIOutDTO {
+  id: number;
   formDefinitionName: string;
   formType: string;
   formCategory: FormCategory;
-  formSubmissionGrouping?: FormSubmissionGrouping;
+  formDescription: string;
+  allowBundledSubmission: boolean;
+  hasApplicationScope: boolean;
 }
 
 export class DynamicFormConfigurationsAPIOutDTO {
