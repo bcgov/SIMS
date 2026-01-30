@@ -2646,7 +2646,7 @@
             {
               "label": "Is your spouse/common-law partner considered a dependant?",
               "optionsLabelPosition": "right",
-              "tooltip": "A spouse is considered a dependant if they are are fully supported by the student and claimed on their income tax.",
+              "tooltip": "A spouse is considered a dependant if they are fully supported by the student and claimed on their income tax.",
               "inline": false,
               "tableView": true,
               "values": [
