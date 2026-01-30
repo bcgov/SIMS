@@ -769,7 +769,7 @@ export const PendingOfferingsHeaders = [
 export const PendingProgramsHeaders = [
   { title: "Date submitted", sortable: true, key: "submittedDate" },
   {
-    title: "Institution Operating Name",
+    title: "Institution operating name",
     sortable: true,
     key: "institutionOperatingName",
   },
