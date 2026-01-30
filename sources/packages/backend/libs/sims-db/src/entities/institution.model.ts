@@ -141,4 +141,53 @@ export class Institution extends RecordDataModel {
     (restriction) => restriction.institution,
   )
   restrictions: InstitutionRestriction[];
+
+  // TODO: These additional columns are currently nullable until all existing institutions
+  // have been backfilled with appropriate data.
+  // After that, these columns should not be nullable.
+
+  /**
+   * Country code of the institution country.
+   */
+  @Column({
+    name: "country",
+    nullable: true,
+  })
+  country?: string;
+
+  /**
+   * Province code of the institution province if the country is Canada.
+   */
+  @Column({
+    name: "province",
+    nullable: true,
+  })
+  province?: string;
+
+  /**
+   * Classification of the institution (e.g. public or private).
+   */
+  @Column({
+    name: "classification",
+    nullable: true,
+  })
+  classification?: string;
+
+  /**
+   * Organization status of the institution (e.g. profit or non-profit).
+   */
+  @Column({
+    name: "organization_status",
+    nullable: true,
+  })
+  organizationStatus?: string;
+
+  /**
+   * Indicates the status of the institution being considered as a medical school.
+   */
+  @Column({
+    name: "medical_school_status",
+    nullable: true,
+  })
+  medicalSchoolStatus?: string;
 }

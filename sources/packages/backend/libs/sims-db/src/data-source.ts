@@ -67,6 +67,7 @@ import {
   SFASApplicationDependant,
   SFASApplicationDisbursement,
   DynamicFormConfiguration,
+  SystemLookupConfiguration,
 } from "./entities";
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import {
@@ -232,4 +233,5 @@ export const DBEntities = [
   BetaUsersAuthorizations,
   SFASBridgeLog,
   DynamicFormConfiguration,
+  SystemLookupConfiguration,
 ];
