@@ -41,7 +41,9 @@ export function createFakeEducationProgram(
     options?.initialValues?.programIntensity ?? ProgramIntensity.fullTime;
   program.isAviationProgram = options?.initialValues?.isAviationProgram ?? "no";
   program.submittedBy = relations.auditUser;
-  program.submittedDate = options?.initialValues?.submittedDate ?? null;
+  if (options?.initialValues?.submittedDate) {
+    program.submittedDate = options.initialValues.submittedDate;
+  }
   program.isActive = options?.initialValues?.isActive ?? true;
   program.effectiveEndDate = options?.initialValues?.effectiveEndDate ?? null;
   program.sabcCode = options?.initialValues?.sabcCode ?? null;
