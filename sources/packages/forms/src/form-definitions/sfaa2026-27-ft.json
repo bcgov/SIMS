@@ -2671,25 +2671,6 @@
               "type": "radio",
               "input": true,
               "lockKey": true
-            },
-            {
-              "label": "HTML",
-              "tag": "p",
-              "className": "alert alert-info fa fa-info-circle",
-              "content": "You have identified that your spouse/common-law partner is a disabled dependant. Please make sure you answer \"Yes' to having eligible dependants and add them in the Dependant Information section and ensure you select 'Spouse/common-law partner' as the relationship.",
-              "refreshOnChange": false,
-              "customClass": "banner-info",
-              "key": "html52",
-              "conditional": {
-                "show": true,
-                "when": "youthInCare",
-                "eq": "yes"
-              },
-              "customConditional": "show = data.spouseIsDependant === \"yes\";",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false,
-              "hideLabel": true
             }
           ],
           "type": "panel",
