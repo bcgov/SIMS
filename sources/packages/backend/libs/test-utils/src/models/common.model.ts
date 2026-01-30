@@ -22,6 +22,9 @@ export enum YesNoOptions {
   No = "no",
 }
 
+/**
+ * Dependant relationship with student.
+ */
 export enum DependantRelationship {
   Child = "child",
   Spouse = "spouse",
