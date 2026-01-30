@@ -7,6 +7,7 @@ import {
   Provinces,
   YesNoOptions,
   OfferingDeliveryOptions,
+  DependantRelationship,
 } from "@sims/test-utils";
 import { JSONDoc } from "@camunda8/sdk/dist/zeebe/types";
 
@@ -14,6 +15,7 @@ export interface StudentDependent extends JSONDoc {
   dateOfBirth: string;
   attendingPostSecondarySchool: YesNoOptions;
   declaredOnTaxes: YesNoOptions;
+  dependantRelationship?: DependantRelationship;
 }
 
 export interface StudentDependantAppealData extends JSONDoc {

@@ -638,7 +638,8 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_1k4n9fq" name="calculatedDataFamilySize">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if calculatedDataDependantHasSpouseRelationship = false&#10;  then calculatedDataTotalEligibleDependants + 2&#10;  else calculatedDataTotalEligibleDependants + 1" target="calculatedDataFamilySize" />
+          <zeebe:output source="=count(calculatedDataEligibleDependants [dependantRelationship != &#34;spouse&#34;])" target="calculatedDataTotalEligibleDependantsExcludingPartner" />
+          <zeebe:output source="=calculatedDataTotalEligibleDependantsExcludingPartner + 2" target="calculatedDataFamilySize" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1ekiozl</bpmn:incoming>
@@ -1094,8 +1095,8 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_1du7pjb" name="Calculate Eligible Dependents">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=count(&#10;    calculatedDataDependants[&#10;      // 0-18 years of age: eligible.&#10;      date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;      // 19-22 years of age: post-sec must be Yes or Tax is Yes.&#10;      or (&#10;        date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;        and date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;        and (item.attendingPostSecondarySchool = &#34;yes&#34; or item.declaredOnTaxes = &#34;yes&#34;)&#10;      )&#10;      // &#62; 22 years: eligible if Tax is Yes.&#10;      or (&#10;        date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;        and item.declaredOnTaxes = &#34;yes&#34;&#10;      )&#10;    ]&#10;  )" target="calculatedDataTotalEligibleDependants" />
-          <zeebe:output source="=if studentDataDependants = null then false&#10;else if &#10;some studentDataDependant in studentDataDependants satisfies studentDataDependant.dependantStatus = &#34;spouse&#34; then true&#10;else false&#10;" target="calculatedDataDependantHasSpouseRelationship" />
+          <zeebe:output source="=calculatedDataDependants[&#10;      // 0-18 years of age: eligible.&#10;      date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;      // 19-22 years of age: post-sec must be Yes or Tax is Yes.&#10;      or (&#10;        date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;        and date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;        and (item.attendingPostSecondarySchool = &#34;yes&#34; or item.declaredOnTaxes = &#34;yes&#34;)&#10;      )&#10;      // &#62; 22 years: eligible if Tax is Yes.&#10;      or (&#10;        date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;        and item.declaredOnTaxes = &#34;yes&#34;&#10;      )&#10;]" target="calculatedDataEligibleDependants" />
+          <zeebe:output source="=count(calculatedDataEligibleDependants)" target="calculatedDataTotalEligibleDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0c6lc7n</bpmn:incoming>

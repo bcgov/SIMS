@@ -22,6 +22,13 @@ export enum YesNoOptions {
   No = "no",
 }
 
+export enum DependantRelationship {
+  Child = "child",
+  Spouse = "spouse",
+  ElderlyRelative = "elderlyRelative",
+  Other = "other",
+}
+
 /**
  * Offering delivery options.
  */
