@@ -345,7 +345,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
             institutionOperatingName: institution.operatingName,
             submittedDate: program.submittedDate.toISOString(),
             institutionId: institution.id,
-            locationId: null,
+            locationId: location.id,
           },
         ],
         count: 1,
