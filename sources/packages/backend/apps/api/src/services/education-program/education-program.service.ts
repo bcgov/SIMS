@@ -970,8 +970,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * Gets a list of Education Programs with status 'Pending' where the Program is active/not expired.
    * For each program, retrieves the location with the most offerings, or any location if no offerings exist.
    * Pagination, sort and search are available on results.
-   * @param paginationOptions pagination options.
-   * @returns pending programs with location ID.
+   * @param paginationOptions Pagination options.
+   * @returns Pending programs with location ID.
    */
   async getPendingPrograms(
     paginationOptions: PaginationOptions,
