@@ -67,3 +67,15 @@ export interface EducationProgramsSummary {
   locationId: number;
   locationName: string;
 }
+
+/**
+ * Education Program with selected location for pending programs queue.
+ */
+export class PendingEducationProgram {
+  id: number;
+  name: string;
+  submittedDate: Date;
+  selectedLocationId: number;
+  institutionId: number;
+  institutionOperatingName: string;
+}

@@ -2,6 +2,7 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
+  createFakeLocation,
   createTestingAppModule,
   getAESTToken,
 } from "../../../../testHelpers";
@@ -12,7 +13,7 @@ import {
   createFakeInstitution,
   createFakeUser,
 } from "@sims/test-utils";
-import { EducationProgram, ProgramStatus, User } from "@sims/sims-db";
+import { ProgramStatus, User } from "@sims/sims-db";
 import * as request from "supertest";
 import { addDays } from "@sims/utilities";
 
@@ -39,6 +40,9 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
       // Custom dates are used to avoid collisions with other test data.
       const institution = createFakeInstitution();
       await db.institution.save(institution);
+
+      const location = createFakeLocation(institution);
+      await db.institutionLocation.save(location);
 
       const oldProgram = createFakeEducationProgram(
         {
@@ -105,6 +109,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
               institutionOperatingName: institution.operatingName,
               submittedDate: oldestProgram.submittedDate.toISOString(),
               institutionId: institution.id,
+              locationId: location.id,
             },
             {
               id: olderProgram.id,
@@ -112,6 +117,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
               institutionOperatingName: institution.operatingName,
               submittedDate: olderProgram.submittedDate.toISOString(),
               institutionId: institution.id,
+              locationId: location.id,
             },
           ],
           count: 3,
@@ -128,6 +134,9 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
       // Custom dates are used to avoid collisions with other test data.
       const institution = createFakeInstitution();
       await db.institution.save(institution);
+
+      const location = createFakeLocation(institution);
+      await db.institutionLocation.save(location);
 
       const programA = createFakeEducationProgram(
         {
@@ -191,6 +200,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
               institutionOperatingName: institution.operatingName,
               submittedDate: programA.submittedDate.toISOString(),
               institutionId: institution.id,
+              locationId: location.id,
             },
             {
               id: programB.id,
@@ -198,6 +208,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
               institutionOperatingName: institution.operatingName,
               submittedDate: programB.submittedDate.toISOString(),
               institutionId: institution.id,
+              locationId: location.id,
             },
             {
               id: programC.id,
@@ -205,6 +216,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
               institutionOperatingName: institution.operatingName,
               submittedDate: programC.submittedDate.toISOString(),
               institutionId: institution.id,
+              locationId: location.id,
             },
           ],
           count: 3,
@@ -216,6 +228,9 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
     // Arrange
     const institution = createFakeInstitution();
     await db.institution.save(institution);
+
+    const location = createFakeLocation(institution);
+    await db.institutionLocation.save(location);
 
     const activeProgram = createFakeEducationProgram(
       {
@@ -267,6 +282,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
             institutionOperatingName: institution.operatingName,
             submittedDate: activeProgram.submittedDate.toISOString(),
             institutionId: institution.id,
+            locationId: location.id,
           },
         ],
         count: 1,
@@ -306,15 +322,18 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body.count).toBeGreaterThanOrEqual(1);
-        const foundProgram = response.body.results.find(
-          (p: EducationProgram) => p.id === program.id,
-        );
-        expect(foundProgram).toBeDefined();
-        expect(foundProgram.institutionOperatingName).toBe(
-          uniqueInstitutionName,
-        );
+      .expect({
+        results: [
+          {
+            id: program.id,
+            programName: program.name,
+            institutionOperatingName: institution.operatingName,
+            submittedDate: program.submittedDate.toISOString(),
+            institutionId: institution.id,
+            locationId: null,
+          },
+        ],
+        count: 1,
       });
   });
 

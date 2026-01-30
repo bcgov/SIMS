@@ -31,6 +31,7 @@ import {
 import {
   SaveEducationProgram,
   EducationProgramsSummary,
+  PendingEducationProgram,
 } from "./education-program.service.models";
 import {
   sortProgramsColumnMap,
@@ -967,30 +968,40 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
 
   /**
    * Gets a list of Education Programs with status 'Pending' where the Program is active/not expired.
+   * For each program, retrieves the location with the most offerings, or any location if no offerings exist.
    * Pagination, sort and search are available on results.
    * @param paginationOptions pagination options.
-   * @returns pending programs.
+   * @returns pending programs with location ID.
    */
   async getPendingPrograms(
     paginationOptions: PaginationOptions,
-  ): Promise<PaginatedResults<EducationProgram>> {
+  ): Promise<PaginatedResults<PendingEducationProgram>> {
     const programsQuery = this.repo
       .createQueryBuilder("programs")
       .select([
         "programs.id",
         "programs.name",
         "programs.submittedDate",
-        "institution.id",
-        "institution.legalOperatingName",
         "institution.operatingName",
-        "location.id",
+        "institution.id",
       ])
+      // Get the location with the most offerings for each program. If no offerings exist, get any location for the institution.
+      // This is to work around the program details page requirement where the location is required to load the list of offerings
+      .addSelect((subQuery) => {
+        return subQuery
+          .select("location.id")
+          .from(InstitutionLocation, "location")
+          .leftJoin(
+            EducationProgramOffering,
+            "offering",
+            "offering.educationProgram.id = programs.id",
+          )
+          .where("location.institution.id = institution.id")
+          .groupBy("location.id")
+          .orderBy("COUNT(offering.id)", "DESC")
+          .limit(1);
+      }, "selectedLocationId")
       .innerJoin("programs.institution", "institution")
-      .innerJoin(
-        InstitutionLocation,
-        "location",
-        "institution.id = location.institution.id",
-      )
       .where("programs.programStatus = :status", {
         status: ProgramStatus.Pending,
       })
@@ -1020,9 +1031,22 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .offset(paginationOptions.page * paginationOptions.pageLimit)
       .limit(paginationOptions.pageLimit);
 
-    const [results, count] = await programsQuery.getManyAndCount();
+    const { entities, raw } = await programsQuery.getRawAndEntities();
+    const count = await programsQuery.getCount();
 
-    return { results, count };
+    const pendingPrograms = entities.map((program, index) => ({
+      id: program.id,
+      name: program.name,
+      submittedDate: program.submittedDate,
+      institutionId: program.institution.id,
+      institutionOperatingName: program.institution.operatingName,
+      selectedLocationId: raw[index].selectedLocationId,
+    }));
+
+    return {
+      results: pendingPrograms,
+      count,
+    };
   }
 
   /**

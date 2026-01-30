@@ -70,10 +70,10 @@ export class EducationProgramAESTController extends BaseController {
       results: programs.results.map((program) => ({
         id: program.id,
         programName: program.name,
-        institutionOperatingName: program.institution.operatingName,
+        institutionId: program.institutionId,
+        institutionOperatingName: program.institutionOperatingName,
         submittedDate: program.submittedDate,
-        institutionId: program.institution.id,
-        locationId: 0,
+        locationId: program.selectedLocationId,
       })),
       count: programs.count,
     };
