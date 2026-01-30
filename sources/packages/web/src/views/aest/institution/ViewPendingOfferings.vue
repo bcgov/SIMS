@@ -62,9 +62,6 @@
           <template #[`item.offeringDelivered`]="{ item }">
             {{ capitalizeFirstWord(item.offeringDelivered) }}
           </template>
-          <template #[`item.offeringStatus`]="{ item }">
-            <status-chip-offering :status="item.offeringStatus" />
-          </template>
           <template #[`item.actions`]="{ item }">
             <v-btn color="primary" @click="viewOffering(item)">View</v-btn>
           </template>
@@ -80,7 +77,6 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import router from "@/router";
 import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
 import { EducationProgramOfferingPendingAPIOutDTO } from "@/services/http/dto";
-import StatusChipOffering from "@/components/generic/StatusChipOffering.vue";
 import {
   PaginatedResults,
   DEFAULT_DATATABLE_PAGE_NUMBER,
@@ -98,9 +94,6 @@ import { useOffering } from "@/composables/useOffering";
 const DEFAULT_SORT_FIELD = "submittedDate";
 
 export default defineComponent({
-  components: {
-    StatusChipOffering,
-  },
   setup() {
     const loading = ref(false);
     const searchCriteria = ref("");

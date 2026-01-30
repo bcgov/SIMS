@@ -986,7 +986,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "institution.id",
       ])
       // Get the location with the most offerings for each program. If no offerings exist, get any location for the institution.
-      // This is to work around the program details page requirement where the location is required to load the list of offerings
+      // This is to work around the program details page requirement where the location is required to load the list of offerings.
       .addSelect((subQuery) => {
         return subQuery
           .select("location.id")
@@ -1040,7 +1040,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       submittedDate: program.submittedDate,
       institutionId: program.institution.id,
       institutionOperatingName: program.institution.operatingName,
-      selectedLocationId: raw[index].selectedLocationId,
+      selectedLocationId:
+        raw[index].selectedLocationId ?? raw[index].selectedlocationid,
     }));
 
     return {
