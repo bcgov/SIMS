@@ -3826,7 +3826,7 @@
                         "onlyAvailableItems": true
                       },
                       "validateWhenHidden": false,
-                      "key": "dependantRelationship",
+                      "key": "relationship",
                       "type": "radio",
                       "input": true
                     },

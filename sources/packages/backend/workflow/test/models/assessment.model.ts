@@ -15,7 +15,7 @@ export interface StudentDependent extends JSONDoc {
   dateOfBirth: string;
   attendingPostSecondarySchool: YesNoOptions;
   declaredOnTaxes: YesNoOptions;
-  dependantRelationship?: DependantRelationship;
+  relationship?: DependantRelationship;
 }
 
 export interface StudentDependantAppealData extends JSONDoc {

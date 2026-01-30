@@ -638,7 +638,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_1k4n9fq" name="calculatedDataFamilySize">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=count(calculatedDataEligibleDependants [dependantRelationship != &#34;spouse&#34;])" target="calculatedDataTotalEligibleDependantsExcludingPartner" />
+          <zeebe:output source="=count(calculatedDataEligibleDependants [relationship != &#34;spouse&#34;])" target="calculatedDataTotalEligibleDependantsExcludingPartner" />
           <zeebe:output source="=calculatedDataTotalEligibleDependantsExcludingPartner + 2" target="calculatedDataFamilySize" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>

@@ -58,7 +58,7 @@
           <zeebe:header key="studentDataIncomeAssistanceAmount" value="data.incomeAssistanceAmount" />
           <zeebe:header key="studentDataLivingWithPartner" value="data.livingWithPartner" />
           <zeebe:header key="studentDataCRAReportedIncome" value="student.craReportedIncome" />
-          <zeebe:header key="studentDataDependants" value="data.dependants[].{&#10;  &#34;dateOfBirth&#34;: dateOfBirth,&#10;  &#34;declaredOnTaxes&#34;: declaredOnTaxes,&#10;  &#34;attendingPostSecondarySchool&#34;: attendingPostSecondarySchool,&#10;  &#34;dependantRelationship&#34;: dependantRelationship&#10;}" />
+          <zeebe:header key="studentDataDependants" value="data.dependants[].{&#10;  &#34;dateOfBirth&#34;: dateOfBirth,&#10;  &#34;declaredOnTaxes&#34;: declaredOnTaxes,&#10;  &#34;attendingPostSecondarySchool&#34;: attendingPostSecondarySchool,&#10;  &#34;relationship&#34;: relationship&#10;}" />
           <zeebe:header key="studentDataGovernmentFundingCosts" value="data.governmentFundingCosts" />
           <zeebe:header key="studentDataNonGovernmentFundingCosts" value="data.nonGovernmentFundingCosts" />
           <zeebe:header key="studentDataParentVoluntaryContributionsCosts" value="data.parentvoluntarycontributionsCosts" />
