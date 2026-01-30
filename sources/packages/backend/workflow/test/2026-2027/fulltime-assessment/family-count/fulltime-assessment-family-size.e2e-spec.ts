@@ -2,7 +2,6 @@ import { DependantRelationship } from "@sims/test-utils";
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 import {
   createFakeConsolidatedFulltimeData,
-  createFakeConsolidatedPartTimeData,
   executeFullTimeAssessmentForProgramYear,
   ZeebeMockedClient,
 } from "../../../test-utils";
@@ -40,7 +39,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-family-size.`, (
   it("Should correctly calculate the family size count when an independant spouse is selected as the dependant relationship.", async () => {
     // Arrange
     const assessmentConsolidatedData =
-      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentNotEligible(
