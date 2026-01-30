@@ -56,8 +56,8 @@ export class EducationProgramAESTController extends BaseController {
   /**
    * Gets a list of Education Programs with status 'Pending' where the Program is active/not expired.
    * Pagination, sort and search are available on results.
-   * @param paginationOptions pagination options.
-   * @returns pending programs.
+   * @param paginationOptions Pagination options.
+   * @returns Pending programs.
    */
   @Get("pending")
   async getPendingPrograms(
