@@ -41,6 +41,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-family-size.`, (
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentNotEligible(
         DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
