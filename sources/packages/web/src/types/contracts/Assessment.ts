@@ -9,28 +9,23 @@ export interface AssessmentDetailHeader {
 }
 
 /**
- * Type of award to be displayed in the awards table.
+ * Type of adjustment that was made to an award.
  */
-export enum AwardTableType {
-  Estimated = "Estimated",
-  Final = "Final",
-}
-
-/**
- * Adjustments that were made to an award.
- */
-export interface AwardAdjustmentAmounts {
+export interface AwardAdjustmentType {
   /**
-   * Value amount already disbursed for the same application and
-   * the same award that was subtracted from the calculated award.
+   * A restriction resulted in a decreased award.
    */
-  disbursedAmountSubtracted: number;
+  restriction: boolean;
   /**
-   * Overaward amount value subtracted from the award calculated.
+   * A previous disbursed amount resulted in a decreased award.
    */
-  overawardAmountSubtracted: number;
+  disbursed: boolean;
   /**
-   * Restriction amount value subtracted from the award calculated.
+   * A positive overaward resulted in a decreased award.
    */
-  restrictionAmountSubtracted: number;
+  positiveOveraward: boolean;
+  /**
+   * A negative overaward resulted in an increased award.
+   */
+  negativeOveraward: boolean;
 }
