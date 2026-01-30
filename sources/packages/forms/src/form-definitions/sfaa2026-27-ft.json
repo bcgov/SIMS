@@ -2662,15 +2662,44 @@
                 }
               ],
               "validate": {
-                "required": true
+                "required": true,
+                "onlyAvailableItems": true
               },
               "validateWhenHidden": false,
               "errorLabel": "Dependent",
               "key": "spouseIsDependant",
-              "customConditional": "show = data.relationshipStatus === \"married\";",
+              "conditional": {
+                "show": true,
+                "when": "relationshipStatus",
+                "eq": "married"
+              },
               "type": "radio",
               "input": true,
               "lockKey": true
+            },
+            {
+              "label": "HTML",
+              "tag": "p",
+              "className": "alert alert-info fa fa-info-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong>You have identified that your spouse/common-law partner is a disabled dependant. Please make sure you answer \"Yes' to having eligible dependants and add them in the Dependant Information section and ensure you select 'Spouse/common-law partner' as the relationship.</strong>",
+              "refreshOnChange": false,
+              "customClass": "banner-info",
+              "key": "html52",
+              "conditional": {
+                "show": true,
+                "when": "spouseIsDependant",
+                "eq": "yes"
+              },
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true
             }
           ],
           "type": "panel",
