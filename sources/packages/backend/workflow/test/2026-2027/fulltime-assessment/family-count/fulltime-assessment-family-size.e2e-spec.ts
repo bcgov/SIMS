@@ -4,7 +4,6 @@ import {
   createFakeConsolidatedFulltimeData,
   createFakeConsolidatedPartTimeData,
   executeFullTimeAssessmentForProgramYear,
-  executePartTimeAssessmentForProgramYear,
   ZeebeMockedClient,
 } from "../../../test-utils";
 import {
@@ -53,7 +52,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-family-size.`, (
     assessmentConsolidatedData.studentDataDependants = [dependent];
 
     // Act
-    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
