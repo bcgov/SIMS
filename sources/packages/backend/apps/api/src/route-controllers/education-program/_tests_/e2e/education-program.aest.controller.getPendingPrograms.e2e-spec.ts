@@ -88,7 +88,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     // Include a search criteria that matches both programs to avoid test data collisions.
-    const searchCriteria = "Mathematics";
+    const searchCriteria = uniqueProgramName;
     const endpoint = `/aest/education-program/pending?page=0&pageLimit=2&searchCriteria=${searchCriteria}`;
 
     // Act/Assert
