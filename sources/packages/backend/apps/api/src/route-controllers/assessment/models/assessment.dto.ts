@@ -5,6 +5,9 @@ import {
   Assessment,
   AssessmentStatus,
   AssessmentTriggerType,
+  COEStatus,
+  DisbursementScheduleStatus,
+  DisbursementValueType,
   NOTE_DESCRIPTION_MAX_LENGTH,
   OfferingIntensity,
   OfferingStatus,
@@ -201,6 +204,46 @@ export class AwardDetailsAPIOutDTO {
       "If the conditions to have a receipt are not match this information will not be available.",
   })
   finalAward?: DynamicAwardValue;
+}
+
+export class AwardDetails2APIOutDTO {
+  applicationNumber: string;
+  applicationStatus: ApplicationStatus;
+  institutionName: string;
+  offeringIntensity: OfferingIntensity;
+  offeringStudyStartDate: string;
+  offeringStudyEndDate: string;
+  firstDisbursement: AwardDisbursementScheduleAPIOutDTO;
+  secondDisbursement: AwardDisbursementScheduleAPIOutDTO;
+}
+
+export class AwardDisbursementScheduleAPIOutDTO {
+  disbursementDate: string;
+  status: DisbursementScheduleStatus;
+  coeStatus: COEStatus;
+  msfaaNumber: string;
+  msfaaId: number;
+  msfaaCancelledDate: string;
+  msfaaDateSigned: string;
+  tuitionRemittance: number;
+  enrolmentDate: Date;
+  id: number;
+  statusUpdatedOn: Date;
+  dateSent?: Date;
+  documentNumber?: number;
+  disbursementValues: AwardDisbursementValueAPIOutDTO[];
+  receiptReceived: boolean;
+}
+
+export class AwardDisbursementValueAPIOutDTO {
+  valueCode: string;
+  valueType: DisbursementValueType;
+  valueAmount: number;
+  effectiveAmount?: number;
+  hasRestrictionAdjustment?: boolean;
+  hasDisbursedAdjustment?: boolean;
+  hasPositiveOverawardAdjustment?: boolean;
+  hasNegativeOverawardAdjustment?: boolean;
 }
 
 export class ManualReassessmentAPIInDTO {

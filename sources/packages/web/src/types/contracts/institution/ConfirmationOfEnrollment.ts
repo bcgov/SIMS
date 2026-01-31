@@ -79,6 +79,13 @@ export enum DisbursementScheduleStatus {
    */
   Pending = "Pending",
   /**
+   * All e-Cert calculations are done for the disbursement and it is ready
+   * to be added to an e-Cert. This status has the same effect as 'Sent'
+   * when the system should consider that no further modifications will
+   * be executed to the e-Cert related data.
+   */
+  ReadyToSend = "Ready to send",
+  /**
    * The money values associated with the disbursement schedule
    * were included in an e-Cert file to be disbursed to the student.
    */

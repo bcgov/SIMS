@@ -23,6 +23,7 @@ import {
   MASKED_MSFAA_NUMBER,
   ApplicationOfferingChangeRequestService,
   MASKED_MONEY_AMOUNT,
+  StudentRestrictionService,
 } from "../../services";
 import {
   AssessmentNOAAPIOutDTO,
@@ -32,6 +33,9 @@ import {
   AssessmentHistorySummaryAPIOutDTO,
   DynamicAwardValue,
   AssessmentAPIOutDTO,
+  AwardDetails2APIOutDTO,
+  AwardDisbursementScheduleAPIOutDTO,
+  AwardDisbursementValueAPIOutDTO,
 } from "./models/assessment.dto";
 import { getUserFullName } from "../../utilities";
 import {
@@ -39,6 +43,10 @@ import {
   getDateOnlyFullMonthFormat,
   getTotalDisbursementAmountFromSchedules,
 } from "@sims/utilities";
+import {
+  AwardOverawardBalance,
+  DisbursementOverawardService,
+} from "@sims/services";
 
 /**
  * Final award value dynamic identifier prefix.
@@ -72,6 +80,8 @@ export class AssessmentControllerService {
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly applicationExceptionService: ApplicationExceptionService,
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
+    private readonly disbursementOverawardService: DisbursementOverawardService,
+    private readonly studentRestrictionService: StudentRestrictionService,
   ) {}
 
   /**
@@ -306,6 +316,189 @@ export class AssessmentControllerService {
       estimatedAward,
       finalAward,
     };
+  }
+
+  /**
+   * Get estimated and actual(if present) award details of an assessment.
+   * @param assessmentId assessment to which awards details belong to.
+   * @param includeDocumentNumber when true document number is mapped
+   * to disbursement dynamic data.
+   * @param options options,
+   * - `studentId` studentId student to whom the award details belong to.
+   * - `applicationId` application is used for authorization purposes to
+   * ensure that a user has access to the specific application data.
+   * - `includeDocumentNumber` when true document number is mapped
+   * to disbursement dynamic data.
+   * - `includeDateSent` when true, date sent is mapped to disbursement dynamic data.
+   * - `maskMSFAA` mask MSFAA or not.
+   * @returns estimated and actual award details.
+   */
+  async getAssessmentAwardDetails2(
+    assessmentId: number,
+    options?: {
+      studentId?: number;
+      applicationId?: number;
+      includeDocumentNumber?: boolean;
+      includeDateSent?: boolean;
+      maskMSFAA?: boolean;
+    },
+  ): Promise<AwardDetails2APIOutDTO> {
+    // Setting default value.
+    const includeDocumentNumber = options?.includeDocumentNumber ?? false;
+    const includeDateSent = options?.includeDateSent ?? false;
+    const maskMSFAA = options?.maskMSFAA ?? true;
+    const assessment = await this.assessmentService.getAssessmentForNOA(
+      assessmentId,
+      options,
+    );
+    if (!assessment) {
+      throw new NotFoundException("Assessment not found.");
+    }
+    const disbursementSchedules = assessment.disbursementSchedules;
+
+    const firstDisbursement = await this.populateDisbursementSchedule(
+      disbursementSchedules[0],
+      assessment.application.student.id,
+      { includeDocumentNumber, includeDateSent, maskMSFAA },
+    );
+    let secondDisbursement;
+    if (disbursementSchedules.length === 2) {
+      secondDisbursement = await this.populateDisbursementSchedule(
+        disbursementSchedules[1],
+        assessment.application.student.id,
+        { includeDocumentNumber, includeDateSent, maskMSFAA },
+      );
+    }
+    return {
+      applicationNumber: assessment.application.applicationNumber,
+      applicationStatus: assessment.application.applicationStatus,
+      institutionName:
+        assessment.offering.educationProgram.institution.operatingName,
+      offeringIntensity: assessment.offering.offeringIntensity,
+      offeringStudyStartDate: getDateOnlyFormat(
+        assessment.offering.studyStartDate,
+      ),
+      offeringStudyEndDate: getDateOnlyFormat(assessment.offering.studyEndDate),
+      firstDisbursement: firstDisbursement,
+      secondDisbursement: secondDisbursement,
+    };
+  }
+
+  private async populateDisbursementSchedule(
+    schedule: DisbursementSchedule,
+    studentId: number,
+    options?: {
+      includeDocumentNumber?: boolean;
+      includeDateSent?: boolean;
+      maskMSFAA?: boolean;
+    },
+  ): Promise<AwardDisbursementScheduleAPIOutDTO> {
+    // Setting default value.
+    const includeDocumentNumber = options?.includeDocumentNumber ?? false;
+    const includeDateSent = options?.includeDateSent ?? false;
+    const maskMSFAA = options?.maskMSFAA ?? true;
+
+    const disbursement = new AwardDisbursementScheduleAPIOutDTO();
+
+    disbursement.disbursementDate = schedule.disbursementDate;
+    disbursement.status = schedule.disbursementScheduleStatus;
+    disbursement.coeStatus = schedule.coeStatus;
+    disbursement.msfaaNumber = maskMSFAA
+      ? MASKED_MSFAA_NUMBER
+      : schedule.msfaaNumber.msfaaNumber;
+    disbursement.msfaaId = schedule.msfaaNumber.id;
+    disbursement.msfaaCancelledDate = schedule.msfaaNumber.cancelledDate;
+    disbursement.msfaaDateSigned = schedule.msfaaNumber.dateSigned;
+    disbursement.tuitionRemittance = schedule.tuitionRemittanceRequestedAmount;
+    disbursement.enrolmentDate = schedule.coeUpdatedAt;
+    disbursement.id = schedule.id;
+    disbursement.statusUpdatedOn = schedule.disbursementScheduleStatusUpdatedOn;
+    if (includeDateSent) {
+      disbursement.dateSent = schedule.dateSent;
+    }
+    if (includeDocumentNumber) {
+      disbursement.documentNumber = schedule.documentNumber;
+    }
+
+    disbursement.receiptReceived = schedule.disbursementReceipts?.length > 0;
+
+    // Populate disbursement values.
+    const disbursementValues: AwardDisbursementValueAPIOutDTO[] = [];
+    disbursement.disbursementValues = disbursementValues;
+
+    // Get adjustment values for Estimated awards. While they apply to a specific award type,
+    // we can retrieve all the adjustments beforehand.
+    let studentOverwardBalances: AwardOverawardBalance;
+    if (disbursement.status !== DisbursementScheduleStatus.Sent) {
+      //Restriction: If the student has a restriction that impacts funding, display the tag beside it.
+      //Stop full time BC loan: BCSL
+      //Stop full time BC grant: BCAG (FT), SBSD (FT), BGPD
+      //Stop part time BC grant: BCAG (PT), SBSD (PT)
+      const studentRestrictions =
+        await this.studentRestrictionService.getStudentRestrictionsById(
+          studentId,
+        );
+      console.log("studentRestrictions", studentRestrictions);
+
+      //Overaward: If there is a positive overaward balance for that award type, display the tag beside it.
+      const overawardBalances =
+        await this.disbursementOverawardService.getOverawardBalance([
+          studentId,
+        ]);
+      studentOverwardBalances = overawardBalances[studentId];
+      console.log("overawardBalances", studentOverwardBalances);
+      //Funded: If a previous assessment in the application has disbursed that award type, display the tag beside it.
+    }
+
+    schedule.disbursementValues.forEach((disbursementValue) => {
+      if (disbursementValue.valueType === DisbursementValueType.BCTotalGrant) {
+        // BC Total grants are not part of the students grants and should not be part of the summary.
+        return;
+      }
+      const awardDisbursementValue = new AwardDisbursementValueAPIOutDTO();
+      awardDisbursementValue.valueCode = disbursementValue.valueCode;
+      awardDisbursementValue.valueType = disbursementValue.valueType;
+      // Estimated award value.
+      awardDisbursementValue.valueAmount = disbursementValue.valueAmount;
+      // Final award value.
+      awardDisbursementValue.effectiveAmount =
+        disbursementValue.effectiveAmount;
+
+      if (disbursement.status !== DisbursementScheduleStatus.Sent) {
+        // Estimated Award - use custom conditions.
+        //Restriction: If the student has a restriction that impacts funding, display the tag beside it.
+        //Stop full time BC loan: BCSL
+        //Stop full time BC grant: BCAG (FT), SBSD (FT), BGPD
+        //Stop part time BC grant: BCAG (PT), SBSD (PT)
+        // Overaward: If there is a positive overaward balance for that award type, display the tag beside it.
+        const overawardBalance =
+          studentOverwardBalances[disbursementValue.valueCode];
+        if (overawardBalance < 0) {
+          awardDisbursementValue.hasNegativeOverawardAdjustment = true;
+        } else if (overawardBalance > 0) {
+          awardDisbursementValue.hasPositiveOverawardAdjustment = true;
+        }
+        console.log("overawardBalance", overawardBalance);
+
+        //Funded: If a previous assessment in the application has disbursed that award type, display the tag beside it.
+      } else {
+        // Final Award - use actual subtracted amounts.
+        awardDisbursementValue.hasRestrictionAdjustment =
+          disbursementValue.restrictionAmountSubtracted > 0;
+        awardDisbursementValue.hasDisbursedAdjustment =
+          disbursementValue.disbursedAmountSubtracted > 0;
+        awardDisbursementValue.hasNegativeOverawardAdjustment =
+          disbursementValue.overawardAmountSubtracted > 0;
+        awardDisbursementValue.hasPositiveOverawardAdjustment =
+          disbursementValue.overawardAmountSubtracted < 0;
+      }
+
+      disbursementValues.push(awardDisbursementValue);
+    });
+
+    disbursement.disbursementValues = disbursementValues;
+
+    return disbursement;
   }
 
   /**

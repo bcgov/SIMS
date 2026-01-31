@@ -4,14 +4,14 @@
       <v-col cols="12">
         <content-group>
           <award-table
-            :assessment-award-data="assessmentAwardData"
+            :disbursement="assessmentAwardData.firstDisbursement"
+            :offering-intensity="assessmentAwardData.offeringIntensity"
+            :application-status="assessmentAwardData.applicationStatus"
             :allow-confirm-enrolment="allowConfirmEnrolment"
             :allow-disbursement-cancellation="allowDisbursementCancellation"
             :allow-final-award-extended-information="
               allowFinalAwardExtendedInformation
             "
-            identifier="disbursement1"
-            final-identifier="disbursementReceipt1"
             :header="
               isSecondDisbursementAvailable
                 ? 'First disbursement'
@@ -29,14 +29,14 @@
       <v-col>
         <content-group>
           <award-table
-            :assessment-award-data="assessmentAwardData"
+            :disbursement="assessmentAwardData.secondDisbursement"
+            :offering-intensity="assessmentAwardData.offeringIntensity"
+            :application-status="assessmentAwardData.applicationStatus"
             :allow-confirm-enrolment="allowConfirmEnrolment"
             :allow-disbursement-cancellation="allowDisbursementCancellation"
             :allow-final-award-extended-information="
               allowFinalAwardExtendedInformation
             "
-            identifier="disbursement2"
-            final-identifier="disbursementReceipt2"
             header="Second Disbursement"
             @disbursement-cancelled="$emit('disbursementCancelled')"
             @confirm-enrolment="$emit('confirmEnrolment', $event)"
@@ -84,7 +84,8 @@ export default defineComponent({
   },
   setup(props) {
     const isSecondDisbursementAvailable = computed(
-      () => props.assessmentAwardData.estimatedAward?.disbursement2Date,
+      // TODO Do we need to check a property inside secondDisbursement to confirm its availability?
+      () => props.assessmentAwardData.secondDisbursement,
     );
 
     return {

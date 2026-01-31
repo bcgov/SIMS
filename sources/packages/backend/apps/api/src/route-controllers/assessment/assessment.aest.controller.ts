@@ -22,7 +22,7 @@ import {
   AssessmentHistorySummaryAPIOutDTO,
   AssessmentNOAAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
-  AwardDetailsAPIOutDTO,
+  AwardDetails2APIOutDTO,
 } from "./models/assessment.dto";
 import {
   ApiNotFoundResponse,
@@ -121,8 +121,8 @@ export class AssessmentAESTController extends BaseController {
   })
   async getAssessmentAwardDetails(
     @Param("assessmentId", ParseIntPipe) assessmentId: number,
-  ): Promise<AwardDetailsAPIOutDTO> {
-    return this.assessmentControllerService.getAssessmentAwardDetails(
+  ): Promise<AwardDetails2APIOutDTO> {
+    return this.assessmentControllerService.getAssessmentAwardDetails2(
       assessmentId,
       { includeDateSent: true, includeDocumentNumber: true, maskMSFAA: false },
     );

@@ -21,6 +21,7 @@ export default defineComponent({
         case DisbursementScheduleStatus.Sent:
           return "success";
         case DisbursementScheduleStatus.Pending:
+        case DisbursementScheduleStatus.ReadyToSend:
           return "warning";
         case DisbursementScheduleStatus.Cancelled:
         case DisbursementScheduleStatus.Rejected:
@@ -34,6 +35,7 @@ export default defineComponent({
         case DisbursementScheduleStatus.Sent:
           return "success-shade";
         case DisbursementScheduleStatus.Pending:
+        case DisbursementScheduleStatus.ReadyToSend:
           return "warning-shade";
         case DisbursementScheduleStatus.Cancelled:
         case DisbursementScheduleStatus.Rejected:
@@ -47,6 +49,7 @@ export default defineComponent({
         case DisbursementScheduleStatus.Sent:
           return "success-chip-background";
         case DisbursementScheduleStatus.Pending:
+        case DisbursementScheduleStatus.ReadyToSend:
           return "warning-chip-background";
         case DisbursementScheduleStatus.Cancelled:
         case DisbursementScheduleStatus.Rejected:
@@ -60,6 +63,7 @@ export default defineComponent({
         case DisbursementScheduleStatus.Sent:
           return "success-shade";
         case DisbursementScheduleStatus.Pending:
+        case DisbursementScheduleStatus.ReadyToSend:
           return "warning-shade";
         case DisbursementScheduleStatus.Cancelled:
         case DisbursementScheduleStatus.Rejected:
@@ -73,6 +77,7 @@ export default defineComponent({
         case DisbursementScheduleStatus.Sent:
           return "fa:fa fa-check";
         case DisbursementScheduleStatus.Pending:
+        case DisbursementScheduleStatus.ReadyToSend:
           return "fa:fa fa-clock-rotate-left";
         case DisbursementScheduleStatus.Cancelled:
         case DisbursementScheduleStatus.Rejected:
@@ -86,6 +91,7 @@ export default defineComponent({
         case DisbursementScheduleStatus.Sent:
           return "Sent";
         case DisbursementScheduleStatus.Pending:
+        case DisbursementScheduleStatus.ReadyToSend:
           return "Pending";
         case DisbursementScheduleStatus.Cancelled:
         case DisbursementScheduleStatus.Rejected:

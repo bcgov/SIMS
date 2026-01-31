@@ -29,3 +29,15 @@ export interface AwardAdjustmentType {
    */
   negativeOveraward: boolean;
 }
+
+export interface AssessmentAwardData {
+  awardType: string;
+  awardTypeDisplay: string;
+  awardDescription: string;
+  estimatedAmount: string | number;
+  finalAmount?: string | number;
+  hasRestrictionAdjustment: boolean;
+  hasDisbursedAdjustment: boolean;
+  hasPositiveOverawardAdjustment: boolean;
+  hasNegativeOverawardAdjustment: boolean;
+}
