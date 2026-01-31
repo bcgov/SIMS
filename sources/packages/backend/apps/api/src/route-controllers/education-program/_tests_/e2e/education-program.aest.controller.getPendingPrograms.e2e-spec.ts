@@ -16,6 +16,7 @@ import {
 import { ProgramStatus, User } from "@sims/sims-db";
 import * as request from "supertest";
 import { addDays } from "@sims/utilities";
+import { faker } from "@faker-js/faker/locale/zu_ZA";
 
 const PAST_SUBMITTED_DATE = new Date("2000-01-01");
 
@@ -41,6 +42,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
     const location = createFakeLocation(institution);
     await db.institutionLocation.save(location);
 
+    const uniqueProgramName = faker.company.name();
     // An approved program to ensure only pending programs are returned.
     const approvedProgram = createFakeEducationProgram(
       {
@@ -49,54 +51,30 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
       },
       {
         initialValues: {
-          name: "Mathematics 100",
+          name: `${uniqueProgramName} 100`,
           programStatus: ProgramStatus.Approved,
           submittedDate: PAST_SUBMITTED_DATE,
         },
       },
     );
 
-    const oldProgram = createFakeEducationProgram(
-      {
-        auditUser: savedUser,
-        institution,
-      },
-      {
-        initialValues: {
-          name: "Mathematics 101",
-          programStatus: ProgramStatus.Pending,
-          submittedDate: PAST_SUBMITTED_DATE,
+    const [oldProgram, olderProgram, oldestProgram] = Array.from({
+      length: 3,
+    }).map((_, index) => {
+      return createFakeEducationProgram(
+        {
+          auditUser: savedUser,
+          institution,
         },
-      },
-    );
-
-    const olderProgram = createFakeEducationProgram(
-      {
-        auditUser: savedUser,
-        institution,
-      },
-      {
-        initialValues: {
-          name: "Mathematics 201",
-          programStatus: ProgramStatus.Pending,
-          submittedDate: addDays(-1, PAST_SUBMITTED_DATE),
+        {
+          initialValues: {
+            name: `${uniqueProgramName} ${index + 1}01`,
+            programStatus: ProgramStatus.Pending,
+            submittedDate: addDays(-index, PAST_SUBMITTED_DATE),
+          },
         },
-      },
-    );
-
-    const oldestProgram = createFakeEducationProgram(
-      {
-        auditUser: savedUser,
-        institution,
-      },
-      {
-        initialValues: {
-          name: "Mathematics 301",
-          programStatus: ProgramStatus.Pending,
-          submittedDate: addDays(-2, PAST_SUBMITTED_DATE),
-        },
-      },
-    );
+      );
+    });
 
     // Create the newer program before the older program to ensure that our default
     // sort works and that we're not just getting default DB ordering.
@@ -151,45 +129,22 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
     const location = createFakeLocation(institution);
     await db.institutionLocation.save(location);
 
-    const programA = createFakeEducationProgram(
-      {
-        auditUser: savedUser,
-        institution,
-      },
-      {
-        initialValues: {
-          name: "Chemistry 101",
-          programStatus: ProgramStatus.Pending,
-          submittedDate: PAST_SUBMITTED_DATE,
-        },
-      },
-    );
-
-    const programB = createFakeEducationProgram(
-      {
-        auditUser: savedUser,
-        institution,
-      },
-      {
-        initialValues: {
-          name: "Chemistry 201",
-          programStatus: ProgramStatus.Pending,
-          submittedDate: PAST_SUBMITTED_DATE,
-        },
-      },
-    );
-
-    const programC = createFakeEducationProgram(
-      {
-        auditUser: savedUser,
-        institution,
-      },
-      {
-        initialValues: {
-          name: "Chemistry 301",
-          programStatus: ProgramStatus.Pending,
-          submittedDate: PAST_SUBMITTED_DATE,
-        },
+    const uniqueProgramName = faker.company.name();
+    const [programA, programB, programC] = Array.from({ length: 3 }).map(
+      (_, index) => {
+        return createFakeEducationProgram(
+          {
+            auditUser: savedUser,
+            institution,
+          },
+          {
+            initialValues: {
+              name: `${uniqueProgramName} ${index + 1}01`,
+              programStatus: ProgramStatus.Pending,
+              submittedDate: PAST_SUBMITTED_DATE,
+            },
+          },
+        );
       },
     );
 
@@ -197,7 +152,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
 
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    const searchCriteria = "Chemistry";
+    const searchCriteria = uniqueProgramName;
     const endpoint = `/aest/education-program/pending?page=0&pageLimit=10&searchCriteria=${searchCriteria}&sortField=programName&sortOrder=ASC`;
 
     // Act/Assert
@@ -244,6 +199,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
     const location = createFakeLocation(institution);
     await db.institutionLocation.save(location);
 
+    const uniqueProgramName = faker.company.name();
     const activeProgram = createFakeEducationProgram(
       {
         auditUser: savedUser,
@@ -251,7 +207,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
       },
       {
         initialValues: {
-          name: "Physics Active Pending",
+          name: `${uniqueProgramName} Active Pending`,
           programStatus: ProgramStatus.Pending,
           isActive: true,
           submittedDate: PAST_SUBMITTED_DATE,
@@ -266,7 +222,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
       },
       {
         initialValues: {
-          name: "Physics Inactive Pending",
+          name: `${uniqueProgramName} Inactive Pending`,
           programStatus: ProgramStatus.Pending,
           isActive: false,
           submittedDate: PAST_SUBMITTED_DATE,
@@ -278,7 +234,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
 
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    const searchCriteria = "Physics";
+    const searchCriteria = uniqueProgramName;
     const endpoint = `/aest/education-program/pending?page=0&pageLimit=10&searchCriteria=${searchCriteria}`;
 
     // Act/Assert
@@ -303,7 +259,8 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
 
   it("Should return filtered pending programs when search by institution operating name is applied.", async () => {
     // Arrange
-    const uniqueInstitutionName = "Unique Test Institution XYZ";
+    const uniqueGUID = faker.string.uuid();
+    const uniqueInstitutionName = `Unique Institution - ${uniqueGUID}`;
     const institution = createFakeInstitution();
     institution.operatingName = uniqueInstitutionName;
     await db.institution.save(institution);
@@ -329,7 +286,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
 
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    const searchCriteria = "Unique Test Institution";
+    const searchCriteria = uniqueGUID;
     const endpoint = `/aest/education-program/pending?page=0&pageLimit=10&searchCriteria=${searchCriteria}`;
 
     // Act/Assert
