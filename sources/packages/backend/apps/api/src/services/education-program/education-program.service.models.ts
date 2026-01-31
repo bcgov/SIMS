@@ -75,7 +75,9 @@ export class PendingEducationProgram {
   id: number;
   name: string;
   submittedDate: Date;
+  institution: {
+    id: number;
+    operatingName: string;
+  };
   selectedLocationId: number;
-  institutionId: number;
-  institutionOperatingName: string;
 }

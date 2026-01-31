@@ -24,7 +24,7 @@
       </template>
     </body-header>
     <content-group>
-      <toggle-content :toggled="!programsAndCount?.count">
+      <toggle-content :toggled="!programsAndCount?.count && !loading">
         <v-data-table-server
           :headers="PendingProgramsHeaders"
           :items="programsAndCount?.results"
@@ -36,6 +36,9 @@
           :mobile="isMobile"
           @update:options="pageSortEvent"
         >
+          <template #loading>
+            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+          </template>
           <template #[`item.institutionOperatingName`]="{ item }">
             {{ item.institutionOperatingName }}
           </template>

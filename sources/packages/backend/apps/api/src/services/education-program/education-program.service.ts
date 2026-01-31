@@ -13,6 +13,7 @@ import {
   InstitutionLocation,
   getRawCount,
   ProgramIntensity,
+  mapFromRawAndEntities,
 } from "@sims/sims-db";
 import {
   DataSource,
@@ -1031,18 +1032,13 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .offset(paginationOptions.page * paginationOptions.pageLimit)
       .limit(paginationOptions.pageLimit);
 
-    const { entities, raw } = await programsQuery.getRawAndEntities();
+    const rawAndEntities = await programsQuery.getRawAndEntities();
     const count = await programsQuery.getCount();
 
-    const pendingPrograms = entities.map((program, index) => ({
-      id: program.id,
-      name: program.name,
-      submittedDate: program.submittedDate,
-      institutionId: program.institution.id,
-      institutionOperatingName: program.institution.operatingName,
-      selectedLocationId:
-        raw[index].selectedLocationId ?? raw[index].selectedlocationid,
-    }));
+    const pendingPrograms = mapFromRawAndEntities<PendingEducationProgram>(
+      rawAndEntities,
+      "selectedLocationId",
+    );
 
     return {
       results: pendingPrograms,
@@ -1059,17 +1055,19 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     programsQuery: SelectQueryBuilder<EducationProgram>,
     paginationOptions: PaginationOptions,
   ): void {
-    const sortField = paginationOptions.sortField || "submittedDate";
+    const defaultSortField = "submittedDate";
+    const sortField = paginationOptions.sortField || defaultSortField;
     const sortOrder = paginationOptions.sortOrder || FieldSortOrder.ASC;
 
     // Map the sort field to the correct column.
     const sortColumnMap: Record<string, string> = {
-      submittedDate: "programs.submittedDate",
+      [defaultSortField]: "programs.submittedDate",
       programName: "programs.name",
       institutionOperatingName: "institution.operatingName",
     };
 
-    const sortColumn = sortColumnMap[sortField] || sortColumnMap.submittedDate;
+    const sortColumn =
+      sortColumnMap[sortField] || sortColumnMap[defaultSortField];
     programsQuery.orderBy(sortColumn, sortOrder);
   }
 

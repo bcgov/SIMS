@@ -36,6 +36,9 @@
           :mobile="isMobile"
           @update:options="pageSortEvent"
         >
+          <template #loading>
+            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+          </template>
           <template #[`item.submittedDate`]="{ item }">
             {{ dateOnlyLongString(item.submittedDate) }}
           </template>
