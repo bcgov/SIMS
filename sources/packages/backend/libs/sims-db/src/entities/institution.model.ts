@@ -14,7 +14,10 @@ import { InstitutionUser } from "./institution-user.model";
 import { InstitutionType } from "./institution-type.model";
 import {
   EducationProgram,
+  InstitutionClassification,
   InstitutionLocation,
+  InstitutionMedicalSchoolStatus,
+  InstitutionOrganizationStatus,
   InstitutionRestriction,
   Note,
 } from ".";
@@ -171,7 +174,7 @@ export class Institution extends RecordDataModel {
     name: "classification",
     nullable: true,
   })
-  classification?: string;
+  classification?: InstitutionClassification;
 
   /**
    * Organization status of the institution (e.g. profit or non-profit).
@@ -180,7 +183,7 @@ export class Institution extends RecordDataModel {
     name: "organization_status",
     nullable: true,
   })
-  organizationStatus?: string;
+  organizationStatus?: InstitutionOrganizationStatus;
 
   /**
    * Indicates the status of the institution being considered as a medical school.
@@ -189,5 +192,5 @@ export class Institution extends RecordDataModel {
     name: "medical_school_status",
     nullable: true,
   })
-  medicalSchoolStatus?: string;
+  medicalSchoolStatus?: InstitutionMedicalSchoolStatus;
 }
