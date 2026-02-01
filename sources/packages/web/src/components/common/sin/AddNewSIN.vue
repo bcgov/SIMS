@@ -1,6 +1,6 @@
 <template>
   <v-form ref="addNewSINForm">
-    <modal-dialog-base title="Add a new SIN" :showDialog="showDialog">
+    <modal-dialog-base title="Add a new SIN" :show-dialog="showDialog">
       <template #content>
         <error-summary :errors="addNewSINForm.errors" />
         <div class="pb-5">
@@ -20,7 +20,9 @@
           label="Skip the validations"
           v-model="formModel.skipValidations"
           hide-details="auto"
-          @update:model-value="(value: boolean | null) => (formModel.skipValidations = !!value)" />
+          @update:model-value="
+            (value: boolean | null) => (formModel.skipValidations = !!value)
+          " />
         <banner
           class="mb-4"
           v-if="formModel.skipValidations"
@@ -36,16 +38,33 @@
           placeholder="Long text..."
           v-model="formModel.noteDescription"
           variant="outlined"
-          :rules="[checkNotesLengthRule]"
+          :rules="[checkNotesLengthRule]" />
+        <banner
+          class="mb-4"
+          v-if="showDuplicateWarning"
+          :type="BannerTypes.Warning"
+          header="Duplicate SIN Warning"
+          summary="This SIN is currently associated with another student profile. Please investigate and correct any profiles with the incorrect SIN. If this is correct for the current student, please confirm and click 'Add SIN now'."
+        >
+        </banner>
+        <v-checkbox
+          v-if="showDuplicateWarning"
+          label="I confirm this SIN is correct for the current student"
+          v-model="formModel.confirmDuplicateSIN"
+          hide-details="auto"
+          :rules="[requiredCheckboxRule]"
+          @update:model-value="
+            (value: boolean | null) => (formModel.confirmDuplicateSIN = !!value)
+          "
       /></template>
       <template #footer>
         <check-permission-role :role="allowedRole">
           <template #="{ notAllowed }">
             <footer-buttons
-              primaryLabel="Add SIN now"
-              @secondaryClick="cancel"
-              @primaryClick="submit"
-              :disablePrimaryButton="notAllowed"
+              primary-label="Add SIN now"
+              @secondary-click="cancel"
+              @primary-click="submit"
+              :disable-primary-button="notAllowed"
             />
           </template>
         </check-permission-role>
@@ -79,22 +98,37 @@ export default defineComponent({
     const addNewSINForm = ref({} as VForm);
     const formModel = reactive({
       skipValidations: false,
+      confirmDuplicateSIN: false,
     } as CreateSINValidationAPIInDTO);
+    const showDuplicateWarning = ref(false);
+
+    const requiredCheckboxRule = (value: boolean) =>
+      value || "You must confirm to proceed";
 
     const submit = async () => {
       const validationResult = await addNewSINForm.value.validate();
       if (!validationResult.valid) {
         return;
       }
+
       // Copying the payload, as reset is making the formModel properties null.
       const payload = { ...formModel };
       resolvePromise(payload);
       addNewSINForm.value.reset();
+      showDuplicateWarning.value = false;
     };
 
     const cancel = () => {
       addNewSINForm.value.reset();
+      showDuplicateWarning.value = false;
       resolvePromise(false);
+    };
+
+    const setDuplicateWarning = (value: boolean) => {
+      showDuplicateWarning.value = value;
+      if (value) {
+        formModel.confirmDuplicateSIN = false;
+      }
     };
 
     return {
@@ -102,11 +136,14 @@ export default defineComponent({
       showModal,
       cancel,
       submit,
+      setDuplicateWarning,
       addNewSINForm,
       formModel,
+      showDuplicateWarning,
       BannerTypes,
       sinValidationRule,
       checkNotesLengthRule,
+      requiredCheckboxRule,
     };
   },
 });

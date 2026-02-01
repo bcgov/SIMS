@@ -56,6 +56,23 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
   }
 
   /**
+   * Checks if the provided SIN exists for another student.
+   * @param studentId current student id to exclude from the check.
+   * @param sin SIN to check for duplicates.
+   * @returns true if the SIN exists for another student, false otherwise.
+   */
+  async checkDuplicateSIN(studentId: number, sin: string): Promise<boolean> {
+    const normalizedSIN = removeWhiteSpaces(sin);
+    const existingSIN = await this.repo
+      .createQueryBuilder("sinValidation")
+      .select("sinValidation.id")
+      .where("sinValidation.sin = :sin", { sin: normalizedSIN })
+      .andWhere("sinValidation.student.id != :studentId", { studentId })
+      .getOne();
+    return !!existingSIN;
+  }
+
+  /**
    * Creates a new SIN validation entry associated with the student.
    * This entry will be updated in the student record as the one that represents
    * the current state of the SIN validation.

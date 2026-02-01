@@ -298,6 +298,9 @@ export class CreateSINValidationAPIInDTO {
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;
+  @IsOptional()
+  @IsBoolean()
+  confirmDuplicateSIN?: boolean;
 }
 
 /**

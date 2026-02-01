@@ -220,6 +220,7 @@ export interface CreateSINValidationAPIInDTO {
   sin: string;
   skipValidations: boolean;
   noteDescription: string;
+  confirmDuplicateSIN?: boolean;
 }
 
 /**

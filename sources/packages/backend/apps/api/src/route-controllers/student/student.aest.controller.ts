@@ -76,6 +76,7 @@ import {
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import {
   MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED,
+  SIN_DUPLICATE_NOT_CONFIRMED,
   SIN_VALIDATION_RECORD_INVALID_OPERATION,
   SIN_VALIDATION_RECORD_NOT_FOUND,
 } from "../../constants";
@@ -338,6 +339,10 @@ export class StudentAESTController extends BaseController {
   @Roles(Role.StudentAddNewSIN)
   @Post(":studentId/sin-validations")
   @ApiNotFoundResponse({ description: "Student does not exists." })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "This SIN is currently associated with another student profile. Please confirm to proceed.",
+  })
   async createStudentSINValidation(
     @Param("studentId", ParseIntPipe) studentId: number,
     @Body() payload: CreateSINValidationAPIInDTO,
@@ -346,6 +351,19 @@ export class StudentAESTController extends BaseController {
     const studentExists = await this.studentService.studentExists(studentId);
     if (!studentExists) {
       throw new NotFoundException("Student does not exists.");
+    }
+    // Check for duplicate SIN.
+    const isDuplicate = await this.sinValidationService.checkDuplicateSIN(
+      studentId,
+      payload.sin,
+    );
+    if (isDuplicate && !payload.confirmDuplicateSIN) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          "This SIN is currently associated with another student profile. Please investigate and correct any profiles with the incorrect SIN. If this is correct for the current student, please confirm and click 'Add SIN now'.",
+          SIN_DUPLICATE_NOT_CONFIRMED,
+        ),
+      );
     }
     const createdSINValidation =
       await this.sinValidationService.createSINValidation(

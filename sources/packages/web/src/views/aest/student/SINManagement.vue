@@ -109,6 +109,7 @@ import {
   LayoutTemplates,
   Role,
   SocialInsuranceNumberHeaders,
+  ApiProcessError,
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
 import { useFileUtils, ModalDialog, useSnackBar } from "@/composables";
@@ -119,6 +120,7 @@ import {
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import AddNewSIN from "@/components/common/sin/AddNewSIN.vue";
 import AddExpiryDate from "@/components/common/sin/AddExpiryDate.vue";
+import { SIN_DUPLICATE_NOT_CONFIRMED } from "@/constants";
 
 export default defineComponent({
   components: {
@@ -135,9 +137,7 @@ export default defineComponent({
   setup(props) {
     const showModal = ref(false);
     const studentSINValidations = ref([] as SINValidations[]);
-    const addNewSINModal = ref(
-      {} as ModalDialog<CreateSINValidationAPIInDTO | boolean>,
-    );
+    const addNewSINModal = ref<InstanceType<typeof AddNewSIN>>();
     const addExpiryDateModal = ref(
       {} as ModalDialog<UpdateSINValidationAPIInDTO | boolean>,
     );
@@ -157,8 +157,8 @@ export default defineComponent({
     watch(() => props.studentId, loadSINValidations, { immediate: true });
 
     const addNewSIN = async () => {
-      const addNewSINData = await addNewSINModal.value.showModal();
-      if (addNewSINData)
+      const addNewSINData = await addNewSINModal.value?.showModal();
+      if (addNewSINData) {
         try {
           processingNewSIN.value = true;
           await StudentService.shared.createStudentSINValidation(
@@ -169,11 +169,23 @@ export default defineComponent({
             "New SIN record created and associated to the student.",
           );
           await loadSINValidations();
-        } catch {
+        } catch (error: unknown) {
+          // Check if this is a duplicate SIN error.
+          if (
+            error instanceof ApiProcessError &&
+            error.errorType === SIN_DUPLICATE_NOT_CONFIRMED
+          ) {
+            // Show the duplicate warning in the modal and retry.
+            addNewSINModal.value?.setDuplicateWarning(true);
+            processingNewSIN.value = false;
+            await addNewSIN();
+            return;
+          }
           snackBar.error("Unexpected error while creating a new SIN record.");
         } finally {
           processingNewSIN.value = false;
         }
+      }
     };
 
     const addExpiryDate = async (sinValidationId: number) => {
