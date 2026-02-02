@@ -988,6 +988,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       ])
       // Get the location with the most offerings for each program. If no offerings exist, get any location for the institution.
       // This is to work around the program details page requirement where the location is required to load the list of offerings.
+      // When the location ID is no longer required in this context, the subquery can be removed, and the overall query can be simplified.
       .addSelect((subQuery) => {
         return subQuery
           .select("location.id")
@@ -1006,14 +1007,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .where("programs.programStatus = :status", {
         status: ProgramStatus.Pending,
       })
-      .andWhere("programs.isActive = true")
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where("programs.effectiveEndDate is null").orWhere(
-            "programs.effectiveEndDate > CURRENT_DATE",
-          );
-        }),
-      );
+      .andWhere("programs.isActive = true");
+
     // Search by program name or institution operating name.
     if (paginationOptions.searchCriteria) {
       programsQuery.andWhere(

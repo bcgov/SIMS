@@ -158,7 +158,7 @@ export default defineComponent({
         params: {
           programId: item.id,
           institutionId: item.institutionId,
-          locationId: item.locationId,
+          locationId: item.selectedLocationId,
         },
       });
     };

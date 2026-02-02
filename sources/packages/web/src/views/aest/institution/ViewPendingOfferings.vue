@@ -24,7 +24,7 @@
       </template>
     </body-header>
     <content-group>
-      <toggle-content :toggled="!offeringsAndCount?.count">
+      <toggle-content :toggled="!offeringsAndCount?.count && !loading">
         <v-data-table-server
           :headers="PendingOfferingsHeaders"
           :items="offeringsAndCount?.results"

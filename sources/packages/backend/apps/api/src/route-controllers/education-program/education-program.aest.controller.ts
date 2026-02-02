@@ -73,7 +73,7 @@ export class EducationProgramAESTController extends BaseController {
         institutionId: program.institution.id,
         institutionOperatingName: program.institution.operatingName,
         submittedDate: program.submittedDate,
-        locationId: program.selectedLocationId,
+        selectedLocationId: program.selectedLocationId,
       })),
       count: programs.count,
     };

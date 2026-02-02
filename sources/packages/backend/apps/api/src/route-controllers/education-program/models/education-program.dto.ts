@@ -205,5 +205,5 @@ export class EducationProgramPendingAPIOutDTO {
   institutionOperatingName: string;
   submittedDate: Date;
   institutionId: number;
-  locationId: number;
+  selectedLocationId: number;
 }
