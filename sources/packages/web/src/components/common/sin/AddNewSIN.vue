@@ -40,7 +40,7 @@
           variant="outlined"
           :rules="[checkNotesLengthRule]" />
         <banner
-          class="mb-4"
+          class="mt-4"
           v-if="showDuplicateWarning"
           :type="BannerTypes.Warning"
           header="Duplicate SIN Warning"
@@ -76,11 +76,13 @@
 import { PropType, ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { useModalDialog, useRules } from "@/composables";
-import { Role, VForm } from "@/types";
+import { useModalDialog, useRules, useSnackBar } from "@/composables";
+import { ApiProcessError, Role, VForm } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { CreateSINValidationAPIInDTO } from "@/services/http/dto";
 import { BannerTypes } from "@/types/contracts/Banner";
+import { StudentService } from "@/services/StudentService";
+import { SIN_DUPLICATE_NOT_CONFIRMED } from "@/constants";
 
 export default defineComponent({
   components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
@@ -89,12 +91,15 @@ export default defineComponent({
       type: String as PropType<Role>,
       required: true,
     },
+    studentId: {
+      type: Number,
+      required: true,
+    },
   },
-  setup() {
+  setup(props) {
+    const snackBar = useSnackBar();
     const { sinValidationRule, checkNotesLengthRule } = useRules();
-    const { showDialog, showModal, resolvePromise } = useModalDialog<
-      CreateSINValidationAPIInDTO | boolean
-    >();
+    const { showDialog, showModal, resolvePromise } = useModalDialog<boolean>();
     const addNewSINForm = ref({} as VForm);
     const formModel = reactive({
       skipValidations: false,
@@ -111,11 +116,36 @@ export default defineComponent({
         return;
       }
 
-      // Copying the payload, as reset is making the formModel properties null.
-      const payload = { ...formModel };
-      resolvePromise(payload);
-      addNewSINForm.value.reset();
-      showDuplicateWarning.value = false;
+      if (await createSINValidation()) {
+        resolvePromise(true);
+        addNewSINForm.value.reset();
+        showDuplicateWarning.value = false;
+      }
+    };
+
+    const createSINValidation = async () => {
+      try {
+        await StudentService.shared.createStudentSINValidation(
+          props.studentId,
+          formModel,
+        );
+        snackBar.success(
+          "New SIN record created and associated to the student.",
+        );
+      } catch (error: unknown) {
+        // Check if this is a duplicate SIN error.
+        if (
+          error instanceof ApiProcessError &&
+          error.errorType === SIN_DUPLICATE_NOT_CONFIRMED
+        ) {
+          // Show the duplicate warning in the modal and retry.
+          setDuplicateWarning(true);
+          return false;
+        }
+        snackBar.error("Unexpected error while creating a new SIN record.");
+      }
+
+      return true;
     };
 
     const cancel = () => {

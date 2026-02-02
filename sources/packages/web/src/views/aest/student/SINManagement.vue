@@ -89,6 +89,7 @@
       <add-new-s-i-n
         ref="addNewSINModal"
         :allowed-role="Role.StudentAddNewSIN"
+        :student-id="studentId"
       />
       <add-expiry-date
         ref="addExpiryDateModal"
@@ -109,18 +110,13 @@ import {
   LayoutTemplates,
   Role,
   SocialInsuranceNumberHeaders,
-  ApiProcessError,
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
 import { useFileUtils, ModalDialog, useSnackBar } from "@/composables";
-import {
-  CreateSINValidationAPIInDTO,
-  UpdateSINValidationAPIInDTO,
-} from "@/services/http/dto";
+import { UpdateSINValidationAPIInDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import AddNewSIN from "@/components/common/sin/AddNewSIN.vue";
 import AddExpiryDate from "@/components/common/sin/AddExpiryDate.vue";
-import { SIN_DUPLICATE_NOT_CONFIRMED } from "@/constants";
 
 export default defineComponent({
   components: {
@@ -159,32 +155,7 @@ export default defineComponent({
     const addNewSIN = async () => {
       const addNewSINData = await addNewSINModal.value?.showModal();
       if (addNewSINData) {
-        try {
-          processingNewSIN.value = true;
-          await StudentService.shared.createStudentSINValidation(
-            props.studentId,
-            addNewSINData as CreateSINValidationAPIInDTO,
-          );
-          snackBar.success(
-            "New SIN record created and associated to the student.",
-          );
-          await loadSINValidations();
-        } catch (error: unknown) {
-          // Check if this is a duplicate SIN error.
-          if (
-            error instanceof ApiProcessError &&
-            error.errorType === SIN_DUPLICATE_NOT_CONFIRMED
-          ) {
-            // Show the duplicate warning in the modal and retry.
-            addNewSINModal.value?.setDuplicateWarning(true);
-            processingNewSIN.value = false;
-            await addNewSIN();
-            return;
-          }
-          snackBar.error("Unexpected error while creating a new SIN record.");
-        } finally {
-          processingNewSIN.value = false;
-        }
+        await loadSINValidations();
       }
     };
 
