@@ -2687,7 +2687,7 @@
                   "value": ""
                 }
               ],
-              "content": "<strong>You have identified that your spouse/common-law partner is a disabled dependant. Please make sure you answer \"Yes' to having eligible dependants and add them in the Dependant Information section and ensure you select 'Spouse/common-law partner' as the relationship.</strong>",
+              "content": "You have identified that your spouse/common-law partner is a disabled dependant. Please make sure you answer \"Yes\" to having eligible dependants and add them in the Dependant Information section and ensure you select 'Spouse/common-law partner' as the relationship.",
               "refreshOnChange": false,
               "customClass": "banner-info",
               "key": "html52",

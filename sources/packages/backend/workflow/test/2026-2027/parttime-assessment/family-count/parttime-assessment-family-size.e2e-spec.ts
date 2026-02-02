@@ -22,11 +22,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-family-size.`, (
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.EligibleOver22YearsOld,
+        { initialValue: { relationship: DependantRelationship.Spouse } },
       ),
     ];
-    const [dependent] = assessmentConsolidatedData.studentDataDependants;
-    dependent.relationship = DependantRelationship.Spouse;
-    assessmentConsolidatedData.studentDataDependants = [dependent];
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
 
     // Act
@@ -43,7 +41,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-family-size.`, (
   });
 
   it(
-    "Should correctly calculate the family size count when student relationship status is married and one dependant is provided in the application with relationship type spouse " +
+    "Should correctly calculate the family size count when student relationship status is married and one dependant is provided in the application with relationship type spouse" +
       " and not declared on taxes for disability.",
     async () => {
       // Arrange
@@ -55,12 +53,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-family-size.`, (
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentNotEligible(
           DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
-          { relationship: DependantRelationship.Spouse },
+          { initialValue: { relationship: DependantRelationship.Spouse } },
         ),
       ];
-      const [dependent] = assessmentConsolidatedData.studentDataDependants;
-      dependent.relationship = DependantRelationship.Spouse;
-      assessmentConsolidatedData.studentDataDependants = [dependent];
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
 
       // Act
@@ -79,7 +74,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-family-size.`, (
   );
 
   it(
-    "Should correctly calculate the family size count when student relationship status is married and one dependant is provided in the application with relationship type child " +
+    "Should correctly calculate the family size count when student relationship status is married and one dependant is provided in the application with relationship type child" +
       " and declared on taxes for disability.",
     async () => {
       // Arrange

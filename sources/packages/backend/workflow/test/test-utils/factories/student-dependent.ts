@@ -45,11 +45,12 @@ export function createFakeStudentDependentEligible(
   eligibility: DependentEligibility,
   options?: {
     referenceDate?: Date | string;
-    relationship?: DependantRelationship;
+    initialValue?: { relationship?: DependantRelationship };
   },
 ): StudentDependent {
   const referenceDate = options?.referenceDate ?? new Date();
-  const relationship = options?.relationship ?? DependantRelationship.Child;
+  const relationship =
+    options?.initialValue?.relationship ?? DependantRelationship.Child;
   switch (eligibility) {
     case DependentEligibility.Eligible0To18YearsOld:
       return {
@@ -94,11 +95,12 @@ export function createFakeStudentDependentNotEligible(
   eligibility: DependentEligibility,
   options?: {
     referenceDate?: Date | string;
-    relationship?: DependantRelationship;
+    initialValue?: { relationship?: DependantRelationship };
   },
 ): StudentDependent {
   const referenceDate = options?.referenceDate ?? new Date();
-  const relationship = options?.relationship ?? DependantRelationship.Child;
+  const relationship =
+    options?.initialValue?.relationship ?? DependantRelationship.Child;
   switch (eligibility) {
     case DependentEligibility.Eligible0To18YearsOld:
       return {
