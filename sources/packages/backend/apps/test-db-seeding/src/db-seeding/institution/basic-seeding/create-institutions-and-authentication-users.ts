@@ -72,6 +72,12 @@ export class CreateInstitutionsAndAuthenticationUsers {
     fakeInstitution.institutionType = {
       id: institutionsData.institutionTypeId,
     } as InstitutionType;
+    fakeInstitution.country = institutionsData.country;
+    fakeInstitution.province = institutionsData.province;
+    fakeInstitution.classification = institutionsData.classification;
+    fakeInstitution.organizationStatus = institutionsData.organizationStatus;
+    fakeInstitution.medicalSchoolStatus = institutionsData.medicalSchoolStatus;
+    // Save institution to DB.
     const savedInstitution = await this.institutionRepo.save(fakeInstitution);
     // Create the users associated with the institution.
     for (const user of institutionsData.users) {
@@ -87,9 +93,8 @@ export class CreateInstitutionsAndAuthenticationUsers {
         savedInstitution,
       );
       // Associate the new users with the institution.
-      const savedInstitutionUser = await this.institutionUserRepo.save(
-        fakeInstitutionUser,
-      );
+      const savedInstitutionUser =
+        await this.institutionUserRepo.save(fakeInstitutionUser);
       // Get the user role to be associated.
       const userTypeRole =
         await this.userTypeRoleHelperService.getInstitutionUserTypeAndRole(

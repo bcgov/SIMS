@@ -77,3 +77,13 @@ export const TableNames = {
 
 export const INSTITUTION_TYPE_BC_PUBLIC = 1;
 export const INSTITUTION_TYPE_BC_PRIVATE = 2;
+
+/**
+ * Canada country code.
+ */
+export const CANADA_COUNTRY_CODE = "CA";
+
+/**
+ * BC province code.
+ */
+export const BC_PROVINCE_CODE = "BC";

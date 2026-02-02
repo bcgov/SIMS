@@ -1,5 +1,13 @@
-import { InstitutionUserRoles, InstitutionUserTypes } from "@sims/sims-db";
 import {
+  InstitutionClassification,
+  InstitutionMedicalSchoolStatus,
+  InstitutionOrganizationStatus,
+  InstitutionUserRoles,
+  InstitutionUserTypes,
+} from "@sims/sims-db";
+import {
+  BC_PROVINCE_CODE,
+  CANADA_COUNTRY_CODE,
   INSTITUTION_TYPE_BC_PRIVATE,
   INSTITUTION_TYPE_BC_PUBLIC,
 } from "@sims/sims-db/constant";
@@ -8,6 +16,7 @@ import {
   COLLEGE_D_BUSINESS_GUID,
   COLLEGE_E_BUSINESS_GUID,
   COLLEGE_F_BUSINESS_GUID,
+  ONTARIO_PROVINCE_CODE,
   SIMS2_COLLC_USER,
   SIMS2_COLLD_USER,
   SIMS2_COLLE_USER,
@@ -31,6 +40,12 @@ export interface InstitutionBaseData {
   operatingName: string;
   businessGuid: string;
   institutionTypeId: number;
+  country: string;
+  province: string;
+  classification: InstitutionClassification;
+  organizationStatus: InstitutionOrganizationStatus;
+  medicalSchoolStatus: InstitutionMedicalSchoolStatus;
+
   users: InstitutionUserBaseData[];
 }
 const INSTITUTION_TYPE_OUT_OF_PROVINCE = 3;
@@ -41,6 +56,11 @@ export const INSTITUTIONS_INITIAL_DATA: InstitutionBaseData[] = [
     operatingName: "College C (non-legal operating name)",
     businessGuid: COLLEGE_C_BUSINESS_GUID,
     institutionTypeId: INSTITUTION_TYPE_BC_PRIVATE,
+    country: CANADA_COUNTRY_CODE,
+    province: BC_PROVINCE_CODE,
+    classification: InstitutionClassification.Private,
+    organizationStatus: InstitutionOrganizationStatus.Profit,
+    medicalSchoolStatus: InstitutionMedicalSchoolStatus.No,
     users: [
       {
         userName: SIMS_COLLC_ADMIN_LEGAL_SIGNING_USER,
@@ -63,6 +83,11 @@ export const INSTITUTIONS_INITIAL_DATA: InstitutionBaseData[] = [
     operatingName: "College D (non-legal operating name)",
     businessGuid: COLLEGE_D_BUSINESS_GUID,
     institutionTypeId: INSTITUTION_TYPE_OUT_OF_PROVINCE,
+    country: CANADA_COUNTRY_CODE,
+    province: ONTARIO_PROVINCE_CODE,
+    classification: InstitutionClassification.Public,
+    organizationStatus: InstitutionOrganizationStatus.Profit,
+    medicalSchoolStatus: InstitutionMedicalSchoolStatus.No,
     users: [
       {
         userName: SIMS_COLLD_ADMIN_NON_LEGAL_SIGNING_USER,
@@ -85,6 +110,11 @@ export const INSTITUTIONS_INITIAL_DATA: InstitutionBaseData[] = [
     operatingName: "College E (non-legal operating name)",
     businessGuid: COLLEGE_E_BUSINESS_GUID,
     institutionTypeId: INSTITUTION_TYPE_BC_PUBLIC,
+    country: CANADA_COUNTRY_CODE,
+    province: BC_PROVINCE_CODE,
+    classification: InstitutionClassification.Public,
+    organizationStatus: InstitutionOrganizationStatus.Profit,
+    medicalSchoolStatus: InstitutionMedicalSchoolStatus.No,
     users: [
       {
         userName: SIMS_COLLE_ADMIN_NON_LEGAL_SIGNING_USER,
@@ -107,6 +137,11 @@ export const INSTITUTIONS_INITIAL_DATA: InstitutionBaseData[] = [
     operatingName: "College F (non-legal operating name)",
     businessGuid: COLLEGE_F_BUSINESS_GUID,
     institutionTypeId: INSTITUTION_TYPE_BC_PUBLIC,
+    country: CANADA_COUNTRY_CODE,
+    province: BC_PROVINCE_CODE,
+    classification: InstitutionClassification.Public,
+    organizationStatus: InstitutionOrganizationStatus.Profit,
+    medicalSchoolStatus: InstitutionMedicalSchoolStatus.No,
     users: [
       {
         userName: SIMS_COLLF_ADMIN_LEGAL_SIGNING_USER,
