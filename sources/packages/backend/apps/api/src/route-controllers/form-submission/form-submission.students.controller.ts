@@ -76,7 +76,8 @@ export class FormSubmissionStudentsController extends BaseController {
           status: submission.submissionStatus,
           submissionItems: submission.formSubmissionItems.map((item) => ({
             formType: item.dynamicFormConfiguration.formType,
-            status: item.decisionStatus,
+            decisionStatus: item.decisionStatus,
+            decisionDate: item.decisionDate,
           })),
           applicationId: submission.application?.id,
           applicationNumber: submission.application?.applicationNumber,
@@ -157,7 +158,6 @@ export class FormSubmissionStudentsController extends BaseController {
         );
       }
     }
-
     let application: Application;
     if (payload.applicationId) {
       // Execute application validations.
@@ -179,7 +179,7 @@ export class FormSubmissionStudentsController extends BaseController {
         );
       }
     }
-
+    // Check if there is any existing form submission pending a decision for the same context.
     const existingFormSubmission =
       await this.formSubmissionService.hasPendingFormSubmission(
         userToken.studentId,
@@ -194,7 +194,7 @@ export class FormSubmissionStudentsController extends BaseController {
         ),
       );
     }
-
+    // Process all the dry run submissions to validate the requests.
     let dryRunSubmissionResults: DryRunSubmissionResult[] = [];
     try {
       const dryRunPromise: Promise<DryRunSubmissionResult>[] =
@@ -231,7 +231,6 @@ export class FormSubmissionStudentsController extends BaseController {
         "Not able to complete the submission due to an invalid request.",
       );
     }
-
     // Generate the data to be persisted based on the result of the dry run submission.
     const formItems = dryRunSubmissionResults.map((dryRunResult) => {
       const submissionConfig = submissionConfigs.find(
@@ -244,7 +243,6 @@ export class FormSubmissionStudentsController extends BaseController {
         files: submissionConfig.files,
       } as FormSubmissionModel;
     });
-
     const studentAppeal = await this.formSubmissionService.saveFormSubmission(
       userToken.studentId,
       payload.applicationId,
@@ -252,7 +250,6 @@ export class FormSubmissionStudentsController extends BaseController {
       formItems,
       userToken.userId,
     );
-
     return {
       id: studentAppeal.id,
     };

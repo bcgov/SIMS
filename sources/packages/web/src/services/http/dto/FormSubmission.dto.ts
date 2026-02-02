@@ -6,7 +6,8 @@ import {
 
 interface FormSubmissionItemAPIOutDTO {
   formType: string;
-  status: FormSubmissionDecisionStatus;
+  decisionStatus: FormSubmissionDecisionStatus;
+  decisionDate?: Date;
 }
 
 export interface FormSubmissionAPIOutDTO {

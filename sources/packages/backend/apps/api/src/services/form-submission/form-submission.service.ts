@@ -125,6 +125,7 @@ export class FormSubmissionService {
             formType: true,
           },
           decisionStatus: true,
+          decisionDate: true,
         },
         application: { id: true, applicationNumber: true },
       },

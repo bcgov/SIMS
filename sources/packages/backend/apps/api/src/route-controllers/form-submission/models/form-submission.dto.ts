@@ -16,7 +16,8 @@ import { FormSubmissionDecisionStatus } from "@sims/sims-db/entities/form-submis
 
 class FormSubmissionItemAPIOutDTO {
   formType: string;
-  status: FormSubmissionDecisionStatus;
+  decisionStatus: FormSubmissionDecisionStatus;
+  decisionDate?: Date;
 }
 
 export class FormSubmissionAPIOutDTO {

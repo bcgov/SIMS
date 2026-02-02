@@ -1,128 +1,150 @@
 <template>
-  <body-header-container>
-    <template #header>
-      <body-header
-        title="History"
-        sub-title="You can see the history of submitted appeals."
-      />
-    </template>
-    <content-group
-      ><toggle-content
-        :toggled="!appeals?.length"
-        message="Review your past appeals and forms submissions, and decisions here."
-      >
-        <v-data-table
-          :headers="StudentAppealsHistoryHeaders"
-          :items="appeals"
-          item-value="id"
-          :items-per-page="DEFAULT_PAGE_LIMIT"
-          :items-per-page-options="ITEMS_PER_PAGE"
-          v-model:expanded="expanded"
-          :mobile="isMobile"
+  <v-card class="mb-4 p-4">
+    <body-header-container>
+      <template #header>
+        <body-header
+          title="History"
+          sub-title="You can see the history of submitted forms."
         >
-          <template #loading>
-            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
-          </template>
-          <template #[`item.submittedDate`]="{ item }">
-            {{ dateOnlyLongString(item.submittedDate) }}
-          </template>
-          <template #[`item.assessedDate`]="{ item }">
-            {{
-              conditionalEmptyStringFiller(
-                !!item.assessedDate,
-                dateOnlyLongString(item.assessedDate),
-              )
-            }}
-          </template>
-          <template #[`item.appealStatus`]="{ item }">
-            <status-chip-requested-assessment :status="item.appealStatus" />
-          </template>
-          <template #[`item.applicationNumber`]="{ item }">
-            {{ emptyStringFiller(item.applicationNumber) }}
-          </template>
-          <template #[`item.actions`]="{ item }">
-            <v-btn color="primary" variant="text" @click="goToAppeal(item.id)"
-              >View
-              <v-tooltip activator="parent" location="start"
-                >Click to view this appeal request.</v-tooltip
+          <template #actions>
+            <v-btn-toggle
+              density="compact"
+              mandatory
+              class="float-right btn-toggle"
+              selected-class="selected-btn-toggle"
+            >
+              <v-btn rounded="xl" color="primary" value="appeals"
+                >Student appeals</v-btn
               >
-            </v-btn>
+              <v-btn rounded="xl" class="ml-2" color="primary" value="forms"
+                >Student forms</v-btn
+              >
+            </v-btn-toggle>
           </template>
-          <template #expanded-row="{ columns, item }">
-            <tr>
-              <td :colspan="columns.length">
-                <v-table class="ml-5 mb-5">
-                  <thead>
-                    <tr>
-                      <th id="status-header">Status</th>
-                      <th id="appeal-header">Appeal Name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      v-for="appealRequest in item.appealRequests"
-                      :key="appealRequest.submittedFormName"
-                    >
-                      <td headers="status-header">
-                        <status-chip-student-appeal
-                          :status="appealRequest.appealStatus"
-                        />
-                      </td>
-                      <td headers="appeal-header" class="w-100">
-                        {{
-                          mapStudentAppealsFormNames(
-                            appealRequest.submittedFormName,
-                          )
-                        }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </v-table>
-              </td>
-            </tr>
-          </template>
-        </v-data-table>
+        </body-header>
+      </template>
+      <toggle-content
+        :toggled="!submissions?.length"
+        message="Review your past forms submissions, and decisions here."
+      >
+        <v-card
+          hover
+          class="mb-4"
+          v-for="submission in submissions"
+          :key="submission.id"
+          variant="elevated"
+        >
+          <v-card-item>
+            <v-card-title>
+              <span class="category-header-medium brand-gray-text mr-2">{{
+                submission.formCategory
+              }}</span>
+              <StatusChipFormSubmission :status="submission.status" />
+              <v-btn color="primary" class="float-right">
+                View submitted form(s)
+              </v-btn>
+              <v-divider class="mb-0"></v-divider>
+            </v-card-title>
+          </v-card-item>
+          <v-card-text>
+            <v-row no-gutters>
+              <v-col
+                ><title-value property-title="Submitted date">
+                  <template #value>
+                    {{ getISODateHourMinuteString(submission.submittedDate) }}
+                  </template>
+                </title-value></v-col
+              >
+              <v-col
+                ><title-value property-title="Assessed date">
+                  <template #value>
+                    {{
+                      !!submission.assessedDate
+                        ? getISODateHourMinuteString(submission.assessedDate)
+                        : "Pending"
+                    }}
+                  </template>
+                </title-value>
+              </v-col>
+              <v-col v-if="submission.applicationNumber">
+                <title-value
+                  property-title="Application number"
+                  :property-value="submission.applicationNumber"
+              /></v-col>
+            </v-row>
+            <v-row no-gutters class="mt-2">
+              <v-col cols="3">
+                <span class="category-header-small brand-gray-text"
+                  >Submitted form(s)</span
+                >
+              </v-col>
+            </v-row>
+            <v-table striped="even">
+              <thead>
+                <tr>
+                  <th id="name" class="text-left">Name</th>
+                  <th id="decisionStatus" class="text-left">Decision status</th>
+                  <th id="decisionDate" class="text-left">Decision Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="item in submission.submissionItems"
+                  :key="item.formType"
+                >
+                  <td headers="name">{{ item.formType }}</td>
+                  <td headers="decisionStatus">
+                    <StatusChipFormSubmissionDecision
+                      :status="item.decisionStatus"
+                    />
+                  </td>
+                  <td headers="decisionDate">
+                    {{
+                      !!item.decisionDate
+                        ? getISODateHourMinuteString(item.decisionDate)
+                        : "Pending"
+                    }}
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
+          </v-card-text>
+        </v-card>
       </toggle-content>
-    </content-group>
-  </body-header-container>
+    </body-header-container>
+  </v-card>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watchEffect } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { StudentAppealService } from "../../../services/StudentAppealService";
-import {
-  DEFAULT_PAGE_LIMIT,
-  ITEMS_PER_PAGE,
-  StudentAppealsHistoryHeaders,
-} from "@/types";
-import { AppealSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters, useStudentAppeals } from "@/composables";
-import StatusChipRequestedAssessment from "@/components/generic/StatusChipRequestedAssessment.vue";
-import StatusChipStudentAppeal from "@/components/generic/StatusChipStudentAppeal.vue";
 import router from "@/router";
 import { useDisplay } from "vuetify";
+import { FormSubmissionsService } from "@/services/FormSubmissionsService";
+import { FormSubmissionAPIOutDTO } from "@/services/http/dto/FormSubmission.dto";
+import StatusChipFormSubmission from "@/components/generic/StatusChipFormSubmission.vue";
+import StatusChipFormSubmissionDecision from "@/components/generic/StatusChipFormSubmissionDecision.vue";
 
 export default defineComponent({
   components: {
-    StatusChipRequestedAssessment,
-    StatusChipStudentAppeal,
+    StatusChipFormSubmission,
+    StatusChipFormSubmissionDecision,
   },
   setup() {
     const { mobile: isMobile } = useDisplay();
     const { mapStudentAppealsFormNames } = useStudentAppeals();
     const {
+      emptyStringFiller,
+      getISODateHourMinuteString,
       conditionalEmptyStringFiller,
       dateOnlyLongString,
-      emptyStringFiller,
     } = useFormatters();
-    const appeals = ref<AppealSummaryAPIOutDTO[]>();
-    const expanded = ref<number[]>([]);
+    const submissions = ref<FormSubmissionAPIOutDTO[]>();
 
     watchEffect(async () => {
-      const appealsSummary =
-        await StudentAppealService.shared.getStudentAppealSummary();
-      appeals.value = appealsSummary.appeals;
-      expanded.value = appeals.value.map((appeal) => appeal.id);
+      const submissionSummary =
+        await FormSubmissionsService.shared.getFormSubmissionSummary();
+      submissions.value = submissionSummary.submissions;
     });
 
     const goToAppeal = async (appealId: number) => {
@@ -136,16 +158,13 @@ export default defineComponent({
 
     return {
       isMobile,
+      submissions,
       StudentRoutesConst,
-      appeals,
-      StudentAppealsHistoryHeaders,
-      DEFAULT_PAGE_LIMIT,
-      ITEMS_PER_PAGE,
+      emptyStringFiller,
+      getISODateHourMinuteString,
       conditionalEmptyStringFiller,
       dateOnlyLongString,
-      emptyStringFiller,
       mapStudentAppealsFormNames,
-      expanded,
       goToAppeal,
     };
   },
