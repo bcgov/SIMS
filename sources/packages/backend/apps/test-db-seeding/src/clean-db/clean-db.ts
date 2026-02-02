@@ -12,5 +12,8 @@ export class CleanDatabase {
     await this.dataSource.query(
       "DROP FUNCTION IF EXISTS sims.create_history_entry",
     );
+    await this.dataSource.query(
+      "DROP FUNCTION IF EXISTS sims.is_valid_system_lookup_key(TEXT,TEXT)",
+    );
   }
 }
