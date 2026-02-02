@@ -49,13 +49,10 @@
         </banner>
         <v-checkbox
           v-if="showDuplicateWarning"
-          label="I confirm this SIN is correct for the current student"
+          label="I confirm this SIN is correct for the current student."
           v-model="formModel.confirmDuplicateSIN"
           hide-details="auto"
           :rules="[requiredCheckboxRule]"
-          @update:model-value="
-            (value: boolean | null) => (formModel.confirmDuplicateSIN = !!value)
-          "
       /></template>
       <template #footer>
         <check-permission-role :role="allowedRole">
