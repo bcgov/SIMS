@@ -40,7 +40,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-family-size.`, (
   });
 
   it(
-    "Should correctly calculate the family size count when student relationship status is married and one dependant is provided in the application with relationship type spouse" +
+    "Should correctly calculate the family size count when student relationship status is married and one dependant is provided in the application with relationship type 'spouse'" +
       " and not declared on taxes for disability.",
     async () => {
       // Arrange
@@ -72,7 +72,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-family-size.`, (
   );
 
   it(
-    "Should correctly calculate the family size count when student relationship status is married and one dependant is provided in the application with relationship type child" +
+    "Should correctly calculate the family size count when student relationship status is married and one dependant is provided in the application with relationship type 'child'" +
       " and declared on taxes for disability.",
     async () => {
       // Arrange
