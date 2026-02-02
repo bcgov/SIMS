@@ -56,7 +56,7 @@
     "@nestjs/axios": "^4.0.1",
     "@nestjs/bull": "^11.0.4",
     "@nestjs/common": "^11.1.9",
-    "@nestjs/core": "^11.1.12",
+    "@nestjs/core": "^11.1.9",
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/microservices": "^11.1.12",
