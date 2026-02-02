@@ -26,19 +26,14 @@ describe("StudentAESTController(e2e)-createStudentSINValidation", () => {
 
   it("Should reject creation of duplicate SIN when confirmDuplicateSIN is not provided.", async () => {
     // Arrange
-    const studentA = await saveFakeStudent(db.dataSource);
-    const studentB = await saveFakeStudent(db.dataSource);
-    const duplicateSIN = "900000001";
-
-    // Create a SIN validation for student A.
-    const sinValidationA = createFakeSINValidation({
-      student: studentA,
+    const duplicateSIN = "927159533";
+    await saveFakeStudent(db.dataSource, null, {
+      sinValidationInitialValue: { sin: duplicateSIN },
     });
-    sinValidationA.sin = duplicateSIN;
-    await db.sinValidation.save(sinValidationA);
+    const student = await saveFakeStudent(db.dataSource);
 
     const aestUserToken = await getAESTToken(AESTGroups.BusinessAdministrators);
-    const endpoint = `/aest/student/${studentB.id}/sin-validations`;
+    const endpoint = `/aest/student/${student.id}/sin-validations`;
     const payload = {
       sin: duplicateSIN,
       skipValidations: false,
@@ -63,7 +58,7 @@ describe("StudentAESTController(e2e)-createStudentSINValidation", () => {
     // Arrange
     const studentA = await saveFakeStudent(db.dataSource);
     const studentB = await saveFakeStudent(db.dataSource);
-    const duplicateSIN = "900000002";
+    const duplicateSIN = "534012703";
 
     // Create a SIN validation for student A.
     const sinValidationA = createFakeSINValidation({
@@ -106,7 +101,7 @@ describe("StudentAESTController(e2e)-createStudentSINValidation", () => {
   it("Should create SIN validation when SIN is not a duplicate.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
-    const uniqueSIN = "900000003";
+    const uniqueSIN = "696098482";
 
     const aestUserToken = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = `/aest/student/${student.id}/sin-validations`;

@@ -24,9 +24,7 @@ export function createFakeSINValidation(
     faker.number.int({ min: 100000000, max: 899999999 }).toString();
   sinValidation.dateSent = now;
   sinValidation.dateReceived =
-    options?.initialValue?.dateReceived !== undefined
-      ? options.initialValue.dateReceived
-      : now;
+    options?.initialValue?.dateReceived ?? now;
   sinValidation.fileSent = null;
   sinValidation.fileReceived = null;
   sinValidation.givenNameSent = null;
