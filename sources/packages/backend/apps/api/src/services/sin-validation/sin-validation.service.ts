@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, Not } from "typeorm";
 import {
   RecordDataModelService,
   NoteType,
@@ -65,15 +65,15 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
    */
   async checkDuplicateSIN(studentId: number, sin: string): Promise<boolean> {
     const normalizedSIN = removeWhiteSpaces(sin);
-    const existingStudent = await this.dataSource
-      .getRepository(Student)
-      .createQueryBuilder("student")
-      .innerJoin("student.sinValidation", "sinValidation")
-      .select("student.id")
-      .where("sinValidation.sin = :sin", { sin: normalizedSIN })
-      .andWhere("student.id != :studentId", { studentId })
-      .getOne();
-    return !!existingStudent;
+    const exists = await this.dataSource.getRepository(Student).exists({
+      where: {
+        id: Not(studentId),
+        sinValidation: {
+          sin: normalizedSIN,
+        },
+      },
+    });
+    return exists;
   }
 
   /**

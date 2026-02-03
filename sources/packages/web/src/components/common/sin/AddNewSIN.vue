@@ -44,7 +44,7 @@
           v-if="showDuplicateWarning"
           :type="BannerTypes.Warning"
           header="Duplicate SIN Warning"
-          summary="This SIN is currently associated with another student profile. Please investigate and correct any profiles with the incorrect SIN. If this is correct for the current student, please confirm and click 'Add SIN now'."
+          summary='This SIN is currently associated with another student profile. Please investigate and correct any profiles with the incorrect SIN. If this is correct for the current student, please confirm and click "Add SIN now".'
         >
         </banner>
         <v-checkbox

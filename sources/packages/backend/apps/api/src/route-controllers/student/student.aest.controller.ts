@@ -352,15 +352,19 @@ export class StudentAESTController extends BaseController {
     if (!studentExists) {
       throw new NotFoundException("Student does not exists.");
     }
-    // Check for duplicate SIN.
-    const isDuplicate = await this.sinValidationService.checkDuplicateSIN(
-      studentId,
-      payload.sin,
-    );
+
+    let isDuplicate = false;
+    if (!payload.confirmDuplicateSIN) {
+      // Check for duplicate SIN if confirmation is not provided.
+      isDuplicate = await this.sinValidationService.checkDuplicateSIN(
+        studentId,
+        payload.sin,
+      );
+    }
     if (isDuplicate && !payload.confirmDuplicateSIN) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
-          "This SIN is currently associated with another student profile. Please investigate and correct any profiles with the incorrect SIN. If this is correct for the current student, please confirm and click 'Add SIN now'.",
+          "This SIN is currently associated with another student profile and confirmation to allow duplication SIN is missing.",
           SIN_DUPLICATE_NOT_CONFIRMED,
         ),
       );
