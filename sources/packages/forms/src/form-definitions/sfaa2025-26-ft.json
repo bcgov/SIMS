@@ -725,7 +725,7 @@
                       "content": "<strong>We are currently accepting limited full-time applications</strong> \n<br><br>\n<span>Only programs that appear in the programs list can be applied for in SIMS. If your program does not appear in this list please cancel this application draft and go to the <a href=\"https://studentaidbc.ca/dashboard\" target=\"_blank\" rel=\"noopener noreferrer\">SFAS student dashboard</a> to complete a full-time application.</span>",
                       "refreshOnChange": false,
                       "key": "html15",
-                      "customConditional": "show = !!data.myProgramNotListed && !!data.allowBetaInstitutionsOnly;",
+                      "customConditional": "show = !!data.myProgramNotListed && !!data.allowBetaInstitutionsOnly && !data.myStudyPeriodIsntListed;",
                       "type": "htmlelement",
                       "input": false,
                       "tableView": false
