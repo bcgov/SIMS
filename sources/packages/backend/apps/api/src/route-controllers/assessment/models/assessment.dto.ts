@@ -191,28 +191,6 @@ export class AwardDetailsAPIOutDTO {
   offeringIntensity: OfferingIntensity;
   offeringStudyStartDate: string;
   offeringStudyEndDate: string;
-  @ApiProperty({
-    description:
-      "Dynamic output of the workflow calculation. " +
-      "Contains data that could represent a part-time or a full-time award details. ",
-  })
-  estimatedAward: DynamicAwardValue;
-  @ApiProperty({
-    description:
-      "Dynamic output from disbursement receipt for the given disbursement. " +
-      "Contains data that could represent a part-time or a full-time award details. " +
-      "If the conditions to have a receipt are not match this information will not be available.",
-  })
-  finalAward?: DynamicAwardValue;
-}
-
-export class AwardDetails2APIOutDTO {
-  applicationNumber: string;
-  applicationStatus: ApplicationStatus;
-  institutionName: string;
-  offeringIntensity: OfferingIntensity;
-  offeringStudyStartDate: string;
-  offeringStudyEndDate: string;
   firstDisbursement: AwardDisbursementScheduleAPIOutDTO;
   secondDisbursement: AwardDisbursementScheduleAPIOutDTO;
 }
