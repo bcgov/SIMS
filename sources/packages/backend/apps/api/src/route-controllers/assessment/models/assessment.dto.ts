@@ -5,6 +5,7 @@ import {
   Assessment,
   AssessmentStatus,
   AssessmentTriggerType,
+  FormSubmissionStatus,
   NOTE_DESCRIPTION_MAX_LENGTH,
   OfferingIntensity,
   OfferingStatus,
@@ -49,7 +50,8 @@ type RequestAssessmentSummaryStatus =
   | StudentAppealStatus
   | ApplicationExceptionStatus
   | OfferingStatus
-  | ApplicationOfferingChangeRequestStatus;
+  | ApplicationOfferingChangeRequestStatus
+  | FormSubmissionStatus;
 
 export class RequestAssessmentSummaryAPIOutDTO {
   id: number;

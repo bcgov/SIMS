@@ -42,6 +42,7 @@ import {
   StudentAppealAssessmentService,
   StudentAppealCreateAssessmentAction,
   StudentAppealUpdateModifiedIndependentAction,
+  FormSubmissionService,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -226,6 +227,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     StudentAppealActionsProcessor,
     StudentAppealCreateAssessmentAction,
     StudentAppealUpdateModifiedIndependentAction,
+    FormSubmissionService,
   ],
 })
 export class AppAESTModule {}

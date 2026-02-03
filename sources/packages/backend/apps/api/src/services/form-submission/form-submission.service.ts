@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, IsNull, Repository } from "typeorm";
+import { DataSource, IsNull, Not, Repository } from "typeorm";
 import {
   Application,
   User,
@@ -199,5 +199,29 @@ export class FormSubmissionService {
         "MIXED_FORM_CATEGORIES",
       );
     }
+  }
+
+  /**
+   * Get student appeals submissions that are not in pending status.
+   * The non-pending submissions should be either pending for decision
+   * or had all their individual items declined.
+   * @param applicationId application ID to filter the submissions.
+   * @returns list of non-completed student appeals submissions.
+   */
+  async getNonCompletedAppealsSubmissions(
+    applicationId: number,
+  ): Promise<FormSubmission[]> {
+    return this.formSubmissionRepo.find({
+      select: {
+        id: true,
+        submissionStatus: true,
+        submittedDate: true,
+      },
+      where: {
+        formCategory: FormCategory.StudentAppeal,
+        application: { id: applicationId },
+        submissionStatus: Not(FormSubmissionStatus.Pending),
+      },
+    });
   }
 }
