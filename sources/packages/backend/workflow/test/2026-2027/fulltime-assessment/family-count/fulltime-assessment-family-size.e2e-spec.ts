@@ -1,0 +1,109 @@
+import { DependantRelationship } from "@sims/test-utils";
+import { PROGRAM_YEAR } from "../../constants/program-year.constants";
+import {
+  createFakeConsolidatedFulltimeData,
+  executeFullTimeAssessmentForProgramYear,
+  ZeebeMockedClient,
+} from "../../../test-utils";
+import {
+  createFakeStudentDependentEligible,
+  createFakeStudentDependentNotEligible,
+  DependentEligibility,
+} from "../../../test-utils/factories";
+
+describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-family-size.`, () => {
+  it("Should correctly calculate the family size count when one or more dependants provided in the application has relationship type 'spouse'.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
+    assessmentConsolidatedData.studentDataDependants = [
+      createFakeStudentDependentEligible(
+        DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
+        { initialValue: { relationship: DependantRelationship.Spouse } },
+      ),
+    ];
+
+    // Act
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+
+    // Assert
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalEligibleDependants,
+    ).toBe(1);
+    expect(calculatedAssessment.variables.calculatedDataFamilySize).toBe(2);
+  });
+
+  it(
+    "Should correctly calculate the family size count when student relationship status is married and one dependant is provided in the application with relationship type 'spouse'" +
+      " and not declared on taxes for disability.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
+      assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
+      assessmentConsolidatedData.studentDataDependants = [
+        createFakeStudentDependentNotEligible(
+          DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes,
+          { initialValue: { relationship: DependantRelationship.Spouse } },
+        ),
+      ];
+
+      // Act
+      const calculatedAssessment =
+        await executeFullTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+
+      // Assert
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalEligibleDependants,
+      ).toBe(0);
+      expect(calculatedAssessment.variables.calculatedDataFamilySize).toBe(2);
+    },
+  );
+
+  it(
+    "Should correctly calculate the family size count when student relationship status is married and one dependant is provided in the application with relationship type 'child'" +
+      " and declared on taxes for disability.",
+    async () => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
+      assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
+      assessmentConsolidatedData.studentDataDependants = [
+        createFakeStudentDependentEligible(
+          DependentEligibility.EligibleOver22YearsOld,
+        ),
+      ];
+
+      // Act
+      const calculatedAssessment =
+        await executeFullTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+
+      // Assert
+      expect(
+        calculatedAssessment.variables.calculatedDataTotalEligibleDependants,
+      ).toBe(1);
+      expect(calculatedAssessment.variables.calculatedDataFamilySize).toBe(3);
+    },
+  );
+
+  afterAll(async () => {
+    // Closes the singleton instance created during test executions.
+    await ZeebeMockedClient.getMockedZeebeInstance().close();
+  });
+});
