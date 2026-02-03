@@ -31,6 +31,10 @@ export class SystemLookupConfigurationService {
         lookupKey: true,
         lookupValue: true,
       },
+      order: {
+        lookupCategory: "ASC",
+        lookupKey: "ASC",
+      },
     });
     this.systemLookupConfigurationsMap = lookupItems.reduce(
       (lookupMap, item) => {
