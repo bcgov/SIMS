@@ -760,6 +760,19 @@ export const PendingOfferingsHeaders = [
   { title: "Intensity", sortable: true, key: "offeringIntensity" },
   { title: "Offering type", sortable: true, key: "offeringType" },
   { title: "Study delivery", sortable: false, key: "offeringDelivered" },
-  { title: "Status", sortable: false, key: "offeringStatus" },
+  { title: "Action", sortable: false, key: "actions" },
+];
+
+/**
+ * Pending programs header.
+ */
+export const PendingProgramsHeaders = [
+  { title: "Date submitted", sortable: true, key: "submittedDate" },
+  {
+    title: "Institution operating name",
+    sortable: true,
+    key: "institutionOperatingName",
+  },
+  { title: "Program name", sortable: true, key: "programName" },
   { title: "Action", sortable: false, key: "actions" },
 ];
