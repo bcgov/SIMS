@@ -1,6 +1,6 @@
 import { StudentDependent } from "workflow/test/models";
 import { addToDateOnlyString } from "@sims/utilities";
-import { YesNoOptions } from "@sims/test-utils";
+import { DependantRelationship, YesNoOptions } from "@sims/test-utils";
 
 export enum DependentEligibility {
   /**
@@ -43,33 +43,42 @@ export enum DependentChildCareEligibility {
  */
 export function createFakeStudentDependentEligible(
   eligibility: DependentEligibility,
-  options?: { referenceDate?: Date | string },
+  options?: {
+    referenceDate?: Date | string;
+    initialValue?: { relationship?: DependantRelationship };
+  },
 ): StudentDependent {
   const referenceDate = options?.referenceDate ?? new Date();
+  const relationship =
+    options?.initialValue?.relationship ?? DependantRelationship.Child;
   switch (eligibility) {
     case DependentEligibility.Eligible0To18YearsOld:
       return {
         dateOfBirth: addToDateOnlyString(referenceDate, -17, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.No,
+        relationship,
       };
     case DependentEligibility.Eligible18To22YearsOldAttendingHighSchool:
       return {
         dateOfBirth: addToDateOnlyString(referenceDate, -19, "years"),
         attendingPostSecondarySchool: YesNoOptions.Yes,
         declaredOnTaxes: YesNoOptions.No,
+        relationship,
       };
     case DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes:
       return {
         dateOfBirth: addToDateOnlyString(referenceDate, -22, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.Yes,
+        relationship,
       };
     case DependentEligibility.EligibleOver22YearsOld:
       return {
         dateOfBirth: addToDateOnlyString(referenceDate, -23, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.Yes,
+        relationship,
       };
   }
 }
@@ -84,33 +93,42 @@ export function createFakeStudentDependentEligible(
  */
 export function createFakeStudentDependentNotEligible(
   eligibility: DependentEligibility,
-  options?: { referenceDate?: Date | string },
+  options?: {
+    referenceDate?: Date | string;
+    initialValue?: { relationship?: DependantRelationship };
+  },
 ): StudentDependent {
   const referenceDate = options?.referenceDate ?? new Date();
+  const relationship =
+    options?.initialValue?.relationship ?? DependantRelationship.Child;
   switch (eligibility) {
     case DependentEligibility.Eligible0To18YearsOld:
       return {
         dateOfBirth: addToDateOnlyString(referenceDate, -21, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.No,
+        relationship,
       };
     case DependentEligibility.Eligible18To22YearsOldAttendingHighSchool:
       return {
         dateOfBirth: addToDateOnlyString(referenceDate, -19, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.No,
+        relationship,
       };
     case DependentEligibility.Eligible18To22YearsOldDeclaredOnTaxes:
       return {
         dateOfBirth: addToDateOnlyString(referenceDate, -22, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.No,
+        relationship,
       };
     case DependentEligibility.EligibleOver22YearsOld:
       return {
         dateOfBirth: addToDateOnlyString(referenceDate, -23, "years"),
         attendingPostSecondarySchool: YesNoOptions.No,
         declaredOnTaxes: YesNoOptions.No,
+        relationship,
       };
   }
 }

@@ -2669,6 +2669,64 @@
               "tooltip": "For StudentAid BC purposes, eligible dependents/dependants are any dependents for whom the Canada Child Tax Benefit is claimed, or for whom a benefit is claimed on the applicant’s income tax return. Eligible dependents/dependants must meet one of the following criteria:\n\n- For the student’s or spouse/common-law partner’s children who are 18 years of age and under, the student and/or spouse/common-law partner must be guardians of the children who must live with the student or spouse/common-law partner at least two full days per week; or\n\n- The student’s or spouse/common-law partner’s children aged 19 to 22 are full-time dependent students in study; or\n\n- The student’s or spouse/common-law partner’s children are permanently disabled, are 19 years of age or over, are fully supported by the student or spouse/common-law partner and are claimed on the student’s or spouse/common-law partner’s income tax return; or\n\n- The children are the student’s foster children and foster-parent income is claimed on the application; or\n\n- The dependents are the student’s or spouse/common-law partner’s elderly relatives who are fully supported by the student and claimed on the student’s or spouse’s income tax.",
               "errorLabel": "Dependent",
               "lockKey": true
+            },
+            {
+              "label": "Is your spouse/common-law partner considered a dependant?",
+              "optionsLabelPosition": "right",
+              "tooltip": "A spouse is considered a dependant if they are fully supported by the student and claimed on their income tax.",
+              "inline": false,
+              "tableView": true,
+              "values": [
+                {
+                  "value": "yes",
+                  "label": "Yes",
+                  "shortcut": ""
+                },
+                {
+                  "value": "no",
+                  "label": "No",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+              },
+              "validateWhenHidden": false,
+              "errorLabel": "Dependent",
+              "key": "spouseIsDependant",
+              "conditional": {
+                "show": true,
+                "when": "relationshipStatus",
+                "eq": "married"
+              },
+              "type": "radio",
+              "input": true,
+              "lockKey": true
+            },
+            {
+              "label": "HTML",
+              "tag": "p",
+              "className": "alert alert-info fa fa-info-circle",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "You have identified that your spouse/common-law partner is a disabled dependant. Please make sure you answer \"Yes\" to having eligible dependants and add them in the Dependant Information section and ensure you select 'Spouse/common-law partner' as the relationship.",
+              "refreshOnChange": false,
+              "customClass": "banner-info",
+              "key": "html53",
+              "conditional": {
+                "show": true,
+                "when": "spouseIsDependant",
+                "eq": "yes"
+              },
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false,
+              "hideLabel": true
             }
           ],
           "type": "panel",
@@ -3762,6 +3820,42 @@
                       "attributes": {
                         "data-cy": "attendingPostSecondarySchool"
                       },
+                      "type": "radio",
+                      "input": true
+                    },
+                    {
+                      "label": "What is this dependant's relationship to you?",
+                      "optionsLabelPosition": "right",
+                      "inline": false,
+                      "tableView": false,
+                      "values": [
+                        {
+                          "label": "Child/Step-child/Foster child",
+                          "value": "child",
+                          "shortcut": ""
+                        },
+                        {
+                          "label": "Spouse/common-law partner",
+                          "value": "spouse",
+                          "shortcut": ""
+                        },
+                        {
+                          "label": "Elderly relative",
+                          "value": "elderlyRelative",
+                          "shortcut": ""
+                        },
+                        {
+                          "label": "Other",
+                          "value": "other",
+                          "shortcut": ""
+                        }
+                      ],
+                      "validate": {
+                        "required": true,
+                        "onlyAvailableItems": true
+                      },
+                      "validateWhenHidden": false,
+                      "key": "relationship",
                       "type": "radio",
                       "input": true
                     },
