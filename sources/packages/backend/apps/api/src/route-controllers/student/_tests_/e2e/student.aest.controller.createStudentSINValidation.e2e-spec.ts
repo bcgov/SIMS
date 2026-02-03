@@ -84,10 +84,11 @@ describe("StudentAESTController(e2e)-createStudentSINValidation", () => {
       select: {
         id: true,
         sin: true,
-        student: { id: true },
+      },
+      relations: {
+        student: true,
       },
       where: { id: createdId },
-      loadEagerRelations: false,
     });
     expect(createdSINValidation).toMatchObject({
       id: createdId,
@@ -130,10 +131,11 @@ describe("StudentAESTController(e2e)-createStudentSINValidation", () => {
       select: {
         id: true,
         sin: true,
-        student: { id: true },
+      },
+      relations: {
+        student: true,
       },
       where: { id: createdId },
-      loadEagerRelations: false,
     });
     expect(createdSINValidation).toMatchObject({
       id: createdId,
@@ -172,10 +174,11 @@ describe("StudentAESTController(e2e)-createStudentSINValidation", () => {
       select: {
         id: true,
         sin: true,
-        student: { id: true },
+      },
+      relations: {
+        student: true,
       },
       where: { id: createdId },
-      loadEagerRelations: false,
     });
     expect(createdSINValidation).toMatchObject({
       id: createdId,
