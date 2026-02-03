@@ -136,7 +136,7 @@ export default defineComponent({
           error.errorType === SIN_DUPLICATE_NOT_CONFIRMED
         ) {
           // Show the duplicate warning in the modal and retry.
-          setDuplicateWarning(true);
+          showDuplicateWarning.value = true;
           return false;
         }
         snackBar.error("Unexpected error while creating a new SIN record.");
@@ -152,17 +152,11 @@ export default defineComponent({
       resolvePromise(false);
     };
 
-    const setDuplicateWarning = () => {
-      showDuplicateWarning.value = true;
-      formModel.confirmDuplicateSIN = false;
-    };
-
     return {
       showDialog,
       showModal,
       cancel,
       submit,
-      setDuplicateWarning,
       addNewSINForm,
       formModel,
       showDuplicateWarning,
