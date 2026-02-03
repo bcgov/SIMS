@@ -81,8 +81,13 @@ describe("StudentAESTController(e2e)-createStudentSINValidation", () => {
 
     // Verify the SIN validation was created for student.
     const createdSINValidation = await db.sinValidation.findOne({
+      select: {
+        id: true,
+        sin: true,
+        student: { id: true },
+      },
       where: { id: createdId },
-      relations: { student: true },
+      loadEagerRelations: false,
     });
     expect(createdSINValidation).toEqual({
       id: createdId,
@@ -122,8 +127,13 @@ describe("StudentAESTController(e2e)-createStudentSINValidation", () => {
 
     // Verify the SIN validation was created for student.
     const createdSINValidation = await db.sinValidation.findOne({
+      select: {
+        id: true,
+        sin: true,
+        student: { id: true },
+      },
       where: { id: createdId },
-      relations: { student: true },
+      loadEagerRelations: false,
     });
     expect(createdSINValidation).toEqual({
       id: createdId,
@@ -159,8 +169,13 @@ describe("StudentAESTController(e2e)-createStudentSINValidation", () => {
 
     // Verify the SIN validation was created.
     const createdSINValidation = await db.sinValidation.findOne({
+      select: {
+        id: true,
+        sin: true,
+        student: { id: true },
+      },
       where: { id: createdId },
-      relations: { student: true },
+      loadEagerRelations: false,
     });
     expect(createdSINValidation).toEqual({
       id: createdId,
