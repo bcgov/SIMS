@@ -57,6 +57,14 @@
                 :subtitle="form.formDescription"
                 prepend-icon="mdi-scale-balance"
               >
+                <template #prepend="{ isSelected, select }">
+                  <v-list-item-action start>
+                    <v-checkbox-btn
+                      :model-value="isSelected"
+                      @update:model-value="select"
+                    ></v-checkbox-btn>
+                  </v-list-item-action>
+                </template>
               </v-list-item>
             </v-list>
           </v-form>
@@ -98,7 +106,16 @@
               :subtitle="form.formDescription"
               :value="form.formDefinitionName"
               prepend-icon="mdi-scale-balance"
-            />
+            >
+              <template #prepend="{ isSelected, select }">
+                <v-list-item-action start>
+                  <v-checkbox-btn
+                    :model-value="isSelected"
+                    @update:model-value="select"
+                  ></v-checkbox-btn>
+                </v-list-item-action>
+              </template>
+            </v-list-item>
           </v-list>
           <footer-buttons
             class="mt-4"
