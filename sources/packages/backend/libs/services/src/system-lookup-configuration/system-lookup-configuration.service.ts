@@ -40,9 +40,9 @@ export class SystemLookupConfigurationService {
   }
 
   /**
-   *
-   * @param lookupCategory
-   * @returns
+   * Get system lookup by category.
+   * @param lookupCategory lookup category.
+   * @returns system lookup for the lookup category.
    */
   getLookupByCategory(
     lookupCategory: SystemLookupCategory,
