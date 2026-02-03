@@ -99,7 +99,7 @@
   "devDependencies": {
     "@aws-sdk/types": "^3.973.0",
     "@faker-js/faker": "^10.1.0",
-    "@golevelup/ts-jest": "^1.1.1",
+    "@golevelup/ts-jest": "^1.2.1",
     "@nestjs/cli": "^11.0.14",
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/testing": "^11.1.13",
