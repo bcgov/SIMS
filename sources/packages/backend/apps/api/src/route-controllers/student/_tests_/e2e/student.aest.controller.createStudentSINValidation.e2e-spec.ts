@@ -45,12 +45,50 @@ describe("StudentAESTController(e2e)-createStudentSINValidation", () => {
       .send(payload)
       .auth(aestUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-      .expect((response) => {
-        expect(response.body.message).toContain(
-          "This SIN is currently associated with another student profile",
-        );
-        expect(response.body.errorType).toBe(SIN_DUPLICATE_NOT_CONFIRMED);
+      .expect({
+        message:
+          "This SIN is currently associated with another student profile. Please investigate and correct any profiles with the incorrect SIN. If this is correct for the current student, please confirm and click 'Add SIN now'.",
+        errorType: SIN_DUPLICATE_NOT_CONFIRMED,
       });
+  });
+
+  it("Should create SIN validation when duplicate SIN is for the same student.", async () => {
+    // Arrange
+    const duplicateSIN = "732983952";
+    const student = await saveFakeStudent(db.dataSource, null, {
+      sinValidationInitialValue: { sin: duplicateSIN },
+    });
+
+    const aestUserToken = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/student/${student.id}/sin-validations`;
+    const payload = {
+      sin: duplicateSIN,
+      skipValidations: true,
+      noteDescription: "Adding duplicate SIN with no confirmation.",
+    };
+
+    // Act/Assert
+    let createdId: number;
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(aestUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        createdId = response.body.id;
+        expect(createdId).toBeGreaterThan(0);
+      });
+
+    // Verify the SIN validation was created for student.
+    const createdSINValidation = await db.sinValidation.findOne({
+      where: { id: createdId },
+      relations: { student: true },
+    });
+    expect(createdSINValidation).toEqual({
+      id: createdId,
+      sin: duplicateSIN,
+      student: { id: student.id },
+    });
   });
 
   it("Should create SIN validation when duplicate SIN is confirmed with confirmDuplicateSIN flag.", async () => {
@@ -87,9 +125,11 @@ describe("StudentAESTController(e2e)-createStudentSINValidation", () => {
       where: { id: createdId },
       relations: { student: true },
     });
-    expect(createdSINValidation).toBeDefined();
-    expect(createdSINValidation.student.id).toBe(student.id);
-    expect(createdSINValidation.sin).toBe(duplicateSIN);
+    expect(createdSINValidation).toEqual({
+      id: createdId,
+      sin: duplicateSIN,
+      student: { id: student.id },
+    });
   });
 
   it("Should create SIN validation when SIN is not a duplicate.", async () => {
@@ -122,9 +162,11 @@ describe("StudentAESTController(e2e)-createStudentSINValidation", () => {
       where: { id: createdId },
       relations: { student: true },
     });
-    expect(createdSINValidation).toBeDefined();
-    expect(createdSINValidation.student.id).toBe(student.id);
-    expect(createdSINValidation.sin).toBe(uniqueSIN);
+    expect(createdSINValidation).toEqual({
+      id: createdId,
+      sin: uniqueSIN,
+      student: { id: student.id },
+    });
   });
 
   afterAll(async () => {
