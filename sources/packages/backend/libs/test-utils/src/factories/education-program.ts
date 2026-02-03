@@ -16,7 +16,7 @@ export function createFakeEducationProgram(
   options?: { initialValues?: Partial<EducationProgram> },
 ): EducationProgram {
   const program = new EducationProgram();
-  program.name = faker.person.jobArea();
+  program.name = options?.initialValues?.name ?? faker.person.jobArea();
   program.description = "description";
   program.credentialType = "credentialType";
   program.cipCode = "cipCode";
@@ -30,7 +30,8 @@ export function createFakeEducationProgram(
   program.eslEligibility = "eslEligibility";
   program.hasJointInstitution = "hasJointInstitution";
   program.hasJointDesignatedInstitution = "hasJointDesignatedInstitution";
-  program.programStatus = ProgramStatus.Approved;
+  program.programStatus =
+    options?.initialValues?.programStatus ?? ProgramStatus.Approved;
   program.hasWILComponent = "yes";
   program.hasTravel = "yes";
   program.hasIntlExchange = "yes";
@@ -40,6 +41,9 @@ export function createFakeEducationProgram(
     options?.initialValues?.programIntensity ?? ProgramIntensity.fullTime;
   program.isAviationProgram = options?.initialValues?.isAviationProgram ?? "no";
   program.submittedBy = relations.auditUser;
+  if (options?.initialValues?.submittedDate) {
+    program.submittedDate = options.initialValues.submittedDate;
+  }
   program.isActive = options?.initialValues?.isActive ?? true;
   program.effectiveEndDate = options?.initialValues?.effectiveEndDate ?? null;
   program.sabcCode = options?.initialValues?.sabcCode ?? null;
