@@ -14,7 +14,7 @@ export class SystemLookupConfigurationService {
   >();
   constructor(
     @InjectRepository(SystemLookupConfiguration)
-    private systemLookupConfigurationRepo: Repository<SystemLookupConfiguration>,
+    private readonly systemLookupConfigurationRepo: Repository<SystemLookupConfiguration>,
   ) {}
 
   /**
@@ -29,14 +29,15 @@ export class SystemLookupConfigurationService {
         lookupValue: true,
       },
     });
-    for (const item of lookupItems) {
-      const category = item.lookupCategory;
-      const existing = this.systemLookupConfigurationsMap.get(category) ?? [];
-      this.systemLookupConfigurationsMap.set(category, [
-        ...existing,
-        Object.freeze(item),
-      ]);
-    }
+    this.systemLookupConfigurationsMap = lookupItems.reduce(
+      (lookupMap, item) => {
+        const categoryLookupEntries = lookupMap.get(item.lookupCategory) ?? [];
+        categoryLookupEntries.push(Object.freeze(item));
+        lookupMap.set(item.lookupCategory, categoryLookupEntries);
+        return lookupMap;
+      },
+      new Map<SystemLookupCategory, SystemLookupConfiguration[]>(),
+    );
   }
 
   /**
