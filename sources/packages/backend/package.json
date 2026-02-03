@@ -102,7 +102,7 @@
     "@golevelup/ts-jest": "^1.1.1",
     "@nestjs/cli": "^11.0.14",
     "@nestjs/schematics": "^11.0.9",
-    "@nestjs/testing": "^11.1.9",
+    "@nestjs/testing": "^11.1.13",
     "@suites/di.nestjs": "^3.0.1",
     "@suites/doubles.jest": "^3.0.1",
     "@suites/unit": "^3.0.1",
