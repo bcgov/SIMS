@@ -37,7 +37,7 @@ describe("SystemLookupConfigurationController(e2e)-getSystemLookupEntriesByCateg
     await db.systemLookupConfiguration.delete({ lookupKey: ILike("TEST_%") });
   });
 
-  it("Should get the system lookup test entries for the category country when one ore more test entries exist for the same category.", async () => {
+  it("Should get the system lookup test entries for the category country when one or more test entries exist for the same category.", async () => {
     // Arrange
     // Create test system lookup entries for country.
     const testCountryLookup1 = createFakeSystemLookupConfiguration(

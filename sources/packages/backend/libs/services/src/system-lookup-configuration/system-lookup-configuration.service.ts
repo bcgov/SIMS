@@ -3,6 +3,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { SystemLookupCategory, SystemLookupConfiguration } from "@sims/sims-db";
 import { Repository } from "typeorm";
 
+/**
+ * System lookup configuration service.
+ */
 @Injectable()
 export class SystemLookupConfigurationService {
   /**

@@ -7,6 +7,9 @@ import { SystemLookupCategory } from "@sims/sims-db";
 import { SystemLookupConfigurationService } from "@sims/services/system-lookup-configuration";
 import { SystemLookupEntriesAPIOutDTO } from "..";
 
+/**
+ * System lookup configuration controller.
+ */
 @AllowAuthorizedParty(
   AuthorizedParties.institution,
   AuthorizedParties.student,

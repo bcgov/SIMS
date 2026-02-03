@@ -2,6 +2,9 @@ import { Global, Module, OnModuleInit } from "@nestjs/common";
 import { SystemLookupConfigurationService } from ".";
 import { LoggerService } from "@sims/utilities/logger";
 
+/**
+ * System lookup configuration module.
+ */
 @Global()
 @Module({
   providers: [SystemLookupConfigurationService],
