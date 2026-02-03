@@ -1,22 +1,22 @@
 <template>
   <full-page-container :full-width="true">
     <template #header>
-      <header-navigator title="Institution requests" sub-title="Offerings" />
+      <header-navigator title="Institution requests" sub-title="Programs" />
     </template>
     <body-header
-      title="Pending offerings"
-      :records-count="offeringsAndCount?.count"
+      title="Pending programs"
+      :records-count="programsAndCount?.count"
     >
       <template #subtitle>
-        Offering requests that require Ministry review.
+        Program requests that require Ministry review.
       </template>
       <template #actions>
         <v-text-field
           density="compact"
-          label="Search offering name"
+          label="Search program or institution name"
           variant="outlined"
           v-model="searchCriteria"
-          @keyup.enter="searchOfferings"
+          @keyup.enter="searchPrograms"
           prepend-inner-icon="mdi-magnify"
           hide-details="auto"
         >
@@ -24,11 +24,11 @@
       </template>
     </body-header>
     <content-group>
-      <toggle-content :toggled="!offeringsAndCount?.count && !loading">
+      <toggle-content :toggled="!programsAndCount?.count && !loading">
         <v-data-table-server
-          :headers="PendingOfferingsHeaders"
-          :items="offeringsAndCount?.results"
-          :items-length="offeringsAndCount?.count"
+          :headers="PendingProgramsHeaders"
+          :items="programsAndCount?.results"
+          :items-length="programsAndCount?.count"
           :loading="loading"
           item-value="id"
           :items-per-page="DEFAULT_PAGE_LIMIT"
@@ -39,34 +39,17 @@
           <template #loading>
             <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
           </template>
-          <template #[`item.submittedDate`]="{ item }">
-            {{ dateOnlyLongString(item.submittedDate) }}
-          </template>
-          <template #[`item.locationName`]="{ item }">
-            {{ item.locationName }}
+          <template #[`item.institutionOperatingName`]="{ item }">
+            {{ item.institutionOperatingName }}
           </template>
           <template #[`item.programName`]="{ item }">
             {{ item.programName }}
           </template>
-          <template #[`item.name`]="{ item }">
-            {{ item.name }}
-          </template>
-          <template #[`item.studyDates`]="{ item }">
-            {{
-              dateOnlyLongPeriodString(item.studyStartDate, item.studyEndDate)
-            }}
-          </template>
-          <template #[`item.offeringIntensity`]="{ item }">
-            {{ mapOfferingIntensity(item.offeringIntensity) }}
-          </template>
-          <template #[`item.offeringType`]="{ item }">
-            {{ item.offeringType }}
-          </template>
-          <template #[`item.offeringDelivered`]="{ item }">
-            {{ capitalizeFirstWord(item.offeringDelivered) }}
+          <template #[`item.submittedDate`]="{ item }">
+            {{ dateOnlyLongString(item.submittedDate) }}
           </template>
           <template #[`item.actions`]="{ item }">
-            <v-btn color="primary" @click="viewOffering(item)">View</v-btn>
+            <v-btn color="primary" @click="viewProgram(item)">View</v-btn>
           </template>
         </v-data-table-server>
       </toggle-content>
@@ -78,8 +61,8 @@
 import { useFormatters, useSnackBar } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import router from "@/router";
-import { EducationProgramOfferingService } from "@/services/EducationProgramOfferingService";
-import { EducationProgramOfferingPendingAPIOutDTO } from "@/services/http/dto";
+import { EducationProgramService } from "@/services/EducationProgramService";
+import { EducationProgramPendingAPIOutDTO } from "@/services/http/dto";
 import {
   PaginatedResults,
   DEFAULT_DATATABLE_PAGE_NUMBER,
@@ -87,12 +70,11 @@ import {
   DataTableSortByOrder,
   DataTableOptions,
   ITEMS_PER_PAGE,
-  PendingOfferingsHeaders,
+  PendingProgramsHeaders,
   PaginationOptions,
 } from "@/types";
 import { defineComponent, onMounted, ref } from "vue";
 import { useDisplay } from "vuetify";
-import { useOffering } from "@/composables/useOffering";
 
 const DEFAULT_SORT_FIELD = "submittedDate";
 
@@ -100,17 +82,12 @@ export default defineComponent({
   setup() {
     const loading = ref(false);
     const searchCriteria = ref("");
-    const {
-      capitalizeFirstWord,
-      dateOnlyLongString,
-      dateOnlyLongPeriodString,
-    } = useFormatters();
-    const { mapOfferingIntensity } = useOffering();
+    const { dateOnlyLongString } = useFormatters();
     const { mobile: isMobile } = useDisplay();
     const snackBar = useSnackBar();
 
-    const offeringsAndCount = ref(
-      {} as PaginatedResults<EducationProgramOfferingPendingAPIOutDTO>,
+    const programsAndCount = ref(
+      {} as PaginatedResults<EducationProgramPendingAPIOutDTO>,
     );
 
     /**
@@ -124,25 +101,25 @@ export default defineComponent({
     };
 
     /**
-     * Loads study period offerings for the Institution Program.
+     * Loads pending programs for Ministry review.
      */
-    const getOfferings = async () => {
+    const getPrograms = async () => {
       try {
         loading.value = true;
-        offeringsAndCount.value =
-          await EducationProgramOfferingService.shared.getPendingOfferings({
+        programsAndCount.value =
+          await EducationProgramService.shared.getPendingPrograms({
             searchCriteria: searchCriteria.value,
             ...currentPagination,
           });
       } catch {
-        snackBar.error("Unexpected error while loading Offerings.");
+        snackBar.error("Unexpected error while loading Programs.");
       } finally {
         loading.value = false;
       }
     };
 
     onMounted(async () => {
-      await getOfferings();
+      await getPrograms();
     });
 
     /**
@@ -161,26 +138,27 @@ export default defineComponent({
         currentPagination.sortField = DEFAULT_SORT_FIELD;
         currentPagination.sortOrder = DataTableSortByOrder.ASC;
       }
-      await getOfferings();
-    };
-
-    // Search offering table.
-    const searchOfferings = async () => {
-      await getOfferings();
+      await getPrograms();
     };
 
     /**
-     * Navigate to View the Offering.
-     * @param item the selected Offering.
+     * Search program table.
      */
-    const viewOffering = (item: EducationProgramOfferingPendingAPIOutDTO) => {
+    const searchPrograms = async () => {
+      await getPrograms();
+    };
+
+    /**
+     * Navigate to View the Program.
+     * @param item the selected Program.
+     */
+    const viewProgram = (item: EducationProgramPendingAPIOutDTO) => {
       router.push({
-        name: AESTRoutesConst.VIEW_OFFERING,
+        name: AESTRoutesConst.PROGRAM_DETAILS,
         params: {
-          offeringId: item.id,
-          programId: item.programId,
-          locationId: item.locationId,
+          programId: item.id,
           institutionId: item.institutionId,
+          locationId: item.selectedLocationId,
         },
       });
     };
@@ -188,18 +166,15 @@ export default defineComponent({
     return {
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
-      PendingOfferingsHeaders,
+      PendingProgramsHeaders,
       dateOnlyLongString,
-      dateOnlyLongPeriodString,
       pageSortEvent,
-      offeringsAndCount,
+      programsAndCount,
       loading,
       searchCriteria,
-      searchOfferings,
-      viewOffering,
+      searchPrograms,
+      viewProgram,
       isMobile,
-      mapOfferingIntensity,
-      capitalizeFirstWord,
     };
   },
 });

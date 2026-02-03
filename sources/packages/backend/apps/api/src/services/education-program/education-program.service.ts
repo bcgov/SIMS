@@ -13,6 +13,7 @@ import {
   InstitutionLocation,
   getRawCount,
   ProgramIntensity,
+  mapFromRawAndEntities,
 } from "@sims/sims-db";
 import {
   DataSource,
@@ -31,6 +32,7 @@ import {
 import {
   SaveEducationProgram,
   EducationProgramsSummary,
+  PendingEducationProgram,
 } from "./education-program.service.models";
 import {
   sortProgramsColumnMap,
@@ -41,6 +43,7 @@ import {
 } from "../../utilities";
 import {
   CustomNamedError,
+  FieldSortOrder,
   getISODateOnlyString,
   isSameOrAfterDate,
 } from "@sims/utilities";
@@ -962,6 +965,105 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       results: programSummary,
       count: totalCount,
     };
+  }
+
+  /**
+   * Gets a list of Education Programs with status 'Pending' where the Program is active/not expired.
+   * For each program, retrieves the location with the most offerings, or any location if no offerings exist.
+   * Pagination, sort and search are available on results.
+   * @param paginationOptions Pagination options.
+   * @returns Pending programs with location ID.
+   */
+  async getPendingPrograms(
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResults<PendingEducationProgram>> {
+    const programsQuery = this.repo
+      .createQueryBuilder("programs")
+      .select([
+        "programs.id",
+        "programs.name",
+        "programs.submittedDate",
+        "institution.operatingName",
+        "institution.id",
+      ])
+      // Get the location with the most offerings for each program. If no offerings exist, get any location for the institution.
+      // This is to work around the program details page requirement where the location is required to load the list of offerings.
+      // When the location ID is no longer required in this context, the subquery can be removed, and the overall query can be simplified.
+      .addSelect((subQuery) => {
+        return subQuery
+          .select("location.id")
+          .from(InstitutionLocation, "location")
+          .leftJoin(
+            EducationProgramOffering,
+            "offering",
+            "offering.educationProgram.id = programs.id",
+          )
+          .where("location.institution.id = institution.id")
+          .groupBy("location.id")
+          .orderBy("COUNT(offering.id)", "DESC")
+          .limit(1);
+      }, "selectedLocationId")
+      .innerJoin("programs.institution", "institution")
+      .where("programs.programStatus = :status", {
+        status: ProgramStatus.Pending,
+      })
+      .andWhere("programs.isActive = true");
+
+    // Search by program name or institution operating name.
+    if (paginationOptions.searchCriteria) {
+      programsQuery.andWhere(
+        new Brackets((qb) => {
+          qb.where("programs.name Ilike :searchCriteria", {
+            searchCriteria: `%${paginationOptions.searchCriteria}%`,
+          }).orWhere("institution.operatingName Ilike :searchCriteria", {
+            searchCriteria: `%${paginationOptions.searchCriteria}%`,
+          });
+        }),
+      );
+    }
+    this.addProgramsSort(programsQuery, paginationOptions);
+
+    programsQuery
+      .offset(paginationOptions.page * paginationOptions.pageLimit)
+      .limit(paginationOptions.pageLimit);
+
+    const rawAndEntities = await programsQuery.getRawAndEntities();
+    const count = await programsQuery.getCount();
+
+    const pendingPrograms = mapFromRawAndEntities<PendingEducationProgram>(
+      rawAndEntities,
+      "selectedLocationId",
+    );
+
+    return {
+      results: pendingPrograms,
+      count,
+    };
+  }
+
+  /**
+   * Adds sort to the programs query.
+   * @param programsQuery programs query.
+   * @param paginationOptions pagination options.
+   */
+  private addProgramsSort(
+    programsQuery: SelectQueryBuilder<EducationProgram>,
+    paginationOptions: PaginationOptions,
+  ): void {
+    const defaultSortField = "submittedDate";
+    const sortField = paginationOptions.sortField || defaultSortField;
+    const sortOrder = paginationOptions.sortOrder || FieldSortOrder.ASC;
+
+    // Map the sort field to the correct column.
+    const sortColumnMap: Record<string, string> = {
+      [defaultSortField]: "programs.submittedDate",
+      programName: "programs.name",
+      institutionOperatingName: "institution.operatingName",
+    };
+
+    const sortColumn =
+      sortColumnMap[sortField] || sortColumnMap[defaultSortField];
+    programsQuery.orderBy(sortColumn, sortOrder);
   }
 
   /**

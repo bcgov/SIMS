@@ -179,6 +179,7 @@ export const AESTRoutesConst = {
   APPLICATION_STATUS_TRACKER: Symbol(),
   APPLICATION_VERSION_DETAILS: Symbol(),
   PENDING_OFFERINGS: Symbol(),
+  PENDING_PROGRAMS: Symbol(),
 };
 
 /**

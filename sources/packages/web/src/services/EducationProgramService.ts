@@ -10,6 +10,7 @@ import {
   DeclineProgramAPIInDTO,
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
+  EducationProgramPendingAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
   PaginatedResultsAPIOutDTO,
@@ -206,5 +207,17 @@ export class EducationProgramService {
     payload?: DeactivateProgramAPIInDTO,
   ): Promise<void> {
     await ApiClient.EducationProgram.deactivateProgram(programId, payload);
+  }
+
+  /**
+   * Gets a list of Programs with status 'Pending' where the Program is active/not expired.
+   * Pagination, sort and search are available on results.
+   * @param paginationOptions Pagination options.
+   * @returns pending programs.
+   */
+  async getPendingPrograms(
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramPendingAPIOutDTO>> {
+    return ApiClient.EducationProgram.getPendingPrograms(paginationOptions);
   }
 }
