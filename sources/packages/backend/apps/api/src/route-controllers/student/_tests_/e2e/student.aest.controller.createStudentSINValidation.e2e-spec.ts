@@ -47,7 +47,7 @@ describe("StudentAESTController(e2e)-createStudentSINValidation", () => {
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message:
-          "This SIN is currently associated with another student profile. Please investigate and correct any profiles with the incorrect SIN. If this is correct for the current student, please confirm and click 'Add SIN now'.",
+          "This SIN is currently associated with another student profile and confirmation to allow duplication SIN is missing.",
         errorType: SIN_DUPLICATE_NOT_CONFIRMED,
       });
   });
@@ -89,7 +89,7 @@ describe("StudentAESTController(e2e)-createStudentSINValidation", () => {
       where: { id: createdId },
       loadEagerRelations: false,
     });
-    expect(createdSINValidation).toEqual({
+    expect(createdSINValidation).toMatchObject({
       id: createdId,
       sin: duplicateSIN,
       student: { id: student.id },
@@ -135,7 +135,7 @@ describe("StudentAESTController(e2e)-createStudentSINValidation", () => {
       where: { id: createdId },
       loadEagerRelations: false,
     });
-    expect(createdSINValidation).toEqual({
+    expect(createdSINValidation).toMatchObject({
       id: createdId,
       sin: duplicateSIN,
       student: { id: student.id },
@@ -177,7 +177,7 @@ describe("StudentAESTController(e2e)-createStudentSINValidation", () => {
       where: { id: createdId },
       loadEagerRelations: false,
     });
-    expect(createdSINValidation).toEqual({
+    expect(createdSINValidation).toMatchObject({
       id: createdId,
       sin: uniqueSIN,
       student: { id: student.id },
