@@ -140,6 +140,7 @@ export default defineComponent({
           return false;
         }
         snackBar.error("Unexpected error while creating a new SIN record.");
+        return false;
       }
 
       return true;
@@ -151,11 +152,9 @@ export default defineComponent({
       resolvePromise(false);
     };
 
-    const setDuplicateWarning = (value: boolean) => {
-      showDuplicateWarning.value = value;
-      if (value) {
-        formModel.confirmDuplicateSIN = false;
-      }
+    const setDuplicateWarning = () => {
+      showDuplicateWarning.value = true;
+      formModel.confirmDuplicateSIN = false;
     };
 
     return {
