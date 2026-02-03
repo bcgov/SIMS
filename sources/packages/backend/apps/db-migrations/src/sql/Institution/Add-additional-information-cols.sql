@@ -88,4 +88,8 @@ SET
         WHERE
             -- System user.
             user_name = '8fb44f70-6ce6-11ed-b307-8743a2da47ef@system'
-    );
+    )
+WHERE
+    -- Where clause which does not have any additional impact other than explicitly defining the institution types to be updated.
+    institution_type_id BETWEEN 1
+    AND 7;
