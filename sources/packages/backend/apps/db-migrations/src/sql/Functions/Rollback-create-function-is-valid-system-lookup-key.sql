@@ -1,0 +1,1 @@
+DROP FUNCTION sims.is_valid_system_lookup_key(TEXT, TEXT);
