@@ -105,7 +105,7 @@ export default defineComponent({
     const showDuplicateWarning = ref(false);
 
     const requiredCheckboxRule = (value: boolean) =>
-      value || "You must confirm to proceed";
+      value || "You must confirm to proceed.";
 
     const submit = async () => {
       const validationResult = await addNewSINForm.value.validate();
