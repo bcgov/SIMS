@@ -3,7 +3,7 @@
     <modal-dialog-base title="Add a new SIN" :show-dialog="showDialog">
       <template #content>
         <error-summary :errors="addNewSINForm.errors" />
-        <div class="pb-5">
+        <div class="pb-4">
           <span class="label-value"
             >Enter a new SIN for the student. The SIN will be validated with
             Employment and Social Development Canada (ESDC) unless you skip the
@@ -27,6 +27,7 @@
           class="mb-4"
           v-if="formModel.skipValidations"
           :type="BannerTypes.Error"
+          density="compact"
           header="Danger! Are you sure you want to skip the validations?"
           summary="By selecting this, you are forcing the SIN to be valid for the
             student. Please proceed with caution."
@@ -35,12 +36,14 @@
         <v-textarea
           hide-details="auto"
           label="Notes"
-          placeholder="Long text..."
+          rows="2"
+          placeholder="Include any relevant information about this SIN..."
           v-model="formModel.noteDescription"
           variant="outlined"
           :rules="[checkNotesLengthRule]" />
         <banner
-          class="mt-4"
+          class="mt-2"
+          density="compact"
           v-if="showDuplicateWarning"
           :type="BannerTypes.Warning"
           header="Duplicate SIN Warning"
