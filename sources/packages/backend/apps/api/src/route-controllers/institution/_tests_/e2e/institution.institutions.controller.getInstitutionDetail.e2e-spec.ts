@@ -18,7 +18,11 @@ import {
   InstitutionOrganizationStatus,
   InstitutionUserTypes,
 } from "@sims/sims-db";
-import { CANADA_COUNTRY_CODE, BC_PROVINCE_CODE } from "@sims/sims-db/constant";
+import {
+  CANADA_COUNTRY_CODE,
+  BC_PROVINCE_CODE,
+  INSTITUTION_TYPE_BC_PUBLIC,
+} from "@sims/sims-db/constant";
 import { getISODateOnlyString } from "@sims/utilities";
 import { InstitutionUserAuthorizations } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
@@ -39,22 +43,25 @@ describe("InstitutionInstitutionsController(e2e)-getInstitutionDetail", () => {
 
   it("Should return details of the institution associated to the institution user from the user token when the institution is already set up.", async () => {
     // Arrange
-    const institution = await db.institution.save(
-      createFakeInstitution(undefined, {
-        initialValues: {
-          country: CANADA_COUNTRY_CODE,
-          province: BC_PROVINCE_CODE,
-          classification: InstitutionClassification.Private,
-          organizationStatus: InstitutionOrganizationStatus.Profit,
-          medicalSchoolStatus: InstitutionMedicalSchoolStatus.No,
-        },
-      }),
-    );
-    const mailingAddress = institution.institutionAddress.mailingAddress;
     const institutionType = await db.institutionType.findOne({
       select: { id: true, name: true },
-      where: { id: institution.institutionType.id },
+      where: { id: INSTITUTION_TYPE_BC_PUBLIC },
     });
+    const institution = await db.institution.save(
+      createFakeInstitution(
+        { institutionType },
+        {
+          initialValues: {
+            country: CANADA_COUNTRY_CODE,
+            province: BC_PROVINCE_CODE,
+            classification: InstitutionClassification.Public,
+            organizationStatus: InstitutionOrganizationStatus.NotForProfit,
+            medicalSchoolStatus: InstitutionMedicalSchoolStatus.No,
+          },
+        },
+      ),
+    );
+    const mailingAddress = institution.institutionAddress.mailingAddress;
     const expectedInstitutionDetails = {
       legalOperatingName: institution.legalOperatingName,
       operatingName: institution.operatingName,
@@ -80,13 +87,13 @@ describe("InstitutionInstitutionsController(e2e)-getInstitutionDetail", () => {
         canadaPostalCode: mailingAddress.postalCode,
         selectedCountry: mailingAddress.selectedCountry,
       },
-      isBCPrivate: true,
-      isBCPublic: false,
+      isBCPrivate: false,
+      isBCPublic: true,
       hasBusinessGuid: true,
       country: CANADA_COUNTRY_CODE,
       province: BC_PROVINCE_CODE,
-      classification: InstitutionClassification.Private,
-      organizationStatus: InstitutionOrganizationStatus.Profit,
+      classification: InstitutionClassification.Public,
+      organizationStatus: InstitutionOrganizationStatus.NotForProfit,
       medicalSchoolStatus: InstitutionMedicalSchoolStatus.No,
     };
     // Mock institution user authorization so that the user token will return the fake institution id and mocked roles.

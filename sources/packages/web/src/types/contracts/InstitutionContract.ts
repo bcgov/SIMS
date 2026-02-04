@@ -26,3 +26,27 @@ export interface InstitutionProfileForm {
   institutionType: number;
   institutionTypeName?: string;
 }
+
+/**
+ * Institution classification types.
+ */
+export enum InstitutionClassification {
+  Public = "Public",
+  Private = "Private",
+}
+
+/**
+ * Institution organization status types.
+ */
+export enum InstitutionOrganizationStatus {
+  Profit = "Profit",
+  NotForProfit = "Not for profit",
+}
+
+/**
+ * Institution medical school status types.
+ */
+export enum InstitutionMedicalSchoolStatus {
+  Yes = "Yes",
+  No = "No",
+}

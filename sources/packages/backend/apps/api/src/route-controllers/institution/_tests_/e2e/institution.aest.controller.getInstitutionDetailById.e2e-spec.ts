@@ -13,7 +13,11 @@ import {
 } from "@sims/test-utils";
 import { InstitutionDetailAPIOutDTO } from "../../models/institution.dto";
 import { getISODateOnlyString } from "@sims/utilities";
-import { BC_PROVINCE_CODE, CANADA_COUNTRY_CODE } from "@sims/sims-db/constant";
+import {
+  BC_PROVINCE_CODE,
+  CANADA_COUNTRY_CODE,
+  INSTITUTION_TYPE_BC_PRIVATE,
+} from "@sims/sims-db/constant";
 import {
   InstitutionClassification,
   InstitutionMedicalSchoolStatus,
@@ -32,22 +36,25 @@ describe("InstitutionAESTController(e2e)-getInstitutionDetailById", () => {
 
   it("Should return institution details when an institution with given institution id exist.", async () => {
     // Arrange
-    const institution = await db.institution.save(
-      createFakeInstitution(undefined, {
-        initialValues: {
-          country: CANADA_COUNTRY_CODE,
-          province: BC_PROVINCE_CODE,
-          classification: InstitutionClassification.Private,
-          organizationStatus: InstitutionOrganizationStatus.Profit,
-          medicalSchoolStatus: InstitutionMedicalSchoolStatus.No,
-        },
-      }),
-    );
-    const mailingAddress = institution.institutionAddress.mailingAddress;
     const institutionType = await db.institutionType.findOne({
       select: { id: true, name: true },
-      where: { id: institution.institutionType.id },
+      where: { id: INSTITUTION_TYPE_BC_PRIVATE },
     });
+    const institution = await db.institution.save(
+      createFakeInstitution(
+        { institutionType },
+        {
+          initialValues: {
+            country: CANADA_COUNTRY_CODE,
+            province: BC_PROVINCE_CODE,
+            classification: InstitutionClassification.Private,
+            organizationStatus: InstitutionOrganizationStatus.Profit,
+            medicalSchoolStatus: InstitutionMedicalSchoolStatus.No,
+          },
+        },
+      ),
+    );
+    const mailingAddress = institution.institutionAddress.mailingAddress;
     const expectedInstitutionDetails: InstitutionDetailAPIOutDTO = {
       legalOperatingName: institution.legalOperatingName,
       operatingName: institution.operatingName,

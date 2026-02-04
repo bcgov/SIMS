@@ -1,17 +1,14 @@
-import { ClientIdType, DesignationAgreementStatus } from "@/types";
+import {
+  DesignationAgreementStatus,
+  InstitutionClassification,
+  InstitutionMedicalSchoolStatus,
+  InstitutionOrganizationStatus,
+} from "@/types";
 import {
   AddressAPIOutDTO,
   AddressDetailsFormAPIDTO,
 } from "@/services/http/dto";
 import { Expose } from "class-transformer";
-
-export interface InstitutionContactAPIOutDTO {
-  primaryContactEmail: string;
-  primaryContactFirstName: string;
-  primaryContactLastName: string;
-  primaryContactPhone: string;
-  mailingAddress: AddressAPIOutDTO;
-}
 
 export class InstitutionContactAPIInDTO {
   @Expose()
@@ -24,18 +21,6 @@ export class InstitutionContactAPIInDTO {
   primaryContactPhone: string;
   @Expose()
   mailingAddress: AddressDetailsFormAPIDTO;
-}
-
-export interface InstitutionProfileAPIOutDTO
-  extends InstitutionContactAPIOutDTO {
-  operatingName: string;
-  primaryPhone: string;
-  primaryEmail: string;
-  website: string;
-  regulatingBody: string;
-  otherRegulatingBody?: string;
-  establishedDate: string;
-  institutionType: number;
 }
 
 export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
@@ -57,23 +42,34 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   institutionType: number;
 }
 
-export interface InstitutionDetailAPIOutDTO
-  extends InstitutionProfileAPIOutDTO {
+export interface InstitutionDetailAPIOutDTO {
+  primaryContactEmail: string;
+  primaryContactFirstName: string;
+  primaryContactLastName: string;
+  primaryContactPhone: string;
+  mailingAddress: AddressAPIOutDTO;
+  operatingName: string;
+  primaryPhone: string;
+  primaryEmail: string;
+  website: string;
+  regulatingBody: string;
+  otherRegulatingBody?: string;
+  establishedDate: string;
+  institutionType: number;
   legalOperatingName: string;
-  /**
-   * @deprecated  Need to be removed.
-   * Not removed here as it fails to compile the cypress code.
-   */
-  formattedEstablishedDate?: string;
   institutionTypeName?: string;
-  isBCPrivate?: boolean;
-  isBCPublic?: boolean;
-  clientType?: ClientIdType;
+  isBCPrivate: boolean;
+  isBCPublic: boolean;
   /**
    * Indicates if the institution has a BCeID business guid
    * associated with, if not it is a basic BCeID institution.
    */
   hasBusinessGuid: boolean;
+  country?: string;
+  province?: string;
+  classification?: InstitutionClassification;
+  organizationStatus?: InstitutionOrganizationStatus;
+  medicalSchoolStatus?: InstitutionMedicalSchoolStatus;
 }
 
 export interface InstitutionDetailAPIInDTO extends InstitutionProfileAPIInDTO {
