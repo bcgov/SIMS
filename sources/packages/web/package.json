@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^6.5.2",
-    "@types/node": "^25.0.9",
+    "@types/node": "^25.2.0",
     "@vitejs/plugin-vue": "^6.0.3",
     "@vue/eslint-config-typescript": "^14.6.0",
     "eslint": "^9.39.2",
