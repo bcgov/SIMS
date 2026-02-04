@@ -6,7 +6,6 @@ import {
   ApplicationOfferingChangeRequestStatus,
   DisbursementValueType,
   DisbursementScheduleStatus,
-  DisbursementValue,
 } from "@sims/sims-db";
 import {
   Injectable,
@@ -388,8 +387,6 @@ export class AssessmentControllerService {
 
       studentRestrictions =
         getStopFundingTypesAndRestrictionsMap(eligibleDisbursement);
-
-      console.log("studentRestrictions", studentRestrictions);
     }
 
     // Populate disbursement values.
@@ -419,18 +416,18 @@ export class AssessmentControllerService {
         // Stop full time BC loan: BCSL
         // Stop full time BC grant: BCAG (FT), SBSD (FT), BGPD
         // Stop part time BC grant: BCAG (PT), SBSD (PT)
-        // awardDisbursementValue.hasRestrictionAdjustment =
-        //   studentRestrictions?.length > 0;
+        hasRestrictionAdjustment = studentRestrictions.has(
+          disbursementValue.valueType,
+        );
         // Overaward: If there is a positive overaward balance for that award type, display the tag beside it.
         const overawardBalance =
           studentOverwardBalances[disbursementValue.valueCode];
-
         if (overawardBalance > 0) {
           hasPositiveOverawardAdjustment = true;
         }
 
         // Funded: If a previous assessment in the application has disbursed that award type, display the tag beside it.
-        awardDisbursementValue.hasDisbursedAdjustment =
+        hasDisbursedAdjustment =
           disbursementValue.disbursedAmountSubtracted > 0;
       } else {
         // Final Award - use actual subtracted amounts.
@@ -455,20 +452,6 @@ export class AssessmentControllerService {
     });
     return disbursement;
   }
-
-  /**
-   * Applies the subtracted amounts for the estimated award adjustments.
-   * @param disbursementValue the disbursement value.
-   * @param awardDisbursementValue the award disbursement value to be populated.
-   * @param studentOverwardBalances the student overaward balances.
-   * @param studentRestrictions the student restrictions.
-   */
-  private applyEstimatedAwardAdjustments(
-    disbursementValue: DisbursementValue,
-    awardDisbursementValue: AwardDisbursementValueAPIOutDTO,
-    studentOverwardBalances: AwardOverawardBalance,
-    studentRestrictions: ActiveRestriction[],
-  ): void {}
 
   /**
    * Get all pending and denied appeals for an application.

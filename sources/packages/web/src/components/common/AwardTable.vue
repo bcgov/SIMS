@@ -97,10 +97,7 @@
   </content-group-info>
   <div class="my-3">
     <status-info-disbursement-cancellation
-      v-if="
-        disbursement.disbursementScheduleStatus ===
-        DisbursementScheduleStatus.Rejected
-      "
+      v-if="disbursement.status === DisbursementScheduleStatus.Rejected"
       :cancellation-date="disbursement.statusUpdatedOn"
     />
     <cancel-disbursement-schedule
@@ -131,6 +128,8 @@ import StatusInfoDisbursementCancellation from "@/components/common/StatusInfoDi
 import ConfirmEnrolment from "@/components/common/ConfirmEnrolment.vue";
 import CancelDisbursementSchedule from "@/components/common/CancelDisbursementSchedule.vue";
 import { AwardDisbursementScheduleAPIOutDTO } from "@/services/http/dto";
+
+const AWARD_NOT_ELIGIBLE = "(Not eligible)";
 
 export default defineComponent({
   emits: {
@@ -190,18 +189,15 @@ export default defineComponent({
 
     const { currencyFormatter, dateOnlyLongString } = useFormatters();
 
-    console.log("awards", awardTypes.value);
-
+    // Associate disbursement values to their award types.
     const awards: AssessmentAwardData[] = awardTypes.value.map((award) => {
       const disbursementValue = props.disbursement.disbursementValues.find(
         (value) => {
           return value.valueCode === award.awardType;
         },
       );
-      // If the award in not defined at all it means that the award is not eligible and it was not
-      // part of the disbursement calculations output.
-      let estimatedAmount = "(Not eligible)";
-      let finalAmount = "(Not eligible)";
+      let estimatedAmount;
+      let finalAmount;
       let hasDisbursedAdjustment;
       let hasRestrictionAdjustment;
       let hasNegativeOverawardAdjustment;
@@ -216,6 +212,11 @@ export default defineComponent({
           disbursementValue.hasNegativeOverawardAdjustment;
         hasPositiveOverawardAdjustment =
           disbursementValue.hasPositiveOverawardAdjustment;
+      } else {
+        // If the award in not defined at all it means that the award is not eligible and it was not
+        // part of the disbursement calculations output.
+        estimatedAmount = AWARD_NOT_ELIGIBLE;
+        finalAmount = AWARD_NOT_ELIGIBLE;
       }
       return {
         awardType: award.awardType,
@@ -232,12 +233,7 @@ export default defineComponent({
 
     const showFinalAward = computed(() => {
       //  Rejected disbursements should not show Final Award
-      if (props.disbursement.status === DisbursementScheduleStatus.Rejected) {
-        return false;
-      }
-      // TODO Check this logic
-      //return props.disbursement.finalAward;
-      return true;
+      return props.disbursement.status !== DisbursementScheduleStatus.Rejected;
     });
 
     const isDisbursementCompleted = computed<boolean>(

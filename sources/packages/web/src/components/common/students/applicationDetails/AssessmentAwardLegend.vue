@@ -18,8 +18,8 @@
     </v-row>
     <v-row>
       <v-col cols="12" md="3" lg="2">
-        <status-chip-disbursement :status="DisbursementScheduleStatus.Sent"
-      /></v-col>
+        <status-chip-disbursement :status="DisbursementScheduleStatus.Sent" />
+      </v-col>
       <v-col
         >Your funding has been sent to NSLSC. If you want to confirm the amounts
         you will receive or when they will be disbursed, please access your
@@ -35,7 +35,8 @@
       <v-col cols="12" md="3" lg="2">
         <status-chip-disbursement
           :status="DisbursementScheduleStatus.Cancelled"
-      /></v-col>
+        />
+      </v-col>
       <v-col
         >The final award is no longer applicable due to a change. Any scheduled
         disbursements will be cancelled.</v-col
@@ -83,7 +84,18 @@
     </v-row>
   </content-group>
 </template>
-<script setup lang="ts">
+<script lang="ts">
 import StatusChipDisbursement from "@/components/generic/StatusChipDisbursement.vue";
 import { DisbursementScheduleStatus } from "@/types";
+import { defineComponent } from "vue";
+
+export default defineComponent({
+  components: { StatusChipDisbursement },
+
+  setup() {
+    return {
+      DisbursementScheduleStatus,
+    };
+  },
+});
 </script>

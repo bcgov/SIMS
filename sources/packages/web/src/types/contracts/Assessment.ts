@@ -41,3 +41,12 @@ export interface AssessmentAwardData {
   hasPositiveOverawardAdjustment: boolean;
   hasNegativeOverawardAdjustment: boolean;
 }
+
+/**
+ *  Disbursement status label.
+ */
+export enum DisbursementStatusBadgeLabel {
+  Cancelled = "Cancelled",
+  Pending = "Pending",
+  Sent = "Sent",
+}
