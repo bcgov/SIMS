@@ -70,6 +70,11 @@ export class InstitutionControllerService {
       isBCPrivate,
       isBCPublic,
       hasBusinessGuid: !!institutionDetail.businessGuid,
+      country: institutionDetail.country,
+      province: institutionDetail.province,
+      classification: institutionDetail.classification,
+      organizationStatus: institutionDetail.organizationStatus,
+      medicalSchoolStatus: institutionDetail.medicalSchoolStatus,
     };
   }
 

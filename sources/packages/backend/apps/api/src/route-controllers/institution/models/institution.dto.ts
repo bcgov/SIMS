@@ -18,6 +18,9 @@ import {
 import {
   OPERATING_NAME_MAX_LENGTH,
   LEGAL_OPERATING_NAME_MAX_LENGTH,
+  InstitutionClassification,
+  InstitutionOrganizationStatus,
+  InstitutionMedicalSchoolStatus,
 } from "@sims/sims-db";
 import { OTHER_REGULATING_BODY_MAX_LENGTH } from "../../../constants";
 
@@ -117,7 +120,12 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   institutionType: number;
 }
 
-export class InstitutionProfileAPIOutDTO extends InstitutionContactAPIOutDTO {
+export class InstitutionDetailAPIOutDTO {
+  primaryContactEmail: string;
+  primaryContactFirstName: string;
+  primaryContactLastName: string;
+  primaryContactPhone: string;
+  mailingAddress: AddressDetailsAPIOutDTO;
   operatingName: string;
   primaryPhone: string;
   primaryEmail: string;
@@ -126,9 +134,6 @@ export class InstitutionProfileAPIOutDTO extends InstitutionContactAPIOutDTO {
   otherRegulatingBody?: string;
   establishedDate: string;
   institutionType: number;
-}
-
-export class InstitutionDetailAPIOutDTO extends InstitutionProfileAPIOutDTO {
   legalOperatingName: string;
   institutionTypeName?: string;
   isBCPrivate: boolean;
@@ -138,6 +143,11 @@ export class InstitutionDetailAPIOutDTO extends InstitutionProfileAPIOutDTO {
    * associated with, if not it is a basic BCeID institution.
    */
   hasBusinessGuid: boolean;
+  country?: string;
+  province?: string;
+  classification?: InstitutionClassification;
+  organizationStatus?: InstitutionOrganizationStatus;
+  medicalSchoolStatus?: InstitutionMedicalSchoolStatus;
 }
 
 export class InstitutionBasicAPIOutDTO {
