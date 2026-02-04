@@ -131,26 +131,15 @@ updates:
   - package-ecosystem: "docker"
     commit-message:
       prefix: "docker"
-    directory: "/sources/packages/backend/apps/api"
+    directories:
+      - "/sources/packages/backend/**/*"
+      - "/sources/packages/web/**/*"
     schedule:
       interval: "weekly"
     labels:
       - "Dependencies"
       - "Docker"
     groups:
-      docker-backend-updates:
-        patterns:
-          - "*"
-  - package-ecosystem: "docker"
-    commit-message:
-      prefix: "docker"
-    directory: "/sources/packages/web"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "Dependencies"
-      - "Docker"
-    groups:
-      docker-frontend-updates:
+      docker-updates:
         patterns:
           - "*"
