@@ -65,7 +65,7 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
    */
   async checkDuplicateSIN(studentId: number, sin: string): Promise<boolean> {
     const normalizedSIN = removeWhiteSpaces(sin);
-    const exists = await this.dataSource.getRepository(Student).exists({
+    return await this.dataSource.getRepository(Student).exists({
       where: {
         id: Not(studentId),
         sinValidation: {
@@ -73,7 +73,6 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
         },
       },
     });
-    return exists;
   }
 
   /**
