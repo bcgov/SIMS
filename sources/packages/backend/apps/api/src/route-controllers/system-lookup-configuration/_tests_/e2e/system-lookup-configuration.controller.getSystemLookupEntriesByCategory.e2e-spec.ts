@@ -15,13 +15,14 @@ import {
 import { SystemLookupCategory, User } from "@sims/sims-db";
 
 import { SystemLookupConfigurationService } from "@sims/services/system-lookup-configuration";
-import { ILike } from "typeorm";
+import { Like } from "typeorm";
 
 describe("SystemLookupConfigurationController(e2e)-getSystemLookupEntriesByCategory", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let auditUser: User;
   let systemLookupConfigurationService: SystemLookupConfigurationService;
+  const TEST_LOOKUP_KEY_PREFIX = "TEST_";
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -34,36 +35,29 @@ describe("SystemLookupConfigurationController(e2e)-getSystemLookupEntriesByCateg
   });
   beforeEach(async () => {
     // Clean up the system lookup configuration test entries before each test.
-    await db.systemLookupConfiguration.delete({ lookupKey: ILike("TEST_%") });
+    await db.systemLookupConfiguration.delete({
+      lookupKey: Like(`${TEST_LOOKUP_KEY_PREFIX}%`),
+    });
   });
 
   it("Should get the system lookup test entries for the category country when one or more test entries exist for the same category.", async () => {
     // Arrange
     // Create test system lookup entries for country.
-    const testCountryLookup1 = createFakeSystemLookupConfiguration(
-      {
-        auditUser,
-      },
-      {
-        initialValues: {
-          lookupCategory: SystemLookupCategory.Country,
-          lookupKey: "TEST_CN1",
-          lookupValue: "Test Country1",
+    const [testCountryLookup1, testCountryLookup2] = Array.from({
+      length: 2,
+    }).map((_, index) =>
+      createFakeSystemLookupConfiguration(
+        {
+          auditUser,
         },
-      },
-    );
-
-    const testCountryLookup2 = createFakeSystemLookupConfiguration(
-      {
-        auditUser,
-      },
-      {
-        initialValues: {
-          lookupCategory: SystemLookupCategory.Country,
-          lookupKey: "TEST_CN2",
-          lookupValue: "Test Country2",
+        {
+          initialValues: {
+            lookupCategory: SystemLookupCategory.Country,
+            lookupKey: `${TEST_LOOKUP_KEY_PREFIX}CN${index + 1}`,
+            lookupValue: `Test Country${index + 1}`,
+          },
         },
-      },
+      ),
     );
     await db.systemLookupConfiguration.save([
       testCountryLookup1,
