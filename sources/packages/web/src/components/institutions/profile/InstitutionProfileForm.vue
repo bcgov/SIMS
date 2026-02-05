@@ -1,7 +1,7 @@
 <template>
   <formio-container
-    formName="institutionProfile"
-    :formData="profileData"
+    form-name="institutionProfile"
+    :form-data="profileData"
     @loaded="formLoaded"
     @submitted="submitInstitutionProfile"
   >
@@ -10,10 +10,10 @@
         <template #="{ notAllowed }">
           <footer-buttons
             :processing="processing"
-            :primaryLabel="submitLabel"
-            @primaryClick="submit"
-            :showSecondaryButton="false"
-            :disablePrimaryButton="notAllowed"
+            :primary-label="submitLabel"
+            @primary-click="submit"
+            :show-secondary-button="false"
+            :disable-primary-button="notAllowed"
           />
         </template>
       </check-permission-role>
@@ -24,7 +24,7 @@
 <script lang="ts">
 import { useFormioDropdownLoader } from "@/composables";
 import { PropType, defineComponent } from "vue";
-import { FormIOForm, InstitutionProfileForm, Role } from "@/types";
+import { FormIOForm, InstitutionProfileFormData, Role } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 export default defineComponent({
@@ -33,7 +33,7 @@ export default defineComponent({
   },
   props: {
     profileData: {
-      type: Object,
+      type: Object as PropType<InstitutionProfileFormData>,
       required: true,
     },
     submitLabel: {
@@ -48,6 +48,7 @@ export default defineComponent({
     allowedRole: {
       type: String as PropType<Role>,
       required: false,
+      default: undefined,
     },
   },
   emits: ["submitInstitutionProfile"],
@@ -55,12 +56,12 @@ export default defineComponent({
     const formioDataLoader = useFormioDropdownLoader();
 
     const submitInstitutionProfile = async (
-      form: FormIOForm<InstitutionProfileForm>,
+      form: FormIOForm<InstitutionProfileFormData>,
     ) => {
       context.emit("submitInstitutionProfile", form.data);
     };
 
-    const formLoaded = async (form: any) => {
+    const formLoaded = async (form: FormIOForm<InstitutionProfileFormData>) => {
       await formioDataLoader.loadInstitutionTypes(form, "institutionType");
     };
 

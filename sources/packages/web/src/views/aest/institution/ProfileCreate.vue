@@ -3,15 +3,15 @@
     <template #header>
       <header-navigator
         title="Manage institutions"
-        subTitle="Create Institution"
+        sub-title="Create Institution"
       />
     </template>
     <institution-profile-form
-      :profileData="institutionProfileModel"
-      @submitInstitutionProfile="createInstitution"
+      :profile-data="institutionProfileModel"
+      @submit-institution-profile="createInstitution"
       :processing="processing"
-      submitLabel="Create profile"
-      :allowedRole="Role.AESTCreateInstitution"
+      submit-label="Create profile"
+      :allowed-role="Role.AESTCreateInstitution"
     ></institution-profile-form>
   </full-page-container>
 </template>
@@ -19,17 +19,12 @@
 <script lang="ts">
 import { ref, defineComponent } from "vue";
 import { useRouter } from "vue-router";
-import { ClientIdType, Role } from "@/types";
+import { ClientIdType, InstitutionProfileFormData, Role } from "@/types";
 import { AESTCreateInstitutionAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
 import { useFormioUtils, useSnackBar } from "@/composables";
 import InstitutionProfileForm from "@/components/institutions/profile/InstitutionProfileForm.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-
-interface FormModel {
-  clientType: ClientIdType;
-  mode: string;
-}
 
 export default defineComponent({
   components: { InstitutionProfileForm },
@@ -41,7 +36,7 @@ export default defineComponent({
     const institutionProfileModel = ref({
       clientType: ClientIdType.AEST,
       mode: "create",
-    } as FormModel);
+    } as InstitutionProfileFormData);
 
     const createInstitution = async (data: unknown) => {
       try {
