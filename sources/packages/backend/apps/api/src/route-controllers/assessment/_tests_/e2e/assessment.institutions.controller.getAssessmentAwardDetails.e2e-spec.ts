@@ -109,7 +109,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
           // Final amount has been modified by a $-15 overaward amount and a $10 restriction amount.
           {
             effectiveAmount: 405,
-            overawardAmountSubtracted: 15,
+            overawardAmountSubtracted: -15,
             restrictionAmountSubtracted: 10,
           },
         ),
@@ -209,7 +209,6 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
               disbursementValues: expect.arrayContaining([
                 {
                   valueCode: "CSLP",
-                  valueType: DisbursementValueType.CanadaLoan,
                   valueAmount: 100,
                   effectiveAmount: 100,
                   hasRestrictionAdjustment: false,
@@ -219,7 +218,6 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
                 },
                 {
                   valueCode: "CSGP",
-                  valueType: DisbursementValueType.CanadaGrant,
                   valueAmount: 200,
                   effectiveAmount: 195,
                   hasRestrictionAdjustment: false,
@@ -229,7 +227,6 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
                 },
                 {
                   valueCode: "CSPT",
-                  valueType: DisbursementValueType.CanadaGrant,
                   valueAmount: 300,
                   effectiveAmount: 300,
                   hasRestrictionAdjustment: false,
@@ -239,7 +236,6 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
                 },
                 {
                   valueCode: "CSGD",
-                  valueType: DisbursementValueType.CanadaGrant,
                   valueAmount: 400,
                   effectiveAmount: 405,
                   hasRestrictionAdjustment: true,
@@ -249,7 +245,6 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
                 },
                 {
                   valueCode: "BCAG",
-                  valueType: DisbursementValueType.BCGrant,
                   valueAmount: 500,
                   effectiveAmount: 500,
                   hasRestrictionAdjustment: false,
@@ -259,7 +254,6 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
                 },
                 {
                   valueCode: "SBSD",
-                  valueType: DisbursementValueType.BCGrant,
                   valueAmount: 600,
                   effectiveAmount: 600,
                   hasRestrictionAdjustment: false,

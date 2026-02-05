@@ -7,7 +7,6 @@ import {
   AssessmentTriggerType,
   COEStatus,
   DisbursementScheduleStatus,
-  DisbursementValueType,
   NOTE_DESCRIPTION_MAX_LENGTH,
   OfferingIntensity,
   OfferingStatus,
@@ -184,6 +183,9 @@ export class AssessmentNOAAPIOutDTO {
   offeringName: string;
 }
 
+/**
+ * Award summary for an Assessment.
+ */
 export class AwardDetailsAPIOutDTO {
   applicationNumber: string;
   applicationStatus: ApplicationStatus;
@@ -195,6 +197,9 @@ export class AwardDetailsAPIOutDTO {
   secondDisbursement: AwardDisbursementScheduleAPIOutDTO;
 }
 
+/**
+ * Disbursement schedule details for the award summary.
+ */
 export class AwardDisbursementScheduleAPIOutDTO {
   disbursementDate: string;
   status: DisbursementScheduleStatus;
@@ -213,9 +218,11 @@ export class AwardDisbursementScheduleAPIOutDTO {
   receiptReceived: boolean;
 }
 
+/**
+ * Disbursement values for the award summary.
+ */
 export class AwardDisbursementValueAPIOutDTO {
   valueCode: string;
-  valueType: DisbursementValueType;
   valueAmount: number;
   effectiveAmount?: number;
   hasRestrictionAdjustment?: boolean;

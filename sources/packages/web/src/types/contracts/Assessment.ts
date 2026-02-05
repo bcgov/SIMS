@@ -30,6 +30,9 @@ export interface AwardAdjustmentType {
   negativeOveraward: boolean;
 }
 
+/**
+ * Award information for the Award table.
+ */
 export interface AssessmentAwardData {
   awardType: string;
   awardTypeDisplay: string;

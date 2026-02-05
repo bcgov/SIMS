@@ -193,7 +193,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               disbursementValues: expect.arrayContaining([
                 {
                   valueCode: "CSLP",
-                  valueType: DisbursementValueType.CanadaLoan,
                   valueAmount: 111,
                   effectiveAmount: 100,
                   hasRestrictionAdjustment: false,
@@ -203,7 +202,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
                 },
                 {
                   valueCode: "CSGP",
-                  valueType: DisbursementValueType.CanadaGrant,
                   valueAmount: 222,
                   effectiveAmount: 220,
                   hasRestrictionAdjustment: false,
@@ -213,7 +211,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
                 },
                 {
                   valueCode: "CSPT",
-                  valueType: DisbursementValueType.CanadaGrant,
                   valueAmount: 333,
                   effectiveAmount: 330,
                   hasRestrictionAdjustment: false,
@@ -223,17 +220,15 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
                 },
                 {
                   valueCode: "CSGD",
-                  valueType: DisbursementValueType.CanadaGrant,
                   valueAmount: 444,
                   effectiveAmount: 440,
                   hasRestrictionAdjustment: true,
                   hasDisbursedAdjustment: false,
-                  hasPositiveOverawardAdjustment: false,
-                  hasNegativeOverawardAdjustment: true,
+                  hasPositiveOverawardAdjustment: true,
+                  hasNegativeOverawardAdjustment: false,
                 },
                 {
                   valueCode: "BCAG",
-                  valueType: DisbursementValueType.BCGrant,
                   valueAmount: 555,
                   effectiveAmount: 550,
                   hasRestrictionAdjustment: false,
@@ -243,7 +238,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
                 },
                 {
                   valueCode: "SBSD",
-                  valueType: DisbursementValueType.BCGrant,
                   valueAmount: 666,
                   effectiveAmount: 660,
                   hasRestrictionAdjustment: false,
@@ -444,7 +438,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               disbursementValues: expect.arrayContaining([
                 {
                   valueCode: "CSLP",
-                  valueType: DisbursementValueType.CanadaLoan,
                   valueAmount: 111,
                   effectiveAmount: 110,
                   hasRestrictionAdjustment: false,
@@ -454,7 +447,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
                 },
                 {
                   valueCode: "CSGP",
-                  valueType: DisbursementValueType.CanadaGrant,
                   valueAmount: 222,
                   effectiveAmount: 220,
                   hasRestrictionAdjustment: false,
@@ -464,7 +456,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
                 },
                 {
                   valueCode: "CSPT",
-                  valueType: DisbursementValueType.CanadaGrant,
                   valueAmount: 333,
                   effectiveAmount: 330,
                   hasRestrictionAdjustment: false,
@@ -474,7 +465,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
                 },
                 {
                   valueCode: "CSGD",
-                  valueType: DisbursementValueType.CanadaGrant,
                   valueAmount: 444,
                   effectiveAmount: 440,
                   hasRestrictionAdjustment: false,
@@ -484,7 +474,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
                 },
                 {
                   valueCode: "BCAG",
-                  valueType: DisbursementValueType.BCGrant,
                   valueAmount: 555,
                   effectiveAmount: 550,
                   hasRestrictionAdjustment: false,
@@ -494,7 +483,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
                 },
                 {
                   valueCode: "SBSD",
-                  valueType: DisbursementValueType.BCGrant,
                   valueAmount: 666,
                   effectiveAmount: 660,
                   hasRestrictionAdjustment: false,
@@ -522,7 +510,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               disbursementValues: [
                 {
                   valueCode: "CSLP",
-                  valueType: DisbursementValueType.CanadaLoan,
                   valueAmount: 9999,
                   effectiveAmount: 9990,
                   hasRestrictionAdjustment: false,
@@ -532,7 +519,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
                 },
                 {
                   valueCode: "CSGP",
-                  valueType: DisbursementValueType.CanadaGrant,
                   valueAmount: 1010,
                   effectiveAmount: 1010,
                   hasRestrictionAdjustment: false,
@@ -542,7 +528,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
                 },
                 {
                   valueCode: "CSPT",
-                  valueType: DisbursementValueType.CanadaGrant,
                   valueAmount: 1111,
                   effectiveAmount: 1110,
                   hasRestrictionAdjustment: false,
@@ -552,7 +537,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
                 },
                 {
                   valueCode: "CSGD",
-                  valueType: DisbursementValueType.CanadaGrant,
                   valueAmount: 1212,
                   effectiveAmount: 1210,
                   hasRestrictionAdjustment: false,
@@ -562,7 +546,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
                 },
                 {
                   valueCode: "BCAG",
-                  valueType: DisbursementValueType.BCGrant,
                   valueAmount: 1313,
                   effectiveAmount: 1310,
                   hasRestrictionAdjustment: false,
@@ -572,7 +555,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
                 },
                 {
                   valueCode: "SBSD",
-                  valueType: DisbursementValueType.BCGrant,
                   valueAmount: 1414,
                   effectiveAmount: 1410,
                   hasRestrictionAdjustment: false,
@@ -688,7 +670,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
             disbursementValues: expect.arrayContaining([
               {
                 valueCode: "CSLP",
-                valueType: DisbursementValueType.CanadaLoan,
                 valueAmount: 100,
                 effectiveAmount: null,
                 hasRestrictionAdjustment: false,
@@ -698,7 +679,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "CSGP",
-                valueType: DisbursementValueType.CanadaGrant,
                 valueAmount: 200,
                 effectiveAmount: null,
                 hasRestrictionAdjustment: false,
@@ -708,7 +688,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "CSPT",
-                valueType: DisbursementValueType.CanadaGrant,
                 valueAmount: 300,
                 effectiveAmount: null,
                 hasRestrictionAdjustment: false,
@@ -718,7 +697,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "CSGD",
-                valueType: DisbursementValueType.CanadaGrant,
                 valueAmount: 400,
                 effectiveAmount: null,
                 hasRestrictionAdjustment: false,
@@ -728,7 +706,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "BCAG",
-                valueType: DisbursementValueType.BCGrant,
                 valueAmount: 500,
                 effectiveAmount: null,
                 hasRestrictionAdjustment: false,
@@ -738,7 +715,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "SBSD",
-                valueType: DisbursementValueType.BCGrant,
                 valueAmount: 600,
                 effectiveAmount: null,
                 hasRestrictionAdjustment: false,
@@ -940,7 +916,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
             disbursementValues: expect.arrayContaining([
               {
                 valueCode: "CSLF",
-                valueType: DisbursementValueType.CanadaLoan,
                 valueAmount: 1000,
                 effectiveAmount: 1000,
                 hasRestrictionAdjustment: false,
@@ -950,7 +925,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "CSGP",
-                valueType: DisbursementValueType.CanadaGrant,
                 valueAmount: 1001,
                 effectiveAmount: 1001,
                 hasRestrictionAdjustment: false,
@@ -960,7 +934,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "CSGD",
-                valueType: DisbursementValueType.CanadaGrant,
                 valueAmount: 1002,
                 effectiveAmount: 1002,
                 hasRestrictionAdjustment: false,
@@ -970,7 +943,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "CSGF",
-                valueType: DisbursementValueType.CanadaGrant,
                 valueAmount: 1003,
                 effectiveAmount: 1003,
                 hasRestrictionAdjustment: false,
@@ -980,7 +952,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "BCSL",
-                valueType: DisbursementValueType.BCLoan,
                 valueAmount: 1004,
                 effectiveAmount: 1004,
                 hasRestrictionAdjustment: false,
@@ -990,7 +961,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "BCAG",
-                valueType: DisbursementValueType.BCGrant,
                 valueAmount: 1005,
                 effectiveAmount: 1005,
                 hasRestrictionAdjustment: false,
@@ -1000,7 +970,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "BGPD",
-                valueType: DisbursementValueType.BCGrant,
                 valueAmount: 1006,
                 effectiveAmount: 1006,
                 hasRestrictionAdjustment: false,
@@ -1010,7 +979,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "SBSD",
-                valueType: DisbursementValueType.BCGrant,
                 valueAmount: 1007,
                 effectiveAmount: 1007,
                 hasRestrictionAdjustment: false,
@@ -1038,7 +1006,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
             disbursementValues: [
               {
                 valueCode: "CSLF",
-                valueType: DisbursementValueType.CanadaLoan,
                 valueAmount: 10010,
                 effectiveAmount: 10010,
                 hasRestrictionAdjustment: false,
@@ -1048,7 +1015,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "CSGP",
-                valueType: DisbursementValueType.CanadaGrant,
                 valueAmount: 10011,
                 effectiveAmount: 10011,
                 hasRestrictionAdjustment: false,
@@ -1058,17 +1024,15 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "CSGD",
-                valueType: DisbursementValueType.CanadaGrant,
                 valueAmount: 10012,
                 effectiveAmount: 10112,
                 hasRestrictionAdjustment: false,
                 hasDisbursedAdjustment: false,
-                hasPositiveOverawardAdjustment: true,
-                hasNegativeOverawardAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: true,
               },
               {
                 valueCode: "CSGF",
-                valueType: DisbursementValueType.CanadaGrant,
                 valueAmount: 10013,
                 effectiveAmount: 10013,
                 hasRestrictionAdjustment: false,
@@ -1078,7 +1042,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "BCSL",
-                valueType: DisbursementValueType.BCLoan,
                 valueAmount: 10015,
                 effectiveAmount: 10015,
                 hasRestrictionAdjustment: false,
@@ -1088,7 +1051,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "BCAG",
-                valueType: DisbursementValueType.BCGrant,
                 valueAmount: 10016,
                 effectiveAmount: 10016,
                 hasRestrictionAdjustment: false,
@@ -1098,7 +1060,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "BGPD",
-                valueType: DisbursementValueType.BCGrant,
                 valueAmount: 10017,
                 effectiveAmount: 10017,
                 hasRestrictionAdjustment: false,
@@ -1108,7 +1069,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "SBSD",
-                valueType: DisbursementValueType.BCGrant,
                 valueAmount: 10018,
                 effectiveAmount: 10018,
                 hasRestrictionAdjustment: false,
@@ -1123,7 +1083,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
       });
   });
 
-  it("Should generate restriction and positive overaward adjustments based on estimated award values for a ful-time application when the disbursement has not been sent yet.", async () => {
+  it("Should generate restriction and positive overaward adjustments based on estimated award values for a full-time application when the disbursement has not been sent yet.", async () => {
     // Arrange
     const statusUpdatedOn = new Date();
     const enrolmentDate1 = addDays(1);
@@ -1237,7 +1197,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
             disbursementValues: expect.arrayContaining([
               {
                 valueCode: "CSLP",
-                valueType: DisbursementValueType.CanadaLoan,
                 valueAmount: 100,
                 effectiveAmount: null,
                 hasRestrictionAdjustment: false,
@@ -1247,7 +1206,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "CSGP",
-                valueType: DisbursementValueType.CanadaGrant,
                 valueAmount: 200,
                 effectiveAmount: null,
                 hasRestrictionAdjustment: false,
@@ -1257,7 +1215,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "CSPT",
-                valueType: DisbursementValueType.CanadaGrant,
                 valueAmount: 300,
                 effectiveAmount: null,
                 hasRestrictionAdjustment: false,
@@ -1267,7 +1224,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "CSGD",
-                valueType: DisbursementValueType.CanadaGrant,
                 valueAmount: 400,
                 effectiveAmount: null,
                 hasRestrictionAdjustment: false,
@@ -1277,7 +1233,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "BCAG",
-                valueType: DisbursementValueType.BCGrant,
                 valueAmount: 500,
                 effectiveAmount: null,
                 hasRestrictionAdjustment: true,
@@ -1287,7 +1242,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
               },
               {
                 valueCode: "SBSD",
-                valueType: DisbursementValueType.BCGrant,
                 valueAmount: 600,
                 effectiveAmount: null,
                 hasRestrictionAdjustment: true,

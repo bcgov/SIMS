@@ -212,45 +212,34 @@ export default defineComponent({
 
     const { currencyFormatter, dateOnlyLongString } = useFormatters();
 
-    // Associate disbursement values to their award types.
+    // Associate disbursement values with their award types.
     const awards: AssessmentAwardData[] = awardTypes.value.map((award) => {
       const disbursementValue = props.disbursement.disbursementValues.find(
         (value) => {
           return value.valueCode === award.awardType;
         },
       );
-      let estimatedAmount;
-      let finalAmount;
-      let hasDisbursedAdjustment;
-      let hasRestrictionAdjustment;
-      let hasNegativeOverawardAdjustment;
-      let hasPositiveOverawardAdjustment;
-      if (disbursementValue) {
-        // If the award is defined but no values are present it means that a receipt value is missing.
-        estimatedAmount = currencyFormatter(disbursementValue.valueAmount, "-");
-        finalAmount = currencyFormatter(disbursementValue.effectiveAmount, "-");
-        hasDisbursedAdjustment = disbursementValue.hasDisbursedAdjustment;
-        hasRestrictionAdjustment = disbursementValue.hasRestrictionAdjustment;
-        hasNegativeOverawardAdjustment =
-          disbursementValue.hasNegativeOverawardAdjustment;
-        hasPositiveOverawardAdjustment =
-          disbursementValue.hasPositiveOverawardAdjustment;
-      } else {
-        // If the award in not defined at all it means that the award is not eligible and it was not
-        // part of the disbursement calculations output.
-        estimatedAmount = AWARD_NOT_ELIGIBLE;
-        finalAmount = AWARD_NOT_ELIGIBLE;
-      }
+      const estimatedAmount = disbursementValue
+        ? currencyFormatter(disbursementValue.valueAmount, "-")
+        : AWARD_NOT_ELIGIBLE;
+      const finalAmount = disbursementValue
+        ? currencyFormatter(disbursementValue.effectiveAmount, "-")
+        : AWARD_NOT_ELIGIBLE;
+
       return {
         awardType: award.awardType,
         awardTypeDisplay: award.awardTypeDisplay,
         awardDescription: award.description,
         estimatedAmount,
         finalAmount,
-        hasDisbursedAdjustment,
-        hasRestrictionAdjustment,
-        hasNegativeOverawardAdjustment,
-        hasPositiveOverawardAdjustment,
+        hasDisbursedAdjustment:
+          disbursementValue?.hasDisbursedAdjustment ?? false,
+        hasRestrictionAdjustment:
+          disbursementValue?.hasRestrictionAdjustment ?? false,
+        hasNegativeOverawardAdjustment:
+          disbursementValue?.hasNegativeOverawardAdjustment ?? false,
+        hasPositiveOverawardAdjustment:
+          disbursementValue?.hasPositiveOverawardAdjustment ?? false,
       };
     });
 
@@ -259,7 +248,7 @@ export default defineComponent({
     });
 
     const showAdjustments = computed(() => {
-      return !ADJUSTMENT_STATUSES.has(props.disbursement.status);
+      return ADJUSTMENT_STATUSES.has(props.disbursement.status);
     });
 
     const isDisbursementCompleted = computed<boolean>(

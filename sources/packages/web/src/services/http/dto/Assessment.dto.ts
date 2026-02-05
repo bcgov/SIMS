@@ -130,8 +130,6 @@ export interface AwardDisbursementScheduleAPIOutDTO {
  */
 export interface AwardDisbursementValueAPIOutDTO {
   valueCode: string;
-  // TODO: Type this as DisbursementValueType??
-  valueType: string;
   valueAmount: number;
   effectiveAmount?: number;
   hasRestrictionAdjustment?: boolean;

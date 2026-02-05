@@ -284,7 +284,7 @@ export class AssessmentControllerService {
     if (
       firstDisbursementSchedule?.disbursementScheduleStatus ===
         DisbursementScheduleStatus.Pending ||
-      secondDisbursementSchedule?.disbursementScheduleStatus !==
+      secondDisbursementSchedule?.disbursementScheduleStatus ===
         DisbursementScheduleStatus.Pending
     ) {
       [firstEligibleDisbursement, secondEligibleDisbursement] =
@@ -327,6 +327,7 @@ export class AssessmentControllerService {
   /**
    * Populates estimated and actual (if present) award details for a disbursement schedule.
    * @param schedule the disbursement schedule.
+   * @param eligibleDisbursement the eligible e-cert disbursement details.
    * @param studentId student to whom the award details belong to.
    * @param options options,
    * - `includeDocumentNumber` when true document number is included in response.
@@ -376,14 +377,14 @@ export class AssessmentControllerService {
     disbursement.receiptReceived = schedule.disbursementReceipts?.length > 0;
 
     // Lookup Overawards and Restrictions if only estimated awards are available.
-    let studentOverwardBalances: AwardOverawardBalance;
+    let studentOverawardBalances: AwardOverawardBalance = {};
     let studentRestrictions: Map<DisbursementValueType, ActiveRestriction[]>;
     if (disbursement.status === DisbursementScheduleStatus.Pending) {
       const overawardBalances =
         await this.disbursementOverawardService.getOverawardBalance([
           studentId,
         ]);
-      studentOverwardBalances = overawardBalances[studentId];
+      studentOverawardBalances = overawardBalances[studentId];
 
       if (eligibleDisbursement) {
         studentRestrictions =
@@ -401,7 +402,6 @@ export class AssessmentControllerService {
       }
       const awardDisbursementValue = new AwardDisbursementValueAPIOutDTO();
       awardDisbursementValue.valueCode = disbursementValue.valueCode;
-      awardDisbursementValue.valueType = disbursementValue.valueType;
       awardDisbursementValue.valueAmount = disbursementValue.valueAmount;
       awardDisbursementValue.effectiveAmount =
         disbursementValue.effectiveAmount;
@@ -415,12 +415,12 @@ export class AssessmentControllerService {
         // Estimated Award - calculate estimated adjustments.
 
         // Restriction: If the student has a restriction that impacts funding, flag the adjustment.)
-        hasRestrictionAdjustment = studentRestrictions?.has(
-          disbursementValue.valueType,
-        );
+        hasRestrictionAdjustment =
+          !!studentRestrictions &&
+          studentRestrictions?.has(disbursementValue.valueType);
         // Overaward: If there is a positive overaward balance for that award type, flag the adjustment.
         const overawardBalance =
-          studentOverwardBalances?.[disbursementValue.valueCode];
+          studentOverawardBalances?.[disbursementValue.valueCode] ?? 0;
         if (overawardBalance > 0) {
           hasPositiveOverawardAdjustment = true;
         }
@@ -435,9 +435,9 @@ export class AssessmentControllerService {
         hasDisbursedAdjustment =
           disbursementValue.disbursedAmountSubtracted > 0;
         hasNegativeOverawardAdjustment =
-          disbursementValue.overawardAmountSubtracted > 0;
-        hasPositiveOverawardAdjustment =
           disbursementValue.overawardAmountSubtracted < 0;
+        hasPositiveOverawardAdjustment =
+          disbursementValue.overawardAmountSubtracted > 0;
       }
       awardDisbursementValue.hasDisbursedAdjustment = hasDisbursedAdjustment;
       awardDisbursementValue.hasNegativeOverawardAdjustment =

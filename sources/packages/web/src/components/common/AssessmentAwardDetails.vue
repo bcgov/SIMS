@@ -84,8 +84,7 @@ export default defineComponent({
   },
   setup(props) {
     const isSecondDisbursementAvailable = computed(
-      // TODO Do we need to check a property inside secondDisbursement to confirm its availability?
-      () => props.assessmentAwardData.secondDisbursement,
+      () => !!props.assessmentAwardData.secondDisbursement,
     );
 
     return {
