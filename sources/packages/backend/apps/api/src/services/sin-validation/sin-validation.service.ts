@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, Not } from "typeorm";
 import {
   RecordDataModelService,
   NoteType,
@@ -52,6 +52,26 @@ export class SINValidationService extends RecordDataModelService<SINValidation> 
       },
       where: { student: { id: studentId } },
       order: { createdAt: "DESC" },
+    });
+  }
+
+  /**
+   * Checks if the provided SIN exists for another student.
+   * Only checks against the current SIN validation record for each student
+   * (the one referenced by student.sinValidation), not historical records.
+   * @param studentId current student id to exclude from the check.
+   * @param sin SIN to check for duplicates.
+   * @returns true if the SIN exists for another student, false otherwise.
+   */
+  async checkDuplicateSIN(studentId: number, sin: string): Promise<boolean> {
+    const normalizedSIN = removeWhiteSpaces(sin);
+    return this.dataSource.getRepository(Student).exists({
+      where: {
+        id: Not(studentId),
+        sinValidation: {
+          sin: normalizedSIN,
+        },
+      },
     });
   }
 

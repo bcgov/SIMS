@@ -1,5 +1,5 @@
 # Base Image
-FROM artifacts.developer.gov.bc.ca/docker-remote/node:25.2.1-alpine3.22
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:25.6.0-alpine3.22
 
 ENV npm_config_cache=/app/.npm
 

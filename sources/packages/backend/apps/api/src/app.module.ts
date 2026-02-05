@@ -14,6 +14,7 @@ import {
   DynamicFormController,
   DynamicFormAESTController,
   HealthController,
+  SystemLookupConfigurationController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { AppAESTModule } from "./app.aest.module";
@@ -39,6 +40,7 @@ import { json } from "express";
 import { JSON_300KB } from "./constants";
 import { AppAllExceptionsFilter } from "./app.exception.filter";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
+import { SystemLookupConfigurationModule } from "@sims/services/system-lookup-configuration";
 
 @Module({
   imports: [
@@ -58,6 +60,7 @@ import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
     ClamAntivirusModule,
     TerminusModule,
     DynamicFormConfigurationModule,
+    SystemLookupConfigurationModule,
     RouterModule.register([
       {
         path: ClientTypeBaseRoute.Institution,
@@ -96,6 +99,7 @@ import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
     ConfigController,
     DynamicFormController,
     AuditController,
+    SystemLookupConfigurationController,
   ],
   providers: [
     AuditService,

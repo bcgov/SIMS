@@ -23,6 +23,16 @@ export enum YesNoOptions {
 }
 
 /**
+ * Dependant relationship with student.
+ */
+export enum DependantRelationship {
+  Child = "child",
+  Spouse = "spouse",
+  ElderlyRelative = "elderlyRelative",
+  Other = "other",
+}
+
+/**
  * Offering delivery options.
  */
 export enum OfferingDeliveryOptions {

@@ -72,9 +72,20 @@ export const TableNames = {
   BetaUsersAuthorizations: "beta_users_authorizations",
   SFASBridgeLogs: "sfas_bridge_logs",
   DynamicFormConfigurations: "dynamic_form_configurations",
+  SystemLookupConfigurations: "system_lookup_configurations",
   FormSubmissions: "form_submissions",
   FormSubmissionItems: "form_submission_items",
 };
 
 export const INSTITUTION_TYPE_BC_PUBLIC = 1;
 export const INSTITUTION_TYPE_BC_PRIVATE = 2;
+
+/**
+ * Canada country code.
+ */
+export const CANADA_COUNTRY_CODE = "CA";
+
+/**
+ * BC province code.
+ */
+export const BC_PROVINCE_CODE = "BC";

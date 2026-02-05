@@ -67,6 +67,7 @@ import {
   SFASApplicationDependant,
   SFASApplicationDisbursement,
   DynamicFormConfiguration,
+  SystemLookupConfiguration,
   FormSubmission,
   FormSubmissionItem,
 } from "./entities";
@@ -234,6 +235,7 @@ export const DBEntities = [
   BetaUsersAuthorizations,
   SFASBridgeLog,
   DynamicFormConfiguration,
+  SystemLookupConfiguration,
   FormSubmission,
   FormSubmissionItem,
 ];

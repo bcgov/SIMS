@@ -51,3 +51,7 @@ export const SIMS2_COLLF_USER = "b7aa48239e1449279aee013dc6e4df23@bceidboth";
  * College F business guid.
  */
 export const COLLEGE_F_BUSINESS_GUID = "64118F10542349AC8574AE7184B0FCF3";
+/**
+ * Ontario province code.
+ */
+export const ONTARIO_PROVINCE_CODE = "ON";

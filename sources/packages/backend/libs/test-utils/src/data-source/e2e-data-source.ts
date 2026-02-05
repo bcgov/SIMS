@@ -64,6 +64,7 @@ import {
   SFASApplicationDisbursement,
   InstitutionUser,
   DynamicFormConfiguration,
+  SystemLookupConfiguration,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 
@@ -169,6 +170,9 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     dynamicFormConfiguration: dataSource.getRepository(
       DynamicFormConfiguration,
     ),
+    systemLookupConfiguration: dataSource.getRepository(
+      SystemLookupConfiguration,
+    ),
   };
 }
 
@@ -242,4 +246,5 @@ export interface E2EDataSources {
   eCertFeedbackError: Repository<ECertFeedbackError>;
   sfasBridgeLog: Repository<SFASBridgeLog>;
   dynamicFormConfiguration: Repository<DynamicFormConfiguration>;
+  systemLookupConfiguration: Repository<SystemLookupConfiguration>;
 }
