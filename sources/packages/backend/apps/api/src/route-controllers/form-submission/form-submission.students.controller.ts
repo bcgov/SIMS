@@ -75,8 +75,13 @@ export class FormSubmissionStudentsController extends BaseController {
           id: submission.id,
           formCategory: submission.formCategory,
           status: submission.submissionStatus,
+          applicationId: submission.application?.id,
+          applicationNumber: submission.application?.applicationNumber,
+          assessedDate: submission.assessedDate,
+          submittedDate: submission.submittedDate,
           submissionItems: submission.formSubmissionItems.map((item) => ({
             formType: item.dynamicFormConfiguration.formType,
+            formCategory: item.dynamicFormConfiguration.formCategory,
             decisionStatus: item.decisionStatus,
             decisionDate: item.decisionDate,
             dynamicFormConfigurationId: item.dynamicFormConfiguration.id,
@@ -84,10 +89,6 @@ export class FormSubmissionStudentsController extends BaseController {
             formDefinitionName:
               item.dynamicFormConfiguration.formDefinitionName,
           })),
-          applicationId: submission.application?.id,
-          applicationNumber: submission.application?.applicationNumber,
-          assessedDate: submission.assessedDate,
-          submittedDate: submission.submittedDate,
         };
       },
     );

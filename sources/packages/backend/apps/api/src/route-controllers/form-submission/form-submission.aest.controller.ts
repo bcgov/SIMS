@@ -1,25 +1,12 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  Patch,
-  Put,
-} from "@nestjs/common";
+import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
 import { FormSubmissionService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
+import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
-import { IUserToken, UserGroups } from "apps/api/src/auth";
-import {
-  FormSubmissionFinalDecisionAPIInDTO,
-  FormSubmissionItemDecisionAPIInDTO,
-  FormSubmissionMinistryAPIOutDTO,
-} from "./models/form-submission.dto";
-import { PrimaryIdentifierAPIOutDTO } from "apps/api/src/route-controllers/models/primary.identifier.dto";
+import { UserGroups } from "apps/api/src/auth";
+import { FormSubmissionMinistryAPIOutDTO } from "./models/form-submission.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -56,21 +43,21 @@ export class FormSubmissionAESTController extends BaseController {
     };
   }
 
-  @Put(":formSubmissionId/items")
-  async submitItemDecision(
-    @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
-    @Body() payload: FormSubmissionItemDecisionAPIInDTO,
-    @UserToken() userToken: IUserToken,
-  ): Promise<PrimaryIdentifierAPIOutDTO> {
-    return null;
-  }
+  // @Put(":formSubmissionId/items")
+  // async submitItemDecision(
+  //   @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
+  //   @Body() payload: FormSubmissionItemDecisionAPIInDTO,
+  //   @UserToken() userToken: IUserToken,
+  // ): Promise<PrimaryIdentifierAPIOutDTO> {
+  //   return null;
+  // }
 
-  @Patch(":formSubmissionId")
-  async submitFinalDecision(
-    @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
-    @Body() payload: FormSubmissionFinalDecisionAPIInDTO,
-    @UserToken() userToken: IUserToken,
-  ): Promise<PrimaryIdentifierAPIOutDTO> {
-    return null;
-  }
+  // @Patch(":formSubmissionId")
+  // async submitFinalDecision(
+  //   @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
+  //   @Body() payload: FormSubmissionFinalDecisionAPIInDTO,
+  //   @UserToken() userToken: IUserToken,
+  // ): Promise<PrimaryIdentifierAPIOutDTO> {
+  //   return null;
+  // }
 }
