@@ -256,18 +256,16 @@ export class ECEResponseProcessingService {
     disbursementProcessingDetails: DisbursementProcessingDetails,
   ): void {
     let hasErrors = false;
-    for (const eceDetailRecord of eceFileDetailRecords) {
+
+    // Filter out records with warnings and track them.
+    const validRecords = eceFileDetailRecords.filter((eceDetailRecord) => {
       const errorMessage = eceDetailRecord.getInvalidDataMessage();
       const warningMessage = eceDetailRecord.getWarningMessage();
       if (warningMessage) {
-        // Remove the record from the list.
-        eceFileDetailRecords.splice(
-          eceFileDetailRecords.indexOf(eceDetailRecord),
-          1,
-        );
+        // Record has a warning, exclude it from the result.
         processSummaryResult.warnings.push(warningMessage);
         ++disbursementProcessingDetails.totalRecordsSkipped;
-        ++disbursementProcessingDetails.disbursementsSkipped;
+        return false;
       }
       if (errorMessage) {
         hasErrors = true;
@@ -276,7 +274,12 @@ export class ECEResponseProcessingService {
           `${errorMessage} at line ${eceDetailRecord.lineNumber}.`,
         );
       }
-    }
+      return true;
+    });
+
+    // Replace the original array contents with valid records.
+    eceFileDetailRecords.length = 0;
+    eceFileDetailRecords.push(...validRecords);
     if (hasErrors) {
       throw new Error(
         "The file consists of invalid data and cannot be processed.",

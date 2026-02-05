@@ -183,7 +183,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 17",
+        "Error(s): 0, Warning(s): 2, Info: 17",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -193,16 +193,17 @@ describe(
           `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
           "Notification has been created to send email to integration contacts.",
           "Total file parsing errors: 0",
-          "Total detail records found: 2",
-          "Total detail records skipped: 1",
+          "Total detail records found: 3",
+          "Total detail records skipped: 2",
           "Total disbursements found: 1",
           "Disbursements successfully updated: 1",
-          "Disbursements skipped to be processed: 1",
+          "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
-          "WARN: Disbursement schedule not found for disbursement value ID: 1119353191, record at line 3 skipped.",
+          "WARN: Disbursement schedule not found for disbursement value ID: 1119353116, record at line 3 skipped.",
+          "WARN: Disbursement schedule not found for disbursement value ID: 1119353117, record at line 4 skipped.",
         ]),
-      );
+      ).toBe(true);
       // Expect the archive method to be called.
       expect(sftpClientMock.rename).toHaveBeenCalled();
     });
