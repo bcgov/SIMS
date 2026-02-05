@@ -7,6 +7,17 @@ import {
 } from "../models/ece-integration.model";
 
 /**
+ * Legacy award codes for which the records are skipped.
+ * These awards are related to Interest free/in-study records from SFAS.
+ */
+const LEGACY_SKIPPED_AWARDS = new Set(["INTP", "INTF"]);
+
+interface ValidationsResult {
+  validationLevel: "warning" | "error";
+  message: string;
+}
+
+/**
  * ECE response file detail.
  * Read and parse the detail records of ECE response file.
  */
@@ -70,39 +81,35 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
    * Validate the record detail data.
    * @returns validation error message if validation fails.
    */
-  getInvalidDataMessage(): string | undefined {
+  validate(): ValidationsResult[] {
+    const validationsResult: ValidationsResult[] = [];
     const errors: string[] = [];
     if (this.recordType !== RecordTypeCodes.ECEDetail) {
       errors.push(`Invalid record type on detail: ${this.recordType}`);
     }
-    if (isNaN(this.disbursementValueId)) {
+    if (Number.isNaN(this.disbursementValueId)) {
       errors.push(
         "Invalid unique index number for the disbursement value ID record",
       );
     }
     if (
-      !(
-        this.disbursementValueCode === "INTP" ||
-        this.disbursementValueCode === "INTF"
-      ) &&
+      !LEGACY_SKIPPED_AWARDS.has(this.disbursementValueCode) &&
       (!this.applicationNumber?.trim() || Number.isNaN(+this.applicationNumber))
     ) {
       errors.push("Invalid application number");
     }
-    return errors.length ? errors.join(", ") : undefined;
-  }
-
-  /**
-   * Get warning messages for non-critical issues found in the record.
-   * @returns warning message if any non-critical issue is found.
-   */
-  getWarningMessage(): string | undefined {
-    if (
-      this.disbursementValueCode === "INTP" ||
-      this.disbursementValueCode === "INTF"
-    ) {
-      return `Disbursement schedule not found for disbursement value ID: ${this.disbursementValueId}, record at line ${this.lineNumber} skipped.`;
+    if (errors.length) {
+      validationsResult.push({
+        validationLevel: "error",
+        message: errors.join(", "),
+      });
     }
-    return undefined;
+    if (LEGACY_SKIPPED_AWARDS.has(this.disbursementValueCode)) {
+      validationsResult.push({
+        validationLevel: "warning",
+        message: `Disbursement schedule not found for disbursement value ID: ${this.disbursementValueId}, record at line ${this.lineNumber} skipped.`,
+      });
+    }
+    return validationsResult;
   }
 }
