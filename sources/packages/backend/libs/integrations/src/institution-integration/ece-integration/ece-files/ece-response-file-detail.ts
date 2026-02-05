@@ -30,6 +30,13 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
   }
 
   /**
+   * Disbursement value code.
+   */
+  get disbursementValueCode(): string {
+    return this.line.substring(15, 19);
+  }
+
+  /**
    * Application number.
    */
   get applicationNumber(): string {
@@ -73,9 +80,29 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
         "Invalid unique index number for the disbursement value ID record",
       );
     }
-    if (!this.applicationNumber?.trim() || isNaN(+this.applicationNumber)) {
+    if (
+      !(
+        this.disbursementValueCode === "INTP" ||
+        this.disbursementValueCode === "INTF"
+      ) &&
+      (!this.applicationNumber?.trim() || isNaN(+this.applicationNumber))
+    ) {
       errors.push("Invalid application number");
     }
     return errors.length ? errors.join(", ") : undefined;
+  }
+
+  /**
+   * Get warning messages for non-critical issues found in the record.
+   * @returns warning message if any non-critical issue is found.
+   */
+  getWarningMessage(): string | undefined {
+    if (
+      this.disbursementValueCode === "INTP" ||
+      this.disbursementValueCode === "INTF"
+    ) {
+      return `Disbursement schedule not found for disbursement value ID: ${this.disbursementValueId}, record at line ${this.lineNumber} skipped.`;
+    }
+    return undefined;
   }
 }

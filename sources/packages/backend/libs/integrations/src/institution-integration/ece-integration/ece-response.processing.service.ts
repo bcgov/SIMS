@@ -258,6 +258,17 @@ export class ECEResponseProcessingService {
     let hasErrors = false;
     for (const eceDetailRecord of eceFileDetailRecords) {
       const errorMessage = eceDetailRecord.getInvalidDataMessage();
+      const warningMessage = eceDetailRecord.getWarningMessage();
+      if (warningMessage) {
+        // Remove the record from the list.
+        eceFileDetailRecords.splice(
+          eceFileDetailRecords.indexOf(eceDetailRecord),
+          1,
+        );
+        processSummaryResult.warnings.push(warningMessage);
+        ++disbursementProcessingDetails.totalRecordsSkipped;
+        ++disbursementProcessingDetails.disbursementsSkipped;
+      }
       if (errorMessage) {
         hasErrors = true;
         ++disbursementProcessingDetails.fileParsingErrors;
