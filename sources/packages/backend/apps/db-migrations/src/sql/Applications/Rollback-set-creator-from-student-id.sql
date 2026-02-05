@@ -6,4 +6,4 @@
 ALTER TABLE
     sims.applications
 ALTER COLUMN
-    creator_id DROP NOT NULL;
+    creator DROP NOT NULL;
