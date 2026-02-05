@@ -38,6 +38,7 @@ import { createFakeStudent } from "./student";
 
 export function createFakeApplication(
   relations?: {
+    auditUser?: User;
     student?: Student;
     programYear?: ProgramYear;
     currentStudentAssessment?: StudentAssessment;
@@ -91,6 +92,8 @@ export function createFakeApplication(
     options?.initialValue?.applicationEditStatusUpdatedOn ?? now;
   application.applicationEditStatusUpdatedBy =
     relations?.applicationEditStatusUpdatedBy;
+  application.creator =
+    options?.initialValue?.creator ?? relations?.auditUser ?? createFakeUser();
   return application;
 }
 
@@ -331,6 +334,7 @@ export async function saveFakeApplication(
   const fakeApplication = createFakeApplication(
     {
       student: savedStudent,
+      auditUser: savedUser,
       location: relations?.institutionLocation,
       programYear: relations?.programYear,
       applicationException: relations?.applicationException,
