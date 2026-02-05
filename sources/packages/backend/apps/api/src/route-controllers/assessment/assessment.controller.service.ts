@@ -385,8 +385,10 @@ export class AssessmentControllerService {
         ]);
       studentOverwardBalances = overawardBalances[studentId];
 
-      studentRestrictions =
-        getStopFundingTypesAndRestrictionsMap(eligibleDisbursement);
+      if (eligibleDisbursement) {
+        studentRestrictions =
+          getStopFundingTypesAndRestrictionsMap(eligibleDisbursement);
+      }
     }
 
     // Populate disbursement values.
@@ -412,21 +414,18 @@ export class AssessmentControllerService {
       if (disbursement.status === DisbursementScheduleStatus.Pending) {
         // Estimated Award - calculate estimated adjustments.
 
-        // Restriction: If the student has a restriction that impacts funding, display the tag beside it.
-        // Stop full time BC loan: BCSL
-        // Stop full time BC grant: BCAG (FT), SBSD (FT), BGPD
-        // Stop part time BC grant: BCAG (PT), SBSD (PT)
-        hasRestrictionAdjustment = studentRestrictions.has(
+        // Restriction: If the student has a restriction that impacts funding, flag the adjustment.)
+        hasRestrictionAdjustment = studentRestrictions?.has(
           disbursementValue.valueType,
         );
-        // Overaward: If there is a positive overaward balance for that award type, display the tag beside it.
+        // Overaward: If there is a positive overaward balance for that award type, flag the adjustment.
         const overawardBalance =
-          studentOverwardBalances[disbursementValue.valueCode];
+          studentOverwardBalances?.[disbursementValue.valueCode];
         if (overawardBalance > 0) {
           hasPositiveOverawardAdjustment = true;
         }
 
-        // Funded: If a previous assessment in the application has disbursed that award type, display the tag beside it.
+        // Funded: If a previous assessment in the application has disbursed that award type, flag the adjustment.
         hasDisbursedAdjustment =
           disbursementValue.disbursedAmountSubtracted > 0;
       } else {
