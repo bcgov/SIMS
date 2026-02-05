@@ -89,6 +89,7 @@
       <add-new-s-i-n
         ref="addNewSINModal"
         :allowed-role="Role.StudentAddNewSIN"
+        :student-id="studentId"
       />
       <add-expiry-date
         ref="addExpiryDateModal"
@@ -112,10 +113,7 @@ import {
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
 import { useFileUtils, ModalDialog, useSnackBar } from "@/composables";
-import {
-  CreateSINValidationAPIInDTO,
-  UpdateSINValidationAPIInDTO,
-} from "@/services/http/dto";
+import { UpdateSINValidationAPIInDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import AddNewSIN from "@/components/common/sin/AddNewSIN.vue";
 import AddExpiryDate from "@/components/common/sin/AddExpiryDate.vue";
@@ -135,9 +133,7 @@ export default defineComponent({
   setup(props) {
     const showModal = ref(false);
     const studentSINValidations = ref([] as SINValidations[]);
-    const addNewSINModal = ref(
-      {} as ModalDialog<CreateSINValidationAPIInDTO | boolean>,
-    );
+    const addNewSINModal = ref<InstanceType<typeof AddNewSIN>>();
     const addExpiryDateModal = ref(
       {} as ModalDialog<UpdateSINValidationAPIInDTO | boolean>,
     );
@@ -157,23 +153,10 @@ export default defineComponent({
     watch(() => props.studentId, loadSINValidations, { immediate: true });
 
     const addNewSIN = async () => {
-      const addNewSINData = await addNewSINModal.value.showModal();
-      if (addNewSINData)
-        try {
-          processingNewSIN.value = true;
-          await StudentService.shared.createStudentSINValidation(
-            props.studentId,
-            addNewSINData as CreateSINValidationAPIInDTO,
-          );
-          snackBar.success(
-            "New SIN record created and associated to the student.",
-          );
-          await loadSINValidations();
-        } catch {
-          snackBar.error("Unexpected error while creating a new SIN record.");
-        } finally {
-          processingNewSIN.value = false;
-        }
+      const addNewSINData = await addNewSINModal.value?.showModal();
+      if (addNewSINData) {
+        await loadSINValidations();
+      }
     };
 
     const addExpiryDate = async (sinValidationId: number) => {

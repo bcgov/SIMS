@@ -170,6 +170,11 @@ export const MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED =
   "MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED";
 
 /**
+ * Duplicate SIN found and not confirmed.
+ */
+export const SIN_DUPLICATE_NOT_CONFIRMED = "SIN_DUPLICATE_NOT_CONFIRMED";
+
+/**
  * An institution restriction is already active.
  */
 export const INSTITUTION_RESTRICTION_ALREADY_ACTIVE =
