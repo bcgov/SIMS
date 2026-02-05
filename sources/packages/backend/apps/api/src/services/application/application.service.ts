@@ -493,6 +493,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       ApplicationEditStatus.ChangeInProgress;
     newApplication.applicationEditStatusUpdatedOn = now;
     newApplication.applicationEditStatusUpdatedBy = auditUser;
+    newApplication.creator = auditUser;
     // While editing an application, a new application record is created and a new
     // assessment record is also created to be the used as a "current Assessment" record.
     // The application and the assessment records have a DB relationship and the
@@ -515,8 +516,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         transactionalEntityManager,
       );
 
-      // Set the creator to the student.
-      newApplication.creator = auditUser;
       newApplication.modifier = auditUser;
       newApplication.updatedAt = now;
       newApplication.studentAssessments = [originalAssessment];
