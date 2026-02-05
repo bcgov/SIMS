@@ -265,9 +265,10 @@ export class ECEResponseProcessingService {
       const warningMessage = validationResult.find(
         (result) => result.validationLevel === "warning",
       )?.message;
-      const errorMessage = validationResult.find(
-        (result) => result.validationLevel === "error",
-      )?.message;
+      const errorMessage = validationResult
+        .filter((result) => result.validationLevel === "error")
+        .map((result) => result.message)
+        .join(", ");
       if (warningMessage) {
         // Record has a warning, exclude it from the result.
         processSummaryResult.warnings.push(warningMessage);

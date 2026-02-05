@@ -83,25 +83,26 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
    */
   validate(): ValidationsResult[] {
     const validationsResult: ValidationsResult[] = [];
-    const errors: string[] = [];
     if (this.recordType !== RecordTypeCodes.ECEDetail) {
-      errors.push(`Invalid record type on detail: ${this.recordType}`);
+      validationsResult.push({
+        validationLevel: "error",
+        message: `Invalid record type on detail: ${this.recordType}`,
+      });
     }
     if (Number.isNaN(this.disbursementValueId)) {
-      errors.push(
-        "Invalid unique index number for the disbursement value ID record",
-      );
+      validationsResult.push({
+        validationLevel: "error",
+        message:
+          "Invalid unique index number for the disbursement value ID record",
+      });
     }
     if (
       !LEGACY_SKIPPED_AWARDS.has(this.disbursementValueCode) &&
       (!this.applicationNumber?.trim() || Number.isNaN(+this.applicationNumber))
     ) {
-      errors.push("Invalid application number");
-    }
-    if (errors.length) {
       validationsResult.push({
         validationLevel: "error",
-        message: errors.join(", "),
+        message: "Invalid application number",
       });
     }
     if (LEGACY_SKIPPED_AWARDS.has(this.disbursementValueCode)) {
