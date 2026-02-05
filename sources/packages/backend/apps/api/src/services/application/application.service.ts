@@ -1122,7 +1122,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "studentAppeal.id",
         "versions.id",
         "versions.applicationEditStatus",
-        "creator.id",
       ])
       .innerJoin("application.programYear", "programYear")
       .leftJoin("application.location", "location")
@@ -1144,7 +1143,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .leftJoin("currentAssessment.studentAppeal", "studentAppeal")
       .leftJoin("application.studentFiles", "studentFiles")
       .leftJoin("studentFiles.studentFile", "studentFile")
-      .leftJoin("application.creator", "creator")
       .where("application.student.id = :studentId", { studentId })
       .andWhere("programYear.active = true");
     if (status) {
