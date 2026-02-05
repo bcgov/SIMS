@@ -15,6 +15,9 @@ import {
   createE2EDataSources,
   createFakeDisbursementValue,
   saveFakeDisbursementReceiptsFromDisbursementSchedule,
+  createFakeStudentRestriction,
+  RestrictionCode,
+  saveFakeApplicationRestrictionBypass,
 } from "@sims/test-utils";
 import {
   ApplicationStatus,
@@ -23,6 +26,7 @@ import {
   DisbursementValueType,
   MSFAANumber,
   OfferingIntensity,
+  RestrictionActionType,
   Student,
 } from "@sims/sims-db";
 import {
@@ -777,6 +781,200 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
                 },
               ]),
               receiptReceived: true,
+            },
+          });
+        });
+    },
+  );
+
+  it(
+    "Should get the student assessment award summary containing all federal and provincial estimated and final awards " +
+      "for a part-time application with one disbursement (including disbursed adjustment and a bypassed restriction) when the e-Cert was not sent.",
+    async () => {
+      // Arrange
+      const dateSent1 = addDays(-60);
+      const enrolmentDate1 = addDays(1);
+      // First disbursement values.
+      const firstDisbursementValues = [
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaLoan,
+          "CSLP",
+          100,
+        ),
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaGrant,
+          "CSGP",
+          200,
+          { disbursedAmountSubtracted: 50 },
+        ),
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaGrant,
+          "CSPT",
+          300,
+        ),
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaGrant,
+          "CSGD",
+          400,
+        ),
+        createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 500),
+        createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 600),
+        // Must be ignored in the result even being present with an effective value.
+        createFakeDisbursementValue(
+          DisbursementValueType.BCTotalGrant,
+          "BCSG",
+          500 + 600,
+        ),
+      ];
+
+      // Part-time application with federal and provincial loans and grants and two disbursements.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        {
+          student: sharedStudent,
+          msfaaNumber: sharedMSFAANumber,
+          firstDisbursementValues,
+        },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+          createSecondDisbursement: false,
+          firstDisbursementInitialValues: {
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+            dateSent: dateSent1,
+            coeUpdatedAt: enrolmentDate1,
+            disbursementScheduleStatusUpdatedOn: dateSent1,
+          },
+        },
+      );
+
+      // Create a student restriction impacting BC Load/Grant
+      const restriction = await db.restriction.findOne({
+        select: { id: true },
+        where: {
+          restrictionCode: RestrictionCode.B6A,
+        },
+      });
+      await db.restriction.save(restriction);
+      const b2Restriction = createFakeStudentRestriction({
+        student: sharedStudent,
+        restriction: restriction,
+      });
+      await db.studentRestriction.save(b2Restriction);
+
+      // Bypass the restriction
+      await saveFakeApplicationRestrictionBypass(
+        db,
+        {
+          application,
+          studentRestriction: b2Restriction,
+        },
+        {
+          restrictionActionType: RestrictionActionType.StopPartTimeBCGrants,
+          restrictionCode: RestrictionCode.B6A,
+        },
+      );
+
+      const endpoint = `/aest/assessment/${application.currentAssessment.id}/award`;
+      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+      // Act/Assert
+      const [firstSchedule] =
+        application.currentAssessment.disbursementSchedules;
+      const offering = application.currentAssessment.offering;
+
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .then((response) => {
+          expect(response.body).toEqual({
+            applicationNumber: application.applicationNumber,
+            applicationStatus: ApplicationStatus.Completed,
+            institutionName:
+              offering.educationProgram.institution.operatingName,
+            offeringIntensity: OfferingIntensity.partTime,
+            offeringStudyStartDate: getDateOnlyFormat(offering.studyStartDate),
+            offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
+            firstDisbursement: {
+              disbursementDate: getDateOnlyFullMonthFormat(
+                firstSchedule.disbursementDate,
+              ),
+              status: firstSchedule.disbursementScheduleStatus,
+              coeStatus: firstSchedule.coeStatus,
+              msfaaNumber: sharedMSFAANumber.msfaaNumber,
+              msfaaId: sharedMSFAANumber.id,
+              msfaaCancelledDate: null,
+              msfaaDateSigned: sharedMSFAANumber.dateSigned,
+              tuitionRemittance: 0,
+              enrolmentDate: enrolmentDate1.toISOString(),
+              id: firstSchedule.id,
+              statusUpdatedOn: dateSent1.toISOString(),
+              dateSent: dateSent1.toISOString(),
+              documentNumber: firstSchedule.documentNumber,
+              disbursementValues: expect.arrayContaining([
+                {
+                  valueCode: "CSLP",
+                  valueType: DisbursementValueType.CanadaLoan,
+                  valueAmount: 100,
+                  effectiveAmount: null,
+                  hasRestrictionAdjustment: false,
+                  hasDisbursedAdjustment: false,
+                  hasPositiveOverawardAdjustment: false,
+                  hasNegativeOverawardAdjustment: false,
+                },
+                {
+                  valueCode: "CSGP",
+                  valueType: DisbursementValueType.CanadaGrant,
+                  valueAmount: 200,
+                  effectiveAmount: null,
+                  hasRestrictionAdjustment: false,
+                  hasDisbursedAdjustment: true,
+                  hasPositiveOverawardAdjustment: false,
+                  hasNegativeOverawardAdjustment: false,
+                },
+                {
+                  valueCode: "CSPT",
+                  valueType: DisbursementValueType.CanadaGrant,
+                  valueAmount: 300,
+                  effectiveAmount: null,
+                  hasRestrictionAdjustment: false,
+                  hasDisbursedAdjustment: false,
+                  hasPositiveOverawardAdjustment: false,
+                  hasNegativeOverawardAdjustment: false,
+                },
+                {
+                  valueCode: "CSGD",
+                  valueType: DisbursementValueType.CanadaGrant,
+                  valueAmount: 400,
+                  effectiveAmount: null,
+                  hasRestrictionAdjustment: false,
+                  hasDisbursedAdjustment: false,
+                  hasPositiveOverawardAdjustment: false,
+                  hasNegativeOverawardAdjustment: false,
+                },
+                {
+                  valueCode: "BCAG",
+                  valueType: DisbursementValueType.BCGrant,
+                  valueAmount: 500,
+                  effectiveAmount: null,
+                  hasRestrictionAdjustment: false,
+                  hasDisbursedAdjustment: false,
+                  hasPositiveOverawardAdjustment: false,
+                  hasNegativeOverawardAdjustment: false,
+                },
+                {
+                  valueCode: "SBSD",
+                  valueType: DisbursementValueType.BCGrant,
+                  valueAmount: 600,
+                  effectiveAmount: null,
+                  hasRestrictionAdjustment: false,
+                  hasDisbursedAdjustment: false,
+                  hasPositiveOverawardAdjustment: false,
+                  hasNegativeOverawardAdjustment: false,
+                },
+              ]),
+              receiptReceived: false,
             },
           });
         });
