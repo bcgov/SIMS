@@ -135,6 +135,7 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
         applicationEditStatus: true,
         applicationEditStatusUpdatedOn: true,
         applicationEditStatusUpdatedBy: { id: true },
+        creator: { id: true },
         currentAssessment: {
           id: true,
           studentAssessmentStatus: true,
@@ -152,6 +153,7 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
         precedingApplication: true,
         student: true,
         applicationEditStatusUpdatedBy: true,
+        creator: true,
         currentAssessment: {
           offering: true,
           studentAppeal: true,
@@ -180,6 +182,7 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
       applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
       applicationEditStatusUpdatedOn: now,
       applicationEditStatusUpdatedBy: { id: student.user.id },
+      creator: { id: student.user.id },
       currentAssessment: {
         id: expect.any(Number),
         studentAssessmentStatus: StudentAssessmentStatus.Submitted,

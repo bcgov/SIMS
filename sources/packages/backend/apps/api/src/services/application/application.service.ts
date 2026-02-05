@@ -515,6 +515,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         transactionalEntityManager,
       );
 
+      // Set the creator to the student.
+      newApplication.creator = auditUser;
       newApplication.modifier = auditUser;
       newApplication.updatedAt = now;
       newApplication.studentAssessments = [originalAssessment];
