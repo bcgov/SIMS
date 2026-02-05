@@ -13,15 +13,15 @@ export function useDisbursement() {
     icon?: string;
   } => {
     switch (status) {
+      case DisbursementScheduleStatus.ReadyToSend:
       case DisbursementScheduleStatus.Sent:
         return {
           label: DisbursementStatusBadgeLabel.Sent,
           status: StatusChipTypes.Success,
         };
       case DisbursementScheduleStatus.Pending:
-      case DisbursementScheduleStatus.ReadyToSend:
         return {
-          label: DisbursementStatusBadgeLabel.Pending,
+          label: DisbursementStatusBadgeLabel.Waiting,
           status: StatusChipTypes.Warning,
           icon: "fa:fa fa-clock-rotate-left",
         };

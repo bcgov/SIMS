@@ -47,6 +47,6 @@ export interface AssessmentAwardData {
  */
 export enum DisbursementStatusBadgeLabel {
   Cancelled = "Cancelled",
-  Pending = "Pending",
+  Waiting = "Waiting",
   Sent = "Sent",
 }

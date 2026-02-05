@@ -22,7 +22,13 @@
             >
               Final award
             </th>
-            <th scope="col" class="text-left font-weight-bold">Adjustments</th>
+            <th
+              v-if="showAdjustments"
+              scope="col"
+              class="text-left font-weight-bold"
+            >
+              Adjustments
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -42,7 +48,7 @@
             <td v-if="showFinalAward">
               {{ award.finalAmount }}
             </td>
-            <td>
+            <td v-if="showAdjustments">
               <assessment-award-adjustments
                 :adjustments="{
                   restriction: award.hasRestrictionAdjustment,
@@ -130,6 +136,23 @@ import CancelDisbursementSchedule from "@/components/common/CancelDisbursementSc
 import { AwardDisbursementScheduleAPIOutDTO } from "@/services/http/dto";
 
 const AWARD_NOT_ELIGIBLE = "(Not eligible)";
+
+/**
+ * Statuses which allow Adjustments to be shown.
+ */
+const ADJUSTMENT_STATUSES = new Set([
+  DisbursementScheduleStatus.Pending,
+  DisbursementScheduleStatus.ReadyToSend,
+  DisbursementScheduleStatus.Sent,
+]);
+
+/**
+ * Statuses which allow Final Award to be shown.
+ */
+const FINAL_AWARD_STATUSES = new Set([
+  DisbursementScheduleStatus.ReadyToSend,
+  DisbursementScheduleStatus.Sent,
+]);
 
 export default defineComponent({
   emits: {
@@ -232,8 +255,11 @@ export default defineComponent({
     });
 
     const showFinalAward = computed(() => {
-      //  Rejected disbursements should not show Final Award
-      return props.disbursement.status !== DisbursementScheduleStatus.Rejected;
+      return FINAL_AWARD_STATUSES.has(props.disbursement.status);
+    });
+
+    const showAdjustments = computed(() => {
+      return !ADJUSTMENT_STATUSES.has(props.disbursement.status);
     });
 
     const isDisbursementCompleted = computed<boolean>(
@@ -251,6 +277,7 @@ export default defineComponent({
     return {
       awards,
       showFinalAward,
+      showAdjustments,
       DisbursementScheduleStatus,
       isDisbursementCompleted,
       dateOnlyLongString,
