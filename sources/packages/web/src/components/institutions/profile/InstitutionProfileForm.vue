@@ -1,7 +1,8 @@
 <template>
   <formio-container
     form-name="institutionProfile"
-    :form-data="profileData"
+    :form-data="formData"
+    :is-data-ready="isDataReady"
     @loaded="formLoaded"
     @submitted="submitInstitutionProfile"
   >
@@ -23,9 +24,17 @@
 
 <script lang="ts">
 import { useFormioDropdownLoader } from "@/composables";
-import { PropType, defineComponent } from "vue";
-import { FormIOForm, InstitutionProfileFormData, Role } from "@/types";
+import { PropType, computed, defineComponent, onMounted, ref } from "vue";
+import {
+  FormIOForm,
+  InstitutionProfileFormData,
+  InstitutionProfileFormInitialData,
+  Role,
+  SystemLookupCategory,
+  SystemLookupEntry,
+} from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { SystemLookupConfigurationService } from "@/services/SystemLookupConfigurationService";
 
 export default defineComponent({
   components: {
@@ -33,7 +42,7 @@ export default defineComponent({
   },
   props: {
     profileData: {
-      type: Object as PropType<InstitutionProfileFormData>,
+      type: Object as PropType<InstitutionProfileFormInitialData>,
       required: true,
     },
     submitLabel: {
@@ -52,8 +61,19 @@ export default defineComponent({
     },
   },
   emits: ["submitInstitutionProfile"],
-  setup(_props, context) {
+  setup(props, context) {
     const formioDataLoader = useFormioDropdownLoader();
+    const countries = ref<SystemLookupEntry[]>([]);
+    const provinces = ref<SystemLookupEntry[]>([]);
+    const isLookupLoaded = ref(false);
+    const isDataReady = computed(
+      () => props.profileData && isLookupLoaded.value,
+    );
+    const formData = computed<InstitutionProfileFormData>(() => ({
+      ...props.profileData,
+      countries: countries.value,
+      provinces: provinces.value,
+    }));
 
     const submitInstitutionProfile = async (
       form: FormIOForm<InstitutionProfileFormData>,
@@ -65,10 +85,34 @@ export default defineComponent({
       await formioDataLoader.loadInstitutionTypes(form, "institutionType");
     };
 
+    /**
+     * Loads the lookup data.
+     */
+    const loadLookup = async () => {
+      const countryLookupPromise =
+        SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
+          SystemLookupCategory.Country,
+        );
+      const provinceLookupPromise =
+        SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
+          SystemLookupCategory.Province,
+        );
+      const [countryLookup, provinceLookup] = await Promise.all([
+        countryLookupPromise,
+        provinceLookupPromise,
+      ]);
+      countries.value = countryLookup.items;
+      provinces.value = provinceLookup.items;
+      isLookupLoaded.value = true;
+    };
+    onMounted(loadLookup);
+
     return {
       submitInstitutionProfile,
       formLoaded,
       Role,
+      isDataReady,
+      formData,
     };
   },
 });

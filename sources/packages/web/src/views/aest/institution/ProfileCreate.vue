@@ -19,7 +19,7 @@
 <script lang="ts">
 import { ref, defineComponent } from "vue";
 import { useRouter } from "vue-router";
-import { ClientIdType, InstitutionProfileFormData, Role } from "@/types";
+import { ClientIdType, InstitutionProfileFormInitialData, Role } from "@/types";
 import { AESTCreateInstitutionAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
 import { useFormioUtils, useSnackBar } from "@/composables";
@@ -36,7 +36,7 @@ export default defineComponent({
     const institutionProfileModel = ref({
       clientType: ClientIdType.AEST,
       mode: "create",
-    } as InstitutionProfileFormData);
+    } as InstitutionProfileFormInitialData);
 
     const createInstitution = async (data: unknown) => {
       try {

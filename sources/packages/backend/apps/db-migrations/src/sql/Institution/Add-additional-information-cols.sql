@@ -66,17 +66,17 @@ SET
         ELSE NULL
     END,
     classification = CASE
-        -- Update for Canadian public institution types(BC Public, Out of Province Public) to Public.
-        -- Update for Canadian private institution types(BC Private, Out of Province Private) to Private.
-        WHEN institution_type_id IN (1, 3) THEN 'Public'
-        WHEN institution_type_id IN (2, 7) THEN 'Private'
+        -- Update for Canadian public institution types(BC Public, Out of Province Public) to public.
+        -- Update for Canadian private institution types(BC Private, Out of Province Private) to private.
+        WHEN institution_type_id IN (1, 3) THEN 'public'
+        WHEN institution_type_id IN (2, 7) THEN 'private'
         ELSE NULL
     END,
     medical_school_status = CASE
-        -- Update for International Medical institution type to Yes.
-        -- Update for International institution type to No.
-        WHEN institution_type_id = 6 THEN 'Yes'
-        WHEN institution_type_id = 5 THEN 'No'
+        -- Update for International Medical institution type to yes.
+        -- Update for International institution type to no.
+        WHEN institution_type_id = 6 THEN 'yes'
+        WHEN institution_type_id = 5 THEN 'no'
         ELSE NULL
     END,
     updated_at = NOW(),

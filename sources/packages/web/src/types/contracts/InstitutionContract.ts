@@ -42,10 +42,15 @@ export interface InstitutionProfileFormData {
   primaryContactPhone: string;
   // Mailing Address
   mailingAddress: InstitutionMailingAddress;
-  countries?: SystemLookupEntry[];
+  countries: SystemLookupEntry[];
+  provinces: SystemLookupEntry[];
   clientType?: ClientIdType;
   mode?: "create" | "edit";
 }
+export type InstitutionProfileFormInitialData = Omit<
+  InstitutionProfileFormData,
+  "countries" | "provinces"
+>;
 
 /**
  * Institution classification types.
@@ -59,14 +64,14 @@ export enum InstitutionClassification {
  * Institution organization status types.
  */
 export enum InstitutionOrganizationStatus {
-  Profit = "Profit",
-  NotForProfit = "Not for profit",
+  Profit = "profit",
+  NotForProfit = "not for profit",
 }
 
 /**
  * Institution medical school status types.
  */
 export enum InstitutionMedicalSchoolStatus {
-  Yes = "Yes",
-  No = "No",
+  Yes = "yes",
+  No = "no",
 }
