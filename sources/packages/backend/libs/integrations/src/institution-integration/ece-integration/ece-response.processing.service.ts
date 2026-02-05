@@ -182,7 +182,7 @@ export class ECEResponseProcessingService {
       // Set the total records count.
       disbursementProcessingDetails.totalRecords = eceFileDetailRecords.length;
       // Sanitize all the ece response detail records.
-      this.sanitizeDisbursements(
+      const filteredECEFileDetailRecords = this.sanitizeDisbursements(
         eceFileDetailRecords,
         processSummary,
         disbursementProcessingDetails,
@@ -190,7 +190,7 @@ export class ECEResponseProcessingService {
       // Transform ECE response detail records to disbursements which could be individually processed.
       const disbursementsToProcess =
         await this.transformDetailRecordsToDisbursements(
-          eceFileDetailRecords,
+          filteredECEFileDetailRecords,
           processSummary,
           disbursementProcessingDetails,
         );
@@ -201,7 +201,6 @@ export class ECEResponseProcessingService {
         processSummary,
         disbursementProcessingDetails,
       );
-
       this.logger.log(`Completed processing the file ${remoteFilePath}.`);
     } catch (error: unknown) {
       if (
@@ -254,7 +253,7 @@ export class ECEResponseProcessingService {
     eceFileDetailRecords: ECEResponseFileDetail[],
     processSummaryResult: ProcessSummaryResult,
     disbursementProcessingDetails: DisbursementProcessingDetails,
-  ): void {
+  ): ECEResponseFileDetail[] {
     let hasErrors = false;
     // Filter out records with warnings and track them.
     const validRecords = eceFileDetailRecords.filter((eceDetailRecord) => {
@@ -265,16 +264,16 @@ export class ECEResponseProcessingService {
       const warningMessage = validationResult.find(
         (result) => result.validationLevel === "warning",
       )?.message;
-      const errorMessage = validationResult
-        .filter((result) => result.validationLevel === "error")
-        .map((result) => result.message)
-        .join(", ");
       if (warningMessage) {
         // Record has a warning, exclude it from the result.
         processSummaryResult.warnings.push(warningMessage);
         ++disbursementProcessingDetails.totalRecordsSkipped;
         return false;
       }
+      const errorMessage = validationResult
+        .filter((result) => result.validationLevel === "error")
+        .map((result) => result.message)
+        .join(", ");
       if (errorMessage) {
         hasErrors = true;
         ++disbursementProcessingDetails.fileParsingErrors;
@@ -290,8 +289,7 @@ export class ECEResponseProcessingService {
       );
     }
     // Replace the original array contents with valid records.
-    eceFileDetailRecords.length = 0;
-    eceFileDetailRecords.push(...validRecords);
+    return validRecords;
   }
 
   /**
