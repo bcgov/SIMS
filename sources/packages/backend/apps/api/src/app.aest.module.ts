@@ -92,6 +92,7 @@ import {
   ApplicationChangeRequestAESTController,
   DynamicFormAESTController,
   DisbursementScheduleAESTController,
+  FormSubmissionAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -148,6 +149,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     ApplicationChangeRequestAESTController,
     DynamicFormAESTController,
     DisbursementScheduleAESTController,
+    FormSubmissionAESTController,
   ],
   providers: [
     ApplicationExceptionControllerService,

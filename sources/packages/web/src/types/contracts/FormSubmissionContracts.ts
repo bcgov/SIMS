@@ -61,6 +61,7 @@ export enum FormSubmissionDecisionStatus {
 
 export interface FormSubmissionItemApproval {
   id: number;
+  parentName: string;
   status: FormSubmissionDecisionStatus;
   noteDescription: string;
   assessedDate?: string;
@@ -71,6 +72,7 @@ export interface FormSubmissionItemApproval {
 export interface FormSubmissionItem {
   dynamicConfigurationId: number;
   category: FormCategory;
+  formType: string;
   formName: string;
   formData: unknown;
   files?: string[];
@@ -80,6 +82,6 @@ export interface FormSubmissionItem {
 export interface FormSubmissionItemSubmitted {
   dynamicConfigurationId: number;
   formData: unknown;
-  files?: string[];
+  files: string[];
   approval?: FormSubmissionItemApproval;
 }

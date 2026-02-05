@@ -66,6 +66,7 @@ import ApplicationRestrictionsManagement from "@/views/aest/student/applicationD
 import ApplicationStatusTracker from "@/views/aest/student/applicationDetails/ApplicationStatusTracker.vue";
 import { AESTRoutesApplicationVersionsDetails } from "@/router/AESTRoutesApplicationVersionsDetails";
 import ViewPendingOfferings from "@/views/aest/institution/ViewPendingOfferings.vue";
+import StudentFormSubmissionApproval from "@/views/aest/student/StudentFormSubmissionApproval.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -198,6 +199,19 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
         props: true,
         component: StudentAppealRequestsApproval,
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.StudentFormSubmissionApproval,
+        name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_APPROVAL,
+        props: (route) => ({
+          formSubmissionId: Number.parseInt(
+            route.params.formSubmissionId as string,
+          ),
+        }),
+        component: StudentFormSubmissionApproval,
         meta: {
           clientType: ClientIdType.AEST,
         },

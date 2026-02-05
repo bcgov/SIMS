@@ -6,6 +6,7 @@ import {
   UnprocessableEntityException,
   BadRequestException,
   Get,
+  Param,
 } from "@nestjs/common";
 import {
   ApplicationService,
@@ -16,8 +17,8 @@ import {
 } from "../../services";
 import {
   FormSubmissionAPIInDTO,
-  FormSubmissionAPIOutDTO,
-  FormSubmissionsAPIOutDTO,
+  FormSubmissionStudentAPIOutDTO,
+  FormSubmissionStudentSummaryAPIOutDTO,
 } from "./models/form-submission.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -63,12 +64,12 @@ export class FormSubmissionStudentsController extends BaseController {
   @Get()
   async getFormSubmissionSummary(
     @UserToken() userToken: StudentUserToken,
-  ): Promise<FormSubmissionsAPIOutDTO> {
+  ): Promise<FormSubmissionStudentSummaryAPIOutDTO> {
     const studentSubmissions =
       await this.formSubmissionService.getFormSubmissionsByStudentId(
         userToken.studentId,
       );
-    const submissions = studentSubmissions.map<FormSubmissionAPIOutDTO>(
+    const submissions = studentSubmissions.map<FormSubmissionStudentAPIOutDTO>(
       (submission) => {
         return {
           id: submission.id,
@@ -78,6 +79,10 @@ export class FormSubmissionStudentsController extends BaseController {
             formType: item.dynamicFormConfiguration.formType,
             decisionStatus: item.decisionStatus,
             decisionDate: item.decisionDate,
+            dynamicFormConfigurationId: item.dynamicFormConfiguration.id,
+            submissionData: item.submittedData,
+            formDefinitionName:
+              item.dynamicFormConfiguration.formDefinitionName,
           })),
           applicationId: submission.application?.id,
           applicationNumber: submission.application?.applicationNumber,
@@ -87,6 +92,35 @@ export class FormSubmissionStudentsController extends BaseController {
       },
     );
     return { submissions };
+  }
+
+  @Get(":formSubmissionId")
+  async getFormSubmission(
+    @Param("formSubmissionId") formSubmissionId: number,
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<FormSubmissionStudentAPIOutDTO> {
+    const submission = await this.formSubmissionService.getFormSubmissionsById(
+      formSubmissionId,
+      { studentId: userToken.studentId },
+    );
+    return {
+      id: submission.id,
+      formCategory: submission.formCategory,
+      status: submission.submissionStatus,
+      applicationId: submission.application?.id,
+      applicationNumber: submission.application?.applicationNumber,
+      assessedDate: submission.assessedDate,
+      submittedDate: submission.submittedDate,
+      submissionItems: submission.formSubmissionItems.map((item) => ({
+        formType: item.dynamicFormConfiguration.formType,
+        formCategory: item.dynamicFormConfiguration.formCategory,
+        decisionStatus: item.decisionStatus,
+        decisionDate: item.decisionDate,
+        dynamicFormConfigurationId: item.dynamicFormConfiguration.id,
+        submissionData: item.submittedData,
+        formDefinitionName: item.dynamicFormConfiguration.formDefinitionName,
+      })),
+    };
   }
 
   /**
@@ -111,7 +145,7 @@ export class FormSubmissionStudentsController extends BaseController {
       "Not able to submit change request/appeal due to invalid request.",
   })
   @Post()
-  async submitApplicationAppeal(
+  async submitForm(
     @Body() payload: FormSubmissionAPIInDTO,
     @UserToken() userToken: StudentUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {

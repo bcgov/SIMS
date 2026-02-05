@@ -133,8 +133,39 @@ export class FormSubmissionService {
         formSubmissionItems: { dynamicFormConfiguration: true },
         application: true,
       },
-      where: [{ student: { id: studentId } }],
+      where: { student: { id: studentId } },
       order: { submittedDate: "DESC", formSubmissionItems: { id: "ASC" } },
+    });
+  }
+
+  async getFormSubmissionsById(
+    formSubmissionId: number,
+    options?: { studentId?: number },
+  ): Promise<FormSubmission> {
+    return this.formSubmissionRepo.findOne({
+      select: {
+        id: true,
+        submissionStatus: true,
+        submittedDate: true,
+        assessedDate: true,
+        formCategory: true,
+        formSubmissionItems: {
+          id: true,
+          dynamicFormConfiguration: {
+            id: true,
+            formType: true,
+            formCategory: true,
+            formDefinitionName: true,
+          },
+          submittedData: true,
+          decisionStatus: true,
+          decisionDate: true,
+        },
+      },
+      relations: {
+        formSubmissionItems: { dynamicFormConfiguration: true },
+      },
+      where: { id: formSubmissionId, student: { id: options?.studentId } },
     });
   }
 

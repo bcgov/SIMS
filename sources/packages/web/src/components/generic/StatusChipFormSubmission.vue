@@ -1,5 +1,5 @@
 <template>
-  <chip-status :status="chipStatus" :label="status" />
+  <chip-status :status="chipStatus" :label="label" />
 </template>
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
@@ -13,12 +13,17 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const label = computed(() =>
+      props.status === FormSubmissionStatus.Pending
+        ? FormSubmissionStatus.Pending
+        : FormSubmissionStatus.Completed,
+    );
     const chipStatus = computed(() =>
       props.status === FormSubmissionStatus.Completed
         ? StatusChipTypes.Success
         : StatusChipTypes.Warning,
     );
-    return { chipStatus };
+    return { chipStatus, label };
   },
 });
 </script>

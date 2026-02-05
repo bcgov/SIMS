@@ -59,6 +59,7 @@ export enum AppRoutes {
    * Student forms submission page.
    */
   StudentFormsSubmit = "forms/:formDefinitions",
+  StudentFormSubmission = "forms/submission/:formDefinitionId",
 
   // Institution
   InstitutionRoot = "/institution",
@@ -169,4 +170,5 @@ export enum AppRoutes {
   DynamicFormEditor = "dynamic-form-editor",
   ApplicationRestrictionsManagement = "application-restrictions-management",
   ApplicationStatusTracker = "application-status-tracker",
+  StudentFormSubmissionApproval = "form-submission/:formSubmissionId",
 }

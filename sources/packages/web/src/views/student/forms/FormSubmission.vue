@@ -1,3 +1,4 @@
+<!-- Allow the student to submit a new form. -->
 <template>
   <student-page-container>
     <template #header>
@@ -42,7 +43,7 @@ import {
 import { ApplicationService } from "@/services/ApplicationService";
 import { useSnackBar } from "@/composables";
 import { AppealApplicationDetailsAPIOutDTO } from "@/services/http/dto";
-import FormSubmissionItems from "./FormSubmissionItems.vue";
+import FormSubmissionItems from "@/components/form-submissions/FormSubmissionItems.vue";
 import { DynamicFormConfigurationService } from "@/services/DynamicFormConfigurationService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { FormSubmissionsService } from "@/services/FormSubmissionsService";
@@ -73,7 +74,7 @@ export default defineComponent({
 
     const submitted = async (items: FormSubmissionItemSubmitted[]) => {
       try {
-        await FormSubmissionsService.shared.submitApplicationAppeal({
+        await FormSubmissionsService.shared.submitForm({
           applicationId: props.applicationId,
           items,
         });
@@ -123,13 +124,13 @@ export default defineComponent({
           }
           return {
             dynamicConfigurationId: formConfiguration.id,
+            formType: formConfiguration.formType,
             category: formConfiguration.formCategory,
             formName: formConfiguration.formDefinitionName,
             formData: {
               programYear: application?.programYear,
               parents: application?.supportingUserParents,
             },
-            files: [],
           };
         },
       );

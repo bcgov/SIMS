@@ -38,6 +38,7 @@ import StudentForms from "@/views/student/forms/StudentForms.vue";
 import StudentFormsSelector from "@/views/student/forms/StudentFormsSelector.vue";
 import StudentFormsHistory from "@/views/student/forms/StudentFormsHistory.vue";
 import FormSubmission from "@/views/student/forms/FormSubmission.vue";
+import FormSubmissionView from "@/views/student/forms/FormSubmissionView.vue";
 import {
   StudentRoutesConst,
   SharedRouteConst,
@@ -271,6 +272,19 @@ export const studentRoutes: Array<RouteRecordRaw> = [
           applicationId: route.query["application"]
             ? Number.parseInt(route.query["application"] as string)
             : undefined,
+        }),
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentFormSubmission,
+        name: StudentRoutesConst.STUDENT_FORMS_SUBMISSION_VIEW,
+        component: FormSubmissionView,
+        props: (route) => ({
+          formDefinitionId: Number.parseInt(
+            route.params.formDefinitionId as string,
+          ),
         }),
         meta: {
           clientType: ClientIdType.Student,

@@ -1,16 +1,12 @@
 import {
   FormCategory,
-  FormSubmissionDecisionStatus,
   FormSubmissionStatus,
+  FormSubmissionDecisionStatus,
 } from "@/types";
 
-interface FormSubmissionItemAPIOutDTO {
-  formType: string;
-  decisionStatus: FormSubmissionDecisionStatus;
-  decisionDate?: Date;
-}
+// Base classes for submission DTOs and submission items.
 
-export interface FormSubmissionAPIOutDTO {
+abstract class FormSubmissionAPIOutDTO {
   id: number;
   formCategory: FormCategory;
   status: FormSubmissionStatus;
@@ -18,20 +14,64 @@ export interface FormSubmissionAPIOutDTO {
   applicationNumber?: string;
   submittedDate: Date;
   assessedDate?: Date;
-  submissionItems: FormSubmissionItemAPIOutDTO[];
 }
 
-export interface FormSubmissionsAPIOutDTO {
-  submissions: FormSubmissionAPIOutDTO[];
+abstract class FormSubmissionItemAPIOutDTO {
+  formType: string;
+  formCategory: FormCategory;
+  decisionStatus: FormSubmissionDecisionStatus;
+  decisionDate?: Date;
+  dynamicFormConfigurationId: number;
+  submissionData: unknown;
+  formDefinitionName: string;
 }
 
-export interface FormSubmissionItemAPIInDTO {
+// Submission summary (history).
+
+export class FormSubmissionStudentSummaryAPIOutDTO {
+  submissions: FormSubmissionStudentAPIOutDTO[];
+}
+
+export class FormSubmissionMinistrySummaryAPIOutDTO {
+  submissions: FormSubmissionMinistryAPIOutDTO[];
+}
+
+// Get submission and items.
+
+class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {}
+
+export class FormSubmissionMinistryAPIOutDTO extends FormSubmissionAPIOutDTO {
+  submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
+}
+
+class FormSubmissionItemStudentAPIOutDTO extends FormSubmissionItemAPIOutDTO {}
+
+export class FormSubmissionStudentAPIOutDTO extends FormSubmissionAPIOutDTO {
+  submissionItems: FormSubmissionItemStudentAPIOutDTO[];
+}
+
+// Student submission.
+
+export class FormSubmissionItemAPIInDTO {
   dynamicConfigurationId: number;
   formData: unknown;
-  files?: string[];
+  files: string[];
 }
 
-export interface FormSubmissionAPIInDTO {
+export class FormSubmissionAPIInDTO {
   applicationId?: number;
   items: FormSubmissionItemAPIInDTO[];
+}
+
+// Ministry submission.
+
+export class FormSubmissionItemDecisionAPIInDTO {
+  dynamicConfigurationId: number;
+  decisionStatus: FormSubmissionDecisionStatus;
+  noteDescription: string;
+}
+
+export class FormSubmissionFinalDecisionAPIInDTO {
+  submissionId: number;
+  submissionStatus: FormSubmissionStatus;
 }

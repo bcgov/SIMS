@@ -1,7 +1,11 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
   FormSubmissionAPIInDTO,
-  FormSubmissionsAPIOutDTO,
+  FormSubmissionFinalDecisionAPIInDTO,
+  FormSubmissionItemDecisionAPIInDTO,
+  FormSubmissionMinistryAPIOutDTO,
+  FormSubmissionStudentAPIOutDTO,
+  FormSubmissionStudentSummaryAPIOutDTO,
 } from "@/services/http/dto/FormSubmission.dto";
 
 export class FormSubmissionsService {
@@ -12,13 +16,37 @@ export class FormSubmissionsService {
     return this.instance || (this.instance = new this());
   }
 
-  async getFormSubmissionSummary(): Promise<FormSubmissionsAPIOutDTO> {
+  async getFormSubmissionSummary(): Promise<FormSubmissionStudentSummaryAPIOutDTO> {
     return ApiClient.FormSubmissions.getFormSubmissionSummary();
   }
 
-  async submitApplicationAppeal(
-    payload: FormSubmissionAPIInDTO,
+  async getFormSubmission(
+    formSubmissionId: number,
+  ): Promise<FormSubmissionStudentAPIOutDTO | FormSubmissionMinistryAPIOutDTO> {
+    return ApiClient.FormSubmissions.getFormSubmission(formSubmissionId);
+  }
+
+  async submitForm(payload: FormSubmissionAPIInDTO): Promise<void> {
+    await ApiClient.FormSubmissions.submitForm(payload);
+  }
+
+  async submitItemDecision(
+    formSubmissionId: number,
+    payload: FormSubmissionItemDecisionAPIInDTO,
   ): Promise<void> {
-    await ApiClient.FormSubmissions.submitApplicationAppeal(payload);
+    await ApiClient.FormSubmissions.submitItemDecision(
+      formSubmissionId,
+      payload,
+    );
+  }
+
+  async submitFinalDecision(
+    formSubmissionId: number,
+    payload: FormSubmissionFinalDecisionAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.FormSubmissions.submitFinalDecision(
+      formSubmissionId,
+      payload,
+    );
   }
 }

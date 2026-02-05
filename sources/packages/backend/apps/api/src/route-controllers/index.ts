@@ -105,3 +105,4 @@ export * from "./disbursement-schedule/disbursement-schedule.aest.controller";
 export * from "./disbursement-schedule/models/disbursement-schedule.dto";
 export * from "./form-submission/models/form-submission.dto";
 export * from "./form-submission/form-submission.students.controller";
+export * from "./form-submission/form-submission.aest.controller";

@@ -36,11 +36,15 @@
         >
           <v-card-item>
             <v-card-title>
-              <span class="category-header-medium brand-gray-text mr-2">{{
+              <span class="category-header-medium color-blue mr-2">{{
                 submission.formCategory
               }}</span>
               <StatusChipFormSubmission :status="submission.status" />
-              <v-btn color="primary" class="float-right">
+              <v-btn
+                color="primary"
+                class="float-right"
+                @click="goToSubmission(submission.id)"
+              >
                 View submitted form(s)
               </v-btn>
               <v-divider class="mb-0"></v-divider>
@@ -121,9 +125,9 @@ import { useFormatters, useStudentAppeals } from "@/composables";
 import router from "@/router";
 import { useDisplay } from "vuetify";
 import { FormSubmissionsService } from "@/services/FormSubmissionsService";
-import { FormSubmissionAPIOutDTO } from "@/services/http/dto/FormSubmission.dto";
 import StatusChipFormSubmission from "@/components/generic/StatusChipFormSubmission.vue";
 import StatusChipFormSubmissionDecision from "@/components/generic/StatusChipFormSubmissionDecision.vue";
+import { FormSubmissionStudentAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   components: {
@@ -139,7 +143,7 @@ export default defineComponent({
       conditionalEmptyStringFiller,
       dateOnlyLongString,
     } = useFormatters();
-    const submissions = ref<FormSubmissionAPIOutDTO[]>();
+    const submissions = ref<FormSubmissionStudentAPIOutDTO[]>();
 
     watchEffect(async () => {
       const submissionSummary =
@@ -147,11 +151,11 @@ export default defineComponent({
       submissions.value = submissionSummary.submissions;
     });
 
-    const goToAppeal = async (appealId: number) => {
+    const goToSubmission = async (formDefinitionId: number) => {
       await router.push({
-        name: StudentRoutesConst.STUDENT_APPEAL_REQUEST,
+        name: StudentRoutesConst.STUDENT_FORMS_SUBMISSION_VIEW,
         params: {
-          appealId,
+          formDefinitionId,
         },
       });
     };
@@ -165,7 +169,7 @@ export default defineComponent({
       conditionalEmptyStringFiller,
       dateOnlyLongString,
       mapStudentAppealsFormNames,
-      goToAppeal,
+      goToSubmission,
     };
   },
 });
