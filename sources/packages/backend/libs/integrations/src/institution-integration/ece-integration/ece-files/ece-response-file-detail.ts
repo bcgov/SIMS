@@ -85,7 +85,7 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
         this.disbursementValueCode === "INTP" ||
         this.disbursementValueCode === "INTF"
       ) &&
-      (!this.applicationNumber?.trim() || isNaN(+this.applicationNumber))
+      (!this.applicationNumber?.trim() || Number.isNaN(+this.applicationNumber))
     ) {
       errors.push("Invalid application number");
     }
