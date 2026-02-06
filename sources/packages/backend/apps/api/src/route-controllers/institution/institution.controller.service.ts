@@ -70,11 +70,13 @@ export class InstitutionControllerService {
       isBCPrivate,
       isBCPublic,
       hasBusinessGuid: !!institutionDetail.businessGuid,
-      country: institutionDetail.country,
-      province: institutionDetail.province,
-      classification: institutionDetail.classification,
-      organizationStatus: institutionDetail.organizationStatus,
-      medicalSchoolStatus: institutionDetail.medicalSchoolStatus,
+      // Fallback to undefined is to avoid returning null which is causing issues at the consumer side
+      // and eventually all these fields should become mandatory.
+      country: institutionDetail.country ?? undefined,
+      province: institutionDetail.province ?? undefined,
+      classification: institutionDetail.classification ?? undefined,
+      organizationStatus: institutionDetail.organizationStatus ?? undefined,
+      medicalSchoolStatus: institutionDetail.medicalSchoolStatus ?? undefined,
     };
   }
 

@@ -46,7 +46,6 @@ export default defineComponent({
     };
 
     const updateInstitution = async (data: InstitutionProfileAPIInDTO) => {
-      console.log("Updating institution with data:", data);
       try {
         const typedData = excludeExtraneousValues(
           InstitutionProfileAPIInDTO,

@@ -71,8 +71,8 @@ export default defineComponent({
     );
     const formData = computed<InstitutionProfileFormData>(() => ({
       ...props.profileData,
-      countries: countries.value,
-      provinces: provinces.value,
+      countryOptionValues: countries.value,
+      provinceOptionValues: provinces.value,
     }));
 
     const submitInstitutionProfile = async (

@@ -42,22 +42,22 @@ export interface InstitutionProfileFormData {
   primaryContactPhone: string;
   // Mailing Address
   mailingAddress: InstitutionMailingAddress;
-  countries: SystemLookupEntry[];
-  provinces: SystemLookupEntry[];
+  countryOptionValues: SystemLookupEntry[];
+  provinceOptionValues: SystemLookupEntry[];
   clientType?: ClientIdType;
   mode?: "create" | "edit";
 }
 export type InstitutionProfileFormInitialData = Omit<
   InstitutionProfileFormData,
-  "countries" | "provinces"
+  "countryOptionValues" | "provinceOptionValues"
 >;
 
 /**
  * Institution classification types.
  */
 export enum InstitutionClassification {
-  Public = "Public",
-  Private = "Private",
+  Public = "public",
+  Private = "private",
 }
 
 /**
@@ -65,7 +65,7 @@ export enum InstitutionClassification {
  */
 export enum InstitutionOrganizationStatus {
   Profit = "profit",
-  NotForProfit = "not for profit",
+  NotForProfit = "notForProfit",
 }
 
 /**
