@@ -7,6 +7,17 @@ import {
 } from "../models/ece-integration.model";
 
 /**
+ * Legacy award codes for which the records are skipped.
+ * These awards are related to Interest free/in-study records from SFAS.
+ */
+const LEGACY_SKIPPED_AWARDS = new Set(["INTP", "INTF"]);
+
+interface ValidationsResult {
+  validationLevel: "warning" | "error";
+  message: string;
+}
+
+/**
  * ECE response file detail.
  * Read and parse the detail records of ECE response file.
  */
@@ -27,6 +38,13 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
    */
   get disbursementValueId(): number {
     return +this.line.substring(5, 15);
+  }
+
+  /**
+   * Disbursement value code.
+   */
+  get disbursementValueCode(): string {
+    return this.line.substring(15, 19);
   }
 
   /**
@@ -63,19 +81,36 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
    * Validate the record detail data.
    * @returns validation error message if validation fails.
    */
-  getInvalidDataMessage(): string | undefined {
-    const errors: string[] = [];
+  validate(): ValidationsResult[] {
+    const validationsResult: ValidationsResult[] = [];
     if (this.recordType !== RecordTypeCodes.ECEDetail) {
-      errors.push(`Invalid record type on detail: ${this.recordType}`);
+      validationsResult.push({
+        validationLevel: "error",
+        message: `Invalid record type on detail: ${this.recordType}`,
+      });
     }
-    if (isNaN(this.disbursementValueId)) {
-      errors.push(
-        "Invalid unique index number for the disbursement value ID record",
-      );
+    if (Number.isNaN(this.disbursementValueId)) {
+      validationsResult.push({
+        validationLevel: "error",
+        message:
+          "Invalid unique index number for the disbursement value ID record",
+      });
     }
-    if (!this.applicationNumber?.trim() || isNaN(+this.applicationNumber)) {
-      errors.push("Invalid application number");
+    if (
+      !LEGACY_SKIPPED_AWARDS.has(this.disbursementValueCode) &&
+      (!this.applicationNumber?.trim() || Number.isNaN(+this.applicationNumber))
+    ) {
+      validationsResult.push({
+        validationLevel: "error",
+        message: "Invalid application number",
+      });
     }
-    return errors.length ? errors.join(", ") : undefined;
+    if (LEGACY_SKIPPED_AWARDS.has(this.disbursementValueCode)) {
+      validationsResult.push({
+        validationLevel: "warning",
+        message: `Award code ${this.disbursementValueCode} is legacy only, record at line ${this.lineNumber} skipped.`,
+      });
+    }
+    return validationsResult;
   }
 }

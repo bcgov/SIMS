@@ -45,6 +45,7 @@ import {
   CONR_008_MULT_FILE,
   CONR_008_VALD_FILE,
   CONR_008_DBLO_FILE,
+  CONR_008_WARN_FILE,
   AWARD_VALUE_ID_PLACEHOLDER,
   AWARD_VALUE_ID_PLACEHOLDER_1,
   AWARD_VALUE_ID_PLACEHOLDER_2,
@@ -69,6 +70,7 @@ describe(
     let db: E2EDataSources;
     let sftpClientMock: DeepMocked<Client>;
     let eceResponseMockDownloadFolder: string;
+    let locationWARN: InstitutionLocation;
     let locationCONF: InstitutionLocation;
     let locationDECL: InstitutionLocation;
     let locationSKIP: InstitutionLocation;
@@ -93,6 +95,7 @@ describe(
       // Processor to be tested.
       processor = app.get(ECEResponseIntegrationScheduler);
       const {
+        institutionLocationWARN,
         institutionLocationCONF,
         institutionLocationDECL,
         institutionLocationSKIP,
@@ -101,6 +104,7 @@ describe(
         institutionLocationVALD,
         institutionLocationDBLO,
       } = await createInstitutionLocations(db);
+      locationWARN = institutionLocationWARN;
       locationCONF = institutionLocationCONF;
       locationDECL = institutionLocationDECL;
       locationSKIP = institutionLocationSKIP;
@@ -124,6 +128,84 @@ describe(
         { dateSent: IsNull() },
         { dateSent: new Date() },
       );
+    });
+
+    it("Should process an ECE response file and generate warning message when the disbursement value code is of the type 'INTP' or 'INTF'.", async () => {
+      // Arrange
+      // Enable integration for institution location used for test.
+      await enableIntegration(locationWARN, db);
+      const confirmEnrolmentResponseFile = path.join(
+        process.env.INSTITUTION_RESPONSE_FOLDER,
+        CONR_008_WARN_FILE,
+      );
+
+      // Create disbursement to confirm enrolment.
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        undefined,
+        {
+          applicationStatus: ApplicationStatus.Enrolment,
+        },
+      );
+
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const [referenceDisbursementValue] = disbursement.disbursementValues;
+      const currentDate = new Date();
+
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Modify the data in mock file to have the correct values for
+      // disbursement value ID and application number.
+      mockDownloadFiles(
+        sftpClientMock,
+        [CONR_008_WARN_FILE],
+        (fileContent: string) => {
+          return replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: referenceDisbursementValue.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: application.applicationNumber,
+            },
+            { placeholder: ENRL_DATE_PLACEHOLDER_1, value: currentDate },
+          ]);
+        },
+      );
+
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
+
+      // Assert
+      expect(result).toStrictEqual([
+        "ECE response files received: 1. Check logs for details.",
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+        "Error(s): 0, Warning(s): 2, Info: 17",
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file(s) for institution code: WARN, files: ${CONR_008_WARN_FILE}.`,
+          `Starting download of file ${confirmEnrolmentResponseFile}.`,
+          `Disbursement ${disbursement.id}, enrolment confirmed.`,
+          `The file ${confirmEnrolmentResponseFile} has been archived after processing.`,
+          "Notification has been created to send email to integration contacts.",
+          "Total file parsing errors: 0",
+          "Total detail records found: 3",
+          "Total detail records skipped: 2",
+          "Total disbursements found: 1",
+          "Disbursements successfully updated: 1",
+          "Disbursements skipped to be processed: 0",
+          "Disbursements considered duplicate and skipped: 0",
+          "Disbursements failed to process: 0",
+          "WARN: Award code INTP is legacy only, record at line 3 skipped.",
+          "WARN: Award code INTF is legacy only, record at line 4 skipped.",
+        ]),
+      ).toBe(true);
+      // Expect the archive method to be called.
+      expect(sftpClientMock.rename).toHaveBeenCalled();
     });
 
     it("Should process an ECE response file and confirm the enrolment and create notification when the disbursement and application are valid.", async () => {

@@ -14,6 +14,7 @@ import { IsNull } from "typeorm";
 import { formatDate } from "@sims/utilities/date-utils";
 
 export const CONR_008_CONF_FILE = "CONR-008-CONF-20250502-144027.TXT";
+export const CONR_008_WARN_FILE = "CONR-008-WARN-20250502-144027.TXT";
 export const CONR_008_DECL_FILE = "CONR-008-DECL-20250502-144027.TXT";
 export const CONR_008_SKIP_FILE = "CONR-008-SKIP-20250502-144027.TXT";
 export const CONR_008_FAIL_FILE = "CONR-008-FAIL-20250502-144027.TXT";
@@ -41,6 +42,7 @@ export const ENRL_DATE_PLACEHOLDER_3 = "ENRLDT03";
 export async function createInstitutionLocations(
   e2eDataSources: E2EDataSources,
 ): Promise<{
+  institutionLocationWARN: InstitutionLocation;
   institutionLocationCONF: InstitutionLocation;
   institutionLocationDECL: InstitutionLocation;
   institutionLocationSKIP: InstitutionLocation;
@@ -51,6 +53,11 @@ export async function createInstitutionLocations(
 }> {
   const institution = await e2eDataSources.institution.save(
     createFakeInstitution(),
+  );
+  const institutionLocationWARN = await findOrCreateInstitutionLocation(
+    institution,
+    "WARN",
+    e2eDataSources,
   );
   const institutionLocationCONF = await findOrCreateInstitutionLocation(
     institution,
@@ -96,6 +103,7 @@ export async function createInstitutionLocations(
   );
 
   return {
+    institutionLocationWARN,
     institutionLocationCONF,
     institutionLocationDECL,
     institutionLocationSKIP,
