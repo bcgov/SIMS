@@ -26,7 +26,7 @@ import {
 } from "@sims/sims-db";
 import { OTHER_REGULATING_BODY_MAX_LENGTH } from "../../../constants";
 import { CANADA_COUNTRY_CODE } from "@sims/sims-db/constant";
-import { AllowIf } from "apps/api/src/utilities/class-validation";
+import { AllowIf } from "../../../utilities/class-validation";
 
 /**
  * DTO for institution creation by the institution user during the on board process
