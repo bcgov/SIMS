@@ -17,6 +17,7 @@ abstract class FormSubmissionAPIOutDTO {
 }
 
 abstract class FormSubmissionItemAPIOutDTO {
+  id: number;
   formType: string;
   formCategory: FormCategory;
   decisionStatus: FormSubmissionDecisionStatus;
@@ -38,7 +39,9 @@ export class FormSubmissionMinistrySummaryAPIOutDTO {
 
 // Get submission and items.
 
-class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {}
+class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
+  decisionNoteDescription?: string;
+}
 
 export class FormSubmissionMinistryAPIOutDTO extends FormSubmissionAPIOutDTO {
   submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
@@ -66,12 +69,6 @@ export class FormSubmissionAPIInDTO {
 // Ministry submission.
 
 export class FormSubmissionItemDecisionAPIInDTO {
-  dynamicConfigurationId: number;
   decisionStatus: FormSubmissionDecisionStatus;
   noteDescription: string;
-}
-
-export class FormSubmissionFinalDecisionAPIInDTO {
-  submissionId: number;
-  submissionStatus: FormSubmissionStatus;
 }

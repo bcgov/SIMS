@@ -1,12 +1,24 @@
-import { Controller, Get, Param, ParseIntPipe } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Put,
+} from "@nestjs/common";
 import { FormSubmissionService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
+import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
-import { UserGroups } from "apps/api/src/auth";
-import { FormSubmissionMinistryAPIOutDTO } from "./models/form-submission.dto";
+import { IUserToken, UserGroups } from "apps/api/src/auth";
+import {
+  FormSubmissionItemDecisionAPIInDTO,
+  FormSubmissionMinistryAPIOutDTO,
+} from "./models/form-submission.dto";
+import { PrimaryIdentifierAPIOutDTO } from "apps/api/src/route-controllers/models/primary.identifier.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -32,10 +44,12 @@ export class FormSubmissionAESTController extends BaseController {
       assessedDate: submission.assessedDate,
       submittedDate: submission.submittedDate,
       submissionItems: submission.formSubmissionItems.map((item) => ({
+        id: item.id,
         formType: item.dynamicFormConfiguration.formType,
         formCategory: item.dynamicFormConfiguration.formCategory,
         decisionStatus: item.decisionStatus,
         decisionDate: item.decisionDate,
+        decisionNoteDescription: item.decisionNote?.description,
         dynamicFormConfigurationId: item.dynamicFormConfiguration.id,
         submissionData: item.submittedData,
         formDefinitionName: item.dynamicFormConfiguration.formDefinitionName,
@@ -43,21 +57,29 @@ export class FormSubmissionAESTController extends BaseController {
     };
   }
 
-  // @Put(":formSubmissionId/items")
-  // async submitItemDecision(
-  //   @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
-  //   @Body() payload: FormSubmissionItemDecisionAPIInDTO,
-  //   @UserToken() userToken: IUserToken,
-  // ): Promise<PrimaryIdentifierAPIOutDTO> {
-  //   return null;
-  // }
+  @Put("items/:formSubmissionItemId/decision")
+  async submitItemDecision(
+    @Param("formSubmissionItemId", ParseIntPipe) formSubmissionItemId: number,
+    @Body() payload: FormSubmissionItemDecisionAPIInDTO,
+    @UserToken() userToken: IUserToken,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const updatedItem = await this.formSubmissionService.saveFormSubmissionItem(
+      formSubmissionItemId,
+      payload.decisionStatus,
+      payload.noteDescription,
+      userToken.userId,
+    );
+    return { id: updatedItem.id };
+  }
 
-  // @Patch(":formSubmissionId")
-  // async submitFinalDecision(
-  //   @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
-  //   @Body() payload: FormSubmissionFinalDecisionAPIInDTO,
-  //   @UserToken() userToken: IUserToken,
-  // ): Promise<PrimaryIdentifierAPIOutDTO> {
-  //   return null;
-  // }
+  @Patch(":formSubmissionId/complete")
+  async completeFormSubmission(
+    @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
+    @UserToken() userToken: IUserToken,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return this.formSubmissionService.completeFormSubmission(
+      formSubmissionId,
+      userToken.userId,
+    );
+  }
 }

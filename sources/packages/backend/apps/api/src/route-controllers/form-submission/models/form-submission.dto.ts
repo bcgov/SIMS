@@ -54,7 +54,9 @@ export class FormSubmissionMinistrySummaryAPIOutDTO {
 
 // Get submission and items.
 
-class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {}
+class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
+  decisionNoteDescription?: string;
+}
 
 export class FormSubmissionMinistryAPIOutDTO extends FormSubmissionAPIOutDTO {
   submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
@@ -95,18 +97,9 @@ export class FormSubmissionAPIInDTO {
 // Ministry submission.
 
 export class FormSubmissionItemDecisionAPIInDTO {
-  @IsPositive()
-  dynamicConfigurationId: number;
   @IsEnum(FormSubmissionDecisionStatus)
   decisionStatus: FormSubmissionDecisionStatus;
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;
-}
-
-export class FormSubmissionFinalDecisionAPIInDTO {
-  @IsPositive()
-  submissionId: number;
-  @IsEnum(FormSubmissionStatus)
-  submissionStatus: FormSubmissionStatus;
 }

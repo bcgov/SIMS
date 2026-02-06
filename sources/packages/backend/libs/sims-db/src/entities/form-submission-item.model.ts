@@ -80,7 +80,7 @@ export class FormSubmissionItem extends RecordDataModel {
   /**
    * Note associated with the decision.
    */
-  @OneToOne(() => Note, { nullable: true })
+  @OneToOne(() => Note, { nullable: true, cascade: ["insert", "update"] })
   @JoinColumn({
     name: "decision_note_id",
     referencedColumnName: ColumnNames.ID,

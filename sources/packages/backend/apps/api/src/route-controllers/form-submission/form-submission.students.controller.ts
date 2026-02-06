@@ -80,6 +80,7 @@ export class FormSubmissionStudentsController extends BaseController {
           assessedDate: submission.assessedDate,
           submittedDate: submission.submittedDate,
           submissionItems: submission.formSubmissionItems.map((item) => ({
+            id: item.id,
             formType: item.dynamicFormConfiguration.formType,
             formCategory: item.dynamicFormConfiguration.formCategory,
             decisionStatus: item.decisionStatus,

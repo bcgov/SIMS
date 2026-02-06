@@ -4,7 +4,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import {
@@ -12,7 +11,6 @@ import {
   FormCategory,
   FormSubmissionItem,
   FormSubmissionStatus,
-  Note,
   Student,
   User,
 } from ".";
@@ -103,15 +101,6 @@ export class FormSubmission extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   assessedBy?: User;
-  /**
-   * Ministry note associated with the submission assessment.
-   */
-  @OneToOne(() => Note, { nullable: true })
-  @JoinColumn({
-    name: "assessed_note_id",
-    referencedColumnName: ColumnNames.ID,
-  })
-  assessedNote?: Note;
   /**
    * Submission items containing the individual forms submitted for a decision.
    */

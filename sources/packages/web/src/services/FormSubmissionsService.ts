@@ -1,7 +1,6 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
   FormSubmissionAPIInDTO,
-  FormSubmissionFinalDecisionAPIInDTO,
   FormSubmissionItemDecisionAPIInDTO,
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionStudentAPIOutDTO,
@@ -31,22 +30,16 @@ export class FormSubmissionsService {
   }
 
   async submitItemDecision(
-    formSubmissionId: number,
+    formSubmissionItemId: number,
     payload: FormSubmissionItemDecisionAPIInDTO,
   ): Promise<void> {
     await ApiClient.FormSubmissions.submitItemDecision(
-      formSubmissionId,
+      formSubmissionItemId,
       payload,
     );
   }
 
-  async submitFinalDecision(
-    formSubmissionId: number,
-    payload: FormSubmissionFinalDecisionAPIInDTO,
-  ): Promise<void> {
-    await ApiClient.FormSubmissions.submitFinalDecision(
-      formSubmissionId,
-      payload,
-    );
+  async completeFormSubmission(formSubmissionId: number): Promise<void> {
+    await ApiClient.FormSubmissions.completeFormSubmission(formSubmissionId);
   }
 }

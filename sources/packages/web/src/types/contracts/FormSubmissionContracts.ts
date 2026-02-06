@@ -62,14 +62,18 @@ export enum FormSubmissionDecisionStatus {
 export interface FormSubmissionItemApproval {
   id: number;
   parentName: string;
+  parentStatus: FormSubmissionStatus;
   status: FormSubmissionDecisionStatus;
   noteDescription: string;
   assessedDate?: string;
   assessedByUserName?: string;
   showAudit: boolean;
+  saveDecisionInProgress: boolean;
+  decisionSaved: boolean;
 }
 
 export interface FormSubmissionItem {
+  id: number;
   dynamicConfigurationId: number;
   category: FormCategory;
   formType: string;

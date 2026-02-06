@@ -7,7 +7,6 @@ CREATE TABLE sims.form_submissions(
     submission_status sims.form_submission_status NOT NULL,
     assessed_date TIMESTAMP WITH TIME ZONE,
     assessed_by INT REFERENCES sims.users (id),
-    assessed_note_id INT REFERENCES sims.notes (id),
     -- Audit columns.
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -19,7 +18,6 @@ CREATE TABLE sims.form_submissions(
             submission_status != 'Pending' :: sims.form_submission_status
             AND assessed_date IS NOT NULL
             AND assessed_by IS NOT NULL
-            AND assessed_note_id IS NOT NULL
         )
         OR (
             submission_status = 'Pending' :: sims.form_submission_status
@@ -45,8 +43,6 @@ COMMENT ON COLUMN sims.form_submissions.submission_status IS 'Current status of 
 COMMENT ON COLUMN sims.form_submissions.assessed_date IS 'Date and time when the submission was assessed. When assessed, the status must be either Completed or Declined.';
 
 COMMENT ON COLUMN sims.form_submissions.assessed_by IS 'User who assessed the submission.';
-
-COMMENT ON COLUMN sims.form_submissions.assessed_note_id IS 'Ministry note associated with the submission assessment.';
 
 COMMENT ON COLUMN sims.form_submissions.created_at IS 'Record creation timestamp.';
 

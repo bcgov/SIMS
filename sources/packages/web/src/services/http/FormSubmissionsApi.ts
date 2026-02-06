@@ -2,7 +2,6 @@ import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   FormSubmissionStudentSummaryAPIOutDTO,
   FormSubmissionAPIInDTO,
-  FormSubmissionFinalDecisionAPIInDTO,
   FormSubmissionItemDecisionAPIInDTO,
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionStudentAPIOutDTO,
@@ -29,22 +28,21 @@ export class FormSubmissionsApi extends HttpBaseClient {
   }
 
   async submitItemDecision(
-    formSubmissionId: number,
+    formSubmissionItemId: number,
     payload: FormSubmissionItemDecisionAPIInDTO,
   ): Promise<void> {
     await this.putCall(
-      this.addClientRoot(`form-submission/${formSubmissionId}/items`),
+      this.addClientRoot(
+        `form-submission/items/${formSubmissionItemId}/decision`,
+      ),
       payload,
     );
   }
 
-  async submitFinalDecision(
-    formSubmissionId: number,
-    payload: FormSubmissionFinalDecisionAPIInDTO,
-  ): Promise<void> {
+  async completeFormSubmission(formSubmissionId: number): Promise<void> {
     await this.patchCall(
-      this.addClientRoot(`form-submission/${formSubmissionId}`),
-      payload,
+      this.addClientRoot(`form-submission/${formSubmissionId}/complete`),
+      null,
     );
   }
 }
