@@ -255,6 +255,6 @@
       "Sources",
       "All",
     ],
-    "jest.jestCommandLine": "npm run test:e2e:watch --",
+    "jest.jestCommandLine": "npm run test:e2e:api:local --",
   },
 }
