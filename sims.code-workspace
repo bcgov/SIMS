@@ -41,6 +41,7 @@
       "redhat.vscode-yaml",
       "mongodb.mongodb-vscode",
       "sonarsource.sonarlint-vscode",
+      "orta.vscode-jest",
     ],
   },
   "tasks": {
