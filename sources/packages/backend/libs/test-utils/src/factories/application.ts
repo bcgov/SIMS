@@ -93,7 +93,9 @@ export function createFakeApplication(
   application.applicationEditStatusUpdatedBy =
     relations?.applicationEditStatusUpdatedBy;
   application.creator =
-    options?.initialValue?.creator ?? relations?.auditUser ?? createFakeUser();
+    options?.initialValue?.creator ??
+    relations?.auditUser ??
+    application.student.user;
   return application;
 }
 
