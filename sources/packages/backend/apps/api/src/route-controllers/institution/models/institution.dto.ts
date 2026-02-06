@@ -1,8 +1,10 @@
 import {
   IsDateString,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsPositive,
+  Length,
   MaxLength,
   ValidateIf,
   ValidateNested,
@@ -23,6 +25,8 @@ import {
   InstitutionMedicalSchoolStatus,
 } from "@sims/sims-db";
 import { OTHER_REGULATING_BODY_MAX_LENGTH } from "../../../constants";
+import { CANADA_COUNTRY_CODE } from "@sims/sims-db/constant";
+import { AllowIf } from "apps/api/src/utilities/class-validation";
 
 /**
  * DTO for institution creation by the institution user during the on board process
@@ -110,7 +114,9 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   website: string;
   @IsNotEmpty()
   regulatingBody: string;
-  @ValidateIf((e) => e.regulatingBody === "other")
+  @ValidateIf(
+    (input: InstitutionProfileAPIInDTO) => input.regulatingBody === "other",
+  )
   @IsNotEmpty()
   @MaxLength(OTHER_REGULATING_BODY_MAX_LENGTH)
   otherRegulatingBody: string;
@@ -118,6 +124,25 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   establishedDate: string;
   @IsPositive()
   institutionType: number;
+  @Length(2, 2)
+  country: string;
+  @ValidateIf(
+    (input: InstitutionProfileAPIInDTO) =>
+      input.country === CANADA_COUNTRY_CODE || !!input.province,
+  )
+  @AllowIf(
+    (input: InstitutionProfileAPIInDTO) =>
+      input.country === CANADA_COUNTRY_CODE,
+  )
+  @IsNotEmpty()
+  @Length(2, 2)
+  province?: string;
+  @IsEnum(InstitutionClassification)
+  classification: InstitutionClassification;
+  @IsEnum(InstitutionOrganizationStatus)
+  organizationStatus: InstitutionOrganizationStatus;
+  @IsEnum(InstitutionMedicalSchoolStatus)
+  medicalSchoolStatus: InstitutionMedicalSchoolStatus;
 }
 
 export class InstitutionDetailAPIOutDTO {

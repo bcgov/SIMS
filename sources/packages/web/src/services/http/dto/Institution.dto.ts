@@ -40,6 +40,16 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   establishedDate: Date;
   @Expose()
   institutionType: number;
+  @Expose()
+  country: string;
+  @Expose()
+  province?: string;
+  @Expose()
+  classification: InstitutionClassification;
+  @Expose()
+  organizationStatus: InstitutionOrganizationStatus;
+  @Expose()
+  medicalSchoolStatus: InstitutionMedicalSchoolStatus;
 }
 
 export interface InstitutionDetailAPIOutDTO {
