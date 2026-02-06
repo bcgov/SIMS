@@ -291,30 +291,6 @@
         "ENVIRONMENT": "test",
         "TZ": "UTC"
       }
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "API (npm) - Selected test name",
-      "cwd": "${workspaceFolder}/sources/packages/backend",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run",
-        "test:e2e:api:local",
-        "--",
-        "--runInBand",
-        "--runTestsByPath",
-        "${file}",
-        "--testNamePattern",
-        "${selectedText}"
-      ],
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "disableOptimisticBPs": true,
-      "env": {
-        "ENVIRONMENT": "test",
-        "TZ": "UTC"
-      }
     }
   ]
 }
