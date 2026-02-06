@@ -5,7 +5,13 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { BaseModel, DynamicFormType, OfferingIntensity, ProgramYear } from ".";
+import {
+  BaseModel,
+  DynamicFormType,
+  FormCategory,
+  OfferingIntensity,
+  ProgramYear,
+} from ".";
 import { ColumnNames, TableNames } from "../constant";
 
 /**
@@ -59,4 +65,39 @@ export class DynamicFormConfiguration extends BaseModel {
     name: "form_definition_name",
   })
   formDefinitionName: string;
+
+  /**
+   * Indicates the category of the form.
+   */
+  @Column({
+    name: "form_category",
+    type: "enum",
+    enum: FormCategory,
+    enumName: "FormCategory",
+  })
+  formCategory: FormCategory;
+
+  /**
+   * Provides a description of the form to be shown to the student.
+   */
+  @Column({
+    name: "form_description",
+  })
+  formDescription: string;
+
+  /**
+   * Indicates whether the form must be associated with a Student Application.
+   */
+  @Column({
+    name: "has_application_scope",
+  })
+  hasApplicationScope: boolean;
+
+  /**
+   * Indicates whether this form can be part of submission that would included multiple forms.
+   */
+  @Column({
+    name: "allow_bundled_submission",
+  })
+  allowBundledSubmission: boolean;
 }
