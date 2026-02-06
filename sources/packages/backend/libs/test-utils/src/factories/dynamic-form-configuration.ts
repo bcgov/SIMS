@@ -1,6 +1,7 @@
 import {
   DynamicFormConfiguration,
   DynamicFormType,
+  FormCategory,
   OfferingIntensity,
   ProgramYear,
 } from "@sims/sims-db";
@@ -30,6 +31,9 @@ export function createFakeDynamicFormConfiguration(
   dynamicFormConfiguration.offeringIntensity = options?.offeringIntensity;
   dynamicFormConfiguration.formDefinitionName =
     options?.formDefinitionName ?? faker.string.alphanumeric({ length: 50 });
+  dynamicFormConfiguration.formCategory = FormCategory.System;
+  dynamicFormConfiguration.hasApplicationScope = false;
+  dynamicFormConfiguration.allowBundledSubmission = false;
   return dynamicFormConfiguration;
 }
 
