@@ -108,7 +108,7 @@ export class ECEResponseFileDetail extends ECEResponseFileRecord {
     if (LEGACY_SKIPPED_AWARDS.has(this.disbursementValueCode)) {
       validationsResult.push({
         validationLevel: "warning",
-        message: `Disbursement schedule not found for disbursement value ID: ${this.disbursementValueId}, record at line ${this.lineNumber} skipped.`,
+        message: `Award code ${this.disbursementValueCode} is legacy only, record at line ${this.lineNumber} skipped.`,
       });
     }
     return validationsResult;

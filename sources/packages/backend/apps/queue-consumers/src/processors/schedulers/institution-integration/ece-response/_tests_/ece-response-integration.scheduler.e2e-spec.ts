@@ -200,8 +200,8 @@ describe(
           "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
-          "WARN: Disbursement schedule not found for disbursement value ID: 1119353116, record at line 3 skipped.",
-          "WARN: Disbursement schedule not found for disbursement value ID: 1119353117, record at line 4 skipped.",
+          "WARN: Award code INTP is legacy only, record at line 3 skipped.",
+          "WARN: Award code INTF is legacy only, record at line 4 skipped.",
         ]),
       ).toBe(true);
       // Expect the archive method to be called.
