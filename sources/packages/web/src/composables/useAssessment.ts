@@ -7,6 +7,7 @@ import {
   StatusChipLabelTypes,
   ApplicationOfferingChangeRequestStatus,
   OfferingStatus,
+  FormSubmissionStatus,
 } from "@/types";
 
 export function useAssessment() {
@@ -15,13 +16,15 @@ export function useAssessment() {
       | StudentAppealStatus
       | ApplicationExceptionStatus
       | ApplicationOfferingChangeRequestStatus
-      | OfferingStatus,
+      | OfferingStatus
+      | FormSubmissionStatus,
   ): StatusChipTypes => {
     switch (status) {
       case StudentAppealStatus.Approved:
       case ApplicationExceptionStatus.Approved:
       case ApplicationOfferingChangeRequestStatus.Approved:
       case OfferingStatus.Approved:
+      case FormSubmissionStatus.Completed:
         return StatusChipTypes.Success;
       case StudentAppealStatus.Pending:
       case ApplicationExceptionStatus.Pending:
@@ -29,6 +32,7 @@ export function useAssessment() {
       case ApplicationOfferingChangeRequestStatus.InProgressWithSABC:
       case OfferingStatus.CreationPending:
       case OfferingStatus.ChangeUnderReview:
+      case FormSubmissionStatus.Pending:
         return StatusChipTypes.Warning;
       case StudentAppealStatus.Declined:
       case ApplicationExceptionStatus.Declined:
@@ -36,6 +40,7 @@ export function useAssessment() {
       case ApplicationOfferingChangeRequestStatus.DeclinedBySABC:
       case OfferingStatus.CreationDeclined:
       case OfferingStatus.ChangeDeclined:
+      case FormSubmissionStatus.Declined:
         return StatusChipTypes.Error;
       default:
         return StatusChipTypes.Inactive;
@@ -47,13 +52,15 @@ export function useAssessment() {
       | StudentAppealStatus
       | ApplicationExceptionStatus
       | ApplicationOfferingChangeRequestStatus
-      | OfferingStatus,
+      | OfferingStatus
+      | FormSubmissionStatus,
   ): StatusChipLabelTypes | string => {
     switch (status) {
       case StudentAppealStatus.Approved:
       case ApplicationExceptionStatus.Approved:
       case ApplicationOfferingChangeRequestStatus.Approved:
       case OfferingStatus.Approved:
+      case FormSubmissionStatus.Completed:
         return StatusChipLabelTypes.Completed;
       case StudentAppealStatus.Pending:
       case ApplicationExceptionStatus.Pending:
@@ -61,6 +68,7 @@ export function useAssessment() {
       case ApplicationOfferingChangeRequestStatus.InProgressWithSABC:
       case OfferingStatus.CreationPending:
       case OfferingStatus.ChangeUnderReview:
+      case FormSubmissionStatus.Pending:
         return StatusChipLabelTypes.Pending;
       case StudentAppealStatus.Declined:
       case ApplicationExceptionStatus.Declined:
@@ -68,6 +76,7 @@ export function useAssessment() {
       case ApplicationOfferingChangeRequestStatus.DeclinedBySABC:
       case OfferingStatus.CreationDeclined:
       case OfferingStatus.ChangeDeclined:
+      case FormSubmissionStatus.Declined:
         return StatusChipLabelTypes.Declined;
       default:
         return status;

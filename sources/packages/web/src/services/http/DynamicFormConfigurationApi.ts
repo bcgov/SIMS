@@ -1,6 +1,9 @@
 import { DynamicFormType, OfferingIntensity } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
-import { DynamicFormConfigurationAPIOutDTO } from "@/services/http/dto";
+import {
+  DynamicFormConfigurationAPIOutDTO,
+  DynamicFormConfigurationsAPIOutDTO,
+} from "@/services/http/dto";
 
 export class DynamicFormConfigurationApi extends HttpBaseClient {
   /**
@@ -29,5 +32,10 @@ export class DynamicFormConfigurationApi extends HttpBaseClient {
       url += `?${parameters.join("&")}`;
     }
     return this.getCall<DynamicFormConfigurationAPIOutDTO>(url);
+  }
+
+  async getDynamicFormConfigurationsByCategory(): Promise<DynamicFormConfigurationsAPIOutDTO> {
+    const url = `dynamic-form-configuration/student-forms`;
+    return this.getCall<DynamicFormConfigurationsAPIOutDTO>(url);
   }
 }

@@ -98,6 +98,9 @@ export class FormService {
   async dryRunSubmission<T = any>(
     formName: string,
     data: unknown,
+    options?: {
+      dynamicConfigurationId?: number;
+    },
   ): Promise<DryRunSubmissionResult<T>> {
     try {
       const authHeader = await this.createAuthHeader();
@@ -106,8 +109,12 @@ export class FormService {
         { data },
         authHeader,
       );
-
-      return { valid: true, data: submissionResponse.data, formName };
+      return {
+        valid: true,
+        data: submissionResponse.data,
+        formName,
+        dynamicConfigurationId: options?.dynamicConfigurationId,
+      };
     } catch (error) {
       if (error.response?.data) {
         this.logger.warn(
@@ -116,7 +123,11 @@ export class FormService {
         this.logger.warn(error.response.data);
       }
       if (error.response.status === HttpStatus.BAD_REQUEST) {
-        return { valid: false, formName };
+        return {
+          valid: false,
+          formName,
+          dynamicConfigurationId: options?.dynamicConfigurationId,
+        };
       }
       throw error;
     }
@@ -126,7 +137,9 @@ export class FormService {
    * Creates the expected authorization header to authorize the formio API.
    * @returns header to be added to HTTP request.
    */
-  private async createAuthHeader() {
+  private async createAuthHeader(): Promise<{
+    headers: Record<string, string>;
+  }> {
     const token = await this.tokenCacheService.getToken();
     return {
       headers: {

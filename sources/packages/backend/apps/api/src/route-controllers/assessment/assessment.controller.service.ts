@@ -23,6 +23,7 @@ import {
   MASKED_MSFAA_NUMBER,
   ApplicationOfferingChangeRequestService,
   MASKED_MONEY_AMOUNT,
+  FormSubmissionService,
 } from "../../services";
 import {
   AssessmentNOAAPIOutDTO,
@@ -72,6 +73,7 @@ export class AssessmentControllerService {
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly applicationExceptionService: ApplicationExceptionService,
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
+    private readonly formSubmissionService: FormSubmissionService,
   ) {}
 
   /**
@@ -573,10 +575,18 @@ export class AssessmentControllerService {
         }));
       return requestAssessmentSummary.concat(applicationExceptionArray);
     }
-    const appeals = await this.getPendingAndDeniedAppeals(
-      applicationId,
-      options?.studentId,
-    );
+    // Get application appeals requests.
+    const nonCompletedAppeals =
+      await this.formSubmissionService.getNonCompletedAppealsSubmissions(
+        applicationId,
+      );
+    const appealsRequests = nonCompletedAppeals.map((appeal) => ({
+      id: appeal.id,
+      submittedDate: appeal.submittedDate,
+      status: appeal.submissionStatus,
+      requestType: RequestAssessmentTypeAPIOutDTO.StudentAppeal,
+    }));
+
     const applicationOfferingChangeRequests =
       await this.getApplicationOfferingChangeRequestsByStatus(
         applicationId,
@@ -588,8 +598,9 @@ export class AssessmentControllerService {
         ],
         { studentId: options?.studentId },
       );
+
     return requestAssessmentSummary
-      .concat(appeals)
+      .concat(appealsRequests)
       .concat(applicationOfferingChangeRequests)
       .sort(this.sortAssessmentHistory);
   }

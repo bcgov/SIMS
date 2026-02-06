@@ -39,10 +39,10 @@
           class="nav-item-label"
           variant="text"
           :to="{
-            name: StudentRoutesConst.STUDENT_APPEAL_SUBMISSION,
+            name: StudentRoutesConst.STUDENT_FORMS_SELECTOR,
           }"
           prepend-icon="fa:fa fa-balance-scale"
-          >Appeals</v-btn
+          >Forms</v-btn
         >
         <v-btn
           v-if="hasAuthenticatedStudentAccount"

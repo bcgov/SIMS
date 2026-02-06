@@ -11,7 +11,7 @@
     >
       <div>
         <v-icon start icon="mdi-scale-balance"></v-icon>
-        <span class="mx-2 label-bold">Appeal Submission</span>
+        <span class="mx-2 label-bold">Submission</span>
       </div>
     </v-tab>
     <v-tab
@@ -25,7 +25,7 @@
     >
       <div>
         <v-icon start icon="mdi-history"></v-icon>
-        <span class="mx-2 label-bold">Appeal History</span>
+        <span class="mx-2 label-bold">History</span>
       </div>
     </v-tab>
   </v-tabs>

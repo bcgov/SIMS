@@ -153,12 +153,7 @@ export default defineComponent({
       return [];
     });
     const selectedOtherAppeal = ref<string>();
-    const otherAppeals = ref<AppealForm[]>([
-      {
-        formName: "modifiedindependentappeal",
-        description: mapStudentAppealsFormNames("modifiedindependentappeal"),
-      },
-    ]);
+    const otherAppeals = ref<AppealForm[]>([]);
 
     onMounted(async () => {
       try {

@@ -18,6 +18,7 @@ import { DynamicFormType } from "@sims/sims-db";
 import {
   DynamicFormConfigurationAPIInDTO,
   DynamicFormConfigurationAPIOutDTO,
+  DynamicFormConfigurationsAPIOutDTO,
 } from "..";
 
 @AllowAuthorizedParty(
@@ -66,16 +67,43 @@ export class DynamicFormConfigurationController extends BaseController {
         );
       }
     }
-    const formDefinitionName =
-      this.dynamicFormConfigurationService.getDynamicFormName(formType, {
+    const dynamicForm = this.dynamicFormConfigurationService.getDynamicForm(
+      formType,
+      {
         programYearId: dynamicFormOptions?.programYearId,
         offeringIntensity: dynamicFormOptions?.offeringIntensity,
-      });
-    if (!formDefinitionName) {
+      },
+    );
+    if (!dynamicForm) {
       throw new UnprocessableEntityException(
         `Dynamic form configuration for ${formType} not found.`,
       );
     }
-    return { formDefinitionName };
+    return {
+      id: dynamicForm.id,
+      formDefinitionName: dynamicForm.formDefinitionName,
+      formType: dynamicForm.formType,
+      formCategory: dynamicForm.formCategory,
+      formDescription: dynamicForm.formDescription,
+      allowBundledSubmission: dynamicForm.allowBundledSubmission,
+      hasApplicationScope: dynamicForm.hasApplicationScope,
+    };
+  }
+
+  @Get("student-forms")
+  async getDynamicFormConfigurationsByCategory(): Promise<DynamicFormConfigurationsAPIOutDTO> {
+    const formsConfigurations =
+      this.dynamicFormConfigurationService.getDynamicStudentForms();
+    return {
+      configurations: formsConfigurations.map((configuration) => ({
+        id: configuration.id,
+        formDefinitionName: configuration.formDefinitionName,
+        formType: configuration.formType,
+        formCategory: configuration.formCategory,
+        formDescription: configuration.formDescription,
+        allowBundledSubmission: configuration.allowBundledSubmission,
+        hasApplicationScope: configuration.hasApplicationScope,
+      })),
+    };
   }
 }

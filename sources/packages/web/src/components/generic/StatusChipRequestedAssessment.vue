@@ -9,6 +9,7 @@ import {
   ApplicationExceptionStatus,
   ApplicationOfferingChangeRequestStatus,
   OfferingStatus,
+  FormSubmissionStatus,
 } from "@/types";
 export default defineComponent({
   props: {
@@ -18,6 +19,7 @@ export default defineComponent({
         | ApplicationExceptionStatus
         | ApplicationOfferingChangeRequestStatus
         | OfferingStatus
+        | FormSubmissionStatus
       >,
       required: true,
     },
