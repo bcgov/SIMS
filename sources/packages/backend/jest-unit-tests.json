@@ -5,7 +5,10 @@
     "ts"
   ],
   "rootDir": ".",
-  "testRegex": ".*\\.spec\\.ts$",
+  "testRegex": ".*\\.(?:e2e-)?spec\\.ts$",
+  "setupFiles": [
+    "<rootDir>/env-setup.js"
+  ],
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
