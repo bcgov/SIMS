@@ -34,6 +34,7 @@
     "test:e2e:queue-consumers:seed": "npm run db:seed:test filter=CreateCASDistributionAccounts",
     "test:e2e:queue-consumers": "npm run test:e2e:queue-consumers:seed && cross-env ENVIRONMENT=test jest --collect-coverage --verbose --config ./apps/queue-consumers/test/jest-e2e.json --runInBand --forceExit",
     "test:e2e:queue-consumers:local": "cross-env ENVIRONMENT=test TZ=UTC jest --verbose --config ./apps/queue-consumers/test/jest-e2e.json --runInBand --forceExit",
+    "test:e2e:watch": "jest --watch --config ./jest-e2e-tests.json",
     "migration": "ts-node -r tsconfig-paths/register --transpile-only apps/db-migrations/src/main.ts",
     "migration:run": "npm run migration run",
     "migration:list": "npm run migration list",
