@@ -28,6 +28,8 @@ export function createFakeSystemLookupConfiguration(
   systemLookupConfiguration.lookupValue =
     options?.initialValues?.lookupValue ??
     faker.string.alphanumeric({ length: 100 });
+  systemLookupConfiguration.lookupPriority =
+    options?.initialValues?.lookupPriority ?? 2;
   systemLookupConfiguration.creator = relations.auditUser;
   return systemLookupConfiguration;
 }

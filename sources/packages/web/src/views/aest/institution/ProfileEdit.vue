@@ -2,14 +2,14 @@
   <v-container>
     <header-navigator
       title="Profile"
-      subTitle="Edit Profile"
-      :routeLocation="institutionProfileRoute"
+      sub-title="Edit Profile"
+      :route-location="institutionProfileRoute"
     />
     <full-page-container>
       <institution-profile-form
-        :profileData="institutionProfileModel"
-        @submitInstitutionProfile="updateInstitution"
-        :allowedRole="Role.InstitutionEditProfile"
+        :profile-data="institutionProfileModel"
+        @submit-institution-profile="updateInstitution"
+        :allowed-role="Role.InstitutionEditProfile"
       ></institution-profile-form>
     </full-page-container>
   </v-container>
@@ -18,11 +18,8 @@
 <script lang="ts">
 import { ref, onMounted, defineComponent } from "vue";
 import { useRouter } from "vue-router";
-import { ClientIdType, Role } from "@/types";
-import {
-  InstitutionDetailAPIOutDTO,
-  InstitutionProfileAPIInDTO,
-} from "@/services/http/dto";
+import { ClientIdType, InstitutionProfileFormInitialData, Role } from "@/types";
+import { InstitutionProfileAPIInDTO } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormioUtils, useSnackBar } from "@/composables";
@@ -40,7 +37,9 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const router = useRouter();
     const { excludeExtraneousValues } = useFormioUtils();
-    const institutionProfileModel = ref({} as InstitutionDetailAPIOutDTO);
+    const institutionProfileModel = ref(
+      {} as InstitutionProfileFormInitialData,
+    );
     const institutionProfileRoute = {
       name: AESTRoutesConst.INSTITUTION_PROFILE,
       params: { institutionId: props.institutionId },
@@ -64,10 +63,13 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      institutionProfileModel.value = await InstitutionService.shared.getDetail(
+      const institutionDetail = await InstitutionService.shared.getDetail(
         props.institutionId,
       );
-      institutionProfileModel.value.clientType = ClientIdType.AEST;
+      institutionProfileModel.value = {
+        ...institutionDetail,
+        clientType: ClientIdType.AEST,
+      };
     });
 
     return {

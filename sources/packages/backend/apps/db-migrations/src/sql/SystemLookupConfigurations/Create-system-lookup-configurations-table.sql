@@ -3,6 +3,7 @@ CREATE TABLE sims.system_lookup_configurations(
     lookup_category VARCHAR(100) NOT NULL,
     lookup_key VARCHAR(100) NOT NULL,
     lookup_value VARCHAR(500) NOT NULL,
+    lookup_priority SMALLINT NOT NULL,
     -- Audit columns.
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -21,6 +22,8 @@ COMMENT ON COLUMN sims.system_lookup_configurations.lookup_category IS 'Lookup c
 COMMENT ON COLUMN sims.system_lookup_configurations.lookup_key IS 'Lookup key of a lookup data.';
 
 COMMENT ON COLUMN sims.system_lookup_configurations.lookup_value IS 'Lookup value of a lookup data.';
+
+COMMENT ON COLUMN sims.system_lookup_configurations.lookup_priority IS 'Lookup priority to order the lookup data.';
 
 COMMENT ON COLUMN sims.system_lookup_configurations.created_at IS 'Record creation timestamp.';
 

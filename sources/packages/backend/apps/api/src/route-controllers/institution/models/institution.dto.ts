@@ -1,8 +1,10 @@
 import {
   IsDateString,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsPositive,
+  Length,
   MaxLength,
   ValidateIf,
   ValidateNested,
@@ -18,8 +20,13 @@ import {
 import {
   OPERATING_NAME_MAX_LENGTH,
   LEGAL_OPERATING_NAME_MAX_LENGTH,
+  InstitutionClassification,
+  InstitutionOrganizationStatus,
+  InstitutionMedicalSchoolStatus,
 } from "@sims/sims-db";
 import { OTHER_REGULATING_BODY_MAX_LENGTH } from "../../../constants";
+import { CANADA_COUNTRY_CODE } from "@sims/sims-db/constant";
+import { AllowIf } from "../../../utilities/class-validation";
 
 /**
  * DTO for institution creation by the institution user during the on board process
@@ -107,7 +114,9 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   website: string;
   @IsNotEmpty()
   regulatingBody: string;
-  @ValidateIf((e) => e.regulatingBody === "other")
+  @ValidateIf(
+    (input: InstitutionProfileAPIInDTO) => input.regulatingBody === "other",
+  )
   @IsNotEmpty()
   @MaxLength(OTHER_REGULATING_BODY_MAX_LENGTH)
   otherRegulatingBody: string;
@@ -115,9 +124,33 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   establishedDate: string;
   @IsPositive()
   institutionType: number;
+  @Length(2, 2)
+  country: string;
+  @ValidateIf(
+    (input: InstitutionProfileAPIInDTO) =>
+      input.country === CANADA_COUNTRY_CODE || !!input.province,
+  )
+  @AllowIf(
+    (input: InstitutionProfileAPIInDTO) =>
+      input.country === CANADA_COUNTRY_CODE,
+  )
+  @IsNotEmpty()
+  @Length(2, 2)
+  province?: string;
+  @IsEnum(InstitutionClassification)
+  classification: InstitutionClassification;
+  @IsEnum(InstitutionOrganizationStatus)
+  organizationStatus: InstitutionOrganizationStatus;
+  @IsEnum(InstitutionMedicalSchoolStatus)
+  medicalSchoolStatus: InstitutionMedicalSchoolStatus;
 }
 
-export class InstitutionProfileAPIOutDTO extends InstitutionContactAPIOutDTO {
+export class InstitutionDetailAPIOutDTO {
+  primaryContactEmail: string;
+  primaryContactFirstName: string;
+  primaryContactLastName: string;
+  primaryContactPhone: string;
+  mailingAddress: AddressDetailsAPIOutDTO;
   operatingName: string;
   primaryPhone: string;
   primaryEmail: string;
@@ -126,9 +159,6 @@ export class InstitutionProfileAPIOutDTO extends InstitutionContactAPIOutDTO {
   otherRegulatingBody?: string;
   establishedDate: string;
   institutionType: number;
-}
-
-export class InstitutionDetailAPIOutDTO extends InstitutionProfileAPIOutDTO {
   legalOperatingName: string;
   institutionTypeName?: string;
   isBCPrivate: boolean;
@@ -138,6 +168,11 @@ export class InstitutionDetailAPIOutDTO extends InstitutionProfileAPIOutDTO {
    * associated with, if not it is a basic BCeID institution.
    */
   hasBusinessGuid: boolean;
+  country?: string;
+  province?: string;
+  classification?: InstitutionClassification;
+  organizationStatus?: InstitutionOrganizationStatus;
+  medicalSchoolStatus?: InstitutionMedicalSchoolStatus;
 }
 
 export class InstitutionBasicAPIOutDTO {

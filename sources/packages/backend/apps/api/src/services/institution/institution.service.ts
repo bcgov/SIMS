@@ -853,6 +853,11 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       institution.institutionType = {
         id: updateInstitution.institutionType,
       } as InstitutionType;
+      institution.country = updateInstitution.country;
+      institution.province = updateInstitution.province ?? null;
+      institution.classification = updateInstitution.classification;
+      institution.organizationStatus = updateInstitution.organizationStatus;
+      institution.medicalSchoolStatus = updateInstitution.medicalSchoolStatus;
     }
     institution.institutionPrimaryContact = {
       firstName: updateInstitution.primaryContactFirstName,

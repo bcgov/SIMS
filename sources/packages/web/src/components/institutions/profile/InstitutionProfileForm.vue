@@ -1,7 +1,8 @@
 <template>
   <formio-container
-    formName="institutionProfile"
-    :formData="profileData"
+    form-name="institutionProfile"
+    :form-data="formData"
+    :is-data-ready="isDataReady"
     @loaded="formLoaded"
     @submitted="submitInstitutionProfile"
   >
@@ -10,10 +11,10 @@
         <template #="{ notAllowed }">
           <footer-buttons
             :processing="processing"
-            :primaryLabel="submitLabel"
-            @primaryClick="submit"
-            :showSecondaryButton="false"
-            :disablePrimaryButton="notAllowed"
+            :primary-label="submitLabel"
+            @primary-click="submit"
+            :show-secondary-button="false"
+            :disable-primary-button="notAllowed"
           />
         </template>
       </check-permission-role>
@@ -23,9 +24,17 @@
 
 <script lang="ts">
 import { useFormioDropdownLoader } from "@/composables";
-import { PropType, defineComponent } from "vue";
-import { FormIOForm, InstitutionProfileForm, Role } from "@/types";
+import { PropType, computed, defineComponent, onMounted, ref } from "vue";
+import {
+  FormIOForm,
+  InstitutionProfileFormData,
+  InstitutionProfileFormInitialData,
+  Role,
+  SystemLookupCategory,
+  SystemLookupEntry,
+} from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import { SystemLookupConfigurationService } from "@/services/SystemLookupConfigurationService";
 
 export default defineComponent({
   components: {
@@ -33,7 +42,7 @@ export default defineComponent({
   },
   props: {
     profileData: {
-      type: Object,
+      type: Object as PropType<InstitutionProfileFormInitialData>,
       required: true,
     },
     submitLabel: {
@@ -48,26 +57,62 @@ export default defineComponent({
     allowedRole: {
       type: String as PropType<Role>,
       required: false,
+      default: undefined,
     },
   },
   emits: ["submitInstitutionProfile"],
-  setup(_props, context) {
+  setup(props, context) {
     const formioDataLoader = useFormioDropdownLoader();
+    const countries = ref<SystemLookupEntry[]>([]);
+    const provinces = ref<SystemLookupEntry[]>([]);
+    const isLookupLoaded = ref(false);
+    const isDataReady = computed(
+      () => props.profileData && isLookupLoaded.value,
+    );
+    const formData = computed<InstitutionProfileFormData>(() => ({
+      ...props.profileData,
+      countryOptionValues: countries.value,
+      provinceOptionValues: provinces.value,
+    }));
 
     const submitInstitutionProfile = async (
-      form: FormIOForm<InstitutionProfileForm>,
+      form: FormIOForm<InstitutionProfileFormData>,
     ) => {
       context.emit("submitInstitutionProfile", form.data);
     };
 
-    const formLoaded = async (form: any) => {
+    const formLoaded = async (form: FormIOForm<InstitutionProfileFormData>) => {
       await formioDataLoader.loadInstitutionTypes(form, "institutionType");
     };
+
+    /**
+     * Loads the lookup data.
+     */
+    const loadLookup = async () => {
+      const countryLookupPromise =
+        SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
+          SystemLookupCategory.Country,
+        );
+      const provinceLookupPromise =
+        SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
+          SystemLookupCategory.Province,
+        );
+      const [countryLookup, provinceLookup] = await Promise.all([
+        countryLookupPromise,
+        provinceLookupPromise,
+      ]);
+      countries.value = countryLookup.items;
+      provinces.value = provinceLookup.items;
+      isLookupLoaded.value = true;
+    };
+    onMounted(loadLookup);
 
     return {
       submitInstitutionProfile,
       formLoaded,
       Role,
+      isDataReady,
+      formData,
     };
   },
 });

@@ -78,3 +78,11 @@ export enum LayoutTemplates {
    */
   CenteredCardTab = "centered-card-tab",
 }
+
+/**
+ * System lookup entry.
+ */
+export interface SystemLookupEntry {
+  lookupKey: string;
+  lookupValue: string;
+}

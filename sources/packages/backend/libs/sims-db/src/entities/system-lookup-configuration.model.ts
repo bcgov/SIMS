@@ -36,4 +36,13 @@ export class SystemLookupConfiguration extends RecordDataModel {
     name: "lookup_value",
   })
   lookupValue: string;
+
+  /**
+   * Lookup priority to order the lookup data.
+   */
+  @Column({
+    name: "lookup_priority",
+    type: "smallint",
+  })
+  lookupPriority: number;
 }
