@@ -22,7 +22,7 @@ COMMENT ON COLUMN sims.dynamic_form_configurations.form_description IS 'Provides
 
 COMMENT ON COLUMN sims.dynamic_form_configurations.has_application_scope IS 'Indicates whether the form must be associated with a Student Application.';
 
-COMMENT ON COLUMN sims.dynamic_form_configurations.allow_bundled_submission IS 'Indicates whether this form can be part of submission that would included multiple forms.';
+COMMENT ON COLUMN sims.dynamic_form_configurations.allow_bundled_submission IS 'Indicates whether this form can be part of submission that would include multiple forms.';
 
 -- Insert new dynamic form configurations with appropriate categories and grouping types
 -- for existing appeals and the new 'Non-punitive withdrawal' form.

@@ -31,7 +31,7 @@ export class FormSubmission extends RecordDataModel {
   /**
    * Student related to this form submission.
    */
-  @ManyToOne(() => Student)
+  @ManyToOne(() => Student, { nullable: false })
   @JoinColumn({
     name: "student_id",
     referencedColumnName: ColumnNames.ID,
@@ -41,9 +41,7 @@ export class FormSubmission extends RecordDataModel {
    * Application associated with the submission when the
    * form is student application-related.
    */
-  @ManyToOne(() => Application, {
-    nullable: true,
-  })
+  @ManyToOne(() => Application)
   @JoinColumn({
     name: "application_id",
     referencedColumnName: ColumnNames.ID,
@@ -92,7 +90,7 @@ export class FormSubmission extends RecordDataModel {
   /**
    * User who assessed the submission.
    */
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User)
   @JoinColumn({
     name: "assessed_by",
     referencedColumnName: ColumnNames.ID,

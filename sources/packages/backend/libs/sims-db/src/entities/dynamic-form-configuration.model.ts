@@ -82,8 +82,9 @@ export class DynamicFormConfiguration extends BaseModel {
    */
   @Column({
     name: "form_description",
+    nullable: true,
   })
-  formDescription: string;
+  formDescription?: string;
 
   /**
    * Indicates whether the form must be associated with a Student Application.
@@ -94,7 +95,7 @@ export class DynamicFormConfiguration extends BaseModel {
   hasApplicationScope: boolean;
 
   /**
-   * Indicates whether this form can be part of submission that would included multiple forms.
+   * Indicates whether this form can be part of submission that would include multiple forms.
    */
   @Column({
     name: "allow_bundled_submission",

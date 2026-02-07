@@ -10,7 +10,7 @@ CREATE TABLE sims.form_submissions(
     -- Audit columns.
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    creator INT NOT NULL REFERENCES sims.users(id) NOT NULL,
+    creator INT NOT NULL REFERENCES sims.users(id),
     modifier INT NULL DEFAULT NULL REFERENCES sims.users(id),
     -- Ensure assessed fields are all provided when submission status is not pending.
     CONSTRAINT form_submissions_assessed_fields_required_constraint CHECK (

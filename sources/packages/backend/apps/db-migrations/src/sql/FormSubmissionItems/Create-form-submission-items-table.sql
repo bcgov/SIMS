@@ -10,9 +10,9 @@ CREATE TABLE sims.form_submission_items(
     -- Audit columns.
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    creator INT NOT NULL REFERENCES sims.users(id) NOT NULL,
+    creator INT NOT NULL REFERENCES sims.users(id),
     modifier INT NULL DEFAULT NULL REFERENCES sims.users(id),
-    -- Ensure assessed fields are all provided when submission status is not pending.
+    -- Ensure decision fields are all provided when decision status is not pending.
     CONSTRAINT form_submission_items_decision_fields_required_constraint CHECK (
         (
             decision_status != 'Pending' :: sims.form_submission_decision_status
@@ -54,4 +54,4 @@ COMMENT ON COLUMN sims.form_submission_items.creator IS 'User ID of the record c
 COMMENT ON COLUMN sims.form_submission_items.modifier IS 'User ID of the last user who modified the record.';
 
 -- Constraints comments.
-COMMENT ON CONSTRAINT form_submission_items_decision_fields_required_constraint ON sims.form_submission_items IS 'Requires decision_date, decision_by, and decision_note_id when submission_status is not pending.';
+COMMENT ON CONSTRAINT form_submission_items_decision_fields_required_constraint ON sims.form_submission_items IS 'Requires decision_date, decision_by, and decision_note_id when decision_status is not pending.';

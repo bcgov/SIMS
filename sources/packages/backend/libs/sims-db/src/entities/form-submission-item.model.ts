@@ -31,7 +31,7 @@ export class FormSubmissionItem extends RecordDataModel {
   /**
    * Parent form submission that this item belongs to.
    */
-  @ManyToOne(() => FormSubmission)
+  @ManyToOne(() => FormSubmission, { nullable: false })
   @JoinColumn({
     name: "form_submission_id",
     referencedColumnName: ColumnNames.ID,
@@ -40,7 +40,7 @@ export class FormSubmissionItem extends RecordDataModel {
   /**
    * Dynamic form configuration used to render and validate this item.
    */
-  @ManyToOne(() => DynamicFormConfiguration)
+  @ManyToOne(() => DynamicFormConfiguration, { nullable: false })
   @JoinColumn({
     name: "dynamic_form_configuration_id",
     referencedColumnName: ColumnNames.ID,
@@ -76,7 +76,7 @@ export class FormSubmissionItem extends RecordDataModel {
   /**
    * Ministry user who made the decision.
    */
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User)
   @JoinColumn({
     name: "decision_by",
     referencedColumnName: ColumnNames.ID,
