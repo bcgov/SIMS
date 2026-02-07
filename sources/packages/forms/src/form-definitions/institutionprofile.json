@@ -42,16 +42,29 @@
       "tableView": false
     },
     {
+      "label": "Is full institution profile update allowed",
+      "persistent": "client-only",
+      "calculateValue": "value = data.clientType === 'aest';",
+      "key": "isFullUpdateAllowed",
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
       "title": "Institution details panel",
       "collapsible": false,
       "hideLabel": true,
       "key": "institutionDetailsPanel",
       "logic": [
         {
-          "name": "Client type not AEST",
+          "name": "Disable panel when full update is not allowed",
           "trigger": {
-            "type": "javascript",
-            "javascript": "result = (data.clientType !== 'aest')"
+            "type": "simple",
+            "simple": {
+              "show": true,
+              "when": "isFullUpdateAllowed",
+              "eq": "false"
+            }
           },
           "actions": [
             {
@@ -269,6 +282,29 @@
                   "customAction": "component.data.values = data.countryOptionValues.map((optionValue) => ({\r\n  value: optionValue.lookupKey,\r\n  label: optionValue.lookupValue,\r\n}));"
                 }
               ]
+            },
+            {
+              "name": "Set component to not required when full update is not allowed",
+              "trigger": {
+                "type": "simple",
+                "simple": {
+                  "show": true,
+                  "when": "isFullUpdateAllowed",
+                  "eq": "false"
+                }
+              },
+              "actions": [
+                {
+                  "name": "Set required as false",
+                  "type": "property",
+                  "property": {
+                    "label": "Required",
+                    "value": "validate.required",
+                    "type": "boolean"
+                  },
+                  "state": false
+                }
+              ]
             }
           ],
           "type": "select",
@@ -302,6 +338,29 @@
                   "customAction": "component.data.values = data.provinceOptionValues.map((optionValue) => ({\r\n  value: optionValue.lookupKey,\r\n  label: optionValue.lookupValue,\r\n}));"
                 }
               ]
+            },
+            {
+              "name": "Set component to not required when full update is not allowed",
+              "trigger": {
+                "type": "simple",
+                "simple": {
+                  "show": true,
+                  "when": "isFullUpdateAllowed",
+                  "eq": "false"
+                }
+              },
+              "actions": [
+                {
+                  "name": "Set required as false",
+                  "type": "property",
+                  "property": {
+                    "label": "Required",
+                    "value": "validate.required",
+                    "type": "boolean"
+                  },
+                  "state": false
+                }
+              ]
             }
           ],
           "type": "select",
@@ -330,6 +389,31 @@
           },
           "validateWhenHidden": false,
           "key": "classification",
+          "logic": [
+            {
+              "name": "Set component to not required when full update is not allowed",
+              "trigger": {
+                "type": "simple",
+                "simple": {
+                  "show": true,
+                  "when": "isFullUpdateAllowed",
+                  "eq": "false"
+                }
+              },
+              "actions": [
+                {
+                  "name": "Set required as false",
+                  "type": "property",
+                  "property": {
+                    "label": "Required",
+                    "value": "validate.required",
+                    "type": "boolean"
+                  },
+                  "state": false
+                }
+              ]
+            }
+          ],
           "type": "radio",
           "input": true
         },
@@ -356,6 +440,31 @@
           },
           "validateWhenHidden": false,
           "key": "organizationStatus",
+          "logic": [
+            {
+              "name": "Set component to not required when full update is not allowed",
+              "trigger": {
+                "type": "simple",
+                "simple": {
+                  "show": true,
+                  "when": "isFullUpdateAllowed",
+                  "eq": "false"
+                }
+              },
+              "actions": [
+                {
+                  "name": "Set required as false",
+                  "type": "property",
+                  "property": {
+                    "label": "Required",
+                    "value": "validate.required",
+                    "type": "boolean"
+                  },
+                  "state": false
+                }
+              ]
+            }
+          ],
           "type": "radio",
           "input": true
         },
@@ -382,6 +491,31 @@
           },
           "validateWhenHidden": false,
           "key": "medicalSchoolStatus",
+          "logic": [
+            {
+              "name": "Set component to not required when full update is not allowed",
+              "trigger": {
+                "type": "simple",
+                "simple": {
+                  "show": true,
+                  "when": "isFullUpdateAllowed",
+                  "eq": "false"
+                }
+              },
+              "actions": [
+                {
+                  "name": "Set required as false",
+                  "type": "property",
+                  "property": {
+                    "label": "Required",
+                    "value": "validate.required",
+                    "type": "boolean"
+                  },
+                  "state": false
+                }
+              ]
+            }
+          ],
           "type": "radio",
           "input": true
         },
@@ -1002,7 +1136,7 @@
       "tableView": false
     },
     {
-      "label": "Client type (AEST | undefined)",
+      "label": "Client type (aest|undefined)",
       "persistent": "client-only",
       "key": "clientType",
       "type": "hidden",
