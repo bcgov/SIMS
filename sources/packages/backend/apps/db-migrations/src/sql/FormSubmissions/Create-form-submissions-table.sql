@@ -32,7 +32,7 @@ COMMENT ON COLUMN sims.form_submissions.id IS 'Primary key of the form submissio
 
 COMMENT ON COLUMN sims.form_submissions.student_id IS 'Student associated with the form submission.';
 
-COMMENT ON COLUMN sims.form_submissions.application_id IS 'Application associated with the submission when the grouping requires it (e.g., Application bundle).';
+COMMENT ON COLUMN sims.form_submissions.application_id IS 'Application associated with the submission when the form is student application-related.';
 
 COMMENT ON COLUMN sims.form_submissions.submitted_date IS 'Date and time when the submission was received.';
 
@@ -53,4 +53,4 @@ COMMENT ON COLUMN sims.form_submissions.creator IS 'Creator of the record.';
 COMMENT ON COLUMN sims.form_submissions.modifier IS 'Modifier of the record.';
 
 -- Constraints comments.
-COMMENT ON CONSTRAINT form_submissions_assessed_fields_required_constraint ON sims.form_submissions IS 'Requires assessed_date, assessed_by, and assessed_note_id when submission_status is not Pending.';
+COMMENT ON CONSTRAINT form_submissions_assessed_fields_required_constraint ON sims.form_submissions IS 'Requires assessed_date, and assessed_by when submission_status is not pending.';

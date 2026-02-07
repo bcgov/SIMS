@@ -78,7 +78,7 @@ export class DynamicFormConfiguration extends BaseModel {
   formCategory: FormCategory;
 
   /**
-   * Provides a description of the form to be shown to the student.
+   * Provides a description of the form to be shown to the user submitting it.
    */
   @Column({
     name: "form_description",

@@ -6,10 +6,15 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { DynamicFormConfiguration, FormSubmission, Note, User } from ".";
+import {
+  DynamicFormConfiguration,
+  FormSubmission,
+  Note,
+  User,
+  FormSubmissionDecisionStatus,
+} from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { FormSubmissionDecisionStatus } from "@sims/sims-db/entities/form-submission-decision-status.type";
 
 /**
  * Individual forms submitted for a decision that are part of a form submission process.
@@ -33,7 +38,7 @@ export class FormSubmissionItem extends RecordDataModel {
   })
   formSubmission: FormSubmission;
   /**
-   *Dynamic form configuration used to render and validate this item.
+   * Dynamic form configuration used to render and validate this item.
    */
   @ManyToOne(() => DynamicFormConfiguration)
   @JoinColumn({

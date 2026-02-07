@@ -8,12 +8,12 @@ export enum FormCategory {
   StudentAppeal = "Student appeal",
   /**
    * Any form submitted by a student that does not fall under
-   * the appeals process and have multiple applications.
+   * the appeals process and have multiple purposes.
    */
   StudentForm = "Student form",
   /**
    * Forms used along the system that are not directly
-   * selected by students.
+   * selected by users.
    */
   System = "System",
 }

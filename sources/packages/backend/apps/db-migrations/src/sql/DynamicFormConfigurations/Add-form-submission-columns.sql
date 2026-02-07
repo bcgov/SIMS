@@ -18,7 +18,7 @@ ALTER COLUMN
 
 COMMENT ON COLUMN sims.dynamic_form_configurations.form_category IS 'Indicates the category of the form.';
 
-COMMENT ON COLUMN sims.dynamic_form_configurations.form_description IS 'Provides a description of the form to be shown to the student.';
+COMMENT ON COLUMN sims.dynamic_form_configurations.form_description IS 'Provides a description of the form to be shown to the user submitting it.';
 
 COMMENT ON COLUMN sims.dynamic_form_configurations.has_application_scope IS 'Indicates whether the form must be associated with a Student Application.';
 
@@ -40,7 +40,7 @@ VALUES
         'Room and board costs',
         'roomandboardcostsappeal',
         'Student appeal',
-        'A StudentAid BC Room and Board appeal allows students living with parents, step-parents, sponsors, or legal guardians to include, in their financial assessment, costs for room and board that they are required to pay, when those individuals cannot afford to provide this support for free.',
+        'A StudentAid BC Room and Board Appeal allows students living with parents, step-parents, sponsors, or legal guardians to include, in their financial assessment, costs for room and board that they are required to pay, when those individuals cannot afford to provide this support for free.',
         TRUE,
         TRUE
     ),
@@ -48,7 +48,7 @@ VALUES
         'Step-parent waiver',
         'stepparentwaiverappeal',
         'Student appeal',
-        'A StudentAid BC step-parent waiver appeal allows dependent students to request that a step-parent''s income be excluded from their financial assessment if the step-parent has not assumed financial responsibility and does not claim the student as a dependent. This appeal is generally for recent marriages or common-law relationships (within 5 years).',
+        'A StudentAid BC Step-parent Waiver Appeal allows dependent students to request that a step-parent''s income be excluded from their financial assessment if the step-parent has not assumed financial responsibility and does not claim the student as a dependent. This appeal is generally for recent marriages or common-law relationships (within 5 years).',
         TRUE,
         TRUE
     ),
@@ -64,7 +64,7 @@ VALUES
         'Non-punitive withdrawal',
         'nonpunitivewithdrawalform',
         'Student form',
-        'A StudentAid BC non-punitive withdrawal appeal allows students to remove a withdrawal from their record, preventing it from counting against future funding eligibility. This appeal is used when studies were stopped due to exceptional, documented circumstances—such as medical illness, family emergency, or institutional closure—rather than academic failure.',
+        'A StudentAid BC Non-punitive Withdrawal Appeal allows students to remove a withdrawal from their record, preventing it from counting against future funding eligibility. This appeal is used when studies were stopped due to exceptional, documented circumstances—such as medical illness, family emergency, or institutional closure—rather than academic failure.',
         FALSE,
         FALSE
     );

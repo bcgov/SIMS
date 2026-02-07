@@ -9,9 +9,8 @@ export enum FormSubmissionStatus {
   Pending = "Pending",
   /**
    * All forms within the submission were assessed and
-   * are no longer pending. The decisions could be
-   * approved or declined, either way the submission
-   * process is completed.
+   * are no longer pending, at least one form was approved,
+   * and the submission process is completed.
    */
   Completed = "Completed",
   /**

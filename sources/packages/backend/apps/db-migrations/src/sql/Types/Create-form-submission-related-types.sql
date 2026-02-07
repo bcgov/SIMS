@@ -8,7 +8,7 @@ COMMENT ON TYPE sims.form_category_types IS 'Defines the category of forms.';
 
 CREATE TYPE sims.form_submission_status AS ENUM('Pending', 'Completed', 'Declined');
 
-COMMENT ON TYPE sims.form_submission_status IS 'Status for form submission that contains one to many forms to be assessed and have a decision assigned. Once all forms within the submission have been assessed, the submission is defined as Completed or Declined where declined indicates all forms were declined and Completed indicates at least one form was approved.';
+COMMENT ON TYPE sims.form_submission_status IS 'This status applies to a submission containing one-to-many forms that require assessment and decision. Once all forms within the submission have been assessed, the submission is marked as Completed or Declined. ''Declined'' indicates that all forms were rejected, whereas ''Completed'' indicates that at least one form was approved. This value is denormalized for easier querying of submission status without needing to evaluate the status of each individual form submission item.';
 
 CREATE TYPE sims.form_submission_decision_status AS ENUM(
     'Pending',

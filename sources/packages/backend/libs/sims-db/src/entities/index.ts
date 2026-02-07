@@ -121,5 +121,6 @@ export * from "./system-lookup-category.type";
 export * from "./system-lookup-configuration.model";
 export * from "./form-category.type";
 export * from "./form-submission-status.type";
+export * from "./form-submission-decision-status.type";
 export * from "./form-submission.model";
 export * from "./form-submission-item.model";

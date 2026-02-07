@@ -30,8 +30,6 @@ export class FormSubmission extends RecordDataModel {
   id: number;
   /**
    * Student related to this form submission.
-   * A form submission may or may not be linked to an application,
-   * but it must be linked to a student.
    */
   @ManyToOne(() => Student)
   @JoinColumn({
@@ -40,8 +38,8 @@ export class FormSubmission extends RecordDataModel {
   })
   student: Student;
   /**
-   * Application associated with the submission when the grouping
-   * requires it (e.g., Application bundle).
+   * Application associated with the submission when the
+   * form is student application-related.
    */
   @ManyToOne(() => Application, {
     nullable: true,
@@ -57,7 +55,6 @@ export class FormSubmission extends RecordDataModel {
   @Column({
     name: "submitted_date",
     type: "timestamptz",
-    nullable: false,
   })
   submittedDate: Date;
   /**
