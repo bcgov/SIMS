@@ -179,22 +179,6 @@
           "input": true
         },
         {
-          "label": "Institution type",
-          "widget": "html5",
-          "placeholder": "Select",
-          "tableView": true,
-          "validate": {
-            "required": true
-          },
-          "key": "institutionType",
-          "attributes": {
-            "data-cy": "institutionType"
-          },
-          "type": "select",
-          "input": true,
-          "searchThreshold": 0.3
-        },
-        {
           "label": "Institution regulatory body",
           "widget": "choicesjs",
           "tableView": true,

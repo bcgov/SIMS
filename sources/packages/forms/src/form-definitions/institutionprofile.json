@@ -144,22 +144,6 @@
           "input": true
         },
         {
-          "label": "Institution type",
-          "widget": "html5",
-          "tableView": true,
-          "clearOnHide": false,
-          "validate": {
-            "required": true
-          },
-          "key": "institutionType",
-          "attributes": {
-            "data-cy": "institutionType"
-          },
-          "type": "select",
-          "input": true,
-          "searchThreshold": 0.3
-        },
-        {
           "label": "Institution regulatory body",
           "widget": "choicesjs",
           "tableView": true,
@@ -1146,7 +1130,7 @@
       "tableView": false
     },
     {
-      "label": "mode (create/edit)",
+      "label": "mode (create|edit)",
       "key": "mode",
       "type": "hidden",
       "input": true,
