@@ -503,6 +503,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
           DisbursementValueType.CanadaLoan,
           "CSLF",
           100,
+          { disbursedAmountSubtracted: 80 },
         ),
         createFakeDisbursementValue(
           DisbursementValueType.CanadaGrant,
@@ -560,20 +561,6 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
         db,
         application.currentAssessment.disbursementSchedules[0],
       );
-
-      // Create a student restriction impacting BC Load/Grant
-      const restriction = await db.restriction.findOne({
-        select: { id: true },
-        where: {
-          restrictionCode: RestrictionCode.B6A,
-        },
-      });
-      await db.restriction.save(restriction);
-      const b2Restriction = createFakeStudentRestriction({
-        student: sharedStudent,
-        restriction: restriction,
-      });
-      await db.studentRestriction.save(b2Restriction);
 
       // Create an CSLF positive overaward of $10.
       const positiveOveraward = createFakeDisbursementOveraward({
@@ -717,7 +704,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
                 valueAmount: 100,
                 effectiveAmount: null,
                 hasRestrictionAdjustment: false,
-                hasDisbursedAdjustment: false,
+                hasDisbursedAdjustment: true,
                 hasPositiveOverawardAdjustment: true,
                 hasNegativeOverawardAdjustment: false,
               },
@@ -752,7 +739,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
                 valueCode: "BCSL",
                 valueAmount: 600,
                 effectiveAmount: null,
-                hasRestrictionAdjustment: true,
+                hasRestrictionAdjustment: false,
                 hasDisbursedAdjustment: false,
                 hasPositiveOverawardAdjustment: false,
                 hasNegativeOverawardAdjustment: false,
@@ -761,7 +748,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
                 valueCode: "BCAG",
                 valueAmount: 700,
                 effectiveAmount: null,
-                hasRestrictionAdjustment: true,
+                hasRestrictionAdjustment: false,
                 hasDisbursedAdjustment: false,
                 hasPositiveOverawardAdjustment: false,
                 hasNegativeOverawardAdjustment: false,
@@ -770,7 +757,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
                 valueCode: "BGPD",
                 valueAmount: 800,
                 effectiveAmount: null,
-                hasRestrictionAdjustment: true,
+                hasRestrictionAdjustment: false,
                 hasDisbursedAdjustment: false,
                 hasPositiveOverawardAdjustment: false,
                 hasNegativeOverawardAdjustment: false,
@@ -779,7 +766,7 @@ describe("AssessmentAESTController(e2e)-getAssessmentAwardDetails", () => {
                 valueCode: "SBSD",
                 valueAmount: 900,
                 effectiveAmount: null,
-                hasRestrictionAdjustment: true,
+                hasRestrictionAdjustment: false,
                 hasDisbursedAdjustment: false,
                 hasPositiveOverawardAdjustment: false,
                 hasNegativeOverawardAdjustment: false,
