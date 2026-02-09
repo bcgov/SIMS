@@ -103,8 +103,9 @@ export interface AwardDetailsAPIOutDTO {
   offeringStudyStartDate: string;
   offeringStudyEndDate: string;
   firstDisbursement: AwardDisbursementScheduleAPIOutDTO;
-  secondDisbursement: AwardDisbursementScheduleAPIOutDTO;
+  secondDisbursement?: AwardDisbursementScheduleAPIOutDTO;
 }
+
 /**
  * Disbursement schedule details for Awards.
  */
@@ -114,10 +115,10 @@ export interface AwardDisbursementScheduleAPIOutDTO {
   coeStatus: COEStatus;
   msfaaNumber: string;
   msfaaId: number;
-  msfaaCancelledDate: string;
-  msfaaDateSigned: string;
+  msfaaCancelledDate?: string;
+  msfaaDateSigned?: string;
   tuitionRemittance: number;
-  enrolmentDate: Date;
+  enrolmentDate?: Date;
   id: number;
   statusUpdatedOn: Date;
   dateSent?: Date;

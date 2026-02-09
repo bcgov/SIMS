@@ -115,7 +115,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "disbursementReceipt",
       )
       .where("assessment.id = :assessmentId", { assessmentId })
-      .orderBy("disbursementSchedule.disbursementDate");
+      .orderBy("disbursementSchedule.disbursementDate")
+      .addOrderBy("disbursementValue.id");
 
     if (options?.studentId) {
       query.andWhere("student.id = :studentId", {

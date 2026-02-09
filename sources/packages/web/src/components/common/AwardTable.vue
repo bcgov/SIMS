@@ -34,7 +34,7 @@
         <tbody>
           <tr v-for="award in awards" :key="award.awardType">
             <td>
-              <span v-if="$vuetify.display.smAndDown">
+              <span v-if="isMobile">
                 {{ award.awardTypeDisplay }}
                 <tooltip-icon>{{ award.awardDescription }}</tooltip-icon>
               </span>
@@ -49,14 +49,7 @@
               {{ award.finalAmount }}
             </td>
             <td v-if="showAdjustments">
-              <assessment-award-adjustments
-                :adjustments="{
-                  restriction: award.hasRestrictionAdjustment,
-                  disbursed: award.hasDisbursedAdjustment,
-                  positiveOveraward: award.hasPositiveOverawardAdjustment,
-                  negativeOveraward: award.hasNegativeOverawardAdjustment,
-                }"
-              />
+              <assessment-award-adjustments :adjustments="award.adjustments" />
             </td>
           </tr>
         </tbody>
@@ -92,7 +85,7 @@
       <span class="label-bold">Earliest date of disbursement: </span>
       <span>{{ dateOnlyLongString(disbursement.disbursementDate) }}</span>
     </div>
-    <div v-if="isDisbursementCompleted && disbursement.documentNumber">
+    <div v-if="disbursement.documentNumber">
       <span class="label-bold">Cert number: </span>
       <span>{{ disbursement.documentNumber }}</span>
     </div>
@@ -112,15 +105,12 @@
       @disbursement-cancelled="$emit('disbursementCancelled')"
     />
   </div>
-
-  <div></div>
 </template>
 <script lang="ts">
 import { PropType, defineComponent, computed } from "vue";
 import {
   ApplicationStatus,
   AssessmentAwardData,
-  COEStatus,
   DisbursementScheduleStatus,
   OfferingIntensity,
   StatusInfo,
@@ -134,6 +124,7 @@ import StatusInfoDisbursementCancellation from "@/components/common/StatusInfoDi
 import ConfirmEnrolment from "@/components/common/ConfirmEnrolment.vue";
 import CancelDisbursementSchedule from "@/components/common/CancelDisbursementSchedule.vue";
 import { AwardDisbursementScheduleAPIOutDTO } from "@/services/http/dto";
+import { useDisplay } from "vuetify";
 
 const AWARD_NOT_ELIGIBLE = "(Not eligible)";
 
@@ -204,6 +195,8 @@ export default defineComponent({
   },
 
   setup(props) {
+    const { mobile: isMobile } = useDisplay();
+
     const awardTypes = computed<AwardDetail[]>(() =>
       AWARDS.filter(
         (award) => award.offeringIntensity === props.offeringIntensity,
@@ -213,34 +206,36 @@ export default defineComponent({
     const { currencyFormatter, dateOnlyLongString } = useFormatters();
 
     // Associate disbursement values with their award types.
-    const awards: AssessmentAwardData[] = awardTypes.value.map((award) => {
-      const disbursementValue = props.disbursement.disbursementValues.find(
-        (value) => {
-          return value.valueCode === award.awardType;
-        },
-      );
-      const estimatedAmount = disbursementValue
-        ? currencyFormatter(disbursementValue.valueAmount, "-")
-        : AWARD_NOT_ELIGIBLE;
-      const finalAmount = disbursementValue
-        ? currencyFormatter(disbursementValue.effectiveAmount, "-")
-        : AWARD_NOT_ELIGIBLE;
+    const awards = computed<AssessmentAwardData[]>(() => {
+      return awardTypes.value.map((award) => {
+        const disbursementValue = props.disbursement.disbursementValues.find(
+          (value) => {
+            return value.valueCode === award.awardType;
+          },
+        );
+        const estimatedAmount = disbursementValue
+          ? currencyFormatter(disbursementValue.valueAmount, "-")
+          : AWARD_NOT_ELIGIBLE;
+        const finalAmount = disbursementValue
+          ? currencyFormatter(disbursementValue.effectiveAmount, "-")
+          : AWARD_NOT_ELIGIBLE;
 
-      return {
-        awardType: award.awardType,
-        awardTypeDisplay: award.awardTypeDisplay,
-        awardDescription: award.description,
-        estimatedAmount,
-        finalAmount,
-        hasDisbursedAdjustment:
-          disbursementValue?.hasDisbursedAdjustment ?? false,
-        hasRestrictionAdjustment:
-          disbursementValue?.hasRestrictionAdjustment ?? false,
-        hasNegativeOverawardAdjustment:
-          disbursementValue?.hasNegativeOverawardAdjustment ?? false,
-        hasPositiveOverawardAdjustment:
-          disbursementValue?.hasPositiveOverawardAdjustment ?? false,
-      };
+        return {
+          awardType: award.awardType,
+          awardTypeDisplay: award.awardTypeDisplay,
+          awardDescription: award.description,
+          estimatedAmount,
+          finalAmount,
+          adjustments: {
+            disbursed: disbursementValue?.hasDisbursedAdjustment ?? false,
+            restriction: disbursementValue?.hasRestrictionAdjustment ?? false,
+            negativeOveraward:
+              disbursementValue?.hasNegativeOverawardAdjustment ?? false,
+            positiveOveraward:
+              disbursementValue?.hasPositiveOverawardAdjustment ?? false,
+          },
+        };
+      });
     });
 
     const showFinalAward = computed(() => {
@@ -250,10 +245,6 @@ export default defineComponent({
     const showAdjustments = computed(() => {
       return ADJUSTMENT_STATUSES.has(props.disbursement.status);
     });
-
-    const isDisbursementCompleted = computed<boolean>(
-      () => props.disbursement.coeStatus === COEStatus.completed,
-    );
 
     const canCancelDisbursement = computed<boolean>(() => {
       return (
@@ -268,10 +259,10 @@ export default defineComponent({
       showFinalAward,
       showAdjustments,
       DisbursementScheduleStatus,
-      isDisbursementCompleted,
       dateOnlyLongString,
       StatusInfo,
       canCancelDisbursement,
+      isMobile,
     };
   },
 });

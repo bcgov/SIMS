@@ -39,10 +39,7 @@ export interface AssessmentAwardData {
   awardDescription: string;
   estimatedAmount: string | number;
   finalAmount?: string | number;
-  hasRestrictionAdjustment: boolean;
-  hasDisbursedAdjustment: boolean;
-  hasPositiveOverawardAdjustment: boolean;
-  hasNegativeOverawardAdjustment: boolean;
+  adjustments: AwardAdjustmentType;
 }
 
 /**

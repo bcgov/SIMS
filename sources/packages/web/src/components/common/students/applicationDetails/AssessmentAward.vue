@@ -1,6 +1,6 @@
 <template>
   <toggle-content
-    :toggled="!assessmentAwardData.firstDisbursement"
+    :toggled="!assessmentAwardData"
     message="Assessment details not available yet."
   >
     <body-header

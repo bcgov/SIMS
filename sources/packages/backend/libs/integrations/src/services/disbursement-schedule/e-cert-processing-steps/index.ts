@@ -15,3 +15,4 @@ export * from "./restriction-bypasses-resolution-step";
 export * from "./apply-stop-bc-funding-restriction-step";
 export * from "./add-aviation-credential-restriction-step";
 export * from "./e-cert-steps-restriction-utils";
+export * from "./e-cert-steps-utils";

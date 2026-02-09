@@ -48,7 +48,7 @@ import {
   ECertGenerationService,
   EligibleECertDisbursement,
 } from "@sims/integrations/services";
-import { getStopFundingTypesAndRestrictionsMap } from "@sims/integrations/services/disbursement-schedule/e-cert-processing-steps/e-cert-steps-utils";
+import { getStopFundingTypesAndRestrictionsMap } from "@sims/integrations/services/disbursement-schedule/e-cert-processing-steps";
 
 @Injectable()
 export class AssessmentControllerService {
@@ -279,36 +279,47 @@ export class AssessmentControllerService {
 
     // Get the eligible disbursements to be part of e-Cert generation
     // if either disbursement is pending.
-    let firstEligibleDisbursement: EligibleECertDisbursement;
-    let secondEligibleDisbursement: EligibleECertDisbursement;
+    let firstEligibleDisbursement: EligibleECertDisbursement,
+      secondEligibleDisbursement: EligibleECertDisbursement;
     if (
       firstDisbursementSchedule?.disbursementScheduleStatus ===
         DisbursementScheduleStatus.Pending ||
       secondDisbursementSchedule?.disbursementScheduleStatus ===
         DisbursementScheduleStatus.Pending
     ) {
-      [firstEligibleDisbursement, secondEligibleDisbursement] =
+      const eligibleDisbursements =
         await this.eCertGenerationService.getEligibleDisbursements({
           applicationId: assessment.application.id,
           allowNonCompleted: true,
         });
-    }
-
-    const firstDisbursement = await this.populateAwardDisbursement(
-      firstDisbursementSchedule,
-      firstEligibleDisbursement,
-      assessment.application.student.id,
-      { includeDocumentNumber, includeDateSent, maskMSFAA },
-    );
-    let secondDisbursement;
-    if (secondDisbursementSchedule) {
-      secondDisbursement = await this.populateAwardDisbursement(
-        secondDisbursementSchedule,
-        secondEligibleDisbursement,
-        assessment.application.student.id,
-        { includeDocumentNumber, includeDateSent, maskMSFAA },
+      firstEligibleDisbursement = eligibleDisbursements.find(
+        (eligibleDisbursement) =>
+          eligibleDisbursement.disbursement.id ===
+          firstDisbursementSchedule?.id,
+      );
+      secondEligibleDisbursement = eligibleDisbursements.find(
+        (eligibleDisbursement) =>
+          eligibleDisbursement.disbursement.id ===
+          secondDisbursementSchedule?.id,
       );
     }
+
+    const [firstDisbursement, secondDisbursement] = await Promise.all([
+      this.populateAwardDisbursement(
+        firstDisbursementSchedule,
+        firstEligibleDisbursement,
+        assessment.application.student.id,
+        { includeDocumentNumber, includeDateSent, maskMSFAA },
+      ),
+      secondDisbursementSchedule
+        ? this.populateAwardDisbursement(
+            secondDisbursementSchedule,
+            secondEligibleDisbursement,
+            assessment.application.student.id,
+            { includeDocumentNumber, includeDateSent, maskMSFAA },
+          )
+        : null,
+    ]);
     return {
       applicationNumber: assessment.application.applicationNumber,
       applicationStatus: assessment.application.applicationStatus,
@@ -337,7 +348,7 @@ export class AssessmentControllerService {
    */
   private async populateAwardDisbursement(
     schedule: DisbursementSchedule,
-    eligibleDisbursement: EligibleECertDisbursement,
+    eligibleDisbursement: EligibleECertDisbursement | undefined,
     studentId: number,
     options?: {
       includeDocumentNumber?: boolean;
@@ -414,7 +425,7 @@ export class AssessmentControllerService {
       if (disbursement.status === DisbursementScheduleStatus.Pending) {
         // Estimated Award - calculate estimated adjustments.
 
-        // Restriction: If the student has a restriction that impacts funding, flag the adjustment.)
+        // Restriction: If the student has a restriction that impacts funding, flag the adjustment.
         hasRestrictionAdjustment =
           !!studentRestrictions &&
           studentRestrictions?.has(disbursementValue.valueType);

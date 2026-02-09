@@ -1,50 +1,36 @@
 <template>
-  <div>
-    <v-row>
-      <v-col cols="12">
-        <content-group>
-          <award-table
-            :disbursement="assessmentAwardData.firstDisbursement"
-            :offering-intensity="assessmentAwardData.offeringIntensity"
-            :application-status="assessmentAwardData.applicationStatus"
-            :allow-confirm-enrolment="allowConfirmEnrolment"
-            :allow-disbursement-cancellation="allowDisbursementCancellation"
-            :allow-final-award-extended-information="
-              allowFinalAwardExtendedInformation
-            "
-            :header="
-              isSecondDisbursementAvailable
-                ? 'First disbursement'
-                : 'Disbursement'
-            "
-            @disbursement-cancelled="$emit('disbursementCancelled')"
-            @confirm-enrolment="$emit('confirmEnrolment', $event)"
-          />
-        </content-group>
-      </v-col>
-    </v-row>
-  </div>
-  <div v-if="isSecondDisbursementAvailable">
-    <v-row>
-      <v-col>
-        <content-group>
-          <award-table
-            :disbursement="assessmentAwardData.secondDisbursement"
-            :offering-intensity="assessmentAwardData.offeringIntensity"
-            :application-status="assessmentAwardData.applicationStatus"
-            :allow-confirm-enrolment="allowConfirmEnrolment"
-            :allow-disbursement-cancellation="allowDisbursementCancellation"
-            :allow-final-award-extended-information="
-              allowFinalAwardExtendedInformation
-            "
-            header="Second Disbursement"
-            @disbursement-cancelled="$emit('disbursementCancelled')"
-            @confirm-enrolment="$emit('confirmEnrolment', $event)"
-          />
-        </content-group>
-      </v-col>
-    </v-row>
-  </div>
+  <content-group>
+    <award-table
+      :disbursement="assessmentAwardData.firstDisbursement"
+      :offering-intensity="assessmentAwardData.offeringIntensity"
+      :application-status="assessmentAwardData.applicationStatus"
+      :allow-confirm-enrolment="allowConfirmEnrolment"
+      :allow-disbursement-cancellation="allowDisbursementCancellation"
+      :allow-final-award-extended-information="
+        allowFinalAwardExtendedInformation
+      "
+      :header="
+        isSecondDisbursementAvailable ? 'First disbursement' : 'Disbursement'
+      "
+      @disbursement-cancelled="$emit('disbursementCancelled')"
+      @confirm-enrolment="$emit('confirmEnrolment', $event)"
+    />
+  </content-group>
+  <content-group v-if="isSecondDisbursementAvailable" class="mt-4">
+    <award-table
+      :disbursement="assessmentAwardData.secondDisbursement"
+      :offering-intensity="assessmentAwardData.offeringIntensity"
+      :application-status="assessmentAwardData.applicationStatus"
+      :allow-confirm-enrolment="allowConfirmEnrolment"
+      :allow-disbursement-cancellation="allowDisbursementCancellation"
+      :allow-final-award-extended-information="
+        allowFinalAwardExtendedInformation
+      "
+      header="Second Disbursement"
+      @disbursement-cancelled="$emit('disbursementCancelled')"
+      @confirm-enrolment="$emit('confirmEnrolment', $event)"
+    />
+  </content-group>
 </template>
 <script lang="ts">
 import { AwardDetailsAPIOutDTO } from "@/services/http/dto";
