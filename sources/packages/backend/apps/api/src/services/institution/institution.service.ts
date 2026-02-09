@@ -268,7 +268,11 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.institutionType = {
       id: institutionModel.institutionType,
     } as InstitutionType;
-
+    institution.country = institutionModel.country;
+    institution.province = institutionModel.province ?? null;
+    institution.classification = institutionModel.classification;
+    institution.organizationStatus = institutionModel.organizationStatus;
+    institution.medicalSchoolStatus = institutionModel.medicalSchoolStatus;
     // Institution Primary Contact Information.
     institution.institutionPrimaryContact = {
       firstName: institutionModel.primaryContactFirstName,

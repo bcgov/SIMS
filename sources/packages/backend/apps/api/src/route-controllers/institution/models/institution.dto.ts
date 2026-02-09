@@ -53,6 +53,26 @@ export class CreateInstitutionAPIInDTO {
   establishedDate: string;
   @IsPositive()
   institutionType: number;
+  @IsNotEmpty()
+  @Length(2, 2)
+  country: string;
+  @ValidateIf(
+    (input: InstitutionProfileAPIInDTO) =>
+      input.country === CANADA_COUNTRY_CODE || !!input.province,
+  )
+  @AllowIf(
+    (input: InstitutionProfileAPIInDTO) =>
+      input.country === CANADA_COUNTRY_CODE,
+  )
+  @IsNotEmpty()
+  @Length(2, 2)
+  province?: string;
+  @IsEnum(InstitutionClassification)
+  classification: InstitutionClassification;
+  @IsEnum(InstitutionOrganizationStatus)
+  organizationStatus: InstitutionOrganizationStatus;
+  @IsEnum(InstitutionMedicalSchoolStatus)
+  medicalSchoolStatus: InstitutionMedicalSchoolStatus;
   //Institutions Primary Contact Information
   @IsNotEmpty()
   primaryContactFirstName: string;
@@ -124,6 +144,7 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   establishedDate: string;
   @IsPositive()
   institutionType: number;
+  @IsNotEmpty()
   @Length(2, 2)
   country: string;
   @ValidateIf(

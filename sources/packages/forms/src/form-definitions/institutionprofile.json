@@ -262,6 +262,7 @@
         {
           "label": "What country is your institution located in?",
           "widget": "choicesjs",
+          "placeholder": "Select country",
           "tableView": true,
           "validate": {
             "required": true
@@ -313,6 +314,7 @@
         {
           "label": "In which Canadian province is the organization located?",
           "widget": "choicesjs",
+          "placeholder": "Select province",
           "tableView": true,
           "validate": {
             "required": true

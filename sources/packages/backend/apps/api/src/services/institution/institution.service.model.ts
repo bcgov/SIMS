@@ -47,6 +47,11 @@ export interface InstitutionFormModel {
   regulatingBody: string;
   otherRegulatingBody?: string;
   establishedDate: string;
+  country: string;
+  province?: string;
+  classification: InstitutionClassification;
+  organizationStatus: InstitutionOrganizationStatus;
+  medicalSchoolStatus: InstitutionMedicalSchoolStatus;
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactEmail: string;

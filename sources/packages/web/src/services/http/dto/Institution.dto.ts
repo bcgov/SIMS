@@ -126,6 +126,16 @@ export class CreateInstitution {
   @Expose()
   establishedDate: string;
   @Expose()
+  country: string;
+  @Expose()
+  province?: string;
+  @Expose()
+  classification: InstitutionClassification;
+  @Expose()
+  organizationStatus: InstitutionOrganizationStatus;
+  @Expose()
+  medicalSchoolStatus: InstitutionMedicalSchoolStatus;
+  @Expose()
   primaryContactFirstName: string;
   @Expose()
   primaryContactLastName: string;
