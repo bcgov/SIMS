@@ -3,7 +3,6 @@ import {
   IsEnum,
   IsNotEmpty,
   IsOptional,
-  IsPositive,
   Length,
   MaxLength,
   ValidateIf,
@@ -51,8 +50,6 @@ export class CreateInstitutionAPIInDTO {
   otherRegulatingBody: string;
   @IsDateString()
   establishedDate: string;
-  @IsPositive()
-  institutionType: number;
   @IsNotEmpty()
   @Length(2, 2)
   country: string;
@@ -142,8 +139,6 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   otherRegulatingBody: string;
   @IsDateString()
   establishedDate: string;
-  @IsPositive()
-  institutionType: number;
   @IsNotEmpty()
   @Length(2, 2)
   country: string;
@@ -181,7 +176,6 @@ export class InstitutionDetailAPIOutDTO {
   establishedDate: string;
   institutionType: number;
   legalOperatingName: string;
-  institutionTypeName?: string;
   isBCPrivate: boolean;
   isBCPublic: boolean;
   /**

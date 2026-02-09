@@ -25,44 +25,40 @@
         <v-row>
           <v-col>
             <title-value
-              propertyTitle="Primary phone number"
-              :propertyValue="institutionProfileDetail.primaryPhone"
+              property-title="Primary phone number"
+              :property-value="institutionProfileDetail.primaryPhone"
             />
             <title-value
-              propertyTitle="Primary email"
-              :propertyValue="institutionProfileDetail.primaryEmail"
+              property-title="Primary email"
+              :property-value="institutionProfileDetail.primaryEmail"
             />
             <title-value
-              propertyTitle="Website"
-              :propertyValue="institutionProfileDetail.website"
+              property-title="Website"
+              :property-value="institutionProfileDetail.website"
             />
             <title-value
-              propertyTitle="Established date"
-              :propertyValue="institutionProfileDetail.establishedDate"
+              property-title="Established date"
+              :property-value="institutionProfileDetail.establishedDate"
             />
           </v-col>
           <v-divider :thickness="2" vertical />
           <v-col>
             <title-value
-              propertyTitle="Legal operating name"
-              :propertyValue="institutionProfileDetail.legalOperatingName"
+              property-title="Legal operating name"
+              :property-value="institutionProfileDetail.legalOperatingName"
             />
             <title-value
-              propertyTitle="Institution name"
-              :propertyValue="institutionProfileDetail.operatingName"
+              property-title="Institution name"
+              :property-value="institutionProfileDetail.operatingName"
             />
             <title-value
-              propertyTitle="Type"
-              :propertyValue="institutionProfileDetail.institutionTypeName"
-            />
-            <title-value
-              propertyTitle="Regulatory body"
-              :propertyValue="institutionProfileDetail.regulatingBody"
+              property-title="Regulatory body"
+              :property-value="institutionProfileDetail.regulatingBody"
             />
             <title-value
               v-if="institutionProfileDetail.regulatingBody === 'other'"
-              propertyTitle="Other regulatory body"
-              :propertyValue="institutionProfileDetail.otherRegulatingBody"
+              property-title="Other regulatory body"
+              :property-value="institutionProfileDetail.otherRegulatingBody"
             />
           </v-col>
         </v-row>
@@ -88,34 +84,36 @@
       <p class="category-header-medium mt-5">Mailing address</p>
       <content-group>
         <title-value
-          propertyTitle="Address line 1"
-          :propertyValue="institutionProfileDetail.mailingAddress?.addressLine1"
+          property-title="Address line 1"
+          :property-value="
+            institutionProfileDetail.mailingAddress?.addressLine1
+          "
         />
         <title-value
-          propertyTitle="Address line 2"
-          :propertyValue="
+          property-title="Address line 2"
+          :property-value="
             emptyStringFiller(
               institutionProfileDetail.mailingAddress?.addressLine2,
             )
           "
         />
         <title-value
-          propertyTitle="City"
-          :propertyValue="institutionProfileDetail.mailingAddress?.city"
+          property-title="City"
+          :property-value="institutionProfileDetail.mailingAddress?.city"
         />
         <title-value
-          propertyTitle="Postal Code"
-          :propertyValue="institutionProfileDetail.mailingAddress?.postalCode"
+          property-title="Postal Code"
+          :property-value="institutionProfileDetail.mailingAddress?.postalCode"
         />
         <title-value
-          propertyTitle="Province"
-          :propertyValue="
+          property-title="Province"
+          :property-value="
             institutionProfileDetail.mailingAddress?.provinceState
           "
         />
         <title-value
-          propertyTitle="Country"
-          :propertyValue="institutionProfileDetail.mailingAddress?.country"
+          property-title="Country"
+          :property-value="institutionProfileDetail.mailingAddress?.country"
         />
       </content-group>
     </body-header-container>

@@ -14,7 +14,6 @@
         form-name="institutionProfileCreation"
         :form-data="initialData"
         :is-data-ready="isDataReady"
-        @loaded="formLoaded"
         @submitted="submitted"
       >
         <template #actions="{ submit }">
@@ -38,7 +37,6 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { CreateInstitutionAPIInDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
-  useFormioDropdownLoader,
   useFormioUtils,
   useInstitutionState,
   useSnackBar,
@@ -53,7 +51,6 @@ export default defineComponent({
     const { excludeExtraneousValues } = useFormioUtils();
     const { initialize } = useInstitutionState();
     const router = useRouter();
-    const formioDataLoader = useFormioDropdownLoader();
     const initialData = ref({});
     const isDataReady = ref(false);
 
@@ -111,14 +108,9 @@ export default defineComponent({
       }
     });
 
-    const formLoaded = async (form: any) => {
-      await formioDataLoader.loadInstitutionTypes(form, "institutionType");
-    };
-
     return {
       initialData,
       submitted,
-      formLoaded,
       processing,
       isDataReady,
     };

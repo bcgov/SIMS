@@ -3,7 +3,6 @@
     form-name="institutionProfile"
     :form-data="formData"
     :is-data-ready="isDataReady"
-    @loaded="formLoaded"
     @submitted="submitInstitutionProfile"
   >
     <template #actions="{ submit }">
@@ -23,7 +22,6 @@
 </template>
 
 <script lang="ts">
-import { useFormioDropdownLoader } from "@/composables";
 import { PropType, computed, defineComponent, onMounted, ref } from "vue";
 import {
   FormIOForm,
@@ -62,7 +60,6 @@ export default defineComponent({
   },
   emits: ["submitInstitutionProfile"],
   setup(props, context) {
-    const formioDataLoader = useFormioDropdownLoader();
     const countries = ref<SystemLookupEntry[]>([]);
     const provinces = ref<SystemLookupEntry[]>([]);
     const isLookupLoaded = ref(false);
@@ -79,10 +76,6 @@ export default defineComponent({
       form: FormIOForm<InstitutionProfileFormData>,
     ) => {
       context.emit("submitInstitutionProfile", form.data);
-    };
-
-    const formLoaded = async (form: FormIOForm<InstitutionProfileFormData>) => {
-      await formioDataLoader.loadInstitutionTypes(form, "institutionType");
     };
 
     /**
@@ -109,7 +102,6 @@ export default defineComponent({
 
     return {
       submitInstitutionProfile,
-      formLoaded,
       Role,
       isDataReady,
       formData,

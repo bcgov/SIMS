@@ -13,7 +13,6 @@ export interface UpdateInstitution {
   regulatingBody?: string;
   otherRegulatingBody?: string;
   establishedDate?: string;
-  institutionType?: number;
   primaryContactEmail: string;
   primaryContactFirstName: string;
   primaryContactLastName: string;
@@ -56,7 +55,6 @@ export interface InstitutionFormModel {
   primaryContactLastName: string;
   primaryContactEmail: string;
   primaryContactPhone: string;
-  institutionType: number;
   mailingAddress: AddressInfo;
 }
 

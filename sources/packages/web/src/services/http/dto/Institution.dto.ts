@@ -39,8 +39,6 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   @Expose()
   establishedDate: Date;
   @Expose()
-  institutionType: number;
-  @Expose()
   country: string;
   @Expose()
   province?: string;
@@ -67,7 +65,6 @@ export interface InstitutionDetailAPIOutDTO {
   establishedDate: string;
   institutionType: number;
   legalOperatingName: string;
-  institutionTypeName?: string;
   isBCPrivate: boolean;
   isBCPublic: boolean;
   /**
@@ -89,7 +86,6 @@ export interface InstitutionDetailAPIInDTO extends InstitutionProfileAPIInDTO {
    * Not removed here as it fails to compile the cypress code.
    */
   formattedEstablishedDate?: string;
-  institutionTypeName?: string;
   isBCPrivate?: boolean;
 }
 
@@ -143,8 +139,6 @@ export class CreateInstitution {
   primaryContactEmail: string;
   @Expose()
   primaryContactPhone: string;
-  @Expose()
-  institutionType: number;
   @Expose()
   mailingAddress: AddressDetailsFormAPIDTO;
 }

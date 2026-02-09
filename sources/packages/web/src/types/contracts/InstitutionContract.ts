@@ -23,7 +23,6 @@ export interface InstitutionProfileFormData {
   userEmail?: string;
   legalOperatingName: string;
   operatingName: string;
-  institutionType: number;
   regulatingBody: string;
   otherRegulatingBody?: string;
   establishedDate: string;
