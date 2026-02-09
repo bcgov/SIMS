@@ -74,6 +74,8 @@ export interface InstitutionDetailAPIOutDTO {
   hasBusinessGuid: boolean;
   country?: string;
   province?: string;
+  countryName?: string;
+  provinceName?: string;
   classification?: InstitutionClassification;
   organizationStatus?: InstitutionOrganizationStatus;
   medicalSchoolStatus?: InstitutionMedicalSchoolStatus;

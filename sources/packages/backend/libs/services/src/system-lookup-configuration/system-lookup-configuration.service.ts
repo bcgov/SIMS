@@ -58,4 +58,18 @@ export class SystemLookupConfigurationService {
   ): ReadonlyArray<SystemLookupConfiguration> {
     return this.systemLookupConfigurationsMap.get(lookupCategory) ?? [];
   }
+
+  /**
+   * Get system lookup by category and key.
+   * @param lookupCategory lookup category.
+   * @param lookupKey lookup key.
+   * @returns system lookup for the lookup category and key.
+   */
+  getSystemLookup(
+    lookupCategory: SystemLookupCategory,
+    lookupKey: string,
+  ): SystemLookupConfiguration | undefined {
+    const lookupItems = this.getLookupByCategory(lookupCategory);
+    return lookupItems.find((item) => item.lookupKey === lookupKey);
+  }
 }

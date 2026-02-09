@@ -60,6 +60,30 @@
               property-title="Other regulatory body"
               :property-value="institutionProfileDetail.otherRegulatingBody"
             />
+            <title-value
+              property-title="Country"
+              :property-value="
+                emptyStringFiller(institutionProfileDetail.countryName)
+              "
+            />
+            <title-value
+              property-title="Province"
+              :property-value="
+                emptyStringFiller(institutionProfileDetail.provinceName)
+              "
+            />
+            <title-value
+              property-title="Classification"
+              :property-value="institutionProfileDetail.classification"
+            />
+            <title-value
+              property-title="Organization status"
+              :property-value="institutionProfileDetail.organizationStatus"
+            />
+            <title-value
+              property-title="Medical"
+              :property-value="institutionProfileDetail.medicalSchoolStatus"
+            />
           </v-col>
         </v-row>
       </content-group>

@@ -87,6 +87,8 @@ describe("InstitutionAESTController(e2e)-getInstitutionDetailById", () => {
       classification: InstitutionClassification.Private,
       organizationStatus: InstitutionOrganizationStatus.Profit,
       medicalSchoolStatus: InstitutionMedicalSchoolStatus.No,
+      countryName: "Canada",
+      provinceName: "British Columbia",
     };
     const endpoint = `/aest/institution/${institution.id}`;
     const token = await getAESTToken(AESTGroups.Operations);

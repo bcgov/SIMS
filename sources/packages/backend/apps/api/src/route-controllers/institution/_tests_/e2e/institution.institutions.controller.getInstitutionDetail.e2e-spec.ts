@@ -94,6 +94,8 @@ describe("InstitutionInstitutionsController(e2e)-getInstitutionDetail", () => {
       classification: InstitutionClassification.Public,
       organizationStatus: InstitutionOrganizationStatus.NotForProfit,
       medicalSchoolStatus: InstitutionMedicalSchoolStatus.No,
+      countryName: "Canada",
+      provinceName: "British Columbia",
     };
     // Mock institution user authorization so that the user token will return the fake institution id and mocked roles.
     await mockInstitutionUserAuthorization(

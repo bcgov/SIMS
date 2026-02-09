@@ -184,7 +184,9 @@ export class InstitutionDetailAPIOutDTO {
    */
   hasBusinessGuid: boolean;
   country?: string;
+  countryName?: string;
   province?: string;
+  provinceName?: string;
   classification?: InstitutionClassification;
   organizationStatus?: InstitutionOrganizationStatus;
   medicalSchoolStatus?: InstitutionMedicalSchoolStatus;
