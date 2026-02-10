@@ -109,6 +109,7 @@ import {
     FullTimeCalculationProcess,
     PartTimeCalculationProcess,
     ECertPreValidationService,
+    ECertGenerationService,
   ],
 })
 export class ECertIntegrationModule {}

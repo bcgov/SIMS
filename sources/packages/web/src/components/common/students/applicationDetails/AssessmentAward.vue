@@ -1,27 +1,37 @@
 <template>
-  <body-header
-    title="Funding summary"
-    sub-title="Below is the summary from your assessment. To view your Notice of Assessment, click on view assessment."
+  <toggle-content
+    :toggled="!assessmentAwardData"
+    message="Assessment details not available yet."
   >
-    <template #actions>
-      <v-btn
-        class="float-right"
-        color="primary"
-        prepend-icon="fa:far fa-file-lines"
-        @click="goToNoticeOfAssessment"
-        >View assessment</v-btn
-      >
-    </template>
-  </body-header>
-  <assessment-award-details
-    :assessment-award-data="assessmentAwardData"
-    :allow-confirm-enrolment="allowConfirmEnrolment"
-    :allow-disbursement-cancellation="allowDisbursementCancellation"
-    :allow-final-award-extended-information="allowFinalAwardExtendedInformation"
-    @confirm-enrolment="$emit('confirmEnrolment', $event)"
-    @disbursement-cancelled="$emit('disbursementCancelled')"
-  />
-  <assessment-award-legend />
+    <body-header
+      title="Funding summary"
+      sub-title="Below is the summary from your assessment. To view your Notice of Assessment, click on view assessment."
+    >
+      <template #actions>
+        <v-btn
+          class="float-right"
+          color="primary"
+          prepend-icon="fa:far fa-file-lines"
+          @click="goToNoticeOfAssessment"
+          >View assessment</v-btn
+        >
+      </template>
+    </body-header>
+
+    <assessment-award-details
+      :assessment-award-data="assessmentAwardData"
+      :allow-confirm-enrolment="allowConfirmEnrolment"
+      :allow-disbursement-cancellation="allowDisbursementCancellation"
+      :allow-final-award-extended-information="
+        allowFinalAwardExtendedInformation
+      "
+      @confirm-enrolment="$emit('confirmEnrolment', $event)"
+      @disbursement-cancelled="$emit('disbursementCancelled')"
+    />
+    <div class="mt-4">
+      <assessment-award-legend />
+    </div>
+  </toggle-content>
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";

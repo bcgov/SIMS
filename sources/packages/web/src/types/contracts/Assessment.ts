@@ -9,28 +9,44 @@ export interface AssessmentDetailHeader {
 }
 
 /**
- * Type of award to be displayed in the awards table.
+ * Type of adjustment that was made to an award.
  */
-export enum AwardTableType {
-  Estimated = "Estimated",
-  Final = "Final",
+export interface AwardAdjustmentType {
+  /**
+   * A restriction resulted in a decreased award.
+   */
+  restriction: boolean;
+  /**
+   * A previous disbursed amount resulted in a decreased award.
+   */
+  disbursed: boolean;
+  /**
+   * A positive overaward resulted in a decreased award.
+   */
+  positiveOveraward: boolean;
+  /**
+   * A negative overaward resulted in an increased award.
+   */
+  negativeOveraward: boolean;
 }
 
 /**
- * Adjustments that were made to an award.
+ * Award information for the Award table.
  */
-export interface AwardAdjustmentAmounts {
-  /**
-   * Value amount already disbursed for the same application and
-   * the same award that was subtracted from the calculated award.
-   */
-  disbursedAmountSubtracted: number;
-  /**
-   * Overaward amount value subtracted from the award calculated.
-   */
-  overawardAmountSubtracted: number;
-  /**
-   * Restriction amount value subtracted from the award calculated.
-   */
-  restrictionAmountSubtracted: number;
+export interface AssessmentAwardData {
+  awardType: string;
+  awardTypeDisplay: string;
+  awardDescription: string;
+  estimatedAmount: string | number;
+  finalAmount?: string | number;
+  adjustments: AwardAdjustmentType;
+}
+
+/**
+ *  Disbursement status label.
+ */
+export enum DisbursementStatusBadgeLabel {
+  Cancelled = "Cancelled",
+  Waiting = "Waiting",
+  Sent = "Sent",
 }

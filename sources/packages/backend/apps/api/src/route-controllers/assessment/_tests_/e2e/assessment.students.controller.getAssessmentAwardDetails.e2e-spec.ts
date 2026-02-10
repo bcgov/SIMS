@@ -16,6 +16,9 @@ import {
   MSFAAStates,
   createFakeMSFAANumber,
   saveFakeDisbursementReceiptsFromDisbursementSchedule,
+  createFakeDisbursementOveraward,
+  createFakeStudentRestriction,
+  RestrictionCode,
 } from "@sims/test-utils";
 import {
   ApplicationStatus,
@@ -144,15 +147,22 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         },
       );
 
+      const [firstSchedule] =
+        application.currentAssessment.disbursementSchedules;
+
+      // Save receipts for the first disbursement.
+      await saveFakeDisbursementReceiptsFromDisbursementSchedule(
+        db,
+        firstSchedule,
+      );
+
       const endpoint = `/students/assessment/${application.currentAssessment.id}/award`;
       const token = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
+      const offering = application.currentAssessment.offering;
 
       // Act/Assert
-      const [firstSchedule] =
-        application.currentAssessment.disbursementSchedules;
-      const offering = application.currentAssessment.offering;
       await request(app.getHttpServer())
         .get(endpoint)
         .auth(token, BEARER_AUTH_TYPE)
@@ -164,40 +174,79 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           offeringIntensity: OfferingIntensity.partTime,
           offeringStudyStartDate: getDateOnlyFormat(offering.studyStartDate),
           offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
-          estimatedAward: {
-            disbursement1Date: getDateOnlyFullMonthFormat(
+          firstDisbursement: {
+            disbursementDate: getDateOnlyFullMonthFormat(
               firstSchedule.disbursementDate,
             ),
-            disbursement1Status: firstSchedule.disbursementScheduleStatus,
-            disbursement1COEStatus: COEStatus.completed,
-            disbursement1MSFAANumber: "XXXXXXXXXX",
-            disbursement1MSFAAId: sharedMSFAANumber.id,
-            disbursement1MSFAACancelledDate: null,
-            disbursement1MSFAADateSigned: sharedMSFAANumber.dateSigned,
-            disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
-            disbursement1TuitionRemittance: 0,
-            disbursement1Id: firstSchedule.id,
-            disbursement1StatusUpdatedOn: statusUpdatedOn.toISOString(),
-            disbursement1cslp: 111,
-            disbursement1csgp: 222,
-            disbursement1cspt: 333,
-            disbursement1csgd: 444,
-            disbursement1bcag: 555,
-            disbursement1sbsd: 666,
+            status: firstSchedule.disbursementScheduleStatus,
+            coeStatus: firstSchedule.coeStatus,
+            msfaaNumber: "XXXXXXXXXX",
+            msfaaId: sharedMSFAANumber.id,
+            msfaaCancelledDate: null,
+            msfaaDateSigned: sharedMSFAANumber.dateSigned,
+            tuitionRemittance: 0,
+            enrolmentDate: enrolmentDate1.toISOString(),
+            id: firstSchedule.id,
+            statusUpdatedOn: statusUpdatedOn.toISOString(),
+            disbursementValues: [
+              {
+                valueCode: "CSLP",
+                valueAmount: 111,
+                effectiveAmount: 100,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: true,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "CSGP",
+                valueAmount: 222,
+                effectiveAmount: 220,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "CSPT",
+                valueAmount: 333,
+                effectiveAmount: 330,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "CSGD",
+                valueAmount: 444,
+                effectiveAmount: 440,
+                hasRestrictionAdjustment: true,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: true,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "BCAG",
+                valueAmount: 555,
+                effectiveAmount: 550,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "SBSD",
+                valueAmount: 666,
+                effectiveAmount: 660,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+            ],
+            receiptReceived: true,
           },
-          finalAward: {
-            disbursementReceipt1Received: false,
-            disbursementReceipt1HasAwards: true,
-            disbursementReceipt1cslp: 100,
-            disbursementReceipt1cslpDisbursedAmountSubtracted: 11,
-            disbursementReceipt1csgp: 220,
-            disbursementReceipt1cspt: 330,
-            disbursementReceipt1csgd: 440,
-            disbursementReceipt1csgdOverawardAmountSubtracted: 3,
-            disbursementReceipt1csgdRestrictionAmountSubtracted: 1,
-            disbursementReceipt1bcag: 550,
-            disbursementReceipt1sbsd: 660,
-          },
+          secondDisbursement: null,
         });
     },
   );
@@ -356,6 +405,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
       const [firstSchedule, secondSchedule] =
         application.currentAssessment.disbursementSchedules;
       const offering = application.currentAssessment.offering;
+
       await request(app.getHttpServer())
         .get(endpoint)
         .auth(token, BEARER_AUTH_TYPE)
@@ -367,82 +417,188 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
           offeringIntensity: OfferingIntensity.partTime,
           offeringStudyStartDate: getDateOnlyFormat(offering.studyStartDate),
           offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
-          estimatedAward: {
-            // First disbursement schedule dynamic properties.
-            disbursement1Date: getDateOnlyFullMonthFormat(
+          firstDisbursement: {
+            disbursementDate: getDateOnlyFullMonthFormat(
               firstSchedule.disbursementDate,
             ),
-            disbursement1Status: firstSchedule.disbursementScheduleStatus,
-            disbursement1COEStatus: COEStatus.completed,
-            disbursement1MSFAANumber: "XXXXXXXXXX",
-            disbursement1MSFAAId: sharedMSFAANumber.id,
-            disbursement1MSFAACancelledDate: null,
-            disbursement1MSFAADateSigned: sharedMSFAANumber.dateSigned,
-            disbursement1TuitionRemittance: 0,
-            disbursement1Id: firstSchedule.id,
-            disbursement1StatusUpdatedOn: statusUpdatedOn1.toISOString(),
-            disbursement1cslp: 111,
-            disbursement1csgp: 222,
-            disbursement1cspt: 333,
-            disbursement1csgd: 444,
-            disbursement1bcag: 555,
-            disbursement1sbsd: 666,
-            // Second disbursement schedule dynamic properties.
-            disbursement2Date: getDateOnlyFullMonthFormat(
+            status: firstSchedule.disbursementScheduleStatus,
+            coeStatus: firstSchedule.coeStatus,
+            msfaaNumber: "XXXXXXXXXX",
+            msfaaId: sharedMSFAANumber.id,
+            msfaaCancelledDate: null,
+            msfaaDateSigned: sharedMSFAANumber.dateSigned,
+            tuitionRemittance: 0,
+            enrolmentDate: enrolmentDate1.toISOString(),
+            id: firstSchedule.id,
+            statusUpdatedOn: statusUpdatedOn1.toISOString(),
+            disbursementValues: [
+              {
+                valueCode: "CSLP",
+                valueAmount: 111,
+                effectiveAmount: 110,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "CSGP",
+                valueAmount: 222,
+                effectiveAmount: 220,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "CSPT",
+                valueAmount: 333,
+                effectiveAmount: 330,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "CSGD",
+                valueAmount: 444,
+                effectiveAmount: 440,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "BCAG",
+                valueAmount: 555,
+                effectiveAmount: 550,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "SBSD",
+                valueAmount: 666,
+                effectiveAmount: 660,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+            ],
+            receiptReceived: true,
+          },
+          secondDisbursement: {
+            disbursementDate: getDateOnlyFullMonthFormat(
               secondSchedule.disbursementDate,
             ),
-            disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
-            disbursement2Status: secondSchedule.disbursementScheduleStatus,
-            disbursement2COEStatus: COEStatus.completed,
-            disbursement2MSFAANumber: "XXXXXXXXXX",
-            disbursement2MSFAAId: sharedMSFAANumber.id,
-            disbursement2MSFAACancelledDate: null,
-            disbursement2MSFAADateSigned: sharedMSFAANumber.dateSigned,
-            disbursement2TuitionRemittance: 9876,
-            disbursement2Id: secondSchedule.id,
-            disbursement2StatusUpdatedOn: statusUpdatedOn2.toISOString(),
-            disbursement2cslp: 9999,
-            disbursement2csgp: 1010,
-            disbursement2cspt: 1111,
-            disbursement2csgd: 1212,
-            disbursement2bcag: 1313,
-            disbursement2sbsd: 1414,
-            disbursement2EnrolmentDate: enrolmentDate2.toISOString(),
-          },
-          finalAward: {
-            disbursementReceipt1Received: true,
-            disbursementReceipt2Received: true,
-            // First disbursement schedule receipt dynamic properties.
-            disbursementReceipt1HasAwards: true,
-            disbursementReceipt1cslp: 110,
-            disbursementReceipt1csgp: 220,
-            disbursementReceipt1cspt: 330,
-            disbursementReceipt1csgd: 440,
-            disbursementReceipt1bcag: 550,
-            disbursementReceipt1sbsd: 660,
-            // Second disbursement schedule receipt dynamic properties.
-            disbursementReceipt2HasAwards: true,
-            disbursementReceipt2cslp: 9990,
-            disbursementReceipt2csgp: 1010,
-            disbursementReceipt2cspt: 1110,
-            disbursementReceipt2csgd: 1210,
-            disbursementReceipt2bcag: 1310,
-            disbursementReceipt2sbsd: 1410,
+            status: secondSchedule.disbursementScheduleStatus,
+            coeStatus: secondSchedule.coeStatus,
+            msfaaNumber: "XXXXXXXXXX",
+            msfaaId: sharedMSFAANumber.id,
+            msfaaCancelledDate: null,
+            msfaaDateSigned: sharedMSFAANumber.dateSigned,
+            tuitionRemittance: 9876,
+            enrolmentDate: enrolmentDate2.toISOString(),
+            id: secondSchedule.id,
+            statusUpdatedOn: statusUpdatedOn2.toISOString(),
+            disbursementValues: [
+              {
+                valueCode: "CSLP",
+                valueAmount: 9999,
+                effectiveAmount: 9990,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "CSGP",
+                valueAmount: 1010,
+                effectiveAmount: 1010,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "CSPT",
+                valueAmount: 1111,
+                effectiveAmount: 1110,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "CSGD",
+                valueAmount: 1212,
+                effectiveAmount: 1210,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "BCAG",
+                valueAmount: 1313,
+                effectiveAmount: 1310,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "SBSD",
+                valueAmount: 1414,
+                effectiveAmount: 1410,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+            ],
+            receiptReceived: true,
           },
         });
     },
   );
 
-  it("Should not generate final award values for a part-time application when the disbursement has not been sent yet.", async () => {
+  it("Should generate disbursed and positive overaward adjustments based on estimated award values for a part-time application when the disbursement has not been sent yet.", async () => {
     // Arrange
     const statusUpdatedOn = new Date();
     const enrolmentDate1 = addDays(1);
+    // First disbursement values.
     const firstDisbursementValues = [
       createFakeDisbursementValue(
         DisbursementValueType.CanadaLoan,
         "CSLP",
-        111,
-        { effectiveAmount: 110 },
+        100,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGP",
+        200,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSPT",
+        300,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGD",
+        400,
+        { disbursedAmountSubtracted: 150 },
+      ),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 500),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 600),
+      // Must be ignored in the result even being present with an effective value.
+      createFakeDisbursementValue(
+        DisbursementValueType.BCTotalGrant,
+        "BCSG",
+        500 + 600,
       ),
     ];
     const application = await saveFakeApplicationDisbursements(
@@ -463,6 +619,14 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
       },
     );
 
+    // Create an CSLP positive overaward of $40.
+    const positiveOveraward = createFakeDisbursementOveraward({
+      student: sharedStudent,
+    });
+    positiveOveraward.overawardValue = 40;
+    positiveOveraward.disbursementValueCode = "CSLP";
+    await db.disbursementOveraward.save(positiveOveraward);
+
     const endpoint = `/students/assessment/${application.currentAssessment.id}/award`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -471,6 +635,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
     // Act/Assert
     const [firstSchedule] = application.currentAssessment.disbursementSchedules;
     const offering = application.currentAssessment.offering;
+
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
@@ -482,22 +647,79 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         offeringIntensity: OfferingIntensity.partTime,
         offeringStudyStartDate: getDateOnlyFormat(offering.studyStartDate),
         offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
-        estimatedAward: {
-          disbursement1Date: getDateOnlyFullMonthFormat(
+        firstDisbursement: {
+          disbursementDate: getDateOnlyFullMonthFormat(
             firstSchedule.disbursementDate,
           ),
-          disbursement1Status: firstSchedule.disbursementScheduleStatus,
-          disbursement1COEStatus: COEStatus.completed,
-          disbursement1MSFAANumber: "XXXXXXXXXX",
-          disbursement1MSFAAId: sharedMSFAANumber.id,
-          disbursement1MSFAACancelledDate: null,
-          disbursement1MSFAADateSigned: sharedMSFAANumber.dateSigned,
-          disbursement1TuitionRemittance: 0,
-          disbursement1Id: firstSchedule.id,
-          disbursement1StatusUpdatedOn: statusUpdatedOn.toISOString(),
-          disbursement1cslp: 111,
-          disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
+          status: firstSchedule.disbursementScheduleStatus,
+          coeStatus: firstSchedule.coeStatus,
+          msfaaNumber: "XXXXXXXXXX",
+          msfaaId: sharedMSFAANumber.id,
+          msfaaCancelledDate: null,
+          msfaaDateSigned: sharedMSFAANumber.dateSigned,
+          tuitionRemittance: 0,
+          enrolmentDate: enrolmentDate1.toISOString(),
+          id: firstSchedule.id,
+          statusUpdatedOn: statusUpdatedOn.toISOString(),
+          disbursementValues: [
+            {
+              valueCode: "CSLP",
+              valueAmount: 100,
+              effectiveAmount: null,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: true,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "CSGP",
+              valueAmount: 200,
+              effectiveAmount: null,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "CSPT",
+              valueAmount: 300,
+              effectiveAmount: null,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "CSGD",
+              valueAmount: 400,
+              effectiveAmount: null,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: true,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "BCAG",
+              valueAmount: 500,
+              effectiveAmount: null,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "SBSD",
+              valueAmount: 600,
+              effectiveAmount: null,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+          ],
+          receiptReceived: false,
         },
+        secondDisbursement: null,
       });
   });
 
@@ -515,8 +737,8 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
       createFakeDisbursementValue(
         DisbursementValueType.CanadaGrant,
         "CSGP",
-        10001,
-        { effectiveAmount: 10001 },
+        1001,
+        { effectiveAmount: 1001 },
       ),
       createFakeDisbursementValue(
         DisbursementValueType.CanadaGrant,
@@ -530,28 +752,22 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         1003,
         { effectiveAmount: 1003 },
       ),
-      createFakeDisbursementValue(
-        DisbursementValueType.CanadaGrant,
-        "CSGT",
-        1004,
-        { effectiveAmount: 1004 },
-      ),
-      createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 1005, {
+      createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 1004, {
+        effectiveAmount: 1004,
+      }),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 1005, {
         effectiveAmount: 1005,
       }),
-      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 1006, {
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BGPD", 1006, {
         effectiveAmount: 1006,
       }),
-      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BGPD", 1007, {
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 1007, {
         effectiveAmount: 1007,
-      }),
-      createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 1008, {
-        effectiveAmount: 1008,
       }),
       createFakeDisbursementValue(
         DisbursementValueType.BCTotalGrant,
         "BCSG",
-        1006 + 1007 + 1008,
+        1006 + 1007 + 1007,
         { effectiveAmount: 1006 + 1007 + 1008 },
       ),
     ];
@@ -581,12 +797,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         "CSGF",
         10013,
         { effectiveAmount: 10013 },
-      ),
-      createFakeDisbursementValue(
-        DisbursementValueType.CanadaGrant,
-        "CSGT",
-        10014,
-        { effectiveAmount: 10014 },
       ),
       createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 10015, {
         effectiveAmount: 10015,
@@ -654,6 +864,13 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
       },
     );
 
+    // Save receipts for both disbursements.
+    const saveReceiptsPromises =
+      application.currentAssessment.disbursementSchedules.map((disbursement) =>
+        saveFakeDisbursementReceiptsFromDisbursementSchedule(db, disbursement),
+      );
+    await Promise.all(saveReceiptsPromises);
+
     const endpoint = `/students/assessment/${application.currentAssessment.id}/award`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -663,6 +880,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
     const [firstSchedule, secondSchedule] =
       application.currentAssessment.disbursementSchedules;
     const offering = application.currentAssessment.offering;
+
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
@@ -674,82 +892,358 @@ describe("AssessmentStudentsController(e2e)-getAssessmentAwardDetails", () => {
         offeringIntensity: OfferingIntensity.fullTime,
         offeringStudyStartDate: getDateOnlyFormat(offering.studyStartDate),
         offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
-        estimatedAward: {
-          // First disbursement schedule dynamic properties.
-          disbursement1Date: getDateOnlyFullMonthFormat(
+        firstDisbursement: {
+          disbursementDate: getDateOnlyFullMonthFormat(
             firstSchedule.disbursementDate,
           ),
-          disbursement1Status: firstSchedule.disbursementScheduleStatus,
-          disbursement1COEStatus: COEStatus.completed,
-          disbursement1MSFAANumber: "XXXXXXXXXX",
-          disbursement1MSFAAId: sharedMSFAANumber.id,
-          disbursement1MSFAACancelledDate: null,
-          disbursement1MSFAADateSigned: sharedMSFAANumber.dateSigned,
-          disbursement1TuitionRemittance: 1099,
-          disbursement1Id: firstSchedule.id,
-          disbursement1StatusUpdatedOn: statusUpdatedOn1.toISOString(),
-          disbursement1cslf: 1000,
-          disbursement1csgp: 10001,
-          disbursement1csgd: 1002,
-          disbursement1csgf: 1003,
-          disbursement1csgt: 1004,
-          disbursement1bcsl: 1005,
-          disbursement1bcag: 1006,
-          disbursement1bgpd: 1007,
-          disbursement1sbsd: 1008,
-          disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
-          // Second disbursement schedule dynamic properties.
-          disbursement2Date: getDateOnlyFullMonthFormat(
+          status: firstSchedule.disbursementScheduleStatus,
+          coeStatus: firstSchedule.coeStatus,
+          msfaaNumber: "XXXXXXXXXX",
+          msfaaId: sharedMSFAANumber.id,
+          msfaaCancelledDate: null,
+          msfaaDateSigned: sharedMSFAANumber.dateSigned,
+          tuitionRemittance: 1099,
+          enrolmentDate: enrolmentDate1.toISOString(),
+          id: firstSchedule.id,
+          statusUpdatedOn: statusUpdatedOn1.toISOString(),
+          disbursementValues: [
+            {
+              valueCode: "CSLF",
+              valueAmount: 1000,
+              effectiveAmount: 1000,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "CSGP",
+              valueAmount: 1001,
+              effectiveAmount: 1001,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "CSGD",
+              valueAmount: 1002,
+              effectiveAmount: 1002,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "CSGF",
+              valueAmount: 1003,
+              effectiveAmount: 1003,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "BCSL",
+              valueAmount: 1004,
+              effectiveAmount: 1004,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "BCAG",
+              valueAmount: 1005,
+              effectiveAmount: 1005,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "BGPD",
+              valueAmount: 1006,
+              effectiveAmount: 1006,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "SBSD",
+              valueAmount: 1007,
+              effectiveAmount: 1007,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+          ],
+          receiptReceived: true,
+        },
+        secondDisbursement: {
+          disbursementDate: getDateOnlyFullMonthFormat(
             secondSchedule.disbursementDate,
           ),
-          disbursement2Status: secondSchedule.disbursementScheduleStatus,
-          disbursement2COEStatus: COEStatus.completed,
-          disbursement2MSFAANumber: "XXXXXXXXXX",
-          disbursement2MSFAAId: sharedMSFAANumber.id,
-          disbursement2MSFAACancelledDate: null,
-          disbursement2MSFAADateSigned: sharedMSFAANumber.dateSigned,
-          disbursement2TuitionRemittance: 0,
-          disbursement2Id: secondSchedule.id,
-          disbursement2StatusUpdatedOn: statusUpdatedOn2.toISOString(),
-          disbursement2cslf: 10010,
-          disbursement2csgp: 10011,
-          disbursement2csgd: 10012,
-          disbursement2csgf: 10013,
-          disbursement2csgt: 10014,
-          disbursement2bcsl: 10015,
-          disbursement2bcag: 10016,
-          disbursement2bgpd: 10017,
-          disbursement2sbsd: 10018,
-          disbursement2EnrolmentDate: enrolmentDate2.toISOString(),
+          status: secondSchedule.disbursementScheduleStatus,
+          coeStatus: secondSchedule.coeStatus,
+          msfaaNumber: "XXXXXXXXXX",
+          msfaaId: sharedMSFAANumber.id,
+          msfaaCancelledDate: null,
+          msfaaDateSigned: sharedMSFAANumber.dateSigned,
+          tuitionRemittance: 0,
+          enrolmentDate: enrolmentDate2.toISOString(),
+          id: secondSchedule.id,
+          statusUpdatedOn: statusUpdatedOn2.toISOString(),
+          disbursementValues: [
+            {
+              valueCode: "CSLF",
+              valueAmount: 10010,
+              effectiveAmount: 10010,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "CSGP",
+              valueAmount: 10011,
+              effectiveAmount: 10011,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "CSGD",
+              valueAmount: 10012,
+              effectiveAmount: 10112,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: true,
+            },
+            {
+              valueCode: "CSGF",
+              valueAmount: 10013,
+              effectiveAmount: 10013,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "BCSL",
+              valueAmount: 10015,
+              effectiveAmount: 10015,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "BCAG",
+              valueAmount: 10016,
+              effectiveAmount: 10016,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "BGPD",
+              valueAmount: 10017,
+              effectiveAmount: 10017,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "SBSD",
+              valueAmount: 10018,
+              effectiveAmount: 10018,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+          ],
+          receiptReceived: true,
         },
-        finalAward: {
-          // Receipt isn't available but final values still should be populated.
-          disbursementReceipt1Received: false,
-          disbursementReceipt2Received: false,
-          // First disbursement schedule receipt dynamic properties.
-          disbursementReceipt1HasAwards: true,
-          disbursementReceipt1cslf: 1000,
-          disbursementReceipt1csgp: 10001,
-          disbursementReceipt1csgd: 1002,
-          disbursementReceipt1csgf: 1003,
-          disbursementReceipt1csgt: 1004,
-          disbursementReceipt1bcsl: 1005,
-          disbursementReceipt1bcag: 1006,
-          disbursementReceipt1bgpd: 1007,
-          disbursementReceipt1sbsd: 1008,
-          // Second disbursement schedule receipt dynamic properties.
-          disbursementReceipt2HasAwards: true,
-          disbursementReceipt2cslf: 10010,
-          disbursementReceipt2csgp: 10011,
-          disbursementReceipt2csgd: 10112,
-          disbursementReceipt2csgdOverawardAmountSubtracted: -100,
-          disbursementReceipt2csgf: 10013,
-          disbursementReceipt2csgt: 10014,
-          disbursementReceipt2bcsl: 10015,
-          disbursementReceipt2bcag: 10016,
-          disbursementReceipt2bgpd: 10017,
-          disbursementReceipt2sbsd: 10018,
+      });
+  });
+
+  it("Should generate restriction and positive overaward adjustments based on estimated award values for a full-time application when the disbursement has not been sent yet.", async () => {
+    // Arrange
+    const statusUpdatedOn = new Date();
+    const enrolmentDate1 = addDays(1);
+    // First disbursement values.
+    const firstDisbursementValues = [
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaLoan,
+        "CSLP",
+        100,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGP",
+        200,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSPT",
+        300,
+      ),
+      createFakeDisbursementValue(
+        DisbursementValueType.CanadaGrant,
+        "CSGD",
+        400,
+        { disbursedAmountSubtracted: 150 },
+      ),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 500),
+      createFakeDisbursementValue(DisbursementValueType.BCGrant, "SBSD", 600),
+      // Must be ignored in the result even being present with an effective value.
+      createFakeDisbursementValue(
+        DisbursementValueType.BCTotalGrant,
+        "BCSG",
+        500 + 600,
+      ),
+    ];
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student: sharedStudent,
+        msfaaNumber: sharedMSFAANumber,
+        firstDisbursementValues,
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+        firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          coeUpdatedAt: enrolmentDate1,
+          disbursementScheduleStatusUpdatedOn: statusUpdatedOn,
         },
+      },
+    );
+
+    // Create an CSLP positive overaward of $50.
+    const positiveOveraward = createFakeDisbursementOveraward({
+      student: sharedStudent,
+    });
+    positiveOveraward.overawardValue = 50;
+    positiveOveraward.disbursementValueCode = "CSLP";
+    await db.disbursementOveraward.save(positiveOveraward);
+
+    const endpoint = `/students/assessment/${application.currentAssessment.id}/award`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Create a student restriction impacting BCSL
+    const restriction = await db.restriction.findOne({
+      select: { id: true },
+      where: {
+        restrictionCode: RestrictionCode.B6A,
+      },
+    });
+    await db.restriction.save(restriction);
+    const b2Restriction = createFakeStudentRestriction({
+      student: sharedStudent,
+      restriction: restriction,
+    });
+    await db.studentRestriction.save(b2Restriction);
+
+    // Act/Assert
+    const [firstSchedule] = application.currentAssessment.disbursementSchedules;
+    const offering = application.currentAssessment.offering;
+
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        applicationNumber: application.applicationNumber,
+        applicationStatus: ApplicationStatus.Completed,
+        institutionName: offering.educationProgram.institution.operatingName,
+        offeringIntensity: OfferingIntensity.partTime,
+        offeringStudyStartDate: getDateOnlyFormat(offering.studyStartDate),
+        offeringStudyEndDate: getDateOnlyFormat(offering.studyEndDate),
+        firstDisbursement: {
+          disbursementDate: getDateOnlyFullMonthFormat(
+            firstSchedule.disbursementDate,
+          ),
+          status: firstSchedule.disbursementScheduleStatus,
+          coeStatus: firstSchedule.coeStatus,
+          msfaaNumber: "XXXXXXXXXX",
+          msfaaId: sharedMSFAANumber.id,
+          msfaaCancelledDate: null,
+          msfaaDateSigned: sharedMSFAANumber.dateSigned,
+          tuitionRemittance: 0,
+          enrolmentDate: enrolmentDate1.toISOString(),
+          id: firstSchedule.id,
+          statusUpdatedOn: statusUpdatedOn.toISOString(),
+          disbursementValues: [
+            {
+              valueCode: "CSLP",
+              valueAmount: 100,
+              effectiveAmount: null,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: true,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "CSGP",
+              valueAmount: 200,
+              effectiveAmount: null,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "CSPT",
+              valueAmount: 300,
+              effectiveAmount: null,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "CSGD",
+              valueAmount: 400,
+              effectiveAmount: null,
+              hasRestrictionAdjustment: false,
+              hasDisbursedAdjustment: true,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "BCAG",
+              valueAmount: 500,
+              effectiveAmount: null,
+              hasRestrictionAdjustment: true,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+            {
+              valueCode: "SBSD",
+              valueAmount: 600,
+              effectiveAmount: null,
+              hasRestrictionAdjustment: true,
+              hasDisbursedAdjustment: false,
+              hasPositiveOverawardAdjustment: false,
+              hasNegativeOverawardAdjustment: false,
+            },
+          ],
+          receiptReceived: false,
+        },
+        secondDisbursement: null,
       });
   });
 

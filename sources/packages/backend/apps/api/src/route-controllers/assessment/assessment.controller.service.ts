@@ -5,8 +5,6 @@ import {
   StudentAssessmentStatus,
   ApplicationOfferingChangeRequestStatus,
   DisbursementValueType,
-  StudentAssessment,
-  DisbursementValue,
   DisbursementScheduleStatus,
 } from "@sims/sims-db";
 import {
@@ -26,12 +24,14 @@ import {
 } from "../../services";
 import {
   AssessmentNOAAPIOutDTO,
-  AwardDetailsAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
   RequestAssessmentTypeAPIOutDTO,
   AssessmentHistorySummaryAPIOutDTO,
   DynamicAwardValue,
   AssessmentAPIOutDTO,
+  AwardDisbursementScheduleAPIOutDTO,
+  AwardDisbursementValueAPIOutDTO,
+  AwardDetailsAPIOutDTO,
 } from "./models/assessment.dto";
 import { getUserFullName } from "../../utilities";
 import {
@@ -39,29 +39,16 @@ import {
   getDateOnlyFullMonthFormat,
   getTotalDisbursementAmountFromSchedules,
 } from "@sims/utilities";
-
-/**
- * Final award value dynamic identifier prefix.
- */
-const DISBURSEMENT_RECEIPT_PREFIX = "disbursementReceipt";
-
-/**
- * Suffixes for dynamic fields to track subtracted amounts.
- */
-const DISBURSED_SUBTRACTED_SUFFIX = "DisbursedAmountSubtracted";
-const OVERAWARD_SUBTRACTED_SUFFIX = "OverawardAmountSubtracted";
-const RESTRICTION_SUBTRACTED_SUFFIX = "RestrictionAmountSubtracted";
-
-/**
- * Indicates which disbursement schedule statuses are expected to have receipts generated.
- * When 'Sent' and later 'Rejected', the receipt should not be received in a usual situation.
- * Either way, both status are considered as subjected to check for receipts since an
- * e-Cert was produced.
- */
-const HAS_POTENTIAL_RECEIPT_STATUSES = new Set([
-  DisbursementScheduleStatus.Sent,
-  DisbursementScheduleStatus.Rejected,
-]);
+import {
+  AwardOverawardBalance,
+  DisbursementOverawardService,
+} from "@sims/services";
+import {
+  ActiveRestriction,
+  ECertGenerationService,
+  EligibleECertDisbursement,
+} from "@sims/integrations/services";
+import { getStopFundingTypesAndRestrictionsMap } from "@sims/integrations/services/disbursement-schedule/e-cert-processing-steps";
 
 @Injectable()
 export class AssessmentControllerService {
@@ -72,6 +59,8 @@ export class AssessmentControllerService {
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly applicationExceptionService: ApplicationExceptionService,
     private readonly applicationOfferingChangeRequestService: ApplicationOfferingChangeRequestService,
+    private readonly disbursementOverawardService: DisbursementOverawardService,
+    private readonly eCertGenerationService: ECertGenerationService,
   ) {}
 
   /**
@@ -252,17 +241,14 @@ export class AssessmentControllerService {
   }
 
   /**
-   * Get estimated and actual(if present) award details of an assessment.
+   * Get estimated and actual (if present) award details of an assessment.
    * @param assessmentId assessment to which awards details belong to.
-   * @param includeDocumentNumber when true document number is mapped
-   * to disbursement dynamic data.
    * @param options options,
    * - `studentId` studentId student to whom the award details belong to.
    * - `applicationId` application is used for authorization purposes to
    * ensure that a user has access to the specific application data.
-   * - `includeDocumentNumber` when true document number is mapped
-   * to disbursement dynamic data.
-   * - `includeDateSent` when true, date sent is mapped to disbursement dynamic data.
+   * - `includeDocumentNumber` when true document number is included in response.
+   * - `includeDateSent` when true, date sent is included in response.
    * - `maskMSFAA` mask MSFAA or not.
    * @returns estimated and actual award details.
    */
@@ -287,12 +273,53 @@ export class AssessmentControllerService {
     if (!assessment) {
       throw new NotFoundException("Assessment not found.");
     }
-    const estimatedAward = this.populateDisbursementAwardValues(
-      assessment.disbursementSchedules,
-      { includeDocumentNumber, includeDateSent, maskMSFAA },
-    );
-    const finalAward =
-      await this.populateDisbursementFinalAwardsValues(assessment);
+
+    const [firstDisbursementSchedule, secondDisbursementSchedule] =
+      assessment.disbursementSchedules;
+
+    // Get the eligible disbursements to be part of e-Cert generation
+    // if either disbursement is pending.
+    let firstEligibleDisbursement: EligibleECertDisbursement,
+      secondEligibleDisbursement: EligibleECertDisbursement;
+    if (
+      firstDisbursementSchedule?.disbursementScheduleStatus ===
+        DisbursementScheduleStatus.Pending ||
+      secondDisbursementSchedule?.disbursementScheduleStatus ===
+        DisbursementScheduleStatus.Pending
+    ) {
+      const eligibleDisbursements =
+        await this.eCertGenerationService.getEligibleDisbursements({
+          applicationId: assessment.application.id,
+          allowNonCompleted: true,
+        });
+      firstEligibleDisbursement = eligibleDisbursements.find(
+        (eligibleDisbursement) =>
+          eligibleDisbursement.disbursement.id ===
+          firstDisbursementSchedule?.id,
+      );
+      secondEligibleDisbursement = eligibleDisbursements.find(
+        (eligibleDisbursement) =>
+          eligibleDisbursement.disbursement.id ===
+          secondDisbursementSchedule?.id,
+      );
+    }
+
+    const [firstDisbursement, secondDisbursement] = await Promise.all([
+      this.populateAwardDisbursement(
+        firstDisbursementSchedule,
+        firstEligibleDisbursement,
+        assessment.application.student.id,
+        { includeDocumentNumber, includeDateSent, maskMSFAA },
+      ),
+      secondDisbursementSchedule
+        ? this.populateAwardDisbursement(
+            secondDisbursementSchedule,
+            secondEligibleDisbursement,
+            assessment.application.student.id,
+            { includeDocumentNumber, includeDateSent, maskMSFAA },
+          )
+        : null,
+    ]);
     return {
       applicationNumber: assessment.application.applicationNumber,
       applicationStatus: assessment.application.applicationStatus,
@@ -303,141 +330,137 @@ export class AssessmentControllerService {
         assessment.offering.studyStartDate,
       ),
       offeringStudyEndDate: getDateOnlyFormat(assessment.offering.studyEndDate),
-      estimatedAward,
-      finalAward,
+      firstDisbursement,
+      secondDisbursement,
     };
   }
 
   /**
-   * Populate the final awards in a dynamic way like disbursement schedule(estimated) awards.
-   * @param assessment student assessment.
+   * Populates estimated and actual (if present) award details for a disbursement schedule.
+   * @param schedule the disbursement schedule.
+   * @param eligibleDisbursement the eligible e-cert disbursement details.
+   * @param studentId student to whom the award details belong to.
    * @param options options,
-   * - `studentId` studentId student to whom the award details belong to.
-   * - `applicationId` application is used for authorization purposes to
-   * ensure that a user has access to the specific application data.
-   * @returns dynamic award data of disbursement receipts of a given disbursement.
+   * - `includeDocumentNumber` when true document number is included in response.
+   * - `includeDateSent` when true, date sent is included in response.
+   * - `maskMSFAA` mask MSFAA or not.
+   * @returns estimated and actual award details.
    */
-  private async populateDisbursementFinalAwardsValues(
-    assessment: StudentAssessment,
-  ): Promise<DynamicAwardValue | undefined> {
-    const [firstDisbursement] = assessment.disbursementSchedules;
-    if (
-      !HAS_POTENTIAL_RECEIPT_STATUSES.has(
-        firstDisbursement.disbursementScheduleStatus,
-      )
-    ) {
-      // If a e-Cert was never generated no additional processing is needed.
-      return undefined;
-    }
-    let finalAward: DynamicAwardValue = {};
-    // Populate the disbursementReceipt[n]Received flags for each disbursement schedule.
-    assessment.disbursementSchedules.forEach((schedule, index) => {
-      const hasReceipt = schedule.disbursementReceipts?.length > 0;
-      this.setReceiptReceivedFlag(finalAward, index + 1, hasReceipt);
-    });
+  private async populateAwardDisbursement(
+    schedule: DisbursementSchedule,
+    eligibleDisbursement: EligibleECertDisbursement | undefined,
+    studentId: number,
+    options?: {
+      includeDocumentNumber?: boolean;
+      includeDateSent?: boolean;
+      maskMSFAA?: boolean;
+    },
+  ): Promise<AwardDisbursementScheduleAPIOutDTO> {
+    // Setting default value.
+    const includeDocumentNumber = options?.includeDocumentNumber ?? false;
+    const includeDateSent = options?.includeDateSent ?? false;
+    const maskMSFAA = options?.maskMSFAA ?? true;
 
-    // Obtain final awards from e-Cert effective amounts for both Part-time and Full-time assessments.
-    let index = 1;
-    for (const schedule of assessment.disbursementSchedules) {
-      if (
-        !HAS_POTENTIAL_RECEIPT_STATUSES.has(schedule.disbursementScheduleStatus)
-      ) {
-        break;
+    const disbursement = new AwardDisbursementScheduleAPIOutDTO();
+
+    disbursement.disbursementDate = getDateOnlyFullMonthFormat(
+      schedule.disbursementDate,
+    );
+    disbursement.status = schedule.disbursementScheduleStatus;
+    disbursement.coeStatus = schedule.coeStatus;
+    disbursement.msfaaNumber = maskMSFAA
+      ? MASKED_MSFAA_NUMBER
+      : schedule.msfaaNumber.msfaaNumber;
+    disbursement.msfaaId = schedule.msfaaNumber.id;
+    disbursement.msfaaCancelledDate = schedule.msfaaNumber.cancelledDate;
+    disbursement.msfaaDateSigned = schedule.msfaaNumber.dateSigned;
+    disbursement.tuitionRemittance = schedule.tuitionRemittanceRequestedAmount;
+    disbursement.enrolmentDate = schedule.coeUpdatedAt;
+    disbursement.id = schedule.id;
+    disbursement.statusUpdatedOn = schedule.disbursementScheduleStatusUpdatedOn;
+    if (includeDateSent) {
+      disbursement.dateSent = schedule.dateSent;
+    }
+    if (includeDocumentNumber) {
+      disbursement.documentNumber = schedule.documentNumber;
+    }
+
+    disbursement.receiptReceived = schedule.disbursementReceipts?.length > 0;
+
+    // Lookup Overawards and Restrictions if only estimated awards are available.
+    let studentOverawardBalances: AwardOverawardBalance = {};
+    let studentRestrictions: Map<DisbursementValueType, ActiveRestriction[]>;
+    if (disbursement.status === DisbursementScheduleStatus.Pending) {
+      const overawardBalances =
+        await this.disbursementOverawardService.getOverawardBalance([
+          studentId,
+        ]);
+      studentOverawardBalances = overawardBalances[studentId];
+
+      if (eligibleDisbursement) {
+        studentRestrictions =
+          getStopFundingTypesAndRestrictionsMap(eligibleDisbursement);
       }
-      this.setHasAwardsFlag(finalAward, index, true);
-      const awards = this.populateDisbursementECertAwardValues(
-        schedule.disbursementValues,
-        `${DISBURSEMENT_RECEIPT_PREFIX}${index}`,
-      );
-      finalAward = { ...finalAward, ...awards };
-      index++;
     }
-    return finalAward;
-  }
 
-  /**
-   * Creates the  receipt received flag that indicates if a receipt was received
-   * for a specific disbursement schedule.
-   * This flag will be true if any receipt (Federal or Provincial) was received.
-   * @param finalAwards dynamic award values to have the flag set.
-   * @param index disbursement schedule index.
-   * @param flag indicates if awards were added to the final award.
-   */
-  private setReceiptReceivedFlag(
-    finalAwards: DynamicAwardValue,
-    index: number,
-    flag: boolean,
-  ): void {
-    const identifier = `${DISBURSEMENT_RECEIPT_PREFIX}${index}Received`;
-    finalAwards[identifier] = flag;
-  }
-
-  /**
-   * Creates the has awards flag for a specific disbursement schedule
-   * to indicate if awards were added.
-   * For a full-time assessment, this flag will be set to true if any awards
-   * were found in the disbursement receipts.
-   * For a part-time application it will be awarded based on the e-Cert values.
-   * @param finalAwards dynamic award values to have the flag set.
-   * @param index disbursement schedule index.
-   * @param flag indicates if awards were added to the final award.
-   */
-  private setHasAwardsFlag(
-    finalAwards: DynamicAwardValue,
-    index: number,
-    flag: boolean,
-  ): void {
-    const identifier = `${DISBURSEMENT_RECEIPT_PREFIX}${index}HasAwards`;
-    finalAwards[identifier] = flag;
-  }
-
-  /**
-   * Populate final awards values from e-Cert effective values.
-   * @param disbursementValues disbursement values with the effective amounts used to generate the e-Cert.
-   * @param identifier identifier which is used to create dynamic data by appending award code to it.
-   * @returns dynamic award data of disbursement receipts of a given disbursement.
-   */
-  private populateDisbursementECertAwardValues(
-    disbursementValues: DisbursementValue[],
-    identifier: string,
-  ): DynamicAwardValue {
-    const finalAward: DynamicAwardValue = {};
-    disbursementValues.forEach((award) => {
-      if (award.valueType === DisbursementValueType.BCTotalGrant) {
+    // Populate disbursement values.
+    const disbursementValues: AwardDisbursementValueAPIOutDTO[] = [];
+    disbursement.disbursementValues = disbursementValues;
+    schedule.disbursementValues.forEach((disbursementValue) => {
+      if (disbursementValue.valueType === DisbursementValueType.BCTotalGrant) {
         // BC Total grants are not part of the students grants and should not be part of the summary.
         return;
       }
-      const disbursementValueKey = this.createReceiptFullIdentifier(
-        identifier,
-        award.valueCode,
-      );
-      finalAward[disbursementValueKey] = award.effectiveAmount;
+      const awardDisbursementValue = new AwardDisbursementValueAPIOutDTO();
+      awardDisbursementValue.valueCode = disbursementValue.valueCode;
+      awardDisbursementValue.valueAmount = disbursementValue.valueAmount;
+      awardDisbursementValue.effectiveAmount =
+        disbursementValue.effectiveAmount;
 
-      // Populate subtracted amounts.
-      const disbursedAmountSubtractedKey = `${disbursementValueKey}${DISBURSED_SUBTRACTED_SUFFIX}`;
-      finalAward[disbursedAmountSubtractedKey] =
-        award.disbursedAmountSubtracted ?? undefined;
-      const overawardAmountSubtractedKey = `${disbursementValueKey}${OVERAWARD_SUBTRACTED_SUFFIX}`;
-      finalAward[overawardAmountSubtractedKey] =
-        award.overawardAmountSubtracted ?? undefined;
-      const restrictionAmountSubtractedKey = `${disbursementValueKey}${RESTRICTION_SUBTRACTED_SUFFIX}`;
-      finalAward[restrictionAmountSubtractedKey] =
-        award.restrictionAmountSubtracted ?? undefined;
+      let hasDisbursedAdjustment = false;
+      let hasNegativeOverawardAdjustment = false;
+      let hasPositiveOverawardAdjustment = false;
+      let hasRestrictionAdjustment = false;
+
+      if (disbursement.status === DisbursementScheduleStatus.Pending) {
+        // Estimated Award - calculate estimated adjustments.
+
+        // Restriction: If the student has a restriction that impacts funding, flag the adjustment.
+        hasRestrictionAdjustment =
+          !!studentRestrictions &&
+          studentRestrictions?.has(disbursementValue.valueType);
+        // Overaward: If there is a positive overaward balance for that award type, flag the adjustment.
+        const overawardBalance =
+          studentOverawardBalances?.[disbursementValue.valueCode] ?? 0;
+        if (overawardBalance > 0) {
+          hasPositiveOverawardAdjustment = true;
+        }
+
+        // Funded: If a previous assessment in the application has disbursed that award type, flag the adjustment.
+        hasDisbursedAdjustment =
+          disbursementValue.disbursedAmountSubtracted > 0;
+      } else {
+        // Final Award - use actual subtracted amounts.
+        hasRestrictionAdjustment =
+          disbursementValue.restrictionAmountSubtracted > 0;
+        hasDisbursedAdjustment =
+          disbursementValue.disbursedAmountSubtracted > 0;
+        hasNegativeOverawardAdjustment =
+          disbursementValue.overawardAmountSubtracted < 0;
+        hasPositiveOverawardAdjustment =
+          disbursementValue.overawardAmountSubtracted > 0;
+      }
+      awardDisbursementValue.hasDisbursedAdjustment = hasDisbursedAdjustment;
+      awardDisbursementValue.hasNegativeOverawardAdjustment =
+        hasNegativeOverawardAdjustment;
+      awardDisbursementValue.hasPositiveOverawardAdjustment =
+        hasPositiveOverawardAdjustment;
+      awardDisbursementValue.hasRestrictionAdjustment =
+        hasRestrictionAdjustment;
+
+      disbursementValues.push(awardDisbursementValue);
     });
-    return finalAward;
-  }
-
-  /**
-   * Create the unique property name to represent the receipt values for each award.
-   * @param identifierPrefix prefix to be used for all properties.
-   * @param uniqueCode code to uniquely identify the property (e.g. CSLF, BCAG, BCSL).
-   * @returns returns the unique identifier (e.g. disbursementReceipt1cslf).
-   */
-  private createReceiptFullIdentifier(
-    identifierPrefix: string,
-    uniqueCode: string,
-  ): string {
-    return `${identifierPrefix}${uniqueCode.toLowerCase()}`;
+    return disbursement;
   }
 
   /**

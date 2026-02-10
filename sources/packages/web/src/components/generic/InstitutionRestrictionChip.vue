@@ -3,11 +3,9 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, watchEffect } from "vue";
-import ChipLabel from "@/components/generic/ChipLabel.vue";
 import { useInstitutionRestrictionState, useRestriction } from "@/composables";
 
 export default defineComponent({
-  components: { ChipLabel },
   props: {
     institutionId: {
       type: Number,

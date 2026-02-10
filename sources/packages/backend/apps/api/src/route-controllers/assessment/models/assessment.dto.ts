@@ -5,6 +5,8 @@ import {
   Assessment,
   AssessmentStatus,
   AssessmentTriggerType,
+  COEStatus,
+  DisbursementScheduleStatus,
   NOTE_DESCRIPTION_MAX_LENGTH,
   OfferingIntensity,
   OfferingStatus,
@@ -181,6 +183,9 @@ export class AssessmentNOAAPIOutDTO {
   offeringName: string;
 }
 
+/**
+ * Award summary for an Assessment.
+ */
 export class AwardDetailsAPIOutDTO {
   applicationNumber: string;
   applicationStatus: ApplicationStatus;
@@ -188,19 +193,42 @@ export class AwardDetailsAPIOutDTO {
   offeringIntensity: OfferingIntensity;
   offeringStudyStartDate: string;
   offeringStudyEndDate: string;
-  @ApiProperty({
-    description:
-      "Dynamic output of the workflow calculation. " +
-      "Contains data that could represent a part-time or a full-time award details. ",
-  })
-  estimatedAward: DynamicAwardValue;
-  @ApiProperty({
-    description:
-      "Dynamic output from disbursement receipt for the given disbursement. " +
-      "Contains data that could represent a part-time or a full-time award details. " +
-      "If the conditions to have a receipt are not match this information will not be available.",
-  })
-  finalAward?: DynamicAwardValue;
+  firstDisbursement: AwardDisbursementScheduleAPIOutDTO;
+  secondDisbursement?: AwardDisbursementScheduleAPIOutDTO;
+}
+
+/**
+ * Disbursement schedule details for the award summary.
+ */
+export class AwardDisbursementScheduleAPIOutDTO {
+  disbursementDate: string;
+  status: DisbursementScheduleStatus;
+  coeStatus: COEStatus;
+  msfaaNumber: string;
+  msfaaId: number;
+  msfaaCancelledDate: string;
+  msfaaDateSigned: string;
+  tuitionRemittance: number;
+  enrolmentDate: Date;
+  id: number;
+  statusUpdatedOn: Date;
+  dateSent?: Date;
+  documentNumber?: number;
+  disbursementValues: AwardDisbursementValueAPIOutDTO[];
+  receiptReceived: boolean;
+}
+
+/**
+ * Disbursement values for the award summary.
+ */
+export class AwardDisbursementValueAPIOutDTO {
+  valueCode: string;
+  valueAmount: number;
+  effectiveAmount?: number;
+  hasRestrictionAdjustment?: boolean;
+  hasDisbursedAdjustment?: boolean;
+  hasPositiveOverawardAdjustment?: boolean;
+  hasNegativeOverawardAdjustment?: boolean;
 }
 
 export class ManualReassessmentAPIInDTO {

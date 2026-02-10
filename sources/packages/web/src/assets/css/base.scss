@@ -195,6 +195,10 @@ strong {
   width: 305px;
 }
 
+.error-chip-background {
+  background-color: $banner-background-error !important;
+}
+
 .success-chip-background {
   background-color: $banner-background-success !important;
 }

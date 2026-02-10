@@ -1,128 +1,268 @@
 <template>
-  <v-table class="bordered">
-    <thead>
-      <tr>
-        <th scope="col" class="text-left">Loan/grant type</th>
-        <th scope="col" class="text-left">{{ awardHeader }}</th>
-        <th v-if="isFinal" scope="col" class="text-left">Adjustments</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="award in awards" :key="award.awardType">
-        <td>
-          {{ award.awardTypeDisplay }}
-          <tooltip-icon>{{ award.description }}</tooltip-icon>
-        </td>
-        <td>
-          {{ getAwardValue(award.awardType) }}
-        </td>
-        <td v-if="isFinal">
-          <assessment-award-adjustments
-            :amounts="getAdjustmentAmounts(award.awardType)"
-          />
-        </td>
-      </tr>
-    </tbody>
-  </v-table>
+  <body-header :title="header">
+    <template #status-chip>
+      <status-chip-disbursement :status="disbursement.status" />
+    </template>
+  </body-header>
+  <v-row>
+    <v-col cols="12">
+      <v-table class="bordered">
+        <thead>
+          <tr>
+            <th scope="col" class="text-left font-weight-bold">
+              Loan/grant type
+            </th>
+            <th scope="col" class="text-left font-weight-bold">
+              Estimated award
+            </th>
+            <th
+              v-if="showFinalAward"
+              scope="col"
+              class="text-left font-weight-bold"
+            >
+              Final award
+            </th>
+            <th
+              v-if="showAdjustments"
+              scope="col"
+              class="text-left font-weight-bold"
+            >
+              Adjustments
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="award in awards" :key="award.awardType">
+            <td>
+              <span v-if="isMobile">
+                {{ award.awardTypeDisplay }}
+                <tooltip-icon>{{ award.awardDescription }}</tooltip-icon>
+              </span>
+              <span v-else>
+                {{ award.awardDescription }}
+              </span>
+            </td>
+            <td>
+              {{ award.estimatedAmount }}
+            </td>
+            <td v-if="showFinalAward">
+              {{ award.finalAmount }}
+            </td>
+            <td v-if="showAdjustments">
+              <assessment-award-adjustments :adjustments="award.adjustments" />
+            </td>
+          </tr>
+        </tbody>
+      </v-table>
+    </v-col>
+  </v-row>
+  <div class="my-3">
+    <status-info-enrolment
+      :coe-status="disbursement.coeStatus"
+      :enrolment-date="disbursement.enrolmentDate"
+    />
+    <confirm-enrolment
+      v-if="allowConfirmEnrolment"
+      :coe-status="disbursement.coeStatus"
+      :application-status="applicationStatus"
+      :disbursement-id="disbursement.id"
+      @confirm-enrolment="$emit('confirmEnrolment', $event)"
+    />
+  </div>
+  <div class="my-3" v-if="disbursement.tuitionRemittance">
+    <status-info-label :status="StatusInfo.Completed"
+      >Tuition remittance applied
+      <span class="label-bold">-${{ disbursement.tuitionRemittance }}</span>
+      <tooltip-icon
+        >Tuition remittance is when your institution requests money from your
+        award to pay for upcoming school fees.</tooltip-icon
+      >
+    </status-info-label>
+  </div>
+
+  <content-group-info>
+    <div>
+      <span class="label-bold">Earliest date of disbursement: </span>
+      <span>{{ dateOnlyLongString(disbursement.disbursementDate) }}</span>
+    </div>
+    <div v-if="disbursement.documentNumber">
+      <span class="label-bold">Cert number: </span>
+      <span>{{ disbursement.documentNumber }}</span>
+    </div>
+    <div v-if="allowFinalAwardExtendedInformation && !!disbursement.dateSent">
+      <span class="label-bold">Date sent: </span>
+      <span>{{ dateOnlyLongString(disbursement.dateSent) }}</span>
+    </div>
+  </content-group-info>
+  <div class="my-3">
+    <status-info-disbursement-cancellation
+      v-if="disbursement.status === DisbursementScheduleStatus.Rejected"
+      :cancellation-date="disbursement.statusUpdatedOn"
+    />
+    <cancel-disbursement-schedule
+      v-if="canCancelDisbursement"
+      :disbursement-id="disbursement.id"
+      @disbursement-cancelled="$emit('disbursementCancelled')"
+    />
+  </div>
 </template>
 <script lang="ts">
 import { PropType, defineComponent, computed } from "vue";
 import {
-  AwardAdjustmentAmounts,
-  AwardTableType,
+  ApplicationStatus,
+  AssessmentAwardData,
+  DisbursementScheduleStatus,
   OfferingIntensity,
+  StatusInfo,
 } from "@/types";
 import { AWARDS, AwardDetail } from "@/constants/award-constants";
-import { DynamicAwardValue } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
 import AssessmentAwardAdjustments from "@/components/common/students/applicationDetails/AssessmentAwardAdjustments.vue";
+import StatusChipDisbursement from "@/components/generic/StatusChipDisbursement.vue";
+import StatusInfoEnrolment from "@/components/common/StatusInfoEnrolment.vue";
+import StatusInfoDisbursementCancellation from "@/components/common/StatusInfoDisbursementCancellation.vue";
+import ConfirmEnrolment from "@/components/common/ConfirmEnrolment.vue";
+import CancelDisbursementSchedule from "@/components/common/CancelDisbursementSchedule.vue";
+import { AwardDisbursementScheduleAPIOutDTO } from "@/services/http/dto";
+import { useDisplay } from "vuetify";
+
+const AWARD_NOT_ELIGIBLE = "(Not eligible)";
 
 /**
- * Suffixes for dynamic fields to track subtracted amounts.
+ * Statuses which allow Adjustments to be shown.
  */
-const DISBURSED_SUBTRACTED_SUFFIX = "DisbursedAmountSubtracted";
-const OVERAWARD_SUBTRACTED_SUFFIX = "OverawardAmountSubtracted";
-const RESTRICTION_SUBTRACTED_SUFFIX = "RestrictionAmountSubtracted";
+const ADJUSTMENT_STATUSES = new Set([
+  DisbursementScheduleStatus.Pending,
+  DisbursementScheduleStatus.ReadyToSend,
+  DisbursementScheduleStatus.Sent,
+]);
+
+/**
+ * Statuses which allow Final Award to be shown.
+ */
+const FINAL_AWARD_STATUSES = new Set([
+  DisbursementScheduleStatus.ReadyToSend,
+  DisbursementScheduleStatus.Sent,
+]);
 
 export default defineComponent({
-  components: { AssessmentAwardAdjustments },
-  props: {
-    awardDetails: {
-      type: Object as PropType<DynamicAwardValue>,
-      required: true,
-      default: {} as DynamicAwardValue,
+  emits: {
+    confirmEnrolment: (disbursementId: number) => {
+      return !!disbursementId;
     },
-    identifier: {
-      type: String,
+    disbursementCancelled: null,
+  },
+  components: {
+    AssessmentAwardAdjustments,
+    CancelDisbursementSchedule,
+    ConfirmEnrolment,
+    StatusChipDisbursement,
+    StatusInfoEnrolment,
+    StatusInfoDisbursementCancellation,
+  },
+  props: {
+    disbursement: {
+      type: Object as PropType<AwardDisbursementScheduleAPIOutDTO>,
       required: true,
+      default: {} as AwardDisbursementScheduleAPIOutDTO,
     },
     offeringIntensity: {
       type: String as PropType<OfferingIntensity>,
       required: true,
     },
-    awardTableType: {
-      type: String as PropType<AwardTableType>,
+    applicationStatus: {
+      type: String as PropType<ApplicationStatus>,
       required: true,
     },
+    header: {
+      type: String,
+      required: true,
+    },
+    allowConfirmEnrolment: {
+      type: Boolean,
+      required: false,
+    },
+    allowFinalAwardExtendedInformation: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    allowDisbursementCancellation: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
+
   setup(props) {
-    const awards = computed<AwardDetail[]>(() =>
+    const { mobile: isMobile } = useDisplay();
+
+    const awardTypes = computed<AwardDetail[]>(() =>
       AWARDS.filter(
         (award) => award.offeringIntensity === props.offeringIntensity,
       ),
     );
-    const { currencyFormatter } = useFormatters();
 
-    const getAwardValue = (awardType: string): string | number | Date => {
-      const awardValue = props.awardDetails[
-        `${props.identifier}${awardType.toLowerCase()}`
-      ] as number;
-      // If the award is defined but no values are present it means that a receipt value is missing.
-      if (awardValue === null) {
-        return "-";
-      }
-      // If the award in not defined at all it means that the award is not eligible and it was not
-      // part of the disbursement calculations output.
-      return currencyFormatter(awardValue, "(Not eligible)");
-    };
+    const { currencyFormatter, dateOnlyLongString } = useFormatters();
 
-    const getAdjustmentAmounts = (
-      awardType: string,
-    ): AwardAdjustmentAmounts => {
-      const disbursementValueKey = `${props.identifier}${awardType.toLowerCase()}`;
-      const disbursedAmountSubtracted =
-        (props.awardDetails[
-          `${disbursementValueKey}${DISBURSED_SUBTRACTED_SUFFIX}`
-        ] as number) ?? 0;
-      const overawardAmountSubtracted =
-        (props.awardDetails[
-          `${disbursementValueKey}${OVERAWARD_SUBTRACTED_SUFFIX}`
-        ] as number) ?? 0;
-      const restrictionAmountSubtracted =
-        (props.awardDetails[
-          `${disbursementValueKey}${RESTRICTION_SUBTRACTED_SUFFIX}`
-        ] as number) ?? 0;
-      return {
-        disbursedAmountSubtracted,
-        overawardAmountSubtracted,
-        restrictionAmountSubtracted,
-      };
-    };
+    // Associate disbursement values with their award types.
+    const awards = computed<AssessmentAwardData[]>(() => {
+      return awardTypes.value.map((award) => {
+        const disbursementValue = props.disbursement.disbursementValues.find(
+          (value) => {
+            return value.valueCode === award.awardType;
+          },
+        );
+        const estimatedAmount = disbursementValue
+          ? currencyFormatter(disbursementValue.valueAmount, "-")
+          : AWARD_NOT_ELIGIBLE;
+        const finalAmount = disbursementValue
+          ? currencyFormatter(disbursementValue.effectiveAmount, "-")
+          : AWARD_NOT_ELIGIBLE;
 
-    const isFinal = computed(() => {
-      return props.awardTableType === AwardTableType.Final;
+        return {
+          awardType: award.awardType,
+          awardTypeDisplay: award.awardTypeDisplay,
+          awardDescription: award.description,
+          estimatedAmount,
+          finalAmount,
+          adjustments: {
+            disbursed: disbursementValue?.hasDisbursedAdjustment ?? false,
+            restriction: disbursementValue?.hasRestrictionAdjustment ?? false,
+            negativeOveraward:
+              disbursementValue?.hasNegativeOverawardAdjustment ?? false,
+            positiveOveraward:
+              disbursementValue?.hasPositiveOverawardAdjustment ?? false,
+          },
+        };
+      });
     });
 
-    const awardHeader = computed(() => {
-      return isFinal.value ? "Award" : "Estimated award";
+    const showFinalAward = computed(() => {
+      return FINAL_AWARD_STATUSES.has(props.disbursement.status);
+    });
+
+    const showAdjustments = computed(() => {
+      return ADJUSTMENT_STATUSES.has(props.disbursement.status);
+    });
+
+    const canCancelDisbursement = computed<boolean>(() => {
+      return (
+        props.allowDisbursementCancellation &&
+        props.disbursement.status === DisbursementScheduleStatus.Sent &&
+        !props.disbursement.receiptReceived
+      );
     });
 
     return {
-      getAwardValue,
       awards,
-      awardHeader,
-      isFinal,
-      getAdjustmentAmounts,
+      showFinalAward,
+      showAdjustments,
+      DisbursementScheduleStatus,
+      dateOnlyLongString,
+      StatusInfo,
+      canCancelDisbursement,
+      isMobile,
     };
   },
 });

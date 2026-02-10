@@ -109,7 +109,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
           // Final amount has been modified by a $-15 overaward amount and a $10 restriction amount.
           {
             effectiveAmount: 405,
-            overawardAmountSubtracted: 15,
+            overawardAmountSubtracted: -15,
             restrictionAmountSubtracted: 10,
           },
         ),
@@ -178,9 +178,10 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
         .get(endpoint)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
+
         .expect({
           applicationNumber: application.applicationNumber,
-          applicationStatus: application.applicationStatus,
+          applicationStatus: ApplicationStatus.Completed,
           institutionName:
             assessment.offering.educationProgram.institution.operatingName,
           offeringIntensity: assessment.offering.offeringIntensity,
@@ -190,46 +191,80 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentAwardDetails", () =
           offeringStudyEndDate: getDateOnlyFormat(
             assessment.offering.studyEndDate,
           ),
-          estimatedAward: {
-            disbursement1Date: getDateOnlyFullMonthFormat(
+          firstDisbursement: {
+            disbursementDate: getDateOnlyFullMonthFormat(
               firstDisbursementSchedule.disbursementDate,
             ),
-            disbursement1Status:
-              firstDisbursementSchedule.disbursementScheduleStatus,
-            disbursement1COEStatus: firstDisbursementSchedule.coeStatus,
-            disbursement1MSFAANumber: MASKED_MSFAA_NUMBER,
-            disbursement1MSFAAId: firstDisbursementSchedule.msfaaNumber.id,
-            disbursement1MSFAACancelledDate:
-              firstDisbursementSchedule.msfaaNumber.cancelledDate,
-            disbursement1MSFAADateSigned:
-              firstDisbursementSchedule.msfaaNumber.dateSigned,
-            disbursement1TuitionRemittance:
-              firstDisbursementSchedule.tuitionRemittanceRequestedAmount,
-            disbursement1Id: firstDisbursementSchedule.id,
-            disbursement1DocumentNumber:
-              firstDisbursementSchedule.documentNumber,
-            disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
-            disbursement1StatusUpdatedOn: statusUpdatedOn.toISOString(),
-            disbursement1cslp: 100,
-            disbursement1csgp: 200,
-            disbursement1cspt: 300,
-            disbursement1csgd: 400,
-            disbursement1bcag: 500,
-            disbursement1sbsd: 600,
+            status: firstDisbursementSchedule.disbursementScheduleStatus,
+            coeStatus: firstDisbursementSchedule.coeStatus,
+            msfaaNumber: MASKED_MSFAA_NUMBER,
+            msfaaId: sharedMSFAANumber.id,
+            msfaaCancelledDate: null,
+            msfaaDateSigned: sharedMSFAANumber.dateSigned,
+            tuitionRemittance: 0,
+            enrolmentDate: enrolmentDate1.toISOString(),
+            id: firstDisbursementSchedule.id,
+            statusUpdatedOn: statusUpdatedOn.toISOString(),
+            documentNumber: firstDisbursementSchedule.documentNumber,
+            disbursementValues: [
+              {
+                valueCode: "CSLP",
+                valueAmount: 100,
+                effectiveAmount: 100,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "CSGP",
+                valueAmount: 200,
+                effectiveAmount: 195,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: true,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "CSPT",
+                valueAmount: 300,
+                effectiveAmount: 300,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "CSGD",
+                valueAmount: 400,
+                effectiveAmount: 405,
+                hasRestrictionAdjustment: true,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: true,
+              },
+              {
+                valueCode: "BCAG",
+                valueAmount: 500,
+                effectiveAmount: 500,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+              {
+                valueCode: "SBSD",
+                valueAmount: 600,
+                effectiveAmount: 600,
+                hasRestrictionAdjustment: false,
+                hasDisbursedAdjustment: false,
+                hasPositiveOverawardAdjustment: false,
+                hasNegativeOverawardAdjustment: false,
+              },
+            ],
+            receiptReceived: true,
           },
-          finalAward: {
-            disbursementReceipt1Received: true,
-            disbursementReceipt1HasAwards: true,
-            disbursementReceipt1cslp: 100,
-            disbursementReceipt1csgp: 195,
-            disbursementReceipt1csgpDisbursedAmountSubtracted: 5,
-            disbursementReceipt1cspt: 300,
-            disbursementReceipt1csgd: 405,
-            disbursementReceipt1csgdOverawardAmountSubtracted: 15,
-            disbursementReceipt1csgdRestrictionAmountSubtracted: 10,
-            disbursementReceipt1bcag: 500,
-            disbursementReceipt1sbsd: 600,
-          },
+          secondDisbursement: null,
         });
     },
   );
