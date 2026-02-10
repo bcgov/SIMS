@@ -1535,79 +1535,79 @@ FROM
                 'Province',
                 'Alberta',
                 'AB',
-                2
+                1
             ),
             (
                 'Province',
                 'British Columbia',
                 'BC',
-                2
+                1
             ),
             (
                 'Province',
                 'Manitoba',
                 'MB',
-                2
+                1
             ),
             (
                 'Province',
                 'New Brunswick',
                 'NB',
-                2
+                1
             ),
             (
                 'Province',
                 'Newfoundland and Labrador',
                 'NL',
-                2
+                1
             ),
             (
                 'Province',
                 'Nova Scotia',
                 'NS',
-                2
+                1
             ),
             (
                 'Province',
                 'Ontario',
                 'ON',
-                2
+                1
             ),
             (
                 'Province',
                 'Prince Edward Island',
                 'PE',
-                2
+                1
             ),
             (
                 'Province',
                 'Quebec',
                 'QC',
-                2
+                1
             ),
             (
                 'Province',
                 'Saskatchewan',
                 'SK',
-                2
+                1
             ),
             (
                 'Province',
                 'Yukon',
                 'YT',
-                2
+                1
             ),
             (
                 'Province',
                 'Nunavut',
                 'NU',
-                2
+                1
             ),
             (
                 'Province',
                 'Northwest Territories',
                 'NT',
-                2
+                1
             )
     ) AS lookup_data(
         lookup_category,

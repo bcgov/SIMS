@@ -3,7 +3,7 @@ CREATE TABLE sims.system_lookup_configurations(
     lookup_category VARCHAR(100) NOT NULL,
     lookup_key VARCHAR(100) NOT NULL,
     lookup_value VARCHAR(500) NOT NULL,
-    lookup_priority SMALLINT NOT NULL,
+    lookup_priority SMALLINT NOT NULL DEFAULT 1,
     -- Audit columns.
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
