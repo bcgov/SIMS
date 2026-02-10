@@ -69,7 +69,7 @@
     "@nestjs/typeorm": "^11.0.0",
     "@types/ssh2-sftp-client": "^9.0.6",
     "adm-zip": "^0.5.16",
-    "axios": "^1.13.2",
+    "axios": "^1.13.5",
     "bull": "^4.16.5",
     "clamscan": "^2.4.0",
     "class-transformer": "^0.5.1",
