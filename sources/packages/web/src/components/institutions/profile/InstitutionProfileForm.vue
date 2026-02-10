@@ -33,6 +33,7 @@ import {
 } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { SystemLookupConfigurationService } from "@/services/SystemLookupConfigurationService";
+import { useSnackBar } from "@/composables";
 
 export default defineComponent({
   components: {
@@ -60,6 +61,7 @@ export default defineComponent({
   },
   emits: ["submitInstitutionProfile"],
   setup(props, context) {
+    const snackBar = useSnackBar();
     const countries = ref<SystemLookupEntry[]>([]);
     const provinces = ref<SystemLookupEntry[]>([]);
     const isLookupLoaded = ref(false);
@@ -82,21 +84,25 @@ export default defineComponent({
      * Loads the lookup data.
      */
     const loadLookup = async () => {
-      const countryLookupPromise =
-        SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
-          SystemLookupCategory.Country,
-        );
-      const provinceLookupPromise =
-        SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
-          SystemLookupCategory.Province,
-        );
-      const [countryLookup, provinceLookup] = await Promise.all([
-        countryLookupPromise,
-        provinceLookupPromise,
-      ]);
-      countries.value = countryLookup.items;
-      provinces.value = provinceLookup.items;
-      isLookupLoaded.value = true;
+      try {
+        const countryLookupPromise =
+          SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
+            SystemLookupCategory.Country,
+          );
+        const provinceLookupPromise =
+          SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
+            SystemLookupCategory.Province,
+          );
+        const [countryLookup, provinceLookup] = await Promise.all([
+          countryLookupPromise,
+          provinceLookupPromise,
+        ]);
+        countries.value = countryLookup.items;
+        provinces.value = provinceLookup.items;
+        isLookupLoaded.value = true;
+      } catch {
+        snackBar.error("Unexpected error while loading data.");
+      }
     };
     onMounted(loadLookup);
 

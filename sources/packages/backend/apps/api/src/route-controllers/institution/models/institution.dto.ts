@@ -27,77 +27,6 @@ import { OTHER_REGULATING_BODY_MAX_LENGTH } from "../../../constants";
 import { CANADA_COUNTRY_CODE } from "@sims/sims-db/constant";
 import { AllowIf } from "../../../utilities/class-validation";
 
-/**
- * DTO for institution creation by the institution user during the on board process
- * when the institution profile and the admin user must be created altogether.
- */
-export class CreateInstitutionAPIInDTO {
-  @IsNotEmpty()
-  userEmail: string;
-  @IsOptional()
-  operatingName: string;
-  @IsNotEmpty()
-  primaryPhone: string;
-  @IsNotEmpty()
-  primaryEmail: string;
-  @IsNotEmpty()
-  website: string;
-  @IsNotEmpty()
-  regulatingBody: string;
-  @ValidateIf((e) => e.regulatingBody === "other")
-  @IsNotEmpty()
-  @MaxLength(OTHER_REGULATING_BODY_MAX_LENGTH)
-  otherRegulatingBody: string;
-  @IsDateString()
-  establishedDate: string;
-  @IsNotEmpty()
-  @Length(2, 2)
-  country: string;
-  @ValidateIf(
-    (input: InstitutionProfileAPIInDTO) =>
-      input.country === CANADA_COUNTRY_CODE || !!input.province,
-  )
-  @AllowIf(
-    (input: InstitutionProfileAPIInDTO) =>
-      input.country === CANADA_COUNTRY_CODE,
-  )
-  @IsNotEmpty()
-  @Length(2, 2)
-  province?: string;
-  @IsEnum(InstitutionClassification)
-  classification: InstitutionClassification;
-  @IsEnum(InstitutionOrganizationStatus)
-  organizationStatus: InstitutionOrganizationStatus;
-  @IsEnum(InstitutionMedicalSchoolStatus)
-  medicalSchoolStatus: InstitutionMedicalSchoolStatus;
-  //Institutions Primary Contact Information
-  @IsNotEmpty()
-  primaryContactFirstName: string;
-  @IsNotEmpty()
-  primaryContactLastName: string;
-  @IsNotEmpty()
-  primaryContactEmail: string;
-  @IsNotEmpty()
-  primaryContactPhone: string;
-  @ValidateNested()
-  @Type(() => AddressDetailsAPIInDTO)
-  mailingAddress: AddressDetailsAPIInDTO;
-}
-
-/**
- * Ministry user institution creation. No user information is provided and
- * user related information (e.g. userEmail) is not needed. Besides that,
- * the Ministry user should be able to provide all data needed to create
- * the institution.
- */
-export class AESTCreateInstitutionFormAPIInDTO extends OmitType(
-  CreateInstitutionAPIInDTO,
-  ["userEmail"],
-) {
-  @IsNotEmpty()
-  legalOperatingName: string;
-}
-
 export class InstitutionContactAPIInDTO {
   @IsNotEmpty()
   primaryContactEmail: string;
@@ -110,14 +39,6 @@ export class InstitutionContactAPIInDTO {
   @ValidateNested()
   @Type(() => AddressDetailsAPIInDTO)
   mailingAddress: AddressDetailsAPIInDTO;
-}
-
-export class InstitutionContactAPIOutDTO {
-  primaryContactEmail: string;
-  primaryContactFirstName: string;
-  primaryContactLastName: string;
-  primaryContactPhone: string;
-  mailingAddress: AddressDetailsAPIOutDTO;
 }
 
 export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
@@ -159,6 +80,39 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   organizationStatus: InstitutionOrganizationStatus;
   @IsEnum(InstitutionMedicalSchoolStatus)
   medicalSchoolStatus: InstitutionMedicalSchoolStatus;
+}
+
+/**
+ * DTO for institution creation by the institution user during the on board process
+ * when the institution profile and the admin user must be created altogether.
+ */
+export class CreateInstitutionAPIInDTO extends InstitutionProfileAPIInDTO {
+  @IsNotEmpty()
+  userEmail: string;
+  @IsOptional()
+  declare operatingName: string;
+}
+
+/**
+ * Ministry user institution creation. No user information is provided and
+ * user related information (e.g. userEmail) is not needed. Besides that,
+ * the Ministry user should be able to provide all data needed to create
+ * the institution.
+ */
+export class AESTCreateInstitutionFormAPIInDTO extends OmitType(
+  CreateInstitutionAPIInDTO,
+  ["userEmail"],
+) {
+  @IsNotEmpty()
+  legalOperatingName: string;
+}
+
+export class InstitutionContactAPIOutDTO {
+  primaryContactEmail: string;
+  primaryContactFirstName: string;
+  primaryContactLastName: string;
+  primaryContactPhone: string;
+  mailingAddress: AddressDetailsAPIOutDTO;
 }
 
 export class InstitutionDetailAPIOutDTO {
