@@ -108,48 +108,11 @@ export interface InstitutionBasicAPIOutDTO {
   hasBusinessGuid: boolean;
 }
 
-export class CreateInstitution {
-  @Expose()
-  operatingName: string;
-  @Expose()
-  primaryPhone: string;
-  @Expose()
-  primaryEmail: string;
-  @Expose()
-  website: string;
-  @Expose()
-  regulatingBody: string;
-  @Expose()
-  otherRegulatingBody?: string;
-  @Expose()
-  establishedDate: string;
-  @Expose()
-  country: string;
-  @Expose()
-  province?: string;
-  @Expose()
-  classification: InstitutionClassification;
-  @Expose()
-  organizationStatus: InstitutionOrganizationStatus;
-  @Expose()
-  medicalSchoolStatus: InstitutionMedicalSchoolStatus;
-  @Expose()
-  primaryContactFirstName: string;
-  @Expose()
-  primaryContactLastName: string;
-  @Expose()
-  primaryContactEmail: string;
-  @Expose()
-  primaryContactPhone: string;
-  @Expose()
-  mailingAddress: AddressDetailsFormAPIDTO;
-}
-
 /**
  * DTO for institution creation by the institution user during the on board process
  * when the institution profile and the admin user must be created altogether.
  */
-export class CreateInstitutionAPIInDTO extends CreateInstitution {
+export class CreateInstitutionAPIInDTO extends InstitutionProfileAPIInDTO {
   @Expose()
   userEmail: string;
 }
@@ -160,7 +123,7 @@ export class CreateInstitutionAPIInDTO extends CreateInstitution {
  * the Ministry user should be able to provide all data needed to create
  * the institution.
  */
-export class AESTCreateInstitutionAPIInDTO extends CreateInstitution {
+export class AESTCreateInstitutionAPIInDTO extends InstitutionProfileAPIInDTO {
   @Expose()
   legalOperatingName: string;
 }

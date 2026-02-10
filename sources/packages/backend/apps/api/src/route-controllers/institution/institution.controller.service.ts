@@ -5,7 +5,10 @@ import {
 } from "@nestjs/common";
 import { InstitutionService, InstitutionTypeService } from "../../services";
 import { AddressInfo, SystemLookupCategory } from "@sims/sims-db";
-import { InstitutionDetailAPIOutDTO } from "./models/institution.dto";
+import {
+  InstitutionDetailAPIOutDTO,
+  InstitutionProfileAPIInDTO,
+} from "./models/institution.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import {
   INSTITUTION_TYPE_BC_PRIVATE,
@@ -131,10 +134,9 @@ export class InstitutionControllerService {
    * @param institution institution details to validate the lookup data.
    * @throws UnprocessableEntityException when any of the lookup input is invalid.
    */
-  validateLookupData(institution: {
-    country: string;
-    province?: string;
-  }): void {
+  validateLookupData(
+    institution: Pick<InstitutionProfileAPIInDTO, "country" | "province">,
+  ): void {
     const invalidFields: string[] = [];
     const isValidCountry =
       this.systemLookupConfigurationService.isValidSystemLookup(
@@ -150,7 +152,6 @@ export class InstitutionControllerService {
           SystemLookupCategory.Province,
           institution.province,
         );
-
       if (!isValidProvince) {
         invalidFields.push("Province");
       }

@@ -195,6 +195,10 @@ describe("InstitutionAESTController(e2e)-updateInstitution", () => {
       });
   });
 
+  /**
+   * Get the institution update payload with valid data.
+   * @returns institution update payload.
+   */
   function getUpdatePayload(): InstitutionProfileAPIInDTO {
     return {
       operatingName: "Updated Institution operating name",

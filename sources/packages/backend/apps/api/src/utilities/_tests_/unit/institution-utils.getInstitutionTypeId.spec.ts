@@ -56,7 +56,7 @@ describe("InstitutionUtils-getInstitutionTypeId", () => {
       expectedInstitutionTypeId: InstitutionIdTypes.OutOfProvincePrivate,
     },
     {
-      // International not united states and not a medical school.
+      // International not United States and not a medical school.
       country: "FR",
       province: undefined,
       classification: InstitutionClassification.Private,

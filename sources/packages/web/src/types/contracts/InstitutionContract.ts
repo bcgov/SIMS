@@ -46,6 +46,7 @@ export interface InstitutionProfileFormData {
   clientType?: ClientIdType;
   mode?: "create" | "edit";
 }
+
 export type InstitutionProfileFormInitialData = Omit<
   InstitutionProfileFormData,
   "countryOptionValues" | "provinceOptionValues"
