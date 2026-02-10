@@ -1541,7 +1541,7 @@ FROM
                 'Province',
                 'British Columbia',
                 'BC',
-                1
+                2
             ),
             (
                 'Province',
