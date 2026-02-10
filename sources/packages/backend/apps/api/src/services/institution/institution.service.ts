@@ -13,8 +13,6 @@ import {
   getUserFullNameLikeSearch,
   Application,
   ApplicationStatus,
-  InstitutionClassification,
-  InstitutionMedicalSchoolStatus,
   InstitutionType,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, IsNull, Not, Repository } from "typeorm";
@@ -25,6 +23,7 @@ import {
   sortUsersColumnMap,
   PaginationOptions,
   transformAddressDetails,
+  getInstitutionTypeId,
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -45,21 +44,7 @@ import {
 import { InstitutionUserAuthService } from "../institution-user-auth/institution-user-auth.service";
 import { UserService } from "../user/user.service";
 import { NoteSharedService } from "@sims/services";
-import {
-  BC_PROVINCE_CODE,
-  CANADA_COUNTRY_CODE,
-  UNITED_STATES_COUNTRY_CODE,
-} from "@sims/sims-db/constant";
 
-enum InstitutionTypes {
-  BCPublic = 1,
-  BCPrivate = 2,
-  OutOfProvincePublic = 3,
-  UnitedStates = 4,
-  International = 5,
-  InternationalMedical = 6,
-  OutOfProvincePrivate = 7,
-}
 @Injectable()
 export class InstitutionService extends RecordDataModelService<Institution> {
   institutionUserRepo: Repository<InstitutionUser>;
@@ -282,7 +267,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.otherRegulatingBody = institutionModel.otherRegulatingBody;
     institution.establishedDate = institutionModel.establishedDate;
     institution.institutionType = {
-      id: this.getInstitutionTypeId(institutionModel),
+      id: getInstitutionTypeId(institutionModel),
     } as InstitutionType;
     institution.country = institutionModel.country;
     institution.province = institutionModel.province ?? null;
@@ -871,7 +856,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       institution.otherRegulatingBody = updateInstitution.otherRegulatingBody;
       institution.establishedDate = updateInstitution.establishedDate;
       institution.institutionType = {
-        id: this.getInstitutionTypeId(updateInstitution),
+        id: getInstitutionTypeId(updateInstitution),
       } as InstitutionType;
       institution.country = updateInstitution.country;
       institution.province = updateInstitution.province ?? null;
@@ -1010,44 +995,5 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     return this.repo.exists({
       where: { locations: { id: locationId }, programs: { id: programId } },
     });
-  }
-
-  /**
-   * Get institution type id based on institution details.
-   * @returns institution type.
-   */
-  private getInstitutionTypeId(
-    institution: Pick<
-      Institution,
-      | "country"
-      | "province"
-      | "classification"
-      | "organizationStatus"
-      | "medicalSchoolStatus"
-    >,
-  ): number {
-    // When country is Canada.
-    if (institution.country === CANADA_COUNTRY_CODE) {
-      const isPublic =
-        institution.classification === InstitutionClassification.Public;
-      const canadaMap = {
-        [BC_PROVINCE_CODE]: isPublic
-          ? InstitutionTypes.BCPublic
-          : InstitutionTypes.BCPrivate,
-        default: isPublic
-          ? InstitutionTypes.OutOfProvincePublic
-          : InstitutionTypes.OutOfProvincePrivate,
-      };
-      return canadaMap[institution.province] || canadaMap.default;
-    }
-    // When country is United States.
-    if (institution.country === UNITED_STATES_COUNTRY_CODE) {
-      return InstitutionTypes.UnitedStates;
-    }
-    // Other international institutions.
-    return institution.medicalSchoolStatus ===
-      InstitutionMedicalSchoolStatus.Yes
-      ? InstitutionTypes.InternationalMedical
-      : InstitutionTypes.International;
   }
 }
