@@ -194,7 +194,7 @@ export class AwardDetailsAPIOutDTO {
   offeringStudyStartDate: string;
   offeringStudyEndDate: string;
   firstDisbursement: AwardDisbursementScheduleAPIOutDTO;
-  secondDisbursement: AwardDisbursementScheduleAPIOutDTO;
+  secondDisbursement?: AwardDisbursementScheduleAPIOutDTO;
 }
 
 /**
