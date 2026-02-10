@@ -35,7 +35,7 @@
           >Applications</v-btn
         >
         <v-btn
-          v-if="hasAuthenticatedStudentAccount"
+          v-if="hasAuthenticatedStudentAccount && !isFormSubmissionEnabled"
           class="nav-item-label"
           variant="text"
           :to="{
@@ -43,6 +43,16 @@
           }"
           prepend-icon="fa:fa fa-balance-scale"
           >Appeals</v-btn
+        >
+        <v-btn
+          v-if="hasAuthenticatedStudentAccount && isFormSubmissionEnabled"
+          class="nav-item-label"
+          variant="text"
+          :to="{
+            name: StudentRoutesConst.STUDENT_FORMS_SELECTOR,
+          }"
+          prepend-icon="fa:fa fa-balance-scale"
+          >Forms</v-btn
         >
         <v-btn
           v-if="hasAuthenticatedStudentAccount"
@@ -136,7 +146,7 @@ import { useRouter } from "vue-router";
 import { computed, ref, defineComponent, onMounted, watchEffect } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { ClientIdType, MenuItemModel } from "@/types";
-import { useAuth, useStudentStore } from "@/composables";
+import { useAuth, useFeatureToggles, useStudentStore } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
 import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
 import { AppConfigService } from "@/services/AppConfigService";
@@ -145,6 +155,7 @@ import { useDisplay } from "vuetify";
 export default defineComponent({
   components: { BCLogo, IdleTimeChecker },
   setup() {
+    const { isFormSubmissionEnabled } = useFeatureToggles();
     const toggleNav = ref();
     const { executeLogout } = useAuth();
     const router = useRouter();
@@ -272,6 +283,7 @@ export default defineComponent({
       smallScreen,
       drawer,
       showNavigationDrawer,
+      isFormSubmissionEnabled,
     };
   },
 });

@@ -32,3 +32,4 @@ export * from "./useRestrictionBypass";
 export * from "./useInvoiceBatch";
 export * from "./useStudentAppeals";
 export * from "./useInstitutionRestrictionState";
+export * from "./useFeatureToggles";
