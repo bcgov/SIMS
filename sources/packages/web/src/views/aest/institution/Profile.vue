@@ -25,6 +25,14 @@
         <v-row>
           <v-col>
             <title-value
+              property-title="Legal operating name"
+              :property-value="institutionProfileDetail.legalOperatingName"
+            />
+            <title-value
+              property-title="Institution name"
+              :property-value="institutionProfileDetail.operatingName"
+            />
+            <title-value
               property-title="Primary phone number"
               :property-value="institutionProfileDetail.primaryPhone"
             />
@@ -44,16 +52,12 @@
           <v-divider :thickness="2" vertical />
           <v-col>
             <title-value
-              property-title="Legal operating name"
-              :property-value="institutionProfileDetail.legalOperatingName"
-            />
-            <title-value
-              property-title="Institution name"
-              :property-value="institutionProfileDetail.operatingName"
-            />
-            <title-value
               property-title="Regulatory body"
-              :property-value="institutionProfileDetail.regulatingBody"
+              :property-value="
+                getRegulatoryBodyToDisplay(
+                  institutionProfileDetail.regulatingBody,
+                )
+              "
             />
             <title-value
               v-if="institutionProfileDetail.regulatingBody === 'other'"
@@ -74,15 +78,36 @@
             />
             <title-value
               property-title="Classification"
-              :property-value="institutionProfileDetail.classification"
+              :property-value="
+                conditionalEmptyStringFiller(
+                  !!institutionProfileDetail.classification,
+                  getClassificationToDisplay(
+                    institutionProfileDetail.classification as InstitutionClassification,
+                  ),
+                )
+              "
             />
             <title-value
               property-title="Organization status"
-              :property-value="institutionProfileDetail.organizationStatus"
+              :property-value="
+                conditionalEmptyStringFiller(
+                  !!institutionProfileDetail.organizationStatus,
+                  getOrganizationStatusToDisplay(
+                    institutionProfileDetail.organizationStatus as InstitutionOrganizationStatus,
+                  ),
+                )
+              "
             />
             <title-value
               property-title="Medical"
-              :property-value="institutionProfileDetail.medicalSchoolStatus"
+              :property-value="
+                conditionalEmptyStringFiller(
+                  !!institutionProfileDetail.medicalSchoolStatus,
+                  getMedicalSchoolStatusToDisplay(
+                    institutionProfileDetail.medicalSchoolStatus as InstitutionMedicalSchoolStatus,
+                  ),
+                )
+              "
             />
           </v-col>
         </v-row>
@@ -151,8 +176,13 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { Role } from "@/types";
-import { useFormatters } from "@/composables";
+import {
+  InstitutionClassification,
+  InstitutionMedicalSchoolStatus,
+  InstitutionOrganizationStatus,
+  Role,
+} from "@/types";
+import { useFormatters, useInstitution } from "@/composables";
 
 export default defineComponent({
   components: { CheckPermissionRole },
@@ -164,7 +194,17 @@ export default defineComponent({
   },
   setup(props) {
     const institutionProfileDetail = ref({} as InstitutionDetailAPIOutDTO);
-    const { emptyStringFiller, dateOnlyLongString } = useFormatters();
+    const {
+      emptyStringFiller,
+      dateOnlyLongString,
+      conditionalEmptyStringFiller,
+    } = useFormatters();
+    const {
+      getRegulatoryBodyToDisplay,
+      getClassificationToDisplay,
+      getOrganizationStatusToDisplay,
+      getMedicalSchoolStatusToDisplay,
+    } = useInstitution();
     const router = useRouter();
     onMounted(async () => {
       institutionProfileDetail.value =
@@ -185,6 +225,14 @@ export default defineComponent({
       editProfile,
       Role,
       emptyStringFiller,
+      conditionalEmptyStringFiller,
+      getRegulatoryBodyToDisplay,
+      getClassificationToDisplay,
+      getOrganizationStatusToDisplay,
+      getMedicalSchoolStatusToDisplay,
+      InstitutionClassification,
+      InstitutionOrganizationStatus,
+      InstitutionMedicalSchoolStatus,
     };
   },
 });

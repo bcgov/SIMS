@@ -28,7 +28,8 @@ export function createFakeInstitution(
 ): Institution {
   const institution = new Institution();
   institution.businessGuid = faker.string.uuid();
-  institution.legalOperatingName = faker.company.name();
+  institution.legalOperatingName =
+    options?.initialValues?.legalOperatingName ?? faker.company.name();
   institution.operatingName = faker.company.name();
   institution.primaryPhone = faker.phone.number({ style: "national" });
   institution.primaryEmail = faker.internet.email();

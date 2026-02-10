@@ -57,7 +57,8 @@ export class InstitutionInstitutionsController extends BaseController {
    * @returns primary identifier of the created resource.
    */
   @ApiUnprocessableEntityResponse({
-    description: "Institution user already exist",
+    description:
+      "Institution user already exist or invalid value(s) found for lookup fields.",
   })
   @RequiresUserAccount(false)
   @Post()
@@ -70,6 +71,8 @@ export class InstitutionInstitutionsController extends BaseController {
     if (existingUser) {
       throw new UnprocessableEntityException("Institution User already exists");
     }
+    // Validate the lookup data.
+    this.institutionControllerService.validateLookupData(payload);
 
     // Save institution
     const institution =

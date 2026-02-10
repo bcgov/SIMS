@@ -136,7 +136,7 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   )
   @IsNotEmpty()
   @MaxLength(OTHER_REGULATING_BODY_MAX_LENGTH)
-  otherRegulatingBody: string;
+  otherRegulatingBody?: string;
   @IsDateString()
   establishedDate: string;
   @IsNotEmpty()

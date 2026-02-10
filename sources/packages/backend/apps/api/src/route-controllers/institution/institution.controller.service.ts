@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from "@nestjs/common";
 import { InstitutionService, InstitutionTypeService } from "../../services";
 import { AddressInfo, SystemLookupCategory } from "@sims/sims-db";
 import { InstitutionDetailAPIOutDTO } from "./models/institution.dto";
@@ -120,5 +124,41 @@ export class InstitutionControllerService {
       id: institution.id,
       description: institution.operatingName,
     }));
+  }
+
+  /**
+   * Validate institution lookup data(e.g. country, province).
+   * @param institution institution details to validate the lookup data.
+   * @throws UnprocessableEntityException when any of the lookup input is invalid.
+   */
+  validateLookupData(institution: {
+    country: string;
+    province?: string;
+  }): void {
+    const invalidFields: string[] = [];
+    const isValidCountry =
+      this.systemLookupConfigurationService.isValidSystemLookup(
+        SystemLookupCategory.Country,
+        institution.country,
+      );
+    if (!isValidCountry) {
+      invalidFields.push("Country");
+    }
+    if (institution.province) {
+      const isValidProvince =
+        this.systemLookupConfigurationService.isValidSystemLookup(
+          SystemLookupCategory.Province,
+          institution.province,
+        );
+
+      if (!isValidProvince) {
+        invalidFields.push("Province");
+      }
+    }
+    if (invalidFields.length) {
+      throw new UnprocessableEntityException(
+        `Invalid value(s) found for: ${invalidFields.join(", ")}.`,
+      );
+    }
   }
 }

@@ -69,7 +69,23 @@ export class SystemLookupConfigurationService {
     lookupCategory: SystemLookupCategory,
     lookupKey: string,
   ): SystemLookupConfiguration | undefined {
-    const lookupItems = this.getLookupByCategory(lookupCategory);
-    return lookupItems.find((item) => item.lookupKey === lookupKey);
+    return this.getLookupByCategory(lookupCategory).find(
+      (item) => item.lookupKey === lookupKey,
+    );
+  }
+
+  /**
+   * Is valid system lookup for the lookup category and key.
+   * @param lookupCategory lookup category.
+   * @param lookupKey lookup key.
+   * @returns true if valid system lookup, false otherwise.
+   */
+  isValidSystemLookup(
+    lookupCategory: SystemLookupCategory,
+    lookupKey: string,
+  ): boolean {
+    return this.getLookupByCategory(lookupCategory).some(
+      (item) => item.lookupKey === lookupKey,
+    );
   }
 }
