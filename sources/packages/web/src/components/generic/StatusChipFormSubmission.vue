@@ -19,9 +19,9 @@ export default defineComponent({
         : FormSubmissionStatus.Completed,
     );
     const chipStatus = computed(() =>
-      props.status === FormSubmissionStatus.Completed
-        ? StatusChipTypes.Success
-        : StatusChipTypes.Warning,
+      props.status === FormSubmissionStatus.Pending
+        ? StatusChipTypes.Warning
+        : StatusChipTypes.Success,
     );
     return { chipStatus, label };
   },

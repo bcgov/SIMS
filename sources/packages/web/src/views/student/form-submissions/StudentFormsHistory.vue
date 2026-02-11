@@ -53,7 +53,7 @@
                   }}</span></v-col
                 >
                 <v-col
-                  ><StatusChipFormSubmission :status="submission.status"
+                  ><status-chip-form-submission :status="submission.status"
                 /></v-col>
                 <v-col
                   ><v-btn
@@ -95,7 +95,7 @@
               /></v-col>
             </v-row>
             <v-row no-gutters class="mt-2">
-              <v-col cols="3">
+              <v-col>
                 <span class="category-header-small brand-gray-text"
                   >Submitted form(s)</span
                 >
