@@ -100,13 +100,12 @@ export default defineComponent({
             countryOptionValues: countryLookup.items,
             provinceOptionValues: provinceLookup.items,
           };
+          isDataReady.value = true;
         } else {
           snackBar.error("Unable to fetch account details.");
         }
       } catch {
         snackBar.error("Unexpected error while loading data.");
-      } finally {
-        isDataReady.value = true;
       }
     });
 
