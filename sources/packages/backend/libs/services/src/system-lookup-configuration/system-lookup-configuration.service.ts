@@ -33,7 +33,8 @@ export class SystemLookupConfigurationService {
       },
       order: {
         lookupCategory: "ASC",
-        lookupKey: "ASC",
+        lookupPriority: "ASC",
+        lookupValue: "ASC",
       },
     });
     this.systemLookupConfigurationsMap = lookupItems.reduce(
@@ -56,5 +57,35 @@ export class SystemLookupConfigurationService {
     lookupCategory: SystemLookupCategory,
   ): ReadonlyArray<SystemLookupConfiguration> {
     return this.systemLookupConfigurationsMap.get(lookupCategory) ?? [];
+  }
+
+  /**
+   * Get system lookup by category and key.
+   * @param lookupCategory lookup category.
+   * @param lookupKey lookup key.
+   * @returns system lookup for the lookup category and key.
+   */
+  getSystemLookup(
+    lookupCategory: SystemLookupCategory,
+    lookupKey: string,
+  ): SystemLookupConfiguration | undefined {
+    return this.getLookupByCategory(lookupCategory).find(
+      (item) => item.lookupKey === lookupKey,
+    );
+  }
+
+  /**
+   * Is valid system lookup for the lookup category and key.
+   * @param lookupCategory lookup category.
+   * @param lookupKey lookup key.
+   * @returns true if valid system lookup, false otherwise.
+   */
+  isValidSystemLookup(
+    lookupCategory: SystemLookupCategory,
+    lookupKey: string,
+  ): boolean {
+    return this.getLookupByCategory(lookupCategory).some(
+      (item) => item.lookupKey === lookupKey,
+    );
   }
 }
