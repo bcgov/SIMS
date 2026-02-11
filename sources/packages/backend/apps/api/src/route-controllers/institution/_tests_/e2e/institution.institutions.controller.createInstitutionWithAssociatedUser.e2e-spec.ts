@@ -23,7 +23,7 @@ import { getInstitutionProfilePayload } from "./institution.utils";
 import { User } from "@sims/sims-db";
 import { AccountDetails } from "../../../../services/bceid/account-details.model";
 
-describe("InstitutionInstitutionsController(e2e)-getInstitutionDetail", () => {
+describe("InstitutionInstitutionsController(e2e)-createInstitutionWithAssociatedUser", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let appModule: TestingModule;
@@ -60,7 +60,7 @@ describe("InstitutionInstitutionsController(e2e)-getInstitutionDetail", () => {
       const fakeBCeIDAccount = getFakeBCeIDAccount(user, "Some legal name");
       bCeIDService.getAccountDetails = jest
         .fn()
-        .mockReturnValueOnce(fakeBCeIDAccount);
+        .mockResolvedValueOnce(fakeBCeIDAccount);
       await mockJWTUserInfo(appModule, user);
       const institutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeFUser,
@@ -77,6 +77,7 @@ describe("InstitutionInstitutionsController(e2e)-getInstitutionDetail", () => {
           expect(response.body.id).toBeGreaterThan(0);
           institutionId = response.body.id;
         });
+      // Validate created institution and the user.
       const createdInstitution = await db.institution.findOne({
         select: {
           id: true,
@@ -156,6 +157,18 @@ describe("InstitutionInstitutionsController(e2e)-getInstitutionDetail", () => {
         organizationStatus: payload.organizationStatus,
         medicalSchoolStatus: payload.medicalSchoolStatus,
         creator: { id: expect.any(Number), userName: user.userName },
+      });
+      const institutionUserId = createdInstitution.creator.id;
+      const institutionUserAuth = await db.institutionUserAuth.findOne({
+        select: { id: true, authType: { id: true, type: true } },
+        relations: { authType: true },
+        loadEagerRelations: false,
+        where: { institutionUser: { user: { id: institutionUserId } } },
+      });
+      // Validate the institution user auth type is set to admin.
+      expect(institutionUserAuth).toEqual({
+        id: expect.any(Number),
+        authType: { id: expect.any(Number), type: "admin" },
       });
     },
   );
