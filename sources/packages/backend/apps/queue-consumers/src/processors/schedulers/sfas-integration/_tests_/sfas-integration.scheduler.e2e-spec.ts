@@ -1171,7 +1171,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
 
   ["N", " "].forEach((withdrawalActiveFlag) => {
     it(
-      "Should import one active WTHD restrictions and ignore three other SFAS applications for withdrawal import" +
+      "Should import one active WTHD restriction and ignore three other SFAS applications for withdrawal import" +
         " when the SFAS applications have different withdrawal data for withdrawal_date, withdrawal_reason, and withdrawal_active_flag" +
         ` considering withdrawal_active_flag as '${withdrawalActiveFlag.trim() || "white space"}',` +
         " and multiple WTHD restrictions must be imported as a single active one.",
