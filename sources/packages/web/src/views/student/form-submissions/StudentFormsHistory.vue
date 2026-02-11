@@ -46,17 +46,25 @@
         >
           <v-card-item>
             <v-card-title>
-              <span class="category-header-medium color-blue mr-2">{{
-                submission.formCategory
-              }}</span>
-              <StatusChipFormSubmission :status="submission.status" />
-              <v-btn
-                color="primary"
-                class="float-right"
-                @click="goToSubmission(submission.id)"
-              >
-                View submitted form(s)
-              </v-btn>
+              <v-row>
+                <v-col
+                  ><span class="category-header-medium color-blue mr-2">{{
+                    submission.formCategory
+                  }}</span></v-col
+                >
+                <v-col
+                  ><StatusChipFormSubmission :status="submission.status"
+                /></v-col>
+                <v-col
+                  ><v-btn
+                    color="primary"
+                    class="float-right"
+                    @click="goToSubmission(submission.id)"
+                  >
+                    View
+                  </v-btn></v-col
+                >
+              </v-row>
               <v-divider class="mb-0"></v-divider>
             </v-card-title>
           </v-card-item>
