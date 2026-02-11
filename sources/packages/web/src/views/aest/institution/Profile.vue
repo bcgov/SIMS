@@ -79,33 +79,24 @@
             <title-value
               property-title="Classification"
               :property-value="
-                conditionalEmptyStringFiller(
-                  !!institutionProfileDetail.classification,
-                  getClassificationToDisplay(
-                    institutionProfileDetail.classification as InstitutionClassification,
-                  ),
+                getClassificationToDisplay(
+                  institutionProfileDetail.classification,
                 )
               "
             />
             <title-value
               property-title="Organization status"
               :property-value="
-                conditionalEmptyStringFiller(
-                  !!institutionProfileDetail.organizationStatus,
-                  getOrganizationStatusToDisplay(
-                    institutionProfileDetail.organizationStatus as InstitutionOrganizationStatus,
-                  ),
+                getOrganizationStatusToDisplay(
+                  institutionProfileDetail.organizationStatus,
                 )
               "
             />
             <title-value
               property-title="Medical"
               :property-value="
-                conditionalEmptyStringFiller(
-                  !!institutionProfileDetail.medicalSchoolStatus,
-                  getMedicalSchoolStatusToDisplay(
-                    institutionProfileDetail.medicalSchoolStatus as InstitutionMedicalSchoolStatus,
-                  ),
+                getMedicalSchoolStatusToDisplay(
+                  institutionProfileDetail.medicalSchoolStatus,
                 )
               "
             />
@@ -176,12 +167,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import {
-  InstitutionClassification,
-  InstitutionMedicalSchoolStatus,
-  InstitutionOrganizationStatus,
-  Role,
-} from "@/types";
+import { Role } from "@/types";
 import { useFormatters, useInstitution } from "@/composables";
 
 export default defineComponent({
@@ -230,9 +216,6 @@ export default defineComponent({
       getClassificationToDisplay,
       getOrganizationStatusToDisplay,
       getMedicalSchoolStatusToDisplay,
-      InstitutionClassification,
-      InstitutionOrganizationStatus,
-      InstitutionMedicalSchoolStatus,
     };
   },
 });

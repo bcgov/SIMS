@@ -1,3 +1,4 @@
+import { useFormatters } from "@/composables/useFormatters";
 import {
   InstitutionClassification,
   InstitutionMedicalSchoolStatus,
@@ -5,6 +6,7 @@ import {
 } from "@/types";
 
 export function useInstitution() {
+  const { emptyStringFiller } = useFormatters();
   /**
    * Get regulatory body to display.
    * @param regulatoryBody regulatory body value.
@@ -26,61 +28,63 @@ export function useInstitution() {
   /**
    * Get institution classification to display.
    * @param classification institution classification value.
-   * @returns institution classification to display.
+   * @returns institution classification to display or an empty string filler.
    */
   const getClassificationToDisplay = (
-    classification: InstitutionClassification,
+    classification?: InstitutionClassification,
   ): string => {
-    const classificationToDisplayMapping: Record<
-      InstitutionClassification,
+    const classificationToDisplayMap = new Map<
+      InstitutionClassification | undefined,
       string
-    > = {
-      [InstitutionClassification.Public]: "Public",
-      [InstitutionClassification.Private]: "Private",
-    };
-    return classificationToDisplayMapping[classification] || classification;
+    >([
+      [InstitutionClassification.Public, "Public"],
+      [InstitutionClassification.Private, "Private"],
+    ]);
+    const result =
+      classificationToDisplayMap.get(classification) || classification;
+    return emptyStringFiller(result);
   };
 
   /**
    * Get organization status to display.
    * @param organizationStatus organization status value.
-   * @returns organization status to display.
+   * @returns organization status to display or an empty string filler.
    */
   const getOrganizationStatusToDisplay = (
-    organizationStatus: InstitutionOrganizationStatus,
+    organizationStatus?: InstitutionOrganizationStatus,
   ): string => {
-    const organizationStatusToDisplayMapping: Record<
-      InstitutionOrganizationStatus,
+    const organizationStatusToDisplayMap = new Map<
+      InstitutionOrganizationStatus | undefined,
       string
-    > = {
-      [InstitutionOrganizationStatus.Profit]: "Profit",
-      [InstitutionOrganizationStatus.NotForProfit]: "Not for Profit",
-    };
-    return (
-      organizationStatusToDisplayMapping[organizationStatus] ||
-      organizationStatus
-    );
+    >([
+      [InstitutionOrganizationStatus.Profit, "Profit"],
+      [InstitutionOrganizationStatus.NotForProfit, "Not for Profit"],
+    ]);
+    const result =
+      organizationStatusToDisplayMap.get(organizationStatus) ||
+      organizationStatus;
+    return emptyStringFiller(result);
   };
 
   /**
    * Get medical school status to display.
    * @param medicalSchoolStatus medical school status value.
-   * @returns medical school status to display.
+   * @returns medical school status to display or an empty string filler.
    */
   const getMedicalSchoolStatusToDisplay = (
-    medicalSchoolStatus: InstitutionMedicalSchoolStatus,
+    medicalSchoolStatus?: InstitutionMedicalSchoolStatus,
   ): string => {
-    const medicalSchoolStatusToDisplayMapping: Record<
-      InstitutionMedicalSchoolStatus,
+    const medicalSchoolStatusToDisplayMap = new Map<
+      InstitutionMedicalSchoolStatus | undefined,
       string
-    > = {
-      [InstitutionMedicalSchoolStatus.Yes]: "Yes",
-      [InstitutionMedicalSchoolStatus.No]: "No",
-    };
-    return (
-      medicalSchoolStatusToDisplayMapping[medicalSchoolStatus] ||
-      medicalSchoolStatus
-    );
+    >([
+      [InstitutionMedicalSchoolStatus.Yes, "Yes"],
+      [InstitutionMedicalSchoolStatus.No, "No"],
+    ]);
+    const result =
+      medicalSchoolStatusToDisplayMap.get(medicalSchoolStatus) ||
+      medicalSchoolStatus;
+    return emptyStringFiller(result);
   };
   return {
     getRegulatoryBodyToDisplay,
