@@ -73,7 +73,7 @@ export interface FormSubmissionItemApproval {
 }
 
 export interface FormSubmissionItem {
-  id: number;
+  id?: number;
   dynamicConfigurationId: number;
   category: FormCategory;
   formType: string;

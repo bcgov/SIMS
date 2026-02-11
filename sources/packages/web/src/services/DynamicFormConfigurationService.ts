@@ -1,8 +1,5 @@
 import ApiClient from "@/services/http/ApiClient";
-import {
-  DynamicFormConfigurationAPIOutDTO,
-  DynamicFormConfigurationsAPIOutDTO,
-} from "@/services/http/dto";
+import { DynamicFormConfigurationAPIOutDTO } from "@/services/http/dto";
 import { DynamicFormType, OfferingIntensity } from "@/types";
 
 export class DynamicFormConfigurationService {
@@ -29,9 +26,5 @@ export class DynamicFormConfigurationService {
       formType,
       options,
     );
-  }
-
-  async getDynamicFormConfigurationsByCategory(): Promise<DynamicFormConfigurationsAPIOutDTO> {
-    return ApiClient.DynamicFormConfigurationApi.getDynamicFormConfigurationsByCategory();
   }
 }

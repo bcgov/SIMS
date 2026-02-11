@@ -58,7 +58,7 @@ export enum AppRoutes {
   /**
    * Student forms submission page.
    */
-  StudentFormsSubmit = "forms/:formDefinitions",
+  StudentFormsSubmit = "forms/:formDefinitionIds",
   StudentFormSubmission = "forms/submission/:formDefinitionId",
 
   // Institution

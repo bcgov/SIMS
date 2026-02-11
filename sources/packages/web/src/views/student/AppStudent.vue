@@ -51,7 +51,7 @@
           :to="{
             name: StudentRoutesConst.STUDENT_FORMS_SELECTOR,
           }"
-          prepend-icon="fa:fa fa-balance-scale"
+          prepend-icon="fa:fas fa-inbox"
           >Forms</v-btn
         >
         <v-btn

@@ -35,11 +35,11 @@ import StudentApplicationAppealRequests from "@/views/student/appeal/StudentAppl
 // Legacy Appeal Request (to be removed later)
 import LegacyStudentAppealRequest from "@/views/student/appeal-legacy/StudentAppealSubmit.vue";
 // Student Forms
-import StudentForms from "@/views/student/forms/StudentForms.vue";
-import StudentFormsSelector from "@/views/student/forms/StudentFormsSelector.vue";
-import StudentFormsHistory from "@/views/student/forms/StudentFormsHistory.vue";
-import FormSubmission from "@/views/student/forms/FormSubmission.vue";
-import FormSubmissionView from "@/views/student/forms/FormSubmissionView.vue";
+import StudentForms from "@/views/student/form-submissions/StudentForms.vue";
+import StudentFormsSelector from "@/views/student/form-submissions/StudentFormsSelector.vue";
+import StudentFormsHistory from "@/views/student/form-submissions/StudentFormsHistory.vue";
+import FormSubmission from "@/views/student/form-submissions/FormSubmission.vue";
+import FormSubmissionView from "@/views/student/form-submissions/FormSubmissionView.vue";
 import {
   StudentRoutesConst,
   SharedRouteConst,
@@ -269,7 +269,9 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         name: StudentRoutesConst.STUDENT_FORM_SUBMIT,
         component: FormSubmission,
         props: (route) => ({
-          formDefinitions: (route.params.formDefinitions as string).split(","),
+          formDefinitionIds: (route.params.formDefinitionIds as string)
+            .split(",")
+            .map((id) => Number.parseInt(id)),
           applicationId: route.query["application"]
             ? Number.parseInt(route.query["application"] as string)
             : undefined,

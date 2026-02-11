@@ -1,13 +1,18 @@
 <template>
   <v-switch
     class="float-right mr-2"
-    v-model="expandAll"
+    v-model="expandAllModel"
     label="Expand all"
     hide-details
     color="primary"
     @update:model-value="expandAllUpdated"
   />
-  <v-expansion-panels class="mt-5" multiple v-model="expandedPanels">
+  <v-expansion-panels
+    class="mt-5"
+    multiple
+    v-model="expansionPanelsModel"
+    @update:model-value="expansionPanelsUpdated"
+  >
     <v-expansion-panel
       :eager="true"
       v-for="submissionItem in submissionItems"
@@ -76,46 +81,70 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const expandAll = ref(false);
-    const expandedPanels = ref<string[]>([]);
+    const expandAllModel = ref(false);
+    const expansionPanelsModel = ref<string[]>([]);
     const { checkFormioValidity, getAssociatedFiles } = useFormioUtils();
     const forms = new Map<string, FormIOForm>();
+
+    /**
+     * Keep track of all forms that will be part of the submission.
+     * @param form form.io form.
+     * @param formKey associated identifier of the form.
+     */
     const formLoaded = (form: FormIOForm, formKey: string) => {
-      console.log(formKey);
       forms.set(formKey, form);
     };
 
+    /**
+     * Validate and emits an event if all forms are valid.
+     */
     const submit = async () => {
-      const formsValues = [...forms.values()];
-      if (await checkFormioValidity(formsValues)) {
-        const formsData = [...forms.entries()].map<FormSubmissionItemSubmitted>(
-          ([formKey, formIOForm]) => ({
-            dynamicConfigurationId: +formKey,
-            formData: formIOForm.data,
-            files: getAssociatedFiles(formIOForm),
-          }),
-        );
-        context.emit("submitted", formsData);
+      const invalidFormKeys: string[] = [];
+      const validItems: FormSubmissionItemSubmitted[] = [];
+      for (const [key, form] of forms) {
+        const isValid = await checkFormioValidity([form]);
+        if (isValid) {
+          validItems.push({
+            dynamicConfigurationId: +key,
+            formData: form.data,
+            files: getAssociatedFiles(form),
+          });
+        } else {
+          invalidFormKeys.push(key);
+        }
       }
+      if (invalidFormKeys.length) {
+        // Ensure forms with invalid data will be visible.
+        expansionPanelsModel.value = invalidFormKeys;
+        return;
+      }
+      // Emit the event with the valid forms.
+      context.emit("submitted", validItems);
     };
 
     const expandAllUpdated = () => {
-      if (expandAll.value) {
-        expandedPanels.value = props.submissionItems.map((item) =>
+      if (expandAllModel.value) {
+        expansionPanelsModel.value = props.submissionItems.map((item) =>
           item.dynamicConfigurationId.toString(),
         );
       } else {
-        expandedPanels.value = [];
+        expansionPanelsModel.value = [];
       }
+    };
+
+    const expansionPanelsUpdated = () => {
+      expandAllModel.value =
+        expansionPanelsModel.value.length === props.submissionItems.length;
     };
 
     return {
       formLoaded,
       AESTRoutesConst,
       submit,
-      expandAll,
-      expandedPanels,
+      expandAllModel,
       expandAllUpdated,
+      expansionPanelsModel,
+      expansionPanelsUpdated,
     };
   },
 });

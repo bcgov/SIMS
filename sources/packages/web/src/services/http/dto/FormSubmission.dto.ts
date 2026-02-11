@@ -4,6 +4,20 @@ import {
   FormSubmissionDecisionStatus,
 } from "@/types";
 
+export interface SubmissionFormConfigurationAPIOutDTO {
+  id: number;
+  formDefinitionName: string;
+  formType: string;
+  formCategory: FormCategory;
+  formDescription: string;
+  allowBundledSubmission: boolean;
+  hasApplicationScope: boolean;
+}
+
+export interface SubmissionFormConfigurationsAPIOutDTO {
+  configurations: SubmissionFormConfigurationAPIOutDTO[];
+}
+
 // Base classes for submission DTOs and submission items.
 
 abstract class FormSubmissionAPIOutDTO {
@@ -33,42 +47,10 @@ export class FormSubmissionStudentSummaryAPIOutDTO {
   submissions: FormSubmissionStudentAPIOutDTO[];
 }
 
-export class FormSubmissionMinistrySummaryAPIOutDTO {
-  submissions: FormSubmissionMinistryAPIOutDTO[];
-}
-
 // Get submission and items.
-
-class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
-  decisionNoteDescription?: string;
-}
-
-export class FormSubmissionMinistryAPIOutDTO extends FormSubmissionAPIOutDTO {
-  submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
-}
 
 class FormSubmissionItemStudentAPIOutDTO extends FormSubmissionItemAPIOutDTO {}
 
 export class FormSubmissionStudentAPIOutDTO extends FormSubmissionAPIOutDTO {
   submissionItems: FormSubmissionItemStudentAPIOutDTO[];
-}
-
-// Student submission.
-
-export class FormSubmissionItemAPIInDTO {
-  dynamicConfigurationId: number;
-  formData: unknown;
-  files: string[];
-}
-
-export class FormSubmissionAPIInDTO {
-  applicationId?: number;
-  items: FormSubmissionItemAPIInDTO[];
-}
-
-// Ministry submission.
-
-export class FormSubmissionItemDecisionAPIInDTO {
-  decisionStatus: FormSubmissionDecisionStatus;
-  noteDescription: string;
 }

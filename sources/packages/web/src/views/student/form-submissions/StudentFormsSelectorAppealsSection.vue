@@ -6,11 +6,12 @@
         sub-title="You can submit two types of appeals for StudentAid BC to review. Select the appropriate appeals type below."
       />
     </template>
-    <v-expansion-panels class="mt-5">
-      <v-expansion-panel>
+    <v-expansion-panels class="mt-5" v-model="selectedAppealType">
+      <v-expansion-panel :value="AppealTypes.Application">
         <template #title
           ><div>
-            <span class="category-header-medium brand-gray-text"
+            <span
+              class="category-header-medium brand-gray-text application-appeals-header"
               >Application appeals</span
             >
             <div>
@@ -36,37 +37,47 @@
               no-data-text="No eligible applications available"
               :rules="[(v) => checkNullOrEmptyRule(v, 'Application number')]"
             />
-            <p v-if="applicationAppeals.length">
-              Please select the appropriate appeal(s) from the list below and
-              click 'Fill appeal(s)' to provide the data. Multiple appeals can
-              be submitted at a time and new appeals would not be allowed if
-              there is already some appeal pending StudentAid BC decision.
-            </p>
-            <v-list
-              lines="three"
-              select-strategy="leaf"
-              variant="elevated"
-              v-model:selected="selectedApplicationAppealsForms"
-            >
-              <v-list-item
-                color="primary"
-                v-for="form in applicationAppeals"
-                :key="form.formDefinitionName"
-                :title="form.formType"
-                :value="form.formDefinitionName"
-                :subtitle="form.formDescription"
-                prepend-icon="mdi-scale-balance"
+            <template v-if="applicationAppeals.length">
+              <p>
+                Please select the appropriate appeal(s) from the list below and
+                click 'Fill appeal(s)' to provide the data. Multiple appeals can
+                be submitted at a time and new appeals would not be allowed if
+                there is already some appeal pending StudentAid BC decision.
+              </p>
+              <v-list
+                lines="three"
+                select-strategy="leaf"
+                variant="elevated"
+                v-model:selected="selectedApplicationAppealsForms"
               >
-                <template #prepend="{ isSelected, select }">
-                  <v-list-item-action start>
-                    <v-checkbox-btn
-                      :model-value="isSelected"
-                      @update:model-value="select"
-                    ></v-checkbox-btn>
-                  </v-list-item-action>
-                </template>
-              </v-list-item>
-            </v-list>
+                <v-list-item
+                  v-for="form in applicationAppeals"
+                  :key="form.formDefinitionName"
+                  :title="form.formType"
+                  :value="form.id"
+                  :subtitle="form.formDescription"
+                  prepend-icon="mdi-scale-balance"
+                >
+                  <template #prepend="{ isSelected, select }">
+                    <v-list-item-action start>
+                      <v-checkbox-btn
+                        color="primary"
+                        :model-value="isSelected"
+                        @update:model-value="select"
+                      ></v-checkbox-btn>
+                    </v-list-item-action>
+                  </template>
+                </v-list-item>
+              </v-list>
+              <v-input
+                :rules="[
+                  (v) =>
+                    !!v ||
+                    'Please select one or more appeal(s) to be submitted.',
+                ]"
+              >
+              </v-input>
+            </template>
           </v-form>
           <footer-buttons
             class="mt-4"
@@ -77,7 +88,7 @@
           />
         </template>
       </v-expansion-panel>
-      <v-expansion-panel>
+      <v-expansion-panel :value="AppealTypes.Other">
         <template #title
           ><div>
             <span class="category-header-medium brand-gray-text"
@@ -92,31 +103,39 @@
             provide the data. A single appeal in this category can be submitted
             at a time.
           </p>
-          <v-list
-            lines="three"
-            select-strategy="single-leaf"
-            variant="elevated"
-            v-model:selected="selectedStandaloneAppealsForm"
-          >
-            <v-list-item
-              color="primary"
-              v-for="form in standaloneAppealsForms"
-              :key="form.formDefinitionName"
-              :title="form.formType"
-              :subtitle="form.formDescription"
-              :value="form.formDefinitionName"
-              prepend-icon="mdi-scale-balance"
+          <v-form ref="standaloneAppealsSelectionForm">
+            <v-list
+              lines="three"
+              select-strategy="single-leaf"
+              variant="elevated"
+              v-model:selected="selectedStandaloneAppealsForm"
             >
-              <template #prepend="{ isSelected, select }">
-                <v-list-item-action start>
-                  <v-checkbox-btn
-                    :model-value="isSelected"
-                    @update:model-value="select"
-                  ></v-checkbox-btn>
-                </v-list-item-action>
-              </template>
-            </v-list-item>
-          </v-list>
+              <v-list-item
+                v-for="form in standaloneAppealsForms"
+                :key="form.formDefinitionName"
+                :title="form.formType"
+                :subtitle="form.formDescription"
+                :value="form.id"
+                prepend-icon="mdi-scale-balance"
+              >
+                <template #prepend="{ isSelected, select }">
+                  <v-list-item-action start>
+                    <v-checkbox-btn
+                      color="primary"
+                      :model-value="isSelected"
+                      @update:model-value="select"
+                    ></v-checkbox-btn>
+                  </v-list-item-action>
+                </template>
+              </v-list-item>
+            </v-list>
+            <v-input
+              :rules="[
+                (v) => !!v || 'Please select one appeal to be submitted.',
+              ]"
+            >
+            </v-input>
+          </v-form>
           <footer-buttons
             class="mt-4"
             primary-label="Fill appeal"
@@ -134,11 +153,12 @@ import { useRules, useSnackBar } from "@/composables";
 import { computed, defineComponent, ref, watch, PropType } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import {
-  DynamicFormConfigurationAPIOutDTO,
+  SubmissionFormConfigurationAPIOutDTO,
   EligibleApplicationForAppealAPIOutDTO,
 } from "@/services/http/dto";
 import { useRouter } from "vue-router";
-import { FormCategory, VForm, BannerTypes } from "@/types";
+import { FormCategory, BannerTypes } from "@/types";
+import { VForm } from "vuetify/components";
 import { StudentAppealService } from "@/services/StudentAppealService";
 
 enum AppealTypes {
@@ -149,9 +169,9 @@ enum AppealTypes {
 export default defineComponent({
   props: {
     formsConfigurations: {
-      type: Object as PropType<DynamicFormConfigurationAPIOutDTO[]>,
+      type: Object as PropType<SubmissionFormConfigurationAPIOutDTO[]>,
       required: true,
-      default: [] as DynamicFormConfigurationAPIOutDTO[],
+      default: [] as SubmissionFormConfigurationAPIOutDTO[],
     },
     applicationId: {
       type: Number,
@@ -162,23 +182,30 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const router = useRouter();
     const { checkNullOrEmptyRule } = useRules();
-    const appealsSelectionForm = ref({} as VForm);
+    const appealsSelectionForm = ref<InstanceType<typeof VForm> | null>(null);
+    const standaloneAppealsSelectionForm = ref({} as VForm);
     // Forms Categories
     const bundleApplicationAppealsForms = ref<
-      DynamicFormConfigurationAPIOutDTO[]
+      SubmissionFormConfigurationAPIOutDTO[]
     >([]);
-    const standaloneAppealsForms = ref<DynamicFormConfigurationAPIOutDTO[]>([]);
+    const standaloneAppealsForms = ref<SubmissionFormConfigurationAPIOutDTO[]>(
+      [],
+    );
     // Selected form(s)
-    const selectedApplicationAppealsForms = ref<string[]>();
+    const selectedApplicationAppealsForms = ref<number[]>();
     const selectedStandaloneAppealsForm = ref<string[]>();
     // Appeal type (Applications or Others).
-    const selectedAppealType = ref<AppealTypes | null>();
+    const selectedAppealType = ref<AppealTypes | null>(null);
     // Eligible applications
     const eligibleApplications = ref<EligibleApplicationForAppealAPIOutDTO[]>();
     const selectedApplicationId = ref<number | null>();
     const loadingEligibleApplications = ref(false);
     const applicationAppeals = computed(() => {
-      if (!eligibleApplications.value || !selectedApplicationId.value) {
+      if (
+        !eligibleApplications.value ||
+        !selectedApplicationId.value ||
+        !bundleApplicationAppealsForms.value.length
+      ) {
         return [];
       }
       // Find application by selected application id.
@@ -213,7 +240,6 @@ export default defineComponent({
         } finally {
           loadingEligibleApplications.value = false;
         }
-
         selectedApplicationId.value = props.applicationId;
         selectedAppealType.value = props.applicationId
           ? AppealTypes.Application
@@ -254,7 +280,7 @@ export default defineComponent({
         name: StudentRoutesConst.STUDENT_FORM_SUBMIT,
         params: {
           category: FormCategory.StudentAppeal,
-          formDefinitions: selectedApplicationAppealsForms.value?.toString(),
+          formDefinitionIds: selectedApplicationAppealsForms.value?.toString(),
         },
         query: {
           application: selectedApplicationId.value,
@@ -263,10 +289,14 @@ export default defineComponent({
     };
 
     const fillStudentAppeals = async (): Promise<void> => {
+      const formIsValid = standaloneAppealsSelectionForm.value.validate();
+      if (!formIsValid) {
+        return;
+      }
       await router.push({
         name: StudentRoutesConst.STUDENT_FORM_SUBMIT,
         params: {
-          formDefinitions: selectedStandaloneAppealsForm.value?.toString(),
+          formDefinitionIds: selectedStandaloneAppealsForm.value?.toString(),
         },
       });
     };
@@ -274,6 +304,7 @@ export default defineComponent({
     return {
       BannerTypes,
       appealsSelectionForm,
+      standaloneAppealsSelectionForm,
       checkNullOrEmptyRule,
       StudentRoutesConst,
       selectedAppealType,

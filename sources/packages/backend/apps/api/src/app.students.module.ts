@@ -56,6 +56,7 @@ import {
   AnnouncementStudentsController,
   SupportingUserControllerService,
   SupportingUserStudentsController,
+  FormSubmissionStudentsController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "@sims/utilities/config";
@@ -104,6 +105,7 @@ import { ObjectStorageModule } from "@sims/integrations/object-storage";
     ScholasticStandingStudentsController,
     AnnouncementStudentsController,
     SupportingUserStudentsController,
+    FormSubmissionStudentsController,
   ],
   providers: [
     AnnouncementService,

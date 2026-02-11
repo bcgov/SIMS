@@ -17,24 +17,20 @@
           </div></template
         >
         <template #text>
-          <v-list
-            lines="three"
-            select-strategy="leaf"
-            color="primary"
-            variant="elevated"
-          >
+          <v-list lines="three" select-strategy="leaf" variant="elevated">
             <v-list-item
               v-for="form in standaloneForms"
               :key="form.formDefinitionName"
               :title="form.formType"
               :subtitle="form.formDescription"
               :elevation="1"
-              :value="form.formDefinitionName"
+              :value="form.id"
               prepend-icon="mdi-subtitles-outline"
             >
               <template #prepend="{ isSelected, select }">
                 <v-list-item-action start>
                   <v-checkbox-btn
+                    color="primary"
                     :model-value="isSelected"
                     @update:model-value="select"
                   ></v-checkbox-btn>
@@ -58,22 +54,22 @@
 import { useRules } from "@/composables";
 import { defineComponent, watchEffect, ref, PropType } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { DynamicFormConfigurationAPIOutDTO } from "@/services/http/dto";
 import { FormCategory } from "@/types";
 import { useRouter } from "vue-router";
+import { SubmissionFormConfigurationAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   props: {
     formsConfigurations: {
-      type: Object as PropType<DynamicFormConfigurationAPIOutDTO[]>,
+      type: Object as PropType<SubmissionFormConfigurationAPIOutDTO[]>,
       required: true,
-      default: [] as DynamicFormConfigurationAPIOutDTO[],
+      default: [] as SubmissionFormConfigurationAPIOutDTO[],
     },
   },
   setup(props) {
     const router = useRouter();
     const { checkNullOrEmptyRule } = useRules();
-    const standaloneForms = ref<DynamicFormConfigurationAPIOutDTO[]>([]);
+    const standaloneForms = ref<SubmissionFormConfigurationAPIOutDTO[]>([]);
     const selectedStandaloneForm = ref<string>();
 
     watchEffect(async () => {
@@ -87,7 +83,7 @@ export default defineComponent({
       await router.push({
         name: StudentRoutesConst.STUDENT_FORM_SUBMIT,
         params: {
-          formDefinitions: selectedStandaloneForm.value?.toString(),
+          formDefinitionIds: selectedStandaloneForm.value?.toString(),
         },
       });
     };

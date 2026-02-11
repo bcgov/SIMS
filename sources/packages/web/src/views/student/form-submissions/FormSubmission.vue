@@ -22,7 +22,7 @@
           <footer-buttons
             justify="space-between"
             :processing="processing"
-            @secondary-click="$.emit('cancel')"
+            @secondary-click="cancel"
             secondary-label="Back"
             @primary-click="submit"
             primary-label="Submit for review"
@@ -44,18 +44,17 @@ import { ApplicationService } from "@/services/ApplicationService";
 import { useSnackBar } from "@/composables";
 import { AppealApplicationDetailsAPIOutDTO } from "@/services/http/dto";
 import FormSubmissionItems from "@/components/form-submissions/FormSubmissionItems.vue";
-import { DynamicFormConfigurationService } from "@/services/DynamicFormConfigurationService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { FormSubmissionsService } from "@/services/FormSubmissionsService";
 import { useRouter } from "vue-router";
+import { FormSubmissionsService } from "@/services/FormSubmissionsService";
 
 export default defineComponent({
   components: {
     FormSubmissionItems,
   },
   props: {
-    formDefinitions: {
-      type: Array as PropType<string[]>,
+    formDefinitionIds: {
+      type: Array as PropType<number[]>,
       required: true,
     },
     applicationId: {
@@ -72,16 +71,13 @@ export default defineComponent({
 
     const referenceForm = computed(() => formSubmissionItems.value[0]);
 
-    const submitted = async (items: FormSubmissionItemSubmitted[]) => {
+    const submitted = async (_items: FormSubmissionItemSubmitted[]) => {
       try {
-        await FormSubmissionsService.shared.submitForm({
-          applicationId: props.applicationId,
-          items,
-        });
+        // TODO: Submit form.
         processing.value = true;
         snackBar.success("The student appeal has been submitted successfully.");
         router.push({
-          name: StudentRoutesConst.STUDENT_APPEAL_HISTORY,
+          name: StudentRoutesConst.STUDENT_FORMS_HISTORY,
         });
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
@@ -113,11 +109,11 @@ export default defineComponent({
         }
       }
       const formConfigurations =
-        await DynamicFormConfigurationService.shared.getDynamicFormConfigurationsByCategory();
-      formSubmissionItems.value = props.formDefinitions.map<FormSubmissionItem>(
-        (formDefinition) => {
+        await FormSubmissionsService.shared.getSubmissionForms();
+      formSubmissionItems.value =
+        props.formDefinitionIds.map<FormSubmissionItem>((formDefinitionId) => {
           const formConfiguration = formConfigurations.configurations.find(
-            (form) => form.formDefinitionName === formDefinition,
+            (form) => form.id === formDefinitionId,
           );
           if (!formConfiguration) {
             throw new Error("Invalid form configuration ID");
@@ -132,15 +128,26 @@ export default defineComponent({
               parents: application?.supportingUserParents,
             },
           };
-        },
-      );
+        });
     });
+
+    const cancel = () => {
+      router.push({
+        name: StudentRoutesConst.STUDENT_FORMS_SELECTOR,
+        query: props.applicationId
+          ? {
+              applicationId: props.applicationId,
+            }
+          : undefined,
+      });
+    };
 
     return {
       referenceForm,
       formSubmissionItems,
       submitted,
       processing,
+      cancel,
     };
   },
 });
