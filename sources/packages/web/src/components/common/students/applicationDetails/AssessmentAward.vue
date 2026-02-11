@@ -53,7 +53,6 @@ export default defineComponent({
     assessmentAwardData: {
       type: Object as PropType<AwardDetailsAPIOutDTO>,
       required: true,
-      default: {} as AwardDetailsAPIOutDTO,
     },
     noticeOfAssessmentRoute: {
       type: Object as PropType<RouteLocationRaw>,
