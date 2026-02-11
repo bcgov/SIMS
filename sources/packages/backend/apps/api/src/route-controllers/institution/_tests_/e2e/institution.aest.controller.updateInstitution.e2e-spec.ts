@@ -166,6 +166,35 @@ describe("InstitutionAESTController(e2e)-updateInstitution", () => {
       });
   });
 
+  it("Should throw unprocessable entity error when invalid province is provided in the update payload.", async () => {
+    // Arrange
+    const institution = await db.institution.save(
+      createFakeInstitution(undefined, {
+        initialValues: {
+          legalOperatingName: "Institution legal operating name",
+        },
+      }),
+    );
+    const payload = getUpdatePayload();
+    // Set province with invalid value.
+    payload.country = CANADA_COUNTRY_CODE;
+    payload.province = "QQ";
+    const endpoint = `/aest/institution/${institution.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "Invalid value(s) found for: Province.",
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
   it("Should throw bad request error when province is provided for a country which is not Canada.", async () => {
     // Arrange
     const institution = await db.institution.save(

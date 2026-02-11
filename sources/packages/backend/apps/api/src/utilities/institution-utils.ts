@@ -36,15 +36,14 @@ export function getInstitutionTypeId(
   if (institution.country === CANADA_COUNTRY_CODE) {
     const isPublic =
       institution.classification === InstitutionClassification.Public;
-    const canadaMap = {
-      [BC_PROVINCE_CODE]: isPublic
+    if (institution.province === BC_PROVINCE_CODE) {
+      return isPublic
         ? InstitutionIdTypes.BCPublic
-        : InstitutionIdTypes.BCPrivate,
-      default: isPublic
-        ? InstitutionIdTypes.OutOfProvincePublic
-        : InstitutionIdTypes.OutOfProvincePrivate,
-    };
-    return canadaMap[institution.province] || canadaMap.default;
+        : InstitutionIdTypes.BCPrivate;
+    }
+    return isPublic
+      ? InstitutionIdTypes.OutOfProvincePublic
+      : InstitutionIdTypes.OutOfProvincePrivate;
   }
   // When country is United States.
   if (institution.country === UNITED_STATES_COUNTRY_CODE) {
