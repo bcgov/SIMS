@@ -17,27 +17,33 @@
           </div></template
         >
         <template #text>
-          <v-list lines="three" select-strategy="leaf" variant="elevated">
-            <v-list-item
-              v-for="form in standaloneForms"
-              :key="form.formDefinitionName"
-              :title="form.formType"
-              :subtitle="form.formDescription"
-              :elevation="1"
-              :value="form.id"
-              prepend-icon="mdi-subtitles-outline"
+          <v-form ref="standaloneFormsSelectionForm">
+            <v-list lines="three" select-strategy="leaf" variant="elevated">
+              <v-list-item
+                v-for="form in standaloneForms"
+                :key="form.formDefinitionName"
+                :title="form.formType"
+                :subtitle="form.formDescription"
+                :elevation="1"
+                :value="form.id"
+                prepend-icon="mdi-subtitles-outline"
+              >
+                <template #prepend="{ isSelected, select }">
+                  <v-list-item-action start>
+                    <v-checkbox-btn
+                      color="primary"
+                      :model-value="isSelected"
+                      @update:model-value="select"
+                    ></v-checkbox-btn>
+                  </v-list-item-action>
+                </template>
+              </v-list-item>
+            </v-list>
+            <v-input
+              :rules="[(v) => !!v || 'Please select one form to be submitted.']"
             >
-              <template #prepend="{ isSelected, select }">
-                <v-list-item-action start>
-                  <v-checkbox-btn
-                    color="primary"
-                    :model-value="isSelected"
-                    @update:model-value="select"
-                  ></v-checkbox-btn>
-                </v-list-item-action>
-              </template>
-            </v-list-item>
-          </v-list>
+            </v-input>
+          </v-form>
           <footer-buttons
             class="mt-4"
             primary-label="Fill form"
@@ -54,7 +60,7 @@
 import { useRules } from "@/composables";
 import { defineComponent, watchEffect, ref, PropType } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { FormCategory } from "@/types";
+import { FormCategory, VForm } from "@/types";
 import { useRouter } from "vue-router";
 import { SubmissionFormConfigurationAPIOutDTO } from "@/services/http/dto";
 
@@ -71,6 +77,7 @@ export default defineComponent({
     const { checkNullOrEmptyRule } = useRules();
     const standaloneForms = ref<SubmissionFormConfigurationAPIOutDTO[]>([]);
     const selectedStandaloneForm = ref<string>();
+    const standaloneFormsSelectionForm = ref({} as VForm);
 
     watchEffect(async () => {
       // Forms
@@ -80,6 +87,10 @@ export default defineComponent({
     });
 
     const fillStudentForm = async (): Promise<void> => {
+      const formIsValid = standaloneFormsSelectionForm.value.validate();
+      if (!formIsValid) {
+        return;
+      }
       await router.push({
         name: StudentRoutesConst.STUDENT_FORM_SUBMIT,
         params: {
@@ -93,6 +104,7 @@ export default defineComponent({
       StudentRoutesConst,
       standaloneForms,
       selectedStandaloneForm,
+      standaloneFormsSelectionForm,
       fillStudentForm,
     };
   },

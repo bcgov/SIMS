@@ -17,7 +17,7 @@
       :eager="true"
       v-for="submissionItem in submissionItems"
       :key="submissionItem.dynamicConfigurationId"
-      :value="submissionItem.dynamicConfigurationId.toString()"
+      :value="submissionItem.dynamicConfigurationId"
     >
       <template #title>
         <v-row>
@@ -37,13 +37,15 @@
       </template>
       <template #text>
         <formio
-          :form-key="submissionItem.dynamicConfigurationId.toString()"
+          :form-key="submissionItem.dynamicConfigurationId"
           :form-name="submissionItem.formName"
           :data="submissionItem.formData"
           :read-only="readOnly"
           @loaded="formLoaded"
         ></formio>
         <div class="my-4">
+          <!-- Allow the component to be shared with the approval view for the Ministry, also
+           allowing institutions to shared the approvals statuses visualization. -->
           <slot name="approval-form" :approval="submissionItem.approval"></slot>
         </div>
       </template>
@@ -55,7 +57,7 @@
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { defineComponent, PropType, ref } from "vue";
+import { defineComponent, PropType, ref, watch } from "vue";
 import { useFormioUtils } from "@/composables";
 import {
   FormIOForm,
@@ -81,17 +83,17 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const expandAllModel = ref(false);
-    const expansionPanelsModel = ref<string[]>([]);
+    const expandAllModel = ref(true);
+    const expansionPanelsModel = ref<number[]>([]);
     const { checkFormioValidity, getAssociatedFiles } = useFormioUtils();
-    const forms = new Map<string, FormIOForm>();
+    const forms = new Map<number, FormIOForm>();
 
     /**
      * Keep track of all forms that will be part of the submission.
      * @param form form.io form.
      * @param formKey associated identifier of the form.
      */
-    const formLoaded = (form: FormIOForm, formKey: string) => {
+    const formLoaded = (form: FormIOForm, formKey: number) => {
       forms.set(formKey, form);
     };
 
@@ -99,7 +101,7 @@ export default defineComponent({
      * Validate and emits an event if all forms are valid.
      */
     const submit = async () => {
-      const invalidFormKeys: string[] = [];
+      const invalidFormKeys: number[] = [];
       const validItems: FormSubmissionItemSubmitted[] = [];
       for (const [key, form] of forms) {
         const isValid = await checkFormioValidity([form]);
@@ -110,28 +112,45 @@ export default defineComponent({
             files: getAssociatedFiles(form),
           });
         } else {
-          invalidFormKeys.push(key);
+          invalidFormKeys.push(+key);
         }
       }
       if (invalidFormKeys.length) {
         // Ensure forms with invalid data will be visible.
         expansionPanelsModel.value = invalidFormKeys;
+        expansionPanelsUpdated();
         return;
       }
       // Emit the event with the valid forms.
       context.emit("submitted", validItems);
     };
 
+    /**
+     * Force all panels to be expanded once data is loaded.
+     */
+    watch(
+      () => props.submissionItems,
+      () => expandAllUpdated(),
+    );
+
+    /**
+     * Ensure all expandable panels are expanded or collapsed
+     * based on the "expand all" switch.
+     */
     const expandAllUpdated = () => {
       if (expandAllModel.value) {
-        expansionPanelsModel.value = props.submissionItems.map((item) =>
-          item.dynamicConfigurationId.toString(),
+        expansionPanelsModel.value = props.submissionItems.map(
+          (item) => item.dynamicConfigurationId,
         );
       } else {
         expansionPanelsModel.value = [];
       }
     };
 
+    /**
+     * Ensures the "expand all" switch stays in sync with the expanded panels
+     * once they actioned by the user or a result of validations.
+     */
     const expansionPanelsUpdated = () => {
       expandAllModel.value =
         expansionPanelsModel.value.length === props.submissionItems.length;

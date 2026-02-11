@@ -4,10 +4,10 @@
       <header-navigator title="Student" sub-title="Student Forms" />
     </template>
     <template #tab-header>
-      <v-tabs color="primary" stacked grow>
+      <v-tabs color="primary" grow>
         <v-tab
           class="label-bold"
-          prepend-icon="mdi-scale-balance"
+          prepend-icon="fa:fas fa-inbox"
           text="Submissions"
           :to="{
             name: StudentRoutesConst.STUDENT_FORMS_SELECTOR,
@@ -17,7 +17,7 @@
         />
         <v-tab
           class="label-bold"
-          prepend-icon="mdi-history"
+          prepend-icon="fa:fas fa-clock-rotate-left"
           text="History"
           :to="{
             name: StudentRoutesConst.STUDENT_FORMS_HISTORY,

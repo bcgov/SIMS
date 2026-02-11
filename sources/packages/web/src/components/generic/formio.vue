@@ -40,7 +40,8 @@ export default defineComponent({
     changed: (form: FormIOForm, event: FormIOChangeEvent) => {
       return !!form && !!event;
     },
-    loaded: (form: FormIOForm, formKey: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    loaded: (form: FormIOForm, _formKey: object) => {
       return !!form;
     },
     customEvent: (form: FormIOForm, event: FormIOCustomEvent) => {
@@ -73,7 +74,7 @@ export default defineComponent({
       required: false,
     },
     formKey: {
-      type: String,
+      type: Object,
       default: null,
       required: false,
     },

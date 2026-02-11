@@ -157,8 +157,7 @@ import {
   EligibleApplicationForAppealAPIOutDTO,
 } from "@/services/http/dto";
 import { useRouter } from "vue-router";
-import { FormCategory, BannerTypes } from "@/types";
-import { VForm } from "vuetify/components";
+import { FormCategory, BannerTypes, VForm } from "@/types";
 import { StudentAppealService } from "@/services/StudentAppealService";
 
 enum AppealTypes {
@@ -182,7 +181,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const router = useRouter();
     const { checkNullOrEmptyRule } = useRules();
-    const appealsSelectionForm = ref<InstanceType<typeof VForm> | null>(null);
+    const appealsSelectionForm = ref({} as VForm);
     const standaloneAppealsSelectionForm = ref({} as VForm);
     // Forms Categories
     const bundleApplicationAppealsForms = ref<
@@ -269,6 +268,7 @@ export default defineComponent({
           (form) => !form.hasApplicationScope && !form.allowBundledSubmission,
         );
       },
+      { deep: true },
     );
 
     const fillApplicationAppeals = async (): Promise<void> => {

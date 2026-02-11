@@ -9,15 +9,25 @@
           <template #actions>
             <v-btn-toggle
               density="compact"
+              color="primary"
+              multiple
               mandatory
               class="float-right btn-toggle"
               selected-class="selected-btn-toggle"
+              v-model="formCategoryFilter"
             >
-              <v-btn rounded="xl" color="primary" value="appeals"
-                >Student appeals</v-btn
+              <v-btn
+                rounded="xl"
+                color="primary"
+                :value="FormCategory.StudentAppeal"
+                >View appeals</v-btn
               >
-              <v-btn rounded="xl" class="ml-2" color="primary" value="forms"
-                >Student forms</v-btn
+              <v-btn
+                rounded="xl"
+                class="ml-2"
+                color="primary"
+                :value="FormCategory.StudentForm"
+                >View forms</v-btn
               >
             </v-btn-toggle>
           </template>
@@ -29,8 +39,8 @@
       >
         <v-card
           hover
-          class="mb-4"
-          v-for="submission in submissions"
+          class="my-4"
+          v-for="submission in filteredSubmissions"
           :key="submission.id"
           variant="elevated"
         >
@@ -88,7 +98,6 @@
                 <tr>
                   <th id="name" class="text-left">Name</th>
                   <th id="decisionStatus" class="text-left">Decision status</th>
-                  <th id="decisionDate" class="text-left">Decision Date</th>
                 </tr>
               </thead>
               <tbody>
@@ -102,13 +111,6 @@
                       :status="item.decisionStatus"
                     />
                   </td>
-                  <td headers="decisionDate">
-                    {{
-                      !!item.decisionDate
-                        ? getISODateHourMinuteString(item.decisionDate)
-                        : "Pending"
-                    }}
-                  </td>
                 </tr>
               </tbody>
             </v-table>
@@ -119,7 +121,7 @@
   </v-card>
 </template>
 <script lang="ts">
-import { defineComponent, ref, watchEffect } from "vue";
+import { computed, defineComponent, ref, watchEffect } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormatters, useStudentAppeals } from "@/composables";
 import router from "@/router";
@@ -128,6 +130,7 @@ import { FormSubmissionsService } from "@/services/FormSubmissionsService";
 import StatusChipFormSubmission from "@/components/generic/StatusChipFormSubmission.vue";
 import StatusChipFormSubmissionDecision from "@/components/generic/StatusChipFormSubmissionDecision.vue";
 import { FormSubmissionStudentAPIOutDTO } from "@/services/http/dto";
+import { FormCategory } from "@/types";
 
 export default defineComponent({
   components: {
@@ -136,6 +139,10 @@ export default defineComponent({
   },
   setup() {
     const { mobile: isMobile } = useDisplay();
+    const formCategoryFilter = ref([
+      FormCategory.StudentAppeal,
+      FormCategory.StudentForm,
+    ]);
     const { mapStudentAppealsFormNames } = useStudentAppeals();
     const {
       emptyStringFiller,
@@ -151,6 +158,12 @@ export default defineComponent({
       submissions.value = submissionSummary.submissions;
     });
 
+    const filteredSubmissions = computed(() => {
+      return submissions.value?.filter((submission) =>
+        formCategoryFilter.value.includes(submission.formCategory),
+      );
+    });
+
     const goToSubmission = async (formDefinitionId: number) => {
       await router.push({
         name: StudentRoutesConst.STUDENT_FORMS_SUBMISSION_VIEW,
@@ -161,6 +174,8 @@ export default defineComponent({
     };
 
     return {
+      FormCategory,
+      formCategoryFilter,
       isMobile,
       submissions,
       StudentRoutesConst,
@@ -170,6 +185,7 @@ export default defineComponent({
       dateOnlyLongString,
       mapStudentAppealsFormNames,
       goToSubmission,
+      filteredSubmissions,
     };
   },
 });
