@@ -1220,8 +1220,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
           },
         });
         expect(studentRestrictions.length).toBe(1);
-        const [studentRestriction] = studentRestrictions;
-        expect(studentRestriction).toEqual({
+        const [expectedRestriction] = studentRestrictions;
+        expect(expectedRestriction).toEqual({
           id: expect.any(Number),
           isActive: true,
           restriction: {
@@ -1245,7 +1245,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   });
 
   it(
-    "Should import two active WTHD restriction and ignore the deleted WTHD in the student account " +
+    "Should import one active WTHD restriction and ignore the deleted WTHD in the student account " +
       " when there is at least one application that would generate a WTHD restriction and the restriction is marked as active but deleted.",
     async () => {
       // Arrange
@@ -1290,8 +1290,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         },
       });
       expect(studentRestrictions.length).toBe(1);
-      const [studentRestriction] = studentRestrictions;
-      expect(studentRestriction).toEqual({
+      const [expectedRestriction] = studentRestrictions;
+      expect(expectedRestriction).toEqual({
         id: expect.any(Number),
         isActive: true,
         restriction: {
