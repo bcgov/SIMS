@@ -141,7 +141,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
   studentDataEstimatedSpouseIncome?: number;
-  studentDataCurrentYearPartnerIncome?: number;
+  studentDataCurrentYearPartnerIncome?: number; // No longer used in PY 26/27 and beyond.
   studentDataLivingWithPartner?: YesNoOptions;
   studentDataCRAReportedIncome?: number;
   studentDataDependants?: StudentDependent[];
@@ -161,7 +161,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataDaycareCosts11YearsOrUnder?: number;
   studentDataDaycareCosts12YearsOrOver?: number;
   studentDataLivingAtHomeRent?: YesNoOptions;
-  studentDataCurrentYearIncome?: number;
+  studentDataCurrentYearIncome?: number; // No longer used in PY 26/27 and beyond.
   studentDataReturnTripHomeCost?: number;
   studentDataIncomeAssistanceAmount?: number;
   offeringCourseLoad?: number;
@@ -234,6 +234,12 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   programYearTotalPartTimeReturnTransportationCost: number;
   programYearTotalFullTimeReturnTransportationCost: number;
   studentDataParents?: IdentifiableParentData[];
+  // TODO: These are placeholders while work is done on the exception to appeal conversions.
+  // Update any data types or structures as needed when the appeals are fully implemented.
+  appealsStudentCurrentYearIncomeAppealData?: JSONDoc;
+  appealsPartnerCurrentYearIncomeAppealData?: JSONDoc;
+  appealsParentCurrentYearIncomeAppealData?: JSONDoc;
+  appealsStudentExceptionalExpenseAppealData?: JSONDoc;
 }
 
 /**
@@ -284,8 +290,7 @@ export interface ConfigureDisbursementDataPartTime extends ConfigureDisbursement
 
 export interface IdentifiableParentData extends JSONDoc {
   parentIsAbleToReport: YesNoOptions;
-
-  currentYearParentIncome?: number;
+  currentYearParentIncome?: number; // No longer used in PY 26/27 and beyond.
 }
 
 export interface AssessmentModel {

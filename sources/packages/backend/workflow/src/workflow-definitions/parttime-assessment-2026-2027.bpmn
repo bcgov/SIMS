@@ -141,6 +141,7 @@ dmnX (comes from dmn)</bpmn:text>
         <bpmn:flowNodeRef>Event_1wc04jf</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0rpww4j</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_14c5gxm</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_0ejpwa7" name="Primary Assessed Need and Award Configuration">
         <bpmn:flowNodeRef>Event_1sg75ph</bpmn:flowNodeRef>
@@ -297,7 +298,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:sequenceFlow id="Flow_0f8vjr1" sourceRef="Gateway_1rkb8fr" targetRef="Gateway_08rr1xe" />
     <bpmn:sequenceFlow id="Flow_15xhu93" sourceRef="Event_0rpww4j" targetRef="Event_1wc04jf" />
     <bpmn:sequenceFlow id="Flow_1xay9j9" sourceRef="Event_0gp899b" targetRef="Gateway_0wuxqll" />
-    <bpmn:sequenceFlow id="Flow_1tcyqyg" sourceRef="StartEvent_1" targetRef="Event_0rpww4j" />
+    <bpmn:sequenceFlow id="Flow_1tcyqyg" sourceRef="StartEvent_1" targetRef="Event_14c5gxm" />
     <bpmn:sequenceFlow id="Flow_1jqn9ef" name="Use application data" sourceRef="Gateway_1mvl0g4" targetRef="Activity_0vy07zm" />
     <bpmn:sequenceFlow id="Flow_09y3wi8" name="Use appeal data" sourceRef="Gateway_1mvl0g4" targetRef="Activity_1w0f50f">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=appealsStudentFinancialInformationAppealData != null</bpmn:conditionExpression>
@@ -307,7 +308,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:sequenceFlow id="Flow_04yoo98" sourceRef="Gateway_0wuxqll" targetRef="Gateway_1mvl0g4" />
     <bpmn:sequenceFlow id="Flow_0ax5vgw" sourceRef="Gateway_1wzffaf" targetRef="Gateway_08rr1xe" />
     <bpmn:sequenceFlow id="Flow_1h81jv6" name="Has current Year Income" sourceRef="Gateway_1vaorzj" targetRef="Activity_09h0zn7">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataCurrentYearIncome != null</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=appealsStudentCurrentYearIncomeAppealData != null</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1xxxgrf" name="Default: Has previous year income" sourceRef="Gateway_1vaorzj" targetRef="Activity_1nk1n97" />
     <bpmn:sequenceFlow id="Flow_1bytmzm" sourceRef="Activity_09h0zn7" targetRef="Gateway_1k2cpjq" />
@@ -352,7 +353,7 @@ dmnX (comes from dmn)</bpmn:text>
     </bpmn:scriptTask>
     <bpmn:scriptTask id="Activity_09h0zn7" name="Define Student Total Income">
       <bpmn:extensionElements>
-        <zeebe:script expression="=calculatedDataCurrentYearIncome" resultVariable="calculatedDataStudentTotalIncome" />
+        <zeebe:script expression="=appealsStudentCurrentYearIncomeAppealData.currentYearIncome" resultVariable="calculatedDataStudentTotalIncome" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1h81jv6</bpmn:incoming>
       <bpmn:outgoing>Flow_1bytmzm</bpmn:outgoing>
@@ -1237,9 +1238,19 @@ dmnX (comes from dmn)</bpmn:text>
           <zeebe:output source="=if calculatedDataScholarshipsBursaries = null&#10;then 0&#10;else&#10;  calculatedDataScholarshipsBursaries" target="calculatedDataScholarshipsBursaries" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1tcyqyg</bpmn:incoming>
+      <bpmn:incoming>Flow_1wdcv72</bpmn:incoming>
       <bpmn:outgoing>Flow_15xhu93</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateThrowEvent id="Event_14c5gxm" name="Evaluate application appeal eligibilites">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=true" target="isEligibleForStudentCurrentYearIncomeAppeal" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1tcyqyg</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wdcv72</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_1wdcv72" sourceRef="Event_14c5gxm" targetRef="Event_0rpww4j" />
     <bpmn:association id="Association_0eiso39" sourceRef="Event_0rpww4j" targetRef="TextAnnotation_0xf4j19" />
   </bpmn:process>
   <bpmn:category id="Category_0appz4m">
@@ -1712,6 +1723,12 @@ dmnX (comes from dmn)</bpmn:text>
           <dc:Bounds x="756" y="815" width="88" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_14c5gxm_di" bpmnElement="Event_14c5gxm">
+        <dc:Bounds x="722" y="852" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="695" y="895" width="90" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_02o9884" bpmnElement="Flow_1su3k2o">
         <di:waypoint x="1426" y="810" />
         <di:waypoint x="1494" y="810" />
@@ -1872,7 +1889,7 @@ dmnX (comes from dmn)</bpmn:text>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1tcyqyg_di" bpmnElement="Flow_1tcyqyg">
         <di:waypoint x="698" y="870" />
-        <di:waypoint x="782" y="870" />
+        <di:waypoint x="722" y="870" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0h993jj" bpmnElement="Flow_1jqn9ef">
         <di:waypoint x="1256" y="1115" />
@@ -2389,6 +2406,10 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmndi:BPMNEdge id="Flow_1aswl6c_di" bpmnElement="Flow_1aswl6c">
         <di:waypoint x="918" y="870" />
         <di:waypoint x="962" y="870" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wdcv72_di" bpmnElement="Flow_1wdcv72">
+        <di:waypoint x="758" y="870" />
+        <di:waypoint x="782" y="870" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0eiso39_di" bpmnElement="Association_0eiso39">
         <di:waypoint x="804" y="887" />
