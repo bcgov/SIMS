@@ -1289,16 +1289,15 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
           student: { id: sharedStudent.id },
         },
       });
-      expect(studentRestrictions.length).toBe(2);
-      expect(studentRestrictions).toEqual(
-        Array.from({ length: 2 }, () => ({
-          id: expect.any(Number),
-          isActive: true,
-          restriction: {
-            restrictionCode: RestrictionCode.WTHD,
-          },
-        })),
-      );
+      expect(studentRestrictions.length).toBe(1);
+      const [studentRestriction] = studentRestrictions;
+      expect(studentRestriction).toEqual({
+        id: expect.any(Number),
+        isActive: true,
+        restriction: {
+          restrictionCode: RestrictionCode.WTHD,
+        },
+      });
     },
   );
 
