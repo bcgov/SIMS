@@ -20,7 +20,7 @@ FROM
       sfas_applications.withdrawal_date IS NOT NULL
       AND sfas_applications.withdrawal_reason != 'NPWD'
       AND (
-        sfas_applications.withdrawal_active_flag = 'N'
+        sfas_applications.withdrawal_active_flag != 'Y'
         OR sfas_applications.withdrawal_active_flag IS NULL
       )
       AND sfas_applications.wthd_processed = FALSE
