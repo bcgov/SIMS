@@ -5,11 +5,11 @@
  */
 INSERT INTO
   sims.student_restrictions (student_id, restriction_id, creator, created_at)
-SELECT
+SELECT DISTINCT
   sfas_individuals.student_id,
-  $1, -- WTHD restriction ID.
-  $2, -- Creator user ID.
-  $3  -- Created at timestamp.
+  $1::INT, -- WTHD restriction ID.
+  $2::INT, -- Creator user ID.
+  $3::TIMESTAMP  -- Created at timestamp.
 FROM
   (
     SELECT

@@ -21,7 +21,11 @@ import {
   createFakeRestriction,
   findAndSaveRestriction,
 } from "@sims/test-utils";
-import { mockDownloadFiles } from "@sims/test-utils/mocks";
+import {
+  createFileFromStructuredRecords,
+  getStructuredRecords,
+  mockDownloadFiles,
+} from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
 import * as path from "node:path";
 import { SFASIntegrationScheduler } from "../sfas-integration.scheduler";
@@ -76,7 +80,9 @@ const WTHD_RESTRICTIONS_SFAS_INDIVIDUAL_ID = 1010101010;
 /**
  * SFAS application IDs used in the withdrawal restrictions test file.
  */
-const WTHD_RESTRICTIONS_SFAS_APPLICATION_IDS = [14541, 14542, 14543, 14544];
+const WTHD_RESTRICTIONS_SFAS_APPLICATION_IDS = [
+  14541, 14542, 14543, 14544, 14545,
+];
 
 describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let app: INestApplication;
@@ -1163,64 +1169,83 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     },
   );
 
-  it(
-    "Should import one active WTHD restriction and ignore three other SFAS applications for withdrawal import" +
-      " when the SFAS applications have different withdrawal data for withdrawal_date, withdrawal_reason, and withdrawal_active_flag.",
-    async () => {
-      // Arrange
-      // Queued job.
-      const mockedJob = mockBullJob<void>();
-      mockDownloadFiles(sftpClientMock, [
-        SFAS_TO_SIMS_INDIVIDUAL_AND_APPLICATION_WTHD_RESTRICTIONS,
-      ]);
+  ["N", " "].forEach((withdrawalActiveFlag) => {
+    it(
+      "Should import one active WTHD restrictions and ignore three other SFAS applications for withdrawal import" +
+        " when the SFAS applications have different withdrawal data for withdrawal_date, withdrawal_reason, and withdrawal_active_flag" +
+        ` considering withdrawal_active_flag as '${withdrawalActiveFlag.trim() || "white space"}',` +
+        " and multiple WTHD restrictions must be imported as a single active one.",
+      async () => {
+        // Arrange
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+        mockDownloadFiles(
+          sftpClientMock,
+          [SFAS_TO_SIMS_INDIVIDUAL_AND_APPLICATION_WTHD_RESTRICTIONS],
+          (fileContent: string) => {
+            const file = getStructuredRecords(fileContent);
+            const [record1, record2, record3, record4, record5, record6] =
+              file.records;
+            file.records = [
+              record1,
+              record2,
+              record3,
+              record4.replace("QUITN", `QUIT${withdrawalActiveFlag}`),
+              record5.replace("ABCDN", `ABCD${withdrawalActiveFlag}`),
+              record6,
+            ];
+            return createFileFromStructuredRecords(file);
+          },
+        );
 
-      // Act
-      const result = await processor.processQueue(mockedJob.job);
+        // Act
+        const result = await processor.processQueue(mockedJob.job);
 
-      // Assert
-      expect(result).toStrictEqual([
-        "Completed processing SFAS integration files.",
-      ]);
-      // Expect a total of 1 restrictions to be inserted.
-      const studentRestrictions = await db.studentRestriction.find({
-        select: {
-          id: true,
+        // Assert
+        expect(result).toStrictEqual([
+          "Completed processing SFAS integration files.",
+        ]);
+        // Expect a total of 1 restrictions to be inserted.
+        const studentRestrictions = await db.studentRestriction.find({
+          select: {
+            id: true,
+            isActive: true,
+            restriction: {
+              restrictionCode: true,
+            },
+          },
+          relations: { restriction: true },
+          where: {
+            student: { id: sharedStudent.id },
+          },
+        });
+        expect(studentRestrictions.length).toBe(1);
+        const [studentRestriction] = studentRestrictions;
+        expect(studentRestriction).toEqual({
+          id: expect.any(Number),
           isActive: true,
           restriction: {
-            restrictionCode: true,
+            restrictionCode: RestrictionCode.WTHD,
           },
-        },
-        relations: { restriction: true },
-        where: {
-          student: { id: sharedStudent.id },
-        },
-      });
-      expect(studentRestrictions.length).toBe(1);
-      const [expectedRestriction] = studentRestrictions;
-      expect(expectedRestriction).toEqual({
-        id: expect.any(Number),
-        isActive: true,
-        restriction: {
-          restrictionCode: RestrictionCode.WTHD,
-        },
-      });
-      // Assert the SFAS application wthdProcessed flag is set to true.
-      const sfasApplications = await db.sfasApplication.find({
-        select: { id: true, wthdProcessed: true },
-        where: { individual: { id: WTHD_RESTRICTIONS_SFAS_INDIVIDUAL_ID } },
-        order: { id: "ASC" },
-      });
-      expect(sfasApplications).toEqual(
-        WTHD_RESTRICTIONS_SFAS_APPLICATION_IDS.map((id) => ({
-          id,
-          wthdProcessed: true,
-        })),
-      );
-    },
-  );
+        });
+        // Assert the SFAS application wthdProcessed flag is set to true.
+        const sfasApplications = await db.sfasApplication.find({
+          select: { id: true, wthdProcessed: true },
+          where: { individual: { id: WTHD_RESTRICTIONS_SFAS_INDIVIDUAL_ID } },
+          order: { id: "ASC" },
+        });
+        expect(sfasApplications).toEqual(
+          WTHD_RESTRICTIONS_SFAS_APPLICATION_IDS.map((id) => ({
+            id,
+            wthdProcessed: true,
+          })),
+        );
+      },
+    );
+  });
 
   it(
-    "Should import one active WTHD restriction and ignore the deleted WTHD in the student account " +
+    "Should import two active WTHD restriction and ignore the deleted WTHD in the student account " +
       " when there is at least one application that would generate a WTHD restriction and the restriction is marked as active but deleted.",
     async () => {
       // Arrange
@@ -1264,15 +1289,16 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
           student: { id: sharedStudent.id },
         },
       });
-      expect(studentRestrictions.length).toBe(1);
-      const [expectedRestriction] = studentRestrictions;
-      expect(expectedRestriction).toEqual({
-        id: expect.any(Number),
-        isActive: true,
-        restriction: {
-          restrictionCode: RestrictionCode.WTHD,
-        },
-      });
+      expect(studentRestrictions.length).toBe(2);
+      expect(studentRestrictions).toEqual(
+        Array.from({ length: 2 }, () => ({
+          id: expect.any(Number),
+          isActive: true,
+          restriction: {
+            restrictionCode: RestrictionCode.WTHD,
+          },
+        })),
+      );
     },
   );
 
