@@ -5,7 +5,7 @@ import {
   FormSubmissionDecisionStatus,
 } from "@/types";
 
-export interface SubmissionFormConfigurationAPIOutDTO {
+export interface FormSubmissionConfigurationAPIOutDTO {
   id: number;
   formDefinitionName: string;
   formType: string;
@@ -15,8 +15,8 @@ export interface SubmissionFormConfigurationAPIOutDTO {
   hasApplicationScope: boolean;
 }
 
-export interface SubmissionFormConfigurationsAPIOutDTO {
-  configurations: SubmissionFormConfigurationAPIOutDTO[];
+export interface FormSubmissionConfigurationsAPIOutDTO {
+  configurations: FormSubmissionConfigurationAPIOutDTO[];
 }
 
 // Base classes for submission DTOs and submission items.

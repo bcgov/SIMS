@@ -70,20 +70,20 @@ import { defineComponent, watchEffect, ref, PropType } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { FormCategory, VForm } from "@/types";
 import { useRouter } from "vue-router";
-import { SubmissionFormConfigurationAPIOutDTO } from "@/services/http/dto";
+import { FormSubmissionConfigurationAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   props: {
     formsConfigurations: {
-      type: Object as PropType<SubmissionFormConfigurationAPIOutDTO[]>,
+      type: Object as PropType<FormSubmissionConfigurationAPIOutDTO[]>,
       required: true,
-      default: [] as SubmissionFormConfigurationAPIOutDTO[],
+      default: [] as FormSubmissionConfigurationAPIOutDTO[],
     },
   },
   setup(props) {
     const router = useRouter();
     const { checkNullOrEmptyRule } = useRules();
-    const standaloneForms = ref<SubmissionFormConfigurationAPIOutDTO[]>([]);
+    const standaloneForms = ref<FormSubmissionConfigurationAPIOutDTO[]>([]);
     const selectedStandaloneForm = ref<string>();
     const standaloneFormsSelectionForm = ref({} as VForm);
 

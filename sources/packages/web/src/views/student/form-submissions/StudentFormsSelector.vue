@@ -22,7 +22,6 @@
 import { useSnackBar } from "@/composables";
 import { defineComponent, onMounted, ref } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { SubmissionFormConfigurationAPIOutDTO } from "@/services/http/dto";
 import { FormSubmissionsService } from "@/services/FormSubmissionsService";
 import StudentFormsSelectorAppealsSection from "./StudentFormsSelectorAppealsSection.vue";
 import StudentFormsSelectorFormSection from "./StudentFormsSelectorFormsSection.vue";
@@ -41,7 +40,7 @@ export default defineComponent({
   },
   setup() {
     const snackBar = useSnackBar();
-    const formConfigurations = ref<SubmissionFormConfigurationAPIOutDTO[]>([]);
+    const formConfigurations = ref<FormSubmissionConfigurationAPIOutDTO[]>([]);
 
     onMounted(async () => {
       try {

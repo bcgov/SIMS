@@ -2,7 +2,7 @@ import ApiClient from "@/services/http/ApiClient";
 import {
   FormSubmissionStudentAPIOutDTO,
   FormSubmissionStudentSummaryAPIOutDTO,
-  SubmissionFormConfigurationsAPIOutDTO,
+  FormSubmissionConfigurationsAPIOutDTO,
 } from "@/services/http/dto/FormSubmission.dto";
 
 export class FormSubmissionsService {
@@ -17,7 +17,7 @@ export class FormSubmissionsService {
    * Get all submission form configurations for student submission forms.
    * @returns form configurations that allow student submissions.
    */
-  async getSubmissionForms(): Promise<SubmissionFormConfigurationsAPIOutDTO> {
+  async getSubmissionForms(): Promise<FormSubmissionConfigurationsAPIOutDTO> {
     return ApiClient.FormSubmissionsApi.getSubmissionForms();
   }
 

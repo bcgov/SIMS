@@ -2,7 +2,7 @@ import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   FormSubmissionStudentSummaryAPIOutDTO,
   FormSubmissionStudentAPIOutDTO,
-  SubmissionFormConfigurationsAPIOutDTO,
+  FormSubmissionConfigurationsAPIOutDTO,
 } from "@/services/http/dto";
 import {
   FormCategory,
@@ -88,7 +88,7 @@ export class FormSubmissionsApi extends HttpBaseClient {
    * Get all submission form configurations for student submission forms.
    * @returns form configurations that allow student submissions.
    */
-  async getSubmissionForms(): Promise<SubmissionFormConfigurationsAPIOutDTO> {
+  async getSubmissionForms(): Promise<FormSubmissionConfigurationsAPIOutDTO> {
     return this.getCall(this.addClientRoot("form-submission/forms"));
   }
 

@@ -9,7 +9,7 @@ import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 import { FormCategory } from "@sims/sims-db";
-import { SubmissionFormConfigurationsAPIOutDTO } from "./models/form-submission.dto";
+import { FormSubmissionConfigurationsAPIOutDTO } from "./models/form-submission.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -27,7 +27,7 @@ export class FormSubmissionStudentsController extends BaseController {
    * @returns form configurations that allow student submissions.
    */
   @Get("forms")
-  async getSubmissionForms(): Promise<SubmissionFormConfigurationsAPIOutDTO> {
+  async getSubmissionForms(): Promise<FormSubmissionConfigurationsAPIOutDTO> {
     const studentForms =
       this.dynamicFormConfigurationService.getFormsByCategory(
         FormCategory.StudentForm,

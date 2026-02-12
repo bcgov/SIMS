@@ -149,7 +149,7 @@ import { useRules, useSnackBar } from "@/composables";
 import { computed, defineComponent, ref, watch, PropType } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import {
-  SubmissionFormConfigurationAPIOutDTO,
+  FormSubmissionConfigurationAPIOutDTO,
   EligibleApplicationForAppealAPIOutDTO,
 } from "@/services/http/dto";
 import { useRouter } from "vue-router";
@@ -164,9 +164,9 @@ enum AppealTypes {
 export default defineComponent({
   props: {
     formsConfigurations: {
-      type: Object as PropType<SubmissionFormConfigurationAPIOutDTO[]>,
+      type: Object as PropType<FormSubmissionConfigurationAPIOutDTO[]>,
       required: true,
-      default: [] as SubmissionFormConfigurationAPIOutDTO[],
+      default: [] as FormSubmissionConfigurationAPIOutDTO[],
     },
     applicationId: {
       type: Number,
@@ -182,9 +182,9 @@ export default defineComponent({
     const standaloneAppealsSelectionForm = ref({} as VForm);
     // Forms Categories
     const bundleApplicationAppealsForms = ref<
-      SubmissionFormConfigurationAPIOutDTO[]
+      FormSubmissionConfigurationAPIOutDTO[]
     >([]);
-    const standaloneAppealsForms = ref<SubmissionFormConfigurationAPIOutDTO[]>(
+    const standaloneAppealsForms = ref<FormSubmissionConfigurationAPIOutDTO[]>(
       [],
     );
     // Selected form(s)
@@ -216,6 +216,14 @@ export default defineComponent({
         const formConfig = bundleApplicationAppealsForms.value.find(
           (form) => form.formDefinitionName === eligibleAppeal,
         );
+        if (!formConfig) {
+          snackBar.error(
+            "An unexpected error occurred while loading eligible application information",
+          );
+          throw new Error(
+            `Form configuration not found for ${eligibleAppeal}.`,
+          );
+        }
         return formConfig!;
       });
     });

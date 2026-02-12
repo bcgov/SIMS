@@ -1,7 +1,7 @@
 // TODO: These DTOs will have their final version once the API is fully integrated.
 import { FormCategory } from "@sims/sims-db";
 
-export class SubmissionFormConfigurationAPIOutDTO {
+export class FormSubmissionConfigurationAPIOutDTO {
   id: number;
   formDefinitionName: string;
   formType: string;
@@ -11,6 +11,6 @@ export class SubmissionFormConfigurationAPIOutDTO {
   hasApplicationScope: boolean;
 }
 
-export class SubmissionFormConfigurationsAPIOutDTO {
-  configurations: SubmissionFormConfigurationAPIOutDTO[];
+export class FormSubmissionConfigurationsAPIOutDTO {
+  configurations: FormSubmissionConfigurationAPIOutDTO[];
 }
