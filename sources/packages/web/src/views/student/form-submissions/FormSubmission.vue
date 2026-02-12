@@ -14,7 +14,6 @@
           <template #subtitle>
             All requested changes will be reviewed by StudentAid BC after you
             submit for review.
-            <slot name="submit-appeal-header"> </slot>
           </template>
         </body-header>
       </template>
@@ -80,7 +79,7 @@ export default defineComponent({
       try {
         // TODO: Submit form.
         processing.value = true;
-        snackBar.success("The student appeal has been submitted successfully.");
+        snackBar.success("The student form has been submitted successfully.");
         router.push({
           name: StudentRoutesConst.STUDENT_FORMS_HISTORY,
         });
@@ -108,7 +107,7 @@ export default defineComponent({
             );
         } catch {
           snackBar.error(
-            "An unexpected error happened while retrieving the application to submit the request for change.",
+            "An unexpected error happened while retrieving the application information.",
           );
           return;
         }
