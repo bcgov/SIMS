@@ -120,7 +120,10 @@ export default defineComponent({
             (form) => form.id === formDefinitionId,
           );
           if (!formConfiguration) {
-            throw new Error("Invalid form configuration ID");
+            snackBar.error(
+              "An unexpected error occurred loading a form configuration.",
+            );
+            throw new Error("Invalid form configuration ID.");
           }
           return {
             dynamicConfigurationId: formConfiguration.id,

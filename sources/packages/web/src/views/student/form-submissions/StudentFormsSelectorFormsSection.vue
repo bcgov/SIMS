@@ -20,7 +20,7 @@
           <v-form ref="standaloneFormsSelectionForm">
             <v-list
               lines="three"
-              select-strategy="leaf"
+              select-strategy="single-leaf"
               variant="elevated"
               v-model:selected="selectedStandaloneForm"
             >
@@ -75,16 +75,16 @@ import { FormSubmissionConfigurationAPIOutDTO } from "@/services/http/dto";
 export default defineComponent({
   props: {
     formsConfigurations: {
-      type: Object as PropType<FormSubmissionConfigurationAPIOutDTO[]>,
+      type: Array as PropType<FormSubmissionConfigurationAPIOutDTO[]>,
       required: true,
-      default: [] as FormSubmissionConfigurationAPIOutDTO[],
+      default: (): FormSubmissionConfigurationAPIOutDTO[] => [],
     },
   },
   setup(props) {
     const router = useRouter();
     const { checkNullOrEmptyRule } = useRules();
     const standaloneForms = ref<FormSubmissionConfigurationAPIOutDTO[]>([]);
-    const selectedStandaloneForm = ref<string>();
+    const selectedStandaloneForm = ref<string[]>();
     const standaloneFormsSelectionForm = ref({} as VForm);
 
     watchEffect(async () => {

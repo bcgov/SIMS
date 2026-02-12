@@ -1,5 +1,5 @@
 export function useFeatureToggles() {
-  const isFormSubmissionEnabled = true;
+  const isFormSubmissionEnabled = !import.meta.env.PROD;
   return {
     isFormSubmissionEnabled,
   };

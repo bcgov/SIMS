@@ -164,9 +164,9 @@ enum AppealTypes {
 export default defineComponent({
   props: {
     formsConfigurations: {
-      type: Object as PropType<FormSubmissionConfigurationAPIOutDTO[]>,
+      type: Array as PropType<FormSubmissionConfigurationAPIOutDTO[]>,
       required: true,
-      default: [] as FormSubmissionConfigurationAPIOutDTO[],
+      default: (): FormSubmissionConfigurationAPIOutDTO[] => [],
     },
     applicationId: {
       type: Number,

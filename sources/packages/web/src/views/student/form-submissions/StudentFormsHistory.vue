@@ -172,11 +172,11 @@ export default defineComponent({
       );
     });
 
-    const goToSubmission = async (formDefinitionId: number) => {
+    const goToSubmission = async (formSubmissionId: number) => {
       await router.push({
         name: StudentRoutesConst.STUDENT_FORMS_SUBMISSION_VIEW,
         params: {
-          formDefinitionId,
+          formSubmissionId,
         },
       });
     };
