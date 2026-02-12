@@ -71,6 +71,7 @@ describe("InstitutionInstitutionsController(e2e)-getInstitutionDetail", () => {
       regulatingBody: institution.regulatingBody,
       otherRegulatingBody: institution.otherRegulatingBody ?? null,
       institutionType: institutionType.id,
+      institutionTypeName: institutionType.name,
       establishedDate: getISODateOnlyString(institution.establishedDate),
       primaryContactEmail: institution.institutionPrimaryContact.email,
       primaryContactFirstName: institution.institutionPrimaryContact.firstName,

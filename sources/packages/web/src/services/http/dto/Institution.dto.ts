@@ -64,6 +64,7 @@ export interface InstitutionDetailAPIOutDTO {
   otherRegulatingBody?: string;
   establishedDate: string;
   institutionType: number;
+  institutionTypeName: string;
   legalOperatingName: string;
   isBCPrivate: boolean;
   isBCPublic: boolean;
