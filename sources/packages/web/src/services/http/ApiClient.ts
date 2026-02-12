@@ -76,7 +76,7 @@ const ApiClient = {
   ApplicationChangeRequestApi: new ApplicationChangeRequestApi(),
   DisbursementSchedule: new DisbursementScheduleApi(),
   SystemLookupConfigurationApi: new SystemLookupConfigurationApi(),
-  FormSubmissions: new FormSubmissionsApi(),
+  FormSubmissionsApi: new FormSubmissionsApi(),
 };
 
 export default ApiClient;
