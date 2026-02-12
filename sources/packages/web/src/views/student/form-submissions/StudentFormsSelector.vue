@@ -21,7 +21,6 @@
 <script lang="ts">
 import { useSnackBar } from "@/composables";
 import { defineComponent, onMounted, ref } from "vue";
-import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
 import StudentFormsSelectorAppealsSection from "./StudentFormsSelectorAppealsSection.vue";
 import StudentFormsSelectorFormSection from "./StudentFormsSelectorFormsSection.vue";
@@ -55,7 +54,6 @@ export default defineComponent({
 
     return {
       formConfigurations,
-      StudentRoutesConst,
     };
   },
 });

@@ -75,6 +75,7 @@ export default defineComponent({
 
     const referenceForm = computed(() => formSubmissionItems.value[0]);
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const submitted = async (_items: FormSubmissionItemSubmitted[]) => {
       try {
         // TODO: Submit form.
