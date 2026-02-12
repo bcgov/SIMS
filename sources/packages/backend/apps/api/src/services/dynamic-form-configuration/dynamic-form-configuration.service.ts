@@ -66,7 +66,7 @@ export class DynamicFormConfigurationService {
    * @param options dynamic form options
    * - `programYearId` program year id.
    * - `offeringIntensity` offering intensity.
-   * @returns form definition
+   * @returns form definition.
    */
   getFormConfiguration(
     dynamicFormType: DynamicFormType,
@@ -83,8 +83,8 @@ export class DynamicFormConfigurationService {
   }
 
   /**
-   * Get form configurations by its category.
-   * @param formCategories form category.
+   * Get form configurations by by their categories.
+   * @param formCategories form categories.
    * @returns dynamic form configurations for the requested categories.
    */
   getFormsByCategory(

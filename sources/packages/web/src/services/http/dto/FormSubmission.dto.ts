@@ -1,4 +1,5 @@
 // TODO: These DTOs will have their final version once the API is fully integrated.
+// TODO: Ensure the DTOs will be converted to interfaces, following the pattern used in other API DTOs, once the API is fully integrated.
 import {
   FormCategory,
   FormSubmissionStatus,
@@ -42,13 +43,9 @@ abstract class FormSubmissionItemAPIOutDTO {
   formDefinitionName: string;
 }
 
-// Submission summary (history).
-
 export class FormSubmissionStudentSummaryAPIOutDTO {
   submissions: FormSubmissionStudentAPIOutDTO[];
 }
-
-// Get submission and items.
 
 class FormSubmissionItemStudentAPIOutDTO extends FormSubmissionItemAPIOutDTO {}
 

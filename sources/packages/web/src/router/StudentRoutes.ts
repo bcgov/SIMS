@@ -246,8 +246,8 @@ export const studentRoutes: Array<RouteRecordRaw> = [
             name: StudentRoutesConst.STUDENT_FORMS_SELECTOR,
             component: StudentFormsSelector,
             props: (route) => ({
-              applicationId: route.query["applicationId"]
-                ? Number.parseInt(route.query["applicationId"] as string)
+              applicationId: route.query.applicationId
+                ? Number.parseInt(route.query.applicationId as string)
                 : undefined,
             }),
             meta: {
@@ -272,8 +272,8 @@ export const studentRoutes: Array<RouteRecordRaw> = [
           formDefinitionIds: (route.params.formDefinitionIds as string)
             .split(",")
             .map((id) => Number.parseInt(id)),
-          applicationId: route.query["applicationId"]
-            ? Number.parseInt(route.query["applicationId"] as string)
+          applicationId: route.query.applicationId
+            ? Number.parseInt(route.query.applicationId as string)
             : undefined,
         }),
         meta: {
