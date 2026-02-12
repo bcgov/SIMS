@@ -11,18 +11,14 @@ import {
   createE2EDataSources,
   createFakeInstitution,
 } from "@sims/test-utils";
-import {
-  InstitutionClassification,
-  InstitutionMedicalSchoolStatus,
-  InstitutionOrganizationStatus,
-} from "@sims/sims-db";
+import { InstitutionClassification } from "@sims/sims-db";
 import {
   CANADA_COUNTRY_CODE,
   BC_PROVINCE_CODE,
   UNITED_STATES_COUNTRY_CODE,
 } from "@sims/sims-db/constant";
-import { InstitutionProfileAPIInDTO } from "../../models/institution.dto";
 import { ONTARIO_PROVINCE_CODE } from "@sims/test-utils/constants";
+import { getInstitutionProfilePayload } from "./institution.utils";
 
 describe("InstitutionAESTController(e2e)-updateInstitution", () => {
   let app: INestApplication;
@@ -44,7 +40,7 @@ describe("InstitutionAESTController(e2e)-updateInstitution", () => {
         },
       }),
     );
-    const payload = getUpdatePayload();
+    const payload = getInstitutionProfilePayload();
     // Set country and province to be out of province public institution.
     payload.country = CANADA_COUNTRY_CODE;
     payload.province = ONTARIO_PROVINCE_CODE;
@@ -146,7 +142,7 @@ describe("InstitutionAESTController(e2e)-updateInstitution", () => {
         },
       }),
     );
-    const payload = getUpdatePayload();
+    const payload = getInstitutionProfilePayload();
     // Set country with invalid value.
     payload.country = "ZZ";
     payload.province = undefined;
@@ -175,7 +171,7 @@ describe("InstitutionAESTController(e2e)-updateInstitution", () => {
         },
       }),
     );
-    const payload = getUpdatePayload();
+    const payload = getInstitutionProfilePayload();
     // Set province with invalid value.
     payload.country = CANADA_COUNTRY_CODE;
     payload.province = "QQ";
@@ -204,7 +200,7 @@ describe("InstitutionAESTController(e2e)-updateInstitution", () => {
         },
       }),
     );
-    const payload = getUpdatePayload();
+    const payload = getInstitutionProfilePayload();
     // Set country with invalid value.
     payload.country = UNITED_STATES_COUNTRY_CODE;
     payload.province = BC_PROVINCE_CODE;
@@ -228,37 +224,3 @@ describe("InstitutionAESTController(e2e)-updateInstitution", () => {
     await app?.close();
   });
 });
-
-/**
- * Get the institution update payload with valid data.
- * @returns institution update payload.
- */
-function getUpdatePayload(): InstitutionProfileAPIInDTO {
-  return {
-    operatingName: "Updated Institution operating name",
-    regulatingBody: "icbc",
-    establishedDate: "2023-06-01",
-    primaryEmail: "test@test.ca",
-    primaryPhone: "7785367878",
-    website: "https://www.test.ca",
-    country: CANADA_COUNTRY_CODE,
-    province: BC_PROVINCE_CODE,
-    classification: InstitutionClassification.Public,
-    organizationStatus: InstitutionOrganizationStatus.Profit,
-    medicalSchoolStatus: InstitutionMedicalSchoolStatus.No,
-    primaryContactFirstName: "Primary",
-    primaryContactLastName: "Contact",
-    primaryContactEmail: "test@test.ca",
-    primaryContactPhone: "7785367878",
-    mailingAddress: {
-      addressLine1: "123 Gorge Rd E",
-      addressLine2: "",
-      selectedCountry: "Canada",
-      country: "Canada",
-      city: "Victoria",
-      postalCode: "V1V1V1",
-      provinceState: "BC",
-      canadaPostalCode: "V1V1V1",
-    },
-  };
-}
