@@ -71,6 +71,7 @@ export class InstitutionControllerService {
       regulatingBody: institutionDetail.regulatingBody,
       otherRegulatingBody: institutionDetail.otherRegulatingBody,
       institutionType: institutionDetail.institutionType.id,
+      institutionTypeName: institutionDetail.institutionType.name,
       establishedDate: institutionDetail.establishedDate,
       primaryContactEmail: institutionDetail.institutionPrimaryContact.email,
       primaryContactFirstName:
