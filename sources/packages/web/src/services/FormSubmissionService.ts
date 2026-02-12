@@ -5,11 +5,11 @@ import {
   FormSubmissionConfigurationsAPIOutDTO,
 } from "@/services/http/dto/FormSubmission.dto";
 
-export class FormSubmissionsService {
+export class FormSubmissionService {
   // Share Instance
-  private static instance: FormSubmissionsService;
+  private static instance: FormSubmissionService;
 
-  static get shared(): FormSubmissionsService {
+  static get shared(): FormSubmissionService {
     return this.instance || (this.instance = new this());
   }
 

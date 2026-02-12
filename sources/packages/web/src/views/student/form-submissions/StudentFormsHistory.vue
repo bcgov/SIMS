@@ -133,7 +133,7 @@ import { computed, defineComponent, ref, watchEffect } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormatters, useStudentAppeals } from "@/composables";
 import router from "@/router";
-import { FormSubmissionsService } from "@/services/FormSubmissionsService";
+import { FormSubmissionService } from "@/services/FormSubmissionService";
 import StatusChipFormSubmission from "@/components/generic/StatusChipFormSubmission.vue";
 import StatusChipFormSubmissionDecision from "@/components/generic/StatusChipFormSubmissionDecision.vue";
 import { FormSubmissionStudentAPIOutDTO } from "@/services/http/dto";
@@ -161,7 +161,7 @@ export default defineComponent({
     watchEffect(async () => {
       // TODO: add loading and error handling.
       const submissionSummary =
-        await FormSubmissionsService.shared.getFormSubmissionSummary();
+        await FormSubmissionService.shared.getFormSubmissionSummary();
       submissions.value = submissionSummary.submissions;
     });
 

@@ -50,7 +50,7 @@ import { AppealApplicationDetailsAPIOutDTO } from "@/services/http/dto";
 import FormSubmissionItems from "@/components/form-submissions/FormSubmissionItems.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
-import { FormSubmissionsService } from "@/services/FormSubmissionsService";
+import { FormSubmissionService } from "@/services/FormSubmissionService";
 
 export default defineComponent({
   components: {
@@ -113,7 +113,7 @@ export default defineComponent({
         }
       }
       const formConfigurations =
-        await FormSubmissionsService.shared.getSubmissionForms();
+        await FormSubmissionService.shared.getSubmissionForms();
       formSubmissionItems.value =
         props.formDefinitionIds.map<FormSubmissionItem>((formDefinitionId) => {
           const formConfiguration = formConfigurations.configurations.find(

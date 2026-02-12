@@ -22,7 +22,7 @@
 import { useSnackBar } from "@/composables";
 import { defineComponent, onMounted, ref } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { FormSubmissionsService } from "@/services/FormSubmissionsService";
+import { FormSubmissionService } from "@/services/FormSubmissionService";
 import StudentFormsSelectorAppealsSection from "./StudentFormsSelectorAppealsSection.vue";
 import StudentFormsSelectorFormSection from "./StudentFormsSelectorFormsSection.vue";
 import { FormSubmissionConfigurationAPIOutDTO } from "@/services/http/dto";
@@ -46,7 +46,7 @@ export default defineComponent({
     onMounted(async () => {
       try {
         const formsConfigs =
-          await FormSubmissionsService.shared.getSubmissionForms();
+          await FormSubmissionService.shared.getSubmissionForms();
         formConfigurations.value = formsConfigs.configurations;
       } catch {
         snackBar.error("Unexpected error while loading forms configurations.");

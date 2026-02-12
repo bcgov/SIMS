@@ -40,7 +40,7 @@
 import { defineComponent, ref, watchEffect } from "vue";
 import FormSubmissionItems from "@/components/form-submissions/FormSubmissionItems.vue";
 import { useRouter } from "vue-router";
-import { FormSubmissionsService } from "@/services/FormSubmissionsService";
+import { FormSubmissionService } from "@/services/FormSubmissionService";
 import { FormSubmissionItem, FormSubmissionItemApproval } from "@/types";
 import { FormSubmissionStudentAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -73,7 +73,7 @@ export default defineComponent({
       try {
         // Submission data.
         formSubmission.value =
-          await FormSubmissionsService.shared.getFormSubmission(
+          await FormSubmissionService.shared.getFormSubmission(
             props.formSubmissionId,
           );
         // Convert submission items to be displayed.
