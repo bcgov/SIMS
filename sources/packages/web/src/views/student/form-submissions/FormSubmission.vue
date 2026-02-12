@@ -2,7 +2,11 @@
 <template>
   <student-page-container>
     <template #header>
-      <header-navigator title="Student" :sub-title="referenceForm?.category" />
+      <header-navigator
+        title="Student Forms"
+        :sub-title="referenceForm?.category"
+        :route-location="backRouteLocation"
+      />
     </template>
     <body-header-container>
       <template #header>
@@ -131,19 +135,22 @@ export default defineComponent({
         });
     });
 
+    const backRouteLocation = computed(() => ({
+      name: StudentRoutesConst.STUDENT_FORMS_SELECTOR,
+      query: props.applicationId
+        ? {
+            applicationId: props.applicationId,
+          }
+        : undefined,
+    }));
+
     const cancel = () => {
-      router.push({
-        name: StudentRoutesConst.STUDENT_FORMS_SELECTOR,
-        query: props.applicationId
-          ? {
-              applicationId: props.applicationId,
-            }
-          : undefined,
-      });
+      router.push(backRouteLocation.value);
     };
 
     return {
       referenceForm,
+      backRouteLocation,
       formSubmissionItems,
       submitted,
       processing,

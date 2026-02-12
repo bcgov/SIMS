@@ -18,7 +18,12 @@
         >
         <template #text>
           <v-form ref="standaloneFormsSelectionForm">
-            <v-list lines="three" select-strategy="leaf" variant="elevated">
+            <v-list
+              lines="three"
+              select-strategy="leaf"
+              variant="elevated"
+              v-model:selected="selectedStandaloneForm"
+            >
               <v-list-item
                 v-for="form in standaloneForms"
                 :key="form.formDefinitionName"

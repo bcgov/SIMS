@@ -2,7 +2,13 @@
 <template>
   <student-page-container>
     <template #header>
-      <header-navigator title="Student" sub-title="Forms submission" />
+      <header-navigator
+        title="Student Forms"
+        sub-title="Forms submission"
+        :route-location="{
+          name: StudentRoutesConst.STUDENT_FORMS_HISTORY,
+        }"
+      />
     </template>
     <body-header-container>
       <template #header>
@@ -18,19 +24,26 @@
       <form-submission-items
         :submission-items="formSubmissionItems"
         :read-only="true"
-      />
+      >
+        <template #actions>
+          <footer-buttons
+            :show-primary-button="false"
+            secondary-label="Back"
+            @secondary-click="goBack"
+        /></template>
+      </form-submission-items>
     </body-header-container>
   </student-page-container>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, watchEffect } from "vue";
-import { useSnackBar } from "@/composables";
 import FormSubmissionItems from "@/components/form-submissions/FormSubmissionItems.vue";
 import { useRouter } from "vue-router";
 import { FormSubmissionsService } from "@/services/FormSubmissionsService";
 import { FormSubmissionItem, FormSubmissionItemApproval } from "@/types";
 import { FormSubmissionStudentAPIOutDTO } from "@/services/http/dto";
+import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 
 export default defineComponent({
   components: {
@@ -44,10 +57,15 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter();
-    const snackBar = useSnackBar();
     const formSubmissionItems = ref([] as FormSubmissionItem[]);
     const processing = ref(false);
     const formSubmission = ref<FormSubmissionStudentAPIOutDTO>();
+
+    const goBack = () => {
+      router.push({
+        name: StudentRoutesConst.STUDENT_FORMS_HISTORY,
+      });
+    };
 
     watchEffect(async () => {
       // Submission data.
@@ -73,8 +91,10 @@ export default defineComponent({
 
     return {
       formSubmissionItems,
+      StudentRoutesConst,
       processing,
       formSubmission,
+      goBack,
     };
   },
 });
