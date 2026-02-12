@@ -83,7 +83,7 @@ const MOCKED_SUBMISSIONS: FormSubmissionStudentAPIOutDTO[] = [
 /**
  * Http API client for Form Submissions.
  */
-export class FormSubmissionsApi extends HttpBaseClient {
+export class FormSubmissionApi extends HttpBaseClient {
   /**
    * Get all submission form configurations for student submission forms.
    * @returns form configurations that allow student submissions.

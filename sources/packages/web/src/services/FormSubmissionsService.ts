@@ -18,18 +18,18 @@ export class FormSubmissionsService {
    * @returns form configurations that allow student submissions.
    */
   async getSubmissionForms(): Promise<FormSubmissionConfigurationsAPIOutDTO> {
-    return ApiClient.FormSubmissionsApi.getSubmissionForms();
+    return ApiClient.FormSubmissionApi.getSubmissionForms();
   }
 
   // TODO: To be implemented.
   async getFormSubmissionSummary(): Promise<FormSubmissionStudentSummaryAPIOutDTO> {
-    return ApiClient.FormSubmissionsApi.getFormSubmissionSummary();
+    return ApiClient.FormSubmissionApi.getFormSubmissionSummary();
   }
 
   // TODO: To be implemented.
   async getFormSubmission(
     formSubmissionId: number,
   ): Promise<FormSubmissionStudentAPIOutDTO> {
-    return ApiClient.FormSubmissionsApi.getFormSubmission(formSubmissionId);
+    return ApiClient.FormSubmissionApi.getFormSubmission(formSubmissionId);
   }
 }
