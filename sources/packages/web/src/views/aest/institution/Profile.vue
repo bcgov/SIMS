@@ -25,44 +25,80 @@
         <v-row>
           <v-col>
             <title-value
-              propertyTitle="Primary phone number"
-              :propertyValue="institutionProfileDetail.primaryPhone"
+              property-title="Legal operating name"
+              :property-value="institutionProfileDetail.legalOperatingName"
             />
             <title-value
-              propertyTitle="Primary email"
-              :propertyValue="institutionProfileDetail.primaryEmail"
+              property-title="Institution name"
+              :property-value="institutionProfileDetail.operatingName"
             />
             <title-value
-              propertyTitle="Website"
-              :propertyValue="institutionProfileDetail.website"
+              property-title="Primary phone number"
+              :property-value="institutionProfileDetail.primaryPhone"
             />
             <title-value
-              propertyTitle="Established date"
-              :propertyValue="institutionProfileDetail.establishedDate"
+              property-title="Primary email"
+              :property-value="institutionProfileDetail.primaryEmail"
+            />
+            <title-value
+              property-title="Website"
+              :property-value="institutionProfileDetail.website"
+            />
+            <title-value
+              property-title="Established date"
+              :property-value="institutionProfileDetail.establishedDate"
             />
           </v-col>
           <v-divider :thickness="2" vertical />
           <v-col>
             <title-value
-              propertyTitle="Legal operating name"
-              :propertyValue="institutionProfileDetail.legalOperatingName"
-            />
-            <title-value
-              propertyTitle="Institution name"
-              :propertyValue="institutionProfileDetail.operatingName"
-            />
-            <title-value
-              propertyTitle="Type"
-              :propertyValue="institutionProfileDetail.institutionTypeName"
-            />
-            <title-value
-              propertyTitle="Regulatory body"
-              :propertyValue="institutionProfileDetail.regulatingBody"
+              property-title="Regulatory body"
+              :property-value="
+                getRegulatoryBodyToDisplay(
+                  institutionProfileDetail.regulatingBody,
+                )
+              "
             />
             <title-value
               v-if="institutionProfileDetail.regulatingBody === 'other'"
-              propertyTitle="Other regulatory body"
-              :propertyValue="institutionProfileDetail.otherRegulatingBody"
+              property-title="Other regulatory body"
+              :property-value="institutionProfileDetail.otherRegulatingBody"
+            />
+            <title-value
+              property-title="Country"
+              :property-value="
+                emptyStringFiller(institutionProfileDetail.countryName)
+              "
+            />
+            <title-value
+              property-title="Province"
+              :property-value="
+                emptyStringFiller(institutionProfileDetail.provinceName)
+              "
+            />
+            <title-value
+              property-title="Classification"
+              :property-value="
+                getClassificationToDisplay(
+                  institutionProfileDetail.classification,
+                )
+              "
+            />
+            <title-value
+              property-title="Organization status"
+              :property-value="
+                getOrganizationStatusToDisplay(
+                  institutionProfileDetail.organizationStatus,
+                )
+              "
+            />
+            <title-value
+              property-title="Medical"
+              :property-value="
+                getMedicalSchoolStatusToDisplay(
+                  institutionProfileDetail.medicalSchoolStatus,
+                )
+              "
             />
           </v-col>
         </v-row>
@@ -88,34 +124,36 @@
       <p class="category-header-medium mt-5">Mailing address</p>
       <content-group>
         <title-value
-          propertyTitle="Address line 1"
-          :propertyValue="institutionProfileDetail.mailingAddress?.addressLine1"
+          property-title="Address line 1"
+          :property-value="
+            institutionProfileDetail.mailingAddress?.addressLine1
+          "
         />
         <title-value
-          propertyTitle="Address line 2"
-          :propertyValue="
+          property-title="Address line 2"
+          :property-value="
             emptyStringFiller(
               institutionProfileDetail.mailingAddress?.addressLine2,
             )
           "
         />
         <title-value
-          propertyTitle="City"
-          :propertyValue="institutionProfileDetail.mailingAddress?.city"
+          property-title="City"
+          :property-value="institutionProfileDetail.mailingAddress?.city"
         />
         <title-value
-          propertyTitle="Postal Code"
-          :propertyValue="institutionProfileDetail.mailingAddress?.postalCode"
+          property-title="Postal Code"
+          :property-value="institutionProfileDetail.mailingAddress?.postalCode"
         />
         <title-value
-          propertyTitle="Province"
-          :propertyValue="
+          property-title="Province"
+          :property-value="
             institutionProfileDetail.mailingAddress?.provinceState
           "
         />
         <title-value
-          propertyTitle="Country"
-          :propertyValue="institutionProfileDetail.mailingAddress?.country"
+          property-title="Country"
+          :property-value="institutionProfileDetail.mailingAddress?.country"
         />
       </content-group>
     </body-header-container>
@@ -130,7 +168,7 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { InstitutionDetailAPIOutDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role } from "@/types";
-import { useFormatters } from "@/composables";
+import { useFormatters, useInstitution } from "@/composables";
 
 export default defineComponent({
   components: { CheckPermissionRole },
@@ -142,7 +180,17 @@ export default defineComponent({
   },
   setup(props) {
     const institutionProfileDetail = ref({} as InstitutionDetailAPIOutDTO);
-    const { emptyStringFiller, dateOnlyLongString } = useFormatters();
+    const {
+      emptyStringFiller,
+      dateOnlyLongString,
+      conditionalEmptyStringFiller,
+    } = useFormatters();
+    const {
+      getRegulatoryBodyToDisplay,
+      getClassificationToDisplay,
+      getOrganizationStatusToDisplay,
+      getMedicalSchoolStatusToDisplay,
+    } = useInstitution();
     const router = useRouter();
     onMounted(async () => {
       institutionProfileDetail.value =
@@ -163,6 +211,11 @@ export default defineComponent({
       editProfile,
       Role,
       emptyStringFiller,
+      conditionalEmptyStringFiller,
+      getRegulatoryBodyToDisplay,
+      getClassificationToDisplay,
+      getOrganizationStatusToDisplay,
+      getMedicalSchoolStatusToDisplay,
     };
   },
 });

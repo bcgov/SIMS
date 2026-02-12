@@ -1,4 +1,9 @@
-import { AddressInfo } from "@sims/sims-db";
+import {
+  AddressInfo,
+  InstitutionClassification,
+  InstitutionMedicalSchoolStatus,
+  InstitutionOrganizationStatus,
+} from "@sims/sims-db";
 
 export interface UpdateInstitution {
   operatingName?: string;
@@ -8,12 +13,16 @@ export interface UpdateInstitution {
   regulatingBody?: string;
   otherRegulatingBody?: string;
   establishedDate?: string;
-  institutionType?: number;
   primaryContactEmail: string;
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactPhone: string;
   mailingAddress: AddressInfo;
+  country?: string;
+  province?: string;
+  classification?: InstitutionClassification;
+  organizationStatus?: InstitutionOrganizationStatus;
+  medicalSchoolStatus?: InstitutionMedicalSchoolStatus;
 }
 
 export interface InstitutionFormModel {
@@ -37,11 +46,15 @@ export interface InstitutionFormModel {
   regulatingBody: string;
   otherRegulatingBody?: string;
   establishedDate: string;
+  country: string;
+  province?: string;
+  classification: InstitutionClassification;
+  organizationStatus: InstitutionOrganizationStatus;
+  medicalSchoolStatus: InstitutionMedicalSchoolStatus;
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactEmail: string;
   primaryContactPhone: string;
-  institutionType: number;
   mailingAddress: AddressInfo;
 }
 

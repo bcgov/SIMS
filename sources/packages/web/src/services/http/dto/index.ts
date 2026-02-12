@@ -36,4 +36,5 @@ export * from "@/services/http/dto/Form.dto";
 export * from "@/services/http/dto/ApplicationChangeRequest.dto";
 export * from "@/services/http/dto/DisbursementSchedule.dto";
 export * from "@/services/http/dto/ProgramYear.dto";
+export * from "@/services/http/dto/SystemLookupConfiguration.dto";
 export * from "@/services/http/dto/FormSubmission.dto";

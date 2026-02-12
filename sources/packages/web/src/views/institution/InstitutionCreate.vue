@@ -11,17 +11,17 @@
     </div>
     <full-page-container>
       <formio-container
-        formName="institutionProfileCreation"
-        :formData="initialData"
-        @loaded="formLoaded"
+        form-name="institutionProfileCreation"
+        :form-data="initialData"
+        :is-data-ready="isDataReady"
         @submitted="submitted"
       >
         <template #actions="{ submit }">
           <footer-buttons
             :processing="processing"
-            primaryLabel="Create profile"
-            @primaryClick="submit"
-            :showSecondaryButton="false"
+            primary-label="Create profile"
+            @primary-click="submit"
+            :show-secondary-button="false"
           />
         </template>
       </formio-container>
@@ -37,12 +37,12 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { CreateInstitutionAPIInDTO } from "@/services/http/dto";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import {
-  useFormioDropdownLoader,
   useFormioUtils,
   useInstitutionState,
   useSnackBar,
 } from "@/composables";
-import { FormIOForm } from "@/types";
+import { FormIOForm, SystemLookupCategory } from "@/types";
+import { SystemLookupConfigurationService } from "@/services/SystemLookupConfigurationService";
 
 export default defineComponent({
   setup() {
@@ -51,8 +51,8 @@ export default defineComponent({
     const { excludeExtraneousValues } = useFormioUtils();
     const { initialize } = useInstitutionState();
     const router = useRouter();
-    const formioDataLoader = useFormioDropdownLoader();
     const initialData = ref({});
+    const isDataReady = ref(false);
 
     const submitted = async (form: FormIOForm<CreateInstitutionAPIInDTO>) => {
       try {
@@ -77,28 +77,43 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      const bceidAccount = await UserService.shared.getBCeIDAccount();
-      if (bceidAccount) {
-        initialData.value = {
-          userFirstName: bceidAccount.user.firstname,
-          userLastName: bceidAccount.user.surname,
-          userEmail: bceidAccount.user.email,
-          institutionLegalName: bceidAccount.institution.legalName,
-        };
-      } else {
-        snackBar.error("Unable to fetch account details.");
+      try {
+        const bceidAccount = await UserService.shared.getBCeIDAccount();
+        if (bceidAccount) {
+          const countryLookupPromise =
+            SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
+              SystemLookupCategory.Country,
+            );
+          const provinceLookupPromise =
+            SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
+              SystemLookupCategory.Province,
+            );
+          const [countryLookup, provinceLookup] = await Promise.all([
+            countryLookupPromise,
+            provinceLookupPromise,
+          ]);
+          initialData.value = {
+            userFirstName: bceidAccount.user.firstname,
+            userLastName: bceidAccount.user.surname,
+            userEmail: bceidAccount.user.email,
+            institutionLegalName: bceidAccount.institution.legalName,
+            countryOptionValues: countryLookup.items,
+            provinceOptionValues: provinceLookup.items,
+          };
+          isDataReady.value = true;
+        } else {
+          snackBar.error("Unable to fetch account details.");
+        }
+      } catch {
+        snackBar.error("Unexpected error while loading data.");
       }
     });
-
-    const formLoaded = async (form: any) => {
-      await formioDataLoader.loadInstitutionTypes(form, "institutionType");
-    };
 
     return {
       initialData,
       submitted,
-      formLoaded,
       processing,
+      isDataReady,
     };
   },
 });

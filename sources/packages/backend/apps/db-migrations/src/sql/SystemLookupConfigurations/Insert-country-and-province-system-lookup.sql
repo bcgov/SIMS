@@ -13,12 +13,14 @@ INSERT INTO
         lookup_category,
         lookup_value,
         lookup_key,
+        lookup_priority,
         creator
     )
 SELECT
     lookup_data.lookup_category,
     lookup_data.lookup_value,
     lookup_data.lookup_key,
+    lookup_data.lookup_priority,
     su.id
 FROM
     (
@@ -26,1322 +28,1591 @@ FROM
             (
                 'Country',
                 'Afghanistan',
-                'AF'
+                'AF',
+                2
             ),
             (
                 'Country',
                 'Albania',
-                'AL'
+                'AL',
+                2
             ),
             (
                 'Country',
                 'Antarctica',
-                'AQ'
+                'AQ',
+                2
             ),
             (
                 'Country',
                 'Algeria',
-                'DZ'
+                'DZ',
+                2
             ),
             (
                 'Country',
                 'American Samoa',
-                'AS'
+                'AS',
+                2
             ),
             (
                 'Country',
                 'Andorra',
-                'AD'
+                'AD',
+                2
             ),
             (
                 'Country',
                 'Angola',
-                'AO'
+                'AO',
+                2
             ),
             (
                 'Country',
                 'Antigua and Barbuda',
-                'AG'
+                'AG',
+                2
             ),
             (
                 'Country',
                 'Azerbaijan',
-                'AZ'
+                'AZ',
+                2
             ),
             (
                 'Country',
                 'Argentina',
-                'AR'
+                'AR',
+                2
             ),
             (
                 'Country',
                 'Australia',
-                'AU'
+                'AU',
+                2
             ),
             (
                 'Country',
                 'Austria',
-                'AT'
+                'AT',
+                2
             ),
             (
                 'Country',
                 'Bahamas',
-                'BS'
+                'BS',
+                2
             ),
             (
                 'Country',
                 'Bahrain',
-                'BH'
+                'BH',
+                2
             ),
             (
                 'Country',
                 'Bangladesh',
-                'BD'
+                'BD',
+                2
             ),
             (
                 'Country',
                 'Armenia',
-                'AM'
+                'AM',
+                2
             ),
             (
                 'Country',
                 'Barbados',
-                'BB'
+                'BB',
+                2
             ),
             (
                 'Country',
                 'Belgium',
-                'BE'
+                'BE',
+                2
             ),
             (
                 'Country',
                 'Bermuda',
-                'BM'
+                'BM',
+                2
             ),
             (
                 'Country',
                 'Bhutan',
-                'BT'
+                'BT',
+                2
             ),
             (
                 'Country',
                 'Bolivia',
-                'BO'
+                'BO',
+                2
             ),
             (
                 'Country',
                 'Bosnia and Herzegovina',
-                'BA'
+                'BA',
+                2
             ),
             (
                 'Country',
                 'Botswana',
-                'BW'
+                'BW',
+                2
             ),
             (
                 'Country',
                 'Bouvet Island',
-                'BV'
+                'BV',
+                2
             ),
             (
                 'Country',
                 'Brazil',
-                'BR'
+                'BR',
+                2
             ),
             (
                 'Country',
                 'Belize',
-                'BZ'
+                'BZ',
+                2
             ),
             (
                 'Country',
                 'British Indian Ocean Territory',
-                'IO'
+                'IO',
+                2
             ),
             (
                 'Country',
                 'Solomon Islands',
-                'SB'
+                'SB',
+                2
             ),
             (
                 'Country',
                 'Virgin Islands, British',
-                'VG'
+                'VG',
+                2
             ),
             (
                 'Country',
                 'Brunei Darussalam',
-                'BN'
+                'BN',
+                2
             ),
             (
                 'Country',
                 'Bulgaria',
-                'BG'
+                'BG',
+                2
             ),
             (
                 'Country',
                 'Myanmar',
-                'MM'
+                'MM',
+                2
             ),
             (
                 'Country',
                 'Burundi',
-                'BI'
+                'BI',
+                2
             ),
             (
                 'Country',
                 'Belarus',
-                'BY'
+                'BY',
+                2
             ),
             (
                 'Country',
                 'Cambodia',
-                'KH'
+                'KH',
+                2
             ),
             (
                 'Country',
                 'Cameroon',
-                'CM'
+                'CM',
+                2
             ),
             (
                 'Country',
                 'Canada',
-                'CA'
+                'CA',
+                1
             ),
             (
                 'Country',
                 'Cabo Verde',
-                'CV'
+                'CV',
+                2
             ),
             (
                 'Country',
                 'Cayman Islands',
-                'KY'
+                'KY',
+                2
             ),
             (
                 'Country',
                 'Central African Republic',
-                'CF'
+                'CF',
+                2
             ),
             (
                 'Country',
                 'Sri Lanka',
-                'LK'
+                'LK',
+                2
             ),
             (
                 'Country',
                 'Chad',
-                'TD'
+                'TD',
+                2
             ),
             (
                 'Country',
                 'Chile',
-                'CL'
+                'CL',
+                2
             ),
             (
                 'Country',
                 'China',
-                'CN'
+                'CN',
+                2
             ),
             (
                 'Country',
                 'Taiwan',
-                'TW'
+                'TW',
+                2
             ),
             (
                 'Country',
                 'Christmas Island',
-                'CX'
+                'CX',
+                2
             ),
             (
                 'Country',
                 'Cocos (Keeling) Islands',
-                'CC'
+                'CC',
+                2
             ),
             (
                 'Country',
                 'Colombia',
-                'CO'
+                'CO',
+                2
             ),
             (
                 'Country',
                 'Comoros',
-                'KM'
+                'KM',
+                2
             ),
             (
                 'Country',
                 'Mayotte',
-                'YT'
+                'YT',
+                2
             ),
             (
                 'Country',
                 'Congo, Republic of the',
-                'CG'
+                'CG',
+                2
             ),
             (
                 'Country',
                 'Congo, Democratic Republic of the',
-                'CD'
+                'CD',
+                2
             ),
             (
                 'Country',
                 'Cook Islands',
-                'CK'
+                'CK',
+                2
             ),
             (
                 'Country',
                 'Costa Rica',
-                'CR'
+                'CR',
+                2
             ),
             (
                 'Country',
                 'Croatia',
-                'HR'
+                'HR',
+                2
             ),
             (
                 'Country',
                 'Cuba',
-                'CU'
+                'CU',
+                2
             ),
             (
                 'Country',
                 'Cyprus',
-                'CY'
+                'CY',
+                2
             ),
             (
                 'Country',
                 'Czechia',
-                'CZ'
+                'CZ',
+                2
             ),
             (
                 'Country',
                 'Benin',
-                'BJ'
+                'BJ',
+                2
             ),
             (
                 'Country',
                 'Denmark',
-                'DK'
+                'DK',
+                2
             ),
             (
                 'Country',
                 'Dominica',
-                'DM'
+                'DM',
+                2
             ),
             (
                 'Country',
                 'Dominican Republic',
-                'DO'
+                'DO',
+                2
             ),
             (
                 'Country',
                 'Ecuador',
-                'EC'
+                'EC',
+                2
             ),
             (
                 'Country',
                 'El Salvador',
-                'SV'
+                'SV',
+                2
             ),
             (
                 'Country',
                 'Equatorial Guinea',
-                'GQ'
+                'GQ',
+                2
             ),
             (
                 'Country',
                 'Ethiopia',
-                'ET'
+                'ET',
+                2
             ),
             (
                 'Country',
                 'Eritrea',
-                'ER'
+                'ER',
+                2
             ),
             (
                 'Country',
                 'Estonia',
-                'EE'
+                'EE',
+                2
             ),
             (
                 'Country',
                 'Faroe Islands',
-                'FO'
+                'FO',
+                2
             ),
             (
                 'Country',
                 'Falkland Islands (Malvinas)',
-                'FK'
+                'FK',
+                2
             ),
             (
                 'Country',
                 'South Georgia and the South Sandwich Islands',
-                'GS'
+                'GS',
+                2
             ),
             (
                 'Country',
                 'Fiji',
-                'FJ'
+                'FJ',
+                2
             ),
             (
                 'Country',
                 'Finland',
-                'FI'
+                'FI',
+                2
             ),
             (
                 'Country',
                 'Åland Islands',
-                'AX'
+                'AX',
+                2
             ),
             (
                 'Country',
                 'France',
-                'FR'
+                'FR',
+                2
             ),
             (
                 'Country',
                 'French Guiana',
-                'GF'
+                'GF',
+                2
             ),
             (
                 'Country',
                 'French Polynesia',
-                'PF'
+                'PF',
+                2
             ),
             (
                 'Country',
                 'French Southern Territories',
-                'TF'
+                'TF',
+                2
             ),
             (
                 'Country',
                 'Djibouti',
-                'DJ'
+                'DJ',
+                2
             ),
             (
                 'Country',
                 'Gabon',
-                'GA'
+                'GA',
+                2
             ),
             (
                 'Country',
                 'Georgia',
-                'GE'
+                'GE',
+                2
             ),
             (
                 'Country',
                 'Gambia',
-                'GM'
+                'GM',
+                2
             ),
             (
                 'Country',
                 'West Bank and Gaza',
-                'PS'
+                'PS',
+                2
             ),
             (
                 'Country',
                 'Germany',
-                'DE'
+                'DE',
+                2
             ),
             (
                 'Country',
                 'Ghana',
-                'GH'
+                'GH',
+                2
             ),
             (
                 'Country',
                 'Gibraltar',
-                'GI'
+                'GI',
+                2
             ),
             (
                 'Country',
                 'Kiribati',
-                'KI'
+                'KI',
+                2
             ),
             (
                 'Country',
                 'Greece',
-                'GR'
+                'GR',
+                2
             ),
             (
                 'Country',
                 'Greenland',
-                'GL'
+                'GL',
+                2
             ),
             (
                 'Country',
                 'Grenada',
-                'GD'
+                'GD',
+                2
             ),
             (
                 'Country',
                 'Guadeloupe',
-                'GP'
+                'GP',
+                2
             ),
             (
                 'Country',
                 'Guam',
-                'GU'
+                'GU',
+                2
             ),
             (
                 'Country',
                 'Guatemala',
-                'GT'
+                'GT',
+                2
             ),
             (
                 'Country',
                 'Guinea',
-                'GN'
+                'GN',
+                2
             ),
             (
                 'Country',
                 'Guyana',
-                'GY'
+                'GY',
+                2
             ),
             (
                 'Country',
                 'Haiti',
-                'HT'
+                'HT',
+                2
             ),
             (
                 'Country',
                 'Heard Island and McDonald Islands',
-                'HM'
+                'HM',
+                2
             ),
             (
                 'Country',
                 'Holy See (Vatican City State)',
-                'VA'
+                'VA',
+                2
             ),
             (
                 'Country',
                 'Honduras',
-                'HN'
+                'HN',
+                2
             ),
             (
                 'Country',
                 'Hong Kong',
-                'HK'
+                'HK',
+                2
             ),
             (
                 'Country',
                 'Hungary',
-                'HU'
+                'HU',
+                2
             ),
             (
                 'Country',
                 'Iceland',
-                'IS'
+                'IS',
+                2
             ),
             (
                 'Country',
                 'India',
-                'IN'
+                'IN',
+                2
             ),
             (
                 'Country',
                 'Indonesia',
-                'ID'
+                'ID',
+                2
             ),
             (
                 'Country',
                 'Iran',
-                'IR'
+                'IR',
+                2
             ),
             (
                 'Country',
                 'Iraq',
-                'IQ'
+                'IQ',
+                2
             ),
             (
                 'Country',
                 'Ireland',
-                'IE'
+                'IE',
+                2
             ),
             (
                 'Country',
                 'Israel',
-                'IL'
+                'IL',
+                2
             ),
             (
                 'Country',
                 'Italy',
-                'IT'
+                'IT',
+                2
             ),
             (
                 'Country',
                 'Côte d’Ivoire',
-                'CI'
+                'CI',
+                2
             ),
             (
                 'Country',
                 'Jamaica',
-                'JM'
+                'JM',
+                2
             ),
             (
                 'Country',
                 'Japan',
-                'JP'
+                'JP',
+                2
             ),
             (
                 'Country',
                 'Kazakhstan',
-                'KZ'
+                'KZ',
+                2
             ),
             (
                 'Country',
                 'Jordan',
-                'JO'
+                'JO',
+                2
             ),
             (
                 'Country',
                 'Kenya',
-                'KE'
+                'KE',
+                2
             ),
             (
                 'Country',
                 'Korea, North',
-                'KP'
+                'KP',
+                2
             ),
             (
                 'Country',
                 'Korea, South',
-                'KR'
+                'KR',
+                2
             ),
             (
                 'Country',
                 'Kuwait',
-                'KW'
+                'KW',
+                2
             ),
             (
                 'Country',
                 'Kyrgyzstan',
-                'KG'
+                'KG',
+                2
             ),
             (
                 'Country',
                 'Laos',
-                'LA'
+                'LA',
+                2
             ),
             (
                 'Country',
                 'Lebanon',
-                'LB'
+                'LB',
+                2
             ),
             (
                 'Country',
                 'Lesotho',
-                'LS'
+                'LS',
+                2
             ),
             (
                 'Country',
                 'Latvia',
-                'LV'
+                'LV',
+                2
             ),
             (
                 'Country',
                 'Liberia',
-                'LR'
+                'LR',
+                2
             ),
             (
                 'Country',
                 'Libya',
-                'LY'
+                'LY',
+                2
             ),
             (
                 'Country',
                 'Liechtenstein',
-                'LI'
+                'LI',
+                2
             ),
             (
                 'Country',
                 'Lithuania',
-                'LT'
+                'LT',
+                2
             ),
             (
                 'Country',
                 'Luxembourg',
-                'LU'
+                'LU',
+                2
             ),
             (
                 'Country',
                 'Macao',
-                'MO'
+                'MO',
+                2
             ),
             (
                 'Country',
                 'Madagascar',
-                'MG'
+                'MG',
+                2
             ),
             (
                 'Country',
                 'Malawi',
-                'MW'
+                'MW',
+                2
             ),
             (
                 'Country',
                 'Malaysia',
-                'MY'
+                'MY',
+                2
             ),
             (
                 'Country',
                 'Maldives',
-                'MV'
+                'MV',
+                2
             ),
             (
                 'Country',
                 'Mali',
-                'ML'
+                'ML',
+                2
             ),
             (
                 'Country',
                 'Malta',
-                'MT'
+                'MT',
+                2
             ),
             (
                 'Country',
                 'Martinique',
-                'MQ'
+                'MQ',
+                2
             ),
             (
                 'Country',
                 'Mauritania',
-                'MR'
+                'MR',
+                2
             ),
             (
                 'Country',
                 'Mauritius',
-                'MU'
+                'MU',
+                2
             ),
             (
                 'Country',
                 'Mexico',
-                'MX'
+                'MX',
+                2
             ),
             (
                 'Country',
                 'Monaco',
-                'MC'
+                'MC',
+                2
             ),
             (
                 'Country',
                 'Mongolia',
-                'MN'
+                'MN',
+                2
             ),
             (
                 'Country',
                 'Moldova',
-                'MD'
+                'MD',
+                2
             ),
             (
                 'Country',
                 'Montenegro',
-                'ME'
+                'ME',
+                2
             ),
             (
                 'Country',
                 'Montserrat',
-                'MS'
+                'MS',
+                2
             ),
             (
                 'Country',
                 'Morocco',
-                'MA'
+                'MA',
+                2
             ),
             (
                 'Country',
                 'Mozambique',
-                'MZ'
+                'MZ',
+                2
             ),
             (
                 'Country',
                 'Oman',
-                'OM'
+                'OM',
+                2
             ),
             (
                 'Country',
                 'Namibia',
-                'NA'
+                'NA',
+                2
             ),
             (
                 'Country',
                 'Nauru',
-                'NR'
+                'NR',
+                2
             ),
             (
                 'Country',
                 'Nepal',
-                'NP'
+                'NP',
+                2
             ),
             (
                 'Country',
                 'Netherlands',
-                'NL'
+                'NL',
+                2
             ),
             (
                 'Country',
                 'Curaçao',
-                'CW'
+                'CW',
+                2
             ),
             (
                 'Country',
                 'Aruba',
-                'AW'
+                'AW',
+                2
             ),
             (
                 'Country',
                 'Sint Maarten (Dutch part)',
-                'SX'
+                'SX',
+                2
             ),
             (
                 'Country',
                 'Bonaire, Sint Eustatius and Saba',
-                'BQ'
+                'BQ',
+                2
             ),
             (
                 'Country',
                 'New Caledonia',
-                'NC'
+                'NC',
+                2
             ),
             (
                 'Country',
                 'Vanuatu',
-                'VU'
+                'VU',
+                2
             ),
             (
                 'Country',
                 'New Zealand',
-                'NZ'
+                'NZ',
+                2
             ),
             (
                 'Country',
                 'Nicaragua',
-                'NI'
+                'NI',
+                2
             ),
             (
                 'Country',
                 'Niger',
-                'NE'
+                'NE',
+                2
             ),
             (
                 'Country',
                 'Nigeria',
-                'NG'
+                'NG',
+                2
             ),
             (
                 'Country',
                 'Niue',
-                'NU'
+                'NU',
+                2
             ),
             (
                 'Country',
                 'Norfolk Island',
-                'NF'
+                'NF',
+                2
             ),
             (
                 'Country',
                 'Norway',
-                'NO'
+                'NO',
+                2
             ),
             (
                 'Country',
                 'Northern Mariana Islands',
-                'MP'
+                'MP',
+                2
             ),
             (
                 'Country',
                 'United States Minor Outlying Islands',
-                'UM'
+                'UM',
+                2
             ),
             (
                 'Country',
                 'Micronesia, Federated States of',
-                'FM'
+                'FM',
+                2
             ),
             (
                 'Country',
                 'Marshall Islands',
-                'MH'
+                'MH',
+                2
             ),
             (
                 'Country',
                 'Palau',
-                'PW'
+                'PW',
+                2
             ),
             (
                 'Country',
                 'Pakistan',
-                'PK'
+                'PK',
+                2
             ),
             (
                 'Country',
                 'Panama',
-                'PA'
+                'PA',
+                2
             ),
             (
                 'Country',
                 'Papua New Guinea',
-                'PG'
+                'PG',
+                2
             ),
             (
                 'Country',
                 'Paraguay',
-                'PY'
+                'PY',
+                2
             ),
             (
                 'Country',
                 'Peru',
-                'PE'
+                'PE',
+                2
             ),
             (
                 'Country',
                 'Philippines',
-                'PH'
+                'PH',
+                2
             ),
             (
                 'Country',
                 'Pitcairn',
-                'PN'
+                'PN',
+                2
             ),
             (
                 'Country',
                 'Poland',
-                'PL'
+                'PL',
+                2
             ),
             (
                 'Country',
                 'Portugal',
-                'PT'
+                'PT',
+                2
             ),
             (
                 'Country',
                 'Guinea-Bissau',
-                'GW'
+                'GW',
+                2
             ),
             (
                 'Country',
                 'Timor-Leste',
-                'TL'
+                'TL',
+                2
             ),
             (
                 'Country',
                 'Puerto Rico',
-                'PR'
+                'PR',
+                2
             ),
             (
                 'Country',
                 'Qatar',
-                'QA'
+                'QA',
+                2
             ),
             (
                 'Country',
                 'Réunion',
-                'RE'
+                'RE',
+                2
             ),
             (
                 'Country',
                 'Romania',
-                'RO'
+                'RO',
+                2
             ),
             (
                 'Country',
                 'Russian Federation',
-                'RU'
+                'RU',
+                2
             ),
             (
                 'Country',
                 'Rwanda',
-                'RW'
+                'RW',
+                2
             ),
             (
                 'Country',
                 'Saint Barthélemy',
-                'BL'
+                'BL',
+                2
             ),
             (
                 'Country',
                 'Saint Helena, Ascension and Tristan da Cunha',
-                'SH'
+                'SH',
+                2
             ),
             (
                 'Country',
                 'Saint Kitts and Nevis',
-                'KN'
+                'KN',
+                2
             ),
             (
                 'Country',
                 'Anguilla',
-                'AI'
+                'AI',
+                2
             ),
             (
                 'Country',
                 'Saint Lucia',
-                'LC'
+                'LC',
+                2
             ),
             (
                 'Country',
                 'Saint Martin (French part)',
-                'MF'
+                'MF',
+                2
             ),
             (
                 'Country',
                 'Saint Pierre and Miquelon',
-                'PM'
+                'PM',
+                2
             ),
             (
                 'Country',
                 'Saint Vincent and the Grenadines',
-                'VC'
+                'VC',
+                2
             ),
             (
                 'Country',
                 'San Marino',
-                'SM'
+                'SM',
+                2
             ),
             (
                 'Country',
                 'Sao Tome and Principe',
-                'ST'
+                'ST',
+                2
             ),
             (
                 'Country',
                 'Sark',
-                'XQ'
+                'XQ',
+                2
             ),
             (
                 'Country',
                 'Saudi Arabia',
-                'SA'
+                'SA',
+                2
             ),
             (
                 'Country',
                 'Senegal',
-                'SN'
+                'SN',
+                2
             ),
             (
                 'Country',
                 'Serbia',
-                'RS'
+                'RS',
+                2
             ),
             (
                 'Country',
                 'Seychelles',
-                'SC'
+                'SC',
+                2
             ),
             (
                 'Country',
                 'Sierra Leone',
-                'SL'
+                'SL',
+                2
             ),
             (
                 'Country',
                 'Singapore',
-                'SG'
+                'SG',
+                2
             ),
             (
                 'Country',
                 'Slovakia',
-                'SK'
+                'SK',
+                2
             ),
             (
                 'Country',
                 'Viet Nam',
-                'VN'
+                'VN',
+                2
             ),
             (
                 'Country',
                 'Slovenia',
-                'SI'
+                'SI',
+                2
             ),
             (
                 'Country',
                 'Somalia',
-                'SO'
+                'SO',
+                2
             ),
             (
                 'Country',
                 'South Africa, Republic of',
-                'ZA'
+                'ZA',
+                2
             ),
             (
                 'Country',
                 'Zimbabwe',
-                'ZW'
+                'ZW',
+                2
             ),
             (
                 'Country',
                 'Spain',
-                'ES'
+                'ES',
+                2
             ),
             (
                 'Country',
                 'South Sudan',
-                'SS'
+                'SS',
+                2
             ),
             (
                 'Country',
                 'Sudan',
-                'SD'
+                'SD',
+                2
             ),
             (
                 'Country',
                 'Western Sahara',
-                'EH'
+                'EH',
+                2
             ),
             (
                 'Country',
                 'Suriname',
-                'SR'
+                'SR',
+                2
             ),
             (
                 'Country',
                 'Svalbard and Jan Mayen',
-                'SJ'
+                'SJ',
+                2
             ),
             (
                 'Country',
                 'Eswatini',
-                'SZ'
+                'SZ',
+                2
             ),
             (
                 'Country',
                 'Sweden',
-                'SE'
+                'SE',
+                2
             ),
             (
                 'Country',
                 'Switzerland',
-                'CH'
+                'CH',
+                2
             ),
             (
                 'Country',
                 'Syria',
-                'SY'
+                'SY',
+                2
             ),
             (
                 'Country',
                 'Tajikistan',
-                'TJ'
+                'TJ',
+                2
             ),
             (
                 'Country',
                 'Thailand',
-                'TH'
+                'TH',
+                2
             ),
             (
                 'Country',
                 'Togo',
-                'TG'
+                'TG',
+                2
             ),
             (
                 'Country',
                 'Tokelau',
-                'TK'
+                'TK',
+                2
             ),
             (
                 'Country',
                 'Tonga',
-                'TO'
+                'TO',
+                2
             ),
             (
                 'Country',
                 'Trinidad and Tobago',
-                'TT'
+                'TT',
+                2
             ),
             (
                 'Country',
                 'United Arab Emirates',
-                'AE'
+                'AE',
+                2
             ),
             (
                 'Country',
                 'Tunisia',
-                'TN'
+                'TN',
+                2
             ),
             (
                 'Country',
                 'Türkiye',
-                'TR'
+                'TR',
+                2
             ),
             (
                 'Country',
                 'Turkmenistan',
-                'TM'
+                'TM',
+                2
             ),
             (
                 'Country',
                 'Turks and Caicos Islands',
-                'TC'
+                'TC',
+                2
             ),
             (
                 'Country',
                 'Tuvalu',
-                'TV'
+                'TV',
+                2
             ),
             (
                 'Country',
                 'Uganda',
-                'UG'
+                'UG',
+                2
             ),
             (
                 'Country',
                 'Ukraine',
-                'UA'
+                'UA',
+                2
             ),
             (
                 'Country',
                 'North Macedonia',
-                'MK'
+                'MK',
+                2
             ),
             (
                 'Country',
                 'Egypt',
-                'EG'
+                'EG',
+                2
             ),
             (
                 'Country',
                 'United Kingdom',
-                'GB'
+                'GB',
+                2
             ),
             (
                 'Country',
                 'Guernsey',
-                'GG'
+                'GG',
+                2
             ),
             (
                 'Country',
                 'Jersey',
-                'JE'
+                'JE',
+                2
             ),
             (
                 'Country',
                 'Isle of Man',
-                'IM'
+                'IM',
+                2
             ),
             (
                 'Country',
                 'Tanzania',
-                'TZ'
+                'TZ',
+                2
             ),
             (
                 'Country',
                 'United States of America',
-                'US'
+                'US',
+                2
             ),
             (
                 'Country',
                 'Virgin Islands, United States',
-                'VI'
+                'VI',
+                2
             ),
             (
                 'Country',
                 'Burkina Faso',
-                'BF'
+                'BF',
+                2
             ),
             (
                 'Country',
                 'Uruguay',
-                'UY'
+                'UY',
+                2
             ),
             (
                 'Country',
                 'Uzbekistan',
-                'UZ'
+                'UZ',
+                2
             ),
             (
                 'Country',
                 'Venezuela',
-                'VE'
+                'VE',
+                2
             ),
             (
                 'Country',
                 'Wallis and Futuna',
-                'WF'
+                'WF',
+                2
             ),
             (
                 'Country',
                 'Samoa',
-                'WS'
+                'WS',
+                2
             ),
             (
                 'Country',
                 'Yemen',
-                'YE'
+                'YE',
+                2
             ),
             (
                 'Country',
                 'Zambia',
-                'ZM'
+                'ZM',
+                2
             ),
             (
                 'Country',
                 'Kosovo',
-                'XK'
+                'XK',
+                2
             ),
             (
                 'Province',
                 'Alberta',
-                'AB'
+                'AB',
+                1
             ),
             (
                 'Province',
                 'British Columbia',
-                'BC'
+                'BC',
+                1
             ),
             (
                 'Province',
                 'Manitoba',
-                'MB'
+                'MB',
+                1
             ),
             (
                 'Province',
                 'New Brunswick',
-                'NB'
+                'NB',
+                1
             ),
             (
                 'Province',
                 'Newfoundland and Labrador',
-                'NL'
+                'NL',
+                1
             ),
             (
                 'Province',
                 'Nova Scotia',
-                'NS'
+                'NS',
+                1
             ),
             (
                 'Province',
                 'Ontario',
-                'ON'
+                'ON',
+                1
             ),
             (
                 'Province',
                 'Prince Edward Island',
-                'PE'
+                'PE',
+                1
             ),
             (
                 'Province',
                 'Quebec',
-                'QC'
+                'QC',
+                1
             ),
             (
                 'Province',
                 'Saskatchewan',
-                'SK'
+                'SK',
+                1
             ),
             (
                 'Province',
                 'Yukon',
-                'YT'
+                'YT',
+                1
             ),
             (
                 'Province',
                 'Nunavut',
-                'NU'
+                'NU',
+                1
             ),
             (
                 'Province',
                 'Northwest Territories',
-                'NT'
+                'NT',
+                1
             )
-    ) AS lookup_data(lookup_category, lookup_value, lookup_key)
+    ) AS lookup_data(
+        lookup_category,
+        lookup_value,
+        lookup_key,
+        lookup_priority
+    )
     CROSS JOIN system_user_data su;

@@ -89,3 +89,8 @@ export const CANADA_COUNTRY_CODE = "CA";
  * BC province code.
  */
 export const BC_PROVINCE_CODE = "BC";
+
+/**
+ * United States country code.
+ */
+export const UNITED_STATES_COUNTRY_CODE = "US";

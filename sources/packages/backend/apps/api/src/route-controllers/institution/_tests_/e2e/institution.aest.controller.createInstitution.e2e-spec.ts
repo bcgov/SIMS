@@ -7,7 +7,16 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import { E2EDataSources, createE2EDataSources } from "@sims/test-utils";
-import { InstitutionType } from "@sims/sims-db";
+import {
+  InstitutionClassification,
+  InstitutionMedicalSchoolStatus,
+  InstitutionOrganizationStatus,
+} from "@sims/sims-db";
+import {
+  CANADA_COUNTRY_CODE,
+  BC_PROVINCE_CODE,
+  INSTITUTION_TYPE_BC_PUBLIC,
+} from "@sims/sims-db/constant";
 
 describe("InstitutionAESTController(e2e)-createInstitution", () => {
   let app: INestApplication;
@@ -24,12 +33,16 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
     const payload = {
       legalOperatingName: "Create Institution legal operating name",
       operatingName: "Create Institution operating name",
-      institutionType: 1,
       regulatingBody: "icbc",
       establishedDate: "2023-06-01",
       primaryEmail: "test@test.ca",
       primaryPhone: "7785367878",
       website: "https://www.test.ca",
+      country: CANADA_COUNTRY_CODE,
+      province: BC_PROVINCE_CODE,
+      classification: InstitutionClassification.Public,
+      organizationStatus: InstitutionOrganizationStatus.Profit,
+      medicalSchoolStatus: InstitutionMedicalSchoolStatus.No,
       primaryContactFirstName: "Primary",
       primaryContactLastName: "Contact",
       primaryContactEmail: "test@test.ca",
@@ -91,43 +104,52 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
         primaryPhone: true,
         regulatingBody: true,
         website: true,
+        country: true,
+        province: true,
+        classification: true,
+        organizationStatus: true,
+        medicalSchoolStatus: true,
       },
       where: { id: institutionId },
       relations: { institutionType: true },
     });
-    expect(savedInstitution).toEqual(
-      expect.objectContaining({
-        businessGuid: null,
-        establishedDate: payload.establishedDate,
-        institutionAddress: {
-          mailingAddress: {
-            addressLine1: payload.mailingAddress.addressLine1,
-            addressLine2: payload.mailingAddress.addressLine2,
-            city: payload.mailingAddress.city,
-            country: payload.mailingAddress.country,
-            postalCode: payload.mailingAddress.postalCode,
-            provinceState: payload.mailingAddress.provinceState,
-            selectedCountry: payload.mailingAddress.selectedCountry,
-          },
+    expect(savedInstitution).toEqual({
+      id: institutionId,
+      businessGuid: null,
+      establishedDate: payload.establishedDate,
+      institutionAddress: {
+        mailingAddress: {
+          addressLine1: payload.mailingAddress.addressLine1,
+          addressLine2: payload.mailingAddress.addressLine2,
+          city: payload.mailingAddress.city,
+          country: payload.mailingAddress.country,
+          postalCode: payload.mailingAddress.postalCode,
+          provinceState: payload.mailingAddress.provinceState,
+          selectedCountry: payload.mailingAddress.selectedCountry,
         },
-        institutionPrimaryContact: {
-          email: payload.primaryContactEmail,
-          firstName: payload.primaryContactFirstName,
-          lastName: payload.primaryContactLastName,
-          phone: payload.primaryContactPhone,
-        },
-        institutionType: expect.objectContaining({
-          id: payload.institutionType,
-        } as InstitutionType),
-        legalOperatingName: payload.legalOperatingName,
-        operatingName: payload.operatingName,
-        otherRegulatingBody: null,
-        primaryEmail: payload.primaryEmail,
-        primaryPhone: payload.primaryPhone,
-        regulatingBody: payload.regulatingBody,
-        website: payload.website,
-      }),
-    );
+      },
+      institutionPrimaryContact: {
+        email: payload.primaryContactEmail,
+        firstName: payload.primaryContactFirstName,
+        lastName: payload.primaryContactLastName,
+        phone: payload.primaryContactPhone,
+      },
+      institutionType: {
+        id: INSTITUTION_TYPE_BC_PUBLIC,
+      },
+      legalOperatingName: payload.legalOperatingName,
+      operatingName: payload.operatingName,
+      otherRegulatingBody: null,
+      primaryEmail: payload.primaryEmail,
+      primaryPhone: payload.primaryPhone,
+      regulatingBody: payload.regulatingBody,
+      website: payload.website,
+      country: payload.country,
+      province: payload.province,
+      classification: payload.classification,
+      organizationStatus: payload.organizationStatus,
+      medicalSchoolStatus: payload.medicalSchoolStatus,
+    });
   });
 
   afterAll(async () => {

@@ -136,14 +136,6 @@ export function useFormioDropdownLoader() {
     );
   };
 
-  const loadInstitutionTypes = async (form: any, dropdownName: string) => {
-    return loadDropdown(
-      form,
-      dropdownName,
-      InstitutionService.shared.getInstitutionTypeOptions(),
-    );
-  };
-
   const loadProgramYear = async (form: any, dropdownName: string) => {
     // Find the dropdown to be populated with the locations.
     const dropdown = formioUtils.getFirstComponent(form, dropdownName);
@@ -181,7 +173,6 @@ export function useFormioDropdownLoader() {
     loadProgramsForInstitution,
     loadOfferingsForLocation,
     loadOfferingsForLocationForInstitution,
-    loadInstitutionTypes,
     loadPIRDeniedReasonList,
     loadProgramYear,
     loadDropdown,

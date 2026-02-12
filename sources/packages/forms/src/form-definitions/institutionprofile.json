@@ -42,16 +42,29 @@
       "tableView": false
     },
     {
+      "label": "Is full institution profile update allowed",
+      "persistent": "client-only",
+      "calculateValue": "value = data.clientType === 'aest';",
+      "key": "isFullUpdateAllowed",
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
       "title": "Institution details panel",
       "collapsible": false,
       "hideLabel": true,
       "key": "institutionDetailsPanel",
       "logic": [
         {
-          "name": "Client type not AEST",
+          "name": "Disable panel when full update is not allowed",
           "trigger": {
-            "type": "javascript",
-            "javascript": "result = (data.clientType !== 'aest')"
+            "type": "simple",
+            "simple": {
+              "show": true,
+              "when": "isFullUpdateAllowed",
+              "eq": "false"
+            }
           },
           "actions": [
             {
@@ -129,22 +142,6 @@
           },
           "type": "textfield",
           "input": true
-        },
-        {
-          "label": "Institution type",
-          "widget": "html5",
-          "tableView": true,
-          "clearOnHide": false,
-          "validate": {
-            "required": true
-          },
-          "key": "institutionType",
-          "attributes": {
-            "data-cy": "institutionType"
-          },
-          "type": "select",
-          "input": true,
-          "searchThreshold": 0.3
         },
         {
           "label": "Institution regulatory body",
@@ -244,6 +241,268 @@
             "data-cy": "establishedDate"
           },
           "type": "textfield",
+          "input": true
+        },
+        {
+          "label": "What country is your institution located in?",
+          "widget": "choicesjs",
+          "placeholder": "Select country",
+          "tableView": true,
+          "validate": {
+            "required": true
+          },
+          "validateWhenHidden": false,
+          "key": "country",
+          "logic": [
+            {
+              "name": "Populate component data values from option values",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = !!data.countryOptionValues && !!data.countryOptionValues.length;"
+              },
+              "actions": [
+                {
+                  "name": "Set component data values",
+                  "type": "customAction",
+                  "customAction": "component.data.values = data.countryOptionValues.map((optionValue) => ({\r\n  value: optionValue.lookupKey,\r\n  label: optionValue.lookupValue,\r\n}));"
+                }
+              ]
+            },
+            {
+              "name": "Set component to not required when full update is not allowed",
+              "trigger": {
+                "type": "simple",
+                "simple": {
+                  "show": true,
+                  "when": "isFullUpdateAllowed",
+                  "eq": "false"
+                }
+              },
+              "actions": [
+                {
+                  "name": "Set required as false",
+                  "type": "property",
+                  "property": {
+                    "label": "Required",
+                    "value": "validate.required",
+                    "type": "boolean"
+                  },
+                  "state": false
+                }
+              ]
+            }
+          ],
+          "type": "select",
+          "input": true
+        },
+        {
+          "label": "In which Canadian province is the organization located?",
+          "widget": "choicesjs",
+          "placeholder": "Select province",
+          "tableView": true,
+          "validate": {
+            "required": true
+          },
+          "validateWhenHidden": false,
+          "key": "province",
+          "conditional": {
+            "show": true,
+            "when": "country",
+            "eq": "CA"
+          },
+          "logic": [
+            {
+              "name": "Populate component data values from option values",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = !!data.provinceOptionValues && !!data.provinceOptionValues.length;"
+              },
+              "actions": [
+                {
+                  "name": "Set component data values",
+                  "type": "customAction",
+                  "customAction": "component.data.values = data.provinceOptionValues.map((optionValue) => ({\r\n  value: optionValue.lookupKey,\r\n  label: optionValue.lookupValue,\r\n}));"
+                }
+              ]
+            },
+            {
+              "name": "Set component to not required when full update is not allowed",
+              "trigger": {
+                "type": "simple",
+                "simple": {
+                  "show": true,
+                  "when": "isFullUpdateAllowed",
+                  "eq": "false"
+                }
+              },
+              "actions": [
+                {
+                  "name": "Set required as false",
+                  "type": "property",
+                  "property": {
+                    "label": "Required",
+                    "value": "validate.required",
+                    "type": "boolean"
+                  },
+                  "state": false
+                }
+              ]
+            }
+          ],
+          "type": "select",
+          "input": true
+        },
+        {
+          "label": "Is the institution public or private?",
+          "optionsLabelPosition": "right",
+          "inline": false,
+          "tableView": false,
+          "values": [
+            {
+              "label": "Public",
+              "value": "public",
+              "shortcut": ""
+            },
+            {
+              "label": "Private",
+              "value": "private",
+              "shortcut": ""
+            }
+          ],
+          "validate": {
+            "required": true,
+            "onlyAvailableItems": true
+          },
+          "validateWhenHidden": false,
+          "key": "classification",
+          "logic": [
+            {
+              "name": "Set component to not required when full update is not allowed",
+              "trigger": {
+                "type": "simple",
+                "simple": {
+                  "show": true,
+                  "when": "isFullUpdateAllowed",
+                  "eq": "false"
+                }
+              },
+              "actions": [
+                {
+                  "name": "Set required as false",
+                  "type": "property",
+                  "property": {
+                    "label": "Required",
+                    "value": "validate.required",
+                    "type": "boolean"
+                  },
+                  "state": false
+                }
+              ]
+            }
+          ],
+          "type": "radio",
+          "input": true
+        },
+        {
+          "label": "Is the institution for profit or not for profit?",
+          "optionsLabelPosition": "right",
+          "inline": false,
+          "tableView": false,
+          "values": [
+            {
+              "label": "For profit",
+              "value": "profit",
+              "shortcut": ""
+            },
+            {
+              "label": "Not for profit",
+              "value": "notForProfit",
+              "shortcut": ""
+            }
+          ],
+          "validate": {
+            "required": true,
+            "onlyAvailableItems": true
+          },
+          "validateWhenHidden": false,
+          "key": "organizationStatus",
+          "logic": [
+            {
+              "name": "Set component to not required when full update is not allowed",
+              "trigger": {
+                "type": "simple",
+                "simple": {
+                  "show": true,
+                  "when": "isFullUpdateAllowed",
+                  "eq": "false"
+                }
+              },
+              "actions": [
+                {
+                  "name": "Set required as false",
+                  "type": "property",
+                  "property": {
+                    "label": "Required",
+                    "value": "validate.required",
+                    "type": "boolean"
+                  },
+                  "state": false
+                }
+              ]
+            }
+          ],
+          "type": "radio",
+          "input": true
+        },
+        {
+          "label": "Is the institution medical in nature?",
+          "optionsLabelPosition": "right",
+          "inline": false,
+          "tableView": false,
+          "values": [
+            {
+              "label": "Yes",
+              "value": "yes",
+              "shortcut": ""
+            },
+            {
+              "label": "No",
+              "value": "no",
+              "shortcut": ""
+            }
+          ],
+          "validate": {
+            "required": true,
+            "onlyAvailableItems": true
+          },
+          "validateWhenHidden": false,
+          "key": "medicalSchoolStatus",
+          "logic": [
+            {
+              "name": "Set component to not required when full update is not allowed",
+              "trigger": {
+                "type": "simple",
+                "simple": {
+                  "show": true,
+                  "when": "isFullUpdateAllowed",
+                  "eq": "false"
+                }
+              },
+              "actions": [
+                {
+                  "name": "Set required as false",
+                  "type": "property",
+                  "property": {
+                    "label": "Required",
+                    "value": "validate.required",
+                    "type": "boolean"
+                  },
+                  "state": false
+                }
+              ]
+            }
+          ],
+          "type": "radio",
           "input": true
         },
         {
@@ -847,24 +1106,32 @@
       "tableView": false
     },
     {
-      "label": "mode (create/edit)",
+      "label": "Country option values",
+      "persistent": "client-only",
+      "key": "countryOptionValues",
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
+      "label": "Province option values",
+      "persistent": "client-only",
+      "key": "provinceOptionValues",
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
+      "label": "Client type (aest|undefined)",
+      "persistent": "client-only",
+      "key": "clientType",
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
+      "label": "mode (create|edit)",
       "key": "mode",
-      "type": "hidden",
-      "input": true,
-      "tableView": false
-    },
-    {
-      "label": "applicationId",
-      "persistent": "client-only",
-      "key": "applicationId",
-      "type": "hidden",
-      "input": true,
-      "tableView": false
-    },
-    {
-      "label": "applicationStatus",
-      "persistent": "client-only",
-      "key": "applicationStatus",
       "type": "hidden",
       "input": true,
       "tableView": false

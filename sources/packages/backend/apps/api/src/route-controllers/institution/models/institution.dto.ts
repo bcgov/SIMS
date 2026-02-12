@@ -1,8 +1,9 @@
 import {
   IsDateString,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
-  IsPositive,
+  Length,
   MaxLength,
   ValidateIf,
   ValidateNested,
@@ -18,17 +19,30 @@ import {
 import {
   OPERATING_NAME_MAX_LENGTH,
   LEGAL_OPERATING_NAME_MAX_LENGTH,
+  InstitutionClassification,
+  InstitutionOrganizationStatus,
+  InstitutionMedicalSchoolStatus,
 } from "@sims/sims-db";
 import { OTHER_REGULATING_BODY_MAX_LENGTH } from "../../../constants";
+import { CANADA_COUNTRY_CODE } from "@sims/sims-db/constant";
+import { AllowIf } from "../../../utilities/class-validation";
 
-/**
- * DTO for institution creation by the institution user during the on board process
- * when the institution profile and the admin user must be created altogether.
- */
-export class CreateInstitutionAPIInDTO {
+export class InstitutionContactAPIInDTO {
   @IsNotEmpty()
-  userEmail: string;
-  @IsOptional()
+  primaryContactEmail: string;
+  @IsNotEmpty()
+  primaryContactFirstName: string;
+  @IsNotEmpty()
+  primaryContactLastName: string;
+  @IsNotEmpty()
+  primaryContactPhone: string;
+  @ValidateNested()
+  @Type(() => AddressDetailsAPIInDTO)
+  mailingAddress: AddressDetailsAPIInDTO;
+}
+
+export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
+  @IsNotEmpty()
   operatingName: string;
   @IsNotEmpty()
   primaryPhone: string;
@@ -38,26 +52,45 @@ export class CreateInstitutionAPIInDTO {
   website: string;
   @IsNotEmpty()
   regulatingBody: string;
-  @ValidateIf((e) => e.regulatingBody === "other")
+  @ValidateIf(
+    (input: InstitutionProfileAPIInDTO) => input.regulatingBody === "other",
+  )
   @IsNotEmpty()
   @MaxLength(OTHER_REGULATING_BODY_MAX_LENGTH)
-  otherRegulatingBody: string;
+  otherRegulatingBody?: string;
   @IsDateString()
   establishedDate: string;
-  @IsPositive()
-  institutionType: number;
-  //Institutions Primary Contact Information
   @IsNotEmpty()
-  primaryContactFirstName: string;
+  @Length(2, 2)
+  country: string;
+  @ValidateIf(
+    (input: InstitutionProfileAPIInDTO) =>
+      input.country === CANADA_COUNTRY_CODE || !!input.province,
+  )
+  @AllowIf(
+    (input: InstitutionProfileAPIInDTO) =>
+      input.country === CANADA_COUNTRY_CODE,
+  )
   @IsNotEmpty()
-  primaryContactLastName: string;
+  @Length(2, 2)
+  province?: string;
+  @IsEnum(InstitutionClassification)
+  classification: InstitutionClassification;
+  @IsEnum(InstitutionOrganizationStatus)
+  organizationStatus: InstitutionOrganizationStatus;
+  @IsEnum(InstitutionMedicalSchoolStatus)
+  medicalSchoolStatus: InstitutionMedicalSchoolStatus;
+}
+
+/**
+ * DTO for institution creation by the institution user during the on board process
+ * when the institution profile and the admin user must be created altogether.
+ */
+export class CreateInstitutionAPIInDTO extends InstitutionProfileAPIInDTO {
   @IsNotEmpty()
-  primaryContactEmail: string;
-  @IsNotEmpty()
-  primaryContactPhone: string;
-  @ValidateNested()
-  @Type(() => AddressDetailsAPIInDTO)
-  mailingAddress: AddressDetailsAPIInDTO;
+  userEmail: string;
+  @IsOptional()
+  declare operatingName: string;
 }
 
 /**
@@ -74,20 +107,6 @@ export class AESTCreateInstitutionFormAPIInDTO extends OmitType(
   legalOperatingName: string;
 }
 
-export class InstitutionContactAPIInDTO {
-  @IsNotEmpty()
-  primaryContactEmail: string;
-  @IsNotEmpty()
-  primaryContactFirstName: string;
-  @IsNotEmpty()
-  primaryContactLastName: string;
-  @IsNotEmpty()
-  primaryContactPhone: string;
-  @ValidateNested()
-  @Type(() => AddressDetailsAPIInDTO)
-  mailingAddress: AddressDetailsAPIInDTO;
-}
-
 export class InstitutionContactAPIOutDTO {
   primaryContactEmail: string;
   primaryContactFirstName: string;
@@ -96,28 +115,12 @@ export class InstitutionContactAPIOutDTO {
   mailingAddress: AddressDetailsAPIOutDTO;
 }
 
-export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
-  @IsNotEmpty()
-  operatingName: string;
-  @IsNotEmpty()
-  primaryPhone: string;
-  @IsNotEmpty()
-  primaryEmail: string;
-  @IsNotEmpty()
-  website: string;
-  @IsNotEmpty()
-  regulatingBody: string;
-  @ValidateIf((e) => e.regulatingBody === "other")
-  @IsNotEmpty()
-  @MaxLength(OTHER_REGULATING_BODY_MAX_LENGTH)
-  otherRegulatingBody: string;
-  @IsDateString()
-  establishedDate: string;
-  @IsPositive()
-  institutionType: number;
-}
-
-export class InstitutionProfileAPIOutDTO extends InstitutionContactAPIOutDTO {
+export class InstitutionDetailAPIOutDTO {
+  primaryContactEmail: string;
+  primaryContactFirstName: string;
+  primaryContactLastName: string;
+  primaryContactPhone: string;
+  mailingAddress: AddressDetailsAPIOutDTO;
   operatingName: string;
   primaryPhone: string;
   primaryEmail: string;
@@ -126,11 +129,7 @@ export class InstitutionProfileAPIOutDTO extends InstitutionContactAPIOutDTO {
   otherRegulatingBody?: string;
   establishedDate: string;
   institutionType: number;
-}
-
-export class InstitutionDetailAPIOutDTO extends InstitutionProfileAPIOutDTO {
   legalOperatingName: string;
-  institutionTypeName?: string;
   isBCPrivate: boolean;
   isBCPublic: boolean;
   /**
@@ -138,6 +137,13 @@ export class InstitutionDetailAPIOutDTO extends InstitutionProfileAPIOutDTO {
    * associated with, if not it is a basic BCeID institution.
    */
   hasBusinessGuid: boolean;
+  country?: string;
+  countryName?: string;
+  province?: string;
+  provinceName?: string;
+  classification?: InstitutionClassification;
+  organizationStatus?: InstitutionOrganizationStatus;
+  medicalSchoolStatus?: InstitutionMedicalSchoolStatus;
 }
 
 export class InstitutionBasicAPIOutDTO {
