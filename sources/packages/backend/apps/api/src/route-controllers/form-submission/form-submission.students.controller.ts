@@ -9,7 +9,7 @@ import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 import { FormCategory } from "@sims/sims-db";
-import { SubmissionFormConfigurationsAPIOutDTO } from "apps/api/src/route-controllers/form-submission/models/form-submission.dto";
+import { SubmissionFormConfigurationsAPIOutDTO } from "./models/form-submission.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
