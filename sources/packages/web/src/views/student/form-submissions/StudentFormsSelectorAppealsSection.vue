@@ -166,7 +166,6 @@ export default defineComponent({
     formsConfigurations: {
       type: Array as PropType<FormSubmissionConfigurationAPIOutDTO[]>,
       required: true,
-      default: (): FormSubmissionConfigurationAPIOutDTO[] => [],
     },
     applicationId: {
       type: Number,
@@ -189,7 +188,7 @@ export default defineComponent({
     );
     // Selected form(s)
     const selectedApplicationAppealsForms = ref<number[]>();
-    const selectedStandaloneAppealsForm = ref<string[]>();
+    const selectedStandaloneAppealsForm = ref<number[]>();
     // Appeal type (Applications or Others).
     const selectedAppealType = ref<AppealTypes | null>(null);
     // Eligible applications

@@ -77,7 +77,6 @@ export default defineComponent({
     formsConfigurations: {
       type: Array as PropType<FormSubmissionConfigurationAPIOutDTO[]>,
       required: true,
-      default: (): FormSubmissionConfigurationAPIOutDTO[] => [],
     },
   },
   setup(props) {

@@ -25,6 +25,7 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { FormSubmissionsService } from "@/services/FormSubmissionsService";
 import StudentFormsSelectorAppealsSection from "./StudentFormsSelectorAppealsSection.vue";
 import StudentFormsSelectorFormSection from "./StudentFormsSelectorFormsSection.vue";
+import { FormSubmissionConfigurationAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   components: {

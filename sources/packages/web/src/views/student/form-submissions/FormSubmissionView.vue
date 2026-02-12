@@ -44,6 +44,7 @@ import { FormSubmissionsService } from "@/services/FormSubmissionsService";
 import { FormSubmissionItem, FormSubmissionItemApproval } from "@/types";
 import { FormSubmissionStudentAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import { useSnackBar } from "@/composables";
 
 export default defineComponent({
   components: {
@@ -56,6 +57,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const snackBar = useSnackBar();
     const router = useRouter();
     const formSubmissionItems = ref([] as FormSubmissionItem[]);
     const processing = ref(false);
@@ -68,25 +70,29 @@ export default defineComponent({
     };
 
     watchEffect(async () => {
-      // Submission data.
-      formSubmission.value =
-        await FormSubmissionsService.shared.getFormSubmission(
-          props.formSubmissionId,
-        );
-      // Convert submission items to be displayed.
-      formSubmissionItems.value =
-        formSubmission.value.submissionItems.map<FormSubmissionItem>(
-          (item) => ({
-            dynamicConfigurationId: item.dynamicFormConfigurationId,
-            category: item.formCategory,
-            formType: item.formType,
-            formName: item.formDefinitionName,
-            formData: item.submissionData,
-            approval: {
-              status: item.decisionStatus,
-            } as FormSubmissionItemApproval,
-          }),
-        );
+      try {
+        // Submission data.
+        formSubmission.value =
+          await FormSubmissionsService.shared.getFormSubmission(
+            props.formSubmissionId,
+          );
+        // Convert submission items to be displayed.
+        formSubmissionItems.value =
+          formSubmission.value.submissionItems.map<FormSubmissionItem>(
+            (item) => ({
+              dynamicConfigurationId: item.dynamicFormConfigurationId,
+              category: item.formCategory,
+              formType: item.formType,
+              formName: item.formDefinitionName,
+              formData: item.submissionData,
+              approval: {
+                status: item.decisionStatus,
+              } as FormSubmissionItemApproval,
+            }),
+          );
+      } catch {
+        snackBar.error("Error while loading form submission data.");
+      }
     });
 
     return {

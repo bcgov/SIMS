@@ -133,7 +133,6 @@ import { computed, defineComponent, ref, watchEffect } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useFormatters, useStudentAppeals } from "@/composables";
 import router from "@/router";
-import { useDisplay } from "vuetify";
 import { FormSubmissionsService } from "@/services/FormSubmissionsService";
 import StatusChipFormSubmission from "@/components/generic/StatusChipFormSubmission.vue";
 import StatusChipFormSubmissionDecision from "@/components/generic/StatusChipFormSubmissionDecision.vue";
@@ -146,7 +145,6 @@ export default defineComponent({
     StatusChipFormSubmissionDecision,
   },
   setup() {
-    const { mobile: isMobile } = useDisplay();
     const formCategoryFilter = ref([
       FormCategory.StudentAppeal,
       FormCategory.StudentForm,
@@ -161,6 +159,7 @@ export default defineComponent({
     const submissions = ref<FormSubmissionStudentAPIOutDTO[]>();
 
     watchEffect(async () => {
+      // TODO: add loading and error handling.
       const submissionSummary =
         await FormSubmissionsService.shared.getFormSubmissionSummary();
       submissions.value = submissionSummary.submissions;
@@ -184,7 +183,6 @@ export default defineComponent({
     return {
       FormCategory,
       formCategoryFilter,
-      isMobile,
       submissions,
       StudentRoutesConst,
       emptyStringFiller,

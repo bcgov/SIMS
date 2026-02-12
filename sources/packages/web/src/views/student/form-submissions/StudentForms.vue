@@ -11,7 +11,7 @@
           text="Submissions"
           :to="{
             name: StudentRoutesConst.STUDENT_FORMS_SELECTOR,
-            params: applicationId ? { applicationId } : undefined,
+            query: applicationId ? { applicationId } : undefined,
           }"
           value="form-selector"
         />
@@ -21,7 +21,7 @@
           text="History"
           :to="{
             name: StudentRoutesConst.STUDENT_FORMS_HISTORY,
-            params: applicationId ? { applicationId } : undefined,
+            query: applicationId ? { applicationId } : undefined,
           }"
           value="form-history"
         />
