@@ -281,12 +281,12 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.StudentFormSubmission,
+        path: AppRoutes.StudentFormSubmissionView,
         name: StudentRoutesConst.STUDENT_FORMS_SUBMISSION_VIEW,
         component: FormSubmissionView,
         props: (route) => ({
-          formDefinitionId: Number.parseInt(
-            route.params.formDefinitionId as string,
+          formSubmissionId: Number.parseInt(
+            route.params.formSubmissionId as string,
           ),
         }),
         meta: {

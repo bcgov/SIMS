@@ -89,7 +89,7 @@ export default defineComponent({
           return;
         }
         snackBar.error(
-          "An unexpected error happened while submitting the appeal.",
+          "An unexpected error happened while submitting the form.",
         );
       } finally {
         processing.value = false;

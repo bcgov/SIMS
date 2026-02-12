@@ -1,4 +1,4 @@
-// TODO: This DTOs will have its final version once API is fully integrated.
+// TODO: These DTOs will have their final version once the API is fully integrated.
 import {
   FormCategory,
   FormSubmissionStatus,

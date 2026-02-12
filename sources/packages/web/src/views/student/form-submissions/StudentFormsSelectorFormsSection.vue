@@ -3,7 +3,7 @@
     <template #header>
       <body-header
         title="Standard forms"
-        sub-title="Standard forms to be submitted for StudentAid Bc review."
+        sub-title="Standard forms to be submitted for StudentAid BC review."
       />
     </template>
     <v-expansion-panels class="mt-5">
@@ -45,7 +45,10 @@
               </v-list-item>
             </v-list>
             <v-input
-              :rules="[(v) => !!v || 'Please select one form to be submitted.']"
+              :model-value="selectedStandaloneForm"
+              :rules="[
+                (v) => checkNullOrEmptyRule(v, 'At least one selected form'),
+              ]"
             >
             </v-input>
           </v-form>

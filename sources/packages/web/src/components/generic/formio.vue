@@ -12,9 +12,15 @@
 </template>
 
 <script lang="ts">
-import { computed, ref, watch, watchEffect } from "vue";
+import {
+  defineComponent,
+  PropType,
+  computed,
+  ref,
+  watch,
+  watchEffect,
+} from "vue";
 import { Formio } from "@formio/js";
-import { defineComponent } from "vue";
 import ApiClient from "@/services/http/ApiClient";
 import FormUploadService from "@/services/FormUploadService";
 import {
@@ -41,7 +47,7 @@ export default defineComponent({
       return !!form && !!event;
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    loaded: (form: FormIOForm, _formKey: object) => {
+    loaded: (form: FormIOForm, _formKey: string | number) => {
       return !!form;
     },
     customEvent: (form: FormIOForm, event: FormIOCustomEvent) => {
@@ -58,6 +64,7 @@ export default defineComponent({
     },
     data: {
       type: Object,
+      default: undefined,
     },
     readOnly: {
       type: Boolean,
@@ -74,7 +81,7 @@ export default defineComponent({
       required: false,
     },
     formKey: {
-      type: Object,
+      type: Object as PropType<string | number>,
       default: null,
       required: false,
     },

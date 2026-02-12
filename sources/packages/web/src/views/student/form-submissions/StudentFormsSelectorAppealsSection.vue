@@ -70,11 +70,8 @@
                 </v-list-item>
               </v-list>
               <v-input
-                :rules="[
-                  (v) =>
-                    !!v ||
-                    'Please select one or more appeal(s) to be submitted.',
-                ]"
+                :model-value="selectedApplicationAppealsForms"
+                :rules="[(v) => checkNullOrEmptyRule(v, 'At least one appeal')]"
               >
               </v-input>
             </template>
@@ -130,9 +127,8 @@
               </v-list-item>
             </v-list>
             <v-input
-              :rules="[
-                (v) => !!v || 'Please select one appeal to be submitted.',
-              ]"
+              :model-value="selectedStandaloneAppealsForm"
+              :rules="[(v) => checkNullOrEmptyRule(v, 'At least one appeal')]"
             >
             </v-input>
           </v-form>
@@ -174,7 +170,8 @@ export default defineComponent({
     },
     applicationId: {
       type: Number,
-      required: true,
+      required: false,
+      default: undefined,
     },
   },
   setup(props) {

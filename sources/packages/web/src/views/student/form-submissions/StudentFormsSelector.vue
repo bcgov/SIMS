@@ -49,7 +49,7 @@ export default defineComponent({
           await FormSubmissionsService.shared.getSubmissionForms();
         formConfigurations.value = formsConfigs.configurations;
       } catch {
-        snackBar.error("Unexpected error while loading eligible applications.");
+        snackBar.error("Unexpected error while loading forms configurations.");
       }
     });
 

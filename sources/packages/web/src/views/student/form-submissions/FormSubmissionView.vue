@@ -50,7 +50,7 @@ export default defineComponent({
     FormSubmissionItems,
   },
   props: {
-    formDefinitionId: {
+    formSubmissionId: {
       type: Number,
       required: true,
     },
@@ -71,7 +71,7 @@ export default defineComponent({
       // Submission data.
       formSubmission.value =
         await FormSubmissionsService.shared.getFormSubmission(
-          props.formDefinitionId,
+          props.formSubmissionId,
         );
       // Convert submission items to be displayed.
       formSubmissionItems.value =

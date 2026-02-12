@@ -15,6 +15,7 @@ export enum FormCategory {
    * Forms used along the system that are not directly
    * selected by users.
    */
+  System = "System",
 }
 
 /**

@@ -101,6 +101,7 @@ export default defineComponent({
      * Validate and emits an event if all forms are valid.
      */
     const submit = async () => {
+      // TODO: Consider not allowing the submission if all the forms were not loaded.
       const invalidFormKeys: number[] = [];
       const validItems: FormSubmissionItemSubmitted[] = [];
       for (const [key, form] of forms) {
