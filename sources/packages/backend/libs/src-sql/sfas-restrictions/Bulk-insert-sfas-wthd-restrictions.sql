@@ -5,11 +5,11 @@
  */
 INSERT INTO
   sims.student_restrictions (student_id, restriction_id, creator, created_at)
-SELECT
+SELECT DISTINCT
   sfas_individuals.student_id,
-  $1, -- WTHD restriction ID.
-  $2, -- Creator user ID.
-  $3  -- Created at timestamp.
+  $1::INT, -- WTHD restriction ID.
+  $2::INT, -- Creator user ID.
+  $3::TIMESTAMP  -- Created at timestamp.
 FROM
   (
     SELECT
@@ -19,7 +19,10 @@ FROM
     WHERE
       sfas_applications.withdrawal_date IS NOT NULL
       AND sfas_applications.withdrawal_reason != 'NPWD'
-      AND sfas_applications.withdrawal_active_flag != 'Y'
+      AND (
+        sfas_applications.withdrawal_active_flag != 'Y'
+        OR sfas_applications.withdrawal_active_flag IS NULL
+      )
       AND sfas_applications.wthd_processed = FALSE
   ) applications_wthd_restrictions
   INNER JOIN sims.sfas_individuals sfas_individuals ON applications_wthd_restrictions.individual_id = sfas_individuals.id
