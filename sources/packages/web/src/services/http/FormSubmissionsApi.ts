@@ -84,26 +84,27 @@ const MOCKED_SUBMISSIONS: FormSubmissionStudentAPIOutDTO[] = [
  * Http API client for Form Submissions.
  */
 export class FormSubmissionsApi extends HttpBaseClient {
-  async getFormSubmissionSummary(): Promise<FormSubmissionStudentSummaryAPIOutDTO> {
-    // TODO: Call to API endpoint to get form submission summary for students.
-    return {
-      submissions: MOCKED_SUBMISSIONS,
-    };
-  }
-
-  async getFormSubmission(
-    formSubmissionId: number,
-  ): Promise<FormSubmissionStudentAPIOutDTO> {
-    return MOCKED_SUBMISSIONS.find(
-      (submission) => submission.id === formSubmissionId,
-    )!;
-  }
-
   /**
    * Get all submission form configurations for student submission forms.
    * @returns form configurations that allow student submissions.
    */
   async getSubmissionForms(): Promise<SubmissionFormConfigurationsAPIOutDTO> {
     return this.getCall(this.addClientRoot("form-submission/forms"));
+  }
+
+  // TODO: To be implemented.
+  async getFormSubmissionSummary(): Promise<FormSubmissionStudentSummaryAPIOutDTO> {
+    return {
+      submissions: MOCKED_SUBMISSIONS,
+    };
+  }
+
+  // TODO: To be implemented.
+  async getFormSubmission(
+    formSubmissionId: number,
+  ): Promise<FormSubmissionStudentAPIOutDTO> {
+    return MOCKED_SUBMISSIONS.find(
+      (submission) => submission.id === formSubmissionId,
+    )!;
   }
 }

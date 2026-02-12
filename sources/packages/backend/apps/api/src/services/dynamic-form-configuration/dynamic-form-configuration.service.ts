@@ -82,6 +82,11 @@ export class DynamicFormConfigurationService {
     );
   }
 
+  /**
+   * Get form configurations by its category.
+   * @param formCategories form category.
+   * @returns dynamic form configurations for the requested categories.
+   */
   getFormsByCategory(
     ...formCategories: FormCategory[]
   ): DynamicFormConfiguration[] {

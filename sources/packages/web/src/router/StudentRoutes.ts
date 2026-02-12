@@ -272,8 +272,8 @@ export const studentRoutes: Array<RouteRecordRaw> = [
           formDefinitionIds: (route.params.formDefinitionIds as string)
             .split(",")
             .map((id) => Number.parseInt(id)),
-          applicationId: route.query["application"]
-            ? Number.parseInt(route.query["application"] as string)
+          applicationId: route.query["applicationId"]
+            ? Number.parseInt(route.query["applicationId"] as string)
             : undefined,
         }),
         meta: {

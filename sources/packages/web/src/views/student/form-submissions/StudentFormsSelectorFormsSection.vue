@@ -85,7 +85,6 @@ export default defineComponent({
     const standaloneFormsSelectionForm = ref({} as VForm);
 
     watchEffect(async () => {
-      // Forms
       standaloneForms.value = props.formsConfigurations.filter(
         (form) => form.formCategory === FormCategory.StudentForm,
       );

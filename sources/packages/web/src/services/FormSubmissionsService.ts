@@ -21,10 +21,12 @@ export class FormSubmissionsService {
     return ApiClient.FormSubmissionsApi.getSubmissionForms();
   }
 
+  // TODO: To be implemented.
   async getFormSubmissionSummary(): Promise<FormSubmissionStudentSummaryAPIOutDTO> {
     return ApiClient.FormSubmissionsApi.getFormSubmissionSummary();
   }
 
+  // TODO: To be implemented.
   async getFormSubmission(
     formSubmissionId: number,
   ): Promise<FormSubmissionStudentAPIOutDTO> {

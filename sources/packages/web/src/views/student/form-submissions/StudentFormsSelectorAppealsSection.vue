@@ -283,7 +283,7 @@ export default defineComponent({
           formDefinitionIds: selectedApplicationAppealsForms.value?.toString(),
         },
         query: {
-          application: selectedApplicationId.value,
+          applicationId: selectedApplicationId.value,
         },
       });
     };

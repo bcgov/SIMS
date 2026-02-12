@@ -8,9 +8,13 @@ export enum FormCategory {
   StudentAppeal = "Student appeal",
   /**
    * Any form submitted by a student that does not fall under
-   * the appeals process and have multiple applications.
+   * the appeals process and have multiple purposes.
    */
   StudentForm = "Student form",
+  /**
+   * Forms used along the system that are not directly
+   * selected by users.
+   */
 }
 
 /**
@@ -24,9 +28,8 @@ export enum FormSubmissionStatus {
   Pending = "Pending",
   /**
    * All forms within the submission were assessed and
-   * are no longer pending. The decisions could be
-   * approved or declined, either way the submission
-   * process is completed.
+   * are no longer pending, at least one form was approved,
+   * and the submission process is completed.
    */
   Completed = "Completed",
   /**
