@@ -13,7 +13,8 @@ export class DynamicFormConfigurationService {
   /**
    * @private All dynamic form configurations.
    */
-  private dynamicFormConfigurations: DynamicFormConfiguration[] = [];
+  private dynamicFormConfigurations: ReadonlyArray<DynamicFormConfiguration> =
+    [];
   constructor(
     @InjectRepository(DynamicFormConfiguration)
     private readonly dynamicFormConfigurationRepo: Repository<DynamicFormConfiguration>,
@@ -23,7 +24,7 @@ export class DynamicFormConfigurationService {
    * Load all dynamic form configurations.
    */
   async loadAllDynamicFormConfigurations(): Promise<void> {
-    this.dynamicFormConfigurations =
+    const configurations = (this.dynamicFormConfigurations =
       await this.dynamicFormConfigurationRepo.find({
         select: {
           id: true,
@@ -39,7 +40,11 @@ export class DynamicFormConfigurationService {
         relations: {
           programYear: true,
         },
-      });
+      }));
+    // Freeze each configuration object to make it immutable.
+    configurations.forEach((configuration) => Object.freeze(configuration));
+    // Freeze the array to prevent adding/removing items at runtime.
+    this.dynamicFormConfigurations = Object.freeze(configurations);
   }
 
   /**
