@@ -52,3 +52,25 @@ class FormSubmissionItemStudentAPIOutDTO extends FormSubmissionItemAPIOutDTO {}
 export class FormSubmissionStudentAPIOutDTO extends FormSubmissionAPIOutDTO {
   submissionItems: FormSubmissionItemStudentAPIOutDTO[];
 }
+
+/**
+ * Individual form item in the form submission.
+ */
+export interface FormSubmissionItemAPIInDTO {
+  dynamicConfigurationId: number;
+  formData: unknown;
+  files: string[];
+}
+
+/**
+ * Form submission with one to many form items for individual Ministry decision.
+ * All forms must belong to same category and may be related to an application.
+ * When related to an application, the application ID must be provided and all
+ * forms must have application scope.
+ * For submissions with an application scope, that must enforce the applicationId,
+ * the validation is executed outside the DTO scope.
+ */
+export interface FormSubmissionAPIInDTO {
+  applicationId?: number;
+  items: FormSubmissionItemAPIInDTO[];
+}

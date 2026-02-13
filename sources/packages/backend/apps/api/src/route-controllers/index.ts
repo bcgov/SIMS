@@ -107,3 +107,4 @@ export * from "./system-lookup-configuration/models/system-lookup-configuration.
 export * from "./system-lookup-configuration/system-lookup-configuration.controller";
 export * from "./form-submission/form-submission.students.controller";
 export * from "./form-submission/models/form-submission.dto";
+export * from "./form-submission/form-submission.controller.service";

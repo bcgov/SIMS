@@ -74,11 +74,17 @@ export default defineComponent({
 
     const referenceForm = computed(() => formSubmissionItems.value[0]);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const submitted = async (_items: FormSubmissionItemSubmitted[]) => {
+    const submitted = async (items: FormSubmissionItemSubmitted[]) => {
       try {
-        // TODO: Submit form.
         processing.value = true;
+        await FormSubmissionService.shared.submitForm({
+          applicationId: props.applicationId,
+          items: items.map((item) => ({
+            dynamicConfigurationId: item.dynamicConfigurationId,
+            formData: item.formData,
+            files: item.files,
+          })),
+        });
         snackBar.success("The student form has been submitted successfully.");
         router.push({
           name: StudentRoutesConst.STUDENT_FORMS_HISTORY,
