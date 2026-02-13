@@ -34,6 +34,12 @@ import StudentApplicationAppealSubmit from "@/views/student/appeal/StudentApplic
 import StudentApplicationAppealRequests from "@/views/student/appeal/StudentApplicationAppealRequests.vue";
 // Legacy Appeal Request (to be removed later)
 import LegacyStudentAppealRequest from "@/views/student/appeal-legacy/StudentAppealSubmit.vue";
+// Student Forms
+import StudentForms from "@/views/student/form-submissions/StudentForms.vue";
+import StudentFormsSelector from "@/views/student/form-submissions/StudentFormsSelector.vue";
+import StudentFormsHistory from "@/views/student/form-submissions/StudentFormsHistory.vue";
+import FormSubmission from "@/views/student/form-submissions/FormSubmission.vue";
+import FormSubmissionView from "@/views/student/form-submissions/FormSubmissionView.vue";
 import {
   StudentRoutesConst,
   SharedRouteConst,
@@ -221,6 +227,67 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         component: StudentApplicationDetails,
         props: (route) => ({
           id: Number.parseInt(route.params.id as string),
+        }),
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      // Student Forms
+      {
+        path: AppRoutes.StudentForms,
+        name: StudentRoutesConst.STUDENT_FORMS,
+        component: StudentForms,
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+        children: [
+          {
+            path: AppRoutes.StudentFormsSelector,
+            name: StudentRoutesConst.STUDENT_FORMS_SELECTOR,
+            component: StudentFormsSelector,
+            props: (route) => ({
+              applicationId: route.query.applicationId
+                ? Number.parseInt(route.query.applicationId as string)
+                : undefined,
+            }),
+            meta: {
+              clientType: ClientIdType.Student,
+            },
+          },
+          {
+            path: AppRoutes.StudentFormsHistory,
+            name: StudentRoutesConst.STUDENT_FORMS_HISTORY,
+            component: StudentFormsHistory,
+            meta: {
+              clientType: ClientIdType.Student,
+            },
+          },
+        ],
+      },
+      {
+        path: AppRoutes.StudentFormsSubmit,
+        name: StudentRoutesConst.STUDENT_FORM_SUBMIT,
+        component: FormSubmission,
+        props: (route) => ({
+          formDefinitionIds: (route.params.formDefinitionIds as string)
+            .split(",")
+            .map((id) => Number.parseInt(id)),
+          applicationId: route.query.applicationId
+            ? Number.parseInt(route.query.applicationId as string)
+            : undefined,
+        }),
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentFormSubmissionView,
+        name: StudentRoutesConst.STUDENT_FORMS_SUBMISSION_VIEW,
+        component: FormSubmissionView,
+        props: (route) => ({
+          formSubmissionId: Number.parseInt(
+            route.params.formSubmissionId as string,
+          ),
         }),
         meta: {
           clientType: ClientIdType.Student,

@@ -35,6 +35,7 @@ import { DynamicFormConfigurationApi } from "@/services/http/DynamicFormConfigur
 import { ApplicationChangeRequestApi } from "@/services/http/ApplicationChangeRequestApi";
 import { DisbursementScheduleApi } from "@/services/http/DisbursementScheduleApi";
 import { SystemLookupConfigurationApi } from "@/services/http/SystemLookupConfigurationApi";
+import { FormSubmissionApi } from "@/services/http/FormSubmissionApi";
 
 const ApiClient = {
   AuditApi: new AuditApi(),
@@ -75,6 +76,7 @@ const ApiClient = {
   ApplicationChangeRequestApi: new ApplicationChangeRequestApi(),
   DisbursementSchedule: new DisbursementScheduleApi(),
   SystemLookupConfigurationApi: new SystemLookupConfigurationApi(),
+  FormSubmissionApi: new FormSubmissionApi(),
 };
 
 export default ApiClient;
