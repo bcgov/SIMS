@@ -14,6 +14,7 @@ import {
   StudentRestriction,
   RestrictionBypassBehaviors,
   Application,
+  InstitutionRestriction,
 } from "@sims/sims-db";
 
 /**
@@ -47,12 +48,27 @@ export class ApplicationRestrictionBypass extends RecordDataModel {
   @ManyToOne(() => StudentRestriction, {
     eager: false,
     cascade: false,
+    nullable: true,
   })
   @JoinColumn({
     name: "student_restriction_id",
     referencedColumnName: ColumnNames.ID,
   })
   studentRestriction: StudentRestriction;
+
+  /**
+   * Active institution restriction to be bypassed.
+   */
+  @ManyToOne(() => InstitutionRestriction, {
+    eager: false,
+    cascade: false,
+    nullable: true,
+  })
+  @JoinColumn({
+    name: "institution_restriction_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  institutionRestriction: InstitutionRestriction;
 
   /**
    * Defines how the bypass should behave, for instance, until when it will be valid.

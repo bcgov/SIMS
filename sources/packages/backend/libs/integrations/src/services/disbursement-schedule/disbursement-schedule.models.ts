@@ -236,7 +236,11 @@ export interface ApplicationActiveRestrictionBypass {
   /**
    * Student restriction bypassed.
    */
-  studentRestrictionId: number;
+  studentRestrictionId?: number;
+  /**
+   * Institution restriction bypassed.
+   */
+  institutionRestrictionId?: number;
   /**
    * Bypass behavior.
    */
@@ -265,6 +269,7 @@ export type EligibleECertOffering = Pick<
  */
 export class EligibleECertDisbursement {
   private readonly studentRestrictionsBypassedIds: number[];
+  private readonly institutionRestrictionsBypassedIds: number[];
   /**
    * Creates a new instance of a eligible e-Cert to be calculated.
    * @param studentId student id.
@@ -312,6 +317,9 @@ export class EligibleECertDisbursement {
   ) {
     this.studentRestrictionsBypassedIds = this.restrictionBypass.map(
       (bypass) => bypass.studentRestrictionId,
+    );
+    this.institutionRestrictionsBypassedIds = this.restrictionBypass.map(
+      (bypass) => bypass.institutionRestrictionId,
     );
   }
 
@@ -376,7 +384,7 @@ export class EligibleECertDisbursement {
   }
 
   /**
-   * List the effective institution restrictions for the given disbursement.
+   * List the effective institution restrictions not bypassed for the given disbursement.
    * @returns Effective institution restrictions.
    */
   private getEffectiveInstitutionRestrictions(): ReadonlyArray<InstitutionActiveRestriction> {
@@ -385,7 +393,10 @@ export class EligibleECertDisbursement {
     return this.institutionRestrictions.filter(
       (restriction) =>
         restriction.program.id === programId &&
-        restriction.location.id === locationId,
+        restriction.location.id === locationId &&
+        !this.institutionRestrictionsBypassedIds.includes(
+          restriction.institutionRestrictionId,
+        ),
     );
   }
 
