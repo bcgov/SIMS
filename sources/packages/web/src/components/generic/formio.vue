@@ -12,14 +12,7 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  PropType,
-  computed,
-  ref,
-  watch,
-  watchEffect,
-} from "vue";
+import { defineComponent, computed, ref, watch, watchEffect } from "vue";
 import { Formio } from "@formio/js";
 import ApiClient from "@/services/http/ApiClient";
 import FormUploadService from "@/services/FormUploadService";
@@ -81,7 +74,7 @@ export default defineComponent({
       required: false,
     },
     formKey: {
-      type: Object as PropType<string | number>,
+      type: [String, Number],
       default: null,
       required: false,
     },
