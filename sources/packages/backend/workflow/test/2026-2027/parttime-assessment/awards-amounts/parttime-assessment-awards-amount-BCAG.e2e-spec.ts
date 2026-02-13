@@ -193,7 +193,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataCurrentYearIncome = 20001;
+      assessmentConsolidatedData.appealsStudentCurrentYearIncomeAppealData = {
+        currentYearIncome: 20001,
+      };
       assessmentConsolidatedData.studentDataCRAReportedIncome = 1000001;
       assessmentConsolidatedData.studentDataRelationshipStatus = "single";
       // Act
