@@ -58,7 +58,6 @@ import {
   SupportingUserControllerService,
   SupportingUserStudentsController,
   FormSubmissionStudentsController,
-  FormSubmissionControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "@sims/utilities/config";
@@ -163,7 +162,6 @@ import { ObjectStorageModule } from "@sims/integrations/object-storage";
     DisbursementScheduleSharedService,
     InstitutionRestrictionService,
     FormSubmissionService,
-    FormSubmissionControllerService,
   ],
 })
 export class AppStudentsModule {}

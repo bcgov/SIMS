@@ -24,7 +24,6 @@ import {
 } from "./models/form-submission.dto";
 import { StudentUserToken } from "apps/api/src/auth";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { FormSubmissionControllerService } from "./form-submission.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -34,7 +33,6 @@ export class FormSubmissionStudentsController extends BaseController {
   constructor(
     private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
     private readonly formSubmissionService: FormSubmissionService,
-    private readonly formSubmissionControllerService: FormSubmissionControllerService,
   ) {
     super();
   }
@@ -93,16 +91,10 @@ export class FormSubmissionStudentsController extends BaseController {
     @UserToken() userToken: StudentUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
-      const { items, formCategory } =
-        await this.formSubmissionControllerService.getValidatedFormItems(
-          payload,
-          userToken.studentId,
-        );
       const studentAppeal = await this.formSubmissionService.saveFormSubmission(
         userToken.studentId,
         payload.applicationId,
-        formCategory,
-        items,
+        payload.items,
         userToken.userId,
       );
       return {
