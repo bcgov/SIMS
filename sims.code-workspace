@@ -257,5 +257,6 @@
       "All",
     ],
     "jest.jestCommandLine": "npm run test:e2e:api:local --",
+    "typescript.tsserver.web.projectWideIntellisense.enabled": false,
   },
 }
