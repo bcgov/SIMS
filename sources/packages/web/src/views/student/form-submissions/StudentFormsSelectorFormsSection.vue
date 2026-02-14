@@ -2,7 +2,7 @@
   <body-header-container :enable-card-view="true">
     <template #header>
       <body-header
-        title="Standard forms"
+        title="Student forms"
         sub-title="Standard forms to be submitted for StudentAid BC review."
       />
     </template>
@@ -10,9 +10,12 @@
       <v-expansion-panel>
         <template #title
           ><div>
-            <span class="category-header-medium brand-gray-text">General</span>
+            <span class="category-header-medium brand-gray-text"
+              >Standard forms</span
+            >
             <div>
-              Forms for diverse types of requests for StudentAid BC decision.
+              Forms used to determine eligibility for a variety of StudentAid BC
+              funding programs.
             </div>
           </div></template
         >

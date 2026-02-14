@@ -60,3 +60,6 @@ export * from "./dynamic-form-configuration/dynamic-form-configuration.service";
 export * from "./application-change-request/application-change-request.service";
 export * from "./student-appeal/student-appeal.model";
 export * from "./student-appeal/student-appeal-assessment";
+export * from "./form-submission/constants";
+export * from "./form-submission/form-submission.models";
+export * from "./form-submission/form-submission.service";

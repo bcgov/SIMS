@@ -2,8 +2,8 @@
   <body-header-container :enable-card-view="true">
     <template #header>
       <body-header
-        title="Appeals"
-        sub-title="You can submit two types of appeals for StudentAid BC to review. Select the appropriate appeals type below."
+        title="Appeal forms"
+        sub-title="There are two appeal paths available. Please review the options below and select the appropriate path."
       />
     </template>
     <v-expansion-panels class="mt-5" v-model="selectedAppealType">
@@ -14,10 +14,7 @@
               class="category-header-medium brand-gray-text application-appeals-header"
               >Application appeals</span
             >
-            <div>
-              Application-related appeals to request changes for an already
-              submitted and completed application.
-            </div>
+            <div>Application appeals are assessment focused changes.</div>
           </div></template
         >
         <template #text>
@@ -91,7 +88,7 @@
             <span class="category-header-medium brand-gray-text"
               >Other appeals</span
             >
-            <div>Non-application related appeals.</div>
+            <div>Appeals that are profile and student specific.</div>
           </div></template
         >
         <template #text>

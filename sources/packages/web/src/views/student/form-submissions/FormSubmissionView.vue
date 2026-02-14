@@ -3,7 +3,7 @@
   <student-page-container>
     <template #header>
       <header-navigator
-        title="Student Forms"
+        title="Forms"
         sub-title="Forms submission"
         :route-location="{
           name: StudentRoutesConst.STUDENT_FORMS_HISTORY,
