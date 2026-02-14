@@ -75,21 +75,14 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
       await this.applicationRestrictionBypassService.getApplicationRestrictionBypasses(
         applicationId,
       );
-    // Map the application restriction bypasses to the summary DTO
-    // depending on whether the bypass is student or institution restriction bypass.
     const bypasses = applicationRestrictionBypasses.map(
       (item: ApplicationRestrictionBypass) => ({
         id: item.id,
         restrictionCategory:
-          item.studentRestriction?.restriction.restrictionCategory ||
-          item.institutionRestriction?.restriction.restrictionCategory,
-        restrictionCode:
-          item.studentRestriction?.restriction.restrictionCode ||
-          item.institutionRestriction?.restriction.restrictionCode,
-        isRestrictionActive:
-          item.studentRestriction?.isActive ||
-          item.institutionRestriction?.isActive,
-        restrictionDeletedAt: item.studentRestriction?.deletedAt,
+          item.studentRestriction.restriction.restrictionCategory,
+        restrictionCode: item.studentRestriction.restriction.restrictionCode,
+        isRestrictionActive: item.studentRestriction.isActive,
+        restrictionDeletedAt: item.studentRestriction.deletedAt,
         isBypassActive: item.isActive,
       }),
     );

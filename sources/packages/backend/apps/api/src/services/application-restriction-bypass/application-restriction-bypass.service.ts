@@ -80,19 +80,9 @@ export class ApplicationRestrictionBypassService {
             restrictionCode: true,
           },
         },
-        institutionRestriction: {
-          id: true,
-          isActive: true,
-          restriction: {
-            id: true,
-            restrictionCategory: true,
-            restrictionCode: true,
-          },
-        },
       },
       relations: {
         studentRestriction: { restriction: true },
-        institutionRestriction: { restriction: true },
       },
       where: {
         application: {
