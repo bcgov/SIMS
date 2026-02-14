@@ -1,6 +1,7 @@
 import {
   Application,
   ApplicationRestrictionBypass,
+  InstitutionRestriction,
   Note,
   NoteType,
   Restriction,
@@ -80,6 +81,7 @@ export async function saveFakeApplicationRestrictionBypass(
   relations: {
     application?: Application;
     studentRestriction?: StudentRestriction;
+    institutionRestriction?: InstitutionRestriction;
     creationNote?: Note;
     bypassCreatedBy?: User;
     removalNote?: Note;
@@ -103,8 +105,8 @@ export async function saveFakeApplicationRestrictionBypass(
   bypass.isActive = options?.initialValues?.isActive ?? true;
   bypass.creator = relations?.creator;
   bypass.createdAt = now;
-  // Define studentRestriction.
-  if (!relations.studentRestriction) {
+  // Define studentRestriction if neither studentRestriction or institutionRestriction is provided.
+  if (!relations.studentRestriction && !relations.institutionRestriction) {
     // Find the restriction to be associated with the student.
     const findOptions: FindOneOptions<Restriction> = options?.restrictionCode
       ? { where: { restrictionCode: options.restrictionCode } }
@@ -124,8 +126,10 @@ export async function saveFakeApplicationRestrictionBypass(
         restriction,
       },
     );
-  } else {
+  } else if (relations.studentRestriction) {
     bypass.studentRestriction = relations.studentRestriction;
+  } else if (relations.institutionRestriction) {
+    bypass.institutionRestriction = relations.institutionRestriction;
   }
   // Define creationNote.
   bypass.creationNote = relations?.creationNote;

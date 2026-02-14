@@ -19,6 +19,8 @@ import {
   MSFAAStates,
   saveFakeApplicationRestrictionBypass,
   createFakeUser,
+  RestrictionCode,
+  saveFakeInstitutionRestriction,
 } from "@sims/test-utils";
 import {
   Application,
@@ -31,6 +33,7 @@ import {
   OfferingIntensity,
   RestrictionActionType,
   RestrictionBypassBehaviors,
+  RestrictionType,
   User,
   WorkflowData,
 } from "@sims/sims-db";
@@ -179,6 +182,47 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       },
       {
         restrictionActionType: RestrictionActionType.StopPartTimeDisbursement,
+        initialValues: {
+          bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
+        },
+      },
+    );
+    const studentUserToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const endpoint = `/students/assessment/${application.currentAssessment.id}/confirm-assessment`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .auth(studentUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+  });
+
+  it(`Should allow NOA approval when the current assessment for the program has a institution '${RestrictionCode.SUS}' restriction but the application has the restriction bypass active.`, async () => {
+    // Arrange
+    const { application } = await createApplicationAndAssessments();
+    const restriction = await db.restriction.findOne({
+      select: { id: true },
+      where: {
+        restrictionType: RestrictionType.Institution,
+        restrictionCode: RestrictionCode.SUS,
+      },
+    });
+    const susRestriction = await saveFakeInstitutionRestriction(db, {
+      restriction,
+      program: application.currentAssessment.offering.educationProgram,
+    });
+    // Create an institution restriction and a bypass to allow the NOA to be accepted.
+    await saveFakeApplicationRestrictionBypass(
+      db,
+      {
+        application,
+        institutionRestriction: susRestriction,
+        bypassCreatedBy: sharedMinistryUser,
+        creator: sharedMinistryUser,
+      },
+      {
         initialValues: {
           bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
         },

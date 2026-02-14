@@ -119,8 +119,11 @@ export class ECertGenerationService {
         "restrictionBypass.id",
         "restrictionBypass.bypassBehavior",
         "restrictionBypassStudentRestriction.id",
+        "restrictionBypassInstitutionRestriction.id",
         "restrictionBypassStudentRestrictionRestriction.id",
+        "restrictionBypassInstitutionRestrictionRestriction.id",
         "restrictionBypassStudentRestrictionRestriction.restrictionCode",
+        "restrictionBypassInstitutionRestrictionRestriction.restrictionCode",
         "programYear.id",
         "programYear.maxLifetimeBCLoanAmount",
       ])
@@ -163,6 +166,14 @@ export class ECertGenerationService {
         "institutionRestriction.isActive = true",
       )
       .leftJoin("institutionRestriction.restriction", "restrictionInstitution")
+      .leftJoin(
+        "restrictionBypass.institutionRestriction",
+        "restrictionBypassInstitutionRestriction",
+      )
+      .leftJoin(
+        "restrictionBypassInstitutionRestriction.restriction",
+        "restrictionBypassInstitutionRestrictionRestriction",
+      )
       .leftJoin(
         "institutionRestriction.program",
         "institutionRestrictionProgram",
@@ -262,13 +273,24 @@ export class ECertGenerationService {
             };
             const restrictionBypasses =
               application.restrictionBypasses.map<ApplicationActiveRestrictionBypass>(
-                (bypass) => ({
-                  id: bypass.id,
-                  restrictionCode:
-                    bypass.studentRestriction.restriction.restrictionCode,
-                  studentRestrictionId: bypass.studentRestriction.id,
-                  bypassBehavior: bypass.bypassBehavior,
-                }),
+                (bypass) => {
+                  if (bypass.studentRestriction) {
+                    return {
+                      id: bypass.id,
+                      restrictionCode:
+                        bypass.studentRestriction.restriction.restrictionCode,
+                      studentRestrictionId: bypass.studentRestriction.id,
+                      bypassBehavior: bypass.bypassBehavior,
+                    };
+                  }
+                  return {
+                    id: bypass.id,
+                    restrictionCode:
+                      bypass.institutionRestriction.restriction.restrictionCode,
+                    institutionRestrictionId: bypass.institutionRestriction.id,
+                    bypassBehavior: bypass.bypassBehavior,
+                  };
+                },
               );
             return new EligibleECertDisbursement(
               student.id,
