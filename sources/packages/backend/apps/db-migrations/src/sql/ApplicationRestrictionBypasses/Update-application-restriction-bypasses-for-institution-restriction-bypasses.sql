@@ -24,3 +24,5 @@ ADD
       AND institution_restriction_id IS NOT NULL
     )
   );
+
+COMMENT ON CONSTRAINT student_institution_restriction_id_constraint ON sims.application_restriction_bypasses IS 'At most one of student_restriction_id and institution_restriction_id can be populated.';
