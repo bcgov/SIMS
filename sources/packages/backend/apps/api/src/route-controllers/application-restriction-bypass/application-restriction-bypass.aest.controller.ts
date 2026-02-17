@@ -91,10 +91,9 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
             bypassedRestriction.restriction.restrictionCategory,
           restrictionCode: bypassedRestriction.restriction.restrictionCode,
           isRestrictionActive: bypassedRestriction.isActive,
-          restrictionDeletedAt:
-            bypassedRestriction instanceof StudentRestriction
-              ? bypassedRestriction.deletedAt
-              : null,
+          ...(bypassedRestriction instanceof StudentRestriction && {
+            restrictionDeletedAt: bypassedRestriction.deletedAt,
+          }),
           isBypassActive: item.isActive,
         };
       },
