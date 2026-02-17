@@ -38,6 +38,7 @@ import {
   saveFakeStudent,
   saveFakeStudentAssessment,
   saveFakeStudentRestriction,
+  RestrictionCode,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import { ArrayContains, In, IsNull, Like, Not } from "typeorm";
@@ -65,7 +66,7 @@ import {
   loadAwardValues,
   loadDisbursementAndStudentRestrictions,
 } from "./e-cert-utils";
-import { RestrictionCode, SystemUsersService } from "@sims/services";
+import { SystemUsersService } from "@sims/services";
 import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
 import { ConfigService } from "@sims/utilities/config";
 
@@ -1756,7 +1757,7 @@ describe(
         expect(
           mockedJob.containLogMessages([
             `The application has an active bypass for ${RestrictionCode.BCLM}. The verification will be ignored.`,
-            `Current active restriction bypasses [Restriction Code(Student Restriction ID)]: ${restrictionBypass.studentRestriction.restriction.restrictionCode}(${restrictionBypass.studentRestriction.id}).`,
+            `Current active restriction bypasses [Restriction Code(Restriction ID)]: ${restrictionBypass.studentRestriction.restriction.restrictionCode}(${restrictionBypass.studentRestriction.id}).`,
           ]),
         ).toBe(true);
         expect(
@@ -1907,7 +1908,117 @@ describe(
         // Assert
         expect(
           mockedJob.containLogMessages([
-            `Current active restriction bypasses [Restriction Code(Student Restriction ID)]: ${restrictionBypass.studentRestriction.restriction.restrictionCode}(${restrictionBypass.studentRestriction.id}).`,
+            `Current active restriction bypasses [Restriction Code(Restriction ID)]: ${restrictionBypass.studentRestriction.restriction.restrictionCode}(${restrictionBypass.studentRestriction.id}).`,
+          ]),
+        ).toBe(true);
+
+        const [firstSchedule] =
+          application.currentAssessment.disbursementSchedules;
+        // Check if the disbursement was sent.
+        const isScheduleSent = await db.disbursementSchedule.exists({
+          where: {
+            id: firstSchedule.id,
+            dateSent: Not(IsNull()),
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        });
+        expect(isScheduleSent).toBe(true);
+        // Validate if the bypass is still active.
+        const isBypassActive = await db.applicationRestrictionBypass.exists({
+          where: { id: restrictionBypass.id, isActive: true },
+        });
+        expect(isBypassActive).toBe(true);
+      },
+    );
+
+    it.only(
+      "Should have the e-Cert generated for a full-time application when the restriction bypass is active when " +
+        `an application has an active institution '${RestrictionCode.SUS}' restriction and it is bypassed with behavior '${RestrictionBypassBehaviors.AllDisbursements}'.`,
+      async () => {
+        // Arrange
+        // Student with valid SIN.
+        const student = await saveFakeStudent(db.dataSource);
+        // Valid MSFAA Number.
+        const msfaaNumber = await db.msfaaNumber.save(
+          createFakeMSFAANumber(
+            { student },
+            {
+              msfaaState: MSFAAStates.Signed,
+              msfaaInitialValues: {
+                offeringIntensity: OfferingIntensity.fullTime,
+              },
+            },
+          ),
+        );
+        // Student application eligible for e-Cert.
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          {
+            student,
+            msfaaNumber,
+            firstDisbursementValues: [
+              createFakeDisbursementValue(
+                DisbursementValueType.CanadaLoan,
+                "CSLF",
+                9999,
+              ),
+            ],
+          },
+          {
+            offeringIntensity: OfferingIntensity.fullTime,
+            applicationStatus: ApplicationStatus.Completed,
+            currentAssessmentInitialValues: {
+              assessmentData: { weeks: 5 } as Assessment,
+              assessmentDate: new Date(),
+            },
+            firstDisbursementInitialValues: {
+              coeStatus: COEStatus.completed,
+            },
+          },
+        );
+        // Create an institution restriction.
+        const restriction = await db.restriction.findOne({
+          select: {
+            id: true,
+            restrictionCode: true,
+          },
+          where: {
+            restrictionCode: RestrictionCode.SUS,
+          },
+        });
+        const susRestriction = await saveFakeInstitutionRestriction(db, {
+          restriction,
+          program: application.currentAssessment.offering.educationProgram,
+          location: application.currentAssessment.offering.institutionLocation,
+        });
+        // Create a bypass for the above created institution restriction.
+        const restrictionBypass = await saveFakeApplicationRestrictionBypass(
+          db,
+          {
+            application,
+            institutionRestriction: susRestriction,
+            bypassCreatedBy: sharedMinistryUser,
+            creator: sharedMinistryUser,
+          },
+          {
+            restrictionActionType:
+              RestrictionActionType.StopFullTimeDisbursement,
+            initialValues: {
+              bypassBehavior: RestrictionBypassBehaviors.AllDisbursements,
+            },
+          },
+        );
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await processor.processQueue(mockedJob.job);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            `Current active restriction bypasses [Restriction Code(Restriction ID)]: ${restrictionBypass.institutionRestriction.restriction.restrictionCode}(${restrictionBypass.institutionRestriction.id}).`,
           ]),
         ).toBe(true);
 
@@ -2019,7 +2130,7 @@ describe(
         // Assert
         expect(
           mockedJob.containLogMessages([
-            `Current active restriction bypasses [Restriction Code(Student Restriction ID)]: ${restrictionBypass.studentRestriction.restriction.restrictionCode}(${restrictionBypass.studentRestriction.id}).`,
+            `Current active restriction bypasses [Restriction Code(Restriction ID)]: ${restrictionBypass.studentRestriction.restriction.restrictionCode}(${restrictionBypass.studentRestriction.id}).`,
             `Student has an active '${RestrictionActionType.StopFullTimeDisbursement}' restriction and the disbursement calculation will not proceed.`,
           ]),
         ).toBe(true);

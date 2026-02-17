@@ -74,11 +74,14 @@ export function logActiveRestrictionsBypasses(
     log.info("There are no active restriction bypasses.");
     return;
   }
-  const bypassLogInfo = bypasses.map(
-    (bypass) => `${bypass.restrictionCode}(${bypass.studentRestrictionId})`,
-  );
+  const bypassLogInfo = bypasses.map((bypass) => {
+    if (bypass.institutionRestrictionId) {
+      return `${bypass.restrictionCode}(${bypass.institutionRestrictionId})`;
+    }
+    return `${bypass.restrictionCode}(${bypass.studentRestrictionId})`;
+  });
   log.info(
-    `Current active restriction bypasses [Restriction Code(Student Restriction ID)]: ${bypassLogInfo.join(
+    `Current active restriction bypasses [Restriction Code(Restriction ID)]: ${bypassLogInfo.join(
       ", ",
     )}.`,
   );
