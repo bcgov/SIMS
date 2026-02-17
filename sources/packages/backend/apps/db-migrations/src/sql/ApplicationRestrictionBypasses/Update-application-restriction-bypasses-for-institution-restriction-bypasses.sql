@@ -14,7 +14,7 @@ COMMENT ON COLUMN sims.application_restriction_bypasses.institution_restriction_
 ALTER TABLE
   sims.application_restriction_bypasses
 ADD
-  CONSTRAINT exactly_one_restriction_reference CHECK (
+  CONSTRAINT student_institution_restriction_id_constraint CHECK (
     (
       student_restriction_id IS NOT NULL
       AND institution_restriction_id IS NULL
