@@ -15,3 +15,7 @@ export enum RestrictionType {
    */
   Institution = "Institution",
 }
+
+export interface RestrictionMetadata {
+  constraints: Record<string, string>;
+}
