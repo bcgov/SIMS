@@ -127,6 +127,8 @@
           <zeebe:header key="appealsStudentHasDependentsAppealData" value="appeals.studentdependantsappeal.submittedData.hasDependents" />
           <zeebe:header key="appealsStepParentWaiverAppealData" value="appeals.stepparentwaiverappeal.submittedData.{&#34;selectedParent&#34;: selectedParent}" />
           <zeebe:header key="appealsRoomAndBoardCostsAppealData" value="appeals.roomandboardcostsappeal.submittedData" />
+          <zeebe:header key="studentDataPartnerIsAbleToReport" value="data.partnerIsAbleToReport" />
+          <zeebe:header key="studentDataPartnerFullName" value="data.partnerFullName" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>

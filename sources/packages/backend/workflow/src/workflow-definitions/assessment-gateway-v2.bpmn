@@ -26,6 +26,9 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:association id="Association_1ek1rle" sourceRef="verify-assessment-calculation-order-task" targetRef="TextAnnotation_0g9dtl6" />
     <bpmn:association id="Association_110g427" associationDirection="None" sourceRef="TextAnnotation_1qwxwaf" targetRef="application-change-request-approval-task" />
     <bpmn:association id="Association_1wys3mp" associationDirection="None" sourceRef="TextAnnotation_17tw6q4" targetRef="minitry-approval-change-in-progress-still-pending-gateway" />
+    <bpmn:textAnnotation id="TextAnnotation_1q6xzna">
+      <bpmn:text>Use the updated property key "partnerIsAbleToReport" to determine whether we are processing 26-27 or later</bpmn:text>
+    </bpmn:textAnnotation>
   </bpmn:collaboration>
   <bpmn:process id="assessment-gateway-v2" name="Assessment Gateway V2" isExecutable="true">
     <bpmn:laneSet id="LaneSet_07shl28">
@@ -246,7 +249,7 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:extensionElements>
         <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
         <zeebe:ioMapping>
-          <zeebe:input source="=createdSupportingUsersIds[1]" target="supportingUserId" />
+          <zeebe:input source="=createdSupportingUserId" target="supportingUserId" />
           <zeebe:input source="=[&#34;retrieve-supporting-info-for-partner-subprocess&#34;]" target="parentSubprocesses" />
           <zeebe:output source="=totalIncome" target="partner1TotalIncome" />
           <zeebe:output source="=supportingUserId" target="partnerSupportingUserId" />
@@ -258,9 +261,12 @@ Note: the workflow process should continue its execution as a regular reassessme
     </bpmn:callActivity>
     <bpmn:serviceTask id="create-supporting-user-for-the-partner-task" name="Create supporting user for the partner">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="create-supporting-users" />
+        <zeebe:taskDefinition type="create-identifiable-supporting-users" />
         <zeebe:ioMapping>
-          <zeebe:input source="=[&#34;Partner&#34;]" target="supportingUsersTypes" />
+          <zeebe:input source="=&#34;Partner&#34;" target="supportingUserType" />
+          <zeebe:input source="=partnerFullName" target="fullNamePropertyFilter" />
+          <zeebe:input source="=studentDataIsYourPartnerAbleToReport or studentDataPartnerIsAbleToReport" target="isAbleToReport" />
+          <zeebe:output source="=createdSupportingUserId" target="createdSupportingUserId" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_14701yl</bpmn:incoming>
@@ -1773,6 +1779,10 @@ Note: the workflow process should continue its execution as a regular reassessme
         <di:waypoint x="3320" y="647" />
         <di:waypoint x="3219" y="694" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_0xhexpd" bpmnElement="TextAnnotation_1q6xzna">
+        <dc:Bounds x="1540" y="730" width="300" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1tu9mrb">

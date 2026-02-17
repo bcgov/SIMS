@@ -5003,7 +5003,8 @@
                 "required": true,
                 "onlyAvailableItems": true
               },
-              "key": "isYourPartnerEligibleForBCSCAccount",
+              "validateWhenHidden": false,
+              "key": "partnerIsAbleToReport",
               "attributes": {
                 "data-cy": "isYourPartnerAbleToReport"
               },
@@ -5027,7 +5028,7 @@
               "key": "additionalInformationRequired",
               "conditional": {
                 "show": true,
-                "when": "isYourPartnerEligibleForBCSCAccount",
+                "when": "partnerIsAbleToReport",
                 "eq": "true"
               },
               "type": "htmlelement",
@@ -5037,6 +5038,7 @@
             },
             {
               "label": "Spouse Estimation",
+              "tag": "p",
               "className": "alert alert-warning fa fa-exclamation-circle",
               "attrs": [
                 {
@@ -5049,14 +5051,13 @@
               "customClass": "banner-warning",
               "key": "spouseEstimation",
               "conditional": {
-                "show": "true",
+                "show": true,
                 "when": "isYourPartnerEligibleForBCSCAccount",
                 "eq": "no"
               },
               "type": "htmlelement",
               "input": false,
               "tableView": false,
-              "tag": "p",
               "hideLabel": true
             }
           ]
