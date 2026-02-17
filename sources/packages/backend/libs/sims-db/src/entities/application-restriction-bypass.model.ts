@@ -54,7 +54,7 @@ export class ApplicationRestrictionBypass extends RecordDataModel {
     name: "student_restriction_id",
     referencedColumnName: ColumnNames.ID,
   })
-  studentRestriction: StudentRestriction;
+  studentRestriction?: StudentRestriction;
 
   /**
    * Active institution restriction to be bypassed.
@@ -68,7 +68,7 @@ export class ApplicationRestrictionBypass extends RecordDataModel {
     name: "institution_restriction_id",
     referencedColumnName: ColumnNames.ID,
   })
-  institutionRestriction: InstitutionRestriction;
+  institutionRestriction?: InstitutionRestriction;
 
   /**
    * Defines how the bypass should behave, for instance, until when it will be valid.
