@@ -33,7 +33,6 @@ import {
   OfferingIntensity,
   RestrictionActionType,
   RestrictionBypassBehaviors,
-  RestrictionType,
   User,
   WorkflowData,
 } from "@sims/sims-db";
@@ -199,19 +198,19 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       .expect(HttpStatus.OK);
   });
 
-  it(`Should allow NOA approval when the current assessment for the program has an institution '${RestrictionCode.SUS}' restriction but the application has the restriction bypass active.`, async () => {
+  it(`Should allow NOA approval when the current application program and location has an institution '${RestrictionCode.SUS}' restriction but the application has the restriction bypass active.`, async () => {
     // Arrange
     const { application } = await createApplicationAndAssessments();
     const restriction = await db.restriction.findOne({
       select: { id: true },
       where: {
-        restrictionType: RestrictionType.Institution,
         restrictionCode: RestrictionCode.SUS,
       },
     });
     const susRestriction = await saveFakeInstitutionRestriction(db, {
       restriction,
       program: application.currentAssessment.offering.educationProgram,
+      location: application.currentAssessment.offering.institutionLocation,
     });
     // Create an institution restriction and a bypass to allow the NOA to be accepted.
     await saveFakeApplicationRestrictionBypass(

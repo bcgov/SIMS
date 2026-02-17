@@ -20,7 +20,6 @@ import {
   OfferingIntensity,
   RestrictionActionType,
   RestrictionBypassBehaviors,
-  RestrictionType,
   User,
 } from "@sims/sims-db";
 
@@ -79,7 +78,6 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
         restrictionCategory: true,
       },
       where: {
-        restrictionType: RestrictionType.Institution,
         restrictionCode: RestrictionCode.SUS,
       },
     });
