@@ -199,7 +199,7 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       .expect(HttpStatus.OK);
   });
 
-  it(`Should allow NOA approval when the current assessment for the program has a institution '${RestrictionCode.SUS}' restriction but the application has the restriction bypass active.`, async () => {
+  it(`Should allow NOA approval when the current assessment for the program has an institution '${RestrictionCode.SUS}' restriction but the application has the restriction bypass active.`, async () => {
     // Arrange
     const { application } = await createApplicationAndAssessments();
     const restriction = await db.restriction.findOne({
