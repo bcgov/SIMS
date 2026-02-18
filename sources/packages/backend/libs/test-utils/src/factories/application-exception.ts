@@ -5,6 +5,7 @@ import {
   User,
 } from "@sims/sims-db";
 import { createFakeNote } from "./note";
+import { createFakeUser } from "./user";
 
 /**
  * Creates a fake application exception with the passed status.
@@ -21,9 +22,10 @@ export function createFakeApplicationException(relations?: {
   applicationException.exceptionStatus = ApplicationExceptionStatus.Pending;
   applicationException.assessedDate = new Date();
   applicationException.assessedBy = relations?.assessedBy;
-  applicationException.creator = relations?.creator;
+  const creator = relations?.creator ?? createFakeUser();
+  applicationException.creator = creator;
   const applicationExceptionNote = createFakeNote(NoteType.Application, {
-    creator: relations?.creator,
+    creator,
   });
   applicationException.exceptionNote = applicationExceptionNote;
   return applicationException;
