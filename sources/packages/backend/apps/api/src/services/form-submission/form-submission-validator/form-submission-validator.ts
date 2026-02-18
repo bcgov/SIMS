@@ -4,7 +4,7 @@ import {
   FormSubmissionValidatorBase,
   PendingConcurrencyValidator,
   ConfigurationContextValidator,
-  StudentAppealsValidator,
+  ApplicationAppealsValidator,
 } from ".";
 
 @Injectable()
@@ -13,12 +13,12 @@ export class FormSubmissionValidator {
   constructor(
     private readonly configurationContextValidator: ConfigurationContextValidator,
     private readonly pendingConcurrencyValidator: PendingConcurrencyValidator,
-    private readonly studentAppealsValidator: StudentAppealsValidator,
+    private readonly applicationAppealsValidator: ApplicationAppealsValidator,
   ) {
     this.validators = [
       this.configurationContextValidator,
       this.pendingConcurrencyValidator,
-      this.studentAppealsValidator,
+      this.applicationAppealsValidator,
     ];
   }
 

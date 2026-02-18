@@ -5,10 +5,10 @@ import { FormCategory, FormSubmission } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import { FormSubmissionValidatorBase } from ".";
 import { APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL } from "apps/api/src/constants";
-import { StudentAppealService } from "../../../services";
+import { StudentAppealService } from "../..";
 
 @Injectable()
-export class StudentAppealsValidator implements FormSubmissionValidatorBase {
+export class ApplicationAppealsValidator implements FormSubmissionValidatorBase {
   constructor(
     @InjectRepository(FormSubmission)
     private readonly studentAppealService: StudentAppealService,
@@ -19,15 +19,12 @@ export class StudentAppealsValidator implements FormSubmissionValidatorBase {
     studentId: number,
   ): Promise<void> {
     const [referencedConfig] = formSubmissionConfigs;
-    if (referencedConfig.formCategory !== FormCategory.StudentAppeal) {
-      // Form validator application only for appeals.
+    if (
+      referencedConfig.formCategory !== FormCategory.StudentAppeal ||
+      !referencedConfig.applicationId
+    ) {
+      // Form validator application only for appeals with a valid application ID.
       return;
-    }
-    if (!referencedConfig.applicationId) {
-      throw new CustomNamedError(
-        "Application ID is required for student appeals.",
-        APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
-      );
     }
     // Ensures the appeals are validated based on the eligibility criteria used for fetching the
     // eligible applications for appeal using getEligibleApplicationsForAppeal endpoint.

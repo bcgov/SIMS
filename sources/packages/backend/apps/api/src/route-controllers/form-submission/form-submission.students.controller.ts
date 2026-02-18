@@ -84,7 +84,9 @@ export class FormSubmissionStudentsController extends BaseController {
       "all forms in the submission must have the same application scope or " +
       "all forms in the submission must have an application ID when they have application scope or " +
       "one or more forms in the submission do not allow bundled submissions or " +
-      "all forms in the submission must share the same form category.",
+      "all forms in the submission must share the same form category or " +
+      "the application is not eligible for an appeal or " +
+      "the submitted appeal form(s) is/are not eligible for the application.",
   })
   @ApiBadRequestResponse({
     description: "Failed to submit the form due to invalid dynamic data.",
