@@ -1,11 +1,11 @@
 <template>
-  <div v-show="!isFormReady">
+  <div v-show="!isFormReady || loading">
     <slot name="loading"
       ><v-skeleton-loader type="image, article"></v-skeleton-loader
     ></slot>
   </div>
   <div
-    v-show="isFormReady"
+    v-show="isFormReady && !loading"
     class="ff-form-container"
     ref="formioContainerRef"
   ></div>
@@ -71,6 +71,11 @@ export default defineComponent({
     isDataReady: {
       type: Boolean,
       default: true,
+      required: false,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
       required: false,
     },
     formKey: {

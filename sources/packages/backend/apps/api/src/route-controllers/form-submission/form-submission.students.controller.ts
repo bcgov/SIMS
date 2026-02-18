@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
@@ -29,10 +30,13 @@ import { FormCategory } from "@sims/sims-db";
 import {
   FormSubmissionAPIInDTO,
   FormSubmissionConfigurationsAPIOutDTO,
+  FormSupplementaryDataAPIInDTO,
+  FormSupplementaryDataAPIOutDTO,
 } from "./models/form-submission.dto";
 import { StudentUserToken } from "apps/api/src/auth";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { CustomNamedError } from "@sims/utilities";
+import { SupplementaryDataLoader } from "../../services/form-submission/form-supplementary-data/form-supplementary-data-loader";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -42,6 +46,7 @@ export class FormSubmissionStudentsController extends BaseController {
   constructor(
     private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
     private readonly formSubmissionService: FormSubmissionService,
+    private readonly supplementaryDataLoader: SupplementaryDataLoader,
   ) {
     super();
   }
@@ -67,6 +72,26 @@ export class FormSubmissionStudentsController extends BaseController {
         allowBundledSubmission: configuration.allowBundledSubmission,
         hasApplicationScope: configuration.hasApplicationScope,
       })),
+    };
+  }
+
+  /**
+   * Get supplementary data for the given data keys and application ID if provided.
+   * @param query data keys and application ID to retrieve the supplementary data for.
+   * @returns supplementary data for the given data keys and application ID.
+   */
+  @Get("supplementary-data")
+  async getSupplementaryData(
+    @Query() query: FormSupplementaryDataAPIInDTO,
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<FormSupplementaryDataAPIOutDTO> {
+    const formData = await this.supplementaryDataLoader.getSupplementaryData(
+      query.dataKeys,
+      query.applicationId,
+      userToken.studentId,
+    );
+    return {
+      formData,
     };
   }
 

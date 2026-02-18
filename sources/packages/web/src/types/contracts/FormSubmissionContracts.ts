@@ -93,3 +93,21 @@ export interface FormSubmissionItemSubmitted {
   files: string[];
   approval?: FormSubmissionItemApproval;
 }
+
+/**
+ * Optional data that can be loaded as part of the form.
+ */
+export enum KnownSupplementaryDataKey {
+  ProgramYear = "programYear",
+  Parents = "parents",
+}
+
+export interface KnownSupplementaryData {
+  [KnownSupplementaryDataKey.ProgramYear]?: string;
+  [KnownSupplementaryDataKey.Parents]?: Parent[];
+}
+
+export interface Parent {
+  id: number;
+  fullName: string;
+}

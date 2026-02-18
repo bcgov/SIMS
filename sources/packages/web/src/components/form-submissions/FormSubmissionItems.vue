@@ -40,6 +40,7 @@
           :form-key="submissionItem.dynamicConfigurationId"
           :form-name="submissionItem.formName"
           :data="submissionItem.formData"
+          :loading="!allFormsLoaded"
           :read-only="readOnly"
           @loaded="formLoaded"
         ></formio>
@@ -51,7 +52,7 @@
       </template>
     </v-expansion-panel>
   </v-expansion-panels>
-  <div class="mt-4">
+  <div class="mt-4" v-show="allFormsLoaded">
     <slot name="actions" :submit="submit"></slot>
   </div>
 </template>
@@ -63,8 +64,10 @@ import {
   FormIOForm,
   FormSubmissionItem,
   FormSubmissionItemSubmitted,
+  KnownSupplementaryDataKey,
 } from "@/types";
 import StatusChipFormSubmissionDecision from "@/components/generic/StatusChipFormSubmissionDecision.vue";
+import { FormSubmissionService } from "@/services/FormSubmissionService";
 
 export default defineComponent({
   emits: ["submitted"],
@@ -75,6 +78,11 @@ export default defineComponent({
     submissionItems: {
       type: Array as PropType<FormSubmissionItem[]>,
       required: true,
+    },
+    applicationId: {
+      type: Number,
+      default: null,
+      required: false,
     },
     readOnly: {
       type: Boolean,
@@ -87,14 +95,37 @@ export default defineComponent({
     const expansionPanelsModel = ref<number[]>([]);
     const { checkFormioValidity, getAssociatedFiles } = useFormioUtils();
     const forms = new Map<number, FormIOForm>();
+    const allFormsLoaded = ref(false);
+    const { setComponentValue } = useFormioUtils();
 
     /**
      * Keep track of all forms that will be part of the submission.
      * @param form form.io form.
      * @param formKey associated identifier of the form.
      */
-    const formLoaded = (form: FormIOForm, formKey: number) => {
+    const formLoaded = async (form: FormIOForm, formKey: number) => {
       forms.set(formKey, form);
+      if (!props.readOnly) {
+        // Check if the form has any know supplementary key that must be loaded.
+        const supplementaryDataKeys = Object.values(
+          KnownSupplementaryDataKey,
+        ).filter((key) => Object.hasOwn(form.data as object, key.toString()));
+        if (supplementaryDataKeys.length) {
+          const supplementaryData =
+            await FormSubmissionService.shared.getSupplementaryData({
+              dataKeys: supplementaryDataKeys,
+              applicationId: props.applicationId,
+            });
+          for (const dataKey of supplementaryDataKeys) {
+            setComponentValue(
+              form,
+              dataKey,
+              supplementaryData.formData[dataKey],
+            );
+          }
+        }
+      }
+      allFormsLoaded.value = forms.size === props.submissionItems.length;
     };
 
     /**
@@ -165,6 +196,7 @@ export default defineComponent({
       expandAllUpdated,
       expansionPanelsModel,
       expansionPanelsUpdated,
+      allFormsLoaded,
     };
   },
 });

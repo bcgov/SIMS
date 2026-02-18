@@ -8,7 +8,6 @@ import {
 import { SupportingUser, SupportingUserType } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { getSupportingUserParents } from "apps/api/src/utilities";
 import { Parent } from "../../../types";
 
 /**
@@ -79,12 +78,18 @@ export class SupplementaryDataParents extends SupplementaryDataBaseLoader<KnownS
         supportingUserType: SupportingUserType.Parent,
         application: { id: applicationId, student: { id: studentId } },
       },
+      order: {
+        id: "ASC",
+      },
     });
     if (!parents?.length) {
       throw new Error(
         `Parents data is not available for application with ID ${applicationId}.`,
       );
     }
-    return getSupportingUserParents(parents);
+    return parents.map((parent) => ({
+      id: parent.id,
+      fullName: parent.fullName,
+    }));
   }
 }

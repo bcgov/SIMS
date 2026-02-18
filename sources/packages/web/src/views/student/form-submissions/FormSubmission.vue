@@ -19,6 +19,7 @@
       </template>
       <form-submission-items
         :submission-items="formSubmissionItems"
+        :application-id="applicationId"
         @submitted="submitted"
       >
         <template #actions="{ submit }">
@@ -43,9 +44,7 @@ import {
   FormSubmissionItem,
   FormSubmissionItemSubmitted,
 } from "@/types";
-import { ApplicationService } from "@/services/ApplicationService";
 import { useSnackBar } from "@/composables";
-import { AppealApplicationDetailsAPIOutDTO } from "@/services/http/dto";
 import FormSubmissionItems from "@/components/form-submissions/FormSubmissionItems.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
@@ -103,21 +102,6 @@ export default defineComponent({
     };
 
     watchEffect(async () => {
-      let application: AppealApplicationDetailsAPIOutDTO | undefined =
-        undefined;
-      if (props.applicationId) {
-        try {
-          application =
-            await ApplicationService.shared.getApplicationForRequestChange(
-              props.applicationId,
-            );
-        } catch {
-          snackBar.error(
-            "An unexpected error happened while retrieving the application information.",
-          );
-          return;
-        }
-      }
       const formConfigurations =
         await FormSubmissionService.shared.getSubmissionForms();
       formSubmissionItems.value =
@@ -136,10 +120,7 @@ export default defineComponent({
             formType: formConfiguration.formType,
             category: formConfiguration.formCategory,
             formName: formConfiguration.formDefinitionName,
-            formData: {
-              programYear: application?.programYear,
-              parents: application?.supportingUserParents,
-            },
+            formData: {},
           };
         });
     });

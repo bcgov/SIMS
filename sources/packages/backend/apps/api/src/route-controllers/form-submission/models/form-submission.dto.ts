@@ -1,9 +1,12 @@
 // TODO: These DTOs will have their final version once the API is fully integrated.
 import { FormCategory } from "@sims/sims-db";
 import { JSON_10KB } from "apps/api/src/constants";
-import { KnownSupplementaryData } from "../../../services/form-submission/form-submission.models";
+import {
+  KnownSupplementaryData,
+  KnownSupplementaryDataKey,
+} from "../../../services/form-submission/form-submission.models";
 import { JsonMaxSize } from "../../../utilities/class-validation";
-import { Type } from "class-transformer";
+import { Transform, Type } from "class-transformer";
 import {
   IsPositive,
   IsDefined,
@@ -11,6 +14,8 @@ import {
   ArrayMinSize,
   ArrayMaxSize,
   ValidateNested,
+  IsEnum,
+  IsArray,
 } from "class-validator";
 
 export class FormSubmissionConfigurationAPIOutDTO {
@@ -25,6 +30,22 @@ export class FormSubmissionConfigurationAPIOutDTO {
 
 export class FormSubmissionConfigurationsAPIOutDTO {
   configurations: FormSubmissionConfigurationAPIOutDTO[];
+}
+
+export class FormSupplementaryDataAPIInDTO {
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayMaxSize(10)
+  @Transform(({ value }) => value.split(","))
+  @IsEnum(KnownSupplementaryDataKey, { each: true })
+  dataKeys: KnownSupplementaryDataKey[];
+  @IsOptional()
+  @IsPositive()
+  applicationId?: number;
+}
+
+export class FormSupplementaryDataAPIOutDTO {
+  formData: KnownSupplementaryData;
 }
 
 /**

@@ -4,6 +4,8 @@ import {
   FormSubmissionStudentAPIOutDTO,
   FormSubmissionConfigurationsAPIOutDTO,
   FormSubmissionAPIInDTO,
+  FormSupplementaryDataAPIInDTO,
+  FormSupplementaryDataAPIOutDTO,
 } from "@/services/http/dto";
 import {
   FormCategory,
@@ -107,6 +109,21 @@ export class FormSubmissionApi extends HttpBaseClient {
     return MOCKED_SUBMISSIONS.find(
       (submission) => submission.id === formSubmissionId,
     )!;
+  }
+
+  /**
+   * Get supplementary data for the given data keys and application ID if provided.
+   * @param query data keys and application ID to retrieve the supplementary data for.
+   * @returns supplementary data for the given data keys and application ID.
+   */
+  async getSupplementaryData(
+    query: FormSupplementaryDataAPIInDTO,
+  ): Promise<FormSupplementaryDataAPIOutDTO> {
+    return this.getCall(
+      this.addClientRoot(
+        `form-submission/supplementary-data?dataKeys=${query.dataKeys.toString()}&applicationId=${query.applicationId}`,
+      ),
+    );
   }
 
   /**

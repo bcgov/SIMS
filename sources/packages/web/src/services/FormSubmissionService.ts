@@ -4,6 +4,8 @@ import {
   FormSubmissionStudentSummaryAPIOutDTO,
   FormSubmissionConfigurationsAPIOutDTO,
   FormSubmissionAPIInDTO,
+  FormSupplementaryDataAPIInDTO,
+  FormSupplementaryDataAPIOutDTO,
 } from "@/services/http/dto/FormSubmission.dto";
 
 export class FormSubmissionService {
@@ -32,6 +34,17 @@ export class FormSubmissionService {
     formSubmissionId: number,
   ): Promise<FormSubmissionStudentAPIOutDTO> {
     return ApiClient.FormSubmissionApi.getFormSubmission(formSubmissionId);
+  }
+
+  /**
+   * Get supplementary data for the given data keys and application ID if provided.
+   * @param query data keys and application ID to retrieve the supplementary data for.
+   * @returns supplementary data for the given data keys and application ID.
+   */
+  async getSupplementaryData(
+    query: FormSupplementaryDataAPIInDTO,
+  ): Promise<FormSupplementaryDataAPIOutDTO> {
+    return ApiClient.FormSubmissionApi.getSupplementaryData(query);
   }
 
   /**
