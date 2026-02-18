@@ -52,19 +52,19 @@
       </template>
     </v-expansion-panel>
   </v-expansion-panels>
-  <div class="mt-4" v-show="allFormsLoaded">
+  <div class="mt-4">
     <slot name="actions" :submit="submit"></slot>
   </div>
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { defineComponent, PropType, ref, watch } from "vue";
-import { useFormioUtils } from "@/composables";
+import { useFormioUtils, useSnackBar } from "@/composables";
 import {
+  FormIOComponent,
   FormIOForm,
   FormSubmissionItem,
   FormSubmissionItemSubmitted,
-  KnownSupplementaryDataKey,
 } from "@/types";
 import StatusChipFormSubmissionDecision from "@/components/generic/StatusChipFormSubmissionDecision.vue";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
@@ -91,12 +91,32 @@ export default defineComponent({
     },
   },
   setup(props, context) {
+    const snackBar = useSnackBar();
     const expandAllModel = ref(true);
     const expansionPanelsModel = ref<number[]>([]);
     const { checkFormioValidity, getAssociatedFiles } = useFormioUtils();
     const forms = new Map<number, FormIOForm>();
     const allFormsLoaded = ref(false);
-    const { setComponentValue } = useFormioUtils();
+    const { recursiveSearch } = useFormioUtils();
+
+    const getSupplementaryData = async (supplementaryDataKeys: string[]) => {
+      try {
+        return await FormSubmissionService.shared.getSupplementaryData({
+          dataKeys: supplementaryDataKeys,
+          applicationId: props.applicationId,
+        });
+      } catch (error: unknown) {
+        snackBar.error("Unexpected error while loading supplementary data.");
+        throw error;
+      }
+    };
+
+    /**
+     * Check if all expected forms were loaded.
+     */
+    const updateFormsLoadState = () => {
+      allFormsLoaded.value = forms.size === props.submissionItems.length;
+    };
 
     /**
      * Keep track of all forms that will be part of the submission.
@@ -105,27 +125,35 @@ export default defineComponent({
      */
     const formLoaded = async (form: FormIOForm, formKey: number) => {
       forms.set(formKey, form);
-      if (!props.readOnly) {
-        // Check if the form has any know supplementary key that must be loaded.
-        const supplementaryDataKeys = Object.values(
-          KnownSupplementaryDataKey,
-        ).filter((key) => Object.hasOwn(form.data as object, key.toString()));
-        if (supplementaryDataKeys.length) {
-          const supplementaryData =
-            await FormSubmissionService.shared.getSupplementaryData({
-              dataKeys: supplementaryDataKeys,
-              applicationId: props.applicationId,
-            });
-          for (const dataKey of supplementaryDataKeys) {
-            setComponentValue(
-              form,
-              dataKey,
-              supplementaryData.formData[dataKey],
-            );
-          }
+      if (props.readOnly) {
+        updateFormsLoadState();
+        return;
+      }
+      // Check if the form has any know supplementary key that must be loaded.
+      const supplementaryComponentsSearch = recursiveSearch(
+        form,
+        (component: FormIOComponent) =>
+          component.component.tags?.includes("supplementary-data"),
+      );
+      if (!supplementaryComponentsSearch.length) {
+        updateFormsLoadState();
+        return;
+      }
+      // Group the key to retrieve supplementary data from the API.
+      const supplementaryDataKeys = supplementaryComponentsSearch.map(
+        (component) => component.component.key,
+      );
+      if (supplementaryDataKeys.length) {
+        const supplementaryData = await getSupplementaryData(
+          supplementaryDataKeys,
+        );
+        for (const componentSearch of supplementaryComponentsSearch) {
+          componentSearch.component.setValue(
+            supplementaryData.formData[componentSearch.component.key],
+          );
         }
       }
-      allFormsLoaded.value = forms.size === props.submissionItems.length;
+      updateFormsLoadState();
     };
 
     /**

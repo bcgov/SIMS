@@ -5,7 +5,6 @@ import {
   FormSubmissionStatus,
   FormSubmissionDecisionStatus,
   KnownSupplementaryData,
-  KnownSupplementaryDataKey,
 } from "@/types";
 
 export interface FormSubmissionConfigurationAPIOutDTO {
@@ -78,7 +77,7 @@ export interface FormSubmissionAPIInDTO {
 }
 
 export class FormSupplementaryDataAPIInDTO {
-  dataKeys: KnownSupplementaryDataKey[];
+  dataKeys: string[];
   applicationId?: number;
 }
 
