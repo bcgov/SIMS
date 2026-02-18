@@ -7,7 +7,7 @@ import { User } from "./user.model";
  * Abstract class to model a record element which has four audit columns. Creator and Modifier columns are specified here and it includes time stamp columns form BaseModel
  */
 export abstract class RecordDataModel extends BaseModel {
-  @ManyToOne(() => User, { eager: false, nullable: false })
+  @ManyToOne(() => User, { eager: false })
   @JoinColumn({
     name: ColumnNames.Creator,
     referencedColumnName: ColumnNames.ID,
