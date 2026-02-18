@@ -45,9 +45,9 @@ export class SupplementaryDataLoader {
     // Shared object to accumulate loaded supplementary data across multiple loaders,
     // avoiding the same data being loaded multiple times for different form submissions.
     const supplementaryData: KnownSupplementaryData = {};
+    // Execute the submissions in sequence to allow the data to be reused.
     for (const submissionConfig of formSubmissions) {
       // Execute all loaders in parallel for the current form submission config.
-      // Execute the submissions in sequence to allow the data to be reused.
       const loaderPromises = this.dataLoaders.map((loader) =>
         loader.loadSupplementaryData(
           submissionConfig,
@@ -97,8 +97,8 @@ export class SupplementaryDataLoader {
     applicationId: number | undefined,
     studentId: number | undefined,
   ): Promise<{
-    data: KnownSupplementaryData[KnownSupplementaryDataKey];
     key: KnownSupplementaryDataKey;
+    data: KnownSupplementaryData[KnownSupplementaryDataKey];
   }> {
     const loader = this.dataLoaders.find(
       (loader) => loader.dataKey === dataKey,
@@ -108,8 +108,8 @@ export class SupplementaryDataLoader {
     }
     const data = await loader.getSupplementaryData(applicationId, studentId);
     return {
-      data,
       key: dataKey,
+      data,
     };
   }
 }

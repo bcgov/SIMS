@@ -14,7 +14,6 @@ import {
   ArrayMaxSize,
   ValidateNested,
   IsEnum,
-  IsArray,
 } from "class-validator";
 
 export class FormSubmissionConfigurationAPIOutDTO {
@@ -31,8 +30,11 @@ export class FormSubmissionConfigurationsAPIOutDTO {
   configurations: FormSubmissionConfigurationAPIOutDTO[];
 }
 
+/**
+ * Forms supplementary data necessary for a dynamic form
+ * submissions (e.g., program year, parents).
+ */
 export class FormSupplementaryDataAPIInDTO {
-  @IsArray()
   @ArrayMinSize(1)
   @ArrayMaxSize(10)
   @Transform(({ value }) => value.split(","))
@@ -43,6 +45,11 @@ export class FormSupplementaryDataAPIInDTO {
   applicationId?: number;
 }
 
+/**
+ * Consolidated supplementary data for dynamic form submissions.
+ * The keys of this object are dynamic based on the known supplementary
+ * data keys requested by the client.
+ */
 export class FormSupplementaryDataAPIOutDTO {
   formData: KnownSupplementaryData;
 }

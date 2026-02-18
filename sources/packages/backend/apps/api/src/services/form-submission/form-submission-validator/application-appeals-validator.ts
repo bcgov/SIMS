@@ -1,7 +1,6 @@
 import { Injectable, UnprocessableEntityException } from "@nestjs/common";
 import { FormSubmissionConfig } from "../form-submission.models";
-import { InjectRepository } from "@nestjs/typeorm";
-import { FormCategory, FormSubmission } from "@sims/sims-db";
+import { FormCategory } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import { FormSubmissionValidatorBase } from ".";
 import { APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL } from "../../../constants";
@@ -13,10 +12,7 @@ import { StudentAppealService } from "../..";
  */
 @Injectable()
 export class ApplicationEligibleAppealsValidator implements FormSubmissionValidatorBase {
-  constructor(
-    @InjectRepository(FormSubmission)
-    private readonly studentAppealService: StudentAppealService,
-  ) {}
+  constructor(private readonly studentAppealService: StudentAppealService) {}
 
   /**
    * Executes the validation of application appeals form submission,

@@ -146,9 +146,7 @@ export class FormSubmissionStudentsController extends BaseController {
             throw new UnprocessableEntityException(error.message);
         }
       }
-      throw new Error("Failed to submit the form due to unknown reason.", {
-        cause: error,
-      });
+      throw error;
     }
   }
 }

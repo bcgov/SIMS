@@ -1,4 +1,3 @@
-import { Injectable } from "@nestjs/common";
 import {
   FormSubmissionConfig,
   KnownSupplementaryData,
@@ -9,7 +8,6 @@ import {
  * Loads supplementary data for form submissions based on the form dynamic data properties.
  * Each loader is responsible for a specific type of supplementary data, identified by its dataKey.
  */
-@Injectable()
 export abstract class SupplementaryDataBaseLoader<
   K extends KnownSupplementaryDataKey = KnownSupplementaryDataKey,
   T extends KnownSupplementaryData[K] = KnownSupplementaryData[K],

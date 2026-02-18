@@ -59,9 +59,8 @@ export class ConfigurationContextValidator implements FormSubmissionValidatorBas
       );
     }
     // Validate if all forms share the same category.
-    const [referenceForm] = formSubmissionConfigs;
     const allSameCategory = formSubmissionConfigs.every(
-      (config) => config.formCategory === referenceForm.formCategory,
+      (config) => config.formCategory === referencedConfig.formCategory,
     );
     if (!allSameCategory) {
       throw new CustomNamedError(

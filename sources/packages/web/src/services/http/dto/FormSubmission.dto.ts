@@ -1,10 +1,8 @@
-// TODO: These DTOs will have their final version once the API is fully integrated.
 // TODO: Ensure the DTOs will be converted to interfaces, following the pattern used in other API DTOs, once the API is fully integrated.
 import {
   FormCategory,
   FormSubmissionStatus,
   FormSubmissionDecisionStatus,
-  KnownSupplementaryData,
 } from "@/types";
 
 export interface FormSubmissionConfigurationAPIOutDTO {
@@ -76,11 +74,20 @@ export interface FormSubmissionAPIInDTO {
   items: FormSubmissionItemAPIInDTO[];
 }
 
-export class FormSupplementaryDataAPIInDTO {
+/**
+ * Forms supplementary data necessary for a dynamic form
+ * submissions (e.g., program year, parents).
+ */
+export interface FormSupplementaryDataAPIInDTO {
   dataKeys: string[];
   applicationId?: number;
 }
 
-export class FormSupplementaryDataAPIOutDTO {
-  formData: KnownSupplementaryData;
+/**
+ * Consolidated supplementary data for dynamic form submissions.
+ * The keys of this object are dynamic based on the known supplementary
+ * data keys requested by the client.
+ */
+export interface FormSupplementaryDataAPIOutDTO {
+  formData: Record<string, unknown>;
 }

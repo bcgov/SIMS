@@ -72,6 +72,7 @@ import {
 } from "@/types";
 import StatusChipFormSubmissionDecision from "@/components/generic/StatusChipFormSubmissionDecision.vue";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
+import { FormSupplementaryDataAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   emits: ["submitted"],
@@ -107,7 +108,9 @@ export default defineComponent({
      * Retrieves supplementary data for a form.
      * @param supplementaryDataKeys data keys to be retrieved.
      */
-    const getSupplementaryData = async (supplementaryDataKeys: string[]) => {
+    const getSupplementaryData = async (
+      supplementaryDataKeys: string[],
+    ): Promise<FormSupplementaryDataAPIOutDTO> => {
       try {
         return await FormSubmissionService.shared.getSupplementaryData({
           dataKeys: supplementaryDataKeys,
@@ -134,7 +137,7 @@ export default defineComponent({
     const formLoaded = async (form: FormIOForm, formKey: number) => {
       forms.set(formKey, form);
       if (props.readOnly) {
-        formsLoadedCount.value++;
+        formsLoadedCount.value = forms.size;
         return;
       }
       // Check if the form has any know supplementary key that must be loaded.
@@ -151,15 +154,14 @@ export default defineComponent({
       const supplementaryDataKeys = supplementaryComponentsSearch.map(
         (component) => component.component.key,
       );
-      if (supplementaryDataKeys.length) {
-        const supplementaryData = await getSupplementaryData(
-          supplementaryDataKeys,
+
+      const supplementaryData = await getSupplementaryData(
+        supplementaryDataKeys,
+      );
+      for (const componentSearch of supplementaryComponentsSearch) {
+        componentSearch.component.setValue(
+          supplementaryData.formData[componentSearch.component.key],
         );
-        for (const componentSearch of supplementaryComponentsSearch) {
-          componentSearch.component.setValue(
-            supplementaryData.formData[componentSearch.component.key],
-          );
-        }
       }
       formsLoadedCount.value = forms.size;
     };

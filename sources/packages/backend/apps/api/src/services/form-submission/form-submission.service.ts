@@ -59,7 +59,6 @@ export class FormSubmissionService {
     submissionItems: FormSubmissionModel[],
     auditUserId: number,
   ): Promise<FormSubmission> {
-    // Validate configurations.
     const submissionConfigs = this.convertToFormSubmissionConfigs(
       submissionItems,
       applicationId,
@@ -159,7 +158,7 @@ export class FormSubmissionService {
    * Executes a dry run submission for the given form
    * submission configuration to validate the request.
    * @param submissionItem form submission configuration to be validated.
-   * @returns a promise that resolves to a validated form submission model.
+   * @returns validated form submission model.
    */
   private async getValidatedFormSubmission(
     submissionItem: FormSubmissionConfig,

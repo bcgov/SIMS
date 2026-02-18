@@ -79,11 +79,7 @@ export default defineComponent({
         processing.value = true;
         await FormSubmissionService.shared.submitForm({
           applicationId: props.applicationId,
-          items: items.map((item) => ({
-            dynamicConfigurationId: item.dynamicConfigurationId,
-            formData: item.formData,
-            files: item.files,
-          })),
+          items,
         });
         snackBar.success("The student form has been submitted successfully.");
         router.push({

@@ -183,7 +183,7 @@ import {
     SupplementaryDataParents,
     FormSubmissionService,
     SupplementaryDataLoader,
-    // Form Submission Service (used by validators and controllers, but not exported outside of this module).
+    // Form Submission Service.
     FormSubmissionService,
   ],
 })
