@@ -4648,9 +4648,6 @@
               },
               "validateWhenHidden": false,
               "key": "partnerIsAbleToReport",
-              "attributes": {
-                "data-cy": "isYourPartnerAbleToReport"
-              },
               "type": "radio",
               "input": true,
               "lockKey": true
@@ -4707,7 +4704,7 @@
         },
         {
           "label": "Is partner name match",
-          "calculateValue": "const studentFullName = `${data.studentGivenNames} ${data.studentLastName}`.trim();\nvalue = data.partnerFullName?.trim() === studentFullName;\n//value = true;\n",
+          "calculateValue": "const studentFullName = `${data.studentGivenNames} ${data.studentLastName}`.trim().toLowerCase();\nvalue = data.partnerFullName?.trim().toLowerCase() === studentFullName;",
           "key": "isPartnerNameMatch",
           "type": "hidden",
           "input": true,
