@@ -389,6 +389,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataStudentTotalIncome: number;
   calculatedDataCurrentYearPartnerIncome: number;
   partner1CRAReportedIncome?: number;
+  studentDataCurrentYearPartnerIncome?: number; // No longer used in PY 26/27 and beyond.
   studentDataGovernmentFundingCosts?: number;
   calculatedDataPartnerBCEAIncomeAssistanceAmount?: number;
   calculatedDataInterfacePolicyApplies: boolean;

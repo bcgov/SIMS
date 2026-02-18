@@ -883,7 +883,7 @@ dmnX (comes from dmn)</bpmn:text>
         <bpmn:outgoing>Flow_0bhp3uf</bpmn:outgoing>
       </bpmn:exclusiveGateway>
       <bpmn:sequenceFlow id="Flow_1sqp89w" name="Has current year partner income" sourceRef="Gateway_0sagtkj" targetRef="Activity_0n6r0rm">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataCurrentYearPartnerIncome != null</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataCurrentYearPartnerIncome != null</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="Flow_1mrd0pj" sourceRef="Activity_0n6r0rm" targetRef="Gateway_15bk18a" />
       <bpmn:sequenceFlow id="Flow_0kzutrb" name="Default: Has no current year partner income" sourceRef="Gateway_0sagtkj" targetRef="Activity_0nyqfy4" />
@@ -1027,7 +1027,7 @@ dmnX (comes from dmn)</bpmn:text>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1mtcoea" name="Not eligible for additional transportation" sourceRef="Gateway_14myy0o" targetRef="Event_0ip2nw4" />
     <bpmn:sequenceFlow id="Flow_0btwcpj" name="Eligible for additional transportation" sourceRef="Gateway_14myy0o" targetRef="Event_1qui2nz">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=calculatedDataAdditionalTransportRequested = "yes" and calculatedDataAdditionalTransportListedDriver ="yes"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataAdditionalTransportRequested = "yes" and studentDataAdditionalTransportListedDriver ="yes"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0onzs1l" sourceRef="Event_1qui2nz" targetRef="Event_0tjlor6" />
     <bpmn:sequenceFlow id="Flow_0uvmsmj" sourceRef="Event_0tjlor6" targetRef="Gateway_1uj6ty4" />
@@ -1062,7 +1062,7 @@ dmnX (comes from dmn)</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_0i7yki0" name="PD/PPD Status">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=studentDataApplicationPDPPDStatus" target="calculatedDataPDPPDStatus" />
+          <zeebe:output source="=if studentDataApplicationPDPPDStatus = &#34;yes&#34;&#10;then true&#10;else false" target="calculatedDataPDPPDStatus" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_02jktrl</bpmn:incoming>
