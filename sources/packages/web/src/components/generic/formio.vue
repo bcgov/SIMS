@@ -73,6 +73,9 @@ export default defineComponent({
       default: true,
       required: false,
     },
+    // Allow an alternative control of the loading state, overriding the isDataReady behavior.
+    // Useful when the form must be loaded into the DOM to allow form.io utils methods to interact
+    // with the form but the form can still be displayed in its loading state for the user.
     loading: {
       type: Boolean,
       default: false,

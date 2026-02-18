@@ -99,6 +99,10 @@ export default defineComponent({
     const allFormsLoaded = ref(false);
     const { recursiveSearch } = useFormioUtils();
 
+    /**
+     * Retrieves supplementary data for a form.
+     * @param supplementaryDataKeys data keys to be retrieved.
+     */
     const getSupplementaryData = async (supplementaryDataKeys: string[]) => {
       try {
         return await FormSubmissionService.shared.getSupplementaryData({
