@@ -10,6 +10,11 @@ export const FORM_SUBMISSION_UNKNOWN_FORM_CONFIGURATION =
 export const FORM_SUBMISSION_MIXED_FORM_APPLICATION_SCOPE =
   "FORM_SUBMISSION_MIXED_FORM_APPLICATION_SCOPE";
 /**
+ * The submission contains application scoped forms, but the application ID is missing.
+ */
+export const FORM_SUBMISSION_APPLICATION_SCOPE_MISSING_APPLICATION_ID =
+  "FORM_SUBMISSION_APPLICATION_SCOPE_MISSING_APPLICATION_ID";
+/**
  * The submission contains more than one form item, but at least one
  * of the forms does not allow bundled submission.
  */

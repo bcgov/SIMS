@@ -81,6 +81,17 @@ import {
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
 import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
 import { ObjectStorageModule } from "@sims/integrations/object-storage";
+import {
+  ConfigurationContextValidator,
+  PendingConcurrencyValidator,
+  StudentAppealsValidator,
+  FormSubmissionValidator,
+} from "./services/form-submission/form-submission-validator";
+import {
+  SupplementaryDataProgramYear,
+  SupplementaryDataParents,
+  SupplementaryDataLoader,
+} from "./services/form-submission/form-supplementary-data";
 
 @Module({
   imports: [
@@ -89,6 +100,7 @@ import { ObjectStorageModule } from "@sims/integrations/object-storage";
     ATBCIntegrationModule,
     ECertIntegrationModule,
     ObjectStorageModule,
+    //FormSubmissionModule,
   ],
   controllers: [
     ApplicationStudentsController,
@@ -161,6 +173,17 @@ import { ObjectStorageModule } from "@sims/integrations/object-storage";
     SupportingUserControllerService,
     DisbursementScheduleSharedService,
     InstitutionRestrictionService,
+    // Form Validators
+    ConfigurationContextValidator,
+    PendingConcurrencyValidator,
+    StudentAppealsValidator,
+    FormSubmissionValidator,
+    // Form Supplementary Data Loaders
+    SupplementaryDataProgramYear,
+    SupplementaryDataParents,
+    FormSubmissionService,
+    SupplementaryDataLoader,
+    // Form Submission Service (used by validators and controllers, but not exported outside of this module).
     FormSubmissionService,
   ],
 })

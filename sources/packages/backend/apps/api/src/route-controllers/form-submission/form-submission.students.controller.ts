@@ -1,6 +1,15 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Post,
+  UnprocessableEntityException,
+} from "@nestjs/common";
 import {
   DynamicFormConfigurationService,
+  FORM_SUBMISSION_INVALID_DYNAMIC_DATA,
+  FORM_SUBMISSION_PENDING_DECISION,
   FormSubmissionService,
 } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -11,12 +20,11 @@ import {
 } from "../../auth/decorators";
 import {
   ApiBadRequestResponse,
-  ApiNotFoundResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { FormCategory } from "@sims/sims-db";
 import {
   FormSubmissionAPIInDTO,
@@ -24,6 +32,7 @@ import {
 } from "./models/form-submission.dto";
 import { StudentUserToken } from "apps/api/src/auth";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { CustomNamedError } from "@sims/utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -62,28 +71,23 @@ export class FormSubmissionStudentsController extends BaseController {
   }
 
   /**
-   * Submits forms represents appeals or other students forms for Ministry's decision.
-   * The submission will be processed based on the form category and the related business rules.
-   * @param userToken user token of the student submitting the forms.
-   * @param payload form submission with one or more form items.
-   * @returns the id of the created form submission record that holds all the individual form items.
+   * Executes a dynamic form submission for the Ministry decision.
+   * Each form will have an individual decision associated with and upon its
+   * approval, may trigger different actions in the system based on the form type.
+   * @param payload one to many form submissions for the Ministry decision.
+   * @returns ID for the newly created form submission.
    */
-  // TODO: Review the API response and error handling.
-  @ApiNotFoundResponse({
-    description:
-      "Application either not found or not eligible to submit change request/appeal.",
-  })
   @ApiUnprocessableEntityResponse({
     description:
-      "Only one change request/appeal can be submitted at a time for each application. " +
-      "When your current request is approved or denied by StudentAid BC, you will be able to submit a new one or " +
-      "the submitted appeal form(s) are not eligible for the application or " +
-      "the application is not eligible to submit an appeal or " +
-      "the application is no longer eligible to submit change request/appeal.",
+      "There is already a pending form submission for the same context or " +
+      "one or more forms configurations in the submission are not recognized or " +
+      "all forms in the submission must have the same application scope or " +
+      "all forms in the submission must have an application ID when they have application scope or " +
+      "one or more forms in the submission do not allow bundled submissions or " +
+      "all forms in the submission must share the same form category.",
   })
   @ApiBadRequestResponse({
-    description:
-      "Not able to submit change request/appeal due to invalid request.",
+    description: "Failed to submit the form due to invalid dynamic data.",
   })
   @Post()
   async submitForm(
@@ -91,16 +95,30 @@ export class FormSubmissionStudentsController extends BaseController {
     @UserToken() userToken: StudentUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
-      const studentAppeal = await this.formSubmissionService.saveFormSubmission(
+      const submission = await this.formSubmissionService.saveFormSubmission(
         userToken.studentId,
         payload.applicationId,
         payload.items,
         userToken.userId,
       );
       return {
-        id: studentAppeal.id,
+        id: submission.id,
       };
     } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case FORM_SUBMISSION_INVALID_DYNAMIC_DATA:
+            throw new BadRequestException(
+              "Failed to submit the form due to invalid dynamic data.",
+            );
+          case FORM_SUBMISSION_PENDING_DECISION:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+          default:
+            throw new UnprocessableEntityException(error.message);
+        }
+      }
       throw new Error("Failed to submit the form due to unknown reason.", {
         cause: error,
       });
