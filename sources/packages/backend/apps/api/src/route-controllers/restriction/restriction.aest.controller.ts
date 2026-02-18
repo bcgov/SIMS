@@ -38,6 +38,7 @@ import {
   AssignInstitutionRestrictionAPIInDTO,
   InstitutionRestrictionSummaryAPIOutDTO,
   InstitutionActiveRestrictionsAPIOutDTO,
+  RestrictionAPIOutDTO,
 } from "./models/restriction.dto";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
@@ -120,7 +121,7 @@ export class RestrictionAESTController extends BaseController {
   @Get("reasons")
   async getReasonsOptionsList(
     @Query() options: RestrictionReasonsOptionsAPIInDTO,
-  ): Promise<OptionItemAPIOutDTO[]> {
+  ): Promise<RestrictionAPIOutDTO[]> {
     const reasons =
       await this.restrictionService.getRestrictionReasonsByCategory(
         options.type,
@@ -129,6 +130,7 @@ export class RestrictionAESTController extends BaseController {
     return reasons.map((reason) => ({
       id: reason.id,
       description: `${reason.restrictionCode} - ${reason.description}`,
+      fieldRequirements: reason.metadata?.fieldRequirements,
     }));
   }
 

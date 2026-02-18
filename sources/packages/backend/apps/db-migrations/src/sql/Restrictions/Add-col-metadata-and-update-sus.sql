@@ -9,6 +9,6 @@ COMMENT ON COLUMN sims.restrictions.metadata IS 'Restriction metadata.';
 UPDATE
     sims.restrictions
 SET
-    metadata = '{"constraints":{ "location": "required", "program": "required" }}' :: JSONB
+    metadata = '{"fieldRequirements":{ "location": "required", "program": "required" }}' :: JSONB
 WHERE
     restriction_code = 'SUS';

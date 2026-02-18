@@ -54,7 +54,7 @@ export class RestrictionService {
    */
   async getRestrictionReasons(
     restrictionType: RestrictionType.Provincial | RestrictionType.Institution,
-    restrictionCategory: string,
+    restrictionCategory?: string,
   ): Promise<OptionItemAPIOutDTO[]> {
     return ApiClient.RestrictionApi.getRestrictionReasons(
       restrictionType,

@@ -41,13 +41,13 @@ export class RestrictionApi extends HttpBaseClient {
    */
   async getRestrictionReasons(
     restrictionType: RestrictionType.Provincial | RestrictionType.Institution,
-    restrictionCategory: string,
+    restrictionCategory?: string,
   ): Promise<OptionItemAPIOutDTO[]> {
-    return this.getCall<OptionItemAPIOutDTO[]>(
-      this.addClientRoot(
-        `restriction/reasons?type=${restrictionType}&category=${restrictionCategory}`,
-      ),
-    );
+    let url = `restriction/reasons?type=${restrictionType}`;
+    if (restrictionCategory) {
+      url += `&category=${restrictionCategory}`;
+    }
+    return this.getCall<OptionItemAPIOutDTO[]>(this.addClientRoot(url));
   }
 
   async getStudentRestrictionDetail(

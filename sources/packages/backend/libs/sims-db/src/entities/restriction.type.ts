@@ -1,3 +1,5 @@
+import { FieldRequirementType } from ".";
+
 /**
  * Enumeration types for Restriction.
  */
@@ -15,7 +17,12 @@ export enum RestrictionType {
    */
   Institution = "Institution",
 }
-
+/**
+ * Restriction metadata.
+ */
 export interface RestrictionMetadata {
-  constraints: Record<string, string>;
+  /**
+   * The restricted party(student or institution) field requirements for the restriction.
+   */
+  fieldRequirements: Record<string, FieldRequirementType>;
 }

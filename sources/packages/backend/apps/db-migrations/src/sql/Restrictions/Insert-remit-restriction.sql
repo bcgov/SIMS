@@ -5,7 +5,8 @@ INSERT INTO
         description,
         restriction_category,
         action_type,
-        notification_type
+        notification_type,
+        metadata
     )
 VALUES
     (
@@ -14,5 +15,6 @@ VALUES
         'No direct tuition remittance allowed.',
         'Location',
         ARRAY ['No effect'] :: sims.restriction_action_types [],
-        'No effect' :: sims.restriction_notification_types
+        'No effect' :: sims.restriction_notification_types,
+        '{"fieldRequirements":{ "location": "required", "program": "optional" }}' :: JSONB
     );

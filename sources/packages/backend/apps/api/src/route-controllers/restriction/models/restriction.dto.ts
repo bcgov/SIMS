@@ -3,6 +3,7 @@ import {
   ArrayMinSize,
   IsIn,
   IsNotEmpty,
+  IsOptional,
   IsPositive,
   MaxLength,
 } from "class-validator";
@@ -12,6 +13,7 @@ import {
   RestrictionType,
   RESTRICTION_CATEGORY_MAX_LENGTH,
   RestrictionActionType,
+  FieldRequirementType,
 } from "@sims/sims-db";
 
 /**
@@ -193,7 +195,16 @@ export class RestrictionReasonsOptionsAPIInDTO {
   /**
    * Category of the restriction expected to be filtered.
    */
-  @IsNotEmpty()
+  @IsOptional()
   @MaxLength(RESTRICTION_CATEGORY_MAX_LENGTH)
   category: string;
+}
+
+/**
+ * Restriction details.
+ */
+export class RestrictionAPIOutDTO {
+  id: number;
+  description: string;
+  fieldRequirements?: Record<string, FieldRequirementType>;
 }

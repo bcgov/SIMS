@@ -77,11 +77,6 @@ import { InstitutionService } from "@/services/InstitutionService";
 import { RestrictionService } from "@/services/RestrictionService";
 import { EducationProgramService } from "@/services/EducationProgramService";
 
-/**
- * Default category to be displayed for institution restrictions.
- */
-export const CATEGORY = "Program";
-
 export default defineComponent({
   components: { ModalDialogBase, ErrorSummary },
   props: {
@@ -135,7 +130,6 @@ export default defineComponent({
           await Promise.all([
             RestrictionService.shared.getRestrictionReasons(
               RestrictionType.Institution,
-              CATEGORY,
             ),
             InstitutionService.shared.getAllInstitutionLocations(
               props.institutionId,
