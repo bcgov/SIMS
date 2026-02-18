@@ -1,6 +1,5 @@
-// TODO: These DTOs will have their final version once the API is fully integrated.
 import { FormCategory } from "@sims/sims-db";
-import { JSON_10KB } from "apps/api/src/constants";
+import { JSON_10KB } from "../../../constants";
 import {
   KnownSupplementaryData,
   KnownSupplementaryDataKey,
