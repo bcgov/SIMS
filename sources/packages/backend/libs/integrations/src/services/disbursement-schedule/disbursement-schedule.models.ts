@@ -315,12 +315,12 @@ export class EligibleECertDisbursement {
     private readonly restrictionBypass: ApplicationActiveRestrictionBypass[],
     private readonly institutionRestrictions: InstitutionActiveRestriction[],
   ) {
-    this.studentRestrictionsBypassedIds = this.restrictionBypass.map(
-      (bypass) => bypass.studentRestrictionId,
-    );
-    this.institutionRestrictionsBypassedIds = this.restrictionBypass.map(
-      (bypass) => bypass.institutionRestrictionId,
-    );
+    this.studentRestrictionsBypassedIds = this.restrictionBypass
+      .filter((bypass) => !!bypass.studentRestrictionId)
+      .map((bypass) => bypass.studentRestrictionId);
+    this.institutionRestrictionsBypassedIds = this.restrictionBypass
+      .filter((bypass) => !!bypass.institutionRestrictionId)
+      .map((bypass) => bypass.institutionRestrictionId);
   }
 
   /**

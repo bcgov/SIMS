@@ -273,26 +273,15 @@ export class ECertGenerationService {
             };
             const restrictionBypasses =
               application.restrictionBypasses.map<ApplicationActiveRestrictionBypass>(
-                (bypass) => {
-                  const baseBypass = {
-                    id: bypass.id,
-                    bypassBehavior: bypass.bypassBehavior,
-                    restrictionCode: bypass.studentRestriction
-                      ? bypass.studentRestriction.restriction.restrictionCode
-                      : bypass.institutionRestriction.restriction
-                          .restrictionCode,
-                  };
-                  return bypass.studentRestriction
-                    ? {
-                        ...baseBypass,
-                        studentRestrictionId: bypass.studentRestriction.id,
-                      }
-                    : {
-                        ...baseBypass,
-                        institutionRestrictionId:
-                          bypass.institutionRestriction.id,
-                      };
-                },
+                (bypass) => ({
+                  id: bypass.id,
+                  restrictionCode: bypass.studentRestriction
+                    ? bypass.studentRestriction.restriction.restrictionCode
+                    : bypass.institutionRestriction.restriction.restrictionCode,
+                  studentRestrictionId: bypass.studentRestriction?.id,
+                  institutionRestrictionId: bypass.institutionRestriction?.id,
+                  bypassBehavior: bypass.bypassBehavior,
+                }),
               );
             return new EligibleECertDisbursement(
               student.id,

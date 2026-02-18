@@ -1931,7 +1931,7 @@ describe(
       },
     );
 
-    it.only(
+    it(
       "Should have the e-Cert generated for a full-time application when the restriction bypass is active when " +
         `an application has an active institution '${RestrictionCode.SUS}' restriction and it is bypassed with behavior '${RestrictionBypassBehaviors.AllDisbursements}'.`,
       async () => {

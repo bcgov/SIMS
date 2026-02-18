@@ -83,7 +83,10 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
     // This depends on whether the bypass is a student or institution restriction bypass.
     const bypasses = applicationRestrictionBypasses.map(
       (item: ApplicationRestrictionBypass) => {
-        const bypassedRestriction: StudentRestriction | InstitutionRestriction =
+        const bypassedRestriction: (
+          | StudentRestriction
+          | InstitutionRestriction
+        ) & { deletedAt?: Date } =
           item.studentRestriction ?? item.institutionRestriction;
         return {
           id: item.id,
@@ -91,9 +94,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
             bypassedRestriction.restriction.restrictionCategory,
           restrictionCode: bypassedRestriction.restriction.restrictionCode,
           isRestrictionActive: bypassedRestriction.isActive,
-          ...(bypassedRestriction instanceof StudentRestriction && {
-            restrictionDeletedAt: bypassedRestriction.deletedAt,
-          }),
+          restrictionDeletedAt: bypassedRestriction.deletedAt,
           isBypassActive: item.isActive,
         };
       },

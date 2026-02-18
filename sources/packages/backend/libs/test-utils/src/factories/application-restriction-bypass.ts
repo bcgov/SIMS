@@ -126,9 +126,8 @@ export async function saveFakeApplicationRestrictionBypass(
         restriction,
       },
     );
-  } else if (relations.studentRestriction) {
+  } else {
     bypass.studentRestriction = relations.studentRestriction;
-  } else if (relations.institutionRestriction) {
     bypass.institutionRestriction = relations.institutionRestriction;
   }
   // Define creationNote.
