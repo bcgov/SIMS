@@ -137,6 +137,12 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsStepParentWaiverAppealData?: StepParentWaiverAppealData;
   appealsStudentDependantsAppealData?: StudentDependent[];
   appealsStudentHasDependentsAppealData?: YesNoOptions;
+  // TODO: The following appeals are placeholders while work is done on the exception to appeal conversions.
+  // Update any data types or structures as needed when the appeals are fully implemented.
+  appealsStudentCurrentYearIncomeAppealData?: JSONDoc;
+  appealsPartnerCurrentYearIncomeAppealData?: JSONDoc;
+  appealsParentCurrentYearIncomeAppealData?: JSONDoc;
+  appealsStudentExceptionalExpenseAppealData?: JSONDoc;
   studentDataIsYourPartnerAbleToReport?: boolean;
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
@@ -234,12 +240,6 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   programYearTotalPartTimeReturnTransportationCost: number;
   programYearTotalFullTimeReturnTransportationCost: number;
   studentDataParents?: IdentifiableParentData[];
-  // TODO: These are placeholders while work is done on the exception to appeal conversions.
-  // Update any data types or structures as needed when the appeals are fully implemented.
-  appealsStudentCurrentYearIncomeAppealData?: JSONDoc;
-  appealsPartnerCurrentYearIncomeAppealData?: JSONDoc;
-  appealsParentCurrentYearIncomeAppealData?: JSONDoc;
-  appealsStudentExceptionalExpenseAppealData?: JSONDoc;
 }
 
 /**

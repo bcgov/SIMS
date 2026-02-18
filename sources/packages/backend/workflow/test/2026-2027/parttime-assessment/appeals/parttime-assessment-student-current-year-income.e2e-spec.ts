@@ -26,7 +26,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-current-
     ).toBe(1234);
   });
 
-  it("Should use the appeal current year income values when there is a student current year income appeal.", async () => {
+  it("Should use the appeal current year income values when there is a student current year income appeal and the student has no CRA reported income.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -42,6 +42,26 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-current-
       assessmentConsolidatedData,
     );
 
+    // Assert
+    expect(
+      calculatedAssessment.variables.calculatedDataStudentTotalIncome,
+    ).toBe(20001);
+  });
+
+  it("Should use the appeal current year income values when there is a student current year income appeal and the student has CRA reported income.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.appealsStudentCurrentYearIncomeAppealData = {
+      currentYearIncome: 20001,
+    };
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 1000001;
+    assessmentConsolidatedData.studentDataTaxReturnIncome = 100002;
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
     // Assert
     expect(
       calculatedAssessment.variables.calculatedDataStudentTotalIncome,
