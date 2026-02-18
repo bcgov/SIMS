@@ -23,18 +23,27 @@ export class SupplementaryDataParents extends SupplementaryDataBaseLoader<KnownS
     super();
   }
 
+  /**
+   * The key that identifies the type of supplementary data loaded by this loader.
+   * This property is used to determine which loader should be invoked to load a specific type
+   * of supplementary data based on the known supplementary data keys.
+   */
   get dataKey(): KnownSupplementaryDataKey.Parents {
     return KnownSupplementaryDataKey.Parents;
   }
 
+  /**
+   * Loads parents data for application-scoped form submissions.
+   * @param submissionConfig form submission configuration for which the parents data should be loaded.
+   * @param resultSupplementaryData object that will also be updated with the loaded parents data.
+   * @param studentId student ID associated with the form submission.
+   */
   async loadSupplementaryData(
     submissionConfig: FormSubmissionConfig,
     resultSupplementaryData: KnownSupplementaryData,
-    studentId?: number,
+    studentId: number,
   ): Promise<void> {
-    if (!submissionConfig.hasApplicationScope) {
-      // Parents data is only relevant for application-scoped forms,
-      // so we can skip loading if it's not application-scoped.
+    if (!this.hasDataKeyProperty(submissionConfig)) {
       return;
     }
     if (!submissionConfig.applicationId) {
@@ -42,20 +51,24 @@ export class SupplementaryDataParents extends SupplementaryDataBaseLoader<KnownS
         "Application ID is required to load parents data for application-scoped forms.",
       );
     }
-    if (!resultSupplementaryData[KnownSupplementaryDataKey.Parents]) {
-      resultSupplementaryData[KnownSupplementaryDataKey.Parents] =
-        await this.getSupplementaryData(
-          submissionConfig.applicationId,
-          studentId,
-        );
-    }
-    submissionConfig.formData[KnownSupplementaryDataKey.Parents] =
-      resultSupplementaryData[KnownSupplementaryDataKey.Parents];
+    await super.loadSupplementaryData(
+      submissionConfig,
+      resultSupplementaryData,
+      studentId,
+    );
+    submissionConfig.formData[this.dataKey] =
+      resultSupplementaryData[this.dataKey];
   }
 
+  /**
+   * Loads parents data for the given application and student.
+   * @param applicationId application ID associated with the parents data.
+   * @param studentId student ID associated with the parents data.
+   * @returns parents data for the given application and student.
+   */
   async getSupplementaryData(
     applicationId: number,
-    studentId?: number,
+    studentId: number,
   ): Promise<Parent[]> {
     const parents = await this.supportingUserRepo.find({
       select: {

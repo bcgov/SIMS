@@ -22,7 +22,6 @@ export interface FormSubmissionModel {
 
 export interface FormSubmissionModel {
   dynamicConfigurationId: number;
-
   formData: KnownSupplementaryData & Record<string, unknown>;
   files: string[];
 }

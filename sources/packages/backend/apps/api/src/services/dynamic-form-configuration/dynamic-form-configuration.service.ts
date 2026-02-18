@@ -100,6 +100,11 @@ export class DynamicFormConfigurationService {
     );
   }
 
+  /**
+   * Get a form configuration by its id.
+   * @param formId form id.
+   * @returns dynamic form configuration for the requested id.
+   */
   getFormsById(formId: number): DynamicFormConfiguration | undefined {
     return this.dynamicFormConfigurations.find(
       (dynamicFormConfiguration) => dynamicFormConfiguration.id === formId,

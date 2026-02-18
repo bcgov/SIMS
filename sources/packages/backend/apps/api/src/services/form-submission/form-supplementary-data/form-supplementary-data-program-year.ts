@@ -18,18 +18,28 @@ export class SupplementaryDataProgramYear extends SupplementaryDataBaseLoader<Kn
     super();
   }
 
+  /**
+   * The key that identifies the type of supplementary data loaded by this loader.
+   * This property is used to determine which loader should be invoked to load a specific type
+   * of supplementary data based on the known supplementary data keys.
+   */
   get dataKey(): KnownSupplementaryDataKey.ProgramYear {
     return KnownSupplementaryDataKey.ProgramYear;
   }
 
+  /**
+   * Loads program year data for application-scoped form submissions.
+   * @param submissionConfig form submission configuration for which the program year data should be loaded.
+   * @param resultSupplementaryData object that will also be updated with the loaded program year data.
+   * @param studentId student ID associated with the form submission.
+   * @returns program year data for the given application and student.
+   */
   async loadSupplementaryData(
     submissionConfig: FormSubmissionConfig,
     resultSupplementaryData: KnownSupplementaryData,
-    studentId?: number,
+    studentId: number,
   ): Promise<void> {
-    if (!submissionConfig.hasApplicationScope) {
-      // Program year data is only relevant for application-scoped forms,
-      // so we can skip loading if it's not application-scoped.
+    if (!this.hasDataKeyProperty(submissionConfig)) {
       return;
     }
     if (!submissionConfig.applicationId) {
@@ -37,20 +47,24 @@ export class SupplementaryDataProgramYear extends SupplementaryDataBaseLoader<Kn
         "Application ID is required to load program year data for application-scoped forms.",
       );
     }
-    if (!resultSupplementaryData[KnownSupplementaryDataKey.ProgramYear]) {
-      resultSupplementaryData[KnownSupplementaryDataKey.ProgramYear] =
-        await this.getSupplementaryData(
-          submissionConfig.applicationId,
-          studentId,
-        );
-    }
-    submissionConfig.formData[KnownSupplementaryDataKey.ProgramYear] =
-      resultSupplementaryData[KnownSupplementaryDataKey.ProgramYear];
+    await super.loadSupplementaryData(
+      submissionConfig,
+      resultSupplementaryData,
+      studentId,
+    );
+    submissionConfig.formData[this.dataKey] =
+      resultSupplementaryData[this.dataKey];
   }
 
+  /**
+   * Loads program year data for the given application and student.
+   * @param applicationId application ID associated with the program year data.
+   * @param studentId student ID associated with the program year data.
+   * @returns program year data for the given application and student.
+   */
   async getSupplementaryData(
     applicationId: number,
-    studentId?: number,
+    studentId: number,
   ): Promise<string> {
     const application = await this.applicationRepo.findOne({
       select: {

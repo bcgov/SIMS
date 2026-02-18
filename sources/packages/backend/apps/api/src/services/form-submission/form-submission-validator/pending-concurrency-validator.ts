@@ -7,6 +7,10 @@ import { CustomNamedError } from "@sims/utilities";
 import { FORM_SUBMISSION_PENDING_DECISION } from "../constants";
 import { FormSubmissionValidatorBase } from ".";
 
+/**
+ * Executes validations to prevent concurrent pending form submissions for the
+ * same context such as the same category for same student or application
+ */
 @Injectable()
 export class PendingConcurrencyValidator implements FormSubmissionValidatorBase {
   constructor(
@@ -14,10 +18,16 @@ export class PendingConcurrencyValidator implements FormSubmissionValidatorBase 
     private readonly formSubmissionRepo: Repository<FormSubmission>,
   ) {}
 
+  /**
+   * Executes the validation to prevent concurrent pending form submissions.
+   * @param formSubmissionConfigs form submission configurations.
+   * @param studentId student ID associated with the form submission.
+   */
   async validate(
     formSubmissionConfigs: FormSubmissionConfig[],
     studentId: number,
   ): Promise<void> {
+    // All forms in the submission share the same context, so we can use the first one as reference for the validation.
     const [referencedConfig] = formSubmissionConfigs;
     const hasPendingFormSubmission = await this.formSubmissionRepo.exists({
       where: {

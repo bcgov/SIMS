@@ -9,9 +9,20 @@ import {
 } from "../constants";
 import { FormSubmissionValidatorBase } from ".";
 
+/**
+ * Executes validations related to the context of the form submission, such as the
+ * form category, application scope, and bundled submission rules.
+ * For example, it validates that all forms in the submission share the same application scope
+ * and form category, and that they have an application ID when they have application scope.
+ */
 @Injectable()
 export class ConfigurationContextValidator implements FormSubmissionValidatorBase {
+  /**
+   * Executes the validation of form submission context rules.
+   * @param formSubmissionConfigs form submission configurations.
+   */
   validate(formSubmissionConfigs: FormSubmissionConfig[]): void {
+    // All forms in the submission share the same context, so we can use the first one as reference for the validation.
     const [referencedConfig] = formSubmissionConfigs;
     // Validate if all forms share the same scope.
     const hasSameApplicationScope = formSubmissionConfigs.every(

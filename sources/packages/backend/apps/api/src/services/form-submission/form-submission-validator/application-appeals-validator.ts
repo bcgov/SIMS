@@ -4,20 +4,31 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { FormCategory, FormSubmission } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import { FormSubmissionValidatorBase } from ".";
-import { APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL } from "apps/api/src/constants";
+import { APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL } from "../../../constants";
 import { StudentAppealService } from "../..";
 
+/**
+ * Executes validations for application-related appeals that are associated with
+ * a Student Application and were determined to be eligible for such application.
+ */
 @Injectable()
-export class ApplicationAppealsValidator implements FormSubmissionValidatorBase {
+export class ApplicationEligibleAppealsValidator implements FormSubmissionValidatorBase {
   constructor(
     @InjectRepository(FormSubmission)
     private readonly studentAppealService: StudentAppealService,
   ) {}
 
+  /**
+   * Executes the validation of application appeals form submission,
+   * @param formSubmissionConfigs form submission configurations.
+   * @param studentId student id.
+   * @throws error if the validation fails.
+   */
   async validate(
     formSubmissionConfigs: FormSubmissionConfig[],
     studentId: number,
   ): Promise<void> {
+    // All forms in the submission share the same context, so we can use the first one as reference for the validation.
     const [referencedConfig] = formSubmissionConfigs;
     if (
       referencedConfig.formCategory !== FormCategory.StudentAppeal ||

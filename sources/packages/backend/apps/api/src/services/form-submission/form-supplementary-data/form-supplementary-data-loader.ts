@@ -10,6 +10,13 @@ import {
   SupplementaryDataBaseLoader,
 } from ".";
 
+/**
+ * Consolidates all data loaders for form submission supplementary data.
+ * Any supplementary data required by the forms should be loaded through this service,
+ * which will delegate to the appropriate loader based on the known supplementary data keys.
+ * New data loaders can be created by implementing the {@see SupplementaryDataBaseLoader} interface
+ * and adding them to the constructor of this service.
+ */
 @Injectable()
 export class SupplementaryDataLoader {
   private readonly dataLoaders: SupplementaryDataBaseLoader[];
@@ -38,25 +45,22 @@ export class SupplementaryDataLoader {
     // Shared object to accumulate loaded supplementary data across multiple loaders,
     // avoiding the same data being loaded multiple times for different form submissions.
     const supplementaryData: KnownSupplementaryData = {};
-    const promises: Promise<void>[] = [];
     for (const submissionConfig of formSubmissions) {
-      promises.push(
-        ...this.dataLoaders.map((loader) =>
-          loader.loadSupplementaryData(
-            submissionConfig,
-            supplementaryData,
-            studentId,
-          ),
+      // Execute all loaders in parallel for the current form submission config.
+      // Execute the submissions in sequence to allow the data to be reused.
+      const loaderPromises = this.dataLoaders.map((loader) =>
+        loader.loadSupplementaryData(
+          submissionConfig,
+          supplementaryData,
+          studentId,
         ),
       );
+      await Promise.all(loaderPromises);
     }
-    await Promise.all(promises);
   }
 
   /**
-   * Get supplementary data for the provided known supplementary data keys and application ID.
-   * The application ID is used to load supplementary data that is scoped to an application, such as parents and program year.
-   * The known supplementary data keys are used to determine which supplementary data loaders to invoke to load the necessary data.
+   * Get supplementary data for the provided known supplementary data keys.
    * @param KnownSupplementaryDataKeys supplementary data to load.
    * @param applicationId application ID to load application-scoped supplementary data for, if necessary.
    * @param studentId student ID used for authorization purposes, when required.
@@ -65,7 +69,7 @@ export class SupplementaryDataLoader {
   async getSupplementaryData(
     KnownSupplementaryDataKeys: KnownSupplementaryDataKey[],
     applicationId: number | undefined,
-    studentId?: number,
+    studentId: number | undefined,
   ): Promise<KnownSupplementaryData> {
     const supplementaryData: KnownSupplementaryData = {};
     // Load all supplementary data in parallel.
@@ -81,10 +85,17 @@ export class SupplementaryDataLoader {
     return supplementaryData;
   }
 
+  /**
+   * Retrieves supplementary data for the given data key.
+   * @param dataKey key identifying the type of supplementary data to retrieve.
+   * @param applicationId application ID to load application-scoped supplementary data for, if necessary.
+   * @param studentId student ID used for authorization purposes, when required.
+   * @returns an object containing the loaded supplementary data and its corresponding key.
+   */
   private async getSupplementaryDataInternal(
     dataKey: KnownSupplementaryDataKey,
     applicationId: number | undefined,
-    studentId?: number,
+    studentId: number | undefined,
   ): Promise<{
     data: KnownSupplementaryData[KnownSupplementaryDataKey];
     key: KnownSupplementaryDataKey;

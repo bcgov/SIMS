@@ -84,7 +84,7 @@ import { ObjectStorageModule } from "@sims/integrations/object-storage";
 import {
   ConfigurationContextValidator,
   PendingConcurrencyValidator,
-  ApplicationAppealsValidator,
+  ApplicationEligibleAppealsValidator,
   FormSubmissionValidator,
 } from "./services/form-submission/form-submission-validator";
 import {
@@ -176,7 +176,7 @@ import {
     // Form Validators
     ConfigurationContextValidator,
     PendingConcurrencyValidator,
-    ApplicationAppealsValidator,
+    ApplicationEligibleAppealsValidator,
     FormSubmissionValidator,
     // Form Supplementary Data Loaders
     SupplementaryDataProgramYear,
