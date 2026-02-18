@@ -22,7 +22,7 @@
         :application-id="applicationId"
         @submitted="submitted"
       >
-        <template #actions="{ submit }">
+        <template #actions="{ submit, allFormsLoaded }">
           <footer-buttons
             justify="space-between"
             :processing="processing"
@@ -30,6 +30,7 @@
             secondary-label="Back"
             @primary-click="submit"
             primary-label="Submit for review"
+            :disable-primary-button="!allFormsLoaded"
           ></footer-buttons>
         </template>
       </form-submission-items>

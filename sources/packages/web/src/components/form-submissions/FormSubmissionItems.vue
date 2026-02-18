@@ -53,12 +53,16 @@
     </v-expansion-panel>
   </v-expansion-panels>
   <div class="mt-4">
-    <slot name="actions" :submit="submit"></slot>
+    <slot
+      name="actions"
+      :submit="submit"
+      :all-forms-loaded="allFormsLoaded"
+    ></slot>
   </div>
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { defineComponent, PropType, ref, watch } from "vue";
+import { computed, defineComponent, PropType, ref, watch } from "vue";
 import { useFormioUtils, useSnackBar } from "@/composables";
 import {
   FormIOComponent,
@@ -96,7 +100,7 @@ export default defineComponent({
     const expansionPanelsModel = ref<number[]>([]);
     const { checkFormioValidity, getAssociatedFiles } = useFormioUtils();
     const forms = new Map<number, FormIOForm>();
-    const allFormsLoaded = ref(false);
+    const formsLoadedCount = ref(0);
     const { recursiveSearch } = useFormioUtils();
 
     /**
@@ -116,11 +120,11 @@ export default defineComponent({
     };
 
     /**
-     * Check if all expected forms were loaded.
+     * Indicates when all the expected forms are loaded.
      */
-    const updateFormsLoadState = () => {
-      allFormsLoaded.value = forms.size === props.submissionItems.length;
-    };
+    const allFormsLoaded = computed(
+      () => formsLoadedCount.value === props.submissionItems.length,
+    );
 
     /**
      * Keep track of all forms that will be part of the submission.
@@ -130,7 +134,7 @@ export default defineComponent({
     const formLoaded = async (form: FormIOForm, formKey: number) => {
       forms.set(formKey, form);
       if (props.readOnly) {
-        updateFormsLoadState();
+        formsLoadedCount.value++;
         return;
       }
       // Check if the form has any know supplementary key that must be loaded.
@@ -140,7 +144,7 @@ export default defineComponent({
           component.component.tags?.includes("supplementary-data"),
       );
       if (!supplementaryComponentsSearch.length) {
-        updateFormsLoadState();
+        formsLoadedCount.value = forms.size;
         return;
       }
       // Group the key to retrieve supplementary data from the API.
@@ -157,14 +161,13 @@ export default defineComponent({
           );
         }
       }
-      updateFormsLoadState();
+      formsLoadedCount.value = forms.size;
     };
 
     /**
      * Validate and emits an event if all forms are valid.
      */
     const submit = async () => {
-      // TODO: Consider not allowing the submission if all the forms were not loaded.
       const invalidFormKeys: number[] = [];
       const validItems: FormSubmissionItemSubmitted[] = [];
       for (const [key, form] of forms) {
