@@ -50,6 +50,7 @@ import FormSubmissionItems from "@/components/form-submissions/FormSubmissionIte
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
+import { FORM_SUBMISSION_PENDING_DECISION } from "@/constants";
 
 export default defineComponent({
   components: {
@@ -87,6 +88,10 @@ export default defineComponent({
         });
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
+          if (error.errorType === FORM_SUBMISSION_PENDING_DECISION) {
+            snackBar.warn(error.message);
+            return;
+          }
           snackBar.error(error.message);
           return;
         }
