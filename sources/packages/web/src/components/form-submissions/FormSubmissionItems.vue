@@ -140,7 +140,7 @@ export default defineComponent({
         formsLoadedCount.value = forms.size;
         return;
       }
-      // Check if the form has any know supplementary key that must be loaded.
+      // Check if the form has any known supplementary key that must be loaded.
       const supplementaryComponentsSearch = recursiveSearch(
         form,
         (component: FormIOComponent) =>

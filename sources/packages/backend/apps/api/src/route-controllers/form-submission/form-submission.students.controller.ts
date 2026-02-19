@@ -18,7 +18,8 @@ import {
   AllowAuthorizedParty,
   RequiresStudentAccount,
   UserToken,
-} from "../../auth/decorators";
+  StudentUserToken,
+} from "../../auth";
 import {
   ApiBadRequestResponse,
   ApiTags,
@@ -33,7 +34,6 @@ import {
   FormSupplementaryDataAPIInDTO,
   FormSupplementaryDataAPIOutDTO,
 } from "./models/form-submission.dto";
-import { StudentUserToken } from "apps/api/src/auth";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { CustomNamedError } from "@sims/utilities";
 import { SupplementaryDataLoader } from "../../services/form-submission/form-supplementary-data/form-supplementary-data-loader";

@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { FormSubmissionConfig } from "../form-submission.models";
 import { FormCategory } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
@@ -57,8 +57,9 @@ export class ApplicationEligibleAppealsValidator implements FormSubmissionValida
       (formName) => !eligibleAppealForms.has(formName),
     );
     if (ineligibleFormNames.length) {
-      throw new UnprocessableEntityException(
+      throw new CustomNamedError(
         `The submitted appeal form(s) ${ineligibleFormNames.join(", ")} is/are not eligible for the application.`,
+        APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
       );
     }
   }
