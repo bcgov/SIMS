@@ -147,6 +147,8 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     studentDataAdditionalTransportWeeks: null,
     studentDataAdditionalTransportPlacement: null,
     studentDataCurrentYearIncome: null,
+    studentDataPartnerIsAbleToReport: null,
+    studentDataPartnerFullName: null,
     offeringCourseLoad: null,
     parent1Contributions: null,
     parent1Ei: null,
