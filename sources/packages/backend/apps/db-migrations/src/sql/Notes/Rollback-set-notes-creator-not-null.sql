@@ -1,17 +1,19 @@
 -- Rollback the creator field to allow NULLs again.
+-- Drop the NOT NULL constraint that uses ON DELETE RESTRICT.
+ALTER TABLE
+    sims.notes DROP CONSTRAINT IF EXISTS notes_creator_fkey;
+
+-- Alter the creator column to allow NULLs.
 ALTER TABLE
     sims.notes
 ALTER COLUMN
     creator DROP NOT NULL;
 
--- Restore the original foreign key behavior on creator with ON DELETE SET NULL.
+-- Recreate the original foreign key with ON DELETE SET NULL behavior.
 ALTER TABLE
     sims.notes
-DROP CONSTRAINT IF EXISTS fk_notes_creator;
-
-ALTER TABLE
-    sims.notes
-ADD CONSTRAINT fk_notes_creator
-FOREIGN KEY (creator)
-REFERENCES sims.users(id)
-ON DELETE SET NULL;
+ADD
+    CONSTRAINT notes_creator_fkey FOREIGN KEY (creator) REFERENCES sims.users (id) ON
+DELETE
+SET
+    NULL;
