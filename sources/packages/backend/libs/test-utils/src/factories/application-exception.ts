@@ -14,8 +14,8 @@ import { createFakeNote } from "./note";
  * @returns a fake application exception.
  * Note: exceptionNote will only be created if a creator is provided in relations.
  */
-export function createFakeApplicationException(relations?: {
-  creator?: User;
+export function createFakeApplicationException(relations: {
+  creator: User;
   assessedBy?: User;
 }): ApplicationException {
   const applicationException = new ApplicationException();
@@ -25,12 +25,10 @@ export function createFakeApplicationException(relations?: {
   applicationException.creator = relations?.creator;
 
   // Only create exception note if creator is provided (since notes require a creator)
-  if (relations?.creator) {
-    const applicationExceptionNote = createFakeNote(NoteType.Application, {
-      creator: relations.creator,
-    });
-    applicationException.exceptionNote = applicationExceptionNote;
-  }
+  const applicationExceptionNote = createFakeNote(NoteType.Application, {
+    creator: relations.creator,
+  });
+  applicationException.exceptionNote = applicationExceptionNote;
 
   return applicationException;
 }
