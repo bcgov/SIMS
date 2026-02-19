@@ -944,6 +944,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
         someApplicationException: { someExceptionData: "some data" },
       },
     } as ApplicationData;
+
     const creator = await db.user.save(createFakeUser());
     const fakeApplicationException = createFakeApplicationException({
       creator,
