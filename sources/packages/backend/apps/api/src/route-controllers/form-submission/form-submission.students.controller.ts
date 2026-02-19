@@ -13,13 +13,12 @@ import {
   FORM_SUBMISSION_PENDING_DECISION,
   FormSubmissionService,
 } from "../../services";
-import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { AuthorizedParties, StudentUserToken } from "../../auth";
 import {
+  UserToken,
   AllowAuthorizedParty,
   RequiresStudentAccount,
-  UserToken,
-  StudentUserToken,
-} from "../../auth";
+} from "../../auth/decorators";
 import {
   ApiBadRequestResponse,
   ApiTags,
