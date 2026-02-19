@@ -24,10 +24,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-total-partner-in
     expect(
       calculatedAssessment.variables.calculatedDataPartner1TotalIncome,
     ).toBe(30000);
-    // As the student did not report the current year partner income, it must be null.
+    // As the student did not report the current year partner income, it must be undefined.
     expect(
-      calculatedAssessment.variables.calculatedDataCurrentYearPartnerIncome,
-    ).toBe(null);
+      calculatedAssessment.variables.studentDataCurrentYearPartnerIncome,
+    ).toBe(undefined);
   });
 
   it(
@@ -48,13 +48,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-total-partner-in
           assessmentConsolidatedData,
         );
       // Assert
-      // Calculated total partner income must be 30000.
+      // Calculated total partner income must be 10000 based on current year income being the top priority for income.
       expect(
         calculatedAssessment.variables.calculatedDataPartner1TotalIncome,
-      ).toBe(10000);
-      // As the student reported the current year partner income, it must be 10000.
-      expect(
-        calculatedAssessment.variables.calculatedDataCurrentYearPartnerIncome,
       ).toBe(10000);
     },
   );
@@ -83,10 +79,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-total-partner-in
       expect(
         calculatedAssessment.variables.calculatedDataPartner1TotalIncome,
       ).toBe(15000);
-      // As the student did not report the current year partner income, it must be null.
+      // As the student did not report the current year partner income, it must be undefined.
       expect(
-        calculatedAssessment.variables.calculatedDataCurrentYearPartnerIncome,
-      ).toBe(null);
+        calculatedAssessment.variables.studentDataCurrentYearPartnerIncome,
+      ).toBe(undefined);
     },
   );
 

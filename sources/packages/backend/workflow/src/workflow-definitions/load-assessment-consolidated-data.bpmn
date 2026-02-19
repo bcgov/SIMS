@@ -127,6 +127,10 @@
           <zeebe:header key="appealsStudentHasDependentsAppealData" value="appeals.studentdependantsappeal.submittedData.hasDependents" />
           <zeebe:header key="appealsStepParentWaiverAppealData" value="appeals.stepparentwaiverappeal.submittedData.{&#34;selectedParent&#34;: selectedParent}" />
           <zeebe:header key="appealsRoomAndBoardCostsAppealData" value="appeals.roomandboardcostsappeal.submittedData" />
+          <zeebe:header key="appealsStudentCurrentYearIncomeAppealData" value="appeals.studentcurrentyearincomeappeal.submittedData" />
+          <zeebe:header key="appealsPartnerCurrentYearIncomeAppealData" value="appeals.partnercurrentyearincomeappeal.submittedData" />
+          <zeebe:header key="appealsParentCurrentYearIncomeAppealData" value="appeals.parentcurrentyearincomeappeal.submittedData" />
+          <zeebe:header key="appealsStudentExceptionalExpenseAppealData" value="appeals.studentexceptionalexpenseappeal.submittedData" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>

@@ -137,11 +137,17 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsStepParentWaiverAppealData?: StepParentWaiverAppealData;
   appealsStudentDependantsAppealData?: StudentDependent[];
   appealsStudentHasDependentsAppealData?: YesNoOptions;
+  // TODO: The following appeals are placeholders while work is done on the exception to appeal conversions.
+  // Update any data types or structures as needed when the appeals are fully implemented.
+  appealsStudentCurrentYearIncomeAppealData?: JSONDoc;
+  appealsPartnerCurrentYearIncomeAppealData?: JSONDoc;
+  appealsParentCurrentYearIncomeAppealData?: JSONDoc;
+  appealsStudentExceptionalExpenseAppealData?: JSONDoc;
   studentDataIsYourPartnerAbleToReport?: boolean;
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
   studentDataEstimatedSpouseIncome?: number;
-  studentDataCurrentYearPartnerIncome?: number;
+  studentDataCurrentYearPartnerIncome?: number; // No longer used in PY 26/27 and beyond.
   studentDataLivingWithPartner?: YesNoOptions;
   studentDataCRAReportedIncome?: number;
   studentDataDependants?: StudentDependent[];
@@ -161,7 +167,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataDaycareCosts11YearsOrUnder?: number;
   studentDataDaycareCosts12YearsOrOver?: number;
   studentDataLivingAtHomeRent?: YesNoOptions;
-  studentDataCurrentYearIncome?: number;
+  studentDataCurrentYearIncome?: number; // No longer used in PY 26/27 and beyond.
   studentDataReturnTripHomeCost?: number;
   studentDataIncomeAssistanceAmount?: number;
   offeringCourseLoad?: number;
@@ -284,8 +290,7 @@ export interface ConfigureDisbursementDataPartTime extends ConfigureDisbursement
 
 export interface IdentifiableParentData extends JSONDoc {
   parentIsAbleToReport: YesNoOptions;
-
-  currentYearParentIncome?: number;
+  currentYearParentIncome?: number; // No longer used in PY 26/27 and beyond.
 }
 
 export interface AssessmentModel {
@@ -384,6 +389,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataStudentTotalIncome: number;
   calculatedDataCurrentYearPartnerIncome: number;
   partner1CRAReportedIncome?: number;
+  studentDataCurrentYearPartnerIncome?: number; // No longer used in PY 26/27 and beyond.
   studentDataGovernmentFundingCosts?: number;
   calculatedDataPartnerBCEAIncomeAssistanceAmount?: number;
   calculatedDataInterfacePolicyApplies: boolean;
