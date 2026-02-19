@@ -21,6 +21,7 @@ import {
   createE2EDataSources,
   createFakeApplicationException,
   createFakeApplicationExceptionRequest,
+  createFakeUser,
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
@@ -49,7 +50,8 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
 
   it("Should approve the application exception when all the assessed exception requests are approved.", async () => {
     // Arrange
-    const applicationException = createFakeApplicationException();
+    const creator = await db.user.save(createFakeUser());
+    const applicationException = createFakeApplicationException({ creator });
     // Create two exception requests in pending status.
     const exceptionRequests = Array.from({ length: 2 }, () =>
       createFakeApplicationExceptionRequest(
@@ -158,7 +160,8 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
 
   it("Should decline the application exception when one or more assessed exception requests are declined.", async () => {
     // Arrange
-    const applicationException = createFakeApplicationException();
+    const creator = await db.user.save(createFakeUser());
+    const applicationException = createFakeApplicationException({ creator });
     // Create two exception requests in pending status.
     const exceptionRequests = Array.from({ length: 2 }, () =>
       createFakeApplicationExceptionRequest(
@@ -338,7 +341,8 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       " does not contain all the pending exception requests available in the application exception.",
     async () => {
       // Arrange
-      const applicationException = createFakeApplicationException();
+      const creator = await db.user.save(createFakeUser());
+      const applicationException = createFakeApplicationException({ creator });
       // Create two exception requests in pending status.
       const exceptionRequests = Array.from({ length: 2 }, () =>
         createFakeApplicationExceptionRequest(
@@ -393,7 +397,10 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     async () => {
       // Arrange
       // Create a parent application with parent application exception that was previously approved.
-      const parentApplicationException = createFakeApplicationException();
+      const parentCreator = await db.user.save(createFakeUser());
+      const parentApplicationException = createFakeApplicationException({
+        creator: parentCreator,
+      });
       const parentExceptionRequest = createFakeApplicationExceptionRequest(
         {
           applicationException: parentApplicationException,
@@ -411,7 +418,8 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       const parentApplication = await saveFakeApplication(appDataSource, {
         applicationException: parentApplicationException,
       });
-      const applicationException = createFakeApplicationException();
+      const creator = await db.user.save(createFakeUser());
+      const applicationException = createFakeApplicationException({ creator });
       // Create two exception requests in pending status.
       const exceptionRequests = Array.from({ length: 2 }, () =>
         createFakeApplicationExceptionRequest(

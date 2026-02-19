@@ -3,6 +3,7 @@ import { ApplicationData, ApplicationExceptionStatus } from "@sims/sims-db";
 import {
   createE2EDataSources,
   createFakeApplicationException,
+  createFakeUser,
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
@@ -139,7 +140,11 @@ describe("ApplicationController(e2e)-verifyApplicationExceptions", () => {
         test: "studentApplicationException",
       },
     } as ApplicationData;
-    const fakeApplicationException = createFakeApplicationException();
+    const creator = await db.user.save(createFakeUser());
+    const fakeApplicationException = createFakeApplicationException({
+      creator,
+    });
+
     fakeApplicationException.exceptionStatus =
       ApplicationExceptionStatus.Approved;
     const savedFakeApplicationException = await db.applicationException.save(

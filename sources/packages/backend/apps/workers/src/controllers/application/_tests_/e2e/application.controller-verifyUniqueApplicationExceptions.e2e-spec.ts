@@ -14,6 +14,7 @@ import {
   createFakeApplicationException,
   createFakeApplicationExceptionRequest,
   createFakeEducationProgramOffering,
+  createFakeUser,
   E2EDataSources,
   saveFakeApplication,
   saveFakeStudent,
@@ -45,7 +46,8 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
 
   beforeAll(async () => {
     // Set the application submission deadline weeks configuration for the test.
-    process.env.APPLICATION_SUBMISSION_DEADLINE_WEEKS = APPLICATION_SUBMISSION_DEADLINE_WEEKS;
+    process.env.APPLICATION_SUBMISSION_DEADLINE_WEEKS =
+      APPLICATION_SUBMISSION_DEADLINE_WEEKS;
     const { nestApplication, dataSource } = await createTestingAppModule();
     db = createE2EDataSources(dataSource);
     applicationController = nestApplication.get(ApplicationController);
@@ -218,7 +220,8 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
     async () => {
       // Arrange
       // Create two already approved application exceptions.
-      const exception = createFakeApplicationException();
+      const creator = await db.user.save(createFakeUser());
+      const exception = createFakeApplicationException({ creator });
       exception.exceptionStatus = ApplicationExceptionStatus.Approved;
       const savedException = await db.applicationException.save(exception);
       const exceptionRequest1 = createFakeApplicationExceptionRequest(
@@ -428,7 +431,8 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
       // Arrange
       // Create a declined exception with two exception requests
       // where one of the requests was previously approved but the other one was declined.
-      const exception = createFakeApplicationException();
+      const creator = await db.user.save(createFakeUser());
+      const exception = createFakeApplicationException({ creator });
       exception.exceptionStatus = ApplicationExceptionStatus.Declined;
       const savedException = await db.applicationException.save(exception);
       const exceptionRequest1 = createFakeApplicationExceptionRequest(
@@ -627,7 +631,8 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
     async () => {
       // Arrange
       // Create a declined exception with one exception request which is therefore declined.
-      const exception = createFakeApplicationException();
+      const creator = await db.user.save(createFakeUser());
+      const exception = createFakeApplicationException({ creator });
       exception.exceptionStatus = ApplicationExceptionStatus.Declined;
       const savedException = await db.applicationException.save(exception);
       const exceptionRequest = createFakeApplicationExceptionRequest(
@@ -939,7 +944,10 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
         someApplicationException: { someExceptionData: "some data" },
       },
     } as ApplicationData;
-    const fakeApplicationException = createFakeApplicationException();
+    const creator = await db.user.save(createFakeUser());
+    const fakeApplicationException = createFakeApplicationException({
+      creator,
+    });
     fakeApplicationException.exceptionStatus =
       ApplicationExceptionStatus.Approved;
     const savedFakeApplicationException = await db.applicationException.save(
