@@ -210,6 +210,8 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
     const susRestriction = await saveFakeInstitutionRestriction(db, {
       restriction,
       program: application.currentAssessment.offering.educationProgram,
+      institution:
+        application.currentAssessment.offering.institutionLocation.institution,
       location: application.currentAssessment.offering.institutionLocation,
     });
     // Create an institution restriction and a bypass to allow the NOA to be accepted.
@@ -237,6 +239,19 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       .patch(endpoint)
       .auth(studentUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
+
+    // Assert the assessment NOA approval status is updated.
+    const updatedAssessment = await db.studentAssessment.findOne({
+      select: {
+        id: true,
+        noaApprovalStatus: true,
+      },
+      where: { id: application.currentAssessment.id },
+    });
+    expect(updatedAssessment).toEqual({
+      id: application.currentAssessment.id,
+      noaApprovalStatus: AssessmentStatus.completed,
+    });
   });
 
   /**

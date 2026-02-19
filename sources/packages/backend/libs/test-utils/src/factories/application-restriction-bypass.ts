@@ -59,8 +59,9 @@ export function createFakeApplicationRestrictionBypass(relations: {
  * @param relations bypass relations.
  * - `application`: mandatory for bypass creation. Requires student and user to also be loaded.
  * - `studentRestriction`: optional student restriction. If not provided, one will be created.
+ * - `institutionRestriction`: optional institution restriction.
  * - `creationNote`: optional creation note. If not provided, one will be created.
- * - `bypassCreatedBy`:
+ * - `bypassCreatedBy`: user that created the bypass.
  * - `removalNote`: optional removal note. If not provided, one will be created only if the
  * {@link isRemoved} is set as true.
  * - `bypassRemovedBy`: optional removal user. Should be provided if {@link isRemoved} is set as true.

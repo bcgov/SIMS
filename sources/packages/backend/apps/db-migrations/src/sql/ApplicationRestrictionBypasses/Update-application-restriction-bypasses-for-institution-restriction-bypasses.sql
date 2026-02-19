@@ -25,4 +25,4 @@ ADD
     )
   );
 
-COMMENT ON CONSTRAINT student_institution_restriction_id_constraint ON sims.application_restriction_bypasses IS 'At most one of student_restriction_id and institution_restriction_id can be populated.';
+COMMENT ON CONSTRAINT student_institution_restriction_id_constraint ON sims.application_restriction_bypasses IS 'Constraint to assign either the student restriction or the institution restriction, but not both.';

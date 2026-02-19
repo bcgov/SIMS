@@ -86,7 +86,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
       program: application.currentAssessment.offering.educationProgram,
     });
     // Create an institution restriction bypass so that bypass history includes both
-    // application and institution-level bypasses for this application.
+    // student and institution level bypasses for this application.
     const institutionRestrictionBypass =
       await saveFakeApplicationRestrictionBypass(
         db,
