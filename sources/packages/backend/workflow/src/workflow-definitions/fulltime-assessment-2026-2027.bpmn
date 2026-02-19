@@ -477,7 +477,6 @@ calculatedDataParent1TaxRate</bpmn:text>
         <bpmn:flowNodeRef>Event_0bk5jrr</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1n57xgo</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1bl5l5x</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_1ikowt9</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_05w97d8</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_17g355h</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0yaowp1</bpmn:flowNodeRef>
@@ -488,6 +487,7 @@ calculatedDataParent1TaxRate</bpmn:text>
         <bpmn:flowNodeRef>Event_0zvfjsx</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1dvt26b</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0gwvumx</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1btmzxj</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:intermediateThrowEvent id="Event_175iz5m" name="10A: Total Discretionary Income">
@@ -1724,7 +1724,7 @@ There is also a per application limit based on the number of weeks in the offeri
     <bpmn:intermediateThrowEvent id="Event_1ck4wni" name="Parental Assets">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=parent1NetAssests + parent2NetAssests" target="calculatedDataParentalAssets" />
+          <zeebe:output source="=parent1NetAssets + parent2NetAssets" target="calculatedDataParentalAssets" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_119pdg5</bpmn:incoming>
@@ -1733,7 +1733,7 @@ There is also a per application limit based on the number of weeks in the offeri
     <bpmn:intermediateThrowEvent id="Event_1x1bzlu" name="Parental Assets">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=parent1NetAssests" target="calculatedDataParentalAssets" />
+          <zeebe:output source="=parent1NetAssets" target="calculatedDataParentalAssets" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1qvqrur</bpmn:incoming>
@@ -2087,16 +2087,16 @@ Alimony/Child Support paid by the Partner during the study period can be conside
         <zeebe:ioMapping>
           <zeebe:output source="=if partner1TotalStudentLoan = null&#10;then &#10;  if studentDataPartnerTotalStudentLoan = null&#10;  then 0&#10;  else studentDataPartnerTotalStudentLoan&#10;else&#10;  partner1TotalStudentLoan" target="calculatedDataPartnerStudentLoans" />
           <zeebe:output source="=if partner1PartnerCaringForDependant = null&#10;then &#10; studentDataPartnerCaringForDependant&#10;else&#10; partner1PartnerCaringForDependant" target="calculatedDataPartnerCaringForDependant" />
-          <zeebe:output source="=if (studentDataPartnerChildSupportCosts = null and partner1ChildSpousalSupportCost = null)&#10;then 0&#10;else&#10;  if studentDataPartnerChildSupportCosts = null&#10;  then partner1ChildSpousalSupportCost&#10;  else studentDataPartnerChildSupportCosts&#10;" target="calculatedDataPartnerAlimonySupport" />
+          <zeebe:output source="=if partner1ChildSpousalSupportCost = null&#10;then 0&#10;else partner1ChildSpousalSupportCost" target="calculatedDataPartnerAlimonySupport" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0ssiiff</bpmn:incoming>
+      <bpmn:incoming>Flow_1iz59pc</bpmn:incoming>
       <bpmn:outgoing>Flow_1gzgc13</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="Event_1b81z89" name="Partner FT Study Weeks">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if studentDataIsYourPartnerAbleToReport = true&#10;then &#10;  //partner self report&#10;  if partner1StudentStudyWeeks =  null &#10;  then    0&#10;  else  min(partner1StudentStudyWeeks,offeringWeeks)&#10;else &#10;  //student report on behalf of partner&#10;  if studentDataPartnerStudyWeeks = null &#10;  then    0&#10;  else min(studentDataPartnerStudyWeeks,offeringWeeks)" target="calculatedDataPartnerStudyWeeks" />
+          <zeebe:output source="=if partner1StudentStudyWeeks =  null &#10;then 0&#10;else min(partner1StudentStudyWeeks,offeringWeeks)" target="calculatedDataPartnerStudyWeeks" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1gzgc13</bpmn:incoming>
@@ -2124,25 +2124,11 @@ Alimony/Child Support paid by the Partner during the study period can be conside
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=if studentDataIsYourPartnerAbleToReport = true then &#10;  partner1HasFedralProvincialPDReceipt&#10;else &#10;  studentDataPartnerHasFedralProvincialPDReceipt" target="calculatedDataPartnerFedralProvincialPDReceipt" />
-          <zeebe:output source="=if studentDataIsYourPartnerAbleToReport = true then&#10;  partner1BCEAIncomeAssistanceAmount&#10;else&#10;  studentDataPartnerBCEAIncomeAssistanceAmount" target="calculatedDataPartnerBCEAIncomeAssistanceAmount" />
+          <zeebe:output source="=if partner1BCEAIncomeAssistanceAmount = null&#10;then 0&#10;else partner1BCEAIncomeAssistanceAmount" target="calculatedDataPartnerBCEAIncomeAssistanceAmount" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0wb0sz0</bpmn:incoming>
       <bpmn:outgoing>Flow_0ixsnmb</bpmn:outgoing>
-    </bpmn:intermediateThrowEvent>
-    <bpmn:intermediateThrowEvent id="Event_1ikowt9" name="Partner Total Income">
-      <bpmn:documentation>The priority for Income used in the assessment is:
-1. Current Year 
-2. CRA Reported
-3. Self Reported (Own Income)
-4. Self Reported (Student)</bpmn:documentation>
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=if&#10;  studentDataCurrentYearPartnerIncome = null&#10;then &#10;  if (partner1CRAReportedIncome = null)&#10;   then &#10;    if partner1TotalIncome = null&#10;      then &#10;          studentDataEstimatedSpouseIncome&#10;      else &#10;          partner1TotalIncome&#10;    else&#10;      partner1CRAReportedIncome&#10;else &#10;  studentDataCurrentYearPartnerIncome" target="calculatedDataPartner1TotalIncome" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1ekiozl</bpmn:incoming>
-      <bpmn:outgoing>Flow_0ssiiff</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:businessRuleTask id="Activity_05w97d8" name="dmnFullTimeProgramYearMaximums">
       <bpmn:extensionElements>
@@ -2373,7 +2359,7 @@ Alimony/Child Support paid by the Partner during the study period can be conside
     <bpmn:sequenceFlow id="Flow_142ei9l" name="single independent" sourceRef="Gateway_0um3yvb" targetRef="Gateway_0qwoqqh">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= (studentDataRelationshipStatus = "single" or studentDataRelationshipStatus = "other" or studentDataRelationshipStatus = "marriedUnable") and studentDataDependantstatus = "independant"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1ekiozl" name="married / common-law" sourceRef="Gateway_0um3yvb" targetRef="Event_1ikowt9">
+    <bpmn:sequenceFlow id="Flow_1ekiozl" name="married / common-law" sourceRef="Gateway_0um3yvb" targetRef="Activity_1btmzxj">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= studentDataRelationshipStatus = "married"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_04nzmk7" sourceRef="Event_1qvwy4q" targetRef="Activity_17g355h" />
@@ -2412,7 +2398,6 @@ Alimony/Child Support paid by the Partner during the study period can be conside
     <bpmn:sequenceFlow id="Flow_0livwk3" sourceRef="Activity_17g355h" targetRef="Gateway_1hun062" />
     <bpmn:sequenceFlow id="Flow_196f761" sourceRef="Event_0zvfjsx" targetRef="Activity_0yaowp1" />
     <bpmn:sequenceFlow id="Flow_0ixsnmb" sourceRef="Event_1bl5l5x" targetRef="Gateway_0qwoqqh" />
-    <bpmn:sequenceFlow id="Flow_0ssiiff" sourceRef="Event_1ikowt9" targetRef="Event_0um94bq" />
     <bpmn:sequenceFlow id="Flow_1gzgc13" sourceRef="Event_0um94bq" targetRef="Event_1b81z89" />
     <bpmn:sequenceFlow id="Flow_1w7m8ku" sourceRef="Event_1b81z89" targetRef="Event_0bk5jrr" />
     <bpmn:sequenceFlow id="Flow_0l4ido8" sourceRef="Event_0bk5jrr" targetRef="Event_1n57xgo" />
@@ -2574,6 +2559,61 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
     <bpmn:sequenceFlow id="Flow_1goqpi4" sourceRef="Event_1882i4u" targetRef="Event_1dvt26b" />
     <bpmn:sequenceFlow id="Flow_1y6lzwr" sourceRef="Event_0gwvumx" targetRef="Event_0zvfjsx" />
     <bpmn:sequenceFlow id="Flow_0lxtjkj" sourceRef="Event_1dvt26b" targetRef="Event_0gwvumx" />
+    <bpmn:subProcess id="Activity_1btmzxj" name="Partner Total Income">
+      <bpmn:incoming>Flow_1ekiozl</bpmn:incoming>
+      <bpmn:outgoing>Flow_1iz59pc</bpmn:outgoing>
+      <bpmn:intermediateThrowEvent id="Event_0rqcvwz" name="Partner Total Income">
+        <bpmn:documentation>The priority for Income used in the assessment is:
+1. Current Year 
+2. CRA Reported
+3. Self Reported</bpmn:documentation>
+        <bpmn:extensionElements>
+          <zeebe:ioMapping>
+            <zeebe:output source="=if partner1CRAReportedIncome = null&#10;then partner1TotalIncome&#10;else partner1CRAReportedIncome" target="calculatedDataPartner1TotalIncome" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_172u6ft</bpmn:incoming>
+        <bpmn:outgoing>Flow_10kg3iw</bpmn:outgoing>
+      </bpmn:intermediateThrowEvent>
+      <bpmn:exclusiveGateway id="Gateway_1fe53gf" name="Partner CY Income Appeal" default="Flow_172u6ft">
+        <bpmn:incoming>Flow_1sldl88</bpmn:incoming>
+        <bpmn:outgoing>Flow_172u6ft</bpmn:outgoing>
+        <bpmn:outgoing>Flow_15nsohu</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:intermediateThrowEvent id="Event_1bmosj5" name="Partner Total Income">
+        <bpmn:documentation>The priority for Income used in the assessment is:
+1. Current Year 
+2. CRA Reported
+3. Self Reported</bpmn:documentation>
+        <bpmn:extensionElements>
+          <zeebe:ioMapping>
+            <zeebe:output source="=studentDataCurrentYearPartnerIncome" target="calculatedDataPartner1TotalIncome" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_15nsohu</bpmn:incoming>
+        <bpmn:outgoing>Flow_17z521s</bpmn:outgoing>
+      </bpmn:intermediateThrowEvent>
+      <bpmn:exclusiveGateway id="Gateway_0vg6ukf">
+        <bpmn:incoming>Flow_10kg3iw</bpmn:incoming>
+        <bpmn:incoming>Flow_17z521s</bpmn:incoming>
+        <bpmn:outgoing>Flow_1k3l7oj</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:startEvent id="Event_07pde4l" name="Define Partner Income">
+        <bpmn:outgoing>Flow_1sldl88</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_0femnwh">
+        <bpmn:incoming>Flow_1k3l7oj</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_172u6ft" name="Application or CRA" sourceRef="Gateway_1fe53gf" targetRef="Event_0rqcvwz" />
+      <bpmn:sequenceFlow id="Flow_10kg3iw" sourceRef="Event_0rqcvwz" targetRef="Gateway_0vg6ukf" />
+      <bpmn:sequenceFlow id="Flow_1sldl88" sourceRef="Event_07pde4l" targetRef="Gateway_1fe53gf" />
+      <bpmn:sequenceFlow id="Flow_15nsohu" name="Appeal" sourceRef="Gateway_1fe53gf" targetRef="Event_1bmosj5">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataCurrentYearPartnerIncome != null</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_17z521s" sourceRef="Event_1bmosj5" targetRef="Gateway_0vg6ukf" />
+      <bpmn:sequenceFlow id="Flow_1k3l7oj" sourceRef="Gateway_0vg6ukf" targetRef="Event_0femnwh" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_1iz59pc" sourceRef="Activity_1btmzxj" targetRef="Event_0um94bq" />
   </bpmn:process>
   <bpmn:category id="Category_0fcvyng">
     <bpmn:categoryValue id="CategoryValue_11muwzy" value="Step 8A: Student Contribution" />
@@ -2641,24 +2681,24 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
         <dc:Bounds x="160" y="41" width="12500" height="3669" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1gxyyjh_di" bpmnElement="Lane_1gxyyjh" isHorizontal="true">
+        <dc:Bounds x="190" y="41" width="12470" height="817" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_0ejpwa7_di" bpmnElement="Lane_0ejpwa7" isHorizontal="true">
         <dc:Bounds x="190" y="858" width="12470" height="2852" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_0r9twzh_di" bpmnElement="Lane_0r9twzh" isHorizontal="true">
-        <dc:Bounds x="220" y="3010" width="12440" height="700" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_0pbg2l1_di" bpmnElement="Lane_0pbg2l1" isHorizontal="true">
-        <dc:Bounds x="220" y="858" width="12440" height="1212" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_0l32w49_di" bpmnElement="Lane_0l32w49" isHorizontal="true">
         <dc:Bounds x="220" y="2070" width="12440" height="940" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_1gxyyjh_di" bpmnElement="Lane_1gxyyjh" isHorizontal="true">
-        <dc:Bounds x="190" y="41" width="12470" height="817" />
+      <bpmndi:BPMNShape id="Lane_0pbg2l1_di" bpmnElement="Lane_0pbg2l1" isHorizontal="true">
+        <dc:Bounds x="220" y="858" width="12440" height="1212" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0r9twzh_di" bpmnElement="Lane_0r9twzh" isHorizontal="true">
+        <dc:Bounds x="220" y="3010" width="12440" height="700" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1r3qhpw" bpmnElement="Event_175iz5m">
@@ -3536,6 +3576,10 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
           <dc:Bounds x="1535" y="423" width="55" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1nx864q" bpmnElement="Activity_17g355h">
+        <dc:Bounds x="1400" y="351" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0qwoqqh_di" bpmnElement="Gateway_0qwoqqh" isMarkerVisible="true">
         <dc:Bounds x="1835" y="585" width="50" height="50" />
       </bpmndi:BPMNShape>
@@ -3569,14 +3613,12 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
           <dc:Bounds x="1777" y="705" width="89" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1d79y2x" bpmnElement="Event_1ikowt9">
-        <dc:Bounds x="1372" y="662" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1359" y="711" width="63" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0u3xnva" bpmnElement="Activity_05w97d8">
         <dc:Bounds x="1121" y="570" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0yaowp1_di" bpmnElement="Activity_0yaowp1">
+        <dc:Bounds x="960" y="570" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1j5gue8_di" bpmnElement="Event_1j5gue8">
@@ -3621,12 +3663,8 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
           <dc:Bounds x="777" y="635" width="66" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1nx864q" bpmnElement="Activity_17g355h">
-        <dc:Bounds x="1400" y="351" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0yaowp1_di" bpmnElement="Activity_0yaowp1">
-        <dc:Bounds x="960" y="570" width="100" height="80" />
+      <bpmndi:BPMNShape id="BPMNShape_14wvfwm" bpmnElement="Activity_1btmzxj">
+        <dc:Bounds x="1330" y="640" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1aeof15_di" bpmnElement="Flow_1aeof15">
@@ -4514,15 +4552,15 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
         <di:waypoint x="1295" y="610" />
         <di:waypoint x="1835" y="610" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1300" y="576" width="62" height="27" />
+          <dc:Bounds x="1279" y="566" width="62" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ekiozl_di" bpmnElement="Flow_1ekiozl">
         <di:waypoint x="1270" y="635" />
         <di:waypoint x="1270" y="680" />
-        <di:waypoint x="1372" y="680" />
+        <di:waypoint x="1330" y="680" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1288" y="637" width="64" height="27" />
+          <dc:Bounds x="1258" y="686" width="64" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_04nzmk7_di" bpmnElement="Flow_04nzmk7">
@@ -4654,10 +4692,6 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
         <di:waypoint x="1860" y="680" />
         <di:waypoint x="1860" y="635" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ssiiff_di" bpmnElement="Flow_0ssiiff">
-        <di:waypoint x="1408" y="680" />
-        <di:waypoint x="1462" y="680" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1gzgc13_di" bpmnElement="Flow_1gzgc13">
         <di:waypoint x="1498" y="680" />
         <di:waypoint x="1552" y="680" />
@@ -4702,85 +4736,9 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
         <di:waypoint x="748" y="610" />
         <di:waypoint x="792" y="610" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0oxzl70_di" bpmnElement="Association_0oxzl70">
-        <di:waypoint x="10546" y="3313" />
-        <di:waypoint x="10573" y="3244" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1daiiyv_di" bpmnElement="Association_1daiiyv">
-        <di:waypoint x="11053" y="3313" />
-        <di:waypoint x="11066" y="3239" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1kl6b20_di" bpmnElement="Association_1kl6b20">
-        <di:waypoint x="9598" y="2623" />
-        <di:waypoint x="9720" y="2602" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_15vakin_di" bpmnElement="Association_15vakin">
-        <di:waypoint x="9598" y="2706" />
-        <di:waypoint x="9913" y="2706" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1vycdja_di" bpmnElement="Association_1vycdja">
-        <di:waypoint x="9598" y="2795" />
-        <di:waypoint x="9929" y="2761" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0k52tdi_di" bpmnElement="Association_0k52tdi">
-        <di:waypoint x="9598" y="2457" />
-        <di:waypoint x="9700" y="2440" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1vr33fz_di" bpmnElement="Association_1vr33fz">
-        <di:waypoint x="9598" y="2537" />
-        <di:waypoint x="9705" y="2525" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_01prvbh_di" bpmnElement="Association_01prvbh">
-        <di:waypoint x="9598" y="2379" />
-        <di:waypoint x="9700" y="2359" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1ledsf9_di" bpmnElement="Association_1ledsf9">
-        <di:waypoint x="9598" y="2875" />
-        <di:waypoint x="9929" y="2850" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_06rcduh_di" bpmnElement="Association_06rcduh">
-        <di:waypoint x="10817" y="3314" />
-        <di:waypoint x="10830" y="3284" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0q448eh_di" bpmnElement="Association_0q448eh">
-        <di:waypoint x="3441" y="1138" />
-        <di:waypoint x="3443" y="1113" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1cey5l7_di" bpmnElement="Association_1cey5l7">
-        <di:waypoint x="7707" y="1728" />
-        <di:waypoint x="7727" y="1845" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_005glcp_di" bpmnElement="Association_005glcp">
-        <di:waypoint x="10657" y="3314" />
-        <di:waypoint x="10670" y="3284" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1me16nu_di" bpmnElement="Association_1me16nu">
-        <di:waypoint x="10737" y="3314" />
-        <di:waypoint x="10750" y="3284" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0dshwlo_di" bpmnElement="Association_0dshwlo">
-        <di:waypoint x="2946" y="570" />
-        <di:waypoint x="3008" y="474" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0nm5s3i_di" bpmnElement="Association_0nm5s3i">
-        <di:waypoint x="2766" y="570" />
-        <di:waypoint x="2736" y="520" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0y8dx8b_di" bpmnElement="Association_0y8dx8b">
-        <di:waypoint x="11143" y="3313" />
-        <di:waypoint x="11156" y="3239" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_14t2f5k_di" bpmnElement="Association_14t2f5k">
-        <di:waypoint x="11243" y="3313" />
-        <di:waypoint x="11256" y="3248" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_013h80t_di" bpmnElement="Association_013h80t">
-        <di:waypoint x="1441" y="351" />
-        <di:waypoint x="1415" y="240" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1o4g869_di" bpmnElement="Association_1o4g869">
-        <di:waypoint x="1170" y="458" />
-        <di:waypoint x="1172" y="570" />
+      <bpmndi:BPMNEdge id="Flow_1iz59pc_di" bpmnElement="Flow_1iz59pc">
+        <di:waypoint x="1430" y="680" />
+        <di:waypoint x="1462" y="680" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_0lerduq_di" bpmnElement="Group_0lerduq">
         <dc:Bounds x="5290" y="1180" width="870" height="760" />
@@ -4990,6 +4948,86 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
           <dc:Bounds x="766" y="552" width="69" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0q448eh_di" bpmnElement="Association_0q448eh">
+        <di:waypoint x="3441" y="1138" />
+        <di:waypoint x="3443" y="1113" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1cey5l7_di" bpmnElement="Association_1cey5l7">
+        <di:waypoint x="7707" y="1728" />
+        <di:waypoint x="7727" y="1845" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_005glcp_di" bpmnElement="Association_005glcp">
+        <di:waypoint x="10657" y="3314" />
+        <di:waypoint x="10670" y="3284" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1me16nu_di" bpmnElement="Association_1me16nu">
+        <di:waypoint x="10737" y="3314" />
+        <di:waypoint x="10750" y="3284" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_06rcduh_di" bpmnElement="Association_06rcduh">
+        <di:waypoint x="10817" y="3314" />
+        <di:waypoint x="10830" y="3284" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_14t2f5k_di" bpmnElement="Association_14t2f5k">
+        <di:waypoint x="11243" y="3313" />
+        <di:waypoint x="11256" y="3248" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0y8dx8b_di" bpmnElement="Association_0y8dx8b">
+        <di:waypoint x="11143" y="3313" />
+        <di:waypoint x="11156" y="3239" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1daiiyv_di" bpmnElement="Association_1daiiyv">
+        <di:waypoint x="11053" y="3313" />
+        <di:waypoint x="11066" y="3239" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0oxzl70_di" bpmnElement="Association_0oxzl70">
+        <di:waypoint x="10546" y="3313" />
+        <di:waypoint x="10573" y="3244" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1o4g869_di" bpmnElement="Association_1o4g869">
+        <di:waypoint x="1170" y="458" />
+        <di:waypoint x="1172" y="570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ledsf9_di" bpmnElement="Association_1ledsf9">
+        <di:waypoint x="9598" y="2875" />
+        <di:waypoint x="9929" y="2850" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1vycdja_di" bpmnElement="Association_1vycdja">
+        <di:waypoint x="9598" y="2795" />
+        <di:waypoint x="9929" y="2761" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_15vakin_di" bpmnElement="Association_15vakin">
+        <di:waypoint x="9598" y="2706" />
+        <di:waypoint x="9913" y="2706" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1vr33fz_di" bpmnElement="Association_1vr33fz">
+        <di:waypoint x="9598" y="2537" />
+        <di:waypoint x="9705" y="2525" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0k52tdi_di" bpmnElement="Association_0k52tdi">
+        <di:waypoint x="9598" y="2457" />
+        <di:waypoint x="9700" y="2440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_01prvbh_di" bpmnElement="Association_01prvbh">
+        <di:waypoint x="9598" y="2379" />
+        <di:waypoint x="9700" y="2359" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1kl6b20_di" bpmnElement="Association_1kl6b20">
+        <di:waypoint x="9598" y="2623" />
+        <di:waypoint x="9720" y="2602" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0nm5s3i_di" bpmnElement="Association_0nm5s3i">
+        <di:waypoint x="2766" y="570" />
+        <di:waypoint x="2736" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0dshwlo_di" bpmnElement="Association_0dshwlo">
+        <di:waypoint x="2946" y="570" />
+        <di:waypoint x="3008" y="474" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_013h80t_di" bpmnElement="Association_013h80t">
+        <di:waypoint x="1441" y="351" />
+        <di:waypoint x="1415" y="240" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
   <bpmndi:BPMNDiagram id="BPMNDiagram_0lbfbig">
@@ -5153,16 +5191,22 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
   </bpmndi:BPMNDiagram>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1n1vf8z">
     <bpmndi:BPMNPlane id="BPMNPlane_0wu5drz" bpmnElement="Activity_0yaowp1">
+      <bpmndi:BPMNShape id="BPMNShape_1hghxhx" bpmnElement="Event_02vtx5v">
+        <dc:Bounds x="452" y="352" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="439" y="401" width="65" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_00fhzrs" bpmnElement="Gateway_05sqxm9" isMarkerVisible="true">
         <dc:Bounds x="325" y="295" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="263" y="276" width="74" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1y7x7jp_di" bpmnElement="Event_1y7x7jp">
-        <dc:Bounds x="202" y="302" width="36" height="36" />
+      <bpmndi:BPMNShape id="BPMNShape_002nlpr" bpmnElement="Event_0cvkzw7">
+        <dc:Bounds x="452" y="242" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="183" y="345" width="74" height="27" />
+          <dc:Bounds x="438" y="291" width="65" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1eij4d9" bpmnElement="Gateway_09c8zqq" isMarkerVisible="true">
@@ -5171,20 +5215,14 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
           <dc:Bounds x="935" y="547" width="57" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1y7x7jp_di" bpmnElement="Event_1y7x7jp">
+        <dc:Bounds x="202" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="183" y="345" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_12zzd9l_di" bpmnElement="Event_12zzd9l">
         <dc:Bounds x="652" y="302" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_002nlpr" bpmnElement="Event_0cvkzw7">
-        <dc:Bounds x="452" y="242" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="438" y="291" width="65" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1hghxhx" bpmnElement="Event_02vtx5v">
-        <dc:Bounds x="452" y="352" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="439" y="401" width="65" height="27" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_1tdtrd3" bpmnElement="Flow_1pizhcx">
         <di:waypoint x="350" y="345" />
@@ -5219,6 +5257,77 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
       <bpmndi:BPMNEdge id="Flow_1sxkrb8_di" bpmnElement="Flow_1sxkrb8">
         <di:waypoint x="585" y="320" />
         <di:waypoint x="652" y="320" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1fut68p">
+    <bpmndi:BPMNPlane id="BPMNPlane_0nk04rc" bpmnElement="Activity_1btmzxj">
+      <bpmndi:BPMNShape id="BPMNShape_1jvv87v" bpmnElement="Event_0rqcvwz">
+        <dc:Bounds x="449" y="190" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="437" y="239" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1bohsdc" bpmnElement="Gateway_1fe53gf" isMarkerVisible="true">
+        <dc:Bounds x="322" y="133" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="261" y="114" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0chmk6w" bpmnElement="Event_1bmosj5">
+        <dc:Bounds x="449" y="80" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="436" y="129" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_10jg7j1" bpmnElement="Gateway_0vg6ukf" isMarkerVisible="true">
+        <dc:Bounds x="532" y="133" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="935" y="547" width="57" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1j7pkww" bpmnElement="Event_07pde4l">
+        <dc:Bounds x="199" y="140" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="181" y="183" width="73" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1gvz0l4" bpmnElement="Event_0femnwh">
+        <dc:Bounds x="649" y="140" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_1hgo4l5" bpmnElement="Flow_172u6ft">
+        <di:waypoint x="347" y="183" />
+        <di:waypoint x="347" y="208" />
+        <di:waypoint x="449" y="208" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="350" y="214" width="67" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1univo2" bpmnElement="Flow_10kg3iw">
+        <di:waypoint x="485" y="208" />
+        <di:waypoint x="557" y="208" />
+        <di:waypoint x="557" y="183" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1ujxg5t" bpmnElement="Flow_1sldl88">
+        <di:waypoint x="235" y="158" />
+        <di:waypoint x="322" y="158" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1wxdfbj" bpmnElement="Flow_15nsohu">
+        <di:waypoint x="347" y="133" />
+        <di:waypoint x="347" y="98" />
+        <di:waypoint x="449" y="98" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="367" y="81" width="34" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1sqj439" bpmnElement="Flow_17z521s">
+        <di:waypoint x="485" y="98" />
+        <di:waypoint x="557" y="98" />
+        <di:waypoint x="557" y="133" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1b9bl3e" bpmnElement="Flow_1k3l7oj">
+        <di:waypoint x="582" y="158" />
+        <di:waypoint x="649" y="158" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

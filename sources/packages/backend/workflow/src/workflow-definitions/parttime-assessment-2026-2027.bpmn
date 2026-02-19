@@ -869,10 +869,9 @@ dmnX (comes from dmn)</bpmn:text>
         <bpmn:documentation>The priority for Income used in the assessment is:
 1. Current Year 
 2. CRA Reported
-3. Self Reported (Own Income)
-4. Self Reported (Student)</bpmn:documentation>
+3. Self Reported</bpmn:documentation>
         <bpmn:extensionElements>
-          <zeebe:script expression="=if&#10;  partner1CRAReportedIncome = null&#10;then&#10;  if partner1TotalIncome = null then &#10;    studentDataEstimatedSpouseIncome&#10;  else partner1TotalIncome&#10;else&#10;  partner1CRAReportedIncome" resultVariable="calculatedDataPartner1TotalIncome" />
+          <zeebe:script expression="=if partner1CRAReportedIncome = null&#10;then partner1TotalIncome&#10;else partner1CRAReportedIncome" resultVariable="calculatedDataPartner1TotalIncome" />
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_0kzutrb</bpmn:incoming>
         <bpmn:outgoing>Flow_03zrtci</bpmn:outgoing>
@@ -1949,10 +1948,6 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="868" y="870" />
         <di:waypoint x="960" y="870" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0rz384u_di" bpmnElement="Association_0rz384u">
-        <di:waypoint x="1990" y="993" />
-        <di:waypoint x="1990" y="1050" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_0hjhvfj" bpmnElement="TextAnnotation_15vd5py">
         <dc:Bounds x="7019" y="2700" width="100" height="30" />
         <bpmndi:BPMNLabel />
@@ -2035,6 +2030,10 @@ dmnX (comes from dmn)</bpmn:text>
           <dc:Bounds x="1370" y="727" width="81" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0fndf4s_di" bpmnElement="TextAnnotation_0fndf4s">
+        <dc:Bounds x="1940" y="1050" width="230" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1gi7mg0_di" bpmnElement="Association_1gi7mg0">
         <di:waypoint x="7041" y="2756" />
         <di:waypoint x="7061" y="2730" />
@@ -2111,10 +2110,10 @@ dmnX (comes from dmn)</bpmn:text>
         <di:waypoint x="709" y="884" />
         <di:waypoint x="673" y="930" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="TextAnnotation_0fndf4s_di" bpmnElement="TextAnnotation_0fndf4s">
-        <dc:Bounds x="1940" y="1050" width="230" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0rz384u_di" bpmnElement="Association_0rz384u">
+        <di:waypoint x="1990" y="993" />
+        <di:waypoint x="1990" y="1050" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
   <bpmndi:BPMNDiagram id="BPMNDiagram_11m1sql">

@@ -174,7 +174,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   parent1SupportingUserId?: number;
   parent1Contributions?: number;
   parent1Ei?: number;
-  parent1NetAssests?: number;
+  parent1NetAssets?: number;
   parent1Tax?: number;
   parent1TotalIncome?: number;
   parent1DependentTable?: StudentDependent[];
@@ -186,7 +186,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   parent2CppSelfemploymentOther?: number;
   parent2DependentTable?: StudentDependent[];
   parent2Ei?: number;
-  parent2NetAssests?: number;
+  parent2NetAssets?: number;
   parent2Tax?: number;
   parent2TotalIncome?: number;
   parent2CRAReportedIncome?: number;
