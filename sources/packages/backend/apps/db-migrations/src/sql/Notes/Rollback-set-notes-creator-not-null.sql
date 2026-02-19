@@ -1,7 +1,9 @@
 -- Rollback the creator field to allow NULLs again.
--- Recreate the original foreign key with ON DELETE SET NULL behavior.
+-- Note: This does not restore any NULL creator values that were updated to the system user.
+-- The data update is intentionally not rolled back to preserve audit information.
+-- Drop the NOT NULL constraint.
 ALTER TABLE
-    sims.notes DROP CONSTRAINT notes_creator_fkey;
+    sims.notes DROP CONSTRAINT IF EXISTS notes_creator_fkey;
 
 -- Alter the creator column to allow NULLs.
 ALTER TABLE

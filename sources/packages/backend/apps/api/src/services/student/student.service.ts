@@ -427,7 +427,7 @@ export class StudentService extends RecordDataModelService<Student> {
           student.id,
           NoteType.Restriction,
           "Restriction added to prevent application completion while potential partial match exists",
-          auditUserId,
+          auditUserId ?? this.systemUsersService.systemUser.id,
           externalEntityManager,
         );
 
