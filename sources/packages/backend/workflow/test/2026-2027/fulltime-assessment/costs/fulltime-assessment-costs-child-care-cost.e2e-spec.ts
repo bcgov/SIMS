@@ -65,8 +65,9 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-child-car
       assessmentConsolidatedData.studentDataDaycareCosts11YearsOrUnder = 1000;
       assessmentConsolidatedData.offeringWeeks = 18;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.partner1StudentStudyWeeks = 3;
-      assessmentConsolidatedData.partner1TotalIncome = 10000;
+      assessmentConsolidatedData.studentDataPartnerStudyWeeks = 3;
+      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
+      assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 10000;
       assessmentConsolidatedData.studentDataTaxReturnIncome = 10002;
       // Creates 1 eligible dependent.
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
@@ -110,11 +111,9 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-child-car
       assessmentConsolidatedData.studentDataDaycareCosts11YearsOrUnder = 1000;
       assessmentConsolidatedData.offeringWeeks = 18;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.partner1StudentStudyWeeks = 13;
-      // TODO This is a workaround to allow the correct execution path in the the full time assessment until it can be updated to remove
-      // usage of studentDataIsYourPartnerAbleToReport and studentDataPartner* fields
-      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
-      assessmentConsolidatedData.partner1TotalIncome = 10000;
+      assessmentConsolidatedData.studentDataPartnerStudyWeeks = 13;
+      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
+      assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 10000;
       assessmentConsolidatedData.studentDataTaxReturnIncome = 10002;
       // Creates 1 eligible dependent.
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
@@ -255,7 +254,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-child-car
       assessmentConsolidatedData.studentDataDaycareCosts11YearsOrUnder = 1000;
       assessmentConsolidatedData.offeringWeeks = 18;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.partner1PartnerCaringForDependant =
+      assessmentConsolidatedData.studentDataPartnerCaringForDependant =
         YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
       assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 10000;
@@ -300,7 +299,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-child-car
       assessmentConsolidatedData.studentDataDaycareCosts11YearsOrUnder = 1000;
       assessmentConsolidatedData.offeringWeeks = 18;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.partner1PartnerCaringForDependant =
+      assessmentConsolidatedData.studentDataPartnerCaringForDependant =
         YesNoOptions.No;
       assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
       assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 10000;

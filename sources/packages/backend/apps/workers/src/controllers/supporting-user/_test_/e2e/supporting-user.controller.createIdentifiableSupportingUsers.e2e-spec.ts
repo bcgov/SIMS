@@ -341,7 +341,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
       });
       // Validate the creation of notification for the partner declare information
       // to be provided by the partner.
-      // TODO Add updated assertion when tracker card and notification updates are completed.
+      // TODO Add updated assertion when SIMS #5757 is implemented.
       // await notificationLookupAndAssertion(
       //   savedApplication,
       //   partnerFullName,
@@ -416,7 +416,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
       });
       // Validate the creation of notification for the partner declare information
       // to be provided by the student.
-      // TODO Add updated assertion when tracker card and notification updates are completed.
+      // TODO Add updated assertion when SIMS #5757 is implemented.
       // await notificationLookupAndAssertion(
       //   savedApplication,
       //   partnerFullName,

@@ -219,7 +219,6 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataPartnerBCEAIncomeAssistanceAmount?: number;
   studentDataPartnerFullName?: string;
   studentDataPartnerIsAbleToReport?: YesNoOptions;
-  partner1ChildSpousalSupportCost: number;
   partner1HasEmploymentInsuranceBenefits?: YesNoOptions;
   partner1HasFedralProvincialPDReceipt?: YesNoOptions;
   partner1HasTotalIncomeAssistance?: YesNoOptions;

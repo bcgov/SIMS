@@ -33,17 +33,15 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataIncomeAssistanceAmount = 1000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    // TODO This is a workaround to allow the correct execution path in the the full time assessment until it can be updated to remove
-    // usage of studentDataIsYourPartnerAbleToReport and studentDataPartner* fields
-    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
-    assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
+    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
+    assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
       YesNoOptions.No;
-    assessmentConsolidatedData.partner1HasTotalIncomeAssistance =
+    assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
       YesNoOptions.No;
-    assessmentConsolidatedData.partner1HasFedralProvincialPDReceipt =
+    assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
       YesNoOptions.No;
-    assessmentConsolidatedData.partner1TotalIncome = 0;
-    assessmentConsolidatedData.partner1BCEAIncomeAssistanceAmount = 1500;
+    assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
+    assessmentConsolidatedData.studentDataPartnerBCEAIncomeAssistanceAmount = 1500;
 
     // Act
     const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
@@ -104,14 +102,15 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataIncomeAssistanceAmount = 1000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
+    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
+    assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
       YesNoOptions.No;
-    assessmentConsolidatedData.partner1HasTotalIncomeAssistance =
+    assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
       YesNoOptions.No;
-    assessmentConsolidatedData.partner1HasFedralProvincialPDReceipt =
+    assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
       YesNoOptions.No;
-    assessmentConsolidatedData.partner1TotalIncome = 0;
-    assessmentConsolidatedData.partner1BCEAIncomeAssistanceAmount = 1000;
+    assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
+    assessmentConsolidatedData.studentDataPartnerBCEAIncomeAssistanceAmount = 1000;
     assessmentConsolidatedData.studentDataGovernmentFundingCosts = 100;
 
     // Act

@@ -160,13 +160,13 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-al
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
+    assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
       YesNoOptions.No;
-    assessmentConsolidatedData.partner1HasTotalIncomeAssistance =
+    assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
       YesNoOptions.No;
-    assessmentConsolidatedData.partner1HasFedralProvincialPDReceipt =
+    assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
       YesNoOptions.No;
-    assessmentConsolidatedData.partner1TotalIncome = 0;
+    assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
     // Act
     const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
@@ -186,13 +186,13 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-al
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
     assessmentConsolidatedData.studentDataRelationshipStatus = "marriedUnable";
-    assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
+    assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
       YesNoOptions.No;
-    assessmentConsolidatedData.partner1HasTotalIncomeAssistance =
+    assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
       YesNoOptions.No;
-    assessmentConsolidatedData.partner1HasFedralProvincialPDReceipt =
+    assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
       YesNoOptions.No;
-    assessmentConsolidatedData.partner1TotalIncome = 0;
+    assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
     // Act
     const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
