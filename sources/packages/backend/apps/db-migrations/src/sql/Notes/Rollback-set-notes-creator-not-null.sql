@@ -13,7 +13,4 @@ ALTER COLUMN
 ALTER TABLE
     sims.notes
 ADD
-    CONSTRAINT notes_creator_fkey FOREIGN KEY (creator) REFERENCES sims.users (id) ON
-DELETE
-SET
-    NULL;
+    CONSTRAINT notes_creator_fkey FOREIGN KEY (creator) REFERENCES sims.users (id)
