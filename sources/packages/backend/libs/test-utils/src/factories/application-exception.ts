@@ -22,7 +22,7 @@ export function createFakeApplicationException(relations: {
   applicationException.exceptionStatus = ApplicationExceptionStatus.Pending;
   applicationException.assessedDate = new Date();
   applicationException.assessedBy = relations?.assessedBy;
-  applicationException.creator = relations?.creator;
+  applicationException.creator = relations.creator;
 
   // Only create exception note if creator is provided (since notes require a creator)
   const applicationExceptionNote = createFakeNote(NoteType.Application, {

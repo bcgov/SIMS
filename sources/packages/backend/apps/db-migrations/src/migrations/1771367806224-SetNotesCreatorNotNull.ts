@@ -3,9 +3,7 @@ import { getSQLFileData } from "../utilities/sqlLoader";
 
 /**
  * Migration to set the creator field as NOT NULL for notes.
- * Based on code analysis, all places that save notes properly set the creator field.
  * This ensures data integrity by enforcing the creator field at the database level.
- * This addresses ticket #5154 - ensuring all notes have a creator.
  */
 export class SetNotesCreatorNotNull1771367806224 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
