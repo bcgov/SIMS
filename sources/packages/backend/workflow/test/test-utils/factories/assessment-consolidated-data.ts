@@ -238,6 +238,24 @@ export function createFakeSingleIndependentStudentData(): Partial<AssessmentCons
 }
 
 /**
+ * Create fake married independent student data.
+ * @param partnerIsAbleToReport indicates if the partner is able to report income.
+ * @returns consolidated data for married independent student.
+ */
+export function createFakeMarriedIndependentStudentData(
+  partnerIsAbleToReport?: YesNoOptions,
+  partner1TotalIncome?: number,
+): Partial<AssessmentConsolidatedData> {
+  return {
+    // Married independent student.
+    studentDataDependantstatus: "independant",
+    studentDataRelationshipStatus: "married",
+    studentDataPartnerIsAbleToReport: partnerIsAbleToReport ?? YesNoOptions.Yes,
+    partner1TotalIncome: partner1TotalIncome ?? 10000,
+  };
+}
+
+/**
  * Provides the necessary data to the assessment workflow, defines how the parents
  * are present in the application, if they need income verification or if they are not able
  * to use a BCSC to provide data using the supporting users portal.
