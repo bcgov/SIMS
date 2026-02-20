@@ -11,7 +11,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-total-partner-in
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
     assessmentConsolidatedData.partner1CRAReportedIncome = 30000;
 
     // Act
@@ -38,7 +37,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-total-partner-in
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
       assessmentConsolidatedData.studentDataCurrentYearPartnerIncome = 10000;
 
       // Act
@@ -63,8 +61,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-total-partner-in
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
-      assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 15000;
+      assessmentConsolidatedData.partner1TotalIncome = 15000;
       // No income verification happened as student self reported partner's tax return income.
       assessmentConsolidatedData.partner1CRAReportedIncome = null;
 
