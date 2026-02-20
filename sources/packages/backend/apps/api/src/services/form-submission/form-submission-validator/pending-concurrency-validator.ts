@@ -9,7 +9,7 @@ import { FormSubmissionValidatorBase } from ".";
 
 /**
  * Executes validations to prevent concurrent pending form submissions for the
- * same context such as the same category for same student or application
+ * same context such as the same category for same student or application.
  */
 @Injectable()
 export class PendingConcurrencyValidator implements FormSubmissionValidatorBase {

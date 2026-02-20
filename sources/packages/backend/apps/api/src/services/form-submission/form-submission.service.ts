@@ -137,7 +137,7 @@ export class FormSubmissionService {
     applicationId: number | undefined = undefined,
   ): FormSubmissionConfig[] {
     return submissionItems.map((submissionItem) => {
-      const config = this.dynamicFormConfigurationService.getFormsById(
+      const config = this.dynamicFormConfigurationService.getFormById(
         submissionItem.dynamicConfigurationId,
       );
       if (!config) {

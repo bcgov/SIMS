@@ -119,14 +119,11 @@ export class FormSubmissionApi extends HttpBaseClient {
   async getSupplementaryData(
     query: FormSupplementaryDataAPIInDTO,
   ): Promise<FormSupplementaryDataAPIOutDTO> {
-    const applicationIdQuery = query.applicationId
-      ? `&applicationId=${query.applicationId}`
-      : "";
-    return this.getCall(
-      this.addClientRoot(
-        `form-submission/supplementary-data?dataKeys=${query.dataKeys.toString()}${applicationIdQuery}`,
-      ),
-    );
+    let url = `form-submission/supplementary-data?dataKeys=${query.dataKeys.toString()}`;
+    if (query.applicationId) {
+      url += `&applicationId=${query.applicationId}`;
+    }
+    return this.getCall(this.addClientRoot(url));
   }
 
   /**
