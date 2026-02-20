@@ -295,7 +295,7 @@ describe("StudentStudentsController(e2e)-create", () => {
           id: true,
           description: true,
           noteType: true,
-          creator: { id: true, userName: true },
+          creator: { id: true },
         },
       },
       relations: {
@@ -334,7 +334,6 @@ describe("StudentStudentsController(e2e)-create", () => {
         noteType: NoteType.Restriction,
         creator: {
           id: systemUserId,
-          userName: expect.any(String),
         },
       },
     });

@@ -28,7 +28,7 @@ ALTER COLUMN
 SET
     NOT NULL;
 
--- Recreate the foreign key with an ON DELETE behavior compatible with NOT NULL.
+-- Recreate the foreign key.
 ALTER TABLE
     sims.notes
 ADD
