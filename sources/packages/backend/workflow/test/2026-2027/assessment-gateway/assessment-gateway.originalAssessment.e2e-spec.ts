@@ -466,7 +466,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     );
   });
 
-  it("Should create and load data from a supporting user when the student is married and the Partner is able to report.", async () => {
+  it("Should create and load data from a supporting user when the student is married and the partner is able to report.", async () => {
     // Arrange
     const partnerSupportingUserId = supportingUserId++;
 

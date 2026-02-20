@@ -8,7 +8,7 @@ import { WorkerMockedData } from "..";
  * Creates the mock for 'Create identifiable partner supporting user' completed task
  * and publish the necessary messages to unblock the workflow.
  * @param options.
- * - `supportingUserId` ID of the mocked supporting user that will also be created using mocks.
+ * - `createdSupportingUserId` ID of the mocked supporting user that will also be created using mocks.
  * @returns mocked created supporting user ID and one mocked message to unblock the workflow.
  */
 export function createIdentifiablePartnerTaskMock(options: {

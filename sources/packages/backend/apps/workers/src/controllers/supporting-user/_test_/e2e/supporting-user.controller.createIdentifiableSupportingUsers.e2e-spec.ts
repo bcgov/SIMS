@@ -276,7 +276,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
   });
 
   it(
-    "Should create supporting user for the partner when the partner is able to self declare" +
+    "Should create supporting user for the partner when the partner is able to self declare " +
       "and create a student notification for partner declaration required by partner.",
     async () => {
       // Arrange
@@ -351,7 +351,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
   );
 
   it(
-    "Should create supporting user for the partner when the partner is not able to self declare" +
+    "Should create supporting user for the partner when the partner is not able to self declare " +
       "and create a student notification for partner declaration required by student.",
     async () => {
       // Arrange

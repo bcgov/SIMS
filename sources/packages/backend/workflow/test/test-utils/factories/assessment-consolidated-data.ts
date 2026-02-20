@@ -240,6 +240,7 @@ export function createFakeSingleIndependentStudentData(): Partial<AssessmentCons
 /**
  * Create fake married independent student data.
  * @param partnerIsAbleToReport indicates if the partner is able to report income.
+ * @param partner1TotalIncome total income of the partner. If not provided it will be set as 10000.
  * @returns consolidated data for married independent student.
  */
 export function createFakeMarriedIndependentStudentData(
