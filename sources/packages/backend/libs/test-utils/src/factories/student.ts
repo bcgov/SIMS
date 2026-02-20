@@ -11,7 +11,7 @@ import { createFakeUser } from "@sims/test-utils";
 import { DataSource } from "typeorm";
 import { createFakeSINValidation } from "./sin-validation";
 import { COUNTRY_CANADA, getISODateOnlyString } from "@sims/utilities";
-import { CreateStudentAPIInDTO } from "apps/api/src/route-controllers/student/models/student.dto";
+import { CreateStudentAPIInDTO } from "../../../../apps/api/src/route-controllers/student/models/student.dto";
 
 // TODO: the parameter user must be moved to relations and all the references must be
 // updated.
