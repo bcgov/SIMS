@@ -61,19 +61,19 @@ export class SupplementaryDataLoader {
 
   /**
    * Get supplementary data for the provided known supplementary data keys.
-   * @param KnownSupplementaryDataKeys supplementary data to load.
+   * @param knownSupplementaryDataKeys supplementary data to load.
    * @param applicationId application ID to load application-scoped supplementary data for, if necessary.
    * @param studentId student ID used for authorization purposes, when required.
    * @returns loaded supplementary data for the provided known supplementary data keys and application ID.
    */
   async getSupplementaryData(
-    KnownSupplementaryDataKeys: KnownSupplementaryDataKey[],
+    knownSupplementaryDataKeys: KnownSupplementaryDataKey[],
     applicationId: number | undefined,
     studentId: number | undefined,
   ): Promise<KnownSupplementaryData> {
     const supplementaryData: KnownSupplementaryData = {};
     // Load all supplementary data in parallel.
-    const supplementaryDataPromises = KnownSupplementaryDataKeys.map(
+    const supplementaryDataPromises = knownSupplementaryDataKeys.map(
       async (dataKey) =>
         this.getSupplementaryDataInternal(dataKey, applicationId, studentId),
     );
