@@ -2,6 +2,6 @@
  * Institution organization status types.
  */
 export enum InstitutionOrganizationStatus {
-  Profit = "Profit",
-  NotForProfit = "Not for profit",
+  Profit = "profit",
+  NotForProfit = "notForProfit",
 }

@@ -32,7 +32,6 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { ApplicationRestrictionBypassService } from "../../services";
-import { ApplicationRestrictionBypass } from "@sims/sims-db";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IUserToken, Role } from "../../auth";
 import { CustomNamedError } from "@sims/utilities";
@@ -46,6 +45,11 @@ import {
   STUDENT_RESTRICTION_NOT_FOUND,
 } from "../../constants";
 import { getUserFullName } from "../../utilities";
+import {
+  ApplicationRestrictionBypass,
+  StudentRestriction,
+  InstitutionRestriction,
+} from "@sims/sims-db";
 
 /**
  * Controller for AEST Application Restriction Bypasses.
@@ -75,18 +79,26 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
       await this.applicationRestrictionBypassService.getApplicationRestrictionBypasses(
         applicationId,
       );
+    // Map the application restriction bypasses to the summary DTO.
+    // This depends on whether the bypass is a student or institution restriction bypass.
     const bypasses = applicationRestrictionBypasses.map(
-      (item: ApplicationRestrictionBypass) => ({
-        id: item.id,
-        restrictionCategory:
-          item.studentRestriction.restriction.restrictionCategory,
-        restrictionCode: item.studentRestriction.restriction.restrictionCode,
-        isRestrictionActive: item.studentRestriction.isActive,
-        restrictionDeletedAt: item.studentRestriction.deletedAt,
-        isBypassActive: item.isActive,
-      }),
+      (item: ApplicationRestrictionBypass) => {
+        const bypassedRestriction: (
+          | StudentRestriction
+          | InstitutionRestriction
+        ) & { deletedAt?: Date } =
+          item.studentRestriction ?? item.institutionRestriction;
+        return {
+          id: item.id,
+          restrictionCategory:
+            bypassedRestriction.restriction.restrictionCategory,
+          restrictionCode: bypassedRestriction.restriction.restrictionCode,
+          isRestrictionActive: bypassedRestriction.isActive,
+          restrictionDeletedAt: bypassedRestriction.deletedAt,
+          isBypassActive: item.isActive,
+        };
+      },
     );
-
     return { bypasses };
   }
 

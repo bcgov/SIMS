@@ -7,13 +7,13 @@ import {
   InstitutionUserTypeAndRole,
   User,
   InstitutionLocation,
-  InstitutionType,
   Note,
   NoteType,
   IdentityProviders,
   getUserFullNameLikeSearch,
   Application,
   ApplicationStatus,
+  InstitutionType,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, IsNull, Not, Repository } from "typeorm";
 import { InstitutionUserType, UserInfo } from "../../types";
@@ -23,6 +23,7 @@ import {
   sortUsersColumnMap,
   PaginationOptions,
   transformAddressDetails,
+  getInstitutionTypeId,
 } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -263,12 +264,17 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.primaryEmail = institutionModel.primaryEmail;
     institution.website = institutionModel.website;
     institution.regulatingBody = institutionModel.regulatingBody;
-    institution.otherRegulatingBody = institutionModel.otherRegulatingBody;
+    institution.otherRegulatingBody =
+      institutionModel.otherRegulatingBody ?? null;
     institution.establishedDate = institutionModel.establishedDate;
     institution.institutionType = {
-      id: institutionModel.institutionType,
+      id: getInstitutionTypeId(institutionModel),
     } as InstitutionType;
-
+    institution.country = institutionModel.country;
+    institution.province = institutionModel.province ?? null;
+    institution.classification = institutionModel.classification;
+    institution.organizationStatus = institutionModel.organizationStatus;
+    institution.medicalSchoolStatus = institutionModel.medicalSchoolStatus;
     // Institution Primary Contact Information.
     institution.institutionPrimaryContact = {
       firstName: institutionModel.primaryContactFirstName,
@@ -851,8 +857,13 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       institution.otherRegulatingBody = updateInstitution.otherRegulatingBody;
       institution.establishedDate = updateInstitution.establishedDate;
       institution.institutionType = {
-        id: updateInstitution.institutionType,
+        id: getInstitutionTypeId(updateInstitution),
       } as InstitutionType;
+      institution.country = updateInstitution.country;
+      institution.province = updateInstitution.province ?? null;
+      institution.classification = updateInstitution.classification;
+      institution.organizationStatus = updateInstitution.organizationStatus;
+      institution.medicalSchoolStatus = updateInstitution.medicalSchoolStatus;
     }
     institution.institutionPrimaryContact = {
       firstName: updateInstitution.primaryContactFirstName,

@@ -179,22 +179,6 @@
           "input": true
         },
         {
-          "label": "Institution type",
-          "widget": "html5",
-          "placeholder": "Select",
-          "tableView": true,
-          "validate": {
-            "required": true
-          },
-          "key": "institutionType",
-          "attributes": {
-            "data-cy": "institutionType"
-          },
-          "type": "select",
-          "input": true,
-          "searchThreshold": 0.3
-        },
-        {
           "label": "Institution regulatory body",
           "widget": "choicesjs",
           "tableView": true,
@@ -291,6 +275,147 @@
             "data-cy": "establishedDate"
           },
           "type": "textfield",
+          "input": true
+        },
+        {
+          "label": "What country is your institution located in?",
+          "widget": "choicesjs",
+          "placeholder": "Select country",
+          "tableView": true,
+          "validate": {
+            "required": true
+          },
+          "validateWhenHidden": false,
+          "key": "country",
+          "logic": [
+            {
+              "name": "Populate component data values from option values",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = !!data.countryOptionValues && !!data.countryOptionValues.length;"
+              },
+              "actions": [
+                {
+                  "name": "Set component data values",
+                  "type": "customAction",
+                  "customAction": "component.data.values = data.countryOptionValues.map((optionValue) => ({\r\n  value: optionValue.lookupKey,\r\n  label: optionValue.lookupValue,\r\n}));"
+                }
+              ]
+            }
+          ],
+          "type": "select",
+          "input": true
+        },
+        {
+          "label": "In which Canadian province is the organization located?",
+          "widget": "choicesjs",
+          "placeholder": "Select province",
+          "tableView": true,
+          "validate": {
+            "required": true
+          },
+          "validateWhenHidden": false,
+          "key": "province",
+          "conditional": {
+            "show": true,
+            "when": "country",
+            "eq": "CA"
+          },
+          "logic": [
+            {
+              "name": "Populate component data values from option values",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = !!data.provinceOptionValues && !!data.provinceOptionValues.length;"
+              },
+              "actions": [
+                {
+                  "name": "Set component data values",
+                  "type": "customAction",
+                  "customAction": "component.data.values = data.provinceOptionValues.map((optionValue) => ({\r\n  value: optionValue.lookupKey,\r\n  label: optionValue.lookupValue,\r\n}));"
+                }
+              ]
+            }
+          ],
+          "type": "select",
+          "input": true
+        },
+        {
+          "label": "Is the institution public or private?",
+          "optionsLabelPosition": "right",
+          "inline": false,
+          "tableView": false,
+          "values": [
+            {
+              "label": "Public",
+              "value": "public",
+              "shortcut": ""
+            },
+            {
+              "label": "Private",
+              "value": "private",
+              "shortcut": ""
+            }
+          ],
+          "validate": {
+            "required": true,
+            "onlyAvailableItems": true
+          },
+          "validateWhenHidden": false,
+          "key": "classification",
+          "type": "radio",
+          "input": true
+        },
+        {
+          "label": "Is the institution for profit or not for profit?",
+          "optionsLabelPosition": "right",
+          "inline": false,
+          "tableView": false,
+          "values": [
+            {
+              "label": "For profit",
+              "value": "profit",
+              "shortcut": ""
+            },
+            {
+              "label": "Not for profit",
+              "value": "notForProfit",
+              "shortcut": ""
+            }
+          ],
+          "validate": {
+            "required": true,
+            "onlyAvailableItems": true
+          },
+          "validateWhenHidden": false,
+          "key": "organizationStatus",
+          "type": "radio",
+          "input": true
+        },
+        {
+          "label": "Is the institution medical in nature?",
+          "optionsLabelPosition": "right",
+          "inline": false,
+          "tableView": false,
+          "values": [
+            {
+              "label": "Yes",
+              "value": "yes",
+              "shortcut": ""
+            },
+            {
+              "label": "No",
+              "value": "no",
+              "shortcut": ""
+            }
+          ],
+          "validate": {
+            "required": true,
+            "onlyAvailableItems": true
+          },
+          "validateWhenHidden": false,
+          "key": "medicalSchoolStatus",
+          "type": "radio",
           "input": true
         },
         {
@@ -869,17 +994,17 @@
       "tableView": false
     },
     {
-      "label": "applicationId",
+      "label": "Country option values",
       "persistent": "client-only",
-      "key": "applicationId",
+      "key": "countryOptionValues",
       "type": "hidden",
       "input": true,
       "tableView": false
     },
     {
-      "label": "applicationStatus",
+      "label": "Province option values",
       "persistent": "client-only",
-      "key": "applicationStatus",
+      "key": "provinceOptionValues",
       "type": "hidden",
       "input": true,
       "tableView": false

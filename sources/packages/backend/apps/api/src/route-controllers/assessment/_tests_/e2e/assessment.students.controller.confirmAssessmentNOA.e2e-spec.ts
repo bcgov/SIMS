@@ -19,6 +19,8 @@ import {
   MSFAAStates,
   saveFakeApplicationRestrictionBypass,
   createFakeUser,
+  RestrictionCode,
+  saveFakeInstitutionRestriction,
 } from "@sims/test-utils";
 import {
   Application,
@@ -194,6 +196,62 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       .patch(endpoint)
       .auth(studentUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
+  });
+
+  it(`Should allow NOA approval when the current application program and location has an institution '${RestrictionCode.SUS}' restriction but the application has the restriction bypass active.`, async () => {
+    // Arrange
+    const { application } = await createApplicationAndAssessments();
+    const restriction = await db.restriction.findOne({
+      select: { id: true },
+      where: {
+        restrictionCode: RestrictionCode.SUS,
+      },
+    });
+    const susRestriction = await saveFakeInstitutionRestriction(db, {
+      restriction,
+      program: application.currentAssessment.offering.educationProgram,
+      institution:
+        application.currentAssessment.offering.institutionLocation.institution,
+      location: application.currentAssessment.offering.institutionLocation,
+    });
+    // Create an institution restriction and a bypass to allow the NOA to be accepted.
+    await saveFakeApplicationRestrictionBypass(
+      db,
+      {
+        application,
+        institutionRestriction: susRestriction,
+        bypassCreatedBy: sharedMinistryUser,
+        creator: sharedMinistryUser,
+      },
+      {
+        initialValues: {
+          bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
+        },
+      },
+    );
+    const studentUserToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const endpoint = `/students/assessment/${application.currentAssessment.id}/confirm-assessment`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .auth(studentUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    // Assert the assessment NOA approval status is updated.
+    const updatedAssessment = await db.studentAssessment.findOne({
+      select: {
+        id: true,
+        noaApprovalStatus: true,
+      },
+      where: { id: application.currentAssessment.id },
+    });
+    expect(updatedAssessment).toEqual({
+      id: application.currentAssessment.id,
+      noaApprovalStatus: AssessmentStatus.completed,
+    });
   });
 
   /**

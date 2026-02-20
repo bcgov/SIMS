@@ -32,7 +32,7 @@ import StudentApplicationsExtendedSummary from "@/components/students/StudentApp
 import { ApplicationService } from "@/services/ApplicationService";
 import { useRouter } from "vue-router";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { useSnackBar, ModalDialog } from "@/composables";
+import { useSnackBar, ModalDialog, useFeatureToggles } from "@/composables";
 import ConfirmEditApplication from "@/components/students/modals/ConfirmEditApplication.vue";
 import CancelApplication from "@/components/students/modals/CancelApplication.vue";
 import { useDisplay } from "vuetify";
@@ -45,6 +45,7 @@ export default defineComponent({
     CancelApplication,
   },
   setup() {
+    const { isFormSubmissionEnabled } = useFeatureToggles();
     const router = useRouter();
     const snackBar = useSnackBar();
     const editApplicationModal = ref({} as ModalDialog<boolean>);
@@ -105,6 +106,15 @@ export default defineComponent({
     };
 
     const submitAppeal = async (applicationId: number) => {
+      if (isFormSubmissionEnabled) {
+        router.push({
+          name: StudentRoutesConst.STUDENT_FORMS_SELECTOR,
+          query: {
+            applicationId,
+          },
+        });
+        return;
+      }
       router.push({
         name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_SUBMISSION,
         params: {

@@ -188,13 +188,12 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
 
   it(
     "Should determine provincialAwardBCAGAmount to be 1000, provincialAwardNetBCAGAmount to be 700 when " +
-      "student's current year income is 20001 and their relationship status is single.",
+      "student's CRA reported income is 20001 and their relationship status is single.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataCurrentYearIncome = 20001;
-      assessmentConsolidatedData.studentDataCRAReportedIncome = 1000001;
+      assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
       assessmentConsolidatedData.studentDataRelationshipStatus = "single";
       // Act
       const calculatedAssessment =

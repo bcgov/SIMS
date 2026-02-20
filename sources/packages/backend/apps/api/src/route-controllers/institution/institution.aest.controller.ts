@@ -30,7 +30,11 @@ import {
 import BaseController from "../BaseController";
 import { InstitutionControllerService } from "./institution.controller.service";
 import { InstitutionLocationControllerService } from "../institution-locations/institution-location.controller.service";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { transformAddressDetailsForAddressBlockForm } from "../utils/address-utils";
 import { InstitutionLocationAPIOutDTO } from "../institution-locations/models/institution-location.dto";
 import { ClientTypeBaseRoute } from "../../types";
@@ -116,6 +120,12 @@ export class InstitutionAESTController extends BaseController {
    * @param institutionId id for the institution to be updated.
    * @param payload institution details to be updated.
    */
+  @ApiNotFoundResponse({
+    description: "Institution not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "Invalid value(s) found for lookup fields.",
+  })
   @Roles(Role.InstitutionEditProfile)
   @Patch(":institutionId")
   async updateInstitution(
@@ -130,6 +140,8 @@ export class InstitutionAESTController extends BaseController {
     if (!institution) {
       throw new NotFoundException("Institution not found.");
     }
+    // Validate the lookup data.
+    this.institutionControllerService.validateLookupData(payload);
     await this.institutionService.updateInstitution(
       institutionId,
       userToken.userId,
@@ -184,12 +196,17 @@ export class InstitutionAESTController extends BaseController {
    * @param payload complete information to create the profile.
    * @returns primary identifier of the created resource.
    */
+  @ApiUnprocessableEntityResponse({
+    description: "Invalid value(s) found for lookup fields.",
+  })
   @Roles(Role.AESTCreateInstitution)
   @Post()
   async createInstitution(
     @Body() payload: AESTCreateInstitutionFormAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
+    // Validate the lookup data.
+    this.institutionControllerService.validateLookupData(payload);
     const institution = await this.institutionService.createInstitution(
       payload,
       userToken.userId,

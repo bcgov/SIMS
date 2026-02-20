@@ -1,0 +1,118 @@
+<template>
+  <body-header-container :enable-card-view="true">
+    <template #header>
+      <body-header
+        title="Standard forms"
+        sub-title="Standard forms to be submitted for StudentAid BC review."
+      />
+    </template>
+    <v-expansion-panels class="mt-5">
+      <v-expansion-panel>
+        <template #title
+          ><div>
+            <span class="category-header-medium brand-gray-text">General</span>
+            <div>
+              Forms for diverse types of requests for StudentAid BC decision.
+            </div>
+          </div></template
+        >
+        <template #text>
+          <v-form ref="standaloneFormsSelectionForm">
+            <v-list
+              lines="three"
+              select-strategy="single-leaf"
+              variant="elevated"
+              v-model:selected="selectedStandaloneForm"
+            >
+              <v-list-item
+                v-for="form in standaloneForms"
+                :key="form.formDefinitionName"
+                :title="form.formType"
+                :subtitle="form.formDescription"
+                :elevation="1"
+                :value="form.id"
+                prepend-icon="mdi-subtitles-outline"
+              >
+                <template #prepend="{ isSelected, select }">
+                  <v-list-item-action start>
+                    <v-checkbox-btn
+                      color="primary"
+                      :model-value="isSelected"
+                      @update:model-value="select"
+                    ></v-checkbox-btn>
+                  </v-list-item-action>
+                </template>
+              </v-list-item>
+            </v-list>
+            <v-input
+              :model-value="selectedStandaloneForm"
+              :rules="[
+                (v) => checkNullOrEmptyRule(v, 'At least one selected form'),
+              ]"
+            >
+            </v-input>
+          </v-form>
+          <footer-buttons
+            class="mt-4"
+            primary-label="Fill form"
+            justify="end"
+            @primary-click="fillStudentForm"
+            :show-secondary-button="false"
+          />
+        </template>
+      </v-expansion-panel>
+    </v-expansion-panels>
+  </body-header-container>
+</template>
+<script lang="ts">
+import { useRules } from "@/composables";
+import { defineComponent, watchEffect, ref, PropType } from "vue";
+import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import { FormCategory, VForm } from "@/types";
+import { useRouter } from "vue-router";
+import { FormSubmissionConfigurationAPIOutDTO } from "@/services/http/dto";
+
+export default defineComponent({
+  props: {
+    formsConfigurations: {
+      type: Array as PropType<FormSubmissionConfigurationAPIOutDTO[]>,
+      required: true,
+    },
+  },
+  setup(props) {
+    const router = useRouter();
+    const { checkNullOrEmptyRule } = useRules();
+    const standaloneForms = ref<FormSubmissionConfigurationAPIOutDTO[]>([]);
+    const selectedStandaloneForm = ref<string[]>();
+    const standaloneFormsSelectionForm = ref({} as VForm);
+
+    watchEffect(async () => {
+      standaloneForms.value = props.formsConfigurations.filter(
+        (form) => form.formCategory === FormCategory.StudentForm,
+      );
+    });
+
+    const fillStudentForm = async (): Promise<void> => {
+      const formIsValid = standaloneFormsSelectionForm.value.validate();
+      if (!formIsValid) {
+        return;
+      }
+      await router.push({
+        name: StudentRoutesConst.STUDENT_FORM_SUBMIT,
+        params: {
+          formDefinitionIds: selectedStandaloneForm.value?.toString(),
+        },
+      });
+    };
+
+    return {
+      checkNullOrEmptyRule,
+      StudentRoutesConst,
+      standaloneForms,
+      selectedStandaloneForm,
+      standaloneFormsSelectionForm,
+      fillStudentForm,
+    };
+  },
+});
+</script>
