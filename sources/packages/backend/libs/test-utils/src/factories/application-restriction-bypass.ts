@@ -1,6 +1,7 @@
 import {
   Application,
   ApplicationRestrictionBypass,
+  InstitutionRestriction,
   Note,
   NoteType,
   Restriction,
@@ -58,8 +59,9 @@ export function createFakeApplicationRestrictionBypass(relations: {
  * @param relations bypass relations.
  * - `application`: mandatory for bypass creation. Requires student and user to also be loaded.
  * - `studentRestriction`: optional student restriction. If not provided, one will be created.
+ * - `institutionRestriction`: optional institution restriction.
  * - `creationNote`: optional creation note. If not provided, one will be created.
- * - `bypassCreatedBy`:
+ * - `bypassCreatedBy`: user that created the bypass.
  * - `removalNote`: optional removal note. If not provided, one will be created only if the
  * {@link isRemoved} is set as true.
  * - `bypassRemovedBy`: optional removal user. Should be provided if {@link isRemoved} is set as true.
@@ -80,6 +82,7 @@ export async function saveFakeApplicationRestrictionBypass(
   relations: {
     application?: Application;
     studentRestriction?: StudentRestriction;
+    institutionRestriction?: InstitutionRestriction;
     creationNote?: Note;
     bypassCreatedBy?: User;
     removalNote?: Note;
@@ -103,8 +106,8 @@ export async function saveFakeApplicationRestrictionBypass(
   bypass.isActive = options?.initialValues?.isActive ?? true;
   bypass.creator = relations?.creator;
   bypass.createdAt = now;
-  // Define studentRestriction.
-  if (!relations.studentRestriction) {
+  // Define studentRestriction if neither studentRestriction or institutionRestriction is provided.
+  if (!relations.studentRestriction && !relations.institutionRestriction) {
     // Find the restriction to be associated with the student.
     const findOptions: FindOneOptions<Restriction> = options?.restrictionCode
       ? { where: { restrictionCode: options.restrictionCode } }
@@ -126,6 +129,7 @@ export async function saveFakeApplicationRestrictionBypass(
     );
   } else {
     bypass.studentRestriction = relations.studentRestriction;
+    bypass.institutionRestriction = relations.institutionRestriction;
   }
   // Define creationNote.
   bypass.creationNote = relations?.creationNote;
