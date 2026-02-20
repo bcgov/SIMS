@@ -4978,6 +4978,11 @@
               "refreshOnChange": false,
               "customClass": "banner-warning",
               "key": "isFullNameMatchWarning",
+              "conditional": {
+                "show": true,
+                "when": "isPartnerNameMatch",
+                "eq": "true"
+              },
               "type": "htmlelement",
               "input": false,
               "tableView": false
@@ -5026,7 +5031,7 @@
               "conditional": {
                 "show": true,
                 "when": "partnerIsAbleToReport",
-                "eq": "true"
+                "eq": "yes"
               },
               "type": "htmlelement",
               "input": false,
