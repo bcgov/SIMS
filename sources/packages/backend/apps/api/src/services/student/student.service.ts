@@ -276,7 +276,7 @@ export class StudentService extends RecordDataModelService<Student> {
           user,
           student,
           studentSIN,
-          auditUserId,
+          this.systemUsersService.systemUser.id,
           entityManager,
         );
       }

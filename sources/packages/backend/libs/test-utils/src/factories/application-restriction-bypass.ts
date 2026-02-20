@@ -134,9 +134,11 @@ export async function saveFakeApplicationRestrictionBypass(
   // Define creationNote.
   bypass.creationNote = relations?.creationNote;
   if (!bypass.creationNote) {
+    const noteCreator =
+      relations?.creator ?? (await db.user.save(createFakeUser()));
     bypass.creationNote = await db.note.save(
       createFakeNote(NoteType.Application, {
-        creator: relations?.creator,
+        creator: noteCreator,
       }),
     );
   }
@@ -147,9 +149,11 @@ export async function saveFakeApplicationRestrictionBypass(
     // Define columns to set the bypass as removed.
     bypass.removalNote = relations?.removalNote;
     if (!bypass.removalNote) {
+      const removalNoteCreator =
+        relations?.bypassRemovedBy ?? (await db.user.save(createFakeUser()));
       bypass.removalNote = await db.note.save(
         createFakeNote(NoteType.Application, {
-          creator: relations?.bypassRemovedBy,
+          creator: removalNoteCreator,
         }),
       );
     }
