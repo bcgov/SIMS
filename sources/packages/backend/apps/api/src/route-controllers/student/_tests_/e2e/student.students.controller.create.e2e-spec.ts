@@ -13,7 +13,6 @@ import {
   createFakeSFASApplication,
   createFakeSFASRestriction,
   createFakeUser,
-  createFakeStudentPayload,
   E2EDataSources,
   getProviderInstanceForModule,
   saveFakeSFASIndividual,
@@ -23,7 +22,8 @@ import { FormNames, FormService } from "../../../../services";
 import { RestrictionCode, SystemUsersService } from "@sims/services";
 import { AppStudentsModule } from "../../../../app.students.module";
 import { In } from "typeorm";
-import { NoteType } from "@sims/sims-db";
+import { IdentityProviders, NoteType } from "@sims/sims-db";
+import { CreateStudentAPIInDTO } from "apps/api/src/route-controllers/student/models/student.dto";
 
 const SIN_NUMBER_A = "544962244";
 const SIN_NUMBER_B = "317149003";
@@ -213,7 +213,7 @@ describe("StudentStudentsController(e2e)-create", () => {
     expect(updatedSFASApplication.wthdProcessed).toBe(false);
   });
 
-  it("Should create a BCSC student with HOLD restriction and note when SFAS partial match exists and note should have a creator.", async () => {
+  it("Should create a BCSC student with HOLD restriction and note when SFAS partial match exists.", async () => {
     // Arrange
     const birthDate = "2000-01-01";
     const payload = createFakeStudentPayload({
@@ -307,35 +307,65 @@ describe("StudentStudentsController(e2e)-create", () => {
         student: { id: studentId },
         restriction: { restrictionCode: RestrictionCode.HOLD },
       },
+      loadEagerRelations: false,
     });
 
-    // Assert - Verify the creator is set to a system user.
-    expect(holdRestriction).toEqual(
-      expect.objectContaining({
+    // Assert the restriction was created as expected.
+    if (!holdRestriction) {
+      throw new Error(
+        "Expected a HOLD restriction to be created for the student.",
+      );
+    }
+
+    expect(holdRestriction).toMatchObject({
+      id: expect.any(Number),
+      isActive: true,
+      restriction: {
         id: expect.any(Number),
-        isActive: true,
-        restriction: expect.objectContaining({
-          id: expect.any(Number),
-          restrictionCode: RestrictionCode.HOLD,
-        }),
-        student: expect.objectContaining({
-          id: studentId,
-        }),
-        restrictionNote: expect.objectContaining({
-          id: expect.any(Number),
-          description:
-            "Restriction added to prevent application completion while potential partial match exists",
-          noteType: NoteType.Restriction,
-          creator: expect.objectContaining({
-            id: systemUserId,
-            userName: expect.any(String),
-          }),
-        }),
-      }),
-    );
+        restrictionCode: RestrictionCode.HOLD,
+      },
+      student: {
+        id: studentId,
+      },
+      restrictionNote: {
+        id: expect.any(Number),
+        description:
+          "Restriction added to prevent application completion while potential partial match exists",
+        noteType: NoteType.Restriction,
+        creator: {
+          id: systemUserId,
+          userName: expect.any(String),
+        },
+      },
+    });
   });
 
   afterAll(async () => {
     await app?.close();
   });
 });
+
+/** * Create valid student creation payload.
+ * @param options options to create the payload.
+ * - `sinNumber` SIN number to be used in the payload.
+ * @returns student creation payload. */
+function createFakeStudentPayload(options: {
+  sinNumber: string;
+}): CreateStudentAPIInDTO {
+  const payload: CreateStudentAPIInDTO = {
+    mode: "student-create",
+    identityProvider: IdentityProviders.BCSC,
+    country: "Canada",
+    selectedCountry: "Canada",
+    provinceState: "BC",
+    city: "Vancouver",
+    addressLine1: "123 Main St",
+    postalCode: "V5K0A1",
+    canadaPostalCode: "V5K0A1",
+    phone: "123-456-7890",
+    sinNumber: options.sinNumber,
+    sinConsent: true,
+    gender: "X",
+  };
+  return payload;
+}
