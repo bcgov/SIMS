@@ -2123,7 +2123,7 @@ Alimony/Child Support paid by the Partner during the study period can be conside
     <bpmn:intermediateThrowEvent id="Event_1bl5l5x" name="Partner Federal/Provincial &#10;PD">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if studentDataIsYourPartnerAbleToReport = true then &#10;  partner1HasFedralProvincialPDReceipt&#10;else &#10;  studentDataPartnerHasFedralProvincialPDReceipt" target="calculatedDataPartnerFedralProvincialPDReceipt" />
+          <zeebe:output source="=partner1HasFedralProvincialPDReceipt" target="calculatedDataPartnerFedralProvincialPDReceipt" />
           <zeebe:output source="=if partner1BCEAIncomeAssistanceAmount = null&#10;then 0&#10;else partner1BCEAIncomeAssistanceAmount" target="calculatedDataPartnerBCEAIncomeAssistanceAmount" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>

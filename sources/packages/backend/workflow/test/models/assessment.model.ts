@@ -143,10 +143,10 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsPartnerCurrentYearIncomeAppealData?: JSONDoc;
   appealsParentCurrentYearIncomeAppealData?: JSONDoc;
   appealsStudentExceptionalExpenseAppealData?: JSONDoc;
-  studentDataIsYourPartnerAbleToReport?: boolean;
+  studentDataIsYourPartnerAbleToReport?: boolean; // No longer used in PY 26/27 and beyond.
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
-  studentDataEstimatedSpouseIncome?: number;
+  studentDataEstimatedSpouseIncome?: number; // No longer used in PY 26/27 and beyond.
   studentDataCurrentYearPartnerIncome?: number; // No longer used in PY 26/27 and beyond.
   studentDataLivingWithPartner?: YesNoOptions;
   studentDataCRAReportedIncome?: number;
@@ -154,12 +154,12 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataGovernmentFundingCosts?: number;
   studentDataNonGovernmentFundingCosts?: number;
   studentDataParentVoluntaryContributionsCosts?: number;
-  studentDataPartnerStudyWeeks?: number;
-  studentDataPartnerEmploymentInsurance?: YesNoOptions;
-  studentDataPartnerFedralProvincialPDReceiptCost?: number;
-  studentDataPartnerChildSupportCosts?: number;
-  studentDataPartnerCaringForDependant?: YesNoOptions;
-  studentDataPartnerTotalIncomeAssistance?: number;
+  studentDataPartnerStudyWeeks?: number; // No longer used in PY 26/27 and beyond.
+  studentDataPartnerEmploymentInsurance?: YesNoOptions; // No longer used in PY 26/27 and beyond.
+  studentDataPartnerFedralProvincialPDReceiptCost?: number; // No longer used in PY 26/27 and beyond.
+  studentDataPartnerChildSupportCosts?: number; // No longer used in PY 26/27 and beyond.
+  studentDataPartnerCaringForDependant?: YesNoOptions; // No longer used in PY 26/27 and beyond.
+  studentDataPartnerTotalIncomeAssistance?: number; // No longer used in PY 26/27 and beyond.
   studentDataVoluntaryContributions?: number;
   studentDataScholarshipAmount?: number;
   studentDataStudentParentsTotalIncome?: number;
@@ -221,10 +221,10 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   applicationStatus: string;
   applicationEditStatus: ApplicationEditStatus;
   applicationHasNOAApproval: boolean;
-  studentDataPartnerHasEmploymentInsuranceBenefits?: YesNoOptions;
-  studentDataPartnerHasFedralProvincialPDReceipt?: YesNoOptions;
-  studentDataPartnerHasTotalIncomeAssistance?: YesNoOptions;
-  studentDataPartnerBCEAIncomeAssistanceAmount?: number;
+  studentDataPartnerHasEmploymentInsuranceBenefits?: YesNoOptions; // No longer used in PY 26/27 and beyond.
+  studentDataPartnerHasFedralProvincialPDReceipt?: YesNoOptions; // No longer used in PY 26/27 and beyond.
+  studentDataPartnerHasTotalIncomeAssistance?: YesNoOptions; // No longer used in PY 26/27 and beyond.
+  studentDataPartnerBCEAIncomeAssistanceAmount?: number; // No longer used in PY 26/27 and beyond.
   partner1HasEmploymentInsuranceBenefits?: YesNoOptions;
   partner1HasFedralProvincialPDReceipt?: YesNoOptions;
   partner1HasTotalIncomeAssistance?: YesNoOptions;

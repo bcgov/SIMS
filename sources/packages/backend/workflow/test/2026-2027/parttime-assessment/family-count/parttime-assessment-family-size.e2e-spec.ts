@@ -17,7 +17,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-family-size.`, (
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
     assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
@@ -48,7 +47,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-family-size.`, (
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
       assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentNotEligible(
@@ -81,7 +79,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-family-size.`, (
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
       assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligible(
