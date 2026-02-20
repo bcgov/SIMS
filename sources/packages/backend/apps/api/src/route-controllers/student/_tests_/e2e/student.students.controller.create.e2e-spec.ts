@@ -13,13 +13,12 @@ import {
   createFakeSFASApplication,
   createFakeSFASRestriction,
   createFakeUser,
+  createFakeStudentPayload,
   E2EDataSources,
   getProviderInstanceForModule,
   saveFakeSFASIndividual,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
-import { CreateStudentAPIInDTO } from "../../../../route-controllers";
-import { IdentityProviders } from "@sims/sims-db";
 import { FormNames, FormService } from "../../../../services";
 import { AppStudentsModule } from "../../../../app.students.module";
 import { In } from "typeorm";
@@ -59,7 +58,7 @@ describe("StudentStudentsController(e2e)-create", () => {
     // Arrange
     const birthDate = "2000-01-01";
     // Student creation payload.
-    const payload = createStudentPayload({ sinNumber: SIN_NUMBER_A });
+    const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_A });
     // Mocked user info to populate the JWT token.
     const user = createFakeUser();
     // Form.io mock.
@@ -129,7 +128,7 @@ describe("StudentStudentsController(e2e)-create", () => {
     // Arrange
     const birthDate = "2000-01-01";
     // Student creation payload.
-    const payload = createStudentPayload({ sinNumber: SIN_NUMBER_B });
+    const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_B });
     // Mocked user info to populate the JWT token.
     const user = createFakeUser();
     // Form.io mock.
@@ -213,30 +212,3 @@ describe("StudentStudentsController(e2e)-create", () => {
     await app?.close();
   });
 });
-
-/**
- * Create valid student creation payload.
- * @param options options to create the payload.
- * - `sinNumber` SIN number to be used in the payload.
- * @returns student creation payload.
- */
-function createStudentPayload(options: {
-  sinNumber: string;
-}): CreateStudentAPIInDTO {
-  const payload: CreateStudentAPIInDTO = {
-    mode: "student-create",
-    identityProvider: IdentityProviders.BCSC,
-    country: "Canada",
-    selectedCountry: "Canada",
-    provinceState: "BC",
-    city: "Vancouver",
-    addressLine1: "123 Main St",
-    postalCode: "V5K0A1",
-    canadaPostalCode: "V5K0A1",
-    phone: "123-456-7890",
-    sinNumber: options.sinNumber,
-    sinConsent: true,
-    gender: "X",
-  };
-  return payload;
-}

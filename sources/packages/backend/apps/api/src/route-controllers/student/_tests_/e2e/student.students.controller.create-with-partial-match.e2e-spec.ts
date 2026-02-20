@@ -11,13 +11,13 @@ import {
 import {
   createE2EDataSources,
   createFakeUser,
+  createFakeStudentPayload,
   E2EDataSources,
   getProviderInstanceForModule,
   saveFakeSFASIndividual,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
-import { CreateStudentAPIInDTO } from "../../../../route-controllers";
-import { IdentityProviders, NoteType } from "@sims/sims-db";
+import { NoteType } from "@sims/sims-db";
 import { FormNames, FormService } from "../../../../services";
 import { RestrictionCode, SystemUsersService } from "@sims/services";
 import { AppStudentsModule } from "../../../../app.students.module";
@@ -58,7 +58,7 @@ describe("StudentStudentsController(e2e)-create-with-partial-match", () => {
   it("Should create a BCSC student with HOLD restriction and note when SFAS partial match exists and note should have a creator.", async () => {
     // Arrange
     const birthDate = "2000-01-01";
-    const payload = createStudentPayload({
+    const payload = createFakeStudentPayload({
       sinNumber: SIN_NUMBER_PARTIAL_MATCH,
     });
     const user = createFakeUser();
@@ -180,7 +180,7 @@ describe("StudentStudentsController(e2e)-create-with-partial-match", () => {
   it("Should create a BCSC student with HOLD restriction when SFAS partial match exists (lastName and SIN match, different birthDate).", async () => {
     // Arrange
     const birthDate = "2000-01-01";
-    const payload = createStudentPayload({
+    const payload = createFakeStudentPayload({
       sinNumber: SIN_NUMBER_PARTIAL_MATCH,
     });
     const user = createFakeUser();
@@ -256,7 +256,7 @@ describe("StudentStudentsController(e2e)-create-with-partial-match", () => {
   it("Should create a BCSC student with HOLD restriction when SFAS partial match exists (SIN and birthDate match, different lastName).", async () => {
     // Arrange
     const birthDate = "2000-01-01";
-    const payload = createStudentPayload({
+    const payload = createFakeStudentPayload({
       sinNumber: SIN_NUMBER_PARTIAL_MATCH,
     });
     const user = createFakeUser();
@@ -333,30 +333,3 @@ describe("StudentStudentsController(e2e)-create-with-partial-match", () => {
     await app?.close();
   });
 });
-
-/**
- * Create valid student creation payload.
- * @param options options to create the payload.
- * - `sinNumber` SIN number to be used in the payload.
- * @returns student creation payload.
- */
-function createStudentPayload(options: {
-  sinNumber: string;
-}): CreateStudentAPIInDTO {
-  const payload: CreateStudentAPIInDTO = {
-    mode: "student-create",
-    identityProvider: IdentityProviders.BCSC,
-    country: "Canada",
-    selectedCountry: "Canada",
-    provinceState: "BC",
-    city: "Vancouver",
-    addressLine1: "123 Main St",
-    postalCode: "V5K0A1",
-    canadaPostalCode: "V5K0A1",
-    phone: "123-456-7890",
-    sinNumber: options.sinNumber,
-    sinConsent: true,
-    gender: "X",
-  };
-  return payload;
-}
