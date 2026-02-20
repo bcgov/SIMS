@@ -107,6 +107,7 @@ export enum FromIOComponentTypes {
 
 export interface FormIOComponentInternal {
   key: string;
+  tags: string[];
   customClass: string;
   options: unknown;
   values: unknown;
@@ -116,7 +117,6 @@ export interface FormIOComponentInternal {
 export interface FormIOComponent {
   id: string;
   key: string;
-  tags: string[];
   components: FormIOComponent[];
   selectOptions: unknown[];
   _visible: boolean;

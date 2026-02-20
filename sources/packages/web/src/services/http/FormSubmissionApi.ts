@@ -3,6 +3,9 @@ import {
   FormSubmissionStudentSummaryAPIOutDTO,
   FormSubmissionStudentAPIOutDTO,
   FormSubmissionConfigurationsAPIOutDTO,
+  FormSubmissionAPIInDTO,
+  FormSupplementaryDataAPIInDTO,
+  FormSupplementaryDataAPIOutDTO,
 } from "@/services/http/dto";
 import {
   FormCategory,
@@ -106,5 +109,29 @@ export class FormSubmissionApi extends HttpBaseClient {
     return MOCKED_SUBMISSIONS.find(
       (submission) => submission.id === formSubmissionId,
     )!;
+  }
+
+  /**
+   * Get supplementary data for the given data keys and application ID if provided.
+   * @param query data keys and application ID to retrieve the supplementary data for.
+   * @returns supplementary data for the given data keys and application ID.
+   */
+  async getSupplementaryData(
+    query: FormSupplementaryDataAPIInDTO,
+  ): Promise<FormSupplementaryDataAPIOutDTO> {
+    let url = `form-submission/supplementary-data?dataKeys=${query.dataKeys.toString()}`;
+    if (query.applicationId) {
+      url += `&applicationId=${query.applicationId}`;
+    }
+    return this.getCall(this.addClientRoot(url));
+  }
+
+  /**
+   * Submits forms represents appeals or other students forms for Ministry's decision.
+   * The submission will be processed based on the form category and the related business rules.
+   * @param payload form submission with one or more form items.
+   */
+  async submitForm(payload: FormSubmissionAPIInDTO): Promise<void> {
+    await this.postCall(this.addClientRoot("form-submission"), payload);
   }
 }
