@@ -134,7 +134,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataChildSupportAndOrSpousalSupport = 2000;
-      assessmentConsolidatedData.partner1ChildSpousalSupportCost000;
+      assessmentConsolidatedData.partner1ChildSpousalSupportCost = 1000;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
       assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
         YesNoOptions.No;

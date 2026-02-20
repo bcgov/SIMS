@@ -2085,8 +2085,8 @@ Priority to loan reported by partner directly, then by student. Otherwise will b
 Alimony/Child Support paid by the Partner during the study period can be considered towards costs. If not entered, consider their costs for this 0.</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if partner1TotalStudentLoan = null&#10;then &#10;  if studentDataPartnerTotalStudentLoan = null&#10;  then 0&#10;  else studentDataPartnerTotalStudentLoan&#10;else&#10;  partner1TotalStudentLoan" target="calculatedDataPartnerStudentLoans" />
-          <zeebe:output source="=if partner1PartnerCaringForDependant = null&#10;then &#10; studentDataPartnerCaringForDependant&#10;else&#10; partner1PartnerCaringForDependant" target="calculatedDataPartnerCaringForDependant" />
+          <zeebe:output source="=if partner1TotalStudentLoan = null&#10;then 0&#10;else&#10;  partner1TotalStudentLoan" target="calculatedDataPartnerStudentLoans" />
+          <zeebe:output source="=partner1PartnerCaringForDependant" target="calculatedDataPartnerCaringForDependant" />
           <zeebe:output source="=if partner1ChildSpousalSupportCost = null&#10;then 0&#10;else partner1ChildSpousalSupportCost" target="calculatedDataPartnerAlimonySupport" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -2105,7 +2105,7 @@ Alimony/Child Support paid by the Partner during the study period can be conside
     <bpmn:intermediateThrowEvent id="Event_0bk5jrr" name="Partner EI Benefits">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if studentDataIsYourPartnerAbleToReport = true then&#10;   partner1HasEmploymentInsuranceBenefits&#10;else &#10;   studentDataPartnerHasEmploymentInsuranceBenefits    " target="calculatedDataPartnerEmploymentInsuranceBenefits" />
+          <zeebe:output source="=partner1HasEmploymentInsuranceBenefits  " target="calculatedDataPartnerEmploymentInsuranceBenefits" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1w7m8ku</bpmn:incoming>
@@ -2114,7 +2114,7 @@ Alimony/Child Support paid by the Partner during the study period can be conside
     <bpmn:intermediateThrowEvent id="Event_1n57xgo" name="Partner Social Assistance">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if studentDataIsYourPartnerAbleToReport = true then &#10;  partner1HasTotalIncomeAssistance&#10;else &#10;  studentDataPartnerHasTotalIncomeAssistance" target="calculatedDataPartnerSocialAssistance" />
+          <zeebe:output source="=partner1HasTotalIncomeAssistance" target="calculatedDataPartnerSocialAssistance" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0l4ido8</bpmn:incoming>
