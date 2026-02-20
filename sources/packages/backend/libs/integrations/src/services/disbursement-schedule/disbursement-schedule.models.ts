@@ -1,6 +1,7 @@
 import { RestrictedParty, RestrictionCode } from "@sims/services";
 import {
   ActionEffectiveCondition,
+  ApplicationRestrictionBypass,
   DisabilityStatus,
   DisbursementSchedule,
   DisbursementValueType,
@@ -224,27 +225,48 @@ export class InstitutionActiveRestriction extends BaseActiveRestriction {
 /**
  * Restriction bypass active for the application.
  */
-export interface ApplicationActiveRestrictionBypass {
+export class ApplicationActiveRestrictionBypass {
   /**
    * Bypass ID.
    */
-  id: number;
+  readonly id: number;
   /**
    * Restriction code being bypassed.
    */
-  restrictionCode: string;
+  readonly restrictionCode: string;
   /**
    * Student restriction bypassed.
    */
-  studentRestrictionId?: number;
+  readonly studentRestrictionId?: number;
   /**
    * Institution restriction bypassed.
    */
-  institutionRestrictionId?: number;
+  readonly institutionRestrictionId?: number;
   /**
    * Bypass behavior.
    */
-  bypassBehavior: RestrictionBypassBehaviors;
+  readonly bypassBehavior: RestrictionBypassBehaviors;
+  /**
+   * Bypassed restriction id.
+   */
+  readonly bypassedRestrictionId: number;
+  /**
+   * Bypassed restriction.
+   * Either student or institution restriction.
+   */
+  private readonly bypassedRestriction:
+    | StudentRestriction
+    | InstitutionRestriction;
+  constructor(bypass: ApplicationRestrictionBypass) {
+    this.bypassedRestriction =
+      bypass.studentRestriction ?? bypass.institutionRestriction;
+    this.id = bypass.id;
+    this.restrictionCode = this.bypassedRestriction.restriction.restrictionCode;
+    this.studentRestrictionId = bypass.studentRestriction?.id;
+    this.institutionRestrictionId = bypass.institutionRestriction?.id;
+    this.bypassBehavior = bypass.bypassBehavior;
+    this.bypassedRestrictionId = this.bypassedRestriction.id;
+  }
 }
 
 /**

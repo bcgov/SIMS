@@ -1120,7 +1120,7 @@ describe(
 
     it(
       "Should have the e-Cert generated for a part-time application when an application has an active institution " +
-        `'${RestrictionCode.SUS}' restriction and it is bypassed with behavior '${RestrictionBypassBehaviors.AllDisbursements}'.`,
+        `'${RestrictionCode.SUS}' restriction and it is bypassed with behavior '${RestrictionBypassBehaviors.NextDisbursementOnly}'.`,
       async () => {
         // Arrange
         // Student with valid SIN.
@@ -1176,6 +1176,9 @@ describe(
         const susRestriction = await saveFakeInstitutionRestriction(db, {
           restriction,
           program: application.currentAssessment.offering.educationProgram,
+          institution:
+            application.currentAssessment.offering.institutionLocation
+              .institution,
           location: application.currentAssessment.offering.institutionLocation,
         });
         // Create a bypass for the above created institution restriction.
@@ -1188,10 +1191,8 @@ describe(
             creator: sharedMinistryUser,
           },
           {
-            restrictionActionType:
-              RestrictionActionType.StopPartTimeDisbursement,
             initialValues: {
-              bypassBehavior: RestrictionBypassBehaviors.AllDisbursements,
+              bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
             },
           },
         );
@@ -1224,7 +1225,7 @@ describe(
         const isBypassActive = await db.applicationRestrictionBypass.exists({
           where: { id: restrictionBypass.id, isActive: true },
         });
-        expect(isBypassActive).toBe(true);
+        expect(isBypassActive).toBe(false);
       },
     );
 

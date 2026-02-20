@@ -1989,6 +1989,9 @@ describe(
         const susRestriction = await saveFakeInstitutionRestriction(db, {
           restriction,
           program: application.currentAssessment.offering.educationProgram,
+          institution:
+            application.currentAssessment.offering.institutionLocation
+              .institution,
           location: application.currentAssessment.offering.institutionLocation,
         });
         // Create a bypass for the above created institution restriction.
