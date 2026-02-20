@@ -18,7 +18,7 @@ WHERE
 
 -- Drop the existing foreign key constraint.
 ALTER TABLE
-    sims.notes DROP CONSTRAINT IF EXISTS notes_creator_fkey;
+    sims.notes DROP CONSTRAINT notes_creator_fkey;
 
 -- Alter the creator field to NOT NULL.
 ALTER TABLE
@@ -32,6 +32,4 @@ SET
 ALTER TABLE
     sims.notes
 ADD
-    CONSTRAINT notes_creator_fkey FOREIGN KEY (creator) REFERENCES sims.users (id) ON
-DELETE
-    RESTRICT;
+    CONSTRAINT notes_creator_fkey FOREIGN KEY (creator) REFERENCES sims.users (id)
