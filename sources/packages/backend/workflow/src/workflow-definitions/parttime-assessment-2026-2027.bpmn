@@ -855,7 +855,7 @@ dmnX (comes from dmn)</bpmn:text>
       </bpmn:endEvent>
       <bpmn:scriptTask id="Activity_0n6r0rm" name="Define Partner Total Income">
         <bpmn:extensionElements>
-          <zeebe:script expression="=studentDataCurrentYearPartnerIncome" resultVariable="calculatedDataPartner1TotalIncome" />
+          <zeebe:script expression="=appealsPartnerCurrentYearIncomeAppealData.currentYearIncome" resultVariable="calculatedDataPartner1TotalIncome" />
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_1sqp89w</bpmn:incoming>
         <bpmn:outgoing>Flow_1mrd0pj</bpmn:outgoing>
@@ -882,7 +882,7 @@ dmnX (comes from dmn)</bpmn:text>
         <bpmn:outgoing>Flow_0bhp3uf</bpmn:outgoing>
       </bpmn:exclusiveGateway>
       <bpmn:sequenceFlow id="Flow_1sqp89w" name="Has current year partner income" sourceRef="Gateway_0sagtkj" targetRef="Activity_0n6r0rm">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataCurrentYearPartnerIncome != null</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=appealsPartnerCurrentYearIncomeAppealData != null</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="Flow_1mrd0pj" sourceRef="Activity_0n6r0rm" targetRef="Gateway_15bk18a" />
       <bpmn:sequenceFlow id="Flow_0kzutrb" name="Default: Has no current year partner income" sourceRef="Gateway_0sagtkj" targetRef="Activity_0nyqfy4" />

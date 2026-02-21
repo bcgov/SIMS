@@ -2429,8 +2429,7 @@ Alimony/Child Support paid by the Partner during the study period can be conside
         <bpmn:documentation>The priority for Income used in the assessment is:
 1. Current Year 
 2. CRA Reported
-3. Self Reported (Own Income)
-4. Self Reported (Student)</bpmn:documentation>
+3. Self Reported</bpmn:documentation>
         <bpmn:extensionElements>
           <zeebe:ioMapping>
             <zeebe:output source="=appealsStudentCurrentYearIncomeAppealData.currentYearIncome" target="calculatedDataStudentTotalIncome" />
@@ -2588,7 +2587,7 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
 3. Self Reported</bpmn:documentation>
         <bpmn:extensionElements>
           <zeebe:ioMapping>
-            <zeebe:output source="=studentDataCurrentYearPartnerIncome" target="calculatedDataPartner1TotalIncome" />
+            <zeebe:output source="=appealsPartnerCurrentYearIncomeAppealData.currentYearIncome" target="calculatedDataPartner1TotalIncome" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_15nsohu</bpmn:incoming>
@@ -2609,7 +2608,7 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
       <bpmn:sequenceFlow id="Flow_10kg3iw" sourceRef="Event_0rqcvwz" targetRef="Gateway_0vg6ukf" />
       <bpmn:sequenceFlow id="Flow_1sldl88" sourceRef="Event_07pde4l" targetRef="Gateway_1fe53gf" />
       <bpmn:sequenceFlow id="Flow_15nsohu" name="Appeal" sourceRef="Gateway_1fe53gf" targetRef="Event_1bmosj5">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataCurrentYearPartnerIncome != null</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=appealsPartnerCurrentYearIncomeAppealData != null</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="Flow_17z521s" sourceRef="Event_1bmosj5" targetRef="Gateway_0vg6ukf" />
       <bpmn:sequenceFlow id="Flow_1k3l7oj" sourceRef="Gateway_0vg6ukf" targetRef="Event_0femnwh" />
@@ -5193,71 +5192,71 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
   <bpmndi:BPMNDiagram id="BPMNDiagram_1n1vf8z">
     <bpmndi:BPMNPlane id="BPMNPlane_0wu5drz" bpmnElement="Activity_0yaowp1">
       <bpmndi:BPMNShape id="BPMNShape_1hghxhx" bpmnElement="Event_02vtx5v">
-        <dc:Bounds x="452" y="352" width="36" height="36" />
+        <dc:Bounds x="452" y="192" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="439" y="401" width="65" height="27" />
+          <dc:Bounds x="439" y="241" width="65" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_00fhzrs" bpmnElement="Gateway_05sqxm9" isMarkerVisible="true">
-        <dc:Bounds x="325" y="295" width="50" height="50" />
+        <dc:Bounds x="325" y="135" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="263" y="276" width="74" height="27" />
+          <dc:Bounds x="263" y="116" width="74" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_002nlpr" bpmnElement="Event_0cvkzw7">
-        <dc:Bounds x="452" y="242" width="36" height="36" />
+        <dc:Bounds x="452" y="82" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="438" y="291" width="65" height="27" />
+          <dc:Bounds x="438" y="131" width="65" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1eij4d9" bpmnElement="Gateway_09c8zqq" isMarkerVisible="true">
-        <dc:Bounds x="535" y="295" width="50" height="50" />
+        <dc:Bounds x="535" y="135" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="935" y="547" width="57" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1y7x7jp_di" bpmnElement="Event_1y7x7jp">
-        <dc:Bounds x="202" y="302" width="36" height="36" />
+        <dc:Bounds x="202" y="142" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="183" y="345" width="74" height="27" />
+          <dc:Bounds x="183" y="185" width="74" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_12zzd9l_di" bpmnElement="Event_12zzd9l">
-        <dc:Bounds x="652" y="302" width="36" height="36" />
+        <dc:Bounds x="652" y="142" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_1tdtrd3" bpmnElement="Flow_1pizhcx">
-        <di:waypoint x="350" y="345" />
-        <di:waypoint x="350" y="370" />
-        <di:waypoint x="452" y="370" />
+        <di:waypoint x="350" y="185" />
+        <di:waypoint x="350" y="210" />
+        <di:waypoint x="452" y="210" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="353" y="376" width="67" height="27" />
+          <dc:Bounds x="353" y="216" width="67" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1s7csei" bpmnElement="Flow_0txvgcb">
-        <di:waypoint x="488" y="370" />
-        <di:waypoint x="560" y="370" />
-        <di:waypoint x="560" y="345" />
+        <di:waypoint x="488" y="210" />
+        <di:waypoint x="560" y="210" />
+        <di:waypoint x="560" y="185" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qch2t6_di" bpmnElement="Flow_0qch2t6">
+        <di:waypoint x="238" y="160" />
+        <di:waypoint x="325" y="160" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0hzk3tc" bpmnElement="Flow_024dvxv">
-        <di:waypoint x="350" y="295" />
-        <di:waypoint x="350" y="260" />
-        <di:waypoint x="452" y="260" />
+        <di:waypoint x="350" y="135" />
+        <di:waypoint x="350" y="100" />
+        <di:waypoint x="452" y="100" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="370" y="243" width="34" height="14" />
+          <dc:Bounds x="370" y="83" width="34" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1kewp0g" bpmnElement="Flow_1uj3on0">
-        <di:waypoint x="488" y="260" />
-        <di:waypoint x="560" y="260" />
-        <di:waypoint x="560" y="295" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0qch2t6_di" bpmnElement="Flow_0qch2t6">
-        <di:waypoint x="238" y="320" />
-        <di:waypoint x="325" y="320" />
+        <di:waypoint x="488" y="100" />
+        <di:waypoint x="560" y="100" />
+        <di:waypoint x="560" y="135" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1sxkrb8_di" bpmnElement="Flow_1sxkrb8">
-        <di:waypoint x="585" y="320" />
-        <di:waypoint x="652" y="320" />
+        <di:waypoint x="585" y="160" />
+        <di:waypoint x="652" y="160" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

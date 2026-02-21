@@ -407,6 +407,9 @@ export interface CalculatedAssessmentModel {
   dmnFullTimeLivingCategory: string;
   isEligibleForRoomAndBoardAppeal?: boolean;
   isEligibleForStepParentWaiverAppeal?: boolean;
+  isEligibleForStudentCurrentYearIncomeAppeal?: boolean;
+  isEligibleForPartnerCurrentYearIncomeAppeal?: boolean;
+  isEligibleForParentCurrentYearIncomeAppeal?: boolean;
   calculatedDataWaivedParent?: number;
   // Common variables used in both full-time and part-time.
   // CSGP
