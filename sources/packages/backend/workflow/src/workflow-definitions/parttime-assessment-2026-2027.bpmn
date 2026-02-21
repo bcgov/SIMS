@@ -835,6 +835,7 @@ dmnX (comes from dmn)</bpmn:text>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=true" target="isEligibleForStudentCurrentYearIncomeAppeal" />
+          <zeebe:output source="=if  studentDataRelationshipStatus = &#34;married&#34;&#10;then true&#10;else false" target="isEligibleForPartnerCurrentYearIncomeAppeal" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1tcyqyg</bpmn:incoming>

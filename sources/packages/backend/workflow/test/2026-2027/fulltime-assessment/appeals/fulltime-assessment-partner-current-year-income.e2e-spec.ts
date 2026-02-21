@@ -30,6 +30,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-partner-current-
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     assessmentConsolidatedData.appealsPartnerCurrentYearIncomeAppealData = {
       currentYearIncome: 20001,
     };
@@ -52,6 +53,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-partner-current-
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     assessmentConsolidatedData.appealsPartnerCurrentYearIncomeAppealData = {
       currentYearIncome: 20001,
     };

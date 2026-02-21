@@ -25,7 +25,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     ).toBe(true);
   });
 
-  it("Should evaluate the partner current year income appeal as not eligible when the student is single and independant.", async () => {
+  it("Should evaluate the partner current year income appeal as not eligible when the student is single.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -43,7 +43,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     ).toBe(false);
   });
 
-  it("Should evaluate the partner current year income appeal as not eligible when the student relationship status is other and independant.", async () => {
+  it("Should evaluate the partner current year income appeal as not eligible when the student relationship status is other.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -61,30 +61,11 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     ).toBe(false);
   });
 
-  it("Should evaluate the partner current year income appeal as not eligible when the student relationship status is unable to report and independant.", async () => {
+  it("Should evaluate the partner current year income appeal as not eligible when the student relationship status is unable to report.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataRelationshipStatus = "marriedUnable";
-    // Act
-    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
-      PROGRAM_YEAR,
-      assessmentConsolidatedData,
-    );
-
-    // Assert
-    expect(
-      calculatedAssessment.variables
-        .isEligibleForPartnerCurrentYearIncomeAppeal,
-    ).toBe(false);
-  });
-
-  it("Should evaluate the partner current year income appeal as not eligible when the student is dependant.", async () => {
-    // Arrange
-    const assessmentConsolidatedData =
-      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-
-    assessmentConsolidatedData.studentDataDependantstatus = "dependant";
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
