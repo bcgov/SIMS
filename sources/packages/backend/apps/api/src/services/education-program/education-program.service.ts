@@ -37,7 +37,6 @@ import {
 import {
   sortProgramsColumnMap,
   PaginatedResults,
-  SortPriority,
   ProgramPaginationOptions,
   PaginationOptions,
 } from "../../utilities";
@@ -393,7 +392,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   async getProgramsSummaryForLocation(
     institutionId: number,
     offeringTypes: OfferingTypes[],
-    paginationOptions: PaginationOptions,
+    paginationOptions: ProgramPaginationOptions,
     locationId: number,
   ): Promise<PaginatedResults<EducationProgramsSummary>> {
     const { programQuery, queryParams } = this.getProgramsQueryWithQueryParams(
@@ -407,10 +406,75 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       });
     }
     if (paginationOptions.searchCriteria) {
-      programQuery.andWhere("programs.name Ilike :searchCriteria", {
-        searchCriteria: `%${paginationOptions.searchCriteria}%`,
-      });
-      queryParams.push(`%${paginationOptions.searchCriteria}%`);
+      programQuery.andWhere(
+        new Brackets((qb) =>
+          qb
+            .where("programs.name Ilike :nameSearch", {
+              nameSearch: `%${paginationOptions.searchCriteria}%`,
+            })
+            .orWhere("programs.cipCode Ilike :cipSearch", {
+              cipSearch: `%${paginationOptions.searchCriteria}%`,
+            })
+            .orWhere("programs.sabcCode Ilike :sabcSearch", {
+              sabcSearch: `%${paginationOptions.searchCriteria}%`,
+            }),
+        ),
+      );
+      queryParams.push(
+        `%${paginationOptions.searchCriteria}%`,
+        `%${paginationOptions.searchCriteria}%`,
+        `%${paginationOptions.searchCriteria}%`,
+      );
+    }
+    // Status and inactive filtering (mirrors getProgramsSummary logic).
+    if (
+      paginationOptions.statusSearch &&
+      paginationOptions.inactiveProgramSearch
+    ) {
+      programQuery.andWhere(
+        new Brackets((qb) =>
+          qb
+            .where(
+              "programs.programStatus IN (:...programStatusSearchCriteria)",
+              {
+                programStatusSearchCriteria: paginationOptions.statusSearch,
+              },
+            )
+            .orWhere("programs.isActive = :programIsActiveSearchCriteria", {
+              programIsActiveSearchCriteria:
+                !paginationOptions.inactiveProgramSearch,
+            })
+            .orWhere(
+              "programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE",
+            ),
+        ),
+      );
+      queryParams.push(
+        ...paginationOptions.statusSearch,
+        !paginationOptions.inactiveProgramSearch,
+      );
+    } else if (paginationOptions.statusSearch) {
+      // Fetching only the active programs with the provided program status.
+      programQuery.andWhere(
+        "programs.programStatus IN (:...programStatusSearchCriteria) and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE)",
+        {
+          programStatusSearchCriteria: paginationOptions.statusSearch,
+        },
+      );
+      queryParams.push(...paginationOptions.statusSearch);
+    } else if (paginationOptions.inactiveProgramSearch) {
+      // Fetching only the inactive status programs.
+      programQuery.andWhere(
+        new Brackets((qb) => {
+          qb.where("programs.isActive = :programIsActiveSearchCriteria", {
+            programIsActiveSearchCriteria:
+              !paginationOptions.inactiveProgramSearch,
+          }).orWhere(
+            "programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE",
+          );
+        }),
+      );
+      queryParams.push(!paginationOptions.inactiveProgramSearch);
     }
     return this.preparePaginatedProgramQuery(
       programQuery,
@@ -930,16 +994,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         paginationOptions.sortOrder,
       );
     } else {
-      // Default sort and order.
-      paginatedProgramQuery.orderBy(
-        `CASE           
-          WHEN programs.programStatus = '${ProgramStatus.Pending}' and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE) THEN ${SortPriority.Priority1}
-          WHEN programs.programStatus = '${ProgramStatus.Approved}' and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE) THEN ${SortPriority.Priority2}
-          WHEN programs.programStatus = '${ProgramStatus.Declined}' and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE) THEN ${SortPriority.Priority3}
-          WHEN programs.isActive = false or (programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE) THEN ${SortPriority.Priority4}
-          ELSE ${SortPriority.Priority5}
-        END`,
-      );
+      // Default sort: program name ascending.
+      paginatedProgramQuery.orderBy("programs.name", "ASC");
     }
 
     // Total count and summary.
