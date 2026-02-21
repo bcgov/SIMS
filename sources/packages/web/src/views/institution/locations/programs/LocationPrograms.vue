@@ -50,11 +50,12 @@
         >
           <template #item="{ item }">
             <tr>
-              <td data-cy="programCIP">{{ item.cipCode }}</td>
               <td data-cy="programName">{{ item.programName }}</td>
               <td data-cy="programCredential">
                 {{ item.credentialTypeToDisplay }}
               </td>
+              <td data-cy="programCIP">{{ item.cipCode }}</td>
+              <td data-cy="programSabcCode">{{ item.sabcCode || "-" }}</td>
               <td data-cy="programStudyPeriods">
                 {{ item.totalOfferings }}
               </td>

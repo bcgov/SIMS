@@ -865,6 +865,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .addSelect("programs.programStatus", "programStatus")
       .addSelect("programs.isActive", "isActive")
       .addSelect("programs.effectiveEndDate", "effectiveEndDate")
+      .addSelect("programs.sabcCode", "sabcCode")
       .addSelect(
         (qb) =>
           qb
@@ -951,6 +952,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       programId: program.programId,
       programName: program.programName,
       cipCode: program.cipCode,
+      sabcCode: program.sabcCode,
       credentialType: program.credentialType,
       submittedDate: program.programSubmittedAt,
       programStatus: program.programStatus,

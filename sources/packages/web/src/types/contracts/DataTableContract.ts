@@ -58,6 +58,7 @@ export enum ProgramSummaryFields {
   ProgramName = "programName",
   LocationName = "locationName",
   CipCode = "cipCode",
+  SabcCode = "sabcCode",
   CredentialType = "credentialType",
   TotalOfferings = "totalOfferings",
   ProgramStatus = "programStatus",
@@ -66,26 +67,33 @@ export enum ProgramSummaryFields {
 
 export const ProgramSummaryHeaders = [
   {
-    title: "CIP",
-    sortable: false,
-    key: "cipCode",
-  },
-  {
-    title: "Program Name",
+    title: "Program name",
+    sortable: true,
     key: "programName",
   },
   {
     title: "Credential",
+    sortable: true,
     key: "credentialType",
   },
   {
+    title: "CIP",
+    sortable: true,
+    key: "cipCode",
+  },
+  {
+    title: "SABC program code",
+    sortable: true,
+    key: "sabcCode",
+  },
+  {
     title: "Study periods",
-    sortable: false,
+    sortable: true,
     key: "totalOfferings",
   },
   {
     title: "Status",
-    sortable: false,
+    sortable: true,
     key: "programStatus",
   },
   {
