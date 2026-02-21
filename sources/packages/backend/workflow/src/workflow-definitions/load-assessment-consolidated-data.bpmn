@@ -79,8 +79,8 @@
           <zeebe:header key="parent2DependentTable" value="supportingUsers.Parent2.supportingData.parentDependentTable[].{&#10;  &#34;dateOfBirth&#34;: dateOfBirth,&#10;  &#34;declaredOnTaxes&#34;: declaredOnTaxes,&#10;  &#34;attendingPostSecondarySchool&#34;: attendingPostSecondarySchool&#10;}" />
           <zeebe:header key="parent1Ei" value="supportingUsers.Parent1.supportingData.eiLine31200" />
           <zeebe:header key="parent2Ei" value="supportingUsers.Parent2.supportingData.eiLine31200" />
-          <zeebe:header key="parent1NetAssests" value="supportingUsers.Parent1.supportingData.foreignAssets" />
-          <zeebe:header key="parent2NetAssests" value="supportingUsers.Parent2.supportingData.foreignAssets" />
+          <zeebe:header key="parent1NetAssets" value="supportingUsers.Parent1.supportingData.foreignAssets" />
+          <zeebe:header key="parent2NetAssets" value="supportingUsers.Parent2.supportingData.foreignAssets" />
           <zeebe:header key="parent1Tax" value="supportingUsers.Parent1.supportingData.totalIncomeTaxLine43500" />
           <zeebe:header key="parent2Tax" value="supportingUsers.Parent2.supportingData.totalIncomeTaxLine43500" />
           <zeebe:header key="studentDataAdditionalTransportRequested" value="data.additionalTransportRequested" />
