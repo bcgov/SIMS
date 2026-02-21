@@ -103,12 +103,7 @@
           :loading="loading"
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
-          :sort-by="[
-            {
-              key: ProgramSummaryFields.ProgramName,
-              order: DataTableSortByOrder.ASC,
-            },
-          ]"
+          v-model:sort-by="sortBy"
           @update:options="paginationAndSortEvent"
         >
           <template #item="{ item }">
@@ -184,6 +179,12 @@ export default defineComponent({
     const locationDetails = ref();
     const loading = ref(false);
     const searchBox = ref("");
+    const sortBy = ref([
+      {
+        key: ProgramSummaryFields.ProgramName,
+        order: DataTableSortByOrder.ASC,
+      },
+    ]);
     // Sentinel value used to represent the "All" filter state.
     const ALL_STATUS = "all";
     const selectedStatuses = ref<string[]>([ALL_STATUS]);
@@ -331,7 +332,7 @@ export default defineComponent({
       ALL_STATUS,
       ProgramStatus,
       INACTIVE_PROGRAM,
-      DataTableSortByOrder,
+      sortBy,
     };
   },
 });

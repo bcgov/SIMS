@@ -74,7 +74,7 @@ export const sortProgramsColumnMap = (fieldName: string): string => {
     credentialType: "programs.credentialType",
     cipCode: "programs.cipCode",
     sabcCode: "programs.sabcCode",
-    totalOfferings: "totalOfferings",
+    totalOfferings: `"totalOfferings"`,
     locationName: "location.name",
   };
   return programSortOptions[fieldName] ?? null;
