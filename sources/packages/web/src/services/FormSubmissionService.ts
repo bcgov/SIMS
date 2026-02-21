@@ -6,6 +6,8 @@ import {
   FormSubmissionAPIInDTO,
   FormSupplementaryDataAPIInDTO,
   FormSupplementaryDataAPIOutDTO,
+  FormSubmissionItemDecisionAPIInDTO,
+  FormSubmissionItemDecisionAPIOutDTO,
 } from "@/services/http/dto";
 
 export class FormSubmissionService {
@@ -54,5 +56,32 @@ export class FormSubmissionService {
    */
   async submitForm(payload: FormSubmissionAPIInDTO): Promise<void> {
     await ApiClient.FormSubmissionApi.submitForm(payload);
+  }
+
+  /**
+   * Updates an individual form item in the form submission with the decision made by the Ministry, including the decision status and note.
+   * @param formSubmissionItemId ID of the form submission item to update the decision for.
+   * @param payload decision status and note description for the form submission item.
+   * @param userToken user token containing the user ID of the Ministry user making the decision, used for auditing purposes.
+   */
+  async submitItemDecision(
+    formSubmissionItemId: number,
+    payload: FormSubmissionItemDecisionAPIInDTO,
+  ): Promise<FormSubmissionItemDecisionAPIOutDTO> {
+    return ApiClient.FormSubmissionApi.submitItemDecision(
+      formSubmissionItemId,
+      payload,
+    );
+  }
+
+  /**
+   * Updates the form submission status to completed when all the related form items have been decided,
+   * and executes the related business logic such as sending notification.
+   * This is the final step of the form submission approval process for the Ministry, which indicates that
+   * all decisions on the form items have been made and the form submission is completed.
+   * @param formSubmissionId ID of the form submission to be completed.
+   */
+  async completeFormSubmission(formSubmissionId: number): Promise<void> {
+    await ApiClient.FormSubmissionApi.completeFormSubmission(formSubmissionId);
   }
 }

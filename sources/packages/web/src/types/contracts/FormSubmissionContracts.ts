@@ -69,8 +69,8 @@ export interface FormSubmissionItemApproval {
   parentStatus: FormSubmissionStatus;
   status: FormSubmissionDecisionStatus;
   noteDescription: string;
-  assessedDate?: string;
-  assessedByUserName?: string;
+  decisionBy: string;
+  decisionDate: Date;
   showAudit: boolean;
   saveDecisionInProgress: boolean;
   decisionSaved: boolean;

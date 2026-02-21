@@ -1,4 +1,9 @@
-import { FormCategory } from "@sims/sims-db";
+import {
+  FormCategory,
+  FormSubmissionDecisionStatus,
+  FormSubmissionStatus,
+  NOTE_DESCRIPTION_MAX_LENGTH,
+} from "@sims/sims-db";
 import { JSON_10KB } from "../../../constants";
 import {
   KnownSupplementaryData,
@@ -14,6 +19,9 @@ import {
   ArrayMaxSize,
   ValidateNested,
   IsEnum,
+  IsNotEmpty,
+  MaxLength,
+  IsDate,
 } from "class-validator";
 
 export class FormSubmissionConfigurationAPIOutDTO {
@@ -26,8 +34,39 @@ export class FormSubmissionConfigurationAPIOutDTO {
   hasApplicationScope: boolean;
 }
 
+// Base classes for submission DTOs and submission items.
+
+abstract class FormSubmissionAPIOutDTO {
+  id: number;
+  formCategory: FormCategory;
+  status: FormSubmissionStatus;
+  applicationId?: number;
+  applicationNumber?: string;
+  submittedDate: Date;
+  assessedDate?: Date;
+}
+
+abstract class FormSubmissionItemAPIOutDTO {
+  formType: string;
+  formCategory: FormCategory;
+  decisionStatus: FormSubmissionDecisionStatus;
+  decisionDate?: Date;
+  dynamicFormConfigurationId: number;
+  submissionData: unknown;
+  formDefinitionName: string;
+}
+
 export class FormSubmissionConfigurationsAPIOutDTO {
   configurations: FormSubmissionConfigurationAPIOutDTO[];
+}
+
+class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
+  decisionBy: string;
+  decisionNoteDescription?: string;
+}
+
+export class FormSubmissionMinistryAPIOutDTO extends FormSubmissionAPIOutDTO {
+  submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
 }
 
 /**
@@ -55,7 +94,7 @@ export class FormSupplementaryDataAPIOutDTO {
 }
 
 /**
- * Individual form item in the form submission.
+ * Student individual form item in the form submission.
  */
 export class FormSubmissionItemAPIInDTO {
   @IsPositive()
@@ -68,7 +107,7 @@ export class FormSubmissionItemAPIInDTO {
 }
 
 /**
- * Form submission with one to many form items for individual Ministry decision.
+ * Student form submission with one to many form items for individual Ministry decision.
  * All forms must belong to same category and may be related to an application.
  * When related to an application, the application ID must be provided and all
  * forms must have application scope.
@@ -84,4 +123,30 @@ export class FormSubmissionAPIInDTO {
   @ValidateNested({ each: true })
   @Type(() => FormSubmissionItemAPIInDTO)
   items: FormSubmissionItemAPIInDTO[];
+}
+
+/**
+ * Ministry individual form item decision update.
+ */
+export class FormSubmissionItemDecisionAPIInDTO {
+  @IsEnum(FormSubmissionDecisionStatus)
+  decisionStatus: FormSubmissionDecisionStatus;
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  noteDescription: string;
+  /**
+   * Date when the decision was made for the last time, used for
+   * concurrency control to prevent overwriting a more recent decision.
+   */
+  @IsOptional()
+  @IsDate()
+  lastUpdatedDate?: Date;
+}
+
+/**
+ * Ministry individual form item decision update result.
+ */
+export class FormSubmissionItemDecisionAPIOutDTO {
+  decisionBy: string;
+  decisionDate: Date;
 }

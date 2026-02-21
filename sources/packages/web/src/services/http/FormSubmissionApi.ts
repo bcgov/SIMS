@@ -6,6 +6,9 @@ import {
   FormSubmissionAPIInDTO,
   FormSupplementaryDataAPIInDTO,
   FormSupplementaryDataAPIOutDTO,
+  FormSubmissionMinistryAPIOutDTO,
+  FormSubmissionItemDecisionAPIInDTO,
+  FormSubmissionItemDecisionAPIOutDTO,
 } from "@/services/http/dto";
 import {
   FormCategory,
@@ -102,13 +105,24 @@ export class FormSubmissionApi extends HttpBaseClient {
     };
   }
 
-  // TODO: To be implemented.
+  /**
+   * Get the details of a form submission, including the individual form items and their details.
+   * For the ministry, it is using during the approval process, providing the necessary details for
+   * the decision making on each form item.
+   * For the student, it is used to show the details of their submission, including the decision made
+   * on each form item.
+   * @param formSubmissionId ID of the form submission to retrieve the details for.
+   * for Ministry users to review and make decisions on each form item, also providing the data
+   * for visualization of the form submission details.
+   * @param formSubmissionId ID of the form submission to retrieve the details for.
+   * @returns form submission details including individual form items and their details.
+   */
   async getFormSubmission(
     formSubmissionId: number,
-  ): Promise<FormSubmissionStudentAPIOutDTO> {
-    return MOCKED_SUBMISSIONS.find(
-      (submission) => submission.id === formSubmissionId,
-    )!;
+  ): Promise<FormSubmissionStudentAPIOutDTO | FormSubmissionMinistryAPIOutDTO> {
+    return this.getCall(
+      this.addClientRoot(`form-submission/${formSubmissionId}`),
+    );
   }
 
   /**
@@ -133,5 +147,37 @@ export class FormSubmissionApi extends HttpBaseClient {
    */
   async submitForm(payload: FormSubmissionAPIInDTO): Promise<void> {
     await this.postCall(this.addClientRoot("form-submission"), payload);
+  }
+
+  /**
+   * Updates an individual form item in the form submission with the decision made by the Ministry, including the decision status and note.
+   * @param formSubmissionItemId ID of the form submission item to update the decision for.
+   * @param payload decision status and note description for the form submission item.
+   * @param userToken user token containing the user ID of the Ministry user making the decision, used for auditing purposes.
+   */
+  async submitItemDecision(
+    formSubmissionItemId: number,
+    payload: FormSubmissionItemDecisionAPIInDTO,
+  ): Promise<FormSubmissionItemDecisionAPIOutDTO> {
+    return this.patchCall(
+      this.addClientRoot(
+        `form-submission/items/${formSubmissionItemId}/decision`,
+      ),
+      payload,
+    );
+  }
+
+  /**
+   * Updates the form submission status to completed when all the related form items have been decided,
+   * and executes the related business logic such as sending notification.
+   * This is the final step of the form submission approval process for the Ministry, which indicates that
+   * all decisions on the form items have been made and the form submission is completed.
+   * @param formSubmissionId ID of the form submission to be completed.
+   */
+  async completeFormSubmission(formSubmissionId: number): Promise<void> {
+    await this.patchCall(
+      this.addClientRoot(`form-submission/${formSubmissionId}/complete`),
+      null,
+    );
   }
 }

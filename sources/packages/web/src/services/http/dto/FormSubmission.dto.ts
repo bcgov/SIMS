@@ -52,6 +52,15 @@ export class FormSubmissionStudentAPIOutDTO extends FormSubmissionAPIOutDTO {
   submissionItems: FormSubmissionItemStudentAPIOutDTO[];
 }
 
+class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
+  decisionBy: string;
+  decisionNoteDescription?: string;
+}
+
+export class FormSubmissionMinistryAPIOutDTO extends FormSubmissionAPIOutDTO {
+  submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
+}
+
 /**
  * Individual form item in the form submission.
  */
@@ -90,4 +99,21 @@ export interface FormSupplementaryDataAPIInDTO {
  */
 export interface FormSupplementaryDataAPIOutDTO {
   formData: Record<string, unknown>;
+}
+
+/**
+ * Ministry individual form item decision update.
+ */
+export interface FormSubmissionItemDecisionAPIInDTO {
+  decisionStatus: FormSubmissionDecisionStatus;
+  noteDescription: string;
+  lastUpdatedDate?: Date;
+}
+
+/**
+ * Ministry individual form item decision update result.
+ */
+export class FormSubmissionItemDecisionAPIOutDTO {
+  decisionBy: string;
+  decisionDate: Date;
 }

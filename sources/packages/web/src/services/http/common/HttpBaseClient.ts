@@ -146,9 +146,14 @@ export default abstract class HttpBaseClient {
    * @param payload data to be sent.
    * @param suppressErrorHandler optionally skip the global error handling.
    */
-  protected async patchCall<T>(url: string, payload: T): Promise<void> {
+  protected async patchCall<T, R = void>(url: string, payload: T): Promise<R> {
     try {
-      await this.apiClient.patch(url, payload, this.addAuthHeader());
+      const response = await this.apiClient.patch(
+        url,
+        payload,
+        this.addAuthHeader(),
+      );
+      return response.data;
     } catch (error: unknown) {
       this.handleRequestError(error);
       throw error;

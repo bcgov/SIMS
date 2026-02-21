@@ -171,4 +171,5 @@ export enum AppRoutes {
   DynamicFormEditor = "dynamic-form-editor",
   ApplicationRestrictionsManagement = "application-restrictions-management",
   ApplicationStatusTracker = "application-status-tracker",
+  StudentFormSubmissionApproval = "form-submission/:formSubmissionId",
 }
