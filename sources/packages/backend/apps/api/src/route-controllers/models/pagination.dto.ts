@@ -117,6 +117,9 @@ export class ProgramsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO
     "locationName",
     "programStatus",
     "credentialType",
+    "cipCode",
+    "sabcCode",
+    "totalOfferings",
   ])
   sortField?: string;
   @IsOptional()

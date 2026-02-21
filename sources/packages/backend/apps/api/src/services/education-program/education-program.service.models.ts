@@ -58,6 +58,7 @@ export interface EducationProgramsSummary {
   programId: number;
   programName: string;
   cipCode: string;
+  sabcCode?: string;
   credentialType: string;
   submittedDate: Date;
   programStatus: ProgramStatus;

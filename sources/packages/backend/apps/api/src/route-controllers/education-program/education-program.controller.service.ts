@@ -84,6 +84,7 @@ export class EducationProgramControllerService {
         programId: program.programId,
         programName: program.programName,
         cipCode: program.cipCode,
+        sabcCode: program.sabcCode,
         credentialType: program.credentialType,
         totalOfferings: program.totalOfferings,
         submittedDate: program.submittedDate,
