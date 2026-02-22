@@ -672,6 +672,126 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
     },
   );
 
+  it("Should retrieve education programs sorted by ascending SABC code when sorted by the sabcCode field.", async () => {
+    // Arrange
+    // SABC code starting with 'A' to sort before the one starting with 'Z'.
+    const firstProgram = createFakeEducationProgram(
+      { institution: institution, user: sharedUser },
+      { initialValue: { sabcCode: "AAAA" } },
+    );
+    // SABC code starting with 'Z' to sort after the one starting with 'A'.
+    const secondProgram = createFakeEducationProgram(
+      { institution: institution, user: sharedUser },
+      { initialValue: { sabcCode: "ZZZZ" } },
+    );
+    const [savedFirstProgram, savedSecondProgram] =
+      await db.educationProgram.save([firstProgram, secondProgram]);
+    const endpoint = `/aest/education-program/institution/${institution.id}/summary?page=0&pageLimit=10&programNameSearch=&locationNameSearch=&inactiveProgramSearch=false&statusSearch=Approved&sortField=sabcCode&sortOrder=ASC`;
+    const userToken = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(userToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        results: [
+          {
+            programId: savedFirstProgram.id,
+            programName: savedFirstProgram.name,
+            cipCode: savedFirstProgram.cipCode,
+            sabcCode: savedFirstProgram.sabcCode,
+            credentialType: savedFirstProgram.credentialType,
+            totalOfferings: "0",
+            submittedDate: savedFirstProgram.createdAt.toISOString(),
+            locationId: institutionLocation.id,
+            locationName: institutionLocation.name,
+            programStatus: savedFirstProgram.programStatus,
+            isActive: savedFirstProgram.isActive,
+            isExpired: savedFirstProgram.isExpired,
+            credentialTypeToDisplay: savedFirstProgram.credentialType,
+          },
+          {
+            programId: savedSecondProgram.id,
+            programName: savedSecondProgram.name,
+            cipCode: savedSecondProgram.cipCode,
+            sabcCode: savedSecondProgram.sabcCode,
+            credentialType: savedSecondProgram.credentialType,
+            totalOfferings: "0",
+            submittedDate: savedSecondProgram.createdAt.toISOString(),
+            locationId: institutionLocation.id,
+            locationName: institutionLocation.name,
+            programStatus: savedSecondProgram.programStatus,
+            isActive: savedSecondProgram.isActive,
+            isExpired: savedSecondProgram.isExpired,
+            credentialTypeToDisplay: savedSecondProgram.credentialType,
+          },
+        ],
+        count: 2,
+      });
+  });
+
+  it("Should retrieve education programs sorted by ascending CIP code when sorted by the cipCode field.", async () => {
+    // Arrange
+    const firstProgram = createFakeEducationProgram({
+      institution: institution,
+      user: sharedUser,
+    });
+    // CIP code starting with '01' to sort before '99'.
+    firstProgram.cipCode = "01.0101";
+    const secondProgram = createFakeEducationProgram({
+      institution: institution,
+      user: sharedUser,
+    });
+    // CIP code starting with '99' to sort after '01'.
+    secondProgram.cipCode = "99.9999";
+    const [savedFirstProgram, savedSecondProgram] =
+      await db.educationProgram.save([firstProgram, secondProgram]);
+    const endpoint = `/aest/education-program/institution/${institution.id}/summary?page=0&pageLimit=10&programNameSearch=&locationNameSearch=&inactiveProgramSearch=false&statusSearch=Approved&sortField=cipCode&sortOrder=ASC`;
+    const userToken = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(userToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        results: [
+          {
+            programId: savedFirstProgram.id,
+            programName: savedFirstProgram.name,
+            cipCode: savedFirstProgram.cipCode,
+            sabcCode: savedFirstProgram.sabcCode,
+            credentialType: savedFirstProgram.credentialType,
+            totalOfferings: "0",
+            submittedDate: savedFirstProgram.createdAt.toISOString(),
+            locationId: institutionLocation.id,
+            locationName: institutionLocation.name,
+            programStatus: savedFirstProgram.programStatus,
+            isActive: savedFirstProgram.isActive,
+            isExpired: savedFirstProgram.isExpired,
+            credentialTypeToDisplay: savedFirstProgram.credentialType,
+          },
+          {
+            programId: savedSecondProgram.id,
+            programName: savedSecondProgram.name,
+            cipCode: savedSecondProgram.cipCode,
+            sabcCode: savedSecondProgram.sabcCode,
+            credentialType: savedSecondProgram.credentialType,
+            totalOfferings: "0",
+            submittedDate: savedSecondProgram.createdAt.toISOString(),
+            locationId: institutionLocation.id,
+            locationName: institutionLocation.name,
+            programStatus: savedSecondProgram.programStatus,
+            isActive: savedSecondProgram.isActive,
+            isExpired: savedSecondProgram.isExpired,
+            credentialTypeToDisplay: savedSecondProgram.credentialType,
+          },
+        ],
+        count: 2,
+      });
+  });
+
   afterAll(async () => {
     await app?.close();
   });
