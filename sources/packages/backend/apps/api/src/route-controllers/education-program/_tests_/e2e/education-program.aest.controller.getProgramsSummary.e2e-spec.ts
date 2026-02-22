@@ -89,6 +89,8 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
         institution: institution,
         user: sharedUser,
       });
+      // Name starting with 'A' to sort before the inactive program name starting with 'Z'.
+      approvedProgram.name = "Approved program";
       const inactiveProgram = createFakeEducationProgram(
         {
           institution: institution,
@@ -101,6 +103,8 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
           },
         },
       );
+      // Name starting with 'Z' to sort after the approved program name starting with 'A'.
+      inactiveProgram.name = "Zeta inactive program";
       const [savedApprovedProgram, savedInactiveProgram] =
         await db.educationProgram.save([approvedProgram, inactiveProgram]);
 
