@@ -16,5 +16,5 @@ VALUES
         'Location',
         ARRAY ['No effect'] :: sims.restriction_action_types [],
         'No effect' :: sims.restriction_notification_types,
-        '{"fieldRequirements":{ "location": "required", "program": "optional" }}' :: JSONB
+        '{"fieldRequirements":{ "location": "required", "program": "not allowed" }}' :: JSONB
     );

@@ -8,6 +8,7 @@ import {
   InstitutionRestrictionSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
   ResolveRestrictionAPIInDTO,
+  RestrictionAPIOutDTO,
   RestrictionDetailAPIOutDTO,
   RestrictionSummaryAPIOutDTO,
   StudentRestrictionAPIOutDTO,
@@ -42,12 +43,12 @@ export class RestrictionApi extends HttpBaseClient {
   async getRestrictionReasons(
     restrictionType: RestrictionType.Provincial | RestrictionType.Institution,
     restrictionCategory?: string,
-  ): Promise<OptionItemAPIOutDTO[]> {
+  ): Promise<RestrictionAPIOutDTO[]> {
     let url = `restriction/reasons?type=${restrictionType}`;
     if (restrictionCategory) {
       url += `&category=${restrictionCategory}`;
     }
-    return this.getCall<OptionItemAPIOutDTO[]>(this.addClientRoot(url));
+    return this.getCall<RestrictionAPIOutDTO[]>(this.addClientRoot(url));
   }
 
   async getStudentRestrictionDetail(

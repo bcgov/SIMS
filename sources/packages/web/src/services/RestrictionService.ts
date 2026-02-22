@@ -8,6 +8,7 @@ import {
   InstitutionRestrictionSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
   ResolveRestrictionAPIInDTO,
+  RestrictionAPIOutDTO,
   RestrictionDetailAPIOutDTO,
   RestrictionSummaryAPIOutDTO,
   StudentRestrictionAPIOutDTO,
@@ -55,7 +56,7 @@ export class RestrictionService {
   async getRestrictionReasons(
     restrictionType: RestrictionType.Provincial | RestrictionType.Institution,
     restrictionCategory?: string,
-  ): Promise<OptionItemAPIOutDTO[]> {
+  ): Promise<RestrictionAPIOutDTO[]> {
     return ApiClient.RestrictionApi.getRestrictionReasons(
       restrictionType,
       restrictionCategory,

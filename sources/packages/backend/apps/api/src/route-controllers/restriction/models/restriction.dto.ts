@@ -119,6 +119,7 @@ export class AssignInstitutionRestrictionAPIInDTO extends AssignRestrictionAPIIn
    * List of location IDs where the restriction is applicable.
    * A new restriction will be created for each location ID provided.
    */
+  @IsOptional()
   @ArrayMinSize(1)
   @ArrayMaxSize(MAX_ALLOWED_LOCATIONS)
   @IsPositive({ each: true })
@@ -126,6 +127,7 @@ export class AssignInstitutionRestrictionAPIInDTO extends AssignRestrictionAPIIn
   /**
    * Program ID where the restriction is applicable.
    */
+  @IsOptional()
   @IsPositive()
   programId: number;
 }

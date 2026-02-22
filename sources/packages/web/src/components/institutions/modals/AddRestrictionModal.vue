@@ -16,6 +16,7 @@
           :loading="loadingData"
           hide-details="auto" />
         <v-autocomplete
+          v-if="isProgramRequired"
           item-value="id"
           item-title="description"
           class="mb-4"
@@ -29,6 +30,7 @@
           :clearable="true"
           hide-details="auto" />
         <v-select
+          v-if="isLocationRequired"
           item-value="id"
           item-title="name"
           class="mb-4"
@@ -63,15 +65,16 @@
   </v-form>
 </template>
 <script lang="ts">
-import { ref, reactive, defineComponent } from "vue";
+import { ref, reactive, defineComponent, computed } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useRules, useSnackBar } from "@/composables";
-import { VForm, RestrictionType } from "@/types";
+import { VForm, RestrictionType, FieldRequirementType } from "@/types";
 import {
   AssignInstitutionRestrictionAPIInDTO,
   InstitutionLocationAPIOutDTO,
   OptionItemAPIOutDTO,
+  RestrictionAPIOutDTO,
 } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
 import { RestrictionService } from "@/services/RestrictionService";
@@ -88,13 +91,31 @@ export default defineComponent({
   setup(props) {
     const snackBar = useSnackBar();
     const { checkNotesLengthRule, checkNullOrEmptyRule } = useRules();
-    const reasons = ref([] as OptionItemAPIOutDTO[]);
+    const reasons = ref([] as RestrictionAPIOutDTO[]);
     const locations = ref([] as InstitutionLocationAPIOutDTO[]);
     const programs = ref([] as OptionItemAPIOutDTO[]);
     const formModel = reactive({} as AssignInstitutionRestrictionAPIInDTO);
     const loadingData = ref(false);
     const submittingData = ref(false);
     const addRestrictionForm = ref({} as VForm);
+    const isProgramRequired = computed(() => {
+      const selectedReason = reasons.value.find(
+        (reason) => reason.id === formModel.restrictionId,
+      );
+      return (
+        selectedReason?.fieldRequirements?.program ===
+        FieldRequirementType.Required
+      );
+    });
+    const isLocationRequired = computed(() => {
+      const selectedReason = reasons.value.find(
+        (reason) => reason.id === formModel.restrictionId,
+      );
+      return (
+        selectedReason?.fieldRequirements?.location ===
+        FieldRequirementType.Required
+      );
+    });
     const {
       showDialog,
       showModal: showModalInternal,
@@ -185,6 +206,8 @@ export default defineComponent({
       programs,
       checkNotesLengthRule,
       checkNullOrEmptyRule,
+      isProgramRequired,
+      isLocationRequired,
     };
   },
 });

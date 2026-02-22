@@ -1,4 +1,5 @@
 import {
+  FieldRequirementType,
   RestrictionActionType,
   RestrictionNotificationType,
   RestrictionType,
@@ -122,4 +123,13 @@ export interface InstitutionActiveRestrictionAPIOutDTO {
  */
 export interface InstitutionActiveRestrictionsAPIOutDTO {
   items: InstitutionActiveRestrictionAPIOutDTO[];
+}
+
+/**
+ * Restriction details.
+ */
+export interface RestrictionAPIOutDTO {
+  id: number;
+  description: string;
+  fieldRequirements?: Record<string, FieldRequirementType>;
 }
