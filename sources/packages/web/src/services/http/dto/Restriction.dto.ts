@@ -112,8 +112,8 @@ export interface InstitutionRestrictionsAPIOutDTO {
  * Active institution restriction details.
  */
 export interface InstitutionActiveRestrictionAPIOutDTO {
-  programId: number;
-  locationId: number;
+  programId?: number;
+  locationId?: number;
   restrictionCode: string;
   restrictionActions: RestrictionActionType[];
 }
