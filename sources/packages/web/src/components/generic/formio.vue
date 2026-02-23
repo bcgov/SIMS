@@ -1,11 +1,11 @@
 <template>
-  <div v-show="!isFormReady">
+  <div v-show="!isFormReady || loading">
     <slot name="loading"
       ><v-skeleton-loader type="image, article"></v-skeleton-loader
     ></slot>
   </div>
   <div
-    v-show="isFormReady"
+    v-show="isFormReady && !loading"
     class="ff-form-container"
     ref="formioContainerRef"
   ></div>
@@ -71,6 +71,14 @@ export default defineComponent({
     isDataReady: {
       type: Boolean,
       default: true,
+      required: false,
+    },
+    // Allow an alternative control of the loading state, overriding the isDataReady behavior.
+    // Useful when the form must be loaded into the DOM to allow form.io utils methods to interact
+    // with the form but the form can still be displayed in its loading state for the user.
+    loading: {
+      type: Boolean,
+      default: false,
       required: false,
     },
     formKey: {

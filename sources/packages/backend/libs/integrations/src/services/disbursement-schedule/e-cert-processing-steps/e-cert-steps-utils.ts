@@ -75,10 +75,10 @@ export function logActiveRestrictionsBypasses(
     return;
   }
   const bypassLogInfo = bypasses.map(
-    (bypass) => `${bypass.restrictionCode}(${bypass.studentRestrictionId})`,
+    (bypass) => `${bypass.restrictionCode}(${bypass.bypassedRestrictionId})`,
   );
   log.info(
-    `Current active restriction bypasses [Restriction Code(Student Restriction ID)]: ${bypassLogInfo.join(
+    `Current active restriction bypasses [Restriction Code(Restriction ID)]: ${bypassLogInfo.join(
       ", ",
     )}.`,
   );

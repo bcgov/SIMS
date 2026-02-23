@@ -16,6 +16,7 @@ import {
   createE2EDataSources,
   createFakeApplicationException,
   createFakeApplicationExceptionRequest,
+  createFakeUser,
   E2EDataSources,
 } from "@sims/test-utils";
 
@@ -78,7 +79,8 @@ describe("ApplicationExceptionAESTController(e2e)-getExceptionById", () => {
       application.applicationException.exceptionRequests;
     // Create the an approved exception to be associated to the exception created
     // by the method saveFakeApplicationWithApplicationException.
-    const approvedException = createFakeApplicationException();
+    const creator = await db.user.save(createFakeUser());
+    const approvedException = createFakeApplicationException({ creator });
     approvedException.exceptionStatus = ApplicationExceptionStatus.Approved;
     approvedException.application = application;
     approvedException.assessedDate = new Date();

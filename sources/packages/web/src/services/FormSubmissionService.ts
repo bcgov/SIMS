@@ -3,7 +3,10 @@ import {
   FormSubmissionStudentAPIOutDTO,
   FormSubmissionStudentSummaryAPIOutDTO,
   FormSubmissionConfigurationsAPIOutDTO,
-} from "@/services/http/dto/FormSubmission.dto";
+  FormSubmissionAPIInDTO,
+  FormSupplementaryDataAPIInDTO,
+  FormSupplementaryDataAPIOutDTO,
+} from "@/services/http/dto";
 
 export class FormSubmissionService {
   // Share Instance
@@ -31,5 +34,25 @@ export class FormSubmissionService {
     formSubmissionId: number,
   ): Promise<FormSubmissionStudentAPIOutDTO> {
     return ApiClient.FormSubmissionApi.getFormSubmission(formSubmissionId);
+  }
+
+  /**
+   * Get supplementary data for the given data keys and application ID if provided.
+   * @param query data keys and application ID to retrieve the supplementary data for.
+   * @returns supplementary data for the given data keys and application ID.
+   */
+  async getSupplementaryData(
+    query: FormSupplementaryDataAPIInDTO,
+  ): Promise<FormSupplementaryDataAPIOutDTO> {
+    return ApiClient.FormSubmissionApi.getSupplementaryData(query);
+  }
+
+  /**
+   * Submits forms represents appeals or other students forms for Ministry's decision.
+   * The submission will be processed based on the form category and the related business rules.
+   * @param payload form submission with one or more form items.
+   */
+  async submitForm(payload: FormSubmissionAPIInDTO): Promise<void> {
+    await ApiClient.FormSubmissionApi.submitForm(payload);
   }
 }

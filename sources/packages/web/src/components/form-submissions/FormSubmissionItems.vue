@@ -40,6 +40,7 @@
           :form-key="submissionItem.dynamicConfigurationId"
           :form-name="submissionItem.formName"
           :data="submissionItem.formData"
+          :loading="!allFormsLoaded"
           :read-only="readOnly"
           @loaded="formLoaded"
         ></formio>
@@ -52,19 +53,26 @@
     </v-expansion-panel>
   </v-expansion-panels>
   <div class="mt-4">
-    <slot name="actions" :submit="submit"></slot>
+    <slot
+      name="actions"
+      :submit="submit"
+      :all-forms-loaded="allFormsLoaded"
+    ></slot>
   </div>
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { defineComponent, PropType, ref, watch } from "vue";
-import { useFormioUtils } from "@/composables";
+import { computed, defineComponent, PropType, ref, watch } from "vue";
+import { useFormioUtils, useSnackBar } from "@/composables";
 import {
+  FormIOComponent,
   FormIOForm,
   FormSubmissionItem,
   FormSubmissionItemSubmitted,
 } from "@/types";
 import StatusChipFormSubmissionDecision from "@/components/generic/StatusChipFormSubmissionDecision.vue";
+import { FormSubmissionService } from "@/services/FormSubmissionService";
+import { FormSupplementaryDataAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   emits: ["submitted"],
@@ -76,6 +84,11 @@ export default defineComponent({
       type: Array as PropType<FormSubmissionItem[]>,
       required: true,
     },
+    applicationId: {
+      type: Number,
+      default: null,
+      required: false,
+    },
     readOnly: {
       type: Boolean,
       required: false,
@@ -83,25 +96,80 @@ export default defineComponent({
     },
   },
   setup(props, context) {
+    const snackBar = useSnackBar();
     const expandAllModel = ref(true);
     const expansionPanelsModel = ref<number[]>([]);
     const { checkFormioValidity, getAssociatedFiles } = useFormioUtils();
     const forms = new Map<number, FormIOForm>();
+    const formsLoadedCount = ref(0);
+    const { recursiveSearch } = useFormioUtils();
+
+    /**
+     * Retrieves supplementary data for a form.
+     * @param supplementaryDataKeys data keys to be retrieved.
+     */
+    const getSupplementaryData = async (
+      supplementaryDataKeys: string[],
+    ): Promise<FormSupplementaryDataAPIOutDTO> => {
+      try {
+        return await FormSubmissionService.shared.getSupplementaryData({
+          dataKeys: supplementaryDataKeys,
+          applicationId: props.applicationId,
+        });
+      } catch (error: unknown) {
+        snackBar.error("Unexpected error while loading supplementary data.");
+        throw error;
+      }
+    };
+
+    /**
+     * Indicates when all the expected forms are loaded.
+     */
+    const allFormsLoaded = computed(
+      () => formsLoadedCount.value === props.submissionItems.length,
+    );
 
     /**
      * Keep track of all forms that will be part of the submission.
      * @param form form.io form.
      * @param formKey associated identifier of the form.
      */
-    const formLoaded = (form: FormIOForm, formKey: number) => {
+    const formLoaded = async (form: FormIOForm, formKey: number) => {
       forms.set(formKey, form);
+      if (props.readOnly) {
+        formsLoadedCount.value = forms.size;
+        return;
+      }
+      // Check if the form has any known supplementary key that must be loaded.
+      const supplementaryComponentsSearch = recursiveSearch(
+        form,
+        (component: FormIOComponent) =>
+          component.component.tags?.includes("supplementary-data"),
+      );
+      if (!supplementaryComponentsSearch.length) {
+        formsLoadedCount.value = forms.size;
+        return;
+      }
+      // Group the key to retrieve supplementary data from the API.
+      const supplementaryDataKeys = supplementaryComponentsSearch.map(
+        (component) => component.component.key,
+      );
+
+      const supplementaryData = await getSupplementaryData(
+        supplementaryDataKeys,
+      );
+      for (const componentSearch of supplementaryComponentsSearch) {
+        componentSearch.component.setValue(
+          supplementaryData.formData[componentSearch.component.key],
+        );
+      }
+      formsLoadedCount.value = forms.size;
     };
 
     /**
      * Validate and emits an event if all forms are valid.
      */
     const submit = async () => {
-      // TODO: Consider not allowing the submission if all the forms were not loaded.
       const invalidFormKeys: number[] = [];
       const validItems: FormSubmissionItemSubmitted[] = [];
       for (const [key, form] of forms) {
@@ -165,6 +233,7 @@ export default defineComponent({
       expandAllUpdated,
       expansionPanelsModel,
       expansionPanelsUpdated,
+      allFormsLoaded,
     };
   },
 });

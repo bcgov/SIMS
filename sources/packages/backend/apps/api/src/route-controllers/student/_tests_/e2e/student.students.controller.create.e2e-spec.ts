@@ -18,20 +18,23 @@ import {
   saveFakeSFASIndividual,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
-import { CreateStudentAPIInDTO } from "../../../../route-controllers";
-import { IdentityProviders } from "@sims/sims-db";
 import { FormNames, FormService } from "../../../../services";
+import { RestrictionCode, SystemUsersService } from "@sims/services";
 import { AppStudentsModule } from "../../../../app.students.module";
 import { In } from "typeorm";
+import { IdentityProviders, NoteType } from "@sims/sims-db";
+import { CreateStudentAPIInDTO } from "apps/api/src/route-controllers/student/models/student.dto";
 
 const SIN_NUMBER_A = "544962244";
 const SIN_NUMBER_B = "317149003";
+const SIN_NUMBER_PARTIAL_MATCH = "123456789";
 
 describe("StudentStudentsController(e2e)-create", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let appModule: TestingModule;
   let formService: FormService;
+  let systemUserId: number;
   const endpoint = "/students/student";
 
   beforeAll(async () => {
@@ -45,12 +48,13 @@ describe("StudentStudentsController(e2e)-create", () => {
       AppStudentsModule,
       FormService,
     );
+    systemUserId = app.get(SystemUsersService).systemUser.id;
   });
 
   beforeEach(async () => {
     await resetMockJWTUserInfo(appModule);
     await db.sinValidation.update(
-      { sin: In([SIN_NUMBER_A, SIN_NUMBER_B]) },
+      { sin: In([SIN_NUMBER_A, SIN_NUMBER_B, SIN_NUMBER_PARTIAL_MATCH]) },
       { sin: "000000000" },
     );
   });
@@ -59,7 +63,7 @@ describe("StudentStudentsController(e2e)-create", () => {
     // Arrange
     const birthDate = "2000-01-01";
     // Student creation payload.
-    const payload = createStudentPayload({ sinNumber: SIN_NUMBER_A });
+    const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_A });
     // Mocked user info to populate the JWT token.
     const user = createFakeUser();
     // Form.io mock.
@@ -129,7 +133,7 @@ describe("StudentStudentsController(e2e)-create", () => {
     // Arrange
     const birthDate = "2000-01-01";
     // Student creation payload.
-    const payload = createStudentPayload({ sinNumber: SIN_NUMBER_B });
+    const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_B });
     // Mocked user info to populate the JWT token.
     const user = createFakeUser();
     // Form.io mock.
@@ -209,18 +213,142 @@ describe("StudentStudentsController(e2e)-create", () => {
     expect(updatedSFASApplication.wthdProcessed).toBe(false);
   });
 
+  it("Should create a BCSC student with HOLD restriction and note when SFAS partial match exists.", async () => {
+    // Arrange
+    const birthDate = "2000-01-01";
+    const payload = createFakeStudentPayload({
+      sinNumber: SIN_NUMBER_PARTIAL_MATCH,
+    });
+    const user = createFakeUser();
+
+    // Form.io mock.
+    const dryRunSubmissionMock = jest.fn().mockResolvedValueOnce({
+      valid: true,
+      formName: FormNames.StudentProfile,
+      data: { data: payload },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+
+    // Create a SFAS individual that will PARTIALLY match (only 2 out of 3 fields match).
+    // Match: lastName and birthDate.
+    // No match: SIN (different SIN).
+    await saveFakeSFASIndividual(db.dataSource, {
+      initialValues: {
+        lastName: user.lastName,
+        birthDate,
+        sin: "987654321", // Different SIN - this creates a partial match.
+      },
+    });
+
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, { ...user, birthDate: birthDate });
+
+    // Get any student user token. The properties required for student creation
+    // are provided by the mocked user info and overridden using mockJWTUserInfo.
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act
+    let studentId: number;
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        studentId = response.body.id;
+        expect(studentId).toBeGreaterThan(0);
+      });
+
+    // Assert - Verify student was created.
+    const createdStudent = await db.student.findOne({
+      select: {
+        id: true,
+        birthDate: true,
+        user: {
+          id: true,
+          lastName: true,
+        },
+      },
+      relations: { user: true },
+      where: { id: studentId },
+      loadEagerRelations: false,
+    });
+
+    expect(createdStudent).toEqual({
+      id: studentId,
+      birthDate: birthDate,
+      user: {
+        id: expect.any(Number),
+        lastName: user.lastName,
+      },
+    });
+
+    const holdRestriction = await db.studentRestriction.findOne({
+      select: {
+        id: true,
+        restriction: { id: true, restrictionCode: true },
+        student: { id: true },
+        isActive: true,
+        restrictionNote: {
+          id: true,
+          description: true,
+          noteType: true,
+          creator: { id: true },
+        },
+      },
+      relations: {
+        restriction: true,
+        student: true,
+        restrictionNote: { creator: true },
+      },
+      where: {
+        student: { id: studentId },
+        restriction: { restrictionCode: RestrictionCode.HOLD },
+      },
+      loadEagerRelations: false,
+    });
+
+    // Assert the restriction was created as expected.
+    if (!holdRestriction) {
+      throw new Error(
+        "Expected a HOLD restriction to be created for the student.",
+      );
+    }
+
+    expect(holdRestriction).toMatchObject({
+      id: expect.any(Number),
+      isActive: true,
+      restriction: {
+        id: expect.any(Number),
+        restrictionCode: RestrictionCode.HOLD,
+      },
+      student: {
+        id: studentId,
+      },
+      restrictionNote: {
+        id: expect.any(Number),
+        description:
+          "Restriction added to prevent application completion while potential partial match exists",
+        noteType: NoteType.Restriction,
+        creator: {
+          id: systemUserId,
+        },
+      },
+    });
+  });
+
   afterAll(async () => {
     await app?.close();
   });
 });
 
-/**
- * Create valid student creation payload.
+/** * Create valid student creation payload.
  * @param options options to create the payload.
  * - `sinNumber` SIN number to be used in the payload.
- * @returns student creation payload.
- */
-function createStudentPayload(options: {
+ * @returns student creation payload. */
+function createFakeStudentPayload(options: {
   sinNumber: string;
 }): CreateStudentAPIInDTO {
   const payload: CreateStudentAPIInDTO = {
