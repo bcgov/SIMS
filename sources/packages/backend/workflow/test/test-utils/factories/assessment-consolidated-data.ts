@@ -147,6 +147,7 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     studentDataAdditionalTransportWeeks: null,
     studentDataAdditionalTransportPlacement: null,
     studentDataCurrentYearIncome: null,
+    studentDataPartnerIsAbleToReport: null,
     offeringCourseLoad: null,
     parent1Contributions: null,
     parent1Ei: null,
@@ -232,6 +233,27 @@ export function createFakeSingleIndependentStudentData(): Partial<AssessmentCons
     // Single independent student.
     studentDataDependantstatus: "independant",
     studentDataRelationshipStatus: "single",
+  };
+}
+
+/**
+ * Create fake married independent student data.
+ * @param options creation options.
+ * - `partnerIsAbleToReport` indicates if the partner is able to report income.
+ * - `partner1TotalIncome` total income of the partner. If not provided it will be set as 10000.
+ * @returns consolidated data for married independent student.
+ */
+export function createFakeMarriedIndependentStudentData(options?: {
+  partnerIsAbleToReport?: YesNoOptions;
+  partner1TotalIncome?: number;
+}): Partial<AssessmentConsolidatedData> {
+  return {
+    // Married independent student.
+    studentDataDependantstatus: "independant",
+    studentDataRelationshipStatus: "married",
+    studentDataPartnerIsAbleToReport:
+      options?.partnerIsAbleToReport ?? YesNoOptions.Yes,
+    partner1TotalIncome: options?.partner1TotalIncome ?? 10000,
   };
 }
 

@@ -26,6 +26,12 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:association id="Association_1ek1rle" sourceRef="verify-assessment-calculation-order-task" targetRef="TextAnnotation_0g9dtl6" />
     <bpmn:association id="Association_110g427" associationDirection="None" sourceRef="TextAnnotation_1qwxwaf" targetRef="application-change-request-approval-task" />
     <bpmn:association id="Association_1wys3mp" associationDirection="None" sourceRef="TextAnnotation_17tw6q4" targetRef="minitry-approval-change-in-progress-still-pending-gateway" />
+    <bpmn:textAnnotation id="TextAnnotation_1q6xzna">
+      <bpmn:text>There are two conditions under which a supporting user is created:
+ 1. The 2025-26 and earlier applications where the partner is able to report. These applications have studentDataIsYourPartnerAbleToReport = true.
+ 2. All 2026-27 and later applications. These applications have the renamed property studentDataPartnerIsAbleToReport.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0z482ud" associationDirection="None" sourceRef="TextAnnotation_1q6xzna" targetRef="Gateway_176fysj" />
   </bpmn:collaboration>
   <bpmn:process id="assessment-gateway-v2" name="Assessment Gateway V2" isExecutable="true">
     <bpmn:laneSet id="LaneSet_07shl28">
@@ -34,7 +40,7 @@ Note: the workflow process should continue its execution as a regular reassessme
         <bpmn:flowNodeRef>student-income-verification-subprocess</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>partner-income-verification-subprocess</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>retrieve-supporting-info-for-partner-subprocess</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>create-supporting-user-for-the-partner-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>create-identifiable-partner-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_176fysj</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_05k6rp7</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_1jdrla2</bpmn:flowNodeRef>
@@ -246,7 +252,7 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:extensionElements>
         <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
         <zeebe:ioMapping>
-          <zeebe:input source="=createdSupportingUsersIds[1]" target="supportingUserId" />
+          <zeebe:input source="=createdSupportingUserId" target="supportingUserId" />
           <zeebe:input source="=[&#34;retrieve-supporting-info-for-partner-subprocess&#34;]" target="parentSubprocesses" />
           <zeebe:output source="=totalIncome" target="partner1TotalIncome" />
           <zeebe:output source="=supportingUserId" target="partnerSupportingUserId" />
@@ -256,11 +262,15 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:incoming>Flow_03zfrkx</bpmn:incoming>
       <bpmn:outgoing>Flow_1wde0bi</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:serviceTask id="create-supporting-user-for-the-partner-task" name="Create supporting user for the partner">
+    <bpmn:serviceTask id="create-identifiable-partner-task" name="Create identifiable partner">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="create-supporting-users" />
+        <zeebe:taskDefinition type="create-identifiable-supporting-users" />
         <zeebe:ioMapping>
-          <zeebe:input source="=[&#34;Partner&#34;]" target="supportingUsersTypes" />
+          <zeebe:input source="=&#34;Partner&#34;" target="supportingUserType" />
+          <zeebe:input source="=if studentDataPartnerIsAbleToReport != null then&#10;  &#34;partnerFullName&#34; else null" target="fullNamePropertyFilter" />
+          <zeebe:input source="=studentDataIsYourPartnerAbleToReport = true or studentDataPartnerIsAbleToReport = &#34;yes&#34;" target="isAbleToReport" />
+          <zeebe:output source="=createdSupportingUserId" target="createdSupportingUserId" />
+          <zeebe:output source="=create_identifiable_partner_task_passthrough" target="create_identifiable_partner_task_passthrough" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_14701yl</bpmn:incoming>
@@ -766,14 +776,14 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:sequenceFlow id="Flow_18qbsu1" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="student-income-verification-subprocess" />
     <bpmn:sequenceFlow id="Flow_1wde0bi" sourceRef="retrieve-supporting-info-for-partner-subprocess" targetRef="partner-income-verification-subprocess" />
     <bpmn:sequenceFlow id="Flow_0jrbmj3" sourceRef="partner-income-verification-subprocess" targetRef="Gateway_1jdrla2" />
-    <bpmn:sequenceFlow id="Flow_03zfrkx" sourceRef="create-supporting-user-for-the-partner-task" targetRef="retrieve-supporting-info-for-partner-subprocess" />
-    <bpmn:sequenceFlow id="Flow_14701yl" name="Partner is able to report" sourceRef="Gateway_176fysj" targetRef="create-supporting-user-for-the-partner-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = true</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="Flow_03zfrkx" sourceRef="create-identifiable-partner-task" targetRef="retrieve-supporting-info-for-partner-subprocess" />
+    <bpmn:sequenceFlow id="Flow_14701yl" sourceRef="Gateway_176fysj" targetRef="create-identifiable-partner-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = true or studentDataPartnerIsAbleToReport != null</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0emvz6f" name="Yes" sourceRef="Gateway_05k6rp7" targetRef="Gateway_176fysj">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataRelationshipStatus = "married"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1gii09j" name="Partner is not able to report" sourceRef="Gateway_176fysj" targetRef="Gateway_1jdrla2" />
+    <bpmn:sequenceFlow id="Flow_1gii09j" name="Skip creation. Only for 2025/2026 and earlier." sourceRef="Gateway_176fysj" targetRef="Gateway_1jdrla2" />
     <bpmn:sequenceFlow id="Flow_0v2i46e" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="Gateway_05k6rp7" />
     <bpmn:sequenceFlow id="Flow_1u0qixu" name="No" sourceRef="Gateway_05k6rp7" targetRef="Gateway_1jdrla2">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataRelationshipStatus != "married"</bpmn:conditionExpression>
@@ -1020,7 +1030,7 @@ Note: the workflow process should continue its execution as a regular reassessme
         <dc:Bounds x="2269" y="490" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1sauqjd" bpmnElement="create-supporting-user-for-the-partner-task">
+      <bpmndi:BPMNShape id="BPMNShape_1sauqjd" bpmnElement="create-identifiable-partner-task">
         <dc:Bounds x="2127" y="490" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
@@ -1408,7 +1418,7 @@ Note: the workflow process should continue its execution as a regular reassessme
         <di:waypoint x="2030" y="630" />
         <di:waypoint x="2515" y="630" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2205" y="636" width="90" height="27" />
+          <dc:Bounds x="2213" y="636" width="74" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0v2i46e_di" bpmnElement="Flow_0v2i46e">
@@ -1757,6 +1767,10 @@ Note: the workflow process should continue its execution as a regular reassessme
         <dc:Bounds x="3260" y="920" width="481" height="70" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0xhexpd" bpmnElement="TextAnnotation_1q6xzna">
+        <dc:Bounds x="1570" y="710" width="299.99462134251297" height="127.36660929432014" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1gbgxzr_di" bpmnElement="Association_1gbgxzr">
         <di:waypoint x="3200" y="871" />
         <di:waypoint x="3273" y="920" />
@@ -1772,6 +1786,10 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmndi:BPMNEdge id="Association_1wys3mp_di" bpmnElement="Association_1wys3mp">
         <di:waypoint x="3320" y="647" />
         <di:waypoint x="3219" y="694" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0z482ud_di" bpmnElement="Association_0z482ud">
+        <di:waypoint x="1776" y="710" />
+        <di:waypoint x="2015" y="540" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

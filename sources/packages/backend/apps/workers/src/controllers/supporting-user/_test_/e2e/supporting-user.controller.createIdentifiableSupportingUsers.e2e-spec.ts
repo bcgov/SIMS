@@ -1,6 +1,7 @@
 import {
   Application,
   ApplicationData,
+  Notification,
   NotificationMessageType,
   SupportingUserType,
 } from "@sims/sims-db";
@@ -275,6 +276,90 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
     });
   });
 
+  describe("Should create supporting user for the partner and create a notification for partner declaration required when the student is married.", () => {
+    const ABLE_TO_REPORT_OPTIONS = [true, false];
+    for (const ableToReport of ABLE_TO_REPORT_OPTIONS) {
+      it(`Should create supporting user for the partner and create a notification for partner declaration required when partner able to report is ${ableToReport}.`, async () => {
+        // Arrange
+        const partnerFullName = faker.string.uuid();
+        const savedApplication = await saveFakeApplication(
+          db.dataSource,
+          undefined,
+          {
+            applicationData: {
+              workflowName: "some-workflow",
+              partnerFullName,
+            } as ApplicationData,
+          },
+        );
+        const fakePayload = createFakeCreateIdentifiableSupportingUsersPayload({
+          applicationId: savedApplication.id,
+          supportingUserType: SupportingUserType.Partner,
+          isAbleToReport: ableToReport,
+        });
+
+        // Act
+        const result =
+          await supportingUserController.createIdentifiableSupportingUsers(
+            createFakeWorkerJob<
+              CreateIdentifiableSupportingUsersJobInDTO,
+              ICustomHeaders,
+              CreateIdentifiableSupportingUsersJobOutDTO
+            >(fakePayload),
+          );
+
+        // Assert
+        // Validate DB creation.
+        const updatedApplication = await db.application.findOne({
+          select: {
+            id: true,
+            supportingUsers: {
+              id: true,
+              supportingUserType: true,
+              isAbleToReport: true,
+              fullName: true,
+            },
+          },
+          relations: { supportingUsers: true },
+          where: {
+            id: savedApplication.id,
+          },
+        });
+        expect(updatedApplication.supportingUsers).toHaveLength(1);
+        const [partner] = updatedApplication.supportingUsers;
+        expect(partner).toEqual({
+          id: expect.any(Number),
+          supportingUserType: SupportingUserType.Partner,
+          isAbleToReport: ableToReport,
+          fullName: partnerFullName,
+        });
+        // Validate job result.
+        expect(result).toEqual({
+          resultType: MockedZeebeJobResult.Complete,
+          outputVariables: {
+            createdSupportingUserId: partner.id,
+          },
+        });
+        // Validate the creation of notification for the partner declare information
+        // to be provided by the partner.
+        const notification = await notificationLookup(
+          savedApplication,
+          NotificationMessageType.SupportingUserInformationNotification,
+        );
+        expect(notification.dateSent).toBeNull();
+        expect(notification.messagePayload).toStrictEqual({
+          email_address: savedApplication.student.user.email,
+          template_id: notification.notificationMessage.templateId,
+          personalisation: {
+            supportingUserType: "partner",
+            lastName: savedApplication.student.user.lastName,
+            givenNames: savedApplication.student.user.firstName,
+          },
+        });
+      });
+    }
+  });
+
   it("Should throw an error when the full name is expected but it is not present in the application dynamic data.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
@@ -332,7 +417,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
   });
 
   /**
-   * Helper function to lookup notifications and perform assertions.
+   * Helper function to lookup notifications and perform assertions for parents.
    * @param savedApplication the saved application.
    * @param parentFullName the full name of the parent.
    * @param notificationMessageType the notification message type to check.
@@ -342,6 +427,33 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
     parentFullName: string,
     notificationMessageType: NotificationMessageType,
   ): Promise<void> {
+    const notification = await notificationLookup(
+      savedApplication,
+      notificationMessageType,
+    );
+    expect(notification.dateSent).toBeNull();
+    expect(notification.messagePayload).toStrictEqual({
+      email_address: savedApplication.student.user.email,
+      template_id: notification.notificationMessage.templateId,
+      personalisation: {
+        applicationNumber: savedApplication.applicationNumber,
+        parentFullName,
+        supportingUserType: "parent",
+        lastName: savedApplication.student.user.lastName,
+        givenNames: savedApplication.student.user.firstName,
+      },
+    });
+  }
+
+  /**
+   * Helper function to lookup notifications.
+   * @param savedApplication the saved application.
+   * @param notificationMessageType the notification message type to check.
+   */
+  async function notificationLookup(
+    savedApplication: Application,
+    notificationMessageType: NotificationMessageType,
+  ): Promise<Notification> {
     const notification = await db.notification.findOne({
       select: {
         id: true,
@@ -360,17 +472,6 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
         },
       },
     });
-    expect(notification.dateSent).toBeNull();
-    expect(notification.messagePayload).toStrictEqual({
-      email_address: savedApplication.student.user.email,
-      template_id: notification.notificationMessage.templateId,
-      personalisation: {
-        applicationNumber: savedApplication.applicationNumber,
-        parentFullName,
-        supportingUserType: "parent",
-        lastName: savedApplication.student.user.lastName,
-        givenNames: savedApplication.student.user.firstName,
-      },
-    });
+    return notification;
   }
 });
