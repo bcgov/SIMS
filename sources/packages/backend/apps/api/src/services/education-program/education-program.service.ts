@@ -426,56 +426,30 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         `%${paginationOptions.searchCriteria}%`,
       );
     }
-    // Status and inactive filtering (mirrors getProgramsSummary logic).
-    if (
-      paginationOptions.statusSearch &&
-      paginationOptions.inactiveProgramSearch
-    ) {
+    // If statusSearch is provided, narrow by the requested program statuses.
+    if (paginationOptions.statusSearch) {
       programQuery.andWhere(
-        new Brackets((qb) =>
-          qb
-            .where(
-              "programs.programStatus IN (:...programStatusSearchCriteria)",
-              {
-                programStatusSearchCriteria: paginationOptions.statusSearch,
-              },
-            )
-            .orWhere("programs.isActive = :programIsActiveSearchCriteria", {
-              programIsActiveSearchCriteria:
-                !paginationOptions.inactiveProgramSearch,
-            })
-            .orWhere(
-              "programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE",
-            ),
-        ),
-      );
-      queryParams.push(
-        ...paginationOptions.statusSearch,
-        !paginationOptions.inactiveProgramSearch,
-      );
-    } else if (paginationOptions.statusSearch) {
-      // Fetching only the active programs with the provided program status.
-      programQuery.andWhere(
-        "programs.programStatus IN (:...programStatusSearchCriteria) and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE)",
+        "programs.programStatus IN (:...programStatusSearchCriteria)",
         {
           programStatusSearchCriteria: paginationOptions.statusSearch,
         },
       );
       queryParams.push(...paginationOptions.statusSearch);
-    } else if (paginationOptions.inactiveProgramSearch) {
-      // Fetching only the inactive status programs.
-      programQuery.andWhere(
-        new Brackets((qb) => {
-          qb.where("programs.isActive = :programIsActiveSearchCriteria", {
-            programIsActiveSearchCriteria:
-              !paginationOptions.inactiveProgramSearch,
-          }).orWhere(
-            "programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE",
-          );
-        }),
-      );
-      queryParams.push(!paginationOptions.inactiveProgramSearch);
     }
+    // Active programs are always included by default.
+    // if inactiveProgramSearch is set also include inactive programs alongside active ones.
+    programQuery.andWhere(
+      new Brackets((qb) => {
+        qb.where(
+          "programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE)",
+        );
+        if (paginationOptions.inactiveProgramSearch) {
+          qb.orWhere(
+            "programs.isActive = false OR (programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE)",
+          );
+        }
+      }),
+    );
     return this.preparePaginatedProgramQuery(
       programQuery,
       paginationOptions,
