@@ -123,13 +123,13 @@ export class AssignInstitutionRestrictionAPIInDTO extends AssignRestrictionAPIIn
   @ArrayMinSize(1)
   @ArrayMaxSize(MAX_ALLOWED_LOCATIONS)
   @IsPositive({ each: true })
-  locationIds: number[];
+  locationIds?: number[];
   /**
    * Program ID where the restriction is applicable.
    */
   @IsOptional()
   @IsPositive()
-  programId: number;
+  programId?: number;
 }
 
 /**

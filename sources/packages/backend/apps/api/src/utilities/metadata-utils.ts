@@ -36,8 +36,11 @@ function validateFieldRequirement(
  */
 export function validateFieldRequirements(
   fieldKeyValues: Map<string, unknown>,
-  fieldRequirements: Record<string, FieldRequirementType>,
+  fieldRequirements: Record<string, FieldRequirementType> | undefined,
 ): { isValid: boolean; errorMessages: string[] } {
+  if (!fieldRequirements) {
+    throw new Error("Field requirements must be present for validation.");
+  }
   const errorMessages: string[] = [];
   for (const [fieldKey, fieldValue] of fieldKeyValues.entries()) {
     const validationError = validateFieldRequirement(
