@@ -275,155 +275,76 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
     });
   });
 
-  it(
-    "Should create supporting user for the partner when the partner is able to self declare " +
-      "and create a student notification for partner declaration required by partner.",
-    async () => {
-      // Arrange
-      const partnerFullName = faker.string.uuid();
-      const savedApplication = await saveFakeApplication(
-        db.dataSource,
-        undefined,
-        {
-          applicationData: {
-            workflowName: "some-workflow",
-            partnerFullName,
-          } as ApplicationData,
-        },
-      );
-      const fakePayload = createFakeCreateIdentifiableSupportingUsersPayload({
-        applicationId: savedApplication.id,
-        supportingUserType: SupportingUserType.Partner,
-        isAbleToReport: true,
-      });
-
-      // Act
-      const result =
-        await supportingUserController.createIdentifiableSupportingUsers(
-          createFakeWorkerJob<
-            CreateIdentifiableSupportingUsersJobInDTO,
-            ICustomHeaders,
-            CreateIdentifiableSupportingUsersJobOutDTO
-          >(fakePayload),
-        );
-
-      // Assert
-      // Validate DB creation.
-      const updatedApplication = await db.application.findOne({
-        select: {
-          id: true,
-          supportingUsers: {
-            id: true,
-            supportingUserType: true,
-            isAbleToReport: true,
-            fullName: true,
+  describe("Should create supporting user for the partner and create a notification for partner declaration required when the student is married and ", () => {
+    const ABLE_TO_REPORT_OPTIONS = [true, false];
+    for (const ableToReport of ABLE_TO_REPORT_OPTIONS) {
+      it(`partner able to report is ${ableToReport} `, async () => {
+        // Arrange
+        const partnerFullName = faker.string.uuid();
+        const savedApplication = await saveFakeApplication(
+          db.dataSource,
+          undefined,
+          {
+            applicationData: {
+              workflowName: "some-workflow",
+              partnerFullName,
+            } as ApplicationData,
           },
-        },
-        relations: { supportingUsers: true },
-        where: {
-          id: savedApplication.id,
-        },
-      });
-      expect(updatedApplication.supportingUsers).toHaveLength(1);
-      const [partner] = updatedApplication.supportingUsers;
-      expect(partner).toEqual({
-        id: expect.any(Number),
-        supportingUserType: SupportingUserType.Partner,
-        isAbleToReport: true,
-        fullName: partnerFullName,
-      });
-      // Validate job result.
-      expect(result).toEqual({
-        resultType: MockedZeebeJobResult.Complete,
-        outputVariables: {
-          createdSupportingUserId: partner.id,
-        },
-      });
-      // Validate the creation of notification for the partner declare information
-      // to be provided by the partner.
-      // TODO Add updated assertion when SIMS #5757 is implemented.
-      // await notificationLookupAndAssertion(
-      //   savedApplication,
-      //   partnerFullName,
-      //   NotificationMessageType.ParentInformationRequiredFromParentNotification,
-      // );
-    },
-  );
-
-  it(
-    "Should create supporting user for the partner when the partner is not able to self declare " +
-      "and create a student notification for partner declaration required by student.",
-    async () => {
-      // Arrange
-      const partnerFullName = faker.string.uuid();
-      const savedApplication = await saveFakeApplication(
-        db.dataSource,
-        undefined,
-        {
-          applicationData: {
-            workflowName: "some-workflow",
-            partnerFullName,
-          } as ApplicationData,
-        },
-      );
-      const fakePayload = createFakeCreateIdentifiableSupportingUsersPayload({
-        applicationId: savedApplication.id,
-        supportingUserType: SupportingUserType.Partner,
-        isAbleToReport: false,
-      });
-
-      // Act
-      const result =
-        await supportingUserController.createIdentifiableSupportingUsers(
-          createFakeWorkerJob<
-            CreateIdentifiableSupportingUsersJobInDTO,
-            ICustomHeaders,
-            CreateIdentifiableSupportingUsersJobOutDTO
-          >(fakePayload),
         );
+        const fakePayload = createFakeCreateIdentifiableSupportingUsersPayload({
+          applicationId: savedApplication.id,
+          supportingUserType: SupportingUserType.Partner,
+          isAbleToReport: ableToReport,
+        });
 
-      // Assert
-      // Validate DB creation.
-      const updatedApplication = await db.application.findOne({
-        select: {
-          id: true,
-          supportingUsers: {
+        // Act
+        const result =
+          await supportingUserController.createIdentifiableSupportingUsers(
+            createFakeWorkerJob<
+              CreateIdentifiableSupportingUsersJobInDTO,
+              ICustomHeaders,
+              CreateIdentifiableSupportingUsersJobOutDTO
+            >(fakePayload),
+          );
+
+        // Assert
+        // Validate DB creation.
+        const updatedApplication = await db.application.findOne({
+          select: {
             id: true,
-            supportingUserType: true,
-            isAbleToReport: true,
-            fullName: true,
+            supportingUsers: {
+              id: true,
+              supportingUserType: true,
+              isAbleToReport: true,
+              fullName: true,
+            },
           },
-        },
-        relations: { supportingUsers: true },
-        where: {
-          id: savedApplication.id,
-        },
+          relations: { supportingUsers: true },
+          where: {
+            id: savedApplication.id,
+          },
+        });
+        expect(updatedApplication.supportingUsers).toHaveLength(1);
+        const [partner] = updatedApplication.supportingUsers;
+        expect(partner).toEqual({
+          id: expect.any(Number),
+          supportingUserType: SupportingUserType.Partner,
+          isAbleToReport: ableToReport,
+          fullName: partnerFullName,
+        });
+        // Validate job result.
+        expect(result).toEqual({
+          resultType: MockedZeebeJobResult.Complete,
+          outputVariables: {
+            createdSupportingUserId: partner.id,
+          },
+        });
+        // Validate the creation of notification for the partner declare information
+        // to be provided by the partner.
+        // TODO Add updated assertion when SIMS #5757 is implemented using notificationLookupAndAssertion.
       });
-      expect(updatedApplication.supportingUsers).toHaveLength(1);
-      const [partner] = updatedApplication.supportingUsers;
-      expect(partner).toEqual({
-        id: expect.any(Number),
-        supportingUserType: SupportingUserType.Partner,
-        isAbleToReport: false,
-        fullName: partnerFullName,
-      });
-      // Validate job result.
-      expect(result).toEqual({
-        resultType: MockedZeebeJobResult.Complete,
-        outputVariables: {
-          createdSupportingUserId: partner.id,
-        },
-      });
-      // Validate the creation of notification for the partner declare information
-      // to be provided by the student.
-      // TODO Add updated assertion when SIMS #5757 is implemented.
-      // await notificationLookupAndAssertion(
-      //   savedApplication,
-      //   partnerFullName,
-      //   NotificationMessageType.ParentInformationRequiredFromParentNotification,
-      // );
-    },
-  );
+    }
+  });
 
   it("Should throw an error when the full name is expected but it is not present in the application dynamic data.", async () => {
     // Arrange

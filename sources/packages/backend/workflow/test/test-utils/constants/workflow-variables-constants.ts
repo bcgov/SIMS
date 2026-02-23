@@ -10,7 +10,6 @@ export enum WorkflowServiceTasks {
   UpdateApplicationStatusToInProgress = "update-application-status-to-in-progress-task",
   ProgramInfoRequired = "program-info-required-task",
   ProgramInfoNotRequired = "program-info-not-required-task",
-  CreateSupportingUserPartnerTask = "create-supporting-user-for-the-partner-task",
   CreateSupportingUsersParentsTask = "create-supporting-users-for-parents-task",
   CreateIdentifiableParentTask = "create-identifiable-parent-task",
   CreateIdentifiablePartnerTask = "create-identifiable-partner-task",
