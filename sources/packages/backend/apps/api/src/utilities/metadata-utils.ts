@@ -13,7 +13,8 @@ function validateFieldRequirement(
   fieldRequirements: Record<string, FieldRequirementType>,
 ): undefined | string {
   const requirement = fieldRequirements[fieldKey];
-  if (requirement === FieldRequirementType.Optional) {
+  // If there is no requirement for the field, return without validating.
+  if (!requirement) {
     return;
   }
   const isValueProvided = Array.isArray(fieldValue)

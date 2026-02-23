@@ -139,10 +139,6 @@ export enum FieldRequirementType {
    */
   Required = "required",
   /**
-   * The field is optional and may be provided or omitted.
-   */
-  Optional = "optional",
-  /**
    * The field is not allowed and must not be provided.
    */
   NotAllowed = "not allowed",
