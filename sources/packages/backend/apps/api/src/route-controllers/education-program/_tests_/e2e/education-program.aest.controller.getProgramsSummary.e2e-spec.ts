@@ -684,6 +684,13 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       { institution: institution, user: sharedUser },
       { initialValue: { sabcCode: "ZZZZ" } },
     );
+
+    // Pending program that should be filtered out.
+    createFakeEducationProgram(
+      { institution: institution, user: sharedUser },
+      { initialValue: { programStatus: ProgramStatus.Pending } },
+    );
+
     const [savedFirstProgram, savedSecondProgram] =
       await db.educationProgram.save([firstProgram, secondProgram]);
     const endpoint = `/aest/education-program/institution/${institution.id}/summary?page=0&pageLimit=10&programNameSearch=&locationNameSearch=&inactiveProgramSearch=false&statusSearch=Approved&sortField=sabcCode&sortOrder=ASC`;
@@ -743,6 +750,17 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       institution: institution,
       user: sharedUser,
     });
+
+    // Inactive program that should be filtered out.
+    createFakeEducationProgram(
+      { institution: institution, user: sharedUser },
+      {
+        initialValue: {
+          isActive: false,
+        },
+      },
+    );
+
     // CIP code starting with '99' to sort after '01'.
     secondProgram.cipCode = "99.9999";
     const [savedFirstProgram, savedSecondProgram] =
