@@ -28,8 +28,8 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:association id="Association_1wys3mp" associationDirection="None" sourceRef="TextAnnotation_17tw6q4" targetRef="minitry-approval-change-in-progress-still-pending-gateway" />
     <bpmn:textAnnotation id="TextAnnotation_1q6xzna">
       <bpmn:text>There are two conditions under which a supporting user is created:
- 1. 25-26 and earlier applications where the partner is able to report. These applications have studentDataIsYourPartnerAbleToReport = true. 26-27 and newer do not have this property.
- 2. All 26-27 and later applications. These applications have the renamed property studentDataPartnerIsAbleToReport. 25-26 and older use a different name for the form property.</bpmn:text>
+ 1. The 2025-26 and earlier applications where the partner is able to report. These applications have studentDataIsYourPartnerAbleToReport = true.
+ 2. All 2026-27 and later applications. These applications have the renamed property studentDataPartnerIsAbleToReport.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_0z482ud" associationDirection="None" sourceRef="TextAnnotation_1q6xzna" targetRef="Gateway_176fysj" />
   </bpmn:collaboration>
@@ -777,13 +777,13 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:sequenceFlow id="Flow_1wde0bi" sourceRef="retrieve-supporting-info-for-partner-subprocess" targetRef="partner-income-verification-subprocess" />
     <bpmn:sequenceFlow id="Flow_0jrbmj3" sourceRef="partner-income-verification-subprocess" targetRef="Gateway_1jdrla2" />
     <bpmn:sequenceFlow id="Flow_03zfrkx" sourceRef="create-identifiable-partner-task" targetRef="retrieve-supporting-info-for-partner-subprocess" />
-    <bpmn:sequenceFlow id="Flow_14701yl" name="Partner is able to report" sourceRef="Gateway_176fysj" targetRef="create-identifiable-partner-task">
+    <bpmn:sequenceFlow id="Flow_14701yl" sourceRef="Gateway_176fysj" targetRef="create-identifiable-partner-task">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = true or studentDataPartnerIsAbleToReport != null</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0emvz6f" name="Yes" sourceRef="Gateway_05k6rp7" targetRef="Gateway_176fysj">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataRelationshipStatus = "married"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1gii09j" name="Partner is not able to report" sourceRef="Gateway_176fysj" targetRef="Gateway_1jdrla2" />
+    <bpmn:sequenceFlow id="Flow_1gii09j" name="Skip creation. Only for 2025/2026 and earlier." sourceRef="Gateway_176fysj" targetRef="Gateway_1jdrla2" />
     <bpmn:sequenceFlow id="Flow_0v2i46e" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="Gateway_05k6rp7" />
     <bpmn:sequenceFlow id="Flow_1u0qixu" name="No" sourceRef="Gateway_05k6rp7" targetRef="Gateway_1jdrla2">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataRelationshipStatus != "married"</bpmn:conditionExpression>
@@ -1418,7 +1418,7 @@ Note: the workflow process should continue its execution as a regular reassessme
         <di:waypoint x="2030" y="630" />
         <di:waypoint x="2515" y="630" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2205" y="636" width="90" height="27" />
+          <dc:Bounds x="2213" y="636" width="74" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0v2i46e_di" bpmnElement="Flow_0v2i46e">
@@ -1768,7 +1768,7 @@ Note: the workflow process should continue its execution as a regular reassessme
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0xhexpd" bpmnElement="TextAnnotation_1q6xzna">
-        <dc:Bounds x="1570" y="710" width="300" height="156" />
+        <dc:Bounds x="1570" y="710" width="299.99462134251297" height="127.36660929432014" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1gbgxzr_di" bpmnElement="Association_1gbgxzr">

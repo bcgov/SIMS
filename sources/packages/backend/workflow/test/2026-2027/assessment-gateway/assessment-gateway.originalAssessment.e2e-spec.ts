@@ -466,10 +466,10 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     );
   });
 
-  describe("Should create and load data from a supporting user when the student is married and  ", () => {
+  describe("Should create and load data for a supporting user when the student is married.", () => {
     const ABLE_TO_REPORT_OPTIONS = [YesNoOptions.Yes, YesNoOptions.No];
     for (const ableToReport of ABLE_TO_REPORT_OPTIONS) {
-      it(`partner able to report is ${ableToReport}`, async () => {
+      it(`Should create and load data for a supporting user when partner able to report is ${ableToReport}.`, async () => {
         // Arrange
         const partnerSupportingUserId = supportingUserId++;
 

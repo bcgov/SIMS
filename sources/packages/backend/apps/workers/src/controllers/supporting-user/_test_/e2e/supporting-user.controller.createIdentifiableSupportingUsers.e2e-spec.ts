@@ -276,10 +276,10 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
     });
   });
 
-  describe("Should create supporting user for the partner and create a notification for partner declaration required when the student is married and ", () => {
+  describe("Should create supporting user for the partner and create a notification for partner declaration required when the student is married.", () => {
     const ABLE_TO_REPORT_OPTIONS = [true, false];
     for (const ableToReport of ABLE_TO_REPORT_OPTIONS) {
-      it(`partner able to report is ${ableToReport} `, async () => {
+      it(`Should create supporting user for the partner and create a notification for partner declaration required when partner able to report is ${ableToReport}.`, async () => {
         // Arrange
         const partnerFullName = faker.string.uuid();
         const savedApplication = await saveFakeApplication(

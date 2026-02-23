@@ -257,7 +257,7 @@ export class SupportingUserController {
     isAbleToReport: boolean,
     entityManager: EntityManager,
   ): Promise<void> {
-    if (supportingUserType == SupportingUserType.Parent) {
+    if (supportingUserType === SupportingUserType.Parent) {
       const notificationPayload:
         | ParentInformationRequiredFromParentNotification
         | ParentInformationRequiredFromStudentNotification = {
@@ -280,7 +280,7 @@ export class SupportingUserController {
           entityManager,
         );
       }
-    } else if (supportingUserType == SupportingUserType.Partner) {
+    } else if (supportingUserType === SupportingUserType.Partner) {
       await this.notificationActionsService.saveSupportingUserInformationNotification(
         {
           givenNames: application.student.user.firstName,
