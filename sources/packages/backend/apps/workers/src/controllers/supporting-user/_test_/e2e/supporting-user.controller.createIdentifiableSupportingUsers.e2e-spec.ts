@@ -1,6 +1,7 @@
 import {
   Application,
   ApplicationData,
+  Notification,
   NotificationMessageType,
   SupportingUserType,
 } from "@sims/sims-db";
@@ -341,7 +342,20 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
         });
         // Validate the creation of notification for the partner declare information
         // to be provided by the partner.
-        // TODO Add updated assertion when SIMS #5757 is implemented using notificationLookupAndAssertion.
+        const notification = await notificationLookup(
+          savedApplication,
+          NotificationMessageType.SupportingUserInformationNotification,
+        );
+        expect(notification.dateSent).toBeNull();
+        expect(notification.messagePayload).toStrictEqual({
+          email_address: savedApplication.student.user.email,
+          template_id: notification.notificationMessage.templateId,
+          personalisation: {
+            supportingUserType: "partner",
+            lastName: savedApplication.student.user.lastName,
+            givenNames: savedApplication.student.user.firstName,
+          },
+        });
       });
     }
   });
@@ -403,7 +417,7 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
   });
 
   /**
-   * Helper function to lookup notifications and perform assertions.
+   * Helper function to lookup notifications and perform assertions for parents.
    * @param savedApplication the saved application.
    * @param parentFullName the full name of the parent.
    * @param notificationMessageType the notification message type to check.
@@ -413,6 +427,33 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
     parentFullName: string,
     notificationMessageType: NotificationMessageType,
   ): Promise<void> {
+    const notification = await notificationLookup(
+      savedApplication,
+      notificationMessageType,
+    );
+    expect(notification.dateSent).toBeNull();
+    expect(notification.messagePayload).toStrictEqual({
+      email_address: savedApplication.student.user.email,
+      template_id: notification.notificationMessage.templateId,
+      personalisation: {
+        applicationNumber: savedApplication.applicationNumber,
+        parentFullName,
+        supportingUserType: "parent",
+        lastName: savedApplication.student.user.lastName,
+        givenNames: savedApplication.student.user.firstName,
+      },
+    });
+  }
+
+  /**
+   * Helper function to lookup notifications.
+   * @param savedApplication the saved application.
+   * @param notificationMessageType the notification message type to check.
+   */
+  async function notificationLookup(
+    savedApplication: Application,
+    notificationMessageType: NotificationMessageType,
+  ): Promise<Notification> {
     const notification = await db.notification.findOne({
       select: {
         id: true,
@@ -431,17 +472,6 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
         },
       },
     });
-    expect(notification.dateSent).toBeNull();
-    expect(notification.messagePayload).toStrictEqual({
-      email_address: savedApplication.student.user.email,
-      template_id: notification.notificationMessage.templateId,
-      personalisation: {
-        applicationNumber: savedApplication.applicationNumber,
-        parentFullName,
-        supportingUserType: "parent",
-        lastName: savedApplication.student.user.lastName,
-        givenNames: savedApplication.student.user.firstName,
-      },
-    });
+    return notification;
   }
 });

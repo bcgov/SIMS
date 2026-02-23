@@ -40,7 +40,7 @@ import {
   ParentInformationRequiredFromParentNotification,
   ParentInformationRequiredFromStudentNotification,
 } from "@sims/services";
-import { SupportingUserType } from "@sims/sims-db";
+import { Application, SupportingUserType } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
 import * as jsonata from "jsonata";
 
@@ -185,31 +185,13 @@ export class SupportingUserController {
               },
               entityManager,
             );
-          const notificationPayload:
-            | ParentInformationRequiredFromParentNotification
-            | ParentInformationRequiredFromStudentNotification = {
-            givenNames: application.student.user.firstName,
-            lastName: application.student.user.lastName,
-            toAddress: application.student.user.email,
-            userId: application.student.user.id,
-            supportingUserType:
-              job.variables.supportingUserType === SupportingUserType.Parent
-                ? "parent"
-                : "partner",
-            parentFullName: fullName,
-            applicationNumber: application.applicationNumber,
-          };
-          if (isAbleToReport) {
-            await this.notificationActionsService.saveParentInformationRequiredFromParentNotification(
-              notificationPayload,
-              entityManager,
-            );
-          } else {
-            await this.notificationActionsService.saveParentInformationRequiredFromStudentNotification(
-              notificationPayload,
-              entityManager,
-            );
-          }
+          await this.saveSupportingUserNotification(
+            application,
+            job.variables.supportingUserType,
+            fullName,
+            isAbleToReport,
+            entityManager,
+          );
           return job.complete({
             [CREATED_SUPPORTING_USER_ID]: createdSupportingUserId,
           });
@@ -257,6 +239,58 @@ export class SupportingUserController {
       return createUnexpectedJobFail(error, job, {
         logger: jobLogger,
       });
+    }
+  }
+
+  /**
+   * Saves a supporting user information notification for the student for both parent and partner types.
+   * @param application application details for notification.
+   * @param supportingUserType type of the supporting user.
+   * @param fullName the fullName of the supporting user.
+   * @param isAbleToReport flag indicating whether the supporting user is able to report.
+   * @param entityManager entity manager to be used in the transaction.
+   */
+  private async saveSupportingUserNotification(
+    application: Application,
+    supportingUserType: SupportingUserType,
+    fullName: string,
+    isAbleToReport: boolean,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    if (supportingUserType == SupportingUserType.Parent) {
+      const notificationPayload:
+        | ParentInformationRequiredFromParentNotification
+        | ParentInformationRequiredFromStudentNotification = {
+        givenNames: application.student.user.firstName,
+        lastName: application.student.user.lastName,
+        toAddress: application.student.user.email,
+        userId: application.student.user.id,
+        supportingUserType: "parent",
+        parentFullName: fullName,
+        applicationNumber: application.applicationNumber,
+      };
+      if (isAbleToReport) {
+        await this.notificationActionsService.saveParentInformationRequiredFromParentNotification(
+          notificationPayload,
+          entityManager,
+        );
+      } else {
+        await this.notificationActionsService.saveParentInformationRequiredFromStudentNotification(
+          notificationPayload,
+          entityManager,
+        );
+      }
+    } else if (supportingUserType == SupportingUserType.Partner) {
+      await this.notificationActionsService.saveSupportingUserInformationNotification(
+        {
+          givenNames: application.student.user.firstName,
+          lastName: application.student.user.lastName,
+          toAddress: application.student.user.email,
+          userId: application.student.user.id,
+          supportingUserType: "partner",
+        },
+        entityManager,
+      );
     }
   }
 
