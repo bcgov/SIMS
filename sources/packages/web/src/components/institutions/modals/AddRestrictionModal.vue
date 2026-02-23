@@ -16,7 +16,7 @@
           :loading="loadingData"
           hide-details="auto" />
         <v-autocomplete
-          v-if="isProgramRequired"
+          v-if="programAttributes.canShow"
           item-value="id"
           item-title="description"
           class="mb-4"
@@ -25,12 +25,12 @@
           :items="programs"
           v-model="formModel.programId"
           variant="outlined"
-          :rules="[(v) => checkNullOrEmptyRule(v, 'Program')]"
+          :rules="programAttributes.rules"
           :loading="loadingData"
           :clearable="true"
           hide-details="auto" />
         <v-select
-          v-if="isLocationRequired"
+          v-if="locationAttributes.canShow"
           item-value="id"
           item-title="name"
           class="mb-4"
@@ -39,7 +39,7 @@
           :items="locations"
           v-model="formModel.locationIds"
           variant="outlined"
-          :rules="[(v) => checkNullOrEmptyRule(v, 'Location(s)')]"
+          :rules="locationAttributes.rules"
           :loading="loadingData"
           clearable
           multiple
@@ -79,6 +79,12 @@ import {
 import { InstitutionService } from "@/services/InstitutionService";
 import { RestrictionService } from "@/services/RestrictionService";
 import { EducationProgramService } from "@/services/EducationProgramService";
+const LOCATION_FIELD_KEY = "location";
+const PROGRAM_FIELD_KEY = "program";
+interface FieldAttributes {
+  canShow: boolean;
+  rules?: ((v: string | number) => true | string)[];
+}
 
 export default defineComponent({
   components: { ModalDialogBase, ErrorSummary },
@@ -98,23 +104,39 @@ export default defineComponent({
     const loadingData = ref(false);
     const submittingData = ref(false);
     const addRestrictionForm = ref({} as VForm);
-    const isProgramRequired = computed(() => {
+    /**
+     * Get field attributes.
+     * @param fieldKey field key to get the attributes for.
+     * @param friendlyName friendly name of the field.
+     */
+    const getFieldAttributes = (
+      fieldKey: string,
+      friendlyName: string,
+    ): FieldAttributes => {
       const selectedReason = reasons.value.find(
         (reason) => reason.id === formModel.restrictionId,
       );
-      return (
-        selectedReason?.fieldRequirements?.program ===
-        FieldRequirementType.Required
-      );
+      if (!selectedReason?.fieldRequirements) {
+        return { canShow: false };
+      }
+      const fieldRequirement = selectedReason.fieldRequirements[fieldKey];
+      const canShow = fieldRequirement !== FieldRequirementType.NotAllowed;
+      const rules =
+        fieldRequirement === FieldRequirementType.Required
+          ? [(v: string | number) => checkNullOrEmptyRule(v, friendlyName)]
+          : [];
+      return {
+        canShow,
+        rules,
+      };
+    };
+
+    const locationAttributes = computed(() => {
+      return getFieldAttributes(LOCATION_FIELD_KEY, "Location(s)");
     });
-    const isLocationRequired = computed(() => {
-      const selectedReason = reasons.value.find(
-        (reason) => reason.id === formModel.restrictionId,
-      );
-      return (
-        selectedReason?.fieldRequirements?.location ===
-        FieldRequirementType.Required
-      );
+
+    const programAttributes = computed(() => {
+      return getFieldAttributes(PROGRAM_FIELD_KEY, "Program");
     });
     const {
       showDialog,
@@ -206,8 +228,8 @@ export default defineComponent({
       programs,
       checkNotesLengthRule,
       checkNullOrEmptyRule,
-      isProgramRequired,
-      isLocationRequired,
+      locationAttributes,
+      programAttributes,
     };
   },
 });

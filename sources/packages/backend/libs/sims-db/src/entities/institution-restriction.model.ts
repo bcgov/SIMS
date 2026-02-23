@@ -34,7 +34,7 @@ export class InstitutionRestriction extends BaseRestrictionModel {
     name: "program_id",
     referencedColumnName: ColumnNames.ID,
   })
-  program: EducationProgram;
+  program?: EducationProgram;
 
   /**
    * Specific location the restriction applies to.
@@ -44,5 +44,5 @@ export class InstitutionRestriction extends BaseRestrictionModel {
     name: "location_id",
     referencedColumnName: ColumnNames.ID,
   })
-  location: InstitutionLocation;
+  location?: InstitutionLocation;
 }

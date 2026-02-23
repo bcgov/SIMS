@@ -16,10 +16,13 @@ function validateFieldRequirement(
   if (requirement === FieldRequirementType.Optional) {
     return;
   }
-  if (requirement === FieldRequirementType.Required && !fieldValue) {
+  const isValueProvided = Array.isArray(fieldValue)
+    ? !!fieldValue.length
+    : !!fieldValue;
+  if (requirement === FieldRequirementType.Required && !isValueProvided) {
     return `${fieldKey} is required`;
   }
-  if (requirement === FieldRequirementType.NotAllowed && fieldValue) {
+  if (requirement === FieldRequirementType.NotAllowed && isValueProvided) {
     return `${fieldKey} is not allowed`;
   }
 }

@@ -214,24 +214,31 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
         auditUserId,
         entityManager,
       );
+      // If the restriction is not applicable to locations, create a single institution restriction
+      // without location.
+      const locationsToCreateRestriction = uniqueLocationIds.length
+        ? uniqueLocationIds
+        : [null];
       // New institution restriction creation.
-      const newRestrictions = institutionRestriction.locationIds.map(
-        (locationId) => {
-          const restriction = new InstitutionRestriction();
-          restriction.institution = { id: institutionId } as Institution;
-          restriction.restriction = {
-            id: institutionRestriction.restrictionId,
-          } as Restriction;
-          restriction.location = { id: locationId } as InstitutionLocation;
-          restriction.program = {
-            id: institutionRestriction.programId,
-          } as EducationProgram;
-          restriction.creator = { id: auditUserId } as User;
-          restriction.restrictionNote = note;
-          restriction.isActive = true;
-          return restriction;
-        },
-      );
+      const newRestrictions = locationsToCreateRestriction.map((locationId) => {
+        const restriction = new InstitutionRestriction();
+        restriction.institution = { id: institutionId } as Institution;
+        restriction.restriction = {
+          id: institutionRestriction.restrictionId,
+        } as Restriction;
+        restriction.location = locationId
+          ? ({ id: locationId } as InstitutionLocation)
+          : null;
+        restriction.program = institutionRestriction.programId
+          ? ({
+              id: institutionRestriction.programId,
+            } as EducationProgram)
+          : null;
+        restriction.creator = { id: auditUserId } as User;
+        restriction.restrictionNote = note;
+        restriction.isActive = true;
+        return restriction;
+      });
       await entityManager
         .getRepository(InstitutionRestriction)
         .insert(newRestrictions);
@@ -310,14 +317,14 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
     }
     const fieldValidationResult = validateFieldRequirements(
       new Map<string, unknown>([
-        ["program", hasProgram],
-        ["location", hasLocations],
+        ["program", programId],
+        ["location", locationIds],
       ]),
       restriction.metadata.fieldRequirements,
     );
     if (!fieldValidationResult.isValid) {
       throw new CustomNamedError(
-        fieldValidationResult.errorMessages.join(", "),
+        `Field requirement error(s): ${fieldValidationResult.errorMessages.join(", ")}.`,
         FIELD_REQUIREMENTS_NOT_VALID,
       );
     }
