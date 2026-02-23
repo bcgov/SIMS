@@ -21,4 +21,4 @@ CREATE UNIQUE INDEX institution_id_location_id_program_id_restriction_id_is_acti
 WHERE
     is_active = TRUE;
 
-COMMENT ON INDEX institution_id_location_id_program_id_restriction_id_is_active_unique IS 'Ensures only one active restriction per institution, location, program, and restriction combination for active restrictions.';
+COMMENT ON INDEX sims.institution_id_location_id_program_id_restriction_id_is_active_unique IS 'Ensures only one active restriction per institution, location, program, and restriction combination for active restrictions.';
