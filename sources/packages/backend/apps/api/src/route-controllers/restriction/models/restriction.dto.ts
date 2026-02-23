@@ -199,7 +199,7 @@ export class RestrictionReasonsOptionsAPIInDTO {
    */
   @IsOptional()
   @MaxLength(RESTRICTION_CATEGORY_MAX_LENGTH)
-  category: string;
+  category?: string;
 }
 
 /**
