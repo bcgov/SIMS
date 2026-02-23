@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  Query,
 } from "@nestjs/common";
 import { FormSubmissionApprovalService } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -39,15 +40,18 @@ export class FormSubmissionAESTController extends BaseController {
    * For the student, it is used to show the details of their submission, including the decision made
    * on each form item.
    * @param formSubmissionId ID of the form submission to retrieve the details for.
+   * @param itemId optional ID of the form submission item to filter the details for.
    * @returns form submission details including individual form items and their details.
    */
   @Get(":formSubmissionId")
   async getFormSubmission(
     @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
+    @Query("itemId", new ParseIntPipe({ optional: true })) itemId?: number,
   ): Promise<FormSubmissionMinistryAPIOutDTO> {
     const submission =
       await this.formSubmissionApprovalService.getFormSubmissionsById(
         formSubmissionId,
+        { itemId },
       );
     return {
       id: submission.id,

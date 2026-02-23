@@ -30,7 +30,7 @@
             <status-chip-form-submission-decision
               v-if="submissionItem.approval"
               class="float-right mr-4"
-              :status="submissionItem.approval.status"
+              :status="submissionItem.approval?.status"
             />
           </v-col>
         </v-row>
@@ -195,14 +195,6 @@ export default defineComponent({
     };
 
     /**
-     * Force all panels to be expanded once data is loaded.
-     */
-    watch(
-      () => props.submissionItems,
-      () => expandAllUpdated(),
-    );
-
-    /**
      * Ensure all expandable panels are expanded or collapsed
      * based on the "expand all" switch.
      */
@@ -215,6 +207,15 @@ export default defineComponent({
         expansionPanelsModel.value = [];
       }
     };
+
+    /**
+     * Force all panels to be expanded once data is loaded.
+     */
+    watch(
+      () => props.submissionItems,
+      () => expandAllUpdated(),
+      { immediate: true },
+    );
 
     /**
      * Ensures the "expand all" switch stays in sync with the expanded panels

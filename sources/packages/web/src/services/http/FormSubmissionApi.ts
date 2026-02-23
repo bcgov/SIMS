@@ -115,14 +115,21 @@ export class FormSubmissionApi extends HttpBaseClient {
    * for Ministry users to review and make decisions on each form item, also providing the data
    * for visualization of the form submission details.
    * @param formSubmissionId ID of the form submission to retrieve the details for.
+   * @param options.
+   * - `itemId`: optional ID of the form submission item to filter the details for.
    * @returns form submission details including individual form items and their details.
    */
   async getFormSubmission(
     formSubmissionId: number,
+    options?: { itemId?: number },
   ): Promise<FormSubmissionStudentAPIOutDTO | FormSubmissionMinistryAPIOutDTO> {
-    return this.getCall(
-      this.addClientRoot(`form-submission/${formSubmissionId}`),
-    );
+    const url = `form-submission/${formSubmissionId}`;
+    if (options?.itemId) {
+      return this.getCall(
+        this.addClientRoot(`${url}?itemId=${options.itemId}`),
+      );
+    }
+    return this.getCall(this.addClientRoot(url));
   }
 
   /**

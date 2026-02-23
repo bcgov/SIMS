@@ -12,7 +12,7 @@
     </template>
     <v-skeleton-loader v-if="formSubmissionLoading" type="image, article" />
     <v-form v-else ref="approvalsForm">
-      <error-summary :errors="approvalsForm.errors" />
+      <error-summary :errors="approvalsForm?.errors" />
       <form-submission-items
         :submission-items="formSubmissionItems"
         :read-only="true"
@@ -149,7 +149,10 @@ import FormSubmissionItems from "./FormSubmissionItems.vue";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
 import { useRules, useSnackBar, useFormatters } from "@/composables";
 import { VTextarea } from "vuetify/lib/components";
-import { FormSubmissionMinistryAPIOutDTO } from "@/services/http/dto/FormSubmission.dto";
+import {
+  FormSubmissionMinistryAPIOutDTO,
+  FormSubmissionItemMinistryAPIOutDTO,
+} from "@/services/http/dto";
 import StatusChipFormSubmission from "@/components/generic/StatusChipFormSubmission.vue";
 
 export default defineComponent({
@@ -186,6 +189,23 @@ export default defineComponent({
       new Map<FormSubmissionItemApproval, InstanceType<typeof VTextarea>>(),
     );
 
+    const createItemApproval = (
+      submissionItem: FormSubmissionItemMinistryAPIOutDTO,
+      parentStatus: FormSubmissionStatus,
+    ): FormSubmissionItemApproval => {
+      return {
+        id: submissionItem.id,
+        parentName: submissionItem.formType,
+        parentStatus,
+        noteDescription: submissionItem.decisionNoteDescription,
+        status: submissionItem.decisionStatus,
+        saveDecisionInProgress: false,
+        decisionSaved: !!submissionItem.decisionNoteDescription,
+        decisionBy: submissionItem.decisionBy,
+        decisionDate: submissionItem.decisionDate,
+      } as FormSubmissionItemApproval;
+    };
+
     /**
      * Load the form definition and its items.
      */
@@ -205,21 +225,44 @@ export default defineComponent({
               category: formSubmission.value.formCategory,
               formName: submissionItem.formDefinitionName,
               formData: submissionItem.submissionData,
-              approval: {
-                id: submissionItem.id,
-                parentName: submissionItem.formType,
-                parentStatus: formSubmission.value.status,
-                noteDescription: submissionItem.decisionNoteDescription,
-                status: submissionItem.decisionStatus,
-                saveDecisionInProgress: false,
-                decisionSaved: !!submissionItem.decisionNoteDescription,
-                decisionBy: submissionItem.decisionBy,
-                decisionDate: submissionItem.decisionDate,
-              } as FormSubmissionItemApproval,
+              approval: createItemApproval(
+                submissionItem,
+                formSubmission.value.status,
+              ),
             }),
           );
       } catch {
         snackBar.error("Unexpected error while loading the form submission.");
+      } finally {
+        formSubmissionLoading.value = false;
+      }
+    };
+
+    /**
+     * Reload the decision-related data to refresh only the updated data.
+     * @param itemId updated item to have the data refreshed.
+     */
+    const reLoadFormSubmissionItem = async (itemId: number) => {
+      try {
+        formSubmissionLoading.value = true;
+        const submission =
+          (await FormSubmissionService.shared.getFormSubmission(
+            props.formSubmissionId,
+            { itemId },
+          )) as FormSubmissionMinistryAPIOutDTO;
+        const itemToUpdate = formSubmissionItems.value.find(
+          (item) => (item.id = itemId),
+        );
+        if (!itemToUpdate?.approval) {
+          throw new Error("Expected item to be updated was not found.");
+        }
+        const [reloadedSubmissionItem] = submission.submissionItems;
+        itemToUpdate.approval.status = reloadedSubmissionItem.decisionStatus;
+        itemToUpdate.approval.decisionBy = reloadedSubmissionItem.decisionBy;
+        itemToUpdate.approval.decisionDate =
+          reloadedSubmissionItem.decisionDate;
+      } catch {
+        snackBar.error("Unexpected error while loading updated decision.");
       } finally {
         formSubmissionLoading.value = false;
       }
@@ -303,15 +346,13 @@ export default defineComponent({
       }
       try {
         approval.saveDecisionInProgress = true;
-        const updatedAudit =
-          await FormSubmissionService.shared.submitItemDecision(approval.id, {
-            decisionStatus: approval.status,
-            noteDescription: approval.noteDescription,
-            lastUpdatedDate: approval.decisionDate,
-          });
-        approval.decisionDate = updatedAudit.decisionDate;
-        approval.decisionBy = updatedAudit.decisionBy;
+        await FormSubmissionService.shared.submitItemDecision(approval.id, {
+          decisionStatus: approval.status,
+          noteDescription: approval.noteDescription,
+          lastUpdatedDate: approval.decisionDate,
+        });
         approval.decisionSaved = true;
+        await reLoadFormSubmissionItem(approval.id);
         snackBar.success(
           "Decision saved! The decision can be changed till the main submission is no longer pending.",
         );

@@ -25,7 +25,7 @@ export class FormSubmissionApprovalService {
 
   async getFormSubmissionsById(
     formSubmissionId: number,
-    options?: { studentId?: number },
+    options?: { studentId?: number; itemId?: number },
   ): Promise<FormSubmission> {
     return this.formSubmissionRepo.findOne({
       select: {
@@ -56,7 +56,11 @@ export class FormSubmissionApprovalService {
           decisionBy: true,
         },
       },
-      where: { id: formSubmissionId, student: { id: options?.studentId } },
+      where: {
+        id: formSubmissionId,
+        student: { id: options?.studentId },
+        formSubmissionItems: { id: options?.itemId },
+      },
     });
   }
 

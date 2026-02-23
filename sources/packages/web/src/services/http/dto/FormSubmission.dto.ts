@@ -52,7 +52,7 @@ export class FormSubmissionStudentAPIOutDTO extends FormSubmissionAPIOutDTO {
   submissionItems: FormSubmissionItemStudentAPIOutDTO[];
 }
 
-class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
+export class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
   decisionBy: string;
   decisionNoteDescription?: string;
 }

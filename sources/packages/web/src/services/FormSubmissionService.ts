@@ -31,11 +31,27 @@ export class FormSubmissionService {
     return ApiClient.FormSubmissionApi.getFormSubmissionSummary();
   }
 
-  // TODO: To be implemented.
+  /**
+   * Get the details of a form submission, including the individual form items and their details.
+   * For the ministry, it is using during the approval process, providing the necessary details for
+   * the decision making on each form item.
+   * For the student, it is used to show the details of their submission, including the decision made
+   * on each form item.
+   * @param formSubmissionId ID of the form submission to retrieve the details for.
+   * for Ministry users to review and make decisions on each form item, also providing the data
+   * for visualization of the form submission details.
+   * @param formSubmissionId ID of the form submission to retrieve the details for.
+   * @param options.
+   * - `itemId`: optional ID of the form submission item to filter the details for.
+   * @returns form submission details including individual form items and their details.
+   */
   async getFormSubmission(
     formSubmissionId: number,
+    options?: { itemId?: number },
   ): Promise<FormSubmissionStudentAPIOutDTO> {
-    return ApiClient.FormSubmissionApi.getFormSubmission(formSubmissionId);
+    return ApiClient.FormSubmissionApi.getFormSubmission(formSubmissionId, {
+      itemId: options?.itemId,
+    });
   }
 
   /**
