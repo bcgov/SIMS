@@ -344,8 +344,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
             ),
         ),
       );
-      queryParams.push(...paginationOptions.statusSearch);
-      queryParams.push(!paginationOptions.inactiveProgramSearch);
+      queryParams.push(...paginationOptions.statusSearch, !paginationOptions.inactiveProgramSearch);
     }
     // Fetching only the active programs with the provided program status.
     else if (paginationOptions.statusSearch) {
@@ -440,13 +439,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // if inactiveProgramSearch is set also include inactive programs alongside active ones.
     programQuery.andWhere(
       new Brackets((qb) => {
-        qb.where(
-          "programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE)",
-        );
+        qb.where("programs.isActive = true");
         if (paginationOptions.inactiveProgramSearch) {
-          qb.orWhere(
-            "programs.isActive = false OR (programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE)",
-          );
+          qb.orWhere("programs.isActive = false");
         }
       }),
     );
