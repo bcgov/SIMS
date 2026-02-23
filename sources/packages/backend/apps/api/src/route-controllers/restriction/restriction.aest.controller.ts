@@ -300,8 +300,8 @@ export class RestrictionAESTController extends BaseController {
       restrictionCode: institutionRestriction.restriction.restrictionCode,
       description: institutionRestriction.restriction.description,
       createdAt: institutionRestriction.createdAt,
-      locationName: institutionRestriction.location.name,
-      programName: institutionRestriction.program.name,
+      locationName: institutionRestriction.location?.name,
+      programName: institutionRestriction.program?.name,
       resolvedAt: institutionRestriction.resolvedAt,
       isActive: institutionRestriction.isActive,
     }));

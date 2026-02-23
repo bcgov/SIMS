@@ -80,8 +80,8 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       ])
       .innerJoin("institutionRestrictions.restriction", "restriction")
       .innerJoin("institutionRestrictions.institution", "institution")
-      .innerJoin("institutionRestrictions.location", "location")
-      .innerJoin("institutionRestrictions.program", "program")
+      .leftJoin("institutionRestrictions.location", "location")
+      .leftJoin("institutionRestrictions.program", "program")
       .where("institution.id = :institutionId", { institutionId });
     if (options?.isActive !== undefined && options.isActive !== null) {
       restrictionsQuery.andWhere(
@@ -298,8 +298,16 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       );
     }
     if (institution.restrictions.length > 0) {
+      const errorMessage = [
+        `The restriction ID ${restrictionId} is already assigned and active to the institution`,
+        hasProgram && `program ID ${programId}`,
+        hasLocations && `and at least one of the location ID(s) ${locationIds}`,
+      ]
+        .filter(Boolean)
+        .join(", ")
+        .concat(".");
       throw new CustomNamedError(
-        `The restriction ID ${restrictionId} is already assigned and active to the institution${hasProgram ? `, program ID ${programId}` : ""}${hasLocations ? `, and at least one of the location ID(s) ${locationIds}` : ""}.`,
+        errorMessage,
         INSTITUTION_RESTRICTION_ALREADY_ACTIVE,
       );
     }
@@ -501,26 +509,20 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
     }
     // Build institution restriction criteria to validate
     // if there is an active institution restriction for the same program and location combination.
-    const institutionRestrictionCriteria: string[] = [];
-    institutionRestrictionCriteria.push(
+    const institutionRestrictionCriteria = [
       "institutionRestriction.isActive = TRUE AND institutionRestriction.restriction.id = :restrictionId",
-    );
-    // Program join criteria.
-    institutionRestrictionCriteria.push(
       hasProgram
         ? "institutionRestriction.program.id = :programId"
         : "institutionRestriction.program.id IS NULL",
-    );
-    // Location join criteria.
-    institutionRestrictionCriteria.push(
       hasLocations
         ? "institutionRestriction.location.id IN (:...locationIds)"
         : "institutionRestriction.location.id IS NULL",
-    );
+    ].join(" AND ");
+
     query.leftJoin(
       "institution.restrictions",
       "institutionRestriction",
-      institutionRestrictionCriteria.join(" AND "),
+      institutionRestrictionCriteria,
     );
     return query;
   }
