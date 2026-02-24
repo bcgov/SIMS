@@ -61,7 +61,8 @@
                   >{{ FormSubmissionDecisionStatus.Pending }}</v-btn
                 >
                 <v-btn
-                  color="primary"
+                  class="text-white"
+                  color="success"
                   :value="FormSubmissionDecisionStatus.Approved"
                   >{{ FormSubmissionDecisionStatus.Approved }}</v-btn
                 >
@@ -114,7 +115,7 @@
             v-if="showApprovalDetails && approval.decisionBy"
             class="brand-gray-text mt-4"
           >
-            Decision given by <strong>{{ approval.decisionBy }}</strong> on
+            Last updated by <strong>{{ approval.decisionBy }}</strong> on
             <strong>{{
               getISODateHourMinuteString(approval.decisionDate)
             }}</strong>

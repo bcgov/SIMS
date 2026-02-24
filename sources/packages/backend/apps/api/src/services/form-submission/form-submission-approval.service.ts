@@ -66,6 +66,7 @@ export class FormSubmissionApprovalService {
         student: { id: options?.studentId },
         formSubmissionItems: { id: options?.itemId },
       },
+      order: { formSubmissionItems: { id: "ASC" } },
     });
   }
 
