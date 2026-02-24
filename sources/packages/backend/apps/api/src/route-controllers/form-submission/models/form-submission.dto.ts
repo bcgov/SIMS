@@ -140,13 +140,5 @@ export class FormSubmissionItemDecisionAPIInDTO {
    */
   @IsOptional()
   @IsDate()
-  lastUpdatedDate?: Date;
-}
-
-/**
- * Ministry individual form item decision update result.
- */
-export class FormSubmissionItemDecisionAPIOutDTO {
-  decisionBy: string;
-  decisionDate: Date;
+  lastDecisionDate?: Date;
 }

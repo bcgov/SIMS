@@ -8,7 +8,6 @@ import {
   FormSupplementaryDataAPIOutDTO,
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionItemDecisionAPIInDTO,
-  FormSubmissionItemDecisionAPIOutDTO,
 } from "@/services/http/dto";
 import {
   FormCategory,
@@ -165,8 +164,8 @@ export class FormSubmissionApi extends HttpBaseClient {
   async submitItemDecision(
     formSubmissionItemId: number,
     payload: FormSubmissionItemDecisionAPIInDTO,
-  ): Promise<FormSubmissionItemDecisionAPIOutDTO> {
-    return this.patchCall(
+  ): Promise<void> {
+    await this.patchCall(
       this.addClientRoot(
         `form-submission/items/${formSubmissionItemId}/decision`,
       ),

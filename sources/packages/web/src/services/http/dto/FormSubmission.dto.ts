@@ -107,13 +107,5 @@ export interface FormSupplementaryDataAPIOutDTO {
 export interface FormSubmissionItemDecisionAPIInDTO {
   decisionStatus: FormSubmissionDecisionStatus;
   noteDescription: string;
-  lastUpdatedDate?: Date;
-}
-
-/**
- * Ministry individual form item decision update result.
- */
-export class FormSubmissionItemDecisionAPIOutDTO {
-  decisionBy: string;
-  decisionDate: Date;
+  lastDecisionDate?: Date;
 }

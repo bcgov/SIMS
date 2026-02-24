@@ -134,6 +134,13 @@
       "
     ></footer-buttons>
   </body-header-container>
+  <confirm-modal
+    title="Outdated decision"
+    ref="outdatedDecisionModal"
+    ok-label="Refresh data"
+    cancel-label="Cancel"
+    text="This decision was updated and the displayed information in no longer the most updated one. Would you like to refresh the displayed data?"
+  />
 </template>
 
 <script lang="ts">
@@ -144,21 +151,30 @@ import {
   FormSubmissionDecisionStatus,
   VForm,
   FormSubmissionStatus,
+  ApiProcessError,
 } from "@/types";
 import FormSubmissionItems from "./FormSubmissionItems.vue";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
-import { useRules, useSnackBar, useFormatters } from "@/composables";
+import {
+  useRules,
+  useSnackBar,
+  useFormatters,
+  ModalDialog,
+} from "@/composables";
 import { VTextarea } from "vuetify/lib/components";
 import {
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionItemMinistryAPIOutDTO,
 } from "@/services/http/dto";
 import StatusChipFormSubmission from "@/components/generic/StatusChipFormSubmission.vue";
+import { FORM_SUBMISSION_ITEM_OUTDATED } from "@/constants";
+import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 
 export default defineComponent({
   components: {
     FormSubmissionItems,
     StatusChipFormSubmission,
+    ConfirmModal,
   },
   props: {
     formSubmissionId: {
@@ -180,6 +196,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const { getISODateHourMinuteString } = useFormatters();
     const { checkNotesLengthRule } = useRules();
+    const outdatedDecisionModal = ref({} as ModalDialog<boolean>);
     const formSubmission = ref({} as FormSubmissionMinistryAPIOutDTO);
     const formSubmissionItems = ref([] as FormSubmissionItem[]);
     const formSubmissionLoading = ref(true);
@@ -188,23 +205,6 @@ export default defineComponent({
     const noteRefs = ref(
       new Map<FormSubmissionItemApproval, InstanceType<typeof VTextarea>>(),
     );
-
-    const createItemApproval = (
-      submissionItem: FormSubmissionItemMinistryAPIOutDTO,
-      parentStatus: FormSubmissionStatus,
-    ): FormSubmissionItemApproval => {
-      return {
-        id: submissionItem.id,
-        parentName: submissionItem.formType,
-        parentStatus,
-        noteDescription: submissionItem.decisionNoteDescription,
-        status: submissionItem.decisionStatus,
-        saveDecisionInProgress: false,
-        decisionSaved: !!submissionItem.decisionNoteDescription,
-        decisionBy: submissionItem.decisionBy,
-        decisionDate: submissionItem.decisionDate,
-      } as FormSubmissionItemApproval;
-    };
 
     /**
      * Load the form definition and its items.
@@ -239,19 +239,42 @@ export default defineComponent({
     };
 
     /**
+     * Creates the submission item to handle the approval.
+     * @param submissionItem API returned submission item.
+     * @param parentStatus submission main status required
+     * for the UI be adjusted accordingly.
+     * @returns UI model to handle the approval.
+     */
+    const createItemApproval = (
+      submissionItem: FormSubmissionItemMinistryAPIOutDTO,
+      parentStatus: FormSubmissionStatus,
+    ): FormSubmissionItemApproval => {
+      return {
+        id: submissionItem.id,
+        parentName: submissionItem.formType,
+        parentStatus,
+        noteDescription: submissionItem.decisionNoteDescription,
+        status: submissionItem.decisionStatus,
+        saveDecisionInProgress: false,
+        decisionSaved: !!submissionItem.decisionNoteDescription,
+        decisionBy: submissionItem.decisionBy,
+        decisionDate: submissionItem.decisionDate,
+      } as FormSubmissionItemApproval;
+    };
+
+    /**
      * Reload the decision-related data to refresh only the updated data.
      * @param itemId updated item to have the data refreshed.
      */
     const reLoadFormSubmissionItem = async (itemId: number) => {
       try {
-        formSubmissionLoading.value = true;
         const submission =
           (await FormSubmissionService.shared.getFormSubmission(
             props.formSubmissionId,
             { itemId },
           )) as FormSubmissionMinistryAPIOutDTO;
         const itemToUpdate = formSubmissionItems.value.find(
-          (item) => (item.id = itemId),
+          (item) => item.approval?.id === itemId,
         );
         if (!itemToUpdate?.approval) {
           throw new Error("Expected item to be updated was not found.");
@@ -261,16 +284,11 @@ export default defineComponent({
         itemToUpdate.approval.decisionBy = reloadedSubmissionItem.decisionBy;
         itemToUpdate.approval.decisionDate =
           reloadedSubmissionItem.decisionDate;
+        itemToUpdate.approval.decisionSaved = true;
       } catch {
         snackBar.error("Unexpected error while loading updated decision.");
-      } finally {
-        formSubmissionLoading.value = false;
       }
     };
-
-    watchEffect(async () => {
-      await loadFormSubmission();
-    });
 
     /**
      * Creates an association between an approval object and its
@@ -348,15 +366,24 @@ export default defineComponent({
         approval.saveDecisionInProgress = true;
         await FormSubmissionService.shared.submitItemDecision(approval.id, {
           decisionStatus: approval.status,
-          noteDescription: approval.noteDescription,
-          lastUpdatedDate: approval.decisionDate,
+          noteDescription: approval.noteDescription as string,
+          lastDecisionDate: approval.decisionDate,
         });
-        approval.decisionSaved = true;
         await reLoadFormSubmissionItem(approval.id);
         snackBar.success(
           "Decision saved! The decision can be changed till the main submission is no longer pending.",
         );
-      } catch {
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          if (error.errorType === FORM_SUBMISSION_ITEM_OUTDATED) {
+            approval.saveDecisionInProgress = false;
+            const modalResult = await outdatedDecisionModal.value.showModal();
+            if (modalResult) {
+              await reLoadFormSubmissionItem(approval.id);
+            }
+          }
+          return;
+        }
         snackBar.error("Unexpected error while saving the decision.");
       } finally {
         approval.saveDecisionInProgress = false;
@@ -371,7 +398,12 @@ export default defineComponent({
       approval.decisionSaved = false;
     };
 
+    watchEffect(async () => {
+      await loadFormSubmission();
+    });
+
     return {
+      outdatedDecisionModal,
       FormSubmissionStatus,
       formSubmission,
       formSubmissionItems,

@@ -6,17 +6,20 @@ import {
   ParseIntPipe,
   Patch,
   Query,
+  UnprocessableEntityException,
 } from "@nestjs/common";
-import { FormSubmissionApprovalService } from "../../services";
+import {
+  FORM_SUBMISSION_ITEM_OUTDATED,
+  FormSubmissionApprovalService,
+} from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { IUserToken, UserGroups } from "apps/api/src/auth";
 import {
   FormSubmissionItemDecisionAPIInDTO,
-  FormSubmissionItemDecisionAPIOutDTO,
   FormSubmissionMinistryAPIOutDTO,
 } from "./models/form-submission.dto";
 import { getUserFullName } from "apps/api/src/utilities";
@@ -87,19 +90,26 @@ export class FormSubmissionAESTController extends BaseController {
     @Param("formSubmissionItemId", ParseIntPipe) formSubmissionItemId: number,
     @Body() payload: FormSubmissionItemDecisionAPIInDTO,
     @UserToken() userToken: IUserToken,
-  ): Promise<FormSubmissionItemDecisionAPIOutDTO> {
-    const updatedItem =
+  ): Promise<void> {
+    try {
       await this.formSubmissionApprovalService.saveFormSubmissionItem(
         formSubmissionItemId,
         payload.decisionStatus,
         payload.noteDescription,
-        payload.lastUpdatedDate,
+        payload.lastDecisionDate,
         userToken.userId,
       );
-    return {
-      decisionBy: getUserFullName(updatedItem.decisionBy),
-      decisionDate: updatedItem.decisionDate,
-    };
+    } catch (error: unknown) {
+      if (
+        error instanceof Error &&
+        error.name === FORM_SUBMISSION_ITEM_OUTDATED
+      ) {
+        throw new UnprocessableEntityException(
+          new ApiProcessError(error.message, error.name),
+        );
+      }
+      throw error;
+    }
   }
 
   /**

@@ -191,3 +191,9 @@ export const NO_LOCATION_SELECTED_FOR_DESIGNATION =
  */
 export const FORM_SUBMISSION_PENDING_DECISION =
   "FORM_SUBMISSION_PENDING_DECISION";
+
+/**
+ * A more updated decision was saved since the form submission item was last retrieved for decision,
+ * and the decision cannot be saved based on potentially outdated information.
+ */
+export const FORM_SUBMISSION_ITEM_OUTDATED = "FORM_SUBMISSION_ITEM_OUTDATED";

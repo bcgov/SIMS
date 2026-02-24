@@ -7,7 +7,6 @@ import {
   FormSupplementaryDataAPIInDTO,
   FormSupplementaryDataAPIOutDTO,
   FormSubmissionItemDecisionAPIInDTO,
-  FormSubmissionItemDecisionAPIOutDTO,
 } from "@/services/http/dto";
 
 export class FormSubmissionService {
@@ -83,8 +82,8 @@ export class FormSubmissionService {
   async submitItemDecision(
     formSubmissionItemId: number,
     payload: FormSubmissionItemDecisionAPIInDTO,
-  ): Promise<FormSubmissionItemDecisionAPIOutDTO> {
-    return ApiClient.FormSubmissionApi.submitItemDecision(
+  ): Promise<void> {
+    await ApiClient.FormSubmissionApi.submitItemDecision(
       formSubmissionItemId,
       payload,
     );
