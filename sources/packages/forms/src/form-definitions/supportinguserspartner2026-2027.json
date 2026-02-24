@@ -28,6 +28,77 @@
       "tableView": false,
       "components": [
         {
+          "label": "Is able to report",
+          "key": "isAbleToReport",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "tag": "p",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Personal Information",
+          "refreshOnChange": false,
+          "customClass": "category-header-large primary-color",
+          "key": "html3",
+          "conditional": {
+            "show": true,
+            "when": "isAbleToReport",
+            "eq": "false"
+          },
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "title": "Student reporting personal information panel",
+          "collapsible": false,
+          "hideLabel": true,
+          "key": "panel3",
+          "conditional": {
+            "show": true,
+            "when": "isAbleToReport",
+            "eq": "false"
+          },
+          "type": "panel",
+          "label": "Panel",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "label": "Given names",
+              "applyMaskOn": "change",
+              "tableView": true,
+              "customDefaultValue": "value  = data.isAbleToReport;",
+              "validate": {
+                "maxLength": 100
+              },
+              "validateWhenHidden": false,
+              "key": "givenNames",
+              "type": "textfield",
+              "input": true
+            },
+            {
+              "label": "Last name",
+              "applyMaskOn": "change",
+              "tableView": true,
+              "validate": {
+                "required": true
+              },
+              "validateWhenHidden": false,
+              "key": "lastName",
+              "type": "textfield",
+              "input": true
+            }
+          ]
+        },
+        {
           "label": "HTML",
           "tag": "p",
           "attrs": [
@@ -40,11 +111,27 @@
           "refreshOnChange": false,
           "customClass": "category-header-large primary-color",
           "key": "html1",
+          "conditional": {
+            "show": true,
+            "when": "hidden",
+            "eq": "true"
+          },
           "type": "htmlelement",
           "input": false,
           "tableView": false
         },
         {
+          "title": "Supporting user reporting personal information panel",
+          "collapsible": false,
+          "hideLabel": true,
+          "key": "panel1",
+          "conditional": {
+            "show": true,
+            "when": "hidden",
+            "eq": "true"
+          },
+          "type": "panel",
+          "label": "Panel",
           "breadcrumbClickable": true,
           "buttonSettings": {
             "previous": true,
@@ -52,11 +139,6 @@
             "next": true
           },
           "scrollToTop": false,
-          "collapsible": false,
-          "hideLabel": true,
-          "key": "panel1",
-          "type": "panel",
-          "label": "Panel",
           "input": false,
           "tableView": false,
           "components": [
@@ -67,10 +149,13 @@
                   "components": [
                     {
                       "label": "Given names",
+                      "applyMaskOn": "change",
                       "disabled": true,
                       "tableView": true,
                       "persistent": false,
-                      "key": "givenNames",
+                      "calculateValue": "value = data.givenNames;",
+                      "validateWhenHidden": false,
+                      "key": "readOnlyGivenNames",
                       "type": "textfield",
                       "input": true,
                       "hideOnChildrenHidden": false
@@ -97,10 +182,13 @@
                   "components": [
                     {
                       "label": "Last name",
+                      "applyMaskOn": "change",
                       "disabled": true,
                       "tableView": true,
                       "persistent": false,
-                      "key": "lastName",
+                      "calculateValue": "value = data.lastName;",
+                      "validateWhenHidden": false,
+                      "key": "readOnlyLastName",
                       "type": "textfield",
                       "input": true,
                       "hideOnChildrenHidden": false

@@ -78,8 +78,11 @@ export class SupportingUserStudentsController {
         "Supporting user not found or not eligible to be accessed by the student.",
       );
     }
+
     const formName = this.dynamicFormConfigurationService.getDynamicFormName(
-      DynamicFormType.SupportingUsersParent,
+      supportingUser.supportingUserType === SupportingUserType.Parent
+        ? DynamicFormType.SupportingUsersParent
+        : DynamicFormType.SupportingUsersPartner,
       { programYearId: supportingUser.application.programYear.id },
     );
     return {
@@ -149,7 +152,7 @@ export class SupportingUserStudentsController {
     const validatedData =
       await this.supportingUserControllerService.validateDryRunSubmission(
         supportingUser.application.programYear.id,
-        SupportingUserType.Parent,
+        supportingUser.supportingUserType,
         { ...payload, isAbleToReport: supportingUser.isAbleToReport },
       );
     // Update supporting user reported data.

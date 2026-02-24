@@ -20,6 +20,7 @@ import ApplicationOfferingChangeFormView from "@/views/student/application-offer
 import RequestedApplicationOfferingDetails from "@/views/student/application-offering-change-request/tabs/RequestedApplicationOfferingDetails.vue";
 import ActiveApplicationOfferingDetails from "@/views/student/application-offering-change-request/tabs/ActiveApplicationOfferingDetails.vue";
 import ReportParentInformation from "@/views/student/ReportParentInformation.vue";
+import ReportPartnerInformation from "@/views/student/ReportPartnerInformation.vue";
 import ViewScholasticStanding from "@/views/student/ViewScholasticStanding.vue";
 // Student Appeal
 import StudentAppeal from "@/views/student/appeal/StudentAppeal.vue";
@@ -146,6 +147,37 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         path: AppRoutes.ChangeRequestStudentReportParentInformation,
         name: StudentRoutesConst.CHANGE_REQUEST_REPORT_PARENT_INFORMATION,
         component: ReportParentInformation,
+        props: (route) => ({
+          applicationId: Number.parseInt(route.params.applicationId as string),
+          supportingUserId: Number.parseInt(
+            route.params.supportingUserId as string,
+          ),
+          changeRequestApplicationId: Number.parseInt(
+            route.params.changeRequestApplicationId as string,
+          ),
+        }),
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentReportPartnerInformation,
+        name: StudentRoutesConst.REPORT_PARTNER_INFORMATION,
+        component: ReportPartnerInformation,
+        props: (route) => ({
+          applicationId: Number.parseInt(route.params.applicationId as string),
+          supportingUserId: Number.parseInt(
+            route.params.supportingUserId as string,
+          ),
+        }),
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.ChangeRequestStudentReportPartnerInformation,
+        name: StudentRoutesConst.CHANGE_REQUEST_REPORT_PARTNER_INFORMATION,
+        component: ReportPartnerInformation,
         props: (route) => ({
           applicationId: Number.parseInt(route.params.applicationId as string),
           supportingUserId: Number.parseInt(

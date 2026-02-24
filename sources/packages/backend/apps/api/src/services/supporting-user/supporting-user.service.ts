@@ -158,6 +158,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         fullName: true,
         isAbleToReport: true,
         supportingData: !!options?.loadSupportingData,
+        supportingUserType: true,
         application: {
           id: true,
           programYear: { id: true, startDate: true },
@@ -170,7 +171,6 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         id: supportingUserId,
         isAbleToReport: options?.isAbleToReport,
         application: { student: { id: options?.studentId } },
-        supportingUserType: SupportingUserType.Parent,
       },
     });
   }
