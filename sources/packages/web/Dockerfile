@@ -1,5 +1,6 @@
 # "builder" stage, based on Node.js, to build and compile the frontend.
-FROM artifacts.developer.gov.bc.ca/docker-remote/node:25.6.0-alpine3.22 AS builder
+# dependabot: FROM node:25.6.1-alpine3.22
+FROM artifacts.developer.gov.bc.ca/docker-remote/node:25.6.1-alpine3.22 AS builder
 
 # Application Port.
 ENV PORT=3030
@@ -22,6 +23,7 @@ RUN sed 's/${PORT}/'"${PORT}"'/g' nginx/default.conf.template > default.conf
 # Building app
 RUN npm run build
 
+# dependabot: FROM nginx:1.29.3-alpine3.22
 FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:1.29.3-alpine3.22 AS deployer
 
 # Copy the app built on builder stage to the resulting container.
