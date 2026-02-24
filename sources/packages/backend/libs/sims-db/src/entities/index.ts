@@ -1,5 +1,5 @@
 export * from "./base.model";
-export * from "./common.type";
+export * from "./common.models";
 export * from "./record.model";
 export * from "./supplier-status.type";
 export * from "./cas-supplier.model";

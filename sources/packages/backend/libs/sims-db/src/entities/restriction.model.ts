@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { RestrictionMetadata, RestrictionType } from ".";
+import { FieldRequirementType, RestrictionType } from ".";
 import { RestrictionNotificationType } from "./restriction-notification-type.type";
 import { RestrictionActionType } from "./restriction-action-type.type";
 
@@ -121,4 +121,14 @@ export interface ActionEffectiveCondition {
  */
 export enum ActionEffectiveConditionNames {
   AviationCredentialTypes = "Aviation credential types",
+}
+
+/**
+ * Restriction metadata.
+ */
+export interface RestrictionMetadata {
+  /**
+   * The restricted party(student or institution) field requirements for the restriction.
+   */
+  fieldRequirements: Record<string, FieldRequirementType>;
 }

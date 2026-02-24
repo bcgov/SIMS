@@ -251,9 +251,9 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
    * association and restriction existence.
    * @param institutionId Institution ID.
    * @param restrictionId Restriction ID.
-   * @param locationIds Location IDs. All locations must be associated with the institution
-   * and all locations must not have the same restriction already active.
    * @param programId Program ID.
+   * @param locationIds Location IDs. All locations if present must be associated with the institution
+   * and all locations must not have the same restriction already active.
    * @param entityManager Entity manager for transaction.
    * @throws CustomNamedError when any of the validations fail.
    */
