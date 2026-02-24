@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DataSource, Repository } from "typeorm";
+import { Role } from "../../auth";
 import {
   User,
   FormSubmission,
@@ -9,6 +10,7 @@ import {
   FormSubmissionDecisionStatus,
   Note,
   NoteType,
+  FormCategory,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -18,7 +20,9 @@ import {
   FORM_SUBMISSION_ITEM_OUTDATED,
   FORM_SUBMISSION_NOT_FOUND,
   FORM_SUBMISSION_NOT_PENDING,
+  FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
 } from "./constants";
+import { ROLES_MAP } from "./form-submission.models";
 
 @Injectable()
 export class FormSubmissionApprovalService {
@@ -76,6 +80,7 @@ export class FormSubmissionApprovalService {
     decisionStatus: FormSubmissionDecisionStatus,
     noteDescription: string,
     lastUpdateDate: Date | undefined,
+    userRoles: Role[],
     auditUserId: number,
   ): Promise<void> {
     return this.dataSource.transaction(async (entityManager) => {
@@ -93,6 +98,10 @@ export class FormSubmissionApprovalService {
           decisionBy: { id: true, firstName: true, lastName: true },
           formSubmission: { id: true, submissionStatus: true },
           updatedAt: true,
+          dynamicFormConfiguration: {
+            id: true,
+            formCategory: true,
+          },
         },
         relations: {
           decisionNote: true,
@@ -107,6 +116,16 @@ export class FormSubmissionApprovalService {
           FORM_SUBMISSION_ITEM_NOT_FOUND,
         );
       }
+      this.checkUserAuthorization(
+        submissionItem.dynamicFormConfiguration.formCategory,
+        userRoles,
+      );
+      if (submissionItem.updatedAt.getTime() !== lastUpdateDate?.getTime()) {
+        throw new CustomNamedError(
+          "The form submission item has been updated since it was last retrieved. Please refresh and try again.",
+          FORM_SUBMISSION_ITEM_OUTDATED,
+        );
+      }
       if (
         submissionItem.formSubmission.submissionStatus !==
         FormSubmissionStatus.Pending
@@ -114,12 +133,6 @@ export class FormSubmissionApprovalService {
         throw new CustomNamedError(
           `Decisions cannot be made on items belonging to a form submission with status ${submissionItem.formSubmission.submissionStatus}.`,
           FORM_SUBMISSION_ITEM_NOT_PENDING,
-        );
-      }
-      if (submissionItem.updatedAt.getTime() !== lastUpdateDate?.getTime()) {
-        throw new CustomNamedError(
-          "The form submission item has been updated since it was last retrieved. Please refresh and try again.",
-          FORM_SUBMISSION_ITEM_OUTDATED,
         );
       }
       const now = new Date();
@@ -154,6 +167,7 @@ export class FormSubmissionApprovalService {
    */
   async completeFormSubmission(
     submissionId: number,
+    userRoles: Role[],
     auditUserId: number,
   ): Promise<FormSubmission> {
     return this.dataSource.transaction(async (entityManager) => {
@@ -168,6 +182,7 @@ export class FormSubmissionApprovalService {
         select: {
           id: true,
           submissionStatus: true,
+          formCategory: true,
           formSubmissionItems: {
             id: true,
             decisionStatus: true,
@@ -182,6 +197,7 @@ export class FormSubmissionApprovalService {
           FORM_SUBMISSION_NOT_FOUND,
         );
       }
+      this.checkUserAuthorization(formSubmission.formCategory, userRoles);
       if (formSubmission.submissionStatus !== FormSubmissionStatus.Pending) {
         throw new CustomNamedError(
           `Final decision cannot be made on a form submission with status ${formSubmission.submissionStatus}.`,
@@ -215,5 +231,28 @@ export class FormSubmissionApprovalService {
       // TODO: should the student notes relation be created at this point?
       return repo.save(formSubmission);
     });
+  }
+
+  /**
+   * Ensures the user authorization to update a form submission item
+   * based on the form category and user roles.
+   * @param category The category of the form item being updated, used
+   * to determine the required role for authorization.
+   * @param userRoles The roles of the user attempting to perform the action.
+   * @throws CustomNamedError with FORM_SUBMISSION_ITEM_DECISION_UNAUTHORIZED
+   * if the user does not have the required role for the form category.
+   */
+  private async checkUserAuthorization(
+    category: FormCategory,
+    userRoles: Role[],
+  ): Promise<void> {
+    const allowedRole = ROLES_MAP.get(category);
+    const hasRole = allowedRole ? userRoles.includes(allowedRole) : false;
+    if (!hasRole) {
+      throw new CustomNamedError(
+        "User does not have the required role to perform this action.",
+        FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
+      );
+    }
   }
 }

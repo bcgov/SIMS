@@ -64,3 +64,9 @@ export const FORM_SUBMISSION_ITEM_NOT_PENDING =
  * and the decision cannot be saved based on potentially outdated information.
  */
 export const FORM_SUBMISSION_ITEM_OUTDATED = "FORM_SUBMISSION_ITEM_OUTDATED";
+
+/**
+ * User is not authorized to update a form submission related data.
+ */
+export const FORM_SUBMISSION_UPDATE_UNAUTHORIZED =
+  "FORM_SUBMISSION_UPDATE_UNAUTHORIZED";

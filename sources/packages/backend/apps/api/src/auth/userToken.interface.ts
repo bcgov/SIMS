@@ -1,5 +1,5 @@
 import { InstitutionUserAuthorizations } from "../services/institution-user-auth/institution-user-auth.models";
-import { AuthorizedParties } from ".";
+import { AuthorizedParties, Role } from ".";
 import { IdentityProviders, SpecificIdentityProviders } from "@sims/sims-db";
 
 /**
@@ -119,4 +119,16 @@ export interface IInstitutionUserToken extends IUserToken {
 
 export interface StudentUserToken extends IUserToken {
   studentId?: number;
+}
+
+/**
+ * Extracts the user roles from the token resource access based on the authorized party (client ID).
+ * The roles are expected to be defined as a property under the resource_access object
+ * corresponding to the authorized party (client ID).
+ */
+export function extractRolesFromToken(token: IUserToken): Role[] {
+  if (!token.resource_access || !token.azp) {
+    return [];
+  }
+  return token.resource_access[token.azp]?.roles ?? [];
 }

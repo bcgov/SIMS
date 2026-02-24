@@ -6,18 +6,30 @@ import {
   ParseIntPipe,
   Patch,
   Query,
+  UnauthorizedException,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
   FORM_SUBMISSION_ITEM_OUTDATED,
+  FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
   FormSubmissionApprovalService,
 } from "../../services";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  Groups,
+  Roles,
+  UserToken,
+} from "../../auth/decorators";
 import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { IUserToken, UserGroups } from "apps/api/src/auth";
+import {
+  extractRolesFromToken,
+  IUserToken,
+  Role,
+  UserGroups,
+} from "apps/api/src/auth";
 import {
   FormSubmissionItemDecisionAPIInDTO,
   FormSubmissionMinistryAPIOutDTO,
@@ -86,6 +98,7 @@ export class FormSubmissionAESTController extends BaseController {
    * @param payload decision status and note description for the form submission item.
    * @param userToken user token containing the user ID of the Ministry user making the decision, used for auditing purposes.
    */
+  @Roles(Role.StudentApproveDeclineAppeals, Role.StudentApproveDeclineForms)
   @Patch("items/:formSubmissionItemId/decision")
   async submitItemDecision(
     @Param("formSubmissionItemId", ParseIntPipe) formSubmissionItemId: number,
@@ -93,11 +106,13 @@ export class FormSubmissionAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
+      const userRoles = extractRolesFromToken(userToken);
       await this.formSubmissionApprovalService.saveFormSubmissionItem(
         formSubmissionItemId,
         payload.decisionStatus,
         payload.noteDescription,
         payload.lastUpdateDate,
+        userRoles,
         userToken.userId,
       );
     } catch (error: unknown) {
@@ -108,6 +123,11 @@ export class FormSubmissionAESTController extends BaseController {
         throw new UnprocessableEntityException(
           new ApiProcessError(error.message, error.name),
         );
+      } else if (
+        error instanceof Error &&
+        error.name === FORM_SUBMISSION_UPDATE_UNAUTHORIZED
+      ) {
+        throw new UnauthorizedException(error.message);
       }
       throw error;
     }
@@ -120,14 +140,27 @@ export class FormSubmissionAESTController extends BaseController {
    * all decisions on the form items have been made and the form submission is completed.
    * @param formSubmissionId ID of the form submission to be completed.
    */
+  @Roles(Role.StudentApproveDeclineAppeals, Role.StudentApproveDeclineForms)
   @Patch(":formSubmissionId/complete")
   async completeFormSubmission(
     @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    await this.formSubmissionApprovalService.completeFormSubmission(
-      formSubmissionId,
-      userToken.userId,
-    );
+    try {
+      const userRoles = extractRolesFromToken(userToken);
+      await this.formSubmissionApprovalService.completeFormSubmission(
+        formSubmissionId,
+        userRoles,
+        userToken.userId,
+      );
+    } catch (error: unknown) {
+      if (
+        error instanceof Error &&
+        error.name === FORM_SUBMISSION_UPDATE_UNAUTHORIZED
+      ) {
+        throw new UnauthorizedException(error.message);
+      }
+      throw error;
+    }
   }
 }
