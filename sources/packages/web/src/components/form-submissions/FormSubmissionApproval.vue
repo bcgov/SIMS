@@ -260,6 +260,7 @@ export default defineComponent({
         decisionSaved: !!submissionItem.decisionNoteDescription,
         decisionBy: submissionItem.decisionBy,
         decisionDate: submissionItem.decisionDate,
+        lastUpdateDate: submissionItem.updatedAt,
       } as FormSubmissionItemApproval;
     };
 
@@ -285,6 +286,7 @@ export default defineComponent({
         itemToUpdate.approval.decisionBy = reloadedSubmissionItem.decisionBy;
         itemToUpdate.approval.decisionDate =
           reloadedSubmissionItem.decisionDate;
+        itemToUpdate.approval.lastUpdateDate = reloadedSubmissionItem.updatedAt;
         itemToUpdate.approval.decisionSaved = true;
       } catch {
         snackBar.error("Unexpected error while loading updated decision.");
@@ -368,7 +370,7 @@ export default defineComponent({
         await FormSubmissionService.shared.submitItemDecision(approval.id, {
           decisionStatus: approval.status,
           noteDescription: approval.noteDescription as string,
-          lastDecisionDate: approval.decisionDate,
+          lastUpdateDate: approval.lastUpdateDate,
         });
         await reLoadFormSubmissionItem(approval.id);
         snackBar.success(

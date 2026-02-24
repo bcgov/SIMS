@@ -75,6 +75,7 @@ export class FormSubmissionAESTController extends BaseController {
         dynamicFormConfigurationId: item.dynamicFormConfiguration.id,
         submissionData: item.submittedData,
         formDefinitionName: item.dynamicFormConfiguration.formDefinitionName,
+        updatedAt: item.updatedAt,
       })),
     };
   }
@@ -96,7 +97,7 @@ export class FormSubmissionAESTController extends BaseController {
         formSubmissionItemId,
         payload.decisionStatus,
         payload.noteDescription,
-        payload.lastDecisionDate,
+        payload.lastUpdateDate,
         userToken.userId,
       );
     } catch (error: unknown) {

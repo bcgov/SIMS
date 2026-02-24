@@ -74,6 +74,7 @@ export interface FormSubmissionItemApproval {
   showAudit: boolean;
   saveDecisionInProgress: boolean;
   decisionSaved: boolean;
+  lastUpdateDate: Date;
 }
 
 export interface FormSubmissionItem {

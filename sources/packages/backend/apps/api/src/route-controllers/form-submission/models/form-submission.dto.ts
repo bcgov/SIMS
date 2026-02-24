@@ -24,6 +24,12 @@ import {
   IsDate,
 } from "class-validator";
 
+/**
+ * Form configuration details necessary for form submission.
+ * Dictates the necessary details for the client to render the form and submit the data,
+ * including in which category the form belongs, whether it has application scope,
+ * and whether it allows bundled submission.
+ */
 export class FormSubmissionConfigurationAPIOutDTO {
   id: number;
   formDefinitionName: string;
@@ -34,8 +40,19 @@ export class FormSubmissionConfigurationAPIOutDTO {
   hasApplicationScope: boolean;
 }
 
-// Base classes for submission DTOs and submission items.
+/**
+ * List of form configurations for form submission, currently used only to display
+ * available forms for the student when starting a new form submission.
+ */
+export class FormSubmissionConfigurationsAPIOutDTO {
+  configurations: FormSubmissionConfigurationAPIOutDTO[];
+}
 
+/**
+ * Form submission with one to many forms.
+ * This is a basic representation of a form submission properties to be extended
+ * for Ministry, Student, and Institutions.
+ */
 abstract class FormSubmissionAPIOutDTO {
   id: number;
   formCategory: FormCategory;
@@ -46,6 +63,11 @@ abstract class FormSubmissionAPIOutDTO {
   assessedDate?: Date;
 }
 
+/**
+ * Individual form items that will be part of a form submission with one to many forms.
+ * This is a basic representation of a form submission item properties to be extended
+ * for Ministry, Student, and Institutions.
+ */
 abstract class FormSubmissionItemAPIOutDTO {
   formType: string;
   formCategory: FormCategory;
@@ -54,17 +76,22 @@ abstract class FormSubmissionItemAPIOutDTO {
   dynamicFormConfigurationId: number;
   submissionData: unknown;
   formDefinitionName: string;
+  updatedAt: Date;
 }
 
-export class FormSubmissionConfigurationsAPIOutDTO {
-  configurations: FormSubmissionConfigurationAPIOutDTO[];
-}
-
+/**
+ * Individual form items that will be part of a form submission with one to many forms
+ * for the Ministry, including the decision details.
+ */
 class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
-  decisionBy: string;
+  decisionBy?: string;
   decisionNoteDescription?: string;
 }
 
+/**
+ * Form submission with one to many forms for the Ministry,
+ * including the individual form items.
+ */
 export class FormSubmissionMinistryAPIOutDTO extends FormSubmissionAPIOutDTO {
   submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
 }
@@ -135,10 +162,9 @@ export class FormSubmissionItemDecisionAPIInDTO {
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;
   /**
-   * Date when the decision was made for the last time, used for
-   * concurrency control to prevent overwriting a more recent decision.
+   * Date when the decision record was last updated. Used for concurrency control
+   * to prevent overwriting a more recent decision.
    */
-  @IsOptional()
   @IsDate()
-  lastDecisionDate?: Date;
+  lastUpdateDate: Date;
 }

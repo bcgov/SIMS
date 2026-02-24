@@ -52,6 +52,7 @@ export class FormSubmissionApprovalService {
           decisionDate: true,
           decisionNote: { id: true, description: true },
           decisionBy: { id: true, firstName: true, lastName: true },
+          updatedAt: true,
         },
       },
       relations: {
@@ -74,7 +75,7 @@ export class FormSubmissionApprovalService {
     submissionItemId: number,
     decisionStatus: FormSubmissionDecisionStatus,
     noteDescription: string,
-    lastDecisionDate: Date | undefined,
+    lastUpdateDate: Date | undefined,
     auditUserId: number,
   ): Promise<void> {
     return this.dataSource.transaction(async (entityManager) => {
@@ -91,7 +92,7 @@ export class FormSubmissionApprovalService {
           decisionNote: { id: true },
           decisionBy: { id: true, firstName: true, lastName: true },
           formSubmission: { id: true, submissionStatus: true },
-          decisionDate: true,
+          updatedAt: true,
         },
         relations: {
           decisionNote: true,
@@ -115,10 +116,7 @@ export class FormSubmissionApprovalService {
           FORM_SUBMISSION_ITEM_NOT_PENDING,
         );
       }
-      if (
-        submissionItem.decisionDate &&
-        submissionItem.decisionDate.getTime() !== lastDecisionDate?.getTime()
-      ) {
+      if (submissionItem.updatedAt.getTime() !== lastUpdateDate?.getTime()) {
         throw new CustomNamedError(
           "The form submission item has been updated since it was last retrieved. Please refresh and try again.",
           FORM_SUBMISSION_ITEM_OUTDATED,
