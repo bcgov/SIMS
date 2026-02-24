@@ -1,11 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {
-  DataSource,
-  EntityManager,
-  Equal,
-  Not,
-  SelectQueryBuilder,
-} from "typeorm";
+import { DataSource, EntityManager, Equal, Not, Repository } from "typeorm";
 import {
   RecordDataModelService,
   InstitutionRestriction,
@@ -31,6 +25,7 @@ import {
 import { NoteSharedService } from "@sims/services";
 import { CreateInstitutionRestrictionModel } from "./models/institution-restriction.model";
 import { validateFieldRequirements } from "../../utilities";
+import { InjectRepository } from "@nestjs/typeorm";
 
 /**
  * Service layer for institution Restriction.
@@ -40,6 +35,8 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
   constructor(
     private readonly dataSource: DataSource,
     private readonly noteSharedService: NoteSharedService,
+    @InjectRepository(Restriction)
+    private readonly restrictionRepo: Repository<Restriction>,
   ) {
     super(dataSource.getRepository(InstitutionRestriction));
   }
@@ -269,14 +266,13 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
     // Check institution, location, program association and institution restriction existence.
     // Execute left joins to allow the validations in a single query and the generation
     // of more precise error messages.
-    const institutionPromise = this.buildValidationQuery(
-      hasProgram,
-      hasLocations,
+    const institutionPromise = this.getInstitutionToValidateRestrictions(
+      institutionId,
+      restrictionId,
+      programId,
+      locationIds,
       entityManager,
-    )
-      .where("institution.id = :institutionId", { institutionId })
-      .setParameters({ institutionId, restrictionId, programId, locationIds })
-      .getOne();
+    );
     const restrictionPromise = this.getRestriction(restrictionId, {
       entityManager,
     });
@@ -467,7 +463,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
   ): Promise<Restriction> {
     const repo =
       options?.entityManager?.getRepository(Restriction) ??
-      this.dataSource.getRepository(Restriction);
+      this.restrictionRepo;
     return repo.findOne({
       select: { id: true, metadata: true },
       where: {
@@ -478,17 +474,24 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
   }
 
   /**
-   * Build the restriction validation query based on the existence of location and program criteria.
-   * @param hasProgram Indicates whether the restriction is applicable to a program.
-   * @param hasLocations Indicates whether the restriction is applicable to one or more locations.
+   * Get institution with active institution restrictions and associated locations and programs
+   * to validate the creation of new institution restrictions.
+   * @param institutionId Institution ID.
+   * @param restrictionId Restriction ID.
+   * @param programId Program ID.
+   * @param locationIds Location IDs.
    * @param entityManager The entity manager to use for the query.
-   * @returns The query builder for the institution restriction validation.
+   * @returns Institution with details to validate the creation of new institution restrictions.
    */
-  private buildValidationQuery(
-    hasProgram: boolean,
-    hasLocations: boolean,
+  private async getInstitutionToValidateRestrictions(
+    institutionId: number,
+    restrictionId: number,
+    programId: number | undefined,
+    locationIds: number[] | undefined,
     entityManager: EntityManager,
-  ): SelectQueryBuilder<Institution> {
+  ): Promise<Institution> {
+    const hasProgram = !!programId;
+    const hasLocations = !!locationIds?.length;
     const query = entityManager
       .getRepository(Institution)
       .createQueryBuilder("institution")
@@ -519,11 +522,14 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
         : "institutionRestriction.location.id IS NULL",
     ].join(" AND ");
 
-    query.leftJoin(
-      "institution.restrictions",
-      "institutionRestriction",
-      institutionRestrictionCriteria,
-    );
-    return query;
+    return query
+      .leftJoin(
+        "institution.restrictions",
+        "institutionRestriction",
+        institutionRestrictionCriteria,
+      )
+      .where("institution.id = :institutionId", { institutionId })
+      .setParameters({ institutionId, restrictionId, programId, locationIds })
+      .getOne();
   }
 }
