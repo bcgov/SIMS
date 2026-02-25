@@ -215,11 +215,11 @@ export class InstitutionActiveRestriction extends BaseActiveRestriction {
   /**
    * Specific program the restriction applies to.
    */
-  program: EducationProgram;
+  program?: EducationProgram;
   /**
    * Specific location the restriction applies to.
    */
-  location: InstitutionLocation;
+  location?: InstitutionLocation;
 }
 
 /**
@@ -414,8 +414,8 @@ export class EligibleECertDisbursement {
     const locationId = this.offering.institutionLocation.id;
     return this.institutionRestrictions.filter(
       (restriction) =>
-        restriction.program.id === programId &&
-        restriction.location.id === locationId &&
+        restriction.program?.id === programId &&
+        restriction.location?.id === locationId &&
         !this.institutionRestrictionsBypassedIds.includes(
           restriction.institutionRestrictionId,
         ),
