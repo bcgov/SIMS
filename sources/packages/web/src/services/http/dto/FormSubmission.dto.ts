@@ -49,6 +49,7 @@ interface FormSubmissionAPIOutDTO {
  * for Ministry, Student, and Institutions.
  */
 interface FormSubmissionItemAPIOutDTO {
+  id: number;
   formType: string;
   formCategory: FormCategory;
   decisionStatus: FormSubmissionDecisionStatus;
@@ -63,7 +64,7 @@ interface FormSubmissionItemAPIOutDTO {
  * Individual form items that will be part of a form submission with one to many forms
  * for the Ministry, including the decision details.
  */
-interface FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
+export interface FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
   decisionBy?: string;
   decisionNoteDescription?: string;
 }

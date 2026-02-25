@@ -69,6 +69,7 @@ abstract class FormSubmissionAPIOutDTO {
  * for Ministry, Student, and Institutions.
  */
 abstract class FormSubmissionItemAPIOutDTO {
+  id: number;
   formType: string;
   formCategory: FormCategory;
   decisionStatus: FormSubmissionDecisionStatus;
