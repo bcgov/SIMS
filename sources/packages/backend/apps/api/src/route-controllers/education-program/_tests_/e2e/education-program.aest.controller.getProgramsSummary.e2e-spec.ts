@@ -122,7 +122,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
               programId: savedApprovedProgram.id,
               programName: savedApprovedProgram.name,
               cipCode: savedApprovedProgram.cipCode,
-              sabcCode: savedApprovedProgram.sabcCode,
+              sabcCode: null,
               credentialType: savedApprovedProgram.credentialType,
               totalOfferings: "0",
               submittedDate: savedApprovedProgram.createdAt.toISOString(),
@@ -137,7 +137,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
               programId: savedInactiveProgram.id,
               programName: savedInactiveProgram.name,
               cipCode: savedInactiveProgram.cipCode,
-              sabcCode: savedInactiveProgram.sabcCode,
+              sabcCode: null,
               credentialType: savedInactiveProgram.credentialType,
               totalOfferings: "0",
               submittedDate: savedInactiveProgram.createdAt.toISOString(),
@@ -214,7 +214,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
               programId: savedInactiveProgram.id,
               programName: savedInactiveProgram.name,
               cipCode: savedInactiveProgram.cipCode,
-              sabcCode: savedInactiveProgram.sabcCode,
+              sabcCode: null,
               credentialType: savedInactiveProgram.credentialType,
               totalOfferings: "0",
               submittedDate: savedInactiveProgram.createdAt.toISOString(),
@@ -292,7 +292,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
               programId: savedPendingProgram.id,
               programName: savedPendingProgram.name,
               cipCode: savedPendingProgram.cipCode,
-              sabcCode: savedPendingProgram.sabcCode,
+              sabcCode: null,
               credentialType: savedPendingProgram.credentialType,
               totalOfferings: "0",
               submittedDate: savedPendingProgram.createdAt.toISOString(),
@@ -307,7 +307,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
               programId: savedInactiveProgram.id,
               programName: savedInactiveProgram.name,
               cipCode: savedInactiveProgram.cipCode,
-              sabcCode: savedInactiveProgram.sabcCode,
+              sabcCode: null,
               credentialType: savedInactiveProgram.credentialType,
               totalOfferings: "0",
               submittedDate: savedInactiveProgram.createdAt.toISOString(),
@@ -322,7 +322,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
               programId: savedDeclinedProgram.id,
               programName: savedDeclinedProgram.name,
               cipCode: savedDeclinedProgram.cipCode,
-              sabcCode: savedDeclinedProgram.sabcCode,
+              sabcCode: null,
               credentialType: savedDeclinedProgram.credentialType,
               totalOfferings: "0",
               submittedDate: savedDeclinedProgram.createdAt.toISOString(),
@@ -401,7 +401,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
             programId: savedApprovedProgram.id,
             programName: savedApprovedProgram.name,
             cipCode: savedApprovedProgram.cipCode,
-            sabcCode: savedApprovedProgram.sabcCode,
+            sabcCode: null,
             credentialType: savedApprovedProgram.credentialType,
             totalOfferings: "0",
             submittedDate: savedApprovedProgram.createdAt.toISOString(),
@@ -416,7 +416,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
             programId: savedDeclinedProgram.id,
             programName: savedDeclinedProgram.name,
             cipCode: savedDeclinedProgram.cipCode,
-            sabcCode: savedDeclinedProgram.sabcCode,
+            sabcCode: null,
             credentialType: savedDeclinedProgram.credentialType,
             totalOfferings: "0",
             submittedDate: savedDeclinedProgram.createdAt.toISOString(),
@@ -512,7 +512,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
               programId: savedFirstApprovedProgram.id,
               programName: savedFirstApprovedProgram.name,
               cipCode: savedFirstApprovedProgram.cipCode,
-              sabcCode: savedFirstApprovedProgram.sabcCode,
+              sabcCode: null,
               credentialType: savedFirstApprovedProgram.credentialType,
               totalOfferings: "0",
               submittedDate: savedFirstApprovedProgram.createdAt.toISOString(),
@@ -527,7 +527,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
               programId: savedSecondPendingProgram.id,
               programName: savedSecondPendingProgram.name,
               cipCode: savedSecondPendingProgram.cipCode,
-              sabcCode: savedSecondPendingProgram.sabcCode,
+              sabcCode: null,
               credentialType: savedSecondPendingProgram.credentialType,
               totalOfferings: "0",
               submittedDate: savedSecondPendingProgram.createdAt.toISOString(),
@@ -640,7 +640,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
               programId: savedDeclinedProgram.id,
               programName: savedDeclinedProgram.name,
               cipCode: savedDeclinedProgram.cipCode,
-              sabcCode: savedDeclinedProgram.sabcCode,
+              sabcCode: null,
               credentialType: savedDeclinedProgram.credentialType,
               totalOfferings: "0",
               submittedDate: savedDeclinedProgram.createdAt.toISOString(),
@@ -655,7 +655,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
               programId: savedFirstInactiveProgram.id,
               programName: savedFirstInactiveProgram.name,
               cipCode: savedFirstInactiveProgram.cipCode,
-              sabcCode: savedFirstInactiveProgram.sabcCode,
+              sabcCode: null,
               credentialType: savedFirstInactiveProgram.credentialType,
               totalOfferings: "0",
               submittedDate: savedFirstInactiveProgram.createdAt.toISOString(),
@@ -677,22 +677,26 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
     // SABC code starting with 'A' to sort before the one starting with 'Z'.
     const firstProgram = createFakeEducationProgram(
       { institution: institution, user: sharedUser },
-      { initialValue: { sabcCode: "AAAA" } },
+      { initialValue: { sabcCode: "AAA0" } },
     );
     // SABC code starting with 'Z' to sort after the one starting with 'A'.
     const secondProgram = createFakeEducationProgram(
       { institution: institution, user: sharedUser },
-      { initialValue: { sabcCode: "ZZZZ" } },
+      { initialValue: { sabcCode: "ZZZ0" } },
     );
 
     // Pending program that should be filtered out.
-    createFakeEducationProgram(
+    const pendingProgram = createFakeEducationProgram(
       { institution: institution, user: sharedUser },
       { initialValue: { programStatus: ProgramStatus.Pending } },
     );
 
     const [savedFirstProgram, savedSecondProgram] =
-      await db.educationProgram.save([firstProgram, secondProgram]);
+      await db.educationProgram.save([
+        firstProgram,
+        secondProgram,
+        pendingProgram,
+      ]);
     const endpoint = `/aest/education-program/institution/${institution.id}/summary?page=0&pageLimit=10&programNameSearch=&locationNameSearch=&inactiveProgramSearch=false&statusSearch=Approved&sortField=sabcCode&sortOrder=ASC`;
     const userToken = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -752,7 +756,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
     });
 
     // Inactive program that should be filtered out.
-    createFakeEducationProgram(
+    const inactiveProgram = createFakeEducationProgram(
       { institution: institution, user: sharedUser },
       {
         initialValue: {
@@ -764,7 +768,11 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
     // CIP code starting with '99' to sort after '01'.
     secondProgram.cipCode = "99.9999";
     const [savedFirstProgram, savedSecondProgram] =
-      await db.educationProgram.save([firstProgram, secondProgram]);
+      await db.educationProgram.save([
+        firstProgram,
+        secondProgram,
+        inactiveProgram,
+      ]);
     const endpoint = `/aest/education-program/institution/${institution.id}/summary?page=0&pageLimit=10&programNameSearch=&locationNameSearch=&inactiveProgramSearch=false&statusSearch=Approved&sortField=cipCode&sortOrder=ASC`;
     const userToken = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -779,7 +787,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
             programId: savedFirstProgram.id,
             programName: savedFirstProgram.name,
             cipCode: savedFirstProgram.cipCode,
-            sabcCode: savedFirstProgram.sabcCode,
+            sabcCode: null,
             credentialType: savedFirstProgram.credentialType,
             totalOfferings: "0",
             submittedDate: savedFirstProgram.createdAt.toISOString(),
@@ -794,7 +802,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
             programId: savedSecondProgram.id,
             programName: savedSecondProgram.name,
             cipCode: savedSecondProgram.cipCode,
-            sabcCode: savedSecondProgram.sabcCode,
+            sabcCode: null,
             credentialType: savedSecondProgram.credentialType,
             totalOfferings: "0",
             submittedDate: savedSecondProgram.createdAt.toISOString(),
