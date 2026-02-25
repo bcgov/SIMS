@@ -10,6 +10,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-partner-current-
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     assessmentConsolidatedData.appealsPartnerCurrentYearIncomeAppealData = null;
     assessmentConsolidatedData.partner1TotalIncome = 1234;
     assessmentConsolidatedData.partner1CRAReportedIncome = null;
