@@ -72,8 +72,11 @@ abstract class FormSubmissionItemAPIOutDTO {
   id: number;
   formType: string;
   formCategory: FormCategory;
+  /**
+   * Current decision status for this form submission item. The current decision status represents the most recent decision made on
+   * this item and represents the current state of the item and should be available for all users to see.
+   */
   decisionStatus: FormSubmissionDecisionStatus;
-  decisionDate?: Date;
   dynamicFormConfigurationId: number;
   submissionData: unknown;
   formDefinitionName: string;
@@ -81,12 +84,34 @@ abstract class FormSubmissionItemAPIOutDTO {
 }
 
 /**
+ * Current decision associated with a form submission item.
+ * If the no decision is present yet, the status will be Pending and the other properties will be undefined.
+ */
+class FormSubmissionItemDecisionAPIOutDTO {
+  id?: number;
+  decisionStatus: FormSubmissionDecisionStatus;
+  decisionDate?: Date;
+  decisionBy?: string;
+  decisionNoteDescription?: string;
+}
+
+/**
  * Individual form items that will be part of a form submission with one to many forms
  * for the Ministry, including the decision details.
  */
 class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
-  decisionBy?: string;
-  decisionNoteDescription?: string;
+  /**
+   * Current decision details for this form submission item. The current decision is the most recent decision made on
+   * this item and represents the current state of the item.
+   * Optionally include decision information if the user has the necessary permissions to view the decision details.
+   */
+  currentDecision?: FormSubmissionItemDecisionAPIOutDTO;
+  /**
+   * Decision history for this form submission item. The decision history includes all decisions made on this item,
+   * including the current decision and any previous decisions.
+   * Optionally include decision history information if the user has the necessary permissions to view the decision details.
+   */
+  decisions?: FormSubmissionItemDecisionAPIOutDTO[];
 }
 
 /**

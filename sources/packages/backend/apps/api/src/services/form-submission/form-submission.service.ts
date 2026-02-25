@@ -9,7 +9,6 @@ import {
   FormSubmissionStatus,
   FormSubmissionItem,
   DynamicFormConfiguration,
-  FormSubmissionDecisionStatus,
   FormCategory,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
@@ -76,7 +75,7 @@ export class FormSubmissionService {
       (submissionConfig) => this.getValidatedFormSubmission(submissionConfig),
       submissionConfigs,
     );
-    const formCategory = submissionConfigs[0].formCategory;
+    const [referenceSubmissionConfig] = submissionConfigs;
     // Save the form submission and the related items.
     return this.dataSource.transaction(async (entityManager) => {
       const now = new Date();
@@ -86,7 +85,7 @@ export class FormSubmissionService {
       formSubmission.application = { id: applicationId } as Application;
       formSubmission.submittedDate = now;
       formSubmission.submissionStatus = FormSubmissionStatus.Pending;
-      formSubmission.formCategory = formCategory;
+      formSubmission.formCategory = referenceSubmissionConfig.formCategory;
       formSubmission.creator = creator;
       formSubmission.createdAt = now;
       formSubmission.formSubmissionItems = validatedItems.map(
@@ -96,7 +95,6 @@ export class FormSubmissionService {
               id: submissionItem.dynamicConfigurationId,
             } as DynamicFormConfiguration,
             submittedData: submissionItem.formData,
-            decisionStatus: FormSubmissionDecisionStatus.Pending,
             creator: creator,
             createdAt: now,
           }) as FormSubmissionItem,
@@ -106,7 +104,7 @@ export class FormSubmissionService {
       );
       if (uniqueFileNames.length) {
         const fileOrigin =
-          formCategory === FormCategory.StudentAppeal
+          referenceSubmissionConfig.formCategory === FormCategory.StudentAppeal
             ? FileOriginType.Appeal
             : FileOriginType.Student;
         await this.studentFileService.updateStudentFiles(
@@ -120,6 +118,17 @@ export class FormSubmissionService {
       }
       // TODO: send notification.
       return entityManager.getRepository(FormSubmission).save(formSubmission);
+      // Associate a decision with each form submission item to mark them all as pending.
+      // formSubmission.formSubmissionItems.forEach((item) => {
+      //   const decision = new FormSubmissionItemDecision();
+      //   decision.decisionStatus = FormSubmissionDecisionStatus.Pending;
+      //   decision.creator = creator;
+      //   decision.createdAt = now;
+      //   decision.formSubmissionItem = item;
+      //   item.decisions = [decision];
+      //   item.currentDecision = decision;
+      // });
+      // return entityManager.getRepository(FormSubmission).save(formSubmission);
     });
   }
 

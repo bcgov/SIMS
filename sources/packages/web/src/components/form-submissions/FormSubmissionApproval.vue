@@ -18,14 +18,16 @@
         :read-only="true"
       >
         <template #approval-form="{ approval }">
-          <span class="category-header-medium brand-gray-text">Decision</span>
+          <span class="category-header-medium brand-gray-text"
+            >Current decision</span
+          >
           <v-divider />
           <v-textarea
             :ref="(el) => captureNoteRef(el, approval)"
             class="my-4"
             label="Notes"
             variant="outlined"
-            v-model="approval.noteDescription"
+            v-model="approval.decisionNoteDescription"
             hide-details="auto"
             :rules="[
               (v) => checkNotesLengthRule(v, `${approval.parentName}, notes`),
@@ -120,6 +122,31 @@
               getISODateHourMinuteString(approval.decisionDate)
             }}</strong>
           </p>
+          <v-divider></v-divider>
+          <span
+            v-if="approval.decisionHistory?.length"
+            class="category-header-medium brand-gray-text"
+            >Decision history</span
+          >
+          <v-timeline density="compact" side="end" class="mt-4">
+            <v-timeline-item
+              v-for="decision in approval.decisionHistory"
+              :key="decision"
+              :dot-color="decision.statusColor"
+              size="x-small"
+            >
+              <v-alert>
+                <div class="content-footer secondary-color-light">
+                  <strong class="d-block">
+                    Saved as {{ decision.decisionStatus }} on
+                    {{ getISODateHourMinuteString(decision.decisionDate) }} by
+                    {{ decision.decisionBy }}
+                  </strong>
+                  {{ decision.decisionNoteDescription }}
+                </div>
+              </v-alert>
+            </v-timeline-item>
+          </v-timeline>
         </template>
       </form-submission-items>
     </v-form>
@@ -226,7 +253,7 @@ export default defineComponent({
               category: formSubmission.value.formCategory,
               formName: submissionItem.formDefinitionName,
               formData: submissionItem.submissionData,
-              approval: createItemApproval(
+              approval: assignItemApproval(
                 submissionItem,
                 formSubmission.value.status,
               ),
@@ -246,22 +273,42 @@ export default defineComponent({
      * for the UI be adjusted accordingly.
      * @returns UI model to handle the approval.
      */
-    const createItemApproval = (
+    const assignItemApproval = (
       submissionItem: FormSubmissionItemMinistryAPIOutDTO,
       parentStatus: FormSubmissionStatus,
+      options?: { approval?: FormSubmissionItemApproval },
     ): FormSubmissionItemApproval => {
-      return {
-        id: submissionItem.id,
-        parentName: submissionItem.formType,
-        parentStatus,
-        noteDescription: submissionItem.decisionNoteDescription,
-        status: submissionItem.decisionStatus,
-        saveDecisionInProgress: false,
-        decisionSaved: !!submissionItem.decisionNoteDescription,
-        decisionBy: submissionItem.decisionBy,
-        decisionDate: submissionItem.decisionDate,
-        lastUpdateDate: submissionItem.updatedAt,
-      } as FormSubmissionItemApproval;
+      const approval = options?.approval ?? ({} as FormSubmissionItemApproval);
+      approval.id = submissionItem.id;
+      approval.parentName = submissionItem.formType;
+      approval.parentStatus = parentStatus;
+      approval.status = submissionItem.decisionStatus;
+      approval.saveDecisionInProgress = false;
+      approval.decisionSaved =
+        !!submissionItem.currentDecision?.decisionNoteDescription;
+      approval.decisionBy = submissionItem.currentDecision?.decisionBy;
+      approval.decisionDate = submissionItem.currentDecision?.decisionDate;
+      approval.decisionNoteDescription =
+        submissionItem.currentDecision?.decisionNoteDescription;
+      approval.lastUpdateDate = submissionItem.updatedAt;
+      approval.decisionHistory = submissionItem.decisions?.map((decision) => ({
+        decisionStatus: decision.decisionStatus,
+        decisionDate: decision.decisionDate,
+        decisionBy: decision.decisionBy,
+        decisionNoteDescription: decision.decisionNoteDescription,
+        statusColor: getStatusColor(decision.decisionStatus),
+      }));
+      return approval;
+    };
+
+    const getStatusColor = (status: FormSubmissionDecisionStatus) => {
+      if (status === FormSubmissionDecisionStatus.Pending) {
+        return "warning";
+      }
+      if (status === FormSubmissionDecisionStatus.Declined) {
+        return "danger";
+      }
+      return "success";
     };
 
     /**
@@ -282,12 +329,9 @@ export default defineComponent({
           throw new Error("Expected item to be updated was not found.");
         }
         const [reloadedSubmissionItem] = submission.submissionItems;
-        itemToUpdate.approval.status = reloadedSubmissionItem.decisionStatus;
-        itemToUpdate.approval.decisionBy = reloadedSubmissionItem.decisionBy;
-        itemToUpdate.approval.decisionDate =
-          reloadedSubmissionItem.decisionDate;
-        itemToUpdate.approval.lastUpdateDate = reloadedSubmissionItem.updatedAt;
-        itemToUpdate.approval.decisionSaved = true;
+        assignItemApproval(reloadedSubmissionItem, submission.status, {
+          approval: itemToUpdate.approval,
+        });
       } catch {
         snackBar.error("Unexpected error while loading updated decision.");
       }
@@ -369,7 +413,7 @@ export default defineComponent({
         approval.saveDecisionInProgress = true;
         await FormSubmissionService.shared.submitItemDecision(approval.id, {
           decisionStatus: approval.status,
-          noteDescription: approval.noteDescription as string,
+          noteDescription: approval.decisionNoteDescription as string,
           lastUpdateDate: approval.lastUpdateDate,
         });
         await reLoadFormSubmissionItem(approval.id);

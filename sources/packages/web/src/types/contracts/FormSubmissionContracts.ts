@@ -63,6 +63,14 @@ export enum FormSubmissionDecisionStatus {
   Declined = "Declined",
 }
 
+interface DecisionHistory {
+  decisionStatus: FormSubmissionDecisionStatus;
+  decisionDate?: Date;
+  decisionBy?: string;
+  decisionNoteDescription?: string;
+  statusColor: string;
+}
+
 export interface FormSubmissionItemApproval {
   id: number;
   parentName: string;
@@ -70,11 +78,13 @@ export interface FormSubmissionItemApproval {
   status: FormSubmissionDecisionStatus;
   noteDescription?: string;
   decisionBy?: string;
+  decisionNoteDescription?: string;
   decisionDate?: Date;
   showAudit: boolean;
   saveDecisionInProgress: boolean;
   decisionSaved: boolean;
   lastUpdateDate: Date;
+  decisionHistory?: DecisionHistory[];
 }
 
 export interface FormSubmissionItem {

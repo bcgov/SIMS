@@ -103,7 +103,7 @@ export class FormSubmission extends RecordDataModel {
     () => FormSubmissionItem,
     (formSubmissionItem) => formSubmissionItem.formSubmission,
     {
-      cascade: ["insert"],
+      cascade: ["insert", "update"],
     },
   )
   formSubmissionItems: FormSubmissionItem[];

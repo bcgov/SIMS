@@ -46,7 +46,7 @@ export type FormSubmissionConfig = FormSubmissionModel &
 /**
  * Allowed role to update a form submission item based on the form category.
  */
-export const ROLES_MAP = new Map<FormCategory, Role>([
+export const FORM_SUBMISSION_APPROVAL_ROLES_MAP = new Map<FormCategory, Role>([
   [FormCategory.StudentAppeal, Role.StudentApproveDeclineAppeals],
   [FormCategory.StudentForm, Role.StudentApproveDeclineForms],
 ]);

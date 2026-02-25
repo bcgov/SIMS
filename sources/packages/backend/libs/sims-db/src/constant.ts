@@ -75,6 +75,7 @@ export const TableNames = {
   SystemLookupConfigurations: "system_lookup_configurations",
   FormSubmissions: "form_submissions",
   FormSubmissionItems: "form_submission_items",
+  FormSubmissionItemDecisions: "form_submission_item_decisions",
 };
 
 export const INSTITUTION_TYPE_BC_PUBLIC = 1;

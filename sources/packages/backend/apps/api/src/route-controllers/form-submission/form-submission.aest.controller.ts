@@ -35,8 +35,9 @@ import {
   FormSubmissionMinistryAPIOutDTO,
 } from "./models/form-submission.dto";
 import { getUserFullName } from "apps/api/src/utilities";
+import { FormSubmissionDecisionStatus } from "@sims/sims-db/entities/form-submission-decision-status.type";
+import { CustomNamedError } from "@sims/utilities";
 
-// TODO: add roles
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("form-submission")
@@ -60,6 +61,7 @@ export class FormSubmissionAESTController extends BaseController {
    */
   @Get(":formSubmissionId")
   async getFormSubmission(
+    @UserToken() userToken: IUserToken,
     @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
     @Query("itemId", new ParseIntPipe({ optional: true })) itemId?: number,
   ): Promise<FormSubmissionMinistryAPIOutDTO> {
@@ -67,6 +69,11 @@ export class FormSubmissionAESTController extends BaseController {
       await this.formSubmissionApprovalService.getFormSubmissionsById(
         formSubmissionId,
         { itemId },
+      );
+    const hasApprovalAuthorization =
+      this.formSubmissionApprovalService.hasApprovalAuthorization(
+        submission.formCategory,
+        extractRolesFromToken(userToken),
       );
     return {
       id: submission.id,
@@ -80,14 +87,36 @@ export class FormSubmissionAESTController extends BaseController {
         id: item.id,
         formType: item.dynamicFormConfiguration.formType,
         formCategory: item.dynamicFormConfiguration.formCategory,
-        decisionStatus: item.decisionStatus,
-        decisionDate: item.decisionDate,
-        decisionNoteDescription: item.decisionNote?.description,
-        decisionBy: getUserFullName(item.decisionBy),
         dynamicFormConfigurationId: item.dynamicFormConfiguration.id,
         submissionData: item.submittedData,
         formDefinitionName: item.dynamicFormConfiguration.formDefinitionName,
+        decisionStatus:
+          item.currentDecision?.decisionStatus ??
+          FormSubmissionDecisionStatus.Pending,
         updatedAt: item.updatedAt,
+        currentDecision: hasApprovalAuthorization
+          ? {
+              id: item.currentDecision?.id,
+              decisionStatus:
+                item.currentDecision?.decisionStatus ??
+                FormSubmissionDecisionStatus.Pending,
+              decisionDate: item.currentDecision?.decisionDate,
+              decisionBy: getUserFullName(item.currentDecision?.decisionBy),
+              decisionNoteDescription:
+                item.currentDecision?.decisionNote?.description,
+            }
+          : undefined,
+        decisions: hasApprovalAuthorization
+          ? item.decisions
+              .filter((decision) => decision.id !== item.currentDecision?.id)
+              .map((decision) => ({
+                id: decision.id,
+                decisionStatus: decision.decisionStatus,
+                decisionDate: decision.decisionDate,
+                decisionBy: getUserFullName(decision.decisionBy),
+                decisionNoteDescription: decision.decisionNote?.description,
+              }))
+          : undefined,
       })),
     };
   }
@@ -116,18 +145,14 @@ export class FormSubmissionAESTController extends BaseController {
         userToken.userId,
       );
     } catch (error: unknown) {
-      if (
-        error instanceof Error &&
-        error.name === FORM_SUBMISSION_ITEM_OUTDATED
-      ) {
-        throw new UnprocessableEntityException(
-          new ApiProcessError(error.message, error.name),
-        );
-      } else if (
-        error instanceof Error &&
-        error.name === FORM_SUBMISSION_UPDATE_UNAUTHORIZED
-      ) {
-        throw new UnauthorizedException(error.message);
+      if (error instanceof CustomNamedError) {
+        if (error.name === FORM_SUBMISSION_ITEM_OUTDATED) {
+          throw new UnprocessableEntityException(
+            new ApiProcessError(error.message, error.name),
+          );
+        } else if (error.name === FORM_SUBMISSION_UPDATE_UNAUTHORIZED) {
+          throw new UnauthorizedException(error.message);
+        }
       }
       throw error;
     }
@@ -154,11 +179,10 @@ export class FormSubmissionAESTController extends BaseController {
         userToken.userId,
       );
     } catch (error: unknown) {
-      if (
-        error instanceof Error &&
-        error.name === FORM_SUBMISSION_UPDATE_UNAUTHORIZED
-      ) {
-        throw new UnauthorizedException(error.message);
+      if (error instanceof CustomNamedError) {
+        if (error.name === FORM_SUBMISSION_UPDATE_UNAUTHORIZED) {
+          throw new UnauthorizedException(error.message);
+        }
       }
       throw error;
     }

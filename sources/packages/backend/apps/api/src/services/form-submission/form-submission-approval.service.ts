@@ -11,6 +11,7 @@ import {
   Note,
   NoteType,
   FormCategory,
+  FormSubmissionItemDecision,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -22,7 +23,7 @@ import {
   FORM_SUBMISSION_NOT_PENDING,
   FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
 } from "./constants";
-import { ROLES_MAP } from "./form-submission.models";
+import { FORM_SUBMISSION_APPROVAL_ROLES_MAP } from "./form-submission.models";
 
 @Injectable()
 export class FormSubmissionApprovalService {
@@ -51,19 +52,35 @@ export class FormSubmissionApprovalService {
             formCategory: true,
             formDefinitionName: true,
           },
+          currentDecision: {
+            id: true,
+            decisionStatus: true,
+            decisionDate: true,
+            decisionBy: { id: true, firstName: true, lastName: true },
+            decisionNote: { id: true, description: true },
+          },
+          decisions: {
+            id: true,
+            decisionStatus: true,
+            decisionDate: true,
+            decisionBy: { id: true, firstName: true, lastName: true },
+            decisionNote: { id: true, description: true },
+          },
           submittedData: true,
-          decisionStatus: true,
-          decisionDate: true,
-          decisionNote: { id: true, description: true },
-          decisionBy: { id: true, firstName: true, lastName: true },
           updatedAt: true,
         },
       },
       relations: {
         formSubmissionItems: {
           dynamicFormConfiguration: true,
-          decisionNote: true,
-          decisionBy: true,
+          currentDecision: {
+            decisionBy: true,
+            decisionNote: true,
+          },
+          decisions: {
+            decisionBy: true,
+            decisionNote: true,
+          },
         },
       },
       where: {
@@ -71,7 +88,7 @@ export class FormSubmissionApprovalService {
         student: { id: options?.studentId },
         formSubmissionItems: { id: options?.itemId },
       },
-      order: { formSubmissionItems: { id: "ASC" } },
+      order: { formSubmissionItems: { id: "ASC", decisions: { id: "DESC" } } },
     });
   }
 
@@ -79,7 +96,7 @@ export class FormSubmissionApprovalService {
     submissionItemId: number,
     decisionStatus: FormSubmissionDecisionStatus,
     noteDescription: string,
-    lastUpdateDate: Date | undefined,
+    lastUpdateDate: Date,
     userRoles: Role[],
     auditUserId: number,
   ): Promise<void> {
@@ -94,19 +111,24 @@ export class FormSubmissionApprovalService {
       const submissionItem = await repo.findOne({
         select: {
           id: true,
-          decisionNote: { id: true },
-          decisionBy: { id: true, firstName: true, lastName: true },
           formSubmission: { id: true, submissionStatus: true },
           updatedAt: true,
           dynamicFormConfiguration: {
             id: true,
             formCategory: true,
           },
+          currentDecision: {
+            id: true,
+            decisionStatus: true,
+            decisionNote: { id: true },
+          },
         },
         relations: {
-          decisionNote: true,
-          decisionBy: true,
           formSubmission: true,
+          dynamicFormConfiguration: true,
+          currentDecision: {
+            decisionNote: true,
+          },
         },
         where: { id: submissionItemId },
       });
@@ -116,11 +138,11 @@ export class FormSubmissionApprovalService {
           FORM_SUBMISSION_ITEM_NOT_FOUND,
         );
       }
-      this.checkUserAuthorization(
+      this.checkApprovalAuthorization(
         submissionItem.dynamicFormConfiguration.formCategory,
         userRoles,
       );
-      if (submissionItem.updatedAt.getTime() !== lastUpdateDate?.getTime()) {
+      if (submissionItem.updatedAt.getTime() !== lastUpdateDate.getTime()) {
         throw new CustomNamedError(
           "The form submission item has been updated since it was last retrieved. Please refresh and try again.",
           FORM_SUBMISSION_ITEM_OUTDATED,
@@ -137,24 +159,27 @@ export class FormSubmissionApprovalService {
       }
       const now = new Date();
       const auditUser = { id: auditUserId } as User;
-      submissionItem.decisionStatus = decisionStatus;
-      submissionItem.decisionBy = auditUser;
-      submissionItem.decisionDate = now;
+      // Create a new decision history entry.
+      const decision = new FormSubmissionItemDecision();
+      decision.decisionStatus = decisionStatus;
+      decision.decisionBy = auditUser;
+      decision.decisionDate = now;
+      decision.createdAt = now;
+      decision.creator = auditUser;
+      // Create decision note.
+      const note = new Note();
+      note.description = noteDescription;
+      note.noteType = NoteType.Application;
+      note.creator = auditUser;
+      note.createdAt = now;
+      decision.decisionNote = await entityManager
+        .getRepository(Note)
+        .save(note);
+      // Update submission item.
+      decision.formSubmissionItem = submissionItem;
+      submissionItem.currentDecision = decision;
       submissionItem.modifier = auditUser;
       submissionItem.updatedAt = now;
-      if (submissionItem.decisionNote) {
-        const note = submissionItem.decisionNote;
-        note.description = noteDescription;
-        note.modifier = auditUser;
-        note.updatedAt = now;
-      } else {
-        const note = { description: noteDescription } as Note;
-        note.description = noteDescription;
-        note.noteType = NoteType.Application;
-        note.createdAt = now;
-        note.creator = auditUser;
-        submissionItem.decisionNote = note;
-      }
       await repo.save(submissionItem);
     });
   }
@@ -185,10 +210,13 @@ export class FormSubmissionApprovalService {
           formCategory: true,
           formSubmissionItems: {
             id: true,
-            decisionStatus: true,
+            currentDecision: {
+              id: true,
+              decisionStatus: true,
+            },
           },
         },
-        relations: { formSubmissionItems: true },
+        relations: { formSubmissionItems: { currentDecision: true } },
         where: { id: submissionId },
       });
       if (!formSubmission) {
@@ -197,7 +225,7 @@ export class FormSubmissionApprovalService {
           FORM_SUBMISSION_NOT_FOUND,
         );
       }
-      this.checkUserAuthorization(formSubmission.formCategory, userRoles);
+      this.checkApprovalAuthorization(formSubmission.formCategory, userRoles);
       if (formSubmission.submissionStatus !== FormSubmissionStatus.Pending) {
         throw new CustomNamedError(
           `Final decision cannot be made on a form submission with status ${formSubmission.submissionStatus}.`,
@@ -206,7 +234,10 @@ export class FormSubmissionApprovalService {
       }
       let isFullyDeclined = true;
       for (const item of formSubmission.formSubmissionItems) {
-        if (item.decisionStatus === FormSubmissionDecisionStatus.Pending) {
+        if (
+          item.currentDecision.decisionStatus ===
+          FormSubmissionDecisionStatus.Pending
+        ) {
           throw new CustomNamedError(
             "Final decision cannot be made when some decisions are still pending.",
             FORM_SUBMISSION_DECISION_PENDING,
@@ -214,7 +245,8 @@ export class FormSubmissionApprovalService {
         }
         if (
           isFullyDeclined &&
-          item.decisionStatus === FormSubmissionDecisionStatus.Approved
+          item.currentDecision.decisionStatus ===
+            FormSubmissionDecisionStatus.Approved
         ) {
           isFullyDeclined = false;
         }
@@ -228,9 +260,21 @@ export class FormSubmissionApprovalService {
       formSubmission.assessedBy = auditUser;
       formSubmission.modifier = auditUser;
       formSubmission.updatedAt = now;
-      // TODO: should the student notes relation be created at this point?
+      // TODO: Create a student note to allow the final note to be displayed in the student notes tab.
       return repo.save(formSubmission);
     });
+  }
+
+  /**
+   * Indicates if the form submission item can be updated by the user based on the form category and user roles.
+   * @param category The category of the form item being updated, used
+   * to determine the required role for authorization.
+   * @param userRoles The roles of the user attempting to perform the action.
+   * @returns true if the user has the required role for the form category, false otherwise.
+   */
+  hasApprovalAuthorization(category: FormCategory, userRoles: Role[]): boolean {
+    const allowedRole = FORM_SUBMISSION_APPROVAL_ROLES_MAP.get(category);
+    return allowedRole ? userRoles.includes(allowedRole) : false;
   }
 
   /**
@@ -242,13 +286,11 @@ export class FormSubmissionApprovalService {
    * @throws CustomNamedError with FORM_SUBMISSION_ITEM_DECISION_UNAUTHORIZED
    * if the user does not have the required role for the form category.
    */
-  private async checkUserAuthorization(
+  private checkApprovalAuthorization(
     category: FormCategory,
     userRoles: Role[],
-  ): Promise<void> {
-    const allowedRole = ROLES_MAP.get(category);
-    const hasRole = allowedRole ? userRoles.includes(allowedRole) : false;
-    if (!hasRole) {
+  ): void {
+    if (!this.hasApprovalAuthorization(category, userRoles)) {
       throw new CustomNamedError(
         "User does not have the required role to perform this action.",
         FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
