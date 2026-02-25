@@ -53,23 +53,27 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
 
   it("Should retrieve active programs for the location sorted by program name ascending by default.", async () => {
     // Arrange
+    // A UUID is embedded in the names so that searchCriteria can isolate programs
+    // created in this test from pre-existing CollegeF programs in the test database.
+    const searchString = faker.string.uuid();
     // Name starting with 'A' to sort before the one starting with 'Z'.
     const firstProgram = createFakeEducationProgram({
       institution: collegeF,
       user: sharedUser,
     });
-    firstProgram.name = "Alpha program";
+    firstProgram.name = `Alpha ${searchString}`;
     // Name starting with 'Z' to sort after the one starting with 'A'.
     const secondProgram = createFakeEducationProgram({
       institution: collegeF,
       user: sharedUser,
     });
-    secondProgram.name = "Zeta program";
+    secondProgram.name = `Zeta ${searchString}`;
     // Inactive program that should not be returned by default.
     const inactiveProgram = createFakeEducationProgram(
       { institution: collegeF, user: sharedUser },
       { initialValue: { isActive: false } },
     );
+    inactiveProgram.name = `Inactive ${searchString}`;
     const [savedFirstProgram, savedSecondProgram] =
       await db.educationProgram.save([
         firstProgram,
@@ -79,7 +83,7 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = `/institutions/education-program/location/${collegeFLocation.id}/summary?page=0&pageLimit=10&statusSearch=Approved&inactiveProgramSearch=false`;
+    const endpoint = `/institutions/education-program/location/${collegeFLocation.id}/summary?page=0&pageLimit=10&searchCriteria=${searchString}&statusSearch=Approved&inactiveProgramSearch=false`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -273,18 +277,24 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
 
   it("Should retrieve only programs with the given status when a status filter is applied.", async () => {
     // Arrange
+    // A UUID is embedded in the names so that searchCriteria can isolate programs
+    // created in this test from pre-existing CollegeF programs in the test database.
+    const searchString = faker.string.uuid();
     const approvedProgram = createFakeEducationProgram({
       institution: collegeF,
       user: sharedUser,
     });
+    approvedProgram.name = `Approved ${searchString}`;
     const pendingProgram = createFakeEducationProgram(
       { institution: collegeF, user: sharedUser },
       { initialValue: { programStatus: ProgramStatus.Pending } },
     );
+    pendingProgram.name = `Pending ${searchString}`;
     const declinedProgram = createFakeEducationProgram(
       { institution: collegeF, user: sharedUser },
       { initialValue: { programStatus: ProgramStatus.Declined } },
     );
+    declinedProgram.name = `Declined ${searchString}`;
     const [savedApprovedProgram] = await db.educationProgram.save([
       approvedProgram,
       pendingProgram,
@@ -293,7 +303,7 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = `/institutions/education-program/location/${collegeFLocation.id}/summary?page=0&pageLimit=10&statusSearch=Approved&inactiveProgramSearch=false`;
+    const endpoint = `/institutions/education-program/location/${collegeFLocation.id}/summary?page=0&pageLimit=10&searchCriteria=${searchString}&statusSearch=Approved&inactiveProgramSearch=false`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -324,12 +334,15 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
 
   it("Should retrieve inactive programs when the inactive program filter is enabled.", async () => {
     // Arrange
+    // A UUID is embedded in the names so that searchCriteria can isolate programs
+    // created in this test from pre-existing CollegeF programs in the test database.
+    const searchString = faker.string.uuid();
     // Name starting with 'A' to sort before the one starting with 'Z'.
     const activeProgram = createFakeEducationProgram({
       institution: collegeF,
       user: sharedUser,
     });
-    activeProgram.name = "Active program";
+    activeProgram.name = `Active ${searchString}`;
     // Name starting with 'Z' to sort after the one starting with 'A'.
     const inactiveProgram = createFakeEducationProgram(
       { institution: collegeF, user: sharedUser },
@@ -340,13 +353,13 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
         },
       },
     );
-    inactiveProgram.name = "Zeta inactive program";
+    inactiveProgram.name = `Zeta inactive ${searchString}`;
     const [savedActiveProgram, savedInactiveProgram] =
       await db.educationProgram.save([activeProgram, inactiveProgram]);
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = `/institutions/education-program/location/${collegeFLocation.id}/summary?page=0&pageLimit=10&statusSearch=Approved&inactiveProgramSearch=true`;
+    const endpoint = `/institutions/education-program/location/${collegeFLocation.id}/summary?page=0&pageLimit=10&searchCriteria=${searchString}&statusSearch=Approved&inactiveProgramSearch=true`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -392,21 +405,27 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
 
   it("Should retrieve programs sorted by ascending SABC code when sorted by the sabcCode field.", async () => {
     // Arrange
+    // A UUID is embedded in the names so that searchCriteria can isolate programs
+    // created in this test from pre-existing CollegeF programs in the test database.
+    const searchString = faker.string.uuid();
     // SABC code starting with 'A' to sort before the one starting with 'Z'.
     const firstProgram = createFakeEducationProgram(
       { institution: collegeF, user: sharedUser },
       { initialValue: { sabcCode: "AAA0" } },
     );
+    firstProgram.name = `First ${searchString}`;
     // SABC code starting with 'Z' to sort after the one starting with 'A'.
     const secondProgram = createFakeEducationProgram(
       { institution: collegeF, user: sharedUser },
       { initialValue: { sabcCode: "ZZZ0" } },
     );
+    secondProgram.name = `Second ${searchString}`;
     // Pending program that should be filtered out.
     const pendingProgram = createFakeEducationProgram(
       { institution: collegeF, user: sharedUser },
       { initialValue: { programStatus: ProgramStatus.Pending } },
     );
+    pendingProgram.name = `Pending ${searchString}`;
     const [savedFirstProgram, savedSecondProgram] =
       await db.educationProgram.save([
         firstProgram,
@@ -416,7 +435,7 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = `/institutions/education-program/location/${collegeFLocation.id}/summary?page=0&pageLimit=10&statusSearch=Approved&inactiveProgramSearch=false&sortField=sabcCode&sortOrder=ASC`;
+    const endpoint = `/institutions/education-program/location/${collegeFLocation.id}/summary?page=0&pageLimit=10&searchCriteria=${searchString}&statusSearch=Approved&inactiveProgramSearch=false&sortField=sabcCode&sortOrder=ASC`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -462,23 +481,29 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
 
   it("Should retrieve programs sorted by ascending CIP code when sorted by the cipCode field.", async () => {
     // Arrange
+    // A UUID is embedded in the names so that searchCriteria can isolate programs
+    // created in this test from pre-existing CollegeF programs in the test database.
+    const searchString = faker.string.uuid();
     const firstProgram = createFakeEducationProgram({
       institution: collegeF,
       user: sharedUser,
     });
     // CIP code starting with '01' to sort before '99'.
     firstProgram.cipCode = "01.0101";
+    firstProgram.name = `First ${searchString}`;
     const secondProgram = createFakeEducationProgram({
       institution: collegeF,
       user: sharedUser,
     });
     // CIP code starting with '99' to sort after '01'.
     secondProgram.cipCode = "99.9999";
+    secondProgram.name = `Second ${searchString}`;
     // Inactive program that should be filtered out.
     const inactiveProgram = createFakeEducationProgram(
       { institution: collegeF, user: sharedUser },
       { initialValue: { isActive: false } },
     );
+    inactiveProgram.name = `Inactive ${searchString}`;
     const [savedFirstProgram, savedSecondProgram] =
       await db.educationProgram.save([
         firstProgram,
@@ -488,7 +513,7 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = `/institutions/education-program/location/${collegeFLocation.id}/summary?page=0&pageLimit=10&statusSearch=Approved&inactiveProgramSearch=false&sortField=cipCode&sortOrder=ASC`;
+    const endpoint = `/institutions/education-program/location/${collegeFLocation.id}/summary?page=0&pageLimit=10&searchCriteria=${searchString}&statusSearch=Approved&inactiveProgramSearch=false&sortField=cipCode&sortOrder=ASC`;
 
     // Act/Assert
     await request(app.getHttpServer())
