@@ -32,9 +32,7 @@ export function createFakeEducationProgram(
   program.credentialType = "credentialType";
   program.cipCode = "cipCode";
   program.nocCode = "nocCode";
-  program.sabcCode =
-    options?.initialValue?.sabcCode ??
-    faker.string.alphanumeric(4).toUpperCase();
+  program.sabcCode = options?.initialValue?.sabcCode;
   program.regulatoryBody = "regulatoryBody";
   program.deliveredOnSite = options?.initialValue?.deliveredOnSite ?? false;
   program.deliveredOnline = options?.initialValue?.deliveredOnline ?? false;
