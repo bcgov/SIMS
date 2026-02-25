@@ -14,6 +14,7 @@
           variant="outlined"
           :rules="[(v) => checkNullOrEmptyRule(v, 'Reason')]"
           :loading="loadingData"
+          @update:model-value="resetFormModelValues()"
           hide-details="auto" />
         <v-autocomplete
           v-if="programAttributes.canShow"
@@ -138,6 +139,19 @@ export default defineComponent({
     const programAttributes = computed(() => {
       return getFieldAttributes(PROGRAM_FIELD_KEY, "Program");
     });
+
+    /**
+     * Resets the form model values based on the visibility of the fields.
+     * This is required to avoid sending invalid data to the API in case the user changes the reason after filling some fields.
+     */
+    const resetFormModelValues = () => {
+      if (!locationAttributes.value.canShow) {
+        formModel.locationIds = [];
+      }
+      if (!programAttributes.value.canShow) {
+        formModel.programId = undefined;
+      }
+    };
     const {
       showDialog,
       showModal: showModalInternal,
@@ -230,6 +244,7 @@ export default defineComponent({
       checkNullOrEmptyRule,
       locationAttributes,
       programAttributes,
+      resetFormModelValues,
     };
   },
 });

@@ -75,8 +75,8 @@ export interface AssignRestrictionAPIInDTO extends ResolveRestrictionAPIInDTO {
  * Add restriction to an institution.
  */
 export interface AssignInstitutionRestrictionAPIInDTO extends AssignRestrictionAPIInDTO {
-  locationIds: number[];
-  programId: number;
+  locationIds?: number[];
+  programId?: number;
 }
 
 /**
