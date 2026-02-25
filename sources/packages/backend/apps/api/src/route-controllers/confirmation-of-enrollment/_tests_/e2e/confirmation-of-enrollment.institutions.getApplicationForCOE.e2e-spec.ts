@@ -307,11 +307,21 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
 
   it("Should get the COE details with canRequestTuitionRemittance as false and calculated maxTuitionRemittanceAllowed as 0 when the application has an effective REMIT restriction.", async () => {
     // Arrange
+    // Create a new institution location to add REMIT restriction.
+    const institutionLocation = await db.institutionLocation.save(
+      createFakeInstitutionLocation({ institution: collegeC }),
+    );
+    // Authorize the new institution location.
+    await authorizeUserTokenForLocation(
+      appDataSource,
+      InstitutionTokenTypes.CollegeCUser,
+      institutionLocation,
+    );
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
       {
         institution: collegeC,
-        institutionLocation: collegeCLocation,
+        institutionLocation,
         disbursementValues: [
           createFakeDisbursementValue(
             DisbursementValueType.CanadaLoan,
@@ -338,11 +348,11 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
     await saveFakeInstitutionRestriction(db, {
       restriction: remitRestriction,
       institution: collegeC,
-      location: collegeCLocation,
+      location: institutionLocation,
     });
     const [firstDisbursementSchedule] =
       application.currentAssessment.disbursementSchedules;
-    const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}`;
+    const endpoint = `/institutions/location/${institutionLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}`;
     // Act/Assert
     return request(app.getHttpServer())
       .get(endpoint)
@@ -355,6 +365,65 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-getApplicationForC
         // With effective REMIT restriction, maxTuitionRemittanceAllowed should be 0.
         expect(response.body.maxTuitionRemittanceAllowed).toBe(0);
         expect(response.body.canRequestTuitionRemittance).toBe(false);
+      });
+  });
+
+  it("Should get the COE details with canRequestTuitionRemittance as true when the application has an effective REMIT restriction but inactive.", async () => {
+    // Arrange
+    // Create a new institution location to add REMIT restriction.
+    const institutionLocation = await db.institutionLocation.save(
+      createFakeInstitutionLocation({ institution: collegeC }),
+    );
+    // Authorize the new institution location.
+    await authorizeUserTokenForLocation(
+      appDataSource,
+      InstitutionTokenTypes.CollegeCUser,
+      institutionLocation,
+    );
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      {
+        institution: collegeC,
+        institutionLocation: institutionLocation,
+        disbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1000,
+            { disbursedAmountSubtracted: 100 },
+          ),
+        ],
+      },
+      { applicationStatus: ApplicationStatus.Enrolment },
+    );
+    application.data = {
+      workflowName: "test",
+      applicationPDPPDStatus: YesNoOptions.No,
+    };
+    await db.application.save(application);
+    // Add REMIT restriction to the application institution location.
+    await saveFakeInstitutionRestriction(
+      db,
+      {
+        restriction: remitRestriction,
+        institution: collegeC,
+        location: institutionLocation,
+      },
+      { initialValues: { isActive: false } },
+    );
+    const [firstDisbursementSchedule] =
+      application.currentAssessment.disbursementSchedules;
+    const endpoint = `/institutions/location/${institutionLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}`;
+    // Act/Assert
+    return request(app.getHttpServer())
+      .get(endpoint)
+      .auth(
+        await getInstitutionToken(InstitutionTokenTypes.CollegeCUser),
+        BEARER_AUTH_TYPE,
+      )
+      .expect(HttpStatus.OK)
+      .expect((response) => {
+        expect(response.body.canRequestTuitionRemittance).toBe(true);
       });
   });
 
