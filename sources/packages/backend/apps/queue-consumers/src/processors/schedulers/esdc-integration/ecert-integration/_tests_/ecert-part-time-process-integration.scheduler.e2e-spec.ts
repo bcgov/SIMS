@@ -1802,11 +1802,15 @@ describe(
           application.currentAssessment.offering.institutionLocation;
         const institution = location.institution;
         // Add institution restriction for the application location but different program.
-        await saveFakeInstitutionRestriction(db, {
-          restriction,
-          institution,
-          location,
-        });
+        await saveFakeInstitutionRestriction(
+          db,
+          {
+            restriction,
+            institution,
+            location,
+          },
+          { createProgram: true },
+        );
         // Queued job.
         const mockedJob = mockBullJob<void>();
 

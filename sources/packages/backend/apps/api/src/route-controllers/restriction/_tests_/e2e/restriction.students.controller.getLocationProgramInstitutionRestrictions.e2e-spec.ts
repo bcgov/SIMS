@@ -135,9 +135,13 @@ describe("RestrictionStudentsController(e2e)-getLocationProgramInstitutionRestri
       select: { id: true, restrictionCode: true, actionType: true },
       where: { restrictionCode: RestrictionCode.SUS },
     });
-    return saveFakeInstitutionRestriction(db, {
-      restriction,
-    });
+    return saveFakeInstitutionRestriction(
+      db,
+      {
+        restriction,
+      },
+      { createProgram: true, createLocation: true },
+    );
   }
 
   afterAll(async () => {

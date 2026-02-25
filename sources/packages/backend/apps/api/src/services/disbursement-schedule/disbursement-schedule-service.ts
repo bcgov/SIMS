@@ -113,63 +113,78 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
     locationId: number,
     disbursementScheduleId: number,
   ): Promise<DisbursementSchedule> {
-    return this.repo
-      .createQueryBuilder("disbursement")
-      .select([
-        "disbursement.id",
-        "disbursement.disbursementDate",
-        "disbursement.coeStatus",
-        "disbursement.coeDeniedOtherDesc",
-        "studentAssessment.id",
-        "application.applicationNumber",
-        "application.applicationStatus",
-        "application.id",
-        "application.pirStatus",
-        "application.data",
-        "currentAssessment.id",
-        "location.name",
-        "location.id",
-        "student.id",
-        "student.disabilityStatus",
-        "user.firstName",
-        "user.lastName",
-        "offering.name",
-        "offering.offeringIntensity",
-        "offering.studyStartDate",
-        "offering.studyEndDate",
-        "offering.lacksStudyBreaks",
-        "offering.actualTuitionCosts",
-        "offering.programRelatedCosts",
-        "offering.mandatoryFees",
-        "offering.exceptionalExpenses",
-        "offering.offeringDelivered",
-        "offering.studyBreaks",
-        "program.name",
-        "program.description",
-        "program.credentialType",
-        "program.deliveredOnline",
-        "program.deliveredOnSite",
-        "coeDeniedReason.id",
-        "coeDeniedReason.reason",
-      ])
-      .innerJoin("disbursement.studentAssessment", "studentAssessment")
-      .innerJoin("studentAssessment.application", "application")
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .innerJoin("currentAssessment.offering", "offering")
-      .innerJoin("offering.institutionLocation", "location")
-      .innerJoin("offering.educationProgram", "program")
-      .leftJoin("disbursement.coeDeniedReason", "coeDeniedReason")
-      .where("location.id = :locationId", { locationId })
-      .andWhere("application.applicationStatus IN (:...status)", {
-        status: [ApplicationStatus.Enrolment, ApplicationStatus.Completed],
-      })
-      .andWhere("disbursement.id = :disbursementScheduleId", {
-        disbursementScheduleId,
-      })
-      .andWhere("disbursement.hasEstimatedAwards = true")
-      .getOne();
+    return (
+      this.repo
+        .createQueryBuilder("disbursement")
+        .select([
+          "disbursement.id",
+          "disbursement.disbursementDate",
+          "disbursement.coeStatus",
+          "disbursement.coeDeniedOtherDesc",
+          "studentAssessment.id",
+          "application.applicationNumber",
+          "application.applicationStatus",
+          "application.id",
+          "application.pirStatus",
+          "application.data",
+          "currentAssessment.id",
+          "location.name",
+          "location.id",
+          "student.id",
+          "student.disabilityStatus",
+          "user.firstName",
+          "user.lastName",
+          "offering.name",
+          "offering.offeringIntensity",
+          "offering.studyStartDate",
+          "offering.studyEndDate",
+          "offering.lacksStudyBreaks",
+          "offering.actualTuitionCosts",
+          "offering.programRelatedCosts",
+          "offering.mandatoryFees",
+          "offering.exceptionalExpenses",
+          "offering.offeringDelivered",
+          "offering.studyBreaks",
+          "program.name",
+          "program.description",
+          "program.credentialType",
+          "program.deliveredOnline",
+          "program.deliveredOnSite",
+          "coeDeniedReason.id",
+          "coeDeniedReason.reason",
+          "institution.id",
+          "institutionRestriction.id",
+          "restriction.id",
+          "restriction.restrictionCode",
+        ])
+        .innerJoin("disbursement.studentAssessment", "studentAssessment")
+        .innerJoin("studentAssessment.application", "application")
+        .innerJoin("application.student", "student")
+        .innerJoin("student.user", "user")
+        .innerJoin("application.currentAssessment", "currentAssessment")
+        .innerJoin("currentAssessment.offering", "offering")
+        .innerJoin("offering.institutionLocation", "location")
+        .innerJoin("location.institution", "institution")
+        .innerJoin("offering.educationProgram", "program")
+        .leftJoin("disbursement.coeDeniedReason", "coeDeniedReason")
+        // Retrieve the institution restrictions effective for the application.
+        .leftJoin(
+          "institution.restrictions",
+          "institutionRestriction",
+          "institutionRestriction.isActive = TRUE AND (institutionRestriction.location.id = location.id OR institutionRestriction.location.id IS NULL)" +
+            " AND (institutionRestriction.program.id = program.id OR institutionRestriction.program.id IS NULL)",
+        )
+        .leftJoin("institutionRestriction.restriction", "restriction")
+        .where("location.id = :locationId", { locationId })
+        .andWhere("application.applicationStatus IN (:...status)", {
+          status: [ApplicationStatus.Enrolment, ApplicationStatus.Completed],
+        })
+        .andWhere("disbursement.id = :disbursementScheduleId", {
+          disbursementScheduleId,
+        })
+        .andWhere("disbursement.hasEstimatedAwards = true")
+        .getOne()
+    );
   }
 
   /**

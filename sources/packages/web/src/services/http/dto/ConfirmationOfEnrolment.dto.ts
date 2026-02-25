@@ -61,6 +61,7 @@ export interface ApplicationDetailsForCOEAPIOutDTO {
   disabilityProfileStatusDescription: string;
   disabilityApplicationStatus: string;
   disabilityApplicationStatusDescription: string;
+  canRequestTuitionRemittance: boolean;
 }
 
 export interface COEDeniedReasonAPIOutDTO {

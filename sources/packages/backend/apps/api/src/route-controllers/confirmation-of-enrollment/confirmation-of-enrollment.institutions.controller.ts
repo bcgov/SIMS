@@ -56,6 +56,7 @@ import {
   ConfirmationOfEnrollmentService,
   DisbursementOverawardService,
   EnrollmentPeriod,
+  RestrictionCode,
 } from "@sims/services";
 import {
   ENROLMENT_ALREADY_COMPLETED,
@@ -164,12 +165,23 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
         "Confirmation of enrollment not found or application status not valid.",
       );
     }
-
+    // Check if the application program and location has effective REMIT restriction to determine
+    // if tuition remittance can be requested for the application.
+    const institutionRestrictions =
+      disbursementSchedule.studentAssessment.application.currentAssessment
+        .offering.institutionLocation.institution.restrictions;
+    const canRequestTuitionRemittance = !institutionRestrictions.some(
+      (institutionRestriction) =>
+        institutionRestriction.restriction.restrictionCode ===
+        RestrictionCode.REMIT,
+    );
     const hasOverawardBalancePromise =
       this.disbursementOverawardService.hasOverawardBalance(
         disbursementSchedule.studentAssessment.application.student.id,
       );
+    // Calculate the max tuition remittance only when the application is eligible to request tuition remittance.
     const maxTuitionRemittanceAllowedPromise =
+      canRequestTuitionRemittance &&
       this.confirmationOfEnrollmentService.getEstimatedMaxTuitionRemittance(
         disbursementScheduleId,
       );
@@ -227,7 +239,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
         offering.educationProgram.deliveredOnline,
         offering.educationProgram.deliveredOnSite,
       ),
-      maxTuitionRemittanceAllowed,
+      maxTuitionRemittanceAllowed: maxTuitionRemittanceAllowed || 0,
       hasOverawardBalance,
       disabilityApplicationStatus:
         disbursementSchedule.studentAssessment.application.data
@@ -235,6 +247,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       disabilityProfileStatus:
         disbursementSchedule.studentAssessment.application.student
           .disabilityStatus,
+      canRequestTuitionRemittance,
     };
   }
 

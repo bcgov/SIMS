@@ -41,6 +41,7 @@ export class ApplicationDetailsForCOEAPIOutDTO {
   hasOverawardBalance: boolean;
   disabilityProfileStatus: DisabilityStatus;
   disabilityApplicationStatus: YesNoOptions;
+  canRequestTuitionRemittance: boolean;
 }
 
 export class COEDeniedReasonAPIOutDTO {
