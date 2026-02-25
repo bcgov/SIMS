@@ -3,6 +3,7 @@ import {
   ArrayMinSize,
   IsIn,
   IsNotEmpty,
+  IsOptional,
   IsPositive,
   MaxLength,
 } from "class-validator";
@@ -12,6 +13,7 @@ import {
   RestrictionType,
   RESTRICTION_CATEGORY_MAX_LENGTH,
   RestrictionActionType,
+  FieldRequirementType,
 } from "@sims/sims-db";
 
 /**
@@ -117,15 +119,17 @@ export class AssignInstitutionRestrictionAPIInDTO extends AssignRestrictionAPIIn
    * List of location IDs where the restriction is applicable.
    * A new restriction will be created for each location ID provided.
    */
+  @IsOptional()
   @ArrayMinSize(1)
   @ArrayMaxSize(MAX_ALLOWED_LOCATIONS)
   @IsPositive({ each: true })
-  locationIds: number[];
+  locationIds?: number[];
   /**
    * Program ID where the restriction is applicable.
    */
+  @IsOptional()
   @IsPositive()
-  programId: number;
+  programId?: number;
 }
 
 /**
@@ -168,8 +172,8 @@ export class InstitutionRestrictionsAPIOutDTO {
  * Active institution restriction details.
  */
 export class InstitutionActiveRestrictionAPIOutDTO {
-  programId: number;
-  locationId: number;
+  programId?: number;
+  locationId?: number;
   restrictionCode: string;
   restrictionActions: RestrictionActionType[];
 }
@@ -193,7 +197,16 @@ export class RestrictionReasonsOptionsAPIInDTO {
   /**
    * Category of the restriction expected to be filtered.
    */
-  @IsNotEmpty()
+  @IsOptional()
   @MaxLength(RESTRICTION_CATEGORY_MAX_LENGTH)
-  category: string;
+  category?: string;
+}
+
+/**
+ * Restriction details.
+ */
+export class RestrictionAPIOutDTO {
+  id: number;
+  description: string;
+  fieldRequirements?: Record<string, FieldRequirementType>;
 }

@@ -17,6 +17,7 @@ import {
   expectNotToPassThroughServiceTasks,
   createIdentifiableParentsData,
   MultiInstanceProcesses,
+  createFakeMarriedIndependentStudentData,
 } from "../../test-utils";
 import {
   createVerifyApplicationExceptionsTaskMock,
@@ -29,13 +30,14 @@ import {
   createIdentifiableParentTaskMock,
   createProgramInfoRequiredTaskMock,
   createProgramInfoNotRequiredTaskMock,
+  createIdentifiablePartnerTaskMock,
 } from "../../test-utils/mock";
 import {
   DEFAULT_ASSESSMENT_GATEWAY,
   PROGRAM_YEAR,
   PROGRAM_YEAR_BASE_ID,
 } from "../constants/program-year.constants";
-import { AssessmentDataType } from "@sims/test-utils";
+import { AssessmentDataType, YesNoOptions } from "@sims/test-utils";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 
 describe(`E2E Test Workflow assessment gateway on original assessment for ${PROGRAM_YEAR}`, () => {
@@ -462,6 +464,83 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       WorkflowServiceTasks.ProgramInfoNotRequired,
       WorkflowServiceTasks.VerifyApplicationExceptions,
     );
+  });
+
+  describe("Should create and load data for a supporting user when the student is married.", () => {
+    const ABLE_TO_REPORT_OPTIONS = [YesNoOptions.Yes, YesNoOptions.No];
+    for (const ableToReport of ABLE_TO_REPORT_OPTIONS) {
+      it(`Should create and load data for a supporting user when partner able to report is ${ableToReport}.`, async () => {
+        // Arrange
+        const partnerSupportingUserId = supportingUserId++;
+
+        // Assessment consolidated mocked data.
+        const assessmentConsolidatedData: AssessmentConsolidatedData = {
+          assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+          ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
+          ...createFakeMarriedIndependentStudentData({
+            partnerIsAbleToReport: ableToReport,
+          }),
+          // Application with PIR not required.
+          studentDataSelectedOffering: 1,
+        };
+
+        const workersMockedData = createWorkersMockedData([
+          createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
+          createProgramInfoNotRequiredTaskMock(),
+          createVerifyApplicationExceptionsTaskMock(),
+          createIdentifiablePartnerTaskMock({
+            createdSupportingUserId: partnerSupportingUserId,
+          }),
+          createCheckSupportingUserResponseTaskMock({
+            totalIncome: 1,
+            subprocesses: WorkflowSubprocesses.RetrieveSupportingInfoPartner,
+          }),
+          createIncomeRequestTaskMock({
+            incomeVerificationId: incomeVerificationId++,
+            subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+          }),
+          createIncomeRequestTaskMock({
+            incomeVerificationId: incomeVerificationId++,
+            subprocesses: WorkflowSubprocesses.PartnerIncomeVerification,
+          }),
+          createCheckIncomeRequestTaskMock({
+            subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+          }),
+          createCheckIncomeRequestTaskMock({
+            subprocesses: WorkflowSubprocesses.PartnerIncomeVerification,
+          }),
+          createVerifyAssessmentCalculationOrderTaskMock(),
+        ]);
+
+        const currentAssessmentId = assessmentId++;
+
+        // Act/Assert
+        const assessmentGatewayResponse =
+          await zeebeClientProvider.createProcessInstanceWithResult({
+            bpmnProcessId: DEFAULT_ASSESSMENT_GATEWAY,
+            variables: {
+              [ASSESSMENT_ID]: currentAssessmentId,
+              ...workersMockedData,
+            },
+            requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+          });
+        expectToPassThroughServiceTasks(
+          assessmentGatewayResponse.variables,
+          WorkflowServiceTasks.AssociateWorkflowInstance,
+          WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
+          WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
+          WorkflowServiceTasks.VerifyApplicationExceptions,
+          WorkflowServiceTasks.ProgramInfoNotRequired,
+          WorkflowServiceTasks.CreateIdentifiablePartnerTask,
+          WorkflowSubprocesses.RetrieveSupportingInfoPartner,
+          WorkflowSubprocesses.PartnerIncomeVerification,
+          WorkflowServiceTasks.SaveDisbursementSchedules,
+          WorkflowServiceTasks.AssociateMSFAA,
+          WorkflowServiceTasks.UpdateNOAStatusToRequired,
+          WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
+        );
+      });
+    }
   });
 
   afterAll(async () => {

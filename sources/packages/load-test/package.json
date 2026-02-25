@@ -13,11 +13,11 @@
   "devDependencies": {
     "ts-loader": "^9.5.4",
     "typescript": "^5.9.3",
-    "webpack": "^5.105.0",
+    "webpack": "^5.105.2",
     "webpack-cli": "^6.0.1",
     "webpack-glob-entries": "^1.0.1"
   },
   "dependencies": {
-    "@types/k6": "^1.5.0"
+    "@types/k6": "^1.6.0"
   }
 }

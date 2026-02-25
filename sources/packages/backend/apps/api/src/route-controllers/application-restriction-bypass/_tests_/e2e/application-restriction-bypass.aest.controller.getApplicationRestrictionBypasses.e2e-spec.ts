@@ -6,6 +6,7 @@ import {
   createFakeUser,
   saveFakeApplication,
   saveFakeApplicationRestrictionBypass,
+  saveFakeInstitutionRestriction,
 } from "@sims/test-utils";
 import {
   AESTGroups,
@@ -18,6 +19,7 @@ import {
   ApplicationStatus,
   OfferingIntensity,
   RestrictionActionType,
+  RestrictionBypassBehaviors,
   User,
 } from "@sims/sims-db";
 
@@ -69,6 +71,37 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
         restrictionCode: RestrictionCode.PTSSR,
       },
     );
+    // Create an institution restriction and a bypass for it.
+    const restriction = await db.restriction.findOne({
+      select: {
+        id: true,
+        restrictionCategory: true,
+      },
+      where: {
+        restrictionCode: RestrictionCode.SUS,
+      },
+    });
+    const susRestriction = await saveFakeInstitutionRestriction(db, {
+      restriction,
+      program: application.currentAssessment.offering.educationProgram,
+    });
+    // Create an institution restriction bypass so that bypass history includes both
+    // student and institution level bypasses for this application.
+    const institutionRestrictionBypass =
+      await saveFakeApplicationRestrictionBypass(
+        db,
+        {
+          application,
+          institutionRestriction: susRestriction,
+          bypassCreatedBy: sharedMinistryUser,
+          creator: sharedMinistryUser,
+        },
+        {
+          initialValues: {
+            bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
+          },
+        },
+      );
     const endpoint = `/aest/application-restriction-bypass/application/${application.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -80,13 +113,23 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
       .expect({
         bypasses: [
           {
+            id: institutionRestrictionBypass.id,
+            restrictionCategory:
+              institutionRestrictionBypass.institutionRestriction.restriction
+                .restrictionCategory,
+            restrictionCode: RestrictionCode.SUS,
+            isRestrictionActive:
+              institutionRestrictionBypass.institutionRestriction.isActive,
+            isBypassActive: institutionRestrictionBypass.isActive,
+          },
+          {
             id: restrictionBypass.id,
             restrictionCategory:
               restrictionBypass.studentRestriction.restriction
                 .restrictionCategory,
             restrictionCode: RestrictionCode.PTSSR,
-            restrictionDeletedAt: null,
             isRestrictionActive: restrictionBypass.studentRestriction.isActive,
+            restrictionDeletedAt: null,
             isBypassActive: restrictionBypass.isActive,
           },
         ],

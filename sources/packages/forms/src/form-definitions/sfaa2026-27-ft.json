@@ -4866,16 +4866,6 @@
       "tableView": false,
       "components": [
         {
-          "label": "Is partner able to report",
-          "calculateValue": "const hasReceivedInputs = !!data.isYourPartnerEligibleForBCSCAccount && (data.hasCurrentYearPartnerIncome === \"no\" || data.partnerCurrentYearIncomeConfirmation);\r\nconst isPartnerEligibleToReport = (data.isYourPartnerEligibleForBCSCAccount === \"yes\" && !data.partnerCurrentYearIncomeConfirmation);\r\nvalue = hasReceivedInputs ? isPartnerEligibleToReport : null;",
-          "calculateServer": true,
-          "key": "isYourPartnerAbleToReport",
-          "type": "hidden",
-          "input": true,
-          "tableView": false,
-          "lockKey": true
-        },
-        {
           "label": "HTML",
           "tag": "h2",
           "className": "category-header-large primary-color",
@@ -4901,7 +4891,7 @@
               "value": ""
             }
           ],
-          "content": "Please provide your spouse/common-law partner's financial information.",
+          "content": "Please provide information about your partner.",
           "refreshOnChange": false,
           "key": "html66",
           "type": "htmlelement",
@@ -4936,6 +4926,40 @@
               "tableView": false
             },
             {
+              "label": "Full name",
+              "applyMaskOn": "change",
+              "tableView": true,
+              "validate": {
+                "required": true
+              },
+              "validateWhenHidden": false,
+              "key": "partnerFullName",
+              "type": "textfield",
+              "input": true
+            },
+            {
+              "label": "HTML",
+              "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "The name entered for your spouse/common-law partner matches your name. Please ensure this is correct before proceeding with your application.",
+              "refreshOnChange": false,
+              "customClass": "banner-warning",
+              "key": "isFullNameMatchWarning",
+              "conditional": {
+                "show": true,
+                "when": "isPartnerNameMatch",
+                "eq": "true"
+              },
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false
+            },
+            {
               "label": "Is your spouse/common-law partner eligible for a BC Services Card account?",
               "optionsLabelPosition": "right",
               "inline": false,
@@ -4956,137 +4980,15 @@
                 "required": true,
                 "onlyAvailableItems": true
               },
-              "key": "isYourPartnerEligibleForBCSCAccount",
-              "attributes": {
-                "data-cy": "isYourPartnerAbleToReport"
-              },
+              "validateWhenHidden": false,
+              "key": "partnerIsAbleToReport",
               "type": "radio",
               "input": true,
               "lockKey": true
             },
             {
-              "key": "panel3Panel",
-              "input": false,
-              "title": "Partner current year income",
-              "tableView": false,
-              "components": [
-                {
-                  "key": "panel3PanelPartnercurrentyearincome",
-                  "label": "Partner current year income",
-                  "input": false,
-                  "tag": "h3",
-                  "attrs": [
-                    {
-                      "value": "",
-                      "attr": ""
-                    }
-                  ],
-                  "className": "category-header-medium primary-color",
-                  "content": "Partner current year income",
-                  "type": "htmlelement",
-                  "hideLabel": true,
-                  "tableView": false
-                },
-                {
-                  "key": "panel3PanelCurrentyearincomesituation",
-                  "label": "Current year income situation",
-                  "input": false,
-                  "tag": "p",
-                  "attrs": [
-                    {
-                      "value": "",
-                      "attr": ""
-                    }
-                  ],
-                  "content": "If your spouse/common-law partner has had, or anticipates having a significant decrease in gross income for {{data.currentTaxYear}}, you may request to be assessed using your spouse/common-law partner's estimated gross income.",
-                  "type": "htmlelement",
-                  "hideLabel": true,
-                  "tableView": false
-                },
-                {
-                  "input": true,
-                  "tableView": true,
-                  "label": "Do you want to declare your spouse/common-law partner's estimated current year gross income?",
-                  "key": "hasCurrentYearPartnerIncome",
-                  "values": [
-                    {
-                      "value": "yes",
-                      "label": "Yes",
-                      "shortcut": ""
-                    },
-                    {
-                      "value": "no",
-                      "label": "No",
-                      "shortcut": ""
-                    }
-                  ],
-                  "validate": {
-                    "required": true
-                  },
-                  "type": "radio",
-                  "optionsLabelPosition": "right",
-                  "lockKey": true
-                },
-                {
-                  "title": "",
-                  "customClass": "alert-banner-container alert-banner-warning",
-                  "collapsible": false,
-                  "hideLabel": true,
-                  "key": "partnerCurrentYearIncomeExceptionConfirmPanel",
-                  "conditional": {
-                    "show": true,
-                    "when": "hasCurrentYearPartnerIncome",
-                    "eq": "yes"
-                  },
-                  "type": "panel",
-                  "label": "Panel",
-                  "input": false,
-                  "tableView": false,
-                  "components": [
-                    {
-                      "label": "Content",
-                      "className": "alert alert-warning fa fa-exclamation-triangle w-100",
-                      "attrs": [
-                        {
-                          "value": "",
-                          "attr": ""
-                        }
-                      ],
-                      "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou are requesting additional financial aid due to your spouse/common-law partner having or anticipating a significant decrease in gross income for {{data.currentTaxYear}}, due to one of the following circumstances:\n<li>Medical illness or injury</li>\n<li>Family emergency (e.g., death or injury)</li>\n<li>Natural disaster</li>\n<li>Layoff, strike, lockout or other reduction in earnings beyond the family’s control</li>",
-                      "refreshOnChange": false,
-                      "key": "estimatedCurrentYearIncomeExceptionPanelContent1",
-                      "type": "htmlelement",
-                      "input": false,
-                      "hideLabel": true,
-                      "tableView": false
-                    },
-                    {
-                      "label": "I confirm I am eligible for this exception category and understand that this process requires ministry review and will lead to delays in my funding.",
-                      "customClass": "formio-component-weight-bold",
-                      "tableView": true,
-                      "defaultValue": false,
-                      "validate": {
-                        "required": true,
-                        "customMessage": "You must confirm you understand the exception eligibility criteria."
-                      },
-                      "validateWhenHidden": false,
-                      "key": "partnerCurrentYearIncomeConfirmation",
-                      "type": "checkbox",
-                      "dataGridLabel": false,
-                      "input": true,
-                      "lockKey": true,
-                      "hideOnChildrenHidden": false
-                    }
-                  ],
-                  "lockKey": true
-                }
-              ],
-              "type": "panel",
-              "hideLabel": true,
-              "label": "Panel"
-            },
-            {
               "label": "Additional information required",
+              "tag": "p",
               "className": "alert alert-info  fa fa-info-circle",
               "attrs": [
                 {
@@ -5099,19 +5001,19 @@
               "customClass": "banner-info",
               "key": "additionalInformationRequired",
               "conditional": {
-                "show": "true",
-                "when": "isYourPartnerAbleToReport",
-                "eq": "true"
+                "show": true,
+                "when": "partnerIsAbleToReport",
+                "eq": "yes"
               },
               "type": "htmlelement",
               "input": false,
               "tableView": false,
-              "tag": "p",
               "hideLabel": true
             },
             {
               "label": "Spouse Estimation",
-              "className": "alert alert-warning fa fa-exclamation-circle",
+              "tag": "p",
+              "className": "alert alert-warning fa fa-exclamation-triangle w-100",
               "attrs": [
                 {
                   "attr": "",
@@ -5123,821 +5025,25 @@
               "customClass": "banner-warning",
               "key": "spouseEstimation",
               "conditional": {
-                "show": "true",
-                "when": "isYourPartnerEligibleForBCSCAccount",
+                "show": true,
+                "when": "partnerIsAbleToReport",
                 "eq": "no"
               },
               "type": "htmlelement",
               "input": false,
               "tableView": false,
-              "tag": "p",
               "hideLabel": true
             }
           ]
         },
         {
-          "title": "Partner Income Panel",
-          "collapsible": false,
-          "hideLabel": true,
-          "key": "partnerIncomePanel",
-          "conditional": {
-            "show": true,
-            "when": "isYourPartnerAbleToReport",
-            "eq": "false"
-          },
-          "type": "panel",
-          "label": "Partner Income Panel",
-          "breadcrumbClickable": false,
-          "allowPrevious": false,
-          "buttonSettings": {
-            "previous": false,
-            "cancel": false,
-            "next": false
-          },
-          "input": false,
-          "tableView": false,
-          "components": [
-            {
-              "label": "Partner financial information",
-              "tag": "h3",
-              "className": "category-header-medium primary-color",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Partner financial information",
-              "refreshOnChange": false,
-              "key": "html67",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false
-            },
-            {
-              "label": "HTML",
-              "tag": "p",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "Please provide your spouse/common-law partner's financial information.",
-              "refreshOnChange": false,
-              "key": "html68",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false
-            },
-            {
-              "label": "I have been authorized by my spouse/common-law partner to submit their financial information, including their total reported income from their {{data.calculatedTaxYear}} tax return.",
-              "tableView": false,
-              "defaultValue": false,
-              "validate": {
-                "required": true
-              },
-              "key": "partnerAuthorized",
-              "conditional": {
-                "show": "true",
-                "when": "hasCurrentYearPartnerIncome",
-                "eq": "no"
-              },
-              "type": "checkbox",
-              "input": true
-            },
-            {
-              "label": "Enter your spouse/common-law partner's reported total income from line 15000 of their {{data.calculatedTaxYear}} income tax return. If they did not file a {{data.calculatedTaxYear}} income tax return, enter their total income from all sources both inside and outside of Canada.",
-              "prefix": "$",
-              "applyMaskOn": "change",
-              "mask": false,
-              "tableView": false,
-              "delimiter": true,
-              "requireDecimal": false,
-              "inputFormat": "plain",
-              "truncateMultipleSpaces": false,
-              "validate": {
-                "required": true,
-                "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
-              },
-              "validateWhenHidden": false,
-              "key": "estimatedSpouseIncome",
-              "conditional": {
-                "show": true,
-                "when": "hasCurrentYearPartnerIncome",
-                "eq": "no"
-              },
-              "type": "number",
-              "decimalLimit": 0,
-              "input": true
-            },
-            {
-              "title": "Decrease in partner income panel",
-              "collapsible": false,
-              "hideLabel": true,
-              "key": "partnerIncomePanelPanel",
-              "conditional": {
-                "show": true,
-                "when": "partnerCurrentYearIncomeConfirmation",
-                "eq": "true"
-              },
-              "type": "panel",
-              "label": "Panel",
-              "input": false,
-              "tableView": false,
-              "components": [
-                {
-                  "label": "currentYearPartnerIncomeApplicationException",
-                  "tableView": false,
-                  "validateWhenHidden": false,
-                  "key": "currentYearPartnerIncomeApplicationException",
-                  "type": "container",
-                  "input": true,
-                  "components": [
-                    {
-                      "label": "Exception Description - Partner current year income",
-                      "calculateValue": "value = \"Partner current year income\";",
-                      "calculateServer": true,
-                      "key": "exceptionDescription",
-                      "type": "hidden",
-                      "input": true,
-                      "tableView": false,
-                      "lockKey": true
-                    },
-                    {
-                      "key": "partnerIncomePanelPanelContent",
-                      "label": "Current year income blurb",
-                      "input": false,
-                      "tag": "p",
-                      "attrs": [
-                        {
-                          "value": "",
-                          "attr": ""
-                        }
-                      ],
-                      "content": "Add your spouse/common-law partner's actual gross income from the beginning of {{data.currentTaxYear}} up to the date their gross income changed, along with the estimated gross income for the remainder of the year, to calculate their total estimated gross income for the current year.",
-                      "type": "htmlelement",
-                      "hideLabel": true,
-                      "tableView": false
-                    },
-                    {
-                      "label": "My spouse/common-law partner's current year gross income is:",
-                      "prefix": "$",
-                      "applyMaskOn": "change",
-                      "mask": false,
-                      "tableView": false,
-                      "delimiter": true,
-                      "requireDecimal": false,
-                      "inputFormat": "plain",
-                      "truncateMultipleSpaces": false,
-                      "validate": {
-                        "required": true,
-                        "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
-                      },
-                      "validateWhenHidden": false,
-                      "key": "currentYearPartnerIncome",
-                      "type": "number",
-                      "decimalLimit": 0,
-                      "input": true
-                    },
-                    {
-                      "input": true,
-                      "tableView": true,
-                      "label": "Select the reason for your spouse/common-law partner's significant decrease in gross income:",
-                      "key": "reasonsignificantdecreaseInPartnerIncome",
-                      "values": [
-                        {
-                          "value": "medicalIllnessOrInjury",
-                          "label": "Medical illness or injury",
-                          "shortcut": ""
-                        },
-                        {
-                          "value": "familyEmergencyEGDeathOrInjury",
-                          "label": "Family emergency (e.g., death or injury)",
-                          "shortcut": ""
-                        },
-                        {
-                          "value": "naturalDisaster",
-                          "label": "Natural disaster",
-                          "shortcut": ""
-                        },
-                        {
-                          "value": "layoffStrikeLockoutOrOtherReductionInEarningsBeyondTheFamilysControl",
-                          "label": "Layoff, strike, lockout or other reduction in earnings beyond the family’s control",
-                          "shortcut": ""
-                        },
-                        {
-                          "value": "other",
-                          "label": "Other",
-                          "shortcut": ""
-                        }
-                      ],
-                      "validate": {
-                        "required": true
-                      },
-                      "type": "radio",
-                      "optionsLabelPosition": "right",
-                      "lockKey": true
-                    },
-                    {
-                      "key": "partnerIncomePanelPanelPanel",
-                      "input": false,
-                      "title": "Other reason for significant decrease in income",
-                      "tableView": false,
-                      "components": [
-                        {
-                          "input": true,
-                          "tableView": true,
-                          "label": "Please explain your spouse/common-law partner's situation:",
-                          "key": "otherExceptionalPartnerCircumstance",
-                          "validate": {
-                            "required": true
-                          },
-                          "type": "textarea",
-                          "inputFormat": "plain",
-                          "lockKey": true
-                        }
-                      ],
-                      "type": "panel",
-                      "hideLabel": true,
-                      "conditional": {
-                        "show": "true",
-                        "when": "reasonsignificantdecreaseInPartnerIncome",
-                        "eq": "other"
-                      },
-                      "label": "Panel"
-                    },
-                    {
-                      "key": "partnerIncomePanelPanelUploadfile",
-                      "label": "Upload file",
-                      "input": false,
-                      "tag": "h3",
-                      "attrs": [
-                        {
-                          "value": "",
-                          "attr": ""
-                        }
-                      ],
-                      "className": "category-header-medium primary-color",
-                      "content": "Upload supporting documents for spouse/common-law partner's {{data.currentTaxYear}} estimated gross income.",
-                      "type": "htmlelement",
-                      "hideLabel": true,
-                      "tableView": false
-                    },
-                    {
-                      "key": "partnerIncomePanelPanelPleaseprovidedocumentationblurb",
-                      "label": "Please provide documentation blurb",
-                      "input": false,
-                      "tag": "p",
-                      "attrs": [
-                        {
-                          "value": "",
-                          "attr": ""
-                        }
-                      ],
-                      "content": "Please provide supporting documentation for your request to use current year estimated gross income for your spouse/common law partner.",
-                      "type": "htmlelement",
-                      "hideLabel": true,
-                      "tableView": false
-                    },
-                    {
-                      "key": "partnerIncomePanelPanelHtml",
-                      "label": "HTML",
-                      "input": false,
-                      "tag": "p",
-                      "attrs": [
-                        {
-                          "value": "",
-                          "attr": ""
-                        }
-                      ],
-                      "className": "alert alert-warning fa fa-exclamation-triangle w-100",
-                      "content": "<span class=\"font-bold ml-2\"> Request for Exception</span>\n <br> \n<span>Failure to provide the documents required will result in denial of the exception and may cause additional delays in application processing.<span>",
-                      "type": "htmlelement",
-                      "hideLabel": true,
-                      "customClass": "banner-warning",
-                      "tableView": false
-                    },
-                    {
-                      "key": "partnerIncomePanelPanelProvidethefollowingblurb",
-                      "label": "Provide the following blurb",
-                      "input": false,
-                      "attrs": [
-                        {
-                          "value": "",
-                          "attr": ""
-                        }
-                      ],
-                      "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<ul><li>A letter explaining the circumstances that meet one or more of the Appeal Criteria (see above) and a detailed breakdown of how you calculated total estimated gross income (if applicable).</li></ul>",
-                      "type": "htmlelement",
-                      "hideLabel": true,
-                      "customClass": "align-bullets",
-                      "tableView": false
-                    },
-                    {
-                      "key": "partnerIncomePanelPanelProvideoneofthefollowingblurb",
-                      "label": "Provide one of the following blurb",
-                      "input": false,
-                      "attrs": [
-                        {
-                          "value": "",
-                          "attr": ""
-                        }
-                      ],
-                      "content": "<h4 class=\"category-header-medium-small\">AND</h4>\n<ul>\n<li>All relevant supporting documentation of the circumstance(s) (medical records, letter from physician, record of employment, layoff or strike, etc.).</li>\n<li>(If the year matching your application number is still in progress): All relevant supporting documentation of estimated total gross income for the current year, including all year-to-date gross income (pay stubs, invoices, bank statements, Employment Insurance benefit statements, Record of Employment, etc.).</li></ul>\n<h4 class=\"category-header-medium-small\">OR</h4>\n<ul>\n<li>(If the year matching your application number is complete): CRA Income Tax Return and gross income information for the year matching the student financial assistance application number.</li>\n</ul>",
-                      "type": "htmlelement",
-                      "hideLabel": true,
-                      "customClass": "align-bullets",
-                      "tableView": false
-                    },
-                    {
-                      "input": true,
-                      "tableView": true,
-                      "label": "Upload supporting documents",
-                      "key": "decreaseInPartnerIncomeSupportingDocuments",
-                      "multiple": true,
-                      "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                      "fileMaxSize": "15MB",
-                      "type": "file",
-                      "storage": "url",
-                      "url": "student/files",
-                      "lockKey": true,
-                      "validate": {
-                        "required": true,
-                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
-                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
-                      }
-                    },
-                    {
-                      "label": "Columns",
-                      "input": false,
-                      "tableView": false,
-                      "key": "partnerIncomePanelPanelColumns",
-                      "columns": [
-                        {
-                          "components": [
-                            {
-                              "key": "partnerIncomePanelPanelColumnsFileType",
-                              "label": "File Type",
-                              "input": false,
-                              "tag": "span",
-                              "attrs": [
-                                {
-                                  "value": "",
-                                  "attr": ""
-                                }
-                              ],
-                              "content": "We accept <strong class=\"font-bold\">JPG, PNG, DOC, DOCX, PDF, TXT</strong>",
-                              "type": "htmlelement",
-                              "hideLabel": true,
-                              "tableView": false
-                            }
-                          ],
-                          "width": 6,
-                          "offset": 0,
-                          "push": 0,
-                          "pull": 0,
-                          "size": "md",
-                          "currentWidth": 6
-                        },
-                        {
-                          "components": [
-                            {
-                              "key": "partnerIncomePanelPanelColumnsFileLimit",
-                              "label": "File Limit",
-                              "input": false,
-                              "tag": "span",
-                              "attrs": [
-                                {
-                                  "value": "",
-                                  "attr": ""
-                                }
-                              ],
-                              "className": "pull-right",
-                              "content": "15MB file limit each",
-                              "type": "htmlelement",
-                              "hideLabel": true,
-                              "tableView": false
-                            }
-                          ],
-                          "width": 6,
-                          "offset": 0,
-                          "push": 0,
-                          "pull": 0,
-                          "size": "md",
-                          "currentWidth": 6
-                        }
-                      ],
-                      "type": "columns",
-                      "hideLabel": true
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "input": true,
-              "tableView": false,
-              "label": "Will your partner receive Employment Insurance (EI) benefits during your study period?",
-              "key": "partnerHasEmploymentInsuranceBenefits",
-              "values": [
-                {
-                  "value": "yes",
-                  "label": "Yes",
-                  "shortcut": ""
-                },
-                {
-                  "value": "no",
-                  "label": "No",
-                  "shortcut": ""
-                }
-              ],
-              "validate": {
-                "required": true,
-                "onlyAvailableItems": true
-              },
-              "type": "radio",
-              "optionsLabelPosition": "right",
-              "lockKey": true
-            },
-            {
-              "input": true,
-              "tableView": false,
-              "label": "Will your partner receive federal or provincial disability benefits during your study period?",
-              "key": "partnerHasFedralProvincialPDReceipt",
-              "values": [
-                {
-                  "value": "yes",
-                  "label": "Yes",
-                  "shortcut": ""
-                },
-                {
-                  "value": "no",
-                  "label": "No",
-                  "shortcut": ""
-                }
-              ],
-              "validate": {
-                "required": true,
-                "onlyAvailableItems": true
-              },
-              "type": "radio",
-              "optionsLabelPosition": "right",
-              "lockKey": true
-            },
-            {
-              "input": true,
-              "tableView": false,
-              "label": "Will your partner receive Income Assistance (welfare) during your study period?",
-              "key": "partnerHasTotalIncomeAssistance",
-              "values": [
-                {
-                  "value": "yes",
-                  "label": "Yes",
-                  "shortcut": ""
-                },
-                {
-                  "value": "no",
-                  "label": "No",
-                  "shortcut": ""
-                }
-              ],
-              "validate": {
-                "required": true,
-                "onlyAvailableItems": true
-              },
-              "type": "radio",
-              "optionsLabelPosition": "right",
-              "lockKey": true
-            },
-            {
-              "label": "Will your partner receive B.C. income assistance for persons with disabilities under the Employment and Assistance for Persons with Disabilities Act during your study period?",
-              "optionsLabelPosition": "right",
-              "inline": false,
-              "tableView": false,
-              "values": [
-                {
-                  "label": "Yes",
-                  "value": "yes",
-                  "shortcut": ""
-                },
-                {
-                  "label": "No",
-                  "value": "no",
-                  "shortcut": ""
-                }
-              ],
-              "validate": {
-                "required": true,
-                "onlyAvailableItems": true
-              },
-              "validateWhenHidden": false,
-              "key": "partnerHasBCEAIncomeAssistance",
-              "type": "radio",
-              "input": true
-            },
-            {
-              "title": "Student Partner Receives BCEA Income Assistance Panel",
-              "collapsible": false,
-              "hideLabel": true,
-              "key": "studentPartnerReceivesBCEAIncomeAssistance",
-              "conditional": {
-                "show": true,
-                "when": "partnerHasBCEAIncomeAssistance",
-                "eq": "yes"
-              },
-              "type": "panel",
-              "label": "Panel",
-              "breadcrumbClickable": false,
-              "allowPrevious": false,
-              "buttonSettings": {
-                "previous": false,
-                "cancel": false,
-                "next": false
-              },
-              "input": false,
-              "tableView": false,
-              "components": [
-                {
-                  "label": "Enter the amount of assistance they will receive during the applicant's study period",
-                  "prefix": "$",
-                  "applyMaskOn": "change",
-                  "mask": false,
-                  "tableView": false,
-                  "delimiter": true,
-                  "requireDecimal": false,
-                  "inputFormat": "plain",
-                  "truncateMultipleSpaces": false,
-                  "validate": {
-                    "required": true,
-                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
-                  },
-                  "validateWhenHidden": false,
-                  "key": "partnerBCEAIncomeAssistanceAmount",
-                  "type": "number",
-                  "decimalLimit": 0,
-                  "input": true
-                }
-              ]
-            },
-            {
-              "label": "Will your partner be at home caring for eligible dependants on a full-time basis during your entire study period?",
-              "optionsLabelPosition": "right",
-              "tooltip": "Answer 'Yes' to this question if your spouse/common-law partner will be caring for eligible dependant children aged 11 years and/or disabled/infirm dependants 12 years of age or older claimed on your income tax return as of the class start date. \r\n\r\nFor StudentAid BC purposes, eligible dependant children are dependant children for whom the Canada Child Tax Benefit is claimed. Eligible dependant children must meet one of the following criteria:\r\n\r\n- The student and/or spouse/common-law partner must be guardians of the children who must live with the student or spouse/common-law partner at least two full days per week; or\r\n\r\n- The children are the student's foster children and foster-parent income is claimed on application.",
-              "inline": false,
-              "tableView": false,
-              "values": [
-                {
-                  "label": "Yes",
-                  "value": "yes",
-                  "shortcut": ""
-                },
-                {
-                  "label": "No",
-                  "value": "no",
-                  "shortcut": ""
-                }
-              ],
-              "validate": {
-                "required": true,
-                "onlyAvailableItems": true
-              },
-              "validateWhenHidden": false,
-              "key": "partnerCaringForDependant",
-              "type": "radio",
-              "input": true
-            },
-            {
-              "label": "Will your partner be a full-time post-secondary student for some or all of your study period?",
-              "optionsLabelPosition": "right",
-              "inline": false,
-              "tableView": false,
-              "values": [
-                {
-                  "label": "Yes",
-                  "value": "yes",
-                  "shortcut": ""
-                },
-                {
-                  "label": "No",
-                  "value": "no",
-                  "shortcut": ""
-                }
-              ],
-              "validate": {
-                "required": true,
-                "onlyAvailableItems": true
-              },
-              "key": "partnerfulltimeStudent",
-              "attributes": {
-                "data-cy": "partnerfulltimeStudent"
-              },
-              "type": "radio",
-              "input": true
-            },
-            {
-              "title": "If your partner will be a full-time student, how many weeks of your study period will they also be in studies Panel",
-              "breadcrumbClickable": false,
-              "buttonSettings": {
-                "previous": false,
-                "cancel": false,
-                "next": false
-              },
-              "collapsible": false,
-              "hideLabel": true,
-              "key": "ifYourPartnerWillBeAFullTimeStudentHowManyWeeksOfYourStudyPeriodWillTheyAlsoBeInStudiesPanel",
-              "conditional": {
-                "show": true,
-                "when": "partnerfulltimeStudent",
-                "eq": "yes"
-              },
-              "type": "panel",
-              "label": "If your partner will be a full-time student, how many weeks of your study period will they also be in studies Panel",
-              "input": false,
-              "tableView": false,
-              "components": [
-                {
-                  "label": "If your partner will be a full-time student, how many weeks of your study period will they also be in studies?",
-                  "prefix": "Number of Weeks",
-                  "mask": false,
-                  "tableView": false,
-                  "delimiter": false,
-                  "requireDecimal": false,
-                  "inputFormat": "plain",
-                  "truncateMultipleSpaces": false,
-                  "validate": {
-                    "required": true
-                  },
-                  "key": "partnerStudyWeeks",
-                  "conditional": {
-                    "show": "true",
-                    "when": "partnerfulltimeStudent",
-                    "eq": "yes"
-                  },
-                  "type": "number",
-                  "spellcheck": true,
-                  "input": true,
-                  "inputType": "number",
-                  "lockKey": true
-                }
-              ],
-              "allowPrevious": false
-            },
-            {
-              "label": "Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your study period?",
-              "optionsLabelPosition": "right",
-              "inline": false,
-              "tableView": false,
-              "values": [
-                {
-                  "label": "Yes",
-                  "value": "yes",
-                  "shortcut": ""
-                },
-                {
-                  "label": "No",
-                  "value": "no",
-                  "shortcut": ""
-                }
-              ],
-              "validate": {
-                "required": true,
-                "onlyAvailableItems": true
-              },
-              "key": "partnerstudentLoan",
-              "attributes": {
-                "data-cy": "partnerstudentLoan"
-              },
-              "type": "radio",
-              "input": true
-            },
-            {
-              "title": "Will your partner be paying a Canada Student Loan and/or a provincial student loan regular scheduled payments during your study period Panel",
-              "breadcrumbClickable": false,
-              "buttonSettings": {
-                "previous": false,
-                "cancel": false,
-                "next": false
-              },
-              "collapsible": false,
-              "hideLabel": true,
-              "key": "willYourPartnerBePayingACanadaStudentLoanAndOrAProvincialStudentLoanRegularScheduledPaymentsDuringTheYourStudyPeriodPanel",
-              "conditional": {
-                "show": true,
-                "when": "partnerstudentLoan",
-                "eq": "yes"
-              },
-              "type": "panel",
-              "label": "Panel",
-              "input": false,
-              "tableView": false,
-              "components": [
-                {
-                  "label": "Enter amount that your partner will pay during your study period.",
-                  "prefix": "$",
-                  "applyMaskOn": "change",
-                  "mask": false,
-                  "tableView": false,
-                  "delimiter": true,
-                  "requireDecimal": false,
-                  "inputFormat": "plain",
-                  "truncateMultipleSpaces": false,
-                  "validate": {
-                    "required": true,
-                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
-                  },
-                  "validateWhenHidden": false,
-                  "key": "partnerStudentLoanCosts",
-                  "conditional": {
-                    "show": true,
-                    "when": "partnerstudentLoan",
-                    "eq": "yes"
-                  },
-                  "type": "number",
-                  "decimalLimit": 0,
-                  "input": true
-                }
-              ],
-              "allowPrevious": false
-            },
-            {
-              "label": "Will your partner be paying for child support and/or spousal support during your study period?",
-              "optionsLabelPosition": "right",
-              "inline": false,
-              "tableView": false,
-              "values": [
-                {
-                  "label": "Yes",
-                  "value": "yes",
-                  "shortcut": ""
-                },
-                {
-                  "label": "No",
-                  "value": "no",
-                  "shortcut": ""
-                }
-              ],
-              "validate": {
-                "required": true,
-                "onlyAvailableItems": true
-              },
-              "key": "partnerchildSupport",
-              "attributes": {
-                "data-cy": "partnerchildSupport"
-              },
-              "type": "radio",
-              "input": true
-            },
-            {
-              "title": "Will your partner be paying for child support and/or spousal support during your study period Panel",
-              "breadcrumbClickable": false,
-              "buttonSettings": {
-                "previous": false,
-                "cancel": false,
-                "next": false
-              },
-              "collapsible": false,
-              "hideLabel": true,
-              "key": "willYourPartnerBePayingForChildSupportAndOrSpousalSupportDuringTheYourStudyPeriodPanel",
-              "conditional": {
-                "show": true,
-                "when": "partnerchildSupport",
-                "eq": "yes"
-              },
-              "type": "panel",
-              "label": "Panel",
-              "input": false,
-              "tableView": false,
-              "components": [
-                {
-                  "label": "Enter amount that your partner will pay during your study period.",
-                  "prefix": "$",
-                  "applyMaskOn": "change",
-                  "mask": false,
-                  "tableView": false,
-                  "delimiter": true,
-                  "requireDecimal": false,
-                  "inputFormat": "plain",
-                  "truncateMultipleSpaces": false,
-                  "validate": {
-                    "required": true,
-                    "custom": "valid = (input >= 0 && input < data.maxIncome) ? true : 'The number you have entered is outside the expected range.';"
-                  },
-                  "validateWhenHidden": false,
-                  "key": "partnerchildsupportCosts",
-                  "conditional": {
-                    "show": true,
-                    "when": "partnerchildSupport",
-                    "eq": "yes"
-                  },
-                  "type": "number",
-                  "decimalLimit": 0,
-                  "input": true
-                }
-              ],
-              "allowPrevious": false
-            }
-          ]
+          "label": "Is partner name match",
+          "persistent": false,
+          "calculateValue": "const studentFullName = `${data.studentGivenNames ?? ''} ${data.studentLastName}`.trim().toLowerCase();\nvalue = data.partnerFullName?.trim().toLowerCase() === studentFullName;",
+          "key": "isPartnerNameMatch",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
         }
       ]
     },

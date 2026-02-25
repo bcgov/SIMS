@@ -3,7 +3,7 @@
   <student-page-container>
     <template #header>
       <header-navigator
-        title="Student Forms"
+        title="Forms"
         :sub-title="referenceForm?.category"
         :route-location="backRouteLocation"
       />
@@ -19,9 +19,10 @@
       </template>
       <form-submission-items
         :submission-items="formSubmissionItems"
+        :application-id="applicationId"
         @submitted="submitted"
       >
-        <template #actions="{ submit }">
+        <template #actions="{ submit, allFormsLoaded }">
           <footer-buttons
             justify="space-between"
             :processing="processing"
@@ -29,6 +30,7 @@
             secondary-label="Back"
             @primary-click="submit"
             primary-label="Submit for review"
+            :disable-primary-button="!allFormsLoaded"
           ></footer-buttons>
         </template>
       </form-submission-items>
@@ -43,13 +45,12 @@ import {
   FormSubmissionItem,
   FormSubmissionItemSubmitted,
 } from "@/types";
-import { ApplicationService } from "@/services/ApplicationService";
 import { useSnackBar } from "@/composables";
-import { AppealApplicationDetailsAPIOutDTO } from "@/services/http/dto";
 import FormSubmissionItems from "@/components/form-submissions/FormSubmissionItems.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
+import { FORM_SUBMISSION_PENDING_DECISION } from "@/constants";
 
 export default defineComponent({
   components: {
@@ -74,17 +75,23 @@ export default defineComponent({
 
     const referenceForm = computed(() => formSubmissionItems.value[0]);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const submitted = async (_items: FormSubmissionItemSubmitted[]) => {
+    const submitted = async (items: FormSubmissionItemSubmitted[]) => {
       try {
-        // TODO: Submit form.
         processing.value = true;
+        await FormSubmissionService.shared.submitForm({
+          applicationId: props.applicationId,
+          items,
+        });
         snackBar.success("The student form has been submitted successfully.");
         router.push({
           name: StudentRoutesConst.STUDENT_FORMS_HISTORY,
         });
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
+          if (error.errorType === FORM_SUBMISSION_PENDING_DECISION) {
+            snackBar.warn(error.message);
+            return;
+          }
           snackBar.error(error.message);
           return;
         }
@@ -97,21 +104,6 @@ export default defineComponent({
     };
 
     watchEffect(async () => {
-      let application: AppealApplicationDetailsAPIOutDTO | undefined =
-        undefined;
-      if (props.applicationId) {
-        try {
-          application =
-            await ApplicationService.shared.getApplicationForRequestChange(
-              props.applicationId,
-            );
-        } catch {
-          snackBar.error(
-            "An unexpected error happened while retrieving the application information.",
-          );
-          return;
-        }
-      }
       const formConfigurations =
         await FormSubmissionService.shared.getSubmissionForms();
       formSubmissionItems.value =
@@ -130,10 +122,7 @@ export default defineComponent({
             formType: formConfiguration.formType,
             category: formConfiguration.formCategory,
             formName: formConfiguration.formDefinitionName,
-            formData: {
-              programYear: application?.programYear,
-              parents: application?.supportingUserParents,
-            },
+            formData: {},
           };
         });
     });

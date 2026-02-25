@@ -185,3 +185,9 @@ export const INSTITUTION_RESTRICTION_ALREADY_ACTIVE =
  */
 export const NO_LOCATION_SELECTED_FOR_DESIGNATION =
   "NO_LOCATION_SELECTED_FOR_DESIGNATION";
+
+/**
+ * There is already a form submission pending a decision for the same context.
+ */
+export const FORM_SUBMISSION_PENDING_DECISION =
+  "FORM_SUBMISSION_PENDING_DECISION";

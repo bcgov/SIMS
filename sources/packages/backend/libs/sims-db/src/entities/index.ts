@@ -1,4 +1,5 @@
 export * from "./base.model";
+export * from "./common.models";
 export * from "./record.model";
 export * from "./supplier-status.type";
 export * from "./cas-supplier.model";
@@ -33,8 +34,8 @@ export * from "./offering-intensity.type";
 export * from "./cra-income-verification.model";
 export * from "./supporting-user-type.type";
 export * from "./supporting-user.model";
-export * from "./restriction.model";
 export * from "./restriction.type";
+export * from "./restriction.model";
 export * from "./student-restriction.model";
 export * from "./sfas-individual.model";
 export * from "./base-sfas-application.model";

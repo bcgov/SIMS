@@ -1,6 +1,7 @@
 import { RestrictedParty, RestrictionCode } from "@sims/services";
 import {
   ActionEffectiveCondition,
+  ApplicationRestrictionBypass,
   DisabilityStatus,
   DisbursementSchedule,
   DisbursementValueType,
@@ -214,33 +215,58 @@ export class InstitutionActiveRestriction extends BaseActiveRestriction {
   /**
    * Specific program the restriction applies to.
    */
-  program: EducationProgram;
+  program?: EducationProgram;
   /**
    * Specific location the restriction applies to.
    */
-  location: InstitutionLocation;
+  location?: InstitutionLocation;
 }
 
 /**
  * Restriction bypass active for the application.
  */
-export interface ApplicationActiveRestrictionBypass {
+export class ApplicationActiveRestrictionBypass {
   /**
    * Bypass ID.
    */
-  id: number;
+  readonly id: number;
   /**
    * Restriction code being bypassed.
    */
-  restrictionCode: string;
+  readonly restrictionCode: string;
   /**
    * Student restriction bypassed.
    */
-  studentRestrictionId: number;
+  readonly studentRestrictionId?: number;
+  /**
+   * Institution restriction bypassed.
+   */
+  readonly institutionRestrictionId?: number;
   /**
    * Bypass behavior.
    */
-  bypassBehavior: RestrictionBypassBehaviors;
+  readonly bypassBehavior: RestrictionBypassBehaviors;
+  /**
+   * Bypassed restriction id.
+   */
+  readonly bypassedRestrictionId: number;
+  /**
+   * Bypassed restriction.
+   * Either student or institution restriction.
+   */
+  private readonly bypassedRestriction:
+    | StudentRestriction
+    | InstitutionRestriction;
+  constructor(bypass: ApplicationRestrictionBypass) {
+    this.bypassedRestriction =
+      bypass.studentRestriction ?? bypass.institutionRestriction;
+    this.id = bypass.id;
+    this.restrictionCode = this.bypassedRestriction.restriction.restrictionCode;
+    this.studentRestrictionId = bypass.studentRestriction?.id;
+    this.institutionRestrictionId = bypass.institutionRestriction?.id;
+    this.bypassBehavior = bypass.bypassBehavior;
+    this.bypassedRestrictionId = this.bypassedRestriction.id;
+  }
 }
 
 /**
@@ -265,6 +291,7 @@ export type EligibleECertOffering = Pick<
  */
 export class EligibleECertDisbursement {
   private readonly studentRestrictionsBypassedIds: number[];
+  private readonly institutionRestrictionsBypassedIds: number[];
   /**
    * Creates a new instance of a eligible e-Cert to be calculated.
    * @param studentId student id.
@@ -310,9 +337,12 @@ export class EligibleECertDisbursement {
     private readonly restrictionBypass: ApplicationActiveRestrictionBypass[],
     private readonly institutionRestrictions: InstitutionActiveRestriction[],
   ) {
-    this.studentRestrictionsBypassedIds = this.restrictionBypass.map(
-      (bypass) => bypass.studentRestrictionId,
-    );
+    this.studentRestrictionsBypassedIds = this.restrictionBypass
+      .filter((bypass) => !!bypass.studentRestrictionId)
+      .map((bypass) => bypass.studentRestrictionId);
+    this.institutionRestrictionsBypassedIds = this.restrictionBypass
+      .filter((bypass) => !!bypass.institutionRestrictionId)
+      .map((bypass) => bypass.institutionRestrictionId);
   }
 
   /**
@@ -376,7 +406,7 @@ export class EligibleECertDisbursement {
   }
 
   /**
-   * List the effective institution restrictions for the given disbursement.
+   * List the effective institution restrictions not bypassed for the given disbursement.
    * @returns Effective institution restrictions.
    */
   private getEffectiveInstitutionRestrictions(): ReadonlyArray<InstitutionActiveRestriction> {
@@ -384,8 +414,11 @@ export class EligibleECertDisbursement {
     const locationId = this.offering.institutionLocation.id;
     return this.institutionRestrictions.filter(
       (restriction) =>
-        restriction.program.id === programId &&
-        restriction.location.id === locationId,
+        restriction.program?.id === programId &&
+        restriction.location?.id === locationId &&
+        !this.institutionRestrictionsBypassedIds.includes(
+          restriction.institutionRestrictionId,
+        ),
     );
   }
 

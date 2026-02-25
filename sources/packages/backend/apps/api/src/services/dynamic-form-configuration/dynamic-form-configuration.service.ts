@@ -99,4 +99,15 @@ export class DynamicFormConfigurationService {
       formCategories.includes(dynamicFormConfiguration.formCategory),
     );
   }
+
+  /**
+   * Get a form configuration by its id.
+   * @param formId form id.
+   * @returns dynamic form configuration for the requested id.
+   */
+  getFormById(formId: number): DynamicFormConfiguration | undefined {
+    return this.dynamicFormConfigurations.find(
+      (dynamicFormConfiguration) => dynamicFormConfiguration.id === formId,
+    );
+  }
 }

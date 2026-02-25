@@ -24,7 +24,7 @@ import {
 export function createFakeCreateIdentifiableSupportingUsersPayload(options: {
   applicationId: number;
   supportingUserType: SupportingUserType;
-  parent: 1 | 2;
+  parent?: 1 | 2;
   isAbleToReport: boolean;
 }): Readonly<
   ZeebeJob<
@@ -41,9 +41,10 @@ export function createFakeCreateIdentifiableSupportingUsersPayload(options: {
     variables: {
       [APPLICATION_ID]: options.applicationId,
       [SUPPORTING_USER_TYPE]: options.supportingUserType,
-      [FULL_NAME_PROPERTY_FILTER]: `$.parents[${
-        options.parent - 1
-      }].parentFullName`,
+      [FULL_NAME_PROPERTY_FILTER]:
+        options.supportingUserType === SupportingUserType.Parent
+          ? `$.parents[${options.parent - 1}].parentFullName`
+          : `partnerFullName`,
       [IS_ABLE_TO_REPORT]: options.isAbleToReport,
     },
   });

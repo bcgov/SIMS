@@ -13,3 +13,4 @@ export * from "./pagination-utils";
 export * from "./address-utils";
 export * from "./http-utils";
 export * from "./institution-utils";
+export * from "./metadata-utils";

@@ -223,6 +223,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataPartnerHasFedralProvincialPDReceipt?: YesNoOptions; // No longer used in PY 26/27 and beyond.
   studentDataPartnerHasTotalIncomeAssistance?: YesNoOptions; // No longer used in PY 26/27 and beyond.
   studentDataPartnerBCEAIncomeAssistanceAmount?: number; // No longer used in PY 26/27 and beyond.
+  studentDataPartnerIsAbleToReport?: YesNoOptions;
   partner1HasEmploymentInsuranceBenefits?: YesNoOptions;
   partner1HasFedralProvincialPDReceipt?: YesNoOptions;
   partner1HasTotalIncomeAssistance?: YesNoOptions;

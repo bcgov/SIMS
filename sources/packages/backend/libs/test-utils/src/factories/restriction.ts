@@ -17,20 +17,21 @@ export function createFakeRestriction(options?: {
 }): Restriction {
   const restriction = new Restriction();
   restriction.restrictionType =
-    options?.initialValues.restrictionType ?? RestrictionType.Provincial;
+    options?.initialValues?.restrictionType ?? RestrictionType.Provincial;
   restriction.restrictionCategory =
-    options?.initialValues.restrictionCategory ?? "Other";
+    options?.initialValues?.restrictionCategory ?? "Other";
   restriction.restrictionCode =
-    options?.initialValues.restrictionCode ??
+    options?.initialValues?.restrictionCode ??
     faker.string.alpha({ length: 10, casing: "upper" });
   restriction.description =
-    options?.initialValues.description ?? faker.lorem.words(2);
-  restriction.actionType = options?.initialValues.actionType ?? [
+    options?.initialValues?.description ?? faker.lorem.words(2);
+  restriction.actionType = options?.initialValues?.actionType ?? [
     RestrictionActionType.NoEffect,
   ];
   restriction.notificationType =
-    options?.initialValues.notificationType ??
+    options?.initialValues?.notificationType ??
     RestrictionNotificationType.NoEffect;
-  restriction.isLegacy = options?.initialValues.isLegacy ?? false;
+  restriction.isLegacy = options?.initialValues?.isLegacy ?? false;
+  restriction.metadata = options?.initialValues?.metadata;
   return restriction;
 }
