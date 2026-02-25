@@ -84,7 +84,8 @@ export class SupportingUserAESTController {
       email: supportingUserForApplication.user?.email,
       firstName: supportingUserForApplication.user?.firstName,
       lastName: supportingUserForApplication.user?.lastName,
-      parentFullName: supportingUserForApplication.fullName,
+      fullName: supportingUserForApplication.fullName,
+      supportingUserType: supportingUserForApplication.supportingUserType,
       personalInfo: {
         givenNames: supportingUserForApplication.personalInfo?.givenNames,
         lastName: supportingUserForApplication.personalInfo?.lastName,

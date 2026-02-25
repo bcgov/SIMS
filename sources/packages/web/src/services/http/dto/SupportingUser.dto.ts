@@ -75,7 +75,8 @@ export interface SupportingUserFormDataAPIOutDTO {
   firstName: string;
   lastName: string;
   personalInfo: SupportingUserPersonalInfoAPIOutDTO;
-  parentFullName: string;
+  fullName: string;
+  supportingUserType: SupportingUserType;
 }
 
 export class SupportingUserPersonalInfoAPIOutDTO {
@@ -91,6 +92,7 @@ export interface ReportedSupportingUserAPIOutDTO {
   formName: string;
   isAbleToReport: boolean;
   programYearStartDate: string;
+  supportingUserType: SupportingUserType;
 }
 
 /**

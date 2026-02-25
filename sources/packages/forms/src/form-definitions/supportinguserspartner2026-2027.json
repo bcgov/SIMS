@@ -113,7 +113,7 @@
           "key": "html1",
           "conditional": {
             "show": true,
-            "when": "hidden",
+            "when": "isAbleToReport",
             "eq": "true"
           },
           "type": "htmlelement",
@@ -127,7 +127,7 @@
           "key": "panel1",
           "conditional": {
             "show": true,
-            "when": "hidden",
+            "when": "isAbleToReport",
             "eq": "true"
           },
           "type": "panel",

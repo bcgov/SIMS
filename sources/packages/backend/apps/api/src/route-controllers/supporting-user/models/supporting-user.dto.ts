@@ -131,7 +131,8 @@ export class SupportingUserFormDataAPIOutDTO {
   email: string;
   firstName: string;
   lastName: string;
-  parentFullName: string;
+  fullName: string;
+  supportingUserType: SupportingUserType;
   personalInfo: SupportingUserPersonalInfoAPIOutDTO;
 }
 
@@ -149,6 +150,7 @@ export class ReportedSupportingUserAPIOutDTO {
   formName: string;
   isAbleToReport: boolean;
   programYearStartDate: string;
+  supportingUserType?: SupportingUserType;
 }
 
 /**

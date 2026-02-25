@@ -24,6 +24,7 @@ describe("SupportingUserAESTController(e2e)-getIdentifiableSupportingUser", () =
   let app: INestApplication;
   let db: E2EDataSources;
   let recentPYParentForm: DynamicFormConfiguration;
+  let recentPYPartnerForm: DynamicFormConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -38,6 +39,19 @@ describe("SupportingUserAESTController(e2e)-getIdentifiableSupportingUser", () =
       relations: { programYear: true },
       where: {
         formType: DynamicFormType.SupportingUsersParent,
+        programYear: { active: true },
+      },
+      order: { programYear: { startDate: "DESC" } },
+    });
+    recentPYPartnerForm = await db.dynamicFormConfiguration.findOne({
+      select: {
+        id: true,
+        programYear: { id: true, startDate: true },
+        formDefinitionName: true,
+      },
+      relations: { programYear: true },
+      where: {
+        formType: DynamicFormType.SupportingUsersPartner,
         programYear: { active: true },
       },
       order: { programYear: { startDate: "DESC" } },
@@ -80,16 +94,85 @@ describe("SupportingUserAESTController(e2e)-getIdentifiableSupportingUser", () =
         formName: recentPYParentForm.formDefinitionName,
         isAbleToReport: false,
         programYearStartDate: recentPYParentForm.programYear.startDate,
-        parentFullName: parentFullName,
+        fullName: parentFullName,
         supportingData: null,
         contactInfo: null,
         sin: null,
         birthDate: null,
+        supportingUserType: SupportingUserType.Parent,
         personalInfo: {
           givenNames: "TestGivenNames",
           lastName: "TestLastName",
           hasValidSIN: FormYesNoOptions.Yes,
         },
+      });
+  });
+
+  it("Should get supporting user data when the supporting user is a partner with personal information.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource, {
+      programYear: recentPYParentForm.programYear,
+    });
+
+    const partnerFullName = faker.string.alpha({ length: 50 });
+    const partner = createFakeSupportingUser(
+      { application },
+      {
+        initialValues: {
+          isAbleToReport: false,
+          supportingUserType: SupportingUserType.Partner,
+          fullName: partnerFullName,
+          personalInfo: {
+            givenNames: "TestGivenNames",
+            lastName: "TestLastName",
+            hasValidSIN: FormYesNoOptions.Yes,
+          },
+        },
+      },
+    );
+    await db.supportingUser.save(partner);
+
+    const endpoint = `/aest/supporting-user/${partner.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        formName: recentPYPartnerForm.formDefinitionName,
+        isAbleToReport: false,
+        programYearStartDate: recentPYPartnerForm.programYear.startDate,
+        fullName: partnerFullName,
+        supportingData: null,
+        contactInfo: null,
+        sin: null,
+        birthDate: null,
+        supportingUserType: SupportingUserType.Partner,
+        personalInfo: {
+          givenNames: "TestGivenNames",
+          lastName: "TestLastName",
+          hasValidSIN: FormYesNoOptions.Yes,
+        },
+      });
+  });
+
+  it("Should throw not found error when the supporting user id is invalid.", async () => {
+    // Arrange
+    const supportingUserId = 99999;
+    const endpoint = `/aest/supporting-user/${supportingUserId}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: `Supporting user ${supportingUserId} details not found or Supporting user has not submitted the form`,
+        error: "Not Found",
       });
   });
 

@@ -90,6 +90,7 @@ export class SupportingUserStudentsController {
       formName,
       isAbleToReport: supportingUser.isAbleToReport,
       programYearStartDate: supportingUser.application.programYear.startDate,
+      supportingUserType: supportingUser.supportingUserType,
     };
   }
 
