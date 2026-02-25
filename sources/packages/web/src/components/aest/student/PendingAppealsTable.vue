@@ -17,10 +17,22 @@
       </v-text-field>
     </template>
   </body-header>
+  <v-btn-toggle
+    v-if="showFilterToggle"
+    v-model="selectedFilter"
+    mandatory
+    color="primary"
+    class="mb-4"
+    density="compact"
+  >
+    <v-btn value="all" rounded="lg">All</v-btn>
+    <v-btn value="application" rounded="lg">Application</v-btn>
+    <v-btn value="other" rounded="lg">Other</v-btn>
+  </v-btn-toggle>
   <content-group>
     <toggle-content :toggled="!applicationAppeals.count && !isLoading">
       <v-data-table-server
-        :headers="PendingChangeRequestsTableHeaders"
+        :headers="tableHeaders"
         :items="applicationAppeals.results"
         :items-length="applicationAppeals.count"
         :loading="isLoading"
@@ -40,6 +52,9 @@
         <template #[`item.applicationNumber`]="{ item }">
           {{ emptyStringFiller(item.applicationNumber) }}
         </template>
+        <template #[`item.appealType`]="{ item }">
+          {{ item.applicationId ? "Application" : "Other" }}
+        </template>
         <template #[`item.action`]="{ item }">
           <v-btn color="primary" @click="goToAppealsApproval(item)">View</v-btn>
         </template>
@@ -49,7 +64,7 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted, defineComponent, computed } from "vue";
+import { ref, onMounted, defineComponent, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import {
   DEFAULT_PAGE_LIMIT,
@@ -57,6 +72,7 @@ import {
   DataTableSortByOrder,
   PaginatedResults,
   PendingChangeRequestsTableHeaders,
+  PendingAppealsTableHeaders,
   DataTableOptions,
   PaginationOptions,
   DEFAULT_DATATABLE_PAGE_NUMBER,
@@ -72,6 +88,10 @@ export default defineComponent({
       type: String as () => "legacy-change-request" | "appeal",
       required: true,
     },
+    showFilterToggle: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const router = useRouter();
@@ -79,6 +99,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const isLoading = ref(false);
     const searchCriteria = ref("");
+    const selectedFilter = ref<"all" | "application" | "other">("all");
     const applicationAppeals = ref(
       {} as PaginatedResults<StudentAppealPendingSummaryAPIOutDTO>,
     );
@@ -101,6 +122,12 @@ export default defineComponent({
       return props.appealsType === "legacy-change-request"
         ? "Change requests that require ministry review."
         : "Appeals that require ministry review.";
+    });
+
+    const tableHeaders = computed(() => {
+      return props.showFilterToggle
+        ? PendingAppealsTableHeaders
+        : PendingChangeRequestsTableHeaders;
     });
 
     const goToAppealsApproval = (
@@ -127,6 +154,12 @@ export default defineComponent({
     const loadAppeals = async () => {
       try {
         isLoading.value = true;
+        // When showFilterToggle is enabled, the new combined appeal type filter values
+        // ("all", "application", "other") are used. These require the corresponding
+        // backend changes to be completed before they will return results.
+        const appealTypeParam = props.showFilterToggle
+          ? selectedFilter.value
+          : props.appealsType;
         applicationAppeals.value =
           await StudentAppealService.shared.getPendingAppeals({
             page: currentPagination.page,
@@ -134,7 +167,7 @@ export default defineComponent({
             sortField: currentPagination.sortField,
             sortOrder: currentPagination.sortOrder,
             searchCriteria: {
-              appealType: props.appealsType,
+              appealType: appealTypeParam,
               searchCriteria: searchCriteria.value,
             },
           });
@@ -167,18 +200,23 @@ export default defineComponent({
       await loadAppeals();
     });
 
+    watch(selectedFilter, async () => {
+      await loadAppeals();
+    });
+
     return {
       goToAppealsApproval,
       applicationAppeals,
       dateOnlyLongString,
       emptyStringFiller,
       isLoading,
-      PendingChangeRequestsTableHeaders,
+      tableHeaders,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
       searchAppeals,
       pageSortEvent,
       searchCriteria,
+      selectedFilter,
       pageTitle,
       pageDescription,
       currentPagination,

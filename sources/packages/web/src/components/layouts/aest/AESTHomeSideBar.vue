@@ -152,6 +152,15 @@ export default defineComponent({
         },
       },
       {
+        title: "Forms",
+        props: {
+          prependIcon: "mdi-file-document-outline",
+          to: {
+            name: AESTRoutesConst.PENDING_FORMS,
+          },
+        },
+      },
+      {
         type: "subheader",
         title: "Institution requests",
       },
