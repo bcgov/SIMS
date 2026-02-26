@@ -33,12 +33,14 @@ import {
   SaveEducationProgram,
   EducationProgramsSummary,
   PendingEducationProgram,
+  EducationProgramsLocationSummary,
 } from "./education-program.service.models";
 import {
   sortProgramsColumnMap,
   PaginatedResults,
   ProgramPaginationOptions,
   PaginationOptions,
+  ProgramLocationPaginationOptions,
 } from "../../utilities";
 import {
   CustomNamedError,
@@ -374,11 +376,34 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       queryParams.push(!paginationOptions.inactiveProgramSearch);
     }
 
-    return this.preparePaginatedProgramQuery(
+    const totalQuery = programQuery.getSql();
+    const paginatedProgramQuery = await this.preparePaginatedProgramQuery(
       programQuery,
       paginationOptions,
-      queryParams,
     );
+
+    // Total count and summary.
+    const [totalCount, programsQuery] = await Promise.all([
+      getRawCount(this.repo, totalQuery, queryParams),
+      paginatedProgramQuery.getRawMany(),
+    ]);
+
+    const programSummary = programsQuery.map((program) => ({
+      programId: program.programId,
+      programName: program.programName,
+      submittedDate: program.programSubmittedAt,
+      programStatus: program.programStatus,
+      isActive: program.isActive,
+      isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
+      totalOfferings: program.totalOfferings,
+      locationId: program.locationId,
+      locationName: program.locationName,
+    }));
+
+    return {
+      results: programSummary,
+      count: totalCount,
+    };
   }
 
   /**
@@ -394,9 +419,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   async getProgramsSummaryForLocation(
     institutionId: number,
     offeringTypes: OfferingTypes[],
-    paginationOptions: ProgramPaginationOptions,
+    paginationOptions: ProgramLocationPaginationOptions,
     locationId: number,
-  ): Promise<PaginatedResults<EducationProgramsSummary>> {
+  ): Promise<PaginatedResults<EducationProgramsLocationSummary>> {
     const { programQuery, queryParams } = this.getProgramsQueryWithQueryParams(
       offeringTypes,
       institutionId,
@@ -448,11 +473,37 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         }
       }),
     );
-    return this.preparePaginatedProgramQuery(
+    const totalQuery = programQuery.getSql();
+    const paginatedProgramQuery = await this.preparePaginatedProgramQuery(
       programQuery,
       paginationOptions,
-      queryParams,
     );
+
+    // Total count and summary.
+    const [totalCount, programsQuery] = await Promise.all([
+      getRawCount(this.repo, totalQuery, queryParams),
+      paginatedProgramQuery.getRawMany(),
+    ]);
+
+    const programSummary = programsQuery.map((program) => ({
+      programId: program.programId,
+      programName: program.programName,
+      sabcCode: program.sabcCode,
+      cipCode: program.cipCode,
+      credentialType: program.credentialType,
+      submittedDate: program.programSubmittedAt,
+      programStatus: program.programStatus,
+      isActive: program.isActive,
+      isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
+      totalOfferings: program.totalOfferings,
+      locationId: program.locationId,
+      locationName: program.locationName,
+    }));
+
+    return {
+      results: programSummary,
+      count: totalCount,
+    };
   }
 
   /**
@@ -935,17 +986,11 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * Prepares the paginated query and the count.
    * @param paginatedProgramQuery paginated program query.
    * @param paginationOptions pagination options.
-   * @param queryParams query parameters.
-   * @returns paginated result along with the count.
    */
   private async preparePaginatedProgramQuery(
     paginatedProgramQuery: SelectQueryBuilder<EducationProgram>,
     paginationOptions: PaginationOptions,
-    queryParams: unknown[],
-  ): Promise<PaginatedResults<EducationProgramsSummary>> {
-    // For getting total raw count before pagination.
-    const sqlQuery = paginatedProgramQuery.getSql();
-
+  ): Promise<SelectQueryBuilder<EducationProgram>> {
     if (paginationOptions.pageLimit) {
       paginatedProgramQuery.limit(paginationOptions.pageLimit);
     }
@@ -969,32 +1014,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       // Default sort: program name ascending.
       paginatedProgramQuery.orderBy("programs.name", "ASC");
     }
-
-    // Total count and summary.
-    const [totalCount, programsQuery] = await Promise.all([
-      getRawCount(this.repo, sqlQuery, queryParams),
-      paginatedProgramQuery.getRawMany(),
-    ]);
-
-    const programSummary = programsQuery.map((program) => ({
-      programId: program.programId,
-      programName: program.programName,
-      cipCode: program.cipCode,
-      sabcCode: program.sabcCode,
-      credentialType: program.credentialType,
-      submittedDate: program.programSubmittedAt,
-      programStatus: program.programStatus,
-      isActive: program.isActive,
-      isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
-      totalOfferings: program.totalOfferings,
-      locationId: program.locationId,
-      locationName: program.locationName,
-    }));
-
-    return {
-      results: programSummary,
-      count: totalCount,
-    };
+    return paginatedProgramQuery;
   }
 
   /**

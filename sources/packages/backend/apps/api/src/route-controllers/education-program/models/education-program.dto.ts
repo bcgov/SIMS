@@ -76,6 +76,18 @@ export class StudentEducationProgramAPIOutDTO {
 export class EducationProgramsSummaryAPIOutDTO {
   programId: number;
   programName: string;
+  totalOfferings: number;
+  submittedDate: Date;
+  locationName: string;
+  locationId: number;
+  programStatus: ProgramStatus;
+  isActive: boolean;
+  isExpired: boolean;
+}
+
+export class EducationProgramsSummaryLocationAPIOutDTO {
+  programId: number;
+  programName: string;
   cipCode: string;
   sabcCode?: string;
   credentialType: string;

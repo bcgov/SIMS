@@ -57,6 +57,18 @@ export interface SaveEducationProgram {
 export interface EducationProgramsSummary {
   programId: number;
   programName: string;
+  submittedDate: Date;
+  programStatus: ProgramStatus;
+  isActive: boolean;
+  isExpired: boolean;
+  totalOfferings: number;
+  locationId: number;
+  locationName: string;
+}
+
+export interface EducationProgramsLocationSummary {
+  programId: number;
+  programName: string;
   cipCode: string;
   sabcCode?: string;
   credentialType: string;

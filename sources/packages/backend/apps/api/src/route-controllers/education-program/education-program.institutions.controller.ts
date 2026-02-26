@@ -32,7 +32,7 @@ import {
 import BaseController from "../BaseController";
 import {
   PaginatedResultsAPIOutDTO,
-  ProgramsPaginationOptionsAPIInDTO,
+  ProgramsLocationPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
 import { EducationProgramControllerService } from "..";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
@@ -58,10 +58,10 @@ export class EducationProgramInstitutionsController extends BaseController {
   @Get("location/:locationId/summary")
   async getProgramsSummaryByLocationId(
     @Param("locationId", ParseIntPipe) locationId: number,
-    @Query() paginationOptions: ProgramsPaginationOptionsAPIInDTO,
+    @Query() paginationOptions: ProgramsLocationPaginationOptionsAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummary>> {
-    return this.educationProgramControllerService.getProgramsSummary(
+    return this.educationProgramControllerService.getProgramsSummaryForLocation(
       userToken.authorizations.institutionId,
       paginationOptions,
       locationId,
