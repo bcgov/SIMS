@@ -376,17 +376,23 @@ export class ECEResponseProcessingService {
             .filter((award) => award.enrolmentConfirmationFlag === YNOptions.Y)
             .map((award) => award.payToSchoolAmount)
             .reduce((accumulator, currentValue) => accumulator + currentValue);
-          await this.confirmationOfEnrollmentService.confirmEnrollment(
-            +disbursementScheduleId,
-            auditUserId,
-            tuitionRemittance,
-            {
-              enrolmentConfirmationDate:
-                confirmedEnrolmentDetails.enrolmentConfirmationDate,
-              applicationNumber: disbursementDetails.applicationNumber,
-            },
-          );
+          const result =
+            await this.confirmationOfEnrollmentService.confirmEnrollment(
+              +disbursementScheduleId,
+              auditUserId,
+              tuitionRemittance,
+              {
+                enrolmentConfirmationDate:
+                  confirmedEnrolmentDetails.enrolmentConfirmationDate,
+                applicationNumber: disbursementDetails.applicationNumber,
+              },
+            );
           ++disbursementProcessingDetails.disbursementsSuccessfullyProcessed;
+          if (result.isTuitionRemittanceRemovedOnRestriction) {
+            processSummary.warnings.push(
+              `Disbursement ${disbursementScheduleId} had remittance requested and due to restrictions will not be submitted.`,
+            );
+          }
           processSummary.summary.push(
             `Disbursement ${disbursementScheduleId}, enrolment confirmed.`,
           );

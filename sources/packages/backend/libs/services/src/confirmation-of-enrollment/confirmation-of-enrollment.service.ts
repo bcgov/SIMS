@@ -22,6 +22,7 @@ import {
 import {
   Award,
   COEApprovalPeriodStatus,
+  ConfirmEnrolmentResult,
   EnrollmentPeriod,
   MaxTuitionRemittanceTypes,
   OfferingCosts,
@@ -581,7 +582,7 @@ export class ConfirmationOfEnrollmentService {
    * - `allowOutsideCOEApprovalPeriod` allow COEs which are outside the valid COE confirmation period to be confirmed..
    * - `enrolmentConfirmationDate` date of enrolment confirmation.
    * - `applicationNumber` application number of the enrolment.
-   * - `canZeroTuitionRemittanceOnRestriction` allow the tuition remittance to be set to zero
+   * - `canRemoveTuitionRemittanceOnRestriction` allow the tuition remittance to be removed
    *   when there is an effective restriction that does not allow to request tuition remittance
    *   and the requested tuition remittance amount is greater than zero.
    */
@@ -594,9 +595,10 @@ export class ConfirmationOfEnrollmentService {
       allowOutsideCOEApprovalPeriod?: boolean;
       enrolmentConfirmationDate?: Date;
       applicationNumber?: string;
-      canZeroTuitionRemittanceOnRestriction?: boolean;
+      canRemoveTuitionRemittanceOnRestriction?: boolean;
     },
-  ): Promise<void> {
+  ): Promise<ConfirmEnrolmentResult> {
+    let isTuitionRemittanceRemovedOnRestriction = false;
     // Get the disbursement and application summary for COE.
     const disbursementSchedule =
       await this.getDisbursementAndApplicationSummary(
@@ -684,14 +686,17 @@ export class ConfirmationOfEnrollmentService {
     // then the tuition remittance amount will be set to 0 if it is allowed by options,
     // otherwise an error will be thrown.
     if (!canRequestedTuitionRemittance && tuitionRemittanceAmount > 0) {
-      if (!options?.canZeroTuitionRemittanceOnRestriction) {
+      if (options?.canRemoveTuitionRemittanceOnRestriction) {
         tuitionRemittanceAmount = 0;
+        isTuitionRemittanceRemovedOnRestriction = true;
       }
-      // Throw error if not allowed to set the tuition remittance to 0.
-      throw new CustomNamedError(
-        "Tuition remittance cannot be requested for the disbursement.",
-        TUITION_REMITTANCE_NOT_ALLOWED,
-      );
+      // Throw error if not allowed to remove tuition remittance on restriction.
+      else {
+        throw new CustomNamedError(
+          "Tuition remittance cannot be requested for the disbursement.",
+          TUITION_REMITTANCE_NOT_ALLOWED,
+        );
+      }
     }
 
     // Validate tuition remittance amount.
@@ -710,6 +715,7 @@ export class ConfirmationOfEnrollmentService {
         .offering.offeringIntensity,
       options?.enrolmentConfirmationDate,
     );
+    return { isTuitionRemittanceRemovedOnRestriction };
   }
 
   /**
