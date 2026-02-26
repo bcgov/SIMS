@@ -26,7 +26,7 @@
       <v-row class="m-0 p-0 mb-4" align="center">
         <v-text-field
           density="compact"
-          label="Search program name, SABC program code or CIP"
+          label="Search Program name or SABC program code or CIP"
           variant="outlined"
           v-model="searchBox"
           @keyup.enter="searchProgramTable"
