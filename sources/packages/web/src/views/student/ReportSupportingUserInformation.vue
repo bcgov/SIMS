@@ -57,7 +57,7 @@ export default defineComponent({
       default: null,
     },
     supportingUserType: {
-      type: {} as PropType<SupportingUserType>,
+      type: String as PropType<SupportingUserType>,
       required: true,
     },
   },

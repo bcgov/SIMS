@@ -122,6 +122,24 @@ describe("SupportingUserAESTController(e2e)-getIdentifiableSupportingUser", () =
           isAbleToReport: false,
           supportingUserType: SupportingUserType.Partner,
           fullName: partnerFullName,
+          supportingData: {
+            totalIncome: 600000,
+            iAgreeToTheAboveCRAConsent: true,
+            iAgreeToAboveStudentAidBCConsent: true,
+          },
+          contactInfo: {
+            phone: "6045551234",
+            address: {
+              city: "Vancouver",
+              country: "Canada",
+              postalCode: "V1V1V1",
+              addressLine1: "123 Main St",
+              addressLine2: "Suite 100",
+              provinceState: "BC",
+            },
+          },
+          sin: "900000000",
+          birthDate: "1990-01-01",
           personalInfo: {
             givenNames: "TestGivenNames",
             lastName: "TestLastName",
@@ -145,10 +163,24 @@ describe("SupportingUserAESTController(e2e)-getIdentifiableSupportingUser", () =
         isAbleToReport: false,
         programYearStartDate: recentPYPartnerForm.programYear.startDate,
         fullName: partnerFullName,
-        supportingData: null,
-        contactInfo: null,
-        sin: null,
-        birthDate: null,
+        supportingData: {
+          totalIncome: 600000,
+          iAgreeToTheAboveCRAConsent: true,
+          iAgreeToAboveStudentAidBCConsent: true,
+        },
+        contactInfo: {
+          phone: "6045551234",
+          address: {
+            city: "Vancouver",
+            country: "Canada",
+            postalCode: "V1V1V1",
+            addressLine1: "123 Main St",
+            addressLine2: "Suite 100",
+            provinceState: "BC",
+          },
+        },
+        sin: "900000000",
+        birthDate: "1990-01-01",
         supportingUserType: SupportingUserType.Partner,
         personalInfo: {
           givenNames: "TestGivenNames",

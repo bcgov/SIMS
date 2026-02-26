@@ -38,5 +38,6 @@ export function createFakeSupportingUser(
     options?.initialValues?.isAbleToReport ?? true;
   supportingUser.user = relations?.user ?? null;
   supportingUser.personalInfo = options?.initialValues?.personalInfo ?? null;
+  supportingUser.contactInfo = options?.initialValues?.contactInfo ?? null;
   return supportingUser;
 }
