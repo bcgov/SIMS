@@ -223,7 +223,7 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
         programYear: recentPYParentForm.programYear,
       });
       const student = application.student;
-      // Create fake supporting user parent.
+      // Create fake supporting user partner.
       const partnerFullName = faker.string.alpha({ length: 50 });
       const partner = createFakeSupportingUser(
         { application },
