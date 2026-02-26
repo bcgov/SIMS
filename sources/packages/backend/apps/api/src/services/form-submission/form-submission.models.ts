@@ -50,3 +50,8 @@ export const FORM_SUBMISSION_APPROVAL_ROLES_MAP = new Map<FormCategory, Role>([
   [FormCategory.StudentAppeal, Role.StudentApproveDeclineAppeals],
   [FormCategory.StudentForm, Role.StudentApproveDeclineForms],
 ]);
+
+export interface FormSubmissionCompletionItem {
+  submissionItemId: number;
+  lastUpdateDate: Date;
+}

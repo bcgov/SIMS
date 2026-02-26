@@ -8,6 +8,7 @@ import {
   FormSupplementaryDataAPIOutDTO,
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionItemDecisionAPIInDTO,
+  FormSubmissionCompletionAPIInDTO,
 } from "@/services/http/dto";
 import {
   FormCategory,
@@ -179,11 +180,15 @@ export class FormSubmissionApi extends HttpBaseClient {
    * This is the final step of the form submission approval process for the Ministry, which indicates that
    * all decisions on the form items have been made and the form submission is completed.
    * @param formSubmissionId ID of the form submission to be completed.
+   * @param payload form submission completion details.
    */
-  async completeFormSubmission(formSubmissionId: number): Promise<void> {
+  async completeFormSubmission(
+    formSubmissionId: number,
+    payload: FormSubmissionCompletionAPIInDTO,
+  ): Promise<void> {
     await this.patchCall(
       this.addClientRoot(`form-submission/${formSubmissionId}/complete`),
-      null,
+      payload,
     );
   }
 }

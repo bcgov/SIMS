@@ -17,136 +17,117 @@
         :submission-items="formSubmissionItems"
         :read-only="true"
       >
-        <template #approval-form="{ approval }">
+        <template #decision="{ decision }" v-if="canShowDecisionDetails">
           <span class="category-header-medium brand-gray-text"
             >Current decision</span
           >
           <v-divider />
           <v-textarea
-            :ref="(el) => captureNoteRef(el, approval)"
+            :ref="(el) => captureNoteRef(el, decision)"
             class="my-4"
             label="Notes"
             variant="outlined"
-            v-model="approval.decisionNoteDescription"
+            v-model="decision.decisionNoteDescription"
             hide-details="auto"
             :rules="[
-              (v) => checkNotesLengthRule(v, `${approval.parentName}, notes`),
+              (v) => checkNotesLengthRule(v, `${decision.parentName}, notes`),
             ]"
             required
-            :readonly="approval.decisionSaved"
-            :disabled="readOnly || approval.saveDecisionInProgress"
+            :readonly="decision.decisionSaved"
+            :disabled="readOnly || decision.saveDecisionInProgress"
           />
           <v-row justify="space-between" class="mt-2 mb-1 mx-0">
             <v-input
-              v-model="approval.status"
+              v-model="decision.decisionStatus"
               :rules="[
                 (v: FormSubmissionDecisionStatus) =>
-                  hasDecisionRule(v, approval.parentName),
+                  hasDecisionRule(v, decision.parentName),
               ]"
               :hide-details="true"
             >
               <v-btn-toggle
                 density="compact"
-                v-model="approval.status"
+                v-model="decision.decisionStatus"
                 class="btn-toggle"
                 selected-class="selected-btn-toggle"
                 :disabled="
                   readOnly ||
-                  approval.saveDecisionInProgress ||
-                  approval.decisionSaved
+                  decision.saveDecisionInProgress ||
+                  decision.decisionSaved
                 "
                 mandatory
               >
                 <v-btn
-                  color="warning"
-                  :value="FormSubmissionDecisionStatus.Pending"
-                  >{{ FormSubmissionDecisionStatus.Pending }}</v-btn
-                >
-                <v-btn
+                  v-for="decisionStatus of decisionStatusOptions"
+                  :key="decisionStatus.value"
                   class="text-white"
-                  color="success"
-                  :value="FormSubmissionDecisionStatus.Approved"
-                  >{{ FormSubmissionDecisionStatus.Approved }}</v-btn
-                >
-                <v-btn
-                  color="danger"
-                  :value="FormSubmissionDecisionStatus.Declined"
-                  >{{ FormSubmissionDecisionStatus.Declined }}</v-btn
+                  :color="decisionStatus.color"
+                  :value="decisionStatus.value"
+                  >{{ decisionStatus.value }}</v-btn
                 >
               </v-btn-toggle>
             </v-input>
+            <!-- Allow editing a decision while the main submission is still pending. -->
             <template
-              v-if="approval.parentStatus === FormSubmissionStatus.Pending"
+              v-if="decision.parentStatus === FormSubmissionStatus.Pending"
             >
               <v-btn
-                v-if="approval.decisionSaved"
+                v-if="decision.decisionSaved"
                 class="float-right"
                 color="primary"
                 variant="outlined"
-                :loading="approval.saveDecisionInProgress"
-                @click="changeDecision(approval)"
+                :loading="decision.saveDecisionInProgress"
+                @click="changeDecision(decision)"
                 >Edit
                 <v-tooltip activator="parent" location="bottom"
                   >Allow changing the information previously
                   submitted.</v-tooltip
                 ></v-btn
               >
-              <v-btn
-                v-else
-                class="float-right"
-                color="primary"
-                variant="outlined"
-                :loading="approval.saveDecisionInProgress"
-                @click="saveDecision(approval)"
-                >Save
-                <v-tooltip activator="parent" location="bottom"
-                  >Save a decision for this item only. This decision is not
-                  final and can be reverted till the main submission is no
-                  longer pending.</v-tooltip
-                ></v-btn
-              >
+              <template v-else>
+                <v-btn
+                  class="float-right mr-2"
+                  color="primary"
+                  variant="outlined"
+                  :loading="decision.saveDecisionInProgress"
+                  @click="cancelChangeDecision(decision)"
+                  >Cancel
+                </v-btn>
+                <v-btn
+                  class="float-right"
+                  color="primary"
+                  :loading="decision.saveDecisionInProgress"
+                  @click="saveDecision(decision)"
+                  >Save
+                  <v-tooltip activator="parent" location="bottom"
+                    >Save a decision for this item only. This decision is not
+                    final and can be reverted till the main submission is no
+                    longer pending.</v-tooltip
+                  ></v-btn
+                >
+              </template>
             </template>
           </v-row>
           <v-input
             class="float-right"
-            v-model="approval.decisionSaved"
-            :rules="[(v) => v || `${approval.parentName}, must be saved.`]"
+            v-model="decision.decisionSaved"
+            :rules="[(v) => v || `${decision.parentName}, must be saved.`]"
             :hide-details="false"
           ></v-input>
-          <p
-            v-if="showApprovalDetails && approval.decisionBy"
-            class="brand-gray-text mt-4"
-          >
-            Last updated by <strong>{{ approval.decisionBy }}</strong> on
+          <!-- Audit for latest decision made on this item. -->
+          <p v-if="decision.decisionBy" class="brand-gray-text mt-4">
+            Last updated by <strong>{{ decision.decisionBy }}</strong> on
             <strong>{{
-              getISODateHourMinuteString(approval.decisionDate)
+              getISODateHourMinuteString(decision.decisionDate)
             }}</strong>
           </p>
-          <v-divider></v-divider>
-          <span
-            v-if="approval.decisionHistory?.length"
-            class="category-header-medium brand-gray-text"
-            >Decision history</span
-          >
-          <v-timeline density="compact" side="end" class="mt-4">
-            <v-timeline-item
-              v-for="decision in approval.decisionHistory"
-              :key="decision"
-              :dot-color="decision.statusColor"
-              size="x-small"
-            >
-              <v-alert>
-                <div class="content-footer secondary-color-light">
-                  <strong class="d-block">
-                    Saved as {{ decision.decisionStatus }} on
-                    {{ getISODateHourMinuteString(decision.decisionDate) }} by
-                    {{ decision.decisionBy }}
-                  </strong>
-                  {{ decision.decisionNoteDescription }}
-                </div>
-              </v-alert>
-            </v-timeline-item>
-          </v-timeline>
+          <!-- Timeline with the decision history. -->
+          <template v-if="decision.decisionHistory?.length">
+            <v-divider />
+            <form-submission-decision-history
+              :decision-history="decision.decisionHistory"
+            />
+          </template>
         </template>
       </form-submission-items>
     </v-form>
@@ -157,9 +138,7 @@
       secondary-label="Back"
       @primary-click="completeSubmission"
       primary-label="Submit final decision(s)"
-      :show-primary-button="
-        !readOnly && formSubmission.status === FormSubmissionStatus.Pending
-      "
+      :show-primary-button="canSubmitFinalDecision"
     ></footer-buttons>
   </body-header-container>
   <confirm-modal
@@ -167,15 +146,22 @@
     ref="outdatedDecisionModal"
     ok-label="Refresh data"
     cancel-label="Cancel"
-    text="This decision was updated and the displayed information in no longer the most updated one. Would you like to refresh the displayed data?"
+    text="This decision was updated and the displayed information in no longer the most updated one. Would you like to refresh this decision displayed data?"
+  />
+  <confirm-modal
+    title="Outdated decision(s)"
+    ref="outdatedDecisionItemsModal"
+    ok-label="Refresh data"
+    cancel-label="Cancel"
+    text="At least one decision was updated and the displayed information in no longer the most updated one. Would you like to refresh the entire form displayed data?"
   />
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watchEffect } from "vue";
+import { computed, defineComponent, ref, watchEffect } from "vue";
 import {
   FormSubmissionItem,
-  FormSubmissionItemApproval,
+  FormSubmissionItemDecision,
   FormSubmissionDecisionStatus,
   VForm,
   FormSubmissionStatus,
@@ -188,6 +174,7 @@ import {
   useSnackBar,
   useFormatters,
   ModalDialog,
+  useFormSubmission,
 } from "@/composables";
 import { VTextarea } from "vuetify/lib/components";
 import {
@@ -197,10 +184,17 @@ import {
 import StatusChipFormSubmission from "@/components/generic/StatusChipFormSubmission.vue";
 import { FORM_SUBMISSION_ITEM_OUTDATED } from "@/constants";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
+import FormSubmissionDecisionHistory from "./FormSubmissionDecisionHistory.vue";
+
+type FormSubmission = Pick<
+  FormSubmissionMinistryAPIOutDTO,
+  "id" | "formCategory" | "status" | "hasApprovalAuthorization"
+>;
 
 export default defineComponent({
   components: {
     FormSubmissionItems,
+    FormSubmissionDecisionHistory,
     StatusChipFormSubmission,
     ConfirmModal,
   },
@@ -214,7 +208,7 @@ export default defineComponent({
       required: false,
       default: false,
     },
-    showApprovalDetails: {
+    showDecisionDetails: {
       type: Boolean,
       required: false,
       default: true,
@@ -222,16 +216,44 @@ export default defineComponent({
   },
   setup(props) {
     const snackBar = useSnackBar();
+    const { mapFormSubmissionDecisionStatus } = useFormSubmission();
     const { getISODateHourMinuteString } = useFormatters();
     const { checkNotesLengthRule } = useRules();
     const outdatedDecisionModal = ref({} as ModalDialog<boolean>);
-    const formSubmission = ref({} as FormSubmissionMinistryAPIOutDTO);
+    const outdatedDecisionItemsModal = ref({} as ModalDialog<boolean>);
+    const formSubmission = ref({} as FormSubmission);
     const formSubmissionItems = ref([] as FormSubmissionItem[]);
     const formSubmissionLoading = ref(true);
     const processingCompletion = ref(false);
     const approvalsForm = ref({} as VForm);
     const noteRefs = ref(
-      new Map<FormSubmissionItemApproval, InstanceType<typeof VTextarea>>(),
+      new Map<FormSubmissionItemDecision, InstanceType<typeof VTextarea>>(),
+    );
+
+    /**
+     * Decision options to be selected by the user
+     * while providing a decision.
+     */
+    const decisionStatusOptions = [
+      FormSubmissionDecisionStatus.Pending,
+      FormSubmissionDecisionStatus.Approved,
+      FormSubmissionDecisionStatus.Declined,
+    ].map((decisionStatus) => ({
+      color: mapFormSubmissionDecisionStatus(decisionStatus),
+      value: decisionStatus,
+    }));
+
+    const canShowDecisionDetails = computed(
+      () =>
+        props.showDecisionDetails &&
+        formSubmission.value.hasApprovalAuthorization,
+    );
+
+    const canSubmitFinalDecision = computed(
+      () =>
+        !props.readOnly &&
+        formSubmission.value.status === FormSubmissionStatus.Pending &&
+        formSubmission.value.hasApprovalAuthorization,
     );
 
     /**
@@ -240,12 +262,21 @@ export default defineComponent({
     const loadFormSubmission = async () => {
       try {
         formSubmissionLoading.value = true;
-        formSubmission.value =
+        const submission =
           (await FormSubmissionService.shared.getFormSubmission(
             props.formSubmissionId,
           )) as FormSubmissionMinistryAPIOutDTO;
+        // Keeps only the necessary properties for this UI.
+        formSubmission.value = {
+          id: submission.id,
+          formCategory: submission.formCategory,
+          status: submission.status,
+          hasApprovalAuthorization: submission.hasApprovalAuthorization,
+        };
+        // Adapt the items to a UI model to render each item
+        // and a internal modal to provide the approval.
         formSubmissionItems.value =
-          formSubmission.value.submissionItems.map<FormSubmissionItem>(
+          submission.submissionItems.map<FormSubmissionItem>(
             (submissionItem) => ({
               id: submissionItem.id,
               dynamicConfigurationId: submissionItem.dynamicFormConfigurationId,
@@ -253,7 +284,7 @@ export default defineComponent({
               category: formSubmission.value.formCategory,
               formName: submissionItem.formDefinitionName,
               formData: submissionItem.submissionData,
-              approval: assignItemApproval(
+              decision: assignItemDecisionProperties(
                 submissionItem,
                 formSubmission.value.status,
               ),
@@ -267,48 +298,46 @@ export default defineComponent({
     };
 
     /**
-     * Creates the submission item to handle the approval.
+     * Creates the submission item to handle the decision.
+     * This centralizes the logic to populates a single  decision section that must
+     * be refreshed when a new decision in added to the history or when an outdated
+     * item is detected and the user would like to get the most recent data.
      * @param submissionItem API returned submission item.
      * @param parentStatus submission main status required
      * for the UI be adjusted accordingly.
      * @returns UI model to handle the approval.
      */
-    const assignItemApproval = (
+    const assignItemDecisionProperties = (
       submissionItem: FormSubmissionItemMinistryAPIOutDTO,
       parentStatus: FormSubmissionStatus,
-      options?: { approval?: FormSubmissionItemApproval },
-    ): FormSubmissionItemApproval => {
-      const approval = options?.approval ?? ({} as FormSubmissionItemApproval);
-      approval.id = submissionItem.id;
-      approval.parentName = submissionItem.formType;
-      approval.parentStatus = parentStatus;
-      approval.status = submissionItem.decisionStatus;
-      approval.saveDecisionInProgress = false;
-      approval.decisionSaved =
+      options?: { decision?: FormSubmissionItemDecision },
+    ): FormSubmissionItemDecision => {
+      const decision = options?.decision ?? ({} as FormSubmissionItemDecision);
+      decision.submissionItemId = submissionItem.id;
+      decision.parentName = submissionItem.formType;
+      decision.parentStatus = parentStatus;
+      decision.decisionStatus = submissionItem.decisionStatus;
+      decision.saveDecisionInProgress = false;
+      decision.decisionSaved =
         !!submissionItem.currentDecision?.decisionNoteDescription;
-      approval.decisionBy = submissionItem.currentDecision?.decisionBy;
-      approval.decisionDate = submissionItem.currentDecision?.decisionDate;
-      approval.decisionNoteDescription =
+      decision.decisionBy = submissionItem.currentDecision?.decisionBy;
+      decision.decisionDate = submissionItem.currentDecision?.decisionDate;
+      decision.decisionNoteDescription =
         submissionItem.currentDecision?.decisionNoteDescription;
-      approval.lastUpdateDate = submissionItem.updatedAt;
-      approval.decisionHistory = submissionItem.decisions?.map((decision) => ({
-        decisionStatus: decision.decisionStatus,
-        decisionDate: decision.decisionDate,
-        decisionBy: decision.decisionBy,
-        decisionNoteDescription: decision.decisionNoteDescription,
-        statusColor: getStatusColor(decision.decisionStatus),
-      }));
-      return approval;
-    };
-
-    const getStatusColor = (status: FormSubmissionDecisionStatus) => {
-      if (status === FormSubmissionDecisionStatus.Pending) {
-        return "warning";
-      }
-      if (status === FormSubmissionDecisionStatus.Declined) {
-        return "danger";
-      }
-      return "success";
+      decision.lastUpdateDate = submissionItem.updatedAt;
+      decision.decisionHistory = submissionItem.decisions?.map(
+        (decisionEntry) => ({
+          id: decisionEntry.id,
+          decisionStatus: decisionEntry.decisionStatus,
+          decisionDate: decisionEntry.decisionDate,
+          decisionBy: decisionEntry.decisionBy,
+          decisionNoteDescription: decisionEntry.decisionNoteDescription,
+          statusColor: mapFormSubmissionDecisionStatus(
+            decisionEntry.decisionStatus,
+          ),
+        }),
+      );
+      return decision;
     };
 
     /**
@@ -323,15 +352,19 @@ export default defineComponent({
             { itemId },
           )) as FormSubmissionMinistryAPIOutDTO;
         const itemToUpdate = formSubmissionItems.value.find(
-          (item) => item.approval?.id === itemId,
+          (item) => item.decision?.submissionItemId === itemId,
         );
-        if (!itemToUpdate?.approval) {
+        if (!itemToUpdate?.decision) {
           throw new Error("Expected item to be updated was not found.");
         }
         const [reloadedSubmissionItem] = submission.submissionItems;
-        assignItemApproval(reloadedSubmissionItem, submission.status, {
-          approval: itemToUpdate.approval,
-        });
+        assignItemDecisionProperties(
+          reloadedSubmissionItem,
+          submission.status,
+          {
+            decision: itemToUpdate.decision,
+          },
+        );
       } catch {
         snackBar.error("Unexpected error while loading updated decision.");
       }
@@ -346,7 +379,7 @@ export default defineComponent({
      */
     const captureNoteRef = (
       noteInput: unknown,
-      approval: FormSubmissionItemApproval,
+      approval: FormSubmissionItemDecision,
     ) => {
       if (noteInput) {
         noteRefs.value.set(
@@ -373,6 +406,46 @@ export default defineComponent({
     };
 
     /**
+     * Save an item decision.
+     */
+    const saveDecision = async (decision: FormSubmissionItemDecision) => {
+      const noteInput = noteRefs.value.get(decision);
+      const errors = await noteInput?.validate();
+      if (errors.length) {
+        return;
+      }
+      try {
+        decision.saveDecisionInProgress = true;
+        await FormSubmissionService.shared.submitItemDecision(
+          decision.submissionItemId,
+          {
+            decisionStatus: decision.decisionStatus,
+            noteDescription: decision.decisionNoteDescription as string,
+            lastUpdateDate: decision.lastUpdateDate,
+          },
+        );
+        await reLoadFormSubmissionItem(decision.submissionItemId);
+        snackBar.success(
+          "Decision saved! The decision can be changed till the main submission is no longer pending.",
+        );
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          if (error.errorType === FORM_SUBMISSION_ITEM_OUTDATED) {
+            decision.saveDecisionInProgress = false;
+            const modalResult = await outdatedDecisionModal.value.showModal();
+            if (modalResult) {
+              await reLoadFormSubmissionItem(decision.submissionItemId);
+            }
+          }
+          return;
+        }
+        snackBar.error("Unexpected error while saving the decision.");
+      } finally {
+        decision.saveDecisionInProgress = false;
+      }
+    };
+
+    /**
      * Mark the form submission as completed.
      */
     const completeSubmission = async () => {
@@ -386,54 +459,31 @@ export default defineComponent({
       }
       try {
         processingCompletion.value = true;
+        const lastUpdatedInfo = formSubmissionItems.value.map((item) => ({
+          submissionItemId: item.id,
+          lastUpdateDate: item.decision?.lastUpdateDate as Date,
+        }));
         await FormSubmissionService.shared.completeFormSubmission(
           formSubmission.value.id,
+          { items: lastUpdatedInfo },
         );
         await loadFormSubmission();
         snackBar.success("Form submission completed.");
-      } catch {
-        snackBar.error(
-          "Unexpected error while completing the form submission.",
-        );
-      } finally {
-        processingCompletion.value = false;
-      }
-    };
-
-    /**
-     * Save an item decision.
-     */
-    const saveDecision = async (approval: FormSubmissionItemApproval) => {
-      const noteInput = noteRefs.value.get(approval);
-      const errors = await noteInput?.validate();
-      if (errors.length) {
-        return;
-      }
-      try {
-        approval.saveDecisionInProgress = true;
-        await FormSubmissionService.shared.submitItemDecision(approval.id, {
-          decisionStatus: approval.status,
-          noteDescription: approval.decisionNoteDescription as string,
-          lastUpdateDate: approval.lastUpdateDate,
-        });
-        await reLoadFormSubmissionItem(approval.id);
-        snackBar.success(
-          "Decision saved! The decision can be changed till the main submission is no longer pending.",
-        );
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
           if (error.errorType === FORM_SUBMISSION_ITEM_OUTDATED) {
-            approval.saveDecisionInProgress = false;
-            const modalResult = await outdatedDecisionModal.value.showModal();
+            processingCompletion.value = false;
+            const modalResult =
+              await outdatedDecisionItemsModal.value.showModal();
             if (modalResult) {
-              await reLoadFormSubmissionItem(approval.id);
+              await loadFormSubmission();
             }
           }
           return;
         }
         snackBar.error("Unexpected error while saving the decision.");
       } finally {
-        approval.saveDecisionInProgress = false;
+        processingCompletion.value = false;
       }
     };
 
@@ -441,8 +491,18 @@ export default defineComponent({
      * Reopen a previously submitted decision for edition.
      * @param approval decision to allow edit.
      */
-    const changeDecision = async (approval: FormSubmissionItemApproval) => {
-      approval.decisionSaved = false;
+    const changeDecision = (decision: FormSubmissionItemDecision): void => {
+      decision.decisionSaved = false;
+    };
+
+    /**
+     * Cancel a request to edit a decision and reloads the data.
+     * @param decision
+     */
+    const cancelChangeDecision = async (
+      decision: FormSubmissionItemDecision,
+    ): Promise<void> => {
+      await reLoadFormSubmissionItem(decision.submissionItemId);
     };
 
     watchEffect(async () => {
@@ -450,7 +510,11 @@ export default defineComponent({
     });
 
     return {
+      canShowDecisionDetails,
+      canSubmitFinalDecision,
+      decisionStatusOptions,
       outdatedDecisionModal,
+      outdatedDecisionItemsModal,
       FormSubmissionStatus,
       formSubmission,
       formSubmissionItems,
@@ -463,8 +527,10 @@ export default defineComponent({
       captureNoteRef,
       saveDecision,
       changeDecision,
+      cancelChangeDecision,
       getISODateHourMinuteString,
       formSubmissionLoading,
+      mapFormSubmissionDecisionStatus,
     };
   },
 });

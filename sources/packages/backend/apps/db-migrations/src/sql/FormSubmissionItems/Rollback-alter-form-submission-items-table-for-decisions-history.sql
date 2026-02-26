@@ -1,8 +1,3 @@
--- The feature is still under development, so we can safely delete all existing data in the form submission decisions, form submission items, and form submission tables.
-DELETE FROM sims.form_submission_item_decisions;
-DELETE FROM sims.form_submission_items;
-DELETE FROM sims.form_submissions;
-
 -- Drop reference to the current decision from form_submission_items and restore decision fields.
 ALTER TABLE sims.form_submission_items
     DROP COLUMN current_decision_id,

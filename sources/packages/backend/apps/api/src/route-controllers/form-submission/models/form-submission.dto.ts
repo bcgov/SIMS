@@ -24,6 +24,12 @@ import {
   IsDate,
 } from "class-validator";
 
+/***
+ * Max number of form submission items allowed in a single form submission.
+ * This is to prevent abuse and ensure performance of the system.
+ */
+const MAX_SUBMISSION_ITEMS = 50;
+
 /**
  * Form configuration details necessary for form submission.
  * Dictates the necessary details for the client to render the form and submit the data,
@@ -88,7 +94,7 @@ abstract class FormSubmissionItemAPIOutDTO {
  * If the no decision is present yet, the status will be Pending and the other properties will be undefined.
  */
 class FormSubmissionItemDecisionAPIOutDTO {
-  id?: number;
+  id: number;
   decisionStatus: FormSubmissionDecisionStatus;
   decisionDate?: Date;
   decisionBy?: string;
@@ -119,6 +125,7 @@ class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
  * including the individual form items.
  */
 export class FormSubmissionMinistryAPIOutDTO extends FormSubmissionAPIOutDTO {
+  hasApprovalAuthorization: boolean;
   submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
 }
 
@@ -172,7 +179,7 @@ export class FormSubmissionAPIInDTO {
   @IsPositive()
   applicationId?: number;
   @ArrayMinSize(1)
-  @ArrayMaxSize(50)
+  @ArrayMaxSize(MAX_SUBMISSION_ITEMS)
   @ValidateNested({ each: true })
   @Type(() => FormSubmissionItemAPIInDTO)
   items: FormSubmissionItemAPIInDTO[];
@@ -193,4 +200,22 @@ export class FormSubmissionItemDecisionAPIInDTO {
    */
   @IsDate()
   lastUpdateDate: Date;
+}
+
+export class FormSubmissionCompletionItemAPIInDTO {
+  @IsPositive()
+  submissionItemId: number;
+  @IsDate()
+  lastUpdateDate: Date;
+}
+
+/**
+ * Ministry individual form item decision update.
+ */
+export class FormSubmissionCompletionAPIInDTO {
+  @ArrayMinSize(1)
+  @ArrayMaxSize(MAX_SUBMISSION_ITEMS)
+  @ValidateNested({ each: true })
+  @Type(() => FormSubmissionCompletionItemAPIInDTO)
+  items: FormSubmissionCompletionItemAPIInDTO[];
 }

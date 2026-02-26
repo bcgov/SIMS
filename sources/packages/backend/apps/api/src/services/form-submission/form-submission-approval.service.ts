@@ -17,18 +17,22 @@ import { CustomNamedError } from "@sims/utilities";
 import {
   FORM_SUBMISSION_DECISION_PENDING,
   FORM_SUBMISSION_ITEM_NOT_FOUND,
-  FORM_SUBMISSION_ITEM_NOT_PENDING,
   FORM_SUBMISSION_ITEM_OUTDATED,
   FORM_SUBMISSION_NOT_FOUND,
   FORM_SUBMISSION_NOT_PENDING,
   FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
 } from "./constants";
-import { FORM_SUBMISSION_APPROVAL_ROLES_MAP } from "./form-submission.models";
+import {
+  FORM_SUBMISSION_APPROVAL_ROLES_MAP,
+  FormSubmissionCompletionItem,
+} from "./form-submission.models";
+import { NoteSharedService } from "@sims/services";
 
 @Injectable()
 export class FormSubmissionApprovalService {
   constructor(
     private readonly dataSource: DataSource,
+    private readonly noteSharedService: NoteSharedService,
     @InjectRepository(FormSubmission)
     private readonly formSubmissionRepo: Repository<FormSubmission>,
   ) {}
@@ -153,8 +157,8 @@ export class FormSubmissionApprovalService {
         FormSubmissionStatus.Pending
       ) {
         throw new CustomNamedError(
-          `Decisions cannot be made on items belonging to a form submission with status ${submissionItem.formSubmission.submissionStatus}.`,
-          FORM_SUBMISSION_ITEM_NOT_PENDING,
+          "Decisions cannot be made on items belonging to a form submission that is not pending.",
+          FORM_SUBMISSION_NOT_PENDING,
         );
       }
       const now = new Date();
@@ -187,11 +191,15 @@ export class FormSubmissionApprovalService {
   /**
    * Marks the form submission as completed or declined based on the decisions on individual form items.
    * @param submissionId The ID of the form submission to complete.
+   * @param items The list of form submission items with their last update date to validate against
+   * potential outdated information.
+   * @param userRoles The roles of the user performing the action, used for authorization.
    * @param auditUserId The ID of the user performing the action.
    * @returns The updated form submission.
    */
   async completeFormSubmission(
     submissionId: number,
+    items: FormSubmissionCompletionItem[],
     userRoles: Role[],
     auditUserId: number,
   ): Promise<FormSubmission> {
@@ -206,17 +214,23 @@ export class FormSubmissionApprovalService {
       const formSubmission = await repo.findOne({
         select: {
           id: true,
+          student: { id: true },
           submissionStatus: true,
           formCategory: true,
           formSubmissionItems: {
             id: true,
+            updatedAt: true,
             currentDecision: {
               id: true,
               decisionStatus: true,
+              decisionNote: { id: true },
             },
           },
         },
-        relations: { formSubmissionItems: { currentDecision: true } },
+        relations: {
+          student: true,
+          formSubmissionItems: { currentDecision: { decisionNote: true } },
+        },
         where: { id: submissionId },
       });
       if (!formSubmission) {
@@ -228,9 +242,36 @@ export class FormSubmissionApprovalService {
       this.checkApprovalAuthorization(formSubmission.formCategory, userRoles);
       if (formSubmission.submissionStatus !== FormSubmissionStatus.Pending) {
         throw new CustomNamedError(
-          `Final decision cannot be made on a form submission with status ${formSubmission.submissionStatus}.`,
+          "Final decision cannot be made on a form submission with status different than pending.",
           FORM_SUBMISSION_NOT_PENDING,
         );
+      }
+      // Check if all the items were provided.
+      if (items.length !== formSubmission.formSubmissionItems.length) {
+        throw new CustomNamedError(
+          "The provided form submission items do not match the form submission items for this submission.",
+          FORM_SUBMISSION_ITEM_NOT_FOUND,
+        );
+      }
+      // Check for all timestamps and IDs to match to prevent completing the form submission based on outdated information.
+      for (const item of items) {
+        const submissionItem = formSubmission.formSubmissionItems.find(
+          (i) => i.id === item.submissionItemId,
+        );
+        if (!submissionItem) {
+          throw new CustomNamedError(
+            `Form submission item with ID ${item.submissionItemId} not found in the form submission.`,
+            FORM_SUBMISSION_ITEM_NOT_FOUND,
+          );
+        }
+        if (
+          submissionItem.updatedAt.getTime() !== item.lastUpdateDate.getTime()
+        ) {
+          throw new CustomNamedError(
+            `Form submission item with ID ${item.submissionItemId} has been updated since it was last retrieved. Please refresh and try again.`,
+            FORM_SUBMISSION_ITEM_OUTDATED,
+          );
+        }
       }
       let isFullyDeclined = true;
       for (const item of formSubmission.formSubmissionItems) {
@@ -260,8 +301,19 @@ export class FormSubmissionApprovalService {
       formSubmission.assessedBy = auditUser;
       formSubmission.modifier = auditUser;
       formSubmission.updatedAt = now;
-      // TODO: Create a student note to allow the final note to be displayed in the student notes tab.
-      return repo.save(formSubmission);
+      // Save form completion.
+      const saveFormSubmissionPromise = repo.save(formSubmission);
+      // Associate final notes with the student.
+      const noteRelationsPromises = formSubmission.formSubmissionItems.map(
+        (item) =>
+          this.noteSharedService.createStudentNoteRelation(
+            formSubmission.student,
+            item.currentDecision.decisionNote,
+            entityManager,
+          ),
+      );
+      await Promise.all([saveFormSubmissionPromise, ...noteRelationsPromises]);
+      return formSubmission;
     });
   }
 

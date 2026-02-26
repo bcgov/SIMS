@@ -41,10 +41,6 @@ export const FORM_SUBMISSION_PENDING_DECISION =
  */
 export const FORM_SUBMISSION_NOT_FOUND = "FORM_SUBMISSION_NOT_FOUND";
 /**
- * A final decision cannot be made on a form submission that is not in pending status.
- */
-export const FORM_SUBMISSION_NOT_PENDING = "FORM_SUBMISSION_NOT_PENDING";
-/**
  * A final decision cannot be made on a form submission when some
  * decisions on the form items are still pending.
  */
@@ -55,10 +51,9 @@ export const FORM_SUBMISSION_DECISION_PENDING =
  */
 export const FORM_SUBMISSION_ITEM_NOT_FOUND = "FORM_SUBMISSION_ITEM_NOT_FOUND";
 /**
- * A decision cannot be saved on a form submission item that is not in pending status.
+ * A decision cannot be saved on a form submission item when its parent submission is not in pending status.
  */
-export const FORM_SUBMISSION_ITEM_NOT_PENDING =
-  "FORM_SUBMISSION_ITEM_NOT_PENDING";
+export const FORM_SUBMISSION_NOT_PENDING = "FORM_SUBMISSION_NOT_PENDING";
 /**
  * A more updated decision was saved since the form submission item was last retrieved for decision,
  * and the decision cannot be saved based on potentially outdated information.

@@ -1,12 +1,12 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
-  FormSubmissionStudentAPIOutDTO,
-  FormSubmissionStudentSummaryAPIOutDTO,
   FormSubmissionConfigurationsAPIOutDTO,
   FormSubmissionAPIInDTO,
   FormSupplementaryDataAPIInDTO,
   FormSupplementaryDataAPIOutDTO,
   FormSubmissionItemDecisionAPIInDTO,
+  FormSubmissionMinistryAPIOutDTO,
+  FormSubmissionCompletionAPIInDTO,
 } from "@/services/http/dto";
 
 export class FormSubmissionService {
@@ -47,7 +47,7 @@ export class FormSubmissionService {
   async getFormSubmission(
     formSubmissionId: number,
     options?: { itemId?: number },
-  ): Promise<FormSubmissionStudentAPIOutDTO> {
+  ): Promise<FormSubmissionStudentAPIOutDTO | FormSubmissionMinistryAPIOutDTO> {
     return ApiClient.FormSubmissionApi.getFormSubmission(formSubmissionId, {
       itemId: options?.itemId,
     });
@@ -95,8 +95,15 @@ export class FormSubmissionService {
    * This is the final step of the form submission approval process for the Ministry, which indicates that
    * all decisions on the form items have been made and the form submission is completed.
    * @param formSubmissionId ID of the form submission to be completed.
+   * @param payload form submission completion details.
    */
-  async completeFormSubmission(formSubmissionId: number): Promise<void> {
-    await ApiClient.FormSubmissionApi.completeFormSubmission(formSubmissionId);
+  async completeFormSubmission(
+    formSubmissionId: number,
+    payload: FormSubmissionCompletionAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.FormSubmissionApi.completeFormSubmission(
+      formSubmissionId,
+      payload,
+    );
   }
 }

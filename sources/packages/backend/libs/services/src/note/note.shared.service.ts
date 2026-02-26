@@ -33,13 +33,31 @@ export class NoteSharedService {
       entityManager,
     );
     // Associate the created note with the student.
+    await this.createStudentNoteRelation(
+      { id: studentId } as Student,
+      savedNote,
+      entityManager,
+    );
+    return savedNote;
+  }
+
+  /**
+   * Associates an existing note with the student.
+   * @param student student to have the note associated.
+   * @param note note to be associated with the student.
+   * @param entityManager transactional entity manager.
+   */
+  async createStudentNoteRelation(
+    student: Student,
+    note: Note,
+    entityManager: EntityManager,
+  ): Promise<void> {
     await entityManager
       .getRepository(Student)
       .createQueryBuilder()
       .relation(Student, "notes")
-      .of({ id: studentId } as Student)
-      .add(savedNote);
-    return savedNote;
+      .of(student)
+      .add(note);
   }
 
   /**

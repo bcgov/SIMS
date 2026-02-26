@@ -68,7 +68,7 @@ interface FormSubmissionItemAPIOutDTO {
  * If the no decision is present yet, the status will be Pending and the other properties will be undefined.
  */
 interface FormSubmissionItemDecisionAPIOutDTO {
-  id?: number;
+  id: number;
   decisionStatus: FormSubmissionDecisionStatus;
   decisionDate?: Date;
   decisionBy?: string;
@@ -99,6 +99,7 @@ export interface FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemA
  * including the individual form items.
  */
 export interface FormSubmissionMinistryAPIOutDTO extends FormSubmissionAPIOutDTO {
+  hasApprovalAuthorization: boolean;
   submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
 }
 
@@ -153,4 +154,16 @@ export interface FormSubmissionItemDecisionAPIInDTO {
    * to prevent overwriting a more recent decision.
    */
   lastUpdateDate: Date;
+}
+
+export interface FormSubmissionCompletionItemAPIInDTO {
+  submissionItemId: number;
+  lastUpdateDate: Date;
+}
+
+/**
+ * Ministry individual form item decision update.
+ */
+export interface FormSubmissionCompletionAPIInDTO {
+  items: FormSubmissionCompletionItemAPIInDTO[];
 }

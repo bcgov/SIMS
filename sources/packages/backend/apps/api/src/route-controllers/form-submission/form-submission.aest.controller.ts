@@ -31,6 +31,7 @@ import {
   UserGroups,
 } from "apps/api/src/auth";
 import {
+  FormSubmissionCompletionAPIInDTO,
   FormSubmissionItemDecisionAPIInDTO,
   FormSubmissionMinistryAPIOutDTO,
 } from "./models/form-submission.dto";
@@ -76,6 +77,7 @@ export class FormSubmissionAESTController extends BaseController {
         extractRolesFromToken(userToken),
       );
     return {
+      hasApprovalAuthorization,
       id: submission.id,
       formCategory: submission.formCategory,
       status: submission.submissionStatus,
@@ -94,18 +96,17 @@ export class FormSubmissionAESTController extends BaseController {
           item.currentDecision?.decisionStatus ??
           FormSubmissionDecisionStatus.Pending,
         updatedAt: item.updatedAt,
-        currentDecision: hasApprovalAuthorization
-          ? {
-              id: item.currentDecision?.id,
-              decisionStatus:
-                item.currentDecision?.decisionStatus ??
-                FormSubmissionDecisionStatus.Pending,
-              decisionDate: item.currentDecision?.decisionDate,
-              decisionBy: getUserFullName(item.currentDecision?.decisionBy),
-              decisionNoteDescription:
-                item.currentDecision?.decisionNote?.description,
-            }
-          : undefined,
+        currentDecision:
+          hasApprovalAuthorization && item.currentDecision
+            ? {
+                id: item.currentDecision.id,
+                decisionStatus: item.currentDecision.decisionStatus,
+                decisionDate: item.currentDecision.decisionDate,
+                decisionBy: getUserFullName(item.currentDecision.decisionBy),
+                decisionNoteDescription:
+                  item.currentDecision.decisionNote?.description,
+              }
+            : undefined,
         decisions: hasApprovalAuthorization
           ? item.decisions
               .filter((decision) => decision.id !== item.currentDecision?.id)
@@ -146,12 +147,15 @@ export class FormSubmissionAESTController extends BaseController {
       );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
-        if (error.name === FORM_SUBMISSION_ITEM_OUTDATED) {
-          throw new UnprocessableEntityException(
-            new ApiProcessError(error.message, error.name),
-          );
-        } else if (error.name === FORM_SUBMISSION_UPDATE_UNAUTHORIZED) {
-          throw new UnauthorizedException(error.message);
+        switch (error.name) {
+          case FORM_SUBMISSION_ITEM_OUTDATED:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+          case FORM_SUBMISSION_UPDATE_UNAUTHORIZED:
+            throw new UnauthorizedException(error.message);
+          default:
+            throw new UnprocessableEntityException(error.message);
         }
       }
       throw error;
@@ -170,18 +174,27 @@ export class FormSubmissionAESTController extends BaseController {
   async completeFormSubmission(
     @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
     @UserToken() userToken: IUserToken,
+    @Body() payload: FormSubmissionCompletionAPIInDTO,
   ): Promise<void> {
     try {
       const userRoles = extractRolesFromToken(userToken);
       await this.formSubmissionApprovalService.completeFormSubmission(
         formSubmissionId,
+        payload.items,
         userRoles,
         userToken.userId,
       );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
-        if (error.name === FORM_SUBMISSION_UPDATE_UNAUTHORIZED) {
-          throw new UnauthorizedException(error.message);
+        switch (error.name) {
+          case FORM_SUBMISSION_ITEM_OUTDATED:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+          case FORM_SUBMISSION_UPDATE_UNAUTHORIZED:
+            throw new UnauthorizedException(error.message);
+          default:
+            throw new UnprocessableEntityException(error.message);
         }
       }
       throw error;
