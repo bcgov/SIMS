@@ -463,7 +463,7 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
             credentialTypeToDisplay: savedExpiredProgram.credentialType,
           },
         ],
-        count: 2,
+        count: 3,
       });
   });
 
