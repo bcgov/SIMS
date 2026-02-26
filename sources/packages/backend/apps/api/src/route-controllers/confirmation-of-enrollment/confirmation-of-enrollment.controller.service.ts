@@ -15,6 +15,7 @@ import {
   ENROLMENT_NOT_FOUND,
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
+  TUITION_REMITTANCE_NOT_ALLOWED,
 } from "@sims/services/constants";
 
 @Injectable()
@@ -63,6 +64,7 @@ export class ConfirmationOfEnrollmentControllerService extends BaseController {
             throw new UnprocessableEntityException(error.message);
           case FIRST_COE_NOT_COMPLETE:
           case INVALID_TUITION_REMITTANCE_AMOUNT:
+          case TUITION_REMITTANCE_NOT_ALLOWED:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );
