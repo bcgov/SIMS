@@ -1260,10 +1260,10 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
     </bpmn:exclusiveGateway>
     <bpmn:intermediateThrowEvent id="Event_08jbc4u" name="Partner Student Loan">
       <bpmn:documentation>Student Loan Payments by Partner during the study period can be considered a cost.
-Priority to loan reported by partner directly, then by student. Otherwise will be 0.</bpmn:documentation>
+If the student does not have a partner, this value should be 0.</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if partner1TotalStudentLoan = null&#10;then &#10;  if studentDataPartnerTotalStudentLoan = null&#10;  then 0&#10;  else studentDataPartnerTotalStudentLoan&#10;else&#10;  partner1TotalStudentLoan" target="calculatedDataPartnerStudentLoans" />
+          <zeebe:output source="=if calculatedDataPartnerStudentLoans = null&#10;then 0&#10;else calculatedDataPartnerStudentLoans" target="calculatedDataPartnerStudentLoans" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1c0irgd</bpmn:incoming>
@@ -5237,10 +5237,6 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
         <di:waypoint x="560" y="210" />
         <di:waypoint x="560" y="185" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0qch2t6_di" bpmnElement="Flow_0qch2t6">
-        <di:waypoint x="238" y="160" />
-        <di:waypoint x="325" y="160" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0hzk3tc" bpmnElement="Flow_024dvxv">
         <di:waypoint x="350" y="135" />
         <di:waypoint x="350" y="100" />
@@ -5253,6 +5249,10 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
         <di:waypoint x="488" y="100" />
         <di:waypoint x="560" y="100" />
         <di:waypoint x="560" y="135" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qch2t6_di" bpmnElement="Flow_0qch2t6">
+        <di:waypoint x="238" y="160" />
+        <di:waypoint x="325" y="160" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1sxkrb8_di" bpmnElement="Flow_1sxkrb8">
         <di:waypoint x="585" y="160" />
