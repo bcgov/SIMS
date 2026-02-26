@@ -180,11 +180,11 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
         disbursementSchedule.studentAssessment.application.student.id,
       );
     // Calculate the max tuition remittance only when the application is eligible to request tuition remittance.
-    const maxTuitionRemittanceAllowedPromise =
-      canRequestTuitionRemittance &&
-      this.confirmationOfEnrollmentService.getEstimatedMaxTuitionRemittance(
-        disbursementScheduleId,
-      );
+    const maxTuitionRemittanceAllowedPromise = canRequestTuitionRemittance
+      ? this.confirmationOfEnrollmentService.getEstimatedMaxTuitionRemittance(
+          disbursementScheduleId,
+        )
+      : Promise.resolve(0);
     const [hasOverawardBalance, maxTuitionRemittanceAllowed] =
       await Promise.all([
         hasOverawardBalancePromise,
@@ -239,7 +239,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
         offering.educationProgram.deliveredOnline,
         offering.educationProgram.deliveredOnSite,
       ),
-      maxTuitionRemittanceAllowed: maxTuitionRemittanceAllowed || 0,
+      maxTuitionRemittanceAllowed: maxTuitionRemittanceAllowed,
       hasOverawardBalance,
       disabilityApplicationStatus:
         disbursementSchedule.studentAssessment.application.data

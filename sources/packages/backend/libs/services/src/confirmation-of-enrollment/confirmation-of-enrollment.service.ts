@@ -670,12 +670,11 @@ export class ConfirmationOfEnrollmentService {
     const effectiveInstitutionRestrictions =
       disbursementSchedule.studentAssessment.application.currentAssessment
         .offering.institutionLocation.institution.restrictions;
-    const canRequestedTuitionRemittance =
-      !effectiveInstitutionRestrictions.some(
-        (institutionRestriction) =>
-          institutionRestriction.restriction.restrictionCode ===
-          RestrictionCode.REMIT,
-      );
+    const canRequestTuitionRemittance = !effectiveInstitutionRestrictions.some(
+      (institutionRestriction) =>
+        institutionRestriction.restriction.restrictionCode ===
+        RestrictionCode.REMIT,
+    );
     // If no tuition remittance is set then, it is defaulted to 0.
     // This happens when ministry confirms COE.
     let tuitionRemittanceAmount = tuitionRemittance ?? 0;
@@ -684,7 +683,7 @@ export class ConfirmationOfEnrollmentService {
     // and the requested tuition remittance amount is greater than zero,
     // then the tuition remittance amount will be set to 0 if it is allowed by options,
     // otherwise an error will be thrown.
-    if (!canRequestedTuitionRemittance && tuitionRemittanceAmount > 0) {
+    if (!canRequestTuitionRemittance && tuitionRemittanceAmount > 0) {
       if (options?.canRemoveTuitionRemittanceOnRestriction) {
         tuitionRemittanceAmount = 0;
         isTuitionRemittanceImpactedOnRestriction = true;
