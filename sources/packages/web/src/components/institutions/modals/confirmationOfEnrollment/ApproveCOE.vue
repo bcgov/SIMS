@@ -1,6 +1,6 @@
 <template>
   <v-form ref="confirmCOE">
-    <modal-dialog-base :showDialog="showDialog" title="Confirm enrolment">
+    <modal-dialog-base :show-dialog="showDialog" title="Confirm enrolment">
       <template #content>
         <error-summary :errors="confirmCOE.errors" />
         <p class="category-header-medium">
@@ -10,7 +10,7 @@
           >Confirming enrolment verifies this applicant is attending your
           institution and will allow funding to be disbursed.</span
         >
-        <content-group class="my-3">
+        <content-group class="my-3" v-if="canRequestTuitionRemittance">
           <v-radio-group
             v-model="formModel.requestedTuitionRemittance"
             class="mt-2 input-unset-display-opacity"
@@ -73,10 +73,9 @@
       </template>
       <template #footer>
         <footer-buttons
-          :processing="processing"
-          primaryLabel="Continue to confirmation"
-          @primaryClick="submit"
-          @secondaryClick="cancel"
+          primary-label="Continue to confirmation"
+          @primary-click="submit"
+          @secondary-click="cancel"
         />
       </template>
     </modal-dialog-base>
@@ -103,6 +102,10 @@ export default defineComponent({
     },
     maxTuitionRemittance: {
       type: Number,
+      required: true,
+    },
+    canRequestTuitionRemittance: {
+      type: Boolean,
       required: true,
     },
   },

@@ -58,6 +58,7 @@
       ref="confirmCOEModal"
       :max-tuition-remittance="initialData.maxTuitionRemittanceAllowed"
       :has-overawards="initialData.hasOverawardBalance"
+      :can-request-tuition-remittance="initialData.canRequestTuitionRemittance"
     />
     <!-- Deny modal -->
     <deny-c-o-e
@@ -129,7 +130,6 @@ export default defineComponent({
     const confirmCOEModal = ref(
       {} as ModalDialog<ApproveConfirmEnrollmentModel | boolean>,
     );
-
     const showApplicationActions = computed(
       () =>
         initialData.value.applicationCOEStatus === COEStatus.required &&
