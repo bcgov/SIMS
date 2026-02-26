@@ -19,8 +19,7 @@ import StudentAssessmentAward from "@/views/student/StudentAssessmentAward.vue";
 import ApplicationOfferingChangeFormView from "@/views/student/application-offering-change-request/ApplicationOfferingChangeFormView.vue";
 import RequestedApplicationOfferingDetails from "@/views/student/application-offering-change-request/tabs/RequestedApplicationOfferingDetails.vue";
 import ActiveApplicationOfferingDetails from "@/views/student/application-offering-change-request/tabs/ActiveApplicationOfferingDetails.vue";
-import ReportParentInformation from "@/views/student/ReportParentInformation.vue";
-import ReportPartnerInformation from "@/views/student/ReportPartnerInformation.vue";
+import ReportSupportingUserInformation from "@/views/student/ReportSupportingUserInformation.vue";
 import ViewScholasticStanding from "@/views/student/ViewScholasticStanding.vue";
 // Student Appeal
 import StudentAppeal from "@/views/student/appeal/StudentAppeal.vue";
@@ -45,7 +44,7 @@ import {
   StudentRoutesConst,
   SharedRouteConst,
 } from "../constants/routes/RouteConstants";
-import { AppRoutes, AuthStatus } from "../types";
+import { AppRoutes, AuthStatus, SupportingUserType } from "../types";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
@@ -132,12 +131,13 @@ export const studentRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.StudentReportParentInformation,
         name: StudentRoutesConst.REPORT_PARENT_INFORMATION,
-        component: ReportParentInformation,
+        component: ReportSupportingUserInformation,
         props: (route) => ({
           applicationId: Number.parseInt(route.params.applicationId as string),
           supportingUserId: Number.parseInt(
             route.params.supportingUserId as string,
           ),
+          supportingUserType: SupportingUserType.Parent,
         }),
         meta: {
           clientType: ClientIdType.Student,
@@ -146,7 +146,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.ChangeRequestStudentReportParentInformation,
         name: StudentRoutesConst.CHANGE_REQUEST_REPORT_PARENT_INFORMATION,
-        component: ReportParentInformation,
+        component: ReportSupportingUserInformation,
         props: (route) => ({
           applicationId: Number.parseInt(route.params.applicationId as string),
           supportingUserId: Number.parseInt(
@@ -155,6 +155,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
           changeRequestApplicationId: Number.parseInt(
             route.params.changeRequestApplicationId as string,
           ),
+          supportingUserType: SupportingUserType.Parent,
         }),
         meta: {
           clientType: ClientIdType.Student,
@@ -163,12 +164,13 @@ export const studentRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.StudentReportPartnerInformation,
         name: StudentRoutesConst.REPORT_PARTNER_INFORMATION,
-        component: ReportPartnerInformation,
+        component: ReportSupportingUserInformation,
         props: (route) => ({
           applicationId: Number.parseInt(route.params.applicationId as string),
           supportingUserId: Number.parseInt(
             route.params.supportingUserId as string,
           ),
+          supportingUserType: SupportingUserType.Partner,
         }),
         meta: {
           clientType: ClientIdType.Student,
@@ -177,7 +179,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.ChangeRequestStudentReportPartnerInformation,
         name: StudentRoutesConst.CHANGE_REQUEST_REPORT_PARTNER_INFORMATION,
-        component: ReportPartnerInformation,
+        component: ReportSupportingUserInformation,
         props: (route) => ({
           applicationId: Number.parseInt(route.params.applicationId as string),
           supportingUserId: Number.parseInt(
@@ -186,6 +188,7 @@ export const studentRoutes: Array<RouteRecordRaw> = [
           changeRequestApplicationId: Number.parseInt(
             route.params.changeRequestApplicationId as string,
           ),
+          supportingUserType: SupportingUserType.Partner,
         }),
         meta: {
           clientType: ClientIdType.Student,
