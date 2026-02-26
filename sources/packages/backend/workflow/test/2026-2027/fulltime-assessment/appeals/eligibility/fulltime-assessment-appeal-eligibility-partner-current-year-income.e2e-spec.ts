@@ -89,6 +89,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
       ).toBe(expectedEligibility);
     });
   }
+
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
     await ZeebeMockedClient.getMockedZeebeInstance().close();
