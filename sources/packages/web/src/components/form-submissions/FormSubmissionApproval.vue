@@ -388,14 +388,15 @@ export default defineComponent({
     /**
      * Indicates if a decision was made for an individual form,
      * which means, the decision in no longer pending.
-     * @param value
-     * @param parentName
+     * @param decision decision status.
+     * @param parentName identifier to be included in the validation message.
+     * @returns true if the validation was successful, otherwise the validation message.
      */
     const hasDecisionRule = (
-      value: FormSubmissionDecisionStatus,
+      decision: FormSubmissionDecisionStatus,
       parentName: string,
-    ) => {
-      if (value === FormSubmissionDecisionStatus.Pending) {
+    ): boolean | string => {
+      if (decision === FormSubmissionDecisionStatus.Pending) {
         return `${parentName}, pending decision.`;
       }
       return true;

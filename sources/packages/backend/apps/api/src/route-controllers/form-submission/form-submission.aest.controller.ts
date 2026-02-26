@@ -126,7 +126,6 @@ export class FormSubmissionAESTController extends BaseController {
    * Updates an individual form item in the form submission with the decision made by the Ministry, including the decision status and note.
    * @param formSubmissionItemId ID of the form submission item to update the decision for.
    * @param payload decision status and note description for the form submission item.
-   * @param userToken user token containing the user ID of the Ministry user making the decision, used for auditing purposes.
    */
   @Roles(Role.StudentApproveDeclineAppeals, Role.StudentApproveDeclineForms)
   @Patch("items/:formSubmissionItemId/decision")
