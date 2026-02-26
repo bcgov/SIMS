@@ -109,33 +109,33 @@ export function createFakePartTimeAssessmentConsolidatedData(
  */
 function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
   return {
-    appealsStudentIncomeAppealData: null,
-    appealsPartnerIncomeAppealData: null,
-    appealsStudentDisabilityAppealData: null,
-    appealsStudentAdditionalTransportationAppealData: null,
-    appealsPartnerInformationAndIncomeAppealData: null,
-    appealsStudentFinancialInformationAppealData: null,
-    appealsStudentHasDependentsAppealData: null,
-    appealsStudentDependantsAppealData: null,
+    appealsStudentIncomeAppealData: null, // No longer used in PY 26/27 and beyond.
+    appealsPartnerIncomeAppealData: null, // No longer used in PY 26/27 and beyond.
+    appealsStudentDisabilityAppealData: null, // No longer used in PY 26/27 and beyond.
+    appealsStudentAdditionalTransportationAppealData: null, // No longer used in PY 26/27 and beyond.
+    appealsPartnerInformationAndIncomeAppealData: null, // No longer used in PY 26/27 and beyond.
+    appealsStudentFinancialInformationAppealData: null, // No longer used in PY 26/27 and beyond.
+    appealsStudentHasDependentsAppealData: null, // No longer used in PY 26/27 and beyond.
+    appealsStudentDependantsAppealData: null, // No longer used in PY 26/27 and beyond.
     appealsRoomAndBoardCostsAppealData: null,
     appealsStepParentWaiverAppealData: null,
-    studentDataIsYourPartnerAbleToReport: null,
+    studentDataIsYourPartnerAbleToReport: null, // No longer used in PY 26/27 and beyond.
     studentDataParentValidSinNumber: null,
     studentDataNumberOfParents: null,
-    studentDataEstimatedSpouseIncome: null,
+    studentDataEstimatedSpouseIncome: null, // No longer used in PY 26/27 and beyond.
     studentDataLivingWithPartner: null,
     studentDataCRAReportedIncome: null,
     studentDataDependants: null,
     studentDataGovernmentFundingCosts: null,
     studentDataNonGovernmentFundingCosts: null,
     studentDataParentVoluntaryContributionsCosts: null,
-    studentDataPartnerStudyWeeks: null,
-    studentDataPartnerEmploymentInsurance: null,
-    studentDataPartnerFedralProvincialPDReceiptCost: null,
-    studentDataPartnerChildSupportCosts: null,
-    studentDataPartnerBCEAIncomeAssistanceAmount: null,
-    studentDataPartnerCaringForDependant: null,
-    studentDataPartnerTotalIncomeAssistance: null,
+    studentDataPartnerStudyWeeks: null, // No longer used in PY 26/27 and beyond.
+    studentDataPartnerEmploymentInsurance: null, // No longer used in PY 26/27 and beyond.
+    studentDataPartnerFedralProvincialPDReceiptCost: null, // No longer used in PY 26/27 and beyond.
+    studentDataPartnerChildSupportCosts: null, // No longer used in PY 26/27 and beyond.
+    studentDataPartnerBCEAIncomeAssistanceAmount: null, // No longer used in PY 26/27 and beyond.
+    studentDataPartnerCaringForDependant: null, // No longer used in PY 26/27 and beyond.
+    studentDataPartnerTotalIncomeAssistance: null, // No longer used in PY 26/27 and beyond.
     studentDataVoluntaryContributions: null,
     studentDataScholarshipAmount: null,
     studentDataChildSupportAndOrSpousalSupport: null,
@@ -151,7 +151,7 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     offeringCourseLoad: null,
     parent1Contributions: null,
     parent1Ei: null,
-    parent1NetAssests: null,
+    parent1NetAssets: null,
     parent1Tax: null,
     parent1TotalIncome: null,
     parent1DependentTable: [],
@@ -162,7 +162,7 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     parent2CppSelfemploymentOther: null,
     parent2DependentTable: [],
     parent2Ei: null,
-    parent2NetAssests: null,
+    parent2NetAssets: null,
     parent2Tax: null,
     parent2TotalIncome: null,
     parent2CRAReportedIncome: null,
@@ -179,9 +179,9 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     applicationStatus: null,
     applicationEditStatus: null,
     applicationHasNOAApproval: null,
-    studentDataPartnerHasEmploymentInsuranceBenefits: null,
-    studentDataPartnerHasFedralProvincialPDReceipt: null,
-    studentDataPartnerHasTotalIncomeAssistance: null,
+    studentDataPartnerHasEmploymentInsuranceBenefits: null, // No longer used in PY 26/27 and beyond.
+    studentDataPartnerHasFedralProvincialPDReceipt: null, // No longer used in PY 26/27 and beyond.
+    studentDataPartnerHasTotalIncomeAssistance: null, // No longer used in PY 26/27 and beyond.
     partner1HasEmploymentInsuranceBenefits: null,
     partner1HasFedralProvincialPDReceipt: null,
     partner1HasTotalIncomeAssistance: null,

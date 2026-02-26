@@ -13,13 +13,13 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+    assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+    assessmentConsolidatedData.partner1HasTotalIncomeAssistance =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+    assessmentConsolidatedData.partner1HasFedralProvincialPDReceipt =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 30000;
+    assessmentConsolidatedData.partner1TotalIncome = 30000;
 
     // Act
     const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
@@ -75,13 +75,13 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+      assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
         YesNoOptions.No;
-      assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+      assessmentConsolidatedData.partner1HasTotalIncomeAssistance =
         YesNoOptions.No;
-      assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+      assessmentConsolidatedData.partner1HasFedralProvincialPDReceipt =
         YesNoOptions.No;
-      assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 30000;
+      assessmentConsolidatedData.partner1TotalIncome = 30000;
       assessmentConsolidatedData.studentDataYouthInCare = YesNoOptions.Yes;
 
       // Act
@@ -133,15 +133,15 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+      assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
         YesNoOptions.No;
-      assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+      assessmentConsolidatedData.partner1HasTotalIncomeAssistance =
         YesNoOptions.No;
-      assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+      assessmentConsolidatedData.partner1HasFedralProvincialPDReceipt =
         YesNoOptions.No;
-      assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 30000;
+      assessmentConsolidatedData.partner1TotalIncome = 30000;
       assessmentConsolidatedData.studentDataYouthInCare = YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataPartnerStudyWeeks = 12;
+      assessmentConsolidatedData.partner1StudentStudyWeeks = 12;
 
       // Act
       const calculatedAssessment =
@@ -197,13 +197,13 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+      assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
         YesNoOptions.No;
-      assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+      assessmentConsolidatedData.partner1HasTotalIncomeAssistance =
         YesNoOptions.No;
-      assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+      assessmentConsolidatedData.partner1HasFedralProvincialPDReceipt =
         YesNoOptions.No;
-      assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 30000;
+      assessmentConsolidatedData.partner1TotalIncome = 30000;
       assessmentConsolidatedData.studentDataYouthInCare = YesNoOptions.Yes;
       assessmentConsolidatedData.programYearTotalFullTimeSpouseContributionWeeks = 20; // Spouse contribution for 20 weeks have been calculated in the program year.
 
@@ -263,13 +263,13 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+    assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
       YesNoOptions.Yes;
-    assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+    assessmentConsolidatedData.partner1HasTotalIncomeAssistance =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+    assessmentConsolidatedData.partner1HasFedralProvincialPDReceipt =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 30000;
+    assessmentConsolidatedData.partner1TotalIncome = 30000;
     assessmentConsolidatedData.studentDataYouthInCare = YesNoOptions.Yes;
 
     // Act
@@ -325,13 +325,13 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+    assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+    assessmentConsolidatedData.partner1HasTotalIncomeAssistance =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+    assessmentConsolidatedData.partner1HasFedralProvincialPDReceipt =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 10000;
+    assessmentConsolidatedData.partner1TotalIncome = 10000;
     assessmentConsolidatedData.studentDataYouthInCare = YesNoOptions.Yes;
 
     // Act
@@ -387,13 +387,13 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+    assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+    assessmentConsolidatedData.partner1HasTotalIncomeAssistance =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+    assessmentConsolidatedData.partner1HasFedralProvincialPDReceipt =
       YesNoOptions.Yes;
-    assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 30000;
+    assessmentConsolidatedData.partner1TotalIncome = 30000;
     assessmentConsolidatedData.studentDataYouthInCare = YesNoOptions.Yes;
 
     // Act
@@ -449,13 +449,13 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+    assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+    assessmentConsolidatedData.partner1HasTotalIncomeAssistance =
       YesNoOptions.Yes;
-    assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+    assessmentConsolidatedData.partner1HasFedralProvincialPDReceipt =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 30000;
+    assessmentConsolidatedData.partner1TotalIncome = 30000;
 
     assessmentConsolidatedData.studentDataYouthInCare = YesNoOptions.Yes;
 
@@ -512,16 +512,16 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+    assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+    assessmentConsolidatedData.partner1HasTotalIncomeAssistance =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+    assessmentConsolidatedData.partner1HasFedralProvincialPDReceipt =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 30000;
+    assessmentConsolidatedData.partner1TotalIncome = 30000;
     assessmentConsolidatedData.studentDataYouthInCare = YesNoOptions.Yes;
     // The spouse is a full-time student for more weeks than the student's offering weeks (16).
-    assessmentConsolidatedData.studentDataPartnerStudyWeeks = 20;
+    assessmentConsolidatedData.partner1StudentStudyWeeks = 20;
 
     // Act
     const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
