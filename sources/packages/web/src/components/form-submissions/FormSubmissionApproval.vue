@@ -127,7 +127,7 @@
       </v-form>
     </content-group>
     <footer-buttons
-      justify="space-between"
+      justify="end"
       :processing="processingCompletion"
       @primary-click="completeSubmission"
       primary-label="Submit final decision"

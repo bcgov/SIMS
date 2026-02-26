@@ -35,7 +35,7 @@ import {
   FormSubmissionItemDecisionAPIInDTO,
   FormSubmissionMinistryAPIOutDTO,
 } from "./models/form-submission.dto";
-import { getUserFullName } from "apps/api/src/utilities";
+import { getUserFullName } from "../../utilities";
 import { FormSubmissionDecisionStatus } from "@sims/sims-db/entities/form-submission-decision-status.type";
 import { CustomNamedError } from "@sims/utilities";
 
