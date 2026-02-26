@@ -422,11 +422,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
             }),
         ),
       );
-      queryParams.push(
-        `%${paginationOptions.searchCriteria}%`,
-        `%${paginationOptions.searchCriteria}%`,
-        `%${paginationOptions.searchCriteria.toUpperCase()}%`,
-      );
+      queryParams.push(`%${paginationOptions.searchCriteria.toUpperCase()}%`);
     }
     // If statusSearch is provided, narrow by the requested program statuses.
     if (paginationOptions.statusSearch) {
