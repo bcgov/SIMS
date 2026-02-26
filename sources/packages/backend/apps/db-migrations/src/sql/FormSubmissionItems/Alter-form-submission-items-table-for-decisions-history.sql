@@ -21,7 +21,7 @@ ALTER TABLE sims.form_submission_items
     ADD COLUMN created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     ADD COLUMN updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     ADD COLUMN creator INT NOT NULL REFERENCES sims.users(id),
-    ADD COLUMN modifier INT DEFAULT NULL REFERENCES sims.users(id);
+    ADD COLUMN modifier INT REFERENCES sims.users(id);
 
 -- Add comments for the new current_decision_id column.
 COMMENT ON COLUMN sims.form_submission_items.current_decision_id IS 'Reference to the most recent decision for this form submission item. This column points to the latest record in the form_submission_item_decisions table, which maintains the history of all decisions made on this item.';

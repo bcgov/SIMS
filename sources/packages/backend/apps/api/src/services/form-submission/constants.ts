@@ -32,7 +32,7 @@ export const FORM_SUBMISSION_MIXED_FORM_CATEGORIES =
 export const FORM_SUBMISSION_INVALID_DYNAMIC_DATA =
   "FORM_SUBMISSION_INVALID_DYNAMIC_DATA";
 /**
- *  * There is already a form submission pending a decision for the same context.
+ * There is already a form submission pending a decision for the same context.
  */
 export const FORM_SUBMISSION_PENDING_DECISION =
   "FORM_SUBMISSION_PENDING_DECISION";
@@ -59,7 +59,6 @@ export const FORM_SUBMISSION_NOT_PENDING = "FORM_SUBMISSION_NOT_PENDING";
  * and the decision cannot be saved based on potentially outdated information.
  */
 export const FORM_SUBMISSION_ITEM_OUTDATED = "FORM_SUBMISSION_ITEM_OUTDATED";
-
 /**
  * User is not authorized to update a form submission related data.
  */

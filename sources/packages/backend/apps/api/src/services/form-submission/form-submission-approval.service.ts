@@ -41,14 +41,13 @@ export class FormSubmissionApprovalService {
    * Gets a form submission by its ID, optionally filtering by student ID and form submission item ID.
    * @param formSubmissionId The ID of the form submission to retrieve.
    * @param options optional filters.
-   * - `studentId`: if provided, ensures the form submission belongs to the specified student.
    * - `itemId`: if provided, returns only the form submission item with the specified ID in the
    * form submission items array.
    * @returns The form submission if found, otherwise null.
    */
   async getFormSubmissionsById(
     formSubmissionId: number,
-    options?: { studentId?: number; itemId?: number },
+    options?: { itemId?: number },
   ): Promise<FormSubmission | null> {
     return this.formSubmissionRepo.findOne({
       select: {
@@ -98,7 +97,6 @@ export class FormSubmissionApprovalService {
       },
       where: {
         id: formSubmissionId,
-        student: { id: options?.studentId },
         formSubmissionItems: { id: options?.itemId },
       },
       order: { formSubmissionItems: { id: "ASC", decisions: { id: "DESC" } } },
@@ -106,7 +104,7 @@ export class FormSubmissionApprovalService {
   }
 
   /**
-   * Provides a decision to be associated with a form submission item, saving the decision
+   * Saves a decision to be associated with a form submission item, saving the decision
    * history and ensuring the necessary authorization and validations.
    * @param submissionItemId The ID of the form submission item being decided on.
    * @param decisionStatus The decision status to be associated with the form submission item.
@@ -125,14 +123,15 @@ export class FormSubmissionApprovalService {
     auditUserId: number,
   ): Promise<void> {
     return this.dataSource.transaction(async (entityManager) => {
-      const repo = entityManager.getRepository(FormSubmissionItem);
+      const formSubmissionItemRepo =
+        entityManager.getRepository(FormSubmissionItem);
       // Acquire a DB lock for the form submission item to prevent concurrent updates.
-      await repo.findOne({
+      await formSubmissionItemRepo.findOne({
         select: { id: true },
         where: { id: submissionItemId },
         lock: { mode: "pessimistic_write" },
       });
-      const submissionItem = await repo.findOne({
+      const submissionItem = await formSubmissionItemRepo.findOne({
         select: {
           id: true,
           formSubmission: { id: true, submissionStatus: true },
@@ -205,7 +204,7 @@ export class FormSubmissionApprovalService {
       submissionItem.currentDecision = decision;
       submissionItem.modifier = auditUser;
       submissionItem.updatedAt = now;
-      await repo.save(submissionItem);
+      await formSubmissionItemRepo.save(submissionItem);
     });
   }
 
@@ -225,14 +224,14 @@ export class FormSubmissionApprovalService {
     auditUserId: number,
   ): Promise<FormSubmission> {
     return this.dataSource.transaction(async (entityManager) => {
-      const repo = entityManager.getRepository(FormSubmission);
+      const formSubmissionRepo = entityManager.getRepository(FormSubmission);
       // Acquire a DB lock for the form submission to prevent concurrent completion.
-      await repo.findOne({
+      await formSubmissionRepo.findOne({
         select: { id: true },
         where: { id: submissionId },
         lock: { mode: "pessimistic_write" },
       });
-      const formSubmission = await repo.findOne({
+      const formSubmission = await formSubmissionRepo.findOne({
         select: {
           id: true,
           student: { id: true },
@@ -327,7 +326,7 @@ export class FormSubmissionApprovalService {
       formSubmission.modifier = auditUser;
       formSubmission.updatedAt = now;
       // Save form completion.
-      const saveFormSubmissionPromise = repo.save(formSubmission);
+      const saveFormSubmissionPromise = formSubmissionRepo.save(formSubmission);
       // Associate final notes with the student.
       const noteRelationsPromises = formSubmission.formSubmissionItems.map(
         (item) =>

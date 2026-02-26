@@ -9,7 +9,7 @@ CREATE TABLE sims.form_submission_item_decisions(
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     creator INT NOT NULL REFERENCES sims.users(id),
-    modifier INT DEFAULT NULL REFERENCES sims.users(id),
+    modifier INT REFERENCES sims.users(id),
     -- Ensure decision fields are all provided when decision status is not pending.
     CONSTRAINT form_submission_item_decisions_fields_required_constraint CHECK (
         (

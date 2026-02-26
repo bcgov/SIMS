@@ -15,6 +15,5 @@ export function useFormSubmission() {
         return StatusChipTypes.Inactive;
     }
   };
-
   return { mapFormSubmissionDecisionStatus };
 }

@@ -108,7 +108,7 @@ export class FormSubmissionApi extends HttpBaseClient {
 
   /**
    * Get the details of a form submission, including the individual form items and their details.
-   * For the ministry, it is using during the approval process, providing the necessary details for
+   * For the Ministry, it is using during the approval process, providing the necessary details for
    * the decision making on each form item.
    * For the student, it is used to show the details of their submission, including the decision made
    * on each form item.

@@ -64,7 +64,6 @@ interface FormSubmissionItemAPIOutDTO {
 
 /**
  * Current decision associated with a form submission item.
- * If the no decision is present yet, the status will be Pending and the other properties will be undefined.
  */
 interface FormSubmissionItemDecisionAPIOutDTO {
   id: number;
@@ -91,8 +90,8 @@ export interface FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemA
    */
   currentDecision?: FormSubmissionItemDecisionAPIOutDTO;
   /**
-   * Decision history for this form submission item. The decision history includes all decisions made on this item,
-   * including the current decision and any previous decisions.
+   * Decision history for this form submission item. The decision history includes all decisions made on this but
+   * the current one that is sent separately in the currentDecision property.
    * Optionally include decision history information if the user has the necessary permissions to view the decision details.
    */
   decisions?: FormSubmissionItemDecisionAPIOutDTO[];
@@ -165,6 +164,11 @@ export interface FormSubmissionItemDecisionAPIInDTO {
   lastUpdateDate: Date;
 }
 
+/**
+ * Decision item for form submission completion.
+ * Mainly used to ensure that the form submission is not outdated when
+ * the Ministry user tries to complete the form submission.
+ */
 export interface FormSubmissionCompletionItemAPIInDTO {
   submissionItemId: number;
   lastUpdateDate: Date;

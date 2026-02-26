@@ -24,9 +24,8 @@ import {
   IsDate,
 } from "class-validator";
 
-/***
+/**
  * Max number of form submission items allowed in a single form submission.
- * This is to prevent abuse and ensure performance of the system.
  */
 const MAX_SUBMISSION_ITEMS = 50;
 
@@ -90,7 +89,6 @@ abstract class FormSubmissionItemAPIOutDTO {
 
 /**
  * Current decision associated with a form submission item.
- * If the no decision is present yet, the status will be Pending and the other properties will be undefined.
  */
 class FormSubmissionItemDecisionAPIOutDTO {
   id: number;
@@ -117,8 +115,8 @@ class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
    */
   currentDecision?: FormSubmissionItemDecisionAPIOutDTO;
   /**
-   * Decision history for this form submission item. The decision history includes all decisions made on this item,
-   * including the current decision and any previous decisions.
+   * Decision history for this form submission item. The decision history includes all decisions made on this but
+   * the current one that is sent separately in the currentDecision property.
    * Optionally include decision history information if the user has the necessary permissions to view the decision details.
    */
   decisions?: FormSubmissionItemDecisionAPIOutDTO[];
@@ -206,6 +204,11 @@ export class FormSubmissionItemDecisionAPIInDTO {
   lastUpdateDate: Date;
 }
 
+/**
+ * Decision item for form submission completion.
+ * Mainly used to ensure that the form submission is not outdated when
+ * the Ministry user tries to complete the form submission.
+ */
 export class FormSubmissionCompletionItemAPIInDTO {
   @IsPositive()
   submissionItemId: number;

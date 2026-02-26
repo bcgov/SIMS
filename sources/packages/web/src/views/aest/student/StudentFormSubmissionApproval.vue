@@ -5,7 +5,7 @@
     </template>
     <form-submission-approval
       :form-submission-id="formSubmissionId"
-      :show-approval-details="true"
+      :show-decision-details="true"
       :read-only="false"
       @loaded="submissionLoaded"
     />

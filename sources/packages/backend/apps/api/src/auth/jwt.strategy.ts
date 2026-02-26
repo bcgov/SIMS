@@ -40,9 +40,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * @returns the original token information with additional properties depending on the
    * client used for the authentication.
    */
-  async validate(
-    payload: unknown,
-  ): Promise<IUserToken | StudentUserToken | IInstitutionUserToken> {
+  async validate(payload: unknown): Promise<IUserToken> {
     const userToken = payload as IUserToken;
     userToken.roles = extractRolesFromToken(userToken);
     // Check if it is expected that a user exists on DB for the specific authorized parties.

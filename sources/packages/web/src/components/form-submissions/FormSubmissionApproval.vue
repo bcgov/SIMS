@@ -433,7 +433,9 @@ export default defineComponent({
             if (modalResult) {
               await reLoadFormSubmissionItem(decision.submissionItemId);
             }
+            return;
           }
+          snackBar.error(error.message);
           return;
         }
         snackBar.error("Unexpected error while saving the decision.");
@@ -478,7 +480,9 @@ export default defineComponent({
             if (modalResult) {
               await loadFormSubmission();
             }
+            return;
           }
+          snackBar.error(error.message);
           return;
         }
         snackBar.error("Unexpected error while saving the decision.");

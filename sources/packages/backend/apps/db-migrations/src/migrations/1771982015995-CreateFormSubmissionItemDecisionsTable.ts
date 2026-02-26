@@ -14,7 +14,7 @@ export class CreateFormSubmissionItemDecisionsTable1771982015995 implements Migr
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Rollback-create-form-submission-items-table.sql",
+        "Rollback-create-form-submission-item-decisions-table.sql",
         "FormSubmissionItemDecisions",
       ),
     );

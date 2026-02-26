@@ -38,7 +38,7 @@ import {
   FormSubmissionMinistryAPIOutDTO,
 } from "./models/form-submission.dto";
 import { getUserFullName } from "../../utilities";
-import { FormSubmissionDecisionStatus } from "@sims/sims-db/entities/form-submission-decision-status.type";
+import { FormSubmissionDecisionStatus } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
@@ -54,12 +54,9 @@ export class FormSubmissionAESTController extends BaseController {
 
   /**
    * Get the details of a form submission, including the individual form items and their details.
-   * For the ministry, it is using during the approval process, providing the necessary details for
-   * the decision making on each form item.
-   * For the student, it is used to show the details of their submission, including the decision made
-   * on each form item.
    * @param formSubmissionId ID of the form submission to retrieve the details for.
    * @param itemId optional ID of the form submission item to filter the details for.
+   * Useful only when a single item details are required.
    * @returns form submission details including individual form items and their details.
    */
   @ApiNotFoundResponse({ description: "Form submission not found" })
@@ -117,7 +114,7 @@ export class FormSubmissionAESTController extends BaseController {
             : undefined,
         decisions: hasApprovalAuthorization
           ? item.decisions
-              .filter((decision) => decision.id !== item.currentDecision?.id)
+              .filter((decision) => decision.id !== item.currentDecision.id)
               .map((decision) => ({
                 id: decision.id,
                 decisionStatus: decision.decisionStatus,

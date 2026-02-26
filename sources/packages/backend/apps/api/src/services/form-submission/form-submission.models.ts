@@ -1,4 +1,4 @@
-import { DynamicFormConfiguration, FormCategory } from "@sims/sims-db/entities";
+import { DynamicFormConfiguration, FormCategory } from "@sims/sims-db";
 import { Parent } from "../../types";
 import { Role } from "../../auth";
 
