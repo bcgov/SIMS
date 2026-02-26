@@ -1,159 +1,151 @@
 <template>
   <body-header-container :enable-card-view="false">
     <template #header>
-      <body-header
-        :title="formSubmission.formCategory"
-        sub-title="Please see below the list of item(s) submitted."
-      >
-        <template #status-chip>
-          <status-chip-form-submission :status="formSubmission.status" />
-        </template>
-      </body-header>
+      <form-submission-approval-header :form-submission="formSubmission" />
     </template>
-    <v-skeleton-loader v-if="formSubmissionLoading" type="image, article" />
-    <v-form v-else ref="approvalsForm">
-      <error-summary :errors="approvalsForm?.errors" />
-      <form-submission-items
-        :submission-items="formSubmissionItems"
-        :read-only="true"
-      >
-        <template #decision="{ decision }" v-if="canShowDecisionDetails">
-          <span class="category-header-medium brand-gray-text"
-            >Current decision</span
-          >
-          <v-divider />
-          <v-textarea
-            :ref="(el) => captureNoteRef(el, decision)"
-            class="my-4"
-            label="Notes"
-            variant="outlined"
-            v-model="decision.decisionNoteDescription"
-            hide-details="auto"
-            :rules="[
-              (v) => checkNotesLengthRule(v, `${decision.parentName}, notes`),
-            ]"
-            required
-            :readonly="decision.decisionSaved"
-            :disabled="readOnly || decision.saveDecisionInProgress"
-          />
-          <v-row justify="space-between" class="mt-2 mb-1 mx-0">
-            <v-input
-              v-model="decision.decisionStatus"
+    <content-group>
+      <v-skeleton-loader v-if="formSubmissionLoading" type="image, article" />
+      <v-form v-else ref="approvalsForm">
+        <error-summary :errors="approvalsForm?.errors" />
+        <form-submission-items
+          :submission-items="formSubmissionItems"
+          :read-only="true"
+        >
+          <template #decision="{ decision }" v-if="canShowDecisionDetails">
+            <h4 class="category-header-medium brand-gray-text">
+              Current decision
+            </h4>
+            <v-divider />
+            <v-textarea
+              :ref="(el) => captureNoteRef(el, decision)"
+              class="my-4"
+              label="Notes"
+              variant="outlined"
+              v-model="decision.decisionNoteDescription"
+              hide-details="auto"
               :rules="[
-                (v: FormSubmissionDecisionStatus) =>
-                  hasDecisionRule(v, decision.parentName),
+                (v) => checkNotesLengthRule(v, `${decision.parentName}, notes`),
               ]"
-              :hide-details="true"
-            >
-              <v-btn-toggle
-                density="compact"
+              required
+              :readonly="decision.decisionSaved"
+              :disabled="readOnly || decision.saveDecisionInProgress"
+            />
+            <v-row justify="space-between" class="mt-2 mb-1 mx-0">
+              <v-input
                 v-model="decision.decisionStatus"
-                class="btn-toggle"
-                selected-class="selected-btn-toggle"
-                :disabled="
-                  readOnly ||
-                  decision.saveDecisionInProgress ||
-                  decision.decisionSaved
-                "
-                mandatory
+                :rules="[
+                  (v: FormSubmissionDecisionStatus) =>
+                    hasDecisionRule(v, decision.parentName),
+                ]"
+                :hide-details="true"
               >
-                <v-btn
-                  v-for="decisionStatus of decisionStatusOptions"
-                  :key="decisionStatus.value"
-                  class="text-white"
-                  :color="decisionStatus.color"
-                  :value="decisionStatus.value"
-                  >{{ decisionStatus.value }}</v-btn
+                <v-btn-toggle
+                  density="compact"
+                  v-model="decision.decisionStatus"
+                  class="btn-toggle"
+                  selected-class="selected-btn-toggle"
+                  :disabled="
+                    readOnly ||
+                    decision.saveDecisionInProgress ||
+                    decision.decisionSaved
+                  "
+                  mandatory
                 >
-              </v-btn-toggle>
-            </v-input>
-            <!-- Allow editing a decision while the main submission is still pending. -->
-            <template
-              v-if="decision.parentStatus === FormSubmissionStatus.Pending"
-            >
-              <v-btn
-                v-if="decision.decisionSaved"
-                class="float-right"
-                color="primary"
-                variant="outlined"
-                :loading="decision.saveDecisionInProgress"
-                @click="changeDecision(decision)"
-                >Edit
-                <v-tooltip activator="parent" location="bottom"
-                  >Allow changing the information previously
-                  submitted.</v-tooltip
-                ></v-btn
+                  <v-btn
+                    v-for="decisionStatus of decisionStatusOptions"
+                    :key="decisionStatus.value"
+                    class="text-white"
+                    :color="decisionStatus.color"
+                    :value="decisionStatus.value"
+                    >{{ decisionStatus.value }}</v-btn
+                  >
+                </v-btn-toggle>
+              </v-input>
+              <!-- Allow editing a decision while the main submission is still pending. -->
+              <template
+                v-if="decision.parentStatus === FormSubmissionStatus.Pending"
               >
-              <template v-else>
                 <v-btn
-                  class="float-right mr-2"
+                  v-if="decision.decisionSaved"
+                  class="float-right"
                   color="primary"
                   variant="outlined"
                   :loading="decision.saveDecisionInProgress"
-                  @click="cancelChangeDecision(decision)"
-                  >Cancel
-                </v-btn>
-                <v-btn
-                  class="float-right"
-                  color="primary"
-                  :loading="decision.saveDecisionInProgress"
-                  @click="saveDecision(decision)"
-                  >Save
+                  @click="changeDecision(decision)"
+                  >Edit
                   <v-tooltip activator="parent" location="bottom"
-                    >Save a decision for this item only. This decision is not
-                    final and can be reverted till the main submission is no
-                    longer pending.</v-tooltip
+                    >Allow changing the information previously
+                    submitted.</v-tooltip
                   ></v-btn
                 >
+                <template v-else>
+                  <v-btn
+                    class="float-right mr-2"
+                    color="primary"
+                    variant="outlined"
+                    :loading="decision.saveDecisionInProgress"
+                    @click="cancelChangeDecision(decision)"
+                    >Cancel
+                  </v-btn>
+                  <v-btn
+                    class="float-right"
+                    color="primary"
+                    :loading="decision.saveDecisionInProgress"
+                    @click="saveDecision(decision)"
+                    >Save
+                    <v-tooltip activator="parent" location="bottom"
+                      >Save a decision for this item only. This decision is not
+                      final and can be reverted till the main submission is no
+                      longer pending.</v-tooltip
+                    ></v-btn
+                  >
+                </template>
               </template>
+            </v-row>
+            <v-input
+              class="float-right"
+              v-model="decision.decisionSaved"
+              :rules="[(v) => v || `${decision.parentName}, must be saved.`]"
+              :hide-details="false"
+            ></v-input>
+            <!-- Audit for latest decision made on this item. -->
+            <p v-if="decision.decisionBy" class="brand-gray-text mt-4">
+              Last updated by <strong>{{ decision.decisionBy }}</strong> on
+              <strong>{{
+                getISODateHourMinuteString(decision.decisionDate)
+              }}</strong>
+            </p>
+            <!-- Timeline with the decision history. -->
+            <template v-if="decision.decisionHistory?.length">
+              <v-divider />
+              <form-submission-decision-history
+                :decision-history="decision.decisionHistory"
+              />
             </template>
-          </v-row>
-          <v-input
-            class="float-right"
-            v-model="decision.decisionSaved"
-            :rules="[(v) => v || `${decision.parentName}, must be saved.`]"
-            :hide-details="false"
-          ></v-input>
-          <!-- Audit for latest decision made on this item. -->
-          <p v-if="decision.decisionBy" class="brand-gray-text mt-4">
-            Last updated by <strong>{{ decision.decisionBy }}</strong> on
-            <strong>{{
-              getISODateHourMinuteString(decision.decisionDate)
-            }}</strong>
-          </p>
-          <!-- Timeline with the decision history. -->
-          <template v-if="decision.decisionHistory?.length">
-            <v-divider />
-            <form-submission-decision-history
-              :decision-history="decision.decisionHistory"
-            />
           </template>
-        </template>
-      </form-submission-items>
-    </v-form>
+        </form-submission-items>
+      </v-form>
+    </content-group>
     <footer-buttons
       justify="space-between"
       :processing="processingCompletion"
-      @secondary-click="$.emit('cancel')"
-      secondary-label="Back"
       @primary-click="completeSubmission"
-      primary-label="Submit final decision(s)"
+      primary-label="Submit final decision"
       :show-primary-button="canSubmitFinalDecision"
+      :show-secondary-button="false"
     ></footer-buttons>
   </body-header-container>
   <confirm-modal
-    title="Outdated decision"
+    title="Outdated data"
     ref="outdatedDecisionModal"
     ok-label="Refresh data"
-    cancel-label="Cancel"
-    text="This decision was updated and the displayed information in no longer the most updated one. Would you like to refresh this decision displayed data?"
+    text="The information displayed is no longer current due to a recent update. Would you like to refresh the form to view the latest data?"
   />
   <confirm-modal
-    title="Outdated decision(s)"
-    ref="outdatedDecisionItemsModal"
-    ok-label="Refresh data"
-    cancel-label="Cancel"
-    text="At least one decision was updated and the displayed information in no longer the most updated one. Would you like to refresh the entire form displayed data?"
+    title="Confirm final decision"
+    ref="finalDecisionModal"
+    ok-label="Submit final decision"
+    text="Please confirm your final decision. Note that this submission is final and cannot be reversed."
   />
 </template>
 
@@ -181,10 +173,10 @@ import {
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionItemMinistryAPIOutDTO,
 } from "@/services/http/dto";
-import StatusChipFormSubmission from "@/components/generic/StatusChipFormSubmission.vue";
 import { FORM_SUBMISSION_ITEM_OUTDATED } from "@/constants";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import FormSubmissionDecisionHistory from "./FormSubmissionDecisionHistory.vue";
+import FormSubmissionApprovalHeader from "./FormSubmissionApprovalHeader.vue";
 
 type FormSubmission = Pick<
   FormSubmissionMinistryAPIOutDTO,
@@ -192,11 +184,14 @@ type FormSubmission = Pick<
 >;
 
 export default defineComponent({
+  emits: {
+    loaded: (submission: FormSubmissionMinistryAPIOutDTO) => !!submission,
+  },
   components: {
     FormSubmissionItems,
     FormSubmissionDecisionHistory,
-    StatusChipFormSubmission,
     ConfirmModal,
+    FormSubmissionApprovalHeader,
   },
   props: {
     formSubmissionId: {
@@ -214,13 +209,13 @@ export default defineComponent({
       default: true,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const snackBar = useSnackBar();
     const { mapFormSubmissionDecisionStatus } = useFormSubmission();
     const { getISODateHourMinuteString } = useFormatters();
     const { checkNotesLengthRule } = useRules();
     const outdatedDecisionModal = ref({} as ModalDialog<boolean>);
-    const outdatedDecisionItemsModal = ref({} as ModalDialog<boolean>);
+    const finalDecisionModal = ref({} as ModalDialog<boolean>);
     const formSubmission = ref({} as FormSubmission);
     const formSubmissionItems = ref([] as FormSubmissionItem[]);
     const formSubmissionLoading = ref(true);
@@ -266,6 +261,7 @@ export default defineComponent({
           (await FormSubmissionService.shared.getFormSubmission(
             props.formSubmissionId,
           )) as FormSubmissionMinistryAPIOutDTO;
+        emit("loaded", submission);
         // Keeps only the necessary properties for this UI.
         formSubmission.value = {
           id: submission.id,
@@ -457,6 +453,10 @@ export default defineComponent({
         }
         return;
       }
+      const confirm = await finalDecisionModal.value.showModal();
+      if (!confirm) {
+        return;
+      }
       try {
         processingCompletion.value = true;
         const lastUpdatedInfo = formSubmissionItems.value.map((item) => ({
@@ -473,8 +473,7 @@ export default defineComponent({
         if (error instanceof ApiProcessError) {
           if (error.errorType === FORM_SUBMISSION_ITEM_OUTDATED) {
             processingCompletion.value = false;
-            const modalResult =
-              await outdatedDecisionItemsModal.value.showModal();
+            const modalResult = await outdatedDecisionModal.value.showModal();
             if (modalResult) {
               await loadFormSubmission();
             }
@@ -514,7 +513,7 @@ export default defineComponent({
       canSubmitFinalDecision,
       decisionStatusOptions,
       outdatedDecisionModal,
-      outdatedDecisionItemsModal,
+      finalDecisionModal,
       FormSubmissionStatus,
       formSubmission,
       formSubmissionItems,
@@ -530,7 +529,6 @@ export default defineComponent({
       cancelChangeDecision,
       getISODateHourMinuteString,
       formSubmissionLoading,
-      mapFormSubmissionDecisionStatus,
     };
   },
 });

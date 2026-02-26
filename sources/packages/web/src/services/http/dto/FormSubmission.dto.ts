@@ -53,14 +53,13 @@ interface FormSubmissionItemAPIOutDTO {
   formType: string;
   formCategory: FormCategory;
   /**
-   * Current decision status for this form submission item. The current decision status represents the most recent decision made on
-   * this item and represents the current state of the item and should be available for all users to see.
+   * Current decision status for this form submission item.
+   * When no decision is made yet, the status will be assumed to be Pending.
    */
   decisionStatus: FormSubmissionDecisionStatus;
   dynamicFormConfigurationId: number;
   submissionData: unknown;
   formDefinitionName: string;
-  updatedAt: Date;
 }
 
 /**
@@ -81,6 +80,11 @@ interface FormSubmissionItemDecisionAPIOutDTO {
  */
 export interface FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
   /**
+   * Most recent update date for this form submission item. This is used to determine if the item is outdated when
+   * submitting a decision on it, to prevent overwriting a more recent decision.
+   */
+  updatedAt: Date;
+  /**
    * Current decision details for this form submission item. The current decision is the most recent decision made on
    * this item and represents the current state of the item.
    * Optionally include decision information if the user has the necessary permissions to view the decision details.
@@ -92,6 +96,11 @@ export interface FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemA
    * Optionally include decision history information if the user has the necessary permissions to view the decision details.
    */
   decisions?: FormSubmissionItemDecisionAPIOutDTO[];
+}
+
+// TODO: To be used once student view is implemented, currently using mocked data.
+export interface FormSubmissionStudentAPIOutDTO extends FormSubmissionAPIOutDTO {
+  submissionItems: FormSubmissionItemAPIOutDTO[];
 }
 
 /**

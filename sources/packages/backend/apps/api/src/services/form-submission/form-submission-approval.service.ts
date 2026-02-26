@@ -96,6 +96,17 @@ export class FormSubmissionApprovalService {
     });
   }
 
+  /**
+   * Provides a decision to be associated with a form submission item, saving the decision
+   * history and ensuring the necessary authorization and validations.
+   * @param submissionItemId The ID of the form submission item being decided on.
+   * @param decisionStatus The decision status to be associated with the form submission item.
+   * @param noteDescription The description of the note to be associated with the decision.
+   * @param lastUpdateDate The last update date of the form submission item,
+   * used to validate against potential outdated information.
+   * @param userRoles The roles of the user performing the action, used for authorization.
+   * @param auditUserId The ID of the user performing the action, used for auditing purposes.
+   */
   async saveFormSubmissionItem(
     submissionItemId: number,
     decisionStatus: FormSubmissionDecisionStatus,
@@ -142,7 +153,7 @@ export class FormSubmissionApprovalService {
           FORM_SUBMISSION_ITEM_NOT_FOUND,
         );
       }
-      this.checkApprovalAuthorization(
+      this.checkAuthorizationForApproval(
         submissionItem.dynamicFormConfiguration.formCategory,
         userRoles,
       );
@@ -173,7 +184,8 @@ export class FormSubmissionApprovalService {
       // Create decision note.
       const note = new Note();
       note.description = noteDescription;
-      note.noteType = NoteType.Application;
+      // TODO: Create a note type for Forms.
+      note.noteType = NoteType.General;
       note.creator = auditUser;
       note.createdAt = now;
       decision.decisionNote = await entityManager
@@ -239,7 +251,10 @@ export class FormSubmissionApprovalService {
           FORM_SUBMISSION_NOT_FOUND,
         );
       }
-      this.checkApprovalAuthorization(formSubmission.formCategory, userRoles);
+      this.checkAuthorizationForApproval(
+        formSubmission.formCategory,
+        userRoles,
+      );
       if (formSubmission.submissionStatus !== FormSubmissionStatus.Pending) {
         throw new CustomNamedError(
           "Final decision cannot be made on a form submission with status different than pending.",
@@ -335,10 +350,10 @@ export class FormSubmissionApprovalService {
    * @param category The category of the form item being updated, used
    * to determine the required role for authorization.
    * @param userRoles The roles of the user attempting to perform the action.
-   * @throws CustomNamedError with FORM_SUBMISSION_ITEM_DECISION_UNAUTHORIZED
+   * @throws CustomNamedError with FORM_SUBMISSION_UPDATE_UNAUTHORIZED
    * if the user does not have the required role for the form category.
    */
-  private checkApprovalAuthorization(
+  private checkAuthorizationForApproval(
     category: FormCategory,
     userRoles: Role[],
   ): void {

@@ -1,9 +1,10 @@
 <template>
-  <span
+  <h4
     v-if="decisionHistory?.length"
     class="category-header-medium brand-gray-text"
-    >Decision history</span
   >
+    Decision history
+  </h4>
   <v-timeline density="compact" side="end" class="mt-4">
     <v-timeline-item
       v-for="history in decisionHistory"

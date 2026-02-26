@@ -1,6 +1,6 @@
 import { DynamicFormConfiguration, FormCategory } from "@sims/sims-db/entities";
 import { Parent } from "../../types";
-import { Role } from "apps/api/src/auth";
+import { Role } from "../../auth";
 
 /**
  * Optional data that can be loaded as part of the form.

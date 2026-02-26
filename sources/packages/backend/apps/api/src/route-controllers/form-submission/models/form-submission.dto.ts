@@ -79,14 +79,13 @@ abstract class FormSubmissionItemAPIOutDTO {
   formType: string;
   formCategory: FormCategory;
   /**
-   * Current decision status for this form submission item. The current decision status represents the most recent decision made on
-   * this item and represents the current state of the item and should be available for all users to see.
+   * Current decision status for this form submission item.
+   * When no decision is made yet, the status will be assumed to be Pending.
    */
   decisionStatus: FormSubmissionDecisionStatus;
   dynamicFormConfigurationId: number;
   submissionData: unknown;
   formDefinitionName: string;
-  updatedAt: Date;
 }
 
 /**
@@ -106,6 +105,11 @@ class FormSubmissionItemDecisionAPIOutDTO {
  * for the Ministry, including the decision details.
  */
 class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
+  /**
+   * Most recent update date for this form submission item. This is used to determine if the item is outdated when
+   * submitting a decision on it, to prevent overwriting a more recent decision.
+   */
+  updatedAt: Date;
   /**
    * Current decision details for this form submission item. The current decision is the most recent decision made on
    * this item and represents the current state of the item.

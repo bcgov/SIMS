@@ -7,6 +7,7 @@ import {
   FormSubmissionItemDecisionAPIInDTO,
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionCompletionAPIInDTO,
+  FormSubmissionStudentAPIOutDTO,
 } from "@/services/http/dto";
 
 export class FormSubmissionService {
@@ -26,7 +27,9 @@ export class FormSubmissionService {
   }
 
   // TODO: To be implemented.
-  async getFormSubmissionSummary(): Promise<FormSubmissionStudentSummaryAPIOutDTO> {
+  async getFormSubmissionSummary(): Promise<{
+    submissions: FormSubmissionStudentAPIOutDTO[];
+  }> {
     return ApiClient.FormSubmissionApi.getFormSubmissionSummary();
   }
 

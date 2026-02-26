@@ -14,7 +14,6 @@ import {
   FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
   FormSubmissionApprovalService,
 } from "../../services";
-import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
   Groups,
@@ -25,11 +24,12 @@ import { ApiTags } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import {
+  AuthorizedParties,
   extractRolesFromToken,
   IUserToken,
   Role,
   UserGroups,
-} from "apps/api/src/auth";
+} from "../../auth";
 import {
   FormSubmissionCompletionAPIInDTO,
   FormSubmissionItemDecisionAPIInDTO,
