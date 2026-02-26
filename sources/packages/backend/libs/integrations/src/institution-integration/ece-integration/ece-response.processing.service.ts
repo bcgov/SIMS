@@ -385,10 +385,11 @@ export class ECEResponseProcessingService {
                 enrolmentConfirmationDate:
                   confirmedEnrolmentDetails.enrolmentConfirmationDate,
                 applicationNumber: disbursementDetails.applicationNumber,
+                canRemoveTuitionRemittanceOnRestriction: true,
               },
             );
           ++disbursementProcessingDetails.disbursementsSuccessfullyProcessed;
-          if (result.isTuitionRemittanceRemovedOnRestriction) {
+          if (result.isTuitionRemittanceImpactedOnRestriction) {
             processSummary.warnings.push(
               `Disbursement ${disbursementScheduleId} had remittance requested and due to restrictions will not be submitted.`,
             );

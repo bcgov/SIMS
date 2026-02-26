@@ -76,8 +76,8 @@ export enum EnrollmentPeriod {
  */
 export interface ConfirmEnrolmentResult {
   /**
-   * Indicates if the COE was confirmed with tuition remittance amount set to 0
+   * Indicates if the COE was confirmed with impact on tuition remittance
    * due to restriction.
    */
-  isTuitionRemittanceRemovedOnRestriction: boolean;
+  isTuitionRemittanceImpactedOnRestriction: boolean;
 }

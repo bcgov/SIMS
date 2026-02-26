@@ -598,14 +598,13 @@ export class ConfirmationOfEnrollmentService {
       canRemoveTuitionRemittanceOnRestriction?: boolean;
     },
   ): Promise<ConfirmEnrolmentResult> {
-    let isTuitionRemittanceRemovedOnRestriction = false;
+    let isTuitionRemittanceImpactedOnRestriction = false;
     // Get the disbursement and application summary for COE.
     const disbursementSchedule =
       await this.getDisbursementAndApplicationSummary(
         disbursementScheduleId,
         options?.locationId,
       );
-
     if (!disbursementSchedule) {
       throw new CustomNamedError("Enrolment not found.", ENROLMENT_NOT_FOUND);
     }
@@ -688,7 +687,7 @@ export class ConfirmationOfEnrollmentService {
     if (!canRequestedTuitionRemittance && tuitionRemittanceAmount > 0) {
       if (options?.canRemoveTuitionRemittanceOnRestriction) {
         tuitionRemittanceAmount = 0;
-        isTuitionRemittanceRemovedOnRestriction = true;
+        isTuitionRemittanceImpactedOnRestriction = true;
       }
       // Throw error if not allowed to remove tuition remittance on restriction.
       else {
@@ -715,7 +714,7 @@ export class ConfirmationOfEnrollmentService {
         .offering.offeringIntensity,
       options?.enrolmentConfirmationDate,
     );
-    return { isTuitionRemittanceRemovedOnRestriction };
+    return { isTuitionRemittanceImpactedOnRestriction };
   }
 
   /**
