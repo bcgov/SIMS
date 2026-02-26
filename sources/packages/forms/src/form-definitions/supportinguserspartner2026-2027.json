@@ -75,7 +75,6 @@
               "label": "Given names",
               "applyMaskOn": "change",
               "tableView": true,
-              "customDefaultValue": "value  = data.isAbleToReport;",
               "validate": {
                 "maxLength": 100
               },

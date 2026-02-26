@@ -150,7 +150,7 @@ export class ReportedSupportingUserAPIOutDTO {
   formName: string;
   isAbleToReport: boolean;
   programYearStartDate: string;
-  supportingUserType?: SupportingUserType;
+  supportingUserType: SupportingUserType;
 }
 
 /**
