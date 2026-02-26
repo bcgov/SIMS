@@ -60,6 +60,8 @@ export type RelationshipStatusType =
   | "married"
   | "marriedUnable";
 
+export type DependantStatusType = "independent" | "dependent";
+
 export interface PartnerInformationAndIncomeAppealData extends JSONDoc {
   relationshipStatus: RelationshipStatusType;
   partnerEstimatedIncome?: number;
@@ -102,7 +104,7 @@ export enum InstitutionTypes {
  * Data required to calculate the assessment data of an application.
  */
 export interface AssessmentConsolidatedData extends JSONDoc {
-  studentDataDependantstatus: "dependant" | "independant";
+  studentDataDependantStatus: DependantStatusType;
   programYear: string;
   programYearStartDate: string;
   studentDataRelationshipStatus: RelationshipStatusType;
