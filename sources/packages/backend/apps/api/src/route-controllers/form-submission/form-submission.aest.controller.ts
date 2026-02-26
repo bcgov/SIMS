@@ -1,16 +1,19 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
   Query,
-  UnauthorizedException,
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
+  FORM_SUBMISSION_ITEM_NOT_FOUND,
   FORM_SUBMISSION_ITEM_OUTDATED,
+  FORM_SUBMISSION_NOT_FOUND,
   FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
   FormSubmissionApprovalService,
 } from "../../services";
@@ -20,16 +23,15 @@ import {
   Roles,
   UserToken,
 } from "../../auth/decorators";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import {
-  AuthorizedParties,
-  extractRolesFromToken,
-  IUserToken,
-  Role,
-  UserGroups,
-} from "../../auth";
+import { AuthorizedParties, IUserToken, Role, UserGroups } from "../../auth";
 import {
   FormSubmissionCompletionAPIInDTO,
   FormSubmissionItemDecisionAPIInDTO,
@@ -60,6 +62,7 @@ export class FormSubmissionAESTController extends BaseController {
    * @param itemId optional ID of the form submission item to filter the details for.
    * @returns form submission details including individual form items and their details.
    */
+  @ApiNotFoundResponse({ description: "Form submission not found" })
   @Get(":formSubmissionId")
   async getFormSubmission(
     @UserToken() userToken: IUserToken,
@@ -71,6 +74,11 @@ export class FormSubmissionAESTController extends BaseController {
         formSubmissionId,
         { itemId },
       );
+    if (!submission) {
+      throw new NotFoundException(
+        `Form submission with ID ${formSubmissionId} not found.`,
+      );
+    }
     const hasApprovalAuthorization =
       this.formSubmissionApprovalService.hasApprovalAuthorization(
         submission.formCategory,
@@ -127,6 +135,15 @@ export class FormSubmissionAESTController extends BaseController {
    * @param formSubmissionItemId ID of the form submission item to update the decision for.
    * @param payload decision status and note description for the form submission item.
    */
+  @ApiNotFoundResponse({ description: "Form submission item not found." })
+  @ApiForbiddenResponse({
+    description: "User is not authorized to make decision on the form item.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "The form submission item has been updated since it was last retrieved or " +
+      "decisions cannot be made on items belonging to a form submission that is not pending.",
+  })
   @Roles(Role.StudentApproveDeclineAppeals, Role.StudentApproveDeclineForms)
   @Patch("items/:formSubmissionItemId/decision")
   async submitItemDecision(
@@ -146,12 +163,14 @@ export class FormSubmissionAESTController extends BaseController {
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
+          case FORM_SUBMISSION_ITEM_NOT_FOUND:
+            throw new NotFoundException(error.message);
           case FORM_SUBMISSION_ITEM_OUTDATED:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );
           case FORM_SUBMISSION_UPDATE_UNAUTHORIZED:
-            throw new UnauthorizedException(error.message);
+            throw new ForbiddenException(error.message);
           default:
             throw new UnprocessableEntityException(error.message);
         }
@@ -167,6 +186,18 @@ export class FormSubmissionAESTController extends BaseController {
    * all decisions on the form items have been made and the form submission is completed.
    * @param formSubmissionId ID of the form submission to be completed.
    */
+  @ApiNotFoundResponse({ description: "Form submission not found." })
+  @ApiForbiddenResponse({
+    description: "User is not authorized to complete the form submission.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Final decision cannot be made on a form submission with status different than pending or " +
+      "the provided form submission items do not match the form submission items for this submission or " +
+      "form submission item not found in the form submission or " +
+      "form submission item has been updated since it was last retrieved or " +
+      "final decision cannot be made when some decisions are still pending.",
+  })
   @Roles(Role.StudentApproveDeclineAppeals, Role.StudentApproveDeclineForms)
   @Patch(":formSubmissionId/complete")
   async completeFormSubmission(
@@ -175,22 +206,23 @@ export class FormSubmissionAESTController extends BaseController {
     @Body() payload: FormSubmissionCompletionAPIInDTO,
   ): Promise<void> {
     try {
-      const userRoles = extractRolesFromToken(userToken);
       await this.formSubmissionApprovalService.completeFormSubmission(
         formSubmissionId,
         payload.items,
-        userRoles,
+        userToken.roles,
         userToken.userId,
       );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
+          case FORM_SUBMISSION_NOT_FOUND:
+            throw new NotFoundException(error.message);
           case FORM_SUBMISSION_ITEM_OUTDATED:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );
           case FORM_SUBMISSION_UPDATE_UNAUTHORIZED:
-            throw new UnauthorizedException(error.message);
+            throw new ForbiddenException(error.message);
           default:
             throw new UnprocessableEntityException(error.message);
         }

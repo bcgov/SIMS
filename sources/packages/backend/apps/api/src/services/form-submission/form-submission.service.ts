@@ -118,17 +118,6 @@ export class FormSubmissionService {
       }
       // TODO: send notification.
       return entityManager.getRepository(FormSubmission).save(formSubmission);
-      // Associate a decision with each form submission item to mark them all as pending.
-      // formSubmission.formSubmissionItems.forEach((item) => {
-      //   const decision = new FormSubmissionItemDecision();
-      //   decision.decisionStatus = FormSubmissionDecisionStatus.Pending;
-      //   decision.creator = creator;
-      //   decision.createdAt = now;
-      //   decision.formSubmissionItem = item;
-      //   item.decisions = [decision];
-      //   item.currentDecision = decision;
-      // });
-      // return entityManager.getRepository(FormSubmission).save(formSubmission);
     });
   }
 

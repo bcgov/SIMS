@@ -7,7 +7,7 @@
       <ul v-if="formSubmission.formCategory === FormCategory.StudentAppeal">
         <li>Review the appeal(s) and any supporting documentation.</li>
         <li>
-          If there is more then one appeal you must add a decision for each.
+          If there is more than one appeal you must add a decision for each.
         </li>
         <li>
           Once all appeals have a decision you can complete your review by

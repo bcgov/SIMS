@@ -37,10 +37,19 @@ export class FormSubmissionApprovalService {
     private readonly formSubmissionRepo: Repository<FormSubmission>,
   ) {}
 
+  /**
+   * Gets a form submission by its ID, optionally filtering by student ID and form submission item ID.
+   * @param formSubmissionId The ID of the form submission to retrieve.
+   * @param options optional filters.
+   * - `studentId`: if provided, ensures the form submission belongs to the specified student.
+   * - `itemId`: if provided, returns only the form submission item with the specified ID in the
+   * form submission items array.
+   * @returns The form submission if found, otherwise null.
+   */
   async getFormSubmissionsById(
     formSubmissionId: number,
     options?: { studentId?: number; itemId?: number },
-  ): Promise<FormSubmission> {
+  ): Promise<FormSubmission | null> {
     return this.formSubmissionRepo.findOne({
       select: {
         id: true,
@@ -291,8 +300,9 @@ export class FormSubmissionApprovalService {
       let isFullyDeclined = true;
       for (const item of formSubmission.formSubmissionItems) {
         if (
+          !item.currentDecision ||
           item.currentDecision.decisionStatus ===
-          FormSubmissionDecisionStatus.Pending
+            FormSubmissionDecisionStatus.Pending
         ) {
           throw new CustomNamedError(
             "Final decision cannot be made when some decisions are still pending.",

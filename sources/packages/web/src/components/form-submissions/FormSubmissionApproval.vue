@@ -408,7 +408,7 @@ export default defineComponent({
     const saveDecision = async (decision: FormSubmissionItemDecision) => {
       const noteInput = noteRefs.value.get(decision);
       const errors = await noteInput?.validate();
-      if (errors.length) {
+      if (errors?.length) {
         return;
       }
       try {
