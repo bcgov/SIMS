@@ -344,7 +344,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
             ),
         ),
       );
-      queryParams.push(...paginationOptions.statusSearch, !paginationOptions.inactiveProgramSearch);
+      queryParams.push(
+        ...paginationOptions.statusSearch,
+        !paginationOptions.inactiveProgramSearch,
+      );
     }
     // Fetching only the active programs with the provided program status.
     else if (paginationOptions.statusSearch) {
@@ -408,21 +411,21 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       programQuery.andWhere(
         new Brackets((qb) =>
           qb
-            .where("programs.name Ilike :nameSearch", {
-              nameSearch: `%${paginationOptions.searchCriteria}%`,
+            .where("programs.name Ilike :searchCriteria", {
+              searchCriteria: `%${paginationOptions.searchCriteria}%`,
             })
-            .orWhere("programs.cipCode Ilike :cipSearch", {
-              cipSearch: `%${paginationOptions.searchCriteria}%`,
+            .orWhere("programs.cipCode like :searchCriteria", {
+              searchCriteria: `%${paginationOptions.searchCriteria}%`,
             })
-            .orWhere("programs.sabcCode Ilike :sabcSearch", {
-              sabcSearch: `%${paginationOptions.searchCriteria}%`,
+            .orWhere("programs.sabcCode like :searchCriteria", {
+              searchCriteria: `%${paginationOptions.searchCriteria.toUpperCase()}%`,
             }),
         ),
       );
       queryParams.push(
         `%${paginationOptions.searchCriteria}%`,
         `%${paginationOptions.searchCriteria}%`,
-        `%${paginationOptions.searchCriteria}%`,
+        `%${paginationOptions.searchCriteria.toUpperCase()}%`,
       );
     }
     // If statusSearch is provided, narrow by the requested program statuses.

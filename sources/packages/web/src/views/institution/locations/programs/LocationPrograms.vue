@@ -29,32 +29,22 @@
           label="Search program name, SABC program code or CIP"
           variant="outlined"
           v-model="searchBox"
-          data-cy="searchBox"
           @keyup.enter="searchProgramTable"
           prepend-inner-icon="mdi-magnify"
           hide-details="auto"
         />
-        <v-btn
-          class="ml-2"
-          color="primary"
-          @click="searchProgramTable"
-          data-cy="searchProgramBtn"
-        >
+        <v-btn class="ml-2" color="primary" @click="searchProgramTable">
           Search
         </v-btn>
         <v-btn-toggle
-          v-model="selectedStatuses"
+          :model-value="selectedStatuses"
+          @update:model-value="handleStatusChange"
           multiple
           density="compact"
           class="ml-2 btn-toggle"
           selected-class="selected-btn-toggle"
         >
-          <v-btn
-            rounded="xl"
-            :value="ALL_STATUS"
-            color="primary"
-            class="ml-2"
-            data-cy="filterStatusAll"
+          <v-btn rounded="xl" :value="ALL_STATUS" color="primary" class="ml-2"
             >All</v-btn
           >
           <v-btn
@@ -62,7 +52,6 @@
             :value="ProgramStatus.Approved"
             color="primary"
             class="ml-2"
-            data-cy="filterStatusApproved"
             >Approved</v-btn
           >
           <v-btn
@@ -70,7 +59,6 @@
             :value="ProgramStatus.Pending"
             color="primary"
             class="ml-2"
-            data-cy="filterStatusPending"
             >Pending</v-btn
           >
           <v-btn
@@ -78,7 +66,6 @@
             :value="ProgramStatus.Declined"
             color="primary"
             class="ml-2"
-            data-cy="filterStatusDeclined"
             >Declined</v-btn
           >
           <v-btn
@@ -86,7 +73,6 @@
             :value="INACTIVE_PROGRAM"
             color="primary"
             class="ml-2"
-            data-cy="filterStatusInactive"
             >Inactive</v-btn
           >
         </v-btn-toggle>
@@ -108,12 +94,12 @@
         >
           <template #item="{ item }">
             <tr>
-              <td data-cy="programName">{{ item.programName }}</td>
-              <td data-cy="programCredential">
+              <td>{{ item.programName }}</td>
+              <td>
                 {{ item.credentialTypeToDisplay }}
               </td>
-              <td data-cy="programCIP">{{ item.cipCode }}</td>
-              <td data-cy="programSabcCode">{{ item.sabcCode || "-" }}</td>
+              <td>{{ item.cipCode }}</td>
+              <td>{{ emptyStringFiller(item.sabcCode) }}</td>
               <td data-cy="programStudyPeriods">
                 {{ item.totalOfferings }}
               </td>
@@ -159,7 +145,11 @@ import {
 import { INACTIVE_PROGRAM } from "@/constants";
 import { ref, watch, computed, defineComponent } from "vue";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
-import { useInstitutionAuth, useInstitutionState } from "@/composables";
+import {
+  useInstitutionAuth,
+  useInstitutionState,
+  useFormatters,
+} from "@/composables";
 
 export default defineComponent({
   components: { StatusChipProgram },
@@ -172,6 +162,7 @@ export default defineComponent({
   setup(props) {
     const { getLocationName } = useInstitutionState();
     const { isReadOnlyUser } = useInstitutionAuth();
+    const { emptyStringFiller } = useFormatters();
     const router = useRouter();
     const programAndCount = ref(
       {} as PaginatedResults<EducationProgramsSummary> | undefined,
@@ -186,8 +177,8 @@ export default defineComponent({
       },
     ]);
     // Sentinel value used to represent the "All" filter state.
-    const ALL_STATUS = "all";
-    const selectedStatuses = ref<string[]>([ALL_STATUS]);
+    const ALL_STATUS = "All";
+    const selectedStatuses = ref([ALL_STATUS]);
     const currentPage = ref();
     const currentPageLimit = ref();
 
@@ -196,11 +187,28 @@ export default defineComponent({
     });
 
     /**
+     * Builds the search criteria object from the current search box and status
+     * filter values, used consistently across search and pagination/sort events.
+     * @returns The search criteria object reflecting the current filter state.
+     */
+    const getSearchCriteria = () => {
+      const statusSearch = selectedStatuses.value.filter(
+        (s) => s !== INACTIVE_PROGRAM && s !== ALL_STATUS,
+      );
+      return {
+        searchCriteria: searchBox.value,
+        inactiveProgramSearch:
+          selectedStatuses.value.includes(INACTIVE_PROGRAM),
+        ...(statusSearch.length ? { statusSearch } : {}),
+      };
+    };
+
+    /**
      * Function to load program list and count for institution.
      * @param page page number, if nothing passed then DEFAULT_DATATABLE_PAGE_NUMBER.
      * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT.
      * @param sortField sort field, if nothing passed then api sorts with programStatus.
-     * @param sortOrder sort oder, if nothing passed then DataTableSortByOrder.ASC.
+     * @param sortOrder sort order, if nothing passed then DataTableSortByOrder.ASC.
      */
     const loadSummary = async (
       page = DEFAULT_DATATABLE_PAGE_NUMBER,
@@ -209,20 +217,11 @@ export default defineComponent({
       sortOrder?: DataTableSortByOrder,
     ) => {
       loading.value = true;
-      const inactiveProgramSearch =
-        selectedStatuses.value.includes(INACTIVE_PROGRAM);
-      const statusSearch = selectedStatuses.value.filter(
-        (s) => s !== INACTIVE_PROGRAM && s !== ALL_STATUS,
-      );
       programAndCount.value =
         await EducationProgramService.shared.getProgramsSummaryByLocationId(
           props.locationId,
           {
-            searchCriteria: {
-              searchCriteria: searchBox.value,
-              inactiveProgramSearch,
-              ...(statusSearch.length ? { statusSearch } : {}),
-            },
+            searchCriteria: getSearchCriteria(),
             sortField,
             sortOrder,
             page,
@@ -274,24 +273,28 @@ export default defineComponent({
       { immediate: true },
     );
 
-    // Enforce mutual exclusivity between "All" and specific statuses,
-    // and reload the table when the effective selection changes.
-    watch(selectedStatuses, async (newVal, oldVal) => {
+    /**
+     * Handles status filter changes from the toggle group, enforcing mutual
+     * exclusivity between "All" and specific statuses, and reloading the table
+     * when the effective selection changes.
+     * @param newVal The new array of selected status values emitted by the toggle.
+     */
+    const handleStatusChange = async (newVal: string[]) => {
+      const oldVal = selectedStatuses.value;
       if (newVal.includes(ALL_STATUS) && newVal.length > 1) {
-        // Clicking "All" while others are active clears them; clicking a
-        // status while "All" is active removes "All".
+        // Clicking "All" while others are active clears them
+        // Clicking a status while "All" is active removes "All".
         selectedStatuses.value = oldVal.includes(ALL_STATUS)
           ? newVal.filter((s) => s !== ALL_STATUS)
           : [ALL_STATUS];
-        return;
-      }
-      if (newVal.length === 0) {
+      } else if (newVal.length === 0) {
         // Nothing selected – fall back to "All".
         selectedStatuses.value = [ALL_STATUS];
-        return;
+      } else {
+        selectedStatuses.value = newVal;
       }
       await searchProgramTable();
-    });
+    };
 
     const goToAddNewProgram = () => {
       router.push({
@@ -329,10 +332,12 @@ export default defineComponent({
       ProgramSummaryHeaders,
       isReadOnlyUser,
       selectedStatuses,
+      handleStatusChange,
       ALL_STATUS,
       ProgramStatus,
       INACTIVE_PROGRAM,
       sortBy,
+      emptyStringFiller,
     };
   },
 });
