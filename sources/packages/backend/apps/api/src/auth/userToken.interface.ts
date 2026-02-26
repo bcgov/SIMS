@@ -72,6 +72,12 @@ export interface IUserToken {
    */
   groups: string[];
   /**
+   * Roles extracted from the token resource access based on the authorized party (client ID).
+   * The roles are expected to be defined as a property under the resource_access object
+   * corresponding to the authorized party (client ID).
+   */
+  roles: Role[];
+  /**
    * Available only for BCeID authenticated users.
    * For instance, "SIMS_COLLC" as opposed to Keycloak userName
    * that looks like "5e5cdf7132124249aa0eda5036e827e8@bceidboth"

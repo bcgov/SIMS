@@ -74,7 +74,7 @@ export class FormSubmissionAESTController extends BaseController {
     const hasApprovalAuthorization =
       this.formSubmissionApprovalService.hasApprovalAuthorization(
         submission.formCategory,
-        extractRolesFromToken(userToken),
+        userToken.roles,
       );
     return {
       hasApprovalAuthorization,
@@ -135,13 +135,12 @@ export class FormSubmissionAESTController extends BaseController {
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
     try {
-      const userRoles = extractRolesFromToken(userToken);
       await this.formSubmissionApprovalService.saveFormSubmissionItem(
         formSubmissionItemId,
         payload.decisionStatus,
         payload.noteDescription,
         payload.lastUpdateDate,
-        userRoles,
+        userToken.roles,
         userToken.userId,
       );
     } catch (error: unknown) {
