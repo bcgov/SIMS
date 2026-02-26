@@ -22,6 +22,7 @@ import {
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import { faker } from "@faker-js/faker";
+import { getISODateOnlyString } from "@sims/utilities";
 
 describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocationId", () => {
   let app: INestApplication;
@@ -57,28 +58,43 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     // created in this test from pre-existing CollegeF programs in the test database.
     const searchString = faker.string.uuid();
     // Name starting with 'A' to sort before the one starting with 'Z'.
-    const firstProgram = createFakeEducationProgram({
-      institution: collegeF,
-      user: sharedUser,
-    });
-    firstProgram.name = `Alpha ${searchString}`;
+    const firstProgram = createFakeEducationProgram(
+      {
+        institution: collegeF,
+        user: sharedUser,
+      },
+      { initialValue: { name: `Alpha ${searchString}` } },
+    );
     // Name starting with 'Z' to sort after the one starting with 'A'.
-    const secondProgram = createFakeEducationProgram({
-      institution: collegeF,
-      user: sharedUser,
-    });
-    secondProgram.name = `Zeta ${searchString}`;
+    const secondProgram = createFakeEducationProgram(
+      {
+        institution: collegeF,
+        user: sharedUser,
+      },
+      { initialValue: { name: `Zeta ${searchString}` } },
+    );
     // Inactive program that should not be returned by default.
     const inactiveProgram = createFakeEducationProgram(
       { institution: collegeF, user: sharedUser },
-      { initialValue: { isActive: false } },
+      { initialValue: { isActive: false, name: `Inactive ${searchString}` } },
     );
-    inactiveProgram.name = `Inactive ${searchString}`;
+    // Expired program (inactive) that should not be returned by default.
+    const expiredProgram = createFakeEducationProgram(
+      { institution: collegeF, user: sharedUser },
+      {
+        initialValue: {
+          isActive: true,
+          effectiveEndDate: getISODateOnlyString(new Date()),
+          name: `Expired ${searchString}`,
+        },
+      },
+    );
     const [savedFirstProgram, savedSecondProgram] =
       await db.educationProgram.save([
         firstProgram,
         secondProgram,
         inactiveProgram,
+        expiredProgram,
       ]);
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -130,11 +146,13 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
   it("Should retrieve only programs whose name matches the search criteria.", async () => {
     // Arrange
     const searchString = faker.string.uuid();
-    const matchingProgram = createFakeEducationProgram({
-      institution: collegeF,
-      user: sharedUser,
-    });
-    matchingProgram.name = `Program ${searchString} match`;
+    const matchingProgram = createFakeEducationProgram(
+      {
+        institution: collegeF,
+        user: sharedUser,
+      },
+      { initialValue: { name: `Program ${searchString} match` } },
+    );
     // Program that should not be returned because the name does not match.
     const nonMatchingProgram = createFakeEducationProgram({
       institution: collegeF,
@@ -227,18 +245,22 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
 
   it("Should retrieve only programs whose CIP code matches the search criteria.", async () => {
     // Arrange
-    const cipSearchString = faker.string.numeric(2);
-    const matchingProgram = createFakeEducationProgram({
-      institution: collegeF,
-      user: sharedUser,
-    });
-    matchingProgram.cipCode = `${cipSearchString}.0101`;
+    const cipSearchString = `${faker.string.numeric(2)}.${faker.string.numeric(4)}`;
+    const matchingProgram = createFakeEducationProgram(
+      {
+        institution: collegeF,
+        user: sharedUser,
+      },
+      { initialValue: { cipCode: cipSearchString } },
+    );
     // Program with a different CIP code that should not be returned.
-    const nonMatchingProgram = createFakeEducationProgram({
-      institution: collegeF,
-      user: sharedUser,
-    });
-    nonMatchingProgram.cipCode = "cipCode";
+    const nonMatchingProgram = createFakeEducationProgram(
+      {
+        institution: collegeF,
+        user: sharedUser,
+      },
+      { initialValue: { cipCode: "differentCIP" } },
+    );
     const [savedMatchingProgram] = await db.educationProgram.save([
       matchingProgram,
       nonMatchingProgram,
@@ -280,21 +302,31 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     // A UUID is embedded in the names so that searchCriteria can isolate programs
     // created in this test from pre-existing CollegeF programs in the test database.
     const searchString = faker.string.uuid();
-    const approvedProgram = createFakeEducationProgram({
-      institution: collegeF,
-      user: sharedUser,
-    });
-    approvedProgram.name = `Approved ${searchString}`;
+    const approvedProgram = createFakeEducationProgram(
+      {
+        institution: collegeF,
+        user: sharedUser,
+      },
+      { initialValue: { name: `Approved ${searchString}` } },
+    );
     const pendingProgram = createFakeEducationProgram(
       { institution: collegeF, user: sharedUser },
-      { initialValue: { programStatus: ProgramStatus.Pending } },
+      {
+        initialValue: {
+          programStatus: ProgramStatus.Pending,
+          name: `Pending ${searchString}`,
+        },
+      },
     );
-    pendingProgram.name = `Pending ${searchString}`;
     const declinedProgram = createFakeEducationProgram(
       { institution: collegeF, user: sharedUser },
-      { initialValue: { programStatus: ProgramStatus.Declined } },
+      {
+        initialValue: {
+          programStatus: ProgramStatus.Declined,
+          name: `Declined ${searchString}`,
+        },
+      },
     );
-    declinedProgram.name = `Declined ${searchString}`;
     const [savedApprovedProgram] = await db.educationProgram.save([
       approvedProgram,
       pendingProgram,
@@ -350,12 +382,29 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
         initialValue: {
           isActive: false,
           programStatus: ProgramStatus.Approved,
+          name: `Beta inactive ${searchString}`,
         },
       },
     );
-    inactiveProgram.name = `Zeta inactive ${searchString}`;
-    const [savedActiveProgram, savedInactiveProgram] =
-      await db.educationProgram.save([activeProgram, inactiveProgram]);
+
+    // Expired program (inactive) that should not be returned by default.
+    const expiredProgram = createFakeEducationProgram(
+      { institution: collegeF, user: sharedUser },
+      {
+        initialValue: {
+          isActive: true,
+          effectiveEndDate: getISODateOnlyString(new Date()),
+          name: `Zeta expired ${searchString}`,
+        },
+      },
+    );
+
+    const [savedActiveProgram, savedInactiveProgram, savedExpiredProgram] =
+      await db.educationProgram.save([
+        activeProgram,
+        inactiveProgram,
+        expiredProgram,
+      ]);
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -398,6 +447,21 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
             isExpired: savedInactiveProgram.isExpired,
             credentialTypeToDisplay: savedInactiveProgram.credentialType,
           },
+          {
+            programId: savedExpiredProgram.id,
+            programName: savedExpiredProgram.name,
+            cipCode: savedExpiredProgram.cipCode,
+            sabcCode: null,
+            credentialType: savedExpiredProgram.credentialType,
+            totalOfferings: "0",
+            submittedDate: savedExpiredProgram.createdAt.toISOString(),
+            locationId: collegeFLocation.id,
+            locationName: collegeFLocation.name,
+            programStatus: savedExpiredProgram.programStatus,
+            isActive: savedExpiredProgram.isActive,
+            isExpired: savedExpiredProgram.isExpired,
+            credentialTypeToDisplay: savedExpiredProgram.credentialType,
+          },
         ],
         count: 2,
       });
@@ -411,21 +475,23 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     // SABC code starting with 'A' to sort before the one starting with 'Z'.
     const firstProgram = createFakeEducationProgram(
       { institution: collegeF, user: sharedUser },
-      { initialValue: { sabcCode: "AAA0" } },
+      { initialValue: { sabcCode: "AAA0", name: `First ${searchString}` } },
     );
-    firstProgram.name = `First ${searchString}`;
     // SABC code starting with 'Z' to sort after the one starting with 'A'.
     const secondProgram = createFakeEducationProgram(
       { institution: collegeF, user: sharedUser },
-      { initialValue: { sabcCode: "ZZZ0" } },
+      { initialValue: { sabcCode: "ZZZ0", name: `Second ${searchString}` } },
     );
-    secondProgram.name = `Second ${searchString}`;
     // Pending program that should be filtered out.
     const pendingProgram = createFakeEducationProgram(
       { institution: collegeF, user: sharedUser },
-      { initialValue: { programStatus: ProgramStatus.Pending } },
+      {
+        initialValue: {
+          programStatus: ProgramStatus.Pending,
+          name: `Pending ${searchString}`,
+        },
+      },
     );
-    pendingProgram.name = `Pending ${searchString}`;
     const [savedFirstProgram, savedSecondProgram] =
       await db.educationProgram.save([
         firstProgram,
@@ -484,26 +550,27 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     // A UUID is embedded in the names so that searchCriteria can isolate programs
     // created in this test from pre-existing CollegeF programs in the test database.
     const searchString = faker.string.uuid();
-    const firstProgram = createFakeEducationProgram({
-      institution: collegeF,
-      user: sharedUser,
-    });
+    const firstProgram = createFakeEducationProgram(
+      {
+        institution: collegeF,
+        user: sharedUser,
+      },
+      { initialValue: { name: `First ${searchString}`, cipCode: "01.0101" } },
+    );
     // CIP code starting with '01' to sort before '99'.
-    firstProgram.cipCode = "01.0101";
-    firstProgram.name = `First ${searchString}`;
-    const secondProgram = createFakeEducationProgram({
-      institution: collegeF,
-      user: sharedUser,
-    });
+    const secondProgram = createFakeEducationProgram(
+      {
+        institution: collegeF,
+        user: sharedUser,
+      },
+      { initialValue: { name: `Second ${searchString}`, cipCode: "99.9999" } },
+    );
     // CIP code starting with '99' to sort after '01'.
-    secondProgram.cipCode = "99.9999";
-    secondProgram.name = `Second ${searchString}`;
     // Inactive program that should be filtered out.
     const inactiveProgram = createFakeEducationProgram(
       { institution: collegeF, user: sharedUser },
-      { initialValue: { isActive: false } },
+      { initialValue: { isActive: false, name: `Inactive ${searchString}` } },
     );
-    inactiveProgram.name = `Inactive ${searchString}`;
     const [savedFirstProgram, savedSecondProgram] =
       await db.educationProgram.save([
         firstProgram,
