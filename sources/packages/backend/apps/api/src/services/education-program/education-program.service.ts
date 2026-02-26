@@ -438,9 +438,13 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // if inactiveProgramSearch is set also include inactive programs alongside active ones.
     programQuery.andWhere(
       new Brackets((qb) => {
-        qb.where("programs.isActive = true");
+        qb.where(
+          "programs.isActive = true and (programs.effectiveEndDate is null or programs.effectiveEndDate > CURRENT_DATE)",
+        );
         if (paginationOptions.inactiveProgramSearch) {
-          qb.orWhere("programs.isActive = false");
+          qb.orWhere(
+            "programs.isActive = false or (programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE)",
+          );
         }
       }),
     );
