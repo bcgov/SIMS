@@ -71,7 +71,6 @@ export default defineComponent({
       () => props.changeRequestApplicationId ?? props.applicationId,
     );
 
-    console.log("props", props);
     const updateSupportingUser = async (formData: Record<string, unknown>) => {
       supportingUserUpdateInProgress.value = true;
       const typedData = excludeExtraneousValues(
