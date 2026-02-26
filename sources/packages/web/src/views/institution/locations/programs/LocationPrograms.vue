@@ -23,59 +23,59 @@
       </template>
     </body-header>
     <content-group>
-      <v-row class="m-0 p-0 mb-4" align="center">
-        <v-text-field
-          density="compact"
-          label="Search Program name or SABC program code or CIP"
-          variant="outlined"
-          v-model="searchBox"
-          @keyup.enter="searchProgramTable"
-          prepend-inner-icon="mdi-magnify"
-          hide-details="auto"
-        />
-        <v-btn class="ml-2" color="primary" @click="searchProgramTable">
-          Search
-        </v-btn>
-        <v-btn-toggle
-          :model-value="selectedStatuses"
-          @update:model-value="handleStatusChange"
-          multiple
-          density="compact"
-          class="ml-2 btn-toggle"
-          selected-class="selected-btn-toggle"
-        >
-          <v-btn rounded="xl" :value="ALL_STATUS" color="primary" class="ml-2"
-            >All</v-btn
+      <v-row class="m-0 p-0 mb-2" align="center">
+        <v-col md="auto" class="flex-grow-1 pa-0 pr-2 mb-1">
+          <v-text-field
+            density="compact"
+            label="Search Program name or SABC program code or CIP"
+            variant="outlined"
+            v-model="searchBox"
+            @keyup.enter="searchProgramTable"
+            prepend-inner-icon="mdi-magnify"
+            hide-details="auto"
+          />
+        </v-col>
+        <v-col cols="auto" class="pa-0">
+          <v-btn color="primary" @click="searchProgramTable"> Search </v-btn>
+        </v-col>
+        <v-col cols="auto" class="pa-0">
+          <v-btn-toggle
+            :model-value="selectedStatuses"
+            @update:model-value="handleStatusChange"
+            multiple
+            density="compact"
+            class="flex-wrap btn-toggle"
+            selected-class="selected-btn-toggle"
           >
-          <v-btn
-            rounded="xl"
-            :value="ProgramStatus.Approved"
-            color="primary"
-            class="ml-2"
-            >Approved</v-btn
-          >
-          <v-btn
-            rounded="xl"
-            :value="ProgramStatus.Pending"
-            color="primary"
-            class="ml-2"
-            >Pending</v-btn
-          >
-          <v-btn
-            rounded="xl"
-            :value="ProgramStatus.Declined"
-            color="primary"
-            class="ml-2"
-            >Declined</v-btn
-          >
-          <v-btn
-            rounded="xl"
-            :value="INACTIVE_PROGRAM"
-            color="primary"
-            class="ml-2"
-            >Inactive</v-btn
-          >
-        </v-btn-toggle>
+            <v-btn rounded="xl" :value="ALL_STATUS" color="primary" class="mx-2"
+              >All</v-btn
+            >
+            <v-btn
+              rounded="xl"
+              :value="ProgramStatus.Approved"
+              color="primary"
+              class="mr-2"
+              >Approved</v-btn
+            >
+            <v-btn
+              rounded="xl"
+              :value="ProgramStatus.Pending"
+              color="primary"
+              class="mr-2"
+              >Pending</v-btn
+            >
+            <v-btn
+              rounded="xl"
+              :value="ProgramStatus.Declined"
+              color="primary"
+              class="mr-2"
+              >Declined</v-btn
+            >
+            <v-btn rounded="xl" :value="INACTIVE_PROGRAM" color="primary"
+              >Inactive</v-btn
+            >
+          </v-btn-toggle>
+        </v-col>
       </v-row>
       <toggle-content
         :toggled="!programAndCount?.count"
