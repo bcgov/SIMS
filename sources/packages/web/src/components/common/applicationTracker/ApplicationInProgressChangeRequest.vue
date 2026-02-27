@@ -234,7 +234,7 @@ export default defineComponent({
         // Include the details of the parents whose information is still waiting.
         waitingList.parentsInfoWaiting = parentsInfoWaiting;
       }
-      if (change.partnerInfo === SuccessWaitingStatus.Waiting) {
+      if (change.partnerInfo?.status === SuccessWaitingStatus.Waiting) {
         waitingList.waitingTypes.push(WaitingTypes.PartnerDeclaration);
       }
       if (

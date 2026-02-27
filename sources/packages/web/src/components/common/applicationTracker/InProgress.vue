@@ -100,16 +100,50 @@
   </template>
 
   <application-status-tracker-banner
-    label="Waiting for additional information from your partner"
+    :label="`Spouse/Common-law information required for ${applicationDetails?.partnerInfo?.partnerFullName}`"
     icon="fa:fas fa-clock"
     icon-color="secondary"
-    v-if="applicationDetails?.partnerInfo === SuccessWaitingStatus.Waiting"
+    v-if="
+      applicationDetails?.partnerInfo?.status ===
+        SuccessWaitingStatus.Waiting &&
+      !applicationDetails.partnerInfo.isAbleToReport
+    "
     ><template #content
-      >We are waiting for
-      <strong>supporting information from your partner.</strong> Please check
-      your email to confirm that you have received a message from us. This email
-      will include important details and links that your partner will need in
-      order to provide their information for your application.</template
+      >You have indicated that
+      {{ applicationDetails?.partnerInfo?.partnerFullName }} is unable to
+      complete their declaration. Please complete the following declaration on
+      their behalf. Click on the button below to complete the
+      declaration.</template
+    >
+    <template #actions>
+      <v-btn
+        color="primary"
+        @click="
+          navigateToPartnerReporting(
+            applicationDetails?.partnerInfo?.supportingUserId,
+          )
+        "
+      >
+        {{ applicationDetails?.partnerInfo?.partnerFullName }}
+      </v-btn>
+    </template></application-status-tracker-banner
+  >
+
+  <application-status-tracker-banner
+    :label="`Waiting for additional information from ${applicationDetails?.partnerInfo?.partnerFullName}`"
+    icon="fa:fas fa-clock"
+    icon-color="secondary"
+    v-if="
+      applicationDetails?.partnerInfo?.status ===
+        SuccessWaitingStatus.Waiting &&
+      applicationDetails.partnerInfo.isAbleToReport
+    "
+    ><template #content
+      >We are waiting for supporting information from
+      {{ applicationDetails?.partnerInfo?.partnerFullName }}. Please check your
+      email from StudentAidBC for further instructions. The email includes
+      important details and a secure link that your partner/common-law will need
+      in order to provide their information for your application.</template
     ></application-status-tracker-banner
   >
 
@@ -200,7 +234,9 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="We have successfully received supporting information from your partner."
-    v-if="applicationDetails?.partnerInfo === SuccessWaitingStatus.Success"
+    v-if="
+      applicationDetails?.partnerInfo?.status === SuccessWaitingStatus.Success
+    "
   />
 
   <application-status-tracker-banner
@@ -293,6 +329,16 @@ export default defineComponent({
       });
     };
 
+    const navigateToPartnerReporting = (supportingUserId: number) => {
+      router.push({
+        name: StudentRoutesConst.REPORT_PARTNER_INFORMATION,
+        params: {
+          applicationId: props.applicationId,
+          supportingUserId: supportingUserId,
+        },
+      });
+    };
+
     onMounted(async () => {
       applicationDetails.value =
         await ApplicationService.shared.getInProgressApplicationDetails(
@@ -302,6 +348,7 @@ export default defineComponent({
 
     return {
       navigateToParentReporting,
+      navigateToPartnerReporting,
       ProgramInfoStatus,
       applicationDetails,
       ApplicationExceptionStatus,

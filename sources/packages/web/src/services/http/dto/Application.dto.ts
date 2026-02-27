@@ -24,8 +24,15 @@ export interface ParentDetails {
   status: SuccessWaitingStatus;
   isAbleToReport?: boolean;
 }
+
+export interface PartnerDetails {
+  supportingUserId: number;
+  partnerFullName: string;
+  status: SuccessWaitingStatus;
+  isAbleToReport?: boolean;
+}
 export interface ApplicationIdentifiableSupportingUserDetails {
-  partnerInfo?: SuccessWaitingStatus;
+  partnerInfo?: PartnerDetails;
   parentsInfo?: ParentDetails[];
 }
 
@@ -37,7 +44,8 @@ export interface ApplicationIncomeVerification {
 }
 
 export interface InProgressApplicationDetailsAPIOutDTO
-  extends ApplicationIdentifiableSupportingUserDetails,
+  extends
+    ApplicationIdentifiableSupportingUserDetails,
     ApplicationIncomeVerification {
   id: number;
   applicationStatus: ApplicationStatus;
@@ -48,9 +56,6 @@ export interface InProgressApplicationDetailsAPIOutDTO
   parent2IncomeVerificationStatus?: SuccessWaitingStatus;
   partnerIncomeVerificationStatus?: SuccessWaitingStatus;
   studentIncomeVerificationStatus?: SuccessWaitingStatus;
-  parent1Info?: SuccessWaitingStatus;
-  parent2Info?: SuccessWaitingStatus;
-  partnerInfo?: SuccessWaitingStatus;
   outstandingAssessmentStatus: SuccessWaitingStatus;
 }
 
@@ -139,8 +144,7 @@ export interface ApplicationDataChangeAPIOutDTO {
 /**
  * DTO for application data
  */
-export interface ApplicationSupplementalDataAPIOutDTO
-  extends ApplicationBaseAPIOutDTO {
+export interface ApplicationSupplementalDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
   studentFullName: string;
   applicationOfferingIntensity: OfferingIntensity;
   applicationStartDate?: string;
@@ -194,8 +198,7 @@ export interface ECertFailedValidationsInfoAPIOutDTO {
   hasEffectiveAviationRestriction: boolean;
 }
 
-export interface CompletedApplicationDetailsAPIOutDTO
-  extends EnrolmentApplicationDetailsAPIOutDTO {
+export interface CompletedApplicationDetailsAPIOutDTO extends EnrolmentApplicationDetailsAPIOutDTO {
   assessmentTriggerType: AssessmentTriggerType;
   firstDisbursement: DisbursementDetailsAPIOutDTO;
   secondDisbursement?: DisbursementDetailsAPIOutDTO;
@@ -210,7 +213,8 @@ export interface CompletedApplicationDetailsAPIOutDTO
 }
 
 export interface ChangeRequestInProgressAPIOutDTO
-  extends ApplicationIdentifiableSupportingUserDetails,
+  extends
+    ApplicationIdentifiableSupportingUserDetails,
     ApplicationIncomeVerification {
   applicationId: number;
   applicationEditStatus:

@@ -194,6 +194,13 @@ export class ParentDetails {
   isAbleToReport?: boolean;
 }
 
+export class PartnerDetails {
+  supportingUserId: number;
+  partnerFullName: string;
+  status: SuccessWaitingStatus;
+  isAbleToReport?: boolean;
+}
+
 export class ApplicationIncomeVerification {
   parent1IncomeVerificationStatus?: SuccessWaitingStatus;
   parent2IncomeVerificationStatus?: SuccessWaitingStatus;
@@ -202,7 +209,7 @@ export class ApplicationIncomeVerification {
 }
 
 export class ApplicationIdentifiableSupportingUserDetails {
-  partnerInfo?: SuccessWaitingStatus;
+  partnerInfo?: PartnerDetails;
   parentsInfo?: ParentDetails[];
 }
 

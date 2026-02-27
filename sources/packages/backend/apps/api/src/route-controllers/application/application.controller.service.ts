@@ -807,18 +807,18 @@ export class ApplicationControllerService {
 
   /**
    * Process application supporting user details.
-   * @param supportingUser supporting users data.
+   * @param supportingUsers supporting users data.
    * @return processed object.
    */
   processApplicationSupportingUserDetails(
-    supportingUser: SupportingUser[],
+    supportingUsers: SupportingUser[],
   ): ApplicationIdentifiableSupportingUserDetails {
     const supportingUserDetails =
       {} as ApplicationIdentifiableSupportingUserDetails;
     // Parent.
-    const parents = supportingUser.filter(
-      (incomeVerification) =>
-        incomeVerification.supportingUserType === SupportingUserType.Parent,
+    const parents = supportingUsers.filter(
+      (supportingUser) =>
+        supportingUser.supportingUserType === SupportingUserType.Parent,
     );
     if (parents.length) {
       supportingUserDetails.parentsInfo = parents.map((parent) => ({
@@ -832,14 +832,19 @@ export class ApplicationControllerService {
     }
 
     // Partner.
-    const [partner] = supportingUser.filter(
-      (incomeVerification) =>
-        incomeVerification.supportingUserType === SupportingUserType.Partner,
+    const partner = supportingUsers.find(
+      (supportingUser) =>
+        supportingUser.supportingUserType === SupportingUserType.Partner,
     );
     if (partner) {
-      supportingUserDetails.partnerInfo = !partner.supportingData
-        ? SuccessWaitingStatus.Waiting
-        : SuccessWaitingStatus.Success;
+      supportingUserDetails.partnerInfo = {
+        supportingUserId: partner.id,
+        partnerFullName: partner.fullName,
+        status: partner.supportingData
+          ? SuccessWaitingStatus.Success
+          : SuccessWaitingStatus.Waiting,
+        isAbleToReport: partner.isAbleToReport,
+      };
     }
 
     return supportingUserDetails;
