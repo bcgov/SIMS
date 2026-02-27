@@ -34,3 +34,4 @@ export * from "./useStudentAppeals";
 export * from "./useInstitutionRestrictionState";
 export * from "./institution/useInstitution";
 export * from "./useFeatureToggles";
+export * from "./useFormSubmission";

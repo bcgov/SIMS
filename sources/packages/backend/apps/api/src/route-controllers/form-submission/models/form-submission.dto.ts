@@ -1,4 +1,9 @@
-import { FormCategory } from "@sims/sims-db";
+import {
+  FormCategory,
+  FormSubmissionDecisionStatus,
+  FormSubmissionStatus,
+  NOTE_DESCRIPTION_MAX_LENGTH,
+} from "@sims/sims-db";
 import { JSON_10KB } from "../../../constants";
 import {
   KnownSupplementaryData,
@@ -14,8 +19,22 @@ import {
   ArrayMaxSize,
   ValidateNested,
   IsEnum,
+  IsNotEmpty,
+  MaxLength,
+  IsDate,
 } from "class-validator";
 
+/**
+ * Max number of form submission items allowed in a single form submission.
+ */
+const MAX_SUBMISSION_ITEMS = 50;
+
+/**
+ * Form configuration details necessary for form submission.
+ * Dictates the necessary details for the client to render the form and submit the data,
+ * including in which category the form belongs, whether it has application scope,
+ * and whether it allows bundled submission.
+ */
 export class FormSubmissionConfigurationAPIOutDTO {
   id: number;
   formDefinitionName: string;
@@ -26,8 +45,90 @@ export class FormSubmissionConfigurationAPIOutDTO {
   hasApplicationScope: boolean;
 }
 
+/**
+ * List of form configurations for form submission, currently used only to display
+ * available forms for the student when starting a new form submission.
+ */
 export class FormSubmissionConfigurationsAPIOutDTO {
   configurations: FormSubmissionConfigurationAPIOutDTO[];
+}
+
+/**
+ * Form submission with one to many forms.
+ * This is a basic representation of a form submission properties to be extended
+ * for Ministry, Student, and Institutions.
+ */
+abstract class FormSubmissionAPIOutDTO {
+  id: number;
+  formCategory: FormCategory;
+  status: FormSubmissionStatus;
+  applicationId?: number;
+  applicationNumber?: string;
+  submittedDate: Date;
+  assessedDate?: Date;
+}
+
+/**
+ * Individual form items that will be part of a form submission with one to many forms.
+ * This is a basic representation of a form submission item properties to be extended
+ * for Ministry, Student, and Institutions.
+ */
+abstract class FormSubmissionItemAPIOutDTO {
+  id: number;
+  formType: string;
+  formCategory: FormCategory;
+  /**
+   * Current decision status for this form submission item.
+   * When no decision is made yet, the status will be assumed to be Pending.
+   */
+  decisionStatus: FormSubmissionDecisionStatus;
+  dynamicFormConfigurationId: number;
+  submissionData: unknown;
+  formDefinitionName: string;
+}
+
+/**
+ * Current decision associated with a form submission item.
+ */
+class FormSubmissionItemDecisionAPIOutDTO {
+  id: number;
+  decisionStatus: FormSubmissionDecisionStatus;
+  decisionDate?: Date;
+  decisionBy?: string;
+  decisionNoteDescription?: string;
+}
+
+/**
+ * Individual form items that will be part of a form submission with one to many forms
+ * for the Ministry, including the decision details.
+ */
+class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
+  /**
+   * Most recent update date for this form submission item. This is used to determine if the item is outdated when
+   * submitting a decision on it, to prevent overwriting a more recent decision.
+   */
+  updatedAt: Date;
+  /**
+   * Current decision details for this form submission item. The current decision is the most recent decision made on
+   * this item and represents the current state of the item.
+   * Optionally include decision information if the user has the necessary permissions to view the decision details.
+   */
+  currentDecision?: FormSubmissionItemDecisionAPIOutDTO;
+  /**
+   * Decision history for this form submission item. The decision history includes all decisions made on this but
+   * the current one that is sent separately in the currentDecision property.
+   * Optionally include decision history information if the user has the necessary permissions to view the decision details.
+   */
+  decisions?: FormSubmissionItemDecisionAPIOutDTO[];
+}
+
+/**
+ * Form submission with one to many forms for the Ministry,
+ * including the individual form items.
+ */
+export class FormSubmissionMinistryAPIOutDTO extends FormSubmissionAPIOutDTO {
+  hasApprovalAuthorization: boolean;
+  submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
 }
 
 /**
@@ -55,7 +156,7 @@ export class FormSupplementaryDataAPIOutDTO {
 }
 
 /**
- * Individual form item in the form submission.
+ * Student individual form item in the form submission.
  */
 export class FormSubmissionItemAPIInDTO {
   @IsPositive()
@@ -68,7 +169,7 @@ export class FormSubmissionItemAPIInDTO {
 }
 
 /**
- * Form submission with one to many form items for individual Ministry decision.
+ * Student form submission with one to many form items for individual Ministry decision.
  * All forms must belong to same category and may be related to an application.
  * When related to an application, the application ID must be provided and all
  * forms must have application scope.
@@ -80,8 +181,48 @@ export class FormSubmissionAPIInDTO {
   @IsPositive()
   applicationId?: number;
   @ArrayMinSize(1)
-  @ArrayMaxSize(50)
+  @ArrayMaxSize(MAX_SUBMISSION_ITEMS)
   @ValidateNested({ each: true })
   @Type(() => FormSubmissionItemAPIInDTO)
   items: FormSubmissionItemAPIInDTO[];
+}
+
+/**
+ * Ministry individual form item decision update.
+ */
+export class FormSubmissionItemDecisionAPIInDTO {
+  @IsEnum(FormSubmissionDecisionStatus)
+  decisionStatus: FormSubmissionDecisionStatus;
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  noteDescription: string;
+  /**
+   * Date when the decision record was last updated. Used for concurrency control
+   * to prevent overwriting a more recent decision.
+   */
+  @IsDate()
+  lastUpdateDate: Date;
+}
+
+/**
+ * Decision item for form submission completion.
+ * Mainly used to ensure that the form submission is not outdated when
+ * the Ministry user tries to complete the form submission.
+ */
+export class FormSubmissionCompletionItemAPIInDTO {
+  @IsPositive()
+  submissionItemId: number;
+  @IsDate()
+  lastUpdateDate: Date;
+}
+
+/**
+ * Ministry individual form item decision update.
+ */
+export class FormSubmissionCompletionAPIInDTO {
+  @ArrayMinSize(1)
+  @ArrayMaxSize(MAX_SUBMISSION_ITEMS)
+  @ValidateNested({ each: true })
+  @Type(() => FormSubmissionCompletionItemAPIInDTO)
+  items: FormSubmissionCompletionItemAPIInDTO[];
 }

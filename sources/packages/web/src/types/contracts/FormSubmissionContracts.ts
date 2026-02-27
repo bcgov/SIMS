@@ -63,33 +63,45 @@ export enum FormSubmissionDecisionStatus {
   Declined = "Declined",
 }
 
-export interface FormSubmissionItemApproval {
+export interface DecisionHistory {
   id: number;
+  decisionStatus: FormSubmissionDecisionStatus;
+  decisionDate?: Date;
+  decisionBy?: string;
+  decisionNoteDescription?: string;
+  statusColor: string;
+}
+
+export interface FormSubmissionItemDecision {
+  submissionItemId: number;
   parentName: string;
   parentStatus: FormSubmissionStatus;
-  status: FormSubmissionDecisionStatus;
-  noteDescription: string;
-  assessedDate?: string;
-  assessedByUserName?: string;
+  decisionStatus: FormSubmissionDecisionStatus;
+  noteDescription?: string;
+  decisionBy?: string;
+  decisionNoteDescription?: string;
+  decisionDate?: Date;
   showAudit: boolean;
   saveDecisionInProgress: boolean;
   decisionSaved: boolean;
+  lastUpdateDate: Date;
+  decisionHistory?: DecisionHistory[];
 }
 
 export interface FormSubmissionItem {
-  id?: number;
+  id: number;
   dynamicConfigurationId: number;
   category: FormCategory;
   formType: string;
   formName: string;
   formData: unknown;
   files?: string[];
-  approval?: FormSubmissionItemApproval;
+  decision?: FormSubmissionItemDecision;
 }
 
 export interface FormSubmissionItemSubmitted {
   dynamicConfigurationId: number;
   formData: unknown;
   files: string[];
-  approval?: FormSubmissionItemApproval;
+  decision?: FormSubmissionItemDecision;
 }

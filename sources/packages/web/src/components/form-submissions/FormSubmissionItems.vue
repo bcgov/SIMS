@@ -28,9 +28,9 @@
           </v-col>
           <v-col>
             <status-chip-form-submission-decision
-              v-if="submissionItem.approval"
+              v-if="submissionItem.decision"
               class="float-right mr-4"
-              :status="submissionItem.approval.status"
+              :status="submissionItem.decision?.decisionStatus"
             />
           </v-col>
         </v-row>
@@ -45,9 +45,9 @@
           @loaded="formLoaded"
         ></formio>
         <div class="my-4">
-          <!-- Allow the component to be shared with the approval view for the Ministry, also
-           allowing institutions to shared the approvals statuses visualization. -->
-          <slot name="approval-form" :approval="submissionItem.approval"></slot>
+          <!-- Allow the component to be shared with the decision view for the Ministry, also
+           allowing institutions to share the approvals statuses visualization. -->
+          <slot name="decision" :decision="submissionItem.decision"></slot>
         </div>
       </template>
     </v-expansion-panel>
@@ -195,14 +195,6 @@ export default defineComponent({
     };
 
     /**
-     * Force all panels to be expanded once data is loaded.
-     */
-    watch(
-      () => props.submissionItems,
-      () => expandAllUpdated(),
-    );
-
-    /**
      * Ensure all expandable panels are expanded or collapsed
      * based on the "expand all" switch.
      */
@@ -215,6 +207,15 @@ export default defineComponent({
         expansionPanelsModel.value = [];
       }
     };
+
+    /**
+     * Force all panels to be expanded once data is loaded.
+     */
+    watch(
+      () => props.submissionItems,
+      () => expandAllUpdated(),
+      { immediate: true },
+    );
 
     /**
      * Ensures the "expand all" switch stays in sync with the expanded panels

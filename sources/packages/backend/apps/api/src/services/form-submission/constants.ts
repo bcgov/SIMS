@@ -36,3 +36,31 @@ export const FORM_SUBMISSION_INVALID_DYNAMIC_DATA =
  */
 export const FORM_SUBMISSION_PENDING_DECISION =
   "FORM_SUBMISSION_PENDING_DECISION";
+/**
+ * The form submission with the specified ID was not found.
+ */
+export const FORM_SUBMISSION_NOT_FOUND = "FORM_SUBMISSION_NOT_FOUND";
+/**
+ * A final decision cannot be made on a form submission when some
+ * decisions on the form items are still pending.
+ */
+export const FORM_SUBMISSION_DECISION_PENDING =
+  "FORM_SUBMISSION_DECISION_PENDING";
+/**
+ * The form submission item with the specified ID was not found.
+ */
+export const FORM_SUBMISSION_ITEM_NOT_FOUND = "FORM_SUBMISSION_ITEM_NOT_FOUND";
+/**
+ * A decision cannot be saved on a form submission item when its parent submission is not in pending status.
+ */
+export const FORM_SUBMISSION_NOT_PENDING = "FORM_SUBMISSION_NOT_PENDING";
+/**
+ * A more updated decision was saved since the form submission item was last retrieved for decision,
+ * and the decision cannot be saved based on potentially outdated information.
+ */
+export const FORM_SUBMISSION_ITEM_OUTDATED = "FORM_SUBMISSION_ITEM_OUTDATED";
+/**
+ * User is not authorized to update a form submission related data.
+ */
+export const FORM_SUBMISSION_UPDATE_UNAUTHORIZED =
+  "FORM_SUBMISSION_UPDATE_UNAUTHORIZED";
