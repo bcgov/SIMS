@@ -391,7 +391,7 @@ export class ECEResponseProcessingService {
           ++disbursementProcessingDetails.disbursementsSuccessfullyProcessed;
           if (result.isTuitionRemittanceImpactedOnRestriction) {
             processSummary.warnings.push(
-              `Disbursement ${disbursementScheduleId} had remittance requested and due to restrictions will not be submitted.`,
+              `Disbursement ${disbursementScheduleId} had remittance requested but due to restrictions will not be submitted.`,
             );
           }
           processSummary.summary.push(

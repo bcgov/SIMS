@@ -575,7 +575,7 @@ export class ConfirmationOfEnrollmentService {
    * - `enrolmentConfirmationDate` date of enrolment confirmation.
    * - `applicationNumber` application number of the enrolment.
    * - `canRemoveTuitionRemittanceOnRestriction` allow the tuition remittance to be removed
-   *   when there is an effective restriction that does not allow to request tuition remittance
+   *   when there is an effective restriction that does not allow requesting tuition remittance
    *   and the requested tuition remittance amount is greater than zero.
    */
   async confirmEnrollment(

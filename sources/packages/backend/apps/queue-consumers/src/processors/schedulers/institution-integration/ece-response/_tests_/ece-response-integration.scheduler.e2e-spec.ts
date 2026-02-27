@@ -402,7 +402,7 @@ describe(
           mockedJob.containLogMessages([
             `Starting download of file ${confirmEnrolmentResponseFile}.`,
             `Disbursement ${disbursement.id}, enrolment confirmed.`,
-            `WARN: Disbursement ${disbursement.id} had remittance requested and due to restrictions will not be submitted.`,
+            `WARN: Disbursement ${disbursement.id} had remittance requested but due to restrictions will not be submitted.`,
           ]),
         ).toBe(true);
         // Expect the archive method to be called.
@@ -503,7 +503,7 @@ describe(
         // The warning must not be generated.
         expect(
           mockedJob.containLogMessage(
-            `WARN: Disbursement ${disbursement.id} had remittance requested and due to restrictions will not be submitted.`,
+            `WARN: Disbursement ${disbursement.id} had remittance requested but due to restrictions will not be submitted.`,
           ),
         ).toBe(false);
         // Expect the archive method to be called.
@@ -600,7 +600,7 @@ describe(
         // The warning must not be generated.
         expect(
           mockedJob.containLogMessage(
-            `WARN: Disbursement ${disbursement.id} had remittance requested and due to restrictions will not be submitted.`,
+            `WARN: Disbursement ${disbursement.id} had remittance requested but due to restrictions will not be submitted.`,
           ),
         ).toBe(false);
         // Expect the archive method to be called.
