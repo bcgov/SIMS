@@ -73,6 +73,10 @@ export enum RestrictionCode {
    * Legacy aviation restriction added from SFAS.
    */
   SFAS_AV = "SFAS_AV",
+  /**
+   * Institution block remittance request restriction.
+   */
+  REMIT = "REMIT",
 }
 
 /**

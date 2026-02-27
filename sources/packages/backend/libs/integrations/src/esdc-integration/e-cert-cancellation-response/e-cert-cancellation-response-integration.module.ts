@@ -7,6 +7,7 @@ import {
   AssessmentSequentialProcessingService,
   ConfirmationOfEnrollmentService,
   DisbursementScheduleSharedService,
+  RestrictionSharedService,
   SequenceControlService,
 } from "@sims/services";
 
@@ -14,6 +15,7 @@ import {
   imports: [ConfigModule],
   providers: [
     SshService,
+    RestrictionSharedService,
     AssessmentSequentialProcessingService,
     SequenceControlService,
     ConfirmationOfEnrollmentService,

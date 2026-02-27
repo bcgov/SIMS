@@ -151,6 +151,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
         "program.deliveredOnSite",
         "coeDeniedReason.id",
         "coeDeniedReason.reason",
+        "institution.id",
       ])
       .innerJoin("disbursement.studentAssessment", "studentAssessment")
       .innerJoin("studentAssessment.application", "application")
@@ -159,6 +160,7 @@ export class DisbursementScheduleService extends RecordDataModelService<Disburse
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("offering.institutionLocation", "location")
+      .innerJoin("location.institution", "institution")
       .innerJoin("offering.educationProgram", "program")
       .leftJoin("disbursement.coeDeniedReason", "coeDeniedReason")
       .where("location.id = :locationId", { locationId })

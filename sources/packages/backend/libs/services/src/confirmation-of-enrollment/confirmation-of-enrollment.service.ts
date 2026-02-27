@@ -22,6 +22,7 @@ import {
 import {
   Award,
   COEApprovalPeriodStatus,
+  ConfirmEnrolmentResult,
   EnrollmentPeriod,
   MaxTuitionRemittanceTypes,
   OfferingCosts,
@@ -44,9 +45,12 @@ import {
   ENROLMENT_NOT_FOUND,
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
+  TUITION_REMITTANCE_NOT_ALLOWED,
 } from "../constants";
 import {
   AssessmentSequentialProcessingService,
+  RestrictionCode,
+  RestrictionSharedService,
   SystemUsersService,
 } from "@sims/services";
 
@@ -70,6 +74,7 @@ export class ConfirmationOfEnrollmentService {
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
     private readonly systemUserService: SystemUsersService,
     private readonly logger: LoggerService,
+    private readonly restrictionSharedService: RestrictionSharedService,
   ) {}
 
   /**
@@ -237,6 +242,9 @@ export class ConfirmationOfEnrollmentService {
         "disbursementValues.valueType",
         "disbursementValues.valueCode",
         "disbursementValues.valueAmount",
+        "location.id",
+        "program.id",
+        "institution.id",
       ])
       .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
       .innerJoin(
@@ -247,6 +255,8 @@ export class ConfirmationOfEnrollmentService {
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("offering.institutionLocation", "location")
+      .innerJoin("offering.educationProgram", "program")
+      .innerJoin("location.institution", "institution")
       .where("disbursementSchedule.id = :disbursementScheduleId", {
         disbursementScheduleId,
       })
@@ -564,6 +574,9 @@ export class ConfirmationOfEnrollmentService {
    * - `allowOutsideCOEApprovalPeriod` allow COEs which are outside the valid COE confirmation period to be confirmed..
    * - `enrolmentConfirmationDate` date of enrolment confirmation.
    * - `applicationNumber` application number of the enrolment.
+   * - `canRemoveTuitionRemittanceOnRestriction` allow the tuition remittance to be removed
+   *   when there is an effective restriction that does not allow requesting tuition remittance
+   *   and the requested tuition remittance amount is greater than zero.
    */
   async confirmEnrollment(
     disbursementScheduleId: number,
@@ -574,15 +587,16 @@ export class ConfirmationOfEnrollmentService {
       allowOutsideCOEApprovalPeriod?: boolean;
       enrolmentConfirmationDate?: Date;
       applicationNumber?: string;
+      canRemoveTuitionRemittanceOnRestriction?: boolean;
     },
-  ): Promise<void> {
+  ): Promise<ConfirmEnrolmentResult> {
+    let isTuitionRemittanceImpactedOnRestriction = false;
     // Get the disbursement and application summary for COE.
     const disbursementSchedule =
       await this.getDisbursementAndApplicationSummary(
         disbursementScheduleId,
         options?.locationId,
       );
-
     if (!disbursementSchedule) {
       throw new CustomNamedError("Enrolment not found.", ENROLMENT_NOT_FOUND);
     }
@@ -645,10 +659,41 @@ export class ConfirmationOfEnrollmentService {
         FIRST_COE_NOT_COMPLETE,
       );
     }
-
+    const applicationOffering =
+      disbursementSchedule.studentAssessment.application.currentAssessment
+        .offering;
+    const applicationLocation = applicationOffering.institutionLocation;
+    const applicationProgram = applicationOffering.educationProgram;
+    // Check for effective REMIT restriction for the institution, program and location of the application.
+    const institutionREMITRestrictions =
+      await this.restrictionSharedService.getEffectiveInstitutionRestrictions(
+        applicationLocation.institution.id,
+        applicationProgram.id,
+        applicationLocation.id,
+        { restrictionCode: RestrictionCode.REMIT },
+      );
+    const canRequestTuitionRemittance = !institutionREMITRestrictions.length;
     // If no tuition remittance is set then, it is defaulted to 0.
     // This happens when ministry confirms COE.
-    const tuitionRemittanceAmount = tuitionRemittance ?? 0;
+    let tuitionRemittanceAmount = tuitionRemittance ?? 0;
+
+    // When there is an effective restriction that does not allow to request tuition remittance
+    // and the requested tuition remittance amount is greater than zero,
+    // then the tuition remittance amount will be set to 0 if it is allowed by options,
+    // otherwise an error will be thrown.
+    if (!canRequestTuitionRemittance && tuitionRemittanceAmount > 0) {
+      if (options?.canRemoveTuitionRemittanceOnRestriction) {
+        tuitionRemittanceAmount = 0;
+        isTuitionRemittanceImpactedOnRestriction = true;
+      }
+      // Throw error if not allowed to remove tuition remittance on restriction.
+      else {
+        throw new CustomNamedError(
+          "Tuition remittance cannot be requested for the disbursement.",
+          TUITION_REMITTANCE_NOT_ALLOWED,
+        );
+      }
+    }
 
     // Validate tuition remittance amount.
     await this.validateTuitionRemittance(
@@ -666,6 +711,7 @@ export class ConfirmationOfEnrollmentService {
         .offering.offeringIntensity,
       options?.enrolmentConfirmationDate,
     );
+    return { isTuitionRemittanceImpactedOnRestriction };
   }
 
   /**

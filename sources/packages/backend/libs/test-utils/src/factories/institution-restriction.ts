@@ -40,7 +40,7 @@ export function createFakeInstitutionRestriction(
     restrictionNote?: Note;
     creator?: User;
   },
-  options?: { initialValues: Partial<InstitutionRestriction> },
+  options?: { initialValues?: Partial<InstitutionRestriction> },
 ): InstitutionRestriction {
   const restriction = new InstitutionRestriction();
   restriction.institution = relations.institution;
@@ -65,6 +65,8 @@ export function createFakeInstitutionRestriction(
  * - `creator` Record creator.
  * @param options Options for institution restriction.
  * - `initialValues` option for specifying initial values of the institution restriction.
+ * - `createProgram` option to create a program for the institution and assign to the institution restriction.
+ * - `createLocation` option to create a location for the institution and assign to the institution restriction.
  * @returns Persisted fake institution restriction.
  */
 export async function saveFakeInstitutionRestriction(
@@ -77,7 +79,11 @@ export async function saveFakeInstitutionRestriction(
     restrictionNote?: Note;
     creator?: User;
   },
-  options?: { initialValues: Partial<InstitutionRestriction> },
+  options?: {
+    initialValues?: Partial<InstitutionRestriction>;
+    createProgram?: boolean;
+    createLocation?: boolean;
+  },
 ): Promise<InstitutionRestriction> {
   const creator = relations.creator ?? (await db.user.save(createFakeUser()));
   const institution =
@@ -89,20 +95,21 @@ export async function saveFakeInstitutionRestriction(
     institution.id,
     creator,
   );
-  const program =
-    relations.program ??
-    (await db.educationProgram.save(
+  let program = relations.program;
+  let location = relations.location;
+  if (!program && options?.createProgram) {
+    program = await db.educationProgram.save(
       createFakeEducationProgram({
         auditUser: creator,
         institution,
       }),
-    ));
-
-  const location =
-    relations.location ??
-    (await db.institutionLocation.save(
+    );
+  }
+  if (!location && options?.createLocation) {
+    location = await db.institutionLocation.save(
       createFakeInstitutionLocation({ institution }),
-    ));
+    );
+  }
   const institutionRestriction = createFakeInstitutionRestriction(
     {
       restriction: relations.restriction,

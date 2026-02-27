@@ -37,6 +37,7 @@ import {
   StudentLoanBalanceSharedService,
   SFASPartTimeApplicationsService,
   SFASApplicationService,
+  RestrictionSharedService,
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
@@ -82,6 +83,7 @@ import { TerminusModule } from "@nestjs/terminus";
     MSFAANumberSharedService,
     DisbursementOverawardService,
     NoteSharedService,
+    RestrictionSharedService,
     ConfirmationOfEnrollmentService,
     ZeebeHealthIndicator,
     AssessmentSequentialProcessingService,
