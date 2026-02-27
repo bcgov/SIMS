@@ -7,6 +7,7 @@ import { NotificationActionsService } from "@sims/services/notifications";
 import { AssessmentSequentialProcessingService } from "@sims/services/students-assessments/assessment-sequential-processing.service";
 import { SystemUsersService } from "@sims/services/system-users";
 import { LoggerService } from "@sims/utilities/logger";
+import { RestrictionSharedService } from "@sims/services";
 
 describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
   let service: ConfirmationOfEnrollmentService;
@@ -21,6 +22,7 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
       {} as AssessmentSequentialProcessingService;
     const systemUsersService = {} as SystemUsersService;
     const loggerService = {} as LoggerService;
+    const restrictionSharedService = {} as RestrictionSharedService;
     service = new ConfirmationOfEnrollmentService(
       disbursementScheduleRepo,
       dataSource,
@@ -29,6 +31,7 @@ describe("ConfirmationOfEnrollmentService-getMaxTuitionRemittance", () => {
       assessmentSequentialProcessingService,
       systemUsersService,
       loggerService,
+      restrictionSharedService,
     );
   });
 
