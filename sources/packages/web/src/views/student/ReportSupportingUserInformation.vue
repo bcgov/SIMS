@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator
         title="Application details"
-        sub-title="Parent information"
+        :sub-title="`${supportingUserType} information`"
         :route-location="{
           name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
           params: {
@@ -15,7 +15,7 @@
     </template>
     <template #alerts>
       <banner
-        summary="You are submitting this declaration on behalf of your parent. Please complete the following financial information questions with your parents information."
+        :summary="`You are submitting this declaration on behalf of your ${supportingUserType.toLowerCase()}. Please complete the following financial information questions with your ${supportingUserType.toLowerCase()}'s information.`"
         :type="BannerTypes.Info"
       ></banner>
     </template>
@@ -28,9 +28,9 @@
   </student-page-container>
 </template>
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, PropType, ref } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { BannerTypes } from "@/types";
+import { BannerTypes, SupportingUserType } from "@/types";
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { useFormioUtils, useSnackBar } from "@/composables";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
@@ -49,12 +49,16 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    // When reporting parent information as part of a change request,
+    // When reporting supporting user information as part of a change request,
     // this property will hold the change request application id.
     changeRequestApplicationId: {
       type: Number,
       required: false,
       default: null,
+    },
+    supportingUserType: {
+      type: String as PropType<SupportingUserType>,
+      required: true,
     },
   },
   setup(props) {
@@ -78,7 +82,9 @@ export default defineComponent({
           props.supportingUserId,
           typedData,
         );
-        snackBar.success("Parent information reported successfully.");
+        snackBar.success(
+          `${props.supportingUserType} information reported successfully.`,
+        );
         router.push({
           name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
           params: {
@@ -86,7 +92,9 @@ export default defineComponent({
           },
         });
       } catch {
-        snackBar.error("Unexpected error reporting parent information.");
+        snackBar.error(
+          `Unexpected error reporting ${props.supportingUserType.toLowerCase()} information.`,
+        );
       } finally {
         supportingUserUpdateInProgress.value = false;
       }

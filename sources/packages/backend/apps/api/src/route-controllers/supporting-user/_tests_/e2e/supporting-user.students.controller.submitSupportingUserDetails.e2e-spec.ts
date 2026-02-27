@@ -102,42 +102,6 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
     },
   );
 
-  it("Should throw not found error when trying to update supporting user details of a supporting user who is a partner.", async () => {
-    // Arrange
-    // Create fake application and supporting user partner.
-    const { application, supportingUser: partner } =
-      await createApplicationAndSupportingUser({
-        supportingUserType: SupportingUserType.Partner,
-      });
-    const student = application.student;
-    // Mock student user token.
-    await mockJWTUserInfo(appModule, student.user);
-    const endpoint = `/students/supporting-user/${partner.id}`;
-    const token = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-    );
-    // Mock dry run submission.
-    const payload = createSupportingUserPayload();
-    await mockDryRunSubmission(
-      appModule,
-      AppStudentsModule,
-      recentPYParentForm.formDefinitionName,
-      payload,
-    );
-    // Act/Assert
-    await request(app.getHttpServer())
-      .patch(endpoint)
-      .send(payload)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.NOT_FOUND)
-      .expect({
-        statusCode: HttpStatus.NOT_FOUND,
-        message:
-          "Supporting user not found or not eligible to be accessed by the user.",
-        error: "Not Found",
-      });
-  });
-
   it(
     "Should throw unprocessable entity error when trying to update supporting user details of a supporting user who is a parent and" +
       " the supporting user is associated to the student submitted application and" +
@@ -290,6 +254,84 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
       expect(zeebeClient.publishMessage).toHaveBeenCalledWith(
         expect.objectContaining({
           correlationKey: parent.id.toString(),
+          name: "supporting-user-info-received",
+          variables: {},
+        }),
+      );
+    },
+  );
+
+  it(
+    "Should update the supporting user details when the supporting user is a partner and" +
+      " the supporting user is associated to the student submitted application and" +
+      " the supporting user is not able to report.",
+    async () => {
+      // Arrange
+      // Create fake application and supporting user.
+      const { application, supportingUser: partner } =
+        await createApplicationAndSupportingUser({
+          supportingUserType: SupportingUserType.Partner,
+        });
+      const student = application.student;
+      // Mock student user token.
+      await mockJWTUserInfo(appModule, student.user);
+      const endpoint = `/students/supporting-user/${partner.id}`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      // Mock dry run submission.
+      const payload = createSupportingUserPayload();
+      await mockDryRunSubmission(
+        appModule,
+        AppStudentsModule,
+        recentPYParentForm.formDefinitionName,
+        payload,
+      );
+
+      // Act
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send(payload)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({});
+
+      // Assert
+      const updatedSupportingUser = await db.supportingUser.findOne({
+        select: {
+          id: true,
+          personalInfo: true,
+          contactInfo: true,
+          supportingData: true,
+          modifier: { id: true },
+        },
+        relations: { modifier: true },
+        where: { id: partner.id },
+      });
+      // Assert supporting user reported details.
+      expect(updatedSupportingUser).toEqual({
+        id: partner.id,
+        personalInfo: {
+          givenNames: payload.givenNames,
+          lastName: payload.lastName,
+        },
+        contactInfo: {
+          address: {
+            city: payload.city,
+            country: payload.country,
+            postalCode: payload.postalCode,
+            addressLine1: payload.addressLine1,
+            provinceState: payload.provinceState,
+          },
+          phone: payload.phone,
+        },
+        supportingData: payload.supportingData,
+        modifier: { id: student.user.id },
+      });
+      // Assert workflow message.
+      expect(zeebeClient.publishMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          correlationKey: partner.id.toString(),
           name: "supporting-user-info-received",
           variables: {},
         }),

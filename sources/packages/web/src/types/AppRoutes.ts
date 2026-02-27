@@ -22,6 +22,8 @@ export enum AppRoutes {
   StudentActiveApplicationOfferingDetails = "active-offering",
   StudentReportParentInformation = "application/:applicationId/supporting-user/:supportingUserId/report-parent-information",
   ChangeRequestStudentReportParentInformation = "application/:applicationId/supporting-user/:supportingUserId/change-request-application/:changeRequestApplicationId/report-parent-information",
+  StudentReportPartnerInformation = "application/:applicationId/supporting-user/:supportingUserId/report-partner-information",
+  ChangeRequestStudentReportPartnerInformation = "application/:applicationId/supporting-user/:supportingUserId/change-request-application/:changeRequestApplicationId/report-partner-information",
   StudentScholasticStandingView = "application/:applicationId/scholastic-standing/:scholasticStandingId",
   /**
    * Student appeal initiated from the top-level appeal menu (not tied to a specific application).

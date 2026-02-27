@@ -1,23 +1,23 @@
 <template>
   <header-navigator
     title="Back to student applications"
-    :routeLocation="{
+    :route-location="{
       name: AESTRoutesConst.STUDENT_APPLICATIONS,
       params: { studentId },
     }"
-    subTitle="Financial Aid Application"
+    sub-title="Financial Aid Application"
   >
   </header-navigator>
   <application-header-title :application-id="applicationId" />
-  <div v-if="parentFullName">
+  <div v-if="supportingUser?.supportingUserType === SupportingUserType.Parent">
     <detail-header
       class="mb-2"
-      :header-map="{ 'Parent Name': parentFullName }"
+      :header-map="{ 'Parent Name': supportingUser.fullName }"
     />
   </div>
   <full-page-container class="my-2">
     <supporting-user-form
-      v-if="supportingUser"
+      v-if="!!supportingUser.supportingData"
       :supporting-user-id="supportingUserId"
       :is-readonly="true"
     ></supporting-user-form>
@@ -38,6 +38,7 @@ import { BannerTypes } from "@/types/contracts/Banner";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 import SupportingUserForm from "@/components/common/SupportingUserForm.vue";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
+import { SupportingUser, SupportingUserType } from "@/types";
 
 export default defineComponent({
   components: {
@@ -60,22 +61,19 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const parentFullName = ref<string>();
-    const supportingUser = ref<boolean>(false);
+    const supportingUser = ref({} as SupportingUser);
 
     onMounted(async () => {
-      const supportingUsersData =
+      supportingUser.value =
         await SupportingUsersService.shared.getSupportingUserData(
           props.supportingUserId,
         );
-      parentFullName.value = supportingUsersData.parentFullName;
-      supportingUser.value = !!supportingUsersData.supportingData;
     });
     return {
-      parentFullName,
       supportingUser,
       AESTRoutesConst,
       BannerTypes,
+      SupportingUserType,
     };
   },
 });

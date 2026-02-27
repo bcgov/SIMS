@@ -27,6 +27,7 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
   let appModule: TestingModule;
   let db: E2EDataSources;
   let recentPYParentForm: DynamicFormConfiguration;
+  let recentPYPartnerForm: DynamicFormConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -47,13 +48,26 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
       },
       order: { programYear: { startDate: "DESC" } },
     });
+    recentPYPartnerForm = await db.dynamicFormConfiguration.findOne({
+      select: {
+        id: true,
+        programYear: { id: true, startDate: true },
+        formDefinitionName: true,
+      },
+      relations: { programYear: true },
+      where: {
+        formType: DynamicFormType.SupportingUsersPartner,
+        programYear: { active: true },
+      },
+      order: { programYear: { startDate: "DESC" } },
+    });
   });
 
   beforeEach(() => {
     resetMockJWTUserInfo(appModule);
   });
 
-  it("Should throw not found error when the supporting user is not associated to the student submitted application.", async () => {
+  it("Should throw not found error when the student is not associated to the application.", async () => {
     // Arrange
     // Create fake application.
     const application = await saveFakeApplication(db.dataSource, {
@@ -74,44 +88,6 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
     await db.supportingUser.save(parent);
     const endpoint = `/students/supporting-user/${parent.id}`;
     // Token belongs to a different student who is not associated to the application.
-    const token = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.NOT_FOUND)
-      .expect({
-        statusCode: HttpStatus.NOT_FOUND,
-        message:
-          "Supporting user not found or not eligible to be accessed by the student.",
-        error: "Not Found",
-      });
-  });
-
-  it("Should throw not found error when the supporting user type is not parent.", async () => {
-    // Arrange
-    // Create fake application.
-    const application = await saveFakeApplication(db.dataSource, {
-      programYear: recentPYParentForm.programYear,
-    });
-    const student = application.student;
-    // Create fake supporting user partner.
-    const partner = createFakeSupportingUser(
-      { application },
-      {
-        initialValues: {
-          isAbleToReport: false,
-          supportingUserType: SupportingUserType.Partner,
-        },
-      },
-    );
-    await db.supportingUser.save(partner);
-    // Mock student user token.
-    await mockJWTUserInfo(appModule, student.user);
-    const endpoint = `/students/supporting-user/${partner.id}`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -230,7 +206,54 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
           fullName: parentFullName,
           formName: recentPYParentForm.formDefinitionName,
           isAbleToReport: false,
+          supportingUserType: SupportingUserType.Parent,
           programYearStartDate: recentPYParentForm.programYear.startDate,
+        });
+    },
+  );
+
+  it(
+    "Should get the supporting user details when the supporting user is a partner and" +
+      " the supporting user is associated to the student submitted application and" +
+      " the supporting user is not able to report.",
+    async () => {
+      // Arrange
+      // Create fake application.
+      const application = await saveFakeApplication(db.dataSource, {
+        programYear: recentPYParentForm.programYear,
+      });
+      const student = application.student;
+      // Create fake supporting user partner.
+      const partnerFullName = faker.string.alpha({ length: 50 });
+      const partner = createFakeSupportingUser(
+        { application },
+        {
+          initialValues: {
+            isAbleToReport: false,
+            supportingUserType: SupportingUserType.Partner,
+            fullName: partnerFullName,
+          },
+        },
+      );
+      await db.supportingUser.save(partner);
+      // Mock student user token.
+      await mockJWTUserInfo(appModule, student.user);
+      const endpoint = `/students/supporting-user/${partner.id}`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          fullName: partnerFullName,
+          formName: recentPYPartnerForm.formDefinitionName,
+          isAbleToReport: false,
+          supportingUserType: SupportingUserType.Partner,
+          programYearStartDate: recentPYPartnerForm.programYear.startDate,
         });
     },
   );
