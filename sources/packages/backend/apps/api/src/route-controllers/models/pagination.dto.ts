@@ -133,7 +133,6 @@ export class ProgramsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO
 export class ProgramsLocationPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
   @IsIn([
-    "submittedDate",
     "programName",
     "locationName",
     "programStatus",

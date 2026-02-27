@@ -93,7 +93,6 @@ export class EducationProgramsSummaryLocationAPIOutDTO {
   credentialType: string;
   totalOfferings: number;
   credentialTypeToDisplay: string;
-  submittedDate: Date;
   locationName: string;
   locationId: number;
   programStatus: ProgramStatus;

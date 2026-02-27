@@ -40,6 +40,7 @@ import {
 import { EducationProgramControllerService } from "./education-program.controller.service";
 import { Role } from "../../auth/roles.enum";
 import { OptionItemAPIOutDTO } from "..";
+import { OfferingTypes } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -107,8 +108,9 @@ export class EducationProgramAESTController extends BaseController {
     @Param("institutionId", ParseIntPipe) institutionId: number,
     @Query() paginationOptions: ProgramsPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
-    return this.educationProgramControllerService.getProgramsSummary(
+    return await this.programService.getProgramsSummary(
       institutionId,
+      [OfferingTypes.Public, OfferingTypes.Private],
       paginationOptions,
     );
   }

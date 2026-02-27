@@ -41,6 +41,7 @@ import {
   ProgramPaginationOptions,
   PaginationOptions,
   ProgramLocationPaginationOptions,
+  credentialTypeToDisplay,
 } from "../../utilities";
 import {
   CustomNamedError,
@@ -426,12 +427,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       offeringTypes,
       institutionId,
     );
-    if (locationId) {
-      queryParams.push(locationId);
-      programQuery.andWhere("location.id = :locationId", {
-        locationId,
-      });
-    }
+    programQuery.andWhere("location.id = :locationId", {
+      locationId,
+    });
+    queryParams.push(locationId);
     if (paginationOptions.searchCriteria) {
       programQuery.andWhere(
         new Brackets((qb) =>
@@ -459,20 +458,13 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       );
       queryParams.push(...paginationOptions.statusSearch);
     }
-    // Active programs are always included by default.
-    // if inactiveProgramSearch is set also include inactive programs alongside active ones.
-    programQuery.andWhere(
-      new Brackets((qb) => {
-        qb.where(
-          "programs.isActive = true and (programs.effectiveEndDate is null or programs.effectiveEndDate > CURRENT_DATE)",
-        );
-        if (paginationOptions.inactiveProgramSearch) {
-          qb.orWhere(
-            "programs.isActive = false or (programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE)",
-          );
-        }
-      }),
-    );
+
+    // If inactiveProgramSearch is false only active programs are included.
+    if (!paginationOptions.inactiveProgramSearch) {
+      programQuery.andWhere(
+        "programs.isActive = true and (programs.effectiveEndDate is null or programs.effectiveEndDate > CURRENT_DATE)",
+      );
+    }
     const totalQuery = programQuery.getSql();
     const paginatedProgramQuery = await this.preparePaginatedProgramQuery(
       programQuery,
@@ -498,6 +490,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       totalOfferings: program.totalOfferings,
       locationId: program.locationId,
       locationName: program.locationName,
+      credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
     }));
 
     return {

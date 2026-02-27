@@ -17,7 +17,7 @@ import {
   HasLocationAccess,
   UserToken,
 } from "../../auth/decorators";
-import { EducationProgramsSummary } from "../../services/education-program/education-program.service.models";
+import { EducationProgramsLocationSummary } from "../../services/education-program/education-program.service.models";
 import {
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
@@ -34,15 +34,18 @@ import {
   PaginatedResultsAPIOutDTO,
   ProgramsLocationPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
-import { EducationProgramControllerService } from "..";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
+import { EducationProgramService } from "../../services/education-program/education-program.service";
+import { EducationProgramControllerService } from "../../route-controllers/education-program/education-program.controller.service";
+import { OfferingTypes } from "@sims/sims-db/entities/offering.type";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-education-program`)
 export class EducationProgramInstitutionsController extends BaseController {
   constructor(
+    private readonly educationProgramService: EducationProgramService,
     private readonly educationProgramControllerService: EducationProgramControllerService,
   ) {
     super();
@@ -60,9 +63,10 @@ export class EducationProgramInstitutionsController extends BaseController {
     @Param("locationId", ParseIntPipe) locationId: number,
     @Query() paginationOptions: ProgramsLocationPaginationOptionsAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummary>> {
-    return this.educationProgramControllerService.getProgramsSummaryForLocation(
+  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsLocationSummary>> {
+    return await this.educationProgramService.getProgramsSummaryForLocation(
       userToken.authorizations.institutionId,
+      [OfferingTypes.Public, OfferingTypes.Private],
       paginationOptions,
       locationId,
     );

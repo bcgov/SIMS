@@ -27,7 +27,7 @@ export interface PaginationOptions extends BasePaginationOptions {
 /**
  * Program pagination option allowing for multiple criteria search.
  */
-export interface ProgramPaginationOptions extends PaginationOptions {
+export interface ProgramPaginationOptions extends BasePaginationOptions {
   programNameSearch?: string;
   locationNameSearch?: string;
   statusSearch?: ProgramStatus[];

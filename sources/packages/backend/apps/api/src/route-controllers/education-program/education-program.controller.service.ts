@@ -10,17 +10,10 @@ import {
   FormService,
   InstitutionUserAuthorizations,
 } from "../../services";
-import { EducationProgram, OfferingTypes } from "@sims/sims-db";
-import {
-  PaginatedResultsAPIOutDTO,
-  ProgramsLocationPaginationOptionsAPIInDTO,
-  ProgramsPaginationOptionsAPIInDTO,
-} from "../models/pagination.dto";
+import { EducationProgram } from "@sims/sims-db";
 import {
   EducationProgramAPIOutDTO,
-  EducationProgramsSummaryAPIOutDTO,
   EducationProgramAPIInDTO,
-  EducationProgramsSummaryLocationAPIOutDTO,
 } from "./models/education-program.dto";
 import { credentialTypeToDisplay, getUserFullName } from "../../utilities";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
@@ -44,83 +37,6 @@ export class EducationProgramControllerService {
     private readonly formService: FormService,
     private readonly institutionService: InstitutionService,
   ) {}
-
-  /**
-   * Gets all the programs that are associated with an institution
-   * alongside with the total of offerings on locations.
-   * @param institutionId id of the institution.
-   * @param paginationOptions pagination options.
-   * @returns paginated summary for the institution or location.
-   */
-  async getProgramsSummary(
-    institutionId: number,
-    paginationOptions: ProgramsPaginationOptionsAPIInDTO,
-  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
-    const programs = await this.programService.getProgramsSummary(
-      institutionId,
-      [OfferingTypes.Public, OfferingTypes.Private],
-      paginationOptions,
-    );
-
-    return {
-      results: programs.results.map((program) => ({
-        programId: program.programId,
-        programName: program.programName,
-        totalOfferings: program.totalOfferings,
-        submittedDate: program.submittedDate,
-        locationId: program.locationId,
-        locationName: program.locationName,
-        programStatus: program.programStatus,
-        isActive: program.isActive,
-        isExpired: program.isExpired,
-      })),
-      count: programs.count,
-    };
-  }
-
-  /**
-   * Gets all the programs that are associated with an institution
-   * alongside with the total of offerings on locations.
-   * @param institutionId id of the institution.
-   * @param paginationOptions pagination options.
-   * @param locationId optional location id to filter.
-   * @returns paginated summary for the institution or location.
-   */
-  async getProgramsSummaryForLocation(
-    institutionId: number,
-    paginationOptions: ProgramsLocationPaginationOptionsAPIInDTO,
-    locationId: number,
-  ): Promise<
-    PaginatedResultsAPIOutDTO<EducationProgramsSummaryLocationAPIOutDTO>
-  > {
-    const programs = await this.programService.getProgramsSummaryForLocation(
-      institutionId,
-      [OfferingTypes.Public, OfferingTypes.Private],
-      paginationOptions,
-      locationId,
-    );
-
-    return {
-      results: programs.results.map((program) => ({
-        programId: program.programId,
-        programName: program.programName,
-        sabcCode: program.sabcCode,
-        cipCode: program.cipCode,
-        credentialType: program.credentialType,
-        totalOfferings: program.totalOfferings,
-        submittedDate: program.submittedDate,
-        locationId: program.locationId,
-        locationName: program.locationName,
-        programStatus: program.programStatus,
-        isActive: program.isActive,
-        isExpired: program.isExpired,
-        credentialTypeToDisplay: credentialTypeToDisplay(
-          program.credentialType,
-        ),
-      })),
-      count: programs.count,
-    };
-  }
 
   /**
    * Saves an education program (insert/update).

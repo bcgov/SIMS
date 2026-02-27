@@ -54,6 +54,9 @@ export interface SaveEducationProgram {
   credentialTypesAviation?: AviationProgramCredentialTypes;
 }
 
+/**
+ * Education Program Summary for ministry view.
+ */
 export interface EducationProgramsSummary {
   programId: number;
   programName: string;
@@ -66,13 +69,15 @@ export interface EducationProgramsSummary {
   locationName: string;
 }
 
+/**
+ * Education Program Summary for institution locations.
+ */
 export interface EducationProgramsLocationSummary {
   programId: number;
   programName: string;
   cipCode: string;
   sabcCode?: string;
   credentialType: string;
-  submittedDate: Date;
   programStatus: ProgramStatus;
   isActive: boolean;
   isExpired: boolean;
