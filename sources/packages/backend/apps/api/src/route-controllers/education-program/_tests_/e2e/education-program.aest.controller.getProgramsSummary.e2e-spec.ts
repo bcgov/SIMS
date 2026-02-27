@@ -477,17 +477,6 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
         .expect({
           results: [
             {
-              programId: savedFirstApprovedProgram.id,
-              programName: savedFirstApprovedProgram.name,
-              totalOfferings: "0",
-              submittedDate: savedFirstApprovedProgram.createdAt.toISOString(),
-              locationId: institutionLocation.id,
-              locationName: institutionLocation.name,
-              programStatus: savedFirstApprovedProgram.programStatus,
-              isActive: savedFirstApprovedProgram.isActive,
-              isExpired: savedFirstApprovedProgram.isExpired,
-            },
-            {
               programId: savedSecondPendingProgram.id,
               programName: savedSecondPendingProgram.name,
               totalOfferings: "0",
@@ -497,6 +486,17 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
               programStatus: savedSecondPendingProgram.programStatus,
               isActive: savedSecondPendingProgram.isActive,
               isExpired: savedSecondPendingProgram.isExpired,
+            },
+            {
+              programId: savedFirstApprovedProgram.id,
+              programName: savedFirstApprovedProgram.name,
+              totalOfferings: "0",
+              submittedDate: savedFirstApprovedProgram.createdAt.toISOString(),
+              locationId: institutionLocation.id,
+              locationName: institutionLocation.name,
+              programStatus: savedFirstApprovedProgram.programStatus,
+              isActive: savedFirstApprovedProgram.isActive,
+              isExpired: savedFirstApprovedProgram.isExpired,
             },
           ],
           count: 2,
