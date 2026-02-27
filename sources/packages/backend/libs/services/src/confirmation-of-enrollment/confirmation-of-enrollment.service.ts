@@ -50,6 +50,7 @@ import {
 import {
   AssessmentSequentialProcessingService,
   RestrictionCode,
+  RestrictionSharedService,
   SystemUsersService,
 } from "@sims/services";
 
@@ -73,6 +74,7 @@ export class ConfirmationOfEnrollmentService {
     private readonly assessmentSequentialProcessingService: AssessmentSequentialProcessingService,
     private readonly systemUserService: SystemUsersService,
     private readonly logger: LoggerService,
+    private readonly restrictionSharedService: RestrictionSharedService,
   ) {}
 
   /**
@@ -243,9 +245,6 @@ export class ConfirmationOfEnrollmentService {
         "location.id",
         "program.id",
         "institution.id",
-        "institutionRestriction.id",
-        "restriction.id",
-        "restriction.restrictionCode",
       ])
       .innerJoin("disbursementSchedule.studentAssessment", "studentAssessment")
       .innerJoin(
@@ -258,13 +257,6 @@ export class ConfirmationOfEnrollmentService {
       .innerJoin("offering.institutionLocation", "location")
       .innerJoin("offering.educationProgram", "program")
       .innerJoin("location.institution", "institution")
-      .leftJoin(
-        "institution.restrictions",
-        "institutionRestriction",
-        "institutionRestriction.isActive = TRUE AND (institutionRestriction.location.id = location.id OR institutionRestriction.location.id IS NULL)" +
-          " AND (institutionRestriction.program.id = program.id OR institutionRestriction.program.id IS NULL)",
-      )
-      .leftJoin("institutionRestriction.restriction", "restriction")
       .where("disbursementSchedule.id = :disbursementScheduleId", {
         disbursementScheduleId,
       })
@@ -667,14 +659,20 @@ export class ConfirmationOfEnrollmentService {
         FIRST_COE_NOT_COMPLETE,
       );
     }
-    const effectiveInstitutionRestrictions =
+    const applicationOffering =
       disbursementSchedule.studentAssessment.application.currentAssessment
-        .offering.institutionLocation.institution.restrictions;
-    const canRequestTuitionRemittance = !effectiveInstitutionRestrictions.some(
-      (institutionRestriction) =>
-        institutionRestriction.restriction.restrictionCode ===
-        RestrictionCode.REMIT,
-    );
+        .offering;
+    const applicationLocation = applicationOffering.institutionLocation;
+    const applicationProgram = applicationOffering.educationProgram;
+    // Check for effective REMIT restriction for the institution, program and location of the application.
+    const institutionREMITRestrictions =
+      await this.restrictionSharedService.getEffectiveInstitutionRestrictions(
+        applicationLocation.institution.id,
+        applicationProgram.id,
+        applicationLocation.id,
+        { restrictionCode: RestrictionCode.REMIT },
+      );
+    const canRequestTuitionRemittance = !institutionREMITRestrictions.length;
     // If no tuition remittance is set then, it is defaulted to 0.
     // This happens when ministry confirms COE.
     let tuitionRemittanceAmount = tuitionRemittance ?? 0;
