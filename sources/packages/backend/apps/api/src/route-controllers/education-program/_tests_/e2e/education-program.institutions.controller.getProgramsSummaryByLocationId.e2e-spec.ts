@@ -375,7 +375,6 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
       user: sharedUser,
     });
     activeProgram.name = `Active ${searchString}`;
-    // Name starting with 'Z' to sort after the one starting with 'A'.
     const inactiveProgram = createFakeEducationProgram(
       { institution: collegeF, user: sharedUser },
       {
@@ -386,25 +385,42 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
         },
       },
     );
-
-    // Expired program (inactive) that should not be returned by default.
+    // Expired program (inactive display status) that should be returned.
     const expiredProgram = createFakeEducationProgram(
       { institution: collegeF, user: sharedUser },
       {
         initialValue: {
           isActive: true,
           effectiveEndDate: getISODateOnlyString(new Date()),
-          name: `Zeta expired ${searchString}`,
+          name: `Gamma expired ${searchString}`,
+        },
+      },
+    );
+    // Inactive program with a non-matching stored status (Pending).
+    // It should still be returned because all inactive programs are included
+    // regardless of their stored programStatus when inactiveProgramSearch is true.
+    const inactivePendingProgram = createFakeEducationProgram(
+      { institution: collegeF, user: sharedUser },
+      {
+        initialValue: {
+          isActive: false,
+          programStatus: ProgramStatus.Pending,
+          name: `Zeta inactive pending ${searchString}`,
         },
       },
     );
 
-    const [savedActiveProgram, savedInactiveProgram, savedExpiredProgram] =
-      await db.educationProgram.save([
-        activeProgram,
-        inactiveProgram,
-        expiredProgram,
-      ]);
+    const [
+      savedActiveProgram,
+      savedInactiveProgram,
+      savedExpiredProgram,
+      savedInactivePendingProgram,
+    ] = await db.educationProgram.save([
+      activeProgram,
+      inactiveProgram,
+      expiredProgram,
+      inactivePendingProgram,
+    ]);
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -462,8 +478,23 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
             isExpired: savedExpiredProgram.isExpired,
             credentialTypeToDisplay: savedExpiredProgram.credentialType,
           },
+          {
+            programId: savedInactivePendingProgram.id,
+            programName: savedInactivePendingProgram.name,
+            cipCode: savedInactivePendingProgram.cipCode,
+            sabcCode: null,
+            credentialType: savedInactivePendingProgram.credentialType,
+            totalOfferings: "0",
+            submittedDate: savedInactivePendingProgram.createdAt.toISOString(),
+            locationId: collegeFLocation.id,
+            locationName: collegeFLocation.name,
+            programStatus: savedInactivePendingProgram.programStatus,
+            isActive: savedInactivePendingProgram.isActive,
+            isExpired: savedInactivePendingProgram.isExpired,
+            credentialTypeToDisplay: savedInactivePendingProgram.credentialType,
+          },
         ],
-        count: 3,
+        count: 4,
       });
   });
 

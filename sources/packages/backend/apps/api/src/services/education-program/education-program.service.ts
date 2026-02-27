@@ -445,21 +445,31 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // If statusSearch is provided, narrow by the requested program statuses.
     if (paginationOptions.statusSearch) {
       programQuery.andWhere(
-        "programs.programStatus IN (:...programStatusSearchCriteria)",
-        {
-          programStatusSearchCriteria: paginationOptions.statusSearch,
-        },
+        new Brackets((qb) => {
+          qb.andWhere(
+            "programs.programStatus IN (:...programStatusSearchCriteria)",
+            {
+              programStatusSearchCriteria: paginationOptions.statusSearch,
+            },
+          );
+          // When both statusSearch and inactiveProgramSearch are provided
+          // fetch the inactive programs along with the ones from the program status list.
+          if (paginationOptions.inactiveProgramSearch) {
+            qb.orWhere(
+              "programs.isActive = false or (programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE)",
+            );
+          }
+        }),
       );
       queryParams.push(...paginationOptions.statusSearch);
     }
 
-    // If inactiveProgramSearch is false only active programs are included.
     if (!paginationOptions.inactiveProgramSearch) {
+      // If inactiveProgramSearch is false only active programs are included.
       programQuery.andWhere(
         "programs.isActive = true and (programs.effectiveEndDate is null or programs.effectiveEndDate > CURRENT_DATE)",
       );
     }
-
     const [totalCount, programsQueryResults] =
       await this.preparePaginatedProgramQuery(
         programQuery,
