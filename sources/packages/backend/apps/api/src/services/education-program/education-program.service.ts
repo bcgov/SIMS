@@ -42,6 +42,7 @@ import {
   PaginationOptions,
   ProgramLocationPaginationOptions,
   credentialTypeToDisplay,
+  SortPriority,
 } from "../../utilities";
 import {
   CustomNamedError,
@@ -377,32 +378,25 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       queryParams.push(!paginationOptions.inactiveProgramSearch);
     }
 
-    const totalQuery = programQuery.getSql();
-    const paginatedProgramQuery = await this.preparePaginatedProgramQuery(
-      programQuery,
-      paginationOptions,
-    );
-
-    // Total count and summary.
-    const [totalCount, programsQuery] = await Promise.all([
-      getRawCount(this.repo, totalQuery, queryParams),
-      paginatedProgramQuery.getRawMany(),
-    ]);
-
-    const programSummary = programsQuery.map((program) => ({
-      programId: program.programId,
-      programName: program.programName,
-      submittedDate: program.programSubmittedAt,
-      programStatus: program.programStatus,
-      isActive: program.isActive,
-      isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
-      totalOfferings: program.totalOfferings,
-      locationId: program.locationId,
-      locationName: program.locationName,
-    }));
+    const [totalCount, programsQueryResults] =
+      await this.preparePaginatedProgramQuery(
+        programQuery,
+        paginationOptions,
+        queryParams,
+      );
 
     return {
-      results: programSummary,
+      results: programsQueryResults.map((program) => ({
+        programId: program.programId,
+        programName: program.programName,
+        submittedDate: program.programSubmittedAt,
+        programStatus: program.programStatus,
+        isActive: program.isActive,
+        isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
+        totalOfferings: program.totalOfferings,
+        locationId: program.locationId,
+        locationName: program.locationName,
+      })),
       count: totalCount,
     };
   }
@@ -465,36 +459,33 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.isActive = true and (programs.effectiveEndDate is null or programs.effectiveEndDate > CURRENT_DATE)",
       );
     }
-    const totalQuery = programQuery.getSql();
-    const paginatedProgramQuery = await this.preparePaginatedProgramQuery(
-      programQuery,
-      paginationOptions,
-    );
 
-    // Total count and summary.
-    const [totalCount, programsQuery] = await Promise.all([
-      getRawCount(this.repo, totalQuery, queryParams),
-      paginatedProgramQuery.getRawMany(),
-    ]);
-
-    const programSummary = programsQuery.map((program) => ({
-      programId: program.programId,
-      programName: program.programName,
-      sabcCode: program.sabcCode,
-      cipCode: program.cipCode,
-      credentialType: program.credentialType,
-      submittedDate: program.programSubmittedAt,
-      programStatus: program.programStatus,
-      isActive: program.isActive,
-      isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
-      totalOfferings: program.totalOfferings,
-      locationId: program.locationId,
-      locationName: program.locationName,
-      credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
-    }));
+    const [totalCount, programsQueryResults] =
+      await this.preparePaginatedProgramQuery(
+        programQuery,
+        paginationOptions,
+        queryParams,
+        "programs.name",
+      );
 
     return {
-      results: programSummary,
+      results: programsQueryResults.map((program) => ({
+        programId: program.programId,
+        programName: program.programName,
+        sabcCode: program.sabcCode,
+        cipCode: program.cipCode,
+        credentialType: program.credentialType,
+        submittedDate: program.programSubmittedAt,
+        programStatus: program.programStatus,
+        isActive: program.isActive,
+        isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
+        totalOfferings: program.totalOfferings,
+        locationId: program.locationId,
+        locationName: program.locationName,
+        credentialTypeToDisplay: credentialTypeToDisplay(
+          program.credentialType,
+        ),
+      })),
       count: totalCount,
     };
   }
@@ -979,11 +970,17 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * Prepares the paginated query and the count.
    * @param paginatedProgramQuery paginated program query.
    * @param paginationOptions pagination options.
+   * @param queryParams query parameters for the count query.
+   * @param defaultSortField default sort field.
+   * @returns A tuple containing the total count and the paginated programs.
    */
   private async preparePaginatedProgramQuery(
     paginatedProgramQuery: SelectQueryBuilder<EducationProgram>,
     paginationOptions: PaginationOptions,
-  ): Promise<SelectQueryBuilder<EducationProgram>> {
+    queryParams: unknown[],
+    defaultSortField?: string,
+  ): Promise<[number, any[]]> {
+    const sqlQuery = paginatedProgramQuery.getSql();
     if (paginationOptions.pageLimit) {
       paginatedProgramQuery.limit(paginationOptions.pageLimit);
     }
@@ -1003,11 +1000,25 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         sortProgramsColumnMap(paginationOptions.sortField),
         paginationOptions.sortOrder,
       );
-    } else {
-      // Default sort: program name ascending.
-      paginatedProgramQuery.orderBy("programs.name", "ASC");
-    }
-    return paginatedProgramQuery;
+    } else if (defaultSortField) {
+      paginatedProgramQuery.orderBy(defaultSortField, "ASC");
+    } else
+      // Default sort and order.
+      paginatedProgramQuery.orderBy(
+        `CASE           
+          WHEN programs.programStatus = '${ProgramStatus.Pending}' and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE) THEN ${SortPriority.Priority1}
+          WHEN programs.programStatus = '${ProgramStatus.Approved}' and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE) THEN ${SortPriority.Priority2}
+          WHEN programs.programStatus = '${ProgramStatus.Declined}' and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE) THEN ${SortPriority.Priority3}
+          WHEN programs.isActive = false or (programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE) THEN ${SortPriority.Priority4}
+          ELSE ${SortPriority.Priority5}
+        END`,
+      );
+
+    // Total count and summary.
+    return await Promise.all([
+      getRawCount(this.repo, sqlQuery, queryParams),
+      paginatedProgramQuery.getRawMany(),
+    ]);
   }
 
   /**
