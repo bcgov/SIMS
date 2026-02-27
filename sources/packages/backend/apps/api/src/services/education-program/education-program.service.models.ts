@@ -55,35 +55,22 @@ export interface SaveEducationProgram {
 }
 
 /**
- * Education Program Summary for ministry view.
+ * Education Program Summary.
+ * Includes the count of total offerings and location information.
  */
-export interface EducationProgramsSummary {
+export interface EducationProgramSummary {
   programId: number;
   programName: string;
-  submittedDate: Date;
   programStatus: ProgramStatus;
   isActive: boolean;
-  isExpired: boolean;
+  submittedDate: Date;
+  effectiveEndDate?: Date;
   totalOfferings: number;
   locationId: number;
   locationName: string;
-}
-
-/**
- * Education Program Summary for institution locations.
- */
-export interface EducationProgramsLocationSummary {
-  programId: number;
-  programName: string;
   cipCode: string;
   sabcCode?: string;
   credentialType: string;
-  programStatus: ProgramStatus;
-  isActive: boolean;
-  isExpired: boolean;
-  totalOfferings: number;
-  locationId: number;
-  locationName: string;
 }
 
 /**

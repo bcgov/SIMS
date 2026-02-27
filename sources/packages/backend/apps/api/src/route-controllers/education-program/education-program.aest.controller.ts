@@ -41,6 +41,7 @@ import { EducationProgramControllerService } from "./education-program.controlle
 import { Role } from "../../auth/roles.enum";
 import { OptionItemAPIOutDTO } from "..";
 import { OfferingTypes } from "@sims/sims-db";
+import { isSameOrAfterDate } from "@sims/utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -108,11 +109,26 @@ export class EducationProgramAESTController extends BaseController {
     @Param("institutionId", ParseIntPipe) institutionId: number,
     @Query() paginationOptions: ProgramsPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
-    return await this.programService.getProgramsSummary(
+    const programsSummary = await this.programService.getProgramsSummary(
       institutionId,
       [OfferingTypes.Public, OfferingTypes.Private],
       paginationOptions,
     );
+
+    return {
+      results: programsSummary.results.map((program) => ({
+        programId: program.programId,
+        programName: program.programName,
+        submittedDate: program.submittedDate,
+        programStatus: program.programStatus,
+        isActive: program.isActive,
+        isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
+        totalOfferings: program.totalOfferings,
+        locationId: program.locationId,
+        locationName: program.locationName,
+      })),
+      count: programsSummary.count,
+    };
   }
 
   /**

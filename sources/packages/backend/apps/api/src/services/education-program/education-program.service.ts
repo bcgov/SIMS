@@ -31,9 +31,8 @@ import {
 } from "typeorm";
 import {
   SaveEducationProgram,
-  EducationProgramsSummary,
   PendingEducationProgram,
-  EducationProgramsLocationSummary,
+  EducationProgramSummary,
 } from "./education-program.service.models";
 import {
   sortProgramsColumnMap,
@@ -41,14 +40,12 @@ import {
   ProgramPaginationOptions,
   PaginationOptions,
   ProgramLocationPaginationOptions,
-  credentialTypeToDisplay,
   SortPriority,
 } from "../../utilities";
 import {
   CustomNamedError,
   FieldSortOrder,
   getISODateOnlyString,
-  isSameOrAfterDate,
 } from "@sims/utilities";
 import {
   EDUCATION_PROGRAM_NOT_FOUND,
@@ -294,7 +291,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     institutionId: number,
     offeringTypes: OfferingTypes[],
     paginationOptions: ProgramPaginationOptions,
-  ): Promise<PaginatedResults<EducationProgramsSummary>> {
+  ): Promise<PaginatedResults<EducationProgramSummary>> {
     // When both the status search and inactive search is false, nothing is returned.
     if (
       !paginationOptions.statusSearch &&
@@ -386,17 +383,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       );
 
     return {
-      results: programsQueryResults.map((program) => ({
-        programId: program.programId,
-        programName: program.programName,
-        submittedDate: program.programSubmittedAt,
-        programStatus: program.programStatus,
-        isActive: program.isActive,
-        isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
-        totalOfferings: program.totalOfferings,
-        locationId: program.locationId,
-        locationName: program.locationName,
-      })),
+      results: programsQueryResults,
       count: totalCount,
     };
   }
@@ -416,7 +403,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     offeringTypes: OfferingTypes[],
     paginationOptions: ProgramLocationPaginationOptions,
     locationId: number,
-  ): Promise<PaginatedResults<EducationProgramsLocationSummary>> {
+  ): Promise<PaginatedResults<EducationProgramSummary>> {
     const { programQuery, queryParams } = this.getProgramsQueryWithQueryParams(
       offeringTypes,
       institutionId,
@@ -479,23 +466,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       );
 
     return {
-      results: programsQueryResults.map((program) => ({
-        programId: program.programId,
-        programName: program.programName,
-        sabcCode: program.sabcCode,
-        cipCode: program.cipCode,
-        credentialType: program.credentialType,
-        submittedDate: program.programSubmittedAt,
-        programStatus: program.programStatus,
-        isActive: program.isActive,
-        isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
-        totalOfferings: program.totalOfferings,
-        locationId: program.locationId,
-        locationName: program.locationName,
-        credentialTypeToDisplay: credentialTypeToDisplay(
-          program.credentialType,
-        ),
-      })),
+      results: programsQueryResults,
       count: totalCount,
     };
   }
@@ -940,7 +911,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .addSelect("programs.name", "programName")
       .addSelect("programs.cipCode", "cipCode")
       .addSelect("programs.credentialType", "credentialType")
-      .addSelect("programs.createdAt", "programSubmittedAt")
+      .addSelect("programs.createdAt", "submittedDate")
       .addSelect("location.id", "locationId")
       .addSelect("location.name", "locationName")
       .addSelect("programs.programStatus", "programStatus")
@@ -989,7 +960,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     paginationOptions: PaginationOptions,
     queryParams: unknown[],
     defaultSortField?: string,
-  ): Promise<[number, any[]]> {
+  ): Promise<[number, EducationProgramSummary[]]> {
     const sqlQuery = paginatedProgramQuery.getSql();
     if (paginationOptions.pageLimit) {
       paginatedProgramQuery.limit(paginationOptions.pageLimit);
@@ -1027,7 +998,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // Total count and summary.
     return await Promise.all([
       getRawCount(this.repo, sqlQuery, queryParams),
-      paginatedProgramQuery.getRawMany(),
+      paginatedProgramQuery.getRawMany<EducationProgramSummary>(),
     ]);
   }
 
