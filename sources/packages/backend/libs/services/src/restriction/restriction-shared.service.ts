@@ -65,7 +65,7 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
       ])
       .innerJoin("institutionRestriction.restriction", "restriction")
       .where("institutionRestriction.isActive = TRUE")
-      .andWhere("institutionRestriction.institutionId = :institutionId", {
+      .andWhere("institutionRestriction.institution.id = :institutionId", {
         institutionId,
       })
       .andWhere(
