@@ -103,6 +103,12 @@ export class StudentAppealPendingPaginationOptionsAPIInDTO extends PaginationOpt
   appealType: AppealType;
 }
 
+export class FormSubmissionPendingPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["submittedDate", "lastName"])
+  sortField?: string;
+}
+
 export class ApplicationChangeRequestPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
   @IsIn(["submittedDate", "applicationNumber", "lastName"])
