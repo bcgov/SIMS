@@ -10,21 +10,12 @@ import {
   FormService,
   InstitutionUserAuthorizations,
 } from "../../services";
-import { EducationProgram, OfferingTypes } from "@sims/sims-db";
-import {
-  PaginatedResultsAPIOutDTO,
-  ProgramsPaginationOptionsAPIInDTO,
-} from "../models/pagination.dto";
+import { EducationProgram } from "@sims/sims-db";
 import {
   EducationProgramAPIOutDTO,
-  EducationProgramsSummaryAPIOutDTO,
   EducationProgramAPIInDTO,
 } from "./models/education-program.dto";
-import {
-  credentialTypeToDisplay,
-  getUserFullName,
-  PaginatedResults,
-} from "../../utilities";
+import { credentialTypeToDisplay, getUserFullName } from "../../utilities";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import { FormNames } from "../../services/form/constants";
 import {
@@ -33,10 +24,7 @@ import {
   EDUCATION_PROGRAM_INVALID_OPERATION,
 } from "../../constants";
 import { ApiProcessError } from "../../types";
-import {
-  EducationProgramsSummary,
-  SaveEducationProgram,
-} from "../../services/education-program/education-program.service.models";
+import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
 import { InstitutionService } from "../../services/institution/institution.service";
 import { InstitutionUserTypes } from "../../auth";
 import { OptionItemAPIOutDTO } from "apps/api/src/route-controllers/models/common.dto";
@@ -49,56 +37,6 @@ export class EducationProgramControllerService {
     private readonly formService: FormService,
     private readonly institutionService: InstitutionService,
   ) {}
-
-  /**
-   * Gets all the programs that are associated with an institution
-   * alongside with the total of offerings on locations.
-   * @param institutionId id of the institution.
-   * @param paginationOptions pagination options.
-   * @param locationId optional location id to filter.
-   * @returns paginated summary for the institution or location.
-   */
-  async getProgramsSummary(
-    institutionId: number,
-    paginationOptions: ProgramsPaginationOptionsAPIInDTO,
-    locationId?: number,
-  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
-    let programs: PaginatedResults<EducationProgramsSummary>;
-    if (locationId) {
-      programs = await this.programService.getProgramsSummaryForLocation(
-        institutionId,
-        [OfferingTypes.Public, OfferingTypes.Private],
-        paginationOptions,
-        locationId,
-      );
-    } else {
-      programs = await this.programService.getProgramsSummary(
-        institutionId,
-        [OfferingTypes.Public, OfferingTypes.Private],
-        paginationOptions,
-      );
-    }
-
-    return {
-      results: programs.results.map((program) => ({
-        programId: program.programId,
-        programName: program.programName,
-        cipCode: program.cipCode,
-        credentialType: program.credentialType,
-        totalOfferings: program.totalOfferings,
-        submittedDate: program.submittedDate,
-        locationId: program.locationId,
-        locationName: program.locationName,
-        programStatus: program.programStatus,
-        isActive: program.isActive,
-        isExpired: program.isExpired,
-        credentialTypeToDisplay: credentialTypeToDisplay(
-          program.credentialType,
-        ),
-      })),
-      count: programs.count,
-    };
-  }
 
   /**
    * Saves an education program (insert/update).

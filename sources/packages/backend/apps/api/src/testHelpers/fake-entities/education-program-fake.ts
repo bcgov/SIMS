@@ -30,7 +30,7 @@ export function createFakeEducationProgram(
   program.name = options?.initialValue?.name ?? faker.person.jobArea();
   program.description = "description";
   program.credentialType = "credentialType";
-  program.cipCode = "cipCode";
+  program.cipCode = options?.initialValue?.cipCode ?? "cipCode";
   program.nocCode = "nocCode";
   program.sabcCode = options?.initialValue?.sabcCode;
   program.regulatoryBody = "regulatoryBody";

@@ -9,20 +9,9 @@
     </template>
     <body-header title="All programs" :records-count="programAndCount?.count">
       <template #actions>
-        <v-row class="m-0 p-0">
-          <v-text-field
-            density="compact"
-            label="Search Program"
-            variant="outlined"
-            v-model="searchBox"
-            data-cy="searchBox"
-            @keyup.enter="searchProgramTable"
-            prepend-inner-icon="mdi-magnify"
-            hide-details="auto"
-          />
+        <div class="d-flex justify-end">
           <v-btn
             v-if="!isReadOnlyUser(locationId)"
-            class="ml-2"
             color="primary"
             @click="goToAddNewProgram()"
             data-cy="createProgram"
@@ -30,10 +19,64 @@
           >
             Create program
           </v-btn>
-        </v-row>
+        </div>
       </template>
     </body-header>
     <content-group>
+      <v-row class="m-0 p-0 mb-2" align="center">
+        <v-col md="auto" class="flex-grow-1 pa-0 pr-2 mb-1">
+          <v-text-field
+            density="compact"
+            label="Search Program name or SABC program code or CIP"
+            variant="outlined"
+            v-model="searchBox"
+            @keyup.enter="searchProgramTable"
+            prepend-inner-icon="mdi-magnify"
+            hide-details="auto"
+          />
+        </v-col>
+        <v-col cols="auto" class="pa-0">
+          <v-btn color="primary" @click="searchProgramTable"> Search </v-btn>
+        </v-col>
+        <v-col cols="auto" class="pa-0">
+          <v-btn-toggle
+            :model-value="selectedStatuses"
+            @update:model-value="handleStatusChange"
+            multiple
+            density="compact"
+            class="flex-wrap btn-toggle"
+            selected-class="selected-btn-toggle"
+          >
+            <v-btn rounded="xl" :value="ALL_STATUS" color="primary" class="mx-2"
+              >All</v-btn
+            >
+            <v-btn
+              rounded="xl"
+              :value="ProgramStatus.Approved"
+              color="primary"
+              class="mr-2"
+              >Approved</v-btn
+            >
+            <v-btn
+              rounded="xl"
+              :value="ProgramStatus.Pending"
+              color="primary"
+              class="mr-2"
+              >Pending</v-btn
+            >
+            <v-btn
+              rounded="xl"
+              :value="ProgramStatus.Declined"
+              color="primary"
+              class="mr-2"
+              >Declined</v-btn
+            >
+            <v-btn rounded="xl" :value="INACTIVE_PROGRAM" color="primary"
+              >Inactive</v-btn
+            >
+          </v-btn-toggle>
+        </v-col>
+      </v-row>
       <toggle-content
         :toggled="!programAndCount?.count"
         message="You don't have programs yet"
@@ -46,15 +89,17 @@
           :loading="loading"
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
+          v-model:sort-by="sortBy"
           @update:options="paginationAndSortEvent"
         >
           <template #item="{ item }">
             <tr>
-              <td data-cy="programCIP">{{ item.cipCode }}</td>
-              <td data-cy="programName">{{ item.programName }}</td>
-              <td data-cy="programCredential">
+              <td>{{ item.programName }}</td>
+              <td>
                 {{ item.credentialTypeToDisplay }}
               </td>
+              <td>{{ item.cipCode }}</td>
+              <td>{{ emptyStringFiller(item.sabcCode) }}</td>
               <td data-cy="programStudyPeriods">
                 {{ item.totalOfferings }}
               </td>
@@ -95,10 +140,16 @@ import {
   ProgramSummaryHeaders,
   DataTableOptions,
   DataTableSortByOrder,
+  ProgramStatus,
 } from "@/types";
+import { INACTIVE_PROGRAM } from "@/constants";
 import { ref, watch, computed, defineComponent } from "vue";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
-import { useInstitutionAuth, useInstitutionState } from "@/composables";
+import {
+  useInstitutionAuth,
+  useInstitutionState,
+  useFormatters,
+} from "@/composables";
 
 export default defineComponent({
   components: { StatusChipProgram },
@@ -111,6 +162,7 @@ export default defineComponent({
   setup(props) {
     const { getLocationName } = useInstitutionState();
     const { isReadOnlyUser } = useInstitutionAuth();
+    const { emptyStringFiller } = useFormatters();
     const router = useRouter();
     const programAndCount = ref(
       {} as PaginatedResults<EducationProgramsSummary> | undefined,
@@ -118,6 +170,15 @@ export default defineComponent({
     const locationDetails = ref();
     const loading = ref(false);
     const searchBox = ref("");
+    const sortBy = ref([
+      {
+        key: ProgramSummaryFields.ProgramName,
+        order: DataTableSortByOrder.ASC,
+      },
+    ]);
+    // Sentinel value used to represent the "All" filter state.
+    const ALL_STATUS = "All";
+    const selectedStatuses = ref([ALL_STATUS]);
     const currentPage = ref();
     const currentPageLimit = ref();
 
@@ -126,11 +187,28 @@ export default defineComponent({
     });
 
     /**
+     * Builds the search criteria object from the current search box and status
+     * filter values, used consistently across search and pagination/sort events.
+     * @returns The search criteria object reflecting the current filter state.
+     */
+    const getSearchCriteria = () => {
+      const statusSearch = selectedStatuses.value.filter(
+        (s) => s !== INACTIVE_PROGRAM && s !== ALL_STATUS,
+      );
+      return {
+        searchCriteria: searchBox.value,
+        inactiveProgramSearch:
+          selectedStatuses.value.includes(INACTIVE_PROGRAM),
+        ...(statusSearch.length ? { statusSearch } : {}),
+      };
+    };
+
+    /**
      * Function to load program list and count for institution.
      * @param page page number, if nothing passed then DEFAULT_DATATABLE_PAGE_NUMBER.
      * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT.
      * @param sortField sort field, if nothing passed then api sorts with programStatus.
-     * @param sortOrder sort oder, if nothing passed then DataTableSortByOrder.ASC.
+     * @param sortOrder sort order, if nothing passed then DataTableSortByOrder.ASC.
      */
     const loadSummary = async (
       page = DEFAULT_DATATABLE_PAGE_NUMBER,
@@ -143,7 +221,7 @@ export default defineComponent({
         await EducationProgramService.shared.getProgramsSummaryByLocationId(
           props.locationId,
           {
-            searchCriteria: searchBox.value,
+            searchCriteria: getSearchCriteria(),
             sortField,
             sortOrder,
             page,
@@ -195,6 +273,29 @@ export default defineComponent({
       { immediate: true },
     );
 
+    /**
+     * Handles status filter changes from the toggle group, enforcing mutual
+     * exclusivity between "All" and specific statuses, and reloading the table
+     * when the effective selection changes.
+     * @param newVal The new array of selected status values emitted by the toggle.
+     */
+    const handleStatusChange = async (newVal: string[]) => {
+      const oldVal = selectedStatuses.value;
+      if (newVal.includes(ALL_STATUS) && newVal.length > 1) {
+        // Clicking "All" while others are active clears them
+        // Clicking a status while "All" is active removes "All".
+        selectedStatuses.value = oldVal.includes(ALL_STATUS)
+          ? newVal.filter((s) => s !== ALL_STATUS)
+          : [ALL_STATUS];
+      } else if (newVal.length === 0) {
+        // Nothing selected – fall back to "All".
+        selectedStatuses.value = [ALL_STATUS];
+      } else {
+        selectedStatuses.value = newVal;
+      }
+      await searchProgramTable();
+    };
+
     const goToAddNewProgram = () => {
       router.push({
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
@@ -230,6 +331,13 @@ export default defineComponent({
       locationName,
       ProgramSummaryHeaders,
       isReadOnlyUser,
+      selectedStatuses,
+      handleStatusChange,
+      ALL_STATUS,
+      ProgramStatus,
+      INACTIVE_PROGRAM,
+      sortBy,
+      emptyStringFiller,
     };
   },
 });

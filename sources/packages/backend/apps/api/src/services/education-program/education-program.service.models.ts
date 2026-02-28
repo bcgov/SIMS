@@ -54,18 +54,23 @@ export interface SaveEducationProgram {
   credentialTypesAviation?: AviationProgramCredentialTypes;
 }
 
-export interface EducationProgramsSummary {
+/**
+ * Education Program Summary.
+ * Includes the count of total offerings and location information.
+ */
+export interface EducationProgramSummary {
   programId: number;
   programName: string;
-  cipCode: string;
-  credentialType: string;
-  submittedDate: Date;
   programStatus: ProgramStatus;
   isActive: boolean;
-  isExpired: boolean;
+  submittedDate: Date;
+  effectiveEndDate?: Date;
   totalOfferings: number;
   locationId: number;
   locationName: string;
+  cipCode: string;
+  sabcCode?: string;
+  credentialType: string;
 }
 
 /**
