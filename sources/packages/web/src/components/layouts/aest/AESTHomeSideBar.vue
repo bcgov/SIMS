@@ -152,6 +152,15 @@ export default defineComponent({
         },
       },
       {
+        title: "All appeals",
+        props: {
+          prependIcon: "mdi-scale-balance",
+          to: {
+            name: AESTRoutesConst.STUDENT_ALL_APPEALS,
+          },
+        },
+      },
+      {
         title: "Forms",
         props: {
           prependIcon: "mdi-file-document-outline",

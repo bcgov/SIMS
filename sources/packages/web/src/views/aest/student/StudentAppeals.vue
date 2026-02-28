@@ -1,18 +1,22 @@
 <template>
   <full-page-container :full-width="true">
     <template #header>
-      <header-navigator title="Student requests" sub-title="Appeals" />
+      <header-navigator
+        title="Student requests"
+        subTitle="Appeals (2025-2026 and later)"
+      />
     </template>
-    <pending-appeals-table
-      appeals-type="appeal"
-      :show-filter-toggle="isNewAppealsQueueEnabled"
-    />
+    <pending-appeals-table appeals-type="appeal" />
   </full-page-container>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
+import { defineComponent } from "vue";
 import PendingAppealsTable from "@/components/aest/student/PendingAppealsTable.vue";
-import { useFeatureToggles } from "@/composables";
 
-const { isNewAppealsQueueEnabled } = useFeatureToggles();
+export default defineComponent({
+  components: {
+    PendingAppealsTable,
+  },
+});
 </script>
