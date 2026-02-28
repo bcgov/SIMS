@@ -91,3 +91,15 @@ export interface FormSupplementaryDataAPIInDTO {
 export interface FormSupplementaryDataAPIOutDTO {
   formData: Record<string, unknown>;
 }
+
+/**
+ * Summary of a pending form submission for the ministry queue.
+ */
+export interface FormSubmissionPendingSummaryAPIOutDTO {
+  formSubmissionId: number;
+  studentId: number;
+  submittedDate: Date;
+  firstName?: string;
+  lastName: string;
+  formNames: string[];
+}

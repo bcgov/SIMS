@@ -85,3 +85,15 @@ export class FormSubmissionAPIInDTO {
   @Type(() => FormSubmissionItemAPIInDTO)
   items: FormSubmissionItemAPIInDTO[];
 }
+
+/**
+ * Summary of a pending form submission item for the ministry queue.
+ */
+export class FormSubmissionPendingSummaryAPIOutDTO {
+  formSubmissionId: number;
+  studentId: number;
+  submittedDate: Date;
+  firstName?: string;
+  lastName: string;
+  formName: string;
+}

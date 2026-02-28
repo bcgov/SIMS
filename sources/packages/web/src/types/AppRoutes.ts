@@ -123,6 +123,8 @@ export enum AppRoutes {
   ViewOfferingChangeRequest = "institution/offering-change-request/:offeringId/program/:programId",
   LegacyChangeRequests = "legacy-change-requests",
   StudentAppeals = "appeals",
+  StudentAllAppeals = "all-appeals",
+  PendingForms = "pending-forms",
   ApplicationChangeRequests = "application-change-requests",
   StudentAccountApplications = "student-account-applications",
   StudentAccountApplicationsApproval = "student-account-applications/:studentAccountApplicationId/approval",

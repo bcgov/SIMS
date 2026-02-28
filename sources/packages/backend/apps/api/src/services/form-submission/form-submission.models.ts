@@ -1,4 +1,5 @@
 import { DynamicFormConfiguration } from "@sims/sims-db/entities";
+import { FieldSortOrder } from "@sims/utilities";
 import { Parent } from "../../types";
 
 /**
@@ -41,3 +42,27 @@ export type FormSubmissionConfig = FormSubmissionModel &
   > & {
     applicationId: number | undefined;
   };
+
+/**
+ * Pagination options for querying pending form submissions in the ministry queue.
+ */
+export interface FormSubmissionPendingPaginationOptions {
+  searchCriteria?: string;
+  sortField?: string;
+  sortOrder?: FieldSortOrder;
+  page: number;
+  pageLimit: number;
+}
+
+/**
+ * Summary of a pending form submission item for the ministry queue view.
+ * Each entry represents one form within a submission.
+ */
+export interface FormSubmissionPendingSummary {
+  formSubmissionId: number;
+  studentId: number;
+  submittedDate: Date;
+  firstName?: string;
+  lastName: string;
+  formName: string;
+}

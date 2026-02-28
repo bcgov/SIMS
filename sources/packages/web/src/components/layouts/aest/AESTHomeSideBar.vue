@@ -64,7 +64,8 @@
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel, Role } from "@/types";
-import { ref, defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
+import { useFeatureToggles } from "@/composables";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { UserService } from "@/services/UserService";
 import { AppConfigService } from "@/services/AppConfigService";
@@ -72,7 +73,8 @@ import { AppConfigService } from "@/services/AppConfigService";
 export default defineComponent({
   components: { CheckPermissionRole },
   setup() {
-    const menuItems = ref<MenuItemModel[]>([
+    const { isNewAppealsQueueEnabled } = useFeatureToggles();
+    const menuItems = computed<MenuItemModel[]>(() => [
       {
         title: "Home",
         props: {
@@ -147,7 +149,18 @@ export default defineComponent({
         props: {
           prependIcon: "mdi-scale-balance",
           to: {
-            name: AESTRoutesConst.STUDENT_APPEALS,
+            name: isNewAppealsQueueEnabled
+              ? AESTRoutesConst.STUDENT_ALL_APPEALS
+              : AESTRoutesConst.STUDENT_APPEALS,
+          },
+        },
+      },
+      {
+        title: "Forms",
+        props: {
+          prependIcon: "mdi-file-document-outline",
+          to: {
+            name: AESTRoutesConst.PENDING_FORMS,
           },
         },
       },

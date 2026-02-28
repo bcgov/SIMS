@@ -6,7 +6,10 @@ import {
   FormSubmissionAPIInDTO,
   FormSupplementaryDataAPIInDTO,
   FormSupplementaryDataAPIOutDTO,
+  FormSubmissionPendingSummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
+import { PaginationOptions } from "@/types";
 
 export class FormSubmissionService {
   // Share Instance
@@ -54,5 +57,18 @@ export class FormSubmissionService {
    */
   async submitForm(payload: FormSubmissionAPIInDTO): Promise<void> {
     await ApiClient.FormSubmissionApi.submitForm(payload);
+  }
+
+  /**
+   * Gets all pending form submissions for ministry review.
+   * @param paginationOptions options to execute the pagination.
+   * @returns paginated list of pending form submissions.
+   */
+  async getPendingFormSubmissions(
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>> {
+    return ApiClient.FormSubmissionApi.getPendingFormSubmissions(
+      paginationOptions,
+    );
   }
 }

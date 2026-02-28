@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { Brackets, DataSource } from "typeorm";
 import {
   Application,
   User,
@@ -11,11 +11,14 @@ import {
   DynamicFormConfiguration,
   FormSubmissionDecisionStatus,
   FormCategory,
+  getUserFullNameLikeSearch,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
   FormSubmissionConfig,
   FormSubmissionModel,
+  FormSubmissionPendingPaginationOptions,
+  FormSubmissionPendingSummary,
 } from "./form-submission.models";
 import {
   DynamicFormConfigurationService,
@@ -23,10 +26,15 @@ import {
   FORM_SUBMISSION_UNKNOWN_FORM_CONFIGURATION,
   FormService,
 } from "../../services";
-import { CustomNamedError, processInParallel } from "@sims/utilities";
+import {
+  CustomNamedError,
+  FieldSortOrder,
+  processInParallel,
+} from "@sims/utilities";
 import { DryRunSubmissionResult } from "../../types";
 import { FormSubmissionValidator } from "./form-submission-validator";
 import { SupplementaryDataLoader } from "./form-supplementary-data";
+import { PaginatedResults } from "../../utilities";
 
 /**
  * Manages how the form submissions are processed, including the validations,
@@ -121,6 +129,83 @@ export class FormSubmissionService {
       // TODO: send notification.
       return entityManager.getRepository(FormSubmission).save(formSubmission);
     });
+  }
+
+  /**
+   * Gets all pending student form submission items awaiting ministry review,
+   * returning one entry per form within a submission.
+   * Only items belonging to submissions with category {@link FormCategory.StudentForm}
+   * and status {@link FormSubmissionStatus.Pending} are returned.
+   * @param paginationOptions options to control pagination, sorting, and search.
+   * @returns paginated list of pending form submission items, one per form.
+   */
+  async getPendingFormSubmissions(
+    paginationOptions: FormSubmissionPendingPaginationOptions,
+  ): Promise<PaginatedResults<FormSubmissionPendingSummary>> {
+    const { page, pageLimit, sortField, sortOrder, searchCriteria } =
+      paginationOptions;
+
+    const query = this.dataSource
+      .getRepository(FormSubmissionItem)
+      .createQueryBuilder("formSubmissionItem")
+      .select([
+        "formSubmissionItem.id",
+        "formSubmission.id",
+        "formSubmission.submittedDate",
+        "student.id",
+        "user.firstName",
+        "user.lastName",
+        "dynamicFormConfiguration.formDescription",
+        "dynamicFormConfiguration.formType",
+      ])
+      .innerJoin("formSubmissionItem.formSubmission", "formSubmission")
+      .innerJoin("formSubmission.student", "student")
+      .innerJoin("student.user", "user")
+      .innerJoin(
+        "formSubmissionItem.dynamicFormConfiguration",
+        "dynamicFormConfiguration",
+      )
+      .where("formSubmission.submissionStatus = :status", {
+        status: FormSubmissionStatus.Pending,
+      })
+      .andWhere("formSubmission.formCategory = :category", {
+        category: FormCategory.StudentForm,
+      });
+
+    if (searchCriteria) {
+      query
+        .andWhere(new Brackets((qb) => qb.where(getUserFullNameLikeSearch())))
+        .setParameter("searchCriteria", `%${searchCriteria}%`);
+    }
+
+    const sortFieldMapping: Record<string, string> = {
+      submittedDate: "formSubmission.submittedDate",
+      lastName: "user.lastName",
+    };
+    const dbSortField =
+      sortFieldMapping[sortField ?? "submittedDate"] ??
+      "formSubmission.submittedDate";
+
+    query
+      .orderBy(dbSortField, sortOrder ?? FieldSortOrder.DESC)
+      .skip(page * pageLimit)
+      .take(pageLimit);
+
+    const [items, count] = await query.getManyAndCount();
+
+    return {
+      results: items.map((item) => ({
+        formSubmissionId: item.formSubmission.id,
+        studentId: item.formSubmission.student.id,
+        submittedDate: item.formSubmission.submittedDate,
+        firstName: item.formSubmission.student.user.firstName ?? undefined,
+        lastName: item.formSubmission.student.user.lastName,
+        formName:
+          item.dynamicFormConfiguration.formDescription ??
+          (item.dynamicFormConfiguration.formType as string),
+      })),
+      count,
+    };
   }
 
   /**

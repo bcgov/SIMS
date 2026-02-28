@@ -6,12 +6,16 @@ import {
   FormSubmissionAPIInDTO,
   FormSupplementaryDataAPIInDTO,
   FormSupplementaryDataAPIOutDTO,
+  FormSubmissionPendingSummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
 import {
   FormCategory,
   FormSubmissionDecisionStatus,
   FormSubmissionStatus,
+  PaginationOptions,
 } from "@/types";
+import { getPaginationQueryString } from "@/helpers";
 
 const MOCKED_SUBMISSIONS: FormSubmissionStudentAPIOutDTO[] = [
   {
@@ -133,5 +137,19 @@ export class FormSubmissionApi extends HttpBaseClient {
    */
   async submitForm(payload: FormSubmissionAPIInDTO): Promise<void> {
     await this.postCall(this.addClientRoot("form-submission"), payload);
+  }
+
+  /**
+   * Gets all pending form submissions for ministry review.
+   * @param paginationOptions options to execute the pagination.
+   * @returns paginated list of pending form submissions.
+   */
+  async getPendingFormSubmissions(
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>> {
+    const url = `form-submission/pending?${getPaginationQueryString(paginationOptions)}`;
+    return this.getCall<
+      PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>
+    >(this.addClientRoot(url));
   }
 }
