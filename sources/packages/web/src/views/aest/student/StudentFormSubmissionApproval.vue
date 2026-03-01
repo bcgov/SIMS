@@ -14,7 +14,6 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import FormSubmissionApproval from "@/components/form-submissions/FormSubmissionApproval.vue";
 import { FormSubmissionMinistryAPIOutDTO } from "@/services/http/dto";
 import { FormCategory } from "@/types";
@@ -38,7 +37,6 @@ export default defineComponent({
           : "Form submission";
     };
     return {
-      AESTRoutesConst,
       submissionLoaded,
       subtitle,
     };

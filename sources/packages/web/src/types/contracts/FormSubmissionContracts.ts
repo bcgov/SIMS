@@ -88,20 +88,49 @@ export interface FormSubmissionItemDecision {
   decisionHistory?: DecisionHistory[];
 }
 
-export interface FormSubmissionItem {
-  id: number;
+/**
+ * Information required while student is submitting a form.
+ */
+export interface FormSubmissionItemSubmitted {
+  /**
+   * ID of the dynamic form configuration being submitted.
+   */
   dynamicConfigurationId: number;
-  category: FormCategory;
-  formType: string;
-  formName: string;
+  /**
+   * Dynamic form data.
+   */
   formData: unknown;
-  files?: string[];
-  decision?: FormSubmissionItemDecision;
+  /**
+   * Files are not required during the UI rendering for the student submission, but will be
+   * populated with some file or an empty array when the student is submitting the form.
+   */
+  files: string[];
 }
 
-export interface FormSubmissionItemSubmitted {
-  dynamicConfigurationId: number;
-  formData: unknown;
-  files: string[];
+/**
+ * Information required to render a form to be submitted by the student
+ * or visualized by the Ministry or Institution.
+ */
+export interface FormSubmissionItem extends FormSubmissionItemSubmitted {
+  /**
+   * Form submission item ID. Present if the form item is already persisted.
+   */
+  id?: number;
+  /**
+   * Form category. All forms under the same submission will belong to the same category.
+   */
+  category: FormCategory;
+  /**
+   * Form type, which is used to identify the form and its structure.
+   */
+  formType: string;
+  /**
+   * Form definition name.
+   */
+  formName: string;
+  /**
+   * Current decision status for this form submission item, available for certain
+   * user roles for Ministry, allowing a decision to be made and later auditing.
+   */
   decision?: FormSubmissionItemDecision;
 }

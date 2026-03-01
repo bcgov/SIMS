@@ -284,6 +284,7 @@ export default defineComponent({
                 submissionItem,
                 formSubmission.value.status,
               ),
+              files: undefined,
             }),
           );
       } catch {
@@ -340,7 +341,7 @@ export default defineComponent({
      * Reload the decision-related data to refresh only the updated data.
      * @param itemId updated item to have the data refreshed.
      */
-    const reLoadFormSubmissionItem = async (itemId: number) => {
+    const reloadFormSubmissionItem = async (itemId: number) => {
       try {
         const submission =
           (await FormSubmissionService.shared.getFormSubmission(
@@ -421,7 +422,7 @@ export default defineComponent({
             lastUpdateDate: decision.lastUpdateDate,
           },
         );
-        await reLoadFormSubmissionItem(decision.submissionItemId);
+        await reloadFormSubmissionItem(decision.submissionItemId);
         snackBar.success(
           "Decision saved! The decision can be changed till the main submission is no longer pending.",
         );
@@ -431,7 +432,7 @@ export default defineComponent({
             decision.saveDecisionInProgress = false;
             const modalResult = await outdatedDecisionModal.value.showModal();
             if (modalResult) {
-              await reLoadFormSubmissionItem(decision.submissionItemId);
+              await reloadFormSubmissionItem(decision.submissionItemId);
             }
             return;
           }
@@ -506,7 +507,7 @@ export default defineComponent({
     const cancelChangeDecision = async (
       decision: FormSubmissionItemDecision,
     ): Promise<void> => {
-      await reLoadFormSubmissionItem(decision.submissionItemId);
+      await reloadFormSubmissionItem(decision.submissionItemId);
     };
 
     watchEffect(async () => {

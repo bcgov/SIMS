@@ -57,7 +57,6 @@ export class FormSubmissionItem extends RecordDataModel {
    * Current decision associated with the form submission item.
    */
   @OneToOne(() => FormSubmissionItemDecision, {
-    nullable: true,
     cascade: ["insert", "update"],
   })
   @JoinColumn({

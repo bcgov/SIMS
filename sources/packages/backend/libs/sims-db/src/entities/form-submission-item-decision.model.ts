@@ -29,7 +29,7 @@ export class FormSubmissionItemDecision extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
   /**
-   * Parent form submission item that this decision belongs to.
+   * Form submission item that this decision belongs to.
    */
   @ManyToOne(() => FormSubmissionItem, { nullable: false })
   @JoinColumn({
@@ -38,7 +38,7 @@ export class FormSubmissionItemDecision extends RecordDataModel {
   })
   formSubmissionItem: FormSubmissionItem;
   /**
-   * Current decision status for this item.
+   * Decision status.
    */
   @Column({
     name: "decision_status",
@@ -53,9 +53,8 @@ export class FormSubmissionItemDecision extends RecordDataModel {
   @Column({
     name: "decision_date",
     type: "timestamptz",
-    nullable: true,
   })
-  decisionDate?: Date;
+  decisionDate: Date;
   /**
    * Ministry user who made the decision.
    */
@@ -64,14 +63,14 @@ export class FormSubmissionItemDecision extends RecordDataModel {
     name: "decision_by",
     referencedColumnName: ColumnNames.ID,
   })
-  decisionBy?: User;
+  decisionBy: User;
   /**
    * Note associated with the decision.
    */
-  @OneToOne(() => Note, { nullable: true, cascade: ["insert", "update"] })
+  @OneToOne(() => Note, { cascade: ["insert", "update"] })
   @JoinColumn({
     name: "decision_note_id",
     referencedColumnName: ColumnNames.ID,
   })
-  decisionNote?: Note;
+  decisionNote: Note;
 }

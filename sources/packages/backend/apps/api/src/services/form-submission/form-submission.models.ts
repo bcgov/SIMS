@@ -1,4 +1,8 @@
-import { DynamicFormConfiguration, FormCategory } from "@sims/sims-db";
+import {
+  DynamicFormConfiguration,
+  FormCategory,
+  FormSubmissionDecisionStatus,
+} from "@sims/sims-db";
 import { Parent } from "../../types";
 import { Role } from "../../auth";
 
@@ -53,5 +57,14 @@ export const FORM_SUBMISSION_APPROVAL_ROLES_MAP = new Map<FormCategory, Role>([
 
 export interface FormSubmissionCompletionItem {
   submissionItemId: number;
+  lastUpdateDate: Date;
+}
+
+/**
+ * Ministry individual form item decision update.
+ */
+export interface FormItemDecision {
+  decisionStatus: FormSubmissionDecisionStatus;
+  noteDescription: string;
   lastUpdateDate: Date;
 }

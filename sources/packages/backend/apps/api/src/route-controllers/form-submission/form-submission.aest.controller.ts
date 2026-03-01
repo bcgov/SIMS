@@ -41,6 +41,15 @@ import { getUserFullName } from "../../utilities";
 import { FormSubmissionDecisionStatus } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 
+/**
+ * Roles allowed to update the form submission item decision
+ * and complete the form submission for AEST.
+ */
+const FORM_SUBMISSION_UPDATE_ROLES = [
+  Role.StudentApproveDeclineAppeals,
+  Role.StudentApproveDeclineForms,
+];
+
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
 @Controller("form-submission")
@@ -56,7 +65,7 @@ export class FormSubmissionAESTController extends BaseController {
    * Get the details of a form submission, including the individual form items and their details.
    * @param formSubmissionId ID of the form submission to retrieve the details for.
    * @param itemId optional ID of the form submission item to filter the details for.
-   * Useful only when a single item details are required.
+   * Useful only when a single item detail is required.
    * @returns form submission details including individual form items and their details.
    */
   @ApiNotFoundResponse({ description: "Form submission not found" })
@@ -72,6 +81,11 @@ export class FormSubmissionAESTController extends BaseController {
         { itemId },
       );
     if (!submission) {
+      if (itemId) {
+        throw new NotFoundException(
+          `Form submission with ID ${formSubmissionId} and form submission item ID ${itemId} not found.`,
+        );
+      }
       throw new NotFoundException(
         `Form submission with ID ${formSubmissionId} not found.`,
       );
@@ -88,7 +102,6 @@ export class FormSubmissionAESTController extends BaseController {
       status: submission.submissionStatus,
       applicationId: submission.application?.id,
       applicationNumber: submission.application?.applicationNumber,
-      assessedDate: submission.assessedDate,
       submittedDate: submission.submittedDate,
       submissionItems: submission.formSubmissionItems.map((item) => ({
         id: item.id,
@@ -109,7 +122,7 @@ export class FormSubmissionAESTController extends BaseController {
                 decisionDate: item.currentDecision.decisionDate,
                 decisionBy: getUserFullName(item.currentDecision.decisionBy),
                 decisionNoteDescription:
-                  item.currentDecision.decisionNote?.description,
+                  item.currentDecision.decisionNote.description,
               }
             : undefined,
         decisions: hasApprovalAuthorization
@@ -120,7 +133,7 @@ export class FormSubmissionAESTController extends BaseController {
                 decisionStatus: decision.decisionStatus,
                 decisionDate: decision.decisionDate,
                 decisionBy: getUserFullName(decision.decisionBy),
-                decisionNoteDescription: decision.decisionNote?.description,
+                decisionNoteDescription: decision.decisionNote.description,
               }))
           : undefined,
       })),
@@ -141,7 +154,7 @@ export class FormSubmissionAESTController extends BaseController {
       "The form submission item has been updated since it was last retrieved or " +
       "decisions cannot be made on items belonging to a form submission that is not pending.",
   })
-  @Roles(Role.StudentApproveDeclineAppeals, Role.StudentApproveDeclineForms)
+  @Roles(...FORM_SUBMISSION_UPDATE_ROLES)
   @Patch("items/:formSubmissionItemId/decision")
   async submitItemDecision(
     @Param("formSubmissionItemId", ParseIntPipe) formSubmissionItemId: number,
@@ -151,9 +164,7 @@ export class FormSubmissionAESTController extends BaseController {
     try {
       await this.formSubmissionApprovalService.saveFormSubmissionItem(
         formSubmissionItemId,
-        payload.decisionStatus,
-        payload.noteDescription,
-        payload.lastUpdateDate,
+        payload,
         userToken.roles,
         userToken.userId,
       );
@@ -190,12 +201,12 @@ export class FormSubmissionAESTController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description:
       "Final decision cannot be made on a form submission with status different than pending or " +
-      "the provided form submission items do not match the form submission items for this submission or " +
+      "the provided form submission items do not match the form submission items currently saved for this submission or " +
       "form submission item not found in the form submission or " +
       "form submission item has been updated since it was last retrieved or " +
       "final decision cannot be made when some decisions are still pending.",
   })
-  @Roles(Role.StudentApproveDeclineAppeals, Role.StudentApproveDeclineForms)
+  @Roles(...FORM_SUBMISSION_UPDATE_ROLES)
   @Patch(":formSubmissionId/complete")
   async completeFormSubmission(
     @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,

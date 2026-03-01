@@ -40,7 +40,6 @@ interface FormSubmissionAPIOutDTO {
   applicationId?: number;
   applicationNumber?: string;
   submittedDate: Date;
-  assessedDate?: Date;
 }
 
 /**

@@ -131,6 +131,9 @@ export interface StudentUserToken extends IUserToken {
  * Extracts the user roles from the token resource access based on the authorized party (client ID).
  * The roles are expected to be defined as a property under the resource_access object
  * corresponding to the authorized party (client ID).
+ * @param token IUserToken containing the resource access information from which the roles will be extracted.
+ * @returns an array of roles extracted from the token resource access for the authorized party,
+ * or an empty array if no roles information are present.
  */
 export function extractRolesFromToken(token: IUserToken): Role[] {
   if (!token.resource_access || !token.azp) {

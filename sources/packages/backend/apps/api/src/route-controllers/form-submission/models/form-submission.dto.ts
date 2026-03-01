@@ -65,7 +65,6 @@ abstract class FormSubmissionAPIOutDTO {
   applicationId?: number;
   applicationNumber?: string;
   submittedDate: Date;
-  assessedDate?: Date;
 }
 
 /**
