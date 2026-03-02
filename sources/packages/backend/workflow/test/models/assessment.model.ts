@@ -144,7 +144,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsStudentCurrentYearIncomeAppealData?: JSONDoc;
   appealsPartnerCurrentYearIncomeAppealData?: JSONDoc;
   appealsParentCurrentYearIncomeAppealData?: JSONDoc;
-  appealsStudentExceptionalExpenseAppealData?: JSONDoc;
+  appealsExceptionalExpenseAppealData?: JSONDoc;
   studentDataIsYourPartnerAbleToReport?: boolean; // No longer used in PY 26/27 and beyond.
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
@@ -345,6 +345,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalChildSpousalSupport: number;
   calculatedMSOLProvince: Provinces;
   calculatedDataTotalMSOLAllowance: number;
+  calculatedDataExceptionalCosts: number;
   calculatedDataTotalCosts: number;
   calculatedDataTotalFamilyIncome: number;
   awardNetFederalTotalAward: number;
@@ -374,6 +375,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalEligibleDependants: number;
   calculatedDataTotalScholarshipsBursaries: number;
   calculatedDataExemptScholarshipsBursaries: number;
+  calculatedDataTotalNonEducationalCost: number;
   calculatedDataDependants11YearsOrUnder: number;
   calculatedDataDependants12YearsOverOnTaxes: number;
   calculatedDataTotalEligibleDependentsForChildCare: number;
