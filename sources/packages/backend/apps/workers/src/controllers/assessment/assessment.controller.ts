@@ -688,7 +688,7 @@ export class AssessmentController {
       };
     });
     formSubmissionItems
-      .filter(
+      ?.filter(
         (formSubmission) =>
           formSubmission.currentDecision.decisionStatus ===
           FormSubmissionDecisionStatus.Approved,
