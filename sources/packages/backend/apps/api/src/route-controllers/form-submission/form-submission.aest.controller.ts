@@ -125,7 +125,7 @@ export class FormSubmissionAESTController extends BaseController {
                   item.currentDecision.decisionNote.description,
               }
             : undefined,
-        decisions: hasApprovalAuthorization
+        previousDecisions: hasApprovalAuthorization
           ? item.decisions
               .filter((decision) => decision.id !== item.currentDecision.id)
               .map((decision) => ({

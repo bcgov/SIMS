@@ -322,7 +322,7 @@ export default defineComponent({
       decision.decisionNoteDescription =
         submissionItem.currentDecision?.decisionNoteDescription;
       decision.lastUpdateDate = submissionItem.updatedAt;
-      decision.decisionHistory = submissionItem.decisions?.map(
+      decision.decisionHistory = submissionItem.previousDecisions?.map(
         (decisionEntry) => ({
           id: decisionEntry.id,
           decisionStatus: decisionEntry.decisionStatus,
