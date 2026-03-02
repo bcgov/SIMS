@@ -121,11 +121,9 @@ export class FormSubmissionApi extends HttpBaseClient {
     formSubmissionId: number,
     options?: { itemId?: number },
   ): Promise<FormSubmissionStudentAPIOutDTO | FormSubmissionMinistryAPIOutDTO> {
-    const url = `form-submission/${formSubmissionId}`;
+    let url = `form-submission/${formSubmissionId}`;
     if (options?.itemId) {
-      return this.getCall(
-        this.addClientRoot(`${url}?itemId=${options.itemId}`),
-      );
+      url += `?itemId=${options.itemId}`;
     }
     return this.getCall(this.addClientRoot(url));
   }
