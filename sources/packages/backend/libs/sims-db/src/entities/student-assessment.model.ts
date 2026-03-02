@@ -11,6 +11,7 @@ import {
   AssessmentStatus,
   DisbursementSchedule,
   EducationProgramOffering,
+  FormSubmission,
   FormYesNoOptions,
   RelationshipStatus,
   StudentAppeal,
@@ -270,6 +271,15 @@ export class StudentAssessment extends RecordDataModel {
     type: "varchar",
   })
   eligibleApplicationAppeals?: string[];
+  /**
+   * Form submission that caused the assessment.
+   */
+  @ManyToOne(() => FormSubmission)
+  @JoinColumn({
+    name: "form_submission_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  formSubmission?: FormSubmission;
 }
 
 /**

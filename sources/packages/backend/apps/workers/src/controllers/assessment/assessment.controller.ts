@@ -28,6 +28,8 @@ import { StudentAssessmentService } from "../../services";
 import {
   ApplicationStatus,
   CRAIncomeVerification,
+  FormSubmissionDecisionStatus,
+  FormSubmissionItem,
   OfferingIntensity,
   StudentAppealRequest,
   StudentAssessment,
@@ -598,6 +600,7 @@ export class AssessmentController {
       ),
       appeals: this.flattenStudentAppeals(
         assessment.studentAppeal?.appealRequests,
+        assessment.formSubmission?.formSubmissionItems,
       ),
     };
   }
@@ -654,10 +657,14 @@ export class AssessmentController {
    * appeal request will be a property named by the form.io definition name used
    * to execute the student appeal request submission.
    * @param appealRequests approved student appeal requests.
+   * @param formSubmissionItems form submission items that will override current
+   * appeals data and should be the only source for appeals once the form submission
+   * feature is done.
    * @returns object where every student appeal request is a property.
    */
   flattenStudentAppeals(
     appealRequests: StudentAppealRequest[],
+    formSubmissionItems: FormSubmissionItem[],
   ): Record<string, StudentAppealRequestJobOutDTO> {
     if (!appealRequests?.length) {
       return null;
@@ -680,6 +687,19 @@ export class AssessmentController {
         submittedData: appealRequest.submittedData,
       };
     });
+    formSubmissionItems
+      .filter(
+        (formSubmission) =>
+          formSubmission.currentDecision.decisionStatus ===
+          FormSubmissionDecisionStatus.Approved,
+      )
+      .forEach((formSubmissionItem) => {
+        const submittedFormName =
+          formSubmissionItem.dynamicFormConfiguration.formDefinitionName;
+        flattenedAppealRequests[submittedFormName] = {
+          submittedData: formSubmissionItem.submittedData,
+        };
+      });
     return flattenedAppealRequests;
   }
 
