@@ -22,6 +22,7 @@ export enum Role {
   StudentEditProfile = "student-edit-profile",
   StudentApproveDeclineExceptions = "student-approve-decline-exceptions",
   StudentApproveDeclineAppeals = "student-approve-decline-appeals",
+  StudentApproveDeclineForms = "student-approve-decline-forms",
   StudentAddSINExpiry = "student-add-sin-expiry",
   StudentAddNewSIN = "student-add-new-sin",
   StudentCreateNote = "student-create-note",

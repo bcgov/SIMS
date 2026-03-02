@@ -123,6 +123,7 @@ export default defineComponent({
             category: formConfiguration.formCategory,
             formName: formConfiguration.formDefinitionName,
             formData: {},
+            files: [],
           };
         });
     });

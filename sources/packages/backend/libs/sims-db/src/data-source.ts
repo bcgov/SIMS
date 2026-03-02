@@ -70,6 +70,7 @@ import {
   SystemLookupConfiguration,
   FormSubmission,
   FormSubmissionItem,
+  FormSubmissionItemDecision,
 } from "./entities";
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import {
@@ -238,4 +239,5 @@ export const DBEntities = [
   SystemLookupConfiguration,
   FormSubmission,
   FormSubmissionItem,
+  FormSubmissionItemDecision,
 ];
