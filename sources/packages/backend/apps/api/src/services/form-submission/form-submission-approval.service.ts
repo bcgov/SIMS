@@ -288,13 +288,13 @@ export class FormSubmissionApprovalService {
       const notesToBeAssociated = formSubmission.formSubmissionItems.map(
         (item) => item.currentDecision?.decisionNote,
       );
-      const noteRelationsPromises =
+      const noteRelationsPromise =
         this.noteSharedService.createStudentNoteRelation(
           formSubmission.student,
           notesToBeAssociated,
           entityManager,
         );
-      await Promise.all([saveFormSubmissionPromise, noteRelationsPromises]);
+      await Promise.all([saveFormSubmissionPromise, noteRelationsPromise]);
       return formSubmission;
     });
   }
