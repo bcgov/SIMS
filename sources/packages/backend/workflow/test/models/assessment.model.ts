@@ -355,6 +355,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalAssessedNeed: number;
   calculatedDataProgramRelatedCosts: number;
   calculatedDataTotalBookCost: number;
+  calculatedDataPartnerStudentLoans: number;
   awardNetProvincialTotalAward: number;
   calculatedDataFederalAssessedNeed: number;
   offeringExceptionalExpenses: number;
@@ -415,6 +416,7 @@ export interface CalculatedAssessmentModel {
   isEligibleForStudentCurrentYearIncomeAppeal?: boolean;
   isEligibleForPartnerCurrentYearIncomeAppeal?: boolean;
   isEligibleForParentCurrentYearIncomeAppeal?: boolean;
+  isEligibleForExceptionalExpenseAppeal?: boolean;
   calculatedDataWaivedParent?: number;
   // Common variables used in both full-time and part-time.
   // CSGP
