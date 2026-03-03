@@ -134,13 +134,15 @@ export class FormSubmissionService {
   /**
    * Gets all pending student form submission items awaiting ministry review,
    * returning one entry per form within a submission.
-   * Only items belonging to submissions with category {@link FormCategory.StudentForm}
+   * Only items belonging to submissions with the specified category
    * and status {@link FormSubmissionStatus.Pending} are returned.
    * @param paginationOptions options to control pagination, sorting, and search.
+   * @param formCategory category of the form submissions to filter.
    * @returns paginated list of pending form submission items, one per form.
    */
   async getPendingFormSubmissions(
     paginationOptions: FormSubmissionPendingPaginationOptions,
+    formCategory: FormCategory,
   ): Promise<PaginatedResults<FormSubmissionPendingSummary>> {
     const { page, pageLimit, sortField, sortOrder, searchCriteria } =
       paginationOptions;
@@ -157,7 +159,7 @@ export class FormSubmissionService {
         "user.lastName",
         "dynamicFormConfiguration.formDescription",
         "dynamicFormConfiguration.formType",
-      ])
+      ])  
       .innerJoin("formSubmissionItem.formSubmission", "formSubmission")
       .innerJoin("formSubmission.student", "student")
       .innerJoin("student.user", "user")
@@ -169,7 +171,7 @@ export class FormSubmissionService {
         status: FormSubmissionStatus.Pending,
       })
       .andWhere("formSubmission.formCategory = :category", {
-        category: FormCategory.StudentForm,
+        category: formCategory,
       });
 
     if (searchCriteria) {
