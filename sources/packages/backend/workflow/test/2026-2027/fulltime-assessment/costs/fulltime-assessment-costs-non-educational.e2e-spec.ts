@@ -120,7 +120,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-non-educat
     expect(
       calculatedAssessment.variables.calculatedDataExceptionalCosts,
     ).toBeGreaterThan(0);
-    // No other values should be added to the total non-educational costs calculation, so it should be equal to the total MSOL allowance.
+    // The total non-educational costs should be the sum of all the individual non-educational costs.
     expect(
       calculatedAssessment.variables.calculatedDataTotalNonEducationalCost,
     ).toBe(
