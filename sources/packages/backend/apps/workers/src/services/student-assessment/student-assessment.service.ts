@@ -165,6 +165,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "formSubmissionItemCurrentDecision.decisionStatus",
         "dynamicFormConfiguration.id",
         "dynamicFormConfiguration.formDefinitionName",
+        "dynamicFormConfiguration.formCategory",
       ])
       .innerJoin("assessment.application", "application")
       .innerJoin("application.programYear", "programYear")

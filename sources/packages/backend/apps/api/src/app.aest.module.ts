@@ -232,12 +232,10 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     StudentAppealActionsProcessor,
     StudentAppealCreateAssessmentAction,
     StudentAppealUpdateModifiedIndependentAction,
-
     // Form submission actions.
     FormSubmissionCreateAppealAssessmentAction,
     FormSubmissionUpdateModifiedIndependentAction,
     FormSubmissionActionProcessor,
-
     FormSubmissionApprovalService,
   ],
 })

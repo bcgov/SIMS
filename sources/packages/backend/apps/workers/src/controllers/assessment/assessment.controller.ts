@@ -28,6 +28,7 @@ import { StudentAssessmentService } from "../../services";
 import {
   ApplicationStatus,
   CRAIncomeVerification,
+  FormCategory,
   FormSubmissionDecisionStatus,
   FormSubmissionItem,
   OfferingIntensity,
@@ -687,11 +688,16 @@ export class AssessmentController {
         submittedData: appealRequest.submittedData,
       };
     });
+    // Look for approved appeals to have data included in the output.
+    // Associated form submissions will be completed before being associated with the assessment,
+    // so it is safe to consider that all form submission items are available at this moment.
     formSubmissionItems
       ?.filter(
         (formSubmission) =>
+          formSubmission.dynamicFormConfiguration.formCategory ===
+            FormCategory.StudentAppeal &&
           formSubmission.currentDecision.decisionStatus ===
-          FormSubmissionDecisionStatus.Approved,
+            FormSubmissionDecisionStatus.Approved,
       )
       .forEach((formSubmissionItem) => {
         const submittedFormName =

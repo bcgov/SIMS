@@ -28,9 +28,9 @@ export class FormSubmissionActionProcessor {
    * Process the actions associated with a form submission.
    * Checks for the form submission requests action types and process
    * the corresponding actions as required.
-   * Please note that a declined action can also trigger other actions. It is the responsibility of each
+   * Please note that a declined action can also trigger actions. It is the responsibility of each
    * action to determined if it should be executed based on the form submission data.
-   * @param formSubmission the form submission to process actions for.
+   * @param formSubmissionId the ID of the form submission to process actions for.
    * @param auditUserId the ID of the user performing the action.
    * @param auditDate the date the action is being performed.
    * @param entityManager entity manager to allow the query to happen within a transaction.
@@ -47,7 +47,7 @@ export class FormSubmissionActionProcessor {
     );
     if (!formSubmission) {
       throw new Error(
-        `Form submission with ID ${formSubmission.id} not found for actions processing.`,
+        `Form submission with ID ${formSubmissionId} not found for actions processing.`,
       );
     }
     const actionTypes = formSubmission.submissionItems.flatMap(
@@ -65,7 +65,7 @@ export class FormSubmissionActionProcessor {
     );
     if (unknownActions.length) {
       throw new Error(
-        `One or more action types associated with the form submission ID ${formSubmission.id} are not recognized: ${unknownActions}.`,
+        `One or more action types associated with the form submission ID ${formSubmissionId} are not recognized: ${unknownActions}.`,
       );
     }
     const actionsToProcess = this.actions.filter((action) =>
