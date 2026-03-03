@@ -466,6 +466,19 @@ export class ConfigService {
   }
 
   /**
+   * Generic list of enabled feature toggles configuration.
+   * When defined, it should be a comma separated list of feature toggles to be enabled.
+   * This allows to enable/disable features without the need of redeploying the application.
+   * @returns list of enabled feature toggles.
+   */
+  get featureToggles(): string[] | undefined {
+    return this.getCachedConfig(
+      "featureTogglesConfig",
+      process.env.FEATURE_TOGGLES?.split(","),
+    );
+  }
+
+  /**
    * Avoids reading the env configuration every time and creates
    * a property to store the value and keep reading from it.
    * @param key cache key.

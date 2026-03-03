@@ -52,6 +52,7 @@ export class ConfigController extends BaseController {
       maintenanceModeSupportingUser:
         this.configService.maintenanceModeSupportingUser,
       maintenanceModeExternal: this.configService.maintenanceModeExternal,
+      featureToggles: this.configService.featureToggles,
     };
   }
 }

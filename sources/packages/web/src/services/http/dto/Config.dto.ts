@@ -25,4 +25,9 @@ export interface ConfigAPIOutDTO {
   maintenanceModeMinistry: boolean;
   maintenanceModeSupportingUser: boolean;
   maintenanceModeExternal: boolean;
+  /**
+   * Generic list of enabled feature toggles configuration.
+   * It an item is present in the list, it means the feature toggle is enabled.
+   */
+  featureToggles?: string[];
 }
