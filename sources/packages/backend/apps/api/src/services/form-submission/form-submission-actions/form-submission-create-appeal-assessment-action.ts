@@ -27,25 +27,17 @@ export class FormSubmissionCreateAppealAssessmentAction extends FormSubmissionAc
    * @param auditDate date the action is being performed.
    * @param entityManager entity manager to use for database operations.
    */
-  async process(
+  protected async applyAction(
     formSubmission: FormSubmissionActionModel,
     auditUserId: number,
     auditDate: Date,
     entityManager: EntityManager,
   ): Promise<void> {
-    if (
-      formSubmission.formCategory !== FormCategory.StudentAppeal ||
-      formSubmission.applicationId === undefined
-    ) {
-      // Skip this action since application appeals actions are only
-      // applicable to approved student appeal form submissions.
-      return;
-    }
-    const submissionItems = this.getSubmissionItemsByActionType(
+    const approvedSubmissionItems = this.getSubmissionItemsByActionType(
       formSubmission,
       { decisionStatus: FormSubmissionDecisionStatus.Approved },
     );
-    if (!submissionItems.length) {
+    if (!approvedSubmissionItems.length) {
       // Skip this action since at least one of the submission items needs to be approved
       // for an assessment to be created.
       return;
@@ -72,6 +64,18 @@ export class FormSubmissionCreateAppealAssessmentAction extends FormSubmissionAc
         modifier: auditUser,
         updatedAt: auditDate,
       },
+    );
+  }
+
+  /**
+   * Determines if the action applies to the given form submission.
+   * @param formSubmission the form submission to check.
+   * @returns true if the action applies, false otherwise.
+   */
+  protected appliesTo(formSubmission: FormSubmissionActionModel): boolean {
+    return (
+      formSubmission.formCategory === FormCategory.StudentAppeal &&
+      formSubmission.applicationId !== undefined
     );
   }
 }

@@ -934,6 +934,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
             id: true,
             offering: { id: true },
             studentAppeal: { id: true },
+            formSubmission: { id: true },
           },
         },
         applicationException: {

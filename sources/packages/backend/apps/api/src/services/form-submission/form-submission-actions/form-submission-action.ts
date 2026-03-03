@@ -15,13 +15,42 @@ import {
  */
 export abstract class FormSubmissionAction {
   /**
+   * Type of action being performed.
+   */
+  abstract get actionType(): FormSubmissionActionType;
+
+  /**
    * Process the form submission action.
    * @param formSubmission the form submission to process actions for.
    * @param auditUserId ID of the user performing the action.
    * @param auditDate date the action is being performed.
    * @param entityManager entity manager to use for database operations.
    */
-  abstract process(
+  async process(
+    formSubmission: FormSubmissionActionModel,
+    auditUserId: number,
+    auditDate: Date,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    if (!this.appliesTo(formSubmission)) {
+      return;
+    }
+    await this.applyAction(
+      formSubmission,
+      auditUserId,
+      auditDate,
+      entityManager,
+    );
+  }
+
+  /**
+   * Execute the action for the given form submission.
+   * @param formSubmission the form submission to process actions for.
+   * @param auditUserId ID of the user performing the action.
+   * @param auditDate date the action is being performed.
+   * @param entityManager entity manager to use for database operations.
+   */
+  protected abstract applyAction(
     formSubmission: FormSubmissionActionModel,
     auditUserId: number,
     auditDate: Date,
@@ -29,9 +58,13 @@ export abstract class FormSubmissionAction {
   ): Promise<void>;
 
   /**
-   * Type of action being performed.
+   * Determines if the action applies to the given form submission.
+   * @param formSubmission the form submission to check.
+   * @returns true if the action applies, false otherwise.
    */
-  abstract get actionType(): FormSubmissionActionType;
+  protected abstract appliesTo(
+    formSubmission: FormSubmissionActionModel,
+  ): boolean;
 
   /**
    * Filter only the submission items that are associated with this action.

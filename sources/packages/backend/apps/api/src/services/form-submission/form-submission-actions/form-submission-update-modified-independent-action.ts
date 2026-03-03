@@ -25,7 +25,7 @@ export class FormSubmissionUpdateModifiedIndependentAction extends FormSubmissio
    * @param auditDate date the action is being performed.
    * @param entityManager entity manager to use for database operations.
    */
-  async process(
+  protected async applyAction(
     formSubmission: FormSubmissionActionModel,
     auditUserId: number,
     auditDate: Date,
@@ -54,5 +54,13 @@ export class FormSubmissionUpdateModifiedIndependentAction extends FormSubmissio
         updatedAt: auditDate,
       },
     );
+  }
+
+  /**
+   * Determines if the action applies to the given form submission.
+   * @returns true if the action applies, false otherwise.
+   */
+  protected appliesTo(): boolean {
+    return true;
   }
 }
