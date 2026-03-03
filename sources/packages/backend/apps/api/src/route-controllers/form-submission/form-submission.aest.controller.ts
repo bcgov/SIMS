@@ -11,6 +11,7 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import { FormSubmissionService } from "../../services";
+import { FormCategory } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -32,7 +33,10 @@ export class FormSubmissionAESTController extends BaseController {
     @Query() pagination: FormSubmissionPendingPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>> {
     const pendingSubmissions =
-      await this.formSubmissionService.getPendingFormSubmissions(pagination);
+      await this.formSubmissionService.getPendingFormSubmissions(
+        pagination,
+        FormCategory.StudentForm,
+      );
     return {
       results: pendingSubmissions.results.map((submission) => ({
         formSubmissionId: submission.formSubmissionId,

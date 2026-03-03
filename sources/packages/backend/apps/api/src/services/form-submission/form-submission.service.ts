@@ -148,10 +148,9 @@ export class FormSubmissionService {
       paginationOptions;
 
     const query = this.dataSource
-      .getRepository(FormSubmissionItem)
-      .createQueryBuilder("formSubmissionItem")
+      .getRepository(FormSubmission)
+      .createQueryBuilder("formSubmission")
       .select([
-        "formSubmissionItem.id",
         "formSubmission.id",
         "formSubmission.submittedDate",
         "student.id",
@@ -159,10 +158,10 @@ export class FormSubmissionService {
         "user.lastName",
         "dynamicFormConfiguration.formDescription",
         "dynamicFormConfiguration.formType",
-      ])  
-      .innerJoin("formSubmissionItem.formSubmission", "formSubmission")
+      ])
       .innerJoin("formSubmission.student", "student")
       .innerJoin("student.user", "user")
+      .innerJoin("formSubmission.formSubmissionItems", "formSubmissionItem")
       .innerJoin(
         "formSubmissionItem.dynamicFormConfiguration",
         "dynamicFormConfiguration",
@@ -197,14 +196,16 @@ export class FormSubmissionService {
 
     return {
       results: items.map((item) => ({
-        formSubmissionId: item.formSubmission.id,
-        studentId: item.formSubmission.student.id,
-        submittedDate: item.formSubmission.submittedDate,
-        firstName: item.formSubmission.student.user.firstName ?? undefined,
-        lastName: item.formSubmission.student.user.lastName,
-        formName:
-          item.dynamicFormConfiguration.formDescription ??
-          (item.dynamicFormConfiguration.formType as string),
+        formSubmissionId: item.id,
+        studentId: item.student.id,
+        submittedDate: item.submittedDate,
+        firstName: item.student.user.firstName,
+        lastName: item.student.user.lastName,
+        formNames: item.formSubmissionItems.map(
+          (formSubmissionItem) =>
+            formSubmissionItem.dynamicFormConfiguration.formDescription ??
+            (formSubmissionItem.dynamicFormConfiguration.formType as string),
+        ),
       })),
       count,
     };
