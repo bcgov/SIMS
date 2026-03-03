@@ -474,7 +474,7 @@ export class ConfigService {
   get featureToggles(): string[] | undefined {
     return this.getCachedConfig(
       "featureTogglesConfig",
-      process.env.FEATURE_TOGGLES?.split(","),
+      process.env.FEATURE_TOGGLES?.split(",").map((toggle) => toggle.trim()),
     );
   }
 
