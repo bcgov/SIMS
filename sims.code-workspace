@@ -146,7 +146,7 @@
       "editor.codeActionsOnSave": {
         "source.addMissingImports": "explicit",
         "source.fixAll.eslint": "explicit",
-        "source.removeUnusedImports": "always",
+        "source.removeUnusedImports": "explicit",
       },
     },
     "typescript.preferences.importModuleSpecifier": "non-relative",

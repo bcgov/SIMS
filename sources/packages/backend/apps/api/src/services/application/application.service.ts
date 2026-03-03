@@ -934,6 +934,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
             id: true,
             offering: { id: true },
             studentAppeal: { id: true },
+            formSubmission: { id: true },
           },
         },
         applicationException: {
@@ -1666,6 +1667,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "user.lastName",
         "user.email",
         "studentAppeal.id",
+        "formSubmission.id",
         "educationProgram.credentialType",
         "educationProgram.deliveredOnline",
         "educationProgram.deliveredOnSite",
@@ -1679,6 +1681,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "offering")
       .leftJoin("currentAssessment.studentAppeal", "studentAppeal")
+      .leftJoin("currentAssessment.formSubmission", "formSubmission")
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("offering.institutionLocation", "location")
       .innerJoin("application.student", "student")
@@ -2175,6 +2178,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
           assessmentDate: true,
           offering: { id: true },
           studentAppeal: { id: true },
+          formSubmission: { id: true },
         },
         studentAssessments: { studentAssessmentStatus: true },
         student: { id: true },
@@ -2182,7 +2186,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatus: true,
       },
       relations: {
-        currentAssessment: { offering: true, studentAppeal: true },
+        currentAssessment: {
+          offering: true,
+          studentAppeal: true,
+          formSubmission: true,
+        },
         studentAssessments: true,
         student: true,
       },

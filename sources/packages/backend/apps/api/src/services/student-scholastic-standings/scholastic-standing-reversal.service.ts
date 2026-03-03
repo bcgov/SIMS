@@ -59,6 +59,7 @@ export class ScholasticStandingReversalService {
           "currentAssessment.id",
           "currentAssessment.triggerType",
           "studentAppeal.id",
+          "formSubmission.id",
           "offeringBeforeScholasticStanding.id",
           "parentOffering.id",
           "offeringVersion.id",
@@ -68,6 +69,7 @@ export class ScholasticStandingReversalService {
         .innerJoin("student.user", "user")
         .innerJoin("application.currentAssessment", "currentAssessment")
         .leftJoin("currentAssessment.studentAppeal", "studentAppeal")
+        .leftJoin("currentAssessment.formSubmission", "formSubmission")
         .leftJoin(
           "scholasticStanding.referenceOffering",
           "offeringBeforeScholasticStanding",
@@ -164,6 +166,7 @@ export class ScholasticStandingReversalService {
         reversalAssessment.submittedDate = now;
         reversalAssessment.offering = offeringBeforeScholasticStanding;
         reversalAssessment.studentAppeal = currentAssessment.studentAppeal;
+        reversalAssessment.formSubmission = currentAssessment.formSubmission;
 
         // Create a new re-assessment to reverse the study period changes.
         application.currentAssessment = reversalAssessment;

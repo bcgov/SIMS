@@ -31,5 +31,6 @@
       "@sims/auth": ["libs/auth/src"],
       "@sims/auth/*": ["libs/auth/src/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", "dist"]
 }

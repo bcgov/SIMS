@@ -33,6 +33,10 @@ export interface SequentialApplication {
    * Current student appeal id associated to the current assessment of the active application.
    */
   currentAssessmentAppealId?: number;
+  /**
+   * Current form submission id associated to the current assessment of the active application.
+   */
+  currentAssessmentFormSubmissionId?: number;
 }
 
 /**

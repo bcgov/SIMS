@@ -28,12 +28,14 @@ import {
   FormSubmissionCompletionItem,
 } from "./form-submission.models";
 import { NoteSharedService } from "@sims/services";
+import { FormSubmissionActionProcessor } from "./form-submission-actions/form-submission-action-processor";
 
 @Injectable()
 export class FormSubmissionApprovalService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly noteSharedService: NoteSharedService,
+    private readonly formSubmissionActionProcessor: FormSubmissionActionProcessor,
     @InjectRepository(FormSubmission)
     private readonly formSubmissionRepo: Repository<FormSubmission>,
   ) {}
@@ -184,11 +186,18 @@ export class FormSubmissionApprovalService {
       decision.decisionDate = now;
       decision.createdAt = now;
       decision.creator = auditUser;
+      // Define note type.
+      // Any appeal form submission must be associated with a note of type Student Appeal,
+      // while any other form submission can have the fallback as a regular student form.
+      const noteType =
+        submissionItem.dynamicFormConfiguration.formCategory ===
+        FormCategory.StudentAppeal
+          ? NoteType.StudentAppeal
+          : NoteType.StudentForm;
       // Create decision note.
       const note = new Note();
       note.description = formItemDecision.noteDescription;
-      // TODO: Create a note type for Forms.
-      note.noteType = NoteType.General;
+      note.noteType = noteType;
       note.creator = auditUser;
       note.createdAt = now;
       decision.decisionNote = await entityManager
@@ -295,6 +304,15 @@ export class FormSubmissionApprovalService {
           entityManager,
         );
       await Promise.all([saveFormSubmissionPromise, noteRelationsPromise]);
+      // Process actions based on the form submission decisions, independently
+      // if they were approved or declined, since some actions might need to be
+      // processed even in case of declined decisions.
+      await this.formSubmissionActionProcessor.processActions(
+        formSubmission.id,
+        auditUserId,
+        now,
+        entityManager,
+      );
       return formSubmission;
     });
   }
