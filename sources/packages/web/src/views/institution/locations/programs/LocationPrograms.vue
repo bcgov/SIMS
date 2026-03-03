@@ -90,6 +90,7 @@
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
           v-model:sort-by="sortBy"
+          :mobile="isMobile"
           @update:options="paginationAndSortEvent"
         >
           <template #item="{ item }">
@@ -150,6 +151,7 @@ import {
   useInstitutionState,
   useFormatters,
 } from "@/composables";
+import { useDisplay } from "vuetify";
 
 export default defineComponent({
   components: { StatusChipProgram },
@@ -163,6 +165,7 @@ export default defineComponent({
     const { getLocationName } = useInstitutionState();
     const { isReadOnlyUser } = useInstitutionAuth();
     const { emptyStringFiller } = useFormatters();
+    const { mobile: isMobile } = useDisplay();
     const router = useRouter();
     const programAndCount = ref(
       {} as PaginatedResults<EducationProgramsSummary> | undefined,
@@ -338,6 +341,7 @@ export default defineComponent({
       INACTIVE_PROGRAM,
       sortBy,
       emptyStringFiller,
+      isMobile,
     };
   },
 });
