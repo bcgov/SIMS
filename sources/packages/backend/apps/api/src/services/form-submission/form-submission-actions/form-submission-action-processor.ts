@@ -1,6 +1,6 @@
 import { EntityManager } from "typeorm";
 import { Injectable } from "@nestjs/common";
-import { FormSubmission } from "@sims/sims-db";
+import { FormSubmission, FormSubmissionActionType } from "@sims/sims-db";
 import { FormSubmissionAction } from "./form-submission-action";
 import { FormSubmissionCreateAppealAssessmentAction } from "./form-submission-create-appeal-assessment-action";
 import { FormSubmissionUpdateModifiedIndependentAction } from "./form-submission-update-modified-independent-action";
@@ -29,7 +29,7 @@ export class FormSubmissionActionProcessor {
    * Checks for the form submission requests action types and process
    * the corresponding actions as required.
    * Please note that a declined action can also trigger actions. It is the responsibility of each
-   * action to determined if it should be executed based on the form submission data.
+   * action to determine if it should be executed based on the form submission data.
    * @param formSubmissionId the ID of the form submission to process actions for.
    * @param auditUserId the ID of the user performing the action.
    * @param auditDate the date the action is being performed.
@@ -58,7 +58,9 @@ export class FormSubmissionActionProcessor {
       return;
     }
     // Get unique action types to avoid processing the same action multiple times.
-    const uniqueActionsTypes: Set<string> = new Set(actionTypes);
+    const uniqueActionsTypes: Set<FormSubmissionActionType> = new Set(
+      actionTypes,
+    );
     // Ensure every action type is known.
     const unknownActions = [...uniqueActionsTypes].filter((requestActionType) =>
       this.actions.every((action) => action.actionType !== requestActionType),

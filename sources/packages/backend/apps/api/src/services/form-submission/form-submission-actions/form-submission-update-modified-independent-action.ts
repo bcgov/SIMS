@@ -31,12 +31,13 @@ export class FormSubmissionUpdateModifiedIndependentAction extends FormSubmissio
     auditDate: Date,
     entityManager: EntityManager,
   ): Promise<void> {
-    // The actions are only invoked if at least one submission item is associated with it.
-    // The form submission framework also validates that only one item would be possible to
-    // be submitted, hence it is safe to assume that there will be only one item associated
-    // with this action.
-    const [submissionItem] =
-      this.getSubmissionItemsByActionType(formSubmission);
+    const submissionItems = this.getSubmissionItemsByActionType(formSubmission);
+    if (submissionItems.length !== 1) {
+      throw new Error(
+        `Unexpected number of submission items associated with the form submission action. Expected 1 but found ${submissionItems.length}.`,
+      );
+    }
+    const [submissionItem] = submissionItems;
     const modifiedIndependentStatus =
       submissionItem.decisionStatus === FormSubmissionDecisionStatus.Approved
         ? ModifiedIndependentStatus.Approved

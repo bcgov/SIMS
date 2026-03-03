@@ -11,7 +11,7 @@ import {
 /**
  * Actions that can be performed on form submissions during the Ministry approval/decline process.
  * Please note that a declined action can also trigger actions. It is the responsibility of each
- * action to determined if it should be executed based on the form submission data.
+ * action to determine if it should be executed based on the form submission data.
  */
 export abstract class FormSubmissionAction {
   /**
