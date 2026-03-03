@@ -2,6 +2,7 @@ import {
   AssessmentSequentialProcessingService,
   ConfirmationOfEnrollmentService,
   NotificationActionsService,
+  RestrictionSharedService,
   SequenceControlService,
   SystemUsersService,
 } from "@sims/services";
@@ -24,6 +25,7 @@ describe("DisbursementScheduleService-getCOEApprovalPeriodStatus", () => {
       {} as AssessmentSequentialProcessingService;
     const systemUsersService = {} as SystemUsersService;
     const loggerService = {} as LoggerService;
+    const restrictionSharedService = {} as RestrictionSharedService;
     service = new ConfirmationOfEnrollmentService(
       disbursementScheduleRepo,
       dataSource,
@@ -32,6 +34,7 @@ describe("DisbursementScheduleService-getCOEApprovalPeriodStatus", () => {
       assessmentSequentialProcessingService,
       systemUsersService,
       loggerService,
+      restrictionSharedService,
     );
   });
 

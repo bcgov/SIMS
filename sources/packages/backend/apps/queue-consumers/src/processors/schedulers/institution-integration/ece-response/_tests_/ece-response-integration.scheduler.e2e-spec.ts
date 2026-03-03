@@ -15,9 +15,11 @@ import {
 import { ECEResponseIntegrationScheduler } from "../ece-response-integration.scheduler";
 import {
   E2EDataSources,
+  RestrictionCode,
   createE2EDataSources,
   createFakeDisbursementValue,
   saveFakeApplicationDisbursements,
+  saveFakeInstitutionRestriction,
 } from "@sims/test-utils";
 import {
   createFileFromStructuredRecords,
@@ -32,6 +34,7 @@ import {
   DisbursementScheduleStatus,
   DisbursementValueType,
   InstitutionLocation,
+  Restriction,
 } from "@sims/sims-db";
 import {
   createInstitutionLocations,
@@ -58,6 +61,7 @@ import {
   ENRL_DATE_PLACEHOLDER_1,
   ENRL_DATE_PLACEHOLDER_2,
   ENRL_DATE_PLACEHOLDER_3,
+  REMITTANCE_AMOUNT_PLACEHOLDER,
 } from "./ece-response-helper";
 import { FILE_PARSING_ERROR } from "@sims/services/constants";
 import { IsNull } from "typeorm";
@@ -79,6 +83,7 @@ describe(
     let locationMULT: InstitutionLocation;
     let locationVALD: InstitutionLocation;
     let locationDBLO: InstitutionLocation;
+    let remitRestriction: Restriction;
 
     beforeAll(async () => {
       eceResponseMockDownloadFolder = path.join(
@@ -112,6 +117,10 @@ describe(
       locationMULT = institutionLocationMULT;
       locationVALD = institutionLocationVALD;
       locationDBLO = institutionLocationDBLO;
+      remitRestriction = await db.restriction.findOne({
+        select: { id: true },
+        where: { restrictionCode: RestrictionCode.REMIT },
+      });
     });
 
     beforeEach(async () => {
@@ -128,6 +137,10 @@ describe(
         { dateSent: IsNull() },
         { dateSent: new Date() },
       );
+      // Delete the institution restrictions created for the tests.
+      await db.institutionRestriction.delete({
+        location: { id: locationCONF.id },
+      });
     });
 
     it("Should process an ECE response file and generate warning message when the disbursement value code is of the type 'INTP' or 'INTF'.", async () => {
@@ -249,6 +262,7 @@ describe(
               value: application.applicationNumber,
             },
             { placeholder: ENRL_DATE_PLACEHOLDER },
+            { placeholder: REMITTANCE_AMOUNT_PLACEHOLDER },
           ]);
         },
       );
@@ -317,6 +331,296 @@ describe(
       });
       expect(updatedDisbursement.coeStatus).toBe(COEStatus.completed);
     });
+
+    it(
+      "Should process an ECE response file and confirm the enrolment and set the tuition remittance requested to 0" +
+        " and log a warning when the disbursement application has effective REMIT restriction.",
+      async () => {
+        // Arrange
+        // Enable integration for institution location used for test.
+        await enableIntegration(locationCONF, db);
+        const confirmEnrolmentResponseFile = path.join(
+          process.env.INSTITUTION_RESPONSE_FOLDER,
+          CONR_008_CONF_FILE,
+        );
+        // Create disbursement to confirm enrolment.
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          {
+            institutionLocation: locationCONF,
+            institution: locationCONF.institution,
+          },
+          {
+            applicationStatus: ApplicationStatus.Enrolment,
+          },
+        );
+        // Add REMIT restriction to the application institution location.
+        await saveFakeInstitutionRestriction(db, {
+          restriction: remitRestriction,
+          institution: locationCONF.institution,
+          location: locationCONF,
+        });
+
+        const [disbursement] =
+          application.currentAssessment.disbursementSchedules;
+        const [referenceDisbursementValue] = disbursement.disbursementValues;
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Modify the data in mock file to have the correct values for
+        // disbursement value ID and application number.
+        mockDownloadFiles(
+          sftpClientMock,
+          [CONR_008_CONF_FILE],
+          (fileContent: string) => {
+            return replaceFilePlaceHolder(fileContent, [
+              {
+                placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+                value: referenceDisbursementValue.id,
+              },
+              {
+                placeholder: APP_NUMBER_PLACEHOLDER,
+                value: application.applicationNumber,
+              },
+              { placeholder: ENRL_DATE_PLACEHOLDER },
+              { placeholder: REMITTANCE_AMOUNT_PLACEHOLDER, value: 1 },
+            ]);
+          },
+        );
+
+        // Act
+        const result = await processor.processQueue(mockedJob.job);
+
+        // Assert
+        expect(result).toStrictEqual([
+          "ECE response files received: 1. Check logs for details.",
+          "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+          "Error(s): 0, Warning(s): 2, Info: 17",
+        ]);
+        expect(
+          mockedJob.containLogMessages([
+            `Starting download of file ${confirmEnrolmentResponseFile}.`,
+            `Disbursement ${disbursement.id}, enrolment confirmed.`,
+            `WARN: Disbursement ${disbursement.id} had remittance requested but due to restrictions will not be submitted.`,
+          ]),
+        ).toBe(true);
+        // Expect the archive method to be called.
+        expect(sftpClientMock.rename).toHaveBeenCalled();
+        // Expect the COE status of the updated disbursement to be completed and tuition remittance requested to be 0.
+        const updatedDisbursement = await db.disbursementSchedule.findOne({
+          select: {
+            id: true,
+            coeStatus: true,
+            tuitionRemittanceRequestedAmount: true,
+          },
+          where: { id: disbursement.id },
+        });
+        expect(updatedDisbursement).toEqual({
+          id: disbursement.id,
+          coeStatus: COEStatus.completed,
+          tuitionRemittanceRequestedAmount: 0,
+        });
+      },
+    );
+
+    it(
+      "Should process an ECE response file and confirm the enrolment and set the tuition remittance requested to value from the file" +
+        " and not log a warning when the disbursement application has effective REMIT restriction but inactive.",
+      async () => {
+        // Arrange
+        // Enable integration for institution location used for test.
+        await enableIntegration(locationCONF, db);
+        const confirmEnrolmentResponseFile = path.join(
+          process.env.INSTITUTION_RESPONSE_FOLDER,
+          CONR_008_CONF_FILE,
+        );
+        // Create disbursement to confirm enrolment.
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          {
+            institutionLocation: locationCONF,
+            institution: locationCONF.institution,
+          },
+          {
+            applicationStatus: ApplicationStatus.Enrolment,
+          },
+        );
+        // Add inactive REMIT restriction to the application institution location.
+        await saveFakeInstitutionRestriction(
+          db,
+          {
+            restriction: remitRestriction,
+            institution: locationCONF.institution,
+            location: locationCONF,
+          },
+          { initialValues: { isActive: false } },
+        );
+
+        const [disbursement] =
+          application.currentAssessment.disbursementSchedules;
+        const [referenceDisbursementValue] = disbursement.disbursementValues;
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Modify the data in mock file to have the correct values for
+        // disbursement value ID and application number.
+        mockDownloadFiles(
+          sftpClientMock,
+          [CONR_008_CONF_FILE],
+          (fileContent: string) => {
+            return replaceFilePlaceHolder(fileContent, [
+              {
+                placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+                value: referenceDisbursementValue.id,
+              },
+              {
+                placeholder: APP_NUMBER_PLACEHOLDER,
+                value: application.applicationNumber,
+              },
+              { placeholder: ENRL_DATE_PLACEHOLDER },
+              { placeholder: REMITTANCE_AMOUNT_PLACEHOLDER, value: 1 },
+            ]);
+          },
+        );
+
+        // Act
+        const result = await processor.processQueue(mockedJob.job);
+
+        // Assert
+        expect(result).toStrictEqual([
+          "ECE response files received: 1. Check logs for details.",
+          "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+          "Error(s): 0, Warning(s): 1, Info: 17",
+        ]);
+        expect(
+          mockedJob.containLogMessages([
+            `Starting download of file ${confirmEnrolmentResponseFile}.`,
+            `Disbursement ${disbursement.id}, enrolment confirmed.`,
+          ]),
+        ).toBe(true);
+        // The warning must not be generated.
+        expect(
+          mockedJob.containLogMessage(
+            `WARN: Disbursement ${disbursement.id} had remittance requested but due to restrictions will not be submitted.`,
+          ),
+        ).toBe(false);
+        // Expect the archive method to be called.
+        expect(sftpClientMock.rename).toHaveBeenCalled();
+        // Expect the COE status of the updated disbursement to be completed and tuition remittance requested to be 0.
+        const updatedDisbursement = await db.disbursementSchedule.findOne({
+          select: {
+            id: true,
+            coeStatus: true,
+            tuitionRemittanceRequestedAmount: true,
+          },
+          where: { id: disbursement.id },
+        });
+        expect(updatedDisbursement).toEqual({
+          id: disbursement.id,
+          coeStatus: COEStatus.completed,
+          tuitionRemittanceRequestedAmount: 1,
+        });
+      },
+    );
+
+    it(
+      "Should process an ECE response file and confirm the enrolment and set the tuition remittance requested to 0" +
+        " and not log a warning when the disbursement application has effective REMIT restriction but the remittance amount from file is 0.",
+      async () => {
+        // Arrange
+        // Enable integration for institution location used for test.
+        await enableIntegration(locationCONF, db);
+        const confirmEnrolmentResponseFile = path.join(
+          process.env.INSTITUTION_RESPONSE_FOLDER,
+          CONR_008_CONF_FILE,
+        );
+        // Create disbursement to confirm enrolment.
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          {
+            institutionLocation: locationCONF,
+            institution: locationCONF.institution,
+          },
+          {
+            applicationStatus: ApplicationStatus.Enrolment,
+          },
+        );
+        // Add inactive REMIT restriction to the application institution location.
+        await saveFakeInstitutionRestriction(db, {
+          restriction: remitRestriction,
+          institution: locationCONF.institution,
+          location: locationCONF,
+        });
+
+        const [disbursement] =
+          application.currentAssessment.disbursementSchedules;
+        const [referenceDisbursementValue] = disbursement.disbursementValues;
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Modify the data in mock file to have the correct values for
+        // disbursement value ID and application number.
+        mockDownloadFiles(
+          sftpClientMock,
+          [CONR_008_CONF_FILE],
+          (fileContent: string) => {
+            return replaceFilePlaceHolder(fileContent, [
+              {
+                placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+                value: referenceDisbursementValue.id,
+              },
+              {
+                placeholder: APP_NUMBER_PLACEHOLDER,
+                value: application.applicationNumber,
+              },
+              { placeholder: ENRL_DATE_PLACEHOLDER },
+              { placeholder: REMITTANCE_AMOUNT_PLACEHOLDER, value: 0 },
+            ]);
+          },
+        );
+
+        // Act
+        const result = await processor.processQueue(mockedJob.job);
+
+        // Assert
+        expect(result).toStrictEqual([
+          "ECE response files received: 1. Check logs for details.",
+          "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+          "Error(s): 0, Warning(s): 1, Info: 17",
+        ]);
+        expect(
+          mockedJob.containLogMessages([
+            `Starting download of file ${confirmEnrolmentResponseFile}.`,
+            `Disbursement ${disbursement.id}, enrolment confirmed.`,
+          ]),
+        ).toBe(true);
+        // The warning must not be generated.
+        expect(
+          mockedJob.containLogMessage(
+            `WARN: Disbursement ${disbursement.id} had remittance requested but due to restrictions will not be submitted.`,
+          ),
+        ).toBe(false);
+        // Expect the archive method to be called.
+        expect(sftpClientMock.rename).toHaveBeenCalled();
+        // Expect the COE status of the updated disbursement to be completed and tuition remittance requested to be 0.
+        const updatedDisbursement = await db.disbursementSchedule.findOne({
+          select: {
+            id: true,
+            coeStatus: true,
+            tuitionRemittanceRequestedAmount: true,
+          },
+          where: { id: disbursement.id },
+        });
+        expect(updatedDisbursement).toEqual({
+          id: disbursement.id,
+          coeStatus: COEStatus.completed,
+          tuitionRemittanceRequestedAmount: 0,
+        });
+      },
+    );
 
     it("Should process an ECE response file and confirm the enrolment and create notification when a disbursement has multiple detail records.", async () => {
       // Arrange
@@ -1168,6 +1472,7 @@ describe(
               placeholder: APP_NUMBER_PLACEHOLDER,
               value: application.applicationNumber,
             },
+            { placeholder: REMITTANCE_AMOUNT_PLACEHOLDER },
           ]) // Replacing Y with K. As Y is present in other places using a pattern.
             .replace("YENRLDATE", `K${formatDate(new Date(), "YYYYMMDD")}`);
         },
@@ -1352,6 +1657,7 @@ describe(
               placeholder: ENRL_DATE_PLACEHOLDER,
               value: addDays(-(COE_WINDOW + 2), disbursementDate),
             },
+            { placeholder: REMITTANCE_AMOUNT_PLACEHOLDER },
           ]);
         },
       );
@@ -1438,6 +1744,7 @@ describe(
                 application.currentAssessment.offering.studyEndDate,
               ),
             },
+            { placeholder: REMITTANCE_AMOUNT_PLACEHOLDER },
           ]);
         },
       );

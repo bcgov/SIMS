@@ -15,7 +15,9 @@ import {
   createFakeDisbursementValue,
   createFakeInstitutionLocation,
   E2EDataSources,
+  RestrictionCode,
   saveFakeApplicationDisbursements,
+  saveFakeInstitutionRestriction,
 } from "@sims/test-utils";
 import {
   Application,
@@ -27,11 +29,13 @@ import {
   Institution,
   InstitutionLocation,
   OfferingIntensity,
+  Restriction,
   SequenceControl,
 } from "@sims/sims-db";
 import { MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE } from "../../../../utilities";
 import { COE_WINDOW, addDays, getISODateOnlyString } from "@sims/utilities";
 import { InstitutionUserTypes } from "../../../../auth";
+import { TUITION_REMITTANCE_NOT_ALLOWED } from "@sims/services/constants";
 
 describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment", () => {
   let app: INestApplication;
@@ -43,6 +47,7 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
   let collegeCLocation: InstitutionLocation;
   let db: E2EDataSources;
   let sequenceControlRepo: Repository<SequenceControl>;
+  let remitRestriction: Restriction;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -65,6 +70,10 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
       InstitutionTokenTypes.CollegeCUser,
       collegeCLocation,
     );
+    remitRestriction = await db.restriction.findOne({
+      select: { id: true },
+      where: { restrictionCode: RestrictionCode.REMIT },
+    });
   });
 
   it("Should allow the COE confirmation when the application is on Enrolment status and all the conditions are fulfilled.", async () => {
@@ -207,6 +216,178 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
     expect(updatedDisbursementSchedule.coeStatus).toBe(COEStatus.completed);
   });
 
+  it(
+    "Should allow the COE confirmation when the application has effective REMIT restriction" +
+      " but the requested tuition remittance amount is zero.",
+    async () => {
+      // Arrange
+      // Create a new institution location to add REMIT restriction.
+      const institutionLocation = await db.institutionLocation.save(
+        createFakeInstitutionLocation({ institution: collegeC }),
+      );
+      // Authorize the new institution location.
+      await authorizeUserTokenForLocation(
+        appDataSource,
+        InstitutionTokenTypes.CollegeCUser,
+        institutionLocation,
+      );
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          institution: collegeC,
+          institutionLocation,
+        },
+        { applicationStatus: ApplicationStatus.Enrolment },
+      );
+      // Add REMIT restriction to the application institution location.
+      await saveFakeInstitutionRestriction(db, {
+        restriction: remitRestriction,
+        institution: collegeC,
+        location: institutionLocation,
+      });
+      const [firstDisbursementSchedule] =
+        application.currentAssessment.disbursementSchedules;
+      const endpoint = `/institutions/location/${institutionLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
+      const token = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeCUser,
+      );
+      // Act/Assert
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send({ tuitionRemittanceAmount: 0 })
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK);
+      // Check if the disbursement was updated as expected.
+      const updatedDisbursement = await db.disbursementSchedule.findOne({
+        select: {
+          id: true,
+          coeStatus: true,
+          tuitionRemittanceRequestedAmount: true,
+        },
+        where: { id: firstDisbursementSchedule.id },
+      });
+      expect(updatedDisbursement).toEqual({
+        id: firstDisbursementSchedule.id,
+        coeStatus: COEStatus.completed,
+        tuitionRemittanceRequestedAmount: 0,
+      });
+    },
+  );
+
+  it(
+    "Should allow the COE confirmation with requested tuition remittance greater than zero" +
+      " when the application has effective REMIT restriction but inactive.",
+    async () => {
+      // Arrange
+      // Create a new institution location to add REMIT restriction.
+      const institutionLocation = await db.institutionLocation.save(
+        createFakeInstitutionLocation({ institution: collegeC }),
+      );
+      // Authorize the new institution location.
+      await authorizeUserTokenForLocation(
+        appDataSource,
+        InstitutionTokenTypes.CollegeCUser,
+        institutionLocation,
+      );
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          institution: collegeC,
+          institutionLocation,
+        },
+        { applicationStatus: ApplicationStatus.Enrolment },
+      );
+      // Add inactive REMIT restriction to the application institution location.
+      await saveFakeInstitutionRestriction(
+        db,
+        {
+          restriction: remitRestriction,
+          institution: collegeC,
+          location: institutionLocation,
+        },
+        { initialValues: { isActive: false } },
+      );
+      const [firstDisbursementSchedule] =
+        application.currentAssessment.disbursementSchedules;
+      const endpoint = `/institutions/location/${institutionLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
+      const token = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeCUser,
+      );
+      // Act/Assert
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send({ tuitionRemittanceAmount: 1 })
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK);
+      // Check if the disbursement was updated as expected.
+      const updatedDisbursement = await db.disbursementSchedule.findOne({
+        select: {
+          id: true,
+          coeStatus: true,
+          tuitionRemittanceRequestedAmount: true,
+        },
+        where: { id: firstDisbursementSchedule.id },
+      });
+      expect(updatedDisbursement).toEqual({
+        id: firstDisbursementSchedule.id,
+        coeStatus: COEStatus.completed,
+        tuitionRemittanceRequestedAmount: 1,
+      });
+    },
+  );
+
+  it(
+    "Should allow the COE confirmation with requested tuition remittance greater than zero" +
+      " when the application institution has REMIT restriction but for a different location.",
+    async () => {
+      // Arrange
+      // Create a new institution location to add REMIT restriction.
+      const institutionLocation = await db.institutionLocation.save(
+        createFakeInstitutionLocation({ institution: collegeC }),
+      );
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          institution: collegeC,
+          institutionLocation: collegeCLocation,
+        },
+        { applicationStatus: ApplicationStatus.Enrolment },
+      );
+      // Add REMIT restriction to the different institution location.
+      await saveFakeInstitutionRestriction(db, {
+        restriction: remitRestriction,
+        institution: collegeC,
+        location: institutionLocation,
+      });
+      const [firstDisbursementSchedule] =
+        application.currentAssessment.disbursementSchedules;
+      const endpoint = `/institutions/location/${collegeCLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
+      const token = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeCUser,
+      );
+      // Act/Assert
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send({ tuitionRemittanceAmount: 1 })
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK);
+      // Check if the disbursement was updated as expected.
+      const updatedDisbursement = await db.disbursementSchedule.findOne({
+        select: {
+          id: true,
+          coeStatus: true,
+          tuitionRemittanceRequestedAmount: true,
+        },
+        where: { id: firstDisbursementSchedule.id },
+      });
+      expect(updatedDisbursement).toEqual({
+        id: firstDisbursementSchedule.id,
+        coeStatus: COEStatus.completed,
+        tuitionRemittanceRequestedAmount: 1,
+      });
+    },
+  );
+
   it("Should throw Unprocessable Entity when application status is not valid.", async () => {
     // Arrange
     const application = await saveFakeApplicationDisbursements(
@@ -271,6 +452,55 @@ describe("ConfirmationOfEnrollmentInstitutionsController(e2e)-confirmEnrollment"
         error: "Unprocessable Entity",
       });
   });
+
+  it(
+    "Should throw unprocessable entity exception when the application has effective REMIT restriction" +
+      " and the requested tuition remittance amount is greater than zero.",
+    async () => {
+      // Arrange
+      // Create a new institution location to add REMIT restriction.
+      const institutionLocation = await db.institutionLocation.save(
+        createFakeInstitutionLocation({ institution: collegeC }),
+      );
+      // Authorize the new institution location.
+      await authorizeUserTokenForLocation(
+        appDataSource,
+        InstitutionTokenTypes.CollegeCUser,
+        institutionLocation,
+      );
+      const application = await saveFakeApplicationDisbursements(
+        appDataSource,
+        {
+          institution: collegeC,
+          institutionLocation,
+        },
+        { applicationStatus: ApplicationStatus.Enrolment },
+      );
+      // Add REMIT restriction to the application institution location.
+      await saveFakeInstitutionRestriction(db, {
+        restriction: remitRestriction,
+        institution: collegeC,
+        location: institutionLocation,
+      });
+      const [firstDisbursementSchedule] =
+        application.currentAssessment.disbursementSchedules;
+      const endpoint = `/institutions/location/${institutionLocation.id}/confirmation-of-enrollment/disbursement-schedule/${firstDisbursementSchedule.id}/confirm`;
+      const token = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeCUser,
+      );
+      // Act/Assert
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send({ tuitionRemittanceAmount: 1 })
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+        .expect({
+          message:
+            "Tuition remittance cannot be requested for the disbursement.",
+          errorType: TUITION_REMITTANCE_NOT_ALLOWED,
+        });
+    },
+  );
 
   it("Should throw BadRequestException when the tuitionRemittanceAmount is negative.", async () => {
     // Arrange

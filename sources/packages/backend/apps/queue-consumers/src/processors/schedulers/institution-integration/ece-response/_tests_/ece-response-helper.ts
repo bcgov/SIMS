@@ -33,6 +33,7 @@ export const ENRL_DATE_PLACEHOLDER = "ENRLDATE";
 export const ENRL_DATE_PLACEHOLDER_1 = "ENRLDT01";
 export const ENRL_DATE_PLACEHOLDER_2 = "ENRLDT02";
 export const ENRL_DATE_PLACEHOLDER_3 = "ENRLDT03";
+export const REMITTANCE_AMOUNT_PLACEHOLDER = "REMI";
 
 /**
  * Create institution locations to be used for testing.
@@ -131,7 +132,8 @@ async function findOrCreateInstitutionLocation(
   options?: { initialValues?: Partial<InstitutionLocation> },
 ): Promise<InstitutionLocation> {
   let institutionLocation = await e2eDataSources.institutionLocation.findOne({
-    select: { id: true, institutionCode: true },
+    select: { id: true, institutionCode: true, institution: { id: true } },
+    relations: { institution: true },
     where: { institutionCode },
   });
   if (!institutionLocation) {
@@ -214,6 +216,9 @@ export function replaceFilePlaceHolder(
       case ENRL_DATE_PLACEHOLDER_2:
       case ENRL_DATE_PLACEHOLDER_3:
         valueFormatted = formatDate((value ?? new Date()) as Date, "YYYYMMDD");
+        break;
+      case REMITTANCE_AMOUNT_PLACEHOLDER:
+        valueFormatted = (value ?? 0).toString().padStart(4, "0");
         break;
       default:
         throw new Error(`Unknown placeholder: ${placeholder}.`);

@@ -33,15 +33,14 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataIncomeAssistanceAmount = 1000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
-    assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+    assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+    assessmentConsolidatedData.partner1HasTotalIncomeAssistance =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+    assessmentConsolidatedData.partner1HasFedralProvincialPDReceipt =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
-    assessmentConsolidatedData.studentDataPartnerBCEAIncomeAssistanceAmount = 1500;
+    assessmentConsolidatedData.partner1TotalIncome = 0;
+    assessmentConsolidatedData.partner1BCEAIncomeAssistanceAmount = 1500;
 
     // Act
     const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
@@ -102,15 +101,14 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataIncomeAssistanceAmount = 1000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
-    assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+    assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+    assessmentConsolidatedData.partner1HasTotalIncomeAssistance =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+    assessmentConsolidatedData.partner1HasFedralProvincialPDReceipt =
       YesNoOptions.No;
-    assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
-    assessmentConsolidatedData.studentDataPartnerBCEAIncomeAssistanceAmount = 1000;
+    assessmentConsolidatedData.partner1TotalIncome = 0;
+    assessmentConsolidatedData.partner1BCEAIncomeAssistanceAmount = 1000;
     assessmentConsolidatedData.studentDataGovernmentFundingCosts = 100;
 
     // Act

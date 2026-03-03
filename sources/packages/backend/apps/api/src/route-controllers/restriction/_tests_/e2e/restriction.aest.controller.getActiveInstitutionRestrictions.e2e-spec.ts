@@ -51,9 +51,13 @@ describe("RestrictionAESTController(e2e)-getActiveInstitutionRestrictions.", () 
 
   it("Should return active institution restrictions for the institution when institution has one or more active restrictions.", async () => {
     // Arrange
-    const institutionRestriction = await saveFakeInstitutionRestriction(db, {
-      restriction,
-    });
+    const institutionRestriction = await saveFakeInstitutionRestriction(
+      db,
+      {
+        restriction,
+      },
+      { createProgram: true, createLocation: true },
+    );
     const location = institutionRestriction.location;
     const institution = institutionRestriction.institution;
     const program = institutionRestriction.program;

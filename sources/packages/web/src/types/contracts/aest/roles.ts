@@ -21,6 +21,7 @@ export enum Role {
   StudentApproveDeclineAccountRequests = "student-approve-decline-account-requests",
   StudentEditProfile = "student-edit-profile",
   StudentApproveDeclineExceptions = "student-approve-decline-exceptions",
+  StudentApproveDeclineForms = "student-approve-decline-forms",
   StudentApproveDeclineAppeals = "student-approve-decline-appeals",
   StudentAddSINExpiry = "student-add-sin-expiry",
   StudentAddNewSIN = "student-add-new-sin",

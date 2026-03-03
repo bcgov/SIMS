@@ -36,7 +36,7 @@ export interface SupportingUser {
   formName: string;
   isAbleToReport: boolean;
   programYearStartDate?: string;
-  fullName?: string;
+  fullName: string;
   supportingData?: unknown;
   contactInfo?: ContactInfo;
   sin?: string;
@@ -44,8 +44,8 @@ export interface SupportingUser {
   email?: string;
   firstName?: string;
   lastName?: string;
-  parentFullName?: string;
   personalInfo?: SupportingUserPersonalInfo;
+  supportingUserType: SupportingUserType;
 }
 
 export interface SupportingUserPersonalInfo {
