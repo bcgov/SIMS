@@ -87,52 +87,33 @@ describe("ConfigController(e2e)-getConfig", () => {
   it("Should return featureToggles value when a csv string, including empty white spaces, is provided using FEATURE_TOGGLES.", async () => {
     // Arrange
     const app = await getNestApplication({
-      FEATURE_TOGGLES: "SOME_FEATURE_TOGGLE, ANOTHER_FEATURE_TOGGLE ",
+      FEATURE_TOGGLES: "SOME_FEATURE_TOGGLE, , ANOTHER_FEATURE_TOGGLE ",
     });
 
     // Act/Assert
     await request(app.getHttpServer())
       .get("/config")
       .expect(HttpStatus.OK)
-      .expect({
-        auth: {
-          url: fakeEnvVariables.KEYCLOAK_AUTH_URL,
-          realm: fakeEnvVariables.KEYCLOAK_REALM,
-          clientIds: {
-            student: fakeEnvVariables.KEYCLOAK_CLIENT_STUDENT,
-            institution: fakeEnvVariables.KEYCLOAK_CLIENT_INSTITUTION,
-            aest: fakeEnvVariables.KEYCLOAK_CLIENT_AEST,
-            supportingUsers: fakeEnvVariables.KEYCLOAK_CLIENT_SUPPORTING_USERS,
-          },
-          externalSiteMinderLogoutUrl: fakeEnvVariables.SITE_MINDER_LOGOUT_URL,
-        },
-        isFulltimeAllowed: fakeEnvVariables.IS_FULLTIME_ALLOWED === "true",
-        allowBetaInstitutionsOnly: false,
-        maximumIdleTimeForWarningStudent:
-          +fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_STUDENT,
-        maximumIdleTimeForWarningSupportingUser:
-          +fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_SUPPORTING_USER,
-        maximumIdleTimeForWarningInstitution:
-          +fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_INSTITUTION,
-        maximumIdleTimeForWarningAEST:
-          +fakeEnvVariables.MAXIMUM_IDLE_TIME_FOR_WARNING_AEST,
-        applicationSubmissionDeadlineWeeks:
-          +fakeEnvVariables.APPLICATION_SUBMISSION_DEADLINE_WEEKS,
-        appEnv: fakeEnvVariables.APP_ENV,
-        queueDashboardURL: `${fakeEnvVariables.QUEUE_DASHBOARD_BASE_URL}/admin/queues`,
-        maintenanceMode: fakeEnvVariables.MAINTENANCE_MODE === "true",
-        maintenanceModeStudent:
-          fakeEnvVariables.MAINTENANCE_MODE_STUDENT === "true",
-        maintenanceModeInstitution:
-          fakeEnvVariables.MAINTENANCE_MODE_INSTITUTION === "true",
-        maintenanceModeMinistry:
-          fakeEnvVariables.MAINTENANCE_MODE_MINISTRY === "true",
-        maintenanceModeSupportingUser:
-          fakeEnvVariables.MAINTENANCE_MODE_SUPPORTING_USER === "true",
-        maintenanceModeExternal:
-          fakeEnvVariables.MAINTENANCE_MODE_EXTERNAL === "true",
-        featureToggles: ["SOME_FEATURE_TOGGLE", "ANOTHER_FEATURE_TOGGLE"],
-      });
+      .expect(({ body }) =>
+        expect(body.featureToggles).toEqual([
+          "SOME_FEATURE_TOGGLE",
+          "ANOTHER_FEATURE_TOGGLE",
+        ]),
+      );
+    await app?.close();
+  });
+
+  it("Should return featureToggles as undefined when FEATURE_TOGGLES is an empty string.", async () => {
+    // Arrange
+    const app = await getNestApplication({
+      FEATURE_TOGGLES: "",
+    });
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get("/config")
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => expect(body.featureToggles).toBeUndefined());
     await app?.close();
   });
 

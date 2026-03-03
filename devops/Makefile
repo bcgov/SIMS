@@ -389,7 +389,6 @@ deploy-api:
 	test -n "$(EXTERNAL_IP_WHITELIST)"
 	test -n "$(THROTTLE_TIME)"
 	test -n "$(THROTTLE_LIMIT)"
-
 	@echo "+\n++ Deploying API with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
@@ -438,6 +437,7 @@ deploy-api:
 		-p REPLICAS=$(API_REPLICAS) \
 		-p THROTTLE_TIME=$(THROTTLE_TIME) \
 		-p THROTTLE_LIMIT=$(THROTTLE_LIMIT) \
+		-p FEATURE_TOGGLES=$(FEATURE_TOGGLES) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(API))
 
