@@ -667,7 +667,7 @@ export class AssessmentController {
     appealRequests: StudentAppealRequest[],
     formSubmissionItems: FormSubmissionItem[],
   ): Record<string, StudentAppealRequestJobOutDTO> {
-    if (!appealRequests?.length) {
+    if (!appealRequests?.length && !formSubmissionItems?.length) {
       return null;
     }
     // Object to be returned.
@@ -675,7 +675,7 @@ export class AssessmentController {
       string,
       StudentAppealRequestJobOutDTO
     >;
-    appealRequests.forEach((appealRequest) => {
+    appealRequests?.forEach((appealRequest) => {
       // The submitted form name for the appeals contains the form path of the submitted appeal form.
       // But the legacy change requests which are using the same appeals framework
       // contain the form name instead of the form path as the submitted form name.
@@ -691,21 +691,20 @@ export class AssessmentController {
     // Look for approved appeals to have data included in the output.
     // Associated form submissions will be completed before being associated with the assessment,
     // so it is safe to consider that all form submission items are available at this moment.
-    formSubmissionItems
-      ?.filter(
-        (formSubmission) =>
-          formSubmission.dynamicFormConfiguration.formCategory ===
-            FormCategory.StudentAppeal &&
-          formSubmission.currentDecision.decisionStatus ===
-            FormSubmissionDecisionStatus.Approved,
-      )
-      .forEach((formSubmissionItem) => {
-        const submittedFormName =
-          formSubmissionItem.dynamicFormConfiguration.formDefinitionName;
-        flattenedAppealRequests[submittedFormName] = {
-          submittedData: formSubmissionItem.submittedData,
-        };
-      });
+    const approvedAppealFormSubmissionItems = formSubmissionItems?.filter(
+      (formSubmission) =>
+        formSubmission.dynamicFormConfiguration.formCategory ===
+          FormCategory.StudentAppeal &&
+        formSubmission.currentDecision.decisionStatus ===
+          FormSubmissionDecisionStatus.Approved,
+    );
+    approvedAppealFormSubmissionItems?.forEach((formSubmissionItem) => {
+      const submittedFormName =
+        formSubmissionItem.dynamicFormConfiguration.formDefinitionName;
+      flattenedAppealRequests[submittedFormName] = {
+        submittedData: formSubmissionItem.submittedData,
+      };
+    });
     return flattenedAppealRequests;
   }
 

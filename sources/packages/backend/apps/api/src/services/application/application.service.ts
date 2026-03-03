@@ -2175,6 +2175,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
           assessmentDate: true,
           offering: { id: true },
           studentAppeal: { id: true },
+          formSubmission: { id: true },
         },
         studentAssessments: { studentAssessmentStatus: true },
         student: { id: true },
@@ -2182,7 +2183,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationStatus: true,
       },
       relations: {
-        currentAssessment: { offering: true, studentAppeal: true },
+        currentAssessment: {
+          offering: true,
+          studentAppeal: true,
+          formSubmission: true,
+        },
         studentAssessments: true,
         student: true,
       },
