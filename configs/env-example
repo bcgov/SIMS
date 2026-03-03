@@ -198,3 +198,7 @@ THROTTLE_LIMIT=30
 
 # App Environment
 APP_ENV=
+
+# Feature Toggles - A comma-separated list of feature toggles to enable specific
+# features in the application. For example: "SOME_FEATURE_TOGGLE,ANOTHER_FEATURE_TOGGLE"
+FEATURE_TOGGLES=
