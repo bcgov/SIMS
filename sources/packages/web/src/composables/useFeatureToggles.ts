@@ -28,18 +28,15 @@ export function useFeatureToggles() {
    * @param featureToggle The name of the feature toggle to check.
    * @returns true if the feature toggle is enabled, false otherwise.
    */
-  const isFeatureToggleEnabled = async (featureToggle: string) => {
+  const isFeatureToggleEnabled = (featureToggle: string) => {
     return appConfig.value?.featureToggles.includes(featureToggle) ?? false;
   };
 
   /**
    * Form submission feature toggle.
    */
-  const isFormSubmissionEnabled = computed(
-    () =>
-      appConfig.value?.featureToggles.includes(
-        FORMS_SUBMISSION_FEATURE_TOGGLE,
-      ) ?? false,
+  const isFormSubmissionEnabled = computed(() =>
+    isFeatureToggleEnabled(FORMS_SUBMISSION_FEATURE_TOGGLE),
   );
 
   return {
