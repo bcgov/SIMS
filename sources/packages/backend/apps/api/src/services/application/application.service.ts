@@ -1666,6 +1666,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "user.lastName",
         "user.email",
         "studentAppeal.id",
+        "formSubmission.id",
         "educationProgram.credentialType",
         "educationProgram.deliveredOnline",
         "educationProgram.deliveredOnSite",
@@ -1679,6 +1680,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "offering")
       .leftJoin("currentAssessment.studentAppeal", "studentAppeal")
+      .leftJoin("currentAssessment.formSubmission", "formSubmission")
       .innerJoin("offering.educationProgram", "educationProgram")
       .innerJoin("offering.institutionLocation", "location")
       .innerJoin("application.student", "student")
