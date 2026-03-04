@@ -73,7 +73,7 @@ import { AppConfigService } from "@/services/AppConfigService";
 export default defineComponent({
   components: { CheckPermissionRole },
   setup() {
-    const { isNewAppealsQueueEnabled } = useFeatureToggles();
+    const { isFormSubmissionEnabled } = useFeatureToggles();
     const menuItems = computed<MenuItemModel[]>(() => [
       {
         title: "Home",
@@ -149,7 +149,7 @@ export default defineComponent({
         props: {
           prependIcon: "mdi-scale-balance",
           to: {
-            name: isNewAppealsQueueEnabled
+            name: isFormSubmissionEnabled.value
               ? AESTRoutesConst.STUDENT_APPEALS
               : AESTRoutesConst.LEGACY_STUDENT_APPEALS,
           },
