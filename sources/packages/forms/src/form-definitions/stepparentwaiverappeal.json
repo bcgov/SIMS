@@ -9,6 +9,16 @@
     ],
     "components": [
         {
+            "label": "Actions: CreateStudentAppealAssessment",
+            "calculateValue": "value = [\"CreateStudentAppealAssessment\"];",
+            "calculateServer": true,
+            "key": "actions",
+            "type": "hidden",
+            "input": true,
+            "tableView": true,
+            "lockKey": true
+        },
+        {
             "input": true,
             "tableView": true,
             "key": "maxUploadedFiles",
@@ -22,6 +32,9 @@
         {
             "label": "Parents",
             "key": "parents",
+            "tags": [
+                "supplementary-data"
+            ],
             "type": "hidden",
             "input": true,
             "tableView": false

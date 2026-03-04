@@ -52,7 +52,7 @@ export class FormSubmissionItem extends RecordDataModel {
     name: "submitted_data",
     type: "jsonb",
   })
-  submittedData: unknown;
+  submittedData: FormSubmissionSubmittedData;
   /**
    * Current decision associated with the form submission item.
    */
@@ -76,4 +76,13 @@ export class FormSubmissionItem extends RecordDataModel {
       formSubmissionItemDecision.formSubmissionItem,
   )
   decisions: FormSubmissionItemDecision[];
+}
+
+export enum FormSubmissionActionType {
+  CreateStudentAppealAssessment = "CreateStudentAppealAssessment",
+  UpdateModifiedIndependent = "UpdateModifiedIndependent",
+}
+
+export interface FormSubmissionSubmittedData extends Record<string, unknown> {
+  actions?: FormSubmissionActionType[];
 }
