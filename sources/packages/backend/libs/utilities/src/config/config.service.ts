@@ -477,7 +477,7 @@ export class ConfigService {
       process.env.FEATURE_TOGGLES?.trim()
         ? process.env.FEATURE_TOGGLES.split(",")
             .map((toggle) => toggle.trim())
-            .filter((toggle) => toggle.length > 0)
+            .filter((toggle) => !!toggle.length)
         : undefined,
     );
   }
