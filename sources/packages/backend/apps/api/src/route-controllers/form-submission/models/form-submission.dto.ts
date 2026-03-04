@@ -195,7 +195,7 @@ export class FormSubmissionPendingSummaryAPIOutDTO {
   submittedDate: Date;
   firstName?: string;
   lastName: string;
-  formName: string;
+  formNames: string[];
 }
 
 /**

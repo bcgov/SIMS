@@ -57,8 +57,8 @@ import ViewOfferingChangeRequest from "@/views/aest/institution/ViewOfferingChan
 import ViewPendingOfferingChangeRequests from "@/views/aest/institution/ViewPendingOfferingChangeRequests.vue";
 import LegacyChangeRequests from "@/views/aest/student/LegacyChangeRequests.vue";
 import ApplicationChangeRequests from "@/views/aest/student/ApplicationChangeRequests.vue";
+import LegacyStudentAppeals from "@/views/aest/student/LegacyStudentAppeals.vue";
 import StudentAppeals from "@/views/aest/student/StudentAppeals.vue";
-import StudentAllAppeals from "@/views/aest/student/StudentAllAppeals.vue";
 import PendingForms from "@/views/aest/student/PendingForms.vue";
 import ApplicationOfferingChangeRequestForm from "@/views/aest/student/applicationDetails/ApplicationOfferingChangeRequestForm.vue";
 import StudentAccountApplications from "@/views/aest/student/StudentAccountApplications.vue";
@@ -649,10 +649,10 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.StudentAppeals,
-        name: AESTRoutesConst.STUDENT_APPEALS,
+        path: AppRoutes.LegacyStudentAppeals,
+        name: AESTRoutesConst.LEGACY_STUDENT_APPEALS,
         components: {
-          default: StudentAppeals,
+          default: LegacyStudentAppeals,
           sidebar: AESTHomeSideBar,
         },
         meta: {
@@ -660,10 +660,10 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.StudentAllAppeals,
-        name: AESTRoutesConst.STUDENT_ALL_APPEALS,
+        path: AppRoutes.StudentAppeals,
+        name: AESTRoutesConst.STUDENT_APPEALS,
         components: {
-          default: StudentAllAppeals,
+          default: StudentAppeals,
           sidebar: AESTHomeSideBar,
         },
         meta: {

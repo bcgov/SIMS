@@ -150,8 +150,8 @@ export default defineComponent({
           prependIcon: "mdi-scale-balance",
           to: {
             name: isNewAppealsQueueEnabled
-              ? AESTRoutesConst.STUDENT_ALL_APPEALS
-              : AESTRoutesConst.STUDENT_APPEALS,
+              ? AESTRoutesConst.STUDENT_APPEALS
+              : AESTRoutesConst.LEGACY_STUDENT_APPEALS,
           },
         },
       },
