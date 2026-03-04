@@ -181,13 +181,13 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         parentsInfo: [
           {
             supportingUserId: parent1.id,
-            parentFullName: parent1.fullName,
+            fullName: parent1.fullName,
             status: SuccessWaitingStatus.Success,
             isAbleToReport: true,
           },
           {
             supportingUserId: parent2.id,
-            parentFullName: parent2.fullName,
+            fullName: parent2.fullName,
             status: SuccessWaitingStatus.Success,
             isAbleToReport: true,
           },
@@ -195,7 +195,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       });
   });
 
-  it("Should get application in-progress details when the student has partner as supporting user.", async () => {
+  it("Should get application in-progress details when the student has a partner who is not able to report and the student has entered the partner's supporting data.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
 
@@ -208,13 +208,14 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
       { applicationStatus: ApplicationStatus.InProgress },
     );
 
-    // Create supporting users.
+    // Create supporting user.
     const partner = createFakeSupportingUser(
       { application },
       {
         initialValues: {
           supportingUserType: SupportingUserType.Partner,
           supportingData: { totalIncome: 2000 },
+          fullName: "My Partner",
         },
       },
     );
@@ -258,7 +259,12 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
         pirStatus: application.pirStatus,
         studentIncomeVerificationStatus: SuccessWaitingStatus.Success,
         partnerIncomeVerificationStatus: SuccessWaitingStatus.Success,
-        partnerInfo: SuccessWaitingStatus.Success,
+        partnerInfo: {
+          supportingUserId: partner.id,
+          fullName: partner.fullName,
+          status: SuccessWaitingStatus.Success,
+          isAbleToReport: true,
+        },
         outstandingAssessmentStatus: SuccessWaitingStatus.Success,
       });
   });

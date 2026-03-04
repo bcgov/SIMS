@@ -60,13 +60,13 @@
       v-if="
         parent.status === SuccessWaitingStatus.Waiting && parent.isAbleToReport
       "
-      :label="`Waiting for additional information from ${parent.parentFullName}`"
+      :label="`Waiting for additional information from ${parent.fullName}`"
       icon="fa:fas fa-clock"
       icon-color="secondary"
     >
       <template #content>
         We are waiting for supporting information from
-        <strong>{{ parent.parentFullName }}</strong
+        <strong>{{ parent.fullName }}</strong
         >. Please check your email from StudentAidBC for further instructions.
         The email includes important details and a secure link that your parent
         will need in order to provide their information for your application.
@@ -77,42 +77,41 @@
       v-if="
         parent.status === SuccessWaitingStatus.Waiting && !parent.isAbleToReport
       "
-      :label="`Parent information required for ${parent.parentFullName}`"
+      :label="`Parent information required for ${parent.fullName}`"
       icon="fa:fas fa-exclamation-triangle"
       icon-color="warning"
       background-color="warning-bg"
     >
       <template #content>
-        You have indicated that <strong>{{ parent.parentFullName }}</strong> is
-        unable to complete their declaration. Please complete the following
-        declaration on their behalf. Click on the button below to complete the
-        declaration.
+        You have indicated that <strong>{{ parent.fullName }}</strong> is unable
+        to complete their declaration. Please complete the following declaration
+        on their behalf. Click on the button below to complete the declaration.
       </template>
       <template #actions>
         <v-btn
           color="primary"
           @click="navigateToParentReporting(parent.supportingUserId)"
+          :disabled="!areApplicationActionsAllowed"
         >
-          {{ parent.parentFullName }}
+          {{ parent.fullName }}
         </v-btn>
       </template>
     </application-status-tracker-banner>
   </template>
 
   <application-status-tracker-banner
-    :label="`Spouse/Common-law information required for ${applicationDetails?.partnerInfo?.partnerFullName}`"
+    :label="`Spouse/Common-law information required for ${applicationDetails?.partnerInfo?.fullName}`"
     icon="fa:fas fa-clock"
     icon-color="secondary"
     v-if="
       applicationDetails?.partnerInfo?.status ===
         SuccessWaitingStatus.Waiting &&
-      !applicationDetails.partnerInfo.isAbleToReport
+      !applicationDetails.partnerInfo?.isAbleToReport
     "
     ><template #content
-      >You have indicated that
-      {{ applicationDetails?.partnerInfo?.partnerFullName }} is unable to
-      complete their declaration. Please complete the following declaration on
-      their behalf. Click on the button below to complete the
+      >You have indicated that {{ applicationDetails.partnerInfo?.fullName }} is
+      unable to complete their declaration. Please complete the following
+      declaration on their behalf. Click on the button below to complete the
       declaration.</template
     >
     <template #actions>
@@ -120,17 +119,18 @@
         color="primary"
         @click="
           navigateToPartnerReporting(
-            applicationDetails?.partnerInfo?.supportingUserId,
+            applicationDetails.partnerInfo?.supportingUserId,
           )
         "
+        :disabled="!areApplicationActionsAllowed"
       >
-        {{ applicationDetails?.partnerInfo?.partnerFullName }}
+        {{ applicationDetails.partnerInfo?.fullName }}
       </v-btn>
     </template></application-status-tracker-banner
   >
 
   <application-status-tracker-banner
-    :label="`Waiting for additional information from ${applicationDetails?.partnerInfo?.partnerFullName}`"
+    :label="`Waiting for additional information from ${applicationDetails.partnerInfo?.fullName}`"
     icon="fa:fas fa-clock"
     icon-color="secondary"
     v-if="
@@ -140,10 +140,10 @@
     "
     ><template #content
       >We are waiting for supporting information from
-      {{ applicationDetails?.partnerInfo?.partnerFullName }}. Please check your
-      email from StudentAidBC for further instructions. The email includes
-      important details and a secure link that your partner/common-law will need
-      in order to provide their information for your application.</template
+      {{ applicationDetails.partnerInfo?.fullName }}. Please check your email
+      from StudentAidBC for further instructions. The email includes important
+      details and a secure link that your partner/common-law will need in order
+      to provide their information for your application.</template
     ></application-status-tracker-banner
   >
 
@@ -225,7 +225,7 @@
       label="Parent information request completed"
       icon="fa:fas fa-check-circle"
       icon-color="success"
-      :content="`We have successfully received supporting information from ${parent.parentFullName}.`"
+      :content="`We have successfully received supporting information from ${parent.fullName}.`"
     />
   </template>
 
@@ -313,6 +313,11 @@ export default defineComponent({
     applicationId: {
       type: Number,
       required: true,
+    },
+    areApplicationActionsAllowed: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   setup(props) {

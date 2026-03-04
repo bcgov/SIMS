@@ -36,6 +36,7 @@ import {
   ApplicationVersionAPIOutDTO,
   ApplicationIdentifiableSupportingUserDetails,
   ECertFailedValidationsInfoAPIOutDTO,
+  SupportingUserDetails,
 } from "./models/application.dto";
 import {
   allowApplicationChangeRequest,
@@ -821,14 +822,9 @@ export class ApplicationControllerService {
         supportingUser.supportingUserType === SupportingUserType.Parent,
     );
     if (parents.length) {
-      supportingUserDetails.parentsInfo = parents.map((parent) => ({
-        supportingUserId: parent.id,
-        parentFullName: parent.fullName,
-        status: parent.supportingData
-          ? SuccessWaitingStatus.Success
-          : SuccessWaitingStatus.Waiting,
-        isAbleToReport: parent.isAbleToReport,
-      }));
+      supportingUserDetails.parentsInfo = parents.map((parent) =>
+        this.transformToSupportingUserDetails(parent),
+      );
     }
 
     // Partner.
@@ -837,14 +833,8 @@ export class ApplicationControllerService {
         supportingUser.supportingUserType === SupportingUserType.Partner,
     );
     if (partner) {
-      supportingUserDetails.partnerInfo = {
-        supportingUserId: partner.id,
-        partnerFullName: partner.fullName,
-        status: partner.supportingData
-          ? SuccessWaitingStatus.Success
-          : SuccessWaitingStatus.Waiting,
-        isAbleToReport: partner.isAbleToReport,
-      };
+      supportingUserDetails.partnerInfo =
+        this.transformToSupportingUserDetails(partner);
     }
 
     return supportingUserDetails;
@@ -918,6 +908,24 @@ export class ApplicationControllerService {
         supportingUserFullName: user.fullName,
         isAbleToReport: user.isAbleToReport,
       })),
+    };
+  }
+
+  /**
+   * Convert supporting user to the DTO equivalent.
+   * @param supportingUser supporting user to be converted.
+   * @returns supporting user details DTO.
+   */
+  private transformToSupportingUserDetails(
+    supportingUser: SupportingUser,
+  ): SupportingUserDetails {
+    return {
+      supportingUserId: supportingUser.id,
+      fullName: supportingUser.fullName,
+      status: supportingUser.supportingData
+        ? SuccessWaitingStatus.Success
+        : SuccessWaitingStatus.Waiting,
+      isAbleToReport: supportingUser.isAbleToReport,
     };
   }
 
