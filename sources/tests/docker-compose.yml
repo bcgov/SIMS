@@ -84,6 +84,7 @@ services:
       - ALLOW_BETA_INSTITUTIONS_ONLY=${ALLOW_BETA_INSTITUTIONS_ONLY}
       - THROTTLE_TIME=${THROTTLE_TIME}
       - THROTTLE_LIMIT=${THROTTLE_LIMIT}
+      - FEATURE_TOGGLES=${FEATURE_TOGGLES}
     networks:
       - local-network-tests
     restart: always

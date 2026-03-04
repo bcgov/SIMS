@@ -6,8 +6,6 @@ import * as request from "supertest";
 import { ConfigController } from "../../config.controller";
 
 describe("ConfigController(e2e)-getConfig", () => {
-  let app: INestApplication;
-  const originalEnv = process.env;
   const fakeEnvVariables = {
     KEYCLOAK_AUTH_URL: "https://keycloak-fake-url",
     KEYCLOAK_REALM: "keycloak_fake_realm",
@@ -35,22 +33,13 @@ describe("ConfigController(e2e)-getConfig", () => {
 
   beforeAll(async () => {
     jest.resetModules();
-    process.env = {
-      ...originalEnv,
-      ...fakeEnvVariables,
-    };
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [ConfigModule],
-      controllers: [ConfigController],
-    }).compile();
-    const nestApplication = module.createNestApplication();
-    setGlobalPipes(nestApplication);
-    await nestApplication.init();
-    app = nestApplication;
   });
 
-  it("Should return config values.", async () => {
-    // Arrange Act/Assert
+  it("Should return config values when fake env variables are provided.", async () => {
+    // Arrange
+    const app = await getNestApplication();
+
+    // Act/Assert
     await request(app.getHttpServer())
       .get("/config")
       .expect(HttpStatus.OK)
@@ -92,9 +81,63 @@ describe("ConfigController(e2e)-getConfig", () => {
         maintenanceModeExternal:
           fakeEnvVariables.MAINTENANCE_MODE_EXTERNAL === "true",
       });
-  });
-
-  afterAll(async () => {
     await app?.close();
   });
+
+  it("Should return featureToggles value when a csv string, including empty white spaces, is provided using FEATURE_TOGGLES.", async () => {
+    // Arrange
+    const app = await getNestApplication({
+      FEATURE_TOGGLES: "SOME_FEATURE_TOGGLE, , ANOTHER_FEATURE_TOGGLE ",
+    });
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get("/config")
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body.featureToggles).toEqual([
+          "SOME_FEATURE_TOGGLE",
+          "ANOTHER_FEATURE_TOGGLE",
+        ]),
+      );
+    await app?.close();
+  });
+
+  it("Should return featureToggles as undefined when FEATURE_TOGGLES is an empty string.", async () => {
+    // Arrange
+    const app = await getNestApplication({
+      FEATURE_TOGGLES: "",
+    });
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get("/config")
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => expect(body.featureToggles).toBeUndefined());
+    await app?.close();
+  });
+
+  /**
+   * Create a fresh Nest application instance with the ConfigModule imported and ConfigController registered.
+   * The environment variables can be overridden by providing an object with the desired key-value pairs.
+   * @param envOverrides An object containing environment variable key-value pairs to override the default
+   * fake environment variables.
+   * @returns instance of INestApplication.
+   */
+  const getNestApplication = async (
+    envOverrides?: Record<string, string>,
+  ): Promise<INestApplication> => {
+    process.env = {
+      ...fakeEnvVariables,
+      ...envOverrides,
+    };
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [ConfigModule],
+      controllers: [ConfigController],
+    }).compile();
+    const nestApplication = module.createNestApplication();
+    setGlobalPipes(nestApplication);
+    await nestApplication.init();
+    return nestApplication;
+  };
 });

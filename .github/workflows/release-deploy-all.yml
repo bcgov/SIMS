@@ -130,6 +130,7 @@ env:
   EXTERNAL_IP_WHITELIST: ${{ vars.EXTERNAL_IP_WHITELIST }}
   THROTTLE_TIME: ${{ vars.THROTTLE_TIME }}
   THROTTLE_LIMIT: ${{ vars.THROTTLE_LIMIT }}
+  FEATURE_TOGGLES: ${{ vars.FEATURE_TOGGLES }}
 jobs:
   env-setup:
     name: Setup Dynamic Environment Variables

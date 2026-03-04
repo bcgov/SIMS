@@ -239,6 +239,8 @@ objects:
                     secretKeyRef:
                       key: ${S3_REGION_KEY}
                       name: ${API_SECRET_NAME}
+                - name: FEATURE_TOGGLES
+                  value: ${FEATURE_TOGGLES}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -638,3 +640,5 @@ parameters:
     value: "10000"
   - name: THROTTLE_LIMIT
     value: "30"
+  - name: FEATURE_TOGGLES
+    required: false
