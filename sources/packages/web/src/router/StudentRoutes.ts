@@ -323,6 +323,9 @@ export const studentRoutes: Array<RouteRecordRaw> = [
           formSubmissionId: Number.parseInt(
             route.params.formSubmissionId as string,
           ),
+          applicationId: route.query.applicationId
+            ? Number.parseInt(route.query.applicationId as string)
+            : undefined,
         }),
         meta: {
           clientType: ClientIdType.Student,

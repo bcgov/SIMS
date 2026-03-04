@@ -129,6 +129,12 @@ export interface FormSubmissionItem extends FormSubmissionItemSubmitted {
    */
   formName: string;
   /**
+   * Current decision status for this form submission item.
+   * This is the mos recent status returned from the system and may differ of the current
+   * Ministry decision if currently being assessed or updated.
+   */
+  decisionStatus: FormSubmissionDecisionStatus;
+  /**
    * Current decision status for this form submission item, available for certain
    * user roles for Ministry, allowing a decision to be made and later auditing.
    */

@@ -83,6 +83,7 @@ import { useFormatters } from "@/composables";
 import StatusChipAssessmentHistory from "@/components/generic/StatusChipAssessmentHistory.vue";
 import { AssessmentHistorySummaryAPIOutDTO } from "@/services/http/dto/Assessment.dto";
 import AssessmentTags from "@/components/common/students/assessment/AssessmentTags.vue";
+import { useFeatureToggles } from "@/composables";
 
 export default defineComponent({
   emits: [
@@ -119,6 +120,7 @@ export default defineComponent({
       emptyStringFiller,
       getISODateHourMinuteString,
     } = useFormatters();
+    const { isFormSubmissionEnabled } = useFeatureToggles();
     const { mobile: isMobile } = useDisplay();
 
     const assessmentHistory = ref([] as AssessmentHistorySummaryAPIOutDTO[]);
@@ -138,7 +140,12 @@ export default defineComponent({
     const viewRequest = (data: AssessmentHistorySummaryAPIOutDTO) => {
       switch (data.triggerType) {
         case AssessmentTriggerType.StudentAppeal:
-          context.emit("viewStudentAppeal", data.studentAppealId);
+          if (isFormSubmissionEnabled.value) {
+            context.emit("viewStudentAppeal", data.formSubmissionId);
+          } else {
+            // TODO: removed once the toggle is no longer required.
+            context.emit("viewStudentAppeal", data.studentAppealId);
+          }
           break;
         case AssessmentTriggerType.ApplicationOfferingChange:
           context.emit(

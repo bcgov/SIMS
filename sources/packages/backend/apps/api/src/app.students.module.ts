@@ -29,6 +29,7 @@ import {
   AnnouncementService,
   ApplicationRestrictionBypassService,
   InstitutionRestrictionService,
+  FormSubmissionSubmitService,
   FormSubmissionService,
 } from "./services";
 import {
@@ -183,6 +184,7 @@ import {
     SupplementaryDataParents,
     SupplementaryDataLoader,
     // Form Submission Service.
+    FormSubmissionSubmitService,
     FormSubmissionService,
   ],
 })

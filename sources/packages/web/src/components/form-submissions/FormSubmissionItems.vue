@@ -28,9 +28,8 @@
           </v-col>
           <v-col>
             <status-chip-form-submission-decision
-              v-if="submissionItem.decision"
               class="float-right mr-4"
-              :status="submissionItem.decision?.decisionStatus"
+              :status="submissionItem.decisionStatus"
             />
           </v-col>
         </v-row>

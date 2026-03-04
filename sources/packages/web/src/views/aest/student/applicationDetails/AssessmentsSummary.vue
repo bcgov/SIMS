@@ -52,6 +52,7 @@ import RequestAssessment from "@/components/common/students/assessment/Request.v
 import HistoryAssessment from "@/components/common/students/assessment/History.vue";
 import ManualReassessment from "@/components/aest/students/assessment/ManualReassessment.vue";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
+import { useFeatureToggles } from "@/composables";
 
 export default defineComponent({
   components: {
@@ -72,6 +73,7 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter();
+    const { isFormSubmissionEnabled } = useFeatureToggles();
     const historyKey = ref(0);
 
     // The assessment trigger types for which the request form must be visible by default.
@@ -83,13 +85,22 @@ export default defineComponent({
       AssessmentTriggerType.ApplicationOfferingChange,
     ];
 
-    const goToStudentAppeal = (appealId: number) => {
+    const goToStudentAppeal = (id: number) => {
+      if (isFormSubmissionEnabled.value) {
+        router.push({
+          name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_APPROVAL,
+          params: {
+            formSubmissionId: id,
+          },
+        });
+        return;
+      }
       router.push({
         name: AESTRoutesConst.STUDENT_APPLICATION_APPEAL_REQUESTS_APPROVAL,
         params: {
           studentId: props.studentId,
           applicationId: props.applicationId,
-          appealId,
+          appealId: id,
         },
       });
     };

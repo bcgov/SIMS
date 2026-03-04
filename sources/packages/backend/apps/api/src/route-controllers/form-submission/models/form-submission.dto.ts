@@ -72,7 +72,7 @@ abstract class FormSubmissionAPIOutDTO {
  * This is a basic representation of a form submission item properties to be extended
  * for Ministry, Student, and Institutions.
  */
-abstract class FormSubmissionItemAPIOutDTO {
+export class FormSubmissionItemAPIOutDTO {
   id: number;
   formType: string;
   formCategory: FormCategory;
@@ -89,7 +89,7 @@ abstract class FormSubmissionItemAPIOutDTO {
 /**
  * Current decision associated with a form submission item.
  */
-class FormSubmissionItemDecisionAPIOutDTO {
+export class FormSubmissionItemDecisionAPIOutDTO {
   id: number;
   decisionStatus: FormSubmissionDecisionStatus;
   decisionDate?: Date;
@@ -128,6 +128,10 @@ class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
 export class FormSubmissionMinistryAPIOutDTO extends FormSubmissionAPIOutDTO {
   hasApprovalAuthorization: boolean;
   submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
+}
+
+export class FormSubmissionStudentAPIOutDTO extends FormSubmissionAPIOutDTO {
+  submissionItems: FormSubmissionItemAPIOutDTO[];
 }
 
 /**

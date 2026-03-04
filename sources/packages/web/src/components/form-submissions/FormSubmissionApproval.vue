@@ -284,7 +284,8 @@ export default defineComponent({
                 submissionItem,
                 formSubmission.value.status,
               ),
-              files: undefined,
+              decisionStatus: submissionItem.decisionStatus,
+              files: [],
             }),
           );
       } catch {
@@ -355,6 +356,7 @@ export default defineComponent({
           throw new Error("Expected item to be updated was not found.");
         }
         const [reloadedSubmissionItem] = submission.submissionItems;
+        itemToUpdate.decisionStatus = reloadedSubmissionItem.decisionStatus;
         assignItemDecisionProperties(
           reloadedSubmissionItem,
           submission.status,

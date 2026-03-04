@@ -27,6 +27,7 @@ import { AssessmentTriggerType } from "@/types";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import HistoryAssessment from "@/components/common/students/assessment/History.vue";
 import RequestAssessment from "@/components/common/students/assessment/Request.vue";
+import { useFeatureToggles } from "@/composables";
 
 export default defineComponent({
   components: {
@@ -41,6 +42,7 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter();
+    const { isFormSubmissionEnabled } = useFeatureToggles();
     // The assessment trigger types for which the request form is visible to student.
     const studentAssessmentRequestTypes = [
       AssessmentTriggerType.StudentAppeal,
@@ -58,12 +60,24 @@ export default defineComponent({
       });
     };
 
-    const goToStudentAppeal = (appealId: number) => {
+    const goToStudentAppeal = (id: number) => {
+      if (isFormSubmissionEnabled.value) {
+        router.push({
+          name: StudentRoutesConst.STUDENT_FORMS_SUBMISSION_VIEW,
+          params: {
+            formSubmissionId: id,
+          },
+          query: {
+            applicationId: props.applicationId,
+          },
+        });
+        return;
+      }
       router.push({
         name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_REQUEST,
         params: {
           applicationId: props.applicationId,
-          appealId,
+          appealId: id,
         },
       });
     };
