@@ -131,13 +131,17 @@ export class FormSubmissionService {
   }
 
   /**
-   * Gets all pending student form submission items awaiting ministry review,
-   * returning one entry per form within a submission.
-   * Only items belonging to submissions with the specified category
-   * and status {@link FormSubmissionStatus.Pending} are returned.
+   * Gets all pending student form submissions awaiting ministry review.
+   * Each result represents a single {@link FormSubmission} and can include
+   * multiple forms through an array of form names when a submission has more
+   * than one associated form.
+   * Only submissions with the specified category and status
+   * {@link FormSubmissionStatus.Pending} are returned, and pagination/count
+   * are based on the number of submissions, not the number of individual forms.
    * @param paginationOptions options to control pagination, sorting, and search.
    * @param formCategory category of the form submissions to filter.
-   * @returns paginated list of pending form submission items, one per form.
+   * @returns paginated list of pending form submissions, one entry per submission
+   * with form names aggregated per submission.
    */
   async getPendingFormSubmissions(
     paginationOptions: FormSubmissionPendingPaginationOptions,
@@ -191,16 +195,18 @@ export class FormSubmissionService {
     }
 
     if (searchCriteria) {
+      const trimmedSearchCriteria = searchCriteria.trim();
       query
         .andWhere(
           new Brackets((qb) =>
             qb
               .where(getUserFullNameLikeSearch())
-              .orWhere("application.applicationNumber = :exactSearchCriteria"),
+              .orWhere(
+                "application.applicationNumber ILIKE TRIM(:searchCriteria)",
+              ),
           ),
         )
-        .setParameter("searchCriteria", `%${searchCriteria}%`)
-        .setParameter("exactSearchCriteria", searchCriteria);
+        .setParameter("searchCriteria", `%${trimmedSearchCriteria}%`);
     }
 
     const sortFieldMapping: Record<string, string> = {

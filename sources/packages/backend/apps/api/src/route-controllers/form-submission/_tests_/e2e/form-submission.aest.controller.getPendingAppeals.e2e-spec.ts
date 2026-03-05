@@ -225,4 +225,8 @@ describe("FormSubmissionAESTController(e2e)-getPendingAppeals", () => {
         count: 1,
       });
   });
+
+  afterAll(async () => {
+    await app?.close();
+  });
 });
