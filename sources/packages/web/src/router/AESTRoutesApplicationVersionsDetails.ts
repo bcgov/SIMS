@@ -9,6 +9,7 @@ import ViewScholasticStandingVersion from "@/views/aest/student/applicationDetai
 import AssessmentAwardVersion from "@/views/aest/student/applicationDetails/AssessmentAwardVersion.vue";
 import ApplicationOfferingChangeRequestForm from "@/views/aest/student/applicationDetails/ApplicationOfferingChangeRequestForm.vue";
 import ApplicationExceptionsApprovalVersion from "@/views/aest/student/applicationDetails/ApplicationExceptionsApprovalVersion.vue";
+import StudentFormSubmissionApproval from "@/views/aest/student/StudentFormSubmissionApproval.vue";
 
 /**
  * AEST Routes for application version details views.
@@ -68,6 +69,29 @@ export const AESTRoutesApplicationVersionsDetails: Array<RouteRecordRaw> = [
       appealId: Number.parseInt(route.params.appealId as string),
     }),
     component: StudentAppealRequestsApprovalVersion,
+    meta: {
+      clientType: ClientIdType.AEST,
+    },
+  },
+  {
+    path: getVersionRoutePath(AppRoutes.StudentFormSubmissionApproval),
+    name: AESTRoutesConst.STUDENT_APPLICATION_FORM_SUBMISSION_APPROVAL_VERSION,
+    props: (route) => ({
+      formSubmissionId: Number.parseInt(
+        route.params.formSubmissionId as string,
+      ),
+      backTarget: {
+        name: "Assessments",
+        to: {
+          name: AESTRoutesConst.ASSESSMENTS_SUMMARY_VERSION,
+          params: {
+            studentId: route.params.studentId,
+            applicationId: route.params.applicationId,
+          },
+        },
+      },
+    }),
+    component: StudentFormSubmissionApproval,
     meta: {
       clientType: ClientIdType.AEST,
     },

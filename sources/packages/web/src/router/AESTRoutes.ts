@@ -278,13 +278,10 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             path: AppRoutes.StudentFormSubmissionApproval,
             name: AESTRoutesConst.STUDENT_APPLICATION_FORM_SUBMISSION_APPROVAL,
             props: (route) => ({
-              studentId: Number.parseInt(route.params.studentId as string),
-              applicationId: Number.parseInt(
-                route.params.applicationId as string,
-              ),
               formSubmissionId: Number.parseInt(
                 route.params.formSubmissionId as string,
               ),
+              readOnly: false,
               backTarget: {
                 name: "Assessments",
                 to: {

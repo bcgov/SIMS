@@ -63,7 +63,10 @@
               </v-input>
               <!-- Allow editing a decision while the main submission is still pending. -->
               <template
-                v-if="decision.parentStatus === FormSubmissionStatus.Pending"
+                v-if="
+                  !readOnly &&
+                  decision.parentStatus === FormSubmissionStatus.Pending
+                "
               >
                 <v-btn
                   v-if="decision.decisionSaved"

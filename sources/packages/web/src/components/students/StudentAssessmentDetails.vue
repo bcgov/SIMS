@@ -63,7 +63,7 @@ export default defineComponent({
     const goToStudentAppeal = (id: number) => {
       if (isFormSubmissionEnabled.value) {
         router.push({
-          name: StudentRoutesConst.STUDENT_FORMS_SUBMISSION_VIEW,
+          name: StudentRoutesConst.STUDENT_FORMS_SUBMISSION_VIEW_FROM_APPLICATION_SUMMARY,
           params: {
             formSubmissionId: id,
           },

@@ -795,9 +795,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               formSubmissionId: Number.parseInt(
                 route.params.formSubmissionId as string,
               ),
-              applicationId: Number.parseInt(
-                route.params.applicationId as string,
-              ),
               backTarget: {
                 name: "Assessments",
                 to: {

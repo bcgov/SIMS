@@ -1,6 +1,6 @@
 import { RouteLocationRaw } from "vue-router";
 
 export interface BackTarget {
-  name: string;
+  name?: string;
   to: RouteLocationRaw;
 }

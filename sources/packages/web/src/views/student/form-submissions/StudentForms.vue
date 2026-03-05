@@ -1,7 +1,7 @@
 <template>
   <student-page-container :layout-template="LayoutTemplates.CenteredTab">
     <template #header>
-      <header-navigator title="Student" sub-title="Student Forms" />
+      <header-navigator title="Forms" sub-title="Student Forms" />
     </template>
     <template #tab-header>
       <v-tabs color="primary" grow>

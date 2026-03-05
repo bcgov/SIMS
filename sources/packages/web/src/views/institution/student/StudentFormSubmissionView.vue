@@ -3,9 +3,9 @@
   <student-page-container>
     <template #header>
       <header-navigator
-        :title="backTarget.name"
+        title="Forms"
         :sub-title="subtitle"
-        :route-location="backTarget.to"
+        :back-target="backTarget"
       />
     </template>
     <body-header-container>
@@ -81,11 +81,6 @@ export default defineComponent({
     formSubmissionId: {
       type: Number,
       required: true,
-    },
-    applicationId: {
-      type: Number,
-      required: false,
-      default: undefined,
     },
     backTarget: {
       type: Object as PropType<BackTarget>,

@@ -8,6 +8,7 @@
         :route-location="{
           name: StudentRoutesConst.STUDENT_FORMS_HISTORY,
         }"
+        :back-target="backTarget"
       />
     </template>
     <body-header-container>
@@ -43,11 +44,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watchEffect } from "vue";
+import { defineComponent, PropType, ref, watchEffect } from "vue";
 import FormSubmissionItems from "@/components/form-submissions/FormSubmissionItems.vue";
 import { useRouter } from "vue-router";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
-import { FormSubmissionItem } from "@/types";
+import { BackTarget, FormSubmissionItem } from "@/types";
 import { FormSubmissionAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar } from "@/composables";
@@ -65,6 +66,11 @@ export default defineComponent({
     },
     applicationId: {
       type: Number,
+      required: false,
+      default: undefined,
+    },
+    backTarget: {
+      type: Object as PropType<BackTarget>,
       required: false,
       default: undefined,
     },

@@ -2,15 +2,15 @@
   <full-page-container>
     <template #header>
       <header-navigator
-        :title="backTarget.name"
+        title="Forms submission"
         :sub-title="subtitle"
-        :routeLocation="backTarget.to"
+        :back-target="backTarget"
       />
     </template>
     <form-submission-approval
       :form-submission-id="formSubmissionId"
       :show-decision-details="true"
-      :read-only="false"
+      :read-only="readOnly"
       @loaded="submissionLoaded"
     />
   </full-page-container>
@@ -31,9 +31,15 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    readOnly: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
     backTarget: {
       type: Object as PropType<BackTarget>,
-      required: true,
+      required: false,
+      default: undefined,
     },
   },
   setup() {
