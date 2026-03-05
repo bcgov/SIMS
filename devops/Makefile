@@ -148,7 +148,8 @@ endef
 
 init-oc: | print-status init-project
 oc-build-migrations: | print-status build-migrations
-oc-run-db-migrations: | print-status delete-db-migrations run-db-migrations wait-for-db-migrations
+oc-run-db-migrations: | print-status delete-migrations-job deploy-migrations-job run-db-migrations
+oc-deploy-form-definitions: | print-status delete-migrations-job deploy-migrations-job deploy-form-definitions
 oc-build-api: | print-status build-api
 oc-deploy-api: | print-status deploy-api
 oc-build-workers: | print-status build-workers
@@ -308,10 +309,10 @@ redis-cluster-meet:
 	REDIS_PASSWORD=$$(oc get secret -n $(NAMESPACE) redis-cluster -o jsonpath='{.data.redis-password}' | base64 -d); \
   oc get pods -n $(NAMESPACE) -o json | jq -r '.items[] | select(.metadata.ownerReferences[]? | .kind=="StatefulSet" and .name=="redis-cluster") | "\(.status.podIP) \(env.REDIS_PORT)"' | xargs -n2 oc exec -n $(NAMESPACE) -it redis-cluster-0 -- redis-cli -a $$REDIS_PASSWORD -c CLUSTER MEET
 
-deploy-migrations:
+deploy-migrations-job:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(API_SECRET_NAME)"
+	test -n "$(MIGRATIONS_SECRET_NAME)"
 	test -n "$(MIGRATIONS_BUILD_REF)"
 	test -n "$(BUILD_REF)"
 	test -n "$(MIGRATIONS)"
@@ -319,11 +320,12 @@ deploy-migrations:
 	@oc -n $(NAMESPACE) process -f openshift/migrations-job.yml \
 		-p NAME=$(MIGRATIONS) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-		-p API_SECRET_NAME=$(API_SECRET_NAME) \
+		-p MIGRATIONS_SECRET_NAME=$(MIGRATIONS_SECRET_NAME) \
 		-p IMAGE_STREAM_TAG="$(MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p JOB_NAME=$(MIGRATIONS_JOB_NAME) \
 		| oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) wait --for=condition=Ready pod -l job-name=$(MIGRATIONS_JOB_NAME) --timeout=180s
 
 run-db-migrations:
 	test -n "$(NAMESPACE)"
@@ -343,9 +345,10 @@ wait-for-db-migrations:
 	while [ "$$(oc -n $(NAMESPACE) get job $(MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ] && [ "$$WAIT_TIME" -lt "$$MAX_WAIT" ]; do sleep 5; WAIT_TIME=$$((WAIT_TIME+5)); done
 	if [ "$$(oc -n $(NAMESPACE) get job $(MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ]; then echo "Error: Job $(MIGRATIONS_JOB_NAME) failed to complete within the specified timeout"; exit 1; fi
 
-delete-db-migrations:
+delete-migrations-job:
 	@if [ -n "$(shell oc -n $(NAMESPACE) get job $(MIGRATIONS_JOB_NAME) -o name 2>/dev/null)" ]; then \
 		oc -n $(NAMESPACE) delete job $(MIGRATIONS_JOB_NAME); \
+		oc wait --for=delete job/$(MIGRATIONS_JOB_NAME) --timeout=180s; \
 			echo "Job deleted."; \
 	else \
 		echo "Job not found."; \
@@ -356,7 +359,7 @@ delete-db-migrations:
 deploy-db-migrations-repl:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(DB_MIGRATIONS_SECRET_NAME)"
+	test -n "$(MIGRATIONS_SECRET_NAME)"
 	test -n "$(HOST_PREFIX)"
 	test -n "$(MIGRATIONS_BUILD_REF)"
 	test -n "$(BUILD_REF)"
@@ -364,7 +367,7 @@ deploy-db-migrations-repl:
 	@echo "+\n++ Deploying DB migrations REPL with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/db-migrations-repl.yml \
 		-p NAME=$(DB_MIGRATIONS_REPL) \
-		-p DB_MIGRATIONS_SECRET_NAME=$(DB_MIGRATIONS_SECRET_NAME) \
+		-p MIGRATIONS_SECRET_NAME=$(MIGRATIONS_SECRET_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
 		-p IMAGE_STREAM_TAG="$(MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \

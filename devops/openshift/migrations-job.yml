@@ -44,7 +44,7 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       key: ${SIMS_DB_NAME}
-                      name: ${API_SECRET_NAME}
+                      name: ${MIGRATIONS_SECRET_NAME}
                 - name: FORMS_SA_USER_NAME
                   valueFrom:
                     secretKeyRef:
@@ -73,7 +73,7 @@ parameters:
     value: sims
   - name: SERVICE_NAME
     value: db-migrations
-  - name: API_SECRET_NAME
+  - name: MIGRATIONS_SECRET_NAME
     required: true
   - name: SIMS_DB_NAME
     value: sims-db-name
