@@ -1,7 +1,7 @@
 <template>
   <body-header
     title="Pending appeals"
-    :records-count="filteredCount"
+    :records-count="applicationAppeals.count"
     sub-title="Appeals that require ministry review."
   />
   <content-group>
@@ -28,18 +28,25 @@
           class="btn-toggle"
           selected-class="selected-btn-toggle"
         >
-          <v-btn value="application" rounded="xl" class="mr-2"
+          <v-btn
+            :value="FormSubmissionApplicationFilter.WithApplication"
+            rounded="xl"
+            class="mr-2"
             >Application</v-btn
           >
-          <v-btn value="other" rounded="xl">Other</v-btn>
+          <v-btn
+            :value="FormSubmissionApplicationFilter.WithoutApplication"
+            rounded="xl"
+            >Other</v-btn
+          >
         </v-btn-toggle>
       </v-col>
     </v-row>
-    <toggle-content :toggled="!filteredCount && !isLoading">
+    <toggle-content :toggled="!applicationAppeals.count && !isLoading">
       <v-data-table-server
         :headers="PendingAppealsTableHeaders"
-        :items="filteredResults"
-        :items-length="filteredCount"
+        :items="applicationAppeals.results"
+        :items-length="applicationAppeals.count"
         :loading="isLoading"
         :items-per-page="DEFAULT_PAGE_LIMIT"
         :items-per-page-options="ITEMS_PER_PAGE"
@@ -69,9 +76,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import {
+  FormSubmissionApplicationFilter,
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   DataTableSortByOrder,
@@ -93,26 +101,10 @@ const { dateOnlyLongString, emptyStringFiller } = useFormatters();
 const snackBar = useSnackBar();
 const isLoading = ref(false);
 const searchCriteria = ref("");
-const selectedFilter = ref<"application" | "other" | undefined>(undefined);
+const selectedFilter = ref<AppealTypeFilter | undefined>(undefined);
 const applicationAppeals = ref<
   PaginatedResultsAPIOutDTO<FormSubmissionPendingAppealSummaryAPIOutDTO>
 >({ results: [], count: 0 });
-
-const filteredResults = computed(() => {
-  if (selectedFilter.value === "application") {
-    return applicationAppeals.value.results.filter((a) => !!a.applicationId);
-  }
-  if (selectedFilter.value === "other") {
-    return applicationAppeals.value.results.filter((a) => !a.applicationId);
-  }
-  return applicationAppeals.value.results;
-});
-
-const filteredCount = computed(() =>
-  selectedFilter.value
-    ? filteredResults.value.length
-    : applicationAppeals.value.count,
-);
 
 const DEFAULT_SORT_FIELD = "submittedDate";
 const currentPagination: PaginationOptions = {
@@ -153,13 +145,16 @@ const loadAppeals = async () => {
   try {
     isLoading.value = true;
     applicationAppeals.value =
-      await FormSubmissionService.shared.getPendingAppeals({
-        page: currentPagination.page,
-        pageLimit: currentPagination.pageLimit,
-        sortField: currentPagination.sortField,
-        sortOrder: currentPagination.sortOrder,
-        searchCriteria: searchCriteria.value,
-      });
+      await FormSubmissionService.shared.getPendingAppeals(
+        {
+          page: currentPagination.page,
+          pageLimit: currentPagination.pageLimit,
+          sortField: currentPagination.sortField,
+          sortOrder: currentPagination.sortOrder,
+          searchCriteria: searchCriteria.value,
+        },
+        { applicationFilter: selectedFilter.value },
+      );
   } catch {
     snackBar.error("Error loading appeals.");
   } finally {
@@ -170,6 +165,10 @@ const loadAppeals = async () => {
 const searchAppeals = async () => {
   await loadAppeals();
 };
+
+watch(selectedFilter, async () => {
+  await loadAppeals();
+});
 
 const pageSortEvent = async (event: DataTableOptions) => {
   currentPagination.page = event.page;

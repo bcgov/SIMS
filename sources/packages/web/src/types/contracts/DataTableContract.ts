@@ -115,6 +115,14 @@ export enum PaginationParams {
 }
 
 /**
+ * Application filter options for the form submissions.
+ */
+export enum FormSubmissionApplicationFilter {
+  WithApplication = "withApplication",
+  WithoutApplication = "withoutApplication",
+}
+
+/**
  * Pagination Options.
  * @param searchCriteria search criteria can be a single criterion
  * or it can be an object with multiple search criteria (for eg. search of
@@ -512,7 +520,6 @@ export const PendingChangeRequestsTableHeaders = [
   { title: "Application", sortable: true, key: "applicationNumber" },
   { title: "Action", sortable: false, key: "action" },
 ];
-
 
 export const PendingAppealsTableHeaders = [
   { title: "Date submitted", sortable: true, key: "submittedDate" },

@@ -14,6 +14,7 @@ import {
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
+  FormSubmissionApplicationFilter,
   FormSubmissionConfig,
   FormSubmissionModel,
   FormSubmissionPendingPaginationOptions,
@@ -142,8 +143,14 @@ export class FormSubmissionService {
     paginationOptions: FormSubmissionPendingPaginationOptions,
     formCategory: FormCategory,
   ): Promise<PaginatedResults<FormSubmissionPendingSummary>> {
-    const { page, pageLimit, sortField, sortOrder, searchCriteria } =
-      paginationOptions;
+    const {
+      page,
+      pageLimit,
+      sortField,
+      sortOrder,
+      searchCriteria,
+      applicationFilter,
+    } = paginationOptions;
 
     const query = this.dataSource
       .getRepository(FormSubmission)
@@ -175,10 +182,25 @@ export class FormSubmissionService {
         category: formCategory,
       });
 
+    if (applicationFilter === FormSubmissionApplicationFilter.WithApplication) {
+      query.andWhere("application.id IS NOT NULL");
+    } else if (
+      applicationFilter === FormSubmissionApplicationFilter.WithoutApplication
+    ) {
+      query.andWhere("application.id IS NULL");
+    }
+
     if (searchCriteria) {
       query
-        .andWhere(new Brackets((qb) => qb.where(getUserFullNameLikeSearch())))
-        .setParameter("searchCriteria", `%${searchCriteria}%`);
+        .andWhere(
+          new Brackets((qb) =>
+            qb
+              .where(getUserFullNameLikeSearch())
+              .orWhere("application.applicationNumber = :exactSearchCriteria"),
+          ),
+        )
+        .setParameter("searchCriteria", `%${searchCriteria}%`)
+        .setParameter("exactSearchCriteria", searchCriteria);
     }
 
     const sortFieldMapping: Record<string, string> = {

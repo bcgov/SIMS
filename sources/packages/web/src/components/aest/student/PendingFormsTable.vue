@@ -41,7 +41,9 @@
           {{ emptyStringFiller(item.firstName) }}
         </template>
         <template #[`item.formNames`]="{ item }">
-          {{ item.formNames.join(", ") }}
+          <div v-for="formName in item.formNames" :key="formName">
+            {{ formName }}
+          </div>
         </template>
         <template #[`item.action`]="{ item }">
           <v-btn color="primary" @click="goToFormSubmission(item)">View</v-btn>
@@ -104,14 +106,13 @@ const goToFormSubmission = (
 const loadForms = async () => {
   try {
     isLoading.value = true;
-    pendingForms.value =
-      await FormSubmissionService.shared.getPendingFormSubmissions({
-        page: currentPagination.page,
-        pageLimit: currentPagination.pageLimit,
-        sortField: currentPagination.sortField,
-        sortOrder: currentPagination.sortOrder,
-        searchCriteria: searchCriteria.value,
-      });
+    pendingForms.value = await FormSubmissionService.shared.getPendingForms({
+      page: currentPagination.page,
+      pageLimit: currentPagination.pageLimit,
+      sortField: currentPagination.sortField,
+      sortOrder: currentPagination.sortOrder,
+      searchCriteria: searchCriteria.value,
+    });
   } catch {
     snackBar.error("Error loading pending forms.");
   } finally {

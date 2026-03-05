@@ -71,6 +71,14 @@ export interface FormItemDecision {
 }
 
 /**
+ * Application filter options for the form submissions.
+ */
+export enum FormSubmissionApplicationFilter {
+  WithApplication = "withApplication",
+  WithoutApplication = "withoutApplication",
+}
+
+/**
  * Pagination options for querying pending form submissions in the ministry queue.
  */
 export interface FormSubmissionPendingPaginationOptions {
@@ -79,6 +87,7 @@ export interface FormSubmissionPendingPaginationOptions {
   sortOrder?: FieldSortOrder;
   page: number;
   pageLimit: number;
+  applicationFilter?: FormSubmissionApplicationFilter;
 }
 
 /**

@@ -12,7 +12,7 @@ import {
   FormSubmissionPendingSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
-import { PaginationOptions } from "@/types";
+import { FormSubmissionApplicationFilter, PaginationOptions } from "@/types";
 
 export class FormSubmissionService {
   // Share Instance
@@ -91,14 +91,20 @@ export class FormSubmissionService {
   /**
    * Gets all pending appeal form submissions for ministry review.
    * @param paginationOptions options to execute the pagination.
+   * @param options additional filter options.
+   * - `applicationFilter` filters the results by application type (with or without application).
    * @returns paginated list of pending appeal submissions including optional application details.
    */
   async getPendingAppeals(
     paginationOptions: PaginationOptions,
+    options?: { applicationFilter?: FormSubmissionApplicationFilter },
   ): Promise<
     PaginatedResultsAPIOutDTO<FormSubmissionPendingAppealSummaryAPIOutDTO>
   > {
-    return ApiClient.FormSubmissionApi.getPendingAppeals(paginationOptions);
+    return ApiClient.FormSubmissionApi.getPendingAppeals(
+      paginationOptions,
+      options,
+    );
   }
 
   /**
