@@ -36,6 +36,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     env:
+      NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+      BUILD_REF: ${{ github.ref_name }}
+      HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
       FORMS_URL: ${{ secrets.FORMS_URL }}
       FORMS_SA_USER_NAME: ${{ secrets.FORMS_SA_USER_NAME }}
       FORMS_SA_PASSWORD: ${{ secrets.FORMS_SA_PASSWORD }}

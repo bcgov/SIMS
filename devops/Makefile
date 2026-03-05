@@ -328,14 +328,14 @@ deploy-migrations:
 run-db-migrations:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_REF)"
-	test -n "$(MIGRATIONS_JOB_NAME)"
+	test -n "$(HOST_PREFIX)"
 	@echo "+\n++ Run DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) exec job/$(MIGRATIONS_JOB_NAME) -- npm run migration:run
 
 deploy-form-definitions:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_REF)"
-	test -n "$(MIGRATIONS_JOB_NAME)"
+	test -n "$(HOST_PREFIX)"
 	@echo "+\n++ Run DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) exec job/$(MIGRATIONS_JOB_NAME) -- npm run deploy --prefix forms
 
