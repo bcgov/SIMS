@@ -144,19 +144,17 @@ export default defineComponent({
           },
         },
       },
-      {
-        title: "Appeals",
-        props: {
-          prependIcon: "mdi-scale-balance",
-          to: {
-            name: isFormSubmissionEnabled.value
-              ? AESTRoutesConst.STUDENT_APPEALS
-              : AESTRoutesConst.LEGACY_STUDENT_APPEALS,
-          },
-        },
-      },
       ...(isFormSubmissionEnabled.value
         ? [
+            {
+              title: "Appeals",
+              props: {
+                prependIcon: "mdi-scale-balance",
+                to: {
+                  name: AESTRoutesConst.STUDENT_APPEALS,
+                },
+              },
+            },
             {
               title: "Forms",
               props: {
@@ -167,7 +165,17 @@ export default defineComponent({
               },
             },
           ]
-        : []),
+        : [
+            {
+              title: "Appeals",
+              props: {
+                prependIcon: "mdi-scale-balance",
+                to: {
+                  name: AESTRoutesConst.LEGACY_STUDENT_APPEALS,
+                },
+              },
+            },
+          ]),
       {
         type: "subheader",
         title: "Institution requests",
