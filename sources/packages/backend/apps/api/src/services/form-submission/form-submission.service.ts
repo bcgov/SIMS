@@ -201,12 +201,11 @@ export class FormSubmissionService {
           new Brackets((qb) =>
             qb
               .where(getUserFullNameLikeSearch())
-              .orWhere(
-                "application.applicationNumber ILIKE TRIM(:searchCriteria)",
-              ),
+              .orWhere("application.applicationNumber = :applicationNumber"),
           ),
         )
-        .setParameter("searchCriteria", `%${trimmedSearchCriteria}%`);
+        .setParameter("searchCriteria", `%${trimmedSearchCriteria}%`)
+        .setParameter("applicationNumber", trimmedSearchCriteria);
     }
 
     const sortFieldMapping: Record<string, string> = {
