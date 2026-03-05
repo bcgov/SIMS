@@ -200,10 +200,13 @@ export class FormSubmissionPendingSummaryAPIOutDTO {
 
 /**
  * Summary of a pending appeal form submission for the ministry queue.
- * Extends the base pending form submission summary with application details,
- * since appeals are associated with a student application.
  */
-export class FormSubmissionPendingAppealSummaryAPIOutDTO extends FormSubmissionPendingSummaryAPIOutDTO {
+export class FormSubmissionPendingAppealSummaryAPIOutDTO {
+  formSubmissionId: number;
+  studentId: number;
+  submittedDate: Date;
+  firstName?: string;
+  lastName: string;
   applicationId?: number;
   applicationNumber?: string;
 }

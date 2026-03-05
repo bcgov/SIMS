@@ -1,4 +1,5 @@
 import {
+  Application,
   DynamicFormConfiguration,
   FormCategory,
   FormSubmission,
@@ -69,6 +70,8 @@ export function createFakeFormSubmissionItem(
  * - `student` student performing the submission. When not provided, a new student is created.
  * - `dynamicFormConfiguration` form configuration used by all items. When not provided,
  * an existing one is fetched from the database by the resolved `formCategory`.
+ * - `application` application associated with the submission, used for appeal submissions
+ * that are linked to a student application.
  * @param options submission options.
  * - `formCategory` category for the submission and its dynamic form configuration.
  * Defaults to `FormCategory.StudentForm`.
@@ -81,6 +84,7 @@ export async function saveFakeFormSubmission(
   relations?: {
     student?: Student;
     dynamicFormConfiguration?: DynamicFormConfiguration;
+    application?: Application;
   },
   options?: {
     formCategory?: FormCategory;
@@ -101,6 +105,7 @@ export async function saveFakeFormSubmission(
   formSubmission.creator = student.user;
   formSubmission.submittedDate = new Date();
   formSubmission.formCategory = formCategory;
+  formSubmission.application = relations?.application;
   const submissionStatus =
     options?.submissionStatus ?? FormSubmissionStatus.Pending;
   formSubmission.submissionStatus = submissionStatus;

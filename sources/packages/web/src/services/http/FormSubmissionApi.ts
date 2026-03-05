@@ -162,10 +162,10 @@ export class FormSubmissionApi extends HttpBaseClient {
    * @param paginationOptions options to execute the pagination.
    * @returns paginated list of pending form submissions.
    */
-  async getPendingFormSubmissions(
+  async getPendingForms(
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>> {
-    const url = `form-submission/pending?${getPaginationQueryString(paginationOptions)}`;
+    const url = `form-submission/pending-forms?${getPaginationQueryString(paginationOptions)}`;
     return this.getCall<
       PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>
     >(this.addClientRoot(url));

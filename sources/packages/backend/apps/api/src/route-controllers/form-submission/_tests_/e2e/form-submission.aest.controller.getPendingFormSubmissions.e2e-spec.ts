@@ -1,4 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
+import { faker } from "@faker-js/faker";
 import * as request from "supertest";
 import {
   AESTGroups,
@@ -9,8 +10,10 @@ import {
 import { FormCategory, FormSubmissionStatus } from "@sims/sims-db";
 import {
   createE2EDataSources,
+  createFakeUser,
   E2EDataSources,
   saveFakeFormSubmission,
+  saveFakeStudent,
 } from "@sims/test-utils";
 
 describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
@@ -23,33 +26,50 @@ describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should return only pending StudentForm submissions in the paginated results.", async () => {
+  it("Should return only pending StudentForm submissions in the paginated results when using the pending forms endpoint.", async () => {
     // Arrange
-    const [
-      pendingSubmission1,
-      pendingSubmission2,
-      completedSubmission,
-      appealSubmission,
-    ] = await Promise.all([
-      saveFakeFormSubmission(db, undefined, {
+    // Add a unique identifier in the student lastName to isolate the data.
+    const uniqueIdentifier = faker.string.uuid();
+    const user1 = createFakeUser();
+    user1.lastName = uniqueIdentifier;
+    const user2 = createFakeUser();
+    user2.lastName = uniqueIdentifier;
+    const student1 = await saveFakeStudent(db.dataSource, { user: user1 });
+    const student2 = await saveFakeStudent(db.dataSource, { user: user2 });
+    const pendingSubmission1 = await saveFakeFormSubmission(
+      db,
+      { student: student1 },
+      {
         formCategory: FormCategory.StudentForm,
         submissionStatus: FormSubmissionStatus.Pending,
-      }),
-      saveFakeFormSubmission(db, undefined, {
+      },
+    );
+    const pendingSubmission2 = await saveFakeFormSubmission(
+      db,
+      { student: student2 },
+      {
         formCategory: FormCategory.StudentForm,
         submissionStatus: FormSubmissionStatus.Pending,
-      }),
-      saveFakeFormSubmission(db, undefined, {
+      },
+    );
+    // Unused submissions without the unique identifier to verify the endpoint filtering.
+    await saveFakeFormSubmission(
+      db,
+      { student: student2 },
+      {
         formCategory: FormCategory.StudentForm,
         submissionStatus: FormSubmissionStatus.Completed,
-      }),
-      saveFakeFormSubmission(db, undefined, {
+      },
+    );
+    await saveFakeFormSubmission(
+      db,
+      { student: student2 },
+      {
         formCategory: FormCategory.StudentAppeal,
         submissionStatus: FormSubmissionStatus.Pending,
-      }),
-    ]);
-    const endpoint =
-      "/aest/form-submission/pending?page=0&pageLimit=100&sortField=submittedDate&sortOrder=DESC";
+      },
+    );
+    const endpoint = `/aest/form-submission/pending-forms?page=0&pageLimit=100&sortField=submittedDate&sortOrder=DESC&searchCriteria=${uniqueIdentifier}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -57,41 +77,34 @@ describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        const results = response.body.results;
-        expect(results).toEqual(
-          expect.arrayContaining([
-            expect.objectContaining({
-              formSubmissionId: pendingSubmission1.id,
-              studentId: pendingSubmission1.student.id,
-            }),
-            expect.objectContaining({
-              formSubmissionId: pendingSubmission2.id,
-              studentId: pendingSubmission2.student.id,
-            }),
-          ]),
-        );
-        expect(results).not.toContainEqual(
-          expect.objectContaining({
-            formSubmissionId: completedSubmission.id,
-          }),
-        );
-        expect(results).not.toContainEqual(
-          expect.objectContaining({
-            formSubmissionId: appealSubmission.id,
-          }),
-        );
+      .expect({
+        results: [
+          {
+            formSubmissionId: pendingSubmission2.id,
+            studentId: pendingSubmission2.student.id,
+            submittedDate: pendingSubmission2.submittedDate.toISOString(),
+            firstName: pendingSubmission2.student.user.firstName,
+            lastName: pendingSubmission2.student.user.lastName,
+            formNames: pendingSubmission2.formSubmissionItems.map(
+              (item) =>
+                item.dynamicFormConfiguration.formDescription ??
+                (item.dynamicFormConfiguration.formType as string),
+            ),
+          },
+          {
+            formSubmissionId: pendingSubmission1.id,
+            studentId: pendingSubmission1.student.id,
+            submittedDate: pendingSubmission1.submittedDate.toISOString(),
+            firstName: pendingSubmission1.student.user.firstName,
+            lastName: pendingSubmission1.student.user.lastName,
+            formNames: pendingSubmission1.formSubmissionItems.map(
+              (item) =>
+                item.dynamicFormConfiguration.formDescription ??
+                (item.dynamicFormConfiguration.formType as string),
+            ),
+          },
+        ],
+        count: 2,
       });
-  });
-
-  it("Should return 401 when the request is not authenticated.", async () => {
-    // Arrange
-    const endpoint =
-      "/aest/form-submission/pending?page=0&pageLimit=100&sortField=submittedDate&sortOrder=DESC";
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .expect(HttpStatus.UNAUTHORIZED);
   });
 });

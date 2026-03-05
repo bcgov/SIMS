@@ -76,7 +76,7 @@ export class FormSubmissionAESTController extends BaseController {
    * @param pagination pagination options to control page size, sorting, and optional search.
    * @returns paginated list of pending form submissions awaiting ministry review.
    */
-  @Get("pending")
+  @Get("pending-forms")
   async getPendingFormSubmissions(
     @Query() pagination: FormSubmissionPendingPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>> {
@@ -125,7 +125,6 @@ export class FormSubmissionAESTController extends BaseController {
         submittedDate: submission.submittedDate,
         firstName: submission.firstName,
         lastName: submission.lastName,
-        formNames: submission.formNames,
         applicationId: submission.applicationId,
         applicationNumber: submission.applicationNumber,
       })),

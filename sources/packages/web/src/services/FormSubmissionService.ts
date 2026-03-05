@@ -82,12 +82,10 @@ export class FormSubmissionService {
    * @param paginationOptions options to execute the pagination.
    * @returns paginated list of pending form submissions.
    */
-  async getPendingFormSubmissions(
+  async getPendingForms(
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>> {
-    return ApiClient.FormSubmissionApi.getPendingFormSubmissions(
-      paginationOptions,
-    );
+    return ApiClient.FormSubmissionApi.getPendingForms(paginationOptions);
   }
 
   /**
