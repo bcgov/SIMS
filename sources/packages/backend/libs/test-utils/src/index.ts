@@ -51,3 +51,4 @@ export * from "./factories/sfas-restriction";
 export * from "./factories/sin-validation";
 export * from "./factories/sfas-application";
 export * from "./factories/system-lookup-configuration";
+export * from "./factories/form-submission";

@@ -3,20 +3,24 @@
     title="Pending forms"
     :records-count="pendingForms.count"
     sub-title="Forms that require ministry review."
-  >
-    <template #actions>
-      <v-text-field
-        density="compact"
-        label="Search name"
-        variant="outlined"
-        v-model="searchCriteria"
-        @keyup.enter="searchForms"
-        prepend-inner-icon="mdi-magnify"
-        hide-details="auto"
-      />
-    </template>
-  </body-header>
+  />
   <content-group>
+    <v-row class="m-0 p-0 mb-2" align="center">
+      <v-col md="auto" class="flex-grow-1 pa-0 pr-2 mb-1">
+        <v-text-field
+          density="compact"
+          label="Search name"
+          variant="outlined"
+          v-model="searchCriteria"
+          @keyup.enter="searchForms"
+          prepend-inner-icon="mdi-magnify"
+          hide-details="auto"
+        />
+      </v-col>
+      <v-col cols="auto" class="pa-0 pr-2">
+        <v-btn color="primary" @click="searchForms">Search</v-btn>
+      </v-col>
+    </v-row>
     <toggle-content :toggled="!pendingForms.count && !isLoading">
       <v-data-table-server
         :headers="PendingFormsTableHeaders"
@@ -85,16 +89,15 @@ const currentPagination: PaginationOptions = {
 };
 
 /**
- * Navigates to the student profile to view the form submission details.
- * The dedicated form submission AEST review view will replace this once available.
+ * Navigates to the form submission approval page for ministry review.
  * @param formSubmission pending form submission to navigate to.
  */
 const goToFormSubmission = (
   formSubmission: FormSubmissionPendingSummaryAPIOutDTO,
 ) => {
   router.push({
-    name: AESTRoutesConst.STUDENT_DETAILS,
-    params: { studentId: formSubmission.studentId },
+    name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_APPROVAL,
+    params: { formSubmissionId: formSubmission.formSubmissionId },
   });
 };
 

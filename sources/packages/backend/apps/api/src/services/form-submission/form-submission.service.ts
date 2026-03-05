@@ -154,8 +154,11 @@ export class FormSubmissionService {
         "student.id",
         "user.firstName",
         "user.lastName",
+        "formSubmissionItem.id",
         "dynamicFormConfiguration.formDescription",
         "dynamicFormConfiguration.formType",
+        "application.id",
+        "application.applicationNumber",
       ])
       .innerJoin("formSubmission.student", "student")
       .innerJoin("student.user", "user")
@@ -164,6 +167,7 @@ export class FormSubmissionService {
         "formSubmissionItem.dynamicFormConfiguration",
         "dynamicFormConfiguration",
       )
+      .leftJoin("formSubmission.application", "application")
       .where("formSubmission.submissionStatus = :status", {
         status: FormSubmissionStatus.Pending,
       })
@@ -180,6 +184,7 @@ export class FormSubmissionService {
     const sortFieldMapping: Record<string, string> = {
       submittedDate: "formSubmission.submittedDate",
       lastName: "user.lastName",
+      applicationNumber: "application.applicationNumber",
     };
     const dbSortField =
       sortFieldMapping[sortField ?? "submittedDate"] ??
@@ -204,6 +209,8 @@ export class FormSubmissionService {
             formSubmissionItem.dynamicFormConfiguration.formDescription ??
             (formSubmissionItem.dynamicFormConfiguration.formType as string),
         ),
+        applicationId: item.application?.id,
+        applicationNumber: item.application?.applicationNumber,
       })),
       count,
     };

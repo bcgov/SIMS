@@ -1,39 +1,45 @@
 <template>
   <body-header
     title="Pending appeals"
-    :records-count="applicationAppeals.count"
+    :records-count="filteredCount"
     sub-title="Appeals that require ministry review."
-  >
-    <template #actions>
-      <v-text-field
-        density="compact"
-        label="Search name or application #"
-        variant="outlined"
-        v-model="searchCriteria"
-        @keyup.enter="searchAppeals"
-        prepend-inner-icon="mdi-magnify"
-        hide-details="auto"
-      >
-      </v-text-field>
-    </template>
-  </body-header>
-  <v-btn-toggle
-    v-model="selectedFilter"
-    mandatory
-    color="primary"
-    class="mb-4"
-    density="compact"
-  >
-    <v-btn value="all" rounded="lg">All</v-btn>
-    <v-btn value="application" rounded="lg">Application</v-btn>
-    <v-btn value="other" rounded="lg">Other</v-btn>
-  </v-btn-toggle>
+  />
   <content-group>
-    <toggle-content :toggled="!applicationAppeals.count && !isLoading">
+    <v-row class="m-0 p-0 mb-2" align="center">
+      <v-col md="auto" class="flex-grow-1 pa-0 pr-2 mb-1">
+        <v-text-field
+          density="compact"
+          label="Search name or application #"
+          variant="outlined"
+          v-model="searchCriteria"
+          @keyup.enter="searchAppeals"
+          prepend-inner-icon="mdi-magnify"
+          hide-details="auto"
+        />
+      </v-col>
+      <v-col cols="auto" class="pa-0 pr-2">
+        <v-btn color="primary" @click="searchAppeals">Search</v-btn>
+      </v-col>
+      <v-col cols="auto" class="pa-0">
+        <v-btn-toggle
+          v-model="selectedFilter"
+          color="primary"
+          density="compact"
+          class="btn-toggle"
+          selected-class="selected-btn-toggle"
+        >
+          <v-btn value="application" rounded="xl" class="mr-2"
+            >Application</v-btn
+          >
+          <v-btn value="other" rounded="xl">Other</v-btn>
+        </v-btn-toggle>
+      </v-col>
+    </v-row>
+    <toggle-content :toggled="!filteredCount && !isLoading">
       <v-data-table-server
         :headers="PendingAppealsTableHeaders"
-        :items="applicationAppeals.results"
-        :items-length="applicationAppeals.count"
+        :items="filteredResults"
+        :items-length="filteredCount"
         :loading="isLoading"
         :items-per-page="DEFAULT_PAGE_LIMIT"
         :items-per-page-options="ITEMS_PER_PAGE"
@@ -48,6 +54,9 @@
         <template #[`item.firstName`]="{ item }">
           {{ emptyStringFiller(item.firstName) }}
         </template>
+        <template #[`item.applicationNumber`]="{ item }">
+          {{ emptyStringFiller(item.applicationNumber) }}
+        </template>
         <template #[`item.appealType`]="{ item }">
           {{ item.applicationId ? "Application" : "Other" }}
         </template>
@@ -60,13 +69,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   DataTableSortByOrder,
-  PaginatedResults,
   PendingAppealsTableHeaders,
   DataTableOptions,
   PaginationOptions,
@@ -74,17 +82,36 @@ import {
 } from "@/types";
 import { useFormatters, useSnackBar } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { StudentAppealPendingSummaryAPIOutDTO } from "@/services/http/dto/StudentAppeal.dto";
-import { StudentAppealService } from "@/services/StudentAppealService";
+import {
+  FormSubmissionPendingAppealSummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+} from "@/services/http/dto";
+import { FormSubmissionService } from "@/services/FormSubmissionService";
 
 const router = useRouter();
 const { dateOnlyLongString, emptyStringFiller } = useFormatters();
 const snackBar = useSnackBar();
 const isLoading = ref(false);
 const searchCriteria = ref("");
-const selectedFilter = ref<"all" | "application" | "other">("all");
-const applicationAppeals = ref(
-  {} as PaginatedResults<StudentAppealPendingSummaryAPIOutDTO>,
+const selectedFilter = ref<"application" | "other" | undefined>(undefined);
+const applicationAppeals = ref<
+  PaginatedResultsAPIOutDTO<FormSubmissionPendingAppealSummaryAPIOutDTO>
+>({ results: [], count: 0 });
+
+const filteredResults = computed(() => {
+  if (selectedFilter.value === "application") {
+    return applicationAppeals.value.results.filter((a) => !!a.applicationId);
+  }
+  if (selectedFilter.value === "other") {
+    return applicationAppeals.value.results.filter((a) => !a.applicationId);
+  }
+  return applicationAppeals.value.results;
+});
+
+const filteredCount = computed(() =>
+  selectedFilter.value
+    ? filteredResults.value.length
+    : applicationAppeals.value.count,
 );
 
 const DEFAULT_SORT_FIELD = "submittedDate";
@@ -98,11 +125,11 @@ const currentPagination: PaginationOptions = {
 /**
  * Navigates to the appropriate page to review and approve the pending appeal.
  * Application appeals are redirected to the assessments summary page, while
- * non-application appeals are redirected to the standalone appeal requests page.
+ * non-application appeals are redirected to the form submission approval page.
  * @param pendingAppeal pending appeal item to navigate to.
  */
 const goToAppealsApproval = (
-  pendingAppeal: StudentAppealPendingSummaryAPIOutDTO,
+  pendingAppeal: FormSubmissionPendingAppealSummaryAPIOutDTO,
 ) => {
   if (pendingAppeal.applicationId) {
     router.push({
@@ -115,9 +142,9 @@ const goToAppealsApproval = (
     return;
   }
   router.push({
-    name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
+    name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_APPROVAL,
     params: {
-      appealId: pendingAppeal.appealId,
+      formSubmissionId: pendingAppeal.formSubmissionId,
     },
   });
 };
@@ -126,15 +153,12 @@ const loadAppeals = async () => {
   try {
     isLoading.value = true;
     applicationAppeals.value =
-      await StudentAppealService.shared.getPendingAppeals({
+      await FormSubmissionService.shared.getPendingAppeals({
         page: currentPagination.page,
         pageLimit: currentPagination.pageLimit,
         sortField: currentPagination.sortField,
         sortOrder: currentPagination.sortOrder,
-        searchCriteria: {
-          appealType: selectedFilter.value,
-          searchCriteria: searchCriteria.value,
-        },
+        searchCriteria: searchCriteria.value,
       });
   } catch {
     snackBar.error("Error loading appeals.");
@@ -162,10 +186,6 @@ const pageSortEvent = async (event: DataTableOptions) => {
 };
 
 onMounted(async () => {
-  await loadAppeals();
-});
-
-watch(selectedFilter, async () => {
   await loadAppeals();
 });
 </script>

@@ -37,15 +37,17 @@ import {
   FormSubmissionCompletionAPIInDTO,
   FormSubmissionItemDecisionAPIInDTO,
   FormSubmissionMinistryAPIOutDTO,
+  FormSubmissionPendingAppealSummaryAPIOutDTO,
   FormSubmissionPendingSummaryAPIOutDTO,
 } from "./models/form-submission.dto";
 import { getUserFullName } from "../../utilities";
 import { FormCategory, FormSubmissionDecisionStatus } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import {
+  FormSubmissionPendingAppealPaginationOptionsAPIInDTO,
   FormSubmissionPendingPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
-} from "apps/api/src/route-controllers/models/pagination.dto";
+} from "../models/pagination.dto";
 
 /**
  * Roles allowed to update the form submission item decision
@@ -91,6 +93,41 @@ export class FormSubmissionAESTController extends BaseController {
         firstName: submission.firstName,
         lastName: submission.lastName,
         formNames: submission.formNames,
+      })),
+      count: pendingSubmissions.count,
+    };
+  }
+
+  /**
+   * Gets all pending student appeal form submissions for ministry review.
+   * Only form submissions with category StudentAppeal and status Pending are returned.
+   * Unlike regular form submissions, appeals may be linked to a student application,
+   * so the response includes optional applicationId and applicationNumber fields.
+   * @param pagination pagination options to control page size, sorting, and optional search.
+   * @returns paginated list of pending appeal submissions awaiting ministry review.
+   */
+  @Get("pending-appeals")
+  async getPendingAppeals(
+    @Query()
+    pagination: FormSubmissionPendingAppealPaginationOptionsAPIInDTO,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<FormSubmissionPendingAppealSummaryAPIOutDTO>
+  > {
+    const pendingSubmissions =
+      await this.formSubmissionService.getPendingFormSubmissions(
+        pagination,
+        FormCategory.StudentAppeal,
+      );
+    return {
+      results: pendingSubmissions.results.map((submission) => ({
+        formSubmissionId: submission.formSubmissionId,
+        studentId: submission.studentId,
+        submittedDate: submission.submittedDate,
+        firstName: submission.firstName,
+        lastName: submission.lastName,
+        formNames: submission.formNames,
+        applicationId: submission.applicationId,
+        applicationNumber: submission.applicationNumber,
       })),
       count: pendingSubmissions.count,
     };

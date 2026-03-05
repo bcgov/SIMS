@@ -92,4 +92,6 @@ export interface FormSubmissionPendingSummary {
   firstName?: string;
   lastName: string;
   formNames: string[];
+  applicationId?: number;
+  applicationNumber?: string;
 }

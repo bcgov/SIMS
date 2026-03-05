@@ -191,3 +191,13 @@ export interface FormSubmissionPendingSummaryAPIOutDTO {
   lastName: string;
   formNames: string[];
 }
+
+/**
+ * Summary of a pending appeal form submission for the ministry queue.
+ * Extends the base pending form submission summary with application details,
+ * since appeals are associated with a student application.
+ */
+export interface FormSubmissionPendingAppealSummaryAPIOutDTO extends FormSubmissionPendingSummaryAPIOutDTO {
+  applicationId?: number;
+  applicationNumber?: string;
+}

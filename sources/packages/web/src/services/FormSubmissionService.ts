@@ -8,6 +8,7 @@ import {
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionCompletionAPIInDTO,
   FormSubmissionStudentAPIOutDTO,
+  FormSubmissionPendingAppealSummaryAPIOutDTO,
   FormSubmissionPendingSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
@@ -87,6 +88,19 @@ export class FormSubmissionService {
     return ApiClient.FormSubmissionApi.getPendingFormSubmissions(
       paginationOptions,
     );
+  }
+
+  /**
+   * Gets all pending appeal form submissions for ministry review.
+   * @param paginationOptions options to execute the pagination.
+   * @returns paginated list of pending appeal submissions including optional application details.
+   */
+  async getPendingAppeals(
+    paginationOptions: PaginationOptions,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<FormSubmissionPendingAppealSummaryAPIOutDTO>
+  > {
+    return ApiClient.FormSubmissionApi.getPendingAppeals(paginationOptions);
   }
 
   /**

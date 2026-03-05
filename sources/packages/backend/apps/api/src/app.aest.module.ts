@@ -49,6 +49,17 @@ import {
   FormSubmissionUpdateModifiedIndependentAction,
 } from "./services";
 import {
+  ConfigurationContextValidator,
+  PendingConcurrencyValidator,
+  ApplicationEligibleAppealsValidator,
+  FormSubmissionValidator,
+} from "./services/form-submission/form-submission-validator";
+import {
+  SupplementaryDataProgramYear,
+  SupplementaryDataParents,
+  SupplementaryDataLoader,
+} from "./services/form-submission/form-supplementary-data";
+import {
   SupportingUserAESTController,
   DesignationAgreementAESTController,
   DesignationAgreementControllerService,
@@ -233,6 +244,15 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     StudentAppealActionsProcessor,
     StudentAppealCreateAssessmentAction,
     StudentAppealUpdateModifiedIndependentAction,
+    // Form validators.
+    ConfigurationContextValidator,
+    PendingConcurrencyValidator,
+    ApplicationEligibleAppealsValidator,
+    FormSubmissionValidator,
+    // Form supplementary data loaders.
+    SupplementaryDataProgramYear,
+    SupplementaryDataParents,
+    SupplementaryDataLoader,
     FormSubmissionService,
     // Form submission actions.
     FormSubmissionCreateAppealAssessmentAction,

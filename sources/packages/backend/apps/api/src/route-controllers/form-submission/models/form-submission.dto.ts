@@ -199,6 +199,16 @@ export class FormSubmissionPendingSummaryAPIOutDTO {
 }
 
 /**
+ * Summary of a pending appeal form submission for the ministry queue.
+ * Extends the base pending form submission summary with application details,
+ * since appeals are associated with a student application.
+ */
+export class FormSubmissionPendingAppealSummaryAPIOutDTO extends FormSubmissionPendingSummaryAPIOutDTO {
+  applicationId?: number;
+  applicationNumber?: string;
+}
+
+/**
  * Ministry individual form item decision update.
  */
 export class FormSubmissionItemDecisionAPIInDTO {

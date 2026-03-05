@@ -8,6 +8,7 @@ import {
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionItemDecisionAPIInDTO,
   FormSubmissionCompletionAPIInDTO,
+  FormSubmissionPendingAppealSummaryAPIOutDTO,
   FormSubmissionPendingSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
@@ -167,6 +168,22 @@ export class FormSubmissionApi extends HttpBaseClient {
     const url = `form-submission/pending?${getPaginationQueryString(paginationOptions)}`;
     return this.getCall<
       PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>
+    >(this.addClientRoot(url));
+  }
+
+  /**
+   * Gets all pending appeal form submissions for ministry review.
+   * @param paginationOptions options to execute the pagination.
+   * @returns paginated list of pending appeal submissions including optional application details.
+   */
+  async getPendingAppeals(
+    paginationOptions: PaginationOptions,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<FormSubmissionPendingAppealSummaryAPIOutDTO>
+  > {
+    const url = `form-submission/pending-appeals?${getPaginationQueryString(paginationOptions)}`;
+    return this.getCall<
+      PaginatedResultsAPIOutDTO<FormSubmissionPendingAppealSummaryAPIOutDTO>
     >(this.addClientRoot(url));
   }
 

@@ -513,11 +513,13 @@ export const PendingChangeRequestsTableHeaders = [
   { title: "Action", sortable: false, key: "action" },
 ];
 
+
 export const PendingAppealsTableHeaders = [
   { title: "Date submitted", sortable: true, key: "submittedDate" },
   { title: "Given names", sortable: false, key: "firstName" },
   { title: "Last name", sortable: true, key: "lastName" },
-  { title: "Appeal type", sortable: false, key: "appealType" },
+  { title: "Application", sortable: true, key: "applicationNumber" },
+  { title: "Type", sortable: false, key: "appealType" },
   { title: "Action", sortable: false, key: "action" },
 ];
 
