@@ -45,6 +45,18 @@ objects:
                     secretKeyRef:
                       key: ${SIMS_DB_NAME}
                       name: ${API_SECRET_NAME}
+                - name: FORMS_SA_USER_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${FORMIO_ROOT_EMAIL_NAME_KEY}
+                      name: ${FORMS_SECRET_NAME}
+                - name: FORMS_SA_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${FORMIO_ROOT_PASSWORD_NAME_KEY}
+                      name: ${FORMS_SECRET_NAME}
+                - name: FORMS_URL
+                  value: "${FORMS_URL}"
               resources:
                 limits:
                   memory: ${MEMORY_LIMIT}
@@ -83,9 +95,19 @@ parameters:
     value: user
   - name: DB_PASSWORD_KEY
     value: password
+  - name: FORMS_SECRET_NAME
+    value: forms
+  - name: FORMIO_ROOT_EMAIL_NAME_KEY
+    value: FORMIO_ROOT_EMAIL
+  - name: FORMIO_ROOT_PASSWORD_NAME_KEY
+    value: FORMIO_ROOT_PASSWORD
+  - name: FORMS_URL_NAME_KEY
+    value: FORMS_URL
   - name: MEMORY_LIMIT
     value: "500M"
   - name: CPU_REQUEST
     value: "0.5"
   - name: MEMORY_REQUEST
     value: "500M"
+  - name: FORMS_URL
+    value: "http://dev-forms:3001"
