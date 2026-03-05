@@ -128,13 +128,13 @@ import {
   RestrictionStatus,
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
-  RestrictionEntityType,
   LayoutTemplates,
   Role,
   ApiProcessError,
   RestrictionType,
   StudentRestrictionsHeaders,
   RestrictionDetail,
+  RestrictedParty,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -316,7 +316,7 @@ export default defineComponent({
       addRestriction,
       addStudentRestriction,
       deleteStudentRestriction,
-      RestrictionEntityType,
+      RestrictedParty,
       LayoutTemplates,
       Role,
       emptyStringFiller,

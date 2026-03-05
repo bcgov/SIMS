@@ -16,9 +16,9 @@ export enum RestrictionType {
   Institution = "Institution",
 }
 /**
- * Enumeration for restriction entity
+ * Enumeration for restriction entity.
  */
-export enum RestrictionEntityType {
+export enum RestrictedParty {
   /**
    * Student entity type
    */

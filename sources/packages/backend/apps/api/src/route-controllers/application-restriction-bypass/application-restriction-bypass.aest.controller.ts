@@ -21,7 +21,7 @@ import {
 import {
   ApplicationRestrictionBypassAPIOutDTO,
   ApplicationRestrictionBypassHistoryAPIOutDTO,
-  AvailableStudentRestrictionsAPIOutDTO,
+  AvailableRestrictionsAPIOutDTO,
   BypassRestrictionAPIInDTO,
   RemoveBypassRestrictionAPIInDTO,
 } from "./models/application-restriction-bypass.dto";
@@ -50,6 +50,7 @@ import {
   StudentRestriction,
   InstitutionRestriction,
 } from "@sims/sims-db";
+import { RestrictedParty } from "@sims/services";
 
 /**
  * Controller for AEST Application Restriction Bypasses.
@@ -121,12 +122,17 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
     if (!applicationRestrictionBypass) {
       throw new NotFoundException("Application restriction bypass not found.");
     }
+    const restriction =
+      applicationRestrictionBypass.studentRestriction ??
+      applicationRestrictionBypass.institutionRestriction;
     return {
       applicationRestrictionBypassId: applicationRestrictionBypass.id,
-      studentRestrictionId: applicationRestrictionBypass.studentRestriction.id,
-      restrictionCode:
-        applicationRestrictionBypass.studentRestriction.restriction
-          .restrictionCode,
+      restrictionId: restriction.id,
+      restrictionCode: restriction.restriction.restrictionCode,
+      restrictionType:
+        restriction instanceof StudentRestriction
+          ? RestrictedParty.Student
+          : RestrictedParty.Institution,
       creationNote: applicationRestrictionBypass.creationNote.description,
       removalNote: applicationRestrictionBypass.removalNote?.description,
       createdBy: getUserFullName(applicationRestrictionBypass.bypassCreatedBy),
@@ -143,24 +149,25 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
   }
 
   /**
-   * Gets available student restrictions to bypass for a given application.
+   * Gets all available restrictions to bypass for a given application.
    * @param applicationId id of the application to retrieve restriction bypasses.
    * @returns application restriction bypasses.
    */
   @Get("application/:applicationId/options-list")
-  async getAvailableStudentRestrictionsToBypass(
+  async getAvailableRestrictionsToBypass(
     @Param("applicationId", ParseIntPipe) applicationId: number,
-  ): Promise<AvailableStudentRestrictionsAPIOutDTO> {
+  ): Promise<AvailableRestrictionsAPIOutDTO> {
     const availableRestrictionsToBypass =
-      await this.applicationRestrictionBypassService.getAvailableStudentRestrictionsToBypass(
+      await this.applicationRestrictionBypassService.getAvailableRestrictionsToBypass(
         applicationId,
       );
     return {
       availableRestrictionsToBypass: availableRestrictionsToBypass.map(
         (item) => ({
-          studentRestrictionId: item.studentRestrictionId,
+          restrictionId: item.restrictionId,
+          restrictionType: item.restrictionType,
           restrictionCode: item.restrictionCode,
-          studentRestrictionCreatedAt: item.studentRestrictionCreatedAt,
+          restrictionCreatedAt: item.restrictionCreatedAt,
         }),
       ),
     };

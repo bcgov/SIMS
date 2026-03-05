@@ -1,3 +1,4 @@
+import { RestrictedParty } from "@sims/services";
 import {
   NOTE_DESCRIPTION_MAX_LENGTH,
   RestrictionBypassBehaviors,
@@ -27,7 +28,9 @@ export class BypassRestrictionAPIInDTO {
   @IsPositive()
   applicationId: number;
   @IsPositive()
-  studentRestrictionId: number;
+  restrictionId: number;
+  @IsEnum(RestrictedParty)
+  restrictionType: RestrictedParty.Student | RestrictedParty.Institution;
   @IsEnum(RestrictionBypassBehaviors)
   bypassBehavior: RestrictionBypassBehaviors;
   @IsNotEmpty()
@@ -41,20 +44,22 @@ export class RemoveBypassRestrictionAPIInDTO {
   note: string;
 }
 
-export class AvailableStudentRestrictionAPIOutDTO {
-  studentRestrictionId: number;
+export class AvailableRestrictionAPIOutDTO {
+  restrictionId: number;
+  restrictionType: RestrictedParty.Student | RestrictedParty.Institution;
   restrictionCode: string;
-  studentRestrictionCreatedAt: Date;
+  restrictionCreatedAt: Date;
 }
 
-export class AvailableStudentRestrictionsAPIOutDTO {
-  availableRestrictionsToBypass: AvailableStudentRestrictionAPIOutDTO[];
+export class AvailableRestrictionsAPIOutDTO {
+  availableRestrictionsToBypass: AvailableRestrictionAPIOutDTO[];
 }
 
 export class ApplicationRestrictionBypassAPIOutDTO {
   applicationRestrictionBypassId: number;
-  studentRestrictionId: number;
+  restrictionId: number;
   restrictionCode: string;
+  restrictionType: RestrictedParty.Student | RestrictedParty.Institution;
   createdDate: string;
   createdBy: string;
   creationNote: string;

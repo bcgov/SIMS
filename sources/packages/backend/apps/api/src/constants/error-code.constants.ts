@@ -210,15 +210,33 @@ export const ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS =
   "ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS";
 
 /**
+ * Bypass for institution restriction already exists.
+ */
+export const ACTIVE_BYPASS_FOR_INSTITUTION_RESTRICTION_ALREADY_EXISTS =
+  "ACTIVE_BYPASS_FOR_INSTITUTION_RESTRICTION_ALREADY_EXISTS";
+
+/**
  * Student restriction is not active.
  */
 export const STUDENT_RESTRICTION_IS_NOT_ACTIVE =
   "STUDENT_RESTRICTION_IS_NOT_ACTIVE";
 
 /**
+ * Institution restriction is not active.
+ */
+export const INSTITUTION_RESTRICTION_IS_NOT_ACTIVE =
+  "INSTITUTION_RESTRICTION_IS_NOT_ACTIVE";
+
+/**
  * Student restriction not found.
  */
 export const STUDENT_RESTRICTION_NOT_FOUND = "STUDENT_RESTRICTION_NOT_FOUND";
+
+/**
+ * Institution restriction not found.
+ */
+export const INSTITUTION_RESTRICTION_NOT_FOUND =
+  "INSTITUTION_RESTRICTION_NOT_FOUND";
 
 /**
  * Student application is in invalid state for application restriction bypass creation.
