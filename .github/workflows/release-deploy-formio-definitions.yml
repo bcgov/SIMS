@@ -40,17 +40,24 @@ jobs:
       FORMS_SA_USER_NAME: ${{ secrets.FORMS_SA_USER_NAME }}
       FORMS_SA_PASSWORD: ${{ secrets.FORMS_SA_PASSWORD }}
     steps:
+      - name: Install CLI tools from OpenShift Mirror
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: "4"
+      - name: Print env
+        run: |
+          echo Deploy Environment: ${{ inputs.environment }}
+          echo GIT REF: ${{ github.ref_name }}
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
         uses: actions/checkout@v6
         with:
-          ref: ${{ inputs.gitRef }}
-      - name: Setup Nodejs
-        uses: actions/setup-node@v6
-        with:
-          node-version: "18.x"
-      - name: Downloading packages
-        working-directory: "./sources/packages/forms"
-        run: npm ci
-      - name: Executing deployment
-        working-directory: "./sources/packages/forms"
-        run: npm run deploy
+          ref: ${{ github.ref_name }}
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+      - name: Run db-migrations using REPL mode
+        working-directory: "./devops/"
+        run: |
+          make deploy-form-definitions

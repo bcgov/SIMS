@@ -72,8 +72,8 @@ export THROTTLE_LIMIT := $(or $(THROTTLE_LIMIT), 30)
 export MAX_WAIT=300 # Maximum wait time in seconds.
 export WAIT_TIME=0  # Initialize wait time to zero.
 
-define DB_MIGRATIONS
-"$(HOST_PREFIX)db-migrations-$(APP_NAME)"
+define MIGRATIONS
+"$(HOST_PREFIX)migrations-$(APP_NAME)"
 endef
 
 define DB_MIGRATIONS_REPL
@@ -81,7 +81,7 @@ define DB_MIGRATIONS_REPL
 endef
 
 define MIGRATIONS_JOB_NAME
-"$(HOST_PREFIX)migrations"
+"$(HOST_PREFIX)migrations-job-$(BUILD_REF)"
 endef
 
 define API
@@ -314,10 +314,10 @@ deploy-migrations:
 	test -n "$(API_SECRET_NAME)"
 	test -n "$(MIGRATIONS_BUILD_REF)"
 	test -n "$(BUILD_REF)"
-	test -n "$(DB_MIGRATIONS)"
+	test -n "$(MIGRATIONS)"
 	@echo "+\n++ Deploying MIGRATIONS with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/migrations-job.yml \
-		-p NAME=$(DB_MIGRATIONS) \
+		-p NAME=$(MIGRATIONS) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
 		-p API_SECRET_NAME=$(API_SECRET_NAME) \
 		-p IMAGE_STREAM_TAG="$(MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
@@ -327,20 +327,17 @@ deploy-migrations:
 
 run-db-migrations:
 	test -n "$(NAMESPACE)"
-	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(API_SECRET_NAME)"
-	test -n "$(MIGRATIONS_BUILD_REF)"
 	test -n "$(BUILD_REF)"
-	test -n "$(DB_MIGRATIONS)"
-	@echo "+\n++ Deploying DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
-	@oc -n $(NAMESPACE) process -f openshift/db-migrations-job.yml \
-		-p NAME=$(DB_MIGRATIONS) \
-		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-		-p API_SECRET_NAME=$(API_SECRET_NAME) \
-		-p IMAGE_STREAM_TAG="$(MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
-		-p BUILD_TAG=$(BUILD_REF) \
-		-p JOB_NAME=$(DB_MIGRATIONS_JOB_NAME) \
-		| oc -n $(NAMESPACE) apply -f -
+	test -n "$(DB_MIGRATIONS_JOB_NAME)"
+	@echo "+\n++ Run DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
+	@oc -n $(NAMESPACE) exec job/$(DB_MIGRATIONS_JOB_NAME) -- npm run migration:run
+
+deploy-form-definitions:
+	test -n "$(NAMESPACE)"
+	test -n "$(BUILD_REF)"
+	test -n "$(DB_MIGRATIONS_JOB_NAME)"
+	@echo "+\n++ Run DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
+	@oc -n $(NAMESPACE) exec job/$(DB_MIGRATIONS_JOB_NAME) -- npm run deploy --prefix forms
 
 wait-for-db-migrations:
 	while [ "$$(oc -n $(NAMESPACE) get job $(DB_MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ] && [ "$$WAIT_TIME" -lt "$$MAX_WAIT" ]; do sleep 5; WAIT_TIME=$$((WAIT_TIME+5)); done

@@ -45,4 +45,4 @@ jobs:
       - name: Run db-migrations using REPL mode
         working-directory: "./devops/"
         run: |
-          make deploy-db-migrations-repl
+          make run-db-migrations
