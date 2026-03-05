@@ -92,7 +92,7 @@ export interface FormSubmissionPendingPaginationOptions {
 
 /**
  * Summary of a pending form submission item for the ministry queue view.
- * Each entry represents one form within a submission.
+ * Each entry represents one pending submission that can include multiple forms.
  */
 export interface FormSubmissionPendingSummary {
   formSubmissionId: number;

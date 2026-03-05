@@ -102,7 +102,9 @@ const { dateOnlyLongString, emptyStringFiller } = useFormatters();
 const snackBar = useSnackBar();
 const isLoading = ref(false);
 const searchCriteria = ref("");
-const selectedFilter = ref<AppealTypeFilter | undefined>(undefined);
+const selectedFilter = ref<FormSubmissionApplicationFilter | undefined>(
+  undefined,
+);
 const applicationAppeals = ref<
   PaginatedResultsAPIOutDTO<FormSubmissionPendingAppealSummaryAPIOutDTO>
 >({ results: [], count: 0 });

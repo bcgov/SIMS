@@ -107,4 +107,8 @@ describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
         count: 2,
       });
   });
+
+  afterAll(async () => {
+    await app?.close();
+  });
 });
