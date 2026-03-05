@@ -111,13 +111,7 @@ export class ApplicationChangeRequestPaginationOptionsAPIInDTO extends Paginatio
 
 export class ProgramsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
-  @IsIn([
-    "submittedDate",
-    "programName",
-    "locationName",
-    "programStatus",
-    "credentialType",
-  ])
+  @IsIn(["submittedDate", "programName", "locationName", "programStatus"])
   sortField?: string;
   @IsOptional()
   @MaxLength(PAGINATION_SEARCH_MAX_LENGTH)
@@ -125,6 +119,28 @@ export class ProgramsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO
   @IsOptional()
   @MaxLength(PAGINATION_SEARCH_MAX_LENGTH)
   locationNameSearch?: string;
+  @IsArray()
+  @IsOptional()
+  @Transform(({ value }) => value.split(","))
+  @IsEnum(ProgramStatus, { each: true })
+  statusSearch?: ProgramStatus[];
+  @IsOptional()
+  @IsBoolean()
+  @ToBoolean()
+  inactiveProgramSearch?: boolean;
+}
+
+export class ProgramsLocationPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn([
+    "programName",
+    "locationName",
+    "programStatus",
+    "cipCode",
+    "sabcCode",
+    "totalOfferings",
+  ])
+  sortField?: string;
   @IsArray()
   @IsOptional()
   @Transform(({ value }) => value.split(","))

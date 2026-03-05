@@ -9,6 +9,16 @@
     ],
     "components": [
         {
+            "label": "Actions: CreateStudentAppealAssessment",
+            "calculateValue": "value = [\"CreateStudentAppealAssessment\"];",
+            "calculateServer": true,
+            "key": "actions",
+            "type": "hidden",
+            "input": true,
+            "tableView": true,
+            "lockKey": true
+        },
+        {
             "input": true,
             "tableView": false,
             "key": "maxMoneyValue",

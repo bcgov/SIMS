@@ -125,3 +125,4 @@ export * from "./form-submission-status.type";
 export * from "./form-submission-decision-status.type";
 export * from "./form-submission.model";
 export * from "./form-submission-item.model";
+export * from "./form-submission-item-decision.model";

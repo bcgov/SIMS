@@ -916,7 +916,7 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:sequenceFlow id="Flow_13rnc99" sourceRef="Activity_0d78x0s" targetRef="Gateway_1hwknxt" />
     <bpmn:scriptTask id="Activity_1vyml74" name="Configure application appeals eligibility">
       <bpmn:extensionElements>
-        <zeebe:script expression="=[&#10;  {&#10;    formName: &#34;stepparentwaiverappeal&#34;,&#10;    isEligible: isEligibleForStepParentWaiverAppeal&#10;  },&#10;  {&#10;    formName: &#34;roomandboardcostsappeal&#34;,&#10;    isEligible: isEligibleForRoomAndBoardAppeal&#10;  },&#10;  {&#10;    formName: &#34;studentcurrentyearincomeappeal&#34;,&#10;    isEligible: if is defined(isEligibleForStudentCurrentYearIncomeAppeal) then isEligibleForStudentCurrentYearIncomeAppeal&#10;    else false&#10;  },&#10;  {&#10;    formName: &#34;partnercurrentyearincomeappeal&#34;,&#10;    isEligible: if is defined(isEligibleForPartnerCurrentYearIncomeAppeal) then isEligibleForPartnerCurrentYearIncomeAppeal&#10;    else false&#10;  }&#10;]" resultVariable="applicationAppealsEligibilityDetails" />
+        <zeebe:script expression="=[&#10;  {&#10;    formName: &#34;stepparentwaiverappeal&#34;,&#10;    isEligible: isEligibleForStepParentWaiverAppeal&#10;  },&#10;  {&#10;    formName: &#34;roomandboardcostsappeal&#34;,&#10;    isEligible: isEligibleForRoomAndBoardAppeal&#10;  },&#10;  {&#10;    formName: &#34;studentcurrentyearincomeappeal&#34;,&#10;    isEligible: if is defined(isEligibleForStudentCurrentYearIncomeAppeal) then isEligibleForStudentCurrentYearIncomeAppeal&#10;    else false&#10;  },&#10;  {&#10;    formName: &#34;partnercurrentyearincomeappeal&#34;,&#10;    isEligible: if is defined(isEligibleForPartnerCurrentYearIncomeAppeal) then isEligibleForPartnerCurrentYearIncomeAppeal&#10;    else false&#10;  },&#10;  {&#10;    formName: &#34;studentexceptionalexpenseappeal&#34;,&#10;    isEligible: if is defined(isEligibleForExceptionalExpenseAppeal) then isEligibleForExceptionalExpenseAppeal&#10;    else false&#10;  }&#10;]" resultVariable="applicationAppealsEligibilityDetails" />
         <zeebe:ioMapping>
           <zeebe:output source="=applicationAppealsEligibilityDetails" target="applicationAppealsEligibilityDetails" />
           <zeebe:output source="=(applicationAppealsEligibilityDetails [isEligible = true]).formName" target="eligibleApplicationAppeals" />
@@ -1133,49 +1133,6 @@ Note: the workflow process should continue its execution as a regular reassessme
         <dc:Bounds x="1587" y="440" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_05dcqr1" bpmnElement="update-noa-status-to-not-required-task">
-        <dc:Bounds x="4310" y="1380" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1kjbwdp" bpmnElement="update-noa-status-to-not-required-application-completed-task">
-        <dc:Bounds x="4310" y="1480" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1xse027_di" bpmnElement="Gateway_1xse027" isMarkerVisible="true">
-        <dc:Bounds x="3955" y="1335" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_054vajm" bpmnElement="Gateway_04wql0w" isMarkerVisible="true">
-        <dc:Bounds x="4435" y="1325" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0f9knk0_di" bpmnElement="Gateway_0f9knk0" isMarkerVisible="true">
-        <dc:Bounds x="4535" y="1325" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1m2js1c_di" bpmnElement="Gateway_1m2js1c" isMarkerVisible="true">
-        <dc:Bounds x="4065" y="1335" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_19j2z1x" bpmnElement="associate-msfaa-task">
-        <dc:Bounds x="3830" y="1320" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1usikde" bpmnElement="update-application-status-to-assessment-task">
-        <dc:Bounds x="4160" y="1240" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_012hpqk" bpmnElement="update-noa-status-to-required-task">
-        <dc:Bounds x="4320" y="1240" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1hwknxt_di" bpmnElement="Gateway_1hwknxt" isMarkerVisible="true">
-        <dc:Bounds x="3735" y="1335" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1bv2wa1" bpmnElement="Activity_0d78x0s">
-        <dc:Bounds x="3610" y="1420" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0dvkb3l" bpmnElement="Activity_1vyml74">
-        <dc:Bounds x="3610" y="1320" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1r28emd_di" bpmnElement="identifiable-parents-creation" isExpanded="true">
         <dc:Bounds x="2060" y="790" width="580" height="200" />
       </bpmndi:BPMNShape>
@@ -1270,6 +1227,49 @@ Note: the workflow process should continue its execution as a regular reassessme
         <bpmndi:BPMNLabel>
           <dc:Bounds x="4601" y="1375" width="67" height="27" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_05dcqr1" bpmnElement="update-noa-status-to-not-required-task">
+        <dc:Bounds x="4310" y="1380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1kjbwdp" bpmnElement="update-noa-status-to-not-required-application-completed-task">
+        <dc:Bounds x="4310" y="1480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1xse027_di" bpmnElement="Gateway_1xse027" isMarkerVisible="true">
+        <dc:Bounds x="3955" y="1335" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_054vajm" bpmnElement="Gateway_04wql0w" isMarkerVisible="true">
+        <dc:Bounds x="4435" y="1325" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0f9knk0_di" bpmnElement="Gateway_0f9knk0" isMarkerVisible="true">
+        <dc:Bounds x="4535" y="1325" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1m2js1c_di" bpmnElement="Gateway_1m2js1c" isMarkerVisible="true">
+        <dc:Bounds x="4065" y="1335" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_19j2z1x" bpmnElement="associate-msfaa-task">
+        <dc:Bounds x="3830" y="1320" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1usikde" bpmnElement="update-application-status-to-assessment-task">
+        <dc:Bounds x="4160" y="1240" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_012hpqk" bpmnElement="update-noa-status-to-required-task">
+        <dc:Bounds x="4320" y="1240" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1hwknxt_di" bpmnElement="Gateway_1hwknxt" isMarkerVisible="true">
+        <dc:Bounds x="3735" y="1335" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1bv2wa1" bpmnElement="Activity_0d78x0s">
+        <dc:Bounds x="3610" y="1420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0dvkb3l" bpmnElement="Activity_1vyml74">
+        <dc:Bounds x="3610" y="1320" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0bza37i_di" bpmnElement="Flow_0bza37i">
         <di:waypoint x="2695" y="1480" />

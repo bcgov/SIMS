@@ -58,6 +58,7 @@
       ref="confirmCOEModal"
       :max-tuition-remittance="initialData.maxTuitionRemittanceAllowed"
       :has-overawards="initialData.hasOverawardBalance"
+      :can-request-tuition-remittance="initialData.canRequestTuitionRemittance"
     />
     <!-- Deny modal -->
     <deny-c-o-e
@@ -84,6 +85,7 @@ import { useSnackBar, ModalDialog, useCOE, useFormatters } from "@/composables";
 import {
   FIRST_COE_NOT_COMPLETE,
   INVALID_TUITION_REMITTANCE_AMOUNT,
+  TUITION_REMITTANCE_NOT_ALLOWED,
 } from "@/constants";
 
 import {
@@ -129,7 +131,6 @@ export default defineComponent({
     const confirmCOEModal = ref(
       {} as ModalDialog<ApproveConfirmEnrollmentModel | boolean>,
     );
-
     const showApplicationActions = computed(
       () =>
         initialData.value.applicationCOEStatus === COEStatus.required &&
@@ -179,21 +180,23 @@ export default defineComponent({
           },
         });
       } catch (error: unknown) {
-        let errorLabel = "Unexpected error!";
-        let errorMsg = "An error happened while confirming the COE.";
+        let errorMsg =
+          "Unexpected error!. An error happened while confirming the COE.";
         if (error instanceof ApiProcessError) {
           switch (error.errorType) {
             case FIRST_COE_NOT_COMPLETE:
-              errorLabel = "First COE is not completed.";
-              errorMsg = error.message;
+              errorMsg = `First COE is not completed. ${error.message}`;
               break;
             case INVALID_TUITION_REMITTANCE_AMOUNT:
-              errorLabel = "Invalid tuition remittance amount.";
-              errorMsg = error.message;
+              errorMsg = `Invalid tuition remittance amount. ${error.message}`;
+              break;
+            case TUITION_REMITTANCE_NOT_ALLOWED:
+              errorMsg =
+                "Confirmation of enrolment was not completed. Please refresh and try again.";
               break;
           }
         }
-        snackBar.error(`${errorLabel}. ${errorMsg}`);
+        snackBar.error(errorMsg);
       }
     };
 

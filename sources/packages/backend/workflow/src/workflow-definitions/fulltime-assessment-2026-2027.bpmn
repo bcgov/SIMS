@@ -934,10 +934,10 @@ If distance education/blended learning program or if married and claiming separa
       <bpmn:outgoing>Flow_1p7o8v2</bpmn:outgoing>
       <bpmn:outgoing>Flow_15cawt4</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:intermediateThrowEvent id="Event_0n3kqyy" name="Exceptional Expense (Exception)">
+    <bpmn:intermediateThrowEvent id="Event_0n3kqyy" name="Exceptional Expense (Appeal)">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if studentDataExceptionalExpenseAmount = null&#10;then 0&#10;else studentDataExceptionalExpenseAmount" target="calculatedDataExceptionalCosts" />
+          <zeebe:output source="=if appealsExceptionalExpenseAppealData = null&#10;then 0&#10;else appealsExceptionalExpenseAppealData.exceptionalExpenseAmount" target="calculatedDataExceptionalCosts" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1x8ntar</bpmn:incoming>
@@ -2465,6 +2465,7 @@ Alimony/Child Support paid by the Partner during the study period can be conside
           <zeebe:output source="=studentDataLivingAtHomeRent = &#34;yes&#34;" target="isEligibleForRoomAndBoardAppeal" />
           <zeebe:output source="=true" target="isEligibleForStudentCurrentYearIncomeAppeal" />
           <zeebe:output source="=if studentDataRelationshipStatus = &#34;married&#34;&#10;then true&#10;else false" target="isEligibleForPartnerCurrentYearIncomeAppeal" />
+          <zeebe:output source="=true" target="isEligibleForExceptionalExpenseAppeal" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1u26ach</bpmn:incoming>
@@ -2975,7 +2976,7 @@ This also brings in the total PY spouse contribution weeks value if it exists.</
       <bpmndi:BPMNShape id="Event_0n3kqyy_di" bpmnElement="Event_0n3kqyy">
         <dc:Bounds x="4142" y="1290" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="4132" y="1333" width="58" height="40" />
+          <dc:Bounds x="4117" y="1333" width="88" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0j44ttl_di" bpmnElement="Event_0j44ttl">

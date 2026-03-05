@@ -69,6 +69,7 @@ export interface EducationProgramsSummaryAPIOutDTO {
   programId: number;
   programName: string;
   cipCode: string;
+  sabcCode?: string;
   credentialType: string;
   totalOfferings: number;
   credentialTypeToDisplay: string;

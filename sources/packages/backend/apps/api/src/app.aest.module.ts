@@ -42,6 +42,10 @@ import {
   StudentAppealAssessmentService,
   StudentAppealCreateAssessmentAction,
   StudentAppealUpdateModifiedIndependentAction,
+  FormSubmissionApprovalService,
+  FormSubmissionActionProcessor,
+  FormSubmissionCreateAppealAssessmentAction,
+  FormSubmissionUpdateModifiedIndependentAction,
 } from "./services";
 import {
   SupportingUserAESTController,
@@ -91,6 +95,7 @@ import {
   ApplicationChangeRequestAESTController,
   DynamicFormAESTController,
   DisbursementScheduleAESTController,
+  FormSubmissionAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -147,6 +152,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     ApplicationChangeRequestAESTController,
     DynamicFormAESTController,
     DisbursementScheduleAESTController,
+    FormSubmissionAESTController,
   ],
   providers: [
     ApplicationExceptionControllerService,
@@ -226,6 +232,11 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     StudentAppealActionsProcessor,
     StudentAppealCreateAssessmentAction,
     StudentAppealUpdateModifiedIndependentAction,
+    // Form submission actions.
+    FormSubmissionCreateAppealAssessmentAction,
+    FormSubmissionUpdateModifiedIndependentAction,
+    FormSubmissionActionProcessor,
+    FormSubmissionApprovalService,
   ],
 })
 export class AppAESTModule {}

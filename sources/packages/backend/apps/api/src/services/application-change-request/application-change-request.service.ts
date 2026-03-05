@@ -4,6 +4,7 @@ import {
   ApplicationEditStatus,
   ApplicationStatus,
   EducationProgramOffering,
+  FormSubmission,
   getUserFullNameLikeSearch,
   NoteType,
   StudentAppeal,
@@ -129,6 +130,11 @@ export class ApplicationChangeRequestService {
         changeRequestApplication.currentAssessment.studentAppeal = {
           id: copyFromAssessment.studentAppeal.id,
         } as StudentAppeal;
+      }
+      if (copyFromAssessment.formSubmission) {
+        changeRequestApplication.currentAssessment.formSubmission = {
+          id: copyFromAssessment.formSubmission.id,
+        } as FormSubmission;
       }
       await applicationRepo.save(changeRequestApplication);
     });

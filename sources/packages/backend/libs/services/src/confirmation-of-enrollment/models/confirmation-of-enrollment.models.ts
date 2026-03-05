@@ -70,3 +70,14 @@ export enum EnrollmentPeriod {
    */
   Upcoming = "upcoming",
 }
+
+/**
+ * Result of COE completion process.
+ */
+export interface ConfirmEnrolmentResult {
+  /**
+   * Indicates if the COE was confirmed with an impact on tuition remittance
+   * due to restriction.
+   */
+  isTuitionRemittanceImpactedOnRestriction: boolean;
+}

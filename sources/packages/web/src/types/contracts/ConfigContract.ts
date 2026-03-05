@@ -34,4 +34,9 @@ export interface AppConfig {
   maintenanceModeMinistry: boolean;
   maintenanceModeSupportingUser: boolean;
   maintenanceModeExternal: boolean;
+  /**
+   * Generic list of enabled feature toggles configuration.
+   * If an item is present in the list, it means the feature toggle is enabled.
+   */
+  featureToggles: string[];
 }

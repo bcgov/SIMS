@@ -131,7 +131,7 @@
           <zeebe:header key="appealsStudentCurrentYearIncomeAppealData" value="appeals.studentcurrentyearincomeappeal.submittedData" />
           <zeebe:header key="appealsPartnerCurrentYearIncomeAppealData" value="appeals.partnercurrentyearincomeappeal.submittedData" />
           <zeebe:header key="appealsParentCurrentYearIncomeAppealData" value="appeals.parentcurrentyearincomeappeal.submittedData" />
-          <zeebe:header key="appealsStudentExceptionalExpenseAppealData" value="appeals.studentexceptionalexpenseappeal.submittedData" />
+          <zeebe:header key="appealsExceptionalExpenseAppealData" value="appeals.studentexceptionalexpenseappeal.submittedData" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>

@@ -3,7 +3,8 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
-import { FormSubmissionDecisionStatus, StatusChipTypes } from "@/types";
+import { FormSubmissionDecisionStatus } from "@/types";
+import { useFormSubmission } from "@/composables";
 
 export default defineComponent({
   props: {
@@ -13,17 +14,9 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { mapFormSubmissionDecisionStatus } = useFormSubmission();
     const chipStatus = computed(() => {
-      switch (props.status) {
-        case FormSubmissionDecisionStatus.Approved:
-          return StatusChipTypes.Success;
-        case FormSubmissionDecisionStatus.Pending:
-          return StatusChipTypes.Warning;
-        case FormSubmissionDecisionStatus.Declined:
-          return StatusChipTypes.Error;
-        default:
-          return StatusChipTypes.Inactive;
-      }
+      return mapFormSubmissionDecisionStatus(props.status);
     });
     return { chipStatus };
   },

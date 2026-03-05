@@ -1,5 +1,10 @@
-import { DynamicFormConfiguration } from "@sims/sims-db/entities";
+import {
+  DynamicFormConfiguration,
+  FormCategory,
+  FormSubmissionDecisionStatus,
+} from "@sims/sims-db";
 import { Parent } from "../../types";
+import { Role } from "../../auth";
 
 /**
  * Optional data that can be loaded as part of the form.
@@ -41,3 +46,25 @@ export type FormSubmissionConfig = FormSubmissionModel &
   > & {
     applicationId: number | undefined;
   };
+
+/**
+ * Allowed role to update a form submission item based on the form category.
+ */
+export const FORM_SUBMISSION_APPROVAL_ROLES_MAP = new Map<FormCategory, Role>([
+  [FormCategory.StudentAppeal, Role.StudentApproveDeclineAppeals],
+  [FormCategory.StudentForm, Role.StudentApproveDeclineForms],
+]);
+
+export interface FormSubmissionCompletionItem {
+  submissionItemId: number;
+  lastUpdateDate: Date;
+}
+
+/**
+ * Ministry individual form item decision update.
+ */
+export interface FormItemDecision {
+  decisionStatus: FormSubmissionDecisionStatus;
+  noteDescription: string;
+  lastUpdateDate: Date;
+}

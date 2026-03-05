@@ -10,7 +10,7 @@ import { Role, IUserToken } from "..";
  */
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
     const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
@@ -22,10 +22,6 @@ export class RolesGuard implements CanActivate {
     }
     const { user } = context.switchToHttp().getRequest();
     const userToken = user as IUserToken;
-    if (userToken.resource_access && userToken.azp) {
-      const userRoles = userToken.resource_access[userToken.azp].roles;
-      return requiredRoles.some((role) => userRoles?.includes(role));
-    }
-    return false;
+    return requiredRoles.some((role) => userToken.roles.includes(role));
   }
 }
