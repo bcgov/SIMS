@@ -1,6 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { In, Repository } from "typeorm";
-import { FormSubmission, FormSubmissionStatus } from "@sims/sims-db";
+import {
+  FormCategory,
+  FormSubmission,
+  FormSubmissionStatus,
+} from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
@@ -10,7 +14,16 @@ export class FormSubmissionService {
     private readonly formSubmissionRepo: Repository<FormSubmission>,
   ) {}
 
-  async getNonCompletedFormSubmissions(
+  /**
+   * Gets all non-completed form submissions for a given application.
+   * Pending or fully declined form submissions are considered non-completed, and are
+   * usually displayed separated from the completed ones that potentially generated
+   * assessment.
+   * @param applicationId
+   * @param studentId
+   * @returns
+   */
+  async getNonCompletedStudentAppeals(
     applicationId: number,
     studentId?: number,
   ): Promise<FormSubmission[]> {
@@ -23,6 +36,7 @@ export class FormSubmissionService {
       where: {
         application: { id: applicationId },
         student: studentId ? { id: studentId } : undefined,
+        formCategory: FormCategory.StudentAppeal,
         submissionStatus: In([
           FormSubmissionStatus.Pending,
           FormSubmissionStatus.Declined,
@@ -34,14 +48,12 @@ export class FormSubmissionService {
   /**
    * Gets a form submission by its ID.
    * @param formSubmissionId The ID of the form submission to retrieve.
-   * @param options optional filters.
-   * - `itemId`: if provided, returns only the form submission item with the specified ID in the
-   * form submission items array.
+   * @param studentId student ID for authorization.
    * @returns The form submission if found, otherwise null.
    */
   async getFormSubmissionsById(
     formSubmissionId: number,
-    options?: { studentId?: number },
+    studentId: number,
   ): Promise<FormSubmission | null> {
     return this.formSubmissionRepo.findOne({
       select: {
@@ -49,10 +61,6 @@ export class FormSubmissionService {
         submissionStatus: true,
         submittedDate: true,
         formCategory: true,
-        application: {
-          id: true,
-          applicationNumber: true,
-        },
         formSubmissionItems: {
           id: true,
           dynamicFormConfiguration: {
@@ -66,19 +74,22 @@ export class FormSubmissionService {
           currentDecision: {
             id: true,
             decisionStatus: true,
+            decisionNote: {
+              id: true,
+              description: true,
+            },
           },
         },
       },
       relations: {
-        application: true,
         formSubmissionItems: {
           dynamicFormConfiguration: true,
-          currentDecision: true,
+          currentDecision: { decisionNote: true },
         },
       },
       where: {
         id: formSubmissionId,
-        student: { id: options.studentId },
+        student: { id: studentId },
       },
       order: { formSubmissionItems: { id: "ASC" } },
     });

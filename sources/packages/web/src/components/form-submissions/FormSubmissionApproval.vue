@@ -153,7 +153,7 @@
 import { computed, defineComponent, ref, watchEffect } from "vue";
 import {
   FormSubmissionItem,
-  FormSubmissionItemDecision,
+  FormSubmissionItemDecisionApproval,
   FormSubmissionDecisionStatus,
   VForm,
   FormSubmissionStatus,
@@ -217,12 +217,17 @@ export default defineComponent({
     const outdatedDecisionModal = ref({} as ModalDialog<boolean>);
     const finalDecisionModal = ref({} as ModalDialog<boolean>);
     const formSubmission = ref({} as FormSubmission);
-    const formSubmissionItems = ref([] as FormSubmissionItem[]);
+    const formSubmissionItems = ref(
+      [] as FormSubmissionItem<FormSubmissionItemDecisionApproval>[],
+    );
     const formSubmissionLoading = ref(true);
     const processingCompletion = ref(false);
     const approvalsForm = ref({} as VForm);
     const noteRefs = ref(
-      new Map<FormSubmissionItemDecision, InstanceType<typeof VTextarea>>(),
+      new Map<
+        FormSubmissionItemDecisionApproval,
+        InstanceType<typeof VTextarea>
+      >(),
     );
 
     /**
@@ -271,23 +276,22 @@ export default defineComponent({
         };
         // Adapt the items to a UI model to render each item
         // and a internal modal to provide the approval.
-        formSubmissionItems.value =
-          submission.submissionItems.map<FormSubmissionItem>(
-            (submissionItem) => ({
-              id: submissionItem.id,
-              dynamicConfigurationId: submissionItem.dynamicFormConfigurationId,
-              formType: submissionItem.formType,
-              category: formSubmission.value.formCategory,
-              formName: submissionItem.formDefinitionName,
-              formData: submissionItem.submissionData,
-              decision: assignItemDecisionProperties(
-                submissionItem,
-                formSubmission.value.status,
-              ),
-              decisionStatus: submissionItem.decisionStatus,
-              files: [],
-            }),
-          );
+        formSubmissionItems.value = submission.submissionItems.map<
+          FormSubmissionItem<FormSubmissionItemDecisionApproval>
+        >((submissionItem) => ({
+          id: submissionItem.id,
+          dynamicConfigurationId: submissionItem.dynamicFormConfigurationId,
+          formType: submissionItem.formType,
+          category: formSubmission.value.formCategory,
+          formName: submissionItem.formDefinitionName,
+          formData: submissionItem.submissionData,
+          decision: assignItemDecisionProperties(
+            submissionItem,
+            formSubmission.value.status,
+          ),
+
+          files: [],
+        }));
       } catch {
         snackBar.error("Unexpected error while loading the form submission.");
       } finally {
@@ -308,13 +312,13 @@ export default defineComponent({
     const assignItemDecisionProperties = (
       submissionItem: FormSubmissionItemMinistryAPIOutDTO,
       parentStatus: FormSubmissionStatus,
-      options?: { decision?: FormSubmissionItemDecision },
-    ): FormSubmissionItemDecision => {
-      const decision = options?.decision ?? ({} as FormSubmissionItemDecision);
+      options?: { decision?: FormSubmissionItemDecisionApproval },
+    ): FormSubmissionItemDecisionApproval => {
+      const decision =
+        options?.decision ?? ({} as FormSubmissionItemDecisionApproval);
       decision.submissionItemId = submissionItem.id;
       decision.parentName = submissionItem.formType;
       decision.parentStatus = parentStatus;
-      decision.decisionStatus = submissionItem.decisionStatus;
       decision.saveDecisionInProgress = false;
       decision.decisionSaved =
         !!submissionItem.currentDecision?.decisionNoteDescription;
@@ -323,9 +327,10 @@ export default defineComponent({
       decision.decisionNoteDescription =
         submissionItem.currentDecision?.decisionNoteDescription;
       decision.lastUpdateDate = submissionItem.updatedAt;
+      decision.decisionStatus = submissionItem.currentDecision.decisionStatus;
       decision.decisionHistory = submissionItem.previousDecisions?.map(
         (decisionEntry) => ({
-          id: decisionEntry.id,
+          id: decisionEntry.id as number,
           decisionStatus: decisionEntry.decisionStatus,
           decisionDate: decisionEntry.decisionDate,
           decisionBy: decisionEntry.decisionBy,
@@ -350,13 +355,12 @@ export default defineComponent({
             { itemId },
           )) as FormSubmissionMinistryAPIOutDTO;
         const itemToUpdate = formSubmissionItems.value.find(
-          (item) => item.decision?.submissionItemId === itemId,
+          (item) => item.decision.submissionItemId === itemId,
         );
         if (!itemToUpdate?.decision) {
           throw new Error("Expected item to be updated was not found.");
         }
         const [reloadedSubmissionItem] = submission.submissionItems;
-        itemToUpdate.decisionStatus = reloadedSubmissionItem.decisionStatus;
         assignItemDecisionProperties(
           reloadedSubmissionItem,
           submission.status,
@@ -378,7 +382,7 @@ export default defineComponent({
      */
     const captureNoteRef = (
       noteInput: unknown,
-      approval: FormSubmissionItemDecision,
+      approval: FormSubmissionItemDecisionApproval,
     ) => {
       if (noteInput) {
         noteRefs.value.set(
@@ -408,7 +412,9 @@ export default defineComponent({
     /**
      * Save an item decision.
      */
-    const saveDecision = async (decision: FormSubmissionItemDecision) => {
+    const saveDecision = async (
+      decision: FormSubmissionItemDecisionApproval,
+    ) => {
       const noteInput = noteRefs.value.get(decision);
       const errors = await noteInput?.validate();
       if (errors?.length) {
@@ -498,7 +504,9 @@ export default defineComponent({
      * Reopen a previously submitted decision for edition.
      * @param approval decision to allow edit.
      */
-    const changeDecision = (decision: FormSubmissionItemDecision): void => {
+    const changeDecision = (
+      decision: FormSubmissionItemDecisionApproval,
+    ): void => {
       decision.decisionSaved = false;
     };
 
@@ -507,7 +515,7 @@ export default defineComponent({
      * @param decision
      */
     const cancelChangeDecision = async (
-      decision: FormSubmissionItemDecision,
+      decision: FormSubmissionItemDecisionApproval,
     ): Promise<void> => {
       await reloadFormSubmissionItem(decision.submissionItemId);
     };

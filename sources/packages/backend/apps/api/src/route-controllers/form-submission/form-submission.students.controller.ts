@@ -3,7 +3,6 @@ import {
   Body,
   Controller,
   Get,
-  NotFoundException,
   Param,
   ParseIntPipe,
   Post,
@@ -14,7 +13,6 @@ import {
   DynamicFormConfigurationService,
   FORM_SUBMISSION_INVALID_DYNAMIC_DATA,
   FORM_SUBMISSION_PENDING_DECISION,
-  FormSubmissionService,
   FormSubmissionSubmitService,
 } from "../../services";
 import { AuthorizedParties, StudentUserToken } from "../../auth";
@@ -31,21 +29,18 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import {
-  FormCategory,
-  FormSubmissionDecisionStatus,
-  FormSubmissionStatus,
-} from "@sims/sims-db";
+import { FormCategory } from "@sims/sims-db";
 import {
   FormSubmissionAPIInDTO,
+  FormSubmissionAPIOutDTO,
   FormSubmissionConfigurationsAPIOutDTO,
-  FormSubmissionStudentAPIOutDTO,
   FormSupplementaryDataAPIInDTO,
   FormSupplementaryDataAPIOutDTO,
 } from "./models/form-submission.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { CustomNamedError } from "@sims/utilities";
 import { SupplementaryDataLoader } from "../../services/form-submission/form-supplementary-data/form-supplementary-data-loader";
+import { FormSubmissionControllerService } from "./form-submission.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -56,7 +51,7 @@ export class FormSubmissionStudentsController extends BaseController {
     private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
     private readonly formSubmissionSubmitService: FormSubmissionSubmitService,
     private readonly supplementaryDataLoader: SupplementaryDataLoader,
-    private readonly formSubmissionService: FormSubmissionService,
+    private readonly formSubmissionControllerService: FormSubmissionControllerService,
   ) {
     super();
   }
@@ -108,46 +103,18 @@ export class FormSubmissionStudentsController extends BaseController {
   /**
    * Get the details of a form submission, including the individual form items and their details.
    * @param formSubmissionId ID of the form submission to retrieve the details for.
-   * @param itemId optional ID of the form submission item to filter the details for.
-   * Useful only when a single item detail is required.
    * @returns form submission details including individual form items and their details.
    */
-  @ApiNotFoundResponse({ description: "Form submission not found" })
+  @ApiNotFoundResponse({ description: "Form submission not found." })
   @Get(":formSubmissionId")
   async getFormSubmission(
-    @UserToken() userToken: StudentUserToken,
     @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
-  ): Promise<FormSubmissionStudentAPIOutDTO> {
-    const submission = await this.formSubmissionService.getFormSubmissionsById(
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<FormSubmissionAPIOutDTO> {
+    return this.formSubmissionControllerService.getFormSubmission(
       formSubmissionId,
-      { studentId: userToken.studentId },
+      userToken.studentId,
     );
-    if (!submission) {
-      throw new NotFoundException(
-        `Form submission with ID ${formSubmissionId} not found.`,
-      );
-    }
-    return {
-      id: submission.id,
-      formCategory: submission.formCategory,
-      status: submission.submissionStatus,
-      applicationId: submission.application?.id,
-      applicationNumber: submission.application?.applicationNumber,
-      submittedDate: submission.submittedDate,
-      submissionItems: submission.formSubmissionItems.map((item) => ({
-        id: item.id,
-        formType: item.dynamicFormConfiguration.formType,
-        formCategory: item.dynamicFormConfiguration.formCategory,
-        dynamicFormConfigurationId: item.dynamicFormConfiguration.id,
-        submissionData: item.submittedData,
-        formDefinitionName: item.dynamicFormConfiguration.formDefinitionName,
-        decisionStatus:
-          submission.submissionStatus === FormSubmissionStatus.Pending
-            ? FormSubmissionDecisionStatus.Pending
-            : (item.currentDecision?.decisionStatus ??
-              FormSubmissionDecisionStatus.Pending),
-      })),
-    };
   }
 
   /**

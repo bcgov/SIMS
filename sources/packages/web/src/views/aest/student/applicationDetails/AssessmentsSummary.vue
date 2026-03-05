@@ -88,7 +88,7 @@ export default defineComponent({
     const goToStudentAppeal = (id: number) => {
       if (isFormSubmissionEnabled.value) {
         router.push({
-          name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_APPROVAL,
+          name: AESTRoutesConst.STUDENT_APPLICATION_FORM_SUBMISSION_APPROVAL,
           params: {
             formSubmissionId: id,
           },

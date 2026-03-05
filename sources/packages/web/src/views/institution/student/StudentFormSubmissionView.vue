@@ -3,11 +3,9 @@
   <student-page-container>
     <template #header>
       <header-navigator
-        title="Forms"
-        sub-title="Forms submission"
-        :route-location="{
-          name: StudentRoutesConst.STUDENT_FORMS_HISTORY,
-        }"
+        :title="backTarget.name"
+        :sub-title="subtitle"
+        :route-location="backTarget.to"
       />
     </template>
     <body-header-container>
@@ -31,6 +29,15 @@
         :submission-items="formSubmissionItems"
         :read-only="true"
       >
+        <template #decision="{ decision }">
+          <h4 class="category-header-medium brand-gray-text">Decision notes</h4>
+          <v-divider />
+          <v-sheet color="grey-lighten-4 p-3" rounded border>
+            <p>
+              {{ decision.noteDescription }}
+            </p>
+          </v-sheet>
+        </template>
         <template #actions>
           <footer-buttons
             :show-primary-button="false"
@@ -43,13 +50,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watchEffect } from "vue";
+import { computed, defineComponent, PropType, ref, watchEffect } from "vue";
 import FormSubmissionItems from "@/components/form-submissions/FormSubmissionItems.vue";
 import { useRouter } from "vue-router";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
-import { FormSubmissionItem } from "@/types";
+import {
+  BackTarget,
+  FormCategory,
+  FormSubmissionItem,
+  FormSubmissionItemDecision,
+} from "@/types";
 import { FormSubmissionAPIOutDTO } from "@/services/http/dto";
-import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
+import {
+  InstitutionRoutesConst,
+  StudentRoutesConst,
+} from "@/constants/routes/RouteConstants";
 import { useSnackBar } from "@/composables";
 import StatusChipFormSubmission from "@/components/generic/StatusChipFormSubmission.vue";
 
@@ -59,6 +74,10 @@ export default defineComponent({
     StatusChipFormSubmission,
   },
   props: {
+    studentId: {
+      type: Number,
+      required: true,
+    },
     formSubmissionId: {
       type: Number,
       required: true,
@@ -68,18 +87,28 @@ export default defineComponent({
       required: false,
       default: undefined,
     },
+    backTarget: {
+      type: Object as PropType<BackTarget>,
+      required: true,
+    },
   },
   setup(props) {
     const snackBar = useSnackBar();
     const router = useRouter();
     const formSubmission = ref<FormSubmissionAPIOutDTO>();
-    const formSubmissionItems = ref([] as FormSubmissionItem[]);
+    const formSubmissionItems = ref(
+      [] as FormSubmissionItem<FormSubmissionItemDecision>[],
+    );
     const processing = ref(false);
 
+    const subtitle = computed(() =>
+      formSubmission.value?.formCategory === FormCategory.StudentAppeal
+        ? "Appeal submission"
+        : "Form submission",
+    );
+
     const goBack = () => {
-      router.push({
-        name: StudentRoutesConst.STUDENT_FORMS_HISTORY,
-      });
+      router.push(props.backTarget.to);
     };
 
     watchEffect(async () => {
@@ -88,32 +117,37 @@ export default defineComponent({
         const submission =
           (await FormSubmissionService.shared.getFormSubmission(
             props.formSubmissionId,
+            { studentId: props.studentId },
           )) as FormSubmissionAPIOutDTO;
         formSubmission.value = submission;
 
         // Convert submission items to be displayed.
-        formSubmissionItems.value =
-          submission.submissionItems.map<FormSubmissionItem>(
-            (item) =>
-              ({
-                dynamicConfigurationId: item.dynamicFormConfigurationId,
-                formData: item.submissionData,
-                category: item.formCategory,
-                formType: item.formType,
-                formName: item.formDefinitionName,
-                files: [],
-              }) as FormSubmissionItem,
-          );
+        formSubmissionItems.value = submission.submissionItems.map<
+          FormSubmissionItem<FormSubmissionItemDecision>
+        >((item) => ({
+          dynamicConfigurationId: item.dynamicFormConfigurationId,
+          formData: item.submissionData,
+          category: item.formCategory,
+          formType: item.formType,
+          formName: item.formDefinitionName,
+          files: [],
+          decision: {
+            decisionStatus: item.currentDecision.decisionStatus,
+            noteDescription: item.currentDecision.decisionNoteDescription,
+          },
+        }));
       } catch {
         snackBar.error("Error while loading form submission data.");
       }
     });
 
     return {
+      subtitle,
       formSubmissionItems,
       StudentRoutesConst,
       processing,
       formSubmission,
+      InstitutionRoutesConst,
       goBack,
     };
   },

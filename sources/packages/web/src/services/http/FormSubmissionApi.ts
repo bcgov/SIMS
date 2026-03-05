@@ -8,6 +8,7 @@ import {
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionItemDecisionAPIInDTO,
   FormSubmissionCompletionAPIInDTO,
+  FormSubmissionAPIOutDTO,
 } from "@/services/http/dto";
 import {
   FormCategory,
@@ -114,14 +115,18 @@ export class FormSubmissionApi extends HttpBaseClient {
    * on each form item.
    * @param formSubmissionId ID of the form submission to retrieve the details for.
    * @param options.
+   * - `studentId`: optional ID used to validate the institution access to the student data.
    * - `itemId`: optional ID of the form submission item to filter the details for.
    * @returns form submission details including individual form items and their details.
    */
   async getFormSubmission(
     formSubmissionId: number,
-    options?: { itemId?: number },
-  ): Promise<FormSubmissionStudentAPIOutDTO | FormSubmissionMinistryAPIOutDTO> {
+    options?: { studentId?: number; itemId?: number },
+  ): Promise<FormSubmissionAPIOutDTO | FormSubmissionMinistryAPIOutDTO> {
     let url = `form-submission/${formSubmissionId}`;
+    if (options?.studentId) {
+      url = `form-submission/student/${options.studentId}/${url}`;
+    }
     if (options?.itemId) {
       url += `?itemId=${options.itemId}`;
     }

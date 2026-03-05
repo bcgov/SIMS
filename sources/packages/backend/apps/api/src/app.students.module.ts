@@ -59,6 +59,7 @@ import {
   SupportingUserControllerService,
   SupportingUserStudentsController,
   FormSubmissionStudentsController,
+  FormSubmissionControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "@sims/utilities/config";
@@ -185,6 +186,7 @@ import {
     SupplementaryDataLoader,
     // Form Submission Service.
     FormSubmissionSubmitService,
+    FormSubmissionControllerService,
     FormSubmissionService,
   ],
 })

@@ -53,3 +53,4 @@ export * from "@/types/contracts/DynamicFormConfigurationContracts";
 export * from "@/types/contracts/ApplicationExceptionRequestStatus";
 export * from "@/types/contracts/SystemLookupConfiguration";
 export * from "@/types/contracts/FormSubmissionContracts";
+export * from "@/types/RouteNavigation";

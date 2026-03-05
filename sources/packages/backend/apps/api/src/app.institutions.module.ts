@@ -79,6 +79,8 @@ import {
   ProgramYearControllerService,
   ReportControllerService,
   AnnouncementInstitutionsController,
+  FormSubmissionInstitutionsController,
+  FormSubmissionControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -127,6 +129,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     ApplicationOfferingChangeRequestInstitutionsController,
     ProgramYearInstitutionsController,
     ReportInstitutionsController,
+    FormSubmissionInstitutionsController,
   ],
   providers: [
     AnnouncementService,
@@ -198,6 +201,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     DisbursementScheduleSharedService,
     InstitutionRestrictionService,
     FormSubmissionService,
+    FormSubmissionControllerService,
   ],
 })
 export class AppInstitutionsModule {}

@@ -73,11 +73,14 @@ export interface DecisionHistory {
 }
 
 export interface FormSubmissionItemDecision {
+  decisionStatus: FormSubmissionDecisionStatus;
+  noteDescription?: string;
+}
+
+export interface FormSubmissionItemDecisionApproval extends FormSubmissionItemDecision {
   submissionItemId: number;
   parentName: string;
   parentStatus: FormSubmissionStatus;
-  decisionStatus: FormSubmissionDecisionStatus;
-  noteDescription?: string;
   decisionBy?: string;
   decisionNoteDescription?: string;
   decisionDate?: Date;
@@ -111,7 +114,9 @@ export interface FormSubmissionItemSubmitted {
  * Information required to render a form to be submitted by the student
  * or visualized by the Ministry or Institution.
  */
-export interface FormSubmissionItem extends FormSubmissionItemSubmitted {
+export interface FormSubmissionItem<
+  T extends FormSubmissionItemDecision = FormSubmissionItemDecision,
+> extends FormSubmissionItemSubmitted {
   /**
    * Form submission item ID. Present if the form item is already persisted.
    */
@@ -129,14 +134,10 @@ export interface FormSubmissionItem extends FormSubmissionItemSubmitted {
    */
   formName: string;
   /**
-   * Current decision status for this form submission item.
-   * This is the mos recent status returned from the system and may differ of the current
-   * Ministry decision if currently being assessed or updated.
-   */
-  decisionStatus: FormSubmissionDecisionStatus;
-  /**
    * Current decision status for this form submission item, available for certain
    * user roles for Ministry, allowing a decision to be made and later auditing.
+   * Not set only during a new submission by the student.
+   *
    */
-  decision?: FormSubmissionItemDecision;
+  decision?: T;
 }

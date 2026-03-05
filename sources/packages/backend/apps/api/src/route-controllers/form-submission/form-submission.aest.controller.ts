@@ -110,21 +110,24 @@ export class FormSubmissionAESTController extends BaseController {
         dynamicFormConfigurationId: item.dynamicFormConfiguration.id,
         submissionData: item.submittedData,
         formDefinitionName: item.dynamicFormConfiguration.formDefinitionName,
-        decisionStatus:
-          item.currentDecision?.decisionStatus ??
-          FormSubmissionDecisionStatus.Pending,
         updatedAt: item.updatedAt,
         currentDecision:
           hasApprovalAuthorization && item.currentDecision
             ? {
                 id: item.currentDecision.id,
-                decisionStatus: item.currentDecision.decisionStatus,
+                decisionStatus:
+                  item.currentDecision?.decisionStatus ??
+                  FormSubmissionDecisionStatus.Pending,
                 decisionDate: item.currentDecision.decisionDate,
                 decisionBy: getUserFullName(item.currentDecision.decisionBy),
                 decisionNoteDescription:
                   item.currentDecision.decisionNote.description,
               }
-            : undefined,
+            : {
+                decisionStatus:
+                  item.currentDecision?.decisionStatus ??
+                  FormSubmissionDecisionStatus.Pending,
+              },
         previousDecisions: hasApprovalAuthorization
           ? item.decisions
               .filter((decision) => decision.id !== item.currentDecision.id)

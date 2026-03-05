@@ -1,7 +1,11 @@
 <template>
   <full-page-container>
     <template #header>
-      <header-navigator title="Forms" :sub-title="subtitle" />
+      <header-navigator
+        :title="backTarget.name"
+        :sub-title="subtitle"
+        :routeLocation="backTarget.to"
+      />
     </template>
     <form-submission-approval
       :form-submission-id="formSubmissionId"
@@ -13,10 +17,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, PropType, ref } from "vue";
 import FormSubmissionApproval from "@/components/form-submissions/FormSubmissionApproval.vue";
 import { FormSubmissionMinistryAPIOutDTO } from "@/services/http/dto";
-import { FormCategory } from "@/types";
+import { BackTarget, FormCategory } from "@/types";
 
 export default defineComponent({
   components: {
@@ -25,6 +29,10 @@ export default defineComponent({
   props: {
     formSubmissionId: {
       type: Number,
+      required: true,
+    },
+    backTarget: {
+      type: Object as PropType<BackTarget>,
       required: true,
     },
   },

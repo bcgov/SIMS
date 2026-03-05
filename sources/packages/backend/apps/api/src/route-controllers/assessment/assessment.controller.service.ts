@@ -490,12 +490,18 @@ export class AssessmentControllerService {
     return studentAppealArray;
   }
 
-  async getPendingAndDeniedFormSubmissions(
+  /**
+   * Get student appeals that not generated an assessment yet, which are usually pending or denied appeals.
+   * @param applicationId application to which the requests are retrieved.
+   * @param studentId applicant student.
+   * @returns pending and denied student appeals.
+   */
+  async getPendingAndDeniedStudentAppeals(
     applicationId: number,
     studentId?: number,
   ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
     const formSubmissions =
-      await this.formSubmissionService.getNonCompletedFormSubmissions(
+      await this.formSubmissionService.getNonCompletedStudentAppeals(
         applicationId,
         studentId,
       );
@@ -622,7 +628,7 @@ export class AssessmentControllerService {
       applicationId,
       options?.studentId,
     );
-    const formSubmissionAppeals = await this.getPendingAndDeniedFormSubmissions(
+    const formSubmissionAppeals = await this.getPendingAndDeniedStudentAppeals(
       applicationId,
       options?.studentId,
     );
