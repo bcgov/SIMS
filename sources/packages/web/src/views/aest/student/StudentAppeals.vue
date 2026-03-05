@@ -1,7 +1,7 @@
 <template>
   <full-page-container :full-width="true">
     <template #header>
-      <header-navigator title="Student requests" sub-title="All appeals" />
+      <header-navigator title="Student requests" sub-title="Appeals" />
     </template>
     <pending-appeals-table />
   </full-page-container>

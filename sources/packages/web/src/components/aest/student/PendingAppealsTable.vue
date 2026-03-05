@@ -27,6 +27,7 @@
           density="compact"
           class="btn-toggle"
           selected-class="selected-btn-toggle"
+          @update:model-value="searchAppeals"
         >
           <v-btn
             :value="FormSubmissionApplicationFilter.WithApplication"
@@ -76,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import {
   FormSubmissionApplicationFilter,
@@ -165,10 +166,6 @@ const loadAppeals = async () => {
 const searchAppeals = async () => {
   await loadAppeals();
 };
-
-watch(selectedFilter, async () => {
-  await loadAppeals();
-});
 
 const pageSortEvent = async (event: DataTableOptions) => {
   currentPagination.page = event.page;
