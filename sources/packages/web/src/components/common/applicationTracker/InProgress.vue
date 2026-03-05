@@ -100,6 +100,25 @@
   </template>
 
   <application-status-tracker-banner
+    :label="`Waiting for additional information from ${partnerName}`"
+    icon="fa:fas fa-clock"
+    icon-color="secondary"
+    v-if="
+      applicationDetails?.partnerInfo?.status ===
+        SuccessWaitingStatus.Waiting &&
+      applicationDetails.partnerInfo.isAbleToReport
+    "
+    ><template #content
+      >We are waiting for supporting information from
+      <strong>{{ partnerName }}</strong
+      >. Please check your email from StudentAidBC for further instructions. The
+      email includes important details and a secure link that your
+      partner/common-law will need in order to provide their information for
+      your application.</template
+    ></application-status-tracker-banner
+  >
+
+  <application-status-tracker-banner
     :label="`Spouse/Common-law information required for ${applicationDetails?.partnerInfo?.fullName}`"
     icon="fa:fas fa-clock"
     icon-color="secondary"
@@ -109,9 +128,10 @@
       !applicationDetails.partnerInfo?.isAbleToReport
     "
     ><template #content
-      >You have indicated that {{ applicationDetails.partnerInfo?.fullName }} is
-      unable to complete their declaration. Please complete the following
-      declaration on their behalf. Click on the button below to complete the
+      >You have indicated that
+      <strong>{{ applicationDetails.partnerInfo?.fullName }}</strong> is unable
+      to complete their declaration. Please complete the following declaration
+      on their behalf. Click on the button below to complete the
       declaration.</template
     >
     <template #actions>
@@ -127,24 +147,6 @@
         {{ applicationDetails.partnerInfo?.fullName }}
       </v-btn>
     </template></application-status-tracker-banner
-  >
-
-  <application-status-tracker-banner
-    :label="`Waiting for additional information from ${applicationDetails.partnerInfo?.fullName}`"
-    icon="fa:fas fa-clock"
-    icon-color="secondary"
-    v-if="
-      applicationDetails?.partnerInfo?.status ===
-        SuccessWaitingStatus.Waiting &&
-      applicationDetails.partnerInfo.isAbleToReport
-    "
-    ><template #content
-      >We are waiting for supporting information from
-      {{ applicationDetails.partnerInfo?.fullName }}. Please check your email
-      from StudentAidBC for further instructions. The email includes important
-      details and a secure link that your partner/common-law will need in order
-      to provide their information for your application.</template
-    ></application-status-tracker-banner
   >
 
   <application-status-tracker-banner
@@ -301,7 +303,7 @@ import {
   ProgramInfoStatus,
   SuccessWaitingStatus,
 } from "@/types";
-import { onMounted, ref, defineComponent } from "vue";
+import { onMounted, ref, defineComponent, computed } from "vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { InProgressApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 
@@ -344,6 +346,13 @@ export default defineComponent({
       });
     };
 
+    const partnerName = computed(() => {
+      return (
+        applicationDetails.value?.partnerInfo?.fullName ||
+        "your spouse/common-law partner"
+      );
+    });
+
     onMounted(async () => {
       applicationDetails.value =
         await ApplicationService.shared.getInProgressApplicationDetails(
@@ -354,6 +363,7 @@ export default defineComponent({
     return {
       navigateToParentReporting,
       navigateToPartnerReporting,
+      partnerName,
       ProgramInfoStatus,
       applicationDetails,
       ApplicationExceptionStatus,
