@@ -720,7 +720,7 @@ export class StudentService extends RecordDataModelService<Student> {
    */
   async getStudentNotes(
     studentId: number,
-    noteType?: NoteType,
+    noteType?: NoteType[],
     options?: {
       filterNoEffectRestrictionNotes?: boolean;
     },
@@ -728,6 +728,7 @@ export class StudentService extends RecordDataModelService<Student> {
     const studentNoteQuery = this.repo
       .createQueryBuilder("student")
       .select([
+        "note.id",
         "student.id",
         "note.noteType",
         "note.description",
@@ -738,8 +739,10 @@ export class StudentService extends RecordDataModelService<Student> {
       .innerJoin("student.notes", "note")
       .innerJoin("note.creator", "user")
       .where("student.id = :studentId", { studentId });
-    if (noteType) {
-      studentNoteQuery.andWhere("note.noteType = :noteType", { noteType });
+    if (noteType?.length) {
+      studentNoteQuery.andWhere("note.noteType IN (:...noteType)", {
+        noteType,
+      });
     }
     if (options?.filterNoEffectRestrictionNotes) {
       const filterOutRestrictionNoteSubQuery = this.dataSource

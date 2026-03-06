@@ -1,6 +1,6 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import { NoteAPIInDTO } from "@/services/http/dto";
-import { NoteItemModel } from "@/types";
+import { NoteItemModel, NoteType } from "@/types";
 
 /**
  * Http API client for Notes.
@@ -22,9 +22,11 @@ export class NoteApi extends HttpBaseClient {
 
   async getInstitutionNotes(
     institutionId: number,
-    noteType?: string,
+    noteTypes?: NoteType[],
   ): Promise<NoteItemModel[]> {
-    const queryString = noteType ? `?noteType=${noteType}` : ``;
+    const queryString = noteTypes?.length
+      ? `?noteTypes=${noteTypes.join(",")}`
+      : ``;
     return this.getCall<NoteItemModel[]>(
       this.addClientRoot(`note/institution/${institutionId}${queryString}`),
     );
@@ -32,9 +34,11 @@ export class NoteApi extends HttpBaseClient {
 
   async getStudentNotes(
     studentId: number,
-    noteType?: string,
+    noteTypes?: NoteType[],
   ): Promise<NoteItemModel[]> {
-    const queryString = noteType ? `?noteType=${noteType}` : ``;
+    const queryString = noteTypes?.length
+      ? `?noteTypes=${noteTypes.join(",")}`
+      : "";
     return this.getCall<NoteItemModel[]>(
       this.addClientRoot(`note/student/${studentId}${queryString}`),
     );

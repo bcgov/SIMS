@@ -1,6 +1,48 @@
 import { NoteAPIOutDTO } from "@/services/http/dto";
 
 /**
+ * Enumeration types for Notes.
+ */
+export enum NoteType {
+  /**
+   * Note type general.
+   */
+  General = "General",
+  /**
+   * Note type Application.
+   */
+  Application = "Application",
+  /**
+   * Notes associated with a student appeal.
+   */
+  StudentAppeal = "Student appeal",
+  /**
+   * Notes associated with a student form.
+   */
+  StudentForm = "Student form",
+  /**
+   * Note type Program.
+   */
+  Program = "Program",
+  /**
+   * Note type Restriction.
+   */
+  Restriction = "Restriction",
+  /**
+   * Note type Designation.
+   */
+  Designation = "Designation",
+  /**
+   * Note type Overaward.
+   */
+  Overaward = "Overaward",
+  /**
+   * Note type System.
+   */
+  System = "System Actions",
+}
+
+/**
  * Enumeration types for Institution Notes.
  */
 export enum InstitutionNoteType {
@@ -53,6 +95,11 @@ export enum StudentNoteType {
    */
   Application = "Application",
   /**
+   * Note type for forms submissions
+   * (e.g., Student Appeal, Student Forms).
+   */
+  Forms = "Forms",
+  /**
    * Note type Restriction.
    */
   Restriction = "Restriction",
@@ -65,6 +112,16 @@ export enum StudentNoteType {
    */
   System = "System Actions",
 }
+
+/**
+ * Map between specific student notes displayed to the user
+ * and how they should be requested from the API.
+ */
+export const STUDENT_NOTE_TO_NOTES_TYPE_MAP: Partial<
+  Record<StudentNoteType, NoteType[]>
+> = {
+  [StudentNoteType.Forms]: [NoteType.StudentForm, NoteType.StudentAppeal],
+};
 
 export interface NoteItemModel extends NoteAPIOutDTO {
   showMore: boolean;

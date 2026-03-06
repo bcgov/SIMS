@@ -11,12 +11,12 @@ import {
 import { StudentService, InstitutionService } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { NoteType } from "@sims/sims-db";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
   NoteAPIOutDTO,
   NoteAPIInDTO,
   transformToNoteDTO,
+  NoteAPIQueryStringApiInDTO,
 } from "./models/note.dto";
 import {
   AllowAuthorizedParty,
@@ -29,7 +29,6 @@ import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { Role } from "../../auth/roles.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { ParseEnumQueryPipe } from "../utils/custom-validation-pipe";
 
 /**
  * Controller for Notes.
@@ -50,14 +49,14 @@ export class NoteAESTController extends BaseController {
   /**
    * Get notes for a student.
    * @param studentId Student id.
-   * @param noteType Note type enum which is passed to filter the notes.
+   * @param queryString query string containing note types to filter the notes.
    * @returns Student Notes.
    */
   @ApiNotFoundResponse({ description: "Student not found." })
   @Get("student/:studentId")
   async getStudentNotes(
     @Param("studentId", ParseIntPipe) studentId: number,
-    @Query("noteType", new ParseEnumQueryPipe(NoteType)) noteType?: NoteType,
+    @Query() queryString: NoteAPIQueryStringApiInDTO,
   ): Promise<NoteAPIOutDTO[]> {
     const student = await this.studentService.getStudentById(studentId);
     if (!student) {
@@ -65,7 +64,7 @@ export class NoteAESTController extends BaseController {
     }
     const studentNotes = await this.studentService.getStudentNotes(
       studentId,
-      noteType,
+      queryString.noteTypes,
     );
     return studentNotes?.map((note) => transformToNoteDTO(note));
   }
@@ -73,14 +72,14 @@ export class NoteAESTController extends BaseController {
   /**
    * Gets notes for an Institution.
    * @param institutionId Institution id.
-   * @param noteType Note type enum which is passed to filter the notes.
+   * @param queryString query string containing note types to filter the notes.
    * @returns Institution Notes.
    */
   @ApiNotFoundResponse({ description: "Institution not found." })
   @Get("institution/:institutionId")
   async getInstitutionNotes(
     @Param("institutionId", ParseIntPipe) institutionId: number,
-    @Query("noteType", new ParseEnumQueryPipe(NoteType)) noteType?: NoteType,
+    @Query() queryString: NoteAPIQueryStringApiInDTO,
   ): Promise<NoteAPIOutDTO[]> {
     const institution =
       await this.institutionService.getBasicInstitutionDetailById(
@@ -91,7 +90,7 @@ export class NoteAESTController extends BaseController {
     }
     const institutionNotes = await this.institutionService.getInstitutionNotes(
       institutionId,
-      noteType,
+      queryString.noteTypes,
     );
     return institutionNotes?.map((note) => transformToNoteDTO(note)) ?? [];
   }

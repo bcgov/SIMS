@@ -31,36 +31,36 @@
     >
       <v-timeline-item
         v-for="note in notes"
-        :key="note"
+        :key="note.id"
         dot-color="primary"
         size="x-small"
         fill-dot
       >
         <div class="d-flex">
-          <span class="primary-color label-bold">{{
+          <span class="primary-color label-bold text-no-wrap">{{
             dateOnlyLongString(note.createdAt)
           }}</span>
           <div class="mx-8">
             <div class="content-header">{{ note.noteType }}</div>
-            <div v-if="showMoreNotes(notes)" class="header mt-2">
-              {{ note.description.substring(0, 150) }}
-              <a @click="toggleNotes(notes)" class="primary-color"
-                >Show more...</a
+            <div v-if="showMoreNotes(note)" class="header mt-2">
+              {{ note.description.substring(0, 150) }}...
+              <a @click="toggleNotes(note)" class="primary-color d-block mt-2"
+                >Show more</a
               >
             </div>
             <div v-else class="header mt-2">
               {{ note.description }}
               <a
                 v-if="note.showMore"
-                @click="toggleNotes(notes)"
-                class="primary-color"
-                >Show less...</a
+                @click="toggleNotes(note)"
+                class="primary-color d-block mt-2"
+                >Show less</a
               >
             </div>
             <div class="content-footer mt-2 mb-8 secondary-color-light">
               <span>{{ timeOnlyInHoursAndMinutes(note.createdAt) }}</span
               ><span class="mx-2">|</span>
-              <span>{{ `${note.lastName}, ${note.firstName}` }}</span>
+              <span>{{ note.createdBy }}</span>
             </div>
           </div>
         </div>
@@ -68,8 +68,8 @@
     </v-timeline>
     <create-note-modal
       ref="createNotesModal"
-      :entityType="entityType"
-      :allowedRole="allowedRole"
+      :entity-type="entityType"
+      :allowed-role="allowedRole"
     />
   </body-header-container>
 </template>
@@ -87,7 +87,7 @@ export default defineComponent({
   components: { CreateNoteModal, CheckPermissionRole },
   props: {
     notes: {
-      type: Array,
+      type: Array as PropType<NoteItemModel[]>,
       required: true,
     },
     title: {

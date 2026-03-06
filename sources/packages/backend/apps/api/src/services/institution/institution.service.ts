@@ -747,18 +747,19 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   }
 
   /**
-   * Service to get notes for a student.
-   * @param institutionId
-   * @param noteType
+   * Service to get notes for an institution.
+   * @param institutionId institution id to retrieve the notes.
+   * @param noteTypes optional filter to return only specific note types.
    * @returns Notes.
    */
   async getInstitutionNotes(
     institutionId: number,
-    noteType?: NoteType,
+    noteTypes?: NoteType[],
   ): Promise<Note[]> {
     const institutionNoteQuery = this.repo
       .createQueryBuilder("institution")
       .select([
+        "note.id",
         "institution.id",
         "note.noteType",
         "note.description",
@@ -769,10 +770,11 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       .innerJoin("institution.notes", "note")
       .innerJoin("note.creator", "user")
       .where("institution.id = :institutionId", { institutionId });
-    if (noteType) {
-      institutionNoteQuery.andWhere("note.noteType = :noteType", { noteType });
+    if (noteTypes?.length) {
+      institutionNoteQuery.andWhere("note.noteType IN (:...noteTypes)", {
+        noteTypes,
+      });
     }
-
     const institution = await institutionNoteQuery
       .orderBy("note.id", "DESC")
       .getOne();
