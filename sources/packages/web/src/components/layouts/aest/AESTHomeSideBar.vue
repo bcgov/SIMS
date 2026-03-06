@@ -151,7 +151,7 @@ export default defineComponent({
               props: {
                 prependIcon: "mdi-scale-balance",
                 to: {
-                  name: AESTRoutesConst.STUDENT_APPEALS,
+                  name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_PENDING_APPEALS,
                 },
               },
             },
@@ -160,7 +160,7 @@ export default defineComponent({
               props: {
                 prependIcon: "mdi-file-document-outline",
                 to: {
-                  name: AESTRoutesConst.PENDING_FORMS,
+                  name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_PENDING_FORMS,
                 },
               },
             },
