@@ -107,16 +107,17 @@ const goToFormSubmission = (
 const loadForms = async () => {
   try {
     isLoading.value = true;
-    pendingForms.value = await FormSubmissionService.shared.getPendingFormSubmissions(
-      {
-        page: currentPagination.page,
-        pageLimit: currentPagination.pageLimit,
-        sortField: currentPagination.sortField,
-        sortOrder: currentPagination.sortOrder,
-        searchCriteria: searchCriteria.value,
-      },
-      { formCategory: FormCategory.StudentForm },
-    );
+    pendingForms.value =
+      await FormSubmissionService.shared.getPendingFormSubmissions(
+        {
+          page: currentPagination.page,
+          pageLimit: currentPagination.pageLimit,
+          sortField: currentPagination.sortField,
+          sortOrder: currentPagination.sortOrder,
+          searchCriteria: searchCriteria.value,
+        },
+        { formCategory: FormCategory.StudentForm },
+      );
   } catch {
     snackBar.error("Error loading pending forms.");
   } finally {
