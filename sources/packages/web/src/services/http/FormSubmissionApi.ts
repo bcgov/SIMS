@@ -14,7 +14,6 @@ import {
 } from "@/services/http/dto";
 import {
   FormCategory,
-  FormSubmissionApplicationFilter,
   FormSubmissionDecisionStatus,
   FormSubmissionStatus,
   PaginationOptions,
@@ -176,18 +175,18 @@ export class FormSubmissionApi extends HttpBaseClient {
    * Gets all pending appeal form submissions for ministry review.
    * @param paginationOptions options to execute the pagination.
    * @param options additional filter options.
-   * - `applicationFilter` filters the results by application type (with or without application).
+   * - `hasApplicationScope` when true returns only appeals linked to an application; when false returns only appeals not linked.
    * @returns paginated list of pending appeal submissions including optional application details.
    */
   async getPendingAppeals(
     paginationOptions: PaginationOptions,
-    options?: { applicationFilter?: FormSubmissionApplicationFilter },
+    options?: { hasApplicationScope?: boolean },
   ): Promise<
     PaginatedResultsAPIOutDTO<FormSubmissionPendingAppealSummaryAPIOutDTO>
   > {
     let url = `form-submission/pending-appeals?${getPaginationQueryString(paginationOptions)}`;
-    if (options?.applicationFilter) {
-      url += `&applicationFilter=${options.applicationFilter}`;
+    if (options?.hasApplicationScope !== undefined) {
+      url += `&hasApplicationScope=${options.hasApplicationScope}`;
     }
     return this.getCall<
       PaginatedResultsAPIOutDTO<FormSubmissionPendingAppealSummaryAPIOutDTO>

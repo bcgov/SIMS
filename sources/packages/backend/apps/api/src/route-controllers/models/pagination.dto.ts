@@ -19,7 +19,7 @@ import {
 } from "@sims/sims-db";
 import { Transform } from "class-transformer";
 import { ToBoolean } from "../../utilities/class-transform";
-import { AppealType, FormSubmissionApplicationFilter } from "../../services";
+import { AppealType } from "../../services";
 import { AllowIf, IsDateAfter } from "../../utilities/class-validation";
 /**
  * Common parameters used when an API result
@@ -114,8 +114,9 @@ export class FormSubmissionPendingAppealPaginationOptionsAPIInDTO extends Pagina
   @IsIn(["submittedDate", "lastName", "applicationNumber"])
   sortField?: string;
   @IsOptional()
-  @IsEnum(FormSubmissionApplicationFilter)
-  applicationFilter?: FormSubmissionApplicationFilter;
+  @IsBoolean()
+  @ToBoolean()
+  hasApplicationScope?: boolean;
 }
 
 export class ApplicationChangeRequestPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {

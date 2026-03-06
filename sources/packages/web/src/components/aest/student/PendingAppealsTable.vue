@@ -29,17 +29,13 @@
           selected-class="selected-btn-toggle"
           @update:model-value="searchAppeals"
         >
-          <v-btn
-            :value="FormSubmissionApplicationFilter.WithApplication"
-            rounded="xl"
-            class="mr-2"
+          <v-btn value="all" rounded="xl" color="primary" class="mr-2"
+            >All</v-btn
+          >
+          <v-btn :value="true" rounded="xl" color="primary" class="mr-2"
             >Application</v-btn
           >
-          <v-btn
-            :value="FormSubmissionApplicationFilter.WithoutApplication"
-            rounded="xl"
-            >Other</v-btn
-          >
+          <v-btn :value="false" rounded="xl" color="primary">Other</v-btn>
         </v-btn-toggle>
       </v-col>
     </v-row>
@@ -77,10 +73,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import {
-  FormSubmissionApplicationFilter,
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   DataTableSortByOrder,
@@ -102,8 +97,9 @@ const { dateOnlyLongString, emptyStringFiller } = useFormatters();
 const snackBar = useSnackBar();
 const isLoading = ref(false);
 const searchCriteria = ref("");
-const selectedFilter = ref<FormSubmissionApplicationFilter | undefined>(
-  undefined,
+const selectedFilter = ref<boolean | "all">("all");
+const applicationFilter = computed(() =>
+  selectedFilter.value === "all" ? undefined : selectedFilter.value,
 );
 const applicationAppeals = ref<
   PaginatedResultsAPIOutDTO<FormSubmissionPendingAppealSummaryAPIOutDTO>
@@ -156,7 +152,7 @@ const loadAppeals = async () => {
           sortOrder: currentPagination.sortOrder,
           searchCriteria: searchCriteria.value,
         },
-        { applicationFilter: selectedFilter.value },
+        { hasApplicationScope: applicationFilter.value },
       );
   } catch {
     snackBar.error("Error loading appeals.");

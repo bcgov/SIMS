@@ -14,7 +14,6 @@ import {
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
-  FormSubmissionApplicationFilter,
   FormSubmissionConfig,
   FormSubmissionModel,
   FormSubmissionPendingPaginationOptions,
@@ -153,7 +152,7 @@ export class FormSubmissionService {
       sortField,
       sortOrder,
       searchCriteria,
-      applicationFilter,
+      hasApplicationScope,
     } = paginationOptions;
 
     const query = this.dataSource
@@ -186,11 +185,9 @@ export class FormSubmissionService {
         category: formCategory,
       });
 
-    if (applicationFilter === FormSubmissionApplicationFilter.WithApplication) {
+    if (hasApplicationScope === true) {
       query.andWhere("application.id IS NOT NULL");
-    } else if (
-      applicationFilter === FormSubmissionApplicationFilter.WithoutApplication
-    ) {
+    } else if (hasApplicationScope === false) {
       query.andWhere("application.id IS NULL");
     }
 
@@ -233,8 +230,7 @@ export class FormSubmissionService {
         lastName: item.student.user.lastName,
         formNames: item.formSubmissionItems.map(
           (formSubmissionItem) =>
-            formSubmissionItem.dynamicFormConfiguration.formDescription ??
-            (formSubmissionItem.dynamicFormConfiguration.formType as string),
+            formSubmissionItem.dynamicFormConfiguration.formType as string,
         ),
         applicationId: item.application?.id,
         applicationNumber: item.application?.applicationNumber,
