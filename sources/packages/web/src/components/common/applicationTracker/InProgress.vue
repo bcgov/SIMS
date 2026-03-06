@@ -119,7 +119,7 @@
   >
 
   <application-status-tracker-banner
-    :label="`Spouse/Common-law information required for ${applicationDetails?.partnerInfo?.fullName}`"
+    :label="`Spouse/Common-law information required for ${applicationDetails?.partnerInfo.fullName}`"
     icon="fa:fas fa-clock"
     icon-color="secondary"
     v-if="
@@ -129,7 +129,7 @@
     "
     ><template #content
       >You have indicated that
-      <strong>{{ applicationDetails.partnerInfo?.fullName }}</strong> is unable
+      <strong>{{ applicationDetails.partnerInfo.fullName }}</strong> is unable
       to complete their declaration. Please complete the following declaration
       on their behalf. Click on the button below to complete the
       declaration.</template
@@ -139,12 +139,12 @@
         color="primary"
         @click="
           navigateToPartnerReporting(
-            applicationDetails.partnerInfo?.supportingUserId,
+            applicationDetails.partnerInfo.supportingUserId,
           )
         "
         :disabled="!areApplicationActionsAllowed"
       >
-        {{ applicationDetails.partnerInfo?.fullName }}
+        {{ applicationDetails.partnerInfo.fullName }}
       </v-btn>
     </template></application-status-tracker-banner
   >

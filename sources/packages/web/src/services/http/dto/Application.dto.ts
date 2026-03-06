@@ -20,9 +20,9 @@ import {
 
 export interface SupportingUserDetails {
   supportingUserId: number;
-  fullName: string;
+  fullName?: string;
   status: SuccessWaitingStatus;
-  isAbleToReport?: boolean;
+  isAbleToReport: boolean;
 }
 
 export interface ApplicationIdentifiableSupportingUserDetails {

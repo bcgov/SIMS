@@ -187,11 +187,11 @@ export enum SuccessWaitingStatus {
   Waiting = "Waiting",
 }
 
-export interface SupportingUserDetails {
+export class SupportingUserDetails {
   supportingUserId: number;
-  fullName: string;
+  fullName?: string;
   status: SuccessWaitingStatus;
-  isAbleToReport?: boolean;
+  isAbleToReport: boolean;
 }
 
 export class ApplicationIncomeVerification {

@@ -32,7 +32,7 @@
           "
           ><li
             v-for="parent in waitingList.parentsInfoWaiting"
-            :key="parent.fullName"
+            :key="parent.supportingUserId"
           >
             <template v-if="parent.isAbleToReport">
               We are waiting for supporting information from

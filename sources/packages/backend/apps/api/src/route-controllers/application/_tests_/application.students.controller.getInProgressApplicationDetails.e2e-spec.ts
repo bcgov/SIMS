@@ -216,6 +216,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           supportingUserType: SupportingUserType.Partner,
           supportingData: { totalIncome: 2000 },
           fullName: "My Partner",
+          isAbleToReport: false,
         },
       },
     );
@@ -263,7 +264,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationProgressDetails", () 
           supportingUserId: partner.id,
           fullName: partner.fullName,
           status: SuccessWaitingStatus.Success,
-          isAbleToReport: true,
+          isAbleToReport: false,
         },
         outstandingAssessmentStatus: SuccessWaitingStatus.Success,
       });
