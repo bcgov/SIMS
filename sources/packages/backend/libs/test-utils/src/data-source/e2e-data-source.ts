@@ -65,6 +65,9 @@ import {
   InstitutionUser,
   DynamicFormConfiguration,
   SystemLookupConfiguration,
+  FormSubmission,
+  FormSubmissionItem,
+  FormSubmissionItemDecision,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 
@@ -173,6 +176,11 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     systemLookupConfiguration: dataSource.getRepository(
       SystemLookupConfiguration,
     ),
+    formSubmission: dataSource.getRepository(FormSubmission),
+    formSubmissionItem: dataSource.getRepository(FormSubmissionItem),
+    formSubmissionItemDecision: dataSource.getRepository(
+      FormSubmissionItemDecision,
+    ),
   };
 }
 
@@ -247,4 +255,7 @@ export interface E2EDataSources {
   sfasBridgeLog: Repository<SFASBridgeLog>;
   dynamicFormConfiguration: Repository<DynamicFormConfiguration>;
   systemLookupConfiguration: Repository<SystemLookupConfiguration>;
+  formSubmission: Repository<FormSubmission>;
+  formSubmissionItem: Repository<FormSubmissionItem>;
+  formSubmissionItemDecision: Repository<FormSubmissionItemDecision>;
 }
