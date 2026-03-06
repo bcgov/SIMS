@@ -3,10 +3,10 @@
     <template #header>
       <header-navigator title="Student requests" sub-title="Forms" />
     </template>
-    <pending-forms-table />
+    <form-submission-pending-forms-table />
   </full-page-container>
 </template>
 
 <script setup lang="ts">
-import PendingFormsTable from "@/components/aest/student/PendingFormsTable.vue";
+import FormSubmissionPendingFormsTable from "@/components/aest/student/FormSubmissionPendingFormsTable.vue";
 </script>

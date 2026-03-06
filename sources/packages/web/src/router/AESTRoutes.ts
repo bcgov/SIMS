@@ -58,8 +58,6 @@ import ViewPendingOfferingChangeRequests from "@/views/aest/institution/ViewPend
 import LegacyChangeRequests from "@/views/aest/student/LegacyChangeRequests.vue";
 import ApplicationChangeRequests from "@/views/aest/student/ApplicationChangeRequests.vue";
 import LegacyStudentAppeals from "@/views/aest/student/LegacyStudentAppeals.vue";
-import StudentAppeals from "@/views/aest/student/StudentAppeals.vue";
-import PendingForms from "@/views/aest/student/PendingForms.vue";
 import ApplicationOfferingChangeRequestForm from "@/views/aest/student/applicationDetails/ApplicationOfferingChangeRequestForm.vue";
 import StudentAccountApplications from "@/views/aest/student/StudentAccountApplications.vue";
 import StudentAccountApplicationsApproval from "@/views/aest/student/StudentAccountApplicationsApproval.vue";
@@ -70,6 +68,8 @@ import { AESTRoutesApplicationVersionsDetails } from "@/router/AESTRoutesApplica
 import ViewPendingOfferings from "@/views/aest/institution/ViewPendingOfferings.vue";
 import ViewPendingPrograms from "@/views/aest/institution/ViewPendingPrograms.vue";
 import StudentFormSubmissionApproval from "@/views/aest/student/StudentFormSubmissionApproval.vue";
+import StudentFormSubmissionPendingForms from "@/views/aest/student/StudentFormSubmissionPendingForms.vue";
+import StudentFormSubmissionPendingAppeals from "@/views/aest/student/StudentFormSubmissionPendingAppeals.vue";
 
 export const aestRoutes: Array<RouteRecordRaw> = [
   {
@@ -660,10 +660,10 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.StudentAppeals,
-        name: AESTRoutesConst.STUDENT_APPEALS,
+        path: AppRoutes.FormSubmissionPendingAppeals,
+        name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_PENDING_APPEALS,
         components: {
-          default: StudentAppeals,
+          default: StudentFormSubmissionPendingAppeals,
           sidebar: AESTHomeSideBar,
         },
         meta: {
@@ -671,10 +671,10 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.PendingForms,
-        name: AESTRoutesConst.PENDING_FORMS,
+        path: AppRoutes.FormSubmissionPendingForms,
+        name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_PENDING_FORMS,
         components: {
-          default: PendingForms,
+          default: StudentFormSubmissionPendingForms,
           sidebar: AESTHomeSideBar,
         },
         meta: {
