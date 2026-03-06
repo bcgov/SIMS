@@ -13,7 +13,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
     assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
@@ -47,7 +46,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
     assessmentConsolidatedData.partner1CRAReportedIncome = 33999;
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
@@ -88,7 +86,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
     assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
     // Public institution
     assessmentConsolidatedData.institutionType = InstitutionTypes.BCPublic;
@@ -134,7 +131,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
     assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
     // Public institution
     assessmentConsolidatedData.institutionType = InstitutionTypes.BCPublic;
@@ -163,7 +159,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
       assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
       // Public institution
       assessmentConsolidatedData.institutionType = InstitutionTypes.BCPublic;

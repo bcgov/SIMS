@@ -24,6 +24,7 @@ import {
   StudentAppealRequest,
   ModifiedIndependentStatus,
   SINValidation,
+  FormSubmissionItem,
 } from ".";
 
 @Entity({ name: TableNames.Student })
@@ -219,4 +220,17 @@ export class Student extends RecordDataModel {
     nullable: true,
   })
   modifiedIndependentStatusUpdatedOn?: Date;
+
+  /**
+   * Reference to the form submission item assessed by the Ministry if the
+   * student has requested an appeal for the modified independent status.
+   */
+  @OneToOne(() => FormSubmissionItem, {
+    nullable: true,
+  })
+  @JoinColumn({
+    name: "modified_independent_form_submission_item_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  modifiedIndependentFormSubmissionItem?: FormSubmissionItem;
 }

@@ -13,6 +13,7 @@ import {
   User,
   StudentScholasticStandingChangeType,
   StudentAppeal,
+  FormSubmission,
 } from "@sims/sims-db";
 import {
   ScholasticStanding,
@@ -207,6 +208,12 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           scholasticStanding.studentAssessment.studentAppeal = {
             id: application.currentAssessment.studentAppeal.id,
           } as StudentAppeal;
+        }
+        // Update the form submission record for the student assessment if it exists.
+        if (application.currentAssessment.formSubmission) {
+          scholasticStanding.studentAssessment.formSubmission = {
+            id: application.currentAssessment.formSubmission.id,
+          } as FormSubmission;
         }
         // Set archive to true only when the scholastic standing change type is not 'Student did not complete program'.
         application.isArchived = true;

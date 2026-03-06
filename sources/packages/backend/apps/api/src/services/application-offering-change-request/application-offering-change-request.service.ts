@@ -14,6 +14,7 @@ import {
   AssessmentTriggerType,
   StudentAssessment,
   StudentAppeal,
+  FormSubmission,
 } from "@sims/sims-db";
 import { DataSource, Brackets, Repository, In } from "typeorm";
 import { PaginatedResults, PaginationOptions } from "../../utilities";
@@ -310,7 +311,11 @@ export class ApplicationOfferingChangeRequestService {
               email: true,
             },
           },
-          currentAssessment: { id: true, studentAppeal: { id: true } },
+          currentAssessment: {
+            id: true,
+            studentAppeal: { id: true },
+            formSubmission: { id: true },
+          },
         },
         assessedNote: {
           id: true,
@@ -323,7 +328,7 @@ export class ApplicationOfferingChangeRequestService {
           student: {
             user: true,
           },
-          currentAssessment: { studentAppeal: true },
+          currentAssessment: { studentAppeal: true, formSubmission: true },
         },
         activeOffering: true,
         requestedOffering: {
@@ -648,6 +653,12 @@ export class ApplicationOfferingChangeRequestService {
           application.currentAssessment.studentAppeal = {
             id: studentAssessment.studentAppeal.id,
           } as StudentAppeal;
+        }
+        // Update the form submission record for the student assessment if it exists.
+        if (studentAssessment.formSubmission) {
+          application.currentAssessment.formSubmission = {
+            id: studentAssessment.formSubmission.id,
+          } as FormSubmission;
         }
       }
       await transactionalEntityManager

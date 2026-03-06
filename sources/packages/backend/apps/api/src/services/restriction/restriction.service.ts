@@ -39,13 +39,14 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
    */
   async getRestrictionReasonsByCategory(
     restrictionType: RestrictionType.Provincial | RestrictionType.Institution,
-    restrictionCategory: string,
+    restrictionCategory?: string,
   ): Promise<Restriction[]> {
     return this.repo.find({
       select: {
         id: true,
         restrictionCode: true,
         description: true,
+        metadata: true,
       },
       where: {
         restrictionType,

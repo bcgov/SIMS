@@ -6,12 +6,11 @@ import {
 } from "../../../test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-total-partner-income.`, () => {
-  it("Should calculate total partner income as the CRA verified income value when the student is married and the partner is able to report their financial information.", async () => {
+  it("Should calculate total partner income as the CRA verified income value when the student is married and the partner had CRA verified income.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = true;
     assessmentConsolidatedData.partner1CRAReportedIncome = 30000;
 
     // Act
@@ -24,47 +23,21 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-total-partner-in
     expect(
       calculatedAssessment.variables.calculatedDataPartner1TotalIncome,
     ).toBe(30000);
-    // As the student did not report the current year partner income, it must be undefined.
-    expect(
-      calculatedAssessment.variables.studentDataCurrentYearPartnerIncome,
-    ).toBe(undefined);
+    expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
+      calculatedAssessment.variables.calculatedDataPartner1TotalIncome +
+        calculatedAssessment.variables.calculatedDataStudentTotalIncome,
+    );
   });
 
   it(
-    "Should calculate total partner income as self reported partner's current year income when the student is married and need to self report the partner financial information" +
-      " as their partner's current year income needs to be reported.",
+    "Should calculate total partner income as self reported partner's tax return income when the student is married and" +
+      " their partner did not have CRA verified income.",
     async () => {
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
-      assessmentConsolidatedData.studentDataCurrentYearPartnerIncome = 10000;
-
-      // Act
-      const calculatedAssessment =
-        await executePartTimeAssessmentForProgramYear(
-          PROGRAM_YEAR,
-          assessmentConsolidatedData,
-        );
-      // Assert
-      // Calculated total partner income must be 10000 based on current year income being the top priority for income.
-      expect(
-        calculatedAssessment.variables.calculatedDataPartner1TotalIncome,
-      ).toBe(10000);
-    },
-  );
-
-  it(
-    "Should calculate total partner income as self reported partner's tax return income when the student is married and need to self report the partner financial information" +
-      " as their partner is not eligible for BC Services Card.",
-    async () => {
-      // Arrange
-      const assessmentConsolidatedData =
-        createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
-      assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 15000;
+      assessmentConsolidatedData.partner1TotalIncome = 15000;
       // No income verification happened as student self reported partner's tax return income.
       assessmentConsolidatedData.partner1CRAReportedIncome = null;
 
@@ -79,10 +52,12 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-total-partner-in
       expect(
         calculatedAssessment.variables.calculatedDataPartner1TotalIncome,
       ).toBe(15000);
-      // As the student did not report the current year partner income, it must be undefined.
       expect(
-        calculatedAssessment.variables.studentDataCurrentYearPartnerIncome,
-      ).toBe(undefined);
+        calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
+      ).toBe(
+        calculatedAssessment.variables.calculatedDataPartner1TotalIncome +
+          calculatedAssessment.variables.calculatedDataStudentTotalIncome,
+      );
     },
   );
 

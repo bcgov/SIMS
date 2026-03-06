@@ -10,6 +10,7 @@ import {
   InternalServerErrorException,
   ParseIntPipe,
   Query,
+  BadRequestException,
 } from "@nestjs/common";
 import {
   StudentRestrictionService,
@@ -38,6 +39,7 @@ import {
   AssignInstitutionRestrictionAPIInDTO,
   InstitutionRestrictionSummaryAPIOutDTO,
   InstitutionActiveRestrictionsAPIOutDTO,
+  RestrictionAPIOutDTO,
 } from "./models/restriction.dto";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
@@ -59,9 +61,9 @@ import {
   RESTRICTION_NOT_ACTIVE,
   RESTRICTION_IS_DELETED,
   INSTITUTION_NOT_FOUND,
-  INSTITUTION_PROGRAM_LOCATION_ASSOCIATION_NOT_FOUND,
   INSTITUTION_RESTRICTION_ALREADY_ACTIVE,
   RESTRICTION_NOT_PROVINCIAL,
+  FIELD_REQUIREMENTS_NOT_VALID,
 } from "../../constants";
 import { RestrictionType } from "@sims/sims-db";
 
@@ -120,7 +122,7 @@ export class RestrictionAESTController extends BaseController {
   @Get("reasons")
   async getReasonsOptionsList(
     @Query() options: RestrictionReasonsOptionsAPIInDTO,
-  ): Promise<OptionItemAPIOutDTO[]> {
+  ): Promise<RestrictionAPIOutDTO[]> {
     const reasons =
       await this.restrictionService.getRestrictionReasonsByCategory(
         options.type,
@@ -129,6 +131,7 @@ export class RestrictionAESTController extends BaseController {
     return reasons.map((reason) => ({
       id: reason.id,
       description: `${reason.restrictionCode} - ${reason.description}`,
+      fieldRequirements: reason.metadata?.fieldRequirements,
     }));
   }
 
@@ -297,8 +300,8 @@ export class RestrictionAESTController extends BaseController {
       restrictionCode: institutionRestriction.restriction.restrictionCode,
       description: institutionRestriction.restriction.description,
       createdAt: institutionRestriction.createdAt,
-      locationName: institutionRestriction.location.name,
-      programName: institutionRestriction.program.name,
+      locationName: institutionRestriction.location?.name,
+      programName: institutionRestriction.program?.name,
       resolvedAt: institutionRestriction.resolvedAt,
       isActive: institutionRestriction.isActive,
     }));
@@ -400,10 +403,7 @@ export class RestrictionAESTController extends BaseController {
       const createdRestrictions =
         await this.institutionRestrictionService.addInstitutionRestriction(
           institutionId,
-          payload.restrictionId,
-          payload.locationIds,
-          payload.programId,
-          payload.noteDescription,
+          payload,
           userToken.userId,
         );
       return { ids: createdRestrictions.map((r) => r.id) };
@@ -412,13 +412,14 @@ export class RestrictionAESTController extends BaseController {
         switch (error.name) {
           case INSTITUTION_NOT_FOUND:
             throw new NotFoundException(error.message);
-          case RESTRICTION_NOT_FOUND:
-          case INSTITUTION_PROGRAM_LOCATION_ASSOCIATION_NOT_FOUND:
-            throw new UnprocessableEntityException(error.message);
+          case FIELD_REQUIREMENTS_NOT_VALID:
+            throw new BadRequestException(error.message);
           case INSTITUTION_RESTRICTION_ALREADY_ACTIVE:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );
+          default:
+            throw new UnprocessableEntityException(error.message);
         }
       }
       throw error;

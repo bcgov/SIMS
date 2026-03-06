@@ -56,6 +56,8 @@ import {
   ConfirmationOfEnrollmentService,
   DisbursementOverawardService,
   EnrollmentPeriod,
+  RestrictionCode,
+  RestrictionSharedService,
 } from "@sims/services";
 import {
   ENROLMENT_ALREADY_COMPLETED,
@@ -76,6 +78,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     private readonly confirmationOfEnrollmentControllerService: ConfirmationOfEnrollmentControllerService,
     private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
     private readonly disbursementOverawardService: DisbursementOverawardService,
+    private readonly restrictionSharedService: RestrictionSharedService,
   ) {
     super();
   }
@@ -164,15 +167,31 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
         "Confirmation of enrollment not found or application status not valid.",
       );
     }
-
+    const applicationOffering =
+      disbursementSchedule.studentAssessment.application.currentAssessment
+        .offering;
+    const applicationLocation = applicationOffering.institutionLocation;
+    const applicationProgram = applicationOffering.educationProgram;
+    // Check if the application program and location has effective REMIT restriction to determine
+    // if tuition remittance can be requested for the application.
+    const institutionREMITRestrictions =
+      await this.restrictionSharedService.getEffectiveInstitutionRestrictions(
+        applicationLocation.institution.id,
+        applicationProgram.id,
+        applicationLocation.id,
+        { restrictionCode: RestrictionCode.REMIT },
+      );
+    const canRequestTuitionRemittance = !institutionREMITRestrictions.length;
     const hasOverawardBalancePromise =
       this.disbursementOverawardService.hasOverawardBalance(
         disbursementSchedule.studentAssessment.application.student.id,
       );
-    const maxTuitionRemittanceAllowedPromise =
-      this.confirmationOfEnrollmentService.getEstimatedMaxTuitionRemittance(
-        disbursementScheduleId,
-      );
+    // Calculate the max tuition remittance only when the application is eligible to request tuition remittance.
+    const maxTuitionRemittanceAllowedPromise = canRequestTuitionRemittance
+      ? this.confirmationOfEnrollmentService.getEstimatedMaxTuitionRemittance(
+          disbursementScheduleId,
+        )
+      : Promise.resolve(0);
     const [hasOverawardBalance, maxTuitionRemittanceAllowed] =
       await Promise.all([
         hasOverawardBalancePromise,
@@ -227,7 +246,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
         offering.educationProgram.deliveredOnline,
         offering.educationProgram.deliveredOnSite,
       ),
-      maxTuitionRemittanceAllowed,
+      maxTuitionRemittanceAllowed: maxTuitionRemittanceAllowed,
       hasOverawardBalance,
       disabilityApplicationStatus:
         disbursementSchedule.studentAssessment.application.data
@@ -235,6 +254,7 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
       disabilityProfileStatus:
         disbursementSchedule.studentAssessment.application.student
           .disabilityStatus,
+      canRequestTuitionRemittance,
     };
   }
 

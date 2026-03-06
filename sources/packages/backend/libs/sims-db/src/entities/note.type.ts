@@ -11,6 +11,14 @@ export enum NoteType {
    */
   Application = "Application",
   /**
+   * Notes associated with a student appeal.
+   */
+  StudentAppeal = "Student appeal",
+  /**
+   * Notes associated with a student form.
+   */
+  StudentForm = "Student form",
+  /**
    * Note type Program.
    */
   Program = "Program",

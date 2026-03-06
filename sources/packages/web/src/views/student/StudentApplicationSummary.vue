@@ -106,7 +106,7 @@ export default defineComponent({
     };
 
     const submitAppeal = async (applicationId: number) => {
-      if (isFormSubmissionEnabled) {
+      if (isFormSubmissionEnabled.value) {
         router.push({
           name: StudentRoutesConst.STUDENT_FORMS_SELECTOR,
           query: {

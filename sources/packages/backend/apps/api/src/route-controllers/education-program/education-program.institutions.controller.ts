@@ -17,10 +17,10 @@ import {
   HasLocationAccess,
   UserToken,
 } from "../../auth/decorators";
-import { EducationProgramsSummary } from "../../services/education-program/education-program.service.models";
 import {
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
+  EducationProgramsSummaryLocationAPIOutDTO,
 } from "./models/education-program.dto";
 import { ClientTypeBaseRoute } from "../../types";
 import {
@@ -32,17 +32,22 @@ import {
 import BaseController from "../BaseController";
 import {
   PaginatedResultsAPIOutDTO,
-  ProgramsPaginationOptionsAPIInDTO,
+  ProgramsLocationPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
-import { EducationProgramControllerService } from "..";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
+import { EducationProgramService } from "../../services/education-program/education-program.service";
+import { EducationProgramControllerService } from "../../route-controllers/education-program/education-program.controller.service";
+import { OfferingTypes } from "@sims/sims-db/entities/offering.type";
+import { credentialTypeToDisplay } from "../../utilities";
+import { isSameOrAfterDate } from "@sims/utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-education-program`)
 export class EducationProgramInstitutionsController extends BaseController {
   constructor(
+    private readonly educationProgramService: EducationProgramService,
     private readonly educationProgramControllerService: EducationProgramControllerService,
   ) {
     super();
@@ -58,14 +63,38 @@ export class EducationProgramInstitutionsController extends BaseController {
   @Get("location/:locationId/summary")
   async getProgramsSummaryByLocationId(
     @Param("locationId", ParseIntPipe) locationId: number,
-    @Query() paginationOptions: ProgramsPaginationOptionsAPIInDTO,
+    @Query() paginationOptions: ProgramsLocationPaginationOptionsAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummary>> {
-    return this.educationProgramControllerService.getProgramsSummary(
-      userToken.authorizations.institutionId,
-      paginationOptions,
-      locationId,
-    );
+  ): Promise<
+    PaginatedResultsAPIOutDTO<EducationProgramsSummaryLocationAPIOutDTO>
+  > {
+    const programsSummary =
+      await this.educationProgramService.getProgramsSummaryForLocation(
+        userToken.authorizations.institutionId,
+        [OfferingTypes.Public, OfferingTypes.Private],
+        paginationOptions,
+        locationId,
+      );
+
+    return {
+      results: programsSummary.results.map((program) => ({
+        programId: program.programId,
+        programName: program.programName,
+        sabcCode: program.sabcCode,
+        cipCode: program.cipCode,
+        credentialType: program.credentialType,
+        programStatus: program.programStatus,
+        isActive: program.isActive,
+        isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
+        totalOfferings: program.totalOfferings,
+        locationId: program.locationId,
+        locationName: program.locationName,
+        credentialTypeToDisplay: credentialTypeToDisplay(
+          program.credentialType,
+        ),
+      })),
+      count: programsSummary.count,
+    };
   }
 
   /**

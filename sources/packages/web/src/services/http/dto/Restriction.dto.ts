@@ -1,4 +1,5 @@
 import {
+  FieldRequirementType,
   RestrictionActionType,
   RestrictionNotificationType,
   RestrictionType,
@@ -74,8 +75,8 @@ export interface AssignRestrictionAPIInDTO extends ResolveRestrictionAPIInDTO {
  * Add restriction to an institution.
  */
 export interface AssignInstitutionRestrictionAPIInDTO extends AssignRestrictionAPIInDTO {
-  locationIds: number[];
-  programId: number;
+  locationIds?: number[];
+  programId?: number;
 }
 
 /**
@@ -111,8 +112,8 @@ export interface InstitutionRestrictionsAPIOutDTO {
  * Active institution restriction details.
  */
 export interface InstitutionActiveRestrictionAPIOutDTO {
-  programId: number;
-  locationId: number;
+  programId?: number;
+  locationId?: number;
   restrictionCode: string;
   restrictionActions: RestrictionActionType[];
 }
@@ -122,4 +123,13 @@ export interface InstitutionActiveRestrictionAPIOutDTO {
  */
 export interface InstitutionActiveRestrictionsAPIOutDTO {
   items: InstitutionActiveRestrictionAPIOutDTO[];
+}
+
+/**
+ * Restriction details.
+ */
+export interface RestrictionAPIOutDTO {
+  id: number;
+  description: string;
+  fieldRequirements?: Record<string, FieldRequirementType>;
 }

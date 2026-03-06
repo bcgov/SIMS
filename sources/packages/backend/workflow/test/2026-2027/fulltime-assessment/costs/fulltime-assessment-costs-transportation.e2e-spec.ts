@@ -82,15 +82,14 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
       assessmentConsolidatedData.studentDataReturnTripHomeCost = 1000;
       assessmentConsolidatedData.studentDataLivingWithPartner =
         YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+      assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
         YesNoOptions.No;
-      assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+      assessmentConsolidatedData.partner1HasTotalIncomeAssistance =
         YesNoOptions.No;
-      assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+      assessmentConsolidatedData.partner1HasFedralProvincialPDReceipt =
         YesNoOptions.No;
-      assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
+      assessmentConsolidatedData.partner1TotalIncome = 0;
       // Act
       const calculatedAssessment =
         await executeFullTimeAssessmentForProgramYear(

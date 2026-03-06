@@ -78,6 +78,7 @@ export class AppConfigService {
       maintenanceModeMinistry: config.maintenanceModeMinistry,
       maintenanceModeSupportingUser: config.maintenanceModeSupportingUser,
       maintenanceModeExternal: config.maintenanceModeExternal,
+      featureToggles: config.featureToggles ?? [],
     };
     return appConfig;
   }

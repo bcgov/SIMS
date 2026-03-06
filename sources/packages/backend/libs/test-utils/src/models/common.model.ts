@@ -163,4 +163,8 @@ export enum RestrictionCode {
    * Institution suspension restriction.
    */
   SUS = "SUS",
+  /**
+   * Institution block remittance request restriction.
+   */
+  REMIT = "REMIT",
 }

@@ -3,8 +3,8 @@ import { EffectiveRestrictionStatus, RestrictionActionType } from "@/types";
 import { computed, ComputedRef, MaybeRefOrGetter, ref, toValue } from "vue";
 
 interface InstitutionRestriction {
-  programId: number;
-  locationId: number;
+  programId?: number;
+  locationId?: number;
   restrictionCode: string;
   restrictionActions: RestrictionActionType[];
 }

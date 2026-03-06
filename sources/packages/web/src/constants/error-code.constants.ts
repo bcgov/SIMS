@@ -13,6 +13,7 @@ export const APPLICATION_HAS_PENDING_APPEAL = "APPLICATION_HAS_PENDING_APPEAL";
 export const FIRST_COE_NOT_COMPLETE = "FIRST_COE_NOT_COMPLETE";
 export const INVALID_TUITION_REMITTANCE_AMOUNT =
   "INVALID_TUITION_REMITTANCE_AMOUNT";
+export const TUITION_REMITTANCE_NOT_ALLOWED = "TUITION_REMITTANCE_NOT_ALLOWED";
 /**
  * A user is trying to be added to the institution when it is already present.
  */
@@ -191,3 +192,9 @@ export const NO_LOCATION_SELECTED_FOR_DESIGNATION =
  */
 export const FORM_SUBMISSION_PENDING_DECISION =
   "FORM_SUBMISSION_PENDING_DECISION";
+
+/**
+ * A more updated decision was saved since the form submission item was last retrieved for decision,
+ * and the decision cannot be saved based on potentially outdated information.
+ */
+export const FORM_SUBMISSION_ITEM_OUTDATED = "FORM_SUBMISSION_ITEM_OUTDATED";

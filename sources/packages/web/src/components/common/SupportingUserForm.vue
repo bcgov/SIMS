@@ -5,9 +5,9 @@
     </template>
     <template v-if="supportingUser.formName"
       ><formio-container
-        :formName="supportingUser.formName"
-        :formData="formInitialData"
-        :readOnly="isReadonly"
+        :form-name="supportingUser.formName"
+        :form-data="formInitialData"
+        :read-only="isReadonly"
         :is-data-ready="isDataReady"
         @loaded="formLoaded"
         @submitted="submitted"
@@ -17,11 +17,11 @@
           <footer-buttons
             :justify="isFirstPage ? 'end' : 'space-between'"
             :processing="updateInProgress"
-            @secondaryClick="wizardGoPrevious"
-            secondaryLabel="Back"
-            :showSecondaryButton="!isFirstPage"
-            @primaryClick="wizardGoNext"
-            primaryLabel="Next step"
+            @secondary-click="wizardGoPrevious"
+            secondary-label="Back"
+            :show-secondary-button="!isFirstPage"
+            @primary-click="wizardGoNext"
+            primary-label="Next step"
           >
             <!-- On the last page, show the submit button as primary. -->
             <template #primary-buttons v-if="isLastPage">
@@ -118,7 +118,6 @@ export default defineComponent({
           supportingData: supportingUser.value.supportingData,
           ...contactAddress,
           hasValidSIN: supportingUser.value.personalInfo?.hasValidSIN,
-          parentFullName: supportingUser.value.parentFullName,
         };
         isDataReady.value = true;
       }

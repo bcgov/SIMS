@@ -158,6 +158,14 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "institutionLocation.data",
         "appealRequest.submittedFormName",
         "appealRequest.submittedData",
+        "formSubmission.id",
+        "formSubmissionItem.id",
+        "formSubmissionItem.submittedData",
+        "formSubmissionItemCurrentDecision.id",
+        "formSubmissionItemCurrentDecision.decisionStatus",
+        "dynamicFormConfiguration.id",
+        "dynamicFormConfiguration.formDefinitionName",
+        "dynamicFormConfiguration.formCategory",
       ])
       .innerJoin("assessment.application", "application")
       .innerJoin("application.programYear", "programYear")
@@ -174,6 +182,16 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "appealRequest",
         "appealRequest.appealStatus = :appealStatus",
         { appealStatus: StudentAppealStatus.Approved },
+      )
+      .leftJoin("assessment.formSubmission", "formSubmission")
+      .leftJoin("formSubmission.formSubmissionItems", "formSubmissionItem")
+      .leftJoin(
+        "formSubmissionItem.currentDecision",
+        "formSubmissionItemCurrentDecision",
+      )
+      .leftJoin(
+        "formSubmissionItem.dynamicFormConfiguration",
+        "dynamicFormConfiguration",
       )
       .leftJoin("application.craIncomeVerifications", "craIncomeVerification")
       .leftJoin(

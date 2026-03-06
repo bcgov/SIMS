@@ -8,6 +8,7 @@ import {
   DisbursementScheduleStatus,
   DisbursementValue,
   DisbursementValueType,
+  FormSubmission,
   OfferingIntensity,
   SFASApplication,
   SFASPartTimeApplications,
@@ -131,7 +132,11 @@ export class AssessmentSequentialProcessingService {
       impactedApplication.currentAssessment.studentAppeal = {
         id: futureSequencedApplication.currentAssessmentAppealId,
       } as StudentAppeal;
+      impactedApplication.currentAssessment.formSubmission = {
+        id: futureSequencedApplication.currentAssessmentFormSubmissionId,
+      } as FormSubmission;
     }
+
     return applicationRepo.save(impactedApplication);
   }
 
@@ -506,12 +511,20 @@ export class AssessmentSequentialProcessingService {
       .addSelect("application.applicationStatus", "applicationStatus")
       .addSelect("currentAssessmentOffering.id", "currentAssessmentOfferingId")
       .addSelect("currentAssessmentAppeal.id", "currentAssessmentAppealId")
+      .addSelect(
+        "currentAssessmentFormSubmission.id",
+        "currentAssessmentFormSubmissionId",
+      )
       .addSelect(`(${assessmentDateSubQuery})`, referenceAssessmentDateColumn)
       .innerJoin("application.student", "student")
       .innerJoin("application.programYear", "programYear")
       .innerJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "currentAssessmentOffering")
       .leftJoin("currentAssessment.studentAppeal", "currentAssessmentAppeal")
+      .leftJoin(
+        "currentAssessment.formSubmission",
+        "currentAssessmentFormSubmission",
+      )
       .where("student.id = :studentId", { studentId })
       .andWhere("programYear.id = :programYearId", { programYearId })
       .andWhere("application.applicationStatus != :editedStatus", {
@@ -582,9 +595,10 @@ export class AssessmentSequentialProcessingService {
       .andWhere("sfasApplication.startDate < :referenceAssessmentDate", {
         referenceAssessmentDate,
       });
-    const awards = await sfasApplicationAwards.getRawOne<
-      Record<"CSGP" | "SBSD" | "CSGD" | "BCAG", string>
-    >();
+    const awards =
+      await sfasApplicationAwards.getRawOne<
+        Record<"CSGP" | "SBSD" | "CSGD" | "BCAG", string>
+      >();
     const totals: ProgramYearOutputTotal<string>[] = [];
     Object.entries(awards).forEach(([key, value]) => {
       if (value && +value > 0) {
@@ -626,9 +640,10 @@ export class AssessmentSequentialProcessingService {
       .andWhere("sfasPTApplication.startDate < :referenceAssessmentDate", {
         referenceAssessmentDate,
       });
-    const awards = await sfasPartTimeApplicationAwards.getRawOne<
-      Record<"CSGP" | "SBSD" | "CSGD" | "BCAG" | "CSPT", string>
-    >();
+    const awards =
+      await sfasPartTimeApplicationAwards.getRawOne<
+        Record<"CSGP" | "SBSD" | "CSGD" | "BCAG" | "CSPT", string>
+      >();
     const totals: ProgramYearOutputTotal<string>[] = [];
     Object.entries(awards).forEach(([key, value]) => {
       if (value && +value > 0) {

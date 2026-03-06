@@ -14,8 +14,10 @@
           variant="outlined"
           :rules="[(v) => checkNullOrEmptyRule(v, 'Reason')]"
           :loading="loadingData"
+          @update:model-value="resetFormModelValues()"
           hide-details="auto" />
         <v-autocomplete
+          v-if="programAttributes.canShow"
           item-value="id"
           item-title="description"
           class="mb-4"
@@ -24,11 +26,12 @@
           :items="programs"
           v-model="formModel.programId"
           variant="outlined"
-          :rules="[(v) => checkNullOrEmptyRule(v, 'Program')]"
+          :rules="programAttributes.rules"
           :loading="loadingData"
           :clearable="true"
           hide-details="auto" />
         <v-select
+          v-if="locationAttributes.canShow"
           item-value="id"
           item-title="name"
           class="mb-4"
@@ -37,7 +40,7 @@
           :items="locations"
           v-model="formModel.locationIds"
           variant="outlined"
-          :rules="[(v) => checkNullOrEmptyRule(v, 'Location(s)')]"
+          :rules="locationAttributes.rules"
           :loading="loadingData"
           clearable
           multiple
@@ -63,24 +66,26 @@
   </v-form>
 </template>
 <script lang="ts">
-import { ref, reactive, defineComponent } from "vue";
+import { ref, reactive, defineComponent, computed } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useModalDialog, useRules, useSnackBar } from "@/composables";
-import { VForm, RestrictionType } from "@/types";
+import { VForm, RestrictionType, FieldRequirementType } from "@/types";
 import {
   AssignInstitutionRestrictionAPIInDTO,
   InstitutionLocationAPIOutDTO,
   OptionItemAPIOutDTO,
+  RestrictionAPIOutDTO,
 } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
 import { RestrictionService } from "@/services/RestrictionService";
 import { EducationProgramService } from "@/services/EducationProgramService";
-
-/**
- * Default category to be displayed for institution restrictions.
- */
-export const CATEGORY = "Program";
+const LOCATION_FIELD_KEY = "location";
+const PROGRAM_FIELD_KEY = "program";
+interface FieldAttributes {
+  canShow: boolean;
+  rules?: ((v: string | number) => true | string)[];
+}
 
 export default defineComponent({
   components: { ModalDialogBase, ErrorSummary },
@@ -93,13 +98,60 @@ export default defineComponent({
   setup(props) {
     const snackBar = useSnackBar();
     const { checkNotesLengthRule, checkNullOrEmptyRule } = useRules();
-    const reasons = ref([] as OptionItemAPIOutDTO[]);
+    const reasons = ref([] as RestrictionAPIOutDTO[]);
     const locations = ref([] as InstitutionLocationAPIOutDTO[]);
     const programs = ref([] as OptionItemAPIOutDTO[]);
     const formModel = reactive({} as AssignInstitutionRestrictionAPIInDTO);
     const loadingData = ref(false);
     const submittingData = ref(false);
     const addRestrictionForm = ref({} as VForm);
+    /**
+     * Get field attributes.
+     * @param fieldKey field key to get the attributes for.
+     * @param friendlyName friendly name of the field.
+     */
+    const getFieldAttributes = (
+      fieldKey: string,
+      friendlyName: string,
+    ): FieldAttributes => {
+      const selectedReason = reasons.value.find(
+        (reason) => reason.id === formModel.restrictionId,
+      );
+      if (!selectedReason?.fieldRequirements) {
+        return { canShow: false };
+      }
+      const fieldRequirement = selectedReason.fieldRequirements[fieldKey];
+      const canShow = fieldRequirement !== FieldRequirementType.NotAllowed;
+      const rules =
+        fieldRequirement === FieldRequirementType.Required
+          ? [(v: string | number) => checkNullOrEmptyRule(v, friendlyName)]
+          : [];
+      return {
+        canShow,
+        rules,
+      };
+    };
+
+    const locationAttributes = computed(() => {
+      return getFieldAttributes(LOCATION_FIELD_KEY, "Location(s)");
+    });
+
+    const programAttributes = computed(() => {
+      return getFieldAttributes(PROGRAM_FIELD_KEY, "Program");
+    });
+
+    /**
+     * Resets the form model values based on the visibility of the fields.
+     * This is required to avoid sending invalid data to the API in case the user changes the reason after filling some fields.
+     */
+    const resetFormModelValues = () => {
+      if (!locationAttributes.value.canShow) {
+        formModel.locationIds = [];
+      }
+      if (!programAttributes.value.canShow) {
+        formModel.programId = undefined;
+      }
+    };
     const {
       showDialog,
       showModal: showModalInternal,
@@ -135,7 +187,6 @@ export default defineComponent({
           await Promise.all([
             RestrictionService.shared.getRestrictionReasons(
               RestrictionType.Institution,
-              CATEGORY,
             ),
             InstitutionService.shared.getAllInstitutionLocations(
               props.institutionId,
@@ -191,6 +242,9 @@ export default defineComponent({
       programs,
       checkNotesLengthRule,
       checkNullOrEmptyRule,
+      locationAttributes,
+      programAttributes,
+      resetFormModelValues,
     };
   },
 });

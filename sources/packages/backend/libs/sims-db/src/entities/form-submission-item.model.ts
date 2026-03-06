@@ -3,15 +3,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import {
   DynamicFormConfiguration,
   FormSubmission,
-  Note,
-  User,
-  FormSubmissionDecisionStatus,
+  FormSubmissionItemDecision,
 } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
@@ -53,42 +52,37 @@ export class FormSubmissionItem extends RecordDataModel {
     name: "submitted_data",
     type: "jsonb",
   })
-  submittedData: unknown;
+  submittedData: FormSubmissionSubmittedData;
   /**
-   * Current decision status for this item.
+   * Current decision associated with the form submission item.
    */
-  @Column({
-    name: "decision_status",
-    type: "enum",
-    enum: FormSubmissionDecisionStatus,
-    enumName: "FormSubmissionDecisionStatus",
+  @OneToOne(() => FormSubmissionItemDecision, {
+    cascade: ["insert", "update"],
   })
-  decisionStatus: FormSubmissionDecisionStatus;
-  /**
-   * Date and time when the decision was recorded.
-   */
-  @Column({
-    name: "decision_date",
-    type: "timestamptz",
-    nullable: true,
-  })
-  decisionDate?: Date;
-  /**
-   * Ministry user who made the decision.
-   */
-  @ManyToOne(() => User)
   @JoinColumn({
-    name: "decision_by",
+    name: "current_decision_id",
     referencedColumnName: ColumnNames.ID,
   })
-  decisionBy?: User;
+  currentDecision?: FormSubmissionItemDecision;
   /**
-   * Note associated with the decision.
+   * History of decisions made on this form submission item. Each time a decision
+   * is made (or reverted), a new record is inserted into the FormSubmissionItemDecisions
+   * table with the relevant decision details, allowing to keep track of the history
+   * of decisions for this item.
    */
-  @OneToOne(() => Note, { nullable: true, cascade: ["insert", "update"] })
-  @JoinColumn({
-    name: "decision_note_id",
-    referencedColumnName: ColumnNames.ID,
-  })
-  decisionNote?: Note;
+  @OneToMany(
+    () => FormSubmissionItemDecision,
+    (formSubmissionItemDecision) =>
+      formSubmissionItemDecision.formSubmissionItem,
+  )
+  decisions: FormSubmissionItemDecision[];
+}
+
+export enum FormSubmissionActionType {
+  CreateStudentAppealAssessment = "CreateStudentAppealAssessment",
+  UpdateModifiedIndependent = "UpdateModifiedIndependent",
+}
+
+export interface FormSubmissionSubmittedData extends Record<string, unknown> {
+  actions?: FormSubmissionActionType[];
 }

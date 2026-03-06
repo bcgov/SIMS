@@ -60,6 +60,8 @@ export type RelationshipStatusType =
   | "married"
   | "marriedUnable";
 
+export type DependantStatusType = "independent" | "dependent";
+
 export interface PartnerInformationAndIncomeAppealData extends JSONDoc {
   relationshipStatus: RelationshipStatusType;
   partnerEstimatedIncome?: number;
@@ -102,7 +104,7 @@ export enum InstitutionTypes {
  * Data required to calculate the assessment data of an application.
  */
 export interface AssessmentConsolidatedData extends JSONDoc {
-  studentDataDependantstatus: "dependant" | "independant";
+  studentDataDependantStatus: DependantStatusType;
   programYear: string;
   programYearStartDate: string;
   studentDataRelationshipStatus: RelationshipStatusType;
@@ -142,11 +144,11 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsStudentCurrentYearIncomeAppealData?: JSONDoc;
   appealsPartnerCurrentYearIncomeAppealData?: JSONDoc;
   appealsParentCurrentYearIncomeAppealData?: JSONDoc;
-  appealsStudentExceptionalExpenseAppealData?: JSONDoc;
-  studentDataIsYourPartnerAbleToReport?: boolean;
+  appealsExceptionalExpenseAppealData?: JSONDoc;
+  studentDataIsYourPartnerAbleToReport?: boolean; // No longer used in PY 26/27 and beyond.
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
-  studentDataEstimatedSpouseIncome?: number;
+  studentDataEstimatedSpouseIncome?: number; // No longer used in PY 26/27 and beyond.
   studentDataCurrentYearPartnerIncome?: number; // No longer used in PY 26/27 and beyond.
   studentDataLivingWithPartner?: YesNoOptions;
   studentDataCRAReportedIncome?: number;
@@ -154,12 +156,12 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataGovernmentFundingCosts?: number;
   studentDataNonGovernmentFundingCosts?: number;
   studentDataParentVoluntaryContributionsCosts?: number;
-  studentDataPartnerStudyWeeks?: number;
-  studentDataPartnerEmploymentInsurance?: YesNoOptions;
-  studentDataPartnerFedralProvincialPDReceiptCost?: number;
-  studentDataPartnerChildSupportCosts?: number;
-  studentDataPartnerCaringForDependant?: YesNoOptions;
-  studentDataPartnerTotalIncomeAssistance?: number;
+  studentDataPartnerStudyWeeks?: number; // No longer used in PY 26/27 and beyond.
+  studentDataPartnerEmploymentInsurance?: YesNoOptions; // No longer used in PY 26/27 and beyond.
+  studentDataPartnerFedralProvincialPDReceiptCost?: number; // No longer used in PY 26/27 and beyond.
+  studentDataPartnerChildSupportCosts?: number; // No longer used in PY 26/27 and beyond.
+  studentDataPartnerCaringForDependant?: YesNoOptions; // No longer used in PY 26/27 and beyond.
+  studentDataPartnerTotalIncomeAssistance?: number; // No longer used in PY 26/27 and beyond.
   studentDataVoluntaryContributions?: number;
   studentDataScholarshipAmount?: number;
   studentDataStudentParentsTotalIncome?: number;
@@ -174,7 +176,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   parent1SupportingUserId?: number;
   parent1Contributions?: number;
   parent1Ei?: number;
-  parent1NetAssests?: number;
+  parent1NetAssets?: number;
   parent1Tax?: number;
   parent1TotalIncome?: number;
   parent1DependentTable?: StudentDependent[];
@@ -186,7 +188,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   parent2CppSelfemploymentOther?: number;
   parent2DependentTable?: StudentDependent[];
   parent2Ei?: number;
-  parent2NetAssests?: number;
+  parent2NetAssets?: number;
   parent2Tax?: number;
   parent2TotalIncome?: number;
   parent2CRAReportedIncome?: number;
@@ -219,10 +221,10 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   applicationStatus: string;
   applicationEditStatus: ApplicationEditStatus;
   applicationHasNOAApproval: boolean;
-  studentDataPartnerHasEmploymentInsuranceBenefits?: YesNoOptions;
-  studentDataPartnerHasFedralProvincialPDReceipt?: YesNoOptions;
-  studentDataPartnerHasTotalIncomeAssistance?: YesNoOptions;
-  studentDataPartnerBCEAIncomeAssistanceAmount?: number;
+  studentDataPartnerHasEmploymentInsuranceBenefits?: YesNoOptions; // No longer used in PY 26/27 and beyond.
+  studentDataPartnerHasFedralProvincialPDReceipt?: YesNoOptions; // No longer used in PY 26/27 and beyond.
+  studentDataPartnerHasTotalIncomeAssistance?: YesNoOptions; // No longer used in PY 26/27 and beyond.
+  studentDataPartnerBCEAIncomeAssistanceAmount?: number; // No longer used in PY 26/27 and beyond.
   studentDataPartnerIsAbleToReport?: YesNoOptions;
   partner1HasEmploymentInsuranceBenefits?: YesNoOptions;
   partner1HasFedralProvincialPDReceipt?: YesNoOptions;
@@ -343,6 +345,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalChildSpousalSupport: number;
   calculatedMSOLProvince: Provinces;
   calculatedDataTotalMSOLAllowance: number;
+  calculatedDataExceptionalCosts: number;
   calculatedDataTotalCosts: number;
   calculatedDataTotalFamilyIncome: number;
   awardNetFederalTotalAward: number;
@@ -352,6 +355,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalAssessedNeed: number;
   calculatedDataProgramRelatedCosts: number;
   calculatedDataTotalBookCost: number;
+  calculatedDataPartnerStudentLoans: number;
   awardNetProvincialTotalAward: number;
   calculatedDataFederalAssessedNeed: number;
   offeringExceptionalExpenses: number;
@@ -372,6 +376,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalEligibleDependants: number;
   calculatedDataTotalScholarshipsBursaries: number;
   calculatedDataExemptScholarshipsBursaries: number;
+  calculatedDataTotalNonEducationalCost: number;
   calculatedDataDependants11YearsOrUnder: number;
   calculatedDataDependants12YearsOverOnTaxes: number;
   calculatedDataTotalEligibleDependentsForChildCare: number;
@@ -408,6 +413,10 @@ export interface CalculatedAssessmentModel {
   dmnFullTimeLivingCategory: string;
   isEligibleForRoomAndBoardAppeal?: boolean;
   isEligibleForStepParentWaiverAppeal?: boolean;
+  isEligibleForStudentCurrentYearIncomeAppeal?: boolean;
+  isEligibleForPartnerCurrentYearIncomeAppeal?: boolean;
+  isEligibleForParentCurrentYearIncomeAppeal?: boolean;
+  isEligibleForExceptionalExpenseAppeal?: boolean;
   calculatedDataWaivedParent?: number;
   // Common variables used in both full-time and part-time.
   // CSGP

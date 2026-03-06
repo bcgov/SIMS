@@ -1281,8 +1281,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .addSelect("application.applicationStatus")
       .addSelect("assessment.id")
       .addSelect("studentAppeal.id")
+      .addSelect("formSubmission.id")
       .innerJoin("application.currentAssessment", "assessment")
       .leftJoin("assessment.studentAppeal", "studentAppeal")
+      .leftJoin("assessment.formSubmission", "formSubmission")
       .innerJoin(
         EducationProgramOffering,
         "offering",
@@ -1366,6 +1368,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
             submittedBy: auditUser,
             submittedDate: currentDate,
             studentAppeal: application.currentAssessment.studentAppeal,
+            formSubmission: application.currentAssessment.formSubmission,
           } as StudentAssessment;
         }
 

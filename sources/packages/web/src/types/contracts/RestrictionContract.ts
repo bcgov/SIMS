@@ -129,3 +129,17 @@ export interface RestrictionDetail {
   resolutionNote?: string;
   deletionNote?: string;
 }
+
+/**
+ * Field requirement types.
+ */
+export enum FieldRequirementType {
+  /**
+   * The field is required and must be provided.
+   */
+  Required = "required",
+  /**
+   * The field is not allowed and must not be provided.
+   */
+  NotAllowed = "not allowed",
+}

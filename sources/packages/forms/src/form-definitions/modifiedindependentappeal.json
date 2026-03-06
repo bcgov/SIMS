@@ -9,6 +9,16 @@
     ],
     "components": [
         {
+            "label": "Actions: UpdateModifiedIndependent",
+            "calculateValue": "value = [\"UpdateModifiedIndependent\"];",
+            "calculateServer": true,
+            "key": "actions",
+            "type": "hidden",
+            "input": true,
+            "tableView": true,
+            "lockKey": true
+        },
+        {
             "input": true,
             "tableView": true,
             "key": "maxUploadedFiles",
@@ -18,16 +28,6 @@
             "lockKey": true,
             "calculateValue": "value = 25;",
             "calculateServer": true
-        },
-        {
-            "label": "Actions: UpdateModifiedIndependent",
-            "calculateValue": "value = [\"UpdateModifiedIndependent\"];",
-            "calculateServer": true,
-            "key": "actions",
-            "type": "hidden",
-            "input": true,
-            "tableView": true,
-            "lockKey": true
         },
         {
             "label": "HTML",
