@@ -96,7 +96,7 @@ export interface FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemA
    * the current one that is sent separately in the currentDecision property.
    * Optionally include decision history information if the user has the necessary permissions to view the decision details.
    */
-  previousDecisions: FormSubmissionItemDecisionAPIOutDTO[];
+  previousDecisions?: FormSubmissionItemDecisionAPIOutDTO[];
 }
 
 /**
