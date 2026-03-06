@@ -1,14 +1,17 @@
 <template>
   <body-header-container :enable-card-view="false">
     <template #header>
-      <form-submission-approval-header :form-submission="formSubmission" />
+      <form-submission-approval-header
+        :form-submission="formSubmission"
+        :loading="formSubmissionLoading"
+      />
     </template>
     <content-group>
-      <v-skeleton-loader v-if="formSubmissionLoading" type="image, article" />
-      <v-form v-else ref="approvalsForm">
+      <v-form ref="approvalsForm">
         <error-summary :errors="approvalsForm?.errors" />
         <form-submission-items
           :submission-items="formSubmissionItems"
+          :loading="formSubmissionLoading"
           :read-only="true"
         >
           <template #decision="{ decision }" v-if="canShowDecisionDetails">

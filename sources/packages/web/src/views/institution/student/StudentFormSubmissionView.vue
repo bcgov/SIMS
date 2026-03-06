@@ -1,4 +1,4 @@
-<!-- Allow the student to see a submitted form. -->
+<!-- Allow an Institution to see a form submitted by the student. -->
 <template>
   <student-page-container>
     <template #header>
@@ -13,7 +13,7 @@
         <body-header :title="formSubmission?.formCategory">
           <template #status-chip>
             <status-chip-form-submission
-              v-if="formSubmission"
+              v-if="formSubmission && !loading"
               :status="formSubmission.status"
             />
           </template>
@@ -27,6 +27,7 @@
       </template>
       <form-submission-items
         :submission-items="formSubmissionItems"
+        :loading="loading"
         :read-only="true"
       >
         <template #decision="{ decision }">
@@ -38,12 +39,6 @@
             </p>
           </v-sheet>
         </template>
-        <template #actions>
-          <footer-buttons
-            :show-primary-button="false"
-            secondary-label="Back"
-            @secondary-click="goBack"
-        /></template>
       </form-submission-items>
     </body-header-container>
   </student-page-container>
@@ -52,7 +47,6 @@
 <script lang="ts">
 import { computed, defineComponent, PropType, ref, watchEffect } from "vue";
 import FormSubmissionItems from "@/components/form-submissions/FormSubmissionItems.vue";
-import { useRouter } from "vue-router";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
 import {
   BackTarget,
@@ -89,12 +83,11 @@ export default defineComponent({
   },
   setup(props) {
     const snackBar = useSnackBar();
-    const router = useRouter();
     const formSubmission = ref<FormSubmissionAPIOutDTO>();
     const formSubmissionItems = ref(
       [] as FormSubmissionItem<FormSubmissionItemDecision>[],
     );
-    const processing = ref(false);
+    const loading = ref(true);
 
     const subtitle = computed(() =>
       formSubmission.value?.formCategory === FormCategory.StudentAppeal
@@ -102,12 +95,9 @@ export default defineComponent({
         : "Form submission",
     );
 
-    const goBack = () => {
-      router.push(props.backTarget.to);
-    };
-
     watchEffect(async () => {
       try {
+        loading.value = true;
         // Submission data.
         const submission =
           (await FormSubmissionService.shared.getFormSubmission(
@@ -133,6 +123,8 @@ export default defineComponent({
         }));
       } catch {
         snackBar.error("Error while loading form submission data.");
+      } finally {
+        loading.value = false;
       }
     });
 
@@ -140,10 +132,9 @@ export default defineComponent({
       subtitle,
       formSubmissionItems,
       StudentRoutesConst,
-      processing,
+      loading,
       formSubmission,
       InstitutionRoutesConst,
-      goBack,
     };
   },
 });

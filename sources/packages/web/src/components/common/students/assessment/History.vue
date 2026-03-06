@@ -79,11 +79,10 @@ import {
 import { ref, PropType, defineComponent, watchEffect } from "vue";
 import { useDisplay } from "vuetify";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
-import { useFormatters } from "@/composables";
+import { useFormatters, useFeatureToggles } from "@/composables";
 import StatusChipAssessmentHistory from "@/components/generic/StatusChipAssessmentHistory.vue";
 import { AssessmentHistorySummaryAPIOutDTO } from "@/services/http/dto/Assessment.dto";
 import AssessmentTags from "@/components/common/students/assessment/AssessmentTags.vue";
-import { useFeatureToggles } from "@/composables";
 
 export default defineComponent({
   emits: [

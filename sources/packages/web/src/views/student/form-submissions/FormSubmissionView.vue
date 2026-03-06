@@ -16,7 +16,7 @@
         <body-header :title="formSubmission?.formCategory">
           <template #status-chip>
             <status-chip-form-submission
-              v-if="formSubmission"
+              v-if="formSubmission && !loading"
               :status="formSubmission.status"
             />
           </template>
@@ -30,6 +30,7 @@
       </template>
       <form-submission-items
         :submission-items="formSubmissionItems"
+        :loading="loading"
         :read-only="true"
       >
         <template #actions>
@@ -80,7 +81,7 @@ export default defineComponent({
     const router = useRouter();
     const formSubmission = ref<FormSubmissionAPIOutDTO>();
     const formSubmissionItems = ref([] as FormSubmissionItem[]);
-    const processing = ref(false);
+    const loading = ref(true);
 
     const goBack = () => {
       router.push({
@@ -90,13 +91,13 @@ export default defineComponent({
 
     watchEffect(async () => {
       try {
+        loading.value = true;
         // Submission data.
         const submission =
           (await FormSubmissionService.shared.getFormSubmission(
             props.formSubmissionId,
           )) as FormSubmissionAPIOutDTO;
         formSubmission.value = submission;
-
         // Convert submission items to be displayed.
         formSubmissionItems.value =
           submission.submissionItems.map<FormSubmissionItem>(
@@ -112,13 +113,15 @@ export default defineComponent({
           );
       } catch {
         snackBar.error("Error while loading form submission data.");
+      } finally {
+        loading.value = false;
       }
     });
 
     return {
       formSubmissionItems,
       StudentRoutesConst,
-      processing,
+      loading,
       formSubmission,
       goBack,
     };

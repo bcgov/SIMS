@@ -51,7 +51,6 @@ export const StudentRoutesConst = {
   // Student Forms
   STUDENT_FORMS: Symbol(),
   STUDENT_FORMS_SELECTOR: Symbol(),
-  STUDENT_FORMS_SELECTOR_FROM_APPLICATION_SUMMARY: Symbol(),
   STUDENT_FORM_SUBMIT: Symbol(),
   STUDENT_FORMS_HISTORY: Symbol(),
   STUDENT_FORMS_SUBMISSION_VIEW: Symbol(),
