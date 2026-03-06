@@ -35,7 +35,7 @@ export class FormSubmissionService {
       },
       where: {
         application: { id: applicationId },
-        student: studentId ? { id: studentId } : undefined,
+        student: { id: studentId },
         formCategory: FormCategory.StudentAppeal,
         submissionStatus: In([
           FormSubmissionStatus.Pending,
