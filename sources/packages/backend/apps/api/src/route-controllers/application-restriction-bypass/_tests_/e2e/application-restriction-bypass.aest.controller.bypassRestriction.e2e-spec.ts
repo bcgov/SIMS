@@ -64,7 +64,8 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
 
     const payload = {
       applicationId: application.id,
-      studentRestrictionId: studentRestriction.id,
+      restrictionId: studentRestriction.id,
+      restrictionType: RestrictedParty.Student,
       bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
       note: "test note",
     };

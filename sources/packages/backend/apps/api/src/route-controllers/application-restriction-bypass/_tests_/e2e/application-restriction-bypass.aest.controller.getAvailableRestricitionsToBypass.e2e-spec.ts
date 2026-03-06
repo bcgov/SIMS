@@ -134,7 +134,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       .expect({
         availableRestrictionsToBypass: [
           {
-            studentRestrictionId:
+            restrictionId:
               removedApplicationRestrictionsBypass.studentRestriction.id,
             restrictionCode:
               removedApplicationRestrictionsBypass.studentRestriction
@@ -144,21 +144,21 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
             restrictionType: RestrictedParty.Student,
           },
           {
-            studentRestrictionId: stopPartTimeBCFundingStudentRestriction.id,
+            restrictionId: stopPartTimeBCFundingStudentRestriction.id,
             restrictionCode: b6aRestriction.restrictionCode,
             studentRestrictionCreatedAt:
               stopPartTimeBCFundingStudentRestriction.createdAt.toISOString(),
             restrictionType: RestrictedParty.Student,
           },
           {
-            studentRestrictionId: stopPartTimeDisbursementStudentRestriction.id,
+            restrictionId: stopPartTimeDisbursementStudentRestriction.id,
             restrictionCode: ecrsRestriction.restrictionCode,
             studentRestrictionCreatedAt:
               stopPartTimeDisbursementStudentRestriction.createdAt.toISOString(),
             restrictionType: RestrictedParty.Student,
           },
           {
-            studentRestrictionId: ptssrStudentRestriction.id,
+            restrictionId: ptssrStudentRestriction.id,
             restrictionCode: ptssrRestriction.restrictionCode,
             studentRestrictionCreatedAt:
               ptssrStudentRestriction.createdAt.toISOString(),
