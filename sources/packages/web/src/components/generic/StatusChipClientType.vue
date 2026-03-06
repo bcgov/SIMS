@@ -2,24 +2,15 @@
   <chip-status status="success" :label="clientTypeLabel" />
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { RestrictedParty } from "@/types";
-import { computed, defineComponent, PropType } from "vue";
+import { computed } from "vue";
 
-export default defineComponent({
-  props: {
-    clientType: {
-      type: String as PropType<
-        RestrictedParty.Student | RestrictedParty.Institution
-      >,
-      required: true,
-    },
-  },
-  setup(props) {
-    const clientTypeLabel = computed(() =>
-      props.clientType === RestrictedParty.Student ? "Student" : "Institution",
-    );
-    return { clientTypeLabel };
-  },
-});
+const props = defineProps<{
+  clientType: RestrictedParty.Student | RestrictedParty.Institution;
+}>();
+
+const clientTypeLabel = computed(() =>
+  props.clientType === RestrictedParty.Student ? "Student" : "Institution",
+);
 </script>

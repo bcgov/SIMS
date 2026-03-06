@@ -3,9 +3,11 @@ import {
   E2EDataSources,
   RestrictionCode,
   createE2EDataSources,
+  createFakeRestriction,
   createFakeUser,
   saveFakeApplication,
   saveFakeApplicationRestrictionBypass,
+  saveFakeInstitutionRestriction,
   saveFakeStudentRestriction,
 } from "@sims/test-utils";
 import {
@@ -15,7 +17,12 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import * as request from "supertest";
-import { OfferingIntensity, RestrictionActionType, User } from "@sims/sims-db";
+import {
+  OfferingIntensity,
+  RestrictionActionType,
+  RestrictionType,
+  User,
+} from "@sims/sims-db";
 import { RestrictedParty } from "@sims/services";
 
 describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictionsToBypass.", () => {
@@ -30,7 +37,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
     sharedMinistryUser = await db.user.save(createFakeUser());
   });
 
-  it("Should list all student active restrictions and not already bypassed for a part-time application when there is one restriction bypassed and some others not.", async () => {
+  it("Should list all the active restrictions and not the ones already bypassed for a part-time application when there are some restrictions bypassed and some others not.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       offeringIntensity: OfferingIntensity.partTime,
@@ -50,10 +57,32 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       },
     );
 
+    // Add an institution restriction bypass that should be not available for bypass.
+    const remitRestriction = await db.restriction.findOne({
+      where: { restrictionCode: RestrictionCode.REMIT },
+    });
+    const remitInstitutionRestriction = await saveFakeInstitutionRestriction(
+      db,
+      {
+        institution:
+          application.currentAssessment.offering.institutionLocation
+            .institution,
+        restriction: remitRestriction,
+        program: application.currentAssessment.offering.educationProgram,
+        location: application.currentAssessment.offering.institutionLocation,
+      },
+    );
+    await saveFakeApplicationRestrictionBypass(db, {
+      application,
+      bypassCreatedBy: sharedMinistryUser,
+      creator: sharedMinistryUser,
+      institutionRestriction: remitInstitutionRestriction,
+    });
+
+    // Add a student restriction that should be available to be bypassed because the student restriction is a different one than the student restriction bypassed above.
     const ptssrRestriction = await db.restriction.findOne({
       where: { restrictionCode: RestrictionCode.PTSSR },
     });
-    // Add a student restriction that should be available to be bypassed because the student restriction is a different one than the student restriction bypassed above.
     const ptssrStudentRestriction = await saveFakeStudentRestriction(
       db.dataSource,
       {
@@ -61,6 +90,18 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
         restriction: ptssrRestriction,
       },
     );
+
+    // Add an institution restriction that should be available to be bypassed.
+    const susRestriction = await db.restriction.findOne({
+      where: { restrictionCode: RestrictionCode.SUS },
+    });
+    const institutionRestriction = await saveFakeInstitutionRestriction(db, {
+      institution:
+        application.currentAssessment.offering.institutionLocation.institution,
+      restriction: susRestriction,
+      program: application.currentAssessment.offering.educationProgram,
+      location: application.currentAssessment.offering.institutionLocation,
+    });
 
     // Add a student restriction bypassed that was removed. In other words, it is no longer active and the student restriction should be available to be bypassed again.
     const removedApplicationRestrictionsBypass =
@@ -79,29 +120,64 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
         },
       );
 
+    // Add an institution restriction bypass that was removed. In other words, it is no longer active and the institution restriction should be available to be bypassed again.
+    const newInstitutionRestriction = createFakeRestriction({
+      initialValues: {
+        restrictionType: RestrictionType.Institution,
+      },
+    });
+    // Assigning a dummy restriction code to handle the order of the result during assertion since the restriction code is used as the sort order during assertion.
+    newInstitutionRestriction.restrictionCode = "ZZZ";
+    const savedInstitutionRestriction = await db.restriction.save(
+      newInstitutionRestriction,
+    );
+    const savedInstitutionRestrictionBypass =
+      await saveFakeInstitutionRestriction(db, {
+        institution:
+          application.currentAssessment.offering.institutionLocation
+            .institution,
+        restriction: savedInstitutionRestriction,
+        program: application.currentAssessment.offering.educationProgram,
+        location: application.currentAssessment.offering.institutionLocation,
+      });
+    const removedInstitutionRestrictionBypass =
+      await saveFakeApplicationRestrictionBypass(
+        db,
+        {
+          application,
+          bypassCreatedBy: sharedMinistryUser,
+          bypassRemovedBy: sharedMinistryUser,
+          creator: sharedMinistryUser,
+          institutionRestriction: savedInstitutionRestrictionBypass,
+        },
+        {
+          isRemoved: true,
+        },
+      );
+
+    // Add a student restriction that should be available to be bypassed because the restriction has an action type "Stop part time BC funding".
     const b6aRestriction = await db.restriction.findOne({
       where: { restrictionCode: RestrictionCode.B6A },
     });
-    // Add a student restriction that should be available to be bypassed because the restriction has an action type "Stop part time BC funding".
     const stopPartTimeBCFundingStudentRestriction =
       await saveFakeStudentRestriction(db.dataSource, {
         student: application.student,
         restriction: b6aRestriction,
       });
 
+    // Add a student restriction that should not be available to be bypassed because the restriction doesn't have an action type "Stop part time disbursement".
     const b6bRestriction = await db.restriction.findOne({
       where: { restrictionCode: RestrictionCode.B6B },
     });
-    // Add a student restriction that should not be available to be bypassed because the restriction doesn't have an action type "Stop part time disbursement".
     await saveFakeStudentRestriction(db.dataSource, {
       student: application.student,
       restriction: b6bRestriction,
     });
 
+    // Add a student restriction that should not be available to be bypassed because the student restriction is not active.
     const af4Restriction = await db.restriction.findOne({
       where: { restrictionCode: RestrictionCode.AF4 },
     });
-    // Add a student restriction that should not be available to be bypassed because the student restriction is not active.
     await saveFakeStudentRestriction(
       db.dataSource,
       {
@@ -113,16 +189,16 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       },
     );
 
+    // Add a student restriction that should be available to be bypassed because the restriction has an action type "Stop part time disbursement".
     const ecrsRestriction = await db.restriction.findOne({
       where: { restrictionCode: RestrictionCode.ECRS },
     });
-
-    // Add a student restriction that should be available to be bypassed because the restriction has an action type "Stop part time disbursement".
     const stopPartTimeDisbursementStudentRestriction =
       await saveFakeStudentRestriction(db.dataSource, {
         student: application.student,
         restriction: ecrsRestriction,
       });
+
     const endpoint = `/aest/application-restriction-bypass/application/${application.id}/options-list`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -163,6 +239,23 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
             restrictionCreatedAt:
               ptssrStudentRestriction.createdAt.toISOString(),
             restrictionType: RestrictedParty.Student,
+          },
+          {
+            restrictionId: institutionRestriction.id,
+            restrictionCode: institutionRestriction.restriction.restrictionCode,
+            restrictionCreatedAt:
+              institutionRestriction.createdAt.toISOString(),
+            restrictionType: RestrictedParty.Institution,
+          },
+          {
+            restrictionId:
+              removedInstitutionRestrictionBypass.institutionRestriction.id,
+            restrictionCode:
+              removedInstitutionRestrictionBypass.institutionRestriction
+                .restriction.restrictionCode,
+            restrictionCreatedAt:
+              removedInstitutionRestrictionBypass.institutionRestriction.createdAt.toISOString(),
+            restrictionType: RestrictedParty.Institution,
           },
         ],
       });

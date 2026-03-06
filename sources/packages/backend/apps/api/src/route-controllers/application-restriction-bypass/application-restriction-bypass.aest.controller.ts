@@ -36,11 +36,14 @@ import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IUserToken, Role } from "../../auth";
 import { CustomNamedError } from "@sims/utilities";
 import {
+  ACTIVE_BYPASS_FOR_INSTITUTION_RESTRICTION_ALREADY_EXISTS,
   ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
   APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION,
   APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_REMOVAL,
   APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
   APPLICATION_RESTRICTION_BYPASS_NOT_FOUND,
+  INSTITUTION_RESTRICTION_IS_NOT_ACTIVE,
+  INSTITUTION_RESTRICTION_NOT_FOUND,
   STUDENT_RESTRICTION_IS_NOT_ACTIVE,
   STUDENT_RESTRICTION_NOT_FOUND,
 } from "../../constants";
@@ -184,6 +187,9 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
       "Cannot create a bypass when there is an active bypass for the same active student restriction id or " +
       "could not find student restriction for the given id or " +
       "cannot create a bypass when student restriction is not active  or " +
+      "cannot create a bypass when there is an active bypass for the same active institution restriction id or " +
+      "could not find institution restriction for the given id or " +
+      "cannot create a bypass when institution restriction is not active." +
       "cannot create a bypass when application is in invalid state.",
   })
   @Roles(Role.AESTBypassStudentRestriction)
@@ -206,6 +212,9 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
           case STUDENT_RESTRICTION_NOT_FOUND:
           case STUDENT_RESTRICTION_IS_NOT_ACTIVE:
           case APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION:
+          case ACTIVE_BYPASS_FOR_INSTITUTION_RESTRICTION_ALREADY_EXISTS:
+          case INSTITUTION_RESTRICTION_NOT_FOUND:
+          case INSTITUTION_RESTRICTION_IS_NOT_ACTIVE:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );
