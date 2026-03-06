@@ -144,16 +144,6 @@ export class FormSubmissionService {
   async getPendingFormSubmissions(
     paginationOptions: FormSubmissionPendingPaginationOptions,
   ): Promise<PaginatedResults<FormSubmissionPendingSummary>> {
-    const {
-      page,
-      pageLimit,
-      sortField,
-      sortOrder,
-      searchCriteria,
-      hasApplicationScope,
-      formCategory,
-    } = paginationOptions;
-
     const query = this.dataSource
       .getRepository(FormSubmission)
       .createQueryBuilder("formSubmission")
@@ -181,20 +171,20 @@ export class FormSubmissionService {
         status: FormSubmissionStatus.Pending,
       });
 
-    if (hasApplicationScope === true) {
+    if (paginationOptions.hasApplicationScope === true) {
       query.andWhere("application.id IS NOT NULL");
-    } else if (hasApplicationScope === false) {
+    } else if (paginationOptions.hasApplicationScope === false) {
       query.andWhere("application.id IS NULL");
     }
 
-    if (formCategory) {
+    if (paginationOptions.formCategory) {
       query.andWhere("formSubmission.formCategory = :formCategory", {
-        formCategory,
+        formCategory: paginationOptions.formCategory,
       });
     }
 
-    if (searchCriteria) {
-      const trimmedSearchCriteria = searchCriteria.trim();
+    if (paginationOptions.searchCriteria) {
+      const trimmedSearchCriteria = paginationOptions.searchCriteria.trim();
       query
         .andWhere(
           new Brackets((qb) =>
@@ -213,13 +203,13 @@ export class FormSubmissionService {
       applicationNumber: "application.applicationNumber",
     };
     const dbSortField =
-      sortFieldMapping[sortField ?? "submittedDate"] ??
+      sortFieldMapping[paginationOptions.sortField ?? "submittedDate"] ??
       "formSubmission.submittedDate";
 
     query
-      .orderBy(dbSortField, sortOrder ?? FieldSortOrder.DESC)
-      .skip(page * pageLimit)
-      .take(pageLimit);
+      .orderBy(dbSortField, paginationOptions.sortOrder ?? FieldSortOrder.DESC)
+      .skip(paginationOptions.page * paginationOptions.pageLimit)
+      .take(paginationOptions.pageLimit);
 
     const [items, count] = await query.getManyAndCount();
 
