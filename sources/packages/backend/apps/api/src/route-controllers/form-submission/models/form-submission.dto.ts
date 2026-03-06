@@ -187,7 +187,8 @@ export class FormSubmissionAPIInDTO {
 }
 
 /**
- * Summary of a pending form submission item for the ministry queue.
+ * Summary of a pending form submission for the ministry queue.
+ * Applies to all form submission categories, including student forms and appeals.
  */
 export class FormSubmissionPendingSummaryAPIOutDTO {
   formSubmissionId: number;
@@ -196,17 +197,6 @@ export class FormSubmissionPendingSummaryAPIOutDTO {
   firstName?: string;
   lastName: string;
   formNames: string[];
-}
-
-/**
- * Summary of a pending appeal form submission for the ministry queue.
- */
-export class FormSubmissionPendingAppealSummaryAPIOutDTO {
-  formSubmissionId: number;
-  studentId: number;
-  submittedDate: Date;
-  firstName?: string;
-  lastName: string;
   applicationId?: number;
   applicationNumber?: string;
 }

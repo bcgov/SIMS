@@ -138,13 +138,11 @@ export class FormSubmissionService {
    * {@link FormSubmissionStatus.Pending} are returned, and pagination/count
    * are based on the number of submissions, not the number of individual forms.
    * @param paginationOptions options to control pagination, sorting, and search.
-   * @param formCategory category of the form submissions to filter.
-   * @returns paginated list of pending form submissions, one entry per submission
+   * @returns paginated list of pending form submissions across all categories, one entry per submission
    * with form names aggregated per submission.
    */
   async getPendingFormSubmissions(
     paginationOptions: FormSubmissionPendingPaginationOptions,
-    formCategory: FormCategory,
   ): Promise<PaginatedResults<FormSubmissionPendingSummary>> {
     const {
       page,
@@ -153,6 +151,7 @@ export class FormSubmissionService {
       sortOrder,
       searchCriteria,
       hasApplicationScope,
+      formCategory,
     } = paginationOptions;
 
     const query = this.dataSource
@@ -180,15 +179,18 @@ export class FormSubmissionService {
       .leftJoin("formSubmission.application", "application")
       .where("formSubmission.submissionStatus = :status", {
         status: FormSubmissionStatus.Pending,
-      })
-      .andWhere("formSubmission.formCategory = :category", {
-        category: formCategory,
       });
 
     if (hasApplicationScope === true) {
       query.andWhere("application.id IS NOT NULL");
     } else if (hasApplicationScope === false) {
       query.andWhere("application.id IS NULL");
+    }
+
+    if (formCategory) {
+      query.andWhere("formSubmission.formCategory = :formCategory", {
+        formCategory,
+      });
     }
 
     if (searchCriteria) {

@@ -8,7 +8,6 @@ import {
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionItemDecisionAPIInDTO,
   FormSubmissionCompletionAPIInDTO,
-  FormSubmissionPendingAppealSummaryAPIOutDTO,
   FormSubmissionPendingSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
@@ -158,38 +157,26 @@ export class FormSubmissionApi extends HttpBaseClient {
   }
 
   /**
-   * Gets all pending form submissions for ministry review.
-   * @param paginationOptions options to execute the pagination.
-   * @returns paginated list of pending form submissions.
-   */
-  async getPendingForms(
-    paginationOptions: PaginationOptions,
-  ): Promise<PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>> {
-    const url = `form-submission/pending-forms?${getPaginationQueryString(paginationOptions)}`;
-    return this.getCall<
-      PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>
-    >(this.addClientRoot(url));
-  }
-
-  /**
-   * Gets all pending appeal form submissions for ministry review.
+   * Gets all pending form submissions for ministry review across all form categories.
    * @param paginationOptions options to execute the pagination.
    * @param options additional filter options.
-   * - `hasApplicationScope` when true returns only appeals linked to an application; when false returns only appeals not linked.
-   * @returns paginated list of pending appeal submissions including optional application details.
+   * - `hasApplicationScope` when true returns only submissions linked to an application; when false returns only submissions not linked.
+   * - `formCategory` filters results to a specific form category.
+   * @returns paginated list of pending form submissions.
    */
-  async getPendingAppeals(
+  async getPendingFormSubmissions(
     paginationOptions: PaginationOptions,
-    options?: { hasApplicationScope?: boolean },
-  ): Promise<
-    PaginatedResultsAPIOutDTO<FormSubmissionPendingAppealSummaryAPIOutDTO>
-  > {
-    let url = `form-submission/pending-appeals?${getPaginationQueryString(paginationOptions)}`;
+    options?: { hasApplicationScope?: boolean; formCategory?: FormCategory },
+  ): Promise<PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>> {
+    let url = `form-submission/pending?${getPaginationQueryString(paginationOptions)}`;
     if (options?.hasApplicationScope !== undefined) {
       url += `&hasApplicationScope=${options.hasApplicationScope}`;
     }
+    if (options?.formCategory !== undefined) {
+      url += `&formCategory=${options.formCategory}`;
+    }
     return this.getCall<
-      PaginatedResultsAPIOutDTO<FormSubmissionPendingAppealSummaryAPIOutDTO>
+      PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>
     >(this.addClientRoot(url));
   }
 

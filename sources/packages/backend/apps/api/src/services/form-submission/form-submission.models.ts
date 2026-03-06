@@ -80,6 +80,7 @@ export interface FormSubmissionPendingPaginationOptions {
   page: number;
   pageLimit: number;
   hasApplicationScope?: boolean;
+  formCategory?: FormCategory;
 }
 
 /**

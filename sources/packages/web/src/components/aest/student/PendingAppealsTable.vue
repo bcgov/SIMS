@@ -83,11 +83,12 @@ import {
   DataTableOptions,
   PaginationOptions,
   DEFAULT_DATATABLE_PAGE_NUMBER,
+  FormCategory,
 } from "@/types";
 import { useFormatters, useSnackBar } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import {
-  FormSubmissionPendingAppealSummaryAPIOutDTO,
+  FormSubmissionPendingSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
@@ -102,7 +103,7 @@ const applicationFilter = computed(() =>
   selectedFilter.value === "all" ? undefined : selectedFilter.value,
 );
 const applicationAppeals = ref<
-  PaginatedResultsAPIOutDTO<FormSubmissionPendingAppealSummaryAPIOutDTO>
+  PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>
 >({ results: [], count: 0 });
 
 const DEFAULT_SORT_FIELD = "submittedDate";
@@ -120,7 +121,7 @@ const currentPagination: PaginationOptions = {
  * @param pendingAppeal pending appeal item to navigate to.
  */
 const goToAppealsApproval = (
-  pendingAppeal: FormSubmissionPendingAppealSummaryAPIOutDTO,
+  pendingAppeal: FormSubmissionPendingSummaryAPIOutDTO,
 ) => {
   if (pendingAppeal.applicationId) {
     router.push({
@@ -144,7 +145,7 @@ const loadAppeals = async () => {
   try {
     isLoading.value = true;
     applicationAppeals.value =
-      await FormSubmissionService.shared.getPendingAppeals(
+      await FormSubmissionService.shared.getPendingFormSubmissions(
         {
           page: currentPagination.page,
           pageLimit: currentPagination.pageLimit,
@@ -152,7 +153,7 @@ const loadAppeals = async () => {
           sortOrder: currentPagination.sortOrder,
           searchCriteria: searchCriteria.value,
         },
-        { hasApplicationScope: applicationFilter.value },
+        { hasApplicationScope: applicationFilter.value, formCategory: FormCategory.StudentAppeal },
       );
   } catch {
     snackBar.error("Error loading appeals.");

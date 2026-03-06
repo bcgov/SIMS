@@ -8,11 +8,10 @@ import {
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionCompletionAPIInDTO,
   FormSubmissionStudentAPIOutDTO,
-  FormSubmissionPendingAppealSummaryAPIOutDTO,
   FormSubmissionPendingSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
-import { PaginationOptions } from "@/types";
+import { FormCategory, PaginationOptions } from "@/types";
 
 export class FormSubmissionService {
   // Share Instance
@@ -78,30 +77,18 @@ export class FormSubmissionService {
   }
 
   /**
-   * Gets all pending form submissions for ministry review.
-   * @param paginationOptions options to execute the pagination.
-   * @returns paginated list of pending form submissions.
-   */
-  async getPendingForms(
-    paginationOptions: PaginationOptions,
-  ): Promise<PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>> {
-    return ApiClient.FormSubmissionApi.getPendingForms(paginationOptions);
-  }
-
-  /**
-   * Gets all pending appeal form submissions for ministry review.
+   * Gets all pending form submissions for ministry review across all form categories.
    * @param paginationOptions options to execute the pagination.
    * @param options additional filter options.
-   * - `hasApplicationScope` when true returns only appeals linked to an application; when false returns only appeals not linked.
-   * @returns paginated list of pending appeal submissions including optional application details.
+   * - `hasApplicationScope` when true returns only submissions linked to an application; when false returns only submissions not linked.
+   * - `formCategory` filters results to a specific form category.
+   * @returns paginated list of pending form submissions.
    */
-  async getPendingAppeals(
+  async getPendingFormSubmissions(
     paginationOptions: PaginationOptions,
-    options?: { hasApplicationScope?: boolean },
-  ): Promise<
-    PaginatedResultsAPIOutDTO<FormSubmissionPendingAppealSummaryAPIOutDTO>
-  > {
-    return ApiClient.FormSubmissionApi.getPendingAppeals(
+    options?: { hasApplicationScope?: boolean; formCategory?: FormCategory },
+  ): Promise<PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>> {
+    return ApiClient.FormSubmissionApi.getPendingFormSubmissions(
       paginationOptions,
       options,
     );
