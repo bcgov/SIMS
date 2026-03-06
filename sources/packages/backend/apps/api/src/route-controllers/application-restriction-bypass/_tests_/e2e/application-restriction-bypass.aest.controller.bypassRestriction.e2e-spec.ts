@@ -29,6 +29,7 @@ import {
   APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION,
   STUDENT_RESTRICTION_IS_NOT_ACTIVE,
 } from "../../../../constants";
+import { RestrictedParty } from "@sims/services";
 
 describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", () => {
   let app: INestApplication;
@@ -140,7 +141,8 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     );
     const payload = {
       applicationId: application.id,
-      studentRestrictionId: restrictionBypass.studentRestriction.id,
+      restrictionId: restrictionBypass.studentRestriction.id,
+      restrictionType: RestrictedParty.Student,
       bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
       note: "test note",
     };
@@ -180,7 +182,8 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
 
     const payload = {
       applicationId: application.id,
-      studentRestrictionId: studentRestriction.id,
+      restrictionId: studentRestriction.id,
+      restrictionType: RestrictedParty.Student,
       bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
       note: "test note",
     };
@@ -215,7 +218,8 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
 
     const payload = {
       applicationId: application.id,
-      studentRestrictionId: studentRestriction.id,
+      restrictionId: studentRestriction.id,
+      restrictionType: RestrictedParty.Student,
       bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
       note: "test note",
     };
@@ -250,7 +254,8 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
 
     const payload = {
       applicationId: application.id,
-      studentRestrictionId: studentRestriction.id,
+      restrictionId: studentRestriction.id,
+      restrictionType: RestrictedParty.Student,
       bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
       note: "test note",
     };

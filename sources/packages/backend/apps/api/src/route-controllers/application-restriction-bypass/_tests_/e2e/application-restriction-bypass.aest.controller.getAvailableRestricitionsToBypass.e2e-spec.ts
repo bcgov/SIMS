@@ -16,6 +16,7 @@ import {
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import { OfferingIntensity, RestrictionActionType, User } from "@sims/sims-db";
+import { RestrictedParty } from "@sims/services";
 
 describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictionsToBypass.", () => {
   let app: INestApplication;
@@ -140,24 +141,28 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
                 .restriction.restrictionCode,
             studentRestrictionCreatedAt:
               removedApplicationRestrictionsBypass.studentRestriction.createdAt.toISOString(),
+            restrictionType: RestrictedParty.Student,
           },
           {
             studentRestrictionId: stopPartTimeBCFundingStudentRestriction.id,
             restrictionCode: b6aRestriction.restrictionCode,
             studentRestrictionCreatedAt:
               stopPartTimeBCFundingStudentRestriction.createdAt.toISOString(),
+            restrictionType: RestrictedParty.Student,
           },
           {
             studentRestrictionId: stopPartTimeDisbursementStudentRestriction.id,
             restrictionCode: ecrsRestriction.restrictionCode,
             studentRestrictionCreatedAt:
               stopPartTimeDisbursementStudentRestriction.createdAt.toISOString(),
+            restrictionType: RestrictedParty.Student,
           },
           {
             studentRestrictionId: ptssrStudentRestriction.id,
             restrictionCode: ptssrRestriction.restrictionCode,
             studentRestrictionCreatedAt:
               ptssrStudentRestriction.createdAt.toISOString(),
+            restrictionType: RestrictedParty.Student,
           },
         ],
       });
@@ -242,25 +247,28 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       .expect({
         availableRestrictionsToBypass: [
           {
-            studentRestrictionId:
+            restrictionId:
               removedApplicationRestrictionsBypass.studentRestriction.id,
             restrictionCode:
               removedApplicationRestrictionsBypass.studentRestriction
                 .restriction.restrictionCode,
-            studentRestrictionCreatedAt:
+            restrictionCreatedAt:
               removedApplicationRestrictionsBypass.studentRestriction.createdAt.toISOString(),
+            restrictionType: RestrictedParty.Student,
           },
           {
-            studentRestrictionId: stopFullTimeBCFundingStudentRestriction.id,
+            restrictionId: stopFullTimeBCFundingStudentRestriction.id,
             restrictionCode: stopFullTimeBCFundingRestriction.restrictionCode,
-            studentRestrictionCreatedAt:
+            restrictionCreatedAt:
               stopFullTimeBCFundingStudentRestriction.createdAt.toISOString(),
+            restrictionType: RestrictedParty.Student,
           },
           {
-            studentRestrictionId: stopFullTimeStudentRestriction.id,
+            restrictionId: stopFullTimeStudentRestriction.id,
             restrictionCode: ssrRestriction.restrictionCode,
-            studentRestrictionCreatedAt:
+            restrictionCreatedAt:
               stopFullTimeStudentRestriction.createdAt.toISOString(),
+            restrictionType: RestrictedParty.Student,
           },
         ],
       });
