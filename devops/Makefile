@@ -346,13 +346,10 @@ wait-for-db-migrations:
 	if [ "$$(oc -n $(NAMESPACE) get job $(MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ]; then echo "Error: Job $(MIGRATIONS_JOB_NAME) failed to complete within the specified timeout"; exit 1; fi
 
 delete-migrations-job:
-	@if [ -n "$(shell oc -n $(NAMESPACE) get job $(MIGRATIONS_JOB_NAME) -o name 2>/dev/null)" ]; then \
-		oc -n $(NAMESPACE) delete job $(MIGRATIONS_JOB_NAME); \
-		oc wait --for=delete job/$(MIGRATIONS_JOB_NAME) --timeout=180s; \
-			echo "Job deleted."; \
-	else \
-		echo "Job not found."; \
-	fi
+	@echo "+\n++ Deleting MIGRATIONS job if it exists\n+"
+	@oc delete job $(MIGRATIONS_JOB_NAME) --ignore-not-found
+	@oc wait --for=delete job/$(MIGRATIONS_JOB_NAME) --timeout=180s
+	@echo "+\n++ MIGRATIONS job deleted\n+"
 
 # This deployment reuses the build already in place for db-migrations
 # overriding the docker entry point command to run the db-migrations REPL.

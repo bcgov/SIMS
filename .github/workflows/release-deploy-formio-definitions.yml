@@ -37,7 +37,9 @@ jobs:
     environment: ${{ inputs.environment }}
     env:
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+      BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
       BUILD_REF: ${{ github.ref_name }}
+      MIGRATIONS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
       FORMS_URL: ${{ secrets.FORMS_URL }}
       FORMS_SA_USER_NAME: ${{ secrets.FORMS_SA_USER_NAME }}
@@ -63,4 +65,4 @@ jobs:
       - name: Run db-migrations using REPL mode
         working-directory: "./devops/"
         run: |
-          make deploy-form-definitions
+          make oc-deploy-form-definitions
