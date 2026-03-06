@@ -67,9 +67,10 @@
 
           <template v-else>
             You have indicated that
-            {{ waitingList.partnerInfoWaiting.fullName }} is unable to complete
-            their declaration. Please complete the following declaration on
-            their behalf. Click on the button below to complete the declaration.
+            <strong>{{ waitingList.partnerInfoWaiting.fullName }}</strong> is
+            unable to complete their declaration. Please complete the following
+            declaration on their behalf. Click on the button below to complete
+            the declaration.
             <div class="m-2">
               <v-btn
                 color="primary"

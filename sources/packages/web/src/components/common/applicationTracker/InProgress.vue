@@ -348,7 +348,7 @@ export default defineComponent({
 
     const partnerName = computed(() => {
       return (
-        applicationDetails.value?.partnerInfo?.fullName ||
+        applicationDetails.value?.partnerInfo?.fullName ??
         "your spouse/common-law partner"
       );
     });
