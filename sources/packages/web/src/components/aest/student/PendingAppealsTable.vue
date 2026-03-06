@@ -18,7 +18,9 @@
         />
       </v-col>
       <v-col cols="auto" class="pa-0 pr-2">
-        <v-btn color="primary" @click="searchAppeals">Search</v-btn>
+        <v-btn color="primary" :loading="isLoading" @click="searchAppeals"
+          >Search</v-btn
+        >
       </v-col>
       <v-col cols="auto" class="pa-0">
         <v-btn-toggle
@@ -153,7 +155,10 @@ const loadAppeals = async () => {
           sortOrder: currentPagination.sortOrder,
           searchCriteria: searchCriteria.value,
         },
-        { hasApplicationScope: applicationFilter.value, formCategory: FormCategory.StudentAppeal },
+        {
+          hasApplicationScope: applicationFilter.value,
+          formCategory: FormCategory.StudentAppeal,
+        },
       );
   } catch {
     snackBar.error("Error loading appeals.");

@@ -42,8 +42,7 @@ export function createFakeFormSubmissionItemDecision(
 }
 
 /**
- * Creates a fake form submission item ready to be persisted via cascade from
- * a parent `FormSubmission`.
+ * Creates a fake form submission item.
  * @param dynamicFormConfiguration dynamic form configuration for the item.
  * @param options item options.
  * - `currentDecision` current decision. When not provided the item will have no decision (Pending).

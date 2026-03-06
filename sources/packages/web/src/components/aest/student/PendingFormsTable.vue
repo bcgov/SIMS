@@ -18,7 +18,9 @@
         />
       </v-col>
       <v-col cols="auto" class="pa-0 pr-2">
-        <v-btn color="primary" @click="searchForms">Search</v-btn>
+        <v-btn color="primary" :loading="isLoading" @click="searchForms"
+          >Search</v-btn
+        >
       </v-col>
     </v-row>
     <toggle-content :toggled="!pendingForms.count && !isLoading">
