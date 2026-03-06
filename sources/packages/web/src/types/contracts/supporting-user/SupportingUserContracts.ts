@@ -1,4 +1,5 @@
 import { Address, FormYesNoOptions } from "@/types/contracts/Common";
+import { OfferingIntensity } from "@/types/contracts/OfferingContact";
 // Expected possible errors returned by the API while submitting supporting data.
 
 // Not possible to find a Student Application with the data provided by the supporting user.
@@ -46,6 +47,7 @@ export interface SupportingUser {
   lastName?: string;
   personalInfo?: SupportingUserPersonalInfo;
   supportingUserType: SupportingUserType;
+  offeringIntensity?: OfferingIntensity;
 }
 
 export interface SupportingUserPersonalInfo {
