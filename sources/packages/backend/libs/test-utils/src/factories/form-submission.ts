@@ -35,7 +35,7 @@ export function createFakeFormSubmissionItemDecision(
     options?.decisionStatus ?? FormSubmissionDecisionStatus.Approved;
   decision.decisionDate = new Date();
   decision.decisionBy = relations.decisionBy;
-  decision.decisionNote = createFakeNote(NoteType.Application, {
+  decision.decisionNote = createFakeNote(NoteType.StudentForm, {
     creator: relations.decisionBy,
   });
   return decision;
@@ -43,21 +43,19 @@ export function createFakeFormSubmissionItemDecision(
 
 /**
  * Creates a fake form submission item.
- * @param dynamicFormConfiguration dynamic form configuration for the item.
- * @param options item options.
+ * @param relations form submission item relations.
+ * - `dynamicFormConfiguration` dynamic form configuration for the item.
  * - `currentDecision` current decision. When not provided the item will have no decision (Pending).
  * @returns a form submission item not yet persisted.
  */
-export function createFakeFormSubmissionItem(
-  dynamicFormConfiguration: DynamicFormConfiguration,
-  options?: {
-    currentDecision?: FormSubmissionItemDecision;
-  },
-): FormSubmissionItem {
+export function createFakeFormSubmissionItem(relations: {
+  dynamicFormConfiguration: DynamicFormConfiguration;
+  currentDecision?: FormSubmissionItemDecision;
+}): FormSubmissionItem {
   const item = new FormSubmissionItem();
-  item.dynamicFormConfiguration = dynamicFormConfiguration;
+  item.dynamicFormConfiguration = relations.dynamicFormConfiguration;
   item.submittedData = { someField: faker.lorem.word() };
-  item.currentDecision = options?.currentDecision;
+  item.currentDecision = relations.currentDecision;
   return item;
 }
 
@@ -71,6 +69,8 @@ export function createFakeFormSubmissionItem(
  * an existing one is fetched from the database by the resolved `formCategory`.
  * - `application` application associated with the submission, used for appeal submissions
  * that are linked to a student application.
+ * @param initialValues initial values for the form submission. When not provided, default values are used.
+ * - `submissionStatus` submission status, defaults to `FormSubmissionStatus.Pending`.
  * @param options submission options.
  * - `formCategory` category for the submission and its dynamic form configuration.
  * Defaults to `FormCategory.StudentForm`.
@@ -85,28 +85,26 @@ export async function saveFakeFormSubmission(
     dynamicFormConfiguration?: DynamicFormConfiguration;
     application?: Application;
   },
+  initialValues?: Partial<FormSubmission>,
   options?: {
-    formCategory?: FormCategory;
-    submissionStatus?: FormSubmissionStatus;
     numberOfItems?: number;
   },
 ): Promise<FormSubmission> {
-  const formCategory = options?.formCategory ?? FormCategory.StudentForm;
+  const formCategory = initialValues?.formCategory ?? FormCategory.StudentForm;
   const student = relations?.student ?? (await saveFakeStudent(db.dataSource));
   const dynamicFormConfiguration =
     relations?.dynamicFormConfiguration ??
     (await db.dynamicFormConfiguration.findOneOrFail({
       where: { formCategory },
     }));
-
+  const submissionStatus =
+    initialValues?.submissionStatus ?? FormSubmissionStatus.Pending;
   const formSubmission = new FormSubmission();
   formSubmission.student = student;
   formSubmission.creator = student.user;
   formSubmission.submittedDate = new Date();
   formSubmission.formCategory = formCategory;
   formSubmission.application = relations?.application;
-  const submissionStatus =
-    options?.submissionStatus ?? FormSubmissionStatus.Pending;
   formSubmission.submissionStatus = submissionStatus;
   // The DB constraint requires assessedDate and assessedBy when not Pending.
   if (submissionStatus !== FormSubmissionStatus.Pending) {
@@ -117,7 +115,7 @@ export async function saveFakeFormSubmission(
   formSubmission.formSubmissionItems = Array.from(
     { length: numberOfItems },
     () => {
-      const item = createFakeFormSubmissionItem(dynamicFormConfiguration);
+      const item = createFakeFormSubmissionItem({ dynamicFormConfiguration });
       item.creator = student.user;
       return item;
     },
