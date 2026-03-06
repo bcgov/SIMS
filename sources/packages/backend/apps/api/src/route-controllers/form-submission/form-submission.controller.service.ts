@@ -1,10 +1,15 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { FormSubmissionService } from "../../services";
 import {
+  FormSubmission,
   FormSubmissionDecisionStatus,
+  FormSubmissionItem,
   FormSubmissionStatus,
 } from "@sims/sims-db";
-import { FormSubmissionAPIOutDTO } from "./models/form-submission.dto";
+import {
+  FormSubmissionAPIOutDTO,
+  FormSubmissionItemDecisionAPIOutDTO,
+} from "./models/form-submission.dto";
 
 @Injectable()
 export class FormSubmissionControllerService {
@@ -27,7 +32,7 @@ export class FormSubmissionControllerService {
       includeBasicDecisionDetails?: boolean;
     },
   ): Promise<FormSubmissionAPIOutDTO> {
-    const submission = await this.formSubmissionService.getFormSubmissionsById(
+    const submission = await this.formSubmissionService.getFormSubmissionById(
       formSubmissionId,
       studentId,
     );
@@ -50,41 +55,39 @@ export class FormSubmissionControllerService {
         dynamicFormConfigurationId: item.dynamicFormConfiguration.id,
         submissionData: item.submittedData,
         formDefinitionName: item.dynamicFormConfiguration.formDefinitionName,
-        currentDecision: options?.includeBasicDecisionDetails
-          ? {
-              decisionStatus: this.mapFormSubmissionDecisionStatus(
-                submission.submissionStatus,
-                item.currentDecision?.decisionStatus,
-              ),
-              decisionNoteDescription:
-                item.currentDecision?.decisionNote.description,
-            }
-          : {
-              decisionStatus: this.mapFormSubmissionDecisionStatus(
-                submission.submissionStatus,
-                item.currentDecision?.decisionStatus,
-              ),
-            },
+        currentDecision: this.mapCurrentDecision(
+          submission,
+          item,
+          !!options?.includeBasicDecisionDetails,
+        ),
       })),
     };
   }
 
   /**
-   * Define the decision status to be returned.
-   * The decision status is determined based on the form submission status and the current decision item status.
-   * For certain scenarios, such as when the form submission is still pending, it may be desirable to keep the decision status
-   * as pending even if there is a decision item with a final decision.
-   * @param submissionStatus form submission status.
-   * @param decisionItemStatus form item decision status.
-   * @returns the decision status to be returned.
+   * Define the decision to be returned.
+   * The decision and its details are determined based on the form submission status
+   * and the access to the decision details that the consumer has.
+   * @param submissionStatus form submission.
+   * @param submissionItem form submission to determine the decision details to be returned.
+   * @param includeBasicDecisionDetails flag to indicate if the basic decision details should be included in the response,
+   * besides the status that is always included.
+   * @returns the decision that must be exposed the consumer.
    */
-  private mapFormSubmissionDecisionStatus(
-    submissionStatus: FormSubmissionStatus,
-    decisionItemStatus: FormSubmissionDecisionStatus | undefined,
-  ): FormSubmissionDecisionStatus {
-    if (submissionStatus === FormSubmissionStatus.Pending) {
-      return FormSubmissionDecisionStatus.Pending;
+  private mapCurrentDecision(
+    submission: FormSubmission,
+    submissionItem: FormSubmissionItem,
+    includeBasicDecisionDetails: boolean,
+  ): FormSubmissionItemDecisionAPIOutDTO {
+    if (submission.submissionStatus === FormSubmissionStatus.Pending) {
+      // For pending submissions, the decision details should not be returned.
+      return { decisionStatus: FormSubmissionDecisionStatus.Pending };
     }
-    return decisionItemStatus ?? FormSubmissionDecisionStatus.Pending;
+    return {
+      decisionStatus: submissionItem.currentDecision.decisionStatus,
+      decisionNoteDescription: includeBasicDecisionDetails
+        ? submissionItem.currentDecision.decisionNote.description
+        : undefined,
+    };
   }
 }

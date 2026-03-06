@@ -1,6 +1,5 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
-  FormSubmissionStudentAPIOutDTO,
   FormSubmissionConfigurationsAPIOutDTO,
   FormSubmissionAPIInDTO,
   FormSupplementaryDataAPIInDTO,
@@ -16,7 +15,7 @@ import {
   FormSubmissionStatus,
 } from "@/types";
 
-const MOCKED_SUBMISSIONS: FormSubmissionStudentAPIOutDTO[] = [
+const MOCKED_SUBMISSIONS: FormSubmissionAPIOutDTO[] = [
   {
     id: 1,
     formCategory: FormCategory.StudentAppeal,
@@ -100,7 +99,7 @@ export class FormSubmissionApi extends HttpBaseClient {
 
   // TODO: To be implemented.
   async getFormSubmissionSummary(): Promise<{
-    submissions: FormSubmissionStudentAPIOutDTO[];
+    submissions: FormSubmissionAPIOutDTO[];
   }> {
     return {
       submissions: MOCKED_SUBMISSIONS,

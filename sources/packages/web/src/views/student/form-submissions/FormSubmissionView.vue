@@ -109,6 +109,9 @@ export default defineComponent({
                 formType: item.formType,
                 formName: item.formDefinitionName,
                 files: [],
+                decision: {
+                  decisionStatus: item.currentDecision?.decisionStatus,
+                },
               }) as FormSubmissionItem,
           );
       } catch {

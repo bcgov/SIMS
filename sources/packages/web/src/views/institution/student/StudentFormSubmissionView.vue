@@ -30,7 +30,10 @@
         :loading="loading"
         :read-only="true"
       >
-        <template #decision="{ decision }">
+        <template
+          #decision="{ decision }"
+          v-if="formSubmission?.status !== FormSubmissionStatus.Pending"
+        >
           <h4 class="category-header-medium brand-gray-text">Decision notes</h4>
           <v-divider />
           <v-sheet color="grey-lighten-4 p-3" rounded border>
@@ -53,6 +56,7 @@ import {
   FormCategory,
   FormSubmissionItem,
   FormSubmissionItemDecision,
+  FormSubmissionStatus,
 } from "@/types";
 import { FormSubmissionAPIOutDTO } from "@/services/http/dto";
 import {
@@ -135,6 +139,7 @@ export default defineComponent({
       loading,
       formSubmission,
       InstitutionRoutesConst,
+      FormSubmissionStatus,
     };
   },
 });

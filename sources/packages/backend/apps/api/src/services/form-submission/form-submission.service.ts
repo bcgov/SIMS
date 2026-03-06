@@ -51,7 +51,7 @@ export class FormSubmissionService {
    * @param studentId student ID for authorization.
    * @returns The form submission if found, otherwise null.
    */
-  async getFormSubmissionsById(
+  async getFormSubmissionById(
     formSubmissionId: number,
     studentId: number,
   ): Promise<FormSubmission | null> {
@@ -61,6 +61,10 @@ export class FormSubmissionService {
         submissionStatus: true,
         submittedDate: true,
         formCategory: true,
+        application: {
+          id: true,
+          applicationNumber: true,
+        },
         formSubmissionItems: {
           id: true,
           dynamicFormConfiguration: {
@@ -82,6 +86,7 @@ export class FormSubmissionService {
         },
       },
       relations: {
+        application: true,
         formSubmissionItems: {
           dynamicFormConfiguration: true,
           currentDecision: { decisionNote: true },

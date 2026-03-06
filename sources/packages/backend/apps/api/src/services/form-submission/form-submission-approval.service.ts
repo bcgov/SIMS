@@ -50,7 +50,7 @@ export class FormSubmissionApprovalService {
    * form submission items array.
    * @returns The form submission if found, otherwise null.
    */
-  async getFormSubmissionsById(
+  async getFormSubmissionById(
     formSubmissionId: number,
     options?: { itemId?: number },
   ): Promise<FormSubmission | null> {

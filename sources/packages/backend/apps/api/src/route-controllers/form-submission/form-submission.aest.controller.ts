@@ -76,7 +76,7 @@ export class FormSubmissionAESTController extends BaseController {
     @Query("itemId", new ParseIntPipe({ optional: true })) itemId?: number,
   ): Promise<FormSubmissionMinistryAPIOutDTO> {
     const submission =
-      await this.formSubmissionApprovalService.getFormSubmissionsById(
+      await this.formSubmissionApprovalService.getFormSubmissionById(
         formSubmissionId,
         { itemId },
       );
