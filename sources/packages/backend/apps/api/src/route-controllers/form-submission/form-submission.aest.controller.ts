@@ -76,7 +76,7 @@ export class FormSubmissionAESTController extends BaseController {
     @Query("itemId", new ParseIntPipe({ optional: true })) itemId?: number,
   ): Promise<FormSubmissionMinistryAPIOutDTO> {
     const submission =
-      await this.formSubmissionApprovalService.getFormSubmissionsById(
+      await this.formSubmissionApprovalService.getFormSubmissionById(
         formSubmissionId,
         { itemId },
       );
@@ -110,21 +110,24 @@ export class FormSubmissionAESTController extends BaseController {
         dynamicFormConfigurationId: item.dynamicFormConfiguration.id,
         submissionData: item.submittedData,
         formDefinitionName: item.dynamicFormConfiguration.formDefinitionName,
-        decisionStatus:
-          item.currentDecision?.decisionStatus ??
-          FormSubmissionDecisionStatus.Pending,
         updatedAt: item.updatedAt,
         currentDecision:
           hasApprovalAuthorization && item.currentDecision
             ? {
                 id: item.currentDecision.id,
-                decisionStatus: item.currentDecision.decisionStatus,
+                decisionStatus:
+                  item.currentDecision?.decisionStatus ??
+                  FormSubmissionDecisionStatus.Pending,
                 decisionDate: item.currentDecision.decisionDate,
                 decisionBy: getUserFullName(item.currentDecision.decisionBy),
                 decisionNoteDescription:
                   item.currentDecision.decisionNote.description,
               }
-            : undefined,
+            : {
+                decisionStatus:
+                  item.currentDecision?.decisionStatus ??
+                  FormSubmissionDecisionStatus.Pending,
+              },
         previousDecisions: hasApprovalAuthorization
           ? item.decisions
               .filter((decision) => decision.id !== item.currentDecision.id)
@@ -152,7 +155,8 @@ export class FormSubmissionAESTController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description:
       "The form submission item has been updated since it was last retrieved or " +
-      "decisions cannot be made on items belonging to a form submission that is not pending.",
+      "decisions cannot be made on items belonging to a form submission that is not pending or " +
+      "the application associated with the form submission is not in completed status.",
   })
   @Roles(...FORM_SUBMISSION_UPDATE_ROLES)
   @Patch("items/:formSubmissionItemId/decision")
@@ -204,7 +208,8 @@ export class FormSubmissionAESTController extends BaseController {
       "the provided form submission items do not match the form submission items currently saved for this submission or " +
       "form submission item not found in the form submission or " +
       "form submission item has been updated since it was last retrieved or " +
-      "final decision cannot be made when some decisions are still pending.",
+      "final decision cannot be made when some decisions are still pending or " +
+      "the application associated with the form submission is not in completed status.",
   })
   @Roles(...FORM_SUBMISSION_UPDATE_ROLES)
   @Patch(":formSubmissionId/complete")

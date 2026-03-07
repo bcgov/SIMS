@@ -42,6 +42,7 @@ export interface AssessmentHistorySummaryAPIOutDTO {
   offeringId?: number;
   programId?: number;
   studentAppealId?: number;
+  formSubmissionId?: number;
   applicationOfferingChangeRequestId?: number;
   applicationExceptionId?: number;
   studentScholasticStandingId?: number;

@@ -12,6 +12,7 @@ import {
   NoteType,
   FormCategory,
   FormSubmissionItemDecision,
+  ApplicationStatus,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -20,6 +21,7 @@ import {
   FORM_SUBMISSION_ITEM_OUTDATED,
   FORM_SUBMISSION_NOT_FOUND,
   FORM_SUBMISSION_NOT_PENDING,
+  FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE,
   FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
 } from "./constants";
 import {
@@ -48,7 +50,7 @@ export class FormSubmissionApprovalService {
    * form submission items array.
    * @returns The form submission if found, otherwise null.
    */
-  async getFormSubmissionsById(
+  async getFormSubmissionById(
     formSubmissionId: number,
     options?: { itemId?: number },
   ): Promise<FormSubmission | null> {
@@ -132,7 +134,11 @@ export class FormSubmissionApprovalService {
       const submissionItem = await formSubmissionItemRepo.findOne({
         select: {
           id: true,
-          formSubmission: { id: true, submissionStatus: true },
+          formSubmission: {
+            id: true,
+            submissionStatus: true,
+            application: { id: true, applicationStatus: true },
+          },
           updatedAt: true,
           dynamicFormConfiguration: {
             id: true,
@@ -140,7 +146,7 @@ export class FormSubmissionApprovalService {
           },
         },
         relations: {
-          formSubmission: true,
+          formSubmission: { application: true },
           dynamicFormConfiguration: true,
         },
         where: { id: submissionItemId },
@@ -155,6 +161,16 @@ export class FormSubmissionApprovalService {
         submissionItem.dynamicFormConfiguration.formCategory,
         userRoles,
       );
+      if (
+        submissionItem.formSubmission.application?.id &&
+        submissionItem.formSubmission.application.applicationStatus !==
+          ApplicationStatus.Completed
+      ) {
+        throw new CustomNamedError(
+          "The application associated with the form submission is not in completed status.",
+          FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE,
+        );
+      }
       if (
         submissionItem.updatedAt.getTime() !==
         formItemDecision.lastUpdateDate.getTime()
@@ -241,6 +257,7 @@ export class FormSubmissionApprovalService {
           student: { id: true },
           submissionStatus: true,
           formCategory: true,
+          application: { id: true, applicationStatus: true },
           formSubmissionItems: {
             id: true,
             updatedAt: true,
@@ -253,6 +270,7 @@ export class FormSubmissionApprovalService {
         },
         relations: {
           student: true,
+          application: true,
           formSubmissionItems: { currentDecision: { decisionNote: true } },
         },
         where: { id: submissionId },
@@ -267,6 +285,16 @@ export class FormSubmissionApprovalService {
         formSubmission.formCategory,
         userRoles,
       );
+      if (
+        formSubmission.application?.id &&
+        formSubmission.application.applicationStatus !==
+          ApplicationStatus.Completed
+      ) {
+        throw new CustomNamedError(
+          "The application associated with the form submission is not in completed status.",
+          FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE,
+        );
+      }
       if (formSubmission.submissionStatus !== FormSubmissionStatus.Pending) {
         throw new CustomNamedError(
           "Final decision cannot be made on a form submission with status different than pending.",

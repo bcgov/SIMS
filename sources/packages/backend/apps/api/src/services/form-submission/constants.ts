@@ -64,3 +64,11 @@ export const FORM_SUBMISSION_ITEM_OUTDATED = "FORM_SUBMISSION_ITEM_OUTDATED";
  */
 export const FORM_SUBMISSION_UPDATE_UNAUTHORIZED =
   "FORM_SUBMISSION_UPDATE_UNAUTHORIZED";
+/**
+ * The application associated with the form submission is not in completed status.
+ * Ensures data change will not happen when the application is not in the expected state,
+ * for instance, if a previously completed application has a change request and is no
+ * longer the current version.
+ */
+export const FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE =
+  "FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE";
