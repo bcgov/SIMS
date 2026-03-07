@@ -139,12 +139,10 @@ export default defineComponent({
     const viewRequest = (data: AssessmentHistorySummaryAPIOutDTO) => {
       switch (data.triggerType) {
         case AssessmentTriggerType.StudentAppeal:
-          if (isFormSubmissionEnabled.value) {
-            context.emit("viewStudentAppeal", data.formSubmissionId);
-          } else {
-            // TODO: removed once the toggle is no longer required.
-            context.emit("viewStudentAppeal", data.studentAppealId);
-          }
+          context.emit(
+            "viewStudentAppeal",
+            data.formSubmissionId ?? data.studentAppealId,
+          );
           break;
         case AssessmentTriggerType.ApplicationOfferingChange:
           context.emit(
