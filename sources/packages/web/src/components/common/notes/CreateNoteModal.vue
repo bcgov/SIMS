@@ -1,6 +1,6 @@
 <template>
   <v-form ref="addNewNoteForm">
-    <modal-dialog-base title="Create new note" :showDialog="showDialog">
+    <modal-dialog-base title="Create new note" :show-dialog="showDialog">
       <template #content>
         <error-summary :errors="addNewNoteForm.errors" />
         <div class="pb-2">
@@ -28,10 +28,10 @@
         <check-permission-role :role="allowedRole">
           <template #="{ notAllowed }">
             <footer-buttons
-              primaryLabel="Add note"
-              @secondaryClick="cancel"
-              @primaryClick="submit"
-              :disablePrimaryButton="notAllowed"
+              primary-label="Add note"
+              @secondary-click="cancel"
+              @primary-click="submit"
+              :disable-primary-button="notAllowed"
             />
           </template>
         </check-permission-role>
@@ -44,7 +44,7 @@
 import { PropType, ref, reactive, onMounted, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { useModalDialog, useRules } from "@/composables";
+import { useModalDialog, useRules, useAuth } from "@/composables";
 import {
   Role,
   VForm,
@@ -52,6 +52,9 @@ import {
   StudentNoteType,
   NoteEntityType,
   SelectItemType,
+  NoteType,
+  STUDENT_NOTE_TO_NOTES_TYPE_MAP,
+  STUDENT_NOTE_USER_ROLES_MAP,
 } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { NoteAPIInDTO } from "@/services/http/dto";
@@ -76,13 +79,33 @@ export default defineComponent({
     const addNewNoteForm = ref({} as VForm);
     const formModel = reactive({} as NoteAPIInDTO);
     const noteTypeItems = ref([] as SelectItemType[]);
+    const { hasRole } = useAuth();
 
     onMounted(async () => {
       if (props.entityType === NoteEntityType.Institution) {
         noteTypeItems.value = convertToSelectItemType(InstitutionNoteType);
       }
       if (props.entityType === NoteEntityType.Student) {
-        noteTypeItems.value = convertToSelectItemType(StudentNoteType);
+        const studentNotesForCreation: NoteType[] = [];
+        for (const studentNote of Object.keys(StudentNoteType)) {
+          // Convert student UI notes to API types to allow its creation.
+          studentNotesForCreation.push(
+            ...(STUDENT_NOTE_TO_NOTES_TYPE_MAP.get(
+              studentNote as StudentNoteType,
+            ) ?? [studentNote as NoteType]),
+          );
+        }
+        noteTypeItems.value = studentNotesForCreation
+          .filter((note) => {
+            // Check if the note type is restricted by some user role.
+            const roleRestriction = STUDENT_NOTE_USER_ROLES_MAP.get(note);
+            // If non restricted or the user has role, return it.
+            return !roleRestriction || hasRole(roleRestriction);
+          })
+          .map<SelectItemType>((noteType) => ({
+            title: noteType,
+            value: NoteType[noteType],
+          }));
       }
     });
 

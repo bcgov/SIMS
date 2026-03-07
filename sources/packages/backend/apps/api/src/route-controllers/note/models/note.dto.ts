@@ -48,9 +48,9 @@ export const transformToNoteDTO = (note: Note): NoteAPIOutDTO => {
 
 /**
  * Query string for filtering notes by note types.
- * In no note types are provided, all notes will be returned.
+ * If no note types are provided, all notes will be returned.
  */
-export class NoteAPIQueryStringApiInDTO {
+export class NoteAPIQueryStringAPIInDTO {
   @IsOptional()
   @ArrayMaxSize(Object.keys(NoteType).length)
   @Transform(({ value }) => value.split(","))

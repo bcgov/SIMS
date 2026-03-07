@@ -59,7 +59,7 @@ export class NoteService {
     if (!noteType?.length) {
       return ApiClient.NoteApi.getStudentNotes(studentId);
     }
-    const convertedNotes = STUDENT_NOTE_TO_NOTES_TYPE_MAP[noteType] ?? [
+    const convertedNotes = STUDENT_NOTE_TO_NOTES_TYPE_MAP.get(noteType) ?? [
       noteType as unknown as NoteType,
     ];
     return ApiClient.NoteApi.getStudentNotes(studentId, convertedNotes);

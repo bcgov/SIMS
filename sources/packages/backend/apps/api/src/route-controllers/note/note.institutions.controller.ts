@@ -4,7 +4,7 @@ import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   NoteAPIOutDTO,
-  NoteAPIQueryStringApiInDTO,
+  NoteAPIQueryStringAPIInDTO,
   transformToNoteDTO,
 } from "./models/note.dto";
 import {
@@ -37,7 +37,7 @@ export class NoteInstitutionsController extends BaseController {
   @Get("student/:studentId")
   async getStudentNotes(
     @Param("studentId", ParseIntPipe) studentId: number,
-    @Query() queryString: NoteAPIQueryStringApiInDTO,
+    @Query() queryString: NoteAPIQueryStringAPIInDTO,
   ): Promise<NoteAPIOutDTO[]> {
     const studentNotes = await this.studentService.getStudentNotes(studentId, {
       noteTypes: queryString.noteTypes,

@@ -7,6 +7,7 @@ import {
   Query,
   ParseIntPipe,
   NotFoundException,
+  ForbiddenException,
 } from "@nestjs/common";
 import { StudentService, InstitutionService } from "../../services";
 import BaseController from "../BaseController";
@@ -16,7 +17,7 @@ import {
   NoteAPIOutDTO,
   NoteAPIInDTO,
   transformToNoteDTO,
-  NoteAPIQueryStringApiInDTO,
+  NoteAPIQueryStringAPIInDTO,
 } from "./models/note.dto";
 import {
   AllowAuthorizedParty,
@@ -29,6 +30,16 @@ import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import { Role } from "../../auth/roles.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { NoteType } from "@sims/sims-db";
+
+/**
+ * Map note categories to the user roles, only if there is some
+ * authorization to be applied to the role.
+ */
+export const STUDENT_NOTE_USER_ROLES_MAP = new Map<NoteType, Role>([
+  [NoteType.StudentAppeal, Role.StudentApproveDeclineAppeals],
+  [NoteType.StudentForm, Role.StudentApproveDeclineForms],
+]);
 
 /**
  * Controller for Notes.
@@ -56,7 +67,7 @@ export class NoteAESTController extends BaseController {
   @Get("student/:studentId")
   async getStudentNotes(
     @Param("studentId", ParseIntPipe) studentId: number,
-    @Query() queryString: NoteAPIQueryStringApiInDTO,
+    @Query() queryString: NoteAPIQueryStringAPIInDTO,
   ): Promise<NoteAPIOutDTO[]> {
     const student = await this.studentService.getStudentById(studentId);
     if (!student) {
@@ -78,7 +89,7 @@ export class NoteAESTController extends BaseController {
   @Get("institution/:institutionId")
   async getInstitutionNotes(
     @Param("institutionId", ParseIntPipe) institutionId: number,
-    @Query() queryString: NoteAPIQueryStringApiInDTO,
+    @Query() queryString: NoteAPIQueryStringAPIInDTO,
   ): Promise<NoteAPIOutDTO[]> {
     const institution =
       await this.institutionService.getBasicInstitutionDetailById(
@@ -141,6 +152,16 @@ export class NoteAESTController extends BaseController {
     const student = await this.studentService.getStudentById(studentId);
     if (!student) {
       throw new NotFoundException("Student not found.");
+    }
+    // Check if the note type is restricted by some user role.
+    const roleRestriction = STUDENT_NOTE_USER_ROLES_MAP.get(payload.noteType);
+    // If non restricted or the user has role, return it.
+    const notAuthorized =
+      !roleRestriction || userToken.roles.includes(roleRestriction);
+    if (!notAuthorized) {
+      throw new ForbiddenException(
+        "User does not have authorization to create a note for the provided category.",
+      );
     }
     const note = await this.studentService.addStudentNote(
       studentId,
