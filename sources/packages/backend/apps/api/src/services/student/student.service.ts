@@ -794,7 +794,7 @@ export class StudentService extends RecordDataModelService<Student> {
    * @param userRoles user roles to validate if the user has authorization to create
    * the note based on the note type.
    * @param auditUserId user that should be considered the one that is causing the changes.
-   * @returns saved Note.
+   * @returns saved note.
    */
   async addStudentNote(
     studentId: number,
