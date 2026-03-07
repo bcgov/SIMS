@@ -58,7 +58,7 @@ export class FormSubmissionConfigurationsAPIOutDTO {
  * This is a basic representation of a form submission properties to be extended
  * for Ministry, Student, and Institutions.
  */
-class FormSubmissionBaseAPIOutDTO {
+abstract class FormSubmissionBaseAPIOutDTO {
   id: number;
   formCategory: FormCategory;
   status: FormSubmissionStatus;
@@ -68,28 +68,39 @@ class FormSubmissionBaseAPIOutDTO {
 }
 
 /**
- * Current decision associated with a form submission item.
- */
-export class FormSubmissionItemDecisionAPIOutDTO {
-  id?: number;
-  decisionStatus: FormSubmissionDecisionStatus;
-  decisionDate?: Date;
-  decisionBy?: string;
-  decisionNoteDescription?: string;
-}
-
-/**
  * Individual form items that will be part of a form submission with one to many forms.
  * This is a basic representation of a form submission item properties to be extended
  * for Ministry, Student, and Institutions.
  */
-export class FormSubmissionItemAPIOutDTO {
+abstract class FormSubmissionItemBaseAPIOutDTO {
   id: number;
   formType: string;
   formCategory: FormCategory;
   dynamicFormConfigurationId: number;
   submissionData: unknown;
   formDefinitionName: string;
+}
+
+/**
+ * Current decision associated with a form submission
+ * item used by Student and Institution.
+ */
+export class FormSubmissionItemDecisionAPIOutDTO {
+  id?: number;
+  decisionStatus: FormSubmissionDecisionStatus;
+  decisionNoteDescription?: string;
+}
+
+/**
+ * Current decision associated with a form submission item
+ * with additional details for the Ministry, including the decision date and decision by.
+ */
+export class FormSubmissionItemDecisionMinistryAPIOutDTO extends FormSubmissionItemDecisionAPIOutDTO {
+  decisionDate?: Date;
+  decisionBy?: string;
+}
+
+export class FormSubmissionItemAPIOutDTO extends FormSubmissionItemBaseAPIOutDTO {
   /**
    * Current decision details for this form submission item. The current decision is the most recent decision made on
    * this item and represents the current state of the item.
@@ -110,18 +121,24 @@ export class FormSubmissionAPIOutDTO extends FormSubmissionBaseAPIOutDTO {
  * Individual form items that will be part of a form submission with one to many forms
  * for the Ministry, including the decision details.
  */
-export class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
+export class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemBaseAPIOutDTO {
   /**
    * Most recent update date for this form submission item. This is used to determine if the item is outdated when
    * submitting a decision on it, to prevent overwriting a more recent decision.
    */
   updatedAt: Date;
   /**
+   * Current decision details for this form submission item. The current decision is the most recent decision made on
+   * this item and represents the current state of the item.
+   * Optionally include decision information if the user has the necessary permissions to view the decision details.
+   */
+  currentDecision: FormSubmissionItemDecisionMinistryAPIOutDTO;
+  /**
    * Decision history for this form submission item. The decision history includes all decisions made on this but
    * the current one that is sent separately in the currentDecision property.
    * Optionally include decision history information if the user has the necessary permissions to view the decision details.
    */
-  previousDecisions?: FormSubmissionItemDecisionAPIOutDTO[];
+  previousDecisions?: FormSubmissionItemDecisionMinistryAPIOutDTO[];
 }
 
 /**

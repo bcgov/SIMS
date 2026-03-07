@@ -43,6 +43,20 @@ interface FormSubmissionBaseAPIOutDTO {
 }
 
 /**
+ * Individual form items that will be part of a form submission with one to many forms.
+ * This is a basic representation of a form submission item properties to be extended
+ * for Ministry, Student, and Institutions.
+ */
+interface FormSubmissionItemBaseAPIOutDTO {
+  id: number;
+  formType: string;
+  formCategory: FormCategory;
+  dynamicFormConfigurationId: number;
+  submissionData: unknown;
+  formDefinitionName: string;
+}
+
+/**
  * Form submission with one to many forms for the Ministry,
  * including the individual form items.
  */
@@ -62,17 +76,20 @@ export interface FormSubmissionItemDecisionAPIOutDTO {
 }
 
 /**
+ * Current decision associated with a form submission item
+ * with additional details for the Ministry, including the decision date and decision by.
+ */
+export interface FormSubmissionItemDecisionMinistryAPIOutDTO extends FormSubmissionItemDecisionAPIOutDTO {
+  decisionDate?: Date;
+  decisionBy?: string;
+}
+
+/**
  * Individual form items that will be part of a form submission with one to many forms.
  * This is a basic representation of a form submission item properties to be extended
  * for Ministry, Student, and Institutions.
  */
-export interface FormSubmissionItemAPIOutDTO {
-  id: number;
-  formType: string;
-  formCategory: FormCategory;
-  dynamicFormConfigurationId: number;
-  submissionData: unknown;
-  formDefinitionName: string;
+export interface FormSubmissionItemAPIOutDTO extends FormSubmissionItemBaseAPIOutDTO {
   /**
    * Current decision details for this form submission item. The current decision is the most recent decision made on
    * this item and represents the current state of the item.
@@ -92,11 +109,17 @@ export interface FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemA
    */
   updatedAt: Date;
   /**
+   * Current decision details for this form submission item. The current decision is the most recent decision made on
+   * this item and represents the current state of the item.
+   * Optionally include decision information if the user has the necessary permissions to view the decision details.
+   */
+  currentDecision: FormSubmissionItemDecisionMinistryAPIOutDTO;
+  /**
    * Decision history for this form submission item. The decision history includes all decisions made on this but
    * the current one that is sent separately in the currentDecision property.
    * Optionally include decision history information if the user has the necessary permissions to view the decision details.
    */
-  previousDecisions?: FormSubmissionItemDecisionAPIOutDTO[];
+  previousDecisions?: FormSubmissionItemDecisionMinistryAPIOutDTO[];
 }
 
 /**
