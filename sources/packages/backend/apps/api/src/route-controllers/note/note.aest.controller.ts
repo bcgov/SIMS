@@ -26,20 +26,16 @@ import {
   Roles,
 } from "../../auth/decorators";
 import { IUserToken } from "../../auth/userToken.interface";
-import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiTags,
+} from "@nestjs/swagger";
 import { Role } from "../../auth/roles.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { NoteType } from "@sims/sims-db";
-
-/**
- * Map note categories to the user roles, only if there is some
- * authorization to be applied to the role.
- */
-export const STUDENT_NOTE_USER_ROLES_MAP = new Map<NoteType, Role>([
-  [NoteType.StudentAppeal, Role.StudentApproveDeclineAppeals],
-  [NoteType.StudentForm, Role.StudentApproveDeclineForms],
-]);
+import { CustomNamedError } from "@sims/utilities";
+import { NOTE_CREATION_NOT_AUTHORIZED_FOR_NOTE_CATEGORY } from "../../constants";
 
 /**
  * Controller for Notes.
@@ -143,6 +139,10 @@ export class NoteAESTController extends BaseController {
    */
   @Roles(Role.StudentCreateNote)
   @ApiNotFoundResponse({ description: "Student not found." })
+  @ApiForbiddenResponse({
+    description:
+      "User does not have authorization to create a note for the provided category.",
+  })
   @Post("student/:studentId")
   async addStudentNote(
     @UserToken() userToken: IUserToken,
@@ -153,22 +153,23 @@ export class NoteAESTController extends BaseController {
     if (!student) {
       throw new NotFoundException("Student not found.");
     }
-    // Check if the note type is restricted by some user role.
-    const roleRestriction = STUDENT_NOTE_USER_ROLES_MAP.get(payload.noteType);
-    // If non restricted or the user has role, return it.
-    const notAuthorized =
-      !roleRestriction || userToken.roles.includes(roleRestriction);
-    if (!notAuthorized) {
-      throw new ForbiddenException(
-        "User does not have authorization to create a note for the provided category.",
+    try {
+      const note = await this.studentService.addStudentNote(
+        studentId,
+        payload.noteType,
+        payload.description,
+        userToken.roles,
+        userToken.userId,
       );
+      return { id: note.id };
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === NOTE_CREATION_NOT_AUTHORIZED_FOR_NOTE_CATEGORY
+      ) {
+        throw new ForbiddenException(error.message);
+      }
+      throw error;
     }
-    const note = await this.studentService.addStudentNote(
-      studentId,
-      payload.noteType,
-      payload.description,
-      userToken.userId,
-    );
-    return { id: note.id };
   }
 }

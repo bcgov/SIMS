@@ -145,8 +145,7 @@ describe("NoteAESTController(e2e)-addStudentNotes", () => {
           .auth(await getAESTToken(AESTGroups.Operations), BEARER_AUTH_TYPE)
           .expect(HttpStatus.FORBIDDEN)
           .expect({
-            message:
-              "User does not have authorization to create a note for the provided category.",
+            message: `User does not have authorization to create a note for category ${restrictedNoteType}.`,
             error: "Forbidden",
             statusCode: HttpStatus.FORBIDDEN,
           });

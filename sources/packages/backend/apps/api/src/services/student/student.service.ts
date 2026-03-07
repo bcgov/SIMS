@@ -26,6 +26,7 @@ import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {
   CreateStudentUserInfo,
+  STUDENT_NOTE_USER_ROLES_MAP,
   StudentInfo,
   StudentUserData,
   UserInfoMatchData,
@@ -37,6 +38,7 @@ import {
   STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
   STUDENT_SIN_CONSENT_NOT_CHECKED,
+  NOTE_CREATION_NOT_AUTHORIZED_FOR_NOTE_CATEGORY,
 } from "../../constants";
 import {
   NoteSharedService,
@@ -46,6 +48,7 @@ import {
   StudentRestrictionSharedService,
 } from "@sims/services";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
+import { Role } from "../../auth";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -795,8 +798,20 @@ export class StudentService extends RecordDataModelService<Student> {
     studentId: number,
     noteType: NoteType,
     noteDescription: string,
+    userRoles: Role[],
     auditUserId: number,
   ): Promise<Note> {
+    // Check if the note type is restricted by some user role.
+    const roleRestriction = STUDENT_NOTE_USER_ROLES_MAP.get(noteType);
+    // If not restricted or the user has the role, it should be authorized.
+    const notAuthorized =
+      !roleRestriction || userRoles.includes(roleRestriction);
+    if (!notAuthorized) {
+      throw new CustomNamedError(
+        `User does not have authorization to create a note for category ${noteType}.`,
+        NOTE_CREATION_NOT_AUTHORIZED_FOR_NOTE_CATEGORY,
+      );
+    }
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       return this.noteSharedService.createStudentNote(
         studentId,
