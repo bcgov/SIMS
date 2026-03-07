@@ -1,4 +1,4 @@
-import { RestrictionBypassBehaviors } from "@/types";
+import { RestrictedParty, RestrictionBypassBehaviors } from "@/types";
 
 /**
  * Application restriction bypass summary.
@@ -21,19 +21,20 @@ export interface ApplicationRestrictionBypassHistoryAPIOutDTO {
 }
 
 /**
- * Available student restrictions to bypass.
+ * Available restrictions to bypass.
  */
-export interface AvailableStudentRestrictionAPIOutDTO {
-  studentRestrictionId: number;
+export interface AvailableRestrictionAPIOutDTO {
+  restrictionId: number;
   restrictionCode: string;
-  studentRestrictionCreatedAt: Date;
+  restrictionCreatedAt: Date;
+  restrictionType: RestrictedParty.Student | RestrictedParty.Institution;
 }
 
 /**
- * Available student restrictions to bypass item.
+ * Available restrictions to bypass item.
  */
-export interface AvailableStudentRestrictionsAPIOutDTO {
-  availableRestrictionsToBypass: AvailableStudentRestrictionAPIOutDTO[];
+export interface AvailableRestrictionsAPIOutDTO {
+  availableRestrictionsToBypass: AvailableRestrictionAPIOutDTO[];
 }
 
 /**
@@ -41,7 +42,8 @@ export interface AvailableStudentRestrictionsAPIOutDTO {
  */
 export interface BypassRestrictionAPIInDTO {
   applicationId: number;
-  studentRestrictionId: number;
+  restrictionId: number;
+  restrictionType: RestrictedParty.Student | RestrictedParty.Institution;
   bypassBehavior: RestrictionBypassBehaviors;
   note: string;
 }
@@ -58,8 +60,9 @@ export interface RemoveBypassRestrictionAPIInDTO {
  */
 export interface ApplicationRestrictionBypassAPIOutDTO {
   applicationRestrictionBypassId: number;
-  studentRestrictionId: number;
+  restrictionId: number;
   restrictionCode: string;
+  restrictionType: RestrictedParty.Student | RestrictedParty.Institution;
   createdDate: Date;
   createdBy: string;
   creationNote: string;

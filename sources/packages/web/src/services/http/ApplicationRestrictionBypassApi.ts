@@ -2,7 +2,7 @@ import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   ApplicationRestrictionBypassAPIOutDTO,
   ApplicationRestrictionBypassHistoryAPIOutDTO,
-  AvailableStudentRestrictionsAPIOutDTO,
+  AvailableRestrictionsAPIOutDTO,
   BypassRestrictionAPIInDTO,
   RemoveBypassRestrictionAPIInDTO,
 } from "@/services/http/dto";
@@ -27,14 +27,14 @@ export class ApplicationRestrictionBypassApi extends HttpBaseClient {
   }
 
   /**
-   * Gets all available student restriction bypasses for an application.
+   * Gets all available restrictions to bypass for a given application.
    * @param applicationId application Id.
-   * @returns application restriction bypasses.
+   * @returns available restrictions to bypass.
    */
-  async getAvailableStudentRestrictions(
+  async getAvailableRestrictionsToBypass(
     applicationId: number,
-  ): Promise<AvailableStudentRestrictionsAPIOutDTO> {
-    return this.getCall<AvailableStudentRestrictionsAPIOutDTO>(
+  ): Promise<AvailableRestrictionsAPIOutDTO> {
+    return this.getCall<AvailableRestrictionsAPIOutDTO>(
       this.addClientRoot(
         `application-restriction-bypass/application/${applicationId}/options-list`,
       ),

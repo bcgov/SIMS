@@ -1,6 +1,6 @@
 <template>
   <v-form ref="bypassRestrictionForm">
-    <modal-dialog-base :showDialog="showDialog" title="Bypass restriction">
+    <modal-dialog-base :show-dialog="showDialog" title="Bypass restriction">
       >
       <template #content>
         <h3 class="category-header-medium secondary-color my-4">
@@ -18,12 +18,31 @@
             label="I want this application to bypass the following restriction"
             density="compact"
             :items="restrictionsToBypass"
-            v-model="formModel.studentRestrictionId"
+            v-model="formModel.restrictionId"
             variant="outlined"
             :rules="[(v) => checkNullOrEmptyRule(v, 'Restriction')]"
             :disabled="readOnly"
             hide-details="auto"
-          />
+          >
+            <template #item="{ props, item }">
+              <v-list-item v-bind="props" title="">
+                <span>{{ item.title }}</span>
+                <StatusChipClientType
+                  :client-type="item.raw.restrictionType"
+                  class="ml-3 float-right"
+                />
+              </v-list-item>
+            </template>
+            <template #selection="{ item }">
+              <v-list-item title="">
+                <span>{{ item.title }}</span>
+                <StatusChipClientType
+                  :client-type="item.raw.restrictionType"
+                  class="ml-3 float-right"
+                />
+              </v-list-item>
+            </template>
+          </v-select>
           <v-radio-group
             label="Until"
             inline
@@ -54,23 +73,23 @@
             v-if="!readOnly"
           />
           <title-value
-            propertyTitle="Notes"
-            :propertyValue="formModel.note"
+            property-title="Notes"
+            :property-value="formModel.note"
             v-if="readOnly"
           />
           <v-row v-if="restrictionBypassDetails.createdDate" class="mt-2">
             <v-col>
               <title-value
-                propertyTitle="Date created"
-                :propertyValue="
+                property-title="Date created"
+                :property-value="
                   dateOnlyLongString(restrictionBypassDetails.createdDate)
                 "
               />
             </v-col>
             <v-col>
               <title-value
-                propertyTitle="Created by"
-                :propertyValue="restrictionBypassDetails.createdBy"
+                property-title="Created by"
+                :property-value="restrictionBypassDetails.createdBy"
               /> </v-col
           ></v-row>
         </content-group>
@@ -81,22 +100,22 @@
           </h3>
           <content-group>
             <title-value
-              propertyTitle="Notes"
-              :propertyValue="restrictionBypassDetails.removalNote"
+              property-title="Notes"
+              :property-value="restrictionBypassDetails.removalNote"
             />
             <v-row class="mt-2">
               <v-col>
                 <title-value
-                  propertyTitle="Removal"
-                  :propertyValue="
+                  property-title="Removal"
+                  :property-value="
                     dateOnlyLongString(restrictionBypassDetails.removedDate)
                   "
                 />
               </v-col>
               <v-col>
                 <title-value
-                  propertyTitle="Removed by"
-                  :propertyValue="restrictionBypassDetails.removedBy"
+                  property-title="Removed by"
+                  :property-value="restrictionBypassDetails.removedBy"
                 />
               </v-col>
             </v-row>
@@ -106,10 +125,10 @@
       <template #footer>
         <footer-buttons
           :processing="loading"
-          primaryLabel="Bypass restriction"
-          @secondaryClick="cancel"
-          @primaryClick="bypassRestriction"
-          :showPrimaryButton="
+          primary-label="Bypass restriction"
+          @secondary-click="cancel"
+          @primary-click="bypassRestriction"
+          :show-primary-button="
             !restrictionBypassDetails?.applicationRestrictionBypassId
           "
         />
@@ -121,11 +140,12 @@
 import {
   ApiProcessError,
   BannerTypes,
+  RestrictedParty,
   RestrictionBypassBehaviors,
   SelectItemType,
   VForm,
 } from "@/types";
-import { ref, defineComponent } from "vue";
+import { watch, ref, defineComponent } from "vue";
 import {
   useRules,
   useModalDialog,
@@ -134,15 +154,17 @@ import {
 } from "@/composables";
 import {
   ApplicationRestrictionBypassAPIOutDTO,
-  AvailableStudentRestrictionsAPIOutDTO,
+  AvailableRestrictionsAPIOutDTO,
   BypassRestrictionAPIInDTO,
 } from "@/services/http/dto";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
+import StatusChipClientType from "@/components/generic/StatusChipClientType.vue";
 import { ApplicationRestrictionBypassService } from "@/services/ApplicationRestrictionBypassService";
 
 export default defineComponent({
   components: {
     ModalDialogBase,
+    StatusChipClientType,
   },
   setup() {
     const snackBar = useSnackBar();
@@ -154,8 +176,8 @@ export default defineComponent({
       {} as ApplicationRestrictionBypassAPIOutDTO,
     );
     const formModel = ref({} as BypassRestrictionAPIInDTO);
-    const availableStudentRestrictions = ref(
-      {} as AvailableStudentRestrictionsAPIOutDTO,
+    const availableRestrictionsToBypass = ref(
+      {} as AvailableRestrictionsAPIOutDTO,
     );
     const {
       showDialog,
@@ -181,9 +203,10 @@ export default defineComponent({
         loading.value = true;
         await ApplicationRestrictionBypassService.shared.bypassRestriction({
           applicationId: applicationId.value,
-          studentRestrictionId: formModel.value.studentRestrictionId,
+          restrictionId: formModel.value.restrictionId,
           bypassBehavior: formModel.value.bypassBehavior,
           note: formModel.value.note,
+          restrictionType: formModel.value.restrictionType,
         });
         snackBar.success("Restriction bypassed.");
         resolvePromise(true);
@@ -203,12 +226,14 @@ export default defineComponent({
     const getRestrictionToBypassOption = (
       restrictionCode: string,
       createdDate: Date,
-      studentRestrictionId: number,
-    ) => {
+      restrictionId: number,
+      restrictionType: RestrictedParty.Student | RestrictedParty.Institution,
+    ): SelectItemType => {
       const formattedDate = dateOnlyLongString(createdDate);
       return {
         title: `${restrictionCode} added on ${formattedDate}`,
-        value: studentRestrictionId,
+        value: restrictionId,
+        restrictionType,
       };
     };
 
@@ -220,19 +245,20 @@ export default defineComponent({
       if (params.applicationId) {
         readOnly.value = false;
         applicationId.value = params.applicationId;
-        availableStudentRestrictions.value =
-          await ApplicationRestrictionBypassService.shared.getAvailableStudentRestrictions(
+        availableRestrictionsToBypass.value =
+          await ApplicationRestrictionBypassService.shared.getAvailableRestrictionsToBypass(
             applicationId.value,
           );
-        if (!availableStudentRestrictions.value.availableRestrictionsToBypass)
+        if (!availableRestrictionsToBypass.value.availableRestrictionsToBypass)
           return;
         restrictionsToBypass.value =
-          availableStudentRestrictions.value.availableRestrictionsToBypass.map(
+          availableRestrictionsToBypass.value.availableRestrictionsToBypass.map(
             (restriction) => {
               return getRestrictionToBypassOption(
                 restriction.restrictionCode,
-                restriction.studentRestrictionCreatedAt,
-                restriction.studentRestrictionId,
+                restriction.restrictionCreatedAt,
+                restriction.restrictionId,
+                restriction.restrictionType,
               );
             },
           );
@@ -246,17 +272,31 @@ export default defineComponent({
           getRestrictionToBypassOption(
             restrictionBypassDetails.value.restrictionCode,
             restrictionBypassDetails.value.createdDate,
-            restrictionBypassDetails.value.studentRestrictionId,
+            restrictionBypassDetails.value.restrictionId,
+            restrictionBypassDetails.value.restrictionType,
           ),
         ];
-        formModel.value.studentRestrictionId =
-          restrictionBypassDetails.value.studentRestrictionId;
+        formModel.value.restrictionId =
+          restrictionBypassDetails.value.restrictionId;
         formModel.value.bypassBehavior = restrictionBypassDetails.value
           .bypassBehavior as RestrictionBypassBehaviors;
         formModel.value.note = restrictionBypassDetails.value.creationNote;
       }
       return showModalInternal();
     };
+
+    watch(
+      () => formModel.value.restrictionId,
+      (restrictionId) => {
+        const foundRestriction =
+          availableRestrictionsToBypass.value.availableRestrictionsToBypass?.find(
+            (r) => r.restrictionId === restrictionId,
+          );
+        if (foundRestriction) {
+          formModel.value.restrictionType = foundRestriction.restrictionType;
+        }
+      },
+    );
 
     return {
       showDialog,
@@ -267,7 +307,7 @@ export default defineComponent({
       cancel,
       checkNotesLengthRule,
       note,
-      availableStudentRestrictions,
+      availableRestrictionsToBypass,
       formModel,
       checkNullOrEmptyRule,
       restrictionsToBypass,

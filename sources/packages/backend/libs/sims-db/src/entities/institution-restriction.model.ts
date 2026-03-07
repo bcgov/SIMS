@@ -1,7 +1,18 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { BaseRestrictionModel } from "./base-restriction.model";
-import { EducationProgram, Institution, InstitutionLocation } from ".";
+import {
+  ApplicationRestrictionBypass,
+  EducationProgram,
+  Institution,
+  InstitutionLocation,
+} from ".";
 
 /**
  * Restriction details for an institution.
@@ -45,4 +56,18 @@ export class InstitutionRestriction extends BaseRestrictionModel {
     referencedColumnName: ColumnNames.ID,
   })
   location?: InstitutionLocation;
+
+  /**
+   * Application restriction bypasses related to this institution restriction.
+   */
+  @OneToMany(
+    () => ApplicationRestrictionBypass,
+    (applicationRestrictionBypass) =>
+      applicationRestrictionBypass.institutionRestriction,
+    {
+      eager: false,
+      cascade: false,
+    },
+  )
+  applicationRestrictionBypasses?: ApplicationRestrictionBypass[];
 }

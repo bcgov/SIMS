@@ -15,6 +15,7 @@ import {
 import * as request from "supertest";
 import { RestrictionActionType, User } from "@sims/sims-db";
 import { getUserFullName } from "../../../../utilities";
+import { RestrictedParty } from "@sims/services";
 
 describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrictionBypass.", () => {
   let app: INestApplication;
@@ -52,11 +53,11 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
       .expect(HttpStatus.OK)
       .expect({
         applicationRestrictionBypassId: applicationRestrictionBypass.id,
-        studentRestrictionId:
-          applicationRestrictionBypass.studentRestriction.id,
+        restrictionId: applicationRestrictionBypass.studentRestriction.id,
         restrictionCode:
           applicationRestrictionBypass.studentRestriction.restriction
             .restrictionCode,
+        restrictionType: RestrictedParty.Student,
         creationNote: applicationRestrictionBypass.creationNote.description,
         createdBy: getUserFullName(
           applicationRestrictionBypass.bypassCreatedBy,
@@ -93,11 +94,11 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
       .expect(HttpStatus.OK)
       .expect({
         applicationRestrictionBypassId: applicationRestrictionBypass.id,
-        studentRestrictionId:
-          applicationRestrictionBypass.studentRestriction.id,
+        restrictionId: applicationRestrictionBypass.studentRestriction.id,
         restrictionCode:
           applicationRestrictionBypass.studentRestriction.restriction
             .restrictionCode,
+        restrictionType: RestrictedParty.Student,
         creationNote: applicationRestrictionBypass.creationNote.description,
         removalNote: applicationRestrictionBypass.removalNote.description,
         createdBy: getUserFullName(
@@ -148,11 +149,11 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
       .expect(HttpStatus.OK)
       .expect({
         applicationRestrictionBypassId: applicationRestrictionBypass.id,
-        studentRestrictionId:
-          applicationRestrictionBypass.studentRestriction.id,
+        restrictionId: applicationRestrictionBypass.studentRestriction.id,
         restrictionCode:
           applicationRestrictionBypass.studentRestriction.restriction
             .restrictionCode,
+        restrictionType: RestrictedParty.Student,
         creationNote: applicationRestrictionBypass.creationNote.description,
         removalNote: applicationRestrictionBypass.removalNote.description,
         createdBy: getUserFullName(
