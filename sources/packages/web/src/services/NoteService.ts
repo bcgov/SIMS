@@ -1,6 +1,12 @@
 import ApiClient from "@/services/http/ApiClient";
 import { NoteAPIInDTO } from "@/services/http/dto";
-import { NoteItemModel } from "@/types";
+import {
+  InstitutionNoteType,
+  NoteItemModel,
+  NoteType,
+  STUDENT_NOTE_TO_NOTES_TYPE_MAP,
+  StudentNoteType,
+} from "@/types";
 
 /**
  * Client service layer for Notes.
@@ -20,21 +26,42 @@ export class NoteService {
     await ApiClient.NoteApi.addInstitutionNote(institutionId, note);
   }
 
+  /**
+   * Gets notes for an Institution.
+   * @param institutionId Institution ID.
+   * @param noteType institution note type to filter the notes.
+   * @returns institution notes.
+   */
   async getInstitutionNotes(
     institutionId: number,
-    noteType?: string,
+    noteType?: InstitutionNoteType,
   ): Promise<NoteItemModel[]> {
-    return ApiClient.NoteApi.getInstitutionNotes(institutionId, noteType);
+    return ApiClient.NoteApi.getInstitutionNotes(
+      institutionId,
+      noteType ? [noteType as unknown as NoteType] : undefined,
+    );
   }
 
   async addStudentNote(studentId: number, note: NoteAPIInDTO): Promise<void> {
     await ApiClient.NoteApi.addStudentNote(studentId, note);
   }
 
+  /**
+   * Get notes for a student.
+   * @param studentId Student ID.
+   * @param noteType student note type to filter the notes.
+   * @returns student notes.
+   */
   async getStudentNotes(
     studentId: number,
-    noteType?: string,
+    noteType?: StudentNoteType,
   ): Promise<NoteItemModel[]> {
-    return ApiClient.NoteApi.getStudentNotes(studentId, noteType);
+    if (!noteType?.length) {
+      return ApiClient.NoteApi.getStudentNotes(studentId);
+    }
+    const convertedNotes = STUDENT_NOTE_TO_NOTES_TYPE_MAP.get(noteType) ?? [
+      noteType as unknown as NoteType,
+    ];
+    return ApiClient.NoteApi.getStudentNotes(studentId, convertedNotes);
   }
 }
