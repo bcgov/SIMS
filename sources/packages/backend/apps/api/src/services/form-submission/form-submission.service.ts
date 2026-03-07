@@ -49,11 +49,17 @@ export class FormSubmissionService {
    * Gets a form submission by its ID.
    * @param formSubmissionId The ID of the form submission to retrieve.
    * @param studentId student ID for authorization.
+   * @param options method options.
+   * - `applicationId`: optional application ID to ensure the form submission
+   * belongs to the application related to the institution's student.
    * @returns The form submission if found, otherwise null.
    */
   async getFormSubmissionById(
     formSubmissionId: number,
     studentId: number,
+    options?: {
+      applicationId?: number;
+    },
   ): Promise<FormSubmission | null> {
     return this.formSubmissionRepo.findOne({
       select: {
@@ -95,6 +101,7 @@ export class FormSubmissionService {
       where: {
         id: formSubmissionId,
         student: { id: studentId },
+        application: { id: options?.applicationId },
       },
       order: { formSubmissionItems: { id: "ASC" } },
     });

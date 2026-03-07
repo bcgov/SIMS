@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { FormSubmissionService } from "../../services";
 import {
-  FormSubmission,
   FormSubmissionDecisionStatus,
   FormSubmissionItem,
   FormSubmissionStatus,
@@ -30,11 +29,13 @@ export class FormSubmissionControllerService {
     studentId: number,
     options?: {
       includeBasicDecisionDetails?: boolean;
+      applicationId?: number;
     },
   ): Promise<FormSubmissionAPIOutDTO> {
     const submission = await this.formSubmissionService.getFormSubmissionById(
       formSubmissionId,
       studentId,
+      { applicationId: options?.applicationId },
     );
     if (!submission) {
       throw new NotFoundException(
@@ -56,7 +57,7 @@ export class FormSubmissionControllerService {
         submissionData: item.submittedData,
         formDefinitionName: item.dynamicFormConfiguration.formDefinitionName,
         currentDecision: this.mapCurrentDecision(
-          submission,
+          submission.submissionStatus,
           item,
           !!options?.includeBasicDecisionDetails,
         ),
@@ -68,18 +69,18 @@ export class FormSubmissionControllerService {
    * Define the decision to be returned.
    * The decision and its details are determined based on the form submission status
    * and the access to the decision details that the consumer has.
-   * @param submissionStatus form submission.
+   * @param submissionStatus form submission status.
    * @param submissionItem form submission to determine the decision details to be returned.
    * @param includeBasicDecisionDetails flag to indicate if the basic decision details should be included in the response,
    * besides the status that is always included.
    * @returns the decision that must be exposed the consumer.
    */
   private mapCurrentDecision(
-    submission: FormSubmission,
+    submissionStatus: FormSubmissionStatus,
     submissionItem: FormSubmissionItem,
     includeBasicDecisionDetails: boolean,
   ): FormSubmissionItemDecisionAPIOutDTO {
-    if (submission.submissionStatus === FormSubmissionStatus.Pending) {
+    if (submissionStatus === FormSubmissionStatus.Pending) {
       // For pending submissions, the decision details should not be returned.
       return { decisionStatus: FormSubmissionDecisionStatus.Pending };
     }

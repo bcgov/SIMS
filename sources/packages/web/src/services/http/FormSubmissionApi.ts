@@ -115,18 +115,23 @@ export class FormSubmissionApi extends HttpBaseClient {
    * @param formSubmissionId ID of the form submission to retrieve the details for.
    * @param options.
    * - `studentId`: optional ID used to validate the institution access to the student data.
+   * Must be provided with `applicationId`.
+   * - `applicationId`: optional ID used to validate the institution access to the application data.
+   * Must be provided with `studentId`.
    * - `itemId`: optional ID of the form submission item to filter the details for.
    * @returns form submission details including individual form items and their details.
    */
   async getFormSubmission(
     formSubmissionId: number,
-    options?: { studentId?: number; itemId?: number },
+    options?: { studentId?: number; applicationId?: number; itemId?: number },
   ): Promise<FormSubmissionAPIOutDTO | FormSubmissionMinistryAPIOutDTO> {
     let url = `form-submission/${formSubmissionId}`;
-    if (options?.studentId) {
-      url = `form-submission/student/${options.studentId}/${url}`;
+    if (options?.studentId && options?.applicationId) {
+      // Used for institutions to validate the access to the student and application data related to the form submission.
+      url = `form-submission/student/${options.studentId}/application/${options.applicationId}/${url}`;
     }
     if (options?.itemId) {
+      // Used by the Ministry to filter the form submission details for a specific form item during the approval process.
       url += `?itemId=${options.itemId}`;
     }
     return this.getCall(this.addClientRoot(url));

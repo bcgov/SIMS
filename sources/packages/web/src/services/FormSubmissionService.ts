@@ -43,12 +43,15 @@ export class FormSubmissionService {
    * @param formSubmissionId ID of the form submission to retrieve the details for.
    * @param options.
    * - `studentId`: optional ID used to validate the institution access to the student data.
+   * Must be provided with `applicationId`.
+   * - `applicationId`: optional ID used to validate the institution access to the application data.
+   * Must be provided with `studentId`.
    * - `itemId`: optional ID of the form submission item to filter the details for.
    * @returns form submission details including individual form items and their details.
    */
   async getFormSubmission(
     formSubmissionId: number,
-    options?: { studentId?: number; itemId?: number },
+    options?: { studentId?: number; applicationId?: number; itemId?: number },
   ): Promise<FormSubmissionAPIOutDTO | FormSubmissionMinistryAPIOutDTO> {
     return ApiClient.FormSubmissionApi.getFormSubmission(
       formSubmissionId,

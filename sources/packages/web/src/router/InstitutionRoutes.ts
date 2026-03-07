@@ -792,6 +792,9 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             component: FormSubmissionView,
             props: (route) => ({
               studentId: Number.parseInt(route.params.studentId as string),
+              applicationId: Number.parseInt(
+                route.params.applicationId as string,
+              ),
               formSubmissionId: Number.parseInt(
                 route.params.formSubmissionId as string,
               ),
