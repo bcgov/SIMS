@@ -36,9 +36,10 @@ export class NoteService {
     institutionId: number,
     noteType?: InstitutionNoteType,
   ): Promise<NoteItemModel[]> {
-    return ApiClient.NoteApi.getInstitutionNotes(institutionId, [
-      noteType as unknown as NoteType,
-    ]);
+    return ApiClient.NoteApi.getInstitutionNotes(
+      institutionId,
+      noteType ? [noteType as unknown as NoteType] : undefined,
+    );
   }
 
   async addStudentNote(studentId: number, note: NoteAPIInDTO): Promise<void> {

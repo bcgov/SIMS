@@ -44,18 +44,26 @@
             <div class="content-header">{{ note.noteType }}</div>
             <div v-if="showMoreNotes(note)" class="header mt-2">
               {{ note.description.substring(0, 150) }}...
-              <a @click="toggleNotes(note)" class="primary-color d-block mt-2"
-                >Show more</a
+              <v-btn
+                @click="toggleNotes(note)"
+                variant="text"
+                density="compact"
+                class="primary-color pa-0"
               >
+                Show more
+              </v-btn>
             </div>
             <div v-else class="header mt-2">
               {{ note.description }}
-              <a
+              <v-btn
                 v-if="note.showMore"
                 @click="toggleNotes(note)"
-                class="primary-color d-block mt-2"
-                >Show less</a
+                variant="text"
+                density="compact"
+                class="primary-color d-block pa-0"
               >
+                Show less
+              </v-btn>
             </div>
             <div class="content-footer mt-2 mb-8 secondary-color-light">
               <span>{{ timeOnlyInHoursAndMinutes(note.createdAt) }}</span
