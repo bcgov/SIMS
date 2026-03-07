@@ -791,6 +791,8 @@ export class StudentService extends RecordDataModelService<Student> {
    * @param studentId student to have the note associated.
    * @param noteType note type.
    * @param noteDescription note description.
+   * @param userRoles user roles to validate if the user has authorization to create
+   * the note based on the note type.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @returns saved Note.
    */
@@ -804,9 +806,8 @@ export class StudentService extends RecordDataModelService<Student> {
     // Check if the note type is restricted by some user role.
     const roleRestriction = STUDENT_NOTE_USER_ROLES_MAP.get(noteType);
     // If not restricted or the user has the role, it should be authorized.
-    const notAuthorized =
-      !roleRestriction || userRoles.includes(roleRestriction);
-    if (!notAuthorized) {
+    const authorized = !roleRestriction || userRoles.includes(roleRestriction);
+    if (!authorized) {
       throw new CustomNamedError(
         `User does not have authorization to create a note for category ${noteType}.`,
         NOTE_CREATION_NOT_AUTHORIZED_FOR_NOTE_CATEGORY,

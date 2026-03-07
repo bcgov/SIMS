@@ -104,7 +104,7 @@ export default defineComponent({
           })
           .map<SelectItemType>((noteType) => ({
             title: noteType,
-            value: NoteType[noteType],
+            value: noteType,
           }));
       }
     });
