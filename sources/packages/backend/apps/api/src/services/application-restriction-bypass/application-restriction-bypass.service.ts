@@ -400,35 +400,28 @@ export class ApplicationRestrictionBypassService {
       );
       const now = new Date();
       const auditUser = { id: auditUserId } as User;
+      const bypass: Partial<ApplicationRestrictionBypass> = {
+        application: { id: payload.applicationId } as Application,
+        isActive: true,
+        bypassCreatedDate: now,
+        bypassCreatedBy: auditUser,
+        creator: auditUser,
+        createdAt: now,
+        bypassBehavior: payload.bypassBehavior,
+        creationNote: noteObj,
+      };
       if (payload.restrictionType === RestrictedParty.Student) {
-        return transactionalEntityManager
-          .getRepository(ApplicationRestrictionBypass)
-          .save({
-            application: { id: payload.applicationId },
-            studentRestriction: { id: payload.restrictionId },
-            isActive: true,
-            bypassCreatedDate: now,
-            bypassCreatedBy: auditUser,
-            creator: auditUser,
-            createdAt: now,
-            bypassBehavior: payload.bypassBehavior,
-            creationNote: noteObj,
-          });
+        bypass.studentRestriction = {
+          id: payload.restrictionId,
+        } as StudentRestriction;
       } else {
-        return transactionalEntityManager
-          .getRepository(ApplicationRestrictionBypass)
-          .save({
-            application: { id: payload.applicationId },
-            institutionRestriction: { id: payload.restrictionId },
-            isActive: true,
-            bypassCreatedDate: now,
-            bypassCreatedBy: auditUser,
-            creator: auditUser,
-            createdAt: now,
-            bypassBehavior: payload.bypassBehavior,
-            creationNote: noteObj,
-          });
+        bypass.institutionRestriction = {
+          id: payload.restrictionId,
+        } as InstitutionRestriction;
       }
+      return transactionalEntityManager
+        .getRepository(ApplicationRestrictionBypass)
+        .save(bypass);
     });
   }
 
