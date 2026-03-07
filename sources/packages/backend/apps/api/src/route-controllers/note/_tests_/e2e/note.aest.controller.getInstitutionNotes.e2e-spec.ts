@@ -1,7 +1,10 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import { createFakeInstitution } from "@sims/test-utils";
-import { DataSource, Repository } from "typeorm";
-import { Institution, NoteType } from "@sims/sims-db";
+import {
+  createE2EDataSources,
+  createFakeInstitution,
+  E2EDataSources,
+} from "@sims/test-utils";
+import { NoteType } from "@sims/sims-db";
 import {
   AESTGroups,
   createTestingAppModule,
@@ -13,24 +16,23 @@ import {
   createFakeNote,
   saveFakeInstitutionNotes,
 } from "@sims/test-utils/factories/note";
+import { noteToApiReturn } from "./test-utils";
 
 describe("NoteAESTController(e2e)-getInstitutionNotes", () => {
   let app: INestApplication;
-  let institutionRepo: Repository<Institution>;
-  let appDataSource: DataSource;
+  let db: E2EDataSources;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
-    appDataSource = dataSource;
-    institutionRepo = dataSource.getRepository(Institution);
+    db = createE2EDataSources(dataSource);
   });
 
   it("Should allow access to the expected AEST users groups.", async () => {
     // Arrange
-    const institution = await institutionRepo.save(createFakeInstitution());
+    const institution = await db.institution.save(createFakeInstitution());
     await saveFakeInstitutionNotes(
-      appDataSource,
+      db.dataSource,
       [createFakeNote(NoteType.General)],
       institution.id,
     );
@@ -69,9 +71,9 @@ describe("NoteAESTController(e2e)-getInstitutionNotes", () => {
 
   it("Should get institution notes.", async () => {
     // Arrange
-    const institution = await institutionRepo.save(createFakeInstitution());
+    const institution = await db.institution.save(createFakeInstitution());
     const [institutionNote] = await saveFakeInstitutionNotes(
-      appDataSource,
+      db.dataSource,
       [createFakeNote(NoteType.General)],
       institution.id,
     );
@@ -82,22 +84,14 @@ describe("NoteAESTController(e2e)-getInstitutionNotes", () => {
       .get(endpoint)
       .auth(await getAESTToken(), BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([
-        {
-          noteType: institutionNote.noteType,
-          description: institutionNote.description,
-          firstName: institutionNote.creator.firstName,
-          lastName: institutionNote.creator.lastName,
-          createdAt: institutionNote.createdAt.toISOString(),
-        },
-      ]);
+      .expect([noteToApiReturn(institutionNote)]);
   });
 
   it("Should filter institution notes when a filter is provided.", async () => {
     // Arrange
-    const institution = await institutionRepo.save(createFakeInstitution());
+    const institution = await db.institution.save(createFakeInstitution());
     const savedNotes = await saveFakeInstitutionNotes(
-      appDataSource,
+      db.dataSource,
       [
         createFakeNote(NoteType.General),
         createFakeNote(NoteType.Designation),
@@ -108,22 +102,14 @@ describe("NoteAESTController(e2e)-getInstitutionNotes", () => {
     const expectedNote = savedNotes.find(
       (note) => note.noteType === NoteType.Designation,
     );
-    const endpoint = `/aest/note/institution/${institution.id}?noteType=${NoteType.Designation}`;
+    const endpoint = `/aest/note/institution/${institution.id}?noteTypes=${NoteType.Designation}`;
 
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(await getAESTToken(), BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([
-        {
-          noteType: NoteType.Designation,
-          description: expectedNote.description,
-          firstName: expectedNote.creator.firstName,
-          lastName: expectedNote.creator.lastName,
-          createdAt: expectedNote.createdAt.toISOString(),
-        },
-      ]);
+      .expect([noteToApiReturn(expectedNote)]);
   });
 
   it("Should throw NotFoundException when institution not found.", async () => {
@@ -141,7 +127,7 @@ describe("NoteAESTController(e2e)-getInstitutionNotes", () => {
 
   it("Should throw bad request exception when invalid note type provided.", async () => {
     // Arrange
-    const endpoint = "/aest/note/institution/99999?noteType=invalid_node_type";
+    const endpoint = "/aest/note/institution/99999?noteTypes=invalid_node_type";
 
     // Act/Assert
     return request(app.getHttpServer())
@@ -149,15 +135,17 @@ describe("NoteAESTController(e2e)-getInstitutionNotes", () => {
       .auth(await getAESTToken(), BEARER_AUTH_TYPE)
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: "Validation failed (enum string is expected)",
+        message: [
+          "each value in noteTypes must be one of the following values: General, Application, Student appeal, Student form, Program, Restriction, Designation, Overaward, System Actions",
+        ],
         error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
       });
   });
 
   it("Should return empty result when institution does not have any note.", async () => {
     // Arrange
-    const institution = await institutionRepo.save(createFakeInstitution());
+    const institution = await db.institution.save(createFakeInstitution());
     const endpoint = `/aest/note/institution/${institution.id}`;
 
     // Act/Assert
@@ -172,13 +160,13 @@ describe("NoteAESTController(e2e)-getInstitutionNotes", () => {
 
   it("Should return empty result when institution has notes but none of filtered note type.", async () => {
     // Arrange
-    const institution = await institutionRepo.save(createFakeInstitution());
+    const institution = await db.institution.save(createFakeInstitution());
     await saveFakeInstitutionNotes(
-      appDataSource,
+      db.dataSource,
       [createFakeNote(NoteType.General), createFakeNote(NoteType.Program)],
       institution.id,
     );
-    const endpoint = `/aest/note/institution/${institution.id}?noteType=${NoteType.Designation}`;
+    const endpoint = `/aest/note/institution/${institution.id}?noteTypes=${NoteType.Designation}`;
 
     // Act/Assert
     return request(app.getHttpServer())

@@ -1,37 +1,36 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { createFakeStudent, createFakeUser } from "@sims/test-utils";
-import { DataSource, Repository } from "typeorm";
-import { NoteType, Student, User } from "@sims/sims-db";
+import {
+  createE2EDataSources,
+  E2EDataSources,
+  saveFakeStudent,
+} from "@sims/test-utils";
+import { NoteType } from "@sims/sims-db";
 import {
   createFakeNote,
   saveFakeStudentNotes,
 } from "@sims/test-utils/factories/note";
-import { NoteAPIOutDTO } from "../../models/note.dto";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
   getAESTToken,
   createTestingAppModule,
 } from "../../../../testHelpers";
+import { noteToApiReturn } from "./test-utils";
 
 describe("NoteAESTController(e2e)-getStudentNotes", () => {
   let app: INestApplication;
-  let appDataSource: DataSource;
-  let studentRepo: Repository<Student>;
-  let userRepo: Repository<User>;
+  let db: E2EDataSources;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
-    appDataSource = dataSource;
-    studentRepo = dataSource.getRepository(Student);
-    userRepo = dataSource.getRepository(User);
+    db = createE2EDataSources(dataSource);
   });
 
   it("Should allow access to the expected AEST users groups.", async () => {
     // Arrange
-    const student = await studentRepo.save(createFakeStudent());
+    const student = await saveFakeStudent(db.dataSource);
     const endpoint = `/aest/note/student/${student.id}`;
     const expectedPermissions = [
       {
@@ -83,22 +82,24 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
   it("Should cause a bad request when a wrong note type is provided as a filter.", async () => {
     // Arrange/Act/Assert
     return request(app.getHttpServer())
-      .get("/aest/note/student/999999?noteType=invalid_node_type")
+      .get("/aest/note/student/999999?noteTypes=invalid_node_type")
       .auth(
         await getAESTToken(AESTGroups.BusinessAdministrators),
         BEARER_AUTH_TYPE,
       )
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
-        statusCode: 400,
-        message: "Validation failed (enum string is expected)",
+        message: [
+          "each value in noteTypes must be one of the following values: General, Application, Student appeal, Student form, Program, Restriction, Designation, Overaward, System Actions",
+        ],
         error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
       });
   });
 
   it("Should get an empty student notes result when student has no notes.", async () => {
     // Arrange
-    const student = await studentRepo.save(createFakeStudent());
+    const student = await saveFakeStudent(db.dataSource);
     // Act/Assert
     return request(app.getHttpServer())
       .get(`/aest/note/student/${student.id}`)
@@ -114,9 +115,9 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
 
   it("Should get all student notes types when student has notes and no note type filter was provided.", async () => {
     // Arrange
-    const student = await studentRepo.save(createFakeStudent());
+    const student = await saveFakeStudent(db.dataSource);
     await saveFakeStudentNotes(
-      appDataSource,
+      db.dataSource,
       [createFakeNote(NoteType.General), createFakeNote(NoteType.System)],
       student.id,
     );
@@ -136,37 +137,57 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
 
   it("Should get specific student notes types when student has notes and a note type filter was provided.", async () => {
     // Arrange
-    const user = await userRepo.save(createFakeUser());
-    const student = await studentRepo.save(createFakeStudent(user));
+    const student = await saveFakeStudent(db.dataSource);
     const expectedNote = createFakeNote(NoteType.Application);
     await saveFakeStudentNotes(
-      appDataSource,
+      db.dataSource,
       [
         createFakeNote(NoteType.General),
         expectedNote,
         createFakeNote(NoteType.Designation),
       ],
       student.id,
-      user,
+      student.user,
     );
 
     // Act/Assert
     return request(app.getHttpServer())
-      .get(`/aest/note/student/${student.id}?noteType=${NoteType.Application}`)
+      .get(`/aest/note/student/${student.id}?noteTypes=${NoteType.Application}`)
       .auth(
         await getAESTToken(AESTGroups.BusinessAdministrators),
         BEARER_AUTH_TYPE,
       )
       .expect(HttpStatus.OK)
-      .expect((response) => {
-        expect(response.body).toHaveLength(1);
-        const note = response.body[0] as NoteAPIOutDTO;
-        expect(note.noteType).toBe(NoteType.Application);
-        expect(note.description).toBe(expectedNote.description);
-        expect(note.firstName).toBe(user.firstName);
-        expect(note.lastName).toBe(user.lastName);
-        expect(new Date(note.createdAt)).toStrictEqual(expectedNote.createdAt);
-      });
+      .expect([noteToApiReturn(expectedNote)]);
+  });
+
+  it("Should get two student notes from two different categories when the two categories are provided as a filter.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    const [studentAppealNote, studentFormNote] = await saveFakeStudentNotes(
+      db.dataSource,
+      [
+        createFakeNote(NoteType.StudentAppeal),
+        createFakeNote(NoteType.StudentForm),
+      ],
+      student.id,
+      student.user,
+    );
+
+    // Act/Assert
+    return request(app.getHttpServer())
+      .get(
+        `/aest/note/student/${student.id}?noteTypes=${NoteType.StudentAppeal},${NoteType.StudentForm}`,
+      )
+      .auth(
+        await getAESTToken(AESTGroups.BusinessAdministrators),
+        BEARER_AUTH_TYPE,
+      )
+      .expect(HttpStatus.OK)
+      .expect([
+        noteToApiReturn(studentFormNote),
+        noteToApiReturn(studentAppealNote),
+      ]);
   });
 
   afterAll(async () => {
