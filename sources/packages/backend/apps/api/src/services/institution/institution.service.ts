@@ -748,9 +748,9 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
   /**
    * Service to get notes for an institution.
-   * @param institutionId institution id to retrieve the notes.
+   * @param institutionId institution ID to retrieve the notes.
    * @param noteTypes optional filter to return only specific note types.
-   * @returns Notes.
+   * @returns notes.
    */
   async getInstitutionNotes(
     institutionId: number,

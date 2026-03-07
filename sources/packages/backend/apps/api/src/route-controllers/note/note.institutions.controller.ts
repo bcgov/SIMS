@@ -39,11 +39,10 @@ export class NoteInstitutionsController extends BaseController {
     @Param("studentId", ParseIntPipe) studentId: number,
     @Query() queryString: NoteAPIQueryStringApiInDTO,
   ): Promise<NoteAPIOutDTO[]> {
-    const studentNotes = await this.studentService.getStudentNotes(
-      studentId,
-      queryString.noteTypes,
-      { filterNoEffectRestrictionNotes: true },
-    );
+    const studentNotes = await this.studentService.getStudentNotes(studentId, {
+      noteTypes: queryString.noteTypes,
+      filterNoEffectRestrictionNotes: true,
+    });
     return studentNotes?.map((note) => transformToNoteDTO(note));
   }
 }

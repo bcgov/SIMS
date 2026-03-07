@@ -26,6 +26,12 @@ export class NoteService {
     await ApiClient.NoteApi.addInstitutionNote(institutionId, note);
   }
 
+  /**
+   * Gets notes for an Institution.
+   * @param institutionId Institution ID.
+   * @param noteType institution note type to filter the notes.
+   * @returns institution notes.
+   */
   async getInstitutionNotes(
     institutionId: number,
     noteType?: InstitutionNoteType,
@@ -39,6 +45,12 @@ export class NoteService {
     await ApiClient.NoteApi.addStudentNote(studentId, note);
   }
 
+  /**
+   * Get notes for a student.
+   * @param studentId Student ID.
+   * @param noteType student note type to filter the notes.
+   * @returns student notes.
+   */
   async getStudentNotes(
     studentId: number,
     noteType?: StudentNoteType,

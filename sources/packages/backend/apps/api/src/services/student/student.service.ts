@@ -711,17 +711,17 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Get notes for a student and note type. Options can be used to filter notes.
-   * @param studentId student id.
-   * @param noteType note type.
+   * Get notes for a student and note types. Options can be used to filter notes.
+   * @param studentId student ID.
    * @param options options to filter notes:
    * - `filterNoEffectRestrictionNotes`: if true, do not include notes for student restrictions with notification type = "No effect".
+   * - `noteTypes`: if provided, only include notes with the provided note types.
    * @returns student notes.
    */
   async getStudentNotes(
     studentId: number,
-    noteType?: NoteType[],
     options?: {
+      noteTypes?: NoteType[];
       filterNoEffectRestrictionNotes?: boolean;
     },
   ): Promise<Note[]> {
@@ -739,9 +739,9 @@ export class StudentService extends RecordDataModelService<Student> {
       .innerJoin("student.notes", "note")
       .innerJoin("note.creator", "user")
       .where("student.id = :studentId", { studentId });
-    if (noteType?.length) {
-      studentNoteQuery.andWhere("note.noteType IN (:...noteType)", {
-        noteType,
+    if (options?.noteTypes?.length) {
+      studentNoteQuery.andWhere("note.noteType IN (:...noteTypes)", {
+        noteTypes: options.noteTypes,
       });
     }
     if (options?.filterNoEffectRestrictionNotes) {

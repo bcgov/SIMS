@@ -6,7 +6,7 @@ import {
   MaxLength,
 } from "class-validator";
 import { Note, NoteType, NOTE_DESCRIPTION_MAX_LENGTH } from "@sims/sims-db";
-import { getUserFullName } from "apps/api/src/utilities";
+import { getUserFullName } from "../../../utilities";
 import { Transform } from "class-transformer";
 
 /**
@@ -46,6 +46,10 @@ export const transformToNoteDTO = (note: Note): NoteAPIOutDTO => {
   };
 };
 
+/**
+ * Query string for filtering notes by note types.
+ * In no note types are provided, all notes will be returned.
+ */
 export class NoteAPIQueryStringApiInDTO {
   @IsOptional()
   @ArrayMaxSize(Object.keys(NoteType).length)

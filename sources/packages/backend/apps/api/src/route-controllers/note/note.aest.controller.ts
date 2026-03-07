@@ -50,7 +50,7 @@ export class NoteAESTController extends BaseController {
    * Get notes for a student.
    * @param studentId Student id.
    * @param queryString query string containing note types to filter the notes.
-   * @returns Student Notes.
+   * @returns student notes.
    */
   @ApiNotFoundResponse({ description: "Student not found." })
   @Get("student/:studentId")
@@ -62,18 +62,17 @@ export class NoteAESTController extends BaseController {
     if (!student) {
       throw new NotFoundException("Student not found.");
     }
-    const studentNotes = await this.studentService.getStudentNotes(
-      studentId,
-      queryString.noteTypes,
-    );
+    const studentNotes = await this.studentService.getStudentNotes(studentId, {
+      noteTypes: queryString.noteTypes,
+    });
     return studentNotes?.map((note) => transformToNoteDTO(note));
   }
 
   /**
    * Gets notes for an Institution.
-   * @param institutionId Institution id.
+   * @param institutionId Institution ID.
    * @param queryString query string containing note types to filter the notes.
-   * @returns Institution Notes.
+   * @returns institution notes.
    */
   @ApiNotFoundResponse({ description: "Institution not found." })
   @Get("institution/:institutionId")
@@ -97,7 +96,7 @@ export class NoteAESTController extends BaseController {
 
   /**
    * Add note for an Institution.
-   * @param institutionId Institution id.
+   * @param institutionId Institution ID.
    * @param payload Note create object.
    * @returns note id.
    */
@@ -127,7 +126,7 @@ export class NoteAESTController extends BaseController {
 
   /**
    * Add note for a Student.
-   * @param studentId student id.
+   * @param studentId Student ID.
    * @param payload Note create object.
    * @returns note id.
    */
