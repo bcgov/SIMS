@@ -139,4 +139,8 @@ describe("MSFAANumberAESTController(e2e)-getStudentMSFAAActivity", () => {
       .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN);
   });
+
+  afterAll(async () => {
+    await app?.close();
+  });
 });
