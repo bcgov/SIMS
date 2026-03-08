@@ -13,7 +13,7 @@ objects:
     metadata:
       name: ${JOB_NAME}
     spec:
-      activeDeadlineSeconds: 1800 # The maximum duration the job can run.
+      activeDeadlineSeconds: ${{ACTIVE_DEADLINE_SECONDS}} # The maximum duration the job can run.
       backoffLimit: 5 # The number of retries for a job.
       template:
         metadata:
@@ -85,6 +85,10 @@ parameters:
     required: true
   - name: BUILD_NAMESPACE
     required: true
+  - name: FORMS_URL
+    required: true
+  - name: ACTIVE_DEADLINE_SECONDS
+    required: true
   - name: IMAGE_REGISTRY
     value: image-registry.openshift-image-registry.svc:5000
   - name: DB_SERVICE_KEY
@@ -109,5 +113,3 @@ parameters:
     value: "0.5"
   - name: MEMORY_REQUEST
     value: "500M"
-  - name: FORMS_URL
-    value: "http://dev-forms:3001"

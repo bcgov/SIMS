@@ -68,9 +68,13 @@ export QUEUE_CONSUMERS_MEMORY_LIMIT := $(or ${QUEUE_CONSUMERS_MEMORY_LIMIT}, 102
 export QUEUE_CONSUMERS_REPLICAS := $(or ${QUEUE_CONSUMERS_REPLICAS}, 2)
 export THROTTLE_TIME := $(or $(THROTTLE_TIME), 10000)
 export THROTTLE_LIMIT := $(or $(THROTTLE_LIMIT), 30)
+export FORMS_PORT := 3001
 
-export MAX_WAIT=300 # Maximum wait time in seconds.
-export WAIT_TIME=0  # Initialize wait time to zero.
+# Timeout waiting for a migrations openshift process to complete in seconds.
+export MIGRATIONS_OC_TIMEOUT :=300s 
+
+# Maximum job duration limit in seconds for migration jobs.
+export MIGRATIONS_JOB_MAX_DURATION := 300
 
 define MIGRATIONS
 "$(HOST_PREFIX)migrations-$(APP_NAME)"
@@ -81,7 +85,7 @@ define DB_MIGRATIONS_REPL
 endef
 
 define MIGRATIONS_JOB_NAME
-"$(HOST_PREFIX)migrations-job-$(BUILD_REF)"
+"$(HOST_PREFIX)migrations-job"
 endef
 
 define API
@@ -124,10 +128,9 @@ define FORMS_NAME
 "$(HOST_PREFIX)forms"
 endef
 
-# Ensure DOMAIN_PREFIX do not have any ".", which would create a subdomain
-# since forms has it own custom prefix appended.
+# Forms URL internal.
 define FORMS_URL
-$(subst .,-,$(DOMAIN_PREFIX))forms.$(DOMAIN)
+http://$(HOST_PREFIX)forms:$(FORMS_PORT)
 endef
 
 define SOURCE_REPOSITORY_URL
@@ -316,7 +319,7 @@ deploy-migrations-job:
 	test -n "$(MIGRATIONS_BUILD_REF)"
 	test -n "$(BUILD_REF)"
 	test -n "$(MIGRATIONS)"
-	@echo "+\n++ Deploying MIGRATIONS with tag: $(BUILD_REF)\n+"
+	@echo "+\n++ Deploying MIGRATIONS job with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/migrations-job.yml \
 		-p NAME=$(MIGRATIONS) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
@@ -324,9 +327,17 @@ deploy-migrations-job:
 		-p IMAGE_STREAM_TAG="$(MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p JOB_NAME=$(MIGRATIONS_JOB_NAME) \
+		-p FORMS_URL=$(FORMS_URL) \
+		-p ACTIVE_DEADLINE_SECONDS=$(MIGRATIONS_JOB_MAX_DURATION) \
 		| oc -n $(NAMESPACE) apply -f -
-	@oc -n $(NAMESPACE) wait --for=condition=Ready pod -l job-name=$(MIGRATIONS_JOB_NAME) --timeout=180s
+	@oc -n $(NAMESPACE) wait --for=condition=Ready pod -l job-name=$(MIGRATIONS_JOB_NAME) --timeout=$(MIGRATIONS_OC_TIMEOUT)
 
+delete-migrations-job:
+	@echo "+\n++ Deleting MIGRATIONS job if it exists\n+"
+	@oc delete job $(MIGRATIONS_JOB_NAME) --ignore-not-found
+	@oc wait --for=delete job/$(MIGRATIONS_JOB_NAME) --timeout=$(MIGRATIONS_OC_TIMEOUT)
+	@echo "+\n++ MIGRATIONS job deleted\n+"
+	
 run-db-migrations:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_REF)"
@@ -338,18 +349,9 @@ deploy-form-definitions:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_REF)"
 	test -n "$(HOST_PREFIX)"
+	test -n "$(FORMS_URL)"
 	@echo "+\n++ Run DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) exec job/$(MIGRATIONS_JOB_NAME) -- npm run deploy --prefix forms
-
-wait-for-db-migrations:
-	while [ "$$(oc -n $(NAMESPACE) get job $(MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ] && [ "$$WAIT_TIME" -lt "$$MAX_WAIT" ]; do sleep 5; WAIT_TIME=$$((WAIT_TIME+5)); done
-	if [ "$$(oc -n $(NAMESPACE) get job $(MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ]; then echo "Error: Job $(MIGRATIONS_JOB_NAME) failed to complete within the specified timeout"; exit 1; fi
-
-delete-migrations-job:
-	@echo "+\n++ Deleting MIGRATIONS job if it exists\n+"
-	@oc delete job $(MIGRATIONS_JOB_NAME) --ignore-not-found
-	@oc wait --for=delete job/$(MIGRATIONS_JOB_NAME) --timeout=180s
-	@echo "+\n++ MIGRATIONS job deleted\n+"
 
 # This deployment reuses the build already in place for db-migrations
 # overriding the docker entry point command to run the db-migrations REPL.
@@ -403,6 +405,7 @@ deploy-api:
 	test -n "$(EXTERNAL_IP_WHITELIST)"
 	test -n "$(THROTTLE_TIME)"
 	test -n "$(THROTTLE_LIMIT)"
+	test -n "$(FORMS_URL)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
@@ -451,6 +454,7 @@ deploy-api:
 		-p REPLICAS=$(API_REPLICAS) \
 		-p THROTTLE_TIME=$(THROTTLE_TIME) \
 		-p THROTTLE_LIMIT=$(THROTTLE_LIMIT) \
+		-p FORMS_URL=$(FORMS_URL) \
 		-p FEATURE_TOGGLES=$(FEATURE_TOGGLES) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(API))
