@@ -48,8 +48,8 @@
   </content-group>
 </template>
 
-<script lang="ts">
-import { ref, onMounted, defineComponent, computed } from "vue";
+<script setup lang="ts">
+import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import {
   DEFAULT_PAGE_LIMIT,
@@ -67,123 +67,100 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { StudentAppealPendingSummaryAPIOutDTO } from "@/services/http/dto/StudentAppeal.dto";
 import { StudentAppealService } from "@/services/StudentAppealService";
 
-export default defineComponent({
-  props: {
-    appealsType: {
-      type: String as () => AppealType,
-      required: true,
+const props = defineProps<{
+  appealsType: AppealType;
+}>();
+
+const router = useRouter();
+const { dateOnlyLongString, emptyStringFiller } = useFormatters();
+const snackBar = useSnackBar();
+const isLoading = ref(false);
+const searchCriteria = ref("");
+const applicationAppeals = ref(
+  {} as PaginatedResults<StudentAppealPendingSummaryAPIOutDTO>,
+);
+
+const DEFAULT_SORT_FIELD = "submittedDate";
+const currentPagination: PaginationOptions = {
+  page: DEFAULT_DATATABLE_PAGE_NUMBER,
+  pageLimit: DEFAULT_PAGE_LIMIT,
+  sortField: DEFAULT_SORT_FIELD,
+  sortOrder: DataTableSortByOrder.DESC,
+};
+
+const pageTitle = computed(() => {
+  return props.appealsType === AppealType.LegacyChangeRequest
+    ? "Pending change requests"
+    : "Pending appeals";
+});
+
+const pageDescription = computed(() => {
+  return props.appealsType === AppealType.LegacyChangeRequest
+    ? "Change requests that require ministry review."
+    : "Appeals that require ministry review.";
+});
+
+const goToAppealsApproval = (
+  pendingAppeal: StudentAppealPendingSummaryAPIOutDTO,
+) => {
+  if (pendingAppeal.applicationId) {
+    router.push({
+      name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
+      params: {
+        applicationId: pendingAppeal.applicationId,
+        studentId: pendingAppeal.studentId,
+      },
+    });
+    return;
+  }
+  router.push({
+    name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
+    params: {
+      appealId: pendingAppeal.appealId,
     },
-  },
-  setup(props) {
-    const router = useRouter();
-    const { dateOnlyLongString, emptyStringFiller } = useFormatters();
-    const snackBar = useSnackBar();
-    const isLoading = ref(false);
-    const searchCriteria = ref("");
-    const applicationAppeals = ref(
-      {} as PaginatedResults<StudentAppealPendingSummaryAPIOutDTO>,
-    );
+  });
+};
 
-    const DEFAULT_SORT_FIELD = "submittedDate";
-    const currentPagination: PaginationOptions = {
-      page: DEFAULT_DATATABLE_PAGE_NUMBER,
-      pageLimit: DEFAULT_PAGE_LIMIT,
-      sortField: DEFAULT_SORT_FIELD,
-      sortOrder: DataTableSortByOrder.DESC,
-    };
-
-    const pageTitle = computed(() => {
-      return props.appealsType === AppealType.LegacyChangeRequest
-        ? "Pending change requests"
-        : "Pending appeals";
-    });
-
-    const pageDescription = computed(() => {
-      return props.appealsType === AppealType.LegacyChangeRequest
-        ? "Change requests that require ministry review."
-        : "Appeals that require ministry review.";
-    });
-
-    const goToAppealsApproval = (
-      pendingAppeal: StudentAppealPendingSummaryAPIOutDTO,
-    ) => {
-      if (pendingAppeal.applicationId) {
-        router.push({
-          name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
-          params: {
-            applicationId: pendingAppeal.applicationId,
-            studentId: pendingAppeal.studentId,
-          },
-        });
-        return;
-      }
-      router.push({
-        name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
-        params: {
-          appealId: pendingAppeal.appealId,
+const loadAppeals = async () => {
+  try {
+    isLoading.value = true;
+    applicationAppeals.value =
+      await StudentAppealService.shared.getPendingAppeals({
+        page: currentPagination.page,
+        pageLimit: currentPagination.pageLimit,
+        sortField: currentPagination.sortField,
+        sortOrder: currentPagination.sortOrder,
+        searchCriteria: {
+          appealType: props.appealsType,
+          searchCriteria: searchCriteria.value,
         },
       });
-    };
+  } catch {
+    snackBar.error("Error loading appeals.");
+  } finally {
+    isLoading.value = false;
+  }
+};
 
-    const loadAppeals = async () => {
-      try {
-        isLoading.value = true;
-        applicationAppeals.value =
-          await StudentAppealService.shared.getPendingAppeals({
-            page: currentPagination.page,
-            pageLimit: currentPagination.pageLimit,
-            sortField: currentPagination.sortField,
-            sortOrder: currentPagination.sortOrder,
-            searchCriteria: {
-              appealType: props.appealsType,
-              searchCriteria: searchCriteria.value,
-            },
-          });
-      } catch {
-        snackBar.error("Error loading appeals.");
-      } finally {
-        isLoading.value = false;
-      }
-    };
+const searchAppeals = async () => {
+  await loadAppeals();
+};
 
-    const searchAppeals = async () => {
-      await loadAppeals();
-    };
+const pageSortEvent = async (event: DataTableOptions) => {
+  currentPagination.page = event.page;
+  currentPagination.pageLimit = event.itemsPerPage;
+  if (event.sortBy.length) {
+    const [sortBy] = event.sortBy;
+    currentPagination.sortField = sortBy.key;
+    currentPagination.sortOrder = sortBy.order;
+  } else {
+    currentPagination.sortField = DEFAULT_SORT_FIELD;
+    currentPagination.sortOrder = DataTableSortByOrder.DESC;
+  }
+  await loadAppeals();
+};
 
-    const pageSortEvent = async (event: DataTableOptions) => {
-      currentPagination.page = event.page;
-      currentPagination.pageLimit = event.itemsPerPage;
-      if (event.sortBy.length) {
-        const [sortBy] = event.sortBy;
-        currentPagination.sortField = sortBy.key;
-        currentPagination.sortOrder = sortBy.order;
-      } else {
-        currentPagination.sortField = DEFAULT_SORT_FIELD;
-        currentPagination.sortOrder = DataTableSortByOrder.DESC;
-      }
-      await loadAppeals();
-    };
-
-    onMounted(async () => {
-      await loadAppeals();
-    });
-
-    return {
-      goToAppealsApproval,
-      applicationAppeals,
-      dateOnlyLongString,
-      emptyStringFiller,
-      isLoading,
-      PendingChangeRequestsTableHeaders,
-      DEFAULT_PAGE_LIMIT,
-      ITEMS_PER_PAGE,
-      searchAppeals,
-      pageSortEvent,
-      searchCriteria,
-      pageTitle,
-      pageDescription,
-      currentPagination,
-    };
-  },
+onMounted(async () => {
+  await loadAppeals();
 });
 </script>
