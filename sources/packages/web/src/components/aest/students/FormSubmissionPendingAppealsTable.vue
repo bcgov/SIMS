@@ -29,7 +29,7 @@
           density="compact"
           class="btn-toggle"
           selected-class="selected-btn-toggle"
-          @update:model-value="searchAppeals"
+          @update:model-value="onFilterChange"
         >
           <v-btn value="all" rounded="xl" color="primary" class="mr-2"
             >All</v-btn
@@ -168,6 +168,19 @@ const loadAppeals = async () => {
 };
 
 const searchAppeals = async () => {
+  await loadAppeals();
+};
+
+/**
+ * Handles the filter toggle change. When all buttons are deselected (i.e., the
+ * user clicks the currently active button), resets the selection back to "all"
+ * to ensure at least one filter is always active.
+ * @param value the new filter value from the toggle.
+ */
+const onFilterChange = async (value: boolean | "all" | undefined) => {
+  if (value === undefined) {
+    selectedFilter.value = "all";
+  }
   await loadAppeals();
 };
 

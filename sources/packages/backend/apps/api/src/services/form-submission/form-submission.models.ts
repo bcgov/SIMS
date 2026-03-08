@@ -83,5 +83,3 @@ export interface FormSubmissionPendingSummary {
   applicationId?: number;
   applicationNumber?: string;
 }
-
-export interface FormSubmissionCompletionItem {
