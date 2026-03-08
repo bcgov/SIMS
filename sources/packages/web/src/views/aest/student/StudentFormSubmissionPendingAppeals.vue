@@ -8,5 +8,5 @@
 </template>
 
 <script setup lang="ts">
-import FormSubmissionPendingAppealsTable from "@/components/aest/student/FormSubmissionPendingAppealsTable.vue";
+import FormSubmissionPendingAppealsTable from "@/components/aest/students/FormSubmissionPendingAppealsTable.vue";
 </script>

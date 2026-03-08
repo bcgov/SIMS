@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import LegacyPendingAppealsTable from "@/components/aest/student/LegacyPendingAppealsTable.vue";
+import LegacyPendingAppealsTable from "@/components/aest/students/LegacyPendingAppealsTable.vue";
 
 export default defineComponent({
   components: {

@@ -11,5 +11,5 @@
 </template>
 
 <script setup lang="ts">
-import LegacyPendingAppealsTable from "@/components/aest/student/LegacyPendingAppealsTable.vue";
+import LegacyPendingAppealsTable from "@/components/aest/students/LegacyPendingAppealsTable.vue";
 </script>
