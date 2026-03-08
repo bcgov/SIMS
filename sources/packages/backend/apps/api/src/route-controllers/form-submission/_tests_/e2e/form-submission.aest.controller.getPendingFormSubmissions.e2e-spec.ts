@@ -35,41 +35,53 @@ describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
     user1.lastName = uniqueIdentifier;
     const user2 = createFakeUser();
     user2.lastName = uniqueIdentifier;
-    const student1 = await saveFakeStudent(db.dataSource, { user: user1 });
-    const student2 = await saveFakeStudent(db.dataSource, { user: user2 });
-    const pendingStudentForm = await saveFakeFormSubmission(
-      db,
-      { student: student1 },
-      {
-        formCategory: FormCategory.StudentForm,
-        submissionStatus: FormSubmissionStatus.Pending,
-      },
-    );
-    const pendingStudentAppeal = await saveFakeFormSubmission(
-      db,
-      { student: student2 },
-      {
-        formCategory: FormCategory.StudentAppeal,
-        submissionStatus: FormSubmissionStatus.Pending,
-      },
-    );
-    // Submissions that should not appear in the results.
-    await saveFakeFormSubmission(
-      db,
-      { student: student1 },
-      {
-        formCategory: FormCategory.StudentForm,
-        submissionStatus: FormSubmissionStatus.Completed,
-      },
-    );
-    await saveFakeFormSubmission(
-      db,
-      { student: student2 },
-      {
-        formCategory: FormCategory.StudentAppeal,
-        submissionStatus: FormSubmissionStatus.Completed,
-      },
-    );
+    const [student1, student2] = await Promise.all([
+      saveFakeStudent(db.dataSource, { user: user1 }),
+      saveFakeStudent(db.dataSource, { user: user2 }),
+    ]);
+    const [pendingStudentForm, pendingStudentAppeal] = await Promise.all([
+      saveFakeFormSubmission(
+        db,
+        { student: student1 },
+        {
+          initialValues: {
+            formCategory: FormCategory.StudentForm,
+            submissionStatus: FormSubmissionStatus.Pending,
+          },
+        },
+      ),
+      saveFakeFormSubmission(
+        db,
+        { student: student2 },
+        {
+          initialValues: {
+            formCategory: FormCategory.StudentAppeal,
+            submissionStatus: FormSubmissionStatus.Pending,
+          },
+        },
+      ),
+      // Submissions that should not appear in the results.
+      saveFakeFormSubmission(
+        db,
+        { student: student1 },
+        {
+          initialValues: {
+            formCategory: FormCategory.StudentForm,
+            submissionStatus: FormSubmissionStatus.Completed,
+          },
+        },
+      ),
+      saveFakeFormSubmission(
+        db,
+        { student: student2 },
+        {
+          initialValues: {
+            formCategory: FormCategory.StudentAppeal,
+            submissionStatus: FormSubmissionStatus.Completed,
+          },
+        },
+      ),
+    ]);
     const endpoint = `/aest/form-submission/pending?page=0&pageLimit=100&sortField=submittedDate&sortOrder=DESC&searchCriteria=${uniqueIdentifier}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -113,32 +125,37 @@ describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
     userWithApplication.lastName = uniqueIdentifier;
     const userWithoutApplication = createFakeUser();
     userWithoutApplication.lastName = uniqueIdentifier;
-    const studentWithApplication = await saveFakeStudent(db.dataSource, {
-      user: userWithApplication,
-    });
-    const studentWithoutApplication = await saveFakeStudent(db.dataSource, {
-      user: userWithoutApplication,
-    });
+    const [studentWithApplication, studentWithoutApplication] =
+      await Promise.all([
+        saveFakeStudent(db.dataSource, { user: userWithApplication }),
+        saveFakeStudent(db.dataSource, { user: userWithoutApplication }),
+      ]);
     const application = await saveFakeApplication(db.dataSource, {
       student: studentWithApplication,
     });
-    const pendingSubmissionWithApplication = await saveFakeFormSubmission(
-      db,
-      { student: studentWithApplication, application },
-      {
-        formCategory: FormCategory.StudentAppeal,
-        submissionStatus: FormSubmissionStatus.Pending,
-      },
-    );
-    // This submission should not appear in the filtered results.
-    await saveFakeFormSubmission(
-      db,
-      { student: studentWithoutApplication },
-      {
-        formCategory: FormCategory.StudentAppeal,
-        submissionStatus: FormSubmissionStatus.Pending,
-      },
-    );
+    const [pendingSubmissionWithApplication] = await Promise.all([
+      saveFakeFormSubmission(
+        db,
+        { student: studentWithApplication, application },
+        {
+          initialValues: {
+            formCategory: FormCategory.StudentAppeal,
+            submissionStatus: FormSubmissionStatus.Pending,
+          },
+        },
+      ),
+      // This submission should not appear in the filtered results.
+      saveFakeFormSubmission(
+        db,
+        { student: studentWithoutApplication },
+        {
+          initialValues: {
+            formCategory: FormCategory.StudentAppeal,
+            submissionStatus: FormSubmissionStatus.Pending,
+          },
+        },
+      ),
+    ]);
     const endpoint = `/aest/form-submission/pending?page=0&pageLimit=100&sortField=submittedDate&sortOrder=DESC&searchCriteria=${uniqueIdentifier}&hasApplicationScope=true`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -175,32 +192,37 @@ describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
     userWithApplication.lastName = uniqueIdentifier;
     const userWithoutApplication = createFakeUser();
     userWithoutApplication.lastName = uniqueIdentifier;
-    const studentWithApplication = await saveFakeStudent(db.dataSource, {
-      user: userWithApplication,
-    });
-    const studentWithoutApplication = await saveFakeStudent(db.dataSource, {
-      user: userWithoutApplication,
-    });
+    const [studentWithApplication, studentWithoutApplication] =
+      await Promise.all([
+        saveFakeStudent(db.dataSource, { user: userWithApplication }),
+        saveFakeStudent(db.dataSource, { user: userWithoutApplication }),
+      ]);
     const application = await saveFakeApplication(db.dataSource, {
       student: studentWithApplication,
     });
-    // This submission should not appear in the filtered results.
-    await saveFakeFormSubmission(
-      db,
-      { student: studentWithApplication, application },
-      {
-        formCategory: FormCategory.StudentAppeal,
-        submissionStatus: FormSubmissionStatus.Pending,
-      },
-    );
-    const pendingSubmissionWithoutApplication = await saveFakeFormSubmission(
-      db,
-      { student: studentWithoutApplication },
-      {
-        formCategory: FormCategory.StudentAppeal,
-        submissionStatus: FormSubmissionStatus.Pending,
-      },
-    );
+    const [, pendingSubmissionWithoutApplication] = await Promise.all([
+      // This submission should not appear in the filtered results.
+      saveFakeFormSubmission(
+        db,
+        { student: studentWithApplication, application },
+        {
+          initialValues: {
+            formCategory: FormCategory.StudentAppeal,
+            submissionStatus: FormSubmissionStatus.Pending,
+          },
+        },
+      ),
+      saveFakeFormSubmission(
+        db,
+        { student: studentWithoutApplication },
+        {
+          initialValues: {
+            formCategory: FormCategory.StudentAppeal,
+            submissionStatus: FormSubmissionStatus.Pending,
+          },
+        },
+      ),
+    ]);
     const endpoint = `/aest/form-submission/pending?page=0&pageLimit=100&sortField=submittedDate&sortOrder=DESC&searchCriteria=${uniqueIdentifier}&hasApplicationScope=false`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -237,25 +259,33 @@ describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
     user1.lastName = uniqueIdentifier;
     const user2 = createFakeUser();
     user2.lastName = uniqueIdentifier;
-    const student1 = await saveFakeStudent(db.dataSource, { user: user1 });
-    const student2 = await saveFakeStudent(db.dataSource, { user: user2 });
-    const pendingAppeal = await saveFakeFormSubmission(
-      db,
-      { student: student1 },
-      {
-        formCategory: FormCategory.StudentAppeal,
-        submissionStatus: FormSubmissionStatus.Pending,
-      },
-    );
-    // This StudentForm submission should not appear in the filtered results.
-    await saveFakeFormSubmission(
-      db,
-      { student: student2 },
-      {
-        formCategory: FormCategory.StudentForm,
-        submissionStatus: FormSubmissionStatus.Pending,
-      },
-    );
+    const [student1, student2] = await Promise.all([
+      saveFakeStudent(db.dataSource, { user: user1 }),
+      saveFakeStudent(db.dataSource, { user: user2 }),
+    ]);
+    const [pendingAppeal] = await Promise.all([
+      saveFakeFormSubmission(
+        db,
+        { student: student1 },
+        {
+          initialValues: {
+            formCategory: FormCategory.StudentAppeal,
+            submissionStatus: FormSubmissionStatus.Pending,
+          },
+        },
+      ),
+      // This StudentForm submission should not appear in the filtered results.
+      saveFakeFormSubmission(
+        db,
+        { student: student2 },
+        {
+          initialValues: {
+            formCategory: FormCategory.StudentForm,
+            submissionStatus: FormSubmissionStatus.Pending,
+          },
+        },
+      ),
+    ]);
     const endpoint = `/aest/form-submission/pending?page=0&pageLimit=100&sortField=submittedDate&sortOrder=DESC&searchCriteria=${uniqueIdentifier}&formCategory=${encodeURIComponent(FormCategory.StudentAppeal)}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -289,25 +319,33 @@ describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
     user1.lastName = uniqueIdentifier;
     const user2 = createFakeUser();
     user2.lastName = uniqueIdentifier;
-    const student1 = await saveFakeStudent(db.dataSource, { user: user1 });
-    const student2 = await saveFakeStudent(db.dataSource, { user: user2 });
-    const pendingStudentForm = await saveFakeFormSubmission(
-      db,
-      { student: student1 },
-      {
-        formCategory: FormCategory.StudentForm,
-        submissionStatus: FormSubmissionStatus.Pending,
-      },
-    );
-    // This StudentAppeal submission should not appear in the filtered results.
-    await saveFakeFormSubmission(
-      db,
-      { student: student2 },
-      {
-        formCategory: FormCategory.StudentAppeal,
-        submissionStatus: FormSubmissionStatus.Pending,
-      },
-    );
+    const [student1, student2] = await Promise.all([
+      saveFakeStudent(db.dataSource, { user: user1 }),
+      saveFakeStudent(db.dataSource, { user: user2 }),
+    ]);
+    const [pendingStudentForm] = await Promise.all([
+      saveFakeFormSubmission(
+        db,
+        { student: student1 },
+        {
+          initialValues: {
+            formCategory: FormCategory.StudentForm,
+            submissionStatus: FormSubmissionStatus.Pending,
+          },
+        },
+      ),
+      // This StudentAppeal submission should not appear in the filtered results.
+      saveFakeFormSubmission(
+        db,
+        { student: student2 },
+        {
+          initialValues: {
+            formCategory: FormCategory.StudentAppeal,
+            submissionStatus: FormSubmissionStatus.Pending,
+          },
+        },
+      ),
+    ]);
     const endpoint = `/aest/form-submission/pending?page=0&pageLimit=100&sortField=submittedDate&sortOrder=DESC&searchCriteria=${uniqueIdentifier}&formCategory=${encodeURIComponent(FormCategory.StudentForm)}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
