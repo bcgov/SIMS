@@ -3,7 +3,7 @@ import { OfferingIntensity } from "@sims/sims-db";
 /**
  * MSFAA activity record details for a student as seen by Ministry users.
  */
-export interface MSFAANumberAPIOutDTO {
+export class MSFAANumberAPIOutDTO {
   /**
    * Date the MSFAA record was created.
    */
