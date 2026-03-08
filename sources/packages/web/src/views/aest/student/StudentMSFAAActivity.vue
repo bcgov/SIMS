@@ -77,7 +77,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { useFormatters } from "@/composables";
+import { useFormatters, useOffering } from "@/composables";
 import { MSFAANumberService } from "@/services/MSFAANumberService";
 import { MSFAANumberAPIOutDTO } from "@/services/http/dto";
 import { MSFAAActivityHeaders } from "@/types/contracts/DataTableContract";
@@ -90,6 +90,7 @@ const props = defineProps({
   },
 });
 
+const { mapOfferingIntensity } = useOffering();
 const { dateOnlyLongString, emptyStringFiller } = useFormatters();
 
 const msfaaActivity = ref<MSFAANumberAPIOutDTO[]>([]);
