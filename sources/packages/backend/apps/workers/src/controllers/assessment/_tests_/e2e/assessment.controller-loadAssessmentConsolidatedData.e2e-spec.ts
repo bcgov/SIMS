@@ -588,6 +588,11 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
       programYear: "programYear.programYear",
       institutionLocationProvince: "location.institutionLocationProvince",
       institutionType: "institution.institutionType",
+      institutionCountry: "institution.institutionCountry",
+      institutionProvince: "institution.institutionProvince",
+      institutionClassification: "institution.institutionClassification",
+      institutionOrganizationStatus:
+        "institution.institutionOrganizationStatus",
       programLength: "program.programLength",
       programCredentialType: "program.programCredentialType",
       offeringIntensity: "offering.offeringIntensity",
