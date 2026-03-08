@@ -257,6 +257,6 @@
       "All",
     ],
     "jest.runMode": "on-demand",
-    "jest.jestCommandLine": "npm run test:e2e:api:local --",
+    "jest.jestCommandLine": "npm run test:e2e:all:local --",
   },
 }
