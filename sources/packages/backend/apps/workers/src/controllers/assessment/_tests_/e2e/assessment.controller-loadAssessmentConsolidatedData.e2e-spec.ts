@@ -16,7 +16,7 @@ import {
 } from "../../../../../test/utils/worker-job-mock";
 import { createTestingAppModule } from "../../../../../test/helpers";
 import { AssessmentController } from "../../assessment.controller";
-import {} from "../../assessment.dto";
+
 import {
   ApplicationData,
   AssessmentTriggerType,
