@@ -39,7 +39,7 @@
               {{ dateOnlyLongString(item.createdAt) }}
             </template>
             <template #[`item.offeringIntensity`]="{ item }">
-              {{ item.offeringIntensity }}
+              {{ mapOfferingIntensity(item.offeringIntensity) }}
             </template>
             <template #[`item.msfaaNumber`]="{ item }">
               {{ item.msfaaNumber }}
