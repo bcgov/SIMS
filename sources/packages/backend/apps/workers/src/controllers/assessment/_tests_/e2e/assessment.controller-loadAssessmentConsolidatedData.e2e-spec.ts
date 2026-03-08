@@ -20,6 +20,8 @@ import {} from "../../assessment.dto";
 import {
   ApplicationData,
   AssessmentTriggerType,
+  InstitutionClassification,
+  InstitutionOrganizationStatus,
   OfferingIntensity,
   RelationshipStatus,
   StudentAppealStatus,
@@ -103,6 +105,10 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
         institutionLocationProvince:
           offering.institutionLocation?.data.address?.provinceState,
         institutionType: "BC Private",
+        institutionCountry: "CA",
+        institutionProvince: "BC",
+        institutionClassification: InstitutionClassification.Private,
+        institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
         programLength: program.completionYears,
         programCredentialType: program.credentialType,
         offeringIntensity: OfferingIntensity.partTime,
@@ -214,6 +220,10 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
         institutionLocationProvince:
           offering.institutionLocation?.data.address?.provinceState,
         institutionType: "BC Private",
+        institutionCountry: "CA",
+        institutionProvince: "BC",
+        institutionClassification: InstitutionClassification.Private,
+        institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
         programLength: program.completionYears,
         programCredentialType: program.credentialType,
         offeringIntensity: OfferingIntensity.partTime,
@@ -348,6 +358,10 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
         institutionLocationProvince:
           offering.institutionLocation?.data.address?.provinceState,
         institutionType: "BC Private",
+        institutionCountry: "CA",
+        institutionProvince: "BC",
+        institutionClassification: InstitutionClassification.Private,
+        institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
         programLength: program.completionYears,
         programCredentialType: program.credentialType,
         offeringIntensity: OfferingIntensity.fullTime,
@@ -453,6 +467,10 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
       institutionLocationProvince:
         offering.institutionLocation?.data.address?.provinceState,
       institutionType: "BC Private",
+      institutionCountry: "CA",
+      institutionProvince: "BC",
+      institutionClassification: InstitutionClassification.Private,
+      institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
       programLength: program.completionYears,
       programCredentialType: program.credentialType,
       offeringIntensity: OfferingIntensity.fullTime,
@@ -553,6 +571,10 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
         institutionLocationProvince:
           offering.institutionLocation?.data.address?.provinceState,
         institutionType: "BC Private",
+        institutionCountry: "CA",
+        institutionProvince: "BC",
+        institutionClassification: InstitutionClassification.Private,
+        institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
         programLength: program.completionYears,
         programCredentialType: program.credentialType,
         offeringIntensity: OfferingIntensity.fullTime,
