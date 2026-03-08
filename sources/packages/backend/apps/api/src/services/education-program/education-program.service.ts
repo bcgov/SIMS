@@ -321,11 +321,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       queryParams.push(`%${paginationOptions.locationNameSearch}%`);
     }
 
-    await this.addProgramStatusSearch(
-      programQuery,
-      paginationOptions,
-      queryParams,
-    );
+    this.addProgramStatusSearch(programQuery, paginationOptions, queryParams);
 
     const [totalCount, programsQueryResults] =
       await this.preparePaginatedProgramQuery(
@@ -382,11 +378,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       queryParams.push(`%${paginationOptions.searchCriteria.toUpperCase()}%`);
     }
 
-    await this.addProgramStatusSearch(
-      programQuery,
-      paginationOptions,
-      queryParams,
-    );
+    this.addProgramStatusSearch(programQuery, paginationOptions, queryParams);
 
     const [totalCount, programsQueryResults] =
       await this.preparePaginatedProgramQuery(
