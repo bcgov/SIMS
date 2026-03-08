@@ -23,6 +23,10 @@
           <zeebe:header key="studentDataSelectedLocation" value="data.selectedLocation" />
           <zeebe:header key="institutionLocationProvince" value="location.institutionLocationProvince" />
           <zeebe:header key="institutionType" value="institution.institutionType" />
+          <zeebe:header key="institutionCountry" value="institution.institutionCountry" />
+          <zeebe:header key="institutionProvince" value="institution.institutionProvince" />
+          <zeebe:header key="institutionClassification" value="institution.institutionClassification" />
+          <zeebe:header key="institutionOrganizationStatus" value="institution.institutionOrganizationStatus" />
           <zeebe:header key="programLength" value="program.programLength" />
           <zeebe:header key="programCredentialType" value="program.programCredentialType" />
           <zeebe:header key="offeringIntensity" value="offering.offeringIntensity" />
