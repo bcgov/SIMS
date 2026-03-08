@@ -1,19 +1,19 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
-  BEARER_AUTH_TYPE,
-  createTestingAppModule,
-  AESTGroups,
-  getAESTToken,
-  getStudentToken,
-  FakeStudentUsersTypes,
+    BEARER_AUTH_TYPE,
+    createTestingAppModule,
+    AESTGroups,
+    getAESTToken,
+    getStudentToken,
+    FakeStudentUsersTypes,
 } from "../../../../testHelpers";
 import {
-  createE2EDataSources,
-  createFakeMSFAANumber,
-  E2EDataSources,
-  MSFAAStates,
-  saveFakeStudent,
+    createE2EDataSources,
+    createFakeMSFAANumber,
+    E2EDataSources,
+    MSFAAStates,
+    saveFakeStudent,
 } from "@sims/test-utils";
 import { OfferingIntensity } from "@sims/sims-db";
 import { addDays } from "@sims/utilities";
@@ -91,6 +91,7 @@ describe("MSFAANumberAESTController(e2e)-getStudentMSFAAActivity", () => {
           createdAt: pendingFullTimeMSFAA.createdAt.toISOString(),
           offeringIntensity: OfferingIntensity.fullTime,
           msfaaNumber: pendingFullTimeMSFAA.msfaaNumber,
+          dateSent: null,
           dateSigned: null,
           cancelledDate: null,
           newIssuingProvince: null,
