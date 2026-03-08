@@ -51,6 +51,7 @@ import ViewScholasticStanding from "@/views/aest/student/applicationDetails/View
 import SINManagement from "@/views/aest/student/SINManagement.vue";
 import CASSupplierInformation from "@/views/aest/student/CASSupplierInformation.vue";
 import Balances from "@/views/aest/student/Balances.vue";
+import StudentMSFAAActivity from "@/views/aest/student/StudentMSFAAActivity.vue";
 import StudentApplicationExceptions from "@/views/aest/student/StudentApplicationExceptions.vue";
 import OfferingChangeRequests from "@/views/aest/institution/OfferingChangeRequests.vue";
 import ViewOfferingChangeRequest from "@/views/aest/institution/ViewOfferingChangeRequest.vue";
@@ -189,6 +190,15 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             name: AESTRoutesConst.STUDENT_BALANCES,
             props: true,
             component: Balances,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.MSFAAActivity,
+            name: AESTRoutesConst.STUDENT_MSFAA,
+            props: true,
+            component: StudentMSFAAActivity,
             meta: {
               clientType: ClientIdType.AEST,
             },

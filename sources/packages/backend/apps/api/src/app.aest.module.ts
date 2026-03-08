@@ -29,6 +29,7 @@ import {
   DisbursementScheduleService,
   ApplicationOfferingChangeRequestService,
   StudentLoanBalanceService,
+  MSFAANumberService,
   ProgramYearService,
   CASSupplierService,
   ApplicationRestrictionBypassService,
@@ -96,6 +97,7 @@ import {
   DynamicFormAESTController,
   DisbursementScheduleAESTController,
   FormSubmissionAESTController,
+  MSFAANumberAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -153,6 +155,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     DynamicFormAESTController,
     DisbursementScheduleAESTController,
     FormSubmissionAESTController,
+    MSFAANumberAESTController,
   ],
   providers: [
     ApplicationExceptionControllerService,
@@ -217,6 +220,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     ApplicationOfferingChangeRequestControllerService,
     AssessmentSequentialProcessingService,
     StudentLoanBalanceService,
+    MSFAANumberService,
     ProgramYearService,
     CASSupplierService,
     ApplicationRestrictionBypassService,
