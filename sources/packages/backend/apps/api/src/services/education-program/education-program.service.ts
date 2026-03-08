@@ -939,11 +939,11 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * @param paginationOptions pagination options.
    * @param queryParams query parameters for the count query.
    */
-  private async addProgramStatusSearch(
+  private addProgramStatusSearch(
     programQuery: SelectQueryBuilder<EducationProgram>,
     paginationOptions: ProgramPaginationOptions,
     queryParams: unknown[],
-  ): Promise<void> {
+  ): void {
     // When the status search and inactive both are true,
     // then fetch the inactive programs along with the ones
     // from the program status list.
