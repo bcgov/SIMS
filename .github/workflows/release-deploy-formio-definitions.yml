@@ -51,7 +51,7 @@ jobs:
       - name: Print env
         run: |
           echo Deploy Environment: ${{ inputs.environment }}
-          echo GIT REF: ${{ github.ref_name }}
+          echo GIT REF: $BUILD_REF
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
