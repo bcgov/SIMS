@@ -105,7 +105,6 @@ export const InstitutionRoutesConst = {
   STUDENT_RESTRICTIONS: Symbol(),
   STUDENT_FILE_UPLOADS: Symbol(),
   STUDENT_BALANCES: Symbol(),
-  STUDENT_MSFAA: Symbol(),
   STUDENT_NOTES: Symbol(),
   ASSESSMENTS_SUMMARY: Symbol(),
   APPLICATION_EXCEPTION: Symbol(),
