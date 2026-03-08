@@ -15,7 +15,6 @@ env:
   NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
   BUILD_REF: ${{ github.ref_name }}
   HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
-  DOMAIN_PREFIX: ${{ vars.DOMAIN_PREFIX }}
   BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
   MIGRATIONS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
 
@@ -45,4 +44,4 @@ jobs:
       - name: Run db-migrations using REPL mode
         working-directory: "./devops/"
         run: |
-          make oc-run-db-migrations
+          make deploy-db-migrations-repl

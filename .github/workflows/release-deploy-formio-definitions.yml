@@ -41,7 +41,6 @@ jobs:
       BUILD_REF: ${{ github.ref_name }}
       MIGRATIONS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
-      FORMS_URL: ${{ secrets.FORMS_URL }}
       FORMS_SA_USER_NAME: ${{ secrets.FORMS_SA_USER_NAME }}
       FORMS_SA_PASSWORD: ${{ secrets.FORMS_SA_PASSWORD }}
     steps:
@@ -62,7 +61,7 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-      - name: Run db-migrations using REPL mode
+      - name: Run deploy form definitions
         working-directory: "./devops/"
         run: |
           make oc-deploy-form-definitions
