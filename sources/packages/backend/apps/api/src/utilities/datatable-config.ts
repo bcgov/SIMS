@@ -1,6 +1,7 @@
 import {
   CASInvoiceBatchApprovalStatus,
   CASInvoiceStatus,
+  FormCategory,
   ProgramStatus,
   OfferingIntensity,
 } from "@sims/sims-db";
@@ -81,6 +82,14 @@ export interface COEPaginationOptions extends PaginationOptions {
 
 export interface StudentAppealPaginationOptions extends PaginationOptions {
   appealType: AppealType;
+}
+
+/**
+ * Pagination options for querying pending form submissions in the ministry queue.
+ */
+export interface FormSubmissionPendingPaginationOptions extends PaginationOptions {
+  hasApplicationScope?: boolean;
+  formCategory?: FormCategory;
 }
 
 /**

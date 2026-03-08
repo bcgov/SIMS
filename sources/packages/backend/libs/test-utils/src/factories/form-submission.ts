@@ -20,12 +20,8 @@ import { saveFakeStudent } from "./student";
  * an existing one is fetched from the database by the resolved `formCategory`.
  * - `application` application associated with the submission, used for appeal submissions
  * that are linked to a student application.
- * @param initialValues initial values for the form submission. When not provided, default values are used.
- * - `submissionStatus` submission status, defaults to `FormSubmissionStatus.Pending`.
  * @param options submission options.
- * - `formCategory` category for the submission and its dynamic form configuration.
- * Defaults to `FormCategory.StudentForm`.
- * - `submissionStatus` status of the submission. Defaults to `FormSubmissionStatus.Pending`.
+ * - `initialValues` initial values for the form submission. When not provided, default values are used.
  * - `numberOfItems` number of form items to create. Defaults to 1.
  * @returns the saved form submission, including cascaded items.
  */
@@ -36,12 +32,12 @@ export async function saveFakeFormSubmission(
     dynamicFormConfiguration?: DynamicFormConfiguration;
     application?: Application;
   },
-  initialValues?: Partial<FormSubmission>,
   options?: {
+    initialValues?: Partial<FormSubmission>;
     numberOfItems?: number;
   },
 ): Promise<FormSubmission> {
-  const formCategory = initialValues?.formCategory ?? FormCategory.StudentForm;
+  const formCategory = options?.initialValues?.formCategory ?? FormCategory.StudentForm;
   const student = relations?.student ?? (await saveFakeStudent(db.dataSource));
   const dynamicFormConfiguration =
     relations?.dynamicFormConfiguration ??
@@ -49,7 +45,7 @@ export async function saveFakeFormSubmission(
       where: { formCategory },
     }));
   const submissionStatus =
-    initialValues?.submissionStatus ?? FormSubmissionStatus.Pending;
+    options?.initialValues?.submissionStatus ?? FormSubmissionStatus.Pending;
   const formSubmission = new FormSubmission();
   formSubmission.student = student;
   formSubmission.creator = student.user;

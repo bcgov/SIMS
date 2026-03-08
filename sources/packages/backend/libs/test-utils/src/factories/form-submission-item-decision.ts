@@ -11,16 +11,19 @@ import { createFakeNote } from "./note";
  * @param relations decision relations.
  * - `decisionBy` user who made the decision.
  * @param options decision options.
- * - `decisionStatus` decision status. Defaults to `FormSubmissionDecisionStatus.Approved`.
+ * - `initialValues` initial values for the decision. When not provided, default values are used.
  * @returns a form submission item decision not yet persisted.
  */
 export function createFakeFormSubmissionItemDecision(
   relations: { decisionBy: User },
-  initialValues?: Partial<FormSubmissionItemDecision>,
+  options?: {
+    initialValues?: Partial<FormSubmissionItemDecision>;
+  },
 ): FormSubmissionItemDecision {
   const decision = new FormSubmissionItemDecision();
   decision.decisionStatus =
-    initialValues?.decisionStatus ?? FormSubmissionDecisionStatus.Approved;
+    options?.initialValues?.decisionStatus ??
+    FormSubmissionDecisionStatus.Approved;
   decision.decisionDate = new Date();
   decision.decisionBy = relations.decisionBy;
   decision.decisionNote = createFakeNote(NoteType.StudentForm, {

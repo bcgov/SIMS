@@ -6,17 +6,13 @@
         sub-title="Change Requests (Pre 2025-2026)"
       />
     </template>
-    <legacy-pending-appeals-table appeals-type="legacy-change-request" />
+    <legacy-pending-appeals-table
+      :appeals-type="AppealType.LegacyChangeRequest"
+    />
   </full-page-container>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { AppealType } from "@/types";
 import LegacyPendingAppealsTable from "@/components/aest/students/LegacyPendingAppealsTable.vue";
-
-export default defineComponent({
-  components: {
-    LegacyPendingAppealsTable,
-  },
-});
 </script>

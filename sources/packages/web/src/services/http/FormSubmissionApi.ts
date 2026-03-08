@@ -172,7 +172,7 @@ export class FormSubmissionApi extends HttpBaseClient {
     if (options?.hasApplicationScope !== undefined) {
       url += `&hasApplicationScope=${options.hasApplicationScope}`;
     }
-    if (options?.formCategory !== undefined) {
+    if (options?.formCategory) {
       url += `&formCategory=${options.formCategory}`;
     }
     return this.getCall<

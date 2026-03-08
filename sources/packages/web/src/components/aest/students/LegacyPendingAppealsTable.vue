@@ -60,6 +60,7 @@ import {
   DataTableOptions,
   PaginationOptions,
   DEFAULT_DATATABLE_PAGE_NUMBER,
+  AppealType,
 } from "@/types";
 import { useFormatters, useSnackBar } from "@/composables";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
@@ -69,7 +70,7 @@ import { StudentAppealService } from "@/services/StudentAppealService";
 export default defineComponent({
   props: {
     appealsType: {
-      type: String as () => "legacy-change-request" | "appeal",
+      type: String as () => AppealType,
       required: true,
     },
   },
@@ -92,13 +93,13 @@ export default defineComponent({
     };
 
     const pageTitle = computed(() => {
-      return props.appealsType === "legacy-change-request"
+      return props.appealsType === AppealType.LegacyChangeRequest
         ? "Pending change requests"
         : "Pending appeals";
     });
 
     const pageDescription = computed(() => {
-      return props.appealsType === "legacy-change-request"
+      return props.appealsType === AppealType.LegacyChangeRequest
         ? "Change requests that require ministry review."
         : "Appeals that require ministry review.";
     });

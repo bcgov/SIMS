@@ -16,7 +16,6 @@ import { StudentFileService } from "../student-file/student-file.service";
 import {
   FormSubmissionConfig,
   FormSubmissionModel,
-  FormSubmissionPendingPaginationOptions,
   FormSubmissionPendingSummary,
 } from "./form-submission.models";
 import {
@@ -33,7 +32,7 @@ import {
 import { DryRunSubmissionResult } from "../../types";
 import { FormSubmissionValidator } from "./form-submission-validator";
 import { SupplementaryDataLoader } from "./form-supplementary-data";
-import { PaginatedResults } from "../../utilities";
+import { FormSubmissionPendingPaginationOptions, PaginatedResults } from "../../utilities";
 
 /**
  * Manages how the form submissions are processed, including the validations,

@@ -137,6 +137,14 @@ export enum DataTableSortByOrder {
 }
 
 /**
+ * Appeal type for the legacy appeals and change requests queues.
+ */
+export enum AppealType {
+  LegacyChangeRequest = "legacy-change-request",
+  Appeal = "appeal",
+}
+
+/**
  * DataTable options.
  */
 export interface DataTableOptions {

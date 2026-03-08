@@ -3,7 +3,6 @@ import {
   FormCategory,
   FormSubmissionDecisionStatus,
 } from "@sims/sims-db";
-import { FieldSortOrder } from "@sims/utilities";
 import { Parent } from "../../types";
 import { Role } from "../../auth";
 
@@ -71,19 +70,6 @@ export interface FormItemDecision {
 }
 
 /**
- * Pagination options for querying pending form submissions in the ministry queue.
- */
-export interface FormSubmissionPendingPaginationOptions {
-  searchCriteria?: string;
-  sortField?: string;
-  sortOrder?: FieldSortOrder;
-  page: number;
-  pageLimit: number;
-  hasApplicationScope?: boolean;
-  formCategory?: FormCategory;
-}
-
-/**
  * Summary of a pending form submission item for the ministry queue view.
  * Each entry represents one pending submission that can include multiple forms.
  */
@@ -97,3 +83,5 @@ export interface FormSubmissionPendingSummary {
   applicationId?: number;
   applicationNumber?: string;
 }
+
+export interface FormSubmissionCompletionItem {
