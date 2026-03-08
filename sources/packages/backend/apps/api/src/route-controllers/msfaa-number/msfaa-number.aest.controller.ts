@@ -50,7 +50,7 @@ export class MSFAANumberAESTController extends BaseController {
       createdAt: msfaa.createdAt,
       offeringIntensity: msfaa.offeringIntensity,
       msfaaNumber: msfaa.msfaaNumber,
-      dateSent: msfaa.dateRequested ?? undefined,
+      dateSent: msfaa.dateRequested,
       dateSigned: msfaa.dateSigned,
       cancelledDate: msfaa.cancelledDate,
       newIssuingProvince: msfaa.newIssuingProvince,
