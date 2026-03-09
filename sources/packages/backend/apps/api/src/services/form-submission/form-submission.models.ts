@@ -68,3 +68,18 @@ export interface FormItemDecision {
   noteDescription: string;
   lastUpdateDate: Date;
 }
+
+/**
+ * Summary of a pending form submission item for the ministry queue view.
+ * Each entry represents one pending submission that can include multiple forms.
+ */
+export interface FormSubmissionPendingSummary {
+  formSubmissionId: number;
+  studentId: number;
+  submittedDate: Date;
+  firstName?: string;
+  lastName: string;
+  formNames: string[];
+  applicationId?: number;
+  applicationNumber?: string;
+}

@@ -200,3 +200,18 @@ export interface FormSubmissionCompletionItemAPIInDTO {
 export interface FormSubmissionCompletionAPIInDTO {
   items: FormSubmissionCompletionItemAPIInDTO[];
 }
+
+/**
+ * Summary of a pending form submission for the ministry queue.
+ * Applies to all form submission categories, including student forms and appeals.
+ */
+export interface FormSubmissionPendingSummaryAPIOutDTO {
+  formSubmissionId: number;
+  studentId: number;
+  submittedDate: Date;
+  firstName?: string;
+  lastName: string;
+  formNames: string[];
+  applicationId?: number;
+  applicationNumber?: string;
+}

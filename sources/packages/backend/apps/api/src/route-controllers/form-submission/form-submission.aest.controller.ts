@@ -16,6 +16,7 @@ import {
   FORM_SUBMISSION_NOT_FOUND,
   FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
   FormSubmissionApprovalService,
+  FormSubmissionService,
 } from "../../services";
 import {
   AllowAuthorizedParty,
@@ -36,10 +37,15 @@ import {
   FormSubmissionCompletionAPIInDTO,
   FormSubmissionItemDecisionAPIInDTO,
   FormSubmissionMinistryAPIOutDTO,
+  FormSubmissionPendingSummaryAPIOutDTO,
 } from "./models/form-submission.dto";
 import { getUserFullName } from "../../utilities";
 import { FormSubmissionDecisionStatus } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
+import {
+  FormSubmissionPendingPaginationOptionsAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "../models/pagination.dto";
 
 /**
  * Roles allowed to update the form submission item decision
@@ -57,8 +63,36 @@ const FORM_SUBMISSION_UPDATE_ROLES = [
 export class FormSubmissionAESTController extends BaseController {
   constructor(
     private readonly formSubmissionApprovalService: FormSubmissionApprovalService,
+    private readonly formSubmissionService: FormSubmissionService,
   ) {
     super();
+  }
+
+  /**
+   * Gets all pending student form submissions for ministry review across all form categories.
+   * Only form submissions with status Pending are returned.
+   * @param pagination pagination options to control page size, sorting, and optional search.
+   * @returns paginated list of pending form submissions awaiting ministry review.
+   */
+  @Get("pending")
+  async getPendingFormSubmissions(
+    @Query() pagination: FormSubmissionPendingPaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>> {
+    const pendingSubmissions =
+      await this.formSubmissionService.getPendingFormSubmissions(pagination);
+    return {
+      results: pendingSubmissions.results.map((submission) => ({
+        formSubmissionId: submission.formSubmissionId,
+        studentId: submission.studentId,
+        submittedDate: submission.submittedDate,
+        firstName: submission.firstName,
+        lastName: submission.lastName,
+        formNames: submission.formNames,
+        applicationId: submission.applicationId,
+        applicationNumber: submission.applicationNumber,
+      })),
+      count: pendingSubmissions.count,
+    };
   }
 
   /**

@@ -164,6 +164,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
           programYear: { id: true, startDate: true },
           applicationStatus: true,
           applicationEditStatus: true,
+          offeringIntensity: true,
         },
       },
       relations: { application: { programYear: true } },

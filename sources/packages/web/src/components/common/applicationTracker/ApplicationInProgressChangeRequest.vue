@@ -32,24 +32,23 @@
           "
           ><li
             v-for="parent in waitingList.parentsInfoWaiting"
-            :key="parent.parentFullName"
+            :key="parent.supportingUserId"
           >
             <template v-if="parent.isAbleToReport">
               We are waiting for supporting information from
-              <strong>{{ parent.parentFullName }}</strong
+              <strong>{{ parent.fullName }}</strong
               >.
             </template>
             <template v-else>
               You have indicated that
-              <strong>{{ parent.parentFullName }}</strong> is unable to complete
-              their declaration. Please complete the following declaration on
-              their behalf. Click on the button below to complete the
-              declaration.
+              <strong>{{ parent.fullName }}</strong> is unable to complete their
+              declaration. Please complete the following declaration on their
+              behalf. Click on the button below to complete the declaration.
               <div class="m-2">
                 <v-btn
                   color="primary"
                   @click="navigateToParentReporting(parent.supportingUserId)"
-                  >{{ parent.parentFullName }}</v-btn
+                  >{{ parent.fullName }}</v-btn
                 >
               </div>
             </template>
@@ -57,10 +56,33 @@
         >
         <li
           v-if="
-            waitingList.waitingTypes.includes(WaitingTypes.PartnerDeclaration)
+            waitingList.waitingTypes.includes(
+              WaitingTypes.PartnerDeclaration,
+            ) && waitingList.partnerInfoWaiting
           "
         >
-          Pending partner declaration information.
+          <template v-if="waitingList.partnerInfoWaiting.isAbleToReport"
+            >Pending partner declaration information.</template
+          >
+
+          <template v-else>
+            You have indicated that
+            <strong>{{ waitingList.partnerInfoWaiting.fullName }}</strong> is
+            unable to complete their declaration. Please complete the following
+            declaration on their behalf. Click on the button below to complete
+            the declaration.
+            <div class="m-2">
+              <v-btn
+                color="primary"
+                @click="
+                  navigateToPartnerReporting(
+                    waitingList.partnerInfoWaiting.supportingUserId,
+                  )
+                "
+                >{{ waitingList.partnerInfoWaiting.fullName }}</v-btn
+              >
+            </div></template
+          >
         </li>
         <li
           v-if="
@@ -114,7 +136,7 @@
 import ApplicationStatusTrackerBanner from "@/components/common/applicationTracker/generic/ApplicationStatusTrackerBanner.vue";
 import {
   ChangeRequestInProgressAPIOutDTO,
-  ParentDetails,
+  SupportingUserDetails,
 } from "@/services/http/dto";
 import { computed, defineComponent, PropType, ref } from "vue";
 import { ApplicationEditStatus, SuccessWaitingStatus } from "@/types";
@@ -138,7 +160,8 @@ enum WaitingTypes {
 
 interface WaitingList {
   waitingTypes: WaitingTypes[];
-  parentsInfoWaiting?: ParentDetails[];
+  parentsInfoWaiting?: SupportingUserDetails[];
+  partnerInfoWaiting?: SupportingUserDetails;
 }
 
 export default defineComponent({
@@ -234,8 +257,10 @@ export default defineComponent({
         // Include the details of the parents whose information is still waiting.
         waitingList.parentsInfoWaiting = parentsInfoWaiting;
       }
-      if (change.partnerInfo === SuccessWaitingStatus.Waiting) {
+      if (change.partnerInfo?.status === SuccessWaitingStatus.Waiting) {
         waitingList.waitingTypes.push(WaitingTypes.PartnerDeclaration);
+        // Include the details of the partner whose information is still waiting.
+        waitingList.partnerInfoWaiting = change.partnerInfo;
       }
       if (
         change.studentIncomeVerificationStatus === SuccessWaitingStatus.Waiting
@@ -278,6 +303,17 @@ export default defineComponent({
       });
     };
 
+    const navigateToPartnerReporting = (supportingUserId: number) => {
+      router.push({
+        name: StudentRoutesConst.CHANGE_REQUEST_REPORT_PARTNER_INFORMATION,
+        params: {
+          applicationId: props.applicationId,
+          supportingUserId: supportingUserId,
+          changeRequestApplicationId: props.changeRequest.applicationId,
+        },
+      });
+    };
+
     return {
       cancelChangeRequest,
       cancelChangeRequestModal,
@@ -287,6 +323,7 @@ export default defineComponent({
       WaitingTypes,
       trackerLabel,
       navigateToParentReporting,
+      navigateToPartnerReporting,
     };
   },
 });
