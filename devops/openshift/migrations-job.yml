@@ -22,6 +22,7 @@ objects:
           containers:
             - name: db-migrations-container
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
+              imagePullPolicy: Always
               env:
                 - name: VERSION
                   value: ${BUILD_TAG}
