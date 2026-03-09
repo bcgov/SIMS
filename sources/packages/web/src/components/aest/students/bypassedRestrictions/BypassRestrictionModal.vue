@@ -27,7 +27,8 @@
               <v-list-item v-bind="props" title="">
                 <span>{{ item.title }}</span>
                 <StatusChipClientType
-                  :client-type="item.raw.restrictionType"
+                  v-if="item.raw.restrictedParty"
+                  :client-type="item.raw.restrictedParty"
                   class="ml-3 float-right"
                 />
               </v-list-item>
@@ -36,7 +37,8 @@
               <v-list-item title="">
                 <span>{{ item.title }}</span>
                 <StatusChipClientType
-                  :client-type="item.raw.restrictionType"
+                  v-if="item.raw.restrictedParty"
+                  :client-type="item.raw.restrictedParty"
                   class="ml-3 float-right"
                 />
               </v-list-item>
@@ -205,7 +207,7 @@ export default defineComponent({
           restrictionId: formModel.value.restrictionId,
           bypassBehavior: formModel.value.bypassBehavior,
           note: formModel.value.note,
-          restrictionType: formModel.value.restrictionType,
+          restrictedParty: formModel.value.restrictedParty,
         });
         snackBar.success("Restriction bypassed.");
         resolvePromise(true);
@@ -226,13 +228,13 @@ export default defineComponent({
       restrictionCode: string,
       createdDate: Date,
       restrictionId: number,
-      restrictionType: RestrictedParty.Student | RestrictedParty.Institution,
+      restrictedParty: RestrictedParty.Student | RestrictedParty.Institution,
     ): SelectItemType => {
       const formattedDate = dateOnlyLongString(createdDate);
       return {
         title: `${restrictionCode} added on ${formattedDate}`,
         value: restrictionId,
-        restrictionType,
+        restrictedParty,
       };
     };
 
@@ -257,7 +259,7 @@ export default defineComponent({
                 restriction.restrictionCode,
                 restriction.restrictionCreatedAt,
                 restriction.restrictionId,
-                restriction.restrictionType,
+                restriction.restrictedParty,
               );
             },
           );
@@ -272,7 +274,7 @@ export default defineComponent({
             restrictionBypassDetails.value.restrictionCode,
             restrictionBypassDetails.value.createdDate,
             restrictionBypassDetails.value.restrictionId,
-            restrictionBypassDetails.value.restrictionType,
+            restrictionBypassDetails.value.restrictedParty,
           ),
         ];
         formModel.value.restrictionId =
@@ -292,7 +294,7 @@ export default defineComponent({
             (r) => r.restrictionId === restrictionId,
           );
         if (foundRestriction) {
-          formModel.value.restrictionType = foundRestriction.restrictionType;
+          formModel.value.restrictedParty = foundRestriction.restrictedParty;
         }
       },
     );

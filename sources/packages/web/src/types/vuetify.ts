@@ -51,7 +51,7 @@ export interface InputFile extends Blob {
 export interface SelectItemType {
   title: string;
   value: string | number;
-  restrictionType?: RestrictedParty.Student | RestrictedParty.Institution;
+  restrictedParty?: RestrictedParty.Student | RestrictedParty.Institution;
 }
 
 export interface Event {

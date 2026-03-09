@@ -36,15 +36,13 @@ import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IUserToken, Role } from "../../auth";
 import { CustomNamedError } from "@sims/utilities";
 import {
-  ACTIVE_BYPASS_FOR_INSTITUTION_RESTRICTION_ALREADY_EXISTS,
-  ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
+  ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS,
   APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION,
   APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_REMOVAL,
   APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
   APPLICATION_RESTRICTION_BYPASS_NOT_FOUND,
-  INSTITUTION_RESTRICTION_IS_NOT_ACTIVE,
   INSTITUTION_RESTRICTION_NOT_FOUND,
-  STUDENT_RESTRICTION_IS_NOT_ACTIVE,
+  RESTRICTION_IS_NOT_ACTIVE,
   STUDENT_RESTRICTION_NOT_FOUND,
 } from "../../constants";
 import { getUserFullName } from "../../utilities";
@@ -132,7 +130,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
       applicationRestrictionBypassId: applicationRestrictionBypass.id,
       restrictionId: restriction.id,
       restrictionCode: restriction.restriction.restrictionCode,
-      restrictionType:
+      restrictedParty:
         restriction instanceof StudentRestriction
           ? RestrictedParty.Student
           : RestrictedParty.Institution,
@@ -168,7 +166,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
       availableRestrictionsToBypass: availableRestrictionsToBypass.map(
         (item) => ({
           restrictionId: item.restrictionId,
-          restrictionType: item.restrictionType,
+          restrictedParty: item.restrictedParty,
           restrictionCode: item.restrictionCode,
           restrictionCreatedAt: item.restrictionCreatedAt,
         }),
@@ -208,13 +206,11 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
     } catch (error) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
-          case ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS:
+          case ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS:
           case STUDENT_RESTRICTION_NOT_FOUND:
-          case STUDENT_RESTRICTION_IS_NOT_ACTIVE:
+          case RESTRICTION_IS_NOT_ACTIVE:
           case APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION:
-          case ACTIVE_BYPASS_FOR_INSTITUTION_RESTRICTION_ALREADY_EXISTS:
           case INSTITUTION_RESTRICTION_NOT_FOUND:
-          case INSTITUTION_RESTRICTION_IS_NOT_ACTIVE:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );
@@ -256,7 +252,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
         switch (error.name) {
           case APPLICATION_RESTRICTION_BYPASS_NOT_FOUND:
             throw new NotFoundException(error.message);
-          case STUDENT_RESTRICTION_IS_NOT_ACTIVE:
+          case RESTRICTION_IS_NOT_ACTIVE:
           case APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE:
           case APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_REMOVAL:
             throw new UnprocessableEntityException(

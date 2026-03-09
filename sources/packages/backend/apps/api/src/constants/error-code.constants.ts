@@ -204,28 +204,15 @@ export const VIRUS_DETECTED = "VIRUS_DETECTED";
 export const FILE_SAVE_ERROR = "FILE_SAVE_ERROR";
 
 /**
- * Bypass for student restriction already exists.
+ * Bypass for restricted party already exists.
  */
-export const ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS =
-  "ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS";
+export const ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS =
+  "ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS";
 
 /**
- * Bypass for institution restriction already exists.
+ * Restriction is not active.
  */
-export const ACTIVE_BYPASS_FOR_INSTITUTION_RESTRICTION_ALREADY_EXISTS =
-  "ACTIVE_BYPASS_FOR_INSTITUTION_RESTRICTION_ALREADY_EXISTS";
-
-/**
- * Student restriction is not active.
- */
-export const STUDENT_RESTRICTION_IS_NOT_ACTIVE =
-  "STUDENT_RESTRICTION_IS_NOT_ACTIVE";
-
-/**
- * Institution restriction is not active.
- */
-export const INSTITUTION_RESTRICTION_IS_NOT_ACTIVE =
-  "INSTITUTION_RESTRICTION_IS_NOT_ACTIVE";
+export const RESTRICTION_IS_NOT_ACTIVE = "RESTRICTION_IS_NOT_ACTIVE";
 
 /**
  * Student restriction not found.

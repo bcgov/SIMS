@@ -14,6 +14,7 @@ import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
+  getAESTUser,
 } from "../../../../testHelpers";
 import * as request from "supertest";
 import {
@@ -26,11 +27,9 @@ import {
   User,
 } from "@sims/sims-db";
 import {
-  ACTIVE_BYPASS_FOR_INSTITUTION_RESTRICTION_ALREADY_EXISTS,
-  ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
+  ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS,
   APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION,
-  INSTITUTION_RESTRICTION_IS_NOT_ACTIVE,
-  STUDENT_RESTRICTION_IS_NOT_ACTIVE,
+  RESTRICTION_IS_NOT_ACTIVE,
 } from "../../../../constants";
 import { RestrictedParty } from "@sims/services";
 
@@ -40,6 +39,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
   let sharedMinistryUser: User;
   let ptssrRestriction: Restriction;
   let endpoint: string;
+  let susRestriction: Restriction, remitRestriction: Restriction;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -50,6 +50,14 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       restrictionCode: RestrictionCode.PTSSR,
     });
     endpoint = "/aest/application-restriction-bypass";
+    susRestriction = await db.restriction.findOne({
+      where: { restrictionCode: RestrictionCode.SUS },
+    });
+    remitRestriction = await db.restriction.findOne({
+      where: {
+        restrictionCode: RestrictionCode.REMIT,
+      },
+    });
   });
 
   it("Should be able to create a bypass when there is not an active bypass for the same student restriction.", async () => {
@@ -68,7 +76,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     const payload = {
       applicationId: application.id,
       restrictionId: studentRestriction.id,
-      restrictionType: RestrictedParty.Student,
+      restrictedParty: RestrictedParty.Student,
       bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
       note: "test note",
     };
@@ -131,12 +139,6 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     const application = await saveFakeApplication(db.dataSource, undefined, {
       offeringIntensity: OfferingIntensity.partTime,
     });
-
-    const remitRestriction = await db.restriction.findOne({
-      where: {
-        restrictionCode: RestrictionCode.REMIT,
-      },
-    });
     const institutionRestriction = await saveFakeInstitutionRestriction(db, {
       institution:
         application.currentAssessment.offering.institutionLocation.institution,
@@ -149,7 +151,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     const payload = {
       applicationId: application.id,
       restrictionId: institutionRestriction.id,
-      restrictionType: RestrictedParty.Institution,
+      restrictedParty: RestrictedParty.Institution,
       bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
       note: "institution restriction test note",
     };
@@ -189,8 +191,12 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
         },
         where: { id: applicationRestrictionBypassId },
       });
+    const auditUser = await getAESTUser(
+      db.dataSource,
+      AESTGroups.BusinessAdministrators,
+    );
 
-    expect(applicationRestrictionBypass).toMatchObject({
+    expect(applicationRestrictionBypass).toEqual({
       id: applicationRestrictionBypassId,
       application: { id: application.id },
       institutionRestriction: { id: institutionRestriction.id },
@@ -200,7 +206,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
         description: payload.note,
       },
       bypassCreatedDate: expect.any(Date),
-      bypassCreatedBy: { id: expect.any(Number) },
+      bypassCreatedBy: { id: auditUser.id },
       bypassRemovedDate: null,
       createdAt: expect.any(Date),
       isActive: true,
@@ -227,7 +233,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     const payload = {
       applicationId: application.id,
       restrictionId: restrictionBypass.studentRestriction.id,
-      restrictionType: RestrictedParty.Student,
+      restrictedParty: RestrictedParty.Student,
       bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
       note: "test note",
     };
@@ -242,7 +248,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       .expect({
         message:
           "Cannot create a bypass when there is an active bypass for the same active student restriction.",
-        errorType: ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
+        errorType: ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS,
       });
   });
 
@@ -250,9 +256,6 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       offeringIntensity: OfferingIntensity.partTime,
-    });
-    const susRestriction = await db.restriction.findOne({
-      where: { restrictionCode: RestrictionCode.SUS },
     });
     const susInstitutionRestriction = await saveFakeInstitutionRestriction(db, {
       institution:
@@ -276,7 +279,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     const payload = {
       applicationId: application.id,
       restrictionId: restrictionBypass.institutionRestriction.id,
-      restrictionType: RestrictedParty.Institution,
+      restrictedParty: RestrictedParty.Institution,
       bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
       note: "test note",
     };
@@ -291,7 +294,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       .expect({
         message:
           "Cannot create a bypass when there is an active bypass for the same active institution restriction.",
-        errorType: ACTIVE_BYPASS_FOR_INSTITUTION_RESTRICTION_ALREADY_EXISTS,
+        errorType: ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS,
       });
   });
 
@@ -317,7 +320,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     const payload = {
       applicationId: application.id,
       restrictionId: studentRestriction.id,
-      restrictionType: RestrictedParty.Student,
+      restrictedParty: RestrictedParty.Student,
       bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
       note: "test note",
     };
@@ -332,7 +335,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       .expect({
         message:
           "Cannot create a bypass when student restriction is not active.",
-        errorType: STUDENT_RESTRICTION_IS_NOT_ACTIVE,
+        errorType: RESTRICTION_IS_NOT_ACTIVE,
       });
   });
 
@@ -340,9 +343,6 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       offeringIntensity: OfferingIntensity.partTime,
-    });
-    const susRestriction = await db.restriction.findOne({
-      where: { restrictionCode: RestrictionCode.SUS },
     });
     const institutionRestriction = await saveFakeInstitutionRestriction(
       db,
@@ -361,7 +361,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     const payload = {
       applicationId: application.id,
       restrictionId: institutionRestriction.id,
-      restrictionType: RestrictedParty.Institution,
+      restrictedParty: RestrictedParty.Institution,
       bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
       note: "test note",
     };
@@ -376,7 +376,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       .expect({
         message:
           "Cannot create a bypass when institution restriction is not active.",
-        errorType: INSTITUTION_RESTRICTION_IS_NOT_ACTIVE,
+        errorType: RESTRICTION_IS_NOT_ACTIVE,
       });
   });
 
@@ -397,7 +397,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     const payload = {
       applicationId: application.id,
       restrictionId: studentRestriction.id,
-      restrictionType: RestrictedParty.Student,
+      restrictedParty: RestrictedParty.Student,
       bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
       note: "test note",
     };
@@ -433,7 +433,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     const payload = {
       applicationId: application.id,
       restrictionId: studentRestriction.id,
-      restrictionType: RestrictedParty.Student,
+      restrictedParty: RestrictedParty.Student,
       bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
       note: "test note",
     };

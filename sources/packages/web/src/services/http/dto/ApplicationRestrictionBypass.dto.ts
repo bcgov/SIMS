@@ -27,7 +27,7 @@ export interface AvailableRestrictionAPIOutDTO {
   restrictionId: number;
   restrictionCode: string;
   restrictionCreatedAt: Date;
-  restrictionType: RestrictedParty.Student | RestrictedParty.Institution;
+  restrictedParty: RestrictedParty.Student | RestrictedParty.Institution;
 }
 
 /**
@@ -43,7 +43,7 @@ export interface AvailableRestrictionsAPIOutDTO {
 export interface BypassRestrictionAPIInDTO {
   applicationId: number;
   restrictionId: number;
-  restrictionType: RestrictedParty.Student | RestrictedParty.Institution;
+  restrictedParty: RestrictedParty.Student | RestrictedParty.Institution;
   bypassBehavior: RestrictionBypassBehaviors;
   note: string;
 }
@@ -62,7 +62,7 @@ export interface ApplicationRestrictionBypassAPIOutDTO {
   applicationRestrictionBypassId: number;
   restrictionId: number;
   restrictionCode: string;
-  restrictionType: RestrictedParty.Student | RestrictedParty.Institution;
+  restrictedParty: RestrictedParty.Student | RestrictedParty.Institution;
   createdDate: Date;
   createdBy: string;
   creationNote: string;
