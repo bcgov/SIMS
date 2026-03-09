@@ -13,7 +13,7 @@ objects:
       FORMIO_ROOT_PASSWORD: "${FORMIO_ROOT_PASSWORD}"
       MONGODB_URI: "${MONGODB_URI}"
       NODE_CONFIG: '{"mongo": "${MONGODB_URI}"}'
-      FORMS_URL: "https://${FORMS_URL}"
+      FORMS_URL: "${FORMS_URL}"
     type: Opaque
 
   - apiVersion: apps/v1
@@ -125,41 +125,7 @@ objects:
         app: ${NAME}
     status:
       loadBalancer: {}
-  - kind: Route
-    apiVersion: route.openshift.io/v1
-    metadata:
-      labels:
-        app: ${NAME}
-      name: ${NAME}-route
-      annotations:
-        haproxy.router.openshift.io/balance: leastconn
-        haproxy.router.openshift.io/disable_cookies: "true"
-        haproxy.router.openshift.io/hsts_header: max-age=31536000;includeSubDomains;preload
-        haproxy.router.openshift.io/timeout: 30s
-    spec:
-      host: ${FORMS_URL}
-      to:
-        kind: Service
-        name: ${NAME}
-        weight: 100
-      port:
-        targetPort: "3001"
-      tls:
-        insecureEdgeTerminationPolicy: Redirect
-        termination: edge
-        certificate: |
-          -----BEGIN CERTIFICATE-----
-          ${TLS_CERTIFICATE}
-          -----END CERTIFICATE-----
-        key: |
-          -----BEGIN PRIVATE KEY-----
-          ${TLS_KEY}
-          -----END PRIVATE KEY-----
-        caCertificate: |
-          -----BEGIN CERTIFICATE-----
-          ${TLS_CA_CERTIFICATE}
-          -----END CERTIFICATE-----
-      wildcardPolicy: None
+
   - apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
     metadata:
@@ -242,10 +208,4 @@ parameters:
   - name: MEMORY_LIMIT
     displayName: Resources Memory Limit
     description: The resources Memory limit (in Mi, Gi, etc) for this build.
-    required: true
-  - name: TLS_CERTIFICATE
-    required: true
-  - name: TLS_KEY
-    required: true
-  - name: TLS_CA_CERTIFICATE
     required: true
