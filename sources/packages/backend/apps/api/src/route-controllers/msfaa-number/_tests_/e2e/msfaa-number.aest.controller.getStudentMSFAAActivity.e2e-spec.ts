@@ -1,19 +1,19 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
-    BEARER_AUTH_TYPE,
-    createTestingAppModule,
-    AESTGroups,
-    getAESTToken,
-    getStudentToken,
-    FakeStudentUsersTypes,
+  BEARER_AUTH_TYPE,
+  createTestingAppModule,
+  AESTGroups,
+  getAESTToken,
+  getStudentToken,
+  FakeStudentUsersTypes,
 } from "../../../../testHelpers";
 import {
-    createE2EDataSources,
-    createFakeMSFAANumber,
-    E2EDataSources,
-    MSFAAStates,
-    saveFakeStudent,
+  createE2EDataSources,
+  createFakeMSFAANumber,
+  E2EDataSources,
+  MSFAAStates,
+  saveFakeStudent,
 } from "@sims/test-utils";
 import { OfferingIntensity } from "@sims/sims-db";
 import { addDays } from "@sims/utilities";
@@ -32,18 +32,12 @@ describe("MSFAANumberAESTController(e2e)-getStudentMSFAAActivity", () => {
     // Arrange.
     const student = await saveFakeStudent(db.dataSource);
     // Pending full-time MSFAA (earliest - two days ago).
-    const pendingFullTimeMSFAA = createFakeMSFAANumber(
-      { student },
-      { msfaaInitialValues: { offeringIntensity: OfferingIntensity.fullTime } },
-    );
+    const pendingFullTimeMSFAA = createFakeMSFAANumber({ student });
     pendingFullTimeMSFAA.createdAt = addDays(-2);
     // Signed full-time MSFAA (middle - yesterday).
     const signedFullTimeMSFAA = createFakeMSFAANumber(
       { student },
-      {
-        msfaaState: MSFAAStates.Signed,
-        msfaaInitialValues: { offeringIntensity: OfferingIntensity.fullTime },
-      },
+      { msfaaState: MSFAAStates.Signed },
     );
     signedFullTimeMSFAA.createdAt = addDays(-1);
     // Part-time MSFAA cancelled due to another province (most recent - today).
@@ -131,8 +125,7 @@ describe("MSFAANumberAESTController(e2e)-getStudentMSFAAActivity", () => {
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
-    const student = await saveFakeStudent(db.dataSource);
-    const endpoint = `/aest/msfaa-number/student/${student.id}`;
+    const endpoint = `/aest/msfaa-number/student/0`;
 
     // Act/Assert.
     await request(app.getHttpServer())

@@ -2,31 +2,6 @@
   <tab-container>
     <body-header-container>
       <template #header>
-        <body-header title="Active MSFAA Numbers" />
-      </template>
-      <content-group>
-        <v-row>
-          <v-col>
-            <title-value
-              property-title="Full-time"
-              :property-value="
-                emptyStringFiller(activeMSFAANumbers?.fullTimeMSFAANumber)
-              "
-            />
-          </v-col>
-          <v-col>
-            <title-value
-              property-title="Part-time"
-              :property-value="
-                emptyStringFiller(activeMSFAANumbers?.partTimeMSFAANumber)
-              "
-            />
-          </v-col>
-        </v-row>
-      </content-group>
-    </body-header-container>
-    <body-header-container>
-      <template #header>
         <body-header title="Activity" :records-count="msfaaActivity?.length" />
       </template>
       <content-group>
@@ -34,15 +9,19 @@
           :toggled="!msfaaActivity?.length"
           message="No MSFAA records found."
         >
-          <v-data-table :headers="MSFAAActivityHeaders" :items="msfaaActivity">
+          <v-data-table
+            :headers="MSFAAActivityHeaders"
+            :items="msfaaActivity"
+            :loading="isLoading"
+          >
+            <template #loading>
+              <v-skeleton-loader type="table-row@5" />
+            </template>
             <template #[`item.createdAt`]="{ item }">
               {{ dateOnlyLongString(item.createdAt) }}
             </template>
             <template #[`item.offeringIntensity`]="{ item }">
               {{ mapOfferingIntensity(item.offeringIntensity) }}
-            </template>
-            <template #[`item.msfaaNumber`]="{ item }">
-              {{ item.msfaaNumber }}
             </template>
             <template #[`item.dateSent`]="{ item }">
               {{
@@ -76,12 +55,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { useFormatters, useOffering } from "@/composables";
+import { ref, watchEffect } from "vue";
+import { useFormatters, useOffering, useSnackBar } from "@/composables";
 import { MSFAANumberService } from "@/services/MSFAANumberService";
 import { MSFAANumberAPIOutDTO } from "@/services/http/dto";
 import { MSFAAActivityHeaders } from "@/types/contracts/DataTableContract";
-import { OfferingIntensity } from "@/types";
 
 const props = defineProps({
   studentId: {
@@ -92,32 +70,23 @@ const props = defineProps({
 
 const { mapOfferingIntensity } = useOffering();
 const { dateOnlyLongString, emptyStringFiller } = useFormatters();
-
+const snackBar = useSnackBar();
+const isLoading = ref(false);
 const msfaaActivity = ref<MSFAANumberAPIOutDTO[]>([]);
 
-/** The active MSFAA number is the most recent signed and not cancelled one per intensity. */
-const activeMSFAANumbers = computed(() => ({
-  fullTimeMSFAANumber: msfaaActivity.value.find(
-    (r) =>
-      r.offeringIntensity === OfferingIntensity.fullTime &&
-      r.dateSigned &&
-      !r.cancelledDate,
-  )?.msfaaNumber,
-  partTimeMSFAANumber: msfaaActivity.value.find(
-    (r) =>
-      r.offeringIntensity === OfferingIntensity.partTime &&
-      r.dateSigned &&
-      !r.cancelledDate,
-  )?.msfaaNumber,
-}));
-
 const loadMSFAAActivity = async () => {
-  msfaaActivity.value = await MSFAANumberService.shared.getStudentMSFAAActivity(
-    props.studentId,
-  );
+  try {
+    isLoading.value = true;
+    msfaaActivity.value =
+      await MSFAANumberService.shared.getStudentMSFAAActivity(props.studentId);
+  } catch {
+    snackBar.error("An error occurred while loading MSFAA activity.");
+  } finally {
+    isLoading.value = false;
+  }
 };
 
-onMounted(async () => {
+watchEffect(async () => {
   await loadMSFAAActivity();
 });
 </script>

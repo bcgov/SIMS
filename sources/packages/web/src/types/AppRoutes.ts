@@ -130,6 +130,7 @@ export enum AppRoutes {
   PendingApplicationOfferingChangeRequests = "institution/application-offering-change-request/in-progress",
   PendingOfferings = "institution/offering/pending",
   PendingPrograms = "institution/program/pending",
+  MSFAAActivity = "msfaa-activity",
   // program
   Programs = "programs",
   ViewProgram = "institution/:institutionId/location/:locationId/program/:programId",
@@ -156,7 +157,6 @@ export enum AppRoutes {
   StudentNotes = "student-notes/:studentId",
   StudentRestrictions = "student-restrictions/:studentId",
   Balances = "balances",
-  MSFAAActivity = "msfaa-activity",
   StudentDetail = "student/:studentId",
   StudentProfile = "profile",
   Applications = "applications",

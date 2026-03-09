@@ -6,11 +6,9 @@ import {
   ParseIntPipe,
 } from "@nestjs/common";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
-import { AuthorizedParties } from "../../auth/authorized-parties.enum";
+import { AuthorizedParties, UserGroups } from "../../auth";
 import { AllowAuthorizedParty, Groups } from "../../auth/decorators";
-import { UserGroups } from "../../auth/user-groups.enum";
-import { StudentService } from "../../services";
-import { MSFAANumberService } from "../../services/msfaa-number/msfaa-number.service";
+import { MSFAANumberService, StudentService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { MSFAANumberAPIOutDTO } from "./models/msfaa-number.dto";
