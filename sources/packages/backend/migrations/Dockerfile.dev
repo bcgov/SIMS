@@ -27,7 +27,11 @@ COPY forms/src ./forms/src
 COPY backend/tsconfig.json ./forms/
 COPY backend/tsconfig.build.json ./forms/
 
-
+# Adding a nonroot user
+RUN addgroup -S nonroot \
+    && adduser -S nonroot -G nonroot
+    
+USER nonroot
 
 # Entry point
 CMD ["sh", "-c", "echo 'Migration container started.' && tail -f /dev/null"]
