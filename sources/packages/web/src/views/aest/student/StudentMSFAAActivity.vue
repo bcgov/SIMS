@@ -6,7 +6,7 @@
       </template>
       <content-group>
         <toggle-content
-          :toggled="!msfaaActivity?.length"
+          :toggled="!msfaaActivity?.length && !isLoading"
           message="No MSFAA records found."
         >
           <v-data-table
@@ -71,7 +71,7 @@ const props = defineProps({
 const { mapOfferingIntensity } = useOffering();
 const { dateOnlyLongString, emptyStringFiller } = useFormatters();
 const snackBar = useSnackBar();
-const isLoading = ref(false);
+const isLoading = ref(true);
 const msfaaActivity = ref<MSFAANumberAPIOutDTO[]>([]);
 
 const loadMSFAAActivity = async () => {
