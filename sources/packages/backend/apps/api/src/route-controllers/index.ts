@@ -105,7 +105,8 @@ export * from "./disbursement-schedule/disbursement-schedule.aest.controller";
 export * from "./disbursement-schedule/models/disbursement-schedule.dto";
 export * from "./system-lookup-configuration/models/system-lookup-configuration.dto";
 export * from "./system-lookup-configuration/system-lookup-configuration.controller";
+export * from "./form-submission/form-submission.controller.service";
 export * from "./form-submission/form-submission.students.controller";
 export * from "./form-submission/form-submission.aest.controller";
 export * from "./form-submission/models/form-submission.dto";
-
+export * from "./form-submission/form-submission.institutions.controller";

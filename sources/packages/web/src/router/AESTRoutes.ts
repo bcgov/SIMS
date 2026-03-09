@@ -207,19 +207,6 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.StudentFormSubmissionApproval,
-        name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_APPROVAL,
-        props: (route) => ({
-          formSubmissionId: Number.parseInt(
-            route.params.formSubmissionId as string,
-          ),
-        }),
-        component: StudentFormSubmissionApproval,
-        meta: {
-          clientType: ClientIdType.AEST,
-        },
-      },
-      {
         path: AppRoutes.ApplicationDetail,
         redirect: { name: AESTRoutesConst.APPLICATION_DETAILS },
         props: {
@@ -285,6 +272,30 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             name: AESTRoutesConst.STUDENT_APPLICATION_APPEAL_REQUESTS_APPROVAL,
             props: true,
             component: StudentApplicationAppealRequestsApproval,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.StudentFormSubmissionApproval,
+            name: AESTRoutesConst.STUDENT_APPLICATION_FORM_SUBMISSION_APPROVAL,
+            props: (route) => ({
+              formSubmissionId: Number.parseInt(
+                route.params.formSubmissionId as string,
+              ),
+              readOnly: false,
+              backTarget: {
+                name: "Assessments",
+                to: {
+                  name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
+                  params: {
+                    studentId: route.params.studentId,
+                    applicationId: route.params.applicationId,
+                  },
+                },
+              },
+            }),
+            component: StudentFormSubmissionApproval,
             meta: {
               clientType: ClientIdType.AEST,
             },

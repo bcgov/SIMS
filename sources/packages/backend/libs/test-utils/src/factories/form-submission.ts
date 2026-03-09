@@ -37,7 +37,8 @@ export async function saveFakeFormSubmission(
     numberOfItems?: number;
   },
 ): Promise<FormSubmission> {
-  const formCategory = options?.initialValues?.formCategory ?? FormCategory.StudentForm;
+  const formCategory =
+    options?.initialValues?.formCategory ?? FormCategory.StudentForm;
   const student = relations?.student ?? (await saveFakeStudent(db.dataSource));
   const dynamicFormConfiguration =
     relations?.dynamicFormConfiguration ??
@@ -49,7 +50,8 @@ export async function saveFakeFormSubmission(
   const formSubmission = new FormSubmission();
   formSubmission.student = student;
   formSubmission.creator = student.user;
-  formSubmission.submittedDate = new Date();
+  formSubmission.submittedDate =
+    options?.initialValues?.submittedDate ?? new Date();
   formSubmission.formCategory = formCategory;
   formSubmission.application = relations?.application;
   formSubmission.submissionStatus = submissionStatus;
