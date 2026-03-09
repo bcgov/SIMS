@@ -12,11 +12,9 @@ COPY backend/package*.json ./
 # Copying forms package.json and package-lock.json
 COPY forms/package*.json ./forms/
 
-# Installing backend dependencies
-RUN npm ci --ignore-scripts
-
-# Installing forms dependencies
-RUN cd forms && npm ci --ignore-scripts
+# Installing backend and forms dependencies
+RUN npm ci --ignore-scripts && \
+    cd forms && npm ci --ignore-scripts
 
 # Copying backend sources
 COPY backend/apps/db-migrations ./apps/db-migrations
