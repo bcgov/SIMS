@@ -44,6 +44,8 @@
                 density="comfortable"
                 color="primary"
                 icon="mdi-filter-variant"
+                aria-label="Filter search options"
+                title="Filter search options"
               />
             </template>
             <v-card class="pa-3">
