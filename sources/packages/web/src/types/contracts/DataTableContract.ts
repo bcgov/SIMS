@@ -797,6 +797,23 @@ export const PendingOfferingsHeaders = [
 ];
 
 /**
+ * MSFAA activity headers.
+ */
+export const MSFAAActivityHeaders = [
+  { title: "Date created", key: "createdAt", sortable: false },
+  { title: "Intensity", key: "offeringIntensity", sortable: false },
+  { title: "MSFAA", key: "msfaaNumber", sortable: false },
+  { title: "Date sent", key: "dateSent", sortable: false },
+  { title: "Date signed", key: "dateSigned", sortable: false },
+  { title: "Cancelled date", key: "cancelledDate", sortable: false },
+  {
+    title: "Cancellation province",
+    key: "newIssuingProvince",
+    sortable: false,
+  },
+];
+
+/**
  * Pending programs header.
  */
 export const PendingProgramsHeaders = [
