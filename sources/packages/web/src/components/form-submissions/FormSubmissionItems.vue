@@ -1,64 +1,69 @@
 <template>
-  <v-switch
-    class="float-right mr-2"
-    v-model="expandAllModel"
-    label="Expand all"
-    hide-details
-    color="primary"
-    @update:model-value="expandAllUpdated"
-  />
-  <v-expansion-panels
-    class="mt-5"
-    multiple
-    v-model="expansionPanelsModel"
-    @update:model-value="expansionPanelsUpdated"
+  <v-skeleton-loader
+    :loading="loading"
+    type="list-item-two-line@2, article, actions"
   >
-    <v-expansion-panel
-      :eager="true"
-      v-for="submissionItem in submissionItems"
-      :key="submissionItem.dynamicConfigurationId"
-      :value="submissionItem.dynamicConfigurationId"
+    <v-switch
+      class="float-right mr-2"
+      v-model="expandAllModel"
+      label="Expand all"
+      hide-details
+      color="primary"
+      @update:model-value="expandAllUpdated"
+    />
+    <v-expansion-panels
+      class="mt-5"
+      multiple
+      v-model="expansionPanelsModel"
+      @update:model-value="expansionPanelsUpdated"
     >
-      <template #title>
-        <v-row>
-          <v-col>
-            <span class="category-header-medium color-blue">{{
-              submissionItem.formType
-            }}</span>
-          </v-col>
-          <v-col>
-            <status-chip-form-submission-decision
-              v-if="submissionItem.decision"
-              class="float-right mr-4"
-              :status="submissionItem.decision?.decisionStatus"
-            />
-          </v-col>
-        </v-row>
-      </template>
-      <template #text>
-        <formio
-          :form-key="submissionItem.dynamicConfigurationId"
-          :form-name="submissionItem.formName"
-          :data="submissionItem.formData"
-          :loading="!allFormsLoaded"
-          :read-only="readOnly"
-          @loaded="formLoaded"
-        ></formio>
-        <div class="my-4">
-          <!-- Allow the component to be shared with the decision view for the Ministry, also
+      <v-expansion-panel
+        :eager="true"
+        v-for="submissionItem in submissionItems"
+        :key="submissionItem.dynamicConfigurationId"
+        :value="submissionItem.dynamicConfigurationId"
+      >
+        <template #title>
+          <v-row>
+            <v-col>
+              <span class="category-header-medium color-blue">{{
+                submissionItem.formType
+              }}</span>
+            </v-col>
+            <v-col>
+              <status-chip-form-submission-decision
+                v-if="submissionItem.decision"
+                class="float-right mr-4"
+                :status="submissionItem.decision?.decisionStatus"
+              />
+            </v-col>
+          </v-row>
+        </template>
+        <template #text>
+          <formio
+            :form-key="submissionItem.dynamicConfigurationId"
+            :form-name="submissionItem.formName"
+            :data="submissionItem.formData"
+            :loading="!allFormsLoaded"
+            :read-only="readOnly"
+            @loaded="formLoaded"
+          ></formio>
+          <div class="my-4">
+            <!-- Allow the component to be shared with the decision view for the Ministry, also
            allowing institutions to share the approvals statuses visualization. -->
-          <slot name="decision" :decision="submissionItem.decision"></slot>
-        </div>
-      </template>
-    </v-expansion-panel>
-  </v-expansion-panels>
-  <div class="mt-4">
-    <slot
-      name="actions"
-      :submit="submit"
-      :all-forms-loaded="allFormsLoaded"
-    ></slot>
-  </div>
+            <slot name="decision" :decision="submissionItem.decision"></slot>
+          </div>
+        </template>
+      </v-expansion-panel>
+    </v-expansion-panels>
+    <div class="mt-4">
+      <slot
+        name="actions"
+        :submit="submit"
+        :all-forms-loaded="allFormsLoaded"
+      ></slot>
+    </div>
+  </v-skeleton-loader>
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
@@ -88,6 +93,11 @@ export default defineComponent({
       type: Number,
       default: null,
       required: false,
+    },
+    loading: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     readOnly: {
       type: Boolean,

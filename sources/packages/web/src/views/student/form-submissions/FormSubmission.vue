@@ -20,6 +20,7 @@
       <form-submission-items
         :submission-items="formSubmissionItems"
         :application-id="applicationId"
+        :loading="loadingSubmissionForms"
         @submitted="submitted"
       >
         <template #actions="{ submit, allFormsLoaded }">
@@ -72,6 +73,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const formSubmissionItems = ref([] as FormSubmissionItem[]);
     const processing = ref(false);
+    const loadingSubmissionForms = ref(true);
 
     const referenceForm = computed(() => formSubmissionItems.value[0]);
 
@@ -104,28 +106,37 @@ export default defineComponent({
     };
 
     watchEffect(async () => {
-      const formConfigurations =
-        await FormSubmissionService.shared.getSubmissionForms();
-      formSubmissionItems.value =
-        props.formDefinitionIds.map<FormSubmissionItem>((formDefinitionId) => {
-          const formConfiguration = formConfigurations.configurations.find(
-            (form) => form.id === formDefinitionId,
+      try {
+        loadingSubmissionForms.value = true;
+        const formConfigurations =
+          await FormSubmissionService.shared.getSubmissionForms();
+        formSubmissionItems.value =
+          props.formDefinitionIds.map<FormSubmissionItem>(
+            (formDefinitionId) => {
+              const formConfiguration = formConfigurations.configurations.find(
+                (form) => form.id === formDefinitionId,
+              );
+              if (!formConfiguration) {
+                snackBar.error(
+                  "An unexpected error occurred loading a form configuration.",
+                );
+                throw new Error("Invalid form configuration ID.");
+              }
+              return {
+                dynamicConfigurationId: formConfiguration.id,
+                formType: formConfiguration.formType,
+                category: formConfiguration.formCategory,
+                formName: formConfiguration.formDefinitionName,
+                formData: {},
+                files: [],
+              };
+            },
           );
-          if (!formConfiguration) {
-            snackBar.error(
-              "An unexpected error occurred loading a form configuration.",
-            );
-            throw new Error("Invalid form configuration ID.");
-          }
-          return {
-            dynamicConfigurationId: formConfiguration.id,
-            formType: formConfiguration.formType,
-            category: formConfiguration.formCategory,
-            formName: formConfiguration.formDefinitionName,
-            formData: {},
-            files: [],
-          };
-        });
+      } catch {
+        snackBar.error("An unexpected error happened while loading data.");
+      } finally {
+        loadingSubmissionForms.value = false;
+      }
     });
 
     const backRouteLocation = computed(() => ({
@@ -147,6 +158,7 @@ export default defineComponent({
       formSubmissionItems,
       submitted,
       processing,
+      loadingSubmissionForms,
       cancel,
     };
   },

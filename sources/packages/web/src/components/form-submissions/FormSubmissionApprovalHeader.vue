@@ -24,7 +24,10 @@
       </ul>
     </template>
     <template #status-chip>
-      <status-chip-form-submission :status="formSubmission.status" />
+      <status-chip-form-submission
+        v-if="!loading"
+        :status="formSubmission.status"
+      />
     </template>
   </body-header>
 </template>
@@ -47,6 +50,10 @@ export default defineComponent({
   props: {
     formSubmission: {
       type: Object as PropType<FormSubmission>,
+      required: true,
+    },
+    loading: {
+      type: Boolean,
       required: true,
     },
   },

@@ -12,6 +12,8 @@ import {
   NoteType,
   FormCategory,
   FormSubmissionItemDecision,
+  ApplicationStatus,
+  Application,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -20,6 +22,7 @@ import {
   FORM_SUBMISSION_ITEM_OUTDATED,
   FORM_SUBMISSION_NOT_FOUND,
   FORM_SUBMISSION_NOT_PENDING,
+  FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE,
   FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
 } from "./constants";
 import {
@@ -48,7 +51,7 @@ export class FormSubmissionApprovalService {
    * form submission items array.
    * @returns The form submission if found, otherwise null.
    */
-  async getFormSubmissionsById(
+  async getFormSubmissionById(
     formSubmissionId: number,
     options?: { itemId?: number },
   ): Promise<FormSubmission | null> {
@@ -132,7 +135,11 @@ export class FormSubmissionApprovalService {
       const submissionItem = await formSubmissionItemRepo.findOne({
         select: {
           id: true,
-          formSubmission: { id: true, submissionStatus: true },
+          formSubmission: {
+            id: true,
+            submissionStatus: true,
+            application: { id: true, applicationStatus: true },
+          },
           updatedAt: true,
           dynamicFormConfiguration: {
             id: true,
@@ -140,7 +147,7 @@ export class FormSubmissionApprovalService {
           },
         },
         relations: {
-          formSubmission: true,
+          formSubmission: { application: true },
           dynamicFormConfiguration: true,
         },
         where: { id: submissionItemId },
@@ -154,6 +161,9 @@ export class FormSubmissionApprovalService {
       this.checkAuthorizationForApproval(
         submissionItem.dynamicFormConfiguration.formCategory,
         userRoles,
+      );
+      this.checkFormSubmissionRelatedApplicationStatus(
+        submissionItem.formSubmission.application,
       );
       if (
         submissionItem.updatedAt.getTime() !==
@@ -241,6 +251,7 @@ export class FormSubmissionApprovalService {
           student: { id: true },
           submissionStatus: true,
           formCategory: true,
+          application: { id: true, applicationStatus: true },
           formSubmissionItems: {
             id: true,
             updatedAt: true,
@@ -253,6 +264,7 @@ export class FormSubmissionApprovalService {
         },
         relations: {
           student: true,
+          application: true,
           formSubmissionItems: { currentDecision: { decisionNote: true } },
         },
         where: { id: submissionId },
@@ -266,6 +278,9 @@ export class FormSubmissionApprovalService {
       this.checkAuthorizationForApproval(
         formSubmission.formCategory,
         userRoles,
+      );
+      this.checkFormSubmissionRelatedApplicationStatus(
+        formSubmission.application,
       );
       if (formSubmission.submissionStatus !== FormSubmissionStatus.Pending) {
         throw new CustomNamedError(
@@ -422,6 +437,28 @@ export class FormSubmissionApprovalService {
       throw new CustomNamedError(
         "User does not have the required role to perform this action.",
         FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
+      );
+    }
+  }
+
+  /**
+   * Ensures data change will not happen when the application is not in the expected state,
+   * for instance, if a previously completed application has a change request and is no
+   * longer the current version.
+   * @param application application to check.
+   * @throws CustomNamedError with FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE
+   * if the application is present and is not in completed status.
+   */
+  private checkFormSubmissionRelatedApplicationStatus(
+    application: Pick<Application, "applicationStatus"> | undefined,
+  ): void {
+    if (
+      application &&
+      application.applicationStatus !== ApplicationStatus.Completed
+    ) {
+      throw new CustomNamedError(
+        "The application associated with the form submission is not in completed status.",
+        FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE,
       );
     }
   }
