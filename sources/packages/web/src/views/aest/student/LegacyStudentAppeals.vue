@@ -3,12 +3,10 @@
     <template #header>
       <header-navigator
         title="Student requests"
-        sub-title="Change Requests (Pre 2025-2026)"
+        sub-title="Appeals (2025-2026 and later)"
       />
     </template>
-    <legacy-pending-appeals-table
-      :appeals-type="AppealType.LegacyChangeRequest"
-    />
+    <legacy-pending-appeals-table :appeals-type="AppealType.Appeal" />
   </full-page-container>
 </template>
 

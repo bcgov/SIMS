@@ -14,6 +14,7 @@ import { FieldSortOrder } from "@sims/utilities";
 import {
   CASInvoiceBatchApprovalStatus,
   CASInvoiceStatus,
+  FormCategory,
   OfferingIntensity,
   ProgramStatus,
 } from "@sims/sims-db";
@@ -101,6 +102,19 @@ export class StudentAppealPendingPaginationOptionsAPIInDTO extends PaginationOpt
   sortField?: string;
   @IsEnum(AppealType)
   appealType: AppealType;
+}
+
+export class FormSubmissionPendingPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["submittedDate", "lastName", "applicationNumber"])
+  sortField?: string;
+  @IsOptional()
+  @IsBoolean()
+  @ToBoolean()
+  hasApplicationScope?: boolean;
+  @IsOptional()
+  @IsEnum(FormCategory)
+  formCategory?: FormCategory;
 }
 
 export class ApplicationChangeRequestPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { Brackets, DataSource } from "typeorm";
 import {
   Application,
   User,
@@ -10,11 +10,13 @@ import {
   FormSubmissionItem,
   DynamicFormConfiguration,
   FormCategory,
+  getUserFullNameLikeSearch,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
   FormSubmissionConfig,
   FormSubmissionModel,
+  FormSubmissionPendingSummary,
 } from "./form-submission.models";
 import {
   DynamicFormConfigurationService,
@@ -22,10 +24,15 @@ import {
   FORM_SUBMISSION_UNKNOWN_FORM_CONFIGURATION,
   FormService,
 } from "../../services";
-import { CustomNamedError, processInParallel } from "@sims/utilities";
+import {
+  CustomNamedError,
+  FieldSortOrder,
+  processInParallel,
+} from "@sims/utilities";
 import { DryRunSubmissionResult } from "../../types";
 import { FormSubmissionValidator } from "./form-submission-validator";
 import { SupplementaryDataLoader } from "./form-supplementary-data";
+import { FormSubmissionPendingPaginationOptions, PaginatedResults } from "../../utilities";
 
 /**
  * Manages how the form submissions are processed, including the validations,
@@ -119,6 +126,108 @@ export class FormSubmissionService {
       // TODO: send notification.
       return entityManager.getRepository(FormSubmission).save(formSubmission);
     });
+  }
+
+  /**
+   * Gets all pending student form submissions awaiting ministry review.
+   * Each result represents a single {@link FormSubmission} and can include
+   * multiple forms through an array of form names when a submission has more
+   * than one associated form.
+   * Only submissions with the specified category and status
+   * {@link FormSubmissionStatus.Pending} are returned, and pagination/count
+   * are based on the number of submissions, not the number of individual forms.
+   * @param paginationOptions options to control pagination, sorting, and search.
+   * @returns paginated list of pending form submissions across all categories, one entry per submission
+   * with form names aggregated per submission.
+   */
+  async getPendingFormSubmissions(
+    paginationOptions: FormSubmissionPendingPaginationOptions,
+  ): Promise<PaginatedResults<FormSubmissionPendingSummary>> {
+    const query = this.dataSource
+      .getRepository(FormSubmission)
+      .createQueryBuilder("formSubmission")
+      .select([
+        "formSubmission.id",
+        "formSubmission.submittedDate",
+        "student.id",
+        "user.firstName",
+        "user.lastName",
+        "formSubmissionItem.id",
+        "dynamicFormConfiguration.formDescription",
+        "dynamicFormConfiguration.formType",
+        "application.id",
+        "application.applicationNumber",
+      ])
+      .innerJoin("formSubmission.student", "student")
+      .innerJoin("student.user", "user")
+      .innerJoin("formSubmission.formSubmissionItems", "formSubmissionItem")
+      .innerJoin(
+        "formSubmissionItem.dynamicFormConfiguration",
+        "dynamicFormConfiguration",
+      )
+      .leftJoin("formSubmission.application", "application")
+      .where("formSubmission.submissionStatus = :status", {
+        status: FormSubmissionStatus.Pending,
+      });
+
+    if (paginationOptions.hasApplicationScope === true) {
+      query.andWhere("application.id IS NOT NULL");
+    } else if (paginationOptions.hasApplicationScope === false) {
+      query.andWhere("application.id IS NULL");
+    }
+
+    if (paginationOptions.formCategory) {
+      query.andWhere("formSubmission.formCategory = :formCategory", {
+        formCategory: paginationOptions.formCategory,
+      });
+    }
+
+    if (paginationOptions.searchCriteria) {
+      const trimmedSearchCriteria = paginationOptions.searchCriteria.trim();
+      query
+        .andWhere(
+          new Brackets((qb) =>
+            qb
+              .where(getUserFullNameLikeSearch())
+              .orWhere("application.applicationNumber = :applicationNumber"),
+          ),
+        )
+        .setParameter("searchCriteria", `%${trimmedSearchCriteria}%`)
+        .setParameter("applicationNumber", trimmedSearchCriteria);
+    }
+
+    const sortFieldMapping: Record<string, string> = {
+      submittedDate: "formSubmission.submittedDate",
+      lastName: "user.lastName",
+      applicationNumber: "application.applicationNumber",
+    };
+    const dbSortField =
+      sortFieldMapping[paginationOptions.sortField ?? "submittedDate"] ??
+      "formSubmission.submittedDate";
+
+    query
+      .orderBy(dbSortField, paginationOptions.sortOrder ?? FieldSortOrder.DESC)
+      .skip(paginationOptions.page * paginationOptions.pageLimit)
+      .take(paginationOptions.pageLimit);
+
+    const [items, count] = await query.getManyAndCount();
+
+    return {
+      results: items.map((item) => ({
+        formSubmissionId: item.id,
+        studentId: item.student.id,
+        submittedDate: item.submittedDate,
+        firstName: item.student.user.firstName,
+        lastName: item.student.user.lastName,
+        formNames: item.formSubmissionItems.map(
+          (formSubmissionItem) =>
+            formSubmissionItem.dynamicFormConfiguration.formType as string,
+        ),
+        applicationId: item.application?.id,
+        applicationNumber: item.application?.applicationNumber,
+      })),
+      count,
+    };
   }
 
   /**
