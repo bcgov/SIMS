@@ -36,6 +36,7 @@ import { ApplicationChangeRequestApi } from "@/services/http/ApplicationChangeRe
 import { DisbursementScheduleApi } from "@/services/http/DisbursementScheduleApi";
 import { SystemLookupConfigurationApi } from "@/services/http/SystemLookupConfigurationApi";
 import { FormSubmissionApi } from "@/services/http/FormSubmissionApi";
+import { MSFAANumberApi } from "@/services/http/MSFAANumberApi";
 
 const ApiClient = {
   AuditApi: new AuditApi(),
@@ -77,6 +78,7 @@ const ApiClient = {
   DisbursementSchedule: new DisbursementScheduleApi(),
   SystemLookupConfigurationApi: new SystemLookupConfigurationApi(),
   FormSubmissionApi: new FormSubmissionApi(),
+  MSFAANumberApi: new MSFAANumberApi(),
 };
 
 export default ApiClient;
