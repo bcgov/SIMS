@@ -7,8 +7,12 @@ import {
   FormSubmissionItemDecisionAPIInDTO,
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionCompletionAPIInDTO,
-  FormSubmissionStudentAPIOutDTO,
+  FormSubmissionAPIOutDTO,
+  FormSubmissionItemAPIOutDTO,
+  FormSubmissionPendingSummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
+import { FormCategory, PaginationOptions } from "@/types";
 
 export class FormSubmissionService {
   // Share Instance
@@ -28,7 +32,7 @@ export class FormSubmissionService {
 
   // TODO: To be implemented.
   async getFormSubmissionSummary(): Promise<{
-    submissions: FormSubmissionStudentAPIOutDTO[];
+    submissions: FormSubmissionItemAPIOutDTO[];
   }> {
     return ApiClient.FormSubmissionApi.getFormSubmissionSummary();
   }
@@ -41,16 +45,21 @@ export class FormSubmissionService {
    * on each form item.
    * @param formSubmissionId ID of the form submission to retrieve the details for.
    * @param options.
+   * - `studentId`: optional ID used to validate the institution access to the student data.
+   * Must be provided with `applicationId`.
+   * - `applicationId`: optional ID used to validate the institution access to the application data.
+   * Must be provided with `studentId`.
    * - `itemId`: optional ID of the form submission item to filter the details for.
    * @returns form submission details including individual form items and their details.
    */
   async getFormSubmission(
     formSubmissionId: number,
-    options?: { itemId?: number },
-  ): Promise<FormSubmissionStudentAPIOutDTO | FormSubmissionMinistryAPIOutDTO> {
-    return ApiClient.FormSubmissionApi.getFormSubmission(formSubmissionId, {
-      itemId: options?.itemId,
-    });
+    options?: { studentId?: number; applicationId?: number; itemId?: number },
+  ): Promise<FormSubmissionAPIOutDTO | FormSubmissionMinistryAPIOutDTO> {
+    return ApiClient.FormSubmissionApi.getFormSubmission(
+      formSubmissionId,
+      options,
+    );
   }
 
   /**
@@ -71,6 +80,24 @@ export class FormSubmissionService {
    */
   async submitForm(payload: FormSubmissionAPIInDTO): Promise<void> {
     await ApiClient.FormSubmissionApi.submitForm(payload);
+  }
+
+  /**
+   * Gets all pending form submissions for ministry review across all form categories.
+   * @param paginationOptions options to execute the pagination.
+   * @param options additional filter options.
+   * - `hasApplicationScope` when true returns only submissions linked to an application; when false returns only submissions not linked.
+   * - `formCategory` filters results to a specific form category.
+   * @returns paginated list of pending form submissions.
+   */
+  async getPendingFormSubmissions(
+    paginationOptions: PaginationOptions,
+    options?: { hasApplicationScope?: boolean; formCategory?: FormCategory },
+  ): Promise<PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>> {
+    return ApiClient.FormSubmissionApi.getPendingFormSubmissions(
+      paginationOptions,
+      options,
+    );
   }
 
   /**

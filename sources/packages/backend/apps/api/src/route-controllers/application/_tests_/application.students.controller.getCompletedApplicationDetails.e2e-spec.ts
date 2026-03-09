@@ -1303,7 +1303,12 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           applicationId: changeRequestApplication.id,
           applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
           studentIncomeVerificationStatus: SuccessWaitingStatus.Waiting,
-          partnerInfo: SuccessWaitingStatus.Waiting,
+          partnerInfo: {
+            supportingUserId: partner.id,
+            fullName: partner.fullName,
+            status: SuccessWaitingStatus.Waiting,
+            isAbleToReport: true,
+          },
         },
       });
   });
@@ -1398,13 +1403,13 @@ describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", ()
           parentsInfo: [
             {
               supportingUserId: parentWaitingIncome.id,
-              parentFullName: parentWaitingIncome.fullName,
+              fullName: parentWaitingIncome.fullName,
               status: SuccessWaitingStatus.Success,
               isAbleToReport: parentWaitingIncome.isAbleToReport,
             },
             {
               supportingUserId: parentWaitingData.id,
-              parentFullName: parentWaitingData.fullName,
+              fullName: parentWaitingData.fullName,
               status: SuccessWaitingStatus.Waiting,
               isAbleToReport: parentWaitingData.isAbleToReport,
             },

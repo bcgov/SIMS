@@ -137,6 +137,14 @@ export enum DataTableSortByOrder {
 }
 
 /**
+ * Appeal type for the legacy appeals and change requests queues.
+ */
+export enum AppealType {
+  LegacyChangeRequest = "legacy-change-request",
+  Appeal = "appeal",
+}
+
+/**
  * DataTable options.
  */
 export interface DataTableOptions {
@@ -510,6 +518,23 @@ export const PendingChangeRequestsTableHeaders = [
   { title: "Given names", sortable: false, key: "firstName" },
   { title: "Last name", sortable: true, key: "lastName" },
   { title: "Application", sortable: true, key: "applicationNumber" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+export const PendingAppealsTableHeaders = [
+  { title: "Date submitted", sortable: true, key: "submittedDate" },
+  { title: "Given names", sortable: false, key: "firstName" },
+  { title: "Last name", sortable: true, key: "lastName" },
+  { title: "Application", sortable: true, key: "applicationNumber" },
+  { title: "Type", sortable: false, key: "appealType" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+export const PendingFormsTableHeaders = [
+  { title: "Date submitted", sortable: true, key: "submittedDate" },
+  { title: "Given names", sortable: false, key: "firstName" },
+  { title: "Last name", sortable: true, key: "lastName" },
+  { title: "Form", sortable: false, key: "formNames" },
   { title: "Action", sortable: false, key: "action" },
 ];
 

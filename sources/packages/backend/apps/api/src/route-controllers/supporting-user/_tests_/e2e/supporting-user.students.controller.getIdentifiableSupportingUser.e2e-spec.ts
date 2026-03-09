@@ -19,6 +19,7 @@ import {
 import {
   DynamicFormConfiguration,
   DynamicFormType,
+  OfferingIntensity,
   SupportingUserType,
 } from "@sims/sims-db";
 
@@ -208,6 +209,7 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
           isAbleToReport: false,
           supportingUserType: SupportingUserType.Parent,
           programYearStartDate: recentPYParentForm.programYear.startDate,
+          offeringIntensity: OfferingIntensity.partTime,
         });
     },
   );
@@ -254,6 +256,7 @@ describe("SupportingUserStudentsController(e2e)-getIdentifiableSupportingUser", 
           isAbleToReport: false,
           supportingUserType: SupportingUserType.Partner,
           programYearStartDate: recentPYPartnerForm.programYear.startDate,
+          offeringIntensity: OfferingIntensity.partTime,
         });
     },
   );
