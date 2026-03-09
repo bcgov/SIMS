@@ -437,9 +437,7 @@ export default defineComponent({
           },
         );
         await reloadFormSubmissionItem(decision.submissionItemId);
-        snackBar.success(
-          "Decision saved! The decision can be changed till the main submission is no longer pending.",
-        );
+        snackBar.success("Decision saved.");
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
           if (error.errorType === FORM_SUBMISSION_ITEM_OUTDATED) {

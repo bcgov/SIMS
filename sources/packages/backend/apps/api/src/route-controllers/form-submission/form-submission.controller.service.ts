@@ -17,11 +17,12 @@ export class FormSubmissionControllerService {
   /**
    * Get the details of a form submission, including the individual form items and their details.
    * @param formSubmissionId ID of the form submission to retrieve the details for.
+   * @param studentId ID used to validate the access to the student data.
    * @param options.
-   * - `studentId`: optional ID used to validate the institution access to the student data.
    * - `includeBasicDecisionDetails`: optional flag to include basic decision details, besides
    * the decision status. Used for institutions to have access to more details than the student
    * to better support them.
+   * - `applicationId`: optional ID of the application, used to validate the access to the form submission
    * @returns form submission details.
    */
   async getFormSubmission(

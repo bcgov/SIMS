@@ -79,7 +79,7 @@ import {
 import { ref, PropType, defineComponent, watchEffect } from "vue";
 import { useDisplay } from "vuetify";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
-import { useFormatters, useFeatureToggles } from "@/composables";
+import { useFormatters } from "@/composables";
 import StatusChipAssessmentHistory from "@/components/generic/StatusChipAssessmentHistory.vue";
 import { AssessmentHistorySummaryAPIOutDTO } from "@/services/http/dto/Assessment.dto";
 import AssessmentTags from "@/components/common/students/assessment/AssessmentTags.vue";
@@ -119,7 +119,6 @@ export default defineComponent({
       emptyStringFiller,
       getISODateHourMinuteString,
     } = useFormatters();
-    const { isFormSubmissionEnabled } = useFeatureToggles();
     const { mobile: isMobile } = useDisplay();
 
     const assessmentHistory = ref([] as AssessmentHistorySummaryAPIOutDTO[]);

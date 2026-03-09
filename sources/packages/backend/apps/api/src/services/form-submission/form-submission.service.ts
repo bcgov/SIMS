@@ -32,9 +32,7 @@ export class FormSubmissionService {
    * usually displayed separated from the completed ones that potentially generated
    * assessment.
    * @param applicationId the application ID to filter the form submissions.
-   * @param studentId optional student ID to further filter the form submissions.
-   * If not provided, all non-completed student appeals for the application will
-   * be returned regardless of the student.
+   * @param studentId optional student ID for data access authorization.
    * @returns a list of non-completed form submissions for the given application.
    */
   async getNonCompletedStudentAppeals(
