@@ -6,17 +6,17 @@
           Custom search input slot. When provided, it replaces the default
           text field, allowing full control over the search input.
         -->
-        <slot v-if="slots['prepend-search']" name="prepend-search"></slot>
-        <v-text-field
-          v-else
-          density="compact"
-          :label="searchLabel ?? 'Search'"
-          variant="outlined"
-          v-model="searchText"
-          @keyup.enter="$emit('search')"
-          prepend-inner-icon="mdi-magnify"
-          hide-details="auto"
-        />
+        <slot name="prepend-search">
+          <v-text-field
+            density="compact"
+            :label="searchLabel ?? 'Search'"
+            variant="outlined"
+            v-model="searchText"
+            @keyup.enter="$emit('search')"
+            prepend-inner-icon="mdi-magnify"
+            hide-details="auto"
+          />
+        </slot>
       </v-col>
       <v-col cols="auto" class="pa-0 pr-2 mb-1">
         <v-btn color="primary" :loading="loading" @click="$emit('search')"
@@ -66,14 +66,14 @@ import { ref, useSlots } from "vue";
 const slots = useSlots();
 const filterMenuOpen = ref(false);
 defineProps<{
-  /** Label displayed inside the default search text field. */
+  // Label displayed inside the default search text field.
   searchLabel?: string;
-  /** When true, the Search button displays a loading indicator. */
+  // When true, the Search button displays a loading indicator.
   loading?: boolean;
 }>();
-/** Emitted when the user clicks the Search button or presses Enter in the text field. */
+// Emitted when the user clicks the Search button or presses Enter in the text field.
 defineEmits(["search"]);
 
-/** Bound to the default search text field value. Not required when the `prepend-search` slot is used. */
+// Bound to the default search text field value. Not required when the `prepend-search` slot is used.
 const searchText = defineModel<string>();
 </script>
