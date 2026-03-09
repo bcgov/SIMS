@@ -16,7 +16,7 @@ import {
   getAESTToken,
   createTestingAppModule,
 } from "../../../../testHelpers";
-import { noteToApiReturn } from "./test-utils";
+import { transformNoteToApiReturn } from "./test-utils";
 
 describe("NoteAESTController(e2e)-getStudentNotes", () => {
   let app: INestApplication;
@@ -158,7 +158,7 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
         BEARER_AUTH_TYPE,
       )
       .expect(HttpStatus.OK)
-      .expect([noteToApiReturn(expectedNote)]);
+      .expect([transformNoteToApiReturn(expectedNote)]);
   });
 
   it("Should get two student notes from two different categories when the two categories are provided as a filter.", async () => {
@@ -185,8 +185,8 @@ describe("NoteAESTController(e2e)-getStudentNotes", () => {
       )
       .expect(HttpStatus.OK)
       .expect([
-        noteToApiReturn(studentFormNote),
-        noteToApiReturn(studentAppealNote),
+        transformNoteToApiReturn(studentFormNote),
+        transformNoteToApiReturn(studentAppealNote),
       ]);
   });
 

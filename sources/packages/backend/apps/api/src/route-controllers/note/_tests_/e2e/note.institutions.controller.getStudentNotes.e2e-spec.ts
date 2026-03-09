@@ -26,7 +26,7 @@ import {
   InstitutionTokenTypes,
   INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
 } from "../../../../testHelpers";
-import { noteToApiReturn } from "./test-utils";
+import { transformNoteToApiReturn } from "./test-utils";
 
 describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
   let app: INestApplication;
@@ -76,7 +76,7 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
     const expectedAPIReturnNotes = savedNotes
       .slice()
       .reverse()
-      .map((savedNote) => noteToApiReturn(savedNote));
+      .map((savedNote) => transformNoteToApiReturn(savedNote));
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
@@ -197,7 +197,7 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([noteToApiReturn(expectedNote)]);
+      .expect([transformNoteToApiReturn(expectedNote)]);
   });
 
   it("Should not get notes for student restriction and resolution notes with notification type 'no effect' when any are available.", async () => {
@@ -236,7 +236,10 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([noteToApiReturn(designationNote), noteToApiReturn(generalNote)]);
+      .expect([
+        transformNoteToApiReturn(designationNote),
+        transformNoteToApiReturn(generalNote),
+      ]);
   });
 
   afterAll(async () => {

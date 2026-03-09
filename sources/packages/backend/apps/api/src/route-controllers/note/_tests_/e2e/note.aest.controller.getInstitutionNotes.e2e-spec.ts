@@ -16,7 +16,7 @@ import {
   createFakeNote,
   saveFakeInstitutionNotes,
 } from "@sims/test-utils/factories/note";
-import { noteToApiReturn } from "./test-utils";
+import { transformNoteToApiReturn } from "./test-utils";
 
 describe("NoteAESTController(e2e)-getInstitutionNotes", () => {
   let app: INestApplication;
@@ -84,7 +84,7 @@ describe("NoteAESTController(e2e)-getInstitutionNotes", () => {
       .get(endpoint)
       .auth(await getAESTToken(), BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([noteToApiReturn(institutionNote)]);
+      .expect([transformNoteToApiReturn(institutionNote)]);
   });
 
   it("Should filter institution notes when a filter is provided.", async () => {
@@ -109,7 +109,7 @@ describe("NoteAESTController(e2e)-getInstitutionNotes", () => {
       .get(endpoint)
       .auth(await getAESTToken(), BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([noteToApiReturn(expectedNote)]);
+      .expect([transformNoteToApiReturn(expectedNote)]);
   });
 
   it("Should throw NotFoundException when institution not found.", async () => {

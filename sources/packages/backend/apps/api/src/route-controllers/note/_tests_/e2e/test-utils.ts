@@ -5,7 +5,7 @@ import { Note } from "@sims/sims-db";
  * @param note note to be transformed.
  * @returns an object item for the notes returned by the API.
  */
-export function noteToApiReturn(note: Note) {
+export function transformNoteToApiReturn(note: Note) {
   return {
     id: note.id,
     noteType: note.noteType,
