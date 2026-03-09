@@ -13,6 +13,7 @@ import {
   FormCategory,
   FormSubmissionItemDecision,
   ApplicationStatus,
+  Application,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -161,16 +162,9 @@ export class FormSubmissionApprovalService {
         submissionItem.dynamicFormConfiguration.formCategory,
         userRoles,
       );
-      if (
-        submissionItem.formSubmission.application?.id &&
-        submissionItem.formSubmission.application.applicationStatus !==
-          ApplicationStatus.Completed
-      ) {
-        throw new CustomNamedError(
-          "The application associated with the form submission is not in completed status.",
-          FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE,
-        );
-      }
+      this.checkFormSubmissionRelatedApplicationStatus(
+        submissionItem.formSubmission.application,
+      );
       if (
         submissionItem.updatedAt.getTime() !==
         formItemDecision.lastUpdateDate.getTime()
@@ -285,16 +279,9 @@ export class FormSubmissionApprovalService {
         formSubmission.formCategory,
         userRoles,
       );
-      if (
-        formSubmission.application?.id &&
-        formSubmission.application.applicationStatus !==
-          ApplicationStatus.Completed
-      ) {
-        throw new CustomNamedError(
-          "The application associated with the form submission is not in completed status.",
-          FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE,
-        );
-      }
+      this.checkFormSubmissionRelatedApplicationStatus(
+        formSubmission.application,
+      );
       if (formSubmission.submissionStatus !== FormSubmissionStatus.Pending) {
         throw new CustomNamedError(
           "Final decision cannot be made on a form submission with status different than pending.",
@@ -450,6 +437,28 @@ export class FormSubmissionApprovalService {
       throw new CustomNamedError(
         "User does not have the required role to perform this action.",
         FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
+      );
+    }
+  }
+
+  /**
+   * Ensures data change will not happen when the application is not in the expected state,
+   * for instance, if a previously completed application has a change request and is no
+   * longer the current version.
+   * @param application application to check.
+   * @throws CustomNamedError with FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE
+   * if the application is present and is not in completed status.
+   */
+  private checkFormSubmissionRelatedApplicationStatus(
+    application: Pick<Application, "applicationStatus"> | undefined,
+  ): void {
+    if (
+      application &&
+      application.applicationStatus !== ApplicationStatus.Completed
+    ) {
+      throw new CustomNamedError(
+        "The application associated with the form submission is not in completed status.",
+        FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE,
       );
     }
   }
