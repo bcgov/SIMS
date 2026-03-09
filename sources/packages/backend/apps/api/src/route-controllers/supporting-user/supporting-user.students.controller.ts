@@ -54,8 +54,6 @@ export class SupportingUserStudentsController {
   /**
    * Get supporting user details of the supporting user for whom
    * the student is expected to report the information.
-   ** The access of the supporting user details is limited to
-   ** supporting user type parent only in addition to the student reporting mentioned above.
    * @param supportingUserId supporting user id.
    * @returns supporting user details with the dynamic form name.
    */
@@ -91,6 +89,7 @@ export class SupportingUserStudentsController {
       isAbleToReport: supportingUser.isAbleToReport,
       programYearStartDate: supportingUser.application.programYear.startDate,
       supportingUserType: supportingUser.supportingUserType,
+      offeringIntensity: supportingUser.application.offeringIntensity,
     };
   }
 

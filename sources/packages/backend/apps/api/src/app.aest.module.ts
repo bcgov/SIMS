@@ -29,6 +29,7 @@ import {
   DisbursementScheduleService,
   ApplicationOfferingChangeRequestService,
   StudentLoanBalanceService,
+  MSFAANumberService,
   ProgramYearService,
   CASSupplierService,
   ApplicationRestrictionBypassService,
@@ -42,11 +43,23 @@ import {
   StudentAppealAssessmentService,
   StudentAppealCreateAssessmentAction,
   StudentAppealUpdateModifiedIndependentAction,
+  FormSubmissionService,
   FormSubmissionApprovalService,
   FormSubmissionActionProcessor,
   FormSubmissionCreateAppealAssessmentAction,
   FormSubmissionUpdateModifiedIndependentAction,
 } from "./services";
+import {
+  ConfigurationContextValidator,
+  PendingConcurrencyValidator,
+  ApplicationEligibleAppealsValidator,
+  FormSubmissionValidator,
+} from "./services/form-submission/form-submission-validator";
+import {
+  SupplementaryDataProgramYear,
+  SupplementaryDataParents,
+  SupplementaryDataLoader,
+} from "./services/form-submission/form-supplementary-data";
 import {
   SupportingUserAESTController,
   DesignationAgreementAESTController,
@@ -96,6 +109,7 @@ import {
   DynamicFormAESTController,
   DisbursementScheduleAESTController,
   FormSubmissionAESTController,
+  MSFAANumberAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -153,6 +167,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     DynamicFormAESTController,
     DisbursementScheduleAESTController,
     FormSubmissionAESTController,
+    MSFAANumberAESTController,
   ],
   providers: [
     ApplicationExceptionControllerService,
@@ -217,6 +232,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     ApplicationOfferingChangeRequestControllerService,
     AssessmentSequentialProcessingService,
     StudentLoanBalanceService,
+    MSFAANumberService,
     ProgramYearService,
     CASSupplierService,
     ApplicationRestrictionBypassService,
@@ -232,6 +248,16 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     StudentAppealActionsProcessor,
     StudentAppealCreateAssessmentAction,
     StudentAppealUpdateModifiedIndependentAction,
+    // Form validators.
+    ConfigurationContextValidator,
+    PendingConcurrencyValidator,
+    ApplicationEligibleAppealsValidator,
+    FormSubmissionValidator,
+    // Form supplementary data loaders.
+    SupplementaryDataProgramYear,
+    SupplementaryDataParents,
+    SupplementaryDataLoader,
+    FormSubmissionService,
     // Form submission actions.
     FormSubmissionCreateAppealAssessmentAction,
     FormSubmissionUpdateModifiedIndependentAction,

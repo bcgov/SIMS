@@ -64,7 +64,8 @@
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel, Role } from "@/types";
-import { ref, defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
+import { useFeatureToggles } from "@/composables";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { UserService } from "@/services/UserService";
 import { AppConfigService } from "@/services/AppConfigService";
@@ -72,7 +73,8 @@ import { AppConfigService } from "@/services/AppConfigService";
 export default defineComponent({
   components: { CheckPermissionRole },
   setup() {
-    const menuItems = ref<MenuItemModel[]>([
+    const { isFormSubmissionEnabled } = useFeatureToggles();
+    const menuItems = computed<MenuItemModel[]>(() => [
       {
         title: "Home",
         props: {
@@ -142,15 +144,38 @@ export default defineComponent({
           },
         },
       },
-      {
-        title: "Appeals",
-        props: {
-          prependIcon: "mdi-scale-balance",
-          to: {
-            name: AESTRoutesConst.STUDENT_APPEALS,
-          },
-        },
-      },
+      ...(isFormSubmissionEnabled.value
+        ? [
+            {
+              title: "Appeals",
+              props: {
+                prependIcon: "mdi-scale-balance",
+                to: {
+                  name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_PENDING_APPEALS,
+                },
+              },
+            },
+            {
+              title: "Forms",
+              props: {
+                prependIcon: "mdi-file-document-outline",
+                to: {
+                  name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_PENDING_FORMS,
+                },
+              },
+            },
+          ]
+        : [
+            {
+              title: "Appeals",
+              props: {
+                prependIcon: "mdi-scale-balance",
+                to: {
+                  name: AESTRoutesConst.LEGACY_STUDENT_APPEALS,
+                },
+              },
+            },
+          ]),
       {
         type: "subheader",
         title: "Institution requests",
