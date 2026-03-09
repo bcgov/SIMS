@@ -33,6 +33,7 @@ import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import ChipStatus from "@/components/generic/ChipStatus.vue";
 import ChipTag from "@/components/generic/ChipTag.vue";
 import ChipLabel from "@/components/generic/ChipLabel.vue";
+import SearchTable from "@/components/generic/SearchTable.vue";
 // Form.io Bootstrap Templates (see https://github.com/formio/bootstrap).
 import bootstrap5 from "@formio/bootstrap/bootstrap5";
 import { Formio } from "@formio/js";
@@ -65,5 +66,6 @@ AppConfigService.shared.init().then(() => {
     .component("ChipStatus", ChipStatus)
     .component("ChipTag", ChipTag)
     .component("ChipLabel", ChipLabel)
+    .component("SearchTable", SearchTable)
     .mount("#app");
 });
