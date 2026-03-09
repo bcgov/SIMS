@@ -134,7 +134,6 @@ import {
   RestrictionType,
   StudentRestrictionsHeaders,
   RestrictionDetail,
-  RestrictedParty,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -316,7 +315,6 @@ export default defineComponent({
       addRestriction,
       addStudentRestriction,
       deleteStudentRestriction,
-      RestrictedParty,
       LayoutTemplates,
       Role,
       emptyStringFiller,

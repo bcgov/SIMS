@@ -1,7 +1,6 @@
 <template>
   <v-form ref="bypassRestrictionForm">
     <modal-dialog-base :show-dialog="showDialog" title="Bypass restriction">
-      >
       <template #content>
         <h3 class="category-header-medium secondary-color my-4">
           Bypass information

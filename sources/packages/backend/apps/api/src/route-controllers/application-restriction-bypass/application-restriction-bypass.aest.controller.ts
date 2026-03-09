@@ -189,7 +189,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
       "cannot create a bypass when student restriction is not active  or " +
       "cannot create a bypass when there is an active bypass for the same active institution restriction id or " +
       "could not find institution restriction for the given id or " +
-      "cannot create a bypass when institution restriction is not active." +
+      "cannot create a bypass when institution restriction is not active or" +
       "cannot create a bypass when application is in invalid state.",
   })
   @Roles(Role.AESTBypassStudentRestriction)
