@@ -13,7 +13,6 @@ import {
   createFakeCRAIncomeVerification,
   createFakeSupportingUser,
   saveFakeApplication,
-  saveFakeStudent,
 } from "@sims/test-utils";
 import {
   ApplicationStatus,
@@ -57,11 +56,10 @@ describe("ApplicationAESTController(e2e)-getInProgressApplicationDetails", () =>
 
   it("Should get application in-progress details when the student has a partner who is able to report but the partner has not entered their supporting data.", async () => {
     // Arrange
-    const student = await saveFakeStudent(db.dataSource);
 
     const application = await saveFakeApplication(
       db.dataSource,
-      { student },
+      {},
       {
         applicationStatus: ApplicationStatus.InProgress,
       },
@@ -78,17 +76,17 @@ describe("ApplicationAESTController(e2e)-getInProgressApplicationDetails", () =>
         },
       },
     );
-    await db.supportingUser.save([partner]);
+    await db.supportingUser.save(partner);
 
     // Create CRA income verifications for student and partner.
     const studentCRAIncomeVerification = createFakeCRAIncomeVerification({
       application,
-      applicationEditStatusUpdatedBy: student.user,
+      applicationEditStatusUpdatedBy: application.student.user,
     });
     const partnerCRAIncomeVerification = createFakeCRAIncomeVerification({
       application,
       supportingUser: partner,
-      applicationEditStatusUpdatedBy: student.user,
+      applicationEditStatusUpdatedBy: application.student.user,
     });
 
     await db.craIncomeVerification.save([
