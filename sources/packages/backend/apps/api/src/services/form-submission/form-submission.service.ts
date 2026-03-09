@@ -74,8 +74,7 @@ export class FormSubmissionService {
   async getPendingFormSubmissions(
     paginationOptions: FormSubmissionPendingPaginationOptions,
   ): Promise<PaginatedResults<FormSubmissionPendingSummary>> {
-    const query = this.dataSource
-      .getRepository(FormSubmission)
+    const query = this.formSubmissionRepo
       .createQueryBuilder("formSubmission")
       .select([
         "formSubmission.id",
