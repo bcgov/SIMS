@@ -151,6 +151,7 @@ export class ReportedSupportingUserAPIOutDTO {
   isAbleToReport: boolean;
   programYearStartDate: string;
   supportingUserType: SupportingUserType;
+  offeringIntensity: OfferingIntensity;
 }
 
 /**
