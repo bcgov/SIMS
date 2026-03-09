@@ -29,16 +29,16 @@ export class NoteService {
   /**
    * Gets notes for an Institution.
    * @param institutionId Institution ID.
-   * @param noteType institution note type to filter the notes.
+   * @param institutionNote institution note type to filter the notes.
    * @returns institution notes.
    */
   async getInstitutionNotes(
     institutionId: number,
-    noteType?: InstitutionNoteType,
+    institutionNote?: InstitutionNoteType,
   ): Promise<NoteItemModel[]> {
     return ApiClient.NoteApi.getInstitutionNotes(
       institutionId,
-      noteType ? [noteType as unknown as NoteType] : undefined,
+      institutionNote ? [institutionNote as string as NoteType] : undefined,
     );
   }
 
@@ -49,18 +49,18 @@ export class NoteService {
   /**
    * Get notes for a student.
    * @param studentId Student ID.
-   * @param noteType student note type to filter the notes.
+   * @param studentNote student note type to filter the notes.
    * @returns student notes.
    */
   async getStudentNotes(
     studentId: number,
-    noteType?: StudentNoteType,
+    studentNote?: StudentNoteType,
   ): Promise<NoteItemModel[]> {
-    if (!noteType?.length) {
+    if (!studentNote?.length) {
       return ApiClient.NoteApi.getStudentNotes(studentId);
     }
-    const convertedNotes = STUDENT_NOTE_TO_NOTES_TYPE_MAP.get(noteType) ?? [
-      noteType as unknown as NoteType,
+    const convertedNotes = STUDENT_NOTE_TO_NOTES_TYPE_MAP.get(studentNote) ?? [
+      studentNote as string as NoteType,
     ];
     return ApiClient.NoteApi.getStudentNotes(studentId, convertedNotes);
   }
