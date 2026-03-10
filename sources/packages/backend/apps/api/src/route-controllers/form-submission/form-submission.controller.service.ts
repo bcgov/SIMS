@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { FormSubmissionService } from "../../services";
 import {
+  FormSubmission,
   FormSubmissionDecisionStatus,
   FormSubmissionItem,
   FormSubmissionStatus,
@@ -25,24 +26,43 @@ export class FormSubmissionControllerService {
    * - `applicationId`: optional ID of the application, used to validate the access to the form submission
    * @returns form submission details.
    */
-  async getFormSubmission(
-    formSubmissionId: number,
+  async getFormSubmissions(
     studentId: number,
     options?: {
+      formSubmissionId?: number;
+      locationIds?: number[];
       includeBasicDecisionDetails?: boolean;
-      applicationId?: number;
+      keepPendingDecisionsWhilePendingFormSubmission?: boolean;
     },
-  ): Promise<FormSubmissionAPIOutDTO> {
-    const submission = await this.formSubmissionService.getFormSubmissionById(
-      formSubmissionId,
+  ): Promise<FormSubmissionAPIOutDTO[]> {
+    const submissions = await this.formSubmissionService.getFormSubmissions(
       studentId,
-      { applicationId: options?.applicationId },
+      {
+        formSubmissionId: options?.formSubmissionId,
+        locationIds: options?.locationIds,
+      },
     );
-    if (!submission) {
+    if (options?.formSubmissionId && !submissions?.length) {
       throw new NotFoundException(
-        `Form submission with ID ${formSubmissionId} not found.`,
+        `Form submission with ID ${options?.formSubmissionId} not found.`,
       );
     }
+    return submissions.map((submission) =>
+      this.mapSubmissionsToAPIOutDTO(submission, {
+        includeBasicDecisionDetails: options?.includeBasicDecisionDetails,
+        keepPendingDecisionsWhilePendingFormSubmission:
+          options?.keepPendingDecisionsWhilePendingFormSubmission,
+      }),
+    );
+  }
+
+  private mapSubmissionsToAPIOutDTO(
+    submission: FormSubmission,
+    options?: {
+      includeBasicDecisionDetails?: boolean;
+      keepPendingDecisionsWhilePendingFormSubmission?: boolean;
+    },
+  ): FormSubmissionAPIOutDTO {
     return {
       id: submission.id,
       formCategory: submission.formCategory,
@@ -50,6 +70,7 @@ export class FormSubmissionControllerService {
       applicationId: submission.application?.id,
       applicationNumber: submission.application?.applicationNumber,
       submittedDate: submission.submittedDate,
+      assessedDate: submission.assessedDate,
       submissionItems: submission.formSubmissionItems.map((item) => ({
         id: item.id,
         formType: item.dynamicFormConfiguration.formType,
@@ -60,7 +81,8 @@ export class FormSubmissionControllerService {
         currentDecision: this.mapCurrentDecision(
           submission.submissionStatus,
           item,
-          !!options?.includeBasicDecisionDetails,
+          options?.includeBasicDecisionDetails ?? false,
+          options?.keepPendingDecisionsWhilePendingFormSubmission ?? true,
         ),
       })),
     };
@@ -80,15 +102,19 @@ export class FormSubmissionControllerService {
     submissionStatus: FormSubmissionStatus,
     submissionItem: FormSubmissionItem,
     includeBasicDecisionDetails: boolean,
+    keepPendingDecisionsWhilePendingFormSubmission: boolean,
   ): FormSubmissionItemDecisionAPIOutDTO {
-    if (submissionStatus === FormSubmissionStatus.Pending) {
-      // For pending submissions, the decision details should not be returned.
-      return { decisionStatus: FormSubmissionDecisionStatus.Pending };
-    }
+    let decisionStatus =
+      keepPendingDecisionsWhilePendingFormSubmission &&
+      submissionStatus === FormSubmissionStatus.Pending
+        ? FormSubmissionDecisionStatus.Pending
+        : submissionItem.currentDecision?.decisionStatus;
+    // Default to Pending if no decision exists.
+    decisionStatus = decisionStatus ?? FormSubmissionDecisionStatus.Pending;
     return {
-      decisionStatus: submissionItem.currentDecision.decisionStatus,
+      decisionStatus: decisionStatus,
       decisionNoteDescription: includeBasicDecisionDetails
-        ? submissionItem.currentDecision.decisionNote.description
+        ? submissionItem.currentDecision?.decisionNote?.description
         : undefined,
     };
   }

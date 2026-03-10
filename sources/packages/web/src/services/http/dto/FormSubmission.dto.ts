@@ -40,6 +40,7 @@ interface FormSubmissionBaseAPIOutDTO {
   applicationId?: number;
   applicationNumber?: string;
   submittedDate: Date;
+  assessedDate?: Date;
 }
 
 /**
@@ -62,6 +63,10 @@ interface FormSubmissionItemBaseAPIOutDTO {
  */
 export interface FormSubmissionAPIOutDTO extends FormSubmissionBaseAPIOutDTO {
   submissionItems: FormSubmissionItemAPIOutDTO[];
+}
+
+export class FormSubmissionsAPIOutDTO {
+  submissions: FormSubmissionAPIOutDTO[];
 }
 
 /**

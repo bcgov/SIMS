@@ -34,6 +34,7 @@ import {
   FormSubmissionAPIInDTO,
   FormSubmissionAPIOutDTO,
   FormSubmissionConfigurationsAPIOutDTO,
+  FormSubmissionsAPIOutDTO,
   FormSupplementaryDataAPIInDTO,
   FormSupplementaryDataAPIOutDTO,
 } from "./models/form-submission.dto";
@@ -100,6 +101,19 @@ export class FormSubmissionStudentsController extends BaseController {
     };
   }
 
+  @Get()
+  async getFormSubmissionHistory(
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<FormSubmissionsAPIOutDTO> {
+    const submissions =
+      await this.formSubmissionControllerService.getFormSubmissions(
+        userToken.studentId,
+      );
+    return {
+      submissions,
+    };
+  }
+
   /**
    * Get the details of a form submission, including the individual form items and their details.
    * @param formSubmissionId ID of the form submission to retrieve the details for.
@@ -111,10 +125,12 @@ export class FormSubmissionStudentsController extends BaseController {
     @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<FormSubmissionAPIOutDTO> {
-    return this.formSubmissionControllerService.getFormSubmission(
-      formSubmissionId,
-      userToken.studentId,
-    );
+    const [submission] =
+      await this.formSubmissionControllerService.getFormSubmissions(
+        userToken.studentId,
+        { formSubmissionId },
+      );
+    return submission;
   }
 
   /**

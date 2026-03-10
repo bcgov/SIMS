@@ -8,9 +8,9 @@ import {
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionCompletionAPIInDTO,
   FormSubmissionAPIOutDTO,
-  FormSubmissionItemAPIOutDTO,
   FormSubmissionPendingSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
+  FormSubmissionsAPIOutDTO,
 } from "@/services/http/dto";
 import { FormCategory, PaginationOptions } from "@/types";
 
@@ -31,10 +31,10 @@ export class FormSubmissionService {
   }
 
   // TODO: To be implemented.
-  async getFormSubmissionSummary(): Promise<{
-    submissions: FormSubmissionItemAPIOutDTO[];
-  }> {
-    return ApiClient.FormSubmissionApi.getFormSubmissionSummary();
+  async getFormSubmissionHistory(
+    studentId?: number,
+  ): Promise<FormSubmissionsAPIOutDTO> {
+    return ApiClient.FormSubmissionApi.getFormSubmissionHistory(studentId);
   }
 
   /**

@@ -103,6 +103,7 @@ export enum AppRoutes {
   ActiveApplicationScholasticStandingView = "active-application/location/:locationId/scholastic-standing/:scholasticStandingId",
   OfferingsUpload = "offerings-upload",
   WithdrawalUpload = "withdrawal-upload",
+  InstitutionStudentFormSubmissionView = "student/:studentId/forms/submission/:formSubmissionId",
 
   // AEST
   AESTRoot = "/ministry",
@@ -125,6 +126,7 @@ export enum AppRoutes {
   LegacyStudentAppeals = "legacy-appeals",
   FormSubmissionPendingForms = "pending-forms",
   FormSubmissionPendingAppeals = "pending-appeals",
+  FormSubmissionHistory = "form-submissions",
   ApplicationChangeRequests = "application-change-requests",
   StudentAccountApplications = "student-account-applications",
   StudentAccountApplicationsApproval = "student-account-applications/:studentAccountApplicationId/approval",

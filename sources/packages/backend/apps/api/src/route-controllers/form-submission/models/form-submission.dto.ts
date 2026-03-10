@@ -65,6 +65,7 @@ abstract class FormSubmissionBaseAPIOutDTO {
   applicationId?: number;
   applicationNumber?: string;
   submittedDate: Date;
+  assessedDate?: Date;
 }
 
 /**
@@ -115,6 +116,10 @@ export class FormSubmissionItemAPIOutDTO extends FormSubmissionItemBaseAPIOutDTO
  */
 export class FormSubmissionAPIOutDTO extends FormSubmissionBaseAPIOutDTO {
   submissionItems: FormSubmissionItemAPIOutDTO[];
+}
+
+export class FormSubmissionsAPIOutDTO {
+  submissions: FormSubmissionAPIOutDTO[];
 }
 
 /**

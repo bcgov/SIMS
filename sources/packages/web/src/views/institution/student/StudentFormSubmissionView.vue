@@ -76,10 +76,6 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    applicationId: {
-      type: Number,
-      required: true,
-    },
     formSubmissionId: {
       type: Number,
       required: true,
@@ -110,7 +106,7 @@ export default defineComponent({
         const submission =
           (await FormSubmissionService.shared.getFormSubmission(
             props.formSubmissionId,
-            { studentId: props.studentId, applicationId: props.applicationId },
+            { studentId: props.studentId },
           )) as FormSubmissionAPIOutDTO;
         formSubmission.value = submission;
 

@@ -38,6 +38,7 @@ import {
   FormSubmissionItemDecisionAPIInDTO,
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionPendingSummaryAPIOutDTO,
+  FormSubmissionsAPIOutDTO,
 } from "./models/form-submission.dto";
 import { getUserFullName } from "../../utilities";
 import { FormSubmissionDecisionStatus } from "@sims/sims-db";
@@ -46,6 +47,7 @@ import {
   FormSubmissionPendingPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
+import { FormSubmissionControllerService } from "./form-submission.controller.service";
 
 /**
  * Roles allowed to update the form submission item decision
@@ -64,6 +66,7 @@ export class FormSubmissionAESTController extends BaseController {
   constructor(
     private readonly formSubmissionApprovalService: FormSubmissionApprovalService,
     private readonly formSubmissionService: FormSubmissionService,
+    private readonly formSubmissionControllerService: FormSubmissionControllerService,
   ) {
     super();
   }
@@ -92,6 +95,20 @@ export class FormSubmissionAESTController extends BaseController {
         applicationNumber: submission.applicationNumber,
       })),
       count: pendingSubmissions.count,
+    };
+  }
+
+  @Get("student/:studentId")
+  async getFormSubmissionHistory(
+    @Param("studentId", ParseIntPipe) studentId: number,
+  ): Promise<FormSubmissionsAPIOutDTO> {
+    const submissions =
+      await this.formSubmissionControllerService.getFormSubmissions(studentId, {
+        includeBasicDecisionDetails: false,
+        keepPendingDecisionsWhilePendingFormSubmission: false,
+      });
+    return {
+      submissions,
     };
   }
 

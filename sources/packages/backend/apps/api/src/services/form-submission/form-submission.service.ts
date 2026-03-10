@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Brackets, In, Repository } from "typeorm";
+import { Brackets, In, IsNull, Repository } from "typeorm";
 import {
   FormCategory,
   FormSubmission,
@@ -158,27 +158,19 @@ export class FormSubmissionService {
     };
   }
 
-  /**
-   * Gets a form submission by its ID.
-   * @param formSubmissionId The ID of the form submission to retrieve.
-   * @param studentId student ID for authorization.
-   * @param options method options.
-   * - `applicationId`: optional application ID to ensure the form submission
-   * belongs to the application related to the institution's student.
-   * @returns The form submission if found, otherwise null.
-   */
-  async getFormSubmissionById(
-    formSubmissionId: number,
+  async getFormSubmissions(
     studentId: number,
     options?: {
-      applicationId?: number;
+      formSubmissionId?: number;
+      locationIds?: number[];
     },
-  ): Promise<FormSubmission | null> {
-    return this.formSubmissionRepo.findOne({
+  ): Promise<FormSubmission[]> {
+    return this.formSubmissionRepo.find({
       select: {
         id: true,
         submissionStatus: true,
         submittedDate: true,
+        assessedDate: true,
         formCategory: true,
         application: {
           id: true,
@@ -212,11 +204,15 @@ export class FormSubmissionService {
         },
       },
       where: {
-        id: formSubmissionId,
+        id: options?.formSubmissionId,
         student: { id: studentId },
-        application: { id: options?.applicationId },
+        application: {
+          location: options?.locationIds
+            ? [{ id: In(options.locationIds) }, { id: IsNull() }]
+            : undefined,
+        },
       },
-      order: { formSubmissionItems: { id: "ASC" } },
+      order: { submittedDate: "DESC", formSubmissionItems: { id: "ASC" } },
     });
   }
 }

@@ -110,6 +110,7 @@ import {
   DisbursementScheduleAESTController,
   FormSubmissionAESTController,
   MSFAANumberAESTController,
+  FormSubmissionControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -248,6 +249,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     StudentAppealActionsProcessor,
     StudentAppealCreateAssessmentAction,
     StudentAppealUpdateModifiedIndependentAction,
+    FormSubmissionControllerService,
     // Form validators.
     ConfigurationContextValidator,
     PendingConcurrencyValidator,

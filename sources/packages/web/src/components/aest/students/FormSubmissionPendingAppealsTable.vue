@@ -125,18 +125,18 @@ const currentPagination: PaginationOptions = {
 const goToAppealsApproval = (
   pendingAppeal: FormSubmissionPendingSummaryAPIOutDTO,
 ) => {
-  if (pendingAppeal.applicationId) {
-    router.push({
-      name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
-      params: {
-        applicationId: pendingAppeal.applicationId,
-        studentId: pendingAppeal.studentId,
-      },
-    });
-    return;
-  }
+  // if (pendingAppeal.applicationId) {
+  //   router.push({
+  //     name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
+  //     params: {
+  //       applicationId: pendingAppeal.applicationId,
+  //       studentId: pendingAppeal.studentId,
+  //     },
+  //   });
+  //   return;
+  // }
   router.push({
-    name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_APPROVAL,
+    name: AESTRoutesConst.FORM_SUBMISSION_APPROVAL_FROM_PENDING_APPEALS,
     params: {
       formSubmissionId: pendingAppeal.formSubmissionId,
     },
