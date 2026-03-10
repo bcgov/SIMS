@@ -96,7 +96,7 @@ export class NoteAESTController extends BaseController {
     }
     const institutionNotes = await this.institutionService.getInstitutionNotes(
       institutionId,
-      queryString.noteTypes,
+      { noteTypes: queryString.noteTypes },
     );
     return institutionNotes?.map((note) => transformToNoteDTO(note)) ?? [];
   }
