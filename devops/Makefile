@@ -156,8 +156,7 @@ endef
 
 init-oc: | print-status init-project
 oc-build-migrations: | print-status build-migrations
-oc-run-db-migrations: | print-status delete-migrations-job deploy-migrations-job run-db-migrations
-oc-deploy-form-definitions: | print-status delete-migrations-job deploy-migrations-job
+oc-run-migrations: | print-status delete-migrations-job deploy-migrations-job
 oc-build-api: | print-status build-api
 oc-deploy-api: | print-status deploy-api
 oc-build-workers: | print-status build-workers
