@@ -1,6 +1,6 @@
 <template>
   <v-card class="mb-4 p-4">
-    <form-submission-history />
+    <form-submission-history @go-to-submission="goToSubmission" />
   </v-card>
 </template>
 <script lang="ts">
@@ -16,7 +16,7 @@ export default defineComponent({
   setup() {
     const goToSubmission = async (formSubmissionId: number) => {
       await router.push({
-        name: StudentRoutesConst.STUDENT_FORMS_SUBMISSION_VIEW,
+        name: StudentRoutesConst.STUDENT_FORMS_SUBMISSION_VIEW_FROM_HISTORY,
         params: {
           formSubmissionId,
         },

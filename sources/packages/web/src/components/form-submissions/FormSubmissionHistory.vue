@@ -4,7 +4,6 @@
       <body-header
         title="History"
         sub-title="You can see the history of submitted forms."
-        :records-count="filteredSubmissions?.length"
       >
         <template #actions>
           <v-btn-toggle
@@ -15,130 +14,148 @@
             selected-class="selected-btn-toggle"
             v-model="formCategoryFilter"
           >
-            <v-btn rounded="xl" color="primary" value="all">View appeals</v-btn>
             <v-btn
+              v-for="filterCategory of formCategoryFilterOptions"
+              :key="filterCategory.value"
               rounded="xl"
               class="ml-2"
-              color="primary"
-              :value="FormCategory.StudentAppeal"
-              >View appeals</v-btn
-            >
-            <v-btn
-              rounded="xl"
-              class="ml-2"
-              color="primary"
-              :value="FormCategory.StudentForm"
-              >View forms</v-btn
-            >
+              :value="filterCategory.value"
+              >{{ filterCategory.label }}
+              <template #append
+                ><v-badge
+                  :color="
+                    filterCategory.value === formCategoryFilter
+                      ? 'primary'
+                      : 'gray'
+                  "
+                  :content="filterCategory.count"
+                  inline
+                ></v-badge
+              ></template>
+            </v-btn>
           </v-btn-toggle>
         </template>
       </body-header>
     </template>
     <content-group>
-      <toggle-content
-        :toggled="!filteredSubmissions?.length"
-        message="Review your past forms submissions, and decisions here."
-      >
-        <v-card
-          hover
-          class="my-4"
-          v-for="submission in filteredSubmissions"
-          :key="submission.id"
-          variant="elevated"
+      <v-skeleton-loader :loading="loading" type="card, card">
+        <toggle-content
+          :toggled="!filteredSubmissions?.length"
+          message="Review your past forms submissions, and decisions here."
         >
-          <v-card-item>
-            <v-card-title>
-              <v-row>
-                <v-col
-                  ><span class="category-header-medium color-blue mr-2">{{
-                    submission.formCategory
-                  }}</span></v-col
-                >
-                <v-col
-                  ><status-chip-form-submission :status="submission.status"
-                /></v-col>
-                <v-col
-                  ><v-btn
-                    color="primary"
-                    class="float-right"
-                    @click="goToSubmission(submission.id)"
+          <v-card
+            hover
+            class="my-4"
+            v-for="submission in filteredSubmissions"
+            :key="submission.id"
+            variant="elevated"
+            :ripple="false"
+            @click="goToSubmission(submission.id)"
+          >
+            <v-card-item>
+              <v-card-title>
+                <v-row>
+                  <v-col
+                    ><span class="category-header-medium color-blue mr-2">{{
+                      submission.formCategory
+                    }}</span></v-col
                   >
-                    View
-                  </v-btn></v-col
+                  <v-col
+                    ><status-chip-form-submission :status="submission.status"
+                  /></v-col>
+                  <v-col
+                    ><v-btn
+                      color="primary"
+                      class="float-right"
+                      @click="goToSubmission(submission.id)"
+                    >
+                      View
+                    </v-btn></v-col
+                  >
+                </v-row>
+                <v-divider class="mb-0"></v-divider>
+              </v-card-title>
+            </v-card-item>
+            <v-card-text>
+              <v-row no-gutters>
+                <v-col
+                  ><title-value property-title="Submitted date">
+                    <template #value>
+                      {{ getISODateHourMinuteString(submission.submittedDate) }}
+                    </template>
+                  </title-value></v-col
                 >
+                <v-col
+                  ><title-value property-title="Assessed date">
+                    <template #value>
+                      {{
+                        !!submission.assessedDate
+                          ? getISODateHourMinuteString(submission.assessedDate)
+                          : "Pending"
+                      }}
+                    </template>
+                  </title-value>
+                </v-col>
+                <v-col v-if="submission.applicationNumber">
+                  <title-value
+                    property-title="Application number"
+                    :property-value="submission.applicationNumber"
+                /></v-col>
               </v-row>
-              <v-divider class="mb-0"></v-divider>
-            </v-card-title>
-          </v-card-item>
-          <v-card-text>
-            <v-row no-gutters>
-              <v-col
-                ><title-value property-title="Submitted date">
-                  <template #value>
-                    {{ getISODateHourMinuteString(submission.submittedDate) }}
-                  </template>
-                </title-value></v-col
-              >
-              <v-col
-                ><title-value property-title="Assessed date">
-                  <template #value>
-                    {{
-                      !!submission.assessedDate
-                        ? getISODateHourMinuteString(submission.assessedDate)
-                        : "Pending"
-                    }}
-                  </template>
-                </title-value>
-              </v-col>
-              <v-col v-if="submission.applicationNumber">
-                <title-value
-                  property-title="Application number"
-                  :property-value="submission.applicationNumber"
-              /></v-col>
-            </v-row>
-            <v-row no-gutters class="mt-2">
-              <v-col>
-                <span class="category-header-small brand-gray-text"
-                  >Submitted form(s)</span
-                >
-              </v-col>
-            </v-row>
-            <v-table striped="even">
-              <thead>
-                <tr>
-                  <th id="name" class="text-left">Name</th>
-                  <th id="decisionStatus" class="text-left">Decision status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="item in submission.submissionItems"
-                  :key="item.formType"
-                >
-                  <td headers="name">{{ item.formType }}</td>
-                  <td headers="decisionStatus">
-                    <StatusChipFormSubmissionDecision
-                      :status="item.currentDecision.decisionStatus"
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </v-table>
-          </v-card-text>
-        </v-card>
-      </toggle-content>
+              <v-row no-gutters class="mt-2">
+                <v-col>
+                  <span class="category-header-small brand-gray-text"
+                    >Submitted form(s)</span
+                  >
+                </v-col>
+              </v-row>
+              <v-table striped="even">
+                <thead>
+                  <tr>
+                    <th id="name" class="text-left">Name</th>
+                    <th id="decisionStatus" class="text-left">
+                      Decision status
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="item in submission.submissionItems"
+                    :key="item.formType"
+                  >
+                    <td headers="name">{{ item.formType }}</td>
+                    <td headers="decisionStatus">
+                      <StatusChipFormSubmissionDecision
+                        :status="item.currentDecision.decisionStatus"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </v-card-text>
+          </v-card>
+        </toggle-content>
+      </v-skeleton-loader>
     </content-group>
   </body-header-container>
 </template>
 <script lang="ts">
 import { computed, defineComponent, ref, watchEffect } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { useFormatters, useStudentAppeals } from "@/composables";
+import { useFormatters, useSnackBar, useStudentAppeals } from "@/composables";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
 import StatusChipFormSubmission from "@/components/generic/StatusChipFormSubmission.vue";
 import StatusChipFormSubmissionDecision from "@/components/generic/StatusChipFormSubmissionDecision.vue";
 import { FormCategory } from "@/types";
 import { FormSubmissionAPIOutDTO } from "@/services/http/dto";
+
+export type FormsCategoryFilterTypes = FormCategory | "all";
+
+interface FormsCategoryFilter {
+  label: string;
+  value: FormsCategoryFilterTypes;
+  count: number;
+}
 
 export default defineComponent({
   emits: {
@@ -158,7 +175,10 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    const formCategoryFilter = ref<FormCategory | "all">("all");
+    const loading = ref(true);
+    const snackBar = useSnackBar();
+    const formCategoryFilter = ref<FormsCategoryFilterTypes>("all");
+    const formCategoryFilterOptions = ref<FormsCategoryFilter[]>([]);
     const { mapStudentAppealsFormNames } = useStudentAppeals();
     const {
       emptyStringFiller,
@@ -169,12 +189,44 @@ export default defineComponent({
     const submissions = ref<FormSubmissionAPIOutDTO[]>();
 
     watchEffect(async () => {
-      // TODO: add loading and error handling.
-      const submissionSummary =
-        await FormSubmissionService.shared.getFormSubmissionHistory(
-          props.studentId,
+      try {
+        loading.value = true;
+        const submissionSummary =
+          await FormSubmissionService.shared.getFormSubmissionHistory(
+            props.studentId,
+          );
+        submissions.value = submissionSummary.submissions;
+        // Count submissions per category.
+        const countPerCategory = submissionSummary.submissions.reduce(
+          (total, submission) => {
+            total[submission.formCategory] =
+              (total[submission.formCategory] ?? 0) + 1;
+            return total;
+          },
+          {} as Partial<Record<FormCategory, number>>,
         );
-      submissions.value = submissionSummary.submissions;
+        formCategoryFilterOptions.value = [
+          {
+            label: "View all",
+            value: "all",
+            count: submissionSummary.submissions.length,
+          },
+          {
+            label: "View appeals",
+            value: FormCategory.StudentAppeal,
+            count: countPerCategory[FormCategory.StudentAppeal] ?? 0,
+          },
+          {
+            label: "View forms",
+            value: FormCategory.StudentForm,
+            count: countPerCategory[FormCategory.StudentForm] ?? 0,
+          },
+        ];
+      } catch {
+        snackBar.error("Unexpected error while loading form submissions.");
+      } finally {
+        loading.value = false;
+      }
     });
 
     const filteredSubmissions = computed(() => {
@@ -191,6 +243,8 @@ export default defineComponent({
     };
 
     return {
+      loading,
+      formCategoryFilterOptions,
       FormCategory,
       formCategoryFilter,
       submissions,
