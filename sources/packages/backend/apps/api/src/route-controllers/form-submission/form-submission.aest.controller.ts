@@ -98,6 +98,12 @@ export class FormSubmissionAESTController extends BaseController {
     };
   }
 
+  /**
+   * Gets the list of form submissions for a student,
+   * including the individual form items and their details.
+   * @param studentId student ID to retrieve the form submission history for.
+   * @returns list of form submissions for a student.
+   */
   @Get("student/:studentId")
   async getFormSubmissionHistory(
     @Param("studentId", ParseIntPipe) studentId: number,
@@ -126,11 +132,10 @@ export class FormSubmissionAESTController extends BaseController {
     @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
     @Query("itemId", new ParseIntPipe({ optional: true })) itemId?: number,
   ): Promise<FormSubmissionMinistryAPIOutDTO> {
-    const submission =
-      await this.formSubmissionApprovalService.getFormSubmissionById(
-        formSubmissionId,
-        { itemId },
-      );
+    const [submission] = await this.formSubmissionService.getFormSubmissions(
+      { formSubmissionId, itemId },
+      { includeDecisionHistory: true },
+    );
     if (!submission) {
       if (itemId) {
         throw new NotFoundException(

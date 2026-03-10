@@ -65,6 +65,10 @@ export interface FormSubmissionAPIOutDTO extends FormSubmissionBaseAPIOutDTO {
   submissionItems: FormSubmissionItemAPIOutDTO[];
 }
 
+/**
+ * List of form submissions for a student, including the
+ * individual form items and their details.
+ */
 export class FormSubmissionsAPIOutDTO {
   submissions: FormSubmissionAPIOutDTO[];
 }

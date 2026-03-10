@@ -30,7 +30,12 @@ export class FormSubmissionService {
     return ApiClient.FormSubmissionApi.getSubmissionForms();
   }
 
-  // TODO: To be implemented.
+  /**
+   * Gets the list of form submissions for the student, including the individual form items and their details.
+   * For institutions, the form submissions with application scope will be restricted to the locations the user has access,
+   * while all form submissions without application scope can be retrieved as long as the user has access to the student data.
+   * @returns list of form submissions for the student.
+   */
   async getFormSubmissionHistory(
     studentId?: number,
   ): Promise<FormSubmissionsAPIOutDTO> {

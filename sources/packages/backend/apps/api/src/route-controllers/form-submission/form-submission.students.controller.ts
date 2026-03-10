@@ -101,6 +101,11 @@ export class FormSubmissionStudentsController extends BaseController {
     };
   }
 
+  /**
+   * Gets the list of form submissions for the student,
+   * including the individual form items and their details.
+   * @returns list of form submissions for the student.
+   */
   @Get()
   async getFormSubmissionHistory(
     @UserToken() userToken: StudentUserToken,

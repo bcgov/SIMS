@@ -17,14 +17,20 @@ export class FormSubmissionControllerService {
 
   /**
    * Get the details of a form submission, including the individual form items and their details.
-   * @param formSubmissionId ID of the form submission to retrieve the details for.
-   * @param studentId ID used to validate the access to the student data.
+   * @param studentId ID of the student to have the data retrieved.
    * @param options.
-   * - `includeBasicDecisionDetails`: optional flag to include basic decision details, besides
+   * - `formSubmissionId` allow searching for a specific form submission. When provided, it will validate if the form
+   * submission belongs to the student and throw a not found HTTP error if it does not.
+   * - `locationIds` restrict forms with an application scope to the provided locations. Used for institutions to have access
+   * only to the form submissions related to the locations they have access to.
+   * - `includeBasicDecisionDetails` optional flag to include basic decision details, besides
    * the decision status. Used for institutions to have access to more details than the student
    * to better support them.
-   * - `applicationId`: optional ID of the application, used to validate the access to the form submission
-   * @returns form submission details.
+   * - `keepPendingDecisionsWhilePendingFormSubmission` when true, will return "Pending" as the decision status for all items
+   * if the form submission is still pending. This is used to avoid showing decisions that are not final yet while the form
+   * submission is not completed.
+   * @returns form submission details including individual form items and their details.
+   * @throws NotFoundException when the formSubmissionId is provided but no record is returned.
    */
   async getFormSubmissions(
     studentId: number,
@@ -36,9 +42,8 @@ export class FormSubmissionControllerService {
     },
   ): Promise<FormSubmissionAPIOutDTO[]> {
     const submissions = await this.formSubmissionService.getFormSubmissions(
-      studentId,
+      { studentId, formSubmissionId: options?.formSubmissionId },
       {
-        formSubmissionId: options?.formSubmissionId,
         locationIds: options?.locationIds,
       },
     );

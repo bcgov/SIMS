@@ -26,6 +26,13 @@ export class FormSubmissionInstitutionsController extends BaseController {
     super();
   }
 
+  /**
+   * Gets the list of form submissions for a student, including the individual form items and their details.
+   * The form submissions with application scope will be restricted to the locations the user has access.
+   * All form submissions without application scope can be retrieved as long as the user has access to the student data.
+   * @param studentId student ID to retrieve the form submission history for.
+   * @returns list of form submissions for a student.
+   */
   @Get("student/:studentId")
   async getFormSubmissionHistory(
     @Param("studentId", ParseIntPipe) studentId: number,
@@ -34,7 +41,7 @@ export class FormSubmissionInstitutionsController extends BaseController {
     const submissions =
       await this.formSubmissionControllerService.getFormSubmissions(studentId, {
         includeBasicDecisionDetails: true,
-        keepPendingDecisionsWhilePendingFormSubmission: false,
+        keepPendingDecisionsWhilePendingFormSubmission: true,
         locationIds: userToken.authorizations.getLocationsIds(),
       });
     return {

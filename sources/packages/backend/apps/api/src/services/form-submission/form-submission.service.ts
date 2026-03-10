@@ -158,11 +158,25 @@ export class FormSubmissionService {
     };
   }
 
+  /**
+   * Get the details of a form submission, including the individual form items and their details.
+   * @param options.
+   * - `studentId` ID of the student to have the data retrieved
+   * - `formSubmissionId` allow searching for a specific form submission.
+   * - `locationIds` restrict forms with an application scope to the provided locations. Used for institutions to have access
+   * only to the form submissions related to the locations they have access to.
+   * - `includeDecisionHistory` includes the decision history of each form item.
+   * @returns form submission details including individual form items and their details.
+   */
   async getFormSubmissions(
-    studentId: number,
-    options?: {
+    options: {
+      studentId?: number;
       formSubmissionId?: number;
+      itemId?: number;
+    },
+    queryOptions?: {
       locationIds?: number[];
+      includeDecisionHistory?: boolean;
     },
   ): Promise<FormSubmission[]> {
     return this.formSubmissionRepo.find({
@@ -189,30 +203,55 @@ export class FormSubmissionService {
           currentDecision: {
             id: true,
             decisionStatus: true,
-            decisionNote: {
-              id: true,
-              description: true,
-            },
+            decisionDate: true,
+            decisionBy: { id: true, firstName: true, lastName: true },
+            decisionNote: { id: true, description: true },
           },
+          decisions: queryOptions?.includeDecisionHistory
+            ? {
+                id: true,
+                decisionStatus: true,
+                decisionDate: true,
+                decisionBy: { id: true, firstName: true, lastName: true },
+                decisionNote: { id: true, description: true },
+              }
+            : undefined,
         },
       },
       relations: {
         application: true,
         formSubmissionItems: {
           dynamicFormConfiguration: true,
-          currentDecision: { decisionNote: true },
+          currentDecision: { decisionBy: true, decisionNote: true },
+          decisions: queryOptions?.includeDecisionHistory
+            ? {
+                decisionBy: true,
+                decisionNote: true,
+              }
+            : undefined,
         },
       },
       where: {
         id: options?.formSubmissionId,
-        student: { id: studentId },
+        formSubmissionItems: {
+          id: options?.itemId,
+        },
+        student: { id: options?.studentId },
         application: {
-          location: options?.locationIds
-            ? [{ id: In(options.locationIds) }, { id: IsNull() }]
+          location: queryOptions?.locationIds
+            ? [{ id: In(queryOptions.locationIds) }, { id: IsNull() }]
             : undefined,
         },
       },
-      order: { submittedDate: "DESC", formSubmissionItems: { id: "ASC" } },
+      order: {
+        submittedDate: "DESC",
+        formSubmissionItems: {
+          id: "ASC",
+          decisions: queryOptions?.includeDecisionHistory
+            ? { id: "DESC" }
+            : undefined,
+        },
+      },
     });
   }
 }
