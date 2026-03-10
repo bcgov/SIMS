@@ -157,7 +157,7 @@ endef
 init-oc: | print-status init-project
 oc-build-migrations: | print-status build-migrations
 oc-run-db-migrations: | print-status delete-migrations-job deploy-migrations-job run-db-migrations
-oc-deploy-form-definitions: | print-status delete-migrations-job deploy-migrations-job deploy-form-definitions
+oc-deploy-form-definitions: | print-status delete-migrations-job deploy-migrations-job
 oc-build-api: | print-status build-api
 oc-deploy-api: | print-status deploy-api
 oc-build-workers: | print-status build-workers
@@ -324,6 +324,7 @@ deploy-migrations-job:
 	test -n "$(MIGRATIONS_BUILD_REF)"
 	test -n "$(BUILD_REF)"
 	test -n "$(MIGRATIONS)"
+	test -n "$(MIGRATION_COMMAND)"
 	@echo "+\n++ Deploying MIGRATIONS job with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/migrations-job.yml \
 		-p NAME=$(MIGRATIONS) \
@@ -333,9 +334,11 @@ deploy-migrations-job:
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p JOB_NAME=$(MIGRATIONS_JOB_NAME) \
 		-p FORMS_URL=$(FORMS_URL) \
+		-p MIGRATION_COMMAND="$(MIGRATION_COMMAND)" \
 		-p ACTIVE_DEADLINE_SECONDS=$(MIGRATIONS_JOB_MAX_DURATION) \
 		| oc -n $(NAMESPACE) apply -f -
-	@oc -n $(NAMESPACE) wait --for=condition=Ready pod -l job-name=$(MIGRATIONS_JOB_NAME) --timeout=$(MIGRATIONS_OC_TIMEOUT)
+	@oc -n $(NAMESPACE) wait --for=condition=complete job/$(MIGRATIONS_JOB_NAME) --timeout=$(MIGRATIONS_OC_TIMEOUT)
+	@oc -n $(NAMESPACE) logs job/$(MIGRATIONS_JOB_NAME)
 
 delete-migrations-job:
 	@echo "+\n++ Deleting MIGRATIONS job if it exists\n+"
