@@ -113,15 +113,16 @@
       <strong>{{ partnerName }}</strong
       >. Please check your email from StudentAidBC for further instructions. The
       email includes important details and a secure link that your
-      partner/common-law will need in order to provide their information for
-      your application.</template
+      spouse/common-law partner will need in order to provide their information
+      for your application.</template
     ></application-status-tracker-banner
   >
 
   <application-status-tracker-banner
-    :label="`Spouse/Common-law information required for ${applicationDetails?.partnerInfo.fullName}`"
-    icon="fa:fas fa-clock"
-    icon-color="secondary"
+    :label="`Spouse/common-law partner information required for ${applicationDetails?.partnerInfo.fullName}`"
+    icon="fa:fas fa-exclamation-triangle"
+    icon-color="warning"
+    background-color="warning-bg"
     v-if="
       applicationDetails?.partnerInfo?.status ===
         SuccessWaitingStatus.Waiting &&
