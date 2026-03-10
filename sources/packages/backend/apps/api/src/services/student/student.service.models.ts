@@ -1,5 +1,6 @@
+import { Role } from "../../auth";
 import { UserInfo } from "../../types";
-import { AddressInfo } from "@sims/sims-db";
+import { AddressInfo, NoteType } from "@sims/sims-db";
 
 /**
  * Information that must be provided
@@ -45,3 +46,12 @@ export type UserInfoMatchData = Pick<
   CreateStudentUserInfo,
   "lastName" | "givenNames" | "birthdate"
 >;
+
+/**
+ * Map note categories to the user roles, only if there is some
+ * authorization to be applied to the role.
+ */
+export const STUDENT_NOTE_USER_ROLES_MAP = new Map<NoteType, Role>([
+  [NoteType.StudentAppeal, Role.StudentApproveDeclineAppeals],
+  [NoteType.StudentForm, Role.StudentApproveDeclineForms],
+]);

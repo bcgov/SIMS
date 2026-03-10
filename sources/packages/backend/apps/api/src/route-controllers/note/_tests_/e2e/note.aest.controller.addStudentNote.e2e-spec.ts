@@ -1,8 +1,11 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { createFakeStudent } from "@sims/test-utils";
-import { Repository } from "typeorm";
-import { Note, NoteType, Student } from "@sims/sims-db";
+import {
+  createE2EDataSources,
+  E2EDataSources,
+  saveFakeStudent,
+} from "@sims/test-utils";
+import { NoteType } from "@sims/sims-db";
 import { NoteAPIInDTO } from "../../models/note.dto";
 import {
   AESTGroups,
@@ -13,19 +16,17 @@ import {
 
 describe("NoteAESTController(e2e)-addStudentNotes", () => {
   let app: INestApplication;
-  let studentRepo: Repository<Student>;
-  let noteRepo: Repository<Note>;
+  let db: E2EDataSources;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
-    studentRepo = dataSource.getRepository(Student);
-    noteRepo = dataSource.getRepository(Note);
+    db = createE2EDataSources(dataSource);
   });
 
   it("Should allow create student notes when the user belongs to expected AEST users groups.", async () => {
     // Arrange
-    const student = await studentRepo.save(createFakeStudent());
+    const student = await saveFakeStudent(db.dataSource);
     const endpoint = `/aest/note/student/${student.id}`;
     const note = {
       noteType: NoteType.General,
@@ -45,7 +46,7 @@ describe("NoteAESTController(e2e)-addStudentNotes", () => {
       .then((response) => {
         createdNoteId = response.body.id;
       });
-    const createdNote = await noteRepo.findOne({
+    const createdNote = await db.note.findOne({
       select: { noteType: true, description: true },
       where: { id: createdNoteId },
     });
@@ -109,6 +110,48 @@ describe("NoteAESTController(e2e)-addStudentNotes", () => {
         error: "Bad Request",
       });
   });
+
+  [NoteType.StudentAppeal, NoteType.StudentForm].forEach(
+    (restrictedNoteType) => {
+      it(`Should create a note for category ${restrictedNoteType} when the user has authorization for this note type.`, async () => {
+        // Arrange
+        const student = await saveFakeStudent(db.dataSource);
+        const endpoint = `/aest/note/student/${student.id}`;
+
+        // Act/Assert
+        await request(app.getHttpServer())
+          .post(endpoint)
+          .send({ noteType: restrictedNoteType, description: "test note." })
+          .auth(
+            await getAESTToken(AESTGroups.BusinessAdministrators),
+            BEARER_AUTH_TYPE,
+          )
+          .expect(HttpStatus.CREATED);
+      });
+    },
+  );
+
+  [NoteType.StudentAppeal, NoteType.StudentForm].forEach(
+    (restrictedNoteType) => {
+      it(`Should throw forbidden error when trying to create a ${restrictedNoteType} but the user does not have authorization for this note type.`, async () => {
+        // Arrange
+        const student = await saveFakeStudent(db.dataSource);
+        const endpoint = `/aest/note/student/${student.id}`;
+
+        // Act/Assert
+        await request(app.getHttpServer())
+          .post(endpoint)
+          .send({ noteType: restrictedNoteType, description: "test note." })
+          .auth(await getAESTToken(AESTGroups.Operations), BEARER_AUTH_TYPE)
+          .expect(HttpStatus.FORBIDDEN)
+          .expect({
+            message: `User does not have authorization to create a note for category ${restrictedNoteType}.`,
+            error: "Forbidden",
+            statusCode: HttpStatus.FORBIDDEN,
+          });
+      });
+    },
+  );
 
   afterAll(async () => {
     await app?.close();
