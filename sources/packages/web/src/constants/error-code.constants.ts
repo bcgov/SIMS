@@ -132,7 +132,7 @@ export const STUDENT_RESTRICTION_IS_NOT_ACTIVE =
 /**
  * Student restriction not found.
  */
-export const STUDENT_RESTRICTION_NOT_FOUND = "STUDENT_RESTRICTION_NOT_FOUND";
+export const RESTRICTION_NOT_FOUND = "RESTRICTION_NOT_FOUND";
 
 /**
  * Student application is invalid state for application restriction bypass creation.

@@ -41,9 +41,8 @@ import {
   APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_REMOVAL,
   APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
   APPLICATION_RESTRICTION_BYPASS_NOT_FOUND,
-  INSTITUTION_RESTRICTION_NOT_FOUND,
   RESTRICTION_IS_NOT_ACTIVE,
-  STUDENT_RESTRICTION_NOT_FOUND,
+  RESTRICTION_NOT_FOUND,
 } from "../../constants";
 import { getUserFullName } from "../../utilities";
 import {
@@ -207,10 +206,9 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
           case ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS:
-          case STUDENT_RESTRICTION_NOT_FOUND:
+          case RESTRICTION_NOT_FOUND:
           case RESTRICTION_IS_NOT_ACTIVE:
           case APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION:
-          case INSTITUTION_RESTRICTION_NOT_FOUND:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );

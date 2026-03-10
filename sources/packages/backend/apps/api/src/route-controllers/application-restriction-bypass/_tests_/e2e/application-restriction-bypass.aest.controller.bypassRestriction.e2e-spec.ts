@@ -3,6 +3,7 @@ import {
   E2EDataSources,
   RestrictionCode,
   createE2EDataSources,
+  createFakeRestriction,
   createFakeUser,
   saveFakeApplication,
   saveFakeApplicationRestrictionBypass,
@@ -24,6 +25,7 @@ import {
   Restriction,
   RestrictionActionType,
   RestrictionBypassBehaviors,
+  RestrictionType,
   User,
 } from "@sims/sims-db";
 import {
@@ -39,7 +41,9 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
   let sharedMinistryUser: User;
   let ptssrRestriction: Restriction;
   let endpoint: string;
-  let susRestriction: Restriction, remitRestriction: Restriction;
+  let susRestriction: Restriction,
+    newInstitutionRestriction: Restriction,
+    savedInstitutionRestriction: Restriction;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -53,11 +57,16 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     susRestriction = await db.restriction.findOne({
       where: { restrictionCode: RestrictionCode.SUS },
     });
-    remitRestriction = await db.restriction.findOne({
-      where: {
-        restrictionCode: RestrictionCode.REMIT,
+    newInstitutionRestriction = createFakeRestriction({
+      initialValues: {
+        restrictionCode: "ZZZ",
+        restrictionType: RestrictionType.Institution,
+        actionType: [RestrictionActionType.StopPartTimeDisbursement],
       },
     });
+    savedInstitutionRestriction = await db.restriction.save(
+      newInstitutionRestriction,
+    );
   });
 
   it("Should be able to create a bypass when there is not an active bypass for the same student restriction.", async () => {
@@ -142,7 +151,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     const institutionRestriction = await saveFakeInstitutionRestriction(db, {
       institution:
         application.currentAssessment.offering.institutionLocation.institution,
-      restriction: remitRestriction,
+      restriction: savedInstitutionRestriction,
       creator: sharedMinistryUser,
       program: application.currentAssessment.offering.educationProgram,
       location: application.currentAssessment.offering.institutionLocation,

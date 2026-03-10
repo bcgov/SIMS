@@ -26,8 +26,7 @@
             <template #item="{ props, item }">
               <v-list-item v-bind="props" title="">
                 <span>{{ item.title }}</span>
-                <StatusChipClientType
-                  v-if="item.raw.restrictedParty"
+                <RestrictedPartyChip
                   :client-type="item.raw.restrictedParty"
                   class="ml-3 float-right"
                 />
@@ -36,8 +35,7 @@
             <template #selection="{ item }">
               <v-list-item title="">
                 <span>{{ item.title }}</span>
-                <StatusChipClientType
-                  v-if="item.raw.restrictedParty"
+                <RestrictedPartyChip
                   :client-type="item.raw.restrictedParty"
                   class="ml-3 float-right"
                 />
@@ -146,7 +144,7 @@ import {
   SelectItemType,
   VForm,
 } from "@/types";
-import { watch, ref, defineComponent } from "vue";
+import { ref, defineComponent } from "vue";
 import {
   useRules,
   useModalDialog,
@@ -159,13 +157,13 @@ import {
   BypassRestrictionAPIInDTO,
 } from "@/services/http/dto";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import StatusChipClientType from "@/components/generic/StatusChipClientType.vue";
+import RestrictedPartyChip from "@/components/generic/RestrictedPartyChip.vue";
 import { ApplicationRestrictionBypassService } from "@/services/ApplicationRestrictionBypassService";
 
 export default defineComponent({
   components: {
     ModalDialogBase,
-    StatusChipClientType,
+    RestrictedPartyChip,
   },
   setup() {
     const snackBar = useSnackBar();
@@ -202,12 +200,16 @@ export default defineComponent({
       }
       try {
         loading.value = true;
+        const foundRestriction =
+          availableRestrictionsToBypass.value.availableRestrictionsToBypass?.find(
+            (r) => r.restrictionId === formModel.value.restrictionId,
+          );
         await ApplicationRestrictionBypassService.shared.bypassRestriction({
           applicationId: applicationId.value,
           restrictionId: formModel.value.restrictionId,
           bypassBehavior: formModel.value.bypassBehavior,
           note: formModel.value.note,
-          restrictedParty: formModel.value.restrictedParty,
+          restrictedParty: foundRestriction!.restrictedParty,
         });
         snackBar.success("Restriction bypassed.");
         resolvePromise(true);
@@ -228,7 +230,7 @@ export default defineComponent({
       restrictionCode: string,
       createdDate: Date,
       restrictionId: number,
-      restrictedParty: RestrictedParty.Student | RestrictedParty.Institution,
+      restrictedParty: RestrictedParty,
     ): SelectItemType => {
       const formattedDate = dateOnlyLongString(createdDate);
       return {
@@ -285,19 +287,6 @@ export default defineComponent({
       }
       return showModalInternal();
     };
-
-    watch(
-      () => formModel.value.restrictionId,
-      (restrictionId) => {
-        const foundRestriction =
-          availableRestrictionsToBypass.value.availableRestrictionsToBypass?.find(
-            (r) => r.restrictionId === restrictionId,
-          );
-        if (foundRestriction) {
-          formModel.value.restrictedParty = foundRestriction.restrictedParty;
-        }
-      },
-    );
 
     return {
       showDialog,

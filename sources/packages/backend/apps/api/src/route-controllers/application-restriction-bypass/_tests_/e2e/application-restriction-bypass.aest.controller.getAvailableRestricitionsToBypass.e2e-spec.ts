@@ -57,26 +57,30 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       },
     );
 
-    // Add an institution restriction bypass that should be not available for bypass.
-    const remitRestriction = await db.restriction.findOne({
-      where: { restrictionCode: RestrictionCode.REMIT },
+    // Add an institution restriction such that it is not available for bypass.
+    const newInstitutionRestriction = createFakeRestriction({
+      initialValues: {
+        restrictionCode: "YYY",
+        restrictionType: RestrictionType.Institution,
+      },
     });
-    const remitInstitutionRestriction = await saveFakeInstitutionRestriction(
-      db,
-      {
+    const savedInstitutionRestriction = await db.restriction.save(
+      newInstitutionRestriction,
+    );
+    const savedInstitutionRestrictionForBypass =
+      await saveFakeInstitutionRestriction(db, {
         institution:
           application.currentAssessment.offering.institutionLocation
             .institution,
-        restriction: remitRestriction,
+        restriction: savedInstitutionRestriction,
         program: application.currentAssessment.offering.educationProgram,
         location: application.currentAssessment.offering.institutionLocation,
-      },
-    );
+      });
     await saveFakeApplicationRestrictionBypass(db, {
       application,
       bypassCreatedBy: sharedMinistryUser,
       creator: sharedMinistryUser,
-      institutionRestriction: remitInstitutionRestriction,
+      institutionRestriction: savedInstitutionRestrictionForBypass,
     });
 
     // Add a student restriction that should be available to be bypassed because the student restriction is a different one than the student restriction bypassed above.
@@ -91,7 +95,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       },
     );
 
-    // Add an institution restriction that should be available to be bypassed.
+    // Add an institution restriction that should be available for bypass.
     const susRestriction = await db.restriction.findOne({
       where: { restrictionCode: RestrictionCode.SUS },
     });
@@ -121,22 +125,21 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       );
 
     // Add an institution restriction bypass that was removed. In other words, it is no longer active and the institution restriction should be available to be bypassed again.
-    const newInstitutionRestriction = createFakeRestriction({
+    const secondNewInstitutionRestriction = createFakeRestriction({
       initialValues: {
+        restrictionCode: "ZZZ",
         restrictionType: RestrictionType.Institution,
       },
     });
-    // Assigning a dummy restriction code to handle the order of the result during assertion since the restriction code is used as the sort order during assertion.
-    newInstitutionRestriction.restrictionCode = "ZZZ";
-    const savedInstitutionRestriction = await db.restriction.save(
-      newInstitutionRestriction,
+    const secondSavedInstitutionRestriction = await db.restriction.save(
+      secondNewInstitutionRestriction,
     );
-    const savedInstitutionRestrictionBypass =
+    const secondSavedInstitutionRestrictionBypass =
       await saveFakeInstitutionRestriction(db, {
         institution:
           application.currentAssessment.offering.institutionLocation
             .institution,
-        restriction: savedInstitutionRestriction,
+        restriction: secondSavedInstitutionRestriction,
         program: application.currentAssessment.offering.educationProgram,
         location: application.currentAssessment.offering.institutionLocation,
       });
@@ -148,7 +151,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
           bypassCreatedBy: sharedMinistryUser,
           bypassRemovedBy: sharedMinistryUser,
           creator: sharedMinistryUser,
-          institutionRestriction: savedInstitutionRestrictionBypass,
+          institutionRestriction: secondSavedInstitutionRestrictionBypass,
         },
         {
           isRemoved: true,

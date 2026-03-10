@@ -215,15 +215,9 @@ export const ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS =
 export const RESTRICTION_IS_NOT_ACTIVE = "RESTRICTION_IS_NOT_ACTIVE";
 
 /**
- * Student restriction not found.
+ * Restriction not found.
  */
-export const STUDENT_RESTRICTION_NOT_FOUND = "STUDENT_RESTRICTION_NOT_FOUND";
-
-/**
- * Institution restriction not found.
- */
-export const INSTITUTION_RESTRICTION_NOT_FOUND =
-  "INSTITUTION_RESTRICTION_NOT_FOUND";
+export const RESTRICTION_NOT_FOUND = "RESTRICTION_NOT_FOUND";
 
 /**
  * Student application is in invalid state for application restriction bypass creation.
@@ -292,11 +286,6 @@ export const SCHOLASTIC_STANDING_REVERSAL_NOT_ALLOWED =
  */
 export const SCHOLASTIC_STANDING_REVERSAL_NOT_UPDATED =
   "SCHOLASTIC_STANDING_REVERSAL_NOT_UPDATED";
-
-/**
- * Restriction not found.
- */
-export const RESTRICTION_NOT_FOUND = "RESTRICTION_NOT_FOUND";
 
 /**
  * Restriction is not active.

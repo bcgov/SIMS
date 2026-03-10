@@ -30,7 +30,7 @@ export class BypassRestrictionAPIInDTO {
   @IsPositive()
   restrictionId: number;
   @IsEnum(RestrictedParty)
-  restrictedParty: RestrictedParty.Student | RestrictedParty.Institution;
+  restrictedParty: RestrictedParty;
   @IsEnum(RestrictionBypassBehaviors)
   bypassBehavior: RestrictionBypassBehaviors;
   @IsNotEmpty()
@@ -46,7 +46,7 @@ export class RemoveBypassRestrictionAPIInDTO {
 
 export class AvailableRestrictionAPIOutDTO {
   restrictionId: number;
-  restrictedParty: RestrictedParty.Student | RestrictedParty.Institution;
+  restrictedParty: RestrictedParty;
   restrictionCode: string;
   restrictionCreatedAt: Date;
 }
@@ -59,7 +59,7 @@ export class ApplicationRestrictionBypassAPIOutDTO {
   applicationRestrictionBypassId: number;
   restrictionId: number;
   restrictionCode: string;
-  restrictedParty: RestrictedParty.Student | RestrictedParty.Institution;
+  restrictedParty: RestrictedParty;
   createdDate: string;
   createdBy: string;
   creationNote: string;

@@ -7,7 +7,7 @@ import { RestrictedParty } from "@/types";
 import { computed } from "vue";
 
 const props = defineProps<{
-  clientType: RestrictedParty.Student | RestrictedParty.Institution;
+  clientType: RestrictedParty;
 }>();
 
 const clientTypeLabel = computed(() =>
