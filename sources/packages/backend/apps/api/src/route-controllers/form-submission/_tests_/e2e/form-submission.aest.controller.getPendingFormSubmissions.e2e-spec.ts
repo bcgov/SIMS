@@ -16,6 +16,7 @@ import {
   saveFakeFormSubmission,
   saveFakeStudent,
 } from "@sims/test-utils";
+import { addDays } from "@sims/utilities";
 
 describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
   let app: INestApplication;
@@ -47,6 +48,7 @@ describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
           initialValues: {
             formCategory: FormCategory.StudentForm,
             submissionStatus: FormSubmissionStatus.Pending,
+            submittedDate: addDays(-2),
           },
         },
       ),
@@ -57,6 +59,7 @@ describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
           initialValues: {
             formCategory: FormCategory.StudentAppeal,
             submissionStatus: FormSubmissionStatus.Pending,
+            submittedDate: addDays(-1),
           },
         },
       ),

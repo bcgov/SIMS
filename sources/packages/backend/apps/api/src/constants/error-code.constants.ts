@@ -341,3 +341,9 @@ export const NO_LOCATION_SELECTED_FOR_DESIGNATION =
  * Field requirements not valid.
  */
 export const FIELD_REQUIREMENTS_NOT_VALID = "FIELD_REQUIREMENTS_NOT_VALID";
+
+/**
+ * User is not authorized to create a note for the note category.
+ */
+export const NOTE_CREATION_NOT_AUTHORIZED_FOR_NOTE_CATEGORY =
+  "NOTE_CREATION_NOT_AUTHORIZED_FOR_NOTE_CATEGORY";

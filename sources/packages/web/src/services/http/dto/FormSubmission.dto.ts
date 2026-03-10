@@ -33,7 +33,7 @@ export interface FormSubmissionConfigurationsAPIOutDTO {
  * This is a basic representation of a form submission properties to be extended
  * for Ministry, Student, and Institutions.
  */
-interface FormSubmissionAPIOutDTO {
+interface FormSubmissionBaseAPIOutDTO {
   id: number;
   formCategory: FormCategory;
   status: FormSubmissionStatus;
@@ -47,29 +47,55 @@ interface FormSubmissionAPIOutDTO {
  * This is a basic representation of a form submission item properties to be extended
  * for Ministry, Student, and Institutions.
  */
-interface FormSubmissionItemAPIOutDTO {
+interface FormSubmissionItemBaseAPIOutDTO {
   id: number;
   formType: string;
   formCategory: FormCategory;
-  /**
-   * Current decision status for this form submission item.
-   * When no decision is made yet, the status will be assumed to be Pending.
-   */
-  decisionStatus: FormSubmissionDecisionStatus;
   dynamicFormConfigurationId: number;
   submissionData: unknown;
   formDefinitionName: string;
 }
 
 /**
+ * Form submission with one to many forms for the Ministry,
+ * including the individual form items.
+ */
+export interface FormSubmissionAPIOutDTO extends FormSubmissionBaseAPIOutDTO {
+  submissionItems: FormSubmissionItemAPIOutDTO[];
+}
+
+/**
  * Current decision associated with a form submission item.
  */
-interface FormSubmissionItemDecisionAPIOutDTO {
-  id: number;
+export interface FormSubmissionItemDecisionAPIOutDTO {
+  id?: number;
   decisionStatus: FormSubmissionDecisionStatus;
   decisionDate?: Date;
   decisionBy?: string;
   decisionNoteDescription?: string;
+}
+
+/**
+ * Current decision associated with a form submission item
+ * with additional details for the Ministry, including the decision date and decision by.
+ */
+export interface FormSubmissionItemDecisionMinistryAPIOutDTO extends FormSubmissionItemDecisionAPIOutDTO {
+  decisionDate?: Date;
+  decisionBy?: string;
+}
+
+/**
+ * Individual form items that will be part of a form submission with one to many forms.
+ * This is a basic representation of a form submission item properties to be extended
+ * for Ministry, Student, and Institutions.
+ */
+export interface FormSubmissionItemAPIOutDTO extends FormSubmissionItemBaseAPIOutDTO {
+  /**
+   * Current decision details for this form submission item. The current decision is the most recent decision made on
+   * this item and represents the current state of the item.
+   * Optionally include decision information if the user has the necessary permissions to view the decision details.
+   */
+  currentDecision: FormSubmissionItemDecisionAPIOutDTO;
 }
 
 /**
@@ -87,25 +113,20 @@ export interface FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemA
    * this item and represents the current state of the item.
    * Optionally include decision information if the user has the necessary permissions to view the decision details.
    */
-  currentDecision?: FormSubmissionItemDecisionAPIOutDTO;
+  currentDecision: FormSubmissionItemDecisionMinistryAPIOutDTO;
   /**
    * Decision history for this form submission item. The decision history includes all decisions made on this but
    * the current one that is sent separately in the currentDecision property.
    * Optionally include decision history information if the user has the necessary permissions to view the decision details.
    */
-  previousDecisions?: FormSubmissionItemDecisionAPIOutDTO[];
-}
-
-// TODO: To be used once student view is implemented, currently using mocked data.
-export interface FormSubmissionStudentAPIOutDTO extends FormSubmissionAPIOutDTO {
-  submissionItems: FormSubmissionItemAPIOutDTO[];
+  previousDecisions?: FormSubmissionItemDecisionMinistryAPIOutDTO[];
 }
 
 /**
  * Form submission with one to many forms for the Ministry,
  * including the individual form items.
  */
-export interface FormSubmissionMinistryAPIOutDTO extends FormSubmissionAPIOutDTO {
+export interface FormSubmissionMinistryAPIOutDTO extends FormSubmissionBaseAPIOutDTO {
   hasApprovalAuthorization: boolean;
   submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
 }

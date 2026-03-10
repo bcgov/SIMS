@@ -1,22 +1,26 @@
 <template>
   <full-page-container>
     <template #header>
-      <header-navigator title="Forms" :sub-title="subtitle" />
+      <header-navigator
+        title="Forms submission"
+        :sub-title="subtitle"
+        :back-target="backTarget"
+      />
     </template>
     <form-submission-approval
       :form-submission-id="formSubmissionId"
       :show-decision-details="true"
-      :read-only="false"
+      :read-only="readOnly"
       @loaded="submissionLoaded"
     />
   </full-page-container>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, PropType, ref } from "vue";
 import FormSubmissionApproval from "@/components/form-submissions/FormSubmissionApproval.vue";
 import { FormSubmissionMinistryAPIOutDTO } from "@/services/http/dto";
-import { FormCategory } from "@/types";
+import { BackTarget, FormCategory } from "@/types";
 
 export default defineComponent({
   components: {
@@ -26,6 +30,16 @@ export default defineComponent({
     formSubmissionId: {
       type: Number,
       required: true,
+    },
+    readOnly: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+    backTarget: {
+      type: Object as PropType<BackTarget>,
+      required: false,
+      default: undefined,
     },
   },
   setup() {
