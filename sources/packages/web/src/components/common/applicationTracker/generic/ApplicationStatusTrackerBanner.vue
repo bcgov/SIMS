@@ -38,10 +38,12 @@ export default defineComponent({
     label: {
       type: String,
       required: false,
+      default: "",
     },
     content: {
       type: String,
       required: false,
+      default: "",
     },
     icon: {
       type: String,

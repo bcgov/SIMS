@@ -90,5 +90,5 @@ export function getUserFullNameLikeSearch(
   userTableAlias = "user",
   searchCriteriaParameterName = "searchCriteria",
 ) {
-  return `(${userTableAlias}.firstName || ' ' || ${userTableAlias}.lastName) ILIKE :${searchCriteriaParameterName}`;
+  return `(COALESCE(${userTableAlias}.firstName || ' ', '') || ${userTableAlias}.lastName) ILIKE :${searchCriteriaParameterName}`;
 }

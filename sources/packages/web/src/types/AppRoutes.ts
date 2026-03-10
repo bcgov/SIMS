@@ -122,7 +122,9 @@ export enum AppRoutes {
   OfferingChangeRequests = "institution/offering/change-requests",
   ViewOfferingChangeRequest = "institution/offering-change-request/:offeringId/program/:programId",
   LegacyChangeRequests = "legacy-change-requests",
-  StudentAppeals = "appeals",
+  LegacyStudentAppeals = "legacy-appeals",
+  FormSubmissionPendingForms = "pending-forms",
+  FormSubmissionPendingAppeals = "pending-appeals",
   ApplicationChangeRequests = "application-change-requests",
   StudentAccountApplications = "student-account-applications",
   StudentAccountApplicationsApproval = "student-account-applications/:studentAccountApplicationId/approval",
@@ -130,6 +132,7 @@ export enum AppRoutes {
   PendingApplicationOfferingChangeRequests = "institution/application-offering-change-request/in-progress",
   PendingOfferings = "institution/offering/pending",
   PendingPrograms = "institution/program/pending",
+  MSFAAActivity = "msfaa-activity",
   // program
   Programs = "programs",
   ViewProgram = "institution/:institutionId/location/:locationId/program/:programId",

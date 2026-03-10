@@ -118,6 +118,7 @@ export default defineComponent({
           supportingData: supportingUser.value.supportingData,
           ...contactAddress,
           hasValidSIN: supportingUser.value.personalInfo?.hasValidSIN,
+          offeringIntensity: supportingUser.value.offeringIntensity,
         };
         isDataReady.value = true;
       }
