@@ -16,6 +16,7 @@ import {
   saveFakeFormSubmission,
   saveFakeStudent,
 } from "@sims/test-utils";
+import { addDays } from "@sims/utilities";
 
 describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
   let app: INestApplication;
@@ -47,7 +48,7 @@ describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
           initialValues: {
             formCategory: FormCategory.StudentForm,
             submissionStatus: FormSubmissionStatus.Pending,
-            submittedDate: faker.date.recent({ days: 2 }),
+            submittedDate: addDays(-2),
           },
         },
       ),
@@ -58,7 +59,7 @@ describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
           initialValues: {
             formCategory: FormCategory.StudentAppeal,
             submissionStatus: FormSubmissionStatus.Pending,
-            submittedDate: faker.date.recent({ days: 1 }),
+            submittedDate: addDays(-1),
           },
         },
       ),
@@ -95,22 +96,22 @@ describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
       .expect({
         results: [
           {
-            formSubmissionId: pendingStudentForm.id,
-            studentId: pendingStudentForm.student.id,
-            submittedDate: pendingStudentForm.submittedDate.toISOString(),
-            firstName: pendingStudentForm.student.user.firstName,
-            lastName: pendingStudentForm.student.user.lastName,
-            formNames: pendingStudentForm.formSubmissionItems.map(
-              (item) => item.dynamicFormConfiguration.formType as string,
-            ),
-          },
-          {
             formSubmissionId: pendingStudentAppeal.id,
             studentId: pendingStudentAppeal.student.id,
             submittedDate: pendingStudentAppeal.submittedDate.toISOString(),
             firstName: pendingStudentAppeal.student.user.firstName,
             lastName: pendingStudentAppeal.student.user.lastName,
             formNames: pendingStudentAppeal.formSubmissionItems.map(
+              (item) => item.dynamicFormConfiguration.formType as string,
+            ),
+          },
+          {
+            formSubmissionId: pendingStudentForm.id,
+            studentId: pendingStudentForm.student.id,
+            submittedDate: pendingStudentForm.submittedDate.toISOString(),
+            firstName: pendingStudentForm.student.user.firstName,
+            lastName: pendingStudentForm.student.user.lastName,
+            formNames: pendingStudentForm.formSubmissionItems.map(
               (item) => item.dynamicFormConfiguration.formType as string,
             ),
           },
