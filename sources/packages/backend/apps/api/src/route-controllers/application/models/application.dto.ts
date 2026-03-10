@@ -187,11 +187,11 @@ export enum SuccessWaitingStatus {
   Waiting = "Waiting",
 }
 
-export class ParentDetails {
+export class SupportingUserDetails {
   supportingUserId: number;
-  parentFullName: string;
+  fullName?: string;
   status: SuccessWaitingStatus;
-  isAbleToReport?: boolean;
+  isAbleToReport: boolean;
 }
 
 export class ApplicationIncomeVerification {
@@ -202,8 +202,8 @@ export class ApplicationIncomeVerification {
 }
 
 export class ApplicationIdentifiableSupportingUserDetails {
-  partnerInfo?: SuccessWaitingStatus;
-  parentsInfo?: ParentDetails[];
+  partnerInfo?: SupportingUserDetails;
+  parentsInfo?: SupportingUserDetails[];
 }
 
 export class InProgressApplicationDetailsAPIOutDTO extends IntersectionType(

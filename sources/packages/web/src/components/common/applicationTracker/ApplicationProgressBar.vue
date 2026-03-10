@@ -8,17 +8,17 @@
     >
       <body-header title="Track your application" />
       <stepper-progress-bar
-        :progressBarValue="trackerApplicationStatus"
-        :progressStepLabels="applicationTrackerLabels"
-        :progressBarColor="trackFillColor"
-        :initialStepSize="thumbSize"
+        :progress-bar-value="trackerApplicationStatus"
+        :progress-step-labels="applicationTrackerLabels"
+        :progress-bar-color="trackFillColor"
+        :initial-step-size="thumbSize"
         :disabled="disabled"
-        :progressLabelIcon="statusIconDetails.statusIcon"
-        :progressLabelIconColor="statusIconDetails.statusType"
+        :progress-label-icon="statusIconDetails.statusIcon"
+        :progress-label-icon-color="statusIconDetails.statusType"
       />
       <draft
         :are-application-actions-allowed="areApplicationActionsAllowed"
-        @editApplication="$emit('editApplication')"
+        @edit-application="$emit('editApplication')"
         v-if="
           applicationProgressDetails.applicationStatus ===
           ApplicationStatus.Draft
@@ -37,23 +37,24 @@
           ApplicationStatus.InProgress
         "
         :application-id="applicationId"
+        :are-application-actions-allowed="areApplicationActionsAllowed"
       />
       <assessment
         v-else-if="
           applicationProgressDetails.applicationStatus ===
           ApplicationStatus.Assessment
         "
-        :assessmentTriggerType="
+        :assessment-trigger-type="
           applicationProgressDetails.assessmentTriggerType!
         "
-        @goToNoticeOfAssessment="goToNoticeOfAssessment"
+        @go-to-notice-of-assessment="goToNoticeOfAssessment"
       />
       <enrolment
         v-else-if="
           applicationProgressDetails.applicationStatus ===
           ApplicationStatus.Enrolment
         "
-        :applicationId="applicationId"
+        :application-id="applicationId"
       />
       <completed
         :are-application-actions-allowed="areApplicationActionsAllowed"
@@ -61,7 +62,7 @@
           applicationProgressDetails.applicationStatus ===
           ApplicationStatus.Completed
         "
-        :applicationId="applicationId"
+        :application-id="applicationId"
       />
     </template>
     <cancelled

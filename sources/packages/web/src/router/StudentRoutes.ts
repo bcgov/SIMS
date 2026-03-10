@@ -323,6 +323,32 @@ export const studentRoutes: Array<RouteRecordRaw> = [
           formSubmissionId: Number.parseInt(
             route.params.formSubmissionId as string,
           ),
+          applicationId: route.query.applicationId
+            ? Number.parseInt(route.query.applicationId as string)
+            : undefined,
+        }),
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
+        path: AppRoutes.StudentFormSubmissionView,
+        name: StudentRoutesConst.STUDENT_FORMS_SUBMISSION_VIEW_FROM_APPLICATION_SUMMARY,
+        component: FormSubmissionView,
+        props: (route) => ({
+          formSubmissionId: Number.parseInt(
+            route.params.formSubmissionId as string,
+          ),
+          applicationId: Number.parseInt(route.query.applicationId as string),
+          backTarget: {
+            name: "Financial Aid Application",
+            to: {
+              name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
+              params: {
+                id: route.query.applicationId,
+              },
+            },
+          },
         }),
         meta: {
           clientType: ClientIdType.Student,

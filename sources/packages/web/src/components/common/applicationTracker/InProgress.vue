@@ -60,13 +60,13 @@
       v-if="
         parent.status === SuccessWaitingStatus.Waiting && parent.isAbleToReport
       "
-      :label="`Waiting for additional information from ${parent.parentFullName}`"
+      :label="`Waiting for additional information from ${parent.fullName}`"
       icon="fa:fas fa-clock"
       icon-color="secondary"
     >
       <template #content>
         We are waiting for supporting information from
-        <strong>{{ parent.parentFullName }}</strong
+        <strong>{{ parent.fullName }}</strong
         >. Please check your email from StudentAidBC for further instructions.
         The email includes important details and a secure link that your parent
         will need in order to provide their information for your application.
@@ -77,40 +77,76 @@
       v-if="
         parent.status === SuccessWaitingStatus.Waiting && !parent.isAbleToReport
       "
-      :label="`Parent information required for ${parent.parentFullName}`"
+      :label="`Parent information required for ${parent.fullName}`"
       icon="fa:fas fa-exclamation-triangle"
       icon-color="warning"
       background-color="warning-bg"
     >
       <template #content>
-        You have indicated that <strong>{{ parent.parentFullName }}</strong> is
-        unable to complete their declaration. Please complete the following
-        declaration on their behalf. Click on the button below to complete the
-        declaration.
+        You have indicated that <strong>{{ parent.fullName }}</strong> is unable
+        to complete their declaration. Please complete the following declaration
+        on their behalf. Click on the button below to complete the declaration.
       </template>
       <template #actions>
         <v-btn
           color="primary"
           @click="navigateToParentReporting(parent.supportingUserId)"
+          :disabled="!areApplicationActionsAllowed"
         >
-          {{ parent.parentFullName }}
+          {{ parent.fullName }}
         </v-btn>
       </template>
     </application-status-tracker-banner>
   </template>
 
   <application-status-tracker-banner
-    label="Waiting for additional information from your partner"
+    :label="`Waiting for additional information from ${partnerName}`"
     icon="fa:fas fa-clock"
     icon-color="secondary"
-    v-if="applicationDetails?.partnerInfo === SuccessWaitingStatus.Waiting"
+    v-if="
+      applicationDetails?.partnerInfo?.status ===
+        SuccessWaitingStatus.Waiting &&
+      applicationDetails.partnerInfo.isAbleToReport
+    "
     ><template #content
-      >We are waiting for
-      <strong>supporting information from your partner.</strong> Please check
-      your email to confirm that you have received a message from us. This email
-      will include important details and links that your partner will need in
-      order to provide their information for your application.</template
+      >We are waiting for supporting information from
+      <strong>{{ partnerName }}</strong
+      >. Please check your email from StudentAidBC for further instructions. The
+      email includes important details and a secure link that your
+      partner/common-law will need in order to provide their information for
+      your application.</template
     ></application-status-tracker-banner
+  >
+
+  <application-status-tracker-banner
+    :label="`Spouse/Common-law information required for ${applicationDetails?.partnerInfo.fullName}`"
+    icon="fa:fas fa-clock"
+    icon-color="secondary"
+    v-if="
+      applicationDetails?.partnerInfo?.status ===
+        SuccessWaitingStatus.Waiting &&
+      !applicationDetails.partnerInfo?.isAbleToReport
+    "
+    ><template #content
+      >You have indicated that
+      <strong>{{ applicationDetails.partnerInfo.fullName }}</strong> is unable
+      to complete their declaration. Please complete the following declaration
+      on their behalf. Click on the button below to complete the
+      declaration.</template
+    >
+    <template #actions>
+      <v-btn
+        color="primary"
+        @click="
+          navigateToPartnerReporting(
+            applicationDetails.partnerInfo.supportingUserId,
+          )
+        "
+        :disabled="!areApplicationActionsAllowed"
+      >
+        {{ applicationDetails.partnerInfo.fullName }}
+      </v-btn>
+    </template></application-status-tracker-banner
   >
 
   <application-status-tracker-banner
@@ -191,7 +227,7 @@
       label="Parent information request completed"
       icon="fa:fas fa-check-circle"
       icon-color="success"
-      :content="`We have successfully received supporting information from ${parent.parentFullName}.`"
+      :content="`We have successfully received supporting information from ${parent.fullName}.`"
     />
   </template>
 
@@ -200,7 +236,9 @@
     icon="fa:fas fa-check-circle"
     icon-color="success"
     content="We have successfully received supporting information from your partner."
-    v-if="applicationDetails?.partnerInfo === SuccessWaitingStatus.Success"
+    v-if="
+      applicationDetails?.partnerInfo?.status === SuccessWaitingStatus.Success
+    "
   />
 
   <application-status-tracker-banner
@@ -265,7 +303,7 @@ import {
   ProgramInfoStatus,
   SuccessWaitingStatus,
 } from "@/types";
-import { onMounted, ref, defineComponent } from "vue";
+import { onMounted, ref, defineComponent, computed } from "vue";
 import { ApplicationService } from "@/services/ApplicationService";
 import { InProgressApplicationDetailsAPIOutDTO } from "@/services/http/dto/Application.dto";
 
@@ -277,6 +315,11 @@ export default defineComponent({
     applicationId: {
       type: Number,
       required: true,
+    },
+    areApplicationActionsAllowed: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   setup(props) {
@@ -293,6 +336,23 @@ export default defineComponent({
       });
     };
 
+    const navigateToPartnerReporting = (supportingUserId: number) => {
+      router.push({
+        name: StudentRoutesConst.REPORT_PARTNER_INFORMATION,
+        params: {
+          applicationId: props.applicationId,
+          supportingUserId: supportingUserId,
+        },
+      });
+    };
+
+    const partnerName = computed(() => {
+      return (
+        applicationDetails.value?.partnerInfo?.fullName ??
+        "your spouse/common-law partner"
+      );
+    });
+
     onMounted(async () => {
       applicationDetails.value =
         await ApplicationService.shared.getInProgressApplicationDetails(
@@ -302,6 +362,8 @@ export default defineComponent({
 
     return {
       navigateToParentReporting,
+      navigateToPartnerReporting,
+      partnerName,
       ProgramInfoStatus,
       applicationDetails,
       ApplicationExceptionStatus,

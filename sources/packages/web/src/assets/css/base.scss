@@ -114,6 +114,14 @@ strong {
   color: $brand-black-light;
   line-height: $line-height-header-md;
   font-weight: $font-weight-bold;
+  &-link {
+    @extend .header-title;
+    text-decoration: none;
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 .header-sub-title {

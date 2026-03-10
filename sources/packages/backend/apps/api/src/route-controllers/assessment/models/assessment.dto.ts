@@ -7,6 +7,7 @@ import {
   AssessmentTriggerType,
   COEStatus,
   DisbursementScheduleStatus,
+  FormSubmissionStatus,
   NOTE_DESCRIPTION_MAX_LENGTH,
   OfferingIntensity,
   OfferingStatus,
@@ -49,6 +50,7 @@ export enum RequestAssessmentTypeAPIOutDTO {
 
 type RequestAssessmentSummaryStatus =
   | StudentAppealStatus
+  | FormSubmissionStatus
   | ApplicationExceptionStatus
   | OfferingStatus
   | ApplicationOfferingChangeRequestStatus;
@@ -70,6 +72,7 @@ export class AssessmentHistorySummaryAPIOutDTO {
   offeringId?: number;
   programId?: number;
   studentAppealId?: number;
+  formSubmissionId?: number;
   applicationOfferingChangeRequestId?: number;
   applicationExceptionId?: number;
   studentScholasticStandingId?: number;

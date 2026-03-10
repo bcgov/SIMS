@@ -1,11 +1,11 @@
 <template>
-  <v-row align="end" class="mb-1">
+  <v-row align="end" class="mb-1 user-select-none">
     <v-col>
       <slot name="title">
-        <div v-if="routeLocation" class="header-title">
-          <a @click="goBack()">
+        <div v-if="routeLocation || backTarget" class="header-title">
+          <a @click="goBack()" class="header-title-link">
             <v-icon icon="fa:fa fa-arrow-left" size="25"></v-icon>
-            {{ title }}</a
+            {{ backTarget?.name ?? title }}</a
           >
         </div>
         <div v-else class="header-title">
@@ -31,6 +31,7 @@
   </v-row>
 </template>
 <script lang="ts">
+import { BackTarget } from "@/types";
 import { defineComponent, PropType } from "vue";
 import { RouteLocationRaw, useRouter } from "vue-router";
 
@@ -38,19 +39,38 @@ export default defineComponent({
   props: {
     title: {
       type: String,
+      required: false,
+      default: undefined,
     },
     subTitle: {
       type: String,
+      required: false,
+      default: undefined,
     },
     routeLocation: {
       type: Object as PropType<RouteLocationRaw>,
+      required: false,
+      default: undefined,
+    },
+    /**
+     * Provides alternative route and title.
+     * If provided, it will take precedence over the
+     * properties title and routeLocation.
+     */
+    backTarget: {
+      type: Object as PropType<BackTarget>,
+      required: false,
+      default: undefined,
     },
   },
 
   setup(props) {
     const router = useRouter();
-
     const goBack = () => {
+      if (props.backTarget) {
+        router.push(props.backTarget.to);
+        return;
+      }
       if (props.routeLocation) {
         router.push(props.routeLocation);
       }
