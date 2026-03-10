@@ -269,7 +269,7 @@ workers: create-docker-local-network
 
 # Runs migrations container.
 migrations: create-docker-local-network
-	@echo "+\n++ Make: Database migrations REPL"
+	@echo "+\n++ Make: Run migrations container"
 	@docker compose -f docker-compose.yml build migrations
 	@docker compose -f docker-compose.yml up -d migrations
 
