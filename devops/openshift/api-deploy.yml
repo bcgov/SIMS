@@ -528,8 +528,6 @@ parameters:
     value: FORMIO_ROOT_EMAIL
   - name: FORMIO_ROOT_PASSWORD_NAME_KEY
     value: FORMIO_ROOT_PASSWORD
-  - name: FORMS_URL_NAME_KEY
-    value: FORMS_URL
   - name: SITE_MINDER_LOGOUT_URL
     require: true
   - name: IS_FULLTIME_ALLOWED
