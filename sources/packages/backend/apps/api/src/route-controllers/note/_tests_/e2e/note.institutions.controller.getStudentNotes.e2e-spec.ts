@@ -10,7 +10,6 @@ import {
 } from "@sims/test-utils";
 import {
   InstitutionLocation,
-  Note,
   NoteType,
   RestrictionNotificationType,
 } from "@sims/sims-db";
@@ -27,6 +26,7 @@ import {
   InstitutionTokenTypes,
   INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
 } from "../../../../testHelpers";
+import { transformNoteToApiReturn } from "./test-utils";
 
 describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
   let app: INestApplication;
@@ -76,7 +76,7 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
     const expectedAPIReturnNotes = savedNotes
       .slice()
       .reverse()
-      .map((savedNote) => noteToApiReturn(savedNote));
+      .map((savedNote) => transformNoteToApiReturn(savedNote));
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
@@ -135,7 +135,7 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = `/institutions/note/student/${student.id}?noteType=invalid_node_type`;
+    const endpoint = `/institutions/note/student/${student.id}?noteTypes=invalid_node_type`;
 
     //Act/Assert
     return request(app.getHttpServer())
@@ -143,9 +143,11 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
-        statusCode: 400,
-        message: "Validation failed (enum string is expected)",
+        message: [
+          "each value in noteTypes must be one of the following values: General, Application, Student appeal, Student form, Program, Restriction, Designation, Overaward, System Actions",
+        ],
         error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
       });
   });
 
@@ -188,14 +190,14 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = `/institutions/note/student/${student.id}?noteType=${NoteType.Application}`;
+    const endpoint = `/institutions/note/student/${student.id}?noteTypes=${NoteType.Application}`;
 
     // Act/Assert
     return request(app.getHttpServer())
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([noteToApiReturn(expectedNote)]);
+      .expect([transformNoteToApiReturn(expectedNote)]);
   });
 
   it("Should not get notes for student restriction and resolution notes with notification type 'no effect' when any are available.", async () => {
@@ -234,23 +236,11 @@ describe("NoteInstitutionsController(e2e)-getStudentNotes", () => {
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([noteToApiReturn(designationNote), noteToApiReturn(generalNote)]);
+      .expect([
+        transformNoteToApiReturn(designationNote),
+        transformNoteToApiReturn(generalNote),
+      ]);
   });
-
-  /**
-   * Transform a Note object to the object returned by the API.
-   * @param note note to be transformed.
-   * @returns an object item for the notes returned by the API.
-   */
-  function noteToApiReturn(note: Note) {
-    return {
-      noteType: note.noteType,
-      description: note.description,
-      firstName: note.creator.firstName,
-      lastName: note.creator.lastName,
-      createdAt: note.createdAt.toISOString(),
-    };
-  }
 
   afterAll(async () => {
     await app?.close();
