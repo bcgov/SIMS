@@ -25,19 +25,17 @@
           >
             <template #item="{ props, item }">
               <v-list-item v-bind="props" title="">
-                <span>{{ item.title }}</span>
-                <RestrictedPartyChip
+                <TitleWithChip
+                  :title="item.title"
                   :client-type="item.raw.restrictedParty"
-                  class="ml-3 float-right"
                 />
               </v-list-item>
             </template>
             <template #selection="{ item }">
               <v-list-item title="">
-                <span>{{ item.title }}</span>
-                <RestrictedPartyChip
+                <TitleWithChip
+                  :title="item.title"
                   :client-type="item.raw.restrictedParty"
-                  class="ml-3 float-right"
                 />
               </v-list-item>
             </template>
@@ -158,12 +156,14 @@ import {
 } from "@/services/http/dto";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import RestrictedPartyChip from "@/components/generic/RestrictedPartyChip.vue";
+import RestrictionTitleWithChip from "@/components/generic/RestrictionTitleWithChip.vue";
 import { ApplicationRestrictionBypassService } from "@/services/ApplicationRestrictionBypassService";
 
 export default defineComponent({
   components: {
     ModalDialogBase,
     RestrictedPartyChip,
+    RestrictionTitleWithChip,
   },
   setup() {
     const snackBar = useSnackBar();

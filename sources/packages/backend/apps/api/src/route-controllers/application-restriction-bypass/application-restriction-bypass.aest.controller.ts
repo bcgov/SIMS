@@ -122,9 +122,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
     if (!applicationRestrictionBypass) {
       throw new NotFoundException("Application restriction bypass not found.");
     }
-    const restriction =
-      applicationRestrictionBypass.studentRestriction ??
-      applicationRestrictionBypass.institutionRestriction;
+    const restriction = applicationRestrictionBypass.bypassRestriction();
     return {
       applicationRestrictionBypassId: applicationRestrictionBypass.id,
       restrictionId: restriction.id,

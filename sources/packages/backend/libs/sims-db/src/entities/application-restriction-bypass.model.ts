@@ -16,6 +16,7 @@ import {
   Application,
   InstitutionRestriction,
 } from "@sims/sims-db";
+import { RestrictedParty } from "@sims/services";
 
 /**
  * Restrictions bypass that allow awards to be disbursed ignoring
@@ -147,4 +148,29 @@ export class ApplicationRestrictionBypass extends RecordDataModel {
     nullable: true,
   })
   bypassRemovedDate?: Date;
+
+  bypassRestriction(): StudentRestriction | InstitutionRestriction {
+    this.validateRestrictionAssociation();
+    return this.studentRestriction ?? this.institutionRestriction;
+  }
+
+  restrictedParty(): RestrictedParty {
+    this.validateRestrictionAssociation();
+    return this.studentRestriction
+      ? RestrictedParty.Student
+      : RestrictedParty.Institution;
+  }
+
+  private validateRestrictionAssociation(): void {
+    if (this.studentRestriction && this.institutionRestriction) {
+      throw new Error(
+        "Cannot have both student restriction and institution restriction associated with a restriction bypass.",
+      );
+    }
+    if (!this.studentRestriction && !this.institutionRestriction) {
+      throw new Error(
+        "Must have either a student restriction or an institution restriction associated with a restriction bypass.",
+      );
+    }
+  }
 }
