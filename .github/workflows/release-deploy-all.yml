@@ -172,7 +172,7 @@ jobs:
       - name: Run db-migrations
         working-directory: "./devops/"
         run: |
-          make oc-run-db-migrations
+          make oc-run-migrations MIGRATION_COMMAND="npm run migration:run"
 
   # Deploy SIMS API.
   deploy-sims-api:

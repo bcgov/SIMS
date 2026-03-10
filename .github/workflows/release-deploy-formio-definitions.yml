@@ -41,7 +41,6 @@ jobs:
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
       FORMS_SA_USER_NAME: ${{ secrets.FORMS_SA_USER_NAME }}
       FORMS_SA_PASSWORD: ${{ secrets.FORMS_SA_PASSWORD }}
-      MIGRATION_COMMAND: "cd forms && npm run deploy"
     steps:
       - name: Install CLI tools from OpenShift Mirror
         uses: redhat-actions/openshift-tools-installer@v1
@@ -61,4 +60,4 @@ jobs:
       - name: Run deploy form definitions
         working-directory: "./devops/"
         run: |
-          make oc-deploy-form-definitions
+          make oc-run-migrations MIGRATION_COMMAND="cd forms && npm run deploy"
