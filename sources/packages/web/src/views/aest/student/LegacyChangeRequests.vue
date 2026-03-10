@@ -3,20 +3,16 @@
     <template #header>
       <header-navigator
         title="Student requests"
-        subTitle="Change Requests (Pre 2025-2026)"
+        sub-title="Change Requests (Pre 2025-2026)"
       />
     </template>
-    <pending-appeals-table appeals-type="legacy-change-request" />
+    <legacy-pending-appeals-table
+      :appeals-type="AppealType.LegacyChangeRequest"
+    />
   </full-page-container>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import PendingAppealsTable from "@/components/aest/student/PendingAppealsTable.vue";
-
-export default defineComponent({
-  components: {
-    PendingAppealsTable,
-  },
-});
+<script setup lang="ts">
+import { AppealType } from "@/types";
+import LegacyPendingAppealsTable from "@/components/aest/students/LegacyPendingAppealsTable.vue";
 </script>

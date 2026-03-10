@@ -1,6 +1,5 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
-  FormSubmissionStudentAPIOutDTO,
   FormSubmissionConfigurationsAPIOutDTO,
   FormSubmissionAPIInDTO,
   FormSupplementaryDataAPIInDTO,
@@ -8,14 +7,19 @@ import {
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionItemDecisionAPIInDTO,
   FormSubmissionCompletionAPIInDTO,
+  FormSubmissionPendingSummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
+  FormSubmissionAPIOutDTO,
 } from "@/services/http/dto";
 import {
   FormCategory,
   FormSubmissionDecisionStatus,
   FormSubmissionStatus,
+  PaginationOptions,
 } from "@/types";
+import { getPaginationQueryString } from "@/helpers";
 
-const MOCKED_SUBMISSIONS: FormSubmissionStudentAPIOutDTO[] = [
+const MOCKED_SUBMISSIONS: FormSubmissionAPIOutDTO[] = [
   {
     id: 1,
     formCategory: FormCategory.StudentAppeal,
@@ -23,25 +27,28 @@ const MOCKED_SUBMISSIONS: FormSubmissionStudentAPIOutDTO[] = [
     applicationId: 123,
     applicationNumber: "2025000001",
     submittedDate: new Date("2025-01-01T10:00:00Z"),
-    assessedDate: new Date("2025-01-05T15:30:00Z"),
     submissionItems: [
       {
         id: 1,
         formType: "Room and board costs",
         formCategory: FormCategory.StudentAppeal,
-        decisionStatus: FormSubmissionDecisionStatus.Approved,
         dynamicFormConfigurationId: 71,
         submissionData: {},
         formDefinitionName: "roomandboardcostsappeal",
+        currentDecision: {
+          decisionStatus: FormSubmissionDecisionStatus.Approved,
+        },
       },
       {
         id: 2,
         formType: "Step-parent waiver",
         formCategory: FormCategory.StudentAppeal,
-        decisionStatus: FormSubmissionDecisionStatus.Approved,
         dynamicFormConfigurationId: 72,
         submissionData: {},
         formDefinitionName: "stepparentwaiverappeal",
+        currentDecision: {
+          decisionStatus: FormSubmissionDecisionStatus.Approved,
+        },
       },
     ],
   },
@@ -52,16 +59,17 @@ const MOCKED_SUBMISSIONS: FormSubmissionStudentAPIOutDTO[] = [
     applicationId: 456,
     applicationNumber: "2025000002",
     submittedDate: new Date("2025-01-01T10:00:00Z"),
-    assessedDate: new Date("2025-01-05T15:30:00Z"),
     submissionItems: [
       {
         id: 3,
         formType: "Modified independent",
         formCategory: FormCategory.StudentAppeal,
-        decisionStatus: FormSubmissionDecisionStatus.Pending,
         dynamicFormConfigurationId: 73,
         submissionData: {},
         formDefinitionName: "modifiedindependentappeal",
+        currentDecision: {
+          decisionStatus: FormSubmissionDecisionStatus.Pending,
+        },
       },
     ],
   },
@@ -70,16 +78,17 @@ const MOCKED_SUBMISSIONS: FormSubmissionStudentAPIOutDTO[] = [
     formCategory: FormCategory.StudentForm,
     status: FormSubmissionStatus.Declined,
     submittedDate: new Date("2025-01-01T10:00:00Z"),
-    assessedDate: new Date("2025-01-05T15:30:00Z"),
     submissionItems: [
       {
         id: 4,
         formType: "Non-punitive withdrawal",
         formCategory: FormCategory.StudentForm,
-        decisionStatus: FormSubmissionDecisionStatus.Declined,
         dynamicFormConfigurationId: 74,
         submissionData: {},
         formDefinitionName: "nonpunitivewithdrawalform",
+        currentDecision: {
+          decisionStatus: FormSubmissionDecisionStatus.Declined,
+        },
       },
     ],
   },
@@ -99,7 +108,7 @@ export class FormSubmissionApi extends HttpBaseClient {
 
   // TODO: To be implemented.
   async getFormSubmissionSummary(): Promise<{
-    submissions: FormSubmissionStudentAPIOutDTO[];
+    submissions: FormSubmissionAPIOutDTO[];
   }> {
     return {
       submissions: MOCKED_SUBMISSIONS,
@@ -114,15 +123,24 @@ export class FormSubmissionApi extends HttpBaseClient {
    * on each form item.
    * @param formSubmissionId ID of the form submission to retrieve the details for.
    * @param options.
+   * - `studentId`: optional ID used to validate the institution access to the student data.
+   * Must be provided with `applicationId`.
+   * - `applicationId`: optional ID used to validate the institution access to the application data.
+   * Must be provided with `studentId`.
    * - `itemId`: optional ID of the form submission item to filter the details for.
    * @returns form submission details including individual form items and their details.
    */
   async getFormSubmission(
     formSubmissionId: number,
-    options?: { itemId?: number },
-  ): Promise<FormSubmissionStudentAPIOutDTO | FormSubmissionMinistryAPIOutDTO> {
+    options?: { studentId?: number; applicationId?: number; itemId?: number },
+  ): Promise<FormSubmissionAPIOutDTO | FormSubmissionMinistryAPIOutDTO> {
     let url = `form-submission/${formSubmissionId}`;
+    if (options?.studentId && options?.applicationId) {
+      // Used for institutions to validate the access to the student and application data related to the form submission.
+      url = `form-submission/student/${options.studentId}/application/${options.applicationId}/${url}`;
+    }
     if (options?.itemId) {
+      // Used by the Ministry to filter the form submission details for a specific form item during the approval process.
       url += `?itemId=${options.itemId}`;
     }
     return this.getCall(this.addClientRoot(url));
@@ -150,6 +168,30 @@ export class FormSubmissionApi extends HttpBaseClient {
    */
   async submitForm(payload: FormSubmissionAPIInDTO): Promise<void> {
     await this.postCall(this.addClientRoot("form-submission"), payload);
+  }
+
+  /**
+   * Gets all pending form submissions for ministry review across all form categories.
+   * @param paginationOptions options to execute the pagination.
+   * @param options additional filter options.
+   * - `hasApplicationScope` when true returns only submissions linked to an application; when false returns only submissions not linked.
+   * - `formCategory` filters results to a specific form category.
+   * @returns paginated list of pending form submissions.
+   */
+  async getPendingFormSubmissions(
+    paginationOptions: PaginationOptions,
+    options?: { hasApplicationScope?: boolean; formCategory?: FormCategory },
+  ): Promise<PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>> {
+    let url = `form-submission/pending?${getPaginationQueryString(paginationOptions)}`;
+    if (options?.hasApplicationScope !== undefined) {
+      url += `&hasApplicationScope=${options.hasApplicationScope}`;
+    }
+    if (options?.formCategory) {
+      url += `&formCategory=${options.formCategory}`;
+    }
+    return this.getCall<
+      PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>
+    >(this.addClientRoot(url));
   }
 
   /**

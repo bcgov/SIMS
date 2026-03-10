@@ -3,6 +3,8 @@ import {
   Body,
   Controller,
   Get,
+  Param,
+  ParseIntPipe,
   Post,
   Query,
   UnprocessableEntityException,
@@ -11,7 +13,7 @@ import {
   DynamicFormConfigurationService,
   FORM_SUBMISSION_INVALID_DYNAMIC_DATA,
   FORM_SUBMISSION_PENDING_DECISION,
-  FormSubmissionService,
+  FormSubmissionSubmitService,
 } from "../../services";
 import { AuthorizedParties, StudentUserToken } from "../../auth";
 import {
@@ -21,6 +23,7 @@ import {
 } from "../../auth/decorators";
 import {
   ApiBadRequestResponse,
+  ApiNotFoundResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
@@ -29,6 +32,7 @@ import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { FormCategory } from "@sims/sims-db";
 import {
   FormSubmissionAPIInDTO,
+  FormSubmissionAPIOutDTO,
   FormSubmissionConfigurationsAPIOutDTO,
   FormSupplementaryDataAPIInDTO,
   FormSupplementaryDataAPIOutDTO,
@@ -36,6 +40,7 @@ import {
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { CustomNamedError } from "@sims/utilities";
 import { SupplementaryDataLoader } from "../../services/form-submission/form-supplementary-data/form-supplementary-data-loader";
+import { FormSubmissionControllerService } from "./form-submission.controller.service";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -44,8 +49,9 @@ import { SupplementaryDataLoader } from "../../services/form-submission/form-sup
 export class FormSubmissionStudentsController extends BaseController {
   constructor(
     private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
-    private readonly formSubmissionService: FormSubmissionService,
+    private readonly formSubmissionSubmitService: FormSubmissionSubmitService,
     private readonly supplementaryDataLoader: SupplementaryDataLoader,
+    private readonly formSubmissionControllerService: FormSubmissionControllerService,
   ) {
     super();
   }
@@ -95,6 +101,23 @@ export class FormSubmissionStudentsController extends BaseController {
   }
 
   /**
+   * Get the details of a form submission, including the individual form items and their details.
+   * @param formSubmissionId ID of the form submission to retrieve the details for.
+   * @returns form submission details including individual form items and their details.
+   */
+  @ApiNotFoundResponse({ description: "Form submission not found." })
+  @Get(":formSubmissionId")
+  async getFormSubmission(
+    @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<FormSubmissionAPIOutDTO> {
+    return this.formSubmissionControllerService.getFormSubmission(
+      formSubmissionId,
+      userToken.studentId,
+    );
+  }
+
+  /**
    * Executes a dynamic form submission for the Ministry decision.
    * Each form will have an individual decision associated with and upon its
    * approval, may trigger different actions in the system based on the form type.
@@ -121,12 +144,13 @@ export class FormSubmissionStudentsController extends BaseController {
     @UserToken() userToken: StudentUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
-      const submission = await this.formSubmissionService.saveFormSubmission(
-        userToken.studentId,
-        payload.applicationId,
-        payload.items,
-        userToken.userId,
-      );
+      const submission =
+        await this.formSubmissionSubmitService.saveFormSubmission(
+          userToken.studentId,
+          payload.applicationId,
+          payload.items,
+          userToken.userId,
+        );
       return {
         id: submission.id,
       };

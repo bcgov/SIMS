@@ -105,6 +105,14 @@ export default defineComponent({
         }),
       },
       {
+        label: "MSFAA",
+        icon: "fa:fa fa-file-signature",
+        command: () => ({
+          name: AESTRoutesConst.STUDENT_MSFAA,
+          params: { studentId: props.studentId },
+        }),
+      },
+      {
         label: "Notes",
         icon: "fa:fa fa-sticky-note",
         command: () => ({

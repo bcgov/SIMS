@@ -16,6 +16,7 @@ import {
   FORM_SUBMISSION_NOT_FOUND,
   FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
   FormSubmissionApprovalService,
+  FormSubmissionService,
 } from "../../services";
 import {
   AllowAuthorizedParty,
@@ -36,10 +37,15 @@ import {
   FormSubmissionCompletionAPIInDTO,
   FormSubmissionItemDecisionAPIInDTO,
   FormSubmissionMinistryAPIOutDTO,
+  FormSubmissionPendingSummaryAPIOutDTO,
 } from "./models/form-submission.dto";
 import { getUserFullName } from "../../utilities";
 import { FormSubmissionDecisionStatus } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
+import {
+  FormSubmissionPendingPaginationOptionsAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "../models/pagination.dto";
 
 /**
  * Roles allowed to update the form submission item decision
@@ -57,8 +63,36 @@ const FORM_SUBMISSION_UPDATE_ROLES = [
 export class FormSubmissionAESTController extends BaseController {
   constructor(
     private readonly formSubmissionApprovalService: FormSubmissionApprovalService,
+    private readonly formSubmissionService: FormSubmissionService,
   ) {
     super();
+  }
+
+  /**
+   * Gets all pending student form submissions for ministry review across all form categories.
+   * Only form submissions with status Pending are returned.
+   * @param pagination pagination options to control page size, sorting, and optional search.
+   * @returns paginated list of pending form submissions awaiting ministry review.
+   */
+  @Get("pending")
+  async getPendingFormSubmissions(
+    @Query() pagination: FormSubmissionPendingPaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>> {
+    const pendingSubmissions =
+      await this.formSubmissionService.getPendingFormSubmissions(pagination);
+    return {
+      results: pendingSubmissions.results.map((submission) => ({
+        formSubmissionId: submission.formSubmissionId,
+        studentId: submission.studentId,
+        submittedDate: submission.submittedDate,
+        firstName: submission.firstName,
+        lastName: submission.lastName,
+        formNames: submission.formNames,
+        applicationId: submission.applicationId,
+        applicationNumber: submission.applicationNumber,
+      })),
+      count: pendingSubmissions.count,
+    };
   }
 
   /**
@@ -76,7 +110,7 @@ export class FormSubmissionAESTController extends BaseController {
     @Query("itemId", new ParseIntPipe({ optional: true })) itemId?: number,
   ): Promise<FormSubmissionMinistryAPIOutDTO> {
     const submission =
-      await this.formSubmissionApprovalService.getFormSubmissionsById(
+      await this.formSubmissionApprovalService.getFormSubmissionById(
         formSubmissionId,
         { itemId },
       );
@@ -110,21 +144,24 @@ export class FormSubmissionAESTController extends BaseController {
         dynamicFormConfigurationId: item.dynamicFormConfiguration.id,
         submissionData: item.submittedData,
         formDefinitionName: item.dynamicFormConfiguration.formDefinitionName,
-        decisionStatus:
-          item.currentDecision?.decisionStatus ??
-          FormSubmissionDecisionStatus.Pending,
         updatedAt: item.updatedAt,
         currentDecision:
           hasApprovalAuthorization && item.currentDecision
             ? {
                 id: item.currentDecision.id,
-                decisionStatus: item.currentDecision.decisionStatus,
+                decisionStatus:
+                  item.currentDecision?.decisionStatus ??
+                  FormSubmissionDecisionStatus.Pending,
                 decisionDate: item.currentDecision.decisionDate,
                 decisionBy: getUserFullName(item.currentDecision.decisionBy),
                 decisionNoteDescription:
                   item.currentDecision.decisionNote.description,
               }
-            : undefined,
+            : {
+                decisionStatus:
+                  item.currentDecision?.decisionStatus ??
+                  FormSubmissionDecisionStatus.Pending,
+              },
         previousDecisions: hasApprovalAuthorization
           ? item.decisions
               .filter((decision) => decision.id !== item.currentDecision.id)
@@ -152,7 +189,8 @@ export class FormSubmissionAESTController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description:
       "The form submission item has been updated since it was last retrieved or " +
-      "decisions cannot be made on items belonging to a form submission that is not pending.",
+      "decisions cannot be made on items belonging to a form submission that is not pending or " +
+      "the application associated with the form submission is not in completed status.",
   })
   @Roles(...FORM_SUBMISSION_UPDATE_ROLES)
   @Patch("items/:formSubmissionItemId/decision")
@@ -204,7 +242,8 @@ export class FormSubmissionAESTController extends BaseController {
       "the provided form submission items do not match the form submission items currently saved for this submission or " +
       "form submission item not found in the form submission or " +
       "form submission item has been updated since it was last retrieved or " +
-      "final decision cannot be made when some decisions are still pending.",
+      "final decision cannot be made when some decisions are still pending or " +
+      "the application associated with the form submission is not in completed status.",
   })
   @Roles(...FORM_SUBMISSION_UPDATE_ROLES)
   @Patch(":formSubmissionId/complete")

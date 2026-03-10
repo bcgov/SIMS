@@ -21,6 +21,7 @@ import {
   MASKED_MSFAA_NUMBER,
   ApplicationOfferingChangeRequestService,
   MASKED_MONEY_AMOUNT,
+  FormSubmissionService,
 } from "../../services";
 import {
   AssessmentNOAAPIOutDTO,
@@ -55,6 +56,7 @@ export class AssessmentControllerService {
   constructor(
     private readonly assessmentService: StudentAssessmentService,
     private readonly studentAppealService: StudentAppealService,
+    private readonly formSubmissionService: FormSubmissionService,
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly applicationExceptionService: ApplicationExceptionService,
@@ -489,6 +491,31 @@ export class AssessmentControllerService {
   }
 
   /**
+   * Get student appeals that not generated an assessment yet, which are usually pending or denied appeals.
+   * @param applicationId application to which the requests are retrieved.
+   * @param studentId applicant student.
+   * @returns pending and denied student appeals.
+   */
+  async getPendingAndDeniedStudentAppeals(
+    applicationId: number,
+    studentId?: number,
+  ): Promise<RequestAssessmentSummaryAPIOutDTO[]> {
+    const formSubmissions =
+      await this.formSubmissionService.getNonCompletedStudentAppeals(
+        applicationId,
+        studentId,
+      );
+    const submissions: RequestAssessmentSummaryAPIOutDTO[] =
+      formSubmissions.map((submission) => ({
+        id: submission.id,
+        submittedDate: submission.submittedDate,
+        status: submission.submissionStatus,
+        requestType: RequestAssessmentTypeAPIOutDTO.StudentAppeal,
+      }));
+    return submissions;
+  }
+
+  /**
    * Get history of approved assessment requests and
    * unsuccessful scholastic standings change requests(which will not create new assessment)
    * for an application.
@@ -517,6 +544,7 @@ export class AssessmentControllerService {
         offeringId: assessment.offering.id,
         programId: assessment.offering.educationProgram.id,
         studentAppealId: assessment.studentAppeal?.id,
+        formSubmissionId: assessment.formSubmission?.id,
         applicationOfferingChangeRequestId:
           assessment.applicationOfferingChangeRequest?.id,
         applicationExceptionId: assessment.application.applicationException?.id,
@@ -600,6 +628,10 @@ export class AssessmentControllerService {
       applicationId,
       options?.studentId,
     );
+    const formSubmissionAppeals = await this.getPendingAndDeniedStudentAppeals(
+      applicationId,
+      options?.studentId,
+    );
     const applicationOfferingChangeRequests =
       await this.getApplicationOfferingChangeRequestsByStatus(
         applicationId,
@@ -613,6 +645,7 @@ export class AssessmentControllerService {
       );
     return requestAssessmentSummary
       .concat(appeals)
+      .concat(formSubmissionAppeals)
       .concat(applicationOfferingChangeRequests)
       .sort(this.sortAssessmentHistory);
   }
