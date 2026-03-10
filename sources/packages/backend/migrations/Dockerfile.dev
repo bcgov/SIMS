@@ -24,8 +24,8 @@ COPY backend/env-setup.js ./
 
 # Copying forms sources
 COPY forms/src ./forms/src
-COPY backend/tsconfig.json ./forms/
-COPY backend/tsconfig.build.json ./forms/
+COPY forms/tsconfig.json ./forms/
+COPY forms/tsconfig.build.json ./forms/
 
 # Adding a nonroot user
 RUN addgroup -S nonroot \

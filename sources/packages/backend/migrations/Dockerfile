@@ -24,8 +24,8 @@ COPY backend/env-setup.js ./
 
 # Copying forms sources
 COPY forms/src ./forms/src
-COPY backend/tsconfig.json ./forms/
-COPY backend/tsconfig.build.json ./forms/
+COPY forms/tsconfig.json ./forms/
+COPY forms/tsconfig.build.json ./forms/
 
 # Fixing permissions for OpenShift because it runs containers with a random user ID.
 # See: https://docs.openshift.com/container-platform/4.11/openshift_images/create-images.html#use-uid_create-images
