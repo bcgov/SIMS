@@ -71,7 +71,7 @@ export THROTTLE_LIMIT := $(or $(THROTTLE_LIMIT), 30)
 export FORMS_PORT := 3001
 
 # Timeout waiting for a migrations openshift process to complete in seconds.
-export MIGRATIONS_OC_TIMEOUT :=300s 
+export MIGRATIONS_OC_TIMEOUT := 300s 
 
 # Maximum job duration limit in seconds for migration jobs.
 export MIGRATIONS_JOB_MAX_DURATION := 300
@@ -128,7 +128,7 @@ define FORMS_NAME
 "$(HOST_PREFIX)forms"
 endef
 
-# Forms URL internal.
+# Form.io URL for internal-only POD communication. No external access should be allowed.
 define FORMS_URL
 http://$(HOST_PREFIX)forms:$(FORMS_PORT)
 endef
@@ -347,7 +347,7 @@ run-db-migrations:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_REF)"
 	test -n "$(HOST_PREFIX)"
-	@echo "+\n++ Run DB MIGRATIONS with tag: $(BUILD_REF)\n+"
+	@echo "+\n++ Run DB migrations with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) exec job/$(MIGRATIONS_JOB_NAME) -- npm run migration:run
 
 deploy-form-definitions:
