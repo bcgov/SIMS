@@ -9,6 +9,16 @@
   ],
   "components": [
     {
+      "label": "Actions: CreateStudentAppealAssessment",
+      "calculateValue": "value = [\"CreateStudentAppealAssessment\"];",
+      "calculateServer": true,
+      "key": "actions",
+      "type": "hidden",
+      "input": true,
+      "tableView": true,
+      "lockKey": true
+    },
+    {
       "input": true,
       "tableView": false,
       "key": "maxMoneyValue",
@@ -115,11 +125,6 @@
       },
       "validateWhenHidden": false,
       "key": "currentYearIncome",
-      "conditional": {
-        "show": true,
-        "when": "hasSignificantDegreeOfIncome",
-        "eq": "yes"
-      },
       "type": "number",
       "decimalLimit": 0,
       "input": true
@@ -160,12 +165,8 @@
         "required": true,
         "onlyAvailableItems": true
       },
+      "validateWhenHidden": false,
       "key": "reasonsignificantdecreaseInIncome",
-      "conditional": {
-        "show": "true",
-        "when": "hasSignificantDegreeOfIncome",
-        "eq": "yes"
-      },
       "attributes": {
         "data-cy": "reasonsignificantdecreaseInIncome"
       },
