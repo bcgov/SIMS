@@ -68,7 +68,7 @@ export QUEUE_CONSUMERS_MEMORY_LIMIT := $(or ${QUEUE_CONSUMERS_MEMORY_LIMIT}, 102
 export QUEUE_CONSUMERS_REPLICAS := $(or ${QUEUE_CONSUMERS_REPLICAS}, 2)
 export THROTTLE_TIME := $(or $(THROTTLE_TIME), 10000)
 export THROTTLE_LIMIT := $(or $(THROTTLE_LIMIT), 30)
-export FORMS_PORT := 3002
+export FORMS_PORT := 3001
 
 # Timeout waiting for a migrations openshift process to complete in seconds.
 export MIGRATIONS_OC_TIMEOUT := 300s 
