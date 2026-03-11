@@ -586,6 +586,11 @@ export class AssessmentController {
       },
       institution: {
         institutionType: institutionLocation?.institution.institutionType.name,
+        institutionCountry: institutionLocation?.institution.country,
+        institutionProvince: institutionLocation?.institution.province,
+        institutionClassification: institutionLocation?.institution.classification,
+        institutionOrganizationStatus:
+          institutionLocation?.institution.organizationStatus,
       },
       location: {
         institutionLocationProvince:

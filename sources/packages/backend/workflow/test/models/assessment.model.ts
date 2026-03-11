@@ -1,6 +1,8 @@
 import {
   ApplicationEditStatus,
   AssessmentTriggerType,
+  InstitutionClassification,
+  InstitutionOrganizationStatus,
   OfferingIntensity,
 } from "@sims/sims-db";
 import {
@@ -117,6 +119,10 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentTaxYear: number;
   institutionLocationProvince: Provinces;
   institutionType: InstitutionTypes;
+  institutionCountry?: string;
+  institutionProvince?: string;
+  institutionClassification?: InstitutionClassification;
+  institutionOrganizationStatus?: InstitutionOrganizationStatus;
   programLength: ProgramLengthOptions;
   programCredentialType: CredentialType;
   offeringDelivered: OfferingDeliveryOptions;

@@ -14,6 +14,8 @@ import {
 import {
   ApplicationEditStatus,
   ApplicationStatus,
+  InstitutionClassification,
+  InstitutionOrganizationStatus,
   OfferingIntensity,
 } from "@sims/sims-db";
 
@@ -42,6 +44,10 @@ export function createFakeAssessmentConsolidatedData(
     studentTaxYear: +programStartYear - 1,
     institutionLocationProvince: Provinces.BritishColumbia,
     institutionType: InstitutionTypes.BCPublic,
+    institutionCountry: "CA",
+    institutionProvince: Provinces.BritishColumbia,
+    institutionClassification: InstitutionClassification.Public,
+    institutionOrganizationStatus: InstitutionOrganizationStatus.NotForProfit,
     programLength: ProgramLengthOptions.SixtyWeeksToTwoYears,
     programCredentialType: CredentialType.UnderGraduateDegree,
     offeringDelivered: OfferingDeliveryOptions.Onsite,
@@ -80,6 +86,10 @@ export function createFakePartTimeAssessmentConsolidatedData(
     studentTaxYear: +programStartYear - 1,
     institutionLocationProvince: Provinces.BritishColumbia,
     institutionType: InstitutionTypes.BCPublic,
+    institutionCountry: "CA",
+    institutionProvince: Provinces.BritishColumbia,
+    institutionClassification: InstitutionClassification.Public,
+    institutionOrganizationStatus: InstitutionOrganizationStatus.NotForProfit,
     programLength: ProgramLengthOptions.SixtyWeeksToTwoYears,
     programCredentialType: CredentialType.UnderGraduateDegree,
     offeringDelivered: OfferingDeliveryOptions.Onsite,
@@ -185,6 +195,10 @@ function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
     partner1HasEmploymentInsuranceBenefits: null,
     partner1HasFedralProvincialPDReceipt: null,
     partner1HasTotalIncomeAssistance: null,
+    institutionCountry: null,
+    institutionProvince: null,
+    institutionClassification: null,
+    institutionOrganizationStatus: null,
   } as AssessmentConsolidatedData;
 }
 
