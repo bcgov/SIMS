@@ -15,7 +15,7 @@
     </template>
     <template #alerts>
       <banner
-        :summary="`You are submitting this declaration on behalf of your ${supportingUserLabel.toLowerCase()}. Please complete the following financial information questions with your ${supportingUserLabel.toLowerCase()}'s information.`"
+        :summary="`You are submitting this declaration on behalf of your ${supportingUserLabel}. Please complete the following financial information questions with your ${supportingUserLabel}'s information.`"
         :type="BannerTypes.Info"
       ></banner>
     </template>
@@ -101,8 +101,8 @@ export default defineComponent({
     };
     const supportingUserLabel = computed(() => {
       return props.supportingUserType === SupportingUserType.Partner
-        ? "Spouse/common-law partner"
-        : props.supportingUserType;
+        ? "spouse/common-law partner"
+        : props.supportingUserType.toLowerCase();
     });
     return {
       updateSupportingUser,
