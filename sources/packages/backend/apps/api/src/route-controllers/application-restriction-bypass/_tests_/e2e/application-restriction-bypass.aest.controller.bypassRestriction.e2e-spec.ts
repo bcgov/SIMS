@@ -42,7 +42,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
   let ptssrRestriction: Restriction;
   let endpoint: string;
   let susRestriction: Restriction,
-    newInstitutionRestriction: Restriction,
+    stopPartTimeInstitutionRestriction: Restriction,
     savedInstitutionRestriction: Restriction;
 
   beforeAll(async () => {
@@ -57,7 +57,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     susRestriction = await db.restriction.findOne({
       where: { restrictionCode: RestrictionCode.SUS },
     });
-    newInstitutionRestriction = createFakeRestriction({
+    stopPartTimeInstitutionRestriction = createFakeRestriction({
       initialValues: {
         restrictionCode: "ZZZ",
         restrictionType: RestrictionType.Institution,
@@ -65,7 +65,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       },
     });
     savedInstitutionRestriction = await db.restriction.save(
-      newInstitutionRestriction,
+      stopPartTimeInstitutionRestriction,
     );
   });
 

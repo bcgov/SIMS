@@ -31,7 +31,46 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
     sharedMinistryUser = await db.user.save(createFakeUser());
   });
 
-  it("Should get an application restriction bypass for a submitted part-time application when there is an application restriction bypass with the required id.", async () => {
+  it("Should get a student application restriction bypass for a submitted part-time application when there is an application restriction bypass with the required id.", async () => {
+    // Arrange
+    const applicationRestrictionBypass =
+      await saveFakeApplicationRestrictionBypass(
+        db,
+        {
+          bypassCreatedBy: sharedMinistryUser,
+          creator: sharedMinistryUser,
+        },
+        {
+          restrictionActionType: RestrictionActionType.StopPartTimeDisbursement,
+          restrictionCode: RestrictionCode.PTSSR,
+        },
+      );
+    const endpoint = `/aest/application-restriction-bypass/${applicationRestrictionBypass.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        applicationRestrictionBypassId: applicationRestrictionBypass.id,
+        restrictionId: applicationRestrictionBypass.studentRestriction.id,
+        restrictionCode:
+          applicationRestrictionBypass.studentRestriction.restriction
+            .restrictionCode,
+        restrictedParty: RestrictedParty.Student,
+        creationNote: applicationRestrictionBypass.creationNote.description,
+        createdBy: getUserFullName(
+          applicationRestrictionBypass.bypassCreatedBy,
+        ),
+        createdDate:
+          applicationRestrictionBypass.bypassCreatedDate.toISOString(),
+        bypassBehavior: applicationRestrictionBypass.bypassBehavior,
+      });
+  });
+
+  it("Should get an institution application restriction bypass for a submitted part-time application when there is an application restriction bypass with the required id.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       offeringIntensity: OfferingIntensity.partTime,
