@@ -68,10 +68,13 @@ export QUEUE_CONSUMERS_MEMORY_LIMIT := $(or ${QUEUE_CONSUMERS_MEMORY_LIMIT}, 102
 export QUEUE_CONSUMERS_REPLICAS := $(or ${QUEUE_CONSUMERS_REPLICAS}, 2)
 export THROTTLE_TIME := $(or $(THROTTLE_TIME), 10000)
 export THROTTLE_LIMIT := $(or $(THROTTLE_LIMIT), 30)
-export FORMS_PORT := 3003
+export FORMS_PORT := 3002
 
-# Timeout waiting for a migrations openshift process to complete in seconds.
-export MIGRATIONS_OC_TIMEOUT := 300s 
+# Expected time to wait before logging the progress of a migration.
+export MIGRATIONS_OC_TIMEOUT_INITIAL := 60s
+
+# Expected time to wait before considering a migration job as failed after the initial wait time.
+export MIGRATIONS_OC_TIMEOUT := 240s 
 
 # Maximum job duration limit in seconds for migration jobs.
 export MIGRATIONS_JOB_MAX_DURATION := 300
@@ -156,7 +159,7 @@ endef
 
 init-oc: | print-status init-project
 oc-build-migrations: | print-status build-migrations
-oc-run-migrations: | print-status delete-migrations-job deploy-migrations-job
+oc-run-migrations: | print-status delete-migrations-job deploy-and-run-migrations-job
 oc-build-api: | print-status build-api
 oc-deploy-api: | print-status deploy-api
 oc-build-workers: | print-status build-workers
@@ -316,7 +319,7 @@ redis-cluster-meet:
 	REDIS_PASSWORD=$$(oc get secret -n $(NAMESPACE) redis-cluster -o jsonpath='{.data.redis-password}' | base64 -d); \
   oc get pods -n $(NAMESPACE) -o json | jq -r '.items[] | select(.metadata.ownerReferences[]? | .kind=="StatefulSet" and .name=="redis-cluster") | "\(.status.podIP) \(env.REDIS_PORT)"' | xargs -n2 oc exec -n $(NAMESPACE) -it redis-cluster-0 -- redis-cli -a $$REDIS_PASSWORD -c CLUSTER MEET
 
-deploy-migrations-job:
+deploy-and-run-migrations-job:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(MIGRATIONS_SECRET_NAME)"
@@ -336,6 +339,9 @@ deploy-migrations-job:
 		-p MIGRATION_COMMAND="$(MIGRATION_COMMAND)" \
 		-p ACTIVE_DEADLINE_SECONDS=$(MIGRATIONS_JOB_MAX_DURATION) \
 		| oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) wait --for=condition=complete job/$(MIGRATIONS_JOB_NAME) --timeout=$(MIGRATIONS_OC_TIMEOUT_INITIAL) \
+		|| (echo "Job did not completed in expected time. Waiting until the job is completed or the timeout is reached." && oc -n $(NAMESPACE) logs -f job/$(MIGRATIONS_JOB_NAME)) \
+		|| echo "Unable to get initial logs for $(MIGRATIONS_JOB_NAME) ..."
 	@oc -n $(NAMESPACE) wait --for=condition=complete job/$(MIGRATIONS_JOB_NAME) --timeout=$(MIGRATIONS_OC_TIMEOUT)
 	@oc -n $(NAMESPACE) logs job/$(MIGRATIONS_JOB_NAME)
 
@@ -344,21 +350,6 @@ delete-migrations-job:
 	@oc -n $(NAMESPACE) delete job $(MIGRATIONS_JOB_NAME) --ignore-not-found
 	@oc wait --for=delete job/$(MIGRATIONS_JOB_NAME) --timeout=$(MIGRATIONS_OC_TIMEOUT)
 	@echo "+\n++ MIGRATIONS job deleted\n+"
-	
-run-db-migrations:
-	test -n "$(NAMESPACE)"
-	test -n "$(BUILD_REF)"
-	test -n "$(HOST_PREFIX)"
-	@echo "+\n++ Run DB migrations with tag: $(BUILD_REF)\n+"
-	@oc -n $(NAMESPACE) exec job/$(MIGRATIONS_JOB_NAME) -- npm run migration:run
-
-deploy-form-definitions:
-	test -n "$(NAMESPACE)"
-	test -n "$(BUILD_REF)"
-	test -n "$(HOST_PREFIX)"
-	test -n "$(FORMS_URL)"
-	@echo "+\n++ Deploy form definitions with tag: $(BUILD_REF)\n+"
-	@oc -n $(NAMESPACE) exec job/$(MIGRATIONS_JOB_NAME) -- npm run deploy --prefix forms
 
 # This deployment reuses the build already in place for db-migrations
 # overriding the docker entry point command to run the db-migrations REPL.
