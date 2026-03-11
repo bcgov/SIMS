@@ -66,7 +66,7 @@ objects:
                 requests:
                   cpu: ${CPU_REQUEST}
                   memory: ${MEMORY_REQUEST}
-          restartPolicy: OnFailure
+          restartPolicy: Never
 parameters:
   - name: NAME
     required: true

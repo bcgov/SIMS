@@ -68,13 +68,10 @@ export QUEUE_CONSUMERS_MEMORY_LIMIT := $(or ${QUEUE_CONSUMERS_MEMORY_LIMIT}, 102
 export QUEUE_CONSUMERS_REPLICAS := $(or ${QUEUE_CONSUMERS_REPLICAS}, 2)
 export THROTTLE_TIME := $(or $(THROTTLE_TIME), 10000)
 export THROTTLE_LIMIT := $(or $(THROTTLE_LIMIT), 30)
-export FORMS_PORT := 3001
+export FORMS_PORT := 3002
 
-# Expected time to wait before logging the progress of a migration.
-export MIGRATIONS_OC_TIMEOUT_INITIAL := 60s
-
-# Expected time to wait before considering a migration job as failed after the initial wait time.
-export MIGRATIONS_OC_TIMEOUT := 240s 
+# Timeout waiting for a migrations openshift process to complete in seconds.
+export MIGRATIONS_OC_TIMEOUT := 300s 
 
 # Maximum job duration limit in seconds for migration jobs.
 export MIGRATIONS_JOB_MAX_DURATION := 300
@@ -339,11 +336,10 @@ deploy-and-run-migrations-job:
 		-p MIGRATION_COMMAND="$(MIGRATION_COMMAND)" \
 		-p ACTIVE_DEADLINE_SECONDS=$(MIGRATIONS_JOB_MAX_DURATION) \
 		| oc -n $(NAMESPACE) apply -f -
-	@oc -n $(NAMESPACE) wait --for=condition=complete job/$(MIGRATIONS_JOB_NAME) --timeout=$(MIGRATIONS_OC_TIMEOUT_INITIAL) \
-		|| (echo "Job did not completed in expected time. Waiting until the job is completed or the timeout is reached." && oc -n $(NAMESPACE) logs -f job/$(MIGRATIONS_JOB_NAME)) \
-		|| echo "Unable to get initial logs for $(MIGRATIONS_JOB_NAME) ..."
-	@oc -n $(NAMESPACE) wait --for=condition=complete job/$(MIGRATIONS_JOB_NAME) --timeout=$(MIGRATIONS_OC_TIMEOUT)
-	@oc -n $(NAMESPACE) logs job/$(MIGRATIONS_JOB_NAME)
+	@oc -n $(NAMESPACE) wait --for=condition=complete job/$(MIGRATIONS_JOB_NAME) --timeout=$(MIGRATIONS_OC_TIMEOUT); \
+		EXIT_CODE=$$?; \
+		oc -n $(NAMESPACE) logs job/$(MIGRATIONS_JOB_NAME); \
+		exit $$EXIT_CODE
 
 delete-migrations-job:
 	@echo "+\n++ Deleting MIGRATIONS job if it exists\n+"
