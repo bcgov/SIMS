@@ -133,7 +133,7 @@ export class FormSubmissionStudentsController extends BaseController {
     const [submission] =
       await this.formSubmissionControllerService.getFormSubmissions(
         userToken.studentId,
-        { formSubmissionId },
+        { formSubmissionId, loadSubmittedData: true },
       );
     return submission;
   }

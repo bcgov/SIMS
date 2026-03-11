@@ -169,6 +169,7 @@ export class FormSubmissionService {
    * - `locationIds` restrict forms with an application scope to the provided locations. Used for institutions to have access
    * only to the form submissions related to the locations they have access to.
    * - `includeDecisionHistory` includes the decision history of each form item.
+   * - `loadSubmittedData` includes the submitted data of each form item.
    * @returns form submission details including individual form items and their details.
    */
   async getFormSubmissions(
@@ -180,6 +181,7 @@ export class FormSubmissionService {
     queryOptions?: {
       locationIds?: number[];
       includeDecisionHistory?: boolean;
+      loadSubmittedData?: boolean;
     },
   ): Promise<FormSubmission[]> {
     return this.formSubmissionRepo.find({
@@ -201,7 +203,7 @@ export class FormSubmissionService {
             formCategory: true,
             formDefinitionName: true,
           },
-          submittedData: true,
+          submittedData: !!queryOptions?.loadSubmittedData,
           updatedAt: true,
           currentDecision: {
             id: true,

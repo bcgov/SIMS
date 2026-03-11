@@ -72,7 +72,7 @@ export class FormSubmissionInstitutionsController extends BaseController {
       await this.formSubmissionControllerService.getFormSubmissions(studentId, {
         formSubmissionId,
         includeBasicDecisionDetails: true,
-        keepPendingDecisionsWhilePendingFormSubmission: true,
+        loadSubmittedData: true,
         locationIds: userToken.authorizations.getLocationsIds(),
       });
     return submission;

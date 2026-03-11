@@ -134,7 +134,7 @@ export class FormSubmissionAESTController extends BaseController {
   ): Promise<FormSubmissionMinistryAPIOutDTO> {
     const [submission] = await this.formSubmissionService.getFormSubmissions(
       { formSubmissionId, itemId },
-      { includeDecisionHistory: true },
+      { includeDecisionHistory: true, loadSubmittedData: true },
     );
     if (!submission) {
       if (itemId) {

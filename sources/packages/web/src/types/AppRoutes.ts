@@ -103,7 +103,7 @@ export enum AppRoutes {
   ActiveApplicationScholasticStandingView = "active-application/location/:locationId/scholastic-standing/:scholasticStandingId",
   OfferingsUpload = "offerings-upload",
   WithdrawalUpload = "withdrawal-upload",
-  InstitutionStudentFormSubmissionView = "student/:studentId/forms/submission/:formSubmissionId",
+  InstitutionStudentFormSubmissionView = "student/:studentId/form-submission/:formSubmissionId",
 
   // AEST
   AESTRoot = "/ministry",

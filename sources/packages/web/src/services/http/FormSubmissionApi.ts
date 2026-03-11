@@ -133,8 +133,6 @@ export class FormSubmissionApi extends HttpBaseClient {
    * @param options.
    * - `studentId`: optional ID used to validate the institution access to the student data.
    * Must be provided with `applicationId`.
-   * - `applicationId`: optional ID used to validate the institution access to the application data.
-   * Must be provided with `studentId`.
    * - `itemId`: optional ID of the form submission item to filter the details for.
    * @returns form submission details including individual form items and their details.
    */

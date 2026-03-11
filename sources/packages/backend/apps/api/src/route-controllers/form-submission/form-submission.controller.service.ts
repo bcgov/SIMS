@@ -29,6 +29,7 @@ export class FormSubmissionControllerService {
    * - `includeBasicDecisionDetails` optional flag to include basic decision details, besides
    * the decision status. Used for institutions to have access to more details than the student
    * to better support them.
+   * - `loadSubmittedData` includes the submitted data of each form item.
    * @returns form submission details including individual form items and their details.
    * @throws NotFoundException when the formSubmissionId is provided but no record is returned.
    */
@@ -39,12 +40,14 @@ export class FormSubmissionControllerService {
       locationIds?: number[];
       keepPendingDecisionsWhilePendingFormSubmission?: boolean;
       includeBasicDecisionDetails?: boolean;
+      loadSubmittedData?: boolean;
     },
   ): Promise<FormSubmissionAPIOutDTO[]> {
     const submissions = await this.formSubmissionService.getFormSubmissions(
       { studentId, formSubmissionId: options?.formSubmissionId },
       {
         locationIds: options?.locationIds,
+        loadSubmittedData: options?.loadSubmittedData,
       },
     );
     if (options?.formSubmissionId && !submissions?.length) {
