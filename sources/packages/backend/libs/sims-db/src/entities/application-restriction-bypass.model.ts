@@ -16,7 +16,7 @@ import {
   Application,
   InstitutionRestriction,
 } from "@sims/sims-db";
-import { RestrictedParty } from "@sims/services";
+import { RestrictedParty } from "@sims/services/restriction/model/restriction.model";
 
 /**
  * Restrictions bypass that allow awards to be disbursed ignoring
