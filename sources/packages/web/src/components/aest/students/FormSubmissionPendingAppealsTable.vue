@@ -102,24 +102,12 @@ const currentPagination: PaginationOptions = {
 };
 
 /**
- * Navigates to the appropriate page to review and approve the pending appeal.
- * Application appeals are redirected to the assessments summary page, while
- * non-application appeals are redirected to the form submission approval page.
+ * Navigates to the common form submissions page to review and approve the pending appeal.
  * @param pendingAppeal pending appeal item to navigate to.
  */
 const goToAppealsApproval = (
   pendingAppeal: FormSubmissionPendingSummaryAPIOutDTO,
 ) => {
-  // if (pendingAppeal.applicationId) {
-  //   router.push({
-  //     name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
-  //     params: {
-  //       applicationId: pendingAppeal.applicationId,
-  //       studentId: pendingAppeal.studentId,
-  //     },
-  //   });
-  //   return;
-  // }
   router.push({
     name: AESTRoutesConst.FORM_SUBMISSION_APPROVAL_FROM_PENDING_APPEALS,
     params: {
