@@ -45,7 +45,7 @@ export class ApplicationRestrictionBypassService {
   }
 
   /**
-   * Bypass a restriction bypass.
+   * Bypass a restriction.
    * @param restrictionDetails restriction details.
    */
   async bypassRestriction(

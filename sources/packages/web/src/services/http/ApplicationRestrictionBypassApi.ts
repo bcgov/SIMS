@@ -42,7 +42,7 @@ export class ApplicationRestrictionBypassApi extends HttpBaseClient {
   }
 
   /**
-   * Bypass a student restriction bypass.
+   * Bypass a restriction.
    * @param restrictionDetails restriction details.
    * @returns application restriction bypasses.
    */

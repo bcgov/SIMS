@@ -1,7 +1,7 @@
 <template>
   <span>
     {{ title }}
-    <RestrictedPartyChip :client-type="clientType" class="ml-3 float-right" />
+    <restricted-party-chip :client-type="clientType" class="ml-3 float-right" />
   </span>
 </template>
 

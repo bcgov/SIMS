@@ -503,7 +503,7 @@ export class ApplicationRestrictionBypassService {
           RESTRICTION_NOT_FOUND,
         );
       }
-      if (institutionRestriction.isActive === false) {
+      if (!institutionRestriction.isActive) {
         throw new CustomNamedError(
           "Cannot create a bypass when institution restriction is not active.",
           RESTRICTION_IS_NOT_ACTIVE,

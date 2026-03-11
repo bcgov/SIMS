@@ -25,7 +25,7 @@
           >
             <template #item="{ props, item }">
               <v-list-item v-bind="props" title="">
-                <TitleWithChip
+                <title-with-chip
                   :title="item.title"
                   :client-type="item.raw.restrictedParty"
                 />
@@ -33,7 +33,7 @@
             </template>
             <template #selection="{ item }">
               <v-list-item title="">
-                <TitleWithChip
+                <title-with-chip
                   :title="item.title"
                   :client-type="item.raw.restrictedParty"
                 />
@@ -155,15 +155,13 @@ import {
   BypassRestrictionAPIInDTO,
 } from "@/services/http/dto";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import RestrictedPartyChip from "@/components/generic/RestrictedPartyChip.vue";
-import RestrictionTitleWithChip from "@/components/generic/RestrictionTitleWithChip.vue";
 import { ApplicationRestrictionBypassService } from "@/services/ApplicationRestrictionBypassService";
+import TitleWithChip from "@/components/generic/TitleWithChip.vue";
 
 export default defineComponent({
   components: {
     ModalDialogBase,
-    RestrictedPartyChip,
-    RestrictionTitleWithChip,
+    TitleWithChip,
   },
   setup() {
     const snackBar = useSnackBar();
