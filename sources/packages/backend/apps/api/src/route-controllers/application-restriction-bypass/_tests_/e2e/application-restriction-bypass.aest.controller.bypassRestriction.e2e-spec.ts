@@ -256,7 +256,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message:
-          "Cannot create a bypass when there is an active bypass for the same active student restriction.",
+          "Cannot create a bypass when there is an active bypass for the same active restriction.",
         errorType: ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS,
       });
   });
@@ -302,7 +302,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message:
-          "Cannot create a bypass when there is an active bypass for the same active institution restriction.",
+          "Cannot create a bypass when there is an active bypass for the same active restriction.",
         errorType: ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS,
       });
   });

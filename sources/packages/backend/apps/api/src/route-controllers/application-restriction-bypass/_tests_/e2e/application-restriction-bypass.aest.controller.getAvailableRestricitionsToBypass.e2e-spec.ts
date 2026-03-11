@@ -129,6 +129,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       initialValues: {
         restrictionCode: "ZZZ",
         restrictionType: RestrictionType.Institution,
+        actionType: [RestrictionActionType.StopPartTimeDisbursement],
       },
     });
     const secondSavedInstitutionRestriction = await db.restriction.save(

@@ -179,10 +179,9 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
    */
   @ApiUnprocessableEntityResponse({
     description:
-      "Cannot create a bypass when there is an active bypass for the same active student restriction id or " +
+      "Cannot create a bypass when there is an active bypass for the same active restriction or " +
       "could not find student restriction for the given id or " +
       "cannot create a bypass when student restriction is not active  or " +
-      "cannot create a bypass when there is an active bypass for the same active institution restriction id or " +
       "could not find institution restriction for the given id or " +
       "cannot create a bypass when institution restriction is not active or" +
       "cannot create a bypass when application is in invalid state.",

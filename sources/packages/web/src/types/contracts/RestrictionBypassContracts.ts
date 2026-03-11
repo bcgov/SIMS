@@ -1,3 +1,5 @@
+import { RestrictedParty } from "@/types/contracts/RestrictionContract";
+
 /**
  * Defines how the bypass should behave, for instance, until when it will be valid.
  */
@@ -12,4 +14,10 @@ export enum RestrictionBypassBehaviors {
    * When the next e-Cert is marked as 'Ready to send' the bypass should be removed.
    */
   NextDisbursementOnly = "Next disbursement only",
+}
+
+export interface RestrictionBypassItem {
+  restrictionCode: string;
+  restrictionId: number;
+  restrictedParty: RestrictedParty;
 }

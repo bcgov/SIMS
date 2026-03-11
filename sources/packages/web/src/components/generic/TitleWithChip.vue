@@ -1,7 +1,10 @@
 <template>
   <span>
     {{ title }}
-    <restricted-party-chip :client-type="clientType" class="ml-3 float-right" />
+    <restricted-party-chip
+      :restricted-party="clientType"
+      class="ml-3 float-right"
+    />
   </span>
 </template>
 
@@ -11,6 +14,6 @@ import type { RestrictedParty } from "@/types";
 
 defineProps<{
   title: string;
-  clientType: RestrictedParty;
+  restrictedParty: RestrictedParty;
 }>();
 </script>

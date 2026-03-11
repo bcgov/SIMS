@@ -71,9 +71,6 @@
       <add-restriction-modal
         ref="addRestriction"
         :institution-id="institutionId"
-        :entity-type="RestrictedParty.Institution"
-        @submit-restriction-data="createNewRestriction"
-        :allowed-role="Role.InstitutionAddRestriction"
       />
     </body-header-container>
   </tab-container>

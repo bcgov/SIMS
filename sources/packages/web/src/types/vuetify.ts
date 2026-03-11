@@ -1,5 +1,3 @@
-import { RestrictedParty } from "@/types/contracts/RestrictionContract";
-
 /**
  * Vuetify result from a call to the 'validate()' method.
  */
@@ -51,7 +49,6 @@ export interface InputFile extends Blob {
 export interface SelectItemType {
   title: string;
   value: string | number;
-  restrictedParty: RestrictedParty;
 }
 
 export interface Event {

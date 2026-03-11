@@ -17,6 +17,8 @@
             label="I want this application to bypass the following restriction"
             density="compact"
             :items="restrictionsToBypass"
+            item-title="restrictionCode"
+            item-value="restrictionId"
             v-model="formModel.restrictionId"
             variant="outlined"
             :rules="[(v) => checkNullOrEmptyRule(v, 'Restriction')]"
@@ -27,7 +29,7 @@
               <v-list-item v-bind="props" title="">
                 <title-with-chip
                   :title="item.title"
-                  :client-type="item.raw.restrictedParty"
+                  :restricted-party="item.raw.restrictedParty"
                 />
               </v-list-item>
             </template>
@@ -35,7 +37,7 @@
               <v-list-item title="">
                 <title-with-chip
                   :title="item.title"
-                  :client-type="item.raw.restrictedParty"
+                  :restricted-party="item.raw.restrictedParty"
                 />
               </v-list-item>
             </template>
@@ -139,7 +141,7 @@ import {
   BannerTypes,
   RestrictedParty,
   RestrictionBypassBehaviors,
-  SelectItemType,
+  RestrictionBypassItem,
   VForm,
 } from "@/types";
 import { ref, defineComponent } from "vue";
@@ -168,7 +170,7 @@ export default defineComponent({
     const { dateOnlyLongString } = useFormatters();
     const applicationId = ref(0);
     const readOnly = ref(false);
-    const restrictionsToBypass = ref([] as SelectItemType[]);
+    const restrictionsToBypass = ref([] as RestrictionBypassItem[]);
     const restrictionBypassDetails = ref(
       {} as ApplicationRestrictionBypassAPIOutDTO,
     );
@@ -229,11 +231,11 @@ export default defineComponent({
       createdDate: Date,
       restrictionId: number,
       restrictedParty: RestrictedParty,
-    ): SelectItemType => {
+    ): RestrictionBypassItem => {
       const formattedDate = dateOnlyLongString(createdDate);
       return {
-        title: `${restrictionCode} added on ${formattedDate}`,
-        value: restrictionId,
+        restrictionCode: `${restrictionCode} added on ${formattedDate}`,
+        restrictionId,
         restrictedParty,
       };
     };
