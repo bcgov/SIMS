@@ -1,6 +1,6 @@
 {
-  "preset": "../jest-e2e.json",
-  "rootDir": "../../",
+  "preset": "./jest-e2e.json",
+  "rootDir": "../../../",
   "testTimeout": 60000,
   "coverageDirectory": "<rootDir>/apps/workers/coverage"
 }
