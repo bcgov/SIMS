@@ -34,7 +34,7 @@ export WORKERS_PORT := $(or ${WORKERS_PORT}, 8000)
 export LOAD_TEST_GATEWAY_PORT := $(or ${LOAD_TEST_GATEWAY_PORT}, 3005)
 export WEB_PORT := $(or ${WEB_PORT}, 3030)
 export DB_NAME := $(or ${DB_NAME}, SIMSDB)
-export DB_MIGRATIONS_BUILD_REF := $(or ${DB_MIGRATIONS_BUILD_REF}, db-migrations-${APP_NAME})
+export MIGRATIONS_BUILD_REF := $(or ${MIGRATIONS_BUILD_REF}, migrations-${APP_NAME})
 export API_BUILD_REF := $(or ${API_BUILD_REF}, api-${APP_NAME})
 export WORKERS_BUILD_REF := $(or ${WORKERS_BUILD_REF}, workers-${APP_NAME})
 export QUEUE_CONSUMERS_BUILD_REF := $(or ${QUEUE_CONSUMERS_BUILD_REF}, queue-consumers-${APP_NAME})
@@ -68,20 +68,24 @@ export QUEUE_CONSUMERS_MEMORY_LIMIT := $(or ${QUEUE_CONSUMERS_MEMORY_LIMIT}, 102
 export QUEUE_CONSUMERS_REPLICAS := $(or ${QUEUE_CONSUMERS_REPLICAS}, 2)
 export THROTTLE_TIME := $(or $(THROTTLE_TIME), 10000)
 export THROTTLE_LIMIT := $(or $(THROTTLE_LIMIT), 30)
+export FORMS_PORT := 3001
 
-export MAX_WAIT=300 # Maximum wait time in seconds.
-export WAIT_TIME=0  # Initialize wait time to zero.
+# Timeout waiting for a migrations openshift process to complete in seconds.
+export MIGRATIONS_OC_TIMEOUT := 300s 
 
-define DB_MIGRATIONS
-"$(HOST_PREFIX)db-migrations-$(APP_NAME)"
+# Maximum job duration limit in seconds for migration jobs.
+export MIGRATIONS_JOB_MAX_DURATION := 300
+
+define MIGRATIONS
+"$(HOST_PREFIX)migrations-$(APP_NAME)"
 endef
 
 define DB_MIGRATIONS_REPL
 "$(HOST_PREFIX)db-migrations-repl-$(APP_NAME)"
 endef
 
-define DB_MIGRATIONS_JOB_NAME
-"$(HOST_PREFIX)db.migrations"
+define MIGRATIONS_JOB_NAME
+"$(HOST_PREFIX)migrations-job"
 endef
 
 define API
@@ -124,10 +128,9 @@ define FORMS_NAME
 "$(HOST_PREFIX)forms"
 endef
 
-# Ensure DOMAIN_PREFIX do not have any ".", which would create a subdomain
-# since forms has it own custom prefix appended.
+# Form.io URL for internal-only POD communication. No external access should be allowed.
 define FORMS_URL
-$(subst .,-,$(DOMAIN_PREFIX))forms.$(DOMAIN)
+http://$(HOST_PREFIX)forms:$(FORMS_PORT)
 endef
 
 define SOURCE_REPOSITORY_URL
@@ -142,13 +145,18 @@ define SOURCE_CONTEXT_DIR
 "./sources/packages/"
 endef
 
+# For commands looking for packages as a context directory.
+define PACKAGES_CONTEXT_DIR
+"./sources/packages"
+endef
+
 define rollout_and_wait
 @oc -n $(NAMESPACE) rollout status $1
 endef
 
 init-oc: | print-status init-project
-oc-build-db-migrations: | print-status build-db-migrations
-oc-run-db-migrations: | print-status delete-db-migrations run-db-migrations wait-for-db-migrations
+oc-build-migrations: | print-status build-migrations
+oc-run-migrations: | print-status delete-migrations-job deploy-and-run-migrations-job
 oc-build-api: | print-status build-api
 oc-deploy-api: | print-status deploy-api
 oc-build-workers: | print-status build-workers
@@ -254,13 +262,13 @@ init-artifactory-secret-credential:
 	@oc secrets link default artifactory-secret-credential
 	@oc secrets link builder artifactory-secret-credential
 
-build-db-migrations:
+build-migrations:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(BUILD_REF)"
-	test -n "$(DB_MIGRATIONS_BUILD_REF)"
-	@echo "+\n++ BUILDING DB migrations with tag: $(BUILD_REF)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)backend -p DOCKER_FILE_PATH=apps/db-migrations/Dockerfile -p NAME=$(DB_MIGRATIONS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
-	@oc -n $(BUILD_NAMESPACE) start-build bc/$(DB_MIGRATIONS_BUILD_REF) --wait
+	test -n "$(MIGRATIONS_BUILD_REF)"
+	@echo "+\n++ BUILDING migrations with tag: $(BUILD_REF)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f $(BUILD_TEMPLATE_PATH) -p TAG=$(BUILD_REF) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p SOURCE_CONTEXT_DIR=$(PACKAGES_CONTEXT_DIR) -p DOCKER_FILE_PATH=backend/migrations/Dockerfile -p NAME=$(MIGRATIONS_BUILD_REF) | oc -n $(BUILD_NAMESPACE) apply -f -
+	@oc -n $(BUILD_NAMESPACE) start-build bc/$(MIGRATIONS_BUILD_REF) --wait
 
 build-api:
 	test -n "$(BUILD_NAMESPACE)"
@@ -308,51 +316,53 @@ redis-cluster-meet:
 	REDIS_PASSWORD=$$(oc get secret -n $(NAMESPACE) redis-cluster -o jsonpath='{.data.redis-password}' | base64 -d); \
   oc get pods -n $(NAMESPACE) -o json | jq -r '.items[] | select(.metadata.ownerReferences[]? | .kind=="StatefulSet" and .name=="redis-cluster") | "\(.status.podIP) \(env.REDIS_PORT)"' | xargs -n2 oc exec -n $(NAMESPACE) -it redis-cluster-0 -- redis-cli -a $$REDIS_PASSWORD -c CLUSTER MEET
 
-run-db-migrations:
+deploy-and-run-migrations-job:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(API_SECRET_NAME)"
-	test -n "$(DB_MIGRATIONS_BUILD_REF)"
+	test -n "$(MIGRATIONS_SECRET_NAME)"
+	test -n "$(MIGRATIONS_BUILD_REF)"
 	test -n "$(BUILD_REF)"
-	test -n "$(DB_MIGRATIONS)"
-	@echo "+\n++ Deploying DB_MIGRATIONS with tag: $(BUILD_REF)\n+"
-	@oc -n $(NAMESPACE) process -f openshift/db-migrations-job.yml \
-		-p NAME=$(DB_MIGRATIONS) \
+	test -n "$(MIGRATIONS)"
+	test -n "$(MIGRATION_COMMAND)"
+	@echo "+\n++ Deploying MIGRATIONS job with tag: $(BUILD_REF)\n+"
+	@oc -n $(NAMESPACE) process -f openshift/migrations-job.yml \
+		-p NAME=$(MIGRATIONS) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-		-p API_SECRET_NAME=$(API_SECRET_NAME) \
-		-p IMAGE_STREAM_TAG="$(DB_MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
+		-p MIGRATIONS_SECRET_NAME=$(MIGRATIONS_SECRET_NAME) \
+		-p IMAGE_STREAM_TAG="$(MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
-		-p JOB_NAME=$(DB_MIGRATIONS_JOB_NAME) \
+		-p JOB_NAME=$(MIGRATIONS_JOB_NAME) \
+		-p FORMS_URL=$(FORMS_URL) \
+		-p MIGRATION_COMMAND="$(MIGRATION_COMMAND)" \
+		-p ACTIVE_DEADLINE_SECONDS=$(MIGRATIONS_JOB_MAX_DURATION) \
 		| oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) wait --for=condition=complete job/$(MIGRATIONS_JOB_NAME) --timeout=$(MIGRATIONS_OC_TIMEOUT); \
+		EXIT_CODE=$$?; \
+		oc -n $(NAMESPACE) logs job/$(MIGRATIONS_JOB_NAME); \
+		exit $$EXIT_CODE
 
-wait-for-db-migrations:
-	while [ "$$(oc -n $(NAMESPACE) get job $(DB_MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ] && [ "$$WAIT_TIME" -lt "$$MAX_WAIT" ]; do sleep 5; WAIT_TIME=$$((WAIT_TIME+5)); done
-	if [ "$$(oc -n $(NAMESPACE) get job $(DB_MIGRATIONS_JOB_NAME) -o=jsonpath='{.status.conditions[?(@.type=="Complete")].status}' || echo "None")" != "True" ]; then echo "Error: Job $(DB_MIGRATIONS_JOB_NAME) failed to complete within the specified timeout"; exit 1; fi
-
-delete-db-migrations:
-	@if [ -n "$(shell oc -n $(NAMESPACE) get job $(DB_MIGRATIONS_JOB_NAME) -o name 2>/dev/null)" ]; then \
-		oc -n $(NAMESPACE) delete job $(DB_MIGRATIONS_JOB_NAME); \
-			echo "Job deleted."; \
-	else \
-		echo "Job not found."; \
-	fi
+delete-migrations-job:
+	@echo "+\n++ Deleting MIGRATIONS job if it exists\n+"
+	@oc -n $(NAMESPACE) delete job $(MIGRATIONS_JOB_NAME) --ignore-not-found
+	@oc wait --for=delete job/$(MIGRATIONS_JOB_NAME) --timeout=$(MIGRATIONS_OC_TIMEOUT)
+	@echo "+\n++ MIGRATIONS job deleted\n+"
 
 # This deployment reuses the build already in place for db-migrations
 # overriding the docker entry point command to run the db-migrations REPL.
 deploy-db-migrations-repl:
 	test -n "$(NAMESPACE)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(DB_MIGRATIONS_SECRET_NAME)"
+	test -n "$(MIGRATIONS_SECRET_NAME)"
 	test -n "$(HOST_PREFIX)"
-	test -n "$(DB_MIGRATIONS_BUILD_REF)"
+	test -n "$(MIGRATIONS_BUILD_REF)"
 	test -n "$(BUILD_REF)"
 	test -n "$(DB_MIGRATIONS_REPL)"
 	@echo "+\n++ Deploying DB migrations REPL with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/db-migrations-repl.yml \
 		-p NAME=$(DB_MIGRATIONS_REPL) \
-		-p DB_MIGRATIONS_SECRET_NAME=$(DB_MIGRATIONS_SECRET_NAME) \
+		-p MIGRATIONS_SECRET_NAME=$(MIGRATIONS_SECRET_NAME) \
 		-p BUILD_NAMESPACE=$(BUILD_NAMESPACE) \
-		-p IMAGE_STREAM_TAG="$(DB_MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
+		-p IMAGE_STREAM_TAG="$(MIGRATIONS_BUILD_REF):$(BUILD_REF)" \
 		-p BUILD_TAG=$(BUILD_REF) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(DB_MIGRATIONS_REPL))
@@ -389,6 +399,7 @@ deploy-api:
 	test -n "$(EXTERNAL_IP_WHITELIST)"
 	test -n "$(THROTTLE_TIME)"
 	test -n "$(THROTTLE_LIMIT)"
+	test -n "$(FORMS_URL)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
 		-p NAME=$(API) \
@@ -437,6 +448,7 @@ deploy-api:
 		-p REPLICAS=$(API_REPLICAS) \
 		-p THROTTLE_TIME=$(THROTTLE_TIME) \
 		-p THROTTLE_LIMIT=$(THROTTLE_LIMIT) \
+		-p FORMS_URL=$(FORMS_URL) \
 		-p FEATURE_TOGGLES=$(FEATURE_TOGGLES) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(API))
@@ -618,9 +630,6 @@ deploy-forms:
 	-p FORMIO_ROOT_EMAIL=$(FORMIO_ROOT_EMAIL) \
 	-p FORMIO_ROOT_PASSWORD=$(FORMIO_ROOT_PASSWORD) \
 	-p MONGODB_URI=$(MONGODB_URI) \
-	-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
-	-p TLS_KEY=$(TLS_KEY) \
-	-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
 	-p CPU_REQUEST=$(FORMIO_CPU_REQUEST) \
 	-p MEMORY_REQUEST=$(FORMIO_MEMORY_REQUEST) \
 	-p MEMORY_LIMIT=$(FORMIO_MEMORY_LIMIT) \

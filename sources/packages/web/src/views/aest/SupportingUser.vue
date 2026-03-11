@@ -15,6 +15,17 @@
       :header-map="{ 'Parent Name': supportingUser.fullName }"
     />
   </div>
+  <div
+    v-if="
+      supportingUser?.supportingUserType === SupportingUserType.Partner &&
+      !!supportingUser.fullName
+    "
+  >
+    <detail-header
+      class="mb-2"
+      :header-map="{ 'Partner Name': supportingUser.fullName }"
+    />
+  </div>
   <full-page-container class="my-2">
     <supporting-user-form
       v-if="!!supportingUser.supportingData"

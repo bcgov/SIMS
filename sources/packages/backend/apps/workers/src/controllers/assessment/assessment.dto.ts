@@ -13,6 +13,8 @@ import {
   WorkflowData,
   ApplicationStatus,
   ApplicationEditStatus,
+  InstitutionClassification,
+  InstitutionOrganizationStatus,
 } from "@sims/sims-db";
 
 export interface AssociateWorkflowInstanceJobInDTO {
@@ -50,6 +52,10 @@ export interface ApplicationProgramJobOutDTO {
 
 export interface ApplicationInstitutionJobOutDTO {
   institutionType: string;
+  institutionCountry?: string;
+  institutionProvince?: string;
+  institutionClassification?: InstitutionClassification;
+  institutionOrganizationStatus?: InstitutionOrganizationStatus;
 }
 
 export interface ApplicationLocationJobOutDTO {

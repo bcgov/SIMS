@@ -393,7 +393,7 @@
           "input": true
         },
         {
-          "label": "Is the institution medical in nature?",
+          "label": "Do you offer medical programs at your institution?",
           "optionsLabelPosition": "right",
           "inline": false,
           "tableView": false,

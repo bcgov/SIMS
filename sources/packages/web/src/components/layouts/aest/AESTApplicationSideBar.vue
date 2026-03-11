@@ -117,7 +117,7 @@ export default defineComponent({
       index: number,
     ): string => {
       if (supportingUser.supportingUserType === SupportingUserType.Partner) {
-        return "Partner";
+        return supportingUser.supportingUserFullName ?? "Partner";
       }
       return supportingUser.supportingUserFullName ?? `Parent ${index + 1}`;
     };
@@ -130,7 +130,9 @@ export default defineComponent({
       supportingUser: ApplicationSupportingUsersAPIOutDTO,
     ): string => {
       if (supportingUser.supportingUserType === SupportingUserType.Partner) {
-        return "";
+        return supportingUser.isAbleToReport
+          ? "Partner declared"
+          : "Student declared";
       }
 
       // For parents, determine if it was student declared or parent declared.

@@ -13,7 +13,7 @@ objects:
     metadata:
       name: ${JOB_NAME}
     spec:
-      activeDeadlineSeconds: 300 # The maximum duration the job can run.
+      activeDeadlineSeconds: ${{ACTIVE_DEADLINE_SECONDS}} # The maximum duration the job can run.
       backoffLimit: 5 # The number of retries for a job.
       template:
         metadata:
@@ -22,6 +22,9 @@ objects:
           containers:
             - name: db-migrations-container
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
+              command: ["/bin/sh", "-c"]
+              args: ["${MIGRATION_COMMAND}"]
+              imagePullPolicy: Always
               env:
                 - name: VERSION
                   value: ${BUILD_TAG}
@@ -44,14 +47,26 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       key: ${SIMS_DB_NAME}
-                      name: ${API_SECRET_NAME}
+                      name: ${MIGRATIONS_SECRET_NAME}
+                - name: FORMS_SA_USER_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${FORMIO_ROOT_EMAIL_NAME_KEY}
+                      name: ${FORMS_SECRET_NAME}
+                - name: FORMS_SA_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${FORMIO_ROOT_PASSWORD_NAME_KEY}
+                      name: ${FORMS_SECRET_NAME}
+                - name: FORMS_URL
+                  value: "${FORMS_URL}"
               resources:
                 limits:
                   memory: ${MEMORY_LIMIT}
                 requests:
                   cpu: ${CPU_REQUEST}
                   memory: ${MEMORY_REQUEST}
-          restartPolicy: OnFailure
+          restartPolicy: Never
 parameters:
   - name: NAME
     required: true
@@ -61,7 +76,7 @@ parameters:
     value: sims
   - name: SERVICE_NAME
     value: db-migrations
-  - name: API_SECRET_NAME
+  - name: MIGRATIONS_SECRET_NAME
     required: true
   - name: SIMS_DB_NAME
     value: sims-db-name
@@ -73,6 +88,10 @@ parameters:
     required: true
   - name: BUILD_NAMESPACE
     required: true
+  - name: ACTIVE_DEADLINE_SECONDS
+    required: true
+  - name: MIGRATION_COMMAND
+    required: true
   - name: IMAGE_REGISTRY
     value: image-registry.openshift-image-registry.svc:5000
   - name: DB_SERVICE_KEY
@@ -83,6 +102,16 @@ parameters:
     value: user
   - name: DB_PASSWORD_KEY
     value: password
+  - name: FORMS_URL
+    required: true
+  - name: FORMS_SECRET_NAME
+    value: dev-forms
+  - name: FORMIO_ROOT_EMAIL_NAME_KEY
+    value: FORMIO_ROOT_EMAIL
+  - name: FORMIO_ROOT_PASSWORD_NAME_KEY
+    value: FORMIO_ROOT_PASSWORD
+  - name: FORMS_URL_NAME_KEY
+    value: FORMS_URL
   - name: MEMORY_LIMIT
     value: "500M"
   - name: CPU_REQUEST

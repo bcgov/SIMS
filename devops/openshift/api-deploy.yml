@@ -134,10 +134,7 @@ objects:
                       key: ${FORMIO_ROOT_PASSWORD_NAME_KEY}
                       name: ${FORMS_SECRET_NAME}
                 - name: FORMS_URL
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${FORMS_URL_NAME_KEY}
-                      name: ${FORMS_SECRET_NAME}
+                  value: "${FORMS_URL}"
                 - name: SITE_MINDER_LOGOUT_URL
                   value: ${SITE_MINDER_LOGOUT_URL}
                 - name: FILE_UPLOAD_MAX_FILE_SIZE
@@ -531,8 +528,6 @@ parameters:
     value: FORMIO_ROOT_EMAIL
   - name: FORMIO_ROOT_PASSWORD_NAME_KEY
     value: FORMIO_ROOT_PASSWORD
-  - name: FORMS_URL_NAME_KEY
-    value: FORMS_URL
   - name: SITE_MINDER_LOGOUT_URL
     require: true
   - name: IS_FULLTIME_ALLOWED
@@ -642,3 +637,5 @@ parameters:
     value: "30"
   - name: FEATURE_TOGGLES
     required: false
+  - name: FORMS_URL
+    required: true

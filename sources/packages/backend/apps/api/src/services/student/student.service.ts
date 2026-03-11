@@ -26,6 +26,7 @@ import { removeWhiteSpaces, transformAddressDetails } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {
   CreateStudentUserInfo,
+  STUDENT_NOTE_USER_ROLES_MAP,
   StudentInfo,
   StudentUserData,
   UserInfoMatchData,
@@ -37,6 +38,7 @@ import {
   STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
   STUDENT_SIN_CONSENT_NOT_CHECKED,
+  NOTE_CREATION_NOT_AUTHORIZED_FOR_NOTE_CATEGORY,
 } from "../../constants";
 import {
   NoteSharedService,
@@ -46,6 +48,7 @@ import {
   StudentRestrictionSharedService,
 } from "@sims/services";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
+import { Role } from "../../auth";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -709,23 +712,24 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Get notes for a student and note type. Options can be used to filter notes.
-   * @param studentId student id.
-   * @param noteType note type.
+   * Get notes for a student and note types. Options can be used to filter notes.
+   * @param studentId student ID.
    * @param options options to filter notes:
    * - `filterNoEffectRestrictionNotes`: if true, do not include notes for student restrictions with notification type = "No effect".
+   * - `noteTypes`: if provided, only include notes with the provided note types.
    * @returns student notes.
    */
   async getStudentNotes(
     studentId: number,
-    noteType?: NoteType,
     options?: {
+      noteTypes?: NoteType[];
       filterNoEffectRestrictionNotes?: boolean;
     },
   ): Promise<Note[]> {
     const studentNoteQuery = this.repo
       .createQueryBuilder("student")
       .select([
+        "note.id",
         "student.id",
         "note.noteType",
         "note.description",
@@ -736,8 +740,10 @@ export class StudentService extends RecordDataModelService<Student> {
       .innerJoin("student.notes", "note")
       .innerJoin("note.creator", "user")
       .where("student.id = :studentId", { studentId });
-    if (noteType) {
-      studentNoteQuery.andWhere("note.noteType = :noteType", { noteType });
+    if (options?.noteTypes?.length) {
+      studentNoteQuery.andWhere("note.noteType IN (:...noteTypes)", {
+        noteTypes: options.noteTypes,
+      });
     }
     if (options?.filterNoEffectRestrictionNotes) {
       const filterOutRestrictionNoteSubQuery = this.dataSource
@@ -783,15 +789,28 @@ export class StudentService extends RecordDataModelService<Student> {
    * @param studentId student to have the note associated.
    * @param noteType note type.
    * @param noteDescription note description.
+   * @param userRoles user roles to validate if the user has authorization to create
+   * the note based on the note type.
    * @param auditUserId user that should be considered the one that is causing the changes.
-   * @returns saved Note.
+   * @returns saved note.
    */
   async addStudentNote(
     studentId: number,
     noteType: NoteType,
     noteDescription: string,
+    userRoles: Role[],
     auditUserId: number,
   ): Promise<Note> {
+    // Check if the note type is restricted by some user role.
+    const roleRestriction = STUDENT_NOTE_USER_ROLES_MAP.get(noteType);
+    // If not restricted or the user has the role, it should be authorized.
+    const authorized = !roleRestriction || userRoles.includes(roleRestriction);
+    if (!authorized) {
+      throw new CustomNamedError(
+        `User does not have authorization to create a note for category ${noteType}.`,
+        NOTE_CREATION_NOT_AUTHORIZED_FOR_NOTE_CATEGORY,
+      );
+    }
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       return this.noteSharedService.createStudentNote(
         studentId,

@@ -4,43 +4,28 @@
     :records-count="applicationAppeals.count"
     sub-title="Appeals that require ministry review."
   />
-  <content-group>
-    <v-row class="m-0 p-0 mb-2" align="center">
-      <v-col md="auto" class="flex-grow-1 pa-0 pr-2 mb-1">
-        <v-text-field
-          density="compact"
-          label="Search name or application #"
-          variant="outlined"
-          v-model="searchCriteria"
-          @keyup.enter="searchAppeals"
-          prepend-inner-icon="mdi-magnify"
-          hide-details="auto"
-        />
-      </v-col>
-      <v-col cols="auto" class="pa-0 pr-2">
-        <v-btn color="primary" :loading="isLoading" @click="searchAppeals"
-          >Search</v-btn
+  <search-table
+    v-model="searchCriteria"
+    search-label="Search name or application #"
+    :loading="isLoading"
+    @search="searchAppeals"
+  >
+    <template #append-search>
+      <v-btn-toggle
+        v-model="selectedFilter"
+        color="primary"
+        density="compact"
+        class="btn-toggle"
+        selected-class="selected-btn-toggle"
+        @update:model-value="onFilterChange"
+      >
+        <v-btn value="all" rounded="xl" color="primary" class="mr-2">All</v-btn>
+        <v-btn :value="true" rounded="xl" color="primary" class="mr-2"
+          >Application</v-btn
         >
-      </v-col>
-      <v-col cols="auto" class="pa-0">
-        <v-btn-toggle
-          v-model="selectedFilter"
-          color="primary"
-          density="compact"
-          class="btn-toggle"
-          selected-class="selected-btn-toggle"
-          @update:model-value="onFilterChange"
-        >
-          <v-btn value="all" rounded="xl" color="primary" class="mr-2"
-            >All</v-btn
-          >
-          <v-btn :value="true" rounded="xl" color="primary" class="mr-2"
-            >Application</v-btn
-          >
-          <v-btn :value="false" rounded="xl" color="primary">Other</v-btn>
-        </v-btn-toggle>
-      </v-col>
-    </v-row>
+        <v-btn :value="false" rounded="xl" color="primary">Other</v-btn>
+      </v-btn-toggle>
+    </template>
     <toggle-content :toggled="!applicationAppeals.count && !isLoading">
       <v-data-table-server
         :headers="PendingAppealsTableHeaders"
@@ -71,7 +56,7 @@
         </template>
       </v-data-table-server>
     </toggle-content>
-  </content-group>
+  </search-table>
 </template>
 
 <script setup lang="ts">
