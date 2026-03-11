@@ -102,7 +102,7 @@ export default defineComponent({
     const supportingUserLabel = computed(() => {
       return props.supportingUserType === SupportingUserType.Partner
         ? "spouse/common-law partner"
-        : props.supportingUserType.toLowerCase();
+        : "parent";
     });
     return {
       updateSupportingUser,
