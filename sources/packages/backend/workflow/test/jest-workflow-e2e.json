@@ -1,6 +1,7 @@
 {
   "preset": "./jest-e2e.json",
   "rootDir": "../../",
+  "roots": ["<rootDir>/workflow"],
   "testTimeout": 90000,
   "coverageDirectory": "<rootDir>/workflow/coverage"
 }
