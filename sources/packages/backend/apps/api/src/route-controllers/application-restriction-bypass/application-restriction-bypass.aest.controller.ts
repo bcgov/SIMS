@@ -50,7 +50,6 @@ import {
   StudentRestriction,
   InstitutionRestriction,
 } from "@sims/sims-db";
-import { RestrictedParty } from "@sims/services";
 
 /**
  * Controller for AEST Application Restriction Bypasses.
@@ -122,15 +121,12 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
     if (!applicationRestrictionBypass) {
       throw new NotFoundException("Application restriction bypass not found.");
     }
-    const restriction = applicationRestrictionBypass.bypassRestriction();
+    const restriction = applicationRestrictionBypass.getBypassRestriction();
     return {
       applicationRestrictionBypassId: applicationRestrictionBypass.id,
       restrictionId: restriction.id,
       restrictionCode: restriction.restriction.restrictionCode,
-      restrictedParty:
-        restriction instanceof StudentRestriction
-          ? RestrictedParty.Student
-          : RestrictedParty.Institution,
+      restrictedParty: applicationRestrictionBypass.getRestrictedParty(),
       creationNote: applicationRestrictionBypass.creationNote.description,
       removalNote: applicationRestrictionBypass.removalNote?.description,
       createdBy: getUserFullName(applicationRestrictionBypass.bypassCreatedBy),

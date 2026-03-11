@@ -42,8 +42,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
   let ptssrRestriction: Restriction;
   let endpoint: string;
   let susRestriction: Restriction,
-    stopPartTimeInstitutionRestriction: Restriction,
-    savedInstitutionRestriction: Restriction;
+    stopPartTimeInstitutionRestriction: Restriction;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -57,15 +56,14 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     susRestriction = await db.restriction.findOne({
       where: { restrictionCode: RestrictionCode.SUS },
     });
-    stopPartTimeInstitutionRestriction = createFakeRestriction({
-      initialValues: {
-        restrictionCode: "ZZZ",
-        restrictionType: RestrictionType.Institution,
-        actionType: [RestrictionActionType.StopPartTimeDisbursement],
-      },
-    });
-    savedInstitutionRestriction = await db.restriction.save(
-      stopPartTimeInstitutionRestriction,
+    stopPartTimeInstitutionRestriction = await db.restriction.save(
+      createFakeRestriction({
+        initialValues: {
+          restrictionCode: "ZZZ",
+          restrictionType: RestrictionType.Institution,
+          actionType: [RestrictionActionType.StopPartTimeDisbursement],
+        },
+      }),
     );
   });
 
@@ -151,7 +149,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     const institutionRestriction = await saveFakeInstitutionRestriction(db, {
       institution:
         application.currentAssessment.offering.institutionLocation.institution,
-      restriction: savedInstitutionRestriction,
+      restriction: stopPartTimeInstitutionRestriction,
       creator: sharedMinistryUser,
       program: application.currentAssessment.offering.educationProgram,
       location: application.currentAssessment.offering.institutionLocation,

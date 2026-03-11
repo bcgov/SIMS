@@ -149,12 +149,12 @@ export class ApplicationRestrictionBypass extends RecordDataModel {
   })
   bypassRemovedDate?: Date;
 
-  bypassRestriction(): StudentRestriction | InstitutionRestriction {
+  getBypassRestriction(): StudentRestriction | InstitutionRestriction {
     this.validateRestrictionAssociation();
     return this.studentRestriction ?? this.institutionRestriction;
   }
 
-  restrictedParty(): RestrictedParty {
+  getRestrictedParty(): RestrictedParty {
     this.validateRestrictionAssociation();
     return this.studentRestriction
       ? RestrictedParty.Student

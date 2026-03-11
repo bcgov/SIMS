@@ -27,18 +27,18 @@
           >
             <template #item="{ props, item }">
               <v-list-item v-bind="props" title="">
-                <title-with-chip
-                  :title="item.title"
-                  :restricted-party="item.raw.restrictedParty"
+                {{ item.title }}
+                <chip-tag
+                  color="black"
+                  class="float-right"
+                  :label="item.raw.restrictedParty"
                 />
               </v-list-item>
             </template>
             <template #selection="{ item }">
               <v-list-item title="">
-                <title-with-chip
-                  :title="item.title"
-                  :restricted-party="item.raw.restrictedParty"
-                />
+                {{ item.title }}
+                <chip-tag color="black" :label="item.raw.restrictedParty" />
               </v-list-item>
             </template>
           </v-select>
@@ -141,7 +141,6 @@ import {
   BannerTypes,
   RestrictedParty,
   RestrictionBypassBehaviors,
-  RestrictionBypassItem,
   VForm,
 } from "@/types";
 import { ref, defineComponent } from "vue";
@@ -153,17 +152,22 @@ import {
 } from "@/composables";
 import {
   ApplicationRestrictionBypassAPIOutDTO,
+  AvailableRestrictionAPIOutDTO,
   AvailableRestrictionsAPIOutDTO,
   BypassRestrictionAPIInDTO,
 } from "@/services/http/dto";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { ApplicationRestrictionBypassService } from "@/services/ApplicationRestrictionBypassService";
-import TitleWithChip from "@/components/generic/TitleWithChip.vue";
+
+interface RestrictionBypassItem {
+  restrictionCode: string;
+  restrictionId: number;
+  restrictedParty: RestrictedParty;
+}
 
 export default defineComponent({
   components: {
     ModalDialogBase,
-    TitleWithChip,
   },
   setup() {
     const snackBar = useSnackBar();
@@ -203,13 +207,13 @@ export default defineComponent({
         const foundRestriction =
           availableRestrictionsToBypass.value.availableRestrictionsToBypass?.find(
             (r) => r.restrictionId === formModel.value.restrictionId,
-          );
+          ) as AvailableRestrictionAPIOutDTO;
         await ApplicationRestrictionBypassService.shared.bypassRestriction({
           applicationId: applicationId.value,
           restrictionId: formModel.value.restrictionId,
           bypassBehavior: formModel.value.bypassBehavior,
           note: formModel.value.note,
-          restrictedParty: foundRestriction!.restrictedParty,
+          restrictedParty: foundRestriction.restrictedParty,
         });
         snackBar.success("Restriction bypassed.");
         resolvePromise(true);
