@@ -1,18 +1,14 @@
 <template>
   <span>
     {{ title }}
-    <restricted-party-chip
-      :restricted-party="clientType"
-      class="ml-3 float-right"
-    />
+    <chip-tag color="success" :label="props.restrictedParty" />
   </span>
 </template>
 
 <script setup lang="ts">
-import RestrictedPartyChip from "@/components/generic/RestrictedPartyChip.vue";
 import type { RestrictedParty } from "@/types";
 
-defineProps<{
+const props = defineProps<{
   title: string;
   restrictedParty: RestrictedParty;
 }>();

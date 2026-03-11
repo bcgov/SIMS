@@ -314,7 +314,6 @@ export class ApplicationRestrictionBypassService {
       .createQueryBuilder("application")
       .select([
         "application.id",
-        "student.id",
         "currentAssessment.id",
         "offering.id",
         "offering.offeringIntensity",
@@ -327,7 +326,6 @@ export class ApplicationRestrictionBypassService {
         "instRestrictionDetail.restrictionCode",
         "instRestrictionDetail.actionType",
       ])
-      .innerJoin("application.student", "student")
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("currentAssessment.offering", "offering")
       .innerJoin("offering.educationProgram", "offeringProgram")
