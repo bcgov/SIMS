@@ -88,7 +88,7 @@ const goToFormSubmission = (
   formSubmission: FormSubmissionPendingSummaryAPIOutDTO,
 ) => {
   router.push({
-    name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_PENDING_FORMS,
+    name: AESTRoutesConst.FORM_SUBMISSION_APPROVAL_FROM_PENDING_FORMS,
     params: { formSubmissionId: formSubmission.formSubmissionId },
   });
 };

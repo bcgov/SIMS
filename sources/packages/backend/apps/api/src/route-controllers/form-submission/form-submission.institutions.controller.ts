@@ -17,6 +17,7 @@ import {
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @IsBCPublicInstitution()
+@HasStudentDataAccess("studentId")
 @Controller("form-submission")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-form-submission`)
 export class FormSubmissionInstitutionsController extends BaseController {
@@ -61,7 +62,6 @@ export class FormSubmissionInstitutionsController extends BaseController {
    * @returns form submission details including individual form items and their details.
    */
   @ApiNotFoundResponse({ description: "Form submission not found." })
-  @HasStudentDataAccess("studentId")
   @Get("student/:studentId/form-submission/:formSubmissionId")
   async getFormSubmission(
     @Param("studentId", ParseIntPipe) studentId: number,

@@ -23,12 +23,12 @@ export class FormSubmissionControllerService {
    * submission belongs to the student and throw a not found HTTP error if it does not.
    * - `locationIds` restrict forms with an application scope to the provided locations. Used for institutions to have access
    * only to the form submissions related to the locations they have access to.
-   * - `includeBasicDecisionDetails` optional flag to include basic decision details, besides
-   * the decision status. Used for institutions to have access to more details than the student
-   * to better support them.
    * - `keepPendingDecisionsWhilePendingFormSubmission` when true, will return "Pending" as the decision status for all items
    * if the form submission is still pending. This is used to avoid showing decisions that are not final yet while the form
    * submission is not completed.
+   * - `includeBasicDecisionDetails` optional flag to include basic decision details, besides
+   * the decision status. Used for institutions to have access to more details than the student
+   * to better support them.
    * @returns form submission details including individual form items and their details.
    * @throws NotFoundException when the formSubmissionId is provided but no record is returned.
    */
@@ -37,8 +37,8 @@ export class FormSubmissionControllerService {
     options?: {
       formSubmissionId?: number;
       locationIds?: number[];
-      includeBasicDecisionDetails?: boolean;
       keepPendingDecisionsWhilePendingFormSubmission?: boolean;
+      includeBasicDecisionDetails?: boolean;
     },
   ): Promise<FormSubmissionAPIOutDTO[]> {
     const submissions = await this.formSubmissionService.getFormSubmissions(
@@ -61,6 +61,18 @@ export class FormSubmissionControllerService {
     );
   }
 
+  /**
+   * Convert a form submission record to the API output format,
+   * including the individual form items and their details.
+   * @param submission form submission record to be converted.
+   * @param options.
+   * - `includeBasicDecisionDetails` flag to indicate if the basic decision details should be included in the response,
+   * besides the status that is always included.
+   * - `keepPendingDecisionsWhilePendingFormSubmission` when true, will return "Pending" as the decision status for all items
+   * if the form submission is still pending. This is used to avoid showing decisions that are not final yet while the form
+   * submission is not completed.
+   * @returns form submission details including individual form items and their details in the API output format.
+   */
   private mapSubmissionsToAPIOutDTO(
     submission: FormSubmission,
     options?: {
@@ -68,6 +80,12 @@ export class FormSubmissionControllerService {
       keepPendingDecisionsWhilePendingFormSubmission?: boolean;
     },
   ): FormSubmissionAPIOutDTO {
+    // Avoid adding further details to the decision when the form submission is still pending,
+    // when the flag is set to keep pending decisions while pending form submission, to avoid
+    // confusion for the institutions by showing decisions that are not final yet.
+    const includeBasicDecisionDetails =
+      options?.includeBasicDecisionDetails &&
+      !!options?.keepPendingDecisionsWhilePendingFormSubmission;
     return {
       id: submission.id,
       formCategory: submission.formCategory,
@@ -86,7 +104,7 @@ export class FormSubmissionControllerService {
         currentDecision: this.mapCurrentDecision(
           submission.submissionStatus,
           item,
-          options?.includeBasicDecisionDetails ?? false,
+          includeBasicDecisionDetails,
           options?.keepPendingDecisionsWhilePendingFormSubmission ?? true,
         ),
       })),

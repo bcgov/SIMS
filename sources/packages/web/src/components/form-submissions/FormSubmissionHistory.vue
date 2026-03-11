@@ -23,10 +23,11 @@
               >{{ filterCategory.label }}
               <template #append
                 ><v-badge
+                  class="ma-n1"
                   :color="
                     filterCategory.value === formCategoryFilter
                       ? 'primary'
-                      : 'gray'
+                      : 'border'
                   "
                   :content="filterCategory.count"
                   inline
@@ -64,11 +65,7 @@
                     ><status-chip-form-submission :status="submission.status"
                   /></v-col>
                   <v-col
-                    ><v-btn
-                      color="primary"
-                      class="float-right"
-                      @click="goToSubmission(submission.id)"
-                    >
+                    ><v-btn color="primary" class="float-right">
                       View
                     </v-btn></v-col
                   >
@@ -233,8 +230,8 @@ export default defineComponent({
       if (formCategoryFilter.value === "all") {
         return submissions.value;
       }
-      return submissions.value?.filter((submission) =>
-        formCategoryFilter.value.includes(submission.formCategory),
+      return submissions.value?.filter(
+        (submission) => formCategoryFilter.value === submission.formCategory,
       );
     });
 

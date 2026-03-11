@@ -160,9 +160,12 @@ export class FormSubmissionService {
 
   /**
    * Get the details of a form submission, including the individual form items and their details.
-   * @param options.
+   * @param options at least one of this options should be provided..
    * - `studentId` ID of the student to have the data retrieved
    * - `formSubmissionId` allow searching for a specific form submission.
+   * - `itemId` allow searching for a specific form submission item across all form submissions of the student,
+   * and return the form submission details for the form submission that contains the item.
+   * @param queryOptions.
    * - `locationIds` restrict forms with an application scope to the provided locations. Used for institutions to have access
    * only to the form submissions related to the locations they have access to.
    * - `includeDecisionHistory` includes the decision history of each form item.
