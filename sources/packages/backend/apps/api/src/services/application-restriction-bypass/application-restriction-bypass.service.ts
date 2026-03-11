@@ -250,18 +250,9 @@ export class ApplicationRestrictionBypassService {
     if (!application) {
       return [];
     }
-    const allowedRestrictionActions =
-      application.currentAssessment.offering.offeringIntensity ===
-      OfferingIntensity.fullTime
-        ? [
-            RestrictionActionType.StopFullTimeBCLoan,
-            RestrictionActionType.StopFullTimeBCGrants,
-            RestrictionActionType.StopFullTimeDisbursement,
-          ]
-        : [
-            RestrictionActionType.StopPartTimeBCGrants,
-            RestrictionActionType.StopPartTimeDisbursement,
-          ];
+    const allowedRestrictionActions = this.getAllowedRestrictionActions(
+      application.currentAssessment.offering.offeringIntensity,
+    );
     const bypassedStudentRestrictionIds = new Set(
       application.student.studentRestrictions
         .flatMap(
@@ -346,17 +337,8 @@ export class ApplicationRestrictionBypassService {
     // Determine allowed restriction actions based on offering intensity
     const offeringIntensity =
       institutionApplication.currentAssessment.offering.offeringIntensity;
-    const allowedRestrictionActionsPerOfferingIntensity =
-      offeringIntensity === OfferingIntensity.fullTime
-        ? [
-            RestrictionActionType.StopFullTimeBCLoan,
-            RestrictionActionType.StopFullTimeBCGrants,
-            RestrictionActionType.StopFullTimeDisbursement,
-          ]
-        : [
-            RestrictionActionType.StopPartTimeBCGrants,
-            RestrictionActionType.StopPartTimeDisbursement,
-          ];
+    const allowedRestrictionActions =
+      this.getAllowedRestrictionActions(offeringIntensity);
     const institutionRestrictionsThatAreNotBypassed =
       institutionApplication.currentAssessment.offering.institutionLocation
         .institution.restrictions;
@@ -364,7 +346,7 @@ export class ApplicationRestrictionBypassService {
     const filteredInstitutionRestrictions =
       institutionRestrictionsThatAreNotBypassed.filter(
         (institutionRestriction) =>
-          allowedRestrictionActionsPerOfferingIntensity.some((actionType) =>
+          allowedRestrictionActions.some((actionType) =>
             institutionRestriction.restriction.actionType.includes(actionType),
           ),
       );
@@ -529,6 +511,31 @@ export class ApplicationRestrictionBypassService {
           RESTRICTION_IS_NOT_ACTIVE,
         );
       }
+    }
+  }
+
+  /**
+   * Returns the allowed restriction actions for a given offering intensity.
+   * @param offeringIntensity offering intensity to check.
+   * @returns allowed restriction actions.
+   */
+  private getAllowedRestrictionActions(
+    offeringIntensity: string,
+  ): RestrictionActionType[] {
+    switch (offeringIntensity) {
+      case OfferingIntensity.fullTime:
+        return [
+          RestrictionActionType.StopFullTimeBCLoan,
+          RestrictionActionType.StopFullTimeBCGrants,
+          RestrictionActionType.StopFullTimeDisbursement,
+        ];
+      case OfferingIntensity.partTime:
+        return [
+          RestrictionActionType.StopPartTimeBCGrants,
+          RestrictionActionType.StopPartTimeDisbursement,
+        ];
+      default:
+        return [];
     }
   }
 
