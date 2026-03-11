@@ -1,17 +1,32 @@
 {
+  "rootDir": "./",
+  "testTimeout": 90000,
+  "workerIdleMemoryLimit": 0.2,
   "moduleFileExtensions": [
     "js",
     "json",
     "ts"
   ],
-  "rootDir": "./",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
-  "testTimeout": 90000,
-  "workerIdleMemoryLimit": 0.2,
+  "coveragePathIgnorePatterns": [
+    "node_modules",
+    "_tests_",
+    "test",
+    "main.ts",
+    ".module.ts",
+    "coverage",
+    "testHelpers",
+    ".e2e-spec.ts",
+    ".models.ts",
+    ".model.ts",
+    ".dto.ts",
+    "mock.ts",
+    "index.ts"
+  ],
   "setupFiles": [
     "<rootDir>/env-setup.js"
   ],
@@ -29,21 +44,6 @@
     "@sims/auth/(.*)": "<rootDir>/libs/auth/src/$1",
     "@sims/auth": "<rootDir>/libs/auth/src"
   },
-  "coveragePathIgnorePatterns": [
-    "node_modules",
-    "_tests_",
-    "test",
-    "main.ts",
-    ".module.ts",
-    "coverage",
-    "testHelpers",
-    ".e2e-spec.ts",
-    ".models.ts",
-    ".model.ts",
-    ".dto.ts",
-    "mock.ts",
-    "index.ts"
-  ],
   "transformIgnorePatterns": [
     "/node_modules/(?!@faker-js|uuid)"
   ]
