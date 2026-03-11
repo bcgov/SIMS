@@ -88,8 +88,6 @@ parameters:
     required: true
   - name: BUILD_NAMESPACE
     required: true
-  - name: FORMS_URL
-    required: true
   - name: ACTIVE_DEADLINE_SECONDS
     required: true
   - name: MIGRATION_COMMAND
@@ -104,6 +102,8 @@ parameters:
     value: user
   - name: DB_PASSWORD_KEY
     value: password
+  - name: FORMS_URL
+    required: true
   - name: FORMS_SECRET_NAME
     value: dev-forms
   - name: FORMIO_ROOT_EMAIL_NAME_KEY
