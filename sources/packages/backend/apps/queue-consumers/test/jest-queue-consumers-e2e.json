@@ -1,5 +1,6 @@
 {
   "preset": "../jest-e2e.json",
-  "rootDir": "../../",
-  "testTimeout": 60000
+  "rootDir": "../../../",
+  "testTimeout": 60000,
+  "coverageDirectory": "<rootDir>/apps/queue-consumers/coverage"
 }

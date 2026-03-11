@@ -1,6 +1,7 @@
 {
-  "preset": "../jest-e2e.json",
-  "rootDir": "../../",
+  "preset": "./jest-e2e.json",
+  "rootDir": "../../../",
   "testTimeout": 90000,
-  "workerIdleMemoryLimit": 0.2
+  "workerIdleMemoryLimit": 0.2,
+  "coverageDirectory": "<rootDir>/apps/api/coverage"
 }
