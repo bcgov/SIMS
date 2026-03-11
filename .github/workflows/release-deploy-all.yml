@@ -92,6 +92,7 @@ env:
   API_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
   WORKERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
   QUEUE_CONSUMERS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+  MIGRATIONS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
   FORMS_SECRET_NAME: ${{ secrets.FORMS_SECRET_NAME }}
   QUEUE_PREFIX: ${{ secrets.QUEUE_PREFIX }}
   API_PORT: ${{ secrets.API_PORT }}
@@ -171,7 +172,7 @@ jobs:
       - name: Run db-migrations
         working-directory: "./devops/"
         run: |
-          make oc-run-db-migrations
+          make oc-run-migrations MIGRATION_COMMAND="npm run migration:run"
 
   # Deploy SIMS API.
   deploy-sims-api:

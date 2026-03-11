@@ -267,11 +267,11 @@ workers: create-docker-local-network
 	@docker compose -f docker-compose.yml build workers
 	@docker compose -f docker-compose.yml up -d workers
 
-# Runs db-migrations in REPL mode
-db-migrations-repl: create-docker-local-network
-	@echo "+\n++ Make: Database migrations REPL"
-	@docker compose -f docker-compose.yml build db-migrations-repl
-	@docker compose -f docker-compose.yml up -d db-migrations-repl
+# Runs migrations container.
+migrations: create-docker-local-network
+	@echo "+\n++ Make: Run migrations container"
+	@docker compose -f docker-compose.yml build migrations
+	@docker compose -f docker-compose.yml up -d migrations
 
 # Enable local DB connection to Openshift DEV/TEST/STG/PROD
 connect-dev-db:

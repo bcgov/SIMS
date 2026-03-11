@@ -15,9 +15,8 @@ env:
   NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
   BUILD_REF: ${{ github.ref_name }}
   HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
-  DOMAIN_PREFIX: ${{ vars.DOMAIN_PREFIX }}
   BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
-  DB_MIGRATIONS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+  MIGRATIONS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
 
 jobs:
   deploy-db-migrations-repl:

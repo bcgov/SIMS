@@ -321,20 +321,20 @@ services:
     networks:
       - local-network
   # - Redis
-  # DB Migrations REPL
-  db-migrations-repl:
-    image: db-migrations-repl-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
+  # Migrations
+  migrations:
+    image: migrations-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     tty: true
     stdin_open: true
     deploy:
       resources:
         limits:
           memory: 512M
-    container_name: db-migrations-repl-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
+    container_name: migrations-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     restart: unless-stopped
     build:
-      context: ./packages/backend
-      dockerfile: ./apps/db-migrations/Dockerfile.dev
+      context: ./packages
+      dockerfile: ./backend/migrations/Dockerfile.dev
     environment:
       - NODE_ENV=docker
       - VERSION=v1.0.0-docker
@@ -343,11 +343,14 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - FORMS_URL=http://formio:3001
+      - FORMS_SA_USER_NAME=${FORMS_SA_USER_NAME}
+      - FORMS_SA_PASSWORD=${FORMS_SA_PASSWORD}
     networks:
       - local-network
     depends_on:
       - postgres
-  # - DB Migrations REPL
+  # - Migrations
   # - services
   # Networks
 networks:

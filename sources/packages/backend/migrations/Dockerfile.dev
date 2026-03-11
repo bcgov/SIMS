@@ -1,0 +1,37 @@
+# Image to run all the migrations related to application deployment.
+FROM node:25.6.1-alpine3.22
+
+WORKDIR /app
+
+# Updating container path variable with node bin
+ENV PATH=$PATH:/app/node_modules/.bin
+
+# Copying backend package.json and package-lock.json
+COPY backend/package*.json ./
+
+# Copying forms package.json and package-lock.json
+COPY forms/package*.json ./forms/
+
+# Installing backend and forms dependencies
+RUN npm ci --ignore-scripts && \
+    cd forms && npm ci --ignore-scripts
+
+# Copying backend sources
+COPY backend/apps/db-migrations ./apps/db-migrations
+COPY backend/tsconfig.json ./
+COPY backend/tsconfig.build.json ./
+COPY backend/env-setup.js ./
+
+# Copying forms sources
+COPY forms/src ./forms/src
+COPY forms/tsconfig.json ./forms/
+COPY forms/tsconfig.build.json ./forms/
+
+# Adding a nonroot user
+RUN addgroup -S nonroot \
+    && adduser -S nonroot -G nonroot
+    
+USER nonroot
+
+# Entry point
+CMD ["sh", "-c", "echo 'Migration container started.' && tail -f /dev/null"]
