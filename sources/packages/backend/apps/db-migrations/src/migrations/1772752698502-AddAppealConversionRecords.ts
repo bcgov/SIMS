@@ -14,7 +14,7 @@ export class AddAppealConversionRecords1772752698502 implements MigrationInterfa
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Rollback-Insert-appeal-conversion-records.sql",
+        "Rollback-insert-appeal-conversion-records.sql",
         "DynamicFormConfigurations",
       ),
     );

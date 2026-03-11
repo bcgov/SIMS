@@ -1,4 +1,4 @@
--- Remove configurations for the student current year income appeal form from the dynamic_form_configurations table.
+-- Remove configurations for the student current year income, partner current year income and exceptional expense appeal forms from the dynamic_form_configurations table.
 DELETE FROM
     sims.dynamic_form_configurations
 WHERE

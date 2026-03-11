@@ -46,7 +46,7 @@
       "label": "Current Tax Year",
       "persistent": false,
       "type": "hidden",
-      "calculateValue": "// From the program year, get the calendar start year of the the program year.\r\n// e.g. program year  = 2022-2023, calendar start year is 2022. And Current tax year should be 2022.\r\nconst [startYear] = data.programYear ? data.programYear.split(\"-\"):[];\r\nvalue = startYear;",
+      "calculateValue": "// From the program year, get the calendar start year of the program year.\r\n// e.g. program year  = 2022-2023, calendar start year is 2022. And Current tax year should be 2022.\r\nconst [startYear] = data.programYear ? data.programYear.split(\"-\"):[];\r\nvalue = startYear;",
       "lockKey": true
     },
     {
