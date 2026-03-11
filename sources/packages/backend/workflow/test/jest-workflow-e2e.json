@@ -1,5 +1,5 @@
 {
-  "preset": "../../jest-e2e.json",
+  "preset": "./jest-e2e.json",
   "rootDir": "../../",
   "testTimeout": 90000
 }
