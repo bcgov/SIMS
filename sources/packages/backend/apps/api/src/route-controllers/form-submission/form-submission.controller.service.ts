@@ -62,13 +62,8 @@ export class FormSubmissionControllerService {
     // default behavior to expose less information and avoid showing non-final decisions.
     const keepPendingDecisionsWhilePendingFormSubmission =
       options?.keepPendingDecisionsWhilePendingFormSubmission ?? true;
-    let includeBasicDecisionDetails: boolean;
-    if (keepPendingDecisionsWhilePendingFormSubmission) {
-      includeBasicDecisionDetails = false;
-    } else {
-      includeBasicDecisionDetails =
-        options?.includeBasicDecisionDetails ?? false;
-    }
+    const includeBasicDecisionDetails =
+      options?.includeBasicDecisionDetails ?? false;
     return submissions.map((submission) =>
       this.mapSubmissionsToAPIOutDTO(
         submission,
@@ -135,18 +130,23 @@ export class FormSubmissionControllerService {
     includeBasicDecisionDetails: boolean,
     keepPendingDecisionsWhilePendingFormSubmission: boolean,
   ): FormSubmissionItemDecisionAPIOutDTO {
-    let decisionStatus =
+    // Determine if decision details should be restricted based on the form submission status and the flag.
+    const hasRestrictDecisionDetails =
       keepPendingDecisionsWhilePendingFormSubmission &&
-      submissionStatus === FormSubmissionStatus.Pending
-        ? FormSubmissionDecisionStatus.Pending
-        : submissionItem.currentDecision?.decisionStatus;
-    // Default to Pending if no decision exists.
+      submissionStatus === FormSubmissionStatus.Pending;
+    // Defined the status.
+    let decisionStatus = hasRestrictDecisionDetails
+      ? FormSubmissionDecisionStatus.Pending
+      : submissionItem.currentDecision?.decisionStatus;
     decisionStatus = decisionStatus ?? FormSubmissionDecisionStatus.Pending;
+    // Defined the notes.
+    let decisionNoteDescription =
+      hasRestrictDecisionDetails || !includeBasicDecisionDetails
+        ? undefined
+        : submissionItem.currentDecision?.decisionNote?.description;
     return {
       decisionStatus,
-      decisionNoteDescription: includeBasicDecisionDetails
-        ? submissionItem.currentDecision?.decisionNote?.description
-        : undefined,
+      decisionNoteDescription,
     };
   }
 }
