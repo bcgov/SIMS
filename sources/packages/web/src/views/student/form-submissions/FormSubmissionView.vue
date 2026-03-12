@@ -28,18 +28,13 @@
           </template>
         </body-header>
       </template>
-      <form-submission-items
-        :submission-items="formSubmissionItems"
-        :loading="loading"
-        :read-only="true"
-      >
-        <template #actions>
-          <footer-buttons
-            :show-primary-button="false"
-            secondary-label="Back"
-            @secondary-click="goBack"
-        /></template>
-      </form-submission-items>
+      <content-group>
+        <form-submission-items
+          :submission-items="formSubmissionItems"
+          :loading="loading"
+          :read-only="true"
+        />
+      </content-group>
     </body-header-container>
   </student-page-container>
 </template>
@@ -47,7 +42,6 @@
 <script lang="ts">
 import { defineComponent, PropType, ref, watchEffect } from "vue";
 import FormSubmissionItems from "@/components/form-submissions/FormSubmissionItems.vue";
-import { useRouter } from "vue-router";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
 import { BackTarget, FormSubmissionItem } from "@/types";
 import { FormSubmissionAPIOutDTO } from "@/services/http/dto";
@@ -78,16 +72,9 @@ export default defineComponent({
   },
   setup(props) {
     const snackBar = useSnackBar();
-    const router = useRouter();
     const formSubmission = ref<FormSubmissionAPIOutDTO>();
     const formSubmissionItems = ref([] as FormSubmissionItem[]);
     const loading = ref(true);
-
-    const goBack = () => {
-      router.push({
-        name: StudentRoutesConst.STUDENT_FORMS_HISTORY,
-      });
-    };
 
     watchEffect(async () => {
       try {
@@ -126,7 +113,6 @@ export default defineComponent({
       StudentRoutesConst,
       loading,
       formSubmission,
-      goBack,
     };
   },
 });

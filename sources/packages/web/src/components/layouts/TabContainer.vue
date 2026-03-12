@@ -2,7 +2,7 @@
   <div class="mt-8">
     <!-- Default slot (with and without v-card) -->
     <v-card v-if="enableCardView">
-      <v-container>
+      <v-container :fluid="true">
         <slot></slot>
       </v-container>
     </v-card>

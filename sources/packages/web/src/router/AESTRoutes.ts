@@ -69,6 +69,7 @@ import { AESTRoutesApplicationVersionsDetails } from "@/router/AESTRoutesApplica
 import ViewPendingOfferings from "@/views/aest/institution/ViewPendingOfferings.vue";
 import ViewPendingPrograms from "@/views/aest/institution/ViewPendingPrograms.vue";
 import StudentFormSubmissionApproval from "@/views/aest/student/StudentFormSubmissionApproval.vue";
+import StudentFormSubmissionHistory from "@/views/aest/student/StudentFormSubmissionHistory.vue";
 import StudentFormSubmissionPendingForms from "@/views/aest/student/StudentFormSubmissionPendingForms.vue";
 import StudentFormSubmissionPendingAppeals from "@/views/aest/student/StudentFormSubmissionPendingAppeals.vue";
 
@@ -136,6 +137,17 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             name: AESTRoutesConst.STUDENT_APPLICATIONS,
             props: true,
             component: StudentApplications,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.FormSubmissionHistory,
+            name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_HISTORY,
+            component: StudentFormSubmissionHistory,
+            props: (route) => ({
+              studentId: Number.parseInt(route.params.studentId as string),
+            }),
             meta: {
               clientType: ClientIdType.AEST,
             },
@@ -378,6 +390,71 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           },
           ...AESTRoutesApplicationVersionsDetails,
         ],
+      },
+      {
+        path: AppRoutes.StudentFormSubmissionApproval,
+        name: AESTRoutesConst.FORM_SUBMISSION_APPROVAL_FROM_HISTORY,
+        props: (route) => ({
+          formSubmissionId: Number.parseInt(
+            route.params.formSubmissionId as string,
+          ),
+          readOnly: false,
+          backTarget: route.query?.studentId
+            ? {
+                name: "Student details",
+                to: {
+                  name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_HISTORY,
+                  params: {
+                    studentId: route.query.studentId,
+                  },
+                },
+              }
+            : undefined,
+        }),
+        component: StudentFormSubmissionApproval,
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.StudentFormSubmissionApproval,
+        name: AESTRoutesConst.FORM_SUBMISSION_APPROVAL_FROM_PENDING_APPEALS,
+        props: (route) => ({
+          formSubmissionId: Number.parseInt(
+            route.params.formSubmissionId as string,
+          ),
+          readOnly: false,
+          backTarget: {
+            name: "Appeals",
+            to: {
+              name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_PENDING_APPEALS,
+            },
+          },
+        }),
+        component: StudentFormSubmissionApproval,
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.StudentFormSubmissionApproval,
+        name: AESTRoutesConst.FORM_SUBMISSION_APPROVAL_FROM_PENDING_FORMS,
+        props: (route) => ({
+          formSubmissionId: Number.parseInt(
+            route.params.formSubmissionId as string,
+          ),
+          readOnly: false,
+          backTarget: {
+            name: "Forms",
+            to: {
+              name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_PENDING_FORMS,
+            },
+          },
+        }),
+        component: StudentFormSubmissionApproval,
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
       },
       {
         path: AppRoutes.SearchStudents,

@@ -25,24 +25,28 @@
           </template>
         </body-header>
       </template>
-      <form-submission-items
-        :submission-items="formSubmissionItems"
-        :loading="loading"
-        :read-only="true"
-      >
-        <template
-          #decision="{ decision }"
-          v-if="formSubmission?.status !== FormSubmissionStatus.Pending"
+      <content-group>
+        <form-submission-items
+          :submission-items="formSubmissionItems"
+          :loading="loading"
+          :read-only="true"
         >
-          <h4 class="category-header-medium brand-gray-text">Decision notes</h4>
-          <v-divider />
-          <v-sheet color="grey-lighten-4 p-3" rounded border>
-            <p>
-              {{ decision.noteDescription }}
-            </p>
-          </v-sheet>
-        </template>
-      </form-submission-items>
+          <template
+            #decision="{ decision }"
+            v-if="formSubmission?.status !== FormSubmissionStatus.Pending"
+          >
+            <h4 class="category-header-medium brand-gray-text">
+              Decision notes
+            </h4>
+            <v-divider />
+            <v-sheet color="grey-lighten-4 p-3" rounded border>
+              <p>
+                {{ decision.noteDescription }}
+              </p>
+            </v-sheet>
+          </template>
+        </form-submission-items>
+      </content-group>
     </body-header-container>
   </student-page-container>
 </template>
@@ -76,10 +80,6 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    applicationId: {
-      type: Number,
-      required: true,
-    },
     formSubmissionId: {
       type: Number,
       required: true,
@@ -110,7 +110,7 @@ export default defineComponent({
         const submission =
           (await FormSubmissionService.shared.getFormSubmission(
             props.formSubmissionId,
-            { studentId: props.studentId, applicationId: props.applicationId },
+            { studentId: props.studentId },
           )) as FormSubmissionAPIOutDTO;
         formSubmission.value = submission;
 

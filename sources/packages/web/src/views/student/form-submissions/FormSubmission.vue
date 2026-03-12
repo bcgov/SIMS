@@ -17,24 +17,26 @@
           </template>
         </body-header>
       </template>
-      <form-submission-items
-        :submission-items="formSubmissionItems"
-        :application-id="applicationId"
-        :loading="loadingSubmissionForms"
-        @submitted="submitted"
-      >
-        <template #actions="{ submit, allFormsLoaded }">
-          <footer-buttons
-            justify="space-between"
-            :processing="processing"
-            @secondary-click="cancel"
-            secondary-label="Back"
-            @primary-click="submit"
-            primary-label="Submit for review"
-            :disable-primary-button="!allFormsLoaded"
-          ></footer-buttons>
-        </template>
-      </form-submission-items>
+      <content-group>
+        <form-submission-items
+          :submission-items="formSubmissionItems"
+          :application-id="applicationId"
+          :loading="loadingSubmissionForms"
+          @submitted="submitted"
+        >
+          <template #actions="{ submit, allFormsLoaded }">
+            <footer-buttons
+              justify="space-between"
+              :processing="processing"
+              @secondary-click="cancel"
+              secondary-label="Back"
+              @primary-click="submit"
+              primary-label="Submit for review"
+              :disable-primary-button="!allFormsLoaded"
+            ></footer-buttons>
+          </template>
+        </form-submission-items>
+      </content-group>
     </body-header-container>
   </student-page-container>
 </template>

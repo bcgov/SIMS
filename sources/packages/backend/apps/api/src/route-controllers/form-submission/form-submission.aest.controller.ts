@@ -38,6 +38,7 @@ import {
   FormSubmissionItemDecisionAPIInDTO,
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionPendingSummaryAPIOutDTO,
+  FormSubmissionsAPIOutDTO,
 } from "./models/form-submission.dto";
 import { getUserFullName } from "../../utilities";
 import { FormSubmissionDecisionStatus } from "@sims/sims-db";
@@ -46,6 +47,7 @@ import {
   FormSubmissionPendingPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
+import { FormSubmissionControllerService } from "./form-submission.controller.service";
 
 /**
  * Roles allowed to update the form submission item decision
@@ -64,6 +66,7 @@ export class FormSubmissionAESTController extends BaseController {
   constructor(
     private readonly formSubmissionApprovalService: FormSubmissionApprovalService,
     private readonly formSubmissionService: FormSubmissionService,
+    private readonly formSubmissionControllerService: FormSubmissionControllerService,
   ) {
     super();
   }
@@ -96,6 +99,28 @@ export class FormSubmissionAESTController extends BaseController {
   }
 
   /**
+   * Gets the list of form submissions for a student,
+   * including the individual form items and their details.
+   * @param studentId student ID to retrieve the form submission history for.
+   * @returns list of form submissions for a student.
+   */
+  @Get("student/:studentId")
+  async getFormSubmissionHistory(
+    @Param("studentId", ParseIntPipe) studentId: number,
+  ): Promise<FormSubmissionsAPIOutDTO> {
+    // Kept the includeBasicDecisionDetails as false since the details controlled by
+    // the flag are not required to be returned by this endpoint.
+    const submissions =
+      await this.formSubmissionControllerService.getFormSubmissions(studentId, {
+        includeBasicDecisionDetails: false,
+        keepPendingDecisionsWhilePendingFormSubmission: false,
+      });
+    return {
+      submissions,
+    };
+  }
+
+  /**
    * Get the details of a form submission, including the individual form items and their details.
    * @param formSubmissionId ID of the form submission to retrieve the details for.
    * @param itemId optional ID of the form submission item to filter the details for.
@@ -109,11 +134,10 @@ export class FormSubmissionAESTController extends BaseController {
     @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
     @Query("itemId", new ParseIntPipe({ optional: true })) itemId?: number,
   ): Promise<FormSubmissionMinistryAPIOutDTO> {
-    const submission =
-      await this.formSubmissionApprovalService.getFormSubmissionById(
-        formSubmissionId,
-        { itemId },
-      );
+    const [submission] = await this.formSubmissionService.getFormSubmissions(
+      { formSubmissionId, itemId },
+      { includeDecisionHistory: true, loadSubmittedData: true },
+    );
     if (!submission) {
       if (itemId) {
         throw new NotFoundException(
