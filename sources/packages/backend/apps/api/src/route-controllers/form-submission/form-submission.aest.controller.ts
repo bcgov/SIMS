@@ -108,6 +108,8 @@ export class FormSubmissionAESTController extends BaseController {
   async getFormSubmissionHistory(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<FormSubmissionsAPIOutDTO> {
+    // Kept the includeBasicDecisionDetails as false since the details controlled by
+    // the flag are not required to be returned by this endpoint.
     const submissions =
       await this.formSubmissionControllerService.getFormSubmissions(studentId, {
         includeBasicDecisionDetails: false,

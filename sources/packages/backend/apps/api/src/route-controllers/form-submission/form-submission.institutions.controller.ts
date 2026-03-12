@@ -41,8 +41,6 @@ export class FormSubmissionInstitutionsController extends BaseController {
   ): Promise<FormSubmissionsAPIOutDTO> {
     const submissions =
       await this.formSubmissionControllerService.getFormSubmissions(studentId, {
-        includeBasicDecisionDetails: true,
-        keepPendingDecisionsWhilePendingFormSubmission: true,
         locationIds: userToken.authorizations.getLocationsIds(),
       });
     return {
