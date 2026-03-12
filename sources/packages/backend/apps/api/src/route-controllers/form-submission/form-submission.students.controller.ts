@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Post,
@@ -12,6 +13,7 @@ import {
 import {
   DynamicFormConfigurationService,
   FORM_SUBMISSION_INVALID_DYNAMIC_DATA,
+  FORM_SUBMISSION_SUPPLEMENTARY_DATA_NOT_FOUND,
   FORM_SUBMISSION_PENDING_DECISION,
   FormSubmissionSubmitService,
 } from "../../services";
@@ -90,14 +92,26 @@ export class FormSubmissionStudentsController extends BaseController {
     @Query() query: FormSupplementaryDataAPIInDTO,
     @UserToken() userToken: StudentUserToken,
   ): Promise<FormSupplementaryDataAPIOutDTO> {
-    const formData = await this.supplementaryDataLoader.getSupplementaryData(
-      query.dataKeys,
-      query.applicationId,
-      userToken.studentId,
-    );
-    return {
-      formData,
-    };
+    try {
+      const formData = await this.supplementaryDataLoader.getSupplementaryData(
+        query.dataKeys,
+        query.applicationId,
+        userToken.studentId,
+      );
+      return {
+        formData,
+      };
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case FORM_SUBMISSION_SUPPLEMENTARY_DATA_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          default:
+            throw new UnprocessableEntityException(error.message);
+        }
+      }
+      throw error;
+    }
   }
 
   /**

@@ -8,6 +8,8 @@ import {
 import { Application } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { CustomNamedError } from "@sims/utilities";
+import { FORM_SUBMISSION_SUPPLEMENTARY_DATA_NOT_FOUND } from "../constants";
 
 @Injectable()
 export class SupplementaryDataProgramYear extends SupplementaryDataBaseLoader<KnownSupplementaryDataKey.ProgramYear> {
@@ -80,8 +82,9 @@ export class SupplementaryDataProgramYear extends SupplementaryDataBaseLoader<Kn
       where: { id: applicationId, student: { id: studentId } },
     });
     if (!application?.programYear?.programYear) {
-      throw new Error(
-        `Program year data is not available for application with ID ${applicationId}.`,
+      throw new CustomNamedError(
+        `Application ID ${applicationId} not found or program year data is not available.`,
+        FORM_SUBMISSION_SUPPLEMENTARY_DATA_NOT_FOUND,
       );
     }
     return application.programYear.programYear;
