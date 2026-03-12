@@ -23,9 +23,7 @@ on:
         required: true
         type: string
     secrets:
-      FORMS_SA_USER_NAME:
-        required: true
-      FORMS_SA_PASSWORD:
+      FORMS_SECRET_NAME:
         required: true
 
 jobs:
