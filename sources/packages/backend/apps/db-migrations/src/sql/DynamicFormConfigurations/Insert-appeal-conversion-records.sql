@@ -21,7 +21,7 @@ VALUES
         'Partner current year income',
         'partnercurrentyearincomeappeal',
         'Student appeal',
-        'Submit this appeal to provide your spouse/common-law partner'' s current year income information IF they have experienced a significant CHANGE IN their financial circumstances since you submitted your Student Financial Aid Application.',
+        'If your spouse/common-law partner has had, or is anticipated to have, a significant decrease in gross income, you may submit this appeal to request assessment using their current year estimated gross income.',
         TRUE,
         TRUE
     ),
