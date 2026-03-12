@@ -1160,7 +1160,7 @@
               "input": true
             },
             {
-              "label": "Are all institutions you partner with for this program designated with StudentAid BC?",
+              "label": "Are all institutions you partner with for this program designated by StudentAid BC?",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
