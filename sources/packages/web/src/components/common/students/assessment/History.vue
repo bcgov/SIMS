@@ -57,7 +57,6 @@
                 v-if="showViewButton(item)"
                 @click="$emit('viewAssessment', item.assessmentId)"
                 color="primary"
-                class="p-button-raised"
               >
                 View</v-btn
               >
