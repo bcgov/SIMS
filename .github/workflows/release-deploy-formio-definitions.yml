@@ -25,6 +25,12 @@ on:
     secrets:
       FORMS_SECRET_NAME:
         required: true
+      OPENSHIFT_SIMS_CREDS_NAME:
+        required: true
+      HOST_PREFIX:
+        required: true
+      OPENSHIFT_ENV_NAMESPACE:
+        required: true
 
 jobs:
   deploy:
