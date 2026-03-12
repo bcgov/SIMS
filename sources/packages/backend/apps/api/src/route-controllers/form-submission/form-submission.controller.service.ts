@@ -131,17 +131,17 @@ export class FormSubmissionControllerService {
     keepPendingDecisionsWhilePendingFormSubmission: boolean,
   ): FormSubmissionItemDecisionAPIOutDTO {
     // Determine if decision details should be restricted based on the form submission status and the flag.
-    const hasRestrictDecisionDetails =
+    const shouldRestrictDecisionDetails =
       keepPendingDecisionsWhilePendingFormSubmission &&
       submissionStatus === FormSubmissionStatus.Pending;
     // Defined the status.
-    let decisionStatus = hasRestrictDecisionDetails
+    let decisionStatus = shouldRestrictDecisionDetails
       ? FormSubmissionDecisionStatus.Pending
       : submissionItem.currentDecision?.decisionStatus;
     decisionStatus = decisionStatus ?? FormSubmissionDecisionStatus.Pending;
     // Defined the notes.
-    let decisionNoteDescription =
-      hasRestrictDecisionDetails || !includeBasicDecisionDetails
+    const decisionNoteDescription =
+      shouldRestrictDecisionDetails || !includeBasicDecisionDetails
         ? undefined
         : submissionItem.currentDecision?.decisionNote?.description;
     return {
