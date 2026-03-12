@@ -220,6 +220,12 @@ export const RESTRICTION_IS_NOT_ACTIVE = "RESTRICTION_IS_NOT_ACTIVE";
 export const RESTRICTION_NOT_FOUND = "RESTRICTION_NOT_FOUND";
 
 /**
+ * Restriction bypass not eligible.
+ */
+export const RESTRICTION_BYPASS_NOT_ELIGIBLE =
+  "RESTRICTION_BYPASS_NOT_ELIGIBLE";
+
+/**
  * Student application is in invalid state for application restriction bypass creation.
  */
 export const APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION =

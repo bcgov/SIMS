@@ -27,6 +27,7 @@ import {
   APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_REMOVAL,
   RESTRICTION_NOT_FOUND,
   RESTRICTION_IS_NOT_ACTIVE,
+  RESTRICTION_BYPASS_NOT_ELIGIBLE,
 } from "../../constants";
 import {
   AvailableRestrictionData,
@@ -359,6 +360,37 @@ export class ApplicationRestrictionBypassService {
   }
 
   /**
+   * Validates if a restriction is eligible for bypass.
+   * @param applicationId application Id.
+   * @param restrictionId restriction Id.
+   * @param restrictedParty restricted party (student or institution).
+   * @throws {CustomNamedError} if the restriction is not eligible for bypass with error code RESTRICTION_BYPASS_NOT_ELIGIBLE.
+   */
+  private async validateRestrictionBypassEligibility(
+    applicationId: number,
+    restrictionId: number,
+    restrictedParty: RestrictedParty,
+  ): Promise<void> {
+    let restrictions: AvailableRestrictionData[] = [];
+    if (restrictedParty === RestrictedParty.Student) {
+      restrictions =
+        await this.getAvailableStudentRestrictionsToBypass(applicationId);
+    } else {
+      restrictions =
+        await this.getAvailableInstitutionRestrictionsToBypass(applicationId);
+    }
+    const isEligible = restrictions.some(
+      (restriction) => restriction.restrictionId === restrictionId,
+    );
+    if (!isEligible) {
+      throw new CustomNamedError(
+        "Restriction is not eligible for bypass.",
+        RESTRICTION_BYPASS_NOT_ELIGIBLE,
+      );
+    }
+  }
+
+  /**
    * Creates a new application restriction bypass.
    * @param payload application restriction bypass data.
    * @param auditUserId id of the user who is creating the bypass.
@@ -385,6 +417,11 @@ export class ApplicationRestrictionBypassService {
       checkForActiveRestrictionPromise,
       checkForApplicationInValidStatePromise,
     ]);
+    await this.validateRestrictionBypassEligibility(
+      payload.applicationId,
+      payload.restrictionId,
+      payload.restrictedParty,
+    );
     const studentApplication = await this.applicationRepo.findOne({
       select: {
         student: { id: true },

@@ -205,6 +205,8 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );
+          default:
+            throw new UnprocessableEntityException(error.message);
         }
       }
       throw error;
