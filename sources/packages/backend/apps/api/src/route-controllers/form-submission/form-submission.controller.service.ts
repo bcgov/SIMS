@@ -134,12 +134,12 @@ export class FormSubmissionControllerService {
     const shouldRestrictDecisionDetails =
       keepPendingDecisionsWhilePendingFormSubmission &&
       submissionStatus === FormSubmissionStatus.Pending;
-    // Defined the status.
+    // Define the status.
     let decisionStatus = shouldRestrictDecisionDetails
       ? FormSubmissionDecisionStatus.Pending
       : submissionItem.currentDecision?.decisionStatus;
     decisionStatus = decisionStatus ?? FormSubmissionDecisionStatus.Pending;
-    // Defined the notes.
+    // Define the notes.
     const decisionNoteDescription =
       shouldRestrictDecisionDetails || !includeBasicDecisionDetails
         ? undefined
