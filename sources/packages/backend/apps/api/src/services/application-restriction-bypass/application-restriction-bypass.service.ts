@@ -542,7 +542,7 @@ export class ApplicationRestrictionBypassService {
           RESTRICTION_NOT_FOUND,
         );
       }
-      if (studentRestriction.isActive === false) {
+      if (!studentRestriction.isActive) {
         throw new CustomNamedError(
           "Cannot create a bypass when student restriction is not active.",
           RESTRICTION_IS_NOT_ACTIVE,
@@ -557,7 +557,7 @@ export class ApplicationRestrictionBypassService {
    * @returns allowed restriction actions.
    */
   private getAllowedRestrictionActions(
-    offeringIntensity: string,
+    offeringIntensity: OfferingIntensity,
   ): RestrictionActionType[] {
     switch (offeringIntensity) {
       case OfferingIntensity.fullTime:
@@ -572,7 +572,7 @@ export class ApplicationRestrictionBypassService {
           RestrictionActionType.StopPartTimeDisbursement,
         ];
       default:
-        return [];
+        throw new Error("Invalid offering intensity.");
     }
   }
 

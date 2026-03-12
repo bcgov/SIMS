@@ -149,11 +149,21 @@ export class ApplicationRestrictionBypass extends RecordDataModel {
   })
   bypassRemovedDate?: Date;
 
+  /**
+   * Gets the restriction associated with the bypass.
+   * @throws an error if the bypass is not associated with any restriction.
+   * @returns the restriction associated with the bypass.
+   */
   getBypassRestriction(): StudentRestriction | InstitutionRestriction {
     this.validateRestrictionAssociation();
     return this.studentRestriction ?? this.institutionRestriction;
   }
 
+  /**
+   * Gets the restricted party (student or institution) associated with the bypass.
+   * @throws an error if the bypass is not associated with any restriction.
+   * @returns the restricted party associated with the bypass.
+   */
   getRestrictedParty(): RestrictedParty {
     this.validateRestrictionAssociation();
     return this.studentRestriction
@@ -161,12 +171,11 @@ export class ApplicationRestrictionBypass extends RecordDataModel {
       : RestrictedParty.Institution;
   }
 
+  /**
+   * Validates that the bypass is associated with either a student restriction or an institution restriction.
+   * @throws an error if the bypass is not associated with any restriction.
+   */
   private validateRestrictionAssociation(): void {
-    if (this.studentRestriction && this.institutionRestriction) {
-      throw new Error(
-        "Cannot have both student restriction and institution restriction associated with a restriction bypass.",
-      );
-    }
     if (!this.studentRestriction && !this.institutionRestriction) {
       throw new Error(
         "Must have either a student restriction or an institution restriction associated with a restriction bypass.",
