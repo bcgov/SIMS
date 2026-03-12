@@ -54,10 +54,10 @@
             </template>
             <template #[`item.assessment`]="{ item }">
               <v-btn
-                v-if="!item.hasUnsuccessfulWeeks"
+                v-if="showViewButton(item)"
                 @click="$emit('viewAssessment', item.assessmentId)"
-                variant="outlined"
                 color="primary"
+                class="p-button-raised"
               >
                 View</v-btn
               >
@@ -192,6 +192,10 @@ export default defineComponent({
       return "View request";
     };
 
+    const showViewButton = (data: AssessmentHistorySummaryAPIOutDTO) => {
+      return !!data.assessmentDate && !data.hasUnsuccessfulWeeks;
+    };
+
     return {
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
@@ -205,6 +209,7 @@ export default defineComponent({
       CompletedChangesHeaders,
       isMobile,
       StudentScholasticStandingChangeType,
+      showViewButton,
     };
   },
 });
