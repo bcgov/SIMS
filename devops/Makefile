@@ -322,6 +322,8 @@ deploy-and-run-migrations-job:
 	test -n "$(MIGRATIONS_SECRET_NAME)"
 	test -n "$(MIGRATIONS_BUILD_REF)"
 	test -n "$(BUILD_REF)"
+	test -n "$(FORMS_URL)"
+	test -n "$(FORMS_SECRET_NAME)"
 	test -n "$(MIGRATIONS)"
 	test -n "$(MIGRATION_COMMAND)"
 	@echo "+\n++ Deploying MIGRATIONS job with tag: $(BUILD_REF)\n+"
@@ -333,6 +335,7 @@ deploy-and-run-migrations-job:
 		-p BUILD_TAG=$(BUILD_REF) \
 		-p JOB_NAME=$(MIGRATIONS_JOB_NAME) \
 		-p FORMS_URL=$(FORMS_URL) \
+		-p FORMS_SECRET_NAME=$(FORMS_SECRET_NAME) \
 		-p MIGRATION_COMMAND="$(MIGRATION_COMMAND)" \
 		-p ACTIVE_DEADLINE_SECONDS=$(MIGRATIONS_JOB_MAX_DURATION) \
 		| oc -n $(NAMESPACE) apply -f -
