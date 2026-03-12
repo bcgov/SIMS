@@ -322,6 +322,8 @@ deploy-and-run-migrations-job:
 	test -n "$(MIGRATIONS_SECRET_NAME)"
 	test -n "$(MIGRATIONS_BUILD_REF)"
 	test -n "$(BUILD_REF)"
+	test -n "$(FORMS_URL)"
+	test -n "$(FORMS_SECRET_NAME)"
 	test -n "$(MIGRATIONS)"
 	test -n "$(MIGRATION_COMMAND)"
 	@echo "+\n++ Deploying MIGRATIONS job with tag: $(BUILD_REF)\n+"
