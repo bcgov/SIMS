@@ -71,9 +71,6 @@
       <add-restriction-modal
         ref="addRestriction"
         :institution-id="institutionId"
-        :entity-type="RestrictionEntityType.Institution"
-        @submit-restriction-data="createNewRestriction"
-        :allowed-role="Role.InstitutionAddRestriction"
       />
     </body-header-container>
   </tab-container>
@@ -95,12 +92,12 @@ import {
   RestrictionStatus,
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
-  RestrictionEntityType,
   LayoutTemplates,
   Role,
   InstitutionRestrictionsHeaders,
   ApiProcessError,
   RestrictionDetail,
+  RestrictedParty,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -268,7 +265,7 @@ export default defineComponent({
       addInstitutionRestriction,
       createNewRestriction,
       processingAddingRestriction,
-      RestrictionEntityType,
+      RestrictedParty,
       LayoutTemplates,
       Role,
       InstitutionRestrictionsHeaders,

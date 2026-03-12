@@ -2,7 +2,7 @@ import ApiClient from "@/services/http/ApiClient";
 import {
   ApplicationRestrictionBypassAPIOutDTO,
   ApplicationRestrictionBypassHistoryAPIOutDTO,
-  AvailableStudentRestrictionsAPIOutDTO,
+  AvailableRestrictionsAPIOutDTO,
   BypassRestrictionAPIInDTO,
   RemoveBypassRestrictionAPIInDTO,
 } from "@/services/http/dto";
@@ -32,20 +32,20 @@ export class ApplicationRestrictionBypassService {
   }
 
   /**
-   * Gets all available student restriction bypasses for an application.
+   * Gets all available restrictions to bypass for an application.
    * @param applicationId application Id.
-   * @returns student restrictions.
+   * @returns available restrictions to bypass.
    */
-  async getAvailableStudentRestrictions(
+  async getAvailableRestrictionsToBypass(
     applicationId: number,
-  ): Promise<AvailableStudentRestrictionsAPIOutDTO> {
-    return ApiClient.ApplicationRestrictionBypassApi.getAvailableStudentRestrictions(
+  ): Promise<AvailableRestrictionsAPIOutDTO> {
+    return ApiClient.ApplicationRestrictionBypassApi.getAvailableRestrictionsToBypass(
       applicationId,
     );
   }
 
   /**
-   * Bypass a student restriction bypass.
+   * Bypass a restriction.
    * @param restrictionDetails restriction details.
    */
   async bypassRestriction(

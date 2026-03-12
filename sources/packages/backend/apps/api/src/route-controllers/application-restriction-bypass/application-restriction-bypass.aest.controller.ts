@@ -21,7 +21,7 @@ import {
 import {
   ApplicationRestrictionBypassAPIOutDTO,
   ApplicationRestrictionBypassHistoryAPIOutDTO,
-  AvailableStudentRestrictionsAPIOutDTO,
+  AvailableRestrictionsAPIOutDTO,
   BypassRestrictionAPIInDTO,
   RemoveBypassRestrictionAPIInDTO,
 } from "./models/application-restriction-bypass.dto";
@@ -36,13 +36,13 @@ import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IUserToken, Role } from "../../auth";
 import { CustomNamedError } from "@sims/utilities";
 import {
-  ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
+  ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS,
   APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION,
   APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_REMOVAL,
   APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
   APPLICATION_RESTRICTION_BYPASS_NOT_FOUND,
-  STUDENT_RESTRICTION_IS_NOT_ACTIVE,
-  STUDENT_RESTRICTION_NOT_FOUND,
+  RESTRICTION_IS_NOT_ACTIVE,
+  RESTRICTION_NOT_FOUND,
 } from "../../constants";
 import { getUserFullName } from "../../utilities";
 import {
@@ -121,12 +121,12 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
     if (!applicationRestrictionBypass) {
       throw new NotFoundException("Application restriction bypass not found.");
     }
+    const restriction = applicationRestrictionBypass.getBypassRestriction();
     return {
       applicationRestrictionBypassId: applicationRestrictionBypass.id,
-      studentRestrictionId: applicationRestrictionBypass.studentRestriction.id,
-      restrictionCode:
-        applicationRestrictionBypass.studentRestriction.restriction
-          .restrictionCode,
+      restrictionId: restriction.id,
+      restrictionCode: restriction.restriction.restrictionCode,
+      restrictedParty: applicationRestrictionBypass.getRestrictedParty(),
       creationNote: applicationRestrictionBypass.creationNote.description,
       removalNote: applicationRestrictionBypass.removalNote?.description,
       createdBy: getUserFullName(applicationRestrictionBypass.bypassCreatedBy),
@@ -143,24 +143,25 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
   }
 
   /**
-   * Gets available student restrictions to bypass for a given application.
+   * Gets all available restrictions to bypass for a given application.
    * @param applicationId id of the application to retrieve restriction bypasses.
    * @returns application restriction bypasses.
    */
   @Get("application/:applicationId/options-list")
-  async getAvailableStudentRestrictionsToBypass(
+  async getAvailableRestrictionsToBypass(
     @Param("applicationId", ParseIntPipe) applicationId: number,
-  ): Promise<AvailableStudentRestrictionsAPIOutDTO> {
+  ): Promise<AvailableRestrictionsAPIOutDTO> {
     const availableRestrictionsToBypass =
-      await this.applicationRestrictionBypassService.getAvailableStudentRestrictionsToBypass(
+      await this.applicationRestrictionBypassService.getAvailableRestrictionsToBypass(
         applicationId,
       );
     return {
       availableRestrictionsToBypass: availableRestrictionsToBypass.map(
         (item) => ({
-          studentRestrictionId: item.studentRestrictionId,
+          restrictionId: item.restrictionId,
+          restrictedParty: item.restrictedParty,
           restrictionCode: item.restrictionCode,
-          studentRestrictionCreatedAt: item.studentRestrictionCreatedAt,
+          restrictionCreatedAt: item.restrictionCreatedAt,
         }),
       ),
     };
@@ -174,9 +175,11 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
    */
   @ApiUnprocessableEntityResponse({
     description:
-      "Cannot create a bypass when there is an active bypass for the same active student restriction id or " +
+      "Cannot create a bypass when there is an active bypass for the same active restriction or " +
       "could not find student restriction for the given id or " +
       "cannot create a bypass when student restriction is not active  or " +
+      "could not find institution restriction for the given id or " +
+      "cannot create a bypass when institution restriction is not active or" +
       "cannot create a bypass when application is in invalid state.",
   })
   @Roles(Role.AESTBypassStudentRestriction)
@@ -195,13 +198,15 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
     } catch (error) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
-          case ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS:
-          case STUDENT_RESTRICTION_NOT_FOUND:
-          case STUDENT_RESTRICTION_IS_NOT_ACTIVE:
+          case ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS:
+          case RESTRICTION_NOT_FOUND:
+          case RESTRICTION_IS_NOT_ACTIVE:
           case APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );
+          default:
+            throw new UnprocessableEntityException(error.message);
         }
       }
       throw error;
@@ -240,7 +245,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
         switch (error.name) {
           case APPLICATION_RESTRICTION_BYPASS_NOT_FOUND:
             throw new NotFoundException(error.message);
-          case STUDENT_RESTRICTION_IS_NOT_ACTIVE:
+          case RESTRICTION_IS_NOT_ACTIVE:
           case APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE:
           case APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_REMOVAL:
             throw new UnprocessableEntityException(
