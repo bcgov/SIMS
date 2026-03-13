@@ -313,5 +313,9 @@ describe(
         where: { id: applicationId },
       });
     };
+
+    afterAll(async () => {
+      await app?.close();
+    });
   },
 );

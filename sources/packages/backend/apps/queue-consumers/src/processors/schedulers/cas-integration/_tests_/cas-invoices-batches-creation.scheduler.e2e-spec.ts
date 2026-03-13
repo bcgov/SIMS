@@ -11,7 +11,6 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import { QueueNames } from "@sims/utilities";
-import { CASSupplierIntegrationScheduler } from "../cas-supplier-integration.scheduler";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -37,7 +36,7 @@ describe(
   describeProcessorRootTest(QueueNames.CASInvoicesBatchesCreation),
   () => {
     let app: INestApplication;
-    let processor: CASSupplierIntegrationScheduler;
+    let processor: CASInvoicesBatchesCreationScheduler;
     let db: E2EDataSources;
     let systemUsersService: SystemUsersService;
     let casInvoiceBatchSequenceName: string;
@@ -489,5 +488,10 @@ describe(
         application.currentAssessment.disbursementSchedules;
       return `23S${application.currentAssessment.offering.institutionLocation.institutionCode}${casSupplier.supplierNumber}-${firstDisbursementSchedule.documentNumber}-1`;
     }
+
+    afterAll(async () => {
+      MockDate.reset();
+      await app?.close();
+    });
   },
 );

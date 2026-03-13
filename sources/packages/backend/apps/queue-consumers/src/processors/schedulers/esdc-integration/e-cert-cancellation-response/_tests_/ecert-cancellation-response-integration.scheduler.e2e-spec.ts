@@ -833,5 +833,9 @@ describe(
         expect(sftpClientMock.rename).toHaveBeenCalled();
       },
     );
+
+    afterAll(async () => {
+      await app?.close();
+    });
   },
 );

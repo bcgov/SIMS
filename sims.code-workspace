@@ -149,7 +149,7 @@
         "source.removeUnusedImports": "explicit",
       },
     },
-    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "js/ts.preferences.importModuleSpecifier": "non-relative",
     "cSpell.words": [
       "addressline",
       "AEST",

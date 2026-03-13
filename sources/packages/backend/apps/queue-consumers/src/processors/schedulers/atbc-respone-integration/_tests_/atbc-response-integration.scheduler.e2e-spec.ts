@@ -153,6 +153,10 @@ describe.skip("describeProcessorRootTest(QueueNames.ATBCResponseIntegration)", (
       formatDate(pdReceivedStudent.studentPDUpdateAt, ATBC_DATE_FORMAT),
     ).not.toBe(pdResponse.D8Y_DTE);
   });
+
+  afterAll(async () => {
+    await app?.close();
+  });
 });
 
 /**

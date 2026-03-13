@@ -185,5 +185,9 @@ describe(
         "999MSFAA SENT                              000000000000000000000000                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ",
       );
     });
+
+    afterAll(async () => {
+      await app?.close();
+    });
   },
 );

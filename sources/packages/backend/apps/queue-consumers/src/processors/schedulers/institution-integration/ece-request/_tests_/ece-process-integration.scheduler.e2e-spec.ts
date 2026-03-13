@@ -547,4 +547,8 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
       " ",
     )}100${studyStartDate}${studyEndDate}${disbursementDateFormatted}${studentPDStatusCode}${applicationPDStatusFlag}${disbursement.id.toString().padStart(10, "0")}`;
   }
+
+  afterAll(async () => {
+    await app?.close();
+  });
 });

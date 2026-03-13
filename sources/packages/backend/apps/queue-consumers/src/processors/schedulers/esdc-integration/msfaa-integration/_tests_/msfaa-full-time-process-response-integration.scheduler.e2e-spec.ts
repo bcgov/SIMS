@@ -322,5 +322,9 @@ describe(
         },
       });
     });
+
+    afterAll(async () => {
+      await app?.close();
+    });
   },
 );

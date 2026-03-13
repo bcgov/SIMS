@@ -231,4 +231,8 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
       parentCRAIncomeVerification,
     };
   }
+
+  afterAll(async () => {
+    await app?.close();
+  });
 });

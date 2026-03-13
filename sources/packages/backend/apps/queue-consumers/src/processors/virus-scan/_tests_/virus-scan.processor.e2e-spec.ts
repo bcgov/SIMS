@@ -302,4 +302,8 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     );
     expect(scannedStudentFile.fileName).toBe(studentFile.fileName);
   });
+
+  afterAll(async () => {
+    await app?.close();
+  });
 });

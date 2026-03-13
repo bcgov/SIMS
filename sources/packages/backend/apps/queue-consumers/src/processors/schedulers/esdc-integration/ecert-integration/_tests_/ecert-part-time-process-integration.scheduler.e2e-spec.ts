@@ -2390,5 +2390,10 @@ describe(
       const uploadedFileName = `${ftpRequestFolder}\\DPBC.EDU.NEW.PTCERTS.D${fileDate}.001`;
       return uploadedFileName;
     }
+
+    afterAll(async () => {
+      await app?.close();
+    });
+
   },
 );
