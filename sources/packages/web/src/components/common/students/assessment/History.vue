@@ -54,7 +54,8 @@
             </template>
             <template #[`item.assessment`]="{ item }">
               <v-btn
-                v-if="showViewButton(item)"
+                v-if="!item.hasUnsuccessfulWeeks"
+                :disabled="disableViewButton(item)"
                 @click="$emit('viewAssessment', item.assessmentId)"
                 color="primary"
               >
@@ -191,8 +192,8 @@ export default defineComponent({
       return "View request";
     };
 
-    const showViewButton = (data: AssessmentHistorySummaryAPIOutDTO) => {
-      return !!data.assessmentDate && !data.hasUnsuccessfulWeeks;
+    const disableViewButton = (data: AssessmentHistorySummaryAPIOutDTO) => {
+      return !data.assessmentDate;
     };
 
     return {
@@ -208,7 +209,7 @@ export default defineComponent({
       CompletedChangesHeaders,
       isMobile,
       StudentScholasticStandingChangeType,
-      showViewButton,
+      disableViewButton,
     };
   },
 });
