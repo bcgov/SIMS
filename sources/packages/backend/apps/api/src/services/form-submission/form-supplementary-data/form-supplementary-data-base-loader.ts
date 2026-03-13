@@ -87,13 +87,13 @@ export abstract class SupplementaryDataBaseLoader<
 
   /**
    * Inspects the submission to ensure an application ID was provided.
-   * @param submissionConfig submission to be inspected.
-   * @throws error if the submission does not have an application ID.
+   * @param applicationId application ID to be inspected.
+   * @throws error if the application ID is not provided.
    */
   protected requireApplicationIdForDataKey(
-    submissionConfig: FormSubmissionConfig,
+    applicationId: number | undefined,
   ): void {
-    if (!submissionConfig.applicationId) {
+    if (!applicationId) {
       throw new CustomNamedError(
         `Application ID is required to load supplementary data for key '${this.dataKey}'.`,
         FORM_SUBMISSION_SUPPLEMENTARY_DATA_APPLICATION_REQUIRED,
