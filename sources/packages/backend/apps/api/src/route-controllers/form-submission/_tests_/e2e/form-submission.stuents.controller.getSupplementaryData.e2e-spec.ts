@@ -117,7 +117,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
         });
     });
 
-    it(`Should throw an unprocessable entity exception when requesting supplementary data for ${KnownSupplementaryDataKey.Parents} for a application that has no supporting users.`, async () => {
+    it(`Should throw an unprocessable entity exception when requesting supplementary data for ${KnownSupplementaryDataKey.Parents} for an application that has no supporting users.`, async () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource);
       const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.Parents}&applicationId=${application.id}`;
@@ -194,7 +194,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
         });
     });
 
-    it("Should throw a bad request exception when invalid dataKey is provided.", async () => {
+    it("Should throw a bad request exception when an invalid dataKey is provided.", async () => {
       // Arrange
       const endpoint = `/students/form-submission/supplementary-data?dataKeys=invalidKey`;
       const studentToken = await getStudentToken(

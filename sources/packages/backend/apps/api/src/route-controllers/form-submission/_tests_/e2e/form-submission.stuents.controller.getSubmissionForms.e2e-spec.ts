@@ -31,7 +31,17 @@ describe("FormSubmissionStudentsController(e2e)-getSubmissionForms", () => {
       .expect({
         configurations: [
           {
-            id: 27,
+            id: expect.any(Number),
+            formDefinitionName: "studentexceptionalexpenseappeal",
+            formType: "Exceptional expense",
+            formCategory: "Student appeal",
+            formDescription:
+              "If you have had exceptional expenses that created financial hardship that affected your ability to start or continue your studies these expenses may be considered AS part of your assessment.",
+            allowBundledSubmission: true,
+            hasApplicationScope: true,
+          },
+          {
+            id: expect.any(Number),
             formDefinitionName: "modifiedindependentappeal",
             formType: "Modified independent",
             formCategory: "Student appeal",
@@ -41,7 +51,7 @@ describe("FormSubmissionStudentsController(e2e)-getSubmissionForms", () => {
             hasApplicationScope: false,
           },
           {
-            id: 28,
+            id: expect.any(Number),
             formDefinitionName: "nonpunitivewithdrawalform",
             formType: "Non-punitive withdrawal",
             formCategory: "Student form",
@@ -51,7 +61,17 @@ describe("FormSubmissionStudentsController(e2e)-getSubmissionForms", () => {
             hasApplicationScope: false,
           },
           {
-            id: 25,
+            id: expect.any(Number),
+            formDefinitionName: "partnercurrentyearincomeappeal",
+            formType: "Partner current year income",
+            formCategory: "Student appeal",
+            formDescription:
+              "If your spouse/common-law partner has had, or is anticipated to have, a significant decrease in gross income, you may submit this appeal to request assessment using their current year estimated gross income.",
+            allowBundledSubmission: true,
+            hasApplicationScope: true,
+          },
+          {
+            id: expect.any(Number),
             formDefinitionName: "roomandboardcostsappeal",
             formType: "Room and board costs",
             formCategory: "Student appeal",
@@ -61,12 +81,22 @@ describe("FormSubmissionStudentsController(e2e)-getSubmissionForms", () => {
             hasApplicationScope: true,
           },
           {
-            id: 26,
+            id: expect.any(Number),
             formDefinitionName: "stepparentwaiverappeal",
             formType: "Step-parent waiver",
             formCategory: "Student appeal",
             formDescription:
               "Submit this appeal to waive your step-parent's fixed contribution if your parent has had a recent (within the past five years) marriage or common-law relationship with a step-parent, where the step-parent has not assumed financial responsibility for you and does not claim you as a dependent on their taxes.",
+            allowBundledSubmission: true,
+            hasApplicationScope: true,
+          },
+          {
+            id: expect.any(Number),
+            formDefinitionName: "studentcurrentyearincomeappeal",
+            formType: "Student current year income",
+            formCategory: "Student appeal",
+            formDescription:
+              "Submit this appeal to provide your current year income information if you have experienced a significant change in your financial circumstances since you submitted your Student Financial Aid Application.",
             allowBundledSubmission: true,
             hasApplicationScope: true,
           },
