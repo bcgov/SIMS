@@ -36,104 +36,184 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
     resetMockJWTUserInfo(appModule);
   });
 
-  it(`Should get supplementary data for ${KnownSupplementaryDataKey.ProgramYear} when the application exists.`, async () => {
-    // Arrange
-    const application = await saveFakeApplication(db.dataSource);
-    const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.ProgramYear}&applicationId=${application.id}`;
-    const studentToken = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-    );
-    // Mock the user received in the token.
-    await mockJWTUserInfo(appModule, application.student.user);
+  describe(`Supplementary data validations for ${KnownSupplementaryDataKey.ProgramYear}.`, () => {
+    it(`Should get supplementary data for ${KnownSupplementaryDataKey.ProgramYear} when the application exists.`, async () => {
+      // Arrange
+      const application = await saveFakeApplication(db.dataSource);
+      const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.ProgramYear}&applicationId=${application.id}`;
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      // Mock the user received in the token.
+      await mockJWTUserInfo(appModule, application.student.user);
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({ formData: { programYear: "2022-2023" } });
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({ formData: { programYear: "2022-2023" } });
+    });
+
+    it(`Should throw a not found exception when the application is not associated with the student requesting the supplementary data for ${KnownSupplementaryDataKey.ProgramYear}.`, async () => {
+      const application = await saveFakeApplication(db.dataSource);
+
+      // Arrange
+      const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.ProgramYear}&applicationId=${application.id}`;
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      // Authenticated student is different from the student associated with the application.
+      const student = await getStudentByFakeStudentUserType(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+        db.dataSource,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.NOT_FOUND)
+        .expect({
+          message: `Supplementary data '${KnownSupplementaryDataKey.ProgramYear}' not found. Student ID ${student.id}, application ID ${application.id}.`,
+          error: "Not Found",
+          statusCode: HttpStatus.NOT_FOUND,
+        });
+    });
   });
 
-  it(`Should throw a not found exception when the application is not associated with the student requesting the supplementary data for ${KnownSupplementaryDataKey.ProgramYear}.`, async () => {
-    const application = await saveFakeApplication(db.dataSource);
+  describe(`Supplementary data validations for ${KnownSupplementaryDataKey.Parents}.`, () => {
+    it(`Should get supplementary data for ${KnownSupplementaryDataKey.Parents} when the application has supporting users parents.`, async () => {
+      // Arrange
+      const application = await saveFakeApplication(db.dataSource);
+      // Create supporting users.
+      const [parent1, parent2] = Array.from({ length: 2 }, () =>
+        createFakeSupportingUser(
+          { application },
+          { initialValues: { supportingUserType: SupportingUserType.Parent } },
+        ),
+      );
+      await db.supportingUser.save([parent1, parent2]);
 
-    // Arrange
-    const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.ProgramYear}&applicationId=${application.id}`;
-    const studentToken = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-    );
-    // Authenticated student is different from the student associated with the application.
-    const student = await getStudentByFakeStudentUserType(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-      db.dataSource,
-    );
+      const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.Parents}&applicationId=${application.id}`;
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      // Mock the user received in the token.
+      await mockJWTUserInfo(appModule, application.student.user);
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.NOT_FOUND)
-      .expect({
-        message: `Supplementary data '${KnownSupplementaryDataKey.ProgramYear}' not found. Student ID ${student.id}, application ID ${application.id}.`,
-        error: "Not Found",
-        statusCode: HttpStatus.NOT_FOUND,
-      });
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          formData: {
+            parents: [
+              { id: parent1.id, fullName: parent1.fullName },
+              { id: parent2.id, fullName: parent2.fullName },
+            ],
+          },
+        });
+    });
+
+    it(`Should throw a not found exception when requesting supplementary data for ${KnownSupplementaryDataKey.Parents} for a application that has no supporting users.`, async () => {
+      // Arrange
+      const application = await saveFakeApplication(db.dataSource);
+      const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.Parents}&applicationId=${application.id}`;
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      // Mock the user received in the token.
+      await mockJWTUserInfo(appModule, application.student.user);
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.NOT_FOUND)
+        .expect({
+          message: `Supplementary data '${KnownSupplementaryDataKey.Parents}' not found. Student ID ${application.student.id}, application ID ${application.id}.`,
+          error: "Not Found",
+          statusCode: HttpStatus.NOT_FOUND,
+        });
+    });
   });
 
-  it(`Should get supplementary data for ${KnownSupplementaryDataKey.Parents} when the application has supporting users parents.`, async () => {
-    // Arrange
-    const application = await saveFakeApplication(db.dataSource);
-    // Create supporting users.
-    const [parent1, parent2] = Array.from({ length: 2 }, () =>
-      createFakeSupportingUser(
+  describe(`Supplementary data validations common for all data keys.`, () => {
+    it("Should get supplementary data for two different data keys when two data keys are provided and the data is available.", async () => {
+      // Arrange
+      const application = await saveFakeApplication(db.dataSource);
+      // Create supporting users.
+      const parent = createFakeSupportingUser(
         { application },
         { initialValues: { supportingUserType: SupportingUserType.Parent } },
-      ),
-    );
-    await db.supportingUser.save([parent1, parent2]);
+      );
+      await db.supportingUser.save([parent]);
 
-    const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.Parents}&applicationId=${application.id}`;
-    const studentToken = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-    );
-    // Mock the user received in the token.
-    await mockJWTUserInfo(appModule, application.student.user);
+      const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.Parents},${KnownSupplementaryDataKey.ProgramYear}&applicationId=${application.id}`;
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      // Mock the user received in the token.
+      await mockJWTUserInfo(appModule, application.student.user);
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({
-        formData: {
-          parents: [
-            { id: parent1.id, fullName: parent1.fullName },
-            { id: parent2.id, fullName: parent2.fullName },
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          formData: {
+            parents: [{ id: parent.id, fullName: parent.fullName }],
+            programYear: "2022-2023",
+          },
+        });
+    });
+
+    it("Should throw a bad request exception when no dataKeys are provided.", async () => {
+      // Arrange
+      const endpoint = `/students/form-submission/supplementary-data?applicationId=9999`;
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect({
+          message: [
+            "each value in dataKeys must be one of the following values: programYear, parents",
+            "dataKeys must contain no more than 10 elements",
+            "dataKeys must contain at least 1 elements",
           ],
-        },
-      });
-  });
+          error: "Bad Request",
+          statusCode: HttpStatus.BAD_REQUEST,
+        });
+    });
 
-  it(`Should throw a not found exception when requesting supplementary data for ${KnownSupplementaryDataKey.Parents} for a application that has no supporting users.`, async () => {
-    // Arrange
-    const application = await saveFakeApplication(db.dataSource);
-    const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.Parents}&applicationId=${application.id}`;
-    const studentToken = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-    );
-    // Mock the user received in the token.
-    await mockJWTUserInfo(appModule, application.student.user);
+    it("Should throw a bad request exception when invalid dataKey is provided.", async () => {
+      // Arrange
+      const endpoint = `/students/form-submission/supplementary-data?dataKeys=invalidKey`;
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.NOT_FOUND)
-      .expect({
-        message: `Supplementary data '${KnownSupplementaryDataKey.Parents}' not found. Student ID ${application.student.id}, application ID ${application.id}.`,
-        error: "Not Found",
-        statusCode: HttpStatus.NOT_FOUND,
-      });
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect({
+          message: [
+            "each value in dataKeys must be one of the following values: programYear, parents",
+          ],
+          error: "Bad Request",
+          statusCode: HttpStatus.BAD_REQUEST,
+        });
+    });
   });
 
   afterAll(async () => {
