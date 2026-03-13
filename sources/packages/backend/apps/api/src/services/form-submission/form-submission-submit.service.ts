@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import {
   Application,
   User,
@@ -26,6 +26,8 @@ import { CustomNamedError, processInParallel } from "@sims/utilities";
 import { DryRunSubmissionResult } from "../../types";
 import { FormSubmissionValidator } from "./form-submission-validator";
 import { SupplementaryDataLoader } from "./form-supplementary-data";
+import { NotificationActionsService } from "@sims/services/notifications";
+import { NOTIFICATION_FORM_TYPE } from "../form/constants";
 
 /**
  * Manages how the form submissions are submitted, including the validations,
@@ -41,6 +43,7 @@ export class FormSubmissionSubmitService {
     private readonly formService: FormService,
     private readonly formSubmissionValidator: FormSubmissionValidator,
     private readonly supplementaryDataLoader: SupplementaryDataLoader,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {}
 
   /**
@@ -116,9 +119,82 @@ export class FormSubmissionSubmitService {
           { entityManager: entityManager },
         );
       }
-      // TODO: send notification.
+      // Send a notification to the ministry that a new form or appeal was submitted.
+      await this.saveFormSubmissionNotification(
+        studentId,
+        applicationId,
+        submissionConfigs,
+        referenceSubmissionConfig.formCategory,
+        entityManager,
+      );
       return entityManager.getRepository(FormSubmission).save(formSubmission);
     });
+  }
+
+  /**
+   * Sends a notification to the ministry when a new form or appeal has been submitted.
+   * Loads the required student and application data within the provided
+   * transaction to ensure data consistency.
+   * @param studentId ID of the student who submitted the form.
+   * @param applicationId ID of the application linked to the submission, if applicable.
+   * @param submissionConfigs form submission configurations used to determine
+   * the form names included in the notification.
+   * @param formCategory category of the submitted form, used to derive the notification form type.
+   * @param entityManager entity manager for the current transaction.
+   */
+  private async saveFormSubmissionNotification(
+    studentId: number,
+    applicationId: number | undefined,
+    submissionConfigs: FormSubmissionConfig[],
+    formCategory: FormCategory,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    // Load student info required for the notification.
+    const studentForNotification = await entityManager
+      .getRepository(Student)
+      .findOne({
+        select: {
+          id: true,
+          birthDate: true,
+          user: { id: true, firstName: true, lastName: true, email: true },
+        },
+        relations: { user: true },
+        where: { id: studentId },
+      });
+    // Load application number if an application is linked to this submission.
+    let applicationNumber = "N/A";
+    if (applicationId) {
+      const application = await entityManager
+        .getRepository(Application)
+        .findOne({
+          select: { id: true, applicationNumber: true },
+          where: { id: applicationId },
+        });
+      applicationNumber = application?.applicationNumber ?? applicationNumber;
+    }
+    // Determine the form type category based on the form category and application presence.
+    let notificationFormType: string = NOTIFICATION_FORM_TYPE.StandardForm;
+    if (formCategory === FormCategory.StudentAppeal) {
+      notificationFormType = applicationId
+        ? NOTIFICATION_FORM_TYPE.ApplicationAppeal
+        : NOTIFICATION_FORM_TYPE.OtherAppeal;
+    }
+    // Collect all form friendly names from the submission configs, comma-separated.
+    const formName = submissionConfigs
+      .map((config) => config.formType)
+      .join(", ");
+    await this.notificationActionsService.saveMinistryFormSubmittedNotification(
+      {
+        givenNames: studentForNotification.user.firstName,
+        lastName: studentForNotification.user.lastName,
+        email: studentForNotification.user.email,
+        birthDate: studentForNotification.birthDate,
+        formType: notificationFormType,
+        formName,
+        applicationNumber,
+      },
+      entityManager,
+    );
   }
 
   /**

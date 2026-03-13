@@ -17,6 +17,7 @@ import {
 import { NotificationActionsService } from "@sims/services/notifications";
 import { NoteSharedService } from "@sims/services";
 import { StudentAppealActionsProcessor } from ".";
+import { allowApplicationChangeRequest } from "../../../utilities";
 
 /**
  * Service layer for Student appeals.
@@ -93,18 +94,51 @@ export class StudentAppealAssessmentService {
         entityManager,
       );
       // Create student notification when ministry completes student appeal.
-      const studentUser = appealToUpdate.student.user;
-      await this.notificationActionsService.saveChangeRequestCompleteNotification(
-        {
-          givenNames: studentUser.firstName,
-          lastName: studentUser.lastName,
-          toAddress: studentUser.email,
-          userId: studentUser.id,
-        },
+      await this.saveAssessmentCompletedNotification(
+        appealToUpdate,
         auditUserId,
         entityManager,
       );
     });
+  }
+
+  /**
+   * Creates a student notification when the ministry completes a student appeal assessment.
+   * Determines whether to send a change request review completed notification (for legacy
+   * change requests) or a form completed notification (for new appeals), based on the
+   * associated application program year.
+   * @param appeal student appeal that was assessed, including student user and application data.
+   * @param auditUserId ID of the user performing the operation, used for auditing purposes.
+   * @param entityManager entity manager for the current transaction.
+   */
+  private async saveAssessmentCompletedNotification(
+    appeal: StudentAppeal,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const studentUser = appeal.student.user;
+    const isLegacyChangeRequest =
+      appeal.application !== null &&
+      !allowApplicationChangeRequest(appeal.application.programYear);
+    const studentNotification = {
+      givenNames: studentUser.firstName,
+      lastName: studentUser.lastName,
+      toAddress: studentUser.email,
+      userId: studentUser.id,
+    };
+    if (isLegacyChangeRequest) {
+      await this.notificationActionsService.saveStudentChangeRequestReviewCompletedNotification(
+        studentNotification,
+        auditUserId,
+        entityManager,
+      );
+    } else {
+      await this.notificationActionsService.saveStudentFormCompletedNotification(
+        studentNotification,
+        auditUserId,
+        entityManager,
+      );
+    }
   }
 
   /**
@@ -134,6 +168,8 @@ export class StudentAppealAssessmentService {
         "appealRequest.submittedData",
         "application.id",
         "application.applicationStatus",
+        "programYear.id",
+        "programYear.programYear",
         "student.id",
         "user.id",
         "user.firstName",
@@ -144,6 +180,7 @@ export class StudentAppealAssessmentService {
       .innerJoin("studentAppeal.student", "student")
       .innerJoin("student.user", "user")
       .leftJoin("studentAppeal.application", "application")
+      .leftJoin("application.programYear", "programYear")
       .leftJoin("application.currentAssessment", "currentAssessment")
       .leftJoin("currentAssessment.offering", "offering")
       .leftJoin("studentAppeal.studentAssessment", "studentAssessment")

@@ -20,6 +20,7 @@ import {
   FileOriginType,
   ApplicationStatus,
   Student,
+  ProgramYear,
 } from "@sims/sims-db";
 import {
   AppealType,
@@ -33,13 +34,19 @@ import {
   SortPriority,
   OrderByCondition,
   StudentAppealPaginationOptions,
+  allowApplicationChangeRequest,
 } from "../../utilities";
 import { FieldSortOrder } from "@sims/utilities";
 import { PROGRAM_YEAR_2025_26_START_DATE } from "./constants";
 import {
   NotificationActionsService,
   StudentSubmittedChangeRequestNotification,
+  MinistryFormSubmittedNotification,
 } from "@sims/services/notifications";
+import {
+  APPEAL_FORM_FRIENDLY_NAMES,
+  NOTIFICATION_FORM_TYPE,
+} from "../form/constants";
 import { StudentFileService } from "../student-file/student-file.service";
 import { InjectRepository } from "@nestjs/typeorm";
 
@@ -115,7 +122,10 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   }
 
   /**
-   * Create a notification for the student appeal.
+   * Creates a ministry notification for the student appeal submission.
+   * Determines whether to send a change request submitted notification (for legacy change requests)
+   * or a form submitted notification (for new appeals), based on the associated application
+   * program year.
    * @param appealId appeal ID to send the notification.
    * @param entityManager entity manager to keep DB operations in the same transaction.
    */
@@ -138,22 +148,68 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
             },
             birthDate: true,
           },
-          application: { id: true, applicationNumber: true },
+          application: {
+            id: true,
+            applicationNumber: true,
+            programYear: { id: true, programYear: true },
+          },
+          appealRequests: { id: true, submittedFormName: true },
         },
-        relations: { student: { user: true }, application: true },
+        relations: {
+          student: { user: true },
+          application: { programYear: true },
+          appealRequests: true,
+        },
         where: { id: appealId },
         loadEagerRelations: false,
       });
-    const ministryNotification: StudentSubmittedChangeRequestNotification = {
+    const isLegacyChangeRequest =
+      studentAppeal.application !== null &&
+      !allowApplicationChangeRequest(
+        studentAppeal.application.programYear as ProgramYear,
+      );
+    if (isLegacyChangeRequest) {
+      // Legacy change request: send Ministry - Change Request Submitted notification.
+      const ministryNotification: StudentSubmittedChangeRequestNotification = {
+        givenNames: studentAppeal.student.user.firstName,
+        lastName: studentAppeal.student.user.lastName,
+        email: studentAppeal.student.user.email,
+        birthDate: studentAppeal.student.birthDate,
+        applicationNumber: studentAppeal.application.applicationNumber,
+      };
+      return this.notificationActionsService.saveMinistryChangeRequestSubmittedNotification(
+        ministryNotification,
+        entityManager,
+      );
+    }
+    // New appeal type: send Ministry - Form Submitted notification.
+    const formTypeCategory =
+      studentAppeal.application !== null
+        ? NOTIFICATION_FORM_TYPE.ApplicationAppeal
+        : NOTIFICATION_FORM_TYPE.OtherAppeal;
+    // Map technical form names to human-readable friendly names.
+    const formNames = studentAppeal.appealRequests.map(
+      (request) =>
+        APPEAL_FORM_FRIENDLY_NAMES[request.submittedFormName] ??
+        request.submittedFormName,
+    );
+    // For application appeals, all form names are comma-separated.
+    // For other appeals, only the first form name is used.
+    const formName =
+      formTypeCategory === NOTIFICATION_FORM_TYPE.ApplicationAppeal
+        ? formNames.join(", ")
+        : formNames[0];
+    const ministryFormNotification: MinistryFormSubmittedNotification = {
       givenNames: studentAppeal.student.user.firstName,
       lastName: studentAppeal.student.user.lastName,
       email: studentAppeal.student.user.email,
       birthDate: studentAppeal.student.birthDate,
-      applicationNumber:
-        studentAppeal.application?.applicationNumber ?? "not applicable",
+      formType: formTypeCategory,
+      formName,
+      applicationNumber: studentAppeal.application?.applicationNumber ?? "N/A",
     };
-    return this.notificationActionsService.saveStudentSubmittedChangeRequestNotification(
-      ministryNotification,
+    return this.notificationActionsService.saveMinistryFormSubmittedNotification(
+      ministryFormNotification,
       entityManager,
     );
   }

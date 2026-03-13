@@ -245,3 +245,18 @@ export interface StudentCOERequiredNearEndDateNotification {
   email: string;
   applicationNumber: string;
 }
+
+/**
+ * Ministry notification data when a student submits a form or appeal,
+ * with form type categorization (application appeal, other appeal, standard form),
+ * a human-readable form name, and the related application number.
+ */
+export interface MinistryFormSubmittedNotification {
+  givenNames: string;
+  lastName: string;
+  email: string;
+  birthDate: string;
+  formType: string;
+  formName: string;
+  applicationNumber: string;
+}
