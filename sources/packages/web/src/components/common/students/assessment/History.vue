@@ -55,7 +55,7 @@
             <template #[`item.assessment`]="{ item }">
               <v-btn
                 v-if="!item.hasUnsuccessfulWeeks"
-                :disabled="disableViewButton(item)"
+                :disabled="!item.assessmentDate"
                 @click="$emit('viewAssessment', item.assessmentId)"
                 color="primary"
               >
@@ -192,10 +192,6 @@ export default defineComponent({
       return "View request";
     };
 
-    const disableViewButton = (data: AssessmentHistorySummaryAPIOutDTO) => {
-      return !data.assessmentDate;
-    };
-
     return {
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
@@ -209,7 +205,6 @@ export default defineComponent({
       CompletedChangesHeaders,
       isMobile,
       StudentScholasticStandingChangeType,
-      disableViewButton,
     };
   },
 });
