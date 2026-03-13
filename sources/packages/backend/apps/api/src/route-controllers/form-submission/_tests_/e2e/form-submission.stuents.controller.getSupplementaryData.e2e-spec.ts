@@ -7,6 +7,7 @@ import {
   getStudentByFakeStudentUserType,
   getStudentToken,
   mockJWTUserInfo,
+  resetMockJWTUserInfo,
 } from "../../../../testHelpers";
 import { KnownSupplementaryDataKey } from "../../../../services";
 import {
@@ -31,7 +32,11 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get supplementary data for Program Year when the application exists.", async () => {
+  beforeEach(() => {
+    resetMockJWTUserInfo(appModule);
+  });
+
+  it(`Should get supplementary data for ${KnownSupplementaryDataKey.ProgramYear} when the application exists.`, async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource);
     const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.ProgramYear}&applicationId=${application.id}`;
@@ -49,7 +54,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
       .expect({ formData: { programYear: "2022-2023" } });
   });
 
-  it("Should throw a not found exception when the application is not associated with the student requesting the supplementary data for Program Year.", async () => {
+  it(`Should throw a not found exception when the application is not associated with the student requesting the supplementary data for ${KnownSupplementaryDataKey.ProgramYear}.`, async () => {
     const application = await saveFakeApplication(db.dataSource);
 
     // Arrange
@@ -75,7 +80,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
       });
   });
 
-  it("Should get supplementary data for Parents when the application has supporting users parents.", async () => {
+  it(`Should get supplementary data for ${KnownSupplementaryDataKey.Parents} when the application has supporting users parents.`, async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource);
     // Create supporting users.
@@ -109,7 +114,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
       });
   });
 
-  it("Should throw a not found exception when requesting supplementary data for Parents for a application that has no supporting users.", async () => {
+  it(`Should throw a not found exception when requesting supplementary data for ${KnownSupplementaryDataKey.Parents} for a application that has no supporting users.`, async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource);
     const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.Parents}&applicationId=${application.id}`;
