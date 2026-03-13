@@ -1,3 +1,8 @@
+import { CustomNamedError } from "@sims/utilities";
+import {
+  FORM_SUBMISSION_SUPPLEMENTARY_DATA_APPLICATION_REQUIRED,
+  FORM_SUBMISSION_SUPPLEMENTARY_DATA_NOT_FOUND,
+} from "../constants";
 import {
   FormSubmissionConfig,
   KnownSupplementaryData,
@@ -63,5 +68,36 @@ export abstract class SupplementaryDataBaseLoader<
     submissionConfig: FormSubmissionConfig,
   ): boolean {
     return submissionConfig.formData[this.dataKey] !== undefined;
+  }
+
+  /**
+   * Throws a not found error with a consistent message format for missing supplementary data.
+   * @param applicationId application ID associated with the supplementary data.
+   * @param studentId student ID associated with the supplementary data.
+   */
+  protected throwSupplementaryDataNotFoundError(
+    applicationId: number | undefined,
+    studentId: number | undefined,
+  ): never {
+    throw new CustomNamedError(
+      `Supplementary data '${this.dataKey}' not found. Student ID ${studentId ?? "not provided"}, application ID ${applicationId ?? "not provided"}.`,
+      FORM_SUBMISSION_SUPPLEMENTARY_DATA_NOT_FOUND,
+    );
+  }
+
+  /**
+   * Inspects the submission to ensure an application ID was provided.
+   * @param submissionConfig submission to be inspected.
+   * @throws error if the submission does not have an application ID.
+   */
+  protected requireApplicationIdForDataKey(
+    submissionConfig: FormSubmissionConfig,
+  ): void {
+    if (!submissionConfig.applicationId) {
+      throw new CustomNamedError(
+        `Application ID is required to load supplementary data for key '${this.dataKey}'.`,
+        FORM_SUBMISSION_SUPPLEMENTARY_DATA_APPLICATION_REQUIRED,
+      );
+    }
   }
 }
