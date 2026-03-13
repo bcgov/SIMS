@@ -35,6 +35,7 @@
         :items-per-page="DEFAULT_PAGE_LIMIT"
         :items-per-page-options="ITEMS_PER_PAGE"
         @update:options="pageSortEvent"
+        :mobile="isMobile"
       >
         <template #loading>
           <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
@@ -79,7 +80,9 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
+import { useDisplay } from "vuetify";
 
+const { mobile: isMobile } = useDisplay();
 const router = useRouter();
 const { dateOnlyLongString, emptyStringFiller } = useFormatters();
 const snackBar = useSnackBar();
@@ -102,26 +105,14 @@ const currentPagination: PaginationOptions = {
 };
 
 /**
- * Navigates to the appropriate page to review and approve the pending appeal.
- * Application appeals are redirected to the assessments summary page, while
- * non-application appeals are redirected to the form submission approval page.
+ * Navigates to the common form submissions page to review and approve the pending appeal.
  * @param pendingAppeal pending appeal item to navigate to.
  */
 const goToAppealsApproval = (
   pendingAppeal: FormSubmissionPendingSummaryAPIOutDTO,
 ) => {
-  if (pendingAppeal.applicationId) {
-    router.push({
-      name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
-      params: {
-        applicationId: pendingAppeal.applicationId,
-        studentId: pendingAppeal.studentId,
-      },
-    });
-    return;
-  }
   router.push({
-    name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_APPROVAL,
+    name: AESTRoutesConst.FORM_SUBMISSION_APPROVAL_FROM_PENDING_APPEALS,
     params: {
       formSubmissionId: pendingAppeal.formSubmissionId,
     },

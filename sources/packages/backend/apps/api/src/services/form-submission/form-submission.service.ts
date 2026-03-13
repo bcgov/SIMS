@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Brackets, In, Repository } from "typeorm";
+import { Brackets, In, IsNull, Repository } from "typeorm";
 import {
   FormCategory,
   FormSubmission,
@@ -159,26 +159,37 @@ export class FormSubmissionService {
   }
 
   /**
-   * Gets a form submission by its ID.
-   * @param formSubmissionId The ID of the form submission to retrieve.
-   * @param studentId student ID for authorization.
-   * @param options method options.
-   * - `applicationId`: optional application ID to ensure the form submission
-   * belongs to the application related to the institution's student.
-   * @returns The form submission if found, otherwise null.
+   * Get the details of a form submission, including the individual form items and their details.
+   * @param options at least one of this options should be provided..
+   * - `studentId` ID of the student to have the data retrieved
+   * - `formSubmissionId` allow searching for a specific form submission.
+   * - `itemId` allow searching for a specific form submission item across all form submissions of the student,
+   * and return the form submission details for the form submission that contains the item.
+   * @param queryOptions.
+   * - `locationIds` restrict forms with an application scope to the provided locations. Used for institutions to have access
+   * only to the form submissions related to the locations they have access to.
+   * - `includeDecisionHistory` includes the decision history of each form item.
+   * - `loadSubmittedData` includes the submitted data of each form item.
+   * @returns form submission details including individual form items and their details.
    */
-  async getFormSubmissionById(
-    formSubmissionId: number,
-    studentId: number,
-    options?: {
-      applicationId?: number;
+  async getFormSubmissions(
+    options: {
+      studentId?: number;
+      formSubmissionId?: number;
+      itemId?: number;
     },
-  ): Promise<FormSubmission | null> {
-    return this.formSubmissionRepo.findOne({
+    queryOptions?: {
+      locationIds?: number[];
+      includeDecisionHistory?: boolean;
+      loadSubmittedData?: boolean;
+    },
+  ): Promise<FormSubmission[]> {
+    return this.formSubmissionRepo.find({
       select: {
         id: true,
         submissionStatus: true,
         submittedDate: true,
+        assessedDate: true,
         formCategory: true,
         application: {
           id: true,
@@ -192,31 +203,60 @@ export class FormSubmissionService {
             formCategory: true,
             formDefinitionName: true,
           },
-          submittedData: true,
+          submittedData: !!queryOptions?.loadSubmittedData,
           updatedAt: true,
           currentDecision: {
             id: true,
             decisionStatus: true,
-            decisionNote: {
-              id: true,
-              description: true,
-            },
+            decisionDate: true,
+            decisionBy: { id: true, firstName: true, lastName: true },
+            decisionNote: { id: true, description: true },
           },
+          decisions: queryOptions?.includeDecisionHistory
+            ? {
+                id: true,
+                decisionStatus: true,
+                decisionDate: true,
+                decisionBy: { id: true, firstName: true, lastName: true },
+                decisionNote: { id: true, description: true },
+              }
+            : undefined,
         },
       },
       relations: {
         application: true,
         formSubmissionItems: {
           dynamicFormConfiguration: true,
-          currentDecision: { decisionNote: true },
+          currentDecision: { decisionBy: true, decisionNote: true },
+          decisions: queryOptions?.includeDecisionHistory
+            ? {
+                decisionBy: true,
+                decisionNote: true,
+              }
+            : undefined,
         },
       },
       where: {
-        id: formSubmissionId,
-        student: { id: studentId },
-        application: { id: options?.applicationId },
+        id: options?.formSubmissionId,
+        formSubmissionItems: {
+          id: options?.itemId,
+        },
+        student: { id: options?.studentId },
+        application: {
+          location: queryOptions?.locationIds
+            ? [{ id: In(queryOptions.locationIds) }, { id: IsNull() }]
+            : undefined,
+        },
       },
-      order: { formSubmissionItems: { id: "ASC" } },
+      order: {
+        submittedDate: "DESC",
+        formSubmissionItems: {
+          id: "ASC",
+          decisions: queryOptions?.includeDecisionHistory
+            ? { id: "DESC" }
+            : undefined,
+        },
+      },
     });
   }
 }

@@ -1,14 +1,17 @@
+import { RestrictedParty } from "@sims/services";
 import { RestrictionBypassBehaviors } from "@sims/sims-db";
 
 export interface BypassRestrictionData {
   applicationId: number;
-  studentRestrictionId: number;
+  restrictionId: number;
+  restrictedParty: RestrictedParty;
   bypassBehavior: RestrictionBypassBehaviors;
   note: string;
 }
 
-export class AvailableStudentRestrictionData {
-  studentRestrictionId: number;
+export class AvailableRestrictionData {
+  restrictionId: number;
+  restrictedParty: RestrictedParty;
   restrictionCode: string;
-  studentRestrictionCreatedAt: Date;
+  restrictionCreatedAt: Date;
 }

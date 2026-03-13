@@ -204,21 +204,26 @@ export const VIRUS_DETECTED = "VIRUS_DETECTED";
 export const FILE_SAVE_ERROR = "FILE_SAVE_ERROR";
 
 /**
- * Bypass for student restriction already exists.
+ * Bypass for restricted party already exists.
  */
-export const ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS =
-  "ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS";
+export const ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS =
+  "ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS";
 
 /**
- * Student restriction is not active.
+ * Restriction is not active.
  */
-export const STUDENT_RESTRICTION_IS_NOT_ACTIVE =
-  "STUDENT_RESTRICTION_IS_NOT_ACTIVE";
+export const RESTRICTION_IS_NOT_ACTIVE = "RESTRICTION_IS_NOT_ACTIVE";
 
 /**
- * Student restriction not found.
+ * Restriction not found.
  */
-export const STUDENT_RESTRICTION_NOT_FOUND = "STUDENT_RESTRICTION_NOT_FOUND";
+export const RESTRICTION_NOT_FOUND = "RESTRICTION_NOT_FOUND";
+
+/**
+ * Restriction bypass not eligible.
+ */
+export const RESTRICTION_BYPASS_NOT_ELIGIBLE =
+  "RESTRICTION_BYPASS_NOT_ELIGIBLE";
 
 /**
  * Student application is in invalid state for application restriction bypass creation.
@@ -287,11 +292,6 @@ export const SCHOLASTIC_STANDING_REVERSAL_NOT_ALLOWED =
  */
 export const SCHOLASTIC_STANDING_REVERSAL_NOT_UPDATED =
   "SCHOLASTIC_STANDING_REVERSAL_NOT_UPDATED";
-
-/**
- * Restriction not found.
- */
-export const RESTRICTION_NOT_FOUND = "RESTRICTION_NOT_FOUND";
 
 /**
  * Restriction is not active.

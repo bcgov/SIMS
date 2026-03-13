@@ -4,7 +4,9 @@ import {
   RestrictionCode,
   createE2EDataSources,
   createFakeUser,
+  saveFakeApplication,
   saveFakeApplicationRestrictionBypass,
+  saveFakeInstitutionRestriction,
 } from "@sims/test-utils";
 import {
   AESTGroups,
@@ -13,8 +15,9 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import * as request from "supertest";
-import { RestrictionActionType, User } from "@sims/sims-db";
+import { OfferingIntensity, RestrictionActionType, User } from "@sims/sims-db";
 import { getUserFullName } from "../../../../utilities";
+import { RestrictedParty } from "@sims/services";
 
 describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrictionBypass.", () => {
   let app: INestApplication;
@@ -28,7 +31,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
     sharedMinistryUser = await db.user.save(createFakeUser());
   });
 
-  it("Should get an application restriction bypass for a submitted part-time application when there is an application restriction bypass with the required id.", async () => {
+  it("Should get a student application restriction bypass for a submitted part-time application when there is an application restriction bypass with the required id.", async () => {
     // Arrange
     const applicationRestrictionBypass =
       await saveFakeApplicationRestrictionBypass(
@@ -52,11 +55,58 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
       .expect(HttpStatus.OK)
       .expect({
         applicationRestrictionBypassId: applicationRestrictionBypass.id,
-        studentRestrictionId:
-          applicationRestrictionBypass.studentRestriction.id,
+        restrictionId: applicationRestrictionBypass.studentRestriction.id,
         restrictionCode:
           applicationRestrictionBypass.studentRestriction.restriction
             .restrictionCode,
+        restrictedParty: RestrictedParty.Student,
+        creationNote: applicationRestrictionBypass.creationNote.description,
+        createdBy: getUserFullName(
+          applicationRestrictionBypass.bypassCreatedBy,
+        ),
+        createdDate:
+          applicationRestrictionBypass.bypassCreatedDate.toISOString(),
+        bypassBehavior: applicationRestrictionBypass.bypassBehavior,
+      });
+  });
+
+  it("Should get an institution application restriction bypass for a submitted part-time application when there is an application restriction bypass with the required id.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      offeringIntensity: OfferingIntensity.partTime,
+    });
+    const susRestriction = await db.restriction.findOne({
+      where: { restrictionCode: RestrictionCode.SUS },
+    });
+    const institutionRestriction = await saveFakeInstitutionRestriction(db, {
+      institution:
+        application.currentAssessment.offering.institutionLocation.institution,
+      restriction: susRestriction,
+      program: application.currentAssessment.offering.educationProgram,
+      location: application.currentAssessment.offering.institutionLocation,
+    });
+    const applicationRestrictionBypass =
+      await saveFakeApplicationRestrictionBypass(db, {
+        application,
+        bypassCreatedBy: sharedMinistryUser,
+        creator: sharedMinistryUser,
+        institutionRestriction: institutionRestriction,
+      });
+    const endpoint = `/aest/application-restriction-bypass/${applicationRestrictionBypass.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        applicationRestrictionBypassId: applicationRestrictionBypass.id,
+        restrictionId: applicationRestrictionBypass.institutionRestriction.id,
+        restrictionCode:
+          applicationRestrictionBypass.institutionRestriction.restriction
+            .restrictionCode,
+        restrictedParty: RestrictedParty.Institution,
         creationNote: applicationRestrictionBypass.creationNote.description,
         createdBy: getUserFullName(
           applicationRestrictionBypass.bypassCreatedBy,
@@ -93,11 +143,11 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
       .expect(HttpStatus.OK)
       .expect({
         applicationRestrictionBypassId: applicationRestrictionBypass.id,
-        studentRestrictionId:
-          applicationRestrictionBypass.studentRestriction.id,
+        restrictionId: applicationRestrictionBypass.studentRestriction.id,
         restrictionCode:
           applicationRestrictionBypass.studentRestriction.restriction
             .restrictionCode,
+        restrictedParty: RestrictedParty.Student,
         creationNote: applicationRestrictionBypass.creationNote.description,
         removalNote: applicationRestrictionBypass.removalNote.description,
         createdBy: getUserFullName(
@@ -148,11 +198,11 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
       .expect(HttpStatus.OK)
       .expect({
         applicationRestrictionBypassId: applicationRestrictionBypass.id,
-        studentRestrictionId:
-          applicationRestrictionBypass.studentRestriction.id,
+        restrictionId: applicationRestrictionBypass.studentRestriction.id,
         restrictionCode:
           applicationRestrictionBypass.studentRestriction.restriction
             .restrictionCode,
+        restrictedParty: RestrictedParty.Student,
         creationNote: applicationRestrictionBypass.creationNote.description,
         removalNote: applicationRestrictionBypass.removalNote.description,
         createdBy: getUserFullName(
