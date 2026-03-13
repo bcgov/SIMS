@@ -1348,4 +1348,8 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       db.sfasApplicationDisbursement.createQueryBuilder().delete().execute(),
     ]);
   }
+
+  afterAll(async () => {
+    await app?.close();
+  });
 });

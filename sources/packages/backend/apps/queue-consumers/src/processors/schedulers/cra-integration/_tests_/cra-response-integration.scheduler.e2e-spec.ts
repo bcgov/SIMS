@@ -95,4 +95,8 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
       ]),
     ).toBe(true);
   });
+
+  afterAll(async () => {
+    await app?.close();
+  });
 });

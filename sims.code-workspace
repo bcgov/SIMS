@@ -258,5 +258,9 @@
     ],
     "jest.runMode": "on-demand",
     "jest.jestCommandLine": "npm run test:e2e:all:local --",
+    "jest.shell": "cmd",
+    "terminal.integrated.automationProfile.windows": {
+      "path": "C:\\Windows\\System32\\cmd.exe"
+    },
   },
 }

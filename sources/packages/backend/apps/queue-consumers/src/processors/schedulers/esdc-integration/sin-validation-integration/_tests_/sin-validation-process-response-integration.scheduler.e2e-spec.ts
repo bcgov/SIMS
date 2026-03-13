@@ -139,5 +139,9 @@ describe(
         ]),
       ).toBe(true);
     });
+
+    afterAll(async () => {
+      await app?.close();
+    });
   },
 );
