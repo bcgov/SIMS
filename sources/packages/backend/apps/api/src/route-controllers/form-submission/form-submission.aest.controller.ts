@@ -112,7 +112,6 @@ export class FormSubmissionAESTController extends BaseController {
     // the flag are not required to be returned by this endpoint.
     const submissions =
       await this.formSubmissionControllerService.getFormSubmissions(studentId, {
-        includeBasicDecisionDetails: false,
         keepPendingDecisionsWhilePendingFormSubmission: false,
       });
     return {
