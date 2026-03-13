@@ -3,7 +3,6 @@ import {
   Body,
   Controller,
   Get,
-  NotFoundException,
   Param,
   ParseIntPipe,
   Post,
@@ -13,7 +12,6 @@ import {
 import {
   DynamicFormConfigurationService,
   FORM_SUBMISSION_INVALID_DYNAMIC_DATA,
-  FORM_SUBMISSION_SUPPLEMENTARY_DATA_NOT_FOUND,
   FORM_SUBMISSION_PENDING_DECISION,
   FormSubmissionSubmitService,
 } from "../../services";
@@ -87,6 +85,10 @@ export class FormSubmissionStudentsController extends BaseController {
    * @param query data keys and application ID to retrieve the supplementary data for.
    * @returns supplementary data for the given data keys and application ID.
    */
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Supplementary data not found for the given data keys and/or application ID.",
+  })
   @Get("supplementary-data")
   async getSupplementaryData(
     @Query() query: FormSupplementaryDataAPIInDTO,
@@ -103,12 +105,7 @@ export class FormSubmissionStudentsController extends BaseController {
       };
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
-        switch (error.name) {
-          case FORM_SUBMISSION_SUPPLEMENTARY_DATA_NOT_FOUND:
-            throw new NotFoundException(error.message);
-          default:
-            throw new UnprocessableEntityException(error.message);
-        }
+        throw new UnprocessableEntityException(error.message);
       }
       throw error;
     }

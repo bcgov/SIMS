@@ -55,7 +55,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
         .expect({ formData: { programYear: "2022-2023" } });
     });
 
-    it(`Should throw a not found exception when the application is not associated with the student requesting the supplementary data for ${KnownSupplementaryDataKey.ProgramYear}.`, async () => {
+    it(`Should throw an unprocessable entity exception when the application is not associated with the student requesting the supplementary data for ${KnownSupplementaryDataKey.ProgramYear}.`, async () => {
       const application = await saveFakeApplication(db.dataSource);
 
       // Arrange
@@ -73,11 +73,11 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
       await request(app.getHttpServer())
         .get(endpoint)
         .auth(studentToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.NOT_FOUND)
+        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
         .expect({
           message: `Supplementary data '${KnownSupplementaryDataKey.ProgramYear}' not found. Student ID ${student.id}, application ID ${application.id}.`,
-          error: "Not Found",
-          statusCode: HttpStatus.NOT_FOUND,
+          error: "Unprocessable Entity",
+          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         });
     });
   });
@@ -117,7 +117,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
         });
     });
 
-    it(`Should throw a not found exception when requesting supplementary data for ${KnownSupplementaryDataKey.Parents} for a application that has no supporting users.`, async () => {
+    it(`Should throw an unprocessable entity exception when requesting supplementary data for ${KnownSupplementaryDataKey.Parents} for a application that has no supporting users.`, async () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource);
       const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.Parents}&applicationId=${application.id}`;
@@ -131,11 +131,11 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
       await request(app.getHttpServer())
         .get(endpoint)
         .auth(studentToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.NOT_FOUND)
+        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
         .expect({
           message: `Supplementary data '${KnownSupplementaryDataKey.Parents}' not found. Student ID ${application.student.id}, application ID ${application.id}.`,
-          error: "Not Found",
-          statusCode: HttpStatus.NOT_FOUND,
+          error: "Unprocessable Entity",
+          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         });
     });
   });
