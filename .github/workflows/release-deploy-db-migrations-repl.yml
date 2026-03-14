@@ -44,4 +44,4 @@ jobs:
       - name: Run db-migrations using REPL mode
         working-directory: "./devops/"
         run: |
-          oc whoami --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+          oc whoami --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }} --show-context
