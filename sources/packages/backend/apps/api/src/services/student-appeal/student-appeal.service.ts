@@ -20,7 +20,6 @@ import {
   FileOriginType,
   ApplicationStatus,
   Student,
-  ProgramYear,
 } from "@sims/sims-db";
 import {
   AppealType,
@@ -163,30 +162,57 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         where: { id: appealId },
         loadEagerRelations: false,
       });
+
+    // Check if the submission is for new appeal process(appeal process is for submissions from 2025-26 program year).
     const isLegacyChangeRequest =
       studentAppeal.application !== null &&
-      !allowApplicationChangeRequest(
-        studentAppeal.application.programYear as ProgramYear,
-      );
+      !allowApplicationChangeRequest(studentAppeal.application.programYear);
     if (isLegacyChangeRequest) {
-      // Legacy change request: send Ministry - Change Request Submitted notification.
-      const ministryNotification: StudentSubmittedChangeRequestNotification = {
-        givenNames: studentAppeal.student.user.firstName,
-        lastName: studentAppeal.student.user.lastName,
-        email: studentAppeal.student.user.email,
-        birthDate: studentAppeal.student.birthDate,
-        applicationNumber: studentAppeal.application.applicationNumber,
-      };
-      return this.notificationActionsService.saveMinistryChangeRequestSubmittedNotification(
-        ministryNotification,
+      // For legacy change requests, send a change request submitted notification.
+      return this.saveMinistryChangeRequestNotification(
+        studentAppeal,
         entityManager,
       );
     }
-    // New appeal type: send Ministry - Form Submitted notification.
-    const formTypeCategory =
-      studentAppeal.application !== null
-        ? NOTIFICATION_FORM_TYPE.ApplicationAppeal
-        : NOTIFICATION_FORM_TYPE.OtherAppeal;
+    // Not a legacy change request, so save as a new appeal submission.
+    return this.saveMinistryAppealNotification(studentAppeal, entityManager);
+  }
+
+  /**
+   * Sends a ministry notification for a legacy change request submission.
+   * @param studentAppeal student appeal with student, user, and application data.
+   * @param entityManager entity manager for the current transaction.
+   */
+  private async saveMinistryChangeRequestNotification(
+    studentAppeal: StudentAppeal,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const ministryNotification: StudentSubmittedChangeRequestNotification = {
+      givenNames: studentAppeal.student.user.firstName,
+      lastName: studentAppeal.student.user.lastName,
+      email: studentAppeal.student.user.email,
+      birthDate: studentAppeal.student.birthDate,
+      applicationNumber: studentAppeal.application.applicationNumber,
+    };
+    await this.notificationActionsService.saveMinistryChangeRequestSubmittedNotification(
+      ministryNotification,
+      entityManager,
+    );
+  }
+
+  /**
+   * Sends a ministry notification for a new appeal (application appeal or other appeal) submission.
+   * Classifies the appeal type and maps technical form names to human-readable friendly names.
+   * @param studentAppeal student appeal with student, user, application, and appeal request data.
+   * @param entityManager entity manager for the current transaction.
+   */
+  private async saveMinistryAppealNotification(
+    studentAppeal: StudentAppeal,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const formTypeCategory = studentAppeal.application
+      ? NOTIFICATION_FORM_TYPE.ApplicationAppeal
+      : NOTIFICATION_FORM_TYPE.OtherAppeal;
     // Map technical form names to human-readable friendly names.
     const formNames = studentAppeal.appealRequests.map(
       (request) =>
@@ -208,7 +234,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       formName,
       applicationNumber: studentAppeal.application?.applicationNumber ?? "N/A",
     };
-    return this.notificationActionsService.saveMinistryFormSubmittedNotification(
+    await this.notificationActionsService.saveMinistryFormSubmittedNotification(
       ministryFormNotification,
       entityManager,
     );
