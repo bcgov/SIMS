@@ -51,16 +51,6 @@ export const CHANGE_REQUEST_APPEAL_FORMS = [
 ];
 
 /**
- * Maps form definition names to their human-readable (friendly) form names
- * for use in ministry notifications.
- */
-export const APPEAL_FORM_FRIENDLY_NAMES: Record<string, string> = {
-  [FormNames.ModifiedIndependentAppeal]: "Modified independent",
-  [FormNames.RoomAndBoardCostsAppeal]: "Room and board costs",
-  [FormNames.StepParentWaiverAppeal]: "Step-parent waiver",
-};
-
-/**
  * Notification form type category labels used in ministry form submitted notifications
  * to classify the type of form or appeal being submitted.
  */

@@ -42,11 +42,9 @@ import {
   StudentSubmittedChangeRequestNotification,
   MinistryFormSubmittedNotification,
 } from "@sims/services/notifications";
-import {
-  APPEAL_FORM_FRIENDLY_NAMES,
-  NOTIFICATION_FORM_TYPE,
-} from "../form/constants";
+import { NOTIFICATION_FORM_TYPE } from "../form/constants";
 import { StudentFileService } from "../student-file/student-file.service";
+import { DynamicFormConfigurationService } from "../dynamic-form-configuration/dynamic-form-configuration.service";
 import { InjectRepository } from "@nestjs/typeorm";
 
 /**
@@ -59,6 +57,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly studentFileService: StudentFileService,
+    private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
   ) {
@@ -213,12 +212,14 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     const formTypeCategory = studentAppeal.application
       ? NOTIFICATION_FORM_TYPE.ApplicationAppeal
       : NOTIFICATION_FORM_TYPE.OtherAppeal;
-    // Map technical form names to human-readable friendly names.
-    const formNames = studentAppeal.appealRequests.map(
-      (request) =>
-        APPEAL_FORM_FRIENDLY_NAMES[request.submittedFormName] ??
-        request.submittedFormName,
-    );
+    // Map technical form names to human-readable friendly names using the dynamic form configuration.
+    const formNames = studentAppeal.appealRequests.map((request) => {
+      const config =
+        this.dynamicFormConfigurationService.getFormByDefinitionName(
+          request.submittedFormName,
+        );
+      return config?.formType ?? request.submittedFormName;
+    });
     // For application appeals, all form names are comma-separated.
     // For other appeals, only the first form name is used.
     const formName =

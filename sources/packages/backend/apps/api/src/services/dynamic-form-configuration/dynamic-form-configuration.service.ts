@@ -110,4 +110,18 @@ export class DynamicFormConfigurationService {
       (dynamicFormConfiguration) => dynamicFormConfiguration.id === formId,
     );
   }
+
+  /**
+   * Get a form configuration by its form definition name.
+   * @param formDefinitionName form definition name.
+   * @returns dynamic form configuration for the requested form definition name.
+   */
+  getFormByDefinitionName(
+    formDefinitionName: string,
+  ): DynamicFormConfiguration | undefined {
+    return this.dynamicFormConfigurations.find(
+      (dynamicFormConfiguration) =>
+        dynamicFormConfiguration.formDefinitionName === formDefinitionName,
+    );
+  }
 }
