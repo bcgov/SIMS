@@ -9,8 +9,6 @@
       "args": [
         "--runInBand",
         "--watchAll=false",
-        "--testNamePattern",
-        "${jest.testNamePattern}",
         "--runTestsByPath",
         "${jest.testFile}",
         "--config",
@@ -38,8 +36,6 @@
         "--runInBand",
         "--forceExit",
         "--watchAll=false",
-        "--testNamePattern",
-        "${jest.testNamePattern}",
         "--runTestsByPath",
         "${jest.testFile}",
         "--config",
