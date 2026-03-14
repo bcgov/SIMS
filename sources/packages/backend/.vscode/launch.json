@@ -14,7 +14,8 @@
         "--runTestsByPath",
         "${jest.testFile}",
         "--config",
-        "${workspaceFolder}/jest-e2e.json"
+        "${workspaceFolder}/jest-e2e.json",
+        "--forceExit"
       ],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
@@ -41,7 +42,8 @@
         "--runTestsByPath",
         "${jest.testFile}",
         "--config",
-        "${workspaceFolder}/jest-unit-tests.json"
+        "${workspaceFolder}/jest-unit-tests.json",
+        "--forceExit"
       ],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
