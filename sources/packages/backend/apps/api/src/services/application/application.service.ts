@@ -34,7 +34,7 @@ import {
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
-  ApplicationScholasticStandingStatus as ApplicationScholasticStandingStatus,
+  ApplicationScholasticStandingStatus,
   ApplicationSubmissionResult,
 } from "./application.models";
 import {
@@ -77,6 +77,7 @@ import {
   ApplicationEditedTooManyTimesNotification,
   NotificationActionsService,
   NotificationService,
+  StudentSubmittedChangeRequestNotification,
 } from "@sims/services/notifications";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
 import { StudentService } from "..";
@@ -521,6 +522,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
       newApplication.studentAssessments = [originalAssessment];
       newApplication.currentAssessment = originalAssessment;
       await applicationRepository.save(newApplication);
+      // Notify the ministry that a new change request was submitted.
+      await this.saveMinistryChangeRequestSubmittedNotification(
+        studentId,
+        application.applicationNumber,
+        transactionalEntityManager,
+      );
     });
     return {
       application: newApplication,
@@ -587,6 +594,41 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
+   * Sends a ministry notification when a student submits a new program year change request.
+   * Loads the required student and application number within the provided
+   * transaction to ensure data consistency.
+   * @param studentId ID of the student who submitted the change request.
+   * @param applicationNumber application number of the application being changed.
+   * @param entityManager entity manager for the current transaction.
+   */
+  private async saveMinistryChangeRequestSubmittedNotification(
+    studentId: number,
+    applicationNumber: string,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const student = await entityManager.getRepository(Student).findOne({
+      select: {
+        id: true,
+        birthDate: true,
+        user: { id: true, firstName: true, lastName: true, email: true },
+      },
+      relations: { user: true },
+      where: { id: studentId },
+    });
+    const ministryNotification: StudentSubmittedChangeRequestNotification = {
+      givenNames: student.user.firstName,
+      lastName: student.user.lastName,
+      email: student.user.email,
+      birthDate: student.birthDate,
+      applicationNumber,
+    };
+    await this.notificationActionsService.saveMinistryChangeRequestSubmittedNotification(
+      ministryNotification,
+      entityManager,
+    );
+  }
+
+  /**
    * Saves a notification when the application is edited too many times
    * governed by {@link APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION}.
    * @param applicationNumber application number of the related application.
@@ -642,7 +684,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     const sequenceNumberSize =
       MAX_APPLICATION_NUMBER_LENGTH - sequenceName.length;
 
-    let nextApplicationSequence = NaN;
+    let nextApplicationSequence = Number.NaN;
     await this.sequenceService.consumeNextSequence(
       sequenceName,
       async (nextSequenceNumber: number) => {
