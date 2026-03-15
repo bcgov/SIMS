@@ -1,5 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { NotificationMessage, NotificationMessageType } from "@sims/sims-db";
+import {
+  FormCategory,
+  NotificationMessage,
+  NotificationMessageType,
+} from "@sims/sims-db";
 import {
   base64Encode,
   getDateOnlyFormat,
@@ -44,6 +48,7 @@ import { LoggerService } from "@sims/utilities/logger";
 import { ECE_RESPONSE_ATTACHMENT_FILE_NAME } from "@sims/integrations/constants";
 import { SystemUsersService } from "@sims/services/system-users";
 import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
+import { NOTIFICATION_FORM_TYPE } from "apps/api/src/services/form/constants";
 
 @Injectable()
 export class NotificationActionsService {
@@ -1585,6 +1590,15 @@ export class NotificationActionsService {
     if (!emailContacts?.length) {
       return;
     }
+
+    let formCategory: string = NOTIFICATION_FORM_TYPE.StandardForm;
+    if (notification.formCategory == FormCategory.StudentAppeal) {
+      if (notification.applicationNumber) {
+        formCategory = NOTIFICATION_FORM_TYPE.ApplicationAppeal;
+      } else {
+        formCategory = NOTIFICATION_FORM_TYPE.OtherAppeal;
+      }
+    }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
       messageType: NotificationMessageType.MinistryFormSubmitted,
@@ -1596,9 +1610,9 @@ export class NotificationActionsService {
           lastName: notification.lastName,
           birthDate: getDateOnlyFormat(notification.birthDate),
           studentEmail: notification.email,
-          formType: notification.formType,
+          formCategory: formCategory,
           formName: notification.formName,
-          applicationNumber: notification.applicationNumber,
+          applicationNumber: notification.applicationNumber ?? "N/A",
           dateTime: this.getDateTimeOnPSTTimeZone(),
         },
       },

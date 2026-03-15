@@ -1,4 +1,4 @@
-import { NotificationMessageType } from "@sims/sims-db";
+import { FormCategory, NotificationMessageType } from "@sims/sims-db";
 import { NotificationEmailMessage } from "./gc-notify.model";
 import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
 
@@ -256,7 +256,7 @@ export interface MinistryFormSubmittedNotification {
   lastName: string;
   email: string;
   birthDate: string;
-  formType: string;
+  formCategory: FormCategory;
   formName: string;
   applicationNumber: string;
 }

@@ -20,6 +20,7 @@ import {
   FileOriginType,
   ApplicationStatus,
   Student,
+  FormCategory,
 } from "@sims/sims-db";
 import {
   AppealType,
@@ -42,7 +43,6 @@ import {
   StudentSubmittedChangeRequestNotification,
   MinistryFormSubmittedNotification,
 } from "@sims/services/notifications";
-import { NOTIFICATION_FORM_TYPE } from "../form/constants";
 import { StudentFileService } from "../student-file/student-file.service";
 import { DynamicFormConfigurationService } from "../dynamic-form-configuration/dynamic-form-configuration.service";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -209,9 +209,6 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     studentAppeal: StudentAppeal,
     entityManager: EntityManager,
   ): Promise<void> {
-    const formTypeCategory = studentAppeal.application
-      ? NOTIFICATION_FORM_TYPE.ApplicationAppeal
-      : NOTIFICATION_FORM_TYPE.OtherAppeal;
     // Map technical form names to human-readable friendly names using the dynamic form configuration.
     const formNames = studentAppeal.appealRequests.map((request) => {
       const config =
@@ -220,19 +217,13 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         );
       return config?.formType ?? request.submittedFormName;
     });
-    // For application appeals, all form names are comma-separated.
-    // For other appeals, only the first form name is used.
-    const formName =
-      formTypeCategory === NOTIFICATION_FORM_TYPE.ApplicationAppeal
-        ? formNames.join(", ")
-        : formNames[0];
     const ministryFormNotification: MinistryFormSubmittedNotification = {
       givenNames: studentAppeal.student.user.firstName,
       lastName: studentAppeal.student.user.lastName,
       email: studentAppeal.student.user.email,
       birthDate: studentAppeal.student.birthDate,
-      formType: formTypeCategory,
-      formName,
+      formCategory: FormCategory.StudentAppeal,
+      formName: formNames.join(", "),
       applicationNumber: studentAppeal.application?.applicationNumber ?? "N/A",
     };
     await this.notificationActionsService.saveMinistryFormSubmittedNotification(

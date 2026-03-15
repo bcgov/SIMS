@@ -27,7 +27,6 @@ import { DryRunSubmissionResult } from "../../types";
 import { FormSubmissionValidator } from "./form-submission-validator";
 import { SupplementaryDataLoader } from "./form-supplementary-data";
 import { NotificationActionsService } from "@sims/services/notifications";
-import { NOTIFICATION_FORM_TYPE } from "../form/constants";
 
 /**
  * Manages how the form submissions are submitted, including the validations,
@@ -172,13 +171,7 @@ export class FormSubmissionSubmitService {
         });
       applicationNumber = application?.applicationNumber ?? applicationNumber;
     }
-    // Determine the form type category based on the form category and application presence.
-    let notificationFormType: string = NOTIFICATION_FORM_TYPE.StandardForm;
-    if (formCategory === FormCategory.StudentAppeal) {
-      notificationFormType = applicationId
-        ? NOTIFICATION_FORM_TYPE.ApplicationAppeal
-        : NOTIFICATION_FORM_TYPE.OtherAppeal;
-    }
+
     // Collect all form friendly names from the submission configs, comma-separated.
     const formName = submissionConfigs
       .map((config) => config.formType)
@@ -189,7 +182,7 @@ export class FormSubmissionSubmitService {
         lastName: studentForNotification.user.lastName,
         email: studentForNotification.user.email,
         birthDate: studentForNotification.birthDate,
-        formType: notificationFormType,
+        formCategory: formCategory,
         formName,
         applicationNumber,
       },
