@@ -48,7 +48,7 @@ import { LoggerService } from "@sims/utilities/logger";
 import { ECE_RESPONSE_ATTACHMENT_FILE_NAME } from "@sims/integrations/constants";
 import { SystemUsersService } from "@sims/services/system-users";
 import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
-import { NOTIFICATION_FORM_TYPE } from "apps/api/src/services/form/constants";
+import { NOTIFICATION_FORM_TYPE } from "../../constants";
 
 @Injectable()
 export class NotificationActionsService {

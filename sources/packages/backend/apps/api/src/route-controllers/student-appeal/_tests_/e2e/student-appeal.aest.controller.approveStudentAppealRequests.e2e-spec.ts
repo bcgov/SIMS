@@ -1,3 +1,4 @@
+import { IsNull } from "typeorm";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
@@ -19,12 +20,15 @@ import {
   ApplicationStatus,
   AssessmentTriggerType,
   ModifiedIndependentStatus,
+  NotificationMessageType,
   NoteType,
   StudentAppealActionType,
   StudentAppealStatus,
 } from "@sims/sims-db";
 import { StudentAppealApprovalAPIInDTO } from "../../../../route-controllers";
 import MockDate from "mockdate";
+import { getPSTPDTDateTime } from "@sims/utilities";
+import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/services/constants";
 
 describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => {
   let app: INestApplication;
@@ -39,6 +43,23 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
 
   beforeEach(async () => {
     MockDate.reset();
+    // Mark all existing student appeal notifications as sent to isolate test assertions.
+    await db.notification.update(
+      {
+        notificationMessage: {
+          id: NotificationMessageType.StudentChangeRequestReviewCompleted,
+        },
+      },
+      { dateSent: new Date() },
+    );
+    await db.notification.update(
+      {
+        notificationMessage: {
+          id: NotificationMessageType.StudentFormCompleted,
+        },
+      },
+      { dateSent: new Date() },
+    );
   });
 
   it("Should approve student appeal requests and add note when the appeal with appeal requests submitted for approval are in pending status.", async () => {
@@ -120,6 +141,25 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
           note: { description: "Approved", noteType: NoteType.Application },
         },
       ],
+    });
+    // Validate notification.
+    const createdNotification = await db.notification.findOne({
+      select: { id: true, messagePayload: true },
+      where: {
+        notificationMessage: {
+          id: NotificationMessageType.StudentChangeRequestReviewCompleted,
+        },
+        dateSent: IsNull(),
+      },
+    });
+    expect(createdNotification.messagePayload).toStrictEqual({
+      template_id: GC_NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
+      email_address: application.student.user.email,
+      personalisation: {
+        givenNames: application.student.user.firstName ?? "",
+        lastName: application.student.user.lastName,
+        date: `${getPSTPDTDateTime(now)} PST/PDT`,
+      },
     });
   });
 
@@ -290,6 +330,25 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
               },
             },
           ],
+        });
+        // Validate notification.
+        const createdNotification = await db.notification.findOne({
+          select: { id: true, messagePayload: true },
+          where: {
+            notificationMessage: {
+              id: NotificationMessageType.StudentFormCompleted,
+            },
+            dateSent: IsNull(),
+          },
+        });
+        expect(createdNotification.messagePayload).toStrictEqual({
+          template_id: GC_NOTIFY_TEMPLATE_IDS.StudentFormCompleted,
+          email_address: student.user.email,
+          personalisation: {
+            givenNames: student.user.firstName ?? "",
+            lastName: student.user.lastName,
+            date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          },
         });
       });
     }

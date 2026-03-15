@@ -238,19 +238,19 @@ export enum NotificationMessageType {
    */
   StudentCOERequiredNearEndDateNotification = 35,
   /**
-   * Ministry notification for student submits change request.
+   * Ministry notification when a student submits a change request.
    */
   MinistryChangeRequestSubmitted = 36,
   /**
-   * Student notification for change request review completed.
+   * Student notification when a change request review is completed.
    */
   StudentChangeRequestReviewCompleted = 37,
   /**
-   * Ministry notification for student submits form or appeal.
+   * Ministry notification when a student submits a form or appeal.
    */
   MinistryFormSubmitted = 38,
   /**
-   * Student notification for form or appeal adjudication complete.
+   * Student notification when a form or appeal is completed.
    */
   StudentFormCompleted = 39,
 }

@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, IsNull, Repository } from "typeorm";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
@@ -27,6 +27,7 @@ import {
   Application,
   ApplicationStatus,
   FileOriginType,
+  NotificationMessageType,
   OfferingIntensity,
   ProgramYear,
   StudentAppealRequest,
@@ -37,11 +38,17 @@ import {
 import { StudentApplicationAppealAPIInDTO } from "../../models/student-appeal.dto";
 import { AppStudentsModule } from "../../../../app.students.module";
 import { FormNames, FormService } from "../../../../services";
+import MockDate from "mockdate";
+import { getDateOnlyFormat, getPSTPDTDateTime } from "@sims/utilities";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_HAS_PENDING_APPEAL,
   APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
 } from "../../../../constants";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFICATION_FORM_TYPE,
+} from "@sims/services/constants";
 
 describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
   let app: INestApplication;
@@ -55,6 +62,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
   const DEPENDANT_INFORMATION_FORM_NAME = "studentdependantsappeal";
   const PARTNER_INFORMATION_FORM_NAME = "partnerinformationandincomeappeal";
   const ROOM_AND_BOARD_COSTS_FORM_NAME = "roomandboardcostsappeal";
+  const MINISTRY_EMAIL_ADDRESS = "dummy@some.domain";
   let recentActiveProgramYear: ProgramYear;
 
   beforeAll(async () => {
@@ -68,10 +76,37 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
     studentAppealRequestRepo = dataSource.getRepository(StudentAppealRequest);
     studentFileRepo = dataSource.getRepository(StudentFile);
     recentActiveProgramYear = await getRecentActiveProgramYear(db);
+    // Update fake email contacts to send ministry notifications.
+    await db.notificationMessage.update(
+      { id: NotificationMessageType.MinistryChangeRequestSubmitted },
+      { emailContacts: [MINISTRY_EMAIL_ADDRESS] },
+    );
+    await db.notificationMessage.update(
+      { id: NotificationMessageType.MinistryFormSubmitted },
+      { emailContacts: [MINISTRY_EMAIL_ADDRESS] },
+    );
   });
 
   beforeEach(async () => {
+    MockDate.reset();
     await resetMockJWTUserInfo(appModule);
+    // Mark all existing ministry notifications as sent to isolate test assertions.
+    await db.notification.update(
+      {
+        notificationMessage: {
+          id: NotificationMessageType.MinistryChangeRequestSubmitted,
+        },
+      },
+      { dateSent: new Date() },
+    );
+    await db.notification.update(
+      {
+        notificationMessage: {
+          id: NotificationMessageType.MinistryFormSubmitted,
+        },
+      },
+      { dateSent: new Date() },
+    );
   });
 
   it(
@@ -128,6 +163,8 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
 
       const endpoint = `/students/appeal/application/${application.id}`;
       await mockJWTUserInfo(appModule, student.user);
+      const now = new Date();
+      MockDate.set(now);
 
       // Act/Assert
       let createdAppealId: number;
@@ -168,6 +205,28 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
           programYear: application.programYear.programYear,
         },
       );
+      // Validate notification for legacy change request (pre-2025-26 program year).
+      const createdNotification = await db.notification.findOne({
+        select: { id: true, messagePayload: true },
+        where: {
+          notificationMessage: {
+            id: NotificationMessageType.MinistryChangeRequestSubmitted,
+          },
+          dateSent: IsNull(),
+        },
+      });
+      expect(createdNotification.messagePayload).toStrictEqual({
+        template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryChangeRequestSubmitted,
+        email_address: MINISTRY_EMAIL_ADDRESS,
+        personalisation: {
+          givenNames: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: getDateOnlyFormat(student.birthDate),
+          studentEmail: student.user.email,
+          applicationNumber: application.applicationNumber,
+          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
+      });
     },
   );
 
@@ -617,125 +676,147 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
     );
   });
 
-  it(
-    "Should create room and board costs appeal " +
-      "when student submit an appeal for a program year which is eligible for appeal process.",
-    async () => {
-      // Arrange
-      // Create student to submit application.
-      const student = await saveFakeStudent(appDataSource);
-      // Create application submit appeal with eligible program year.
-      const application = await saveFakeApplicationDisbursements(
-        db.dataSource,
+  it("Should create room and board costs appeal when student submit an appeal for a program year which is eligible for appeal process.", async () => {
+    // Arrange
+    // Create student to submit application.
+    const student = await saveFakeStudent(appDataSource);
+    // Create application submit appeal with eligible program year.
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student,
+        programYear: recentActiveProgramYear,
+      },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          eligibleApplicationAppeals: [FormNames.RoomAndBoardCostsAppeal],
+        },
+      },
+    );
+    // Create a temporary file for room and board costs appeal.
+    const roomAndBoardFile = await saveFakeStudentFileUpload(
+      appDataSource,
+      {
+        student,
+        creator: student.user,
+      },
+      { fileOrigin: FileOriginType.Temporary },
+    );
+    // Prepare the data to request a change of financial information.
+    const roomAndBoardAppealData = {
+      roomAndBoardAmount: 561,
+      roomAndBoardSituations: {
+        parentUnEmployed: false,
+        parentEarnLowIncome: false,
+        parentReceiveIncomeAssistance: false,
+        livingAtHomePayingRoomAndBoard: true,
+        parentReceiveCanadaPensionOrOldAgeSupplement: false,
+      },
+      roomAndBoardSupportingDocuments: [
         {
-          student,
-          programYear: recentActiveProgramYear,
+          url: `student/files/${roomAndBoardFile.uniqueFileName}`,
+          hash: "",
+          name: roomAndBoardFile.uniqueFileName,
+          size: 4,
+          type: "text/plain",
+          storage: "url",
+          originalName: roomAndBoardFile.fileName,
         },
+      ],
+    };
+    const payload: StudentApplicationAppealAPIInDTO = {
+      studentAppealRequests: [
         {
-          offeringIntensity: OfferingIntensity.fullTime,
-          applicationStatus: ApplicationStatus.Completed,
-          currentAssessmentInitialValues: {
-            eligibleApplicationAppeals: [FormNames.RoomAndBoardCostsAppeal],
-          },
+          formName: ROOM_AND_BOARD_COSTS_FORM_NAME,
+          formData: roomAndBoardAppealData,
+          files: [roomAndBoardFile.uniqueFileName],
         },
-      );
-      // Create a temporary file for room and board costs appeal.
-      const roomAndBoardFile = await saveFakeStudentFileUpload(
-        appDataSource,
-        {
-          student,
-          creator: student.user,
-        },
-        { fileOrigin: FileOriginType.Temporary },
-      );
-      // Prepare the data to request a change of financial information.
-      const roomAndBoardAppealData = {
-        roomAndBoardAmount: 561,
-        roomAndBoardSituations: {
-          parentUnEmployed: false,
-          parentEarnLowIncome: false,
-          parentReceiveIncomeAssistance: false,
-          livingAtHomePayingRoomAndBoard: true,
-          parentReceiveCanadaPensionOrOldAgeSupplement: false,
-        },
-        roomAndBoardSupportingDocuments: [
-          {
-            url: `student/files/${roomAndBoardFile.uniqueFileName}`,
-            hash: "",
-            name: roomAndBoardFile.uniqueFileName,
-            size: 4,
-            type: "text/plain",
-            storage: "url",
-            originalName: roomAndBoardFile.fileName,
-          },
-        ],
-      };
-      const payload: StudentApplicationAppealAPIInDTO = {
-        studentAppealRequests: [
-          {
-            formName: ROOM_AND_BOARD_COSTS_FORM_NAME,
-            formData: roomAndBoardAppealData,
-            files: [roomAndBoardFile.uniqueFileName],
-          },
-        ],
-      };
-      // Mock JWT user to return the saved student from token.
-      await mockJWTUserInfo(appModule, student.user);
-      // Get any student user token.
-      const studentToken = await getStudentToken(
-        FakeStudentUsersTypes.FakeStudentUserType1,
-      );
-      // Mock the form service to validate the dry-run submission result.
-      // and this mock must be removed.
-      const formService = await getProviderInstanceForModule(
-        appModule,
-        AppStudentsModule,
-        FormService,
-      );
-      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: ROOM_AND_BOARD_COSTS_FORM_NAME,
-        data: { data: roomAndBoardAppealData },
-      });
-      formService.dryRunSubmission = dryRunSubmissionMock;
-      const endpoint = `/students/appeal/application/${application.id}`;
+      ],
+    };
+    // Mock JWT user to return the saved student from token.
+    await mockJWTUserInfo(appModule, student.user);
+    // Get any student user token.
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    // Mock the form service to validate the dry-run submission result.
+    // and this mock must be removed.
+    const formService = await getProviderInstanceForModule(
+      appModule,
+      AppStudentsModule,
+      FormService,
+    );
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: ROOM_AND_BOARD_COSTS_FORM_NAME,
+      data: { data: roomAndBoardAppealData },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+    const endpoint = `/students/appeal/application/${application.id}`;
+    const now = new Date();
+    MockDate.set(now);
 
-      // Act/Assert
-      let createdAppealId: number;
-      await request(app.getHttpServer())
-        .post(endpoint)
-        .send(payload)
-        .auth(studentToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.CREATED)
-        .then((response) => {
-          expect(response.body.id).toBeGreaterThan(0);
-          createdAppealId = +response.body.id;
-        });
-      const studentAppeal = await db.studentAppeal.findOne({
-        select: {
-          id: true,
-          appealRequests: {
-            id: true,
-            submittedFormName: true,
-            submittedData: true,
-          },
-        },
-        relations: { appealRequests: true },
-        where: { application: { id: application.id } },
+    // Act/Assert
+    let createdAppealId: number;
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+        createdAppealId = +response.body.id;
       });
-      const [appealRequest] = studentAppeal.appealRequests;
-      expect(studentAppeal.id).toBe(createdAppealId);
-      expect(appealRequest.submittedFormName).toBe(
-        ROOM_AND_BOARD_COSTS_FORM_NAME,
-      );
-      expect(appealRequest.submittedData).toStrictEqual(roomAndBoardAppealData);
-      // Expect to call the dry run submission.
-      expect(dryRunSubmissionMock).toHaveBeenCalledWith(
-        ROOM_AND_BOARD_COSTS_FORM_NAME,
-        roomAndBoardAppealData,
-      );
-    },
-  );
+    const studentAppeal = await db.studentAppeal.findOne({
+      select: {
+        id: true,
+        appealRequests: {
+          id: true,
+          submittedFormName: true,
+          submittedData: true,
+        },
+      },
+      relations: { appealRequests: true },
+      where: { application: { id: application.id } },
+    });
+    const [appealRequest] = studentAppeal.appealRequests;
+    expect(studentAppeal.id).toBe(createdAppealId);
+    expect(appealRequest.submittedFormName).toBe(
+      ROOM_AND_BOARD_COSTS_FORM_NAME,
+    );
+    expect(appealRequest.submittedData).toStrictEqual(roomAndBoardAppealData);
+    // Expect to call the dry run submission.
+    expect(dryRunSubmissionMock).toHaveBeenCalledWith(
+      ROOM_AND_BOARD_COSTS_FORM_NAME,
+      roomAndBoardAppealData,
+    );
+    // Validate notification for new appeal (2025-26+ program year).
+    const createdNotification = await db.notification.findOne({
+      select: { id: true, messagePayload: true },
+      where: {
+        notificationMessage: {
+          id: NotificationMessageType.MinistryFormSubmitted,
+        },
+        dateSent: IsNull(),
+      },
+    });
+    expect(createdNotification.messagePayload).toStrictEqual({
+      template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryFormSubmitted,
+      email_address: MINISTRY_EMAIL_ADDRESS,
+      personalisation: {
+        givenNames: student.user.firstName,
+        lastName: student.user.lastName,
+        birthDate: getDateOnlyFormat(student.birthDate),
+        studentEmail: student.user.email,
+        formCategory: NOTIFICATION_FORM_TYPE.ApplicationAppeal,
+        formName: "Room and board costs",
+        applicationNumber: application.applicationNumber,
+        dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+      },
+    });
+  });
 
   it(
     "Should create step-parent waiver appeal for an application" +

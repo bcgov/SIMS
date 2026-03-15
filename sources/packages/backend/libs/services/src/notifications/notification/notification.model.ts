@@ -258,5 +258,5 @@ export interface MinistryFormSubmittedNotification {
   birthDate: string;
   formCategory: FormCategory;
   formName: string;
-  applicationNumber: string;
+  applicationNumber?: string;
 }

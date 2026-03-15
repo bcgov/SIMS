@@ -49,13 +49,3 @@ export const CHANGE_REQUEST_APPEAL_FORMS = [
   FormNames.StudentFinancialInformationAppeal,
   FormNames.PartnerInformationAndIncomeAppeal,
 ];
-
-/**
- * Notification form type category labels used in ministry form submitted notifications
- * to classify the type of form or appeal being submitted.
- */
-export const NOTIFICATION_FORM_TYPE = {
-  ApplicationAppeal: "Application appeal",
-  OtherAppeal: "Other appeal",
-  StandardForm: "Standard form",
-} as const;

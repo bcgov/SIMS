@@ -161,7 +161,7 @@ export class FormSubmissionSubmitService {
         where: { id: studentId },
       });
     // Load application number if an application is linked to this submission.
-    let applicationNumber = "N/A";
+    let applicationNumber: string | undefined;
     if (applicationId) {
       const application = await entityManager
         .getRepository(Application)
@@ -169,7 +169,7 @@ export class FormSubmissionSubmitService {
           select: { id: true, applicationNumber: true },
           where: { id: applicationId },
         });
-      applicationNumber = application?.applicationNumber ?? applicationNumber;
+      applicationNumber = application?.applicationNumber;
     }
 
     // Collect all form friendly names from the submission configs, comma-separated.
