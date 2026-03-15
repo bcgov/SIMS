@@ -868,4 +868,8 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       ],
     });
   });
+
+  afterAll(async () => {
+    await app?.close();
+  });
 });

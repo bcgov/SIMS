@@ -411,5 +411,9 @@ describe(
       });
       expect(notificationCount).toBe(0);
     });
+
+    afterAll(async () => {
+      await app?.close();
+    });
   },
 );

@@ -19,6 +19,7 @@
         :items-per-page="DEFAULT_PAGE_LIMIT"
         :items-per-page-options="ITEMS_PER_PAGE"
         @update:options="pageSortEvent"
+        :mobile="isMobile"
       >
         <template #loading>
           <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
@@ -62,6 +63,9 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
+import { useDisplay } from "vuetify";
+
+const { mobile: isMobile } = useDisplay();
 
 const router = useRouter();
 const { dateOnlyLongString, emptyStringFiller } = useFormatters();
@@ -88,7 +92,7 @@ const goToFormSubmission = (
   formSubmission: FormSubmissionPendingSummaryAPIOutDTO,
 ) => {
   router.push({
-    name: AESTRoutesConst.STUDENT_FORM_SUBMISSION_APPROVAL,
+    name: AESTRoutesConst.FORM_SUBMISSION_APPROVAL_FROM_PENDING_FORMS,
     params: { formSubmissionId: formSubmission.formSubmissionId },
   });
 };

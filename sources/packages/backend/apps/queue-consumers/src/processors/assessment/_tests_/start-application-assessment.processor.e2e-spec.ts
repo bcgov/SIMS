@@ -123,5 +123,9 @@ describe(
         createProcessInstancePayload,
       );
     });
+
+    afterAll(async () => {
+      await app?.close();
+    });
   },
 );

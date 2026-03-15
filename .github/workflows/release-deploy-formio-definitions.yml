@@ -23,9 +23,13 @@ on:
         required: true
         type: string
     secrets:
-      FORMS_SA_USER_NAME:
+      FORMS_SECRET_NAME:
         required: true
-      FORMS_SA_PASSWORD:
+      OPENSHIFT_SIMS_CREDS_NAME:
+        required: true
+      HOST_PREFIX:
+        required: true
+      OPENSHIFT_ENV_NAMESPACE:
         required: true
 
 jobs:
@@ -39,8 +43,7 @@ jobs:
       BUILD_REF: ${{ inputs.gitRef }}
       MIGRATIONS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
-      FORMS_SA_USER_NAME: ${{ secrets.FORMS_SA_USER_NAME }}
-      FORMS_SA_PASSWORD: ${{ secrets.FORMS_SA_PASSWORD }}
+      FORMS_SECRET_NAME: ${{ secrets.FORMS_SECRET_NAME }}
     steps:
       - name: Install CLI tools from OpenShift Mirror
         uses: redhat-actions/openshift-tools-installer@v1

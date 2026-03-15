@@ -4,6 +4,7 @@ import {
   Application,
   ApplicationRestrictionBypass,
   ApplicationStatus,
+  InstitutionRestriction,
   NoteType,
   OfferingIntensity,
   RestrictionActionType,
@@ -19,19 +20,20 @@ import {
 } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import {
-  ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
+  ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS,
   APPLICATION_RESTRICTION_BYPASS_NOT_FOUND,
   APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_CREATION,
-  STUDENT_RESTRICTION_IS_NOT_ACTIVE,
   APPLICATION_RESTRICTION_BYPASS_IS_NOT_ACTIVE,
-  STUDENT_RESTRICTION_NOT_FOUND,
   APPLICATION_IN_INVALID_STATE_FOR_APPLICATION_RESTRICTION_BYPASS_REMOVAL,
+  RESTRICTION_NOT_FOUND,
+  RESTRICTION_IS_NOT_ACTIVE,
+  RESTRICTION_BYPASS_NOT_ELIGIBLE,
 } from "../../constants";
 import {
-  AvailableStudentRestrictionData,
+  AvailableRestrictionData,
   BypassRestrictionData,
 } from "../../services/";
-import { NoteSharedService } from "@sims/services";
+import { NoteSharedService, RestrictedParty } from "@sims/services";
 
 /**
  * Invalid application statuses for bypass creation or removal.
@@ -51,6 +53,8 @@ export class ApplicationRestrictionBypassService {
     private readonly dataSource: DataSource,
     @InjectRepository(StudentRestriction)
     private readonly studentRestrictionRepo: Repository<StudentRestriction>,
+    @InjectRepository(InstitutionRestriction)
+    private readonly institutionRestrictionRepo: Repository<InstitutionRestriction>,
     @InjectRepository(ApplicationRestrictionBypass)
     private readonly applicationRestrictionBypassRepo: Repository<ApplicationRestrictionBypass>,
     @InjectRepository(Application)
@@ -122,6 +126,12 @@ export class ApplicationRestrictionBypassService {
             restrictionCode: true,
           },
         },
+        institutionRestriction: {
+          id: true,
+          restriction: {
+            restrictionCode: true,
+          },
+        },
         creationNote: {
           description: true,
         },
@@ -142,6 +152,7 @@ export class ApplicationRestrictionBypassService {
       },
       relations: {
         studentRestriction: { restriction: true },
+        institutionRestriction: { restriction: true },
         creationNote: true,
         removalNote: true,
         bypassCreatedBy: true,
@@ -155,13 +166,31 @@ export class ApplicationRestrictionBypassService {
   }
 
   /**
-   * Gets all available student restrictions to bypass for a given application.
+   * Gets all available restrictions to bypass for a given application.
    * @param applicationId application id.
    * @returns list of application restriction bypass options.
    */
-  async getAvailableStudentRestrictionsToBypass(
+  async getAvailableRestrictionsToBypass(
     applicationId: number,
-  ): Promise<AvailableStudentRestrictionData[]> {
+  ): Promise<AvailableRestrictionData[]> {
+    // Run both queries in parallel
+    const [studentRestrictions, institutionRestrictions] = await Promise.all([
+      this.getAvailableStudentRestrictionsToBypass(applicationId),
+      this.getAvailableInstitutionRestrictionsToBypass(applicationId),
+    ]);
+    return [...studentRestrictions, ...institutionRestrictions].sort((a, b) =>
+      a.restrictionCode.localeCompare(b.restrictionCode),
+    );
+  }
+
+  /**
+   * Gets all available student restrictions to bypass for a given application.
+   * @param applicationId application id.
+   * @returns list of available student restriction bypass options.
+   */
+  private async getAvailableStudentRestrictionsToBypass(
+    applicationId: number,
+  ): Promise<AvailableRestrictionData[]> {
     const application = await this.applicationRepo.findOne({
       select: {
         id: true,
@@ -219,38 +248,26 @@ export class ApplicationRestrictionBypassService {
         },
       },
     });
-    // In case no application is found, return an empty array.
     if (!application) {
       return [];
     }
-    const allowedRestrictionActions =
-      application.currentAssessment.offering.offeringIntensity ===
-      OfferingIntensity.fullTime
-        ? [
-            RestrictionActionType.StopFullTimeBCLoan,
-            RestrictionActionType.StopFullTimeBCGrants,
-            RestrictionActionType.StopFullTimeDisbursement,
-          ]
-        : [
-            RestrictionActionType.StopPartTimeBCGrants,
-            RestrictionActionType.StopPartTimeDisbursement,
-          ];
-
-    const bypassedStudentRestrictionIds =
+    const allowedRestrictionActions = this.getAllowedRestrictionActions(
+      application.currentAssessment.offering.offeringIntensity,
+    );
+    const bypassedStudentRestrictionIds = new Set(
       application.student.studentRestrictions
         .flatMap(
           (studentRestriction) =>
             studentRestriction.applicationRestrictionBypasses,
         )
         .filter((bypass) => bypass.isActive)
-        .map((bypass) => bypass.studentRestriction.id);
-
+        .map((bypass) => bypass.studentRestriction.id),
+    );
     const studentRestrictionsThatAreNotBypassed =
       application.student.studentRestrictions.filter(
         (studentRestriction) =>
-          !bypassedStudentRestrictionIds.includes(studentRestriction.id),
+          !bypassedStudentRestrictionIds.has(studentRestriction.id),
       );
-
     return studentRestrictionsThatAreNotBypassed
       .filter((studentRestriction) =>
         allowedRestrictionActions.some((actionType) =>
@@ -258,11 +275,119 @@ export class ApplicationRestrictionBypassService {
         ),
       )
       .map((studentRestriction) => ({
-        studentRestrictionId: studentRestriction.id,
+        restrictionId: studentRestriction.id,
         restrictionCode: studentRestriction.restriction.restrictionCode,
-        studentRestrictionCreatedAt: studentRestriction.createdAt,
-      }))
-      .sort((a, b) => a.restrictionCode.localeCompare(b.restrictionCode));
+        restrictionCreatedAt: studentRestriction.createdAt,
+        restrictedParty: RestrictedParty.Student,
+      }));
+  }
+
+  /**
+   * Gets all available institution restrictions to bypass for a given application.
+   * @param applicationId application id.
+   * @returns list of available institution restriction bypass options.
+   */
+  private async getAvailableInstitutionRestrictionsToBypass(
+    applicationId: number,
+  ): Promise<AvailableRestrictionData[]> {
+    const activeInstitutionRestrictionBypasses =
+      this.applicationRestrictionBypassRepo
+        .createQueryBuilder("applicationRestrictionBypass")
+        .select("1")
+        .where(
+          "applicationRestrictionBypass.institutionRestriction.id = institutionRestriction.id",
+        )
+        .andWhere(
+          "applicationRestrictionBypass.application.id = application.id",
+        )
+        .andWhere("applicationRestrictionBypass.isActive = true")
+        .getQuery();
+    const institutionApplication = await this.applicationRepo
+      .createQueryBuilder("application")
+      .select([
+        "application.id",
+        "currentAssessment.id",
+        "offering.id",
+        "offering.offeringIntensity",
+        "offeringProgram.id",
+        "institutionLocation.id",
+        "institution.id",
+        "institutionRestriction.id",
+        "institutionRestriction.createdAt",
+        "instRestrictionDetail.id",
+        "instRestrictionDetail.restrictionCode",
+        "instRestrictionDetail.actionType",
+      ])
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("currentAssessment.offering", "offering")
+      .innerJoin("offering.educationProgram", "offeringProgram")
+      .innerJoin("offering.institutionLocation", "institutionLocation")
+      .innerJoin("institutionLocation.institution", "institution")
+      .leftJoin(
+        "institution.restrictions",
+        "institutionRestriction",
+        "institutionRestriction.isActive = TRUE AND institutionRestriction.program = offeringProgram.id AND institutionRestriction.location = institutionLocation.id",
+      )
+      .innerJoin("institutionRestriction.restriction", "instRestrictionDetail")
+      .where("application.id = :applicationId", { applicationId })
+      .andWhere(`NOT EXISTS (${activeInstitutionRestrictionBypasses})`)
+      .getOne();
+    if (!institutionApplication) {
+      return [];
+    }
+    // Determine allowed restriction actions based on offering intensity
+    const offeringIntensity =
+      institutionApplication.currentAssessment.offering.offeringIntensity;
+    const allowedRestrictionActions =
+      this.getAllowedRestrictionActions(offeringIntensity);
+    const institutionRestrictionsThatAreNotBypassed =
+      institutionApplication.currentAssessment.offering.institutionLocation
+        .institution.restrictions;
+    // Filter by allowed restriction actions
+    const filteredInstitutionRestrictions =
+      institutionRestrictionsThatAreNotBypassed.filter(
+        (institutionRestriction) =>
+          allowedRestrictionActions.some((actionType) =>
+            institutionRestriction.restriction.actionType.includes(actionType),
+          ),
+      );
+    return filteredInstitutionRestrictions.map((institutionRestriction) => ({
+      restrictionId: institutionRestriction.id,
+      restrictionCode: institutionRestriction.restriction.restrictionCode,
+      restrictionCreatedAt: institutionRestriction.createdAt,
+      restrictedParty: RestrictedParty.Institution,
+    }));
+  }
+
+  /**
+   * Validates if a restriction is eligible for bypass.
+   * @param applicationId application Id.
+   * @param restrictionId restriction Id.
+   * @param restrictedParty restricted party (student or institution).
+   * @throws {CustomNamedError} if the restriction is not eligible for bypass with error code RESTRICTION_BYPASS_NOT_ELIGIBLE.
+   */
+  private async validateRestrictionBypassEligibility(
+    applicationId: number,
+    restrictionId: number,
+    restrictedParty: RestrictedParty,
+  ): Promise<void> {
+    let restrictions: AvailableRestrictionData[] = [];
+    if (restrictedParty === RestrictedParty.Student) {
+      restrictions =
+        await this.getAvailableStudentRestrictionsToBypass(applicationId);
+    } else {
+      restrictions =
+        await this.getAvailableInstitutionRestrictionsToBypass(applicationId);
+    }
+    const isEligible = restrictions.some(
+      (restriction) => restriction.restrictionId === restrictionId,
+    );
+    if (!isEligible) {
+      throw new CustomNamedError(
+        "Restriction is not eligible for bypass.",
+        RESTRICTION_BYPASS_NOT_ELIGIBLE,
+      );
+    }
   }
 
   /**
@@ -275,20 +400,28 @@ export class ApplicationRestrictionBypassService {
     payload: BypassRestrictionData,
     auditUserId: number,
   ): Promise<ApplicationRestrictionBypass> {
-    const checkForActiveApplicationStudentRestrictionBypassesPromise =
-      this.checkForActiveApplicationStudentRestrictionBypasses(
+    const checkForActiveApplicationRestrictionBypassesPromise =
+      this.checkForActiveApplicationRestrictionBypasses(
         payload.applicationId,
-        payload.studentRestrictionId,
+        payload.restrictionId,
+        payload.restrictedParty,
       );
-    const checkForActiveStudentRestrictionPromise =
-      this.checkForActiveStudentRestriction(payload.studentRestrictionId);
+    const checkForActiveRestrictionPromise = this.checkForActiveRestriction(
+      payload.restrictionId,
+      payload.restrictedParty,
+    );
     const checkForApplicationInValidStatePromise =
       this.checkForApplicationInValidState(payload.applicationId);
     await Promise.all([
-      checkForActiveApplicationStudentRestrictionBypassesPromise,
-      checkForActiveStudentRestrictionPromise,
+      checkForActiveApplicationRestrictionBypassesPromise,
+      checkForActiveRestrictionPromise,
       checkForApplicationInValidStatePromise,
     ]);
+    await this.validateRestrictionBypassEligibility(
+      payload.applicationId,
+      payload.restrictionId,
+      payload.restrictedParty,
+    );
     const studentApplication = await this.applicationRepo.findOne({
       select: {
         student: { id: true },
@@ -308,19 +441,28 @@ export class ApplicationRestrictionBypassService {
       );
       const now = new Date();
       const auditUser = { id: auditUserId } as User;
+      const bypass: Partial<ApplicationRestrictionBypass> = {
+        application: { id: payload.applicationId } as Application,
+        isActive: true,
+        bypassCreatedDate: now,
+        bypassCreatedBy: auditUser,
+        creator: auditUser,
+        createdAt: now,
+        bypassBehavior: payload.bypassBehavior,
+        creationNote: noteObj,
+      };
+      if (payload.restrictedParty === RestrictedParty.Student) {
+        bypass.studentRestriction = {
+          id: payload.restrictionId,
+        } as StudentRestriction;
+      } else {
+        bypass.institutionRestriction = {
+          id: payload.restrictionId,
+        } as InstitutionRestriction;
+      }
       return transactionalEntityManager
         .getRepository(ApplicationRestrictionBypass)
-        .save({
-          application: { id: payload.applicationId },
-          studentRestriction: { id: payload.studentRestrictionId },
-          isActive: true,
-          bypassCreatedDate: now,
-          bypassCreatedBy: auditUser,
-          creator: auditUser,
-          createdAt: now,
-          bypassBehavior: payload.bypassBehavior,
-          creationNote: noteObj,
-        });
+        .save(bypass);
     });
   }
 
@@ -352,62 +494,109 @@ export class ApplicationRestrictionBypassService {
   }
 
   /**
-   * Checks if a student restriction is active.
-   * Throws an error if the student restriction is not found
+   * Checks if a restriction is active.
+   * Throws an error if the restriction is not found
    * or if it is not active.
-   * @param studentRestrictionId id of the student restriction to check.
+   * @param restrictionId id of the restriction to check.
+   * @param restrictionType type of the restriction to check.
    */
-  private async checkForActiveStudentRestriction(
-    studentRestrictionId: number,
+  private async checkForActiveRestriction(
+    restrictionId: number,
+    restrictionType: RestrictedParty,
   ): Promise<void> {
-    const studentRestriction = await this.studentRestrictionRepo.findOne({
-      select: {
-        isActive: true,
-      },
-      where: {
-        id: studentRestrictionId,
-      },
-    });
-    if (!studentRestriction) {
-      throw new CustomNamedError(
-        "Could not find student restriction for the given id.",
-        STUDENT_RESTRICTION_NOT_FOUND,
-      );
+    if (restrictionType === RestrictedParty.Institution) {
+      const institutionRestriction =
+        await this.institutionRestrictionRepo.findOne({
+          select: {
+            isActive: true,
+          },
+          where: {
+            id: restrictionId,
+          },
+        });
+      if (!institutionRestriction) {
+        throw new CustomNamedError(
+          "Could not find institution restriction for the given id.",
+          RESTRICTION_NOT_FOUND,
+        );
+      }
+      if (!institutionRestriction.isActive) {
+        throw new CustomNamedError(
+          "Cannot create a bypass when institution restriction is not active.",
+          RESTRICTION_IS_NOT_ACTIVE,
+        );
+      }
     }
-    if (studentRestriction.isActive === false) {
-      throw new CustomNamedError(
-        "Cannot create a bypass when student restriction is not active.",
-        STUDENT_RESTRICTION_IS_NOT_ACTIVE,
-      );
+    if (restrictionType === RestrictedParty.Student) {
+      const studentRestriction = await this.studentRestrictionRepo.findOne({
+        select: {
+          isActive: true,
+        },
+        where: {
+          id: restrictionId,
+        },
+      });
+      if (!studentRestriction) {
+        throw new CustomNamedError(
+          "Could not find student restriction for the given id.",
+          RESTRICTION_NOT_FOUND,
+        );
+      }
+      if (!studentRestriction.isActive) {
+        throw new CustomNamedError(
+          "Cannot create a bypass when student restriction is not active.",
+          RESTRICTION_IS_NOT_ACTIVE,
+        );
+      }
     }
   }
 
   /**
-   * Checks if there is an active application student restriction bypass.
+   * Returns the allowed restriction actions for a given offering intensity.
+   * @param offeringIntensity offering intensity to check.
+   * @returns allowed restriction actions.
+   */
+  private getAllowedRestrictionActions(
+    offeringIntensity: OfferingIntensity,
+  ): RestrictionActionType[] {
+    switch (offeringIntensity) {
+      case OfferingIntensity.fullTime:
+        return [
+          RestrictionActionType.StopFullTimeBCLoan,
+          RestrictionActionType.StopFullTimeBCGrants,
+          RestrictionActionType.StopFullTimeDisbursement,
+        ];
+      case OfferingIntensity.partTime:
+        return [
+          RestrictionActionType.StopPartTimeBCGrants,
+          RestrictionActionType.StopPartTimeDisbursement,
+        ];
+      default:
+        throw new Error("Invalid offering intensity.");
+    }
+  }
+
+  /**
+   * Checks if there is an active application restriction bypass.
    * Throws an error if there is an active bypass for the same active student restriction id.
    * @param applicationId id of the application to check.
-   * @param studentRestrictionId id of the student restriction to check.
+   * @param restrictionId id of the restriction to check.
+   * @param restrictionType type of the restriction to check.
    */
-  private async checkForActiveApplicationStudentRestrictionBypasses(
+  private async checkForActiveApplicationRestrictionBypasses(
     applicationId: number,
-    studentRestrictionId: number,
+    restrictionId: number,
+    restrictedParty: RestrictedParty,
   ): Promise<void> {
-    const existsActiveStudentRestriction =
-      await this.applicationRestrictionBypassRepo.exists({
-        where: {
-          application: {
-            id: applicationId,
-          },
-          studentRestriction: {
-            id: studentRestrictionId,
-          },
-          isActive: true,
-        },
-      });
-    if (existsActiveStudentRestriction) {
+    const existsActiveRestrictionBypass = await this.checkIfActiveBypassExists(
+      applicationId,
+      restrictionId,
+      restrictedParty,
+    );
+    if (existsActiveRestrictionBypass) {
       throw new CustomNamedError(
-        "Cannot create a bypass when there is an active bypass for the same active student restriction.",
-        ACTIVE_BYPASS_FOR_STUDENT_RESTRICTION_ALREADY_EXISTS,
+        "Cannot create a bypass when there is an active bypass for the same active restriction.",
+        ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS,
       );
     }
   }
@@ -581,5 +770,39 @@ export class ApplicationRestrictionBypassService {
       );
     }
     return updateResult;
+  }
+
+  /**
+   * Checks if there is an active application restriction bypass for the given application and restriction.
+   * @param applicationId id of the application to check.
+   * @param restrictionId id of the restriction to check.
+   * @param restrictedParty the party that is restricted.
+   * @returns true if there is an active bypass, false otherwise.
+   */
+  private async checkIfActiveBypassExists(
+    applicationId: number,
+    restrictionId: number,
+    restrictedParty: RestrictedParty,
+  ): Promise<boolean> {
+    const studentRestrictionId =
+      restrictedParty === RestrictedParty.Student ? restrictionId : undefined;
+    const institutionRestrictionId =
+      restrictedParty === RestrictedParty.Institution
+        ? restrictionId
+        : undefined;
+    return this.applicationRestrictionBypassRepo.exists({
+      where: {
+        application: {
+          id: applicationId,
+        },
+        studentRestriction: {
+          id: studentRestrictionId,
+        },
+        institutionRestriction: {
+          id: institutionRestrictionId,
+        },
+        isActive: true,
+      },
+    });
   }
 }

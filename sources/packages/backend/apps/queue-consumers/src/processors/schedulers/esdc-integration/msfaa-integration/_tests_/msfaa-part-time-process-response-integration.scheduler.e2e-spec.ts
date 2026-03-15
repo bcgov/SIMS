@@ -544,5 +544,9 @@ describe(
       // Assert that the file was not archived on SFTP.
       expect(sftpClientMock.rename).not.toHaveBeenCalled();
     });
+
+    afterAll(async () => {
+      await app?.close();
+    });
   },
 );

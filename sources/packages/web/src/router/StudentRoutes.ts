@@ -355,6 +355,25 @@ export const studentRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: AppRoutes.StudentFormSubmissionView,
+        name: StudentRoutesConst.STUDENT_FORMS_SUBMISSION_VIEW_FROM_HISTORY,
+        component: FormSubmissionView,
+        props: (route) => ({
+          formSubmissionId: Number.parseInt(
+            route.params.formSubmissionId as string,
+          ),
+          backTarget: {
+            name: "Forms",
+            to: {
+              name: StudentRoutesConst.STUDENT_FORMS_HISTORY,
+            },
+          },
+        }),
+        meta: {
+          clientType: ClientIdType.Student,
+        },
+      },
+      {
         path: AppRoutes.RequestChange,
         name: StudentRoutesConst.STUDENT_REQUEST_CHANGE,
         component: LegacyStudentAppealRequest,

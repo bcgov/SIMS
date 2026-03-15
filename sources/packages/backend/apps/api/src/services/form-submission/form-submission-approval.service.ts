@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { DataSource, Repository } from "typeorm";
+import { DataSource } from "typeorm";
 import { Role } from "../../auth";
 import {
   User,
@@ -41,74 +40,7 @@ export class FormSubmissionApprovalService {
     private readonly noteSharedService: NoteSharedService,
     private readonly formSubmissionActionProcessor: FormSubmissionActionProcessor,
     private readonly notificationActionsService: NotificationActionsService,
-    @InjectRepository(FormSubmission)
-    private readonly formSubmissionRepo: Repository<FormSubmission>,
   ) {}
-
-  /**
-   * Gets a form submission by its ID.
-   * @param formSubmissionId The ID of the form submission to retrieve.
-   * @param options optional filters.
-   * - `itemId`: if provided, returns only the form submission item with the specified ID in the
-   * form submission items array.
-   * @returns The form submission if found, otherwise null.
-   */
-  async getFormSubmissionById(
-    formSubmissionId: number,
-    options?: { itemId?: number },
-  ): Promise<FormSubmission | null> {
-    return this.formSubmissionRepo.findOne({
-      select: {
-        id: true,
-        submissionStatus: true,
-        submittedDate: true,
-        formCategory: true,
-        formSubmissionItems: {
-          id: true,
-          dynamicFormConfiguration: {
-            id: true,
-            formType: true,
-            formCategory: true,
-            formDefinitionName: true,
-          },
-          currentDecision: {
-            id: true,
-            decisionStatus: true,
-            decisionDate: true,
-            decisionBy: { id: true, firstName: true, lastName: true },
-            decisionNote: { id: true, description: true },
-          },
-          decisions: {
-            id: true,
-            decisionStatus: true,
-            decisionDate: true,
-            decisionBy: { id: true, firstName: true, lastName: true },
-            decisionNote: { id: true, description: true },
-          },
-          submittedData: true,
-          updatedAt: true,
-        },
-      },
-      relations: {
-        formSubmissionItems: {
-          dynamicFormConfiguration: true,
-          currentDecision: {
-            decisionBy: true,
-            decisionNote: true,
-          },
-          decisions: {
-            decisionBy: true,
-            decisionNote: true,
-          },
-        },
-      },
-      where: {
-        id: formSubmissionId,
-        formSubmissionItems: { id: options?.itemId },
-      },
-      order: { formSubmissionItems: { id: "ASC", decisions: { id: "DESC" } } },
-    });
-  }
 
   /**
    * Saves a decision to be associated with a form submission item, saving the decision

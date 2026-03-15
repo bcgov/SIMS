@@ -56,6 +56,14 @@ export default defineComponent({
         }),
       },
       {
+        label: "Forms",
+        icon: "fa:fas fa-inbox",
+        command: () => ({
+          name: InstitutionRoutesConst.STUDENT_FORM_SUBMISSION_HISTORY,
+          params: { studentId: props.studentId },
+        }),
+      },
+      {
         label: "Restrictions",
         icon: "fa:far fa-times-circle",
         command: () => ({

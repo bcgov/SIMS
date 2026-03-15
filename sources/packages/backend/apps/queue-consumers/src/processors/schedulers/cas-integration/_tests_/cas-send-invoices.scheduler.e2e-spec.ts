@@ -366,4 +366,8 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     );
     return casInvoiceBatch.id;
   }
+
+  afterAll(async () => {
+    await app?.close();
+  });
 });

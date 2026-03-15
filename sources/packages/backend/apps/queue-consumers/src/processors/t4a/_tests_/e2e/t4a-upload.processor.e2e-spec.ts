@@ -418,4 +418,8 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
       expect.stringContaining(join(T4A_ARCHIVE_FOLDER, SIN_NUMBER)),
     );
   });
+
+  afterAll(async () => {
+    await app?.close();
+  });
 });

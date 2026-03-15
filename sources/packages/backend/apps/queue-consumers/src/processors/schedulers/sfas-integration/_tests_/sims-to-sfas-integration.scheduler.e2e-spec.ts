@@ -497,7 +497,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
           offeringIntensity: OfferingIntensity.partTime,
         },
       );
-      db.studentAssessment.update(
+      await db.studentAssessment.update(
         {
           id: application.currentAssessment.id,
         },
@@ -878,4 +878,8 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       DATE_FORMAT,
     )}${restrictionRemovalDate}`;
   }
+
+  afterAll(async () => {
+    await app?.close();
+  });
 });

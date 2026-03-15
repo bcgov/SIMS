@@ -62,6 +62,7 @@ import InProgress from "@/views/institution/locations/request-a-change/request-a
 import Completed from "@/views/institution/locations/request-a-change/request-a-change/Completed.vue";
 import Reports from "@/views/institution/Reports.vue";
 import FormSubmissionView from "@/views/institution/student/StudentFormSubmissionView.vue";
+import StudentFormSubmissionHistory from "@/views/institution/student/StudentFormSubmissionHistory.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -687,6 +688,22 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             },
           },
           {
+            path: AppRoutes.FormSubmissionHistory,
+            name: InstitutionRoutesConst.STUDENT_FORM_SUBMISSION_HISTORY,
+            component: StudentFormSubmissionHistory,
+            props: (route) => ({
+              studentId: Number.parseInt(route.params.studentId as string),
+            }),
+            meta: {
+              clientType: ClientIdType.Institution,
+              institutionUserTypes: [
+                InstitutionUserTypes.admin,
+                InstitutionUserTypes.user,
+                InstitutionUserTypes.readOnlyUser,
+              ],
+            },
+          },
+          {
             path: AppRoutes.Restrictions,
             name: InstitutionRoutesConst.STUDENT_RESTRICTIONS,
             props: true,
@@ -826,6 +843,34 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             component: NoticeOfAssessment,
           },
         ],
+      },
+      {
+        path: AppRoutes.InstitutionStudentFormSubmissionView,
+        name: InstitutionRoutesConst.STUDENT_FORM_SUBMISSION_VIEW_FROM_HISTORY,
+        component: FormSubmissionView,
+        props: (route) => ({
+          studentId: Number.parseInt(route.params.studentId as string),
+          formSubmissionId: Number.parseInt(
+            route.params.formSubmissionId as string,
+          ),
+          backTarget: {
+            name: "Student details",
+            to: {
+              name: InstitutionRoutesConst.STUDENT_FORM_SUBMISSION_HISTORY,
+              params: {
+                studentId: route.params.studentId,
+              },
+            },
+          },
+        }),
+        meta: {
+          clientType: ClientIdType.Institution,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
+          ],
+        },
       },
     ],
     beforeEnter: (to, _from, next) => {

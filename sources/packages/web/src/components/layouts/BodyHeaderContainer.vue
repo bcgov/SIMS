@@ -1,7 +1,7 @@
 <template>
   <div class="mb-5">
     <v-card v-if="enableCardView">
-      <v-container>
+      <v-container :fluid="true">
         <slot name="header"></slot>
         <slot></slot>
       </v-container>

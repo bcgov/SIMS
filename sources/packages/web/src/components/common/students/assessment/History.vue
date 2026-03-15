@@ -55,8 +55,8 @@
             <template #[`item.assessment`]="{ item }">
               <v-btn
                 v-if="!item.hasUnsuccessfulWeeks"
+                :disabled="!item.assessmentDate"
                 @click="$emit('viewAssessment', item.assessmentId)"
-                variant="outlined"
                 color="primary"
               >
                 View</v-btn

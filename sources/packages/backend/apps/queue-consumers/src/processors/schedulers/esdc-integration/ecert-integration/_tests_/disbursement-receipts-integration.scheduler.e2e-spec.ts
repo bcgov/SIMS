@@ -895,5 +895,9 @@ describe(
       });
       return receiptAwards;
     }
+
+    afterAll(async () => {
+      await app?.close();
+    });
   },
 );

@@ -10,6 +10,7 @@ import {
   FormSubmissionPendingSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   FormSubmissionAPIOutDTO,
+  FormSubmissionsAPIOutDTO,
 } from "@/services/http/dto";
 import {
   FormCategory,
@@ -106,13 +107,20 @@ export class FormSubmissionApi extends HttpBaseClient {
     return this.getCall(this.addClientRoot("form-submission/forms"));
   }
 
-  // TODO: To be implemented.
-  async getFormSubmissionSummary(): Promise<{
-    submissions: FormSubmissionAPIOutDTO[];
-  }> {
-    return {
-      submissions: MOCKED_SUBMISSIONS,
-    };
+  /**
+   * Gets the list of form submissions for the student, including the individual form items and their details.
+   * For institutions, the form submissions with application scope will be restricted to the locations the user has access,
+   * while all form submissions without application scope can be retrieved as long as the user has access to the student data.
+   * @returns list of form submissions for the student.
+   */
+  async getFormSubmissionHistory(
+    studentId?: number,
+  ): Promise<FormSubmissionsAPIOutDTO> {
+    let url = "form-submission";
+    if (studentId) {
+      url += `/student/${studentId}`;
+    }
+    return this.getCall(this.addClientRoot(url));
   }
 
   /**
@@ -125,19 +133,18 @@ export class FormSubmissionApi extends HttpBaseClient {
    * @param options.
    * - `studentId`: optional ID used to validate the institution access to the student data.
    * Must be provided with `applicationId`.
-   * - `applicationId`: optional ID used to validate the institution access to the application data.
-   * Must be provided with `studentId`.
    * - `itemId`: optional ID of the form submission item to filter the details for.
    * @returns form submission details including individual form items and their details.
    */
   async getFormSubmission(
     formSubmissionId: number,
-    options?: { studentId?: number; applicationId?: number; itemId?: number },
+    options?: { studentId?: number; itemId?: number },
   ): Promise<FormSubmissionAPIOutDTO | FormSubmissionMinistryAPIOutDTO> {
     let url = `form-submission/${formSubmissionId}`;
-    if (options?.studentId && options?.applicationId) {
-      // Used for institutions to validate the access to the student and application data related to the form submission.
-      url = `form-submission/student/${options.studentId}/application/${options.applicationId}/${url}`;
+    if (options?.studentId) {
+      // Used for institutions to validate the access to the student data.
+      // Used by the Ministry to request a specific student.
+      url = `form-submission/student/${options.studentId}/${url}`;
     }
     if (options?.itemId) {
       // Used by the Ministry to filter the form submission details for a specific form item during the approval process.

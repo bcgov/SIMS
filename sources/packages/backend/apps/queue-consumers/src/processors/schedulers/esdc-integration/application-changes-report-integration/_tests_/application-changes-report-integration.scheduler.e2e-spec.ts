@@ -413,5 +413,9 @@ describe(
     function formatFileNameDate(date: Date): string {
       return dayjs(date).format("YYYY-MM-DD_HH.mm.ss");
     }
+
+    afterAll(async () => {
+      await app?.close();
+    });
   },
 );

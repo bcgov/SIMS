@@ -48,7 +48,7 @@
     />
   </student-page-container>
   <confirm-modal
-    title="Edit application"
+    :title="editApplicationModalTitle"
     ref="editApplicationModal"
     ok-label="Submit"
     cancel-label="No"
@@ -62,10 +62,10 @@
       >
         <template #label>
           <template v-if="changeRequest"
-            >I acknowledge that by editing my application, I may be required to
-            resubmit previously approved exception requests and my parent or
-            partner may be required to resubmit supporting
-            information.</template
+            >I acknowledge that by changing my application there may be changes
+            to my financial aid assessment. I understand that this request will
+            be reviewed by StudentAid BC and additional supporting information
+            may need to be submitted by me, my parent, or my partner.</template
           >
           <template v-else
             >I acknowledge that by editing my application, I may be required to
@@ -101,7 +101,7 @@
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { onMounted, ref, defineComponent } from "vue";
+import { onMounted, ref, defineComponent, computed } from "vue";
 import { StudentService } from "@/services/StudentService";
 import { ApplicationService } from "@/services/ApplicationService";
 import {
@@ -146,6 +146,7 @@ export default defineComponent({
     },
     readOnly: {
       type: String,
+      default: undefined,
     },
     programYearId: {
       type: Number,
@@ -464,6 +465,11 @@ export default defineComponent({
         applicationWizard.submit();
       }
     };
+
+    const editApplicationModalTitle = computed(() => {
+      return props.changeRequest ? "Change request" : "Edit application";
+    });
+
     return {
       initialData,
       isStudyEndDateWithinDeadline,
@@ -485,6 +491,7 @@ export default defineComponent({
       conditionsAccepted,
       BannerTypes,
       isDataReady,
+      editApplicationModalTitle,
     };
   },
 });

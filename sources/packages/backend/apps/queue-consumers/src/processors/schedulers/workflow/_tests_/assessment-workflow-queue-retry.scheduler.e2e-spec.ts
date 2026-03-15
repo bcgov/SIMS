@@ -183,5 +183,9 @@ describe(
         queueData,
       );
     });
+
+    afterAll(async () => {
+      await app?.close();
+    });
   },
 );
