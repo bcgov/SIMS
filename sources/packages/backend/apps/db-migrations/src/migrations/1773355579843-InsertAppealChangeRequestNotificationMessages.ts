@@ -1,9 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class InsertAppealChangeRequestNotificationMessages1773355579843
-  implements MigrationInterface
-{
+export class InsertAppealChangeRequestNotificationMessages1773355579843 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
