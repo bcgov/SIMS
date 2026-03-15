@@ -606,7 +606,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationNumber: string,
     entityManager: EntityManager,
   ): Promise<void> {
-    const student = await entityManager.getRepository(Student).findOne({
+    const student = await entityManager.getRepository(Student).findOneOrFail({
       select: {
         id: true,
         birthDate: true,

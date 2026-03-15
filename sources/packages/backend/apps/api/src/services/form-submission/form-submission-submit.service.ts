@@ -151,7 +151,7 @@ export class FormSubmissionSubmitService {
     // Load student info required for the notification.
     const studentForNotification = await entityManager
       .getRepository(Student)
-      .findOne({
+      .findOneOrFail({
         select: {
           id: true,
           birthDate: true,

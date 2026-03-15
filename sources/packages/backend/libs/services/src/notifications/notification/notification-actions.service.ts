@@ -1512,7 +1512,7 @@ export class NotificationActionsService {
     }
 
     let formCategory: string = NOTIFICATION_FORM_TYPE.StandardForm;
-    if (notification.formCategory == FormCategory.StudentAppeal) {
+    if (notification.formCategory === FormCategory.StudentAppeal) {
       if (notification.applicationNumber) {
         formCategory = NOTIFICATION_FORM_TYPE.ApplicationAppeal;
       } else {

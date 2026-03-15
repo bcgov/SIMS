@@ -162,7 +162,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         loadEagerRelations: false,
       });
 
-    // Check if the submission is for new appeal process(appeal process is for submissions from 2025-26 program year).
+    // Check if the submission is for new appeal process (appeal process is for submissions from 2025-26 program year).
     const isLegacyChangeRequest =
       studentAppeal.application !== null &&
       !allowApplicationChangeRequest(studentAppeal.application.programYear);

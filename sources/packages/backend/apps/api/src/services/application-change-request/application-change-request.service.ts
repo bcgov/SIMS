@@ -175,7 +175,7 @@ export class ApplicationChangeRequestService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const student = await entityManager.getRepository(Student).findOne({
+    const student = await entityManager.getRepository(Student).findOneOrFail({
       select: {
         id: true,
         user: { id: true, firstName: true, lastName: true, email: true },
