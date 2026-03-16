@@ -78,7 +78,7 @@ export class InstitutionLocationAPIInDTO
 
 export interface InstitutionLocationFormAPIOutDTO extends AddressDetailsFormAPIDTO {
   locationName: string;
-  institutionCode: string;
+  institutionCode: string | null;
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactEmail: string;
@@ -92,7 +92,7 @@ export interface InstitutionLocationAPIOutDTO {
     address: AddressAPIOutDTO;
   };
   primaryContact: InstitutionPrimaryContactAPIOutDTO;
-  institutionCode?: string;
+  institutionCode: string | null;
   designationStatus: DesignationAgreementStatus;
 }
 
