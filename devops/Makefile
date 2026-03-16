@@ -241,7 +241,7 @@ init-secrets:
 
 init-print-secrets:
 	@echo "++\n Deploy print SIMS Creds Secrets $(NAMESPACE) \n++"
-	@oc -n $(NAMESPACE) process -f openshift/init-secrets.yml \
+	@oc -n $(NAMESPACE) process -f openshift/print-secrets.yml \
 		-p NAME=sims-creds-print \
 		-p SECRET_NAME=sims-print-dev-creds \
 		-p API_PORT=$(API_PORT) \
