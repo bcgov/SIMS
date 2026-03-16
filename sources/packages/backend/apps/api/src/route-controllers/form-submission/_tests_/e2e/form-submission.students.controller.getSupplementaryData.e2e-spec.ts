@@ -87,10 +87,10 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource);
       // Create supporting users.
-      const [parent1, parent2] = Array.from({ length: 2 }, () =>
+      const [parent1, parent2] = Array.from({ length: 2 }, (_, index) =>
         createFakeSupportingUser(
           { application },
-          { initialValues: { supportingUserType: SupportingUserType.Parent } },
+          { initialValues: { supportingUserType: SupportingUserType.Parent, fullName: `Parent ${index + 1}` } },
         ),
       );
       await db.supportingUser.save([parent1, parent2]);
@@ -147,7 +147,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
       // Create supporting users.
       const parent = createFakeSupportingUser(
         { application },
-        { initialValues: { supportingUserType: SupportingUserType.Parent } },
+        { initialValues: { supportingUserType: SupportingUserType.Parent, fullName:  "Parent 1" } },
       );
       await db.supportingUser.save([parent]);
 
