@@ -40,16 +40,20 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     const auditUser = { id: auditUserId } as User;
     const institution = { id: institutionId };
 
-    const isInstitutionCodeDuplicate = await this.hasLocationCodeForInstitution(
-      data.institutionCode,
-      { institutionId },
-    );
+    const hasInstitutionCode = !!data.institutionCode?.trim();
 
-    if (isInstitutionCodeDuplicate) {
-      throw new CustomNamedError(
-        "Duplicate institution location code.",
-        DUPLICATE_INSTITUTION_LOCATION_CODE,
-      );
+    if (hasInstitutionCode) {
+      const isInstitutionCodeDuplicate =
+        await this.hasLocationCodeForInstitution(data.institutionCode, {
+          institutionId,
+        });
+
+      if (isInstitutionCodeDuplicate) {
+        throw new CustomNamedError(
+          "Duplicate institution location code.",
+          DUPLICATE_INSTITUTION_LOCATION_CODE,
+        );
+      }
     }
 
     const saveLocation: InstitutionLocation = {
@@ -64,7 +68,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         phone: data.primaryContactPhone,
       },
       institution: institution,
-      institutionCode: data.institutionCode,
+      institutionCode: hasInstitutionCode ? data.institutionCode : null,
       creator: auditUser,
     } as InstitutionLocation;
 
@@ -108,16 +112,24 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     locationId: number,
     auditUserId: number,
   ): Promise<InstitutionLocation> {
-    const isInstitutionCodeDuplicate = await this.hasLocationCodeForInstitution(
-      institutionLocationData.institutionCode,
-      { locationId },
-    );
+    const hasInstitutionCode =
+      !!institutionLocationData.institutionCode?.trim();
 
-    if (isInstitutionCodeDuplicate) {
-      throw new CustomNamedError(
-        "Duplicate institution location code.",
-        DUPLICATE_INSTITUTION_LOCATION_CODE,
-      );
+    if (hasInstitutionCode) {
+      const isInstitutionCodeDuplicate =
+        await this.hasLocationCodeForInstitution(
+          institutionLocationData.institutionCode,
+          {
+            locationId,
+          },
+        );
+
+      if (isInstitutionCodeDuplicate) {
+        throw new CustomNamedError(
+          "Duplicate institution location code.",
+          DUPLICATE_INSTITUTION_LOCATION_CODE,
+        );
+      }
     }
 
     const saveLocation: InstitutionLocation = {
@@ -131,7 +143,9 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         email: institutionLocationData.primaryContactEmail,
         phone: institutionLocationData.primaryContactPhone,
       },
-      institutionCode: institutionLocationData.institutionCode,
+      institutionCode: hasInstitutionCode
+        ? institutionLocationData.institutionCode
+        : null,
       id: locationId,
       modifier: { id: auditUserId } as User,
     } as InstitutionLocation;
@@ -332,7 +346,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   async getLocation(
     locationId: number,
   ): Promise<LocationWithDesignationStatus> {
-    return this.buildLocationQuery(locationId, undefined).getRawOne();
+    return this.buildLocationQuery(locationId).getRawOne();
   }
 
   /**

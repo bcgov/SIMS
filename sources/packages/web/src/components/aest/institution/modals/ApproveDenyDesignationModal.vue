@@ -1,6 +1,6 @@
 <template>
   <v-form ref="approveDenyDesignation">
-    <modal-dialog-base :showDialog="showDialog" :title="title">
+    <modal-dialog-base :show-dialog="showDialog" :title="title">
       <template #content>
         <error-summary :errors="approveDenyDesignation.errors" />
         <p class="label-value">{{ subTitle }}</p>
@@ -28,21 +28,42 @@
                 hide-details="auto" /></v-col></v-row
           ><v-divider-opaque />
           <h4 class="label-bold color-blue">Designate locations</h4>
-          <v-row
+          <template
             v-for="(item, index) in formModel.locationsDesignations"
             :key="index"
-            ><v-col
-              ><title-value
-                :propertyTitle="item.locationName"
-                :propertyValue="item.locationAddress" /></v-col
-            ><v-col
-              ><v-checkbox
-                class="float-right"
-                color="primary"
-                v-model="item.approved"
-                hide-details="auto" /></v-col
-          ></v-row> </content-group
-        ><v-textarea
+          >
+            <v-row>
+              <v-col>
+                <title-value
+                  :property-title="item.locationName"
+                  :property-value="item.locationAddress"
+                />
+                <title-value :property-title="item.institutionCode ?? ''" />
+              </v-col>
+              <v-col cols="auto">
+                <v-checkbox
+                  color="primary"
+                  v-model="item.approved"
+                  :hide-details="true"
+                  :rules="[
+                    (v: boolean) =>
+                      !v ||
+                      !!item.institutionCode ||
+                      'No institution location code',
+                  ]"
+                />
+              </v-col>
+            </v-row>
+            <v-row v-if="item.approved && !item.institutionCode" class="mt-0">
+              <v-col class="text-right pt-0">
+                <span class="text-error d-block"
+                  >No institution location code</span
+                >
+              </v-col>
+            </v-row>
+          </template>
+        </content-group>
+        <v-textarea
           class="mt-4"
           label="Notes"
           placeholder="Long text..."
@@ -58,11 +79,13 @@
           <template #="{ notAllowed }">
             <footer-buttons
               :processing="processing"
-              :primaryLabel="submitLabel"
-              @primaryClick="submit"
-              @secondaryClick="cancel"
-              :disablePrimaryButton="notAllowed" /></template
-        ></check-permission-role>
+              :primary-label="submitLabel"
+              @primary-click="submit"
+              @secondary-click="cancel"
+              :disable-primary-button="notAllowed"
+            />
+          </template>
+        </check-permission-role>
       </template>
     </modal-dialog-base>
   </v-form>
@@ -70,16 +93,14 @@
 
 <script lang="ts">
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import {
-  UpdateDesignationDetailsAPIInDTO,
-  DesignationAgreementStatus,
-} from "@/services/http/dto";
+import { DesignationAgreementStatus } from "@/services/http/dto";
 import { useModalDialog, useRules } from "@/composables";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { Role, VForm } from "@/types";
 import { ref, reactive, defineComponent } from "vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
+import { UpdateDesignationDetailsModel } from "@/components/partial-view/DesignationAgreement/DesignationAgreementForm.models";
 
 export default defineComponent({
   components: {
@@ -100,9 +121,9 @@ export default defineComponent({
       showDialog,
       resolvePromise,
       showModal: showModalInternal,
-    } = useModalDialog<UpdateDesignationDetailsAPIInDTO | boolean>();
+    } = useModalDialog<UpdateDesignationDetailsModel | boolean>();
     const approveDenyDesignation = ref({} as VForm);
-    const formModel = reactive({} as UpdateDesignationDetailsAPIInDTO);
+    const formModel = reactive({} as UpdateDesignationDetailsModel);
     const title = ref("");
     const subTitle = ref("");
     const submitLabel = ref("");
@@ -110,7 +131,7 @@ export default defineComponent({
     const { checkNotesLengthRule, checkStringDateFormatRule } = useRules();
 
     //Setting the title values based on the DesignationAgreementStatus status passed to show modal.
-    const showModal = async (designation: UpdateDesignationDetailsAPIInDTO) => {
+    const showModal = async (designation: UpdateDesignationDetailsModel) => {
       formModel.note = "";
       formModel.designationStatus = designation.designationStatus;
       formModel.locationsDesignations = designation.locationsDesignations;

@@ -18,7 +18,8 @@ export interface LocationWithDesignationStatus {
  */
 export interface InstitutionLocationModel extends AddressInfo {
   locationName: string;
-  institutionCode: string;
+  institutionCode?: string;
+  noInstitutionCode?: boolean;
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactEmail: string;
