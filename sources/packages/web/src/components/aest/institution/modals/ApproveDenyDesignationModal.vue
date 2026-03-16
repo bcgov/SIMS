@@ -38,7 +38,11 @@
                   :property-title="item.locationName"
                   :property-value="item.locationAddress"
                 />
-                <title-value :property-title="item.institutionCode ?? ''" />
+                <title-value
+                  v-if="item.institutionCode"
+                  property-title="Institution location code"
+                  :property-value="item.institutionCode"
+                />
               </v-col>
               <v-col cols="auto">
                 <v-checkbox

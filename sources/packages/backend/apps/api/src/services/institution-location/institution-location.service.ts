@@ -40,11 +40,12 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     const auditUser = { id: auditUserId } as User;
     const institution = { id: institutionId };
 
-    const hasInstitutionCode = !!data.institutionCode?.trim();
+    const normalizedInstitutionCode = data.institutionCode?.trim();
+    const hasInstitutionCode = !!normalizedInstitutionCode;
 
     if (hasInstitutionCode) {
       const isInstitutionCodeDuplicate =
-        await this.hasLocationCodeForInstitution(data.institutionCode, {
+        await this.hasLocationCodeForInstitution(normalizedInstitutionCode, {
           institutionId,
         });
 
@@ -68,7 +69,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         phone: data.primaryContactPhone,
       },
       institution: institution,
-      institutionCode: hasInstitutionCode ? data.institutionCode : null,
+      institutionCode: normalizedInstitutionCode,
       creator: auditUser,
     } as InstitutionLocation;
 
@@ -114,15 +115,15 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   ): Promise<InstitutionLocation> {
     const hasInstitutionCode =
       !!institutionLocationData.institutionCode?.trim();
+    const normalizedInstitutionCode = hasInstitutionCode
+      ? institutionLocationData.institutionCode.trim()
+      : null;
 
     if (hasInstitutionCode) {
       const isInstitutionCodeDuplicate =
-        await this.hasLocationCodeForInstitution(
-          institutionLocationData.institutionCode,
-          {
-            locationId,
-          },
-        );
+        await this.hasLocationCodeForInstitution(normalizedInstitutionCode, {
+          locationId,
+        });
 
       if (isInstitutionCodeDuplicate) {
         throw new CustomNamedError(
@@ -143,9 +144,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         email: institutionLocationData.primaryContactEmail,
         phone: institutionLocationData.primaryContactPhone,
       },
-      institutionCode: hasInstitutionCode
-        ? institutionLocationData.institutionCode
-        : null,
+      institutionCode: normalizedInstitutionCode,
       id: locationId,
       modifier: { id: auditUserId } as User,
     } as InstitutionLocation;

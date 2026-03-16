@@ -88,7 +88,7 @@ export class InstitutionLocationAPIOutDTO {
     address: AddressAPIOutDTO;
   };
   primaryContact: InstitutionPrimaryContactAPIOutDTO;
-  institutionCode?: string;
+  institutionCode?: string | null;
   designationStatus: DesignationStatus;
 }
 
