@@ -31,12 +31,12 @@ export abstract class SupplementaryDataBaseLoader<
    * The loader should add a new property to this object using its dataKey, and assign the loaded data to that property.
    * The resultSupplementaryData object is shared among all loaders, so they can load different pieces of supplementary
    * data and add them to the same result object allowing a previously loaded data to be used by a subsequent loader if needed.
-   * @param studentId non-mandatory student ID associated with the form submission.
+   * @param studentId student ID used for authorization purposes, when required.
    */
   async loadSupplementaryData(
     submissionConfig: FormSubmissionConfig,
     resultSupplementaryData: KnownSupplementaryData,
-    studentId: number | undefined,
+    studentId: number,
   ): Promise<void> {
     if (!resultSupplementaryData[this.dataKey]) {
       resultSupplementaryData[this.dataKey] = await this.getSupplementaryData(
@@ -51,11 +51,11 @@ export abstract class SupplementaryDataBaseLoader<
    * The data retrieved by this method acts as a centralized source of truth for the supplementary data associated with
    * the form submission, and should be used to populate the form when the user is filling it out for submission.
    * @param applicationId non-mandatory application ID associated with the supplementary data.
-   * @param studentId non-mandatory student ID associated with the supplementary data.
+   * @param studentId student ID used for authorization purposes, when required.
    */
   abstract getSupplementaryData(
     applicationId: number | undefined,
-    studentId: number | undefined,
+    studentId: number,
   ): Promise<T>;
 
   /**
@@ -77,7 +77,7 @@ export abstract class SupplementaryDataBaseLoader<
    */
   protected throwSupplementaryDataNotFoundError(
     applicationId: number | undefined,
-    studentId: number | undefined,
+    studentId: number,
   ): never {
     throw new CustomNamedError(
       `Supplementary data '${this.dataKey}' not found. Student ID ${studentId ?? "not provided"}, application ID ${applicationId ?? "not provided"}.`,

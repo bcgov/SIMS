@@ -37,7 +37,7 @@ export class SupplementaryDataProgramYear extends SupplementaryDataBaseLoader<Kn
   async loadSupplementaryData(
     submissionConfig: FormSubmissionConfig,
     resultSupplementaryData: KnownSupplementaryData,
-    studentId: number | undefined,
+    studentId: number,
   ): Promise<void> {
     if (!this.hasDataKeyProperty(submissionConfig)) {
       return;
@@ -59,7 +59,7 @@ export class SupplementaryDataProgramYear extends SupplementaryDataBaseLoader<Kn
    */
   async getSupplementaryData(
     applicationId: number | undefined,
-    studentId: number | undefined,
+    studentId: number,
   ): Promise<string> {
     this.requireApplicationIdForDataKey(applicationId);
     const application = await this.applicationRepo.findOne({

@@ -40,7 +40,7 @@ export class SupplementaryDataParents extends SupplementaryDataBaseLoader<KnownS
   async loadSupplementaryData(
     submissionConfig: FormSubmissionConfig,
     resultSupplementaryData: KnownSupplementaryData,
-    studentId: number | undefined,
+    studentId: number,
   ): Promise<void> {
     if (!this.hasDataKeyProperty(submissionConfig)) {
       return;
@@ -62,7 +62,7 @@ export class SupplementaryDataParents extends SupplementaryDataBaseLoader<KnownS
    */
   async getSupplementaryData(
     applicationId: number | undefined,
-    studentId: number | undefined,
+    studentId: number,
   ): Promise<Parent[]> {
     this.requireApplicationIdForDataKey(applicationId);
     const parents = await this.supportingUserRepo.find({
