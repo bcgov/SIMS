@@ -69,7 +69,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         phone: data.primaryContactPhone,
       },
       institution: institution,
-      institutionCode: normalizedInstitutionCode,
+      institutionCode: hasInstitutionCode ? normalizedInstitutionCode : null,
       creator: auditUser,
     } as InstitutionLocation;
 
