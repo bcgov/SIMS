@@ -210,4 +210,7 @@ describe("DesignationAgreementAESTController(e2e)-updateDesignationAgreement", (
         errorType: MISSING_INSTITUTION_LOCATION_CODE,
       });
   });
+  afterAll(async () => {
+    await app?.close();
+  });
 });
