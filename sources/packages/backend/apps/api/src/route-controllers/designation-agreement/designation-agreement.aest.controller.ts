@@ -41,6 +41,7 @@ import {
 import BaseController from "../BaseController";
 import { Role } from "../../auth/roles.enum";
 import { ClientTypeBaseRoute } from "../../types";
+import { MISSING_INSTITUTION_LOCATION_CODE } from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -127,7 +128,7 @@ export class DesignationAgreementAESTController extends BaseController {
   })
   @ApiUnprocessableEntityResponse({
     description:
-      "One or more locations provided do not belong to designation institution.",
+      "One or more locations provided do not belong to designation institution or are missing an institution location code.",
   })
   async updateDesignationAgreement(
     @Param("designationId", ParseIntPipe) designationId: number,
@@ -156,6 +157,21 @@ export class DesignationAgreementAESTController extends BaseController {
         throw new UnprocessableEntityException(
           "One or more locations provided do not belong to designation institution.",
         );
+      }
+      const approvedLocationIds = payload.locationsDesignations
+        .filter((location) => location.approved)
+        .map((location) => location.locationId);
+      if (approvedLocationIds.length > 0) {
+        const allApprovedLocationsHaveCode =
+          await this.institutionLocationService.validateLocationsHaveInstitutionCode(
+            approvedLocationIds,
+          );
+        if (!allApprovedLocationsHaveCode) {
+          throw new UnprocessableEntityException(
+            "One or more approved locations are missing an institution location code.",
+            MISSING_INSTITUTION_LOCATION_CODE,
+          );
+        }
       }
     }
     await this.designationAgreementService.updateDesignation(

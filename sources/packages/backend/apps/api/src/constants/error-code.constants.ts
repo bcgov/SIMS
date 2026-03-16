@@ -143,6 +143,11 @@ export const DUPLICATE_SABC_CODE = "DUPLICATE_SABC_CODE";
  * Institution location not valid.
  */
 export const INSTITUTION_LOCATION_NOT_VALID = "INSTITUTION_LOCATION_NOT_VALID";
+/**
+ * One or more approved locations are missing an institution location code.
+ */
+export const MISSING_INSTITUTION_LOCATION_CODE =
+  "MISSING_INSTITUTION_LOCATION_CODE";
 
 /**
  * Request for disability not allowed.

@@ -289,6 +289,24 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   }
 
   /**
+   * Validate that all the given locations have an institution location code assigned.
+   * A location code is required for approved designation agreement locations.
+   * @param locationIds location IDs to validate.
+   * @returns true when all locations have a non-null institution location code.
+   */
+  async validateLocationsHaveInstitutionCode(
+    locationIds: number[],
+  ): Promise<boolean> {
+    const locationsWithCode = await this.repo
+      .createQueryBuilder("location")
+      .select("1")
+      .where("location.id IN (:...locationIds)", { locationIds })
+      .andWhere("location.institutionCode IS NOT NULL")
+      .getRawMany();
+    return locationsWithCode.length === locationIds.length;
+  }
+
+  /**
    * Check if location code is already registered for the institution.
    * @param locationCode location code.
    * @param options object that should contain:
