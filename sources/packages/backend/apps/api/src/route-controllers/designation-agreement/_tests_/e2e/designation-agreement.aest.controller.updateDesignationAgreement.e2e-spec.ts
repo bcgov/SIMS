@@ -191,7 +191,7 @@ describe("DesignationAgreementAESTController(e2e)-updateDesignationAgreement", (
     const endpoint = `/aest/designation-agreement/${savedDesignation.id}`;
 
     // Act/Assert
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .patch(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .send({
@@ -203,7 +203,11 @@ describe("DesignationAgreementAESTController(e2e)-updateDesignationAgreement", (
         ],
         note: "Attempt to approve location without code.",
       })
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY);
-    expect(response.body.errorType).toBe(MISSING_INSTITUTION_LOCATION_CODE);
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "One or more approved locations are missing an institution location code.",
+        errorType: MISSING_INSTITUTION_LOCATION_CODE,
+      });
   });
 });
