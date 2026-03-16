@@ -1,5 +1,6 @@
 # Image to run all the migrations related to application deployment.
-FROM node:25.6.1-alpine3.22
+ARG DOCKER_REGISTRY=artifactory-cache/docker-remote/
+FROM ${DOCKER_REGISTRY}node:25.6.1-alpine3.22
 
 WORKDIR /app
 

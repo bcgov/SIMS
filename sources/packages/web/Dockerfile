@@ -1,6 +1,6 @@
 # "builder" stage, based on Node.js, to build and compile the frontend.
-# dependabot: FROM node:25.6.1-alpine3.22
-FROM artifacts.developer.gov.bc.ca/docker-remote/node:25.6.1-alpine3.22 AS builder
+ARG DOCKER_REGISTRY=artifactory-cache/docker-remote/
+FROM ${DOCKER_REGISTRY}node:25.6.1-alpine3.22
 
 # Application Port.
 ENV PORT=3030
