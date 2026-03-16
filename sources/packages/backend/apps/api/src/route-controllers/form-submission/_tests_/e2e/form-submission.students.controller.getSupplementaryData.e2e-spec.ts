@@ -80,6 +80,25 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
           statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         });
     });
+
+     it(`Should throw an unprocessable entity exception when requesting supplementary data for ${KnownSupplementaryDataKey.ProgramYear} and an application ID was not provided.`, async () => {
+      // Arrange
+      const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.ProgramYear}`;
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+        .expect({
+          message: `Application ID is required to load supplementary data for key '${KnownSupplementaryDataKey.ProgramYear}'.`,
+          error: "Unprocessable Entity",
+          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        });
+    });
   });
 
   describe(`Supplementary data validations for ${KnownSupplementaryDataKey.Parents}.`, () => {
@@ -134,6 +153,25 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
         .expect(HttpStatus.UNPROCESSABLE_ENTITY)
         .expect({
           message: `Supplementary data '${KnownSupplementaryDataKey.Parents}' not found. Student ID ${application.student.id}, application ID ${application.id}.`,
+          error: "Unprocessable Entity",
+          statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        });
+    });
+
+    it(`Should throw an unprocessable entity exception when requesting supplementary data for ${KnownSupplementaryDataKey.Parents} and an application ID was not provided.`, async () => {
+      // Arrange
+      const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.Parents}`;
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+        .expect({
+          message: `Application ID is required to load supplementary data for key '${KnownSupplementaryDataKey.Parents}'.`,
           error: "Unprocessable Entity",
           statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         });
