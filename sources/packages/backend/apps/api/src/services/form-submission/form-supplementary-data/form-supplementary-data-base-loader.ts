@@ -1,3 +1,8 @@
+import { CustomNamedError } from "@sims/utilities";
+import {
+  FORM_SUBMISSION_SUPPLEMENTARY_DATA_APPLICATION_REQUIRED,
+  FORM_SUBMISSION_SUPPLEMENTARY_DATA_NOT_FOUND,
+} from "../constants";
 import {
   FormSubmissionConfig,
   KnownSupplementaryData,
@@ -26,12 +31,12 @@ export abstract class SupplementaryDataBaseLoader<
    * The loader should add a new property to this object using its dataKey, and assign the loaded data to that property.
    * The resultSupplementaryData object is shared among all loaders, so they can load different pieces of supplementary
    * data and add them to the same result object allowing a previously loaded data to be used by a subsequent loader if needed.
-   * @param studentId non-mandatory student ID associated with the form submission.
+   * @param studentId student ID used for authorization purposes, when required.
    */
   async loadSupplementaryData(
     submissionConfig: FormSubmissionConfig,
     resultSupplementaryData: KnownSupplementaryData,
-    studentId: number | undefined,
+    studentId: number,
   ): Promise<void> {
     if (!resultSupplementaryData[this.dataKey]) {
       resultSupplementaryData[this.dataKey] = await this.getSupplementaryData(
@@ -46,11 +51,11 @@ export abstract class SupplementaryDataBaseLoader<
    * The data retrieved by this method acts as a centralized source of truth for the supplementary data associated with
    * the form submission, and should be used to populate the form when the user is filling it out for submission.
    * @param applicationId non-mandatory application ID associated with the supplementary data.
-   * @param studentId non-mandatory student ID associated with the supplementary data.
+   * @param studentId student ID used for authorization purposes, when required.
    */
   abstract getSupplementaryData(
     applicationId: number | undefined,
-    studentId: number | undefined,
+    studentId: number,
   ): Promise<T>;
 
   /**
@@ -63,5 +68,36 @@ export abstract class SupplementaryDataBaseLoader<
     submissionConfig: FormSubmissionConfig,
   ): boolean {
     return submissionConfig.formData[this.dataKey] !== undefined;
+  }
+
+  /**
+   * Throws a not found error with a consistent message format for missing supplementary data.
+   * @param applicationId application ID associated with the supplementary data.
+   * @param studentId student ID associated with the supplementary data.
+   */
+  protected throwSupplementaryDataNotFoundError(
+    applicationId: number | undefined,
+    studentId: number,
+  ): never {
+    throw new CustomNamedError(
+      `Supplementary data '${this.dataKey}' not found. Student ID ${studentId ?? "not provided"}, application ID ${applicationId ?? "not provided"}.`,
+      FORM_SUBMISSION_SUPPLEMENTARY_DATA_NOT_FOUND,
+    );
+  }
+
+  /**
+   * Inspects the submission to ensure an application ID was provided.
+   * @param applicationId application ID to be inspected.
+   * @throws error if the application ID is not provided.
+   */
+  protected requireApplicationIdForDataKey(
+    applicationId: number | undefined,
+  ): void {
+    if (!applicationId) {
+      throw new CustomNamedError(
+        `Application ID is required to load supplementary data for key '${this.dataKey}'.`,
+        FORM_SUBMISSION_SUPPLEMENTARY_DATA_APPLICATION_REQUIRED,
+      );
+    }
   }
 }

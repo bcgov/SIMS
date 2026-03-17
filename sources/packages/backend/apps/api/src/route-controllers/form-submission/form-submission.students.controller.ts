@@ -86,19 +86,30 @@ export class FormSubmissionStudentsController extends BaseController {
    * @param query data keys and application ID to retrieve the supplementary data for.
    * @returns supplementary data for the given data keys and application ID.
    */
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Supplementary data not found for the given data keys and/or application ID.",
+  })
   @Get("supplementary-data")
   async getSupplementaryData(
     @Query() query: FormSupplementaryDataAPIInDTO,
     @UserToken() userToken: StudentUserToken,
   ): Promise<FormSupplementaryDataAPIOutDTO> {
-    const formData = await this.supplementaryDataLoader.getSupplementaryData(
-      query.dataKeys,
-      query.applicationId,
-      userToken.studentId,
-    );
-    return {
-      formData,
-    };
+    try {
+      const formData = await this.supplementaryDataLoader.getSupplementaryData(
+        query.dataKeys,
+        query.applicationId,
+        userToken.studentId,
+      );
+      return {
+        formData,
+      };
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        throw new UnprocessableEntityException(error.message);
+      }
+      throw error;
+    }
   }
 
   /**

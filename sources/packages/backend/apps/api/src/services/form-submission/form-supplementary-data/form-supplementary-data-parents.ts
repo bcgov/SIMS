@@ -45,11 +45,6 @@ export class SupplementaryDataParents extends SupplementaryDataBaseLoader<KnownS
     if (!this.hasDataKeyProperty(submissionConfig)) {
       return;
     }
-    if (!submissionConfig.applicationId) {
-      throw new Error(
-        "Application ID is required to load parents data for application-scoped forms.",
-      );
-    }
     await super.loadSupplementaryData(
       submissionConfig,
       resultSupplementaryData,
@@ -66,9 +61,10 @@ export class SupplementaryDataParents extends SupplementaryDataBaseLoader<KnownS
    * @returns parents data for the given application and student.
    */
   async getSupplementaryData(
-    applicationId: number,
+    applicationId: number | undefined,
     studentId: number,
   ): Promise<Parent[]> {
+    this.requireApplicationIdForDataKey(applicationId);
     const parents = await this.supportingUserRepo.find({
       select: {
         id: true,
@@ -83,9 +79,7 @@ export class SupplementaryDataParents extends SupplementaryDataBaseLoader<KnownS
       },
     });
     if (!parents?.length) {
-      throw new Error(
-        `Parents data is not available for application with ID ${applicationId}.`,
-      );
+      this.throwSupplementaryDataNotFoundError(applicationId, studentId);
     }
     return parents.map((parent) => ({
       id: parent.id,
