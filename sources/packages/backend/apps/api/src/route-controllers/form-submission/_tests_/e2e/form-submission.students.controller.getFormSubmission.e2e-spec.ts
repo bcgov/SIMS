@@ -4,24 +4,34 @@ import {
   AESTGroups,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
-  FakeStudentUsersTypes, getAESTUser, getStudentToken,
+  FakeStudentUsersTypes,
+  getAESTUser,
+  getStudentToken,
   mockJWTUserInfo,
-  resetMockJWTUserInfo
+  resetMockJWTUserInfo,
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
   createFakeDynamicFormConfiguration,
-  E2EDataSources, saveFakeFormSubmissionFromInputTestData
+  E2EDataSources,
+  saveFakeFormSubmissionFromInputTestData,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
-import { DynamicFormConfiguration, FormCategory, FormSubmissionDecisionStatus, FormSubmissionStatus, User } from "@sims/sims-db";
+import {
+  DynamicFormConfiguration,
+  FormCategory,
+  FormSubmissionDecisionStatus,
+  FormSubmissionStatus,
+  User,
+} from "@sims/sims-db";
 
 describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
   let app: INestApplication;
   let appModule: TestingModule;
   let db: E2EDataSources;
   let ministryUser: User;
-  let studentAppealApplicationA: DynamicFormConfiguration, studentAppealApplicationB: DynamicFormConfiguration;
+  let studentAppealApplicationA: DynamicFormConfiguration,
+    studentAppealApplicationB: DynamicFormConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, module } =
@@ -29,17 +39,34 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
     app = nestApplication;
     appModule = module;
     db = createE2EDataSources(dataSource);
-    ministryUser = await getAESTUser(db.dataSource, AESTGroups.BusinessAdministrators);
+    ministryUser = await getAESTUser(
+      db.dataSource,
+      AESTGroups.BusinessAdministrators,
+    );
 
-    [studentAppealApplicationA, studentAppealApplicationB] = await db.dynamicFormConfiguration.save([
-      createFakeDynamicFormConfiguration("Student application appeal A", null, {
-        initialValues: { formCategory: FormCategory.StudentAppeal, hasApplicationScope: true },
-      }),
-      createFakeDynamicFormConfiguration("Student application appeal B", null, {
-        initialValues: { formCategory: FormCategory.StudentAppeal, hasApplicationScope: true },
-      }),
-    ]);
-
+    [studentAppealApplicationA, studentAppealApplicationB] =
+      await db.dynamicFormConfiguration.save([
+        createFakeDynamicFormConfiguration(
+          "Student application appeal A",
+          null,
+          {
+            initialValues: {
+              formCategory: FormCategory.StudentAppeal,
+              hasApplicationScope: true,
+            },
+          },
+        ),
+        createFakeDynamicFormConfiguration(
+          "Student application appeal B",
+          null,
+          {
+            initialValues: {
+              formCategory: FormCategory.StudentAppeal,
+              hasApplicationScope: true,
+            },
+          },
+        ),
+      ]);
   });
 
   beforeEach(async () => {
@@ -67,10 +94,11 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
           // Should be pending as it has no decision.
           dynamicFormConfiguration: studentAppealApplicationB,
           decisions: [],
-        }
-      ]
+        },
+      ],
     });
-    const [formSubmissionItemA, formSubmissionItemB] = formSubmission.formSubmissionItems;
+    const [formSubmissionItemA, formSubmissionItemB] =
+      formSubmission.formSubmissionItems;
     const endpoint = `/students/form-submission/${formSubmission.id}`;
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -98,7 +126,9 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
             dynamicFormConfigurationId: studentAppealApplicationA.id,
             submissionData: formSubmissionItemA.submittedData,
             formDefinitionName: studentAppealApplicationA.formDefinitionName,
-            currentDecision: { decisionStatus: FormSubmissionDecisionStatus.Pending }
+            currentDecision: {
+              decisionStatus: FormSubmissionDecisionStatus.Pending,
+            },
           },
           {
             id: formSubmissionItemB.id,
@@ -107,13 +137,15 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
             dynamicFormConfigurationId: studentAppealApplicationB.id,
             submissionData: formSubmissionItemB.submittedData,
             formDefinitionName: studentAppealApplicationB.formDefinitionName,
-            currentDecision: { decisionStatus: FormSubmissionDecisionStatus.Pending }
-          }
-        ]
+            currentDecision: {
+              decisionStatus: FormSubmissionDecisionStatus.Pending,
+            },
+          },
+        ],
       });
   });
 
-  it("Should get a form submission as approved and its decisions statuses when form submission is completed.", async () => {
+  it("Should get a form submission as completed and its decisions statuses when form submission is completed.", async () => {
     // Arrange
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
       formCategory: FormCategory.StudentAppeal,
@@ -138,9 +170,10 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
             },
           ],
         },
-      ]
+      ],
     });
-    const [formSubmissionItemA, formSubmissionItemB] = formSubmission.formSubmissionItems;
+    const [formSubmissionItemA, formSubmissionItemB] =
+      formSubmission.formSubmissionItems;
     const endpoint = `/students/form-submission/${formSubmission.id}`;
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -168,7 +201,9 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
             dynamicFormConfigurationId: studentAppealApplicationA.id,
             submissionData: formSubmissionItemA.submittedData,
             formDefinitionName: studentAppealApplicationA.formDefinitionName,
-            currentDecision: { decisionStatus: FormSubmissionDecisionStatus.Approved }
+            currentDecision: {
+              decisionStatus: FormSubmissionDecisionStatus.Approved,
+            },
           },
           {
             id: formSubmissionItemB.id,
@@ -177,9 +212,60 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
             dynamicFormConfigurationId: studentAppealApplicationB.id,
             submissionData: formSubmissionItemB.submittedData,
             formDefinitionName: studentAppealApplicationB.formDefinitionName,
-            currentDecision: { decisionStatus: FormSubmissionDecisionStatus.Declined }
-          }
-        ]
+            currentDecision: {
+              decisionStatus: FormSubmissionDecisionStatus.Declined,
+            },
+          },
+        ],
+      });
+  });
+
+  it("Should throw a not found exception when the form submission ID belongs to another student.", async () => {
+    // Arrange
+    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+      formCategory: FormCategory.StudentAppeal,
+      submissionStatus: FormSubmissionStatus.Pending,
+      auditUser: ministryUser,
+      formSubmissionItems: [
+        {
+          dynamicFormConfiguration: studentAppealApplicationA,
+          decisions: [],
+        },
+      ],
+    });
+    const endpoint = `/students/form-submission/${formSubmission.id}`;
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        message: `Form submission with ID ${formSubmission.id} not found.`,
+        error: "Not Found",
+        statusCode: HttpStatus.NOT_FOUND,
+      });
+  });
+
+  it("Should throw a not found exception when the form submission ID does not exist.", async () => {
+    // Arrange
+    const endpoint = "/students/form-submission/9999999";
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        message: "Form submission with ID 9999999 not found.",
+        error: "Not Found",
+        statusCode: HttpStatus.NOT_FOUND,
       });
   });
 
