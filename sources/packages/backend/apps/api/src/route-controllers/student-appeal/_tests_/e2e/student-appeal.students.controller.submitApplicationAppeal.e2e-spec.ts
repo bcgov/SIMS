@@ -27,6 +27,7 @@ import {
   Application,
   ApplicationStatus,
   FileOriginType,
+  FormCategory,
   NotificationMessageType,
   OfferingIntensity,
   ProgramYear,
@@ -45,10 +46,7 @@ import {
   APPLICATION_HAS_PENDING_APPEAL,
   APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
 } from "../../../../constants";
-import {
-  GC_NOTIFY_TEMPLATE_IDS,
-  NOTIFICATION_FORM_TYPE,
-} from "@sims/services/constants";
+import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
 
 describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
   let app: INestApplication;
@@ -810,7 +808,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
         lastName: student.user.lastName,
         birthDate: getDateOnlyFormat(student.birthDate),
         studentEmail: student.user.email,
-        formCategory: NOTIFICATION_FORM_TYPE.ApplicationAppeal,
+        formCategory: FormCategory.StudentAppeal,
         formName: "Room and board costs",
         applicationNumber: application.applicationNumber,
         dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,

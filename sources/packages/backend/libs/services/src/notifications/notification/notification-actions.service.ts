@@ -1,9 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {
-  FormCategory,
-  NotificationMessage,
-  NotificationMessageType,
-} from "@sims/sims-db";
+import { NotificationMessage, NotificationMessageType } from "@sims/sims-db";
 import {
   base64Encode,
   getDateOnlyFormat,
@@ -48,7 +44,6 @@ import { LoggerService } from "@sims/utilities/logger";
 import { ECE_RESPONSE_ATTACHMENT_FILE_NAME } from "@sims/integrations/constants";
 import { SystemUsersService } from "@sims/services/system-users";
 import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
-import { NOTIFICATION_FORM_TYPE } from "../../constants";
 
 @Injectable()
 export class NotificationActionsService {
@@ -1493,8 +1488,7 @@ export class NotificationActionsService {
 
   /**
    * Creates a ministry notification when a student submits a form or appeal,
-   * including form type categorization (application appeal, other appeal, or standard form),
-   * a human-readable form name, and the related application number.
+   * using the form category directly from the dynamic form configuration.
    * @param notification notification details.
    * @param entityManager entity manager to execute in transaction.
    */
@@ -1511,14 +1505,6 @@ export class NotificationActionsService {
       return;
     }
 
-    let formCategory: string = NOTIFICATION_FORM_TYPE.StandardForm;
-    if (notification.formCategory === FormCategory.StudentAppeal) {
-      if (notification.applicationNumber) {
-        formCategory = NOTIFICATION_FORM_TYPE.ApplicationAppeal;
-      } else {
-        formCategory = NOTIFICATION_FORM_TYPE.OtherAppeal;
-      }
-    }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
       messageType: NotificationMessageType.MinistryFormSubmitted,
@@ -1530,8 +1516,8 @@ export class NotificationActionsService {
           lastName: notification.lastName,
           birthDate: getDateOnlyFormat(notification.birthDate),
           studentEmail: notification.email,
-          formCategory: formCategory,
-          formName: notification.formName,
+          formCategory: notification.formCategory,
+          formName: notification.formNames.join(", "),
           applicationNumber: notification.applicationNumber ?? "N/A",
           dateTime: this.getDateTimeOnPSTTimeZone(),
         },

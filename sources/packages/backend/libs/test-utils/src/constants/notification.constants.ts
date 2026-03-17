@@ -1,16 +1,7 @@
 /**
- * Notification form type category labels used in ministry form submitted notifications
- * to classify the type of form or appeal being submitted.
- */
-export const NOTIFICATION_FORM_TYPE = {
-  ApplicationAppeal: "Application appeal",
-  OtherAppeal: "Other appeal",
-  StandardForm: "Standard form",
-} as const;
-
-/**
  * GC Notify template IDs for the notification message types related to
  * appeals and change requests, seeded in the database during migrations.
+ * These constants are intended for use in E2E tests only.
  */
 export const GC_NOTIFY_TEMPLATE_IDS = {
   MinistryChangeRequestSubmitted: "fad81016-0bed-4d4e-ad48-f70cc943399c",

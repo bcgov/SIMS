@@ -508,26 +508,27 @@ export class ApplicationService extends RecordDataModelService<Application> {
         transactionalEntityManager.getRepository(Application);
       await applicationRepository.save(newApplication);
 
-      // Check if the application requires E2 restriction check.
-      await this.saveApplicationRestrictions(
-        newApplication.data,
-        studentId,
-        newApplication.id,
-        auditUserId,
-        transactionalEntityManager,
-      );
-
       newApplication.modifier = auditUser;
       newApplication.updatedAt = now;
       newApplication.studentAssessments = [originalAssessment];
       newApplication.currentAssessment = originalAssessment;
-      await applicationRepository.save(newApplication);
-      // Notify the ministry that a new change request was submitted.
-      await this.saveMinistryChangeRequestSubmittedNotification(
-        studentId,
-        application.applicationNumber,
-        transactionalEntityManager,
-      );
+      // Check if the application requires E2 restriction check, save the updated
+      // application, and notify the ministry, all in parallel.
+      await Promise.all([
+        this.saveApplicationRestrictions(
+          newApplication.data,
+          studentId,
+          newApplication.id,
+          auditUserId,
+          transactionalEntityManager,
+        ),
+        applicationRepository.save(newApplication),
+        this.saveMinistryChangeRequestSubmittedNotification(
+          studentId,
+          application.applicationNumber,
+          transactionalEntityManager,
+        ),
+      ]);
     });
     return {
       application: newApplication,

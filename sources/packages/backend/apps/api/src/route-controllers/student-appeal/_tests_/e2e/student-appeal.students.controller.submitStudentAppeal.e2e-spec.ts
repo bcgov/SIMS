@@ -21,6 +21,7 @@ import { TestingModule } from "@nestjs/testing";
 import { AppStudentsModule } from "../../../../app.students.module";
 import { FormService } from "../../../../services";
 import {
+  FormCategory,
   NotificationMessageType,
   StudentAppealActionType,
   StudentAppealStatus,
@@ -31,10 +32,7 @@ import {
   getPSTPDTDateTime,
 } from "@sims/utilities/date-utils";
 import { STUDENT_HAS_PENDING_APPEAL } from "../../../../constants";
-import {
-  GC_NOTIFY_TEMPLATE_IDS,
-  NOTIFICATION_FORM_TYPE,
-} from "@sims/services/constants";
+import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
 
 describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   let app: INestApplication;
@@ -188,7 +186,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         lastName: student.user.lastName,
         birthDate: getDateOnlyFormat(student.birthDate),
         studentEmail: student.user.email,
-        formCategory: NOTIFICATION_FORM_TYPE.OtherAppeal,
+        formCategory: FormCategory.StudentAppeal,
         formName: "Modified independent",
         applicationNumber: "N/A",
         dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,

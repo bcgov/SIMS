@@ -23,10 +23,8 @@ import {
 } from "@sims/test-utils";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 import MockDate from "mockdate";
-import {
-  INVALID_APPLICATION_EDIT_STATUS,
-  GC_NOTIFY_TEMPLATE_IDS,
-} from "@sims/services/constants";
+import { INVALID_APPLICATION_EDIT_STATUS } from "@sims/services/constants";
+import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
 import { getPSTPDTDateTime } from "@sims/utilities";
 
 describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeRequest", () => {

@@ -151,7 +151,7 @@ export class FormSubmissionSubmitService {
     // Load student info required for the notification.
     const studentForNotification = await entityManager
       .getRepository(Student)
-      .findOneOrFail({
+      .findOne({
         select: {
           id: true,
           birthDate: true,
@@ -160,7 +160,12 @@ export class FormSubmissionSubmitService {
         relations: { user: true },
         where: { id: studentId },
       });
-    // Load application number if an application is linked to this submission.
+    if (!studentForNotification) {
+      throw new Error(
+        `Student ${studentId} not found while sending form submission notification.`,
+      );
+    }
+    // Load the application number if a specific application is linked to the submission.
     let applicationNumber: string | undefined;
     if (applicationId) {
       const application = await entityManager
@@ -169,13 +174,14 @@ export class FormSubmissionSubmitService {
           select: { id: true, applicationNumber: true },
           where: { id: applicationId },
         });
-      applicationNumber = application?.applicationNumber;
+      if (!application) {
+        throw new Error(
+          `Application ${applicationId} not found while sending form submission notification.`,
+        );
+      }
+      applicationNumber = application.applicationNumber;
     }
 
-    // Collect all form friendly names from the submission configs, comma-separated.
-    const formName = submissionConfigs
-      .map((config) => config.formType)
-      .join(", ");
     await this.notificationActionsService.saveMinistryFormSubmittedNotification(
       {
         givenNames: studentForNotification.user.firstName,
@@ -183,7 +189,7 @@ export class FormSubmissionSubmitService {
         email: studentForNotification.user.email,
         birthDate: studentForNotification.birthDate,
         formCategory: formCategory,
-        formName,
+        formNames: submissionConfigs.map((config) => config.formType),
         applicationNumber,
       },
       entityManager,

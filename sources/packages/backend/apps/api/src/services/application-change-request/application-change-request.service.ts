@@ -107,12 +107,14 @@ export class ApplicationChangeRequestService {
         changeRequestApplication.updatedAt = currentDate;
         changeRequestApplication.applicationEditStatusUpdatedBy = auditUser;
         changeRequestApplication.applicationEditStatusUpdatedOn = currentDate;
-        await applicationRepo.save(changeRequestApplication);
-        await this.saveChangeRequestReviewCompletedNotification(
-          changeRequestApplication.student.id,
-          auditUserId,
-          transactionalEntityManager,
-        );
+        await Promise.all([
+          applicationRepo.save(changeRequestApplication),
+          this.saveChangeRequestReviewCompletedNotification(
+            changeRequestApplication.student.id,
+            auditUserId,
+            transactionalEntityManager,
+          ),
+        ]);
         return;
       }
       // Previously completed application that will be replaced by the newly approved application change request.
@@ -150,12 +152,14 @@ export class ApplicationChangeRequestService {
           id: copyFromAssessment.formSubmission.id,
         } as FormSubmission;
       }
-      await applicationRepo.save(changeRequestApplication);
-      await this.saveChangeRequestReviewCompletedNotification(
-        changeRequestApplication.student.id,
-        auditUserId,
-        transactionalEntityManager,
-      );
+      await Promise.all([
+        applicationRepo.save(changeRequestApplication),
+        this.saveChangeRequestReviewCompletedNotification(
+          changeRequestApplication.student.id,
+          auditUserId,
+          transactionalEntityManager,
+        ),
+      ]);
     });
     // Send a message to the workflow to proceed.
     await this.workflowClientService.sendApplicationChangeRequestStatusMessage(

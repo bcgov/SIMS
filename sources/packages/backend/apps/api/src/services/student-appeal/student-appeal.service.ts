@@ -223,7 +223,7 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       email: studentAppeal.student.user.email,
       birthDate: studentAppeal.student.birthDate,
       formCategory: FormCategory.StudentAppeal,
-      formName: formNames.join(", "),
+      formNames,
       applicationNumber: studentAppeal.application?.applicationNumber,
     };
     await this.notificationActionsService.saveMinistryFormSubmittedNotification(
