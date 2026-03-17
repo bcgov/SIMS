@@ -34,7 +34,6 @@
       "program": "${workspaceFolder}/node_modules/.bin/jest",
       "args": [
         "--runInBand",
-        "--forceExit",
         "--watchAll=false",
         "--runTestsByPath",
         "${jest.testFile}",
