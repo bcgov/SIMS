@@ -113,9 +113,9 @@ export enum NotificationMessageType {
    */
   MinistryCompletesException = 4,
   /**
-   * Ministry completes updating a change requested by student.
+   * Ministry completes updating an appeal requested by student.
    */
-  MinistryCompletesChange = 5,
+  MinistryCompletesAppeal = 5,
   /**
    * Institution reporting a change on application.
    */
@@ -166,9 +166,9 @@ export enum NotificationMessageType {
    */
   MinistryNotificationDisbursementBlocked = 17,
   /**
-   * Student submitted change request after COE.
+   * Student submitted appeal.
    */
-  StudentSubmittedChangeRequestNotification = 18,
+  StudentSubmittedAppealNotification = 18,
   /**
    * Student submits application with exception request.
    */

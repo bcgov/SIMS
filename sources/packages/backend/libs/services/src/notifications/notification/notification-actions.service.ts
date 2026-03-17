@@ -1422,15 +1422,14 @@ export class NotificationActionsService {
     const auditUser = this.systemUsersService.systemUser;
     const { templateId, emailContacts } =
       await this.assertNotificationMessageDetails(
-        NotificationMessageType.StudentSubmittedChangeRequestNotification,
+        NotificationMessageType.StudentSubmittedAppealNotification,
       );
     if (!emailContacts?.length) {
       return;
     }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
-      messageType:
-        NotificationMessageType.StudentSubmittedChangeRequestNotification,
+      messageType: NotificationMessageType.StudentSubmittedAppealNotification,
       messagePayload: {
         email_address: emailContact,
         template_id: templateId,
@@ -1454,7 +1453,7 @@ export class NotificationActionsService {
 
   /**
    * Creates a student notification when the ministry completes reviewing an appeal,
-   * using the existing production ministry-completes-change template.
+   * using the existing production ministry-completes-appeal template.
    * @param notification notification details.
    * @param auditUserId user who completed the appeal review.
    * @param entityManager entity manager to execute in transaction.
@@ -1466,11 +1465,11 @@ export class NotificationActionsService {
   ): Promise<void> {
     const { templateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
-        NotificationMessageType.MinistryCompletesChange,
+        NotificationMessageType.MinistryCompletesAppeal,
       );
     const appealCompletedNotification = {
       userId: notification.userId,
-      messageType: NotificationMessageType.MinistryCompletesChange,
+      messageType: NotificationMessageType.MinistryCompletesAppeal,
       messagePayload: {
         email_address: notification.toAddress,
         template_id: templateId,

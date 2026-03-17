@@ -60,7 +60,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     // Update fake email contact to send ministry email.
     await db.notificationMessage.update(
       {
-        id: NotificationMessageType.StudentSubmittedChangeRequestNotification,
+        id: NotificationMessageType.StudentSubmittedAppealNotification,
       },
       { emailContacts: [MINISTRY_EMAIL_ADDRESS] },
     );
@@ -74,12 +74,12 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   beforeEach(async () => {
     MockDate.reset();
     await resetMockJWTUserInfo(appModule);
-    // Mark all existing appeals(change request) notifications as sent
+    // Mark all existing appeals notifications as sent
     // to allow it to asserted when a new appeal is submitted.
     await db.notification.update(
       {
         notificationMessage: {
-          id: NotificationMessageType.StudentSubmittedChangeRequestNotification,
+          id: NotificationMessageType.StudentSubmittedAppealNotification,
         },
       },
       { dateSent: new Date() },
@@ -172,14 +172,13 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       select: { id: true, messagePayload: true },
       where: {
         notificationMessage: {
-          id: NotificationMessageType.StudentSubmittedChangeRequestNotification,
+          id: NotificationMessageType.StudentSubmittedAppealNotification,
         },
         dateSent: IsNull(),
       },
     });
     expect(createdNotification.messagePayload).toStrictEqual({
-      template_id:
-        GC_NOTIFY_TEMPLATE_IDS.StudentSubmittedChangeRequestNotification,
+      template_id: GC_NOTIFY_TEMPLATE_IDS.StudentSubmittedAppealNotification,
       email_address: MINISTRY_EMAIL_ADDRESS,
       personalisation: {
         givenNames: student.user.firstName,

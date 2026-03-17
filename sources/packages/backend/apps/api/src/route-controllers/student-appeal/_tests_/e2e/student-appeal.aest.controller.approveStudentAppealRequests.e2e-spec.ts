@@ -55,7 +55,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
     await db.notification.update(
       {
         notificationMessage: {
-          id: NotificationMessageType.MinistryCompletesChange,
+          id: NotificationMessageType.MinistryCompletesAppeal,
         },
       },
       { dateSent: new Date() },
@@ -336,13 +336,13 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
           select: { id: true, messagePayload: true },
           where: {
             notificationMessage: {
-              id: NotificationMessageType.MinistryCompletesChange,
+              id: NotificationMessageType.MinistryCompletesAppeal,
             },
             dateSent: IsNull(),
           },
         });
         expect(createdNotification.messagePayload).toStrictEqual({
-          template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryCompletesChange,
+          template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryCompletesAppeal,
           email_address: student.user.email,
           personalisation: {
             givenNames: student.user.firstName ?? "",
