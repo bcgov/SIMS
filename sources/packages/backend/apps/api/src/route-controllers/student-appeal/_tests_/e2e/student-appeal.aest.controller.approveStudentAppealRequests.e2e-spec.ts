@@ -28,7 +28,7 @@ import {
 import { StudentAppealApprovalAPIInDTO } from "../../../../route-controllers";
 import MockDate from "mockdate";
 import { getPSTPDTDateTime } from "@sims/utilities";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/services/constants";
+import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
 
 describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => {
   let app: INestApplication;
@@ -55,7 +55,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
     await db.notification.update(
       {
         notificationMessage: {
-          id: NotificationMessageType.StudentFormCompleted,
+          id: NotificationMessageType.MinistryCompletesChange,
         },
       },
       { dateSent: new Date() },
@@ -336,13 +336,13 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
           select: { id: true, messagePayload: true },
           where: {
             notificationMessage: {
-              id: NotificationMessageType.StudentFormCompleted,
+              id: NotificationMessageType.MinistryCompletesChange,
             },
             dateSent: IsNull(),
           },
         });
         expect(createdNotification.messagePayload).toStrictEqual({
-          template_id: GC_NOTIFY_TEMPLATE_IDS.StudentFormCompleted,
+          template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryCompletesChange,
           email_address: student.user.email,
           personalisation: {
             givenNames: student.user.firstName ?? "",

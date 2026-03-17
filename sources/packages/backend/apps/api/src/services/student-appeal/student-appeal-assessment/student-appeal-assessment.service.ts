@@ -133,7 +133,7 @@ export class StudentAppealAssessmentService {
         entityManager,
       );
     } else {
-      await this.notificationActionsService.saveStudentFormCompletedNotification(
+      await this.notificationActionsService.saveStudentAppealCompletedNotification(
         studentNotification,
         auditUserId,
         entityManager,

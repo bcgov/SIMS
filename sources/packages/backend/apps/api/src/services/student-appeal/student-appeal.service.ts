@@ -20,7 +20,6 @@ import {
   FileOriginType,
   ApplicationStatus,
   Student,
-  FormCategory,
 } from "@sims/sims-db";
 import {
   AppealType,
@@ -41,10 +40,8 @@ import { PROGRAM_YEAR_2025_26_START_DATE } from "./constants";
 import {
   NotificationActionsService,
   StudentSubmittedChangeRequestNotification,
-  MinistryFormSubmittedNotification,
 } from "@sims/services/notifications";
 import { StudentFileService } from "../student-file/student-file.service";
-import { DynamicFormConfigurationService } from "../dynamic-form-configuration/dynamic-form-configuration.service";
 import { InjectRepository } from "@nestjs/typeorm";
 
 /**
@@ -57,7 +54,6 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     private readonly studentAppealRequestsService: StudentAppealRequestsService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly studentFileService: StudentFileService,
-    private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
   ) {
@@ -209,25 +205,14 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
     studentAppeal: StudentAppeal,
     entityManager: EntityManager,
   ): Promise<void> {
-    // Map technical form names to human-readable friendly names using the dynamic form configuration.
-    const formNames = studentAppeal.appealRequests.map((request) => {
-      const config =
-        this.dynamicFormConfigurationService.getFormByDefinitionName(
-          request.submittedFormName,
-        );
-      return config?.formType ?? request.submittedFormName;
-    });
-    const ministryFormNotification: MinistryFormSubmittedNotification = {
-      givenNames: studentAppeal.student.user.firstName,
-      lastName: studentAppeal.student.user.lastName,
-      email: studentAppeal.student.user.email,
-      birthDate: studentAppeal.student.birthDate,
-      formCategory: FormCategory.StudentAppeal,
-      formNames,
-      applicationNumber: studentAppeal.application?.applicationNumber,
-    };
-    await this.notificationActionsService.saveMinistryFormSubmittedNotification(
-      ministryFormNotification,
+    await this.notificationActionsService.saveMinistryStudentSubmittedAppealNotification(
+      {
+        givenNames: studentAppeal.student.user.firstName,
+        lastName: studentAppeal.student.user.lastName,
+        email: studentAppeal.student.user.email,
+        birthDate: studentAppeal.student.birthDate,
+        applicationNumber: studentAppeal.application?.applicationNumber,
+      },
       entityManager,
     );
   }

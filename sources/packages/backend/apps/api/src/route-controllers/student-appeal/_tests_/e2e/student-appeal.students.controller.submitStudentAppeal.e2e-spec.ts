@@ -21,7 +21,6 @@ import { TestingModule } from "@nestjs/testing";
 import { AppStudentsModule } from "../../../../app.students.module";
 import { FormService } from "../../../../services";
 import {
-  FormCategory,
   NotificationMessageType,
   StudentAppealActionType,
   StudentAppealStatus,
@@ -61,7 +60,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     // Update fake email contact to send ministry email.
     await db.notificationMessage.update(
       {
-        id: NotificationMessageType.MinistryFormSubmitted,
+        id: NotificationMessageType.StudentSubmittedChangeRequestNotification,
       },
       { emailContacts: [MINISTRY_EMAIL_ADDRESS] },
     );
@@ -80,7 +79,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     await db.notification.update(
       {
         notificationMessage: {
-          id: NotificationMessageType.MinistryFormSubmitted,
+          id: NotificationMessageType.StudentSubmittedChangeRequestNotification,
         },
       },
       { dateSent: new Date() },
@@ -173,21 +172,20 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       select: { id: true, messagePayload: true },
       where: {
         notificationMessage: {
-          id: NotificationMessageType.MinistryFormSubmitted,
+          id: NotificationMessageType.StudentSubmittedChangeRequestNotification,
         },
         dateSent: IsNull(),
       },
     });
     expect(createdNotification.messagePayload).toStrictEqual({
-      template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryFormSubmitted,
+      template_id:
+        GC_NOTIFY_TEMPLATE_IDS.StudentSubmittedChangeRequestNotification,
       email_address: MINISTRY_EMAIL_ADDRESS,
       personalisation: {
         givenNames: student.user.firstName,
         lastName: student.user.lastName,
         birthDate: getDateOnlyFormat(student.birthDate),
         studentEmail: student.user.email,
-        formCategory: FormCategory.StudentAppeal,
-        formName: "Modified independent",
         applicationNumber: "N/A",
         dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
       },

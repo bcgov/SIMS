@@ -111,6 +111,18 @@ export interface StudentSubmittedChangeRequestNotification {
   applicationNumber: string;
 }
 
+/**
+ * Ministry notification data when a student submits an appeal using the
+ * existing (pre-form-submissions-framework) appeal notification template.
+ */
+export interface MinistryStudentAppealNotification {
+  givenNames: string;
+  lastName: string;
+  email: string;
+  birthDate: string;
+  applicationNumber?: string;
+}
+
 export interface StudentRequestsBasicBCeIDAccountNotification {
   givenNames: string;
   lastName: string;

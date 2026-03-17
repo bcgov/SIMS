@@ -38,6 +38,7 @@ import {
   ScholasticStandingReversalNotification,
   StudentCOERequiredNearEndDateNotification,
   MinistryFormSubmittedNotification,
+  MinistryStudentAppealNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { LoggerService } from "@sims/utilities/logger";
@@ -1404,6 +1405,85 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       notificationsToSend,
       auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates a ministry notification when a student submits an appeal,
+   * using the existing production appeal submitted template.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveMinistryStudentSubmittedAppealNotification(
+    notification: MinistryStudentAppealNotification,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId, emailContacts } =
+      await this.assertNotificationMessageDetails(
+        NotificationMessageType.StudentSubmittedChangeRequestNotification,
+      );
+    if (!emailContacts?.length) {
+      return;
+    }
+    const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
+      userId: auditUser.id,
+      messageType:
+        NotificationMessageType.StudentSubmittedChangeRequestNotification,
+      messagePayload: {
+        email_address: emailContact,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          birthDate: getDateOnlyFormat(notification.birthDate),
+          studentEmail: notification.email,
+          applicationNumber: notification.applicationNumber ?? "N/A",
+          dateTime: this.getDateTimeOnPSTTimeZone(),
+        },
+      },
+    }));
+    // Save notifications to be sent to the ministry into the notification table.
+    await this.notificationService.saveNotifications(
+      ministryNotificationsToSend,
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates a student notification when the ministry completes reviewing an appeal,
+   * using the existing production ministry-completes-change template.
+   * @param notification notification details.
+   * @param auditUserId user who completed the appeal review.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveStudentAppealCompletedNotification(
+    notification: StudentNotification,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const { templateId } =
+      await this.notificationMessageService.getNotificationMessageDetails(
+        NotificationMessageType.MinistryCompletesChange,
+      );
+    const appealCompletedNotification = {
+      userId: notification.userId,
+      messageType: NotificationMessageType.MinistryCompletesChange,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          date: this.getDateTimeOnPSTTimeZone(),
+        },
+      },
+    };
+    await this.notificationService.saveNotifications(
+      [appealCompletedNotification],
+      auditUserId,
       { entityManager },
     );
   }

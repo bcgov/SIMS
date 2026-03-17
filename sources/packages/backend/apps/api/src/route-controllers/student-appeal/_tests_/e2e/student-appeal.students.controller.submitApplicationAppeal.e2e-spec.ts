@@ -27,7 +27,6 @@ import {
   Application,
   ApplicationStatus,
   FileOriginType,
-  FormCategory,
   NotificationMessageType,
   OfferingIntensity,
   ProgramYear,
@@ -80,7 +79,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
       { emailContacts: [MINISTRY_EMAIL_ADDRESS] },
     );
     await db.notificationMessage.update(
-      { id: NotificationMessageType.MinistryFormSubmitted },
+      { id: NotificationMessageType.StudentSubmittedChangeRequestNotification },
       { emailContacts: [MINISTRY_EMAIL_ADDRESS] },
     );
   });
@@ -100,7 +99,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
     await db.notification.update(
       {
         notificationMessage: {
-          id: NotificationMessageType.MinistryFormSubmitted,
+          id: NotificationMessageType.StudentSubmittedChangeRequestNotification,
         },
       },
       { dateSent: new Date() },
@@ -795,21 +794,20 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
       select: { id: true, messagePayload: true },
       where: {
         notificationMessage: {
-          id: NotificationMessageType.MinistryFormSubmitted,
+          id: NotificationMessageType.StudentSubmittedChangeRequestNotification,
         },
         dateSent: IsNull(),
       },
     });
     expect(createdNotification.messagePayload).toStrictEqual({
-      template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryFormSubmitted,
+      template_id:
+        GC_NOTIFY_TEMPLATE_IDS.StudentSubmittedChangeRequestNotification,
       email_address: MINISTRY_EMAIL_ADDRESS,
       personalisation: {
         givenNames: student.user.firstName,
         lastName: student.user.lastName,
         birthDate: getDateOnlyFormat(student.birthDate),
         studentEmail: student.user.email,
-        formCategory: FormCategory.StudentAppeal,
-        formName: "Room and board costs",
         applicationNumber: application.applicationNumber,
         dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
       },
