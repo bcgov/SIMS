@@ -342,7 +342,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
           },
         });
         expect(createdNotification.messagePayload).toStrictEqual({
-          template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryCompletesAppeal,
+          template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryAppealCompleted,
           email_address: student.user.email,
           personalisation: {
             givenNames: student.user.firstName ?? "",
