@@ -1,0 +1,331 @@
+{
+  "title": "Appeals - Exceptional Expense Appeal",
+  "name": "studentExceptionalExpenseAppeal",
+  "path": "studentexceptionalexpenseappeal",
+  "type": "form",
+  "display": "form",
+  "tags": [
+    "common"
+  ],
+  "components": [
+    {
+      "label": "Actions: CreateStudentAppealAssessment",
+      "calculateValue": "value = [\"CreateStudentAppealAssessment\"];",
+      "calculateServer": true,
+      "key": "actions",
+      "type": "hidden",
+      "input": true,
+      "tableView": true,
+      "lockKey": true
+    },
+    {
+      "input": true,
+      "tableView": false,
+      "key": "maxMoneyValue",
+      "label": "Max Money Value",
+      "persistent": false,
+      "type": "hidden",
+      "lockKey": true,
+      "calculateValue": "value = \"100000000\";",
+      "calculateServer": true
+    },
+    {
+      "label": "maxUploadedFiles",
+      "persistent": false,
+      "calculateValue": "value = 25;",
+      "calculateServer": true,
+      "key": "maxUploadedFiles",
+      "type": "hidden",
+      "input": true,
+      "tableView": true,
+      "lockKey": true
+    },
+    {
+      "label": "HTML",
+      "tag": "p",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "If you have had exceptional expenses that created financial hardship that affected your ability to start or continue your studies these expenses may be considered as part of your assessment.",
+      "refreshOnChange": true,
+      "key": "html87",
+      "type": "htmlelement",
+      "input": false,
+      "tableView": false
+    },
+    {
+      "label": "HTML",
+      "tag": "h3",
+      "className": "category-header-medium primary-color",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "Please provide supporting information ",
+      "refreshOnChange": false,
+      "key": "html84",
+      "type": "htmlelement",
+      "input": false,
+      "tableView": false
+    },
+    {
+      "label": "Select the circumstance that created exceptional expenses that have affected your ability to start or continue your studies:",
+      "optionsLabelPosition": "right",
+      "inline": false,
+      "tableView": false,
+      "values": [
+        {
+          "label": "Medical illness or injury",
+          "value": "medicalIllnessOrInjury",
+          "shortcut": ""
+        },
+        {
+          "label": "Family emergency (e.g., death or injury)",
+          "value": "familyEmergencyEGDeathOrInjury",
+          "shortcut": ""
+        },
+        {
+          "label": "Natural disaster",
+          "value": "naturalDisaster",
+          "shortcut": ""
+        },
+        {
+          "label": "Unforeseen legal expense",
+          "value": "legalExpenses",
+          "shortcut": ""
+        },
+        {
+          "label": "Court-ordered payments",
+          "value": "courtorderedPayments",
+          "shortcut": ""
+        },
+        {
+          "label": "Expenses related to a disability (yours or your dependant's) not covered by other funding (e.g. insurance, grants)",
+          "value": "disabilityExpenses",
+          "shortcut": ""
+        },
+        {
+          "label": "Other",
+          "value": "other",
+          "shortcut": ""
+        }
+      ],
+      "validate": {
+        "required": true,
+        "onlyAvailableItems": true
+      },
+      "validateWhenHidden": false,
+      "key": "reasonexceptionalexpenses",
+      "attributes": {
+        "data-cy": "reasonexceptionalexpense"
+      },
+      "type": "radio",
+      "input": true
+    },
+    {
+      "title": "Other exceptional circumstance Panel",
+      "collapsible": false,
+      "hideLabel": true,
+      "key": "otherExceptionalCircumstancePanel",
+      "conditional": {
+        "show": true,
+        "when": "reasonexceptionalexpenses",
+        "eq": "other"
+      },
+      "type": "panel",
+      "label": "Other exceptional circumstance Panel",
+      "breadcrumbClickable": false,
+      "allowPrevious": false,
+      "buttonSettings": {
+        "previous": false,
+        "cancel": false,
+        "next": false
+      },
+      "scrollToTop": false,
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "label": "Please explain your situation:",
+          "placeholder": "Type of expense, when expenses occurred and amount",
+          "applyMaskOn": "change",
+          "autoExpand": false,
+          "tableView": true,
+          "validate": {
+            "required": true
+          },
+          "validateWhenHidden": false,
+          "key": "otherExceptionalCircumstance",
+          "conditional": {
+            "show": true,
+            "when": "reasonexceptionalexpenses",
+            "eq": "other"
+          },
+          "type": "textarea",
+          "input": true,
+          "lockKey": true
+        }
+      ]
+    },
+    {
+      "label": "Please enter the combined exceptional expense amount rounded to the nearest dollar.",
+      "prefix": "$",
+      "applyMaskOn": "change",
+      "mask": false,
+      "tableView": false,
+      "delimiter": true,
+      "requireDecimal": false,
+      "inputFormat": "plain",
+      "truncateMultipleSpaces": false,
+      "validate": {
+        "required": true,
+        "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
+      },
+      "validateWhenHidden": false,
+      "key": "exceptionalExpenseAmount",
+      "type": "number",
+      "decimalLimit": 0,
+      "input": true
+    },
+    {
+      "title": "Uploader Panel",
+      "collapsible": false,
+      "hideLabel": true,
+      "key": "exceptionalExpenseUploaderPanel",
+      "type": "panel",
+      "label": "Panel",
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "label": "Content",
+          "tag": "h3",
+          "className": "category-header-medium primary-color",
+          "attrs": [
+            {
+              "value": "",
+              "attr": ""
+            }
+          ],
+          "content": "Upload supporting documents",
+          "refreshOnChange": false,
+          "customClass": "header-md",
+          "key": "exceptionalExpenseUploaderHeader",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Please upload supporting documents so that StudentAid BC can assess your request.",
+          "refreshOnChange": false,
+          "key": "html105",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "Content",
+          "attrs": [
+            {
+              "value": "",
+              "attr": ""
+            }
+          ],
+          "content": "<h4 class=\"category-header-medium-small\">Please provide:</h4>\n<ul><li>A letter explaining your situation including the type of expense(s) and when the expense(s) occurred.</li></ul>",
+          "refreshOnChange": false,
+          "customClass": "align-bullets",
+          "key": "exceptionalExpensePanelContent3",
+          "type": "htmlelement",
+          "input": false,
+          "hideLabel": true,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "tag": "p",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "And",
+          "refreshOnChange": true,
+          "key": "exceptionalExpensePanelContent4",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "Content",
+          "attrs": [
+            {
+              "value": "",
+              "attr": ""
+            }
+          ],
+          "content": "<h4 class=\"category-header-medium-small\">Provide at least one of the following:</h4>\n<ul>\n<li>A copy of your insurance documents or claim information.</li>\n<li>Receipt showing payment of costs.</li>\n<li>Bank statement.</li></ul>",
+          "refreshOnChange": false,
+          "customClass": "align-bullets",
+          "key": "exceptionalExpensePanelContent5",
+          "type": "htmlelement",
+          "input": false,
+          "hideLabel": true,
+          "tableView": false
+        },
+        {
+          "label": "Upload supporting documents",
+          "customClass": "font-weight-bold",
+          "hideLabel": true,
+          "tableView": false,
+          "storage": "url",
+          "dir": "Expense Expense - Supporting Documents",
+          "webcam": false,
+          "capture": false,
+          "fileTypes": [
+            {
+              "label": "",
+              "value": ""
+            }
+          ],
+          "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
+          "fileMaxSize": "15MB",
+          "multiple": true,
+          "validate": {
+            "required": true,
+            "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+            "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
+          },
+          "validateWhenHidden": false,
+          "key": "exceptionalExpenseSupportingDocuments",
+          "type": "file",
+          "url": "student/files",
+          "input": true,
+          "lockKey": true
+        },
+        {
+          "label": "Content",
+          "input": false,
+          "className": "file-upload-info-container",
+          "content": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n<p>15MB file limit each</p>",
+          "type": "htmlelement",
+          "hideLabel": true,
+          "tableView": false,
+          "key": "content"
+        }
+      ]
+    }
+  ]
+}
