@@ -40,8 +40,7 @@
                 />
                 <title-value
                   v-if="item.institutionCode"
-                  property-title="Institution location code"
-                  :property-value="item.institutionCode"
+                  :property-title="item.institutionCode"
                 />
               </v-col>
               <v-col cols="auto">
