@@ -1596,7 +1596,9 @@ export class NotificationActionsService {
           birthDate: getDateOnlyFormat(notification.birthDate),
           studentEmail: notification.email,
           formCategory: notification.formCategory,
-          formName: notification.formNames.join(", "),
+          formName: notification.formNames
+            .map((name) => `<li>${name}</li>`)
+            .join(""),
           applicationNumber: notification.applicationNumber ?? "N/A",
           dateTime: this.getDateTimeOnPSTTimeZone(),
         },
