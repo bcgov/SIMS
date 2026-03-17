@@ -55,7 +55,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
     await db.notification.update(
       {
         notificationMessage: {
-          id: NotificationMessageType.MinistryCompletesAppeal,
+          id: NotificationMessageType.MinistryAppealCompleted,
         },
       },
       { dateSent: new Date() },
@@ -336,7 +336,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
           select: { id: true, messagePayload: true },
           where: {
             notificationMessage: {
-              id: NotificationMessageType.MinistryCompletesAppeal,
+              id: NotificationMessageType.MinistryAppealCompleted,
             },
             dateSent: IsNull(),
           },

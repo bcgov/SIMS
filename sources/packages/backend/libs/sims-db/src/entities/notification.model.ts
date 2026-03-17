@@ -115,7 +115,7 @@ export enum NotificationMessageType {
   /**
    * Ministry completes updating an appeal requested by student.
    */
-  MinistryCompletesAppeal = 5,
+  MinistryAppealCompleted = 5,
   /**
    * Institution reporting a change on application.
    */
@@ -168,7 +168,7 @@ export enum NotificationMessageType {
   /**
    * Student submitted appeal.
    */
-  StudentSubmittedAppealNotification = 18,
+  StudentAppealSubmitted = 18,
   /**
    * Student submits application with exception request.
    */

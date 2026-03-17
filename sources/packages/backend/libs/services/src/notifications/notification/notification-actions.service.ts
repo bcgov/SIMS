@@ -1422,14 +1422,14 @@ export class NotificationActionsService {
     const auditUser = this.systemUsersService.systemUser;
     const { templateId, emailContacts } =
       await this.assertNotificationMessageDetails(
-        NotificationMessageType.StudentSubmittedAppealNotification,
+        NotificationMessageType.StudentAppealSubmitted,
       );
     if (!emailContacts?.length) {
       return;
     }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
-      messageType: NotificationMessageType.StudentSubmittedAppealNotification,
+      messageType: NotificationMessageType.StudentAppealSubmitted,
       messagePayload: {
         email_address: emailContact,
         template_id: templateId,
@@ -1465,11 +1465,11 @@ export class NotificationActionsService {
   ): Promise<void> {
     const { templateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
-        NotificationMessageType.MinistryCompletesAppeal,
+        NotificationMessageType.MinistryAppealCompleted,
       );
     const appealCompletedNotification = {
       userId: notification.userId,
-      messageType: NotificationMessageType.MinistryCompletesAppeal,
+      messageType: NotificationMessageType.MinistryAppealCompleted,
       messagePayload: {
         email_address: notification.toAddress,
         template_id: templateId,

@@ -79,7 +79,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
       { emailContacts: [MINISTRY_EMAIL_ADDRESS] },
     );
     await db.notificationMessage.update(
-      { id: NotificationMessageType.StudentSubmittedAppealNotification },
+      { id: NotificationMessageType.StudentAppealSubmitted },
       { emailContacts: [MINISTRY_EMAIL_ADDRESS] },
     );
   });
@@ -99,7 +99,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
     await db.notification.update(
       {
         notificationMessage: {
-          id: NotificationMessageType.StudentSubmittedAppealNotification,
+          id: NotificationMessageType.StudentAppealSubmitted,
         },
       },
       { dateSent: new Date() },
@@ -794,13 +794,13 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
       select: { id: true, messagePayload: true },
       where: {
         notificationMessage: {
-          id: NotificationMessageType.StudentSubmittedAppealNotification,
+          id: NotificationMessageType.StudentAppealSubmitted,
         },
         dateSent: IsNull(),
       },
     });
     expect(createdNotification.messagePayload).toStrictEqual({
-      template_id: GC_NOTIFY_TEMPLATE_IDS.StudentSubmittedAppealNotification,
+      template_id: GC_NOTIFY_TEMPLATE_IDS.StudentAppealSubmitted,
       email_address: MINISTRY_EMAIL_ADDRESS,
       personalisation: {
         givenNames: student.user.firstName,
