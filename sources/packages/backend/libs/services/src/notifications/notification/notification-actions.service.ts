@@ -1566,7 +1566,7 @@ export class NotificationActionsService {
   }
 
   /**
-   * Creates a ministry notification when a student submits a form or appeal,
+   * Creates a ministry notification when a student submits a form submission,
    * using the form category directly from the dynamic form configuration.
    * @param notification notification details.
    * @param entityManager entity manager to execute in transaction.
@@ -1613,9 +1613,9 @@ export class NotificationActionsService {
   }
 
   /**
-   * Creates a student notification when a form or appeal is completed.
+   * Creates a student notification when a form submission is completed.
    * @param notification notification details.
-   * @param auditUserId user who completed the form or appeal.
+   * @param auditUserId user who completed the form submission.
    * @param entityManager entity manager to execute in transaction.
    */
   async saveStudentFormCompletedNotification(

@@ -118,7 +118,7 @@ export class FormSubmissionSubmitService {
           { entityManager: entityManager },
         );
       }
-      // Send a notification to the ministry that a new form or appeal was submitted.
+      // Send a ministry notification when a new form submission has been created.
       await this.saveFormSubmissionNotification(
         studentId,
         applicationId,
@@ -131,7 +131,7 @@ export class FormSubmissionSubmitService {
   }
 
   /**
-   * Sends a notification to the ministry when a new form or appeal has been submitted.
+   * Sends a ministry notification when a new form submission has been created.
    * Loads the required student and application data within the provided
    * transaction to ensure data consistency.
    * @param studentId ID of the student who submitted the form.
@@ -148,49 +148,37 @@ export class FormSubmissionSubmitService {
     formCategory: FormCategory,
     entityManager: EntityManager,
   ): Promise<void> {
-    // Load student info required for the notification.
-    const studentForNotification = await entityManager
-      .getRepository(Student)
-      .findOne({
-        select: {
-          id: true,
-          birthDate: true,
-          user: { id: true, firstName: true, lastName: true, email: true },
-        },
-        relations: { user: true },
-        where: { id: studentId },
-      });
-    if (!studentForNotification) {
+    // Load student and application data in a single query.
+    const student = await entityManager.getRepository(Student).findOneOrFail({
+      select: {
+        id: true,
+        birthDate: true,
+        user: { id: true, firstName: true, lastName: true, email: true },
+        applications: { id: true, applicationNumber: true },
+      },
+      relations: { user: true, applications: true },
+      where: {
+        id: studentId,
+        applications: { id: applicationId },
+      },
+    });
+    if (!student) {
+      throw new Error("Student not found while sending notification.");
+    }
+    if (applicationId && !student.applications.length) {
       throw new Error(
-        `Student ${studentId} not found while sending form submission notification.`,
+        "Application not found found while sending notification.",
       );
     }
-    // Load the application number if a specific application is linked to the submission.
-    let applicationNumber: string | undefined;
-    if (applicationId) {
-      const application = await entityManager
-        .getRepository(Application)
-        .findOne({
-          select: { id: true, applicationNumber: true },
-          where: { id: applicationId },
-        });
-      if (!application) {
-        throw new Error(
-          `Application ${applicationId} not found while sending form submission notification.`,
-        );
-      }
-      applicationNumber = application.applicationNumber;
-    }
-
     await this.notificationActionsService.saveMinistryFormSubmittedNotification(
       {
-        givenNames: studentForNotification.user.firstName,
-        lastName: studentForNotification.user.lastName,
-        email: studentForNotification.user.email,
-        birthDate: studentForNotification.birthDate,
+        givenNames: student.user.firstName,
+        lastName: student.user.lastName,
+        email: student.user.email,
+        birthDate: student.birthDate,
         formCategory: formCategory,
         formNames: submissionConfigs.map((config) => config.formType),
-        applicationNumber,
+        applicationNumber: student.applications?.[0]?.applicationNumber,
       },
       entityManager,
     );

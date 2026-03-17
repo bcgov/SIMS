@@ -246,11 +246,11 @@ export enum NotificationMessageType {
    */
   StudentChangeRequestReviewCompleted = 37,
   /**
-   * Ministry notification when a student submits a form or appeal.
+   * Ministry notification when a student submits a form submission.
    */
   MinistryFormSubmitted = 38,
   /**
-   * Student notification when a form or appeal is completed.
+   * Student notification when a form submission is completed.
    */
   StudentFormCompleted = 39,
 }

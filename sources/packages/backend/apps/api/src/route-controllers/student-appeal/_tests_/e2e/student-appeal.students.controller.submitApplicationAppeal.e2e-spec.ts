@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource, IsNull, Repository } from "typeorm";
+import { DataSource, In, IsNull, Repository } from "typeorm";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
@@ -75,11 +75,12 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
     recentActiveProgramYear = await getRecentActiveProgramYear(db);
     // Update fake email contacts to send ministry notifications.
     await db.notificationMessage.update(
-      { id: NotificationMessageType.MinistryChangeRequestSubmitted },
-      { emailContacts: [MINISTRY_EMAIL_ADDRESS] },
-    );
-    await db.notificationMessage.update(
-      { id: NotificationMessageType.StudentAppealSubmitted },
+      {
+        id: In([
+          NotificationMessageType.MinistryChangeRequestSubmitted,
+          NotificationMessageType.StudentAppealSubmitted,
+        ]),
+      },
       { emailContacts: [MINISTRY_EMAIL_ADDRESS] },
     );
   });
@@ -91,15 +92,10 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
     await db.notification.update(
       {
         notificationMessage: {
-          id: NotificationMessageType.MinistryChangeRequestSubmitted,
-        },
-      },
-      { dateSent: new Date() },
-    );
-    await db.notification.update(
-      {
-        notificationMessage: {
-          id: NotificationMessageType.StudentAppealSubmitted,
+          id: In([
+            NotificationMessageType.MinistryChangeRequestSubmitted,
+            NotificationMessageType.StudentAppealSubmitted,
+          ]),
         },
       },
       { dateSent: new Date() },

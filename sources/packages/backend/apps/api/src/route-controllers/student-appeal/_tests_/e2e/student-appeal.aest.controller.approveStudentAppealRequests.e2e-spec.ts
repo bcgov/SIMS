@@ -1,4 +1,4 @@
-import { IsNull } from "typeorm";
+import { In, IsNull } from "typeorm";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
@@ -47,15 +47,10 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
     await db.notification.update(
       {
         notificationMessage: {
-          id: NotificationMessageType.StudentChangeRequestReviewCompleted,
-        },
-      },
-      { dateSent: new Date() },
-    );
-    await db.notification.update(
-      {
-        notificationMessage: {
-          id: NotificationMessageType.MinistryAppealCompleted,
+          id: In([
+            NotificationMessageType.StudentChangeRequestReviewCompleted,
+            NotificationMessageType.MinistryAppealCompleted,
+          ]),
         },
       },
       { dateSent: new Date() },

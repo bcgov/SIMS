@@ -595,7 +595,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Sends a ministry notification when a student submits a new program year change request.
+   * Sends a ministry notification when a student submits a change request (edit post-COE).
    * Loads the required student and application number within the provided
    * transaction to ensure data consistency.
    * @param studentId ID of the student who submitted the change request.

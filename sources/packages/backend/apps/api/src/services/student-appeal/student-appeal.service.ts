@@ -147,12 +147,10 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
             applicationNumber: true,
             programYear: { id: true, programYear: true },
           },
-          appealRequests: { id: true, submittedFormName: true },
         },
         relations: {
           student: { user: true },
           application: { programYear: true },
-          appealRequests: true,
         },
         where: { id: appealId },
         loadEagerRelations: false,
