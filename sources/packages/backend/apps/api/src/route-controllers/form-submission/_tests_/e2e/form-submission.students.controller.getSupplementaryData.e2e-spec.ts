@@ -16,7 +16,7 @@ import {
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
-import { TestingModule } from "@nestjs/testing/testing-module";
+import { TestingModule } from "@nestjs/testing";
 import { SupportingUserType } from "@sims/sims-db";
 
 describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
@@ -32,8 +32,8 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  beforeEach(() => {
-    resetMockJWTUserInfo(appModule);
+  beforeEach(async () => {
+    await resetMockJWTUserInfo(appModule);
   });
 
   describe(`Supplementary data validations for ${KnownSupplementaryDataKey.ProgramYear}.`, () => {

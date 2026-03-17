@@ -73,8 +73,7 @@ export const FORM_SUBMISSION_UPDATE_UNAUTHORIZED =
 export const FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE =
   "FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE";
 /**
- * The supplementary data associated that should be available to be
- * associated with the form was not found.
+ * The supplementary data that should be available for the form was not found.
  */
 export const FORM_SUBMISSION_SUPPLEMENTARY_DATA_NOT_FOUND =
   "FORM_SUBMISSION_SUPPLEMENTARY_DATA_NOT_FOUND";
