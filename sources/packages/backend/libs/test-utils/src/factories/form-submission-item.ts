@@ -2,6 +2,7 @@ import {
   DynamicFormConfiguration,
   FormSubmissionItem,
   FormSubmissionItemDecision,
+  User,
 } from "@sims/sims-db";
 import { faker } from "@faker-js/faker";
 
@@ -15,10 +16,13 @@ import { faker } from "@faker-js/faker";
 export function createFakeFormSubmissionItem(relations: {
   dynamicFormConfiguration: DynamicFormConfiguration;
   currentDecision?: FormSubmissionItemDecision;
+  auditUser?: User;
 }): FormSubmissionItem {
   const item = new FormSubmissionItem();
   item.dynamicFormConfiguration = relations.dynamicFormConfiguration;
   item.submittedData = { someField: faker.lorem.word() };
   item.currentDecision = relations.currentDecision;
+  item.decisions = relations.currentDecision ? [relations.currentDecision] : [];
+  item.creator = relations.auditUser ?? null;
   return item;
 }

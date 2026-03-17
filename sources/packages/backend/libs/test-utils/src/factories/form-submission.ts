@@ -3,12 +3,90 @@ import {
   DynamicFormConfiguration,
   FormCategory,
   FormSubmission,
+  FormSubmissionDecisionStatus,
+  FormSubmissionItemDecision,
   FormSubmissionStatus,
+  NoteType,
   Student,
+  User,
 } from "@sims/sims-db";
 import { E2EDataSources } from "../data-source/e2e-data-source";
 import { createFakeFormSubmissionItem } from "./form-submission-item";
 import { saveFakeStudent } from "./student";
+import { createFakeNote } from "@sims/test-utils/factories/note";
+
+export interface FormSubmissionDecisionTestInputData {
+  decisionStatus: FormSubmissionDecisionStatus;
+}
+
+export interface FormSubmissionItemTestInputData {
+  dynamicFormConfiguration?: DynamicFormConfiguration;
+  setFirstDecisionAsCurrent?: boolean;
+  decisions: FormSubmissionDecisionTestInputData[];
+}
+
+export interface FormSubmissionTestInputData {
+  student?: Student;
+  application?: Application;
+  formCategory: FormCategory;
+  submissionStatus: FormSubmissionStatus;
+  auditUser: User;
+  formSubmissionItems: FormSubmissionItemTestInputData[];
+}
+
+export async function saveFakeFormSubmissionFromInputTestData(
+  db: E2EDataSources,
+  inputData: FormSubmissionTestInputData,
+): Promise<FormSubmission> {
+  const now = new Date();
+  const student = inputData.student ?? inputData.application?.student ?? (await saveFakeStudent(db.dataSource));
+  const formSubmission = new FormSubmission();
+  formSubmission.student = student;
+  formSubmission.creator = student.user;
+  formSubmission.submittedDate = now;
+  formSubmission.formCategory = inputData.formCategory;
+  formSubmission.submissionStatus = inputData.submissionStatus;
+  if (inputData.submissionStatus !== FormSubmissionStatus.Pending) {
+    formSubmission.assessedDate = now;
+    formSubmission.assessedBy = inputData.auditUser;
+  }
+  formSubmission.formSubmissionItems = [];
+  for (const itemInputData of inputData.formSubmissionItems) {
+    const submissionItem = createFakeFormSubmissionItem({
+      dynamicFormConfiguration: itemInputData.dynamicFormConfiguration,
+      auditUser: inputData.auditUser,
+    });
+    submissionItem.decisions = [];
+    for (const decisionData of itemInputData.decisions) {
+      const decision = new FormSubmissionItemDecision();
+      decision.decisionStatus = decisionData.decisionStatus;
+      decision.creator = inputData.auditUser;
+      decision.createdAt = now;
+      decision.decisionBy = inputData.auditUser;
+      decision.decisionDate = now;
+      decision.modifier = inputData.auditUser;
+      decision.updatedAt = now;
+      const note = createFakeNote();
+      note.creator = inputData.auditUser;
+      note.description = `Note for decision with status ${decisionData.decisionStatus}`;
+      note.noteType = inputData.formCategory === FormCategory.StudentAppeal ? NoteType.StudentAppeal : NoteType.StudentForm;
+      await db.note.save(note);
+      decision.decisionNote = note;
+      submissionItem.decisions.push(decision);
+    }
+    formSubmission.formSubmissionItems.push(submissionItem);
+  }
+  await db.formSubmission.save(formSubmission);
+  for (let i = 0; i < formSubmission.formSubmissionItems.length; i++) {
+    const itemTestInput = inputData.formSubmissionItems[i];
+    const formSubmissionItem = formSubmission.formSubmissionItems[i];
+    if (itemTestInput.setFirstDecisionAsCurrent) {
+      formSubmissionItem.currentDecision = formSubmissionItem.decisions[0];
+    }
+  }
+  await db.formSubmission.save(formSubmission);
+  return formSubmission;
+}
 
 /**
  * Saves a fake form submission with one or more items to the database.

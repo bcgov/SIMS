@@ -18,22 +18,23 @@ import { faker } from "@faker-js/faker";
  * @returns fake dynamic form configuration.
  */
 export function createFakeDynamicFormConfiguration(
-  formType: DynamicFormType,
+  formType: DynamicFormType | string,
   relations?: { programYear?: ProgramYear },
   options?: {
     offeringIntensity?: OfferingIntensity;
     formDefinitionName?: string;
+    initialValues?: Partial<DynamicFormConfiguration>;
   },
 ): DynamicFormConfiguration {
   const dynamicFormConfiguration = new DynamicFormConfiguration();
-  dynamicFormConfiguration.formType = formType;
+  dynamicFormConfiguration.formType = formType as DynamicFormType;
   dynamicFormConfiguration.programYear = relations?.programYear;
   dynamicFormConfiguration.offeringIntensity = options?.offeringIntensity;
   dynamicFormConfiguration.formDefinitionName =
     options?.formDefinitionName ?? faker.string.alphanumeric({ length: 50 });
-  dynamicFormConfiguration.formCategory = FormCategory.System;
-  dynamicFormConfiguration.hasApplicationScope = false;
-  dynamicFormConfiguration.allowBundledSubmission = false;
+  dynamicFormConfiguration.formCategory = options?.initialValues?.formCategory ?? FormCategory.System;
+  dynamicFormConfiguration.hasApplicationScope = options?.initialValues?.hasApplicationScope ?? false;
+  dynamicFormConfiguration.allowBundledSubmission = options?.initialValues?.allowBundledSubmission ?? false;
   return dynamicFormConfiguration;
 }
 
@@ -48,7 +49,7 @@ export function createFakeDynamicFormConfiguration(
  */
 export async function ensureDynamicFormConfigurationExists(
   db: E2EDataSources,
-  formType: DynamicFormType,
+  formType: DynamicFormType | string,
   options?: {
     programYear?: ProgramYear;
     offeringIntensity?: OfferingIntensity;
@@ -64,7 +65,7 @@ export async function ensureDynamicFormConfigurationExists(
       },
       relations: { programYear: true },
       where: {
-        formType,
+        formType: formType as DynamicFormType,
         programYear: { id: options?.programYear.id },
         offeringIntensity: options?.offeringIntensity,
       },
@@ -73,7 +74,7 @@ export async function ensureDynamicFormConfigurationExists(
     return existingDynamicFormConfiguration;
   }
   const dynamicFormConfiguration = createFakeDynamicFormConfiguration(
-    formType,
+    formType as DynamicFormType,
     { programYear: options?.programYear },
     { offeringIntensity: options?.offeringIntensity },
   );
