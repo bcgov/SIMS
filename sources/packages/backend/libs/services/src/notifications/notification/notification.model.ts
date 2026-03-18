@@ -1,4 +1,4 @@
-import { NotificationMessageType } from "@sims/sims-db";
+import { FormCategory, NotificationMessageType } from "@sims/sims-db";
 import { NotificationEmailMessage } from "./gc-notify.model";
 import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
 
@@ -109,6 +109,18 @@ export interface StudentSubmittedChangeRequestNotification {
   email: string;
   birthDate: string;
   applicationNumber: string;
+}
+
+/**
+ * Ministry notification data when a student submits an appeal using the
+ * existing (pre-form-submissions-framework) appeal notification template.
+ */
+export interface MinistryStudentAppealNotification {
+  givenNames: string;
+  lastName: string;
+  email: string;
+  birthDate: string;
+  applicationNumber?: string;
 }
 
 export interface StudentRequestsBasicBCeIDAccountNotification {
@@ -244,4 +256,18 @@ export interface StudentCOERequiredNearEndDateNotification {
   lastName: string;
   email: string;
   applicationNumber: string;
+}
+
+/**
+ * Ministry notification data when a student submits a form submission,
+ * including the form category, human-readable form names, and the related application number if available.
+ */
+export interface MinistryFormSubmittedNotification {
+  givenNames: string;
+  lastName: string;
+  email: string;
+  birthDate: string;
+  formCategory: FormCategory;
+  formNames: string[];
+  applicationNumber?: string;
 }

@@ -33,6 +33,7 @@ import {
   SortPriority,
   OrderByCondition,
   StudentAppealPaginationOptions,
+  allowApplicationChangeRequest,
 } from "../../utilities";
 import { FieldSortOrder } from "@sims/utilities";
 import { PROGRAM_YEAR_2025_26_START_DATE } from "./constants";
@@ -115,7 +116,10 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
   }
 
   /**
-   * Create a notification for the student appeal.
+   * Creates a ministry notification for the student appeal submission.
+   * Determines whether to send a change request submitted notification (for legacy change requests)
+   * or a form submitted notification (for new appeals), based on the associated application
+   * program year.
    * @param appealId appeal ID to send the notification.
    * @param entityManager entity manager to keep DB operations in the same transaction.
    */
@@ -138,22 +142,75 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
             },
             birthDate: true,
           },
-          application: { id: true, applicationNumber: true },
+          application: {
+            id: true,
+            applicationNumber: true,
+            programYear: { id: true, programYear: true },
+          },
         },
-        relations: { student: { user: true }, application: true },
+        relations: {
+          student: { user: true },
+          application: { programYear: true },
+        },
         where: { id: appealId },
         loadEagerRelations: false,
       });
+
+    // Check if the submission is for new appeal process (appeal process is for submissions from 2025-26 program year).
+    const isLegacyChangeRequest =
+      studentAppeal.application !== null &&
+      !allowApplicationChangeRequest(studentAppeal.application.programYear);
+    if (isLegacyChangeRequest) {
+      // For legacy change requests, send a change request submitted notification.
+      return this.saveMinistryChangeRequestNotification(
+        studentAppeal,
+        entityManager,
+      );
+    }
+    // Not a legacy change request, so save as a new appeal submission.
+    return this.saveMinistryAppealNotification(studentAppeal, entityManager);
+  }
+
+  /**
+   * Sends a ministry notification for a legacy change request submission.
+   * @param studentAppeal student appeal with student, user, and application data.
+   * @param entityManager entity manager for the current transaction.
+   */
+  private async saveMinistryChangeRequestNotification(
+    studentAppeal: StudentAppeal,
+    entityManager: EntityManager,
+  ): Promise<void> {
     const ministryNotification: StudentSubmittedChangeRequestNotification = {
       givenNames: studentAppeal.student.user.firstName,
       lastName: studentAppeal.student.user.lastName,
       email: studentAppeal.student.user.email,
       birthDate: studentAppeal.student.birthDate,
-      applicationNumber:
-        studentAppeal.application?.applicationNumber ?? "not applicable",
+      applicationNumber: studentAppeal.application.applicationNumber,
     };
-    return this.notificationActionsService.saveStudentSubmittedChangeRequestNotification(
+    await this.notificationActionsService.saveMinistryChangeRequestSubmittedNotification(
       ministryNotification,
+      entityManager,
+    );
+  }
+
+  /**
+   * Sends a ministry notification for a new appeal (application appeal or other appeal) submission.
+   * Classifies the appeal type and maps technical form names to human-readable friendly names.
+   * @param studentAppeal student appeal with student, user, application, and appeal request data.
+   * @param entityManager entity manager for the current transaction.
+   */
+  private async saveMinistryAppealNotification(
+    studentAppeal: StudentAppeal,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    await this.notificationActionsService.saveMinistryStudentSubmittedAppealNotification(
+      {
+        givenNames: studentAppeal.student.user.firstName,
+        lastName: studentAppeal.student.user.lastName,
+        email: studentAppeal.student.user.email,
+        birthDate: studentAppeal.student.birthDate,
+        applicationNumber: studentAppeal.application?.applicationNumber,
+      },
       entityManager,
     );
   }
