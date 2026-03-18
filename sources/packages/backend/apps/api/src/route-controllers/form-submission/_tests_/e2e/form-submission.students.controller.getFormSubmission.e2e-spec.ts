@@ -12,8 +12,8 @@ import {
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
-  createFakeDynamicFormConfiguration,
   E2EDataSources,
+  ensureDynamicFormConfigurationExists,
   saveFakeFormSubmissionFromInputTestData,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
@@ -43,30 +43,15 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
       db.dataSource,
       AESTGroups.BusinessAdministrators,
     );
-
-    [studentAppealApplicationA, studentAppealApplicationB] =
-      await db.dynamicFormConfiguration.save([
-        createFakeDynamicFormConfiguration(
-          "Student application appeal A",
-          null,
-          {
-            initialValues: {
-              formCategory: FormCategory.StudentAppeal,
-              hasApplicationScope: true,
-            },
-          },
-        ),
-        createFakeDynamicFormConfiguration(
-          "Student application appeal B",
-          null,
-          {
-            initialValues: {
-              formCategory: FormCategory.StudentAppeal,
-              hasApplicationScope: true,
-            },
-          },
-        ),
-      ]);
+    // Create the form configurations to be used along the tests.
+    [studentAppealApplicationA, studentAppealApplicationB] = await Promise.all([
+      ensureDynamicFormConfigurationExists(db, "Student application appeal A", {
+        formCategory: FormCategory.StudentAppeal,
+      }),
+      ensureDynamicFormConfigurationExists(db, "Student application appeal B", {
+        formCategory: FormCategory.StudentAppeal,
+      }),
+    ]);
   });
 
   beforeEach(async () => {
@@ -109,39 +94,39 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      //.then((response) => { console.log(inspect(response.body, { depth: null })) })
-      .expect({
-        id: formSubmission.id,
-        formCategory: FormCategory.StudentAppeal,
-        status: FormSubmissionStatus.Pending,
-        submittedDate: formSubmission.submittedDate.toISOString(),
-        assessedDate: null,
-        submissionItems: [
-          {
-            id: formSubmissionItemA.id,
-            formType: studentAppealApplicationA.formType,
-            formCategory: FormCategory.StudentAppeal,
-            dynamicFormConfigurationId: studentAppealApplicationA.id,
-            submissionData: formSubmissionItemA.submittedData,
-            formDefinitionName: studentAppealApplicationA.formDefinitionName,
-            currentDecision: {
-              decisionStatus: FormSubmissionDecisionStatus.Pending,
+      .expect(({ body }) =>
+        expect(body).toStrictEqual({
+          id: formSubmission.id,
+          formCategory: FormCategory.StudentAppeal,
+          status: FormSubmissionStatus.Pending,
+          submittedDate: formSubmission.submittedDate.toISOString(),
+          assessedDate: null,
+          submissionItems: [
+            {
+              id: formSubmissionItemA.id,
+              formType: studentAppealApplicationA.formType,
+              formCategory: FormCategory.StudentAppeal,
+              dynamicFormConfigurationId: studentAppealApplicationA.id,
+              submissionData: formSubmissionItemA.submittedData,
+              formDefinitionName: studentAppealApplicationA.formDefinitionName,
+              currentDecision: {
+                decisionStatus: FormSubmissionDecisionStatus.Pending,
+              },
             },
-          },
-          {
-            id: formSubmissionItemB.id,
-            formType: studentAppealApplicationB.formType,
-            formCategory: FormCategory.StudentAppeal,
-            dynamicFormConfigurationId: studentAppealApplicationB.id,
-            submissionData: formSubmissionItemB.submittedData,
-            formDefinitionName: studentAppealApplicationB.formDefinitionName,
-            currentDecision: {
-              decisionStatus: FormSubmissionDecisionStatus.Pending,
+            {
+              id: formSubmissionItemB.id,
+              formType: studentAppealApplicationB.formType,
+              formCategory: FormCategory.StudentAppeal,
+              dynamicFormConfigurationId: studentAppealApplicationB.id,
+              submissionData: formSubmissionItemB.submittedData,
+              formDefinitionName: studentAppealApplicationB.formDefinitionName,
+              currentDecision: {
+                decisionStatus: FormSubmissionDecisionStatus.Pending,
+              },
             },
-          },
-        ],
-      });
+          ],
+        }),
+      );
   });
 
   it("Should get a form submission as completed and its decisions statuses when form submission is completed.", async () => {

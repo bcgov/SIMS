@@ -28,8 +28,8 @@ describe("FormSubmissionStudentsController(e2e)-getSubmissionForms", () => {
       .get(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect(({ body }) => {
-        expect(body).toEqual({
+      .expect(({ body }) =>
+        expect(body).toStrictEqual({
           configurations: [
             {
               id: expect.any(Number),
@@ -102,8 +102,8 @@ describe("FormSubmissionStudentsController(e2e)-getSubmissionForms", () => {
               hasApplicationScope: true,
             },
           ],
-        });
-      });
+        }),
+      );
   });
 
   afterAll(async () => {

@@ -12,9 +12,9 @@ import {
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
-  createFakeDynamicFormConfiguration,
   createFakeInstitutionLocation,
   E2EDataSources,
+  ensureDynamicFormConfigurationExists,
   saveFakeApplication,
   saveFakeFormSubmissionFromInputTestData,
 } from "@sims/test-utils";
@@ -57,22 +57,13 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmission", () => {
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
-    [
-      studentAppealApplicationA,
-      studentAppealApplicationB,
-      //studentFormApplication,
-    ] = await db.dynamicFormConfiguration.save([
-      createFakeDynamicFormConfiguration("Student application appeal A", null, {
-        initialValues: {
-          formCategory: FormCategory.StudentAppeal,
-          hasApplicationScope: true,
-        },
+    // Create the form configurations to be used along the tests.
+    [studentAppealApplicationA, studentAppealApplicationB] = await Promise.all([
+      ensureDynamicFormConfigurationExists(db, "Student application appeal A", {
+        formCategory: FormCategory.StudentAppeal,
       }),
-      createFakeDynamicFormConfiguration("Student application appeal B", null, {
-        initialValues: {
-          formCategory: FormCategory.StudentAppeal,
-          hasApplicationScope: true,
-        },
+      ensureDynamicFormConfigurationExists(db, "Student application appeal B", {
+        formCategory: FormCategory.StudentAppeal,
       }),
     ]);
   });
@@ -119,7 +110,6 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmission", () => {
       .get(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      //.then((response) => { console.log(inspect(response.body, { depth: null })) })
       .expect(({ body }) =>
         expect(body).toEqual({
           id: formSubmission.id,
@@ -200,7 +190,6 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmission", () => {
       .get(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      //.then((response) => { console.log(inspect(response.body, { depth: null })) })
       .expect(({ body }) =>
         expect(body).toEqual({
           id: formSubmission.id,

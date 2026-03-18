@@ -11,8 +11,8 @@ import {
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
-  createFakeDynamicFormConfiguration,
   E2EDataSources,
+  ensureDynamicFormConfigurationExists,
   saveFakeFormSubmissionFromInputTestData,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
@@ -23,7 +23,6 @@ import {
   FormSubmissionStatus,
   User,
 } from "@sims/sims-db";
-import { inspect } from "util";
 
 describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
   let app: INestApplication;
@@ -44,29 +43,20 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       db.dataSource,
       AESTGroups.BusinessAdministrators,
     );
-
+    // Create the form configurations to be used along the tests.
     [
       studentAppealApplicationA,
       studentAppealApplicationB,
       studentFormApplication,
-    ] = await db.dynamicFormConfiguration.save([
-      createFakeDynamicFormConfiguration("Student application appeal A", null, {
-        initialValues: {
-          formCategory: FormCategory.StudentAppeal,
-          hasApplicationScope: true,
-        },
+    ] = await Promise.all([
+      ensureDynamicFormConfigurationExists(db, "Student application appeal A", {
+        formCategory: FormCategory.StudentAppeal,
       }),
-      createFakeDynamicFormConfiguration("Student application appeal B", null, {
-        initialValues: {
-          formCategory: FormCategory.StudentAppeal,
-          hasApplicationScope: true,
-        },
+      ensureDynamicFormConfigurationExists(db, "Student application appeal B", {
+        formCategory: FormCategory.StudentAppeal,
       }),
-      createFakeDynamicFormConfiguration("Student form application", null, {
-        initialValues: {
-          formCategory: FormCategory.StudentForm,
-          hasApplicationScope: false,
-        },
+      ensureDynamicFormConfigurationExists(db, "Student form application", {
+        formCategory: FormCategory.StudentForm,
       }),
     ]);
   });
@@ -115,55 +105,57 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      //.expect(({ body }) => console.log(inspect(body, { depth: null })))
-      .expect({
-        hasApprovalAuthorization: true,
-        id: formSubmission.id,
-        formCategory: formSubmission.formCategory,
-        status: formSubmission.submissionStatus,
-        submittedDate: formSubmission.submittedDate.toISOString(),
-        submissionItems: [
-          {
-            id: formSubmissionItemA.id,
-            formType: studentAppealApplicationA.formType,
-            formCategory: studentAppealApplicationA.formCategory,
-            dynamicFormConfigurationId: studentAppealApplicationA.id,
-            submissionData: formSubmissionItemA.submittedData,
-            formDefinitionName: studentAppealApplicationA.formDefinitionName,
-            updatedAt: formSubmissionItemA.updatedAt.toISOString(),
-            currentDecision: {
-              id: itemADecision1.id,
-              decisionStatus: itemADecision1.decisionStatus,
-              decisionDate: itemADecision1.decisionDate.toISOString(),
-              decisionBy: `${itemADecision1.decisionBy.firstName} ${itemADecision1.decisionBy.lastName}`,
-              decisionNoteDescription: itemADecision1.decisionNote.description,
-            },
-            previousDecisions: [
-              {
-                id: itemADecision2.id,
-                decisionStatus: itemADecision2.decisionStatus,
-                decisionDate: itemADecision2.decisionDate.toISOString(),
-                decisionBy: `${itemADecision2.decisionBy.firstName} ${itemADecision2.decisionBy.lastName}`,
+      .expect(({ body }) =>
+        expect(body).toStrictEqual({
+          hasApprovalAuthorization: true,
+          id: formSubmission.id,
+          formCategory: formSubmission.formCategory,
+          status: formSubmission.submissionStatus,
+          submittedDate: formSubmission.submittedDate.toISOString(),
+          submissionItems: [
+            {
+              id: formSubmissionItemA.id,
+              formType: studentAppealApplicationA.formType,
+              formCategory: studentAppealApplicationA.formCategory,
+              dynamicFormConfigurationId: studentAppealApplicationA.id,
+              submissionData: formSubmissionItemA.submittedData,
+              formDefinitionName: studentAppealApplicationA.formDefinitionName,
+              updatedAt: formSubmissionItemA.updatedAt.toISOString(),
+              currentDecision: {
+                id: itemADecision1.id,
+                decisionStatus: itemADecision1.decisionStatus,
+                decisionDate: itemADecision1.decisionDate.toISOString(),
+                decisionBy: `${itemADecision1.decisionBy.firstName} ${itemADecision1.decisionBy.lastName}`,
                 decisionNoteDescription:
-                  itemADecision2.decisionNote.description,
+                  itemADecision1.decisionNote.description,
               },
-            ],
-          },
-          {
-            id: formSubmissionItemB.id,
-            formType: studentAppealApplicationB.formType,
-            formCategory: studentAppealApplicationB.formCategory,
-            dynamicFormConfigurationId: studentAppealApplicationB.id,
-            submissionData: formSubmissionItemB.submittedData,
-            formDefinitionName: studentAppealApplicationB.formDefinitionName,
-            updatedAt: formSubmissionItemB.updatedAt.toISOString(),
-            currentDecision: {
-              decisionStatus: FormSubmissionDecisionStatus.Pending,
+              previousDecisions: [
+                {
+                  id: itemADecision2.id,
+                  decisionStatus: itemADecision2.decisionStatus,
+                  decisionDate: itemADecision2.decisionDate.toISOString(),
+                  decisionBy: `${itemADecision2.decisionBy.firstName} ${itemADecision2.decisionBy.lastName}`,
+                  decisionNoteDescription:
+                    itemADecision2.decisionNote.description,
+                },
+              ],
             },
-            previousDecisions: [],
-          },
-        ],
-      });
+            {
+              id: formSubmissionItemB.id,
+              formType: studentAppealApplicationB.formType,
+              formCategory: studentAppealApplicationB.formCategory,
+              dynamicFormConfigurationId: studentAppealApplicationB.id,
+              submissionData: formSubmissionItemB.submittedData,
+              formDefinitionName: studentAppealApplicationB.formDefinitionName,
+              updatedAt: formSubmissionItemB.updatedAt.toISOString(),
+              currentDecision: {
+                decisionStatus: FormSubmissionDecisionStatus.Pending,
+              },
+              previousDecisions: [],
+            },
+          ],
+        }),
+      );
   });
 
   it("Should get a form submission as pending, and its decisions as pending without history when the form has multiple decisions, including an approved decision, and the user does not have approval authorization.", async () => {
@@ -198,28 +190,29 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect(({ body }) => console.log(inspect(body, { depth: null })))
-      .expect({
-        hasApprovalAuthorization: false,
-        id: formSubmission.id,
-        formCategory: formSubmission.formCategory,
-        status: formSubmission.submissionStatus,
-        submittedDate: formSubmission.submittedDate.toISOString(),
-        submissionItems: [
-          {
-            id: formSubmissionItemA.id,
-            formType: studentAppealApplicationA.formType,
-            formCategory: studentAppealApplicationA.formCategory,
-            dynamicFormConfigurationId: studentAppealApplicationA.id,
-            submissionData: formSubmissionItemA.submittedData,
-            formDefinitionName: studentAppealApplicationA.formDefinitionName,
-            updatedAt: formSubmissionItemA.updatedAt.toISOString(),
-            currentDecision: {
-              decisionStatus: FormSubmissionDecisionStatus.Pending,
+      .expect(({ body }) =>
+        expect(body).toStrictEqual({
+          hasApprovalAuthorization: false,
+          id: formSubmission.id,
+          formCategory: formSubmission.formCategory,
+          status: formSubmission.submissionStatus,
+          submittedDate: formSubmission.submittedDate.toISOString(),
+          submissionItems: [
+            {
+              id: formSubmissionItemA.id,
+              formType: studentAppealApplicationA.formType,
+              formCategory: studentAppealApplicationA.formCategory,
+              dynamicFormConfigurationId: studentAppealApplicationA.id,
+              submissionData: formSubmissionItemA.submittedData,
+              formDefinitionName: studentAppealApplicationA.formDefinitionName,
+              updatedAt: formSubmissionItemA.updatedAt.toISOString(),
+              currentDecision: {
+                decisionStatus: FormSubmissionDecisionStatus.Pending,
+              },
             },
-          },
-        ],
-      });
+          ],
+        }),
+      );
   });
 
   it("Should get a form submission as completed, and its decisions statuses, including current notes when the user does not have approval authorization.", async () => {
@@ -255,7 +248,6 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect(({ body }) => console.log(inspect(body, { depth: null })))
       .expect(({ body }) => {
         expect(body).toStrictEqual({
           hasApprovalAuthorization: false,
@@ -316,8 +308,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect(({ body }) => console.log(inspect(body, { depth: null })))
-      .expect(({ body }) => {
+      .expect(({ body }) =>
         expect(body).toStrictEqual({
           hasApprovalAuthorization: true,
           id: formSubmission.id,
@@ -353,8 +344,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
               ],
             },
           ],
-        });
-      });
+        }),
+      );
   });
 
   it("Should get a form submission item, and its decisions statuses, including current notes and audit when the user has approval authorization and an item ID was provided.", async () => {
@@ -399,7 +390,6 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect(({ body }) => console.log(inspect(body, { depth: null })))
       .expect(({ body }) => {
         expect(body).toStrictEqual({
           hasApprovalAuthorization: true,

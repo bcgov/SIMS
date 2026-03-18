@@ -12,29 +12,31 @@ import { faker } from "@faker-js/faker";
  * Create a fake dynamic form configuration.
  * @param formType form type.
  * @param relations entity relations.
- * @param options dynamic form configuration options
- * - `offeringIntensity` offering intensity.
- * - `formDefinitionName` form definition name.
+ * @param options dynamic form configuration options.
+ * - `initialValues` initial values for the dynamic form configuration.
  * @returns fake dynamic form configuration.
  */
 export function createFakeDynamicFormConfiguration(
   formType: DynamicFormType | string,
   relations?: { programYear?: ProgramYear },
   options?: {
-    offeringIntensity?: OfferingIntensity;
-    formDefinitionName?: string;
     initialValues?: Partial<DynamicFormConfiguration>;
   },
 ): DynamicFormConfiguration {
   const dynamicFormConfiguration = new DynamicFormConfiguration();
   dynamicFormConfiguration.formType = formType as DynamicFormType;
   dynamicFormConfiguration.programYear = relations?.programYear;
-  dynamicFormConfiguration.offeringIntensity = options?.offeringIntensity;
+  dynamicFormConfiguration.offeringIntensity =
+    options?.initialValues?.offeringIntensity;
   dynamicFormConfiguration.formDefinitionName =
-    options?.formDefinitionName ?? faker.string.alphanumeric({ length: 50 });
-  dynamicFormConfiguration.formCategory = options?.initialValues?.formCategory ?? FormCategory.System;
-  dynamicFormConfiguration.hasApplicationScope = options?.initialValues?.hasApplicationScope ?? false;
-  dynamicFormConfiguration.allowBundledSubmission = options?.initialValues?.allowBundledSubmission ?? false;
+    options?.initialValues?.formDefinitionName ??
+    faker.string.alphanumeric({ length: 50 });
+  dynamicFormConfiguration.formCategory =
+    options?.initialValues?.formCategory ?? FormCategory.System;
+  dynamicFormConfiguration.hasApplicationScope =
+    options?.initialValues?.hasApplicationScope ?? false;
+  dynamicFormConfiguration.allowBundledSubmission =
+    options?.initialValues?.allowBundledSubmission ?? false;
   return dynamicFormConfiguration;
 }
 
@@ -43,14 +45,16 @@ export function createFakeDynamicFormConfiguration(
  * @param db e2e DataSources.
  * @param formType dynamic form type.
  * @param options dynamic form configuration options
- * - `offeringIntensity` offering intensity.
+ * - `formCategory` form category.
  * - `programYear` program year.
+ * - `offeringIntensity` offering intensity.
  * @returns dynamic form configuration.
  */
 export async function ensureDynamicFormConfigurationExists(
   db: E2EDataSources,
   formType: DynamicFormType | string,
   options?: {
+    formCategory?: FormCategory;
     programYear?: ProgramYear;
     offeringIntensity?: OfferingIntensity;
   },
@@ -68,6 +72,7 @@ export async function ensureDynamicFormConfigurationExists(
         formType: formType as DynamicFormType,
         programYear: { id: options?.programYear.id },
         offeringIntensity: options?.offeringIntensity,
+        formCategory: options?.formCategory,
       },
     });
   if (existingDynamicFormConfiguration) {
@@ -76,7 +81,12 @@ export async function ensureDynamicFormConfigurationExists(
   const dynamicFormConfiguration = createFakeDynamicFormConfiguration(
     formType as DynamicFormType,
     { programYear: options?.programYear },
-    { offeringIntensity: options?.offeringIntensity },
+    {
+      initialValues: {
+        formCategory: options?.formCategory,
+        offeringIntensity: options?.offeringIntensity,
+      },
+    },
   );
   return db.dynamicFormConfiguration.save(dynamicFormConfiguration);
 }
