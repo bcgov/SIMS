@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import {
   Application,
   User,
@@ -26,6 +26,7 @@ import { CustomNamedError, processInParallel } from "@sims/utilities";
 import { DryRunSubmissionResult } from "../../types";
 import { FormSubmissionValidator } from "./form-submission-validator";
 import { SupplementaryDataLoader } from "./form-supplementary-data";
+import { NotificationActionsService } from "@sims/services/notifications";
 
 /**
  * Manages how the form submissions are submitted, including the validations,
@@ -41,6 +42,7 @@ export class FormSubmissionSubmitService {
     private readonly formService: FormService,
     private readonly formSubmissionValidator: FormSubmissionValidator,
     private readonly supplementaryDataLoader: SupplementaryDataLoader,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {}
 
   /**
@@ -116,9 +118,70 @@ export class FormSubmissionSubmitService {
           { entityManager: entityManager },
         );
       }
-      // TODO: send notification.
+      // Send a ministry notification when a new form submission has been created.
+      await this.saveFormSubmissionNotification(
+        studentId,
+        applicationId,
+        submissionConfigs,
+        referenceSubmissionConfig.formCategory,
+        entityManager,
+      );
       return entityManager.getRepository(FormSubmission).save(formSubmission);
     });
+  }
+
+  /**
+   * Sends a ministry notification when a new form submission has been created.
+   * Loads the required student and application data within the provided
+   * transaction to ensure data consistency.
+   * @param studentId ID of the student who submitted the form.
+   * @param applicationId ID of the application linked to the submission, if applicable.
+   * @param submissionConfigs form submission configurations used to determine
+   * the form names included in the notification.
+   * @param formCategory category of the submitted form, used to derive the notification form type.
+   * @param entityManager entity manager for the current transaction.
+   */
+  private async saveFormSubmissionNotification(
+    studentId: number,
+    applicationId: number | undefined,
+    submissionConfigs: FormSubmissionConfig[],
+    formCategory: FormCategory,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    // Load student and application data in a single query.
+    const student = await entityManager.getRepository(Student).findOneOrFail({
+      select: {
+        id: true,
+        birthDate: true,
+        user: { id: true, firstName: true, lastName: true, email: true },
+        applications: { id: true, applicationNumber: true },
+      },
+      relations: { user: true, applications: true },
+      where: {
+        id: studentId,
+        applications: { id: applicationId },
+      },
+    });
+    if (!student) {
+      throw new Error("Student not found while sending notification.");
+    }
+    if (applicationId && !student.applications.length) {
+      throw new Error(
+        "Application not found found while sending notification.",
+      );
+    }
+    await this.notificationActionsService.saveMinistryFormSubmittedNotification(
+      {
+        givenNames: student.user.firstName,
+        lastName: student.user.lastName,
+        email: student.user.email,
+        birthDate: student.birthDate,
+        formCategory: formCategory,
+        formNames: submissionConfigs.map((config) => config.formType),
+        applicationNumber: student.applications?.[0]?.applicationNumber,
+      },
+      entityManager,
+    );
   }
 
   /**

@@ -7,11 +7,19 @@ import {
   FormSubmission,
   getUserFullNameLikeSearch,
   NoteType,
+  Student,
   StudentAppeal,
   User,
 } from "@sims/sims-db";
-import { Brackets, DataSource, Repository, SelectQueryBuilder } from "typeorm";
+import {
+  Brackets,
+  DataSource,
+  EntityManager,
+  Repository,
+  SelectQueryBuilder,
+} from "typeorm";
 import { NoteSharedService, WorkflowClientService } from "@sims/services";
+import { NotificationActionsService } from "@sims/services/notifications";
 import { ApplicationService } from "../application/application.service";
 import {
   APPLICATION_NOT_FOUND,
@@ -31,6 +39,7 @@ export class ApplicationChangeRequestService {
     private readonly noteSharedService: NoteSharedService,
     private readonly workflowClientService: WorkflowClientService,
     private readonly applicationService: ApplicationService,
+    private readonly notificationActionsService: NotificationActionsService,
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
   ) {}
@@ -98,7 +107,14 @@ export class ApplicationChangeRequestService {
         changeRequestApplication.updatedAt = currentDate;
         changeRequestApplication.applicationEditStatusUpdatedBy = auditUser;
         changeRequestApplication.applicationEditStatusUpdatedOn = currentDate;
-        await applicationRepo.save(changeRequestApplication);
+        await Promise.all([
+          applicationRepo.save(changeRequestApplication),
+          this.saveChangeRequestReviewCompletedNotification(
+            changeRequestApplication.student.id,
+            auditUserId,
+            transactionalEntityManager,
+          ),
+        ]);
         return;
       }
       // Previously completed application that will be replaced by the newly approved application change request.
@@ -136,12 +152,50 @@ export class ApplicationChangeRequestService {
           id: copyFromAssessment.formSubmission.id,
         } as FormSubmission;
       }
-      await applicationRepo.save(changeRequestApplication);
+      await Promise.all([
+        applicationRepo.save(changeRequestApplication),
+        this.saveChangeRequestReviewCompletedNotification(
+          changeRequestApplication.student.id,
+          auditUserId,
+          transactionalEntityManager,
+        ),
+      ]);
     });
     // Send a message to the workflow to proceed.
     await this.workflowClientService.sendApplicationChangeRequestStatusMessage(
       applicationId,
       applicationEditStatus,
+    );
+  }
+
+  /**
+   * Creates a student notification when a change request review is completed by the ministry.
+   * @param studentId student ID to load the notification data.
+   * @param auditUserId user who completed the change request review.
+   * @param entityManager entity manager for the current transaction.
+   */
+  private async saveChangeRequestReviewCompletedNotification(
+    studentId: number,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const student = await entityManager.getRepository(Student).findOneOrFail({
+      select: {
+        id: true,
+        user: { id: true, firstName: true, lastName: true, email: true },
+      },
+      relations: { user: true },
+      where: { id: studentId },
+    });
+    await this.notificationActionsService.saveStudentChangeRequestReviewCompletedNotification(
+      {
+        givenNames: student.user.firstName,
+        lastName: student.user.lastName,
+        toAddress: student.user.email,
+        userId: student.user.id,
+      },
+      auditUserId,
+      entityManager,
     );
   }
 

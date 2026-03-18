@@ -31,6 +31,7 @@ import {
   getPSTPDTDateTime,
 } from "@sims/utilities/date-utils";
 import { STUDENT_HAS_PENDING_APPEAL } from "../../../../constants";
+import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
 
 describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   let app: INestApplication;
@@ -59,7 +60,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     // Update fake email contact to send ministry email.
     await db.notificationMessage.update(
       {
-        id: NotificationMessageType.StudentSubmittedChangeRequestNotification,
+        id: NotificationMessageType.StudentAppealSubmitted,
       },
       { emailContacts: [MINISTRY_EMAIL_ADDRESS] },
     );
@@ -73,12 +74,12 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   beforeEach(async () => {
     MockDate.reset();
     await resetMockJWTUserInfo(appModule);
-    // Mark all existing appeals(change request) notifications as sent
+    // Mark all existing appeals notifications as sent
     // to allow it to asserted when a new appeal is submitted.
     await db.notification.update(
       {
         notificationMessage: {
-          id: NotificationMessageType.StudentSubmittedChangeRequestNotification,
+          id: NotificationMessageType.StudentAppealSubmitted,
         },
       },
       { dateSent: new Date() },
@@ -171,20 +172,20 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
       select: { id: true, messagePayload: true },
       where: {
         notificationMessage: {
-          id: NotificationMessageType.StudentSubmittedChangeRequestNotification,
+          id: NotificationMessageType.StudentAppealSubmitted,
         },
         dateSent: IsNull(),
       },
     });
     expect(createdNotification.messagePayload).toStrictEqual({
-      template_id: "241a360a-07d6-486f-9aa4-fae6903e1cff",
+      template_id: GC_NOTIFY_TEMPLATE_IDS.StudentAppealSubmitted,
       email_address: MINISTRY_EMAIL_ADDRESS,
       personalisation: {
         givenNames: student.user.firstName,
         lastName: student.user.lastName,
         birthDate: getDateOnlyFormat(student.birthDate),
         studentEmail: student.user.email,
-        applicationNumber: "not applicable",
+        applicationNumber: "N/A",
         dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
       },
     });
