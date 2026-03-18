@@ -14,7 +14,7 @@ export interface LocationWithDesignationStatus {
 }
 
 /**
- * Service model for AEST user location update.
+ * Service model for institution user location create.
  */
 export interface InstitutionLocationModel extends AddressInfo {
   locationName: string;
@@ -25,6 +25,19 @@ export interface InstitutionLocationModel extends AddressInfo {
   primaryContactEmail: string;
   primaryContactPhone: string;
 }
+
+/**
+ * Service model for AEST user location update.
+ * Derived from {@link InstitutionLocationModel} without the
+ * `noInstitutionCode` flag, as the AEST user must always provide
+ * an institution location code when updating a location.
+ */
+export type InstitutionLocationUpdateModel = Omit<
+  InstitutionLocationModel,
+  "noInstitutionCode"
+> & {
+  institutionCode: string;
+};
 
 /**
  * Service model for Institution user location update.

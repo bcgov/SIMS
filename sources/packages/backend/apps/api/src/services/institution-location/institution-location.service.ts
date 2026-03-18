@@ -9,6 +9,7 @@ import { DesignationAgreementLocationService } from "../designation-agreement/de
 import {
   LocationWithDesignationStatus,
   InstitutionLocationModel,
+  InstitutionLocationUpdateModel,
   InstitutionLocationPrimaryContactModel,
 } from "./institution-location.models";
 import { transformAddressDetails } from "../../utilities";
@@ -69,7 +70,9 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         phone: data.primaryContactPhone,
       },
       institution: institution,
-      institutionCode: hasInstitutionCode ? normalizedInstitutionCode : null,
+      institutionCode: hasInstitutionCode
+        ? normalizedInstitutionCode
+        : undefined,
       creator: auditUser,
     } as InstitutionLocation;
 
@@ -109,28 +112,24 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    * @returns Updated institution Location.
    */
   async updateLocation(
-    institutionLocationData: InstitutionLocationModel,
+    institutionLocationData: InstitutionLocationUpdateModel,
     locationId: number,
     auditUserId: number,
   ): Promise<InstitutionLocation> {
-    const hasInstitutionCode =
-      !!institutionLocationData.institutionCode?.trim();
-    const normalizedInstitutionCode = hasInstitutionCode
-      ? institutionLocationData.institutionCode.trim()
-      : null;
+    const normalizedInstitutionCode =
+      institutionLocationData.institutionCode.trim();
+    const isInstitutionCodeDuplicate = await this.hasLocationCodeForInstitution(
+      normalizedInstitutionCode,
+      {
+        locationId,
+      },
+    );
 
-    if (hasInstitutionCode) {
-      const isInstitutionCodeDuplicate =
-        await this.hasLocationCodeForInstitution(normalizedInstitutionCode, {
-          locationId,
-        });
-
-      if (isInstitutionCodeDuplicate) {
-        throw new CustomNamedError(
-          "Duplicate institution location code.",
-          DUPLICATE_INSTITUTION_LOCATION_CODE,
-        );
-      }
+    if (isInstitutionCodeDuplicate) {
+      throw new CustomNamedError(
+        "Duplicate institution location code.",
+        DUPLICATE_INSTITUTION_LOCATION_CODE,
+      );
     }
 
     const saveLocation: InstitutionLocation = {
@@ -288,21 +287,20 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   }
 
   /**
-   * Validate that all the given locations have an institution location code assigned.
+   * Checks if any of the given locations is missing an institution location code.
    * A location code is required for approved designation agreement locations.
    * @param locationIds location IDs to validate.
-   * @returns true when all locations have a non-null institution location code.
+   * @returns true when at least one location has a null institution location code.
    */
-  async validateLocationsHaveInstitutionCode(
-    locationIds: number[],
-  ): Promise<boolean> {
-    const locationsWithCode = await this.repo
+  async hasAnyLocationWithoutCode(locationIds: number[]): Promise<boolean> {
+    const locationWithoutCode = await this.repo
       .createQueryBuilder("location")
       .select("1")
       .where("location.id IN (:...locationIds)", { locationIds })
-      .andWhere("location.institutionCode IS NOT NULL")
-      .getRawMany();
-    return locationsWithCode.length === locationIds.length;
+      .andWhere("location.institutionCode IS NULL")
+      .limit(1)
+      .getRawOne();
+    return !!locationWithoutCode;
   }
 
   /**

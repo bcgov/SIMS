@@ -51,6 +51,7 @@ export class InstitutionLocationControllerService {
             primaryContactPhone: el.primaryContact?.phone,
           },
           institutionCode: el.institutionCode,
+          noInstitutionCode: !el.institutionCode,
         };
       },
     );
@@ -95,6 +96,7 @@ export class InstitutionLocationControllerService {
     return {
       locationName: institutionLocation.name,
       institutionCode: institutionLocation.institutionCode,
+      noInstitutionCode: !institutionLocation.institutionCode,
       primaryContactFirstName: institutionLocation.primaryContact.firstName,
       primaryContactLastName: institutionLocation.primaryContact.lastName,
       primaryContactEmail: institutionLocation.primaryContact.email,

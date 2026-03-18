@@ -4,7 +4,7 @@
     <template #header>
       <body-header
         title="All locations"
-        :recordsCount="institutionLocationList.length"
+        :records-count="institutionLocationList.length"
         ><template #actions>
           <!-- Todo: We to eventually eliminate the logic which is based
       on the client type on the vue components.-->
@@ -61,7 +61,7 @@
       <v-row>
         <!-- Address -->
         <v-col>
-          <title-value propertyTitle="Address" />
+          <title-value property-title="Address" />
           <span
             class="label-value muted-content clearfix"
             v-for="addressLine in addressList(item)"
@@ -73,7 +73,7 @@
         </v-col>
         <!-- Primary contact -->
         <v-col>
-          <title-value propertyTitle="Primary contact" />
+          <title-value property-title="Primary contact" />
           <span
             class="label-value muted-content clearfix"
             v-for="contactLine in primaryContactList(item)"
@@ -85,7 +85,7 @@
         </v-col>
         <!-- Institution code -->
         <v-col>
-          <title-value propertyTitle="Institution location code" />
+          <title-value property-title="Institution location code" />
           <span
             data-cy="institutionCode"
             class="label-value muted-content clearfix"

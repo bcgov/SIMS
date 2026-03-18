@@ -73,14 +73,17 @@
         },
         {
           "label": "Institution location code",
+          "applyMaskOn": "change",
           "tableView": true,
           "case": "uppercase",
           "validate": {
-            "minLength": 4,
-            "maxLength": 4,
+            "required": true,
             "pattern": "[A-Z]*",
-            "custom": "valid = (!data.noInstitutionCode && !input) ? 'Institution location code is required.' : true;"
+            "minLength": 4,
+            "maxLength": 4
           },
+          "validateWhenHidden": false,
+          "key": "institutionCode",
           "logic": [
             {
               "name": "Disable and clear when no institution location code",
@@ -103,11 +106,39 @@
                   "name": "Clear value",
                   "type": "value",
                   "value": "value = '';"
+                },
+                {
+                  "name": "Required false",
+                  "type": "property",
+                  "property": {
+                    "label": "Required",
+                    "value": "validate.required",
+                    "type": "boolean"
+                  },
+                  "state": false
+                }
+              ]
+            },
+            {
+              "name": "Required when no institution code is unchecked",
+              "trigger": {
+                "type": "javascript",
+                "javascript": "result = data.noInstitutionCode === false"
+              },
+              "actions": [
+                {
+                  "name": "Required true",
+                  "type": "property",
+                  "property": {
+                    "label": "Required",
+                    "value": "validate.required",
+                    "type": "boolean"
+                  },
+                  "state": true
                 }
               ]
             }
           ],
-          "key": "institutionCode",
           "attributes": {
             "data-cy": "institutionCode"
           },
@@ -135,8 +166,9 @@
               "value": ""
             }
           ],
-          "content": "<strong class=\"ml-2\">Missing institution location code</strong><br><span>Please note: You will be able to create this location without an institution location code. However, you will not be able to designate this location until you obtain a federally issued code from StudentAid BC. Once you submit your location please email designat@gov.bc.ca and request they provide you with the code and update the location information.</span>",
+          "content": "<strong> Missing institution location code</strong>\n<br />Please note: You will be able to create this location without an institution location code. However, you will not be able to designate this location until you obtain a federally issued code from StudentAid BC. Once you submit your location please email designat@gov.bc.ca and request they provide you with the code and update the location information.",
           "refreshOnChange": true,
+          "customClass": "banner-warning",
           "hidden": true,
           "key": "noInstitutionCodeBanner",
           "customConditional": "show = data.noInstitutionCode === true;",

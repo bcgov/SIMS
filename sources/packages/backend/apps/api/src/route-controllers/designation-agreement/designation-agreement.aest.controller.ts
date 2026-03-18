@@ -40,8 +40,7 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { Role } from "../../auth/roles.enum";
-import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { MISSING_INSTITUTION_LOCATION_CODE } from "../../constants";
+import { ClientTypeBaseRoute } from "../../types";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -161,19 +160,14 @@ export class DesignationAgreementAESTController extends BaseController {
       const approvedLocationIds = payload.locationsDesignations
         .filter((location) => location.approved)
         .map((location) => location.locationId);
-      if (approvedLocationIds.length > 0) {
-        const allApprovedLocationsHaveCode =
-          await this.institutionLocationService.validateLocationsHaveInstitutionCode(
-            approvedLocationIds,
-          );
-        if (!allApprovedLocationsHaveCode) {
-          throw new UnprocessableEntityException(
-            new ApiProcessError(
-              "One or more approved locations are missing an institution location code.",
-              MISSING_INSTITUTION_LOCATION_CODE,
-            ),
-          );
-        }
+      if (
+        await this.institutionLocationService.hasAnyLocationWithoutCode(
+          approvedLocationIds,
+        )
+      ) {
+        throw new UnprocessableEntityException(
+          "One or more approved locations are missing an institution location code.",
+        );
       }
     }
     await this.designationAgreementService.updateDesignation(

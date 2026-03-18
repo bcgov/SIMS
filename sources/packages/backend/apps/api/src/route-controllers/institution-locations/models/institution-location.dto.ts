@@ -2,7 +2,6 @@ import {
   Allow,
   IsEmail,
   IsNotEmpty,
-  IsOptional,
   Length,
 } from "class-validator";
 import {
@@ -55,8 +54,8 @@ export class AESTInstitutionLocationAPIInDTO extends AddressDetailsAPIInDTO {
   primaryContactPhone: string;
   @IsNotEmpty()
   locationName: string;
-  @IsOptional()
-  institutionCode?: string | null;
+  @IsNotEmpty()
+  institutionCode: string;
 }
 
 /**
@@ -64,7 +63,8 @@ export class AESTInstitutionLocationAPIInDTO extends AddressDetailsAPIInDTO {
  */
 export class InstitutionLocationDetailsAPIOutDTO extends AddressDetailsAPIOutDTO {
   locationName: string;
-  institutionCode: string | null;
+  institutionCode?: string;
+  noInstitutionCode: boolean;
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactEmail: string;
@@ -88,7 +88,8 @@ export class InstitutionLocationAPIOutDTO {
     address: AddressAPIOutDTO;
   };
   primaryContact: InstitutionPrimaryContactAPIOutDTO;
-  institutionCode?: string | null;
+  institutionCode?: string;
+  noInstitutionCode: boolean;
   designationStatus: DesignationStatus;
 }
 

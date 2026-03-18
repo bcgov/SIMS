@@ -13,9 +13,9 @@ export class InstitutionLocationFormAPIInDTO extends AddressDetailsFormAPIDTO {
   @Expose()
   locationName: string;
   @Expose()
-  institutionCode: string;
+  institutionCode?: string;
   @Expose()
-  noInstitutionCode?: boolean;
+  noInstitutionCode: boolean;
   @Expose()
   primaryContactFirstName: string;
   @Expose()
@@ -78,7 +78,8 @@ export class InstitutionLocationAPIInDTO
 
 export interface InstitutionLocationFormAPIOutDTO extends AddressDetailsFormAPIDTO {
   locationName: string;
-  institutionCode: string | null;
+  institutionCode?: string;
+  noInstitutionCode: boolean;
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactEmail: string;
@@ -92,7 +93,8 @@ export interface InstitutionLocationAPIOutDTO {
     address: AddressAPIOutDTO;
   };
   primaryContact: InstitutionPrimaryContactAPIOutDTO;
-  institutionCode: string | null;
+  institutionCode?: string;
+  noInstitutionCode: boolean;
   designationStatus: DesignationAgreementStatus;
 }
 
