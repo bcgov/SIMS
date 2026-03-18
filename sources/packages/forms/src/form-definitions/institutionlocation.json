@@ -119,29 +119,6 @@
                   "state": false
                 }
               ]
-            },
-            {
-              "name": "Required when no institution code is unchecked",
-              "trigger": {
-                "type": "simple",
-                "simple": {
-                  "show": true,
-                  "when": "noInstitutionCode",
-                  "eq": "false"
-                }
-              },
-              "actions": [
-                {
-                  "name": "Required true",
-                  "type": "property",
-                  "property": {
-                    "label": "Required",
-                    "value": "validate.required",
-                    "type": "boolean"
-                  },
-                  "state": true
-                }
-              ]
             }
           ],
           "type": "textfield",
