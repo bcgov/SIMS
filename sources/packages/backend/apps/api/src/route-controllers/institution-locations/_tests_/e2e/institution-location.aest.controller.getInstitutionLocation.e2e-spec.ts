@@ -56,6 +56,7 @@ describe("InstitutionLocationAESTController(e2e)-getInstitutionLocation", () => 
       .expect({
         locationName: savedLocation.name,
         institutionCode: savedLocation.institutionCode,
+        noInstitutionCode: false,
         primaryContactFirstName: savedLocation.primaryContact.firstName,
         primaryContactLastName: savedLocation.primaryContact.lastName,
         primaryContactEmail: savedLocation.primaryContact.email,
