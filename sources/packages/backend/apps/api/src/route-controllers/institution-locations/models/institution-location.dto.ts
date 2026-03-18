@@ -2,6 +2,7 @@ import {
   Allow,
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   Length,
 } from "class-validator";
 import {
@@ -54,8 +55,8 @@ export class AESTInstitutionLocationAPIInDTO extends AddressDetailsAPIInDTO {
   primaryContactPhone: string;
   @IsNotEmpty()
   locationName: string;
-  @IsNotEmpty()
-  institutionCode: string;
+  @IsOptional()
+  institutionCode?: string;
 }
 
 /**

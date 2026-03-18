@@ -9,7 +9,6 @@ import { DesignationAgreementLocationService } from "../designation-agreement/de
 import {
   LocationWithDesignationStatus,
   InstitutionLocationModel,
-  InstitutionLocationUpdateModel,
   InstitutionLocationPrimaryContactModel,
 } from "./institution-location.models";
 import { transformAddressDetails } from "../../utilities";
@@ -112,24 +111,23 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    * @returns Updated institution Location.
    */
   async updateLocation(
-    institutionLocationData: InstitutionLocationUpdateModel,
+    institutionLocationData: InstitutionLocationModel,
     locationId: number,
     auditUserId: number,
   ): Promise<InstitutionLocation> {
     const normalizedInstitutionCode =
-      institutionLocationData.institutionCode.trim();
-    const isInstitutionCodeDuplicate = await this.hasLocationCodeForInstitution(
-      normalizedInstitutionCode,
-      {
-        locationId,
-      },
-    );
-
-    if (isInstitutionCodeDuplicate) {
-      throw new CustomNamedError(
-        "Duplicate institution location code.",
-        DUPLICATE_INSTITUTION_LOCATION_CODE,
-      );
+      institutionLocationData.institutionCode?.trim() || null;
+    if (normalizedInstitutionCode) {
+      const isInstitutionCodeDuplicate =
+        await this.hasLocationCodeForInstitution(normalizedInstitutionCode, {
+          locationId,
+        });
+      if (isInstitutionCodeDuplicate) {
+        throw new CustomNamedError(
+          "Duplicate institution location code.",
+          DUPLICATE_INSTITUTION_LOCATION_CODE,
+        );
+      }
     }
 
     const saveLocation: InstitutionLocation = {
