@@ -194,6 +194,28 @@ init-project:
 	@oc -n $(BUILD_NAMESPACE) policy add-role-to-group system:image-puller system:serviceaccounts:$(NAMESPACE)
 	@oc -n $(NAMESPACE) create rolebinding github-action --clusterrole=edit --serviceaccount=$(BUILD_NAMESPACE):github-action --namespace=$(NAMESPACE)
 
+# Note: The service account for github action is created in the build namespace.
+create-service-account:
+	test -n $(SERVICE_ACCOUNT_NAMESPACE)
+	test -n $(SERVICE_ACCOUNT_NAME)
+	@oc -n $(SERVICE_ACCOUNT_NAMESPACE) create sa $(SERVICE_ACCOUNT_NAME)
+
+generate-service-account-token:
+	test -n $(SERVICE_ACCOUNT_NAMESPACE)
+	test -n $(SERVICE_ACCOUNT_NAME)
+	@oc -n $(SERVICE_ACCOUNT_NAMESPACE) create token $(SERVICE_ACCOUNT_NAME) --duration=4380h
+
+# Add edit role to a service account in the target namespace.
+add-role-edit-for-service-account:
+	test -n $(NAMESPACE)
+	test -n $(SERVICE_ACCOUNT_NAMESPACE)
+	test -n $(SERVICE_ACCOUNT_NAME)
+	@oc -n $(NAMESPACE) create rolebinding $(SERVICE_ACCOUNT_NAME)-edit --clusterrole=edit --serviceaccount=$(SERVICE_ACCOUNT_NAMESPACE):$(SERVICE_ACCOUNT_NAME)
+
+create-network-policies:
+	@echo "Create network policies for namespace: $(NAMESPACE)"
+	@oc -n $(NAMESPACE) process -f openshift/networkpolicy.yml -p NAMESPACE=$(NAMESPACE) | oc -n $(NAMESPACE) apply -f -
+	
 init-secrets:
 	@echo "++\n Deploy SIMS Creds Secrets $(NAMESPACE) \n++"
 	@oc -n $(NAMESPACE) process -f openshift/init-secrets.yml \
@@ -256,11 +278,11 @@ init-artifactory-secret-credential:
 	test -n $(NAMESPACE)
 	@oc create secret docker-registry artifactory-secret-credential -n $(NAMESPACE) \
     	--docker-server=artifacts.developer.gov.bc.ca \
-    	--docker-username=$(USERNAME) \
-    	--docker-password=$(PASSWORD) \
-    	--docker-email=$(USERNAME)@$(NAMESPACE).local
-	@oc secrets link default artifactory-secret-credential
-	@oc secrets link builder artifactory-secret-credential
+    	--docker-username=$(ARTIFACTORY_USERNAME) \
+    	--docker-password=$(ARTIFACTORY_PASSWORD) \
+    	--docker-email=$(ARTIFACTORY_EMAIL)
+	# @oc secrets link default artifactory-secret-credential
+	# @oc secrets link builder artifactory-secret-credential
 
 build-migrations:
 	test -n "$(BUILD_NAMESPACE)"
