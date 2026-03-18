@@ -127,7 +127,7 @@ export class DesignationAgreementAESTController extends BaseController {
   })
   @ApiUnprocessableEntityResponse({
     description:
-      "One or more locations provided do not belong to designation institution.",
+      "One or more locations provided do not belong to designation institution or are missing an institution location code.",
   })
   async updateDesignationAgreement(
     @Param("designationId", ParseIntPipe) designationId: number,
@@ -155,6 +155,18 @@ export class DesignationAgreementAESTController extends BaseController {
       if (!validInstitutionLocations) {
         throw new UnprocessableEntityException(
           "One or more locations provided do not belong to designation institution.",
+        );
+      }
+      const approvedLocationIds = payload.locationsDesignations
+        .filter((location) => location.approved)
+        .map((location) => location.locationId);
+      if (
+        await this.institutionLocationService.hasAnyLocationWithoutCode(
+          approvedLocationIds,
+        )
+      ) {
+        throw new UnprocessableEntityException(
+          "One or more approved locations are missing an institution location code.",
         );
       }
     }

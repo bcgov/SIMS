@@ -40,16 +40,21 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     const auditUser = { id: auditUserId } as User;
     const institution = { id: institutionId };
 
-    const isInstitutionCodeDuplicate = await this.hasLocationCodeForInstitution(
-      data.institutionCode,
-      { institutionId },
-    );
+    const normalizedInstitutionCode = data.institutionCode?.trim();
+    const hasInstitutionCode = !!normalizedInstitutionCode;
 
-    if (isInstitutionCodeDuplicate) {
-      throw new CustomNamedError(
-        "Duplicate institution location code.",
-        DUPLICATE_INSTITUTION_LOCATION_CODE,
-      );
+    if (hasInstitutionCode) {
+      const isInstitutionCodeDuplicate =
+        await this.hasLocationCodeForInstitution(normalizedInstitutionCode, {
+          institutionId,
+        });
+
+      if (isInstitutionCodeDuplicate) {
+        throw new CustomNamedError(
+          "Duplicate institution location code.",
+          DUPLICATE_INSTITUTION_LOCATION_CODE,
+        );
+      }
     }
 
     const saveLocation: InstitutionLocation = {
@@ -64,7 +69,9 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         phone: data.primaryContactPhone,
       },
       institution: institution,
-      institutionCode: data.institutionCode,
+      institutionCode: hasInstitutionCode
+        ? normalizedInstitutionCode
+        : undefined,
       creator: auditUser,
     } as InstitutionLocation;
 
@@ -108,16 +115,19 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     locationId: number,
     auditUserId: number,
   ): Promise<InstitutionLocation> {
-    const isInstitutionCodeDuplicate = await this.hasLocationCodeForInstitution(
-      institutionLocationData.institutionCode,
-      { locationId },
-    );
-
-    if (isInstitutionCodeDuplicate) {
-      throw new CustomNamedError(
-        "Duplicate institution location code.",
-        DUPLICATE_INSTITUTION_LOCATION_CODE,
-      );
+    const normalizedInstitutionCode =
+      institutionLocationData.institutionCode?.trim() || null;
+    if (normalizedInstitutionCode) {
+      const isInstitutionCodeDuplicate =
+        await this.hasLocationCodeForInstitution(normalizedInstitutionCode, {
+          locationId,
+        });
+      if (isInstitutionCodeDuplicate) {
+        throw new CustomNamedError(
+          "Duplicate institution location code.",
+          DUPLICATE_INSTITUTION_LOCATION_CODE,
+        );
+      }
     }
 
     const saveLocation: InstitutionLocation = {
@@ -131,7 +141,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
         email: institutionLocationData.primaryContactEmail,
         phone: institutionLocationData.primaryContactPhone,
       },
-      institutionCode: institutionLocationData.institutionCode,
+      institutionCode: normalizedInstitutionCode,
       id: locationId,
       modifier: { id: auditUserId } as User,
     } as InstitutionLocation;
@@ -275,6 +285,23 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   }
 
   /**
+   * Checks if any of the given locations is missing an institution location code.
+   * A location code is required for approved designation agreement locations.
+   * @param locationIds location IDs to validate.
+   * @returns true when at least one location has a null institution location code.
+   */
+  async hasAnyLocationWithoutCode(locationIds: number[]): Promise<boolean> {
+    const locationWithoutCode = await this.repo
+      .createQueryBuilder("location")
+      .select("1")
+      .where("location.id IN (:...locationIds)", { locationIds })
+      .andWhere("location.institutionCode IS NULL")
+      .limit(1)
+      .getRawOne();
+    return !!locationWithoutCode;
+  }
+
+  /**
    * Check if location code is already registered for the institution.
    * @param locationCode location code.
    * @param options object that should contain:
@@ -332,7 +359,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   async getLocation(
     locationId: number,
   ): Promise<LocationWithDesignationStatus> {
-    return this.buildLocationQuery(locationId, undefined).getRawOne();
+    return this.buildLocationQuery(locationId).getRawOne();
   }
 
   /**

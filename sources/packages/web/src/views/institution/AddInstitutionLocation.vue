@@ -3,18 +3,18 @@
     <template #header>
       <header-navigator
         title="Manage locations"
-        :routeLocation="{ name: InstitutionRoutesConst.MANAGE_LOCATIONS }"
-        subTitle="Add Location"
+        :route-location="{ name: InstitutionRoutesConst.MANAGE_LOCATIONS }"
+        sub-title="Add Location"
         data-cy="addLocationHeader"
       />
     </template>
-    <formio-container formName="institutionLocation" @submitted="submitted">
+    <formio-container form-name="institutionLocation" @submitted="submitted">
       <template #actions="{ submit }">
         <footer-buttons
           :processing="processing"
-          primaryLabel="Submit"
-          @primaryClick="submit"
-          :showSecondaryButton="false"
+          primary-label="Submit"
+          @primary-click="submit"
+          :show-secondary-button="false"
         />
       </template>
     </formio-container>
@@ -47,6 +47,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const { excludeExtraneousValues } = useFormioUtils();
     const router = useRouter();
+
     const submitted = async (form: FormIOForm<unknown>) => {
       processing.value = true;
       if (props.createMode) {

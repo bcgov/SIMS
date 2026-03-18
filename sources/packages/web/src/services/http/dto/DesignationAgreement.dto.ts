@@ -18,7 +18,7 @@ export interface DesignationAgreementAPIOutDTO {
   locationsDesignations: LocationDesignationAPIOutDTO[];
   startDate: string;
   endDate: string;
-  submittedData: any;
+  submittedData: unknown;
   institutionId: number;
   institutionName: string;
   institutionType: string;
@@ -42,8 +42,7 @@ export interface DesignationAgreementDetailsAPIOutDTO {
   endDate?: string;
 }
 
-export interface PendingDesignationAgreementDetailsAPIOutDTO
-  extends DesignationAgreementDetailsAPIOutDTO {
+export interface PendingDesignationAgreementDetailsAPIOutDTO extends DesignationAgreementDetailsAPIOutDTO {
   legalOperatingName: string;
 }
 
