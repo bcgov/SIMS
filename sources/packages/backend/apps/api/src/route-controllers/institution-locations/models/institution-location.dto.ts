@@ -22,7 +22,7 @@ export class InstitutionLocationFormAPIInDTO extends AddressDetailsAPIInDTO {
   @Allow()
   institutionCode: string;
   @Allow()
-  noInstitutionCode?: boolean;
+  noInstitutionCode: boolean;
   @Allow()
   primaryContactFirstName: string;
   @Allow()
