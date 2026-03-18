@@ -65,9 +65,6 @@
             "maxLength": 100
           },
           "key": "locationName",
-          "attributes": {
-            "data-cy": "locationName"
-          },
           "type": "textfield",
           "input": true
         },
@@ -88,8 +85,12 @@
             {
               "name": "Disable and clear when no institution location code",
               "trigger": {
-                "type": "javascript",
-                "javascript": "result = data.noInstitutionCode === true"
+                "type": "simple",
+                "simple": {
+                  "show": true,
+                  "when": "noInstitutionCode",
+                  "eq": "true"
+                }
               },
               "actions": [
                 {
@@ -122,8 +123,12 @@
             {
               "name": "Required when no institution code is unchecked",
               "trigger": {
-                "type": "javascript",
-                "javascript": "result = data.noInstitutionCode === false"
+                "type": "simple",
+                "simple": {
+                  "show": true,
+                  "when": "noInstitutionCode",
+                  "eq": "false"
+                }
               },
               "actions": [
                 {
@@ -139,9 +144,6 @@
               ]
             }
           ],
-          "attributes": {
-            "data-cy": "institutionCode"
-          },
           "type": "textfield",
           "input": true
         },
@@ -150,9 +152,6 @@
           "tableView": false,
           "defaultValue": false,
           "key": "noInstitutionCode",
-          "attributes": {
-            "data-cy": "noInstitutionCode"
-          },
           "type": "checkbox",
           "input": true
         },
@@ -171,7 +170,11 @@
           "customClass": "banner-warning",
           "hidden": true,
           "key": "noInstitutionCodeBanner",
-          "customConditional": "show = data.noInstitutionCode === true;",
+          "conditional": {
+            "show": true,
+            "when": "noInstitutionCode",
+            "eq": "true"
+          },
           "type": "htmlelement",
           "input": false,
           "tableView": false
@@ -184,9 +187,6 @@
             "maxLength": 100
           },
           "key": "addressLine1",
-          "attributes": {
-            "data-cy": "addressLine1"
-          },
           "type": "textfield",
           "input": true
         },
@@ -197,9 +197,6 @@
             "maxLength": 100
           },
           "key": "addressLine2",
-          "attributes": {
-            "data-cy": "addressLine2"
-          },
           "type": "textfield",
           "input": true
         },
@@ -229,9 +226,6 @@
                     "onlyAvailableItems": true
                   },
                   "key": "selectedCountry",
-                  "attributes": {
-                    "data-cy": "selectedCountry"
-                  },
                   "type": "select",
                   "input": true
                 }
@@ -315,9 +309,6 @@
                     "when": "selectedCountry",
                     "eq": "Canada"
                   },
-                  "attributes": {
-                    "data-cy": "provinceState"
-                  },
                   "type": "select",
                   "input": true
                 },
@@ -334,9 +325,6 @@
                     "show": true,
                     "when": "selectedCountry",
                     "eq": "other"
-                  },
-                  "attributes": {
-                    "data-cy": "otherCountry"
                   },
                   "type": "textfield",
                   "input": true
@@ -377,9 +365,6 @@
                     "maxLength": 100
                   },
                   "key": "city",
-                  "attributes": {
-                    "data-cy": "city"
-                  },
                   "type": "textfield",
                   "input": true,
                   "hideOnChildrenHidden": false
@@ -411,9 +396,6 @@
                     "when": "selectedCountry",
                     "eq": "Canada"
                   },
-                  "attributes": {
-                    "data-cy": "canadaPostalCode"
-                  },
                   "type": "textfield",
                   "input": true,
                   "hideOnChildrenHidden": false
@@ -430,9 +412,6 @@
                     "show": true,
                     "when": "selectedCountry",
                     "eq": "other"
-                  },
-                  "attributes": {
-                    "data-cy": "otherPostalCode"
                   },
                   "type": "textfield",
                   "input": true
@@ -518,9 +497,6 @@
                     "maxLength": 100
                   },
                   "key": "primaryContactFirstName",
-                  "attributes": {
-                    "data-cy": "primaryContactFirstName"
-                  },
                   "type": "textfield",
                   "input": true,
                   "hideOnChildrenHidden": false
@@ -543,9 +519,6 @@
                     "maxLength": 100
                   },
                   "key": "primaryContactLastName",
-                  "attributes": {
-                    "data-cy": "primaryContactLastName"
-                  },
                   "type": "textfield",
                   "input": true,
                   "hideOnChildrenHidden": false
@@ -576,9 +549,6 @@
                     "required": true
                   },
                   "key": "primaryContactEmail",
-                  "attributes": {
-                    "data-cy": "primaryContactEmail"
-                  },
                   "type": "email",
                   "input": true
                 }
@@ -603,9 +573,6 @@
                     "maxLength": 20
                   },
                   "key": "primaryContactPhone",
-                  "attributes": {
-                    "data-cy": "primaryContactPhone"
-                  },
                   "type": "textfield",
                   "input": true,
                   "hideOnChildrenHidden": false
