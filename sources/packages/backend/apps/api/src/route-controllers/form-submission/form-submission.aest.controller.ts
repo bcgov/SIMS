@@ -36,6 +36,7 @@ import { AuthorizedParties, IUserToken, Role, UserGroups } from "../../auth";
 import {
   FormSubmissionCompletionAPIInDTO,
   FormSubmissionItemDecisionAPIInDTO,
+  FormSubmissionItemMinistryAPIOutDTO,
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionPendingSummaryAPIOutDTO,
   FormSubmissionsAPIOutDTO,
@@ -160,43 +161,50 @@ export class FormSubmissionAESTController extends BaseController {
       applicationId: submission.application?.id,
       applicationNumber: submission.application?.applicationNumber,
       submittedDate: submission.submittedDate,
-      submissionItems: submission.formSubmissionItems.map((item) => ({
-        id: item.id,
-        formType: item.dynamicFormConfiguration.formType,
-        formCategory: item.dynamicFormConfiguration.formCategory,
-        dynamicFormConfigurationId: item.dynamicFormConfiguration.id,
-        submissionData: item.submittedData,
-        formDefinitionName: item.dynamicFormConfiguration.formDefinitionName,
-        updatedAt: item.updatedAt,
-        currentDecision:
-          hasApprovalAuthorization && item.currentDecision
-            ? {
-                id: item.currentDecision.id,
-                decisionStatus:
-                  item.currentDecision?.decisionStatus ??
-                  FormSubmissionDecisionStatus.Pending,
-                decisionDate: item.currentDecision.decisionDate,
-                decisionBy: getUserFullName(item.currentDecision.decisionBy),
-                decisionNoteDescription:
-                  item.currentDecision.decisionNote.description,
-              }
-            : {
-                decisionStatus:
-                  item.currentDecision?.decisionStatus ??
-                  FormSubmissionDecisionStatus.Pending,
-              },
-        previousDecisions: hasApprovalAuthorization
-          ? item.decisions
-              .filter((decision) => decision.id !== item.currentDecision.id)
-              .map((decision) => ({
-                id: decision.id,
-                decisionStatus: decision.decisionStatus,
-                decisionDate: decision.decisionDate,
-                decisionBy: getUserFullName(decision.decisionBy),
-                decisionNoteDescription: decision.decisionNote.description,
-              }))
-          : undefined,
-      })),
+      submissionItems:
+        submission.formSubmissionItems.map<FormSubmissionItemMinistryAPIOutDTO>(
+          (item) => ({
+            id: item.id,
+            formType: item.dynamicFormConfiguration.formType,
+            formCategory: item.dynamicFormConfiguration.formCategory,
+            dynamicFormConfigurationId: item.dynamicFormConfiguration.id,
+            submissionData: item.submittedData,
+            formDefinitionName:
+              item.dynamicFormConfiguration.formDefinitionName,
+            updatedAt: item.updatedAt,
+            currentDecision:
+              item.currentDecision && hasApprovalAuthorization
+                ? {
+                    id: item.currentDecision.id,
+                    decisionStatus:
+                      item.currentDecision?.decisionStatus ??
+                      FormSubmissionDecisionStatus.Pending,
+                    decisionDate: item.currentDecision.decisionDate,
+                    decisionBy: getUserFullName(
+                      item.currentDecision.decisionBy,
+                    ),
+                    decisionNoteDescription:
+                      item.currentDecision.decisionNote.description,
+                  }
+                : this.formSubmissionControllerService.mapCurrentDecision(
+                    submission.submissionStatus,
+                    item,
+                    true,
+                    true,
+                  ),
+            previousDecisions: hasApprovalAuthorization
+              ? item.decisions
+                  .filter((decision) => decision.id !== item.currentDecision.id)
+                  .map((decision) => ({
+                    id: decision.id,
+                    decisionStatus: decision.decisionStatus,
+                    decisionDate: decision.decisionDate,
+                    decisionBy: getUserFullName(decision.decisionBy),
+                    decisionNoteDescription: decision.decisionNote.description,
+                  }))
+              : undefined,
+          }),
+        ),
     };
   }
 

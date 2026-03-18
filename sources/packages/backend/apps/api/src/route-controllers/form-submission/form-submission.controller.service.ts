@@ -118,13 +118,15 @@ export class FormSubmissionControllerService {
    * Define the decision to be returned.
    * The decision and its details are determined based on the form submission status
    * and the access to the decision details that the consumer has.
+   * Used for students and institutions that have different access to the decision details,
+   * and for Ministry users with limited access to the decision details.
    * @param submissionStatus form submission status.
    * @param submissionItem form submission to determine the decision details to be returned.
    * @param includeBasicDecisionDetails flag to indicate if the basic decision details should be included in the response,
    * besides the status that is always included.
    * @returns the decision that must be exposed the consumer.
    */
-  private mapCurrentDecision(
+  mapCurrentDecision(
     submissionStatus: FormSubmissionStatus,
     submissionItem: FormSubmissionItem,
     includeBasicDecisionDetails: boolean,

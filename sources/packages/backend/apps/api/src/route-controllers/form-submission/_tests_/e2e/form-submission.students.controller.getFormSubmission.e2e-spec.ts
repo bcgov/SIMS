@@ -30,8 +30,8 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
   let appModule: TestingModule;
   let db: E2EDataSources;
   let ministryUser: User;
-  let studentAppealApplicationA: DynamicFormConfiguration,
-    studentAppealApplicationB: DynamicFormConfiguration;
+  let studentAppealApplicationA: DynamicFormConfiguration;
+  let studentAppealApplicationB: DynamicFormConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, module } =
@@ -73,7 +73,7 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
     await resetMockJWTUserInfo(appModule);
   });
 
-  it("Should get a form submission as pending and its decisions as pending when the final decision is not yet made and there is an approved and a pending decision (not decision set).", async () => {
+  it("Should get a form submission as pending and its decisions as pending when the final decision is not yet made and there is an approved and a pending decision (no decision set).", async () => {
     // Arrange
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
       formCategory: FormCategory.StudentAppeal,

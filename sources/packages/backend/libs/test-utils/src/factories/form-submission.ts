@@ -20,11 +20,21 @@ export interface FormSubmissionDecisionTestInputData {
 }
 
 export interface FormSubmissionItemTestInputData {
-  dynamicFormConfiguration?: DynamicFormConfiguration;
-  setFirstDecisionAsCurrent?: boolean;
+  /**
+   * Dynamic form configuration to be associated with the form submission item.
+   */
+  dynamicFormConfiguration: DynamicFormConfiguration;
+  /**
+   * Decisions to be created for the form submission item.
+   * If provided, the first decision will be considered the current decision for the item,
+   * and the rest will be considered previous decisions.
+   */
   decisions: FormSubmissionDecisionTestInputData[];
 }
 
+/**
+ * Test data to create form submissions, its items and decisions.
+ */
 export interface FormSubmissionTestInputData {
   student?: Student;
   application?: Application;
@@ -34,56 +44,81 @@ export interface FormSubmissionTestInputData {
   formSubmissionItems: FormSubmissionItemTestInputData[];
 }
 
+/**
+ * Creates and saves a fake form submission with its items and decisions based on the provided test input data.
+ * @param db E2E data sources.
+ * @param testInputData test input data for creating the form submission and related data.
+ * @returns the created form submission.
+ */
 export async function saveFakeFormSubmissionFromInputTestData(
   db: E2EDataSources,
-  inputData: FormSubmissionTestInputData,
+  testInputData: FormSubmissionTestInputData,
 ): Promise<FormSubmission> {
   const now = new Date();
-  const student = inputData.student ?? inputData.application?.student ?? (await saveFakeStudent(db.dataSource));
+  const student =
+    testInputData.student ??
+    testInputData.application?.student ??
+    (await saveFakeStudent(db.dataSource));
   const formSubmission = new FormSubmission();
   formSubmission.student = student;
+  formSubmission.application = testInputData.application;
   formSubmission.creator = student.user;
   formSubmission.submittedDate = now;
-  formSubmission.formCategory = inputData.formCategory;
-  formSubmission.submissionStatus = inputData.submissionStatus;
-  if (inputData.submissionStatus !== FormSubmissionStatus.Pending) {
+  formSubmission.formCategory = testInputData.formCategory;
+  formSubmission.submissionStatus = testInputData.submissionStatus;
+  if (testInputData.submissionStatus !== FormSubmissionStatus.Pending) {
     formSubmission.assessedDate = now;
-    formSubmission.assessedBy = inputData.auditUser;
+    formSubmission.assessedBy = testInputData.auditUser;
   }
   formSubmission.formSubmissionItems = [];
-  for (const itemInputData of inputData.formSubmissionItems) {
+  await db.formSubmission.save(formSubmission);
+  for (const itemInputData of testInputData.formSubmissionItems) {
     const submissionItem = createFakeFormSubmissionItem({
       dynamicFormConfiguration: itemInputData.dynamicFormConfiguration,
-      auditUser: inputData.auditUser,
+      auditUser: testInputData.auditUser,
     });
+    submissionItem.formSubmission = formSubmission;
+    // Update the array to avoid reloading the data and allowing a
+    // method consumer to have access to the data.
+    formSubmission.formSubmissionItems.push(submissionItem);
+    // Save form submission item to generate the ID for the item, which is required for the decision relation.
+    await db.formSubmissionItem.save(submissionItem);
     submissionItem.decisions = [];
-    for (const decisionData of itemInputData.decisions) {
+    for (const decisionTestInputData of itemInputData.decisions) {
       const decision = new FormSubmissionItemDecision();
-      decision.decisionStatus = decisionData.decisionStatus;
-      decision.creator = inputData.auditUser;
+      decision.formSubmissionItem = submissionItem;
+      decision.decisionStatus = decisionTestInputData.decisionStatus;
+      decision.creator = testInputData.auditUser;
       decision.createdAt = now;
-      decision.decisionBy = inputData.auditUser;
+      decision.decisionBy = testInputData.auditUser;
       decision.decisionDate = now;
-      decision.modifier = inputData.auditUser;
+      decision.modifier = testInputData.auditUser;
       decision.updatedAt = now;
-      const note = createFakeNote();
-      note.creator = inputData.auditUser;
-      note.description = `Note for decision with status ${decisionData.decisionStatus}`;
-      note.noteType = inputData.formCategory === FormCategory.StudentAppeal ? NoteType.StudentAppeal : NoteType.StudentForm;
+      // Note creation.
+      const noteType =
+        testInputData.formCategory === FormCategory.StudentAppeal
+          ? NoteType.StudentAppeal
+          : NoteType.StudentForm;
+      const note = createFakeNote(noteType, {
+        creator: testInputData.auditUser,
+      });
       await db.note.save(note);
       decision.decisionNote = note;
+      // Update the array to avoid reloading the data and allowing a
+      // method consumer to have access to the data.
       submissionItem.decisions.push(decision);
     }
-    formSubmission.formSubmissionItems.push(submissionItem);
+    await db.formSubmissionItemDecision.save(submissionItem.decisions);
   }
-  await db.formSubmission.save(formSubmission);
-  for (let i = 0; i < formSubmission.formSubmissionItems.length; i++) {
-    const itemTestInput = inputData.formSubmissionItems[i];
-    const formSubmissionItem = formSubmission.formSubmissionItems[i];
-    if (itemTestInput.setFirstDecisionAsCurrent) {
-      formSubmissionItem.currentDecision = formSubmissionItem.decisions[0];
+  // Associate the current decision for each item as the first decision in
+  // the decisions array, if there are any decisions.
+  for (const formSubmissionItem of formSubmission.formSubmissionItems) {
+    if (formSubmissionItem.decisions.length > 0) {
+      const [currentDecision] = formSubmissionItem.decisions;
+      formSubmissionItem.currentDecision = currentDecision;
     }
   }
+  // Save the form submission again to update the relation with the current decision.
   await db.formSubmission.save(formSubmission);
   return formSubmission;
 }
