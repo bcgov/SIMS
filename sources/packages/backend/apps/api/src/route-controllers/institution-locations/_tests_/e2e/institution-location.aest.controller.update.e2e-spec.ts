@@ -23,6 +23,68 @@ describe("InstitutionLocationAESTController(e2e)-update", () => {
     db = createE2EDataSources(dataSource);
   });
 
+  it("Should update all institution location fields and persist them correctly.", async () => {
+    // Arrange
+    const location = createFakeInstitutionLocation();
+    const savedLocation = await db.institutionLocation.save(location);
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/location/${savedLocation.id}`;
+
+    // Act
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .send({
+        locationName: "Updated Location Name",
+        institutionCode: "UPDT",
+        primaryContactFirstName: "John",
+        primaryContactLastName: "Doe",
+        primaryContactEmail: "john.doe@testmail.com",
+        primaryContactPhone: "(250) 555-1234",
+        addressLine1: "123 Updated Street",
+        city: "Vancouver",
+        country: "canada",
+        postalCode: "B1B1B1",
+        selectedCountry: "Canada",
+        provinceState: "BC",
+        canadaPostalCode: "B1B1B1",
+      })
+      .expect(HttpStatus.OK);
+
+    // Assert
+    const updatedLocation = await db.institutionLocation.findOne({
+      select: {
+        id: true,
+        name: true,
+        institutionCode: true,
+        data: true,
+        primaryContact: true,
+      },
+      where: { id: savedLocation.id },
+    });
+    expect(updatedLocation).toEqual({
+      id: savedLocation.id,
+      name: "Updated Location Name",
+      institutionCode: "UPDT",
+      data: {
+        address: {
+          addressLine1: "123 Updated Street",
+          city: "Vancouver",
+          country: "canada",
+          postalCode: "B1B1B1",
+          selectedCountry: "Canada",
+          provinceState: "BC",
+        },
+      },
+      primaryContact: {
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@testmail.com",
+        phone: "(250) 555-1234",
+      },
+    });
+  });
+
   it("Should save institution location with null code when an empty institution code is submitted.", async () => {
     // Arrange
     const location = createFakeInstitutionLocation();
