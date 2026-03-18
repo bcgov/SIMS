@@ -57,6 +57,13 @@
                 />
               </v-col>
             </v-row>
+            <v-row v-if="item.approved && !item.institutionCode" class="mt-0">
+              <v-col class="text-right pt-0">
+                <span class="text-error d-block">
+                  No institution location code
+                </span>
+              </v-col>
+            </v-row>
           </template>
         </content-group>
         <v-textarea
