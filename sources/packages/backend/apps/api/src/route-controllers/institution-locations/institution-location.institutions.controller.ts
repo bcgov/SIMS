@@ -204,6 +204,7 @@ export class InstitutionLocationInstitutionsController extends BaseController {
     return {
       locationName: institutionLocation.name,
       institutionCode: institutionLocation.institutionCode,
+      noInstitutionCode: !institutionLocation.institutionCode,
       primaryContactFirstName: institutionLocation.primaryContact.firstName,
       primaryContactLastName: institutionLocation.primaryContact.lastName,
       primaryContactEmail: institutionLocation.primaryContact.email,

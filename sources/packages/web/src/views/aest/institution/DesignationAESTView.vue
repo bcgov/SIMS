@@ -3,8 +3,8 @@
     <template #header>
       <header-navigator
         :title="navigationTitle"
-        subTitle="View designation agreement"
-        :routeLocation="routeLocation"
+        sub-title="View designation agreement"
+        :route-location="routeLocation"
       >
         <template #buttons>
           <check-permission-role
@@ -179,6 +179,8 @@ export default defineComponent({
             designationLocation.locationAddress = formatter.getFormattedAddress(
               institutionLocation.data.address,
             );
+            designationLocation.institutionCode =
+              institutionLocation.institutionCode;
             const existingDesignationLocation =
               designationAgreement.value.locationsDesignations.find(
                 (item) => item.locationId === institutionLocation.id,
