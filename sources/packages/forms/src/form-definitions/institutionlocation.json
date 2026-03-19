@@ -142,7 +142,7 @@
               "value": ""
             }
           ],
-          "content": "<strong> Missing institution location code</strong>\n<br />Please note: You will be able to create this location without an institution location code. However, you will not be able to designate this location until you obtain a federally issued code from StudentAid BC. Once you submit your location please email designat@gov.bc.ca and request they provide you with the code and update the location information.",
+          "content": "<strong> Missing institution location code</strong>\n<br />Please note: You will be able to create this location without an institution location code. However, you will not be able to designate this location until you obtain a federally issued code from StudentAid BC. Once you submit your location please email <a href=\"mailto:designat@gov.bc.ca\">designat@gov.bc.ca</a> and request they provide you with the code and update the location information.",
           "refreshOnChange": true,
           "customClass": "banner-warning",
           "hidden": true,
