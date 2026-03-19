@@ -3000,7 +3000,7 @@
                       "key": "uploadSupportingDocuments",
                       "conditional": {
                         "show": false,
-                        "when": "citizenshipForBCResidencyApplicationException.otherLivingSituation"
+                        "when": "citizenshipForBCResidencyApplicationException.bclivingSituation"
                       },
                       "type": "panel",
                       "label": "Upload supporting documents",
