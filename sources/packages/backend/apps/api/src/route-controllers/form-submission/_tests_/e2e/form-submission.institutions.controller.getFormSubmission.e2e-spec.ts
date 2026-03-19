@@ -244,24 +244,7 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmission", () => {
       formCategory: FormCategory.StudentAppeal,
       submissionStatus: FormSubmissionStatus.Completed,
       auditUser: ministryUser,
-      formSubmissionItems: [
-        {
-          dynamicFormConfiguration: studentAppealApplicationA,
-          decisions: [
-            {
-              decisionStatus: FormSubmissionDecisionStatus.Approved,
-            },
-          ],
-        },
-        {
-          dynamicFormConfiguration: studentAppealApplicationB,
-          decisions: [
-            {
-              decisionStatus: FormSubmissionDecisionStatus.Declined,
-            },
-          ],
-        },
-      ],
+      formSubmissionItems: [],
     });
     const endpoint = `/institutions/form-submission/student/${formSubmission.student.id}/form-submission/${formSubmission.id}`;
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);

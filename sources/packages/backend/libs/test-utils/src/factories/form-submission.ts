@@ -15,10 +15,17 @@ import { createFakeFormSubmissionItem } from "./form-submission-item";
 import { saveFakeStudent } from "./student";
 import { createFakeNote } from "@sims/test-utils/factories/note";
 
+/**
+ * Test input data for creating form submission decisions.
+ */
 export interface FormSubmissionDecisionTestInputData {
   decisionStatus: FormSubmissionDecisionStatus;
 }
 
+/**
+ * Test input data for creating form submission items,
+ * including the decisions to be created for each item.
+ */
 export interface FormSubmissionItemTestInputData {
   /**
    * Dynamic form configuration to be associated with the form submission item.
@@ -36,11 +43,36 @@ export interface FormSubmissionItemTestInputData {
  * Test data to create form submissions, its items and decisions.
  */
 export interface FormSubmissionTestInputData {
+  /**
+   * Student to be associated with the form submission. When not provided,
+   * the application students will be used or a new student is created.
+   */
   student?: Student;
+  /**
+   * Application associated with the form submission.
+   * If not provided, the form submission will not be associated with any application.
+   */
   application?: Application;
+  /**
+   * Form category for the form submission.
+   */
   formCategory: FormCategory;
+  /**
+   * Form submission status. Defaults to `Pending` when not provided.
+   * If some status other than `Pending` is provided, the assessedDate and assessedBy fields will
+   * be automatically set with the current date and the audit user, respectively.
+   */
   submissionStatus: FormSubmissionStatus;
+  /**
+   * User who performed the audit.
+   */
   auditUser: User;
+  /**
+   * Form submission items to be created.
+   * Can be provided with decisions to be created for each item.
+   * If decisions are provided, the first one will be considered
+   * the current decision for the item.
+   */
   formSubmissionItems: FormSubmissionItemTestInputData[];
 }
 
@@ -75,7 +107,7 @@ export async function saveFakeFormSubmissionFromInputTestData(
   for (const itemInputData of testInputData.formSubmissionItems) {
     const submissionItem = createFakeFormSubmissionItem({
       dynamicFormConfiguration: itemInputData.dynamicFormConfiguration,
-      auditUser: testInputData.auditUser,
+      creator: testInputData.auditUser,
     });
     submissionItem.formSubmission = formSubmission;
     // Update the array to avoid reloading the data and allowing a
@@ -176,11 +208,11 @@ export async function saveFakeFormSubmission(
   const numberOfItems = options?.numberOfItems ?? 1;
   formSubmission.formSubmissionItems = Array.from(
     { length: numberOfItems },
-    () => {
-      const item = createFakeFormSubmissionItem({ dynamicFormConfiguration });
-      item.creator = student.user;
-      return item;
-    },
+    () =>
+      createFakeFormSubmissionItem({
+        dynamicFormConfiguration,
+        creator: student.user,
+      }),
   );
 
   return db.formSubmission.save(formSubmission);

@@ -7,7 +7,6 @@ import {
   getAESTToken,
   getAESTUser,
   mockJWTUserInfo,
-  resetMockJWTUserInfo,
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
@@ -59,10 +58,6 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
         formCategory: FormCategory.StudentForm,
       }),
     ]);
-  });
-
-  beforeEach(async () => {
-    await resetMockJWTUserInfo(appModule);
   });
 
   it("Should get a form submission as pending, its decisions and history when the form has multiple decisions and the user has approval authorization.", async () => {
@@ -123,7 +118,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
               updatedAt: formSubmissionItemA.updatedAt.toISOString(),
               currentDecision: {
                 id: itemADecision1.id,
-                decisionStatus: itemADecision1.decisionStatus,
+                decisionStatus: FormSubmissionDecisionStatus.Approved,
                 decisionDate: itemADecision1.decisionDate.toISOString(),
                 decisionBy: `${itemADecision1.decisionBy.firstName} ${itemADecision1.decisionBy.lastName}`,
                 decisionNoteDescription:
@@ -132,7 +127,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
               previousDecisions: [
                 {
                   id: itemADecision2.id,
-                  decisionStatus: itemADecision2.decisionStatus,
+                  decisionStatus: FormSubmissionDecisionStatus.Pending,
                   decisionDate: itemADecision2.decisionDate.toISOString(),
                   decisionBy: `${itemADecision2.decisionBy.firstName} ${itemADecision2.decisionBy.lastName}`,
                   decisionNoteDescription:
@@ -181,9 +176,6 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
     const [formSubmissionItemA] = formSubmission.formSubmissionItems;
     const endpoint = `/aest/form-submission/${formSubmission.id}`;
     const token = await getAESTToken(AESTGroups.Operations);
-
-    // Mock the user received in the token.
-    await mockJWTUserInfo(appModule, formSubmission.student.user);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -240,9 +232,6 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
     const endpoint = `/aest/form-submission/${formSubmission.id}`;
     const token = await getAESTToken(AESTGroups.Operations);
 
-    // Mock the user received in the token.
-    await mockJWTUserInfo(appModule, formSubmission.student.user);
-
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
@@ -265,7 +254,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
               formDefinitionName: studentAppealApplicationA.formDefinitionName,
               updatedAt: formSubmissionItemA.updatedAt.toISOString(),
               currentDecision: {
-                decisionStatus: itemADecision1.decisionStatus,
+                decisionStatus: FormSubmissionDecisionStatus.Approved,
                 decisionNoteDescription:
                   itemADecision1.decisionNote.description,
               },
@@ -300,9 +289,6 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
     const endpoint = `/aest/form-submission/${formSubmission.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    // Mock the user received in the token.
-    await mockJWTUserInfo(appModule, formSubmission.student.user);
-
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
@@ -326,7 +312,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
               updatedAt: formSubmissionItemA.updatedAt.toISOString(),
               currentDecision: {
                 id: itemADecision1.id,
-                decisionStatus: itemADecision1.decisionStatus,
+                decisionStatus: FormSubmissionDecisionStatus.Approved,
                 decisionDate: itemADecision1.decisionDate.toISOString(),
                 decisionBy: `${itemADecision1.decisionBy.firstName} ${itemADecision1.decisionBy.lastName}`,
                 decisionNoteDescription:
@@ -335,7 +321,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
               previousDecisions: [
                 {
                   id: itemADecision2.id,
-                  decisionStatus: itemADecision2.decisionStatus,
+                  decisionStatus: FormSubmissionDecisionStatus.Pending,
                   decisionDate: itemADecision2.decisionDate.toISOString(),
                   decisionBy: `${itemADecision2.decisionBy.firstName} ${itemADecision2.decisionBy.lastName}`,
                   decisionNoteDescription:
@@ -382,9 +368,6 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
     const endpoint = `/aest/form-submission/${formSubmission.id}?itemId=${formSubmissionItemB.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    // Mock the user received in the token.
-    await mockJWTUserInfo(appModule, formSubmission.student.user);
-
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
@@ -408,7 +391,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
               updatedAt: formSubmissionItemB.updatedAt.toISOString(),
               currentDecision: {
                 id: itemBDecision1.id,
-                decisionStatus: itemBDecision1.decisionStatus,
+                decisionStatus: FormSubmissionDecisionStatus.Declined,
                 decisionDate: itemBDecision1.decisionDate.toISOString(),
                 decisionBy: `${itemBDecision1.decisionBy.firstName} ${itemBDecision1.decisionBy.lastName}`,
                 decisionNoteDescription:
@@ -417,7 +400,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
               previousDecisions: [
                 {
                   id: itemBDecision2.id,
-                  decisionStatus: itemBDecision2.decisionStatus,
+                  decisionStatus: FormSubmissionDecisionStatus.Pending,
                   decisionDate: itemBDecision2.decisionDate.toISOString(),
                   decisionBy: `${itemBDecision2.decisionBy.firstName} ${itemBDecision2.decisionBy.lastName}`,
                   decisionNoteDescription:

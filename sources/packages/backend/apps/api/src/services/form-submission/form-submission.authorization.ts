@@ -18,7 +18,7 @@ export const FORM_SUBMISSION_APPROVAL_ROLES_MAP = new Map<FormCategory, Role>([
  */
 export function hasFormSubmissionApprovalAuthorization(
   category: FormCategory,
-  userRoles: Role[],
+  userRoles?: Role[],
 ): boolean {
   if (!userRoles?.length) {
     return false;

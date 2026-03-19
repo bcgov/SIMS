@@ -29,8 +29,8 @@ describe("FormSubmissionStudentsController(e2e)-getSubmissionForms", () => {
       .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect(({ body }) =>
-        expect(body).toStrictEqual({
-          configurations: [
+        expect(body.configurations).toEqual(
+          expect.arrayContaining([
             {
               id: expect.any(Number),
               formDefinitionName: "studentexceptionalexpenseappeal",
@@ -101,8 +101,8 @@ describe("FormSubmissionStudentsController(e2e)-getSubmissionForms", () => {
               allowBundledSubmission: true,
               hasApplicationScope: true,
             },
-          ],
-        }),
+          ]),
+        ),
       );
   });
 

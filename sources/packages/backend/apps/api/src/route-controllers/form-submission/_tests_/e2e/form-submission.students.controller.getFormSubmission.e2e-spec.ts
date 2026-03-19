@@ -94,6 +94,7 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
       .expect(({ body }) =>
         expect(body).toStrictEqual({
           id: formSubmission.id,
