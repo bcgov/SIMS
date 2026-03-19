@@ -215,7 +215,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       );
   });
 
-  it("Should get a form submission as completed, and its decisions statuses, including current notes when the user does not have approval authorization.", async () => {
+  it("Should get a form submission as completed, and its decision statuses, including current notes when the user does not have approval authorization.", async () => {
     // Arrange
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
       formCategory: FormCategory.StudentAppeal,
@@ -275,7 +275,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       });
   });
 
-  it("Should get a form submission as completed, and its decisions statuses, including current notes and audit when the user has approval authorization.", async () => {
+  it("Should get a form submission as completed, and its decision statuses, including current notes and audit when the user has approval authorization.", async () => {
     // Arrange
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
       formCategory: FormCategory.StudentForm,
@@ -348,7 +348,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       );
   });
 
-  it("Should get a form submission item, and its decisions statuses, including current notes and audit when the user has approval authorization and an item ID was provided.", async () => {
+  it("Should get a form submission item, and its decision statuses, including current notes and audit when the user has approval authorization and an item ID was provided.", async () => {
     // Arrange
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
       formCategory: FormCategory.StudentForm,

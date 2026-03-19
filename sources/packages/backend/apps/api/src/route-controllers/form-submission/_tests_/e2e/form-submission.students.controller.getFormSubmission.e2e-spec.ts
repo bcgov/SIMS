@@ -156,8 +156,6 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
     });
     const [formSubmissionItemA, formSubmissionItemB] =
       formSubmission.formSubmissionItems;
-    const [itemADecision1] = formSubmissionItemA.decisions;
-    const [itemBDecision1] = formSubmissionItemB.decisions;
     const endpoint = `/students/form-submission/${formSubmission.id}`;
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -187,8 +185,6 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
               formDefinitionName: studentAppealApplicationA.formDefinitionName,
               currentDecision: {
                 decisionStatus: FormSubmissionDecisionStatus.Approved,
-                decisionNoteDescription:
-                  itemADecision1.decisionNote.description,
               },
             },
             {
@@ -200,8 +196,6 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
               formDefinitionName: studentAppealApplicationB.formDefinitionName,
               currentDecision: {
                 decisionStatus: FormSubmissionDecisionStatus.Declined,
-                decisionNoteDescription:
-                  itemBDecision1.decisionNote.description,
               },
             },
           ],

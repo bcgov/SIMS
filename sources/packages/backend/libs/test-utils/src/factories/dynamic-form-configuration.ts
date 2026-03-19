@@ -66,11 +66,12 @@ export async function ensureDynamicFormConfigurationExists(
         offeringIntensity: true,
         formType: true,
         formDefinitionName: true,
+        formCategory: true,
       },
       relations: { programYear: true },
       where: {
         formType: formType as DynamicFormType,
-        programYear: { id: options?.programYear.id },
+        programYear: { id: options?.programYear?.id },
         offeringIntensity: options?.offeringIntensity,
         formCategory: options?.formCategory,
       },

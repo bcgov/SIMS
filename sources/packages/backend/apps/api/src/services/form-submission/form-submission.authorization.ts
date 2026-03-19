@@ -20,6 +20,9 @@ export function hasFormSubmissionApprovalAuthorization(
   category: FormCategory,
   userRoles: Role[],
 ): boolean {
+  if (!userRoles?.length) {
+    return false;
+  }
   const allowedRole = FORM_SUBMISSION_APPROVAL_ROLES_MAP.get(category);
   return allowedRole ? userRoles.includes(allowedRole) : false;
 }

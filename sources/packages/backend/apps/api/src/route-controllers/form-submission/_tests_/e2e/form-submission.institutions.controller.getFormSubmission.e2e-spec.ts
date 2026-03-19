@@ -147,7 +147,7 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmission", () => {
       );
   });
 
-  it("Should get a form submission as completed and its decisions statuses, including the decision notes, when form submission is completed.", async () => {
+  it("Should get a form submission as completed and its decision statuses, including the decision notes, when form submission is completed.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, {
       institutionLocation: collegeFLocation,
@@ -196,9 +196,9 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmission", () => {
           applicationId: application.id,
           applicationNumber: application.applicationNumber,
           formCategory: FormCategory.StudentAppeal,
-          status: FormSubmissionStatus.Pending,
+          status: FormSubmissionStatus.Completed,
           submittedDate: formSubmission.submittedDate.toISOString(),
-          assessedDate: null,
+          assessedDate: formSubmission.assessedDate.toISOString(),
           submissionItems: [
             {
               id: formSubmissionItemA.id,
@@ -208,7 +208,7 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmission", () => {
               submissionData: formSubmissionItemA.submittedData,
               formDefinitionName: studentAppealApplicationA.formDefinitionName,
               currentDecision: {
-                decisionStatus: FormSubmissionDecisionStatus.Pending,
+                decisionStatus: FormSubmissionDecisionStatus.Approved,
                 decisionNoteDescription:
                   itemADecision1.decisionNote.description,
               },
@@ -221,7 +221,7 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmission", () => {
               submissionData: formSubmissionItemB.submittedData,
               formDefinitionName: studentAppealApplicationB.formDefinitionName,
               currentDecision: {
-                decisionStatus: FormSubmissionDecisionStatus.Pending,
+                decisionStatus: FormSubmissionDecisionStatus.Declined,
                 decisionNoteDescription:
                   itemBDecision1.decisionNote.description,
               },
