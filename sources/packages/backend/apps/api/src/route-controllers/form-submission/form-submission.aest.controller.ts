@@ -17,6 +17,7 @@ import {
   FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
   FormSubmissionApprovalService,
   FormSubmissionService,
+  hasFormSubmissionApprovalAuthorization,
 } from "../../services";
 import {
   AllowAuthorizedParty,
@@ -107,13 +108,14 @@ export class FormSubmissionAESTController extends BaseController {
    */
   @Get("student/:studentId")
   async getFormSubmissionHistory(
+    @UserToken() userToken: IUserToken,
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<FormSubmissionsAPIOutDTO> {
     // Kept the includeBasicDecisionDetails as false since the details controlled by
     // the flag are not required to be returned by this endpoint.
     const submissions =
       await this.formSubmissionControllerService.getFormSubmissions(studentId, {
-        keepPendingDecisionsWhilePendingFormSubmission: false,
+        userRoles: userToken.roles,
       });
     return {
       submissions,
@@ -148,11 +150,10 @@ export class FormSubmissionAESTController extends BaseController {
         `Form submission with ID ${formSubmissionId} not found.`,
       );
     }
-    const hasApprovalAuthorization =
-      this.formSubmissionApprovalService.hasApprovalAuthorization(
-        submission.formCategory,
-        userToken.roles,
-      );
+    const hasApprovalAuthorization = hasFormSubmissionApprovalAuthorization(
+      submission.formCategory,
+      userToken.roles,
+    );
     return {
       hasApprovalAuthorization,
       id: submission.id,
@@ -190,7 +191,7 @@ export class FormSubmissionAESTController extends BaseController {
                     submission.submissionStatus,
                     item,
                     true,
-                    true,
+                    userToken.roles,
                   ),
             previousDecisions: hasApprovalAuthorization
               ? item.decisions
