@@ -36,7 +36,7 @@ instances:
 # If we need to restore the cluster from a backup, we need to set the following values
 # assuming restore from repo2 (s3), adjust as needed if your S3 repo is different
 dataSource:
-  enabled: false
+  enabled: true
 
 pgBackRest:
   image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default

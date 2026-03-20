@@ -84,15 +84,15 @@ spec:
     pgbackrest:
       configuration:
         - secret:
-            name: {{ .Values.dataSource.secretName }}
+            name: {{ .Values.pgBackRest.s3.s3Secret }}
       global:
-        repo2-path: {{ .Values.dataSource.repo.path }}
+        repo2-path: {{ .Values.pgBackRest.s3.s3Path }}
       repo:
-        name: {{ .Values.dataSource.repo.name }}
+        name: {{ .Values.dataSource.repo }}
         s3:
-          bucket: {{ .Values.dataSource.repo.s3.bucket }}
-          endpoint: {{ .Values.dataSource.repo.s3.endpoint }}
-          region: {{ .Values.dataSource.repo.s3.region }}
+          bucket: {{ .Values.pgBackRest.s3.bucket }}
+          endpoint: {{ .Values.pgBackRest.s3.endpoint }}
+          region: {{ .Values.pgBackRest.s3.region }}
       stanza: {{ .Values.dataSource.stanza }}
   {{ end }}
 
