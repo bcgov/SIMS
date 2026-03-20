@@ -175,7 +175,7 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
           formCategory: FormCategory.StudentAppeal,
           status: FormSubmissionStatus.Completed,
           submittedDate: formSubmission.submittedDate.toISOString(),
-          assessedDate: formSubmission.assessedDate?.toISOString(),
+          assessedDate: formSubmission.assessedDate.toISOString(),
           submissionItems: [
             {
               id: formSubmissionItemA.id,

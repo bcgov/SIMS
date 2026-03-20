@@ -6,7 +6,6 @@ import {
   createTestingAppModule,
   getAESTToken,
   getAESTUser,
-  mockJWTUserInfo,
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
@@ -14,7 +13,6 @@ import {
   ensureDynamicFormConfigurationExists,
   saveFakeFormSubmissionFromInputTestData,
 } from "@sims/test-utils";
-import { TestingModule } from "@nestjs/testing";
 import {
   DynamicFormConfiguration,
   FormCategory,
@@ -25,7 +23,6 @@ import {
 
 describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
   let app: INestApplication;
-  let appModule: TestingModule;
   let db: E2EDataSources;
   let ministryUser: User;
   let studentAppealApplicationA: DynamicFormConfiguration;
@@ -33,10 +30,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
   let studentFormApplication: DynamicFormConfiguration;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource, module } =
-      await createTestingAppModule();
+    const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
-    appModule = module;
     db = createE2EDataSources(dataSource);
     ministryUser = await getAESTUser(
       db.dataSource,
@@ -92,9 +87,6 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
     const endpoint = `/aest/form-submission/${formSubmission.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    // Mock the user received in the token.
-    await mockJWTUserInfo(appModule, formSubmission.student.user);
-
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
@@ -104,14 +96,14 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
         expect(body).toStrictEqual({
           hasApprovalAuthorization: true,
           id: formSubmission.id,
-          formCategory: formSubmission.formCategory,
-          status: formSubmission.submissionStatus,
+          formCategory: FormCategory.StudentAppeal,
+          status: FormSubmissionStatus.Pending,
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
               id: formSubmissionItemA.id,
               formType: studentAppealApplicationA.formType,
-              formCategory: studentAppealApplicationA.formCategory,
+              formCategory: FormCategory.StudentAppeal,
               dynamicFormConfigurationId: studentAppealApplicationA.id,
               submissionData: formSubmissionItemA.submittedData,
               formDefinitionName: studentAppealApplicationA.formDefinitionName,
@@ -138,7 +130,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
             {
               id: formSubmissionItemB.id,
               formType: studentAppealApplicationB.formType,
-              formCategory: studentAppealApplicationB.formCategory,
+              formCategory: FormCategory.StudentAppeal,
               dynamicFormConfigurationId: studentAppealApplicationB.id,
               submissionData: formSubmissionItemB.submittedData,
               formDefinitionName: studentAppealApplicationB.formDefinitionName,
@@ -186,14 +178,14 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
         expect(body).toStrictEqual({
           hasApprovalAuthorization: false,
           id: formSubmission.id,
-          formCategory: formSubmission.formCategory,
-          status: formSubmission.submissionStatus,
+          formCategory: FormCategory.StudentAppeal,
+          status: FormSubmissionStatus.Pending,
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
               id: formSubmissionItemA.id,
               formType: studentAppealApplicationA.formType,
-              formCategory: studentAppealApplicationA.formCategory,
+              formCategory: FormCategory.StudentAppeal,
               dynamicFormConfigurationId: studentAppealApplicationA.id,
               submissionData: formSubmissionItemA.submittedData,
               formDefinitionName: studentAppealApplicationA.formDefinitionName,
@@ -207,7 +199,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       );
   });
 
-  it("Should get a form submission as completed, and its decision statuses, including current notes when the user does not have approval authorization.", async () => {
+  it("Should get a form submission as completed, and its decision statuses, including decision notes when the user does not have approval authorization.", async () => {
     // Arrange
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
       formCategory: FormCategory.StudentAppeal,
@@ -241,14 +233,14 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
         expect(body).toStrictEqual({
           hasApprovalAuthorization: false,
           id: formSubmission.id,
-          formCategory: formSubmission.formCategory,
-          status: formSubmission.submissionStatus,
+          formCategory: FormCategory.StudentAppeal,
+          status: FormSubmissionStatus.Completed,
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
               id: formSubmissionItemA.id,
               formType: studentAppealApplicationA.formType,
-              formCategory: studentAppealApplicationA.formCategory,
+              formCategory: FormCategory.StudentAppeal,
               dynamicFormConfigurationId: studentAppealApplicationA.id,
               submissionData: formSubmissionItemA.submittedData,
               formDefinitionName: studentAppealApplicationA.formDefinitionName,
@@ -298,14 +290,14 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
         expect(body).toStrictEqual({
           hasApprovalAuthorization: true,
           id: formSubmission.id,
-          formCategory: formSubmission.formCategory,
-          status: formSubmission.submissionStatus,
+          formCategory: FormCategory.StudentForm,
+          status: FormSubmissionStatus.Completed,
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
               id: formSubmissionItemA.id,
               formType: studentFormApplication.formType,
-              formCategory: studentFormApplication.formCategory,
+              formCategory: FormCategory.StudentForm,
               dynamicFormConfigurationId: studentFormApplication.id,
               submissionData: formSubmissionItemA.submittedData,
               formDefinitionName: studentFormApplication.formDefinitionName,
@@ -337,7 +329,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
   it("Should get a form submission item, and its decision statuses, including current notes and audit when the user has approval authorization and an item ID was provided.", async () => {
     // Arrange
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
-      formCategory: FormCategory.StudentForm,
+      formCategory: FormCategory.StudentAppeal,
       submissionStatus: FormSubmissionStatus.Completed,
       auditUser: ministryUser,
       formSubmissionItems: [
@@ -377,14 +369,14 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
         expect(body).toStrictEqual({
           hasApprovalAuthorization: true,
           id: formSubmission.id,
-          formCategory: formSubmission.formCategory,
-          status: formSubmission.submissionStatus,
+          formCategory: FormCategory.StudentAppeal,
+          status: FormSubmissionStatus.Completed,
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
               id: formSubmissionItemB.id,
               formType: studentAppealApplicationB.formType,
-              formCategory: studentAppealApplicationB.formCategory,
+              formCategory: FormCategory.StudentAppeal,
               dynamicFormConfigurationId: studentAppealApplicationB.id,
               submissionData: formSubmissionItemB.submittedData,
               formDefinitionName: studentAppealApplicationB.formDefinitionName,

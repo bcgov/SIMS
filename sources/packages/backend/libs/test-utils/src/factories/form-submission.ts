@@ -107,7 +107,7 @@ export async function saveFakeFormSubmissionFromInputTestData(
   for (const itemInputData of testInputData.formSubmissionItems) {
     const submissionItem = createFakeFormSubmissionItem({
       dynamicFormConfiguration: itemInputData.dynamicFormConfiguration,
-      creator: testInputData.auditUser,
+      creator: student.user,
     });
     submissionItem.formSubmission = formSubmission;
     // Update the array to avoid reloading the data and allowing a
