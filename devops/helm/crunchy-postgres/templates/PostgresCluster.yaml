@@ -87,6 +87,7 @@ spec:
             name: {{ .Values.pgBackRest.s3.s3Secret }}
       global:
         repo2-path: {{ .Values.pgBackRest.s3.s3Path }}
+        repo2-s3-uri-style: {{ .Values.pgBackRest.s3.s3UriStyle }}
       repo:
         name: {{ .Values.dataSource.repo }}
         s3:
