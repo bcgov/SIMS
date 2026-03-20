@@ -13,7 +13,6 @@ import {
 import {
   createE2EDataSources,
   E2EDataSources,
-  ensureDynamicFormConfigurationExists,
   saveFakeFormSubmissionFromInputTestData,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
@@ -24,6 +23,7 @@ import {
   FormSubmissionStatus,
   User,
 } from "@sims/sims-db";
+import { createFakeFormConfigurations } from "./form-submission-utils";
 
 describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
   let app: INestApplication;
@@ -43,15 +43,8 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
       db.dataSource,
       AESTGroups.BusinessAdministrators,
     );
-    // Create the form configurations to be used along the tests.
-    [studentAppealApplicationA, studentAppealApplicationB] = await Promise.all([
-      ensureDynamicFormConfigurationExists(db, "Student application appeal A", {
-        formCategory: FormCategory.StudentAppeal,
-      }),
-      ensureDynamicFormConfigurationExists(db, "Student application appeal B", {
-        formCategory: FormCategory.StudentAppeal,
-      }),
-    ]);
+    [studentAppealApplicationA, studentAppealApplicationB] =
+      await createFakeFormConfigurations(db);
   });
 
   beforeEach(async () => {

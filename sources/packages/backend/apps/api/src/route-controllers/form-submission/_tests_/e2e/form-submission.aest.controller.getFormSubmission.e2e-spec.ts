@@ -10,7 +10,6 @@ import {
 import {
   createE2EDataSources,
   E2EDataSources,
-  ensureDynamicFormConfigurationExists,
   saveFakeFormSubmissionFromInputTestData,
 } from "@sims/test-utils";
 import {
@@ -20,6 +19,7 @@ import {
   FormSubmissionStatus,
   User,
 } from "@sims/sims-db";
+import { createFakeFormConfigurations } from "./form-submission-utils";
 
 describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
   let app: INestApplication;
@@ -27,7 +27,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
   let ministryUser: User;
   let studentAppealApplicationA: DynamicFormConfiguration;
   let studentAppealApplicationB: DynamicFormConfiguration;
-  let studentFormApplication: DynamicFormConfiguration;
+  let studentFormA: DynamicFormConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -37,22 +37,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       db.dataSource,
       AESTGroups.BusinessAdministrators,
     );
-    // Create the form configurations to be used along the tests.
-    [
-      studentAppealApplicationA,
-      studentAppealApplicationB,
-      studentFormApplication,
-    ] = await Promise.all([
-      ensureDynamicFormConfigurationExists(db, "Student application appeal A", {
-        formCategory: FormCategory.StudentAppeal,
-      }),
-      ensureDynamicFormConfigurationExists(db, "Student application appeal B", {
-        formCategory: FormCategory.StudentAppeal,
-      }),
-      ensureDynamicFormConfigurationExists(db, "Student form application", {
-        formCategory: FormCategory.StudentForm,
-      }),
-    ]);
+    [studentAppealApplicationA, studentAppealApplicationB, studentFormA] =
+      await createFakeFormConfigurations(db);
   });
 
   it("Should get a form submission as pending, its decisions and history when the form has multiple decisions and the user has approval authorization.", async () => {
@@ -264,7 +250,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       auditUser: ministryUser,
       formSubmissionItems: [
         {
-          dynamicFormConfiguration: studentFormApplication,
+          dynamicFormConfiguration: studentFormA,
           decisions: [
             {
               decisionStatus: FormSubmissionDecisionStatus.Approved,
@@ -296,11 +282,11 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           submissionItems: [
             {
               id: formSubmissionItemA.id,
-              formType: studentFormApplication.formType,
+              formType: studentFormA.formType,
               formCategory: FormCategory.StudentForm,
-              dynamicFormConfigurationId: studentFormApplication.id,
+              dynamicFormConfigurationId: studentFormA.id,
               submissionData: formSubmissionItemA.submittedData,
-              formDefinitionName: studentFormApplication.formDefinitionName,
+              formDefinitionName: studentFormA.formDefinitionName,
               updatedAt: formSubmissionItemA.updatedAt.toISOString(),
               currentDecision: {
                 id: itemADecision1.id,

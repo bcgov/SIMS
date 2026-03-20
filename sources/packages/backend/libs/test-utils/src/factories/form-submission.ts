@@ -64,6 +64,10 @@ export interface FormSubmissionTestInputData {
    */
   submissionStatus: FormSubmissionStatus;
   /**
+   * Used to simulate the creation of the submissions in different points in time.
+   */
+  now?: Date;
+  /**
    * User who performed the audit.
    */
   auditUser: User;
@@ -86,7 +90,7 @@ export async function saveFakeFormSubmissionFromInputTestData(
   db: E2EDataSources,
   testInputData: FormSubmissionTestInputData,
 ): Promise<FormSubmission> {
-  const now = new Date();
+  const now = testInputData.now ?? new Date();
   const student =
     testInputData.student ??
     testInputData.application?.student ??
