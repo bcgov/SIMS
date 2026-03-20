@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { DataSource } from "typeorm";
+import { DataSource, IsNull } from "typeorm";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
@@ -8,7 +8,12 @@ import {
   getAESTToken,
   getAESTUser,
 } from "../../../../testHelpers";
-import { ApplicationEditStatus, ApplicationStatus, User } from "@sims/sims-db";
+import {
+  ApplicationEditStatus,
+  ApplicationStatus,
+  NotificationMessageType,
+  User,
+} from "@sims/sims-db";
 import { faker } from "@faker-js/faker";
 import {
   createE2EDataSources,
@@ -19,6 +24,8 @@ import {
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 import MockDate from "mockdate";
 import { INVALID_APPLICATION_EDIT_STATUS } from "@sims/services/constants";
+import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
+import { getPSTPDTDateTime } from "@sims/utilities";
 
 describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeRequest", () => {
   let app: INestApplication;
@@ -42,6 +49,15 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
 
   beforeEach(async () => {
     MockDate.reset();
+    // Mark all existing change request review completed notifications as sent to isolate test assertions.
+    await db.notification.update(
+      {
+        notificationMessage: {
+          id: NotificationMessageType.StudentChangeRequestReviewCompleted,
+        },
+      },
+      { dateSent: new Date() },
+    );
   });
 
   it("Should approve a change request and copy the offering and appeal when the application change request is waiting for approval.", async () => {
@@ -218,6 +234,25 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
         creator: ministryUser,
       },
     ]);
+    // Validate notification.
+    const createdNotification = await db.notification.findOne({
+      select: { id: true, messagePayload: true },
+      where: {
+        notificationMessage: {
+          id: NotificationMessageType.StudentChangeRequestReviewCompleted,
+        },
+        dateSent: IsNull(),
+      },
+    });
+    expect(createdNotification.messagePayload).toStrictEqual({
+      template_id: GC_NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
+      email_address: changeRequest.student.user.email,
+      personalisation: {
+        givenNames: changeRequest.student.user.firstName ?? "",
+        lastName: changeRequest.student.user.lastName,
+        date: `${getPSTPDTDateTime(now)} PST/PDT`,
+      },
+    });
   });
 
   it("Should approve a change request and copy the offering and no appeals when the application change request is waiting for approval, and no appeals are present.", async () => {
@@ -320,6 +355,25 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
         },
       },
     });
+    // Validate notification.
+    const createdNotification = await db.notification.findOne({
+      select: { id: true, messagePayload: true },
+      where: {
+        notificationMessage: {
+          id: NotificationMessageType.StudentChangeRequestReviewCompleted,
+        },
+        dateSent: IsNull(),
+      },
+    });
+    expect(createdNotification.messagePayload).toStrictEqual({
+      template_id: GC_NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
+      email_address: changeRequest.student.user.email,
+      personalisation: {
+        givenNames: changeRequest.student.user.firstName ?? "",
+        lastName: changeRequest.student.user.lastName,
+        date: `${getPSTPDTDateTime(now)} PST/PDT`,
+      },
+    });
   });
 
   it("Should be able to decline a change request and create a student note when the application change request is waiting for approval.", async () => {
@@ -402,6 +456,25 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
         creator: ministryUser,
       },
     ]);
+    // Validate notification.
+    const createdNotification = await db.notification.findOne({
+      select: { id: true, messagePayload: true },
+      where: {
+        notificationMessage: {
+          id: NotificationMessageType.StudentChangeRequestReviewCompleted,
+        },
+        dateSent: IsNull(),
+      },
+    });
+    expect(createdNotification.messagePayload).toStrictEqual({
+      template_id: GC_NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
+      email_address: changeRequest.student.user.email,
+      personalisation: {
+        givenNames: changeRequest.student.user.firstName ?? "",
+        lastName: changeRequest.student.user.lastName,
+        date: `${getPSTPDTDateTime(now)} PST/PDT`,
+      },
+    });
   });
 
   it("Should throw a BadRequestException when the application change request approval has an invalid status.", async () => {

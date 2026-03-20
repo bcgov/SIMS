@@ -42,6 +42,7 @@ export type FormSubmissionConfig = FormSubmissionModel &
   Pick<
     DynamicFormConfiguration,
     | "formDefinitionName"
+    | "formType"
     | "formCategory"
     | "hasApplicationScope"
     | "allowBundledSubmission"

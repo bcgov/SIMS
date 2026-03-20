@@ -31,6 +31,7 @@ import {
 } from "./form-submission.models";
 import { NoteSharedService } from "@sims/services";
 import { FormSubmissionActionProcessor } from "./form-submission-actions/form-submission-action-processor";
+import { NotificationActionsService } from "@sims/services/notifications";
 
 @Injectable()
 export class FormSubmissionApprovalService {
@@ -38,6 +39,7 @@ export class FormSubmissionApprovalService {
     private readonly dataSource: DataSource,
     private readonly noteSharedService: NoteSharedService,
     private readonly formSubmissionActionProcessor: FormSubmissionActionProcessor,
+    private readonly notificationActionsService: NotificationActionsService,
   ) {}
 
   /**
@@ -180,7 +182,10 @@ export class FormSubmissionApprovalService {
       const formSubmission = await formSubmissionRepo.findOne({
         select: {
           id: true,
-          student: { id: true },
+          student: {
+            id: true,
+            user: { id: true, firstName: true, lastName: true, email: true },
+          },
           submissionStatus: true,
           formCategory: true,
           application: { id: true, applicationStatus: true },
@@ -195,7 +200,7 @@ export class FormSubmissionApprovalService {
           },
         },
         relations: {
-          student: true,
+          student: { user: true },
           application: true,
           formSubmissionItems: { currentDecision: { decisionNote: true } },
         },
@@ -258,6 +263,18 @@ export class FormSubmissionApprovalService {
         formSubmission.id,
         auditUserId,
         now,
+        entityManager,
+      );
+      // Send student notification that the form or appeal adjudication is complete.
+      const studentUser = formSubmission.student.user;
+      await this.notificationActionsService.saveStudentFormCompletedNotification(
+        {
+          givenNames: studentUser.firstName,
+          lastName: studentUser.lastName,
+          toAddress: studentUser.email,
+          userId: studentUser.id,
+        },
+        auditUserId,
         entityManager,
       );
       return formSubmission;
