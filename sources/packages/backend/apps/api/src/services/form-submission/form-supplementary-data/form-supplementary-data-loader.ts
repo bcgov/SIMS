@@ -8,6 +8,7 @@ import {
   SupplementaryDataParents,
   SupplementaryDataProgramYear,
   SupplementaryDataBaseLoader,
+  SupplementaryDataScholasticStandingWithdrawals,
 } from ".";
 
 /**
@@ -24,10 +25,12 @@ export class SupplementaryDataLoader {
   constructor(
     private readonly supplementaryDataParents: SupplementaryDataParents,
     private readonly supplementaryDataProgramYear: SupplementaryDataProgramYear,
+    private readonly supplementaryDataScholasticStandingWithdrawals: SupplementaryDataScholasticStandingWithdrawals,
   ) {
     this.dataLoaders = [
       this.supplementaryDataParents,
       this.supplementaryDataProgramYear,
+      this.supplementaryDataScholasticStandingWithdrawals,
     ];
   }
 

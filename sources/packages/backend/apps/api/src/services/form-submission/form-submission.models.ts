@@ -3,7 +3,7 @@ import {
   FormCategory,
   FormSubmissionDecisionStatus,
 } from "@sims/sims-db";
-import { Parent } from "../../types";
+import { ApplicationWithdrawals, Parent } from "../../types";
 import { Role } from "../../auth";
 
 /**
@@ -12,6 +12,7 @@ import { Role } from "../../auth";
 export enum KnownSupplementaryDataKey {
   ProgramYear = "programYear",
   Parents = "parents",
+  ScholasticStandingWithdrawals = "scholasticStandingWithdrawals",
 }
 
 /**
@@ -21,6 +22,7 @@ export enum KnownSupplementaryDataKey {
 export interface KnownSupplementaryData {
   [KnownSupplementaryDataKey.ProgramYear]?: string;
   [KnownSupplementaryDataKey.Parents]?: Parent[];
+  [KnownSupplementaryDataKey.ScholasticStandingWithdrawals]?: ApplicationWithdrawals[];
 }
 
 /**

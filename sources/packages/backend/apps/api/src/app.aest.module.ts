@@ -59,6 +59,7 @@ import {
   SupplementaryDataProgramYear,
   SupplementaryDataParents,
   SupplementaryDataLoader,
+  SupplementaryDataScholasticStandingWithdrawals,
 } from "./services/form-submission/form-supplementary-data";
 import {
   SupportingUserAESTController,
@@ -258,6 +259,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     // Form supplementary data loaders.
     SupplementaryDataProgramYear,
     SupplementaryDataParents,
+    SupplementaryDataScholasticStandingWithdrawals,
     SupplementaryDataLoader,
     FormSubmissionService,
     // Form submission actions.
