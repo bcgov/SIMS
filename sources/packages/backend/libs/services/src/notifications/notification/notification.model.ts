@@ -77,6 +77,7 @@ export interface StudentNotification {
   lastName: string;
   toAddress: string;
   userId: number;
+  applicationNumber?: string;
 }
 
 export interface DisbursementBlockedNotification {
