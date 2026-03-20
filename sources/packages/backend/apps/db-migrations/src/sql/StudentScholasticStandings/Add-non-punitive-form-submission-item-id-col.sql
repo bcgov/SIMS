@@ -1,4 +1,4 @@
 ALTER TABLE
-  sims.form_submission_items
+  sims.student_scholastic_standings
 ADD
   COLUMN non_punitive_form_submission_item_id INT;

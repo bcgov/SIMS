@@ -1,2 +1,0 @@
-ALTER TABLE
-  sims.form_submission_items DROP COLUMN non_punitive_form_submission_item_id;
