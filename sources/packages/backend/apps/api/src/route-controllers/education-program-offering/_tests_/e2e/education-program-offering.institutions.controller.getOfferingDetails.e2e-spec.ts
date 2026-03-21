@@ -111,8 +111,6 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingDetails
         parentOfferingId: savedOffering.parentOffering.id,
         isBCPrivate: false,
         isBCPublic: true,
-        onlineInstructionMode: savedOffering.onlineInstructionMode,
-        isOnlineDurationSameAlways: savedOffering.isOnlineDurationSameAlways,
         totalOnlineDuration: savedOffering.totalOnlineDuration,
         minimumOnlineDuration: savedOffering.minimumOnlineDuration,
         maximumOnlineDuration: savedOffering.maximumOnlineDuration,
