@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   NotFoundException,
@@ -16,6 +17,7 @@ import {
 import BaseController from "../BaseController";
 import { StudentInformationService } from "../../services";
 import {
+  ActiveSINsAPIOutDTO,
   StudentSearchAPIInDTO,
   StudentSearchResultAPIOutDTO,
 } from "./models/student-external-search.dto";
@@ -104,5 +106,23 @@ export class StudentExternalController extends BaseController {
       ...studentDetails,
       applications,
     };
+  }
+
+  /**
+   * Returns all SIMS and legacy (SFAS) student SINs for full-time applications
+   * meeting at least one of the following criteria:
+   * - A FT application with a start date between now and 90 days in the future.
+   * - A FT application within a current study period.
+   * - FT disbursements sent in the last 90 days.
+   * Only the most recent validated SIN is returned for SIMS students.
+   * @returns active SINs from both SIMS and SFAS.
+   */
+  @Get("active-sins")
+  async getActiveSINs(): Promise<ActiveSINsAPIOutDTO> {
+    const [simsSINs, sfasSINs] = await Promise.all([
+      this.studentInformationService.getSIMSSINs(),
+      this.studentInformationService.getSFASSINs(),
+    ]);
+    return { sins: [...new Set([...simsSINs, ...sfasSINs])] };
   }
 }

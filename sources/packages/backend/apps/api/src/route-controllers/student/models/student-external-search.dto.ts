@@ -112,3 +112,11 @@ export type StudentSearchDetails = Omit<
   StudentSearchResultAPIOutDTO,
   "applications"
 >;
+
+/**
+ * Active SINs result containing all SIMS and legacy SINs for students
+ * with active full-time applications or recent disbursements.
+ */
+export class ActiveSINsAPIOutDTO {
+  sins: string[];
+}
