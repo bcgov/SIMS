@@ -56,7 +56,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
       new Date(),
     ];
     // Pending student appeal with an associated application.
-    // Expected to be returned, decisions as pending even being already assessed (not pending).
+    // Expected to be returned with decisions as pending even if the item decision is not pending.
     const pendingStudentAppealPromise = saveFakeFormSubmissionFromInputTestData(
       db,
       {
@@ -65,11 +65,12 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
         formCategory: FormCategory.StudentAppeal,
         submissionStatus: FormSubmissionStatus.Pending,
         auditUser: ministryUser,
-        // Ensure items are added in alphabetical oder DESC to
-        // assert they will be returned in alphabetical oder ASC.
+        // Ensure items are added in alphabetical order DESC to
+        // assert they will be returned in alphabetical order ASC.
         formSubmissionItems: [
           {
-            // Should be pending as it has no decision.
+            // Should be returned as Pending since the final decision is Pending,
+            // even though it has a declined decision.
             dynamicFormConfiguration: studentAppealApplicationB,
             decisions: [
               {
@@ -93,7 +94,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
       },
     );
     // Completed student appeal, no application associated.
-    // Expected to be returned, decisions as they were assessed (not pending).
+    // Expected to be returned with decisions as the item decisions have a non-pending status.
     const completedStudentAppealPromise =
       saveFakeFormSubmissionFromInputTestData(db, {
         now: yesterday,
@@ -113,7 +114,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
         ],
       });
     // Completed student form, no application associated.
-    // Expected to be returned, decisions as they were assessed (not pending).
+    // Expected to be returned with decisions as the item decisions have a non-pending status.
     const completedStudentFormPromise = saveFakeFormSubmissionFromInputTestData(
       db,
       {

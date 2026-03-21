@@ -49,7 +49,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       auditUser: ministryUser,
       formSubmissionItems: [
         {
-          // Should be Pending as the final decision was not yet made.
+          // Should be returned as Approved, even though the final decision
+          // has not been made yet, since the user has approval authorization.
           dynamicFormConfiguration: studentAppealApplicationA,
           decisions: [
             {
@@ -61,7 +62,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           ],
         },
         {
-          // Should be pending as it has no decision.
+          // Should be returned as Pending since it has no decision.
           dynamicFormConfiguration: studentAppealApplicationB,
           decisions: [],
         },
