@@ -14,7 +14,6 @@ import {
   createE2EDataSources,
   createFakeInstitutionLocation,
   E2EDataSources,
-  ensureDynamicFormConfigurationExists,
   saveFakeApplication,
   saveFakeFormSubmissionFromInputTestData,
 } from "@sims/test-utils";
@@ -27,6 +26,7 @@ import {
   InstitutionLocation,
   User,
 } from "@sims/sims-db";
+import { createFakeFormConfigurations } from "./form-submission-utils";
 
 describe("FormSubmissionInstitutionsController(e2e)-getFormSubmission", () => {
   let app: INestApplication;
@@ -57,15 +57,8 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmission", () => {
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
-    // Create the form configurations to be used along the tests.
-    [studentAppealApplicationA, studentAppealApplicationB] = await Promise.all([
-      ensureDynamicFormConfigurationExists(db, "Student application appeal A", {
-        formCategory: FormCategory.StudentAppeal,
-      }),
-      ensureDynamicFormConfigurationExists(db, "Student application appeal B", {
-        formCategory: FormCategory.StudentAppeal,
-      }),
-    ]);
+    [studentAppealApplicationA, studentAppealApplicationB] =
+      await createFakeFormConfigurations(db);
   });
 
   it("Should get a form submission as pending and its decisions as pending when the final decision is not yet made and there is an approved and a pending decision (no decision set).", async () => {
