@@ -117,6 +117,7 @@ export class InstitutionApi extends HttpBaseClient {
   async searchInstitutions(
     legalName: string,
     operatingName: string,
+    institutionLocationCode?: string,
   ): Promise<SearchInstitutionAPIOutDTO[]> {
     let queryString = "";
     if (legalName) {
@@ -124,6 +125,9 @@ export class InstitutionApi extends HttpBaseClient {
     }
     if (operatingName) {
       queryString += `operatingName=${operatingName}&`;
+    }
+    if (institutionLocationCode) {
+      queryString += `institutionLocationCode=${institutionLocationCode}&`;
     }
     const url = `institution/search?${queryString.slice(0, -1)}`;
     return this.getCall<SearchInstitutionAPIOutDTO[]>(this.addClientRoot(url));

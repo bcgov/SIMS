@@ -96,7 +96,8 @@ export interface SearchInstitutionAPIOutDTO {
   id: number;
   legalName: string;
   operatingName: string;
-  address: AddressAPIOutDTO;
+  country: string;
+  classification: string;
 }
 
 export interface InstitutionBasicAPIOutDTO {

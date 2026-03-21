@@ -30,6 +30,18 @@
               hide-details
             />
           </v-col>
+          <v-col>
+            <v-text-field
+              density="compact"
+              label="Location code"
+              variant="outlined"
+              :model-value="locationCode"
+              @update:model-value="locationCode = ($event ?? '').toUpperCase()"
+              data-cy="locationCode"
+              @keyup.enter="searchInstitutions"
+              hide-details
+            />
+          </v-col>
           <v-col
             ><v-btn
               color="primary"
@@ -63,9 +75,14 @@
               {{ item.legalName }}
             </div>
           </template>
-          <template #[`item.address`]="{ item }">
-            <div class="p-text-capitalize">
-              {{ getFormattedAddress(item.address) }}
+          <template #[`item.country`]="{ item }">
+            <div>
+              {{ item.country }}
+            </div>
+          </template>
+          <template #[`item.status`]="{ item }">
+            <div>
+              {{ item.classification }}
             </div>
           </template>
           <template #[`item.action`]="{ item }">
@@ -89,7 +106,7 @@ import { useDisplay } from "vuetify";
 import { InstitutionService } from "@/services/InstitutionService";
 import { SearchInstitutionAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { useSnackBar, useFormatters } from "@/composables";
+import { useSnackBar } from "@/composables";
 import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
@@ -105,6 +122,7 @@ export default defineComponent({
     const { mobile: isMobile } = useDisplay();
     const legalName = ref("");
     const operatingName = ref("");
+    const locationCode = ref("");
     const institutions = ref([] as SearchInstitutionAPIOutDTO[]);
     const goToViewInstitution = (institutionId: number) => {
       router.push({
@@ -112,9 +130,9 @@ export default defineComponent({
         params: { institutionId: institutionId },
       });
     };
-    const { getFormattedAddress } = useFormatters();
     const isValidSearch = () => {
-      const hasInput = !!operatingName.value || !!legalName.value;
+      const hasInput =
+        !!operatingName.value || !!legalName.value || !!locationCode.value;
       return hasInput || "Please provide at least one search parameter.";
     };
     const searchInstitutions = async () => {
@@ -126,6 +144,7 @@ export default defineComponent({
         institutions.value = await InstitutionService.shared.searchInstitutions(
           legalName.value,
           operatingName.value,
+          locationCode.value || undefined,
         );
 
         if (institutions.value.length === 0) {
@@ -142,11 +161,11 @@ export default defineComponent({
       isValidSearch,
       legalName,
       operatingName,
+      locationCode,
       institutionsFound,
       searchInstitutions,
       institutions,
       goToViewInstitution,
-      getFormattedAddress,
       searchInstitutionsForm,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
