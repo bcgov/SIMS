@@ -104,7 +104,6 @@ export class FedRestrictionProcessingService {
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
     const federalRestrictionRepo =
       queryRunner.manager.getRepository(FederalRestriction);
-    const restrictionRepo = queryRunner.manager.getRepository(Restriction);
 
     const sanitizedRestrictions: FedRestrictionFileRecord[] = [];
     try {

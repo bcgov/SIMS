@@ -208,6 +208,13 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     }
   }
 
+  /**
+   * Allow to process the file line by line as it is being downloaded, without the need to load the entire file content in memory.
+   * This is specially useful for large files that can cause memory issues when loaded entirely.
+   * @param remoteFilePath full remote file path with file name.
+   * @param fileLineProcessor callback function to process each line of the file.
+   * @returns promise that resolves when the file has been fully processed.
+   */
   protected async streamResponseFileLines(
     remoteFilePath: string,
     fileLineProcessor: (line: string) => Promise<void>,
@@ -217,18 +224,17 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     try {
       client = await this.getClient();
       const fileExtension = path.extname(remoteFilePath).toLowerCase();
+      const sftpFileStream = new PassThrough();
+      const downloadPromise = client.get(remoteFilePath, sftpFileStream, {
+        readStreamOptions: { encoding: null },
+      });
       const isZIPFile = fileExtension === ".zip";
       if (isZIPFile) {
-        const zipFileStream = new PassThrough();
-        const downloadPromise = client.get(remoteFilePath, zipFileStream, {
-          readStreamOptions: { encoding: null },
-        });
-        const zipStream = zipFileStream.pipe(
+        const zipStream = sftpFileStream.pipe(
           unzipper.Parse({ forceStream: true }),
-        );
+        ) as AsyncIterable<unzipper.Entry>;
         // Read the zip file entries one by one and process file entries line by line.
-        for await (const rawEntry of zipStream as AsyncIterable<unknown>) {
-          const entry = rawEntry as unzipper.Entry;
+        for await (const entry of zipStream) {
           if (entry.type !== "File") {
             // Allow only file entries, skip directories or other types of entries.
             // Drain the entry stream to avoid hanging the unzip process.
@@ -250,7 +256,20 @@ export abstract class SFTPIntegrationBase<DownloadType> {
         }
         // Wait for the download to complete before returning the file content.
         await downloadPromise;
+        return;
       }
+      // Non-zip: read plain text lines directly.
+      const lineReader = readline.createInterface({
+        input: sftpFileStream,
+        crlfDelay: Infinity,
+      });
+      for await (const line of lineReader) {
+        if (line.length > 0) {
+          await fileLineProcessor(line);
+        }
+      }
+      // Wait for the download to complete before returning the file content.
+      await downloadPromise;
     } catch (error) {
       this.logger.error(`Error downloading file ${remoteFilePath}`, error);
       throw error;
