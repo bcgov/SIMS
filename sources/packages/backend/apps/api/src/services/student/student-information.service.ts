@@ -9,8 +9,9 @@ import {
   Application,
   OfferingIntensity,
   SFASApplication,
+  DisbursementScheduleStatus,
 } from "@sims/sims-db";
-import { Repository } from "typeorm";
+import { Brackets, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 
 const MAX_PAST_PROGRAM_YEARS_INCLUDING_CURRENT = 3;
@@ -267,5 +268,85 @@ export class StudentInformationService {
         .orderBy("legacyApplication.id")
         .getMany()
     );
+  }
+
+  /**
+   * Get SIMS student SINs for students who have full-time applications
+   * meeting at least one of the following criteria:
+   * - A FT application with a start date between now and 90 days in the future (no cancelled apps).
+   * - A FT application within a study period (no cancelled apps).
+   * - FT disbursements sent in the last 90 days (no cancelled apps).
+   * Only the most recent validated SIN for each student is returned.
+   * @returns distinct SIMS student SINs.
+   */
+  async getSIMSSINs(): Promise<string[]> {
+    const results = await this.studentRepo
+      .createQueryBuilder("student")
+      .select("DISTINCT sinValidation.sin", "sin")
+      .innerJoin(
+        "student.sinValidation",
+        "sinValidation",
+        "sinValidation.isValidSIN = true",
+      )
+      .innerJoin("student.applications", "application")
+      .innerJoin("application.currentAssessment", "assessment")
+      .innerJoin("assessment.offering", "offering")
+      .leftJoin("assessment.disbursementSchedules", "disbursement")
+      .where("application.applicationStatus != :cancelled")
+      .andWhere("application.offeringIntensity = :fullTime")
+      .andWhere(
+        new Brackets((qb) =>
+          qb
+            .where(
+              "offering.studyStartDate > CURRENT_DATE AND offering.studyStartDate <= CURRENT_DATE + INTERVAL '90 days'",
+            )
+            .orWhere(
+              "offering.studyStartDate <= CURRENT_DATE AND offering.studyEndDate >= CURRENT_DATE",
+            )
+            .orWhere(
+              "disbursement.disbursementScheduleStatus = :sent AND disbursement.dateSent >= CURRENT_DATE - INTERVAL '90 days'",
+            ),
+        ),
+      )
+      .setParameters({
+        cancelled: ApplicationStatus.Cancelled,
+        fullTime: OfferingIntensity.fullTime,
+        sent: DisbursementScheduleStatus.Sent,
+      })
+      .getRawMany<{ sin: string }>();
+    return [...new Set(results.map((result) => result.sin))];
+  }
+
+  /**
+   * Get SFAS (legacy) student SINs for students who have full-time applications
+   * meeting at least one of the following criteria:
+   * - A FT application with a start date between now and 90 days in the future (no cancelled apps).
+   * - A FT application within a study period (no cancelled apps).
+   * - FT disbursements issued in the last 90 days (no cancelled apps).
+   * @returns distinct SFAS student SINs.
+   */
+  async getSFASSINs(): Promise<string[]> {
+    const results = await this.sfasApplicationRepo
+      .createQueryBuilder("sfasApp")
+      .select("DISTINCT sfasIndividual.sin", "sin")
+      .innerJoin("sfasApp.individual", "sfasIndividual")
+      .leftJoin("sfasApp.disbursements", "disbursement")
+      .where("sfasApp.applicationCancelDate IS NULL")
+      .andWhere(
+        new Brackets((qb) =>
+          qb
+            .where(
+              "sfasApp.startDate > CURRENT_DATE AND sfasApp.startDate <= CURRENT_DATE + INTERVAL '90 days'",
+            )
+            .orWhere(
+              "sfasApp.startDate <= CURRENT_DATE AND sfasApp.endDate >= CURRENT_DATE",
+            )
+            .orWhere(
+              "disbursement.dateIssued >= CURRENT_DATE - INTERVAL '90 days'",
+            ),
+        ),
+      )
+      .getRawMany<{ sin: string }>();
+    return [...new Set(results.map((result) => result.sin))];
   }
 }
