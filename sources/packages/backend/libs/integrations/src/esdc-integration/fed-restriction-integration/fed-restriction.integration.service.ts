@@ -16,18 +16,15 @@ export class FedRestrictionIntegrationService extends SFTPIntegrationBase<
     super(config.zoneBSFTP, sshService, logger);
   }
 
-  /**
-   * Downloads the file specified on 'remoteFilePath' parameter from the
-   * ESDC integration folder on the SFTP.
-   * @param remoteFilePath full remote file path with file name.
-   * @returns parsed records from the file.
-   */
-  async downloadResponseFile(
+  async streamResponseFileRecords(
     remoteFilePath: string,
-  ): Promise<FedRestrictionFileRecord[]> {
-    const fileLines = await this.downloadResponseFileLines(remoteFilePath);
-    return fileLines.map((line, index) => {
-      return new FedRestrictionFileRecord(line, index + 1);
+    fileRecordProcessor: (line: FedRestrictionFileRecord) => Promise<void>,
+  ): Promise<void> {
+    let lineNumber = 0;
+    return super.streamResponseFileLines(remoteFilePath, async (fileLine) => {
+      return fileRecordProcessor(
+        new FedRestrictionFileRecord(fileLine, lineNumber++),
+      );
     });
   }
 }

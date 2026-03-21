@@ -96,12 +96,48 @@ export class FedRestrictionProcessingService {
     processSummary: ProcessSummary,
   ): Promise<void> {
     processSummary.info(`Processing file ${remoteFilePath}.`);
+    let insertedRestrictionsIDs: number[];
+    this.logger.log("Starting database transaction.");
+    // Start the transaction that will handle all the import.
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.startTransaction();
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
-    let downloadResult: FedRestrictionFileRecord[];
+    const federalRestrictionRepo =
+      queryRunner.manager.getRepository(FederalRestriction);
+    const restrictionRepo = queryRunner.manager.getRepository(Restriction);
+
+    const sanitizedRestrictions: FedRestrictionFileRecord[] = [];
     try {
-      // Download the Federal Restrictions file with the full snapshot of the data.
-      downloadResult =
-        await this.integrationService.downloadResponseFile(remoteFilePath);
+      this.logger.log("Truncating federal restrictions table...");
+      // Truncate the federal restrictions table before the insert of the new data.
+      await this.federalRestrictionService.resetFederalRestrictionsTable(
+        queryRunner.manager,
+      );
+      // Stream the file content and process the records line by line to avoid memory issues.
+      // Insert the records considered sanitized.
+      await this.integrationService.streamResponseFileRecords(
+        remoteFilePath,
+        async (record) => {
+          const invalidDataMessage = record.getInvalidDataMessage();
+          if (invalidDataMessage) {
+            const errorMessage = `Found record with invalid data at line number ${record.lineNumber}: ${invalidDataMessage}`;
+            processSummary.warn(errorMessage);
+            this.logger.error(errorMessage);
+            return;
+          }
+          sanitizedRestrictions.push(record);
+          if (
+            sanitizedRestrictions.length >=
+            FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT
+          ) {
+            await this.insertFedRestrictions(
+              sanitizedRestrictions,
+              federalRestrictionRepo,
+            );
+            sanitizedRestrictions.length = 0;
+          }
+        },
+      );
       this.logger.log("File download finished.");
     } catch (error) {
       const errorMessage = `Error downloading file ${remoteFilePath}.`;
@@ -110,11 +146,21 @@ export class FedRestrictionProcessingService {
       return;
     }
 
-    let insertedRestrictionsIDs: number[];
-    this.logger.log("Starting database transaction.");
-    // Start the transaction that will handle all the import.
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.startTransaction();
+    await queryRunner.commitTransaction();
+    throw new Error("Method not implemented.");
+
+    let downloadResult: FedRestrictionFileRecord[];
+    // try {
+    //   // Download the Federal Restrictions file with the full snapshot of the data.
+    //   downloadResult =
+    //     await this.integrationService.downloadResponseFile(remoteFilePath);
+    //   this.logger.log("File download finished.");
+    // } catch (error) {
+    //   const errorMessage = `Error downloading file ${remoteFilePath}.`;
+    //   processSummary.error(errorMessage, error);
+    //   this.logger.error(errorMessage, error);
+    //   return;
+    // }
 
     try {
       // Will contains all restriction codes.
@@ -122,7 +168,7 @@ export class FedRestrictionProcessingService {
       // The file received contains possible invalid records that are not possible to be
       // eliminated prior to the file import. This array will contain the records considered
       // valid to be inserted.
-      const sanitizedRestrictions: FedRestrictionFileRecord[] = [];
+
       this.logger.log("Removing records with invalid data.");
       downloadResult.forEach((restriction) => {
         const invalidDataMessage = restriction.getInvalidDataMessage();
@@ -135,10 +181,6 @@ export class FedRestrictionProcessingService {
           restrictionCodes.push(restriction.getComposedCode());
         }
       });
-
-      const federalRestrictionRepo =
-        queryRunner.manager.getRepository(FederalRestriction);
-      const restrictionRepo = queryRunner.manager.getRepository(Restriction);
 
       // Check in advance if all restrictions codes are present in our database.
       // This process is done before the records are inserted to avoid concurrency
@@ -160,11 +202,6 @@ export class FedRestrictionProcessingService {
         processSummary.warn(logMessage);
         this.logger.warn(logMessage);
       }
-
-      this.logger.log("Truncating federal restrictions table...");
-      await this.federalRestrictionService.resetFederalRestrictionsTable(
-        queryRunner.manager,
-      );
 
       this.logger.log("Starting bulk insert...");
       // Created the bulks to be inserted at the same time.
@@ -292,6 +329,33 @@ export class FedRestrictionProcessingService {
       // may not be necessarily ISO date format.
       newRestriction.birthDate = getISODateOnlyString(restriction.dateOfBirth);
       newRestriction.restriction = restrictionRecord;
+      restrictionsToInsert.push(newRestriction);
+    }
+    try {
+      await federalRestrictionRepo.insert(restrictionsToInsert);
+    } catch (error: unknown) {
+      const [firstLine] = restrictions;
+      const lastLine = restrictions[restrictions.length - 1];
+      const logMessage = `Error while inserting the block of lines from ${firstLine.lineNumber} to ${lastLine.lineNumber}.`;
+      throw new Error(logMessage, { cause: error });
+    }
+  }
+
+  private async insertFedRestrictions(
+    restrictions: FedRestrictionFileRecord[],
+    federalRestrictionRepo: Repository<FederalRestriction>,
+  ): Promise<void> {
+    // DB restriction objects to be inserted to the db.
+    const restrictionsToInsert: FederalRestriction[] = [];
+    for (const restriction of restrictions) {
+      const newRestriction = new FederalRestriction();
+      newRestriction.lastName = restriction.surname;
+      newRestriction.sin = restriction.sin;
+      // The insert of federal restriction always comes from an external source through integration.
+      // Hence birth date is parsed as date object from external source as their date format
+      // may not be necessarily ISO date format.
+      newRestriction.birthDate = getISODateOnlyString(restriction.dateOfBirth);
+      newRestriction.restrictionCode = restriction.getComposedCode();
       restrictionsToInsert.push(newRestriction);
     }
     try {

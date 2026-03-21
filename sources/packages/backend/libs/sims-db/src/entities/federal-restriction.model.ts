@@ -49,12 +49,21 @@ export class FederalRestriction {
   @ManyToOne(() => Restriction, {
     eager: false,
     cascade: true,
+    nullable: true,
   })
   @JoinColumn({
     name: "restriction_id",
     referencedColumnName: ColumnNames.ID,
   })
-  restriction: Restriction;
+  restriction?: Restriction;
+  /**
+   * Code of the restriction associated with the federal record as received in the file.
+   */
+  @Column({
+    name: "restriction_code",
+    nullable: false,
+  })
+  restrictionCode: string;
   /**
    * Record creation timestamp.
    */
