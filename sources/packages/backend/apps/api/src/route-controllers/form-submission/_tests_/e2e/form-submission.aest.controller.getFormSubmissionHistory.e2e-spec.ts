@@ -22,7 +22,7 @@ import {
   User,
 } from "@sims/sims-db";
 import { addDays } from "@sims/utilities";
-import { createFakeFormConfigurations } from "apps/api/src/route-controllers/form-submission/_tests_/e2e/form-submission-utils";
+import { createFakeFormConfigurations } from "./form-submission-utils";
 
 describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
   let app: INestApplication;
