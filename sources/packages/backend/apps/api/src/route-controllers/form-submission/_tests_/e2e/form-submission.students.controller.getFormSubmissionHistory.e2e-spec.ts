@@ -8,6 +8,7 @@ import {
   getAESTUser,
   getStudentToken,
   mockJWTUserInfo,
+  resetMockJWTUserInfo,
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
@@ -50,6 +51,10 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
       await createFakeFormConfigurations(db);
   });
 
+  beforeEach(async () => {
+    await resetMockJWTUserInfo(appModule);
+  });
+
   it("Should get the form submission history including student appeals and student forms when the student has student appeals and forms previously submitted.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
@@ -71,8 +76,8 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
         formCategory: FormCategory.StudentAppeal,
         submissionStatus: FormSubmissionStatus.Pending,
         auditUser: ministryUser,
-        // Ensure items are added in alphabetical oder DESC to
-        // assert they will be returned in alphabetical oder ASC.
+        // Ensure items are added in alphabetical order DESC to
+        // assert they will be returned in alphabetical order ASC.
         formSubmissionItems: [
           {
             // Should be pending as it has no decision.

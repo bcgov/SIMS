@@ -86,8 +86,8 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmissionHistory", (
         formCategory: FormCategory.StudentAppeal,
         submissionStatus: FormSubmissionStatus.Pending,
         auditUser: ministryUser,
-        // Ensure items are added in alphabetical oder DESC to
-        // assert they will be returned in alphabetical oder ASC.
+        // Ensure items are added in alphabetical order DESC to
+        // assert they will be returned in alphabetical order ASC.
         formSubmissionItems: [
           {
             // Should be pending as it has no decision.
@@ -167,7 +167,7 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmissionHistory", (
     const nonAuthorizedCompletedStudentAppealPromise =
       saveFakeFormSubmissionFromInputTestData(db, {
         application: nonAuthorizedApplication,
-        formCategory: FormCategory.StudentForm,
+        formCategory: FormCategory.StudentAppeal,
         submissionStatus: FormSubmissionStatus.Completed,
         auditUser: ministryUser,
         formSubmissionItems: [
@@ -195,14 +195,12 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmissionHistory", (
     const [completedStudentFormSavedItem1] =
       completedStudentForm.formSubmissionItems;
     const endpoint = `/institutions/form-submission/student/${student.id}`;
-    const studentToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
+    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
 
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
-      .auth(studentToken, BEARER_AUTH_TYPE)
+      .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect(({ body }) =>
         expect(body.submissions).toEqual([

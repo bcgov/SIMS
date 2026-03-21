@@ -244,8 +244,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
         formCategory: FormCategory.StudentAppeal,
         submissionStatus: FormSubmissionStatus.Pending,
         auditUser: ministryUser,
-        // Ensure items are added in alphabetical oder DESC to
-        // assert they will be returned in alphabetical oder ASC.
+        // Ensure items are added in alphabetical order DESC to
+        // assert they will be returned in alphabetical order ASC.
         formSubmissionItems: [
           {
             // Should be pending as it has no decision.
