@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { DataModelService, FederalRestriction } from "@sims/sims-db";
+import { RestrictionService } from "@sims/integrations/services";
+import { FederalRestriction, Restriction } from "@sims/sims-db";
 import { getSQLFileData } from "@sims/utilities";
 import { DataSource, EntityManager } from "typeorm";
 
@@ -13,14 +14,16 @@ const FEDERAL_RESTRICTIONS_RAW_SQL_FOLDER = "federal-restrictions";
  * sims.student_restrictions table (table that contains provincial and federal restrictions).
  */
 @Injectable()
-export class FederalRestrictionService extends DataModelService<FederalRestriction> {
+export class FederalRestrictionService {
   private readonly bulkUpdateStudentIdSQL: string;
   private readonly bulkInsertNewRestrictionsSQL: string;
   private readonly bulkDeactivateRestrictionsSQL: string;
   private readonly bulkUpdateActiveRestrictionsSQL: string;
 
-  constructor(private readonly dataSource: DataSource) {
-    super(dataSource.getRepository(FederalRestriction));
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly restrictionService: RestrictionService,
+  ) {
     this.bulkUpdateStudentIdSQL = getSQLFileData(
       "Bulk-update-students-foreign-key.sql",
       FEDERAL_RESTRICTIONS_RAW_SQL_FOLDER,
@@ -65,22 +68,50 @@ export class FederalRestrictionService extends DataModelService<FederalRestricti
    */
   async executeBulkStepsChanges(manager: EntityManager): Promise<number[]> {
     // STEP 1
-    // ! This bulk update MUST happen before the next operations to assign
-    // ! the student foreign keys correctly.
+    // This bulk update MUST happen before the next operations to assign
+    // the student foreign keys correctly.
     await this.bulkUpdateStudentsForeignKey(manager);
-    // This bulk updates expects that the student foreign key is updated.
     // STEP 2
-    const insertedRestrictionsIDs = await this.bulkInsertNewRestrictions(
-      manager,
-    );
+    // Before to execute the bulk insert of new restrictions, the system needs to
+    // ensure that all restriction codes are present on the restriction table.
+    await this.ensureFederalRestrictionExists(manager);
+    // STEP 2
+    // This bulk updates expects that the student foreign key is updated.
+    const insertedRestrictionsIDs =
+      await this.bulkInsertNewRestrictions(manager);
     // STEP 3
     await this.bulkDeactivateRestrictions(manager);
+    // STEP 4
     // This last update is not critical but allows the system to keep track
     // of the last time that an active restriction was received.
-    // STEP 4
     await this.bulkUpdateActiveRestrictions(manager);
 
     return insertedRestrictionsIDs;
+  }
+
+  /**
+   * Ensure all restriction codes are present on the database. If some code is missing,
+   * it is created as an unidentified federal restriction.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async ensureFederalRestrictionExists(
+    entityManager: EntityManager,
+  ): Promise<void> {
+    // TODO: review the query.
+    const importedFederalRestrictions = await entityManager
+      .getRepository(FederalRestriction)
+      .createQueryBuilder("federalRestriction")
+      .distinct()
+      .select("federalRestriction.restrictionCode")
+      .where("federalRestriction.student.id IS NOT NULL")
+      .getRawMany<{ restrictionCode: string }>();
+    const codesToCheck = importedFederalRestrictions.map(
+      (restriction) => restriction.restrictionCode,
+    );
+    await this.restrictionService.ensureFederalRestrictionExists(
+      codesToCheck,
+      entityManager.getRepository(Restriction),
+    );
   }
 
   /*
