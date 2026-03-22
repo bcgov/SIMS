@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import {
-  FederalRestrictionService,
   RestrictionService,
+  FederalRestrictionService,
   SshService,
 } from "@sims/integrations/services";
 import {

@@ -1,16 +1,13 @@
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
 import { FedRestrictionIntegrationService } from "./fed-restriction.integration.service";
-import { DataSource, Repository } from "typeorm";
-import { FederalRestriction, Restriction } from "@sims/sims-db";
-import { getISODateOnlyString, processInParallel } from "@sims/utilities";
+import { DataSource, EntityManager, Repository } from "typeorm";
+import { FederalRestriction } from "@sims/sims-db";
+import { getISODateOnlyString } from "@sims/utilities";
 import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restriction-file-record";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT } from "@sims/services/constants";
-import {
-  FederalRestrictionService,
-  RestrictionService,
-} from "@sims/integrations/services";
+import { FederalRestrictionService } from "@sims/integrations/services";
 import { SystemUsersService } from "@sims/services/system-users";
 import { StudentRestrictionSharedService } from "@sims/services";
 
@@ -26,7 +23,6 @@ export class FedRestrictionProcessingService {
   constructor(
     private readonly dataSource: DataSource,
     config: ConfigService,
-    private readonly restrictionService: RestrictionService,
     private readonly federalRestrictionService: FederalRestrictionService,
     private readonly integrationService: FedRestrictionIntegrationService,
     private readonly studentRestrictionsService: StudentRestrictionSharedService,
@@ -97,160 +93,38 @@ export class FedRestrictionProcessingService {
   ): Promise<void> {
     processSummary.info(`Processing file ${remoteFilePath}.`);
     let insertedRestrictionsIDs: number[];
-    this.logger.log("Starting database transaction.");
-    // Start the transaction that will handle all the import.
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.startTransaction();
-    this.logger.log(`Starting download of file ${remoteFilePath}.`);
-    const federalRestrictionRepo =
-      queryRunner.manager.getRepository(FederalRestriction);
-
-    const sanitizedRestrictions: FedRestrictionFileRecord[] = [];
-    try {
-      this.logger.log("Truncating federal restrictions table...");
-      // Truncate the federal restrictions table before the insert of the new data.
-      await this.federalRestrictionService.resetFederalRestrictionsTable(
-        queryRunner.manager,
-      );
-      // Stream the file content and process the records line by line to avoid memory issues.
-      // Insert the records considered sanitized.
-      await this.integrationService.streamResponseFileRecords(
-        remoteFilePath,
-        async (record) => {
-          const invalidDataMessage = record.getInvalidDataMessage();
-          if (invalidDataMessage) {
-            const errorMessage = `Found record with invalid data at line number ${record.lineNumber}: ${invalidDataMessage}`;
-            processSummary.warn(errorMessage);
-            this.logger.error(errorMessage);
-            return;
-          }
-          sanitizedRestrictions.push(record);
-          if (
-            sanitizedRestrictions.length >=
-            FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT
-          ) {
-            await this.insertFedRestrictions(
-              sanitizedRestrictions,
-              federalRestrictionRepo,
-            );
-            sanitizedRestrictions.length = 0;
-          }
-        },
-      );
-      this.logger.log("File download finished.");
-    } catch (error) {
-      const errorMessage = `Error downloading file ${remoteFilePath}.`;
-      processSummary.error(errorMessage, error);
-      this.logger.error(errorMessage, error);
-      return;
-    }
-
-    await queryRunner.commitTransaction();
-    throw new Error("Method not implemented.");
-
-    let downloadResult: FedRestrictionFileRecord[];
-    // try {
-    //   // Download the Federal Restrictions file with the full snapshot of the data.
-    //   downloadResult =
-    //     await this.integrationService.downloadResponseFile(remoteFilePath);
-    //   this.logger.log("File download finished.");
-    // } catch (error) {
-    //   const errorMessage = `Error downloading file ${remoteFilePath}.`;
-    //   processSummary.error(errorMessage, error);
-    //   this.logger.error(errorMessage, error);
-    //   return;
-    // }
-
-    try {
-      // Will contains all restriction codes.
-      const restrictionCodes: string[] = [];
-      // The file received contains possible invalid records that are not possible to be
-      // eliminated prior to the file import. This array will contain the records considered
-      // valid to be inserted.
-
-      this.logger.log("Removing records with invalid data.");
-      downloadResult.forEach((restriction) => {
-        const invalidDataMessage = restriction.getInvalidDataMessage();
-        if (invalidDataMessage) {
-          const errorMessage = `Found record with invalid data at line number ${restriction.lineNumber}: ${invalidDataMessage}`;
-          processSummary.warn(errorMessage);
-          this.logger.error(errorMessage);
-        } else {
-          sanitizedRestrictions.push(restriction);
-          restrictionCodes.push(restriction.getComposedCode());
-        }
-      });
-
-      // Check in advance if all restrictions codes are present in our database.
-      // This process is done before the records are inserted to avoid concurrency
-      // issues that would happen if the missing codes were added alongside with
-      // the records inserts.
-      this.logger.log(
-        "Checking if all restriction codes are present on the database.",
-      );
-      const federalRestrictions =
-        await this.restrictionService.ensureFederalRestrictionExists(
-          restrictionCodes,
-          restrictionRepo,
-        );
-
-      if (federalRestrictions.createdRestrictionsCodes.length > 0) {
-        const logMessage = `New restrictions created: ${federalRestrictions.createdRestrictionsCodes.join(
-          ", ",
-        )}`;
-        processSummary.warn(logMessage);
-        this.logger.warn(logMessage);
-      }
-
-      this.logger.log("Starting bulk insert...");
-      // Created the bulks to be inserted at the same time.
-      const fedRestrictionsBulks = this.getFedRestrictionsBulks(
-        sanitizedRestrictions,
-      );
-      // Insert the bulks in parallel.
+    await this.dataSource.transaction(async (entityManager) => {
       try {
-        await processInParallel(
-          (fedRestrictionsBulk) =>
-            this.insertFedRestrictionsBulk(
-              fedRestrictionsBulk,
-              federalRestrictions.restrictions,
-              federalRestrictionRepo,
-            ),
-          fedRestrictionsBulks,
-          {
-            progress: (currentBulk) => {
-              this.logger.log(
-                `Inserted record bulk ${currentBulk} of ${fedRestrictionsBulks.length}.`,
-              );
-            },
-          },
+        this.logger.log("Starting database transaction.");
+        // Start the transaction that will handle all the import.
+        await this.downloadIntoTransientTable(
+          remoteFilePath,
+          processSummary,
+          entityManager,
         );
+        this.logger.log(
+          "Starting bulk operations to update student restrictions.",
+        );
+        // TODO: Log the new created restrictions codes if there are any, to have a better control of the changes that are happening on the system related to the federal restrictions codes. This log can be useful for the future analysis of the data and also for debugging purposes.
+        // if (federalRestrictions.createdRestrictionsCodes.length > 0) {
+        //   const logMessage = `New restrictions created: ${federalRestrictions.createdRestrictionsCodes.join(
+        //     ", ",
+        //   )}`;
+        //   processSummary.warn(logMessage);
+        //   this.logger.warn(logMessage);
+        // }
+        insertedRestrictionsIDs =
+          await this.federalRestrictionService.executeBulkStepsChanges(
+            entityManager,
+          );
+        this.logger.log("Process finished, transaction committed.");
       } catch (error: unknown) {
         const logMessage =
-          "Aborting process due to an error on the bulk insert.";
+          "Unexpected error while processing federal restrictions. Executing rollback.";
         this.logger.error(logMessage, error);
         throw new Error(logMessage, { cause: error });
       }
-
-      this.logger.log("Bulk data insert finished.");
-      this.logger.log(
-        "Starting bulk operations to update student restrictions.",
-      );
-      insertedRestrictionsIDs =
-        await this.federalRestrictionService.executeBulkStepsChanges(
-          queryRunner.manager,
-        );
-      await queryRunner.commitTransaction();
-      this.logger.log("Process finished, transaction committed.");
-    } catch (error) {
-      const logMessage =
-        "Unexpected error while processing federal restrictions. Executing rollback.";
-      this.logger.error(logMessage, error);
-      await queryRunner.rollbackTransaction();
-      throw new Error(logMessage, { cause: error });
-    } finally {
-      await queryRunner.release();
-    }
+    });
     // The process of sending the notifications happens after the restrictions are committed
     // because the notifications are considered a lower priority and any error related to the
     // notification should not interfere with the federal restriction process.
@@ -278,69 +152,78 @@ export class FedRestrictionProcessingService {
     }
   }
 
-  /**
-   * Splits the given array of federal restrictions records into
-   * bulks to allow a batch insert. The bulk size is defined by the constant
-   * {@link FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT}.
-   * @param restrictions federal restrictions records read from the file.
-   * @returns bulks of federal restrictions records.
-   */
-  private getFedRestrictionsBulks(
-    restrictions: FedRestrictionFileRecord[],
-  ): FedRestrictionFileRecord[][] {
-    const bulkRestrictions: FedRestrictionFileRecord[][] = [];
-    while (restrictions.length > 0) {
-      const restrictionsToBulkInsert = restrictions.splice(
-        0,
-        FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT,
+  private async downloadIntoTransientTable(
+    remoteFilePath: string,
+    processSummary: ProcessSummary,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    this.logger.log(`Starting download of file ${remoteFilePath}.`);
+    try {
+      this.logger.log("Truncating federal restrictions table...");
+      // Truncate the federal restrictions table before the insert of the new data.
+      await this.federalRestrictionService.resetFederalRestrictionsTable(
+        entityManager,
       );
-      bulkRestrictions.push(restrictionsToBulkInsert);
+      const federalRestrictionRepo =
+        entityManager.getRepository(FederalRestriction);
+      // Temporary array to keep the records to be inserted in batch.
+      const sanitizedRestrictions: FedRestrictionFileRecord[] = [];
+      // Stream the file content and process the records line by line to avoid memory issues.
+      // Insert the records considered sanitized.
+      await this.integrationService.streamResponseFileRecords(
+        remoteFilePath,
+        async (record) => {
+          // Callback to process each line of the file, validating the data and preparing it to be inserted in batch.
+          const invalidDataMessage = record.getInvalidDataMessage();
+          if (invalidDataMessage) {
+            const errorMessage = `Found record with invalid data at line number ${record.lineNumber}: ${invalidDataMessage}`;
+            processSummary.warn(errorMessage);
+            this.logger.error(errorMessage);
+            // Exit the callback without inserting the record if the data is invalid,
+            // but keep processing the next lines of the file.
+            return;
+          }
+          sanitizedRestrictions.push(record);
+          if (
+            sanitizedRestrictions.length >=
+            FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT
+          ) {
+            // Insert the records in batch to avoid memory issues and improve performance.
+            await this.insertFedRestrictionsBulk(
+              sanitizedRestrictions,
+              federalRestrictionRepo,
+            );
+            sanitizedRestrictions.length = 0;
+          }
+        },
+      );
+      // Insert the remaining records that were not inserted in the bulk insert inside the stream,
+      // because they did not reach the amount defined for the bulk insert.
+      if (sanitizedRestrictions.length) {
+        await this.insertFedRestrictionsBulk(
+          sanitizedRestrictions,
+          federalRestrictionRepo,
+        );
+      }
+      this.logger.log(
+        "Completed file download and record insertion into the Federal Restrictions table.",
+      );
+    } catch (error) {
+      const errorMessage = `Error while downloading and inserting records into the Federal Restrictions table, file ${remoteFilePath}.`;
+      processSummary.error(errorMessage, error);
+      this.logger.error(errorMessage, error);
+      return;
     }
-    return bulkRestrictions;
   }
 
   /**
    * Insert a bulk of federal restrictions records from the received data into the DB.
    * The records are converted to DB objects and then inserted in batches.
    * @param restrictions federal restrictions records from the file to be inserted.
-   * @param federalRestrictionsCodes list of existing federal restriction codes expected
-   * in the file record to be used to determine the restriction ID in the DB.
    * @param federalRestrictionRepo repository to execute the inserts in batches that
    * keeps the DB operations in the same transaction.
    */
   private async insertFedRestrictionsBulk(
-    restrictions: FedRestrictionFileRecord[],
-    federalRestrictionsCodes: Restriction[],
-    federalRestrictionRepo: Repository<FederalRestriction>,
-  ): Promise<void> {
-    // DB restriction objects to be inserted to the db.
-    const restrictionsToInsert: FederalRestriction[] = [];
-    for (const restriction of restrictions) {
-      const codeToFind = restriction.getComposedCode();
-      const restrictionRecord = federalRestrictionsCodes.find(
-        (fedRestriction) => fedRestriction.restrictionCode == codeToFind,
-      );
-      const newRestriction = new FederalRestriction();
-      newRestriction.lastName = restriction.surname;
-      newRestriction.sin = restriction.sin;
-      // The insert of federal restriction always comes from an external source through integration.
-      // Hence birth date is parsed as date object from external source as their date format
-      // may not be necessarily ISO date format.
-      newRestriction.birthDate = getISODateOnlyString(restriction.dateOfBirth);
-      newRestriction.restriction = restrictionRecord;
-      restrictionsToInsert.push(newRestriction);
-    }
-    try {
-      await federalRestrictionRepo.insert(restrictionsToInsert);
-    } catch (error: unknown) {
-      const [firstLine] = restrictions;
-      const lastLine = restrictions[restrictions.length - 1];
-      const logMessage = `Error while inserting the block of lines from ${firstLine.lineNumber} to ${lastLine.lineNumber}.`;
-      throw new Error(logMessage, { cause: error });
-    }
-  }
-
-  private async insertFedRestrictions(
     restrictions: FedRestrictionFileRecord[],
     federalRestrictionRepo: Repository<FederalRestriction>,
   ): Promise<void> {
