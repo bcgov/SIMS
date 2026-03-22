@@ -14,7 +14,6 @@ import {
   createFakeInstitutionLocation,
 } from "@sims/test-utils";
 import { SearchInstitutionAPIOutDTO } from "../../models/institution.dto";
-import { CANADA_COUNTRY_CODE } from "@sims/sims-db/constant";
 import { InstitutionClassification } from "@sims/sims-db";
 
 describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
@@ -42,7 +41,7 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
         id: institution.id,
         legalName: institution.legalOperatingName,
         operatingName: institution.operatingName,
-        country: CANADA_COUNTRY_CODE,
+        country: "Canada",
         classification: InstitutionClassification.Private,
       },
     ];
@@ -72,7 +71,7 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
         id: institution.id,
         legalName: institution.legalOperatingName,
         operatingName: institution.operatingName,
-        country: CANADA_COUNTRY_CODE,
+        country: "Canada",
         classification: InstitutionClassification.Private,
       },
     ];
@@ -104,7 +103,7 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
         id: institution.id,
         legalName: institution.legalOperatingName,
         operatingName: institution.operatingName,
-        country: CANADA_COUNTRY_CODE,
+        country: "Canada",
         classification: InstitutionClassification.Private,
       },
     ];

@@ -10,7 +10,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { InstitutionService } from "../../services";
-import { Institution } from "@sims/sims-db";
+import { Institution, SystemLookupCategory } from "@sims/sims-db";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -42,6 +42,7 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { Role } from "../../auth/roles.enum";
+import { SystemLookupConfigurationService } from "@sims/services/system-lookup-configuration";
 
 /**
  * Institution controller for AEST Client.
@@ -55,6 +56,7 @@ export class InstitutionAESTController extends BaseController {
     private readonly institutionService: InstitutionService,
     private readonly institutionControllerService: InstitutionControllerService,
     private readonly locationControllerService: InstitutionLocationControllerService,
+    private readonly systemLookupConfigurationService: SystemLookupConfigurationService,
   ) {
     super();
   }
@@ -78,7 +80,11 @@ export class InstitutionAESTController extends BaseController {
       id: eachInstitution.id,
       legalName: eachInstitution.legalOperatingName,
       operatingName: eachInstitution.operatingName,
-      country: eachInstitution.country,
+      country:
+        this.systemLookupConfigurationService.getSystemLookup(
+          SystemLookupCategory.Country,
+          eachInstitution.country,
+        )?.lookupValue ?? eachInstitution.country,
       classification: eachInstitution.classification,
     }));
   }
