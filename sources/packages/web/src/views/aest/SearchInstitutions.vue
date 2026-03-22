@@ -8,7 +8,7 @@
     <v-form ref="searchInstitutionsForm">
       <content-group class="mb-8">
         <v-row>
-          <v-col>
+          <v-col cols="12" md>
             <v-text-field
               density="compact"
               label="Legal name"
@@ -19,7 +19,7 @@
               hide-details
             />
           </v-col>
-          <v-col>
+          <v-col cols="12" md>
             <v-text-field
               density="compact"
               label="Operating name"
@@ -30,14 +30,27 @@
               hide-details
             />
           </v-col>
-          <v-col
-            ><v-btn
+          <v-col cols="12" md>
+            <v-text-field
+              density="compact"
+              label="Institution location code"
+              variant="outlined"
+              :model-value="locationCode"
+              @update:model-value="locationCode = ($event ?? '').toUpperCase()"
+              data-cy="locationCode"
+              @keyup.enter="searchInstitutions"
+              hide-details
+            />
+          </v-col>
+          <v-col cols="12" md="auto" class="d-flex justify-end">
+            <v-btn
               color="primary"
               data-cy="searchInstitutions"
               @click="searchInstitutions"
-              >Search</v-btn
-            ></v-col
-          >
+            >
+              Search
+            </v-btn>
+          </v-col>
         </v-row>
         <v-input :rules="[isValidSearch()]" hide-details="auto" error />
       </content-group>
@@ -63,9 +76,14 @@
               {{ item.legalName }}
             </div>
           </template>
-          <template #[`item.address`]="{ item }">
+          <template #[`item.country`]="{ item }">
             <div class="p-text-capitalize">
-              {{ getFormattedAddress(item.address) }}
+              {{ item.country }}
+            </div>
+          </template>
+          <template #[`item.classification`]="{ item }">
+            <div class="p-text-capitalize">
+              {{ item.classification }}
             </div>
           </template>
           <template #[`item.action`]="{ item }">
@@ -81,78 +99,61 @@
     </template>
   </full-page-container>
 </template>
-<script lang="ts">
-import { ref, computed, defineComponent } from "vue";
+<script setup lang="ts">
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useDisplay } from "vuetify";
 
 import { InstitutionService } from "@/services/InstitutionService";
 import { SearchInstitutionAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { useSnackBar, useFormatters } from "@/composables";
+import { useSnackBar } from "@/composables";
+import type { VForm } from "@/types";
 import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   SearchInstitutionsHeaders,
-  VForm,
 } from "@/types";
 
-export default defineComponent({
-  setup() {
-    const searchInstitutionsForm = ref({} as VForm);
-    const snackBar = useSnackBar();
-    const router = useRouter();
-    const { mobile: isMobile } = useDisplay();
-    const legalName = ref("");
-    const operatingName = ref("");
-    const institutions = ref([] as SearchInstitutionAPIOutDTO[]);
-    const goToViewInstitution = (institutionId: number) => {
-      router.push({
-        name: AESTRoutesConst.INSTITUTION_PROFILE,
-        params: { institutionId: institutionId },
-      });
-    };
-    const { getFormattedAddress } = useFormatters();
-    const isValidSearch = () => {
-      const hasInput = !!operatingName.value || !!legalName.value;
-      return hasInput || "Please provide at least one search parameter.";
-    };
-    const searchInstitutions = async () => {
-      const validationResult = await searchInstitutionsForm.value.validate();
-      if (!validationResult.valid) {
-        return;
-      }
-      try {
-        institutions.value = await InstitutionService.shared.searchInstitutions(
-          legalName.value,
-          operatingName.value,
-        );
+const searchInstitutionsForm = ref({} as VForm);
+const snackBar = useSnackBar();
+const router = useRouter();
+const { mobile: isMobile } = useDisplay();
+const legalName = ref("");
+const operatingName = ref("");
+const locationCode = ref("");
+const institutions = ref([] as SearchInstitutionAPIOutDTO[]);
+const goToViewInstitution = (institutionId: number) => {
+  router.push({
+    name: AESTRoutesConst.INSTITUTION_PROFILE,
+    params: { institutionId: institutionId },
+  });
+};
+const isValidSearch = () => {
+  const hasInput =
+    !!operatingName.value || !!legalName.value || !!locationCode.value;
+  return hasInput || "Please provide at least one search parameter.";
+};
+const searchInstitutions = async () => {
+  const validationResult = await searchInstitutionsForm.value.validate();
+  if (!validationResult.valid) {
+    return;
+  }
+  try {
+    institutions.value = await InstitutionService.shared.searchInstitutions(
+      legalName.value,
+      operatingName.value,
+      locationCode.value || undefined,
+    );
 
-        if (institutions.value.length === 0) {
-          snackBar.warn("No Institutions found for the given search criteria.");
-        }
-      } catch {
-        snackBar.error("An error happened during the institution search.");
-      }
-    };
-    const institutionsFound = computed(() => {
-      return institutions.value.length > 0;
-    });
-    return {
-      isValidSearch,
-      legalName,
-      operatingName,
-      institutionsFound,
-      searchInstitutions,
-      institutions,
-      goToViewInstitution,
-      getFormattedAddress,
-      searchInstitutionsForm,
-      DEFAULT_PAGE_LIMIT,
-      ITEMS_PER_PAGE,
-      SearchInstitutionsHeaders,
-      isMobile,
-    };
-  },
+    if (institutions.value.length === 0) {
+      snackBar.warn("No Institutions found for the given search criteria.");
+    }
+  } catch {
+    snackBar.error("An error happened during the institution search.");
+  }
+};
+const institutionsFound = computed(() => {
+  return institutions.value.length > 0;
 });
 </script>

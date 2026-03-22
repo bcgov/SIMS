@@ -142,15 +142,21 @@ export class InstitutionService {
 
   /**
    * Search Institution for ministry search page.
-   * @param legalName
-   * @param operatingName
+   * @param legalName legal name search term.
+   * @param operatingName operating name search term.
+   * @param institutionLocationCode institution location code for exact match search.
    * @returns Institution search result(s).
    */
   async searchInstitutions(
     legalName: string,
     operatingName: string,
+    institutionLocationCode?: string,
   ): Promise<SearchInstitutionAPIOutDTO[]> {
-    return ApiClient.Institution.searchInstitutions(legalName, operatingName);
+    return ApiClient.Institution.searchInstitutions(
+      legalName,
+      operatingName,
+      institutionLocationCode,
+    );
   }
 
   /**

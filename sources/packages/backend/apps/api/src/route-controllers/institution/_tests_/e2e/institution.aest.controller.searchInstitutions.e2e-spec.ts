@@ -11,8 +11,10 @@ import {
   E2EDataSources,
   createE2EDataSources,
   createFakeInstitution,
+  createFakeInstitutionLocation,
 } from "@sims/test-utils";
 import { SearchInstitutionAPIOutDTO } from "../../models/institution.dto";
+import { InstitutionClassification } from "@sims/sims-db";
 
 describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
   let app: INestApplication;
@@ -34,20 +36,13 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
     await db.institution.save(institution);
     // Modifying the text to uppercase to validate non case sensitive search.
     const legalNameSearchText = institution.legalOperatingName.toUpperCase();
-    const mailingAddress = institution.institutionAddress.mailingAddress;
     const expectedSearchResult: SearchInstitutionAPIOutDTO[] = [
       {
         id: institution.id,
         legalName: institution.legalOperatingName,
         operatingName: institution.operatingName,
-        address: {
-          addressLine1: mailingAddress.addressLine1,
-          addressLine2: mailingAddress.addressLine2,
-          city: mailingAddress.city,
-          provinceState: mailingAddress.provinceState,
-          country: mailingAddress.country,
-          postalCode: mailingAddress.postalCode,
-        },
+        country: "Canada",
+        classification: InstitutionClassification.Private,
       },
     ];
 
@@ -71,25 +66,50 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
     await db.institution.save(institution);
     const operatingNameSearchText = "Search E2E Test institution";
     const legalNameSearchText = institution.legalOperatingName;
-    const mailingAddress = institution.institutionAddress.mailingAddress;
     const expectedSearchResult: SearchInstitutionAPIOutDTO[] = [
       {
         id: institution.id,
         legalName: institution.legalOperatingName,
         operatingName: institution.operatingName,
-        address: {
-          addressLine1: mailingAddress.addressLine1,
-          addressLine2: mailingAddress.addressLine2,
-          city: mailingAddress.city,
-          provinceState: mailingAddress.provinceState,
-          country: mailingAddress.country,
-          postalCode: mailingAddress.postalCode,
-        },
+        country: "Canada",
+        classification: InstitutionClassification.Private,
       },
     ];
 
     const endpoint = `/aest/institution/search?legalName=${legalNameSearchText}&operatingName=${operatingNameSearchText}`;
     const token = await getAESTToken(AESTGroups.Operations);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(expectedSearchResult);
+  });
+
+  it("Should return institution when searched by institution location code.", async () => {
+    // Arrange
+    const institution = createFakeInstitution();
+    // Using uuid to keep the legal operating name unique for institution.
+    institution.legalOperatingName = faker.string.uuid();
+    await db.institution.save(institution);
+    const institutionLocation = createFakeInstitutionLocation({ institution });
+    await db.institutionLocation.save(institutionLocation);
+    // Modifying the text to lowercase to validate non case sensitive search.
+    const locationCodeSearchText =
+      institutionLocation.institutionCode.toLowerCase();
+    const expectedSearchResult: SearchInstitutionAPIOutDTO[] = [
+      {
+        id: institution.id,
+        legalName: institution.legalOperatingName,
+        operatingName: institution.operatingName,
+        country: "Canada",
+        classification: InstitutionClassification.Private,
+      },
+    ];
+
+    const endpoint = `/aest/institution/search?institutionLocationCode=${locationCodeSearchText}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
     await request(app.getHttpServer())

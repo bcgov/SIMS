@@ -648,19 +648,22 @@ export class InstitutionService extends RecordDataModelService<Institution> {
    * Search the institution based on the search criteria.
    * @param legalName legalName of the institution.
    * @param operatingName operatingName of the institution.
+   * @param institutionLocationCode institution location code for exact match search.
    * @returns Searched institution details.
    */
   async searchInstitution(
     legalName: string,
     operatingName: string,
+    institutionLocationCode?: string,
   ): Promise<Institution[]> {
     const searchQuery = this.repo
       .createQueryBuilder("institution")
       .select([
         "institution.legalOperatingName",
         "institution.operatingName",
-        "institution.institutionAddress",
         "institution.id",
+        "institution.country",
+        "institution.classification",
       ])
       .where("1 = 1");
     if (legalName) {
@@ -672,6 +675,13 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       searchQuery.andWhere("institution.operatingName Ilike :operatingName", {
         operatingName: `%${operatingName}%`,
       });
+    }
+    if (institutionLocationCode) {
+      searchQuery
+        .innerJoin("institution.locations", "location")
+        .andWhere("location.institutionCode = UPPER(:institutionLocationCode)", {
+          institutionLocationCode,
+        });
     }
     return searchQuery.getMany();
   }
