@@ -198,7 +198,7 @@
       "components": [
         {
           "label": "Please explain the situation:",
-          "placeholder": "Type of expense, when expenses occurred and amount",
+          "placeholder": "Type here",
           "applyMaskOn": "change",
           "autoExpand": false,
           "tableView": true,
