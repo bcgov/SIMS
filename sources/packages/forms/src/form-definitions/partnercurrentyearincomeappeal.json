@@ -198,7 +198,7 @@
       "components": [
         {
           "label": "Please explain the situation:",
-          "placeholder": "Describe your situation",
+          "placeholder": "Type here",
           "applyMaskOn": "change",
           "autoExpand": false,
           "tableView": true,
