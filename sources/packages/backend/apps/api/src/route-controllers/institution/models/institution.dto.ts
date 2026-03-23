@@ -161,21 +161,27 @@ export class SearchInstitutionAPIOutDTO {
   id: number;
   legalName: string;
   operatingName: string;
-  country: string;
-  classification: string;
+  country?: string;
+  classification?: InstitutionClassification;
 }
 
 export class SearchInstitutionQueryAPIInDTO {
   @ValidateIf(
     (input: SearchInstitutionQueryAPIInDTO) =>
-      !!(input.legalName || (!input.operatingName && !input.institutionLocationCode)),
+      !!(
+        input.legalName ||
+        (!input.operatingName && !input.institutionLocationCode)
+      ),
   )
   @IsNotEmpty()
   @MaxLength(LEGAL_OPERATING_NAME_MAX_LENGTH)
   legalName?: string;
   @ValidateIf(
     (input: SearchInstitutionQueryAPIInDTO) =>
-      !!(input.operatingName || (!input.legalName && !input.institutionLocationCode)),
+      !!(
+        input.operatingName ||
+        (!input.legalName && !input.institutionLocationCode)
+      ),
   )
   @IsNotEmpty()
   @MaxLength(OPERATING_NAME_MAX_LENGTH)

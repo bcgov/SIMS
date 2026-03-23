@@ -119,17 +119,17 @@ export class InstitutionApi extends HttpBaseClient {
     operatingName: string,
     institutionLocationCode?: string,
   ): Promise<SearchInstitutionAPIOutDTO[]> {
-    let queryString = "";
+    const params = new URLSearchParams();
     if (legalName) {
-      queryString += `legalName=${legalName}&`;
+      params.append("legalName", legalName);
     }
     if (operatingName) {
-      queryString += `operatingName=${operatingName}&`;
+      params.append("operatingName", operatingName);
     }
     if (institutionLocationCode) {
-      queryString += `institutionLocationCode=${institutionLocationCode}&`;
+      params.append("institutionLocationCode", institutionLocationCode);
     }
-    const url = `institution/search?${queryString.slice(0, -1)}`;
+    const url = `institution/search?${params.toString()}`;
     return this.getCall<SearchInstitutionAPIOutDTO[]>(this.addClientRoot(url));
   }
 
