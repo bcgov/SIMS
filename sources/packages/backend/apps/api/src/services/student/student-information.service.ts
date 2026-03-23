@@ -279,14 +279,18 @@ export class StudentInformationService {
    * Only the most recent validated SIN for each student is returned.
    * @returns distinct SIMS student SINs.
    */
-  async getSIMSSINs(): Promise<string[]> {
+  async getFullTimeActiveSINs(): Promise<string[]> {
     const results = await this.studentRepo
       .createQueryBuilder("student")
       .select("DISTINCT sinValidation.sin", "sin")
       .innerJoin(
-        "student.sinValidation",
+        "student.sinValidations",
         "sinValidation",
-        "sinValidation.isValidSIN = true",
+        // Joining the most recent valid SIN for each student.
+        "sinValidation.id = (" +
+          "SELECT sv.id FROM sims.sin_validations sv " +
+          "WHERE sv.student_id = student.id AND sv.valid_sin = true " +
+          "ORDER BY sv.id DESC LIMIT 1)",
       )
       .innerJoin("student.applications", "application")
       .innerJoin("application.currentAssessment", "assessment")
@@ -325,7 +329,7 @@ export class StudentInformationService {
    * - FT disbursements issued in the last 90 days (no cancelled apps).
    * @returns distinct SFAS student SINs.
    */
-  async getSFASSINs(): Promise<string[]> {
+  async getFullTimeActiveLegacySINs(): Promise<string[]> {
     const results = await this.sfasApplicationRepo
       .createQueryBuilder("sfasApp")
       .select("DISTINCT sfasIndividual.sin", "sin")

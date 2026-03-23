@@ -120,8 +120,8 @@ export class StudentExternalController extends BaseController {
   @Get("active-sins")
   async getActiveSINs(): Promise<ActiveSINsAPIOutDTO> {
     const [simsSINs, sfasSINs] = await Promise.all([
-      this.studentInformationService.getSIMSSINs(),
-      this.studentInformationService.getSFASSINs(),
+      this.studentInformationService.getFullTimeActiveSINs(),
+      this.studentInformationService.getFullTimeActiveLegacySINs(),
     ]);
     return { sins: [...new Set([...simsSINs, ...sfasSINs])] };
   }

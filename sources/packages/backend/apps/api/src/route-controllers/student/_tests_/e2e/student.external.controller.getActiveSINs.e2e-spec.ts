@@ -4,6 +4,7 @@ import {
   createE2EDataSources,
   createFakeSFASApplication,
   createFakeSFASApplicationDisbursement,
+  createFakeSINValidation,
   E2EDataSources,
   saveFakeApplicationDisbursements,
   saveFakeSFASIndividual,
@@ -141,6 +142,43 @@ describe("StudentExternalController(e2e)-getActiveSINs", () => {
     // Assert
     const result = response.body as ActiveSINsAPIOutDTO;
     expect(result.sins).not.toContain(student.sinValidation.sin);
+  });
+
+  it("Should return only the most recent valid SIMS student SIN when a student has multiple valid SIN records.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    const olderValidSIN = student.sinValidation.sin;
+    // Create a newer SIN validation with a different SIN also marked as valid.
+    const newerSINValidation = createFakeSINValidation(
+      { student },
+      { initialValue: { isValidSIN: true } },
+    );
+    await db.sinValidation.save(newerSINValidation);
+    // Update the student to point to the newer SIN validation as the current one.
+    student.sinValidation = newerSINValidation;
+    await db.student.save(student);
+    // Create a FT application with a study start date 45 days in the future.
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        offeringInitialValues: {
+          studyStartDate: getISODateOnlyString(addDays(45)),
+          studyEndDate: getISODateOnlyString(addDays(120)),
+        },
+      },
+    );
+    const token = await getExternalUserToken();
+    // Act
+    const response = await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+    // Assert
+    const result = response.body as ActiveSINsAPIOutDTO;
+    expect(result.sins).toContain(newerSINValidation.sin);
+    expect(result.sins).not.toContain(olderValidSIN);
   });
 
   it("Should include SFAS student SIN when student has a FT application with start date between now and 90 days in the future and no cancelled status.", async () => {
