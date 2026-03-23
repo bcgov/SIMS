@@ -23,10 +23,10 @@ import {
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { ActiveSINsAPIOutDTO } from "../../models/student-external-search.dto";
 
-describe("StudentExternalController(e2e)-getActiveSINs", () => {
+describe("StudentExternalController(e2e)-getFullTimeActiveSINs", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  const endpoint = "/external/student/active-sins";
+  const endpoint = "/external/student/full-time-active-sins";
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();

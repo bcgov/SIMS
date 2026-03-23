@@ -117,8 +117,8 @@ export class StudentExternalController extends BaseController {
    * Only the most recent validated SIN is returned for SIMS students.
    * @returns active SINs from both SIMS and SFAS.
    */
-  @Get("active-sins")
-  async getActiveSINs(): Promise<ActiveSINsAPIOutDTO> {
+  @Get("full-time-active-sins")
+  async getFullTimeActiveSINs(): Promise<ActiveSINsAPIOutDTO> {
     const [simsSINs, sfasSINs] = await Promise.all([
       this.studentInformationService.getFullTimeActiveSINs(),
       this.studentInformationService.getFullTimeActiveLegacySINs(),
