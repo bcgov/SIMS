@@ -123,6 +123,7 @@ export class StudentExternalController extends BaseController {
       this.studentInformationService.getFullTimeActiveSINs(),
       this.studentInformationService.getFullTimeActiveLegacySINs(),
     ]);
-    return { sins: [...new Set([...simsSINs, ...sfasSINs])] };
+    const mergedSINs = [...new Set([...simsSINs, ...sfasSINs])].sort();
+    return { sins: mergedSINs };
   }
 }
