@@ -318,7 +318,7 @@ export class StudentInformationService {
         sent: DisbursementScheduleStatus.Sent,
       })
       .getRawMany<{ sin: string }>();
-    return [...new Set(results.map((result) => result.sin))];
+    return results.map((result) => result.sin);
   }
 
   /**
@@ -351,6 +351,6 @@ export class StudentInformationService {
         ),
       )
       .getRawMany<{ sin: string }>();
-    return [...new Set(results.map((result) => result.sin))];
+    return results.map((result) => result.sin);
   }
 }
