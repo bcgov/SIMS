@@ -411,10 +411,14 @@ export class EducationProgramOfferingControllerService {
       // JSON response when not set.
       // Form.io radio components crash when the
       // submission data contains null for a radio field value.
-      onlineInstructionMode: (offering.onlineInstructionMode ??
-        undefined) as OnlineInstructionModeOptions,
-      isOnlineDurationSameAlways: (offering.isOnlineDurationSameAlways ??
-        undefined) as OfferingYesNoOptions,
+      onlineInstructionMode:
+        offering.onlineInstructionMode == null
+          ? undefined
+          : (offering.onlineInstructionMode as OnlineInstructionModeOptions),
+      isOnlineDurationSameAlways:
+        offering.isOnlineDurationSameAlways == null
+          ? undefined
+          : (offering.isOnlineDurationSameAlways as OfferingYesNoOptions),
       totalOnlineDuration: offering.totalOnlineDuration,
       minimumOnlineDuration: offering.minimumOnlineDuration,
       maximumOnlineDuration: offering.maximumOnlineDuration,
