@@ -407,18 +407,16 @@ export class EducationProgramOfferingControllerService {
         offering.institutionLocation.institution.institutionType.isBCPrivate,
       isBCPublic:
         offering.institutionLocation.institution.institutionType.isBCPublic,
-      // Null is converted to undefined so these fields are absent from the
-      // JSON response when not set.
+      // Null and empty strings are converted to undefined so these fields are
+      // absent from the JSON response when not set.
       // Form.io radio components crash when the
       // submission data contains null for a radio field value.
-      onlineInstructionMode:
-        offering.onlineInstructionMode == null
-          ? undefined
-          : (offering.onlineInstructionMode as OnlineInstructionModeOptions),
-      isOnlineDurationSameAlways:
-        offering.isOnlineDurationSameAlways == null
-          ? undefined
-          : (offering.isOnlineDurationSameAlways as OfferingYesNoOptions),
+      onlineInstructionMode: !!offering.onlineInstructionMode
+        ? (offering.onlineInstructionMode as OnlineInstructionModeOptions)
+        : undefined,
+      isOnlineDurationSameAlways: !!offering.isOnlineDurationSameAlways
+        ? (offering.isOnlineDurationSameAlways as OfferingYesNoOptions)
+        : undefined,
       totalOnlineDuration: offering.totalOnlineDuration,
       minimumOnlineDuration: offering.minimumOnlineDuration,
       maximumOnlineDuration: offering.maximumOnlineDuration,
