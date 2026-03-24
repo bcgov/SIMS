@@ -54,7 +54,7 @@
     "@bull-board/nestjs": "^6.16.4",
     "@bull-board/ui": "^6.16.4",
     "@camunda8/sdk": "^8.8.7",
-    "@golevelup/nestjs-discovery": "^6.1.2",
+    "@golevelup/nestjs-discovery": "^7.0.0",
     "@nestjs/axios": "^4.0.1",
     "@nestjs/bull": "^11.0.4",
     "@nestjs/common": "^11.1.17",
@@ -101,7 +101,7 @@
   "devDependencies": {
     "@aws-sdk/types": "^3.973.0",
     "@faker-js/faker": "^10.4.0",
-    "@golevelup/ts-jest": "^1.2.1",
+    "@golevelup/ts-jest": "^3.0.0",
     "@nestjs/cli": "^11.0.16",
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/testing": "^11.1.13",
@@ -135,7 +135,7 @@
     "ts-loader": "^9.5.4",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.2",
     "typescript-eslint": "^8.57.1",
     "webpack": "^5.104.1"
   }
