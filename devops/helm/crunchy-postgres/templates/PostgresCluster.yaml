@@ -96,7 +96,6 @@ spec:
           region: {{ .Values.pgBackRest.s3.region }}
       stanza: {{ .Values.dataSource.stanza }}
       options:
-        - --type=full
         - --force
   {{ end }}
 
