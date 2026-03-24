@@ -86,7 +86,7 @@ spec:
         - secret:
             name: {{ .Values.pgBackRest.s3.s3Secret }}
       global:
-        repo2-path: {{ .Values.pgBackRest.s3.s3Path }}
+        repo2-path: {{ .Values.dataSource.s3Path }}
         repo2-s3-uri-style: {{ .Values.pgBackRest.s3.s3UriStyle }}
       repo:
         name: {{ .Values.dataSource.repo }}
@@ -96,7 +96,9 @@ spec:
           region: {{ .Values.pgBackRest.s3.region }}
       stanza: {{ .Values.dataSource.stanza }}
       options:
-        - --set=20260323-235232F
+        - --db-include=simsdb
+        - --type=time
+        - --target="2026-03-19 00:09:00"
   {{ end }}
 
   backups:

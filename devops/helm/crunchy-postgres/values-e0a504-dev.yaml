@@ -37,6 +37,7 @@ instances:
 # assuming restore from repo2 (s3), adjust as needed if your S3 repo is different
 dataSource:
   enabled: true
+  s3Path: "/habackup"
 
 pgBackRest:
   image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
@@ -75,6 +76,7 @@ pgBackRest:
         memory: 128Mi
   s3:
     bucket: "sims-dev-database-backups"
+    s3Path: "/habackup-gold"
 
 patroni:
   postgresql:
