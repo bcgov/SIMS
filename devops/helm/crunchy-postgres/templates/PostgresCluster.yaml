@@ -106,6 +106,7 @@ spec:
         - --db-include=simsdb
         - --type=time
         - --target="{{ .Values.restore.options.target }}"
+        - --target-timeline=current
       
       {{ if .Values.pgBackRest.image }}
       image: {{ .Values.pgBackRest.image }}
