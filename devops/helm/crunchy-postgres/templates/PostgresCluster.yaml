@@ -96,7 +96,7 @@ spec:
           region: {{ .Values.pgBackRest.s3.region }}
       stanza: {{ .Values.dataSource.stanza }}
       options:
-        - --target-timeline=9A
+        - --target-timeline=current
   {{ end }}
 
   backups:
