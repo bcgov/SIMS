@@ -1077,6 +1077,7 @@ export class NotificationActionsService {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
           applicationNumber: notification.applicationNumber,
+          documentNumber: notification.documentNumber,
           errorCodes: notification.errorCodes,
         },
       },
