@@ -24,6 +24,7 @@ import {
 import { StudentExternalControllerService } from "./student.external.controller.service";
 import { SFASApplication } from "@sims/sims-db";
 import { LoggerService } from "@sims/utilities/logger";
+import { ACTIVE_SINS_DAYS } from "../../utilities";
 
 /**
  * Student controller for external client.
@@ -111,17 +112,18 @@ export class StudentExternalController extends BaseController {
   /**
    * Returns all SIMS and legacy (SFAS) student SINs for full-time applications
    * meeting at least one of the following criteria:
-   * - A FT application with a start date between now and 90 days in the future.
-   * - A FT application within a current study period.
-   * - FT disbursements sent in the last 90 days.
-   * Only the most recent validated SIN is returned for SIMS students.
+   * - A FT application with a start date between now and the lookback/lookahead window.
+   * - FT disbursements sent or issued within the lookback/lookahead window.
+   * Only valid SINs are returned for SIMS students, and duplicate SINs are excluded.
    * @returns active SINs from both SIMS and SFAS.
    */
-  @Get("full-time-active-sins")
-  async getFullTimeActiveSINs(): Promise<ActiveSINsAPIOutDTO> {
+  @Get("active-sins")
+  async getActiveSINs(): Promise<ActiveSINsAPIOutDTO> {
     const [simsSINs, sfasSINs] = await Promise.all([
-      this.studentInformationService.getFullTimeActiveSINs(),
-      this.studentInformationService.getFullTimeActiveLegacySINs(),
+      this.studentInformationService.getFullTimeActiveSINs(ACTIVE_SINS_DAYS),
+      this.studentInformationService.getFullTimeActiveLegacySINs(
+        ACTIVE_SINS_DAYS,
+      ),
     ]);
     const mergedSINs = [...new Set([...simsSINs, ...sfasSINs])].sort((a, b) =>
       a.localeCompare(b),

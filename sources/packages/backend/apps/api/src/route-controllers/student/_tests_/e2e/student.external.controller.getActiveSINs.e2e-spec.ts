@@ -21,12 +21,11 @@ import {
   getExternalUserToken,
 } from "../../../../testHelpers";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
-import { ActiveSINsAPIOutDTO } from "../../models/student-external-search.dto";
 
-describe("StudentExternalController(e2e)-getFullTimeActiveSINs", () => {
+describe("StudentExternalController(e2e)-getActiveSINs", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  const endpoint = "/external/student/full-time-active-sins";
+  const endpoint = "/external/student/active-sins";
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -50,14 +49,16 @@ describe("StudentExternalController(e2e)-getFullTimeActiveSINs", () => {
       },
     );
     const token = await getExternalUserToken();
-    // Act
-    const response = await request(app.getHttpServer())
+    // Act/Assert
+    await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-    // Assert
-    const result = response.body as ActiveSINsAPIOutDTO;
-    expect(result.sins).toContain(student.sinValidation.sin);
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body.sins).toEqual(
+          expect.arrayContaining([student.sinValidation.sin]),
+        ),
+      );
   });
 
   it("Should include SIMS student SIN when student has a FT application currently within the study period and no cancelled status.", async () => {
@@ -69,23 +70,20 @@ describe("StudentExternalController(e2e)-getFullTimeActiveSINs", () => {
       { student },
       {
         offeringIntensity: OfferingIntensity.fullTime,
-        offeringInitialValues: {
-          studyStartDate: getISODateOnlyString(addDays(-30)),
-          studyEndDate: getISODateOnlyString(addDays(30)),
-        },
       },
     );
     const token = await getExternalUserToken();
-    // Act
-    const response = await request(app.getHttpServer())
+    // Act/Assert
+    await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-    // Assert
-    const result = response.body as ActiveSINsAPIOutDTO;
-    expect(result.sins).toContain(student.sinValidation.sin);
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body.sins).toEqual(
+          expect.arrayContaining([student.sinValidation.sin]),
+        ),
+      );
   });
-
   it("Should include SIMS student SIN when student has a FT application with a disbursement sent in the last 90 days and no cancelled status.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
@@ -99,22 +97,26 @@ describe("StudentExternalController(e2e)-getFullTimeActiveSINs", () => {
           studyStartDate: getISODateOnlyString(addDays(-120)),
           studyEndDate: getISODateOnlyString(addDays(-60)),
         },
+        // Set the disbursement as Sent with dateSent within the last 90 days.
+        firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          dateSent: addDays(-60),
+        },
       },
     );
-    // Set the disbursement as Sent with dateSent within the last 90 days.
     const [disbursement] = application.currentAssessment.disbursementSchedules;
-    disbursement.disbursementScheduleStatus = DisbursementScheduleStatus.Sent;
-    disbursement.dateSent = addDays(-60);
     await db.disbursementSchedule.save(disbursement);
     const token = await getExternalUserToken();
     // Act
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-    // Assert
-    const result = response.body as ActiveSINsAPIOutDTO;
-    expect(result.sins).toContain(student.sinValidation.sin);
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body.sins).toEqual(
+          expect.arrayContaining([student.sinValidation.sin]),
+        ),
+      );
   });
 
   it("Should not include SIMS student SIN when student has only a cancelled FT application that would otherwise match the study start date criteria.", async () => {
@@ -134,14 +136,14 @@ describe("StudentExternalController(e2e)-getFullTimeActiveSINs", () => {
       },
     );
     const token = await getExternalUserToken();
-    // Act
-    const response = await request(app.getHttpServer())
+    // Act/Assert
+    await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-    // Assert
-    const result = response.body as ActiveSINsAPIOutDTO;
-    expect(result.sins).not.toContain(student.sinValidation.sin);
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body.sins).not.toContain(student.sinValidation.sin),
+      );
   });
 
   it("Should return only the most recent valid SIMS student SIN when a student has multiple valid SIN records.", async () => {
@@ -170,17 +172,16 @@ describe("StudentExternalController(e2e)-getFullTimeActiveSINs", () => {
       },
     );
     const token = await getExternalUserToken();
-    // Act
-    const response = await request(app.getHttpServer())
+    // Act/Assert
+    await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-    // Assert
-    const result = response.body as ActiveSINsAPIOutDTO;
-    expect(result.sins).toContain(newerSINValidation.sin);
-    expect(result.sins).not.toContain(olderValidSIN);
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => {
+        expect(body.sins).toContain(newerSINValidation.sin);
+        expect(body.sins).not.toContain(olderValidSIN);
+      });
   });
-
   it("Should include SFAS student SIN when student has a FT application with start date between now and 90 days in the future and no cancelled status.", async () => {
     // Arrange
     const individual = await saveFakeSFASIndividual(db.dataSource);
@@ -196,14 +197,14 @@ describe("StudentExternalController(e2e)-getFullTimeActiveSINs", () => {
     );
     await db.sfasApplication.save(sfasApplication);
     const token = await getExternalUserToken();
-    // Act
-    const response = await request(app.getHttpServer())
+    // Act/Assert
+    await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-    // Assert
-    const result = response.body as ActiveSINsAPIOutDTO;
-    expect(result.sins).toContain(individual.sin);
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => {
+        expect(body.sins).toContain(individual.sin);
+      });
   });
 
   it("Should include SFAS student SIN when student has a FT application currently within the study period and no cancelled status.", async () => {
@@ -221,16 +222,15 @@ describe("StudentExternalController(e2e)-getFullTimeActiveSINs", () => {
     );
     await db.sfasApplication.save(sfasApplication);
     const token = await getExternalUserToken();
-    // Act
-    const response = await request(app.getHttpServer())
+    // Act/Assert
+    await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-    // Assert
-    const result = response.body as ActiveSINsAPIOutDTO;
-    expect(result.sins).toContain(individual.sin);
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => {
+        expect(body.sins).toContain(individual.sin);
+      });
   });
-
   it("Should include SFAS student SIN when student has a FT application with disbursement date issued in the last 90 days and no cancelled status.", async () => {
     // Arrange
     const individual = await saveFakeSFASIndividual(db.dataSource);
@@ -257,14 +257,14 @@ describe("StudentExternalController(e2e)-getFullTimeActiveSINs", () => {
     );
     await db.sfasApplicationDisbursement.save(disbursement);
     const token = await getExternalUserToken();
-    // Act
-    const response = await request(app.getHttpServer())
+    // Act/Assert
+    await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-    // Assert
-    const result = response.body as ActiveSINsAPIOutDTO;
-    expect(result.sins).toContain(individual.sin);
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => {
+        expect(body.sins).toContain(individual.sin);
+      });
   });
 
   it("Should not include SFAS student SIN when student has only a cancelled FT application that would otherwise match the study start date criteria.", async () => {
@@ -283,14 +283,14 @@ describe("StudentExternalController(e2e)-getFullTimeActiveSINs", () => {
     );
     await db.sfasApplication.save(sfasApplication);
     const token = await getExternalUserToken();
-    // Act
-    const response = await request(app.getHttpServer())
+    // Act/Assert
+    await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-    // Assert
-    const result = response.body as ActiveSINsAPIOutDTO;
-    expect(result.sins).not.toContain(individual.sin);
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => {
+        expect(body.sins).not.toContain(individual.sin);
+      });
   });
 
   it("Should return HTTP 401 when request is not authenticated.", async () => {

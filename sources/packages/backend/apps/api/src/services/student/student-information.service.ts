@@ -273,16 +273,18 @@ export class StudentInformationService {
   /**
    * Get SIMS student SINs for students who have full-time applications
    * meeting at least one of the following criteria:
-   * - A FT application with a start date between now and 90 days in the future (no cancelled apps).
-   * - A FT application within a study period (no cancelled apps).
-   * - FT disbursements sent in the last 90 days (no cancelled apps).
-   * Only the most recent validated SIN for each student is returned.
+   * - A FT application with a start date between now and the specified future window (no cancelled or edited apps).
+   * - FT disbursements sent within the specified past window (no cancelled or edited apps).
+   * Only valid SINs are returned, and duplicate SINs are excluded.
+   * @param activeSinsDays number of days in the past and future to consider for active SINs.
    * @returns distinct SIMS student SINs.
    */
-  async getFullTimeActiveSINs(): Promise<string[]> {
-    const results = await this.studentRepo
-      .createQueryBuilder("student")
-      .select("DISTINCT sinValidation.sin", "sin")
+  async getFullTimeActiveSINs(activeSinsDays: number): Promise<string[]> {
+    const applications = await this.applicationRepo
+      .createQueryBuilder("application")
+      .select(["application.id", "student.id", "sinValidation.sin"])
+      .distinctOn(["sinValidation.sin"])
+      .innerJoin("application.student", "student")
       .innerJoin(
         "student.sinValidations",
         "sinValidation",
@@ -292,47 +294,54 @@ export class StudentInformationService {
           "WHERE sv.student_id = student.id AND sv.valid_sin = true " +
           "ORDER BY sv.id DESC LIMIT 1)",
       )
-      .innerJoin("student.applications", "application")
       .innerJoin("application.currentAssessment", "assessment")
       .innerJoin("assessment.offering", "offering")
-      .leftJoin("assessment.disbursementSchedules", "disbursement")
-      .where("application.applicationStatus != :cancelled")
-      .andWhere("application.offeringIntensity = :fullTime")
+      .leftJoin(
+        "assessment.disbursementSchedules",
+        "disbursement",
+        "disbursement.disbursementScheduleStatus = :sentDisbursementStatus",
+      )
+      .where(
+        "application.applicationStatus NOT IN (:cancelledApplicationStatus, :editedApplicationStatus)",
+        {},
+      )
+      .andWhere("application.offeringIntensity = :fullTimeOfferingIntensity")
       .andWhere(
         new Brackets((qb) =>
           qb
             .where(
-              "offering.studyStartDate > CURRENT_DATE AND offering.studyStartDate <= CURRENT_DATE + INTERVAL '90 days'",
+              "offering.studyStartDate BETWEEN CURRENT_DATE AND (CURRENT_DATE + :activeSinsDays * INTERVAL '1 day')",
             )
             .orWhere(
-              "offering.studyStartDate <= CURRENT_DATE AND offering.studyEndDate >= CURRENT_DATE",
-            )
-            .orWhere(
-              "disbursement.disbursementScheduleStatus = :sent AND disbursement.dateSent >= CURRENT_DATE - INTERVAL '90 days'",
+              "disbursement.dateSent BETWEEN (CURRENT_DATE - :activeSinsDays * INTERVAL '1 day') AND CURRENT_DATE",
             ),
         ),
       )
       .setParameters({
+        cancelledApplicationStatus: ApplicationStatus.Cancelled,
+        editedApplicationStatus: ApplicationStatus.Edited,
+        fullTimeOfferingIntensity: OfferingIntensity.fullTime,
+        sentDisbursementStatus: DisbursementScheduleStatus.Sent,
         cancelled: ApplicationStatus.Cancelled,
-        fullTime: OfferingIntensity.fullTime,
-        sent: DisbursementScheduleStatus.Sent,
+        activeSinsDays,
       })
-      .getRawMany<{ sin: string }>();
-    return results.map((result) => result.sin);
+      .getMany();
+    return applications.map((app) => app.student.sinValidations[0].sin);
   }
 
   /**
    * Get SFAS (legacy) student SINs for students who have full-time applications
    * meeting at least one of the following criteria:
-   * - A FT application with a start date between now and 90 days in the future (no cancelled apps).
-   * - A FT application within a study period (no cancelled apps).
-   * - FT disbursements issued in the last 90 days (no cancelled apps).
+   * - A FT application with a start date between now and the specified future window (no cancelled apps).
+   * - FT disbursements issued within the specified past window (no cancelled apps).
+   * @param activeSinsDays number of days in the past and future to consider for active SINs.
    * @returns distinct SFAS student SINs.
    */
-  async getFullTimeActiveLegacySINs(): Promise<string[]> {
-    const results = await this.sfasApplicationRepo
+  async getFullTimeActiveLegacySINs(activeSinsDays: number): Promise<string[]> {
+    const sfasApplications = await this.sfasApplicationRepo
       .createQueryBuilder("sfasApp")
-      .select("DISTINCT sfasIndividual.sin", "sin")
+      .select(["sfasApp.id", "sfasIndividual.sin"])
+      .distinctOn(["sfasIndividual.sin"])
       .innerJoin("sfasApp.individual", "sfasIndividual")
       .leftJoin("sfasApp.disbursements", "disbursement")
       .where("sfasApp.applicationCancelDate IS NULL")
@@ -340,17 +349,18 @@ export class StudentInformationService {
         new Brackets((qb) =>
           qb
             .where(
-              "sfasApp.startDate > CURRENT_DATE AND sfasApp.startDate <= CURRENT_DATE + INTERVAL '90 days'",
+              "sfasApp.startDate BETWEEN CURRENT_DATE AND (CURRENT_DATE + :activeSinsDays * INTERVAL '1 day')",
             )
             .orWhere(
               "sfasApp.startDate <= CURRENT_DATE AND sfasApp.endDate >= CURRENT_DATE",
             )
             .orWhere(
-              "disbursement.dateIssued >= CURRENT_DATE - INTERVAL '90 days'",
+              "disbursement.dateIssued BETWEEN (CURRENT_DATE - :activeSinsDays * INTERVAL '1 day') AND CURRENT_DATE",
             ),
         ),
       )
-      .getRawMany<{ sin: string }>();
-    return results.map((result) => result.sin);
+      .setParameters({ activeSinsDays })
+      .getMany();
+    return sfasApplications.map((app) => app.individual.sin);
   }
 }
