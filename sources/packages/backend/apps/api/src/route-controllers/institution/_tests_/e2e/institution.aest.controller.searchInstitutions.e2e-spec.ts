@@ -159,6 +159,8 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
             "legalName should not be empty",
             "operatingName must be shorter than or equal to 250 characters",
             "operatingName should not be empty",
+            "institutionLocationCode must be shorter than or equal to 4 characters",
+            "institutionLocationCode should not be empty",
           ],
           error: "Bad Request",
         });
