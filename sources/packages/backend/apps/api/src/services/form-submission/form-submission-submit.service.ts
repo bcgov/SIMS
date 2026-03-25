@@ -153,25 +153,26 @@ export class FormSubmissionSubmitService {
         id: true,
         birthDate: true,
         user: { id: true, firstName: true, lastName: true, email: true },
+        applications: applicationId
+          ? { id: true, applicationNumber: true }
+          : undefined,
       },
-      relations: { user: true },
-      where: { id: studentId },
+      relations: {
+        user: true,
+        applications: !!applicationId,
+      },
+      where: {
+        id: studentId,
+        applications: applicationId ? { id: applicationId } : undefined,
+      },
     });
-    // Load application number if an application is linked to this submission.
-    let applicationNumber: string | undefined;
-    if (applicationId) {
-      const application = await entityManager
-        .getRepository(Application)
-        .findOne({
-          select: { id: true, applicationNumber: true },
-          where: { id: applicationId },
-        });
-      applicationNumber = application?.applicationNumber;
-    }
 
     if (!student) {
       throw new Error("Student not found while sending notification.");
     }
+    const applicationNumber = applicationId
+      ? student.applications?.[0]?.applicationNumber
+      : undefined;
     if (applicationId && !applicationNumber) {
       throw new Error("Application not found while sending notification.");
     }
