@@ -18,7 +18,6 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import {
-  DynamicFormConfiguration,
   FormCategory,
   FormSubmissionDecisionStatus,
   FormSubmissionStatus,
@@ -26,16 +25,17 @@ import {
 } from "@sims/sims-db";
 import { addDays } from "@sims/utilities";
 import { TestingModule } from "@nestjs/testing";
-import { createFakeFormConfigurations } from "./form-submission-utils";
+import {
+  createFakeFormConfigurations,
+  DynamicConfigurationTestData,
+} from "./form-submission-utils";
 
 describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let appModule: TestingModule;
   let ministryUser: User;
-  let studentAppealApplicationA: DynamicFormConfiguration;
-  let studentAppealApplicationB: DynamicFormConfiguration;
-  let studentFormA: DynamicFormConfiguration;
+  let formConfigs: DynamicConfigurationTestData;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, module } =
@@ -47,8 +47,7 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
       db.dataSource,
       AESTGroups.BusinessAdministrators,
     );
-    [studentAppealApplicationA, studentAppealApplicationB, studentFormA] =
-      await createFakeFormConfigurations(db);
+    formConfigs = await createFakeFormConfigurations(db);
   });
 
   beforeEach(async () => {
@@ -75,13 +74,13 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
         application,
         formCategory: FormCategory.StudentAppeal,
         submissionStatus: FormSubmissionStatus.Pending,
-        auditUser: ministryUser,
+        ministryAuditUser: ministryUser,
         // Ensure items are added in alphabetical order DESC to
         // assert they will be returned in alphabetical order ASC.
         formSubmissionItems: [
           {
             // Should be pending as it has no decision.
-            dynamicFormConfiguration: studentAppealApplicationB,
+            dynamicFormConfiguration: formConfigs.studentAppealApplicationB,
             decisions: [
               {
                 decisionStatus: FormSubmissionDecisionStatus.Declined,
@@ -90,7 +89,7 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
           },
           {
             // Create at least one form with decision history to ensure the data will not be returned.
-            dynamicFormConfiguration: studentAppealApplicationA,
+            dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
             decisions: [
               {
                 decisionStatus: FormSubmissionDecisionStatus.Approved,
@@ -111,10 +110,10 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
         student,
         formCategory: FormCategory.StudentAppeal,
         submissionStatus: FormSubmissionStatus.Completed,
-        auditUser: ministryUser,
+        ministryAuditUser: ministryUser,
         formSubmissionItems: [
           {
-            dynamicFormConfiguration: studentAppealApplicationA,
+            dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
             decisions: [
               {
                 decisionStatus: FormSubmissionDecisionStatus.Declined,
@@ -132,10 +131,10 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
         student,
         formCategory: FormCategory.StudentForm,
         submissionStatus: FormSubmissionStatus.Completed,
-        auditUser: ministryUser,
+        ministryAuditUser: ministryUser,
         formSubmissionItems: [
           {
-            dynamicFormConfiguration: studentFormA,
+            dynamicFormConfiguration: formConfigs.studentFormA,
             decisions: [
               {
                 decisionStatus: FormSubmissionDecisionStatus.Approved,
@@ -183,22 +182,24 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
             submissionItems: [
               {
                 id: pendingStudentAppealSavedItem2.id,
-                formType: studentAppealApplicationA.formType,
+                formType: formConfigs.studentAppealApplicationA.formType,
                 formCategory: FormCategory.StudentAppeal,
-                dynamicFormConfigurationId: studentAppealApplicationA.id,
+                dynamicFormConfigurationId:
+                  formConfigs.studentAppealApplicationA.id,
                 formDefinitionName:
-                  studentAppealApplicationA.formDefinitionName,
+                  formConfigs.studentAppealApplicationA.formDefinitionName,
                 currentDecision: {
                   decisionStatus: FormSubmissionDecisionStatus.Pending,
                 },
               },
               {
                 id: pendingStudentAppealSavedItem1.id,
-                formType: studentAppealApplicationB.formType,
+                formType: formConfigs.studentAppealApplicationB.formType,
                 formCategory: FormCategory.StudentAppeal,
-                dynamicFormConfigurationId: studentAppealApplicationB.id,
+                dynamicFormConfigurationId:
+                  formConfigs.studentAppealApplicationB.id,
                 formDefinitionName:
-                  studentAppealApplicationB.formDefinitionName,
+                  formConfigs.studentAppealApplicationB.formDefinitionName,
                 currentDecision: {
                   decisionStatus: FormSubmissionDecisionStatus.Pending,
                 },
@@ -215,11 +216,12 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
             submissionItems: [
               {
                 id: completedStudentAppealSavedItem1.id,
-                formType: studentAppealApplicationA.formType,
+                formType: formConfigs.studentAppealApplicationA.formType,
                 formCategory: FormCategory.StudentAppeal,
-                dynamicFormConfigurationId: studentAppealApplicationA.id,
+                dynamicFormConfigurationId:
+                  formConfigs.studentAppealApplicationA.id,
                 formDefinitionName:
-                  studentAppealApplicationA.formDefinitionName,
+                  formConfigs.studentAppealApplicationA.formDefinitionName,
                 currentDecision: {
                   decisionStatus: FormSubmissionDecisionStatus.Declined,
                 },
@@ -236,10 +238,10 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
             submissionItems: [
               {
                 id: completedStudentFormSavedItem1.id,
-                formType: studentFormA.formType,
+                formType: formConfigs.studentFormA.formType,
                 formCategory: FormCategory.StudentForm,
-                dynamicFormConfigurationId: studentFormA.id,
-                formDefinitionName: studentFormA.formDefinitionName,
+                dynamicFormConfigurationId: formConfigs.studentFormA.id,
+                formDefinitionName: formConfigs.studentFormA.formDefinitionName,
                 currentDecision: {
                   decisionStatus: FormSubmissionDecisionStatus.Approved,
                 },

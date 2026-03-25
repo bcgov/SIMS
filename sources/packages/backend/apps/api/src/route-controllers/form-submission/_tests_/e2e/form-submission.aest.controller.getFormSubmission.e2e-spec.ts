@@ -10,24 +10,25 @@ import {
 import {
   createE2EDataSources,
   E2EDataSources,
+  saveFakeApplication,
   saveFakeFormSubmissionFromInputTestData,
 } from "@sims/test-utils";
 import {
-  DynamicFormConfiguration,
   FormCategory,
   FormSubmissionDecisionStatus,
   FormSubmissionStatus,
   User,
 } from "@sims/sims-db";
-import { createFakeFormConfigurations } from "./form-submission-utils";
+import {
+  createFakeFormConfigurations,
+  DynamicConfigurationTestData,
+} from "./form-submission-utils";
 
 describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let ministryUser: User;
-  let studentAppealApplicationA: DynamicFormConfiguration;
-  let studentAppealApplicationB: DynamicFormConfiguration;
-  let studentFormA: DynamicFormConfiguration;
+  let formConfigs: DynamicConfigurationTestData;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -37,21 +38,22 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       db.dataSource,
       AESTGroups.BusinessAdministrators,
     );
-    [studentAppealApplicationA, studentAppealApplicationB, studentFormA] =
-      await createFakeFormConfigurations(db);
+    formConfigs = await createFakeFormConfigurations(db);
   });
 
   it("Should get a form submission as pending, its decisions and history when the form has multiple decisions and the user has approval authorization.", async () => {
     // Arrange
+    const application = await saveFakeApplication(db.dataSource);
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+      application,
       formCategory: FormCategory.StudentAppeal,
       submissionStatus: FormSubmissionStatus.Pending,
-      auditUser: ministryUser,
+      ministryAuditUser: ministryUser,
       formSubmissionItems: [
         {
           // Should be returned as Approved, even though the final decision
           // has not been made yet, since the user has approval authorization.
-          dynamicFormConfiguration: studentAppealApplicationA,
+          dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
           decisions: [
             {
               decisionStatus: FormSubmissionDecisionStatus.Approved,
@@ -63,7 +65,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
         },
         {
           // Should be returned as Pending since it has no decision.
-          dynamicFormConfiguration: studentAppealApplicationB,
+          dynamicFormConfiguration: formConfigs.studentAppealApplicationB,
           decisions: [],
         },
       ],
@@ -83,17 +85,21 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
         expect(body).toStrictEqual({
           hasApprovalAuthorization: true,
           id: formSubmission.id,
+          applicationId: application.id,
+          applicationNumber: application.applicationNumber,
           formCategory: FormCategory.StudentAppeal,
           status: FormSubmissionStatus.Pending,
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
               id: formSubmissionItemA.id,
-              formType: studentAppealApplicationA.formType,
+              formType: formConfigs.studentAppealApplicationA.formType,
               formCategory: FormCategory.StudentAppeal,
-              dynamicFormConfigurationId: studentAppealApplicationA.id,
+              dynamicFormConfigurationId:
+                formConfigs.studentAppealApplicationA.id,
               submissionData: formSubmissionItemA.submittedData,
-              formDefinitionName: studentAppealApplicationA.formDefinitionName,
+              formDefinitionName:
+                formConfigs.studentAppealApplicationA.formDefinitionName,
               updatedAt: formSubmissionItemA.updatedAt.toISOString(),
               currentDecision: {
                 id: itemADecision1.id,
@@ -116,11 +122,13 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
             },
             {
               id: formSubmissionItemB.id,
-              formType: studentAppealApplicationB.formType,
+              formType: formConfigs.studentAppealApplicationB.formType,
               formCategory: FormCategory.StudentAppeal,
-              dynamicFormConfigurationId: studentAppealApplicationB.id,
+              dynamicFormConfigurationId:
+                formConfigs.studentAppealApplicationB.id,
               submissionData: formSubmissionItemB.submittedData,
-              formDefinitionName: studentAppealApplicationB.formDefinitionName,
+              formDefinitionName:
+                formConfigs.studentAppealApplicationB.formDefinitionName,
               updatedAt: formSubmissionItemB.updatedAt.toISOString(),
               currentDecision: {
                 decisionStatus: FormSubmissionDecisionStatus.Pending,
@@ -137,10 +145,10 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
       formCategory: FormCategory.StudentAppeal,
       submissionStatus: FormSubmissionStatus.Pending,
-      auditUser: ministryUser,
+      ministryAuditUser: ministryUser,
       formSubmissionItems: [
         {
-          dynamicFormConfiguration: studentAppealApplicationA,
+          dynamicFormConfiguration: formConfigs.studentAppealA,
           decisions: [
             {
               decisionStatus: FormSubmissionDecisionStatus.Approved,
@@ -171,11 +179,11 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           submissionItems: [
             {
               id: formSubmissionItemA.id,
-              formType: studentAppealApplicationA.formType,
+              formType: formConfigs.studentAppealA.formType,
               formCategory: FormCategory.StudentAppeal,
-              dynamicFormConfigurationId: studentAppealApplicationA.id,
+              dynamicFormConfigurationId: formConfigs.studentAppealA.id,
               submissionData: formSubmissionItemA.submittedData,
-              formDefinitionName: studentAppealApplicationA.formDefinitionName,
+              formDefinitionName: formConfigs.studentAppealA.formDefinitionName,
               updatedAt: formSubmissionItemA.updatedAt.toISOString(),
               currentDecision: {
                 decisionStatus: FormSubmissionDecisionStatus.Pending,
@@ -191,10 +199,10 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
       formCategory: FormCategory.StudentAppeal,
       submissionStatus: FormSubmissionStatus.Completed,
-      auditUser: ministryUser,
+      ministryAuditUser: ministryUser,
       formSubmissionItems: [
         {
-          dynamicFormConfiguration: studentAppealApplicationA,
+          dynamicFormConfiguration: formConfigs.studentAppealA,
           decisions: [
             {
               decisionStatus: FormSubmissionDecisionStatus.Approved,
@@ -226,11 +234,11 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           submissionItems: [
             {
               id: formSubmissionItemA.id,
-              formType: studentAppealApplicationA.formType,
+              formType: formConfigs.studentAppealA.formType,
               formCategory: FormCategory.StudentAppeal,
-              dynamicFormConfigurationId: studentAppealApplicationA.id,
+              dynamicFormConfigurationId: formConfigs.studentAppealA.id,
               submissionData: formSubmissionItemA.submittedData,
-              formDefinitionName: studentAppealApplicationA.formDefinitionName,
+              formDefinitionName: formConfigs.studentAppealA.formDefinitionName,
               updatedAt: formSubmissionItemA.updatedAt.toISOString(),
               currentDecision: {
                 decisionStatus: FormSubmissionDecisionStatus.Approved,
@@ -248,10 +256,10 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
       formCategory: FormCategory.StudentForm,
       submissionStatus: FormSubmissionStatus.Completed,
-      auditUser: ministryUser,
+      ministryAuditUser: ministryUser,
       formSubmissionItems: [
         {
-          dynamicFormConfiguration: studentFormA,
+          dynamicFormConfiguration: formConfigs.studentFormA,
           decisions: [
             {
               decisionStatus: FormSubmissionDecisionStatus.Approved,
@@ -283,11 +291,11 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           submissionItems: [
             {
               id: formSubmissionItemA.id,
-              formType: studentFormA.formType,
+              formType: formConfigs.studentFormA.formType,
               formCategory: FormCategory.StudentForm,
-              dynamicFormConfigurationId: studentFormA.id,
+              dynamicFormConfigurationId: formConfigs.studentFormA.id,
               submissionData: formSubmissionItemA.submittedData,
-              formDefinitionName: studentFormA.formDefinitionName,
+              formDefinitionName: formConfigs.studentFormA.formDefinitionName,
               updatedAt: formSubmissionItemA.updatedAt.toISOString(),
               currentDecision: {
                 id: itemADecision1.id,
@@ -315,13 +323,15 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
 
   it("Should get a form submission item, and its decision statuses, including current notes and audit when the user has approval authorization and an item ID was provided.", async () => {
     // Arrange
+    const application = await saveFakeApplication(db.dataSource);
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+      application,
       formCategory: FormCategory.StudentAppeal,
       submissionStatus: FormSubmissionStatus.Completed,
-      auditUser: ministryUser,
+      ministryAuditUser: ministryUser,
       formSubmissionItems: [
         {
-          dynamicFormConfiguration: studentAppealApplicationA,
+          dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
           decisions: [
             {
               decisionStatus: FormSubmissionDecisionStatus.Approved,
@@ -330,7 +340,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
         },
         {
           // This will be the item returned in the response, as its ID will be provided in the query parameter.
-          dynamicFormConfiguration: studentAppealApplicationB,
+          dynamicFormConfiguration: formConfigs.studentAppealApplicationB,
           decisions: [
             {
               decisionStatus: FormSubmissionDecisionStatus.Declined,
@@ -356,17 +366,21 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
         expect(body).toStrictEqual({
           hasApprovalAuthorization: true,
           id: formSubmission.id,
+          applicationId: application.id,
+          applicationNumber: application.applicationNumber,
           formCategory: FormCategory.StudentAppeal,
           status: FormSubmissionStatus.Completed,
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
               id: formSubmissionItemB.id,
-              formType: studentAppealApplicationB.formType,
+              formType: formConfigs.studentAppealApplicationB.formType,
               formCategory: FormCategory.StudentAppeal,
-              dynamicFormConfigurationId: studentAppealApplicationB.id,
+              dynamicFormConfigurationId:
+                formConfigs.studentAppealApplicationB.id,
               submissionData: formSubmissionItemB.submittedData,
-              formDefinitionName: studentAppealApplicationB.formDefinitionName,
+              formDefinitionName:
+                formConfigs.studentAppealApplicationB.formDefinitionName,
               updatedAt: formSubmissionItemB.updatedAt.toISOString(),
               currentDecision: {
                 id: itemBDecision1.id,
