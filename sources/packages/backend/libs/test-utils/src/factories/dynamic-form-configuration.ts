@@ -46,6 +46,8 @@ export function createFakeDynamicFormConfiguration(
  * @param formType dynamic form type.
  * @param options dynamic form configuration options
  * - `formCategory` form category.
+ * - `hasApplicationScope` indicates if the form configuration has application scope.
+ * - `allowBundledSubmission` indicates if the form configuration allows bundled submission.
  * - `programYear` program year.
  * - `offeringIntensity` offering intensity.
  * @returns dynamic form configuration.
@@ -55,6 +57,8 @@ export async function ensureDynamicFormConfigurationExists(
   formType: DynamicFormType | string,
   options?: {
     formCategory?: FormCategory;
+    hasApplicationScope?: boolean;
+    allowBundledSubmission?: boolean;
     programYear?: ProgramYear;
     offeringIntensity?: OfferingIntensity;
   },
@@ -86,6 +90,8 @@ export async function ensureDynamicFormConfigurationExists(
       initialValues: {
         formCategory: options?.formCategory,
         offeringIntensity: options?.offeringIntensity,
+        hasApplicationScope: options?.hasApplicationScope,
+        allowBundledSubmission: options?.allowBundledSubmission,
       },
     },
   );
