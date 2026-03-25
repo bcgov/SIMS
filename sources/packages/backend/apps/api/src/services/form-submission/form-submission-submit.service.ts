@@ -148,27 +148,32 @@ export class FormSubmissionSubmitService {
     formCategory: FormCategory,
     entityManager: EntityManager,
   ): Promise<void> {
-    // Load student and application data in a single query.
     const student = await entityManager.getRepository(Student).findOneOrFail({
       select: {
         id: true,
         birthDate: true,
         user: { id: true, firstName: true, lastName: true, email: true },
-        applications: { id: true, applicationNumber: true },
       },
-      relations: { user: true, applications: true },
-      where: {
-        id: studentId,
-        applications: { id: applicationId },
-      },
+      relations: { user: true },
+      where: { id: studentId },
     });
+    // Load application number if an application is linked to this submission.
+    let applicationNumber: string | undefined;
+    if (applicationId) {
+      const application = await entityManager
+        .getRepository(Application)
+        .findOne({
+          select: { id: true, applicationNumber: true },
+          where: { id: applicationId },
+        });
+      applicationNumber = application?.applicationNumber;
+    }
+
     if (!student) {
       throw new Error("Student not found while sending notification.");
     }
-    if (applicationId && !student.applications.length) {
-      throw new Error(
-        "Application not found found while sending notification.",
-      );
+    if (applicationId && !applicationNumber) {
+      throw new Error("Application not found while sending notification.");
     }
     await this.notificationActionsService.saveMinistryFormSubmittedNotification(
       {
@@ -178,7 +183,7 @@ export class FormSubmissionSubmitService {
         birthDate: student.birthDate,
         formCategory: formCategory,
         formNames: submissionConfigs.map((config) => config.formType),
-        applicationNumber: student.applications?.[0]?.applicationNumber,
+        applicationNumber: applicationNumber,
       },
       entityManager,
     );
