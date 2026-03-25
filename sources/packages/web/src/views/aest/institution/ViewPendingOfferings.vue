@@ -63,9 +63,7 @@
             {{ item.offeringType }}
           </template>
           <template #[`item.offeringDelivered`]="{ item }">
-            <div class="p-text-capitalize">
-              {{ item.offeringDelivered }}
-            </div>
+            {{ item.offeringDelivered }}
           </template>
           <template #[`item.actions`]="{ item }">
             <v-btn color="primary" @click="viewOffering(item)">View</v-btn>

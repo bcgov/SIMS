@@ -36,8 +36,7 @@
               label="Institution location code"
               variant="outlined"
               :model-value="locationCode"
-              @update:model-value="locationCode = ($event ?? '').toUpperCase()"
-              data-cy="locationCode"
+              @update:model-value="locationCode = $event?.toUpperCase() ?? ''"
               @keyup.enter="searchInstitutions"
               hide-details
             />
@@ -77,14 +76,10 @@
             </div>
           </template>
           <template #[`item.country`]="{ item }">
-            <div class="p-text-capitalize">
-              {{ item.country }}
-            </div>
+            {{ emptyStringFiller(item.country) }}
           </template>
           <template #[`item.classification`]="{ item }">
-            <div class="p-text-capitalize">
-              {{ item.classification }}
-            </div>
+            {{ getClassificationToDisplay(item.classification) }}
           </template>
           <template #[`item.action`]="{ item }">
             <v-btn
@@ -107,7 +102,7 @@ import { useDisplay } from "vuetify";
 import { InstitutionService } from "@/services/InstitutionService";
 import { SearchInstitutionAPIOutDTO } from "@/services/http/dto";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { useSnackBar } from "@/composables";
+import { useSnackBar, useFormatters, useInstitution } from "@/composables";
 import type { VForm } from "@/types";
 import {
   DEFAULT_PAGE_LIMIT,
@@ -117,6 +112,8 @@ import {
 
 const searchInstitutionsForm = ref({} as VForm);
 const snackBar = useSnackBar();
+const { emptyStringFiller } = useFormatters();
+const { getClassificationToDisplay } = useInstitution();
 const router = useRouter();
 const { mobile: isMobile } = useDisplay();
 const legalName = ref("");
@@ -143,7 +140,7 @@ const searchInstitutions = async () => {
     institutions.value = await InstitutionService.shared.searchInstitutions(
       legalName.value,
       operatingName.value,
-      locationCode.value || undefined,
+      locationCode.value,
     );
 
     if (institutions.value.length === 0) {

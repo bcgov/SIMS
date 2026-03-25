@@ -646,16 +646,20 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
   /**
    * Search the institution based on the search criteria.
-   * @param legalName legalName of the institution.
-   * @param operatingName operatingName of the institution.
+   * At least one search criteria must be provided.
+   * @param legalName legal name of the institution.
+   * @param operatingName operating name of the institution.
    * @param institutionLocationCode institution location code for exact match search.
-   * @returns Searched institution details.
+   * @returns searched institution details.
    */
   async searchInstitution(
-    legalName: string,
-    operatingName: string,
+    legalName?: string,
+    operatingName?: string,
     institutionLocationCode?: string,
   ): Promise<Institution[]> {
+    if (!legalName && !operatingName && !institutionLocationCode) {
+      throw new Error("At least one search criteria must be provided.");
+    }
     const searchQuery = this.repo
       .createQueryBuilder("institution")
       .select([
@@ -680,8 +684,8 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       searchQuery
         .innerJoin("institution.locations", "location")
         .andWhere(
-          "UPPER(location.institutionCode) = UPPER(:institutionLocationCode)",
-          { institutionLocationCode },
+          "UPPER(location.institutionCode) = :institutionLocationCode",
+          { institutionLocationCode: institutionLocationCode.toUpperCase() },
         );
     }
     return searchQuery.getMany();

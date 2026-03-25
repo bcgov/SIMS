@@ -186,7 +186,13 @@ export class SearchInstitutionQueryAPIInDTO {
   @IsNotEmpty()
   @MaxLength(OPERATING_NAME_MAX_LENGTH)
   operatingName?: string;
-  @IsOptional()
+  @ValidateIf(
+    (input: SearchInstitutionQueryAPIInDTO) =>
+      !!(
+        input.institutionLocationCode ||
+        (!input.legalName && !input.operatingName)
+      ),
+  )
   @IsNotEmpty()
   @MaxLength(INSTITUTION_LOCATION_CODE_MAX_LENGTH)
   institutionLocationCode?: string;

@@ -132,9 +132,7 @@
           {{ mapOfferingIntensity(item.offeringIntensity) }}
         </template>
         <template #[`item.offeringDelivered`]="{ item }">
-          <div class="p-text-capitalize">
-            {{ item.offeringDelivered }}
-          </div>
+          {{ item.offeringDelivered }}
         </template>
         <template #[`item.offeringStatus`]="{ item }">
           <status-chip-offering :status="item.offeringStatus" />

@@ -148,8 +148,8 @@ export class InstitutionService {
    * @returns Institution search result(s).
    */
   async searchInstitutions(
-    legalName: string,
-    operatingName: string,
+    legalName?: string,
+    operatingName?: string,
     institutionLocationCode?: string,
   ): Promise<SearchInstitutionAPIOutDTO[]> {
     return ApiClient.Institution.searchInstitutions(

@@ -115,8 +115,8 @@ export class InstitutionApi extends HttpBaseClient {
   }
 
   async searchInstitutions(
-    legalName: string,
-    operatingName: string,
+    legalName?: string,
+    operatingName?: string,
     institutionLocationCode?: string,
   ): Promise<SearchInstitutionAPIOutDTO[]> {
     const params = new URLSearchParams();

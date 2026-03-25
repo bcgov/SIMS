@@ -81,10 +81,10 @@ export class InstitutionAESTController extends BaseController {
       legalName: eachInstitution.legalOperatingName,
       operatingName: eachInstitution.operatingName,
       country: eachInstitution.country
-        ? (this.systemLookupConfigurationService.getSystemLookup(
+        ? this.systemLookupConfigurationService.getSystemLookup(
             SystemLookupCategory.Country,
             eachInstitution.country,
-          )?.lookupValue ?? eachInstitution.country)
+          )?.lookupValue
         : undefined,
       classification: eachInstitution.classification,
     }));

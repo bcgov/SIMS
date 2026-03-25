@@ -29,10 +29,10 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
 
   it("Should return institution(s) when searched by legal name.", async () => {
     // Arrange
-    const institution = createFakeInstitution();
+    const institution = createFakeInstitution(undefined, {
+      initialValues: { legalOperatingName: faker.string.uuid() },
+    });
     institution.operatingName = FAKE_INSTITUTION_NAME;
-    // Using uuid to keep the legal operating name unique for institution.
-    institution.legalOperatingName = faker.string.uuid();
     await db.institution.save(institution);
     // Modifying the text to uppercase to validate non case sensitive search.
     const legalNameSearchText = institution.legalOperatingName.toUpperCase();
@@ -54,15 +54,17 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect(expectedSearchResult);
+      .expect(({ body }) => {
+        expect(body).toEqual(expectedSearchResult);
+      });
   });
 
   it("Should return institutions when searched by legal name and operating name.", async () => {
     // Arrange
-    const institution = createFakeInstitution();
+    const institution = createFakeInstitution(undefined, {
+      initialValues: { legalOperatingName: faker.string.uuid() },
+    });
     institution.operatingName = FAKE_INSTITUTION_NAME;
-    // Using uuid to keep the legal operating name unique for institution.
-    institution.legalOperatingName = faker.string.uuid();
     await db.institution.save(institution);
     const operatingNameSearchText = "Search E2E Test institution";
     const legalNameSearchText = institution.legalOperatingName;
@@ -84,14 +86,16 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect(expectedSearchResult);
+      .expect(({ body }) => {
+        expect(body).toEqual(expectedSearchResult);
+      });
   });
 
   it("Should return institution when searched by institution location code.", async () => {
     // Arrange
-    const institution = createFakeInstitution();
-    // Using uuid to keep the legal operating name unique for institution.
-    institution.legalOperatingName = faker.string.uuid();
+    const institution = createFakeInstitution(undefined, {
+      initialValues: { legalOperatingName: faker.string.uuid() },
+    });
     await db.institution.save(institution);
     const institutionLocation = createFakeInstitutionLocation({ institution });
     await db.institutionLocation.save(institutionLocation);
@@ -116,7 +120,9 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect(expectedSearchResult);
+      .expect(({ body }) => {
+        expect(body).toEqual(expectedSearchResult);
+      });
   });
 
   it("Should return empty result when search criteria does not return any institution.", async () => {
@@ -130,7 +136,9 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([]);
+      .expect(({ body }) => {
+        expect(body).toEqual([]);
+      });
   });
 
   it("Should throw bad request error when no search criteria exist.", async () => {
@@ -143,15 +151,17 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.BAD_REQUEST)
-      .expect({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: [
-          "legalName must be shorter than or equal to 250 characters",
-          "legalName should not be empty",
-          "operatingName must be shorter than or equal to 250 characters",
-          "operatingName should not be empty",
-        ],
-        error: "Bad Request",
+      .expect(({ body }) => {
+        expect(body).toEqual({
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: [
+            "legalName must be shorter than or equal to 250 characters",
+            "legalName should not be empty",
+            "operatingName must be shorter than or equal to 250 characters",
+            "operatingName should not be empty",
+          ],
+          error: "Bad Request",
+        });
       });
   });
 
