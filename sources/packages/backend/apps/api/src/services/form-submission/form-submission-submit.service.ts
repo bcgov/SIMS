@@ -148,7 +148,7 @@ export class FormSubmissionSubmitService {
     formCategory: FormCategory,
     entityManager: EntityManager,
   ): Promise<void> {
-    const student = await entityManager.getRepository(Student).findOneOrFail({
+    const student = await entityManager.getRepository(Student).findOne({
       select: {
         id: true,
         birthDate: true,
