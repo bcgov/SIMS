@@ -98,7 +98,7 @@ spec:
       options:
         - --db-include=simsdb
         - --type=time
-        - --target="2026-03-25 23:23:59"
+        - --target="2026-03-25 23:54:00"
   {{ end }}
 
   backups:
