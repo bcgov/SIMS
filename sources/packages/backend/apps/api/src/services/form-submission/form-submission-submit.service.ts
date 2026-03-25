@@ -170,10 +170,8 @@ export class FormSubmissionSubmitService {
     if (!student) {
       throw new Error("Student not found while sending notification.");
     }
-    const applicationNumber = applicationId
-      ? student.applications?.[0]?.applicationNumber
-      : undefined;
-    if (applicationId && !applicationNumber) {
+    const [application] = student.applications;
+    if (applicationId && !application) {
       throw new Error("Application not found while sending notification.");
     }
     await this.notificationActionsService.saveMinistryFormSubmittedNotification(
@@ -184,7 +182,7 @@ export class FormSubmissionSubmitService {
         birthDate: student.birthDate,
         formCategory: formCategory,
         formNames: submissionConfigs.map((config) => config.formType),
-        applicationNumber: applicationNumber,
+        applicationNumber: application?.applicationNumber,
       },
       entityManager,
     );
