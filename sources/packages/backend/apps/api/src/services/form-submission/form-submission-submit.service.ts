@@ -170,7 +170,7 @@ export class FormSubmissionSubmitService {
     if (!student) {
       throw new Error("Student not found while sending notification.");
     }
-    const [application] = student.applications;
+    const [application] = student.applications || [];
     if (applicationId && !application) {
       throw new Error("Application not found while sending notification.");
     }
