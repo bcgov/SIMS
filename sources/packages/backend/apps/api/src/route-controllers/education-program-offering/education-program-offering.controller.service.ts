@@ -29,10 +29,10 @@ import {
   OfferingValidationModel,
   CreateFromValidatedOfferingError,
   InstitutionLocationService,
-  OnlineInstructionModeOptions,
-  OfferingYesNoOptions,
   InstitutionRestrictionService,
   OfferingActionType,
+  OfferingYesNoOptions,
+  OnlineInstructionModeOptions,
 } from "../../services";
 import {
   credentialTypeToDisplay,
@@ -407,10 +407,16 @@ export class EducationProgramOfferingControllerService {
         offering.institutionLocation.institution.institutionType.isBCPrivate,
       isBCPublic:
         offering.institutionLocation.institution.institutionType.isBCPublic,
-      onlineInstructionMode:
-        offering.onlineInstructionMode as OnlineInstructionModeOptions,
-      isOnlineDurationSameAlways:
-        offering.isOnlineDurationSameAlways as OfferingYesNoOptions,
+      // Null and empty strings are converted to undefined so these fields are
+      // absent from the JSON response when not set.
+      // Form.io radio components crash when the
+      // submission data contains null for a radio field value.
+      onlineInstructionMode: offering.onlineInstructionMode
+        ? (offering.onlineInstructionMode as OnlineInstructionModeOptions)
+        : undefined,
+      isOnlineDurationSameAlways: offering.isOnlineDurationSameAlways
+        ? (offering.isOnlineDurationSameAlways as OfferingYesNoOptions)
+        : undefined,
       totalOnlineDuration: offering.totalOnlineDuration,
       minimumOnlineDuration: offering.minimumOnlineDuration,
       maximumOnlineDuration: offering.maximumOnlineDuration,

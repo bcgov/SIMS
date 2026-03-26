@@ -17,6 +17,7 @@ import {
   FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
   FormSubmissionApprovalService,
   FormSubmissionService,
+  hasFormSubmissionApprovalAuthorization,
 } from "../../services";
 import {
   AllowAuthorizedParty,
@@ -36,6 +37,7 @@ import { AuthorizedParties, IUserToken, Role, UserGroups } from "../../auth";
 import {
   FormSubmissionCompletionAPIInDTO,
   FormSubmissionItemDecisionAPIInDTO,
+  FormSubmissionItemMinistryAPIOutDTO,
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionPendingSummaryAPIOutDTO,
   FormSubmissionsAPIOutDTO,
@@ -106,13 +108,14 @@ export class FormSubmissionAESTController extends BaseController {
    */
   @Get("student/:studentId")
   async getFormSubmissionHistory(
+    @UserToken() userToken: IUserToken,
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<FormSubmissionsAPIOutDTO> {
     // Kept the includeBasicDecisionDetails as false since the details controlled by
     // the flag are not required to be returned by this endpoint.
     const submissions =
       await this.formSubmissionControllerService.getFormSubmissions(studentId, {
-        keepPendingDecisionsWhilePendingFormSubmission: false,
+        userRoles: userToken.roles,
       });
     return {
       submissions,
@@ -147,11 +150,10 @@ export class FormSubmissionAESTController extends BaseController {
         `Form submission with ID ${formSubmissionId} not found.`,
       );
     }
-    const hasApprovalAuthorization =
-      this.formSubmissionApprovalService.hasApprovalAuthorization(
-        submission.formCategory,
-        userToken.roles,
-      );
+    const hasApprovalAuthorization = hasFormSubmissionApprovalAuthorization(
+      submission.formCategory,
+      userToken.roles,
+    );
     return {
       hasApprovalAuthorization,
       id: submission.id,
@@ -160,43 +162,50 @@ export class FormSubmissionAESTController extends BaseController {
       applicationId: submission.application?.id,
       applicationNumber: submission.application?.applicationNumber,
       submittedDate: submission.submittedDate,
-      submissionItems: submission.formSubmissionItems.map((item) => ({
-        id: item.id,
-        formType: item.dynamicFormConfiguration.formType,
-        formCategory: item.dynamicFormConfiguration.formCategory,
-        dynamicFormConfigurationId: item.dynamicFormConfiguration.id,
-        submissionData: item.submittedData,
-        formDefinitionName: item.dynamicFormConfiguration.formDefinitionName,
-        updatedAt: item.updatedAt,
-        currentDecision:
-          hasApprovalAuthorization && item.currentDecision
-            ? {
-                id: item.currentDecision.id,
-                decisionStatus:
-                  item.currentDecision?.decisionStatus ??
-                  FormSubmissionDecisionStatus.Pending,
-                decisionDate: item.currentDecision.decisionDate,
-                decisionBy: getUserFullName(item.currentDecision.decisionBy),
-                decisionNoteDescription:
-                  item.currentDecision.decisionNote.description,
-              }
-            : {
-                decisionStatus:
-                  item.currentDecision?.decisionStatus ??
-                  FormSubmissionDecisionStatus.Pending,
-              },
-        previousDecisions: hasApprovalAuthorization
-          ? item.decisions
-              .filter((decision) => decision.id !== item.currentDecision.id)
-              .map((decision) => ({
-                id: decision.id,
-                decisionStatus: decision.decisionStatus,
-                decisionDate: decision.decisionDate,
-                decisionBy: getUserFullName(decision.decisionBy),
-                decisionNoteDescription: decision.decisionNote.description,
-              }))
-          : undefined,
-      })),
+      submissionItems:
+        submission.formSubmissionItems.map<FormSubmissionItemMinistryAPIOutDTO>(
+          (item) => ({
+            id: item.id,
+            formType: item.dynamicFormConfiguration.formType,
+            formCategory: item.dynamicFormConfiguration.formCategory,
+            dynamicFormConfigurationId: item.dynamicFormConfiguration.id,
+            submissionData: item.submittedData,
+            formDefinitionName:
+              item.dynamicFormConfiguration.formDefinitionName,
+            updatedAt: item.updatedAt,
+            currentDecision:
+              item.currentDecision && hasApprovalAuthorization
+                ? {
+                    id: item.currentDecision.id,
+                    decisionStatus:
+                      item.currentDecision?.decisionStatus ??
+                      FormSubmissionDecisionStatus.Pending,
+                    decisionDate: item.currentDecision.decisionDate,
+                    decisionBy: getUserFullName(
+                      item.currentDecision.decisionBy,
+                    ),
+                    decisionNoteDescription:
+                      item.currentDecision.decisionNote.description,
+                  }
+                : this.formSubmissionControllerService.mapCurrentDecision(
+                    submission.submissionStatus,
+                    item,
+                    true,
+                    userToken.roles,
+                  ),
+            previousDecisions: hasApprovalAuthorization
+              ? item.decisions
+                  .filter((decision) => decision.id !== item.currentDecision.id)
+                  .map((decision) => ({
+                    id: decision.id,
+                    decisionStatus: decision.decisionStatus,
+                    decisionDate: decision.decisionDate,
+                    decisionBy: getUserFullName(decision.decisionBy),
+                    decisionNoteDescription: decision.decisionNote.description,
+                  }))
+              : undefined,
+          }),
+        ),
     };
   }
 

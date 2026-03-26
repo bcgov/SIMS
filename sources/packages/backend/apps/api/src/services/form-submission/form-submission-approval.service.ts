@@ -25,13 +25,13 @@ import {
   FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
 } from "./constants";
 import {
-  FORM_SUBMISSION_APPROVAL_ROLES_MAP,
   FormItemDecision,
   FormSubmissionCompletionItem,
 } from "./form-submission.models";
 import { NoteSharedService } from "@sims/services";
 import { FormSubmissionActionProcessor } from "./form-submission-actions/form-submission-action-processor";
 import { NotificationActionsService } from "@sims/services/notifications";
+import { hasFormSubmissionApprovalAuthorization } from "./form-submission.authorization";
 
 @Injectable()
 export class FormSubmissionApprovalService {
@@ -358,18 +358,6 @@ export class FormSubmissionApprovalService {
   }
 
   /**
-   * Indicates if the form submission item can be updated by the user based on the form category and user roles.
-   * @param category The category of the form item being updated, used
-   * to determine the required role for authorization.
-   * @param userRoles The roles of the user attempting to perform the action.
-   * @returns true if the user has the required role for the form category, false otherwise.
-   */
-  hasApprovalAuthorization(category: FormCategory, userRoles: Role[]): boolean {
-    const allowedRole = FORM_SUBMISSION_APPROVAL_ROLES_MAP.get(category);
-    return allowedRole ? userRoles.includes(allowedRole) : false;
-  }
-
-  /**
    * Ensures the user authorization to update a form submission item
    * based on the form category and user roles.
    * @param category The category of the form item being updated, used
@@ -382,7 +370,7 @@ export class FormSubmissionApprovalService {
     category: FormCategory,
     userRoles: Role[],
   ): void {
-    if (!this.hasApprovalAuthorization(category, userRoles)) {
+    if (!hasFormSubmissionApprovalAuthorization(category, userRoles)) {
       throw new CustomNamedError(
         "User does not have the required role to perform this action.",
         FORM_SUBMISSION_UPDATE_UNAUTHORIZED,

@@ -1,6 +1,5 @@
 import {
   DynamicFormConfiguration,
-  FormCategory,
   FormSubmissionDecisionStatus,
 } from "@sims/sims-db";
 import { ApplicationWithdrawals, Parent } from "../../types";
@@ -49,14 +48,6 @@ export type FormSubmissionConfig = FormSubmissionModel &
   > & {
     applicationId: number | undefined;
   };
-
-/**
- * Allowed role to update a form submission item based on the form category.
- */
-export const FORM_SUBMISSION_APPROVAL_ROLES_MAP = new Map<FormCategory, Role>([
-  [FormCategory.StudentAppeal, Role.StudentApproveDeclineAppeals],
-  [FormCategory.StudentForm, Role.StudentApproveDeclineForms],
-]);
 
 export interface FormSubmissionCompletionItem {
   submissionItemId: number;
