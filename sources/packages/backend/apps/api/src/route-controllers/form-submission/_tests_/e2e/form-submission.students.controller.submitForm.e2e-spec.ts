@@ -21,6 +21,7 @@ import {
 import {
   createFakeFormConfigurations,
   DynamicConfigurationTestData,
+  getEntitiesForStudentFormSubmissionAssertion,
 } from "./form-submission-utils";
 import { TestingModule } from "@nestjs/testing";
 import {
@@ -41,7 +42,6 @@ import {
   getDateOnlyFormat,
   getPSTPDTDateTime,
 } from "@sims/utilities/date-utils";
-import { IsNull } from "typeorm";
 import { SystemUsersService } from "@sims/services";
 
 describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
@@ -193,38 +193,13 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
     );
 
     // Validate persisted data in the database.
+    const [createdSubmission, updatedStudentFile, notification] =
+      await getEntitiesForStudentFormSubmissionAssertion(
+        db,
+        createdSubmissionId,
+        studentFile.id,
+      );
     const studentUser = { id: student.user.id };
-    const createdSubmission = await db.formSubmission.findOne({
-      select: {
-        id: true,
-        student: { id: true },
-        application: { id: true },
-        submittedDate: true,
-        submissionStatus: true,
-        formCategory: true,
-        creator: { id: true },
-        createdAt: true,
-        formSubmissionItems: {
-          id: true,
-          dynamicFormConfiguration: { id: true },
-          submittedData: true,
-          creator: { id: true },
-          createdAt: true,
-        },
-      },
-      relations: {
-        student: true,
-        application: true,
-        creator: true,
-        formSubmissionItems: {
-          dynamicFormConfiguration: true,
-          creator: true,
-        },
-      },
-      where: { id: createdSubmissionId },
-      order: { formSubmissionItems: { id: "ASC" } },
-      loadEagerRelations: false,
-    });
     expect(createdSubmission).toEqual({
       id: createdSubmissionId,
       student: { id: student.id },
@@ -256,33 +231,12 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
       ],
     });
     // Validate the student file was updated with the correct file origin.
-    const updatedStudentFile = await db.studentFile.findOne({
-      select: { id: true, fileOrigin: true, modifier: { id: true } },
-      relations: { modifier: true },
-      where: { id: studentFile.id },
-    });
     expect(updatedStudentFile).toEqual({
       id: studentFile.id,
       fileOrigin: FileOriginType.Appeal,
       modifier: studentUser,
     });
     // Validate notification.
-    const notification = await db.notification.findOne({
-      select: {
-        id: true,
-        notificationMessage: { id: true },
-        messagePayload: true,
-        creator: { id: true },
-      },
-      relations: { notificationMessage: true, creator: true },
-      where: {
-        dateSent: IsNull(),
-        notificationMessage: {
-          id: NotificationMessageType.MinistryFormSubmitted,
-        },
-      },
-      loadEagerRelations: false,
-    });
     expect(notification).toEqual({
       id: expect.any(Number),
       notificationMessage: {
@@ -363,40 +317,18 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
         propertyA: "some value for property A",
       },
     );
-
     // Validate persisted data in the database.
+    const [createdSubmission, updatedStudentFile, notification] =
+      await getEntitiesForStudentFormSubmissionAssertion(
+        db,
+        createdSubmissionId,
+        studentFile.id,
+      );
     const studentUser = { id: student.user.id };
-    const createdSubmission = await db.formSubmission.findOne({
-      select: {
-        id: true,
-        student: { id: true },
-        submittedDate: true,
-        submissionStatus: true,
-        formCategory: true,
-        creator: { id: true },
-        createdAt: true,
-        formSubmissionItems: {
-          id: true,
-          dynamicFormConfiguration: { id: true },
-          submittedData: true,
-          creator: { id: true },
-          createdAt: true,
-        },
-      },
-      relations: {
-        student: true,
-        creator: true,
-        formSubmissionItems: {
-          dynamicFormConfiguration: true,
-          creator: true,
-        },
-      },
-      where: { id: createdSubmissionId },
-      loadEagerRelations: false,
-    });
     expect(createdSubmission).toEqual({
       id: createdSubmissionId,
       student: { id: student.id },
+      application: null,
       submittedDate: now,
       submissionStatus: FormSubmissionStatus.Pending,
       formCategory: FormCategory.StudentForm,
@@ -415,33 +347,12 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
       ],
     });
     // Validate the student file was updated with the correct file origin.
-    const updatedStudentFile = await db.studentFile.findOne({
-      select: { id: true, fileOrigin: true, modifier: { id: true } },
-      relations: { modifier: true },
-      where: { id: studentFile.id },
-    });
     expect(updatedStudentFile).toEqual({
       id: studentFile.id,
       fileOrigin: FileOriginType.FormSubmission,
       modifier: studentUser,
     });
     // Validate notification.
-    const notification = await db.notification.findOne({
-      select: {
-        id: true,
-        notificationMessage: { id: true },
-        messagePayload: true,
-        creator: { id: true },
-      },
-      relations: { notificationMessage: true, creator: true },
-      where: {
-        dateSent: IsNull(),
-        notificationMessage: {
-          id: NotificationMessageType.MinistryFormSubmitted,
-        },
-      },
-      loadEagerRelations: false,
-    });
     expect(notification).toEqual({
       id: expect.any(Number),
       notificationMessage: {

@@ -1,10 +1,18 @@
 import { INestApplication } from "@nestjs/common";
-import { DynamicFormConfiguration, FormCategory } from "@sims/sims-db";
+import {
+  DynamicFormConfiguration,
+  FormCategory,
+  FormSubmission,
+  Notification,
+  NotificationMessageType,
+  StudentFile,
+} from "@sims/sims-db";
 import {
   E2EDataSources,
   ensureDynamicFormConfigurationExists,
 } from "@sims/test-utils";
 import { DynamicFormConfigurationService } from "../../../../services";
+import { IsNull } from "typeorm";
 
 /**
  * Available dynamic configurations to be used in the form submission tests.
@@ -87,4 +95,76 @@ export async function createFakeFormConfigurations(
     studentAppealB,
     studentFormA,
   };
+}
+
+/**
+ * Get the entities related to a student form submission to assert the expected changes
+ * in the database after a form submission is created.
+ * @param db data sources to retrieve the entities from the database.
+ * @param createdSubmissionId form submission ID to retrieve the created form submission
+ * with its items and related entities.
+ * @param studentFileId student file ID to retrieve the updated student file with the expected association to the created form submission.
+ * @returns the form submission with its items and related entities, the updated student file, and the notification created for the ministry.
+ */
+export function getEntitiesForStudentFormSubmissionAssertion(
+  db: E2EDataSources,
+  createdSubmissionId: number,
+  studentFileId: number,
+): Promise<[FormSubmission, StudentFile, Notification]> {
+  const createdSubmissionPromise = db.formSubmission.findOne({
+    select: {
+      id: true,
+      student: { id: true },
+      application: { id: true },
+      submittedDate: true,
+      submissionStatus: true,
+      formCategory: true,
+      creator: { id: true },
+      createdAt: true,
+      formSubmissionItems: {
+        id: true,
+        dynamicFormConfiguration: { id: true },
+        submittedData: true,
+        creator: { id: true },
+        createdAt: true,
+      },
+    },
+    relations: {
+      student: true,
+      application: true,
+      creator: true,
+      formSubmissionItems: {
+        dynamicFormConfiguration: true,
+        creator: true,
+      },
+    },
+    where: { id: createdSubmissionId },
+    loadEagerRelations: false,
+  });
+  const updatedStudentFilePromise = db.studentFile.findOne({
+    select: { id: true, fileOrigin: true, modifier: { id: true } },
+    relations: { modifier: true },
+    where: { id: studentFileId },
+  });
+  const notificationPromise = db.notification.findOne({
+    select: {
+      id: true,
+      notificationMessage: { id: true },
+      messagePayload: true,
+      creator: { id: true },
+    },
+    relations: { notificationMessage: true, creator: true },
+    where: {
+      dateSent: IsNull(),
+      notificationMessage: {
+        id: NotificationMessageType.MinistryFormSubmitted,
+      },
+    },
+    loadEagerRelations: false,
+  });
+  return Promise.all([
+    createdSubmissionPromise,
+    updatedStudentFilePromise,
+    notificationPromise,
+  ]);
 }
