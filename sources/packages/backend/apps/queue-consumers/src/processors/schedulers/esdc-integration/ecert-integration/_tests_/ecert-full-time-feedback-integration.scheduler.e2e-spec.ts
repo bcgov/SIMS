@@ -448,7 +448,6 @@ describe(
           lastName: application.student.user.lastName,
           givenNames: application.student.user.firstName,
           applicationNumber: application.applicationNumber,
-          documentNumber: SHARED_DOCUMENT_NUMBER,
           errorCodes: ["EDU-00033", "EDU-00034"],
         },
       });

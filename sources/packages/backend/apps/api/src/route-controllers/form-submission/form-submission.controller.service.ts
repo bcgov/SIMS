@@ -1,8 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import {
-  FormSubmissionService,
-  hasFormSubmissionApprovalAuthorization,
-} from "../../services";
+import { FormSubmissionService } from "../../services";
 import {
   FormSubmission,
   FormSubmissionDecisionStatus,
@@ -13,7 +10,6 @@ import {
   FormSubmissionAPIOutDTO,
   FormSubmissionItemDecisionAPIOutDTO,
 } from "./models/form-submission.dto";
-import { Role } from "../../auth";
 
 @Injectable()
 export class FormSubmissionControllerService {
@@ -27,8 +23,9 @@ export class FormSubmissionControllerService {
    * submission belongs to the student and throw a not found HTTP error if it does not.
    * - `locationIds` restrict forms with an application scope to the provided locations. Used for institutions to have access
    * only to the form submissions related to the locations they have access to.
-   * - `userRoles` when provided, it will be used to determine the access to the decision details
-   * that the consumer has based on their roles and the form category.
+   * - `keepPendingDecisionsWhilePendingFormSubmission`, when true, will return "Pending" as the decision status for all items
+   * if the form submission is still pending. This is used to avoid showing decisions that are not final yet while the form
+   * submission is not completed. Default to true when not provided to expose less information.
    * - `includeBasicDecisionDetails` optional flag to include basic decision details, besides
    * the decision status. Used for institutions to have access to more details than the student
    * to better support them. Default to false when not provided to expose less information. When keepPendingDecisionsWhilePendingFormSubmission
@@ -43,9 +40,9 @@ export class FormSubmissionControllerService {
     options?: {
       formSubmissionId?: number;
       locationIds?: number[];
+      keepPendingDecisionsWhilePendingFormSubmission?: boolean;
       includeBasicDecisionDetails?: boolean;
       loadSubmittedData?: boolean;
-      userRoles?: Role[];
     },
   ): Promise<FormSubmissionAPIOutDTO[]> {
     const submissions = await this.formSubmissionService.getFormSubmissions(
@@ -63,13 +60,15 @@ export class FormSubmissionControllerService {
 
     // Set default value for the options that define how data will be returned considering the
     // default behavior to expose less information and avoid showing non-final decisions.
+    const keepPendingDecisionsWhilePendingFormSubmission =
+      options?.keepPendingDecisionsWhilePendingFormSubmission ?? true;
     const includeBasicDecisionDetails =
       options?.includeBasicDecisionDetails ?? false;
     return submissions.map((submission) =>
       this.mapSubmissionsToAPIOutDTO(
         submission,
         includeBasicDecisionDetails,
-        options?.userRoles,
+        keepPendingDecisionsWhilePendingFormSubmission,
       ),
     );
   }
@@ -80,13 +79,15 @@ export class FormSubmissionControllerService {
    * @param submission form submission record to be converted.
    * @param includeBasicDecisionDetails flag to indicate if the basic decision details should be included in the response,
    * besides the status that is always included.
-   * @param userRoles roles of the user to determine access to decision details.
+   * @param keepPendingDecisionsWhilePendingFormSubmission when true, will return "Pending" as the decision status for all items
+   * if the form submission is still pending. This is used to avoid showing decisions that are not final yet while the form
+   * submission is not completed.
    * @returns form submission details including individual form items and their details in the API output format.
    */
   private mapSubmissionsToAPIOutDTO(
     submission: FormSubmission,
     includeBasicDecisionDetails: boolean,
-    userRoles?: Role[],
+    keepPendingDecisionsWhilePendingFormSubmission: boolean,
   ): FormSubmissionAPIOutDTO {
     return {
       id: submission.id,
@@ -107,7 +108,7 @@ export class FormSubmissionControllerService {
           submission.submissionStatus,
           item,
           includeBasicDecisionDetails,
-          userRoles,
+          keepPendingDecisionsWhilePendingFormSubmission,
         ),
       })),
     };
@@ -117,26 +118,22 @@ export class FormSubmissionControllerService {
    * Define the decision to be returned.
    * The decision and its details are determined based on the form submission status
    * and the access to the decision details that the consumer has.
-   * Used for students and institutions that have different access to the decision details,
-   * and for Ministry users with limited access to the decision details.
    * @param submissionStatus form submission status.
    * @param submissionItem form submission to determine the decision details to be returned.
    * @param includeBasicDecisionDetails flag to indicate if the basic decision details should be included in the response,
    * besides the status that is always included.
    * @returns the decision that must be exposed the consumer.
    */
-  mapCurrentDecision(
+  private mapCurrentDecision(
     submissionStatus: FormSubmissionStatus,
     submissionItem: FormSubmissionItem,
     includeBasicDecisionDetails: boolean,
-    userRoles?: Role[],
+    keepPendingDecisionsWhilePendingFormSubmission: boolean,
   ): FormSubmissionItemDecisionAPIOutDTO {
     // Determine if decision details should be restricted based on the form submission status and the flag.
     const shouldRestrictDecisionDetails =
-      !hasFormSubmissionApprovalAuthorization(
-        submissionItem.dynamicFormConfiguration.formCategory,
-        userRoles,
-      ) && submissionStatus === FormSubmissionStatus.Pending;
+      keepPendingDecisionsWhilePendingFormSubmission &&
+      submissionStatus === FormSubmissionStatus.Pending;
     // Define the status.
     let decisionStatus = shouldRestrictDecisionDetails
       ? FormSubmissionDecisionStatus.Pending

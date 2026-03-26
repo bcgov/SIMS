@@ -92,6 +92,8 @@ describe("EducationProgramOfferingAESTController(e2e)-getOfferingDetails", () =>
         parentOfferingId: savedOffering.parentOffering.id,
         isBCPrivate: true,
         isBCPublic: false,
+        onlineInstructionMode: savedOffering.onlineInstructionMode,
+        isOnlineDurationSameAlways: savedOffering.isOnlineDurationSameAlways,
         totalOnlineDuration: savedOffering.totalOnlineDuration,
         minimumOnlineDuration: savedOffering.minimumOnlineDuration,
         maximumOnlineDuration: savedOffering.maximumOnlineDuration,

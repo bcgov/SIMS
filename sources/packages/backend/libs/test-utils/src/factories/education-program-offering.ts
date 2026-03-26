@@ -94,10 +94,6 @@ export function createFakeEducationProgramOffering(
   offering.creator = relations.auditUser;
   offering.submittedBy = relations.auditUser;
   offering.submittedDate = options?.initialValues?.submittedDate ?? undefined;
-  offering.isOnlineDurationSameAlways =
-    options?.initialValues?.isOnlineDurationSameAlways;
-  offering.onlineInstructionMode =
-    options?.initialValues?.onlineInstructionMode;
   return offering;
 }
 

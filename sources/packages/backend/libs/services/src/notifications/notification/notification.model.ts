@@ -77,7 +77,6 @@ export interface StudentNotification {
   lastName: string;
   toAddress: string;
   userId: number;
-  applicationNumber?: string;
 }
 
 export interface DisbursementBlockedNotification {
@@ -135,7 +134,6 @@ export interface ECertFeedbackFileErrorNotification {
   givenNames: string;
   lastName: string;
   applicationNumber: string;
-  documentNumber: number;
   errorCodes: string[];
 }
 

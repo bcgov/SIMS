@@ -125,7 +125,6 @@ export class StudentAppealAssessmentService {
       lastName: studentUser.lastName,
       toAddress: studentUser.email,
       userId: studentUser.id,
-      applicationNumber: appeal.application?.applicationNumber,
     };
     if (isLegacyChangeRequest) {
       await this.notificationActionsService.saveStudentChangeRequestReviewCompletedNotification(

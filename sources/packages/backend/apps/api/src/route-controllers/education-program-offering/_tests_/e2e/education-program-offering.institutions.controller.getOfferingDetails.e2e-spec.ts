@@ -15,11 +15,7 @@ import {
   BEARER_AUTH_TYPE,
   getInstitutionToken,
 } from "../../../../testHelpers";
-import {
-  OfferingValidationWarnings,
-  OnlineInstructionModeOptions,
-  OfferingYesNoOptions,
-} from "../../../../services";
+import { OfferingValidationWarnings } from "../../../../services";
 import * as request from "supertest";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingDetails", () => {
@@ -115,90 +111,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingDetails
         parentOfferingId: savedOffering.parentOffering.id,
         isBCPrivate: false,
         isBCPublic: true,
+        onlineInstructionMode: savedOffering.onlineInstructionMode,
+        isOnlineDurationSameAlways: savedOffering.isOnlineDurationSameAlways,
         totalOnlineDuration: savedOffering.totalOnlineDuration,
         minimumOnlineDuration: savedOffering.minimumOnlineDuration,
         maximumOnlineDuration: savedOffering.maximumOnlineDuration,
-      });
-  });
-
-  it("Should return the requested offering with online instruction fields populated when they are set.", async () => {
-    // Arrange
-    const offering = createFakeEducationProgramOffering(
-      {
-        auditUser: collegeFUser,
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
-      },
-      {
-        initialValues: {
-          submittedDate: new Date(),
-          onlineInstructionMode: OnlineInstructionModeOptions.SynchronousOnly,
-          isOnlineDurationSameAlways: OfferingYesNoOptions.Yes,
-        },
-      },
-    );
-    const savedOffering = await db.educationProgramOffering.save(offering);
-
-    // Institution token.
-    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
-    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedOffering.educationProgram.id}/offering/${savedOffering.id}`;
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect(({ body }) => {
-        expect(body).toStrictEqual({
-          id: savedOffering.id,
-          offeringName: savedOffering.name,
-          studyStartDate: savedOffering.studyStartDate,
-          studyEndDate: savedOffering.studyEndDate,
-          actualTuitionCosts: savedOffering.actualTuitionCosts,
-          programRelatedCosts: savedOffering.programRelatedCosts,
-          mandatoryFees: savedOffering.mandatoryFees,
-          exceptionalExpenses: savedOffering.exceptionalExpenses,
-          offeringDelivered: savedOffering.offeringDelivered,
-          lacksStudyBreaks: savedOffering.lacksStudyBreaks,
-          offeringIntensity: savedOffering.offeringIntensity,
-          yearOfStudy: savedOffering.yearOfStudy,
-          isAviationOffering: savedOffering.isAviationOffering,
-          aviationCredentialType: savedOffering.aviationCredentialType,
-          hasOfferingWILComponent: savedOffering.hasOfferingWILComponent,
-          offeringWILComponentType: null, // Value is undefined on savedOffering.
-          studyPeriodBreakdown: {
-            totalDays: savedOffering.studyBreaks?.totalDays,
-            totalFundedWeeks: savedOffering.studyBreaks?.totalFundedWeeks,
-          },
-          offeringDeclaration: savedOffering.offeringDeclaration,
-          submittedBy:
-            savedOffering.submittedBy.firstName +
-            " " +
-            savedOffering.submittedBy.lastName,
-          submittedDate: savedOffering.submittedDate.toISOString(),
-          offeringStatus: savedOffering.offeringStatus,
-          offeringType: savedOffering.offeringType,
-          locationName: savedOffering.institutionLocation.name,
-          institutionName:
-            savedOffering.institutionLocation.institution.operatingName,
-          assessedBy: "",
-          assessedDate: savedOffering.assessedDate,
-          courseLoad: savedOffering.courseLoad,
-          hasExistingApplication: false,
-          validationInfos: [],
-          validationWarnings: [
-            OfferingValidationWarnings.ProgramOfferingDeliveryMismatch,
-            OfferingValidationWarnings.InvalidFundedStudyPeriodLength,
-          ],
-          parentOfferingId: savedOffering.parentOffering.id,
-          isBCPrivate: false,
-          isBCPublic: true,
-          onlineInstructionMode: OnlineInstructionModeOptions.SynchronousOnly,
-          isOnlineDurationSameAlways: OfferingYesNoOptions.Yes,
-          totalOnlineDuration: savedOffering.totalOnlineDuration,
-          minimumOnlineDuration: savedOffering.minimumOnlineDuration,
-          maximumOnlineDuration: savedOffering.maximumOnlineDuration,
-        });
       });
   });
 

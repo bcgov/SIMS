@@ -198,17 +198,15 @@
       "components": [
         {
           "label": "Please explain your situation:",
-          "placeholder": "Type here",
-          "applyMaskOn": "change",
+          "placeholder": "Type of expense, when expenses occurred and amount",
           "autoExpand": false,
           "tableView": true,
           "validate": {
             "required": true
           },
-          "validateWhenHidden": false,
           "key": "otherExceptionalCircumstance",
           "conditional": {
-            "show": true,
+            "show": "true",
             "when": "reasonsignificantdecreaseInIncome",
             "eq": "other"
           },
