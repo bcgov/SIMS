@@ -46,7 +46,6 @@ export default defineComponent({
       return (
         props.assessment.scholasticStandingChangeType ===
           StudentScholasticStandingChangeType.StudentWithdrewFromProgram &&
-        !props.assessment.scholasticStandingReversalDate &&
         !!props.assessment.nonPunitiveFormSubmissionItemId
       );
     });

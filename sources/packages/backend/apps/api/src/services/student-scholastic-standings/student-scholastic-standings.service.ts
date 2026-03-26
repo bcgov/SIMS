@@ -544,6 +544,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         "studentScholasticStanding.id",
         "studentScholasticStanding.submittedData",
         "studentScholasticStanding.reversalDate",
+        "studentScholasticStanding.nonPunitiveFormSubmissionItemId",
         "application.applicationStatus",
         "application.applicationNumber",
         "offering.offeringIntensity",

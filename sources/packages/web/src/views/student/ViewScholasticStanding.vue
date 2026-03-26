@@ -9,6 +9,10 @@
     </template>
     <template #alerts>
       <scholastic-standing-reversal-banner v-if="hasReversal" />
+      <scholastic-standing-non-punitive-banner
+        v-if="isNonPunitiveWithdrawal"
+        class="mt-3"
+      />
     </template>
     <scholastic-standing-form
       :scholastic-standing-id="scholasticStandingId"
@@ -24,13 +28,16 @@ import { computed, ref } from "vue";
 import { RouteLocationRaw } from "vue-router";
 import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
 import ScholasticStandingReversalBanner from "@/components/common/students/applicationDetails/ScholasticStandingReversalBanner.vue";
+import ScholasticStandingNonPunitiveBanner from "@/components/common/students/applicationDetails/ScholasticStandingNonPunitiveBanner.vue";
 import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "@/services/http/dto";
+import { StudentScholasticStandingChangeType } from "@/types";
 
 export default {
   name: "ViewScholasticStanding",
   components: {
     ScholasticStandingForm,
     ScholasticStandingReversalBanner,
+    ScholasticStandingNonPunitiveBanner,
   },
   props: {
     applicationId: {
@@ -55,6 +62,13 @@ export default {
       () => !!scholasticStandingDetails.value.reversalDate,
     );
 
+    const isNonPunitiveWithdrawal = computed(
+      () =>
+        scholasticStandingDetails.value.scholasticStandingChangeType ===
+          StudentScholasticStandingChangeType.StudentWithdrewFromProgram &&
+        !!scholasticStandingDetails.value.nonPunitiveFormSubmissionItemId,
+    );
+
     const goBackRouteParams = computed(
       () =>
         ({
@@ -63,7 +77,12 @@ export default {
         }) as RouteLocationRaw,
     );
 
-    return { goBackRouteParams, dataLoaded, hasReversal };
+    return {
+      goBackRouteParams,
+      dataLoaded,
+      hasReversal,
+      isNonPunitiveWithdrawal,
+    };
   },
 };
 </script>

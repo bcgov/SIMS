@@ -81,7 +81,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
         });
     });
 
-     it(`Should throw an unprocessable entity exception when requesting supplementary data for ${KnownSupplementaryDataKey.ProgramYear} and an application ID was not provided.`, async () => {
+    it(`Should throw an unprocessable entity exception when requesting supplementary data for ${KnownSupplementaryDataKey.ProgramYear} and an application ID was not provided.`, async () => {
       // Arrange
       const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.ProgramYear}`;
       const studentToken = await getStudentToken(
@@ -109,7 +109,12 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
       const [parent1, parent2] = Array.from({ length: 2 }, (_, index) =>
         createFakeSupportingUser(
           { application },
-          { initialValues: { supportingUserType: SupportingUserType.Parent, fullName: `Parent ${index + 1}` } },
+          {
+            initialValues: {
+              supportingUserType: SupportingUserType.Parent,
+              fullName: `Parent ${index + 1}`,
+            },
+          },
         ),
       );
       await db.supportingUser.save([parent1, parent2]);
@@ -185,7 +190,12 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
       // Create supporting users.
       const parent = createFakeSupportingUser(
         { application },
-        { initialValues: { supportingUserType: SupportingUserType.Parent, fullName:  "Parent 1" } },
+        {
+          initialValues: {
+            supportingUserType: SupportingUserType.Parent,
+            fullName: "Parent 1",
+          },
+        },
       );
       await db.supportingUser.save([parent]);
 
@@ -223,7 +233,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
         .expect(HttpStatus.BAD_REQUEST)
         .expect({
           message: [
-            "each value in dataKeys must be one of the following values: programYear, parents",
+            "each value in dataKeys must be one of the following values: programYear, parents, scholasticStandingWithdrawals",
             "dataKeys must contain no more than 10 elements",
             "dataKeys must contain at least 1 elements",
           ],
@@ -246,7 +256,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
         .expect(HttpStatus.BAD_REQUEST)
         .expect({
           message: [
-            "each value in dataKeys must be one of the following values: programYear, parents",
+            "each value in dataKeys must be one of the following values: programYear, parents, scholasticStandingWithdrawals",
           ],
           error: "Bad Request",
           statusCode: HttpStatus.BAD_REQUEST,

@@ -46,6 +46,7 @@ export class ScholasticStandingSubmittedDetailsAPIOutDTO extends IntersectionTyp
 ) {
   currentAssessmentTriggerType: AssessmentTriggerType;
   reversalDate?: Date;
+  nonPunitiveFormSubmissionItemId?: number;
 }
 
 /**
