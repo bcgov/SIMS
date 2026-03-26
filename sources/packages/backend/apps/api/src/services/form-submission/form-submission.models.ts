@@ -3,7 +3,6 @@ import {
   FormSubmissionDecisionStatus,
 } from "@sims/sims-db";
 import { ApplicationWithdrawals, Parent } from "../../types";
-import { Role } from "../../auth";
 
 /**
  * Optional data that can be loaded as part of the form.
