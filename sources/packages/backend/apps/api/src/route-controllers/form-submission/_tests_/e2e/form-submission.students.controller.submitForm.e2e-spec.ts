@@ -313,7 +313,10 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);
-    const student = await saveFakeStudent(db.dataSource);
+    // Ensure the student will have an application associated to ensure
+    // the notification will consider it as 'N/A' in the payload.
+    const application = await saveFakeApplication(db.dataSource);
+    const student = application.student;
     // Create a student file to ensure its type was updated.
     const studentFile = await saveFakeStudentFileUpload(db.dataSource, {
       student,
