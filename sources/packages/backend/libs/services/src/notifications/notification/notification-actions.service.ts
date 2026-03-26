@@ -1077,6 +1077,7 @@ export class NotificationActionsService {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
           applicationNumber: notification.applicationNumber,
+          documentNumber: notification.documentNumber,
           errorCodes: notification.errorCodes,
         },
       },
@@ -1554,6 +1555,7 @@ export class NotificationActionsService {
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
+          application: notification.applicationNumber,
           date: this.getDateTimeOnPSTTimeZone(),
         },
       },
@@ -1596,9 +1598,7 @@ export class NotificationActionsService {
           birthDate: getDateOnlyFormat(notification.birthDate),
           studentEmail: notification.email,
           formCategory: notification.formCategory,
-          formName: notification.formNames
-            .map((name) => `<li>${name}</li>`)
-            .join(""),
+          formNames: notification.formNames,
           applicationNumber: notification.applicationNumber ?? "N/A",
           dateTime: this.getDateTimeOnPSTTimeZone(),
         },
