@@ -71,6 +71,7 @@ export interface FormSubmissionTestInputData {
   now?: Date;
   /**
    * Ministry user responsible for the decisions and notes data changes.
+   * Required when the submission status is different than `Pending`.
    */
   ministryAuditUser?: User;
   /**

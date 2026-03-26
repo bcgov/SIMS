@@ -13,7 +13,7 @@ import { FormSubmissionValidatorBase } from ".";
  * Executes validations related to the context of the form submission, such as the
  * form category, application scope, and bundled submission rules.
  * For example, it validates that all forms in the submission share the same application scope
- * and form category, and that they have an application ID when they have application scope.
+ * and form category.
  */
 @Injectable()
 export class ConfigurationContextValidator implements FormSubmissionValidatorBase {

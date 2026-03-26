@@ -161,7 +161,7 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
     // Mock the user received in the token.
-    await mockJWTUserInfo(appModule, application.student.user);
+    await mockJWTUserInfo(appModule, student.user);
 
     // Act/Assert
     let createdSubmissionId: number;
@@ -193,7 +193,7 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
     );
 
     // Validate persisted data in the database.
-    const studentUser = { id: application.student.user.id };
+    const studentUser = { id: student.user.id };
     const createdSubmission = await db.formSubmission.findOne({
       select: {
         id: true,
