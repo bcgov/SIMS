@@ -108,13 +108,12 @@ export class FormSubmissionSubmitService {
         const fileOrigin =
           referenceSubmissionConfig.formCategory === FormCategory.StudentAppeal
             ? FileOriginType.Appeal
-            : FileOriginType.Student;
+            : FileOriginType.FormSubmission;
         await this.studentFileService.updateStudentFiles(
           studentId,
           auditUserId,
           uniqueFileNames,
           fileOrigin,
-
           { entityManager: entityManager },
         );
       }
