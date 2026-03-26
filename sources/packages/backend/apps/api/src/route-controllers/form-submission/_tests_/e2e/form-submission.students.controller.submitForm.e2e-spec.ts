@@ -59,7 +59,7 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
     app = nestApplication;
     appModule = module;
     db = createE2EDataSources(dataSource);
-    formConfigs = await createFakeFormConfigurations(db);
+    formConfigs = await createFakeFormConfigurations(app, db);
     formService = await getProviderInstanceForModule(
       appModule,
       AppStudentsModule,

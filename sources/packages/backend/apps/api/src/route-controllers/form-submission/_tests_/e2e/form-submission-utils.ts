@@ -1,8 +1,10 @@
+import { INestApplication } from "@nestjs/common";
 import { DynamicFormConfiguration, FormCategory } from "@sims/sims-db";
 import {
   E2EDataSources,
   ensureDynamicFormConfigurationExists,
 } from "@sims/test-utils";
+import { DynamicFormConfigurationService } from "../../../../services";
 
 /**
  * Available dynamic configurations to be used in the form submission tests.
@@ -32,10 +34,12 @@ export interface DynamicConfigurationTestData {
 
 /**
  * Create fake dynamic configurations to be shared by the form submission tests.
+ * @param app nest application instance to get the necessary services to refresh the dynamic configurations.
  * @param db data sources.
  * @returns an object with dynamic configurations to be used as needed.
  */
 export async function createFakeFormConfigurations(
+  app: INestApplication,
   db: E2EDataSources,
 ): Promise<DynamicConfigurationTestData> {
   // Create the form configurations to be used along the tests.
@@ -73,6 +77,9 @@ export async function createFakeFormConfigurations(
       allowBundledSubmission: false,
     }),
   ]);
+  await app
+    .get(DynamicFormConfigurationService)
+    .loadAllDynamicFormConfigurations();
   return {
     studentAppealApplicationA,
     studentAppealApplicationB,

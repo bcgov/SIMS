@@ -60,7 +60,7 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmissionHistory", (
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
-    formConfigs = await createFakeFormConfigurations(db);
+    formConfigs = await createFakeFormConfigurations(app, db);
   });
 
   it("Should get the form submission history including student appeals and student forms for the locations the user has access to when there are student appeals and forms previously submitted.", async () => {

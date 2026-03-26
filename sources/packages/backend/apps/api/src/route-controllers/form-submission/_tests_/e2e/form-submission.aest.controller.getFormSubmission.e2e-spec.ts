@@ -38,7 +38,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       db.dataSource,
       AESTGroups.BusinessAdministrators,
     );
-    formConfigs = await createFakeFormConfigurations(db);
+    formConfigs = await createFakeFormConfigurations(app, db);
   });
 
   it("Should get a form submission as pending, its decisions and history when the form has multiple decisions and the user has approval authorization.", async () => {

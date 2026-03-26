@@ -45,7 +45,7 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
       db.dataSource,
       AESTGroups.BusinessAdministrators,
     );
-    formConfigs = await createFakeFormConfigurations(db);
+    formConfigs = await createFakeFormConfigurations(app, db);
   });
 
   beforeEach(async () => {
