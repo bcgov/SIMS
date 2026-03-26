@@ -58,7 +58,7 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmission", () => {
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
-    formConfigs = await createFakeFormConfigurations(db);
+    formConfigs = await createFakeFormConfigurations(app, db);
   });
 
   it("Should get a form submission as pending and its decisions as pending when the final decision is not yet made and there is an approved and a pending decision (no decision set).", async () => {

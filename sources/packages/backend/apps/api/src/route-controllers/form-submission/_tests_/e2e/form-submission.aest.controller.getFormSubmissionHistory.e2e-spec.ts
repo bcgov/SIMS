@@ -38,7 +38,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
     db = createE2EDataSources(dataSource);
     [ministryUser, formConfigs] = await Promise.all([
       db.user.save(createFakeUser()),
-      createFakeFormConfigurations(db),
+      createFakeFormConfigurations(app, db),
     ]);
   });
 
