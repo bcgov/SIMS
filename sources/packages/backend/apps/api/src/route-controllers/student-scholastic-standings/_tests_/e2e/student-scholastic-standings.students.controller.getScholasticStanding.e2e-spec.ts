@@ -53,9 +53,8 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
         },
       },
     );
-    const savedScholasticStanding = await db.studentScholasticStanding.save(
-      scholasticStanding,
-    );
+    const savedScholasticStanding =
+      await db.studentScholasticStanding.save(scholasticStanding);
     const endpoint = `/students/scholastic-standing/${savedScholasticStanding.id}`;
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -106,6 +105,7 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
           application.currentAssessment.offering.exceptionalExpenses,
         currentAssessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
         reversalDate: null,
+        nonPunitiveFormSubmissionItemId: null,
       });
   });
 
