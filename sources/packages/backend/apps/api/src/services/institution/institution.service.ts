@@ -683,10 +683,9 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     if (institutionLocationCode) {
       searchQuery
         .innerJoin("institution.locations", "location")
-        .andWhere(
-          "UPPER(location.institutionCode) = :institutionLocationCode",
-          { institutionLocationCode: institutionLocationCode.toUpperCase() },
-        );
+        .andWhere("location.institutionCode = :institutionLocationCode", {
+          institutionLocationCode: institutionLocationCode.toUpperCase(),
+        });
     }
     return searchQuery.getMany();
   }

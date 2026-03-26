@@ -13,7 +13,6 @@ import {
   createFakeInstitution,
   createFakeInstitutionLocation,
 } from "@sims/test-utils";
-import { SearchInstitutionAPIOutDTO } from "../../models/institution.dto";
 import { InstitutionClassification } from "@sims/sims-db";
 
 describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
@@ -30,22 +29,14 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
   it("Should return institution(s) when searched by legal name.", async () => {
     // Arrange
     const institution = createFakeInstitution(undefined, {
-      initialValues: { legalOperatingName: faker.string.uuid() },
+      initialValues: {
+        legalOperatingName: faker.string.uuid(),
+        operatingName: FAKE_INSTITUTION_NAME,
+      },
     });
-    institution.operatingName = FAKE_INSTITUTION_NAME;
     await db.institution.save(institution);
     // Modifying the text to uppercase to validate non case sensitive search.
     const legalNameSearchText = institution.legalOperatingName.toUpperCase();
-    const expectedSearchResult: SearchInstitutionAPIOutDTO[] = [
-      {
-        id: institution.id,
-        legalName: institution.legalOperatingName,
-        operatingName: institution.operatingName,
-        country: "Canada",
-        classification: InstitutionClassification.Private,
-      },
-    ];
-
     const endpoint = `/aest/institution/search?legalName=${legalNameSearchText}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -55,29 +46,29 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect(({ body }) => {
-        expect(body).toEqual(expectedSearchResult);
+        expect(body).toEqual([
+          {
+            id: institution.id,
+            legalName: institution.legalOperatingName,
+            operatingName: institution.operatingName,
+            country: "Canada",
+            classification: InstitutionClassification.Private,
+          },
+        ]);
       });
   });
 
   it("Should return institutions when searched by legal name and operating name.", async () => {
     // Arrange
     const institution = createFakeInstitution(undefined, {
-      initialValues: { legalOperatingName: faker.string.uuid() },
+      initialValues: {
+        legalOperatingName: faker.string.uuid(),
+        operatingName: FAKE_INSTITUTION_NAME,
+      },
     });
-    institution.operatingName = FAKE_INSTITUTION_NAME;
     await db.institution.save(institution);
     const operatingNameSearchText = "Search E2E Test institution";
     const legalNameSearchText = institution.legalOperatingName;
-    const expectedSearchResult: SearchInstitutionAPIOutDTO[] = [
-      {
-        id: institution.id,
-        legalName: institution.legalOperatingName,
-        operatingName: institution.operatingName,
-        country: "Canada",
-        classification: InstitutionClassification.Private,
-      },
-    ];
-
     const endpoint = `/aest/institution/search?legalName=${legalNameSearchText}&operatingName=${operatingNameSearchText}`;
     const token = await getAESTToken(AESTGroups.Operations);
 
@@ -87,7 +78,15 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect(({ body }) => {
-        expect(body).toEqual(expectedSearchResult);
+        expect(body).toEqual([
+          {
+            id: institution.id,
+            legalName: institution.legalOperatingName,
+            operatingName: institution.operatingName,
+            country: "Canada",
+            classification: InstitutionClassification.Private,
+          },
+        ]);
       });
   });
 
@@ -102,16 +101,6 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
     // Modifying the text to lowercase to validate non case sensitive search.
     const locationCodeSearchText =
       institutionLocation.institutionCode.toLowerCase();
-    const expectedSearchResult: SearchInstitutionAPIOutDTO[] = [
-      {
-        id: institution.id,
-        legalName: institution.legalOperatingName,
-        operatingName: institution.operatingName,
-        country: "Canada",
-        classification: InstitutionClassification.Private,
-      },
-    ];
-
     const endpoint = `/aest/institution/search?institutionLocationCode=${locationCodeSearchText}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -121,7 +110,15 @@ describe("InstitutionAESTController(e2e)-searchInstitutions", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect(({ body }) => {
-        expect(body).toEqual(expectedSearchResult);
+        expect(body).toEqual([
+          {
+            id: institution.id,
+            legalName: institution.legalOperatingName,
+            operatingName: institution.operatingName,
+            country: "Canada",
+            classification: InstitutionClassification.Private,
+          },
+        ]);
       });
   });
 
