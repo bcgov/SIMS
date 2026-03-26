@@ -36,7 +36,7 @@ instances:
 # If we need to restore the cluster from a backup, we need to set the following values
 # assuming restore from repo2 (s3), adjust as needed if your S3 repo is different
 dataSource:
-  enabled: true
+  enabled: false
   s3Path: "/habackup-silver"
 
 pgBackRest:
