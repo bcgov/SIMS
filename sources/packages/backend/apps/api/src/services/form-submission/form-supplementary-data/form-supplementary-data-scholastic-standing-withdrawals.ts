@@ -10,7 +10,7 @@ import {
   StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { IsNull, Repository } from "typeorm";
 import { ApplicationWithdrawals } from "apps/api/src/types";
 
 @Injectable()
@@ -64,33 +64,46 @@ export class SupplementaryDataScholasticStandingWithdrawals extends Supplementar
     _applicationId: number | undefined,
     studentId: number,
   ): Promise<ApplicationWithdrawals[]> {
-    const withdrawalScholasticStandings = await this.applicationRepo
-      .createQueryBuilder("application")
-      .addSelect("application.applicationNumber", "applicationNumber")
-      .addSelect("scholasticStanding.id", "scholasticStandingId")
-      .innerJoin("application.student", "student")
-      .innerJoin("application.studentAssessments", "assessment")
-      .innerJoin("assessment.studentScholasticStanding", "scholasticStanding")
-      .where("student.id = :studentId", { studentId })
-      .andWhere("scholasticStanding.changeType = :changeType", {
-        changeType:
-          StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-      })
-      .andWhere("scholasticStanding.reversalDate IS NULL")
-      .getRawMany<{
-        applicationNumber: string;
-        scholasticStandingId: string;
-      }>();
-
-    const scholasticStandingByApplication = [];
-    for (const withdrawalScholasticStanding of withdrawalScholasticStandings) {
-      scholasticStandingByApplication.push({
-        applicationNumber: withdrawalScholasticStanding.applicationNumber,
-        scholasticStandingId: Number(
-          withdrawalScholasticStanding.scholasticStandingId,
-        ),
-      });
-    }
-    return scholasticStandingByApplication;
+    const applications = await this.applicationRepo.find({
+      select: {
+        applicationNumber: true,
+        studentAssessments: {
+          id: true,
+          studentScholasticStanding: {
+            id: true,
+            changeType: true,
+            reversalDate: true,
+            nonPunitiveFormSubmissionItemId: true,
+          },
+        },
+      },
+      relations: {
+        student: true,
+        studentAssessments: {
+          studentScholasticStanding: true,
+        },
+      },
+      where: {
+        student: { id: studentId },
+        studentAssessments: {
+          studentScholasticStanding: {
+            changeType:
+              StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+            reversalDate: IsNull(),
+            nonPunitiveFormSubmissionItemId: IsNull(),
+          },
+        },
+      },
+    });
+    const withdrawalScholasticStandings = applications.flatMap((application) =>
+      (application.studentAssessments ?? [])
+        .map((assessment) => assessment.studentScholasticStanding)
+        .filter((standing) => !!standing)
+        .map((standing) => ({
+          applicationNumber: application.applicationNumber,
+          scholasticStandingId: standing.id,
+        })),
+    );
+    return withdrawalScholasticStandings;
   }
 }

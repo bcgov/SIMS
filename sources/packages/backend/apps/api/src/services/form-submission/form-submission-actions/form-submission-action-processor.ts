@@ -4,6 +4,7 @@ import { FormSubmission, FormSubmissionActionType } from "@sims/sims-db";
 import { FormSubmissionAction } from "./form-submission-action";
 import { FormSubmissionCreateAppealAssessmentAction } from "./form-submission-create-appeal-assessment-action";
 import { FormSubmissionUpdateModifiedIndependentAction } from "./form-submission-update-modified-independent-action";
+import { FormSubmissionUpdateNonPunitiveScholasticStandingWithdrawal } from "./form-submission-update-non-punitive-scholastic-standing-withdrawal";
 import { FormSubmissionActionModel } from "./form-submission-action-models";
 
 /**
@@ -17,10 +18,12 @@ export class FormSubmissionActionProcessor {
   constructor(
     createAppealAssessmentAction: FormSubmissionCreateAppealAssessmentAction,
     updateModifiedIndependentAction: FormSubmissionUpdateModifiedIndependentAction,
+    updateNonPunitiveScholasticStandingWithdrawal: FormSubmissionUpdateNonPunitiveScholasticStandingWithdrawal,
   ) {
     this.actions = [
       createAppealAssessmentAction,
       updateModifiedIndependentAction,
+      updateNonPunitiveScholasticStandingWithdrawal,
     ];
   }
 
@@ -106,6 +109,7 @@ export class FormSubmissionActionProcessor {
               offering: { id: true },
             },
           },
+          submissionStatus: true,
           formSubmissionItems: {
             id: true,
             submittedData: true,
@@ -129,10 +133,12 @@ export class FormSubmissionActionProcessor {
       applicationId: formSubmission.application?.id,
       currentOfferingId:
         formSubmission.application?.currentAssessment?.offering?.id,
+      submissionStatus: formSubmission.submissionStatus,
       submissionItems: formSubmission.formSubmissionItems.map((item) => ({
         id: item.id,
         actions: item.submittedData.actions ?? [],
         decisionStatus: item.currentDecision.decisionStatus,
+        submittedData: item.submittedData,
       })),
     };
   }

@@ -81,6 +81,7 @@ export class FormSubmissionItem extends RecordDataModel {
 export enum FormSubmissionActionType {
   CreateStudentAppealAssessment = "CreateStudentAppealAssessment",
   UpdateModifiedIndependent = "UpdateModifiedIndependent",
+  UpdateNonPunitiveScholasticStandingWithdrawal = "UpdateNonPunitiveScholasticStandingWithdrawal",
 }
 
 export interface FormSubmissionSubmittedData extends Record<string, unknown> {

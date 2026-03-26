@@ -9,6 +9,15 @@
     ],
     "components": [
         {
+            "label": "Actions: Update Non Punitive Scholastic Standing Withdrawal",
+            "calculateValue": "value = [\"UpdateNonPunitiveScholasticStandingWithdrawal\"];",
+            "calculateServer": true,
+            "key": "actions",
+            "type": "hidden",
+            "input": true,
+            "tableView": false
+        },
+        {
             "label": "Withdrawal Scholastic Standing Applications",
             "key": "scholasticStandingWithdrawals",
             "tags": [
@@ -41,25 +50,15 @@
             "placeholder": "Application Number",
             "customClass": "font-weight-bold",
             "tableView": true,
+            "dataSrc": "custom",
+            "data": {
+                "custom": "values = data.scholasticStandingWithdrawals;"
+            },
+            "valueProperty": "scholasticStandingId",
+            "template": "<span>{{ item.applicationNumber }}</span>",
             "customOptions": "",
             "validateWhenHidden": false,
-            "key": "select",
-            "logic": [
-                {
-                    "name": "Populate application number list",
-                    "trigger": {
-                        "type": "javascript",
-                        "javascript": "result = !!data.scholasticStandingWithdrawals;"
-                    },
-                    "actions": [
-                        {
-                            "name": "Populate application number dropdown",
-                            "type": "customAction",
-                            "customAction": "component.data.values = data.scholasticStandingWithdrawals.map((withdrawal) => ({\r\n  value: withdrawal.scholasticStandingId,\r\n  label: withdrawal.applicationNumber,\r\n}));"
-                        }
-                    ]
-                }
-            ],
+            "key": "nonPunitiveWithdrawalId",
             "type": "select",
             "input": true
         },

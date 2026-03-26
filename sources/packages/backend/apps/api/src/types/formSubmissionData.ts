@@ -5,5 +5,5 @@ export interface Parent {
 
 export interface ApplicationWithdrawals {
   applicationNumber: string;
-  scholasticStandingWithdrawalId: number;
+  scholasticStandingId: number;
 }

@@ -150,4 +150,12 @@ export class StudentScholasticStanding extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   reversalNote?: Note;
+  /**
+   * Non-punitive form submission item ID for the scholastic standing withdrawal.
+   */
+  @Column({
+    name: "non_punitive_form_submission_item_id",
+    nullable: true,
+  })
+  nonPunitiveFormSubmissionItemId?: number;
 }
