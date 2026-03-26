@@ -161,7 +161,7 @@ export class FormSubmissionStudentsController extends BaseController {
       "There is already a pending form submission for the same context or " +
       "one or more forms configurations in the submission are not recognized or " +
       "all forms in the submission must have the same application scope or " +
-      "all forms in the submission must have an application ID when they have application scope or " +
+      "all forms in the submission must have an application ID when they have application scope and must not have one otherwise or " +
       "one or more forms in the submission do not allow bundled submissions or " +
       "all forms in the submission must share the same form category or " +
       "the application is not eligible for an appeal or " +

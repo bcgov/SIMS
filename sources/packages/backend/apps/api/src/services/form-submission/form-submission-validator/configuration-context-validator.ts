@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { FormSubmissionConfig } from "../form-submission.models";
 import { CustomNamedError } from "@sims/utilities";
 import {
-  FORM_SUBMISSION_APPLICATION_SCOPE_MISSING_APPLICATION_ID,
+  FORM_SUBMISSION_APPLICATION_SCOPE_AND_APPLICATION_ID_MISMATCH,
   FORM_SUBMISSION_BUNDLED_SUBMISSION_FORMS_NOT_ALLOWED,
   FORM_SUBMISSION_MIXED_FORM_APPLICATION_SCOPE,
   FORM_SUBMISSION_MIXED_FORM_CATEGORIES,
@@ -35,17 +35,16 @@ export class ConfigurationContextValidator implements FormSubmissionValidatorBas
         FORM_SUBMISSION_MIXED_FORM_APPLICATION_SCOPE,
       );
     }
-    // For application scoped forms, validate if all forms have an application ID.
-    if (referencedConfig.hasApplicationScope) {
-      const hasApplicationId = formSubmissionConfigs.every(
-        (config) => !!config.applicationId,
+    // Forms with application scope must have an application ID and vice versa.
+    const hasApplicationScopeAligned = formSubmissionConfigs.every(
+      (config) =>
+        !!config.applicationId === referencedConfig.hasApplicationScope,
+    );
+    if (!hasApplicationScopeAligned) {
+      throw new CustomNamedError(
+        "All forms in the submission must have an application ID when they have application scope and must not have one otherwise.",
+        FORM_SUBMISSION_APPLICATION_SCOPE_AND_APPLICATION_ID_MISMATCH,
       );
-      if (!hasApplicationId) {
-        throw new CustomNamedError(
-          "All forms in the submission must have an application ID when they have application scope.",
-          FORM_SUBMISSION_APPLICATION_SCOPE_MISSING_APPLICATION_ID,
-        );
-      }
     }
     // Validate if the forms allow bundled submissions when there are multiple items.
     const hasAllowedItemsQuantity =

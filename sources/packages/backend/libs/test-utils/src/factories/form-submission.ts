@@ -72,7 +72,7 @@ export interface FormSubmissionTestInputData {
   /**
    * Ministry user responsible for the decisions and notes data changes.
    */
-  ministryAuditUser: User;
+  ministryAuditUser?: User;
   /**
    * Form submission items to be created.
    * Can be provided with decisions to be created for each item.
