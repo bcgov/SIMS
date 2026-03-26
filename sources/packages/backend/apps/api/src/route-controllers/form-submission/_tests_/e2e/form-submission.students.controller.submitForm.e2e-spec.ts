@@ -222,6 +222,7 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
         },
       },
       where: { id: createdSubmissionId },
+      order: { formSubmissionItems: { id: "ASC" } },
       loadEagerRelations: false,
     });
     expect(createdSubmission).toEqual({
