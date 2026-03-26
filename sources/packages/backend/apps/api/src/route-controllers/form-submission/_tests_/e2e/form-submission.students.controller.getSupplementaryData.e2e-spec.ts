@@ -13,11 +13,15 @@ import { KnownSupplementaryDataKey } from "../../../../services";
 import {
   createE2EDataSources,
   createFakeSupportingUser,
+  createFakeStudentScholasticStanding,
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
-import { SupportingUserType } from "@sims/sims-db";
+import {
+  StudentScholasticStandingChangeType,
+  SupportingUserType,
+} from "@sims/sims-db";
 
 describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
   let app: INestApplication;
@@ -180,6 +184,122 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
           error: "Unprocessable Entity",
           statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         });
+    });
+  });
+
+  describe(`Supplementary data validations for ${KnownSupplementaryDataKey.ScholasticStandingWithdrawals}.`, () => {
+    it(`Should get supplementary data for ${KnownSupplementaryDataKey.ScholasticStandingWithdrawals} when there is a scholastic standing of change type ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram} that is not reversed and a non punitive withdrawal form has not been previously submitted for this application.`, async () => {
+      // Arrange
+      const application = await saveFakeApplication(db.dataSource);
+      const scholasticStanding = createFakeStudentScholasticStanding(
+        { submittedBy: application.student.user, application },
+        {
+          initialValues: {
+            changeType:
+              StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+          },
+        },
+      );
+      const savedScholasticStanding =
+        await db.studentScholasticStanding.save(scholasticStanding);
+      // Link the assessment to the scholastic standing.
+      application.currentAssessment.studentScholasticStanding =
+        savedScholasticStanding;
+      await db.studentAssessment.save(application.currentAssessment);
+      const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.ScholasticStandingWithdrawals}`;
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      // Mock the user received in the token.
+      await mockJWTUserInfo(appModule, application.student.user);
+
+      // Act/Assert
+      const response = await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK);
+      expect(response.body).toStrictEqual({
+        formData: {
+          scholasticStandingWithdrawals: [
+            {
+              applicationNumber: application.applicationNumber,
+              scholasticStandingId: savedScholasticStanding.id,
+            },
+          ],
+        },
+      });
+    });
+
+    it(`Should not return supplementary data for ${KnownSupplementaryDataKey.ScholasticStandingWithdrawals} when the ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram} scholastic standing is reversed.`, async () => {
+      // Arrange
+      const application = await saveFakeApplication(db.dataSource);
+      const scholasticStanding = createFakeStudentScholasticStanding(
+        { submittedBy: application.student.user, application },
+        {
+          initialValues: {
+            changeType:
+              StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+            reversalDate: new Date(),
+          },
+        },
+      );
+      const savedScholasticStanding =
+        await db.studentScholasticStanding.save(scholasticStanding);
+      // Link the assessment to the scholastic standing.
+      application.currentAssessment.studentScholasticStanding =
+        savedScholasticStanding;
+      await db.studentAssessment.save(application.currentAssessment);
+      const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.ScholasticStandingWithdrawals}`;
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      // Mock the user received in the token.
+      await mockJWTUserInfo(appModule, application.student.user);
+
+      // Act/Assert
+      const response = await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK);
+      expect(response.body).toStrictEqual({
+        formData: { scholasticStandingWithdrawals: [] },
+      });
+    });
+
+    it(`Should not return supplementary data for ${KnownSupplementaryDataKey.ScholasticStandingWithdrawals} when the ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram} scholastic standing has a non punitive withdrawal form that is previously submitted for this application.`, async () => {
+      // Arrange
+      const application = await saveFakeApplication(db.dataSource);
+      const scholasticStanding = createFakeStudentScholasticStanding(
+        { submittedBy: application.student.user, application },
+        {
+          initialValues: {
+            changeType:
+              StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+            nonPunitiveFormSubmissionItemId: 1,
+          },
+        },
+      );
+      const savedScholasticStanding =
+        await db.studentScholasticStanding.save(scholasticStanding);
+      // Link the assessment to the scholastic standing.
+      application.currentAssessment.studentScholasticStanding =
+        savedScholasticStanding;
+      await db.studentAssessment.save(application.currentAssessment);
+      const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.ScholasticStandingWithdrawals}`;
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      // Mock the user received in the token.
+      await mockJWTUserInfo(appModule, application.student.user);
+
+      // Act/Assert
+      const response = await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK);
+      expect(response.body).toStrictEqual({
+        formData: { scholasticStandingWithdrawals: [] },
+      });
     });
   });
 
