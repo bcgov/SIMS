@@ -155,7 +155,6 @@ describe("StudentExternalController(e2e)-getActiveSINs", () => {
       { student },
       { initialValue: { isValidSIN: true } },
     );
-    await db.sinValidation.save(newerSINValidation);
     // Update the student to point to the newer SIN validation as the current one.
     student.sinValidation = newerSINValidation;
     await db.student.save(student);
@@ -182,6 +181,7 @@ describe("StudentExternalController(e2e)-getActiveSINs", () => {
         expect(body.sins).not.toContain(olderValidSIN);
       });
   });
+
   it("Should include SFAS student SIN when student has a FT application with start date between now and 90 days in the future and no cancelled status.", async () => {
     // Arrange
     const individual = await saveFakeSFASIndividual(db.dataSource);
@@ -293,10 +293,44 @@ describe("StudentExternalController(e2e)-getActiveSINs", () => {
       });
   });
 
-  it("Should return HTTP 401 when request is not authenticated.", async () => {
+  it("Should include both a SIMS and a SFAS student SIN when each has a qualifying FT application with start date between now and 90 days in the future.", async () => {
+    // Arrange
+    // Create a SIMS student with a FT application starting 45 days in the future.
+    const student = await saveFakeStudent(db.dataSource);
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        offeringInitialValues: {
+          studyStartDate: getISODateOnlyString(addDays(45)),
+          studyEndDate: getISODateOnlyString(addDays(120)),
+        },
+      },
+    );
+    // Create a SFAS individual with a FT application starting 45 days in the future.
+    const individual = await saveFakeSFASIndividual(db.dataSource);
+    const sfasApplication = createFakeSFASApplication(
+      { individual },
+      {
+        initialValues: {
+          startDate: getISODateOnlyString(addDays(45)),
+          endDate: getISODateOnlyString(addDays(120)),
+          applicationCancelDate: null,
+        },
+      },
+    );
+    await db.sfasApplication.save(sfasApplication);
+    const token = await getExternalUserToken();
+    // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
-      .expect(HttpStatus.UNAUTHORIZED);
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => {
+        expect(body.sins).toContain(student.sinValidation.sin);
+        expect(body.sins).toContain(individual.sin);
+      });
   });
 
   afterAll(async () => {
