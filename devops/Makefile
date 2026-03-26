@@ -69,7 +69,8 @@ export QUEUE_CONSUMERS_REPLICAS := $(or ${QUEUE_CONSUMERS_REPLICAS}, 2)
 export THROTTLE_TIME := $(or $(THROTTLE_TIME), 10000)
 export THROTTLE_LIMIT := $(or $(THROTTLE_LIMIT), 30)
 export FORMS_PORT := 3001
-
+# Artifactory server URL.
+export ARTIFACTORY_SERVER_ADDRESS := $(or ${ARTIFACTORY_SERVER_ADDRESS}, artifacts.developer.gov.bc.ca)
 # Timeout waiting for a migrations openshift process to complete in seconds.
 export MIGRATIONS_OC_TIMEOUT := 300s 
 
@@ -274,10 +275,10 @@ init-zone-b-sftp-secret:
 		--from-file=private-key=./openshift/zone-b-private-key.cer \
 		--dry-run=client -o yaml | oc apply -f -
 
-init-artifactory-secret-credential:
+create-artifactory-secret-credential:
 	test -n $(NAMESPACE)
 	@oc create secret docker-registry artifactory-secret-credential -n $(NAMESPACE) \
-    	--docker-server=artifacts.developer.gov.bc.ca \
+    	--docker-server=$(ARTIFACTORY_SERVER_ADDRESS) \
     	--docker-username=$(ARTIFACTORY_USERNAME) \
     	--docker-password=$(ARTIFACTORY_PASSWORD) \
     	--docker-email=$(ARTIFACTORY_EMAIL)
