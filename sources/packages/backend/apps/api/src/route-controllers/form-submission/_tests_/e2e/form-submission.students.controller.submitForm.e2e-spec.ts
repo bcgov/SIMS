@@ -92,7 +92,7 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
     );
   });
 
-  it("Should submit a student appeal with multiple items, an associated application, with supplementary data, updating file, and sending a Ministry notification when the student has no pending submissions.", async () => {
+  it("Should submit a student appeal with multiple items, an associated application, with supplementary data, an updated file, and send a Ministry notification when the student has no pending submissions.", async () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);

@@ -1,7 +1,7 @@
 -- Postgres does not allow the removal of items of an enum, only add or rename.
 -- To remove the previously added items, a temporary enum will be created to
 -- allow the creation of the enum as it was before.
-CREATE TYPE sims.student_files_trigger_file_origin_types_to_be_updated AS ENUM (
+CREATE TYPE sims.file_origin_type_to_rollback AS ENUM (
   'Temporary',
   'Application',
   'Student',
