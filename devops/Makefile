@@ -205,12 +205,18 @@ generate-service-account-token:
 	test -n $(SERVICE_ACCOUNT_NAME)
 	@oc -n $(SERVICE_ACCOUNT_NAMESPACE) create token $(SERVICE_ACCOUNT_NAME) --duration=4380h
 
-# Add edit role to a service account in the target namespace.
-add-role-edit-for-service-account:
+# Add role edit to a service account in the target namespace.
+add-role-edit-to-service-account:
 	test -n $(NAMESPACE)
 	test -n $(SERVICE_ACCOUNT_NAMESPACE)
 	test -n $(SERVICE_ACCOUNT_NAME)
 	@oc -n $(NAMESPACE) create rolebinding $(SERVICE_ACCOUNT_NAME)-edit --clusterrole=edit --serviceaccount=$(SERVICE_ACCOUNT_NAMESPACE):$(SERVICE_ACCOUNT_NAME)
+
+# Add role image-puller to a service account group in the target namespace.
+add-role-image-puller-to-target-namespace:
+	test -n $(IMAGE_SOURCE_NAMESPACE)
+	test -n $(TARGET_NAMESPACE)
+	@oc -n $(IMAGE_SOURCE_NAMESPACE) create rolebinding "$(TARGET_NAMESPACE)-system:image-puller" --clusterrole="system:image-puller" --group=system:serviceaccounts:$(TARGET_NAMESPACE)
 
 create-network-policies:
 	@echo "Create network policies for namespace: $(NAMESPACE)"
