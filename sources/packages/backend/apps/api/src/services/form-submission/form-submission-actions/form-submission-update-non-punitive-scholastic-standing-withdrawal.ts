@@ -59,11 +59,11 @@ export class FormSubmissionUpdateNonPunitiveScholasticStandingWithdrawal extends
       .update(
         {
           id: submittedData.nonPunitiveWithdrawalId,
-          nonPunitiveFormSubmissionItem: IsNull(),
+          nonPunitiveFormSubmissionItemId: IsNull(),
           reversalDate: IsNull(),
         },
         {
-          nonPunitiveFormSubmissionItem: { id: submissionItem.id },
+          nonPunitiveFormSubmissionItemId: submissionItem.id,
           modifier: auditUser,
           updatedAt: auditDate,
         },

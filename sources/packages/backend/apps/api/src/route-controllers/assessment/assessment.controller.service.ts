@@ -554,8 +554,7 @@ export class AssessmentControllerService {
         scholasticStandingReversalDate:
           assessment.studentScholasticStanding?.reversalDate,
         nonPunitiveFormSubmissionItemId:
-          assessment.studentScholasticStanding?.nonPunitiveFormSubmissionItem
-            ?.id,
+          assessment.studentScholasticStanding?.nonPunitiveFormSubmissionItemId,
       }),
     );
     const unsuccessfulScholasticStandingHistory =

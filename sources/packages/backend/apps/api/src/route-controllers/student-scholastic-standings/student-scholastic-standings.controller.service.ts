@@ -67,7 +67,7 @@ export class ScholasticStandingControllerService {
       currentAssessmentTriggerType: application.currentAssessment.triggerType,
       reversalDate: scholasticStanding.reversalDate,
       nonPunitiveFormSubmissionItemId:
-        scholasticStanding.nonPunitiveFormSubmissionItem?.id,
+        scholasticStanding.nonPunitiveFormSubmissionItemId,
     };
   }
 

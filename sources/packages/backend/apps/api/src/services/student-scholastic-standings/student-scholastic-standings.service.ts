@@ -544,7 +544,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         "studentScholasticStanding.id",
         "studentScholasticStanding.submittedData",
         "studentScholasticStanding.reversalDate",
-        "nonPunitiveFormSubmissionItem.id",
+        "studentScholasticStanding.nonPunitiveFormSubmissionItemId",
         "application.applicationStatus",
         "application.applicationNumber",
         "offering.offeringIntensity",
@@ -577,10 +577,6 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
-      .leftJoin(
-        "studentScholasticStanding.nonPunitiveFormSubmissionItem",
-        "nonPunitiveFormSubmissionItem",
-      )
       .where("studentScholasticStanding.id = :scholasticStandingId", {
         scholasticStandingId,
       });
