@@ -39,9 +39,9 @@ export interface FormSubmissionItemTestInputData {
    */
   decisions: FormSubmissionDecisionTestInputData[];
   /**
-   * Submission data to be associated with the form submission item.
+   * Submitted data to be associated with the form submission item.
    */
-  submissionData?: FormSubmissionSubmittedData;
+  submittedData?: FormSubmissionSubmittedData;
 }
 
 /**
@@ -123,8 +123,8 @@ export async function saveFakeFormSubmissionFromInputTestData(
       creator: student.user,
     });
     submissionItem.formSubmission = formSubmission;
-    if (itemInputData.submissionData) {
-      submissionItem.submittedData = itemInputData.submissionData;
+    if (itemInputData.submittedData) {
+      submissionItem.submittedData = itemInputData.submittedData;
     }
     // Update the array to avoid reloading the data and allowing a
     // method consumer to have access to the data.

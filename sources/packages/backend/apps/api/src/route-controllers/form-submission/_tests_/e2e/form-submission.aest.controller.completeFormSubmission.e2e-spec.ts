@@ -32,11 +32,9 @@ import {
 import MockDate from "mockdate";
 import { getPSTPDTDateTime } from "@sims/utilities";
 import { FORM_SUBMISSION_ITEM_OUTDATED } from "../../../../services";
-//import { TestingModule } from "@nestjs/testing";
 
 describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
   let app: INestApplication;
-  //let appModule: TestingModule;
   let db: E2EDataSources;
   let ministryAdminUser: User;
   let formConfigs: DynamicConfigurationTestData;
@@ -44,7 +42,6 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
-    //appModule = module;
     db = createE2EDataSources(dataSource);
     ministryAdminUser = await getAESTUser(
       db.dataSource,
@@ -57,7 +54,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
     MockDate.reset();
   });
 
-  it("Should complete a student appeal, create an appeal assessment, and generated a notification when all items have decisions and the user has approval authorization.", async () => {
+  it("Should complete a student appeal, create an appeal assessment, and generate a notification when all items have decisions and the user has approval authorization.", async () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);
@@ -74,7 +71,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
       formSubmissionItems: [
         {
           dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
-          submissionData: {
+          submittedData: {
             actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
           },
           decisions: [
@@ -214,7 +211,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
             formSubmissionItems: [
               {
                 dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
-                submissionData: {
+                submittedData: {
                   actions: [FormSubmissionActionType.UpdateModifiedIndependent],
                 },
                 decisions: [{ decisionStatus }],
@@ -412,7 +409,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
       });
   });
 
-  it("Should throw an unprocessable entity error when attempting to complete a student form but a item decision is pending.", async () => {
+  it("Should throw an unprocessable entity error when attempting to complete a student form but an item decision is pending.", async () => {
     // Arrange
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
       ministryAuditUser: ministryAdminUser,
