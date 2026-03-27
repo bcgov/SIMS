@@ -25,10 +25,9 @@ export class FormSubmissionUpdateNonPunitiveScholasticStandingWithdrawal extends
    * @param auditUserId ID of the user performing the action.
    * @param auditDate date the action is being performed.
    * @param entityManager entity manager to use for database operations.
-   * throws error if:
-   * - there are unexpected number of submission items associated with the form submission action.
-   * - the form submission item associated with the non-punitive scholastic standing withdrawal is not approved.
-   * - the update operation failed.
+   * @throws Error If there is an unexpected number of submission items associated with the form submission action.
+   * @throws Error If the form submission item associated with the non-punitive scholastic standing withdrawal is not approved.
+   * @throws Error If the update operation fails.
    */
   protected async applyAction(
     formSubmission: FormSubmissionActionModel,
