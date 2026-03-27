@@ -35,6 +35,7 @@
               density="compact"
               label="Institution location code"
               variant="outlined"
+              :maxlength="4"
               :model-value="locationCode"
               @update:model-value="locationCode = $event?.toUpperCase() ?? ''"
               @keyup.enter="searchInstitutions"
