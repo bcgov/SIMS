@@ -344,7 +344,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
         },
         {
           submissionItemId: formSubmissionItemB.id,
-          // Force the submission item to be outdated by setting a past date in the payload.
+          // Force the submission item to be outdated by sending a different lastUpdateDate in the payload.
           lastUpdateDate: new Date(),
         },
       ],
@@ -413,7 +413,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
     // Arrange
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
       ministryAuditUser: ministryAdminUser,
-      formCategory: FormCategory.StudentAppeal,
+      formCategory: FormCategory.StudentForm,
       submissionStatus: FormSubmissionStatus.Pending,
       formSubmissionItems: [
         {
