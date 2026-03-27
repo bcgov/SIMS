@@ -255,7 +255,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "studentScholasticStanding.id",
         "studentScholasticStanding.changeType",
         "studentScholasticStanding.reversalDate",
-        "studentScholasticStanding.nonPunitiveFormSubmissionItemId",
+        "nonPunitiveFormSubmissionItem.id",
         "application.id",
         "applicationException.id",
         "assessment.studentAssessmentStatus",
@@ -272,6 +272,10 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .leftJoin(
         "assessment.studentScholasticStanding",
         "studentScholasticStanding",
+      )
+      .leftJoin(
+        "studentScholasticStanding.nonPunitiveFormSubmissionItem",
+        "nonPunitiveFormSubmissionItem",
       )
       .leftJoin("application.applicationException", "applicationException")
       .where("application.id = :applicationId", { applicationId })

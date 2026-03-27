@@ -12,6 +12,8 @@ import {
 import { KnownSupplementaryDataKey } from "../../../../services";
 import {
   createE2EDataSources,
+  createFakeDynamicFormConfiguration,
+  createFakeFormSubmissionItem,
   createFakeSupportingUser,
   createFakeStudentScholasticStanding,
   E2EDataSources,
@@ -19,6 +21,7 @@ import {
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
 import {
+  DynamicFormType,
   StudentScholasticStandingChangeType,
   SupportingUserType,
 } from "@sims/sims-db";
@@ -269,13 +272,24 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
     it(`Should not return supplementary data for ${KnownSupplementaryDataKey.ScholasticStandingWithdrawals} when the ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram} scholastic standing has a non punitive withdrawal form that is previously submitted for this application.`, async () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource);
+      // Create a fake FormSubmissionItem to simulate a previously submitted non-punitive withdrawal form.
+      const dynamicFormConfiguration = createFakeDynamicFormConfiguration(
+        DynamicFormType.StudentFinancialAidApplication,
+      );
+      await db.dynamicFormConfiguration.save(dynamicFormConfiguration);
+      const formSubmissionItem = createFakeFormSubmissionItem({
+        dynamicFormConfiguration,
+        creator: application.student.user,
+      });
+      const savedFormSubmissionItem =
+        await db.formSubmissionItem.save(formSubmissionItem);
       const scholasticStanding = createFakeStudentScholasticStanding(
         { submittedBy: application.student.user, application },
         {
           initialValues: {
             changeType:
               StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-            nonPunitiveFormSubmissionItemId: 1,
+            nonPunitiveFormSubmissionItem: savedFormSubmissionItem,
           },
         },
       );
