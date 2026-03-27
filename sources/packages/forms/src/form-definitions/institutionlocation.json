@@ -65,29 +65,96 @@
             "maxLength": 100
           },
           "key": "locationName",
-          "attributes": {
-            "data-cy": "locationName"
-          },
           "type": "textfield",
           "input": true
         },
         {
           "label": "Institution location code",
-          "tooltip": "Unique 4 digit alpha code assigned the first time an institution is designated in Canada. If your institution has not yet been designated, input a random 4-letter code as a temporary Institution Location Code, and contact SABC to revise this code once your permanent code has been received. This code must be a valid federal education institution code prior to students submitting applications",
+          "applyMaskOn": "change",
           "tableView": true,
           "case": "uppercase",
           "validate": {
             "required": true,
+            "pattern": "[A-Z]*",
             "minLength": 4,
-            "maxLength": 4,
-            "pattern": "[A-Z]*"
+            "maxLength": 4
           },
+          "validateWhenHidden": false,
           "key": "institutionCode",
-          "attributes": {
-            "data-cy": "institutionCode"
-          },
+          "logic": [
+            {
+              "name": "Disable and clear when no institution location code",
+              "trigger": {
+                "type": "simple",
+                "simple": {
+                  "show": true,
+                  "when": "noInstitutionCode",
+                  "eq": "true"
+                }
+              },
+              "actions": [
+                {
+                  "name": "Disable field",
+                  "type": "property",
+                  "property": {
+                    "label": "Disabled",
+                    "value": "disabled",
+                    "type": "boolean"
+                  },
+                  "state": true
+                },
+                {
+                  "name": "Clear value",
+                  "type": "value",
+                  "value": "value = '';"
+                },
+                {
+                  "name": "Required false",
+                  "type": "property",
+                  "property": {
+                    "label": "Required",
+                    "value": "validate.required",
+                    "type": "boolean"
+                  },
+                  "state": false
+                }
+              ]
+            }
+          ],
           "type": "textfield",
           "input": true
+        },
+        {
+          "label": "I do not have an institution location code.",
+          "tableView": false,
+          "defaultValue": false,
+          "key": "noInstitutionCode",
+          "type": "checkbox",
+          "input": true
+        },
+        {
+          "label": "Missing institution location code",
+          "tag": "p",
+          "className": "alert alert-warning fa fa-exclamation-triangle w-100",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "<strong> Missing institution location code</strong>\n<br />Please note: You will be able to create this location without an institution location code. However, you will not be able to designate this location until you obtain a federally issued code from StudentAid BC. Once you submit your location please email <a href=\"mailto:designat@gov.bc.ca\">designat@gov.bc.ca</a> and request they provide you with the code and update the location information.",
+          "refreshOnChange": true,
+          "customClass": "banner-warning",
+          "hidden": true,
+          "key": "noInstitutionCodeBanner",
+          "conditional": {
+            "show": true,
+            "when": "noInstitutionCode",
+            "eq": "true"
+          },
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
         },
         {
           "label": "Address line 1",
@@ -97,9 +164,6 @@
             "maxLength": 100
           },
           "key": "addressLine1",
-          "attributes": {
-            "data-cy": "addressLine1"
-          },
           "type": "textfield",
           "input": true
         },
@@ -110,9 +174,6 @@
             "maxLength": 100
           },
           "key": "addressLine2",
-          "attributes": {
-            "data-cy": "addressLine2"
-          },
           "type": "textfield",
           "input": true
         },
@@ -142,9 +203,6 @@
                     "onlyAvailableItems": true
                   },
                   "key": "selectedCountry",
-                  "attributes": {
-                    "data-cy": "selectedCountry"
-                  },
                   "type": "select",
                   "input": true
                 }
@@ -228,9 +286,6 @@
                     "when": "selectedCountry",
                     "eq": "Canada"
                   },
-                  "attributes": {
-                    "data-cy": "provinceState"
-                  },
                   "type": "select",
                   "input": true
                 },
@@ -247,9 +302,6 @@
                     "show": true,
                     "when": "selectedCountry",
                     "eq": "other"
-                  },
-                  "attributes": {
-                    "data-cy": "otherCountry"
                   },
                   "type": "textfield",
                   "input": true
@@ -290,9 +342,6 @@
                     "maxLength": 100
                   },
                   "key": "city",
-                  "attributes": {
-                    "data-cy": "city"
-                  },
                   "type": "textfield",
                   "input": true,
                   "hideOnChildrenHidden": false
@@ -324,9 +373,6 @@
                     "when": "selectedCountry",
                     "eq": "Canada"
                   },
-                  "attributes": {
-                    "data-cy": "canadaPostalCode"
-                  },
                   "type": "textfield",
                   "input": true,
                   "hideOnChildrenHidden": false
@@ -343,9 +389,6 @@
                     "show": true,
                     "when": "selectedCountry",
                     "eq": "other"
-                  },
-                  "attributes": {
-                    "data-cy": "otherPostalCode"
                   },
                   "type": "textfield",
                   "input": true
@@ -431,9 +474,6 @@
                     "maxLength": 100
                   },
                   "key": "primaryContactFirstName",
-                  "attributes": {
-                    "data-cy": "primaryContactFirstName"
-                  },
                   "type": "textfield",
                   "input": true,
                   "hideOnChildrenHidden": false
@@ -456,9 +496,6 @@
                     "maxLength": 100
                   },
                   "key": "primaryContactLastName",
-                  "attributes": {
-                    "data-cy": "primaryContactLastName"
-                  },
                   "type": "textfield",
                   "input": true,
                   "hideOnChildrenHidden": false
@@ -489,9 +526,6 @@
                     "required": true
                   },
                   "key": "primaryContactEmail",
-                  "attributes": {
-                    "data-cy": "primaryContactEmail"
-                  },
                   "type": "email",
                   "input": true
                 }
@@ -516,9 +550,6 @@
                     "maxLength": 20
                   },
                   "key": "primaryContactPhone",
-                  "attributes": {
-                    "data-cy": "primaryContactPhone"
-                  },
                   "type": "textfield",
                   "input": true,
                   "hideOnChildrenHidden": false

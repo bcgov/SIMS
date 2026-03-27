@@ -1,6 +1,8 @@
 # Base Image
-ARG DOCKER_REGISTRY=artifacts.developer.gov.bc.ca/docker-remote/
-FROM ${DOCKER_REGISTRY}node:25.6.1-alpine3.22
+# dependabot: FROM node:25.8.1-alpine3.22
+ARG DOCKER_REGISTRY=artifacts.developer.gov.bc.ca/docker-remote
+FROM ${DOCKER_REGISTRY}/node:25.8.1-alpine3.22
+
 ENV npm_config_cache=/app/.npm
 
 WORKDIR /app

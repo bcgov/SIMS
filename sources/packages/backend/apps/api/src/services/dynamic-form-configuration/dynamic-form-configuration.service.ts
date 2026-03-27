@@ -40,6 +40,7 @@ export class DynamicFormConfigurationService {
         relations: {
           programYear: true,
         },
+        order: { formType: "ASC", id: "ASC" },
       }));
     // Freeze each configuration object to make it immutable.
     configurations.forEach((configuration) => Object.freeze(configuration));

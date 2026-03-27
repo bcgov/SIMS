@@ -43,8 +43,9 @@ export class InstitutionLocation extends RecordDataModel {
 
   @Column({
     name: "institution_code",
+    nullable: true,
   })
-  institutionCode: string;
+  institutionCode?: string;
 
   @Column({
     name: "primary_contact",

@@ -133,9 +133,9 @@
           <zeebe:header key="appealsRoomAndBoardCostsAppealData" value="appeals.roomandboardcostsappeal.submittedData" />
           <zeebe:header key="studentDataPartnerIsAbleToReport" value="data.partnerIsAbleToReport" />
           <zeebe:header key="appealsStudentCurrentYearIncomeAppealData" value="appeals.studentcurrentyearincomeappeal.submittedData.{&#34;currentYearIncome&#34;: currentYearIncome}" />
-          <zeebe:header key="appealsPartnerCurrentYearIncomeAppealData" value="appeals.partnercurrentyearincomeappeal.submittedData" />
+          <zeebe:header key="appealsPartnerCurrentYearIncomeAppealData" value="appeals.partnercurrentyearincomeappeal.submittedData.{&#34;currentYearIncome&#34;: currentYearIncome}" />
           <zeebe:header key="appealsParentCurrentYearIncomeAppealData" value="appeals.parentcurrentyearincomeappeal.submittedData" />
-          <zeebe:header key="appealsExceptionalExpenseAppealData" value="appeals.studentexceptionalexpenseappeal.submittedData" />
+          <zeebe:header key="appealsExceptionalExpenseAppealData" value="appeals.studentexceptionalexpenseappeal.submittedData{&#34;exceptionalExpenseAmount&#34;:exceptionalExpenseAmount}" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>

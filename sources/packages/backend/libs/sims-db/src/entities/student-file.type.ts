@@ -28,6 +28,12 @@ export enum FileOriginType {
    * File submitted for student appeal.
    */
   Appeal = "Appeal",
+  /**
+   * File submitted from form submissions (e.g., Student Forms).
+   * Student appeals will have the file origin as Appeal, while other
+   * form submissions will have the file origin as Form submission.
+   */
+  FormSubmission = "Form submission",
 }
 
 export interface StudentFileMetadata {

@@ -68,6 +68,7 @@ export interface UpdateDesignationLocationsListItem {
   locationId: number;
   locationName: string;
   locationAddress: string;
+  institutionCode?: string;
   requestForDesignation: boolean;
   approvedForDesignation?: boolean;
   approved: boolean;

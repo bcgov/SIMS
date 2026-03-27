@@ -40,7 +40,7 @@ export class SupplementaryDataLoader {
    */
   async loadSupplementaryData(
     formSubmissions: FormSubmissionConfig[],
-    studentId?: number,
+    studentId: number,
   ): Promise<void> {
     // Shared object to accumulate loaded supplementary data across multiple loaders,
     // avoiding the same data being loaded multiple times for different form submissions.
@@ -69,7 +69,7 @@ export class SupplementaryDataLoader {
   async getSupplementaryData(
     knownSupplementaryDataKeys: KnownSupplementaryDataKey[],
     applicationId: number | undefined,
-    studentId: number | undefined,
+    studentId: number,
   ): Promise<KnownSupplementaryData> {
     const supplementaryData: KnownSupplementaryData = {};
     // Load all supplementary data in parallel.

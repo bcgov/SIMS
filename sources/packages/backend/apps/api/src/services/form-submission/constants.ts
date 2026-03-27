@@ -10,10 +10,11 @@ export const FORM_SUBMISSION_UNKNOWN_FORM_CONFIGURATION =
 export const FORM_SUBMISSION_MIXED_FORM_APPLICATION_SCOPE =
   "FORM_SUBMISSION_MIXED_FORM_APPLICATION_SCOPE";
 /**
- * The submission contains application scoped forms, but the application ID is missing.
+ * The submission contains application scoped forms, but the application
+ * ID is missing or it is present when it should not be.
  */
-export const FORM_SUBMISSION_APPLICATION_SCOPE_MISSING_APPLICATION_ID =
-  "FORM_SUBMISSION_APPLICATION_SCOPE_MISSING_APPLICATION_ID";
+export const FORM_SUBMISSION_APPLICATION_SCOPE_AND_APPLICATION_ID_MISMATCH =
+  "FORM_SUBMISSION_APPLICATION_SCOPE_AND_APPLICATION_ID_MISMATCH";
 /**
  * The submission contains more than one form item, but at least one
  * of the forms does not allow bundled submission.
@@ -72,3 +73,13 @@ export const FORM_SUBMISSION_UPDATE_UNAUTHORIZED =
  */
 export const FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE =
   "FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE";
+/**
+ * The supplementary data that should be available for the form was not found.
+ */
+export const FORM_SUBMISSION_SUPPLEMENTARY_DATA_NOT_FOUND =
+  "FORM_SUBMISSION_SUPPLEMENTARY_DATA_NOT_FOUND";
+/**
+ * The supplementary data requires an application ID to retrieve its data.
+ */
+export const FORM_SUBMISSION_SUPPLEMENTARY_DATA_APPLICATION_REQUIRED =
+  "FORM_SUBMISSION_SUPPLEMENTARY_DATA_APPLICATION_REQUIRED";

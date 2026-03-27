@@ -42,11 +42,6 @@ export class SupplementaryDataProgramYear extends SupplementaryDataBaseLoader<Kn
     if (!this.hasDataKeyProperty(submissionConfig)) {
       return;
     }
-    if (!submissionConfig.applicationId) {
-      throw new Error(
-        "Application ID is required to load program year data for application-scoped forms.",
-      );
-    }
     await super.loadSupplementaryData(
       submissionConfig,
       resultSupplementaryData,
@@ -63,9 +58,10 @@ export class SupplementaryDataProgramYear extends SupplementaryDataBaseLoader<Kn
    * @returns program year data for the given application and student.
    */
   async getSupplementaryData(
-    applicationId: number,
+    applicationId: number | undefined,
     studentId: number,
   ): Promise<string> {
+    this.requireApplicationIdForDataKey(applicationId);
     const application = await this.applicationRepo.findOne({
       select: {
         id: true,
@@ -80,9 +76,7 @@ export class SupplementaryDataProgramYear extends SupplementaryDataBaseLoader<Kn
       where: { id: applicationId, student: { id: studentId } },
     });
     if (!application?.programYear?.programYear) {
-      throw new Error(
-        `Program year data is not available for application with ID ${applicationId}.`,
-      );
+      this.throwSupplementaryDataNotFoundError(applicationId, studentId);
     }
     return application.programYear.programYear;
   }

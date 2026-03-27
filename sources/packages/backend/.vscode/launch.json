@@ -1,0 +1,57 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "name": "vscode-jest-tests.v2.Backend",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [
+        "--runInBand",
+        "--watchAll=false",
+        "--runTestsByPath",
+        "${jest.testFile}",
+        "--config",
+        "${workspaceFolder}/jest-e2e.json",
+        "--forceExit"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+      },
+      "env": {
+        "ENVIRONMENT": "test",
+        "TZ": "UTC"
+      }
+    },
+    {
+      "type": "node",
+      "name": "vscode-jest-tests.v2.Backend.Unit",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [
+        "--runInBand",
+        "--watchAll=false",
+        "--runTestsByPath",
+        "${jest.testFile}",
+        "--config",
+        "${workspaceFolder}/jest-unit-tests.json",
+        "--forceExit"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+      },
+      "env": {
+        "ENVIRONMENT": "test",
+        "TZ": "UTC"
+      }
+    }
+  ]
+}

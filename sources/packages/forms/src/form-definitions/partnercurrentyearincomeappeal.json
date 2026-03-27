@@ -1,0 +1,330 @@
+{
+  "title": "Appeals - Partner Current Year Income",
+  "name": "partnerCurrentYearIncomeAppeal",
+  "path": "partnercurrentyearincomeappeal",
+  "type": "form",
+  "display": "form",
+  "tags": [
+    "common"
+  ],
+  "components": [
+    {
+      "label": "Actions: CreateStudentAppealAssessment",
+      "calculateValue": "value = [\"CreateStudentAppealAssessment\"];",
+      "calculateServer": true,
+      "key": "actions",
+      "type": "hidden",
+      "input": true,
+      "tableView": true,
+      "lockKey": true
+    },
+    {
+      "input": true,
+      "tableView": false,
+      "key": "maxMoneyValue",
+      "label": "Max Money Value",
+      "persistent": false,
+      "type": "hidden",
+      "lockKey": true,
+      "calculateValue": "value = \"100000000\";",
+      "calculateServer": true
+    },
+    {
+      "label": "Program Year",
+      "key": "programYear",
+      "tags": [
+        "supplementary-data"
+      ],
+      "type": "hidden",
+      "input": true,
+      "tableView": true
+    },
+    {
+      "input": true,
+      "tableView": true,
+      "key": "currentTaxYear",
+      "label": "Current Tax Year",
+      "persistent": false,
+      "type": "hidden",
+      "calculateValue": "// From the program year, get the calendar start year of the program year.\r\n// e.g. program year  = 2022-2023, calendar start year is 2022. And Current tax year should be 2022.\r\nconst [startYear] = data.programYear ? data.programYear.split(\"-\"):[];\r\nvalue = startYear;",
+      "lockKey": true
+    },
+    {
+      "label": "maxUploadedFiles",
+      "persistent": false,
+      "calculateValue": "value = 25;",
+      "calculateServer": true,
+      "key": "maxUploadedFiles",
+      "type": "hidden",
+      "input": true,
+      "tableView": true,
+      "lockKey": true
+    },
+    {
+      "label": "HTML",
+      "tag": "p",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "If your partner or common-law partner has had, or is anticipated to have, a significant decrease in gross income for {{data.currentTaxYear}}, you may submit this appeal to request assessment using their current year estimated gross income.",
+      "refreshOnChange": true,
+      "key": "partnerCurrentYearIncomeTest1",
+      "type": "htmlelement",
+      "input": false,
+      "tableView": false
+    },
+    {
+      "label": "HTML",
+      "tag": "h3",
+      "className": "category-header-medium primary-color",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "Please provide supporting information ",
+      "refreshOnChange": false,
+      "key": "partnerCurrentYearIncomeHeader",
+      "type": "htmlelement",
+      "input": false,
+      "tableView": false
+    },
+    {
+      "label": "HTML",
+      "tag": "p",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "Enter your spouse/common-law partner’s actual gross income from the beginning of the calendar year up to the date of this application, and their estimated gross income for the remainder of the calendar year, to calculate their total current year gross income.",
+      "refreshOnChange": false,
+      "key": "partnerCurrentYearIncomeText2",
+      "type": "htmlelement",
+      "input": false,
+      "tableView": false
+    },
+    {
+      "label": "My spouse/common-law partner’s total current year gross income is:",
+      "prefix": "$",
+      "applyMaskOn": "change",
+      "mask": false,
+      "tableView": false,
+      "delimiter": true,
+      "requireDecimal": false,
+      "inputFormat": "plain",
+      "truncateMultipleSpaces": false,
+      "validate": {
+        "required": true,
+        "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
+      },
+      "validateWhenHidden": false,
+      "key": "currentYearIncome",
+      "type": "number",
+      "decimalLimit": 0,
+      "input": true
+    },
+    {
+      "label": "Select the reason that best describes the decrease in your spouse/common-law partner’s gross income:",
+      "optionsLabelPosition": "right",
+      "inline": false,
+      "tableView": false,
+      "values": [
+        {
+          "label": "Medical illness or injury",
+          "value": "medicalIllnessOrInjury",
+          "shortcut": ""
+        },
+        {
+          "label": "Family emergency (e.g., death or injury)",
+          "value": "familyEmergencyEGDeathOrInjury",
+          "shortcut": ""
+        },
+        {
+          "label": "Natural disaster",
+          "value": "naturalDisaster",
+          "shortcut": ""
+        },
+        {
+          "label": "Layoff, strike, lockout or other reduction in earnings beyond the family’s control",
+          "value": "layoffStrikeLockoutOrOtherReductionInEarningsBeyondTheFamilysControl",
+          "shortcut": ""
+        },
+        {
+          "label": "Other",
+          "value": "other",
+          "shortcut": ""
+        }
+      ],
+      "validate": {
+        "required": true,
+        "onlyAvailableItems": true
+      },
+      "validateWhenHidden": false,
+      "key": "reasonsignificantdecreaseInIncome",
+      "attributes": {
+        "data-cy": "reasonsignificantdecreaseInIncome"
+      },
+      "type": "radio",
+      "input": true
+    },
+    {
+      "title": "Other exceptional circumstance Panel",
+      "collapsible": false,
+      "hideLabel": true,
+      "key": "otherExceptionalCircumstancePanel",
+      "conditional": {
+        "show": true,
+        "when": "reasonsignificantdecreaseInIncome",
+        "eq": "other"
+      },
+      "type": "panel",
+      "label": "Other exceptional circumstance Panel",
+      "breadcrumbClickable": false,
+      "allowPrevious": false,
+      "buttonSettings": {
+        "previous": false,
+        "cancel": false,
+        "next": false
+      },
+      "scrollToTop": false,
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "label": "Please explain the situation:",
+          "placeholder": "Type here",
+          "applyMaskOn": "change",
+          "autoExpand": false,
+          "tableView": true,
+          "validate": {
+            "required": true
+          },
+          "validateWhenHidden": false,
+          "key": "otherExceptionalCircumstance",
+          "conditional": {
+            "show": true,
+            "when": "reasonsignificantdecreaseInIncome",
+            "eq": "other"
+          },
+          "type": "textarea",
+          "input": true,
+          "lockKey": true
+        }
+      ]
+    },
+    {
+      "label": "Content",
+      "tag": "h3",
+      "className": "category-header-medium primary-color",
+      "attrs": [
+        {
+          "value": "",
+          "attr": ""
+        }
+      ],
+      "content": "Upload Supporting Documents",
+      "refreshOnChange": false,
+      "customClass": "header-md",
+      "key": "decreaseInIncomePanelContent",
+      "type": "htmlelement",
+      "input": false,
+      "tableView": false
+    },
+    {
+      "label": "Content",
+      "tag": "p",
+      "attrs": [
+        {
+          "value": "",
+          "attr": ""
+        }
+      ],
+      "content": "Please upload documentation to support the request to use your spouse/common-law partner’s current year estimated gross income.",
+      "refreshOnChange": false,
+      "key": "decreaseInIncomePanelContent2",
+      "type": "htmlelement",
+      "input": false,
+      "tableView": false
+    },
+    {
+      "label": "Content",
+      "attrs": [
+        {
+          "value": "",
+          "attr": ""
+        }
+      ],
+      "content": "<h4 class=\"category-header-medium-small\">Provide the following:</h4>\n<ul><li>A letter explaining the circumstances that meet one or more of the criteria listed above and a detailed breakdown of how you calculated total estimated gross income (if applicable).</li></ul>",
+      "refreshOnChange": false,
+      "customClass": "align-bullets",
+      "key": "decreaseInIncomePanelContent3",
+      "type": "htmlelement",
+      "input": false,
+      "hideLabel": true,
+      "tableView": false
+    },
+    {
+      "label": "Content",
+      "attrs": [
+        {
+          "value": "",
+          "attr": ""
+        }
+      ],
+      "content": "<h4 class=\"category-header-medium-small\">Provide at least one of the following:</h4>\n<ul>\n<li>All relevant supporting documentation of the circumstance(s) (medical records, letter from the physician, record of employment, layoff or strike, invoices from damages, etc.).</li>\n<li>The most recent CRA Income Tax Return and gross income information for the year matching the student financial assistance application number (with supporting documentation demonstrating the decrease in income), if available.</li>\n<li>Documentation supporting estimated total gross income for the year matching the student financial assistance application number, if applicable (e.g., pay stubs, invoices, bank statements, Employment Insurance benefit statements, Record of Employment).</li></ul>",
+      "refreshOnChange": false,
+      "customClass": "align-bullets",
+      "key": "decreaseInIncomePanelContent4",
+      "type": "htmlelement",
+      "input": false,
+      "hideLabel": true,
+      "tableView": false
+    },
+    {
+      "label": "Upload supporting documents",
+      "customClass": "font-weight-bold",
+      "hideLabel": true,
+      "tableView": false,
+      "storage": "url",
+      "dir": "Current Year Income - Supporting Documents",
+      "webcam": false,
+      "capture": false,
+      "fileTypes": [
+        {
+          "label": "",
+          "value": ""
+        }
+      ],
+      "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
+      "fileMaxSize": "15MB",
+      "multiple": true,
+      "validate": {
+        "required": true,
+        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
+      },
+      "validateWhenHidden": false,
+      "key": "decreaseInIncomeSupportingDocuments",
+      "type": "file",
+      "url": "student/files",
+      "input": true,
+      "lockKey": true
+    },
+    {
+      "label": "Content",
+      "input": false,
+      "className": "file-upload-info-container",
+      "content": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n<p>15MB file limit each</p>",
+      "type": "htmlelement",
+      "hideLabel": true,
+      "tableView": false,
+      "key": "content"
+    }
+  ]
+}
