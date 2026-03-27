@@ -11,7 +11,7 @@ import {
 } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
 import { IsNull, Repository } from "typeorm";
-import { ApplicationWithdrawals } from "../../../types";
+import { ApplicationWithdrawal } from "../../../types";
 
 @Injectable()
 export class SupplementaryDataScholasticStandingWithdrawals extends SupplementaryDataBaseLoader<KnownSupplementaryDataKey.ScholasticStandingWithdrawals> {
@@ -63,7 +63,7 @@ export class SupplementaryDataScholasticStandingWithdrawals extends Supplementar
   async getSupplementaryData(
     _applicationId: number | undefined,
     studentId: number,
-  ): Promise<ApplicationWithdrawals[]> {
+  ): Promise<ApplicationWithdrawal[]> {
     const applications = await this.applicationRepo.find({
       select: {
         applicationNumber: true,

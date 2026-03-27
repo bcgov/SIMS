@@ -3,7 +3,7 @@ export interface Parent {
   fullName: string;
 }
 
-export interface ApplicationWithdrawals {
+export interface ApplicationWithdrawal {
   applicationNumber: string;
   scholasticStandingId: number;
 }
