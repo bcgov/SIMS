@@ -139,6 +139,7 @@ export function getEntitiesForStudentFormSubmissionAssertion(
       },
     },
     where: { id: createdSubmissionId },
+    order: { formSubmissionItems: { id: "ASC" } },
     loadEagerRelations: false,
   });
   const updatedStudentFilePromise = db.studentFile.findOne({
