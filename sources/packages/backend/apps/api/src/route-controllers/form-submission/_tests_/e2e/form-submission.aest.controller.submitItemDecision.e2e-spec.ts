@@ -64,6 +64,7 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
       initialValues: { applicationStatus: ApplicationStatus.Completed },
     });
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+      now,
       application,
       formCategory: FormCategory.StudentAppeal,
       submissionStatus: FormSubmissionStatus.Pending,
@@ -80,7 +81,6 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
       noteDescription: "This is a decision note.",
       lastUpdateDate: formSubmissionItemA.updatedAt,
     };
-
     const endpoint = `/aest/form-submission/items/${formSubmissionItemA.id}/decision`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const ministryAuditUser = { id: ministryAdminUser.id };
@@ -297,7 +297,6 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
       noteDescription: "This is a decision note.",
       lastUpdateDate: formSubmissionItemA.updatedAt,
     };
-
     const endpoint = `/aest/form-submission/items/${formSubmissionItemA.id}/decision`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -334,7 +333,6 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
       noteDescription: "This is a decision note.",
       lastUpdateDate: formSubmissionItemA.updatedAt,
     };
-
     const endpoint = `/aest/form-submission/items/${formSubmissionItemA.id}/decision`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -352,7 +350,7 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
       });
   });
 
-  it("Should throw an unprocessable entity error when submitting a student form decision and the user is not authorized for the specific form category.", async () => {
+  it("Should throw a forbidden error when submitting a student form decision and the user is not authorized for the specific form category.", async () => {
     // Arrange
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
       formCategory: FormCategory.StudentForm,
@@ -371,7 +369,6 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
       noteDescription: "This is a decision note.",
       lastUpdateDate: formSubmissionItemA.updatedAt,
     };
-
     const endpoint = `/aest/form-submission/items/${formSubmissionItemA.id}/decision`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     await removeJWTUserRoles(appModule, [Role.StudentApproveDeclineForms]);
@@ -389,7 +386,7 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
       });
   });
 
-  it("Should throw an unprocessable entity error when submitting a student appeal decision and the user is not authorized for the specific form category.", async () => {
+  it("Should throw a forbidden error when submitting a student appeal decision and the user is not authorized for the specific form category.", async () => {
     // Arrange
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
       formCategory: FormCategory.StudentAppeal,
@@ -408,7 +405,6 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
       noteDescription: "This is a decision note.",
       lastUpdateDate: formSubmissionItemA.updatedAt,
     };
-
     const endpoint = `/aest/form-submission/items/${formSubmissionItemA.id}/decision`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     await removeJWTUserRoles(appModule, [Role.StudentApproveDeclineAppeals]);
@@ -445,7 +441,6 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
       noteDescription: "This is a decision note.",
       lastUpdateDate: formSubmissionItemA.updatedAt,
     };
-
     const endpoint = `/aest/form-submission/items/${formSubmissionItemA.id}/decision`;
     const token = await getAESTToken(AESTGroups.Operations);
 
@@ -480,7 +475,6 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
       noteDescription: "This is a decision note.",
       lastUpdateDate: new Date(),
     };
-
     const endpoint = `/aest/form-submission/items/${formSubmissionItemA.id}/decision`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 

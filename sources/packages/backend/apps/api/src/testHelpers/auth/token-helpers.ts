@@ -111,7 +111,6 @@ export async function getCachedToken(
  * of the JwtStrategy to override the user information in the payload with the provided one.
  * @param testingModule nest testing module.
  * @param tokenCallback callback function to manipulate the token payload with the provided user information.
- * The callback must return the modified payload.
  * @returns the spy instance of the mocked validate method.
  */
 export async function mockJWTToken(
