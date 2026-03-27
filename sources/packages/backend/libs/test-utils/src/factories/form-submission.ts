@@ -101,6 +101,7 @@ export async function saveFakeFormSubmissionFromInputTestData(
   const formSubmission = new FormSubmission();
   formSubmission.student = student;
   formSubmission.application = testInputData.application;
+  formSubmission.createdAt = now;
   formSubmission.creator = student.user;
   formSubmission.submittedDate = now;
   formSubmission.formCategory = testInputData.formCategory;

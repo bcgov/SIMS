@@ -1,6 +1,7 @@
 import { UserPasswordCredential } from "@sims/utilities/config";
-import { AuthorizedParties } from "../../auth";
-import { getCachedToken } from "./token-helpers";
+import { AuthorizedParties, IUserToken, Role } from "../../auth";
+import { getCachedToken, mockJWTToken } from "./token-helpers";
+import { TestingModule } from "@nestjs/testing";
 
 /**
  * Known AEST groups. The API right now performs authorization for
@@ -58,5 +59,22 @@ export async function getAESTToken(group?: AESTGroups): Promise<string> {
   return getCachedToken(AuthorizedParties.aest, {
     userPasswordCredential: credential,
     uniqueTokenCache: group?.toString(),
+  });
+}
+
+/**
+ * Removes the provided roles from the JWT token.
+ * @param testingModule nest testing module.
+ * @param rolesToRemove roles to be removed from the token payload.
+ */
+export async function removeJWTUserRoles(
+  testingModule: TestingModule,
+  rolesToRemove: Role[],
+): Promise<void> {
+  await mockJWTToken(testingModule, (payload: IUserToken) => {
+    const roles = payload.resource_access[AuthorizedParties.aest].roles;
+    payload.resource_access[AuthorizedParties.aest].roles = roles.filter(
+      (role: Role) => !rolesToRemove.includes(role),
+    );
   });
 }
