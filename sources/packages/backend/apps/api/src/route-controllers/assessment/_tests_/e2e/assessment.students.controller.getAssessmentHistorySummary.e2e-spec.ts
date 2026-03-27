@@ -238,7 +238,6 @@ describe("AssessmentStudentsController(e2e)-getAssessmentHistorySummary", () => 
           scholasticStandingChangeType:
             StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
           scholasticStandingReversalDate: today.toISOString(),
-          nonPunitiveFormSubmissionItemId: null,
         },
         {
           // Original Assessment.

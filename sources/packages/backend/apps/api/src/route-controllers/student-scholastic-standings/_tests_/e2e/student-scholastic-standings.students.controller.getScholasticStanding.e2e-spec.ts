@@ -105,7 +105,6 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
           application.currentAssessment.offering.exceptionalExpenses,
         currentAssessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
         reversalDate: null,
-        nonPunitiveFormSubmissionItemId: null,
       });
   });
 
