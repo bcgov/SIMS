@@ -168,3 +168,54 @@ export function getEntitiesForStudentFormSubmissionAssertion(
     notificationPromise,
   ]);
 }
+
+/**
+ * Get the entities related to a ministry form submission to assert the expected changes
+ * in the database after a form submission is assessed by the ministry.
+ * The form submission and the notification are common entities to be asserted in all the
+ * Ministry form submission tests.
+ * @param db data sources to retrieve the entities from the database.
+ * @param formSubmissionId form submission ID to retrieve the updated form submission with its items and related entities.
+ * @param studentUserId student user ID to retrieve the notification created for the ministry decision.
+ * @returns array containing the updated form submission and the notification for assertion.
+ */
+export async function getEntitiesForMinistryCompleteFormSubmissionAssertion(
+  db: E2EDataSources,
+  formSubmissionId: number,
+  studentUserId: number,
+): Promise<[FormSubmission, Notification]> {
+  const updatedFormSubmissionPromise = db.formSubmission.findOne({
+    select: {
+      id: true,
+      submissionStatus: true,
+      assessedDate: true,
+      assessedBy: { id: true },
+      modifier: { id: true },
+      updatedAt: true,
+      student: { id: true, notes: { id: true } },
+    },
+    relations: {
+      assessedBy: true,
+      modifier: true,
+      student: { notes: true },
+    },
+    where: { id: formSubmissionId },
+    order: { student: { notes: { id: "ASC" } } },
+    loadEagerRelations: false,
+  });
+  const notificationPromise = db.notification.findOne({
+    select: {
+      id: true,
+      notificationMessage: { id: true },
+      messagePayload: true,
+      creator: { id: true },
+    },
+    relations: { notificationMessage: true, creator: true },
+    where: {
+      dateSent: IsNull(),
+      user: { id: studentUserId },
+    },
+    loadEagerRelations: false,
+  });
+  return Promise.all([updatedFormSubmissionPromise, notificationPromise]);
+}
