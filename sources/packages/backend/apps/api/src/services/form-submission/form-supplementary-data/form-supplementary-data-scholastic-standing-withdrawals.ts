@@ -73,14 +73,16 @@ export class SupplementaryDataScholasticStandingWithdrawals extends Supplementar
             id: true,
             changeType: true,
             reversalDate: true,
-            nonPunitiveFormSubmissionItemId: true,
+            nonPunitiveFormSubmissionItem: { id: true },
           },
         },
       },
       relations: {
         student: true,
         studentAssessments: {
-          studentScholasticStanding: true,
+          studentScholasticStanding: {
+            nonPunitiveFormSubmissionItem: true,
+          },
         },
       },
       where: {
@@ -90,7 +92,7 @@ export class SupplementaryDataScholasticStandingWithdrawals extends Supplementar
             changeType:
               StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
             reversalDate: IsNull(),
-            nonPunitiveFormSubmissionItemId: IsNull(),
+            nonPunitiveFormSubmissionItem: IsNull(),
           },
         },
       },

@@ -40,7 +40,7 @@ export function createFakeStudentScholasticStanding(
     options?.initialValues?.changeType ??
     StudentScholasticStandingChangeType.StudentDidNotCompleteProgram;
   scholasticStanding.reversalDate = options?.initialValues?.reversalDate;
-  scholasticStanding.nonPunitiveFormSubmissionItemId =
-    options?.initialValues?.nonPunitiveFormSubmissionItemId;
+  scholasticStanding.nonPunitiveFormSubmissionItem =
+    options?.initialValues?.nonPunitiveFormSubmissionItem;
   return scholasticStanding;
 }
