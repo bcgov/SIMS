@@ -105,7 +105,7 @@
             ],
             "validate": {
                 "required": true,
-                "custom": "const shouldSelectOneOfTheAboveOrAnotherOption =\r\n  (data.eligibleCircumstances.didNotAttendClasses ||\r\n    data.eligibleCircumstances.attendedClassesFor10DaysOrLess ||\r\n    data.eligibleCircumstances.completedFirstSemester ||\r\n    data.eligibleCircumstances.withdrawnFromStudies) &&\r\n  data.eligibleCircumstances.noneOfTheAbove;\r\n\r\nvalid = shouldSelectOneOfTheAboveOrAnotherOption\r\n  ? \"Please select at least one of the circumstances or 'None of the above'.\"\r\n  : true;"
+                "custom": "const shouldSelectOneOfTheAboveOrAnotherOption =\r\n  (data.eligibleCircumstances.didNotAttendClasses ||\r\n    data.eligibleCircumstances.attendedClassesFor10DaysOrLess ||\r\n    data.eligibleCircumstances.completedFirstSemester ||\r\n    data.eligibleCircumstances.withdrawnFromStudies) &&\r\n  data.eligibleCircumstances.noneOfTheAbove;\r\n\r\nvalid = shouldSelectOneOfTheAboveOrAnotherOption\r\n  ? \"Please select either one or more of the circumstances or 'None of the above', but not both.\"\r\n  : true;"
             },
             "validateWhenHidden": false,
             "key": "eligibleCircumstances",
