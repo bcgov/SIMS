@@ -26,6 +26,7 @@ import { PrimaryContact } from "./primary-contact.type";
 
 export const OPERATING_NAME_MAX_LENGTH = 250;
 export const LEGAL_OPERATING_NAME_MAX_LENGTH = 250;
+export const INSTITUTION_LOCATION_CODE_MAX_LENGTH = 4;
 
 export interface InstitutionAddress {
   mailingAddress: AddressInfo;

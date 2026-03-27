@@ -10,7 +10,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { InstitutionService } from "../../services";
-import { AddressInfo, Institution } from "@sims/sims-db";
+import { Institution, SystemLookupCategory } from "@sims/sims-db";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -42,6 +42,7 @@ import { IUserToken } from "../../auth/userToken.interface";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { Role } from "../../auth/roles.enum";
+import { SystemLookupConfigurationService } from "@sims/services/system-lookup-configuration";
 
 /**
  * Institution controller for AEST Client.
@@ -55,6 +56,7 @@ export class InstitutionAESTController extends BaseController {
     private readonly institutionService: InstitutionService,
     private readonly institutionControllerService: InstitutionControllerService,
     private readonly locationControllerService: InstitutionLocationControllerService,
+    private readonly systemLookupConfigurationService: SystemLookupConfigurationService,
   ) {
     super();
   }
@@ -62,8 +64,7 @@ export class InstitutionAESTController extends BaseController {
   /**
    * Search the institution based on the search criteria.
    *!This API method is kept above getInstitutionDetailById to avoid route conflict.
-   * @param legalName legalName of the institution.
-   * @param operatingName operatingName of the institution.
+   * @param searchInstitutionQuery search criteria for institution search.
    * @returns Searched institution details.
    */
   @Get("search")
@@ -73,25 +74,20 @@ export class InstitutionAESTController extends BaseController {
     const searchInstitutions = await this.institutionService.searchInstitution(
       searchInstitutionQuery.legalName,
       searchInstitutionQuery.operatingName,
+      searchInstitutionQuery.institutionLocationCode,
     );
-    return searchInstitutions.map((eachInstitution: Institution) => {
-      const mailingAddress =
-        eachInstitution.institutionAddress.mailingAddress ??
-        ({} as AddressInfo);
-      return {
-        id: eachInstitution.id,
-        legalName: eachInstitution.legalOperatingName,
-        operatingName: eachInstitution.operatingName,
-        address: {
-          addressLine1: mailingAddress.addressLine1,
-          addressLine2: mailingAddress.addressLine2,
-          city: mailingAddress.city,
-          provinceState: mailingAddress.provinceState,
-          country: mailingAddress.country,
-          postalCode: mailingAddress.postalCode,
-        },
-      };
-    });
+    return searchInstitutions.map((eachInstitution: Institution) => ({
+      id: eachInstitution.id,
+      legalName: eachInstitution.legalOperatingName,
+      operatingName: eachInstitution.operatingName,
+      country: eachInstitution.country
+        ? this.systemLookupConfigurationService.getSystemLookup(
+            SystemLookupCategory.Country,
+            eachInstitution.country,
+          )?.lookupValue
+        : undefined,
+      classification: eachInstitution.classification,
+    }));
   }
 
   /**

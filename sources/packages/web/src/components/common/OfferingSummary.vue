@@ -132,7 +132,9 @@
           {{ mapOfferingIntensity(item.offeringIntensity) }}
         </template>
         <template #[`item.offeringDelivered`]="{ item }">
-          {{ capitalizeFirstWord(item.offeringDelivered) }}
+          <div class="p-text-capitalize">
+            {{ item.offeringDelivered }}
+          </div>
         </template>
         <template #[`item.offeringStatus`]="{ item }">
           <status-chip-offering :status="item.offeringStatus" />
@@ -223,7 +225,6 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter();
-    const { capitalizeFirstWord } = useFormatters();
     const { mapOfferingIntensity } = useOffering();
     const { getISODateOnlyString } = useFormatters();
     const loading = ref<boolean>(false);
@@ -405,7 +406,6 @@ export default defineComponent({
       intensityFilter,
       startDate,
       endDate,
-      capitalizeFirstWord,
       searchOfferingsForm,
       isValidSearch,
       mapOfferingIntensity,
