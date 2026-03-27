@@ -1,11 +1,15 @@
 import { JwtService } from "@nestjs/jwt";
 import { UserPasswordCredential } from "@sims/utilities/config";
-import { AuthorizedParties } from "../../auth";
+import { AuthorizedParties, IUserToken } from "../../auth";
 import { TOKEN_RENEWAL_SECONDS } from "../../services";
 import { TokenCacheResponse } from "../../services/auth/token-cache.service.models";
 import { needRenewJwtToken } from "../../utilities";
 import { KeycloakService } from "@sims/auth/services";
 import { KeycloakConfig } from "@sims/auth/config";
+import { getProviderInstanceForModule } from "@sims/test-utils";
+import { TestingModule } from "@nestjs/testing";
+import { AuthModule } from "../../auth/auth.module";
+import { JwtStrategy } from "../../auth/jwt.strategy";
 
 /**
  * Bearer type used by supertest package.
@@ -100,4 +104,32 @@ export async function getCachedToken(
     } as TokenCacheResponse;
   }
   return tokenCache[tokenCacheKey].accessToken;
+}
+
+/**
+ * Allow the manipulation of the JWT token payload used in the tests by mocking the validate method
+ * of the JwtStrategy to override the user information in the payload with the provided one.
+ * @param testingModule nest testing module.
+ * @param tokenCallback callback function to manipulate the token payload with the provided user information.
+ * @returns the spy instance of the mocked validate method.
+ */
+export async function mockJWTToken(
+  testingModule: TestingModule,
+  tokenCallback: (payload: IUserToken) => void,
+): Promise<jest.SpyInstance> {
+  const jwtStrategy = await getProviderInstanceForModule(
+    testingModule,
+    AuthModule,
+    JwtStrategy,
+  );
+  // Keep the original validate method to call it after modifying the payload.
+  const originalValidate = jwtStrategy.validate.bind(jwtStrategy);
+  return jest
+    .spyOn(jwtStrategy, "validate")
+    .mockImplementationOnce((payload: IUserToken) => {
+      // Allow the manipulation of the token payload
+      // with the provided user information.
+      tokenCallback(payload);
+      return originalValidate(payload);
+    });
 }
