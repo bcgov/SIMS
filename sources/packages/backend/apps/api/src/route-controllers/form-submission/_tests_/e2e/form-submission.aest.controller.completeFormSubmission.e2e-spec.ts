@@ -192,7 +192,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
     },
   ].forEach(
     ({ submissionStatus, decisionStatus, modifiedIndependentStatus }) => {
-      it(`Should complete a student form submission, update the modified independent status to ${modifiedIndependentStatus}, and generate a notification when the user completes the form submission and the user has approval authorization.`, async () => {
+      it(`Should complete a student appeal submission, update the modified independent status to ${modifiedIndependentStatus}, and generate a notification when the user completes the form submission and the user has approval authorization.`, async () => {
         // Arrange
         const now = new Date();
         MockDate.set(now);
