@@ -11,7 +11,7 @@ import {
 } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
 import { IsNull, Repository } from "typeorm";
-import { ApplicationWithdrawals } from "apps/api/src/types";
+import { ApplicationWithdrawals } from "../../../types";
 
 @Injectable()
 export class SupplementaryDataScholasticStandingWithdrawals extends SupplementaryDataBaseLoader<KnownSupplementaryDataKey.ScholasticStandingWithdrawals> {
