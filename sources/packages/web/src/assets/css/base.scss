@@ -394,6 +394,11 @@ div.v-field__field input[type="date"] {
   }
 }
 
+.non-punitive-tag {
+  color: $panel-warning-color !important;
+  border-color: $panel-warning-color !important;
+}
+
 // Capitalizes the first letter of each word.
 .p-text-capitalize {
   text-transform: capitalize;

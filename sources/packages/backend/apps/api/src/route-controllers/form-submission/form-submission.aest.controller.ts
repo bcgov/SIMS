@@ -275,7 +275,9 @@ export class FormSubmissionAESTController extends BaseController {
       "form submission item not found in the form submission or " +
       "form submission item has been updated since it was last retrieved or " +
       "final decision cannot be made when some decisions are still pending or " +
-      "the application associated with the form submission is not in completed status.",
+      "the application associated with the form submission is not in completed status or " +
+      "failed to update the non-punitive scholastic standing withdrawal or " +
+      "form submission item is not in the approved status. Non-punitive scholastic standing withdrawal can only be updated for an approved form.",
   })
   @Roles(...FORM_SUBMISSION_UPDATE_ROLES)
   @Patch(":formSubmissionId/complete")

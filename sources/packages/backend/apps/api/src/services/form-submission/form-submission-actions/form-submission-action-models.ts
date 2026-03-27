@@ -2,6 +2,8 @@ import {
   FormCategory,
   FormSubmissionActionType,
   FormSubmissionDecisionStatus,
+  FormSubmissionStatus,
+  FormSubmissionSubmittedData,
 } from "@sims/sims-db";
 
 /**
@@ -9,6 +11,7 @@ import {
  */
 export interface FormSubmissionItemActionModel {
   id: number;
+  submittedData: FormSubmissionSubmittedData;
   actions: FormSubmissionActionType[];
   decisionStatus: FormSubmissionDecisionStatus;
 }
@@ -28,5 +31,6 @@ export interface FormSubmissionActionModel {
    * Present only for application-based form submissions when the current assessment is available.
    */
   currentOfferingId?: number;
+  submissionStatus: FormSubmissionStatus;
   submissionItems: FormSubmissionItemActionModel[];
 }

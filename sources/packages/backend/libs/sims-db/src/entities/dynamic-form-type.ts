@@ -5,4 +5,5 @@ export enum DynamicFormType {
   StudentFinancialAidApplication = "Student financial aid application",
   SupportingUsersParent = "Supporting users parent",
   SupportingUsersPartner = "Supporting users partner",
+  NonPunitiveWithdrawal = "Non-punitive withdrawal",
 }

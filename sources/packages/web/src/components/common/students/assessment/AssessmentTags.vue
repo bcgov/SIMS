@@ -6,6 +6,11 @@
     label="Unsuccessful Completion"
   />
   <chip-tag v-if="showWithdrawal" color="black" label="Withdrawal" />
+  <chip-tag
+    v-if="showNonPunitiveWithdrawal"
+    class="non-punitive-tag"
+    label="Non-Punitive"
+  />
 </template>
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
@@ -37,10 +42,18 @@ export default defineComponent({
         !props.assessment.scholasticStandingReversalDate
       );
     });
+    const showNonPunitiveWithdrawal = computed(() => {
+      return (
+        props.assessment.scholasticStandingChangeType ===
+          StudentScholasticStandingChangeType.StudentWithdrewFromProgram &&
+        !!props.assessment.nonPunitiveFormSubmissionItemId
+      );
+    });
     return {
       showReversed,
       showUnsuccessfulCompletion,
       showWithdrawal,
+      showNonPunitiveWithdrawal,
       StudentScholasticStandingChangeType,
     };
   },

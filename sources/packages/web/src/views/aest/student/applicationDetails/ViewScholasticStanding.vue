@@ -22,6 +22,10 @@
     </template>
     <template #alerts>
       <scholastic-standing-reversal-banner v-if="hasReversal" />
+      <scholastic-standing-non-punitive-banner
+        v-if="isNonPunitiveWithdrawal"
+        class="mt-3"
+      />
     </template>
     <scholastic-standing-form
       :scholastic-standing-id="scholasticStandingId"
@@ -42,6 +46,7 @@ import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.v
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import ReverseScholasticStandingModal from "@/components/aest/students/modals/ReverseScholasticStandingModal.vue";
 import ScholasticStandingReversalBanner from "@/components/common/students/applicationDetails/ScholasticStandingReversalBanner.vue";
+import ScholasticStandingNonPunitiveBanner from "@/components/common/students/applicationDetails/ScholasticStandingNonPunitiveBanner.vue";
 import {
   AssessmentTriggerType,
   Role,
@@ -69,6 +74,7 @@ export default {
     CheckPermissionRole,
     ReverseScholasticStandingModal,
     ScholasticStandingReversalBanner,
+    ScholasticStandingNonPunitiveBanner,
   },
   props: {
     studentId: {
@@ -150,6 +156,13 @@ export default {
       () => !!scholasticStandingDetails.value.reversalDate,
     );
 
+    const isNonPunitiveWithdrawal = computed(
+      () =>
+        scholasticStandingDetails.value.scholasticStandingChangeType ===
+          StudentScholasticStandingChangeType.StudentWithdrewFromProgram &&
+        !!scholasticStandingDetails.value.nonPunitiveFormSubmissionItemId,
+    );
+
     return {
       goToAssessmentSummary,
       Role,
@@ -158,6 +171,7 @@ export default {
       dataLoaded,
       showScholasticStandingReversalAction,
       hasReversal,
+      isNonPunitiveWithdrawal,
     };
   },
 };

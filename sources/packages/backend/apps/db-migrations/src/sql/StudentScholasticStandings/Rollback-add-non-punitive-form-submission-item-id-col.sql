@@ -1,0 +1,2 @@
+ALTER TABLE
+  sims.student_scholastic_standings DROP COLUMN non_punitive_form_submission_item_id;

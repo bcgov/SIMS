@@ -16,6 +16,10 @@
     </template>
     <template #alerts>
       <scholastic-standing-reversal-banner v-if="hasReversal" />
+      <scholastic-standing-non-punitive-banner
+        v-if="isNonPunitiveWithdrawal"
+        class="mt-3"
+      />
     </template>
     <scholastic-standing-form
       :scholastic-standing-id="scholasticStandingId"
@@ -30,14 +34,17 @@
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
 import ScholasticStandingReversalBanner from "@/components/common/students/applicationDetails/ScholasticStandingReversalBanner.vue";
+import ScholasticStandingNonPunitiveBanner from "@/components/common/students/applicationDetails/ScholasticStandingNonPunitiveBanner.vue";
 import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "@/services/http/dto";
 import { computed, ref } from "vue";
+import { StudentScholasticStandingChangeType } from "@/types";
 
 export default {
   name: "ViewScholasticStanding",
   components: {
     ScholasticStandingForm,
     ScholasticStandingReversalBanner,
+    ScholasticStandingNonPunitiveBanner,
   },
   props: {
     studentId: {
@@ -69,10 +76,19 @@ export default {
     const hasReversal = computed(
       () => !!scholasticStandingDetails.value.reversalDate,
     );
+
+    const isNonPunitiveWithdrawal = computed(
+      () =>
+        scholasticStandingDetails.value.scholasticStandingChangeType ===
+          StudentScholasticStandingChangeType.StudentWithdrewFromProgram &&
+        !!scholasticStandingDetails.value.nonPunitiveFormSubmissionItemId,
+    );
+
     return {
       AESTRoutesConst,
       dataLoaded,
       hasReversal,
+      isNonPunitiveWithdrawal,
     };
   },
 };
