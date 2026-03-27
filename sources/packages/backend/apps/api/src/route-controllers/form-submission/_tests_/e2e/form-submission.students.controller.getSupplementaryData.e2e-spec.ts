@@ -244,6 +244,53 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
       });
     });
 
+    it(
+      `Should not return supplementary data for ${KnownSupplementaryDataKey.ScholasticStandingWithdrawals} when there is a scholastic standing of change type ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram} ` +
+        "that is not reversed and a non punitive withdrawal form has not been previously submitted for this application but the application has been archived.",
+      async () => {
+        // Arrange
+        const application = await saveFakeApplication(
+          db.dataSource,
+          undefined,
+          {
+            isArchived: true,
+          },
+        );
+        const scholasticStanding = createFakeStudentScholasticStanding(
+          { submittedBy: application.student.user, application },
+          {
+            initialValues: {
+              changeType:
+                StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+            },
+          },
+        );
+        const savedScholasticStanding =
+          await db.studentScholasticStanding.save(scholasticStanding);
+        // Link the assessment to the scholastic standing.
+        application.currentAssessment.studentScholasticStanding =
+          savedScholasticStanding;
+        await db.studentAssessment.save(application.currentAssessment);
+        const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.ScholasticStandingWithdrawals}`;
+        const studentToken = await getStudentToken(
+          FakeStudentUsersTypes.FakeStudentUserType1,
+        );
+        // Mock the user received in the token.
+        await mockJWTUserInfo(appModule, application.student.user);
+
+        // Act/Assert
+        const response = await request(app.getHttpServer())
+          .get(endpoint)
+          .auth(studentToken, BEARER_AUTH_TYPE)
+          .expect(HttpStatus.OK);
+        expect(response.body).toStrictEqual({
+          formData: {
+            scholasticStandingWithdrawals: [],
+          },
+        });
+      },
+    );
+
     it(`Should not return supplementary data for ${KnownSupplementaryDataKey.ScholasticStandingWithdrawals} when the ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram} scholastic standing is reversed.`, async () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource);
@@ -280,66 +327,69 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
       });
     });
 
-    it(`Should not return supplementary data for ${KnownSupplementaryDataKey.ScholasticStandingWithdrawals} when the ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram} scholastic standing has a non punitive withdrawal form that is previously submitted for this application.`, async () => {
-      // Arrange
-      const application = await saveFakeApplication(db.dataSource);
-      // Create a fake FormSubmission to simulate a previously submitted non-punitive withdrawal form.
-      const dynamicFormConfiguration = createFakeDynamicFormConfiguration(
-        DynamicFormType.NonPunitiveWithdrawal,
-      );
-      await db.dynamicFormConfiguration.save(dynamicFormConfiguration);
-      const savedFormSubmission = await saveFakeFormSubmissionFromInputTestData(
-        db,
-        {
-          student: application.student,
-          formCategory: FormCategory.StudentForm,
-          submissionStatus: FormSubmissionStatus.Completed,
-          ministryAuditUser: auditUser,
-          formSubmissionItems: [
-            {
-              dynamicFormConfiguration,
-              decisions: [
-                {
-                  decisionStatus: FormSubmissionDecisionStatus.Approved,
-                },
-              ],
+    it(
+      `Should not return supplementary data for ${KnownSupplementaryDataKey.ScholasticStandingWithdrawals} when the ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram} scholastic standing ` +
+        "has a non punitive withdrawal form that is previously submitted for this application.",
+      async () => {
+        // Arrange
+        const application = await saveFakeApplication(db.dataSource);
+        // Create a fake FormSubmission to simulate a previously submitted non-punitive withdrawal form.
+        const dynamicFormConfiguration = createFakeDynamicFormConfiguration(
+          DynamicFormType.NonPunitiveWithdrawal,
+        );
+        await db.dynamicFormConfiguration.save(dynamicFormConfiguration);
+        const savedFormSubmission =
+          await saveFakeFormSubmissionFromInputTestData(db, {
+            student: application.student,
+            formCategory: FormCategory.StudentForm,
+            submissionStatus: FormSubmissionStatus.Completed,
+            ministryAuditUser: auditUser,
+            formSubmissionItems: [
+              {
+                dynamicFormConfiguration,
+                decisions: [
+                  {
+                    decisionStatus: FormSubmissionDecisionStatus.Approved,
+                  },
+                ],
+              },
+            ],
+          });
+        const [savedFormSubmissionItem] =
+          savedFormSubmission.formSubmissionItems;
+        const scholasticStanding = createFakeStudentScholasticStanding(
+          { submittedBy: application.student.user, application },
+          {
+            initialValues: {
+              changeType:
+                StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+              nonPunitiveFormSubmissionItem: savedFormSubmissionItem,
             },
-          ],
-        },
-      );
-      const [savedFormSubmissionItem] = savedFormSubmission.formSubmissionItems;
-      const scholasticStanding = createFakeStudentScholasticStanding(
-        { submittedBy: application.student.user, application },
-        {
-          initialValues: {
-            changeType:
-              StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-            nonPunitiveFormSubmissionItem: savedFormSubmissionItem,
           },
-        },
-      );
-      const savedScholasticStanding =
-        await db.studentScholasticStanding.save(scholasticStanding);
-      // Link the assessment to the scholastic standing.
-      application.currentAssessment.studentScholasticStanding =
-        savedScholasticStanding;
-      await db.studentAssessment.save(application.currentAssessment);
-      const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.ScholasticStandingWithdrawals}`;
-      const studentToken = await getStudentToken(
-        FakeStudentUsersTypes.FakeStudentUserType1,
-      );
-      // Mock the user received in the token.
-      await mockJWTUserInfo(appModule, application.student.user);
+        );
+        const savedScholasticStanding =
+          await db.studentScholasticStanding.save(scholasticStanding);
+        // Link the assessment to the scholastic standing.
+        application.currentAssessment.studentScholasticStanding =
+          savedScholasticStanding;
+        await db.studentAssessment.save(application.currentAssessment);
+        const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.ScholasticStandingWithdrawals}`;
+        const studentToken = await getStudentToken(
+          FakeStudentUsersTypes.FakeStudentUserType1,
+        );
+        // Mock the user received in the token.
+        await mockJWTUserInfo(appModule, application.student.user);
 
-      // Act/Assert
-      const response = await request(app.getHttpServer())
-        .get(endpoint)
-        .auth(studentToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK);
-      expect(response.body).toStrictEqual({
-        formData: { scholasticStandingWithdrawals: [] },
-      });
-    });
+        // Act/Assert
+        const response = await request(app.getHttpServer())
+          .get(endpoint)
+          .auth(studentToken, BEARER_AUTH_TYPE)
+          .expect(HttpStatus.OK);
+        expect(response.body).toStrictEqual({
+          formData: { scholasticStandingWithdrawals: [] },
+        });
+      },
+    );
   });
 
   describe(`Supplementary data validations common for all data keys.`, () => {
