@@ -24,6 +24,7 @@ jobs:
     env:
       FORMS_NAME: forms
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+      BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
       FORMIO_SOURCE_REPO_TAG: ${{ inputs.formioTag }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
