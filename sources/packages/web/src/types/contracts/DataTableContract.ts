@@ -596,7 +596,8 @@ export const SearchStudentsHeaders = [
 export const SearchInstitutionsHeaders = [
   { title: "Operating Name", sortable: true, key: "operatingName" },
   { title: "Legal Name", sortable: true, key: "legalName" },
-  { title: "Address", sortable: false, key: "address" },
+  { title: "Country", sortable: true, key: "country" },
+  { title: "Status", sortable: true, key: "classification" },
   { title: "Action", sortable: false, key: "action" },
 ];
 

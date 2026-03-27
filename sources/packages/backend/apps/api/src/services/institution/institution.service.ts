@@ -646,32 +646,53 @@ export class InstitutionService extends RecordDataModelService<Institution> {
 
   /**
    * Search the institution based on the search criteria.
-   * @param legalName legalName of the institution.
-   * @param operatingName operatingName of the institution.
-   * @returns Searched institution details.
+   * At least one search criteria must be provided.
+   * @param legalName legal name of the institution.
+   * @param operatingName operating name of the institution.
+   * @param institutionLocationCode institution location code for exact match search.
+   * @returns searched institution details.
    */
   async searchInstitution(
-    legalName: string,
-    operatingName: string,
+    legalName?: string,
+    operatingName?: string,
+    institutionLocationCode?: string,
   ): Promise<Institution[]> {
+    const trimmedLegalName = legalName?.trim();
+    const trimmedOperatingName = operatingName?.trim();
+    const trimmedInstitutionLocationCode = institutionLocationCode?.trim();
+    if (
+      !trimmedLegalName &&
+      !trimmedOperatingName &&
+      !trimmedInstitutionLocationCode
+    ) {
+      throw new Error("At least one search criteria must be provided.");
+    }
     const searchQuery = this.repo
       .createQueryBuilder("institution")
       .select([
         "institution.legalOperatingName",
         "institution.operatingName",
-        "institution.institutionAddress",
         "institution.id",
+        "institution.country",
+        "institution.classification",
       ])
       .where("1 = 1");
-    if (legalName) {
+    if (trimmedLegalName) {
       searchQuery.andWhere("institution.legalOperatingName Ilike :legalName", {
-        legalName: `%${legalName}%`,
+        legalName: `%${trimmedLegalName}%`,
       });
     }
-    if (operatingName) {
+    if (trimmedOperatingName) {
       searchQuery.andWhere("institution.operatingName Ilike :operatingName", {
-        operatingName: `%${operatingName}%`,
+        operatingName: `%${trimmedOperatingName}%`,
       });
+    }
+    if (trimmedInstitutionLocationCode) {
+      searchQuery
+        .innerJoin("institution.locations", "location")
+        .andWhere("location.institutionCode = :institutionLocationCode", {
+          institutionLocationCode: trimmedInstitutionLocationCode.toUpperCase(),
+        });
     }
     return searchQuery.getMany();
   }

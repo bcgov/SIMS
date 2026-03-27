@@ -393,3 +393,8 @@ div.v-field__field input[type="date"] {
     @extend .font-bold;
   }
 }
+
+// Capitalizes the first letter of each word.
+.p-text-capitalize {
+  text-transform: capitalize;
+}

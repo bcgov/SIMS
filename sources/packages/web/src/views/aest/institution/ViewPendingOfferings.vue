@@ -63,7 +63,9 @@
             {{ item.offeringType }}
           </template>
           <template #[`item.offeringDelivered`]="{ item }">
-            {{ capitalizeFirstWord(item.offeringDelivered) }}
+            <div class="p-text-capitalize">
+              {{ item.offeringDelivered }}
+            </div>
           </template>
           <template #[`item.actions`]="{ item }">
             <v-btn color="primary" @click="viewOffering(item)">View</v-btn>
@@ -100,11 +102,7 @@ export default defineComponent({
   setup() {
     const loading = ref(false);
     const searchCriteria = ref("");
-    const {
-      capitalizeFirstWord,
-      dateOnlyLongString,
-      dateOnlyLongPeriodString,
-    } = useFormatters();
+    const { dateOnlyLongString, dateOnlyLongPeriodString } = useFormatters();
     const { mapOfferingIntensity } = useOffering();
     const { mobile: isMobile } = useDisplay();
     const snackBar = useSnackBar();
@@ -199,7 +197,6 @@ export default defineComponent({
       viewOffering,
       isMobile,
       mapOfferingIntensity,
-      capitalizeFirstWord,
     };
   },
 });
