@@ -57,6 +57,9 @@
             "valueProperty": "scholasticStandingId",
             "template": "<span>{{ item.applicationNumber }}</span>",
             "customOptions": "",
+            "validate": {
+                "required": true
+            },
             "validateWhenHidden": false,
             "key": "nonPunitiveWithdrawalId",
             "type": "select",
@@ -101,6 +104,7 @@
                 }
             ],
             "validate": {
+                "required": true,
                 "custom": "const shouldSelectOneOfTheAboveOrAnotherOption =\r\n  (data.eligibleCircumstances.didNotAttendClasses ||\r\n    data.eligibleCircumstances.attendedClassesFor10DaysOrLess ||\r\n    data.eligibleCircumstances.completedFirstSemester ||\r\n    data.eligibleCircumstances.withdrawnFromStudies) &&\r\n  data.eligibleCircumstances.noneOfTheAbove;\r\n\r\nvalid = shouldSelectOneOfTheAboveOrAnotherOption\r\n  ? \"Please select at least one of the circumstances or 'None of the above'.\"\r\n  : true;"
             },
             "validateWhenHidden": false,

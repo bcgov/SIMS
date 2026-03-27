@@ -1,9 +1,11 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
+  AESTGroups,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   FakeStudentUsersTypes,
+  getAESTUser,
   getStudentByFakeStudentUserType,
   getStudentToken,
   mockJWTUserInfo,
@@ -13,23 +15,28 @@ import { KnownSupplementaryDataKey } from "../../../../services";
 import {
   createE2EDataSources,
   createFakeDynamicFormConfiguration,
-  createFakeFormSubmissionItem,
   createFakeSupportingUser,
   createFakeStudentScholasticStanding,
   E2EDataSources,
   saveFakeApplication,
+  saveFakeFormSubmissionFromInputTestData,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
 import {
   DynamicFormType,
+  FormCategory,
+  FormSubmissionDecisionStatus,
+  FormSubmissionStatus,
   StudentScholasticStandingChangeType,
   SupportingUserType,
+  User,
 } from "@sims/sims-db";
 
 describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
   let app: INestApplication;
   let appModule: TestingModule;
   let db: E2EDataSources;
+  let auditUser: User;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, module } =
@@ -37,6 +44,10 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
     app = nestApplication;
     appModule = module;
     db = createE2EDataSources(dataSource);
+    auditUser = await getAESTUser(
+      dataSource,
+      AESTGroups.BusinessAdministrators,
+    );
   });
 
   beforeEach(async () => {
@@ -272,17 +283,31 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
     it(`Should not return supplementary data for ${KnownSupplementaryDataKey.ScholasticStandingWithdrawals} when the ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram} scholastic standing has a non punitive withdrawal form that is previously submitted for this application.`, async () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource);
-      // Create a fake FormSubmissionItem to simulate a previously submitted non-punitive withdrawal form.
+      // Create a fake FormSubmission to simulate a previously submitted non-punitive withdrawal form.
       const dynamicFormConfiguration = createFakeDynamicFormConfiguration(
-        DynamicFormType.StudentFinancialAidApplication,
+        DynamicFormType.NonPunitiveWithdrawal,
       );
       await db.dynamicFormConfiguration.save(dynamicFormConfiguration);
-      const formSubmissionItem = createFakeFormSubmissionItem({
-        dynamicFormConfiguration,
-        creator: application.student.user,
-      });
-      const savedFormSubmissionItem =
-        await db.formSubmissionItem.save(formSubmissionItem);
+      const savedFormSubmission = await saveFakeFormSubmissionFromInputTestData(
+        db,
+        {
+          student: application.student,
+          formCategory: FormCategory.StudentForm,
+          submissionStatus: FormSubmissionStatus.Completed,
+          ministryAuditUser: auditUser,
+          formSubmissionItems: [
+            {
+              dynamicFormConfiguration,
+              decisions: [
+                {
+                  decisionStatus: FormSubmissionDecisionStatus.Approved,
+                },
+              ],
+            },
+          ],
+        },
+      );
+      const [savedFormSubmissionItem] = savedFormSubmission.formSubmissionItems;
       const scholasticStanding = createFakeStudentScholasticStanding(
         { submittedBy: application.student.user, application },
         {
