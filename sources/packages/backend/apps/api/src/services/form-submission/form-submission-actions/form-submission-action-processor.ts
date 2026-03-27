@@ -18,12 +18,12 @@ export class FormSubmissionActionProcessor {
   constructor(
     createAppealAssessmentAction: FormSubmissionCreateAppealAssessmentAction,
     updateModifiedIndependentAction: FormSubmissionUpdateModifiedIndependentAction,
-    updateNonPunitiveScholasticStandingWithdrawal: FormSubmissionUpdateNonPunitiveScholasticStandingWithdrawalAction,
+    updateNonPunitiveScholasticStandingWithdrawalAction: FormSubmissionUpdateNonPunitiveScholasticStandingWithdrawalAction,
   ) {
     this.actions = [
       createAppealAssessmentAction,
       updateModifiedIndependentAction,
-      updateNonPunitiveScholasticStandingWithdrawal,
+      updateNonPunitiveScholasticStandingWithdrawalAction,
     ];
   }
 

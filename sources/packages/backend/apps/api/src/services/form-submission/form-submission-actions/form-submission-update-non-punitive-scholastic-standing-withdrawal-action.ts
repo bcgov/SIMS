@@ -2,7 +2,6 @@ import {
   FormCategory,
   FormSubmissionActionType,
   FormSubmissionDecisionStatus,
-  FormSubmissionStatus,
   StudentScholasticStanding,
 } from "@sims/sims-db";
 import { EntityManager, IsNull } from "typeorm";
@@ -45,9 +44,7 @@ export class FormSubmissionUpdateNonPunitiveScholasticStandingWithdrawalAction e
     if (
       submissionItem.decisionStatus !== FormSubmissionDecisionStatus.Approved
     ) {
-      throw new Error(
-        `Form submission item with ID ${submissionItem.id} is not approved. Non-punitive scholastic standing withdrawal can only be updated for an approved form.`,
-      );
+      return;
     }
     // Update the student's non-punitive scholastic standing withdrawal with the scholastic standing id associated with the form submission item.
     const auditUser = { id: auditUserId };
@@ -80,9 +77,6 @@ export class FormSubmissionUpdateNonPunitiveScholasticStandingWithdrawalAction e
    * @returns true if the action applies, false otherwise.
    */
   protected appliesTo(formSubmission: FormSubmissionActionModel): boolean {
-    return (
-      formSubmission.formCategory === FormCategory.StudentForm &&
-      formSubmission.submissionStatus === FormSubmissionStatus.Completed
-    );
+    return formSubmission.formCategory === FormCategory.StudentForm;
   }
 }

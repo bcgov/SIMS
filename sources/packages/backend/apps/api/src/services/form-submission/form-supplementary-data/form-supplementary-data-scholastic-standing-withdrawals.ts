@@ -86,6 +86,7 @@ export class SupplementaryDataScholasticStandingWithdrawals extends Supplementar
         },
       },
       where: {
+        isArchived: false,
         student: { id: studentId },
         studentAssessments: {
           studentScholasticStanding: {

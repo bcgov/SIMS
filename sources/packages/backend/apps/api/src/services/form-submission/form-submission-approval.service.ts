@@ -188,7 +188,7 @@ export class FormSubmissionApprovalService {
           },
           submissionStatus: true,
           formCategory: true,
-          application: { id: true, applicationStatus: true, isArchived: true },
+          application: { id: true, applicationStatus: true },
           formSubmissionItems: {
             id: true,
             updatedAt: true,
@@ -384,20 +384,17 @@ export class FormSubmissionApprovalService {
    * longer the current version.
    * @param application application to check.
    * @throws CustomNamedError with FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE
-   * if the application is present and is not in completed status or is archived.
+   * if the application is present and is not in completed status.
    */
   private checkFormSubmissionRelatedApplicationStatus(
-    application:
-      | Pick<Application, "applicationStatus" | "isArchived">
-      | undefined,
+    application: Pick<Application, "applicationStatus"> | undefined,
   ): void {
     if (
       application &&
-      (application.applicationStatus !== ApplicationStatus.Completed ||
-        application.isArchived)
+      application.applicationStatus !== ApplicationStatus.Completed
     ) {
       throw new CustomNamedError(
-        "The application associated with the form submission is not in completed status or is archived.",
+        "The application associated with the form submission is not in completed status.",
         FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE,
       );
     }
