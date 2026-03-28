@@ -3,23 +3,24 @@
     <template #header>
       <header-navigator
         title="Back to student applications"
-        :routeLocation="{
+        :route-location="{
           name: InstitutionRoutesConst.STUDENT_APPLICATIONS,
           params: { studentId },
         }"
-        subTitle="Financial Aid Application"
+        sub-title="Financial Aid Application"
       >
       </header-navigator>
+      <application-header-title :application-id="applicationId" />
     </template>
     <h2 class="color-blue pb-4">
       Student Application Details
       {{ applicationDetail.applicationNumber }}
     </h2>
     <StudentApplication
-      :selectedForm="selectedForm"
-      :initialData="initialData"
-      :programYearId="applicationDetail.applicationProgramYearID"
-      :isReadOnly="true"
+      :selected-form="selectedForm"
+      :initial-data="initialData"
+      :program-year-id="applicationDetail.applicationProgramYearID"
+      :is-read-only="true"
       :is-data-ready="isDataReady"
     />
   </full-page-container>
@@ -32,10 +33,12 @@ import { ApplicationBaseAPIOutDTO } from "@/services/http/dto";
 import { ApplicationService } from "@/services/ApplicationService";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 import { StudentApplicationFormData } from "@/types";
+import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 
 export default defineComponent({
   components: {
     StudentApplication,
+    ApplicationHeaderTitle,
   },
   props: {
     studentId: {

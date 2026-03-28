@@ -55,6 +55,19 @@ export default defineComponent({
           },
         },
       },
+      {
+        title: "Application Status",
+        props: {
+          prependIcon: "mdi-information-outline",
+          to: {
+            name: InstitutionRoutesConst.APPLICATION_STATUS_TRACKER,
+            params: {
+              applicationId: props.applicationId,
+              studentId: props.studentId,
+            },
+          },
+        },
+      },
     ]);
     return {
       items,

@@ -122,6 +122,7 @@ export const InstitutionRoutesConst = {
   REQUEST_CHANGE_COMPLETED: Symbol(),
   REQUEST_CHANGE_FORM_SUBMIT: Symbol(),
   REQUEST_CHANGE_FORM_VIEW: Symbol(),
+  APPLICATION_STATUS_TRACKER: Symbol(),
 };
 
 /**

@@ -6,6 +6,7 @@
         :route-location="backRoute"
         sub-title="Assessment"
       />
+      <application-header-title :application-id="applicationId" />
     </template>
     <request-assessment
       class="mb-5"
@@ -33,11 +34,13 @@ import { AssessmentTriggerType } from "@/types";
 import RequestAssessment from "@/components/common/students/assessment/Request.vue";
 import HistoryAssessment from "@/components/common/students/assessment/History.vue";
 import { useFeatureToggles } from "@/composables";
+import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 
 export default defineComponent({
   components: {
     RequestAssessment,
     HistoryAssessment,
+    ApplicationHeaderTitle,
   },
   props: {
     studentId: {
