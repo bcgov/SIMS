@@ -6,6 +6,7 @@ import {
   createTestingAppModule,
   getAESTToken,
   getAESTUser,
+  removeJWTUserRoles,
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
@@ -32,16 +33,21 @@ import {
 import MockDate from "mockdate";
 import { getPSTPDTDateTime } from "@sims/utilities";
 import { FORM_SUBMISSION_ITEM_OUTDATED } from "../../../../services";
+import { Role } from "../../../../auth/roles.enum";
+import { TestingModule } from "@nestjs/testing";
 
 describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
   let app: INestApplication;
   let db: E2EDataSources;
+  let appModule: TestingModule;
   let ministryAdminUser: User;
   let formConfigs: DynamicConfigurationTestData;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, dataSource, module } =
+      await createTestingAppModule();
     app = nestApplication;
+    appModule = module;
     db = createE2EDataSources(dataSource);
     ministryAdminUser = await getAESTUser(
       db.dataSource,
@@ -445,6 +451,73 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
           "Final decision cannot be made when some decisions are still pending.",
         error: "Unprocessable Entity",
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
+  [
+    {
+      formCategory: FormCategory.StudentAppeal,
+      role: Role.StudentApproveDeclineAppeals,
+    },
+    {
+      formCategory: FormCategory.StudentForm,
+      role: Role.StudentApproveDeclineForms,
+    },
+  ].forEach(({ formCategory, role }) => {
+    it(`Should throw a forbidden error when attempting to complete the form of category ${formCategory} but the user lacks the necessary roles.`, async () => {
+      // Arrange
+      const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+        ministryAuditUser: ministryAdminUser,
+        formCategory,
+        submissionStatus: FormSubmissionStatus.Pending,
+        formSubmissionItems: [],
+      });
+      const payload = {
+        items: [{ submissionItemId: 1, lastUpdateDate: new Date() }],
+      };
+      const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
+      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+      await removeJWTUserRoles(appModule, [role]);
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send(payload)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.FORBIDDEN)
+        .expect({
+          message:
+            "User does not have the required role to perform this action.",
+          error: "Forbidden",
+          statusCode: HttpStatus.FORBIDDEN,
+        });
+    });
+  });
+
+  it("Should throw a forbidden error when attempting to complete the form but the user does not have access to the endpoint.", async () => {
+    // Arrange
+    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+      ministryAuditUser: ministryAdminUser,
+      formCategory: FormCategory.StudentForm,
+      submissionStatus: FormSubmissionStatus.Pending,
+      formSubmissionItems: [],
+    });
+    const payload = {
+      items: [{ submissionItemId: 1, lastUpdateDate: new Date() }],
+    };
+    const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
+    const token = await getAESTToken(AESTGroups.Operations);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        message: "Forbidden resource",
+        error: "Forbidden",
+        statusCode: HttpStatus.FORBIDDEN,
       });
   });
 
