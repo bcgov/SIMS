@@ -9,9 +9,8 @@ import {
   Application,
   OfferingIntensity,
   SFASApplication,
-  DisbursementScheduleStatus,
 } from "@sims/sims-db";
-import { Brackets, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 
 const MAX_PAST_PROGRAM_YEARS_INCLUDING_CURRENT = 3;
@@ -272,11 +271,12 @@ export class StudentInformationService {
 
   /**
    * Get SIMS student SINs for students who have full-time applications
-   * meeting at least one of the following criteria:
-   * - A FT application with a start date between now and the specified future window (no cancelled or edited apps).
-   * - FT disbursements sent within the specified past window (no cancelled or edited apps).
-   * Only valid SINs are returned, and duplicate SINs are excluded.
-   * @param activeSinsDays number of days in the past and future to consider for active SINs.
+   * where the study period is active or starts within the specified future window.
+   * Active is defined as: study start date is on or before (today + activeSinsDays)
+   * AND study end date is on or after today.
+   * Cancelled and edited applications are excluded.
+   * Only the most recent SIN (student.sinValidation) is returned, and duplicate SINs are excluded.
+   * @param activeSinsDays number of days in the future to consider for upcoming study start dates.
    * @returns distinct SIMS student SINs.
    */
   async getFullTimeActiveSINs(activeSinsDays: number): Promise<string[]> {
@@ -285,56 +285,35 @@ export class StudentInformationService {
       .select(["application.id", "student.id", "sinValidation.sin"])
       .distinctOn(["sinValidation.sin"])
       .innerJoin("application.student", "student")
-      .innerJoin(
-        "student.sinValidations",
-        "sinValidation",
-        // Joining the most recent valid SIN for each student.
-        "sinValidation.id = (" +
-          "SELECT sv.id FROM sims.sin_validations sv " +
-          "WHERE sv.student_id = student.id AND sv.valid_sin = true " +
-          "ORDER BY sv.id DESC LIMIT 1)",
-      )
+      .innerJoin("student.sinValidation", "sinValidation")
       .innerJoin("application.currentAssessment", "assessment")
       .innerJoin("assessment.offering", "offering")
-      .leftJoin(
-        "assessment.disbursementSchedules",
-        "disbursement",
-        "disbursement.disbursementScheduleStatus = :sentDisbursementStatus",
-      )
       .where(
-        "application.applicationStatus NOT IN (:cancelledApplicationStatus, :editedApplicationStatus)",
-        {},
+        "application.applicationStatus NOT IN (:...inEligibleApplicationStatuses)",
       )
       .andWhere("application.offeringIntensity = :fullTimeOfferingIntensity")
       .andWhere(
-        new Brackets((qb) =>
-          qb
-            .where(
-              "offering.studyStartDate BETWEEN CURRENT_DATE AND (CURRENT_DATE + :activeSinsDays * INTERVAL '1 day')",
-            )
-            .orWhere(
-              "disbursement.dateSent BETWEEN (CURRENT_DATE - :activeSinsDays * INTERVAL '1 day') AND CURRENT_DATE",
-            ),
-        ),
+        "offering.studyStartDate <= (CURRENT_DATE + :activeSinsDays * INTERVAL '1 day') AND offering.studyEndDate >= CURRENT_DATE",
       )
       .setParameters({
-        cancelledApplicationStatus: ApplicationStatus.Cancelled,
-        editedApplicationStatus: ApplicationStatus.Edited,
+        inEligibleApplicationStatuses: [
+          ApplicationStatus.Cancelled,
+          ApplicationStatus.Edited,
+        ],
         fullTimeOfferingIntensity: OfferingIntensity.fullTime,
-        sentDisbursementStatus: DisbursementScheduleStatus.Sent,
-        cancelled: ApplicationStatus.Cancelled,
         activeSinsDays,
       })
       .getMany();
-    return applications.map((app) => app.student.sinValidations[0].sin);
+    return applications.map((app) => app.student.sinValidation.sin);
   }
 
   /**
    * Get SFAS (legacy) student SINs for students who have full-time applications
-   * meeting at least one of the following criteria:
-   * - A FT application with a start date between now and the specified future window (no cancelled apps).
-   * - FT disbursements issued within the specified past window (no cancelled apps).
-   * @param activeSinsDays number of days in the past and future to consider for active SINs.
+   * where the study period is active or starts within the specified future window.
+   * Active is defined as: study start date is on or before (today + activeSinsDays)
+   * AND study end date is on or after today.
+   * Cancelled applications are excluded.
+   * @param activeSinsDays number of days in the future to consider for upcoming study start dates.
    * @returns distinct SFAS student SINs.
    */
   async getFullTimeActiveLegacySINs(activeSinsDays: number): Promise<string[]> {
@@ -343,21 +322,9 @@ export class StudentInformationService {
       .select(["sfasApp.id", "sfasIndividual.sin"])
       .distinctOn(["sfasIndividual.sin"])
       .innerJoin("sfasApp.individual", "sfasIndividual")
-      .leftJoin("sfasApp.disbursements", "disbursement")
       .where("sfasApp.applicationCancelDate IS NULL")
       .andWhere(
-        new Brackets((qb) =>
-          qb
-            .where(
-              "sfasApp.startDate BETWEEN CURRENT_DATE AND (CURRENT_DATE + :activeSinsDays * INTERVAL '1 day')",
-            )
-            .orWhere(
-              "sfasApp.startDate <= CURRENT_DATE AND sfasApp.endDate >= CURRENT_DATE",
-            )
-            .orWhere(
-              "disbursement.dateIssued BETWEEN (CURRENT_DATE - :activeSinsDays * INTERVAL '1 day') AND CURRENT_DATE",
-            ),
-        ),
+        "sfasApp.startDate <= (CURRENT_DATE + :activeSinsDays * INTERVAL '1 day') AND sfasApp.endDate >= CURRENT_DATE",
       )
       .setParameters({ activeSinsDays })
       .getMany();
