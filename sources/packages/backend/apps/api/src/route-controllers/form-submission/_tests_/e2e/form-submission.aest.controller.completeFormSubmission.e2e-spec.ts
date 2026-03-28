@@ -496,16 +496,10 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
 
   it("Should throw a forbidden error when attempting to complete the form but the user does not have access to the endpoint.", async () => {
     // Arrange
-    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
-      ministryAuditUser: ministryAdminUser,
-      formCategory: FormCategory.StudentForm,
-      submissionStatus: FormSubmissionStatus.Pending,
-      formSubmissionItems: [],
-    });
     const payload = {
       items: [{ submissionItemId: 1, lastUpdateDate: new Date() }],
     };
-    const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
+    const endpoint = `/aest/form-submission/9999999/complete`;
     const token = await getAESTToken(AESTGroups.Operations);
 
     // Act/Assert
