@@ -24,8 +24,7 @@ export default defineComponent({
   props: {
     areApplicationActionsAllowed: {
       type: Boolean,
-      required: false,
-      default: false,
+      required: true,
     },
   },
 });

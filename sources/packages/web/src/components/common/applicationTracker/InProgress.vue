@@ -43,10 +43,7 @@
     label="Waiting for additional information from your institution"
     icon="fa:fas fa-clock"
     icon-color="secondary"
-    v-if="
-      showStudentBanners &&
-      applicationDetails?.pirStatus === ProgramInfoStatus.required
-    "
+    v-if="applicationDetails?.pirStatus === ProgramInfoStatus.required"
     ><template #content
       >We sent a <strong>program information request</strong> to your
       institution to complete the study information in your application. Please
@@ -231,26 +228,22 @@
     icon-color="success"
     content="The Canada Revenue Agency (CRA) has successfully verified your income."
     v-if="
-      showStudentBanners &&
       applicationDetails?.studentIncomeVerificationStatus ===
-        SuccessWaitingStatus.Success
+      SuccessWaitingStatus.Success
     "
   />
 
-  <!-- Parent information banners are only visible in the student view. -->
-  <template v-if="showStudentBanners">
-    <template
-      v-for="parent in applicationDetails?.parentsInfo"
-      :key="parent.supportingUserId"
-    >
-      <application-status-tracker-banner
-        v-if="parent.status === SuccessWaitingStatus.Success"
-        label="Parent information request completed"
-        icon="fa:fas fa-check-circle"
-        icon-color="success"
-        :content="`We have successfully received supporting information from ${parent.fullName}.`"
-      />
-    </template>
+  <template
+    v-for="parent in applicationDetails?.parentsInfo"
+    :key="parent.supportingUserId"
+  >
+    <application-status-tracker-banner
+      v-if="parent.status === SuccessWaitingStatus.Success"
+      label="Parent information request completed"
+      icon="fa:fas fa-check-circle"
+      icon-color="success"
+      :content="`We have successfully received supporting information from ${parent.fullName}.`"
+    />
   </template>
 
   <application-status-tracker-banner
@@ -259,7 +252,6 @@
     icon-color="success"
     content="We have successfully received supporting information from your partner."
     v-if="
-      showStudentBanners &&
       applicationDetails?.partnerInfo?.status === SuccessWaitingStatus.Success
     "
   />
@@ -345,8 +337,7 @@ export default defineComponent({
     },
     areApplicationActionsAllowed: {
       type: Boolean,
-      required: false,
-      default: false,
+      required: true,
     },
     /**
      * When false, hides student-specific banners (parent/partner declarations,
@@ -355,8 +346,7 @@ export default defineComponent({
      */
     showStudentBanners: {
       type: Boolean,
-      required: false,
-      default: true,
+      required: true,
     },
   },
   setup(props) {
