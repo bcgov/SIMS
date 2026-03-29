@@ -6,7 +6,10 @@
         :route-location="backRoute"
         sub-title="Assessment"
       />
-      <application-header-title :application-id="applicationId" />
+      <application-header-title
+        :application-id="applicationId"
+        :student-id="studentId"
+      />
     </template>
     <request-assessment
       class="mb-5"

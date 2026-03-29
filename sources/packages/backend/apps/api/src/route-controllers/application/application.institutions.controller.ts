@@ -9,7 +9,10 @@ import {
 } from "@nestjs/common";
 import { ApplicationService } from "../../services";
 import BaseController from "../BaseController";
-import { ApplicationSupplementalDataAPIOutDTO } from "./models/application.dto";
+import {
+  ApplicationProgressDetailsAPIOutDTO,
+  ApplicationSupplementalDataAPIOutDTO,
+} from "./models/application.dto";
 import {
   AllowAuthorizedParty,
   HasStudentDataAccess,
@@ -85,6 +88,23 @@ export class ApplicationInstitutionsController extends BaseController {
     }
     return this.applicationControllerService.transformToApplicationDTO(
       application,
+    );
+  }
+
+  /**
+   * Get status of all requests and confirmations in student application (Exception, PIR and COE).
+   * @param applicationId application id.
+   * @returns application progress details.
+   */
+  @ApiNotFoundResponse({
+    description: "Application not found.",
+  })
+  @Get(":applicationId/progress-details")
+  async getApplicationProgressDetails(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
+  ): Promise<ApplicationProgressDetailsAPIOutDTO> {
+    return this.applicationControllerService.getApplicationProgressDetails(
+      applicationId,
     );
   }
 }

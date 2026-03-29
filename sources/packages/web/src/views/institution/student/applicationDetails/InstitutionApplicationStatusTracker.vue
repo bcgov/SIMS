@@ -9,7 +9,10 @@
         }"
         sub-title="Application Status"
       />
-      <application-header-title :application-id="applicationId" />
+      <application-header-title
+        :application-id="applicationId"
+        :student-id="studentId"
+      />
     </template>
     <application-progress-bar :application-id="applicationId" />
   </full-page-container>

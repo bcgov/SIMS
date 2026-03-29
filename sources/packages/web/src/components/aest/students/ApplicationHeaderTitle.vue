@@ -16,6 +16,11 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    studentId: {
+      type: Number,
+      required: false,
+      default: undefined,
+    },
   },
   setup(props) {
     const applicationData = ref<ApplicationSupplementalDataAPIOutDTO>();
@@ -41,7 +46,10 @@ export default defineComponent({
     const loadApplicationValues = async () => {
       applicationData.value = await ApplicationService.shared.getApplication(
         props.applicationId,
-        { loadDynamicData: false },
+        {
+          studentId: props.studentId,
+          loadDynamicData: false,
+        },
       );
 
       headerMap.value = mapApplicationHeader(applicationData.value);

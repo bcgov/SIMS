@@ -10,7 +10,10 @@
         sub-title="Financial Aid Application"
       >
       </header-navigator>
-      <application-header-title :application-id="applicationId" />
+      <application-header-title
+        :application-id="applicationId"
+        :student-id="studentId"
+      />
     </template>
     <h2 class="color-blue pb-4">
       Student Application Details
