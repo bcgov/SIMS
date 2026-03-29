@@ -38,6 +38,7 @@
         "
         :application-id="applicationId"
         :are-application-actions-allowed="areApplicationActionsAllowed"
+        :show-student-banners="showStudentBanners"
       />
       <assessment
         v-else-if="
@@ -47,7 +48,7 @@
         :assessment-trigger-type="
           applicationProgressDetails.assessmentTriggerType!
         "
-        :are-application-actions-allowed="areApplicationActionsAllowed"
+        :show-student-banners="showStudentBanners"
         @go-to-notice-of-assessment="goToNoticeOfAssessment"
       />
       <enrolment
@@ -142,6 +143,15 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: false,
+    },
+    /**
+     * When false, hides student-specific banners inside the tracker components.
+     * Defaults to true for student/ministry views; set to false for institution views.
+     */
+    showStudentBanners: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
   setup(props) {

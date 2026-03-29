@@ -5,6 +5,7 @@
     "
   />
   <application-status-tracker-banner
+    v-if="showStudentBanners"
     label="Action required! Please accept your assessment"
     icon="fa:fas fa-exclamation-triangle"
     icon-color="warning"
@@ -17,10 +18,7 @@
       required on your application.
     </template>
     <template #actions>
-      <v-btn
-        color="primary"
-        :disabled="!areApplicationActionsAllowed"
-        @click="$emit('goToNoticeOfAssessment')"
+      <v-btn color="primary" @click="$emit('goToNoticeOfAssessment')"
         >View assessment</v-btn
       >
     </template>
@@ -43,10 +41,9 @@ export default defineComponent({
       type: String as PropType<AssessmentTriggerType>,
       required: true,
     },
-    areApplicationActionsAllowed: {
+    showStudentBanners: {
       type: Boolean,
-      required: false,
-      default: false,
+      required: true,
     },
   },
   setup() {

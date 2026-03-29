@@ -14,7 +14,10 @@
         :student-id="studentId"
       />
     </template>
-    <application-progress-bar :application-id="applicationId" />
+    <application-progress-bar
+      :application-id="applicationId"
+      :show-student-banners="false"
+    />
   </full-page-container>
 </template>
 

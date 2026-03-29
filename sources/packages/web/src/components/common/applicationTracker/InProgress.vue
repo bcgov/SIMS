@@ -43,7 +43,10 @@
     label="Waiting for additional information from your institution"
     icon="fa:fas fa-clock"
     icon-color="secondary"
-    v-if="applicationDetails?.pirStatus === ProgramInfoStatus.required"
+    v-if="
+      showStudentBanners &&
+      applicationDetails?.pirStatus === ProgramInfoStatus.required
+    "
     ><template #content
       >We sent a <strong>program information request</strong> to your
       institution to complete the study information in your application. Please
@@ -52,51 +55,58 @@
     ></application-status-tracker-banner
   >
 
-  <template
-    v-for="parent in applicationDetails?.parentsInfo"
-    :key="parent.supportingUserId"
-  >
-    <application-status-tracker-banner
-      v-if="
-        parent.status === SuccessWaitingStatus.Waiting && parent.isAbleToReport
-      "
-      :label="`Waiting for additional information from ${parent.fullName}`"
-      icon="fa:fas fa-clock"
-      icon-color="secondary"
+  <!-- Parent information banners are only visible in the student view. -->
+  <template v-if="showStudentBanners">
+    <template
+      v-for="parent in applicationDetails?.parentsInfo"
+      :key="parent.supportingUserId"
     >
-      <template #content>
-        We are waiting for supporting information from
-        <strong>{{ parent.fullName }}</strong
-        >. Please check your email from StudentAidBC for further instructions.
-        The email includes important details and a secure link that your parent
-        will need in order to provide their information for your application.
-      </template>
-    </application-status-tracker-banner>
+      <application-status-tracker-banner
+        v-if="
+          parent.status === SuccessWaitingStatus.Waiting &&
+          parent.isAbleToReport
+        "
+        :label="`Waiting for additional information from ${parent.fullName}`"
+        icon="fa:fas fa-clock"
+        icon-color="secondary"
+      >
+        <template #content>
+          We are waiting for supporting information from
+          <strong>{{ parent.fullName }}</strong
+          >. Please check your email from StudentAidBC for further instructions.
+          The email includes important details and a secure link that your
+          parent will need in order to provide their information for your
+          application.
+        </template>
+      </application-status-tracker-banner>
 
-    <application-status-tracker-banner
-      v-if="
-        parent.status === SuccessWaitingStatus.Waiting && !parent.isAbleToReport
-      "
-      :label="`Parent information required for ${parent.fullName}`"
-      icon="fa:fas fa-exclamation-triangle"
-      icon-color="warning"
-      background-color="warning-bg"
-    >
-      <template #content>
-        You have indicated that <strong>{{ parent.fullName }}</strong> is unable
-        to complete their declaration. Please complete the following declaration
-        on their behalf. Click on the button below to complete the declaration.
-      </template>
-      <template #actions>
-        <v-btn
-          color="primary"
-          @click="navigateToParentReporting(parent.supportingUserId)"
-          :disabled="!areApplicationActionsAllowed"
-        >
-          {{ parent.fullName }}
-        </v-btn>
-      </template>
-    </application-status-tracker-banner>
+      <application-status-tracker-banner
+        v-if="
+          parent.status === SuccessWaitingStatus.Waiting &&
+          !parent.isAbleToReport
+        "
+        :label="`Parent information required for ${parent.fullName}`"
+        icon="fa:fas fa-exclamation-triangle"
+        icon-color="warning"
+        background-color="warning-bg"
+      >
+        <template #content>
+          You have indicated that <strong>{{ parent.fullName }}</strong> is
+          unable to complete their declaration. Please complete the following
+          declaration on their behalf. Click on the button below to complete the
+          declaration.
+        </template>
+        <template #actions>
+          <v-btn
+            color="primary"
+            @click="navigateToParentReporting(parent.supportingUserId)"
+            :disabled="!areApplicationActionsAllowed"
+          >
+            {{ parent.fullName }}
+          </v-btn>
+        </template>
+      </application-status-tracker-banner>
+    </template>
   </template>
 
   <application-status-tracker-banner
@@ -104,6 +114,7 @@
     icon="fa:fas fa-clock"
     icon-color="secondary"
     v-if="
+      showStudentBanners &&
       applicationDetails?.partnerInfo?.status ===
         SuccessWaitingStatus.Waiting &&
       applicationDetails.partnerInfo.isAbleToReport
@@ -124,6 +135,7 @@
     icon-color="warning"
     background-color="warning-bg"
     v-if="
+      showStudentBanners &&
       applicationDetails?.partnerInfo?.status ===
         SuccessWaitingStatus.Waiting &&
       !applicationDetails.partnerInfo?.isAbleToReport
@@ -156,8 +168,9 @@
     icon-color="secondary"
     content="The Canada Revenue Agency (CRA) is verifying your parent's income."
     v-if="
+      showStudentBanners &&
       applicationDetails?.parent1IncomeVerificationStatus ===
-      SuccessWaitingStatus.Waiting
+        SuccessWaitingStatus.Waiting
     "
   />
 
@@ -167,8 +180,9 @@
     icon-color="secondary"
     content="The Canada Revenue Agency (CRA) is verifying your other parent's income."
     v-if="
+      showStudentBanners &&
       applicationDetails?.parent2IncomeVerificationStatus ===
-      SuccessWaitingStatus.Waiting
+        SuccessWaitingStatus.Waiting
     "
   />
 
@@ -178,8 +192,9 @@
     icon-color="secondary"
     content="The Canada Revenue Agency (CRA) is verifying your income."
     v-if="
+      showStudentBanners &&
       applicationDetails?.partnerIncomeVerificationStatus ===
-      SuccessWaitingStatus.Waiting
+        SuccessWaitingStatus.Waiting
     "
   />
 
@@ -190,6 +205,7 @@
     content="StudentAid BC is currently reviewing your application and the 
     additional information you provided for 1 or more of the questions."
     v-if="
+      showStudentBanners &&
       applicationDetails?.exceptionStatus === ApplicationExceptionStatus.Pending
     "
   />
@@ -202,8 +218,9 @@
       assessment. Once any earlier applications have been assessed this
       application will move to the assessment stage."
     v-if="
+      showStudentBanners &&
       applicationDetails?.outstandingAssessmentStatus ===
-      SuccessWaitingStatus.Waiting
+        SuccessWaitingStatus.Waiting
     "
   />
 
@@ -214,22 +231,26 @@
     icon-color="success"
     content="The Canada Revenue Agency (CRA) has successfully verified your income."
     v-if="
+      showStudentBanners &&
       applicationDetails?.studentIncomeVerificationStatus ===
-      SuccessWaitingStatus.Success
+        SuccessWaitingStatus.Success
     "
   />
 
-  <template
-    v-for="parent in applicationDetails?.parentsInfo"
-    :key="parent.supportingUserId"
-  >
-    <application-status-tracker-banner
-      v-if="parent.status === SuccessWaitingStatus.Success"
-      label="Parent information request completed"
-      icon="fa:fas fa-check-circle"
-      icon-color="success"
-      :content="`We have successfully received supporting information from ${parent.fullName}.`"
-    />
+  <!-- Parent information banners are only visible in the student view. -->
+  <template v-if="showStudentBanners">
+    <template
+      v-for="parent in applicationDetails?.parentsInfo"
+      :key="parent.supportingUserId"
+    >
+      <application-status-tracker-banner
+        v-if="parent.status === SuccessWaitingStatus.Success"
+        label="Parent information request completed"
+        icon="fa:fas fa-check-circle"
+        icon-color="success"
+        :content="`We have successfully received supporting information from ${parent.fullName}.`"
+      />
+    </template>
   </template>
 
   <application-status-tracker-banner
@@ -238,6 +259,7 @@
     icon-color="success"
     content="We have successfully received supporting information from your partner."
     v-if="
+      showStudentBanners &&
       applicationDetails?.partnerInfo?.status === SuccessWaitingStatus.Success
     "
   />
@@ -256,8 +278,9 @@
     icon-color="success"
     content="The Canada Revenue Agency (CRA) has successfully verified your parent's income."
     v-if="
+      showStudentBanners &&
       applicationDetails?.parent1IncomeVerificationStatus ===
-      SuccessWaitingStatus.Success
+        SuccessWaitingStatus.Success
     "
   />
 
@@ -267,8 +290,9 @@
     icon-color="success"
     content="The Canada Revenue Agency (CRA) has successfully verified your other parent's income."
     v-if="
+      showStudentBanners &&
       applicationDetails?.parent2IncomeVerificationStatus ===
-      SuccessWaitingStatus.Success
+        SuccessWaitingStatus.Success
     "
   />
 
@@ -278,8 +302,9 @@
     icon-color="success"
     content="The Canada Revenue Agency (CRA) has successfully verified your partner's income."
     v-if="
+      showStudentBanners &&
       applicationDetails?.partnerIncomeVerificationStatus ===
-      SuccessWaitingStatus.Success
+        SuccessWaitingStatus.Success
     "
   />
 
@@ -289,8 +314,9 @@
     icon-color="success"
     content="StudentAid BC has successfully reviewed and accepted the additional information you provided."
     v-if="
+      showStudentBanners &&
       applicationDetails?.exceptionStatus ===
-      ApplicationExceptionStatus.Approved
+        ApplicationExceptionStatus.Approved
     "
   />
 </template>
@@ -321,6 +347,16 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: false,
+    },
+    /**
+     * When false, hides student-specific banners (parent/partner declarations,
+     * income verifications, Ministry waiting states). Used for institution users
+     * who should only see PIR-related and exception status information.
+     */
+    showStudentBanners: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
   setup(props) {
