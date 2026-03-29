@@ -18,6 +18,9 @@ import {
   LINE_BREAK_SPLIT_REGEX,
   SFTP_ARCHIVE_DIRECTORY,
 } from "@sims/integrations/constants";
+import * as unzipper from "unzipper";
+import * as readline from "node:readline";
+import { PassThrough } from "node:stream";
 
 /**
  * Provides the basic features to enable the SFTP integration.
@@ -194,6 +197,79 @@ export abstract class SFTPIntegrationBase<DownloadType> {
         .toString()
         .split(LINE_BREAK_SPLIT_REGEX)
         .filter((line) => line.length > 0);
+    } catch (error) {
+      this.logger.error(`Error downloading file ${remoteFilePath}`, error);
+      throw error;
+    } finally {
+      await this.ensureClientClosed(
+        `downloading file ${remoteFilePath}`,
+        client,
+      );
+    }
+  }
+
+  /**
+   * Allow to process the file line by line as it is being downloaded, without the need to load the entire file content in memory.
+   * This is specially useful for large files that can cause memory issues when loaded entirely.
+   * @param remoteFilePath full remote file path with file name.
+   * @param fileLineProcessor callback function to process each line of the file.
+   * @returns promise that resolves when the file has been fully processed.
+   */
+  protected async streamResponseFileLines(
+    remoteFilePath: string,
+    fileLineProcessor: (line: string) => Promise<void>,
+  ): Promise<void> {
+    this.logger.log(`Downloading file ${remoteFilePath}.`);
+    let client: Client;
+    try {
+      client = await this.getClient();
+      const fileExtension = path.extname(remoteFilePath).toLowerCase();
+      const sftpFileStream = new PassThrough();
+      const downloadPromise = client.get(remoteFilePath, sftpFileStream, {
+        readStreamOptions: { encoding: null },
+      });
+      const isZIPFile = fileExtension === ".zip";
+      if (isZIPFile) {
+        const zipStream = sftpFileStream.pipe(
+          unzipper.Parse({ forceStream: true }),
+        ) as AsyncIterable<unzipper.Entry>;
+        // Read the zip file entries one by one and process file entries line by line.
+        for await (const entry of zipStream) {
+          if (entry.type !== "File") {
+            // Allow only file entries, skip directories or other types of entries.
+            // Drain the entry stream to avoid hanging the unzip process.
+            entry.autodrain();
+            continue;
+          }
+          // Read the file entry line by line without loading it entirely in memory.
+          // Reads each byte till a new line is found, supporting windows line breaks (\r\n)
+          // or linux based line breaks (\n).
+          const nextLine = readline.createInterface({
+            input: entry,
+            crlfDelay: Infinity,
+          });
+          for await (const line of nextLine) {
+            if (line.length > 0) {
+              await fileLineProcessor(line);
+            }
+          }
+        }
+        // Wait for the download to complete before returning the file content.
+        await downloadPromise;
+        return;
+      }
+      // Non-zip: read plain text lines directly.
+      const lineReader = readline.createInterface({
+        input: sftpFileStream,
+        crlfDelay: Infinity,
+      });
+      for await (const line of lineReader) {
+        if (line.length > 0) {
+          await fileLineProcessor(line);
+        }
+      }
+      // Wait for the download to complete before returning the file content.
+      await downloadPromise;
     } catch (error) {
       this.logger.error(`Error downloading file ${remoteFilePath}`, error);
       throw error;
