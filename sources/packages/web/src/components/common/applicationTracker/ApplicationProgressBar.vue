@@ -48,6 +48,7 @@
         :assessment-trigger-type="
           applicationProgressDetails.assessmentTriggerType!
         "
+        :are-application-actions-allowed="areApplicationActionsAllowed"
         :show-student-banners="showStudentBanners"
         @go-to-notice-of-assessment="goToNoticeOfAssessment"
       />
