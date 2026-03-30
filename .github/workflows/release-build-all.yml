@@ -93,7 +93,7 @@ jobs:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
         run: |
-          oc login --token=$SA_TOKEN --server=$OPENSHIFT_CLUSTER_URL
+          oc login --token="$SA_TOKEN" --server="$OPENSHIFT_CLUSTER_URL"
       - name: Build migrations Image
         working-directory: "./devops"
         run: |
@@ -122,7 +122,7 @@ jobs:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
         run: |
-          oc login --token=$SA_TOKEN --server=$OPENSHIFT_CLUSTER_URL
+          oc login --token="$SA_TOKEN" --server="$OPENSHIFT_CLUSTER_URL"
       - name: Build SIMS-API Image
         working-directory: "./devops"
         run: |
@@ -151,7 +151,7 @@ jobs:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
         run: |
-          oc login --token=$SA_TOKEN --server=$OPENSHIFT_CLUSTER_URL
+          oc login --token="$SA_TOKEN" --server="$OPENSHIFT_CLUSTER_URL"
       - name: Build Workers Image
         working-directory: "./devops"
         run: |
@@ -180,7 +180,7 @@ jobs:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
         run: |
-          oc login --token=$SA_TOKEN --server=$OPENSHIFT_CLUSTER_URL
+          oc login --token="$SA_TOKEN" --server="$OPENSHIFT_CLUSTER_URL"
       - name: Build Queue Consumers Image
         working-directory: "./devops"
         run: |
@@ -209,7 +209,7 @@ jobs:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
         run: |
-          oc login --token=$SA_TOKEN --server=$OPENSHIFT_CLUSTER_URL
+          oc login --token="$SA_TOKEN" --server="$OPENSHIFT_CLUSTER_URL"
       - name: Build Web/Frontend Image
         working-directory: "./devops"
         run: |

@@ -45,5 +45,9 @@ jobs:
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
       - name: Upgrade Crunchy Postgres Version
         working-directory: "./devops/helm/crunchy-postgres/"
+        env:
+          FROM_VERSION: ${{ inputs.from_version }}
+          TO_VERSION: ${{ inputs.to_version }}
+          POSTGRES_IMAGE_TAG: ${{ inputs.postgres_image_tag }}
         run: |
-          make pg-upgrade NAMESPACE=${NAMESPACE} FROM_VERSION="${{ inputs.from_version }}" TO_VERSION="${{ inputs.to_version }}" POSTGRES_IMAGE_TAG="${{ inputs.postgres_image_tag }}"
+          make pg-upgrade NAMESPACE="$NAMESPACE" FROM_VERSION="$FROM_VERSION" TO_VERSION="$TO_VERSION" POSTGRES_IMAGE_TAG="$POSTGRES_IMAGE_TAG"

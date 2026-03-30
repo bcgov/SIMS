@@ -30,6 +30,8 @@ jobs:
         environment: ${{ inputs.environment }}
         env:
             NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+            SA_TOKEN: ${{ secrets.SA_TOKEN }}
+            OPENSHIFT_CLUSTER_URL: ${{ vars.OPENSHIFT_CLUSTER_URL }}
         steps:
             - name: Validate S3 Path Input
               if: ${{ inputs.action == 'install-from-datasource' && inputs.datasource_s3_path_name == '' }}
@@ -46,14 +48,16 @@ jobs:
                   oc: "4"
             - name: Log in to OpenShift
               run: |
-                  oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+                  oc login --token="$SA_TOKEN" --server="$OPENSHIFT_CLUSTER_URL"
             - name: Install Crunchy DB with datasource
               if: ${{ inputs.action == 'install-from-datasource' }}
               working-directory: "./devops/helm/crunchy-postgres/"
+              env:
+                  DATASOURCE_S3_PATH_NAME: ${{ inputs.datasource_s3_path_name }}
               run: |
-                  make install-with-datasource NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} DATASOURCE_S3_PATH_NAME="${{ inputs.datasource_s3_path_name }}"
+                  make install-with-datasource NAMESPACE="$NAMESPACE" DATASOURCE_S3_PATH_NAME="$DATASOURCE_S3_PATH_NAME"
             - name: Update Crunchy DB to disable datasource
               if: ${{ inputs.action == 'disable-datasource' }}
               working-directory: "./devops/helm/crunchy-postgres/"
               run: |
-                  make update-to-disable-datasource NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+                  make update-to-disable-datasource NAMESPACE="$NAMESPACE"

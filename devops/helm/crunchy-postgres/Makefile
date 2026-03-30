@@ -37,6 +37,8 @@ upgrade: helm-dep
 	
 .PHONY: install-with-datasource
 install-with-datasource:
+	@echo "Installing Crunchy Postgres with datasource enabled..."
+	@echo "Datasource S3 path: ${DATASOURCE_S3_PATH_NAME}"
 	@helm install $(call arguments) --set dataSource.enabled=true --set dataSource.s3Path="/${DATASOURCE_S3_PATH_NAME}" --set restore.enabled=false;
 
 .PHONY: update-to-disable-datasource
