@@ -35,6 +35,7 @@ import { getPSTPDTDateTime } from "@sims/utilities";
 import { FORM_SUBMISSION_ITEM_OUTDATED } from "../../../../services";
 import { Role } from "../../../../auth/roles.enum";
 import { TestingModule } from "@nestjs/testing";
+import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
 
 describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
   let app: INestApplication;
@@ -152,7 +153,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
       creator: ministryAuditUser,
       messagePayload: {
         email_address: student.user.email,
-        template_id: "fed6b26e-d1f2-4a8c-bfe5-5cb66c00458b",
+        template_id: GC_NOTIFY_TEMPLATE_IDS.StudentFormCompleted,
         personalisation: {
           givenNames: student.user.firstName,
           lastName: student.user.lastName,
@@ -277,7 +278,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
           creator: ministryAuditUser,
           messagePayload: {
             email_address: student.user.email,
-            template_id: "fed6b26e-d1f2-4a8c-bfe5-5cb66c00458b",
+            template_id: GC_NOTIFY_TEMPLATE_IDS.StudentFormCompleted,
             personalisation: {
               givenNames: student.user.firstName,
               lastName: student.user.lastName,
