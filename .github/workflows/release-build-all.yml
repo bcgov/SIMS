@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
     inputs:
       use_silver_cluster:
-        description: "Build all applications on the silver cluster? (By default the builds are done on the gold cluster)"
+        description: "Build on the silver cluster? (By default the builds are done on the gold cluster)"
         required: false
         type: boolean
         default: false
