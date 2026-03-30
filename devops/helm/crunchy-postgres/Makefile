@@ -32,6 +32,14 @@ upgrade: helm-dep
 	else \
 		helm upgrade --install $(call arguments) --set restore.enabled=${RESTORE_ENABLED}; \
 	fi
+	
+.PHONY: install-with-datasource
+install-with-datasource:
+	@helm install $(call arguments) --set dataSource.enabled=true --set dataSource.s3Path="/${DATASOURCE_S3_PATH_NAME}" --set restore.enabled=false;
+
+.PHONY: update-to-disable-datasource
+update-to-disable-datasource:
+	@helm upgrade --install $(call arguments) --set dataSource.enabled=false;
 
 .PHONY: pg-upgrade
 pg-upgrade:
