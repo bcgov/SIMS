@@ -3,9 +3,9 @@ appuser: app-database-user
 nonsuperuser: non-super-user
 readonlyuser: read-only-user
 
-crunchyImage: artifacts.developer.gov.bc.ca/bcgov-docker-local/crunchy-postgres:ubi9-18.1-2547
+crunchyImage:
 #crunchyImage: artifacts.developer.gov.bc.ca/bcgov-docker-local/crunchy-postgres-gis:ubi8-15.2-3.3-0 # use this image for POSTGIS
-postgresVersion: 18
+postgresVersion: 17
 #postGISVersion: '3.3' # use this version of POSTGIS. both crunchyImage and this property needs to have valid values for POSTGIS to be enabled.
 imagePullPolicy: IfNotPresent
 
@@ -34,10 +34,10 @@ instances:
       memory: 512Mi
 
 # If we need to restore the cluster from a backup, we need to set the following values
-# assuming restore from repo2 (s3), adjust as needed if your S3 repo is different
+# assuming restore from repo2 (s3), adjust as needed if your S3 repo is different.
 dataSource:
   enabled: false
-  s3Path: "/habackup-silver"
+  s3Path: "datasource-s3-path"
 
 pgBackRest:
   image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default

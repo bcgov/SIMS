@@ -11,13 +11,18 @@ on:
         required: true
         type: environment
       from_version:
-        description: "Source PostgreSQL version for upgrade (e.g. 15)"
+        description: "Source PostgreSQL version for upgrade (e.g. 17)"
         required: true
         type: string
       to_version:
-        description: "Target PostgreSQL version for upgrade (e.g. 17)"
+        description: "Target PostgreSQL version for upgrade (e.g. 18)"
         required: true
         type: string
+      postgres_image_tag:
+        description: "If the upgraded cluster requires a manual image, specify the image tag.(e.g. ubi9-18.1-2547)"
+        required: false
+        type: string
+        default: ""
 
 jobs:
   upgradePostgresVersion:
@@ -41,4 +46,4 @@ jobs:
       - name: Upgrade Crunchy Postgres Version
         working-directory: "./devops/helm/crunchy-postgres/"
         run: |
-          make pg-upgrade NAMESPACE=${NAMESPACE} FROM_VERSION="${{ inputs.from_version }}" TO_VERSION="${{ inputs.to_version }}"
+          make pg-upgrade NAMESPACE=${NAMESPACE} FROM_VERSION="${{ inputs.from_version }}" TO_VERSION="${{ inputs.to_version }}" POSTGRES_IMAGE_TAG="${{ inputs.postgres_image_tag }}"
