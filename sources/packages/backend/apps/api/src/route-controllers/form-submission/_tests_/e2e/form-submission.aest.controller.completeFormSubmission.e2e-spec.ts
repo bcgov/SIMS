@@ -203,21 +203,16 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
         // Arrange
         const now = new Date();
         MockDate.set(now);
-        const application = await saveFakeApplication(db.dataSource, null, {
-          initialValues: { applicationStatus: ApplicationStatus.Completed },
-        });
-        const student = application.student;
         const formSubmission = await saveFakeFormSubmissionFromInputTestData(
           db,
           {
             now,
-            application,
             ministryAuditUser: ministryAdminUser,
             formCategory: FormCategory.StudentAppeal,
             submissionStatus: FormSubmissionStatus.Pending,
             formSubmissionItems: [
               {
-                dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
+                dynamicFormConfiguration: formConfigs.studentAppealA,
                 submittedData: {
                   actions: [FormSubmissionActionType.UpdateModifiedIndependent],
                 },
@@ -226,6 +221,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
             ],
           },
         );
+        const student = formSubmission.student;
         const [formSubmissionItemA] = formSubmission.formSubmissionItems;
         const payload = {
           items: [
@@ -351,7 +347,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
         },
         {
           submissionItemId: formSubmissionItemB.id,
-          // Force the submission item to be outdated by sending a different lastUpdateDate in the payload.
+          // Force the submission item to have a different date from the one saved on DB.
           lastUpdateDate: new Date(),
         },
       ],
@@ -513,6 +509,27 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
         message: "Forbidden resource",
         error: "Forbidden",
         statusCode: HttpStatus.FORBIDDEN,
+      });
+  });
+
+  it("Should throw a not found error when attempting to complete a non-existent form submission.", async () => {
+    // Arrange
+    const payload = {
+      items: [{ submissionItemId: 1, lastUpdateDate: new Date() }],
+    };
+    const endpoint = `/aest/form-submission/9999999/complete`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        message: "Form submission with ID 9999999 not found.",
+        error: "Not Found",
+        statusCode: HttpStatus.NOT_FOUND,
       });
   });
 
