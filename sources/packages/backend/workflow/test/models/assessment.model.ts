@@ -40,6 +40,17 @@ export interface StepParentWaiverAppealData extends JSONDoc {
   selectedParent: number;
 }
 
+export interface DisbursementSchedule extends JSONDoc {
+  disbursementDate: string;
+  negotiatedExpiryDate: string;
+  disbursements?: Array<{
+    valueType: string;
+    valueCode: string;
+    valueAmount: number;
+    awardEligibility: boolean;
+  }>;
+}
+
 export enum TransportationCostSituation {
   NoLimit = "noLimit",
   EducationPlacement = "educationPlacement",
@@ -276,7 +287,6 @@ interface ConfigureDisbursementData extends JSONDoc {
  */
 export interface ConfigureDisbursementDataFullTime extends ConfigureDisbursementData {
   awardEligibilityBCSL?: boolean;
-  awardEligibilityBCTopup?: boolean;
   awardEligibilityCSLF?: boolean;
   awardEligibilityCSGF?: boolean;
   awardEligibilityBCAG2Year?: boolean;
@@ -539,7 +549,7 @@ export interface CalculatedAssessmentModel {
     limitWeeklyTransportationAllowance: number;
   };
   // Disbursement schedules
-  disbursementSchedules: Array<unknown>;
+  disbursementSchedules: Array<DisbursementSchedule>;
   calculatedDataTotalAcademicExpenses: number;
   calculatedDataRemainingBookLimit: number;
 }
