@@ -25,6 +25,8 @@ env:
   # Todo: The use silver cluster option must be removed when all the environments are migrated to gold cluster.
   # When the option is removed the BUILD_NAMESPACE can be set to vars.BUILD_NAMESPACE and vars.BUILD_NAMESPACE should be updated to point to the gold cluster.
   BUILD_NAMESPACE: ${{ (inputs.use_silver_cluster == true && vars.BUILD_NAMESPACE) || vars.BUILD_NAMESPACE_GOLD }}
+  SA_TOKEN: ${{ (inputs.use_silver_cluster == true && secrets.SA_TOKEN) || secrets.SA_TOKEN_GOLD }}
+  OPENSHIFT_CLUSTER_URL: ${{ (inputs.use_silver_cluster == true && vars.OPENSHIFT_CLUSTER_URL) || vars.OPENSHIFT_CLUSTER_URL_GOLD }}
 
 jobs:
   # Print variables for logging and debugging purposes.
@@ -91,7 +93,7 @@ jobs:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+          oc login --token=$SA_TOKEN --server=$OPENSHIFT_CLUSTER_URL
       - name: Build migrations Image
         working-directory: "./devops"
         run: |
@@ -120,7 +122,7 @@ jobs:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+          oc login --token=$SA_TOKEN --server=$OPENSHIFT_CLUSTER_URL
       - name: Build SIMS-API Image
         working-directory: "./devops"
         run: |
@@ -149,7 +151,7 @@ jobs:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+          oc login --token=$SA_TOKEN --server=$OPENSHIFT_CLUSTER_URL
       - name: Build Workers Image
         working-directory: "./devops"
         run: |
@@ -178,7 +180,7 @@ jobs:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+          oc login --token=$SA_TOKEN --server=$OPENSHIFT_CLUSTER_URL
       - name: Build Queue Consumers Image
         working-directory: "./devops"
         run: |
@@ -207,7 +209,7 @@ jobs:
           ref: ${{ needs.createTag.outputs.newTag }}
       - name: Log in to OpenShift
         run: |
-          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+          oc login --token=$SA_TOKEN --server=$OPENSHIFT_CLUSTER_URL
       - name: Build Web/Frontend Image
         working-directory: "./devops"
         run: |
