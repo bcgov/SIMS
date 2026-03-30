@@ -6,6 +6,7 @@ import {
   FormSubmissionDecisionStatus,
   FormSubmissionItemDecision,
   FormSubmissionStatus,
+  FormSubmissionSubmittedData,
   NoteType,
   Student,
   User,
@@ -37,6 +38,10 @@ export interface FormSubmissionItemTestInputData {
    * and the rest will be considered previous decisions.
    */
   decisions: FormSubmissionDecisionTestInputData[];
+  /**
+   * Submitted data to be associated with the form submission item.
+   */
+  submittedData?: FormSubmissionSubmittedData;
 }
 
 /**
@@ -118,6 +123,9 @@ export async function saveFakeFormSubmissionFromInputTestData(
       creator: student.user,
     });
     submissionItem.formSubmission = formSubmission;
+    if (itemInputData.submittedData) {
+      submissionItem.submittedData = itemInputData.submittedData;
+    }
     // Update the array to avoid reloading the data and allowing a
     // method consumer to have access to the data.
     formSubmission.formSubmissionItems.push(submissionItem);
