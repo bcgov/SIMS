@@ -407,7 +407,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
     },
   ];
   for (const testFinalAward of TEST_FINAL_DISBURSEMENT_AMOUNTS) {
-    it.only(`Should generate disbursement values correctly rounded and split across both disbursements when the offering is ${testFinalAward.offeringWeeks} weeks, total federal award is ${testFinalAward.totalFederalAwardAmount} and total provincial award is ${testFinalAward.totalProvincialAwardAmount}.`, async () => {
+    it(`Should generate disbursement values correctly rounded and split across both disbursements when the offering is ${testFinalAward.offeringWeeks} weeks, total federal award is ${testFinalAward.totalFederalAwardAmount} and total provincial award is ${testFinalAward.totalProvincialAwardAmount}.`, async () => {
       // Arrange
       const configureDisbursementData =
         createFakeConfigureDisbursementFullTimeData(PROGRAM_YEAR);
