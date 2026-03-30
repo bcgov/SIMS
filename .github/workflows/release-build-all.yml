@@ -19,7 +19,7 @@ on:
         description: "Build on the silver cluster? (By default the builds are done on the gold cluster)"
         required: false
         type: boolean
-        default: false
+        default: true
 
 env:
   # Todo: The use silver cluster option must be removed when all the environments are migrated to gold cluster.
