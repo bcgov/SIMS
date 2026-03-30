@@ -37,7 +37,7 @@ instances:
 # assuming restore from repo2 (s3), adjust as needed if your S3 repo is different.
 dataSource:
   enabled: false
-  s3Path: "datasource-s3-path"
+  s3Path: "/datasource-s3-path"
 
 pgBackRest:
   image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default

@@ -89,7 +89,7 @@ spec:
         repo2-path: {{ .Values.dataSource.s3Path }}
         repo2-s3-uri-style: {{ .Values.pgBackRest.s3.s3UriStyle }}
       repo:
-        name: {{ .Values.dataSource.repo }}
+        name: repo2
         s3:
           bucket: {{ .Values.pgBackRest.s3.bucket }}
           endpoint: {{ .Values.pgBackRest.s3.endpoint }}

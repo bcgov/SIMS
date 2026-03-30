@@ -196,29 +196,30 @@ init-project:
 
 # Note: The service account for github action is created in the build namespace.
 create-service-account:
-	test -n $(SERVICE_ACCOUNT_NAMESPACE)
-	test -n $(SERVICE_ACCOUNT_NAME)
+	test -n "$(SERVICE_ACCOUNT_NAMESPACE)"
+	test -n "$(SERVICE_ACCOUNT_NAME)"
 	@oc -n $(SERVICE_ACCOUNT_NAMESPACE) create sa $(SERVICE_ACCOUNT_NAME)
 
 generate-service-account-token:
-	test -n $(SERVICE_ACCOUNT_NAMESPACE)
-	test -n $(SERVICE_ACCOUNT_NAME)
+	test -n "$(SERVICE_ACCOUNT_NAMESPACE)"
+	test -n "$(SERVICE_ACCOUNT_NAME)"
 	@oc -n $(SERVICE_ACCOUNT_NAMESPACE) create token $(SERVICE_ACCOUNT_NAME) --duration=4380h
 
 # Add role edit to a service account in the target namespace.
 add-role-edit-to-service-account:
-	test -n $(NAMESPACE)
-	test -n $(SERVICE_ACCOUNT_NAMESPACE)
-	test -n $(SERVICE_ACCOUNT_NAME)
+	test -n "$(NAMESPACE)"
+	test -n "$(SERVICE_ACCOUNT_NAMESPACE)"
+	test -n "$(SERVICE_ACCOUNT_NAME)"
 	@oc -n $(NAMESPACE) create rolebinding $(SERVICE_ACCOUNT_NAME)-edit --clusterrole=edit --serviceaccount=$(SERVICE_ACCOUNT_NAMESPACE):$(SERVICE_ACCOUNT_NAME)
 
 # Add role image-puller to a service account group in the target namespace.
 add-role-image-puller-to-target-namespace:
-	test -n $(IMAGE_SOURCE_NAMESPACE)
-	test -n $(TARGET_NAMESPACE)
+	test -n "$(IMAGE_SOURCE_NAMESPACE)"
+	test -n "$(TARGET_NAMESPACE)"
 	@oc -n $(IMAGE_SOURCE_NAMESPACE) create rolebinding "$(TARGET_NAMESPACE)-system:image-puller" --clusterrole="system:image-puller" --group=system:serviceaccounts:$(TARGET_NAMESPACE)
 
 create-network-policies:
+	test -n "$(NAMESPACE)"
 	@echo "Create network policies for namespace: $(NAMESPACE)"
 	@oc -n $(NAMESPACE) process -f openshift/networkpolicy.yml -p NAMESPACE=$(NAMESPACE) | oc -n $(NAMESPACE) apply -f -
 	
@@ -281,7 +282,11 @@ init-zone-b-sftp-secret:
 		--dry-run=client -o yaml | oc apply -f -
 
 create-artifactory-secret-credential:
-	test -n $(NAMESPACE)
+	test -n "$(NAMESPACE)"
+	test -n "$(ARTIFACTORY_SERVER_ADDRESS)"
+	test -n "$(ARTIFACTORY_USERNAME)"
+	test -n "$(ARTIFACTORY_PASSWORD)"
+	test -n "$(ARTIFACTORY_EMAIL)"
 	@oc create secret docker-registry artifactory-secret-credential -n $(NAMESPACE) \
     	--docker-server=$(ARTIFACTORY_SERVER_ADDRESS) \
     	--docker-username=$(ARTIFACTORY_USERNAME) \

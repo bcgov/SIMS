@@ -50,7 +50,6 @@ instances:
 dataSource:
   enabled: false
   stanza: "db"
-  repo: "repo2"
 
 pgBackRest:
   image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
