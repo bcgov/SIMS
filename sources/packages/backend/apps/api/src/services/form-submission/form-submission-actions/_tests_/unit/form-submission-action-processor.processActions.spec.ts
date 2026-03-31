@@ -5,9 +5,11 @@ import { FormSubmissionCreateAppealAssessmentAction } from "../../../../form-sub
 import { FormSubmissionUpdateModifiedIndependentAction } from "../../../../form-submission/form-submission-actions/form-submission-update-modified-independent-action";
 import {
   FormCategory,
+  FormSubmission,
   FormSubmissionActionType,
   FormSubmissionDecisionStatus,
 } from "@sims/sims-db";
+import { FormSubmissionActionModel } from "apps/api/src/services/form-submission/form-submission-actions/form-submission-action-models";
 
 describe("FormSubmissionActionProcessor-processActions", () => {
   let formSubmissionActionProcessor: FormSubmissionActionProcessor;
@@ -41,36 +43,61 @@ describe("FormSubmissionActionProcessor-processActions", () => {
     // Arrange
     const auditUserId = 123;
     const auditDate = new Date();
-    const entityManager = {} as EntityManager;
-    const mockedFormSubmission = {
+    // Expected form submission returned from DB.
+    const mockedFormSubmission: FormSubmission = {
       id: 1,
-      studentId: 2,
+      student: { id: 2 },
       formCategory: FormCategory.StudentAppeal,
-      applicationId: 3,
-      currentOfferingId: 4,
-      submissionItems: [
-        {
-          id: 5,
-          actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
-          decisionStatus: FormSubmissionDecisionStatus.Approved,
+      application: {
+        id: 3,
+        currentAssessment: {
+          id: 4,
+          offering: { id: 5 },
         },
+      },
+      // Used 'CreateStudentAppealAssessment' and 'UpdateModifiedIndependent' action types to ensure both actions are executed
+      // event though these decision will not be present at the same time for the same request in a real scenario.
+      // The goal is to ensure that the action processor is able to identify and execute both actions when present.
+      formSubmissionItems: [
         {
           id: 6,
-          actions: [FormSubmissionActionType.UpdateModifiedIndependent],
-          decisionStatus: FormSubmissionDecisionStatus.Declined,
+          submittedData: {
+            actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
+          },
+          currentDecision: {
+            decisionStatus: FormSubmissionDecisionStatus.Approved,
+          },
+        },
+        {
+          id: 7,
+          submittedData: {
+            actions: [FormSubmissionActionType.UpdateModifiedIndependent],
+          },
+          currentDecision: {
+            decisionStatus: FormSubmissionDecisionStatus.Declined,
+          },
         },
       ],
-    };
-    jest
-      .spyOn(
-        formSubmissionActionProcessor as any,
-        "getFormSubmissionForActionsProcessing",
-      )
-      .mockResolvedValue(mockedFormSubmission);
+    } as FormSubmission;
+    // Expected model converted from the DB result.
+    const expectedFormSubmissionModel = {
+      id: mockedFormSubmission.id,
+      studentId: mockedFormSubmission.student.id,
+      formCategory: mockedFormSubmission.formCategory,
+      applicationId: mockedFormSubmission.application?.id,
+      currentOfferingId:
+        mockedFormSubmission.application?.currentAssessment?.offering?.id,
+      submissionItems: mockedFormSubmission.formSubmissionItems.map((item) => ({
+        id: item.id,
+        actions: item.submittedData.actions ?? [],
+        decisionStatus: item.currentDecision.decisionStatus,
+      })),
+    } as FormSubmissionActionModel;
+    const entityManager = createFormSubmissionFindOneMock(mockedFormSubmission);
 
     // Act
     await formSubmissionActionProcessor.processActions(
-      mockedFormSubmission.id,
+      1,
       auditUserId,
       auditDate,
       entityManager,
@@ -83,7 +110,7 @@ describe("FormSubmissionActionProcessor-processActions", () => {
     expect(
       formSubmissionCreateAppealAssessmentAction.process,
     ).toHaveBeenCalledWith(
-      mockedFormSubmission,
+      expectedFormSubmissionModel,
       auditUserId,
       auditDate,
       entityManager,
@@ -94,7 +121,7 @@ describe("FormSubmissionActionProcessor-processActions", () => {
     expect(
       formSubmissionUpdateModifiedIndependentAction.process,
     ).toHaveBeenCalledWith(
-      mockedFormSubmission,
+      expectedFormSubmissionModel,
       auditUserId,
       auditDate,
       entityManager,
@@ -105,36 +132,42 @@ describe("FormSubmissionActionProcessor-processActions", () => {
     // Arrange
     const auditUserId = 123;
     const auditDate = new Date();
-    const entityManager = {} as EntityManager;
-    const mockedFormSubmission = {
+    const entityManager = createFormSubmissionFindOneMock({
       id: 1,
-      studentId: 2,
+      student: { id: 2 },
       formCategory: FormCategory.StudentAppeal,
-      applicationId: 3,
-      currentOfferingId: 4,
-      submissionItems: [
-        {
-          id: 5,
-          actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
-          decisionStatus: FormSubmissionDecisionStatus.Approved,
+      application: {
+        id: 3,
+        currentAssessment: {
+          id: 4,
+          offering: { id: 5 },
         },
+      },
+      formSubmissionItems: [
         {
           id: 6,
-          actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
-          decisionStatus: FormSubmissionDecisionStatus.Approved,
+          submittedData: {
+            actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
+          },
+          currentDecision: {
+            decisionStatus: FormSubmissionDecisionStatus.Approved,
+          },
+        },
+        {
+          id: 7,
+          submittedData: {
+            actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
+          },
+          currentDecision: {
+            decisionStatus: FormSubmissionDecisionStatus.Approved,
+          },
         },
       ],
-    };
-    jest
-      .spyOn(
-        formSubmissionActionProcessor as any,
-        "getFormSubmissionForActionsProcessing",
-      )
-      .mockResolvedValue(mockedFormSubmission);
+    } as FormSubmission);
 
     // Act
     await formSubmissionActionProcessor.processActions(
-      mockedFormSubmission.id,
+      1,
       auditUserId,
       auditDate,
       entityManager,
@@ -150,32 +183,34 @@ describe("FormSubmissionActionProcessor-processActions", () => {
     // Arrange
     const auditUserId = 123;
     const auditDate = new Date();
-    const entityManager = {} as EntityManager;
-    const mockedFormSubmission = {
+    const entityManager = createFormSubmissionFindOneMock({
       id: 1,
-      studentId: 2,
+      student: { id: 2 },
       formCategory: FormCategory.StudentAppeal,
-      applicationId: 3,
-      currentOfferingId: 4,
-      submissionItems: [
+      application: {
+        id: 3,
+        currentAssessment: {
+          id: 4,
+          offering: { id: 5 },
+        },
+      },
+      formSubmissionItems: [
         {
-          id: 5,
-          actions: ["SomeUnknownActionType" as FormSubmissionActionType],
-          decisionStatus: FormSubmissionDecisionStatus.Approved,
+          id: 6,
+          submittedData: {
+            actions: ["SomeUnknownActionType" as FormSubmissionActionType],
+          },
+          currentDecision: {
+            decisionStatus: FormSubmissionDecisionStatus.Approved,
+          },
         },
       ],
-    };
-    jest
-      .spyOn(
-        formSubmissionActionProcessor as any,
-        "getFormSubmissionForActionsProcessing",
-      )
-      .mockResolvedValue(mockedFormSubmission);
+    } as FormSubmission);
 
     // Act
     await expect(
       formSubmissionActionProcessor.processActions(
-        mockedFormSubmission.id,
+        1,
         auditUserId,
         auditDate,
         entityManager,
@@ -185,3 +220,18 @@ describe("FormSubmissionActionProcessor-processActions", () => {
     );
   });
 });
+
+/**
+ * Mock the database result for the form submission details retrieval to allow testing
+ * the action processor logic without relying on the database layer.
+ * @param formSubmission form submission details to be returned by the mock.
+ * @returns mocked EntityManager with the form submission details query implemented.
+ */
+function createFormSubmissionFindOneMock(
+  formSubmission: FormSubmission,
+): EntityManager {
+  const mockFindOne = jest.fn().mockResolvedValue(formSubmission);
+  return {
+    getRepository: jest.fn().mockReturnValue({ findOne: mockFindOne }),
+  } as unknown as EntityManager;
+}
