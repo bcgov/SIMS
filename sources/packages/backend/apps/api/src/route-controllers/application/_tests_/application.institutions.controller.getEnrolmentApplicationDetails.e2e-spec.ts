@@ -1,29 +1,34 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
+  AESTGroups,
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
+  getAESTToken,
   getAuthRelatedEntities,
   getInstitutionToken,
   INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
   INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
   InstitutionTokenTypes,
 } from "../../../testHelpers";
-import { SuccessWaitingStatus } from "../models/application.dto";
 import {
   E2EDataSources,
   createE2EDataSources,
   createFakeInstitutionLocation,
   saveFakeApplication,
+  saveFakeApplicationDisbursements,
 } from "@sims/test-utils";
 import {
   ApplicationStatus,
+  AssessmentTriggerType,
+  COEStatus,
+  DisbursementScheduleStatus,
   InstitutionLocation,
-  ProgramInfoStatus,
+  OfferingIntensity,
 } from "@sims/sims-db";
 
-describe("ApplicationInstitutionsController(e2e)-getInProgressApplicationDetails", () => {
+describe("ApplicationInstitutionsController(e2e)-getEnrolmentApplicationDetails", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeCLocation: InstitutionLocation;
@@ -57,59 +62,38 @@ describe("ApplicationInstitutionsController(e2e)-getInProgressApplicationDetails
     );
   });
 
-  it("Should get application in-progress details of a single independent student application with PIR required.", async () => {
-    // Arrange
-    const savedApplication = await saveFakeApplication(
-      db.dataSource,
-      { institutionLocation: collegeFLocation },
-      {
-        applicationStatus: ApplicationStatus.InProgress,
-        pirStatus: ProgramInfoStatus.required,
-      },
-    );
-    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/in-progress`;
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
+  it(
+    "Should get application enrolment details when the application is in 'Enrolment' status" +
+      " with original assessment and offering intensity is part-time.",
+    async () => {
+      // Arrange
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        undefined,
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Enrolment,
+          firstDisbursementInitialValues: { coeStatus: COEStatus.required },
+        },
+      );
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({
-        id: savedApplication.id,
-        applicationStatus: ApplicationStatus.InProgress,
-        pirStatus: ProgramInfoStatus.required,
-        outstandingAssessmentStatus: SuccessWaitingStatus.Success,
-      });
-  });
+      const endpoint = `/aest/application/${application.id}/enrolment`;
+      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-  it("Should throw a HttpStatus Unprocessable Entity (422) error when the application has status Completed.", async () => {
-    // Arrange
-    const savedApplication = await saveFakeApplication(
-      db.dataSource,
-      { institutionLocation: collegeFLocation },
-      {
-        applicationStatus: ApplicationStatus.Completed,
-      },
-    );
-    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/in-progress`;
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-      .expect({
-        statusCode: 422,
-        message: `Application not in ${ApplicationStatus.InProgress} status.`,
-        error: "Unprocessable Entity",
-      });
-  });
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          firstDisbursement: {
+            coeStatus: COEStatus.required,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+          assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+        });
+    },
+  );
 
   it("Should throw a HttpStatus Forbidden (403) error when the student submitted an application to non-public institution.", async () => {
     // Arrange

@@ -27,8 +27,8 @@ import {
 describe("ApplicationInstitutionsController(e2e)-getApplicationProgressDetails", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let collegeFLocation: InstitutionLocation;
   let collegeCLocation: InstitutionLocation;
+  let collegeFLocation: InstitutionLocation;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
