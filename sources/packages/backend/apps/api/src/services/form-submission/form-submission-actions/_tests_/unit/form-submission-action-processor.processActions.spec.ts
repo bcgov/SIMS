@@ -1,8 +1,8 @@
 import { Mocked, TestBed } from "@suites/unit";
 import { EntityManager } from "typeorm";
-import { FormSubmissionActionProcessor } from "../../../../form-submission/form-submission-actions/form-submission-action-processor";
-import { FormSubmissionCreateAppealAssessmentAction } from "../../../../form-submission/form-submission-actions/form-submission-create-appeal-assessment-action";
-import { FormSubmissionUpdateModifiedIndependentAction } from "../../../../form-submission/form-submission-actions/form-submission-update-modified-independent-action";
+import { FormSubmissionActionProcessor } from "../../../form-submission-actions/form-submission-action-processor";
+import { FormSubmissionCreateAppealAssessmentAction } from "../../../form-submission-actions/form-submission-create-appeal-assessment-action";
+import { FormSubmissionUpdateModifiedIndependentAction } from "../../../form-submission-actions/form-submission-update-modified-independent-action";
 import {
   FormCategory,
   FormSubmission,
