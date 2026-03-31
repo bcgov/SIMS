@@ -310,244 +310,238 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
   // An array of award amounts to verify first and second disbursement value amounts.
   const TEST_FINAL_DISBURSEMENT_AMOUNTS = [
     {
-      offeringWeeks: 19,
-      offeringStartDate: getISODateOnlyString(addDays(5)),
-      offeringEndDate: getISODateOnlyString(addDays(138)),
-      midPointDate: getISODateOnlyString(addDays(71)),
-      awardAmountCSLF: 3000,
-      awardAmountCSGP: 2000,
-      awardAmountCSGD: 1000.541,
-      awardAmountCSGF: 1500,
-      awardAmountBCSL: 3500,
-      awardAmountBCAG: 2500.451,
-      awardAmountBGPD: 1240,
-      awardAmountSBSD: 800,
-      firstDisbCSLF: 3000,
-      firstDisbCSGP: 1000,
-      firstDisbCSGD: 500,
-      firstDisbCSGF: 750,
-      firstDisbBCSL: 0,
-      firstDisbBCAG: 1250,
-      firstDisbBGPD: 620,
-      firstDisbSBSD: 800,
-      secondDisbCSLF: 0,
-      secondDisbCSGP: 1000,
-      secondDisbCSGD: 500,
-      secondDisbCSGF: 750,
-      secondDisbBCSL: 3500,
-      secondDisbBCAG: 1250,
-      secondDisbBGPD: 620,
-      secondDisbSBSD: 0,
+      inputData: {
+        offeringWeeks: 19,
+        offeringStudyStartDate: getISODateOnlyString(addDays(5)),
+        offeringStudyEndDate: getISODateOnlyString(addDays(138)),
+        finalFederalAwardNetCSLFAmount: 3000,
+        finalFederalAwardNetCSGPAmount: 2000,
+        finalFederalAwardNetCSGDAmount: 1000.541,
+        finalFederalAwardNetCSGFAmount: 1500,
+        finalProvincialAwardNetBCSLAmount: 3500,
+        finalProvincialAwardNetBCAGAmount: 2500.451,
+        finalProvincialAwardNetBGPDAmount: 1240,
+        finalProvincialAwardNetSBSDAmount: 800,
+      },
+      expectedData: {
+        firstDisbDate: getISODateOnlyString(addDays(5)), // Same as offering start date since it's in the future.
+        midPointDate: getISODateOnlyString(addDays(71)), // Midpoint date is the total offering duration (133 days) divided by 2 (66 days) plus the offering start date (5 days).
+        firstDisbCSLF: 3000,
+        firstDisbCSGP: 1000,
+        firstDisbCSGD: 500,
+        firstDisbCSGF: 750,
+        firstDisbBCSL: 0,
+        firstDisbBCAG: 1250,
+        firstDisbBGPD: 620,
+        firstDisbSBSD: 800,
+        secondDisbCSLF: 0,
+        secondDisbCSGP: 1000,
+        secondDisbCSGD: 500,
+        secondDisbCSGF: 750,
+        secondDisbBCSL: 3500,
+        secondDisbBCAG: 1250,
+        secondDisbBGPD: 620,
+        secondDisbSBSD: 0,
+      },
       totalFederalAwardAmount: Math.floor(3000 + 2000 + 1000.541 + 350),
       totalProvincialAwardAmount: Math.floor(3500 + 2500.451 + 800 + 1240),
     },
     {
-      offeringWeeks: 18,
-      offeringStartDate: getISODateOnlyString(addDays(4)),
-      offeringEndDate: getISODateOnlyString(addDays(130)),
-      midPointDate: getISODateOnlyString(addDays(67)),
-      awardAmountCSLF: 3000,
-      awardAmountCSGP: 2000,
-      awardAmountCSGD: 1000.541,
-      awardAmountCSGF: 1500,
-      awardAmountBCSL: 3500,
-      awardAmountBCAG: 2500.451,
-      awardAmountBGPD: 1240,
-      awardAmountSBSD: 800,
-      firstDisbCSLF: 3000,
-      firstDisbCSGP: 1000,
-      firstDisbCSGD: 500,
-      firstDisbCSGF: 750,
-      firstDisbBCSL: 3500,
-      firstDisbBCAG: 2500,
-      firstDisbBGPD: 1240,
-      firstDisbSBSD: 800,
-      secondDisbCSLF: 0,
-      secondDisbCSGP: 1000,
-      secondDisbCSGD: 500,
-      secondDisbCSGF: 750,
-      secondDisbBCSL: 0,
-      secondDisbBCAG: 0,
-      secondDisbBGPD: 0,
-      secondDisbSBSD: 0,
+      inputData: {
+        offeringWeeks: 18,
+        offeringStudyStartDate: getISODateOnlyString(addDays(4)),
+        offeringStudyEndDate: getISODateOnlyString(addDays(130)),
+        finalFederalAwardNetCSLFAmount: 3000,
+        finalFederalAwardNetCSGPAmount: 2000,
+        finalFederalAwardNetCSGDAmount: 1000.541,
+        finalFederalAwardNetCSGFAmount: 1500,
+        finalProvincialAwardNetBCSLAmount: 3500,
+        finalProvincialAwardNetBCAGAmount: 2500.451,
+        finalProvincialAwardNetBGPDAmount: 1240,
+        finalProvincialAwardNetSBSDAmount: 800,
+      },
+      expectedData: {
+        firstDisbDate: getISODateOnlyString(addDays(4)), // Same as offering start date since it's in the future.
+        midPointDate: getISODateOnlyString(addDays(67)), // Midpoint date is the total offering duration (126 days) divided by 2 (63 days) plus the offering start date (4 days).
+        firstDisbCSLF: 3000,
+        firstDisbCSGP: 1000,
+        firstDisbCSGD: 500,
+        firstDisbCSGF: 750,
+        firstDisbBCSL: 3500,
+        firstDisbBCAG: 2500,
+        firstDisbBGPD: 1240,
+        firstDisbSBSD: 800,
+        secondDisbCSLF: 0,
+        secondDisbCSGP: 1000,
+        secondDisbCSGD: 500,
+        secondDisbCSGF: 750,
+        secondDisbBCSL: 0,
+        secondDisbBCAG: 0,
+        secondDisbBGPD: 0,
+        secondDisbSBSD: 0,
+      },
       totalFederalAwardAmount: Math.floor(3000 + 2000 + 1000.541 + 350),
       totalProvincialAwardAmount: Math.floor(3500 + 2500.451 + 800 + 1240),
     },
     {
-      offeringWeeks: 19,
-      offeringStartDate: getISODateOnlyString(addDays(4)),
-      offeringEndDate: getISODateOnlyString(addDays(137)),
-      midPointDate: getISODateOnlyString(addDays(70)),
-      awardAmountCSLF: 2000.1,
-      awardAmountCSGP: 2000,
-      awardAmountCSGD: 500.213,
-      awardAmountCSGF: 1500,
-      awardAmountBCSL: 3500,
-      awardAmountBCAG: 2000.741,
-      awardAmountBGPD: 1240,
-      awardAmountSBSD: 800,
-      firstDisbCSLF: 2000,
-      firstDisbCSGP: 1000,
-      firstDisbCSGD: 250,
-      firstDisbCSGF: 750,
-      firstDisbBCSL: 350,
-      firstDisbBCAG: 1000,
-      firstDisbBGPD: 620,
-      firstDisbSBSD: 800,
-      secondDisbCSLF: 0,
-      secondDisbCSGP: 1000,
-      secondDisbCSGD: 250,
-      secondDisbCSGF: 750,
-      secondDisbBCSL: 3150,
-      secondDisbBCAG: 1000,
-      secondDisbBGPD: 620,
-      secondDisbSBSD: 0,
+      inputData: {
+        offeringWeeks: 19,
+        offeringStudyStartDate: getISODateOnlyString(addDays(4)),
+        offeringStudyEndDate: getISODateOnlyString(addDays(137)),
+        finalFederalAwardNetCSLFAmount: 2000.1,
+        finalFederalAwardNetCSGPAmount: 2000,
+        finalFederalAwardNetCSGDAmount: 500.213,
+        finalFederalAwardNetCSGFAmount: 1500,
+        finalProvincialAwardNetBCSLAmount: 3500,
+        finalProvincialAwardNetBCAGAmount: 2000.741,
+        finalProvincialAwardNetBGPDAmount: 1240,
+        finalProvincialAwardNetSBSDAmount: 800,
+      },
+      expectedData: {
+        firstDisbDate: getISODateOnlyString(addDays(4)), // Same as offering start date since it's in the future.
+        midPointDate: getISODateOnlyString(addDays(70)), // Midpoint date is the total offering duration (133 days) divided by 2 (66 days) plus the offering start date (5 days).
+        firstDisbCSLF: 2000,
+        firstDisbCSGP: 1000,
+        firstDisbCSGD: 250,
+        firstDisbCSGF: 750,
+        firstDisbBCSL: 350,
+        firstDisbBCAG: 1000,
+        firstDisbBGPD: 620,
+        firstDisbSBSD: 800,
+        secondDisbCSLF: 0,
+        secondDisbCSGP: 1000,
+        secondDisbCSGD: 250,
+        secondDisbCSGF: 750,
+        secondDisbBCSL: 3150,
+        secondDisbBCAG: 1000,
+        secondDisbBGPD: 620,
+        secondDisbSBSD: 0,
+      },
       totalFederalAwardAmount: Math.floor(2000.1 + 2000 + 500.213 + 350),
       totalProvincialAwardAmount: Math.floor(3500 + 2000.741 + 800 + 1240),
     },
   ];
   for (const testFinalAward of TEST_FINAL_DISBURSEMENT_AMOUNTS) {
-    it(`Should generate disbursement values correctly rounded and split across both disbursements when the offering is ${testFinalAward.offeringWeeks} weeks, total federal award is ${testFinalAward.totalFederalAwardAmount} and total provincial award is ${testFinalAward.totalProvincialAwardAmount}.`, async () => {
+    it(`Should generate disbursement values correctly rounded and split across both disbursements when the offering is ${testFinalAward.inputData.offeringWeeks} weeks, total federal award is ${testFinalAward.totalFederalAwardAmount} and total provincial award is ${testFinalAward.totalProvincialAwardAmount}.`, async () => {
       // Arrange
-      const configureDisbursementData =
-        createFakeConfigureDisbursementFullTimeData(PROGRAM_YEAR);
-      configureDisbursementData.offeringWeeks = testFinalAward.offeringWeeks;
-      configureDisbursementData.offeringStudyStartDate =
-        testFinalAward.offeringStartDate;
-      configureDisbursementData.offeringStudyEndDate =
-        testFinalAward.offeringEndDate;
-      configureDisbursementData.finalFederalAwardNetCSLFAmount =
-        testFinalAward.awardAmountCSLF;
-      configureDisbursementData.finalFederalAwardNetCSGPAmount =
-        testFinalAward.awardAmountCSGP;
-      configureDisbursementData.finalFederalAwardNetCSGDAmount =
-        testFinalAward.awardAmountCSGD;
-      configureDisbursementData.finalFederalAwardNetCSGFAmount =
-        testFinalAward.awardAmountCSGF;
-      configureDisbursementData.finalProvincialAwardNetBCSLAmount =
-        testFinalAward.awardAmountBCSL;
-      configureDisbursementData.finalProvincialAwardNetBCAGAmount =
-        testFinalAward.awardAmountBCAG;
-      configureDisbursementData.finalProvincialAwardNetSBSDAmount =
-        testFinalAward.awardAmountSBSD;
-      configureDisbursementData.finalProvincialAwardNetBGPDAmount =
-        testFinalAward.awardAmountBGPD;
+      const configureDisbursementData = {
+        ...createFakeConfigureDisbursementFullTimeData(PROGRAM_YEAR),
+        ...testFinalAward.inputData,
+      };
 
       // Act
       const calculatedAssessment = await executeFullTimeConfigureDisbursement(
         configureDisbursementData,
       );
 
+      const [firstDisbursement, secondDisbursement] =
+        calculatedAssessment.variables.disbursementSchedules;
       // Assert
-      expect(
-        calculatedAssessment.variables.disbursementSchedules[0],
-      ).toStrictEqual({
-        disbursementDate: configureDisbursementData.offeringStudyStartDate,
-        negotiatedExpiryDate: configureDisbursementData.offeringStudyStartDate,
+      expect(firstDisbursement).toStrictEqual({
+        disbursementDate: testFinalAward.expectedData.firstDisbDate,
+        negotiatedExpiryDate: testFinalAward.expectedData.firstDisbDate,
         disbursements: [
           {
             valueCode: "CSLF",
             valueType: "Canada Loan",
-            valueAmount: testFinalAward.firstDisbCSLF,
+            valueAmount: testFinalAward.expectedData.firstDisbCSLF,
             awardEligibility: true,
           },
           {
             valueCode: "CSGP",
             valueType: "Canada Grant",
-            valueAmount: testFinalAward.firstDisbCSGP,
+            valueAmount: testFinalAward.expectedData.firstDisbCSGP,
             awardEligibility: true,
           },
           {
             valueCode: "CSGD",
             valueType: "Canada Grant",
-            valueAmount: testFinalAward.firstDisbCSGD,
+            valueAmount: testFinalAward.expectedData.firstDisbCSGD,
             awardEligibility: true,
           },
           {
             valueCode: "CSGF",
             valueType: "Canada Grant",
-            valueAmount: testFinalAward.firstDisbCSGF,
+            valueAmount: testFinalAward.expectedData.firstDisbCSGF,
             awardEligibility: true,
           },
           {
             valueCode: "BCSL",
             valueType: "BC Loan",
-            valueAmount: testFinalAward.firstDisbBCSL,
+            valueAmount: testFinalAward.expectedData.firstDisbBCSL,
             awardEligibility: true,
           },
           {
             valueCode: "BCAG",
             valueType: "BC Grant",
-            valueAmount: testFinalAward.firstDisbBCAG,
+            valueAmount: testFinalAward.expectedData.firstDisbBCAG,
             awardEligibility: true,
           },
           {
             valueCode: "BGPD",
             valueType: "BC Grant",
-            valueAmount: testFinalAward.firstDisbBGPD,
+            valueAmount: testFinalAward.expectedData.firstDisbBGPD,
             awardEligibility: true,
           },
           {
             valueCode: "SBSD",
             valueType: "BC Grant",
-            valueAmount: testFinalAward.firstDisbSBSD,
+            valueAmount: testFinalAward.expectedData.firstDisbSBSD,
             awardEligibility: true,
           },
         ],
       });
 
-      expect(
-        calculatedAssessment.variables.disbursementSchedules[1],
-      ).toStrictEqual({
-        disbursementDate: testFinalAward.midPointDate,
-        negotiatedExpiryDate: testFinalAward.midPointDate,
+      expect(secondDisbursement).toStrictEqual({
+        disbursementDate: testFinalAward.expectedData.midPointDate,
+        negotiatedExpiryDate: testFinalAward.expectedData.midPointDate,
         disbursements: [
           {
             valueCode: "CSLF",
             valueType: "Canada Loan",
-            valueAmount: testFinalAward.secondDisbCSLF,
+            valueAmount: testFinalAward.expectedData.secondDisbCSLF,
             awardEligibility: true,
           },
           {
             valueCode: "CSGP",
             valueType: "Canada Grant",
-            valueAmount: testFinalAward.secondDisbCSGP,
+            valueAmount: testFinalAward.expectedData.secondDisbCSGP,
             awardEligibility: true,
           },
           {
             valueCode: "CSGD",
             valueType: "Canada Grant",
-            valueAmount: testFinalAward.secondDisbCSGD,
+            valueAmount: testFinalAward.expectedData.secondDisbCSGD,
             awardEligibility: true,
           },
           {
             valueCode: "CSGF",
             valueType: "Canada Grant",
-            valueAmount: testFinalAward.secondDisbCSGF,
+            valueAmount: testFinalAward.expectedData.secondDisbCSGF,
             awardEligibility: true,
           },
           {
             valueCode: "BCSL",
             valueType: "BC Loan",
-            valueAmount: testFinalAward.secondDisbBCSL,
+            valueAmount: testFinalAward.expectedData.secondDisbBCSL,
             awardEligibility: true,
           },
           {
             valueCode: "BCAG",
             valueType: "BC Grant",
-            valueAmount: testFinalAward.secondDisbBCAG,
+            valueAmount: testFinalAward.expectedData.secondDisbBCAG,
             awardEligibility: true,
           },
           {
             valueCode: "BGPD",
             valueType: "BC Grant",
-            valueAmount: testFinalAward.secondDisbBGPD,
+            valueAmount: testFinalAward.expectedData.secondDisbBGPD,
             awardEligibility: true,
           },
           {
             valueCode: "SBSD",
             valueType: "BC Grant",
-            valueAmount: testFinalAward.secondDisbSBSD,
+            valueAmount: testFinalAward.expectedData.secondDisbSBSD,
             awardEligibility: true,
           },
         ],

@@ -40,15 +40,17 @@ export interface StepParentWaiverAppealData extends JSONDoc {
   selectedParent: number;
 }
 
+export interface DisbursementScheduleAward extends JSONDoc {
+  valueType: string;
+  valueCode: string;
+  valueAmount: number;
+  awardEligibility: boolean;
+}
+
 export interface DisbursementSchedule extends JSONDoc {
   disbursementDate: string;
   negotiatedExpiryDate: string;
-  disbursements?: Array<{
-    valueType: string;
-    valueCode: string;
-    valueAmount: number;
-    awardEligibility: boolean;
-  }>;
+  disbursements?: DisbursementScheduleAward[];
 }
 
 export enum TransportationCostSituation {
@@ -549,7 +551,7 @@ export interface CalculatedAssessmentModel {
     limitWeeklyTransportationAllowance: number;
   };
   // Disbursement schedules
-  disbursementSchedules: Array<DisbursementSchedule>;
+  disbursementSchedules: DisbursementSchedule[];
   calculatedDataTotalAcademicExpenses: number;
   calculatedDataRemainingBookLimit: number;
 }
