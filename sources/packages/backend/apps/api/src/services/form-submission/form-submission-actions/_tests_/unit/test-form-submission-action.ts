@@ -14,25 +14,33 @@ import { EntityManager } from "typeorm";
  * Concrete action used only for testing the protected methods.
  */
 export class TestFormSubmissionAction extends FormSubmissionAction {
-  constructor(private readonly testActionType: FormSubmissionActionType) {
+  private readonly testActionType: FormSubmissionActionType;
+  private readonly appliesToResult: boolean;
+
+  constructor(options: {
+    actionType: FormSubmissionActionType;
+    appliesToResult?: boolean;
+  }) {
     super();
+    this.testActionType = options.actionType;
+    this.appliesToResult = options.appliesToResult ?? true;
   }
 
   get actionType(): FormSubmissionActionType {
     return this.testActionType;
   }
 
-  protected applyAction(
-    _formSubmission: FormSubmissionActionModel,
-    _auditUserId: number,
-    _auditDate: Date,
-    _entityManager: EntityManager,
-  ): Promise<void> {
-    return Promise.resolve();
-  }
+  readonly applyAction = jest.fn(
+    async (
+      _formSubmission: FormSubmissionActionModel,
+      _auditUserId: number,
+      _auditDate: Date,
+      _entityManager: EntityManager,
+    ): Promise<void> => Promise.resolve(),
+  );
 
   protected appliesTo(_formSubmission: FormSubmissionActionModel): boolean {
-    return true;
+    return this.appliesToResult;
   }
 
   exposedGetSubmissionItemsByActionType(

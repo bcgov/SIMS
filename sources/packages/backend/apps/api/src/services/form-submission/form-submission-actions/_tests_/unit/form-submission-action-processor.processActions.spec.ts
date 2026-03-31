@@ -101,55 +101,87 @@ describe("FormSubmissionActionProcessor-processActions", () => {
     );
   });
 
-  // it("Should execute actions uniquely when multiple requests with the same actions are part of the same appeal.", async () => {
-  //   // Arrange
-  //   const studentAppeal = new StudentAppeal();
-  //   studentAppeal.appealRequests = [
-  //     {
-  //       submittedData: {
-  //         actions: [createAssessmentAction.actionType],
-  //       },
-  //     } as StudentAppealRequest,
-  //     {
-  //       submittedData: {
-  //         actions: [createAssessmentAction.actionType],
-  //       },
-  //     } as StudentAppealRequest,
-  //   ];
+  it("Should execute actions uniquely when multiple requests with the same actions are part of the same form submission.", async () => {
+    // Arrange
+    const auditUserId = 123;
+    const auditDate = new Date();
+    const entityManager = {} as EntityManager;
+    const mockedFormSubmission = {
+      id: 1,
+      studentId: 2,
+      formCategory: FormCategory.StudentAppeal,
+      applicationId: 3,
+      currentOfferingId: 4,
+      submissionItems: [
+        {
+          id: 5,
+          actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
+          decisionStatus: FormSubmissionDecisionStatus.Approved,
+        },
+        {
+          id: 6,
+          actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
+          decisionStatus: FormSubmissionDecisionStatus.Approved,
+        },
+      ],
+    };
+    jest
+      .spyOn(
+        formSubmissionActionProcessor as any,
+        "getFormSubmissionForActionsProcessing",
+      )
+      .mockResolvedValue(mockedFormSubmission);
 
-  //   // Act
-  //   await studentAppealActionsProcessor.processActions(
-  //     studentAppeal,
-  //     1,
-  //     new Date(),
-  //     null,
-  //   );
+    // Act
+    await formSubmissionActionProcessor.processActions(
+      mockedFormSubmission.id,
+      auditUserId,
+      auditDate,
+      entityManager,
+    );
 
-  //   // Assert
-  //   expect(createAssessmentAction.process).toHaveBeenCalledTimes(1);
-  //   expect(updateModifiedIndependentAction.process).toHaveBeenCalledTimes(0);
-  // });
+    // Assert
+    expect(
+      formSubmissionCreateAppealAssessmentAction.process,
+    ).toHaveBeenCalledTimes(1);
+  });
 
-  // it("Should throw an error when the appeal request has an unknown action.", async () => {
-  //   // Arrange
-  //   const studentAppeal = new StudentAppeal();
-  //   studentAppeal.id = 456;
-  //   (studentAppeal as object)["appealRequests"] = [
-  //     {
-  //       submittedData: { actions: ["UnknownActionType"] },
-  //     },
-  //   ];
+  it("Should throw an error when the form submission has an unknown action.", async () => {
+    // Arrange
+    const auditUserId = 123;
+    const auditDate = new Date();
+    const entityManager = {} as EntityManager;
+    const mockedFormSubmission = {
+      id: 1,
+      studentId: 2,
+      formCategory: FormCategory.StudentAppeal,
+      applicationId: 3,
+      currentOfferingId: 4,
+      submissionItems: [
+        {
+          id: 5,
+          actions: ["SomeUnknownActionType" as FormSubmissionActionType],
+          decisionStatus: FormSubmissionDecisionStatus.Approved,
+        },
+      ],
+    };
+    jest
+      .spyOn(
+        formSubmissionActionProcessor as any,
+        "getFormSubmissionForActionsProcessing",
+      )
+      .mockResolvedValue(mockedFormSubmission);
 
-  //   // Act/Assert
-  //   await expect(
-  //     studentAppealActionsProcessor.processActions(
-  //       studentAppeal,
-  //       1,
-  //       new Date(),
-  //       null,
-  //     ),
-  //   ).rejects.toThrow(
-  //     `One or more action types associated with the student appeal ID 456 are not recognized: UnknownActionType.`,
-  //   );
-  // });
+    // Act
+    await expect(
+      formSubmissionActionProcessor.processActions(
+        mockedFormSubmission.id,
+        auditUserId,
+        auditDate,
+        entityManager,
+      ),
+    ).rejects.toThrow(
+      `One or more action types associated with the form submission ID 1 are not recognized: SomeUnknownActionType.`,
+    );
+  });
 });
