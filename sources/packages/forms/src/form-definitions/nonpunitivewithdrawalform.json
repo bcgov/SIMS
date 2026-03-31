@@ -36,7 +36,7 @@
                     "value": ""
                 }
             ],
-            "content": "<p>This form is used to reverse the eligibility impacts of a withdrawal when certain criteria have been met.</p>",
+            "content": "This form is used to reverse the eligibility impacts of a withdrawal when certain criteria have been met.",
             "refreshOnChange": false,
             "key": "html",
             "type": "htmlelement",
@@ -44,7 +44,7 @@
             "tableView": false
         },
         {
-            "label": "Application",
+            "label": "Please select the application that has been withdrawn that you would like to be converted to non-punitive status.",
             "widget": "choicesjs",
             "placeholder": "Application Number",
             "description": "Please select the application that has been withdrawn that you would like to be converted to non-punitive status.",
@@ -106,7 +106,7 @@
             "validate": {
                 "required": true,
                 "onlyAvailableItems": true,
-                "custom": "const selectedEligibleCircumstances = Object.entries(data.eligibleCircumstances || {})\r\n  .filter(([key, isSelected]) => key !== \"noneOfTheAbove\" && !!isSelected).length;\r\nconst shouldSelectOneOfTheAboveOrAnotherOption =\r\n  !!data.eligibleCircumstances?.noneOfTheAbove &&\r\n  selectedEligibleCircumstances > 0;\r\n\r\nvalid = shouldSelectOneOfTheAboveOrAnotherOption\r\n  ? \"Please select either one or more of the circumstances or 'None of the above', but not both.\"\r\n  : true;"
+                "custom": "const shouldSelectOneOfTheAboveOrAnotherOption =\r\n  !!data.eligibleCircumstances.noneOfTheAbove &&\r\n  Object.values(data.eligibleCircumstances).filter(item => !!item).length > 1;\r\nvalid = shouldSelectOneOfTheAboveOrAnotherOption\r\n  ? \"Please select either one or more of the circumstances or 'None of the above', but not both.\"\r\n  : true;"
             },
             "validateWhenHidden": false,
             "key": "eligibleCircumstances",
