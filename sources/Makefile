@@ -274,7 +274,7 @@ migrations: create-docker-local-network
 	@docker compose -f docker-compose.yml up -d migrations
 
 # Enable local DB connection to Openshift DEV/TEST/STG/PROD
-connect-dev-db-silver:
+connect-dev-silver-db:
 	@echo "Forward local port 5454 to Openshift simsdb-pgbouncer default port."
 	@echo "Use your preferred DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5454."
 	@oc project 0c27fb-dev

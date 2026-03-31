@@ -1,5 +1,5 @@
 name: Crunchy Postgres - Install/Upgrade with datasource
-run-name: Crunchy DB - ${{ inputs.environment }} Crunchy DB in ${{ inputs.environment }} using ${{ github.ref_name }}
+run-name: Crunchy DB in ${{ inputs.environment }} using ${{ github.ref_name }}
 permissions:
     contents: read
 
@@ -25,7 +25,7 @@ on:
 
 jobs:
     manageCrunchyDBWithDatasource:
-        name: ${{ inputs.environment }} Crunchy DB in ${{ inputs.environment }}
+        name: Crunchy DB ${{ inputs.action }} in ${{ inputs.environment }}
         runs-on: ubuntu-latest
         environment: ${{ inputs.environment }}
         env:
