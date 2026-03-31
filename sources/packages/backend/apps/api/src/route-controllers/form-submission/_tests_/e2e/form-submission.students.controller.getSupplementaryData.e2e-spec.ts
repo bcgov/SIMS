@@ -14,12 +14,13 @@ import {
 import { KnownSupplementaryDataKey } from "../../../../services";
 import {
   createE2EDataSources,
-  createFakeDynamicFormConfiguration,
+  createFakeInstitutionUser,
   createFakeSupportingUser,
   createFakeStudentScholasticStanding,
   E2EDataSources,
   saveFakeApplication,
   saveFakeFormSubmissionFromInputTestData,
+  ensureDynamicFormConfigurationExists,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
 import {
@@ -37,6 +38,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
   let appModule: TestingModule;
   let db: E2EDataSources;
   let auditUser: User;
+  let institutionSubmittedByUser: User;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, module } =
@@ -48,6 +50,10 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
       dataSource,
       AESTGroups.BusinessAdministrators,
     );
+    const savedInstitutionUser = await db.institutionUser.save(
+      createFakeInstitutionUser(),
+    );
+    institutionSubmittedByUser = savedInstitutionUser.user;
   });
 
   beforeEach(async () => {
@@ -206,7 +212,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource);
       const scholasticStanding = createFakeStudentScholasticStanding(
-        { submittedBy: application.student.user, application },
+        { submittedBy: institutionSubmittedByUser, application },
         {
           initialValues: {
             changeType:
@@ -257,7 +263,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
           },
         );
         const scholasticStanding = createFakeStudentScholasticStanding(
-          { submittedBy: application.student.user, application },
+          { submittedBy: institutionSubmittedByUser, application },
           {
             initialValues: {
               changeType:
@@ -295,7 +301,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource);
       const scholasticStanding = createFakeStudentScholasticStanding(
-        { submittedBy: application.student.user, application },
+        { submittedBy: institutionSubmittedByUser, application },
         {
           initialValues: {
             changeType:
@@ -334,10 +340,11 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
         // Arrange
         const application = await saveFakeApplication(db.dataSource);
         // Create a fake FormSubmission to simulate a previously submitted non-punitive withdrawal form.
-        const dynamicFormConfiguration = createFakeDynamicFormConfiguration(
-          DynamicFormType.NonPunitiveWithdrawal,
-        );
-        await db.dynamicFormConfiguration.save(dynamicFormConfiguration);
+        const dynamicFormConfiguration =
+          await ensureDynamicFormConfigurationExists(
+            db,
+            DynamicFormType.NonPunitiveWithdrawal,
+          );
         const savedFormSubmission =
           await saveFakeFormSubmissionFromInputTestData(db, {
             student: application.student,
@@ -358,7 +365,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
         const [savedFormSubmissionItem] =
           savedFormSubmission.formSubmissionItems;
         const scholasticStanding = createFakeStudentScholasticStanding(
-          { submittedBy: application.student.user, application },
+          { submittedBy: institutionSubmittedByUser, application },
           {
             initialValues: {
               changeType:

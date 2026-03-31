@@ -10,7 +10,7 @@ import { FormSubmissionAction } from "./form-submission-action";
 import { FormSubmissionActionModel } from "./form-submission-action-models";
 
 @Injectable()
-export class FormSubmissionUpdateNonPunitiveScholasticStandingWithdrawalAction extends FormSubmissionAction {
+export class FormSubmissionUpdateNonPunitiveWithdrawalAction extends FormSubmissionAction {
   /**
    * Type of action being performed.
    */

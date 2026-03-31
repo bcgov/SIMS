@@ -29,15 +29,14 @@
         },
         {
             "label": "HTML",
-            "tag": "h3",
-            "className": "category-header-medium primary-color",
+            "tag": "p",
             "attrs": [
                 {
                     "attr": "",
                     "value": ""
                 }
             ],
-            "content": "This form is used to reverse the eligibility impacts of a withdrawal when certain criteria have been met.",
+            "content": "<p>This form is used to reverse the eligibility impacts of a withdrawal when certain criteria have been met.</p>",
             "refreshOnChange": false,
             "key": "html",
             "type": "htmlelement",
@@ -48,6 +47,7 @@
             "label": "Application",
             "widget": "choicesjs",
             "placeholder": "Application Number",
+            "description": "Please select the application that has been withdrawn that you would like to be converted to non-punitive status.",
             "customClass": "font-weight-bold",
             "tableView": true,
             "dataSrc": "custom",
@@ -105,7 +105,8 @@
             ],
             "validate": {
                 "required": true,
-                "custom": "const shouldSelectOneOfTheAboveOrAnotherOption =\r\n  (data.eligibleCircumstances.didNotAttendClasses ||\r\n    data.eligibleCircumstances.attendedClassesFor10DaysOrLess ||\r\n    data.eligibleCircumstances.completedFirstSemester ||\r\n    data.eligibleCircumstances.withdrawnFromStudies) &&\r\n  data.eligibleCircumstances.noneOfTheAbove;\r\n\r\nvalid = shouldSelectOneOfTheAboveOrAnotherOption\r\n  ? \"Please select either one or more of the circumstances or 'None of the above', but not both.\"\r\n  : true;"
+                "onlyAvailableItems": true,
+                "custom": "const selectedEligibleCircumstances = Object.entries(data.eligibleCircumstances || {})\r\n  .filter(([key, isSelected]) => key !== \"noneOfTheAbove\" && !!isSelected).length;\r\nconst shouldSelectOneOfTheAboveOrAnotherOption =\r\n  !!data.eligibleCircumstances?.noneOfTheAbove &&\r\n  selectedEligibleCircumstances > 0;\r\n\r\nvalid = shouldSelectOneOfTheAboveOrAnotherOption\r\n  ? \"Please select either one or more of the circumstances or 'None of the above', but not both.\"\r\n  : true;"
             },
             "validateWhenHidden": false,
             "key": "eligibleCircumstances",

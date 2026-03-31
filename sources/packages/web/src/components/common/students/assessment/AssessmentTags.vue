@@ -9,7 +9,7 @@
   <chip-tag
     v-if="showNonPunitiveWithdrawal"
     class="non-punitive-tag"
-    label="Non-Punitive"
+    label="Non-punitive"
   />
 </template>
 <script lang="ts">

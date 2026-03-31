@@ -30,7 +30,6 @@ import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.v
 import ScholasticStandingReversalBanner from "@/components/common/students/applicationDetails/ScholasticStandingReversalBanner.vue";
 import ScholasticStandingNonPunitiveBanner from "@/components/common/students/applicationDetails/ScholasticStandingNonPunitiveBanner.vue";
 import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "@/services/http/dto";
-import { StudentScholasticStandingChangeType } from "@/types";
 
 export default {
   name: "ViewScholasticStanding",
@@ -62,13 +61,6 @@ export default {
       () => !!scholasticStandingDetails.value.reversalDate,
     );
 
-    const isNonPunitiveWithdrawal = computed(
-      () =>
-        scholasticStandingDetails.value.scholasticStandingChangeType ===
-          StudentScholasticStandingChangeType.StudentWithdrewFromProgram &&
-        !!scholasticStandingDetails.value.nonPunitiveFormSubmissionItemId,
-    );
-
     const goBackRouteParams = computed(
       () =>
         ({
@@ -81,7 +73,8 @@ export default {
       goBackRouteParams,
       dataLoaded,
       hasReversal,
-      isNonPunitiveWithdrawal,
+      isNonPunitiveWithdrawal:
+        !!scholasticStandingDetails.value.nonPunitiveFormSubmissionItemId,
     };
   },
 };

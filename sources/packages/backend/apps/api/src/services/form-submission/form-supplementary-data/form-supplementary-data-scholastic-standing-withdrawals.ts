@@ -7,6 +7,7 @@ import {
 } from "../form-submission.models";
 import {
   Application,
+  ApplicationStatus,
   StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -86,7 +87,6 @@ export class SupplementaryDataScholasticStandingWithdrawals extends Supplementar
         },
       },
       where: {
-        isArchived: false,
         student: { id: studentId },
         studentAssessments: {
           studentScholasticStanding: {
@@ -96,16 +96,14 @@ export class SupplementaryDataScholasticStandingWithdrawals extends Supplementar
             nonPunitiveFormSubmissionItem: IsNull(),
           },
         },
+        applicationStatus: ApplicationStatus.Completed,
       },
     });
     const withdrawalScholasticStandings = applications.flatMap((application) =>
-      (application.studentAssessments ?? [])
-        .map((assessment) => assessment.studentScholasticStanding)
-        .filter((standing) => !!standing)
-        .map((standing) => ({
-          applicationNumber: application.applicationNumber,
-          scholasticStandingId: standing.id,
-        })),
+      (application.studentAssessments ?? []).map((assessment) => ({
+        applicationNumber: application.applicationNumber,
+        scholasticStandingId: assessment.studentScholasticStanding.id,
+      })),
     );
     return withdrawalScholasticStandings;
   }
