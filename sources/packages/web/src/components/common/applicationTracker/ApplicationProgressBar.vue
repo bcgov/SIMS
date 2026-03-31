@@ -38,7 +38,7 @@
         "
         :application-id="applicationId"
         :are-application-actions-allowed="areApplicationActionsAllowed"
-        :show-student-banners="showStudentBanners"
+        :student-id="studentId"
       />
       <assessment
         v-else-if="
@@ -49,7 +49,6 @@
           applicationProgressDetails.assessmentTriggerType!
         "
         :are-application-actions-allowed="areApplicationActionsAllowed"
-        :show-student-banners="showStudentBanners"
         @go-to-notice-of-assessment="goToNoticeOfAssessment"
       />
       <enrolment
@@ -58,6 +57,7 @@
           ApplicationStatus.Enrolment
         "
         :application-id="applicationId"
+        :student-id="studentId"
       />
       <completed
         :are-application-actions-allowed="areApplicationActionsAllowed"
@@ -66,6 +66,7 @@
           ApplicationStatus.Completed
         "
         :application-id="applicationId"
+        :student-id="studentId"
       />
     </template>
     <cancelled
@@ -145,14 +146,10 @@ export default defineComponent({
       required: false,
       default: false,
     },
-    /**
-     * When false, hides student-specific banners inside the tracker components.
-     * Defaults to true for student/ministry views; set to false for institution views.
-     */
-    showStudentBanners: {
-      type: Boolean,
+    studentId: {
+      type: Number,
       required: false,
-      default: true,
+      default: undefined,
     },
   },
   setup(props) {
@@ -183,6 +180,7 @@ export default defineComponent({
         applicationProgressDetails.value =
           await ApplicationService.shared.getApplicationProgressDetails(
             props.applicationId,
+            { studentId: props.studentId },
           );
 
         if (

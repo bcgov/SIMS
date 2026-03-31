@@ -172,45 +172,77 @@ export class ApplicationService {
   /**
    * Get in progress details of an application by application id.
    * @param applicationId application id.
+   * @param options related options.
+   * - `studentId` student id for the student.
    * @returns application details.
    */
   async getInProgressApplicationDetails(
     applicationId: number,
+    options?: {
+      studentId?: number;
+    },
   ): Promise<InProgressApplicationDetailsAPIOutDTO> {
-    return ApiClient.Application.getInProgressApplicationDetails(applicationId);
+    return ApiClient.Application.getInProgressApplicationDetails(
+      applicationId,
+      options,
+    );
   }
 
   /**
    * Get status of all requests and confirmations in student application (Exception, PIR and COE).
    * @param applicationId Student application.
+   * @param options related options.
+   * - `studentId` student id for the student.
    * @returns application progress details.
    */
   async getApplicationProgressDetails(
     applicationId: number,
+    options?: {
+      studentId?: number;
+    },
   ): Promise<ApplicationProgressDetailsAPIOutDTO> {
-    return ApiClient.Application.getApplicationProgressDetails(applicationId);
+    return ApiClient.Application.getApplicationProgressDetails(
+      applicationId,
+      options,
+    );
   }
 
   /**
    * Get details for the application enrolment status of a student application.
    * @param applicationId student application id.
+   * @param options related options.
+   * - `studentId` student id for the student.
    * @returns details for the application enrolment status.
    */
   async getEnrolmentApplicationDetails(
     applicationId: number,
+    options?: {
+      studentId?: number;
+    },
   ): Promise<EnrolmentApplicationDetailsAPIOutDTO> {
-    return ApiClient.Application.getEnrolmentApplicationDetails(applicationId);
+    return ApiClient.Application.getEnrolmentApplicationDetails(
+      applicationId,
+      options,
+    );
   }
 
   /**
    * Get details for an application on at completed status.
    * @param applicationId application id.
+   * @param options related options.
+   * - `studentId` student id for the student.
    * @returns details for an application on at completed status.
    */
   async getCompletedApplicationDetails(
     applicationId: number,
+    options?: {
+      studentId?: number;
+    },
   ): Promise<CompletedApplicationDetailsAPIOutDTO> {
-    return ApiClient.Application.getCompletedApplicationDetails(applicationId);
+    return ApiClient.Application.getCompletedApplicationDetails(
+      applicationId,
+      options,
+    );
   }
 
   /**
@@ -239,11 +271,19 @@ export class ApplicationService {
   /**
    * Get application overall details for an application.
    * @param applicationId, application id.
+   * @param options related options.
+   * - `studentId` student id for the student.
    * @returns application overall details list.
    */
   async getApplicationOverallDetails(
     applicationId: number,
+    options?: {
+      studentId?: number;
+    },
   ): Promise<ApplicationOverallDetailsAPIOutDTO> {
-    return ApiClient.Application.getApplicationOverallDetails(applicationId);
+    return ApiClient.Application.getApplicationOverallDetails(
+      applicationId,
+      options,
+    );
   }
 }

@@ -189,52 +189,84 @@ export class ApplicationApi extends HttpBaseClient {
   /**
    * Get in progress details of an application by application id.
    * @param applicationId application id.
+   * @param options related options.
+   * - `studentId` student id for the student.
    * @returns application details.
    */
   async getInProgressApplicationDetails(
     applicationId: number,
+    options?: {
+      studentId?: number;
+    },
   ): Promise<InProgressApplicationDetailsAPIOutDTO> {
+    const url = options?.studentId
+      ? `application/student/${options?.studentId}/application/${applicationId}/in-progress`
+      : `application/${applicationId}/in-progress`;
     return this.getCall<InProgressApplicationDetailsAPIOutDTO>(
-      this.addClientRoot(`application/${applicationId}/in-progress`),
+      this.addClientRoot(url),
     );
   }
 
   /**
    * Get status of all requests and confirmations in student application (Exception, PIR and COE).
    * @param applicationId Student application.
+   * @param options related options.
+   * - `studentId` student id for the student.
    * @returns application progress details.
    */
   async getApplicationProgressDetails(
     applicationId: number,
+    options?: {
+      studentId?: number;
+    },
   ): Promise<ApplicationProgressDetailsAPIOutDTO> {
+    const url = options?.studentId
+      ? `application/student/${options?.studentId}/application/${applicationId}/progress-details`
+      : `application/${applicationId}/progress-details`;
     return this.getCall<ApplicationProgressDetailsAPIOutDTO>(
-      this.addClientRoot(`application/${applicationId}/progress-details`),
+      this.addClientRoot(url),
     );
   }
 
   /**
    * Get details for the application enrolment status of a student application.
    * @param applicationId student application id.
+   * @param options related options.
+   * - `studentId` student id for the student.
    * @returns details for the application enrolment status.
    */
   async getEnrolmentApplicationDetails(
     applicationId: number,
+    options?: {
+      studentId?: number;
+    },
   ): Promise<EnrolmentApplicationDetailsAPIOutDTO> {
+    const url = options?.studentId
+      ? `application/student/${options.studentId}/application/${applicationId}/enrolment`
+      : `application/${applicationId}/enrolment`;
     return this.getCall<EnrolmentApplicationDetailsAPIOutDTO>(
-      this.addClientRoot(`application/${applicationId}/enrolment`),
+      this.addClientRoot(url),
     );
   }
 
   /**
    * Get details for an application on at completed status.
    * @param applicationId application id.
+   * @param options related options.
+   * - `studentId` student id for the student.
    * @returns details for an application on at completed status.
    */
   async getCompletedApplicationDetails(
     applicationId: number,
+    options?: {
+      studentId?: number;
+    },
   ): Promise<CompletedApplicationDetailsAPIOutDTO> {
+    const url = options?.studentId
+      ? `application/student/${options.studentId}/application/${applicationId}/completed`
+      : `application/${applicationId}/completed`;
     return this.getCall<CompletedApplicationDetailsAPIOutDTO>(
-      this.addClientRoot(`application/${applicationId}/completed`),
+      this.addClientRoot(url),
     );
   }
 
@@ -267,12 +299,19 @@ export class ApplicationApi extends HttpBaseClient {
   /**
    * Get application overall details for an application.
    * @param applicationId, application id.
+   * @param options related options.
+   * - `studentId` student id for the student.
    * @returns application overall details list.
    */
   async getApplicationOverallDetails(
     applicationId: number,
+    options?: {
+      studentId?: number;
+    },
   ): Promise<ApplicationOverallDetailsAPIOutDTO> {
-    const endpoint = `application/${applicationId}/overall-details`;
+    const endpoint = options?.studentId
+      ? `application/student/${options.studentId}/application/${applicationId}/overall-details`
+      : `application/${applicationId}/overall-details`;
     return this.getCall<ApplicationOverallDetailsAPIOutDTO>(
       this.addClientRoot(endpoint),
     );

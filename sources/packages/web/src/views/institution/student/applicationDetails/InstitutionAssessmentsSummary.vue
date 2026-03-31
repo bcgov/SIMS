@@ -4,7 +4,7 @@
       <header-navigator
         title="Student applications"
         :route-location="backRoute"
-        sub-title="Assessment"
+        sub-title="Assessments"
       />
       <application-header-title
         :application-id="applicationId"

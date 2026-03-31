@@ -7,14 +7,16 @@
   />
   <multiple-disbursement-banner
     v-if="applicationCOEDetails?.secondDisbursement"
-    :firstCOEStatus="applicationCOEDetails?.firstDisbursement?.coeStatus"
-    :secondCOEStatus="applicationCOEDetails?.secondDisbursement?.coeStatus"
-    :coeDenialReason="multipleCOEDenialReason"
+    :first-c-o-e-status="applicationCOEDetails?.firstDisbursement?.coeStatus"
+    :second-c-o-e-status="applicationCOEDetails?.secondDisbursement?.coeStatus"
+    :coe-denial-reason="multipleCOEDenialReason"
   />
   <disbursement-banner
     v-else
-    :coeStatus="applicationCOEDetails?.firstDisbursement?.coeStatus"
-    :coeDenialReason="applicationCOEDetails?.firstDisbursement?.coeDenialReason"
+    :coe-status="applicationCOEDetails?.firstDisbursement?.coeStatus"
+    :coe-denial-reason="
+      applicationCOEDetails?.firstDisbursement?.coeDenialReason
+    "
   />
 </template>
 <script lang="ts">
@@ -37,6 +39,11 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    studentId: {
+      type: Number,
+      required: false,
+      default: undefined,
+    },
   },
   setup(props) {
     const applicationCOEDetails = ref(
@@ -48,6 +55,7 @@ export default defineComponent({
       applicationCOEDetails.value =
         await ApplicationService.shared.getEnrolmentApplicationDetails(
           props.applicationId,
+          { studentId: props.studentId },
         );
       // Even though if an application has multiple COEs
       // COE can be declined only once, either first COE is declined

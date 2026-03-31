@@ -16,7 +16,7 @@
     </template>
     <application-progress-bar
       :application-id="applicationId"
-      :show-student-banners="false"
+      :student-id="studentId"
     />
   </full-page-container>
 </template>

@@ -444,6 +444,7 @@ export class ApplicationControllerService {
   /**
    * Gets the current application id.
    * @param applicationId application id.
+   * TODO Analyze whether the isParentApplication flag is necessary as it is not used in web.
    * @param isParentApplication is parent application.
    * @returns the current application id.
    */

@@ -10,26 +10,24 @@ import {
   INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
   InstitutionTokenTypes,
 } from "../../../testHelpers";
+import { SuccessWaitingStatus } from "../models/application.dto";
 import {
+  E2EDataSources,
   createE2EDataSources,
   createFakeInstitutionLocation,
-  E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
 import {
   ApplicationStatus,
-  EducationProgramOffering,
   InstitutionLocation,
-  OfferingIntensity,
+  ProgramInfoStatus,
 } from "@sims/sims-db";
-import { addDays, getISODateOnlyString } from "@sims/utilities";
-import { getUserFullName } from "../../../utilities";
 
-describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
+describe("ApplicationAESTController(e2e)-getInProgressApplicationDetails", () => {
   let app: INestApplication;
+  let db: E2EDataSources;
   let collegeFLocation: InstitutionLocation;
   let collegeCLocation: InstitutionLocation;
-  let db: E2EDataSources;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -59,28 +57,17 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
     );
   });
 
-  it("Should get the student application details when student has a submitted application for the institution.", async () => {
+  it("Should get application in-progress details of a single independent student application with PIR required.", async () => {
     // Arrange
-    const offeringInitialValues = {
-      studyStartDate: getISODateOnlyString(addDays(-10)),
-      studyEndDate: getISODateOnlyString(addDays(10)),
-      offeringIntensity: OfferingIntensity.fullTime,
-    } as EducationProgramOffering;
-
-    // Create new application.
     const savedApplication = await saveFakeApplication(
       db.dataSource,
+      { institutionLocation: collegeFLocation },
       {
-        institutionLocation: collegeFLocation,
-      },
-      {
-        offeringInitialValues: offeringInitialValues,
-        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: ApplicationStatus.InProgress,
+        pirStatus: ProgramInfoStatus.required,
       },
     );
-
-    const student = savedApplication.student;
-    const endpoint = `/institutions/application/student/${student.id}/application/${savedApplication.id}`;
+    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/in-progress`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -91,33 +78,46 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
-        data: {},
         id: savedApplication.id,
-        applicationStatus: savedApplication.applicationStatus,
-        applicationEditStatus: savedApplication.applicationEditStatus,
-        applicationNumber: savedApplication.applicationNumber,
-        isArchived: false,
-        applicationFormName: "SFAA2022-23",
-        applicationProgramYearID: savedApplication.programYear.id,
-        studentFullName: getUserFullName(savedApplication.student.user),
-        applicationOfferingIntensity: offeringInitialValues.offeringIntensity,
-        applicationStartDate: offeringInitialValues.studyStartDate,
-        applicationEndDate: offeringInitialValues.studyEndDate,
-        applicationInstitutionName:
-          savedApplication.location.institution.legalOperatingName,
-        isChangeRequestAllowedForPY: false,
+        applicationStatus: ApplicationStatus.InProgress,
+        pirStatus: ProgramInfoStatus.required,
+        outstandingAssessmentStatus: SuccessWaitingStatus.Success,
       });
   });
 
-  it("Should not have access to get the student application details when the student submitted an application to non-public institution.", async () => {
+  it("Should throw a HttpStatus Unprocessable Entity (422) error when the application has status Completed.", async () => {
     // Arrange
-    // Create new application.
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      { institutionLocation: collegeFLocation },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/in-progress`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        statusCode: 422,
+        message: `Application not in ${ApplicationStatus.InProgress} status.`,
+        error: "Unprocessable Entity",
+      });
+  });
+
+  it("Should throw a HttpStatus Forbidden (403) error when the student submitted an application to non-public institution.", async () => {
+    // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource, {
       institutionLocation: collegeCLocation,
     });
 
-    const student = savedApplication.student;
-    const endpoint = `/institutions/application/student/${student.id}/application/${savedApplication.id}`;
+    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/in-progress`;
     const institutionUserTokenCUser = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
@@ -134,15 +134,13 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       });
   });
 
-  it("Should not get the student application details when application is submitted for different institution.", async () => {
+  it("Should throw a HttpStatus Forbidden (403) error when the application is submitted for different institution.", async () => {
     // Arrange
-    // Create new application.
     const savedApplication = await saveFakeApplication(db.dataSource, {
       institutionLocation: collegeCLocation,
     });
 
-    const student = savedApplication.student;
-    const endpoint = `/institutions/application/student/${student.id}/application/${savedApplication.id}`;
+    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/in-progress`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -159,7 +157,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       });
   });
 
-  it("Should not get the student application details when the application status is edited.", async () => {
+  it("Should throw a HttpStatus Forbidden (403) error when the application status has status Edited.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(
       db.dataSource,
@@ -171,8 +169,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       },
     );
 
-    const student = savedApplication.student;
-    const endpoint = `/institutions/application/student/${student.id}/application/${savedApplication.id}`;
+    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/in-progress`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );

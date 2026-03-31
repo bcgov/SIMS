@@ -5,7 +5,6 @@
     "
   />
   <application-status-tracker-banner
-    v-if="showStudentBanners"
     label="Action required! Please accept your assessment"
     icon="fa:fas fa-exclamation-triangle"
     icon-color="warning"
@@ -42,10 +41,6 @@ export default defineComponent({
   props: {
     assessmentTriggerType: {
       type: String as PropType<AssessmentTriggerType>,
-      required: true,
-    },
-    showStudentBanners: {
-      type: Boolean,
       required: true,
     },
     areApplicationActionsAllowed: {
