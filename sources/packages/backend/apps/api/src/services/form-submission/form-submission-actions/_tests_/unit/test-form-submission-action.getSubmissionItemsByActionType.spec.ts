@@ -77,7 +77,7 @@ describe("FormSubmissionAction-getSubmissionItemsByActionType", () => {
     const declinedDifferentRequest: FormSubmissionItemActionModel = {
       id: 1,
       actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
-      decisionStatus: FormSubmissionDecisionStatus.Declined,
+      decisionStatus: FormSubmissionDecisionStatus.Approved,
     };
     const declinedSameRequest: FormSubmissionItemActionModel = {
       id: 2,

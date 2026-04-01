@@ -83,6 +83,6 @@ describe("FormSubmissionAction-process", () => {
     );
 
     // Assert
-    expect(action.applyAction).toHaveBeenCalledTimes(0);
+    expect(action.applyAction).not.toHaveBeenCalled();
   });
 });

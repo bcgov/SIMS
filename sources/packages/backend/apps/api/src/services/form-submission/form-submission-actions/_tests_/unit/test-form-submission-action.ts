@@ -10,7 +10,7 @@ import {
 import { EntityManager } from "typeorm";
 
 /**
- * Concrete action used only for testing the protected methods.
+ * Concrete action used to support unit tests.
  */
 export class TestFormSubmissionAction extends FormSubmissionAction {
   private readonly testActionType: FormSubmissionActionType;
