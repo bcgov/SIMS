@@ -9,28 +9,25 @@ import {
 } from "../../form-submission-action-models";
 
 describe("FormSubmissionAction-getSubmissionItemsByActionType", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
-
   it("Should return only the requests that include the matching action type.", () => {
     // Arrange
     const action = new TestFormSubmissionAction({
       actionType: FormSubmissionActionType.UpdateModifiedIndependent,
       appliesToResult: true,
     });
-    const formSubmission = {} as FormSubmissionActionModel;
-    const requestWithMatch = {
+    const requestWithMatch: FormSubmissionItemActionModel = {
       id: 1,
       actions: [FormSubmissionActionType.UpdateModifiedIndependent],
       decisionStatus: FormSubmissionDecisionStatus.Declined,
-    } as FormSubmissionItemActionModel;
-    const requestWithoutMatch = {
+    };
+    const requestWithoutMatch: FormSubmissionItemActionModel = {
       id: 2,
       actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
       decisionStatus: FormSubmissionDecisionStatus.Declined,
-    } as FormSubmissionItemActionModel;
-    formSubmission.submissionItems = [requestWithMatch, requestWithoutMatch];
+    };
+    const formSubmission = {
+      submissionItems: [requestWithMatch, requestWithoutMatch],
+    } as FormSubmissionActionModel;
 
     // Act
     const result = action.exposedGetSubmissionItemsByActionType(formSubmission);
@@ -45,18 +42,19 @@ describe("FormSubmissionAction-getSubmissionItemsByActionType", () => {
       actionType: FormSubmissionActionType.CreateStudentAppealAssessment,
       appliesToResult: true,
     });
-    const formSubmission = {} as FormSubmissionActionModel;
-    const declinedRequest = {
+    const declinedRequest: FormSubmissionItemActionModel = {
       id: 1,
       actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
       decisionStatus: FormSubmissionDecisionStatus.Declined,
-    } as FormSubmissionItemActionModel;
-    const approveRequest = {
+    };
+    const approveRequest: FormSubmissionItemActionModel = {
       id: 2,
       actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
       decisionStatus: FormSubmissionDecisionStatus.Approved,
-    } as FormSubmissionItemActionModel;
-    formSubmission.submissionItems = [declinedRequest, approveRequest];
+    };
+    const formSubmission = {
+      submissionItems: [declinedRequest, approveRequest],
+    } as FormSubmissionActionModel;
 
     // Act
     const result = action.exposedGetSubmissionItemsByActionType(
@@ -76,18 +74,19 @@ describe("FormSubmissionAction-getSubmissionItemsByActionType", () => {
       actionType: FormSubmissionActionType.CreateStudentAppealAssessment,
       appliesToResult: true,
     });
-    const formSubmission = {} as FormSubmissionActionModel;
-    const declinedRequest = {
+    const declinedRequest: FormSubmissionItemActionModel = {
       id: 1,
       actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
       decisionStatus: FormSubmissionDecisionStatus.Declined,
-    } as FormSubmissionItemActionModel;
-    const approveRequest = {
+    };
+    const approveRequest: FormSubmissionItemActionModel = {
       id: 2,
       actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
       decisionStatus: FormSubmissionDecisionStatus.Declined,
-    } as FormSubmissionItemActionModel;
-    formSubmission.submissionItems = [declinedRequest, approveRequest];
+    };
+    const formSubmission = {
+      submissionItems: [declinedRequest, approveRequest],
+    } as FormSubmissionActionModel;
 
     // Act
     const result = action.exposedGetSubmissionItemsByActionType(

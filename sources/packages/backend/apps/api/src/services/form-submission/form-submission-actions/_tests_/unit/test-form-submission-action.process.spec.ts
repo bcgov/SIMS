@@ -8,10 +8,6 @@ import { EntityManager } from "typeorm";
 import { FormSubmissionActionModel } from "../../form-submission-action-models";
 
 describe("FormSubmissionAction-process", () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
-
   it("Should call applyAction when appliesTo result is true.", () => {
     // Arrange
     const action = new TestFormSubmissionAction({

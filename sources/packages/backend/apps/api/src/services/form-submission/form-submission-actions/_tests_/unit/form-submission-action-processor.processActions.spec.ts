@@ -44,7 +44,7 @@ describe("FormSubmissionActionProcessor-processActions", () => {
     const auditUserId = 123;
     const auditDate = new Date();
     // Expected form submission returned from DB.
-    const mockedFormSubmission: FormSubmission = {
+    const mockedFormSubmission = {
       id: 1,
       student: { id: 2 },
       formCategory: FormCategory.StudentAppeal,
