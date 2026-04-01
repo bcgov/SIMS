@@ -28,6 +28,9 @@ export default defineComponent({
     const showReversed = computed(() => {
       return !!props.assessment.scholasticStandingReversalDate;
     });
+    const showNonPunitiveWithdrawal = computed(() => {
+      return !!props.assessment.nonPunitiveFormSubmissionItemId;
+    });
     const showUnsuccessfulCompletion = computed(() => {
       return (
         props.assessment.scholasticStandingChangeType ===
@@ -46,8 +49,7 @@ export default defineComponent({
       showReversed,
       showUnsuccessfulCompletion,
       showWithdrawal,
-      showNonPunitiveWithdrawal:
-        !!props.assessment.nonPunitiveFormSubmissionItemId,
+      showNonPunitiveWithdrawal,
       StudentScholasticStandingChangeType,
     };
   },
