@@ -26,8 +26,8 @@ import {
 describe("ApplicationInstitutionsController(e2e)-getInProgressApplicationDetails", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let collegeCLocation: InstitutionLocation;
   let collegeFLocation: InstitutionLocation;
+  let collegeCLocation: InstitutionLocation;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -57,33 +57,37 @@ describe("ApplicationInstitutionsController(e2e)-getInProgressApplicationDetails
     );
   });
 
-  it("Should get application in-progress details of a single independent student application with PIR required.", async () => {
-    // Arrange
-    const savedApplication = await saveFakeApplication(
-      db.dataSource,
-      { institutionLocation: collegeFLocation },
-      {
-        applicationStatus: ApplicationStatus.InProgress,
-        pirStatus: ProgramInfoStatus.required,
-      },
-    );
-    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/in-progress`;
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
+  it(
+    "Should get application in-progress details of a single independent student application with PIR required when the application is in 'In Progress' status " +
+      "and the institution is authorized to access the application.",
+    async () => {
+      // Arrange
+      const savedApplication = await saveFakeApplication(
+        db.dataSource,
+        { institutionLocation: collegeFLocation },
+        {
+          applicationStatus: ApplicationStatus.InProgress,
+          pirStatus: ProgramInfoStatus.required,
+        },
+      );
+      const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/in-progress`;
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({
-        id: savedApplication.id,
-        applicationStatus: ApplicationStatus.InProgress,
-        pirStatus: ProgramInfoStatus.required,
-        outstandingAssessmentStatus: SuccessWaitingStatus.Success,
-      });
-  });
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          id: savedApplication.id,
+          applicationStatus: ApplicationStatus.InProgress,
+          pirStatus: ProgramInfoStatus.required,
+          outstandingAssessmentStatus: SuccessWaitingStatus.Success,
+        });
+    },
+  );
 
   it("Should throw a HttpStatus Unprocessable Entity (422) error when the application has status Completed.", async () => {
     // Arrange

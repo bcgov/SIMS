@@ -27,8 +27,8 @@ import {
 describe("ApplicationInstitutionsController(e2e)-getApplicationProgressDetails", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let collegeCLocation: InstitutionLocation;
   let collegeFLocation: InstitutionLocation;
+  let collegeCLocation: InstitutionLocation;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -59,40 +59,44 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationProgressDetails",
     );
   });
 
-  it("Should get the progress details for a part-time student application when the application is in 'In Progress' status and the institution is authorized to access the application.", async () => {
-    // Arrange
-    const savedApplication = await saveFakeApplication(
-      db.dataSource,
-      {
-        institutionLocation: collegeFLocation,
-      },
-      {
-        applicationStatus: ApplicationStatus.InProgress,
-        offeringIntensity: OfferingIntensity.partTime,
-        pirStatus: ProgramInfoStatus.notRequired,
-      },
-    );
-    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/progress-details`;
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
+  it(
+    "Should get the progress details for a part-time student application when the application is in 'In Progress' status " +
+      "and the institution is authorized to access the application.",
+    async () => {
+      // Arrange
+      const savedApplication = await saveFakeApplication(
+        db.dataSource,
+        {
+          institutionLocation: collegeFLocation,
+        },
+        {
+          applicationStatus: ApplicationStatus.InProgress,
+          offeringIntensity: OfferingIntensity.partTime,
+          pirStatus: ProgramInfoStatus.notRequired,
+        },
+      );
+      const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/progress-details`;
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({
-        applicationStatus: ApplicationStatus.InProgress,
-        applicationStatusUpdatedOn:
-          savedApplication.applicationStatusUpdatedOn.toISOString(),
-        pirStatus: ProgramInfoStatus.notRequired,
-        assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
-        hasBlockFundingFeedbackError: false,
-        hasECertFailedValidations: false,
-        currentAssessmentId: savedApplication.currentAssessment.id,
-      });
-  });
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          applicationStatus: ApplicationStatus.InProgress,
+          applicationStatusUpdatedOn:
+            savedApplication.applicationStatusUpdatedOn.toISOString(),
+          pirStatus: ProgramInfoStatus.notRequired,
+          assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+          hasBlockFundingFeedbackError: false,
+          hasECertFailedValidations: false,
+          currentAssessmentId: savedApplication.currentAssessment.id,
+        });
+    },
+  );
 
   it("Should throw a HttpStatus Forbidden (403) error when the student submitted an application to non-public institution.", async () => {
     // Arrange
@@ -140,7 +144,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationProgressDetails",
       });
   });
 
-  it("Should throw a HttpStatus Forbidden (403) error when the application status has status Edited.", async () => {
+  it("Should throw a HttpStatus Forbidden (403) error when the application has status Edited.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(
       db.dataSource,

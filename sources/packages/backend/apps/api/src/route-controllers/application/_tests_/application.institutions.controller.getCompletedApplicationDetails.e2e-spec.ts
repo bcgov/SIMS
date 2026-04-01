@@ -29,8 +29,8 @@ import {
 describe("ApplicationInstitutionsController(e2e)-getCompletedApplicationDetails", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let collegeCLocation: InstitutionLocation;
   let collegeFLocation: InstitutionLocation;
+  let collegeCLocation: InstitutionLocation;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -61,8 +61,8 @@ describe("ApplicationInstitutionsController(e2e)-getCompletedApplicationDetails"
   });
 
   it(
-    "Should get application details when application is in 'Completed' status" +
-      " with original assessment and valid MSFAA Number and offering intensity is part-time.",
+    "Should get application details for a full-time student application when application is in 'Completed' status" +
+      "  and the institution is authorized to access the application.",
     async () => {
       // Arrange
       const application = await saveFakeApplicationDisbursements(
@@ -71,13 +71,13 @@ describe("ApplicationInstitutionsController(e2e)-getCompletedApplicationDetails"
           institutionLocation: collegeFLocation,
         },
         {
-          offeringIntensity: OfferingIntensity.partTime,
+          offeringIntensity: OfferingIntensity.fullTime,
           applicationStatus: ApplicationStatus.Completed,
           firstDisbursementInitialValues: { coeStatus: COEStatus.completed },
         },
       );
 
-      const endpoint = `/institutions/student/${application.student.id}/application/${application.id}/completed`;
+      const endpoint = `/institutions/application/student/${application.student.id}/application/${application.id}/completed`;
       const institutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeFUser,
       );
@@ -106,15 +106,15 @@ describe("ApplicationInstitutionsController(e2e)-getCompletedApplicationDetails"
       institutionLocation: collegeCLocation,
     });
 
-    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/in-progress`;
-    const institutionUserTokenCUser = await getInstitutionToken(
+    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/completed`;
+    const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
 
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
-      .auth(institutionUserTokenCUser, BEARER_AUTH_TYPE)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
         statusCode: 403,
@@ -129,7 +129,7 @@ describe("ApplicationInstitutionsController(e2e)-getCompletedApplicationDetails"
       institutionLocation: collegeCLocation,
     });
 
-    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/in-progress`;
+    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/completed`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );

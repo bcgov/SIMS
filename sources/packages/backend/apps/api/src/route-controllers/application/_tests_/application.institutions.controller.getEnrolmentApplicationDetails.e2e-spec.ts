@@ -1,11 +1,9 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
-  AESTGroups,
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
-  getAESTToken,
   getAuthRelatedEntities,
   getInstitutionToken,
   INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
@@ -31,8 +29,8 @@ import {
 describe("ApplicationInstitutionsController(e2e)-getEnrolmentApplicationDetails", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let collegeCLocation: InstitutionLocation;
   let collegeFLocation: InstitutionLocation;
+  let collegeCLocation: InstitutionLocation;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -63,13 +61,13 @@ describe("ApplicationInstitutionsController(e2e)-getEnrolmentApplicationDetails"
   });
 
   it(
-    "Should get application enrolment details when the application is in 'Enrolment' status" +
-      " with original assessment and offering intensity is part-time.",
+    "Should get application enrolment details for a part-time student application when the application is in 'Enrolment' status" +
+      "  and the institution is authorized to access the application.",
     async () => {
       // Arrange
-      const application = await saveFakeApplicationDisbursements(
+      const savedApplication = await saveFakeApplicationDisbursements(
         db.dataSource,
-        undefined,
+        { institutionLocation: collegeFLocation },
         {
           offeringIntensity: OfferingIntensity.partTime,
           applicationStatus: ApplicationStatus.Enrolment,
@@ -77,13 +75,15 @@ describe("ApplicationInstitutionsController(e2e)-getEnrolmentApplicationDetails"
         },
       );
 
-      const endpoint = `/aest/application/${application.id}/enrolment`;
-      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+      const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/enrolment`;
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
 
       // Act/Assert
       await request(app.getHttpServer())
         .get(endpoint)
-        .auth(token, BEARER_AUTH_TYPE)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
         .expect({
           firstDisbursement: {
@@ -101,15 +101,15 @@ describe("ApplicationInstitutionsController(e2e)-getEnrolmentApplicationDetails"
       institutionLocation: collegeCLocation,
     });
 
-    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/in-progress`;
-    const institutionUserTokenCUser = await getInstitutionToken(
+    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/enrolment`;
+    const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
 
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
-      .auth(institutionUserTokenCUser, BEARER_AUTH_TYPE)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
         statusCode: 403,
@@ -124,7 +124,7 @@ describe("ApplicationInstitutionsController(e2e)-getEnrolmentApplicationDetails"
       institutionLocation: collegeCLocation,
     });
 
-    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/in-progress`;
+    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/enrolment`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
