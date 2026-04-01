@@ -90,6 +90,9 @@ export function useFormioComponentLoader() {
   /**
    * Load institution restrictions for the given location and program
    * to the provided form.io component.
+   * If the component doesn't exist in the form, it means the form doesn't support
+   * location program institution restrictions, so the function will simply return without error.
+   * The feature should be available for 2025-26 program year and later.
    * @param form Form to update the component.
    * @param locationId Location.
    * @param programId Program.
@@ -101,13 +104,18 @@ export function useFormioComponentLoader() {
     programId: number,
     formIOComponentKey: string,
   ): Promise<void> => {
+    const component = formioUtils.getComponent(form, formIOComponentKey);
+    if (!component) {
+      // If the component doesn't exist, it means the form doesn't support
+      // location program institution restrictions.
+      return;
+    }
     const institutionRestrictions =
       await RestrictionService.shared.getLocationProgramInstitutionRestrictions(
         locationId,
         programId,
       );
-    const componentValue = institutionRestrictions.institutionRestrictions;
-    formioUtils.setComponentValue(form, formIOComponentKey, componentValue);
+    component.setValue(institutionRestrictions.institutionRestrictions);
   };
 
   return {
