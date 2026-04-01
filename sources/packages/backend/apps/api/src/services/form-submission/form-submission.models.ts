@@ -2,7 +2,7 @@ import {
   DynamicFormConfiguration,
   FormSubmissionDecisionStatus,
 } from "@sims/sims-db";
-import { Parent } from "../../types";
+import { ApplicationWithdrawal, Parent } from "../../types";
 
 /**
  * Optional data that can be loaded as part of the form.
@@ -10,6 +10,7 @@ import { Parent } from "../../types";
 export enum KnownSupplementaryDataKey {
   ProgramYear = "programYear",
   Parents = "parents",
+  ScholasticStandingWithdrawals = "scholasticStandingWithdrawals",
 }
 
 /**
@@ -19,6 +20,7 @@ export enum KnownSupplementaryDataKey {
 export interface KnownSupplementaryData {
   [KnownSupplementaryDataKey.ProgramYear]?: string;
   [KnownSupplementaryDataKey.Parents]?: Parent[];
+  [KnownSupplementaryDataKey.ScholasticStandingWithdrawals]?: ApplicationWithdrawal[];
 }
 
 /**

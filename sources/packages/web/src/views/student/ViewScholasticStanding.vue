@@ -8,7 +8,13 @@
       />
     </template>
     <template #alerts>
-      <scholastic-standing-reversal-banner v-if="hasReversal" />
+      <scholastic-standing-reversal-banner
+        v-if="scholasticStandingDetails.reversalDate"
+        class="mb-3"
+      />
+      <scholastic-standing-non-punitive-banner
+        v-if="scholasticStandingDetails.nonPunitiveFormSubmissionItemId"
+      />
     </template>
     <scholastic-standing-form
       :scholastic-standing-id="scholasticStandingId"
@@ -24,6 +30,7 @@ import { computed, ref } from "vue";
 import { RouteLocationRaw } from "vue-router";
 import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
 import ScholasticStandingReversalBanner from "@/components/common/students/applicationDetails/ScholasticStandingReversalBanner.vue";
+import ScholasticStandingNonPunitiveBanner from "@/components/common/students/applicationDetails/ScholasticStandingNonPunitiveBanner.vue";
 import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "@/services/http/dto";
 
 export default {
@@ -31,6 +38,7 @@ export default {
   components: {
     ScholasticStandingForm,
     ScholasticStandingReversalBanner,
+    ScholasticStandingNonPunitiveBanner,
   },
   props: {
     applicationId: {
@@ -46,15 +54,9 @@ export default {
     const scholasticStandingDetails = ref(
       {} as ScholasticStandingSubmittedDetailsAPIOutDTO,
     );
-
     const dataLoaded = (data: ScholasticStandingSubmittedDetailsAPIOutDTO) => {
       scholasticStandingDetails.value = data;
     };
-
-    const hasReversal = computed(
-      () => !!scholasticStandingDetails.value.reversalDate,
-    );
-
     const goBackRouteParams = computed(
       () =>
         ({
@@ -63,7 +65,11 @@ export default {
         }) as RouteLocationRaw,
     );
 
-    return { goBackRouteParams, dataLoaded, hasReversal };
+    return {
+      goBackRouteParams,
+      dataLoaded,
+      scholasticStandingDetails,
+    };
   },
 };
 </script>

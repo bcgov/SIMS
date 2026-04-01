@@ -1,0 +1,136 @@
+{
+    "title": "Non-punitive Withdrawal",
+    "name": "nonpunitivewithdrawalform",
+    "path": "nonpunitivewithdrawalform",
+    "type": "form",
+    "display": "form",
+    "tags": [
+        "common"
+    ],
+    "components": [
+        {
+            "label": "Actions: Update Non-Punitive Scholastic Standing Withdrawal",
+            "calculateValue": "value = [\"UpdateNonPunitiveScholasticStandingWithdrawal\"];",
+            "calculateServer": true,
+            "key": "actions",
+            "type": "hidden",
+            "input": true,
+            "tableView": false
+        },
+        {
+            "label": "Withdrawal Scholastic Standing Applications",
+            "key": "scholasticStandingWithdrawals",
+            "tags": [
+                "supplementary-data"
+            ],
+            "type": "hidden",
+            "input": true,
+            "tableView": false
+        },
+        {
+            "label": "HTML",
+            "tag": "p",
+            "attrs": [
+                {
+                    "attr": "",
+                    "value": ""
+                }
+            ],
+            "content": "This form is used to reverse the eligibility impacts of a withdrawal when certain criteria have been met.",
+            "refreshOnChange": false,
+            "key": "html",
+            "type": "htmlelement",
+            "input": false,
+            "tableView": false
+        },
+        {
+            "label": "Please select the application that has been withdrawn that you would like to be converted to non-punitive status.",
+            "widget": "choicesjs",
+            "placeholder": "Application Number",
+            "customClass": "font-weight-bold",
+            "tableView": true,
+            "dataSrc": "custom",
+            "data": {
+                "custom": "values = data.scholasticStandingWithdrawals;"
+            },
+            "valueProperty": "scholasticStandingId",
+            "template": "<span>{{ item.applicationNumber }}</span>",
+            "customOptions": "",
+            "validate": {
+                "required": true,
+                "custom": "// Ensure the selected value is one of the available ones to be selected.\r\nconst isAvailableItem = data.scholasticStandingWithdrawals.filter(item => item.scholasticStandingId === value).length === 1;\r\nvalid = isAvailableItem || \"The selected item is not present in the list of available items.\""
+            },
+            "validateWhenHidden": false,
+            "key": "nonPunitiveWithdrawalId",
+            "type": "select",
+            "input": true
+        },
+        {
+            "label": "Please indicate which of the following circumstances applies to you.",
+            "optionsLabelPosition": "right",
+            "tableView": false,
+            "defaultValue": {
+                "didNotAttendClasses": false,
+                "attendedClassesFor10DaysOrLess": false,
+                "completedFirstSemester": false,
+                "withdrawnFromStudies": false,
+                "noneOfTheAbove": false
+            },
+            "values": [
+                {
+                    "label": " I did not attend classes at all and repaid the funding in full within 30 days of the start of classes.",
+                    "value": "didNotAttendClasses",
+                    "shortcut": ""
+                },
+                {
+                    "label": "I attended classes for 10 days or less and repaid the funding in full within 30 days of the start of classes.",
+                    "value": "attendedClassesFor10DaysOrLess",
+                    "shortcut": ""
+                },
+                {
+                    "label": "I completed my first semester, including exams (if applicable), and either did not return to my studies or attended for 10 days or less in the next semester. The funding for the second semester was either not issued to me or it was and repaid in full within 30 days of the start of classes.",
+                    "value": "completedFirstSemester",
+                    "shortcut": ""
+                },
+                {
+                    "label": "I was withdrawn from my studies as the result of an institution closure.",
+                    "value": "withdrawnFromStudies",
+                    "shortcut": ""
+                },
+                {
+                    "label": "None of the above apply.",
+                    "value": "noneOfTheAbove",
+                    "shortcut": ""
+                }
+            ],
+            "validate": {
+                "required": true,
+                "onlyAvailableItems": true,
+                "custom": "const shouldSelectOneOfTheAboveOrAnotherOption =\r\n  !!data.eligibleCircumstances.noneOfTheAbove &&\r\n  Object.values(data.eligibleCircumstances).filter(item => !!item).length > 1;\r\nvalid = shouldSelectOneOfTheAboveOrAnotherOption\r\n  ? \"Please select either one or more of the circumstances or 'None of the above apply.', but not both.\"\r\n  : true;"
+            },
+            "validateWhenHidden": false,
+            "key": "eligibleCircumstances",
+            "type": "selectboxes",
+            "input": true,
+            "inputType": "checkbox"
+        },
+        {
+            "label": "Eligible Circumstances Banner",
+            "tag": "p",
+            "className": "alert alert-danger fa fa-ban w-100",
+            "attrs": [
+                {
+                    "attr": "",
+                    "value": ""
+                }
+            ],
+            "content": "<strong> A non-punitive change to the study period end date may only be processed if one of the conditions above is met.\r\nIf none of the conditions apply, then the withdrawal is not eligible to be changed to non-punitive status. </strong>",
+            "refreshOnChange": false,
+            "key": "html1",
+            "customConditional": "show = !!data.eligibleCircumstances.noneOfTheAbove;",
+            "type": "htmlelement",
+            "input": false,
+            "tableView": false
+        }
+    ]
+}

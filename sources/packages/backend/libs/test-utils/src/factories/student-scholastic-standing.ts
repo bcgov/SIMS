@@ -1,5 +1,6 @@
 import {
   Application,
+  FormSubmissionItem,
   StudentAssessment,
   StudentScholasticStanding,
   StudentScholasticStandingChangeType,
@@ -17,21 +18,22 @@ import {
  * @returns scholastic standing record ready to be saved to the database.
  */
 export function createFakeStudentScholasticStanding(
-  relations?: {
+  relations: {
     submittedBy: User;
     application?: Application;
     studentAssessment?: StudentAssessment;
+    nonPunitiveFormSubmissionItem?: FormSubmissionItem;
   },
   options?: { initialValues?: Partial<StudentScholasticStanding> },
 ): StudentScholasticStanding {
   const scholasticStanding = new StudentScholasticStanding();
-  scholasticStanding.application = relations?.application;
+  scholasticStanding.application = relations.application;
   scholasticStanding.submittedData = {} as unknown;
   scholasticStanding.submittedDate =
     options?.initialValues?.submittedDate ?? new Date();
-  scholasticStanding.submittedBy = relations?.submittedBy;
+  scholasticStanding.submittedBy = relations.submittedBy;
   scholasticStanding.note = null;
-  scholasticStanding.studentAssessment = relations?.studentAssessment;
+  scholasticStanding.studentAssessment = relations.studentAssessment;
   scholasticStanding.referenceOffering =
     options?.initialValues?.referenceOffering ?? null;
   scholasticStanding.unsuccessfulWeeks =
@@ -40,5 +42,7 @@ export function createFakeStudentScholasticStanding(
     options?.initialValues?.changeType ??
     StudentScholasticStandingChangeType.StudentDidNotCompleteProgram;
   scholasticStanding.reversalDate = options?.initialValues?.reversalDate;
+  scholasticStanding.nonPunitiveFormSubmissionItem =
+    relations.nonPunitiveFormSubmissionItem;
   return scholasticStanding;
 }

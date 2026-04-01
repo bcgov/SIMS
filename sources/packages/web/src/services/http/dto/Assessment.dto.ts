@@ -48,6 +48,7 @@ export interface AssessmentHistorySummaryAPIOutDTO {
   studentScholasticStandingId?: number;
   scholasticStandingChangeType?: StudentScholasticStandingChangeType;
   scholasticStandingReversalDate?: Date;
+  nonPunitiveFormSubmissionItemId?: number;
   // This flag decides, the row is unsuccessful week or not.
   hasUnsuccessfulWeeks?: boolean;
 }

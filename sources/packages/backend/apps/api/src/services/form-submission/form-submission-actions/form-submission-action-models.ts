@@ -2,6 +2,7 @@ import {
   FormCategory,
   FormSubmissionActionType,
   FormSubmissionDecisionStatus,
+  FormSubmissionSubmittedData,
 } from "@sims/sims-db";
 
 /**
@@ -9,6 +10,7 @@ import {
  */
 export interface FormSubmissionItemActionModel {
   id: number;
+  submittedData: FormSubmissionSubmittedData;
   actions: FormSubmissionActionType[];
   decisionStatus: FormSubmissionDecisionStatus;
 }

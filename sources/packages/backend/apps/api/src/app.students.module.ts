@@ -93,6 +93,7 @@ import {
   SupplementaryDataProgramYear,
   SupplementaryDataParents,
   SupplementaryDataLoader,
+  SupplementaryDataScholasticStandingWithdrawals,
 } from "./services/form-submission/form-supplementary-data";
 
 @Module({
@@ -183,6 +184,7 @@ import {
     // Form Supplementary Data Loaders
     SupplementaryDataProgramYear,
     SupplementaryDataParents,
+    SupplementaryDataScholasticStandingWithdrawals,
     SupplementaryDataLoader,
     // Form Submission Service.
     FormSubmissionSubmitService,
