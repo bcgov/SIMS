@@ -9,7 +9,7 @@
     ],
     "components": [
         {
-            "label": "Actions: Update Non Punitive Scholastic Standing Withdrawal",
+            "label": "Actions: Update Non-Punitive Scholastic Standing Withdrawal",
             "calculateValue": "value = [\"UpdateNonPunitiveScholasticStandingWithdrawal\"];",
             "calculateServer": true,
             "key": "actions",
@@ -106,7 +106,7 @@
             "validate": {
                 "required": true,
                 "onlyAvailableItems": true,
-                "custom": "const shouldSelectOneOfTheAboveOrAnotherOption =\r\n  !!data.eligibleCircumstances.noneOfTheAbove &&\r\n  Object.values(data.eligibleCircumstances).filter(item => !!item).length > 1;\r\nvalid = shouldSelectOneOfTheAboveOrAnotherOption\r\n  ? \"Please select either one or more of the circumstances or 'None of the above', but not both.\"\r\n  : true;"
+                "custom": "const shouldSelectOneOfTheAboveOrAnotherOption =\r\n  !!data.eligibleCircumstances.noneOfTheAbove &&\r\n  Object.values(data.eligibleCircumstances).filter(item => !!item).length > 1;\r\nvalid = shouldSelectOneOfTheAboveOrAnotherOption\r\n  ? \"Please select either one or more of the circumstances or 'None of the above apply.', but not both.\"\r\n  : true;"
             },
             "validateWhenHidden": false,
             "key": "eligibleCircumstances",
