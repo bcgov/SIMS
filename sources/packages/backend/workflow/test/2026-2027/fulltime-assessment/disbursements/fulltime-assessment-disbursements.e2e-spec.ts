@@ -8,6 +8,8 @@ import { createFakeConfigureDisbursementFullTimeData } from "../../../test-utils
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, () => {
   it("Should generate 1 disbursement when offering weeks is equal to 17 weeks or less.", async () => {
+    const OFFERING_WEEKS = 17;
+    const TOTAL_OFFERING_DURATION_IN_DAYS = OFFERING_WEEKS * 7;
     // Arrange
     const configureDisbursementData =
       createFakeConfigureDisbursementFullTimeData(PROGRAM_YEAR);
@@ -15,73 +17,73 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
     configureDisbursementData.offeringStudyStartDate = getISODateOnlyString(
       addDays(30),
     );
-    // 17 weeks is 119 days, so add 119 days to the offering start date to set the offering end date.
+    // Offering weeks * 7 to get the offering duration in days and add that to the offering start date to get the offering end date.
     configureDisbursementData.offeringStudyEndDate = getISODateOnlyString(
-      addDays(119 + 30),
+      addDays(
+        TOTAL_OFFERING_DURATION_IN_DAYS,
+        configureDisbursementData.offeringStudyStartDate,
+      ),
     );
     // Act
     const calculatedAssessment = await executeFullTimeConfigureDisbursement(
       configureDisbursementData,
     );
     // Assert
-    expect(calculatedAssessment.variables.disbursementSchedules).toStrictEqual(
-      expect.arrayContaining([
-        {
-          disbursementDate: configureDisbursementData.offeringStudyStartDate,
-          negotiatedExpiryDate:
-            configureDisbursementData.offeringStudyStartDate,
-          disbursements: [
-            {
-              awardEligibility: true,
-              valueAmount: 4000,
-              valueCode: "CSLF",
-              valueType: "Canada Loan",
-            },
-            {
-              awardEligibility: true,
-              valueAmount: 3000,
-              valueCode: "CSGP",
-              valueType: "Canada Grant",
-            },
-            {
-              awardEligibility: true,
-              valueAmount: 2000,
-              valueCode: "CSGD",
-              valueType: "Canada Grant",
-            },
-            {
-              awardEligibility: true,
-              valueAmount: 1000,
-              valueCode: "CSGF",
-              valueType: "Canada Grant",
-            },
-            {
-              awardEligibility: true,
-              valueAmount: 8000,
-              valueCode: "BCSL",
-              valueType: "BC Loan",
-            },
-            {
-              awardEligibility: true,
-              valueAmount: 7000,
-              valueCode: "BCAG",
-              valueType: "BC Grant",
-            },
-            {
-              awardEligibility: true,
-              valueAmount: 5000,
-              valueCode: "BGPD",
-              valueType: "BC Grant",
-            },
-            {
-              awardEligibility: true,
-              valueAmount: 6000,
-              valueCode: "SBSD",
-              valueType: "BC Grant",
-            },
-          ],
-        },
-      ]),
+    expect(calculatedAssessment.variables.disbursementSchedules).toContainEqual(
+      {
+        disbursementDate: configureDisbursementData.offeringStudyStartDate,
+        negotiatedExpiryDate: configureDisbursementData.offeringStudyStartDate,
+        disbursements: [
+          {
+            awardEligibility: true,
+            valueAmount: 4000,
+            valueCode: "CSLF",
+            valueType: "Canada Loan",
+          },
+          {
+            awardEligibility: true,
+            valueAmount: 3000,
+            valueCode: "CSGP",
+            valueType: "Canada Grant",
+          },
+          {
+            awardEligibility: true,
+            valueAmount: 2000,
+            valueCode: "CSGD",
+            valueType: "Canada Grant",
+          },
+          {
+            awardEligibility: true,
+            valueAmount: 1000,
+            valueCode: "CSGF",
+            valueType: "Canada Grant",
+          },
+          {
+            awardEligibility: true,
+            valueAmount: 8000,
+            valueCode: "BCSL",
+            valueType: "BC Loan",
+          },
+          {
+            awardEligibility: true,
+            valueAmount: 7000,
+            valueCode: "BCAG",
+            valueType: "BC Grant",
+          },
+          {
+            awardEligibility: true,
+            valueAmount: 5000,
+            valueCode: "BGPD",
+            valueType: "BC Grant",
+          },
+          {
+            awardEligibility: true,
+            valueAmount: 6000,
+            valueCode: "SBSD",
+            valueType: "BC Grant",
+          },
+        ],
+      },
     );
   });
 
@@ -89,24 +91,30 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
     "Should generate 2 disbursements with correct disbursement dates when offering weeks is greater than 17 weeks," +
       " the offering start date is in the past but the midpoint date is in the future.",
     async () => {
+      const OFFERING_WEEKS = 18;
+      const TOTAL_OFFERING_DURATION_IN_DAYS = OFFERING_WEEKS * 7;
       // Arrange
       const configureDisbursementData =
         createFakeConfigureDisbursementFullTimeData(PROGRAM_YEAR);
-      configureDisbursementData.offeringWeeks = 18;
+      configureDisbursementData.offeringWeeks = OFFERING_WEEKS;
+
       // Yesterday (today minus 1 day) to ensure the offering start date is in the past.
       configureDisbursementData.offeringStudyStartDate = getISODateOnlyString(
         addDays(-1),
       );
-      // 125 days from now 18 * 7 = 126 days total offering duration less 1 day for it currently being after study start date.
+      // Offering weeks * 7 to get the offering duration in days and add that to the offering start date to get the offering end date.
       configureDisbursementData.offeringStudyEndDate = getISODateOnlyString(
-        addDays(125),
+        addDays(
+          TOTAL_OFFERING_DURATION_IN_DAYS,
+          configureDisbursementData.offeringStudyStartDate,
+        ),
       );
       // Act
       const calculatedAssessment = await executeFullTimeConfigureDisbursement(
         configureDisbursementData,
       );
       // Assert
-      //Check if there are the expected number of disbursement schedules.
+      // Check if there are the expected number of disbursement schedules.
       expect(calculatedAssessment.variables.disbursementSchedules).toHaveLength(
         2,
       );
@@ -114,14 +122,21 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
       expect(
         calculatedAssessment.variables.disbursementSchedules[0]
           .disbursementDate,
-      ).toBe(getISODateOnlyString(addDays(0)));
+      ).toBe(getISODateOnlyString(new Date()));
       // Disbursement date 2 should be the midpoint date.
       // Midpoint date is the total offering duration divided by 2.
       // Add days to the offering start date to get the midpoint date.
       expect(
         calculatedAssessment.variables.disbursementSchedules[1]
           .disbursementDate,
-      ).toBe(getISODateOnlyString(addDays(Math.floor(125 / 2))));
+      ).toBe(
+        getISODateOnlyString(
+          addDays(
+            TOTAL_OFFERING_DURATION_IN_DAYS / 2,
+            configureDisbursementData.offeringStudyStartDate,
+          ),
+        ),
+      );
     },
   );
 
@@ -129,17 +144,22 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
     "Should generate 2 disbursements with correct disbursement dates when offering weeks is greater than 17 weeks," +
       " the offering start date is in the future and the midpoint date is in the future.",
     async () => {
+      const OFFERING_WEEKS = 18;
+      const TOTAL_OFFERING_DURATION_IN_DAYS = OFFERING_WEEKS * 7;
       // Arrange
       const configureDisbursementData =
         createFakeConfigureDisbursementFullTimeData(PROGRAM_YEAR);
-      configureDisbursementData.offeringWeeks = 18;
+      configureDisbursementData.offeringWeeks = OFFERING_WEEKS;
       // 5 days from now to ensure the offering start date is in the future.
       configureDisbursementData.offeringStudyStartDate = getISODateOnlyString(
         addDays(5),
       );
-      // 131 days from now, total offering duration 126 days which is 18 weeks.
+      // Add total offering duration in days to the offering start date to get the offering end date.
       configureDisbursementData.offeringStudyEndDate = getISODateOnlyString(
-        addDays(131),
+        addDays(
+          TOTAL_OFFERING_DURATION_IN_DAYS,
+          configureDisbursementData.offeringStudyStartDate,
+        ),
       );
       // Act
       const calculatedAssessment = await executeFullTimeConfigureDisbursement(
@@ -156,12 +176,19 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
           .disbursementDate,
       ).toBe(configureDisbursementData.offeringStudyStartDate);
       // Disbursement date 2 should be the midpoint date.
-      // Midpoint date is the total offering duration (126 days) divided by 2 (63 days).
-      // Add days to the offering start date (5 days from now) to get the midpoint date.
+      // Midpoint date is the total offering duration divided by 2 .
+      // Add days to the offering start date to get the midpoint date.
       expect(
         calculatedAssessment.variables.disbursementSchedules[1]
           .disbursementDate,
-      ).toBe(getISODateOnlyString(addDays(68)));
+      ).toBe(
+        getISODateOnlyString(
+          addDays(
+            TOTAL_OFFERING_DURATION_IN_DAYS / 2,
+            configureDisbursementData.offeringStudyStartDate,
+          ),
+        ),
+      );
     },
   );
 
@@ -169,17 +196,22 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
     "Should generate 1 disbursement with correct disbursement date when offering weeks is greater than 17 weeks," +
       " the offering start date and the midpoint date are in the past.",
     async () => {
+      const OFFERING_WEEKS = 18;
+      const TOTAL_OFFERING_DURATION_IN_DAYS = OFFERING_WEEKS * 7;
       // Arrange
       const configureDisbursementData =
         createFakeConfigureDisbursementFullTimeData(PROGRAM_YEAR);
-      configureDisbursementData.offeringWeeks = 18;
+      configureDisbursementData.offeringWeeks = OFFERING_WEEKS;
       // 120 days in the past to ensure the offering start date is in the past.
       configureDisbursementData.offeringStudyStartDate = getISODateOnlyString(
         addDays(-120),
       );
-      // 6 days from now, total offering duration 126 days which is 18 weeks.
+      // Add total offering duration in days to the offering start date to get the offering end date.
       configureDisbursementData.offeringStudyEndDate = getISODateOnlyString(
-        addDays(6),
+        addDays(
+          TOTAL_OFFERING_DURATION_IN_DAYS,
+          configureDisbursementData.offeringStudyStartDate,
+        ),
       );
       // Act
       const calculatedAssessment = await executeFullTimeConfigureDisbursement(
@@ -194,7 +226,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
       expect(
         calculatedAssessment.variables.disbursementSchedules[0]
           .disbursementDate,
-      ).toBe(getISODateOnlyString(addDays(0)));
+      ).toBe(getISODateOnlyString(new Date()));
     },
   );
 
@@ -214,71 +246,73 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
       configureDisbursementData,
     );
     // Assert
-    expect(calculatedAssessment.variables.disbursementSchedules).toStrictEqual(
-      expect.arrayContaining([
-        {
-          disbursementDate: configureDisbursementData.offeringStudyStartDate,
-          negotiatedExpiryDate:
-            configureDisbursementData.offeringStudyStartDate,
-          disbursements: [
-            {
-              awardEligibility: true,
-              valueAmount: 4000,
-              valueCode: "CSLF",
-              valueType: "Canada Loan",
-            },
-            {
-              awardEligibility: true,
-              valueAmount: 3000,
-              valueCode: "CSGP",
-              valueType: "Canada Grant",
-            },
-            {
-              awardEligibility: true,
-              valueAmount: 2000,
-              valueCode: "CSGD",
-              valueType: "Canada Grant",
-            },
-            {
-              awardEligibility: true,
-              valueAmount: 1000,
-              valueCode: "CSGF",
-              valueType: "Canada Grant",
-            },
-            {
-              awardEligibility: true,
-              valueAmount: 8000,
-              valueCode: "BCSL",
-              valueType: "BC Loan",
-            },
-            {
-              awardEligibility: true,
-              valueAmount: 5000,
-              valueCode: "BGPD",
-              valueType: "BC Grant",
-            },
-            {
-              awardEligibility: true,
-              valueAmount: 6000,
-              valueCode: "SBSD",
-              valueType: "BC Grant",
-            },
-          ],
-        },
-      ]),
+    expect(calculatedAssessment.variables.disbursementSchedules).toContainEqual(
+      {
+        disbursementDate: configureDisbursementData.offeringStudyStartDate,
+        negotiatedExpiryDate: configureDisbursementData.offeringStudyStartDate,
+        disbursements: [
+          {
+            awardEligibility: true,
+            valueAmount: 4000,
+            valueCode: "CSLF",
+            valueType: "Canada Loan",
+          },
+          {
+            awardEligibility: true,
+            valueAmount: 3000,
+            valueCode: "CSGP",
+            valueType: "Canada Grant",
+          },
+          {
+            awardEligibility: true,
+            valueAmount: 2000,
+            valueCode: "CSGD",
+            valueType: "Canada Grant",
+          },
+          {
+            awardEligibility: true,
+            valueAmount: 1000,
+            valueCode: "CSGF",
+            valueType: "Canada Grant",
+          },
+          {
+            awardEligibility: true,
+            valueAmount: 8000,
+            valueCode: "BCSL",
+            valueType: "BC Loan",
+          },
+          {
+            awardEligibility: true,
+            valueAmount: 5000,
+            valueCode: "BGPD",
+            valueType: "BC Grant",
+          },
+          {
+            awardEligibility: true,
+            valueAmount: 6000,
+            valueCode: "SBSD",
+            valueType: "BC Grant",
+          },
+        ],
+      },
     );
   });
 
   it("Should generate a disbursement schedule even when student is not eligible for any awards.", async () => {
+    const OFFERING_WEEKS = 16;
+    const TOTAL_OFFERING_DURATION_IN_DAYS = OFFERING_WEEKS * 7;
     // Arrange
     const configureDisbursementData =
       createFakeConfigureDisbursementFullTimeData(PROGRAM_YEAR);
-    configureDisbursementData.offeringWeeks = 16;
+    configureDisbursementData.offeringWeeks = OFFERING_WEEKS;
     configureDisbursementData.offeringStudyStartDate = getISODateOnlyString(
       addDays(0),
     );
     configureDisbursementData.offeringStudyEndDate = getISODateOnlyString(
-      addDays(16 * 7),
+      addDays(
+        TOTAL_OFFERING_DURATION_IN_DAYS,
+        configureDisbursementData.offeringStudyStartDate,
+      ),
     );
 
     configureDisbursementData.awardEligibilityBCSL = false;
@@ -295,15 +329,12 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
       configureDisbursementData,
     );
     // Assert
-    expect(calculatedAssessment.variables.disbursementSchedules).toStrictEqual(
-      expect.arrayContaining([
-        {
-          disbursementDate: configureDisbursementData.offeringStudyStartDate,
-          negotiatedExpiryDate:
-            configureDisbursementData.offeringStudyStartDate,
-          disbursements: [],
-        },
-      ]),
+    expect(calculatedAssessment.variables.disbursementSchedules).toContainEqual(
+      {
+        disbursementDate: configureDisbursementData.offeringStudyStartDate,
+        negotiatedExpiryDate: configureDisbursementData.offeringStudyStartDate,
+        disbursements: [],
+      },
     );
   });
 
