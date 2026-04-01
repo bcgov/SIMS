@@ -24,6 +24,7 @@ import {
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
 import {
+  ApplicationStatus,
   DynamicFormType,
   FormCategory,
   FormSubmissionDecisionStatus,
@@ -210,7 +211,11 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
   describe(`Supplementary data validations for ${KnownSupplementaryDataKey.ScholasticStandingWithdrawals}.`, () => {
     it(`Should get supplementary data for ${KnownSupplementaryDataKey.ScholasticStandingWithdrawals} when there is a scholastic standing of change type ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram} that is not reversed and a non punitive withdrawal form has not been previously submitted for this application.`, async () => {
       // Arrange
-      const application = await saveFakeApplication(db.dataSource);
+      const application = await saveFakeApplication(db.dataSource, undefined, {
+        initialValues: {
+          applicationStatus: ApplicationStatus.Completed,
+        },
+      });
       const scholasticStanding = createFakeStudentScholasticStanding(
         { submittedBy: institutionSubmittedByUser, application },
         {
