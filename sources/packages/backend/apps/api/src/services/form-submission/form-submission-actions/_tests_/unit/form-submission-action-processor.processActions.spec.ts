@@ -56,7 +56,7 @@ describe("FormSubmissionActionProcessor-processActions", () => {
         },
       },
       // Used 'CreateStudentAppealAssessment' and 'UpdateModifiedIndependent' action types to ensure both actions are executed
-      // event though these decision will not be present at the same time for the same request in a real scenario.
+      // even though these decisions will not be present at the same time for the same request in a real scenario.
       // The goal is to ensure that the action processor is able to identify and execute both actions when present.
       formSubmissionItems: [
         {

@@ -8,7 +8,7 @@ import { EntityManager } from "typeorm";
 import { FormSubmissionActionModel } from "../../form-submission-action-models";
 
 describe("FormSubmissionAction-process", () => {
-  it("Should call applyAction when appliesTo result is true.", () => {
+  it("Should call applyAction when appliesTo result is true.", async () => {
     // Arrange
     const action = new TestFormSubmissionAction({
       actionType: FormSubmissionActionType.UpdateModifiedIndependent,
@@ -33,7 +33,12 @@ describe("FormSubmissionAction-process", () => {
     };
 
     // Act
-    action.process(mockedFormSubmission, auditUserId, auditDate, entityManager);
+    await action.process(
+      mockedFormSubmission,
+      auditUserId,
+      auditDate,
+      entityManager,
+    );
 
     // Assert
     expect(action.applyAction).toHaveBeenCalledTimes(1);
@@ -45,7 +50,7 @@ describe("FormSubmissionAction-process", () => {
     );
   });
 
-  it("Should not call applyAction when appliesTo result is false.", () => {
+  it("Should not call applyAction when appliesTo result is false.", async () => {
     // Arrange
     const action = new TestFormSubmissionAction({
       actionType: FormSubmissionActionType.UpdateModifiedIndependent,
@@ -70,7 +75,12 @@ describe("FormSubmissionAction-process", () => {
     };
 
     // Act
-    action.process(mockedFormSubmission, auditUserId, auditDate, entityManager);
+    await action.process(
+      mockedFormSubmission,
+      auditUserId,
+      auditDate,
+      entityManager,
+    );
 
     // Assert
     expect(action.applyAction).toHaveBeenCalledTimes(0);

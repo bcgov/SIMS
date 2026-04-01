@@ -71,21 +71,21 @@ describe("FormSubmissionAction-getSubmissionItemsByActionType", () => {
   it("Should not return any requests when no matching action type and decision status are found.", () => {
     // Arrange
     const action = new TestFormSubmissionAction({
-      actionType: FormSubmissionActionType.CreateStudentAppealAssessment,
+      actionType: FormSubmissionActionType.UpdateModifiedIndependent,
       appliesToResult: true,
     });
-    const declinedRequest: FormSubmissionItemActionModel = {
+    const declinedDifferentRequest: FormSubmissionItemActionModel = {
       id: 1,
       actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
       decisionStatus: FormSubmissionDecisionStatus.Declined,
     };
-    const approveRequest: FormSubmissionItemActionModel = {
+    const declinedSameRequest: FormSubmissionItemActionModel = {
       id: 2,
-      actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
+      actions: [FormSubmissionActionType.UpdateModifiedIndependent],
       decisionStatus: FormSubmissionDecisionStatus.Declined,
     };
     const formSubmission = {
-      submissionItems: [declinedRequest, approveRequest],
+      submissionItems: [declinedDifferentRequest, declinedSameRequest],
     } as FormSubmissionActionModel;
 
     // Act

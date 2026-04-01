@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   FormSubmissionActionType,
   FormSubmissionDecisionStatus,
@@ -30,8 +29,8 @@ export class TestFormSubmissionAction extends FormSubmissionAction {
     return this.testActionType;
   }
 
-  readonly applyAction = jest.fn(
-    async (
+  applyAction = jest.fn(
+    (
       _formSubmission: FormSubmissionActionModel,
       _auditUserId: number,
       _auditDate: Date,
