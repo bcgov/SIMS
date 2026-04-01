@@ -306,7 +306,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
       createFakeConfigureDisbursementFullTimeData(PROGRAM_YEAR);
     configureDisbursementData.offeringWeeks = OFFERING_WEEKS;
     configureDisbursementData.offeringStudyStartDate = getISODateOnlyString(
-      addDays(0),
+      new Date(),
     );
     configureDisbursementData.offeringStudyEndDate = getISODateOnlyString(
       addDays(
