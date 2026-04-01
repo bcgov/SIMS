@@ -42,18 +42,12 @@ export default defineComponent({
         !props.assessment.scholasticStandingReversalDate
       );
     });
-    const showNonPunitiveWithdrawal = computed(() => {
-      return (
-        props.assessment.scholasticStandingChangeType ===
-          StudentScholasticStandingChangeType.StudentWithdrewFromProgram &&
-        !!props.assessment.nonPunitiveFormSubmissionItemId
-      );
-    });
     return {
       showReversed,
       showUnsuccessfulCompletion,
       showWithdrawal,
-      showNonPunitiveWithdrawal,
+      showNonPunitiveWithdrawal:
+        !!props.assessment.nonPunitiveFormSubmissionItemId,
       StudentScholasticStandingChangeType,
     };
   },
