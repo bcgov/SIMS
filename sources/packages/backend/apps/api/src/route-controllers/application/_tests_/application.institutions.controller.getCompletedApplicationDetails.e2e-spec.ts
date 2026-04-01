@@ -100,6 +100,32 @@ describe("ApplicationInstitutionsController(e2e)-getCompletedApplicationDetails"
     },
   );
 
+  it("Should throw a HttpStatus Not Found (404) error when the application is not in Completed status.", async () => {
+    // Arrange
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      { institutionLocation: collegeFLocation },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+      },
+    );
+    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/completed`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: 404,
+        message: `Application not found or not on ${ApplicationStatus.Completed} status.`,
+        error: "Not Found",
+      });
+  });
+
   it("Should throw a HttpStatus Forbidden (403) error when the student submitted an application to non-public institution.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource, {

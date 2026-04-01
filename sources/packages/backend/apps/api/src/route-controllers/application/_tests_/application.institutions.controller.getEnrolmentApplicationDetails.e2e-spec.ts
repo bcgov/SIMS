@@ -95,6 +95,32 @@ describe("ApplicationInstitutionsController(e2e)-getEnrolmentApplicationDetails"
     },
   );
 
+  it("Should throw a HttpStatus Not Found (404) error when the application is not in Enrolment status.", async () => {
+    // Arrange
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      { institutionLocation: collegeFLocation },
+      {
+        applicationStatus: ApplicationStatus.Cancelled,
+      },
+    );
+    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/enrolment`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: 404,
+        message: `Application id ${savedApplication.id} not found or not in relevant status to get enrolment details.`,
+        error: "Not Found",
+      });
+  });
+
   it("Should throw a HttpStatus Forbidden (403) error when the student submitted an application to non-public institution.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource, {

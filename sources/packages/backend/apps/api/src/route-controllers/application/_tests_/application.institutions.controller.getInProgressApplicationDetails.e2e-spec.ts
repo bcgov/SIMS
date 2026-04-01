@@ -89,7 +89,7 @@ describe("ApplicationInstitutionsController(e2e)-getInProgressApplicationDetails
     },
   );
 
-  it("Should throw a HttpStatus Unprocessable Entity (422) error when the application has status Completed.", async () => {
+  it("Should throw a HttpStatus Unprocessable Entity (422) error when the application is not in 'In Progress' status.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(
       db.dataSource,
