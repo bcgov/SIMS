@@ -320,8 +320,8 @@ export default defineComponent({
       }
       if (event.changed?.component.key === PROGRAMS_DROPDOWN_KEY) {
         // Reset the location program institution restrictions when program changes.
-        // It the component doesn't exist, it means the form doesn't support location program
-        // institution restrictions, so we can skip resetting it.
+        // If the component doesn't exist, it means the form doesn't support location program
+        // institution restrictions, so the resetting can be skipped.
         // The component should be present for 2025-26 program year and later.
         formioUtils
           .getComponent(form, SELECTED_LOCATION_PROGRAM_RESTRICTIONS_KEY)

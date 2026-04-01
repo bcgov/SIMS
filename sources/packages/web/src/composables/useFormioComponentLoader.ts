@@ -91,7 +91,7 @@ export function useFormioComponentLoader() {
    * Load institution restrictions for the given location and program
    * to the provided form.io component.
    * If the component doesn't exist in the form, it means the form doesn't support
-   * location program institution restrictions, so the function will simply return without error.
+   * location program institution restrictions.
    * The feature should be available for 2025-26 program year and later.
    * @param form Form to update the component.
    * @param locationId Location.
