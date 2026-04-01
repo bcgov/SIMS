@@ -119,6 +119,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationOverallDetails", 
           applicationEditStatus: currentApplication.applicationEditStatus,
           supportingUsers: [],
         },
+        previousVersions: [],
       });
   });
 
@@ -146,6 +147,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationOverallDetails", 
           applicationEditStatus: originalApplication.applicationEditStatus,
           supportingUsers: [],
         },
+        previousVersions: [],
       });
   });
 
@@ -207,6 +209,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationOverallDetails", 
             applicationEditStatus: currentApplication.applicationEditStatus,
             supportingUsers: [],
           },
+          previousVersions: [],
         });
     },
   );
