@@ -57,7 +57,8 @@
             "template": "<span>{{ item.applicationNumber }}</span>",
             "customOptions": "",
             "validate": {
-                "required": true
+                "required": true,
+                "custom": "// Ensure the selected value is one of the available ones to be selected.\r\nconst isAvailableItem = data.scholasticStandingWithdrawals.filter(item => item.scholasticStandingId === value).length === 1;\r\nvalid = isAvailableItem || \"The selected item is not present in the list of available items.\""
             },
             "validateWhenHidden": false,
             "key": "nonPunitiveWithdrawalId",
