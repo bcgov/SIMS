@@ -14,19 +14,11 @@ on:
       - "release/**"
       - "hotfix/**"
   workflow_dispatch:
-    inputs:
-      use_silver_cluster:
-        description: "Build on the silver cluster? (By default the builds are done on the gold cluster)"
-        required: false
-        type: boolean
-        default: true
 
 env:
-  # Todo: The use silver cluster option must be removed when all the environments are migrated to gold cluster.
-  # When the option is removed the BUILD_NAMESPACE can be set to vars.BUILD_NAMESPACE and vars.BUILD_NAMESPACE should be updated to point to the gold cluster.
-  BUILD_NAMESPACE: ${{ (inputs.use_silver_cluster == true && vars.BUILD_NAMESPACE) || vars.BUILD_NAMESPACE_GOLD }}
-  SA_TOKEN: ${{ (inputs.use_silver_cluster == true && secrets.SA_TOKEN) || secrets.SA_TOKEN_GOLD }}
-  OPENSHIFT_CLUSTER_URL: ${{ (inputs.use_silver_cluster == true && vars.OPENSHIFT_CLUSTER_URL) || vars.OPENSHIFT_CLUSTER_URL_GOLD }}
+  BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
+  SA_TOKEN: ${{ secrets.SA_TOKEN }}
+  OPENSHIFT_CLUSTER_URL: ${{ vars.OPENSHIFT_CLUSTER_URL }}
 
 jobs:
   # Print variables for logging and debugging purposes.
