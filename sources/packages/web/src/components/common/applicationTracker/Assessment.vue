@@ -45,7 +45,8 @@ export default defineComponent({
     },
     areApplicationActionsAllowed: {
       type: Boolean,
-      required: true,
+      required: false,
+      default: false,
     },
   },
   setup() {

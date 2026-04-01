@@ -11,13 +11,12 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watchEffect } from "vue";
+import { ref, watchEffect } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel } from "@/types";
 import { useApplication, useFormatters } from "@/composables";
 import { ApplicationService } from "@/services/ApplicationService";
 import { ApplicationVersionAPIOutDTO } from "@/services/http/dto";
-import useEmitterEvents from "@/composables/useEmitterEvents";
 
 const props = defineProps({
   studentId: {
@@ -33,9 +32,6 @@ const props = defineProps({
 const { getISODateHourMinuteString } = useFormatters();
 const { mapApplicationEditStatusForMinistry } = useApplication();
 const menuItems = ref<MenuItemModel[]>([]);
-// Event emitter for application sidebar refresh.
-const { refreshApplicationSidebarOn, refreshApplicationSidebarOff } =
-  useEmitterEvents();
 
 // Function to load application data and update menu items.
 const loadApplicationData = async () => {
@@ -52,19 +48,6 @@ const loadApplicationData = async () => {
 // Re-register the handler when applicationId changes
 watchEffect(async () => {
   await loadApplicationData();
-});
-
-// Handler that references the current applicationId
-const handleSideBarRefresh = () => {
-  return loadApplicationData();
-};
-
-onMounted(async () => {
-  refreshApplicationSidebarOn(handleSideBarRefresh);
-});
-
-onBeforeUnmount(() => {
-  refreshApplicationSidebarOff(handleSideBarRefresh);
 });
 
 /**
