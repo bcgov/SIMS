@@ -47,7 +47,6 @@
             "label": "Please select the application that has been withdrawn that you would like to be converted to non-punitive status.",
             "widget": "choicesjs",
             "placeholder": "Application Number",
-            "description": "Please select the application that has been withdrawn that you would like to be converted to non-punitive status.",
             "customClass": "font-weight-bold",
             "tableView": true,
             "dataSrc": "custom",
@@ -78,12 +77,12 @@
             },
             "values": [
                 {
-                    "label": " I did not attend classes at all and repaid the funding in full within 30 days of the start of classes",
+                    "label": " I did not attend classes at all and repaid the funding in full within 30 days of the start of classes.",
                     "value": "didNotAttendClasses",
                     "shortcut": ""
                 },
                 {
-                    "label": "I attended classes for 10 days or less and repaid the funding in full within 30 days of the start of classes",
+                    "label": "I attended classes for 10 days or less and repaid the funding in full within 30 days of the start of classes.",
                     "value": "attendedClassesFor10DaysOrLess",
                     "shortcut": ""
                 },
@@ -93,12 +92,12 @@
                     "shortcut": ""
                 },
                 {
-                    "label": "I was withdrawn from my studies as the result of an institution closure",
+                    "label": "I was withdrawn from my studies as the result of an institution closure.",
                     "value": "withdrawnFromStudies",
                     "shortcut": ""
                 },
                 {
-                    "label": "None of the above",
+                    "label": "None of the above apply.",
                     "value": "noneOfTheAbove",
                     "shortcut": ""
                 }
