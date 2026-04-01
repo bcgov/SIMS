@@ -100,9 +100,9 @@ export class SupplementaryDataScholasticStandingWithdrawals extends Supplementar
       },
     });
     const withdrawalScholasticStandings = applications.flatMap((application) =>
-      (application.studentAssessments ?? []).map((assessment) => ({
+      application.studentAssessments!.map((assessment) => ({
         applicationNumber: application.applicationNumber,
-        scholasticStandingId: assessment.studentScholasticStanding.id,
+        scholasticStandingId: assessment.studentScholasticStanding!.id,
       })),
     );
     return withdrawalScholasticStandings;

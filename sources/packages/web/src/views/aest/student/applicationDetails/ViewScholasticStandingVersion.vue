@@ -15,8 +15,13 @@
       />
     </template>
     <template #alerts>
-      <scholastic-standing-reversal-banner v-if="hasReversal" class="mb-3" />
-      <scholastic-standing-non-punitive-banner v-if="isNonPunitiveWithdrawal" />
+      <scholastic-standing-reversal-banner
+        v-if="scholasticStandingDetails.reversalDate"
+        class="mb-3"
+      />
+      <scholastic-standing-non-punitive-banner
+        v-if="scholasticStandingDetails.nonPunitiveFormSubmissionItemId"
+      />
     </template>
     <scholastic-standing-form
       :scholastic-standing-id="scholasticStandingId"
@@ -33,7 +38,7 @@ import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.v
 import ScholasticStandingReversalBanner from "@/components/common/students/applicationDetails/ScholasticStandingReversalBanner.vue";
 import ScholasticStandingNonPunitiveBanner from "@/components/common/students/applicationDetails/ScholasticStandingNonPunitiveBanner.vue";
 import { ScholasticStandingSubmittedDetailsAPIOutDTO } from "@/services/http/dto";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 
 export default {
   name: "ViewScholasticStanding",
@@ -64,21 +69,14 @@ export default {
     const scholasticStandingDetails = ref(
       {} as ScholasticStandingSubmittedDetailsAPIOutDTO,
     );
-
     const dataLoaded = (data: ScholasticStandingSubmittedDetailsAPIOutDTO) => {
       scholasticStandingDetails.value = data;
     };
 
-    const hasReversal = computed(
-      () => !!scholasticStandingDetails.value.reversalDate,
-    );
-
     return {
       AESTRoutesConst,
       dataLoaded,
-      hasReversal,
-      isNonPunitiveWithdrawal:
-        !!scholasticStandingDetails.value.nonPunitiveFormSubmissionItemId,
+      scholasticStandingDetails,
     };
   },
 };

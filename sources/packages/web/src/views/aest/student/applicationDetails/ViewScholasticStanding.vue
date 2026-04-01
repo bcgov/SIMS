@@ -21,8 +21,13 @@
       >
     </template>
     <template #alerts>
-      <scholastic-standing-reversal-banner v-if="hasReversal" class="mb-3" />
-      <scholastic-standing-non-punitive-banner v-if="isNonPunitiveWithdrawal" />
+      <scholastic-standing-reversal-banner
+        v-if="scholasticStandingDetails.reversalDate"
+        class="mb-3"
+      />
+      <scholastic-standing-non-punitive-banner
+        v-if="scholasticStandingDetails.nonPunitiveFormSubmissionItemId"
+      />
     </template>
     <scholastic-standing-form
       :scholastic-standing-id="scholasticStandingId"
@@ -125,7 +130,6 @@ export default {
         reverseScholasticStanding,
       );
     };
-
     const reverseScholasticStanding = async (
       payload: ReverseScholasticStandingAPIInDTO,
     ): Promise<boolean> => {
@@ -144,14 +148,9 @@ export default {
       }
       return false;
     };
-
     const dataLoaded = (data: ScholasticStandingSubmittedDetailsAPIOutDTO) => {
       scholasticStandingDetails.value = data;
     };
-
-    const hasReversal = computed(
-      () => !!scholasticStandingDetails.value.reversalDate,
-    );
 
     return {
       goToAssessmentSummary,
@@ -160,9 +159,7 @@ export default {
       showReverseScholasticStandingModal,
       dataLoaded,
       showScholasticStandingReversalAction,
-      hasReversal,
-      isNonPunitiveWithdrawal:
-        !!scholasticStandingDetails.value.nonPunitiveFormSubmissionItemId,
+      scholasticStandingDetails,
     };
   },
 };

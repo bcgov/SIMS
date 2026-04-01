@@ -8,10 +8,12 @@
       />
     </template>
     <template #alerts>
-      <scholastic-standing-reversal-banner v-if="hasReversal" />
+      <scholastic-standing-reversal-banner
+        v-if="scholasticStandingDetails.reversalDate"
+        class="mb-3"
+      />
       <scholastic-standing-non-punitive-banner
-        v-if="isNonPunitiveWithdrawal"
-        class="mt-3"
+        v-if="scholasticStandingDetails.nonPunitiveFormSubmissionItemId"
       />
     </template>
     <scholastic-standing-form
@@ -52,15 +54,9 @@ export default {
     const scholasticStandingDetails = ref(
       {} as ScholasticStandingSubmittedDetailsAPIOutDTO,
     );
-
     const dataLoaded = (data: ScholasticStandingSubmittedDetailsAPIOutDTO) => {
       scholasticStandingDetails.value = data;
     };
-
-    const hasReversal = computed(
-      () => !!scholasticStandingDetails.value.reversalDate,
-    );
-
     const goBackRouteParams = computed(
       () =>
         ({
@@ -72,9 +68,7 @@ export default {
     return {
       goBackRouteParams,
       dataLoaded,
-      hasReversal,
-      isNonPunitiveWithdrawal:
-        !!scholasticStandingDetails.value.nonPunitiveFormSubmissionItemId,
+      scholasticStandingDetails,
     };
   },
 };
