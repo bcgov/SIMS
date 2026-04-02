@@ -86,9 +86,10 @@
                   ><title-value property-title="Assessed date">
                     <template #value>
                       {{
-                        !!submission.assessedDate
-                          ? getISODateHourMinuteString(submission.assessedDate)
-                          : "Pending"
+                        conditionalEmptyStringFiller(
+                          !!submission.assessedDate,
+                          getISODateHourMinuteString(submission.assessedDate),
+                        )
                       }}
                     </template>
                   </title-value>
