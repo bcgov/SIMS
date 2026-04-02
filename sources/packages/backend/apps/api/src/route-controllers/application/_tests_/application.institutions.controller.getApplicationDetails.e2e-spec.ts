@@ -109,9 +109,8 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       });
   });
 
-  it("Should not have access to get the student application details when the student submitted an application to non-public institution.", async () => {
+  it("Should throw a HttpStatus Forbidden (403) error when a non-public institution accesses the application.", async () => {
     // Arrange
-    // Create new application.
     const savedApplication = await saveFakeApplication(db.dataSource, {
       institutionLocation: collegeCLocation,
     });
@@ -128,7 +127,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       .auth(institutionUserTokenCUser, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
-        statusCode: 403,
+        statusCode: HttpStatus.FORBIDDEN,
         message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
         error: "Forbidden",
       });
@@ -153,7 +152,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
-        statusCode: 403,
+        statusCode: HttpStatus.FORBIDDEN,
         message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
         error: "Forbidden",
       });
@@ -183,7 +182,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
-        statusCode: 403,
+        statusCode: HttpStatus.FORBIDDEN,
         message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
         error: "Forbidden",
       });

@@ -28,7 +28,6 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationOverallDetails", 
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeFLocation: InstitutionLocation;
-  let collegeCLocation: InstitutionLocation;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -44,17 +43,6 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationOverallDetails", 
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
-    );
-    // College C.
-    const { institution: collegeC } = await getAuthRelatedEntities(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeCUser,
-    );
-    collegeCLocation = createFakeInstitutionLocation({ institution: collegeC });
-    await authorizeUserTokenForLocation(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeCUser,
-      collegeCLocation,
     );
   });
 

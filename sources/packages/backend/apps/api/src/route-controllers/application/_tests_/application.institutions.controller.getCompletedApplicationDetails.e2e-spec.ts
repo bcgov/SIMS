@@ -61,8 +61,8 @@ describe("ApplicationInstitutionsController(e2e)-getCompletedApplicationDetails"
   });
 
   it(
-    "Should get application details for a full-time student application when application is in 'Completed' status" +
-      "  and the institution is authorized to access the application.",
+    "Should get application details for a full-time student application when application is in 'Completed' status " +
+      "and the institution is authorized to access the application.",
     async () => {
       // Arrange
       const application = await saveFakeApplicationDisbursements(
@@ -120,13 +120,13 @@ describe("ApplicationInstitutionsController(e2e)-getCompletedApplicationDetails"
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.NOT_FOUND)
       .expect({
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         message: `Application not found or not on ${ApplicationStatus.Completed} status.`,
         error: "Not Found",
       });
   });
 
-  it("Should throw a HttpStatus Forbidden (403) error when the student submitted an application to non-public institution.", async () => {
+  it("Should throw a HttpStatus Forbidden (403) error when a non-public institution accesses the application.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource, {
       institutionLocation: collegeCLocation,
@@ -143,7 +143,7 @@ describe("ApplicationInstitutionsController(e2e)-getCompletedApplicationDetails"
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
-        statusCode: 403,
+        statusCode: HttpStatus.FORBIDDEN,
         message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
         error: "Forbidden",
       });
@@ -166,7 +166,7 @@ describe("ApplicationInstitutionsController(e2e)-getCompletedApplicationDetails"
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
-        statusCode: 403,
+        statusCode: HttpStatus.FORBIDDEN,
         message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
         error: "Forbidden",
       });

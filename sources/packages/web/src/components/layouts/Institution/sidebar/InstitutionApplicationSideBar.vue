@@ -30,7 +30,7 @@ const props = defineProps({
 });
 
 const { getISODateHourMinuteString } = useFormatters();
-const { mapApplicationEditStatusForMinistry } = useApplication();
+const { mapApplicationEditStatusForMinistryAndInstitution } = useApplication();
 const menuItems = ref<MenuItemModel[]>([]);
 
 // Function to load application data and update menu items.
@@ -71,7 +71,7 @@ const createCurrentApplicationMenuItems = (
       title: "Application",
       props: {
         prependIcon: "mdi-school-outline",
-        subtitle: mapApplicationEditStatusForMinistry(
+        subtitle: mapApplicationEditStatusForMinistryAndInstitution(
           currentVersion.applicationEditStatus,
         ),
         to: {

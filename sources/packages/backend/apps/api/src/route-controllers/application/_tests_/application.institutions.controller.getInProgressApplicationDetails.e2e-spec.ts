@@ -109,13 +109,13 @@ describe("ApplicationInstitutionsController(e2e)-getInProgressApplicationDetails
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        statusCode: 422,
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         message: `Application not in ${ApplicationStatus.InProgress} status.`,
         error: "Unprocessable Entity",
       });
   });
 
-  it("Should throw a HttpStatus Forbidden (403) error when the student submitted an application to non-public institution.", async () => {
+  it("Should throw a HttpStatus Forbidden (403) error when a non-public institution accesses the application.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource, {
       institutionLocation: collegeCLocation,
@@ -132,7 +132,7 @@ describe("ApplicationInstitutionsController(e2e)-getInProgressApplicationDetails
       .auth(institutionUserTokenCUser, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
-        statusCode: 403,
+        statusCode: HttpStatus.FORBIDDEN,
         message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
         error: "Forbidden",
       });
@@ -155,7 +155,7 @@ describe("ApplicationInstitutionsController(e2e)-getInProgressApplicationDetails
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
-        statusCode: 403,
+        statusCode: HttpStatus.FORBIDDEN,
         message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
         error: "Forbidden",
       });
