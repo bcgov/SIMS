@@ -2,6 +2,7 @@ import {
   FormCategory,
   FormSubmissionActionType,
   FormSubmissionDecisionStatus,
+  FormSubmissionSubmittedData,
 } from "@sims/sims-db";
 import { TestFormSubmissionAction } from "./test-form-submission-action";
 import { EntityManager } from "typeorm";
@@ -28,6 +29,7 @@ describe("FormSubmissionAction-process", () => {
           id: 5,
           actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
           decisionStatus: FormSubmissionDecisionStatus.Approved,
+          submittedData: {} as FormSubmissionSubmittedData,
         },
       ],
     };
@@ -70,6 +72,7 @@ describe("FormSubmissionAction-process", () => {
           id: 5,
           actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
           decisionStatus: FormSubmissionDecisionStatus.Approved,
+          submittedData: {} as FormSubmissionSubmittedData,
         },
       ],
     };
