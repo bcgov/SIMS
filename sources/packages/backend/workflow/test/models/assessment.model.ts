@@ -440,6 +440,7 @@ export interface CalculatedAssessmentModel {
   // CSGP
   awardEligibilityCSGP: boolean;
   // CSGD
+  assessmentEligibilityCSGD: boolean;
   awardEligibilityCSGD: boolean;
   // BCAG
   assessmentEligibilityBCAG: boolean;

@@ -21,7 +21,7 @@ import {
  * where both will result in the BCAG calculation.
  * These tests are only intended to check the BCAG2Year eligibility.
  */
-describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG.`, () => {
+describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG2Year.`, () => {
   // Expected and not expected credentials types.
   const EXPECTED_PROGRAM_CREDENTIAL_TYPES = [
     CredentialType.UnderGraduateCitation,
@@ -121,7 +121,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
   }
 
   describe(
-    "Should determine BCAG as assessment eligible when programCredentialType and programLength are the expected ones, " +
+    "Should determine BCAG2Year as assessment eligible when programCredentialType and programLength are the expected ones, " +
       "financial need is at least $1 and total family income is below the threshold.",
     () => {
       for (const programCredentialType of EXPECTED_PROGRAM_CREDENTIAL_TYPES) {
@@ -153,7 +153,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
     },
   );
 
-  describe("Should determine BCAG as not assessment eligible when programCredentialType and programLength are not the expected ones.", () => {
+  describe("Should determine BCAG2Year as not assessment eligible when programCredentialType and programLength are not the expected ones.", () => {
     for (const programCredentialType of NOT_EXPECTED_PROGRAM_CREDENTIAL_TYPES) {
       for (const programLength of NOT_EXPECTED_PROGRAM_LENGTH) {
         it(`programCredentialType is ${programCredentialType} and programLength is ${programLength}`, async () => {
@@ -178,7 +178,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
     }
   });
 
-  it("Should determine BCAG as not assessment eligible when family income is above the threshold for the family size.", async () => {
+  it("Should determine BCAG2Year as not assessment eligible when family income is above the threshold for the family size.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
