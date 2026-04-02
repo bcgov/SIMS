@@ -444,6 +444,8 @@ export interface CalculatedAssessmentModel {
   // BCAG
   awardEligibilityBCAG: boolean;
   // SBSD
+  assessmentEligibilitySBSD: boolean;
+  institutionEligibilitySBSD: boolean;
   awardEligibilitySBSD: boolean;
 
   // Full time.
@@ -467,6 +469,8 @@ export interface CalculatedAssessmentModel {
   // BCAG2Year
   awardEligibilityBCAG2Year: number;
   // BGPD
+  assessmentEligibilityBGPD: boolean;
+  institutionEligibilityBGPD: boolean;
   awardEligibilityBGPD: boolean;
   federalAwardNetBGPDAmount: number;
   provincialAwardNetBGPDAmount: number;

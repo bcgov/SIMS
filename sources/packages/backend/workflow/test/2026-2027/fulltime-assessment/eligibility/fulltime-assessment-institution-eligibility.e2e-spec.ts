@@ -98,7 +98,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-institution-elig
         expectedEligibilityBCAG: false,
         expectedEligibilityBGPD: false,
         expectedEligibilitySBSD: false,
-        expectedEligibilityBCSL: false,
+        expectedEligibilityBCSL: true,
         expectedEligibilityCSLF: true,
         expectedEligibilityCSGP: true,
         expectedEligibilityCSGD: true,
