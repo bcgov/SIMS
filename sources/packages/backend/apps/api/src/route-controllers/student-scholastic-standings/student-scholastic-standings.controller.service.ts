@@ -66,6 +66,8 @@ export class ScholasticStandingControllerService {
       ...transformToActiveApplicationDataAPIOutDTO(application, offering),
       currentAssessmentTriggerType: application.currentAssessment.triggerType,
       reversalDate: scholasticStanding.reversalDate,
+      nonPunitiveFormSubmissionItemId:
+        scholasticStanding.nonPunitiveFormSubmissionItem?.id,
     };
   }
 

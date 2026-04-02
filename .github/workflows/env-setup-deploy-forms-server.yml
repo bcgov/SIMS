@@ -24,15 +24,16 @@ jobs:
     env:
       FORMS_NAME: forms
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+      BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
       FORMIO_SOURCE_REPO_TAG: ${{ inputs.formioTag }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
       FORMIO_ROOT_EMAIL: ${{ secrets.FORMS_SA_USER_NAME }}
       FORMIO_ROOT_PASSWORD: ${{ secrets.FORMS_SA_PASSWORD }}
-      DOMAIN_PREFIX: ${{ vars.DOMAIN_PREFIX }}
-      TLS_CERTIFICATE: ${{ secrets.TLS_CERTIFICATE }}
-      TLS_KEY: ${{ secrets.TLS_KEY }}
-      TLS_CA_CERTIFICATE: ${{ secrets.TLS_CA_CERTIFICATE }}
+      FORMIO_CPU_REQUEST: ${{ vars.FORMIO_CPU_REQUEST }}
+      FORMIO_MEMORY_REQUEST: ${{ vars.FORMIO_MEMORY_REQUEST }}
+      FORMIO_MEMORY_LIMIT: ${{ vars.FORMIO_MEMORY_LIMIT }}
+      FORMIO_REPLICAS: ${{ vars.FORMIO_REPLICAS }}
     steps:
       - name: Install CLI tools from OpenShift Mirror
         uses: redhat-actions/openshift-tools-installer@v1

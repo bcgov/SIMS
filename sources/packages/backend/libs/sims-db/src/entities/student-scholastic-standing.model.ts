@@ -9,6 +9,7 @@ import {
 import {
   Application,
   EducationProgramOffering,
+  FormSubmissionItem,
   Note,
   StudentAssessment,
   User,
@@ -150,4 +151,16 @@ export class StudentScholasticStanding extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   reversalNote?: Note;
+  /**
+   * Reference to the form submission item assessed by the Ministry if the student
+   * has been approved for a non-punitive withdrawal.
+   */
+  @OneToOne(() => FormSubmissionItem, {
+    nullable: true,
+  })
+  @JoinColumn({
+    name: "non_punitive_form_submission_item_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  nonPunitiveFormSubmissionItem?: FormSubmissionItem;
 }

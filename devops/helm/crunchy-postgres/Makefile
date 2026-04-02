@@ -11,6 +11,8 @@ define arguments
 	"${NAME}" . -n "${NAMESPACE}" -f values.yaml -f "values-${NAMESPACE}.yaml"
 endef
 
+POSTGRES_MANUAL_IMAGE_PATH=artifacts.developer.gov.bc.ca/bcgov-docker-local/crunchy-postgres
+
 .PHONY: helm-dep
 helm-dep:
 	helm dependency update
@@ -32,10 +34,29 @@ upgrade: helm-dep
 	else \
 		helm upgrade --install $(call arguments) --set restore.enabled=${RESTORE_ENABLED}; \
 	fi
+	
+.PHONY: install-with-datasource
+install-with-datasource:
+	@echo "Installing Crunchy Postgres with datasource enabled..."
+	@echo "Datasource S3 path: ${DATASOURCE_S3_PATH_NAME}"
+	@helm install $(call arguments) --set dataSource.enabled=true --set dataSource.s3Path="/${DATASOURCE_S3_PATH_NAME}" --set restore.enabled=false;
+
+.PHONY: update-to-disable-datasource
+update-to-disable-datasource:
+	@helm upgrade --install $(call arguments) --set dataSource.enabled=false;
+
+.PHONY: shutdown-cluster
+shutdown-cluster:
+	@oc patch postgrescluster simsdb -n ${NAMESPACE} --type=merge -p '{"spec":{"shutdown":true}}'
+
+.PHONY: startup-cluster
+startup-cluster:
+	@oc patch postgrescluster simsdb -n ${NAMESPACE} --type=merge -p '{"spec":{"shutdown":false}}'
 
 .PHONY: pg-upgrade
 pg-upgrade:
 	@echo "Initiating PostgreSQL upgrade from ${FROM_VERSION} to ${TO_VERSION}..."
+	@echo "Postgres image tag provided: $(or $(POSTGRES_IMAGE_TAG),None)"
 	@helm upgrade --install $(call arguments) \
 		--set pgUpgrade.fromPostgresVersion="${FROM_VERSION}" \
 		--set pgUpgrade.toPostgresVersion="${TO_VERSION}" \
@@ -64,7 +85,12 @@ pg-upgrade:
 		--set postgresVersion="${TO_VERSION}"
 	@echo "pgUpgrade.enabled has been set to false."
 	@echo "Starting the PostgreSQL cluster..."
-	@oc patch postgrescluster simsdb -n ${NAMESPACE} --type=merge -p "{\"spec\":{\"postgresVersion\":${TO_VERSION}, \"shutdown\":false}}"
+	@if [ -n "${POSTGRES_IMAGE_TAG}" ]; then \
+		PATCH_CONFIG="{\"spec\":{\"postgresVersion\":${TO_VERSION}, \"shutdown\":false, \"image\":\"${POSTGRES_MANUAL_IMAGE_PATH}:${POSTGRES_IMAGE_TAG}\"}}"; \
+	else \
+		PATCH_CONFIG="{\"spec\":{\"postgresVersion\":${TO_VERSION}, \"shutdown\":false}}"; \
+	fi; \
+	oc patch postgrescluster simsdb -n ${NAMESPACE} --type=merge -p "$$PATCH_CONFIG"
 	@echo "PostgreSQL cluster upgrade complete and restart initiated."
 
 # Uninstall is used to completely remove the helm and its installed object from the openshift environment.

@@ -5,6 +5,7 @@ import { FormSubmissionAction } from "./form-submission-action";
 import { FormSubmissionCreateAppealAssessmentAction } from "./form-submission-create-appeal-assessment-action";
 import { FormSubmissionUpdateModifiedIndependentAction } from "./form-submission-update-modified-independent-action";
 import { FormSubmissionActionModel } from "./form-submission-action-models";
+import { FormSubmissionUpdateNonPunitiveWithdrawalAction } from "./form-submission-update-non-punitive-withdrawal-action";
 
 /**
  * Keeps a list of all available form submission actions that can potentially
@@ -17,10 +18,12 @@ export class FormSubmissionActionProcessor {
   constructor(
     createAppealAssessmentAction: FormSubmissionCreateAppealAssessmentAction,
     updateModifiedIndependentAction: FormSubmissionUpdateModifiedIndependentAction,
+    updateNonPunitiveScholasticStandingWithdrawalAction: FormSubmissionUpdateNonPunitiveWithdrawalAction,
   ) {
     this.actions = [
       createAppealAssessmentAction,
       updateModifiedIndependentAction,
+      updateNonPunitiveScholasticStandingWithdrawalAction,
     ];
   }
 
@@ -133,6 +136,7 @@ export class FormSubmissionActionProcessor {
         id: item.id,
         actions: item.submittedData.actions ?? [],
         decisionStatus: item.currentDecision.decisionStatus,
+        submittedData: item.submittedData,
       })),
     };
   }

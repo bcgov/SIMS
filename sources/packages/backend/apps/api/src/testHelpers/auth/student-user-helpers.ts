@@ -5,6 +5,7 @@ import { AuthModule } from "../../auth/auth.module";
 import { UserService } from "../../services";
 import { JwtStrategy } from "../../auth/jwt.strategy";
 import { IUserToken } from "../../auth";
+import { mockJWTToken } from "../auth/token-helpers";
 
 /**
  * Type used to mock user info in the JWT token.
@@ -54,24 +55,14 @@ export async function mockJWTUserInfo(
   testingModule: TestingModule,
   user: JWTUserMock,
 ): Promise<jest.SpyInstance> {
-  const jwtStrategy = await getProviderInstanceForModule(
-    testingModule,
-    AuthModule,
-    JwtStrategy,
-  );
-  // Keep the original validate method to call it after modifying the payload.
-  const originalValidate = jwtStrategy.validate.bind(jwtStrategy);
-  return jest
-    .spyOn(jwtStrategy, "validate")
-    .mockImplementation((payload: IUserToken) => {
-      payload.userName = user.userName;
-      payload.lastName = user.lastName;
-      payload.givenNames = user.firstName;
-      if (user.birthDate) {
-        payload.birthdate = user.birthDate;
-      }
-      return originalValidate(payload);
-    });
+  return mockJWTToken(testingModule, (payload: IUserToken) => {
+    payload.userName = user.userName;
+    payload.lastName = user.lastName;
+    payload.givenNames = user.firstName;
+    if (user.birthDate) {
+      payload.birthdate = user.birthDate;
+    }
+  });
 }
 
 /**

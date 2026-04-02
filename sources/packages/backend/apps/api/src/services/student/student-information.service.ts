@@ -3,6 +3,7 @@ import {
   Student,
   SFASIndividual,
   ApplicationStatus,
+  DisbursementScheduleStatus,
   StudentAssessmentStatus,
   ProgramYear,
   StudentScholasticStandingChangeType,
@@ -10,7 +11,7 @@ import {
   OfferingIntensity,
   SFASApplication,
 } from "@sims/sims-db";
-import { Repository } from "typeorm";
+import { Brackets, Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 
 const MAX_PAST_PROGRAM_YEARS_INCLUDING_CURRENT = 3;
@@ -267,5 +268,86 @@ export class StudentInformationService {
         .orderBy("legacyApplication.id")
         .getMany()
     );
+  }
+
+  /**
+   * Get SIMS student SINs for students who have full-time applications
+   * meeting at least one of the following criteria:
+   * - The study period is active or starts within the specified future window.
+   *   Active is defined as: study start date is on or before (today + activeSinsDays)
+   *   AND study end date is on or after today.
+   * - A disbursement with status Sent was sent within the last activeSinsDays days.
+   * Cancelled and edited applications are excluded.
+   * Only the most recent SIN (student.sinValidation) is returned, and duplicate SINs are excluded.
+   * @param activeSinsDays number of days used for the lookahead and lookback windows.
+   * @returns distinct SIMS student SINs.
+   */
+  async getFullTimeActiveSINs(activeSinsDays: number): Promise<string[]> {
+    const applications = await this.applicationRepo
+      .createQueryBuilder("application")
+      .select(["application.id", "student.id", "sinValidation.sin"])
+      .distinctOn(["sinValidation.sin"])
+      .innerJoin("application.student", "student")
+      .innerJoin("student.sinValidation", "sinValidation")
+      .innerJoin("application.currentAssessment", "assessment")
+      .innerJoin("assessment.offering", "offering")
+      .leftJoin("assessment.disbursementSchedules", "disbursement")
+      .where(
+        "application.applicationStatus NOT IN (:...inEligibleApplicationStatuses)",
+      )
+      .andWhere("application.offeringIntensity = :fullTimeOfferingIntensity")
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            "offering.studyStartDate <= (CURRENT_DATE + :activeSinsDays * INTERVAL '1 day') AND offering.studyEndDate >= CURRENT_DATE",
+          ).orWhere(
+            "disbursement.dateSent >= (CURRENT_DATE - :activeSinsDays * INTERVAL '1 day') AND disbursement.disbursementScheduleStatus = :sentStatus",
+          );
+        }),
+      )
+      .setParameters({
+        inEligibleApplicationStatuses: [
+          ApplicationStatus.Cancelled,
+          ApplicationStatus.Edited,
+        ],
+        fullTimeOfferingIntensity: OfferingIntensity.fullTime,
+        activeSinsDays,
+        sentStatus: DisbursementScheduleStatus.Sent,
+      })
+      .getMany();
+    return applications.map((app) => app.student.sinValidation.sin);
+  }
+
+  /**
+   * Get SFAS (legacy) student SINs for students who have full-time applications
+   * meeting at least one of the following criteria:
+   * - The study period is active or starts within the specified future window.
+   *   Active is defined as: study start date is on or before (today + activeSinsDays)
+   *   AND study end date is on or after today.
+   * - A disbursement was issued within the last activeSinsDays days.
+   * Cancelled applications are excluded.
+   * @param activeSinsDays number of days used for the lookahead and lookback windows.
+   * @returns distinct SFAS student SINs.
+   */
+  async getFullTimeActiveLegacySINs(activeSinsDays: number): Promise<string[]> {
+    const sfasApplications = await this.sfasApplicationRepo
+      .createQueryBuilder("sfasApp")
+      .select(["sfasApp.id", "sfasIndividual.sin"])
+      .distinctOn(["sfasIndividual.sin"])
+      .innerJoin("sfasApp.individual", "sfasIndividual")
+      .leftJoin("sfasApp.disbursements", "disbursement")
+      .where("sfasApp.applicationCancelDate IS NULL")
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            "sfasApp.startDate <= (CURRENT_DATE + :activeSinsDays * INTERVAL '1 day') AND sfasApp.endDate >= CURRENT_DATE",
+          ).orWhere(
+            "disbursement.dateIssued >= (CURRENT_DATE - :activeSinsDays * INTERVAL '1 day')",
+          );
+        }),
+      )
+      .setParameters({ activeSinsDays })
+      .getMany();
+    return sfasApplications.map((app) => app.individual.sin);
   }
 }

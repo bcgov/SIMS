@@ -75,6 +75,7 @@ pgBackRest:
         memory: 128Mi
   s3:
     bucket: "sims-dev-database-backups"
+    s3Path: "/habackup-silver"
 
 patroni:
   postgresql:

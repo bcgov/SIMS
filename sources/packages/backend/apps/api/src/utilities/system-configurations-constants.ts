@@ -146,3 +146,8 @@ export const AVIATION_RESTRICTION_CODES: RestrictionCode[] = [
   RestrictionCode.AVIR,
   RestrictionCode.SFAS_AV,
 ];
+/**
+ * Number of days used for determining
+ * active student SINs for the external API.
+ */
+export const ACTIVE_SINS_DAYS = 90;

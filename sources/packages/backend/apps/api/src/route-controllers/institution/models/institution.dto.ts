@@ -13,7 +13,6 @@ import { Type } from "class-transformer";
 import { DesignationStatus } from "../../../route-controllers/institution-locations/models/institution-location.dto";
 import {
   AddressDetailsAPIInDTO,
-  AddressAPIOutDTO,
   AddressDetailsAPIOutDTO,
 } from "../../models/common.dto";
 import {
@@ -22,6 +21,7 @@ import {
   InstitutionClassification,
   InstitutionOrganizationStatus,
   InstitutionMedicalSchoolStatus,
+  INSTITUTION_LOCATION_CODE_MAX_LENGTH,
 } from "@sims/sims-db";
 import { OTHER_REGULATING_BODY_MAX_LENGTH } from "../../../constants";
 import { CANADA_COUNTRY_CODE } from "@sims/sims-db/constant";
@@ -161,22 +161,39 @@ export class SearchInstitutionAPIOutDTO {
   id: number;
   legalName: string;
   operatingName: string;
-  address: AddressAPIOutDTO;
+  country?: string;
+  classification?: InstitutionClassification;
 }
 
 export class SearchInstitutionQueryAPIInDTO {
   @ValidateIf(
     (input: SearchInstitutionQueryAPIInDTO) =>
-      !!(input.legalName || !input.operatingName),
+      !!(
+        input.legalName ||
+        (!input.operatingName && !input.institutionLocationCode)
+      ),
   )
   @IsNotEmpty()
   @MaxLength(LEGAL_OPERATING_NAME_MAX_LENGTH)
   legalName?: string;
   @ValidateIf(
     (input: SearchInstitutionQueryAPIInDTO) =>
-      !!(input.operatingName || !input.legalName),
+      !!(
+        input.operatingName ||
+        (!input.legalName && !input.institutionLocationCode)
+      ),
   )
   @IsNotEmpty()
   @MaxLength(OPERATING_NAME_MAX_LENGTH)
   operatingName?: string;
+  @ValidateIf(
+    (input: SearchInstitutionQueryAPIInDTO) =>
+      !!(
+        input.institutionLocationCode ||
+        (!input.legalName && !input.operatingName)
+      ),
+  )
+  @IsNotEmpty()
+  @MaxLength(INSTITUTION_LOCATION_CODE_MAX_LENGTH)
+  institutionLocationCode?: string;
 }

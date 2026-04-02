@@ -6,6 +6,7 @@ import {
   FormSubmissionDecisionStatus,
   FormSubmissionItemDecision,
   FormSubmissionStatus,
+  FormSubmissionSubmittedData,
   NoteType,
   Student,
   User,
@@ -37,6 +38,10 @@ export interface FormSubmissionItemTestInputData {
    * and the rest will be considered previous decisions.
    */
   decisions: FormSubmissionDecisionTestInputData[];
+  /**
+   * Submitted data to be associated with the form submission item.
+   */
+  submittedData?: FormSubmissionSubmittedData;
 }
 
 /**
@@ -46,11 +51,13 @@ export interface FormSubmissionTestInputData {
   /**
    * Student to be associated with the form submission. When not provided,
    * the application students will be used or a new student is created.
+   * The student user associated will be used as the creator.
    */
   student?: Student;
   /**
    * Application associated with the form submission.
    * If not provided, the form submission will not be associated with any application.
+   * If provided with a student, the student user associated will be used as the creator.
    */
   application?: Application;
   /**
@@ -60,13 +67,18 @@ export interface FormSubmissionTestInputData {
   /**
    * Form submission status. Defaults to `Pending` when not provided.
    * If some status other than `Pending` is provided, the assessedDate and assessedBy fields will
-   * be automatically set with the current date and the audit user, respectively.
+   * be automatically set with the current date and the Ministry audit user, respectively.
    */
   submissionStatus: FormSubmissionStatus;
   /**
-   * User who performed the audit.
+   * Used to simulate the creation of the submissions in different points in time.
    */
-  auditUser: User;
+  now?: Date;
+  /**
+   * Ministry user responsible for the decisions and notes data changes.
+   * Required when the submission status is different than `Pending`.
+   */
+  ministryAuditUser?: User;
   /**
    * Form submission items to be created.
    * Can be provided with decisions to be created for each item.
@@ -86,7 +98,7 @@ export async function saveFakeFormSubmissionFromInputTestData(
   db: E2EDataSources,
   testInputData: FormSubmissionTestInputData,
 ): Promise<FormSubmission> {
-  const now = new Date();
+  const now = testInputData.now ?? new Date();
   const student =
     testInputData.student ??
     testInputData.application?.student ??
@@ -94,13 +106,14 @@ export async function saveFakeFormSubmissionFromInputTestData(
   const formSubmission = new FormSubmission();
   formSubmission.student = student;
   formSubmission.application = testInputData.application;
+  formSubmission.createdAt = now;
   formSubmission.creator = student.user;
   formSubmission.submittedDate = now;
   formSubmission.formCategory = testInputData.formCategory;
   formSubmission.submissionStatus = testInputData.submissionStatus;
   if (testInputData.submissionStatus !== FormSubmissionStatus.Pending) {
     formSubmission.assessedDate = now;
-    formSubmission.assessedBy = testInputData.auditUser;
+    formSubmission.assessedBy = testInputData.ministryAuditUser;
   }
   formSubmission.formSubmissionItems = [];
   await db.formSubmission.save(formSubmission);
@@ -110,6 +123,9 @@ export async function saveFakeFormSubmissionFromInputTestData(
       creator: student.user,
     });
     submissionItem.formSubmission = formSubmission;
+    if (itemInputData.submittedData) {
+      submissionItem.submittedData = itemInputData.submittedData;
+    }
     // Update the array to avoid reloading the data and allowing a
     // method consumer to have access to the data.
     formSubmission.formSubmissionItems.push(submissionItem);
@@ -120,11 +136,11 @@ export async function saveFakeFormSubmissionFromInputTestData(
       const decision = new FormSubmissionItemDecision();
       decision.formSubmissionItem = submissionItem;
       decision.decisionStatus = decisionTestInputData.decisionStatus;
-      decision.creator = testInputData.auditUser;
+      decision.creator = testInputData.ministryAuditUser;
       decision.createdAt = now;
-      decision.decisionBy = testInputData.auditUser;
+      decision.decisionBy = testInputData.ministryAuditUser;
       decision.decisionDate = now;
-      decision.modifier = testInputData.auditUser;
+      decision.modifier = testInputData.ministryAuditUser;
       decision.updatedAt = now;
       // Note creation.
       const noteType =
@@ -132,7 +148,7 @@ export async function saveFakeFormSubmissionFromInputTestData(
           ? NoteType.StudentAppeal
           : NoteType.StudentForm;
       const note = createFakeNote(noteType, {
-        creator: testInputData.auditUser,
+        creator: testInputData.ministryAuditUser,
       });
       await db.note.save(note);
       decision.decisionNote = note;

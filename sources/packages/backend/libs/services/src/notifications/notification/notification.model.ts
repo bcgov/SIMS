@@ -135,6 +135,7 @@ export interface ECertFeedbackFileErrorNotification {
   givenNames: string;
   lastName: string;
   applicationNumber: string;
+  documentNumber: number;
   errorCodes: string[];
 }
 

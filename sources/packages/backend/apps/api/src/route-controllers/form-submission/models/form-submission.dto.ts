@@ -243,6 +243,7 @@ export class FormSubmissionItemDecisionAPIInDTO {
    * Date when the decision record was last updated. Used for concurrency control
    * to prevent overwriting a more recent decision.
    */
+  @Type(() => Date)
   @IsDate()
   lastUpdateDate: Date;
 }
@@ -255,6 +256,7 @@ export class FormSubmissionItemDecisionAPIInDTO {
 export class FormSubmissionCompletionItemAPIInDTO {
   @IsPositive()
   submissionItemId: number;
+  @Type(() => Date)
   @IsDate()
   lastUpdateDate: Date;
 }

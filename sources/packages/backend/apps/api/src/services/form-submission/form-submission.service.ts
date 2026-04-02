@@ -251,7 +251,7 @@ export class FormSubmissionService {
       order: {
         submittedDate: "DESC",
         formSubmissionItems: {
-          id: "ASC",
+          dynamicFormConfiguration: { formType: "ASC" },
           decisions: queryOptions?.includeDecisionHistory
             ? { id: "DESC" }
             : undefined,

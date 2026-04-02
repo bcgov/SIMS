@@ -101,13 +101,18 @@ export function useFormioComponentLoader() {
     programId: number,
     formIOComponentKey: string,
   ): Promise<void> => {
+    const component = formioUtils.getComponent(form, formIOComponentKey);
+    if (!component) {
+      // If the component doesn't exist in the form, it means the form doesn't support location program institution restrictions.
+      // The feature should be available for 2025-26 program year and later.
+      return;
+    }
     const institutionRestrictions =
       await RestrictionService.shared.getLocationProgramInstitutionRestrictions(
         locationId,
         programId,
       );
-    const componentValue = institutionRestrictions.institutionRestrictions;
-    formioUtils.setComponentValue(form, formIOComponentKey, componentValue);
+    component.setValue(institutionRestrictions.institutionRestrictions);
   };
 
   return {
