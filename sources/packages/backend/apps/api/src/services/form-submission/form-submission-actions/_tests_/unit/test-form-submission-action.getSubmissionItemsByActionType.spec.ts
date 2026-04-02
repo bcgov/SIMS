@@ -1,6 +1,7 @@
 import {
   FormSubmissionActionType,
   FormSubmissionDecisionStatus,
+  FormSubmissionSubmittedData,
 } from "@sims/sims-db";
 import { TestFormSubmissionAction } from "./test-form-submission-action";
 import {
@@ -19,11 +20,13 @@ describe("FormSubmissionAction-getSubmissionItemsByActionType", () => {
       id: 1,
       actions: [FormSubmissionActionType.UpdateModifiedIndependent],
       decisionStatus: FormSubmissionDecisionStatus.Declined,
+      submittedData: {} as FormSubmissionSubmittedData,
     };
     const requestWithoutMatch: FormSubmissionItemActionModel = {
       id: 2,
       actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
       decisionStatus: FormSubmissionDecisionStatus.Declined,
+      submittedData: {} as FormSubmissionSubmittedData,
     };
     const formSubmission = {
       submissionItems: [requestWithMatch, requestWithoutMatch],
@@ -46,11 +49,13 @@ describe("FormSubmissionAction-getSubmissionItemsByActionType", () => {
       id: 1,
       actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
       decisionStatus: FormSubmissionDecisionStatus.Declined,
+      submittedData: {} as FormSubmissionSubmittedData,
     };
     const approveRequest: FormSubmissionItemActionModel = {
       id: 2,
       actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
       decisionStatus: FormSubmissionDecisionStatus.Approved,
+      submittedData: {} as FormSubmissionSubmittedData,
     };
     const formSubmission = {
       submissionItems: [declinedRequest, approveRequest],
@@ -78,11 +83,13 @@ describe("FormSubmissionAction-getSubmissionItemsByActionType", () => {
       id: 1,
       actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
       decisionStatus: FormSubmissionDecisionStatus.Approved,
+      submittedData: {} as FormSubmissionSubmittedData,
     };
     const declinedSameRequest: FormSubmissionItemActionModel = {
       id: 2,
       actions: [FormSubmissionActionType.UpdateModifiedIndependent],
       decisionStatus: FormSubmissionDecisionStatus.Declined,
+      submittedData: {} as FormSubmissionSubmittedData,
     };
     const formSubmission = {
       submissionItems: [declinedDifferentRequest, declinedSameRequest],
