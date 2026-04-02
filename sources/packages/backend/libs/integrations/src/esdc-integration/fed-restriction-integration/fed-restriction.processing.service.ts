@@ -7,7 +7,7 @@ import {
   Restriction,
   RestrictionType,
 } from "@sims/sims-db";
-import { getISODateOnlyString } from "@sims/utilities";
+import { getISODateOnlyString, QueueNames } from "@sims/utilities";
 import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restriction-file-record";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT } from "@sims/services/constants";
@@ -18,6 +18,7 @@ import {
 import { SystemUsersService } from "@sims/services/system-users";
 import { StudentRestrictionSharedService } from "@sims/services";
 import { Job } from "bull";
+import { QueueService } from "@sims/services/queue/queue.service";
 
 /**
  * Manages the process to import the entire snapshot of federal
@@ -37,6 +38,7 @@ export class FedRestrictionProcessingService {
     private readonly systemUsersService: SystemUsersService,
     private readonly logger: LoggerService,
     private readonly restrictionService: RestrictionService,
+    private readonly queueService: QueueService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -67,7 +69,7 @@ export class FedRestrictionProcessingService {
 
     if (filePaths.length > 0) {
       // Process only the most updated file.
-      await this.processAllRestrictions(
+      await this.processRestrictionsFile(
         filePaths[filePaths.length - 1],
         auditUser.id,
         processSummary,
@@ -96,7 +98,7 @@ export class FedRestrictionProcessingService {
    * @param processSummary process summary for logging.
    * @returns result of the processing, summary and errors.
    */
-  private async processAllRestrictions(
+  private async processRestrictionsFile(
     remoteFilePath: string,
     auditUserId: number,
     processSummary: ProcessSummary,
@@ -107,6 +109,10 @@ export class FedRestrictionProcessingService {
     await this.dataSource.transaction(async (entityManager) => {
       try {
         this.logger.log("Starting database transaction.");
+        await this.queueService.acquireQueueLock(
+          job.queue.name as QueueNames,
+          entityManager,
+        );
         // Start the transaction that will handle all the import.
         await this.downloadIntoTransientTable(
           remoteFilePath,
