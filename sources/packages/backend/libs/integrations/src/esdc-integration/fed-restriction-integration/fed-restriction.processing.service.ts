@@ -187,7 +187,7 @@ export class FedRestrictionProcessingService {
       // Insert the records considered sanitized.
       await this.integrationService.streamResponseFileRecords(
         remoteFilePath,
-        async (record) => {
+        async (record, progress) => {
           // Callback to process each line of the file, validating the data and preparing it to be inserted in batch.
           const invalidDataMessage = record.getInvalidDataMessage();
           if (invalidDataMessage) {
@@ -209,9 +209,11 @@ export class FedRestrictionProcessingService {
               sanitizedRestrictions,
               federalRestrictionsCodesMap,
               processSummary,
+              job,
             );
             sanitizedRestrictions.length = 0;
           }
+          await job.progress(progress);
         },
       );
       // Insert the remaining records that were not inserted in the bulk insert inside the stream,
@@ -222,6 +224,7 @@ export class FedRestrictionProcessingService {
           sanitizedRestrictions,
           federalRestrictionsCodesMap,
           processSummary,
+          job,
         );
       }
       this.logger.log(

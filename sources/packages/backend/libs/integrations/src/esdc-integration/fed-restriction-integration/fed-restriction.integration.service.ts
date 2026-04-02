@@ -25,13 +25,20 @@ export class FedRestrictionIntegrationService extends SFTPIntegrationBase<
    */
   async streamResponseFileRecords(
     remoteFilePath: string,
-    fileRecordProcessor: (line: FedRestrictionFileRecord) => Promise<void>,
+    fileRecordProcessor: (
+      line: FedRestrictionFileRecord,
+      progress: number,
+    ) => Promise<void>,
   ): Promise<void> {
     let lineNumber = 0;
-    return this.streamResponseFileLines(remoteFilePath, async (fileLine) => {
-      return fileRecordProcessor(
-        new FedRestrictionFileRecord(fileLine, lineNumber++),
-      );
-    });
+    return this.streamResponseFileLines(
+      remoteFilePath,
+      async (fileLine, progress) => {
+        return fileRecordProcessor(
+          new FedRestrictionFileRecord(fileLine, lineNumber++),
+          progress,
+        );
+      },
+    );
   }
 }

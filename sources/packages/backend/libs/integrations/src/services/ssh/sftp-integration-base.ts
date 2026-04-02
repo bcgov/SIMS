@@ -217,7 +217,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    */
   protected async streamResponseFileLines(
     remoteFilePath: string,
-    fileLineProcessor: (line: string) => Promise<void>,
+    fileLineProcessor: (line: string, progress: number) => Promise<void>,
   ): Promise<void> {
     this.logger.log(`Downloading file ${remoteFilePath}.`);
     let client: Client;
@@ -225,6 +225,13 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       client = await this.getClient();
       const fileExtension = path.extname(remoteFilePath).toLowerCase();
       const sftpFileStream = new PassThrough();
+      // Track raw bytes as they arrive from the SFTP stream.
+      let bytesReceived = 0;
+      const fileStat = await client.stat(remoteFilePath);
+      // Synchronously count bytes as chunks arrive — safe with event emitters.
+      sftpFileStream.on("data", (chunk: Buffer) => {
+        bytesReceived += chunk.length;
+      });
       const downloadPromise = client.get(remoteFilePath, sftpFileStream, {
         readStreamOptions: { encoding: null },
       });
@@ -250,7 +257,10 @@ export abstract class SFTPIntegrationBase<DownloadType> {
           });
           for await (const line of nextLine) {
             if (line.length > 0) {
-              await fileLineProcessor(line);
+              await fileLineProcessor(
+                line,
+                Math.round((bytesReceived / fileStat.size) * 100),
+              );
             }
           }
         }
@@ -265,7 +275,10 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       });
       for await (const line of lineReader) {
         if (line.length > 0) {
-          await fileLineProcessor(line);
+          await fileLineProcessor(
+            line,
+            Math.round((bytesReceived / fileStat.size) * 100),
+          );
         }
       }
       // Wait for the download to complete before returning the file content.
