@@ -438,9 +438,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
         where: { id: savedScholasticStanding.id },
         loadEagerRelations: false,
       });
-    // Modified independent status should be updated to Approved
-    // with reference to the form submission item and the user who made the update
-    // when the request was approved by the Ministry.
+    // The non-punitive scholastic standing should be updated with a reference to the completed form submission item.
     expect(updatedScholasticStanding).toEqual({
       id: savedScholasticStanding.id,
       nonPunitiveFormSubmissionItem: { id: formSubmissionItemA.id },
