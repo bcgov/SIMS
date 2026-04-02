@@ -3486,7 +3486,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "Canada Student Loan for Full-time Students (CSL-FT)",
+                            "content": "{{ utils.custom.mapAward('CSLF', 'Full Time') }}",
                             "refreshOnChange": false,
                             "key": "canadaStudentLoan",
                             "type": "htmlelement",
@@ -3566,7 +3566,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "B.C. Student Loan (BCSL)",
+                            "content": "{{ utils.custom.mapAward('BCSL', 'Full Time') }}",
                             "refreshOnChange": false,
                             "key": "html1",
                             "type": "htmlelement",
@@ -3646,7 +3646,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "Canada Student Grant for Full-time Students (CSG-FT)",
+                            "content": "{{ utils.custom.mapAward('CSGF', 'Full Time') }}",
                             "refreshOnChange": false,
                             "key": "csgFt",
                             "type": "htmlelement",
@@ -3724,7 +3724,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "Canada Student Grant for Full-time Students with Dependants (CSG-FTDEP)",
+                            "content": "{{ utils.custom.mapAward('CSGD', 'Full Time') }}",
                             "refreshOnChange": false,
                             "key": "csgd",
                             "type": "htmlelement",
@@ -3802,7 +3802,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "B.C. Access Grant for Full-time Students (BCAG-FT)",
+                            "content": "{{ utils.custom.mapAward('BCAG', 'Full Time') }}",
                             "refreshOnChange": false,
                             "key": "bcag",
                             "type": "htmlelement",
@@ -3958,7 +3958,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "B.C. Access Grant for Students with a Disability (BCAG-D)",
+                            "content": "{{ utils.custom.mapAward('BGPD', 'Full Time') }}",
                             "refreshOnChange": false,
                             "key": "bgpd",
                             "type": "htmlelement",
@@ -4037,7 +4037,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "B.C. Supplemental Bursary for Students with Disabilities (SBSD)",
+                            "content": "{{ utils.custom.mapAward('SBSD', 'Full Time') }}",
                             "refreshOnChange": false,
                             "key": "sbsd",
                             "type": "htmlelement",
@@ -4313,7 +4313,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "Canada Student Grant for Part-time Students (CSG-PT)\n <span\n class=\"formio-custom-tooltip\">\n  <span class=\"tooltip-text\">\n    Please click <a\n            href=\"https://studentaidbc.ca/explore/grants-scholarships/canada-student-grant-part-time-studies\"\n            rel=\"noopener\"\n            target=\"_blank\"\n            >here</a> for more information about this grant.\n    </span>\n</span>",
+                            "content": "{{ utils.custom.mapAward('CSPT', 'Part Time') }}\n <span\n class=\"formio-custom-tooltip\">\n  <span class=\"tooltip-text\">\n    Please click <a\n            href=\"https://studentaidbc.ca/explore/grants-scholarships/canada-student-grant-part-time-studies\"\n            rel=\"noopener\"\n            target=\"_blank\"\n            >here</a> for more information about this grant.\n    </span>\n</span>",
                             "refreshOnChange": false,
                             "key": "cspt1",
                             "type": "htmlelement",
@@ -4394,7 +4394,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "Canada Student Grant for Students with Dependants (CSG-PTDEP)\n<span\n class=\"formio-custom-tooltip\">\n  <span class=\"tooltip-text\">\n    Please click <a\n            href=\"https://studentaidbc.ca/explore/grants-scholarships/canada-student-grant-students-dependants\"\n            rel=\"noopener\"\n            target=\"_blank\"\n            >here</a> for more information about this grant.\n    </span>\n</span>",
+                            "content": "{{ utils.custom.mapAward('CSGD', 'Part Time') }}\n<span\n class=\"formio-custom-tooltip\">\n  <span class=\"tooltip-text\">\n    Please click <a\n            href=\"https://studentaidbc.ca/explore/grants-scholarships/canada-student-grant-students-dependants\"\n            rel=\"noopener\"\n            target=\"_blank\"\n            >here</a> for more information about this grant.\n    </span>\n</span>",
                             "refreshOnChange": false,
                             "key": "csgd1",
                             "type": "htmlelement",
@@ -4474,7 +4474,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "B.C. Access Grant for Part-time Studies (BCAG)\n<span\n class=\"formio-custom-tooltip\">\n  <span class=\"tooltip-text\">\n    Please click <a\n            href=\"https://studentaidbc.ca/explore/grants-scholarships/bc-access-grant-part-time\"\n            rel=\"noopener\"\n            target=\"_blank\"\n            >here</a> for more information about this grant.\n    </span>\n</span>",
+                            "content": "{{ utils.custom.mapAward('BCAG', 'Part Time') }}\n<span\n class=\"formio-custom-tooltip\">\n  <span class=\"tooltip-text\">\n    Please click <a\n            href=\"https://studentaidbc.ca/explore/grants-scholarships/bc-access-grant-part-time\"\n            rel=\"noopener\"\n            target=\"_blank\"\n            >here</a> for more information about this grant.\n    </span>\n</span>",
                             "refreshOnChange": false,
                             "key": "html37",
                             "type": "htmlelement",
@@ -4556,7 +4556,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "Canada Student Loan for Part-time Students (CSL-PT)",
+                            "content": "{{ utils.custom.mapAward('CSLP', 'Part Time') }}",
                             "refreshOnChange": false,
                             "key": "canadaStudentLoan1",
                             "type": "htmlelement",
@@ -4634,7 +4634,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "B.C. Supplemental Bursary for Students with Disabilities (SBSD)\n<span\n class=\"formio-custom-tooltip\">\n  <span class=\"tooltip-text\">\n    Please click <a\n            href=\"https://studentaidbc.ca/explore/grants-scholarships/bc-supplemental-bursary-students-disabilities\"\n            rel=\"noopener\"\n            target=\"_blank\"\n            >here</a> for more information about this grant.\n    </span>\n</span>",
+                            "content": "{{ utils.custom.mapAward('SBSD', 'Part Time') }}\n<span\n class=\"formio-custom-tooltip\">\n  <span class=\"tooltip-text\">\n    Please click <a\n            href=\"https://studentaidbc.ca/explore/grants-scholarships/bc-supplemental-bursary-students-disabilities\"\n            rel=\"noopener\"\n            target=\"_blank\"\n            >here</a> for more information about this grant.\n    </span>\n</span>",
                             "refreshOnChange": false,
                             "key": "sbsd1",
                             "type": "htmlelement",
