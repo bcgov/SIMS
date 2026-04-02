@@ -91,6 +91,7 @@ describe("FormSubmissionActionProcessor-processActions", () => {
         id: item.id,
         actions: item.submittedData.actions ?? [],
         decisionStatus: item.currentDecision.decisionStatus,
+        submittedData: item.submittedData,
       })),
     } as FormSubmissionActionModel;
     const entityManager = createFormSubmissionFindOneMock(mockedFormSubmission);
