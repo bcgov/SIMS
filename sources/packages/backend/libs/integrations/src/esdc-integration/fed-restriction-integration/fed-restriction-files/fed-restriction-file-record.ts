@@ -13,7 +13,10 @@ export class FedRestrictionFileRecord {
   constructor(
     private readonly line: string,
     public readonly lineNumber: number,
-  ) {}
+  ) {
+    this.composedCode =
+      `${this.restrictionCode ?? ""}${this.restrictionReasonCode ?? ""}`.trim();
+  }
 
   public get sin(): string {
     return this.line.substr(0, 9);
@@ -35,9 +38,7 @@ export class FedRestrictionFileRecord {
     return this.line.substr(85, 1);
   }
 
-  public getComposedCode() {
-    return `${this.restrictionCode}${this.restrictionReasonCode}`.trim();
-  }
+  public readonly composedCode: string;
 
   /**
    * Assess the record to know in advance if some invalid data is present.
@@ -53,7 +54,7 @@ export class FedRestrictionFileRecord {
       errors.push("invalid date of birth");
     }
 
-    if (!this.getComposedCode()) {
+    if (!this.composedCode) {
       errors.push("invalid restriction code");
     }
     return errors.join(", ");

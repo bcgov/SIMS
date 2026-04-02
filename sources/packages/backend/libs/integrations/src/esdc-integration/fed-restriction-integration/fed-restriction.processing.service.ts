@@ -1,15 +1,23 @@
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
 import { FedRestrictionIntegrationService } from "./fed-restriction.integration.service";
-import { DataSource, EntityManager, Repository } from "typeorm";
-import { FederalRestriction } from "@sims/sims-db";
+import { DataSource, EntityManager } from "typeorm";
+import {
+  FederalRestriction,
+  Restriction,
+  RestrictionType,
+} from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restriction-file-record";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT } from "@sims/services/constants";
-import { FederalRestrictionService } from "@sims/integrations/services";
+import {
+  FederalRestrictionService,
+  RestrictionService,
+} from "@sims/integrations/services";
 import { SystemUsersService } from "@sims/services/system-users";
 import { StudentRestrictionSharedService } from "@sims/services";
+import { Job } from "bull";
 
 /**
  * Manages the process to import the entire snapshot of federal
@@ -28,6 +36,7 @@ export class FedRestrictionProcessingService {
     private readonly studentRestrictionsService: StudentRestrictionSharedService,
     private readonly systemUsersService: SystemUsersService,
     private readonly logger: LoggerService,
+    private readonly restrictionService: RestrictionService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -43,7 +52,7 @@ export class FedRestrictionProcessingService {
    * @param processSummary process summary for logging.
    * @returns process response.
    */
-  async process(processSummary: ProcessSummary): Promise<void> {
+  async process(processSummary: ProcessSummary, job: Job<void>): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     // Get the list of all ZIP files from SFTP ordered by file name.
     const fileSearch = new RegExp(
@@ -62,6 +71,7 @@ export class FedRestrictionProcessingService {
         filePaths[filePaths.length - 1],
         auditUser.id,
         processSummary,
+        job,
       );
       // If there are more than one file, archive it.
       // Only the most updated file matters because it represents the entire data snapshot.
@@ -90,29 +100,23 @@ export class FedRestrictionProcessingService {
     remoteFilePath: string,
     auditUserId: number,
     processSummary: ProcessSummary,
+    job: Job<void>,
   ): Promise<void> {
     processSummary.info(`Processing file ${remoteFilePath}.`);
-    let insertedRestrictionsIDs: number[];
+    let insertedRestrictionsIDs: number[] = [];
     await this.dataSource.transaction(async (entityManager) => {
       try {
         this.logger.log("Starting database transaction.");
         // Start the transaction that will handle all the import.
         await this.downloadIntoTransientTable(
           remoteFilePath,
-          processSummary,
           entityManager,
+          processSummary,
+          job,
         );
         this.logger.log(
           "Starting bulk operations to update student restrictions.",
         );
-        // TODO: Log the new created restrictions codes if there are any, to have a better control of the changes that are happening on the system related to the federal restrictions codes. This log can be useful for the future analysis of the data and also for debugging purposes.
-        // if (federalRestrictions.createdRestrictionsCodes.length > 0) {
-        //   const logMessage = `New restrictions created: ${federalRestrictions.createdRestrictionsCodes.join(
-        //     ", ",
-        //   )}`;
-        //   processSummary.warn(logMessage);
-        //   this.logger.warn(logMessage);
-        // }
         insertedRestrictionsIDs =
           await this.federalRestrictionService.executeBulkStepsChanges(
             entityManager,
@@ -152,10 +156,20 @@ export class FedRestrictionProcessingService {
     }
   }
 
+  /**
+   * Execute the download of the file, validate and transform the data, and insert it into a
+   * transient table to be used on the next steps of the process.
+   * The file download and the insert into the transient table is done in batches to avoid
+   * memory issues and improve performance.
+   * @param remoteFilePath remote file to be downloaded and inserted into the transient table.
+   * @param processSummary process summary for logging.
+   * @param entityManager entity manager to use for the database operations.
+   */
   private async downloadIntoTransientTable(
     remoteFilePath: string,
-    processSummary: ProcessSummary,
     entityManager: EntityManager,
+    processSummary: ProcessSummary,
+    job: Job<void>,
   ): Promise<void> {
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
     try {
@@ -164,8 +178,9 @@ export class FedRestrictionProcessingService {
       await this.federalRestrictionService.resetFederalRestrictionsTable(
         entityManager,
       );
-      const federalRestrictionRepo =
-        entityManager.getRepository(FederalRestriction);
+      // Get the existing federal restrictions codes.
+      const federalRestrictionsCodesMap =
+        await this.getFederalRestrictionsCodesMap(entityManager);
       // Temporary array to keep the records to be inserted in batch.
       const sanitizedRestrictions: FedRestrictionFileRecord[] = [];
       // Stream the file content and process the records line by line to avoid memory issues.
@@ -190,8 +205,10 @@ export class FedRestrictionProcessingService {
           ) {
             // Insert the records in batch to avoid memory issues and improve performance.
             await this.insertFedRestrictionsBulk(
+              entityManager,
               sanitizedRestrictions,
-              federalRestrictionRepo,
+              federalRestrictionsCodesMap,
+              processSummary,
             );
             sanitizedRestrictions.length = 0;
           }
@@ -201,8 +218,10 @@ export class FedRestrictionProcessingService {
       // because they did not reach the amount defined for the bulk insert.
       if (sanitizedRestrictions.length) {
         await this.insertFedRestrictionsBulk(
+          entityManager,
           sanitizedRestrictions,
-          federalRestrictionRepo,
+          federalRestrictionsCodesMap,
+          processSummary,
         );
       }
       this.logger.log(
@@ -224,12 +243,34 @@ export class FedRestrictionProcessingService {
    * keeps the DB operations in the same transaction.
    */
   private async insertFedRestrictionsBulk(
+    entityManager: EntityManager,
     restrictions: FedRestrictionFileRecord[],
-    federalRestrictionRepo: Repository<FederalRestriction>,
+    federalRestrictionsCodesMap: Map<string, number>,
+    processSummary: ProcessSummary,
+    job: Job<void>,
   ): Promise<void> {
-    // DB restriction objects to be inserted to the db.
+    const [firstLine] = restrictions;
+    const lastLine = restrictions[restrictions.length - 1];
+    await job.log(
+      `Inserting federal restrictions records from line number ${firstLine.lineNumber} to line number ${lastLine.lineNumber}.`,
+    );
+    await this.ensureFederalRestrictionExists(
+      entityManager,
+      restrictions,
+      federalRestrictionsCodesMap,
+      processSummary,
+    );
+    // DB restriction objects to be inserted to the DB.
     const restrictionsToInsert: FederalRestriction[] = [];
     for (const restriction of restrictions) {
+      const restrictionId = federalRestrictionsCodesMap.get(
+        restriction.composedCode,
+      );
+      if (!restrictionId) {
+        throw new Error(
+          `Restriction code ${restriction.composedCode} not found for line number ${restriction.lineNumber}. This record should have been created on the previous step.`,
+        );
+      }
       const newRestriction = new FederalRestriction();
       newRestriction.lastName = restriction.surname;
       newRestriction.sin = restriction.sin;
@@ -237,16 +278,89 @@ export class FedRestrictionProcessingService {
       // Hence birth date is parsed as date object from external source as their date format
       // may not be necessarily ISO date format.
       newRestriction.birthDate = getISODateOnlyString(restriction.dateOfBirth);
-      newRestriction.restrictionCode = restriction.getComposedCode();
+      newRestriction.restriction = { id: restrictionId } as Restriction;
       restrictionsToInsert.push(newRestriction);
     }
     try {
-      await federalRestrictionRepo.insert(restrictionsToInsert);
+      await entityManager
+        .getRepository(FederalRestriction)
+        .save(restrictionsToInsert);
     } catch (error: unknown) {
-      const [firstLine] = restrictions;
-      const lastLine = restrictions[restrictions.length - 1];
       const logMessage = `Error while inserting the block of lines from ${firstLine.lineNumber} to ${lastLine.lineNumber}.`;
       throw new Error(logMessage, { cause: error });
     }
+  }
+
+  /**
+   * Ensure that all the federal restrictions received on the file have their corresponding restriction record on the system.
+   * There is a pretty low expectation that new restriction codes will be received on the file, but if that happens, this method
+   * will create the new restriction records with the information available and log the new codes created.
+   * @param entityManager entity manager to use for the database operations.
+   * @param restrictions federal restrictions records from the file to be checked if they have their corresponding restriction record on the system.
+   * @param federalRestrictionsCodesMap map with the existing federal restriction codes on the system to be checked against the received records.
+   * @param processSummary process summary for logging the new created restrictions if some new code is received on the file.
+   */
+  private async ensureFederalRestrictionExists(
+    entityManager: EntityManager,
+    restrictions: FedRestrictionFileRecord[],
+    federalRestrictionsCodesMap: Map<string, number>,
+    processSummary: ProcessSummary,
+  ): Promise<void> {
+    const missingCodes: string[] = [];
+    for (const restriction of restrictions) {
+      if (!federalRestrictionsCodesMap.has(restriction.composedCode)) {
+        missingCodes.push(restriction.composedCode);
+      }
+    }
+    if (!missingCodes.length) {
+      return;
+    }
+    // Add new codes to database.
+    const createdRestrictions =
+      await this.restrictionService.createUnidentifiedFederalRestriction(
+        missingCodes,
+        entityManager,
+      );
+    // Update the map with the new created restrictions.
+    createdRestrictions.forEach((restriction) =>
+      federalRestrictionsCodesMap.set(
+        restriction.restrictionCode,
+        restriction.id,
+      ),
+    );
+    // Log the new created restrictions codes.
+    // The warning will generate a system alert to allow human intervention if needed.
+    const logMessage = `New restrictions created: ${createdRestrictions
+      .map((r) => r.restrictionCode)
+      .join(", ")}`;
+    processSummary.warn(logMessage);
+    this.logger.warn(logMessage);
+  }
+
+  /**
+   * Get a snapshot of the current federal restrictions on the system.
+   * These code are unique and are used to identify the restrictions received from the file
+   * and detected is some new federal restriction was received and needs to be created on the
+   * system before the insert of the federal restrictions records.
+   * @param entityManager entity manager to use for the database operations.
+   * @returns map of federal restriction codes to their corresponding IDs.
+   */
+  private async getFederalRestrictionsCodesMap(
+    entityManager: EntityManager,
+  ): Promise<Map<string, number>> {
+    const federalRestrictions = await entityManager
+      .getRepository(Restriction)
+      .find({
+        select: { id: true, restrictionCode: true },
+        where: {
+          restrictionType: RestrictionType.Federal,
+        },
+      });
+    return new Map<string, number>(
+      federalRestrictions.map((restriction) => [
+        restriction.restrictionCode,
+        restriction.id,
+      ]),
+    );
   }
 }

@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { RestrictionService } from "@sims/integrations/services";
-import { FederalRestriction, Restriction } from "@sims/sims-db";
+import { FederalRestriction } from "@sims/sims-db";
 import { getSQLFileData } from "@sims/utilities";
 import { DataSource, EntityManager } from "typeorm";
 
@@ -20,10 +19,7 @@ export class FederalRestrictionService {
   private readonly bulkDeactivateRestrictionsSQL: string;
   private readonly bulkUpdateActiveRestrictionsSQL: string;
 
-  constructor(
-    private readonly dataSource: DataSource,
-    private readonly restrictionService: RestrictionService,
-  ) {
+  constructor(private readonly dataSource: DataSource) {
     this.bulkUpdateStudentIdSQL = getSQLFileData(
       "Bulk-update-students-foreign-key.sql",
       FEDERAL_RESTRICTIONS_RAW_SQL_FOLDER,
@@ -72,10 +68,6 @@ export class FederalRestrictionService {
     // the student foreign keys correctly.
     await this.bulkUpdateStudentsForeignKey(manager);
     // STEP 2
-    // Before to execute the bulk insert of new restrictions, the system needs to
-    // ensure that all restriction codes are present on the restriction table.
-    await this.ensureFederalRestrictionExists(manager);
-    // STEP 2
     // This bulk updates expects that the student foreign key is updated.
     const insertedRestrictionsIDs =
       await this.bulkInsertNewRestrictions(manager);
@@ -87,31 +79,6 @@ export class FederalRestrictionService {
     await this.bulkUpdateActiveRestrictions(manager);
 
     return insertedRestrictionsIDs;
-  }
-
-  /**
-   * Ensure all restriction codes are present on the database. If some code is missing,
-   * it is created as an unidentified federal restriction.
-   * @param entityManager entity manager to execute in transaction.
-   */
-  async ensureFederalRestrictionExists(
-    entityManager: EntityManager,
-  ): Promise<void> {
-    // TODO: review the query.
-    const importedFederalRestrictions = await entityManager
-      .getRepository(FederalRestriction)
-      .createQueryBuilder("federalRestriction")
-      .distinct()
-      .select("federalRestriction.restrictionCode")
-      .where("federalRestriction.student.id IS NOT NULL")
-      .getRawMany<{ restrictionCode: string }>();
-    const codesToCheck = importedFederalRestrictions.map(
-      (restriction) => restriction.restrictionCode,
-    );
-    await this.restrictionService.ensureFederalRestrictionExists(
-      codesToCheck,
-      entityManager.getRepository(Restriction),
-    );
   }
 
   /*

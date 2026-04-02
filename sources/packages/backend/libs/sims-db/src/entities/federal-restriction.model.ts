@@ -57,14 +57,6 @@ export class FederalRestriction {
   })
   restriction?: Restriction;
   /**
-   * Code of the restriction associated with the federal record as received in the file.
-   */
-  @Column({
-    name: "restriction_code",
-    nullable: false,
-  })
-  restrictionCode: string;
-  /**
    * Record creation timestamp.
    */
   @CreateDateColumn({

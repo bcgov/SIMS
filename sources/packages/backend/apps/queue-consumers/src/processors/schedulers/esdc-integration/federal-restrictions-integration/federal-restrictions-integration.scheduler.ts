@@ -25,10 +25,10 @@ export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void>
    * @returns processing result.
    */
   protected async process(
-    _job: Job<void>,
+    job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string> {
-    await this.fedRestrictionProcessingService.process(processSummary);
+    await this.fedRestrictionProcessingService.process(processSummary, job);
     return "Federal restrictions import process finished.";
   }
 }
