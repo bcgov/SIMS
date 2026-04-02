@@ -7,7 +7,6 @@ export NAMESPACE := $(or $(NAMESPACE), $$NS)
 export APP_NAME := $(or $(PROJECT_NAME), sims)
 export TEMPLATE_FILE_NAME := $(or $(TEMPLATE_FILE_NAME), $$FILE)
 export BUILD_REF := $(or $(BUILD_REF), $(GIT_LOCAL_BRANCH))
-export BUILD_NAMESPACE := $(or $(BUILD_NAMESPACE), 0c27fb-tools)
 export DOMAIN := $(or $(DOMAIN), sims.studentaidbc.ca)
 export DOMAIN_PREFIX := $(or $(DOMAIN_PREFIX),)
 export HOST_PREFIX := $(or $(HOST_PREFIX), $$HOST_PREFIX)
@@ -69,7 +68,8 @@ export QUEUE_CONSUMERS_REPLICAS := $(or ${QUEUE_CONSUMERS_REPLICAS}, 2)
 export THROTTLE_TIME := $(or $(THROTTLE_TIME), 10000)
 export THROTTLE_LIMIT := $(or $(THROTTLE_LIMIT), 30)
 export FORMS_PORT := 3001
-
+# Artifactory server URL.
+export ARTIFACTORY_SERVER_ADDRESS := $(or ${ARTIFACTORY_SERVER_ADDRESS}, artifacts.developer.gov.bc.ca)
 # Timeout waiting for a migrations openshift process to complete in seconds.
 export MIGRATIONS_OC_TIMEOUT := 300s 
 
@@ -194,6 +194,35 @@ init-project:
 	@oc -n $(BUILD_NAMESPACE) policy add-role-to-group system:image-puller system:serviceaccounts:$(NAMESPACE)
 	@oc -n $(NAMESPACE) create rolebinding github-action --clusterrole=edit --serviceaccount=$(BUILD_NAMESPACE):github-action --namespace=$(NAMESPACE)
 
+# Note: The service account for github action is created in the build namespace.
+create-service-account:
+	test -n "$(SERVICE_ACCOUNT_NAMESPACE)"
+	test -n "$(SERVICE_ACCOUNT_NAME)"
+	@oc -n $(SERVICE_ACCOUNT_NAMESPACE) create sa $(SERVICE_ACCOUNT_NAME)
+
+generate-service-account-token:
+	test -n "$(SERVICE_ACCOUNT_NAMESPACE)"
+	test -n "$(SERVICE_ACCOUNT_NAME)"
+	@oc -n $(SERVICE_ACCOUNT_NAMESPACE) create token $(SERVICE_ACCOUNT_NAME) --duration=4380h
+
+# Add role edit to a service account in the target namespace.
+add-role-edit-to-service-account:
+	test -n "$(NAMESPACE)"
+	test -n "$(SERVICE_ACCOUNT_NAMESPACE)"
+	test -n "$(SERVICE_ACCOUNT_NAME)"
+	@oc -n $(NAMESPACE) create rolebinding $(SERVICE_ACCOUNT_NAME)-edit --clusterrole=edit --serviceaccount=$(SERVICE_ACCOUNT_NAMESPACE):$(SERVICE_ACCOUNT_NAME)
+
+# Add role image-puller to a service account group in the target namespace.
+add-role-image-puller-to-target-namespace:
+	test -n "$(IMAGE_SOURCE_NAMESPACE)"
+	test -n "$(TARGET_NAMESPACE)"
+	@oc -n $(IMAGE_SOURCE_NAMESPACE) create rolebinding "$(TARGET_NAMESPACE)-system:image-puller" --clusterrole="system:image-puller" --group=system:serviceaccounts:$(TARGET_NAMESPACE)
+
+create-network-policies:
+	test -n "$(NAMESPACE)"
+	@echo "Create network policies for namespace: $(NAMESPACE)"
+	@oc -n $(NAMESPACE) process -f openshift/networkpolicy.yml -p NAMESPACE=$(NAMESPACE) | oc -n $(NAMESPACE) apply -f -
+	
 init-secrets:
 	@echo "++\n Deploy SIMS Creds Secrets $(NAMESPACE) \n++"
 	@oc -n $(NAMESPACE) process -f openshift/init-secrets.yml \
@@ -252,15 +281,19 @@ init-zone-b-sftp-secret:
 		--from-file=private-key=./openshift/zone-b-private-key.cer \
 		--dry-run=client -o yaml | oc apply -f -
 
-init-artifactory-secret-credential:
-	test -n $(NAMESPACE)
+create-artifactory-secret-credential:
+	test -n "$(NAMESPACE)"
+	test -n "$(ARTIFACTORY_SERVER_ADDRESS)"
+	test -n "$(ARTIFACTORY_USERNAME)"
+	test -n "$(ARTIFACTORY_PASSWORD)"
+	test -n "$(ARTIFACTORY_EMAIL)"
 	@oc create secret docker-registry artifactory-secret-credential -n $(NAMESPACE) \
-    	--docker-server=artifacts.developer.gov.bc.ca \
-    	--docker-username=$(USERNAME) \
-    	--docker-password=$(PASSWORD) \
-    	--docker-email=$(USERNAME)@$(NAMESPACE).local
-	@oc secrets link default artifactory-secret-credential
-	@oc secrets link builder artifactory-secret-credential
+    	--docker-server=$(ARTIFACTORY_SERVER_ADDRESS) \
+    	--docker-username=$(ARTIFACTORY_USERNAME) \
+    	--docker-password=$(ARTIFACTORY_PASSWORD) \
+    	--docker-email=$(ARTIFACTORY_EMAIL)
+	# @oc secrets link default artifactory-secret-credential
+	# @oc secrets link builder artifactory-secret-credential
 
 build-migrations:
 	test -n "$(BUILD_NAMESPACE)"

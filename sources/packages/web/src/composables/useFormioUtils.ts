@@ -54,8 +54,15 @@ const JSON_FORMAT_SPACES = 2;
  * Form.IO helper methods.
  */
 export function useFormioUtils() {
-  // Get a component in a form definition once it is loaded.
+  /**
+   * Get a component in a form definition once it is loaded.
+   * @param form form definition to search the component in.
+   * @param componentKey form.io API key name.
+   * @returns the component, if found.
+   */
   const getComponent = (form: any, componentKey: string): FormIOComponent => {
+    // The return should be adjusted to make it clear that this method may return
+    // undefined if the component is not found.
     return Utils.getComponent(form.components, componentKey, true);
   };
 

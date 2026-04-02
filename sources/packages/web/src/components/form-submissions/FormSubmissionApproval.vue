@@ -27,7 +27,7 @@
               v-model="decision.decisionNoteDescription"
               hide-details="auto"
               :rules="[
-                (v) => checkNotesLengthRule(v, `${decision.parentName}, notes`),
+                (v) => checkNotesLengthRule(v, `${decision.parentName}: notes`),
               ]"
               required
               :readonly="decision.decisionSaved"
@@ -113,7 +113,7 @@
               <v-input
                 class="float-right"
                 v-model="decision.decisionSaved"
-                :rules="[(v) => v || `${decision.parentName}, must be saved.`]"
+                :rules="[(v) => v || `${decision.parentName}: must be saved.`]"
                 :hide-details="false"
               ></v-input>
               <!-- Audit for latest decision made on this item. -->
@@ -408,7 +408,7 @@ export default defineComponent({
       parentName: string,
     ): boolean | string => {
       if (decision === FormSubmissionDecisionStatus.Pending) {
-        return `${parentName}, pending decision.`;
+        return `${parentName}: pending decision.`;
       }
       return true;
     };

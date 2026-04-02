@@ -256,6 +256,7 @@ export class FormSubmissionItemDecisionAPIInDTO {
 export class FormSubmissionCompletionItemAPIInDTO {
   @IsPositive()
   submissionItemId: number;
+  @Type(() => Date)
   @IsDate()
   lastUpdateDate: Date;
 }

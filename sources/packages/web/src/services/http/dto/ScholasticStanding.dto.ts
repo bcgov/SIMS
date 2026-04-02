@@ -31,10 +31,10 @@ export interface ScholasticStandingDataAPIInDTO {
  * Represents the scholastic standing submitted details.
  */
 export interface ScholasticStandingSubmittedDetailsAPIOutDTO
-  extends ScholasticStandingDataAPIInDTO,
-    ActiveApplicationDataAPIOutDTO {
+  extends ScholasticStandingDataAPIInDTO, ActiveApplicationDataAPIOutDTO {
   currentAssessmentTriggerType: AssessmentTriggerType;
   reversalDate?: Date;
+  nonPunitiveFormSubmissionItemId?: number;
 }
 
 /**

@@ -1,0 +1,63 @@
+name: Crunchy Postgres - Install/Upgrade with datasource
+run-name: Crunchy DB in ${{ inputs.environment }} using ${{ github.ref_name }}
+permissions:
+    contents: read
+
+on:
+    workflow_dispatch:
+        inputs:
+            environment:
+                description: "Environment"
+                required: true
+                type: environment
+            action:
+                description: "Action"
+                required: true
+                type: choice
+                options:
+                    - install-from-datasource
+                    - disable-datasource
+            datasource_s3_path_name:
+                description: "Path to the datasource in S3"
+                required: false
+                type: string
+                default: ""
+
+jobs:
+    manageCrunchyDBWithDatasource:
+        name: Crunchy DB ${{ inputs.action }} in ${{ inputs.environment }}
+        runs-on: ubuntu-latest
+        environment: ${{ inputs.environment }}
+        env:
+            NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+            SA_TOKEN: ${{ secrets.SA_TOKEN }}
+            OPENSHIFT_CLUSTER_URL: ${{ vars.OPENSHIFT_CLUSTER_URL }}
+        steps:
+            - name: Validate S3 Path Input
+              if: ${{ inputs.action == 'install-from-datasource' && inputs.datasource_s3_path_name == '' }}
+              run: |
+                  echo "::error::You selected 'install-from-datasource' but did not provide a 'datasource_s3_path_name'. Please run the workflow again and provide the S3 path."
+                  exit 1
+            - name: Checkout Target Branch
+              uses: actions/checkout@v6
+              with:
+                  ref: ${{ github.ref_name }}
+            - name: Install CLI tools from OpenShift Mirror
+              uses: redhat-actions/openshift-tools-installer@v1
+              with:
+                  oc: "4"
+            - name: Log in to OpenShift
+              run: |
+                  oc login --token="$SA_TOKEN" --server="$OPENSHIFT_CLUSTER_URL"
+            - name: Install Crunchy DB with datasource
+              if: ${{ inputs.action == 'install-from-datasource' }}
+              working-directory: "./devops/helm/crunchy-postgres/"
+              env:
+                  DATASOURCE_S3_PATH_NAME: ${{ inputs.datasource_s3_path_name }}
+              run: |
+                  make install-with-datasource NAMESPACE="$NAMESPACE" DATASOURCE_S3_PATH_NAME="$DATASOURCE_S3_PATH_NAME"
+            - name: Update Crunchy DB to disable datasource
+              if: ${{ inputs.action == 'disable-datasource' }}
+              working-directory: "./devops/helm/crunchy-postgres/"
+              run: |
+                  make update-to-disable-datasource NAMESPACE="$NAMESPACE"

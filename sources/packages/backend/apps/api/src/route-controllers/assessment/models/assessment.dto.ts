@@ -85,6 +85,10 @@ export class AssessmentHistorySummaryAPIOutDTO {
    */
   scholasticStandingReversalDate?: Date;
   /**
+   * Id of the non-punitive form submission item.
+   */
+  nonPunitiveFormSubmissionItemId?: number;
+  /**
    * This flag decides, the row is unsuccessful week or not.
    */
   hasUnsuccessfulWeeks?: boolean;

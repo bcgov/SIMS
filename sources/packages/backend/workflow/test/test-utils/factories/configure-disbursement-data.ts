@@ -45,7 +45,6 @@ export function createFakeConfigureDisbursementFullTimeData(
     offeringStudyEndDate: `${programEndYear}-05-24`,
     offeringWeeks: 17,
     awardEligibilityBCSL: true,
-    awardEligibilityBCTopup: true,
     awardEligibilityCSLF: true,
     awardEligibilityCSGP: true,
     awardEligibilityCSGD: true,
