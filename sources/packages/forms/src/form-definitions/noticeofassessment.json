@@ -3873,7 +3873,7 @@
                       {
                         "components": [
                           {
-                            "label": "Canada Student Grant for Persons with Disabilities (CSG-D)",
+                            "label": "Canada Student Grant for Students with Disabilities (CSG-D)",
                             "tag": "p",
                             "attrs": [
                               {
@@ -3881,7 +3881,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "Canada Student Grant for Persons with Disabilities (CSG-D)",
+                            "content": "{{ utils.custom.mapAward('CSGP', 'Full Time') }}",
                             "refreshOnChange": false,
                             "key": "csgp",
                             "type": "htmlelement",
@@ -4232,7 +4232,7 @@
                                 "value": ""
                               }
                             ],
-                            "content": "Canada Student Grant for Student with Disabilities (CSG-PD)\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n    Please click <a\n            href=\"https://studentaidbc.ca/explore/grants-scholarships/canada-student-grant-students-disabilities\"\n            rel=\"noopener\"\n            target=\"_blank\"\n            >here</a> for more information about this grant.\n    </span>\n</span>",
+                            "content": "{{ utils.custom.mapAward('CSGP', 'Part Time') }}\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n    Please click <a\n            href=\"https://studentaidbc.ca/explore/grants-scholarships/canada-student-grant-students-disabilities\"\n            rel=\"noopener\"\n            target=\"_blank\"\n            >here</a> for more information about this grant.\n    </span>\n</span>",
                             "refreshOnChange": false,
                             "key": "csgp1",
                             "type": "htmlelement",

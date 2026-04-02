@@ -37,7 +37,7 @@ export const AWARDS: AwardDetail[] = [
   {
     awardType: FullTimeAwardTypes.CSGP,
     awardTypeDisplay: "CSG-D",
-    description: "Canada Student Grant for Student with Permanent Disability",
+    description: "Canada Student Grant for Students with Disabilities",
     offeringIntensity: OfferingIntensity.fullTime,
   },
   {
