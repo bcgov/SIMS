@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="dmnFullTimeAssessmentDecisions" name="dmnFullTimeAssessmentDecisions" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.42.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="1a575ead-1e6d-468c-901a-766a35569b38">
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="dmnFullTimeAssessmentDecisions" name="dmnFullTimeAssessmentDecisions" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.43.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="1a575ead-1e6d-468c-901a-766a35569b38">
   <decision id="dmnFullTimeProgramYearMaximums" name="dmnFullTimeProgramYearMaximums">
     <decisionTable id="DecisionTable_1oyvbif">
       <input id="InputClause_02zjhj9" label="programYear">
@@ -5623,6 +5623,342 @@
       </rule>
     </decisionTable>
   </decision>
+  <decision id="dmnFullTimeAwardInstitutionEligibility" name="dmnFullTimeAwardInstitutionEligibility">
+    <decisionTable id="DecisionTable_0lsofim" hitPolicy="FIRST">
+      <input id="InputClause_0gzvqmo" label="institutionCountry" biodi:width="150">
+        <inputExpression id="LiteralExpression_1pidngt" typeRef="string">
+          <text>institutionCountry</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0tqnuqh" label="institutionProvince" biodi:width="150">
+        <inputExpression id="LiteralExpression_0rm8n05" typeRef="string">
+          <text>institutionProvince</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_04wvrhx" label="institutionClassification" biodi:width="150">
+        <inputExpression id="LiteralExpression_0j0v400" typeRef="string">
+          <text>institutionClassification</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0yowg8e" label="institutionOrganizationStatus">
+        <inputExpression id="LiteralExpression_1542q50" typeRef="string">
+          <text>institutionOrganizationStatus</text>
+        </inputExpression>
+      </input>
+      <output id="OutputClause_0dtr35w" label="isEligibleBGPD" name="isEligibleBGPD" typeRef="boolean" biodi:width="150" />
+      <output id="OutputClause_01hxfuz" label="isEligibleSBSD" name="isEligibleSBSD" typeRef="boolean" biodi:width="150" />
+      <output id="OutputClause_1athbew" label="isEligibleBCAG" name="isEligibleBCAG" typeRef="boolean" biodi:width="150" />
+      <output id="OutputClause_0xbjut1" label="isEligibleBCSL" name="isEligibleBCSL" typeRef="boolean" biodi:width="150" />
+      <output id="OutputClause_1eeruxq" label="isEligibleCSGF" name="isEligibleCSGF" typeRef="boolean" biodi:width="150" />
+      <output id="OutputClause_0b8htsd" label="isEligibleCSGD" name="isEligibleCSGD" typeRef="boolean" biodi:width="150" />
+      <output id="OutputClause_1nazy5x" label="isEligibleCSGP" name="isEligibleCSGP" typeRef="boolean" biodi:width="150" />
+      <output id="OutputClause_1pra4d8" label="isEligibleCSLF" name="isEligibleCSLF" typeRef="boolean" biodi:width="150" />
+      <rule id="DecisionRule_0ig5plh">
+        <inputEntry id="UnaryTests_039r2vz">
+          <text>"CA"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1qhu8cm">
+          <text>"BC"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1cerv2p">
+          <text>"public"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1xcyj84">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_10ni4q1">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_02uhnmv">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0jtnffp">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1dqqzth">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0cmibse">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1hra0va">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1rcrrm1">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_104rqhq">
+          <text>true</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_16zmgtm">
+        <inputEntry id="UnaryTests_0ja17pt">
+          <text>"CA"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0c421jw">
+          <text>"BC"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1k6b64x">
+          <text>"private"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0rq0213">
+          <text>"notForProfit"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1ux1aau">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0cakz8g">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1a04lok">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1x5dtkr">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0zgl4u2">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0odxmd5">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0p73ld4">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_17svkhh">
+          <text>true</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0ubjge2">
+        <inputEntry id="UnaryTests_1vcymla">
+          <text>"CA"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1rqlfqq">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1imz6fn">
+          <text>"private"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1bddmu6">
+          <text>"profit"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1am6xun">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0mgdp4d">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0w1zci3">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0oj4hea">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1si0sjs">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1j55edw">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ch9axc">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0b3uyrg">
+          <text>true</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_035ddr9">
+        <inputEntry id="UnaryTests_0hiao3n">
+          <text>"CA"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1bzhyok">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ikstpj">
+          <text>"public"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0gz06wc">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_06m5ogs">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_117wswd">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_19ga6u6">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1wra048">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1kqtghv">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_15xrkcu">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1vzs4nx">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1kiy8j4">
+          <text>true</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_011058h">
+        <inputEntry id="UnaryTests_0998prk">
+          <text>"CA"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1angj8i">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0j3ij58">
+          <text>"private"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1308j4q">
+          <text>"notForProfit"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_035d995">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0cck5z3">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ch7s6b">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_05w8w51">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ezdb0f">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0k726mf">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_12cebym">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1t68x52">
+          <text>true</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_13jfkdn">
+        <inputEntry id="UnaryTests_1p3u35y">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ex8ssm">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0nvj7vf">
+          <text>"public"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0lgqxoa">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_09u0ry8">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1lhxvhz">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ww74pt">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1bfnf05">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_13kedgw">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1jynzww">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1qrp37x">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1ezef33">
+          <text>true</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0iamvpm">
+        <inputEntry id="UnaryTests_1euywwn">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0a67749">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_195j8ny">
+          <text>"private"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1a0k57a">
+          <text>"notForProfit"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_01k5d5v">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0p3vje5">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1eifblw">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0j6qwbe">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_04h1cmz">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0aekxd4">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1f9cxmg">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0sye3no">
+          <text>true</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_03s5f5j">
+        <inputEntry id="UnaryTests_0spr9aq">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_05yiead">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_01gzczf">
+          <text>"private"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1e1hfmf">
+          <text>"profit"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_169snke">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0fgufxe">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0b6h3z1">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1otkfu5">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_00jacje">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_002cnsb">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_161l4gj">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1j7nvw3">
+          <text>false</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
   <textAnnotation id="TextAnnotation_1y5ofpb">
     <text>Determines status of student:
 SP, SDA, SIA, SDH, SIH, M</text>
@@ -5810,6 +6146,9 @@ Parent Assets &amp; Rates</text>
       </dmndi:DMNEdge>
       <dmndi:DMNShape id="DMNShape_0btzg1g" dmnElementRef="dmnFullTimeParentsIncomeTaxRate">
         <dc:Bounds height="80" width="180" x="1030" y="400" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_1mesqdx" dmnElementRef="dmnFullTimeAwardInstitutionEligibility">
+        <dc:Bounds height="80" width="180" x="350" y="710" />
       </dmndi:DMNShape>
     </dmndi:DMNDiagram>
   </dmndi:DMNDI>
