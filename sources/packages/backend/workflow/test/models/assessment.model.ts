@@ -442,10 +442,10 @@ export interface CalculatedAssessmentModel {
   // CSGD
   awardEligibilityCSGD: boolean;
   // BCAG
+  assessmentEligibilityBCAG: boolean;
   awardEligibilityBCAG: boolean;
   // SBSD
   assessmentEligibilitySBSD: boolean;
-  institutionEligibilitySBSD: boolean;
   awardEligibilitySBSD: boolean;
 
   // Full time.
@@ -467,6 +467,7 @@ export interface CalculatedAssessmentModel {
   provincialAwardWeeklyBCAGMax: number;
   provincialAwardNetBCAGAmount: number;
   // BCAG2Year
+  assessmentEligibilityBCAG2Year: boolean;
   awardEligibilityBCAG2Year: number;
   // BGPD
   assessmentEligibilityBGPD: boolean;
