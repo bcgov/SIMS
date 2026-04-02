@@ -203,17 +203,20 @@ export class FedRestrictionProcessingService {
             sanitizedRestrictions.length >=
             FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT
           ) {
-            // Insert the records in batch to avoid memory issues and improve performance.
-            await this.insertFedRestrictionsBulk(
-              entityManager,
-              sanitizedRestrictions,
-              federalRestrictionsCodesMap,
-              processSummary,
-              job,
-            );
+            const insertFedRestrictionsBulkPromise =
+              await this.insertFedRestrictionsBulk(
+                entityManager,
+                sanitizedRestrictions,
+                federalRestrictionsCodesMap,
+                processSummary,
+              );
+            const progressPromise = job.progress(progress);
+            await Promise.all([
+              insertFedRestrictionsBulkPromise,
+              progressPromise,
+            ]);
             sanitizedRestrictions.length = 0;
           }
-          await job.progress(progress);
         },
       );
       // Insert the remaining records that were not inserted in the bulk insert inside the stream,
@@ -224,7 +227,6 @@ export class FedRestrictionProcessingService {
           sanitizedRestrictions,
           federalRestrictionsCodesMap,
           processSummary,
-          job,
         );
       }
       this.logger.log(
@@ -250,13 +252,9 @@ export class FedRestrictionProcessingService {
     restrictions: FedRestrictionFileRecord[],
     federalRestrictionsCodesMap: Map<string, number>,
     processSummary: ProcessSummary,
-    job: Job<void>,
   ): Promise<void> {
     const [firstLine] = restrictions;
     const lastLine = restrictions[restrictions.length - 1];
-    await job.log(
-      `Inserting federal restrictions records from line number ${firstLine.lineNumber} to line number ${lastLine.lineNumber}.`,
-    );
     await this.ensureFederalRestrictionExists(
       entityManager,
       restrictions,
@@ -287,7 +285,7 @@ export class FedRestrictionProcessingService {
     try {
       await entityManager
         .getRepository(FederalRestriction)
-        .save(restrictionsToInsert);
+        .insert(restrictionsToInsert);
     } catch (error: unknown) {
       const logMessage = `Error while inserting the block of lines from ${firstLine.lineNumber} to ${lastLine.lineNumber}.`;
       throw new Error(logMessage, { cause: error });

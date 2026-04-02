@@ -30,7 +30,7 @@ export class FedRestrictionIntegrationService extends SFTPIntegrationBase<
       progress: number,
     ) => Promise<void>,
   ): Promise<void> {
-    let lineNumber = 0;
+    let lineNumber = 1;
     return this.streamResponseFileLines(
       remoteFilePath,
       async (fileLine, progress) => {
