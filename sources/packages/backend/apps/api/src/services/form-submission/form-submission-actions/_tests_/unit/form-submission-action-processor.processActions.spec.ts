@@ -9,7 +9,6 @@ import {
   FormSubmissionActionType,
   FormSubmissionDecisionStatus,
 } from "@sims/sims-db";
-import { FormSubmissionActionModel } from "apps/api/src/services/form-submission/form-submission-actions/form-submission-action-models";
 
 describe("FormSubmissionActionProcessor-processActions", () => {
   let formSubmissionActionProcessor: FormSubmissionActionProcessor;
@@ -91,8 +90,9 @@ describe("FormSubmissionActionProcessor-processActions", () => {
         id: item.id,
         actions: item.submittedData.actions ?? [],
         decisionStatus: item.currentDecision.decisionStatus,
+        submittedData: item.submittedData,
       })),
-    } as FormSubmissionActionModel;
+    };
     const entityManager = createFormSubmissionFindOneMock(mockedFormSubmission);
 
     // Act

@@ -10,6 +10,8 @@ import {
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
+  createFakeStudentScholasticStanding,
+  createFakeUser,
   E2EDataSources,
   saveFakeApplication,
   saveFakeFormSubmissionFromInputTestData,
@@ -23,6 +25,7 @@ import {
   FormSubmissionStatus,
   ModifiedIndependentStatus,
   NotificationMessageType,
+  StudentScholasticStandingChangeType,
   User,
 } from "@sims/sims-db";
 import {
@@ -311,6 +314,138 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
       });
     },
   );
+
+  it("Should complete a student form submission, update the non-punitive scholastic standing, and generate a notification when the user completes the form submission and the user has approval authorization.", async () => {
+    // Arrange
+    const now = new Date();
+    MockDate.set(now);
+    const institutionSubmittedByUser = await db.user.save(createFakeUser());
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      initialValues: {
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    });
+    const savedScholasticStanding = await db.studentScholasticStanding.save(
+      createFakeStudentScholasticStanding(
+        { submittedBy: institutionSubmittedByUser, application },
+        {
+          initialValues: {
+            changeType:
+              StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+          },
+        },
+      ),
+    );
+    // Link the assessment to the scholastic standing.
+    const currentAssessment = application.currentAssessment!;
+    currentAssessment.studentScholasticStanding = savedScholasticStanding;
+    await db.studentAssessment.save(currentAssessment);
+    // Create form submission with an item that will update the scholastic standing to a non-punitive withdrawal.
+    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+      now,
+      ministryAuditUser: ministryAdminUser,
+      formCategory: FormCategory.StudentForm,
+      submissionStatus: FormSubmissionStatus.Pending,
+      formSubmissionItems: [
+        {
+          dynamicFormConfiguration: formConfigs.studentFormA,
+          submittedData: {
+            actions: [
+              FormSubmissionActionType.UpdateNonPunitiveScholasticStandingWithdrawal,
+            ],
+            nonPunitiveWithdrawalId: savedScholasticStanding.id,
+          },
+          decisions: [
+            { decisionStatus: FormSubmissionDecisionStatus.Approved },
+          ],
+        },
+      ],
+    });
+    const student = formSubmission.student;
+    const [formSubmissionItemA] = formSubmission.formSubmissionItems;
+    const payload = {
+      items: [
+        {
+          submissionItemId: formSubmissionItemA.id,
+          lastUpdateDate: formSubmissionItemA.updatedAt,
+        },
+      ],
+    };
+    const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const ministryAuditUser = { id: ministryAdminUser.id };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+    // Validate database changes.
+    const [updatedFormSubmission, notification] =
+      await getEntitiesForMinistryCompleteFormSubmissionAssertion(
+        db,
+        formSubmission.id,
+        student.user.id,
+      );
+    // Validate form submission data is updated correctly.
+    expect(updatedFormSubmission).toEqual({
+      id: formSubmission.id,
+      submissionStatus: FormSubmissionStatus.Completed,
+      assessedDate: now,
+      assessedBy: ministryAuditUser,
+      modifier: ministryAuditUser,
+      updatedAt: now,
+      student: {
+        id: student.id,
+        notes: [
+          {
+            id: formSubmissionItemA.currentDecision!.decisionNote.id,
+          },
+        ],
+      },
+    });
+    // Validate notification.
+    expect(notification).toEqual({
+      id: expect.any(Number),
+      notificationMessage: {
+        id: NotificationMessageType.StudentFormCompleted,
+      },
+      creator: ministryAuditUser,
+      messagePayload: {
+        email_address: student.user.email,
+        template_id: GC_NOTIFY_TEMPLATE_IDS.StudentFormCompleted,
+        personalisation: {
+          givenNames: student.user.firstName,
+          lastName: student.user.lastName,
+          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
+      },
+    });
+    // Validate target action for the form submission.
+    const updatedScholasticStanding =
+      await db.studentScholasticStanding.findOne({
+        select: {
+          id: true,
+          nonPunitiveFormSubmissionItem: { id: true },
+          updatedAt: true,
+          modifier: { id: true },
+        },
+        relations: {
+          nonPunitiveFormSubmissionItem: true,
+          modifier: true,
+        },
+        where: { id: savedScholasticStanding.id },
+        loadEagerRelations: false,
+      });
+    // The non-punitive scholastic standing should be updated with a reference to the completed form submission item.
+    expect(updatedScholasticStanding).toEqual({
+      id: savedScholasticStanding.id,
+      nonPunitiveFormSubmissionItem: { id: formSubmissionItemA.id },
+      modifier: ministryAuditUser,
+      updatedAt: now,
+    });
+  });
 
   it("Should throw an unprocessable entity error when attempting to complete a student appeal but some items were updated.", async () => {
     // Arrange
