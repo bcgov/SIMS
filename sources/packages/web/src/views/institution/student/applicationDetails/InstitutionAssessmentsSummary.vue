@@ -4,7 +4,11 @@
       <header-navigator
         title="Student applications"
         :route-location="backRoute"
-        sub-title="Assessment"
+        sub-title="Assessments"
+      />
+      <application-header-title
+        :application-id="applicationId"
+        :student-id="studentId"
       />
     </template>
     <request-assessment
@@ -33,11 +37,13 @@ import { AssessmentTriggerType } from "@/types";
 import RequestAssessment from "@/components/common/students/assessment/Request.vue";
 import HistoryAssessment from "@/components/common/students/assessment/History.vue";
 import { useFeatureToggles } from "@/composables";
+import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 
 export default defineComponent({
   components: {
     RequestAssessment,
     HistoryAssessment,
+    ApplicationHeaderTitle,
   },
   props: {
     studentId: {

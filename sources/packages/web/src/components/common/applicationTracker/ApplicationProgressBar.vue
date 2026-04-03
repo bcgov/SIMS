@@ -38,6 +38,7 @@
         "
         :application-id="applicationId"
         :are-application-actions-allowed="areApplicationActionsAllowed"
+        :student-id="studentId"
       />
       <assessment
         v-else-if="
@@ -47,6 +48,7 @@
         :assessment-trigger-type="
           applicationProgressDetails.assessmentTriggerType!
         "
+        :are-application-actions-allowed="areApplicationActionsAllowed"
         @go-to-notice-of-assessment="goToNoticeOfAssessment"
       />
       <enrolment
@@ -55,6 +57,7 @@
           ApplicationStatus.Enrolment
         "
         :application-id="applicationId"
+        :student-id="studentId"
       />
       <completed
         :are-application-actions-allowed="areApplicationActionsAllowed"
@@ -63,6 +66,7 @@
           ApplicationStatus.Completed
         "
         :application-id="applicationId"
+        :student-id="studentId"
       />
     </template>
     <cancelled
@@ -142,6 +146,11 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    studentId: {
+      type: Number,
+      required: false,
+      default: undefined,
+    },
   },
   setup(props) {
     const applicationTrackerLabels = [
@@ -171,6 +180,7 @@ export default defineComponent({
         applicationProgressDetails.value =
           await ApplicationService.shared.getApplicationProgressDetails(
             props.applicationId,
+            { studentId: props.studentId },
           );
 
         if (

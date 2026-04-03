@@ -60,7 +60,8 @@ export default defineComponent({
   },
   setup(props) {
     const { getISODateHourMinuteString } = useFormatters();
-    const { mapApplicationEditStatusForMinistry } = useApplication();
+    const { mapApplicationEditStatusForMinistryAndInstitution } =
+      useApplication();
     const menuItems = ref<MenuItemModel[]>([]);
     // Event emitter for application sidebar refresh.
     const { refreshApplicationSidebarOn, refreshApplicationSidebarOff } =
@@ -181,7 +182,7 @@ export default defineComponent({
       return {
         title: "Application",
         props: {
-          subtitle: mapApplicationEditStatusForMinistry(
+          subtitle: mapApplicationEditStatusForMinistryAndInstitution(
             applicationVersion.applicationEditStatus,
           ),
           prependIcon: "mdi-school-outline",
@@ -221,7 +222,7 @@ export default defineComponent({
         {
           title: "Application",
           props: {
-            subtitle: mapApplicationEditStatusForMinistry(
+            subtitle: mapApplicationEditStatusForMinistryAndInstitution(
               currentVersion.applicationEditStatus,
             ),
             prependIcon: "mdi-school-outline",
@@ -343,7 +344,7 @@ export default defineComponent({
             props: {
               slim: true,
               prependIcon: "mdi-school-outline",
-              subtitle: mapApplicationEditStatusForMinistry(
+              subtitle: mapApplicationEditStatusForMinistryAndInstitution(
                 version.applicationEditStatus,
               ),
               to: {

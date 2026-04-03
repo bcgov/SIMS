@@ -52,6 +52,7 @@
     ></application-status-tracker-banner
   >
 
+  <!-- Parent information banners are only visible in the student view. -->
   <template
     v-for="parent in applicationDetails?.parentsInfo"
     :key="parent.supportingUserId"
@@ -322,6 +323,11 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    studentId: {
+      type: Number,
+      required: false,
+      default: undefined,
+    },
   },
   setup(props) {
     const applicationDetails = ref<InProgressApplicationDetailsAPIOutDTO>();
@@ -358,6 +364,7 @@ export default defineComponent({
       applicationDetails.value =
         await ApplicationService.shared.getInProgressApplicationDetails(
           props.applicationId,
+          { studentId: props.studentId },
         );
     });
 
