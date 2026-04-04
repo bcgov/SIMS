@@ -28,6 +28,7 @@ import {
   useFormioUtils,
   useOffering,
   useAssessment,
+  useAward,
 } from "@/composables";
 import { FORMIO_LOAD_DATA_PROCESSING_VIEW_DELAY } from "@/constants/system-constants";
 
@@ -88,12 +89,15 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const { registerUtilsMethod, createCacheIdentifier } = useFormioUtils();
+    const { registerUtilsMethod, createCacheIdentifier } =
+      useFormioUtils();
     const { currencyFormatter, isLessThanGivenWeeks } = useFormatters();
     const { mapOfferingIntensity } = useOffering();
     const { mapLivingCategory, mapStudentDependantStatus } = useAssessment();
+    const { mapAward } = useAward();
     // Register global utils functions.
     registerUtilsMethod("currencyFormatter", currencyFormatter);
+    registerUtilsMethod("mapAward", mapAward);
     registerUtilsMethod("mapOfferingIntensity", mapOfferingIntensity);
     registerUtilsMethod("mapLivingCategory", mapLivingCategory);
     registerUtilsMethod("mapStudentDependantStatus", mapStudentDependantStatus);
