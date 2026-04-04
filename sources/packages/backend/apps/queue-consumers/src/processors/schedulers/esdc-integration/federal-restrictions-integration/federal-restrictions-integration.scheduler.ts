@@ -1,18 +1,18 @@
 import { InjectQueue, Processor } from "@nestjs/bull";
 import { FedRestrictionProcessingService } from "@sims/integrations/esdc-integration";
-import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
+import { DataSource } from "typeorm";
 
 @Processor(QueueNames.FederalRestrictionsIntegration)
 export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void> {
   constructor(
     @InjectQueue(QueueNames.FederalRestrictionsIntegration)
     schedulerQueue: Queue<void>,
-    queueService: QueueService,
     private readonly fedRestrictionProcessingService: FedRestrictionProcessingService,
+    private readonly dataSource: DataSource,
     logger: LoggerService,
   ) {
     super(schedulerQueue, queueService, logger);
@@ -25,10 +25,10 @@ export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void>
    * @returns processing result.
    */
   protected async process(
-    _job: Job<void>,
+    job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string> {
-    await this.fedRestrictionProcessingService.process(processSummary);
+    await this.fedRestrictionProcessingService.process(processSummary, job);
     return "Federal restrictions import process finished.";
   }
 }

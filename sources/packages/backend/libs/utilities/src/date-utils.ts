@@ -160,6 +160,20 @@ export function getDateOnlyFromFormat(
  * @param date date/time to have the date extracted.
  * @returns date only string in ISO format YYYY-MM-DD.
  */
+export function getISODateOnlyString(date: Date | string): string;
+/**
+ * Get the date only part of a date/time object.
+ * If null or undefined is provided, it will return null.
+ * @param date date/time to have the date extracted.
+ * @returns date only string in ISO format YYYY-MM-DD, or null if no date provided.
+ */
+export function getISODateOnlyString(date?: Date | string): null;
+/**
+ * Get the date only part of a date/time object.
+ * If null or undefined is provided, it will return null.
+ * @param date date/time to have the date extracted.
+ * @returns date only string in ISO format YYYY-MM-DD, or null if no date provided.
+ */
 export function getISODateOnlyString(date?: Date | string): string | null {
   if (!date) {
     return null;
