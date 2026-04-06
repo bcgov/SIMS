@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import {
-  RestrictionService,
   FederalRestrictionService,
+  RestrictionService,
   SshService,
 } from "@sims/integrations/services";
 import {
@@ -13,13 +13,13 @@ import { FedRestrictionProcessingService } from "./fed-restriction.processing.se
 
 @Module({
   providers: [
-    FederalRestrictionService,
     SshService,
     FedRestrictionIntegrationService,
     FedRestrictionProcessingService,
     RestrictionService,
     RestrictionSharedService,
     StudentRestrictionSharedService,
+    FederalRestrictionService,
   ],
   exports: [FedRestrictionProcessingService],
 })
