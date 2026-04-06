@@ -61,13 +61,13 @@ export const AWARDS: AwardDetail[] = [
   {
     awardType: FullTimeAwardTypes.BCAG,
     awardTypeDisplay: "BCAG-FT",
-    description: "B.C. Access Grant (Full-Time)",
+    description: "B.C. Access Grant for Full-Time Students",
     offeringIntensity: OfferingIntensity.fullTime,
   },
   {
     awardType: FullTimeAwardTypes.BGPD,
     awardTypeDisplay: "BCAG-D",
-    description: "B.C. Access Grant for Students with Disabilities",
+    description: "B.C. Access Grant for Full-Time Students with Disabilities",
     offeringIntensity: OfferingIntensity.fullTime,
   },
   {
