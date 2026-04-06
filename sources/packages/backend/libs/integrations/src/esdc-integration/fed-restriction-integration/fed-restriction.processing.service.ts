@@ -1,13 +1,13 @@
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
 import { FedRestrictionIntegrationService } from "./fed-restriction.integration.service";
-import { DataSource, EntityManager } from "typeorm";
+import { EntityManager } from "typeorm";
 import {
   FederalRestriction,
   Restriction,
   RestrictionType,
 } from "@sims/sims-db";
-import { getISODateOnlyString, QueueNames } from "@sims/utilities";
+import { getISODateOnlyString } from "@sims/utilities";
 import { FedRestrictionFileRecord } from "./fed-restriction-files/fed-restriction-file-record";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT } from "@sims/services/constants";
@@ -17,8 +17,6 @@ import {
 } from "@sims/integrations/services";
 import { SystemUsersService } from "@sims/services/system-users";
 import { StudentRestrictionSharedService } from "@sims/services";
-import { Job } from "bull";
-import { QueueService } from "@sims/services/queue/queue.service";
 
 /**
  * Manages the process to import the entire snapshot of federal
@@ -30,7 +28,6 @@ import { QueueService } from "@sims/services/queue/queue.service";
 export class FedRestrictionProcessingService {
   private readonly esdcConfig: ESDCIntegrationConfig;
   constructor(
-    private readonly dataSource: DataSource,
     config: ConfigService,
     private readonly federalRestrictionService: FederalRestrictionService,
     private readonly integrationService: FedRestrictionIntegrationService,
@@ -38,7 +35,6 @@ export class FedRestrictionProcessingService {
     private readonly systemUsersService: SystemUsersService,
     private readonly logger: LoggerService,
     private readonly restrictionService: RestrictionService,
-    private readonly queueService: QueueService,
   ) {
     this.esdcConfig = config.esdcIntegration;
   }
@@ -52,28 +48,31 @@ export class FedRestrictionProcessingService {
    * 3. If the restriction is present on federal data and it is also
    * present and active on student data, update the updated_at only.
    * @param processSummary process summary for logging.
+   * @param entityManager entity manager to execute all DB operations
+   * in the same transaction.
    * @returns process response.
    */
-  async process(processSummary: ProcessSummary, job: Job<void>): Promise<void> {
+  async process(
+    processSummary: ProcessSummary,
+    entityManager: EntityManager,
+  ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     // Get the list of all ZIP files from SFTP ordered by file name.
     const fileSearch = new RegExp(
       `^${this.esdcConfig.environmentCode}CSLS\\.PBC\\.RESTR\\.LIST\\.D[\\w]*\\.[\\d]*\\.(zip|ZIP)$`,
       "i",
     );
-
     const filePaths = await this.integrationService.getResponseFilesFullPath(
       this.esdcConfig.ftpResponseFolder,
       fileSearch,
     );
-
     if (filePaths.length > 0) {
       // Process only the most updated file.
       await this.processRestrictionsFile(
         filePaths[filePaths.length - 1],
         auditUser.id,
         processSummary,
-        job,
+        entityManager,
       );
       // If there are more than one file, archive it.
       // Only the most updated file matters because it represents the entire data snapshot.
@@ -102,42 +101,33 @@ export class FedRestrictionProcessingService {
     remoteFilePath: string,
     auditUserId: number,
     processSummary: ProcessSummary,
-    job: Job<void>,
+    entityManager: EntityManager,
   ): Promise<void> {
     processSummary.info(`Processing file ${remoteFilePath}.`);
     let insertedRestrictionsIDs: number[] = [];
-    await this.dataSource.transaction(async (entityManager) => {
-      try {
-        this.logger.log("Starting database transaction.");
-        await this.queueService.acquireQueueLock(
-          job.queue.name as QueueNames,
+    try {
+      this.logger.log("Starting database transaction.");
+      // Start the transaction that will handle all the import.
+      await this.downloadIntoTransientTable(
+        remoteFilePath,
+        entityManager,
+        processSummary,
+      );
+      this.logger.log(
+        "Starting bulk operations to update student restrictions.",
+      );
+      insertedRestrictionsIDs =
+        await this.federalRestrictionService.executeBulkStepsChanges(
           entityManager,
         );
-        // Start the transaction that will handle all the import.
-        await this.downloadIntoTransientTable(
-          remoteFilePath,
-          entityManager,
-          processSummary,
-          job,
-        );
-        this.logger.log(
-          "Starting bulk operations to update student restrictions.",
-        );
-        insertedRestrictionsIDs =
-          await this.federalRestrictionService.executeBulkStepsChanges(
-            entityManager,
-          );
-        this.logger.log("Process finished, transaction committed.");
-      } catch (error: unknown) {
-        const logMessage =
-          "Unexpected error while processing federal restrictions. Executing rollback.";
-        this.logger.error(logMessage, error);
-        throw new Error(logMessage, { cause: error });
-      }
-    });
-    // The process of sending the notifications happens after the restrictions are committed
-    // because the notifications are considered a lower priority and any error related to the
-    // notification should not interfere with the federal restriction process.
+      this.logger.log("Process finished, transaction committed.");
+    } catch (error: unknown) {
+      const logMessage =
+        "Unexpected error while processing federal restrictions. Executing rollback.";
+      this.logger.error(logMessage, error);
+      throw new Error(logMessage, { cause: error });
+    }
+    // Generate the notifications.
     try {
       if (insertedRestrictionsIDs?.length) {
         this.logger.log(
@@ -146,6 +136,7 @@ export class FedRestrictionProcessingService {
         await this.studentRestrictionsService.createNotifications(
           insertedRestrictionsIDs,
           auditUserId,
+          entityManager,
         );
         processSummary.info(
           `${insertedRestrictionsIDs.length} notification(s) generated.`,
@@ -175,7 +166,6 @@ export class FedRestrictionProcessingService {
     remoteFilePath: string,
     entityManager: EntityManager,
     processSummary: ProcessSummary,
-    job: Job<void>,
   ): Promise<void> {
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
     try {
@@ -216,7 +206,7 @@ export class FedRestrictionProcessingService {
                 federalRestrictionsCodesMap,
                 processSummary,
               );
-            const progressPromise = job.progress(progress);
+            const progressPromise = await processSummary.progress?.(progress);
             await Promise.all([
               insertFedRestrictionsBulkPromise,
               progressPromise,

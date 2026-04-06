@@ -69,7 +69,7 @@ export class ProcessSummary {
    * The instance can shared among multiple methods to allow
    * the capture of all log entries that must be grouped.
    */
-  constructor() {
+  constructor(readonly progress?: (progress: number) => Promise<void>) {
     this.logs = {
       [LogScopes.Summary]: [],
       [LogScopes.Combined]: [],
