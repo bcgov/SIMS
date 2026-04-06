@@ -15,7 +15,7 @@ export * from "./math-utils";
 export * from "./specialized-string-builder";
 export * from "./string-utils";
 export * from "./address-utils";
-export * from "./compressed-file-utils";
+export * from "./file-reader/stream-reader-content-crlf";
 export * from "./application-data-comparison/application-data-comparison";
 export * from "./application-data-comparison/application-data-comparison.models";
 export * from "./hash-utils";
