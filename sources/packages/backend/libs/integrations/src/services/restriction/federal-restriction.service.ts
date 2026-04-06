@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { FederalRestriction } from "@sims/sims-db";
+import { DataModelService, FederalRestriction } from "@sims/sims-db";
 import { getSQLFileData } from "@sims/utilities";
 import { DataSource, EntityManager } from "typeorm";
 
@@ -13,13 +13,14 @@ const FEDERAL_RESTRICTIONS_RAW_SQL_FOLDER = "federal-restrictions";
  * sims.student_restrictions table (table that contains provincial and federal restrictions).
  */
 @Injectable()
-export class FederalRestrictionService {
+export class FederalRestrictionService extends DataModelService<FederalRestriction> {
   private readonly bulkUpdateStudentIdSQL: string;
   private readonly bulkInsertNewRestrictionsSQL: string;
   private readonly bulkDeactivateRestrictionsSQL: string;
   private readonly bulkUpdateActiveRestrictionsSQL: string;
 
   constructor(private readonly dataSource: DataSource) {
+    super(dataSource.getRepository(FederalRestriction));
     this.bulkUpdateStudentIdSQL = getSQLFileData(
       "Bulk-update-students-foreign-key.sql",
       FEDERAL_RESTRICTIONS_RAW_SQL_FOLDER,
@@ -64,18 +65,19 @@ export class FederalRestrictionService {
    */
   async executeBulkStepsChanges(manager: EntityManager): Promise<number[]> {
     // STEP 1
-    // This bulk update MUST happen before the next operations to assign
-    // the student foreign keys correctly.
+    // ! This bulk update MUST happen before the next operations to assign
+    // ! the student foreign keys correctly.
     await this.bulkUpdateStudentsForeignKey(manager);
-    // STEP 2
     // This bulk updates expects that the student foreign key is updated.
-    const insertedRestrictionsIDs =
-      await this.bulkInsertNewRestrictions(manager);
+    // STEP 2
+    const insertedRestrictionsIDs = await this.bulkInsertNewRestrictions(
+      manager,
+    );
     // STEP 3
     await this.bulkDeactivateRestrictions(manager);
-    // STEP 4
     // This last update is not critical but allows the system to keep track
     // of the last time that an active restriction was received.
+    // STEP 4
     await this.bulkUpdateActiveRestrictions(manager);
 
     return insertedRestrictionsIDs;
