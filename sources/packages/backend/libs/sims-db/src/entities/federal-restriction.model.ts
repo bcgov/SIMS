@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Restriction, Student } from ".";
+import { Restriction } from ".";
 import { ColumnNames, TableNames } from "../constant";
 
 /**
@@ -63,18 +63,4 @@ export class FederalRestriction {
     name: ColumnNames.CreateTimestamp,
   })
   createdAt: Date;
-  /**
-   * Student associated with the federal restriction.
-   * This association happens after the federal restriction is created,
-   * when the system tries to match the federal restriction with an
-   * existing student on the database, based on the SIN, last name and birth date.
-   */
-  @ManyToOne(() => Student, {
-    nullable: true,
-  })
-  @JoinColumn({
-    name: "student_id",
-    referencedColumnName: ColumnNames.ID,
-  })
-  student?: Student;
 }

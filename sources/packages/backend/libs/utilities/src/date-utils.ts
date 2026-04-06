@@ -139,8 +139,32 @@ export function getDateOnly(stringDate: string): Date | null {
  * Get date from date-string in the given format.
  * @param stringDate date string.
  * @param stringDateFormat date format.
- * @param validateFormat validate the date string against date format.
  * @returns parsed date.
+ */
+export function getDateOnlyFromFormat(
+  stringDate: string,
+  stringDateFormat: string,
+): Date;
+/**
+ * Get date from date-string in the given format.
+ * @param stringDate date string.
+ * @param stringDateFormat date format.
+ * @param validateFormat validate the date string against date format.
+ * @returns parsed date, or null if the date string is not valid
+ * against the date format.
+ */
+export function getDateOnlyFromFormat(
+  stringDate: string,
+  stringDateFormat: string,
+  validateFormat: boolean,
+): Date | null;
+/**
+ * Get date from date-string in the given format.
+ * @param stringDate date string.
+ * @param stringDateFormat date format.
+ * @param validateFormat validate the date string against date format.
+ * @returns parsed date, or null if the date string is not valid
+ * against the date format.
  */
 export function getDateOnlyFromFormat(
   stringDate: string,

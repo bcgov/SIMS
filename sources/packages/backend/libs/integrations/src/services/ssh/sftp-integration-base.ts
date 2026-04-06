@@ -230,7 +230,6 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       const fileStat = await client.stat(remoteFilePath);
       // Synchronously count bytes as chunks arrive — safe with event emitters.
       sftpFileStream.on("data", (chunk: Buffer) => {
-        //console.log(`Received chunk of size ${chunk.length} bytes.`);
         bytesReceived += chunk.length;
       });
       const downloadPromise = client.get(remoteFilePath, sftpFileStream, {

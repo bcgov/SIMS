@@ -13,13 +13,13 @@ import { FedRestrictionProcessingService } from "./fed-restriction.processing.se
 
 @Module({
   providers: [
+    FederalRestrictionService,
     SshService,
     FedRestrictionIntegrationService,
     FedRestrictionProcessingService,
     RestrictionService,
     RestrictionSharedService,
     StudentRestrictionSharedService,
-    FederalRestrictionService,
   ],
   exports: [FedRestrictionProcessingService],
 })

@@ -13,32 +13,31 @@ export class FedRestrictionFileRecord {
   constructor(
     private readonly line: string,
     public readonly lineNumber: number,
-  ) {
-    this.composedCode =
-      `${this.restrictionCode ?? ""}${this.restrictionReasonCode ?? ""}`.trim();
-  }
+  ) {}
 
   public get sin(): string {
-    return this.line.substr(0, 9);
+    return this.line.substring(0, 9);
   }
 
   public get surname(): string {
-    return this.line.substr(9, 30).trim();
+    return this.line.substring(9, 39).trim();
   }
 
   public get dateOfBirth(): Date {
-    return getDateOnlyFromFormat(this.line.substr(69, 8), DATE_FORMAT);
+    return getDateOnlyFromFormat(this.line.substring(69, 77), DATE_FORMAT);
   }
 
   public get restrictionCode(): string {
-    return this.line.substr(84, 1);
+    return this.line.substring(84, 85);
   }
 
   public get restrictionReasonCode(): string {
-    return this.line.substr(85, 1);
+    return this.line.substring(85, 86);
   }
 
-  public readonly composedCode: string;
+  public getComposedCode() {
+    return `${this.restrictionCode}${this.restrictionReasonCode}`.trim();
+  }
 
   /**
    * Assess the record to know in advance if some invalid data is present.
@@ -54,7 +53,7 @@ export class FedRestrictionFileRecord {
       errors.push("invalid date of birth");
     }
 
-    if (!this.composedCode) {
+    if (!this.getComposedCode()) {
       errors.push("invalid restriction code");
     }
     return errors.join(", ");
