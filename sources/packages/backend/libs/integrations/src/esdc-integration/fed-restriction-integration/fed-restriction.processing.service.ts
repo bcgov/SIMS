@@ -270,12 +270,11 @@ export class FedRestrictionProcessingService {
     // DB restriction objects to be inserted to the DB.
     const restrictionsToInsert: FederalRestriction[] = [];
     for (const restriction of restrictions) {
-      const restrictionId = federalRestrictionsCodesMap.get(
-        restriction.composedCode,
-      );
+      const composedCode = restriction.getComposedCode();
+      const restrictionId = federalRestrictionsCodesMap.get(composedCode);
       if (!restrictionId) {
         throw new Error(
-          `Restriction code ${restriction.composedCode} not found for line number ${restriction.lineNumber}. This record should have been created on the previous step.`,
+          `Restriction code ${composedCode} not found for line number ${restriction.lineNumber}. This record should have been created on the previous step.`,
         );
       }
       const newRestriction = new FederalRestriction();
@@ -315,8 +314,9 @@ export class FedRestrictionProcessingService {
   ): Promise<void> {
     const missingCodes: string[] = [];
     for (const restriction of restrictions) {
-      if (!federalRestrictionsCodesMap.has(restriction.composedCode)) {
-        missingCodes.push(restriction.composedCode);
+      const composedCode = restriction.getComposedCode();
+      if (!federalRestrictionsCodesMap.has(composedCode)) {
+        missingCodes.push(composedCode);
       }
     }
     if (!missingCodes.length) {
