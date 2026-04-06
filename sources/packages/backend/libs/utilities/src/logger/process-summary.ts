@@ -68,8 +68,9 @@ export class ProcessSummary {
    * Creates a new instance of {@link ProcessSummary}.
    * The instance can shared among multiple methods to allow
    * the capture of all log entries that must be grouped.
+   * @param progress optional function to report the progress of the process.
    */
-  constructor(readonly progress?: (progress: number) => Promise<void>) {
+  constructor(readonly progress?: (progress: number) => Promise<void> | void) {
     this.logs = {
       [LogScopes.Summary]: [],
       [LogScopes.Combined]: [],
