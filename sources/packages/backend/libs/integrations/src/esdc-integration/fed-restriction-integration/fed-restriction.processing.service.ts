@@ -199,8 +199,8 @@ export class FedRestrictionProcessingService {
             sanitizedRestrictions.length >=
             FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT
           ) {
-            const insertFedRestrictionsBulkPromise =
-              await this.insertFedRestrictionsBulk(
+            const insertFederalRestrictionsBulkPromise =
+              await this.insertFederalRestrictionsBulk(
                 entityManager,
                 sanitizedRestrictions,
                 federalRestrictionsCodesMap,
@@ -208,7 +208,7 @@ export class FedRestrictionProcessingService {
               );
             const progressPromise = await processSummary.progress?.(progress);
             await Promise.all([
-              insertFedRestrictionsBulkPromise,
+              insertFederalRestrictionsBulkPromise,
               progressPromise,
             ]);
             sanitizedRestrictions.length = 0;
@@ -218,7 +218,7 @@ export class FedRestrictionProcessingService {
       // Insert the remaining records that were not inserted in the bulk insert inside the stream,
       // because they did not reach the amount defined for the bulk insert.
       if (sanitizedRestrictions.length) {
-        await this.insertFedRestrictionsBulk(
+        await this.insertFederalRestrictionsBulk(
           entityManager,
           sanitizedRestrictions,
           federalRestrictionsCodesMap,
@@ -243,7 +243,7 @@ export class FedRestrictionProcessingService {
    * @param federalRestrictionRepo repository to execute the inserts in batches that
    * keeps the DB operations in the same transaction.
    */
-  private async insertFedRestrictionsBulk(
+  private async insertFederalRestrictionsBulk(
     entityManager: EntityManager,
     restrictions: FedRestrictionFileRecord[],
     federalRestrictionsCodesMap: Map<string, number>,

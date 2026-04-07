@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { SystemUsersService } from "@sims/services";
 import { FEDERAL_RESTRICTIONS_UNIDENTIFIED_DESCRIPTION } from "@sims/services/constants";
 import {
   ActionEffectiveCondition,
@@ -16,7 +17,10 @@ import { DataSource, EntityManager } from "typeorm";
  */
 @Injectable()
 export class RestrictionService extends RecordDataModelService<Restriction> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    dataSource: DataSource,
+    private readonly systemUsersService: SystemUsersService,
+  ) {
     super(dataSource.getRepository(Restriction));
   }
 
@@ -49,6 +53,7 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
     const repo = entityManager.getRepository(Restriction);
     const newRestrictions: Restriction[] = [];
     const uniqueMissingCodes = [...new Set(codes)];
+    const now = new Date();
     for (const code of uniqueMissingCodes) {
       const newRestriction = new Restriction();
       newRestriction.description =
@@ -61,6 +66,8 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
         RestrictionActionType.StopPartTimeDisbursement,
       ];
       newRestriction.restrictionCategory = "Federal";
+      newRestriction.creator = this.systemUsersService.systemUser;
+      newRestriction.createdAt = now;
       newRestrictions.push(newRestriction);
     }
     return repo.save(newRestrictions);
