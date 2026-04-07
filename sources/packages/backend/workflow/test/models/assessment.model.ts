@@ -497,12 +497,14 @@ export interface CalculatedAssessmentModel {
 
   // Part time.
   // CSLP
+  assessmentEligibilityCSLP: boolean;
   awardEligibilityCSLP: boolean;
   federalAwardNetCSLPAmount: number;
   limitAwardCSLPRemaining: number;
   latestCSLPBalance: number;
   finalFederalAwardNetCSLPAmount: number;
   // CSPT
+  assessmentEligibilityCSPT: boolean;
   awardEligibilityCSPT: boolean;
   federalAwardCSPTAmount: number;
   federalAwardNetCSPTAmount: number;
@@ -555,6 +557,15 @@ export interface CalculatedAssessmentModel {
   // DMN Full Time Program Year Maximums
   dmnFullTimeProgramYearMaximums?: {
     limitWeeklyTransportationAllowance: number;
+  };
+  // DMN Part Time Award Institution Eligibility
+  dmnPartTimeAwardInstitutionEligibility?: {
+    isEligibleSBSD: boolean;
+    isEligibleBCAG: boolean;
+    isEligibleCSPT: boolean;
+    isEligibleCSGP: boolean;
+    isEligibleCSGD: boolean;
+    isEligibleCSLP: boolean;
   };
   // DMN Full Time Award Institution Eligibility
   dmnFullTimeAwardInstitutionEligibility?: {
