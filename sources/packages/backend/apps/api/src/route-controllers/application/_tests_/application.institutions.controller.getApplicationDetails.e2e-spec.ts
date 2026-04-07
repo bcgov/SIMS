@@ -17,7 +17,6 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 import {
-  Application,
   ApplicationStatus,
   EducationProgramOffering,
   InstitutionLocation,
@@ -110,9 +109,8 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       });
   });
 
-  it("Should not have access to get the student application details when the student submitted an application to non-public institution.", async () => {
+  it("Should throw a HttpStatus Forbidden (403) error when a non-public institution accesses the application.", async () => {
     // Arrange
-    // Create new application.
     const savedApplication = await saveFakeApplication(db.dataSource, {
       institutionLocation: collegeCLocation,
     });
@@ -129,7 +127,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       .auth(institutionUserTokenCUser, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
-        statusCode: 403,
+        statusCode: HttpStatus.FORBIDDEN,
         message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
         error: "Forbidden",
       });
@@ -154,7 +152,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
-        statusCode: 403,
+        statusCode: HttpStatus.FORBIDDEN,
         message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
         error: "Forbidden",
       });
@@ -184,96 +182,9 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
-        statusCode: 403,
+        statusCode: HttpStatus.FORBIDDEN,
         message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
         error: "Forbidden",
-      });
-  });
-
-  it("Should get the latest student application details when the optional query parameter isParentApplication is set to true.", async () => {
-    // Arrange
-    const offeringInitialValues = {
-      studyStartDate: getISODateOnlyString(addDays(-10)),
-      studyEndDate: getISODateOnlyString(addDays(10)),
-      offeringIntensity: OfferingIntensity.fullTime,
-    } as EducationProgramOffering;
-
-    const firstApplication = await saveFakeApplication(
-      db.dataSource,
-      { institutionLocation: collegeFLocation },
-      {
-        applicationStatus: ApplicationStatus.Edited,
-        offeringInitialValues: offeringInitialValues,
-        offeringIntensity: OfferingIntensity.fullTime,
-      },
-    );
-    firstApplication.parentApplication = {
-      id: firstApplication.id,
-    } as Application;
-    firstApplication.precedingApplication = firstApplication.parentApplication;
-    const savedFirstApplication = await db.application.save(firstApplication);
-
-    const secondApplication = await saveFakeApplication(
-      db.dataSource,
-      {
-        student: firstApplication.student,
-        institutionLocation: collegeFLocation,
-        precedingApplication: { id: savedFirstApplication.id } as Application,
-        parentApplication: { id: savedFirstApplication.id } as Application,
-      },
-      {
-        applicationStatus: ApplicationStatus.Edited,
-        applicationNumber: savedFirstApplication.applicationNumber,
-        offeringInitialValues: offeringInitialValues,
-        offeringIntensity: OfferingIntensity.fullTime,
-      },
-    );
-
-    const thirdApplication = await saveFakeApplication(
-      db.dataSource,
-      {
-        student: firstApplication.student,
-        institutionLocation: collegeFLocation,
-        precedingApplication: { id: secondApplication.id } as Application,
-        parentApplication: {
-          id: savedFirstApplication.parentApplication.id,
-        } as Application,
-      },
-      {
-        applicationStatus: ApplicationStatus.InProgress,
-        applicationNumber: savedFirstApplication.applicationNumber,
-        offeringInitialValues: offeringInitialValues,
-        offeringIntensity: OfferingIntensity.fullTime,
-      },
-    );
-
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
-
-    const endpoint = `/institutions/application/student/${firstApplication.student.id}/application/${firstApplication.id}?isParentApplication=true`;
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({
-        data: {},
-        id: thirdApplication.id,
-        applicationStatus: thirdApplication.applicationStatus,
-        applicationEditStatus: thirdApplication.applicationEditStatus,
-        applicationNumber: thirdApplication.applicationNumber,
-        isArchived: false,
-        applicationFormName: "SFAA2022-23",
-        applicationProgramYearID: thirdApplication.programYear.id,
-        studentFullName: getUserFullName(thirdApplication.student.user),
-        applicationOfferingIntensity: offeringInitialValues.offeringIntensity,
-        applicationStartDate: offeringInitialValues.studyStartDate,
-        applicationEndDate: offeringInitialValues.studyEndDate,
-        applicationInstitutionName:
-          thirdApplication.location.institution.legalOperatingName,
-        isChangeRequestAllowedForPY: false,
       });
   });
 

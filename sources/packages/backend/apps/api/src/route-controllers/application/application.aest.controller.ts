@@ -66,6 +66,7 @@ export class ApplicationAESTController extends BaseController {
    * This API will be used by ministry users.
    * @param applicationId application id.
    * @param loadDynamicData flag for if dynamic data should be loaded.
+   * TODO Analyze whether the isParentApplication flag is necessary as it is not used in web.
    * @param isParentApplication flag for if the application is a parent application.
    * @returns Application details
    */

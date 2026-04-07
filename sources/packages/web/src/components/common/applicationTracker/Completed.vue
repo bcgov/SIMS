@@ -276,6 +276,11 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    studentId: {
+      type: Number,
+      required: false,
+      default: undefined,
+    },
   },
   setup(props) {
     const router = useRouter();
@@ -289,6 +294,7 @@ export default defineComponent({
       assessmentDetails.value =
         await ApplicationService.shared.getCompletedApplicationDetails(
           props.applicationId,
+          { studentId: props.studentId },
         );
       // Even though if an application has multiple COEs
       // COE can be declined only once, either first COE is declined

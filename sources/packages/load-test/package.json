@@ -11,13 +11,13 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "ts-loader": "^9.5.4",
+    "ts-loader": "^9.5.7",
     "typescript": "^6.0.2",
     "webpack": "^5.105.4",
     "webpack-cli": "^7.0.2",
     "webpack-glob-entries": "^1.0.1"
   },
   "dependencies": {
-    "@types/k6": "^1.6.0"
+    "@types/k6": "^1.7.0"
   }
 }

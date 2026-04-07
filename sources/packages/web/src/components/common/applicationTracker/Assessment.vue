@@ -17,7 +17,10 @@
       required on your application.
     </template>
     <template #actions>
-      <v-btn color="primary" @click="$emit('goToNoticeOfAssessment')"
+      <v-btn
+        color="primary"
+        :disabled="!areApplicationActionsAllowed"
+        @click="$emit('goToNoticeOfAssessment')"
         >View assessment</v-btn
       >
     </template>
@@ -39,6 +42,11 @@ export default defineComponent({
     assessmentTriggerType: {
       type: String as PropType<AssessmentTriggerType>,
       required: true,
+    },
+    areApplicationActionsAllowed: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   setup() {
