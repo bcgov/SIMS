@@ -45,11 +45,6 @@ const loadApplicationData = async () => {
   ];
 };
 
-// Re-register the handler when applicationId changes
-watchEffect(async () => {
-  await loadApplicationData();
-});
-
 /**
  * Create the menu for the current application (Active).
  * @param currentVersion application version information.
@@ -111,4 +106,9 @@ const createCurrentApplicationMenuItems = (
     },
   ];
 };
+
+// Re-register the handler when applicationId changes
+watchEffect(async () => {
+  await loadApplicationData();
+});
 </script>
