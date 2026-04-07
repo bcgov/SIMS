@@ -39,14 +39,14 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
   }
 
   /**
-   * During import operations for federal restriction, if there is
-   * a restriction code not present on the database, a new restriction
-   * will be create with a generic restriction.
+   * During import operations for federal restriction, if there are
+   * restriction codes not present on the database, new restrictions
+   * will be created.
    * @param codes codes to create the new restrictions.
    * @param entityManager entity manager to execute in transaction.
-   * @returns newly create restrictions.
+   * @returns newly created restrictions.
    */
-  async createUnidentifiedFederalRestriction(
+  async createUnidentifiedFederalRestrictions(
     codes: string[],
     entityManager: EntityManager,
   ): Promise<Restriction[]> {

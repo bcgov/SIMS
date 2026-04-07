@@ -36,9 +36,11 @@ export class FedRestrictionIntegrationService extends SFTPIntegrationBase<
       async (fileLine, progress) => {
         return fileRecordProcessor(
           new FedRestrictionFileRecord(fileLine, lineNumber++),
-          progress,
+          // Will be available since reportProgress is true.
+          progress!,
         );
       },
+      { reportProgress: true },
     );
   }
 }

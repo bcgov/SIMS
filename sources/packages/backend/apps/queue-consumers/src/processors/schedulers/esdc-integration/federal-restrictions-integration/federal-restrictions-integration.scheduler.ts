@@ -29,8 +29,8 @@ export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void>
   protected async process(
     job: Job<void>,
     processSummary: ProcessSummary,
-  ): Promise<string> {
-    await this.dataSource.transaction(async (entityManager) => {
+  ): Promise<string[] | string> {
+    return this.dataSource.transaction(async (entityManager) => {
       await job.log("Acquiring lock for execution.");
       // Ensure only one instance of the scheduler is processing at a time by acquiring a lock on the queue.
       // Even if the process is considered stalled by the queue processor, the lock will prevent another
@@ -39,11 +39,18 @@ export class FederalRestrictionsIntegrationScheduler extends BaseScheduler<void>
       await job.log(
         "Lock acquired. Starting federal restrictions import process.",
       );
-      await this.fedRestrictionProcessingService.process(
+      const result = await this.fedRestrictionProcessingService.process(
         processSummary,
         entityManager,
       );
+      if (result.filesFound.length) {
+        return [
+          `Federal restrictions import process finished.`,
+          `Processed file: ${result.processedFileName}`,
+          `Files found: ${result.filesFound.join(", ")}.`,
+        ];
+      }
+      return "No files found to be processed.";
     });
-    return "Federal restrictions import process finished.";
   }
 }

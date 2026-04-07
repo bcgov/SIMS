@@ -100,7 +100,7 @@ export async function saveFakeStudent(
 
 /**
  * Ensure a student exists in the database with the provided unique data, if not create a new one.
- * The combination of the last name, birth date and SIN is usually used to determined if a student
+ * The combination of the last name, birth date and SIN is usually used to determine if a student
  * from an external source has a match in the system.
  * @param db E2E data sources to perform the database operations.
  * @param uniqueData data used to determine if the student already exists in the database.

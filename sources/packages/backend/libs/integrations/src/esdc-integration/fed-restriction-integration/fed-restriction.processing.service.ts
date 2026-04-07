@@ -17,6 +17,7 @@ import {
 } from "@sims/integrations/services";
 import { SystemUsersService } from "@sims/services/system-users";
 import { StudentRestrictionSharedService } from "@sims/services";
+import { FederalRestrictionProcessResult } from "@sims/integrations/esdc-integration/fed-restriction-integration/models/fed-restriction-model";
 
 /**
  * Manages the process to import the entire snapshot of federal
@@ -50,12 +51,12 @@ export class FedRestrictionProcessingService {
    * @param processSummary process summary for logging.
    * @param entityManager entity manager to execute all DB operations
    * in the same transaction.
-   * @returns process response.
+   * @returns processing result.
    */
   async process(
     processSummary: ProcessSummary,
     entityManager: EntityManager,
-  ): Promise<void> {
+  ): Promise<FederalRestrictionProcessResult> {
     const auditUser = this.systemUsersService.systemUser;
     // Get the list of all ZIP files from SFTP ordered by file name.
     const fileSearch = new RegExp(
@@ -68,8 +69,9 @@ export class FedRestrictionProcessingService {
     );
     if (filePaths.length > 0) {
       // Process only the most updated file.
+      const fileToProcess = filePaths[filePaths.length - 1];
       await this.processRestrictionsFile(
-        filePaths[filePaths.length - 1],
+        fileToProcess,
         auditUser.id,
         processSummary,
         entityManager,
@@ -85,8 +87,13 @@ export class FedRestrictionProcessingService {
           this.logger.error(logMessage, error);
         }
       }
+      return {
+        filesFound: filePaths,
+        processedFileName: fileToProcess,
+      };
     } else {
       processSummary.info("No files found to be processed at this time.");
+      return { filesFound: [] };
     }
   }
 
@@ -120,7 +127,9 @@ export class FedRestrictionProcessingService {
         await this.federalRestrictionService.executeBulkStepsChanges(
           entityManager,
         );
-      this.logger.log("Process finished, transaction committed.");
+      this.logger.log(
+        `Completed bulk operations to update student restrictions. ${insertedRestrictionsIDs.length} restriction(s) inserted.`,
+      );
     } catch (error: unknown) {
       const logMessage =
         "Unexpected error while processing federal restrictions. Executing rollback.";
@@ -200,13 +209,13 @@ export class FedRestrictionProcessingService {
             FEDERAL_RESTRICTIONS_BULK_INSERT_AMOUNT
           ) {
             const insertFederalRestrictionsBulkPromise =
-              await this.insertFederalRestrictionsBulk(
+              this.insertFederalRestrictionsBulk(
                 entityManager,
                 sanitizedRestrictions,
                 federalRestrictionsCodesMap,
                 processSummary,
               );
-            const progressPromise = await processSummary.progress?.(progress);
+            const progressPromise = processSummary.progress?.(progress);
             await Promise.all([
               insertFederalRestrictionsBulkPromise,
               progressPromise,
@@ -228,11 +237,11 @@ export class FedRestrictionProcessingService {
       this.logger.log(
         "Completed file download and record insertion into the Federal Restrictions table.",
       );
-    } catch (error) {
+    } catch (error: unknown) {
       const errorMessage = `Error while downloading and inserting records into the Federal Restrictions table, file ${remoteFilePath}.`;
       processSummary.error(errorMessage, error);
       this.logger.error(errorMessage, error);
-      return;
+      throw new Error(errorMessage, { cause: error });
     }
   }
 
@@ -314,7 +323,7 @@ export class FedRestrictionProcessingService {
     }
     // Add new codes to database.
     const createdRestrictions =
-      await this.restrictionService.createUnidentifiedFederalRestriction(
+      await this.restrictionService.createUnidentifiedFederalRestrictions(
         missingCodes,
         entityManager,
       );

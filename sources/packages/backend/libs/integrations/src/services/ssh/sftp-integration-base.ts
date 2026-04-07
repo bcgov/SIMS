@@ -137,24 +137,12 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    */
   protected async downloadResponseFileLines(
     remoteFilePath: string,
-  ): Promise<string[] | false> {
-    this.logger.log(`Downloading file ${remoteFilePath}.`);
-    let client: Client | undefined = undefined;
-    try {
-      const fileContent: string[] = [];
-      await this.streamResponseFileLines(remoteFilePath, (line) => {
-        fileContent.push(line);
-      });
-      return fileContent;
-    } catch (error) {
-      this.logger.error(`Error downloading file ${remoteFilePath}`, error);
-      throw error;
-    } finally {
-      await this.ensureClientClosed(
-        `downloading file ${remoteFilePath}`,
-        client,
-      );
-    }
+  ): Promise<string[]> {
+    const fileContent: string[] = [];
+    await this.streamResponseFileLines(remoteFilePath, (line) => {
+      fileContent.push(line);
+    });
+    return fileContent;
   }
 
   /**
@@ -162,6 +150,9 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * This is specially useful for large files that can cause memory issues when loaded entirely.
    * @param remoteFilePath full remote file path with file name.
    * @param fileLineProcessor callback function to process each line of the file.
+   * @param options Optional parameters.
+   * - `reportProgress`: when set to true, the fileLineProcessor callback will receive the current download progress percentage as
+   * the second parameter. This allows for tracking and reporting progress during the file processing.
    */
   protected async streamResponseFileLines(
     remoteFilePath: string,
@@ -169,6 +160,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       line: string,
       progress?: number,
     ) => Promise<void> | void,
+    options?: { reportProgress?: boolean },
   ): Promise<void> {
     this.logger.log(`Downloading file ${remoteFilePath}.`);
     let client: Client | undefined = undefined;
@@ -177,7 +169,11 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       const isCompressed = fileExtension === ".zip";
       const encoding = isCompressed ? null : FILE_DEFAULT_ENCODING;
       client = await this.getClient();
-      const fileStat = await client.stat(remoteFilePath);
+      let fileSize: number | undefined = undefined;
+      if (options?.reportProgress) {
+        const fileStat = await client.stat(remoteFilePath);
+        fileSize = fileStat.size;
+      }
       const sftpFileStream = new PassThrough();
       const downloadPromise = client.get(remoteFilePath, sftpFileStream, {
         readStreamOptions: { encoding },
@@ -189,7 +185,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
       await Promise.all([
         processStreamLineByLine(sftpFileStream, fileLineProcessor, {
           isCompressed,
-          fileSize: fileStat.size,
+          fileSize,
         }),
         downloadPromise,
       ]);
