@@ -50,6 +50,7 @@ import InstitutionStudentFileUploads from "@/views/institution/student/Instituti
 import InstitutionStudentBalances from "@/views/institution/student/InstitutionStudentBalances.vue";
 import InstitutionStudentNotes from "@/views/institution/student/InstitutionStudentNotes.vue";
 import InstitutionAssessmentsSummary from "@/views/institution/student/applicationDetails/InstitutionAssessmentsSummary.vue";
+import InstitutionApplicationStatusTracker from "@/views/institution/student/applicationDetails/InstitutionApplicationStatusTracker.vue";
 import ApplicationExceptions from "@/views/institution/student/applicationDetails/ApplicationExceptions.vue";
 import StudentAppealRequest from "@/views/institution/student/applicationDetails/StudentAppealRequest.vue";
 import AssessmentAward from "@/views/institution/student/applicationDetails/AssessmentAward.vue";
@@ -790,6 +791,12 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             name: InstitutionRoutesConst.ASSESSMENTS_SUMMARY,
             props: true,
             component: InstitutionAssessmentsSummary,
+          },
+          {
+            path: AppRoutes.ApplicationStatusTracker,
+            name: InstitutionRoutesConst.APPLICATION_STATUS_TRACKER,
+            props: true,
+            component: InstitutionApplicationStatusTracker,
           },
           {
             path: AppRoutes.ApplicationException,

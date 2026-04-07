@@ -255,6 +255,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
     ]);
   });
 
+  // TODO Analyze whether the isParentApplication flag is necessary as it is not used in web.
   it("Should get the latest student application details when the optional query parameter isParentApplication is set to true.", async () => {
     // Arrange
     const offeringInitialValues = {
