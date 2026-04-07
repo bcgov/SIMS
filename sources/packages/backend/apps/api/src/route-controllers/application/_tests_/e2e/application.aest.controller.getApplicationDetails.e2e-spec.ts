@@ -5,7 +5,7 @@ import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
-} from "../../../testHelpers";
+} from "../../../../testHelpers";
 import {
   createE2EDataSources,
   E2EDataSources,
@@ -18,7 +18,7 @@ import {
   EducationProgramOffering,
   OfferingIntensity,
 } from "@sims/sims-db";
-import { getUserFullName } from "../../../utilities";
+import { getUserFullName } from "../../../../utilities";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 
 describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {

@@ -9,7 +9,7 @@ import {
   INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
   INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
   InstitutionTokenTypes,
-} from "../../../testHelpers";
+} from "../../../../testHelpers";
 import {
   createE2EDataSources,
   createFakeInstitutionLocation,
@@ -23,7 +23,7 @@ import {
   OfferingIntensity,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
-import { getUserFullName } from "../../../utilities";
+import { getUserFullName } from "../../../../utilities";
 
 describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
   let app: INestApplication;

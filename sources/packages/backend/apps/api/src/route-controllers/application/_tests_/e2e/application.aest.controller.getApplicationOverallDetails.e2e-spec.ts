@@ -5,7 +5,7 @@ import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
-} from "../../../testHelpers";
+} from "../../../../testHelpers";
 import {
   createE2EDataSources,
   createFakeSupportingUser,

@@ -9,7 +9,7 @@ import {
   INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
   INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
   InstitutionTokenTypes,
-} from "../../../testHelpers";
+} from "../../../../testHelpers";
 import {
   E2EDataSources,
   createE2EDataSources,

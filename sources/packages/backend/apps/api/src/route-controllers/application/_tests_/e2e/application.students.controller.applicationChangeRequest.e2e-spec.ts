@@ -8,7 +8,7 @@ import {
   getStudentToken,
   mockUserLoginInfo,
   createPYStudentApplicationFormConfiguration,
-} from "../../../testHelpers";
+} from "../../../../testHelpers";
 import {
   createE2EDataSources,
   E2EDataSources,
@@ -30,9 +30,9 @@ import {
   DynamicFormConfigurationService,
   FormNames,
   FormService,
-} from "../../../services";
-import { AppStudentsModule } from "../../../app.students.module";
-import { SaveApplicationAPIInDTO } from "../models/application.dto";
+} from "../../../../services";
+import { AppStudentsModule } from "../../../../app.students.module";
+import { SaveApplicationAPIInDTO } from "../../models/application.dto";
 import MockDate from "mockdate";
 
 describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {

@@ -9,7 +9,7 @@ import {
   getStudentToken,
   mockJWTUserInfo,
   resetMockJWTUserInfo,
-} from "../../../testHelpers";
+} from "../../../../testHelpers";
 import {
   createE2EDataSources,
   E2EDataSources,
@@ -32,9 +32,9 @@ import {
   Student,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
-import { SaveApplicationAPIInDTO } from "../models/application.dto";
-import { FormNames, FormService } from "../../../services";
-import { AppStudentsModule } from "../../../app.students.module";
+import { SaveApplicationAPIInDTO } from "../../models/application.dto";
+import { FormNames, FormService } from "../../../../services";
+import { AppStudentsModule } from "../../../../app.students.module";
 import { createFakeSFASPartTimeApplication } from "@sims/test-utils/factories/sfas-part-time-application";
 import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
 import { ConfigServiceMockHelper } from "@sims/test-utils/mocks";

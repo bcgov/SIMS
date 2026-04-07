@@ -8,7 +8,7 @@ import {
   FakeStudentUsersTypes,
   getStudentToken,
   mockUserLoginInfo,
-} from "../../../testHelpers";
+} from "../../../../testHelpers";
 import {
   createFakeStudentAppeal,
   createFakeStudentAppealRequest,
@@ -56,7 +56,7 @@ import {
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
 import { ECertFailedValidation } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
-import { SuccessWaitingStatus } from "../models/application.dto";
+import { SuccessWaitingStatus } from "../../models/application.dto";
 
 describe("ApplicationStudentsController(e2e)-getCompletedApplicationDetails", () => {
   let app: INestApplication;
