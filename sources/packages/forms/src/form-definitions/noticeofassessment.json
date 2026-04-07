@@ -3383,7 +3383,7 @@
                   "numRows": 9,
                   "numCols": 4,
                   "cellAlignment": "left",
-                  "customClass": "flexible-width-formio-bordered extra-small",
+                  "customClass": "formio-bordered flexible-width-formio-bordered extra-small",
                   "hover": true,
                   "condensed": true,
                   "key": "table",
@@ -3478,20 +3478,18 @@
                       {
                         "components": [
                           {
-                            "label": "Canada Student Loan for Full-time Students (CSL-FT)",
-                            "tag": "p",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "{{ utils.custom.mapAward('CSLF', 'Full Time') }}",
-                            "refreshOnChange": false,
-                            "key": "canadaStudentLoan",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false
+                            "input": true,
+                            "tableView": false,
+                            "label": "cslf-ft",
+                            "key": "cslf-ft",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.mapAward('CSLF', 'Full Time');"
                           }
                         ]
                       },
@@ -3558,21 +3556,18 @@
                       {
                         "components": [
                           {
-                            "label": "B.C. Student Loan (BCSL)",
-                            "tag": "p",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "{{ utils.custom.mapAward('BCSL', 'Full Time') }}",
-                            "refreshOnChange": false,
-                            "key": "html1",
-                            "type": "htmlelement",
-                            "input": false,
+                            "input": true,
                             "tableView": false,
-                            "hideOnChildrenHidden": false
+                            "label": "bcsl-ft",
+                            "key": "bcsl-ft",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.mapAward('BCSL', 'Full Time');"
                           }
                         ]
                       },
@@ -3638,21 +3633,18 @@
                       {
                         "components": [
                           {
-                            "label": "Canada Student Grant for Full-time Students (CSG-FT)",
-                            "tag": "p",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "{{ utils.custom.mapAward('CSGF', 'Full Time') }}",
-                            "refreshOnChange": false,
-                            "key": "csgFt",
-                            "type": "htmlelement",
-                            "input": false,
+                            "input": true,
                             "tableView": false,
-                            "hideLabel": true
+                            "label": "csg-ft",
+                            "key": "csg-ft",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.mapAward('CSGF', 'Full Time');"
                           }
                         ]
                       },
@@ -3716,20 +3708,18 @@
                       {
                         "components": [
                           {
-                            "label": "Canada Student Grant for Full-time Students with Dependants (CSG-FTDEP)",
-                            "tag": "p",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "{{ utils.custom.mapAward('CSGD', 'Full Time') }}",
-                            "refreshOnChange": false,
-                            "key": "csgd",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false
+                            "input": true,
+                            "tableView": false,
+                            "label": "csgd-ft",
+                            "key": "csgd-ft",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.mapAward('CSGD', 'Full Time');"
                           }
                         ]
                       },
@@ -3794,22 +3784,18 @@
                       {
                         "components": [
                           {
-                            "label": "B.C. Access Grant for Full-time Students (BCAG-FT)",
-                            "tag": "p",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "{{ utils.custom.mapAward('BCAG', 'Full Time') }}",
-                            "refreshOnChange": false,
-                            "key": "bcag",
-                            "type": "htmlelement",
-                            "input": false,
+                            "input": true,
                             "tableView": false,
-                            "hideOnChildrenHidden": false,
-                            "hideLabel": true
+                            "label": "bcag-ft",
+                            "key": "bcag-ft",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.mapAward('BCAG', 'Full Time');"
                           }
                         ]
                       },
@@ -3873,20 +3859,18 @@
                       {
                         "components": [
                           {
-                            "label": "Canada Student Grant for Students with Disabilities (CSG-D)",
-                            "tag": "p",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "{{ utils.custom.mapAward('CSGP', 'Full Time') }}",
-                            "refreshOnChange": false,
-                            "key": "csgp",
-                            "type": "htmlelement",
-                            "input": false,
-                            "tableView": false
+                            "input": true,
+                            "tableView": false,
+                            "label": "csgp-ft",
+                            "key": "csgp-ft",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.mapAward('CSGP', 'Full Time');"
                           }
                         ]
                       },
@@ -3950,22 +3934,18 @@
                       {
                         "components": [
                           {
-                            "label": "B.C. Access Grant for Students with a Disability (BCAG-D)",
-                            "tag": "p",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "{{ utils.custom.mapAward('BGPD', 'Full Time') }}",
-                            "refreshOnChange": false,
-                            "key": "bgpd",
-                            "type": "htmlelement",
-                            "input": false,
+                            "input": true,
                             "tableView": false,
-                            "hideOnChildrenHidden": false,
-                            "hideLabel": true
+                            "label": "bgpd-ft",
+                            "key": "bgpd-ft",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.mapAward('BGPD', 'Full Time');"
                           }
                         ]
                       },
@@ -4029,21 +4009,18 @@
                       {
                         "components": [
                           {
-                            "label": "B.C. Supplemental Bursary for Students with Disabilities (SBSD)",
-                            "tag": "p",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "{{ utils.custom.mapAward('SBSD', 'Full Time') }}",
-                            "refreshOnChange": false,
-                            "key": "sbsd",
-                            "type": "htmlelement",
-                            "input": false,
+                            "input": true,
                             "tableView": false,
-                            "hideOnChildrenHidden": false
+                            "label": "sbsd-ft",
+                            "key": "sbsd-ft",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.mapAward('SBSD', 'Full Time');"
                           }
                         ]
                       },
@@ -4224,21 +4201,18 @@
                       {
                         "components": [
                           {
-                            "label": "CSGP",
-                            "tag": "p",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "{{ utils.custom.mapAward('CSGP', 'Part Time') }}\n <span\n class=\"formio-custom-tooltip\">\n   <span class=\"tooltip-text\">\n    Please click <a\n            href=\"https://studentaidbc.ca/explore/grants-scholarships/canada-student-grant-students-disabilities\"\n            rel=\"noopener\"\n            target=\"_blank\"\n            >here</a> for more information about this grant.\n    </span>\n</span>",
-                            "refreshOnChange": false,
-                            "key": "csgp1",
-                            "type": "htmlelement",
-                            "input": false,
+                            "input": true,
                             "tableView": false,
-                            "hideLabel": true
+                            "label": "csgp-pt",
+                            "key": "csgp-pt",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.mapAward('CSGP', 'Part Time');"
                           }
                         ]
                       },
@@ -4305,21 +4279,18 @@
                       {
                         "components": [
                           {
-                            "label": "CSG-PT",
-                            "tag": "p",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "{{ utils.custom.mapAward('CSPT', 'Part Time') }}\n <span\n class=\"formio-custom-tooltip\">\n  <span class=\"tooltip-text\">\n    Please click <a\n            href=\"https://studentaidbc.ca/explore/grants-scholarships/canada-student-grant-part-time-studies\"\n            rel=\"noopener\"\n            target=\"_blank\"\n            >here</a> for more information about this grant.\n    </span>\n</span>",
-                            "refreshOnChange": false,
-                            "key": "cspt1",
-                            "type": "htmlelement",
-                            "input": false,
+                            "input": true,
                             "tableView": false,
-                            "hideLabel": true
+                            "label": "csgp-pt",
+                            "key": "cspt-pt",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.mapAward('CSPT', 'Part Time');"
                           }
                         ]
                       },
@@ -4386,21 +4357,18 @@
                       {
                         "components": [
                           {
-                            "label": "CSGD",
-                            "tag": "p",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "{{ utils.custom.mapAward('CSGD', 'Part Time') }}\n<span\n class=\"formio-custom-tooltip\">\n  <span class=\"tooltip-text\">\n    Please click <a\n            href=\"https://studentaidbc.ca/explore/grants-scholarships/canada-student-grant-students-dependants\"\n            rel=\"noopener\"\n            target=\"_blank\"\n            >here</a> for more information about this grant.\n    </span>\n</span>",
-                            "refreshOnChange": false,
-                            "key": "csgd1",
-                            "type": "htmlelement",
-                            "input": false,
+                            "input": true,
                             "tableView": false,
-                            "hideLabel": true
+                            "label": "csgd-pt",
+                            "key": "csgd-pt",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.mapAward('CSGD', 'Part Time');"
                           }
                         ]
                       },
@@ -4466,22 +4434,18 @@
                       {
                         "components": [
                           {
-                            "label": "HTML",
-                            "tag": "p",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "{{ utils.custom.mapAward('BCAG', 'Part Time') }}\n<span\n class=\"formio-custom-tooltip\">\n  <span class=\"tooltip-text\">\n    Please click <a\n            href=\"https://studentaidbc.ca/explore/grants-scholarships/bc-access-grant-part-time\"\n            rel=\"noopener\"\n            target=\"_blank\"\n            >here</a> for more information about this grant.\n    </span>\n</span>",
-                            "refreshOnChange": false,
-                            "key": "html37",
-                            "type": "htmlelement",
-                            "input": false,
+                            "input": true,
                             "tableView": false,
-                            "hideOnChildrenHidden": false,
-                            "hideLabel": true
+                            "label": "bcag-pt",
+                            "key": "bcag-pt",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.mapAward('BCAG', 'Part Time');"
                           }
                         ]
                       },
@@ -4548,21 +4512,18 @@
                       {
                         "components": [
                           {
-                            "label": "Canada Student Loan",
-                            "tag": "p",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "{{ utils.custom.mapAward('CSLP', 'Part Time') }}",
-                            "refreshOnChange": false,
-                            "key": "canadaStudentLoan1",
-                            "type": "htmlelement",
-                            "input": false,
+                            "input": true,
                             "tableView": false,
-                            "hideLabel": true
+                            "label": "cslp-pt",
+                            "key": "cslp-pt",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.mapAward('CSLP', 'Part Time');"
                           }
                         ]
                       },
@@ -4626,21 +4587,18 @@
                       {
                         "components": [
                           {
-                            "label": "SBSD",
-                            "tag": "p",
-                            "attrs": [
-                              {
-                                "attr": "",
-                                "value": ""
-                              }
-                            ],
-                            "content": "{{ utils.custom.mapAward('SBSD', 'Part Time') }}\n<span\n class=\"formio-custom-tooltip\">\n  <span class=\"tooltip-text\">\n    Please click <a\n            href=\"https://studentaidbc.ca/explore/grants-scholarships/bc-supplemental-bursary-students-disabilities\"\n            rel=\"noopener\"\n            target=\"_blank\"\n            >here</a> for more information about this grant.\n    </span>\n</span>",
-                            "refreshOnChange": false,
-                            "key": "sbsd1",
-                            "type": "htmlelement",
-                            "input": false,
+                            "input": true,
                             "tableView": false,
-                            "hideOnChildrenHidden": false
+                            "label": "sbsd-pt",
+                            "key": "sbsd-pt",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.mapAward('SBSD', 'Part Time');"
                           }
                         ]
                       },
