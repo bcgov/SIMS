@@ -290,7 +290,7 @@ deploy-zone-b-sftp-secret:
 		--from-literal=private-key="$$ZONE_B_SFTP_PRIVATE_KEY" \
 		--dry-run=client -o yaml | oc -n $(NAMESPACE) apply -f -
 
-deploy-artifactory-secret-credential:
+deploy-artifactory-secret:
 	test -n "$(NAMESPACE)"
 	test -n "$(ARTIFACTORY_SERVER_ADDRESS)"
 	test -n "$(ARTIFACTORY_USERNAME)"
