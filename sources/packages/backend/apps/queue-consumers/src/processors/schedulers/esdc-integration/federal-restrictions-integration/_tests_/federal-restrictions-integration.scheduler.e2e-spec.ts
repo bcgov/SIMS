@@ -121,8 +121,20 @@ describe(
         // Queued job.
         const mockedJob = mockBullJob<void>();
 
-        // Act/Assert
-        await processor.processQueue(mockedJob.job);
+        // Act
+        const result = await processor.processQueue(mockedJob.job);
+
+        // Assert
+
+        expect(result).toEqual([
+          "Federal restrictions import process finished.",
+          // Only the most recent file should be processed.
+          `Processed file: ${downloadedFile}`,
+          // Files must be ordered from oldest to newest.
+          `Files found: ${nonDownloadedOldFile}, ${downloadedFile}.`,
+          "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+          "Error(s): 0, Warning(s): 1, Info: 5",
+        ]);
 
         // Check for the log messages.
         expect(

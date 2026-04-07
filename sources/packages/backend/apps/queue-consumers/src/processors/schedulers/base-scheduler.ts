@@ -8,6 +8,13 @@ import { CronExpressionParser } from "cron-parser";
 import { BaseQueue } from "../schedulers/base-queue";
 import { LoggerService } from "@sims/utilities/logger";
 import { EntityManager } from "typeorm";
+import { configureIdleTransactionSessionTimeout } from "@sims/sims-db";
+
+/**
+ * Timeout to handle the worst-case scenario where the commit/rollback
+ * was not executed due to a possible catastrophic failure.
+ */
+const TRANSACTION_IDLE_TIMEOUT_SECONDS = 60;
 
 export abstract class BaseScheduler<T>
   extends BaseQueue<T>
@@ -162,9 +169,15 @@ export abstract class BaseScheduler<T>
    * @param entityManager entity manager to be used to acquire the lock.
    */
   protected async acquireLock(entityManager: EntityManager): Promise<void> {
-    await this.queueService.acquireQueueLock(
-      this.schedulerQueue.name as QueueNames,
-      entityManager,
-    );
+    await Promise.all([
+      configureIdleTransactionSessionTimeout(
+        entityManager,
+        TRANSACTION_IDLE_TIMEOUT_SECONDS,
+      ),
+      this.queueService.acquireQueueLock(
+        this.schedulerQueue.name as QueueNames,
+        entityManager,
+      ),
+    ]);
   }
 }
