@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { SystemUsersService } from "@sims/services";
 import { FEDERAL_RESTRICTIONS_UNIDENTIFIED_DESCRIPTION } from "@sims/services/constants";
 import {
   ActionEffectiveCondition,
@@ -9,15 +10,17 @@ import {
   RestrictionNotificationType,
   RestrictionType,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, Repository } from "typeorm";
-import { EnsureFederalRestrictionResult } from "./models/federal-restriction.model";
+import { DataSource, EntityManager } from "typeorm";
 
 /**
  * Service layer for restrictions.
  */
 @Injectable()
 export class RestrictionService extends RecordDataModelService<Restriction> {
-  constructor(dataSource: DataSource) {
+  constructor(
+    dataSource: DataSource,
+    private readonly systemUsersService: SystemUsersService,
+  ) {
     super(dataSource.getRepository(Restriction));
   }
 
@@ -36,69 +39,38 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
   }
 
   /**
-   * During import operations for federal restriction, if there is
-   * a restriction code not present on the database, a new restriction
-   * will be create with a generic restriction.
-   * @param code code to create the new restriction.
-   * @param [externalRepo] when provided, it is used instead of the
-   * local repository (this.repo). Useful when the command must be executed,
-   * for instance, as part of an existing transaction manage externally to this
-   * service.
-   * @returns newly create restriction.
+   * During import operations for federal restriction, if there are
+   * restriction codes not present on the database, new restrictions
+   * will be created.
+   * @param codes codes to create the new restrictions.
+   * @param entityManager entity manager to execute in transaction.
+   * @returns newly created restrictions.
    */
-  async createUnidentifiedFederalRestriction(
-    code: string,
-    externalRepo?: Repository<Restriction>,
-  ): Promise<Restriction> {
-    const repo = externalRepo ?? this.repo;
-    const newRestriction = new Restriction();
-    newRestriction.description = FEDERAL_RESTRICTIONS_UNIDENTIFIED_DESCRIPTION;
-    newRestriction.restrictionCode = code;
-    newRestriction.restrictionType = RestrictionType.Federal;
-    newRestriction.notificationType = RestrictionNotificationType.Error;
-    newRestriction.actionType = [
-      RestrictionActionType.StopFullTimeDisbursement,
-      RestrictionActionType.StopPartTimeDisbursement,
-    ];
-    /*  Restriction Category is hard coded for federal restrictions.  */
-    newRestriction.restrictionCategory = "Federal";
-    return repo.save(newRestriction);
-  }
-
-  /**
-   * Check the list of the restriction codes provided to identified
-   * possible missing codes. If some missing code is identified,
-   * a new restriction is created.
-   * @param restrictionCodes code to be verified.
-   * @param [externalRepo] when provided, it is used instead of the
-   * local repository (this.repo). Useful when the command must be executed,
-   * for instance, as part of an existing transaction manage externally to this
-   * service.
-   * @returns the complete list with all exceptions needed to satisfy the
-   * restriction codes provided with an additional list of the created ones.
-   */
-  async ensureFederalRestrictionExists(
-    restrictionCodes: string[],
-    externalRepo?: Repository<Restriction>,
-  ): Promise<EnsureFederalRestrictionResult> {
-    const result = new EnsureFederalRestrictionResult();
-    result.restrictions = await this.getAllFederalRestrictions();
-
-    for (const code of restrictionCodes) {
-      const foundRestriction = result.restrictions.find(
-        (restriction) => restriction.restrictionCode === code,
-      );
-      if (!foundRestriction) {
-        const newRestriction = await this.createUnidentifiedFederalRestriction(
-          code,
-          externalRepo,
-        );
-        result.restrictions.push(newRestriction);
-        result.createdRestrictionsCodes.push(newRestriction.restrictionCode);
-      }
+  async createUnidentifiedFederalRestrictions(
+    codes: string[],
+    entityManager: EntityManager,
+  ): Promise<Restriction[]> {
+    const repo = entityManager.getRepository(Restriction);
+    const newRestrictions: Restriction[] = [];
+    const uniqueMissingCodes = [...new Set(codes)];
+    const now = new Date();
+    for (const code of uniqueMissingCodes) {
+      const newRestriction = new Restriction();
+      newRestriction.description =
+        FEDERAL_RESTRICTIONS_UNIDENTIFIED_DESCRIPTION;
+      newRestriction.restrictionCode = code;
+      newRestriction.restrictionType = RestrictionType.Federal;
+      newRestriction.notificationType = RestrictionNotificationType.Error;
+      newRestriction.actionType = [
+        RestrictionActionType.StopFullTimeDisbursement,
+        RestrictionActionType.StopPartTimeDisbursement,
+      ];
+      newRestriction.restrictionCategory = "Federal";
+      newRestriction.creator = this.systemUsersService.systemUser;
+      newRestriction.createdAt = now;
+      newRestrictions.push(newRestriction);
     }
-
-    return result;
+    return repo.save(newRestrictions);
   }
 
   /**

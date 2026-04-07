@@ -16,23 +16,23 @@ export class FedRestrictionFileRecord {
   ) {}
 
   public get sin(): string {
-    return this.line.substr(0, 9);
+    return this.line.substring(0, 9);
   }
 
   public get surname(): string {
-    return this.line.substr(9, 30).trim();
+    return this.line.substring(9, 39).trim();
   }
 
   public get dateOfBirth(): Date {
-    return getDateOnlyFromFormat(this.line.substr(69, 8), DATE_FORMAT);
+    return getDateOnlyFromFormat(this.line.substring(69, 77), DATE_FORMAT);
   }
 
   public get restrictionCode(): string {
-    return this.line.substr(84, 1);
+    return this.line.substring(84, 85);
   }
 
   public get restrictionReasonCode(): string {
-    return this.line.substr(85, 1);
+    return this.line.substring(85, 86);
   }
 
   public getComposedCode() {
