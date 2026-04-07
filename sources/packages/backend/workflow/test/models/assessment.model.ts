@@ -438,6 +438,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataWaivedParent?: number;
   // Common variables used in both full-time and part-time.
   // CSGP
+  assessmentEligibilityCSGP: boolean;
   awardEligibilityCSGP: boolean;
   // CSGD
   assessmentEligibilityCSGD: boolean;
@@ -460,6 +461,7 @@ export interface CalculatedAssessmentModel {
   federalAwardNetCSGDAmount: number;
   provincialAwardNetCSGDAmount: number;
   // CSGF
+  assessmentEligibilityCSGF: boolean;
   awardEligibilityCSGF: number;
   federalAwardNetCSGFAmount: number;
   provincialAwardNetCSGFAmount: number;

@@ -135,10 +135,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
         institutionClassification: InstitutionClassification.Public,
         institutionOrganizationStatus:
           InstitutionOrganizationStatus.NotForProfit,
-        studentDataHasDependents: YesNoOptions.Yes, // Ensures that there are no eligible dependents.
       },
       expectedData: {
-        expectedAssessmentEligibility: true, // Need > $1
+        expectedAssessmentEligibility: true,
         expectedInstitutionEligibility: true,
         expectedAwardEligibility: true,
       },
@@ -148,7 +147,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
         institutionCountry: "AU",
         institutionClassification: InstitutionClassification.Private,
         institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
-        studentDataHasDependents: YesNoOptions.Yes, // Ensures that there are no eligible dependents.
       },
       expectedData: {
         expectedAssessmentEligibility: true,
@@ -163,11 +161,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
         institutionClassification: InstitutionClassification.Public,
         institutionOrganizationStatus:
           InstitutionOrganizationStatus.NotForProfit,
-        studentDataHasDependents: YesNoOptions.Yes,
-        studentDataTaxReturnIncome: 100000,
+        studentDataTaxReturnIncome: 120000, // Ensures that the income is high enough to be above the threshold for eligibility.
       },
       expectedData: {
-        expectedAssessmentEligibility: false, // No dependants
+        expectedAssessmentEligibility: false, // Above income threshold for eligibility.
         expectedInstitutionEligibility: true,
         expectedAwardEligibility: false,
       },
@@ -183,6 +180,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
           ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
           ...testEligibility.inputData,
         };
+        assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
         assessmentConsolidatedData.studentDataDependants = [
           createFakeStudentDependentEligibleForChildcareCost(
             DependentChildCareEligibility.Eligible0To11YearsOld,
