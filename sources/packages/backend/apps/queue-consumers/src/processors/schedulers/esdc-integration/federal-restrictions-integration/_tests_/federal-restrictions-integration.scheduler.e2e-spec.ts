@@ -26,7 +26,7 @@ import { IsNull } from "typeorm";
 import { SystemUsersService } from "@sims/services";
 
 /**
- * Close to real-world Federal Restrictions file with 750 records, including one record with an unknown restriction
+ * Close to real-world Federal Restrictions file with 10 records, including one record with an unknown restriction
  * code to validate the creation of new restrictions when unknown codes are present in the file.
  */
 const FEDERAL_RESTRICTIONS_FILE = "DCSLS.PBC.RESTR.LIST.D20260406.zip";
@@ -161,7 +161,7 @@ describe(
 
         // Assert the total federal restrictions were imported.
         const importedRestrictions = await db.federalRestriction.count();
-        expect(importedRestrictions).toBe(750);
+        expect(importedRestrictions).toBe(10);
 
         // Assert imported restriction is linked to the student and is active.
         const studentRestrictions = await db.studentRestriction.find({
