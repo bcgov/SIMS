@@ -7,7 +7,7 @@ import {
   getAuthRelatedEntities,
   getInstitutionToken,
   InstitutionTokenTypes,
-} from "../../../testHelpers";
+} from "../../../../testHelpers";
 import {
   createE2EDataSources,
   createFakeInstitutionLocation,

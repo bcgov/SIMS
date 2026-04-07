@@ -7,7 +7,7 @@ import {
   FakeStudentUsersTypes,
   getStudentToken,
   mockUserLoginInfo,
-} from "../../../testHelpers";
+} from "../../../../testHelpers";
 import {
   createE2EDataSources,
   E2EDataSources,

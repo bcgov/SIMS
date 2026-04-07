@@ -6,7 +6,7 @@ import {
   FakeStudentUsersTypes,
   getStudentToken,
   getStudentByFakeStudentUserType,
-} from "../../../testHelpers";
+} from "../../../../testHelpers";
 import {
   saveFakeApplicationDisbursements,
   createE2EDataSources,

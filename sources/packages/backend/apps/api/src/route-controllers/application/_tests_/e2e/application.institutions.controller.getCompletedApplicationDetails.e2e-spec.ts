@@ -9,7 +9,7 @@ import {
   INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
   INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
   InstitutionTokenTypes,
-} from "../../../testHelpers";
+} from "../../../../testHelpers";
 import {
   E2EDataSources,
   createE2EDataSources,
@@ -26,7 +26,7 @@ import {
   OfferingIntensity,
 } from "@sims/sims-db";
 
-describe("ApplicationInstitutionsController(e2e)-getEnrolmentApplicationDetails", () => {
+describe("ApplicationInstitutionsController(e2e)-getCompletedApplicationDetails", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeFLocation: InstitutionLocation;
@@ -61,21 +61,23 @@ describe("ApplicationInstitutionsController(e2e)-getEnrolmentApplicationDetails"
   });
 
   it(
-    "Should get application enrolment details for a part-time student application when the application is in 'Enrolment' status " +
+    "Should get application details for a full-time student application when application is in 'Completed' status " +
       "and the institution is authorized to access the application.",
     async () => {
       // Arrange
-      const savedApplication = await saveFakeApplicationDisbursements(
+      const application = await saveFakeApplicationDisbursements(
         db.dataSource,
-        { institutionLocation: collegeFLocation },
         {
-          offeringIntensity: OfferingIntensity.partTime,
-          applicationStatus: ApplicationStatus.Enrolment,
-          firstDisbursementInitialValues: { coeStatus: COEStatus.required },
+          institutionLocation: collegeFLocation,
+        },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+          firstDisbursementInitialValues: { coeStatus: COEStatus.completed },
         },
       );
 
-      const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/enrolment`;
+      const endpoint = `/institutions/application/student/${application.student.id}/application/${application.id}/completed`;
       const institutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeFUser,
       );
@@ -87,24 +89,27 @@ describe("ApplicationInstitutionsController(e2e)-getEnrolmentApplicationDetails"
         .expect(HttpStatus.OK)
         .expect({
           firstDisbursement: {
-            coeStatus: COEStatus.required,
+            coeStatus: COEStatus.completed,
             disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
           },
           assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+          hasBlockFundingFeedbackError: false,
+          hasActiveUnsuccessfulCompletionWeeks: false,
+          eCertFailedValidations: [],
         });
     },
   );
 
-  it("Should throw a HttpStatus Not Found (404) error when the application is not in Enrolment status.", async () => {
+  it("Should throw a HttpStatus Not Found (404) error when the application is not in Completed status.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(
       db.dataSource,
       { institutionLocation: collegeFLocation },
       {
-        applicationStatus: ApplicationStatus.Cancelled,
+        applicationStatus: ApplicationStatus.Assessment,
       },
     );
-    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/enrolment`;
+    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/completed`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -116,7 +121,7 @@ describe("ApplicationInstitutionsController(e2e)-getEnrolmentApplicationDetails"
       .expect(HttpStatus.NOT_FOUND)
       .expect({
         statusCode: HttpStatus.NOT_FOUND,
-        message: `Application id ${savedApplication.id} not found or not in relevant status to get enrolment details.`,
+        message: `Application not found or not on ${ApplicationStatus.Completed} status.`,
         error: "Not Found",
       });
   });
@@ -127,7 +132,7 @@ describe("ApplicationInstitutionsController(e2e)-getEnrolmentApplicationDetails"
       institutionLocation: collegeCLocation,
     });
 
-    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/enrolment`;
+    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/completed`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
@@ -150,7 +155,7 @@ describe("ApplicationInstitutionsController(e2e)-getEnrolmentApplicationDetails"
       institutionLocation: collegeCLocation,
     });
 
-    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/enrolment`;
+    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/completed`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );

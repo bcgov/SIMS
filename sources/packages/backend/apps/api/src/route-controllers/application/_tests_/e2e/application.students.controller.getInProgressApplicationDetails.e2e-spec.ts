@@ -6,7 +6,7 @@ import {
   getStudentToken,
   FakeStudentUsersTypes,
   mockUserLoginInfo,
-} from "../../../testHelpers";
+} from "../../../../testHelpers";
 import {
   createFakeCRAIncomeVerification,
   createFakeSupportingUser,
@@ -16,7 +16,7 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import { ApplicationStatus, SupportingUserType } from "@sims/sims-db";
-import { SuccessWaitingStatus } from "../models/application.dto";
+import { SuccessWaitingStatus } from "../../models/application.dto";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { TestingModule } from "@nestjs/testing";
 

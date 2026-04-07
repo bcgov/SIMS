@@ -5,8 +5,8 @@ import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
-} from "../../../testHelpers";
-import { SuccessWaitingStatus } from "../models/application.dto";
+} from "../../../../testHelpers";
+import { SuccessWaitingStatus } from "../../models/application.dto";
 import {
   E2EDataSources,
   createE2EDataSources,

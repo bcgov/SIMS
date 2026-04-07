@@ -8,7 +8,7 @@ import {
   getStudentToken,
   mockJWTUserInfo,
   resetMockJWTUserInfo,
-} from "../../../testHelpers";
+} from "../../../../testHelpers";
 import {
   saveFakeApplicationDisbursements,
   createE2EDataSources,

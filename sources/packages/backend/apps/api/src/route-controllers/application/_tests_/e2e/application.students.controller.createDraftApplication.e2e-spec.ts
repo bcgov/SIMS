@@ -8,7 +8,7 @@ import {
   getStudentToken,
   mockJWTUserInfo,
   resetMockJWTUserInfo,
-} from "../../../testHelpers";
+} from "../../../../testHelpers";
 import {
   createE2EDataSources,
   E2EDataSources,
@@ -16,7 +16,7 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import { OfferingIntensity, ProgramYear } from "@sims/sims-db";
-import { CreateApplicationAPIInDTO } from "../../../route-controllers/application/models/application.dto";
+import { CreateApplicationAPIInDTO } from "../../models/application.dto";
 import { ConfigServiceMockHelper } from "@sims/test-utils/mocks";
 
 describe("ApplicationStudentsController(e2e)-createDraftApplication", () => {

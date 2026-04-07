@@ -9,22 +9,24 @@ import {
   INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
   INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
   InstitutionTokenTypes,
-} from "../../../testHelpers";
+} from "../../../../testHelpers";
 import {
   E2EDataSources,
   createE2EDataSources,
   createFakeInstitutionLocation,
   saveFakeApplication,
+  saveFakeApplicationDisbursements,
 } from "@sims/test-utils";
 import {
   ApplicationStatus,
   AssessmentTriggerType,
+  COEStatus,
+  DisbursementScheduleStatus,
   InstitutionLocation,
   OfferingIntensity,
-  ProgramInfoStatus,
 } from "@sims/sims-db";
 
-describe("ApplicationInstitutionsController(e2e)-getApplicationProgressDetails", () => {
+describe("ApplicationInstitutionsController(e2e)-getEnrolmentApplicationDetails", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeFLocation: InstitutionLocation;
@@ -34,7 +36,6 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationProgressDetails",
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-
     // College F.
     const { institution: collegeF } = await getAuthRelatedEntities(
       db.dataSource,
@@ -60,22 +61,21 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationProgressDetails",
   });
 
   it(
-    "Should get the progress details for a part-time student application when the application is in 'In Progress' status " +
+    "Should get application enrolment details for a part-time student application when the application is in 'Enrolment' status " +
       "and the institution is authorized to access the application.",
     async () => {
       // Arrange
-      const savedApplication = await saveFakeApplication(
+      const savedApplication = await saveFakeApplicationDisbursements(
         db.dataSource,
+        { institutionLocation: collegeFLocation },
         {
-          institutionLocation: collegeFLocation,
-        },
-        {
-          applicationStatus: ApplicationStatus.InProgress,
           offeringIntensity: OfferingIntensity.partTime,
-          pirStatus: ProgramInfoStatus.notRequired,
+          applicationStatus: ApplicationStatus.Enrolment,
+          firstDisbursementInitialValues: { coeStatus: COEStatus.required },
         },
       );
-      const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/progress-details`;
+
+      const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/enrolment`;
       const institutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeFUser,
       );
@@ -86,17 +86,40 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationProgressDetails",
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
         .expect({
-          applicationStatus: ApplicationStatus.InProgress,
-          applicationStatusUpdatedOn:
-            savedApplication.applicationStatusUpdatedOn.toISOString(),
-          pirStatus: ProgramInfoStatus.notRequired,
+          firstDisbursement: {
+            coeStatus: COEStatus.required,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
           assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
-          hasBlockFundingFeedbackError: false,
-          hasECertFailedValidations: false,
-          currentAssessmentId: savedApplication.currentAssessment.id,
         });
     },
   );
+
+  it("Should throw a HttpStatus Not Found (404) error when the application is not in Enrolment status.", async () => {
+    // Arrange
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      { institutionLocation: collegeFLocation },
+      {
+        applicationStatus: ApplicationStatus.Cancelled,
+      },
+    );
+    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/enrolment`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: `Application id ${savedApplication.id} not found or not in relevant status to get enrolment details.`,
+        error: "Not Found",
+      });
+  });
 
   it("Should throw a HttpStatus Forbidden (403) error when a non-public institution accesses the application.", async () => {
     // Arrange
@@ -104,15 +127,15 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationProgressDetails",
       institutionLocation: collegeCLocation,
     });
 
-    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/progress-details`;
-    const institutionUserTokenCUser = await getInstitutionToken(
+    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/enrolment`;
+    const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCUser,
     );
 
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
-      .auth(institutionUserTokenCUser, BEARER_AUTH_TYPE)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
         statusCode: HttpStatus.FORBIDDEN,
@@ -127,36 +150,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationProgressDetails",
       institutionLocation: collegeCLocation,
     });
 
-    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/progress-details`;
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
-        error: "Forbidden",
-      });
-  });
-
-  it("Should throw a HttpStatus Forbidden (403) error when the application has status Edited.", async () => {
-    // Arrange
-    const savedApplication = await saveFakeApplication(
-      db.dataSource,
-      {
-        institutionLocation: collegeFLocation,
-      },
-      {
-        applicationStatus: ApplicationStatus.Edited,
-      },
-    );
-
-    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/progress-details`;
+    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/enrolment`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
