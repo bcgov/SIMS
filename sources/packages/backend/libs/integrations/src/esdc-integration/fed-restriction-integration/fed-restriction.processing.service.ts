@@ -69,7 +69,7 @@ export class FedRestrictionProcessingService {
     );
     if (filePaths.length > 0) {
       // Process only the most updated file.
-      const fileToProcess = filePaths[filePaths.length - 1];
+      const fileToProcess = filePaths.at(-1) as string;
       await this.processRestrictionsFile(
         fileToProcess,
         auditUser.id,
