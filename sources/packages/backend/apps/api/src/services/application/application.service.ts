@@ -2456,6 +2456,30 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
+   * Checks if any of the previous versions of the application has completed PIR status.
+   * @param parentApplicationId parent application id.
+   * @returns boolean indicating if any previous version has completed PIR status.
+   */
+  async hasPreviouslyCompletedPIR(applicationId: number): Promise<boolean> {
+    return this.repo
+      .createQueryBuilder("application")
+      .where("application.pirStatus = :pirStatus", {
+        pirStatus: ProgramInfoStatus.completed,
+      })
+      .andWhere((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select("currentApp.parentApplication")
+          .from(Application, "currentApp")
+          .where("currentApp.id = :applicationId")
+          .getQuery();
+        return `application.parentApplication = ${subQuery}`;
+      })
+      .setParameter("applicationId", applicationId)
+      .getExists();
+  }
+
+  /**
    * Copy program data from a source application to a target application.
    * @param sourceApplicationData source application data to copy from.
    * @param targetApplicationData target application data to copy to.

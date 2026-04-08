@@ -125,15 +125,21 @@ export class ApplicationStudentsController extends BaseController {
       this.confirmationOfEnrollmentService.getFirstDisbursementScheduleByApplication(
         applicationId,
       );
-    const [applicationData, firstCOE] = await Promise.all([
-      applicationDataPromise,
-      firstCOEPromise,
-    ]);
+
+    const hasPreviouslyCompletedPIRPromise =
+      this.applicationService.hasPreviouslyCompletedPIR(application.id);
+    const [applicationData, firstCOE, hasPreviouslyCompletedPIR] =
+      await Promise.all([
+        applicationDataPromise,
+        firstCOEPromise,
+        hasPreviouslyCompletedPIRPromise,
+      ]);
 
     application.data = applicationData;
     return this.applicationControllerService.transformToApplicationDetailForStudentDTO(
       application,
       firstCOE,
+      hasPreviouslyCompletedPIR,
     );
   }
 

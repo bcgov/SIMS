@@ -272,6 +272,7 @@ export default defineComponent({
         isFulltimeAllowed,
         allowBetaInstitutionsOnly,
         applicationSubmissionDeadlineWeeks,
+        hasPreviouslyCompletedPIR: applicationData.hasPreviouslyCompletedPIR,
       };
       existingApplication.value = applicationData;
       isDataReady.value = true;

@@ -680,6 +680,7 @@ export class ApplicationControllerService {
   transformToApplicationDetailForStudentDTO(
     applicationDetail: Application,
     disbursement: DisbursementSchedule,
+    hasPreviouslyCompletedPIR: boolean,
   ): ApplicationDataAPIOutDTO {
     const offering = applicationDetail.currentAssessment?.offering;
     const applicationFormName = this.getStudentApplicationFormName(
@@ -715,6 +716,7 @@ export class ApplicationControllerService {
       isChangeRequestAllowedForPY: allowApplicationChangeRequest(
         applicationDetail.programYear,
       ),
+      hasPreviouslyCompletedPIR,
     };
   }
 

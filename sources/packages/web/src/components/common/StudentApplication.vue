@@ -59,6 +59,7 @@ import {
 } from "@/types";
 import { ref, watch, defineComponent, computed, PropType } from "vue";
 import {
+  useFormatters,
   useFormioComponentLoader,
   useFormioDropdownLoader,
   useFormioUtils,
@@ -121,6 +122,8 @@ export default defineComponent({
     const OFFERING_NOT_LISTED = "myStudyPeriodIsntListed";
     const SELECTED_LOCATION_PROGRAM_RESTRICTIONS_KEY =
       "selectedLocationProgramRestrictions";
+    const REQUEST_PIR_RESUBMISSION_KEY = "requestPIRResubmission";
+    const PIR_RESUBMISSION_DATE_KEY = "pirResubmissionDate";
     let formInstance: any;
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
@@ -129,6 +132,7 @@ export default defineComponent({
     const isLastPage = ref(false);
     const showNav = ref(false);
     const isFormLoaded = ref(false);
+    const { getISODateHourMinuteString } = useFormatters();
     let offeringIntensity: OfferingIntensity;
 
     const wizardPrimaryLabel = computed(() => {
@@ -387,6 +391,29 @@ export default defineComponent({
         event.changed.value?.programnotListed
       ) {
         resetSelectedOfferingDetails(form);
+      }
+
+      // Handle updates to 'Request resubmission of program information request.'
+      if (event.changed?.component.key === REQUEST_PIR_RESUBMISSION_KEY) {
+        if (event.changed.value) {
+          // When selected, set pirResubmissionDate to the current date/time to force a new value for the pirHash.
+          // TODO Confirm date format
+          const currentDateTime = getISODateHourMinuteString(new Date());
+          formioUtils.setComponentValue(
+            form,
+            PIR_RESUBMISSION_DATE_KEY,
+            currentDateTime,
+          );
+        } else {
+          // When deselected, reset pirResubmissionDate to the persisted date/time so the pirHash isn't erroneously updated.
+          const initialPirResubmissionDate =
+            props.initialData[PIR_RESUBMISSION_DATE_KEY];
+          formioUtils.setComponentValue(
+            form,
+            PIR_RESUBMISSION_DATE_KEY,
+            initialPirResubmissionDate,
+          );
+        }
       }
     };
 
