@@ -1,6 +1,6 @@
 # Base Image
 ARG DOCKER_REGISTRY=artifacts.developer.gov.bc.ca/docker-remote
-FROM ${DOCKER_REGISTRY}/node:25.8.2-alpine3.22
+FROM ${DOCKER_REGISTRY}/node:25.9.0-alpine3.22
 
 ENV npm_config_cache=/app/.npm
 
