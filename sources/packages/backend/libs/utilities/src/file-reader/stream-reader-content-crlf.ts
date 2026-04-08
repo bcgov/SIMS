@@ -23,14 +23,16 @@ export async function processStreamLineByLine(
     const zipStream = input.pipe(
       unzipper.Parse({ forceStream: true }),
     ) as AsyncIterable<unzipper.Entry>;
-    // Read the zip file entries one by one and process file entries line by line.
+    // Read the zip file entries one by one and process only the first file entry line by line.
+    let firstFileProcessed = false;
     for await (const entry of zipStream) {
-      if (entry.type !== "File") {
-        // Allow only file entries, skip directories or other types of entries.
+      if (entry.type !== "File" || firstFileProcessed) {
+        // Allow only the first file entry; skip directories, other types, or additional file entries.
         // Drain the entry stream to avoid hanging the unzip process.
         entry.autodrain();
         continue;
       }
+      firstFileProcessed = true;
       await readLinesFromStream(entry, fileLineProcessor, getProgress);
     }
     return;
