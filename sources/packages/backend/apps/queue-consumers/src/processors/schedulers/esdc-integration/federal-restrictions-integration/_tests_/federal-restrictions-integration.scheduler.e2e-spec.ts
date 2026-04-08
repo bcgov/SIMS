@@ -205,8 +205,9 @@ describe(
         expect(notifications).toEqual([
           {
             id: expect.any(Number),
-            notificationMessage:
-              NotificationMessageType.StudentRestrictionAdded,
+            notificationMessage: {
+              id: NotificationMessageType.StudentRestrictionAdded,
+            },
             messagePayload: {
               template_id: "2b64245f-770c-4493-9d3c-4e0f86773987",
               email_address: student.user.email,
