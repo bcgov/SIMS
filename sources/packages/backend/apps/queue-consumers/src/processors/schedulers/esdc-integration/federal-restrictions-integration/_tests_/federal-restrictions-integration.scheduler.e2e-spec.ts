@@ -77,7 +77,8 @@ describe(
         FEDERAL_RESTRICTIONS_FILE,
         FEDERAL_RESTRICTIONS_FILE_OLD,
       ].map((file) => join(mockResponseFolder, "Archive", parse(file).name));
-
+      // Created the testing module and get the processor and dependencies
+      // after the environment variable is set and the mock file paths are defined.
       const { nestApplication, dataSource, sshClientMock } =
         await createTestingAppModule();
       app = nestApplication;
@@ -125,7 +126,6 @@ describe(
         const result = await processor.processQueue(mockedJob.job);
 
         // Assert
-
         expect(result).toEqual([
           "Federal restrictions import process finished.",
           // Only the most recent file should be processed.

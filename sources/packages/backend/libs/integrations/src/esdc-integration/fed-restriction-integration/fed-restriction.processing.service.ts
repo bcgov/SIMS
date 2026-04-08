@@ -17,7 +17,7 @@ import {
 } from "@sims/integrations/services";
 import { SystemUsersService } from "@sims/services/system-users";
 import { StudentRestrictionSharedService } from "@sims/services";
-import { FederalRestrictionProcessResult } from "@sims/integrations/esdc-integration/fed-restriction-integration/models/fed-restriction-model";
+import { FederalRestrictionProcessResult } from "./models/fed-restriction-model";
 
 /**
  * Manages the process to import the entire snapshot of federal
@@ -102,6 +102,7 @@ export class FedRestrictionProcessingService {
    * @param remoteFilePath remote file to be processed.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param processSummary process summary for logging.
+   * @param entityManager entity manager to execute all DB operations in the same transaction.
    * @returns result of the processing, summary and errors.
    */
   private async processRestrictionsFile(
@@ -114,7 +115,6 @@ export class FedRestrictionProcessingService {
     let insertedRestrictionsIDs: number[] = [];
     try {
       this.logger.log("Starting database transaction.");
-      // Start the transaction that will handle all the import.
       await this.downloadIntoTransientTable(
         remoteFilePath,
         entityManager,
@@ -168,8 +168,8 @@ export class FedRestrictionProcessingService {
    * The file download and the insert into the transient table is done in batches to avoid
    * memory issues and improve performance.
    * @param remoteFilePath remote file to be downloaded and inserted into the transient table.
-   * @param processSummary process summary for logging.
    * @param entityManager entity manager to use for the database operations.
+   * @param processSummary process summary for logging.
    */
   private async downloadIntoTransientTable(
     remoteFilePath: string,
@@ -210,9 +210,9 @@ export class FedRestrictionProcessingService {
           ) {
             const insertFederalRestrictionsBulkPromise =
               this.insertFederalRestrictionsBulk(
-                entityManager,
                 sanitizedRestrictions,
                 federalRestrictionsCodesMap,
+                entityManager,
                 processSummary,
               );
             const progressPromise = processSummary.progress?.(progress);
@@ -228,9 +228,9 @@ export class FedRestrictionProcessingService {
       // because they did not reach the amount defined for the bulk insert.
       if (sanitizedRestrictions.length) {
         await this.insertFederalRestrictionsBulk(
-          entityManager,
           sanitizedRestrictions,
           federalRestrictionsCodesMap,
+          entityManager,
           processSummary,
         );
       }
@@ -246,24 +246,24 @@ export class FedRestrictionProcessingService {
   }
 
   /**
-   * Insert a bulk of federal restrictions records from the received data into the DB.
-   * The records are converted to DB objects and then inserted in batches.
+   * Inserts a bulk of federal restrictions records from the received data into the DB.
    * @param restrictions federal restrictions records from the file to be inserted.
-   * @param federalRestrictionRepo repository to execute the inserts in batches that
-   * keeps the DB operations in the same transaction.
+   * @param federalRestrictionsCodesMap map of the existing federal restriction codes on the system to be checked against
+   * the received records and create new restrictions if some code is not present on the system.
+   * @param entityManager entity manager to use for the database operations.
+   * @param processSummary process summary for logging the new created restrictions if some new code is received on the file.
+   * @returns IDs of the inserted records.
    */
   private async insertFederalRestrictionsBulk(
-    entityManager: EntityManager,
     restrictions: FedRestrictionFileRecord[],
     federalRestrictionsCodesMap: Map<string, number>,
+    entityManager: EntityManager,
     processSummary: ProcessSummary,
   ): Promise<void> {
-    const [firstLine] = restrictions;
-    const lastLine = restrictions[restrictions.length - 1];
     await this.ensureFederalRestrictionExists(
-      entityManager,
       restrictions,
       federalRestrictionsCodesMap,
+      entityManager,
       processSummary,
     );
     // DB restriction objects to be inserted to the DB.
@@ -291,6 +291,8 @@ export class FedRestrictionProcessingService {
         .getRepository(FederalRestriction)
         .insert(restrictionsToInsert);
     } catch (error: unknown) {
+      const [firstLine] = restrictions;
+      const lastLine = restrictions.at(-1) as FedRestrictionFileRecord;
       const logMessage = `Error while inserting the block of lines from ${firstLine.lineNumber} to ${lastLine.lineNumber}.`;
       throw new Error(logMessage, { cause: error });
     }
@@ -300,15 +302,16 @@ export class FedRestrictionProcessingService {
    * Ensure that all the federal restrictions received on the file have their corresponding restriction record on the system.
    * There is a pretty low expectation that new restriction codes will be received on the file, but if that happens, this method
    * will create the new restriction records with the information available and log the new codes created.
-   * @param entityManager entity manager to use for the database operations.
    * @param restrictions federal restrictions records from the file to be checked if they have their corresponding restriction record on the system.
    * @param federalRestrictionsCodesMap map with the existing federal restriction codes on the system to be checked against the received records.
+   * If new restrictions are created, they will be added to this map.
+   * @param entityManager entity manager to use for the database operations.
    * @param processSummary process summary for logging the new created restrictions if some new code is received on the file.
    */
   private async ensureFederalRestrictionExists(
-    entityManager: EntityManager,
     restrictions: FedRestrictionFileRecord[],
     federalRestrictionsCodesMap: Map<string, number>,
+    entityManager: EntityManager,
     processSummary: ProcessSummary,
   ): Promise<void> {
     const missingCodes: string[] = [];

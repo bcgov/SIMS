@@ -51,10 +51,9 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
     entityManager: EntityManager,
   ): Promise<Restriction[]> {
     const repo = entityManager.getRepository(Restriction);
-    const newRestrictions: Restriction[] = [];
     const uniqueMissingCodes = [...new Set(codes)];
     const now = new Date();
-    for (const code of uniqueMissingCodes) {
+    const newRestrictions = uniqueMissingCodes.map((code) => {
       const newRestriction = new Restriction();
       newRestriction.description =
         FEDERAL_RESTRICTIONS_UNIDENTIFIED_DESCRIPTION;
@@ -68,8 +67,8 @@ export class RestrictionService extends RecordDataModelService<Restriction> {
       newRestriction.restrictionCategory = "Federal";
       newRestriction.creator = this.systemUsersService.systemUser;
       newRestriction.createdAt = now;
-      newRestrictions.push(newRestriction);
-    }
+      return newRestriction;
+    });
     return repo.save(newRestrictions);
   }
 

@@ -152,7 +152,7 @@ export class QueueService {
     queueName: QueueNames,
     entityManager: EntityManager,
   ): Promise<void> {
-    await entityManager.getRepository(QueueConfiguration).find({
+    await entityManager.getRepository(QueueConfiguration).findOne({
       select: {
         id: true,
       },
@@ -160,8 +160,6 @@ export class QueueService {
         queueName,
       },
       lock: { mode: "pessimistic_write" },
-      order: { id: "ASC" },
-      take: 1,
     });
   }
 }
