@@ -16,6 +16,7 @@ import {
   ensureStudentExists,
 } from "@sims/test-utils";
 import {
+  NotificationMessageType,
   RestrictionActionType,
   RestrictionNotificationType,
   RestrictionType,
@@ -87,7 +88,7 @@ describe(
       // Processor under test.
       processor = app.get(FederalRestrictionsIntegrationScheduler);
       systemUsersService = app.get(SystemUsersService);
-      // Student with match data to receive the federal restriction.
+      // Student with matching data to receive the federal restriction.
       student = await ensureStudentExists(db, {
         lastName: STUDENT_LAST_NAME,
         birthDate: STUDENT_DOB,
@@ -175,7 +176,7 @@ describe(
             isActive: true,
           },
           relations: { restriction: true },
-          where: { student: { id: student?.id } },
+          where: { student: { id: student.id } },
         });
         expect(studentRestrictions).toEqual([
           {
@@ -204,7 +205,8 @@ describe(
         expect(notifications).toEqual([
           {
             id: expect.any(Number),
-            notificationMessage: { id: expect.any(Number) },
+            notificationMessage:
+              NotificationMessageType.StudentRestrictionAdded,
             messagePayload: {
               template_id: "2b64245f-770c-4493-9d3c-4e0f86773987",
               email_address: student.user.email,
