@@ -3489,6 +3489,7 @@
                             "inputFormat": "html",
                             "hideLabel": true,
                             "disabled": true,
+                            "customClass": "pb-5",
                             "calculateValue": "value = utils.custom.mapAward('CSLF', 'Full Time');"
                           }
                         ]
@@ -3567,6 +3568,7 @@
                             "inputFormat": "html",
                             "hideLabel": true,
                             "disabled": true,
+                            "customClass": "pb-5",
                             "calculateValue": "value = utils.custom.mapAward('BCSL', 'Full Time');"
                           }
                         ]
@@ -3644,6 +3646,7 @@
                             "inputFormat": "html",
                             "hideLabel": true,
                             "disabled": true,
+                            "customClass": "pb-5",
                             "calculateValue": "value = utils.custom.mapAward('CSGF', 'Full Time');"
                           }
                         ]
@@ -3719,6 +3722,7 @@
                             "inputFormat": "html",
                             "hideLabel": true,
                             "disabled": true,
+                            "customClass": "pb-5",
                             "calculateValue": "value = utils.custom.mapAward('CSGD', 'Full Time');"
                           }
                         ]
@@ -3795,6 +3799,7 @@
                             "inputFormat": "html",
                             "hideLabel": true,
                             "disabled": true,
+                            "customClass": "pb-5",
                             "calculateValue": "value = utils.custom.mapAward('BCAG', 'Full Time');"
                           }
                         ]
@@ -3870,6 +3875,7 @@
                             "inputFormat": "html",
                             "hideLabel": true,
                             "disabled": true,
+                            "customClass": "pb-5",
                             "calculateValue": "value = utils.custom.mapAward('CSGP', 'Full Time');"
                           }
                         ]
@@ -3945,6 +3951,7 @@
                             "inputFormat": "html",
                             "hideLabel": true,
                             "disabled": true,
+                            "customClass": "pb-5",
                             "calculateValue": "value = utils.custom.mapAward('BGPD', 'Full Time');"
                           }
                         ]
@@ -4020,6 +4027,7 @@
                             "inputFormat": "html",
                             "hideLabel": true,
                             "disabled": true,
+                            "customClass": "pb-5",
                             "calculateValue": "value = utils.custom.mapAward('SBSD', 'Full Time');"
                           }
                         ]
@@ -4106,7 +4114,7 @@
                   "numRows": 7,
                   "numCols": 4,
                   "cellAlignment": "left",
-                  "customClass": "flexible-width-formio-bordered extra-small",
+                  "customClass": "formio-bordered flexible-width-formio-bordered extra-small",
                   "hover": true,
                   "condensed": true,
                   "key": "partTimeTable",
@@ -4212,6 +4220,7 @@
                             "inputFormat": "html",
                             "hideLabel": true,
                             "disabled": true,
+                            "customClass": "pb-5",
                             "calculateValue": "value = utils.custom.mapAward('CSGP', 'Part Time');"
                           }
                         ]
@@ -4290,6 +4299,7 @@
                             "inputFormat": "html",
                             "hideLabel": true,
                             "disabled": true,
+                            "customClass": "pb-5",
                             "calculateValue": "value = utils.custom.mapAward('CSPT', 'Part Time');"
                           }
                         ]
@@ -4368,6 +4378,7 @@
                             "inputFormat": "html",
                             "hideLabel": true,
                             "disabled": true,
+                            "customClass": "pb-5",
                             "calculateValue": "value = utils.custom.mapAward('CSGD', 'Part Time');"
                           }
                         ]
@@ -4445,6 +4456,7 @@
                             "inputFormat": "html",
                             "hideLabel": true,
                             "disabled": true,
+                            "customClass": "pb-5",
                             "calculateValue": "value = utils.custom.mapAward('BCAG', 'Part Time');"
                           }
                         ]
@@ -4523,6 +4535,7 @@
                             "inputFormat": "html",
                             "hideLabel": true,
                             "disabled": true,
+                            "customClass": "pb-5",
                             "calculateValue": "value = utils.custom.mapAward('CSLP', 'Part Time');"
                           }
                         ]
@@ -4598,6 +4611,7 @@
                             "inputFormat": "html",
                             "hideLabel": true,
                             "disabled": true,
+                            "customClass": "pb-5",
                             "calculateValue": "value = utils.custom.mapAward('SBSD', 'Part Time');"
                           }
                         ]
