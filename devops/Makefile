@@ -277,6 +277,7 @@ init-secrets:
 		| oc -n $(NAMESPACE) apply -f -
 
 deploy-zone-b-sftp-secret:
+	test -n "$(NAMESPACE)"
 	test -n "$(ZONE_B_SFTP_SERVER)"
 	test -n "$(ZONE_B_SFTP_SERVER_PORT)"
 	test -n "$(ZONE_B_SFTP_USER_NAME)"
