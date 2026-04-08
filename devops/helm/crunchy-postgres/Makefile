@@ -49,7 +49,6 @@ install-with-datasource:
 
 .PHONY: update-to-disable-datasource
 update-to-disable-datasource:
-	test -n "${DATASOURCE_S3_PATH_NAME}"
 	@helm upgrade --install $(call arguments) --set dataSource.enabled=false;
 
 .PHONY: shutdown-cluster
