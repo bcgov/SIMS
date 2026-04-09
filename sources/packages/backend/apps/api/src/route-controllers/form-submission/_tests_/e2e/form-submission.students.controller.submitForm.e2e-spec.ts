@@ -107,7 +107,7 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
       db.dataSource,
       { student },
       {
-        initialValues: { applicationStatus: ApplicationStatus.Completed },
+        initialValues: { applicationStatus: ApplicationStatus.Assessment },
         currentAssessmentInitialValues: {
           eligibleApplicationAppeals: [
             formConfigs.studentAppealApplicationA.formDefinitionName,
