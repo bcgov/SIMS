@@ -6,6 +6,8 @@ ALTER TABLE
 ADD
     COLUMN converted_student_appeal_request_id INT REFERENCES sims.student_appeal_requests(id);
 
+-- Create the new form submission item decision records based on the existing student appeal requests that are not in 'Pending' status.
+-- Only one decision may be ever associated with a given student appeal request.
 INSERT INTO
     sims.form_submission_item_decisions (
         converted_student_appeal_request_id,
@@ -35,3 +37,13 @@ FROM
     JOIN sims.form_submission_items ON form_submission_items.converted_student_appeal_request_id = student_appeal_requests.id
 WHERE
     student_appeal_requests.appeal_status <> 'Pending';
+
+-- Update the current decision back to the form_submission_items.current_decision_id.
+UPDATE
+    sims.form_submission_items
+SET
+    current_decision_id = form_submission_item_decisions.id
+FROM
+    sims.form_submission_item_decisions
+WHERE
+    form_submission_item_decisions.converted_student_appeal_request_id = sims.form_submission_items.converted_student_appeal_request_id
