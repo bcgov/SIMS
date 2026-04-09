@@ -3,6 +3,7 @@ import {
   Brackets,
   DataSource,
   EntityManager,
+  In,
   IsNull,
   MoreThanOrEqual,
   Raw,
@@ -396,7 +397,11 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       where: {
         id: options?.applicationId,
         student: { id: studentId, sinValidation: { isValidSIN: true } },
-        applicationStatus: ApplicationStatus.Completed,
+        applicationStatus: In([
+          ApplicationStatus.Assessment,
+          ApplicationStatus.Enrolment,
+          ApplicationStatus.Completed,
+        ]),
         isArchived: false,
         currentAssessment: {
           eligibleApplicationAppeals: Raw(

@@ -164,7 +164,7 @@ import {
   DEFAULT_DATATABLE_PAGE_NUMBER,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
-import { useFormatters, useStudentStore } from "@/composables";
+import { useFeatureToggles, useFormatters, useStudentStore } from "@/composables";
 import StatusChipApplication from "@/components/generic/StatusChipApplication.vue";
 import StudentApplicationsVersion from "@/components/students/StudentApplicationsVersion.vue";
 import {
@@ -208,6 +208,7 @@ export default defineComponent({
       emptyStringFiller,
     } = useFormatters();
     const { hasValidSIN } = useStudentStore();
+    const { isFormSubmissionEnabled } = useFeatureToggles();
 
     const DEFAULT_SORT_FIELD = StudentApplicationFields.Status;
     const currentPagination: PaginationOptions = {
@@ -296,16 +297,31 @@ export default defineComponent({
     };
 
     /**
-     * Only completed full-time applications can submit an appeal.
+     * Determines if the appeal button should be displayed for an application.
+     * For completed applications, the appeal button is visible regardless of
+     * the appeals path. For applications in assessment or enrolment status,
+     * the appeal button is only visible when the new form submissions path is enabled,
+     * since the new appeals path supports earlier-stage application appeals.
      * @param application application.
      */
     const canDisplaySubmitAppeal = (
       application: ApplicationSummaryAPIOutDTO,
     ) => {
+      if (
+        !application.isChangeRequestAllowedForPY ||
+        application.offeringIntensity !== OfferingIntensity.fullTime
+      ) {
+        return false;
+      }
+      if (application.status === ApplicationStatus.Completed) {
+        return true;
+      }
       return (
-        application.isChangeRequestAllowedForPY &&
-        application.status === ApplicationStatus.Completed &&
-        application.offeringIntensity === OfferingIntensity.fullTime
+        isFormSubmissionEnabled.value &&
+        [
+          ApplicationStatus.Assessment,
+          ApplicationStatus.Enrolment,
+        ].includes(application.status)
       );
     };
 
