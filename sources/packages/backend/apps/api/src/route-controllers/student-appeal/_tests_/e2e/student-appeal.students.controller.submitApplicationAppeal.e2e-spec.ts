@@ -682,7 +682,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
       },
       {
         offeringIntensity: OfferingIntensity.fullTime,
-        applicationStatus: ApplicationStatus.Assessment,
+        applicationStatus: ApplicationStatus.Completed,
         currentAssessmentInitialValues: {
           eligibleApplicationAppeals: [FormNames.RoomAndBoardCostsAppeal],
         },
