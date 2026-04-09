@@ -164,7 +164,11 @@ import {
   DEFAULT_DATATABLE_PAGE_NUMBER,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
-import { useFeatureToggles, useFormatters, useStudentStore } from "@/composables";
+import {
+  useFeatureToggles,
+  useFormatters,
+  useStudentStore,
+} from "@/composables";
 import StatusChipApplication from "@/components/generic/StatusChipApplication.vue";
 import StudentApplicationsVersion from "@/components/students/StudentApplicationsVersion.vue";
 import {
@@ -318,10 +322,9 @@ export default defineComponent({
       }
       return (
         isFormSubmissionEnabled.value &&
-        [
-          ApplicationStatus.Assessment,
-          ApplicationStatus.Enrolment,
-        ].includes(application.status)
+        [ApplicationStatus.Assessment, ApplicationStatus.Enrolment].includes(
+          application.status,
+        )
       );
     };
 
