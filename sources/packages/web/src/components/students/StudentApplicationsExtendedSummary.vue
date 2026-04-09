@@ -83,15 +83,14 @@
                 >
               </v-btn>
               <v-btn
-                v-if="canDisplaySubmitAppeal(item)"
-                :disabled="shouldDisableSubmitAppeal(item)"
+                v-if="isEligibleForAppeal(item.id)"
                 color="primary"
                 @click="$emit('submitAppeal', item.id)"
                 append-icon="mdi-pencil-outline"
                 >Appeal
-                <v-tooltip activator="parent" location="start"
-                  >Click to submit an appeal to this application</v-tooltip
-                >
+                <v-tooltip activator="parent" location="start">
+                  <span>Click to submit an appeal to this application</span>
+                </v-tooltip>
               </v-btn>
               <v-btn
                 v-if="canDisplayEditOrCancel(item)"
@@ -161,14 +160,15 @@ import {
   DataTableOptions,
   PaginationOptions,
   DEFAULT_DATATABLE_PAGE_NUMBER,
-  OfferingIntensity,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
+import { StudentAppealService } from "@/services/StudentAppealService";
 import { useFormatters, useStudentStore } from "@/composables";
 import StatusChipApplication from "@/components/generic/StatusChipApplication.vue";
 import StudentApplicationsVersion from "@/components/students/StudentApplicationsVersion.vue";
 import {
   ApplicationSummaryAPIOutDTO,
+  EligibleApplicationForAppealAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   ApplicationVersionAPIOutDTO,
 } from "@/services/http/dto";
@@ -201,6 +201,9 @@ export default defineComponent({
     const applicationsAndCount = ref(
       {} as PaginatedResultsAPIOutDTO<ApplicationSummaryModel>,
     );
+    const eligibleApplicationsForAppeal = ref<
+      EligibleApplicationForAppealAPIOutDTO[]
+    >([]);
 
     const {
       dateOnlyLongString,
@@ -231,7 +234,18 @@ export default defineComponent({
       }
     };
 
-    onMounted(getStudentApplications);
+    const loadEligibleApplicationsForAppeal = async () => {
+      const result =
+        await StudentAppealService.shared.getEligibleApplicationsForAppeal();
+      eligibleApplicationsForAppeal.value = result.applications;
+    };
+
+    onMounted(() =>
+      Promise.all([
+        getStudentApplications(),
+        loadEligibleApplicationsForAppeal(),
+      ]),
+    );
 
     /**
      * Page/Sort event handler.
@@ -296,35 +310,14 @@ export default defineComponent({
     };
 
     /**
-     * The button should only be displayed for applications in completed, assessment or enrolment status
-     * that are eligible for appeals and have the full-time offering intensity.
-     * @param application application.
+     * Determines if an application is currently in the list of eligible applications
+     * for an appeal.
+     * @param applicationId application ID to check.
+     * @returns true if the application is eligible for an appeal.
      */
-    const canDisplaySubmitAppeal = (
-      application: ApplicationSummaryAPIOutDTO,
-    ) => {
-      return (
-        application.isChangeRequestAllowedForPY &&
-        application.offeringIntensity === OfferingIntensity.fullTime &&
-        [
-          ApplicationStatus.Completed,
-          ApplicationStatus.Assessment,
-          ApplicationStatus.Enrolment,
-        ].includes(application.status)
-      );
-    };
-
-    /**
-     * Validate if the submit appeal button should be disabled.
-     * @param application application.
-     */
-    const shouldDisableSubmitAppeal = (
-      application: ApplicationSummaryAPIOutDTO,
-    ) => {
-      return (
-        !hasValidSIN.value ||
-        application.isArchived ||
-        !application.isEligibleForApplicationAppeals
+    const isEligibleForAppeal = (applicationId: number): boolean => {
+      return eligibleApplicationsForAppeal.value.some(
+        (eligible) => eligible.id === applicationId,
       );
     };
 
@@ -334,8 +327,7 @@ export default defineComponent({
       emptyStringFiller,
       canDisplayEditOrCancel,
       canDisplayChangeRequest,
-      canDisplaySubmitAppeal,
-      shouldDisableSubmitAppeal,
+      isEligibleForAppeal,
       ApplicationStatus,
       applicationsAndCount,
       DEFAULT_PAGE_LIMIT,
