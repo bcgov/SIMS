@@ -215,7 +215,7 @@ export class FedRestrictionProcessingService {
                 entityManager,
                 processSummary,
               );
-            const progressPromise = processSummary.progress?.(progress);
+            const progressPromise = processSummary.progress!(progress);
             await Promise.all([
               insertFederalRestrictionsBulkPromise,
               progressPromise,
