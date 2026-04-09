@@ -21,9 +21,33 @@ export class ConvertStudentAppealsToFormSubmissions1775687162365 implements Migr
         "FormSubmissionItemDecisions",
       ),
     );
+    await queryRunner.query(
+      getSQLFileData(
+        "Convert-student-appeal-id-to-form-submission-id.sql",
+        "StudentAssessments",
+      ),
+    );
+    await queryRunner.query(
+      getSQLFileData(
+        "Convert-modified-independent-appeal-to-form-submission-id.sql",
+        "Student",
+      ),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      getSQLFileData(
+        "Rollback-convert-modified-independent-appeal-to-form-submission-id.sql",
+        "Student",
+      ),
+    );
+    await queryRunner.query(
+      getSQLFileData(
+        "Rollback-convert-student-appeal-id-to-form-submission-id.sql",
+        "StudentAssessments",
+      ),
+    );
     await queryRunner.query(
       getSQLFileData(
         "Rollback-convert-non-pending-appeals-requests-to-form-submission-item-decisions.sql",
