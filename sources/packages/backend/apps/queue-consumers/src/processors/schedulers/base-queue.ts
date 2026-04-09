@@ -29,7 +29,9 @@ export abstract class BaseQueue<T> {
    */
   @Process()
   async processQueue(job: Job<T>): Promise<string | string[]> {
-    const processSummary = new ProcessSummary();
+    const processSummary = new ProcessSummary((progress: number) => {
+      return job.progress(progress);
+    });
     try {
       // Log the start of the process for the summary and logger.
       const startLogMessage = `Processing queue ${job.queue.name}, job ID ${job.id}.`;

@@ -12,12 +12,10 @@ import {
   getFileNameAsExtendedCurrentTimestamp,
   convertToASCII,
   FILE_DEFAULT_ENCODING,
-  readFirstExtractedFile,
+  processStreamLineByLine,
 } from "@sims/utilities";
-import {
-  LINE_BREAK_SPLIT_REGEX,
-  SFTP_ARCHIVE_DIRECTORY,
-} from "@sims/integrations/constants";
+import { SFTP_ARCHIVE_DIRECTORY } from "@sims/integrations/constants";
+import { PassThrough } from "node:stream";
 
 /**
  * Provides the basic features to enable the SFTP integration.
@@ -135,65 +133,62 @@ export abstract class SFTPIntegrationBase<DownloadType> {
    * Downloads the file specified on 'fileName' parameter from the
    * SFAS integration folder on the SFTP.
    * @param remoteFilePath full remote file path with file name.
-   * @param options download file options.
-   * -  `checkIfFileExist` when set to true, check if file exist before downloading it.
    * @returns parsed records from the file.
    */
   protected async downloadResponseFileLines(
     remoteFilePath: string,
-    options: { checkIfFileExist: boolean },
-  ): Promise<string[] | false>;
+  ): Promise<string[]> {
+    const fileContent: string[] = [];
+    await this.streamResponseFileLines(remoteFilePath, (line) => {
+      fileContent.push(line);
+    });
+    return fileContent;
+  }
 
   /**
-   * Downloads the file specified on 'fileName' parameter from the
-   * SFAS integration folder on the SFTP.
+   * Allow to process the file line by line as it is being downloaded, without the need to load the entire file content in memory.
+   * This is specially useful for large files that can cause memory issues when loaded entirely.
    * @param remoteFilePath full remote file path with file name.
-   * @param options download file options.
-   * -  `checkIfFileExist` when set to true, check if file exist before downloading it.
-   * @returns parsed records from the file.
+   * @param fileLineProcessor callback function to process each line of the file.
+   * @param options Optional parameters.
+   * - `reportProgress`: when set to true, the fileLineProcessor callback will receive the current download progress percentage as
+   * the second parameter. This allows for tracking and reporting progress during the file processing.
    */
-  protected async downloadResponseFileLines(
+  protected async streamResponseFileLines(
     remoteFilePath: string,
-    options?: { checkIfFileExist: boolean },
-  ): Promise<string[] | false> {
+    fileLineProcessor: (
+      line: string,
+      progress?: number,
+    ) => Promise<void> | void,
+    options?: { reportProgress?: boolean },
+  ): Promise<void> {
     this.logger.log(`Downloading file ${remoteFilePath}.`);
-    let client: Client;
+    let client: Client | undefined = undefined;
     try {
-      client = await this.getClient();
-      if (options?.checkIfFileExist) {
-        const fileExist = await client.exists(remoteFilePath);
-        if (!fileExist) {
-          return false;
-        }
-      }
-      let fileContent: string;
       const fileExtension = path.extname(remoteFilePath).toLowerCase();
-      const isZIPFile = fileExtension === ".zip";
-      if (isZIPFile) {
-        // Read the zip file content with null encoding to avoid data corruption.
-        const compressedFileContent = (await client.get(
-          remoteFilePath,
-          undefined,
-          { readStreamOptions: { encoding: null } },
-        )) as Buffer;
-        // Read the first file content with 'ascii' encoding.
-        const { fileName, data } = readFirstExtractedFile(
-          compressedFileContent,
-          { encoding: FILE_DEFAULT_ENCODING },
-        );
-        this.logger.log(`Extracted the first file ${fileName}.`);
-        fileContent = data;
-      } else {
-        // Read all the file content and create a buffer with 'ascii' encoding.
-        fileContent = (await client.get(remoteFilePath, undefined, {
-          readStreamOptions: { encoding: FILE_DEFAULT_ENCODING },
-        })) as string;
+      const isCompressed = fileExtension === ".zip";
+      const encoding = isCompressed ? null : FILE_DEFAULT_ENCODING;
+      client = await this.getClient();
+      let fileSize: number | undefined = undefined;
+      if (options?.reportProgress) {
+        const fileStat = await client.stat(remoteFilePath);
+        fileSize = fileStat.size;
       }
-      // Convert the file content to an array of text lines and remove possible blank lines.
-      return fileContent
-        .toString()
-        .split(LINE_BREAK_SPLIT_REGEX)
-        .filter((line) => line.length > 0);
+      const sftpFileStream = new PassThrough();
+      const downloadPromise = client.get(remoteFilePath, sftpFileStream, {
+        readStreamOptions: { encoding },
+      });
+      // Run download and stream processing concurrently: the download writes to
+      // the PassThrough while processStreamLineByLine reads from it. Both must
+      // run at the same time to avoid deadlock, and both must be awaited so that
+      // errors from either side are properly surfaced.
+      await Promise.all([
+        processStreamLineByLine(sftpFileStream, fileLineProcessor, {
+          isCompressed,
+          fileSize,
+        }),
+        downloadPromise,
+      ]);
     } catch (error) {
       this.logger.error(`Error downloading file ${remoteFilePath}`, error);
       throw error;

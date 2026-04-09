@@ -102,18 +102,31 @@ export function mockDownloadFiles(
   fileTransformation?: (fileContent: string) => string,
 ): void {
   const fileInfos = filePaths.map(
-    (filePath) => ({ name: filePath } as Client.FileInfo),
+    (filePath) => ({ name: filePath }) as Client.FileInfo,
   );
   sshClientMock.list.mockResolvedValue(fileInfos);
-  sshClientMock.get.mockImplementation((filePath: string) => {
-    let fileContent = readFileSync(filePath, {
-      encoding: FILE_DEFAULT_ENCODING,
-    }).toString();
-    if (fileTransformation) {
-      fileContent = fileTransformation(fileContent);
-    }
-    return Promise.resolve(fileContent);
+  sshClientMock.stat.mockImplementation((filePath: string) => {
+    const fileBuffer = readFileSync(filePath);
+    return Promise.resolve({ size: fileBuffer.length } as Client.FileStats);
   });
+  sshClientMock.get.mockImplementation(
+    (filePath: string, dst?: NodeJS.WritableStream | string | boolean) => {
+      let fileBuffer = readFileSync(filePath);
+      if (fileTransformation) {
+        const transformed = fileTransformation(
+          fileBuffer.toString(FILE_DEFAULT_ENCODING),
+        );
+        fileBuffer = Buffer.from(transformed, FILE_DEFAULT_ENCODING);
+      }
+      if (dst && typeof dst !== "string" && typeof dst !== "boolean") {
+        // Streaming overload: write the file content into the destination stream.
+        dst.end(fileBuffer);
+        return Promise.resolve(dst);
+      }
+      // String-return overload: return the content as a string.
+      return Promise.resolve(fileBuffer.toString(FILE_DEFAULT_ENCODING));
+    },
+  );
 }
 
 /**

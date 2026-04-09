@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { QueueConfiguration } from "@sims/sims-db";
 import { QueueNames } from "@sims/utilities";
 import Bull, { AdvancedSettings } from "bull";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, EntityManager, Repository } from "typeorm";
 import { QueueModel } from "./model/queue.model";
 
 @Injectable()
@@ -140,6 +140,26 @@ export class QueueService {
         take: 1,
       });
       await callback();
+    });
+  }
+
+  /**
+   * Acquires a database lock for a specific queue.
+   * @param queueName queue name.
+   * @param entityManager entity manager to be used for the lock.
+   */
+  async acquireQueueLock(
+    queueName: QueueNames,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    await entityManager.getRepository(QueueConfiguration).findOne({
+      select: {
+        id: true,
+      },
+      where: {
+        queueName,
+      },
+      lock: { mode: "pessimistic_write" },
     });
   }
 }

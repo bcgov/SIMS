@@ -37,9 +37,15 @@ upgrade: helm-dep
 	
 .PHONY: install-with-datasource
 install-with-datasource:
+	test -n "${DATASOURCE_S3_PATH_NAME}"
+	test -n "${S3_ACCESS_KEY_ID}"
+	test -n "${S3_SECRET_ACCESS_KEY}"
 	@echo "Installing Crunchy Postgres with datasource enabled..."
 	@echo "Datasource S3 path: ${DATASOURCE_S3_PATH_NAME}"
-	@helm install $(call arguments) --set dataSource.enabled=true --set dataSource.s3Path="/${DATASOURCE_S3_PATH_NAME}" --set restore.enabled=false;
+	@helm install $(call arguments) --set dataSource.enabled=true --set dataSource.s3Path="/${DATASOURCE_S3_PATH_NAME}" \
+		--set pgBackRest.s3.s3Key="${S3_ACCESS_KEY_ID}" \
+		--set pgBackRest.s3.s3KeySecret="${S3_SECRET_ACCESS_KEY}" \
+		--set restore.enabled=false;
 
 .PHONY: update-to-disable-datasource
 update-to-disable-datasource:
