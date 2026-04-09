@@ -160,15 +160,11 @@ import {
   ITEMS_PER_PAGE,
   DataTableOptions,
   PaginationOptions,
-  OfferingIntensity,
   DEFAULT_DATATABLE_PAGE_NUMBER,
+  OfferingIntensity,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
-import {
-  useFeatureToggles,
-  useFormatters,
-  useStudentStore,
-} from "@/composables";
+import { useFormatters, useStudentStore } from "@/composables";
 import StatusChipApplication from "@/components/generic/StatusChipApplication.vue";
 import StudentApplicationsVersion from "@/components/students/StudentApplicationsVersion.vue";
 import {
@@ -212,7 +208,6 @@ export default defineComponent({
       emptyStringFiller,
     } = useFormatters();
     const { hasValidSIN } = useStudentStore();
-    const { isFormSubmissionEnabled } = useFeatureToggles();
 
     const DEFAULT_SORT_FIELD = StudentApplicationFields.Status;
     const currentPagination: PaginationOptions = {
@@ -301,30 +296,21 @@ export default defineComponent({
     };
 
     /**
-     * Determines if the appeal button should be displayed for an application.
-     * For completed applications, the appeal button is visible regardless of
-     * the appeals path. For applications in assessment or enrolment status,
-     * the appeal button is only visible when the new form submissions path is enabled,
-     * since the new appeals path supports earlier-stage application appeals.
+     * The button should only be displayed for applications in completed, assessment or enrolment status
+     * that are eligible for appeals and have the full-time offering intensity.
      * @param application application.
      */
     const canDisplaySubmitAppeal = (
       application: ApplicationSummaryAPIOutDTO,
     ) => {
-      if (
-        !application.isChangeRequestAllowedForPY ||
-        application.offeringIntensity !== OfferingIntensity.fullTime
-      ) {
-        return false;
-      }
-      if (application.status === ApplicationStatus.Completed) {
-        return true;
-      }
       return (
-        isFormSubmissionEnabled.value &&
-        [ApplicationStatus.Assessment, ApplicationStatus.Enrolment].includes(
-          application.status,
-        )
+        application.isChangeRequestAllowedForPY &&
+        application.offeringIntensity === OfferingIntensity.fullTime &&
+        [
+          ApplicationStatus.Completed,
+          ApplicationStatus.Assessment,
+          ApplicationStatus.Enrolment,
+        ].includes(application.status)
       );
     };
 
