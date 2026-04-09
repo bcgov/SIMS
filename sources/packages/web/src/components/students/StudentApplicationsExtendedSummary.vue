@@ -317,7 +317,7 @@ export default defineComponent({
      */
     const isEligibleForAppeal = (applicationId: number): boolean => {
       return eligibleApplicationsForAppeal.value.some(
-        (eligible) => eligible.id === applicationId,
+        (application) => application.id === applicationId,
       );
     };
 
