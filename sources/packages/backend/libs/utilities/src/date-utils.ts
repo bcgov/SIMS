@@ -139,8 +139,32 @@ export function getDateOnly(stringDate: string): Date | null {
  * Get date from date-string in the given format.
  * @param stringDate date string.
  * @param stringDateFormat date format.
- * @param validateFormat validate the date string against date format.
  * @returns parsed date.
+ */
+export function getDateOnlyFromFormat(
+  stringDate: string,
+  stringDateFormat: string,
+): Date;
+/**
+ * Get date from date-string in the given format.
+ * @param stringDate date string.
+ * @param stringDateFormat date format.
+ * @param validateFormat validate the date string against date format.
+ * @returns parsed date, or null if the date string is not valid
+ * against the date format.
+ */
+export function getDateOnlyFromFormat(
+  stringDate: string,
+  stringDateFormat: string,
+  validateFormat: boolean,
+): Date | null;
+/**
+ * Get date from date-string in the given format.
+ * @param stringDate date string.
+ * @param stringDateFormat date format.
+ * @param validateFormat validate the date string against date format.
+ * @returns parsed date, or null if the date string is not valid
+ * against the date format.
  */
 export function getDateOnlyFromFormat(
   stringDate: string,
@@ -159,6 +183,20 @@ export function getDateOnlyFromFormat(
  * Get the date only part of a date/time object.
  * @param date date/time to have the date extracted.
  * @returns date only string in ISO format YYYY-MM-DD.
+ */
+export function getISODateOnlyString(date: Date | string): string;
+/**
+ * Get the date only part of a date/time object.
+ * If null or undefined is provided, it will return null.
+ * @param date date/time to have the date extracted.
+ * @returns date only string in ISO format YYYY-MM-DD, or null if no date provided.
+ */
+export function getISODateOnlyString(date?: Date | string): null;
+/**
+ * Get the date only part of a date/time object.
+ * If null or undefined is provided, it will return null.
+ * @param date date/time to have the date extracted.
+ * @returns date only string in ISO format YYYY-MM-DD, or null if no date provided.
  */
 export function getISODateOnlyString(date?: Date | string): string | null {
   if (!date) {

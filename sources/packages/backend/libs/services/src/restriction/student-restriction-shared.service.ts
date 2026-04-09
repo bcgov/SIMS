@@ -1,5 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { NotificationActionsService } from "@sims/services/notifications";
+import {
+  NotificationActionsService,
+  StudentRestrictionAddedNotification,
+} from "@sims/services/notifications";
 import {
   Application,
   Note,
@@ -157,18 +160,18 @@ export class StudentRestrictionSharedService extends RecordDataModelService<Stud
       restrictionsIds,
       entityManager,
     );
-
     if (!restrictions?.length) {
       // There are no notifications to be sent.
       return;
     }
-
-    const notifications = restrictions.map((restriction) => ({
-      givenNames: restriction.student.user.firstName,
-      lastName: restriction.student.user.lastName,
-      toAddress: restriction.student.user.email,
-      userId: restriction.student.user.id,
-    }));
+    const notifications = restrictions.map<StudentRestrictionAddedNotification>(
+      (restriction) => ({
+        givenNames: restriction.student.user.firstName,
+        lastName: restriction.student.user.lastName,
+        toAddress: restriction.student.user.email,
+        userId: restriction.student.user.id,
+      }),
+    );
     await this.notificationActionsService.saveStudentRestrictionAddedNotification(
       notifications,
       auditUserId,

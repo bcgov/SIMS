@@ -153,6 +153,7 @@
     "cSpell.words": [
       "addressline",
       "AEST",
+      "autodrain",
       "AVCP",
       "AVEN",
       "AVIR",
@@ -237,6 +238,7 @@
       "timestamptz",
       "typeorm",
       "unparse",
+      "unzipper",
       "VALD",
       "WTHD",
       "Zeebe",
