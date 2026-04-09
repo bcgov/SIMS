@@ -2456,9 +2456,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Checks if any of the previous versions of the application has completed PIR status.
-   * @param parentApplicationId parent application id.
-   * @returns boolean indicating if any previous version has completed PIR status.
+   * Checks if any version of the application has completed PIR status.
+   * @param applicationId application id.
+   * @returns boolean indicating if any version has completed PIR status.
    */
   async hasPreviouslyCompletedPIR(applicationId: number): Promise<boolean> {
     return this.repo

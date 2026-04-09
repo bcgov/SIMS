@@ -59,7 +59,6 @@ import {
 } from "@/types";
 import { ref, watch, defineComponent, computed, PropType } from "vue";
 import {
-  useFormatters,
   useFormioComponentLoader,
   useFormioDropdownLoader,
   useFormioUtils,
@@ -132,7 +131,6 @@ export default defineComponent({
     const isLastPage = ref(false);
     const showNav = ref(false);
     const isFormLoaded = ref(false);
-    const { getISODateHourMinuteString } = useFormatters();
     let offeringIntensity: OfferingIntensity;
 
     const wizardPrimaryLabel = computed(() => {
@@ -371,50 +369,58 @@ export default defineComponent({
           SELECTED_OFFERING_END_DATE_KEY,
         );
       }
-      // If the user after selecting a study period finds that
-      // they need to check my study period not listed, then
-      // the details of previously selected
-      // study period must be cleared.
-      if (
-        event.changed?.component.key === OFFERING_NOT_LISTED &&
-        event.changed.value?.offeringnotListed
-      ) {
-        resetSelectedOfferingDetails(form);
-      }
 
-      // If the user after selecting a study period finds that
-      // they need to check my program not listed, then
-      // the details of previously selected
-      // study period must be cleared.
-      if (
-        event.changed?.component.key === PROGRAM_NOT_LISTED &&
-        event.changed.value?.programnotListed
-      ) {
-        resetSelectedOfferingDetails(form);
-      }
-
-      // Handle updates to 'Request resubmission of program information request.'
-      if (event.changed?.component.key === REQUEST_PIR_RESUBMISSION_KEY) {
-        if (event.changed.value) {
-          // When selected, set pirResubmissionDate to the current date/time to force a new value for the pirHash.
-          // TODO Confirm date format
-          const currentDateTime = getISODateHourMinuteString(new Date());
-          formioUtils.setComponentValue(
-            form,
-            PIR_RESUBMISSION_DATE_KEY,
-            currentDateTime,
-          );
+      if (event.changed?.component.key === OFFERING_NOT_LISTED) {
+        // If the user after selecting a study period finds that
+        // they need to check my study period not listed, then
+        // the details of previously selected
+        // study period must be cleared.
+        if (event.changed.value?.offeringnotListed) {
+          resetSelectedOfferingDetails(form);
         } else {
-          // When deselected, reset pirResubmissionDate to the persisted date/time so the pirHash isn't erroneously updated.
-          const initialPirResubmissionDate =
-            props.initialData[PIR_RESUBMISSION_DATE_KEY];
-          formioUtils.setComponentValue(
-            form,
-            PIR_RESUBMISSION_DATE_KEY,
-            initialPirResubmissionDate,
-          );
+          // If the user unchecks 'Your study dates are not listed.'
+          // then the pirResubmissionDate must be reset to avoid an erroneous update to the pirHash.
+          resetResubmissionDate(form);
         }
       }
+
+      if (event.changed?.component.key === PROGRAM_NOT_LISTED) {
+        // If the user after selecting a study period finds that
+        // they need to check my program not listed, then
+        // the details of previously selected
+        // study period must be cleared.
+        if (event.changed.value?.programnotListed) {
+          resetSelectedOfferingDetails(form);
+        } else {
+          // If the user unchecks 'Your program is not listed.'
+          // then the pirResubmissionDate must be reset to avoid an erroneous update to the pirHash.
+          resetResubmissionDate(form);
+        }
+      }
+
+      if (event.changed?.component.key === REQUEST_PIR_RESUBMISSION_KEY) {
+        // If the user selects 'Request resubmission...',
+        // set pirResubmissionDate to the current date/time to force a new value for the pirHash.
+        if (event.changed.value) {
+          formioUtils.setComponentValue(
+            form,
+            PIR_RESUBMISSION_DATE_KEY,
+            new Date(),
+          );
+        } else {
+          // If the user unselects 'Request resubmission...',
+          // then the pirResubmissionDate must be reset to avoid an erroneous update to the pirHash.
+          resetResubmissionDate(form);
+        }
+      }
+    };
+
+    const resetResubmissionDate = (form: FormIOForm) => {
+      formioUtils.setComponentValue(
+        form,
+        PIR_RESUBMISSION_DATE_KEY,
+        props.initialData[PIR_RESUBMISSION_DATE_KEY],
+      );
     };
 
     const resetSelectedOfferingDetails = (form: FormIOForm) => {

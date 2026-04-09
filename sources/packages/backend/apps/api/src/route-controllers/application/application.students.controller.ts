@@ -92,15 +92,15 @@ export class ApplicationStudentsController extends BaseController {
 
   /**
    * Get application details by id.
-   * @param id for the application to be retrieved.
+   * @param applicationId Id of the application to be retrieved.
    * @returns application details.
    */
-  @Get(":id")
+  @Get(":applicationId")
   @ApiNotFoundResponse({
     description: "Application id not found.",
   })
-  async getByApplicationId(
-    @Param("id", ParseIntPipe) applicationId: number,
+  async getApplication(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<ApplicationDataAPIOutDTO> {
     const application = await this.applicationService.getApplicationById(

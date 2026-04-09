@@ -895,47 +895,6 @@
                   "allowPrevious": false
                 },
                 {
-                  "title": "PIR Resubmission",
-                  "collapsible": false,
-                  "hideLabel": true,
-                  "key": "panel5",
-                  "customConditional": "// The box and area should only appear if the student previously approved/positively completed PIR\n// The check box question should disappear if the student attaches a program and offering and is no longer on the PIR path\n// The checkbox is not displayed during initial application submission\n// The check box question is only accessible by students during an edit and does not appear during a change request\nconst programOrStudyPeriodNotListed = (data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) ||\n        (data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false);\nshow = !data.isReadOnly && data.hasPreviouslyCompletedPIR && programOrStudyPeriodNotListed &&  !data.isChangeRequestApplication;",
-                  "type": "panel",
-                  "label": "Panel",
-                  "input": false,
-                  "tableView": false,
-                  "components": [
-                    {
-                      "label": "HTML",
-                      "tag": "p",
-                      "className": "alert alert-info fa fa-info-circle",
-                      "attrs": [
-                        {
-                          "attr": "",
-                          "value": ""
-                        }
-                      ],
-                      "content": " <strong>Info!</strong><br />If you need your institution to review or update your program information, you can request a new program information request. Select the checkbox below to send a new request.",
-                      "refreshOnChange": false,
-                      "customClass": "banner-info",
-                      "key": "html2",
-                      "type": "htmlelement",
-                      "input": false,
-                      "tableView": false
-                    },
-                    {
-                      "label": "Request resubmission of program information request.",
-                      "tableView": false,
-                      "persistent": "client-only",
-                      "validateWhenHidden": false,
-                      "key": "requestPIRResubmission",
-                      "type": "checkbox",
-                      "input": true,
-                      "defaultValue": false
-                    }
-                  ]
-                },
-                {
                   "title": "programDesc",
                   "collapsible": false,
                   "hideLabel": true,
@@ -1174,6 +1133,47 @@
                     "offeringnotListed": false
                   },
                   "lockKey": true
+                },
+                {
+                  "title": "PIR Resubmission",
+                  "collapsible": false,
+                  "hideLabel": true,
+                  "key": "panel5",
+                  "customConditional": "// The box and area should only appear if the student previously approved/positively completed PIR\n// The check box question should disappear if the student attaches a program and offering and is no longer on the PIR path\n// The checkbox is not displayed during initial application submission\n// The check box question is only accessible by students during an edit and does not appear during a change request\nconst programOrStudyPeriodNotListed = (data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) ||\n        (data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false);\nshow = !data.isReadOnly && data.hasPreviouslyCompletedPIR && programOrStudyPeriodNotListed &&  !data.isChangeRequestApplication;",
+                  "type": "panel",
+                  "label": "Panel",
+                  "input": false,
+                  "tableView": false,
+                  "components": [
+                    {
+                      "label": "HTML",
+                      "tag": "p",
+                      "className": "alert alert-info fa fa-info-circle",
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
+                      "content": " <strong>Info!</strong><br />If you need your institution to review or update your program information, you can request a new program information request. Select the checkbox below to send a new request.",
+                      "refreshOnChange": false,
+                      "customClass": "banner-info",
+                      "key": "html2",
+                      "type": "htmlelement",
+                      "input": false,
+                      "tableView": false
+                    },
+                    {
+                      "label": "Request resubmission of program information request.",
+                      "tableView": false,
+                      "persistent": "client-only",
+                      "validateWhenHidden": false,
+                      "key": "requestPIRResubmission",
+                      "type": "checkbox",
+                      "input": true,
+                      "defaultValue": false
+                    }
+                  ]
                 },
                 {
                   "label": "Study period end date warning",
