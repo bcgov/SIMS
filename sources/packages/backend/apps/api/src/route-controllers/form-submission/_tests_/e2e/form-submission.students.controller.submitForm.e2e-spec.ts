@@ -107,7 +107,7 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
       db.dataSource,
       { student },
       {
-        initialValues: { applicationStatus: ApplicationStatus.Assessment },
+        initialValues: { applicationStatus: ApplicationStatus.Completed },
         currentAssessmentInitialValues: {
           eligibleApplicationAppeals: [
             formConfigs.studentAppealApplicationA.formDefinitionName,
@@ -261,6 +261,54 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
         },
       },
     });
+  });
+
+  it("Should submit a student appeal when the associated application is in Assessment status.", async () => {
+    // Arrange
+    // Create a student with a valid SIN required to the eligibility criteria.
+    const student = await saveFakeStudent(db.dataSource);
+    // Create an application in Assessment status to be associated with the appeal form.
+    const application = await saveFakeApplication(
+      db.dataSource,
+      { student },
+      {
+        initialValues: { applicationStatus: ApplicationStatus.Assessment },
+        currentAssessmentInitialValues: {
+          eligibleApplicationAppeals: [
+            formConfigs.studentAppealApplicationA.formDefinitionName,
+          ],
+        },
+      },
+    );
+    // Minimum payload to validate the submission.
+    const payload = {
+      applicationId: application.id,
+      items: [
+        {
+          dynamicConfigurationId: formConfigs.studentAppealApplicationA.id,
+          formData: {},
+          files: [],
+        },
+      ],
+    };
+    formService.dryRunSubmission = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: "some form name",
+      data: { data: {} },
+    });
+    const endpoint = "/students/form-submission";
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, student.user);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED);
   });
 
   it("Should submit a student form with a single item, no application, with no supplementary data, updating file, and sending a Ministry notification when the student has no pending submissions.", async () => {

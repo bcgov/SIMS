@@ -1067,7 +1067,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "parentApplication.id",
         "parentApplication.submittedDate",
         "currentAssessment.id",
-        "currentAssessment.eligibleApplicationAppeals",
         "offering.studyStartDate",
         "offering.studyEndDate",
         "application.applicationStatus",

@@ -88,9 +88,9 @@
                 @click="$emit('submitAppeal', item.id)"
                 append-icon="mdi-pencil-outline"
                 >Appeal
-                <v-tooltip activator="parent" location="start">
-                  <span>Click to submit an appeal to this application</span>
-                </v-tooltip>
+                <v-tooltip activator="parent" location="start"
+                  >Click to submit an appeal to this application</v-tooltip
+                >
               </v-btn>
               <v-btn
                 v-if="canDisplayEditOrCancel(item)"
@@ -225,27 +225,20 @@ export default defineComponent({
         loading.value = true;
         // Reset expanded items when fetching new data.
         expandedItems.value = [];
-        applicationsAndCount.value =
-          await ApplicationService.shared.getStudentApplicationSummary(
+        const [applicationsResult, eligibleAppealsResult] = await Promise.all([
+          ApplicationService.shared.getStudentApplicationSummary(
             currentPagination,
-          );
+          ),
+          StudentAppealService.shared.getEligibleApplicationsForAppeal(),
+        ]);
+        applicationsAndCount.value = applicationsResult;
+        eligibleApplicationsForAppeal.value = eligibleAppealsResult.applications;
       } finally {
         loading.value = false;
       }
     };
 
-    const loadEligibleApplicationsForAppeal = async () => {
-      const result =
-        await StudentAppealService.shared.getEligibleApplicationsForAppeal();
-      eligibleApplicationsForAppeal.value = result.applications;
-    };
-
-    onMounted(() =>
-      Promise.all([
-        getStudentApplications(),
-        loadEligibleApplicationsForAppeal(),
-      ]),
-    );
+    onMounted(getStudentApplications);
 
     /**
      * Page/Sort event handler.
