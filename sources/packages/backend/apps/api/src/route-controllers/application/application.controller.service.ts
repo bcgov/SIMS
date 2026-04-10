@@ -673,8 +673,9 @@ export class ApplicationControllerService {
 
   /**
    * Transformation util for Application.
-   * @param applicationDetail
-   * @param disbursement
+   * @param applicationDetail the application.
+   * @param disbursement the disbursement schedule for the application..
+   * @param hasPreviouslyCompletedPIR true if PIR has been previously completed for the application.
    * @returns Application DTO
    */
   transformToApplicationDetailForStudentDTO(

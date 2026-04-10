@@ -416,11 +416,13 @@ export default defineComponent({
     };
 
     const resetResubmissionDate = (form: FormIOForm) => {
-      formioUtils.setComponentValue(
-        form,
-        PIR_RESUBMISSION_DATE_KEY,
-        props.initialData[PIR_RESUBMISSION_DATE_KEY],
-      );
+      if (formioUtils.getComponent(form, PIR_RESUBMISSION_DATE_KEY)) {
+        formioUtils.setComponentValue(
+          form,
+          PIR_RESUBMISSION_DATE_KEY,
+          props.initialData[PIR_RESUBMISSION_DATE_KEY],
+        );
+      }
     };
 
     const resetSelectedOfferingDetails = (form: FormIOForm) => {

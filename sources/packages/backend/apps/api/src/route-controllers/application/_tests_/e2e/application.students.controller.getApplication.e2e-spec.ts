@@ -234,7 +234,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
   );
 
   it(
-    "Should get the student application details when the application status is 'In Progress'" +
+    "Should get the student application details when the application status is 'Assessment'" +
       " and it has a previous version with PIR in 'Completed' status.",
     async () => {
       // Arrange
@@ -244,7 +244,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
         { student },
         {
           applicationStatus: ApplicationStatus.Edited,
-          offeringIntensity: OfferingIntensity.partTime,
+          offeringIntensity: OfferingIntensity.fullTime,
           applicationData: {
             programName: "My Program",
             programDescription: "This is my program.",
@@ -253,7 +253,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
           pirStatus: ProgramInfoStatus.completed,
         },
       );
-      // Current application in PIR 'Not Required' required status to be edited by entering PIR data
+      // Current application with PIR 'Not Required' status.
       const currentApplication = await saveFakeApplication(
         db.dataSource,
         {
@@ -266,10 +266,9 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
           offeringIntensity: OfferingIntensity.partTime,
           applicationNumber: firstApplication.applicationNumber,
           applicationData: {
-            programName: "My Program",
-            programDescription: "This is my program.",
             workflowName: "",
           },
+          pirStatus: ProgramInfoStatus.notRequired,
         },
       );
 
