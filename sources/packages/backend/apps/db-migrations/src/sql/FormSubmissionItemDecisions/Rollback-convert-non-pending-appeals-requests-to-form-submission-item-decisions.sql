@@ -4,7 +4,14 @@ UPDATE
 SET
     current_decision_id = NULL
 WHERE
-    current_decision_id IS NOT NULL;
+    current_decision_id IN (
+        SELECT
+            id
+        FROM
+            sims.form_submission_item_decisions
+        WHERE
+            converted_student_appeal_request_id IS NOT NULL
+    );
 
 -- Remove converted data.
 DELETE FROM

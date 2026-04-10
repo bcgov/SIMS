@@ -49,6 +49,8 @@ SELECT
                 WHERE
                     student_appeal_requests.student_appeal_id = student_appeals.id
                     AND student_appeal_requests.appeal_status = 'Approved'
+                ORDER BY
+                    student_appeal_requests.id
                 LIMIT
                     1
             ) THEN 'Completed'
@@ -62,6 +64,8 @@ SELECT
             sims.student_appeal_requests student_appeal_requests
         WHERE
             student_appeal_requests.student_appeal_id = student_appeals.id
+        ORDER BY
+            student_appeal_requests.id
         LIMIT
             1
     ) AS assessed_date,
@@ -72,6 +76,8 @@ SELECT
             sims.student_appeal_requests student_appeal_requests
         WHERE
             student_appeal_requests.student_appeal_id = student_appeals.id
+        ORDER BY
+            student_appeal_requests.id
         LIMIT
             1
     ) AS assessed_by,
