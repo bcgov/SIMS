@@ -1136,6 +1136,7 @@
                 },
                 {
                   "title": "PIR Resubmission",
+                  "customClass": "panel-border-none",
                   "collapsible": false,
                   "hideLabel": true,
                   "key": "panel5",

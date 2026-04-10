@@ -2461,22 +2461,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @returns boolean indicating if any version has completed PIR status.
    */
   async hasPreviouslyCompletedPIR(applicationId: number): Promise<boolean> {
-    return this.repo
-      .createQueryBuilder("application")
-      .where("application.pirStatus = :pirStatus", {
-        pirStatus: ProgramInfoStatus.completed,
-      })
-      .andWhere((qb) => {
-        const subQuery = qb
-          .subQuery()
-          .select("currentApp.parentApplication")
-          .from(Application, "currentApp")
-          .where("currentApp.id = :applicationId")
-          .getQuery();
-        return `application.parentApplication = ${subQuery}`;
-      })
-      .setParameter("applicationId", applicationId)
-      .getExists();
+    return this.repo.exists({
+      where: {
+        id: applicationId,
+        parentApplication: {
+          versions: {
+            pirStatus: ProgramInfoStatus.completed,
+          },
+        },
+      },
+    });
   }
 
   /**

@@ -5,7 +5,8 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
-  mockUserLoginInfo,
+  mockJWTUserInfo,
+  resetMockJWTUserInfo,
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
@@ -39,7 +40,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
   });
 
   beforeEach(async () => {
-    await mockUserLoginInfo(appModule, student);
+    await resetMockJWTUserInfo(appModule);
   });
 
   it("Should throw not found error when application is not found.", async () => {
@@ -76,6 +77,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
+    await mockJWTUserInfo(appModule, application.student.user);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -132,6 +134,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
       const token = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
+      await mockJWTUserInfo(appModule, application.student.user);
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -192,6 +195,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
       const token = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
+      await mockJWTUserInfo(appModule, application.student.user);
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -276,6 +280,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
       const token = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
+      await mockJWTUserInfo(appModule, currentApplication.student.user);
 
       // Act/Assert
       await request(app.getHttpServer())
