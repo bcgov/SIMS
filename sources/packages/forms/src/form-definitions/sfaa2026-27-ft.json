@@ -1178,6 +1178,47 @@
                   "lockKey": true
                 },
                 {
+                  "title": "PIR Resubmission",
+                  "collapsible": false,
+                  "hideLabel": true,
+                  "key": "panel5",
+                  "customConditional": "// The box and area should only appear if the student previously approved/positively completed PIR\n// The check box question should disappear if the student attaches a program and offering and is no longer on the PIR path\n// The checkbox is not displayed during initial application submission\n// The check box question is only accessible by students during an edit and does not appear during a change request\nconst programOrStudyPeriodNotListed = (data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) ||\n        (data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false);\nshow = !data.isReadOnly && data.hasPreviouslyCompletedPIR && programOrStudyPeriodNotListed &&  !data.isChangeRequestApplication;",
+                  "type": "panel",
+                  "label": "Panel",
+                  "input": false,
+                  "tableView": false,
+                  "components": [
+                    {
+                      "label": "HTML",
+                      "tag": "p",
+                      "className": "alert alert-info fa fa-info-circle",
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
+                      "content": " <strong>Info!</strong><br />If you need your institution to review or update your program information, you can request a new program information request. Select the checkbox below to send a new request.",
+                      "refreshOnChange": false,
+                      "customClass": "banner-info",
+                      "key": "html2",
+                      "type": "htmlelement",
+                      "input": false,
+                      "tableView": false
+                    },
+                    {
+                      "label": "Request resubmission of program information request.",
+                      "tableView": false,
+                      "persistent": "client-only",
+                      "validateWhenHidden": false,
+                      "key": "requestPIRResubmission",
+                      "type": "checkbox",
+                      "input": true,
+                      "defaultValue": false
+                    }
+                  ]
+                },
+                {
                   "label": "Study period end date warning",
                   "tag": "p",
                   "className": "alert alert-warning fa fa-exclamation-triangle w-100",
@@ -1348,7 +1389,7 @@
         },
         {
           "label": "Program persistent properties",
-          "calculateValue": "value = [\r\n  \"selectedLocation\",\r\n  \"mySchoolIsNotListed\",\r\n  \"selectedProgram\",\r\n  \"myProgramNotListed\",\r\n  \"programName\",\r\n  \"programDescription\",\r\n  \"studystartDate\",\r\n  \"studyendDate\",\r\n  \"selectedOffering\",\r\n  \"myStudyPeriodIsntListed\",\r\n  \"studentNumber\",\r\n];",
+          "calculateValue": "value = [\r\n  \"selectedLocation\",\r\n  \"mySchoolIsNotListed\",\r\n  \"selectedProgram\",\r\n  \"myProgramNotListed\",\r\n  \"programName\",\r\n  \"programDescription\",\r\n  \"studystartDate\",\r\n  \"studyendDate\",\r\n  \"selectedOffering\",\r\n  \"myStudyPeriodIsntListed\",\r\n  \"studentNumber\",\r\n  \"pirResubmissionDate\",\r\n];",
           "calculateServer": true,
           "key": "programPersistentProperties",
           "type": "hidden",
@@ -1367,6 +1408,21 @@
           "persistent": false,
           "calculateValue": "const selectedLocationProgramRestrictions =  data.selectedLocationProgramRestrictions || [];\n\nvalue = selectedLocationProgramRestrictions.some((restriction) =>\n  restriction.restrictionActions.includes(\"Stop full time disbursement\")\n);",
           "key": "isSelectedLocationProgramRestricted",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
+        },
+        {
+          "label": "PIR resubmission date",
+          "key": "pirResubmissionDate",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
+        },
+        {
+          "label": "Has previously completed PIR",
+          "persistent": "client-only",
+          "key": "hasPreviouslyCompletedPIR",
           "type": "hidden",
           "input": true,
           "tableView": false
