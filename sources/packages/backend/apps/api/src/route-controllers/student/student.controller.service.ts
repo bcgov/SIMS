@@ -402,8 +402,6 @@ export class StudentControllerService {
         application.programYear,
       ),
       offeringIntensity: application.offeringIntensity,
-      isEligibleForApplicationAppeals:
-        !!application.currentAssessment?.eligibleApplicationAppeals?.length,
     };
   };
 

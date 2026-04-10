@@ -83,8 +83,7 @@
                 >
               </v-btn>
               <v-btn
-                v-if="canDisplaySubmitAppeal(item)"
-                :disabled="shouldDisableSubmitAppeal(item)"
+                v-if="isEligibleForAppeal(item.id)"
                 color="primary"
                 @click="$emit('submitAppeal', item.id)"
                 append-icon="mdi-pencil-outline"
@@ -160,15 +159,16 @@ import {
   ITEMS_PER_PAGE,
   DataTableOptions,
   PaginationOptions,
-  OfferingIntensity,
   DEFAULT_DATATABLE_PAGE_NUMBER,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
+import { StudentAppealService } from "@/services/StudentAppealService";
 import { useFormatters, useStudentStore } from "@/composables";
 import StatusChipApplication from "@/components/generic/StatusChipApplication.vue";
 import StudentApplicationsVersion from "@/components/students/StudentApplicationsVersion.vue";
 import {
   ApplicationSummaryAPIOutDTO,
+  EligibleApplicationForAppealAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   ApplicationVersionAPIOutDTO,
 } from "@/services/http/dto";
@@ -201,6 +201,9 @@ export default defineComponent({
     const applicationsAndCount = ref(
       {} as PaginatedResultsAPIOutDTO<ApplicationSummaryModel>,
     );
+    const eligibleApplicationsForAppeal = ref<
+      EligibleApplicationForAppealAPIOutDTO[]
+    >([]);
 
     const {
       dateOnlyLongString,
@@ -222,10 +225,14 @@ export default defineComponent({
         loading.value = true;
         // Reset expanded items when fetching new data.
         expandedItems.value = [];
-        applicationsAndCount.value =
-          await ApplicationService.shared.getStudentApplicationSummary(
+        const [applicationsResult, eligibleAppealsResult] = await Promise.all([
+          ApplicationService.shared.getStudentApplicationSummary(
             currentPagination,
-          );
+          ),
+          StudentAppealService.shared.getEligibleApplicationsForAppeal(),
+        ]);
+        applicationsAndCount.value = applicationsResult;
+        eligibleApplicationsForAppeal.value = eligibleAppealsResult.applications;
       } finally {
         loading.value = false;
       }
@@ -296,30 +303,14 @@ export default defineComponent({
     };
 
     /**
-     * Only completed full-time applications can submit an appeal.
-     * @param application application.
+     * Determines if an application is currently in the list of eligible applications
+     * for an appeal.
+     * @param applicationId application ID to check.
+     * @returns true if the application is eligible for an appeal.
      */
-    const canDisplaySubmitAppeal = (
-      application: ApplicationSummaryAPIOutDTO,
-    ) => {
-      return (
-        application.isChangeRequestAllowedForPY &&
-        application.status === ApplicationStatus.Completed &&
-        application.offeringIntensity === OfferingIntensity.fullTime
-      );
-    };
-
-    /**
-     * Validate if the submit appeal button should be disabled.
-     * @param application application.
-     */
-    const shouldDisableSubmitAppeal = (
-      application: ApplicationSummaryAPIOutDTO,
-    ) => {
-      return (
-        !hasValidSIN.value ||
-        application.isArchived ||
-        !application.isEligibleForApplicationAppeals
+    const isEligibleForAppeal = (applicationId: number): boolean => {
+      return eligibleApplicationsForAppeal.value.some(
+        (application) => application.id === applicationId,
       );
     };
 
@@ -329,8 +320,7 @@ export default defineComponent({
       emptyStringFiller,
       canDisplayEditOrCancel,
       canDisplayChangeRequest,
-      canDisplaySubmitAppeal,
-      shouldDisableSubmitAppeal,
+      isEligibleForAppeal,
       ApplicationStatus,
       applicationsAndCount,
       DEFAULT_PAGE_LIMIT,

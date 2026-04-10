@@ -189,10 +189,6 @@ export interface ApplicationSummaryAPIOutDTO {
    * Application offering intensity.
    */
   offeringIntensity: OfferingIntensity;
-  /**
-   *  Indicates if the application is eligible for any application appeal.
-   */
-  isEligibleForApplicationAppeals: boolean;
 }
 
 /**

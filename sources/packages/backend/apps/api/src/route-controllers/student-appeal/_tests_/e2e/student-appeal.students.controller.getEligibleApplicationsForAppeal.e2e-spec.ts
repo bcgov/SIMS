@@ -113,7 +113,7 @@ describe("StudentAppealStudentsController(e2e)-getEligibleApplicationsForAppeal"
       });
   });
 
-  it("Should not get any eligible application for appeal when application is not completed.", async () => {
+  it("Should not get any eligible application for appeal when application is not in an eligible status.", async () => {
     // Arrange
     const application = await saveEligibleApplicationForAppeal({
       applicationStatus: ApplicationStatus.InProgress,
@@ -131,6 +131,38 @@ describe("StudentAppealStudentsController(e2e)-getEligibleApplicationsForAppeal"
       .expect({
         applications: [],
       });
+  });
+
+  [
+    ApplicationStatus.Assessment,
+    ApplicationStatus.Enrolment,
+    ApplicationStatus.Completed,
+  ].forEach((applicationStatus) => {
+    it(`Should get eligible applications for an appeal when the application status is ${applicationStatus}.`, async () => {
+      // Arrange
+      const application = await saveEligibleApplicationForAppeal({
+        applicationStatus,
+      });
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      await mockJWTUserInfo(appModule, application.student.user);
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          applications: [
+            {
+              id: application.id,
+              applicationNumber: application.applicationNumber,
+              eligibleApplicationAppeals: ["someEligibleAppeal"],
+            },
+          ],
+        });
+    });
   });
 
   it("Should not get any eligible application for appeal when application is archived.", async () => {
