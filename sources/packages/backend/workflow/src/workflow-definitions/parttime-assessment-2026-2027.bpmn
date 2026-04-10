@@ -983,7 +983,7 @@ Will not change based on institution or appeal</bpmn:text>
           <zeebe:output source="=if (calculatedDataTotalAssessedNeed &#62;= 1)&#10;  and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardCSLPThresholdIncome)&#10;then true&#10;else false" target="assessmentEligibilityCSLP" />
           <zeebe:output source="=if (calculatedDataTotalAssessedNeed &#62;= 1)&#10;  and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGThresholdIncome)&#10;  and (programCredentialType = &#34;undergraduateCertificate&#34;&#10;	   or programCredentialType = &#34;undergraduateCitation&#34;&#10;       or programCredentialType = &#34;undergraduateDiploma&#34;&#10;       or programCredentialType = &#34;undergraduateDegree&#34;)&#10;then true &#10;else false" target="assessmentEligibilityBCAG" />
           <zeebe:output source="=if calculatedDataTotalAssessedNeed &#62;= 1&#10;  and calculatedDataPDPPDStatus = true&#10;  and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardSBSDThresholdIncome)&#10;then true &#10;else false" target="assessmentEligibilitySBSD" />
-          <zeebe:output source="=[{type: &#34;CSPT&#34;, &#10;  assessmentEligible: assessmentEligibilityCSPT, institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleCSPT&#10; },&#10; {type: &#34;CSGP&#34;,&#10; assessmentEligible: assessmentEligibilityCSGP,&#10; institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleCSGP&#10; },&#10; {type: &#34;CSGD&#34;,&#10;  assessmentEligible: assessmentEligibilityCSGD,&#10; institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleCSGD&#10; },&#10; {type: &#34;BCAG&#34;,&#10; assessmentEligible: assessmentEligibilityBCAG,&#10; institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleBCAG&#10; },&#10; {type: &#34;SBSD&#34;,&#10;  assessmentEligible: assessmentEligibilitySBSD,&#10; institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleSBSD},&#10; {type: &#34;CSLP&#34;,&#10;  assessmentEligible: assessmentEligibilityCSLP,&#10; institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleCSLP} ]" target="eligibilityAwardTypes" />
+          <zeebe:output source="=[{type: &#34;CSPT&#34;, &#10;  assessmentEligible: assessmentEligibilityCSPT, &#10;  institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleCSPT},&#10; {type: &#34;CSGP&#34;,&#10; assessmentEligible: assessmentEligibilityCSGP,&#10; institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleCSGP},&#10; {type: &#34;CSGD&#34;,&#10;  assessmentEligible: assessmentEligibilityCSGD,&#10; institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleCSGD},&#10; {type: &#34;BCAG&#34;,&#10; assessmentEligible: assessmentEligibilityBCAG,&#10; institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleBCAG},&#10; {type: &#34;SBSD&#34;,&#10;  assessmentEligible: assessmentEligibilitySBSD,&#10; institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleSBSD},&#10; {type: &#34;CSLP&#34;,&#10;  assessmentEligible: assessmentEligibilityCSLP,&#10; institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleCSLP} ]" target="eligibilityAwardTypes" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_171ny3j</bpmn:incoming>
@@ -992,19 +992,20 @@ Will not change based on institution or appeal</bpmn:text>
     <bpmn:subProcess id="Activity_0m0max6" name="Eligibility">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=awardEligibilityResults[type = &#34;CSPT&#34;].eligible[1]" target="awardEligibilityCSPT" />
-          <zeebe:output source="=awardEligibilityResults[type = &#34;CSGP&#34;].eligible[1]" target="awardEligibilityCSGP" />
-          <zeebe:output source="=awardEligibilityResults[type = &#34;CSGD&#34;].eligible[1]" target="awardEligibilityCSGD" />
-          <zeebe:output source="=awardEligibilityResults[type = &#34;CSLP&#34;].eligible[1]" target="awardEligibilityCSLP" />
-          <zeebe:output source="=awardEligibilityResults[type = &#34;BCAG&#34;].eligible[1]" target="awardEligibilityBCAG" />
-          <zeebe:output source="=awardEligibilityResults[type = &#34;SBSD&#34;].eligible[1]" target="awardEligibilitySBSD" />
+          <zeebe:output source="=eligibilityAwardResults[type = &#34;CSPT&#34;].isEligible[1]" target="awardEligibilityCSPT" />
+          <zeebe:output source="=eligibilityAwardResults[type = &#34;CSGP&#34;].isEligible[1]" target="awardEligibilityCSGP" />
+          <zeebe:output source="=eligibilityAwardResults[type = &#34;CSGD&#34;].isEligible[1]" target="awardEligibilityCSGD" />
+          <zeebe:output source="=eligibilityAwardResults[type = &#34;CSLP&#34;].isEligible[1]" target="awardEligibilityCSLP" />
+          <zeebe:output source="=eligibilityAwardResults[type = &#34;BCAG&#34;].isEligible[1]" target="awardEligibilityBCAG" />
+          <zeebe:output source="=eligibilityAwardResults[type = &#34;SBSD&#34;].isEligible[1]" target="awardEligibilitySBSD" />
         </zeebe:ioMapping>
+        <zeebe:properties />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1w3n6nn</bpmn:incoming>
       <bpmn:outgoing>Flow_1apr1q8</bpmn:outgoing>
-      <bpmn:multiInstanceLoopCharacteristics>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true">
         <bpmn:extensionElements>
-          <zeebe:loopCharacteristics inputCollection="=eligibilityAwardTypes" inputElement="award" outputCollection="awardEligibilityResults" outputElement="={type: award.type, eligible: awardEligibility}" />
+          <zeebe:loopCharacteristics inputCollection="=eligibilityAwardTypes" inputElement="award" outputCollection="eligibilityAwardResults" outputElement="={type: award.type,&#10;isEligible: awardEligibility}" />
         </bpmn:extensionElements>
       </bpmn:multiInstanceLoopCharacteristics>
       <bpmn:exclusiveGateway id="Gateway_08302jq" name="Assessment Eligible?">
@@ -1055,8 +1056,8 @@ Will not change based on institution or appeal</bpmn:text>
       <bpmn:sequenceFlow id="Flow_1yey56q" sourceRef="Gateway_010ospe" targetRef="Event_1k5vtom" />
       <bpmn:sequenceFlow id="Flow_1yiupx8" sourceRef="Event_0iz4ycv" targetRef="Gateway_0q6k5vb" />
       <bpmn:exclusiveGateway id="Gateway_010ospe">
-        <bpmn:incoming>Flow_1ry5tej</bpmn:incoming>
         <bpmn:incoming>Flow_0qeokdz</bpmn:incoming>
+        <bpmn:incoming>Flow_1ry5tej</bpmn:incoming>
         <bpmn:outgoing>Flow_1yey56q</bpmn:outgoing>
       </bpmn:exclusiveGateway>
       <bpmn:exclusiveGateway id="Gateway_0q6k5vb">
@@ -1545,9 +1546,9 @@ Will not change based on institution or appeal</bpmn:text>
       <bpmndi:BPMNEdge id="BPMNEdge_16blc91" bpmnElement="Flow_1qz9ep4">
         <di:waypoint x="5550" y="1544" />
         <di:waypoint x="5550" y="1579" />
-        <di:waypoint x="5740" y="1579" />
+        <di:waypoint x="5742" y="1579" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="5562" y="1582" width="56" height="14" />
+          <dc:Bounds x="5558" y="1583" width="56" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1artler" bpmnElement="Flow_08cav4r">
@@ -2033,7 +2034,7 @@ Will not change based on institution or appeal</bpmn:text>
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_00vsaa8" bpmnElement="TextAnnotation_0eilku9">
-        <dc:Bounds x="5790" y="1650" width="268" height="40" />
+        <dc:Bounds x="5801" y="1660" width="268" height="40" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1gi7mg0_di" bpmnElement="Association_1gi7mg0">
@@ -2101,8 +2102,8 @@ Will not change based on institution or appeal</bpmn:text>
         <di:waypoint x="5878" y="1351" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0lkwpu7" bpmnElement="Association_0cn606e">
-        <di:waypoint x="5773" y="1592" />
-        <di:waypoint x="5790" y="1655" />
+        <di:waypoint x="5773" y="1591" />
+        <di:waypoint x="5801" y="1669" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
