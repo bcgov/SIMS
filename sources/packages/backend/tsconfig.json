@@ -17,6 +17,7 @@
     "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "strictPropertyInitialization": false,
     "paths": {
       "@sims/sims-db": ["libs/sims-db/src"],
       "@sims/sims-db/*": ["libs/sims-db/src/*"],
