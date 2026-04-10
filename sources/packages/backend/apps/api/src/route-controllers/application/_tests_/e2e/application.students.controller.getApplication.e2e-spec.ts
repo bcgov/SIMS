@@ -287,9 +287,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
           isArchived: false,
           assessmentId: currentApplication.currentAssessment?.id,
           data: {
-            programName: "My Program",
             workflowName: "",
-            programDescription: "This is my program.",
           },
           applicationStatus: currentApplication.applicationStatus,
           applicationEditStatus: currentApplication.applicationEditStatus,
@@ -304,7 +302,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
             currentApplication.currentAssessment?.offering?.studyEndDate,
           ),
           applicationInstitutionName: currentApplication.location.name,
-          applicationPIRStatus: null,
+          applicationPIRStatus: ProgramInfoStatus.notRequired,
           applicationAssessmentStatus: null,
           applicationFormName: "SFAA2022-23",
           applicationProgramYearID: currentApplication.programYear.id,
