@@ -24,7 +24,7 @@
               {{ dateOnlyLongString(item.submittedDate) }}
             </template>
             <template #[`item.requestType`]="{ item }">
-              {{ item.requestType }}
+              {{ getRequestTypeToDisplay(item.requestType) }}
             </template>
             <template #[`item.requestForm`]="{ item }">
               <v-btn
@@ -126,6 +126,23 @@ export default defineComponent({
       }
     };
 
+    /**
+     * Adjust the request types as they must be displayed.
+     * Form submissions should be displayed as appeals to the user.
+     * @param requestType the request type to adjust for display.
+     * @returns the request type to display.
+     */
+    const getRequestTypeToDisplay = (
+      requestType: RequestAssessmentTypeAPIOutDTO,
+    ): string => {
+      if (
+        requestType === RequestAssessmentTypeAPIOutDTO.StudentFormSubmission
+      ) {
+        return RequestAssessmentTypeAPIOutDTO.StudentAppeal;
+      }
+      return requestType;
+    };
+
     return {
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
@@ -133,6 +150,7 @@ export default defineComponent({
       dateOnlyLongString,
       viewRequestForm,
       UnapprovedChangesHeaders,
+      getRequestTypeToDisplay,
       isMobile,
     };
   },

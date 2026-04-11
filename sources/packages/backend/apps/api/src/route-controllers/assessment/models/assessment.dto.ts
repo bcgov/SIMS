@@ -44,7 +44,6 @@ export type DynamicAwardValue = Record<
 export enum RequestAssessmentTypeAPIOutDTO {
   StudentException = "Student exceptions",
   StudentAppeal = "Student appeal",
-  // TODO: adjust the name in the request list.
   StudentFormSubmission = "Student form submission",
   OfferingRequest = "Offering request",
   ApplicationOfferingChangeRequest = "Application offering change",

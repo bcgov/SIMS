@@ -16,6 +16,7 @@
       :application-id="applicationId"
       :student-id="studentId"
       @view-student-appeal="goToStudentAppeal"
+      @view-student-form-submission="goToStudentFormSubmission"
       @view-application-exception="goToApplicationException"
     />
     <history-assessment
@@ -23,6 +24,7 @@
       :student-id="studentId"
       :view-request-types="assessmentRequestViewTypes"
       @view-student-appeal="goToStudentAppeal"
+      @view-student-form-submission="goToStudentFormSubmission"
       @view-assessment="gotToViewAssessment"
       @view-application-exception="goToApplicationException"
     />
@@ -36,7 +38,6 @@ import { defineComponent, computed } from "vue";
 import { AssessmentTriggerType } from "@/types";
 import RequestAssessment from "@/components/common/students/assessment/Request.vue";
 import HistoryAssessment from "@/components/common/students/assessment/History.vue";
-import { useFeatureToggles } from "@/composables";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
 
 export default defineComponent({
@@ -57,7 +58,6 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter();
-    const { isFormSubmissionEnabled } = useFeatureToggles();
 
     // The assessment trigger types for which the request form must be visible by default.
     const assessmentRequestViewTypes = [
@@ -65,25 +65,24 @@ export default defineComponent({
       AssessmentTriggerType.OriginalAssessment,
     ];
 
-    // TODO: update to allow both to be viewed.
-    const goToStudentAppeal = (id: number) => {
-      if (isFormSubmissionEnabled.value) {
-        router.push({
-          name: InstitutionRoutesConst.APPLICATION_FORM_SUBMISSION_VIEW,
-          params: {
-            studentId: props.studentId,
-            formSubmissionId: id,
-            applicationId: props.applicationId,
-          },
-        });
-        return;
-      }
+    const goToStudentAppeal = (appealId: number) => {
       router.push({
         name: InstitutionRoutesConst.STUDENT_APPLICATION_APPEAL_REQUESTS_APPROVAL,
         params: {
           studentId: props.studentId,
           applicationId: props.applicationId,
-          appealId: id,
+          appealId,
+        },
+      });
+    };
+
+    const goToStudentFormSubmission = (formSubmissionId: number) => {
+      router.push({
+        name: InstitutionRoutesConst.APPLICATION_FORM_SUBMISSION_VIEW,
+        params: {
+          studentId: props.studentId,
+          formSubmissionId,
+          applicationId: props.applicationId,
         },
       });
     };
@@ -120,6 +119,7 @@ export default defineComponent({
     return {
       InstitutionRoutesConst,
       goToStudentAppeal,
+      goToStudentFormSubmission,
       gotToViewAssessment,
       goToApplicationException,
       assessmentRequestViewTypes,
