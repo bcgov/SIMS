@@ -4,6 +4,7 @@
     :application-id="applicationId"
     :show-when-empty="false"
     @view-student-appeal="goToStudentAppeal"
+    @view-student-form-submission="goToStudentFormSubmission"
     @view-student-application-offering-change="
       goToStudentApplicationOfferingChangeRequest
     "
@@ -13,6 +14,7 @@
     :application-id="applicationId"
     :view-request-types="studentAssessmentRequestTypes"
     @view-student-appeal="goToStudentAppeal"
+    @view-student-form-submission="goToStudentFormSubmission"
     @view-student-application-offering-change="
       goToStudentApplicationOfferingChangeRequest
     "
@@ -60,24 +62,24 @@ export default defineComponent({
       });
     };
 
-    const goToStudentAppeal = (id: number) => {
-      if (isFormSubmissionEnabled.value) {
-        router.push({
-          name: StudentRoutesConst.STUDENT_FORMS_SUBMISSION_VIEW_FROM_APPLICATION_SUMMARY,
-          params: {
-            formSubmissionId: id,
-          },
-          query: {
-            applicationId: props.applicationId,
-          },
-        });
-        return;
-      }
+    const goToStudentAppeal = (appealId: number) => {
       router.push({
         name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_REQUEST,
         params: {
           applicationId: props.applicationId,
-          appealId: id,
+          appealId,
+        },
+      });
+    };
+
+    const goToStudentFormSubmission = (formSubmissionId: number) => {
+      router.push({
+        name: StudentRoutesConst.STUDENT_FORMS_SUBMISSION_VIEW_FROM_APPLICATION_SUMMARY,
+        params: {
+          formSubmissionId,
+        },
+        query: {
+          applicationId: props.applicationId,
         },
       });
     };
@@ -107,6 +109,7 @@ export default defineComponent({
     return {
       goToViewAssessment,
       goToStudentAppeal,
+      goToStudentFormSubmission,
       goToStudentApplicationOfferingChangeRequest,
       studentAssessmentRequestTypes,
       goToScholasticStanding,

@@ -37,3 +37,5 @@ export * from "./clamav/models/clamav.models";
 export * from "./clamav/clam-antivirus.module";
 export * from "./cas-supplier/cas-supplier.shared.service";
 export * from "./student-file/student-file.shared.service";
+export * from "./feature-toggles/feature-toggles";
+export * from "./feature-toggles/feature-toggles.module";
