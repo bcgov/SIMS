@@ -133,7 +133,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   institutionLocationProvince: Provinces;
   institutionType: InstitutionTypes;
   institutionCountry?: string;
-  institutionProvince?: string;
+  institutionProvince?: Provinces;
   institutionClassification?: InstitutionClassification;
   institutionOrganizationStatus?: InstitutionOrganizationStatus;
   programLength: ProgramLengthOptions;
@@ -438,12 +438,16 @@ export interface CalculatedAssessmentModel {
   calculatedDataWaivedParent?: number;
   // Common variables used in both full-time and part-time.
   // CSGP
+  assessmentEligibilityCSGP: boolean;
   awardEligibilityCSGP: boolean;
   // CSGD
+  assessmentEligibilityCSGD: boolean;
   awardEligibilityCSGD: boolean;
   // BCAG
+  assessmentEligibilityBCAG: boolean;
   awardEligibilityBCAG: boolean;
   // SBSD
+  assessmentEligibilitySBSD: boolean;
   awardEligibilitySBSD: boolean;
 
   // Full time.
@@ -457,20 +461,20 @@ export interface CalculatedAssessmentModel {
   federalAwardNetCSGDAmount: number;
   provincialAwardNetCSGDAmount: number;
   // CSGF
+  assessmentEligibilityCSGF: boolean;
   awardEligibilityCSGF: number;
   federalAwardNetCSGFAmount: number;
   provincialAwardNetCSGFAmount: number;
-  // CSGT
-  awardEligibilityCSGT: boolean;
-  federalAwardNetCSGTAmount: number;
-  provincialAwardNetCSGTAmount: number;
   // BCAG
   federalAwardNetBCAGAmount: number;
   provincialAwardWeeklyBCAGMax: number;
   provincialAwardNetBCAGAmount: number;
   // BCAG2Year
+  assessmentEligibilityBCAG2Year: boolean;
   awardEligibilityBCAG2Year: number;
   // BGPD
+  assessmentEligibilityBGPD: boolean;
+  institutionEligibilityBGPD: boolean;
   awardEligibilityBGPD: boolean;
   federalAwardNetBGPDAmount: number;
   provincialAwardNetBGPDAmount: number;
@@ -479,6 +483,8 @@ export interface CalculatedAssessmentModel {
   federalAwardNetSBSDAmount: number;
   provincialAwardNetSBSDAmount: number;
   // Loans
+  assessmentEligibilityBCSL: boolean;
+  institutionEligibilityBCSL: boolean;
   awardEligibilityBCSL: boolean;
   finalProvincialAwardNetBCSLAmount: number;
   awardEligibilityBCTopUp: boolean;
@@ -491,12 +497,14 @@ export interface CalculatedAssessmentModel {
 
   // Part time.
   // CSLP
+  assessmentEligibilityCSLP: boolean;
   awardEligibilityCSLP: boolean;
   federalAwardNetCSLPAmount: number;
   limitAwardCSLPRemaining: number;
   latestCSLPBalance: number;
   finalFederalAwardNetCSLPAmount: number;
   // CSPT
+  assessmentEligibilityCSPT: boolean;
   awardEligibilityCSPT: boolean;
   federalAwardCSPTAmount: number;
   federalAwardNetCSPTAmount: number;
@@ -549,6 +557,26 @@ export interface CalculatedAssessmentModel {
   // DMN Full Time Program Year Maximums
   dmnFullTimeProgramYearMaximums?: {
     limitWeeklyTransportationAllowance: number;
+  };
+  // DMN Part Time Award Institution Eligibility
+  dmnPartTimeAwardInstitutionEligibility?: {
+    isEligibleSBSD: boolean;
+    isEligibleBCAG: boolean;
+    isEligibleCSPT: boolean;
+    isEligibleCSGP: boolean;
+    isEligibleCSGD: boolean;
+    isEligibleCSLP: boolean;
+  };
+  // DMN Full Time Award Institution Eligibility
+  dmnFullTimeAwardInstitutionEligibility?: {
+    isEligibleBCSL: boolean;
+    isEligibleCSLF: boolean;
+    isEligibleCSGP: boolean;
+    isEligibleCSGD: boolean;
+    isEligibleCSGF: boolean;
+    isEligibleBCAG: boolean; // Applies to both 2 year and regular BCAG.
+    isEligibleSBSD: boolean;
+    isEligibleBGPD: boolean;
   };
   // Disbursement schedules
   disbursementSchedules: DisbursementSchedule[];

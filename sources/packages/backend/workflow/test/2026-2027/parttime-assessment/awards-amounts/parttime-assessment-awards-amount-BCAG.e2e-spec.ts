@@ -5,6 +5,7 @@ import {
   executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import { InstitutionTypes } from "../../../models";
+import { Provinces } from "@sims/test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BCAG.`, () => {
   it("Should determine provincialAwardBCAGAmount when calculatedDataTotalFamilyIncome <= limitAwardBCAGIncomeCap.", async () => {
@@ -112,7 +113,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
     // Private institution
-    assessmentConsolidatedData.institutionType = InstitutionTypes.BCPrivate;
+    assessmentConsolidatedData.institutionCountry = "CA";
+    assessmentConsolidatedData.institutionProvince = Provinces.Alberta;
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
