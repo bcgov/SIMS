@@ -65,6 +65,7 @@ export default defineComponent({
       AssessmentTriggerType.OriginalAssessment,
     ];
 
+    // TODO: update to allow both to be viewed.
     const goToStudentAppeal = (id: number) => {
       if (isFormSubmissionEnabled.value) {
         router.push({

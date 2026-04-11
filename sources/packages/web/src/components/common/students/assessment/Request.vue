@@ -65,6 +65,7 @@ import {
 export default defineComponent({
   emits: [
     "viewStudentAppeal",
+    "viewStudentFormSubmission",
     "viewStudentApplicationOfferingChange",
     "viewApplicationException",
     "viewOfferingRequest",
@@ -109,6 +110,9 @@ export default defineComponent({
       switch (data.requestType) {
         case RequestAssessmentTypeAPIOutDTO.StudentAppeal:
           context.emit("viewStudentAppeal", data.id);
+          break;
+        case RequestAssessmentTypeAPIOutDTO.StudentFormSubmission:
+          context.emit("viewStudentFormSubmission", data.id);
           break;
         case RequestAssessmentTypeAPIOutDTO.ApplicationOfferingChangeRequest:
           context.emit("viewStudentApplicationOfferingChange", data.id);

@@ -510,7 +510,7 @@ export class AssessmentControllerService {
         id: submission.id,
         submittedDate: submission.submittedDate,
         status: submission.submissionStatus,
-        requestType: RequestAssessmentTypeAPIOutDTO.StudentAppeal,
+        requestType: RequestAssessmentTypeAPIOutDTO.StudentFormSubmission,
       }));
     return submissions;
   }
