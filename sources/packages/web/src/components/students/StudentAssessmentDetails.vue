@@ -62,7 +62,6 @@ export default defineComponent({
       });
     };
 
-    // TODO: update to allow both to be viewed.
     const goToStudentAppeal = (appealId: number) => {
       router.push({
         name: StudentRoutesConst.STUDENT_APPLICATION_APPEAL_REQUEST,
