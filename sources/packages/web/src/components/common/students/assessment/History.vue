@@ -139,10 +139,10 @@ export default defineComponent({
     const viewRequest = (data: AssessmentHistorySummaryAPIOutDTO) => {
       switch (data.triggerType) {
         case AssessmentTriggerType.StudentAppeal:
-          if (data.studentAppealId) {
-            context.emit("viewStudentAppeal", data.studentAppealId);
-          } else if (data.formSubmissionId) {
+          if (data.formSubmissionId) {
             context.emit("viewStudentFormSubmission", data.formSubmissionId);
+          } else if (data.studentAppealId) {
+            context.emit("viewStudentAppeal", data.studentAppealId);
           }
           break;
         case AssessmentTriggerType.ApplicationOfferingChange:
