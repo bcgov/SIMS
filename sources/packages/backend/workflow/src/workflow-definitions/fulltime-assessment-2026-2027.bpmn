@@ -2466,6 +2466,7 @@ Alimony/Child Support paid by the Partner during the study period can be conside
           <zeebe:output source="=true" target="isEligibleForStudentCurrentYearIncomeAppeal" />
           <zeebe:output source="=if studentDataRelationshipStatus = &#34;married&#34;&#10;then true&#10;else false" target="isEligibleForPartnerCurrentYearIncomeAppeal" />
           <zeebe:output source="=true" target="isEligibleForExceptionalExpenseAppeal" />
+          <zeebe:output source="=studentDataDependantstatus = &#34;dependant&#34;" target="isEligibleForParentCurrentYearIncomeAppeal" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1u26ach</bpmn:incoming>
