@@ -19,12 +19,14 @@ import {
   ensureDynamicFormConfigurationExists,
   saveFakeFormSubmissionFromInputTestData,
   saveFakeApplication,
+  createFakeUser,
 } from "@sims/test-utils";
 import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
   DynamicFormConfiguration,
   FormCategory,
+  FormSubmissionDecisionStatus,
   FormSubmissionStatus,
   ProgramYear,
   Student,
@@ -32,6 +34,7 @@ import {
 } from "@sims/sims-db";
 import { RequestAssessmentTypeAPIOutDTO } from "../../../assessment/models/assessment.dto";
 import { TestingModule } from "@nestjs/testing";
+import { addDays } from "@sims/utilities";
 
 describe("AssessmentStudentsController(e2e)-getRequestedAssessmentSummary", () => {
   let app: INestApplication;
@@ -167,8 +170,9 @@ describe("AssessmentStudentsController(e2e)-getRequestedAssessmentSummary", () =
       ]);
   });
 
-  it("Should get a pending form submission appeal when the student has a pending form submission appeal.", async () => {
+  it("Should get a pending and a declined form submission appeal requests when the student has a pending and declined form submission appeal.", async () => {
     // Arrange
+    const auditUser = await db.user.save(createFakeUser());
     const application = await saveFakeApplication(
       db.dataSource,
       {
@@ -178,18 +182,32 @@ describe("AssessmentStudentsController(e2e)-getRequestedAssessmentSummary", () =
         applicationStatus: ApplicationStatus.Completed,
       },
     );
-    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
-      application,
-      formCategory: FormCategory.StudentAppeal,
-      submissionStatus: FormSubmissionStatus.Pending,
-      formSubmissionItems: [
-        {
-          dynamicFormConfiguration: studentAppealA,
-          decisions: [],
-        },
-      ],
-    });
-    const endpoint = `/students/assessment/application/${formSubmission.application!.id}/requests`;
+    const [pendingFormSubmission, declinedFormSubmission] = await Promise.all(
+      [FormSubmissionStatus.Pending, FormSubmissionStatus.Declined].map(
+        (status, index) =>
+          saveFakeFormSubmissionFromInputTestData(db, {
+            now: addDays(index),
+            ministryAuditUser: auditUser,
+            application,
+            formCategory: FormCategory.StudentAppeal,
+            submissionStatus: status,
+            formSubmissionItems: [
+              {
+                dynamicFormConfiguration: studentAppealA,
+                decisions: [
+                  {
+                    decisionStatus:
+                      status === FormSubmissionStatus.Pending
+                        ? FormSubmissionDecisionStatus.Pending
+                        : FormSubmissionDecisionStatus.Declined,
+                  },
+                ],
+              },
+            ],
+          }),
+      ),
+    );
+    const endpoint = `/students/assessment/application/${application.id}/requests`;
     await mockJWTUserInfo(appModule, application.student.user);
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -202,8 +220,14 @@ describe("AssessmentStudentsController(e2e)-getRequestedAssessmentSummary", () =
       .expect(HttpStatus.OK)
       .expect([
         {
-          id: formSubmission.id,
-          submittedDate: formSubmission.submittedDate.toISOString(),
+          id: declinedFormSubmission.id,
+          submittedDate: declinedFormSubmission.submittedDate.toISOString(),
+          status: FormSubmissionStatus.Declined,
+          requestType: RequestAssessmentTypeAPIOutDTO.StudentFormSubmission,
+        },
+        {
+          id: pendingFormSubmission.id,
+          submittedDate: pendingFormSubmission.submittedDate.toISOString(),
           status: FormSubmissionStatus.Pending,
           requestType: RequestAssessmentTypeAPIOutDTO.StudentFormSubmission,
         },
