@@ -141,7 +141,7 @@ export class AssessmentStudentsController extends BaseController {
         userToken.studentId,
       );
     const formSubmissionAppealsPromise =
-      await this.assessmentControllerService.getPendingAndDeniedStudentAppeals(
+      this.assessmentControllerService.getPendingAndDeniedStudentAppeals(
         applicationId,
         userToken.studentId,
       );
