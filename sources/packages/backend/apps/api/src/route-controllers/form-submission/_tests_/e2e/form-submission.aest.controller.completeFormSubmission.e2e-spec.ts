@@ -541,7 +541,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message:
-          "The application associated with the form submission is not in completed status.",
+          "The application associated with the form submission is not in the expected status.",
         error: "Unprocessable Entity",
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });
