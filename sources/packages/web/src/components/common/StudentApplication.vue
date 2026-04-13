@@ -121,6 +121,8 @@ export default defineComponent({
     const OFFERING_NOT_LISTED = "myStudyPeriodIsntListed";
     const SELECTED_LOCATION_PROGRAM_RESTRICTIONS_KEY =
       "selectedLocationProgramRestrictions";
+    const REQUEST_PIR_RESUBMISSION_KEY = "requestPIRResubmission";
+    const PIR_RESUBMISSION_DATE_KEY = "pirResubmissionDate";
     let formInstance: any;
     const formioUtils = useFormioUtils();
     const formioDataLoader = useFormioDropdownLoader();
@@ -367,26 +369,59 @@ export default defineComponent({
           SELECTED_OFFERING_END_DATE_KEY,
         );
       }
-      // If the user after selecting a study period finds that
-      // they need to check my study period not listed, then
-      // the details of previously selected
-      // study period must be cleared.
-      if (
-        event.changed?.component.key === OFFERING_NOT_LISTED &&
-        event.changed.value?.offeringnotListed
-      ) {
-        resetSelectedOfferingDetails(form);
+
+      if (event.changed?.component.key === OFFERING_NOT_LISTED) {
+        // If the user after selecting a study period finds that
+        // they need to check my study period not listed, then
+        // the details of previously selected
+        // study period must be cleared.
+        if (event.changed.value?.offeringnotListed) {
+          resetSelectedOfferingDetails(form);
+        } else {
+          // If the user unchecks 'Your study dates are not listed.'
+          // then the pirResubmissionDate must be reset to avoid an erroneous update to the pirHash.
+          resetResubmissionDate(form);
+        }
       }
 
-      // If the user after selecting a study period finds that
-      // they need to check my program not listed, then
-      // the details of previously selected
-      // study period must be cleared.
-      if (
-        event.changed?.component.key === PROGRAM_NOT_LISTED &&
-        event.changed.value?.programnotListed
-      ) {
-        resetSelectedOfferingDetails(form);
+      if (event.changed?.component.key === PROGRAM_NOT_LISTED) {
+        // If the user after selecting a study period finds that
+        // they need to check my program not listed, then
+        // the details of previously selected
+        // study period must be cleared.
+        if (event.changed.value?.programnotListed) {
+          resetSelectedOfferingDetails(form);
+        } else {
+          // If the user unchecks 'Your program is not listed.'
+          // then the pirResubmissionDate must be reset to avoid an erroneous update to the pirHash.
+          resetResubmissionDate(form);
+        }
+      }
+
+      if (event.changed?.component.key === REQUEST_PIR_RESUBMISSION_KEY) {
+        // If the user selects 'Request resubmission...',
+        // set pirResubmissionDate to the current date/time to force a new value for the pirHash.
+        if (event.changed.value) {
+          formioUtils.setComponentValue(
+            form,
+            PIR_RESUBMISSION_DATE_KEY,
+            new Date(),
+          );
+        } else {
+          // If the user unselects 'Request resubmission...',
+          // then the pirResubmissionDate must be reset to avoid an erroneous update to the pirHash.
+          resetResubmissionDate(form);
+        }
+      }
+    };
+
+    const resetResubmissionDate = (form: FormIOForm) => {
+      if (formioUtils.getComponent(form, PIR_RESUBMISSION_DATE_KEY)) {
+        formioUtils.setComponentValue(
+          form,
+          PIR_RESUBMISSION_DATE_KEY,
+          props.initialData[PIR_RESUBMISSION_DATE_KEY],
+        );
       }
     };
 

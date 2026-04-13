@@ -2455,6 +2455,24 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
+   * Checks if any version of the application has completed PIR status.
+   * @param applicationId application id.
+   * @returns boolean indicating if any version has completed PIR status.
+   */
+  async hasPreviouslyCompletedPIR(applicationId: number): Promise<boolean> {
+    return this.repo.exists({
+      where: {
+        id: applicationId,
+        parentApplication: {
+          versions: {
+            pirStatus: ProgramInfoStatus.completed,
+          },
+        },
+      },
+    });
+  }
+
+  /**
    * Copy program data from a source application to a target application.
    * @param sourceApplicationData source application data to copy from.
    * @param targetApplicationData target application data to copy to.

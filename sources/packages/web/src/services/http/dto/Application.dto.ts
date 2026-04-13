@@ -126,6 +126,7 @@ export interface ApplicationDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
   programYearStartDate: string;
   programYearEndDate: string;
   submittedDate?: Date;
+  hasPreviouslyCompletedPIR: boolean;
 }
 
 export interface ApplicationDataChangeAPIOutDTO {

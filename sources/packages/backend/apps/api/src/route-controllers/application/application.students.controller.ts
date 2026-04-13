@@ -92,15 +92,15 @@ export class ApplicationStudentsController extends BaseController {
 
   /**
    * Get application details by id.
-   * @param id for the application to be retrieved.
+   * @param applicationId Id of the application to be retrieved.
    * @returns application details.
    */
-  @Get(":id")
+  @Get(":applicationId")
   @ApiNotFoundResponse({
     description: "Application id not found.",
   })
-  async getByApplicationId(
-    @Param("id", ParseIntPipe) applicationId: number,
+  async getApplication(
+    @Param("applicationId", ParseIntPipe) applicationId: number,
     @UserToken() userToken: StudentUserToken,
   ): Promise<ApplicationDataAPIOutDTO> {
     const application = await this.applicationService.getApplicationById(
@@ -125,15 +125,21 @@ export class ApplicationStudentsController extends BaseController {
       this.confirmationOfEnrollmentService.getFirstDisbursementScheduleByApplication(
         applicationId,
       );
-    const [applicationData, firstCOE] = await Promise.all([
-      applicationDataPromise,
-      firstCOEPromise,
-    ]);
+
+    const hasPreviouslyCompletedPIRPromise =
+      this.applicationService.hasPreviouslyCompletedPIR(application.id);
+    const [applicationData, firstCOE, hasPreviouslyCompletedPIR] =
+      await Promise.all([
+        applicationDataPromise,
+        firstCOEPromise,
+        hasPreviouslyCompletedPIRPromise,
+      ]);
 
     application.data = applicationData;
     return this.applicationControllerService.transformToApplicationDetailForStudentDTO(
       application,
       firstCOE,
+      hasPreviouslyCompletedPIR,
     );
   }
 
