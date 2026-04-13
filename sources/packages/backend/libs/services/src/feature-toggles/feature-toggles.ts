@@ -4,7 +4,7 @@ import { ConfigService } from "@sims/utilities/config";
 const FORMS_SUBMISSION = "FORMS_SUBMISSION";
 
 @Injectable()
-export class FeatureToggles {
+export class FeatureTogglesService {
   readonly isFormSubmissionEnabled: boolean = false;
 
   constructor(private readonly configService: ConfigService) {

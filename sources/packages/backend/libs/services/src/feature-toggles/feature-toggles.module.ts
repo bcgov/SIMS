@@ -1,9 +1,9 @@
 import { Global, Module } from "@nestjs/common";
-import { FeatureToggles } from "./feature-toggles";
+import { FeatureTogglesService } from "./feature-toggles";
 
 @Global()
 @Module({
-  providers: [FeatureToggles],
-  exports: [FeatureToggles],
+  providers: [FeatureTogglesService],
+  exports: [FeatureTogglesService],
 })
 export class FeatureTogglesModule {}

@@ -85,7 +85,7 @@ export default defineComponent({
       AssessmentTriggerType.ApplicationOfferingChange,
     ];
 
-    const goToStudentAppeal = (appealId) => {
+    const goToStudentAppeal = (appealId: number) => {
       router.push({
         name: AESTRoutesConst.STUDENT_APPLICATION_APPEAL_REQUESTS_APPROVAL,
         params: {

@@ -9,4 +9,6 @@ WHERE
             sims.form_submissions.converted_student_appeal_id
         FROM
             sims.form_submissions
+        WHERE
+            sims.form_submissions.converted_student_appeal_id IS NOT NULL
     );

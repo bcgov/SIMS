@@ -56,7 +56,7 @@ import {
   getSupportingUserParents,
 } from "../../utilities";
 import { StudentAppealStatus } from "@sims/sims-db";
-import { FeatureToggles } from "@sims/services";
+import { FeatureTogglesService } from "@sims/services";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -68,7 +68,7 @@ export class StudentAppealStudentsController extends BaseController {
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
     private readonly studentAppealControllerService: StudentAppealControllerService,
-    private readonly featureToggles: FeatureToggles,
+    private readonly featureTogglesService: FeatureTogglesService,
   ) {
     super();
   }
@@ -152,7 +152,10 @@ export class StudentAppealStudentsController extends BaseController {
     // If the submission is for new appeal process, then set the operation name as appeal.
     // Otherwise, set it to change request.
     const operation = isProgramYearForNewProcess ? "appeal" : "change request";
-    if (operation === "appeal" && this.featureToggles.isFormSubmissionEnabled) {
+    if (
+      operation === "appeal" &&
+      this.featureTogglesService.isFormSubmissionEnabled
+    ) {
       throw new UnprocessableEntityException(
         "Appeal submission has been deprecated in favor of the new form submission process.",
       );
