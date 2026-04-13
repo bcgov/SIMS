@@ -140,6 +140,11 @@ export class AssessmentStudentsController extends BaseController {
         applicationId,
         userToken.studentId,
       );
+    const formSubmissionAppealsPromise =
+      await this.assessmentControllerService.getPendingAndDeniedStudentAppeals(
+        applicationId,
+        userToken.studentId,
+      );
     const studentInProgressAndDeclinedApplicationOfferingChangeRequestsPromise =
       this.assessmentControllerService.getApplicationOfferingChangeRequestsByStatus(
         applicationId,
@@ -153,13 +158,16 @@ export class AssessmentStudentsController extends BaseController {
       );
     const [
       pendingAndDeniedAppeals,
+      formSubmissionAppeals,
       studentInProgressAndDeclinedApplicationOfferingChangeRequests,
     ] = await Promise.all([
       pendingAndDeniedAppealsPromise,
+      formSubmissionAppealsPromise,
       studentInProgressAndDeclinedApplicationOfferingChangeRequestsPromise,
     ]);
     return [
       ...pendingAndDeniedAppeals,
+      ...formSubmissionAppeals,
       ...studentInProgressAndDeclinedApplicationOfferingChangeRequests,
     ].sort(this.assessmentControllerService.sortAssessmentHistory);
   }

@@ -4,8 +4,10 @@ import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   FakeStudentUsersTypes,
+  getRecentActiveProgramYear,
   getStudentByFakeStudentUserType,
   getStudentToken,
+  mockJWTUserInfo,
 } from "../../../../testHelpers";
 import {
   saveFakeApplicationDisbursements,
@@ -14,27 +16,50 @@ import {
   createFakeStudentAppealRequest,
   createFakeStudentAppeal,
   saveFakeApplicationOfferingRequestChange,
+  ensureDynamicFormConfigurationExists,
+  saveFakeFormSubmissionFromInputTestData,
+  saveFakeApplication,
 } from "@sims/test-utils";
 import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
-  AssessmentTriggerType,
+  DynamicFormConfiguration,
+  FormCategory,
+  FormSubmissionStatus,
+  ProgramYear,
   Student,
   StudentAppealStatus,
 } from "@sims/sims-db";
+import { RequestAssessmentTypeAPIOutDTO } from "../../../assessment/models/assessment.dto";
+import { TestingModule } from "@nestjs/testing";
 
 describe("AssessmentStudentsController(e2e)-getRequestedAssessmentSummary", () => {
   let app: INestApplication;
+  let appModule: TestingModule;
   let db: E2EDataSources;
   let student: Student;
+  let studentAppealA: DynamicFormConfiguration;
+  let recentActiveProgramYear: ProgramYear;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, dataSource, module } =
+      await createTestingAppModule();
     app = nestApplication;
+    appModule = module;
     db = createE2EDataSources(dataSource);
     student = await getStudentByFakeStudentUserType(
       FakeStudentUsersTypes.FakeStudentUserType1,
       dataSource,
+    );
+    recentActiveProgramYear = await getRecentActiveProgramYear(db);
+    studentAppealA = await ensureDynamicFormConfigurationExists(
+      db,
+      "Student Appeal A",
+      {
+        formCategory: FormCategory.StudentAppeal,
+        hasApplicationScope: true,
+        allowBundledSubmission: true,
+      },
     );
   });
 
@@ -116,26 +141,71 @@ describe("AssessmentStudentsController(e2e)-getRequestedAssessmentSummary", () =
           submittedDate:
             pendingApplicationOfferingChangeRequest.createdAt.toISOString(),
           status: ApplicationOfferingChangeRequestStatus.InProgressWithStudent,
-          requestType: AssessmentTriggerType.ApplicationOfferingChange,
+          requestType:
+            RequestAssessmentTypeAPIOutDTO.ApplicationOfferingChangeRequest,
         },
         {
           id: declinedApplicationOfferingChangeRequest.id,
           submittedDate:
             declinedApplicationOfferingChangeRequest.createdAt.toISOString(),
           status: ApplicationOfferingChangeRequestStatus.DeclinedBySABC,
-          requestType: AssessmentTriggerType.ApplicationOfferingChange,
+          requestType:
+            RequestAssessmentTypeAPIOutDTO.ApplicationOfferingChangeRequest,
         },
         {
           id: pendingAppeal.id,
           submittedDate: pendingAppeal.submittedDate.toISOString(),
           status: StudentAppealStatus.Pending,
-          requestType: AssessmentTriggerType.StudentAppeal,
+          requestType: RequestAssessmentTypeAPIOutDTO.StudentAppeal,
         },
         {
           id: declinedAppeal.id,
           submittedDate: declinedAppeal.submittedDate.toISOString(),
           status: StudentAppealStatus.Declined,
-          requestType: AssessmentTriggerType.StudentAppeal,
+          requestType: RequestAssessmentTypeAPIOutDTO.StudentAppeal,
+        },
+      ]);
+  });
+
+  it("Should get a pending form submission appeal when the student has a pending form submission appeal.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        programYear: recentActiveProgramYear,
+      },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+      application,
+      formCategory: FormCategory.StudentAppeal,
+      submissionStatus: FormSubmissionStatus.Pending,
+      formSubmissionItems: [
+        {
+          dynamicFormConfiguration: studentAppealA,
+          decisions: [],
+        },
+      ],
+    });
+    const endpoint = `/students/assessment/application/${formSubmission.application!.id}/requests`;
+    await mockJWTUserInfo(appModule, application.student.user);
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect([
+        {
+          id: formSubmission.id,
+          submittedDate: formSubmission.submittedDate.toISOString(),
+          status: FormSubmissionStatus.Pending,
+          requestType: RequestAssessmentTypeAPIOutDTO.StudentFormSubmission,
         },
       ]);
   });
