@@ -46,8 +46,8 @@ import { StudentFileService } from "../student-file/student-file.service";
 import { InjectRepository } from "@nestjs/typeorm";
 
 /**
- * Defined a constant for the program year start date to determine
- * if appeals should be retrieved from the student_appeals table of
+ * Define a constant for the program year start date to determine
+ * if appeals should be retrieved from the student_appeals table or
  * the new form_submissions table.
  */
 const PROGRAM_YEAR_2024_25_START_DATE = new Date("2024-08-01");
