@@ -47,7 +47,6 @@ import {
 } from "../models/pagination.dto";
 import { Role } from "../../auth/roles.enum";
 import { StudentAppealControllerService } from "./student-appeal.controller.service";
-import { FeatureTogglesService } from "@sims/services";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -58,7 +57,6 @@ export class StudentAppealAESTController extends BaseController {
     private readonly studentAppealService: StudentAppealService,
     private readonly studentAppealControllerService: StudentAppealControllerService,
     private readonly studentAppealAssessmentService: StudentAppealAssessmentService,
-    private readonly featureTogglesService: FeatureTogglesService,
   ) {
     super();
   }
@@ -106,11 +104,6 @@ export class StudentAppealAESTController extends BaseController {
     @Body() payload: StudentAppealApprovalAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    if (this.featureTogglesService.isFormSubmissionEnabled) {
-      throw new UnprocessableEntityException(
-        "Appeal submission has been deprecated in favor of the new form submission process.",
-      );
-    }
     try {
       await this.studentAppealAssessmentService.assessRequests(
         appealId,
