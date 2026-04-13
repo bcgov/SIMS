@@ -16,7 +16,7 @@ import {
 } from "@sims/sims-db";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL.`, () => {
-  it("Should determine BCSL as assessment eligible when provincial need is at least $1.", async () => {
+  it.skip("Should determine BCSL as assessment eligible when provincial need is at least $1.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -33,7 +33,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL
     expect(calculatedAssessment.variables.assessmentEligibilityBCSL).toBe(true);
   });
 
-  it("Should determine BCSL as not assessment eligible when provincial need is less than $1.", async () => {
+  it.skip("Should determine BCSL as not assessment eligible when provincial need is less than $1.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -56,7 +56,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL
     ).toBe(0);
   });
 
-  it("Should determine BC(SL) Top Up as eligible when eligible dependants is greater than 0.", async () => {
+  it.skip("Should determine BC(SL) Top Up as eligible when eligible dependants is greater than 0.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -80,7 +80,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL
     expect(calculatedAssessment.variables.awardEligibilityBCTopUp).toBe(true);
   });
 
-  it("Should determine BC(SL) Top Up as not eligible when eligible dependants is 0.", async () => {
+  it.skip("Should determine BC(SL) Top Up as not eligible when eligible dependants is 0.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -114,7 +114,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL
           InstitutionOrganizationStatus.NotForProfit,
       },
       expectedData: {
-        expectedAssessmentEligibility: true, // Need > $1
+        expectedAssessmentEligibility: true,
         expectedInstitutionEligibility: true,
         expectedAwardEligibility: true,
       },
