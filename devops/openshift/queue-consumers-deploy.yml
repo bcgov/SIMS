@@ -9,8 +9,11 @@ objects:
   - apiVersion: apps/v1
     kind: Deployment
     metadata:
+      annotations:
+        app.openshift.io/connects-to: '[{ "apiVersion": "apps/v1", "kind": "StatefulSet", "name": "redis-cluster" }, { "apiVersion": "apps/v1", "kind": "StatefulSet", "name": "clamav" }]'
       labels:
         app: ${NAME}
+        app.kubernetes.io/part-of: sims-packages-group
       name: ${NAME}
     spec:
       replicas: "${{REPLICAS}}"

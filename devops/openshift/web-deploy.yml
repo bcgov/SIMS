@@ -11,6 +11,7 @@ objects:
     metadata:
       labels:
         app: ${NAME}
+        app.kubernetes.io/part-of: sims-packages-group
       name: ${NAME}
     spec:
       replicas: "${{REPLICAS}}"
