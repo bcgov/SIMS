@@ -56,7 +56,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
       .expect(HttpStatus.NOT_FOUND);
   });
 
-  it("Should get the student application details when the application status is 'Draft'.", async () => {
+  it("Should get the student application details when the application status is Draft.", async () => {
     // Arrange
     const application = await saveFakeApplication(
       db.dataSource,
@@ -109,216 +109,204 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
       });
   });
 
-  it(
-    "Should get the student application details when the application status is 'In-Progress'" +
-      " and the PIR has status Required.",
-    async () => {
-      // Arrange
-      const application = await saveFakeApplication(
-        db.dataSource,
-        { student },
-        {
-          applicationStatus: ApplicationStatus.InProgress,
-          offeringIntensity: OfferingIntensity.partTime,
-          applicationData: {
-            programName: "My Program",
-            programDescription: "This is my program.",
-            workflowName: "",
-          },
-          pirStatus: ProgramInfoStatus.required,
+  it("Should get the student application details when the application status is In-Progress and the PIR has status Required.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      { student },
+      {
+        applicationStatus: ApplicationStatus.InProgress,
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationData: {
+          programName: "My Program",
+          programDescription: "This is my program.",
+          workflowName: "",
         },
-      );
+        pirStatus: ProgramInfoStatus.required,
+      },
+    );
 
-      await db.application.save(application);
-      const endpoint = `/students/application/${application.id}`;
-      const token = await getStudentToken(
-        FakeStudentUsersTypes.FakeStudentUserType1,
-      );
-      await mockJWTUserInfo(appModule, application.student.user);
+    await db.application.save(application);
+    const endpoint = `/students/application/${application.id}`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    await mockJWTUserInfo(appModule, application.student.user);
 
-      // Act/Assert
-      await request(app.getHttpServer())
-        .get(endpoint)
-        .auth(token, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK)
-        .expect({
-          id: application.id,
-          isArchived: false,
-          assessmentId: application.currentAssessment?.id,
-          data: {
-            programName: "My Program",
-            workflowName: "",
-            programDescription: "This is my program.",
-          },
-          applicationStatus: application.applicationStatus,
-          applicationEditStatus: application.applicationEditStatus,
-          applicationStatusUpdatedOn:
-            application.applicationStatusUpdatedOn.toISOString(),
-          applicationNumber: application.applicationNumber,
-          applicationOfferingIntensity: application.offeringIntensity,
-          applicationInstitutionName: application.location.name,
-          applicationPIRStatus: application.pirStatus,
-          applicationAssessmentStatus: null,
-          applicationFormName: "SFAA2022-23",
-          applicationProgramYearID: application.programYear.id,
-          programYearStartDate: application.programYear.startDate,
-          programYearEndDate: application.programYear.endDate,
-          submittedDate: application.submittedDate?.toISOString(),
-          isChangeRequestAllowedForPY: false,
-          hasPreviouslyCompletedPIR: false,
-        });
-    },
-  );
-
-  it(
-    "Should get the student application details when the application status is 'Assessment'" +
-      " and the PIR has status Completed.",
-    async () => {
-      // Arrange
-      const application = await saveFakeApplication(
-        db.dataSource,
-        { student },
-        {
-          applicationStatus: ApplicationStatus.Assessment,
-          offeringIntensity: OfferingIntensity.partTime,
-          applicationData: {
-            programName: "My Program",
-            programDescription: "This is my program.",
-            workflowName: "",
-          },
-          pirStatus: ProgramInfoStatus.completed,
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        id: application.id,
+        isArchived: false,
+        assessmentId: application.currentAssessment?.id,
+        data: {
+          programName: "My Program",
+          workflowName: "",
+          programDescription: "This is my program.",
         },
-      );
+        applicationStatus: application.applicationStatus,
+        applicationEditStatus: application.applicationEditStatus,
+        applicationStatusUpdatedOn:
+          application.applicationStatusUpdatedOn.toISOString(),
+        applicationNumber: application.applicationNumber,
+        applicationOfferingIntensity: application.offeringIntensity,
+        applicationInstitutionName: application.location.name,
+        applicationPIRStatus: application.pirStatus,
+        applicationAssessmentStatus: null,
+        applicationFormName: "SFAA2022-23",
+        applicationProgramYearID: application.programYear.id,
+        programYearStartDate: application.programYear.startDate,
+        programYearEndDate: application.programYear.endDate,
+        submittedDate: application.submittedDate?.toISOString(),
+        isChangeRequestAllowedForPY: false,
+        hasPreviouslyCompletedPIR: false,
+      });
+  });
 
-      await db.application.save(application);
-      const endpoint = `/students/application/${application.id}`;
-      const token = await getStudentToken(
-        FakeStudentUsersTypes.FakeStudentUserType1,
-      );
-      await mockJWTUserInfo(appModule, application.student.user);
-
-      // Act/Assert
-      await request(app.getHttpServer())
-        .get(endpoint)
-        .auth(token, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK)
-        .expect({
-          id: application.id,
-          isArchived: false,
-          assessmentId: application.currentAssessment?.id,
-          data: {
-            programName: "My Program",
-            workflowName: "",
-            programDescription: "This is my program.",
-          },
-          applicationStatus: application.applicationStatus,
-          applicationEditStatus: application.applicationEditStatus,
-          applicationStatusUpdatedOn:
-            application.applicationStatusUpdatedOn.toISOString(),
-          applicationNumber: application.applicationNumber,
-          applicationOfferingIntensity: application.offeringIntensity,
-          applicationStartDate: getDateOnlyFormat(
-            application.currentAssessment?.offering?.studyStartDate,
-          ),
-          applicationEndDate: getDateOnlyFormat(
-            application.currentAssessment?.offering?.studyEndDate,
-          ),
-          applicationInstitutionName: application.location.name,
-          applicationPIRStatus: application.pirStatus,
-          applicationAssessmentStatus: null,
-          applicationFormName: "SFAA2022-23",
-          applicationProgramYearID: application.programYear.id,
-          programYearStartDate: application.programYear.startDate,
-          programYearEndDate: application.programYear.endDate,
-          submittedDate: application.submittedDate?.toISOString(),
-          isChangeRequestAllowedForPY: false,
-          hasPreviouslyCompletedPIR: true,
-        });
-    },
-  );
-
-  it(
-    "Should get the student application details when the application status is 'Assessment'" +
-      " and it has a previous version with PIR in 'Completed' status.",
-    async () => {
-      // Arrange
-      // First application with 'Completed' PIR status.
-      const firstApplication = await saveFakeApplication(
-        db.dataSource,
-        { student },
-        {
-          applicationStatus: ApplicationStatus.Edited,
-          offeringIntensity: OfferingIntensity.fullTime,
-          applicationData: {
-            programName: "My Program",
-            programDescription: "This is my program.",
-            workflowName: "",
-          },
-          pirStatus: ProgramInfoStatus.completed,
+  it("Should get the student application details when the application status is Assessment and the PIR has status Completed.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      { student },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationData: {
+          programName: "My Program",
+          programDescription: "This is my program.",
+          workflowName: "",
         },
-      );
-      // Current application with PIR 'Not Required' status.
-      const currentApplication = await saveFakeApplication(
-        db.dataSource,
-        {
-          student,
-          parentApplication: { id: firstApplication.id } as Application,
-          precedingApplication: { id: firstApplication.id } as Application,
-        },
-        {
-          applicationStatus: ApplicationStatus.Assessment,
-          offeringIntensity: OfferingIntensity.partTime,
-          applicationNumber: firstApplication.applicationNumber,
-          applicationData: {
-            workflowName: "",
-          },
-          pirStatus: ProgramInfoStatus.notRequired,
-        },
-      );
+        pirStatus: ProgramInfoStatus.completed,
+      },
+    );
 
-      const endpoint = `/students/application/${currentApplication.id}`;
-      const token = await getStudentToken(
-        FakeStudentUsersTypes.FakeStudentUserType1,
-      );
-      await mockJWTUserInfo(appModule, currentApplication.student.user);
+    await db.application.save(application);
+    const endpoint = `/students/application/${application.id}`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    await mockJWTUserInfo(appModule, application.student.user);
 
-      // Act/Assert
-      await request(app.getHttpServer())
-        .get(endpoint)
-        .auth(token, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK)
-        .expect({
-          id: currentApplication.id,
-          isArchived: false,
-          assessmentId: currentApplication.currentAssessment?.id,
-          data: {
-            workflowName: "",
-          },
-          applicationStatus: currentApplication.applicationStatus,
-          applicationEditStatus: currentApplication.applicationEditStatus,
-          applicationStatusUpdatedOn:
-            currentApplication.applicationStatusUpdatedOn.toISOString(),
-          applicationNumber: currentApplication.applicationNumber,
-          applicationOfferingIntensity: currentApplication.offeringIntensity,
-          applicationStartDate: getDateOnlyFormat(
-            currentApplication.currentAssessment?.offering?.studyStartDate,
-          ),
-          applicationEndDate: getDateOnlyFormat(
-            currentApplication.currentAssessment?.offering?.studyEndDate,
-          ),
-          applicationInstitutionName: currentApplication.location.name,
-          applicationPIRStatus: ProgramInfoStatus.notRequired,
-          applicationAssessmentStatus: null,
-          applicationFormName: "SFAA2022-23",
-          applicationProgramYearID: currentApplication.programYear.id,
-          programYearStartDate: currentApplication.programYear.startDate,
-          programYearEndDate: currentApplication.programYear.endDate,
-          submittedDate: currentApplication.submittedDate?.toISOString(),
-          isChangeRequestAllowedForPY: false,
-          hasPreviouslyCompletedPIR: true,
-        });
-    },
-  );
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        id: application.id,
+        isArchived: false,
+        assessmentId: application.currentAssessment?.id,
+        data: {
+          programName: "My Program",
+          workflowName: "",
+          programDescription: "This is my program.",
+        },
+        applicationStatus: application.applicationStatus,
+        applicationEditStatus: application.applicationEditStatus,
+        applicationStatusUpdatedOn:
+          application.applicationStatusUpdatedOn.toISOString(),
+        applicationNumber: application.applicationNumber,
+        applicationOfferingIntensity: application.offeringIntensity,
+        applicationStartDate: getDateOnlyFormat(
+          application.currentAssessment?.offering?.studyStartDate,
+        ),
+        applicationEndDate: getDateOnlyFormat(
+          application.currentAssessment?.offering?.studyEndDate,
+        ),
+        applicationInstitutionName: application.location.name,
+        applicationPIRStatus: application.pirStatus,
+        applicationAssessmentStatus: null,
+        applicationFormName: "SFAA2022-23",
+        applicationProgramYearID: application.programYear.id,
+        programYearStartDate: application.programYear.startDate,
+        programYearEndDate: application.programYear.endDate,
+        submittedDate: application.submittedDate?.toISOString(),
+        isChangeRequestAllowedForPY: false,
+        hasPreviouslyCompletedPIR: true,
+      });
+  });
+
+  it("Should get the student application details when the application status is Assessment and it has a previous version with PIR in Completed status.", async () => {
+    // Arrange
+    // First application with 'Completed' PIR status.
+    const firstApplication = await saveFakeApplication(
+      db.dataSource,
+      { student },
+      {
+        applicationStatus: ApplicationStatus.Edited,
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationData: {
+          programName: "My Program",
+          programDescription: "This is my program.",
+          workflowName: "",
+        },
+        pirStatus: ProgramInfoStatus.completed,
+      },
+    );
+    // Current application with PIR 'Not Required' status.
+    const currentApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        student,
+        parentApplication: { id: firstApplication.id } as Application,
+        precedingApplication: { id: firstApplication.id } as Application,
+      },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationNumber: firstApplication.applicationNumber,
+        applicationData: {
+          workflowName: "",
+        },
+        pirStatus: ProgramInfoStatus.notRequired,
+      },
+    );
+
+    const endpoint = `/students/application/${currentApplication.id}`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    await mockJWTUserInfo(appModule, currentApplication.student.user);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        id: currentApplication.id,
+        isArchived: false,
+        assessmentId: currentApplication.currentAssessment?.id,
+        data: {
+          workflowName: "",
+        },
+        applicationStatus: currentApplication.applicationStatus,
+        applicationEditStatus: currentApplication.applicationEditStatus,
+        applicationStatusUpdatedOn:
+          currentApplication.applicationStatusUpdatedOn.toISOString(),
+        applicationNumber: currentApplication.applicationNumber,
+        applicationOfferingIntensity: currentApplication.offeringIntensity,
+        applicationStartDate: getDateOnlyFormat(
+          currentApplication.currentAssessment?.offering?.studyStartDate,
+        ),
+        applicationEndDate: getDateOnlyFormat(
+          currentApplication.currentAssessment?.offering?.studyEndDate,
+        ),
+        applicationInstitutionName: currentApplication.location.name,
+        applicationPIRStatus: ProgramInfoStatus.notRequired,
+        applicationAssessmentStatus: null,
+        applicationFormName: "SFAA2022-23",
+        applicationProgramYearID: currentApplication.programYear.id,
+        programYearStartDate: currentApplication.programYear.startDate,
+        programYearEndDate: currentApplication.programYear.endDate,
+        submittedDate: currentApplication.submittedDate?.toISOString(),
+        isChangeRequestAllowedForPY: false,
+        hasPreviouslyCompletedPIR: true,
+      });
+  });
 
   afterAll(async () => {
     await app?.close();
