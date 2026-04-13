@@ -46,13 +46,6 @@ import { StudentFileService } from "../student-file/student-file.service";
 import { InjectRepository } from "@nestjs/typeorm";
 
 /**
- * Define a constant for the program year start date to determine
- * if appeals should be retrieved from the student_appeals table or
- * the new form_submissions table.
- */
-const PROGRAM_YEAR_2024_25_START_DATE = new Date("2024-08-01");
-
-/**
  * Service layer for Student appeals.
  */
 @Injectable()
@@ -292,8 +285,8 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       .innerJoin("studentAppeal.application", "application")
       .innerJoin("application.programYear", "programYear")
       .where("application.id = :applicationId", { applicationId })
-      .andWhere("programYear.startDate <= :programYear2024StartDate", {
-        programYear2024StartDate: PROGRAM_YEAR_2024_25_START_DATE,
+      .andWhere("programYear.startDate < :programStartDate", {
+        programStartDate: PROGRAM_YEAR_2025_26_START_DATE,
       })
       .andWhere(
         new Brackets((qb) => {
