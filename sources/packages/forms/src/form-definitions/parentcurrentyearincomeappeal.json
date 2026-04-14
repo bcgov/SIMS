@@ -1,6 +1,6 @@
 {
   "title": "Appeals - Parent Current Year Income",
-  "name": "appealsParentCurrentYearIncome",
+  "name": "parentCurrentYearIncomeAppeal",
   "path": "parentcurrentyearincomeappeal",
   "type": "form",
   "display": "form",
@@ -51,19 +51,11 @@
     },
     {
       "label": "Parents",
+      "persistent": false,
       "key": "parents",
       "tags": [
         "supplementary-data"
       ],
-      "type": "hidden",
-      "input": true,
-      "tableView": false
-    },
-    {
-      "label": "Parents Count",
-      "redrawOn": "parents",
-      "calculateValue": "value = data.parents.length;",
-      "key": "parentsCount",
       "type": "hidden",
       "input": true,
       "tableView": false
@@ -115,7 +107,7 @@
       "hideLabel": true
     },
     {
-      "label": "Parents Information",
+      "label": "Parents Income",
       "disableAddingRemovingRows": true,
       "reorder": false,
       "addAnotherPosition": "bottom",
@@ -127,14 +119,18 @@
       "defaultValue": [
         {
           "parent": "",
-          "hasCurrentYearParentIncome": "no"
+          "hasCurrentYearParentIncome": "no",
+          "id": "",
+          "fullName": ""
         }
       ],
-      "redrawOn": "parentsCount",
       "clearOnHide": false,
-      "calculateValue": "// Set the grid size dynamically based on the number of parents\nlet parentsCount = data.parentsCount;\nconsole.log('parentsCount', parentsCount);\nparentsCount = 2;\nconsole.log('parentsCount', parentsCount);\ncomponent.validate.minLength = parentsCount;\ncomponent.validate.maxLength = parentsCount;",
+      "calculateValue": "value = data.parents;",
+      "validate": {
+        "custom": "const errorMessage = 'An income appeal must be submitted for at least one parent';\r\nvalid = data.parentsIncome.some(parent => parent.hasCurrentYearParentIncome === 'yes') ? true : errorMessage;"
+      },
       "validateWhenHidden": false,
-      "key": "parentsInformation",
+      "key": "parentsIncome",
       "type": "datagrid",
       "input": true,
       "components": [
@@ -146,9 +142,8 @@
           "tableView": false,
           "components": [
             {
-              "label": "Parent",
-              "calculateValue": "value = data.parents[rowIndex].fullName;",
-              "key": "parent",
+              "label": "Id",
+              "key": "id",
               "type": "hidden",
               "input": true,
               "tableView": false
@@ -172,7 +167,7 @@
               "hideLabel": true
             },
             {
-              "label": "Do you need to submit an income appeal for {{row.parent}}?",
+              "label": "Do you need to submit an income appeal for {{row.fullName}}?",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -193,8 +188,8 @@
               },
               "validateWhenHidden": false,
               "key": "hasCurrentYearParentIncome",
-              "redrawOn": "data",
               "type": "radio",
+              "redrawOn": "data",
               "input": true
             },
             {
@@ -202,10 +197,10 @@
               "customClass": "panel-border-none",
               "collapsible": false,
               "hideLabel": true,
-              "key": "panel",
+              "key": "parentCurrentYearIncomePanel",
               "conditional": {
                 "show": true,
-                "when": "parentsInformation.hasCurrentYearParentIncome",
+                "when": "parentsIncome.hasCurrentYearParentIncome",
                 "eq": "yes"
               },
               "type": "panel",
@@ -231,7 +226,7 @@
                   "tag": "p"
                 },
                 {
-                  "label": "{{row.parent}}'s total current year gross income is:",
+                  "label": "{{row.fullName}}'s total current year gross income is:",
                   "prefix": "$",
                   "applyMaskOn": "change",
                   "mask": false,
@@ -239,7 +234,6 @@
                   "currency": "USD",
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
-                  "redrawOn": "parent1",
                   "validate": {
                     "required": true
                   },
@@ -320,7 +314,7 @@
                   "key": "otherExceptionalCircumstancePanel",
                   "conditional": {
                     "show": true,
-                    "when": "reasonsignificantdecreaseInIncome",
+                    "when": "parents.reasonSignificantDecreaseInParentIncome",
                     "eq": "other"
                   },
                   "type": "panel",
@@ -347,11 +341,6 @@
                       },
                       "validateWhenHidden": false,
                       "key": "otherExceptionalParentCircumstance",
-                      "conditional": {
-                        "show": true,
-                        "when": "reasonsignificantdecreaseInIncome",
-                        "eq": "other"
-                      },
                       "type": "textarea",
                       "input": true,
                       "lockKey": true
@@ -409,8 +398,7 @@
                   "type": "htmlelement",
                   "input": false,
                   "hideLabel": true,
-                  "tableView": false,
-                  "tag": "p"
+                  "tableView": false
                 },
                 {
                   "label": "Content",
@@ -427,8 +415,7 @@
                   "type": "htmlelement",
                   "input": false,
                   "hideLabel": true,
-                  "tableView": false,
-                  "tag": "p"
+                  "tableView": false
                 },
                 {
                   "label": "Upload supporting documents",
@@ -462,14 +449,20 @@
                 },
                 {
                   "label": "Content",
-                  "input": false,
                   "className": "file-upload-info-container",
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
                   "content": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n<p>15MB file limit each</p>",
-                  "type": "htmlelement",
-                  "hideLabel": true,
-                  "tableView": false,
+                  "refreshOnChange": false,
                   "key": "content",
-                  "tag": "p"
+                  "type": "htmlelement",
+                  "input": false,
+                  "hideLabel": true,
+                  "tableView": false
                 }
               ]
             }
@@ -480,23 +473,6 @@
         }
       ],
       "lockKey": true
-    },
-    {
-      "title": "Parent 1 Income Appeal",
-      "customClass": "panel-border-none",
-      "collapsible": false,
-      "hideLabel": true,
-      "key": "panel1",
-      "conditional": {
-        "show": true,
-        "when": "isParent1IncomeAppeal",
-        "eq": "yes"
-      },
-      "type": "panel",
-      "label": "Panel",
-      "input": false,
-      "tableView": false,
-      "components": []
     }
   ]
 }

@@ -16,4 +16,4 @@ VALUES
         'If either of your parents has had, or is anticipated to have, a significant decrease in gross income, you may submit this appeal to request assessment using their current year estimated gross income.',
         TRUE,
         TRUE
-    )
+    );
