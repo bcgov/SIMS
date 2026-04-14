@@ -18,7 +18,7 @@ import {
 } from "@sims/sims-db";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD.`, () => {
-  it("Should determine CSGD as assessment eligible when financial need is at least $1 and total family income is under the threshold and there is at least 1 eligible dependent.", async () => {
+  it("Should determine CSGD as assessment eligible when financial need is at least $1 and total family income is at or below the threshold and there is at least 1 eligible dependent.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -61,7 +61,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
       assessmentConsolidatedData,
     );
     // Assert
-    // calculatedDataTotalFamilyIncome must be below the threshold for
+    // calculatedDataTotalFamilyIncome must be at or below the threshold for
     // dmnFullTimeAwardFamilySizeVariables.limitAwardCSGDThresholdIncome.
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
       assessmentConsolidatedData.studentDataTaxReturnIncome,

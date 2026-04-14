@@ -63,7 +63,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
         institutionProvince: Provinces.BritishColumbia,
         institutionCountry: "CA",
         institutionClassification: InstitutionClassification.Private,
-        InstitutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
+        institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
       },
       expectedData: {
         expectedAssessmentEligibility: true,
@@ -186,8 +186,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
       CredentialType.GraduateDiploma;
     assessmentConsolidatedData.programLength =
       ProgramLengthOptions.SixtyWeeksToTwoYears;
-    // 132870 is the threshold for a family of 3 (2 dependents + the student).
-    assessmentConsolidatedData.studentDataTaxReturnIncome = 82195;
+    assessmentConsolidatedData.studentDataTaxReturnIncome = 82195; // 82194 is the threshold for a family of 3 (the student and two dependents).
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,

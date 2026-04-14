@@ -53,7 +53,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
         institutionProvince: Provinces.BritishColumbia,
         institutionCountry: "CA",
         institutionClassification: InstitutionClassification.Private,
-        InstitutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
+        institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
       },
       expectedData: {
         expectedAssessmentEligibility: true,
