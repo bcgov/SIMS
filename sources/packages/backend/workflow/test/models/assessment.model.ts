@@ -530,7 +530,7 @@ export interface CalculatedAssessmentModel {
   calculatedDataNetWeeklyAdditionalTransportCost: number;
   calculatedDataTotalAdditionalTransportationAllowance: number;
   calculatedDataTotalTransportationAllowance: number;
-  // DMN Part Time Award Allowable Limits
+  // DMN Part-time Award Allowable Limits
   dmnPartTimeAwardAllowableLimits?: {
     limitAwardBCAGAmount: number;
     limitAwardCSPTAmount: number;
@@ -541,7 +541,7 @@ export interface CalculatedAssessmentModel {
     limitAwardSBSD40AndUpCourseLoadAmount: number;
     limitAwardCSLPAmount: number;
   };
-  // DMN Part Time Award Family Size Variables
+  // DMN Part-time Award Family Size Variables
   dmnPartTimeAwardFamilySizeVariables?: {
     limitAwardBCAGIncomeCap: number;
     limitAwardBCAGSlope: number;
@@ -551,15 +551,15 @@ export interface CalculatedAssessmentModel {
     limitAwardCSGD3OrMoreChildSlope: number;
     limitAwardCSGD2OrLessChildSlope: number;
   };
-  // DMN Part Time Program Year Maximums
+  // DMN Part-time Program Year Maximums
   dmnPartTimeProgramYearMaximums?: {
     limitTransportationAllowance: number;
   };
-  // DMN Full Time Program Year Maximums
+  // DMN Full-time Program Year Maximums
   dmnFullTimeProgramYearMaximums?: {
     limitWeeklyTransportationAllowance: number;
   };
-  // DMN Part Time Award Institution Eligibility
+  // DMN Part-time Award Institution Eligibility
   dmnPartTimeAwardInstitutionEligibility?: {
     isEligibleSBSD: boolean;
     isEligibleBCAG: boolean;
@@ -568,7 +568,7 @@ export interface CalculatedAssessmentModel {
     isEligibleCSGD: boolean;
     isEligibleCSLP: boolean;
   };
-  // DMN Full Time Award Institution Eligibility
+  // DMN Full-time Award Institution Eligibility
   dmnFullTimeAwardInstitutionEligibility?: {
     isEligibleBCSL: boolean;
     isEligibleCSLF: boolean;
