@@ -5654,6 +5654,7 @@
       <output id="OutputClause_1nazy5x" label="isEligibleCSGP" name="isEligibleCSGP" typeRef="boolean" biodi:width="150" />
       <output id="OutputClause_1pra4d8" label="isEligibleCSLF" name="isEligibleCSLF" typeRef="boolean" biodi:width="150" />
       <rule id="DecisionRule_0ig5plh">
+        <description>BC Public institutions</description>
         <inputEntry id="UnaryTests_039r2vz">
           <text>"CA"</text>
         </inputEntry>
@@ -5692,6 +5693,7 @@
         </outputEntry>
       </rule>
       <rule id="DecisionRule_16zmgtm">
+        <description>BC Private Not-for-profit institutions</description>
         <inputEntry id="UnaryTests_0ja17pt">
           <text>"CA"</text>
         </inputEntry>
@@ -5729,45 +5731,8 @@
           <text>true</text>
         </outputEntry>
       </rule>
-      <rule id="DecisionRule_0ubjge2">
-        <inputEntry id="UnaryTests_1vcymla">
-          <text>"CA"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1rqlfqq">
-          <text></text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1imz6fn">
-          <text>"private"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1bddmu6">
-          <text>"profit"</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_1am6xun">
-          <text>false</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0mgdp4d">
-          <text>false</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0w1zci3">
-          <text>false</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0oj4hea">
-          <text>false</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1si0sjs">
-          <text>false</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1j55edw">
-          <text>true</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0ch9axc">
-          <text>true</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0b3uyrg">
-          <text>true</text>
-        </outputEntry>
-      </rule>
       <rule id="DecisionRule_035ddr9">
+        <description>Canadian (OOP) Public institutions</description>
         <inputEntry id="UnaryTests_0hiao3n">
           <text>"CA"</text>
         </inputEntry>
@@ -5805,7 +5770,47 @@
           <text>true</text>
         </outputEntry>
       </rule>
+      <rule id="DecisionRule_0ubjge2">
+        <description>Canadian (OOP) Private For-profit institutions</description>
+        <inputEntry id="UnaryTests_1vcymla">
+          <text>"CA"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1rqlfqq">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1imz6fn">
+          <text>"private"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1bddmu6">
+          <text>"profit"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1am6xun">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0mgdp4d">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0w1zci3">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0oj4hea">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1si0sjs">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1j55edw">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ch9axc">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0b3uyrg">
+          <text>true</text>
+        </outputEntry>
+      </rule>
       <rule id="DecisionRule_011058h">
+        <description>Canadian (OOP) Private Not-for-profit institutions</description>
         <inputEntry id="UnaryTests_0998prk">
           <text>"CA"</text>
         </inputEntry>
@@ -5844,6 +5849,7 @@
         </outputEntry>
       </rule>
       <rule id="DecisionRule_13jfkdn">
+        <description>All public institutions outside of Canada</description>
         <inputEntry id="UnaryTests_1p3u35y">
           <text></text>
         </inputEntry>
@@ -5882,6 +5888,7 @@
         </outputEntry>
       </rule>
       <rule id="DecisionRule_0iamvpm">
+        <description>All private not-for-profit institutions outside of Canada</description>
         <inputEntry id="UnaryTests_1euywwn">
           <text></text>
         </inputEntry>
@@ -5920,6 +5927,7 @@
         </outputEntry>
       </rule>
       <rule id="DecisionRule_03s5f5j">
+        <description>All private for-profit institutions outside of Canada</description>
         <inputEntry id="UnaryTests_0spr9aq">
           <text></text>
         </inputEntry>
