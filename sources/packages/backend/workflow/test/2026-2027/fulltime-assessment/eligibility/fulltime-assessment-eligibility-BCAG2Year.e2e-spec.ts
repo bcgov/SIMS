@@ -16,9 +16,10 @@ import {
 } from "@sims/sims-db";
 
 /**
- * BCAG2Year is a variation for BCAG due to differences in the way thatBCAGWeeklyProratedMaximumGrant
- * is calculated where dmnFullTimeAwardFederalAllowableLimits defines different values for BCAG and BCAG2Year
- * where both will result in the BCAG calculation.
+ * BCAG2Year is a variation for BCAG due to differences in the way that
+ * BCAGWeeklyProratedMaximumGrant is calculated, where
+ * dmnFullTimeAwardFederalAllowableLimits defines different values for BCAG and
+ * BCAG2Year, where both will result in the BCAG calculation.
  * These tests are only intended to check the BCAG2Year eligibility.
  */
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG2Year.`, () => {

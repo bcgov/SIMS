@@ -113,7 +113,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
-    // Private institution
+    // Out-of-province Canadian institution.
     assessmentConsolidatedData.institutionCountry = "CA";
     assessmentConsolidatedData.institutionProvince = Provinces.Alberta;
     assessmentConsolidatedData.institutionClassification =
