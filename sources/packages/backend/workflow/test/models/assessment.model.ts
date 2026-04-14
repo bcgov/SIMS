@@ -474,7 +474,6 @@ export interface CalculatedAssessmentModel {
   awardEligibilityBCAG2Year: number;
   // BGPD
   assessmentEligibilityBGPD: boolean;
-  institutionEligibilityBGPD: boolean;
   awardEligibilityBGPD: boolean;
   federalAwardNetBGPDAmount: number;
   provincialAwardNetBGPDAmount: number;
@@ -484,12 +483,14 @@ export interface CalculatedAssessmentModel {
   provincialAwardNetSBSDAmount: number;
   // Loans
   assessmentEligibilityBCSL: boolean;
-  institutionEligibilityBCSL: boolean;
   awardEligibilityBCSL: boolean;
   finalProvincialAwardNetBCSLAmount: number;
+  assessmentEligibilityBCTopUp: boolean;
   awardEligibilityBCTopUp: boolean;
+  assessmentEligibilityCSLF: boolean;
   awardEligibilityCSLF: boolean;
   federalAwardNetCSLFAmount: number;
+  finalFederalAwardNetCSLFAmount: number;
   // Calculated Data / Intermediate Award Variables
   calculatedDataPotentialBCSL: number;
   calculatedDataBCTopup: number;
