@@ -980,9 +980,9 @@ If distance education/blended learning program or if married and claiming separa
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1o8fr38</bpmn:incoming>
       <bpmn:outgoing>Flow_0g6m6w8</bpmn:outgoing>
-      <bpmn:multiInstanceLoopCharacteristics isSequential="true">
+      <bpmn:multiInstanceLoopCharacteristics>
         <bpmn:extensionElements>
-          <zeebe:loopCharacteristics inputCollection="=eligibilityAwardInput" inputElement="award" outputCollection="eligibilityAwardResults" outputElement="={type: award.type,&#10;isEligible: awardEligibility}" />
+          <zeebe:loopCharacteristics inputCollection="=eligibilityAwardInput" inputElement="award" outputCollection="eligibilityAwardResults" outputElement="={type: award.type,&#10;isEligible: award.awardEligibility}" />
         </bpmn:extensionElements>
       </bpmn:multiInstanceLoopCharacteristics>
       <bpmn:exclusiveGateway id="Gateway_08302jq" name="Assessment Eligible?">
@@ -993,7 +993,7 @@ If distance education/blended learning program or if married and claiming separa
       <bpmn:intermediateThrowEvent id="Event_0iz4ycv" name="Award Eligibility">
         <bpmn:extensionElements>
           <zeebe:ioMapping>
-            <zeebe:output source="=true" target="awardEligibility" />
+            <zeebe:output source="=true" target="award.awardEligibility" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_08cav4r</bpmn:incoming>
@@ -1002,7 +1002,7 @@ If distance education/blended learning program or if married and claiming separa
       <bpmn:intermediateThrowEvent id="Event_1jlyysi" name="Award Eligibility">
         <bpmn:extensionElements>
           <zeebe:ioMapping>
-            <zeebe:output source="=false" target="awardEligibility" />
+            <zeebe:output source="=false" target="award.awardEligibility" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_1qz9ep4</bpmn:incoming>
@@ -1011,7 +1011,7 @@ If distance education/blended learning program or if married and claiming separa
       <bpmn:intermediateThrowEvent id="Event_1ipu05h" name="Award Eligibility">
         <bpmn:extensionElements>
           <zeebe:ioMapping>
-            <zeebe:output source="=false" target="awardEligibility" />
+            <zeebe:output source="=false" target="award.awardEligibility" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_09zyhb8</bpmn:incoming>
