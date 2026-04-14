@@ -87,6 +87,7 @@ import AssessmentTags from "@/components/common/students/assessment/AssessmentTa
 export default defineComponent({
   emits: [
     "viewStudentAppeal",
+    "viewStudentFormSubmission",
     "viewStudentApplicationOfferingChange",
     "viewScholasticStandingChange",
     "viewApplicationException",
@@ -138,10 +139,11 @@ export default defineComponent({
     const viewRequest = (data: AssessmentHistorySummaryAPIOutDTO) => {
       switch (data.triggerType) {
         case AssessmentTriggerType.StudentAppeal:
-          context.emit(
-            "viewStudentAppeal",
-            data.formSubmissionId ?? data.studentAppealId,
-          );
+          if (data.formSubmissionId) {
+            context.emit("viewStudentFormSubmission", data.formSubmissionId);
+          } else if (data.studentAppealId) {
+            context.emit("viewStudentAppeal", data.studentAppealId);
+          }
           break;
         case AssessmentTriggerType.ApplicationOfferingChange:
           context.emit(

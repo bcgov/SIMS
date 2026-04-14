@@ -42,24 +42,6 @@
         },
         {
             "label": "HTML",
-            "tag": "h3",
-            "className": "category-header-medium primary-color",
-            "attrs": [
-                {
-                    "attr": "",
-                    "value": ""
-                }
-            ],
-            "content": "Room and board appeal",
-            "refreshOnChange": false,
-            "key": "html116",
-            "type": "htmlelement",
-            "input": false,
-            "tableView": false,
-            "hideLabel": true
-        },
-        {
-            "label": "HTML",
             "tag": "p",
             "attrs": [
                 {

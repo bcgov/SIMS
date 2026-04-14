@@ -30,24 +30,6 @@
             "calculateServer": true
         },
         {
-            "label": "HTML",
-            "tag": "h3",
-            "className": "category-header-medium primary-color",
-            "attrs": [
-                {
-                    "attr": "",
-                    "value": ""
-                }
-            ],
-            "content": "Modified independent appeal",
-            "refreshOnChange": false,
-            "key": "html116",
-            "type": "htmlelement",
-            "input": false,
-            "tableView": false,
-            "hideLabel": true
-        },
-        {
             "title": "",
             "customClass": "alert-banner-container alert-banner-warning",
             "collapsible": false,
