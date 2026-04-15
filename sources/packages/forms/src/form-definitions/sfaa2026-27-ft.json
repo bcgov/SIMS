@@ -2765,9 +2765,18 @@
           "label": "Panel"
         },
         {
-          "key": "parentInformationPanel",
-          "input": false,
           "title": "Parent information panel",
+          "collapsible": false,
+          "hideLabel": true,
+          "key": "parentInformationPanel",
+          "conditional": {
+            "show": true,
+            "when": "dependantstatus",
+            "eq": "dependant"
+          },
+          "type": "panel",
+          "label": "Panel",
+          "input": false,
           "tableView": false,
           "components": [
             {
@@ -2884,10 +2893,7 @@
               "tableView": false,
               "hideLabel": true
             }
-          ],
-          "type": "panel",
-          "hideLabel": true,
-          "label": "Panel"
+          ]
         },
         {
           "title": "Disability information panel",
@@ -3987,7 +3993,7 @@
         },
         {
           "label": "Dependant Status",
-          "calculateValue": "const isStudentIndependant =\r\n  data.hasDependents === \"yes\" ||\r\n  [\"married\", \"other\", \"marriedUnable\"].includes(data.relationshipStatus) ||\r\n  data.outOfHighSchoolFor4Years === \"yes\" ||\r\n  data.fulltimelabourForce === \"yes\" ||\r\n  data.parentsDeceased === \"yes\" ||\r\n  data.estrangedFromParents === \"yes\" ||\r\n  data.custodyOfChildWelfare === \"yes\";\r\n// If the student is not independant, dependant status is calculated based on personal information answer inputs.\r\nif (!isStudentIndependant) {\r\n  const isPersonalInfoAnswered =\r\n    !!data.hasDependents &&\r\n    !!data.relationshipStatus &&\r\n    !!data.outOfHighSchoolFor4Years &&\r\n    !!data.fulltimelabourForce &&\r\n    !!data.parentsDeceased &&\r\n    !!data.estrangedFromParents && // Considered to be \"no\" at this moment.\r\n    !!data.youthInCare &&\r\n    (data.youthInCare === \"no\" || !!data.custodyOfChildWelfare);\r\n  // If the answers to required personal information inputs are not provided, set the dependant status to null.\r\n  // Otherwise, dependant status is calculated based on personal information answers.\r\n  const calculatedStatusFromPersonalInfo = isPersonalInfoAnswered\r\n    ? \"dependant\"\r\n    : null;\r\n  instance.setValue(calculatedStatusFromPersonalInfo);\r\n} else {\r\n  instance.setValue(\"independant\");\r\n}",
+          "calculateValue": "let parentInformationStatus;\r\nconst isStudentIndependant =\r\n  data.hasDependents === \"yes\" ||\r\n  [\"married\", \"other\", \"marriedUnable\"].includes(data.relationshipStatus) ||\r\n  data.outOfHighSchoolFor4Years === \"yes\" ||\r\n  data.fulltimelabourForce === \"yes\" ||\r\n  data.custodyOfChildWelfare === \"yes\";\r\n// If the student is not independant, dependant status is calculated based on personal information answer inputs.\r\nif (!isStudentIndependant) {\r\n  const isPersonalInfoAnswered =\r\n    !!data.hasDependents &&\r\n    !!data.relationshipStatus &&\r\n    !!data.outOfHighSchoolFor4Years &&\r\n    !!data.fulltimelabourForce &&\r\n    !!data.youthInCare &&\r\n    (data.youthInCare === \"no\" || !!data.custodyOfChildWelfare);\r\n  // If the answers to required personal information inputs are not provided, set the dependant status to null.\r\n  // Otherwise, dependant status is calculated based on personal information answers.\r\n  parentInformationStatus = isPersonalInfoAnswered\r\n    ? \"required\"\r\n    : null;\r\n} else {\r\n  parentInformationStatus = \"not-required\";\r\n}\r\n\r\nif(parentInformationStatus === \"required\") {\r\n\tif(data.parentsDeceased === \"yes\" || data.estrangedFromParents === \"yes\"){\r\n\t\tinstance.setValue(\"independant\");\r\n\t}\r\n\telse{\r\n\t\tif(!!data.parentsDeceased && !!data.estrangedFromParents) {\r\n\t\t\tinstance.setValue(\"dependant\");\r\n\t\t}\r\n\t\telse{\r\n\t\t\tinstance.setValue(null);\r\n\t\t}\r\n\t}\r\n}",
           "calculateServer": true,
           "key": "dependantstatus",
           "type": "hidden",
