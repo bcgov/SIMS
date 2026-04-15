@@ -52,7 +52,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-non-educat
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
 
-    assessmentConsolidatedData.studentDataDependantStatus = "independent";
+    assessmentConsolidatedData.studentDataDependantstatus = "independant";
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     // Return transportation and additional transportation costs should be included in the non-educational costs calculation.
     assessmentConsolidatedData.studentDataReturnTripHomeCost = 500;

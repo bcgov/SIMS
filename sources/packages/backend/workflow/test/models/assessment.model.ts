@@ -75,7 +75,7 @@ export type RelationshipStatusType =
   | "married"
   | "marriedUnable";
 
-export type DependantStatusType = "independent" | "dependent";
+export type DependantStatusType = "independant" | "dependant";
 
 export interface PartnerInformationAndIncomeAppealData extends JSONDoc {
   relationshipStatus: RelationshipStatusType;
@@ -119,7 +119,7 @@ export enum InstitutionTypes {
  * Data required to calculate the assessment data of an application.
  */
 export interface AssessmentConsolidatedData extends JSONDoc {
-  studentDataDependantStatus: DependantStatusType;
+  studentDataDependantstatus: DependantStatusType;
   programYear: string;
   programYearStartDate: string;
   studentDataRelationshipStatus: RelationshipStatusType;
@@ -436,6 +436,8 @@ export interface CalculatedAssessmentModel {
   isEligibleForParentCurrentYearIncomeAppeal?: boolean;
   isEligibleForExceptionalExpenseAppeal?: boolean;
   calculatedDataWaivedParent?: number;
+  calculatedDataParent1TotalIncome?: number;
+  calculatedDataParent2TotalIncome?: number;
   // Common variables used in both full-time and part-time.
   // CSGP
   awardEligibilityCSGP: boolean;

@@ -14,12 +14,12 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
   const appealEligibilityScenarios = [
     {
       studentDataRelationshipStatus: "married",
-      dependantStatus: "independent",
+      dependantStatus: "independant",
       expectedEligibility: true,
     },
     {
       studentDataRelationshipStatus: "single",
-      dependantStatus: "independent",
+      dependantStatus: "independant",
       expectedEligibility: false,
     },
     {
@@ -29,12 +29,12 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       studentDataRelationshipStatus: "other",
-      dependantStatus: "independent",
+      dependantStatus: "independant",
       expectedEligibility: false,
     },
     {
       studentDataRelationshipStatus: "marriedUnable",
-      dependantStatus: "independent",
+      dependantStatus: "independant",
       expectedEligibility: false,
     },
   ];
@@ -49,7 +49,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataRelationshipStatus =
         studentDataRelationshipStatus as RelationshipStatusType;
-      assessmentConsolidatedData.studentDataDependantStatus =
+      assessmentConsolidatedData.studentDataDependantstatus =
         dependantStatus as DependantStatusType;
       // Needed for married students
       assessmentConsolidatedData.partner1TotalIncome = 100002;
