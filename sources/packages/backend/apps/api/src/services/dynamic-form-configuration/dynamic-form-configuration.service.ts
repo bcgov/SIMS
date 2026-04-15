@@ -111,4 +111,10 @@ export class DynamicFormConfigurationService {
       (dynamicFormConfiguration) => dynamicFormConfiguration.id === formId,
     );
   }
+
+  getFormsByType(dynamicFormTypes: string[]): DynamicFormConfiguration[] {
+    return this.dynamicFormConfigurations.filter((dynamicFormConfiguration) =>
+      dynamicFormTypes.includes(dynamicFormConfiguration.formType),
+    );
+  }
 }
