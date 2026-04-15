@@ -41,24 +41,6 @@
         },
         {
             "label": "HTML",
-            "tag": "h3",
-            "className": "category-header-medium primary-color",
-            "attrs": [
-                {
-                    "attr": "",
-                    "value": ""
-                }
-            ],
-            "content": "Step-parent waiver appeal",
-            "refreshOnChange": false,
-            "key": "header",
-            "type": "htmlelement",
-            "input": false,
-            "tableView": false,
-            "hideLabel": true
-        },
-        {
-            "label": "HTML",
             "tag": "p",
             "attrs": [
                 {

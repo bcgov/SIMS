@@ -4,15 +4,19 @@ import {
   createFakeConsolidatedPartTimeData,
   executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
-import { YesNoOptions } from "@sims/test-utils";
+import { Provinces, YesNoOptions } from "@sims/test-utils";
 import {
   createFakeStudentDependentEligible,
   DependentEligibility,
 } from "../../../test-utils/factories";
+import {
+  InstitutionClassification,
+  InstitutionOrganizationStatus,
+} from "@sims/sims-db";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSPT.`, () => {
   it(
-    "Should determine CSPT as eligible when total assessed need is greater than or equal to 1 " +
+    "Should determine CSPT as assessment eligible when total assessed need is greater than or equal to 1 " +
       "and total family income is less than the threshold.",
     async () => {
       // Arrange
@@ -27,14 +31,13 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSPT
         );
 
       // Assert
-      expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(true);
-      expect(
-        calculatedAssessment.variables.finalFederalAwardNetCSPTAmount,
-      ).toBeGreaterThan(0);
+      expect(calculatedAssessment.variables.assessmentEligibilityCSPT).toBe(
+        true,
+      );
     },
   );
 
-  describe("Should determine CSPT as eligible when total assessed need is greater than or equal to 1 and ", () => {
+  describe("Should determine CSPT as assessment eligible when total assessed need is greater than or equal to 1 and ", () => {
     const familySizeInputs: { familySize: number; familyIncome: number }[] = [
       { familySize: 2, familyIncome: 40000 },
       { familySize: 3, familyIncome: 50000 },
@@ -77,15 +80,14 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSPT
           familySize,
         );
         // Validate award eligibility for family size.
-        expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(true);
-        expect(
-          calculatedAssessment.variables.finalFederalAwardNetCSPTAmount,
-        ).toBeGreaterThan(0);
+        expect(calculatedAssessment.variables.assessmentEligibilityCSPT).toBe(
+          true,
+        );
       });
     }
   });
 
-  it("Should determine CSPT as not eligible when total family income is greater than the threshold.", async () => {
+  it("Should determine CSPT as not assessment eligible when total family income is greater than the threshold.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -98,11 +100,89 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSPT
     );
 
     // Assert
-    expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(false);
+    expect(calculatedAssessment.variables.assessmentEligibilityCSPT).toBe(
+      false,
+    );
     expect(calculatedAssessment.variables.finalFederalAwardNetCSPTAmount).toBe(
       0,
     );
   });
+
+  const TEST_AWARD_ELIGIBILITY = [
+    {
+      inputData: {
+        institutionProvince: Provinces.BritishColumbia,
+        institutionCountry: "CA",
+        institutionClassification: InstitutionClassification.Public,
+        institutionOrganizationStatus:
+          InstitutionOrganizationStatus.NotForProfit,
+      },
+      expectedData: {
+        expectedAssessmentEligibility: true,
+        expectedInstitutionEligibility: true,
+        expectedAwardEligibility: true,
+      },
+    },
+    {
+      inputData: {
+        institutionCountry: "AU",
+        institutionClassification: InstitutionClassification.Private,
+        institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
+        institutionProvince: undefined,
+      },
+      expectedData: {
+        expectedAssessmentEligibility: true,
+        expectedInstitutionEligibility: false,
+        expectedAwardEligibility: false,
+      },
+    },
+    {
+      inputData: {
+        institutionProvince: Provinces.BritishColumbia,
+        institutionCountry: "CA",
+        institutionClassification: InstitutionClassification.Public,
+        institutionOrganizationStatus:
+          InstitutionOrganizationStatus.NotForProfit,
+        studentDataCRAReportedIncome: 100000, // Greater than threshold for family size.
+      },
+      expectedData: {
+        expectedAssessmentEligibility: false,
+        expectedInstitutionEligibility: true,
+        expectedAwardEligibility: false,
+      },
+    },
+  ];
+  for (const testEligibility of TEST_AWARD_ELIGIBILITY) {
+    it(
+      `Should determine CSPT as ${testEligibility.expectedData.expectedAwardEligibility ? "eligible" : "not eligible"} when the assessment is ${testEligibility.expectedData.expectedAssessmentEligibility ? "eligible" : "not eligible"} and ` +
+        `institution is ${testEligibility.expectedData.expectedInstitutionEligibility ? "eligible" : "not eligible"}.`,
+      async () => {
+        // Arrange
+        const assessmentConsolidatedData = {
+          ...createFakeConsolidatedPartTimeData(PROGRAM_YEAR),
+          ...testEligibility.inputData,
+        };
+
+        // Act
+        const calculatedAssessment =
+          await executePartTimeAssessmentForProgramYear(
+            PROGRAM_YEAR,
+            assessmentConsolidatedData,
+          );
+        // Assert
+        expect(calculatedAssessment.variables.assessmentEligibilityCSPT).toBe(
+          testEligibility.expectedData.expectedAssessmentEligibility,
+        );
+        expect(
+          calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility
+            .isEligibleCSPT,
+        ).toBe(testEligibility.expectedData.expectedInstitutionEligibility);
+        expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(
+          testEligibility.expectedData.expectedAwardEligibility,
+        );
+      },
+    );
+  }
 
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
