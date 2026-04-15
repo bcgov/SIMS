@@ -40,6 +40,10 @@ export interface StepParentWaiverAppealData extends JSONDoc {
   selectedParent: number;
 }
 
+export interface ParentCurrentYearIncomeWaiverAppealData extends JSONDoc {
+  currentYearParentIncome: number;
+}
+
 export interface DisbursementScheduleAward extends JSONDoc {
   valueType: string;
   valueCode: string;
@@ -162,7 +166,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   // Update any data types or structures as needed when the appeals are fully implemented.
   appealsStudentCurrentYearIncomeAppealData?: JSONDoc;
   appealsPartnerCurrentYearIncomeAppealData?: JSONDoc;
-  appealsParentCurrentYearIncomeAppealData?: JSONDoc;
+  appealsParentCurrentYearIncomeAppealData?: ParentCurrentYearIncomeWaiverAppealData[];
   appealsExceptionalExpenseAppealData?: JSONDoc;
   studentDataIsYourPartnerAbleToReport?: boolean; // No longer used in PY 26/27 and beyond.
   studentDataParentValidSinNumber?: YesNoOptions;

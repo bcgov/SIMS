@@ -1657,12 +1657,12 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
       <bpmn:extensionElements />
       <bpmn:incoming>Flow_04nzmk7</bpmn:incoming>
       <bpmn:outgoing>Flow_0livwk3</bpmn:outgoing>
-      <bpmn:exclusiveGateway id="Gateway_0zn0cny" name="Current Year Income?">
+      <bpmn:exclusiveGateway id="Gateway_0zn0cny" name="Current Year Income?" default="Flow_0f0wu98">
         <bpmn:incoming>Flow_0n65wbz</bpmn:incoming>
         <bpmn:outgoing>Flow_0163xsr</bpmn:outgoing>
         <bpmn:outgoing>Flow_0f0wu98</bpmn:outgoing>
       </bpmn:exclusiveGateway>
-      <bpmn:exclusiveGateway id="Gateway_09wstv9" name="Current Year Income?">
+      <bpmn:exclusiveGateway id="Gateway_09wstv9" name="Current Year Income?" default="Flow_1pj43zf">
         <bpmn:incoming>Flow_1ye51s0</bpmn:incoming>
         <bpmn:outgoing>Flow_1w1lktb</bpmn:outgoing>
         <bpmn:outgoing>Flow_1pj43zf</bpmn:outgoing>
@@ -1760,7 +1760,7 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
       <bpmn:intermediateThrowEvent id="Event_0q2arco" name="Modify Parent Income">
         <bpmn:extensionElements>
           <zeebe:ioMapping>
-            <zeebe:output source="=studentDataParents[1].currentYearParentIncome" target="calculatedDataParent1TotalIncome" />
+            <zeebe:output source="=appealsParentCurrentYearIncomeAppealData[1].currentYearParentIncome" target="calculatedDataParent1TotalIncome" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_0163xsr</bpmn:incoming>
@@ -1769,25 +1769,21 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
       <bpmn:intermediateThrowEvent id="Event_1rmxf0z" name="Modify Parent Income">
         <bpmn:extensionElements>
           <zeebe:ioMapping>
-            <zeebe:output source="=studentDataParents[2].currentYearParentIncome" target="calculatedDataParent2TotalIncome" />
+            <zeebe:output source="=appealsParentCurrentYearIncomeAppealData[2].currentYearParentIncome" target="calculatedDataParent2TotalIncome" />
           </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_1w1lktb</bpmn:incoming>
         <bpmn:outgoing>Flow_00mbfuq</bpmn:outgoing>
       </bpmn:intermediateThrowEvent>
-      <bpmn:sequenceFlow id="Flow_0f0wu98" name="No" sourceRef="Gateway_0zn0cny" targetRef="Event_0yefgn7">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataParents[1].currentYearParentIncome = null </bpmn:conditionExpression>
-      </bpmn:sequenceFlow>
-      <bpmn:sequenceFlow id="Flow_1pj43zf" name="No" sourceRef="Gateway_09wstv9" targetRef="Event_0sjmtg8">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataParents[2].currentYearParentIncome = null </bpmn:conditionExpression>
-      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_0f0wu98" name="No" sourceRef="Gateway_0zn0cny" targetRef="Event_0yefgn7" />
+      <bpmn:sequenceFlow id="Flow_1pj43zf" name="No" sourceRef="Gateway_09wstv9" targetRef="Event_0sjmtg8" />
       <bpmn:sequenceFlow id="Flow_0n65wbz" name="Parent 1" sourceRef="Gateway_15onx49" targetRef="Gateway_0zn0cny" />
       <bpmn:sequenceFlow id="Flow_1ye51s0" name="Parent 2" sourceRef="Gateway_15onx49" targetRef="Gateway_09wstv9" />
       <bpmn:sequenceFlow id="Flow_0163xsr" name="Yes" sourceRef="Gateway_0zn0cny" targetRef="Event_0q2arco">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataParents[1].currentYearParentIncome != null</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=appealsParentCurrentYearIncomeAppealData[1].currentYearParentIncome != null</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="Flow_1w1lktb" name="Yes" sourceRef="Gateway_09wstv9" targetRef="Event_1rmxf0z">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataParents[2].currentYearParentIncome != null</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=appealsParentCurrentYearIncomeAppealData[2].currentYearParentIncome != null</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
     </bpmn:subProcess>
     <bpmn:exclusiveGateway id="Gateway_1mgn0u8" name="Parent/Partner Contributions">
@@ -4902,13 +4898,13 @@ Map the correct 1 or 2 values for each of the values used to calculate income, d
       <bpmndi:BPMNShape id="BPMNShape_1eg7zx9" bpmnElement="Gateway_0zn0cny" isMarkerVisible="true">
         <dc:Bounds x="412" y="163" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="335" y="134" width="64" height="27" />
+          <dc:Bounds x="336" y="134" width="63" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0u3uedd" bpmnElement="Gateway_09wstv9" isMarkerVisible="true">
         <dc:Bounds x="412" y="343" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="335" y="384" width="64" height="27" />
+          <dc:Bounds x="336" y="384" width="63" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0za2wdw" bpmnElement="Event_0sjmtg8">
