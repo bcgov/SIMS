@@ -9,8 +9,87 @@ import {
   DependentEligibility,
   createFakeStudentDependentEligible,
 } from "../../../test-utils/factories";
+import {
+  InstitutionClassification,
+  InstitutionOrganizationStatus,
+} from "@sims/sims-db";
+import { Provinces } from "@sims/test-utils";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF.`, () => {
+  const TEST_AWARD_ELIGIBILITY = [
+    {
+      inputData: {
+        institutionProvince: Provinces.BritishColumbia,
+        institutionCountry: "CA",
+        institutionClassification: InstitutionClassification.Public,
+        institutionOrganizationStatus:
+          InstitutionOrganizationStatus.NotForProfit,
+      },
+      expectedData: {
+        expectedAssessmentEligibility: true,
+        expectedInstitutionEligibility: true,
+        expectedAwardEligibility: true,
+      },
+    },
+    {
+      inputData: {
+        institutionCountry: "AU",
+        institutionClassification: InstitutionClassification.Private,
+        institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
+      },
+      expectedData: {
+        expectedAssessmentEligibility: true,
+        expectedInstitutionEligibility: false,
+        expectedAwardEligibility: false,
+      },
+    },
+    {
+      inputData: {
+        institutionProvince: Provinces.BritishColumbia,
+        institutionCountry: "CA",
+        institutionClassification: InstitutionClassification.Public,
+        institutionOrganizationStatus:
+          InstitutionOrganizationStatus.NotForProfit,
+        studentDataTaxReturnIncome: 120000, // Ensures that the income is high enough to be above the threshold for eligibility.
+      },
+      expectedData: {
+        expectedAssessmentEligibility: false, // Above income threshold for eligibility.
+        expectedInstitutionEligibility: true,
+        expectedAwardEligibility: false,
+      },
+    },
+  ];
+  for (const testEligibility of TEST_AWARD_ELIGIBILITY) {
+    it(
+      `Should determine CSGF as ${testEligibility.expectedData.expectedAwardEligibility ? "eligible" : "not eligible"} when the assessment is ${testEligibility.expectedData.expectedAssessmentEligibility ? "eligible" : "not eligible"} and ` +
+        `institution is ${testEligibility.expectedData.expectedInstitutionEligibility ? "eligible" : "not eligible"}.`,
+      async () => {
+        // Arrange
+        const assessmentConsolidatedData = {
+          ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
+          ...testEligibility.inputData,
+        };
+        // Act
+        const calculatedAssessment =
+          await executeFullTimeAssessmentForProgramYear(
+            PROGRAM_YEAR,
+            assessmentConsolidatedData,
+          );
+        // Assert
+        expect(calculatedAssessment.variables.assessmentEligibilityCSGF).toBe(
+          testEligibility.expectedData.expectedAssessmentEligibility,
+        );
+        expect(
+          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility
+            .isEligibleCSGF,
+        ).toBe(testEligibility.expectedData.expectedInstitutionEligibility);
+        expect(calculatedAssessment.variables.awardEligibilityCSGF).toBe(
+          testEligibility.expectedData.expectedAwardEligibility,
+        );
+      },
+    );
+  }
+
   // Expected and not expected credentials types.
   const EXPECTED_PROGRAM_CREDENTIAL_TYPES = [
     CredentialType.UnderGraduateCertificate,
@@ -35,7 +114,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
   ).filter((type) => !EXPECTED_PROGRAM_LENGTH.includes(type));
 
   describe(
-    "Should determine CSGF as eligible when programCredentialType and programLength are the expected ones " +
+    "Should determine CSGF as assessment eligible when programCredentialType and programLength are the expected ones " +
       "and financial need is at least $1 and total family income is below the threshold.",
     () => {
       for (const programCredentialType of EXPECTED_PROGRAM_CREDENTIAL_TYPES) {
@@ -70,12 +149,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
             expect(
               calculatedAssessment.variables.calculatedDataFamilySize,
             ).toBe(2);
-            expect(calculatedAssessment.variables.awardEligibilityCSGF).toBe(
-              true,
-            );
             expect(
-              calculatedAssessment.variables.federalAwardNetCSGFAmount,
-            ).toBeGreaterThan(0);
+              calculatedAssessment.variables.assessmentEligibilityCSGF,
+            ).toBe(true);
           });
         }
       }
@@ -83,7 +159,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
   );
 
   describe(
-    "Should determine CSGF as not eligible when programCredentialType and programLength are not the expected ones " +
+    "Should determine CSGF as not assessment eligible when programCredentialType and programLength are not the expected ones " +
       "and financial need is at least $1 and total family income is below the threshold.",
     () => {
       for (const programCredentialType of NOT_EXPECTED_PROGRAM_CREDENTIAL_TYPES) {
@@ -112,16 +188,16 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
                 assessmentConsolidatedData,
               );
             // Assert
-            expect(calculatedAssessment.variables.awardEligibilityCSGF).toBe(
-              false,
-            );
+            expect(
+              calculatedAssessment.variables.assessmentEligibilityCSGF,
+            ).toBe(false);
           });
         }
       }
     },
   );
 
-  it("Should determine CSGF as not eligible when total family income is above the threshold.", async () => {
+  it("Should determine CSGF as not assessment eligible when total family income is above the threshold.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -151,7 +227,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
       assessmentConsolidatedData.studentDataTaxReturnIncome,
     );
     expect(calculatedAssessment.variables.calculatedDataFamilySize).toBe(3);
-    expect(calculatedAssessment.variables.awardEligibilityCSGF).toBe(false);
+    expect(calculatedAssessment.variables.assessmentEligibilityCSGF).toBe(
+      false,
+    );
   });
 
   afterAll(async () => {
