@@ -691,3 +691,12 @@ update-sysdig-team:
 	@echo "Updating Sysdig Team for license plate a6ef19.\n"
 	@oc project a6ef19-tools
 	@oc process -f openshift/sysdig-team.yml -p LICENSE_PLATE=a6ef19 | oc apply -f -
+
+# TODO: Rename to update-sysdig-team after the migration is complete in prod and the silver license plates are no longer in use.
+update-sysdig-team-gold:
+	@echo "Updating Sysdig Team for license plate e0a504.\n"
+	@oc project e0a504-tools
+	@oc process -f openshift/sysdig-team.yml -p LICENSE_PLATE=e0a504 | oc apply -f -
+	@echo "Updating Sysdig Team for license plate c85dee.\n"
+	@oc project c85dee-tools
+	@oc process -f openshift/sysdig-team.yml -p LICENSE_PLATE=c85dee | oc apply -f -

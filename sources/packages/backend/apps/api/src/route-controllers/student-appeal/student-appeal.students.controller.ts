@@ -56,6 +56,7 @@ import {
   getSupportingUserParents,
 } from "../../utilities";
 import { StudentAppealStatus } from "@sims/sims-db";
+import { FeatureTogglesService } from "@sims/services";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -67,6 +68,7 @@ export class StudentAppealStudentsController extends BaseController {
     private readonly applicationService: ApplicationService,
     private readonly formService: FormService,
     private readonly studentAppealControllerService: StudentAppealControllerService,
+    private readonly featureTogglesService: FeatureTogglesService,
   ) {
     super();
   }
@@ -119,7 +121,8 @@ export class StudentAppealStudentsController extends BaseController {
       "When your current request is approved or denied by StudentAid BC, you will be able to submit a new one or " +
       "the submitted appeal form(s) are not eligible for the application or " +
       "the application is not eligible to submit an appeal or " +
-      "the application is no longer eligible to submit change request/appeal.",
+      "the application is no longer eligible to submit change request/appeal or " +
+      "appeal submission has been deprecated in favor of the new form submission process.",
   })
   @ApiBadRequestResponse({
     description:
@@ -149,6 +152,14 @@ export class StudentAppealStudentsController extends BaseController {
     // If the submission is for new appeal process, then set the operation name as appeal.
     // Otherwise, set it to change request.
     const operation = isProgramYearForNewProcess ? "appeal" : "change request";
+    if (
+      operation === "appeal" &&
+      this.featureTogglesService.isFormSubmissionEnabled
+    ) {
+      throw new UnprocessableEntityException(
+        "Appeal submission has been deprecated in favor of the new form submission process.",
+      );
+    }
 
     if (application.isArchived) {
       throw new UnprocessableEntityException(

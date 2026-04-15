@@ -24,6 +24,7 @@ import { AppStudentsModule } from "./app.students.module";
 import { AppSupportingUsersModule } from "./app.supporting-users.module";
 import {
   ClamAntivirusModule,
+  FeatureTogglesModule,
   GlobalHttpModule,
   ZeebeModule,
 } from "@sims/services";
@@ -58,6 +59,7 @@ import { SystemLookupConfigurationModule } from "@sims/services/system-lookup-co
     AppSupportingUsersModule,
     QueueModule,
     ClamAntivirusModule,
+    FeatureTogglesModule,
     TerminusModule,
     DynamicFormConfigurationModule,
     SystemLookupConfigurationModule,
