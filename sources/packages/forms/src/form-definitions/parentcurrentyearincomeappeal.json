@@ -126,9 +126,6 @@
       ],
       "clearOnHide": false,
       "calculateValue": "value = data.parents;",
-      "validate": {
-        "custom": "const errorMessage = 'An income appeal must be submitted for at least one parent';\r\nvalid = data.parentsIncome.some(parent => parent.hasCurrentYearParentIncome === 'yes') ? true : errorMessage;"
-      },
       "validateWhenHidden": false,
       "key": "parentsIncome",
       "type": "datagrid",
@@ -167,6 +164,31 @@
               "hideLabel": true
             },
             {
+              "label": "Radio",
+              "optionsLabelPosition": "right",
+              "inline": false,
+              "tableView": false,
+              "values": [
+                {
+                  "label": "Yes",
+                  "value": "yes",
+                  "shortcut": ""
+                },
+                {
+                  "label": "No",
+                  "value": "no",
+                  "shortcut": ""
+                }
+              ],
+              "validate": {
+                "required": true
+              },
+              "validateWhenHidden": false,
+              "key": "radio",
+              "type": "radio",
+              "input": true
+            },
+            {
               "label": "Do you need to submit an income appeal for {{row.fullName}}?",
               "optionsLabelPosition": "right",
               "inline": false,
@@ -189,7 +211,6 @@
               "validateWhenHidden": false,
               "key": "hasCurrentYearParentIncome",
               "type": "radio",
-              "redrawOn": "data",
               "input": true
             },
             {
