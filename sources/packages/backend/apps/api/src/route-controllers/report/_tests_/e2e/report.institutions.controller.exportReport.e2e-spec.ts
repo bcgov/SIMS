@@ -23,7 +23,6 @@ import {
   createFakeInstitution,
   createFakeInstitutionLocation,
   ensureProgramYearExists,
-  getProviderInstanceForModule,
   saveFakeApplication,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
@@ -40,12 +39,7 @@ import {
 } from "../../../../testHelpers";
 import { parse } from "papaparse";
 import * as request from "supertest";
-import { AppInstitutionsModule } from "../../../../app.institutions.module";
-import {
-  FormNames,
-  FormService,
-  InstitutionUserAuthorizations,
-} from "../../../../services";
+import { InstitutionUserAuthorizations } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 import { getISODateOnlyString, getPSTPDTDateTime } from "@sims/utilities";
 import { INSTITUTION_TYPE_BC_PUBLIC } from "@sims/sims-db/constant";
@@ -62,7 +56,6 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
   let collegeFLocation: InstitutionLocation;
   let collegeC: Institution;
   let collegeCLocation: InstitutionLocation;
-  let formService: FormService;
   let programYear: ProgramYear;
   let institutionUser: User;
   let sharedStudent: Student;
@@ -77,12 +70,6 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     app = nestApplication;
     appModule = module;
     db = createE2EDataSources(dataSource);
-    // Mock the form service to validate the dry-run submission result.
-    formService = await getProviderInstanceForModule(
-      appModule,
-      AppInstitutionsModule,
-      FormService,
-    );
     // College F.
     const { institution: collegeF, user } = await getAuthRelatedEntities(
       db.dataSource,
@@ -197,12 +184,6 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         programYear: programYear.id,
       },
     };
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: FormNames.ExportFinancialReports,
-      data: { data: payload },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
     const endpoint = "/institutions/report";
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -286,10 +267,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       });
   });
 
-  it(
-    "Should generate the Student Unmet Need Report for a full-time and part-time applications " +
-      "when full-time has a single disbursement and part-time has two disbursements that should be summed.",
-    async () => {
+  it("Should generate the Student Unmet Need Report for a full-time and part-time applications when full-time has a single disbursement and part-time has two disbursements that should be summed.", async () => {
       // Arrange
       const { fullTimeApplication, partTimeApplication } =
         await createApplicationsDataSetup(db, {
@@ -307,12 +285,6 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
           programYear: programYear.id,
         },
       };
-      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FormNames.ExportFinancialReports,
-        data: { data: payload },
-      });
-      formService.dryRunSubmission = dryRunSubmissionMock;
       const endpoint = "/institutions/report";
       const institutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeFUser,
@@ -364,11 +336,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
       });
   });
 
-  it(
-    `Should generate the COE Requests report for both ${OfferingIntensity.fullTime} and ${OfferingIntensity.partTime} application disbursements` +
-      ` and for the given program year when one or more applications which are neither in ${ApplicationStatus.Completed} or ${ApplicationStatus.Enrolment} status` +
-      " exist for the given institution.",
-    async () => {
+  it(`Should generate the COE Requests report for both ${OfferingIntensity.fullTime} and ${OfferingIntensity.partTime} application disbursements and for the given program year when one or more applications which are neither in ${ApplicationStatus.Completed} or ${ApplicationStatus.Enrolment} status exist for the given institution.`, async () => {
       // Arrange
       const institution = await db.institution.save(
         createFakeInstitution({ institutionType: bcPublicInstitutionType }),
@@ -486,12 +454,6 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         },
       };
 
-      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FormNames.ExportFinancialReports,
-        data: { data: payload },
-      });
-      formService.dryRunSubmission = dryRunSubmissionMock;
       const endpoint = "/institutions/report";
       const institutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeFUser,
@@ -545,10 +507,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     },
   );
 
-  it(
-    "Should generate the COE Requests report without including application(s) that are archived" +
-      " when one or more applications which are archived exist for the given institution.",
-    async () => {
+  it("Should generate the COE Requests report without including application(s) that are archived when one or more applications which are archived exist for the given institution.", async () => {
       // Arrange
       const institution = await db.institution.save(
         createFakeInstitution({ institutionType: bcPublicInstitutionType }),
@@ -634,12 +593,6 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         },
       };
 
-      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FormNames.ExportFinancialReports,
-        data: { data: payload },
-      });
-      formService.dryRunSubmission = dryRunSubmissionMock;
       const endpoint = "/institutions/report";
       const institutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeFUser,
@@ -686,10 +639,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     },
   );
 
-  it(
-    "Should generate the COE Requests report without including application(s) that don't have estimated awards" +
-      " when one or more applications exist for the given institution.",
-    async () => {
+  it("Should generate the COE Requests report without including application(s) that do not have estimated awards when one or more applications exist for the given institution.", async () => {
       // Arrange
       const institution = await db.institution.save(
         createFakeInstitution({ institutionType: bcPublicInstitutionType }),
@@ -746,12 +696,6 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         },
       };
 
-      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FormNames.ExportFinancialReports,
-        data: { data: payload },
-      });
-      formService.dryRunSubmission = dryRunSubmissionMock;
       const endpoint = "/institutions/report";
       const institutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeFUser,

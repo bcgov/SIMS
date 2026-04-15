@@ -10,7 +10,6 @@ import {
   E2EDataSources,
   createE2EDataSources,
   createFakeInstitutionLocation,
-  getProviderInstanceForModule,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -22,9 +21,6 @@ import {
   createFakeEducationProgram,
 } from "../../../../testHelpers";
 import * as request from "supertest";
-import { FormService } from "../../../../services";
-import { TestingModule } from "@nestjs/testing";
-import { AppInstitutionsModule } from "../../../../app.institutions.module";
 import { faker } from "@faker-js/faker";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 
@@ -34,11 +30,9 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
   let collegeFUser: User;
-  let testingModule: TestingModule;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource, module } =
-      await createTestingAppModule();
+    const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
     const { institution, user: institutionUser } = await getAuthRelatedEntities(
@@ -53,23 +47,13 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       collegeFLocation,
     );
     collegeFUser = institutionUser;
-    testingModule = module;
   });
 
   it("Should create an education program when valid data is passed.", async () => {
     // Arrange
     const sabcCode = `${faker.string.alpha({ length: 3, casing: "upper" })}1`;
     const payload = getPayload(sabcCode);
-    const formService = await getProviderInstanceForModule(
-      testingModule,
-      AppInstitutionsModule,
-      FormService,
-    );
     const programStatus = ProgramStatus.Approved;
-    formService.dryRunSubmission = jest.fn().mockResolvedValue({
-      valid: true,
-      data: { data: { ...payload, programStatus } },
-    });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -222,16 +206,6 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     const sameSabcCode = "GGG9";
     await saveEducationProgram(sameSabcCode);
     const payload = getPayload(sameSabcCode);
-    const formService = await getProviderInstanceForModule(
-      testingModule,
-      AppInstitutionsModule,
-      FormService,
-    );
-    const programStatus = ProgramStatus.Approved;
-    formService.dryRunSubmission = jest.fn().mockResolvedValue({
-      valid: true,
-      data: { data: { ...payload, programStatus } },
-    });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -258,16 +232,6 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       getISODateOnlyString(new Date()),
     );
     const payload = getPayload(sameSabcCode);
-    const formService = await getProviderInstanceForModule(
-      testingModule,
-      AppInstitutionsModule,
-      FormService,
-    );
-    const programStatus = ProgramStatus.Approved;
-    formService.dryRunSubmission = jest.fn().mockResolvedValue({
-      valid: true,
-      data: { data: { ...payload, programStatus } },
-    });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -304,16 +268,6 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       getISODateOnlyString(addDays(1)),
     );
     const payload = getPayload(sameSabcCode);
-    const formService = await getProviderInstanceForModule(
-      testingModule,
-      AppInstitutionsModule,
-      FormService,
-    );
-    const programStatus = ProgramStatus.Approved;
-    formService.dryRunSubmission = jest.fn().mockResolvedValue({
-      valid: true,
-      data: { data: { ...payload, programStatus } },
-    });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -381,7 +335,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       credentialType: "undergraduateCertificate",
       cipCode: "11.1111",
       fieldOfStudyCode: "15",
-      nocCode: "2174",
+      nocCode: "21740",
       sabcCode: sabcCode,
       institutionProgramCode: faker.string.alpha({
         length: 3,

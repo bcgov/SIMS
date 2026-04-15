@@ -17,7 +17,7 @@ export function createFakeUser(userName?: string): User {
   const uniqueId = faker.string.uuid();
   const user = new User();
   user.userName = userName ?? uniqueId;
-  user.email = faker.internet.email();
+  user.email = faker.internet.email().toLowerCase();
   user.firstName = createShortUniqueNames(faker.person.firstName(), uniqueId);
   user.lastName = createShortUniqueNames(faker.person.lastName(), uniqueId);
   return user;

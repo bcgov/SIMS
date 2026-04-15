@@ -14,26 +14,22 @@ import {
   createFakeSFASRestriction,
   createFakeUser,
   E2EDataSources,
-  getProviderInstanceForModule,
   saveFakeSFASIndividual,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
-import { FormNames, FormService } from "../../../../services";
 import { RestrictionCode, SystemUsersService } from "@sims/services";
-import { AppStudentsModule } from "../../../../app.students.module";
 import { In } from "typeorm";
 import { IdentityProviders, NoteType } from "@sims/sims-db";
 import { CreateStudentAPIInDTO } from "apps/api/src/route-controllers/student/models/student.dto";
 
 const SIN_NUMBER_A = "544962244";
 const SIN_NUMBER_B = "317149003";
-const SIN_NUMBER_PARTIAL_MATCH = "123456789";
+const SIN_NUMBER_PARTIAL_MATCH = "460870884";
 
 describe("StudentStudentsController(e2e)-create", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let appModule: TestingModule;
-  let formService: FormService;
   let systemUserId: number;
   const endpoint = "/students/student";
 
@@ -43,11 +39,6 @@ describe("StudentStudentsController(e2e)-create", () => {
     app = nestApplication;
     db = createE2EDataSources(dataSource);
     appModule = module;
-    formService = await getProviderInstanceForModule(
-      appModule,
-      AppStudentsModule,
-      FormService,
-    );
     systemUserId = app.get(SystemUsersService).systemUser.id;
   });
 
@@ -66,13 +57,6 @@ describe("StudentStudentsController(e2e)-create", () => {
     const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_A });
     // Mocked user info to populate the JWT token.
     const user = createFakeUser();
-    // Form.io mock.
-    const dryRunSubmissionMock = jest.fn().mockResolvedValueOnce({
-      valid: true,
-      formName: FormNames.StudentProfile,
-      data: { data: payload },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
     // Mock the user received in the token.
     await mockJWTUserInfo(appModule, { ...user, birthDate: birthDate });
     // Get any student user token. The properties required for student creation
@@ -136,13 +120,6 @@ describe("StudentStudentsController(e2e)-create", () => {
     const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_B });
     // Mocked user info to populate the JWT token.
     const user = createFakeUser();
-    // Form.io mock.
-    const dryRunSubmissionMock = jest.fn().mockResolvedValueOnce({
-      valid: true,
-      formName: FormNames.StudentProfile,
-      data: { data: payload },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
     // Create the SFAS individual that will match the student being created.
     // Last name, will always be random, which will avoid conflicts with other tests.
     const legacyProfileMatch = await saveFakeSFASIndividual(db.dataSource, {
@@ -220,14 +197,6 @@ describe("StudentStudentsController(e2e)-create", () => {
       sinNumber: SIN_NUMBER_PARTIAL_MATCH,
     });
     const user = createFakeUser();
-
-    // Form.io mock.
-    const dryRunSubmissionMock = jest.fn().mockResolvedValueOnce({
-      valid: true,
-      formName: FormNames.StudentProfile,
-      data: { data: payload },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
 
     // Create a SFAS individual that will PARTIALLY match (only 2 out of 3 fields match).
     // Match: lastName and birthDate.
@@ -364,7 +333,7 @@ function createFakeStudentPayload(options: {
     phone: "123-456-7890",
     sinNumber: options.sinNumber,
     sinConsent: true,
-    gender: "X",
+    gender: "man",
   };
   return payload;
 }
