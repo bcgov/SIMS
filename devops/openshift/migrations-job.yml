@@ -12,6 +12,8 @@ objects:
     kind: Job
     metadata:
       name: ${JOB_NAME}
+      labels:
+        app.kubernetes.io/part-of: sims-packages-group
     spec:
       activeDeadlineSeconds: ${{ACTIVE_DEADLINE_SECONDS}} # The maximum duration the job can run.
       backoffLimit: 5 # The number of retries for a job.

@@ -9,10 +9,14 @@ import {
   createFakeStudentDependentEligible,
   createFakeStudentDependentNotEligible,
 } from "../../../test-utils/factories";
-import { YesNoOptions } from "@sims/test-utils";
+import { Provinces, YesNoOptions } from "@sims/test-utils";
+import {
+  InstitutionClassification,
+  InstitutionOrganizationStatus,
+} from "@sims/sims-db";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL.`, () => {
-  it("Should determine BCSL as eligible when provincial need is at least $1.", async () => {
+  it("Should determine BCSL as assessment eligible when provincial need is at least $1.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -26,10 +30,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL
     expect(
       calculatedAssessment.variables.calculatedDataProvincialAssessedNeed,
     ).toBeGreaterThan(0);
-    expect(calculatedAssessment.variables.awardEligibilityBCSL).toBe(true);
+    expect(calculatedAssessment.variables.assessmentEligibilityBCSL).toBe(true);
   });
 
-  it("Should determine BCSL as not eligible when provincial need is less than $1.", async () => {
+  it("Should determine BCSL as not assessment eligible when provincial need is less than $1.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -44,7 +48,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL
     expect(
       calculatedAssessment.variables.calculatedDataProvincialAssessedNeed,
     ).toBeLessThan(1);
-    expect(calculatedAssessment.variables.awardEligibilityBCSL).toBe(false);
+    expect(calculatedAssessment.variables.assessmentEligibilityBCSL).toBe(
+      false,
+    );
     expect(
       calculatedAssessment.variables.finalProvincialAwardNetBCSLAmount,
     ).toBe(0);
@@ -97,6 +103,81 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL
     ).toBe(0);
     expect(calculatedAssessment.variables.awardEligibilityBCTopUp).toBe(false);
   });
+
+  const TEST_AWARD_ELIGIBILITY = [
+    {
+      inputData: {
+        institutionProvince: Provinces.BritishColumbia,
+        institutionCountry: "CA",
+        institutionClassification: InstitutionClassification.Public,
+        institutionOrganizationStatus:
+          InstitutionOrganizationStatus.NotForProfit,
+      },
+      expectedData: {
+        expectedAssessmentEligibility: true,
+        expectedInstitutionEligibility: true,
+        expectedAwardEligibility: true,
+      },
+    },
+    {
+      inputData: {
+        institutionProvince: Provinces.BritishColumbia,
+        institutionCountry: "CA",
+        institutionClassification: InstitutionClassification.Private,
+        institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
+      },
+      expectedData: {
+        expectedAssessmentEligibility: true, // Need > $1
+        expectedInstitutionEligibility: false,
+        expectedAwardEligibility: false,
+      },
+    },
+    {
+      inputData: {
+        institutionProvince: Provinces.BritishColumbia,
+        institutionCountry: "CA",
+        institutionClassification: InstitutionClassification.Public,
+        institutionOrganizationStatus:
+          InstitutionOrganizationStatus.NotForProfit,
+        studentDataTaxReturnIncome: 500000, // Ensures that the income is high enough to eliminate any provincial need.
+      },
+      expectedData: {
+        expectedAssessmentEligibility: false, // Need < $1
+        expectedInstitutionEligibility: true,
+        expectedAwardEligibility: false,
+      },
+    },
+  ];
+  for (const testEligibility of TEST_AWARD_ELIGIBILITY) {
+    it(
+      `Should determine BCSL as ${testEligibility.expectedData.expectedAwardEligibility ? "eligible" : "not eligible"} when the assessment is ${testEligibility.expectedData.expectedAssessmentEligibility ? "eligible" : "not eligible"} and ` +
+        `institution is ${testEligibility.expectedData.expectedInstitutionEligibility ? "eligible" : "not eligible"}.`,
+      async () => {
+        // Arrange
+        const assessmentConsolidatedData = {
+          ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
+          ...testEligibility.inputData,
+        };
+        // Act
+        const calculatedAssessment =
+          await executeFullTimeAssessmentForProgramYear(
+            PROGRAM_YEAR,
+            assessmentConsolidatedData,
+          );
+        // Assert
+        expect(calculatedAssessment.variables.assessmentEligibilityBCSL).toBe(
+          testEligibility.expectedData.expectedAssessmentEligibility,
+        );
+        expect(
+          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility
+            .isEligibleBCSL,
+        ).toBe(testEligibility.expectedData.expectedInstitutionEligibility);
+        expect(calculatedAssessment.variables.awardEligibilityBCSL).toBe(
+          testEligibility.expectedData.expectedAwardEligibility,
+        );
+      },
+    );
+  }
 
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
