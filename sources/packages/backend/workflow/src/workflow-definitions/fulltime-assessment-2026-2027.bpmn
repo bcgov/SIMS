@@ -1657,12 +1657,12 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
       <bpmn:extensionElements />
       <bpmn:incoming>Flow_04nzmk7</bpmn:incoming>
       <bpmn:outgoing>Flow_0livwk3</bpmn:outgoing>
-      <bpmn:exclusiveGateway id="Gateway_0zn0cny" name="Current Year Income?" default="Flow_0f0wu98">
+      <bpmn:exclusiveGateway id="Gateway_0zn0cny" name="Parent CY Income Appeal" default="Flow_0f0wu98">
         <bpmn:incoming>Flow_0n65wbz</bpmn:incoming>
         <bpmn:outgoing>Flow_0163xsr</bpmn:outgoing>
         <bpmn:outgoing>Flow_0f0wu98</bpmn:outgoing>
       </bpmn:exclusiveGateway>
-      <bpmn:exclusiveGateway id="Gateway_09wstv9" name="Current Year Income?" default="Flow_1pj43zf">
+      <bpmn:exclusiveGateway id="Gateway_09wstv9" name="Parent CY Income Appeal" default="Flow_1pj43zf">
         <bpmn:incoming>Flow_1ye51s0</bpmn:incoming>
         <bpmn:outgoing>Flow_1w1lktb</bpmn:outgoing>
         <bpmn:outgoing>Flow_1pj43zf</bpmn:outgoing>
@@ -1775,14 +1775,14 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
         <bpmn:incoming>Flow_1w1lktb</bpmn:incoming>
         <bpmn:outgoing>Flow_00mbfuq</bpmn:outgoing>
       </bpmn:intermediateThrowEvent>
-      <bpmn:sequenceFlow id="Flow_0f0wu98" name="No" sourceRef="Gateway_0zn0cny" targetRef="Event_0yefgn7" />
-      <bpmn:sequenceFlow id="Flow_1pj43zf" name="No" sourceRef="Gateway_09wstv9" targetRef="Event_0sjmtg8" />
+      <bpmn:sequenceFlow id="Flow_0f0wu98" name="Application or CRA" sourceRef="Gateway_0zn0cny" targetRef="Event_0yefgn7" />
+      <bpmn:sequenceFlow id="Flow_1pj43zf" name="Appeal" sourceRef="Gateway_09wstv9" targetRef="Event_0sjmtg8" />
       <bpmn:sequenceFlow id="Flow_0n65wbz" name="Parent 1" sourceRef="Gateway_15onx49" targetRef="Gateway_0zn0cny" />
       <bpmn:sequenceFlow id="Flow_1ye51s0" name="Parent 2" sourceRef="Gateway_15onx49" targetRef="Gateway_09wstv9" />
-      <bpmn:sequenceFlow id="Flow_0163xsr" name="Yes" sourceRef="Gateway_0zn0cny" targetRef="Event_0q2arco">
+      <bpmn:sequenceFlow id="Flow_0163xsr" name="Appeal" sourceRef="Gateway_0zn0cny" targetRef="Event_0q2arco">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=appealsParentCurrentYearIncomeAppealData[1].currentYearParentIncome != null</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
-      <bpmn:sequenceFlow id="Flow_1w1lktb" name="Yes" sourceRef="Gateway_09wstv9" targetRef="Event_1rmxf0z">
+      <bpmn:sequenceFlow id="Flow_1w1lktb" name="Application or CRA" sourceRef="Gateway_09wstv9" targetRef="Event_1rmxf0z">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=appealsParentCurrentYearIncomeAppealData[2].currentYearParentIncome != null</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
     </bpmn:subProcess>
@@ -4898,13 +4898,13 @@ Map the correct 1 or 2 values for each of the values used to calculate income, d
       <bpmndi:BPMNShape id="BPMNShape_1eg7zx9" bpmnElement="Gateway_0zn0cny" isMarkerVisible="true">
         <dc:Bounds x="412" y="163" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="336" y="134" width="63" height="27" />
+          <dc:Bounds x="323" y="134" width="90" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0u3uedd" bpmnElement="Gateway_09wstv9" isMarkerVisible="true">
         <dc:Bounds x="412" y="343" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="336" y="384" width="63" height="27" />
+          <dc:Bounds x="323" y="384" width="90" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0za2wdw" bpmnElement="Event_0sjmtg8">
@@ -5009,7 +5009,7 @@ Map the correct 1 or 2 values for each of the values used to calculate income, d
         <di:waypoint x="437" y="98" />
         <di:waypoint x="522" y="98" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="477" y="73" width="15" height="14" />
+          <dc:Bounds x="451" y="70" width="67" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0glg337" bpmnElement="Flow_1pj43zf">
@@ -5017,7 +5017,7 @@ Map the correct 1 or 2 values for each of the values used to calculate income, d
         <di:waypoint x="437" y="448" />
         <di:waypoint x="522" y="448" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="448" y="433" width="15" height="14" />
+          <dc:Bounds x="439" y="433" width="34" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_00x6wy8" bpmnElement="Flow_0n65wbz">
@@ -5040,14 +5040,14 @@ Map the correct 1 or 2 values for each of the values used to calculate income, d
         <di:waypoint x="462" y="188" />
         <di:waypoint x="522" y="188" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="467" y="170" width="18" height="14" />
+          <dc:Bounds x="463" y="170" width="34" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_16egvb5" bpmnElement="Flow_1w1lktb">
         <di:waypoint x="462" y="368" />
         <di:waypoint x="522" y="368" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="464" y="350" width="18" height="14" />
+          <dc:Bounds x="452" y="341" width="67" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
