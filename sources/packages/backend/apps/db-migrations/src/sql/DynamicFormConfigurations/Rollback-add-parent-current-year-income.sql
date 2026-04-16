@@ -2,4 +2,4 @@
 DELETE FROM
     sims.dynamic_form_configurations
 WHERE
-    form_type = 'Parent current year income';
+    form_definition_name = 'parentcurrentyearincomeappeal';

@@ -107,7 +107,7 @@
       "hideLabel": true
     },
     {
-      "label": "Parents Income",
+      "label": "Parent current year income",
       "disableAddingRemovingRows": true,
       "reorder": false,
       "addAnotherPosition": "bottom",
@@ -119,13 +119,16 @@
       "defaultValue": [
         {
           "parent": "",
-          "hasCurrentYearParentIncome": "no",
+          "hasCurrentYearParentIncome": "",
           "id": "",
           "fullName": ""
         }
       ],
       "clearOnHide": false,
       "calculateValue": "value = data.parents;",
+      "validate": {
+        "custom": "// Don't validate until required fields are entered\r\nif (data.parentsIncome.some(parent => !parent.hasCurrentYearParentIncome)) {\r\n  valid = true;\r\n} else {\r\n  const errorMessage = 'An income appeal must be submitted for at least one parent';\r\n  valid = data.parentsIncome.some(parent => parent.hasCurrentYearParentIncome === 'yes') ? true : errorMessage;    \r\n}"
+      },
       "validateWhenHidden": false,
       "key": "parentsIncome",
       "type": "datagrid",
@@ -146,6 +149,13 @@
               "tableView": false
             },
             {
+              "label": "Full Name",
+              "key": "fullName",
+              "type": "hidden",
+              "input": true,
+              "tableView": false
+            },
+            {
               "label": "HTML",
               "tag": "h3",
               "className": "category-header-medium primary-color",
@@ -155,38 +165,13 @@
                   "value": ""
                 }
               ],
-              "content": "{{row.parent}}",
+              "content": "{{row.fullName}}",
               "refreshOnChange": true,
               "key": "html",
               "type": "htmlelement",
               "input": false,
               "tableView": false,
               "hideLabel": true
-            },
-            {
-              "label": "Radio",
-              "optionsLabelPosition": "right",
-              "inline": false,
-              "tableView": false,
-              "values": [
-                {
-                  "label": "Yes",
-                  "value": "yes",
-                  "shortcut": ""
-                },
-                {
-                  "label": "No",
-                  "value": "no",
-                  "shortcut": ""
-                }
-              ],
-              "validate": {
-                "required": true
-              },
-              "validateWhenHidden": false,
-              "key": "radio",
-              "type": "radio",
-              "input": true
             },
             {
               "label": "Do you need to submit an income appeal for {{row.fullName}}?",
@@ -231,20 +216,20 @@
               "components": [
                 {
                   "label": "HTML",
+                  "tag": "p",
                   "attrs": [
                     {
                       "attr": "",
                       "value": ""
                     }
                   ],
-                  "content": "Enter your parents actual gross income from the beginning of the calendar year up to the date of this application, and their estimated gross income for the remainder of the calendar year, to calculate their total current year gross income.",
+                  "content": "Enter your parent's actual gross income from the beginning of the calendar year up to the date of this application, and their estimated gross income for the remainder of the calendar year, to calculate their total current year gross income.",
                   "refreshOnChange": false,
                   "key": "html3",
                   "type": "htmlelement",
                   "input": false,
                   "tableView": false,
-                  "hideLabel": true,
-                  "tag": "p"
+                  "hideLabel": true
                 },
                 {
                   "label": "{{row.fullName}}'s total current year gross income is:",
@@ -256,7 +241,8 @@
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "custom": "valid = (input >= 0 && input < data.maxMoneyValue) ? true : 'The number you have entered is outside the expected range.';"
                   },
                   "validateWhenHidden": false,
                   "key": "currentYearParentIncome",
@@ -335,7 +321,7 @@
                   "key": "otherExceptionalCircumstancePanel",
                   "conditional": {
                     "show": true,
-                    "when": "parents.reasonSignificantDecreaseInParentIncome",
+                    "when": "parentsIncome.reasonSignificantDecreaseInParentIncome",
                     "eq": "other"
                   },
                   "type": "panel",
