@@ -4002,7 +4002,7 @@
         },
         {
           "label": "Dependant Status",
-          "calculateValue": "if(parentInformationStatus === \"not-required\") {\r\n\tinstance.setValue(\"independant\");\r\n}\r\nelse if(parentInformationStatus === \"required\") {\r\n\tif(data.parentsDeceased === \"yes\" || data.estrangedFromParents === \"yes\") {\r\n      instance.setValue(\"independant\");\r\n    }\r\n    else if(!!data.parentsDeceased && !!data.estrangedFromParents) {\r\n      // Both answered, neither is \"yes\" → student is dependant\r\n      instance.setValue(\"dependant\");\r\n    }\r\n    else {\r\n      // Not all questions answered yet\r\n      instance.setValue(null);\r\n    }\r\n}\r\nelse {\r\n  instance.setValue(null);\r\n}",
+          "calculateValue": "if(parentInformationStatus === \"not-required\") {\r\n\tvalue = \"independant\";\r\n}\r\nelse if(parentInformationStatus === \"required\") {\r\n\tif(data.parentsDeceased === \"yes\" || data.estrangedFromParents === \"yes\") {\r\n    value = \"independant\";\r\n  }\r\n  else if(!!data.parentsDeceased && !!data.estrangedFromParents) {\r\n    // Both answered, neither is \"yes\" → student is dependant\r\n    value = \"dependant\";\r\n  }\r\n  else {\r\n    // Not all questions answered yet\r\n    value = null;\r\n  }\r\n}\r\nelse {\r\n  value = null;\r\n}",
           "calculateServer": true,
           "key": "dependantstatus",
           "type": "hidden",
