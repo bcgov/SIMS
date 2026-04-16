@@ -12,6 +12,20 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     {
       dependantStatus: "dependant",
       expectedEligibility: true,
+      inputData: {
+        parent1TotalIncome: 99999,
+        parent1CppEmployment: 500,
+        parent1CppSelfemploymentOther: 200,
+        parent1Ei: 600,
+        parent1Tax: 700,
+        parent1Contributions: 0,
+        studentDataVoluntaryContributions: 0,
+        studentDataParents: [
+          {
+            parentIsAbleToReport: YesNoOptions.Yes,
+          },
+        ],
+      },
     },
     {
       dependantStatus: "independant",
@@ -21,28 +35,16 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
   for (const {
     dependantStatus,
     expectedEligibility,
+    inputData,
   } of appealEligibilityScenarios) {
     it(`Should evaluate the parent current year income appeal as ${expectedEligibility ? "eligible" : "not eligible"} when the student is ${dependantStatus}.`, async () => {
       // Arrange
-      const assessmentConsolidatedData =
-        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+      const assessmentConsolidatedData = {
+        ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
+        ...inputData,
+      };
       assessmentConsolidatedData.studentDataDependantstatus =
         dependantStatus as DependantStatusType;
-      // Need for dependant students
-      if (dependantStatus === "dependant") {
-        assessmentConsolidatedData.parent1TotalIncome = 99999;
-        assessmentConsolidatedData.parent1CppEmployment = 500;
-        assessmentConsolidatedData.parent1CppSelfemploymentOther = 200;
-        assessmentConsolidatedData.parent1Ei = 600;
-        assessmentConsolidatedData.parent1Tax = 700;
-        assessmentConsolidatedData.parent1Contributions = 0;
-        assessmentConsolidatedData.studentDataVoluntaryContributions = 0;
-        assessmentConsolidatedData.studentDataParents = [
-          {
-            parentIsAbleToReport: YesNoOptions.Yes,
-          },
-        ];
-      }
 
       // Act
       const calculatedAssessment =

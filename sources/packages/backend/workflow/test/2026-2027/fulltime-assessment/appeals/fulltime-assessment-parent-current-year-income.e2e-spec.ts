@@ -76,7 +76,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-parent-current-y
     ).toBe(55000);
   });
 
-  it("Should use the appeal current year income values when there is a parent current year income appeal for parent 1 and CRA reported income for parent 2 .", async () => {
+  it("Should use the appeal current year income values when there is a parent current year income appeal for parent 1 and CRA reported income for parent 2.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
