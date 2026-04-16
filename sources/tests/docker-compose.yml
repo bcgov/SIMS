@@ -115,9 +115,6 @@ services:
       NODE_CONFIG: '{"mongo": "mongodb://mongo:27017/formio"}'
       ROOT_EMAIL: ${FORMS_SA_USER_NAME}
       ROOT_PASSWORD: ${FORMS_SA_PASSWORD}
-      # Prevents formio from downloading the client UI from GitHub at runtime,
-      # which would significantly delay startup.
-      NO_INSTALL: 1
     networks:
       - local-network-tests
     depends_on:
