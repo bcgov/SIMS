@@ -1,0 +1,64 @@
+{
+    "title": "Appeals - PT Accessibility grant eligibility",
+    "name": "ptaccessibilitygranteligibilityappeal",
+    "path": "ptaccessibilitygranteligibilityappeal",
+    "type": "form",
+    "display": "form",
+    "tags": [
+        "common"
+    ],
+    "components": [
+        {
+            "label": "Actions: CreateStudentAppealAssessment",
+            "calculateValue": "value = [\"CreateStudentAppealAssessment\"];",
+            "calculateServer": true,
+            "key": "actions",
+            "type": "hidden",
+            "input": true,
+            "tableView": false
+        },
+        {
+            "label": "HTML",
+            "tag": "p",
+            "attrs": [
+                {
+                    "attr": "",
+                    "value": ""
+                }
+            ],
+            "content": "This submission allows you to request consideration to receive the B.C. Supplemental Bursary for Students with Disabilities under the train-out provision.",
+            "refreshOnChange": false,
+            "key": "html",
+            "type": "htmlelement",
+            "input": false,
+            "tableView": false
+        },
+        {
+            "label": "HTML",
+            "attrs": [
+                {
+                    "attr": "",
+                    "value": ""
+                }
+            ],
+            "content": "Please review the following and confirm below that you understand and want to proceed:\r\n\r\nThis exemption provision has been made available due to recent policy changes.\r\n\r\nThis submission does not guarantee approval.\r\n\r\nThis review is conducted administratively and is not subject to review by the Appeal Committee.\r\n\r\nTo be approved you must have received funding during the 2025-2026 financial aid program year in the same program and at the same institution as your current application.\r\n\r\nYou will continue to be eligible until you complete your program or until July 31, 2029, whichever occurs first. ​\r\n\r\nTo remain eligible you must submit this request for each relevant application.\r\n\r\nIf you do not want to request consideration at this time but do want to proceed with other appeals please cancel your current appeal submission and then resubmit without selecting the exemption provision. If you are not submitting any other appeal categories please cancel below.",
+            "refreshOnChange": false,
+            "key": "html1",
+            "type": "htmlelement",
+            "input": false,
+            "tableView": false
+        },
+        {
+            "label": "I confirm that I understand the information above and want to request this train-out provision.",
+            "tableView": false,
+            "validate": {
+                "required": true
+            },
+            "validateWhenHidden": false,
+            "key": "isEligibilityRequested",
+            "type": "checkbox",
+            "input": true,
+            "defaultValue": false
+        }
+    ]
+}
