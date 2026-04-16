@@ -2771,8 +2771,8 @@
           "key": "parentInformationPanel",
           "conditional": {
             "show": true,
-            "when": "dependantstatus",
-            "eq": "dependant"
+            "when": "parentInformationStatus",
+            "eq": "required"
           },
           "type": "panel",
           "label": "Panel",
@@ -3992,8 +3992,16 @@
           "calculateServer": true
         },
         {
+          "label": "Parent Information Status",
+          "calculateValue": "const isStudentIndependant =\r\n  data.hasDependents === \"yes\" ||\r\n  [\"married\", \"other\", \"marriedUnable\"].includes(data.relationshipStatus) ||\r\n  data.outOfHighSchoolFor4Years === \"yes\" ||\r\n  data.fulltimelabourForce === \"yes\" ||\r\n  data.custodyOfChildWelfare === \"yes\";\r\n// If the student is not independant, dependant status is calculated based on personal information answer inputs.\r\nif (!isStudentIndependant) {\r\n  const isPersonalInfoAnswered =\r\n    !!data.hasDependents &&\r\n    !!data.relationshipStatus &&\r\n    !!data.outOfHighSchoolFor4Years &&\r\n    !!data.fulltimelabourForce &&\r\n    !!data.youthInCare &&\r\n    (data.youthInCare === \"no\" || !!data.custodyOfChildWelfare);\r\n  // If the answers to required personal information inputs are not provided, set the dependant status to null.\r\n  // Otherwise, dependant status is calculated based on personal information answers.\r\n  isPersonalInfoAnswered\r\n    ? instance.setValue(\"required\")\r\n    : instance.setValue(null);\r\n} else {\r\n  instance.setValue(\"not-required\");\r\n}\r\n",
+          "key": "parentInformationStatus",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
+        },
+        {
           "label": "Dependant Status",
-          "calculateValue": "let parentInformationStatus;\r\nconst isStudentIndependant =\r\n  data.hasDependents === \"yes\" ||\r\n  [\"married\", \"other\", \"marriedUnable\"].includes(data.relationshipStatus) ||\r\n  data.outOfHighSchoolFor4Years === \"yes\" ||\r\n  data.fulltimelabourForce === \"yes\" ||\r\n  data.custodyOfChildWelfare === \"yes\";\r\n// If the student is not independant, dependant status is calculated based on personal information answer inputs.\r\nif (!isStudentIndependant) {\r\n  const isPersonalInfoAnswered =\r\n    !!data.hasDependents &&\r\n    !!data.relationshipStatus &&\r\n    !!data.outOfHighSchoolFor4Years &&\r\n    !!data.fulltimelabourForce &&\r\n    !!data.youthInCare &&\r\n    (data.youthInCare === \"no\" || !!data.custodyOfChildWelfare);\r\n  // If the answers to required personal information inputs are not provided, set the dependant status to null.\r\n  // Otherwise, dependant status is calculated based on personal information answers.\r\n  parentInformationStatus = isPersonalInfoAnswered\r\n    ? \"required\"\r\n    : null;\r\n} else {\r\n  parentInformationStatus = \"not-required\";\r\n}\r\n\r\nif(parentInformationStatus === \"not-required\") {\r\n\tinstance.setValue(\"independant\");\r\n}\r\nelse if(parentInformationStatus === \"required\") {\r\n\tif(data.parentsDeceased === \"yes\" || data.estrangedFromParents === \"yes\") {\r\n        instance.setValue(\"independant\");\r\n    }\r\n    else if(!!data.parentsDeceased && !!data.estrangedFromParents) {\r\n        // Both answered, neither is \"yes\" → student is dependant\r\n        instance.setValue(\"dependant\");\r\n    }\r\n    else {\r\n        // Not all questions answered yet\r\n        instance.setValue(null);\r\n    }\r\n}\r\nelse {\r\n   instance.setValue(null);\r\n}",
+          "calculateValue": "if(parentInformationStatus === \"not-required\") {\r\n\tinstance.setValue(\"independant\");\r\n}\r\nelse if(parentInformationStatus === \"required\") {\r\n\tif(data.parentsDeceased === \"yes\" || data.estrangedFromParents === \"yes\") {\r\n        instance.setValue(\"independant\");\r\n    }\r\n    else if(!!data.parentsDeceased && !!data.estrangedFromParents) {\r\n        // Both answered, neither is \"yes\" → student is dependant\r\n        instance.setValue(\"dependant\");\r\n    }\r\n    else {\r\n        // Not all questions answered yet\r\n        instance.setValue(null);\r\n    }\r\n}\r\nelse {\r\n   instance.setValue(null);\r\n}",
           "calculateServer": true,
           "key": "dependantstatus",
           "type": "hidden",
