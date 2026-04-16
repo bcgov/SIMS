@@ -291,7 +291,13 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
       },
       sin: undefined,
       birthDate: undefined,
-      supportingData: expect.objectContaining(payload.supportingData),
+      supportingData: {
+        totalIncome: payload.supportingData.totalIncome,
+        iAgreeToAboveStudentAidBCConsent:
+          payload.supportingData.iAgreeToAboveStudentAidBCConsent,
+        iAgreeToTheAboveCRAConsent:
+          payload.supportingData.iAgreeToTheAboveCRAConsent,
+      },
       supportingUserType: undefined,
       fullName: undefined,
       personalInfo: {
