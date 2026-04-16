@@ -14,7 +14,6 @@ import {
   createE2EDataSources,
   createFakeSupportingUser,
   E2EDataSources,
-  getProviderInstanceForModule,
   saveFakeApplication,
 } from "@sims/test-utils";
 import {
@@ -26,9 +25,7 @@ import {
   SupportingUserType,
 } from "@sims/sims-db";
 import { ReportedSupportingUserAPIInDTO } from "../../../../route-controllers";
-import { AppStudentsModule } from "../../../../app.students.module";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
-import { FormService } from "../../../../services";
 
 describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", () => {
   let app: INestApplication;
@@ -36,7 +33,6 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
   let db: E2EDataSources;
   let recentPYParentForm: DynamicFormConfiguration;
   let zeebeClient: ZeebeGrpcClient;
-  let formService: FormService;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -45,11 +41,6 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
     appModule = module;
     db = createE2EDataSources(dataSource);
     zeebeClient = app.get(ZeebeGrpcClient);
-    formService = await getProviderInstanceForModule(
-      appModule,
-      AppStudentsModule,
-      FormService,
-    );
     recentPYParentForm = await db.dynamicFormConfiguration.findOne({
       select: {
         id: true,
@@ -239,6 +230,7 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
+    const payload = createSupportingUserPayload();
 
     // Act
     await request(app.getHttpServer())
