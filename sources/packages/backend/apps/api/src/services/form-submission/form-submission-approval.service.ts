@@ -375,8 +375,8 @@ export class FormSubmissionApprovalService {
       (item) => item.dynamicFormConfiguration.id,
     );
     const isAuthorized = this.formSubmissionAuthorizationService.isAuthorized(
-      FormSubmissionAuthRoles.AssessFinalDecision,
       userRoles,
+      FormSubmissionAuthRoles.AssessFinalDecision,
       dynamicFormConfigurationIDs,
     );
     if (!isAuthorized) {
@@ -392,8 +392,8 @@ export class FormSubmissionApprovalService {
     userRoles: Role[],
   ): void {
     const isAuthorized = this.formSubmissionAuthorizationService.isAuthorized(
-      FormSubmissionAuthRoles.AssessItemDecision,
       userRoles,
+      FormSubmissionAuthRoles.AssessItemDecision,
       [dynamicFormConfigurationID],
     );
     if (!isAuthorized) {

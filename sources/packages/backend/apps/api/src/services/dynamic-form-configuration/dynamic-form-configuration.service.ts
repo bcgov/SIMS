@@ -112,13 +112,13 @@ export class DynamicFormConfigurationService {
     );
   }
 
-  getFormsByDefinitionName(
-    dynamicFormDefinitionNames: string[],
+  getFormsByAuthorizationKey(
+    authorizationKeys: string[],
   ): DynamicFormConfiguration[] {
-    return this.dynamicFormConfigurations.filter((dynamicFormConfiguration) =>
-      dynamicFormDefinitionNames.includes(
-        dynamicFormConfiguration.formDefinitionName,
-      ),
+    return this.dynamicFormConfigurations.filter(
+      (dynamicFormConfiguration) =>
+        dynamicFormConfiguration.authorizationKey &&
+        authorizationKeys.includes(dynamicFormConfiguration.authorizationKey),
     );
   }
 }

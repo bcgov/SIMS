@@ -148,8 +148,8 @@ export class FormSubmissionControllerService {
   ): Promise<FormSubmissionMinistryAPIOutDTO> {
     const authorizedDynamicFormsIDs =
       this.formSubmissionAuthorizationService.getAuthorizedDynamicFormsIDs(
-        FormSubmissionAuthRoles.ViewFormSubmittedData,
         userRoles,
+        FormSubmissionAuthRoles.ViewFormSubmittedData,
       );
     const [submission] = await this.formSubmissionService.getFormSubmissions(
       { formSubmissionId, itemId },
