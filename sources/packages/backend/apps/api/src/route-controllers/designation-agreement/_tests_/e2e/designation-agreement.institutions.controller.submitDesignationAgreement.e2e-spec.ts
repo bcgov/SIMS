@@ -65,14 +65,28 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
     // Arrange
     const payload = {
       dynamicData: {
-        eligibilityOfficers: [],
-        enrolmentOfficers: [],
-        scheduleA: false,
-        scheduleB: false,
-        scheduleD: false,
+        eligibilityOfficers: [
+          {
+            name: "John Doe",
+            positionTitle: "Officer",
+            email: "eligibility@test.com",
+            phone: "555-123-4567",
+          },
+        ],
+        enrolmentOfficers: [
+          {
+            name: "Jane Doe",
+            positionTitle: "Officer",
+            email: "enrolment@test.com",
+            phone: "555-987-6543",
+          },
+        ],
+        scheduleA: true,
+        scheduleB: true,
+        scheduleD: true,
         legalAuthorityName: "SIMS COLLF",
         legalAuthorityEmailAddress: "test@gov.bc.ca",
-        agreementAccepted: false,
+        agreementAccepted: true,
       },
       locations: [
         {
@@ -121,14 +135,28 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
 
     const payload = {
       dynamicData: {
-        eligibilityOfficers: [],
-        enrolmentOfficers: [],
-        scheduleA: false,
-        scheduleB: false,
-        scheduleD: false,
+        eligibilityOfficers: [
+          {
+            name: "John Doe",
+            positionTitle: "Officer",
+            email: "eligibility@test.com",
+            phone: "555-123-4567",
+          },
+        ],
+        enrolmentOfficers: [
+          {
+            name: "Jane Doe",
+            positionTitle: "Officer",
+            email: "enrolment@test.com",
+            phone: "555-987-6543",
+          },
+        ],
+        scheduleA: true,
+        scheduleB: true,
+        scheduleD: true,
         legalAuthorityName: "SIMS COLLC",
         legalAuthorityEmailAddress: "test@gov.bc.ca",
-        agreementAccepted: false,
+        agreementAccepted: true,
       },
       locations: [
         {

@@ -185,14 +185,10 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
       where: { id: parent.id },
     });
     // Assert supporting user reported details.
-    // Use toMatchObject to allow Form.io to return additional computed fields
-    // in supportingData (e.g. hidden fields with default values).
-    expect(updatedSupportingUser).toMatchObject({
+    // supportingData uses expect.objectContaining because Form.io may return
+    // additional computed/hidden fields beyond what the payload submitted.
+    expect(updatedSupportingUser).toEqual({
       id: parent.id,
-      personalInfo: {
-        givenNames: payload.givenNames,
-        lastName: payload.lastName,
-      },
       contactInfo: {
         address: {
           city: payload.city,
@@ -203,8 +199,34 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
         },
         phone: payload.phone,
       },
+      sin: undefined,
+      birthDate: undefined,
       supportingData: expect.objectContaining(payload.supportingData),
-      modifier: { id: student.user.id },
+      supportingUserType: undefined,
+      fullName: undefined,
+      personalInfo: {
+        givenNames: payload.givenNames,
+        lastName: payload.lastName,
+      },
+      isAbleToReport: undefined,
+      user: undefined,
+      application: undefined,
+      creator: undefined,
+      modifier: {
+        id: student.user.id,
+        userName: undefined,
+        email: undefined,
+        firstName: undefined,
+        lastName: undefined,
+        isActive: undefined,
+        identityProviderType: undefined,
+        creator: undefined,
+        modifier: undefined,
+        createdAt: undefined,
+        updatedAt: undefined,
+      },
+      createdAt: undefined,
+      updatedAt: undefined,
     });
     // Assert workflow message.
     expect(zeebeClient.publishMessage).toHaveBeenCalledWith(
@@ -253,12 +275,10 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
       where: { id: partner.id },
     });
     // Assert supporting user reported details.
+    // supportingData uses expect.objectContaining because Form.io may return
+    // additional computed/hidden fields beyond what the payload submitted.
     expect(updatedSupportingUser).toEqual({
       id: partner.id,
-      personalInfo: {
-        givenNames: payload.givenNames,
-        lastName: payload.lastName,
-      },
       contactInfo: {
         address: {
           city: payload.city,
@@ -269,8 +289,34 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
         },
         phone: payload.phone,
       },
-      supportingData: payload.supportingData,
-      modifier: { id: student.user.id },
+      sin: undefined,
+      birthDate: undefined,
+      supportingData: expect.objectContaining(payload.supportingData),
+      supportingUserType: undefined,
+      fullName: undefined,
+      personalInfo: {
+        givenNames: payload.givenNames,
+        lastName: payload.lastName,
+      },
+      isAbleToReport: undefined,
+      user: undefined,
+      application: undefined,
+      creator: undefined,
+      modifier: {
+        id: student.user.id,
+        userName: undefined,
+        email: undefined,
+        firstName: undefined,
+        lastName: undefined,
+        isActive: undefined,
+        identityProviderType: undefined,
+        creator: undefined,
+        modifier: undefined,
+        createdAt: undefined,
+        updatedAt: undefined,
+      },
+      createdAt: undefined,
+      updatedAt: undefined,
     });
     // Assert workflow message.
     expect(zeebeClient.publishMessage).toHaveBeenCalledWith(
