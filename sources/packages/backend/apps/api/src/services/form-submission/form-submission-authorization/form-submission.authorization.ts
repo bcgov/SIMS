@@ -5,7 +5,7 @@ import { Injectable } from "@nestjs/common";
 import { DynamicFormConfigurationService } from "../..";
 
 @Injectable()
-export class FormSubmissionAuthorization {
+export class FormSubmissionAuthorizationService {
   constructor(
     private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
   ) {}
@@ -51,7 +51,9 @@ export class FormSubmissionAuthorization {
         (role) => role.startsWith("forms.") && role.endsWith(`.${formRole}`),
       )
       .map((role) => role.split(".")[1]);
-    return this.dynamicFormConfigurationService.getFormsByType(formTypes);
+    return this.dynamicFormConfigurationService.getFormsByDefinitionName(
+      formTypes,
+    );
   }
 }
 

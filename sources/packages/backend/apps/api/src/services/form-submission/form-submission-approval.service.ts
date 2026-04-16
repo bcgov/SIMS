@@ -33,7 +33,7 @@ import { FormSubmissionActionProcessor } from "./form-submission-actions/form-su
 import { NotificationActionsService } from "@sims/services/notifications";
 import {
   FormSubmissionAuthRoles,
-  FormSubmissionAuthorization,
+  FormSubmissionAuthorizationService,
 } from "../../services";
 
 @Injectable()
@@ -43,7 +43,7 @@ export class FormSubmissionApprovalService {
     private readonly noteSharedService: NoteSharedService,
     private readonly formSubmissionActionProcessor: FormSubmissionActionProcessor,
     private readonly notificationActionsService: NotificationActionsService,
-    private readonly formSubmissionAuthorization: FormSubmissionAuthorization,
+    private readonly formSubmissionAuthorizationService: FormSubmissionAuthorizationService,
   ) {}
 
   /**
@@ -374,7 +374,7 @@ export class FormSubmissionApprovalService {
     const dynamicFormConfigurationIDs = formSubmissionItems.map(
       (item) => item.dynamicFormConfiguration.id,
     );
-    const isAuthorized = this.formSubmissionAuthorization.isAuthorized(
+    const isAuthorized = this.formSubmissionAuthorizationService.isAuthorized(
       FormSubmissionAuthRoles.AssessFinalDecision,
       userRoles,
       dynamicFormConfigurationIDs,
@@ -391,7 +391,7 @@ export class FormSubmissionApprovalService {
     dynamicFormConfigurationID: number,
     userRoles: Role[],
   ): void {
-    const isAuthorized = this.formSubmissionAuthorization.isAuthorized(
+    const isAuthorized = this.formSubmissionAuthorizationService.isAuthorized(
       FormSubmissionAuthRoles.AssessItemDecision,
       userRoles,
       [dynamicFormConfigurationID],

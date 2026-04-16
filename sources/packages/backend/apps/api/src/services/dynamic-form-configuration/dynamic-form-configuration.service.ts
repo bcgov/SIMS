@@ -112,9 +112,13 @@ export class DynamicFormConfigurationService {
     );
   }
 
-  getFormsByType(dynamicFormTypes: string[]): DynamicFormConfiguration[] {
+  getFormsByDefinitionName(
+    dynamicFormDefinitionNames: string[],
+  ): DynamicFormConfiguration[] {
     return this.dynamicFormConfigurations.filter((dynamicFormConfiguration) =>
-      dynamicFormTypes.includes(dynamicFormConfiguration.formType),
+      dynamicFormDefinitionNames.includes(
+        dynamicFormConfiguration.formDefinitionName,
+      ),
     );
   }
 }
