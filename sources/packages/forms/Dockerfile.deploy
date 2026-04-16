@@ -6,6 +6,9 @@ COPY package.json .
 
 RUN npm install
 
-COPY . .
+COPY tsconfig.json tsconfig.build.json ./
+COPY src/ ./src/
+
+USER node
 
 CMD ["npm", "run", "deploy"]
