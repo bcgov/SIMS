@@ -62,7 +62,7 @@ export * from "./student-appeal/student-appeal.model";
 export * from "./student-appeal/student-appeal-assessment";
 export * from "./form-submission/constants";
 export * from "./form-submission/form-submission-authorization/form-submission.authorization.models";
-export * from "./form-submission/form-submission-authorization/form-submission.authorization";
+export * from "./form-submission/form-submission-authorization/form-submission.authorization.service";
 export * from "./form-submission/form-submission.models";
 export * from "./form-submission/form-submission-submit.service";
 export * from "./form-submission/form-submission-approval.service";
