@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { FormSubmissionAuthRoles, FormSubmissionService } from "../../services";
+import {
+  FormSubmissionAuthRoles,
+  FormSubmissionService,
+  FormSubmissionAuthorizationService,
+} from "../../services";
 import {
   FormSubmission,
   FormSubmissionDecisionStatus,
@@ -13,8 +17,7 @@ import {
   FormSubmissionMinistryAPIOutDTO,
 } from "./models/form-submission.dto";
 import { Role } from "../../auth";
-import { FormSubmissionAuthorizationService } from "../../services";
-import { getUserFullName } from "apps/api/src/utilities";
+import { getUserFullName } from "../../utilities";
 
 @Injectable()
 export class FormSubmissionControllerService {
