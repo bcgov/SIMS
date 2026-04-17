@@ -5,6 +5,10 @@ import {
 } from "@/constants/award-constants";
 import { OfferingIntensity } from "@/types";
 
+/**
+ * Composable function for handling award-related logic.
+ * @returns An object containing functions for mapping award types to display labels.
+ */
 export function useAward() {
   /**
    * Maps an award type and offering intensity to a user-friendly display label
