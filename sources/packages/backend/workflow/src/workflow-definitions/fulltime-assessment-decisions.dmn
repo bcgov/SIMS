@@ -21,53 +21,6 @@
       <output id="OutputClause_118w6c3" label="limitAdditionalTransportationPlacement" name="limitAdditionalTransportationPlacement" typeRef="string" />
       <output id="OutputClause_082mspl" label="limitProgramYearReturnTransportation" name="limitProgramYearReturnTransportation" typeRef="string" />
       <output id="OutputClause_0corbvv" label="limitAppealMonthlyRoomAndBoard" name="limitAppealMonthlyRoomAndBoard" typeRef="string" />
-      <rule id="DecisionRule_0bfepni">
-        <inputEntry id="UnaryTests_1s74yiy">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_17ngwzr">
-          <text>268</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1ic4wn8">
-          <text>170</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_16vb1cx">
-          <text>213</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1atose5">
-          <text>13</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1y60x6f">
-          <text>3000</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1yn0ej6">
-          <text>1800</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1q31wle">
-          <text>2899</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0gv7t1p">
-          <text>857</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_094a1jr">
-          <text>0.34</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1ggh2h5">
-          <text>94</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_04n0rzc">
-          <text>69</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0ho65ad">
-          <text>25</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0c7z748">
-          <text>1800</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0akwo0i">
-          <text>1</text>
-        </outputEntry>
-      </rule>
       <rule id="DecisionRule_0gogmxa">
         <inputEntry id="UnaryTests_0zrum1t">
           <text>"2023-2024"</text>
@@ -176,7 +129,7 @@
           <text>357</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1vadz5u">
-          <text>13</text>
+          <text>23</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0bczwac">
           <text>3000</text>
@@ -217,13 +170,13 @@
           <text>268</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0iiq0dh">
-          <text>221</text>
+          <text>226</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_04owfr8">
-          <text>357</text>
+          <text>330</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1qjhx8l">
-          <text>13</text>
+          <text>23</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_16wtie4">
           <text>3000</text>
@@ -232,10 +185,10 @@
           <text>1800</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_12io1yn">
-          <text>3868</text>
+          <text>4034</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0e053bu">
-          <text>1049</text>
+          <text>1077</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_00qz8t9">
           <text>0.34</text>
@@ -253,7 +206,7 @@
           <text>1800</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0ouvqm4">
-          <text>1535</text>
+          <text>1420</text>
         </outputEntry>
       </rule>
     </decisionTable>
@@ -271,39 +224,6 @@
         </inputExpression>
       </input>
       <output id="OutputClause_02h772i" label="limitApplicationBookmaximum" name="limitApplicationBookmaximum" typeRef="string" />
-      <rule id="DecisionRule_1hsue9m">
-        <inputEntry id="UnaryTests_1ec29h0">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0h3mwz2">
-          <text>[1..17]</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_0i29w0g">
-          <text>1500</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_0by80qy">
-        <inputEntry id="UnaryTests_18ubk1l">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0yhii3b">
-          <text>[18..34]</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_1w6omj2">
-          <text>3000</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_1xdi6og">
-        <inputEntry id="UnaryTests_0gy7fez">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0ubgj55">
-          <text>[35..52]</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_1tb01pi">
-          <text>3000</text>
-        </outputEntry>
-      </rule>
       <rule id="DecisionRule_1qa5434">
         <inputEntry id="UnaryTests_16522mk">
           <text>"2023-2024"</text>
@@ -429,28 +349,6 @@
         </inputExpression>
       </input>
       <output id="OutputClause_1s075w7" label="limitApplicationTransportation" name="limitApplicationTransportation" typeRef="string" />
-      <rule id="DecisionRule_0lkj56o">
-        <inputEntry id="UnaryTests_12ntzit">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1qwy6td">
-          <text>[1..26]</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_07y9v55">
-          <text>900</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_1sfy3jv">
-        <inputEntry id="UnaryTests_0e38inf">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0mkvbow">
-          <text>[27..52]</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_12po4by">
-          <text>1800</text>
-        </outputEntry>
-      </rule>
       <rule id="DecisionRule_00xy0do">
         <inputEntry id="UnaryTests_05nx3h5">
           <text>"2023-2024"</text>
@@ -769,261 +667,6 @@
       <output id="OutputClause_0d8mxif" label="YT" name="YT" typeRef="number" />
       <output id="OutputClause_14zxweg" label="NT" name="NT" typeRef="number" />
       <output id="OutputClause_0va7pmc" label="NU" name="NU" typeRef="number" />
-      <rule id="DecisionRule_0dbx3ac">
-        <description>SINGLE STUDENT AWAY FROM HOME</description>
-        <inputEntry id="UnaryTests_1ooci44">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1ed3454">
-          <text>"SIA","SDA"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0dsex2f">
-          <text>"student"</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_0ww2ff3">
-          <text>1672</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_15kfx4a">
-          <text>1162</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_07hhexj">
-          <text>1104</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1br2cxb">
-          <text>1107</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0vl47bj">
-          <text>1051</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_12x6r18">
-          <text>1101</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0hsex9j">
-          <text>1299</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_03ykmiy">
-          <text>1196</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1kg602u">
-          <text>1235</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0dev9qt">
-          <text>1220</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1ee5xzl">
-          <text>1339</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_05pdhcb">
-          <text>1602</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0w0cn14">
-          <text>1605</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_05r6wib">
-        <description>SINGLE PARENT (no dependent considered)</description>
-        <inputEntry id="UnaryTests_1h3s28b">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0busmct">
-          <text>"SP"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_10s3hta">
-          <text>"student"</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_15kenz5">
-          <text>2051</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1ma8saf">
-          <text>1588</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1cyegna">
-          <text>1481</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0qa5waq">
-          <text>1465</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_11qdioz">
-          <text>1404</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0t31iyq">
-          <text>1397</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0kudujg">
-          <text>1683</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0t94k3z">
-          <text>1404</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1toq5jv">
-          <text>1606</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0mqlxsb">
-          <text>1513</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0w6o0yz">
-          <text>1851</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1vhg6y4">
-          <text>2098</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1j87oo4">
-          <text>2102</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_133m06l">
-        <description>MARRIED STUDENT &amp; SPOUSE (no dependent considered)</description>
-        <inputEntry id="UnaryTests_0azq0mv">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_18hfu9a">
-          <text>"M"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1073fem">
-          <text>"student"</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_0gsdfzu">
-          <text>3138</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1mjrinc">
-          <text>2266</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0p6g1d0">
-          <text>2213</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_003l6r5">
-          <text>2218</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_16cv6dg">
-          <text>2089</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0kmakcp">
-          <text>1998</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0h0urh8">
-          <text>2484</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1srh19g">
-          <text>2227</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0cbzpk7">
-          <text>2399</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_188tqtg">
-          <text>2355</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1ayzc47">
-          <text>2674</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0pvr43f">
-          <text>2945</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0y6p0qk">
-          <text>2951</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_16cjq96">
-        <description>SINGLE STUDENT AT HOME</description>
-        <inputEntry id="UnaryTests_0k4eh1v">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1hv0wz6">
-          <text>"SDH","SIH"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0vuxfjn">
-          <text>"student"</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_0w4qbjx">
-          <text>704</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_180asdi">
-          <text>478</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1kgmmbi">
-          <text>523</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1xflls2">
-          <text>516</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0jf570t">
-          <text>503</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1rcgnsq">
-          <text>516</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_086is1h">
-          <text>542</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1w6cx4d">
-          <text>560</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1la1o0d">
-          <text>544</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_19w4klk">
-          <text>585</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1mh0pba">
-          <text>599</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0zgwdd0">
-          <text>608</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1iw4lom">
-          <text>610</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_1twj1l2">
-        <description>EACH DEPENDENT PERSON</description>
-        <inputEntry id="UnaryTests_1h7aseg">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1dt2tf7">
-          <text></text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0ifx763">
-          <text>"dependant"</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_1urf3hq">
-          <text>727</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0ocg636">
-          <text>554</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1qcn5rp">
-          <text>544</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0o49hky">
-          <text>572</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0r9vnb4">
-          <text>527</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_139zoj9">
-          <text>567</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1wnskf5">
-          <text>691</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0akj9gx">
-          <text>653</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1g6o9j9">
-          <text>627</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1l9akyf">
-          <text>642</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0cvbalq">
-          <text>611</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0gm858r">
-          <text>821</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1alf2xa">
-          <text>825</text>
-        </outputEntry>
-      </rule>
       <rule id="DecisionRule_045079w">
         <description>SINGLE STUDENT AWAY FROM HOME</description>
         <inputEntry id="UnaryTests_1t9mg1g">
@@ -1801,43 +1444,43 @@
           <text>"student"</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1r0rdwr">
-          <text>563</text>
+          <text>541</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0e45m1w">
-          <text>304</text>
+          <text>323</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_09imcgw">
-          <text>300</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1t5ggyi">
-          <text>443</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1difb9k">
           <text>362</text>
         </outputEntry>
+        <outputEntry id="LiteralExpression_1t5ggyi">
+          <text>421</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1difb9k">
+          <text>345</text>
+        </outputEntry>
         <outputEntry id="LiteralExpression_0ps9m3m">
-          <text>386</text>
+          <text>390</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1nfbg1t">
-          <text>463</text>
+          <text>454</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_081p9ms">
-          <text>417</text>
+          <text>388</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0c6y85j">
-          <text>347</text>
+          <text>360</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_042lvzx">
-          <text>434</text>
+          <text>417</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0xwx31c">
-          <text>364</text>
+          <text>375</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1qhcw06">
-          <text>424</text>
+          <text>452</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_04xf8yu">
-          <text>541</text>
+          <text>545</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_16s1s8f">
@@ -1852,43 +1495,43 @@
           <text>"student"</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_17zvs38">
-          <text>725</text>
+          <text>698</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_08baify">
-          <text>383</text>
+          <text>417</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0y3jn98">
-          <text>395</text>
+          <text>412</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1jhyzxq">
-          <text>579</text>
+          <text>564</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0ve6q82">
-          <text>438</text>
+          <text>453</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0w3iv1h">
-          <text>510</text>
+          <text>495</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0vdesh6">
-          <text>641</text>
+          <text>622</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1iak2ce">
-          <text>545</text>
+          <text>490</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1moxffd">
-          <text>462</text>
+          <text>490</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0x0uknp">
-          <text>582</text>
+          <text>563</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_14wq66x">
-          <text>485</text>
+          <text>502</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1q955i3">
-          <text>575</text>
+          <text>577</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_19zsj1n">
-          <text>798</text>
+          <text>802</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_0viu0lq">
@@ -1903,43 +1546,43 @@
           <text>"student"</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1hn7zir">
-          <text>1066</text>
+          <text>1020</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_14amfbr">
-          <text>593</text>
+          <text>629</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1rnyqw7">
-          <text>600</text>
+          <text>724</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0473xt3">
-          <text>885</text>
+          <text>843</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1sixd5f">
-          <text>722</text>
+          <text>688</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_158tsxk">
-          <text>716</text>
+          <text>722</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0flkavb">
-          <text>897</text>
+          <text>877</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1hbx12x">
-          <text>816</text>
+          <text>757</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_16n8f5b">
-          <text>674</text>
+          <text>699</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0o1wg9n">
-          <text>846</text>
+          <text>812</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_09y70u7">
-          <text>727</text>
+          <text>749</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1rhkmyb">
-          <text>778</text>
+          <text>831</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0sk2sji">
-          <text>1012</text>
+          <text>1019</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_0liircp">
@@ -1954,43 +1597,43 @@
           <text>"student"</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0iw78np">
-          <text>192</text>
+          <text>196</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_10hrj07">
-          <text>130</text>
+          <text>133</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1tdcrv9">
-          <text>143</text>
+          <text>146</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_03xo77z">
-          <text>155</text>
+          <text>158</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0jchik0">
-          <text>137</text>
+          <text>139</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0127jem">
-          <text>140</text>
+          <text>143</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1mypdue">
-          <text>147</text>
+          <text>150</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1ibhkwj">
-          <text>152</text>
+          <text>155</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1uo6o2z">
-          <text>145</text>
+          <text>148</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1bq7vrr">
-          <text>159</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1yeokwo">
           <text>162</text>
         </outputEntry>
+        <outputEntry id="LiteralExpression_1yeokwo">
+          <text>166</text>
+        </outputEntry>
         <outputEntry id="LiteralExpression_1gzj0u1">
-          <text>165</text>
+          <text>169</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_050aln2">
-          <text>165</text>
+          <text>169</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_1f2kvw3">
@@ -2005,43 +1648,43 @@
           <text>"dependant"</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0qe1zwr">
-          <text>221</text>
+          <text>226</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0tef8um">
-          <text>151</text>
+          <text>154</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0nhd6xd">
-          <text>149</text>
+          <text>152</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1u901fa">
-          <text>178</text>
+          <text>182</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1c42ih6">
-          <text>143</text>
+          <text>146</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1djuydo">
-          <text>172</text>
+          <text>175</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0s39lal">
-          <text>217</text>
+          <text>222</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1nqexkw">
-          <text>196</text>
+          <text>200</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0v2m3dx">
-          <text>163</text>
+          <text>167</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0i3rdcq">
-          <text>192</text>
+          <text>196</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0jtxgy9">
-          <text>172</text>
+          <text>176</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_15skxtk">
-          <text>223</text>
+          <text>227</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1wwpzmw">
-          <text>223</text>
+          <text>228</text>
         </outputEntry>
       </rule>
     </decisionTable>
@@ -2062,146 +1705,6 @@
       <output id="OutputClause_0aiitrd" label="calculatedDataFederalFSCIncomeThreshold" name="calculatedDataFederalFSCIncomeThreshold" typeRef="string" />
       <output id="OutputClause_0j8bckj" label="partnerProvincialContributionIncomeThreshold" name="partnerProvincialContributionIncomeThreshold" typeRef="string" />
       <output id="OutputClause_05rqdv0" label="partnerFederalContributionIncomeThreshold" name="partnerFederalContributionIncomeThreshold" typeRef="string" />
-      <rule id="DecisionRule_0vxn4pf">
-        <inputEntry id="UnaryTests_1u3nujx">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0edn8c4">
-          <text>1</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_0x9mig8">
-          <text>31868</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_032d8p0">
-          <text>31868</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_18vqlm1">
-          <text>31868</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_13o75ak">
-          <text>31868</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_1oo84bx">
-        <inputEntry id="UnaryTests_0cqr4os">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1bsiwag">
-          <text>2</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_1x2i7xt">
-          <text>45068</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0dqiy5e">
-          <text>45068</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_17z1z8d">
-          <text>45068</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0v675ci">
-          <text>45068</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_0yb006x">
-        <inputEntry id="UnaryTests_1oe0uz3">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0uxtbxs">
-          <text>3</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_040ht7u">
-          <text>55196</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0pdld7k">
-          <text>55196</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1k4aui0">
-          <text>55196</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0xpy1b7">
-          <text>55196</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_0e8w56i">
-        <inputEntry id="UnaryTests_1tydovs">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_08t1g1m">
-          <text>4</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_1ioqfx5">
-          <text>63735</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_13z0gu7">
-          <text>63735</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0qvawy5">
-          <text>63735</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1cb6zqn">
-          <text>63735</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_0aqkrr9">
-        <inputEntry id="UnaryTests_053cfbg">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0l1sxk6">
-          <text>5</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_07e3qna">
-          <text>71258</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0zr5a5e">
-          <text>71258</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0zb1rc2">
-          <text>71258</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1wefdug">
-          <text>71258</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_1gu01e3">
-        <inputEntry id="UnaryTests_1ui9k6j">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_16sv8jw">
-          <text>6</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_0ml40h8">
-          <text>78060</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0pgle0j">
-          <text>78060</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_03qem4m">
-          <text>78060</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0ormax3">
-          <text>78060</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_0koapi1">
-        <inputEntry id="UnaryTests_13a4oho">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1jcaqv9">
-          <text>&gt;= 7</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_1m70pga">
-          <text>84313</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_05miql8">
-          <text>84313</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1ixmojd">
-          <text>84313</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_109irdj">
-          <text>84313</text>
-        </outputEntry>
-      </rule>
       <rule id="DecisionRule_002fplp">
         <inputEntry id="UnaryTests_112mfg5">
           <text>"2023-2024"</text>
@@ -2630,16 +2133,16 @@
           <text>1</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0vbj0yl">
-          <text>37701</text>
+          <text>38474</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1x6wy5r">
-          <text>37701</text>
+          <text>38474</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_04lgk9j">
-          <text>37701</text>
+          <text>38474</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1g38ib3">
-          <text>37701</text>
+          <text>38474</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_1gn2f9o">
@@ -2650,16 +2153,16 @@
           <text>2</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1ipv7u9">
-          <text>53318</text>
+          <text>54412</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1rbzm6u">
-          <text>53318</text>
+          <text>54412</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1w8hd4c">
-          <text>53318</text>
+          <text>54412</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1rmjp3d">
-          <text>53318</text>
+          <text>54412</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_0uutmit">
@@ -2670,16 +2173,16 @@
           <text>3</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_10bp9hh">
-          <text>65302</text>
+          <text>66641</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_19pqhiq">
-          <text>65302</text>
+          <text>66641</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1ilkvd2">
-          <text>65302</text>
+          <text>66641</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_120v5jp">
-          <text>65302</text>
+          <text>66641</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_00es7ns">
@@ -2690,16 +2193,16 @@
           <text>4</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0bkuv9h">
-          <text>75405</text>
+          <text>76952</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0m4pmfh">
-          <text>75405</text>
+          <text>76952</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1ty0j6u">
-          <text>75405</text>
+          <text>76952</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_12cluqt">
-          <text>75405</text>
+          <text>76952</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_0zhbtzu">
@@ -2710,16 +2213,16 @@
           <text>5</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1jwnfrq">
-          <text>84304</text>
+          <text>86033</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0b2861d">
-          <text>84304</text>
+          <text>86033</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0ws1hr4">
-          <text>84304</text>
+          <text>86033</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1d4eax9">
-          <text>84304</text>
+          <text>86033</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_0zdvy3x">
@@ -2730,16 +2233,16 @@
           <text>6</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0hl8516">
-          <text>92351</text>
+          <text>94245</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1lggwp9">
-          <text>92351</text>
+          <text>94245</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1uilfvr">
-          <text>92351</text>
+          <text>94245</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0ug4n0d">
-          <text>92351</text>
+          <text>94245</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_06z6e1u">
@@ -2750,16 +2253,16 @@
           <text>&gt;=7</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0e1yhfi">
-          <text>99751</text>
+          <text>101797</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0y4o7gr">
-          <text>99751</text>
+          <text>101797</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0jvyig5">
-          <text>99751</text>
+          <text>101797</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0alvsbq">
-          <text>99751</text>
+          <text>101797</text>
         </outputEntry>
       </rule>
     </decisionTable>
@@ -2777,105 +2280,6 @@
         </inputExpression>
       </input>
       <output id="OutputClause_1g2khwp" label="limitDiscretionaryIncome" name="limitDiscretionaryIncome" typeRef="string" />
-      <rule id="DecisionRule_1pq1n5s">
-        <inputEntry id="UnaryTests_1q1er7q">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1to2zka">
-          <text>2</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_19u14ro">
-          <text>48056</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_0r2fod9">
-        <inputEntry id="UnaryTests_1x66fge">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0c6jpzd">
-          <text>3</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_00pdolh">
-          <text>62430</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_1q7ui26">
-        <inputEntry id="UnaryTests_1f4az3g">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1eyw9rk">
-          <text>4</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_1lkj2g1">
-          <text>72625</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_1d8mf0l">
-        <inputEntry id="UnaryTests_0lu1fd2">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_14qj14i">
-          <text>5</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_0hwxxid">
-          <text>80531</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_18n6zbv">
-        <inputEntry id="UnaryTests_09tj876">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0qg0gac">
-          <text>6</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_16toff0">
-          <text>86994</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_1sm4yu2">
-        <inputEntry id="UnaryTests_0icvpx2">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0jch5ac">
-          <text>7</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_0w2f8gr">
-          <text>92460</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_11f4je7">
-        <inputEntry id="UnaryTests_15s1qvk">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0dcxzj5">
-          <text>8</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_19urmtk">
-          <text>97195</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_0895pwz">
-        <inputEntry id="UnaryTests_185hcm3">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0nx6d9h">
-          <text>9</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_1rvu1g0">
-          <text>101368</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_114mee7">
-        <inputEntry id="UnaryTests_0dbw78u">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1q0zx85">
-          <text>&gt;= 10</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_0lgzces">
-          <text>105100</text>
-        </outputEntry>
-      </rule>
       <rule id="DecisionRule_1mt2rtb">
         <inputEntry id="UnaryTests_0ldvgeh">
           <text>"2023-2024"</text>
@@ -3181,7 +2585,7 @@
           <text>2</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0giwkdr">
-          <text>56537</text>
+          <text>57967</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_18j5h62">
@@ -3192,7 +2596,7 @@
           <text>3</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_19lnszl">
-          <text>73448</text>
+          <text>75305</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_10sui8q">
@@ -3203,7 +2607,7 @@
           <text>4</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0ff7iiw">
-          <text>85442</text>
+          <text>87603</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_1j2t1uk">
@@ -3214,7 +2618,7 @@
           <text>5</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0xmb4lt">
-          <text>94745</text>
+          <text>97140</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_19sf2xw">
@@ -3225,7 +2629,7 @@
           <text>6</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0wy1qp2">
-          <text>102348</text>
+          <text>104936</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_10xot1u">
@@ -3236,7 +2640,7 @@
           <text>7</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0hyindt">
-          <text>108779</text>
+          <text>111529</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_12097jb">
@@ -3247,7 +2651,7 @@
           <text>8</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0oor1du">
-          <text>114349</text>
+          <text>117240</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_0cd8hpu">
@@ -3258,7 +2662,7 @@
           <text>9</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_06wkrrh">
-          <text>119259</text>
+          <text>122275</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_1uwjnww">
@@ -3269,7 +2673,7 @@
           <text>&gt;=10</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1toyr00">
-          <text>123650</text>
+          <text>126776</text>
         </outputEntry>
       </rule>
     </decisionTable>
@@ -3299,65 +2703,6 @@
       <output id="OutputClause_1teklto" label="limitAwardBCAGWeekly" name="limitAwardBCAGWeekly" typeRef="string" biodi:width="192" />
       <output id="OutputClause_1min8wo" label="limitAwardBCAGMinAward" name="limitAwardBCAGMinAward" typeRef="string" />
       <output id="OutputClause_0c9ptt6" label="limitAwardSBSDMaxAllowableAward" name="limitAwardSBSDMaxAllowableAward" typeRef="string" />
-      <rule id="DecisionRule_11z6dl5">
-        <inputEntry id="UnaryTests_1jgae8j">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_0g62cwl">
-          <text>4000</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0brx8u5">
-          <text>3200 / 8 * 12 / 52</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0gk9u3x">
-          <text>100</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_18jfaas">
-          <text>6000</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0qt4yqd">
-          <text>6000 * (1/8) * 12 * (1/52)</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_03r77rn">
-          <text>200</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0rdy87h">
-          <text>2400</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_19yyfef">
-          <text>110</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1bv1oup">
-          <text>140</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1g9681q">
-          <text>350</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0t1td3h">
-          <text>510</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1hqvq5v">
-          <text>30</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0b31jny">
-          <text>1560</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0qalryk">
-          <text>100</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0rqs4li">
-          <text>1000 / 34</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0r15c6r">
-          <text>4000 / 34</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0n5sd78">
-          <text>100</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1n6foge">
-          <text>800</text>
-        </outputEntry>
-      </rule>
       <rule id="DecisionRule_1ydh2jj">
         <inputEntry id="UnaryTests_0n0dvhw">
           <text>"2023-2024"</text>
@@ -3618,272 +2963,6 @@
       <output id="OutputClause_0l6bgub" label="limitAwardBCAGWeeklyPhaseoutRate" name="limitAwardBCAGWeeklyPhaseoutRate" typeRef="string" />
       <output id="OutputClause_178h9np" label="limitAwardBCAGIncomeCap" name="limitAwardBCAGIncomeCap" typeRef="string" />
       <output id="OutputClause_1dq3680" label="limitAwardBCAGTopUpIncomeCap" name="limitAwardBCAGTopUpIncomeCap" typeRef="string" />
-      <rule id="DecisionRule_0kum11p">
-        <inputEntry id="UnaryTests_19jag1x">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_012ainh">
-          <text>1</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_0onbx4v">
-          <text>31868</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_004zref">
-          <text>0.0238 * 3 / 13</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_18176y4">
-          <text>63381</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0doo4bl">
-          <text>0</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1cak7c7">
-          <text>0</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1dq5ax8">
-          <text>0</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_164rupq">
-          <text>31868</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1gxoaa7">
-          <text>0.0952 / 8 * 12 / 52</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_13al8js">
-          <text>42372</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1bzcnkw">
-          <text>45933</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_1qdxkly">
-        <inputEntry id="UnaryTests_0tz6vip">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_08i3boh">
-          <text>2</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_1fbkbp0">
-          <text>45068</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0ctn9op">
-          <text>0.0172 * 3 / 13</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1glnksj">
-          <text>88673</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0erjse4">
-          <text>45068</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0neu7ib">
-          <text>0.0092 / 8 * 12 / 52</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0dksj34">
-          <text>89004</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_04f7304">
-          <text>45068</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0oa8kvk">
-          <text>0.0688 / 8 * 12 / 52</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_19xkw3r">
-          <text>59603</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0b2sngg">
-          <text>64639</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_1u9owc3">
-        <inputEntry id="UnaryTests_0zrsok2">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1nptuv2">
-          <text>3</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_1xwismx">
-          <text>55196</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1bquh4n">
-          <text>0.0148 * 3 / 13</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_026zfot">
-          <text>105872</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0qadp3g">
-          <text>55196</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0ddejy9">
-          <text>0.0079 / 8 * 12 / 52</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0d6qbn0">
-          <text>106278</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_037ybog">
-          <text>55196</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1i4fyo5">
-          <text>0.0592 / 8 * 12 / 52</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0q6bsm2">
-          <text>72088</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_01hgvyx">
-          <text>78257</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_08ap88b">
-        <inputEntry id="UnaryTests_0ibvg7u">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_1dlegpg">
-          <text>4</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_1qwd2ze">
-          <text>63735</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0rpwpgi">
-          <text>0.0142 * 3 / 13</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1xbzhqv">
-          <text>116552</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0oriqyr">
-          <text>63735</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1v9cz3y">
-          <text>0.0076 / 8 * 12 / 52</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1k1ywxr">
-          <text>117021</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0m9fz8f">
-          <text>63735</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_12v558t">
-          <text>0.0568 / 8 * 12 / 52</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_15d2hqt">
-          <text>81341</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0dw5b6c">
-          <text>88465</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_1cy7yhg">
-        <inputEntry id="UnaryTests_0ow4ktd">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0nunyji">
-          <text>5</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_1ylms46">
-          <text>71258</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_195aijd">
-          <text>0.0136 * 3 / 13</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0o2vg2f">
-          <text>126405</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_02f73q4">
-          <text>71258</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0g01lse">
-          <text>0.0073 / 8 * 12 / 52</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0s7ot5w">
-          <text>126929</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_14v8g6g">
-          <text>71258</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1nec7aj">
-          <text>0.0544 / 8 * 12 / 52</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1dy9p8c">
-          <text>89640</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1p0gbgu">
-          <text>97604</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_0l67go5">
-        <inputEntry id="UnaryTests_1xpd4xf">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_055qidf">
-          <text>6</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_0igztem">
-          <text>78060</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0itbxbs">
-          <text>0.013 * 3 / 13</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0xxigq7">
-          <text>135752</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0netiov">
-          <text>78060</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0cbcwr5">
-          <text>0.0069 / 8 * 12 / 52</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_123fzyh">
-          <text>136326</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_00t8691">
-          <text>78060</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_03p2iri">
-          <text>0.0520 / 8 * 12 / 52</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_007srw4">
-          <text>97291</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0goxz1y">
-          <text>106015</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_0v3gq47">
-        <inputEntry id="UnaryTests_19ooinc">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0cb65f7">
-          <text>&gt;= 7</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_19tnso3">
-          <text>84313</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_112w2n9">
-          <text>0.0126 * 3 / 13</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1qwnd3m">
-          <text>143837</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1jswo1h">
-          <text>84313</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1ymrk9p">
-          <text>0.0067 / 8 * 12 / 52</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1hmoz8k">
-          <text>144457</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1fldf36">
-          <text>84313</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1f8nph4">
-          <text>0.0504 / 8 * 12 / 52</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1l57nfe">
-          <text>104154</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_09nozxi">
-          <text>113578</text>
-        </outputEntry>
-      </rule>
       <rule id="DecisionRule_1a029xp">
         <inputEntry id="UnaryTests_15a5gfp">
           <text>"2023-2024"</text>
@@ -4690,13 +3769,13 @@
           <text>1</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0vg5w82">
-          <text>37701</text>
+          <text>38474</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1kfwi9n">
           <text>0.016660 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1bp08sd">
-          <text>68324</text>
+          <text>69987</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_169krnt">
           <text>0</text>
@@ -4708,16 +3787,16 @@
           <text>0</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0rxhlp2">
-          <text>37701</text>
+          <text>38474</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0dagnff">
           <text>0.0952 / 8 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1em31g3">
-          <text>79718</text>
+          <text>80491</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1v400jh">
-          <text>48205</text>
+          <text>48978</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_1hxl0d6">
@@ -4728,34 +3807,34 @@
           <text>2</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_05pa6lp">
-          <text>53318</text>
+          <text>54412</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_07yn8to">
           <text>0.012040 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0gwe6l9">
-          <text>96923</text>
+          <text>98017</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0dd0ksq">
-          <text>53318</text>
+          <text>54412</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1sgncst">
           <text>0.006421282 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1c65mln">
-          <text>96923</text>
+          <text>98017</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_14ff6gh">
-          <text>53318</text>
+          <text>54412</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_00q20ps">
           <text>0.0688 / 8 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0f663zs">
-          <text>111458</text>
+          <text>112552</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0kut6lj">
-          <text>67853</text>
+          <text>68947</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_0irp1a2">
@@ -4766,34 +3845,34 @@
           <text>3</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1v8sdwm">
-          <text>65302</text>
+          <text>66641</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0k4gcmv">
           <text>0.010360 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1p0k76z">
-          <text>115978</text>
+          <text>117317</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1ag85xg">
-          <text>65302</text>
+          <text>66641</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1ypuza6">
           <text>0.005525296 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_12ogf62">
-          <text>115978</text>
+          <text>117317</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0mpfdxp">
-          <text>65302</text>
+          <text>66641</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_09l2vel">
           <text>0.0592 / 8 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0y6u56k">
-          <text>132870</text>
+          <text>134209</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0jqzfv1">
-          <text>82194</text>
+          <text>83533</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_17gejv0">
@@ -4804,34 +3883,34 @@
           <text>4</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1oz1uej">
-          <text>75405</text>
+          <text>76952</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_12i7fs2">
           <text>0.009940 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_05ukjce">
-          <text>128222</text>
+          <text>129769</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_11iuo53">
-          <text>75405</text>
+          <text>76952</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_15yef3e">
           <text>0.005301324 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0b6zjoc">
-          <text>128222</text>
+          <text>129769</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0ogz2tp">
-          <text>75405</text>
+          <text>76952</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0d1isj0">
           <text>0.0568 / 8 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_12bufuf">
-          <text>144047</text>
+          <text>147375</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1vtxtbp">
-          <text>93011</text>
+          <text>94558</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_04s4w7t">
@@ -4842,34 +3921,34 @@
           <text>5</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_102trpf">
-          <text>84304</text>
+          <text>86033</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_17t8a4b">
           <text>0.009520 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_11xysyz">
-          <text>139451</text>
+          <text>141180</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_11e5uqv">
-          <text>84304</text>
+          <text>86033</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1dgxi2q">
           <text>0.005077338 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_14qh20c">
-          <text>139451</text>
+          <text>141180</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1qlwqxq">
-          <text>84304</text>
+          <text>86033</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0pfqyex">
           <text>0.0544 / 8 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_07j6itk">
-          <text>155842</text>
+          <text>159562</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0ply4r8">
-          <text>102686</text>
+          <text>104415</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_01l7aql">
@@ -4880,34 +3959,34 @@
           <text>6</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_00k79f3">
-          <text>92351</text>
+          <text>94245</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0auo3rw">
           <text>0.009100 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0rcgn8a">
-          <text>150043</text>
+          <text>151937</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_02zjsvt">
-          <text>92351</text>
+          <text>94245</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0cuj0oi">
           <text>0.004853366 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_02dfrkm">
-          <text>150043</text>
+          <text>151937</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0w25ziu">
-          <text>92351</text>
+          <text>94245</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0p9e5jq">
           <text>0.0520 / 8 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_17kqael">
-          <text>167093</text>
+          <text>171168</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0gbqbzk">
-          <text>111582</text>
+          <text>113476</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_1jke281">
@@ -4918,34 +3997,34 @@
           <text>&gt;=7</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0ffxgve">
-          <text>99751</text>
+          <text>101797</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0b6gz1u">
           <text>0.008820 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1xcgdx3">
-          <text>159275</text>
+          <text>161321</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_17tof47">
-          <text>99751</text>
+          <text>101797</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0zfas0j">
           <text>0.004703986 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_09nml24">
-          <text>159275</text>
+          <text>161321</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0rzf2ef">
-          <text>99751</text>
+          <text>101797</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_026nqqo">
           <text>0.0504 / 8 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_015ts91">
-          <text>176760</text>
+          <text>181162</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1q5dykt">
-          <text>119592</text>
+          <text>121638</text>
         </outputEntry>
       </rule>
     </decisionTable>
@@ -4965,57 +4044,6 @@
       <output id="OutputClause_18fg3u5" label="limitAnnualFlatAmount" name="limitAnnualFlatAmount" typeRef="string" />
       <output id="OutputClause_1204p4x" label="limitAnnualRate" name="limitAnnualRate" typeRef="string" />
       <output id="OutputClause_04b5pmd" label="limitIncomeReduction" name="limitIncomeReduction" typeRef="string" />
-      <rule id="DecisionRule_0262m1d">
-        <inputEntry id="UnaryTests_0ndiphz">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0iyo3js">
-          <text>[0..7000]</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_1unu9ok">
-          <text>0</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0b1t1hu">
-          <text>0.15</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1sa7s1g">
-          <text>0</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_0vm0doj">
-        <inputEntry id="UnaryTests_1k5zs0e">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_0526v58">
-          <text>[7001..14000]</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_0h4vdx2">
-          <text>1050</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_00wlnc6">
-          <text>0.20</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0i4mlch">
-          <text>7000</text>
-        </outputEntry>
-      </rule>
-      <rule id="DecisionRule_1nophil">
-        <inputEntry id="UnaryTests_0k1vpm0">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <inputEntry id="UnaryTests_09m9nuw">
-          <text>&gt;14000</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_1kprukv">
-          <text>2450</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0qy862e">
-          <text>0.40</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_00uisci">
-          <text>14000</text>
-        </outputEntry>
-      </rule>
       <rule id="DecisionRule_1ssfz22">
         <inputEntry id="UnaryTests_0zoy7u4">
           <text>"2023-2024"</text>
@@ -5239,41 +4267,6 @@
       <output id="OutputClause_1s2y9t4" label="limitFederalContributionWeeks" name="limitFederalContributionWeeks" typeRef="string" />
       <output id="OutputClause_1udvxbo" label="limitFederalFSCMax" name="limitFederalFSCMax" typeRef="string" />
       <output id="OutputClause_0eqv7z2" label="limitFederalFSCWeeklyAmount" name="limitFederalFSCWeeklyAmount" typeRef="string" />
-      <rule id="DecisionRule_1kjcszd">
-        <inputEntry id="UnaryTests_0bgt6b0">
-          <text>"2022-2023"</text>
-        </inputEntry>
-        <outputEntry id="LiteralExpression_1050r8j">
-          <text>150000</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0sr8jen">
-          <text>0.01</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0y0r4wp">
-          <text>34.67</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0pxu5j4">
-          <text>0.10 * 1/8 * 12 * 1/52</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0esjlat">
-          <text>1500</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1sx8nzp">
-          <text>1500 * 1/8 * 12 * 1/52</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0qvarh3">
-          <text>0.15 * 1/8 * 12 * 1/52</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_1q4w43w">
-          <text>34.67</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_14jf6bj">
-          <text>3000</text>
-        </outputEntry>
-        <outputEntry id="LiteralExpression_0czeelc">
-          <text>3000 * 1/8 * 12 * 1/52</text>
-        </outputEntry>
-      </rule>
       <rule id="DecisionRule_1nhhlsl">
         <inputEntry id="UnaryTests_1cerfbs">
           <text>"2023-2024"</text>
