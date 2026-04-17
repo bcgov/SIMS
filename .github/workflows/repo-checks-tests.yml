@@ -60,6 +60,11 @@ jobs:
       # Throttling settings for tests use a shorter time window to allow the throttle window to expire quickly between test cases, making tests run faster.
       THROTTLE_TIME: 100 # in milliseconds
       THROTTLE_LIMIT: 10
+      # Form.io credentials matching the ROOT_EMAIL/ROOT_PASSWORD set in the test Form.io container.
+      FORMS_SA_USER_NAME: admin@example.com
+      FORMS_SA_PASSWORD: CHANGEME
+      FORMIO_SOURCE_REPO_URL: https://github.com/formio/formio.git
+      FORMIO_SOURCE_REPO_TAG: v4.3.2
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch

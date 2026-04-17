@@ -29,11 +29,21 @@ export APP_ENV := $(or $(APP_ENV), local)
 export ALLOW_BETA_USERS_ONLY :=$(or $(ALLOW_BETA_USERS_ONLY), false)
 export ALLOW_BETA_INSTITUTIONS_ONLY :=$(or $(ALLOW_BETA_INSTITUTIONS_ONLY), false)
 
+# Formio forms integration
+export FORMIO_SOURCE_REPO_URL := $(or $(FORMIO_SOURCE_REPO_URL), https://github.com/formio/formio.git)
+export FORMIO_SOURCE_REPO_TAG := $(or $(FORMIO_SOURCE_REPO_TAG), v4.3.2)
+
 backend-unit-tests:
 	@cd ../packages/backend && npm i && npm run test:cov
 
 e2e-tests-api:
 	@echo "+\n++ Make: Starting containers for API E2E tests \n+"
+	@docker compose up -d --wait api
+
+	@echo "+\n++ Make: Deploying form definitions \n+"
+	@cd ../packages/forms && npm ci && npm run deploy
+
+	@echo "+\n++ Make: Running API E2E tests \n+"
 	@docker compose run --name api-e2e-$(BUILD_REF) api npm run test:e2e:api
 	@mkdir -p coverage/api
 	@docker cp api-e2e-$(BUILD_REF):app/apps/api/coverage/clover.xml coverage/api
