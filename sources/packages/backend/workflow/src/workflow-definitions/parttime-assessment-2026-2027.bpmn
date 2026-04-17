@@ -74,6 +74,7 @@ Will not change based on institution or appeal</bpmn:text>
     <bpmn:association id="Association_0gzo1wo" associationDirection="None" sourceRef="Event_1eaa23y" targetRef="TextAnnotation_13w21u1" />
     <bpmn:association id="Association_1mr7raq" sourceRef="Event_0jmbywn" targetRef="TextAnnotation_1mxnhnv" />
     <bpmn:association id="Association_1vdevsr" sourceRef="Event_1h2w0hl" targetRef="TextAnnotation_0i1l46o" />
+    <bpmn:association id="Association_0cn606e" associationDirection="None" sourceRef="Event_1jlyysi" targetRef="TextAnnotation_0eilku9" />
   </bpmn:collaboration>
   <bpmn:process id="parttime-assessment-2026-2027" isExecutable="true">
     <bpmn:laneSet id="LaneSet_0i75wz3">
@@ -846,7 +847,7 @@ Will not change based on institution or appeal</bpmn:text>
           <zeebe:output source="=if (calculatedDataTotalAssessedNeed &#62;= 1)&#10;  and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardCSLPThresholdIncome)&#10;then true&#10;else false" target="assessmentEligibilityCSLP" />
           <zeebe:output source="=if (calculatedDataTotalAssessedNeed &#62;= 1)&#10;  and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardBCAGThresholdIncome)&#10;  and (programCredentialType = &#34;undergraduateCertificate&#34;&#10;	   or programCredentialType = &#34;undergraduateCitation&#34;&#10;       or programCredentialType = &#34;undergraduateDiploma&#34;&#10;       or programCredentialType = &#34;undergraduateDegree&#34;)&#10;then true &#10;else false" target="assessmentEligibilityBCAG" />
           <zeebe:output source="=if calculatedDataTotalAssessedNeed &#62;= 1&#10;  and calculatedDataPDPPDStatus = true&#10;  and (calculatedDataTotalFamilyIncome &#60; dmnPartTimeAwardFamilySizeVariables.limitAwardSBSDThresholdIncome)&#10;then true &#10;else false" target="assessmentEligibilitySBSD" />
-          <zeebe:output source="=[{type: &#34;CSPT&#34;, &#10;  assessmentEligible: assessmentEligibilityCSPT, &#10;  institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleCSPT,&#10;  hasInstitutionEligibilityAppeal: hasPTAccessibilityGrantEligibilityAppeal&#10; },&#10; {type: &#34;CSGP&#34;,&#10;  assessmentEligible: assessmentEligibilityCSGP,&#10;  institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleCSGP,&#10;  hasInstitutionEligibilityAppeal:false&#10; },&#10; {type: &#34;CSGD&#34;,&#10;  assessmentEligible: assessmentEligibilityCSGD,&#10;  institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleCSGD,&#10;  hasInstitutionEligibilityAppeal:false&#10; },&#10; {type: &#34;BCAG&#34;,&#10;  assessmentEligible: assessmentEligibilityBCAG,&#10;  institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleBCAG,&#10;  hasInstitutionEligibilityAppeal:false&#10; },&#10; {type: &#34;SBSD&#34;,&#10;  assessmentEligible: assessmentEligibilitySBSD,&#10; institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleSBSD,&#10; hasInstitutionEligibilityAppeal: false&#10; },&#10; {type: &#34;CSLP&#34;,&#10;  assessmentEligible: assessmentEligibilityCSLP,&#10;  institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleCSLP,&#10;  hasInstitutionEligibilityAppeal: false&#10; } &#10;]" target="eligibilityAwardInput" />
+          <zeebe:output source="=[{type: &#34;CSPT&#34;, &#10;  assessmentEligible: assessmentEligibilityCSPT, &#10;  institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleCSPT,&#10;  hasInstitutionEligibilityAppeal: false&#10; },&#10; {type: &#34;CSGP&#34;,&#10;  assessmentEligible: assessmentEligibilityCSGP,&#10;  institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleCSGP,&#10;  hasInstitutionEligibilityAppeal:false&#10; },&#10; {type: &#34;CSGD&#34;,&#10;  assessmentEligible: assessmentEligibilityCSGD,&#10;  institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleCSGD,&#10;  hasInstitutionEligibilityAppeal:false&#10; },&#10; {type: &#34;BCAG&#34;,&#10;  assessmentEligible: assessmentEligibilityBCAG,&#10;  institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleBCAG,&#10;  hasInstitutionEligibilityAppeal:false&#10; },&#10; {type: &#34;SBSD&#34;,&#10;  assessmentEligible: assessmentEligibilitySBSD,&#10;  institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleSBSD,&#10;  hasInstitutionEligibilityAppeal: hasPTAccessibilityGrantEligibilityAppeal&#10; },&#10; {type: &#34;CSLP&#34;,&#10;  assessmentEligible: assessmentEligibilityCSLP,&#10;  institutionEligible: dmnPartTimeAwardInstitutionEligibility.isEligibleCSLP,&#10;  hasInstitutionEligibilityAppeal: false&#10; } &#10;]" target="eligibilityAwardInput" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0734qjx</bpmn:incoming>
@@ -1061,10 +1062,10 @@ Will not change based on institution or appeal</bpmn:text>
       <bpmn:sequenceFlow id="Flow_1rv0u0e" name="Eligible" sourceRef="Gateway_08302jq" targetRef="Gateway_0k0fasc">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=award.assessmentEligible</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
-      <bpmn:startEvent id="Event_0j5tepu">
+      <bpmn:startEvent id="Event_0j5tepu" name="Start eligibility calculation">
         <bpmn:outgoing>Flow_0opmx2f</bpmn:outgoing>
       </bpmn:startEvent>
-      <bpmn:endEvent id="Event_1k5vtom">
+      <bpmn:endEvent id="Event_1k5vtom" name="End eligibility calculation">
         <bpmn:incoming>Flow_1yey56q</bpmn:incoming>
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="Flow_02nv7cq" sourceRef="Event_1ipu05h" targetRef="Gateway_1udqwub" />
@@ -1073,12 +1074,12 @@ Will not change based on institution or appeal</bpmn:text>
       <bpmn:sequenceFlow id="Flow_1ry5tej" sourceRef="Event_1jlyysi" targetRef="Gateway_010ospe" />
       <bpmn:sequenceFlow id="Flow_1yey56q" sourceRef="Gateway_010ospe" targetRef="Event_1k5vtom" />
       <bpmn:sequenceFlow id="Flow_1yiupx8" sourceRef="Event_0iz4ycv" targetRef="Gateway_0q6k5vb" />
-      <bpmn:exclusiveGateway id="Gateway_010ospe">
+      <bpmn:exclusiveGateway id="Gateway_010ospe" name="End of assessment eligible">
         <bpmn:incoming>Flow_0qeokdz</bpmn:incoming>
         <bpmn:incoming>Flow_1ry5tej</bpmn:incoming>
         <bpmn:outgoing>Flow_1yey56q</bpmn:outgoing>
       </bpmn:exclusiveGateway>
-      <bpmn:exclusiveGateway id="Gateway_0q6k5vb">
+      <bpmn:exclusiveGateway id="Gateway_0q6k5vb" name="End of institution eligible">
         <bpmn:incoming>Flow_1yiupx8</bpmn:incoming>
         <bpmn:incoming>Flow_1xglscf</bpmn:incoming>
         <bpmn:outgoing>Flow_0qeokdz</bpmn:outgoing>
@@ -1105,7 +1106,7 @@ Will not change based on institution or appeal</bpmn:text>
       <bpmn:sequenceFlow id="Flow_1knpezb" name="No" sourceRef="Gateway_0plupks" targetRef="Event_1ipu05h">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=not(award.hasInstitutionEligibilityAppeal)</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
-      <bpmn:exclusiveGateway id="Gateway_1udqwub">
+      <bpmn:exclusiveGateway id="Gateway_1udqwub" name="End of institution eligibility appeal">
         <bpmn:incoming>Flow_02nv7cq</bpmn:incoming>
         <bpmn:incoming>Flow_1m2kwbw</bpmn:incoming>
         <bpmn:outgoing>Flow_1xglscf</bpmn:outgoing>
@@ -1124,7 +1125,6 @@ Will not change based on institution or appeal</bpmn:text>
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=award.hasInstitutionEligibilityAppeal</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="Flow_1m2kwbw" sourceRef="Event_1wzswjz" targetRef="Gateway_1udqwub" />
-      <bpmn:association id="Association_0cn606e" associationDirection="None" sourceRef="Event_1jlyysi" targetRef="TextAnnotation_0eilku9" />
     </bpmn:subProcess>
   </bpmn:process>
   <bpmn:category id="Category_1qzvgjn">
@@ -1514,11 +1514,14 @@ Will not change based on institution or appeal</bpmn:text>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_18fvu9l" bpmnElement="Event_1k5vtom">
         <dc:Bounds x="6262" y="1503" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="6248" y="1546" width="65" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0kxfcnn" bpmnElement="Event_0j5tepu">
         <dc:Bounds x="5582" y="1503" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="233" y="385" width="75" height="14" />
+          <dc:Bounds x="5567" y="1546" width="69" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1rf1vjq" bpmnElement="Gateway_08302jq" isMarkerVisible="true">
@@ -1535,9 +1538,15 @@ Will not change based on institution or appeal</bpmn:text>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_14635p1" bpmnElement="Gateway_010ospe" isMarkerVisible="true">
         <dc:Bounds x="6175" y="1496" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="6130" y="1530" width="60" height="40" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0hycbhs" bpmnElement="Gateway_0q6k5vb" isMarkerVisible="true">
         <dc:Bounds x="6115" y="1425" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="6149" y="1419" width="82" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0j3szcm" bpmnElement="Gateway_0k0fasc" isMarkerVisible="true">
         <dc:Bounds x="5805" y="1425" width="50" height="50" />
@@ -1553,6 +1562,9 @@ Will not change based on institution or appeal</bpmn:text>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1udqwub_di" bpmnElement="Gateway_1udqwub" isMarkerVisible="true">
         <dc:Bounds x="6055" y="1376" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="6099" y="1366" width="82" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_15t3ufh" bpmnElement="Event_1ipu05h">
         <dc:Bounds x="5972" y="1302" width="36" height="36" />
@@ -1572,10 +1584,6 @@ Will not change based on institution or appeal</bpmn:text>
           <dc:Bounds x="5965" y="1606" width="61" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="BPMNEdge_0lkwpu7" bpmnElement="Association_0cn606e">
-        <di:waypoint x="5976" y="1593" />
-        <di:waypoint x="5844" y="1660" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_13iz3tu" bpmnElement="Flow_0opmx2f">
         <di:waypoint x="5618" y="1521" />
         <di:waypoint x="5685" y="1521" />
@@ -2100,6 +2108,10 @@ Will not change based on institution or appeal</bpmn:text>
         <di:waypoint x="6530" y="2622" />
         <di:waypoint x="6531" y="2590" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0lkwpu7" bpmnElement="Association_0cn606e">
+        <di:waypoint x="6005" y="1591" />
+        <di:waypoint x="6070" y="1694" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="TextAnnotation_0xf4j19_di" bpmnElement="TextAnnotation_0xf4j19">
         <dc:Bounds x="590" y="930" width="160" height="40" />
         <bpmndi:BPMNLabel />
@@ -2136,10 +2148,6 @@ Will not change based on institution or appeal</bpmn:text>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_168704m_di" bpmnElement="TextAnnotation_168704m">
         <dc:Bounds x="1970" y="1020" width="240" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_00vsaa8" bpmnElement="TextAnnotation_0eilku9">
-        <dc:Bounds x="5801" y="1660" width="268" height="40" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1p9iqwc_di" bpmnElement="Association_1p9iqwc">
@@ -2200,6 +2208,10 @@ Will not change based on institution or appeal</bpmn:text>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0i1l46o_di" bpmnElement="TextAnnotation_0i1l46o">
         <dc:Bounds x="6480" y="2560" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_00vsaa8" bpmnElement="TextAnnotation_0eilku9">
+        <dc:Bounds x="6070" y="1680" width="268" height="40" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
