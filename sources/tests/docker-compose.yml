@@ -111,6 +111,8 @@ services:
       args:
         - FORMIO_SOURCE_REPO_URL=${FORMIO_SOURCE_REPO_URL}
         - FORMIO_SOURCE_REPO_TAG=${FORMIO_SOURCE_REPO_TAG}
+    # The app will restart until Mongo is listening
+    restart: unless-stopped
     environment:
       NODE_CONFIG: '{"mongo": "mongodb://mongo:27017/formio"}'
       ROOT_EMAIL: ${FORMS_SA_USER_NAME}
