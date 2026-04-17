@@ -18,12 +18,7 @@ import {
   FormSubmissionApprovalService,
   FormSubmissionService,
 } from "../../services";
-import {
-  AllowAuthorizedParty,
-  Groups,
-  Roles,
-  UserToken,
-} from "../../auth/decorators";
+import { AllowAuthorizedParty, Groups, UserToken } from "../../auth/decorators";
 import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
@@ -32,7 +27,7 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { AuthorizedParties, IUserToken, Role, UserGroups } from "../../auth";
+import { AuthorizedParties, IUserToken, UserGroups } from "../../auth";
 import {
   FormSubmissionCompletionAPIInDTO,
   FormSubmissionItemDecisionAPIInDTO,
@@ -46,15 +41,6 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
 import { FormSubmissionControllerService } from "./form-submission.controller.service";
-
-/**
- * Roles allowed to update the form submission item decision
- * and complete the form submission for AEST.
- */
-const FORM_SUBMISSION_UPDATE_ROLES = [
-  Role.StudentApproveDeclineAppeals,
-  Role.StudentApproveDeclineForms,
-];
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -152,7 +138,6 @@ export class FormSubmissionAESTController extends BaseController {
       "decisions cannot be made on items belonging to a form submission that is not pending or " +
       "the application associated with the form submission is not in the expected status..",
   })
-  @Roles(...FORM_SUBMISSION_UPDATE_ROLES)
   @Patch("items/:formSubmissionItemId/decision")
   async submitItemDecision(
     @Param("formSubmissionItemId", ParseIntPipe) formSubmissionItemId: number,
@@ -164,7 +149,7 @@ export class FormSubmissionAESTController extends BaseController {
         formSubmissionItemId,
         payload,
         userToken.roles,
-        userToken.userId,
+        userToken.userId!,
       );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
@@ -205,7 +190,6 @@ export class FormSubmissionAESTController extends BaseController {
       "final decision cannot be made when some decisions are still pending or " +
       "the application associated with the form submission is not in the expected status.",
   })
-  @Roles(...FORM_SUBMISSION_UPDATE_ROLES)
   @Patch(":formSubmissionId/complete")
   async completeFormSubmission(
     @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
