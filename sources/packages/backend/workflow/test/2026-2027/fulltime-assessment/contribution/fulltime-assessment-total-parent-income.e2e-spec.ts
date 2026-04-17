@@ -183,6 +183,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       assessmentConsolidatedData.studentDataParents = [
         {
           parentIsAbleToReport: YesNoOptions.Yes,
+        },
+      ];
+      assessmentConsolidatedData.appealsParentCurrentYearIncomeAppealData = [
+        {
           currentYearParentIncome: 12000,
         },
       ];
@@ -246,6 +250,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
         },
         {
           parentIsAbleToReport: YesNoOptions.Yes,
+        },
+      ];
+      assessmentConsolidatedData.appealsParentCurrentYearIncomeAppealData = [
+        {},
+        {
           currentYearParentIncome: 12000,
         },
       ];
@@ -320,10 +329,14 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
         },
         {
           parentIsAbleToReport: YesNoOptions.Yes,
+        },
+      ];
+      assessmentConsolidatedData.appealsParentCurrentYearIncomeAppealData = [
+        {},
+        {
           currentYearParentIncome: 12000,
         },
       ];
-
       // Act
       const calculatedAssessment =
         await executeFullTimeAssessmentForProgramYear(

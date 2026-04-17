@@ -40,6 +40,10 @@ export interface StepParentWaiverAppealData extends JSONDoc {
   selectedParent: number;
 }
 
+export interface ParentCurrentYearIncomeAppealData extends JSONDoc {
+  currentYearParentIncome?: number;
+}
+
 export interface DisbursementScheduleAward extends JSONDoc {
   valueType: string;
   valueCode: string;
@@ -75,7 +79,7 @@ export type RelationshipStatusType =
   | "married"
   | "marriedUnable";
 
-export type DependantStatusType = "independent" | "dependent";
+export type DependantStatusType = "independant" | "dependant";
 
 export interface PartnerInformationAndIncomeAppealData extends JSONDoc {
   relationshipStatus: RelationshipStatusType;
@@ -119,7 +123,7 @@ export enum InstitutionTypes {
  * Data required to calculate the assessment data of an application.
  */
 export interface AssessmentConsolidatedData extends JSONDoc {
-  studentDataDependantStatus: DependantStatusType;
+  studentDataDependantstatus: DependantStatusType;
   programYear: string;
   programYearStartDate: string;
   studentDataRelationshipStatus: RelationshipStatusType;
@@ -162,7 +166,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   // Update any data types or structures as needed when the appeals are fully implemented.
   appealsStudentCurrentYearIncomeAppealData?: JSONDoc;
   appealsPartnerCurrentYearIncomeAppealData?: JSONDoc;
-  appealsParentCurrentYearIncomeAppealData?: JSONDoc;
+  appealsParentCurrentYearIncomeAppealData?: ParentCurrentYearIncomeAppealData[];
   appealsExceptionalExpenseAppealData?: JSONDoc;
   appealsPTAccessibilityGrantEligibilityAppealData?: JSONDoc;
   studentDataIsYourPartnerAbleToReport?: boolean; // No longer used in PY 26/27 and beyond.
@@ -438,6 +442,8 @@ export interface CalculatedAssessmentModel {
   isEligibleForExceptionalExpenseAppeal?: boolean;
   calculatedDataWaivedParent?: number;
   isEligibleForPTAccessibilityGrantEligibilityAppeal?: boolean;
+  calculatedDataParent1TotalIncome?: number;
+  calculatedDataParent2TotalIncome?: number;
   // Common variables used in both full-time and part-time.
   // CSGP
   assessmentEligibilityCSGP: boolean;
