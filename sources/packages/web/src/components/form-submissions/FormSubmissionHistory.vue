@@ -51,7 +51,11 @@
             :key="submission.id"
             variant="elevated"
             :ripple="false"
-            @click="goToSubmission(submission.id)"
+            @click="
+              submission.canViewFormSubmittedData
+                ? goToSubmission(submission.id)
+                : null
+            "
           >
             <v-card-item>
               <v-card-title>
@@ -65,7 +69,12 @@
                     ><status-chip-form-submission :status="submission.status"
                   /></v-col>
                   <v-col class="d-flex justify-end"
-                    ><v-btn color="primary"> View </v-btn></v-col
+                    ><v-btn
+                      color="primary"
+                      :disabled="!submission.canViewFormSubmittedData"
+                    >
+                      View
+                    </v-btn></v-col
                   >
                 </v-row>
                 <v-divider class="mb-0"></v-divider>

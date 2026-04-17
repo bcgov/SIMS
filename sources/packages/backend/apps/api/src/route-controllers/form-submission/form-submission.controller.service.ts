@@ -47,11 +47,20 @@ export class FormSubmissionControllerService {
       userRoles?: Role[];
     },
   ): Promise<FormSubmissionAPIOutDTO[]> {
+    let dynamicFormsIDs: number[] | undefined = undefined;
+    if (options?.userRoles) {
+      dynamicFormsIDs =
+        this.formSubmissionAuthorizationService.getAuthorizedDynamicFormsIDs(
+          options.userRoles,
+          FormSubmissionAuthRoles.ViewFormHistoryList,
+        );
+    }
     const submissions = await this.formSubmissionService.getFormSubmissions(
       { studentId, formSubmissionId: options?.formSubmissionId },
       {
         locationIds: options?.locationIds,
         loadSubmittedData: options?.loadSubmittedData,
+        dynamicFormsIDs,
       },
     );
     if (options?.formSubmissionId && !submissions?.length) {
@@ -75,7 +84,21 @@ export class FormSubmissionControllerService {
     submission: FormSubmission,
     userRoles?: Role[],
   ): FormSubmissionAPIOutDTO {
+    let canViewFormSubmittedData: boolean | undefined = undefined;
+    if (userRoles) {
+      const items = submission.formSubmissionItems.map(
+        (item) => item.dynamicFormConfiguration.id,
+      );
+      canViewFormSubmittedData =
+        this.formSubmissionAuthorizationService.isAuthorized(
+          userRoles,
+          FormSubmissionAuthRoles.ViewFormSubmittedData,
+          items,
+          { isAuthorizedToAtLeastOne: true },
+        );
+    }
     return {
+      canViewFormSubmittedData,
       id: submission.id,
       formCategory: submission.formCategory,
       status: submission.submissionStatus,
@@ -118,8 +141,8 @@ export class FormSubmissionControllerService {
     const hasAssessItemDecisionAuthorization =
       userRoles &&
       this.formSubmissionAuthorizationService.isAuthorized(
-        FormSubmissionAuthRoles.AssessItemDecision,
         userRoles,
+        FormSubmissionAuthRoles.AssessItemDecision,
         [submissionItem.dynamicFormConfiguration.id],
       );
     // Determine if decision details should be restricted based on the form submission status.
@@ -141,6 +164,14 @@ export class FormSubmissionControllerService {
     };
   }
 
+  /**
+   * Get the details of a form submission for Ministry users, including the individual form items and their details.
+   * The decision details that are returned are determined based on the access that the Ministry user has to the decision details.
+   * @param formSubmissionId ID of the form submission to have the data retrieved.
+   * @param userRoles roles of the user to determine access to decision details.
+   * @param itemId when provided, it will validate if the form submission item belongs to the form submission and throw a not found HTTP error if it does not.
+   * @returns form submission details including individual form items and their details in the API output format for Ministry users.
+   */
   async getFormSubmission(
     formSubmissionId: number,
     userRoles: Role[],
@@ -174,8 +205,8 @@ export class FormSubmissionControllerService {
     );
     const hasAssessFinalDecisionAuthorization =
       this.formSubmissionAuthorizationService.isAuthorized(
-        FormSubmissionAuthRoles.AssessFinalDecision,
         userRoles,
+        FormSubmissionAuthRoles.AssessFinalDecision,
         dynamicFormsIDs,
       );
 
@@ -183,14 +214,14 @@ export class FormSubmissionControllerService {
     for (const formSubmissionItem of submission.formSubmissionItems) {
       const hasViewDecisionHistory =
         this.formSubmissionAuthorizationService.isAuthorized(
-          FormSubmissionAuthRoles.ViewDecisionHistory,
           userRoles,
+          FormSubmissionAuthRoles.ViewDecisionHistory,
           [formSubmissionItem.dynamicFormConfiguration.id],
         );
       const hasAssessItemDecisionAuthorization =
         this.formSubmissionAuthorizationService.isAuthorized(
-          FormSubmissionAuthRoles.AssessItemDecision,
           userRoles,
+          FormSubmissionAuthRoles.AssessItemDecision,
           [formSubmissionItem.dynamicFormConfiguration.id],
         );
       const submissionItemDTO: FormSubmissionItemMinistryAPIOutDTO = {

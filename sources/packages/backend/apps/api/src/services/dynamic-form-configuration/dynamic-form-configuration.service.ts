@@ -36,6 +36,7 @@ export class DynamicFormConfigurationService {
           formDescription: true,
           allowBundledSubmission: true,
           hasApplicationScope: true,
+          authorizationKey: true,
         },
         relations: {
           programYear: true,

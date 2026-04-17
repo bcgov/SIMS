@@ -34,11 +34,17 @@ export class FormSubmissionAuthorizationService {
     userRoles: Role[],
     formRole: FormSubmissionAuthRoles,
     dynamicFormConfigurationIDs: number[],
+    options?: { isAuthorizedToAtLeastOne?: boolean },
   ): boolean {
     const authorizedFormIDs = this.getAuthorizedDynamicFormsIDs(
       userRoles,
       formRole,
     );
+    if (options?.isAuthorizedToAtLeastOne) {
+      return dynamicFormConfigurationIDs.some((id) =>
+        authorizedFormIDs.includes(id),
+      );
+    }
     return dynamicFormConfigurationIDs.every((id) =>
       authorizedFormIDs.includes(id),
     );

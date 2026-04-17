@@ -115,6 +115,11 @@ export class FormSubmissionItemAPIOutDTO extends FormSubmissionItemBaseAPIOutDTO
  * including the individual form items.
  */
 export class FormSubmissionAPIOutDTO extends FormSubmissionBaseAPIOutDTO {
+  /**
+   * For consumers with role based access, indicates if the user has authorization
+   * to view at least one of the form items submitted data.
+   */
+  canViewFormSubmittedData?: boolean;
   submissionItems: FormSubmissionItemAPIOutDTO[];
 }
 
