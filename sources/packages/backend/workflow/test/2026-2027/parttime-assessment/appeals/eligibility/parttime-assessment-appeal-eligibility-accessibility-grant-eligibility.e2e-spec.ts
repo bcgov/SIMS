@@ -92,7 +92,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
   } of appealEligibilityScenarios) {
     it(
       `Should evaluate the accessibility grant eligibility appeal as ${expectedAppealEligibility ? "eligible" : "not eligible"} when the student PD status is ${studentDataApplicationPDPPDStatus}` +
-        ` and total income is ${studentDataTaxReturnIncome} and institution country is ${institutionCountry} and institution province is ${institutionProvince ? institutionProvince : "NA"} and institution classification is ${institutionClassification}.`,
+        ` and total income is ${studentDataTaxReturnIncome} and institution country is ${institutionCountry} and institution province is ${institutionProvince ?? "NA"} and institution classification is ${institutionClassification}.`,
       async () => {
         // Arrange
         const assessmentConsolidatedData =
