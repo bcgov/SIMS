@@ -31,25 +31,25 @@ export const AWARDS: AwardDetail[] = [
   {
     awardType: FullTimeAwardTypes.CSLF,
     awardTypeDisplay: "CSL-FT",
-    description: "Canada Student Loan for Full-time Studies",
+    description: "Canada Student Loan for Full-Time Students",
     offeringIntensity: OfferingIntensity.fullTime,
   },
   {
     awardType: FullTimeAwardTypes.CSGP,
     awardTypeDisplay: "CSG-D",
-    description: "Canada Student Grant for Student with Permanent Disability",
+    description: "Canada Student Grant for Students with Disabilities",
     offeringIntensity: OfferingIntensity.fullTime,
   },
   {
     awardType: FullTimeAwardTypes.CSGD,
     awardTypeDisplay: "CSG-FTDEP",
-    description: "Canada Student Grant for Students with Dependents",
+    description: "Canada Student Grant for Full-Time Students with Dependants",
     offeringIntensity: OfferingIntensity.fullTime,
   },
   {
     awardType: FullTimeAwardTypes.CSGF,
     awardTypeDisplay: "CSG-FT",
-    description: "Canada Student Grant for Full-time Studies",
+    description: "Canada Student Grant for Full-Time Students",
     offeringIntensity: OfferingIntensity.fullTime,
   },
   {
@@ -60,20 +60,20 @@ export const AWARDS: AwardDetail[] = [
   },
   {
     awardType: FullTimeAwardTypes.BCAG,
-    awardTypeDisplay: FullTimeAwardTypes.BCAG,
-    description: "B.C. Access Grant",
+    awardTypeDisplay: "BCAG-FT",
+    description: "B.C. Access Grant for Full-Time Students",
     offeringIntensity: OfferingIntensity.fullTime,
   },
   {
     awardType: FullTimeAwardTypes.BGPD,
     awardTypeDisplay: "BCAG-D",
-    description: "B.C. Permanent Disability Grant",
+    description: "B.C. Access Grant for Students with a Disability",
     offeringIntensity: OfferingIntensity.fullTime,
   },
   {
     awardType: FullTimeAwardTypes.SBSD,
     awardTypeDisplay: FullTimeAwardTypes.SBSD,
-    description: "B.C. Supplemental Bursary with Disabilities",
+    description: "B.C. Supplemental Bursary for Students with Disabilities",
     offeringIntensity: OfferingIntensity.fullTime,
   },
   {
@@ -85,7 +85,7 @@ export const AWARDS: AwardDetail[] = [
   {
     awardType: PartTimeAwardTypes.CSPT,
     awardTypeDisplay: "CSG-PT",
-    description: "Canada Student Grant for Part-time Students",
+    description: "Canada Student Grant for Part-Time Students",
     offeringIntensity: OfferingIntensity.partTime,
   },
   {
@@ -97,13 +97,13 @@ export const AWARDS: AwardDetail[] = [
   {
     awardType: PartTimeAwardTypes.BCAG,
     awardTypeDisplay: "BCAG-PT",
-    description: "B.C. Access Grant for Part-time Studies",
+    description: "B.C. Access Grant for Part-Time Studies",
     offeringIntensity: OfferingIntensity.partTime,
   },
   {
     awardType: PartTimeAwardTypes.CSLP,
     awardTypeDisplay: "CSL-PT",
-    description: "Canada Student Loan for Part-time Students",
+    description: "Canada Student Loan for Part-Time Students",
     offeringIntensity: OfferingIntensity.partTime,
   },
   {
