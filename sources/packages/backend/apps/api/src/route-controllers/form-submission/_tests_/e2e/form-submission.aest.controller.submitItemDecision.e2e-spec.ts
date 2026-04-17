@@ -2,6 +2,7 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
   AESTGroups,
+  authorizeDynamicFormConfigurations,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
@@ -28,7 +29,10 @@ import {
 } from "./form-submission-utils";
 import MockDate from "mockdate";
 import { addDays } from "@sims/utilities";
-import { FORM_SUBMISSION_ITEM_OUTDATED } from "../../../../services";
+import {
+  FORM_SUBMISSION_ITEM_OUTDATED,
+  FormSubmissionAuthRoles,
+} from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 import { Role } from "../../../../auth/roles.enum";
 
@@ -60,7 +64,7 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);
-    const application = await saveFakeApplication(db.dataSource, null, {
+    const application = await saveFakeApplication(db.dataSource, undefined, {
       initialValues: { applicationStatus: ApplicationStatus.Completed },
     });
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
@@ -84,6 +88,11 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
     const endpoint = `/aest/form-submission/items/${formSubmissionItemA.id}/decision`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const ministryAuditUser = { id: ministryAdminUser.id };
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [formConfigs.studentAppealApplicationA],
+      [FormSubmissionAuthRoles.AssessItemDecision],
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -174,6 +183,11 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
     const endpoint = `/aest/form-submission/items/${formSubmissionItemA.id}/decision`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const ministryAuditUser = { id: ministryAdminUser.id };
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [formConfigs.studentFormA],
+      [FormSubmissionAuthRoles.AssessItemDecision],
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -277,7 +291,7 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
 
   it("Should throw an unprocessable entity error when submitting an item decision for an application that was edited.", async () => {
     // Arrange
-    const application = await saveFakeApplication(db.dataSource, null, {
+    const application = await saveFakeApplication(db.dataSource, undefined, {
       initialValues: { applicationStatus: ApplicationStatus.Edited },
     });
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
@@ -299,6 +313,11 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
     };
     const endpoint = `/aest/form-submission/items/${formSubmissionItemA.id}/decision`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [formConfigs.studentAppealApplicationA],
+      [FormSubmissionAuthRoles.AssessItemDecision],
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -335,6 +354,11 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
     };
     const endpoint = `/aest/form-submission/items/${formSubmissionItemA.id}/decision`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [formConfigs.studentAppealA],
+      [FormSubmissionAuthRoles.AssessItemDecision],
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -350,7 +374,7 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
       });
   });
 
-  it("Should throw a forbidden error when submitting a student form decision and the user is not authorized for the specific form category.", async () => {
+  it("Should throw a forbidden error when submitting a student form decision and the user does not have the required role.", async () => {
     // Arrange
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
       formCategory: FormCategory.StudentForm,
@@ -380,78 +404,8 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
-        message: "User does not have the required role to perform this action.",
-        error: "Forbidden",
-        statusCode: HttpStatus.FORBIDDEN,
-      });
-  });
-
-  it("Should throw a forbidden error when submitting a student appeal decision and the user is not authorized for the specific form category.", async () => {
-    // Arrange
-    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
-      formCategory: FormCategory.StudentAppeal,
-      submissionStatus: FormSubmissionStatus.Pending,
-      ministryAuditUser: ministryAdminUser,
-      formSubmissionItems: [
-        {
-          dynamicFormConfiguration: formConfigs.studentAppealA,
-          decisions: [],
-        },
-      ],
-    });
-    const [formSubmissionItemA] = formSubmission.formSubmissionItems;
-    const payload = {
-      decisionStatus: FormSubmissionDecisionStatus.Pending,
-      noteDescription: "This is a decision note.",
-      lastUpdateDate: formSubmissionItemA.updatedAt,
-    };
-    const endpoint = `/aest/form-submission/items/${formSubmissionItemA.id}/decision`;
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    await removeJWTUserRoles(appModule, [Role.StudentApproveDeclineAppeals]);
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .patch(endpoint)
-      .send(payload)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        message: "User does not have the required role to perform this action.",
-        error: "Forbidden",
-        statusCode: HttpStatus.FORBIDDEN,
-      });
-  });
-
-  it("Should throw a forbidden error when submitting a form decision and the user is not authorized to access the endpoint.", async () => {
-    // Arrange
-    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
-      formCategory: FormCategory.StudentAppeal,
-      submissionStatus: FormSubmissionStatus.Pending,
-      ministryAuditUser: ministryAdminUser,
-      formSubmissionItems: [
-        {
-          dynamicFormConfiguration: formConfigs.studentAppealA,
-          decisions: [],
-        },
-      ],
-    });
-    const [formSubmissionItemA] = formSubmission.formSubmissionItems;
-    const payload = {
-      decisionStatus: FormSubmissionDecisionStatus.Pending,
-      noteDescription: "This is a decision note.",
-      lastUpdateDate: formSubmissionItemA.updatedAt,
-    };
-    const endpoint = `/aest/form-submission/items/${formSubmissionItemA.id}/decision`;
-    const token = await getAESTToken(AESTGroups.Operations);
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .patch(endpoint)
-      .send(payload)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        message: "Forbidden resource",
+        message:
+          "User does not have the required role to provide an item decision.",
         error: "Forbidden",
         statusCode: HttpStatus.FORBIDDEN,
       });
@@ -477,6 +431,11 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
     };
     const endpoint = `/aest/form-submission/items/${formSubmissionItemA.id}/decision`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [formConfigs.studentAppealA],
+      [FormSubmissionAuthRoles.AssessItemDecision],
+    );
 
     // Act/Assert
     await request(app.getHttpServer())

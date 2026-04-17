@@ -2,6 +2,7 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
   AESTGroups,
+  authorizeDynamicFormConfigurations,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
@@ -23,16 +24,21 @@ import {
   createFakeFormConfigurations,
   DynamicConfigurationTestData,
 } from "./form-submission-utils";
+import { TestingModule } from "@nestjs/testing";
+import { FormSubmissionAuthRoles } from "../../../../services";
 
 describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
   let app: INestApplication;
+  let appModule: TestingModule;
   let db: E2EDataSources;
   let ministryUser: User;
   let formConfigs: DynamicConfigurationTestData;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, dataSource, module } =
+      await createTestingAppModule();
     app = nestApplication;
+    appModule = module;
     db = createE2EDataSources(dataSource);
     ministryUser = await getAESTUser(
       db.dataSource,
@@ -75,6 +81,18 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
     const [itemADecision1, itemADecision2] = formSubmissionItemA.decisions;
     const endpoint = `/aest/form-submission/${formSubmission.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [
+        formConfigs.studentAppealApplicationA,
+        formConfigs.studentAppealApplicationB,
+      ],
+      [
+        FormSubmissionAuthRoles.ViewFormSubmittedData,
+        FormSubmissionAuthRoles.ViewDecisionHistory,
+        FormSubmissionAuthRoles.AssessItemDecision,
+      ],
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -83,7 +101,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .expect(HttpStatus.OK)
       .expect(({ body }) =>
         expect(body).toStrictEqual({
-          hasApprovalAuthorization: true,
+          hasAssessFinalDecisionAuthorization: false,
           id: formSubmission.id,
           applicationId: application.id,
           applicationNumber: application.applicationNumber,
@@ -92,6 +110,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
+              hasAssessItemDecisionAuthorization: true,
               id: formSubmissionItemA.id,
               formType: formConfigs.studentAppealApplicationA.formType,
               formCategory: FormCategory.StudentAppeal,
@@ -121,6 +140,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
               ],
             },
             {
+              hasAssessItemDecisionAuthorization: true,
               id: formSubmissionItemB.id,
               formType: formConfigs.studentAppealApplicationB.formType,
               formCategory: FormCategory.StudentAppeal,
@@ -163,6 +183,11 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
     const [formSubmissionItemA] = formSubmission.formSubmissionItems;
     const endpoint = `/aest/form-submission/${formSubmission.id}`;
     const token = await getAESTToken(AESTGroups.Operations);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [formConfigs.studentAppealA],
+      [FormSubmissionAuthRoles.ViewFormSubmittedData],
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -171,13 +196,14 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .expect(HttpStatus.OK)
       .expect(({ body }) =>
         expect(body).toStrictEqual({
-          hasApprovalAuthorization: false,
+          hasAssessFinalDecisionAuthorization: false,
           id: formSubmission.id,
           formCategory: FormCategory.StudentAppeal,
           status: FormSubmissionStatus.Pending,
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
+              hasAssessItemDecisionAuthorization: false,
               id: formSubmissionItemA.id,
               formType: formConfigs.studentAppealA.formType,
               formCategory: FormCategory.StudentAppeal,
@@ -218,6 +244,11 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
     const [itemADecision1] = formSubmissionItemA.decisions;
     const endpoint = `/aest/form-submission/${formSubmission.id}`;
     const token = await getAESTToken(AESTGroups.Operations);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [formConfigs.studentAppealA],
+      [FormSubmissionAuthRoles.ViewFormSubmittedData],
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -226,13 +257,14 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .expect(HttpStatus.OK)
       .expect(({ body }) => {
         expect(body).toStrictEqual({
-          hasApprovalAuthorization: false,
+          hasAssessFinalDecisionAuthorization: false,
           id: formSubmission.id,
           formCategory: FormCategory.StudentAppeal,
           status: FormSubmissionStatus.Completed,
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
+              hasAssessItemDecisionAuthorization: false,
               id: formSubmissionItemA.id,
               formType: formConfigs.studentAppealA.formType,
               formCategory: FormCategory.StudentAppeal,
@@ -275,6 +307,15 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
     const [itemADecision1, itemADecision2] = formSubmissionItemA.decisions;
     const endpoint = `/aest/form-submission/${formSubmission.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [formConfigs.studentFormA],
+      [
+        FormSubmissionAuthRoles.ViewFormSubmittedData,
+        FormSubmissionAuthRoles.ViewDecisionHistory,
+        FormSubmissionAuthRoles.AssessItemDecision,
+      ],
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -283,13 +324,14 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .expect(HttpStatus.OK)
       .expect(({ body }) =>
         expect(body).toStrictEqual({
-          hasApprovalAuthorization: true,
+          hasAssessFinalDecisionAuthorization: false,
           id: formSubmission.id,
           formCategory: FormCategory.StudentForm,
           status: FormSubmissionStatus.Completed,
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
+              hasAssessItemDecisionAuthorization: true,
               id: formSubmissionItemA.id,
               formType: formConfigs.studentFormA.formType,
               formCategory: FormCategory.StudentForm,
@@ -356,6 +398,18 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
     const [itemBDecision1, itemBDecision2] = formSubmissionItemB.decisions;
     const endpoint = `/aest/form-submission/${formSubmission.id}?itemId=${formSubmissionItemB.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [
+        formConfigs.studentAppealApplicationA,
+        formConfigs.studentAppealApplicationB,
+      ],
+      [
+        FormSubmissionAuthRoles.ViewFormSubmittedData,
+        FormSubmissionAuthRoles.ViewDecisionHistory,
+        FormSubmissionAuthRoles.AssessItemDecision,
+      ],
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -364,7 +418,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .expect(HttpStatus.OK)
       .expect(({ body }) => {
         expect(body).toStrictEqual({
-          hasApprovalAuthorization: true,
+          hasAssessFinalDecisionAuthorization: false,
           id: formSubmission.id,
           applicationId: application.id,
           applicationNumber: application.applicationNumber,
@@ -373,6 +427,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
+              hasAssessItemDecisionAuthorization: true,
               id: formSubmissionItemB.id,
               formType: formConfigs.studentAppealApplicationB.formType,
               formCategory: FormCategory.StudentAppeal,
