@@ -164,6 +164,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsPartnerCurrentYearIncomeAppealData?: JSONDoc;
   appealsParentCurrentYearIncomeAppealData?: JSONDoc;
   appealsExceptionalExpenseAppealData?: JSONDoc;
+  appealsPTAccessibilityGrantEligibilityAppealData?: JSONDoc;
   studentDataIsYourPartnerAbleToReport?: boolean; // No longer used in PY 26/27 and beyond.
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
@@ -436,6 +437,7 @@ export interface CalculatedAssessmentModel {
   isEligibleForParentCurrentYearIncomeAppeal?: boolean;
   isEligibleForExceptionalExpenseAppeal?: boolean;
   calculatedDataWaivedParent?: number;
+  isEligibleForPTAccessibilityGrantEligibilityAppeal?: boolean;
   // Common variables used in both full-time and part-time.
   // CSGP
   assessmentEligibilityCSGP: boolean;
