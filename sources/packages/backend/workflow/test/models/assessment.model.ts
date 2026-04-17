@@ -44,6 +44,10 @@ export interface ParentCurrentYearIncomeAppealData extends JSONDoc {
   currentYearParentIncome?: number;
 }
 
+export interface EligibilityAppealData extends JSONDoc {
+  isEligibilityRequest: boolean;
+}
+
 export interface DisbursementScheduleAward extends JSONDoc {
   valueType: string;
   valueCode: string;
@@ -168,6 +172,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsPartnerCurrentYearIncomeAppealData?: JSONDoc;
   appealsParentCurrentYearIncomeAppealData?: ParentCurrentYearIncomeAppealData[];
   appealsExceptionalExpenseAppealData?: JSONDoc;
+  appealsPTAccessibilityGrantEligibilityAppealData?: EligibilityAppealData;
   studentDataIsYourPartnerAbleToReport?: boolean; // No longer used in PY 26/27 and beyond.
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
@@ -439,6 +444,7 @@ export interface CalculatedAssessmentModel {
   isEligibleForPartnerCurrentYearIncomeAppeal?: boolean;
   isEligibleForParentCurrentYearIncomeAppeal?: boolean;
   isEligibleForExceptionalExpenseAppeal?: boolean;
+  isEligibleForFTAccessibilityGrantEligibilityAppeal?: boolean;
   calculatedDataWaivedParent?: number;
   calculatedDataParent1TotalIncome?: number;
   calculatedDataParent2TotalIncome?: number;
