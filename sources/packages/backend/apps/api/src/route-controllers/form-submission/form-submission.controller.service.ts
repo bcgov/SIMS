@@ -157,13 +157,8 @@ export class FormSubmissionControllerService {
       ? FormSubmissionDecisionStatus.Pending
       : submissionItem.currentDecision?.decisionStatus;
     decisionStatus = decisionStatus ?? FormSubmissionDecisionStatus.Pending;
-    // Define the notes.
-    const decisionNoteDescription = shouldRestrictDecisionDetails
-      ? undefined
-      : submissionItem.currentDecision?.decisionNote?.description;
     return {
       decisionStatus,
-      decisionNoteDescription,
     };
   }
 
