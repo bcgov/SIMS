@@ -91,8 +91,8 @@ services:
     depends_on:
       postgres:
         condition: service_started
-      forms-deploy:
-        condition: service_completed_successfully
+      formio:
+        condition: service_healthy
   # - API
   # MongoDB (required by Form.io)
   mongo:
@@ -117,6 +117,8 @@ services:
       NODE_CONFIG: '{"mongo": "mongodb://mongo:27017/formio"}'
       ROOT_EMAIL: ${FORMS_SA_USER_NAME}
       ROOT_PASSWORD: ${FORMS_SA_PASSWORD}
+    ports:
+      - "3001:3001"
     networks:
       - local-network-tests
     depends_on:
@@ -127,25 +129,6 @@ services:
       timeout: 10s
       retries: 10
       start_period: 60s
-  # - Form.io
-  # Form definitions deployment
-  forms-deploy:
-    image: forms-deploy-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
-    container_name: forms-deploy-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
-    build:
-      context: ../packages/forms
-      dockerfile: Dockerfile.deploy
-    environment:
-      - FORMS_URL=http://formio:3001
-      - FORMS_SA_USER_NAME=${FORMS_SA_USER_NAME}
-      - FORMS_SA_PASSWORD=${FORMS_SA_PASSWORD}
-    networks:
-      - local-network-tests
-    depends_on:
-      formio:
-        condition: service_healthy
-    restart: "no"
-  # - Form definitions deployment
   # Workers
   workers:
     image: workers-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
