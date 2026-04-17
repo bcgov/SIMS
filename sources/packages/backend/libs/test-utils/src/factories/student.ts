@@ -6,7 +6,7 @@ import {
   Student,
   User,
 } from "@sims/sims-db";
-import { createFakeUser } from "@sims/test-utils";
+import { createFakeUser, E2EDataSources } from "@sims/test-utils";
 import { DataSource } from "typeorm";
 import { createFakeSINValidation } from "./sin-validation";
 import { COUNTRY_CANADA, getISODateOnlyString } from "@sims/utilities";
@@ -96,4 +96,46 @@ export async function saveFakeStudent(
       { initialValue: options?.sinValidationInitialValue },
     );
   return studentRepo.save(student);
+}
+
+/**
+ * Ensures a student exists in the database with the provided unique data, if not create a new one.
+ * The combination of the last name, birth date and SIN is usually used to determine if a student
+ * from an external source has a match in the system.
+ * @param db E2E data sources to perform the database operations.
+ * @param uniqueData data used to determine if the student already exists in the database.
+ * @returns the existing or newly created student.
+ */
+export async function ensureStudentExists(
+  db: E2EDataSources,
+  uniqueData: { lastName: string; birthDate: string; sin: string },
+): Promise<Student> {
+  const existingStudent = await db.student.findOne({
+    select: { id: true },
+    where: {
+      birthDate: uniqueData.birthDate,
+      user: {
+        lastName: uniqueData.lastName,
+      },
+      sinValidation: {
+        sin: uniqueData.sin,
+      },
+    },
+  });
+  if (existingStudent) {
+    return existingStudent;
+  }
+  // Create new student.
+  const user = createFakeUser();
+  user.lastName = uniqueData.lastName;
+  return await saveFakeStudent(
+    db.dataSource,
+    {
+      user,
+    },
+    {
+      initialValue: { birthDate: uniqueData.birthDate },
+      sinValidationInitialValue: { sin: uniqueData.sin },
+    },
+  );
 }

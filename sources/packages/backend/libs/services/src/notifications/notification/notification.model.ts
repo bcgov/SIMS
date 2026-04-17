@@ -58,7 +58,7 @@ export interface ApplicationOfferingChangeRequestCompleteNotification {
 }
 
 export interface StudentRestrictionAddedNotification {
-  givenNames: string;
+  givenNames?: string;
   lastName: string;
   toAddress: string;
   userId: number;

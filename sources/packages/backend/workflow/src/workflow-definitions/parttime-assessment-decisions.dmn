@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="dmnPartTimeAssessmentDecisions" name="dmnPartTimeAssessmentDecisions" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.42.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="1a575ead-1e6d-468c-901a-766a35569b38">
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="dmnPartTimeAssessmentDecisions" name="dmnPartTimeAssessmentDecisions" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.43.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="1a575ead-1e6d-468c-901a-766a35569b38">
   <decision id="dmnPartTimeProgramYearMaximums" name="dmnPartTimeProgramYearMaximums">
     <decisionTable id="DecisionTable_1oyvbif" hitPolicy="FIRST">
       <input id="InputClause_02zjhj9" label="programYear">
@@ -2067,6 +2067,201 @@
       </rule>
     </decisionTable>
   </decision>
+  <decision id="dmnPartTimeAwardInstitutionEligibility" name="dmnPartTimeAwardInstitutionEligibility">
+    <decisionTable id="DecisionTable_0g4iuz0" hitPolicy="FIRST">
+      <input id="InputClause_15sso1q" label="institutionCountry">
+        <inputExpression id="LiteralExpression_05t3i1o" typeRef="string">
+          <text>institutionCountry</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_13qibk1" label="institutionProvince">
+        <inputExpression id="LiteralExpression_01wq5z7" typeRef="string">
+          <text>institutionProvince</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_07vnj18" label="institutionClassification">
+        <inputExpression id="LiteralExpression_06szrjc" typeRef="string">
+          <text>institutionClassification</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0fzmcni" label="institutionOrganizationStatus">
+        <inputExpression id="LiteralExpression_19bbfsu" typeRef="string">
+          <text>institutionOrganizationStatus</text>
+        </inputExpression>
+      </input>
+      <output id="OutputClause_0mcca7s" label="isEligibleSBSD" name="isEligibleSBSD" typeRef="boolean" biodi:width="192" />
+      <output id="OutputClause_13areym" label="isEligibleBCAG" name="isEligibleBCAG" typeRef="boolean" />
+      <output id="OutputClause_136npl9" label="isEligibleCSPT" name="isEligibleCSPT" typeRef="boolean" />
+      <output id="OutputClause_0j8y25c" label="isEligibleCSGP" name="isEligibleCSGP" typeRef="boolean" />
+      <output id="OutputClause_0x728t4" label="isEligibleCSGD" name="isEligibleCSGD" typeRef="boolean" />
+      <output id="OutputClause_00xvad6" label="isEligibleCSLP" name="isEligibleCSLP" typeRef="boolean" />
+      <rule id="DecisionRule_1mi3qr6">
+        <description>BC Public Institutions</description>
+        <inputEntry id="UnaryTests_084e5ar">
+          <text>"CA"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_07wrrld">
+          <text>"BC"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_05xhth3">
+          <text>"public"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1cijajc">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1oa7abn">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0mkrbq7">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1r103ol">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0khlg8b">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0yjiotn">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1lollo6">
+          <text>true</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0ihc7lc">
+        <description>All Canadian Institutions other than BC Publics</description>
+        <inputEntry id="UnaryTests_0kyw1wy">
+          <text>"CA"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1sh4771">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ttydko">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_015q7ub">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_087cu0d">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0kzhefi">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1qbqd87">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0zxhe4o">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_19pezlk">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0x5tkfj">
+          <text>true</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_098w93y">
+        <description>Out of Country/International Public Institutions</description>
+        <inputEntry id="UnaryTests_02grrqq">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0xjif1o">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_19no00f">
+          <text>"public"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0h9x5ua">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1gycel2">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_00q8v1h">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1jj6j8g">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1qhdzet">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1mxvfqd">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_09wueww">
+          <text>true</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1bk38qz">
+        <description>Out of Country/International Private NOT for Profit Institutions</description>
+        <inputEntry id="UnaryTests_171b5r1">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_10gaxve">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0rstd6i">
+          <text>"private"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0bunt7j">
+          <text>"notForProfit"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1q4xbyb">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0kdjdbg">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ngf306">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0k7pw7c">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0jnr93e">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1mfl0mq">
+          <text>true</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0n6ywbh">
+        <description>Out of Country/International Private for Profit Institutions</description>
+        <inputEntry id="UnaryTests_1do5yz8">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1031syg">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0nfhvbz">
+          <text>"private"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0ghruew">
+          <text>"profit"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_13yi6o8">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_05gd56v">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_16icqdm">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_024tnu8">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_111r0c6">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0z70w10">
+          <text>false</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
   <dmndi:DMNDI>
     <dmndi:DMNDiagram>
       <dmndi:DMNShape id="DMNShape_19k3gt6" dmnElementRef="dmnPartTimeProgramYearMaximums">
@@ -2077,6 +2272,9 @@
       </dmndi:DMNShape>
       <dmndi:DMNShape id="DMNShape_0skwxll" dmnElementRef="dmnPartTimeAwardFamilySizeVariables">
         <dc:Bounds height="80" width="180" x="580" y="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_0wufx7y" dmnElementRef="dmnPartTimeAwardInstitutionEligibility">
+        <dc:Bounds height="80" width="180" x="780" y="80" />
       </dmndi:DMNShape>
     </dmndi:DMNDiagram>
   </dmndi:DMNDI>

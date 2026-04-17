@@ -444,6 +444,7 @@ export class ApplicationControllerService {
   /**
    * Gets the current application id.
    * @param applicationId application id.
+   * TODO Analyze whether the isParentApplication flag is necessary as it is not used in web.
    * @param isParentApplication is parent application.
    * @returns the current application id.
    */
@@ -672,13 +673,15 @@ export class ApplicationControllerService {
 
   /**
    * Transformation util for Application.
-   * @param applicationDetail
-   * @param disbursement
+   * @param applicationDetail the application.
+   * @param disbursement the disbursement schedule for the application..
+   * @param hasPreviouslyCompletedPIR true if PIR has been previously completed for the application.
    * @returns Application DTO
    */
   transformToApplicationDetailForStudentDTO(
     applicationDetail: Application,
     disbursement: DisbursementSchedule,
+    hasPreviouslyCompletedPIR: boolean,
   ): ApplicationDataAPIOutDTO {
     const offering = applicationDetail.currentAssessment?.offering;
     const applicationFormName = this.getStudentApplicationFormName(
@@ -714,6 +717,7 @@ export class ApplicationControllerService {
       isChangeRequestAllowedForPY: allowApplicationChangeRequest(
         applicationDetail.programYear,
       ),
+      hasPreviouslyCompletedPIR,
     };
   }
 

@@ -76,6 +76,14 @@ export MIGRATIONS_OC_TIMEOUT := 300s
 # Maximum job duration limit in seconds for migration jobs.
 export MIGRATIONS_JOB_MAX_DURATION := 300
 
+define ZONE_B_SFTP_PRIVATE_KEY
+-----BEGIN OPENSSH PRIVATE KEY-----
+$(ZONE_B_SFTP_PRIVATE_KEY_VALUE)
+-----END OPENSSH PRIVATE KEY-----
+endef
+
+export ZONE_B_SFTP_PRIVATE_KEY
+
 define MIGRATIONS
 "$(HOST_PREFIX)migrations-$(APP_NAME)"
 endef
@@ -268,32 +276,35 @@ init-secrets:
 		-p S3_REGION=$(S3_REGION) \
 		| oc -n $(NAMESPACE) apply -f -
 
-init-zone-b-sftp-secret:
-	test -n $(INIT_ZONE_B_SFTP_SERVER)
-	test -n $(INIT_ZONE_B_SFTP_SERVER_PORT)
-	test -n $(INIT_ZONE_B_SFTP_USER_NAME)
-	test -n $(INIT_ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE)
-	@oc create secret generic zone-b-sftp -n $(NAMESPACE) \
-		--from-literal=server=$(INIT_ZONE_B_SFTP_SERVER) \
-		--from-literal=server-port=$(INIT_ZONE_B_SFTP_SERVER_PORT) \
-		--from-literal=user-name=$(INIT_ZONE_B_SFTP_USER_NAME) \
-		--from-literal=private-key-passphrase=$(INIT_ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE) \
-		--from-file=private-key=./openshift/zone-b-private-key.cer \
-		--dry-run=client -o yaml | oc apply -f -
+deploy-zone-b-sftp-secret:
+	test -n "$(NAMESPACE)"
+	test -n "$(ZONE_B_SFTP_SERVER)"
+	test -n "$(ZONE_B_SFTP_SERVER_PORT)"
+	test -n "$(ZONE_B_SFTP_USER_NAME)"
+	test -n "$(ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE)"
+	test -n "$(ZONE_B_SFTP_PRIVATE_KEY_VALUE)"
+	@oc -n $(NAMESPACE) create secret generic zone-b-sftp \
+		--from-literal=server=$(ZONE_B_SFTP_SERVER) \
+		--from-literal=server-port=$(ZONE_B_SFTP_SERVER_PORT) \
+		--from-literal=user-name=$(ZONE_B_SFTP_USER_NAME) \
+		--from-literal=private-key-passphrase=$(ZONE_B_SFTP_PRIVATE_KEY_PASSPHRASE) \
+		--from-literal=private-key="$$ZONE_B_SFTP_PRIVATE_KEY" \
+		--dry-run=client -o yaml | oc -n $(NAMESPACE) apply -f -
 
-create-artifactory-secret-credential:
+deploy-artifactory-secret:
 	test -n "$(NAMESPACE)"
 	test -n "$(ARTIFACTORY_SERVER_ADDRESS)"
 	test -n "$(ARTIFACTORY_USERNAME)"
 	test -n "$(ARTIFACTORY_PASSWORD)"
 	test -n "$(ARTIFACTORY_EMAIL)"
-	@oc create secret docker-registry artifactory-secret-credential -n $(NAMESPACE) \
+	@oc -n $(NAMESPACE) create secret docker-registry artifactory-secret-credential \
     	--docker-server=$(ARTIFACTORY_SERVER_ADDRESS) \
     	--docker-username=$(ARTIFACTORY_USERNAME) \
     	--docker-password=$(ARTIFACTORY_PASSWORD) \
-    	--docker-email=$(ARTIFACTORY_EMAIL)
-	# @oc secrets link default artifactory-secret-credential
-	# @oc secrets link builder artifactory-secret-credential
+    	--docker-email=$(ARTIFACTORY_EMAIL) \
+		--dry-run=client -o yaml | oc -n $(NAMESPACE) apply -f -
+	@oc -n $(NAMESPACE) secrets link default artifactory-secret-credential
+	@oc -n $(NAMESPACE) secrets link builder artifactory-secret-credential
 
 build-migrations:
 	test -n "$(BUILD_NAMESPACE)"
@@ -680,3 +691,12 @@ update-sysdig-team:
 	@echo "Updating Sysdig Team for license plate a6ef19.\n"
 	@oc project a6ef19-tools
 	@oc process -f openshift/sysdig-team.yml -p LICENSE_PLATE=a6ef19 | oc apply -f -
+
+# TODO: Rename to update-sysdig-team after the migration is complete in prod and the silver license plates are no longer in use.
+update-sysdig-team-gold:
+	@echo "Updating Sysdig Team for license plate e0a504.\n"
+	@oc project e0a504-tools
+	@oc process -f openshift/sysdig-team.yml -p LICENSE_PLATE=e0a504 | oc apply -f -
+	@echo "Updating Sysdig Team for license plate c85dee.\n"
+	@oc project c85dee-tools
+	@oc process -f openshift/sysdig-team.yml -p LICENSE_PLATE=c85dee | oc apply -f -

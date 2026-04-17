@@ -18,6 +18,7 @@ export const ASSESSMENT_ALREADY_IN_PROGRESS = "ASSESSMENT_ALREADY_IN_PROGRESS";
 export enum RequestAssessmentTypeAPIOutDTO {
   StudentException = "Student exceptions",
   StudentAppeal = "Student appeal",
+  StudentFormSubmission = "Student form submission",
   OfferingRequest = "Offering request",
   ApplicationOfferingChangeRequest = "Application offering change",
 }

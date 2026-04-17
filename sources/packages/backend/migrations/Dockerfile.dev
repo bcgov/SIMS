@@ -1,5 +1,5 @@
 # Image to run all the migrations related to application deployment.
-FROM node:25.8.1-alpine3.22
+FROM node:25.9.0-alpine3.22
 
 WORKDIR /app
 

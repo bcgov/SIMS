@@ -3,6 +3,7 @@ import {
   Brackets,
   DataSource,
   EntityManager,
+  In,
   IsNull,
   MoreThanOrEqual,
   Raw,
@@ -282,7 +283,11 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
         "status",
       )
       .innerJoin("studentAppeal.application", "application")
+      .innerJoin("application.programYear", "programYear")
       .where("application.id = :applicationId", { applicationId })
+      .andWhere("programYear.startDate < :programStartDate", {
+        programStartDate: PROGRAM_YEAR_2025_26_START_DATE,
+      })
       .andWhere(
         new Brackets((qb) => {
           qb.where(
@@ -396,7 +401,11 @@ export class StudentAppealService extends RecordDataModelService<StudentAppeal> 
       where: {
         id: options?.applicationId,
         student: { id: studentId, sinValidation: { isValidSIN: true } },
-        applicationStatus: ApplicationStatus.Completed,
+        applicationStatus: In([
+          ApplicationStatus.Assessment,
+          ApplicationStatus.Enrolment,
+          ApplicationStatus.Completed,
+        ]),
         isArchived: false,
         currentAssessment: {
           eligibleApplicationAppeals: Raw(

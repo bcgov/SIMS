@@ -56,18 +56,16 @@
             <v-card-item>
               <v-card-title>
                 <v-row>
-                  <v-col
+                  <v-col cols="auto"
                     ><span class="category-header-medium color-blue mr-2">{{
                       submission.formCategory
                     }}</span></v-col
                   >
-                  <v-col
+                  <v-col cols="auto"
                     ><status-chip-form-submission :status="submission.status"
                   /></v-col>
-                  <v-col
-                    ><v-btn color="primary" class="float-right">
-                      View
-                    </v-btn></v-col
+                  <v-col class="d-flex justify-end"
+                    ><v-btn color="primary"> View </v-btn></v-col
                   >
                 </v-row>
                 <v-divider class="mb-0"></v-divider>
@@ -86,15 +84,17 @@
                   ><title-value property-title="Assessed date">
                     <template #value>
                       {{
-                        !!submission.assessedDate
-                          ? getISODateHourMinuteString(submission.assessedDate)
-                          : "Pending"
+                        conditionalEmptyStringFiller(
+                          !!submission.assessedDate,
+                          getISODateHourMinuteString(submission.assessedDate),
+                        )
                       }}
                     </template>
                   </title-value>
                 </v-col>
-                <v-col v-if="submission.applicationNumber">
+                <v-col>
                   <title-value
+                    v-if="submission.applicationNumber"
                     property-title="Application number"
                     :property-value="submission.applicationNumber"
                 /></v-col>

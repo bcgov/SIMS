@@ -384,17 +384,22 @@ export class FormSubmissionApprovalService {
    * longer the current version.
    * @param application application to check.
    * @throws CustomNamedError with FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE
-   * if the application is present and is not in completed status.
+   * if the application is present and is not in one of the expected statuses
+   * (Assessment, Enrolment, or Completed).
    */
   private checkFormSubmissionRelatedApplicationStatus(
     application: Pick<Application, "applicationStatus"> | undefined,
   ): void {
     if (
       application &&
-      application.applicationStatus !== ApplicationStatus.Completed
+      ![
+        ApplicationStatus.Assessment,
+        ApplicationStatus.Enrolment,
+        ApplicationStatus.Completed,
+      ].includes(application.applicationStatus)
     ) {
       throw new CustomNamedError(
-        "The application associated with the form submission is not in completed status.",
+        "The application associated with the form submission is not in the expected status.",
         FORM_SUBMISSION_RELATED_APPLICATION_NOT_IN_EXPECTED_STATE,
       );
     }

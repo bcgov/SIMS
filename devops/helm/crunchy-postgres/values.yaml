@@ -102,6 +102,10 @@ pgBackRest:
     # region specifies the S3 region to use. If your S3 storage system does not
     # use "region", fill this in with a random value.
     region: "ca-central-1"
+    # S3 key placeholder value.
+    s3Key: "s3-key-placeholder"
+    # S3 key secret placeholder value.
+    s3KeySecret: "s3-key-secret-placeholder"
     # setting the below to be one plus of the default schedule
     # to avoid conflicts
     fullSchedule: "0 10 * * *"

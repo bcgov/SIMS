@@ -1,7 +1,7 @@
 # Base Image
 # "builder" stage, based on Node.js, to build and compile the frontend.
 ARG DOCKER_REGISTRY=artifacts.developer.gov.bc.ca/docker-remote/
-FROM ${DOCKER_REGISTRY}node:25.8.1-alpine3.22 AS builder
+FROM ${DOCKER_REGISTRY}node:25.9.0-alpine3.22 AS builder
 
 # Application Port.
 ENV PORT=3030

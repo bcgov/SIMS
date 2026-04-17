@@ -1067,7 +1067,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "parentApplication.id",
         "parentApplication.submittedDate",
         "currentAssessment.id",
-        "currentAssessment.eligibleApplicationAppeals",
         "offering.studyStartDate",
         "offering.studyEndDate",
         "application.applicationStatus",
@@ -2452,6 +2451,24 @@ export class ApplicationService extends RecordDataModelService<Application> {
       select: { id: true },
       where: { id: applicationId },
       lock: { mode: "pessimistic_write" },
+    });
+  }
+
+  /**
+   * Checks if any version of the application has completed PIR status.
+   * @param applicationId application id.
+   * @returns boolean indicating if any version has completed PIR status.
+   */
+  async hasPreviouslyCompletedPIR(applicationId: number): Promise<boolean> {
+    return this.repo.exists({
+      where: {
+        id: applicationId,
+        parentApplication: {
+          versions: {
+            pirStatus: ProgramInfoStatus.completed,
+          },
+        },
+      },
     });
   }
 

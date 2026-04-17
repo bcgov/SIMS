@@ -1,4 +1,4 @@
-import { ObjectLiteral, QueryRunner, Repository } from "typeorm";
+import { EntityManager, ObjectLiteral, QueryRunner, Repository } from "typeorm";
 
 /**
  * Result type of a Typeorm query when the method getRawAndEntities is used.
@@ -16,12 +16,12 @@ export interface RawAndEntities {
  * It is useful to be defined before the execution of some transaction to handle
  * the worst-case scenario where the commit/rollback was not executed due to a
  * possible catastrophic failure.
- * @param queryRunner Typeorm query runner executing the operation.
+ * @param queryRunner Typeorm query runner or entity manager executing the operation.
  * @param seconds amount of seconds before the transaction is released in
  * case it is idle.
  */
 export async function configureIdleTransactionSessionTimeout(
-  queryRunner: QueryRunner,
+  queryRunner: QueryRunner | EntityManager,
   seconds: number,
 ): Promise<void> {
   queryRunner.query(`SET idle_in_transaction_session_timeout = '${seconds}s'`);

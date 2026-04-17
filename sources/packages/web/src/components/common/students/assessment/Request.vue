@@ -24,7 +24,7 @@
               {{ dateOnlyLongString(item.submittedDate) }}
             </template>
             <template #[`item.requestType`]="{ item }">
-              {{ item.requestType }}
+              {{ getRequestTypeToDisplay(item.requestType) }}
             </template>
             <template #[`item.requestForm`]="{ item }">
               <v-btn
@@ -65,6 +65,7 @@ import {
 export default defineComponent({
   emits: [
     "viewStudentAppeal",
+    "viewStudentFormSubmission",
     "viewStudentApplicationOfferingChange",
     "viewApplicationException",
     "viewOfferingRequest",
@@ -110,6 +111,9 @@ export default defineComponent({
         case RequestAssessmentTypeAPIOutDTO.StudentAppeal:
           context.emit("viewStudentAppeal", data.id);
           break;
+        case RequestAssessmentTypeAPIOutDTO.StudentFormSubmission:
+          context.emit("viewStudentFormSubmission", data.id);
+          break;
         case RequestAssessmentTypeAPIOutDTO.ApplicationOfferingChangeRequest:
           context.emit("viewStudentApplicationOfferingChange", data.id);
           break;
@@ -122,6 +126,23 @@ export default defineComponent({
       }
     };
 
+    /**
+     * Adjust the request types as they must be displayed.
+     * Form submissions should be displayed as appeals to the user.
+     * @param requestType the request type to adjust for display.
+     * @returns the request type to display.
+     */
+    const getRequestTypeToDisplay = (
+      requestType: RequestAssessmentTypeAPIOutDTO,
+    ): string => {
+      if (
+        requestType === RequestAssessmentTypeAPIOutDTO.StudentFormSubmission
+      ) {
+        return RequestAssessmentTypeAPIOutDTO.StudentAppeal;
+      }
+      return requestType;
+    };
+
     return {
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
@@ -129,6 +150,7 @@ export default defineComponent({
       dateOnlyLongString,
       viewRequestForm,
       UnapprovedChangesHeaders,
+      getRequestTypeToDisplay,
       isMobile,
     };
   },

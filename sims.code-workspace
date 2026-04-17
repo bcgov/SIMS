@@ -153,6 +153,7 @@
     "cSpell.words": [
       "addressline",
       "AEST",
+      "autodrain",
       "AVCP",
       "AVEN",
       "AVIR",
@@ -204,6 +205,7 @@
       "NSLSC",
       "Overaward",
       "overawards",
+      "parentcurrentyearincomeappeal",
       "partnerinformationandincomeappeal",
       "parttime",
       "PDAP",
@@ -237,6 +239,7 @@
       "timestamptz",
       "typeorm",
       "unparse",
+      "unzipper",
       "VALD",
       "WTHD",
       "Zeebe",
