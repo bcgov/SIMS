@@ -185,8 +185,6 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
       where: { id: parent.id },
     });
     // Assert supporting user reported details.
-    // supportingData uses expect.objectContaining because Form.io may return
-    // additional computed/hidden fields beyond what the payload submitted.
     expect(updatedSupportingUser).toEqual({
       id: parent.id,
       contactInfo: {
@@ -202,7 +200,15 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
       sin: undefined,
       birthDate: undefined,
       supportingData: {
+        relationshipToStudent: payload.supportingData.relationshipToStudent,
         totalIncome: payload.supportingData.totalIncome,
+        cppLine30800: payload.supportingData.cppLine30800,
+        cppLine31000: payload.supportingData.cppLine31000,
+        totalIncomeTaxLine43500: payload.supportingData.totalIncomeTaxLine43500,
+        eiLine31200: payload.supportingData.eiLine31200,
+        parentalContributions: payload.supportingData.parentalContributions,
+        foreignAssets: payload.supportingData.foreignAssets,
+        parentsOtherDependants: payload.supportingData.parentsOtherDependants,
         iAgreeToAboveStudentAidBCConsent:
           payload.supportingData.iAgreeToAboveStudentAidBCConsent,
         iAgreeToTheAboveCRAConsent:
