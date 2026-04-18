@@ -140,6 +140,7 @@ export class FormSubmissionControllerService {
     submissionItem: FormSubmissionItem,
     userRoles?: Role[],
   ): FormSubmissionItemDecisionAPIOutDTO {
+    // TODO: simplify this logic to support the different clients in a more straightforward way.
     // Define the authorization to assess item decisions based on the form item configuration and user roles.
     const hasAssessItemDecisionAuthorization =
       userRoles &&
@@ -148,6 +149,16 @@ export class FormSubmissionControllerService {
         FormSubmissionAuthRoles.AssessItemDecision,
         [submissionItem.dynamicFormConfiguration.id],
       );
+    // User has a role to see the form submitted data and the form submission is not pending,
+    // then they can see the approval notes.
+    const canViewApprovalNotes =
+      userRoles &&
+      this.formSubmissionAuthorizationService.isAuthorized(
+        userRoles,
+        FormSubmissionAuthRoles.ViewFormSubmittedData,
+        [submissionItem.dynamicFormConfiguration.id],
+      ) &&
+      submissionStatus !== FormSubmissionStatus.Pending;
     // Determine if decision details should be restricted based on the form submission status.
     const shouldRestrictDecisionDetails =
       !hasAssessItemDecisionAuthorization &&
@@ -159,6 +170,10 @@ export class FormSubmissionControllerService {
     decisionStatus = decisionStatus ?? FormSubmissionDecisionStatus.Pending;
     return {
       decisionStatus,
+      decisionNoteDescription:
+        shouldRestrictDecisionDetails || !canViewApprovalNotes
+          ? undefined
+          : submissionItem.currentDecision?.decisionNote.description,
     };
   }
 
