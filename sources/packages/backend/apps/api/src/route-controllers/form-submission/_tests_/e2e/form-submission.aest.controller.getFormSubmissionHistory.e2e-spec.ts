@@ -2,6 +2,7 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
   AESTGroups,
+  authorizeDynamicFormConfigurations,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
@@ -25,16 +26,21 @@ import {
   createFakeFormConfigurations,
   DynamicConfigurationTestData,
 } from "./form-submission-utils";
+import { FormSubmissionAuthRoles } from "../../../../services";
+import { TestingModule } from "@nestjs/testing";
 
 describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
   let app: INestApplication;
+  let appModule: TestingModule;
   let db: E2EDataSources;
   let ministryUser: User;
   let formConfigs: DynamicConfigurationTestData;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, module, dataSource } =
+      await createTestingAppModule();
     app = nestApplication;
+    appModule = module;
     db = createE2EDataSources(dataSource);
     [ministryUser, formConfigs] = await Promise.all([
       db.user.save(createFakeUser()),
@@ -147,6 +153,16 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
       completedStudentForm.formSubmissionItems;
     const endpoint = `/aest/form-submission/student/${student.id}`;
     const token = await getAESTToken(AESTGroups.Operations);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [
+        formConfigs.studentAppealApplicationA,
+        formConfigs.studentAppealApplicationB,
+        formConfigs.studentAppealA,
+        formConfigs.studentFormA,
+      ],
+      [FormSubmissionAuthRoles.ViewFormHistoryList],
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -157,6 +173,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
         expect(body.submissions).toEqual([
           // Pending Student Appeal
           {
+            canViewFormSubmittedData: false,
             id: pendingStudentAppeal.id,
             applicationId: application.id,
             applicationNumber: application.applicationNumber,
@@ -193,6 +210,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
           },
           // Completed Student Appeal
           {
+            canViewFormSubmittedData: false,
             id: completedStudentAppeal.id,
             formCategory: FormCategory.StudentAppeal,
             status: FormSubmissionStatus.Completed,
@@ -214,6 +232,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
           },
           // Completed Student Form
           {
+            canViewFormSubmittedData: false,
             id: completedStudentForm.id,
             formCategory: FormCategory.StudentForm,
             status: FormSubmissionStatus.Completed,
@@ -276,6 +295,17 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
       pendingStudentAppeal.formSubmissionItems;
     const endpoint = `/aest/form-submission/student/${pendingStudentAppeal.student.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [
+        formConfigs.studentAppealApplicationA,
+        formConfigs.studentAppealApplicationB,
+      ],
+      [
+        FormSubmissionAuthRoles.ViewFormHistoryList,
+        FormSubmissionAuthRoles.AssessItemDecision,
+      ],
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -286,6 +316,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
         expect(body.submissions).toEqual([
           // Pending Student Appeal
           {
+            canViewFormSubmittedData: false,
             id: pendingStudentAppeal.id,
             formCategory: FormCategory.StudentAppeal,
             status: FormSubmissionStatus.Pending,

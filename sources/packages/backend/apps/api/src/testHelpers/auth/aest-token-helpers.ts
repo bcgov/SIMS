@@ -2,6 +2,8 @@ import { UserPasswordCredential } from "@sims/utilities/config";
 import { AuthorizedParties, IUserToken, Role } from "../../auth";
 import { getCachedToken, mockJWTToken } from "./token-helpers";
 import { TestingModule } from "@nestjs/testing";
+import { FormSubmissionAuthRoles } from "apps/api/src/services";
+import { DynamicFormConfiguration } from "@sims/sims-db";
 
 /**
  * Known AEST groups. The API right now performs authorization for
@@ -76,5 +78,28 @@ export async function removeJWTUserRoles(
     payload.resource_access[AuthorizedParties.aest].roles = roles.filter(
       (role: Role) => !rolesToRemove.includes(role),
     );
+  });
+}
+
+/**
+ * Adds dynamic form configuration roles to the JWT token to authorize form submission actions.
+ * @param testingModule nest testing module.
+ * @param dynamicFormConfigurations dynamic form configurations to authorize.
+ * @param roles form submission auth roles to grant for each configuration.
+ */
+export async function authorizeDynamicFormConfigurations(
+  testingModule: TestingModule,
+  dynamicFormConfigurations: DynamicFormConfiguration[],
+  roles: FormSubmissionAuthRoles[],
+): Promise<void> {
+  await mockJWTToken(testingModule, (payload: IUserToken) => {
+    const formRoles = dynamicFormConfigurations.flatMap(
+      (dynamicFormConfiguration) =>
+        roles.map(
+          (role) =>
+            `forms.${dynamicFormConfiguration.authorizationKey}.${role}`,
+        ),
+    );
+    payload.resource_access[AuthorizedParties.aest].roles.push(...formRoles);
   });
 }

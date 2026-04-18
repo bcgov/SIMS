@@ -63,6 +63,11 @@ interface FormSubmissionItemBaseAPIOutDTO {
  */
 export interface FormSubmissionAPIOutDTO extends FormSubmissionBaseAPIOutDTO {
   submissionItems: FormSubmissionItemAPIOutDTO[];
+  /**
+   * For consumers with role based access, indicates if the user has authorization
+   * to view at least one of the form items submitted data.
+   */
+  canViewFormSubmittedData?: boolean;
 }
 
 /**
@@ -113,6 +118,10 @@ export interface FormSubmissionItemAPIOutDTO extends FormSubmissionItemBaseAPIOu
  */
 export interface FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemAPIOutDTO {
   /**
+   * Indicates if the user has authorization to make a decision on this form item.
+   */
+  hasAssessItemDecisionAuthorization: boolean;
+  /**
    * Most recent update date for this form submission item. This is used to determine if the item is outdated when
    * submitting a decision on it, to prevent overwriting a more recent decision.
    */
@@ -136,7 +145,7 @@ export interface FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemA
  * including the individual form items.
  */
 export interface FormSubmissionMinistryAPIOutDTO extends FormSubmissionBaseAPIOutDTO {
-  hasApprovalAuthorization: boolean;
+  hasAssessFinalDecisionAuthorization: boolean;
   submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
 }
 

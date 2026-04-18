@@ -89,6 +89,7 @@ export interface FormSubmissionItemDecisionApproval extends FormSubmissionItemDe
   decisionSaved: boolean;
   lastUpdateDate: Date;
   decisionHistory?: DecisionHistory[];
+  hasAssessItemDecisionAuthorization: boolean;
 }
 
 /**

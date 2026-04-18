@@ -31,7 +31,10 @@ import {
 import { NoteSharedService } from "@sims/services";
 import { FormSubmissionActionProcessor } from "./form-submission-actions/form-submission-action-processor";
 import { NotificationActionsService } from "@sims/services/notifications";
-import { hasFormSubmissionApprovalAuthorization } from "./form-submission.authorization";
+import {
+  FormSubmissionAuthRoles,
+  FormSubmissionAuthorizationService,
+} from "../../services";
 
 @Injectable()
 export class FormSubmissionApprovalService {
@@ -40,6 +43,7 @@ export class FormSubmissionApprovalService {
     private readonly noteSharedService: NoteSharedService,
     private readonly formSubmissionActionProcessor: FormSubmissionActionProcessor,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly formSubmissionAuthorizationService: FormSubmissionAuthorizationService,
   ) {}
 
   /**
@@ -92,8 +96,8 @@ export class FormSubmissionApprovalService {
           FORM_SUBMISSION_ITEM_NOT_FOUND,
         );
       }
-      this.checkAuthorizationForApproval(
-        submissionItem.dynamicFormConfiguration.formCategory,
+      this.checkAuthorizationToAssessItemDecision(
+        submissionItem.dynamicFormConfiguration.id,
         userRoles,
       );
       this.checkFormSubmissionRelatedApplicationStatus(
@@ -197,12 +201,18 @@ export class FormSubmissionApprovalService {
               decisionStatus: true,
               decisionNote: { id: true },
             },
+            dynamicFormConfiguration: {
+              id: true,
+            },
           },
         },
         relations: {
           student: { user: true },
           application: true,
-          formSubmissionItems: { currentDecision: { decisionNote: true } },
+          formSubmissionItems: {
+            currentDecision: { decisionNote: true },
+            dynamicFormConfiguration: true,
+          },
         },
         where: { id: submissionId },
       });
@@ -212,8 +222,8 @@ export class FormSubmissionApprovalService {
           FORM_SUBMISSION_NOT_FOUND,
         );
       }
-      this.checkAuthorizationForApproval(
-        formSubmission.formCategory,
+      this.checkAuthorizationToAssessFinalDecision(
+        formSubmission.formSubmissionItems,
         userRoles,
       );
       this.checkFormSubmissionRelatedApplicationStatus(
@@ -357,22 +367,38 @@ export class FormSubmissionApprovalService {
       : FormSubmissionStatus.Completed;
   }
 
-  /**
-   * Ensures the user authorization to update a form submission item
-   * based on the form category and user roles.
-   * @param category The category of the form item being updated, used
-   * to determine the required role for authorization.
-   * @param userRoles The roles of the user attempting to perform the action.
-   * @throws CustomNamedError with FORM_SUBMISSION_UPDATE_UNAUTHORIZED
-   * if the user does not have the required role for the form category.
-   */
-  private checkAuthorizationForApproval(
-    category: FormCategory,
+  private checkAuthorizationToAssessFinalDecision(
+    formSubmissionItems: FormSubmissionItem[],
     userRoles: Role[],
   ): void {
-    if (!hasFormSubmissionApprovalAuthorization(category, userRoles)) {
+    const dynamicFormConfigurationIDs = formSubmissionItems.map(
+      (item) => item.dynamicFormConfiguration.id,
+    );
+    const isAuthorized = this.formSubmissionAuthorizationService.isAuthorized(
+      userRoles,
+      FormSubmissionAuthRoles.AssessFinalDecision,
+      dynamicFormConfigurationIDs,
+    );
+    if (!isAuthorized) {
       throw new CustomNamedError(
-        "User does not have the required role to perform this action.",
+        "User does not have the required role to provide the final decision.",
+        FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
+      );
+    }
+  }
+
+  private checkAuthorizationToAssessItemDecision(
+    dynamicFormConfigurationID: number,
+    userRoles: Role[],
+  ): void {
+    const isAuthorized = this.formSubmissionAuthorizationService.isAuthorized(
+      userRoles,
+      FormSubmissionAuthRoles.AssessItemDecision,
+      [dynamicFormConfigurationID],
+    );
+    if (!isAuthorized) {
+      throw new CustomNamedError(
+        "User does not have the required role to provide an item decision.",
         FORM_SUBMISSION_UPDATE_UNAUTHORIZED,
       );
     }

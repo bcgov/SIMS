@@ -36,6 +36,7 @@ export class DynamicFormConfigurationService {
           formDescription: true,
           allowBundledSubmission: true,
           hasApplicationScope: true,
+          authorizationKey: true,
         },
         relations: {
           programYear: true,
@@ -109,6 +110,16 @@ export class DynamicFormConfigurationService {
   getFormById(formId: number): DynamicFormConfiguration | undefined {
     return this.dynamicFormConfigurations.find(
       (dynamicFormConfiguration) => dynamicFormConfiguration.id === formId,
+    );
+  }
+
+  getFormsByAuthorizationKey(
+    authorizationKeys: string[],
+  ): DynamicFormConfiguration[] {
+    return this.dynamicFormConfigurations.filter(
+      (dynamicFormConfiguration) =>
+        dynamicFormConfiguration.authorizationKey &&
+        authorizationKeys.includes(dynamicFormConfiguration.authorizationKey),
     );
   }
 }

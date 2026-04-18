@@ -160,7 +160,7 @@ export class FormSubmissionService {
 
   /**
    * Get the details of a form submission, including the individual form items and their details.
-   * @param options at least one of this options should be provided..
+   * @param options at least one of this options should be provided.
    * - `studentId` ID of the student to have the data retrieved
    * - `formSubmissionId` allow searching for a specific form submission.
    * - `itemId` allow searching for a specific form submission item across all form submissions of the student,
@@ -170,6 +170,8 @@ export class FormSubmissionService {
    * only to the form submissions related to the locations they have access to.
    * - `includeDecisionHistory` includes the decision history of each form item.
    * - `loadSubmittedData` includes the submitted data of each form item.
+   * - `dynamicFormsIDs` used for authorization access to specific forms, restricting the form items to the provided
+   * dynamic form configuration IDs.
    * @returns form submission details including individual form items and their details.
    */
   async getFormSubmissions(
@@ -182,9 +184,10 @@ export class FormSubmissionService {
       locationIds?: number[];
       includeDecisionHistory?: boolean;
       loadSubmittedData?: boolean;
+      dynamicFormsIDs?: number[];
     },
   ): Promise<FormSubmission[]> {
-    return this.formSubmissionRepo.find({
+    const formSubmissions = await this.formSubmissionRepo.find({
       select: {
         id: true,
         submissionStatus: true,
@@ -240,6 +243,9 @@ export class FormSubmissionService {
         id: options?.formSubmissionId,
         formSubmissionItems: {
           id: options?.itemId,
+          dynamicFormConfiguration: queryOptions?.dynamicFormsIDs
+            ? { id: In(queryOptions.dynamicFormsIDs) }
+            : undefined,
         },
         student: { id: options?.studentId },
         application: {
@@ -258,5 +264,6 @@ export class FormSubmissionService {
         },
       },
     });
+    return formSubmissions;
   }
 }

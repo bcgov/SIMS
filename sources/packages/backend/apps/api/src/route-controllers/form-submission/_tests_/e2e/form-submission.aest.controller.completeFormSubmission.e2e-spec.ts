@@ -2,11 +2,11 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
   AESTGroups,
+  authorizeDynamicFormConfigurations,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
   getAESTUser,
-  removeJWTUserRoles,
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
@@ -35,8 +35,10 @@ import {
 } from "./form-submission-utils";
 import MockDate from "mockdate";
 import { getPSTPDTDateTime } from "@sims/utilities";
-import { FORM_SUBMISSION_ITEM_OUTDATED } from "../../../../services";
-import { Role } from "../../../../auth/roles.enum";
+import {
+  FORM_SUBMISSION_ITEM_OUTDATED,
+  FormSubmissionAuthRoles,
+} from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
 
@@ -68,7 +70,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);
-    const application = await saveFakeApplication(db.dataSource, null, {
+    const application = await saveFakeApplication(db.dataSource, undefined, {
       initialValues: { applicationStatus: ApplicationStatus.Completed },
     });
     const student = application.student;
@@ -112,6 +114,14 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
     };
     const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [
+        formConfigs.studentAppealApplicationA,
+        formConfigs.studentAppealApplicationB,
+      ],
+      [FormSubmissionAuthRoles.AssessFinalDecision],
+    );
     const ministryAuditUser = { id: ministryAdminUser.id };
 
     // Act/Assert
@@ -139,10 +149,10 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
         id: student.id,
         notes: [
           {
-            id: formSubmissionItemA.currentDecision.decisionNote.id,
+            id: formSubmissionItemA.currentDecision!.decisionNote.id,
           },
           {
-            id: formSubmissionItemB.currentDecision.decisionNote.id,
+            id: formSubmissionItemB.currentDecision!.decisionNote.id,
           },
         ],
       },
@@ -237,6 +247,11 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
         const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
         const token = await getAESTToken(AESTGroups.BusinessAdministrators);
         const ministryAuditUser = { id: ministryAdminUser.id };
+        await authorizeDynamicFormConfigurations(
+          appModule,
+          [formConfigs.studentAppealA],
+          [FormSubmissionAuthRoles.AssessFinalDecision],
+        );
 
         // Act/Assert
         await request(app.getHttpServer())
@@ -374,6 +389,11 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
     const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const ministryAuditUser = { id: ministryAdminUser.id };
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [formConfigs.studentFormA],
+      [FormSubmissionAuthRoles.AssessFinalDecision],
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -449,7 +469,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
 
   it("Should throw an unprocessable entity error when attempting to complete a student appeal but some items were updated.", async () => {
     // Arrange
-    const application = await saveFakeApplication(db.dataSource, null, {
+    const application = await saveFakeApplication(db.dataSource, undefined, {
       initialValues: { applicationStatus: ApplicationStatus.Completed },
     });
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
@@ -489,6 +509,14 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
     };
     const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [
+        formConfigs.studentAppealApplicationA,
+        formConfigs.studentAppealApplicationB,
+      ],
+      [FormSubmissionAuthRoles.AssessFinalDecision],
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -504,7 +532,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
 
   it("Should throw an unprocessable entity error when attempting to complete a student appeal but the application was edited.", async () => {
     // Arrange
-    const application = await saveFakeApplication(db.dataSource, null, {
+    const application = await saveFakeApplication(db.dataSource, undefined, {
       initialValues: { applicationStatus: ApplicationStatus.Edited },
     });
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
@@ -532,6 +560,11 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
     };
     const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [formConfigs.studentAppealApplicationA],
+      [FormSubmissionAuthRoles.AssessFinalDecision],
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -571,6 +604,11 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
     };
     const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [formConfigs.studentFormA],
+      [FormSubmissionAuthRoles.AssessFinalDecision],
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -586,53 +624,38 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
       });
   });
 
-  [
-    {
-      formCategory: FormCategory.StudentAppeal,
-      role: Role.StudentApproveDeclineAppeals,
-    },
-    {
-      formCategory: FormCategory.StudentForm,
-      role: Role.StudentApproveDeclineForms,
-    },
-  ].forEach(({ formCategory, role }) => {
-    it(`Should throw a forbidden error when attempting to complete the form of category ${formCategory} but the user lacks the necessary roles.`, async () => {
-      // Arrange
-      const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
-        ministryAuditUser: ministryAdminUser,
-        formCategory,
-        submissionStatus: FormSubmissionStatus.Pending,
-        formSubmissionItems: [],
-      });
-      const payload = {
-        items: [{ submissionItemId: 1, lastUpdateDate: new Date() }],
-      };
-      const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
-      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-      await removeJWTUserRoles(appModule, [role]);
-
-      // Act/Assert
-      await request(app.getHttpServer())
-        .patch(endpoint)
-        .send(payload)
-        .auth(token, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.FORBIDDEN)
-        .expect({
-          message:
-            "User does not have the required role to perform this action.",
-          error: "Forbidden",
-          statusCode: HttpStatus.FORBIDDEN,
-        });
-    });
-  });
-
-  it("Should throw a forbidden error when attempting to complete the form but the user does not have access to the endpoint.", async () => {
+  it("Should throw a forbidden error when attempting to complete the form but the user lacks the necessary role on at least one item.", async () => {
     // Arrange
+    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+      ministryAuditUser: ministryAdminUser,
+      formCategory: FormCategory.StudentAppeal,
+      submissionStatus: FormSubmissionStatus.Pending,
+      formSubmissionItems: [
+        {
+          dynamicFormConfiguration: formConfigs.studentAppealA,
+          decisions: [
+            { decisionStatus: FormSubmissionDecisionStatus.Approved },
+          ],
+        },
+        {
+          dynamicFormConfiguration: formConfigs.studentAppealB,
+          decisions: [
+            { decisionStatus: FormSubmissionDecisionStatus.Approved },
+          ],
+        },
+      ],
+    });
     const payload = {
       items: [{ submissionItemId: 1, lastUpdateDate: new Date() }],
     };
-    const endpoint = `/aest/form-submission/9999999/complete`;
-    const token = await getAESTToken(AESTGroups.Operations);
+    const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      // Note that the user is not authorized for the form config of the second item.
+      [formConfigs.studentAppealA],
+      [FormSubmissionAuthRoles.AssessFinalDecision],
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -641,7 +664,8 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
-        message: "Forbidden resource",
+        message:
+          "User does not have the required role to provide the final decision.",
         error: "Forbidden",
         statusCode: HttpStatus.FORBIDDEN,
       });
