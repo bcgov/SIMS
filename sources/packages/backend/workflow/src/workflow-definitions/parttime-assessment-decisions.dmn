@@ -2357,7 +2357,7 @@
           <text>"public"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_0qvsql7">
-          <text>"notForProfit"</text>
+          <text></text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0xaum3b">
           <text>true</text>
@@ -2377,7 +2377,7 @@
           <text>"private"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1q9emcv">
-          <text>"profit"</text>
+          <text>"notForProfit"</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0vntbny">
           <text>true</text>
@@ -2388,16 +2388,16 @@
       </rule>
       <rule id="DecisionRule_0rki0tq">
         <inputEntry id="UnaryTests_1hky5b6">
-          <text></text>
+          <text>"CA"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_05u5jhg">
           <text></text>
         </inputEntry>
         <inputEntry id="UnaryTests_11ulqev">
-          <text>"public"</text>
+          <text>"private"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_1wey5qo">
-          <text></text>
+          <text>"profit"</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1scgenb">
           <text>true</text>
@@ -2414,10 +2414,10 @@
           <text></text>
         </inputEntry>
         <inputEntry id="UnaryTests_0rms8hh">
-          <text>"private"</text>
+          <text>"public"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_03ismpl">
-          <text>"notForProfit"</text>
+          <text></text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0fy82hz">
           <text>true</text>
@@ -2437,12 +2437,32 @@
           <text>"private"</text>
         </inputEntry>
         <inputEntry id="UnaryTests_012jc2n">
-          <text>"profit"</text>
+          <text>"notForProfit"</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0ze6xg4">
-          <text>false</text>
+          <text>true</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1w0dl6h">
+          <text>false</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_19y6lx9">
+        <inputEntry id="UnaryTests_043zffy">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_005ur4t">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0xstcvo">
+          <text>"private"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1rm3llw">
+          <text>"profit"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_10juq99">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_167usnh">
           <text>false</text>
         </outputEntry>
       </rule>

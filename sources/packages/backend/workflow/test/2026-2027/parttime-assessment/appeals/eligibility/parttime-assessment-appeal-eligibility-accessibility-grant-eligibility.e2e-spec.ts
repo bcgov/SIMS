@@ -17,7 +17,22 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
         // The following values make the accessibility grant eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
-        // BC private institutions are not eligible for the accessibility grant
+        // BC public institutions are eligible for the accessibility grant
+        // and not eligible for the appeal.
+        institutionCountry: "CA",
+        institutionProvince: Provinces.BritishColumbia,
+        institutionClassification: InstitutionClassification.Public,
+        institutionOrganizationStatus:
+          InstitutionOrganizationStatus.NotForProfit,
+      },
+      expectedAppealEligibility: false,
+    },
+    {
+      inputData: {
+        // The following values make the accessibility grant eligible at assessment level.
+        studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
+        studentDataTaxReturnIncome: 30000,
+        // BC private non-profit institutions are not eligible for the accessibility grant
         // and eligible for the appeal.
         institutionCountry: "CA",
         institutionProvince: Provinces.BritishColumbia,
@@ -32,6 +47,20 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
         // The following values make the accessibility grant eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
+        // BC private profit institutions are not eligible for the accessibility grant
+        // and eligible for the appeal.
+        institutionCountry: "CA",
+        institutionProvince: Provinces.BritishColumbia,
+        institutionClassification: InstitutionClassification.Private,
+        institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
+      },
+      expectedAppealEligibility: true,
+    },
+    {
+      inputData: {
+        // The following values make the accessibility grant eligible at assessment level.
+        studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
+        studentDataTaxReturnIncome: 30000,
         // Out of province public institutions are not eligible for the accessibility grant
         // and eligible for the appeal.
         institutionCountry: "CA",
@@ -47,7 +76,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
         // The following values make the accessibility grant eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
-        // Out of province private institutions are not eligible for the accessibility grant
+        // Out of province private non-profit institutions are not eligible for the accessibility grant
         // and eligible for the appeal.
         institutionCountry: "CA",
         institutionProvince: Provinces.Ontario,
@@ -62,28 +91,12 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
         // The following values make the accessibility grant eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
-        // Out of province public institutions are not eligible for the accessibility grant
+        // Out of province private profit institutions are not eligible for the accessibility grant
         // and eligible for the appeal.
         institutionCountry: "CA",
         institutionProvince: Provinces.Ontario,
-        institutionClassification: InstitutionClassification.Public,
-        institutionOrganizationStatus:
-          InstitutionOrganizationStatus.NotForProfit,
-      },
-      expectedAppealEligibility: true,
-    },
-    {
-      inputData: {
-        // The following values make the accessibility grant eligible at assessment level.
-        studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
-        studentDataTaxReturnIncome: 30000,
-        // US institutions are not eligible for the accessibility grant
-        // and eligible for the appeal.
-        institutionCountry: "US",
-        institutionProvince: undefined,
-        institutionClassification: InstitutionClassification.Public,
-        institutionOrganizationStatus:
-          InstitutionOrganizationStatus.NotForProfit,
+        institutionClassification: InstitutionClassification.Private,
+        institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
       },
       expectedAppealEligibility: true,
     },
@@ -96,7 +109,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
         // and eligible for the appeal.
         institutionCountry: "AU",
         institutionProvince: undefined,
-        institutionClassification: InstitutionClassification.Private,
+        institutionClassification: InstitutionClassification.Public,
         institutionOrganizationStatus:
           InstitutionOrganizationStatus.NotForProfit,
       },
@@ -116,21 +129,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
           InstitutionOrganizationStatus.NotForProfit,
       },
       expectedAppealEligibility: true,
-    },
-    {
-      inputData: {
-        // The following values make the accessibility grant eligible at assessment level.
-        studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
-        studentDataTaxReturnIncome: 30000,
-        // BC public institutions are eligible for the accessibility grant
-        // and not eligible for the appeal.
-        institutionCountry: "CA",
-        institutionProvince: Provinces.BritishColumbia,
-        institutionClassification: InstitutionClassification.Public,
-        institutionOrganizationStatus:
-          InstitutionOrganizationStatus.NotForProfit,
-      },
-      expectedAppealEligibility: false,
     },
     {
       inputData: {
