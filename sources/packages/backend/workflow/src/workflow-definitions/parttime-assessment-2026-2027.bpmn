@@ -857,7 +857,7 @@ Will not change based on institution or appeal</bpmn:text>
     <bpmn:intermediateThrowEvent id="Event_0ctze8t" name="Calculate institution award eligibility appeal values">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=if appealsPTAccessibilityGrantEligibilityAppealData !=null and appealsPTAccessibilityGrantEligibilityAppealData.isEligibilityRequested = true&#10; then true&#10; else false" target="hasPTAccessibilityGrantEligibilityAppeal" />
+          <zeebe:output source="=appealsPTAccessibilityGrantEligibilityAppealData.isEligibilityRequested = true" target="hasPTAccessibilityGrantEligibilityAppeal" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_171ny3j</bpmn:incoming>
