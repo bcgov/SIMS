@@ -10,9 +10,9 @@ INSERT INTO
 VALUES
     (
         'Accessibility grant eligibility train-out provision',
-        'ftaccessibilitygranteligibilityappeal',
+        'ptaccessibilitygranteligibilityappeal',
         'Student appeal',
-        'A request to receive the B.C. Access Grant for Full-Time Students with Disabilities and the B.C. Supplemental Bursary for Students with Disabilities under the train-out provision.',
+        'Request to receive the B.C. Supplemental Bursary for Students with Disabilities under the train-out provision.',
         TRUE,
         TRUE
     );

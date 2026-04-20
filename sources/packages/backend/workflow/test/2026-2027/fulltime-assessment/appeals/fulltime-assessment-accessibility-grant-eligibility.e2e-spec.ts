@@ -54,7 +54,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-accessibility-gr
   } of appealScenarios) {
     it(
       `Should evaluate the accessibility grant(SBSD) as ${expectedSBSDEligibility ? "eligible" : "not eligible"} when the assessment eligibility is true` +
-        " and the institution institution eligibility is false" +
+        " and the institution eligibility is false" +
         ` ${appealsFTAccessibilityGrantEligibilityAppealData ? "with" : "without"} an approved accessibility grant eligibility appeal.`,
       async () => {
         // Arrange

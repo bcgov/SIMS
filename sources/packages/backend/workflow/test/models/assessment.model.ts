@@ -45,7 +45,7 @@ export interface ParentCurrentYearIncomeAppealData extends JSONDoc {
 }
 
 export interface EligibilityAppealData extends JSONDoc {
-  isEligibilityRequest: boolean;
+  isEligibilityRequested: boolean;
 }
 
 export interface DisbursementScheduleAward extends JSONDoc {
@@ -172,6 +172,7 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsPartnerCurrentYearIncomeAppealData?: JSONDoc;
   appealsParentCurrentYearIncomeAppealData?: ParentCurrentYearIncomeAppealData[];
   appealsExceptionalExpenseAppealData?: JSONDoc;
+  appealsFTAccessibilityGrantEligibilityAppealData?: EligibilityAppealData;
   appealsPTAccessibilityGrantEligibilityAppealData?: EligibilityAppealData;
   studentDataIsYourPartnerAbleToReport?: boolean; // No longer used in PY 26/27 and beyond.
   studentDataParentValidSinNumber?: YesNoOptions;
@@ -446,6 +447,7 @@ export interface CalculatedAssessmentModel {
   isEligibleForExceptionalExpenseAppeal?: boolean;
   isEligibleForFTAccessibilityGrantEligibilityAppeal?: boolean;
   calculatedDataWaivedParent?: number;
+  isEligibleForPTAccessibilityGrantEligibilityAppeal?: boolean;
   calculatedDataParent1TotalIncome?: number;
   calculatedDataParent2TotalIncome?: number;
   // Common variables used in both full-time and part-time.
