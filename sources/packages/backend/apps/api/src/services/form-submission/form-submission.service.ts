@@ -86,6 +86,13 @@ export class FormSubmissionService {
         userRoles,
         FormSubmissionAuthRoles.AssessItemDecision,
       );
+    if (!dynamicFormsIDs.length) {
+      // If no forms are authorized, refrain from checking the database.
+      return {
+        results: [],
+        count: 0,
+      };
+    }
     const query = this.formSubmissionRepo
       .createQueryBuilder("formSubmission")
       .select([
@@ -95,6 +102,7 @@ export class FormSubmissionService {
         "user.firstName",
         "user.lastName",
         "formSubmissionItem.id",
+        "dynamicFormConfiguration.id",
         "dynamicFormConfiguration.formDescription",
         "dynamicFormConfiguration.formType",
         "application.id",

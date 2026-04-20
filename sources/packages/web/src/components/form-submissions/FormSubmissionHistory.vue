@@ -52,7 +52,8 @@
             variant="elevated"
             :ripple="false"
             @click="
-              canViewFormSubmittedData && submission.canViewFormSubmittedData
+              canViewFormSubmittedData &&
+              submission.canViewFormSubmittedData !== false
                 ? goToSubmission(submission.id)
                 : null
             "
@@ -72,7 +73,7 @@
                     ><v-btn
                       v-if="canViewFormSubmittedData"
                       color="primary"
-                      :disabled="!submission.canViewFormSubmittedData"
+                      :disabled="submission.canViewFormSubmittedData === false"
                     >
                       View
                     </v-btn></v-col
