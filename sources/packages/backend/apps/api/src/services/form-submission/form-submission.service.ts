@@ -13,6 +13,11 @@ import {
   FormSubmissionPendingPaginationOptions,
   PaginatedResults,
 } from "../../utilities";
+import { Role } from "apps/api/src/auth";
+import {
+  FormSubmissionAuthorizationService,
+  FormSubmissionAuthRoles,
+} from "../../services";
 
 /**
  * Manages how the form submissions are processed, including the validations,
@@ -24,6 +29,7 @@ export class FormSubmissionService {
   constructor(
     @InjectRepository(FormSubmission)
     private readonly formSubmissionRepo: Repository<FormSubmission>,
+    private readonly formSubmissionAuthorizationService: FormSubmissionAuthorizationService,
   ) {}
 
   /**
@@ -66,12 +72,20 @@ export class FormSubmissionService {
    * {@link FormSubmissionStatus.Pending} are returned, and pagination/count
    * are based on the number of submissions, not the number of individual forms.
    * @param paginationOptions options to control pagination, sorting, and search.
+   * @param userRoles roles assigned to the user for authorization checks.
    * @returns paginated list of pending form submissions across all categories, one entry per submission
    * with form names aggregated per submission.
    */
   async getPendingFormSubmissions(
     paginationOptions: FormSubmissionPendingPaginationOptions,
+    userRoles: Role[],
   ): Promise<PaginatedResults<FormSubmissionPendingSummary>> {
+    // Ensure only forms the user has access to are included in the search.
+    const dynamicFormsIDs =
+      this.formSubmissionAuthorizationService.getAuthorizedDynamicFormsIDs(
+        userRoles,
+        FormSubmissionAuthRoles.AssessItemDecision,
+      );
     const query = this.formSubmissionRepo
       .createQueryBuilder("formSubmission")
       .select([
@@ -96,6 +110,9 @@ export class FormSubmissionService {
       .leftJoin("formSubmission.application", "application")
       .where("formSubmission.submissionStatus = :status", {
         status: FormSubmissionStatus.Pending,
+      })
+      .andWhere("dynamicFormConfiguration.id IN (:...dynamicFormsIDs)", {
+        dynamicFormsIDs,
       });
 
     if (paginationOptions.hasApplicationScope === true) {

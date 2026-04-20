@@ -63,10 +63,14 @@ export class FormSubmissionAESTController extends BaseController {
    */
   @Get("pending")
   async getPendingFormSubmissions(
+    @UserToken() userToken: IUserToken,
     @Query() pagination: FormSubmissionPendingPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>> {
     const pendingSubmissions =
-      await this.formSubmissionService.getPendingFormSubmissions(pagination);
+      await this.formSubmissionService.getPendingFormSubmissions(
+        pagination,
+        userToken.roles,
+      );
     return {
       results: pendingSubmissions.results.map((submission) => ({
         formSubmissionId: submission.formSubmissionId,

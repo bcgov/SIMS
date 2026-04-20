@@ -52,7 +52,7 @@
             variant="elevated"
             :ripple="false"
             @click="
-              submission.canViewFormSubmittedData
+              canViewFormSubmittedData && submission.canViewFormSubmittedData
                 ? goToSubmission(submission.id)
                 : null
             "
@@ -70,6 +70,7 @@
                   /></v-col>
                   <v-col class="d-flex justify-end"
                     ><v-btn
+                      v-if="canViewFormSubmittedData"
                       color="primary"
                       :disabled="!submission.canViewFormSubmittedData"
                     >
@@ -178,6 +179,11 @@ export default defineComponent({
       type: Number,
       required: false,
       default: undefined,
+    },
+    canViewFormSubmittedData: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
   setup(props, { emit }) {
