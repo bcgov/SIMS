@@ -866,7 +866,7 @@ Will not change based on institution or appeal</bpmn:text>
     <bpmn:endEvent id="Event_1xl9u43">
       <bpmn:incoming>Flow_1spgvb6</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:intermediateThrowEvent id="Event_1o6oul3" name="Evaluate application appeal eligibilites">
+    <bpmn:intermediateThrowEvent id="Event_1o6oul3" name="Evaluate application appeal eligibilities">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=true" target="isEligibleForStudentCurrentYearIncomeAppeal" />
@@ -1427,7 +1427,7 @@ Will not change based on institution or appeal</bpmn:text>
       <bpmndi:BPMNShape id="BPMNShape_03q7skm" bpmnElement="Event_1o6oul3">
         <dc:Bounds x="7692" y="2622" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="7666" y="2665" width="89" height="40" />
+          <dc:Bounds x="7666" y="2665" width="90" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1otxsj1_di" bpmnElement="Event_1otxsj1">
