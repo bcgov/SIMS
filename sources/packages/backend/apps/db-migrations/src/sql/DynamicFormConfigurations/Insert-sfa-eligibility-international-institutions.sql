@@ -9,10 +9,10 @@ INSERT INTO
   )
 VALUES
   (
-    'SFA eligibility international institutions',
+    'International for profit student financial aid eligibility train out provision​',
     'ptsfaeligibilityinternationalinstitutions',
     'Student appeal',
-    'Request to determine eligibility for SFA for international institutions.',
+    'A request to be eligible to receive student financial aid under the train out provision.',
     TRUE,
     TRUE
   );
