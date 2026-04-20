@@ -1,6 +1,9 @@
-import { DynamicFormConfiguration } from "@sims/sims-db";
 import { Role } from "../../../auth";
-import { FormSubmissionAuthRoles } from "./form-submission.authorization.models";
+import {
+  FormSubmissionAuthRoles,
+  FormSubmissionUserRoles,
+  FormSubmissionUserRolesAuth,
+} from "./form-submission.authorization.models";
 import { Injectable } from "@nestjs/common";
 import { DynamicFormConfigurationService } from "../..";
 
@@ -13,16 +16,12 @@ const FORMS_AUTHORIZATION_KEY_PREFIX = "forms";
  * Separator used in the authorization key to separate the different parts of the role.
  */
 const FORMS_AUTHORIZATION_KEY_SEPARATOR = ".";
-/**
- * Position of the authorization key in the role string when split by the separator.
- */
-const FORMS_AUTHORIZATION_KEY_POSITION = 1;
 
 /**
  * Service responsible for authorizing form submissions based on the user's roles
  * and the dynamic form configurations associated with the form submission.
  * The expected format of the role is `forms.{authorization-key}.{form-role}`.
- * Example: `forms.room-and-board-costs-appeal.view-form-submitted-data`
+ * Example: `forms.room-and-board-costs-appeal.view-form-submitted-data`.
  */
 @Injectable()
 export class FormSubmissionAuthorizationService {
@@ -30,53 +29,67 @@ export class FormSubmissionAuthorizationService {
     private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
   ) {}
 
+  /**
+   * Check if the user is authorized to perform an action on a form submission based on their roles and the dynamic form configurations associated with the form submission.
+   * Useful when a single authorization check is needed in the request content.
+   * If multiple authorization checks are needed, it's more efficient to use the `getFormsUserRoles` method.
+   * @param userRoles roles assigned to the user.
+   * @param formRole form role to check authorization for.
+   * @param dynamicFormConfigurationIDs list of dynamic form configuration IDs to check authorization for.
+   * @returns true if the user is authorized to perform the action on the specified form submission, false otherwise.
+   */
   isAuthorized(
     userRoles: Role[],
     formRole: FormSubmissionAuthRoles,
     dynamicFormConfigurationIDs: number[],
-    options?: { isAuthorizedToAtLeastOne?: boolean },
   ): boolean {
-    const authorizedFormIDs = this.getAuthorizedDynamicFormsIDs(
-      userRoles,
-      formRole,
-    );
-    if (options?.isAuthorizedToAtLeastOne) {
-      return dynamicFormConfigurationIDs.some((id) =>
-        authorizedFormIDs.includes(id),
-      );
-    }
-    return dynamicFormConfigurationIDs.every((id) =>
-      authorizedFormIDs.includes(id),
-    );
+    const formsUserRoles = this.getFormsUserRoles(userRoles);
+    return formsUserRoles.isAuthorized(formRole, dynamicFormConfigurationIDs);
   }
 
+  /**
+   * Get the list of dynamic form configuration IDs that the user is authorized to access for a specific form role.
+   * Useful when a single authorization check is needed in the request content.
+   * If multiple authorization checks are needed, it's more efficient to use the `getFormsUserRoles` method.
+   * @param userRoles roles assigned to the user.
+   * @param formRole form role to check authorization for.
+   * @returns list of dynamic form configuration IDs the user is authorized to access for the specified form role.
+   */
   getAuthorizedDynamicFormsIDs(
     userRoles: Role[],
     formRole: FormSubmissionAuthRoles,
   ): number[] {
-    return this.getAuthorizedDynamicForms(userRoles, formRole).map(
-      (form) => form.id,
-    );
+    const formsUserRoles = this.getFormsUserRoles(userRoles);
+    return formsUserRoles.authorizedDynamicFormsIDs(formRole);
   }
 
-  private getAuthorizedDynamicForms(
-    userRoles: Role[],
-    formRole: FormSubmissionAuthRoles,
-  ): DynamicFormConfiguration[] {
-    const formTypes = userRoles
-      .filter(
-        (role) =>
-          role.startsWith(FORMS_AUTHORIZATION_KEY_PREFIX) &&
-          role.endsWith(`${FORMS_AUTHORIZATION_KEY_SEPARATOR}${formRole}`),
+  /**
+   * Convert the user roles to the form submission user roles format, which maps each form role
+   * to the list of dynamic form configuration IDs that the user is authorized to access.
+   * Useful when multiple authorizations are needed in the same request content.
+   * @param userRoles roles assigned to the user.
+   * @returns mapped roles and their associated dynamic form configuration IDs.
+   */
+  getFormsUserRoles(userRoles: Role[]): FormSubmissionUserRolesAuth {
+    const formSubmissionUserRoles = {} as FormSubmissionUserRoles;
+    userRoles
+      .filter((role) =>
+        role.startsWith(
+          `${FORMS_AUTHORIZATION_KEY_PREFIX}${FORMS_AUTHORIZATION_KEY_SEPARATOR}`,
+        ),
       )
-      .map(
-        (role) =>
-          role.split(FORMS_AUTHORIZATION_KEY_SEPARATOR)[
-            FORMS_AUTHORIZATION_KEY_POSITION
-          ],
-      );
-    return this.dynamicFormConfigurationService.getFormsByAuthorizationKey(
-      formTypes,
-    );
+      .forEach((role) => {
+        // Expected format: `forms.{authorization-key}.{form-role}`.
+        const [, authorizationKey, formRole] = role.split(
+          FORMS_AUTHORIZATION_KEY_SEPARATOR,
+        );
+        // Get the form IDs associated with the authorization key and form role.
+        const allowedFormsIDs = this.dynamicFormConfigurationService
+          .getFormsByAuthorizationKey([authorizationKey])
+          .map((form) => form.id);
+        const formRoleEnum = formRole as FormSubmissionAuthRoles;
+        (formSubmissionUserRoles[formRoleEnum] ??= []).push(...allowedFormsIDs);
+      });
+    return new FormSubmissionUserRolesAuth(formSubmissionUserRoles);
   }
 }

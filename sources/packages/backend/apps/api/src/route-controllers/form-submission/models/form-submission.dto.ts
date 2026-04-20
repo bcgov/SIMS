@@ -139,7 +139,7 @@ export class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemBaseA
   /**
    * Indicates if the user has authorization to make a decision on this form item.
    */
-  hasAssessItemDecisionAuthorization: boolean;
+  canAssessItemDecision: boolean;
   /**
    * Most recent update date for this form submission item. This is used to determine if the item is outdated when
    * submitting a decision on it, to prevent overwriting a more recent decision.
@@ -164,7 +164,7 @@ export class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemBaseA
  * including the individual form items.
  */
 export class FormSubmissionMinistryAPIOutDTO extends FormSubmissionBaseAPIOutDTO {
-  hasAssessFinalDecisionAuthorization: boolean;
+  canAssessFinalDecision: boolean;
   submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
 }
 

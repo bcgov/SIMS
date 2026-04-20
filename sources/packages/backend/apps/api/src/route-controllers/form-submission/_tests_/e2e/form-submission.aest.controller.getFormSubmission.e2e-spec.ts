@@ -101,7 +101,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .expect(HttpStatus.OK)
       .expect(({ body }) =>
         expect(body).toStrictEqual({
-          hasAssessFinalDecisionAuthorization: false,
+          canAssessFinalDecision: false,
           id: formSubmission.id,
           applicationId: application.id,
           applicationNumber: application.applicationNumber,
@@ -110,7 +110,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
-              hasAssessItemDecisionAuthorization: true,
+              canAssessItemDecision: true,
               id: formSubmissionItemA.id,
               formType: formConfigs.studentAppealApplicationA.formType,
               formCategory: FormCategory.StudentAppeal,
@@ -140,7 +140,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
               ],
             },
             {
-              hasAssessItemDecisionAuthorization: true,
+              canAssessItemDecision: true,
               id: formSubmissionItemB.id,
               formType: formConfigs.studentAppealApplicationB.formType,
               formCategory: FormCategory.StudentAppeal,
@@ -196,14 +196,14 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .expect(HttpStatus.OK)
       .expect(({ body }) =>
         expect(body).toStrictEqual({
-          hasAssessFinalDecisionAuthorization: false,
+          canAssessFinalDecision: false,
           id: formSubmission.id,
           formCategory: FormCategory.StudentAppeal,
           status: FormSubmissionStatus.Pending,
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
-              hasAssessItemDecisionAuthorization: false,
+              canAssessItemDecision: false,
               id: formSubmissionItemA.id,
               formType: formConfigs.studentAppealA.formType,
               formCategory: FormCategory.StudentAppeal,
@@ -257,14 +257,14 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .expect(HttpStatus.OK)
       .expect(({ body }) => {
         expect(body).toStrictEqual({
-          hasAssessFinalDecisionAuthorization: false,
+          canAssessFinalDecision: false,
           id: formSubmission.id,
           formCategory: FormCategory.StudentAppeal,
           status: FormSubmissionStatus.Completed,
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
-              hasAssessItemDecisionAuthorization: false,
+              canAssessItemDecision: false,
               id: formSubmissionItemA.id,
               formType: formConfigs.studentAppealA.formType,
               formCategory: FormCategory.StudentAppeal,
@@ -324,14 +324,14 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .expect(HttpStatus.OK)
       .expect(({ body }) =>
         expect(body).toStrictEqual({
-          hasAssessFinalDecisionAuthorization: false,
+          canAssessFinalDecision: false,
           id: formSubmission.id,
           formCategory: FormCategory.StudentForm,
           status: FormSubmissionStatus.Completed,
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
-              hasAssessItemDecisionAuthorization: true,
+              canAssessItemDecision: true,
               id: formSubmissionItemA.id,
               formType: formConfigs.studentFormA.formType,
               formCategory: FormCategory.StudentForm,
@@ -418,7 +418,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .expect(HttpStatus.OK)
       .expect(({ body }) => {
         expect(body).toStrictEqual({
-          hasAssessFinalDecisionAuthorization: false,
+          canAssessFinalDecision: false,
           id: formSubmission.id,
           applicationId: application.id,
           applicationNumber: application.applicationNumber,
@@ -427,7 +427,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
-              hasAssessItemDecisionAuthorization: true,
+              canAssessItemDecision: true,
               id: formSubmissionItemB.id,
               formType: formConfigs.studentAppealApplicationB.formType,
               formCategory: FormCategory.StudentAppeal,

@@ -18,7 +18,7 @@
             <template
               v-if="
                 formSubmission.status !== FormSubmissionStatus.Pending ||
-                decision.hasAssessItemDecisionAuthorization
+                decision.canAssessItemDecision
               "
             >
               <h4 class="category-header-medium brand-gray-text">
@@ -41,11 +41,11 @@
                 :disabled="
                   readOnly ||
                   decision.saveDecisionInProgress ||
-                  !decision.hasAssessItemDecisionAuthorization
+                  !decision.canAssessItemDecision
                 "
               />
               <!-- Users without approval authorization do not need to see any information other than the note above. -->
-              <template v-if="decision.hasAssessItemDecisionAuthorization">
+              <template v-if="decision.canAssessItemDecision">
                 <v-row justify="space-between" class="mt-2 mb-1 mx-0">
                   <v-input
                     v-model="decision.decisionStatus"
@@ -203,7 +203,7 @@ import FormSubmissionApprovalHeader from "./FormSubmissionApprovalHeader.vue";
 
 type FormSubmission = Pick<
   FormSubmissionMinistryAPIOutDTO,
-  "id" | "formCategory" | "status" | "hasAssessFinalDecisionAuthorization"
+  "id" | "formCategory" | "status" | "canAssessFinalDecision"
 >;
 
 export default defineComponent({
@@ -263,7 +263,7 @@ export default defineComponent({
 
     const canShowDecisionDetails = computed(
       () =>
-        formSubmission.value.hasAssessFinalDecisionAuthorization ||
+        formSubmission.value.canAssessFinalDecision ||
         formSubmission.value.status !== FormSubmissionStatus.Pending,
     );
 
@@ -271,7 +271,7 @@ export default defineComponent({
       () =>
         !props.readOnly &&
         formSubmission.value.status === FormSubmissionStatus.Pending &&
-        formSubmission.value.hasAssessFinalDecisionAuthorization,
+        formSubmission.value.canAssessFinalDecision,
     );
 
     /**
@@ -290,8 +290,7 @@ export default defineComponent({
           id: submission.id,
           formCategory: submission.formCategory,
           status: submission.status,
-          hasAssessFinalDecisionAuthorization:
-            submission.hasAssessFinalDecisionAuthorization,
+          canAssessFinalDecision: submission.canAssessFinalDecision,
         };
         // Adapt the items to a UI model to render each item
         // and a internal modal to provide the approval.
@@ -358,8 +357,7 @@ export default defineComponent({
           ),
         }),
       );
-      decision.hasAssessItemDecisionAuthorization =
-        submissionItem.hasAssessItemDecisionAuthorization;
+      decision.canAssessItemDecision = submissionItem.canAssessItemDecision;
       return decision;
     };
 

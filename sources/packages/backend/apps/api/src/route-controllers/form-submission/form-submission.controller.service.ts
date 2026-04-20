@@ -13,6 +13,7 @@ import {
 import {
   FormSubmissionAPIOutDTO,
   FormSubmissionItemDecisionAPIOutDTO,
+  FormSubmissionItemDecisionMinistryAPIOutDTO,
   FormSubmissionItemMinistryAPIOutDTO,
   FormSubmissionMinistryAPIOutDTO,
 } from "./models/form-submission.dto";
@@ -89,15 +90,14 @@ export class FormSubmissionControllerService {
   ): FormSubmissionAPIOutDTO {
     let canViewFormSubmittedData: boolean | undefined = undefined;
     if (userRoles) {
-      const items = submission.formSubmissionItems.map(
+      const dynamicFormConfigurationIDs = submission.formSubmissionItems.map(
         (item) => item.dynamicFormConfiguration.id,
       );
       canViewFormSubmittedData =
         this.formSubmissionAuthorizationService.isAuthorized(
           userRoles,
           FormSubmissionAuthRoles.ViewFormSubmittedData,
-          items,
-          { isAuthorizedToAtLeastOne: true },
+          dynamicFormConfigurationIDs,
         );
     }
     return {
@@ -140,40 +140,25 @@ export class FormSubmissionControllerService {
     submissionItem: FormSubmissionItem,
     userRoles?: Role[],
   ): FormSubmissionItemDecisionAPIOutDTO {
-    // TODO: simplify this logic to support the different clients in a more straightforward way.
-    // Define the authorization to assess item decisions based on the form item configuration and user roles.
-    const hasAssessItemDecisionAuthorization =
+    const canAssessItemDecision =
       userRoles &&
       this.formSubmissionAuthorizationService.isAuthorized(
         userRoles,
         FormSubmissionAuthRoles.AssessItemDecision,
         [submissionItem.dynamicFormConfiguration.id],
       );
-    // User has a role to see the form submitted data and the form submission is not pending,
-    // then they can see the approval notes.
-    const canViewApprovalNotes =
-      userRoles &&
-      this.formSubmissionAuthorizationService.isAuthorized(
-        userRoles,
-        FormSubmissionAuthRoles.ViewFormSubmittedData,
-        [submissionItem.dynamicFormConfiguration.id],
-      ) &&
-      submissionStatus !== FormSubmissionStatus.Pending;
-    // Determine if decision details should be restricted based on the form submission status.
-    const shouldRestrictDecisionDetails =
-      !hasAssessItemDecisionAuthorization &&
-      submissionStatus === FormSubmissionStatus.Pending;
-    // Define the status.
-    let decisionStatus = shouldRestrictDecisionDetails
-      ? FormSubmissionDecisionStatus.Pending
-      : submissionItem.currentDecision?.decisionStatus;
-    decisionStatus = decisionStatus ?? FormSubmissionDecisionStatus.Pending;
+    if (
+      !submissionItem.currentDecision ||
+      (submissionStatus === FormSubmissionStatus.Pending &&
+        !canAssessItemDecision)
+    ) {
+      // When there is no decision or the submission is pending, the decision status should be pending for all users, regardless of their authorization to view the decision details.
+      return {
+        decisionStatus: FormSubmissionDecisionStatus.Pending,
+      };
+    }
     return {
-      decisionStatus,
-      decisionNoteDescription:
-        shouldRestrictDecisionDetails || !canViewApprovalNotes
-          ? undefined
-          : submissionItem.currentDecision?.decisionNote.description,
+      decisionStatus: submissionItem.currentDecision.decisionStatus,
     };
   }
 
@@ -216,29 +201,25 @@ export class FormSubmissionControllerService {
     const dynamicFormsIDs = submission.formSubmissionItems.map(
       (item) => item.dynamicFormConfiguration.id,
     );
-    const hasAssessFinalDecisionAuthorization =
-      this.formSubmissionAuthorizationService.isAuthorized(
-        userRoles,
-        FormSubmissionAuthRoles.AssessFinalDecision,
-        dynamicFormsIDs,
-      );
+    const formsUserRoles =
+      this.formSubmissionAuthorizationService.getFormsUserRoles(userRoles);
+    const canAssessFinalDecision = formsUserRoles.isAuthorized(
+      FormSubmissionAuthRoles.AssessFinalDecision,
+      dynamicFormsIDs,
+    );
 
     const submissionItems: FormSubmissionItemMinistryAPIOutDTO[] = [];
     for (const formSubmissionItem of submission.formSubmissionItems) {
-      const hasViewDecisionHistory =
-        this.formSubmissionAuthorizationService.isAuthorized(
-          userRoles,
-          FormSubmissionAuthRoles.ViewDecisionHistory,
-          [formSubmissionItem.dynamicFormConfiguration.id],
-        );
-      const hasAssessItemDecisionAuthorization =
-        this.formSubmissionAuthorizationService.isAuthorized(
-          userRoles,
-          FormSubmissionAuthRoles.AssessItemDecision,
-          [formSubmissionItem.dynamicFormConfiguration.id],
-        );
+      const canViewDecisionHistory = formsUserRoles.isAuthorized(
+        FormSubmissionAuthRoles.ViewDecisionHistory,
+        [formSubmissionItem.dynamicFormConfiguration.id],
+      );
+      const canAssessItemDecision = formsUserRoles.isAuthorized(
+        FormSubmissionAuthRoles.AssessItemDecision,
+        [formSubmissionItem.dynamicFormConfiguration.id],
+      );
       const submissionItemDTO: FormSubmissionItemMinistryAPIOutDTO = {
-        hasAssessItemDecisionAuthorization,
+        canAssessItemDecision,
         id: formSubmissionItem.id,
         formType: formSubmissionItem.dynamicFormConfiguration.formType,
         formCategory: formSubmissionItem.dynamicFormConfiguration.formCategory,
@@ -248,27 +229,12 @@ export class FormSubmissionControllerService {
         formDefinitionName:
           formSubmissionItem.dynamicFormConfiguration.formDefinitionName,
         updatedAt: formSubmissionItem.updatedAt,
-        currentDecision:
-          formSubmissionItem.currentDecision &&
-          hasAssessItemDecisionAuthorization
-            ? {
-                id: formSubmissionItem.currentDecision.id,
-                decisionStatus:
-                  formSubmissionItem.currentDecision?.decisionStatus ??
-                  FormSubmissionDecisionStatus.Pending,
-                decisionDate: formSubmissionItem.currentDecision.decisionDate,
-                decisionBy: getUserFullName(
-                  formSubmissionItem.currentDecision.decisionBy,
-                ),
-                decisionNoteDescription:
-                  formSubmissionItem.currentDecision.decisionNote.description,
-              }
-            : this.mapCurrentDecision(
-                submission.submissionStatus,
-                formSubmissionItem,
-                userRoles,
-              ),
-        previousDecisions: hasViewDecisionHistory
+        currentDecision: this.mapCurrentDecisionExtended(
+          submission.submissionStatus,
+          formSubmissionItem,
+          canAssessItemDecision,
+        ),
+        previousDecisions: canViewDecisionHistory
           ? formSubmissionItem.decisions
               .filter(
                 (decision) =>
@@ -286,7 +252,7 @@ export class FormSubmissionControllerService {
       submissionItems.push(submissionItemDTO);
     }
     return {
-      hasAssessFinalDecisionAuthorization,
+      canAssessFinalDecision,
       id: submission.id,
       formCategory: submission.formCategory,
       status: submission.submissionStatus,
@@ -294,6 +260,55 @@ export class FormSubmissionControllerService {
       applicationNumber: submission.application?.applicationNumber,
       submittedDate: submission.submittedDate,
       submissionItems,
+    };
+  }
+
+  /**
+   * Map the current decision for the Ministry users based on their authorization to view
+   * the decision details and the form submission status.
+   * @param submissionStatus form submission status.
+   * @param submissionItem form submission item to determine the decision details to be returned.
+   * @param canAssessItemDecision indicates if the user has authorization to assess the item decision.
+   * @returns the decision that must be exposed to Ministry users based on their authorization and
+   * the form submission status.
+   */
+  mapCurrentDecisionExtended(
+    submissionStatus: FormSubmissionStatus,
+    submissionItem: FormSubmissionItem,
+    canAssessItemDecision: boolean,
+  ): FormSubmissionItemDecisionMinistryAPIOutDTO {
+    if (!submissionItem.currentDecision) {
+      // Default when no decision has been made yet.
+      return {
+        decisionStatus: FormSubmissionDecisionStatus.Pending,
+      };
+    }
+    if (canAssessItemDecision) {
+      // Return decision details entirely for users that can assess the item decision.
+      return {
+        id: submissionItem.currentDecision.id,
+        decisionStatus:
+          submissionItem.currentDecision?.decisionStatus ??
+          FormSubmissionDecisionStatus.Pending,
+        decisionDate: submissionItem.currentDecision.decisionDate,
+        decisionBy: getUserFullName(submissionItem.currentDecision.decisionBy),
+        decisionNoteDescription:
+          submissionItem.currentDecision.decisionNote.description,
+      };
+    }
+    // When user does not have access to see the decision details,
+    // return the decision based on the form submission status.
+    if (submissionStatus !== FormSubmissionStatus.Pending) {
+      // Status and notes should be available to all Ministry users when a final decision was made.
+      return {
+        decisionStatus: submissionItem.currentDecision.decisionStatus,
+        decisionNoteDescription:
+          submissionItem.currentDecision.decisionNote.description,
+      };
+    }
+    // Default when the user has no access to see in-progress decisions.
+    return {
+      decisionStatus: FormSubmissionDecisionStatus.Pending,
     };
   }
 }
