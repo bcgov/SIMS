@@ -10,7 +10,7 @@ INSERT INTO
 VALUES
   (
     'International for profit student financial aid eligibility train out provision​',
-    'ptsfaeligibilityinternationalinstitutions',
+    'ptsfaeligibilityinternationalinstitutionsappeal',
     'Student appeal',
     'A request to be eligible to receive student financial aid under the train out provision.',
     TRUE,
