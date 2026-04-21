@@ -13,7 +13,7 @@ import {
   FormSubmissionPendingPaginationOptions,
   PaginatedResults,
 } from "../../utilities";
-import { Role } from "apps/api/src/auth";
+import { Role } from "../../auth";
 import {
   FormSubmissionAuthorizationService,
   FormSubmissionAuthRoles,

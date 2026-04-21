@@ -261,12 +261,6 @@ export default defineComponent({
       value: decisionStatus,
     }));
 
-    const canShowDecisionDetails = computed(
-      () =>
-        formSubmission.value.canAssessFinalDecision ||
-        formSubmission.value.status !== FormSubmissionStatus.Pending,
-    );
-
     const canSubmitFinalDecision = computed(
       () =>
         !props.readOnly &&
@@ -541,7 +535,6 @@ export default defineComponent({
     });
 
     return {
-      canShowDecisionDetails,
       canSubmitFinalDecision,
       decisionStatusOptions,
       outdatedDecisionModal,

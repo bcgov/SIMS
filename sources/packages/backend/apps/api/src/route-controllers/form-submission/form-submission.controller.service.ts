@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import {
   FormSubmissionAuthRoles,
   FormSubmissionService,
@@ -177,18 +181,13 @@ export class FormSubmissionControllerService {
     userRoles: Role[],
     itemId?: number,
   ): Promise<FormSubmissionMinistryAPIOutDTO> {
-    const formsUserRoles =
-      this.formSubmissionAuthorizationService.getFormsUserRoles(userRoles);
-    const authorizedDynamicFormsIDs =
-      formsUserRoles.getAuthorizedDynamicFormsIDs(
-        FormSubmissionAuthRoles.ViewFormSubmittedData,
-      );
+    // Retrieve all the form submission items to be able correctly defined the value of
+    // the canAssessFinalDecision property based on the form types included in the submission.
     const [submission] = await this.formSubmissionService.getFormSubmissions(
       { formSubmissionId, itemId },
       {
         includeDecisionHistory: true,
         loadSubmittedData: true,
-        dynamicFormsIDs: authorizedDynamicFormsIDs,
       },
     );
     if (!submission) {
@@ -201,15 +200,17 @@ export class FormSubmissionControllerService {
         `Form submission with ID ${formSubmissionId} not found.`,
       );
     }
-    const dynamicFormsIDs = submission.formSubmissionItems.map(
-      (item) => item.dynamicFormConfiguration.id,
-    );
-    const canAssessFinalDecision = formsUserRoles.isAuthorized(
-      FormSubmissionAuthRoles.AssessFinalDecision,
-      dynamicFormsIDs,
-    );
+    const formsUserRoles =
+      this.formSubmissionAuthorizationService.getFormsUserRoles(userRoles);
     const submissionItems: FormSubmissionItemMinistryAPIOutDTO[] = [];
     for (const formSubmissionItem of submission.formSubmissionItems) {
+      const canViewFormSubmittedData = formsUserRoles.isAuthorized(
+        FormSubmissionAuthRoles.ViewFormSubmittedData,
+        [formSubmissionItem.dynamicFormConfiguration.id],
+      );
+      if (!canViewFormSubmittedData) {
+        continue;
+      }
       const canViewDecisionHistory = formsUserRoles.isAuthorized(
         FormSubmissionAuthRoles.ViewDecisionHistory,
         [formSubmissionItem.dynamicFormConfiguration.id],
@@ -251,6 +252,18 @@ export class FormSubmissionControllerService {
       };
       submissionItems.push(submissionItemDTO);
     }
+    if (!submissionItems.length) {
+      throw new ForbiddenException(
+        `The user does not have access to any form submission items for submission ID ${formSubmissionId}.`,
+      );
+    }
+    const dynamicFormsIDs = submission.formSubmissionItems.map(
+      (item) => item.dynamicFormConfiguration.id,
+    );
+    const canAssessFinalDecision = formsUserRoles.isAuthorized(
+      FormSubmissionAuthRoles.AssessFinalDecision,
+      dynamicFormsIDs,
+    );
     return {
       canAssessFinalDecision,
       id: submission.id,
