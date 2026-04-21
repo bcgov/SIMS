@@ -254,23 +254,6 @@
                   "requireDecimal": true
                 },
                 {
-                  "label": "HTML",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
-                  "content": "Reason for Significant Decrease in Gross Income",
-                  "refreshOnChange": false,
-                  "key": "html4",
-                  "type": "htmlelement",
-                  "input": false,
-                  "tableView": false,
-                  "hideLabel": true,
-                  "tag": "p"
-                },
-                {
                   "label": "Select the reason that best describes the decrease in your parent’s gross income:",
                   "optionsLabelPosition": "right",
                   "inline": false,
