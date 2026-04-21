@@ -84,7 +84,7 @@ export class FormSubmissionService {
     const dynamicFormsIDs =
       this.formSubmissionAuthorizationService.getAuthorizedDynamicFormsIDs(
         userRoles,
-        FormSubmissionAuthRoles.AssessItemDecision,
+        FormSubmissionAuthRoles.ViewFormSubmittedData,
       );
     if (!dynamicFormsIDs.length) {
       // If no forms are authorized, refrain from checking the database.
