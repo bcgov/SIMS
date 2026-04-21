@@ -367,6 +367,11 @@ export class FormSubmissionApprovalService {
       : FormSubmissionStatus.Completed;
   }
 
+  /**
+   * Check final decision authorization based on the user roles and the form submission items to be assessed.
+   * @param formSubmissionItems form submission items to be assessed for the final decision.
+   * @param userRoles roles of the user performing the action.
+   */
   private checkAuthorizationToAssessFinalDecision(
     formSubmissionItems: FormSubmissionItem[],
     userRoles: Role[],
@@ -387,6 +392,11 @@ export class FormSubmissionApprovalService {
     }
   }
 
+  /**
+   * Check item decision authorization based on the user roles and the form submission item to be assessed.
+   * @param dynamicFormConfigurationID ID of the dynamic form configuration to be assessed.
+   * @param userRoles roles of the user performing the action.
+   */
   private checkAuthorizationToAssessItemDecision(
     dynamicFormConfigurationID: number,
     userRoles: Role[],

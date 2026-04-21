@@ -36,10 +36,9 @@ export class FormSubmissionControllerService {
    * submission belongs to the student and throw a not found HTTP error if it does not.
    * - `locationIds` restrict forms with an application scope to the provided locations. Used for institutions to have access
    * only to the form submissions related to the locations they have access to.
-   * - `userRoles` when provided, it will be used to determine the access to the decision details
-   * that the consumer has based on their roles.
    * - `loadSubmittedData` includes the submitted data of each form item. Students should have access to their submitted data,
    * but institution users should not have access to this information.
+   * - `userRoles` when provided, it will be used to determine the access to the forms details that the consumer has based on their roles.
    * @returns form submission details including individual form items and their details.
    * @throws NotFoundException when the formSubmissionId is provided but no record is returned.
    */
@@ -59,7 +58,7 @@ export class FormSubmissionControllerService {
         this.formSubmissionAuthorizationService.getFormsUserRoles(
           options.userRoles,
         );
-      dynamicFormsIDs = formsUserRoles.authorizedDynamicFormsIDs(
+      dynamicFormsIDs = formsUserRoles.getAuthorizedDynamicFormsIDs(
         FormSubmissionAuthRoles.ViewFormHistoryList,
       );
     }
@@ -85,7 +84,8 @@ export class FormSubmissionControllerService {
    * Convert a form submission record to the API output format,
    * including the individual form items and their details.
    * @param submission form submission record to be converted.
-   * @param formsUserRoles roles of the user to determine access to decision details.
+   * @param formsUserRoles when provided, it will be used to determine the access to the forms details that
+   * the consumer has based on their roles.
    * @returns form submission details including individual form items and their details in the API output format.
    */
   private mapSubmissionsToAPIOutDTO(
@@ -136,7 +136,8 @@ export class FormSubmissionControllerService {
    * and for Ministry users with limited access to the decision details.
    * @param submissionStatus form submission status.
    * @param submissionItem form submission to determine the decision details to be returned.
-   * @param formsUserRoles roles of the user to determine access to decision details.
+   * @param formsUserRoles when provided, it will be used to determine the access to the forms details that
+   * the consumer has based on their roles.
    * @returns the decision that must be exposed the consumer.
    */
   mapCurrentDecision(
@@ -153,7 +154,7 @@ export class FormSubmissionControllerService {
       (submissionStatus === FormSubmissionStatus.Pending &&
         !canAssessItemDecision)
     ) {
-      // When there is no decision or the submission is pending, the decision status should be pending for all users, regardless of their authorization to view the decision details.
+      // When there is no decision or the submission is pending and the user has no permission to assess the item decision, return 'Pending'.
       return {
         decisionStatus: FormSubmissionDecisionStatus.Pending,
       };
@@ -176,9 +177,10 @@ export class FormSubmissionControllerService {
     userRoles: Role[],
     itemId?: number,
   ): Promise<FormSubmissionMinistryAPIOutDTO> {
+    const formsUserRoles =
+      this.formSubmissionAuthorizationService.getFormsUserRoles(userRoles);
     const authorizedDynamicFormsIDs =
-      this.formSubmissionAuthorizationService.getAuthorizedDynamicFormsIDs(
-        userRoles,
+      formsUserRoles.getAuthorizedDynamicFormsIDs(
         FormSubmissionAuthRoles.ViewFormSubmittedData,
       );
     const [submission] = await this.formSubmissionService.getFormSubmissions(
@@ -202,13 +204,10 @@ export class FormSubmissionControllerService {
     const dynamicFormsIDs = submission.formSubmissionItems.map(
       (item) => item.dynamicFormConfiguration.id,
     );
-    const formsUserRoles =
-      this.formSubmissionAuthorizationService.getFormsUserRoles(userRoles);
     const canAssessFinalDecision = formsUserRoles.isAuthorized(
       FormSubmissionAuthRoles.AssessFinalDecision,
       dynamicFormsIDs,
     );
-
     const submissionItems: FormSubmissionItemMinistryAPIOutDTO[] = [];
     for (const formSubmissionItem of submission.formSubmissionItems) {
       const canViewDecisionHistory = formsUserRoles.isAuthorized(
@@ -307,7 +306,7 @@ export class FormSubmissionControllerService {
           submissionItem.currentDecision.decisionNote.description,
       };
     }
-    // Default when the user has no access to see in-progress decisions.
+    // Default when the user has no access to see non-completed submissions.
     return {
       decisionStatus: FormSubmissionDecisionStatus.Pending,
     };

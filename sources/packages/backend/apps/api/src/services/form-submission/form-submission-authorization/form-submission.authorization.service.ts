@@ -31,6 +31,7 @@ export class FormSubmissionAuthorizationService {
 
   /**
    * Check if the user is authorized to perform an action on a form submission based on their roles.
+   * If multiple checks are needed for the same user roles context, it is recommended to use `getFormsUserRoles`.
    * @param userRoles roles assigned to the user.
    * @param formRole form role to check authorization for.
    * @param dynamicFormConfigurationIDs list of dynamic form configuration IDs to check authorization for.
@@ -58,6 +59,7 @@ export class FormSubmissionAuthorizationService {
   /**
    * Get the list of dynamic form configuration IDs that the user is authorized to access for a specific form role.
    * Useful for database queries to filter the content based on the user authorizations.
+   * If multiple checks are needed for the same user roles context, it is recommended to use `getFormsUserRoles`.
    * @param userRoles roles assigned to the user.
    * @param formRole form role to check authorization for.
    * @returns list of dynamic form configuration IDs the user is authorized to access for the specified form role.
@@ -67,7 +69,7 @@ export class FormSubmissionAuthorizationService {
     formRole: FormSubmissionAuthRoles,
   ): number[] {
     const formsUserRoles = this.getFormsUserRoles(userRoles);
-    return formsUserRoles.authorizedDynamicFormsIDs(formRole);
+    return formsUserRoles.getAuthorizedDynamicFormsIDs(formRole);
   }
 
   /**

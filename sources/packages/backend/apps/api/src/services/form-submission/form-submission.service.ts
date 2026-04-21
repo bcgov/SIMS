@@ -212,7 +212,12 @@ export class FormSubmissionService {
       dynamicFormsIDs?: number[];
     },
   ): Promise<FormSubmission[]> {
-    const formSubmissions = await this.formSubmissionRepo.find({
+    if (queryOptions?.dynamicFormsIDs?.length === 0) {
+      // If dynamicFormsIDs is provided but empty, it means no forms are authorized,
+      // so refrain from checking the database.
+      return [];
+    }
+    return this.formSubmissionRepo.find({
       select: {
         id: true,
         submissionStatus: true,
@@ -289,6 +294,5 @@ export class FormSubmissionService {
         },
       },
     });
-    return formSubmissions;
   }
 }

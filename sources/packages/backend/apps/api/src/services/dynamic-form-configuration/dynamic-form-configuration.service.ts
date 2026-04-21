@@ -113,6 +113,11 @@ export class DynamicFormConfigurationService {
     );
   }
 
+  /**
+   * Get the form configurations that are associated with any of the provided authorization keys.
+   * @param authorizationKeys authorization keys.
+   * @returns dynamic form configurations for the requested authorization keys.
+   */
   getFormsByAuthorizationKey(
     authorizationKeys: string[],
   ): DynamicFormConfiguration[] {

@@ -1,8 +1,35 @@
+/**
+ * Form submissions roles.
+ */
 export enum FormSubmissionAuthRoles {
+  /**
+   * View the form submitted data, which includes the form items and their details.
+   */
   ViewFormSubmittedData = "view-form-submitted-data",
+  /**
+   * View the history of form submissions, when visualized in the list format,
+   * which provides a summary of each submission, and limited data.
+   */
   ViewFormHistoryList = "view-form-history-list",
+  /**
+   * Assess the decision for a specific form item.
+   * Allow a Ministry user to save decision for a individual form item.
+   * The user must also have 'view-form-submitted-data' authorization to see the
+   * form item details when making the decision.
+   */
   AssessItemDecision = "assess-item-decision",
+  /**
+   * Assess the final decision for a form submission.
+   * Allow a Ministry user to save the final decision for the entire form submission, which may include multiple form items.
+   * The user must also have 'view-form-submitted-data' authorization to see the form item details when making the decision.
+   * The user must have the authorization for all forms that are part of the submission.
+   */
   AssessFinalDecision = "assess-final-decision",
+  /**
+   * View the history of decisions made for a form submission.
+   * When multiple decisions are made for the same form submission, this roles allow the user to see the history of decisions,
+   * including the past decisions and the current decision.
+   */
   ViewDecisionHistory = "view-decision-history",
 }
 
@@ -37,7 +64,7 @@ export class FormSubmissionUserRolesAuth {
     dynamicFormConfigurationIDs: number[],
     options?: { atLeastOneAuthorized?: boolean },
   ): boolean {
-    const authorizedFormIDs = this.authorizedDynamicFormsIDs(formRole);
+    const authorizedFormIDs = this.getAuthorizedDynamicFormsIDs(formRole);
     if (options?.atLeastOneAuthorized) {
       return dynamicFormConfigurationIDs.some((id) =>
         authorizedFormIDs.includes(id),
@@ -54,7 +81,7 @@ export class FormSubmissionUserRolesAuth {
    * @param formRole form role to check authorization for.
    * @returns list of dynamic form configuration IDs the user is authorized to access for the specified form role.
    */
-  authorizedDynamicFormsIDs(formRole: FormSubmissionAuthRoles): number[] {
+  getAuthorizedDynamicFormsIDs(formRole: FormSubmissionAuthRoles): number[] {
     return this.formSubmissionUserRoles[formRole] ?? [];
   }
 }

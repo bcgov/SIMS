@@ -2,7 +2,7 @@ import { UserPasswordCredential } from "@sims/utilities/config";
 import { AuthorizedParties, IUserToken, Role } from "../../auth";
 import { getCachedToken, mockJWTToken } from "./token-helpers";
 import { TestingModule } from "@nestjs/testing";
-import { FormSubmissionAuthRoles } from "apps/api/src/services";
+import { FormSubmissionAuthRoles } from "../../services";
 import { DynamicFormConfiguration } from "@sims/sims-db";
 
 /**
