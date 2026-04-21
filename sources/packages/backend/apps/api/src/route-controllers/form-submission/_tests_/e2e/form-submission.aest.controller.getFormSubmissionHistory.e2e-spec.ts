@@ -48,7 +48,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
     ]);
   });
 
-  it("Should get the form submission history including student appeals and student forms in pending statuses when the Ministry user does not have authorization.", async () => {
+  it("Should get the form submission history including student appeals and student forms in pending statuses when the Ministry user does not have approval authorization.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const application = await saveFakeApplication(db.dataSource, {
@@ -255,7 +255,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
       );
   });
 
-  it("Should get a pending form submission history with its decision statuses when the Ministry user has authorization.", async () => {
+  it("Should get a pending form submission history with its decision statuses when the Ministry user has approval authorization.", async () => {
     // Arrange
     const pendingStudentAppeal = await saveFakeFormSubmissionFromInputTestData(
       db,

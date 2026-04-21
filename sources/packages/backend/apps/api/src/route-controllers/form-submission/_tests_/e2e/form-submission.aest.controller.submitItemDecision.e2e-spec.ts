@@ -7,7 +7,6 @@ import {
   createTestingAppModule,
   getAESTToken,
   getAESTUser,
-  removeJWTUserRoles,
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
@@ -34,7 +33,6 @@ import {
   FormSubmissionAuthRoles,
 } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
-import { Role } from "../../../../auth/roles.enum";
 
 describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
   let app: INestApplication;
@@ -395,7 +393,6 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
     };
     const endpoint = `/aest/form-submission/items/${formSubmissionItemA.id}/decision`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    await removeJWTUserRoles(appModule, [Role.StudentApproveDeclineForms]);
 
     // Act/Assert
     await request(app.getHttpServer())
