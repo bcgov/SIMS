@@ -558,6 +558,7 @@ export interface CalculatedAssessmentModel {
     limitAwardCSGDThresholdIncome: number;
     limitAwardCSGPThresholdIncome: number;
     limitAwardCSLPThresholdIncome: number;
+    limitAwardSBSDThresholdIncome: number;
   };
   // DMN Part-time Program Year Maximums
   dmnPartTimeProgramYearMaximums?: {

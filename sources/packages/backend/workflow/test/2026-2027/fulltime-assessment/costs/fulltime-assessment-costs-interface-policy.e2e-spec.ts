@@ -151,7 +151,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
     expect(
       calculatedAssessment.variables
         .calculatedDataInterfaceTransportationAmount,
-    ).toBe(13 * 16);
+    ).toBe(23 * 16);
 
     // If no additional transportation costs are provided, this should be 0.
     expect(

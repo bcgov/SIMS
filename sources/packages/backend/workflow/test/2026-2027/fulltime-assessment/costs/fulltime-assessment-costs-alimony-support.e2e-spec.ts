@@ -51,14 +51,14 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
           assessmentConsolidatedData,
         );
       // Assert
-      // Maximum alimony and child support costs are $221 / week and the offering is 16 weeks.
-      // So the maximum is $3536.
+      // Maximum alimony and child support costs are $226 / week and the offering is 16 weeks.
+      // So the maximum is $3616.
       expect(
         calculatedAssessment.variables.calculatedDataChildSpousalSupport,
-      ).toBe(3500);
+      ).toBe(3616);
       expect(
         calculatedAssessment.variables.calculatedDataTotalChildSpousalSupport,
-      ).toBe(3500);
+      ).toBe(3616);
     },
   );
 
@@ -79,14 +79,14 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
           assessmentConsolidatedData,
         );
       // Assert
-      // Maximum alimony and child support costs are $221 / week and the offering is 16 weeks.
-      // So the maximum is $3536.
+      // Maximum alimony and child support costs are $226 / week and the offering is 16 weeks.
+      // So the maximum is $3616.
       expect(
         calculatedAssessment.variables.calculatedDataChildSpousalSupport,
-      ).toBe(3536);
+      ).toBe(3616);
       expect(
         calculatedAssessment.variables.calculatedDataTotalChildSpousalSupport,
-      ).toBe(3536);
+      ).toBe(3616);
     },
   );
 
@@ -115,8 +115,8 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
           assessmentConsolidatedData,
         );
       // Assert
-      // Maximum alimony and child support costs are $221 / week and the offering is 16 weeks.
-      // So the maximum is $3536.
+      // Maximum alimony and child support costs are $226 / week and the offering is 16 weeks.
+      // So the maximum is $3616.
       expect(
         calculatedAssessment.variables.calculatedDataChildSpousalSupport,
       ).toBe(3500);
@@ -150,8 +150,8 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
           assessmentConsolidatedData,
         );
       // Assert
-      // Maximum alimony and child support costs are $221 / week and the offering is 16 weeks.
-      // So the maximum is $3536.
+      // Maximum alimony and child support costs are $226 / week and the offering is 16 weeks.
+      // So the maximum is $3616.
       expect(
         calculatedAssessment.variables.calculatedDataChildSpousalSupport,
       ).toBe(3000);
@@ -187,8 +187,8 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
           assessmentConsolidatedData,
         );
       // Assert
-      // Maximum alimony and child support costs are $221 / week and the offering is 16 weeks.
-      // So the maximum is $3536.
+      // Maximum alimony and child support costs are $226 / week and the offering is 16 weeks.
+      // So the maximum is $3616.
       expect(
         calculatedAssessment.variables.calculatedDataChildSpousalSupport,
       ).toBe(3000);
@@ -223,14 +223,14 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
           assessmentConsolidatedData,
         );
       // Assert
-      // Maximum alimony and child support costs are $221 / week and the offering is 16 weeks.
-      // So the maximum is $3536.
+      // Maximum alimony and child support costs are $226 / week and the offering is 16 weeks.
+      // So the maximum is $3616.
       expect(
         calculatedAssessment.variables.calculatedDataChildSpousalSupport,
-      ).toBe(3536);
+      ).toBe(3616);
       expect(
         calculatedAssessment.variables.calculatedDataTotalChildSpousalSupport,
-      ).toBe(3536);
+      ).toBe(3616);
     },
   );
 
