@@ -5969,27 +5969,28 @@
   </decision>
   <decision id="dmnFullTimeInstitutionAwardAppealsEligibility" name="dmnFullTimeInstitutionAwardAppealsEligibility">
     <decisionTable id="DecisionTable_02ex5zn" hitPolicy="FIRST">
-      <input id="InputClause_1ajuv1c">
+      <input id="InputClause_1ajuv1c" label="institutionCountry">
         <inputExpression id="LiteralExpression_0ktblkq" typeRef="string">
           <text>institutionCountry</text>
         </inputExpression>
       </input>
-      <input id="InputClause_0ii9u3d">
+      <input id="InputClause_0ii9u3d" label="institutionProvince">
         <inputExpression id="LiteralExpression_0hi1grt" typeRef="string">
           <text>institutionProvince</text>
         </inputExpression>
       </input>
-      <input id="InputClause_0m1v9dv">
+      <input id="InputClause_0m1v9dv" label="institutionClassification">
         <inputExpression id="LiteralExpression_0hlk0zg" typeRef="string">
           <text>institutionClassification</text>
         </inputExpression>
       </input>
-      <input id="InputClause_16nt2d7">
+      <input id="InputClause_16nt2d7" label="institutionOrganizationStatus">
         <inputExpression id="LiteralExpression_0zd6fwt" typeRef="string">
           <text>institutionOrganizationStatus</text>
         </inputExpression>
       </input>
-      <output id="OutputClause_1gc5mh1" name="isAccessibilityGrantEligibilityAppealEligible" typeRef="boolean" />
+      <output id="OutputClause_1gc5mh1" label="isAccessibilityGrantEligibilityAppealEligible" name="isAccessibilityGrantEligibilityAppealEligible" typeRef="boolean" />
+      <output id="OutputClause_1qhtxma" name="isSFAEligibilityAppealEligible" typeRef="boolean" />
       <rule id="DecisionRule_162dc01">
         <inputEntry id="UnaryTests_0y5b0py">
           <text>"CA"</text>
@@ -6004,6 +6005,9 @@
           <text></text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0s147zg">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0890kqv">
           <text>false</text>
         </outputEntry>
       </rule>
@@ -6023,6 +6027,9 @@
         <outputEntry id="LiteralExpression_07qz2du">
           <text>true</text>
         </outputEntry>
+        <outputEntry id="LiteralExpression_0zuwi35">
+          <text>false</text>
+        </outputEntry>
       </rule>
       <rule id="DecisionRule_0fk3qn8">
         <inputEntry id="UnaryTests_0acraie">
@@ -6039,6 +6046,9 @@
         </inputEntry>
         <outputEntry id="LiteralExpression_0g15x5b">
           <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0t0xctz">
+          <text>false</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_069ie16">
@@ -6057,6 +6067,9 @@
         <outputEntry id="LiteralExpression_1dypqwo">
           <text>true</text>
         </outputEntry>
+        <outputEntry id="LiteralExpression_198t4jj">
+          <text>false</text>
+        </outputEntry>
       </rule>
       <rule id="DecisionRule_0m42rgf">
         <inputEntry id="UnaryTests_11zkbc7">
@@ -6072,6 +6085,9 @@
           <text>"notForProfit"</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1gb0dfx">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0zsbewj">
           <text>false</text>
         </outputEntry>
       </rule>
@@ -6091,6 +6107,9 @@
         <outputEntry id="LiteralExpression_0kp61i1">
           <text>false</text>
         </outputEntry>
+        <outputEntry id="LiteralExpression_0xhkc48">
+          <text>false</text>
+        </outputEntry>
       </rule>
       <rule id="DecisionRule_1r3duve">
         <inputEntry id="UnaryTests_1dgaz8u">
@@ -6107,6 +6126,9 @@
         </inputEntry>
         <outputEntry id="LiteralExpression_09ooe73">
           <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_182g9t4">
+          <text>false</text>
         </outputEntry>
       </rule>
       <rule id="DecisionRule_1u86dou">
@@ -6125,6 +6147,9 @@
         <outputEntry id="LiteralExpression_0xx20ro">
           <text>true</text>
         </outputEntry>
+        <outputEntry id="LiteralExpression_1rdzh6r">
+          <text>false</text>
+        </outputEntry>
       </rule>
       <rule id="DecisionRule_037mdgg">
         <inputEntry id="UnaryTests_1gbvnfc">
@@ -6140,6 +6165,9 @@
           <text>"profit"</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0e0zj5d">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_15hypeu">
           <text>false</text>
         </outputEntry>
       </rule>
