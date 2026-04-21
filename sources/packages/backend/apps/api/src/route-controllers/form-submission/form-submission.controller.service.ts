@@ -3,6 +3,7 @@ import {
   FormSubmissionAuthRoles,
   FormSubmissionService,
   FormSubmissionAuthorizationService,
+  FormSubmissionUserRolesAuth,
 } from "../../services";
 import {
   FormSubmission,
@@ -52,12 +53,15 @@ export class FormSubmissionControllerService {
     },
   ): Promise<FormSubmissionAPIOutDTO[]> {
     let dynamicFormsIDs: number[] | undefined = undefined;
+    let formsUserRoles: FormSubmissionUserRolesAuth | undefined = undefined;
     if (options?.userRoles) {
-      dynamicFormsIDs =
-        this.formSubmissionAuthorizationService.getAuthorizedDynamicFormsIDs(
+      formsUserRoles =
+        this.formSubmissionAuthorizationService.getFormsUserRoles(
           options.userRoles,
-          FormSubmissionAuthRoles.ViewFormHistoryList,
         );
+      dynamicFormsIDs = formsUserRoles.authorizedDynamicFormsIDs(
+        FormSubmissionAuthRoles.ViewFormHistoryList,
+      );
     }
     const submissions = await this.formSubmissionService.getFormSubmissions(
       { studentId, formSubmissionId: options?.formSubmissionId },
@@ -73,7 +77,7 @@ export class FormSubmissionControllerService {
       );
     }
     return submissions.map((submission) =>
-      this.mapSubmissionsToAPIOutDTO(submission, options?.userRoles),
+      this.mapSubmissionsToAPIOutDTO(submission, formsUserRoles),
     );
   }
 
@@ -81,24 +85,23 @@ export class FormSubmissionControllerService {
    * Convert a form submission record to the API output format,
    * including the individual form items and their details.
    * @param submission form submission record to be converted.
-   * @param userRoles roles of the user to determine access to decision details.
+   * @param formsUserRoles roles of the user to determine access to decision details.
    * @returns form submission details including individual form items and their details in the API output format.
    */
   private mapSubmissionsToAPIOutDTO(
     submission: FormSubmission,
-    userRoles?: Role[],
+    formsUserRoles?: FormSubmissionUserRolesAuth,
   ): FormSubmissionAPIOutDTO {
     let canViewFormSubmittedData: boolean | undefined = undefined;
-    if (userRoles) {
+    if (formsUserRoles) {
       const dynamicFormConfigurationIDs = submission.formSubmissionItems.map(
         (item) => item.dynamicFormConfiguration.id,
       );
-      canViewFormSubmittedData =
-        this.formSubmissionAuthorizationService.isAuthorized(
-          userRoles,
-          FormSubmissionAuthRoles.ViewFormSubmittedData,
-          dynamicFormConfigurationIDs,
-        );
+      canViewFormSubmittedData = formsUserRoles.isAuthorized(
+        FormSubmissionAuthRoles.ViewFormSubmittedData,
+        dynamicFormConfigurationIDs,
+        { atLeastOneAuthorized: true },
+      );
     }
     return {
       canViewFormSubmittedData,
@@ -119,7 +122,7 @@ export class FormSubmissionControllerService {
         currentDecision: this.mapCurrentDecision(
           submission.submissionStatus,
           item,
-          userRoles,
+          formsUserRoles,
         ),
       })),
     };
@@ -133,20 +136,18 @@ export class FormSubmissionControllerService {
    * and for Ministry users with limited access to the decision details.
    * @param submissionStatus form submission status.
    * @param submissionItem form submission to determine the decision details to be returned.
+   * @param formsUserRoles roles of the user to determine access to decision details.
    * @returns the decision that must be exposed the consumer.
    */
   mapCurrentDecision(
     submissionStatus: FormSubmissionStatus,
     submissionItem: FormSubmissionItem,
-    userRoles?: Role[],
+    formsUserRoles?: FormSubmissionUserRolesAuth,
   ): FormSubmissionItemDecisionAPIOutDTO {
-    const canAssessItemDecision =
-      userRoles &&
-      this.formSubmissionAuthorizationService.isAuthorized(
-        userRoles,
-        FormSubmissionAuthRoles.AssessItemDecision,
-        [submissionItem.dynamicFormConfiguration.id],
-      );
+    const canAssessItemDecision = formsUserRoles?.isAuthorized(
+      FormSubmissionAuthRoles.AssessItemDecision,
+      [submissionItem.dynamicFormConfiguration.id],
+    );
     if (
       !submissionItem.currentDecision ||
       (submissionStatus === FormSubmissionStatus.Pending &&

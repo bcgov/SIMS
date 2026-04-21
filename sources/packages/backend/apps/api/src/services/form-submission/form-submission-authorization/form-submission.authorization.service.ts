@@ -30,27 +30,34 @@ export class FormSubmissionAuthorizationService {
   ) {}
 
   /**
-   * Check if the user is authorized to perform an action on a form submission based on their roles and the dynamic form configurations associated with the form submission.
-   * Useful when a single authorization check is needed in the request content.
-   * If multiple authorization checks are needed, it's more efficient to use the `getFormsUserRoles` method.
+   * Check if the user is authorized to perform an action on a form submission based on their roles.
    * @param userRoles roles assigned to the user.
    * @param formRole form role to check authorization for.
    * @param dynamicFormConfigurationIDs list of dynamic form configuration IDs to check authorization for.
-   * @returns true if the user is authorized to perform the action on the specified form submission, false otherwise.
+   * @param options authorization options.
+   * - `atLeastOneAuthorized`: if true, the method returns true if the user is authorized for at least
+   * one of the provided dynamic form configuration IDs, otherwise, the user must be authorized for all
+   * provided dynamic form configuration IDs to return true.
+   * @returns boolean indicating whether the user is authorized for the specified form role and
+   * dynamic form configuration IDs.
    */
   isAuthorized(
     userRoles: Role[],
     formRole: FormSubmissionAuthRoles,
     dynamicFormConfigurationIDs: number[],
+    options?: { atLeastOneAuthorized?: boolean },
   ): boolean {
     const formsUserRoles = this.getFormsUserRoles(userRoles);
-    return formsUserRoles.isAuthorized(formRole, dynamicFormConfigurationIDs);
+    return formsUserRoles.isAuthorized(
+      formRole,
+      dynamicFormConfigurationIDs,
+      options,
+    );
   }
 
   /**
    * Get the list of dynamic form configuration IDs that the user is authorized to access for a specific form role.
-   * Useful when a single authorization check is needed in the request content.
-   * If multiple authorization checks are needed, it's more efficient to use the `getFormsUserRoles` method.
+   * Useful for database queries to filter the content based on the user authorizations.
    * @param userRoles roles assigned to the user.
    * @param formRole form role to check authorization for.
    * @returns list of dynamic form configuration IDs the user is authorized to access for the specified form role.
