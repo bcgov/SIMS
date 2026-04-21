@@ -8,7 +8,7 @@ COMMENT ON COLUMN sims.dynamic_form_configurations.authorization_key IS 'Identif
 UPDATE
     sims.dynamic_form_configurations
 SET
-    authorization_key = 'accessibility-grant-eligibility-appeal'
+    authorization_key = 'sbsd-eligibility-appeal'
 WHERE
     form_definition_name = 'ptaccessibilitygranteligibilityappeal';
 

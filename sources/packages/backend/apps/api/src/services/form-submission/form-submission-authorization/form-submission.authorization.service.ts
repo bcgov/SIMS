@@ -88,7 +88,8 @@ export class FormSubmissionAuthorizationService {
           .getFormsByAuthorizationKey([authorizationKey])
           .map((form) => form.id);
         const formRoleEnum = formRole as FormSubmissionAuthRoles;
-        (formSubmissionUserRoles[formRoleEnum] ??= []).push(...allowedFormsIDs);
+        const allowedForms = (formSubmissionUserRoles[formRoleEnum] ??= []);
+        allowedForms.push(...allowedFormsIDs);
       });
     return new FormSubmissionUserRolesAuth(formSubmissionUserRoles);
   }
