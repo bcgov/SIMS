@@ -137,8 +137,6 @@ calculatedDataParent1TaxRate</bpmn:text>
 Will not change based on institution or appeal</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_069y725" associationDirection="None" sourceRef="TextAnnotation_0eilku9" targetRef="Event_1jlyysi" />
-    <bpmn:textAnnotation id="TextAnnotation_118e8yz" />
-    <bpmn:association id="Association_07mimqo" associationDirection="None" sourceRef="Activity_1xv98cp" targetRef="TextAnnotation_118e8yz" />
   </bpmn:collaboration>
   <bpmn:process id="fulltime-assessment-2026-2027" isExecutable="true">
     <bpmn:laneSet id="LaneSet_0i75wz3">
@@ -2465,7 +2463,7 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
           <zeebe:output source="=if studentDataRelationshipStatus = &#34;married&#34;&#10;then true&#10;else false" target="isEligibleForPartnerCurrentYearIncomeAppeal" />
           <zeebe:output source="=true" target="isEligibleForExceptionalExpenseAppeal" />
           <zeebe:output source="=studentDataDependantstatus = &#34;dependant&#34;" target="isEligibleForParentCurrentYearIncomeAppeal" />
-          <zeebe:output source="=assessmentEligibilitySBSD = true and dmnFullTimeAwardInstitutionEligibility.isEligibleSBSD = false and dmnFullTimeInstitutionAwardAppealsEligibility.isAccessibilityGrantEligibilityAppealEligible = true" target="isEligibleForFTAccessibilityGrantEligibilityAppeal" />
+          <zeebe:output source="=// Eligibility rules apply to BGPD and SBSD&#10;(&#10;  (assessmentEligibilityBGPD = true and dmnFullTimeAwardInstitutionEligibility.isEligibleBGPD = false) or &#10;  (assessmentEligibilitySBSD = true and dmnFullTimeAwardInstitutionEligibility.isEligibleSBSD = false)&#10;) and dmnFullTimeInstitutionAwardAppealsEligibility.isAccessibilityGrantEligibilityAppealEligible = true" target="isEligibleForFTAccessibilityGrantEligibilityAppeal" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_15pxazc</bpmn:incoming>
@@ -3639,6 +3637,12 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
           <dc:Bounds x="10076" y="2364" width="79" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1yg1a7f_di" bpmnElement="Gateway_1yg1a7f" isMarkerVisible="true">
+        <dc:Bounds x="10185" y="2205" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="10229" y="2197" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0hycbhs" bpmnElement="Gateway_0q6k5vb" isMarkerVisible="true">
         <dc:Bounds x="10245" y="2254" width="50" height="50" />
         <bpmndi:BPMNLabel>
@@ -3655,6 +3659,18 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
         <dc:Bounds x="10382" y="2321" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="10368" y="2364" width="65" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0mbo3cj_di" bpmnElement="Gateway_0mbo3cj" isMarkerVisible="true">
+        <dc:Bounds x="9985" y="2205" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="9921" y="2187" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_15t3ufh" bpmnElement="Event_1ipu05h">
+        <dc:Bounds x="10092" y="2212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="10075" y="2255" width="79" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1plly5d" bpmnElement="Event_1jlyysi">
@@ -3685,24 +3701,6 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
         <dc:Bounds x="10092" y="2132" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="10080" y="2175" width="61" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0mbo3cj_di" bpmnElement="Gateway_0mbo3cj" isMarkerVisible="true">
-        <dc:Bounds x="9985" y="2205" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="9921" y="2187" width="78" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_15t3ufh" bpmnElement="Event_1ipu05h">
-        <dc:Bounds x="10092" y="2212" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="10075" y="2255" width="79" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1yg1a7f_di" bpmnElement="Gateway_1yg1a7f" isMarkerVisible="true">
-        <dc:Bounds x="10185" y="2205" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="10229" y="2197" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_119sdve_di" bpmnElement="Flow_119sdve">
@@ -4970,9 +4968,6 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
         <dc:Bounds x="10160" y="2480" width="268" height="40" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_118e8yz_di" bpmnElement="TextAnnotation_118e8yz">
-        <dc:Bounds x="9410" y="2200" width="99.99999822778292" height="29.99419368517939" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_0q448eh_di" bpmnElement="Association_0q448eh">
         <di:waypoint x="3441" y="1138" />
         <di:waypoint x="3443" y="1113" />
@@ -5028,10 +5023,6 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
       <bpmndi:BPMNEdge id="Association_069y725_di" bpmnElement="Association_069y725">
         <di:waypoint x="10160" y="2500" />
         <di:waypoint x="10118" y="2415" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_07mimqo_di" bpmnElement="Association_07mimqo">
-        <di:waypoint x="9398" y="2280" />
-        <di:waypoint x="9446" y="2230" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

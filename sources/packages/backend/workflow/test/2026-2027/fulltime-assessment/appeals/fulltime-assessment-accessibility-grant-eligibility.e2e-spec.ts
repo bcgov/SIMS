@@ -14,7 +14,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-accessibility-gr
         // The following values make the accessibility grants (BGPD, SBSD) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
-        // BC private institutions are not eligible for the accessibility grant(SBSD).
+        // BC private institutions are not eligible for the accessibility grants (BGPD, SBSD)).
         // But if the application has approved accessibility grant appeal, the accessibility grant will be eligible.
         institutionCountry: "CA",
         institutionProvince: Provinces.BritishColumbia,
@@ -37,11 +37,55 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-accessibility-gr
         // The following values make the accessibility grants (BGPD, SBSD) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
-        // BC private institutions are not eligible for the accessibility grant(SBSD).
+        // BC private institutions are not eligible for the accessibility grants (BGPD, SBSD)).
         // The application does not have an approved accessibility grant appeal, so the accessibility grant will not be eligible.
         institutionCountry: "CA",
         institutionProvince: Provinces.BritishColumbia,
         institutionClassification: InstitutionClassification.Private,
+        appealsFTAccessibilityGrantEligibilityAppealData: undefined,
+      },
+      expectedData: {
+        assessmentPGPDEligibility: true,
+        assessmentSBSDEligibility: true,
+        institutionPGBDEligibility: false,
+        institutionSBSDEligibility: false,
+        bgpdEligibility: false,
+        sbsdEligibility: false,
+      },
+    },
+    {
+      inputData: {
+        // The following values make the accessibility grants (BGPD, SBSD) eligible at assessment level.
+        studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
+        studentDataTaxReturnIncome: 30000,
+        // OOP public institutions are not eligible for the accessibility grants (BGPD, SBSD)).
+        // But if the application has approved accessibility grant appeal, the accessibility grant will be eligible.
+        institutionCountry: "CA",
+        institutionProvince: Provinces.Alberta,
+        institutionClassification: InstitutionClassification.Public,
+        appealsFTAccessibilityGrantEligibilityAppealData: {
+          isEligibilityRequested: true,
+        },
+      },
+      expectedData: {
+        assessmentPGPDEligibility: true,
+        assessmentSBSDEligibility: true,
+        institutionPGBDEligibility: false,
+        institutionSBSDEligibility: false,
+        bgpdEligibility: true,
+        sbsdEligibility: true,
+      },
+    },
+    {
+      inputData: {
+        // The following values make the accessibility grants (BGPD, SBSD) eligible at assessment level.
+        studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
+        studentDataTaxReturnIncome: 30000,
+        // OOP public institutions are not eligible for the accessibility grants (BGPD, SBSD)).
+        // The application does not have an approved accessibility grant appeal, so the accessibility grant will not be eligible.
+        institutionCountry: "CA",
+        institutionProvince: Provinces.Alberta,
+        institutionClassification: InstitutionClassification.Public,
         appealsFTAccessibilityGrantEligibilityAppealData: undefined,
       },
       expectedData: {
