@@ -21,7 +21,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-al
       assessmentConsolidatedData,
     );
     // Assert
-    // The standard living allowance for a single, independent student living away from home in BC is $563 per week.
+    // The standard living allowance for a single, independent student living away from home in BC is $541 per week.
     // For a 16-week program, the total living allowance would be: 16 weeks * $541 = $8,656.
     expect(
       calculatedAssessment.variables.calculatedDataTotalMSOLAllowance,
@@ -74,7 +74,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-al
       assessmentConsolidatedData,
     );
     // Assert
-    // The standard living allowance for a single, dependant student, living at home in BC is $192 per week.
+    // The standard living allowance for a single, dependant student, living at home in BC is $196 per week.
     // For a 16-week program, the total living allowance would be: 16 weeks * $196 = $3,136.
     expect(calculatedAssessment.variables.calculatedMSOLProvince).toBe(
       Provinces.BritishColumbia,

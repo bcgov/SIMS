@@ -90,7 +90,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       assessmentConsolidatedData,
     );
     // Assert
-    // calculatedDataTotalFamilyIncome (10000) > limitAwardCSGDIncomeCap (94245 for a family of 6) and <= limitAwardCSGDThresholdIncome (151937 for a family of 6)
+    // calculatedDataTotalFamilyIncome (100000) > limitAwardCSGDIncomeCap (94245 for a family of 6) and <= limitAwardCSGDThresholdIncome (151937 for a family of 6).
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeGreaterThan(
