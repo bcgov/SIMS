@@ -22,10 +22,10 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-al
     );
     // Assert
     // The standard living allowance for a single, independent student living away from home in BC is $563 per week.
-    // For a 16-week program, the total living allowance would be: 16 weeks * $563 = $9,008.
+    // For a 16-week program, the total living allowance would be: 16 weeks * $541 = $8,656.
     expect(
       calculatedAssessment.variables.calculatedDataTotalMSOLAllowance,
-    ).toBe(9008);
+    ).toBe(541 * 16);
   });
 
   it("Should calculate standard living allowance when the student is single, independent, living away from home, no dependants, and is attending school in AB.", async () => {
@@ -39,14 +39,14 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-al
       assessmentConsolidatedData,
     );
     // Assert
-    // The standard living allowance for a single, independent student living away from home in AB is $434 per week.
-    // For a 16-week program, the total living allowance would be: 16 weeks * $434 = $6,944.
+    // The standard living allowance for a single, independent student living away from home in AB is $417 per week.
+    // For a 16-week program, the total living allowance would be: 16 weeks * $417 = $6,672.
     expect(calculatedAssessment.variables.calculatedMSOLProvince).toBe(
       Provinces.Alberta,
     );
     expect(
       calculatedAssessment.variables.calculatedDataTotalMSOLAllowance,
-    ).toBe(6944);
+    ).toBe(417 * 16);
   });
 
   it("Should calculate standard living allowance when the student is single, dependant, living at home, and is attending school in BC.", async () => {
@@ -75,13 +75,13 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-al
     );
     // Assert
     // The standard living allowance for a single, dependant student, living at home in BC is $192 per week.
-    // For a 16-week program, the total living allowance would be: 16 weeks * $192 = $3,072.
+    // For a 16-week program, the total living allowance would be: 16 weeks * $196 = $3,136.
     expect(calculatedAssessment.variables.calculatedMSOLProvince).toBe(
       Provinces.BritishColumbia,
     );
     expect(
       calculatedAssessment.variables.calculatedDataTotalMSOLAllowance,
-    ).toBe(3072);
+    ).toBe(196 * 16);
   });
 
   it("Should calculate standard living allowance when the student is single, independent, living away from home, with one eligible dependant, and is attending school in BC.", async () => {
@@ -101,20 +101,24 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-al
       assessmentConsolidatedData,
     );
     // Assert
-    // The standard living allowance for an eligible dependant of the student is $221 per week per dependant.
-    // For a 16-week program, the total living allowance would be: 16 weeks * $221 * 1 = $3,536.
+    // The standard living allowance for an eligible dependant of the student is $226 per week per dependant.
+    // For a 16-week program, the total living allowance would be: 16 weeks * $226 * 1 = $3,616.
     expect(
       calculatedAssessment.variables.calculatedDataDependantTotalMSOLAllowance,
-    ).toBe(3536);
-    // The standard living allowance for a single parent student, living at home in BC is $725 per week.
-    // For a 16-week program, the total living allowance would be: 16 weeks * $725 = $11,600.
-    // The student has one eligible dependant, so the living allowance is increased by $221 per week.
+    ).toBe(16 * 226 * 1);
+    // The standard living allowance for a single parent student, living at home in BC is $698 per week.
+    // For a 16-week program, the total living allowance would be: 16 weeks * $698 = $11,168.
+    // The student has one eligible dependant, so the living allowance is increased by $226 per week.
     expect(calculatedAssessment.variables.calculatedMSOLProvince).toBe(
       Provinces.BritishColumbia,
     );
     expect(
       calculatedAssessment.variables.calculatedDataTotalMSOLAllowance,
-    ).toBe(15136);
+    ).toBe(
+      16 * 698 +
+        calculatedAssessment.variables
+          .calculatedDataDependantTotalMSOLAllowance,
+    );
   });
 
   it("Should calculate standard living allowance when the student is single, independent, living away from home, with two dependants, and is attending school in BC.", async () => {
@@ -138,20 +142,24 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-al
       assessmentConsolidatedData,
     );
     // Assert
-    // The standard living allowance for an eligible dependant of the student is $221 per week per dependant.
-    // For a 16-week program, the total living allowance would be: 16 weeks * $221 * 2 = $7,072.
+    // The standard living allowance for an eligible dependant of the student is $226 per week per dependant.
+    // For a 16-week program, the total living allowance would be: 16 weeks * $226 * 2 = $7,232.
     expect(
       calculatedAssessment.variables.calculatedDataDependantTotalMSOLAllowance,
-    ).toBe(7072);
-    // The standard living allowance for a single parent student, living at home in BC is $725 per week.
-    // For a 16-week program, the total living allowance would be: 16 weeks * $725 = $11,600.
-    // The student has two eligible dependants, so the living allowance is increased by $221 per week per dependant.
+    ).toBe(16 * 226 * 2);
+    // The standard living allowance for a single parent student, living at home in BC is $698 per week.
+    // For a 16-week program, the total living allowance would be: 16 weeks * $698 = $11,168.
+    // The student has two eligible dependants, so the living allowance is increased by $226 per week per dependant.
     expect(calculatedAssessment.variables.calculatedMSOLProvince).toBe(
       Provinces.BritishColumbia,
     );
     expect(
       calculatedAssessment.variables.calculatedDataTotalMSOLAllowance,
-    ).toBe(18672);
+    ).toBe(
+      698 * 16 +
+        calculatedAssessment.variables
+          .calculatedDataDependantTotalMSOLAllowance,
+    );
   });
 
   it("Should calculate standard living allowance when the student is married, with no dependants, and is attending school in BC.", async () => {
@@ -173,11 +181,11 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-al
       assessmentConsolidatedData,
     );
     // Assert
-    // The standard living allowance for a married student, living at home in BC is $1066 per week.
-    // For a 16-week program, the total living allowance would be: 16 weeks * $1066 = $17,056.
+    // The standard living allowance for a married student, living at home in BC is $1020 per week.
+    // For a 16-week program, the total living allowance would be: 16 weeks * $1020 = $16,320.
     expect(
       calculatedAssessment.variables.calculatedDataTotalMSOLAllowance,
-    ).toBe(17056);
+    ).toBe(16 * 1020);
   });
 
   it("Should calculate standard living allowance when the student is married but unable to report due to domestic abuse, with no dependants, and is attending school in BC.", async () => {
@@ -199,14 +207,14 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-living-al
       assessmentConsolidatedData,
     );
     // Assert
-    // The standard living allowance for a student who is married and unable to report, living at home in BC is $563 per week.
-    // For a 16-week program, the total living allowance would be: 16 weeks * $563 = $9,008.
+    // The standard living allowance for a student who is married and unable to report, living at home in BC is $541 per week.
+    // For a 16-week program, the total living allowance would be: 16 weeks * $541 = $8,656.
     expect(calculatedAssessment.variables.calculatedMSOLProvince).toBe(
       Provinces.BritishColumbia,
     );
     expect(
       calculatedAssessment.variables.calculatedDataTotalMSOLAllowance,
-    ).toBe(9008);
+    ).toBe(541 * 16);
   });
 
   afterAll(async () => {

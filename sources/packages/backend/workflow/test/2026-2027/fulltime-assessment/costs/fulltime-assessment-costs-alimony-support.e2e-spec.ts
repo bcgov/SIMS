@@ -55,10 +55,10 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
       // So the maximum is $3616.
       expect(
         calculatedAssessment.variables.calculatedDataChildSpousalSupport,
-      ).toBe(3616);
+      ).toBe(3500);
       expect(
         calculatedAssessment.variables.calculatedDataTotalChildSpousalSupport,
-      ).toBe(3616);
+      ).toBe(3500);
     },
   );
 

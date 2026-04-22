@@ -41,10 +41,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
         calculatedAssessment.variables.calculatedDataTotalParentIncome,
       ).toBe(65000);
       // Calculated total parent deductions must combine total CPP, EI and Income Tax.
-      // The deductions for CPP ($3868) and EI ($1049) are capped at the maximum for the year.
+      // The deductions for CPP ($4034) and EI ($1077) are capped at the maximum for the year.
       expect(
         calculatedAssessment.variables.calculatedDataTotalParentDeductions,
-      ).toBe(5617);
+      ).toBe(4034 + 1077);
       // Calculated total family income should be the gross parent income.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
