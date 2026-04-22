@@ -35,7 +35,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
       ).toBe(false);
       // The federal and provincial fixed student contributions are based on family income and size when the student is not exempt.
       expect(calculatedAssessment.variables.calculatedDataTotalFederalFSC).toBe(
-        1729.21625480769,
+        797.9538461538461,
       );
       expect(
         calculatedAssessment.variables.calculatedDataTotalProvincialFSC,

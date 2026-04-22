@@ -169,7 +169,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
       // The total spouse contribution is calculated based on the spouse contribution weeks, spouse contribution rate, and family income.
       expect(
         calculatedAssessment.variables.calculatedDataTotalSpouseContribution,
-      ).toBe(179.861538461538);
+      ).toBe(179.8615384615385);
       // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFederalContribution,
