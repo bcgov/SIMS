@@ -16,6 +16,7 @@ export * from "./useAssessment";
 export * from "./useFileUtils";
 export * from "./useLocation";
 export * from "./useOffering";
+export * from "./useAward";
 export * from "./useProgramInfoRequest";
 export * from "./useActiveApplication";
 export * from "./useValidators";
