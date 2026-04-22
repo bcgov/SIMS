@@ -10,7 +10,10 @@ UPDATE
 SET
     authorization_key = 'sbsd-eligibility-appeal'
 WHERE
-    form_definition_name = 'ptaccessibilitygranteligibilityappeal';
+    form_definition_name IN (
+        'ptaccessibilitygranteligibilityappeal',
+        'ftaccessibilitygranteligibilityappeal'
+    );
 
 UPDATE
     sims.dynamic_form_configurations
