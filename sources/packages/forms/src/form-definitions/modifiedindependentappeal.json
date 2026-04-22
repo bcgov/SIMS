@@ -264,7 +264,7 @@
                             "value": ""
                         }
                     ],
-                    "content": "Provide all of the following documents:",
+                    "content": "Please provide all of the documents listed below:",
                     "refreshOnChange": false,
                     "key": "html5",
                     "type": "htmlelement",
