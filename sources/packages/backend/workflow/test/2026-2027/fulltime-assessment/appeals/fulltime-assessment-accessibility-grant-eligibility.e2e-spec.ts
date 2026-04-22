@@ -24,9 +24,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-accessibility-gr
         },
       },
       expectedData: {
-        assessmentPGPDEligibility: true,
+        assessmentBGPDEligibility: true,
         assessmentSBSDEligibility: true,
-        institutionPGBDEligibility: false,
+        institutionBGPDEligibility: false,
         institutionSBSDEligibility: false,
         bgpdEligibility: true,
         sbsdEligibility: true,
@@ -45,9 +45,30 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-accessibility-gr
         appealsFTAccessibilityGrantEligibilityAppealData: undefined,
       },
       expectedData: {
-        assessmentPGPDEligibility: true,
+        assessmentBGPDEligibility: true,
         assessmentSBSDEligibility: true,
-        institutionPGBDEligibility: false,
+        institutionBGPDEligibility: false,
+        institutionSBSDEligibility: false,
+        bgpdEligibility: false,
+        sbsdEligibility: false,
+      },
+    },
+    {
+      inputData: {
+        // The following values make the accessibility grants (BGPD, SBSD) ineligible at assessment level.
+        studentDataApplicationPDPPDStatus: YesNoOptions.No,
+        studentDataTaxReturnIncome: 30000,
+        // BC private institutions are not eligible for the accessibility grants (BGPD, SBSD)).
+        // The application does not have an approved accessibility grant appeal, so the accessibility grant will not be eligible.
+        institutionCountry: "CA",
+        institutionProvince: Provinces.BritishColumbia,
+        institutionClassification: InstitutionClassification.Private,
+        appealsFTAccessibilityGrantEligibilityAppealData: undefined,
+      },
+      expectedData: {
+        assessmentBGPDEligibility: false,
+        assessmentSBSDEligibility: false,
+        institutionBGPDEligibility: false,
         institutionSBSDEligibility: false,
         bgpdEligibility: false,
         sbsdEligibility: false,
@@ -68,9 +89,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-accessibility-gr
         },
       },
       expectedData: {
-        assessmentPGPDEligibility: true,
+        assessmentBGPDEligibility: true,
         assessmentSBSDEligibility: true,
-        institutionPGBDEligibility: false,
+        institutionBGPDEligibility: false,
         institutionSBSDEligibility: false,
         bgpdEligibility: true,
         sbsdEligibility: true,
@@ -89,9 +110,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-accessibility-gr
         appealsFTAccessibilityGrantEligibilityAppealData: undefined,
       },
       expectedData: {
-        assessmentPGPDEligibility: true,
+        assessmentBGPDEligibility: true,
         assessmentSBSDEligibility: true,
-        institutionPGBDEligibility: false,
+        institutionBGPDEligibility: false,
         institutionSBSDEligibility: false,
         bgpdEligibility: false,
         sbsdEligibility: false,
@@ -125,7 +146,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-accessibility-gr
           expectedData.sbsdEligibility,
         );
         expect(calculatedAssessment.variables.assessmentEligibilityBGPD).toBe(
-          expectedData.assessmentPGPDEligibility,
+          expectedData.assessmentBGPDEligibility,
         );
         expect(calculatedAssessment.variables.assessmentEligibilitySBSD).toBe(
           expectedData.assessmentSBSDEligibility,
@@ -133,7 +154,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-accessibility-gr
         expect(
           calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
             .isEligibleBGPD,
-        ).toBe(expectedData.institutionPGBDEligibility);
+        ).toBe(expectedData.institutionBGPDEligibility);
         expect(
           calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
             .isEligibleSBSD,
