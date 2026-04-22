@@ -205,8 +205,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
       CredentialType.UnderGraduateCertificate;
     assessmentConsolidatedData.programLength =
       ProgramLengthOptions.TwoToThreeYears;
-    // 115978 is the threshold for a family of 3 (2 dependents + the student).
-    assessmentConsolidatedData.studentDataTaxReturnIncome = 115979;
+    // 117317 is the threshold for a family of 3 (2 dependents + the student).
+    assessmentConsolidatedData.studentDataTaxReturnIncome = 117318;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible0To18YearsOld,
