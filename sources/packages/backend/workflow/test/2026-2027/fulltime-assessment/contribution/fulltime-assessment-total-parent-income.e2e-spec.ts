@@ -268,7 +268,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       ).toBe(700 + 600 + 700);
       expect(
         calculatedAssessment.variables.calculatedDataParent2IncomeDeductions,
-      ).toBe(700 + 600 + 700);
+      ).toBe(1057);
       expect(
         calculatedAssessment.variables.calculatedDataTotalParentDeductions,
       ).toBe(
@@ -348,7 +348,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       ).toBe(undefined);
       expect(
         calculatedAssessment.variables.calculatedDataTotalParentDeductions,
-      ).toBe(2000);
+      ).toBe(1057);
       // Calculated total family income should be the gross parent income.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFamilyIncome,

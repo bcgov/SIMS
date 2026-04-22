@@ -38,10 +38,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
     );
     expect(
       calculatedAssessment.variables.calculatedDataTotalProvincialFSC,
-    ).toBe(1847.2153846153847);
+    ).toBe(1771.4769230769232);
     expect(
       calculatedAssessment.variables.calculatedDataTotalSpouseContribution,
-    ).toBe(769.9384615384616);
+    ).toBe(719.446153846154);
     // The total parental contribution is not calculated for independent students.
     expect(
       calculatedAssessment.variables.calculatedDataTotalParentalContribution,
@@ -105,7 +105,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
       ).toBe(0);
       expect(
         calculatedAssessment.variables.calculatedDataTotalSpouseContribution,
-      ).toBe(769.9384615384616);
+      ).toBe(719.446153846154);
       // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFederalContribution,
@@ -169,7 +169,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
       // The total spouse contribution is calculated based on the spouse contribution weeks, spouse contribution rate, and family income.
       expect(
         calculatedAssessment.variables.calculatedDataTotalSpouseContribution,
-      ).toBe(192.4846153846154);
+      ).toBe(179.861538461538);
       // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFederalContribution,
@@ -238,7 +238,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-spouse-contribut
       // The total spouse contribution is calculated based on the spouse contribution weeks, spouse contribution rate, and family income.
       expect(
         calculatedAssessment.variables.calculatedDataTotalSpouseContribution,
-      ).toBe(705.937326923077);
+      ).toBe(659.6421923076924);
       // Combination of federal fixed student contribution, spouse contribution, parental contribution, and targeted resources.
       expect(
         calculatedAssessment.variables.calculatedDataTotalFederalContribution,

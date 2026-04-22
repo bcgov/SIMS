@@ -74,16 +74,16 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-room-and-board.`
 
     // Assert
     // The student has declared a room and board amount of $3000 per month. The maximum is $1420.
-    // For a 16-week offering, the total room and board amount would be: 16 weeks * $1420/4.3 = $5283.
+    // For a 16-week offering, the total room and board amount would be: 16 weeks * $1420/4.3 = $5284.
     expect(
       calculatedAssessment.variables.calculatedDataTotalRoomAndBoardAmount,
-    ).toBe(5283);
+    ).toBe(5284);
     // The standard living allowance for a single, independent student living away from home in BC is $541 per week.
     // For a 16-week offering, the total living allowance would be: 16 weeks * $541 = $8656.
     // The room and board amount is included in the living allowance calculation.
     expect(
       calculatedAssessment.variables.calculatedDataTotalMSOLAllowance,
-    ).toBe(5283 + 8656);
+    ).toBe(5284 + 8656);
   });
 
   afterAll(async () => {

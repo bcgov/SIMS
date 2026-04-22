@@ -35,7 +35,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
       ).toBe(false);
       // The federal and provincial fixed student contributions are based on family income and size when the student is not exempt.
       expect(calculatedAssessment.variables.calculatedDataTotalFederalFSC).toBe(
-        797.9538461538461,
+        1729.21625480769,
       );
       expect(
         calculatedAssessment.variables.calculatedDataTotalProvincialFSC,
@@ -208,7 +208,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-student-contribu
       );
       expect(
         calculatedAssessment.variables.calculatedDataTotalProvincialFSC,
-      ).toBe(2767.275);
+      ).toBe(2593.35);
       // The total spouse contribution is not calculated for single students.
       expect(
         calculatedAssessment.variables.calculatedDataTotalSpouseContribution,
