@@ -8,14 +8,13 @@ import { Injectable } from "@nestjs/common";
 import { DynamicFormConfigurationService } from "../..";
 
 /**
- * Prefix for roles added to Keycloak to authorize form submission actions
- * based on dynamic form configurations.
+ * Regular expression to validate and parse the form authorization role format.
+ * Expected format: `forms.{authorization-key}.{form-role}`, where form-role
+ * must be one of the values defined in {@link FormSubmissionAuthRoles}.
  */
-const FORMS_AUTHORIZATION_KEY_PREFIX = "forms";
-/**
- * Separator used in the authorization key to separate the different parts of the role.
- */
-const FORMS_AUTHORIZATION_KEY_SEPARATOR = ".";
+const FORMS_AUTHORIZATION_ROLE_REGEX = new RegExp(
+  `^forms\\.([a-zA-Z0-9-]{1,50})\\.(${Object.values(FormSubmissionAuthRoles).join("|")})$`,
+);
 
 /**
  * Service responsible for authorizing form submissions based on the user's roles
@@ -81,25 +80,21 @@ export class FormSubmissionAuthorizationService {
    */
   getFormsUserRoles(userRoles: Role[]): FormSubmissionUserRolesAuth {
     const formSubmissionUserRoles = {} as FormSubmissionUserRoles;
-    userRoles
-      .filter((role) =>
-        role.startsWith(
-          `${FORMS_AUTHORIZATION_KEY_PREFIX}${FORMS_AUTHORIZATION_KEY_SEPARATOR}`,
-        ),
-      )
-      .forEach((role) => {
-        // Expected format: `forms.{authorization-key}.{form-role}`.
-        const [, authorizationKey, formRole] = role.split(
-          FORMS_AUTHORIZATION_KEY_SEPARATOR,
-        );
-        // Get the form IDs associated with the authorization key and form role.
-        const allowedFormsIDs = this.dynamicFormConfigurationService
-          .getFormsByAuthorizationKey([authorizationKey])
-          .map((form) => form.id);
-        const formRoleEnum = formRole as FormSubmissionAuthRoles;
-        const allowedForms = (formSubmissionUserRoles[formRoleEnum] ??= []);
-        allowedForms.push(...allowedFormsIDs);
-      });
+    for (const role of userRoles) {
+      // Expected format: `forms.{authorization-key}.{form-role}`.
+      const match = FORMS_AUTHORIZATION_ROLE_REGEX.exec(role);
+      if (!match) {
+        continue;
+      }
+      const [, authorizationKey, formRole] = match;
+      // Get the form IDs associated with the authorization key and form role.
+      const allowedFormsIDs = this.dynamicFormConfigurationService
+        .getFormsByAuthorizationKey([authorizationKey])
+        .map((form) => form.id);
+      const formRoleEnum = formRole as FormSubmissionAuthRoles;
+      const allowedForms = (formSubmissionUserRoles[formRoleEnum] ??= []);
+      allowedForms.push(...allowedFormsIDs);
+    }
     return new FormSubmissionUserRolesAuth(formSubmissionUserRoles);
   }
 }
