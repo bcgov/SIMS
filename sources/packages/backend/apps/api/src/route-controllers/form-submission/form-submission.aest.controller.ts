@@ -113,7 +113,14 @@ export class FormSubmissionAESTController extends BaseController {
    * Useful only when a single item detail is required.
    * @returns form submission details including individual form items and their details.
    */
-  @ApiNotFoundResponse({ description: "Form submission not found" })
+  @ApiNotFoundResponse({
+    description:
+      "Form submission or form submission item with the specified ID not found.",
+  })
+  @ApiForbiddenResponse({
+    description:
+      "The user does not have access to any form submission items for the submission.",
+  })
   @Get(":formSubmissionId")
   async getFormSubmission(
     @UserToken() userToken: IUserToken,
