@@ -13,7 +13,7 @@ import { DynamicFormConfigurationService } from "../..";
  * must be one of the values defined in {@link FormSubmissionAuthRoles}.
  */
 const FORMS_AUTHORIZATION_ROLE_REGEX = new RegExp(
-  `^forms\\.([a-zA-Z0-9-]{1,50})\\.(${Object.values(FormSubmissionAuthRoles).join("|")})$`,
+  String.raw`^forms\.([a-zA-Z0-9-]{1,50})\.(${Object.values(FormSubmissionAuthRoles).join("|")})$`,
 );
 
 /**
