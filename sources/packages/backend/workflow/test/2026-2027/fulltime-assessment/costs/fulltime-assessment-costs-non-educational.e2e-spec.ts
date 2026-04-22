@@ -40,7 +40,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-non-educat
     // Assert
     expect(
       calculatedAssessment.variables.calculatedDataTotalMSOLAllowance,
-    ).toBe(9008);
+    ).toBe(8656);
     // No other values should be added to the total non-educational costs calculation, so it should be equal to the total MSOL allowance.
     expect(
       calculatedAssessment.variables.calculatedDataTotalNonEducationalCost,

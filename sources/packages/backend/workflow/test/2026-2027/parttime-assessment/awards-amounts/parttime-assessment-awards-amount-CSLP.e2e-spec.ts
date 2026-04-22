@@ -59,6 +59,34 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     );
   });
 
+  it("Should determine federalAwardNetCSLPAmount when calculatedDataTotalFamilyIncome < limitAwardCSLPThresholdIncome.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 55335;
+    assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+    assessmentConsolidatedData.partner1CRAReportedIncome = 55000;
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // For a family of 2, limitAwardCSLPThresholdIncome is 110336.
+    expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
+      110335,
+    );
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
+    ).toBeLessThan(
+      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+        .limitAwardCSLPThresholdIncome,
+    );
+    expect(
+      calculatedAssessment.variables.finalFederalAwardNetCSLPAmount,
+    ).toBeGreaterThan(0);
+  });
+
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
     await ZeebeMockedClient.getMockedZeebeInstance().close();

@@ -12,13 +12,13 @@ import {
 import { YesNoOptions } from "@sims/test-utils";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CSGD.`, () => {
-  it("Should determine federalAwardCSGDAmount for 3 or more dependants and calculatedDataTotalFamilyIncome <= limitAwardCSGDIncomeCap", async () => {
+  it("Should determine federalAwardCSGDAmount for 3 or more dependants and calculatedDataTotalFamilyIncome <= limitAwardCSGDIncomeCap.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 20000;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 54245;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.partner1CRAReportedIncome = 20000;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 40000;
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligibleForChildcareCost(
@@ -45,25 +45,25 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       assessmentConsolidatedData,
     );
     // Assert
-    // calculatedDataTotalFamilyIncome <= limitAwardCSGDIncomeCap
-    // federalAwardCSGDAmount
+    // calculatedDataTotalFamilyIncome (94245) <= limitAwardCSGDIncomeCap (94245 for a family of 6)
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
-    ).toBeLessThan(
+    ).toBeLessThanOrEqual(
       calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
         .limitAwardCSGDIncomeCap,
     );
+    // Maximum federalAwardCSGDAmount is expected and is 1260 for the program year.
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(1260);
     expect(calculatedAssessment.variables.federalAwardMaxCSGDAmount).toBe(1260);
   });
 
-  it("Should determine federalAwardCSGDAmount for 3 or more dependants and calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap", async () => {
+  it("Should determine federalAwardCSGDAmount for 3 or more dependants and calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 52000;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 55000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.partner1CRAReportedIncome = 42000;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 45000;
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligibleForChildcareCost(
@@ -90,13 +90,18 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       assessmentConsolidatedData,
     );
     // Assert
-    // calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap
-    // federalAwardCSGDAmount
+    // calculatedDataTotalFamilyIncome (100000) > limitAwardCSGDIncomeCap (94245 for a family of 6) and <= limitAwardCSGDThresholdIncome (151937 for a family of 6).
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeGreaterThan(
       calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
         .limitAwardCSGDIncomeCap,
+    );
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
+    ).toBeLessThanOrEqual(
+      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+        .limitAwardCSGDThresholdIncome,
     );
     const nestedCalculation = Math.max(
       calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
@@ -117,7 +122,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     const maxComparisonCalculation = Math.max(
       offeringWeeksAmount,
       calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
-        .limitAwardCSGD2OrLessChildAmount,
+        .limitAwardCSGD3OrMoreChildAmount,
     );
     expect(
       Math.round(
@@ -131,14 +136,14 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       ),
     );
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
-      1223.98549371,
+      1134.30959145,
     );
     expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
-      1223.98549371,
+      1134.30959145,
     );
   });
 
-  it("Should determine federalAwardCSGDAmount for less than 3 dependants and calculatedDataTotalFamilyIncome <= limitAwardCSGDIncomeCap", async () => {
+  it("Should determine federalAwardCSGDAmount for less than 3 dependants and calculatedDataTotalFamilyIncome <= limitAwardCSGDIncomeCap.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -181,7 +186,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(calculatedAssessment.variables.federalAwardMaxCSGDAmount).toBe(840);
   });
 
-  it("Should determine federalAwardCSGDAmount for less than 3 dependants and calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap", async () => {
+  it("Should determine federalAwardCSGDAmount for less than 3 dependants and calculatedDataTotalFamilyIncome > limitAwardCSGDIncomeCap.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
@@ -246,14 +251,14 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       ),
     );
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
-      766.92144165,
+      791.52482136,
     );
     expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
-      766.92144165,
+      791.52482136,
     );
   });
 
-  it("Should determine federalAwardCSGDAmount when awardEligibilityCSGD is true and no CSGD awarded in the program year previously", async () => {
+  it("Should determine federalAwardCSGDAmount when awardEligibilityCSGD is true and no CSGD awarded in the program year previously.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);

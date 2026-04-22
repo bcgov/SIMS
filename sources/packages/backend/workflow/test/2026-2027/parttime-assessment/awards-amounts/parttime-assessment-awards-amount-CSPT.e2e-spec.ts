@@ -39,9 +39,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 35000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.partner1CRAReportedIncome = 33999;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 25000;
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
@@ -55,10 +55,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
         .limitAwardCSPTIncomeCap,
     );
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
-      54000,
+      60000,
     );
-    expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBeLessThan(
-      3000,
+    expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(
+      2197.058304,
     );
   });
 
@@ -123,9 +123,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 60001;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 60000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 22535;
     assessmentConsolidatedData.programYearTotalPartTimeCSPT = 795;
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
@@ -135,9 +135,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     // Assert
     expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(true);
     expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(
-      804.617856,
+      894.715584,
     );
-    // Award limit remaining is $804.617856 - $795 = $9.617856 which is less than $100.
+    // Award limit remaining is $894.715584 - $795 = $99.715584 which is less than $100.
     expect(calculatedAssessment.variables.limitAwardCSPTRemaining).toBeLessThan(
       100,
     );

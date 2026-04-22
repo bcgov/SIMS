@@ -13,58 +13,66 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 24412;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.partner1CRAReportedIncome = 22999;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 30000;
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
     // Assert
-    // provincialAwardBCAGAmount is 1000 (limitAwardBCAGAmount)
+    // For a family of 2, limitAwardBCAGIncomeCap is 54412.
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
-    ).toBeLessThan(
+    ).toBeLessThanOrEqual(
       calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
         .limitAwardBCAGIncomeCap,
     );
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
-      43000,
+      54412,
     );
     expect(calculatedAssessment.variables.provincialAwardBCAGAmount).toBe(
       calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
         .limitAwardBCAGAmount,
     );
+    // Max BCAG amount is 1000 for part-time students.
     expect(calculatedAssessment.variables.provincialAwardBCAGAmount).toBe(1000);
     expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(
       700,
     );
   });
 
-  it("Should determine provincialAwardBCAGAmount, provincialAwardNetBCAGAmount when calculatedDataTotalFamilyIncome > limitAwardBCAGIncomeCap", async () => {
+  it("Should determine provincialAwardBCAGAmount, provincialAwardNetBCAGAmount when calculatedDataTotalFamilyIncome > limitAwardBCAGIncomeCap but <= limitAwardBCAGThreshold.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 20001;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 26000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.partner1CRAReportedIncome = 33999;
+    assessmentConsolidatedData.partner1CRAReportedIncome = 29000;
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
       PROGRAM_YEAR,
       assessmentConsolidatedData,
     );
     // Assert
-    // provincialAwardBCAGAmount is less than 1000
+    // For a family of 2, limitAwardBCAGIncomeCap is 54412 and limitAwardBCAGThresholdIncome is 78637.
+    expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
+      55000,
+    );
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeGreaterThan(
       calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
         .limitAwardBCAGIncomeCap,
     );
-    expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
-      54000,
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
+    ).toBeLessThanOrEqual(
+      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+        .limitAwardBCAGThresholdIncome,
     );
+    // Slope Calculation
     expect(calculatedAssessment.variables.provincialAwardBCAGAmount).toBe(
       Math.max(
         calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
@@ -80,6 +88,33 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     expect(
       calculatedAssessment.variables.provincialAwardBCAGAmount,
     ).toBeLessThan(1000);
+  });
+
+  it("Should determine provincialAwardNetBCAGAmount as $0 when calculatedDataTotalFamilyIncome > limitAwardBCAGThresholdIncome.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 48638;
+    assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+    assessmentConsolidatedData.partner1CRAReportedIncome = 30000;
+    // Act
+    const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // For a family of 2, limitAwardBCAGThresholdIncome is 78637.
+    expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
+      78638,
+    );
+
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
+    ).toBeGreaterThan(
+      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+        .limitAwardBCAGThresholdIncome,
+    );
+    expect(calculatedAssessment.variables.provincialAwardNetBCAGAmount).toBe(0);
   });
 
   it("Should determine provincialAwardNetBCAGAmount when awardEligibilityBCAG is true.", async () => {
