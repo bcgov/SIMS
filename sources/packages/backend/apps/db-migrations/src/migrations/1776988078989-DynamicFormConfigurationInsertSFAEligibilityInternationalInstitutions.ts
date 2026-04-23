@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class DynamicFormConfigurationInsertSFAEligibilityInternationalInstitutions1776694310071 implements MigrationInterface {
+export class DynamicFormConfigurationInsertSFAEligibilityInternationalInstitutions1776988078989 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
