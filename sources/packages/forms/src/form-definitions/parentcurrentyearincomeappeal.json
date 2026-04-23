@@ -51,7 +51,6 @@
     },
     {
       "label": "Parents",
-      "persistent": false,
       "key": "parents",
       "tags": [
         "supplementary-data"
@@ -127,7 +126,7 @@
       "clearOnHide": false,
       "calculateValue": "value = data.parents;",
       "validate": {
-        "custom": "// Don't validate until required fields are entered\r\nif (data.parentsIncome.some(parent => !parent.hasCurrentYearParentIncome)) {\r\n  valid = true;\r\n} else {\r\n  const errorMessage = 'An income appeal must be submitted for at least one parent';\r\n  valid = data.parentsIncome.some(parent => parent.hasCurrentYearParentIncome === 'yes') ? true : errorMessage;    \r\n}"
+        "custom": "let errorMessage;\r\n\r\n// Only validate if all parents have a value selected\r\nif (data.parentsIncome.every(parent => parent.hasCurrentYearParentIncome)) {\r\n\r\n  // Get allowed values from injected property 'parents'.\r\n  const allowedValues = !!data.parents\r\n   ? data.parents.map((parent) => parent.id)\r\n   : [];\r\n\r\n  if (!data.parentsIncome.some(parent => parent.hasCurrentYearParentIncome === 'yes')) {\r\n    errorMessage = 'An income appeal must be submitted for at least one parent.';\r\n  } else if (!data.parentsIncome.every(parent => allowedValues.includes(parent.id))) {\r\n    errorMessage = 'Invalid value for parent(s).';\r\n  }\r\n}\r\nvalid = errorMessage || true;"
       },
       "validateWhenHidden": false,
       "key": "parentsIncome",
@@ -252,23 +251,6 @@
                   "inputType": "text",
                   "decimalLimit": 2,
                   "requireDecimal": true
-                },
-                {
-                  "label": "HTML",
-                  "attrs": [
-                    {
-                      "attr": "",
-                      "value": ""
-                    }
-                  ],
-                  "content": "Reason for Significant Decrease in Gross Income",
-                  "refreshOnChange": false,
-                  "key": "html4",
-                  "type": "htmlelement",
-                  "input": false,
-                  "tableView": false,
-                  "hideLabel": true,
-                  "tag": "p"
                 },
                 {
                   "label": "Select the reason that best describes the decrease in your parent’s gross income:",

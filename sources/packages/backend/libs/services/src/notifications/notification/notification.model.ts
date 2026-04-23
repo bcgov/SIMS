@@ -73,7 +73,7 @@ export interface LegacyRestrictionAddedNotification {
 }
 
 export interface StudentNotification {
-  givenNames: string;
+  givenNames?: string;
   lastName: string;
   toAddress: string;
   userId: number;

@@ -66,7 +66,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
         institutionProvince: Provinces.BritishColumbia,
         institutionCountry: "CA",
         institutionClassification: InstitutionClassification.Public,
-        studentDataTaxReturnIncome: 79719, // Income is higher than the threshold for a family of 1 (the student).
+        studentDataTaxReturnIncome: 80492, // Income is higher than the threshold for a family of 1 (the student).
       },
       expectedData: {
         expectedAssessmentEligibility: false,

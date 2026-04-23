@@ -49,6 +49,7 @@ import {
   FormSubmissionCreateAppealAssessmentAction,
   FormSubmissionUpdateModifiedIndependentAction,
   FormSubmissionUpdateNonPunitiveWithdrawalAction,
+  FormSubmissionAuthorizationService,
 } from "./services";
 import {
   ConfigurationContextValidator,
@@ -252,6 +253,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     StudentAppealCreateAssessmentAction,
     StudentAppealUpdateModifiedIndependentAction,
     FormSubmissionControllerService,
+    FormSubmissionAuthorizationService,
     // Form validators.
     ConfigurationContextValidator,
     PendingConcurrencyValidator,

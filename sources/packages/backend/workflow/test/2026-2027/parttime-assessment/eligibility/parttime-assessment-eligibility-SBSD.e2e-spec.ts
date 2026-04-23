@@ -39,7 +39,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataApplicationPDPPDStatus = "yes";
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 80000;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 78891;
 
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
@@ -50,6 +50,15 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
     // Assert
     expect(calculatedAssessment.variables.assessmentEligibilitySBSD).toBe(
       false,
+    );
+    expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
+      78891,
+    );
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
+    ).toBeGreaterThan(
+      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+        .limitAwardSBSDThresholdIncome,
     );
     expect(
       calculatedAssessment.variables.finalProvincialAwardNetSBSDAmount,

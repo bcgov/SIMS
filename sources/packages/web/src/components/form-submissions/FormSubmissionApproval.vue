@@ -14,121 +14,135 @@
           :loading="formSubmissionLoading"
           :read-only="true"
         >
-          <template #decision="{ decision }" v-if="canShowDecisionDetails">
-            <h4 class="category-header-medium brand-gray-text">
-              Current decision
-            </h4>
-            <v-divider />
-            <v-textarea
-              :ref="(el) => captureNoteRef(el, decision)"
-              class="my-4"
-              label="Notes"
-              variant="outlined"
-              v-model="decision.decisionNoteDescription"
-              hide-details="auto"
-              :rules="[
-                (v) => checkNotesLengthRule(v, `${decision.parentName}: notes`),
-              ]"
-              required
-              :readonly="decision.decisionSaved"
-              :disabled="readOnly || decision.saveDecisionInProgress"
-            />
-            <!-- Users without approval authorization do not need to see any information other than the note above. -->
-            <template v-if="formSubmission.hasApprovalAuthorization">
-              <v-row justify="space-between" class="mt-2 mb-1 mx-0">
-                <v-input
-                  v-model="decision.decisionStatus"
-                  :rules="[
-                    (v: FormSubmissionDecisionStatus) =>
-                      hasDecisionRule(v, decision.parentName),
-                  ]"
-                  :hide-details="true"
-                >
-                  <v-btn-toggle
-                    density="compact"
+          <template #decision="{ decision }">
+            <template
+              v-if="
+                formSubmission.status !== FormSubmissionStatus.Pending ||
+                decision.canAssessItemDecision
+              "
+            >
+              <h4 class="category-header-medium brand-gray-text">
+                Current decision
+              </h4>
+              <v-divider />
+              <v-textarea
+                :ref="(el) => captureNoteRef(el, decision)"
+                class="my-4"
+                label="Notes"
+                variant="outlined"
+                v-model="decision.decisionNoteDescription"
+                hide-details="auto"
+                :rules="[
+                  (v) =>
+                    checkNotesLengthRule(v, `${decision.parentName}: notes`),
+                ]"
+                required
+                :readonly="decision.decisionSaved"
+                :disabled="
+                  readOnly ||
+                  decision.saveDecisionInProgress ||
+                  !decision.canAssessItemDecision
+                "
+              />
+              <!-- Users without approval authorization do not need to see any information other than the note above. -->
+              <template v-if="decision.canAssessItemDecision">
+                <v-row justify="space-between" class="mt-2 mb-1 mx-0">
+                  <v-input
                     v-model="decision.decisionStatus"
-                    class="btn-toggle"
-                    selected-class="selected-btn-toggle"
-                    :disabled="
-                      readOnly ||
-                      decision.saveDecisionInProgress ||
-                      decision.decisionSaved
-                    "
-                    mandatory
+                    :rules="[
+                      (v: FormSubmissionDecisionStatus) =>
+                        hasDecisionRule(v, decision.parentName),
+                    ]"
+                    :hide-details="true"
                   >
-                    <v-btn
-                      v-for="decisionStatus of decisionStatusOptions"
-                      :key="decisionStatus.value"
-                      class="text-white"
-                      :color="decisionStatus.color"
-                      :value="decisionStatus.value"
-                      >{{ decisionStatus.value }}</v-btn
+                    <v-btn-toggle
+                      density="compact"
+                      v-model="decision.decisionStatus"
+                      class="btn-toggle"
+                      selected-class="selected-btn-toggle"
+                      :disabled="
+                        readOnly ||
+                        decision.saveDecisionInProgress ||
+                        decision.decisionSaved
+                      "
+                      mandatory
                     >
-                  </v-btn-toggle>
-                </v-input>
-                <!-- Allow editing a decision while the main submission is still pending. -->
-                <template
-                  v-if="
-                    !readOnly &&
-                    decision.parentStatus === FormSubmissionStatus.Pending
-                  "
-                >
-                  <v-btn
-                    v-if="decision.decisionSaved"
-                    class="float-right"
-                    color="primary"
-                    variant="outlined"
-                    :loading="decision.saveDecisionInProgress"
-                    @click="changeDecision(decision)"
-                    >Edit
-                    <v-tooltip activator="parent" location="bottom"
-                      >Allow changing the information previously
-                      submitted.</v-tooltip
-                    ></v-btn
+                      <v-btn
+                        v-for="decisionStatus of decisionStatusOptions"
+                        :key="decisionStatus.value"
+                        class="text-white"
+                        :color="decisionStatus.color"
+                        :value="decisionStatus.value"
+                        >{{ decisionStatus.value }}</v-btn
+                      >
+                    </v-btn-toggle>
+                  </v-input>
+                  <!-- Allow editing a decision while the main submission is still pending. -->
+                  <template
+                    v-if="
+                      !readOnly &&
+                      decision.parentStatus === FormSubmissionStatus.Pending
+                    "
                   >
-                  <template v-else>
                     <v-btn
-                      class="float-right mr-2"
+                      v-if="decision.decisionSaved"
+                      class="float-right"
                       color="primary"
                       variant="outlined"
                       :loading="decision.saveDecisionInProgress"
-                      @click="cancelChangeDecision(decision)"
-                      >Cancel
-                    </v-btn>
-                    <v-btn
-                      class="float-right"
-                      color="primary"
-                      :loading="decision.saveDecisionInProgress"
-                      @click="saveDecision(decision)"
-                      >Save
+                      @click="changeDecision(decision)"
+                      >Edit
                       <v-tooltip activator="parent" location="bottom"
-                        >Save a decision for this item only. This decision is
-                        not final and can be reverted till the main submission
-                        is no longer pending.</v-tooltip
+                        >Allow changing the information previously
+                        submitted.</v-tooltip
                       ></v-btn
                     >
+                    <template v-else>
+                      <v-btn
+                        class="float-right mr-2"
+                        color="primary"
+                        variant="outlined"
+                        :loading="decision.saveDecisionInProgress"
+                        @click="cancelChangeDecision(decision)"
+                        >Cancel
+                      </v-btn>
+                      <v-btn
+                        class="float-right"
+                        color="primary"
+                        :loading="decision.saveDecisionInProgress"
+                        @click="saveDecision(decision)"
+                        >Save
+                        <v-tooltip activator="parent" location="bottom"
+                          >Save a decision for this item only. This decision is
+                          not final and can be reverted till the main submission
+                          is no longer pending.</v-tooltip
+                        ></v-btn
+                      >
+                    </template>
                   </template>
+                </v-row>
+                <v-input
+                  class="float-right"
+                  v-model="decision.decisionSaved"
+                  :rules="[
+                    (v) => v || `${decision.parentName}: must be saved.`,
+                  ]"
+                  :hide-details="false"
+                ></v-input>
+                <!-- Audit for latest decision made on this item. -->
+                <p v-if="decision.decisionBy" class="brand-gray-text mt-4">
+                  Last updated by <strong>{{ decision.decisionBy }}</strong> on
+                  <strong>{{
+                    getISODateHourMinuteString(decision.decisionDate)
+                  }}</strong>
+                </p>
+                <!-- Timeline with the decision history. -->
+                <template v-if="decision.decisionHistory?.length">
+                  <v-divider />
+                  <form-submission-decision-history
+                    :decision-history="decision.decisionHistory"
+                  />
                 </template>
-              </v-row>
-              <v-input
-                class="float-right"
-                v-model="decision.decisionSaved"
-                :rules="[(v) => v || `${decision.parentName}: must be saved.`]"
-                :hide-details="false"
-              ></v-input>
-              <!-- Audit for latest decision made on this item. -->
-              <p v-if="decision.decisionBy" class="brand-gray-text mt-4">
-                Last updated by <strong>{{ decision.decisionBy }}</strong> on
-                <strong>{{
-                  getISODateHourMinuteString(decision.decisionDate)
-                }}</strong>
-              </p>
-              <!-- Timeline with the decision history. -->
-              <template v-if="decision.decisionHistory?.length">
-                <v-divider />
-                <form-submission-decision-history
-                  :decision-history="decision.decisionHistory"
-                />
               </template>
             </template>
           </template>
@@ -189,7 +203,7 @@ import FormSubmissionApprovalHeader from "./FormSubmissionApprovalHeader.vue";
 
 type FormSubmission = Pick<
   FormSubmissionMinistryAPIOutDTO,
-  "id" | "formCategory" | "status" | "hasApprovalAuthorization"
+  "id" | "formCategory" | "status" | "canAssessFinalDecision"
 >;
 
 export default defineComponent({
@@ -247,17 +261,11 @@ export default defineComponent({
       value: decisionStatus,
     }));
 
-    const canShowDecisionDetails = computed(
-      () =>
-        formSubmission.value.hasApprovalAuthorization ||
-        formSubmission.value.status !== FormSubmissionStatus.Pending,
-    );
-
     const canSubmitFinalDecision = computed(
       () =>
         !props.readOnly &&
         formSubmission.value.status === FormSubmissionStatus.Pending &&
-        formSubmission.value.hasApprovalAuthorization,
+        formSubmission.value.canAssessFinalDecision,
     );
 
     /**
@@ -276,7 +284,7 @@ export default defineComponent({
           id: submission.id,
           formCategory: submission.formCategory,
           status: submission.status,
-          hasApprovalAuthorization: submission.hasApprovalAuthorization,
+          canAssessFinalDecision: submission.canAssessFinalDecision,
         };
         // Adapt the items to a UI model to render each item
         // and a internal modal to provide the approval.
@@ -293,7 +301,6 @@ export default defineComponent({
             submissionItem,
             formSubmission.value.status,
           ),
-
           files: [],
         }));
       } catch {
@@ -344,6 +351,7 @@ export default defineComponent({
           ),
         }),
       );
+      decision.canAssessItemDecision = submissionItem.canAssessItemDecision;
       return decision;
     };
 
@@ -527,7 +535,6 @@ export default defineComponent({
     });
 
     return {
-      canShowDecisionDetails,
       canSubmitFinalDecision,
       decisionStatusOptions,
       outdatedDecisionModal,

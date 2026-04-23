@@ -44,6 +44,10 @@ export interface ParentCurrentYearIncomeAppealData extends JSONDoc {
   currentYearParentIncome?: number;
 }
 
+export interface TrainOutEligibilityAppealData extends JSONDoc {
+  isEligibilityRequested: boolean;
+}
+
 export interface DisbursementScheduleAward extends JSONDoc {
   valueType: string;
   valueCode: string;
@@ -168,7 +172,8 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   appealsPartnerCurrentYearIncomeAppealData?: JSONDoc;
   appealsParentCurrentYearIncomeAppealData?: ParentCurrentYearIncomeAppealData[];
   appealsExceptionalExpenseAppealData?: JSONDoc;
-  appealsPTAccessibilityGrantEligibilityAppealData?: JSONDoc;
+  appealsFTAccessibilityGrantEligibilityAppealData?: TrainOutEligibilityAppealData;
+  appealsPTAccessibilityGrantEligibilityAppealData?: TrainOutEligibilityAppealData;
   studentDataIsYourPartnerAbleToReport?: boolean; // No longer used in PY 26/27 and beyond.
   studentDataParentValidSinNumber?: YesNoOptions;
   studentDataNumberOfParents?: 1 | 2;
@@ -431,7 +436,10 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalParentIncome: number;
   calculatedDataParent1IncomeDeductions?: number;
   calculatedDataParent2IncomeDeductions?: number;
+  calculatedDataParentalDiscretionaryContribution?: number;
+  calculatedDataParentalAssetContribution?: number;
   calculatedDataTotalParentDeductions?: number;
+  calculatedDataTotalDiscretionaryIncome?: number;
   calculatedDataTotalNetFamilyIncome?: number;
   dmnFullTimeLivingCategory: string;
   isEligibleForRoomAndBoardAppeal?: boolean;
@@ -440,6 +448,7 @@ export interface CalculatedAssessmentModel {
   isEligibleForPartnerCurrentYearIncomeAppeal?: boolean;
   isEligibleForParentCurrentYearIncomeAppeal?: boolean;
   isEligibleForExceptionalExpenseAppeal?: boolean;
+  isEligibleForFTAccessibilityGrantEligibilityAppeal?: boolean;
   calculatedDataWaivedParent?: number;
   isEligibleForPTAccessibilityGrantEligibilityAppeal?: boolean;
   calculatedDataParent1TotalIncome?: number;
@@ -553,11 +562,17 @@ export interface CalculatedAssessmentModel {
   dmnPartTimeAwardFamilySizeVariables?: {
     limitAwardBCAGIncomeCap: number;
     limitAwardBCAGSlope: number;
+    limitAwardBCAGThresholdIncome: number;
     limitAwardCSPTIncomeCap: number;
     limitAwardCSPTSlope: number;
+    limitAwardCSPTThresholdIncome: number;
     limitAwardCSGDIncomeCap: number;
     limitAwardCSGD3OrMoreChildSlope: number;
     limitAwardCSGD2OrLessChildSlope: number;
+    limitAwardCSGDThresholdIncome: number;
+    limitAwardCSGPThresholdIncome: number;
+    limitAwardCSLPThresholdIncome: number;
+    limitAwardSBSDThresholdIncome: number;
   };
   // DMN Part-time Program Year Maximums
   dmnPartTimeProgramYearMaximums?: {
@@ -586,6 +601,16 @@ export interface CalculatedAssessmentModel {
     isEligibleBCAG: boolean; // Applies to both 2 year and regular BCAG.
     isEligibleSBSD: boolean;
     isEligibleBGPD: boolean;
+  };
+  // DMN Full-time Parents MSOL
+  dmnFullTimeParentsMSOL?: {
+    limitDiscretionaryIncome: number;
+  };
+  // DMN Full-time Parents Discretionary Contribution
+  dmnFullTimeParentsDiscretionary?: {
+    limitAnnualFlatAmount: number;
+    limitAnnualRate: number;
+    limitIncomeReduction: number;
   };
   // Disbursement schedules
   disbursementSchedules: DisbursementSchedule[];
