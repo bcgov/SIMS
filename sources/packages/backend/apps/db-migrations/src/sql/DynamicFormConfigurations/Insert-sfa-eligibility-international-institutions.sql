@@ -16,5 +16,5 @@ VALUES
     'A request to be eligible to receive student financial aid under the train out provision.',
     TRUE,
     TRUE,
-    'pt-sfa-eligibility-international-institutions-appeal'
+    'sfa-eligibility-international-institutions'
   );
