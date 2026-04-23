@@ -80,6 +80,8 @@ export class FormSubmissionAuthorizationService {
    */
   getFormsUserRoles(userRoles: Role[]): FormSubmissionUserRolesAuth {
     const formSubmissionUserRoles = {} as FormSubmissionUserRoles;
+    const formsAuthorizationKeysMap =
+      this.dynamicFormConfigurationService.getFormsIDsAndAuthorizationKeysMap();
     for (const role of userRoles) {
       // Expected format: `forms.{authorization-key}.{form-role}`.
       const match = FORMS_AUTHORIZATION_ROLE_REGEX.exec(role);
@@ -88,9 +90,8 @@ export class FormSubmissionAuthorizationService {
       }
       const [, authorizationKey, formRole] = match;
       // Get the form IDs associated with the authorization key and form role.
-      const allowedFormsIDs = this.dynamicFormConfigurationService
-        .getFormsByAuthorizationKey([authorizationKey])
-        .map((form) => form.id);
+      const allowedFormsIDs =
+        formsAuthorizationKeysMap.get(authorizationKey) ?? [];
       const formRoleEnum = formRole as FormSubmissionAuthRoles;
       const allowedForms = (formSubmissionUserRoles[formRoleEnum] ??= []);
       allowedForms.push(...allowedFormsIDs);

@@ -114,17 +114,20 @@ export class DynamicFormConfigurationService {
   }
 
   /**
-   * Get the form configurations that are associated with any of the provided authorization keys.
-   * @param authorizationKeys authorization keys.
-   * @returns dynamic form configurations for the requested authorization keys.
+   * Get the association between authorization keys and the form configuration IDs that are associated with them.
+   * @returns map of authorization keys to form configuration IDs.
    */
-  getFormsByAuthorizationKey(
-    authorizationKeys: string[],
-  ): DynamicFormConfiguration[] {
-    return this.dynamicFormConfigurations.filter(
-      (dynamicFormConfiguration) =>
-        dynamicFormConfiguration.authorizationKey &&
-        authorizationKeys.includes(dynamicFormConfiguration.authorizationKey),
-    );
+  getFormsIDsAndAuthorizationKeysMap(): Map<string, number[]> {
+    const map = new Map<string, number[]>();
+    for (const dynamicFormConfiguration of this.dynamicFormConfigurations) {
+      if (!dynamicFormConfiguration.authorizationKey) {
+        continue;
+      }
+      map.set(dynamicFormConfiguration.authorizationKey, [
+        ...(map.get(dynamicFormConfiguration.authorizationKey) ?? []),
+        dynamicFormConfiguration.id,
+      ]);
+    }
+    return map;
   }
 }
