@@ -51,7 +51,12 @@
             :key="submission.id"
             variant="elevated"
             :ripple="false"
-            @click="goToSubmission(submission.id)"
+            @click="
+              canViewFormSubmittedData &&
+              submission.canViewFormSubmittedData !== false
+                ? goToSubmission(submission.id)
+                : null
+            "
           >
             <v-card-item>
               <v-card-title>
@@ -65,7 +70,13 @@
                     ><status-chip-form-submission :status="submission.status"
                   /></v-col>
                   <v-col class="d-flex justify-end"
-                    ><v-btn color="primary"> View </v-btn></v-col
+                    ><v-btn
+                      v-if="canViewFormSubmittedData"
+                      color="primary"
+                      :disabled="submission.canViewFormSubmittedData === false"
+                    >
+                      View
+                    </v-btn></v-col
                   >
                 </v-row>
                 <v-divider class="mb-0"></v-divider>
@@ -169,6 +180,11 @@ export default defineComponent({
       type: Number,
       required: false,
       default: undefined,
+    },
+    canViewFormSubmittedData: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
   },
   setup(props, { emit }) {

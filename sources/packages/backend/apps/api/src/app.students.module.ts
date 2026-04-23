@@ -31,6 +31,7 @@ import {
   InstitutionRestrictionService,
   FormSubmissionSubmitService,
   FormSubmissionService,
+  FormSubmissionAuthorizationService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -176,6 +177,7 @@ import {
     SupportingUserControllerService,
     DisbursementScheduleSharedService,
     InstitutionRestrictionService,
+    FormSubmissionAuthorizationService,
     // Form Validators
     ConfigurationContextValidator,
     PendingConcurrencyValidator,

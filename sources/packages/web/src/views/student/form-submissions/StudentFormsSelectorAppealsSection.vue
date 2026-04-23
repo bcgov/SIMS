@@ -37,9 +37,9 @@
             <template v-if="applicationAppeals.length">
               <p>
                 Please select the appropriate appeal(s) from the list below and
-                click 'Fill appeal(s)' to provide the data. Multiple appeals can
-                be submitted at a time and new appeals would not be allowed if
-                there is already some appeal pending StudentAid BC decision.
+                click 'Request appeal(s)' to provide the data. Multiple appeals
+                can be submitted at a time and new appeals would not be allowed
+                if there is already some appeal pending StudentAid BC decision.
               </p>
               <v-list
                 lines="three"
@@ -75,7 +75,7 @@
           </v-form>
           <footer-buttons
             class="mt-4"
-            primary-label="Fill appeal(s)"
+            primary-label="Request appeal(s)"
             justify="end"
             @primary-click="fillApplicationAppeals"
             :show-secondary-button="false"
@@ -93,9 +93,9 @@
         >
         <template #text>
           <p>
-            Please select one of the listed appeals and click 'Fill appeal' to
-            provide the data. A single appeal in this category can be submitted
-            at a time.
+            Please select one of the listed appeals and click 'Request appeal'
+            to provide the data. A single appeal in this category can be
+            submitted at a time.
           </p>
           <v-form ref="standaloneAppealsSelectionForm">
             <v-list
@@ -131,7 +131,7 @@
           </v-form>
           <footer-buttons
             class="mt-4"
-            primary-label="Fill appeal"
+            primary-label="Request appeal"
             justify="end"
             @primary-click="fillStudentAppeals"
             :show-secondary-button="false"

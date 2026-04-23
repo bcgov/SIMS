@@ -37,6 +37,8 @@ export function createFakeDynamicFormConfiguration(
     options?.initialValues?.hasApplicationScope ?? false;
   dynamicFormConfiguration.allowBundledSubmission =
     options?.initialValues?.allowBundledSubmission ?? false;
+  dynamicFormConfiguration.authorizationKey =
+    options?.initialValues?.authorizationKey ?? faker.string.uuid();
   return dynamicFormConfiguration;
 }
 
@@ -71,6 +73,7 @@ export async function ensureDynamicFormConfigurationExists(
         formType: true,
         formDefinitionName: true,
         formCategory: true,
+        authorizationKey: true,
       },
       relations: { programYear: true },
       where: {
