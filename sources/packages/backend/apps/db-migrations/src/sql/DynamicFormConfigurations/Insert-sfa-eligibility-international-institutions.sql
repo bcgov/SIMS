@@ -5,7 +5,8 @@ INSERT INTO
     form_category,
     form_description,
     has_application_scope,
-    allow_bundled_submission
+    allow_bundled_submission,
+    authorization_key
   )
 VALUES
   (
@@ -14,5 +15,6 @@ VALUES
     'Student appeal',
     'A request to be eligible to receive student financial aid under the train out provision.',
     TRUE,
-    TRUE
+    TRUE,
+    'pt-sfa-eligibility-international-institutions-appeal'
   );
