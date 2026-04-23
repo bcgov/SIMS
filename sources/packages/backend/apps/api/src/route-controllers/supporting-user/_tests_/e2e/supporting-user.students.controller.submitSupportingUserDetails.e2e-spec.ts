@@ -183,6 +183,7 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
       },
       relations: { modifier: true },
       where: { id: parent.id },
+      loadEagerRelations: false,
     });
     // Assert supporting user reported details.
     expect(updatedSupportingUser).toEqual({
@@ -197,8 +198,6 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
         },
         phone: payload.phone,
       },
-      sin: undefined,
-      birthDate: undefined,
       supportingData: {
         relationshipToStudent: payload.supportingData.relationshipToStudent,
         totalIncome: payload.supportingData.totalIncome,
@@ -214,31 +213,11 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
         iAgreeToTheAboveCRAConsent:
           payload.supportingData.iAgreeToTheAboveCRAConsent,
       },
-      supportingUserType: undefined,
-      fullName: undefined,
       personalInfo: {
         givenNames: payload.givenNames,
         lastName: payload.lastName,
       },
-      isAbleToReport: undefined,
-      user: undefined,
-      application: undefined,
-      creator: undefined,
-      modifier: {
-        id: student.user.id,
-        userName: undefined,
-        email: undefined,
-        firstName: undefined,
-        lastName: undefined,
-        isActive: undefined,
-        identityProviderType: undefined,
-        creator: undefined,
-        modifier: undefined,
-        createdAt: undefined,
-        updatedAt: undefined,
-      },
-      createdAt: undefined,
-      updatedAt: undefined,
+      modifier: { id: student.user.id },
     });
     // Assert workflow message.
     expect(zeebeClient.publishMessage).toHaveBeenCalledWith(
@@ -285,6 +264,7 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
       },
       relations: { modifier: true },
       where: { id: partner.id },
+      loadEagerRelations: false,
     });
     // Assert
     expect(updatedSupportingUser).toEqual({
@@ -299,8 +279,6 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
         },
         phone: payload.phone,
       },
-      sin: undefined,
-      birthDate: undefined,
       supportingData: {
         totalIncome: payload.supportingData.totalIncome,
         iAgreeToAboveStudentAidBCConsent:
@@ -308,31 +286,11 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
         iAgreeToTheAboveCRAConsent:
           payload.supportingData.iAgreeToTheAboveCRAConsent,
       },
-      supportingUserType: undefined,
-      fullName: undefined,
       personalInfo: {
         givenNames: payload.givenNames,
         lastName: payload.lastName,
       },
-      isAbleToReport: undefined,
-      user: undefined,
-      application: undefined,
-      creator: undefined,
-      modifier: {
-        id: student.user.id,
-        userName: undefined,
-        email: undefined,
-        firstName: undefined,
-        lastName: undefined,
-        isActive: undefined,
-        identityProviderType: undefined,
-        creator: undefined,
-        modifier: undefined,
-        createdAt: undefined,
-        updatedAt: undefined,
-      },
-      createdAt: undefined,
-      updatedAt: undefined,
+      modifier: { id: student.user.id },
     });
     // Assert workflow message.
     expect(zeebeClient.publishMessage).toHaveBeenCalledWith(
