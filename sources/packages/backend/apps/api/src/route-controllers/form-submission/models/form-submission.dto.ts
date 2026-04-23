@@ -164,7 +164,7 @@ export class FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemBaseA
  * including the individual form items.
  */
 export class FormSubmissionMinistryAPIOutDTO extends FormSubmissionBaseAPIOutDTO {
-  canAssessFinalDecision: boolean;
+  canAssessFinalDecision?: boolean;
   submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
 }
 

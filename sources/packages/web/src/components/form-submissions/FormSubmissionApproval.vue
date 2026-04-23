@@ -284,7 +284,7 @@ export default defineComponent({
           id: submission.id,
           formCategory: submission.formCategory,
           status: submission.status,
-          canAssessFinalDecision: submission.canAssessFinalDecision,
+          canAssessFinalDecision: !!submission.canAssessFinalDecision,
         };
         // Adapt the items to a UI model to render each item
         // and a internal modal to provide the approval.

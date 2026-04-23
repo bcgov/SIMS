@@ -145,7 +145,7 @@ export interface FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemA
  * including the individual form items.
  */
 export interface FormSubmissionMinistryAPIOutDTO extends FormSubmissionBaseAPIOutDTO {
-  canAssessFinalDecision: boolean;
+  canAssessFinalDecision?: boolean;
   submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
 }
 

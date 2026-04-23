@@ -260,10 +260,14 @@ export class FormSubmissionControllerService {
     const dynamicFormsIDs = submission.formSubmissionItems.map(
       (item) => item.dynamicFormConfiguration.id,
     );
-    const canAssessFinalDecision = formsUserRoles.isAuthorized(
-      FormSubmissionAuthRoles.AssessFinalDecision,
-      dynamicFormsIDs,
-    );
+    // If the request is for a specific item, refrain from returning the canAssessFinalDecision property as it
+    // is only relevant when assessing the entire submission and not a specific item.
+    const canAssessFinalDecision = !!itemId
+      ? undefined
+      : formsUserRoles.isAuthorized(
+          FormSubmissionAuthRoles.AssessFinalDecision,
+          dynamicFormsIDs,
+        );
     return {
       canAssessFinalDecision,
       id: submission.id,
