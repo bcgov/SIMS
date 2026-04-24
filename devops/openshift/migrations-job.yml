@@ -28,6 +28,8 @@ objects:
               args: ["${MIGRATION_COMMAND}"]
               imagePullPolicy: Always
               env:
+                - name: HOME
+                  value: /tmp
                 - name: VERSION
                   value: ${BUILD_TAG}
                 - name: POSTGRES_HOST
