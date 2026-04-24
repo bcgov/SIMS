@@ -459,6 +459,47 @@ describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
       });
   });
 
+  it("Should not return a form submission if the user does not have ViewFormSubmittedData role access to at least one of the form submissions.", async () => {
+    // Arrange
+    // Add a unique identifier in the student lastName to isolate the data.
+    const uniqueIdentifier = faker.string.uuid();
+    const user = createFakeUser();
+    user.lastName = uniqueIdentifier;
+    const student = await saveFakeStudent(db.dataSource, { user });
+    const pendingStudentForm = await saveFakeFormSubmission(
+      db,
+      { student },
+      {
+        initialValues: {
+          formCategory: FormCategory.StudentAppeal,
+          submissionStatus: FormSubmissionStatus.Pending,
+        },
+      },
+    );
+    const endpoint = `/aest/form-submission/pending?page=0&pageLimit=100&sortField=submittedDate&sortOrder=DESC&searchCriteria=${uniqueIdentifier}&formCategory=${encodeURIComponent(FormCategory.StudentForm)}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const dynamicFormConfigurations =
+      pendingStudentForm.formSubmissionItems.map(
+        (item) => item.dynamicFormConfiguration,
+      );
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      dynamicFormConfigurations,
+      // Authorize the form for some other role than the one required to view the submission.
+      [FormSubmissionAuthRoles.ViewFormHistoryList],
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        results: [],
+        count: 0,
+      });
+  });
+
   afterAll(async () => {
     await app?.close();
   });
