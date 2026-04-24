@@ -23,13 +23,11 @@ on:
         required: true
         type: string
     secrets:
-      ZEEBE_ADDRESS:
+      OPENSHIFT_SIMS_CREDS_NAME:
         required: true
-      ZEEBE_CLIENT_ID:
+      HOST_PREFIX:
         required: true
-      ZEEBE_CLIENT_SECRET:
-        required: true
-      CAMUNDA_OAUTH_URL:
+      OPENSHIFT_ENV_NAMESPACE:
         required: true
 
 jobs:
@@ -38,26 +36,28 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     env:
-      ZEEBE_GRPC_ADDRESS: ${{ secrets.ZEEBE_ADDRESS }}
-      ZEEBE_CLIENT_ID: ${{ secrets.ZEEBE_CLIENT_ID }}
-      ZEEBE_CLIENT_SECRET: ${{ secrets.ZEEBE_CLIENT_SECRET }}
-      CAMUNDA_OAUTH_URL: ${{ secrets.CAMUNDA_OAUTH_URL }}
+      NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+      BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
+      BUILD_REF: ${{ inputs.gitRef }}
+      MIGRATIONS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
+      HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
     steps:
-      - name: Print env variables
+      - name: Install CLI tools from OpenShift Mirror
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: "4"
+      - name: Print env
         run: |
-          echo ZEEBE_ADDRESS: $ZEEBE_ADDRESS
-          echo RESOURCES_FOLDER: $RESOURCES_FOLDER
+          echo BUILD NAMESPACE: "$BUILD_NAMESPACE"
+          echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
         uses: actions/checkout@v6
         with:
           ref: ${{ inputs.gitRef }}
-      - name: Setup Nodejs
-        uses: actions/setup-node@v6
-        with:
-          node-version: "18.x"
-      - name: Downloading packages
-        working-directory: "./sources/packages/backend"
-        run: npm ci
-      - name: Executing deployment
-        working-directory: "./sources/packages/backend"
-        run: npm run deploy:camunda:definitions
+      - name: Log in to OpenShift
+        run: |
+          oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
+      - name: Deploy Camunda definitions
+        working-directory: "./devops/"
+        run: |
+          make oc-run-migrations MIGRATION_COMMAND="npm run deploy:camunda:definitions"
