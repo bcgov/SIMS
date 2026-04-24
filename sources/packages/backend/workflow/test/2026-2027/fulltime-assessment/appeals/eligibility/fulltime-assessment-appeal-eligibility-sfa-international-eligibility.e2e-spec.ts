@@ -14,10 +14,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
   const appealEligibilityScenarios = [
     {
       inputData: {
-        // The following values make the assessment eligible for CSLF.
+        // The following values make some of the SFA grants (e.g. CSLF) eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // BC public institutions are eligible for funding (e.g. CSLF)
-        // and not eligible for the appeal.
+        // BC public institutions are eligible for some of the SFA grants and not eligible for the appeal.
         institutionCountry: "CA",
         institutionProvince: Provinces.BritishColumbia,
         institutionClassification: InstitutionClassification.Public,
@@ -28,10 +27,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make the assessment eligible for CSLF.
+        // The following values make some of the SFA grants (e.g. CSLF) eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // BC private non-profit institutions are eligible for funding (e.g. CSLF)
-        // and not eligible for the appeal.
+        // BC private non-profit institutions are eligible for some of the SFA grants and not eligible for the appeal.
         institutionCountry: "CA",
         institutionProvince: Provinces.BritishColumbia,
         institutionClassification: InstitutionClassification.Private,
@@ -42,10 +40,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make the assessment eligible for CSLF.
+        // The following values make some of the SFA grants (e.g. CSLF) eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // BC private profit institutions are eligible for funding (e.g. CSLF)
-        // and not eligible for the appeal.
+        // BC private profit institutions are eligible for some of the SFA grants and not eligible for the appeal.
         institutionCountry: "CA",
         institutionProvince: Provinces.BritishColumbia,
         institutionClassification: InstitutionClassification.Private,
@@ -55,10 +52,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make the assessment eligible for CSLF.
+        // The following values make some of the SFA grants (e.g. CSLF) eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // Out of province public institutions are eligible for funding (e.g. CSLF)
-        // and not eligible for the appeal.
+        // Out of province public institutions are eligible for some of the SFA grants and not eligible for the appeal.
         institutionCountry: "CA",
         institutionProvince: Provinces.Ontario,
         institutionClassification: InstitutionClassification.Public,
@@ -69,10 +65,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make the assessment eligible for CSLF.
+        // The following values make some of the SFA grants (e.g. CSLF) eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // Out of province private non-profit institutions are eligible for funding (e.g. CSLF)
-        // and not eligible for the appeal.
+        // Out of province private non-profit institutions are eligible for some of the SFA grants and not eligible for the appeal.
         institutionCountry: "CA",
         institutionProvince: Provinces.Ontario,
         institutionClassification: InstitutionClassification.Private,
@@ -83,10 +78,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make the assessment eligible for CSLF.
+        // The following values make some of the SFA grants (e.g. CSLF) eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // Out of province private profit institutions are eligible for funding (e.g. CSLF)
-        // and not eligible for the appeal.
+        // Out of province private profit institutions are eligible for some of the SFA grants and not eligible for the appeal.
         institutionCountry: "CA",
         institutionProvince: Provinces.Ontario,
         institutionClassification: InstitutionClassification.Private,
@@ -96,10 +90,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make the assessment eligible for CSLF.
+        // The following values make some of the SFA grants (e.g. CSLF) eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // Other international public institutions are eligible for funding (e.g. CSLF))
-        // and not eligible for the appeal.
+        // Other international public institutions are eligible for some of the SFA grants and not eligible for the appeal.
         institutionCountry: "AU",
         institutionProvince: undefined,
         institutionClassification: InstitutionClassification.Public,
@@ -110,10 +103,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make the assessment eligible for CSLF.
+        // The following values make some of the SFA grants (e.g. CSLF) eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // Other international private non-profit institutions are eligible for funding (e.g. CSLF)
-        // and not eligible for the appeal.
+        // International private non-profit institutions are eligible for some of the SFA grants and not eligible for the appeal.
         institutionCountry: "AU",
         institutionProvince: undefined,
         institutionClassification: InstitutionClassification.Private,
@@ -124,10 +116,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make the application eligible for at least one award type .
+        // The following values make some of the SFA grants (e.g. CSLF) eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // Other international private profit institutions are not eligible for funding (e.g. CSLF)
-        // and eligible for the appeal.
+        // International private for-profit institutions are not eligible for any of the SFA grants and are eligible for the appeal.
         institutionCountry: "AU",
         institutionProvince: undefined,
         institutionClassification: InstitutionClassification.Private,
@@ -137,14 +128,13 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values eliminate all funding needs.
+        // The following values make none of the SFA grants eligible at assessment level.
         studentDataTaxReturnIncome: 500000,
         offeringWeeks: 5,
         offeringProgramRelatedCosts: 30,
         offeringActualTuitionCosts: 50,
         studentDataVoluntaryContributions: 10000,
-        // Other international private profit institutions are not eligible for funding (e.g. CSLF)
-        // and eligible for the appeal.
+        // International private for-profit institutions are not eligible for any of the SFA grants and are eligible for the appeal.
         institutionCountry: "AU",
         institutionProvince: undefined,
         institutionClassification: InstitutionClassification.Private,
