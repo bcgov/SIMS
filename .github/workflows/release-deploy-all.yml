@@ -304,9 +304,9 @@ jobs:
 
   # Deploy Formio Definitions
   deployFormioDefinitions:
-    if: ${{ inputs.deployFormioDefinitions }}
+    if: ${{ !cancelled() && inputs.deployFormioDefinitions }}
     name: Deploy Form.io definitions
-    needs: [env-setup, deploy-sims-api]
+    needs: [env-setup, deploy-sims-api, deployCamundaDefinitions]
     uses: ./.github/workflows/release-deploy-formio-definitions.yml
     with:
       environment: ${{ inputs.environment }}
