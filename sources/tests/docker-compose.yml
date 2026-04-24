@@ -111,12 +111,12 @@ services:
       args:
         - FORMIO_SOURCE_REPO_URL=${FORMIO_SOURCE_REPO_URL}
         - FORMIO_SOURCE_REPO_TAG=${FORMIO_SOURCE_REPO_TAG}
-    # The app will restart until Mongo is listening
-    restart: unless-stopped
     environment:
       NODE_CONFIG: '{"mongo": "mongodb://mongo:27017/formio"}'
       ROOT_EMAIL: ${FORMS_SA_USER_NAME}
       ROOT_PASSWORD: ${FORMS_SA_PASSWORD}
+    # The app will restart until Mongo is listening.
+    restart: unless-stopped
     ports:
       - "3001:3001"
     networks:
@@ -127,7 +127,7 @@ services:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3001/access || exit 1"]
       interval: 15s
       timeout: 10s
-      retries: 10
+      retries: 15
       start_period: 60s
   # Workers
   workers:
