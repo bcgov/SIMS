@@ -311,7 +311,7 @@ export default defineComponent({
           isAxiosError(error) &&
           error.response?.status === HttpStatusCode.Forbidden
         ) {
-          // Using replace to avoid the user to go back to the previous page.
+          // Using replace to allow the user to go back to the previous page.
           router.replace({ name: SharedRouteConst.FORBIDDEN_USER });
           return;
         }

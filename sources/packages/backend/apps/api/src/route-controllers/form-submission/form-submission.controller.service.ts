@@ -262,7 +262,7 @@ export class FormSubmissionControllerService {
     );
     // If the request is for a specific item, refrain from returning the canAssessFinalDecision property as it
     // is only relevant when assessing the entire submission and not a specific item.
-    const canAssessFinalDecision = !!itemId
+    const canAssessFinalDecision = itemId
       ? undefined
       : formsUserRoles.isAuthorized(
           FormSubmissionAuthRoles.AssessFinalDecision,
