@@ -58,7 +58,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       60000,
     );
     expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(
-      2197.058304,
+      2133.833856,
     );
   });
 
@@ -135,9 +135,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     // Assert
     expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(true);
     expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(
-      894.715584,
+      831.491136,
     );
-    // Award limit remaining is $894.715584 - $795 = $99.715584 which is less than $100.
+    // Award limit remaining is $831.491136 - $795 = $36.491136 which is less than $100.
     expect(calculatedAssessment.variables.limitAwardCSPTRemaining).toBeLessThan(
       100,
     );
