@@ -37,8 +37,8 @@ backend-unit-tests:
 	@cd ../packages/backend && npm i && npm run test:cov
 
 e2e-tests-api:
-	@echo "+\n++ Make: Starting containers for API E2E tests \n+"
-	@docker compose up -d --wait api
+	@echo "+\n++ Make: Starting infrastructure containers for API E2E tests \n+"
+	@docker compose up -d --wait mongo formio postgres
 	@echo "+\n++ Make: Deploying form definitions \n+"
 	@cd ../packages/forms && npm ci && npm run deploy
 	@echo "+\n++ Make: Running API E2E tests \n+"
