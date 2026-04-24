@@ -23,6 +23,8 @@ on:
         required: true
         type: string
     secrets:
+      SA_TOKEN:
+        required: true
       OPENSHIFT_SIMS_CREDS_NAME:
         required: true
       HOST_PREFIX:
