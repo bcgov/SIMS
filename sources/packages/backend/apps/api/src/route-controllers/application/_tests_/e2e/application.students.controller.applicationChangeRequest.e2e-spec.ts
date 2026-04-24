@@ -76,6 +76,9 @@ describe("ApplicationStudentsController(e2e)-applicationChangeRequest", () => {
       programYearId: programYear.id,
     } as SaveApplicationAPIInDTO;
     // Form.io mock.
+    // The Form.io mock is required because the application form has too many required
+    // fields. The minimal stub payload is intentionally used to test the change-request
+    // state machine logic, not form validation.
     const dryRunSubmissionMock = jest.fn().mockResolvedValue({
       valid: true,
       formName: FormNames.Application,
