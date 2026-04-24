@@ -305,7 +305,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
         {
           // User has approval authorization for this item, the decision is still pending,
           // and the user should be able to see all the information related to the decision
-          // but the decision history, since 'view-decision-history' the permission is missing.
+          // but the decision history, since 'view-decision-history' permission is missing.
           dynamicFormConfiguration: formConfigs.studentAppealB,
           decisions: [
             {

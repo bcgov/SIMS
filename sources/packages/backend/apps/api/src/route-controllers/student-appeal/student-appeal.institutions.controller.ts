@@ -47,6 +47,7 @@ export class StudentAppealInstitutionsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Param("appealId", ParseIntPipe) appealId: number,
   ): Promise<StudentAppealAPIOutDTO<StudentAppealRequestAPIOutDTO>> {
+    // TODO: To be removed to prevent institutions from accessing appeals submitted data.
     return this.studentAppealControllerService.getStudentAppealWithRequests<StudentAppealRequestAPIOutDTO>(
       appealId,
       { studentId, applicationId },
