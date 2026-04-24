@@ -13,7 +13,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 24412;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 23318;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     assessmentConsolidatedData.partner1CRAReportedIncome = 30000;
     // Act
@@ -22,7 +22,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
       assessmentConsolidatedData,
     );
     // Assert
-    // For a family of 2, limitAwardBCAGIncomeCap is 54412.
+    // For a family of 2, limitAwardBCAGIncomeCap is 53318.
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeLessThanOrEqual(
@@ -30,7 +30,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-BC
         .limitAwardBCAGIncomeCap,
     );
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
-      54412,
+      53318,
     );
     expect(calculatedAssessment.variables.provincialAwardBCAGAmount).toBe(
       calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits

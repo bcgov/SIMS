@@ -16,7 +16,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 54245;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 52351;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     assessmentConsolidatedData.partner1CRAReportedIncome = 40000;
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
@@ -45,7 +45,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       assessmentConsolidatedData,
     );
     // Assert
-    // calculatedDataTotalFamilyIncome (94245) <= limitAwardCSGDIncomeCap (94245 for a family of 6)
+    // calculatedDataTotalFamilyIncome (92351) <= limitAwardCSGDIncomeCap (92351 for a family of 6)
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeLessThanOrEqual(
@@ -90,7 +90,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       assessmentConsolidatedData,
     );
     // Assert
-    // calculatedDataTotalFamilyIncome (100000) > limitAwardCSGDIncomeCap (94245 for a family of 6) and <= limitAwardCSGDThresholdIncome (151937 for a family of 6).
+    // calculatedDataTotalFamilyIncome (100000) > limitAwardCSGDIncomeCap (92351 for a family of 6) and <= limitAwardCSGDThresholdIncome (150043 for a family of 6).
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeGreaterThan(
@@ -136,10 +136,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       ),
     );
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
-      1134.30959145,
+      1092.94423371,
     );
     expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
-      1134.30959145,
+      1092.94423371,
     );
   });
 
@@ -251,10 +251,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       ),
     );
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(
-      791.52482136,
+      766.92144165,
     );
     expect(calculatedAssessment.variables.finalFederalAwardNetCSGDAmount).toBe(
-      791.52482136,
+      766.92144165,
     );
   });
 
