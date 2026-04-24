@@ -145,6 +145,10 @@ export interface FormSubmissionItemMinistryAPIOutDTO extends FormSubmissionItemA
  * including the individual form items.
  */
 export interface FormSubmissionMinistryAPIOutDTO extends FormSubmissionBaseAPIOutDTO {
+  /**
+   * Indicates when a the final decision can be made on the form submission.
+   * Not present when a single form item is requested.
+   */
   canAssessFinalDecision?: boolean;
   submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
 }

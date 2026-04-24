@@ -472,7 +472,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       );
   });
 
-  it("Should get a form submission item, do not return canAssessFinalDecision, and its decision statuses, including current notes and audit when the user has approval authorization and an item ID was provided.", async () => {
+  it("Should get a form submission item, and its decision statuses, including current notes and audit when the user has approval authorization and an item ID was provided.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource);
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
@@ -527,6 +527,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .expect(HttpStatus.OK)
       .expect(({ body }) => {
         expect(body).toStrictEqual({
+          // canAssessFinalDecision should not be returned since only one item was requested.
           id: formSubmission.id,
           applicationId: application.id,
           applicationNumber: application.applicationNumber,

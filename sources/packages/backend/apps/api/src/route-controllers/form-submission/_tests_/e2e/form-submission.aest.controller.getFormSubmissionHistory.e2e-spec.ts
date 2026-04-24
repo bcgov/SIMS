@@ -353,7 +353,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
       );
   });
 
-  it("Should get form submission history, filtering out submission items the user is not authorized to view when the user is requesting a history where he is not authorized to see all items.", async () => {
+  it("Should get form submission history, filtering out submission items that the user is not authorized to view when the user is requesting a history where he is not authorized to see all items.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource);
     const pendingStudentAppeal = await saveFakeFormSubmissionFromInputTestData(
