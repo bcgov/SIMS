@@ -200,6 +200,9 @@ import { FORM_SUBMISSION_ITEM_OUTDATED } from "@/constants";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import FormSubmissionDecisionHistory from "./FormSubmissionDecisionHistory.vue";
 import FormSubmissionApprovalHeader from "./FormSubmissionApprovalHeader.vue";
+import { SharedRouteConst } from "@/constants/routes/RouteConstants";
+import router from "@/router";
+import { HttpStatusCode, isAxiosError } from "axios";
 
 type FormSubmission = Pick<
   FormSubmissionMinistryAPIOutDTO,
@@ -303,7 +306,15 @@ export default defineComponent({
           ),
           files: [],
         }));
-      } catch {
+      } catch (error: unknown) {
+        if (
+          isAxiosError(error) &&
+          error.response?.status === HttpStatusCode.Forbidden
+        ) {
+          // Using replace to avoid the user to go back to the previous page.
+          router.replace({ name: SharedRouteConst.FORBIDDEN_USER });
+          return;
+        }
         snackBar.error("Unexpected error while loading the form submission.");
       } finally {
         formSubmissionLoading.value = false;
