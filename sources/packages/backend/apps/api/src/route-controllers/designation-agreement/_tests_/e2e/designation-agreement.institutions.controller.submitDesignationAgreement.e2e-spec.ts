@@ -10,7 +10,6 @@ import {
   createFakeDesignationAgreement,
   createFakeInstitutionLocation,
   createFakeUser,
-  getProviderInstanceForModule,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -21,9 +20,6 @@ import {
   getAuthRelatedEntities,
 } from "../../../../testHelpers";
 import * as request from "supertest";
-import { FormService } from "../../../../services";
-import { TestingModule } from "@nestjs/testing";
-import { AppInstitutionsModule } from "../../../../app.institutions.module";
 import { NO_LOCATION_SELECTED_FOR_DESIGNATION } from "../../../../constants/error-code.constants";
 
 describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgreement", () => {
@@ -33,11 +29,9 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
   let collegeC: Institution;
   let collegeFLocation: InstitutionLocation;
   let collegeCLocation: InstitutionLocation;
-  let testingModule: TestingModule;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource, module } =
-      await createTestingAppModule();
+    const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
     const { institution } = await getAuthRelatedEntities(
@@ -65,21 +59,34 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
       InstitutionTokenTypes.CollegeCAdminLegalSigningUser,
       collegeCLocation,
     );
-    testingModule = module;
   });
 
   it("Should request designation for a public institution when institution user is legal signing authority.", async () => {
     // Arrange
     const payload = {
       dynamicData: {
-        eligibilityOfficers: [],
-        enrolmentOfficers: [],
-        scheduleA: false,
-        scheduleB: false,
-        scheduleD: false,
+        eligibilityOfficers: [
+          {
+            name: "John Doe",
+            positionTitle: "Officer",
+            email: "eligibility@test.com",
+            phone: "555-123-4567",
+          },
+        ],
+        enrolmentOfficers: [
+          {
+            name: "Jane Doe",
+            positionTitle: "Officer",
+            email: "enrolment@test.com",
+            phone: "555-987-6543",
+          },
+        ],
+        scheduleA: true,
+        scheduleB: true,
+        scheduleD: true,
         legalAuthorityName: "SIMS COLLF",
         legalAuthorityEmailAddress: "test@gov.bc.ca",
-        agreementAccepted: false,
+        agreementAccepted: true,
       },
       locations: [
         {
@@ -88,14 +95,6 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
         },
       ],
     };
-    const formService = await getProviderInstanceForModule(
-      testingModule,
-      AppInstitutionsModule,
-      FormService,
-    );
-    formService.dryRunSubmission = jest
-      .fn()
-      .mockResolvedValue({ valid: true, data: { data: payload } });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
     );
@@ -136,14 +135,28 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
 
     const payload = {
       dynamicData: {
-        eligibilityOfficers: [],
-        enrolmentOfficers: [],
-        scheduleA: false,
-        scheduleB: false,
-        scheduleD: false,
+        eligibilityOfficers: [
+          {
+            name: "John Doe",
+            positionTitle: "Officer",
+            email: "eligibility@test.com",
+            phone: "555-123-4567",
+          },
+        ],
+        enrolmentOfficers: [
+          {
+            name: "Jane Doe",
+            positionTitle: "Officer",
+            email: "enrolment@test.com",
+            phone: "555-987-6543",
+          },
+        ],
+        scheduleA: true,
+        scheduleB: true,
+        scheduleD: true,
         legalAuthorityName: "SIMS COLLC",
         legalAuthorityEmailAddress: "test@gov.bc.ca",
-        agreementAccepted: false,
+        agreementAccepted: true,
       },
       locations: [
         {
@@ -152,14 +165,6 @@ describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgree
         },
       ],
     };
-    const formService = await getProviderInstanceForModule(
-      testingModule,
-      AppInstitutionsModule,
-      FormService,
-    );
-    formService.dryRunSubmission = jest
-      .fn()
-      .mockResolvedValue({ valid: true, data: { data: payload } });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeCAdminLegalSigningUser,
     );

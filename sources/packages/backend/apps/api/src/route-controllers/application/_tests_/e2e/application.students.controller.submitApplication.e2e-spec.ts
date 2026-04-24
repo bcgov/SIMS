@@ -47,6 +47,10 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
   let formService: FormService;
   let recentActiveProgramYear: ProgramYear;
   let configServiceMockHelper: ConfigServiceMockHelper;
+  // All tests in this describe mock the Form.io dryRunSubmission because the application
+  // form has too many required fields. The minimal stub payloads are intentionally
+  // incomplete to test specific application submission business logic (e.g., study date
+  // overlap checks and application state transitions), not form validation.
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
