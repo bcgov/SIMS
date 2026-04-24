@@ -28,6 +28,7 @@
             </template>
             <template #[`item.requestForm`]="{ item }">
               <v-btn
+                v-if="canShowViewRequest(item)"
                 @click="viewRequestForm(item)"
                 color="primary"
                 variant="text"
@@ -52,7 +53,7 @@ import {
   ITEMS_PER_PAGE,
   UnapprovedChangesHeaders,
 } from "@/types";
-import { ref, defineComponent, watchEffect } from "vue";
+import { ref, defineComponent, watchEffect, PropType } from "vue";
 import { useDisplay } from "vuetify";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { useFormatters } from "@/composables";
@@ -60,7 +61,7 @@ import StatusChipRequestedAssessment from "@/components/generic/StatusChipReques
 import {
   RequestAssessmentSummaryAPIOutDTO,
   RequestAssessmentTypeAPIOutDTO,
-} from "@/services/http/dto/Assessment.dto";
+} from "@/services/http/dto";
 
 export default defineComponent({
   emits: [
@@ -88,6 +89,10 @@ export default defineComponent({
       required: false,
       default: undefined,
     },
+    viewRequestTypes: {
+      type: Array as PropType<RequestAssessmentTypeAPIOutDTO[]>,
+      required: true,
+    },
   },
   setup(props, context) {
     const { dateOnlyLongString } = useFormatters();
@@ -105,6 +110,12 @@ export default defineComponent({
           );
       }
     });
+
+    const canShowViewRequest = (
+      data: RequestAssessmentSummaryAPIOutDTO,
+    ): boolean => {
+      return props.viewRequestTypes.includes(data.requestType);
+    };
 
     const viewRequestForm = (data: RequestAssessmentSummaryAPIOutDTO) => {
       switch (data.requestType) {
@@ -149,6 +160,7 @@ export default defineComponent({
       requestedAssessments,
       dateOnlyLongString,
       viewRequestForm,
+      canShowViewRequest,
       UnapprovedChangesHeaders,
       getRequestTypeToDisplay,
       isMobile,

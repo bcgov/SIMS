@@ -101,4 +101,13 @@ export class DynamicFormConfiguration extends BaseModel {
     name: "allow_bundled_submission",
   })
   allowBundledSubmission: boolean;
+
+  /**
+   * Identifier used to associate authorization roles with this form configuration.
+   */
+  @Column({
+    name: "authorization_key",
+    nullable: true,
+  })
+  authorizationKey?: string;
 }

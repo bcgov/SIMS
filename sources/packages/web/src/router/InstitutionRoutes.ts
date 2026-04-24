@@ -62,7 +62,6 @@ import AvailableToChange from "@/views/institution/locations/request-a-change/re
 import InProgress from "@/views/institution/locations/request-a-change/request-a-change/InProgress.vue";
 import Completed from "@/views/institution/locations/request-a-change/request-a-change/Completed.vue";
 import Reports from "@/views/institution/Reports.vue";
-import FormSubmissionView from "@/views/institution/student/StudentFormSubmissionView.vue";
 import StudentFormSubmissionHistory from "@/views/institution/student/StudentFormSubmissionHistory.vue";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
@@ -811,33 +810,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             component: StudentAppealRequest,
           },
           {
-            path: AppRoutes.StudentFormSubmissionView,
-            name: InstitutionRoutesConst.APPLICATION_FORM_SUBMISSION_VIEW,
-            component: FormSubmissionView,
-            props: (route) => ({
-              studentId: Number.parseInt(route.params.studentId as string),
-              applicationId: Number.parseInt(
-                route.params.applicationId as string,
-              ),
-              formSubmissionId: Number.parseInt(
-                route.params.formSubmissionId as string,
-              ),
-              backTarget: {
-                name: "Assessments",
-                to: {
-                  name: InstitutionRoutesConst.ASSESSMENTS_SUMMARY,
-                  params: {
-                    studentId: route.params.studentId,
-                    applicationId: route.params.applicationId,
-                  },
-                },
-              },
-            }),
-            meta: {
-              clientType: ClientIdType.Institution,
-            },
-          },
-          {
             path: AppRoutes.AssessmentAwardView,
             name: InstitutionRoutesConst.ASSESSMENT_AWARD_VIEW,
             props: true,
@@ -850,34 +822,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             component: NoticeOfAssessment,
           },
         ],
-      },
-      {
-        path: AppRoutes.InstitutionStudentFormSubmissionView,
-        name: InstitutionRoutesConst.STUDENT_FORM_SUBMISSION_VIEW_FROM_HISTORY,
-        component: FormSubmissionView,
-        props: (route) => ({
-          studentId: Number.parseInt(route.params.studentId as string),
-          formSubmissionId: Number.parseInt(
-            route.params.formSubmissionId as string,
-          ),
-          backTarget: {
-            name: "Student details",
-            to: {
-              name: InstitutionRoutesConst.STUDENT_FORM_SUBMISSION_HISTORY,
-              params: {
-                studentId: route.params.studentId,
-              },
-            },
-          },
-        }),
-        meta: {
-          clientType: ClientIdType.Institution,
-          institutionUserTypes: [
-            InstitutionUserTypes.admin,
-            InstitutionUserTypes.user,
-            InstitutionUserTypes.readOnlyUser,
-          ],
-        },
       },
     ],
     beforeEnter: (to, _from, next) => {

@@ -36,6 +36,7 @@ export class DynamicFormConfigurationService {
           formDescription: true,
           allowBundledSubmission: true,
           hasApplicationScope: true,
+          authorizationKey: true,
         },
         relations: {
           programYear: true,
@@ -110,5 +111,23 @@ export class DynamicFormConfigurationService {
     return this.dynamicFormConfigurations.find(
       (dynamicFormConfiguration) => dynamicFormConfiguration.id === formId,
     );
+  }
+
+  /**
+   * Get the association between authorization keys and the form configuration IDs that are associated with them.
+   * @returns map of authorization keys to form configuration IDs.
+   */
+  getFormsIDsAndAuthorizationKeysMap(): Map<string, number[]> {
+    const map = new Map<string, number[]>();
+    for (const dynamicFormConfiguration of this.dynamicFormConfigurations) {
+      if (!dynamicFormConfiguration.authorizationKey) {
+        continue;
+      }
+      map.set(dynamicFormConfiguration.authorizationKey, [
+        ...(map.get(dynamicFormConfiguration.authorizationKey) ?? []),
+        dynamicFormConfiguration.id,
+      ]);
+    }
+    return map;
   }
 }

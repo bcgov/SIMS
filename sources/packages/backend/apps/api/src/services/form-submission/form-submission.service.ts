@@ -13,6 +13,11 @@ import {
   FormSubmissionPendingPaginationOptions,
   PaginatedResults,
 } from "../../utilities";
+import { Role } from "../../auth";
+import {
+  FormSubmissionAuthorizationService,
+  FormSubmissionAuthRoles,
+} from "../../services";
 
 /**
  * Manages how the form submissions are processed, including the validations,
@@ -24,6 +29,7 @@ export class FormSubmissionService {
   constructor(
     @InjectRepository(FormSubmission)
     private readonly formSubmissionRepo: Repository<FormSubmission>,
+    private readonly formSubmissionAuthorizationService: FormSubmissionAuthorizationService,
   ) {}
 
   /**
@@ -66,12 +72,27 @@ export class FormSubmissionService {
    * {@link FormSubmissionStatus.Pending} are returned, and pagination/count
    * are based on the number of submissions, not the number of individual forms.
    * @param paginationOptions options to control pagination, sorting, and search.
+   * @param userRoles roles assigned to the user for authorization checks.
    * @returns paginated list of pending form submissions across all categories, one entry per submission
    * with form names aggregated per submission.
    */
   async getPendingFormSubmissions(
     paginationOptions: FormSubmissionPendingPaginationOptions,
+    userRoles: Role[],
   ): Promise<PaginatedResults<FormSubmissionPendingSummary>> {
+    // Ensure only forms the user has access to are included in the search.
+    const dynamicFormsIDs =
+      this.formSubmissionAuthorizationService.getAuthorizedDynamicFormsIDs(
+        userRoles,
+        FormSubmissionAuthRoles.ViewFormSubmittedData,
+      );
+    if (!dynamicFormsIDs.length) {
+      // If no forms are authorized, refrain from checking the database.
+      return {
+        results: [],
+        count: 0,
+      };
+    }
     const query = this.formSubmissionRepo
       .createQueryBuilder("formSubmission")
       .select([
@@ -81,6 +102,7 @@ export class FormSubmissionService {
         "user.firstName",
         "user.lastName",
         "formSubmissionItem.id",
+        "dynamicFormConfiguration.id",
         "dynamicFormConfiguration.formDescription",
         "dynamicFormConfiguration.formType",
         "application.id",
@@ -96,6 +118,9 @@ export class FormSubmissionService {
       .leftJoin("formSubmission.application", "application")
       .where("formSubmission.submissionStatus = :status", {
         status: FormSubmissionStatus.Pending,
+      })
+      .andWhere("dynamicFormConfiguration.id IN (:...dynamicFormsIDs)", {
+        dynamicFormsIDs,
       });
 
     if (paginationOptions.hasApplicationScope === true) {
@@ -160,7 +185,7 @@ export class FormSubmissionService {
 
   /**
    * Get the details of a form submission, including the individual form items and their details.
-   * @param options at least one of this options should be provided..
+   * @param options at least one of this options should be provided.
    * - `studentId` ID of the student to have the data retrieved
    * - `formSubmissionId` allow searching for a specific form submission.
    * - `itemId` allow searching for a specific form submission item across all form submissions of the student,
@@ -170,6 +195,8 @@ export class FormSubmissionService {
    * only to the form submissions related to the locations they have access to.
    * - `includeDecisionHistory` includes the decision history of each form item.
    * - `loadSubmittedData` includes the submitted data of each form item.
+   * - `dynamicFormsIDs` used for authorization access to specific forms, restricting the form items to the provided
+   * dynamic form configuration IDs.
    * @returns form submission details including individual form items and their details.
    */
   async getFormSubmissions(
@@ -182,8 +209,14 @@ export class FormSubmissionService {
       locationIds?: number[];
       includeDecisionHistory?: boolean;
       loadSubmittedData?: boolean;
+      dynamicFormsIDs?: number[];
     },
   ): Promise<FormSubmission[]> {
+    if (queryOptions?.dynamicFormsIDs?.length === 0) {
+      // If dynamicFormsIDs is provided but empty, it means no forms are authorized,
+      // so refrain from checking the database.
+      return [];
+    }
     return this.formSubmissionRepo.find({
       select: {
         id: true,
@@ -240,6 +273,9 @@ export class FormSubmissionService {
         id: options?.formSubmissionId,
         formSubmissionItems: {
           id: options?.itemId,
+          dynamicFormConfiguration: queryOptions?.dynamicFormsIDs
+            ? { id: In(queryOptions.dynamicFormsIDs) }
+            : undefined,
         },
         student: { id: options?.studentId },
         application: {

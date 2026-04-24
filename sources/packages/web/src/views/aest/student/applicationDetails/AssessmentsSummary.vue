@@ -14,6 +14,7 @@
     <request-assessment
       class="mb-5"
       :application-id="applicationId"
+      :view-request-types="historyRequestTypes"
       @view-student-appeal="goToStudentAppeal"
       @view-student-form-submission="goToStudentFormSubmission"
       @view-student-application-offering-change="
@@ -54,6 +55,7 @@ import RequestAssessment from "@/components/common/students/assessment/Request.v
 import HistoryAssessment from "@/components/common/students/assessment/History.vue";
 import ManualReassessment from "@/components/aest/students/assessment/ManualReassessment.vue";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
+import { RequestAssessmentTypeAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
   components: {
@@ -75,6 +77,14 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const historyKey = ref(0);
+
+    const historyRequestTypes = [
+      RequestAssessmentTypeAPIOutDTO.StudentException,
+      RequestAssessmentTypeAPIOutDTO.StudentAppeal,
+      RequestAssessmentTypeAPIOutDTO.StudentFormSubmission,
+      RequestAssessmentTypeAPIOutDTO.OfferingRequest,
+      RequestAssessmentTypeAPIOutDTO.ApplicationOfferingChangeRequest,
+    ];
 
     // The assessment trigger types for which the request form must be visible by default.
     const assessmentRequestTypes = [
@@ -172,6 +182,7 @@ export default defineComponent({
       goToApplicationException,
       goToScholasticStanding,
       goToOfferingRequest,
+      historyRequestTypes,
       assessmentRequestTypes,
       goToStudentApplicationOfferingChangeRequest,
       historyKey,

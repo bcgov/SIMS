@@ -1,7 +1,13 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
 import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
+import {
+  FormSubmissionAuthRoles,
   FormSubmissionService,
-  hasFormSubmissionApprovalAuthorization,
+  FormSubmissionAuthorizationService,
+  FormSubmissionUserRolesAuth,
 } from "../../services";
 import {
   FormSubmission,
@@ -12,12 +18,19 @@ import {
 import {
   FormSubmissionAPIOutDTO,
   FormSubmissionItemDecisionAPIOutDTO,
+  FormSubmissionItemDecisionMinistryAPIOutDTO,
+  FormSubmissionItemMinistryAPIOutDTO,
+  FormSubmissionMinistryAPIOutDTO,
 } from "./models/form-submission.dto";
 import { Role } from "../../auth";
+import { getUserFullName } from "../../utilities";
 
 @Injectable()
 export class FormSubmissionControllerService {
-  constructor(private readonly formSubmissionService: FormSubmissionService) {}
+  constructor(
+    private readonly formSubmissionService: FormSubmissionService,
+    private readonly formSubmissionAuthorizationService: FormSubmissionAuthorizationService,
+  ) {}
 
   /**
    * Get the details of a form submission, including the individual form items and their details.
@@ -27,14 +40,9 @@ export class FormSubmissionControllerService {
    * submission belongs to the student and throw a not found HTTP error if it does not.
    * - `locationIds` restrict forms with an application scope to the provided locations. Used for institutions to have access
    * only to the form submissions related to the locations they have access to.
-   * - `userRoles` when provided, it will be used to determine the access to the decision details
-   * that the consumer has based on their roles and the form category.
-   * - `includeBasicDecisionDetails` optional flag to include basic decision details, besides
-   * the decision status. Used for institutions to have access to more details than the student
-   * to better support them. Default to false when not provided to expose less information. When keepPendingDecisionsWhilePendingFormSubmission
-   * is true, the decision details will not be included while the form submission is pending to avoid showing non-final decisions
-   * to be exposed.
-   * - `loadSubmittedData` includes the submitted data of each form item.
+   * - `loadSubmittedData` includes the submitted data of each form item. Students should have access to their submitted data,
+   * but institution users should not have access to this information.
+   * - `userRoles` when provided, it will be used to determine the access to the forms details that the consumer has based on their roles.
    * @returns form submission details including individual form items and their details.
    * @throws NotFoundException when the formSubmissionId is provided but no record is returned.
    */
@@ -43,16 +51,27 @@ export class FormSubmissionControllerService {
     options?: {
       formSubmissionId?: number;
       locationIds?: number[];
-      includeBasicDecisionDetails?: boolean;
       loadSubmittedData?: boolean;
       userRoles?: Role[];
     },
   ): Promise<FormSubmissionAPIOutDTO[]> {
+    let dynamicFormsIDs: number[] | undefined = undefined;
+    let formsUserRoles: FormSubmissionUserRolesAuth | undefined = undefined;
+    if (options?.userRoles) {
+      formsUserRoles =
+        this.formSubmissionAuthorizationService.getFormsUserRoles(
+          options.userRoles,
+        );
+      dynamicFormsIDs = formsUserRoles.getAuthorizedDynamicFormsIDs(
+        FormSubmissionAuthRoles.ViewFormHistoryList,
+      );
+    }
     const submissions = await this.formSubmissionService.getFormSubmissions(
       { studentId, formSubmissionId: options?.formSubmissionId },
       {
         locationIds: options?.locationIds,
         loadSubmittedData: options?.loadSubmittedData,
+        dynamicFormsIDs,
       },
     );
     if (options?.formSubmissionId && !submissions?.length) {
@@ -60,17 +79,8 @@ export class FormSubmissionControllerService {
         `Form submission with ID ${options?.formSubmissionId} not found.`,
       );
     }
-
-    // Set default value for the options that define how data will be returned considering the
-    // default behavior to expose less information and avoid showing non-final decisions.
-    const includeBasicDecisionDetails =
-      options?.includeBasicDecisionDetails ?? false;
     return submissions.map((submission) =>
-      this.mapSubmissionsToAPIOutDTO(
-        submission,
-        includeBasicDecisionDetails,
-        options?.userRoles,
-      ),
+      this.mapSubmissionsToAPIOutDTO(submission, formsUserRoles),
     );
   }
 
@@ -78,17 +88,27 @@ export class FormSubmissionControllerService {
    * Convert a form submission record to the API output format,
    * including the individual form items and their details.
    * @param submission form submission record to be converted.
-   * @param includeBasicDecisionDetails flag to indicate if the basic decision details should be included in the response,
-   * besides the status that is always included.
-   * @param userRoles roles of the user to determine access to decision details.
+   * @param formsUserRoles when provided, it will be used to determine the access to the forms details that
+   * the consumer has based on their roles.
    * @returns form submission details including individual form items and their details in the API output format.
    */
   private mapSubmissionsToAPIOutDTO(
     submission: FormSubmission,
-    includeBasicDecisionDetails: boolean,
-    userRoles?: Role[],
+    formsUserRoles?: FormSubmissionUserRolesAuth,
   ): FormSubmissionAPIOutDTO {
+    let canViewFormSubmittedData: boolean | undefined = undefined;
+    if (formsUserRoles) {
+      const dynamicFormConfigurationIDs = submission.formSubmissionItems.map(
+        (item) => item.dynamicFormConfiguration.id,
+      );
+      canViewFormSubmittedData = formsUserRoles.isAuthorized(
+        FormSubmissionAuthRoles.ViewFormSubmittedData,
+        dynamicFormConfigurationIDs,
+        { atLeastOneAuthorized: true },
+      );
+    }
     return {
+      canViewFormSubmittedData,
       id: submission.id,
       formCategory: submission.formCategory,
       status: submission.submissionStatus,
@@ -106,8 +126,7 @@ export class FormSubmissionControllerService {
         currentDecision: this.mapCurrentDecision(
           submission.submissionStatus,
           item,
-          includeBasicDecisionDetails,
-          userRoles,
+          formsUserRoles,
         ),
       })),
     };
@@ -121,35 +140,188 @@ export class FormSubmissionControllerService {
    * and for Ministry users with limited access to the decision details.
    * @param submissionStatus form submission status.
    * @param submissionItem form submission to determine the decision details to be returned.
-   * @param includeBasicDecisionDetails flag to indicate if the basic decision details should be included in the response,
-   * besides the status that is always included.
+   * @param formsUserRoles when provided, it will be used to determine the access to the forms details that
+   * the consumer has based on their roles.
    * @returns the decision that must be exposed the consumer.
    */
   mapCurrentDecision(
     submissionStatus: FormSubmissionStatus,
     submissionItem: FormSubmissionItem,
-    includeBasicDecisionDetails: boolean,
-    userRoles?: Role[],
+    formsUserRoles?: FormSubmissionUserRolesAuth,
   ): FormSubmissionItemDecisionAPIOutDTO {
-    // Determine if decision details should be restricted based on the form submission status and the flag.
-    const shouldRestrictDecisionDetails =
-      !hasFormSubmissionApprovalAuthorization(
-        submissionItem.dynamicFormConfiguration.formCategory,
-        userRoles,
-      ) && submissionStatus === FormSubmissionStatus.Pending;
-    // Define the status.
-    let decisionStatus = shouldRestrictDecisionDetails
-      ? FormSubmissionDecisionStatus.Pending
-      : submissionItem.currentDecision?.decisionStatus;
-    decisionStatus = decisionStatus ?? FormSubmissionDecisionStatus.Pending;
-    // Define the notes.
-    const decisionNoteDescription =
-      shouldRestrictDecisionDetails || !includeBasicDecisionDetails
-        ? undefined
-        : submissionItem.currentDecision?.decisionNote?.description;
+    const canAssessItemDecision = formsUserRoles?.isAuthorized(
+      FormSubmissionAuthRoles.AssessItemDecision,
+      [submissionItem.dynamicFormConfiguration.id],
+    );
+    if (
+      !submissionItem.currentDecision ||
+      (submissionStatus === FormSubmissionStatus.Pending &&
+        !canAssessItemDecision)
+    ) {
+      // When there is no decision or the submission is pending and the user has no permission to assess the item decision, return 'Pending'.
+      return {
+        decisionStatus: FormSubmissionDecisionStatus.Pending,
+      };
+    }
     return {
-      decisionStatus,
-      decisionNoteDescription,
+      decisionStatus: submissionItem.currentDecision.decisionStatus,
+    };
+  }
+
+  /**
+   * Get the details of a form submission for Ministry users, including the individual form items and their details.
+   * The decision details that are returned are determined based on the access that the Ministry user has to the decision details.
+   * @param formSubmissionId ID of the form submission to have the data retrieved.
+   * @param userRoles roles of the user to determine access to decision details.
+   * @param itemId when provided, it will validate if the form submission item belongs to the form submission and throw a not found HTTP error if it does not.
+   * @returns form submission details including individual form items and their details in the API output format for Ministry users.
+   */
+  async getFormSubmission(
+    formSubmissionId: number,
+    userRoles: Role[],
+    itemId?: number,
+  ): Promise<FormSubmissionMinistryAPIOutDTO> {
+    // Retrieve all the form submission items to be able correctly defined the value of
+    // the canAssessFinalDecision property based on the form types included in the submission.
+    const [submission] = await this.formSubmissionService.getFormSubmissions(
+      { formSubmissionId, itemId },
+      {
+        includeDecisionHistory: true,
+        loadSubmittedData: true,
+      },
+    );
+    if (!submission) {
+      if (itemId) {
+        throw new NotFoundException(
+          `Form submission with ID ${formSubmissionId} and form submission item ID ${itemId} not found.`,
+        );
+      }
+      throw new NotFoundException(
+        `Form submission with ID ${formSubmissionId} not found.`,
+      );
+    }
+    const formsUserRoles =
+      this.formSubmissionAuthorizationService.getFormsUserRoles(userRoles);
+    const submissionItems: FormSubmissionItemMinistryAPIOutDTO[] = [];
+    for (const formSubmissionItem of submission.formSubmissionItems) {
+      const canViewFormSubmittedData = formsUserRoles.isAuthorized(
+        FormSubmissionAuthRoles.ViewFormSubmittedData,
+        [formSubmissionItem.dynamicFormConfiguration.id],
+      );
+      if (!canViewFormSubmittedData) {
+        continue;
+      }
+      const canViewDecisionHistory = formsUserRoles.isAuthorized(
+        FormSubmissionAuthRoles.ViewDecisionHistory,
+        [formSubmissionItem.dynamicFormConfiguration.id],
+      );
+      const canAssessItemDecision = formsUserRoles.isAuthorized(
+        FormSubmissionAuthRoles.AssessItemDecision,
+        [formSubmissionItem.dynamicFormConfiguration.id],
+      );
+      const submissionItemDTO: FormSubmissionItemMinistryAPIOutDTO = {
+        canAssessItemDecision,
+        id: formSubmissionItem.id,
+        formType: formSubmissionItem.dynamicFormConfiguration.formType,
+        formCategory: formSubmissionItem.dynamicFormConfiguration.formCategory,
+        dynamicFormConfigurationId:
+          formSubmissionItem.dynamicFormConfiguration.id,
+        submissionData: formSubmissionItem.submittedData,
+        formDefinitionName:
+          formSubmissionItem.dynamicFormConfiguration.formDefinitionName,
+        updatedAt: formSubmissionItem.updatedAt,
+        currentDecision: this.mapCurrentDecisionExtended(
+          submission.submissionStatus,
+          formSubmissionItem,
+          canAssessItemDecision,
+        ),
+        previousDecisions: canViewDecisionHistory
+          ? formSubmissionItem.decisions
+              .filter(
+                (decision) =>
+                  decision.id !== formSubmissionItem.currentDecision!.id,
+              )
+              .map((decision) => ({
+                id: decision.id,
+                decisionStatus: decision.decisionStatus,
+                decisionDate: decision.decisionDate,
+                decisionBy: getUserFullName(decision.decisionBy),
+                decisionNoteDescription: decision.decisionNote.description,
+              }))
+          : undefined,
+      };
+      submissionItems.push(submissionItemDTO);
+    }
+    if (!submissionItems.length) {
+      throw new ForbiddenException(
+        `The user does not have access to any form submission items for submission ID ${formSubmissionId}.`,
+      );
+    }
+    const dynamicFormsIDs = submission.formSubmissionItems.map(
+      (item) => item.dynamicFormConfiguration.id,
+    );
+    const canAssessFinalDecision = formsUserRoles.isAuthorized(
+      FormSubmissionAuthRoles.AssessFinalDecision,
+      dynamicFormsIDs,
+    );
+    return {
+      canAssessFinalDecision,
+      id: submission.id,
+      formCategory: submission.formCategory,
+      status: submission.submissionStatus,
+      applicationId: submission.application?.id,
+      applicationNumber: submission.application?.applicationNumber,
+      submittedDate: submission.submittedDate,
+      submissionItems,
+    };
+  }
+
+  /**
+   * Map the current decision for the Ministry users based on their authorization to view
+   * the decision details and the form submission status.
+   * @param submissionStatus form submission status.
+   * @param submissionItem form submission item to determine the decision details to be returned.
+   * @param canAssessItemDecision indicates if the user has authorization to assess the item decision.
+   * @returns the decision that must be exposed to Ministry users based on their authorization and
+   * the form submission status.
+   */
+  mapCurrentDecisionExtended(
+    submissionStatus: FormSubmissionStatus,
+    submissionItem: FormSubmissionItem,
+    canAssessItemDecision: boolean,
+  ): FormSubmissionItemDecisionMinistryAPIOutDTO {
+    if (!submissionItem.currentDecision) {
+      // Default when no decision has been made yet.
+      return {
+        decisionStatus: FormSubmissionDecisionStatus.Pending,
+      };
+    }
+    if (canAssessItemDecision) {
+      // Return decision details entirely for users that can assess the item decision.
+      return {
+        id: submissionItem.currentDecision.id,
+        decisionStatus:
+          submissionItem.currentDecision?.decisionStatus ??
+          FormSubmissionDecisionStatus.Pending,
+        decisionDate: submissionItem.currentDecision.decisionDate,
+        decisionBy: getUserFullName(submissionItem.currentDecision.decisionBy),
+        decisionNoteDescription:
+          submissionItem.currentDecision.decisionNote.description,
+      };
+    }
+    // When user does not have access to see the decision details,
+    // return the decision based on the form submission status.
+    if (submissionStatus !== FormSubmissionStatus.Pending) {
+      // Status and notes should be available to all Ministry users when a final decision was made.
+      return {
+        decisionStatus: submissionItem.currentDecision.decisionStatus,
+        decisionNoteDescription:
+          submissionItem.currentDecision.decisionNote.description,
+      };
+    }
+    // Default when the user has no access to see non-completed submissions.
+    return {
+      decisionStatus: FormSubmissionDecisionStatus.Pending,
     };
   }
 }

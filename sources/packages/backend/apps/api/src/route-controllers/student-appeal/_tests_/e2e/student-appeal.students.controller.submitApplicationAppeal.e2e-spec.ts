@@ -121,6 +121,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
       const financialInformationData = {
         programYear: application.programYear.programYear,
         taxReturnIncome: 8000,
+        hasSignificantDegreeOfIncome: "no",
         haveDaycareCosts12YearsOrOver: "no",
         haveDaycareCosts11YearsOrUnder: "no",
       };
@@ -138,21 +139,12 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
       const studentToken = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
-      // Mock the form service to validate the dry-run submission result.
-      // TODO: Form service must be hosted for E2E tests to validate dry run submission
-      // and this mock must be removed.
       const formService = await getProviderInstanceForModule(
         appModule,
         AppStudentsModule,
         FormService,
       );
-      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FINANCIAL_INFORMATION_FORM_NAME,
-        data: { data: financialInformationData },
-      });
-
-      formService.dryRunSubmission = dryRunSubmissionMock;
+      const dryRunSubmissionSpied = jest.spyOn(formService, "dryRunSubmission");
 
       const endpoint = `/students/appeal/application/${application.id}`;
       await mockJWTUserInfo(appModule, student.user);
@@ -187,11 +179,11 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
       expect(appealRequest.submittedFormName).toBe(
         FINANCIAL_INFORMATION_FORM_NAME,
       );
-      expect(appealRequest.submittedData).toStrictEqual(
+      expect(appealRequest.submittedData).toMatchObject(
         financialInformationData,
       );
       // Expect to call the dry run submission.
-      expect(dryRunSubmissionMock).toHaveBeenCalledWith(
+      expect(dryRunSubmissionSpied).toHaveBeenCalledWith(
         FINANCIAL_INFORMATION_FORM_NAME,
         {
           ...financialInformationData,
@@ -396,19 +388,6 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
-    // Mock the form service to validate the dry-run submission result.
-    // TODO: Form service must be hosted for E2E tests to validate dry run submission
-    // and this mock must be removed.
-    const formService = await getProviderInstanceForModule(
-      appModule,
-      AppStudentsModule,
-      FormService,
-    );
-    formService.dryRunSubmission = jest.fn().mockResolvedValue({
-      valid: false,
-      data: { data: payload.studentAppealRequests },
-    });
-
     const endpoint = `/students/appeal/application/${application.id}`;
 
     // Act/Assert
@@ -510,21 +489,12 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
-    // Mock the form service to validate the dry-run submission result.
-    // TODO: Form service must be hosted for E2E tests to validate dry run submission
-    // and this mock must be removed.
     const formService = await getProviderInstanceForModule(
       appModule,
       AppStudentsModule,
       FormService,
     );
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: DEPENDANT_INFORMATION_FORM_NAME,
-      data: { data: dependantInformationData },
-    });
-
-    formService.dryRunSubmission = dryRunSubmissionMock;
+    const dryRunSubmissionSpied = jest.spyOn(formService, "dryRunSubmission");
 
     const endpoint = `/students/appeal/application/${application.id}`;
 
@@ -544,7 +514,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
     const newStudentAppealRequest = await studentAppealRequestRepo.findOne({
       where: { studentAppeal: { id: createdAppealId } },
     });
-    expect(newStudentAppealRequest.submittedData).toStrictEqual(
+    expect(newStudentAppealRequest.submittedData).toMatchObject(
       payload.studentAppealRequests[0].formData,
     );
     // Expect the file origin type to be Appeal for the updated pd dependent file
@@ -559,7 +529,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
     expect(updatedDependantCustodyFile.fileOrigin).toBe(FileOriginType.Appeal);
 
     // Expect to call the dry run submission.
-    expect(dryRunSubmissionMock).toHaveBeenCalledWith(
+    expect(dryRunSubmissionSpied).toHaveBeenCalledWith(
       DEPENDANT_INFORMATION_FORM_NAME,
       {
         ...dependantInformationData,
@@ -585,7 +555,9 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
     // Prepare the data to request a change of current year partner income.
     const partnerIncomeInformationData = {
       programYear: application.programYear.programYear,
+      partnerAuthorized: true,
       relationshipStatus: "married",
+      hasCurrentYearPartnerIncome: "yes",
       partnerEstimatedIncome: 1000,
       currentYearPartnerIncome: 2000,
       reasonsignificantdecreaseInPartnerIncome: "other",
@@ -624,13 +596,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
       AppStudentsModule,
       FormService,
     );
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: PARTNER_INFORMATION_FORM_NAME,
-      data: { data: partnerIncomeInformationData },
-    });
-
-    formService.dryRunSubmission = dryRunSubmissionMock;
+    const dryRunSubmissionSpied = jest.spyOn(formService, "dryRunSubmission");
 
     const endpoint = `/students/appeal/application/${application.id}`;
 
@@ -650,7 +616,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
     const newStudentAppealRequest = await studentAppealRequestRepo.findOne({
       where: { studentAppeal: { id: createdAppealId } },
     });
-    expect(newStudentAppealRequest.submittedData).toStrictEqual(
+    expect(newStudentAppealRequest.submittedData).toMatchObject(
       payload.studentAppealRequests[0].formData,
     );
     // Expect the file origin type to be Appeal for the updated current year partner income file.
@@ -660,7 +626,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
     expect(updatedPartnerIncomeFile.fileOrigin).toBe(FileOriginType.Appeal);
 
     // Expect to call the dry run submission.
-    expect(dryRunSubmissionMock).toHaveBeenCalledWith(
+    expect(dryRunSubmissionSpied).toHaveBeenCalledWith(
       PARTNER_INFORMATION_FORM_NAME,
       {
         ...partnerIncomeInformationData,
@@ -734,19 +700,12 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
-    // Mock the form service to validate the dry-run submission result.
-    // and this mock must be removed.
     const formService = await getProviderInstanceForModule(
       appModule,
       AppStudentsModule,
       FormService,
     );
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: ROOM_AND_BOARD_COSTS_FORM_NAME,
-      data: { data: roomAndBoardAppealData },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
+    const dryRunSubmissionSpied = jest.spyOn(formService, "dryRunSubmission");
     const endpoint = `/students/appeal/application/${application.id}`;
     const now = new Date();
     MockDate.set(now);
@@ -779,9 +738,9 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
     expect(appealRequest.submittedFormName).toBe(
       ROOM_AND_BOARD_COSTS_FORM_NAME,
     );
-    expect(appealRequest.submittedData).toStrictEqual(roomAndBoardAppealData);
+    expect(appealRequest.submittedData).toMatchObject(roomAndBoardAppealData);
     // Expect to call the dry run submission.
-    expect(dryRunSubmissionMock).toHaveBeenCalledWith(
+    expect(dryRunSubmissionSpied).toHaveBeenCalledWith(
       ROOM_AND_BOARD_COSTS_FORM_NAME,
       roomAndBoardAppealData,
     );
@@ -809,210 +768,195 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
     });
   });
 
-  it(
-    "Should create step-parent waiver appeal for an application" +
-      " when student submit the appeal for a full-time application reported with both the parents.",
-    async () => {
-      // Arrange
-      // Create student to submit application.
-      const student = await saveFakeStudent(appDataSource);
-      // Create application to submit appeal with eligible program year.
-      const application = await saveFakeApplicationDisbursements(
-        db.dataSource,
-        {
-          student,
-          programYear: recentActiveProgramYear,
+  it("Should create step-parent waiver appeal for an application when student submit the appeal for a full-time application reported with both the parents.", async () => {
+    // Arrange
+    // Create student to submit application.
+    const student = await saveFakeStudent(appDataSource);
+    // Create application to submit appeal with eligible program year.
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student,
+        programYear: recentActiveProgramYear,
+      },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: {
+          eligibleApplicationAppeals: [
+            FormNames.RoomAndBoardCostsAppeal,
+            FormNames.StepParentWaiverAppeal,
+          ],
         },
-        {
-          offeringIntensity: OfferingIntensity.fullTime,
-          applicationStatus: ApplicationStatus.Completed,
-          currentAssessmentInitialValues: {
-            eligibleApplicationAppeals: [
-              FormNames.RoomAndBoardCostsAppeal,
-              FormNames.StepParentWaiverAppeal,
-            ],
-          },
+      },
+    );
+    // Create supporting user parents for the application.
+    const parent1 = createFakeSupportingUser(
+      { application },
+      {
+        initialValues: {
+          supportingUserType: SupportingUserType.Parent,
+          fullName: "Parent One",
         },
-      );
-      // Create supporting user parents for the application.
-      const parent1 = createFakeSupportingUser(
-        { application },
-        {
-          initialValues: {
-            supportingUserType: SupportingUserType.Parent,
-            fullName: "Parent One",
-          },
+      },
+    );
+    const parent2 = createFakeSupportingUser(
+      { application },
+      {
+        initialValues: {
+          supportingUserType: SupportingUserType.Parent,
+          fullName: "Parent Two",
         },
-      );
-      const parent2 = createFakeSupportingUser(
-        { application },
-        {
-          initialValues: {
-            supportingUserType: SupportingUserType.Parent,
-            fullName: "Parent Two",
-          },
-        },
-      );
-      await db.supportingUser.save([parent1, parent2]);
+      },
+    );
+    await db.supportingUser.save([parent1, parent2]);
 
-      // Part of the payload data that will be re-populated by the server.
-      // This re-populated data is provided to form.io to execute dry run submission.
-      const payloadDataToBeRePopulatedByServer = {
-        parents: [
-          { id: parent1.id, fullName: parent1.fullName },
-          // Expect the API to re-populate the parent details with correct id and name.
-          { id: 1, fullName: "Some manipulated name" },
-        ],
-      };
-      // Create a temporary file for step-parent waiver appeal.
-      const stepParentWaiverSupportingFile = await saveFakeStudentFileUpload(
-        appDataSource,
+    // Part of the payload data that will be re-populated by the server.
+    // This re-populated data is provided to form.io to execute dry run submission.
+    const payloadDataToBeRePopulatedByServer = {
+      parents: [
+        { id: parent1.id, fullName: parent1.fullName },
+        // Expect the API to re-populate the parent details with correct id and name.
+        { id: 1, fullName: "Some manipulated name" },
+      ],
+    };
+    // Create a temporary file for step-parent waiver appeal.
+    const stepParentWaiverSupportingFile = await saveFakeStudentFileUpload(
+      appDataSource,
+      {
+        student,
+        creator: student.user,
+      },
+      { fileOrigin: FileOriginType.Temporary },
+    );
+    // Prepare the data to submit step-parent waiver appeal.
+    const stepParentWaiverAppealData = {
+      ...payloadDataToBeRePopulatedByServer,
+      selectedParent: parent1.id,
+      stepParentWaiverSupportingDocuments: [
         {
-          student,
-          creator: student.user,
+          url: `student/files/${stepParentWaiverSupportingFile.uniqueFileName}`,
+          hash: "",
+          name: stepParentWaiverSupportingFile.uniqueFileName,
+          size: 4,
+          type: "text/plain",
+          storage: "url",
+          originalName: stepParentWaiverSupportingFile.fileName,
         },
-        { fileOrigin: FileOriginType.Temporary },
-      );
-      // Prepare the data to submit step-parent waiver appeal.
-      const stepParentWaiverAppealData = {
-        ...payloadDataToBeRePopulatedByServer,
-        selectedParent: parent1.id,
-        stepParentWaiverSupportingDocuments: [
-          {
-            url: `student/files/${stepParentWaiverSupportingFile.uniqueFileName}`,
-            hash: "",
-            name: stepParentWaiverSupportingFile.uniqueFileName,
-            size: 4,
-            type: "text/plain",
-            storage: "url",
-            originalName: stepParentWaiverSupportingFile.fileName,
-          },
-        ],
-      };
-      const payload: StudentApplicationAppealAPIInDTO = {
-        studentAppealRequests: [
-          {
-            formName: FormNames.StepParentWaiverAppeal,
-            formData: stepParentWaiverAppealData,
-            files: [stepParentWaiverSupportingFile.uniqueFileName],
-          },
-        ],
-      };
-      // Expected submitted data after the server re-populates the correct parent details.
-      const expectedSubmittedData = {
-        ...stepParentWaiverAppealData,
-        parents: [
-          { id: parent1.id, fullName: parent1.fullName },
-          { id: parent2.id, fullName: parent2.fullName },
-        ],
-      };
-      // Mock JWT user to return the saved student from token.
-      await mockJWTUserInfo(appModule, student.user);
-      // Get any student user token.
-      const studentToken = await getStudentToken(
-        FakeStudentUsersTypes.FakeStudentUserType1,
-      );
-      // Mock the form service to validate the dry-run submission result.
-      // and this mock must be removed.
-      const formService = await getProviderInstanceForModule(
-        appModule,
-        AppStudentsModule,
-        FormService,
-      );
-      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FormNames.StepParentWaiverAppeal,
-        data: { data: expectedSubmittedData },
+      ],
+    };
+    const payload: StudentApplicationAppealAPIInDTO = {
+      studentAppealRequests: [
+        {
+          formName: FormNames.StepParentWaiverAppeal,
+          formData: stepParentWaiverAppealData,
+          files: [stepParentWaiverSupportingFile.uniqueFileName],
+        },
+      ],
+    };
+    // Expected submitted data after the server re-populates the correct parent details.
+    const expectedSubmittedData = {
+      ...stepParentWaiverAppealData,
+      parents: [
+        { id: parent1.id, fullName: parent1.fullName },
+        { id: parent2.id, fullName: parent2.fullName },
+      ],
+    };
+    // Mock JWT user to return the saved student from token.
+    await mockJWTUserInfo(appModule, student.user);
+    // Get any student user token.
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const formService = await getProviderInstanceForModule(
+      appModule,
+      AppStudentsModule,
+      FormService,
+    );
+    const dryRunSubmissionSpied = jest.spyOn(formService, "dryRunSubmission");
+    const endpoint = `/students/appeal/application/${application.id}`;
+
+    // Act/Assert
+    let createdAppealId: number;
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+        createdAppealId = +response.body.id;
       });
-      formService.dryRunSubmission = dryRunSubmissionMock;
-      const endpoint = `/students/appeal/application/${application.id}`;
-
-      // Act/Assert
-      let createdAppealId: number;
-      await request(app.getHttpServer())
-        .post(endpoint)
-        .send(payload)
-        .auth(studentToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.CREATED)
-        .then((response) => {
-          expect(response.body.id).toBeGreaterThan(0);
-          createdAppealId = +response.body.id;
-        });
-      const studentAppeal = await db.studentAppeal.findOne({
-        select: {
+    const studentAppeal = await db.studentAppeal.findOne({
+      select: {
+        id: true,
+        appealRequests: {
           id: true,
-          appealRequests: {
-            id: true,
-            submittedFormName: true,
-            submittedData: true,
-          },
+          submittedFormName: true,
+          submittedData: true,
         },
-        relations: { appealRequests: true },
-        where: { application: { id: application.id } },
+      },
+      relations: { appealRequests: true },
+      where: { application: { id: application.id } },
+    });
+    const [appealRequest] = studentAppeal.appealRequests;
+    expect(studentAppeal.id).toBe(createdAppealId);
+    expect(appealRequest.submittedFormName).toBe(
+      FormNames.StepParentWaiverAppeal,
+    );
+    expect(appealRequest.submittedData).toMatchObject(expectedSubmittedData);
+    // Expect to call the dry run submission.
+    expect(dryRunSubmissionSpied).toHaveBeenCalledWith(
+      FormNames.StepParentWaiverAppeal,
+      expectedSubmittedData,
+    );
+  });
+
+  it(`Should throw unprocessable entity exception when student submits an appeal for a full-time application in status ${ApplicationStatus.Completed} but is not eligible for any appeal submission.`, async () => {
+    // Arrange
+    // Create student to submit application.
+    const student = await saveFakeStudent(appDataSource);
+    // Create application submit appeal with eligible program year.
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student,
+        programYear: recentActiveProgramYear,
+      },
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: ApplicationStatus.Completed,
+        currentAssessmentInitialValues: { eligibleApplicationAppeals: [] },
+      },
+    );
+    const payload: StudentApplicationAppealAPIInDTO = {
+      studentAppealRequests: [
+        {
+          formName: FormNames.RoomAndBoardCostsAppeal,
+          formData: {},
+          files: [],
+        },
+      ],
+    };
+    // Mock JWT user to return the saved student from token.
+    await mockJWTUserInfo(appModule, student.user);
+    // Get any student user token.
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const endpoint = `/students/appeal/application/${application.id}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "The application is not eligible to submit an appeal.",
+        errorType: APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
       });
-      const [appealRequest] = studentAppeal.appealRequests;
-      expect(studentAppeal.id).toBe(createdAppealId);
-      expect(appealRequest.submittedFormName).toBe(
-        FormNames.StepParentWaiverAppeal,
-      );
-      expect(appealRequest.submittedData).toStrictEqual(expectedSubmittedData);
-      // Expect to call the dry run submission.
-      expect(dryRunSubmissionMock).toHaveBeenCalledWith(
-        FormNames.StepParentWaiverAppeal,
-        expectedSubmittedData,
-      );
-    },
-  );
-
-  it(
-    "Should throw unprocessable entity exception when student submits an appeal" +
-      ` for a full-time application in status ${ApplicationStatus.Completed} but is not eligible for any appeal submission.`,
-    async () => {
-      // Arrange
-      // Create student to submit application.
-      const student = await saveFakeStudent(appDataSource);
-      // Create application submit appeal with eligible program year.
-      const application = await saveFakeApplicationDisbursements(
-        db.dataSource,
-        {
-          student,
-          programYear: recentActiveProgramYear,
-        },
-        {
-          offeringIntensity: OfferingIntensity.fullTime,
-          applicationStatus: ApplicationStatus.Completed,
-          currentAssessmentInitialValues: { eligibleApplicationAppeals: [] },
-        },
-      );
-      const payload: StudentApplicationAppealAPIInDTO = {
-        studentAppealRequests: [
-          {
-            formName: FormNames.RoomAndBoardCostsAppeal,
-            formData: {},
-            files: [],
-          },
-        ],
-      };
-      // Mock JWT user to return the saved student from token.
-      await mockJWTUserInfo(appModule, student.user);
-      // Get any student user token.
-      const studentToken = await getStudentToken(
-        FakeStudentUsersTypes.FakeStudentUserType1,
-      );
-      const endpoint = `/students/appeal/application/${application.id}`;
-
-      // Act/Assert
-      await request(app.getHttpServer())
-        .post(endpoint)
-        .send(payload)
-        .auth(studentToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-        .expect({
-          message: "The application is not eligible to submit an appeal.",
-          errorType: APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
-        });
-    },
-  );
+  });
 
   it("Should throw unprocessable entity exception when student submit an appeal for an ineligible application.", async () => {
     // Arrange
