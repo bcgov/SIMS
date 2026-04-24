@@ -476,7 +476,7 @@ describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
         },
       },
     );
-    const endpoint = `/aest/form-submission/pending?page=0&pageLimit=100&sortField=submittedDate&sortOrder=DESC&searchCriteria=${uniqueIdentifier}&formCategory=${encodeURIComponent(FormCategory.StudentForm)}`;
+    const endpoint = `/aest/form-submission/pending?page=0&pageLimit=100&sortField=submittedDate&sortOrder=DESC&searchCriteria=${uniqueIdentifier}&formCategory=${encodeURIComponent(FormCategory.StudentAppeal)}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const dynamicFormConfigurations =
       pendingStudentForm.formSubmissionItems.map(

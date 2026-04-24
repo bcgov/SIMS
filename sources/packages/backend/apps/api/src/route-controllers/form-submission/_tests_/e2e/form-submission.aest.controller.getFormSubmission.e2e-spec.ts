@@ -569,7 +569,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       });
   });
 
-  it("Should throw a not forbidden exception when user does not have ViewFormSubmittedData access to any of the submitted forms.", async () => {
+  it("Should throw a forbidden exception when user does not have ViewFormSubmittedData access to any of the submitted forms.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource);
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
