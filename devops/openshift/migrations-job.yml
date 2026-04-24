@@ -55,11 +55,13 @@ objects:
                     secretKeyRef:
                       key: ${FORMIO_ROOT_EMAIL_NAME_KEY}
                       name: ${FORMS_SECRET_NAME}
+                      optional: true
                 - name: FORMS_SA_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       key: ${FORMIO_ROOT_PASSWORD_NAME_KEY}
                       name: ${FORMS_SECRET_NAME}
+                      optional: true
                 - name: FORMS_URL
                   value: "${FORMS_URL}"
                 - name: ZEEBE_GRPC_ADDRESS
@@ -130,6 +132,7 @@ parameters:
     value: password
   - name: FORMS_URL
   - name: FORMS_SECRET_NAME
+    value: forms-secret
   - name: FORMIO_ROOT_EMAIL_NAME_KEY
     value: FORMIO_ROOT_EMAIL
   - name: FORMIO_ROOT_PASSWORD_NAME_KEY
