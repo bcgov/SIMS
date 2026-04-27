@@ -95,11 +95,46 @@ export async function authorizeDynamicFormConfigurations(
   await mockJWTToken(testingModule, (payload: IUserToken) => {
     const formRoles = dynamicFormConfigurations.flatMap(
       (dynamicFormConfiguration) =>
-        roles.map(
-          (role) =>
-            `forms.${dynamicFormConfiguration.authorizationKey}.${role}`,
+        roles.map((role) =>
+          createFormRole(dynamicFormConfiguration.authorizationKey!, role),
         ),
     );
     payload.resource_access[AuthorizedParties.aest].roles.push(...formRoles);
   });
+}
+
+/**
+ * Adds dynamic form configuration roles to the JWT token to authorize form submission actions.
+ * @param testingModule nest testing module.
+ * @param formsAndRolesCombination dynamic form configurations and their corresponding roles to authorize.
+ */
+export async function authorizeMultipleDynamicFormConfigurations(
+  testingModule: TestingModule,
+  formsAndRolesCombination: {
+    formConfiguration: DynamicFormConfiguration;
+    roles: FormSubmissionAuthRoles[];
+  }[],
+): Promise<void> {
+  await mockJWTToken(testingModule, (payload: IUserToken) => {
+    const formRoles = formsAndRolesCombination.flatMap(
+      ({ formConfiguration, roles }) =>
+        roles.map((role) =>
+          createFormRole(formConfiguration.authorizationKey!, role),
+        ),
+    );
+    payload.resource_access[AuthorizedParties.aest].roles.push(...formRoles);
+  });
+}
+
+/**
+ * Builds the role string for a dynamic form configuration and a given submission auth role.
+ * @param authorizationKey the authorization key from the dynamic form configuration.
+ * @param role the form submission auth role to grant.
+ * @returns role in the format `forms.authorization-key.role`.
+ */
+function createFormRole(
+  authorizationKey: string,
+  role: FormSubmissionAuthRoles,
+): string {
+  return `forms.${authorizationKey}.${role}`;
 }

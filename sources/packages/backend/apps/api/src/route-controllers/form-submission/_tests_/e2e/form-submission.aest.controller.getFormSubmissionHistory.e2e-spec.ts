@@ -353,6 +353,73 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
       );
   });
 
+  it("Should get form submission history, filtering out submission items that the user is not authorized to view when the user is requesting a history where he is not authorized to see all items.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource);
+    const pendingStudentAppeal = await saveFakeFormSubmissionFromInputTestData(
+      db,
+      {
+        application,
+        formCategory: FormCategory.StudentAppeal,
+        submissionStatus: FormSubmissionStatus.Pending,
+        ministryAuditUser: ministryUser,
+        formSubmissionItems: [
+          {
+            dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
+            decisions: [],
+          },
+          {
+            dynamicFormConfiguration: formConfigs.studentAppealApplicationB,
+            decisions: [],
+          },
+        ],
+      },
+    );
+    const [authorizedStudentAppeal] = pendingStudentAppeal.formSubmissionItems;
+    const endpoint = `/aest/form-submission/student/${pendingStudentAppeal.student.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [formConfigs.studentAppealApplicationA],
+      [FormSubmissionAuthRoles.ViewFormHistoryList],
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body.submissions).toEqual([
+          // Pending Student Appeal
+          {
+            canViewFormSubmittedData: false,
+            applicationId: application.id,
+            applicationNumber: application.applicationNumber,
+            id: pendingStudentAppeal.id,
+            formCategory: FormCategory.StudentAppeal,
+            status: FormSubmissionStatus.Pending,
+            submittedDate: pendingStudentAppeal.submittedDate.toISOString(),
+            assessedDate: null,
+            submissionItems: [
+              {
+                id: authorizedStudentAppeal.id,
+                formType: formConfigs.studentAppealApplicationA.formType,
+                formCategory: FormCategory.StudentAppeal,
+                dynamicFormConfigurationId:
+                  formConfigs.studentAppealApplicationA.id,
+                formDefinitionName:
+                  formConfigs.studentAppealApplicationA.formDefinitionName,
+                currentDecision: {
+                  decisionStatus: FormSubmissionDecisionStatus.Pending,
+                },
+              },
+            ],
+          },
+        ]),
+      );
+  });
+
   afterAll(async () => {
     await app?.close();
   });

@@ -16,14 +16,12 @@
       :application-id="applicationId"
       :student-id="studentId"
       :view-request-types="historyRequestTypes"
-      @view-student-appeal="goToStudentAppeal"
       @view-application-exception="goToApplicationException"
     />
     <history-assessment
       :application-id="applicationId"
       :student-id="studentId"
       :view-request-types="assessmentRequestTypes"
-      @view-student-appeal="goToStudentAppeal"
       @view-assessment="gotToViewAssessment"
       @view-application-exception="goToApplicationException"
     />
@@ -68,17 +66,6 @@ export default defineComponent({
     // The assessment trigger types for which the request form must be visible by default.
     const assessmentRequestTypes = [AssessmentTriggerType.OriginalAssessment];
 
-    const goToStudentAppeal = (appealId: number) => {
-      router.push({
-        name: InstitutionRoutesConst.STUDENT_APPLICATION_APPEAL_REQUESTS_APPROVAL,
-        params: {
-          studentId: props.studentId,
-          applicationId: props.applicationId,
-          appealId,
-        },
-      });
-    };
-
     const goToApplicationException = (exceptionId: number) => {
       router.push({
         name: InstitutionRoutesConst.APPLICATION_EXCEPTION,
@@ -110,7 +97,6 @@ export default defineComponent({
 
     return {
       InstitutionRoutesConst,
-      goToStudentAppeal,
       gotToViewAssessment,
       goToApplicationException,
       backRoute,
