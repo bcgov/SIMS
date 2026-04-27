@@ -2,6 +2,17 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Debug - Web UI",
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}/sources/packages/web",
+      "sourceMapPathOverrides": {
+        "/@fs/*": "/*",
+        "/node_modules/*": "${workspaceFolder}/sources/packages/web/node_modules/*"
+      }
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "Debug - API",

@@ -71,7 +71,6 @@ export * from "./assessment/assessment.institutions.controller";
 export * from "./application-exception/application-exception.institutions.controller";
 export * from "./application-exception/application-exception.controller.service";
 export * from "./student-appeal/student-appeal.controller.service";
-export * from "./student-appeal/student-appeal.institutions.controller";
 export * from "./restriction/restriction.institutions.controller";
 export * from "./restriction/restriction.controller.service";
 export * from "./note/note.institutions.controller";

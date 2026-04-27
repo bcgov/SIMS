@@ -3,6 +3,7 @@ import * as request from "supertest";
 import {
   AESTGroups,
   authorizeDynamicFormConfigurations,
+  authorizeMultipleDynamicFormConfigurations,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
@@ -283,6 +284,114 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       });
   });
 
+  it("Should get a form submission with different authorization for different items when the user has partial approval authorization.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource);
+    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+      application,
+      formCategory: FormCategory.StudentAppeal,
+      submissionStatus: FormSubmissionStatus.Pending,
+      ministryAuditUser: ministryUser,
+      formSubmissionItems: [
+        {
+          // User has no approval authorization for this item and the item is pending, which
+          // will prevent the user from seeing any decision information for this item.
+          dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
+          decisions: [
+            {
+              decisionStatus: FormSubmissionDecisionStatus.Pending,
+            },
+          ],
+        },
+        {
+          // User has approval authorization for this item, the decision is still pending,
+          // and the user should be able to see all the information related to the decision
+          // but the decision history, since 'view-decision-history' permission is missing.
+          dynamicFormConfiguration: formConfigs.studentAppealApplicationB,
+          decisions: [
+            {
+              decisionStatus: FormSubmissionDecisionStatus.Pending,
+            },
+          ],
+        },
+      ],
+    });
+    const [formSubmissionItemA, formSubmissionItemB] =
+      formSubmission.formSubmissionItems;
+    const [itemBDecision1] = formSubmissionItemB.decisions;
+    const endpoint = `/aest/form-submission/${formSubmission.id}`;
+    const token = await getAESTToken(AESTGroups.Operations);
+    await authorizeMultipleDynamicFormConfigurations(appModule, [
+      {
+        formConfiguration: formConfigs.studentAppealApplicationA,
+        roles: [FormSubmissionAuthRoles.ViewFormSubmittedData],
+      },
+      {
+        formConfiguration: formConfigs.studentAppealApplicationB,
+        roles: [
+          FormSubmissionAuthRoles.ViewFormSubmittedData,
+          FormSubmissionAuthRoles.AssessItemDecision,
+        ],
+      },
+    ]);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => {
+        expect(body).toStrictEqual({
+          canAssessFinalDecision: false,
+          applicationId: application.id,
+          applicationNumber: application.applicationNumber,
+          id: formSubmission.id,
+          formCategory: FormCategory.StudentAppeal,
+          status: FormSubmissionStatus.Pending,
+          submittedDate: formSubmission.submittedDate.toISOString(),
+          submissionItems: [
+            {
+              canAssessItemDecision: false,
+              id: formSubmissionItemA.id,
+              formType: formConfigs.studentAppealApplicationA.formType,
+              formCategory: FormCategory.StudentAppeal,
+              dynamicFormConfigurationId:
+                formConfigs.studentAppealApplicationA.id,
+              submissionData: formSubmissionItemA.submittedData,
+              formDefinitionName:
+                formConfigs.studentAppealApplicationA.formDefinitionName,
+              updatedAt: formSubmissionItemA.updatedAt.toISOString(),
+              currentDecision: {
+                // Only status available since the user does not have approval authorization for this item
+                // and the status is still pending.
+                decisionStatus: FormSubmissionDecisionStatus.Pending,
+              },
+            },
+            {
+              canAssessItemDecision: true,
+              id: formSubmissionItemB.id,
+              formType: formConfigs.studentAppealApplicationB.formType,
+              formCategory: FormCategory.StudentAppeal,
+              dynamicFormConfigurationId:
+                formConfigs.studentAppealApplicationB.id,
+              submissionData: formSubmissionItemB.submittedData,
+              formDefinitionName:
+                formConfigs.studentAppealApplicationB.formDefinitionName,
+              updatedAt: formSubmissionItemB.updatedAt.toISOString(),
+              currentDecision: {
+                id: expect.any(Number),
+                decisionStatus: FormSubmissionDecisionStatus.Pending,
+                decisionNoteDescription:
+                  itemBDecision1.decisionNote.description,
+                decisionBy: `${itemBDecision1.decisionBy.firstName} ${itemBDecision1.decisionBy.lastName}`,
+                decisionDate: itemBDecision1.decisionDate.toISOString(),
+              },
+            },
+          ],
+        });
+      });
+  });
+
   it("Should get a form submission as completed, and its decision statuses, including current notes and audit when the user has approval authorization.", async () => {
     // Arrange
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
@@ -418,7 +527,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .expect(HttpStatus.OK)
       .expect(({ body }) => {
         expect(body).toStrictEqual({
-          canAssessFinalDecision: false,
+          // canAssessFinalDecision should not be returned since only one item was requested.
           id: formSubmission.id,
           applicationId: application.id,
           applicationNumber: application.applicationNumber,
@@ -458,6 +567,50 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
             },
           ],
         });
+      });
+  });
+
+  it("Should throw a forbidden exception when user does not have ViewFormSubmittedData access to any of the submitted forms.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource);
+    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+      application,
+      formCategory: FormCategory.StudentAppeal,
+      submissionStatus: FormSubmissionStatus.Pending,
+      formSubmissionItems: [
+        {
+          dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
+          decisions: [],
+        },
+        {
+          // This will be the item returned in the response, as its ID will be provided in the query parameter.
+          dynamicFormConfiguration: formConfigs.studentAppealApplicationB,
+          decisions: [],
+        },
+      ],
+    });
+    const endpoint = `/aest/form-submission/${formSubmission.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [
+        formConfigs.studentAppealApplicationA,
+        formConfigs.studentAppealApplicationB,
+      ],
+      // The user must explicitly have ViewFormSubmittedData authorization.
+      // Any other authorization, including approval authorization, will not allow the user to see the submission data.
+      [FormSubmissionAuthRoles.AssessFinalDecision],
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        message: `The user does not have access to any form submission items for submission ID ${formSubmission.id}.`,
+        error: "Forbidden",
+        statusCode: HttpStatus.FORBIDDEN,
       });
   });
 
