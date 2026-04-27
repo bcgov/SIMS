@@ -1,5 +1,5 @@
-name: Release - Deploy Camunda Resources
-run-name: Release - Deploy Camunda resources from ${{ inputs.gitRef }} to ${{ inputs.environment }}
+name: Release - Deploy Camunda and Form.io Resources
+run-name: Release - Deploy Camunda and Form.io resources from ${{ inputs.gitRef }} to ${{ inputs.environment }}
 permissions:
   contents: read
 
@@ -27,6 +27,8 @@ on:
         required: true
       OPENSHIFT_SIMS_CREDS_NAME:
         required: true
+      FORMS_SECRET_NAME:
+        required: true
       HOST_PREFIX:
         required: true
       OPENSHIFT_ENV_NAMESPACE:
@@ -34,7 +36,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy Camunda resources
+    name: Deploy Camunda and Form.io resources
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     env:
@@ -43,6 +45,7 @@ jobs:
       BUILD_REF: ${{ inputs.gitRef }}
       MIGRATIONS_SECRET_NAME: ${{ secrets.OPENSHIFT_SIMS_CREDS_NAME }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
+      FORMS_SECRET_NAME: ${{ secrets.FORMS_SECRET_NAME }}
     steps:
       - name: Install CLI tools from OpenShift Mirror
         uses: redhat-actions/openshift-tools-installer@v1
@@ -59,7 +62,7 @@ jobs:
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
-      - name: Deploy Camunda definitions
+      - name: Deploy Camunda and Form.io definitions
         working-directory: "./devops/"
         run: |
-          make oc-run-migrations MIGRATION_COMMAND="npm run deploy:camunda:definitions"
+          make oc-run-migrations MIGRATION_COMMAND="npm run deploy:camunda:definitions && cd forms && npm run deploy"

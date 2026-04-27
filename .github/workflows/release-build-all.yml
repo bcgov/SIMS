@@ -234,6 +234,5 @@ jobs:
     with:
       environment: DEV
       gitRef: ${{ needs.createTag.outputs.newTag }}
-      deployCamundaDefinitions: true
-      deployFormioDefinitions: true
+      deployCamundaFormioDefinitions: true
     secrets: inherit
