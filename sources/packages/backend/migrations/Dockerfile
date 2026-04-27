@@ -23,7 +23,9 @@ COPY backend/tsconfig.build.json ./
 COPY backend/env-setup.js ./
 
 # Copying camunda sources
-COPY backend/workflow ./workflow
+COPY backend/workflow/src/deploy.models.ts ./workflow/src/
+COPY backend/workflow/src/deploy.ts ./workflow/src/
+COPY backend/workflow/src/workflow-definitions ./workflow/src/workflow-definitions
 
 # Copying forms sources
 COPY forms/src ./forms/src

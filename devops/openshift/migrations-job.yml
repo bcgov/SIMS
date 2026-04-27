@@ -28,8 +28,8 @@ objects:
               args: ["${MIGRATION_COMMAND}"]
               imagePullPolicy: Always
               env:
-                - name: HOME
-                  value: /tmp
+                - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
+                  value: ${CAMUNDA_TOKEN_DISK_CACHE_DISABLE}
                 - name: VERSION
                   value: ${BUILD_TAG}
                 - name: POSTGRES_HOST
@@ -149,6 +149,8 @@ parameters:
     value: zeebe-client-secret
   - name: CAMUNDA_OAUTH_URL_KEY
     value: camunda-oauth-url
+  - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
+    value: "true"
   - name: MEMORY_LIMIT
     value: "500M"
   - name: CPU_REQUEST
