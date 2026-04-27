@@ -30,9 +30,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
         },
       },
       expectedData: {
-        assessmentEligibility: true,
-        institutionEligibility: false,
-        awardEligibility: true,
+        assessmentEligibilityCSPT: true,
+        institutionEligibilityCSPT: false,
+        awardEligibilityCSPT: true,
       },
     },
     {
@@ -49,9 +49,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
         appealsPTSFAEligibilityInternationalInstitutionsAppealData: undefined,
       },
       expectedData: {
-        assessmentEligibility: true,
-        institutionEligibility: false,
-        awardEligibility: false,
+        assessmentEligibilityCSPT: true,
+        institutionEligibilityCSPT: false,
+        awardEligibilityCSPT: false,
       },
     },
     {
@@ -68,9 +68,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
           InstitutionOrganizationStatus.NotForProfit,
       },
       expectedData: {
-        assessmentEligibility: true,
-        institutionEligibility: true,
-        awardEligibility: true,
+        assessmentEligibilityCSPT: true,
+        institutionEligibilityCSPT: true,
+        awardEligibilityCSPT: true,
       },
     },
     {
@@ -87,9 +87,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
           InstitutionOrganizationStatus.NotForProfit,
       },
       expectedData: {
-        assessmentEligibility: false,
-        institutionEligibility: true,
-        awardEligibility: false,
+        assessmentEligibilitySBSD: false,
+        institutionEligibilitySBSD: true,
+        awardEligibilitySBSD: false,
       },
     },
     {
@@ -107,9 +107,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
           InstitutionOrganizationStatus.NotForProfit,
       },
       expectedData: {
-        assessmentEligibility: true,
-        institutionEligibility: false,
-        awardEligibility: false,
+        assessmentEligibilitySBSD: true,
+        institutionEligibilitySBSD: false,
+        awardEligibilitySBSD: false,
       },
     },
   ];
@@ -118,8 +118,13 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
     inputData,
     expectedData,
   } of grantEligibilityScenarios) {
+    const expectedAwardEligibility =
+      awardType === "CSPT"
+        ? expectedData.awardEligibilityCSPT
+        : expectedData.awardEligibilitySBSD;
+
     it(
-      `Should return ${expectedData.awardEligibility ? "eligible" : "not eligible"} for SFA grant ${awardType} when assessment and institution eligibility rules are applied` +
+      `Should return ${expectedAwardEligibility ? "eligible" : "not eligible"} for SFA grant ${awardType} when assessment and institution eligibility rules are applied` +
         ` ${inputData.appealsPTSFAEligibilityInternationalInstitutionsAppealData ? "with" : "without"} an approved international institutions SFA eligibility appeal.`,
       async () => {
         // Arrange
@@ -138,28 +143,28 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
         // Assert
         if (awardType === "CSPT") {
           expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(
-            expectedData.awardEligibility,
+            expectedAwardEligibility,
           );
           expect(calculatedAssessment.variables.assessmentEligibilityCSPT).toBe(
-            expectedData.assessmentEligibility,
+            expectedData.assessmentEligibilityCSPT,
           );
           expect(
             calculatedAssessment.variables
               .dmnPartTimeAwardInstitutionEligibility?.isEligibleCSPT,
-          ).toBe(expectedData.institutionEligibility);
+          ).toBe(expectedData.institutionEligibilityCSPT);
           return;
         }
 
         expect(calculatedAssessment.variables.awardEligibilitySBSD).toBe(
-          expectedData.awardEligibility,
+          expectedAwardEligibility,
         );
         expect(calculatedAssessment.variables.assessmentEligibilitySBSD).toBe(
-          expectedData.assessmentEligibility,
+          expectedData.assessmentEligibilitySBSD,
         );
         expect(
           calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility
             ?.isEligibleSBSD,
-        ).toBe(expectedData.institutionEligibility);
+        ).toBe(expectedData.institutionEligibilitySBSD);
       },
     );
   }
