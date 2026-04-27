@@ -63,7 +63,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataCRAReportedIncome = 53118;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = 55335;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     assessmentConsolidatedData.partner1CRAReportedIncome = 55000;
     // Act
@@ -72,9 +72,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       assessmentConsolidatedData,
     );
     // Assert
-    // For a family of 2, limitAwardCSLPThresholdIncome is 108119.
+    // For a family of 2, limitAwardCSLPThresholdIncome is 110336.
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
-      108118,
+      110335,
     );
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
