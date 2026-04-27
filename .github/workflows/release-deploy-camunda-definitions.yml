@@ -53,6 +53,8 @@ jobs:
           ref: ${{ inputs.gitRef }}
       - name: Setup Nodejs
         uses: actions/setup-node@v6
+        with:
+          node-version: "25.x"
       - name: Downloading packages
         working-directory: "./sources/packages/backend"
         run: npm ci
