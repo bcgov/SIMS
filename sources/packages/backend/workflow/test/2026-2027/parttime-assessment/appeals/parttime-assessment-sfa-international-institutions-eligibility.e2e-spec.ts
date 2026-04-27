@@ -154,43 +154,42 @@ describe(`E2E Test Workflow parttime-assessment-sfa-${PROGRAM_YEAR}-internationa
   ];
 
   for (const { inputData, expectedData } of grantEligibilityScenarios) {
-    for (const awardType of allAwardTypes) {
-      const eligibilityProps = getEligibilityPropertyNames(awardType);
+    it(
+      `Should return expected SFA grants eligibility outcomes when assessment and institution eligibility rules are applied` +
+        ` ${inputData.appealsPTSFAEligibilityInternationalInstitutionsAppealData ? "with" : "without"} an approved international institutions SFA eligibility appeal.`,
+      async () => {
+        // Arrange
+        const assessmentConsolidatedData = {
+          ...createFakePartTimeAssessmentConsolidatedData(PROGRAM_YEAR),
+          ...inputData,
+        };
 
-      const expectedAssessmentEligibility = getExpectedEligibility(
-        expectedData,
-        awardType,
-        "assessment",
-      );
-      const expectedInstitutionEligibility = getExpectedEligibility(
-        expectedData,
-        awardType,
-        "institution",
-      );
-      const expectedAwardEligibility = getExpectedEligibility(
-        expectedData,
-        awardType,
-        "award",
-      );
+        // Act
+        const calculatedAssessment =
+          await executePartTimeAssessmentForProgramYear(
+            PROGRAM_YEAR,
+            assessmentConsolidatedData,
+          );
 
-      it(
-        `Should return ${expectedAwardEligibility ? "eligible" : "not eligible"} for SFA grant ${awardType} when assessment and institution eligibility rules are applied` +
-          ` ${inputData.appealsPTSFAEligibilityInternationalInstitutionsAppealData ? "with" : "without"} an approved international institutions SFA eligibility appeal.`,
-        async () => {
-          // Arrange
-          const assessmentConsolidatedData = {
-            ...createFakePartTimeAssessmentConsolidatedData(PROGRAM_YEAR),
-            ...inputData,
-          };
+        // Assert
+        for (const awardType of allAwardTypes) {
+          const eligibilityProps = getEligibilityPropertyNames(awardType);
+          const expectedAssessmentEligibility = getExpectedEligibility(
+            expectedData,
+            awardType,
+            "assessment",
+          );
+          const expectedInstitutionEligibility = getExpectedEligibility(
+            expectedData,
+            awardType,
+            "institution",
+          );
+          const expectedAwardEligibility = getExpectedEligibility(
+            expectedData,
+            awardType,
+            "award",
+          );
 
-          // Act
-          const calculatedAssessment =
-            await executePartTimeAssessmentForProgramYear(
-              PROGRAM_YEAR,
-              assessmentConsolidatedData,
-            );
-
-          // Assert
           expect(
             (
               calculatedAssessment.variables as unknown as Record<
@@ -216,9 +215,9 @@ describe(`E2E Test Workflow parttime-assessment-sfa-${PROGRAM_YEAR}-internationa
               >
             )[eligibilityProps.award],
           ).toBe(expectedAwardEligibility);
-        },
-      );
-    }
+        }
+      },
+    );
   }
 
   afterAll(async () => {
