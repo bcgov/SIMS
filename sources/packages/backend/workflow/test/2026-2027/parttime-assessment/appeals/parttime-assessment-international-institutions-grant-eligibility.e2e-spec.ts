@@ -30,54 +30,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
       CSPT: {
         award: "awardEligibilityCSPT",
         assessment: "assessmentEligibilityCSPT",
-        institution: "institutionEligibilityCSPT",
-      },
-      SBSD: {
-        award: "awardEligibilitySBSD",
-        assessment: "assessmentEligibilitySBSD",
-        institution: "institutionEligibilitySBSD",
-      },
-      CSGP: {
-        award: "awardEligibilityCSGP",
-        assessment: "assessmentEligibilityCSGP",
-        institution: "institutionEligibilityCSGP",
-      },
-      CSGD: {
-        award: "awardEligibilityCSGD",
-        assessment: "assessmentEligibilityCSGD",
-        institution: "institutionEligibilityCSGD",
-      },
-      BCAG: {
-        award: "awardEligibilityBCAG",
-        assessment: "assessmentEligibilityBCAG",
-        institution: "institutionEligibilityBCAG",
-      },
-      CSLP: {
-        award: "awardEligibilityCSLP",
-        assessment: "assessmentEligibilityCSLP",
-        institution: "institutionEligibilityCSLP",
-      },
-    };
-    return mapping[awardType];
-  };
-
-  /**
-   * Maps award type to the calculated assessment variables property names.
-   */
-  const getVariablePropertyNames = (
-    awardType: AwardType,
-  ): {
-    award: string;
-    assessment: string;
-    institution: string;
-  } => {
-    const mapping: Record<
-      AwardType,
-      { award: string; assessment: string; institution: string }
-    > = {
-      CSPT: {
-        award: "awardEligibilityCSPT",
-        assessment: "assessmentEligibilityCSPT",
         institution: "isEligibleCSPT",
       },
       SBSD: {
@@ -139,22 +91,22 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
       },
       expectedData: {
         assessmentEligibilityCSPT: true,
-        institutionEligibilityCSPT: false,
+        isEligibleCSPT: false,
         awardEligibilityCSPT: true,
         assessmentEligibilitySBSD: false,
-        institutionEligibilitySBSD: false,
+        isEligibleSBSD: false,
         awardEligibilitySBSD: false,
         assessmentEligibilityCSGP: false,
-        institutionEligibilityCSGP: false,
+        isEligibleCSGP: false,
         awardEligibilityCSGP: false,
         assessmentEligibilityCSGD: false,
-        institutionEligibilityCSGD: false,
+        isEligibleCSGD: false,
         awardEligibilityCSGD: false,
         assessmentEligibilityBCAG: true,
-        institutionEligibilityBCAG: false,
+        isEligibleBCAG: false,
         awardEligibilityBCAG: true,
         assessmentEligibilityCSLP: true,
-        institutionEligibilityCSLP: false,
+        isEligibleCSLP: false,
         awardEligibilityCSLP: true,
       },
     },
@@ -172,22 +124,22 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
       },
       expectedData: {
         assessmentEligibilityCSPT: true,
-        institutionEligibilityCSPT: false,
+        isEligibleCSPT: false,
         awardEligibilityCSPT: false,
         assessmentEligibilitySBSD: false,
-        institutionEligibilitySBSD: false,
+        isEligibleSBSD: false,
         awardEligibilitySBSD: false,
         assessmentEligibilityCSGP: false,
-        institutionEligibilityCSGP: false,
+        isEligibleCSGP: false,
         awardEligibilityCSGP: false,
         assessmentEligibilityCSGD: false,
-        institutionEligibilityCSGD: false,
+        isEligibleCSGD: false,
         awardEligibilityCSGD: false,
         assessmentEligibilityBCAG: true,
-        institutionEligibilityBCAG: false,
+        isEligibleBCAG: false,
         awardEligibilityBCAG: false,
         assessmentEligibilityCSLP: true,
-        institutionEligibilityCSLP: false,
+        isEligibleCSLP: false,
         awardEligibilityCSLP: false,
       },
     },
@@ -205,22 +157,22 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
       },
       expectedData: {
         assessmentEligibilityCSPT: true,
-        institutionEligibilityCSPT: true,
+        isEligibleCSPT: true,
         awardEligibilityCSPT: true,
         assessmentEligibilitySBSD: false,
-        institutionEligibilitySBSD: true,
+        isEligibleSBSD: true,
         awardEligibilitySBSD: false,
         assessmentEligibilityCSGP: false,
-        institutionEligibilityCSGP: true,
+        isEligibleCSGP: true,
         awardEligibilityCSGP: false,
         assessmentEligibilityCSGD: false,
-        institutionEligibilityCSGD: true,
+        isEligibleCSGD: true,
         awardEligibilityCSGD: false,
         assessmentEligibilityBCAG: true,
-        institutionEligibilityBCAG: true,
+        isEligibleBCAG: true,
         awardEligibilityBCAG: true,
         assessmentEligibilityCSLP: true,
-        institutionEligibilityCSLP: true,
+        isEligibleCSLP: true,
         awardEligibilityCSLP: true,
       },
     },
@@ -238,22 +190,22 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
       },
       expectedData: {
         assessmentEligibilityCSPT: true,
-        institutionEligibilityCSPT: true,
+        isEligibleCSPT: true,
         awardEligibilityCSPT: true,
         assessmentEligibilitySBSD: false,
-        institutionEligibilitySBSD: true,
+        isEligibleSBSD: true,
         awardEligibilitySBSD: false,
         assessmentEligibilityCSGP: false,
-        institutionEligibilityCSGP: true,
+        isEligibleCSGP: true,
         awardEligibilityCSGP: false,
         assessmentEligibilityCSGD: false,
-        institutionEligibilityCSGD: true,
+        isEligibleCSGD: true,
         awardEligibilityCSGD: false,
         assessmentEligibilityBCAG: true,
-        institutionEligibilityBCAG: true,
+        isEligibleBCAG: true,
         awardEligibilityBCAG: true,
         assessmentEligibilityCSLP: true,
-        institutionEligibilityCSLP: true,
+        isEligibleCSLP: true,
         awardEligibilityCSLP: true,
       },
     },
@@ -272,22 +224,22 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
       },
       expectedData: {
         assessmentEligibilityCSPT: true,
-        institutionEligibilityCSPT: true,
+        isEligibleCSPT: true,
         awardEligibilityCSPT: true,
         assessmentEligibilitySBSD: true,
-        institutionEligibilitySBSD: false,
+        isEligibleSBSD: false,
         awardEligibilitySBSD: false,
         assessmentEligibilityCSGP: true,
-        institutionEligibilityCSGP: true,
+        isEligibleCSGP: true,
         awardEligibilityCSGP: true,
         assessmentEligibilityCSGD: false,
-        institutionEligibilityCSGD: true,
+        isEligibleCSGD: true,
         awardEligibilityCSGD: false,
         assessmentEligibilityBCAG: true,
-        institutionEligibilityBCAG: false,
+        isEligibleBCAG: false,
         awardEligibilityBCAG: false,
         assessmentEligibilityCSLP: true,
-        institutionEligibilityCSLP: true,
+        isEligibleCSLP: true,
         awardEligibilityCSLP: true,
       },
     },
@@ -304,7 +256,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
 
   for (const { inputData, expectedData } of grantEligibilityScenarios) {
     for (const awardType of allAwardTypes) {
-      const variableProps = getVariablePropertyNames(awardType);
+      const eligibilityProps = getEligibilityPropertyNames(awardType);
 
       const expectedAwardEligibility = getExpectedEligibility(
         expectedData,
@@ -346,7 +298,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
                 string,
                 unknown
               >
-            )[variableProps.assessment],
+            )[eligibilityProps.assessment],
           ).toBe(expectedAssessmentEligibility);
           expect(
             (
@@ -355,7 +307,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
                 string,
                 unknown
               >
-            )[variableProps.institution],
+            )[eligibilityProps.institution],
           ).toBe(expectedInstitutionEligibility);
           expect(
             (
@@ -363,7 +315,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
                 string,
                 unknown
               >
-            )[variableProps.award],
+            )[eligibilityProps.award],
           ).toBe(expectedAwardEligibility);
         },
       );
