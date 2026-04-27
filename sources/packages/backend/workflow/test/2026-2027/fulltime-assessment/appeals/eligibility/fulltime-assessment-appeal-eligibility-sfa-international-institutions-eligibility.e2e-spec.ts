@@ -10,7 +10,7 @@ import {
 } from "@sims/sims-db";
 import { Provinces } from "@sims/test-utils";
 
-describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibility-sfa-international-eligibility.`, () => {
+describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibility-sfa-international-institutions-eligibility.`, () => {
   const appealEligibilityScenarios = [
     {
       inputData: {
@@ -166,7 +166,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
         // Assert
         expect(
           calculatedAssessment.variables
-            .isEligibleForFTSFAInternationalEligibilityAppeal,
+            .isEligibleForFTSFAInternationalInstitutionsEligibilityAppeal,
         ).toBe(expectedAppealEligibility);
       },
     );

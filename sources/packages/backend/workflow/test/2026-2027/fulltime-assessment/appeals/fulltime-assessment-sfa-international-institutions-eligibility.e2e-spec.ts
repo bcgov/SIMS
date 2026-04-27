@@ -30,7 +30,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-internationa
         institutionProvince: undefined,
         institutionClassification: InstitutionClassification.Private,
         institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
-        appealsFTSFAInternationalEligibilityAppealData: undefined,
+        appealsFTSFAInternationalInstitutionsEligibilityAppealData: undefined,
       },
       expectedData: {
         assessmentBGPDEligibility: true,
@@ -62,7 +62,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-internationa
         institutionProvince: undefined,
         institutionClassification: InstitutionClassification.Private,
         institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
-        appealsFTSFAInternationalEligibilityAppealData: {
+        appealsFTSFAInternationalInstitutionsEligibilityAppealData: {
           isEligibilityRequested: true,
         },
       },
@@ -104,7 +104,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-internationa
         institutionProvince: undefined,
         institutionClassification: InstitutionClassification.Private,
         institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
-        appealsFTSFAInternationalEligibilityAppealData: {
+        appealsFTSFAInternationalInstitutionsEligibilityAppealData: {
           isEligibilityRequested: true,
         },
       },
@@ -133,7 +133,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-internationa
       `Should evaluate the award eligibility as (${showEligibility("BGPD", expectedData.bgpdEligibility)}, ${showEligibility("SBSD", expectedData.sbsdEligibility)}, ${showEligibility("BCAG", expectedData.bcagEligibility)}, ${showEligibility("BCSL", expectedData.bcslEligibility)}, ${showEligibility("CSGF", expectedData.csgfEligibility)}, ${showEligibility("CSGD", expectedData.csgdEligibility)}, ${showEligibility("CSGP", expectedData.csgpEligibility)}, ${showEligibility("CSLF", expectedData.cslfEligibility)})` +
         ` when the assessment eligibility is (${showEligibility("BGPD", expectedData.assessmentBGPDEligibility)}, ${showEligibility("SBSD", expectedData.assessmentSBSDEligibility)}, ${showEligibility("BCAG", expectedData.assessmentBCAGEligibility)}, ${showEligibility("BCSL", expectedData.assessmentBCSLEligibility)}, ${showEligibility("CSGF", expectedData.assessmentCSGFEligibility)}, ${showEligibility("CSGD", expectedData.assessmentCSGDEligibility)}, ${showEligibility("CSGP", expectedData.assessmentCSGPEligibility)}, ${showEligibility("CSLF", expectedData.assessmentCSLFEligibility)})` +
         " and the institution eligibility is false" +
-        ` ${inputData.appealsFTSFAInternationalEligibilityAppealData ? "with" : "without"} an approved SFA international institutions eligibility appeal.`,
+        ` ${inputData.appealsFTSFAInternationalInstitutionsEligibilityAppealData ? "with" : "without"} an approved SFA international institutions eligibility appeal.`,
       async () => {
         // Arrange
         const assessmentConsolidatedData = {
