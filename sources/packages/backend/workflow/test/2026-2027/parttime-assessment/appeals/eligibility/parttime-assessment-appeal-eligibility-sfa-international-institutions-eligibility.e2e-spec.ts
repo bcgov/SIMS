@@ -10,7 +10,7 @@ import {
   InstitutionOrganizationStatus,
 } from "@sims/sims-db";
 
-describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibility-international-institutions-eligibility.`, () => {
+describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibility-sfa-international-institutions-eligibility.`, () => {
   const appealEligibilityScenarios = [
     {
       inputData: {
@@ -29,8 +29,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
       inputData: {
         // The following values make some of the SFA grants eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // BC private non-profit institutions are eligible for some of the SFA grants under the
-        // international institutions train out provision and not eligible for the appeal.
+        // BC private non-profit institutions are eligible for some of the SFA grants
+        // and not eligible for the appeal.
         institutionCountry: "CA",
         institutionProvince: Provinces.BritishColumbia,
         institutionClassification: InstitutionClassification.Private,
@@ -43,8 +43,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
       inputData: {
         // The following values make some of the SFA grants eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // BC private for-profit institutions are eligible for some of the SFA grants under the
-        // international institutions train out provision and not eligible for the appeal.
+        // BC private for-profit institutions are eligible for some of the SFA grants
+        // and not eligible for the appeal.
         institutionCountry: "CA",
         institutionProvince: Provinces.BritishColumbia,
         institutionClassification: InstitutionClassification.Private,
@@ -56,8 +56,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
       inputData: {
         // The following values make some of the SFA grants eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // Out of province Canadian public institutions are eligible for some of the SFA grants under the
-        // international institutions train out provision and not eligible for the appeal.
+        // Out of province Canadian public institutions are eligible for some of the SFA grants
+        // and not eligible for the appeal.
         institutionCountry: "CA",
         institutionProvince: Provinces.Ontario,
         institutionClassification: InstitutionClassification.Public,
@@ -70,8 +70,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
       inputData: {
         // The following values make some of the SFA grants eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // Out of province Canadian private non-profit institutions are eligible for some of the SFA grants under the
-        // international institutions train out provision and not eligible for the appeal.
+        // Out of province Canadian private non-profit institutions are eligible for some of the SFA grants
+        // and not eligible for the appeal.
         institutionCountry: "CA",
         institutionProvince: Provinces.Ontario,
         institutionClassification: InstitutionClassification.Private,
@@ -84,9 +84,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
       inputData: {
         // The following values make some of the SFA grants eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // Out of province Canadian private for-profit institutions are eligible for some of the SFA grants under the
-        // international institutions train out provision and not eligible for the appeal
-        // because they are not international institutions.
+        // Out of province Canadian private for-profit institutions are eligible for some of the SFA grants
+        // and not eligible for the appeal because they are not international institutions.
         institutionCountry: "CA",
         institutionProvince: Provinces.Ontario,
         institutionClassification: InstitutionClassification.Private,
@@ -98,8 +97,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
       inputData: {
         // The following values make some of the SFA grants eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // International public non-profit institutions are eligible for some of the SFA grants under the
-        // international institutions train out provision and not eligible for the appeal.
+        // International public non-profit institutions are eligible for some of the SFA grants
+        // and not eligible for the appeal.
         institutionCountry: "AU",
         institutionProvince: undefined,
         institutionClassification: InstitutionClassification.Public,
@@ -112,8 +111,8 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
       inputData: {
         // The following values make some of the SFA grants eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // International private non-profit institutions are eligible for some of the SFA grants under the
-        // international institutions train out provision and not eligible for the appeal.
+        // International private non-profit institutions are eligible for some of the SFA grants
+        // and not eligible for the appeal.
         institutionCountry: "AU",
         institutionProvince: undefined,
         institutionClassification: InstitutionClassification.Private,
