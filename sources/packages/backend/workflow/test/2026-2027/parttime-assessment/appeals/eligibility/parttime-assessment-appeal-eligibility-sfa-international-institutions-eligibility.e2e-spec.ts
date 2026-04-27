@@ -134,6 +134,20 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
       },
       expectedAppealEligibility: true,
     },
+    {
+      inputData: {
+        // The following values make some of the SFA grants eligible at assessment level.
+        studentDataCRAReportedIncome: 100000,
+        studentDataTaxReturnIncome: 3000000,
+        // International private for-profit institutions are the only institution type eligible for the
+        // SFA eligibility international institutions train out provision appeal.
+        institutionCountry: "AU",
+        institutionProvince: undefined,
+        institutionClassification: InstitutionClassification.Private,
+        institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
+      },
+      expectedAppealEligibility: false,
+    },
   ];
   for (const {
     inputData,
