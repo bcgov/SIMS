@@ -44,6 +44,6 @@
     "^@sims/auth(|/.*)$": "<rootDir>/libs/auth/src/$1"
   },
   "transformIgnorePatterns": [
-    "/node_modules/(?!@faker-js|uuid)"
+    "/node_modules/(?!@faker-js|uuid|@nodable)"
   ]
 }

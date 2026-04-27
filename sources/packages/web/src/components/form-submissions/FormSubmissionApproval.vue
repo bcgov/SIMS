@@ -200,6 +200,9 @@ import { FORM_SUBMISSION_ITEM_OUTDATED } from "@/constants";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import FormSubmissionDecisionHistory from "./FormSubmissionDecisionHistory.vue";
 import FormSubmissionApprovalHeader from "./FormSubmissionApprovalHeader.vue";
+import { SharedRouteConst } from "@/constants/routes/RouteConstants";
+import router from "@/router";
+import { HttpStatusCode, isAxiosError } from "axios";
 
 type FormSubmission = Pick<
   FormSubmissionMinistryAPIOutDTO,
@@ -284,7 +287,7 @@ export default defineComponent({
           id: submission.id,
           formCategory: submission.formCategory,
           status: submission.status,
-          canAssessFinalDecision: submission.canAssessFinalDecision,
+          canAssessFinalDecision: !!submission.canAssessFinalDecision,
         };
         // Adapt the items to a UI model to render each item
         // and a internal modal to provide the approval.
@@ -303,7 +306,15 @@ export default defineComponent({
           ),
           files: [],
         }));
-      } catch {
+      } catch (error: unknown) {
+        if (
+          isAxiosError(error) &&
+          error.response?.status === HttpStatusCode.Forbidden
+        ) {
+          // Using replace to allow the user to go back to the previous page.
+          router.replace({ name: SharedRouteConst.FORBIDDEN_USER });
+          return;
+        }
         snackBar.error("Unexpected error while loading the form submission.");
       } finally {
         formSubmissionLoading.value = false;

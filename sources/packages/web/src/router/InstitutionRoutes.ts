@@ -52,7 +52,6 @@ import InstitutionStudentNotes from "@/views/institution/student/InstitutionStud
 import InstitutionAssessmentsSummary from "@/views/institution/student/applicationDetails/InstitutionAssessmentsSummary.vue";
 import InstitutionApplicationStatusTracker from "@/views/institution/student/applicationDetails/InstitutionApplicationStatusTracker.vue";
 import ApplicationExceptions from "@/views/institution/student/applicationDetails/ApplicationExceptions.vue";
-import StudentAppealRequest from "@/views/institution/student/applicationDetails/StudentAppealRequest.vue";
 import AssessmentAward from "@/views/institution/student/applicationDetails/AssessmentAward.vue";
 import NoticeOfAssessment from "@/views/institution/student/applicationDetails/NoticeOfAssessment.vue";
 import RequestApplicationChange from "@/views/institution/locations/request-a-change/RequestAChange.vue";
@@ -802,12 +801,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             name: InstitutionRoutesConst.APPLICATION_EXCEPTION,
             props: true,
             component: ApplicationExceptions,
-          },
-          {
-            path: AppRoutes.StudentAppealRequest,
-            name: InstitutionRoutesConst.STUDENT_APPLICATION_APPEAL_REQUESTS_APPROVAL,
-            props: true,
-            component: StudentAppealRequest,
           },
           {
             path: AppRoutes.AssessmentAwardView,
