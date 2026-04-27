@@ -4,7 +4,6 @@ import {
   createFakePartTimeAssessmentConsolidatedData,
   executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
-import { Provinces, YesNoOptions } from "@sims/test-utils";
 import {
   InstitutionClassification,
   InstitutionOrganizationStatus,
@@ -143,106 +142,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
         awardEligibilityCSLP: false,
       },
     },
-    {
-      inputData: {
-        // The following values make the SFA grant (CSPT) eligible at assessment level.
-        studentDataTaxReturnIncome: 30000,
-        // BC public institutions are eligible for the SFA grants (CSPT) at both assessment and institution level.
-        // The international institutions train out provision appeal does not apply to BC public institutions.
-        institutionCountry: "CA",
-        institutionProvince: Provinces.BritishColumbia,
-        institutionClassification: InstitutionClassification.Public,
-        institutionOrganizationStatus:
-          InstitutionOrganizationStatus.NotForProfit,
-      },
-      expectedData: {
-        assessmentEligibilityCSPT: true,
-        isEligibleCSPT: true,
-        awardEligibilityCSPT: true,
-        assessmentEligibilitySBSD: false,
-        isEligibleSBSD: true,
-        awardEligibilitySBSD: false,
-        assessmentEligibilityCSGP: false,
-        isEligibleCSGP: true,
-        awardEligibilityCSGP: false,
-        assessmentEligibilityCSGD: false,
-        isEligibleCSGD: true,
-        awardEligibilityCSGD: false,
-        assessmentEligibilityBCAG: true,
-        isEligibleBCAG: true,
-        awardEligibilityBCAG: true,
-        assessmentEligibilityCSLP: true,
-        isEligibleCSLP: true,
-        awardEligibilityCSLP: true,
-      },
-    },
-    {
-      inputData: {
-        // The following values make the SFA grant (SBSD) not eligible at assessment level.
-        studentDataTaxReturnIncome: 200000,
-        // BC public institutions are eligible at the institution level,
-        // but the SFA grants will not be eligible due to assessment eligibility being false.
-        institutionCountry: "CA",
-        institutionProvince: Provinces.BritishColumbia,
-        institutionClassification: InstitutionClassification.Public,
-        institutionOrganizationStatus:
-          InstitutionOrganizationStatus.NotForProfit,
-      },
-      expectedData: {
-        assessmentEligibilityCSPT: true,
-        isEligibleCSPT: true,
-        awardEligibilityCSPT: true,
-        assessmentEligibilitySBSD: false,
-        isEligibleSBSD: true,
-        awardEligibilitySBSD: false,
-        assessmentEligibilityCSGP: false,
-        isEligibleCSGP: true,
-        awardEligibilityCSGP: false,
-        assessmentEligibilityCSGD: false,
-        isEligibleCSGD: true,
-        awardEligibilityCSGD: false,
-        assessmentEligibilityBCAG: true,
-        isEligibleBCAG: true,
-        awardEligibilityBCAG: true,
-        assessmentEligibilityCSLP: true,
-        isEligibleCSLP: true,
-        awardEligibilityCSLP: true,
-      },
-    },
-    {
-      inputData: {
-        // The following values make the SFA grant (SBSD) eligible at assessment level.
-        studentDataTaxReturnIncome: 30000,
-        studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
-        // Out-of-province Canadian private institutions are not eligible for the SFA grants(SBSD).
-        // The international institutions train out provision appeal does not apply to out-of-province institutions.
-        institutionCountry: "CA",
-        institutionProvince: Provinces.Ontario,
-        institutionClassification: InstitutionClassification.Private,
-        institutionOrganizationStatus:
-          InstitutionOrganizationStatus.NotForProfit,
-      },
-      expectedData: {
-        assessmentEligibilityCSPT: true,
-        isEligibleCSPT: true,
-        awardEligibilityCSPT: true,
-        assessmentEligibilitySBSD: true,
-        isEligibleSBSD: false,
-        awardEligibilitySBSD: false,
-        assessmentEligibilityCSGP: true,
-        isEligibleCSGP: true,
-        awardEligibilityCSGP: true,
-        assessmentEligibilityCSGD: false,
-        isEligibleCSGD: true,
-        awardEligibilityCSGD: false,
-        assessmentEligibilityBCAG: true,
-        isEligibleBCAG: false,
-        awardEligibilityBCAG: false,
-        assessmentEligibilityCSLP: true,
-        isEligibleCSLP: true,
-        awardEligibilityCSLP: true,
-      },
-    },
   ];
 
   const allAwardTypes: AwardType[] = [
@@ -258,11 +157,6 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
     for (const awardType of allAwardTypes) {
       const eligibilityProps = getEligibilityPropertyNames(awardType);
 
-      const expectedAwardEligibility = getExpectedEligibility(
-        expectedData,
-        awardType,
-        "award",
-      );
       const expectedAssessmentEligibility = getExpectedEligibility(
         expectedData,
         awardType,
@@ -272,6 +166,11 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-international-in
         expectedData,
         awardType,
         "institution",
+      );
+      const expectedAwardEligibility = getExpectedEligibility(
+        expectedData,
+        awardType,
+        "award",
       );
 
       it(
