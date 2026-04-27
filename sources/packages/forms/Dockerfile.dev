@@ -1,5 +1,5 @@
 # Use Node image, maintained by Docker: hub.docker.com/r/_/node.
-FROM node:20-alpine3.20
+FROM node:24-alpine
 
 ARG FORMIO_SOURCE_REPO_URL
 ARG FORMIO_SOURCE_REPO_TAG
@@ -14,8 +14,11 @@ RUN apk update && \
   apk add git && \
   apk cache clean
 
-# Clone code into formio folder, by default.
-RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch
+# Clone only the specific commit (shallow fetch to avoid downloading full history).
+RUN mkdir formio && \
+  git -C formio init && \
+  git -C formio fetch ${FORMIO_SOURCE_REPO_URL} ${FORMIO_SOURCE_REPO_TAG} --depth=1 && \
+  git -C formio checkout FETCH_HEAD
 
 RUN apk del git
 
