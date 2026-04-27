@@ -48,11 +48,11 @@
     "deploy:camunda:definitions": "ts-node ./workflow/src/deploy.ts"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1037.0",
-    "@bull-board/api": "6.21.2",
-    "@bull-board/express": "6.21.2",
-    "@bull-board/nestjs": "6.21.2",
-    "@bull-board/ui": "6.21.2",
+    "@aws-sdk/client-s3": "^3.1038.0",
+    "@bull-board/api": "7.0.0",
+    "@bull-board/express": "7.0.0",
+    "@bull-board/nestjs": "7.0.0",
+    "@bull-board/ui": "7.0.0",
     "@camunda8/sdk": "^8.8.11",
     "@golevelup/nestjs-discovery": "^7.0.0",
     "@nestjs/axios": "^4.0.1",
