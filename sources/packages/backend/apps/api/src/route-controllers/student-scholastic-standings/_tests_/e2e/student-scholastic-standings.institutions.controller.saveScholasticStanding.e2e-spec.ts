@@ -7,7 +7,6 @@ import {
   createFakeSFASIndividual,
   createFakeStudentAppeal,
   createFakeStudentRestriction,
-  getProviderInstanceForModule,
   saveFakeApplication,
   saveFakeStudent,
 } from "@sims/test-utils";
@@ -33,36 +32,24 @@ import {
   StudentScholasticStandingChangeType,
   StudyBreaksAndWeeks,
 } from "@sims/sims-db";
-import {
-  APPLICATION_NOT_FOUND,
-  FormNames,
-  FormService,
-} from "../../../../services";
-import { ScholasticStandingAPIInDTO } from "../../models/student-scholastic-standings.dto";
-import { addToDateOnlyString, getISODateOnlyString } from "@sims/utilities";
-import { AppInstitutionsModule } from "../../../../app.institutions.module";
-import { TestingModule } from "@nestjs/testing";
+import { APPLICATION_NOT_FOUND } from "../../../../services";
 import { APPLICATION_CHANGE_NOT_ELIGIBLE } from "../../../../constants";
 import { InstitutionUserTypes } from "../../../../auth";
 import { SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS } from "../../../../utilities";
 import { In } from "typeorm";
+import { addToDateOnlyString } from "@sims/utilities";
 
 describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticStanding.", () => {
   let app: INestApplication;
-  let appModule: TestingModule;
   let db: E2EDataSources;
   let collegeFLocation: InstitutionLocation;
-  let formService: FormService;
-  let payload: ScholasticStandingAPIInDTO;
   let ssrRestriction: Restriction;
   let ssrnRestriction: Restriction;
   let wthdRestriction: Restriction;
 
   beforeAll(async () => {
-    const { nestApplication, module, dataSource } =
-      await createTestingAppModule();
+    const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
-    appModule = module;
     db = createE2EDataSources(dataSource);
     // College F.
     const { institution: collegeF } = await getAuthRelatedEntities(
@@ -74,14 +61,6 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
-    );
-    // Mock the form service to validate the dry-run submission result.
-    // TODO: Form service must be hosted for E2E tests to validate dry run submission
-    // and this mock must be removed.
-    formService = await getProviderInstanceForModule(
-      appModule,
-      AppInstitutionsModule,
-      FormService,
     );
     // Find restriction used for validations.
     const restrictions = await db.restriction.find({
@@ -108,10 +87,6 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     );
   });
 
-  beforeEach(async () => {
-    mockFormioDryRun();
-  });
-
   it("Should throw bad request exception error when the payload is invalid for formIO dryRun test.", async () => {
     // Arrange
     const application = await saveFakeApplication(
@@ -128,7 +103,6 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
           StudentScholasticStandingChangeType.SchoolTransfer,
       },
     };
-    mockFormioDryRun({ validDryRun: false });
     // Institution token.
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -156,6 +130,13 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     );
 
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/0000`;
+    const payload = {
+      data: {
+        booksAndSupplies: 1000,
+        scholasticStandingChangeType:
+          StudentScholasticStandingChangeType.SchoolTransfer,
+      },
+    };
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -186,6 +167,13 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       InstitutionTokenTypes.CollegeFUser,
     );
 
+    const payload = {
+      data: {
+        booksAndSupplies: 1000,
+        scholasticStandingChangeType:
+          StudentScholasticStandingChangeType.SchoolTransfer,
+      },
+    };
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
     // Act/Assert
@@ -213,6 +201,13 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+    const payload = {
+      data: {
+        booksAndSupplies: 1000,
+        scholasticStandingChangeType:
+          StudentScholasticStandingChangeType.SchoolTransfer,
+      },
+    };
 
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
@@ -251,6 +246,13 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+    const payload = {
+      data: {
+        scholasticStandingChangeType:
+          StudentScholasticStandingChangeType.SchoolTransfer,
+        dateOfChange: application.currentAssessment?.offering?.studyStartDate,
+      },
+    };
 
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
@@ -321,7 +323,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
-  it("Should create a new scholastic standing 'School transfer' for a part-time application when the institution user requests.", async () => {
+  it("Should create a new scholastic standing School transfer for a part-time application when the institution user requests.", async () => {
     // Arrange
     const application = await saveFakeApplication(
       db.dataSource,
@@ -337,12 +339,13 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-
-    mockFormioDryRun({
-      studentScholasticStandingChangeType:
-        StudentScholasticStandingChangeType.SchoolTransfer,
-      dateOfChange: application.currentAssessment.offering.studyStartDate,
-    });
+    const payload = {
+      data: {
+        scholasticStandingChangeType:
+          StudentScholasticStandingChangeType.SchoolTransfer,
+        dateOfChange: application.currentAssessment?.offering?.studyStartDate,
+      },
+    };
 
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
@@ -396,7 +399,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     ]);
   });
 
-  it("Should create a new scholastic standing 'Student withdrew from program' for a part-time application when the institution user requests.", async () => {
+  it("Should create a new scholastic standing Student withdrew from program for a part-time application when the institution user requests.", async () => {
     // Arrange
     const application = await saveFakeApplication(
       db.dataSource,
@@ -412,12 +415,14 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-
-    mockFormioDryRun({
-      studentScholasticStandingChangeType:
-        StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-      dateOfWithdrawal: application.currentAssessment.offering.studyStartDate,
-    });
+    const payload = {
+      data: {
+        scholasticStandingChangeType:
+          StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+        dateOfWithdrawal:
+          application.currentAssessment?.offering?.studyStartDate,
+      },
+    };
 
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
@@ -606,8 +611,9 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     });
   });
 
-  it("Should create a new scholastic standing 'Student completed program early' for a part-time application when the institution user requests.", async () => {
+  it("Should create a new scholastic standing Student completed program early for a part-time application when the institution user requests.", async () => {
     // Arrange
+    const completionDate = addToDateOnlyString(new Date(), -5, "day");
     const application = await saveFakeApplication(
       db.dataSource,
       {
@@ -616,6 +622,10 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       {
         offeringIntensity: OfferingIntensity.partTime,
         applicationStatus: ApplicationStatus.Completed,
+        offeringInitialValues: {
+          studyStartDate: completionDate,
+          studyEndDate: addToDateOnlyString(new Date(), 25, "day"),
+        },
       },
     );
     // Institution token.
@@ -623,11 +633,14 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       InstitutionTokenTypes.CollegeFUser,
     );
 
-    mockFormioDryRun({
-      studentScholasticStandingChangeType:
-        StudentScholasticStandingChangeType.StudentCompletedProgramEarly,
-      dateOfCompletion: application.currentAssessment.offering.studyStartDate,
-    });
+    const payload = {
+      data: {
+        scholasticStandingChangeType:
+          StudentScholasticStandingChangeType.StudentCompletedProgramEarly,
+        dateOfCompletion: completionDate,
+        isCostDifferent: "no",
+      },
+    };
 
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
@@ -681,7 +694,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     ]);
   });
 
-  it("Should not create new scholastic standing 'School transfer' for a part-time application when date of change is not between study start date and end date.", async () => {
+  it("Should not create new scholastic standing School transfer for a part-time application when date of change is not between study start date and end date.", async () => {
     // Arrange
     const application = await saveFakeApplication(
       db.dataSource,
@@ -699,16 +712,18 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     );
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
-    mockFormioDryRun({
-      validDryRun: false,
-      studentScholasticStandingChangeType:
-        StudentScholasticStandingChangeType.SchoolTransfer,
-      dateOfChange: addToDateOnlyString(
-        application.currentAssessment.offering.studyEndDate,
-        1,
-        "day",
-      ),
-    });
+    const payload = {
+      data: {
+        scholasticStandingChangeType:
+          StudentScholasticStandingChangeType.SchoolTransfer,
+        dateOfChange: addToDateOnlyString(
+          application.currentAssessment?.offering?.studyEndDate,
+          1,
+          "day",
+        ),
+      },
+    };
+
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
@@ -722,7 +737,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
-  it("Should not create new scholastic standing 'Student withdrew from program' for a part-time application when date of withdrawal is not between study start date and end date.", async () => {
+  it("Should not create new scholastic standing Student withdrew from program for a part-time application when date of withdrawal is not between study start date and end date.", async () => {
     // Arrange
     const application = await saveFakeApplication(
       db.dataSource,
@@ -738,16 +753,17 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    mockFormioDryRun({
-      validDryRun: false,
-      studentScholasticStandingChangeType:
-        StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-      dateOfWithdrawal: addToDateOnlyString(
-        application.currentAssessment.offering.studyEndDate,
-        1,
-        "day",
-      ),
-    });
+    const payload = {
+      data: {
+        scholasticStandingChangeType:
+          StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+        dateOfWithdrawal: addToDateOnlyString(
+          application.currentAssessment.offering.studyEndDate,
+          1,
+          "day",
+        ),
+      },
+    };
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
     // Act/Assert
@@ -763,7 +779,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
-  it("Should not create new scholastic standing 'Student completed program early' for a part-time application when date of withdrawal is not between study start date and end date.", async () => {
+  it("Should not create new scholastic standing Student completed program early for a part-time application when date of withdrawal is not between study start date and end date.", async () => {
     // Arrange
     const application = await saveFakeApplication(
       db.dataSource,
@@ -779,16 +795,17 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    mockFormioDryRun({
-      validDryRun: false,
-      studentScholasticStandingChangeType:
-        StudentScholasticStandingChangeType.StudentCompletedProgramEarly,
-      dateOfCompletion: addToDateOnlyString(
-        application.currentAssessment.offering.studyEndDate,
-        1,
-        "day",
-      ),
-    });
+    const payload = {
+      data: {
+        scholasticStandingChangeType:
+          StudentScholasticStandingChangeType.StudentCompletedProgramEarly,
+        dateOfCompletion: addToDateOnlyString(
+          application.currentAssessment.offering.studyEndDate,
+          1,
+          "day",
+        ),
+      },
+    };
     const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
     // Act/Assert
@@ -804,14 +821,15 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
-  it("Should not create new scholastic standing 'School transfer' for a part-time application when date of change is greater than current date.", async () => {
+  it("Should not create new scholastic standing School transfer for a part-time application when date of change is greater than current date.", async () => {
     // Arrange
-    mockFormioDryRun({
-      validDryRun: false,
-      studentScholasticStandingChangeType:
-        StudentScholasticStandingChangeType.SchoolTransfer,
-      dateOfChange: addToDateOnlyString(new Date(), 1, "day"),
-    });
+    const payload = {
+      data: {
+        scholasticStandingChangeType:
+          StudentScholasticStandingChangeType.SchoolTransfer,
+        dateOfChange: addToDateOnlyString(new Date(), 1, "day"),
+      },
+    };
     const application = await saveFakeApplication(
       db.dataSource,
       {
@@ -841,108 +859,106 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
-  it(
-    "Should not create new scholastic standing 'Student did not complete program' for a part-time application " +
-      "when number of unsuccessful completion weeks is greater than the total number of offering weeks.",
-    async () => {
-      // Arrange
-      mockFormioDryRun({
-        studentScholasticStandingChangeType:
+  it("Should not create new scholastic standing Student did not complete program for a part-time application when number of unsuccessful completion weeks is greater than the total number of offering weeks.", async () => {
+    // Arrange
+
+    const payload = {
+      data: {
+        scholasticStandingChangeType:
           StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
         numberOfUnsuccessfulWeeks: 50,
+        reasonOfIncompletion: { grades: true },
+      },
+    };
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+    // Institution token.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "Number of unsuccessful weeks cannot exceed the number of offering weeks.",
+        errorType: "INVALID_UNSUCCESSFUL_COMPLETION_WEEKS",
       });
-      const application = await saveFakeApplication(
-        db.dataSource,
-        {
-          institutionLocation: collegeFLocation,
-        },
-        {
-          offeringIntensity: OfferingIntensity.partTime,
-          applicationStatus: ApplicationStatus.Completed,
-        },
-      );
-      // Institution token.
-      const institutionUserToken = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeFUser,
-      );
-      const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+  });
 
-      // Act/Assert
-      await request(app.getHttpServer())
-        .post(endpoint)
-        .send(payload)
-        .auth(institutionUserToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-        .expect({
-          message:
-            "Number of unsuccessful weeks cannot exceed the number of offering weeks.",
-          errorType: "INVALID_UNSUCCESSFUL_COMPLETION_WEEKS",
-        });
-    },
-  );
+  it("Should create new scholastic standing Student did not complete program for a part-time application when number of unsuccessful completion weeks is less than the total number of offering weeks.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+    // Institution token.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
 
-  it(
-    "Should create new scholastic standing 'Student did not complete program' for a part-time application " +
-      "when number of unsuccessful completion weeks is less than the total number of offering weeks.",
-    async () => {
-      // Arrange
-      const application = await saveFakeApplication(
-        db.dataSource,
-        {
-          institutionLocation: collegeFLocation,
-        },
-        {
-          offeringIntensity: OfferingIntensity.partTime,
-          applicationStatus: ApplicationStatus.Completed,
-        },
-      );
-      // Institution token.
-      const institutionUserToken = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeFUser,
-      );
-
-      // Mock with a valid number of unsuccessful weeks (smaller than total offering weeks).
-      mockFormioDryRun({
-        studentScholasticStandingChangeType:
+    const payload = {
+      data: {
+        scholasticStandingChangeType:
           StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
         numberOfUnsuccessfulWeeks: 5,
+        reasonOfIncompletion: { grades: true },
+      },
+    };
+    const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+
+    // Act/Assert
+    let createdScholasticStandingId: number;
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .expect((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+        createdScholasticStandingId = response.body.id;
       });
-
-      const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
-
-      // Act/Assert
-      let createdScholasticStandingId: number;
-      await request(app.getHttpServer())
-        .post(endpoint)
-        .send(payload)
-        .auth(institutionUserToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.CREATED)
-        .expect((response) => {
-          expect(response.body.id).toBeGreaterThan(0);
-          createdScholasticStandingId = response.body.id;
-        });
-      const { unsuccessfulWeeks } = await db.studentScholasticStanding.findOne({
-        select: {
-          id: true,
-          unsuccessfulWeeks: true,
-        },
-        where: {
-          id: createdScholasticStandingId,
-          application: { id: application.id },
-        },
-      });
-      expect(unsuccessfulWeeks).toBe(5);
-    },
-  );
-
-  it("Should not create new scholastic standing 'Student withdrew from program' for a part-time application when date of withdrawal is greater than current date.", async () => {
-    // Arrange
-    mockFormioDryRun({
-      validDryRun: false,
-      studentScholasticStandingChangeType:
-        StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-      dateOfWithdrawal: addToDateOnlyString(new Date(), 1, "day"),
+    const { unsuccessfulWeeks } = await db.studentScholasticStanding.findOne({
+      select: {
+        id: true,
+        unsuccessfulWeeks: true,
+      },
+      where: {
+        id: createdScholasticStandingId,
+        application: { id: application.id },
+      },
     });
+    expect(unsuccessfulWeeks).toBe(5);
+  });
+
+  it("Should not create new scholastic standing Student withdrew from program for a part-time application when date of withdrawal is greater than current date.", async () => {
+    // Arrange
+    const payload = {
+      data: {
+        scholasticStandingChangeType:
+          StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+        dateOfWithdrawal: addToDateOnlyString(new Date(), 1, "day"),
+      },
+    };
     const application = await saveFakeApplication(
       db.dataSource,
       {
@@ -972,14 +988,15 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       });
   });
 
-  it("Should not create new scholastic standing 'Student completed program early' for a part-time application when date of withdrawal is greater than current date.", async () => {
+  it("Should not create new scholastic standing Student completed program early for a part-time application when date of withdrawal is greater than current date.", async () => {
     // Arrange
-    mockFormioDryRun({
-      validDryRun: false,
-      studentScholasticStandingChangeType:
-        StudentScholasticStandingChangeType.StudentCompletedProgramEarly,
-      dateOfCompletion: addToDateOnlyString(new Date(), 1, "day"),
-    });
+    const payload = {
+      data: {
+        scholasticStandingChangeType:
+          StudentScholasticStandingChangeType.StudentCompletedProgramEarly,
+        dateOfCompletion: addToDateOnlyString(new Date(), 1, "day"),
+      },
+    };
     const application = await saveFakeApplication(
       db.dataSource,
       {
@@ -1010,91 +1027,92 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
   });
 
   // Part-time related student restrictions.
-  describe(`Part-time restrictions for '${StudentScholasticStandingChangeType.StudentDidNotCompleteProgram}'.`, () => {
-    it(
-      `Should create ${RestrictionCode.PTSSR} restriction and not archive the application` +
-        " when the institution reports an unsuccessful completion.",
-      async () => {
-        // Arrange
-        mockFormioDryRun({
-          validDryRun: true,
-          studentScholasticStandingChangeType:
+  describe(`Part-time restrictions for ${StudentScholasticStandingChangeType.StudentDidNotCompleteProgram}.`, () => {
+    it(`Should create ${RestrictionCode.PTSSR} restriction and not archive the application when the institution reports an unsuccessful completion.`, async () => {
+      // Arrange
+      const payload = {
+        data: {
+          scholasticStandingChangeType:
             StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
-        });
-        const application = await saveFakeApplication(
-          db.dataSource,
-          {
-            institutionLocation: collegeFLocation,
-          },
-          {
-            offeringIntensity: OfferingIntensity.partTime,
-            applicationStatus: ApplicationStatus.Completed,
-          },
-        );
-        // Institution token.
-        const institutionUserToken = await getInstitutionToken(
-          InstitutionTokenTypes.CollegeFUser,
-        );
-        const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
-        let createdScholasticStandingId: number;
+          numberOfUnsuccessfulWeeks: 5,
+          reasonOfIncompletion: { grades: true },
+        },
+      };
+      const application = await saveFakeApplication(
+        db.dataSource,
+        {
+          institutionLocation: collegeFLocation,
+        },
+        {
+          offeringIntensity: OfferingIntensity.partTime,
+          applicationStatus: ApplicationStatus.Completed,
+        },
+      );
+      // Institution token.
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+      let createdScholasticStandingId: number;
 
-        // Act/Assert
-        await request(app.getHttpServer())
-          .post(endpoint)
-          .send(payload)
-          .auth(institutionUserToken, BEARER_AUTH_TYPE)
-          .expect(HttpStatus.CREATED)
-          .expect((response) => {
-            createdScholasticStandingId = response.body.id;
-            expect(createdScholasticStandingId).toBeGreaterThan(0);
-          });
-        // Verify the scholastic standing was created and the application is not archived.
-        const scholasticStanding = await db.studentScholasticStanding.findOne({
-          select: {
-            id: true,
-            changeType: true,
-            application: { id: true, isArchived: true },
-          },
-          relations: {
-            application: true,
-          },
-          where: { id: createdScholasticStandingId },
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .expect((response) => {
+          createdScholasticStandingId = response.body.id;
+          expect(createdScholasticStandingId).toBeGreaterThan(0);
         });
-        expect(scholasticStanding).toEqual({
-          id: createdScholasticStandingId,
-          changeType:
-            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
-          application: { id: application.id, isArchived: false },
-        });
-        // Verify that student restriction PTSSR was created.
-        const studentRestrictions = await getActiveStudentRestrictions(
-          application.student.id,
-        );
-        expect(studentRestrictions).toEqual([
-          {
+      // Verify the scholastic standing was created and the application is not archived.
+      const scholasticStanding = await db.studentScholasticStanding.findOne({
+        select: {
+          id: true,
+          changeType: true,
+          application: { id: true, isArchived: true },
+        },
+        relations: {
+          application: true,
+        },
+        where: { id: createdScholasticStandingId },
+      });
+      expect(scholasticStanding).toEqual({
+        id: createdScholasticStandingId,
+        changeType:
+          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+        application: { id: application.id, isArchived: false },
+      });
+      // Verify that student restriction PTSSR was created.
+      const studentRestrictions = await getActiveStudentRestrictions(
+        application.student.id,
+      );
+      expect(studentRestrictions).toEqual([
+        {
+          id: expect.any(Number),
+          restriction: {
             id: expect.any(Number),
-            restriction: {
-              id: expect.any(Number),
-              restrictionCode: RestrictionCode.PTSSR,
-            },
+            restrictionCode: RestrictionCode.PTSSR,
           },
-        ]);
-      },
-    );
+        },
+      ]);
+    });
   });
 
   // Full-time related student restrictions.
-  describe(`Full-time restrictions for '${StudentScholasticStandingChangeType.StudentDidNotCompleteProgram}'.`, () => {
+  describe(`Full-time restrictions for ${StudentScholasticStandingChangeType.StudentDidNotCompleteProgram}.`, () => {
     it(`Should create an ${RestrictionCode.SSR} restriction when the student exceeds the maximum number of unsuccessful weeks application.`, async () => {
       // Arrange
       const unsuccessfulWeeks =
         SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS + 1;
-      mockFormioDryRun({
-        validDryRun: true,
-        studentScholasticStandingChangeType:
-          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
-        numberOfUnsuccessfulWeeks: unsuccessfulWeeks,
-      });
+      const payload = {
+        data: {
+          scholasticStandingChangeType:
+            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+          numberOfUnsuccessfulWeeks: unsuccessfulWeeks,
+          reasonOfIncompletion: { grades: true },
+        },
+      };
       const application = await saveFakeApplication(
         db.dataSource,
         {
@@ -1136,72 +1154,74 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       ]);
     });
 
-    it(
-      `Should create an ${RestrictionCode.SSR} restriction when the student equals or exceeds ${SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS} weeks ` +
-        " as a combination of unsuccessful weeks from legacy and SIMS.",
-      async () => {
-        // Arrange
-        const legacyUnsuccessfulWeeks =
-          SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS - 1;
-        const student = await saveFakeStudent(db.dataSource);
-        const legacyProfile = createFakeSFASIndividual({
-          initialValues: {
-            student,
-            unsuccessfulCompletion: legacyUnsuccessfulWeeks,
-          },
-        });
-        await db.sfasIndividual.save(legacyProfile);
-        mockFormioDryRun({
-          studentScholasticStandingChangeType:
+    it(`Should create an ${RestrictionCode.SSR} restriction when the student equals or exceeds ${SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS} weeks as a combination of unsuccessful weeks from legacy and SIMS.`, async () => {
+      // Arrange
+      const legacyUnsuccessfulWeeks =
+        SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS - 1;
+      const student = await saveFakeStudent(db.dataSource);
+      const legacyProfile = createFakeSFASIndividual({
+        initialValues: {
+          student,
+          unsuccessfulCompletion: legacyUnsuccessfulWeeks,
+        },
+      });
+      await db.sfasIndividual.save(legacyProfile);
+      const payload = {
+        data: {
+          scholasticStandingChangeType:
             StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
           numberOfUnsuccessfulWeeks: 1,
-        });
-        // Create a fake application with the same student.
-        const application = await saveFakeApplication(
-          db.dataSource,
-          {
-            institutionLocation: collegeFLocation,
-            student,
-          },
-          {
-            offeringIntensity: OfferingIntensity.fullTime,
-            applicationStatus: ApplicationStatus.Completed,
-          },
-        );
-        // Institution token.
-        const institutionUserToken = await getInstitutionToken(
-          InstitutionTokenTypes.CollegeFUser,
-        );
-        const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+          reasonOfIncompletion: { grades: true },
+        },
+      };
+      // Create a fake application with the same student.
+      const application = await saveFakeApplication(
+        db.dataSource,
+        {
+          institutionLocation: collegeFLocation,
+          student,
+        },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+        },
+      );
+      // Institution token.
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
 
-        // Act/Assert
-        await request(app.getHttpServer())
-          .post(endpoint)
-          .send(payload)
-          .auth(institutionUserToken, BEARER_AUTH_TYPE)
-          .expect(HttpStatus.CREATED);
-        const studentRestrictions = await getActiveStudentRestrictions(
-          application.student.id,
-        );
-        expect(studentRestrictions).toEqual([
-          {
-            id: expect.any(Number),
-            restriction: {
-              id: ssrRestriction.id,
-              restrictionCode: RestrictionCode.SSR,
-            },
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED);
+      const studentRestrictions = await getActiveStudentRestrictions(
+        application.student.id,
+      );
+      expect(studentRestrictions).toEqual([
+        {
+          id: expect.any(Number),
+          restriction: {
+            id: ssrRestriction.id,
+            restrictionCode: RestrictionCode.SSR,
           },
-        ]);
-      },
-    );
+        },
+      ]);
+    });
 
     it(`Should create an ${RestrictionCode.SSRN} restriction when the student already has an ${RestrictionCode.SSR}.`, async () => {
       // Arrange
-      mockFormioDryRun({
-        validDryRun: true,
-        studentScholasticStandingChangeType:
-          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
-      });
+      const payload = {
+        data: {
+          scholasticStandingChangeType:
+            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+          numberOfUnsuccessfulWeeks: 1,
+          reasonOfIncompletion: { grades: true },
+        },
+      };
       const application = await saveFakeApplication(
         db.dataSource,
         {
@@ -1255,12 +1275,14 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       // Arrange
       const unsuccessfulWeeks =
         SCHOLASTIC_STANDING_MINIMUM_UNSUCCESSFUL_WEEKS + 1;
-      mockFormioDryRun({
-        validDryRun: true,
-        studentScholasticStandingChangeType:
-          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
-        numberOfUnsuccessfulWeeks: unsuccessfulWeeks,
-      });
+      const payload = {
+        data: {
+          scholasticStandingChangeType:
+            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+          numberOfUnsuccessfulWeeks: unsuccessfulWeeks,
+          reasonOfIncompletion: { grades: true },
+        },
+      };
       const application = await saveFakeApplication(
         db.dataSource,
         {
@@ -1310,78 +1332,16 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       ]);
     });
 
-    it(
-      "Should not create any restriction and not archive the application when the student does not exceed the maximum number of unsuccessful weeks" +
-        " and does not have any history of restrictions.",
-      async () => {
-        // Arrange
-        mockFormioDryRun({
-          validDryRun: true,
-          studentScholasticStandingChangeType:
-            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
-        });
-        const application = await saveFakeApplication(
-          db.dataSource,
-          {
-            institutionLocation: collegeFLocation,
-          },
-          {
-            offeringIntensity: OfferingIntensity.fullTime,
-            applicationStatus: ApplicationStatus.Completed,
-          },
-        );
-        // Institution token.
-        const institutionUserToken = await getInstitutionToken(
-          InstitutionTokenTypes.CollegeFUser,
-        );
-        const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
-        let createdScholasticStandingId: number;
-
-        // Act/Assert
-        await request(app.getHttpServer())
-          .post(endpoint)
-          .send(payload)
-          .auth(institutionUserToken, BEARER_AUTH_TYPE)
-          .expect(HttpStatus.CREATED)
-          .expect((response) => {
-            createdScholasticStandingId = response.body.id;
-            expect(createdScholasticStandingId).toBeGreaterThan(0);
-          });
-        // Verify the scholastic standing was created and the application is not archived.
-        const scholasticStanding = await db.studentScholasticStanding.findOne({
-          select: {
-            id: true,
-            changeType: true,
-            application: { id: true, isArchived: true },
-          },
-          relations: {
-            application: true,
-          },
-          where: { id: createdScholasticStandingId },
-        });
-        expect(scholasticStanding).toEqual({
-          id: createdScholasticStandingId,
-          changeType:
-            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
-          application: { id: application.id, isArchived: false },
-        });
-        // Verify that no student restrictions were created.
-        const studentRestrictions = await getActiveStudentRestrictions(
-          application.student.id,
-        );
-        expect(studentRestrictions).toEqual([]);
-      },
-    );
-  });
-
-  describe(`Full-time restrictions for '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}'.`, () => {
-    it(`Should create a ${RestrictionCode.WTHD} restriction when the student withdrew and there is no active ${RestrictionCode.WTHD} restriction.`, async () => {
+    it("Should not create any restriction and not archive the application when the student does not exceed the maximum number of unsuccessful weeks and does not have any history of restrictions.", async () => {
       // Arrange
-      mockFormioDryRun({
-        validDryRun: true,
-        studentScholasticStandingChangeType:
-          StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-      });
+      const payload = {
+        data: {
+          scholasticStandingChangeType:
+            StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+          numberOfUnsuccessfulWeeks: 5,
+          reasonOfIncompletion: { grades: true },
+        },
+      };
       const application = await saveFakeApplication(
         db.dataSource,
         {
@@ -1390,6 +1350,74 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
         {
           offeringIntensity: OfferingIntensity.fullTime,
           applicationStatus: ApplicationStatus.Completed,
+        },
+      );
+      // Institution token.
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+      const endpoint = `/institutions/scholastic-standing/location/${collegeFLocation.id}/application/${application.id}`;
+      let createdScholasticStandingId: number;
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .expect((response) => {
+          createdScholasticStandingId = response.body.id;
+          expect(createdScholasticStandingId).toBeGreaterThan(0);
+        });
+      // Verify the scholastic standing was created and the application is not archived.
+      const scholasticStanding = await db.studentScholasticStanding.findOne({
+        select: {
+          id: true,
+          changeType: true,
+          application: { id: true, isArchived: true },
+        },
+        relations: {
+          application: true,
+        },
+        where: { id: createdScholasticStandingId },
+      });
+      expect(scholasticStanding).toEqual({
+        id: createdScholasticStandingId,
+        changeType:
+          StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+        application: { id: application.id, isArchived: false },
+      });
+      // Verify that no student restrictions were created.
+      const studentRestrictions = await getActiveStudentRestrictions(
+        application.student.id,
+      );
+      expect(studentRestrictions).toEqual([]);
+    });
+  });
+
+  describe(`Full-time restrictions for ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}.`, () => {
+    it(`Should create a ${RestrictionCode.WTHD} restriction when the student withdrew and there is no active ${RestrictionCode.WTHD} restriction.`, async () => {
+      // Arrange
+      const withdrawalDate = addToDateOnlyString(new Date(), -5, "day");
+      const payload = {
+        data: {
+          scholasticStandingChangeType:
+            StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+          dateOfWithdrawal: withdrawalDate,
+        },
+      };
+      const application = await saveFakeApplication(
+        db.dataSource,
+        {
+          institutionLocation: collegeFLocation,
+        },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          applicationStatus: ApplicationStatus.Completed,
+          offeringInitialValues: {
+            studyStartDate: withdrawalDate,
+            studyEndDate: addToDateOnlyString(new Date(), 25, "day"),
+          },
         },
       );
       // Institution token.
@@ -1420,11 +1448,14 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
 
     it(`Should create an ${RestrictionCode.SSR} restriction when the student withdrew and there is an active ${RestrictionCode.WTHD} restriction.`, async () => {
       // Arrange
-      mockFormioDryRun({
-        validDryRun: true,
-        studentScholasticStandingChangeType:
-          StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-      });
+      const withdrawalDate = addToDateOnlyString(new Date(), -5, "day");
+      const payload = {
+        data: {
+          scholasticStandingChangeType:
+            StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+          dateOfWithdrawal: withdrawalDate,
+        },
+      };
       const application = await saveFakeApplication(
         db.dataSource,
         {
@@ -1433,6 +1464,10 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
         {
           offeringIntensity: OfferingIntensity.fullTime,
           applicationStatus: ApplicationStatus.Completed,
+          offeringInitialValues: {
+            studyStartDate: withdrawalDate,
+            studyEndDate: addToDateOnlyString(new Date(), 25, "day"),
+          },
         },
       );
       const wthdStudentRestriction = createFakeStudentRestriction(
@@ -1478,11 +1513,14 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
 
     it(`Should create a ${RestrictionCode.WTHD} and an ${RestrictionCode.SSRN} restriction when the student withdraws and there is an inactive ${RestrictionCode.SSR} restriction.`, async () => {
       // Arrange
-      mockFormioDryRun({
-        validDryRun: true,
-        studentScholasticStandingChangeType:
-          StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-      });
+      const withdrawalDate = addToDateOnlyString(new Date(), -5, "day");
+      const payload = {
+        data: {
+          scholasticStandingChangeType:
+            StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+          dateOfWithdrawal: withdrawalDate,
+        },
+      };
       const application = await saveFakeApplication(
         db.dataSource,
         {
@@ -1491,6 +1529,10 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
         {
           offeringIntensity: OfferingIntensity.fullTime,
           applicationStatus: ApplicationStatus.Completed,
+          offeringInitialValues: {
+            studyStartDate: withdrawalDate,
+            studyEndDate: addToDateOnlyString(new Date(), 25, "day"),
+          },
         },
       );
       const ssrStudentRestriction = createFakeStudentRestriction(
@@ -1534,59 +1576,6 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       ]);
     });
   });
-
-  /**
-   * Centralized method to handle the form.io mock.
-   * @param options method options:
-   * - `validDryRun`: boolean false indicates that the form mock resolved value is invalid. Default value is true.
-   * - `studentScholasticStandingChangeType`: Student scholastic standing change type to be added in combination with SchoolTransfer scholastic standing type .
-   * - `dateOfChange`: Date of change used during the School Transfer scholastic standing.
-   * - `dateOfCompletion`: Date of change used during the Student completed program early scholastic standing.
-   * - `dateOfWithdrawal`: Date of change used during the Student withdrew from program scholastic standing.
-   * - `numberOfUnsuccessfulWeeks`: Number of unsuccessful weeks used during the 'Student did not complete program' scholastic standing.
-   */
-  //TODO - When formio container is available, remove the mock.
-  function mockFormioDryRun(options?: {
-    validDryRun?: boolean;
-    studentScholasticStandingChangeType?: StudentScholasticStandingChangeType;
-    dateOfChange?: string;
-    dateOfCompletion?: string;
-    dateOfWithdrawal?: string;
-    numberOfUnsuccessfulWeeks?: number;
-  }): void {
-    const validDryRun = options?.validDryRun ?? true;
-    const scholasticStandingChangeType =
-      options?.studentScholasticStandingChangeType ??
-      StudentScholasticStandingChangeType.SchoolTransfer;
-    payload = {
-      data: { scholasticStandingChangeType },
-    } as ScholasticStandingAPIInDTO;
-    const fallbackDate = getISODateOnlyString(new Date());
-
-    switch (scholasticStandingChangeType) {
-      case StudentScholasticStandingChangeType.StudentCompletedProgramEarly:
-        payload.data.dateOfCompletion =
-          options?.dateOfCompletion ?? fallbackDate;
-        break;
-      case StudentScholasticStandingChangeType.StudentWithdrewFromProgram:
-        payload.data.dateOfWithdrawal =
-          options?.dateOfWithdrawal ?? fallbackDate;
-        break;
-      case StudentScholasticStandingChangeType.SchoolTransfer:
-        payload.data.dateOfChange = options?.dateOfChange ?? fallbackDate;
-        break;
-      case StudentScholasticStandingChangeType.StudentDidNotCompleteProgram:
-        payload.data.numberOfUnsuccessfulWeeks =
-          options?.numberOfUnsuccessfulWeeks ?? 1;
-        break;
-    }
-
-    formService.dryRunSubmission = jest.fn().mockResolvedValue({
-      valid: validDryRun,
-      formName: FormNames.ReportScholasticStandingChange,
-      data: payload,
-    });
-  }
 
   /**
    * Get active student restrictions for a given

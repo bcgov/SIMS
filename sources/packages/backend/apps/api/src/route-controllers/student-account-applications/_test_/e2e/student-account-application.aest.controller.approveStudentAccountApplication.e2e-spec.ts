@@ -11,11 +11,8 @@ import {
   createE2EDataSources,
   createFakeStudentAccountApplication,
   createFakeUser,
-  getProviderInstanceForModule,
   saveFakeSFASIndividual,
 } from "@sims/test-utils";
-import { AppAESTModule } from "../../../../app.aest.module";
-import { FormNames, FormService } from "../../../../services";
 import { Notification, NotificationMessageType, User } from "@sims/sims-db";
 import { In, IsNull } from "typeorm";
 import { faker } from "@faker-js/faker";
@@ -23,8 +20,7 @@ import { faker } from "@faker-js/faker";
 describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountApplication", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let sharedFormService: FormService;
-  const TEST_SIN1 = "534012702";
+  const TEST_SIN1 = "046454286";
   const TEST_SIN2 = "534012703";
   const BLANK_SIN = "000000000";
   const TEST_BIRTH_DATE1 = "2001-01-31";
@@ -32,16 +28,9 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
   const TEST_EMAIL = "dummy@some.domain";
 
   beforeAll(async () => {
-    const { nestApplication, dataSource, module } =
-      await createTestingAppModule();
+    const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-
-    sharedFormService = await getProviderInstanceForModule(
-      module,
-      AppAESTModule,
-      FormService,
-    );
 
     // Insert a fake email contact to send ministry email.
     await db.notificationMessage.update(
@@ -97,12 +86,6 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
 
     const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    // Mock the form.io response.
-    sharedFormService.dryRunSubmission = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: FormNames.StudentProfile,
-      data: { data: submittedData },
-    });
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -154,12 +137,6 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
 
     const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    // Mock the form.io response.
-    sharedFormService.dryRunSubmission = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: FormNames.StudentProfile,
-      data: { data: submittedData },
-    });
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -211,12 +188,6 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
 
     const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    // Mock the form.io response.
-    sharedFormService.dryRunSubmission = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: FormNames.StudentProfile,
-      data: { data: submittedData },
-    });
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -269,10 +240,10 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       addressLine1: "address 1",
       city: "Victoria",
       country: "Canada",
-      postalCode: "H1H1H1H",
+      postalCode: "H1H1H1",
       provinceState: "BC",
-      selectedCountry: "canada",
-      canadaPostalCode: "H1H1H1H",
+      selectedCountry: "Canada",
+      canadaPostalCode: "H1H1H1",
     };
   }
 
