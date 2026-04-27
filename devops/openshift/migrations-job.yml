@@ -133,8 +133,9 @@ parameters:
   - name: DB_PASSWORD_KEY
     value: password
   - name: FORMS_URL
+    required: true
   - name: FORMS_SECRET_NAME
-    value: forms-secret
+    required: true
   - name: FORMIO_ROOT_EMAIL_NAME_KEY
     value: FORMIO_ROOT_EMAIL
   - name: FORMIO_ROOT_PASSWORD_NAME_KEY
