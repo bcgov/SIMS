@@ -1,0 +1,240 @@
+{
+    "title": "Disability status application",
+    "name": "disabilitystatusapplicationform",
+    "path": "disabilitystatusapplicationform",
+    "type": "form",
+    "display": "form",
+    "tags": [
+        "common"
+    ],
+    "components": [
+        {
+            "label": "Required documents list",
+            "persistent": "client-only",
+            "calculateValue": "if(data.disabilityCategories || data.disabilityCategories.length){\r\n  const requiredDocumentsMap = {\r\n    1: \"<li>Verification of disability form completed by a valid assessor.</li>\",\r\n    2: \"<li>Psycho-education assessment completed within the last 5 years, or when you were 18 years of age or older.</li>\",\r\n    3: \"<li>A copy of your most recent visual acuity report.</li>\",\r\n    4: \"<li>A copy of your most recent audiology report.</li>\",\r\n  };\r\n\r\n  const disabilityCategoryRequiredDocumentsMap = {\r\n    \"specificLearningDisorder\": [2],\r\n    \"visualCondition\": [1, 3],\r\n    \"auditoryCondition\": [1, 4],\r\n    \"otherDisablingCondition\": [1],\r\n  };\r\n\r\n  const uniqueDocIds = new Set(\r\n    data.disabilityCategories.flatMap(\r\n      (category) => disabilityCategoryRequiredDocumentsMap[category] || []\r\n    )\r\n  );\r\n\r\n  value = [...uniqueDocIds]\r\n    .sort()\r\n    .map((id) => requiredDocumentsMap[id])\r\n    .filter(Boolean)\r\n    .join(\"\\n\");\r\n}\r\nelse{\r\n  value =\"\";\r\n}",
+            "key": "requiredDocumentsList",
+            "type": "hidden",
+            "input": true,
+            "tableView": false
+        },
+        {
+            "label": "HTML",
+            "tag": "p",
+            "attrs": [
+                {
+                    "attr": "",
+                    "value": ""
+                }
+            ],
+            "content": "This form allows you declare a Permanent Disability (PD) or Persistent and Prolonged Disability (PPD) status. Approval of this form will update your profile with disability status and allow for disability related funding within the StudentAid BC application.",
+            "refreshOnChange": false,
+            "key": "html",
+            "type": "htmlelement",
+            "input": false,
+            "tableView": false
+        },
+        {
+            "label": "Please select the disability status you are requesting:",
+            "optionsLabelPosition": "right",
+            "inline": false,
+            "tableView": false,
+            "values": [
+                {
+                    "label": "Permanent Disability",
+                    "value": "pd",
+                    "shortcut": ""
+                },
+                {
+                    "label": "Persistent and Prolonged Disability",
+                    "value": "ppd",
+                    "shortcut": ""
+                }
+            ],
+            "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+            },
+            "validateWhenHidden": false,
+            "key": "requestedDisabilityStatus",
+            "type": "radio",
+            "input": true
+        },
+        {
+            "label": "Please select all disability categories that apply to you:",
+            "widget": "choicesjs",
+            "tableView": true,
+            "multiple": true,
+            "data": {
+                "values": [
+                    {
+                        "label": "Specific learning disorder (reading, written expression, mathematics impairments, or other learning disorders)",
+                        "value": "specificLearningDisorder"
+                    },
+                    {
+                        "label": "Visual condition",
+                        "value": "visualCondition"
+                    },
+                    {
+                        "label": "Auditory condition",
+                        "value": "auditoryCondition"
+                    },
+                    {
+                        "label": "Any other disabling condition",
+                        "value": "otherDisablingCondition"
+                    }
+                ]
+            },
+            "validate": {
+                "required": true,
+                "onlyAvailableItems": true
+            },
+            "validateWhenHidden": false,
+            "key": "disabilityCategories",
+            "type": "select",
+            "input": true
+        },
+        {
+            "input": false,
+            "key": "panel",
+            "tableView": false,
+            "label": "Panel",
+            "type": "panel",
+            "components": [
+                {
+                    "label": "HTML",
+                    "tag": "h3",
+                    "className": "category-header-medium primary-color",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "Upload supporting documents",
+                    "refreshOnChange": false,
+                    "key": "html1",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "HTML",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "To request disability status for student financial aid, you will need to upload documents that confirm your disability‑related needs. Please do not upload password protected files as they may delay your application.",
+                    "refreshOnChange": false,
+                    "key": "html2",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "HTML",
+                    "tag": "h4",
+                    "className": "category-header-medium-small",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "Required document(s):",
+                    "refreshOnChange": false,
+                    "key": "html3",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "HTML",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "<ul>{{data.requiredDocumentsList}}</ul>",
+                    "refreshOnChange": true,
+                    "key": "html5",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "HTML",
+                    "tag": "h4",
+                    "className": "category-header-medium-small",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "Optional documents:",
+                    "refreshOnChange": false,
+                    "key": "html4",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "HTML",
+                    "attrs": [
+                        {
+                            "attr": "",
+                            "value": ""
+                        }
+                    ],
+                    "content": "<ul>\n  <li>Any additional documents that will support your application for disability status.</li>\n</ul>",
+                    "refreshOnChange": false,
+                    "key": "html6",
+                    "type": "htmlelement",
+                    "input": false,
+                    "tableView": false
+                },
+                {
+                    "label": "Upload supporting documents",
+                    "hideLabel": true,
+                    "tableView": false,
+                    "storage": "url",
+                    "dir": "Disability status application - Supporting Documents",
+                    "webcam": false,
+                    "capture": false,
+                    "fileTypes": [
+                        {
+                            "label": "",
+                            "value": ""
+                        }
+                    ],
+                    "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
+                    "fileMaxSize": "15MB",
+                    "multiple": true,
+                    "validate": {
+                        "required": true,
+                        "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+                        "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
+                    },
+                    "validateWhenHidden": false,
+                    "key": "requiredDocuments",
+                    "type": "file",
+                    "input": true,
+                    "url": "student/files"
+                },
+                {
+                    "label": "Content",
+                    "input": false,
+                    "className": "file-upload-info-container",
+                    "content": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n<p>15MB file limit each</p>",
+                    "type": "htmlelement",
+                    "hideLabel": true,
+                    "tableView": false,
+                    "key": "content"
+                }
+            ]
+        }
+    ]
+}
