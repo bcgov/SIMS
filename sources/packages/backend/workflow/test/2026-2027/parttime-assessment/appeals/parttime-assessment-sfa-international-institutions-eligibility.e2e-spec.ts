@@ -8,71 +8,9 @@ import {
   InstitutionClassification,
   InstitutionOrganizationStatus,
 } from "@sims/sims-db";
-
-type AwardType = "CSPT" | "SBSD" | "CSGP" | "CSGD" | "BCAG" | "CSLP";
+import { CalculatedAssessmentModel } from "workflow/test/models";
 
 describe(`E2E Test Workflow parttime-assessment-sfa-${PROGRAM_YEAR}-international-institutions-eligibility.`, () => {
-  /**
-   * Maps award type to the expected eligibility property names.
-   */
-  const getEligibilityPropertyNames = (
-    awardType: AwardType,
-  ): {
-    award: string;
-    assessment: string;
-    institution: string;
-  } => {
-    const mapping: Record<
-      AwardType,
-      { award: string; assessment: string; institution: string }
-    > = {
-      CSPT: {
-        award: "awardEligibilityCSPT",
-        assessment: "assessmentEligibilityCSPT",
-        institution: "isEligibleCSPT",
-      },
-      SBSD: {
-        award: "awardEligibilitySBSD",
-        assessment: "assessmentEligibilitySBSD",
-        institution: "isEligibleSBSD",
-      },
-      CSGP: {
-        award: "awardEligibilityCSGP",
-        assessment: "assessmentEligibilityCSGP",
-        institution: "isEligibleCSGP",
-      },
-      CSGD: {
-        award: "awardEligibilityCSGD",
-        assessment: "assessmentEligibilityCSGD",
-        institution: "isEligibleCSGD",
-      },
-      BCAG: {
-        award: "awardEligibilityBCAG",
-        assessment: "assessmentEligibilityBCAG",
-        institution: "isEligibleBCAG",
-      },
-      CSLP: {
-        award: "awardEligibilityCSLP",
-        assessment: "assessmentEligibilityCSLP",
-        institution: "isEligibleCSLP",
-      },
-    };
-    return mapping[awardType];
-  };
-
-  /**
-   * Gets the expected eligibility value for a given award type from expectedData.
-   */
-  const getExpectedEligibility = (
-    expectedData: (typeof grantEligibilityScenarios)[number]["expectedData"],
-    awardType: AwardType,
-    property: "award" | "assessment" | "institution",
-  ): boolean => {
-    const props = getEligibilityPropertyNames(awardType);
-    const key = props[property] as keyof typeof expectedData;
-    return expectedData[key];
-  };
-
   const grantEligibilityScenarios = [
     {
       inputData: {
@@ -90,22 +28,22 @@ describe(`E2E Test Workflow parttime-assessment-sfa-${PROGRAM_YEAR}-internationa
       },
       expectedData: {
         assessmentEligibilityCSPT: true,
-        isEligibleCSPT: false,
+        institutionEligibilityCSPT: false,
         awardEligibilityCSPT: true,
         assessmentEligibilitySBSD: false,
-        isEligibleSBSD: false,
+        institutionEligibilitySBSD: false,
         awardEligibilitySBSD: false,
         assessmentEligibilityCSGP: false,
-        isEligibleCSGP: false,
+        institutionEligibilityCSGP: false,
         awardEligibilityCSGP: false,
         assessmentEligibilityCSGD: false,
-        isEligibleCSGD: false,
+        institutionEligibilityCSGD: false,
         awardEligibilityCSGD: false,
         assessmentEligibilityBCAG: true,
-        isEligibleBCAG: false,
+        institutionEligibilityBCAG: false,
         awardEligibilityBCAG: true,
         assessmentEligibilityCSLP: true,
-        isEligibleCSLP: false,
+        institutionEligibilityCSLP: false,
         awardEligibilityCSLP: true,
       },
     },
@@ -123,34 +61,25 @@ describe(`E2E Test Workflow parttime-assessment-sfa-${PROGRAM_YEAR}-internationa
       },
       expectedData: {
         assessmentEligibilityCSPT: true,
-        isEligibleCSPT: false,
+        institutionEligibilityCSPT: false,
         awardEligibilityCSPT: false,
         assessmentEligibilitySBSD: false,
-        isEligibleSBSD: false,
+        institutionEligibilitySBSD: false,
         awardEligibilitySBSD: false,
         assessmentEligibilityCSGP: false,
-        isEligibleCSGP: false,
+        institutionEligibilityCSGP: false,
         awardEligibilityCSGP: false,
         assessmentEligibilityCSGD: false,
-        isEligibleCSGD: false,
+        institutionEligibilityCSGD: false,
         awardEligibilityCSGD: false,
         assessmentEligibilityBCAG: true,
-        isEligibleBCAG: false,
+        institutionEligibilityBCAG: false,
         awardEligibilityBCAG: false,
         assessmentEligibilityCSLP: true,
-        isEligibleCSLP: false,
+        institutionEligibilityCSLP: false,
         awardEligibilityCSLP: false,
       },
     },
-  ];
-
-  const allAwardTypes: AwardType[] = [
-    "CSPT",
-    "SBSD",
-    "CSGP",
-    "CSGD",
-    "BCAG",
-    "CSLP",
   ];
 
   for (const { inputData, expectedData } of grantEligibilityScenarios) {
@@ -171,51 +100,11 @@ describe(`E2E Test Workflow parttime-assessment-sfa-${PROGRAM_YEAR}-internationa
             assessmentConsolidatedData,
           );
 
+        const eligibilityData = getEligibilityData(
+          calculatedAssessment.variables,
+        );
         // Assert
-        for (const awardType of allAwardTypes) {
-          const eligibilityProps = getEligibilityPropertyNames(awardType);
-          const expectedAssessmentEligibility = getExpectedEligibility(
-            expectedData,
-            awardType,
-            "assessment",
-          );
-          const expectedInstitutionEligibility = getExpectedEligibility(
-            expectedData,
-            awardType,
-            "institution",
-          );
-          const expectedAwardEligibility = getExpectedEligibility(
-            expectedData,
-            awardType,
-            "award",
-          );
-
-          expect(
-            (
-              calculatedAssessment.variables as unknown as Record<
-                string,
-                unknown
-              >
-            )[eligibilityProps.assessment],
-          ).toBe(expectedAssessmentEligibility);
-          expect(
-            (
-              calculatedAssessment.variables
-                .dmnPartTimeAwardInstitutionEligibility as unknown as Record<
-                string,
-                unknown
-              >
-            )[eligibilityProps.institution],
-          ).toBe(expectedInstitutionEligibility);
-          expect(
-            (
-              calculatedAssessment.variables as unknown as Record<
-                string,
-                unknown
-              >
-            )[eligibilityProps.award],
-          ).toBe(expectedAwardEligibility);
-        }
+        expect(eligibilityData).toEqual(expectedData);
       },
     );
   }
@@ -225,3 +114,38 @@ describe(`E2E Test Workflow parttime-assessment-sfa-${PROGRAM_YEAR}-internationa
     await ZeebeMockedClient.getMockedZeebeInstance().close();
   });
 });
+
+function getEligibilityData(calculatedAssessment: CalculatedAssessmentModel) {
+  return {
+    assessmentEligibilityCSPT: calculatedAssessment.assessmentEligibilityCSPT,
+    institutionEligibilityCSPT:
+      calculatedAssessment.dmnPartTimeAwardInstitutionEligibility
+        ?.isEligibleCSPT,
+    awardEligibilityCSPT: calculatedAssessment.awardEligibilityCSPT,
+    assessmentEligibilitySBSD: calculatedAssessment.assessmentEligibilitySBSD,
+    institutionEligibilitySBSD:
+      calculatedAssessment.dmnPartTimeAwardInstitutionEligibility
+        ?.isEligibleSBSD,
+    awardEligibilitySBSD: calculatedAssessment.awardEligibilitySBSD,
+    assessmentEligibilityCSGP: calculatedAssessment.assessmentEligibilityCSGP,
+    institutionEligibilityCSGP:
+      calculatedAssessment.dmnPartTimeAwardInstitutionEligibility
+        ?.isEligibleCSGP,
+    awardEligibilityCSGP: calculatedAssessment.awardEligibilityCSGP,
+    assessmentEligibilityCSGD: calculatedAssessment.assessmentEligibilityCSGD,
+    institutionEligibilityCSGD:
+      calculatedAssessment.dmnPartTimeAwardInstitutionEligibility
+        ?.isEligibleCSGD,
+    awardEligibilityCSGD: calculatedAssessment.awardEligibilityCSGD,
+    assessmentEligibilityBCAG: calculatedAssessment.assessmentEligibilityBCAG,
+    institutionEligibilityBCAG:
+      calculatedAssessment.dmnPartTimeAwardInstitutionEligibility
+        ?.isEligibleBCAG,
+    awardEligibilityBCAG: calculatedAssessment.awardEligibilityBCAG,
+    assessmentEligibilityCSLP: calculatedAssessment.assessmentEligibilityCSLP,
+    institutionEligibilityCSLP:
+      calculatedAssessment.dmnPartTimeAwardInstitutionEligibility
+        ?.isEligibleCSLP,
+    awardEligibilityCSLP: calculatedAssessment.awardEligibilityCSLP,
+  };
+}
