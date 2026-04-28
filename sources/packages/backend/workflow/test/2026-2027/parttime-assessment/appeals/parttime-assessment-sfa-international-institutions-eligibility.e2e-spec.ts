@@ -9,14 +9,32 @@ import {
   InstitutionOrganizationStatus,
 } from "@sims/sims-db";
 import { CalculatedAssessmentModel } from "../../../models";
+import { YesNoOptions } from "@sims/test-utils";
+import {
+  DependentChildCareEligibility,
+  createFakeStudentDependentEligibleForChildcareCost,
+} from "../../../test-utils/factories";
+
+const [, programEndYear] = PROGRAM_YEAR.split("-");
+const offeringStudyStartDate = `${programEndYear}-02-01`;
 
 describe(`E2E Test Workflow parttime-assessment-sfa-${PROGRAM_YEAR}-international-institutions-eligibility.`, () => {
   const grantEligibilityScenarios = [
     {
       inputData: {
-        // The following values make the SFA grant (CSPT) eligible at assessment level.
+        // The following values make the SFA funding (e.g. CSPT, SBSD, CSGP, CSGD) eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // International for-profit institutions are not eligible for the SFA grants(CSPT).
+        studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
+        // A dependent under 11 years old is required for CSGD assessment eligibility.
+        offeringStudyStartDate,
+        studentDataHasDependents: YesNoOptions.Yes,
+        studentDataDependants: [
+          createFakeStudentDependentEligibleForChildcareCost(
+            DependentChildCareEligibility.Eligible0To11YearsOld,
+            offeringStudyStartDate,
+          ),
+        ],
+        // International for-profit institutions are not eligible for the SFA funding (e.g. CSPT).
         // But if the application has approved SFA eligibility international institutions appeal, the SFA grants will be eligible.
         institutionCountry: "AU",
         institutionProvince: undefined,
@@ -30,15 +48,15 @@ describe(`E2E Test Workflow parttime-assessment-sfa-${PROGRAM_YEAR}-internationa
         assessmentEligibilityCSPT: true,
         institutionEligibilityCSPT: false,
         awardEligibilityCSPT: true,
-        assessmentEligibilitySBSD: false,
+        assessmentEligibilitySBSD: true,
         institutionEligibilitySBSD: false,
-        awardEligibilitySBSD: false,
-        assessmentEligibilityCSGP: false,
+        awardEligibilitySBSD: true,
+        assessmentEligibilityCSGP: true,
         institutionEligibilityCSGP: false,
-        awardEligibilityCSGP: false,
-        assessmentEligibilityCSGD: false,
+        awardEligibilityCSGP: true,
+        assessmentEligibilityCSGD: true,
         institutionEligibilityCSGD: false,
-        awardEligibilityCSGD: false,
+        awardEligibilityCSGD: true,
         assessmentEligibilityBCAG: true,
         institutionEligibilityBCAG: false,
         awardEligibilityBCAG: true,
