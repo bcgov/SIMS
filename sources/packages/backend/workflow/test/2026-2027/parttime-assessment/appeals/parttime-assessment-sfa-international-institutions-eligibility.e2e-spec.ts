@@ -19,7 +19,7 @@ const [, programEndYear] = PROGRAM_YEAR.split("-");
 const offeringStudyStartDate = `${programEndYear}-02-01`;
 const offeringStudyEndDate = `${programEndYear}-05-24`;
 
-describe(`E2E Test Workflow parttime-assessment-sfa-${PROGRAM_YEAR}-international-institutions-eligibility.`, () => {
+describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-sfa-international-institutions-eligibility.`, () => {
   const grantEligibilityScenarios = [
     {
       inputData: {
@@ -37,7 +37,7 @@ describe(`E2E Test Workflow parttime-assessment-sfa-${PROGRAM_YEAR}-internationa
           ),
         ],
         // International for-profit institutions are not eligible for the SFA funding (e.g. CSPT).
-        // But if the application has approved SFA eligibility international institutions appeal, the SFA grants will be eligible.
+        // But if the application has approved SFA eligibility international institutions appeal, the SFA will be eligible.
         institutionCountry: "AU",
         institutionProvince: undefined,
         institutionClassification: InstitutionClassification.Private,
@@ -69,10 +69,10 @@ describe(`E2E Test Workflow parttime-assessment-sfa-${PROGRAM_YEAR}-internationa
     },
     {
       inputData: {
-        // The following values make the SFA grant (CSPT) eligible at assessment level.
+        // The following values make the SFA funding (e.g. CSPT, BCAG, CSLP) eligible at assessment level.
         studentDataTaxReturnIncome: 30000,
-        // International for-profit institutions are not eligible for the SFA grants (CSPT).
-        // The application does not have an approved SFA eligibility international institutions appeal, so the SFA grants will not be eligible.
+        // International for-profit institutions are not eligible for the SFA funding (e.g. CSPT).
+        // The application does not have an approved SFA eligibility international institutions appeal, so the SFA funding will not be eligible.
         institutionCountry: "AU",
         institutionProvince: undefined,
         institutionClassification: InstitutionClassification.Private,
