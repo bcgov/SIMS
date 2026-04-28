@@ -17,6 +17,7 @@ import {
 
 const [, programEndYear] = PROGRAM_YEAR.split("-");
 const offeringStudyStartDate = `${programEndYear}-02-01`;
+const offeringStudyEndDate = `${programEndYear}-05-24`;
 
 describe(`E2E Test Workflow parttime-assessment-sfa-${PROGRAM_YEAR}-international-institutions-eligibility.`, () => {
   const grantEligibilityScenarios = [
@@ -27,6 +28,7 @@ describe(`E2E Test Workflow parttime-assessment-sfa-${PROGRAM_YEAR}-internationa
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         // A dependent under 11 years old is required for CSGD assessment eligibility.
         offeringStudyStartDate,
+        offeringStudyEndDate,
         studentDataHasDependents: YesNoOptions.Yes,
         studentDataDependants: [
           createFakeStudentDependentEligibleForChildcareCost(
