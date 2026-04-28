@@ -22,8 +22,8 @@ RUN git clone --filter=blob:none ${FORMIO_SOURCE_REPO_URL} formio && \
 WORKDIR /formio
 
 RUN npm pkg set 'dependencies[@formio/core]'="github:formio/core#097f675d8d6794a6130af5964e7cb9822f2d3f5a" && \
-  npm pkg set 'dependencies[@formio/formio.js]'="github:formio/formio.js#2cf4df53929980c17db075b192cfab7e2047b6b0" && \
-  npm pkg set 'dependencies[@formio/vm]'="github:formio/vm#a75fab940b4c43479f9193cb9f1f793b18e232a5"
+  npm pkg set 'dependencies[@formio/js]'="5.3.4" && \
+  npm pkg set 'dependencies[@formio/vm]'="2.0.2"
 
 # We use --foreground-scripts so that when npm builds those raw github repositories
 # in the background, it prints their progress fully to the console instead of silently freezing.
