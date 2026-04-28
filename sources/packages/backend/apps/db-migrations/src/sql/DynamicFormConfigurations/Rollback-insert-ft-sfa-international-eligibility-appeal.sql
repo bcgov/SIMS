@@ -1,4 +1,4 @@
 DELETE FROM
     sims.dynamic_form_configurations
 WHERE
-    form_definition_name = 'ftsfainternationaleligibilityappeal';
+    form_definition_name = 'ftsfainternationalinstitutionseligibilityappeal';

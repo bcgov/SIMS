@@ -1,5 +1,8 @@
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
-import { ProgramLengthOptions } from "../../../models";
+import {
+  CalculatedAssessmentModel,
+  ProgramLengthOptions,
+} from "../../../models";
 import {
   ZeebeMockedClient,
   createFakeConsolidatedFulltimeData,
@@ -21,10 +24,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-internationa
   const appealScenarios = [
     {
       inputData: {
-        // The following values make some of the SFA awards (BGPD, SBSD, BCSL, CSGF, CSGP, CSLF) eligible at assessment level.
+        // The following values make some of the SFA funding (BGPD, SBSD, BCSL, CSGF, CSGP, CSLF) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
-        // International private for-profit institutions are not eligible for any of the SFA awards and are eligible for the appeal.
+        // International private for-profit institutions are not eligible for any of the SFA funding and are eligible for the appeal.
         // The application does not have an approved SFA appeal, so no awards are eligible.
         institutionCountry: "AU",
         institutionProvince: undefined,
@@ -33,31 +36,46 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-internationa
         appealsFTSFAInternationalInstitutionsEligibilityAppealData: undefined,
       },
       expectedData: {
-        assessmentBGPDEligibility: true,
-        assessmentSBSDEligibility: true,
-        assessmentBCAGEligibility: false,
-        assessmentBCSLEligibility: true,
-        assessmentCSGFEligibility: true,
-        assessmentCSGDEligibility: false,
-        assessmentCSGPEligibility: true,
-        assessmentCSLFEligibility: true,
-        bgpdEligibility: false,
-        sbsdEligibility: false,
-        bcagEligibility: false,
-        bcslEligibility: false,
-        csgfEligibility: false,
-        csgdEligibility: false,
-        csgpEligibility: false,
-        cslfEligibility: false,
+        assessmentEligibilityBGPD: true,
+        institutionEligibilityBGPD: false,
+        awardEligibilityBGPD: false,
+
+        assessmentEligibilitySBSD: true,
+        institutionEligibilitySBSD: false,
+        awardEligibilitySBSD: false,
+
+        assessmentEligibilityBCAG: false,
+        institutionEligibilityBCAG: false,
+        awardEligibilityBCAG: false,
+
+        assessmentEligibilityBCSL: true,
+        institutionEligibilityBCSL: false,
+        awardEligibilityBCSL: false,
+
+        assessmentEligibilityCSGF: true,
+        institutionEligibilityCSGF: false,
+        awardEligibilityCSGF: false,
+
+        assessmentEligibilityCSGD: false,
+        institutionEligibilityCSGD: false,
+        awardEligibilityCSGD: false,
+
+        assessmentEligibilityCSGP: true,
+        institutionEligibilityCSGP: false,
+        awardEligibilityCSGP: false,
+
+        assessmentEligibilityCSLF: true,
+        institutionEligibilityCSLF: false,
+        awardEligibilityCSLF: false,
       },
     },
     {
       inputData: {
-        // The following values make specific SFA awards (BGPD, SBSD, BCSL, CSGF, CSGP, CSLF) eligible at assessment level.
+        // The following values make specific SFA funding (BGPD, SBSD, BCSL, CSGF, CSGP, CSLF) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
-        // International private for-profit institutions are not eligible for any of the SFA awards and are eligible for the appeal.
-        // The application has an approved SFA appeal, so some awards (BGPD, SBSD, BCSL, CSGP, CSLF) are eligible.
+        // International private for-profit institutions are not eligible for any of the SFA funding and are eligible for the appeal.
+        // The application has an approved SFA appeal, so some funding (BGPD, SBSD, BCSL, CSGP, CSLF) are eligible.
         institutionCountry: "AU",
         institutionProvince: undefined,
         institutionClassification: InstitutionClassification.Private,
@@ -67,27 +85,42 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-internationa
         },
       },
       expectedData: {
-        assessmentBGPDEligibility: true,
-        assessmentSBSDEligibility: true,
-        assessmentBCAGEligibility: false,
-        assessmentBCSLEligibility: true,
-        assessmentCSGFEligibility: true,
-        assessmentCSGDEligibility: false,
-        assessmentCSGPEligibility: true,
-        assessmentCSLFEligibility: true,
-        bgpdEligibility: true,
-        sbsdEligibility: true,
-        bcagEligibility: false,
-        bcslEligibility: true,
-        csgfEligibility: false,
-        csgdEligibility: false,
-        csgpEligibility: true,
-        cslfEligibility: true,
+        assessmentEligibilityBGPD: true,
+        institutionEligibilityBGPD: false,
+        awardEligibilityBGPD: true,
+
+        assessmentEligibilitySBSD: true,
+        institutionEligibilitySBSD: false,
+        awardEligibilitySBSD: true,
+
+        assessmentEligibilityBCAG: false,
+        institutionEligibilityBCAG: false,
+        awardEligibilityBCAG: false,
+
+        assessmentEligibilityBCSL: true,
+        institutionEligibilityBCSL: false,
+        awardEligibilityBCSL: true,
+
+        assessmentEligibilityCSGF: true,
+        institutionEligibilityCSGF: false,
+        awardEligibilityCSGF: false,
+
+        assessmentEligibilityCSGD: false,
+        institutionEligibilityCSGD: false,
+        awardEligibilityCSGD: false,
+
+        assessmentEligibilityCSGP: true,
+        institutionEligibilityCSGP: false,
+        awardEligibilityCSGP: true,
+
+        assessmentEligibilityCSLF: true,
+        institutionEligibilityCSLF: false,
+        awardEligibilityCSLF: true,
       },
     },
     {
       inputData: {
-        // The following values make specific SFA awards (BCAG, BCSL, CSLF) eligible at assessment level.
+        // The following values make specific SFA funding (BCAG, BCSL, CSLF) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.No,
         studentDataTaxReturnIncome: 30000,
         programLength: ProgramLengthOptions.FiftyThreeWeeksToFiftyNineWeeks,
@@ -98,8 +131,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-internationa
             `${programStartYear}-08-01`,
           ),
         ],
-        // International private for-profit institutions are not eligible for any of the SFA awards and are eligible for the appeal.
-        // The application has an approved SFA appeal, so some awards (BCAG, BCSL, CSLF) are eligible.
+        // International private for-profit institutions are not eligible for any of the SFA funding and are eligible for the appeal.
+        // The application has an approved SFA appeal, so some funding (BCAG, BCSL, CSLF) are eligible.
         institutionCountry: "AU",
         institutionProvince: undefined,
         institutionClassification: InstitutionClassification.Private,
@@ -109,30 +142,45 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-internationa
         },
       },
       expectedData: {
-        assessmentBGPDEligibility: false,
-        assessmentSBSDEligibility: false,
-        assessmentBCAGEligibility: true,
-        assessmentBCSLEligibility: true,
-        assessmentCSGFEligibility: false,
-        assessmentCSGDEligibility: true,
-        assessmentCSGPEligibility: false,
-        assessmentCSLFEligibility: true,
-        bgpdEligibility: false,
-        sbsdEligibility: false,
-        bcagEligibility: true,
-        bcslEligibility: true,
-        csgfEligibility: false,
-        csgdEligibility: true,
-        csgpEligibility: false,
-        cslfEligibility: true,
+        assessmentEligibilityBGPD: false,
+        institutionEligibilityBGPD: false,
+        awardEligibilityBGPD: false,
+
+        assessmentEligibilitySBSD: false,
+        institutionEligibilitySBSD: false,
+        awardEligibilitySBSD: false,
+
+        assessmentEligibilityBCAG: true,
+        institutionEligibilityBCAG: false,
+        awardEligibilityBCAG: true,
+
+        assessmentEligibilityBCSL: true,
+        institutionEligibilityBCSL: false,
+        awardEligibilityBCSL: true,
+
+        assessmentEligibilityCSGF: false,
+        institutionEligibilityCSGF: false,
+        awardEligibilityCSGF: false,
+
+        assessmentEligibilityCSGD: true,
+        institutionEligibilityCSGD: false,
+        awardEligibilityCSGD: true,
+
+        assessmentEligibilityCSGP: false,
+        institutionEligibilityCSGP: false,
+        awardEligibilityCSGP: false,
+
+        assessmentEligibilityCSLF: true,
+        institutionEligibilityCSLF: false,
+        awardEligibilityCSLF: true,
       },
     },
   ];
   for (const { inputData, expectedData } of appealScenarios) {
     it(
-      `Should evaluate the award eligibility as (${showEligibility("BGPD", expectedData.bgpdEligibility)}, ${showEligibility("SBSD", expectedData.sbsdEligibility)}, ${showEligibility("BCAG", expectedData.bcagEligibility)}, ${showEligibility("BCSL", expectedData.bcslEligibility)}, ${showEligibility("CSGF", expectedData.csgfEligibility)}, ${showEligibility("CSGD", expectedData.csgdEligibility)}, ${showEligibility("CSGP", expectedData.csgpEligibility)}, ${showEligibility("CSLF", expectedData.cslfEligibility)})` +
-        ` when the assessment eligibility is (${showEligibility("BGPD", expectedData.assessmentBGPDEligibility)}, ${showEligibility("SBSD", expectedData.assessmentSBSDEligibility)}, ${showEligibility("BCAG", expectedData.assessmentBCAGEligibility)}, ${showEligibility("BCSL", expectedData.assessmentBCSLEligibility)}, ${showEligibility("CSGF", expectedData.assessmentCSGFEligibility)}, ${showEligibility("CSGD", expectedData.assessmentCSGDEligibility)}, ${showEligibility("CSGP", expectedData.assessmentCSGPEligibility)}, ${showEligibility("CSLF", expectedData.assessmentCSLFEligibility)})` +
-        " and the institution eligibility is false" +
+      `Should return expected award eligibility outcomes when assessment and institution eligibility rules are applied for a student ` +
+        `${inputData.studentDataApplicationPDPPDStatus === YesNoOptions.Yes ? "with" : "without"} PD/PPD and` +
+        ` ${inputData.studentDataHasDependents === YesNoOptions.Yes ? "with" : "without"} dependants and` +
         ` ${inputData.appealsFTSFAInternationalInstitutionsEligibilityAppealData ? "with" : "without"} an approved SFA international institutions eligibility appeal.`,
       async () => {
         // Arrange
@@ -148,90 +196,11 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-internationa
             assessmentConsolidatedData,
           );
 
+        const eligibilityData = getEligibilityData(
+          calculatedAssessment.variables,
+        );
         // Assert
-        // International institutions are not eligible for any funding.
-        expect(
-          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
-            .isEligibleBGPD,
-        ).toBe(false);
-        expect(
-          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
-            .isEligibleSBSD,
-        ).toBe(false);
-        expect(
-          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
-            .isEligibleBCAG,
-        ).toBe(false);
-        expect(
-          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
-            .isEligibleBCSL,
-        ).toBe(false);
-        expect(
-          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
-            .isEligibleCSGF,
-        ).toBe(false);
-        expect(
-          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
-            .isEligibleCSGD,
-        ).toBe(false);
-        expect(
-          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
-            .isEligibleCSGP,
-        ).toBe(false);
-        expect(
-          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
-            .isEligibleCSLF,
-        ).toBe(false);
-
-        expect(calculatedAssessment.variables.assessmentEligibilityBGPD).toBe(
-          expectedData.assessmentBGPDEligibility,
-        );
-        expect(calculatedAssessment.variables.assessmentEligibilitySBSD).toBe(
-          expectedData.assessmentSBSDEligibility,
-        );
-        expect(calculatedAssessment.variables.assessmentEligibilityBCAG).toBe(
-          expectedData.assessmentBCAGEligibility,
-        );
-        expect(calculatedAssessment.variables.assessmentEligibilityBCSL).toBe(
-          expectedData.assessmentBCSLEligibility,
-        );
-        expect(calculatedAssessment.variables.assessmentEligibilityCSGF).toBe(
-          expectedData.assessmentCSGFEligibility,
-        );
-        expect(calculatedAssessment.variables.assessmentEligibilityCSGD).toBe(
-          expectedData.assessmentCSGDEligibility,
-        );
-        expect(calculatedAssessment.variables.assessmentEligibilityCSGP).toBe(
-          expectedData.assessmentCSGPEligibility,
-        );
-        expect(calculatedAssessment.variables.assessmentEligibilityCSLF).toBe(
-          expectedData.assessmentCSLFEligibility,
-        );
-
-        expect(calculatedAssessment.variables.awardEligibilityBGPD).toBe(
-          expectedData.bgpdEligibility,
-        );
-        expect(calculatedAssessment.variables.awardEligibilitySBSD).toBe(
-          expectedData.sbsdEligibility,
-        );
-        expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(
-          expectedData.bcagEligibility,
-        );
-        expect(calculatedAssessment.variables.awardEligibilityBCSL).toBe(
-          expectedData.bcslEligibility,
-        );
-        expect(calculatedAssessment.variables.awardEligibilityCSGF).toBe(
-          expectedData.csgfEligibility,
-        );
-        expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(
-          expectedData.csgdEligibility,
-        );
-        expect(calculatedAssessment.variables.awardEligibilityCSGP).toBe(
-          expectedData.csgpEligibility,
-        );
-        expect(calculatedAssessment.variables.awardEligibilityCSLF).toBe(
-          expectedData.cslfEligibility,
-        );
+        expect(eligibilityData).toEqual(expectedData);
       },
     );
   }
@@ -242,6 +211,55 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-internationa
   });
 });
 
-function showEligibility(award: string, eligibility: boolean) {
-  return `${award}: ${eligibility ? "eligible" : "not eligible"}`;
+/**
+ * Extracts the eligibility outcome properties from the calculated assessment
+ * for all SFA award types.
+ * @param calculatedAssessment the calculated assessment model containing all
+ * award eligibility variables and the institution eligibility DMN results.
+ * @returns a flat object with eligibility flags for each award type at the
+ * assessment, institution, and final award levels.
+ */
+function getEligibilityData(calculatedAssessment: CalculatedAssessmentModel) {
+  return {
+    assessmentEligibilityBGPD: calculatedAssessment.assessmentEligibilityBGPD,
+    institutionEligibilityBGPD:
+      calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
+        ?.isEligibleBGPD,
+    awardEligibilityBGPD: calculatedAssessment.awardEligibilityBGPD,
+    assessmentEligibilitySBSD: calculatedAssessment.assessmentEligibilitySBSD,
+    institutionEligibilitySBSD:
+      calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
+        ?.isEligibleSBSD,
+    awardEligibilitySBSD: calculatedAssessment.awardEligibilitySBSD,
+    assessmentEligibilityBCAG: calculatedAssessment.assessmentEligibilityBCAG,
+    institutionEligibilityBCAG:
+      calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
+        ?.isEligibleBCAG,
+    awardEligibilityBCAG: calculatedAssessment.awardEligibilityBCAG,
+    assessmentEligibilityBCSL: calculatedAssessment.assessmentEligibilityBCSL,
+    institutionEligibilityBCSL:
+      calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
+        ?.isEligibleBCSL,
+    awardEligibilityBCSL: calculatedAssessment.awardEligibilityBCSL,
+    assessmentEligibilityCSGF: calculatedAssessment.assessmentEligibilityCSGF,
+    institutionEligibilityCSGF:
+      calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
+        ?.isEligibleCSGF,
+    awardEligibilityCSGF: calculatedAssessment.awardEligibilityCSGF,
+    assessmentEligibilityCSGD: calculatedAssessment.assessmentEligibilityCSGD,
+    institutionEligibilityCSGD:
+      calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
+        ?.isEligibleCSGD,
+    awardEligibilityCSGD: calculatedAssessment.awardEligibilityCSGD,
+    assessmentEligibilityCSGP: calculatedAssessment.assessmentEligibilityCSGP,
+    institutionEligibilityCSGP:
+      calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
+        ?.isEligibleCSGP,
+    awardEligibilityCSGP: calculatedAssessment.awardEligibilityCSGP,
+    assessmentEligibilityCSLF: calculatedAssessment.assessmentEligibilityCSLF,
+    institutionEligibilityCSLF:
+      calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
+        ?.isEligibleCSLF,
+    awardEligibilityCSLF: calculatedAssessment.awardEligibilityCSLF,
+  };
 }
