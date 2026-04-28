@@ -16,7 +16,7 @@ services:
       dockerfile: Dockerfile.dev
       args:
         - FORMIO_SOURCE_REPO_URL=${FORMIO_SOURCE_REPO_URL}
-        - FORMIO_SOURCE_REPO_TAG=${FORMIO_SOURCE_REPO_TAG}
+        - FORMIO_SOURCE_REPO_REF=${FORMIO_SOURCE_REPO_REF}
     # The app will restart until Mongo is listening
     restart: unless-stopped
     links:

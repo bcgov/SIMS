@@ -2,7 +2,7 @@
 FROM node:24-alpine
 
 ARG FORMIO_SOURCE_REPO_URL
-ARG FORMIO_SOURCE_REPO_TAG
+ARG FORMIO_SOURCE_REPO_REF
 
 # "bcrypt" requires python/make/g++, all must be installed in alpine.
 # Note: using pinned versions to ensure immutable build environment.
@@ -14,11 +14,10 @@ RUN apk update && \
   apk add git && \
   apk cache clean
 
-# Clone only the specific commit (shallow fetch to avoid downloading full history).
-RUN mkdir formio && \
-  git -C formio init && \
-  git -C formio fetch ${FORMIO_SOURCE_REPO_URL} ${FORMIO_SOURCE_REPO_TAG} --depth=1 && \
-  git -C formio checkout FETCH_HEAD
+# Clone with a blobless filter to skip downloading file contents until checkout.
+# This makes it very fast while fully supporting tags, branches, and partial SHAs.
+RUN git clone --filter=blob:none ${FORMIO_SOURCE_REPO_URL} formio && \
+  git -C formio checkout ${FORMIO_SOURCE_REPO_REF}
 
 RUN apk del git
 

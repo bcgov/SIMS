@@ -110,7 +110,7 @@ services:
       dockerfile: Dockerfile.dev
       args:
         - FORMIO_SOURCE_REPO_URL=${FORMIO_SOURCE_REPO_URL}
-        - FORMIO_SOURCE_REPO_TAG=${FORMIO_SOURCE_REPO_TAG}
+        - FORMIO_SOURCE_REPO_REF=${FORMIO_SOURCE_REPO_REF}
     environment:
       NODE_CONFIG: '{"mongo": "mongodb://mongo:27017/formio"}'
       ROOT_EMAIL: ${FORMS_SA_USER_NAME}

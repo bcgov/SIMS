@@ -31,7 +31,7 @@ export ALLOW_BETA_INSTITUTIONS_ONLY :=$(or $(ALLOW_BETA_INSTITUTIONS_ONLY), fals
 
 # Formio forms integration
 export FORMIO_SOURCE_REPO_URL := $(or $(FORMIO_SOURCE_REPO_URL), https://github.com/formio/formio.git)
-export FORMIO_SOURCE_REPO_TAG := $(or $(FORMIO_SOURCE_REPO_TAG), v4.3.2)
+export FORMIO_SOURCE_REPO_REF := $(or $(FORMIO_SOURCE_REPO_REF), ff103279a0766400874422b655a65c0843ee5be5)
 
 backend-unit-tests:
 	@cd ../packages/backend && npm i && npm run test:cov

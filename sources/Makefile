@@ -57,7 +57,7 @@ export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
 export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 365)
 #Formio forms integration
 export FORMIO_SOURCE_REPO_URL := $(or ${FORMIO_SOURCE_REPO_URL}, https://github.com/formio/formio.git)
-export FORMIO_SOURCE_REPO_TAG := $(or ${FORMIO_SOURCE_REPO_TAG}, cfbc80a1a6defbcba409e080d5d2e5dac4970f15)
+export FORMIO_SOURCE_REPO_REF := $(or ${FORMIO_SOURCE_REPO_REF}, ff103279a0766400874422b655a65c0843ee5be5)
 #ATBC Integration
 export ATBC_USERNAME := $(or $(ATBC_USERNAME), )
 export ATBC_PASSWORD := $(or $(ATBC_PASSWORD), )

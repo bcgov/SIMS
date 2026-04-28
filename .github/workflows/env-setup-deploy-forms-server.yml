@@ -1,5 +1,5 @@
 name: Env Setup - Deploy Forms Server
-run-name: Env Setup - Deploy forms server from ${{ github.ref_name }}(form.io tag ${{ inputs.formioTag }}) to ${{ inputs.environment }}
+run-name: Env Setup - Deploy forms server from ${{ github.ref_name }}(form.io Git reference ${{ inputs.formioRepoRef }}) to ${{ inputs.environment }}
 permissions:
   contents: read
 
@@ -10,8 +10,8 @@ on:
         description: "Environment the formio is deployed."
         required: true
         type: environment
-      formioTag:
-        description: "Formio tag, please refer https://github.com/formio/formio/tags to deploy the appropriate tag."
+      formioRepoRef:
+        description: "Form.io Git reference, please refer https://github.com/formio/formio for commits or tags."
         type: string
         required: true
         default: "v4.3.2"
@@ -25,7 +25,7 @@ jobs:
       FORMS_NAME: forms
       NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
       BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
-      FORMIO_SOURCE_REPO_TAG: ${{ inputs.formioTag }}
+      FORMIO_SOURCE_REPO_REF: ${{ inputs.formioRepoRef }}
       HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
       FORMIO_ROOT_EMAIL: ${{ secrets.FORMS_SA_USER_NAME }}

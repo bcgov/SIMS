@@ -2,7 +2,7 @@
 FROM artifacts.developer.gov.bc.ca/docker-remote/node:20-alpine3.20
 
 ARG FORMIO_SOURCE_REPO_URL
-ARG FORMIO_SOURCE_REPO_TAG
+ARG FORMIO_SOURCE_REPO_REF
 
 # "bcrypt" requires python/make/g++, all must be installed in alpine.
 # Note: using pinned versions to ensure immutable build environment.
@@ -15,7 +15,10 @@ RUN apk update && \
   apk cache clean
 
 # Clone code into formio folder, by default.
-RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch
+# Clone with a blobless filter to skip downloading file contents until checkout.
+# This makes it very fast while fully supporting tags, branches, and partial SHAs.
+RUN git clone --filter=blob:none ${FORMIO_SOURCE_REPO_URL} formio && \
+  git -C formio checkout ${FORMIO_SOURCE_REPO_REF}
 
 RUN apk del git
 

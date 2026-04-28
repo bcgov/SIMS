@@ -1,13 +1,13 @@
 name: Env Setup - Build Forms Server
-run-name: Env Setup - Build forms server from ${{ github.ref_name }}(form.io tag ${{ inputs.formioTag }})
+run-name: Env Setup - Build forms server from ${{ github.ref_name }}(form.io Git reference ${{ inputs.formioRepoRef }})
 permissions:
   contents: read
 
 on:
   workflow_dispatch:
     inputs:
-      formioTag:
-        description: "Formio tag, please refer https://github.com/formio/formio/tags to deploy the appropriate tag."
+      formioRepoRef:
+        description: "Form.io Git reference, please refer https://github.com/formio/formio for commits or tags."
         type: string
         required: true
         default: "v4.3.2"
@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
-      FORMIO_SOURCE_REPO_TAG: ${{ inputs.formioTag }}
+      FORMIO_SOURCE_REPO_REF: ${{ inputs.formioRepoRef }}
     steps:
       - name: Install CLI tools from OpenShift Mirror
         uses: redhat-actions/openshift-tools-installer@v1
