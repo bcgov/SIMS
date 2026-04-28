@@ -11,10 +11,6 @@ on:
         description: "Environment"
         required: true
         type: environment
-      deployCamundaFormioDefinitions:
-        description: "Deploy Camunda/Formio Definitions"
-        type: boolean
-        default: true
   workflow_call:
     inputs:
       gitRef:
@@ -23,9 +19,6 @@ on:
       environment:
         required: true
         type: string
-      deployCamundaFormioDefinitions:
-        required: true
-        type: boolean
     secrets:
       SA_TOKEN:
         required: true
@@ -286,7 +279,6 @@ jobs:
 
   # Deploy Camunda and Form.io Definitions
   deployCamundaFormioDefinitions:
-    if: ${{ inputs.deployCamundaFormioDefinitions }}
     name: Deploy Camunda and Form.io definitions
     needs: [env-setup, deploy-sims-api]
     uses: ./.github/workflows/release-deploy-camunda-formio-definitions.yml
