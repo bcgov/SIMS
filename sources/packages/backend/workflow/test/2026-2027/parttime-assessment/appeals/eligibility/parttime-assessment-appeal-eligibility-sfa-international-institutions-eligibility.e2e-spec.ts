@@ -136,11 +136,9 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make some of the SFA grants eligible at assessment level.
+        // The following values make none of the SFA grants eligible at assessment level.
         studentDataCRAReportedIncome: 100000,
         studentDataTaxReturnIncome: 3000000,
-        // International private for-profit institutions are the only institution type eligible for the
-        // SFA eligibility international institutions train out provision appeal.
         institutionCountry: "AU",
         institutionProvince: undefined,
         institutionClassification: InstitutionClassification.Private,
@@ -153,9 +151,12 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     inputData,
     expectedAppealEligibility,
   } of appealEligibilityScenarios) {
+    const totalIncome =
+      inputData.studentDataTaxReturnIncome +
+      (inputData.studentDataCRAReportedIncome ?? 0);
     it(
       `Should evaluate the international institutions appeal eligibility as ${expectedAppealEligibility ? "eligible" : "not eligible"}` +
-        ` when total income is ${inputData.studentDataTaxReturnIncome} and institution country is ${inputData.institutionCountry} and institution province is ${inputData.institutionProvince ?? "NA"} and institution classification is ${inputData.institutionClassification}` +
+        ` when total income is ${totalIncome} and institution country is ${inputData.institutionCountry} and institution province is ${inputData.institutionProvince ?? "NA"} and institution classification is ${inputData.institutionClassification}` +
         ` and institution organization status is ${inputData.institutionOrganizationStatus}.`,
       async () => {
         // Arrange
