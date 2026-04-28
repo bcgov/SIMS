@@ -14,18 +14,23 @@ RUN apk update && \
   apk add git && \
   apk cache clean
 
-# Clone code into formio folder, by default.
 # Clone with a blobless filter to skip downloading file contents until checkout.
 # This makes it very fast while fully supporting tags, branches, and partial SHAs.
 RUN git clone --filter=blob:none ${FORMIO_SOURCE_REPO_URL} formio && \
   git -C formio checkout ${FORMIO_SOURCE_REPO_REF}
 
-RUN apk del git
-
 WORKDIR /formio
 
-# Use install as-is from package.json.
-RUN npm i
+RUN npm pkg set 'dependencies[@formio/core]'="github:formio/core#097f675d8d6794a6130af5964e7cb9822f2d3f5a" && \
+  npm pkg set 'dependencies[@formio/formio.js]'="github:formio/formio.js#2cf4df53929980c17db075b192cfab7e2047b6b0" && \
+  npm pkg set 'dependencies[@formio/vm]'="github:formio/vm#a75fab940b4c43479f9193cb9f1f793b18e232a5"
+
+# We use --foreground-scripts so that when npm builds those raw github repositories
+# in the background, it prints their progress fully to the console instead of silently freezing.
+RUN npm i --foreground-scripts
+
+# Remove git after npm i, since npm needs git to download GitHub URL dependencies
+RUN apk del git
 
 # Set this to inspect more from the application. Examples:
 #   DEBUG=formio:db (see index.js for more)
