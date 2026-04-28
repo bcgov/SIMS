@@ -1886,7 +1886,7 @@
         </inputExpression>
       </input>
       <output id="OutputClause_0fjdluh" name="isAccessibilityGrantEligibilityAppealEligible" typeRef="boolean" />
-      <output id="OutputClause_1m7azwh" label="isInternationalInstitutionsEligibilityAppealEligible" name="isInternationInstitutionsEligibilityAppealEligible" typeRef="boolean" />
+      <output id="OutputClause_1m7azwh" label="isSFAInternationalInstitutionsEligibilityAppealEligible" name="isSFAInternationalInstitutionsEligibilityAppealEligible" typeRef="boolean" />
       <rule id="DecisionRule_0ujdpkj">
         <inputEntry id="UnaryTests_0sb3h9e">
           <text>"CA"</text>
@@ -2064,7 +2064,7 @@
           <text>false</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_167usnh">
-          <text>false</text>
+          <text>true</text>
         </outputEntry>
       </rule>
     </decisionTable>
