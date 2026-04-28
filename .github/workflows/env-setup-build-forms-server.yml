@@ -10,7 +10,7 @@ on:
         description: "Form.io Git reference, please refer https://github.com/formio/formio for commits or tags."
         type: string
         required: true
-        default: "v4.3.2"
+        default: "ff103279a0766400874422b655a65c0843ee5be5"
 
 jobs:
   build:
