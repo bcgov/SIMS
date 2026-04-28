@@ -8,7 +8,7 @@ ADD
 ALTER TABLE
     sims.students RENAME COLUMN pd_date_update TO disability_status_updated_on;
 
-COMMENT ON COLUMN sims.students.disability_status_form_submission_item_id IS 'Form submission item assessed by the ministry for a disability status application.';
+COMMENT ON COLUMN sims.students.disability_status_form_submission_item_id IS 'Form submission item assessed by the ministry for the disability status application requested by the student.';
 
 COMMENT ON COLUMN sims.students.disability_status_updated_by IS 'User who updated the disability status.';
 

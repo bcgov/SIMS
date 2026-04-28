@@ -64,10 +64,10 @@ export class Student extends RecordDataModel {
   studentPDSentAt?: Date;
 
   @Column({
-    name: "pd_date_update",
+    name: "disability_status_updated_on",
     nullable: true,
   })
-  studentPDUpdateAt?: Date;
+  disabilityStatusUpdatedOn?: Date;
 
   @ManyToMany(() => Note, { eager: false, cascade: true })
   @JoinTable({
@@ -233,4 +233,27 @@ export class Student extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   modifiedIndependentFormSubmissionItem?: FormSubmissionItem;
+
+  /**
+   * Form submission item assessed by the ministry for the disability status application
+   * requested by the student.
+   */
+  @OneToOne(() => FormSubmissionItem, {
+    nullable: true,
+  })
+  @JoinColumn({
+    name: "disability_status_form_submission_item_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  disabilityStatusFormSubmissionItem?: FormSubmissionItem;
+
+  /**
+   * User who updated the disability status.
+   */
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({
+    name: "disability_status_updated_by",
+    referencedColumnName: ColumnNames.ID,
+  })
+  disabilityStatusUpdatedBy?: User;
 }
