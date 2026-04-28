@@ -8,7 +8,7 @@ import {
   InstitutionClassification,
   InstitutionOrganizationStatus,
 } from "@sims/sims-db";
-import { CalculatedAssessmentModel } from "workflow/test/models";
+import { CalculatedAssessmentModel } from "../../../models";
 
 describe(`E2E Test Workflow parttime-assessment-sfa-${PROGRAM_YEAR}-international-institutions-eligibility.`, () => {
   const grantEligibilityScenarios = [
