@@ -115,6 +115,14 @@ describe(`E2E Test Workflow parttime-assessment-sfa-${PROGRAM_YEAR}-internationa
   });
 });
 
+/**
+ * Extracts the eligibility outcome properties from the calculated assessment
+ * for all SFA award types.
+ * @param calculatedAssessment the calculated assessment model containing all
+ * award eligibility variables and the institution eligibility DMN results.
+ * @returns a flat object with eligibility flags for each award type at the
+ * assessment, institution, and final award levels.
+ */
 function getEligibilityData(calculatedAssessment: CalculatedAssessmentModel) {
   return {
     assessmentEligibilityCSPT: calculatedAssessment.assessmentEligibilityCSPT,
