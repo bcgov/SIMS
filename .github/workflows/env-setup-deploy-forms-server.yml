@@ -14,7 +14,7 @@ on:
         description: "Previously built Form.io build tag (e.g., v9.7.5-999)."
         type: string
         required: true
-        default: "v.0.0-0"
+        default: "v0.0.0-0"
 
 jobs:
   deploy:
