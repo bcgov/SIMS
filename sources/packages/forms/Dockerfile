@@ -3,6 +3,9 @@ FROM artifacts.developer.gov.bc.ca/docker-remote/node:24-alpine
 
 ARG FORMIO_SOURCE_REPO_URL
 ARG FORMIO_SOURCE_REPO_REF
+ARG FORMIO_CORE_SOURCE_REPO_REF
+ARG FORMIO_JS_VERSION
+ARG FORMIO_VM_VERSION
 
 # "bcrypt" requires python/make/g++, all must be installed in alpine.
 # Note: using pinned versions to ensure immutable build environment.
@@ -21,9 +24,9 @@ RUN git clone --filter=blob:none ${FORMIO_SOURCE_REPO_URL} formio && \
 
 WORKDIR /formio
 
-RUN npm pkg set 'dependencies[@formio/core]'="github:formio/core#097f675d8d6794a6130af5964e7cb9822f2d3f5a" && \
-  npm pkg set 'dependencies[@formio/js]'="5.3.4" && \
-  npm pkg set 'dependencies[@formio/vm]'="2.0.2"
+RUN npm pkg set 'dependencies[@formio/core]'="github:formio/core#${FORMIO_CORE_SOURCE_REPO_REF}" && \
+  npm pkg set 'dependencies[@formio/js]'="${FORMIO_JS_VERSION}" && \
+  npm pkg set 'dependencies[@formio/vm]'="${FORMIO_VM_VERSION}"
 
 # We use --foreground-scripts so that when npm builds those raw github repositories
 # in the background, it prints their progress fully to the console instead of silently freezing.
