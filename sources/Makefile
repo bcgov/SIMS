@@ -55,14 +55,14 @@ export INSTITUTION_REQUEST_FOLDER := $(or $(INSTITUTION_REQUEST_FOLDER), OUT)
 export INSTITUTION_RESPONSE_FOLDER := $(or $(INSTITUTION_RESPONSE_FOLDER), IN)
 export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
 export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 365)
-#Formio forms integration
-export FORMIO_SOURCE_REPO_URL := $(or ${FORMIO_SOURCE_REPO_URL}, https://github.com/formio/formio.git)
 # Form.io version targeting the enterprise version 9.7.5
 # see https://github.com/formio/enterprise-release/blob/master/API-Server-Change-Log.md#api-server-version-975
+# Form.io source repo reference (commit hash or tag).
 export FORMIO_SOURCE_REPO_REF := $(or ${FORMIO_SOURCE_REPO_REF}, ff103279a0766400874422b655a65c0843ee5be5)
 export FORMIO_CORE_SOURCE_REPO_REF := $(or $(FORMIO_CORE_SOURCE_REPO_REF), 097f675d8d6794a6130af5964e7cb9822f2d3f5a)
 export FORMIO_JS_VERSION := $(or $(FORMIO_JS_VERSION), 5.3.4)
 export FORMIO_VM_VERSION := $(or $(FORMIO_VM_VERSION), 2.0.2)
+export FORMIO_SOURCE_REPO_URL := $(or ${FORMIO_SOURCE_REPO_URL}, https://github.com/formio/formio.git)
 #ATBC Integration
 export ATBC_USERNAME := $(or $(ATBC_USERNAME), )
 export ATBC_PASSWORD := $(or $(ATBC_PASSWORD), )

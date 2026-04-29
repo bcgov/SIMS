@@ -40,11 +40,10 @@ export QUEUE_CONSUMERS_BUILD_REF := $(or ${QUEUE_CONSUMERS_BUILD_REF}, queue-con
 export LOAD_TEST_GATEWAY_BUILD_REF := $(or ${LOAD_TEST_GATEWAY_BUILD_REF}, load-test-gateway-${APP_NAME})
 export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
 export FORMS_BUILD_REF := $(or ${FORMS_BUILD_REF}, forms)
-# Form.io source repo reference (commit hash or tag).
-# This is used for both building the Form.io server and as a label for the built image.
-export FORMIO_SOURCE_REPO_REF := $(or $(FORMIO_SOURCE_REPO_REF), ff103279a0766400874422b655a65c0843ee5be5)
 # Form.io version targeting the enterprise version 9.7.5
 # see https://github.com/formio/enterprise-release/blob/master/API-Server-Change-Log.md#api-server-version-975
+# Form.io source repo reference (commit hash or tag).
+export FORMIO_SOURCE_REPO_REF := $(or $(FORMIO_SOURCE_REPO_REF), ff103279a0766400874422b655a65c0843ee5be5)
 export FORMIO_CORE_SOURCE_REPO_REF := $(or $(FORMIO_CORE_SOURCE_REPO_REF), 097f675d8d6794a6130af5964e7cb9822f2d3f5a)
 export FORMIO_JS_VERSION := $(or $(FORMIO_JS_VERSION), 5.3.4)
 export FORMIO_VM_VERSION := $(or $(FORMIO_VM_VERSION), 2.0.2)
@@ -729,7 +728,8 @@ build-forms:
 	 -p FORMIO_VM_VERSION=$(FORMIO_VM_VERSION) \
 	 -p SOURCE_REPOSITORY_URL=$(SOURCE_REPOSITORY_URL) \
 	 -p SOURCE_REPOSITORY_REF=$(BUILD_REF) \
-	 -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)forms| oc -n $(BUILD_NAMESPACE) apply -f -
+	 -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)forms \ 
+	 | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMS_BUILD_REF) --wait
 
 deploy-forms:
