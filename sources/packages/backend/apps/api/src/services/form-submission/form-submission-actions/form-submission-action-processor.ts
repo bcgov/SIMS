@@ -101,6 +101,7 @@ export class FormSubmissionActionProcessor {
         select: {
           id: true,
           formCategory: true,
+          submissionStatus: true,
           student: { id: true },
           application: {
             id: true,
@@ -129,13 +130,14 @@ export class FormSubmissionActionProcessor {
       id: formSubmission.id,
       studentId: formSubmission.student.id,
       formCategory: formSubmission.formCategory,
+      submissionStatus: formSubmission.submissionStatus,
       applicationId: formSubmission.application?.id,
       currentOfferingId:
         formSubmission.application?.currentAssessment?.offering?.id,
       submissionItems: formSubmission.formSubmissionItems.map((item) => ({
         id: item.id,
         actions: item.submittedData.actions ?? [],
-        decisionStatus: item.currentDecision.decisionStatus,
+        decisionStatus: item.currentDecision?.decisionStatus,
         submittedData: item.submittedData,
       })),
     };

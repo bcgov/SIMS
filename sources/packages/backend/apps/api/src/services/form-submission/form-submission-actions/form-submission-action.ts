@@ -2,6 +2,7 @@ import { EntityManager } from "typeorm";
 import {
   FormSubmissionActionType,
   FormSubmissionDecisionStatus,
+  FormSubmissionStatus,
 } from "@sims/sims-db";
 import {
   FormSubmissionActionModel,
@@ -83,5 +84,19 @@ export abstract class FormSubmissionAction {
         (!options?.decisionStatus ||
           request.decisionStatus === options.decisionStatus),
     );
+  }
+
+  /**
+   * Determines if the form submission has a final decision status.
+   * @param formSubmission the form submission to check.
+   * @returns true if the form submission has a final decision status, false otherwise.
+   */
+  protected hasFinalDecisionStatus(
+    formSubmission: FormSubmissionActionModel,
+  ): boolean {
+    return [
+      FormSubmissionStatus.Completed,
+      FormSubmissionStatus.Declined,
+    ].includes(formSubmission.submissionStatus);
   }
 }
