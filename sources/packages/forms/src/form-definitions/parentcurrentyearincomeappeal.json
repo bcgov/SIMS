@@ -124,9 +124,9 @@
         }
       ],
       "clearOnHide": false,
-      "calculateValue": "// Only initialize on a new form to avoid overwriting data on form load.\nif (!value) {\n  value = data.parents;\n}\n",
+      "calculateValue": "// Only initialize on a new form to avoid overwriting data on form load.\nif (!value?.length) {\n  value = data.parents;\n}\n",
       "validate": {
-        "custom": "let errorMessage;\r\n\r\n// Only validate if all parents have a value selected\r\nif (data.parentsIncome.every(parent => parent.hasCurrentYearParentIncome)) {\r\n\r\n  // Get allowed values from injected property 'parents'.\r\n  const allowedValues = !!data.parents\r\n   ? data.parents.map((parent) => parent.id)\r\n   : [];\r\n\r\n  if (!data.parentsIncome.some(parent => parent.hasCurrentYearParentIncome === 'yes')) {\r\n    errorMessage = 'An income appeal must be submitted for at least one parent.';\r\n  } else if (!data.parentsIncome.every(parent => allowedValues.includes(parent.id))) {\r\n    errorMessage = 'Invalid value for parent(s).';\r\n  }\r\n}\r\nvalid = errorMessage || true;"
+        "custom": "// Only validate if all parents have a value selected\r\nif (!data.parents?.length || data.parentsIncome.some(parent => !parent.hasCurrentYearParentIncome)) {\r\n  return true;\r\n}\r\n\r\nlet errorMessage;\r\n\r\nif (data.parentsIncome.every(parent => parent.hasCurrentYearParentIncome)) {\r\n\r\n  // Get allowed values from injected property 'parents'.\r\n  const allowedValues = !!data.parents\r\n   ? data.parents.map((parent) => parent.id)\r\n   : [];\r\n\r\n  if (!data.parentsIncome.some(parent => parent.hasCurrentYearParentIncome === 'yes')) {\r\n    errorMessage = 'An income appeal must be submitted for at least one parent.';\r\n  } else if (!data.parentsIncome.every(parent => allowedValues.includes(parent.id))) {\r\n    errorMessage = 'Invalid value for parent(s).';\r\n  }\r\n}\r\nvalid = errorMessage || true;"
       },
       "validateWhenHidden": false,
       "key": "parentsIncome",
