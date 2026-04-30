@@ -138,6 +138,7 @@
           <zeebe:header key="appealsExceptionalExpenseAppealData" value="appeals.studentexceptionalexpenseappeal.submittedData{&#34;exceptionalExpenseAmount&#34;:exceptionalExpenseAmount}" />
           <zeebe:header key="appealsFTAccessibilityGrantEligibilityAppealData" value="appeals.ftaccessibilitygranteligibilityappeal.submittedData.{&#34;isEligibilityRequested&#34;: isEligibilityRequested}" />
           <zeebe:header key="appealsPTAccessibilityGrantEligibilityAppealData" value="appeals.ptaccessibilitygranteligibilityappeal.submittedData.{&#34;isEligibilityRequested&#34;: isEligibilityRequested}" />
+          <zeebe:header key="appealsFTSFAInternationalInstitutionsEligibilityAppealData" value="appeals.ftsfainternationalinstitutionseligibilityappeal.submittedData.{&#34;isEligibilityRequested&#34;: isEligibilityRequested}" />
           <zeebe:header key="appealsPTSFAEligibilityInternationalInstitutionsAppealData" value="appeals.ptsfaeligibilityinternationalinstitutionsappeal.submittedData.{&#34;isEligibilityRequested&#34;: isEligibilityRequested}" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
