@@ -4985,7 +4985,7 @@
       <output id="OutputClause_1gc5mh1" label="isAccessibilityGrantEligibilityAppealEligible" name="isAccessibilityGrantEligibilityAppealEligible" typeRef="boolean" />
       <output id="OutputClause_1qhtxma" name="isSFAEligibilityAppealEligible" typeRef="boolean" />
       <output id="OutputClause_0hotovk" name="isSFAOOPPrivateInstitutionsEligibilityAppealEligible" typeRef="boolean" />
-      <output id="OutputClause_1qhtxma" name="isSFAEligibilityInternationalInstitutionsAppealEligible" typeRef="boolean" />
+      <output id="OutputClause_1qhtxmb" name="isSFAEligibilityInternationalInstitutionsAppealEligible" typeRef="boolean" />
       <rule id="DecisionRule_162dc01">
         <inputEntry id="UnaryTests_0y5b0py">
           <text>"CA"</text>
