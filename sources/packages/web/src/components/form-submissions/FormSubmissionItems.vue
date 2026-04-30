@@ -25,12 +25,12 @@
       >
         <template #title>
           <v-row>
-            <v-col cols="8" md="10">
+            <v-col>
               <span class="category-header-medium color-blue">{{
                 submissionItem.formType
               }}</span>
             </v-col>
-            <v-col cols="4" md="2">
+            <v-col cols="auto">
               <status-chip-form-submission-decision
                 v-if="submissionItem.decision"
                 class="float-right mr-4"

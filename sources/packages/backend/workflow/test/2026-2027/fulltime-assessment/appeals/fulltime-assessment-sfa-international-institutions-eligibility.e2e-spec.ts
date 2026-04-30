@@ -24,9 +24,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-internationa
   const appealScenarios = [
     {
       inputData: {
-        // The following values make some of the SFA funding (BGPD, SBSD, BCSL, CSGF, CSGP, CSLF) eligible at assessment level.
+        // The following values make some of the SFA funding (BGPD, SBSD, BCAG2Year, BCSL, CSGF, CSGP, CSLF) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
+        studentDataHasDependents: YesNoOptions.No,
         // International private for-profit institutions are not eligible for any of the SFA funding and are eligible for the appeal.
         // The application does not have an approved SFA appeal, so no awards are eligible.
         institutionCountry: "AU",
@@ -47,6 +48,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-internationa
         assessmentEligibilityBCAG: false,
         institutionEligibilityBCAG: false,
         awardEligibilityBCAG: false,
+
+        assessmentEligibilityBCAG2Year: true,
+        awardEligibilityBCAG2Year: false,
 
         assessmentEligibilityBCSL: true,
         institutionEligibilityBCSL: false,
@@ -71,11 +75,12 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-internationa
     },
     {
       inputData: {
-        // The following values make specific SFA funding (BGPD, SBSD, BCSL, CSGF, CSGP, CSLF) eligible at assessment level.
+        // The following values make specific SFA funding (BGPD, SBSD, BCAG2Year, BCSL, CSGF, CSGP, CSLF) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
+        studentDataHasDependents: YesNoOptions.No,
         // International private for-profit institutions are not eligible for any of the SFA funding and are eligible for the appeal.
-        // The application has an approved SFA appeal, so some funding (BGPD, SBSD, BCSL, CSGP, CSLF) are eligible.
+        // The application has an approved SFA appeal, so some funding (BGPD, SBSD, BCAG2Year, BCSL, CSGP, CSLF) are eligible.
         institutionCountry: "AU",
         institutionProvince: undefined,
         institutionClassification: InstitutionClassification.Private,
@@ -96,6 +101,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-internationa
         assessmentEligibilityBCAG: false,
         institutionEligibilityBCAG: false,
         awardEligibilityBCAG: false,
+
+        assessmentEligibilityBCAG2Year: true,
+        awardEligibilityBCAG2Year: true,
 
         assessmentEligibilityBCSL: true,
         institutionEligibilityBCSL: false,
@@ -153,6 +161,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-internationa
         assessmentEligibilityBCAG: true,
         institutionEligibilityBCAG: false,
         awardEligibilityBCAG: true,
+
+        assessmentEligibilityBCAG2Year: false,
+        awardEligibilityBCAG2Year: false,
 
         assessmentEligibilityBCSL: true,
         institutionEligibilityBCSL: false,
@@ -236,6 +247,10 @@ function getEligibilityData(calculatedAssessment: CalculatedAssessmentModel) {
       calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
         ?.isEligibleBCAG,
     awardEligibilityBCAG: calculatedAssessment.awardEligibilityBCAG,
+    assessmentEligibilityBCAG2Year:
+      calculatedAssessment.assessmentEligibilityBCAG2Year,
+    // BCAG2Year is covered by dmnFullTimeAwardInstitutionEligibility.isEligibleBCAG
+    awardEligibilityBCAG2Year: calculatedAssessment.awardEligibilityBCAG2Year,
     assessmentEligibilityBCSL: calculatedAssessment.assessmentEligibilityBCSL,
     institutionEligibilityBCSL:
       calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
