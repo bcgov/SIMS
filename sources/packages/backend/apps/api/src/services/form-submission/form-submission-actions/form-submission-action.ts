@@ -99,4 +99,15 @@ export abstract class FormSubmissionAction {
       FormSubmissionStatus.Declined,
     ].includes(formSubmission.submissionStatus);
   }
+
+  /**
+   * Determines if the form submission is pending a final decision status.
+   * @param formSubmission  the form submission to check.
+   * @returns true if the form submission is pending a final decision status, false otherwise.
+   */
+  protected isPendingFinalDecisionStatus(
+    formSubmission: FormSubmissionActionModel,
+  ): boolean {
+    return formSubmission.submissionStatus === FormSubmissionStatus.Pending;
+  }
 }
