@@ -181,10 +181,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-oop-private-
 /**
  * Extracts the eligibility outcome properties from the calculated assessment
  * for the SFA award types relevant to the OOP private institutions eligibility appeal.
- * @param calculatedAssessment the calculated assessment model containing all
- * award eligibility variables and the institution eligibility DMN results.
- * @returns a flat object with eligibility flags for each award type at the
- * assessment, institution, and final award levels.
+ * @param calculatedAssessment the calculated assessment model containing all award eligibility variables and the institution eligibility DMN results.
+ * @returns a flat object with eligibility flags for each award type at the assessment, institution, and final award levels.
  */
 function getEligibilityData(calculatedAssessment: CalculatedAssessmentModel) {
   return {

@@ -174,7 +174,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
         // Assert
         expect(
           calculatedAssessment.variables
-            .isEligibileForFTOOPPrivateGrantEligibilityAppeal,
+            .isEligibleForFTOOPPrivateGrantEligibilityAppeal,
         ).toBe(expectedAppealEligibility);
       },
     );
