@@ -16,5 +16,5 @@ VALUES
         'A request for consideration to receive the Canada Student Grant for Full-time Students under the exemption provision.',
         TRUE,
         TRUE,
-        'sfa-eligibility-canada-student-grant'
+        'csgf-eligibility-appeal'
     );

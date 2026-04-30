@@ -25,7 +25,7 @@
       >
         <template #title>
           <v-row>
-            <v-col cols="8" md="10">
+            <v-col>
               <span class="category-header-medium color-blue">{{
                 submissionItem.formType
               }}</span>
