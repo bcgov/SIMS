@@ -49,7 +49,7 @@
       "tableView": false
     },
     {
-      "label": "I confirm that I understand the information above and want to request this train-out provision.",
+      "label": "I confirm that I understand the information above and want to request this exemption provision.",
       "tableView": false,
       "defaultValue": false,
       "validate": {

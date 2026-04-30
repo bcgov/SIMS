@@ -38,6 +38,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-canada-student-g
         institutionEligibilityBCAG: false,
         awardEligibilityBCAG: false,
 
+        assessmentEligibilityBCAG2Year: true,
+        awardEligibilityBCAG2Year: false,
+
         assessmentEligibilityBCSL: true,
         institutionEligibilityBCSL: false,
         awardEligibilityBCSL: false,
@@ -85,6 +88,9 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-canada-student-g
         assessmentEligibilityBCAG: false,
         institutionEligibilityBCAG: false,
         awardEligibilityBCAG: false,
+
+        assessmentEligibilityBCAG2Year: true,
+        awardEligibilityBCAG2Year: false,
 
         assessmentEligibilityBCSL: true,
         institutionEligibilityBCSL: false,
@@ -166,6 +172,10 @@ function getEligibilityData(calculatedAssessment: CalculatedAssessmentModel) {
       calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
         ?.isEligibleBCAG,
     awardEligibilityBCAG: calculatedAssessment.awardEligibilityBCAG,
+    assessmentEligibilityBCAG2Year:
+      calculatedAssessment.assessmentEligibilityBCAG2Year,
+    // BCAG2Year is covered by dmnFullTimeAwardInstitutionEligibility.isEligibleBCAG
+    awardEligibilityBCAG2Year: calculatedAssessment.awardEligibilityBCAG2Year,
     assessmentEligibilityBCSL: calculatedAssessment.assessmentEligibilityBCSL,
     institutionEligibilityBCSL:
       calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
