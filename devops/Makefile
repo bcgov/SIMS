@@ -40,13 +40,13 @@ export QUEUE_CONSUMERS_BUILD_REF := $(or ${QUEUE_CONSUMERS_BUILD_REF}, queue-con
 export LOAD_TEST_GATEWAY_BUILD_REF := $(or ${LOAD_TEST_GATEWAY_BUILD_REF}, load-test-gateway-${APP_NAME})
 export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
 export FORMS_BUILD_REF := $(or ${FORMS_BUILD_REF}, forms)
-# Form.io version targeting the enterprise version 9.7.5
-# see https://github.com/formio/enterprise-release/blob/master/API-Server-Change-Log.md#api-server-version-975
+# Form.io version targeting the enterprise version 9.6.8
+# see https://github.com/formio/enterprise-release/blob/master/API-Server-Change-Log.md#january-14-2026-release
 # Form.io source repo reference (commit hash or tag).
 export FORMIO_SOURCE_REPO_REF := $(or $(FORMIO_SOURCE_REPO_REF), ff103279a0766400874422b655a65c0843ee5be5)
-export FORMIO_CORE_SOURCE_REPO_REF := $(or $(FORMIO_CORE_SOURCE_REPO_REF), 097f675d8d6794a6130af5964e7cb9822f2d3f5a)
-export FORMIO_JS_VERSION := $(or $(FORMIO_JS_VERSION), 5.3.4)
-export FORMIO_VM_VERSION := $(or $(FORMIO_VM_VERSION), 2.0.2)
+export FORMIO_CORE_VERSION := $(or $(FORMIO_CORE_VERSION), 2.5.4)
+export FORMIO_JS_VERSION := $(or $(FORMIO_JS_VERSION), 5.2.6)
+export FORMIO_VM_VERSION := $(or $(FORMIO_VM_VERSION), 2.0.1)
 export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
 export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
 export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
@@ -716,6 +716,9 @@ build-forms:
 	test -n "$(SOURCE_REPOSITORY_URL)"
 	test -n "$(FORMIO_SOURCE_REPO_URL)"
 	test -n "$(FORMIO_SOURCE_REPO_REF)"
+	test -n "$(FORMIO_CORE_VERSION)"
+	test -n "$(FORMIO_JS_VERSION)"
+	test -n "$(FORMIO_VM_VERSION)"
 	test -n "$(FORMIO_BUILD_TAG)"
 	@echo "+\n++ BUILDING $(FORMS_BUILD_REF) DIR: $(SOURCE_CONTEXT_DIR)forms Git reference:$(FORMIO_SOURCE_REPO_REF)\n+"
 	@oc -n $(BUILD_NAMESPACE) process -f openshift/forms-build.yml \
@@ -723,7 +726,7 @@ build-forms:
 	 -p TAG=$(FORMIO_BUILD_TAG) \
 	 -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) \
 	 -p FORMIO_SOURCE_REPO_REF=$(FORMIO_SOURCE_REPO_REF) \
-	 -p FORMIO_CORE_SOURCE_REPO_REF=$(FORMIO_CORE_SOURCE_REPO_REF) \
+	 -p FORMIO_CORE_VERSION=$(FORMIO_CORE_VERSION) \
 	 -p FORMIO_JS_VERSION=$(FORMIO_JS_VERSION) \
 	 -p FORMIO_VM_VERSION=$(FORMIO_VM_VERSION) \
 	 -p SOURCE_REPOSITORY_URL=$(SOURCE_REPOSITORY_URL) \

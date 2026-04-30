@@ -41,8 +41,8 @@ objects:
               value: "${FORMIO_SOURCE_REPO_URL}"
             - name: FORMIO_SOURCE_REPO_REF
               value: "${FORMIO_SOURCE_REPO_REF}"
-            - name: FORMIO_CORE_SOURCE_REPO_REF
-              value: "${FORMIO_CORE_SOURCE_REPO_REF}"
+            - name: FORMIO_CORE_VERSION
+              value: "${FORMIO_CORE_VERSION}"
             - name: FORMIO_JS_VERSION
               value: "${FORMIO_JS_VERSION}"
             - name: FORMIO_VM_VERSION
@@ -64,7 +64,7 @@ parameters:
     required: true
   - name: FORMIO_SOURCE_REPO_REF
     required: true
-  - name: FORMIO_CORE_SOURCE_REPO_REF
+  - name: FORMIO_CORE_VERSION
     required: true
   - name: FORMIO_JS_VERSION
     required: true

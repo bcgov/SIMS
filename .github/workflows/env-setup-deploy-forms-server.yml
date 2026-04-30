@@ -11,7 +11,7 @@ on:
         required: true
         type: environment
       formioBuildTag:
-        description: "Previously built Form.io build tag (e.g., v9.7.5-999)."
+        description: "Previously built Form.io build tag (e.g., v9.6.8-999)."
         type: string
         required: true
         default: "v0.0.0-0"

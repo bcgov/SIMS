@@ -1,9 +1,9 @@
 # Use Node image, maintained by Docker: hub.docker.com/r/_/node.
-FROM node:24-alpine
+FROM node:20-alpine
 
 ARG FORMIO_SOURCE_REPO_URL
 ARG FORMIO_SOURCE_REPO_REF
-ARG FORMIO_CORE_SOURCE_REPO_REF
+ARG FORMIO_CORE_VERSION
 ARG FORMIO_JS_VERSION
 ARG FORMIO_VM_VERSION
 
@@ -24,7 +24,7 @@ RUN git clone --filter=blob:none ${FORMIO_SOURCE_REPO_URL} formio && \
 
 WORKDIR /formio
 
-RUN npm pkg set 'dependencies[@formio/core]'="github:formio/core#${FORMIO_CORE_SOURCE_REPO_REF}" && \
+RUN npm pkg set 'dependencies[@formio/core]'="${FORMIO_CORE_VERSION}" && \
   npm pkg set 'dependencies[@formio/js]'="${FORMIO_JS_VERSION}" && \
   npm pkg set 'dependencies[@formio/vm]'="${FORMIO_VM_VERSION}"
 

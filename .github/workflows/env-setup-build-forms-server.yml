@@ -9,7 +9,7 @@ on:
       formioTargetVersion:
         description: "Form.io target version"
         required: true
-        default: "v9.7.5"
+        default: "v9.6.8"
 
 jobs:
   build:
