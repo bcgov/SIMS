@@ -450,6 +450,7 @@ export interface CalculatedAssessmentModel {
   isEligibleForExceptionalExpenseAppeal?: boolean;
   isEligibleForFTAccessibilityGrantEligibilityAppeal?: boolean;
   isEligibleForFTOOPPrivateGrantEligibilityAppeal?: boolean;
+  isEligibleForFTSFAInternationalInstitutionsEligibilityAppeal?: boolean;
   calculatedDataWaivedParent?: number;
   isEligibleForPTAccessibilityGrantEligibilityAppeal?: boolean;
   isEligibleForPTSFAInternationalInstitutionsEligibilityAppeal?: boolean;
