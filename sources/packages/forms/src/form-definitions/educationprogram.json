@@ -1372,6 +1372,7 @@
             {
               "label": "Does the WIL meet the program eligibility requirements according to StudentAid BC policy?",
               "optionsLabelPosition": "right",
+              "tooltip": "For the work integrated learning experience to qualify for student financial assistance it must be:\r\n<ul>\r\n  <li>Required for graduation (in the case of a co-op education placement it must either be required for graduation and/or result in a credential with a co-op designation);</li>\r\n  <li>Linked to the curriculum; and</li>\r\n  <li>Not exceed 50% of the program (or no more than 20% for practicums and 10% for preceptorships) unless otherwise regulated as a requirement by an oversight body (e.g., Early Childhood Educators (ECE) Registry).</li>\r\n</ul>",
               "inline": false,
               "tableView": false,
               "values": [
@@ -1386,16 +1387,17 @@
                   "shortcut": ""
                 }
               ],
-              "redrawOn": "data",
               "validate": {
                 "required": true
               },
+              "validateWhenHidden": false,
               "key": "wilProgramEligibility",
               "customConditional": "show = (data.hasWILComponent === \"yes\" && data.isWILApproved === \"yes\");",
               "attributes": {
                 "data-cy": "wilProgramEligibility"
               },
               "type": "radio",
+              "redrawOn": "data",
               "input": true
             },
             {
