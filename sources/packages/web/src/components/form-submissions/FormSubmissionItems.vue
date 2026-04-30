@@ -30,7 +30,7 @@
                 submissionItem.formType
               }}</span>
             </v-col>
-            <v-col cols="4" md="2">
+            <v-col cols="auto">
               <status-chip-form-submission-decision
                 v-if="submissionItem.decision"
                 class="float-right mr-4"

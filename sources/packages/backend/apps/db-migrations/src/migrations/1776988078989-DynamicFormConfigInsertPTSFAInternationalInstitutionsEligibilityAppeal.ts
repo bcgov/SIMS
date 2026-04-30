@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class DynamicFormConfigInsertFTSFAInternationalInstitutionsEligibilityAppeal1777067691103 implements MigrationInterface {
+export class DynamicFormConfigInsertPTSFAInternationalInstitutionsEligibilityAppeal1776988078989 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Insert-ft-sfa-international-eligibility-appeal.sql",
+        "Insert-pt-sfa-eligibility-international-institutions.sql",
         "DynamicFormConfigurations",
       ),
     );
@@ -14,7 +14,7 @@ export class DynamicFormConfigInsertFTSFAInternationalInstitutionsEligibilityApp
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Rollback-insert-ft-sfa-international-eligibility-appeal.sql",
+        "Rollback-insert-pt-sfa-eligibility-international-institutions.sql",
         "DynamicFormConfigurations",
       ),
     );

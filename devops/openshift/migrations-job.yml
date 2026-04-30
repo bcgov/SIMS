@@ -28,6 +28,8 @@ objects:
               args: ["${MIGRATION_COMMAND}"]
               imagePullPolicy: Always
               env:
+                - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
+                  value: ${CAMUNDA_TOKEN_DISK_CACHE_DISABLE}
                 - name: VERSION
                   value: ${BUILD_TAG}
                 - name: POSTGRES_HOST
@@ -55,13 +57,39 @@ objects:
                     secretKeyRef:
                       key: ${FORMIO_ROOT_EMAIL_NAME_KEY}
                       name: ${FORMS_SECRET_NAME}
+                      optional: true
                 - name: FORMS_SA_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       key: ${FORMIO_ROOT_PASSWORD_NAME_KEY}
                       name: ${FORMS_SECRET_NAME}
+                      optional: true
                 - name: FORMS_URL
                   value: "${FORMS_URL}"
+                - name: ZEEBE_GRPC_ADDRESS
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZEEBE_GRPC_ADDRESS_KEY}
+                      name: ${MIGRATIONS_SECRET_NAME}
+                      optional: true
+                - name: ZEEBE_CLIENT_ID
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZEEBE_CLIENT_ID_KEY}
+                      name: ${MIGRATIONS_SECRET_NAME}
+                      optional: true
+                - name: ZEEBE_CLIENT_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${ZEEBE_CLIENT_SECRET_KEY}
+                      name: ${MIGRATIONS_SECRET_NAME}
+                      optional: true
+                - name: CAMUNDA_OAUTH_URL
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${CAMUNDA_OAUTH_URL_KEY}
+                      name: ${MIGRATIONS_SECRET_NAME}
+                      optional: true
               resources:
                 limits:
                   memory: ${MEMORY_LIMIT}
@@ -114,6 +142,16 @@ parameters:
     value: FORMIO_ROOT_PASSWORD
   - name: FORMS_URL_NAME_KEY
     value: FORMS_URL
+  - name: ZEEBE_GRPC_ADDRESS_KEY
+    value: zeebe-address
+  - name: ZEEBE_CLIENT_ID_KEY
+    value: zeebe-client-id
+  - name: ZEEBE_CLIENT_SECRET_KEY
+    value: zeebe-client-secret
+  - name: CAMUNDA_OAUTH_URL_KEY
+    value: camunda-oauth-url
+  - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
+    value: "true"
   - name: MEMORY_LIMIT
     value: "500M"
   - name: CPU_REQUEST
