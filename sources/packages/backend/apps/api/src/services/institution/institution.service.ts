@@ -12,10 +12,9 @@ import {
   IdentityProviders,
   getUserFullNameLikeSearch,
   Application,
-  ApplicationStatus,
   InstitutionType,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, IsNull, Not, Repository } from "typeorm";
+import { DataSource, EntityManager, IsNull, Repository } from "typeorm";
 import { InstitutionUserType, UserInfo } from "../../types";
 import { BCeIDService } from "../bceid/bceid.service";
 import { AccountDetails } from "../bceid/account-details.model";
@@ -965,6 +964,8 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   /**
    * Find if the institution
    * has access to student data of given student.
+   * BC public institutions should have access to the student's profile once the student has been attached/linked
+   * to the institution by any submitted (not draft) application even if it is edited.
    * @param institutionId institution.
    * @param studentId student.
    * @param options options for the query:
@@ -979,17 +980,18 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       applicationId?: number;
     },
   ): Promise<boolean> {
-    const institutionStudentDataAccess = await this.applicationRepo.findOne({
-      select: { id: true },
+    return this.applicationRepo.exists({
       where: {
         student: { id: studentId },
-        location: { institution: { id: institutionId } },
-        applicationStatus: Not(ApplicationStatus.Edited),
+        parentApplication: {
+          versions: {
+            location: { institution: { id: institutionId } },
+          },
+        },
         id: options?.applicationId,
       },
       cache: true,
     });
-    return !!institutionStudentDataAccess;
   }
 
   /**

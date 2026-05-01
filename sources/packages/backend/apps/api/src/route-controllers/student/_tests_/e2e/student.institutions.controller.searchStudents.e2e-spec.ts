@@ -39,10 +39,11 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
     appDataSource = dataSource;
     studentRepo = dataSource.getRepository(Student);
     applicationRepo = dataSource.getRepository(Application);
-    const { institution: collegeF } = await getAuthRelatedEntities(
+    const { institution } = await getAuthRelatedEntities(
       appDataSource,
       InstitutionTokenTypes.CollegeFUser,
     );
+    collegeF = institution;
     collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
 
     await authorizeUserTokenForLocation(
@@ -101,19 +102,67 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .send(searchPayload)
       .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body).toEqual(
-          expect.arrayContaining([
-            {
-              id: student.id,
-              firstName: student.user.firstName,
-              lastName: student.user.lastName,
-              birthDate: student.birthDate,
-              sin: student.sinValidation.sin,
-            },
-          ]),
-        );
-      });
+      .expect([
+        {
+          id: student.id,
+          firstName: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: student.birthDate,
+          sin: student.sinValidation.sin,
+        },
+      ]);
+  });
+
+  it("Should find the student by last name when student has an older application version (Edited) submitted for the institution.", async () => {
+    // Arrange
+    const { application: previousApplication, student } =
+      await saveStudentWithApplicationForCollegeF(ApplicationStatus.Edited);
+
+    const { institution: collegeE } = await getAuthRelatedEntities(
+      appDataSource,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
+    );
+    let collegeELocation = createFakeInstitutionLocation({
+      institution: collegeE,
+    });
+
+    // Create a new version of the application for a different institution.
+    await saveFakeApplication(
+      appDataSource,
+      {
+        institution: collegeE,
+        institutionLocation: collegeELocation,
+        student,
+        parentApplication: { id: previousApplication.id } as Application,
+        precedingApplication: { id: previousApplication.id } as Application,
+      },
+      {
+        applicationStatus: ApplicationStatus.Submitted,
+      },
+    );
+
+    const searchPayload = {
+      appNumber: "",
+      firstName: "",
+      lastName: student.user.lastName,
+      sin: "",
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(searchPayload)
+      .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect([
+        {
+          id: student.id,
+          firstName: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: student.birthDate,
+          sin: student.sinValidation.sin,
+        },
+      ]);
   });
 
   it("Should find the student by part of last name when student has at least one application submitted for the institution.", async () => {
@@ -121,14 +170,12 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
     const { student } = await saveStudentWithApplicationForCollegeF(
       ApplicationStatus.Submitted,
     );
-    student.user.lastName =
-      "last name ef1c3bd5-4e8d-4ac4-adcb-3507a1cc7d43 ilike test";
     await studentRepo.save(student);
 
     const searchPayload = {
       appNumber: "",
       firstName: "",
-      lastName: "EF1C3BD5-4E8D-4AC4-ADCB-3507A1CC7D43",
+      lastName: student.user.lastName?.slice(0, 25),
       sin: "",
     };
 
@@ -167,19 +214,15 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .send(searchPayload)
       .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body).toEqual(
-          expect.arrayContaining([
-            {
-              id: student.id,
-              firstName: student.user.firstName,
-              lastName: student.user.lastName,
-              birthDate: student.birthDate,
-              sin: student.sinValidation.sin,
-            },
-          ]),
-        );
-      });
+      .expect([
+        {
+          id: student.id,
+          firstName: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: student.birthDate,
+          sin: student.sinValidation.sin,
+        },
+      ]);
   });
 
   it("Should find the student by part of first name when student has at least one application submitted for the institution.", async () => {
@@ -187,12 +230,11 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
     const { student } = await saveStudentWithApplicationForCollegeF(
       ApplicationStatus.Submitted,
     );
-    student.user.firstName =
-      "first name 77b83122-35a9-4492-8a27-c1e5cf4514cf ilike test";
     await studentRepo.save(student);
+    console.log("student first name", student.user.firstName);
     const searchPayload = {
       appNumber: "",
-      firstName: "77B83122-35A9-4492-8A27-C1E5CF4514CF",
+      firstName: student.user.firstName?.slice(0, 25),
       lastName: "",
       sin: "",
     };

@@ -678,7 +678,7 @@ export class StudentService extends RecordDataModelService<Student> {
         institutionId,
       });
     }
-    if (institutionId || searchCriteria.appNumber) {
+    if (searchCriteria.appNumber) {
       searchQuery.andWhere("application.applicationStatus != :editedStatus", {
         editedStatus: ApplicationStatus.Edited,
       });
