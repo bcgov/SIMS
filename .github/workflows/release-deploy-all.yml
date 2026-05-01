@@ -11,14 +11,6 @@ on:
         description: "Environment"
         required: true
         type: environment
-      deployCamundaDefinitions:
-        description: "Deploy Camunda BPMN/DMN"
-        type: boolean
-        default: true
-      deployFormioDefinitions:
-        description: "Deploy Form.io forms"
-        type: boolean
-        default: true
   workflow_call:
     inputs:
       gitRef:
@@ -27,12 +19,6 @@ on:
       environment:
         required: true
         type: string
-      deployCamundaDefinitions:
-        required: true
-        type: boolean
-      deployFormioDefinitions:
-        required: true
-        type: boolean
     secrets:
       SA_TOKEN:
         required: true
@@ -291,23 +277,11 @@ jobs:
         run: |
           make oc-deploy-web
 
-  # Deploy Camunda Definitions
-  deployCamundaDefinitions:
-    if: ${{ inputs.deployCamundaDefinitions }}
-    name: Deploy BPMNs and DMNs to Camunda
+  # Deploy Camunda and Form.io Definitions
+  deployCamundaFormioDefinitions:
+    name: Deploy Camunda and Form.io definitions
     needs: [env-setup, deploy-sims-api]
-    uses: ./.github/workflows/release-deploy-camunda-definitions.yml
-    with:
-      environment: ${{ inputs.environment }}
-      gitRef: ${{ needs.env-setup.outputs.build-ref }}
-    secrets: inherit
-
-  # Deploy Formio Definitions
-  deployFormioDefinitions:
-    if: ${{ inputs.deployFormioDefinitions }}
-    name: Deploy Form.io definitions
-    needs: [env-setup, deploy-sims-api]
-    uses: ./.github/workflows/release-deploy-formio-definitions.yml
+    uses: ./.github/workflows/release-deploy-camunda-formio-definitions.yml
     with:
       environment: ${{ inputs.environment }}
       gitRef: ${{ needs.env-setup.outputs.build-ref }}
