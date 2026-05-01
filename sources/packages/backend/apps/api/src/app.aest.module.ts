@@ -50,6 +50,7 @@ import {
   FormSubmissionUpdateModifiedIndependentAction,
   FormSubmissionUpdateNonPunitiveWithdrawalAction,
   FormSubmissionAuthorizationService,
+  FormSubmissionUpdateDisabilityOnSubmissionAction,
 } from "./services";
 import {
   ConfigurationContextValidator,
@@ -269,6 +270,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     FormSubmissionCreateAppealAssessmentAction,
     FormSubmissionUpdateModifiedIndependentAction,
     FormSubmissionUpdateNonPunitiveWithdrawalAction,
+    FormSubmissionUpdateDisabilityOnSubmissionAction,
     FormSubmissionActionProcessor,
     FormSubmissionApprovalService,
   ],

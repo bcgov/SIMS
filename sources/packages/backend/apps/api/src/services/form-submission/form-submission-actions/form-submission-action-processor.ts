@@ -6,6 +6,7 @@ import { FormSubmissionCreateAppealAssessmentAction } from "./form-submission-cr
 import { FormSubmissionUpdateModifiedIndependentAction } from "./form-submission-update-modified-independent-action";
 import { FormSubmissionActionModel } from "./form-submission-action-models";
 import { FormSubmissionUpdateNonPunitiveWithdrawalAction } from "./form-submission-update-non-punitive-withdrawal-action";
+import { FormSubmissionUpdateDisabilityOnSubmissionAction } from "apps/api/src/services/form-submission/form-submission-actions/form-submission-update-disability-on-submission-action";
 
 /**
  * Keeps a list of all available form submission actions that can potentially
@@ -19,11 +20,13 @@ export class FormSubmissionActionProcessor {
     createAppealAssessmentAction: FormSubmissionCreateAppealAssessmentAction,
     updateModifiedIndependentAction: FormSubmissionUpdateModifiedIndependentAction,
     updateNonPunitiveScholasticStandingWithdrawalAction: FormSubmissionUpdateNonPunitiveWithdrawalAction,
+    updateDisabilityOnSubmissionAction: FormSubmissionUpdateDisabilityOnSubmissionAction,
   ) {
     this.actions = [
       createAppealAssessmentAction,
       updateModifiedIndependentAction,
       updateNonPunitiveScholasticStandingWithdrawalAction,
+      updateDisabilityOnSubmissionAction,
     ];
   }
 
