@@ -27,10 +27,8 @@ WORKDIR /formio
 RUN npm pkg set 'dependencies[@formio/core]'="${FORMIO_CORE_VERSION}" && \
   npm pkg set 'dependencies[@formio/js]'="${FORMIO_JS_VERSION}" && \
   npm pkg set 'dependencies[@formio/vm]'="${FORMIO_VM_VERSION}" && \
-  npm i
-
-# Remove git after npm i, since npm needs git to download GitHub URL dependencies
-RUN apk del git
+  npm i && \
+  apk del git
 
 # Set this to inspect more from the application. Examples:
 #   DEBUG=formio:db (see index.js for more)
