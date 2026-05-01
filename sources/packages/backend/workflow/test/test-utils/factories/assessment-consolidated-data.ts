@@ -1,5 +1,6 @@
 import {
   AssessmentConsolidatedData,
+  CalculatedAssessmentModel,
   CredentialType,
   IdentifiableParentData,
   InstitutionTypes,
@@ -369,3 +370,60 @@ export function createIdentifiableParentsData(options?: {
   }
   return parentsData;
 }
+
+/**
+ * Extracts the eligibility outcome properties from the calculated assessment
+ * for all full-time award types.
+ * @param calculatedAssessment the calculated assessment model containing all
+ * award eligibility variables and the institution eligibility DMN results.
+ * @returns a flat object with eligibility flags for each award type at the
+ * assessment, institution, and final award levels.
+ */
+export function getFullTimeEligibilityData(calculatedAssessment: CalculatedAssessmentModel) {
+  return {
+    assessmentEligibilityBGPD: calculatedAssessment.assessmentEligibilityBGPD,
+    institutionEligibilityBGPD:
+      calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
+        ?.isEligibleBGPD,
+    awardEligibilityBGPD: calculatedAssessment.awardEligibilityBGPD,
+    assessmentEligibilitySBSD: calculatedAssessment.assessmentEligibilitySBSD,
+    institutionEligibilitySBSD:
+      calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
+        ?.isEligibleSBSD,
+    awardEligibilitySBSD: calculatedAssessment.awardEligibilitySBSD,
+    assessmentEligibilityBCAG: calculatedAssessment.assessmentEligibilityBCAG,
+    institutionEligibilityBCAG:
+      calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
+        ?.isEligibleBCAG,
+    awardEligibilityBCAG: calculatedAssessment.awardEligibilityBCAG,
+    assessmentEligibilityBCAG2Year:
+      calculatedAssessment.assessmentEligibilityBCAG2Year,
+    // BCAG2Year is covered by dmnFullTimeAwardInstitutionEligibility.isEligibleBCAG
+    awardEligibilityBCAG2Year: calculatedAssessment.awardEligibilityBCAG2Year,
+    assessmentEligibilityBCSL: calculatedAssessment.assessmentEligibilityBCSL,
+    institutionEligibilityBCSL:
+      calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
+        ?.isEligibleBCSL,
+    awardEligibilityBCSL: calculatedAssessment.awardEligibilityBCSL,
+    assessmentEligibilityCSGF: calculatedAssessment.assessmentEligibilityCSGF,
+    institutionEligibilityCSGF:
+      calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
+        ?.isEligibleCSGF,
+    awardEligibilityCSGF: calculatedAssessment.awardEligibilityCSGF,
+    assessmentEligibilityCSGD: calculatedAssessment.assessmentEligibilityCSGD,
+    institutionEligibilityCSGD:
+      calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
+        ?.isEligibleCSGD,
+    awardEligibilityCSGD: calculatedAssessment.awardEligibilityCSGD,
+    assessmentEligibilityCSGP: calculatedAssessment.assessmentEligibilityCSGP,
+    institutionEligibilityCSGP:
+      calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
+        ?.isEligibleCSGP,
+    awardEligibilityCSGP: calculatedAssessment.awardEligibilityCSGP,
+    assessmentEligibilityCSLF: calculatedAssessment.assessmentEligibilityCSLF,
+    institutionEligibilityCSLF:
+      calculatedAssessment.dmnFullTimeAwardInstitutionEligibility
+        ?.isEligibleCSLF,
+    awardEligibilityCSLF: calculatedAssessment.awardEligibilityCSLF,
+  };
+
