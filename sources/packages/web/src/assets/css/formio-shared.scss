@@ -855,3 +855,13 @@ td .formio-custom-tooltip:hover .tooltip-text {
   border-color: transparent !important;
   padding: 5px 0px 5px 0px;
 }
+
+// Bootstrap Icons (bi-*) render via ::before pseudo-elements using inline text flow.
+// The form builder's .component-settings-button uses a fixed 18x18px box with
+// display: inline-block (Bootstrap .btn default), which leaves the icon glyph
+// top-aligned instead of centered. Switching to inline-flex fixes the alignment.
+.component-btn-group .component-settings-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
