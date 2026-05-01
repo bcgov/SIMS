@@ -1,4 +1,8 @@
-import { RouteLocationNormalized, RouteRecordRaw } from "vue-router";
+import {
+  RouteLocationNormalized,
+  RouteLocationNormalizedGeneric,
+  RouteRecordRaw,
+} from "vue-router";
 import InstitutionDashboard from "@/views/institution/InstitutionDashboard.vue";
 import InstitutionProfile from "@/views/institution/InstitutionProfile.vue";
 import InstitutionCreate from "@/views/institution/InstitutionCreate.vue";
@@ -44,7 +48,7 @@ import InstitutionSearchStudents from "@/views/institution/student/InstitutionSe
 import InstitutionStudentDetails from "@/views/institution/student/InstitutionStudentDetails.vue";
 import InstitutionStudentProfile from "@/views/institution/student/InstitutionStudentProfile.vue";
 import InstitutionStudentApplications from "@/views/institution/student/InstitutionStudentApplications.vue";
-import InstitutionApplicationView from "@/views/institution/student/InstitutionStudentApplicationView.vue";
+import InstitutionStudentApplicationView from "@/views/institution/student/InstitutionStudentApplicationView.vue";
 import InstitutionStudentRestrictions from "@/views/institution/student/InstitutionStudentRestrictions.vue";
 import InstitutionStudentFileUploads from "@/views/institution/student/InstitutionStudentFileUploads.vue";
 import InstitutionStudentBalances from "@/views/institution/student/InstitutionStudentBalances.vue";
@@ -782,7 +786,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             path: AppRoutes.ApplicationView,
             name: InstitutionRoutesConst.STUDENT_APPLICATION_DETAILS,
             props: true,
-            component: InstitutionApplicationView,
+            component: InstitutionStudentApplicationView,
           },
           {
             path: AppRoutes.AssessmentSummary,
@@ -813,6 +817,14 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             name: InstitutionRoutesConst.NOTICE_OF_ASSESSMENT_VIEW,
             props: true,
             component: NoticeOfAssessment,
+          },
+          {
+            path: getVersionRoutePath(AppRoutes.ApplicationView),
+            name: InstitutionRoutesConst.APPLICATION_VERSION_DETAILS,
+            props: (route) => ({
+              ...defaultDetailsRoute(route),
+            }),
+            component: InstitutionStudentApplicationView,
           },
         ],
       },
@@ -859,3 +871,29 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
     },
   },
 ];
+
+// TODO Move these functions to a helper file since they are also used in StudentRoutes.
+
+/**
+ * Convert the default route params in applications details version routes.
+ * @param route route with the parameters to be converted.
+ * @returns studentId, applicationId and versionApplicationId as numbers.
+ */
+function defaultDetailsRoute(route: RouteLocationNormalizedGeneric) {
+  return {
+    studentId: Number.parseInt(route.params.studentId as string),
+    applicationId: Number.parseInt(route.params.applicationId as string),
+    versionApplicationId: Number.parseInt(
+      route.params.versionApplicationId as string,
+    ),
+  };
+}
+
+/**
+ * Creates the version route path for application details routes.
+ * @param baseRouteName base route name.
+ * @returns version route path.
+ */
+function getVersionRoutePath(baseRouteName: string): string {
+  return `version/:versionApplicationId/${baseRouteName}`;
+}
