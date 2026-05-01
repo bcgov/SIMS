@@ -11,8 +11,8 @@ import {
 } from "./services";
 import { ZeebeModule } from "@sims/services";
 import { LoadTestAuthModule } from "./auth/load-test-auth.module";
-import { LoadTestHttpModule } from "./load-test-http/load-test-http.module";
 import { LoggerModule } from "@sims/utilities/logger";
+import { LoadTestHttpModule } from "./load-test-http/load-test-http.module";
 import { APP_FILTER } from "@nestjs/core/constants";
 import { LoadTestAllExceptionsFilter } from "./load-test-exception.filter";
 

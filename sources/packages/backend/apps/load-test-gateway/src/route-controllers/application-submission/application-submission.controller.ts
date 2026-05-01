@@ -1,5 +1,7 @@
-import { Controller, Param, ParseIntPipe, Post } from "@nestjs/common";
+import { Body, Controller, Param, ParseIntPipe, Post } from "@nestjs/common";
 import { ApplicationSubmissionService } from "../../services";
+import { SetupApplicationSubmissionAPIInDTO } from "./models/application-submission.dto";
+import { ApplicationSetupData } from "../../services/application-submission/application-submission.service";
 
 @Controller("application-submission")
 export class ApplicationSubmissionController {
@@ -8,28 +10,23 @@ export class ApplicationSubmissionController {
   ) {}
 
   /**
-   * Create draft applications required for the application submission load test.
-   * @param iterations load test iterations.
-   * @returns application IDs.
+   * Creates draft applications required for the application submission load test.
+   * The e2e test student identified by the provided credentials is used as the
+   * application owner. Each application receives a unique offering with
+   * non-overlapping study dates to allow real API submission without triggering
+   * the study date overlap validation.
+   * @param iterations number of draft applications to create.
+   * @param payload setup payload containing the student user name.
+   * @returns per-iteration setup data containing application, offering and program IDs.
    */
   @Post("setup/:iterations")
   async setup(
     @Param("iterations", ParseIntPipe) iterations: number,
-  ): Promise<number[]> {
+    @Body() payload: SetupApplicationSubmissionAPIInDTO,
+  ): Promise<ApplicationSetupData[]> {
     return this.applicationSubmissionService.createDraftApplications(
       iterations,
+      payload.studentUserName,
     );
-  }
-
-  /**
-   * Submit an application by performing a formio dry-run validation and updating
-   * the application status to submitted in the database.
-   * @param applicationId application ID.
-   */
-  @Post("submit/:applicationId")
-  async submit(
-    @Param("applicationId", ParseIntPipe) applicationId: number,
-  ): Promise<void> {
-    await this.applicationSubmissionService.submitApplication(applicationId);
   }
 }

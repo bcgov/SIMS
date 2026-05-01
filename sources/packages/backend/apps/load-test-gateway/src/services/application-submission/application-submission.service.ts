@@ -1,75 +1,96 @@
-import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import {
   Application,
   ApplicationData,
-  ApplicationStatus,
-  DynamicFormConfiguration,
-  DynamicFormType,
   OfferingIntensity,
+  Student,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
   createE2EDataSources,
   createFakeApplication,
   createFakeEducationProgramOffering,
+  createFakeUser,
   saveFakeStudent,
 } from "@sims/test-utils";
-import { ConfigService } from "@sims/utilities/config";
-import { DataSource, Repository } from "typeorm";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
+import { DataSource } from "typeorm";
 import { APPLICATION_SUBMISSION_DATA } from "../../constants/application-submission.constants";
 
 /**
- * Expected header name to send the authentication token to the formio API.
+ * Number of days between each offering's study start date to ensure
+ * no two offerings overlap for the same student.
  */
-const FORMIO_TOKEN_HEADER = "x-jwt-token";
+const OFFERING_DATE_SPACING_DAYS = 20;
 /**
- * Default program year ID used for creating load test applications.
- * Corresponds to the 2023-24 program year.
+ * Duration in days for each offering's study period.
  */
-const DEFAULT_PROGRAM_YEAR_ID = 2;
+const OFFERING_DURATION_DAYS = 14;
+/**
+ * Starting offset in days from today for the first offering's study start date,
+ * ensuring offerings are in the future.
+ */
+const OFFERING_START_OFFSET_DAYS = 30;
+
+/**
+ * Setup data for a single load test iteration.
+ */
+export interface ApplicationSetupData {
+  /**
+   * Draft application ID to submit.
+   */
+  applicationId: number;
+  /**
+   * Offering ID associated with the draft application.
+   */
+  offeringId: number;
+  /**
+   * Education program ID associated with the offering.
+   */
+  programId: number;
+}
 
 @Injectable()
 export class ApplicationSubmissionService {
   private readonly dataSources: E2EDataSources;
-  private readonly dynamicFormConfigRepository: Repository<DynamicFormConfiguration>;
-  /**
-   * Cached formio authentication token obtained once at setup time.
-   */
-  private cachedFormioToken: string | null = null;
-  /**
-   * Cached form definition name obtained once at setup time.
-   */
-  private cachedFormDefinitionName: string | null = null;
 
-  constructor(
-    private readonly dataSource: DataSource,
-    private readonly httpService: HttpService,
-    private readonly configService: ConfigService,
-  ) {
+  constructor(dataSource: DataSource) {
     this.dataSources = createE2EDataSources(dataSource);
-    this.dynamicFormConfigRepository =
-      dataSource.getRepository(DynamicFormConfiguration);
   }
 
   /**
-   * Create draft applications for load testing. Also warms up the formio
-   * token and form definition name caches to avoid per-iteration overhead.
+   * Creates draft applications for load testing using the e2e test student.
+   * Each application is associated with a unique offering with non-overlapping
+   * study dates, allowing the real submit endpoint to be called without
+   * triggering the study date overlap validation.
    * @param iterations number of draft applications to create.
-   * @returns application IDs.
+   * @param studentUserName user name of the e2e test student.
+   * @returns per-iteration setup data containing application, offering and program IDs.
    */
-  async createDraftApplications(iterations: number): Promise<number[]> {
-    const student = await saveFakeStudent(this.dataSource);
-    const offering = await this.dataSources.educationProgramOffering.save(
-      createFakeEducationProgramOffering({ auditUser: student.user }),
-    );
-    this.cachedFormDefinitionName = await this.getFormDefinitionName(
-      DEFAULT_PROGRAM_YEAR_ID,
-      OfferingIntensity.fullTime,
-    );
-    this.cachedFormioToken = await this.fetchFormioToken();
+  async createDraftApplications(
+    iterations: number,
+    studentUserName: string,
+  ): Promise<ApplicationSetupData[]> {
+    const student = await this.getOrCreateStudentByUserName(studentUserName);
+    const setupItems: ApplicationSetupData[] = [];
     const applications: Application[] = [];
     for (let i = 0; i < iterations; i++) {
+      const studyStartDate = getISODateOnlyString(
+        addDays(OFFERING_START_OFFSET_DAYS + i * OFFERING_DATE_SPACING_DAYS),
+      );
+      const studyEndDate = getISODateOnlyString(
+        addDays(
+          OFFERING_START_OFFSET_DAYS +
+            i * OFFERING_DATE_SPACING_DAYS +
+            OFFERING_DURATION_DAYS,
+        ),
+      );
+      const offering = createFakeEducationProgramOffering(
+        { auditUser: student.user },
+        { initialValues: { studyStartDate, studyEndDate } },
+      );
+      const savedOffering =
+        await this.dataSources.educationProgramOffering.save(offering);
       const application = createFakeApplication(
         {
           student,
@@ -84,74 +105,40 @@ export class ApplicationSubmissionService {
         },
       );
       applications.push(application);
+      setupItems.push({
+        applicationId: 0,
+        offeringId: savedOffering.id,
+        programId: savedOffering.educationProgram.id,
+      });
     }
-    await this.dataSources.application.insert(applications);
-    return applications.map((app) => app.id);
+    const savedApplications =
+      await this.dataSources.application.save(applications);
+    for (let i = 0; i < savedApplications.length; i++) {
+      setupItems[i].applicationId = savedApplications[i].id;
+    }
+    return setupItems;
   }
 
   /**
-   * Submit an application by performing a formio dry-run validation and
-   * updating the application status to submitted in the database.
-   * @param applicationId application ID.
+   * Retrieves the student entity for a given user name, creating one if it does not
+   * yet exist in the current database. Creating the student on demand allows the load
+   * test to run against the local dev database where the e2e test student is not
+   * pre-seeded, while still matching the Keycloak JWT that k6 obtains for that user.
+   * @param userName user name to look up or create.
+   * @returns the matching or newly created student.
    */
-  async submitApplication(applicationId: number): Promise<void> {
-    const application = await this.dataSources.application.findOne({
-      where: { id: applicationId },
+  private async getOrCreateStudentByUserName(
+    userName: string,
+  ): Promise<Student> {
+    const existing = await this.dataSources.student.findOne({
+      where: { user: { userName } },
+      relations: { user: true },
     });
-    const token =
-      this.cachedFormioToken ?? (await this.fetchFormioToken());
-    const { formsUrl } = this.configService.forms;
-    await this.httpService.axiosRef.post(
-      `${formsUrl}/${this.cachedFormDefinitionName}/submission?dryRun=1`,
-      { data: application.data },
-      { headers: { [FORMIO_TOKEN_HEADER]: token } },
-    );
-    await this.dataSources.application.update(
-      { id: applicationId },
-      {
-        applicationStatus: ApplicationStatus.Submitted,
-        submittedDate: new Date(),
-      },
-    );
-  }
-
-  /**
-   * Get the form definition name for the given program year and offering intensity
-   * from the dynamic form configurations stored in the database.
-   * @param programYearId program year ID.
-   * @param offeringIntensity offering intensity.
-   * @returns form definition name.
-   */
-  private async getFormDefinitionName(
-    programYearId: number,
-    offeringIntensity: OfferingIntensity,
-  ): Promise<string> {
-    const formConfig = await this.dynamicFormConfigRepository.findOne({
-      where: {
-        formType: DynamicFormType.StudentFinancialAidApplication,
-        programYear: { id: programYearId },
-        offeringIntensity,
-      },
-      relations: { programYear: true },
+    if (existing) {
+      return existing;
+    }
+    return saveFakeStudent(this.dataSources.dataSource, {
+      user: createFakeUser(userName),
     });
-    return formConfig?.formDefinitionName ?? "sfaa2023-24";
-  }
-
-  /**
-   * Fetch a new formio authentication token using the service account credentials.
-   * @returns formio JWT token.
-   */
-  private async fetchFormioToken(): Promise<string> {
-    const { formsUrl, serviceAccountCredential } = this.configService.forms;
-    const response = await this.httpService.axiosRef.post(
-      `${formsUrl}/user/login`,
-      {
-        data: {
-          email: serviceAccountCredential.userName,
-          password: serviceAccountCredential.password,
-        },
-      },
-    );
-    return response.headers[FORMIO_TOKEN_HEADER];
   }
 }
