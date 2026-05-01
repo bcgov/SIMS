@@ -26,11 +26,8 @@ WORKDIR /formio
 
 RUN npm pkg set 'dependencies[@formio/core]'="${FORMIO_CORE_VERSION}" && \
   npm pkg set 'dependencies[@formio/js]'="${FORMIO_JS_VERSION}" && \
-  npm pkg set 'dependencies[@formio/vm]'="${FORMIO_VM_VERSION}"
-
-# We use --foreground-scripts so that when npm builds those raw github repositories
-# in the background, it prints their progress fully to the console instead of silently freezing.
-RUN npm i --foreground-scripts
+  npm pkg set 'dependencies[@formio/vm]'="${FORMIO_VM_VERSION}" && \
+  npm i
 
 # Remove git after npm i, since npm needs git to download GitHub URL dependencies
 RUN apk del git
