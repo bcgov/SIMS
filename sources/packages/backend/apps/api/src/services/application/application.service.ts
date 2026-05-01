@@ -1080,12 +1080,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.applicationStatus != :editedStatus", {
         editedStatus: ApplicationStatus.Edited,
       });
-    // If institution id is present, get only the applications
-    // linked with the institution.
 
+    // If institution id is present, get only the applications linked with the institution at any point in time.
     if (institutionId) {
       applicationQuery
-        .innerJoin("application.location", "institutionLocation")
+        .innerJoin("parentApplication.versions", "version")
+        .innerJoin("version.location", "institutionLocation")
         .innerJoin("institutionLocation.institution", "institution")
         .andWhere("institution.id = :institutionId", {
           institutionId,

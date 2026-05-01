@@ -38,10 +38,11 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
     app = nestApplication;
     appDataSource = dataSource;
     // College F.
-    const { institution: collegeF } = await getAuthRelatedEntities(
+    const { institution } = await getAuthRelatedEntities(
       appDataSource,
       InstitutionTokenTypes.CollegeFUser,
     );
+    collegeF = institution;
     collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     await authorizeUserTokenForLocation(
       appDataSource,
@@ -83,12 +84,12 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
               applicationNumber: savedApplication.applicationNumber,
               isArchived: false,
               studyStartPeriod:
-                savedApplication.currentAssessment.offering.studyStartDate,
+                savedApplication.currentAssessment?.offering?.studyStartDate,
               studyEndPeriod:
-                savedApplication.currentAssessment.offering.studyEndDate,
+                savedApplication.currentAssessment?.offering?.studyEndDate,
               status: savedApplication.applicationStatus,
               parentApplicationId: savedApplication.id,
-              submittedDate: savedApplication.submittedDate.toISOString(),
+              submittedDate: savedApplication.submittedDate?.toISOString(),
               isChangeRequestAllowedForPY: false,
               offeringIntensity: savedApplication.offeringIntensity,
             },
@@ -137,14 +138,84 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
               applicationNumber: savedApplication1.applicationNumber,
               isArchived: false,
               studyStartPeriod:
-                savedApplication1.currentAssessment.offering.studyStartDate,
+                savedApplication1.currentAssessment?.offering?.studyStartDate,
               studyEndPeriod:
-                savedApplication1.currentAssessment.offering.studyEndDate,
+                savedApplication1.currentAssessment?.offering?.studyEndDate,
               status: savedApplication1.applicationStatus,
               parentApplicationId: savedApplication1.id,
-              submittedDate: savedApplication1.submittedDate.toISOString(),
+              submittedDate: savedApplication1.submittedDate?.toISOString(),
               isChangeRequestAllowedForPY: false,
               offeringIntensity: savedApplication1.offeringIntensity,
+            },
+          ],
+          count: 1,
+        });
+    },
+  );
+
+  it(
+    "Should get the student application details belonging to the requested institution as summary when student has an Edited application " +
+      "for the institution and current Submitted application for another institution.",
+    async () => {
+      // Arrange
+
+      // Student has an original (Edited) application to the institution.
+      const student = await saveFakeStudent(appDataSource);
+      // Application 1 for college F.
+      const collegeFApplication = await saveFakeApplication(
+        appDataSource,
+        {
+          institution: collegeF,
+          institutionLocation: collegeFLocation,
+          student,
+        },
+        {
+          applicationStatus: ApplicationStatus.Edited,
+        },
+      );
+
+      // Current Application (Submitted) for another college E.
+      const { institution: collegeE } = await getAuthRelatedEntities(
+        appDataSource,
+        InstitutionTokenTypes.CollegeEReadOnlyUser,
+      );
+      let collegeELocation = createFakeInstitutionLocation({
+        institution: collegeE,
+      });
+      const collegeEApplication = await saveFakeApplication(appDataSource, {
+        institution: collegeE,
+        institutionLocation: collegeELocation,
+        student,
+        parentApplication: collegeFApplication,
+        precedingApplication: collegeFApplication,
+      });
+
+      const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10`;
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          results: [
+            {
+              id: collegeEApplication.id,
+              applicationNumber: collegeEApplication.applicationNumber,
+              isArchived: false,
+              studyStartPeriod:
+                collegeEApplication.currentAssessment?.offering?.studyStartDate,
+              studyEndPeriod:
+                collegeEApplication.currentAssessment?.offering?.studyEndDate,
+              status: collegeEApplication.applicationStatus,
+              parentApplicationId: collegeEApplication.parentApplication?.id,
+              submittedDate:
+                collegeEApplication.parentApplication?.submittedDate?.toISOString(),
+              isChangeRequestAllowedForPY: false,
+              offeringIntensity: collegeEApplication.offeringIntensity,
             },
           ],
           count: 1,
@@ -196,12 +267,12 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
               applicationNumber: savedApplication1.applicationNumber,
               isArchived: false,
               studyStartPeriod:
-                savedApplication1.currentAssessment.offering.studyStartDate,
+                savedApplication1.currentAssessment?.offering?.studyStartDate,
               studyEndPeriod:
-                savedApplication1.currentAssessment.offering.studyEndDate,
+                savedApplication1.currentAssessment?.offering?.studyEndDate,
               status: savedApplication1.applicationStatus,
               parentApplicationId: savedApplication1.id,
-              submittedDate: savedApplication1.submittedDate.toISOString(),
+              submittedDate: savedApplication1.submittedDate?.toISOString(),
               isChangeRequestAllowedForPY: false,
               offeringIntensity: savedApplication1.offeringIntensity,
             },
@@ -259,12 +330,12 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
               applicationNumber: savedApplication2.applicationNumber,
               isArchived: false,
               studyStartPeriod:
-                savedApplication2.currentAssessment.offering.studyStartDate,
+                savedApplication2.currentAssessment?.offering?.studyStartDate,
               studyEndPeriod:
-                savedApplication2.currentAssessment.offering.studyEndDate,
+                savedApplication2.currentAssessment?.offering?.studyEndDate,
               status: savedApplication2.applicationStatus,
               parentApplicationId: savedApplication2.id,
-              submittedDate: savedApplication2.submittedDate.toISOString(),
+              submittedDate: savedApplication2.submittedDate?.toISOString(),
               isChangeRequestAllowedForPY: false,
               offeringIntensity: savedApplication2.offeringIntensity,
             },
@@ -273,12 +344,12 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
               applicationNumber: savedApplication1.applicationNumber,
               isArchived: false,
               studyStartPeriod:
-                savedApplication1.currentAssessment.offering.studyStartDate,
+                savedApplication1.currentAssessment?.offering?.studyStartDate,
               studyEndPeriod:
-                savedApplication1.currentAssessment.offering.studyEndDate,
+                savedApplication1.currentAssessment?.offering?.studyEndDate,
               status: savedApplication1.applicationStatus,
               parentApplicationId: savedApplication1.id,
-              submittedDate: savedApplication1.submittedDate.toISOString(),
+              submittedDate: savedApplication1.submittedDate?.toISOString(),
               isChangeRequestAllowedForPY: false,
               offeringIntensity: savedApplication1.offeringIntensity,
             },
