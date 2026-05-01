@@ -379,7 +379,9 @@ export function createIdentifiableParentsData(options?: {
  * @returns a flat object with eligibility flags for each award type at the
  * assessment, institution, and final award levels.
  */
-export function getFullTimeEligibilityData(calculatedAssessment: CalculatedAssessmentModel) {
+export function getFullTimeEligibilityData(
+  calculatedAssessment: CalculatedAssessmentModel,
+) {
   return {
     assessmentEligibilityBGPD: calculatedAssessment.assessmentEligibilityBGPD,
     institutionEligibilityBGPD:
@@ -426,4 +428,4 @@ export function getFullTimeEligibilityData(calculatedAssessment: CalculatedAsses
         ?.isEligibleCSLF,
     awardEligibilityCSLF: calculatedAssessment.awardEligibilityCSLF,
   };
-
+}
