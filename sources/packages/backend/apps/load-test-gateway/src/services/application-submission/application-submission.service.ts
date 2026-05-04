@@ -1,8 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import {
   Application,
   ApplicationData,
   OfferingIntensity,
+  ProgramYear,
   Student,
 } from "@sims/sims-db";
 import {
@@ -33,6 +34,11 @@ const OFFERING_DURATION_DAYS = 14;
 const OFFERING_START_OFFSET_DAYS = 30;
 
 /**
+ * Program year used for the application submission load test.
+ */
+const LOAD_TEST_PROGRAM_YEAR = "2026-2027";
+
+/**
  * Setup data for a single load test iteration.
  */
 export interface ApplicationSetupData {
@@ -48,6 +54,10 @@ export interface ApplicationSetupData {
    * Education program ID associated with the offering.
    */
   programId: number;
+  /**
+   * Program year ID to use when submitting the application.
+   */
+  programYearId: number;
 }
 
 @Injectable()
@@ -72,6 +82,7 @@ export class ApplicationSubmissionService {
     studentUserName: string,
   ): Promise<ApplicationSetupData[]> {
     const student = await this.getOrCreateStudentByUserName(studentUserName);
+    const programYear = await this.getProgramYear(LOAD_TEST_PROGRAM_YEAR);
     const setupItems: ApplicationSetupData[] = [];
     const applications: Application[] = [];
     for (let i = 0; i < iterations; i++) {
@@ -96,6 +107,7 @@ export class ApplicationSubmissionService {
           student,
           location: offering.institutionLocation,
           applicationEditStatusUpdatedBy: student.user,
+          programYear,
         },
         {
           initialValue: {
@@ -109,6 +121,7 @@ export class ApplicationSubmissionService {
         applicationId: 0,
         offeringId: savedOffering.id,
         programId: savedOffering.educationProgram.id,
+        programYearId: programYear.id,
       });
     }
     const savedApplications =
@@ -120,7 +133,23 @@ export class ApplicationSubmissionService {
   }
 
   /**
-   * Retrieves the student entity for a given user name, creating one if it does not
+   * Retrieves the 2026-2027 program year from the database.
+   * @param programYearLabel program year string in the format YYYY-YYYY.
+   * @returns the matching program year entity.
+   */
+  private async getProgramYear(programYearLabel: string): Promise<ProgramYear> {
+    const programYear = await this.dataSources.programYear.findOne({
+      where: { programYear: programYearLabel },
+    });
+    if (!programYear) {
+      throw new NotFoundException(
+        `Program year ${programYearLabel} not found.`,
+      );
+    }
+    return programYear;
+  }
+
+  /**, creating one if it does not
    * yet exist in the current database. Creating the student on demand allows the load
    * test to run against the local dev database where the e2e test student is not
    * pre-seeded, while still matching the Keycloak JWT that k6 obtains for that user.

@@ -27,7 +27,10 @@ const ITERATIONS = parseInt(__ENV.ITERATIONS || "500");
  * must always be less than the iterations.
  * Can be overridden via k6 -e VIRTUAL_USERS=<n>.
  */
-const VIRTUAL_USERS = Math.min(parseInt(__ENV.VIRTUAL_USERS || "15"), ITERATIONS);
+const VIRTUAL_USERS = Math.min(
+  parseInt(__ENV.VIRTUAL_USERS || "15"),
+  ITERATIONS,
+);
 
 /**
  * Per-iteration data returned by the gateway setup endpoint.
@@ -36,6 +39,7 @@ interface ApplicationSetupData {
   applicationId: number;
   offeringId: number;
   programId: number;
+  programYearId: number;
 }
 
 interface SetupData {
@@ -76,11 +80,11 @@ export const options: Options = {
  * @param setupData setup data returned by setup method.
  */
 export default function (setupData: SetupData) {
-  const { applicationId, offeringId, programId } =
+  const { applicationId, offeringId, programId, programYearId } =
     setupData.setupItems[execution.scenario.iterationInTest];
   const payload = {
     associatedFiles: [] as string[],
-    programYearId: 2,
+    programYearId: Number(programYearId),
     data: {
       ...APPLICATION_SUBMISSION_DATA,
       selectedOffering: offeringId,
@@ -88,7 +92,7 @@ export default function (setupData: SetupData) {
     },
   };
   const submitResponse = patchStudentAPICall(
-    `application/${applicationId}/submit`,
+    `api/students/application/${applicationId}/submit`,
     setupData.studentCredentials,
     payload,
   );
