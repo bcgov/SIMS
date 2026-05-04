@@ -2,14 +2,11 @@ import { HttpStatus, Injectable } from "@nestjs/common";
 import { DryRunSubmissionResult } from "../../types";
 import { ConfigService, FormsConfig } from "@sims/utilities/config";
 import { LoggerService } from "@sims/utilities/logger";
-import { JwtService } from "@nestjs/jwt";
-import { TokenCacheService } from "..";
-import { TokenCacheResponse } from "../auth/token-cache.service.models";
 import { HttpService } from "@nestjs/axios";
 import { FormDefinition } from "./form.service.models";
 
 // Expected header name to send the authorization token to formio API.
-const FORMIO_TOKEN_NAME = "x-jwt-token";
+const FORMIO_TOKEN_NAME = "x-token";
 /**
  * Form.io list method requires some pagination number,
  * otherwise it returns only 10 records.
@@ -22,18 +19,11 @@ const FORMIO_LIST_SORT_FIELD = "title";
 
 @Injectable()
 export class FormService {
-  private tokenCacheService: TokenCacheService = null;
-
   constructor(
     private readonly configService: ConfigService,
-    private readonly jwtService: JwtService,
     private readonly httpService: HttpService,
     private readonly logger: LoggerService,
-  ) {
-    this.tokenCacheService = new TokenCacheService("Form.IO", () =>
-      this.getToken(),
-    );
-  }
+  ) {}
 
   get config(): FormsConfig {
     return this.configService.forms;
@@ -127,68 +117,10 @@ export class FormService {
    * @returns header to be added to HTTP request.
    */
   private async createAuthHeader() {
-    const token = await this.tokenCacheService.getToken();
     return {
       headers: {
-        [FORMIO_TOKEN_NAME]: token,
+        [FORMIO_TOKEN_NAME]: process.env.FORMS_API_KEY,
       },
     };
-  }
-
-  /**
-   * Executes the token request and (alongside with TokenCacheService)
-   * allows it to be cache until it expires.
-   * @returns token and expiration to be cached.
-   */
-  private async getToken(): Promise<TokenCacheResponse> {
-    const token = await this.getAuthToken();
-    const decoded = this.jwtService.decode(token);
-    return {
-      accessToken: token,
-      expiresIn: +decoded["exp"],
-    };
-  }
-
-  /**
-   * Gets the authentication token value to authorize the formio API.
-   * @returns the token that is needed to authentication on the formio API.
-   */
-  private async getAuthToken() {
-    const authResponse = await this.getUserLogin();
-    return authResponse.headers[FORMIO_TOKEN_NAME];
-  }
-
-  /**
-   * Executes the authentication on formio API.
-   * @returns the result of a sucessfull authentication or thows an expection
-   * in case the result is anything different from HTTP 200 code.
-   */
-  private async getUserLogin() {
-    try {
-      const authRequest = await this.httpService.axiosRef.post(
-        `${this.config.formsUrl}/user/login`,
-        {
-          data: {
-            email: this.config.serviceAccountCredential.userName,
-            password: this.config.serviceAccountCredential.password,
-          },
-        },
-      );
-      return authRequest;
-    } catch (excp) {
-      this.logger.error(`Received exception while getting form SA token`);
-      this.logger.error(
-        `${JSON.stringify(
-          {
-            status: excp.response.status,
-            statusText: excp.response.statusText,
-            data: excp.response.data,
-          },
-          null,
-          2,
-        )}`,
-      );
-      throw excp;
-    }
   }
 }

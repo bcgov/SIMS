@@ -118,6 +118,7 @@ services:
       NODE_CONFIG: '{"mongo": "mongodb://mongo:27017/formio"}'
       ROOT_EMAIL: ${FORMS_SA_USER_NAME}
       ROOT_PASSWORD: ${FORMS_SA_PASSWORD}
+      API_KEYS: ${FORMS_API_KEY}
     # The app will restart until Mongo is listening.
     restart: unless-stopped
     ports:
