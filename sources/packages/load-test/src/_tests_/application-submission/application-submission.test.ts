@@ -80,6 +80,16 @@ export const options: Options = {
  * Part of the K6 life cycle.
  * @param setupData setup data returned by setup method.
  */
+/**
+ * Maximum number of retries when a 429 Too Many Requests response is received.
+ */
+const MAX_THROTTLE_RETRIES = 5;
+/**
+ * Delay in seconds between retries when rate-limited.
+ * The API throttle window is 100 ms, so 0.2 s is sufficient to reset it.
+ */
+const THROTTLE_RETRY_DELAY_SECONDS = 0.2;
+
 export default function (setupData: SetupData) {
   const { applicationId, offeringId, programId, locationId, programYearId } =
     setupData.setupItems[execution.scenario.iterationInTest];
@@ -93,11 +103,24 @@ export default function (setupData: SetupData) {
       selectedLocation: locationId,
     },
   };
-  const submitResponse = patchStudentAPICall(
+  let submitResponse = patchStudentAPICall(
     `api/students/application/${applicationId}/submit`,
     setupData.studentCredentials,
     payload,
   );
+  // Retry on 429 Too Many Requests caused by the API throttle guard.
+  for (
+    let retry = 0;
+    submitResponse.status === 429 && retry < MAX_THROTTLE_RETRIES;
+    retry++
+  ) {
+    sleep(THROTTLE_RETRY_DELAY_SECONDS);
+    submitResponse = patchStudentAPICall(
+      `api/students/application/${applicationId}/submit`,
+      setupData.studentCredentials,
+      payload,
+    );
+  }
   check(submitResponse, {
     "Submitted with success": (r) => r.status === 200,
   });
