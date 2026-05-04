@@ -133,6 +133,18 @@ export class ApplicationSubmissionService {
       await this.dataSources.application.save(applications);
     for (let i = 0; i < savedApplications.length; i++) {
       setupItems[i].applicationId = savedApplications[i].id;
+      // Set parentApplication and precedingApplication to the application itself,
+      // mirroring the real ApplicationService.saveApplicationDraft logic so that
+      // the parent_application_id_constraint is satisfied when the application is
+      // submitted (the constraint requires parent_application_id IS NOT NULL for
+      // any status other than 'Draft').
+      await this.dataSources.application.update(
+        { id: savedApplications[i].id },
+        {
+          parentApplication: { id: savedApplications[i].id },
+          precedingApplication: { id: savedApplications[i].id },
+        },
+      );
     }
     return setupItems;
   }
