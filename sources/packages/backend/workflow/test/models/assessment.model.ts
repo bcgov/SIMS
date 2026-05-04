@@ -449,8 +449,11 @@ export interface CalculatedAssessmentModel {
   isEligibleForParentCurrentYearIncomeAppeal?: boolean;
   isEligibleForExceptionalExpenseAppeal?: boolean;
   isEligibleForFTAccessibilityGrantEligibilityAppeal?: boolean;
+  isEligibleForFTSFAInternationalInstitutionsEligibilityAppeal?: boolean;
+  isEligibleForFTCanadaStudentGrantEligibilityAppeal?: boolean;
   calculatedDataWaivedParent?: number;
   isEligibleForPTAccessibilityGrantEligibilityAppeal?: boolean;
+  isEligibleForPTSFAInternationalInstitutionsEligibilityAppeal?: boolean;
   calculatedDataParent1TotalIncome?: number;
   calculatedDataParent2TotalIncome?: number;
   // Common variables used in both full-time and part-time.
