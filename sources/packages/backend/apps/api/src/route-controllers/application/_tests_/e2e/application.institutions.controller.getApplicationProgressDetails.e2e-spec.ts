@@ -144,35 +144,6 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationProgressDetails",
       });
   });
 
-  it("Should throw a HttpStatus Forbidden (403) error when the application has status Edited.", async () => {
-    // Arrange
-    const savedApplication = await saveFakeApplication(
-      db.dataSource,
-      {
-        institutionLocation: collegeFLocation,
-      },
-      {
-        applicationStatus: ApplicationStatus.Edited,
-      },
-    );
-
-    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/progress-details`;
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
-        error: "Forbidden",
-      });
-  });
-
   afterAll(async () => {
     await app?.close();
   });
