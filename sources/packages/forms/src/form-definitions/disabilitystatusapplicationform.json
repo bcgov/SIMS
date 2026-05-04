@@ -60,12 +60,12 @@
             "values": [
                 {
                     "label": "Permanent Disability",
-                    "value": "pd",
+                    "value": "PD",
                     "shortcut": ""
                 },
                 {
-                    "label": "Persistent and Prolonged Disability",
-                    "value": "ppd",
+                    "label": "Persistent or Prolonged Disability",
+                    "value": "PPD",
                     "shortcut": ""
                 }
             ],
@@ -268,18 +268,34 @@
         },
         {
             "label": "Declaration",
+            "tag": "h3",
+            "className": "category-header-medium primary-color",
+            "attrs": [
+                {
+                    "attr": "",
+                    "value": ""
+                }
+            ],
+            "content": "Declaration",
+            "refreshOnChange": false,
+            "key": "html7",
+            "type": "htmlelement",
+            "input": false,
+            "tableView": false
+        },
+        {
+            "label": "Declaration",
             "widget": "",
             "applyMaskOn": "change",
             "autoExpand": false,
+            "customClass": "fixed-height-declaration-large",
+            "hideLabel": true,
             "disabled": true,
             "tableView": true,
             "defaultValue": "I am applying for assistance under any one or more of the disability programs outlined on the StudentAid BC Disability Verification Form. I UNDERSTAND THAT THIS DISABILITY APPLICATION FORMS PART OF MY APPLICATION FOR STUDENT FINANCIAL ASSISTANCE AND AS SUCH INCLUDES ALL TERMS AND CONDITIONS AS STATED IN THE FULL TIME OR PART TIME STUDENTAID BC APPLICATION DECLARATIONS.\n\nIn addition to the terms and conditions stated in the Full Time or Part Time StudentAid BC Application Declarations, I also understand that:\n\n<ol><li>If I receive money to pay for educational related specialized services through the Canada Student Grant for Services and Equipment - Students with Disabilities (CSG-DSE) while at a public or private post-secondary institution, or the Assistance Program for Students with Disabilities (APSD) program while at a private post-secondary institution, I will provide to StudentAid BC, at the end of my study period, receipts showing that the funds were spent for their intended purpose, and will repay any unused funds to the British Columbia Minister of Finance.</li>\n<li>If I am attending a post-secondary institution in BC, I will only request funds from the APSD program after I have exhausted all funds available through the CSG-DSE.</li>\n<li>I give permission to the BC Ministry of Post-Secondary Education and Future Skills to disclose information directly related to my disability to the Ministry of Employment and Social Development Canada, and/or Assistive Technology British Columbia (The Board of Education of School District No. 39 (Vancouver), also known as Vancouver School Board) for the purposes of determining my eligibility for disability funding.</li>\n<li>I give permission to my school to disclose information to the Ministry of Employment and Social Development Canada, the BC Ministry of Post-Secondary Education and Future Skills and/or Assistive Technology British Columbia (ATBC) regarding my disability, access requirements, academic standing, awards, living arrangements and financial status for the purposes of verifying or investigating information pertaining to this application and related documents, determining my eligibility for disability funding or determining whether I will be required to repay any funding I may receive.</li>\n<li>If I am awarded a CSG-DSE and/or a grant under the APSD, I authorize ATBC or the Institution that I am, or will be, attending to cash the grant cheque(s) on my behalf and apply the funds to retain a service worker and/or buy equipment and/or software on my behalf and/or apply the grant to the Learning Disability Assessment Bursary (LDAB) fund.</li></ol>\n<strong>Collection and use of information.</strong> The information included in this form and authorized above is collected under Sections 26c and 26e of the Freedom of Information and Protection of Privacy Act, and under the authority of the Canada Student Financial Assistance Act, R.S.C. 1994, Chapter C-28 and StudentAid BC. The information provided will be used to determine eligibility for a benefit through StudentAid BC and for statistical and evaluation purposes. If you have any questions about the collection and use of this information, contact the Executive Director, StudentAid BC, Ministry of Post- Secondary Education and Future Skills, PO Box 9173, Stn Prov Govt, Victoria B.C., V8W 9H7, or <a href=\"mailto:StudentAidBC@gov.bc.ca\">StudentAidBC@gov.bc.ca.</a>",
             "persistent": "client-only",
             "validateWhenHidden": false,
             "key": "textArea",
-            "attributes": {
-                "style": "max-height: 600px; overflow: auto"
-            },
             "type": "textarea",
             "input": true
         },
