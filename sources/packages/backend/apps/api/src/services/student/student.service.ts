@@ -838,7 +838,6 @@ export class StudentService extends RecordDataModelService<Student> {
       return;
     }
     student.disabilityStatus = DisabilityStatus.NotRequested;
-    return;
   }
 
   /**

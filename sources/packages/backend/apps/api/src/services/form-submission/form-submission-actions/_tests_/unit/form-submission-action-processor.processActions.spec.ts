@@ -29,10 +29,12 @@ describe("FormSubmissionActionProcessor-processActions", () => {
     );
     // Allow setting the action types directly to avoid spying on getters
     // that would not work as expected for protected properties.
-    (formSubmissionCreateAppealAssessmentAction as object)["actionType"] =
-      FormSubmissionActionType.CreateStudentAppealAssessment;
-    (formSubmissionUpdateModifiedIndependentAction as object)["actionType"] =
-      FormSubmissionActionType.UpdateModifiedIndependent;
+    (formSubmissionCreateAppealAssessmentAction as Record<string, unknown>)[
+      "actionType"
+    ] = FormSubmissionActionType.CreateStudentAppealAssessment;
+    (formSubmissionUpdateModifiedIndependentAction as Record<string, unknown>)[
+      "actionType"
+    ] = FormSubmissionActionType.UpdateModifiedIndependent;
   });
 
   beforeEach(() => {

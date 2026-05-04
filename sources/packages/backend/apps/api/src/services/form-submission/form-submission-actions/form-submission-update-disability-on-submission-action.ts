@@ -6,11 +6,15 @@ import {
 } from "@sims/sims-db";
 import { EntityManager, In, Not } from "typeorm";
 import { Injectable } from "@nestjs/common";
+import { LoggerService } from "@sims/utilities/logger";
 import { FormSubmissionAction } from "./form-submission-action";
 import { FormSubmissionActionModel } from "./form-submission-action-models";
 
 @Injectable()
 export class FormSubmissionUpdateDisabilityOnSubmissionAction extends FormSubmissionAction {
+  constructor(private readonly logger: LoggerService) {
+    super();
+  }
   /**
    * Type of action being performed.
    */
@@ -38,10 +42,16 @@ export class FormSubmissionUpdateDisabilityOnSubmissionAction extends FormSubmis
       );
     }
     const auditUser = { id: auditUserId };
-    await entityManager.getRepository(Student).update(
+    const updateResult = await entityManager.getRepository(Student).update(
       {
         id: formSubmission.studentId,
-        disabilityStatus: Not(In([DisabilityStatus.PD, DisabilityStatus.PPD])),
+        disabilityStatus: Not(
+          In([
+            DisabilityStatus.PD,
+            DisabilityStatus.PPD,
+            DisabilityStatus.Requested,
+          ]),
+        ),
       },
       {
         disabilityStatus: DisabilityStatus.Requested,
@@ -50,6 +60,15 @@ export class FormSubmissionUpdateDisabilityOnSubmissionAction extends FormSubmis
         modifier: auditUser,
         updatedAt: auditDate,
       },
+    );
+    if (updateResult.affected === 1) {
+      this.logger.log(
+        `Disability status updated to ${DisabilityStatus.Requested} for the student ID ${formSubmission.studentId} on submission.`,
+      );
+      return;
+    }
+    this.logger.log(
+      `Disability status not updated for the student ID ${formSubmission.studentId} on submission.`,
     );
   }
 
