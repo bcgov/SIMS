@@ -331,7 +331,7 @@ function createFakeStudentPayload(options: {
     postalCode: "V5K0A1",
     canadaPostalCode: "V5K0A1",
     phone: "123-456-7890",
-    sinNumber: options.sinNumber,
+    sinNumber: options.sinNumber.replace(/(\d{3})(\d{3})(\d{3})/, "$1 $2 $3"),
     sinConsent: true,
     gender: "man",
   };
