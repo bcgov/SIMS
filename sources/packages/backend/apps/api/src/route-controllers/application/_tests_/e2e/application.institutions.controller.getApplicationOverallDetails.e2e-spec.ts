@@ -46,7 +46,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationOverallDetails", 
     );
   });
 
-  it("Should get only the current application and no applications versions in overall details when there is one or more edited application associated with the given application.", async () => {
+  it("Should get the current application and all applications versions in overall details when there is one or more edited application associated with the given application.", async () => {
     // Arrange
     // Create the parent application and also the first application version.
     const firstVersionApplication = await saveFakeApplication(
@@ -69,7 +69,8 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationOverallDetails", 
         applicationStatus: ApplicationStatus.Edited,
         applicationNumber: firstVersionApplication.applicationNumber,
         offeringIntensity:
-          firstVersionApplication.currentAssessment.offering.offeringIntensity,
+          firstVersionApplication.currentAssessment?.offering
+            ?.offeringIntensity,
         submittedDate: addDays(-1),
       },
     );
@@ -86,7 +87,8 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationOverallDetails", 
       {
         applicationNumber: firstVersionApplication.applicationNumber,
         offeringIntensity:
-          firstVersionApplication.currentAssessment.offering.offeringIntensity,
+          firstVersionApplication.currentAssessment?.offering
+            ?.offeringIntensity,
         submittedDate: new Date(),
       },
     );
@@ -103,11 +105,26 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationOverallDetails", 
       .expect({
         currentApplication: {
           id: currentApplication.id,
-          submittedDate: currentApplication.submittedDate.toISOString(),
+          submittedDate: currentApplication.submittedDate?.toISOString(),
           applicationEditStatus: currentApplication.applicationEditStatus,
           supportingUsers: [],
         },
-        previousVersions: [],
+        previousVersions: [
+          {
+            id: secondVersionApplication.id,
+            submittedDate: secondVersionApplication.submittedDate.toISOString(),
+            applicationEditStatus:
+              secondVersionApplication.applicationEditStatus,
+            supportingUsers: [],
+          },
+          {
+            id: firstVersionApplication.id,
+            submittedDate: firstVersionApplication.submittedDate.toISOString(),
+            applicationEditStatus:
+              firstVersionApplication.applicationEditStatus,
+            supportingUsers: [],
+          },
+        ],
       });
   });
 
@@ -131,7 +148,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationOverallDetails", 
       .expect({
         currentApplication: {
           id: originalApplication.id,
-          submittedDate: originalApplication.submittedDate.toISOString(),
+          submittedDate: originalApplication.submittedDate?.toISOString(),
           applicationEditStatus: originalApplication.applicationEditStatus,
           supportingUsers: [],
         },
@@ -193,7 +210,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationOverallDetails", 
         .expect({
           currentApplication: {
             id: currentApplication.id,
-            submittedDate: currentApplication.submittedDate.toISOString(),
+            submittedDate: currentApplication.submittedDate?.toISOString(),
             applicationEditStatus: currentApplication.applicationEditStatus,
             supportingUsers: [],
           },

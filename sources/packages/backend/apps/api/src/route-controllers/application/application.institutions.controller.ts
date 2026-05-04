@@ -195,16 +195,10 @@ export class ApplicationInstitutionsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<ApplicationOverallDetailsAPIOutDTO> {
-    const overallDetails =
-      await this.applicationControllerService.getApplicationOverallDetails(
-        applicationId,
-        { studentId },
-      );
-    // TODO Determine how previousVersions will be handled for Institution users.
-    // Temporarily modify the response to return only the currentApplication until the history requirements for Institution users are clarified.
-    return {
-      currentApplication: overallDetails.currentApplication,
-      previousVersions: [],
-    };
+    // TODO Does getApplicationOverallDetails need to be filtered by institution id as well?
+    return await this.applicationControllerService.getApplicationOverallDetails(
+      applicationId,
+      { studentId, includeChangeRequest: false },
+    );
   }
 }

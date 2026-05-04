@@ -94,7 +94,7 @@ export class ApplicationAESTController extends BaseController {
       );
     const application = await this.applicationService.getApplicationById(
       currentApplicationId,
-      { loadDynamicData, allowEdited: true },
+      { loadDynamicData },
     );
     if (!application) {
       throw new NotFoundException(
@@ -286,6 +286,7 @@ export class ApplicationAESTController extends BaseController {
   ): Promise<ApplicationOverallDetailsAPIOutDTO> {
     return this.applicationControllerService.getApplicationOverallDetails(
       applicationId,
+      { includeChangeRequest: true },
     );
   }
 }

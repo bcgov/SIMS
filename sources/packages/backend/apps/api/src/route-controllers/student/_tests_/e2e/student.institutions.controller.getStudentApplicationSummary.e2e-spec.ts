@@ -158,10 +158,9 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
       "for the institution and current Submitted application for another institution.",
     async () => {
       // Arrange
-
-      // Student has an original (Edited) application to the institution.
       const student = await saveFakeStudent(appDataSource);
-      // Application 1 for college F.
+
+      // Original (Edited) application for College F.
       const collegeFApplication = await saveFakeApplication(
         appDataSource,
         {
@@ -174,7 +173,6 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
         },
       );
 
-      // Current Application (Submitted) for another college E.
       const { institution: collegeE } = await getAuthRelatedEntities(
         appDataSource,
         InstitutionTokenTypes.CollegeEReadOnlyUser,
@@ -182,6 +180,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
       let collegeELocation = createFakeInstitutionLocation({
         institution: collegeE,
       });
+      // Current (Submitted) Application for college E.
       const collegeEApplication = await saveFakeApplication(appDataSource, {
         institution: collegeE,
         institutionLocation: collegeELocation,

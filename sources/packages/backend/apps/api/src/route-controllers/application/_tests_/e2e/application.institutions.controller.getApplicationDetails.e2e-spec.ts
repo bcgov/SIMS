@@ -158,35 +158,71 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       });
   });
 
-  it("Should not get the student application details when the application status is edited.", async () => {
-    // Arrange
-    const savedApplication = await saveFakeApplication(
-      db.dataSource,
-      {
-        institutionLocation: collegeFLocation,
-      },
-      {
-        applicationStatus: ApplicationStatus.Edited,
-      },
-    );
+  it(
+    "Should get the student application details when student has an Edited application " +
+      "for the institution and current Submitted application for another institution.",
+    async () => {
+      // Arrange
+      const offeringInitialValues = {
+        studyStartDate: getISODateOnlyString(addDays(-10)),
+        studyEndDate: getISODateOnlyString(addDays(10)),
+        offeringIntensity: OfferingIntensity.fullTime,
+      } as EducationProgramOffering;
+      // Student has an original (Edited) application to the institution.
+      const editedApplication = await saveFakeApplication(
+        db.dataSource,
+        {
+          institutionLocation: collegeFLocation,
+        },
+        { applicationStatus: ApplicationStatus.Edited },
+      );
+      const student = editedApplication.student;
 
-    const student = savedApplication.student;
-    const endpoint = `/institutions/application/student/${student.id}/application/${savedApplication.id}`;
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
+      // Current Application (Submitted) for another college E.
+      const submittedApplication = await saveFakeApplication(
+        db.dataSource,
+        {
+          institutionLocation: collegeCLocation,
+          student,
+          parentApplication: editedApplication,
+          precedingApplication: editedApplication,
+        },
+        {
+          applicationStatus: ApplicationStatus.Submitted,
+          offeringInitialValues: offeringInitialValues,
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+      );
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
-        error: "Forbidden",
-      });
-  });
+      const endpoint = `/institutions/application/student/${student.id}/application/${submittedApplication.id}`;
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          data: {},
+          id: submittedApplication.id,
+          applicationStatus: submittedApplication.applicationStatus,
+          applicationEditStatus: submittedApplication.applicationEditStatus,
+          applicationNumber: submittedApplication.applicationNumber,
+          isArchived: false,
+          applicationFormName: "SFAA2022-23",
+          applicationProgramYearID: submittedApplication.programYear.id,
+          studentFullName: getUserFullName(submittedApplication.student.user),
+          applicationOfferingIntensity: offeringInitialValues.offeringIntensity,
+          applicationStartDate: offeringInitialValues.studyStartDate,
+          applicationEndDate: offeringInitialValues.studyEndDate,
+          applicationInstitutionName:
+            submittedApplication.location.institution.legalOperatingName,
+          isChangeRequestAllowedForPY: false,
+        });
+    },
+  );
 
   afterAll(async () => {
     await app?.close();

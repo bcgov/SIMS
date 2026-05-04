@@ -231,7 +231,6 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       ApplicationStatus.Submitted,
     );
     await studentRepo.save(student);
-    console.log("student first name", student.user.firstName);
     const searchPayload = {
       appNumber: "",
       firstName: student.user.firstName?.slice(0, 25),

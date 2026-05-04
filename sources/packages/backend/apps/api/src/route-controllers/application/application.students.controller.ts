@@ -108,7 +108,6 @@ export class ApplicationStudentsController extends BaseController {
       {
         loadDynamicData: true,
         studentId: userToken.studentId,
-        allowEdited: true,
       },
     );
     if (!application) {
@@ -704,7 +703,7 @@ export class ApplicationStudentsController extends BaseController {
   ): Promise<ApplicationOverallDetailsAPIOutDTO> {
     return this.applicationControllerService.getApplicationOverallDetails(
       applicationId,
-      { studentId: userToken.studentId },
+      { studentId: userToken.studentId, includeChangeRequest: true },
     );
   }
 }

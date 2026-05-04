@@ -938,7 +938,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * - `loadDynamicData` indicates if the dynamic data(JSONB) should be loaded.
    * - `studentId` student id.
    * - `institutionId` institution id.
-   * - `allowEdited` indicates if Edited application is allowed.
    * - `entityManager` entity manager to be used for the query. Useful when
    * it needs to be executed in a transaction.
    * @returns student application.
@@ -949,15 +948,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
       loadDynamicData?: boolean;
       studentId?: number;
       institutionId?: number;
-      allowEdited?: boolean;
       entityManager?: EntityManager;
     },
   ): Promise<Application> {
     const applicationRepo =
       options?.entityManager?.getRepository(Application) ?? this.repo;
-    const applicationStatus = options?.allowEdited
-      ? undefined
-      : Not(ApplicationStatus.Edited);
     return applicationRepo.findOne({
       select: {
         id: true,
@@ -1036,11 +1031,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       where: {
         id: applicationId,
-        applicationStatus,
         student: {
           id: options?.studentId,
         },
-        location: { institution: { id: options?.institutionId } },
+        parentApplication: {
+          versions: {
+            location: { institution: { id: options?.institutionId } },
+          },
+        },
       },
     });
   }
@@ -1083,6 +1081,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     // If institution id is present, get only the applications linked with the institution at any point in time.
     if (institutionId) {
+      // TODO The join on parentApplication.versions can create duplicate rows when a parent application
+      // has multiple versions linked to the same institution (common after multiple edits).
       applicationQuery
         .innerJoin("parentApplication.versions", "version")
         .innerJoin("version.location", "institutionLocation")

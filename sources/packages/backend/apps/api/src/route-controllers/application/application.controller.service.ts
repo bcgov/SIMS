@@ -851,11 +851,12 @@ export class ApplicationControllerService {
    * @param applicationId application ID.
    * @param options options.
    * - `studentId` student ID used for authorization.
+   * - `includeChangeRequest` indicates whether the in-progress change request details should be included in the response.
    * @returns application overall details.
    */
   async getApplicationOverallDetails(
     applicationId: number,
-    options?: { studentId?: number },
+    options?: { studentId?: number; includeChangeRequest: boolean },
   ): Promise<ApplicationOverallDetailsAPIOutDTO> {
     const application = await this.applicationService.getAllApplicationVersions(
       applicationId,
@@ -870,9 +871,10 @@ export class ApplicationControllerService {
     const currentApplication =
       this.transformToApplicationOverallDetailsAPIOutDTO(application);
     // Convert all the past versions of the application.
-    let previousVersions = application.parentApplication.versions.map(
-      (version) => this.transformToApplicationOverallDetailsAPIOutDTO(version),
-    );
+    let previousVersions =
+      application.parentApplication?.versions.map((version) =>
+        this.transformToApplicationOverallDetailsAPIOutDTO(version),
+      ) ?? [];
     // Check if there is an in-progress change request for the application.
     const inProgressChangeRequest = previousVersions.find((version) =>
       APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES.includes(
@@ -888,7 +890,9 @@ export class ApplicationControllerService {
     }
     return {
       currentApplication,
-      inProgressChangeRequest,
+      inProgressChangeRequest: options?.includeChangeRequest
+        ? inProgressChangeRequest
+        : undefined,
       previousVersions,
     };
   }
