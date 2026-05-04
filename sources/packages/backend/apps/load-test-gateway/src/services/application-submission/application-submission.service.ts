@@ -55,6 +55,10 @@ export interface ApplicationSetupData {
    */
   programId: number;
   /**
+   * Institution location ID associated with the offering.
+   */
+  locationId: number;
+  /**
    * Program year ID to use when submitting the application.
    */
   programYearId: number;
@@ -121,6 +125,7 @@ export class ApplicationSubmissionService {
         applicationId: 0,
         offeringId: savedOffering.id,
         programId: savedOffering.educationProgram.id,
+        locationId: savedOffering.institutionLocation.id,
         programYearId: programYear.id,
       });
     }

@@ -39,6 +39,7 @@ interface ApplicationSetupData {
   applicationId: number;
   offeringId: number;
   programId: number;
+  locationId: number;
   programYearId: number;
 }
 
@@ -80,7 +81,7 @@ export const options: Options = {
  * @param setupData setup data returned by setup method.
  */
 export default function (setupData: SetupData) {
-  const { applicationId, offeringId, programId, programYearId } =
+  const { applicationId, offeringId, programId, locationId, programYearId } =
     setupData.setupItems[execution.scenario.iterationInTest];
   const payload = {
     associatedFiles: [] as string[],
@@ -89,6 +90,7 @@ export default function (setupData: SetupData) {
       ...APPLICATION_SUBMISSION_DATA,
       selectedOffering: offeringId,
       selectedProgram: programId,
+      selectedLocation: locationId,
     },
   };
   const submitResponse = patchStudentAPICall(
@@ -108,7 +110,13 @@ export default function (setupData: SetupData) {
  * overridden per iteration with the IDs returned from the gateway setup.
  */
 const APPLICATION_SUBMISSION_DATA = {
-  workflowName: "assessment-gateway",
+  workflowName: "assessment-gateway-v2",
+  applicationExceptionsStrategy: "verify-unique-application-exceptions",
+  maxIncome: "100000000",
+  isChangeRequestApplication: false,
+  isProgramSectionReadOnly: false,
+  allowBetaInstitutionsOnly: false,
+  applicationSubmissionDeadlineWeeks: 6,
   selectedLocation: 14,
   mySchoolIsNotListed: false,
   studentNumber: "",
@@ -120,9 +128,6 @@ const APPLICATION_SUBMISSION_DATA = {
     credentialTypeToDisplay: "Graduate Diploma",
     deliveryMethod: "Onsite",
   },
-  studyEndDateBeforeSixWeeksFromToday: false,
-  selectedStudyEndDateBeforeSixWeeksFromToday: false,
-  studyPeriodMinDays: 84,
   studyPeriodMaxDays: "365",
   studentGivenNames: "MATT",
   studentDateOfBirth: "Nov 25 1985",
@@ -131,30 +136,24 @@ const APPLICATION_SUBMISSION_DATA = {
   studentLastName: "FRANKY",
   studentGender: "man",
   studentPhoneNumber: "7789221234",
-  disabilityStatus: "Requested",
+  disabilityStatus: "Not requested",
   studentInfoConfirmed: true,
   citizenship: "canadianCitizen",
-  bcResident: "yes",
   indigenousStatus: "no",
   youthInCare: "no",
+  everDeclaredBankruptcy: "no",
   addTrustContactToContactSABC: "no",
   roiInformation: [
     {
-      fullNmae: "",
-      relationshipToYou: "",
-      fullName: "",
       firstName: "",
       lastName: "",
       relationshipWithThisContact: "",
     },
   ],
   relationshipStatus: "single",
-  hasDependents: "yes",
-  showParentInformation: false,
+  hasDependents: "no",
   craConsent: true,
-  haveDaycareCosts11YearsOrUnder: "no",
-  haveDaycareCosts12YearsOrOver: "no",
-  dependantstatus: "independant",
+  dependantstatus: "dependant",
   studentAidBcConsent: true,
   applicationId: "",
   applicationStatus: "",
@@ -163,34 +162,43 @@ const APPLICATION_SUBMISSION_DATA = {
   myProgramNotListed: {
     programnotListed: false,
   },
-  programYearStartDate: "2023-08-01",
-  programYearEndDate: "2024-07-31",
-  taxReturnIncome: 9999999999,
+  programYearStartDate: "2026-08-01",
+  programYearEndDate: "2027-07-31",
+  programYear: "2026",
+  calculatedTaxYear: 2025,
+  currentTaxYear: "2026",
+  taxReturnIncome: 15000,
   outOfHighSchoolFor4Years: "no",
   whenDidYouGraduateOrLeaveHighSchool: "2023-10-03",
   fulltimelabourForce: "no",
-  hasSignificantDegreeOfIncome: "no",
-  exceptionalExpense: "no",
+  fulltimeMonthsOfStudy: 0,
+  duringStudyCoopPaidWork: "no",
   childSupport: "no",
   parentvoluntaryContributions: "no",
   governmentFunding: "no",
   nonGovernmentFunding: "no",
   scholarshipsReceived: "no",
   bcIncomeassistanceforDisabilities: "no",
-  livingWithParents: "no",
+  livingAtHome: "no",
   considerCostToRelocateToDifferentCity: "no",
   additionalTransportRequested: "no",
+  parentInformationStatus: "required",
+  parentsDeceased: "no",
+  estrangedFromParents: "no",
+  parents: [
+    {
+      parentFullName: "Test Parent",
+      parentIsAbleToReport: "no",
+    },
+  ],
+  parentbcResident: "yes",
+  isReadOnly: false,
+  isFulltimeAllowed: true,
+  applicationOfferingIntensityValue: "Full Time",
+  pirResubmissionDate: "",
+  hasPreviouslyCompletedPIR: false,
   myStudyPeriodIsntListed: {
     offeringnotListed: false,
   },
-  dependants: [
-    {
-      fullName: "My son",
-      dateOfBirth: "2023-10-03",
-      attendingPostSecondarySchool: "no",
-      declaredOnTaxes: "no",
-    },
-  ],
-  supportnocustodyDependants: "no",
   applicationPDPPDStatus: "no",
 };
