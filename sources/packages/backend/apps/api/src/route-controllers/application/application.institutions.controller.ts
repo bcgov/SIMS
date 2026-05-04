@@ -51,8 +51,6 @@ export class ApplicationInstitutionsController extends BaseController {
    * This API will be used by institution users.
    * @param applicationId for the application.
    * @param studentId for the student.
-   * TODO Analyze whether the isParentApplication flag is necessary as it is not used in web.
-   * @param isParentApplication flag for if the application is a parent application.
    * @returns Application details.
    */
   @ApiNotFoundResponse({
@@ -66,20 +64,11 @@ export class ApplicationInstitutionsController extends BaseController {
     @UserToken() userToken: IInstitutionUserToken,
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Param("studentId", ParseIntPipe) studentId: number,
-    @Query("isParentApplication", new DefaultValuePipe(false), ParseBoolPipe)
-    isParentApplication: boolean,
     @Query("loadDynamicData", new DefaultValuePipe(true), ParseBoolPipe)
     loadDynamicData: boolean,
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
-    // When the application is a parent application, get the current application by parent application id.
-    // Otherwise, set the current application id to the provided application id.
-    const currentApplicationId =
-      await this.applicationControllerService.getCurrentApplicationId(
-        applicationId,
-        isParentApplication,
-      );
     const application = await this.applicationService.getApplicationById(
-      currentApplicationId,
+      applicationId,
       {
         loadDynamicData,
         studentId: studentId,
