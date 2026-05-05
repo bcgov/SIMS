@@ -10,7 +10,7 @@
     "workflow-assessment-submission": "npm run build && k6 run ./dist/workflow-assessment-submission.test.js",
     "application-submission": "npm run build && k6 run ./dist/application-submission.test.js",
     "application-submission:smoke": "npm run build && k6 run -e ITERATIONS=1 -e VIRTUAL_USERS=1 ./dist/application-submission.test.js",
-    "application-submission:stress": "npm run build && k6 run -e ITERATIONS=1000 -e VIRTUAL_USERS=30 ./dist/application-submission.test.js"
+    "application-submission:stress": "npm run build && k6 run -e ITERATIONS=5000 -e VIRTUAL_USERS=200 ./dist/application-submission.test.js"
   },
   "license": "ISC",
   "devDependencies": {

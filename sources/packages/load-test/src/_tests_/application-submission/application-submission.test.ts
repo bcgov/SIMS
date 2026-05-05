@@ -31,6 +31,12 @@ const VIRTUAL_USERS = Math.min(
   parseInt(__ENV.VIRTUAL_USERS || "15"),
   ITERATIONS,
 );
+/**
+ * Maximum number of draft applications to create per setup request.
+ * Batching prevents HTTP and database timeouts when ITERATIONS is large.
+ * Can be overridden via k6 -e SETUP_BATCH_SIZE=<n>.
+ */
+const SETUP_BATCH_SIZE = parseInt(__ENV.SETUP_BATCH_SIZE || "500");
 
 /**
  * Per-iteration data returned by the gateway setup endpoint.
@@ -50,17 +56,27 @@ interface SetupData {
 
 /**
  * Load all the required draft applications to be submitted during
- * the load test execution.
+ * the load test execution. Requests are batched to avoid HTTP and
+ * database timeouts when the number of iterations is large.
  * @returns setup data.
  */
 export function setup(): SetupData {
   const gatewayCredentials = getLoadTestGatewayCredentials();
-  const response = loadTestPostCall(
-    `application-submission/setup/${ITERATIONS}`,
-    gatewayCredentials,
-    { payload: { studentUserName: E2E_TEST_STUDENT_USERNAME } },
-  );
-  const setupItems = response.json() as unknown as ApplicationSetupData[];
+  const setupItems: ApplicationSetupData[] = [];
+  let remaining = ITERATIONS;
+  while (remaining > 0) {
+    const batchSize = Math.min(remaining, SETUP_BATCH_SIZE);
+    const response = loadTestPostCall(
+      `application-submission/setup/${batchSize}`,
+      gatewayCredentials,
+      { payload: { studentUserName: E2E_TEST_STUDENT_USERNAME } },
+    );
+    const batch = response.json() as unknown as ApplicationSetupData[];
+    for (const item of batch) {
+      setupItems.push(item);
+    }
+    remaining -= batchSize;
+  }
   return { setupItems, studentCredentials: getStudentCredentials() };
 }
 
@@ -98,9 +114,14 @@ export default function (setupData: SetupData) {
     setupData.studentCredentials,
     payload,
   );
-  check(submitResponse, {
+  const submitted = check(submitResponse, {
     "Submitted with success": (r) => r.status === 200,
   });
+  if (!submitted) {
+    console.error(
+      `Application ${applicationId} failed — status: ${submitResponse.status}, body: ${submitResponse.body}`,
+    );
+  }
   sleep(1);
 }
 
