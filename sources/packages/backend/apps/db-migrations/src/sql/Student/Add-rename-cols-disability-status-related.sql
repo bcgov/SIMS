@@ -12,6 +12,8 @@ COMMENT ON COLUMN sims.students.disability_status_form_submission_item_id IS 'Fo
 
 COMMENT ON COLUMN sims.students.disability_status_updated_by IS 'User who updated the disability status.';
 
+COMMENT ON COLUMN sims.students.disability_status_updated_on IS 'Timestamp when the disability status was last updated.';
+
 -- History table new columns.
 ALTER TABLE
     sims.students_history
