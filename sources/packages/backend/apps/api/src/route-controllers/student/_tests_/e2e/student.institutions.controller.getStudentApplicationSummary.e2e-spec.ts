@@ -100,6 +100,85 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
   );
 
   it(
+    "Should get the student application details as summary when student has a submitted application with multiple versions" +
+      " for the institution (application with location id saved).",
+    async () => {
+      // Arrange
+
+      // Student has a submitted application to the institution.
+      const student = await saveFakeStudent(appDataSource);
+
+      const application1 = await saveFakeApplication(
+        appDataSource,
+        {
+          institution: collegeF,
+          institutionLocation: collegeFLocation,
+          student,
+        },
+        { applicationStatus: ApplicationStatus.Edited },
+      );
+
+      const application2 = await saveFakeApplication(
+        appDataSource,
+        {
+          institution: collegeF,
+          institutionLocation: collegeFLocation,
+          student,
+          parentApplication: application1,
+          precedingApplication: application1,
+        },
+        {
+          applicationStatus: ApplicationStatus.Edited,
+        },
+      );
+
+      const application3 = await saveFakeApplication(
+        appDataSource,
+        {
+          institution: collegeF,
+          institutionLocation: collegeFLocation,
+          student,
+          parentApplication: application1,
+          precedingApplication: application2,
+        },
+        {
+          applicationStatus: ApplicationStatus.Submitted,
+        },
+      );
+
+      const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10`;
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          results: [
+            {
+              id: application3.id,
+              applicationNumber: application3.applicationNumber,
+              isArchived: false,
+              studyStartPeriod:
+                application3.currentAssessment?.offering?.studyStartDate,
+              studyEndPeriod:
+                application3.currentAssessment?.offering?.studyEndDate,
+              status: application3.applicationStatus,
+              parentApplicationId: application1.id,
+              submittedDate: application1.submittedDate?.toISOString(),
+              isChangeRequestAllowedForPY: false,
+              offeringIntensity: application3.offeringIntensity,
+            },
+          ],
+          count: 1,
+        });
+    },
+  );
+
+  it(
     "Should get the student application details belonging to the requested institution as summary when student has a submitted application " +
       "for the institution and another submitted application for another institution.",
     async () => {

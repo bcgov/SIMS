@@ -937,7 +937,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param options object that should contain:
    * - `loadDynamicData` indicates if the dynamic data(JSONB) should be loaded.
    * - `studentId` student id.
-   * - `institutionId` institution id.
    * - `entityManager` entity manager to be used for the query. Useful when
    * it needs to be executed in a transaction.
    * @returns student application.
@@ -947,7 +946,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
     options?: {
       loadDynamicData?: boolean;
       studentId?: number;
-      institutionId?: number;
       entityManager?: EntityManager;
     },
   ): Promise<Application> {
@@ -1034,11 +1032,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         student: {
           id: options?.studentId,
         },
-        parentApplication: {
-          versions: {
-            location: { institution: { id: options?.institutionId } },
-          },
-        },
       },
     });
   }
@@ -1081,15 +1074,19 @@ export class ApplicationService extends RecordDataModelService<Application> {
 
     // If institution id is present, get only the applications linked with the institution at any point in time.
     if (institutionId) {
-      // TODO The join on parentApplication.versions can create duplicate rows when a parent application
-      // has multiple versions linked to the same institution (common after multiple edits).
-      applicationQuery
-        .innerJoin("parentApplication.versions", "version")
-        .innerJoin("version.location", "institutionLocation")
-        .innerJoin("institutionLocation.institution", "institution")
-        .andWhere("institution.id = :institutionId", {
-          institutionId,
-        });
+      const versionExistsQuery = this.repo
+        .createQueryBuilder("application")
+        .select("1")
+        .from(Application, "version")
+        .innerJoin("version.location", "vLocation")
+        .innerJoin("vLocation.institution", "vInstitution")
+        .where("version.parentApplication.id = parentApplication.id")
+        .andWhere("vInstitution.id = :institutionId")
+        .getQuery();
+      // // Use EXISTS to avoid duplicate rows when a parent application has multiple versions
+      applicationQuery.andWhere(`EXISTS(${versionExistsQuery})`, {
+        institutionId,
+      });
     }
 
     // sorting
@@ -1125,6 +1122,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .offset(pagination.page * pagination.pageLimit);
 
     // result
+
+    console.log("sql", applicationQuery.getSql());
+
     return applicationQuery.getManyAndCount();
   }
 

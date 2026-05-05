@@ -21,7 +21,6 @@ import {
   AllowAuthorizedParty,
   HasStudentDataAccess,
   IsBCPublicInstitution,
-  UserToken,
 } from "../../auth/decorators";
 import {
   ApiNotFoundResponse,
@@ -30,7 +29,7 @@ import {
 } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 import { ApplicationControllerService } from "./application.controller.service";
-import { AuthorizedParties, IInstitutionUserToken } from "../../auth";
+import { AuthorizedParties } from "../../auth";
 import { ApplicationStatus } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -61,7 +60,6 @@ export class ApplicationInstitutionsController extends BaseController {
   })
   @Get("student/:studentId/application/:applicationId")
   async getApplication(
-    @UserToken() userToken: IInstitutionUserToken,
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Param("studentId", ParseIntPipe) studentId: number,
     @Query("loadDynamicData", new DefaultValuePipe(true), ParseBoolPipe)
@@ -72,7 +70,6 @@ export class ApplicationInstitutionsController extends BaseController {
       {
         loadDynamicData,
         studentId: studentId,
-        institutionId: userToken.authorizations.institutionId,
       },
     );
     if (loadDynamicData) {
@@ -184,7 +181,6 @@ export class ApplicationInstitutionsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<ApplicationOverallDetailsAPIOutDTO> {
-    // TODO Does getApplicationOverallDetails need to be filtered by institution id as well?
     return await this.applicationControllerService.getApplicationOverallDetails(
       applicationId,
       { studentId, includeChangeRequest: false },
