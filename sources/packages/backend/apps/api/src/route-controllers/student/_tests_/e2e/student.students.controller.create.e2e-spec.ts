@@ -44,6 +44,7 @@ describe("StudentStudentsController(e2e)-create", () => {
   });
 
   beforeEach(async () => {
+    MockDate.reset();
     await resetMockJWTUserInfo(appModule);
     await db.sinValidation.update(
       { sin: In([SIN_NUMBER_A, SIN_NUMBER_B, SIN_NUMBER_PARTIAL_MATCH]) },

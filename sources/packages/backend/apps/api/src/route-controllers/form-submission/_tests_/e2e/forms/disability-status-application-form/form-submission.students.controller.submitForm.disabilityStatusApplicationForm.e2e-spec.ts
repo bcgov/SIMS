@@ -7,7 +7,7 @@ import {
   getStudentToken,
   mockJWTUserInfo,
   resetMockJWTUserInfo,
-} from "../../../../testHelpers";
+} from "../../../../../../testHelpers";
 import {
   createE2EDataSources,
   E2EDataSources,
@@ -21,7 +21,7 @@ import {
   StudentFile,
 } from "@sims/sims-db";
 import MockDate from "mockdate";
-const FORM_DEFINITION_NAME = "disabilitystatusapplicationform";
+import { FORM_DEFINITION_NAME } from "./form-constants";
 
 describe(`FormSubmissionStudentsController(e2e)-submitForm-${FORM_DEFINITION_NAME}`, () => {
   let app: INestApplication;
