@@ -4985,7 +4985,7 @@
       <output id="OutputClause_1gc5mh1" label="isAccessibilityGrantEligibilityAppealEligible" name="isAccessibilityGrantEligibilityAppealEligible" typeRef="boolean" />
       <output id="OutputClause_1qhtxma" name="isSFAEligibilityInternationalInstitutionsAppealEligible" typeRef="boolean" />
       <output id="OutputClause_0kh4izg" label="isFTCanadaStudentGrantAppealEligible" name="isFTCanadaStudentGrantAppealEligible" typeRef="boolean" />
-      <output id="OutputClause_0w94cj7" name="isSFAEligibilityOOPPrivateInstitutionsEligibilityAppealEligible" typeRef="boolean" />
+      <output id="OutputClause_0w94cj7" name="isSFAEligibilityOOPPrivateInstitutionsAppealEligible" typeRef="boolean" />
       <rule id="DecisionRule_162dc01">
         <inputEntry id="UnaryTests_0y5b0py">
           <text>"CA"</text>
