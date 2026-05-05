@@ -1,4 +1,4 @@
-import { RouteLocationNormalizedGeneric, RouteRecordRaw } from "vue-router";
+import { RouteRecordRaw } from "vue-router";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { AppRoutes, ClientIdType } from "@/types";
 import StudentApplicationView from "@/views/aest/student/applicationDetails/StudentApplicationView.vue";
@@ -10,16 +10,17 @@ import AssessmentAwardVersion from "@/views/aest/student/applicationDetails/Asse
 import ApplicationOfferingChangeRequestForm from "@/views/aest/student/applicationDetails/ApplicationOfferingChangeRequestForm.vue";
 import ApplicationExceptionsApprovalVersion from "@/views/aest/student/applicationDetails/ApplicationExceptionsApprovalVersion.vue";
 import StudentFormSubmissionApproval from "@/views/aest/student/StudentFormSubmissionApproval.vue";
+import { RouteHelper } from "@/helpers";
 
 /**
  * AEST Routes for application version details views.
  */
 export const AESTRoutesApplicationVersionsDetails: Array<RouteRecordRaw> = [
   {
-    path: getVersionRoutePath(AppRoutes.ApplicationView),
+    path: RouteHelper.getVersionRoutePath(AppRoutes.ApplicationView),
     name: AESTRoutesConst.APPLICATION_VERSION_DETAILS,
     props: (route) => ({
-      ...defaultDetailsRoute(route),
+      ...RouteHelper.defaultDetailsRoute(route),
     }),
     component: StudentApplicationView,
     meta: {
@@ -27,10 +28,10 @@ export const AESTRoutesApplicationVersionsDetails: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: getVersionRoutePath(AppRoutes.AssessmentSummary),
+    path: RouteHelper.getVersionRoutePath(AppRoutes.AssessmentSummary),
     name: AESTRoutesConst.ASSESSMENTS_SUMMARY_VERSION,
     props: (route) => ({
-      ...defaultDetailsRoute(route),
+      ...RouteHelper.defaultDetailsRoute(route),
     }),
     component: AssessmentsSummaryVersion,
     meta: {
@@ -38,10 +39,10 @@ export const AESTRoutesApplicationVersionsDetails: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: getVersionRoutePath(AppRoutes.AssessmentAwardView),
+    path: RouteHelper.getVersionRoutePath(AppRoutes.AssessmentAwardView),
     name: AESTRoutesConst.ASSESSMENT_AWARD_VIEW_VERSION,
     props: (route) => ({
-      ...defaultDetailsRoute(route),
+      ...RouteHelper.defaultDetailsRoute(route),
       assessmentId: Number.parseInt(route.params.assessmentId as string),
     }),
     component: AssessmentAwardVersion,
@@ -50,10 +51,10 @@ export const AESTRoutesApplicationVersionsDetails: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: getVersionRoutePath(AppRoutes.NoticeOfAssessmentView),
+    path: RouteHelper.getVersionRoutePath(AppRoutes.NoticeOfAssessmentView),
     name: AESTRoutesConst.NOTICE_OF_ASSESSMENT_VIEW_VERSION,
     props: (route) => ({
-      ...defaultDetailsRoute(route),
+      ...RouteHelper.defaultDetailsRoute(route),
       assessmentId: Number.parseInt(route.params.assessmentId as string),
     }),
     component: NoticeOfAssessmentVersion,
@@ -62,10 +63,10 @@ export const AESTRoutesApplicationVersionsDetails: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: getVersionRoutePath(AppRoutes.StudentAppealRequest),
+    path: RouteHelper.getVersionRoutePath(AppRoutes.StudentAppealRequest),
     name: AESTRoutesConst.STUDENT_APPLICATION_APPEAL_REQUESTS_APPROVAL_VERSION,
     props: (route) => ({
-      ...defaultDetailsRoute(route),
+      ...RouteHelper.defaultDetailsRoute(route),
       appealId: Number.parseInt(route.params.appealId as string),
     }),
     component: StudentAppealRequestsApprovalVersion,
@@ -74,7 +75,9 @@ export const AESTRoutesApplicationVersionsDetails: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: getVersionRoutePath(AppRoutes.StudentFormSubmissionApproval),
+    path: RouteHelper.getVersionRoutePath(
+      AppRoutes.StudentFormSubmissionApproval,
+    ),
     name: AESTRoutesConst.STUDENT_APPLICATION_FORM_SUBMISSION_APPROVAL_VERSION,
     props: (route) => ({
       formSubmissionId: Number.parseInt(
@@ -97,10 +100,10 @@ export const AESTRoutesApplicationVersionsDetails: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: getVersionRoutePath(AppRoutes.ScholasticStandingView),
+    path: RouteHelper.getVersionRoutePath(AppRoutes.ScholasticStandingView),
     name: AESTRoutesConst.SCHOLASTIC_STANDING_VIEW_VERSION,
     props: (route) => ({
-      ...defaultDetailsRoute(route),
+      ...RouteHelper.defaultDetailsRoute(route),
       scholasticStandingId: Number.parseInt(
         route.params.scholasticStandingId as string,
       ),
@@ -111,12 +114,12 @@ export const AESTRoutesApplicationVersionsDetails: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: getVersionRoutePath(
+    path: RouteHelper.getVersionRoutePath(
       AppRoutes.StudentAESTApplicationOfferingChangeRequest,
     ),
     name: AESTRoutesConst.STUDENT_APPLICATION_OFFERING_CHANGE_REQUEST_VERSION,
     props: (route) => ({
-      ...defaultDetailsRoute(route),
+      ...RouteHelper.defaultDetailsRoute(route),
       applicationOfferingChangeRequestId: Number.parseInt(
         route.params.applicationOfferingChangeRequestId as string,
       ),
@@ -127,10 +130,10 @@ export const AESTRoutesApplicationVersionsDetails: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: getVersionRoutePath(AppRoutes.ApplicationException),
+    path: RouteHelper.getVersionRoutePath(AppRoutes.ApplicationException),
     name: AESTRoutesConst.APPLICATION_EXCEPTIONS_APPROVAL_VERSION,
     props: (route) => ({
-      ...defaultDetailsRoute(route),
+      ...RouteHelper.defaultDetailsRoute(route),
       exceptionId: Number.parseInt(route.params.exceptionId as string),
     }),
     component: ApplicationExceptionsApprovalVersion,
@@ -139,27 +142,3 @@ export const AESTRoutesApplicationVersionsDetails: Array<RouteRecordRaw> = [
     },
   },
 ];
-
-/**
- * Convert the default route params in applications details version routes.
- * @param route route with the parameters to be converted.
- * @returns studentId, applicationId and versionApplicationId as numbers.
- */
-function defaultDetailsRoute(route: RouteLocationNormalizedGeneric) {
-  return {
-    studentId: Number.parseInt(route.params.studentId as string),
-    applicationId: Number.parseInt(route.params.applicationId as string),
-    versionApplicationId: Number.parseInt(
-      route.params.versionApplicationId as string,
-    ),
-  };
-}
-
-/**
- * Creates the version route path for application details routes.
- * @param baseRouteName base route name.
- * @returns version route path.
- */
-function getVersionRoutePath(baseRouteName: string): string {
-  return `version/:versionApplicationId/${baseRouteName}`;
-}

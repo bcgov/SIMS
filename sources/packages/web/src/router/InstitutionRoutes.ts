@@ -1,8 +1,4 @@
-import {
-  RouteLocationNormalized,
-  RouteLocationNormalizedGeneric,
-  RouteRecordRaw,
-} from "vue-router";
+import { RouteLocationNormalized, RouteRecordRaw } from "vue-router";
 import InstitutionDashboard from "@/views/institution/InstitutionDashboard.vue";
 import InstitutionProfile from "@/views/institution/InstitutionProfile.vue";
 import InstitutionCreate from "@/views/institution/InstitutionCreate.vue";
@@ -819,10 +815,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             component: NoticeOfAssessment,
           },
           {
-            path: getVersionRoutePath(AppRoutes.ApplicationView),
+            path: RouteHelper.getVersionRoutePath(AppRoutes.ApplicationView),
             name: InstitutionRoutesConst.APPLICATION_VERSION_DETAILS,
             props: (route) => ({
-              ...defaultDetailsRoute(route),
+              ...RouteHelper.defaultDetailsRoute(route),
             }),
             component: InstitutionStudentApplicationView,
           },
@@ -871,29 +867,3 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
     },
   },
 ];
-
-// TODO Move these functions to a helper file since they are also used in StudentRoutes.
-
-/**
- * Convert the default route params in applications details version routes.
- * @param route route with the parameters to be converted.
- * @returns studentId, applicationId and versionApplicationId as numbers.
- */
-function defaultDetailsRoute(route: RouteLocationNormalizedGeneric) {
-  return {
-    studentId: Number.parseInt(route.params.studentId as string),
-    applicationId: Number.parseInt(route.params.applicationId as string),
-    versionApplicationId: Number.parseInt(
-      route.params.versionApplicationId as string,
-    ),
-  };
-}
-
-/**
- * Creates the version route path for application details routes.
- * @param baseRouteName base route name.
- * @returns version route path.
- */
-function getVersionRoutePath(baseRouteName: string): string {
-  return `version/:versionApplicationId/${baseRouteName}`;
-}

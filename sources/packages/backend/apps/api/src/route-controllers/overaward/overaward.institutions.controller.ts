@@ -1,7 +1,11 @@
 import { Controller, Param, ParseIntPipe, Get } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { AllowAuthorizedParty } from "../../auth/decorators";
+import {
+  AllowAuthorizedParty,
+  HasStudentDataAccess,
+  IsBCPublicInstitution,
+} from "../../auth/decorators";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
@@ -11,6 +15,8 @@ import {
 import { OverawardControllerService } from "..";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
+@IsBCPublicInstitution()
+@HasStudentDataAccess("studentId")
 @Controller("overaward")
 @ApiTags(`${ClientTypeBaseRoute.Institution}-overaward`)
 export class OverawardInstitutionsController extends BaseController {

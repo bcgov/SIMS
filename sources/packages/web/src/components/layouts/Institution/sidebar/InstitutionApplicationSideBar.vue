@@ -111,7 +111,7 @@ const createCurrentApplicationMenuItems = (
 
 /**
  * Create the menu for the past applications (Application History).
- * @param applicationVersion application version information.
+ * @param versions application version information.
  */
 const createVersionsMenuItems = (
   versions: ApplicationVersionAPIOutDTO[],
