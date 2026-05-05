@@ -57,10 +57,10 @@ export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
 export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 365)
 #Formio forms integration
 export FORMIO_SOURCE_REPO_URL := $(or ${FORMIO_SOURCE_REPO_URL}, https://github.com/formio/formio.git)
-# Form.io version targeting the enterprise version 9.6.8
-# see https://github.com/formio/enterprise-release/blob/master/API-Server-Change-Log.md#january-14-2026-release
+# Form.io version targeting the API Server Version 9.7.5
+# see https://github.com/formio/enterprise-release/blob/master/API-Server-Change-Log.md#api-server-version-975
 export FORMIO_SOURCE_REPO_REF := $(or $(FORMIO_SOURCE_REPO_REF), ff103279a0766400874422b655a65c0843ee5be5)
-export FORMIO_CORE_VERSION := $(or $(FORMIO_CORE_VERSION), 2.5.4)
+export FORMIO_CORE_VERSION := $(or $(FORMIO_CORE_VERSION), 2.6.3)
 export FORMIO_JS_VERSION := $(or $(FORMIO_JS_VERSION), 5.3.4)
 export FORMIO_VM_VERSION := $(or $(FORMIO_VM_VERSION), 2.0.2)
 #ATBC Integration

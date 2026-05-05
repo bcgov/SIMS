@@ -218,9 +218,14 @@
                       "customClass": "\"customClass\": \"label-bold\""
                     },
                     {
-                      "key": "addDependantsUploadPanel",
-                      "input": false,
+                      "label": "Upload panel",
                       "title": "Upload panel",
+                      "collapsible": false,
+                      "hideLabel": true,
+                      "key": "addDependantsUploadPanel",
+                      "customConditional": "show = row.declaredOnTaxes === 'yes';",
+                      "type": "panel",
+                      "input": false,
                       "tableView": false,
                       "components": [
                         {
@@ -361,15 +366,7 @@
                           "lockKey": true
                         }
                       ],
-                      "type": "panel",
-                      "hideLabel": true,
-                      "conditional": {
-                        "show": "true",
-                        "when": "declaredOnTaxes",
-                        "eq": "yes"
-                      },
-                      "lockKey": true,
-                      "label": "Panel"
+                      "lockKey": true
                     }
                   ],
                   "type": "fieldset",
@@ -436,9 +433,14 @@
           "customClass": "\"customClass\": \"label-bold\""
         },
         {
-          "key": "dependantsCustodyPanel",
-          "input": false,
+          "label": "Dependents that you support financially but do not have sole custody",
           "title": "Dependents that you support financially but do not have sole custody",
+          "collapsible": false,
+          "hideLabel": true,
+          "key": "dependantsCustodyPanel",
+          "customConditional": "show = row.supportnocustodyDependants === 'yes';",
+          "type": "panel",
+          "input": false,
           "tableView": false,
           "components": [
             {
@@ -581,15 +583,7 @@
               "lockKey": true
             }
           ],
-          "type": "panel",
-          "hideLabel": true,
-          "conditional": {
-            "show": "true",
-            "when": "supportnocustodyDependants",
-            "eq": "yes"
-          },
-          "lockKey": true,
-          "label": "Panel"
+          "lockKey": true
         },
         {
           "input": true,

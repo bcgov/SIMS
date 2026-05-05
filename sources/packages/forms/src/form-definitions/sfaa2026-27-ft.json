@@ -3762,7 +3762,6 @@
                 },
                 {
                   "label": "<h4 class='category-header-medium-small'></h4>",
-                  "conditionalAddButton": "show = data.roiInformation.length < 2;",
                   "reorder": false,
                   "addAnother": "Add another trusted contact",
                   "addAnotherPosition": "bottom",
@@ -3777,6 +3776,10 @@
                       "relationshipWithThisContact": ""
                     }
                   ],
+                  "validate": {
+                    "maxLength": "2"
+                  },
+                  "validateWhenHidden": false,
                   "key": "roiInformation",
                   "type": "datagrid",
                   "defaultOpen": false,
@@ -4309,23 +4312,19 @@
                       "input": true
                     },
                     {
+                      "label": "Upload panel",
                       "title": "Upload panel",
                       "collapsible": false,
                       "hideLabel": true,
                       "key": "uploadPanel",
-                      "conditional": {
-                        "show": "true",
-                        "when": "declaredOnTaxes",
-                        "eq": "yes"
-                      },
+                      "customConditional": "show = row.declaredOnTaxes === 'yes';",
                       "type": "panel",
-                      "label": "Upload panel",
+                      "breadcrumbClickable": true,
                       "buttonSettings": {
                         "previous": true,
                         "cancel": true,
                         "next": true
                       },
-                      "breadcrumbClickable": true,
                       "scrollToTop": false,
                       "input": false,
                       "tableView": false,
@@ -4333,7 +4332,7 @@
                         {
                           "label": "dependantsIncomeTaxApplicationException",
                           "tableView": false,
-                          "calculateValue": "value = { ...value, fullName: row.fullName };",
+                          "calculateValue": "value = { ...value, fullName: row?.fullName };",
                           "calculateServer": true,
                           "validateWhenHidden": false,
                           "key": "dependantsIncomeTaxApplicationException",
@@ -4342,7 +4341,7 @@
                           "components": [
                             {
                               "label": "Exception Description - Dependant's income tax",
-                              "calculateValue": "value = `Dependant's income tax - ${row.fullName}`;",
+                              "calculateValue": "value = `Dependant's income tax - ${row?.fullName}`;",
                               "calculateServer": true,
                               "key": "exceptionDescription",
                               "type": "hidden",
@@ -4517,6 +4516,7 @@
                         "required": true,
                         "onlyAvailableItems": true
                       },
+                      "validateWhenHidden": false,
                       "key": "supportnocustodyDependants",
                       "attributes": {
                         "data-cy": "supportnocustodyDependants"
@@ -4526,30 +4526,22 @@
                       "lockKey": true
                     },
                     {
-                      "title": "Dependents that you support financially but do not have sole custody",
-                      "breadcrumbClickable": false,
-                      "buttonSettings": {
-                        "previous": false,
-                        "cancel": false,
-                        "next": false
-                      },
-                      "collapsible": false,
-                      "key": "dependentsThatYouSupportFinanciallyButDoNotHaveSoleCustody",
-                      "conditional": {
-                        "show": "true",
-                        "when": "supportnocustodyDependants",
-                        "eq": "yes"
-                      },
-                      "type": "panel",
                       "label": "Dependents that you support financially but do not have sole custody",
+                      "title": "Dependents that you support financially but do not have sole custody",
+                      "collapsible": false,
+                      "hideLabel": true,
+                      "key": "dependentsThatYouSupportFinanciallyButDoNotHaveSoleCustody",
+                      "customConditional": "show = row.supportnocustodyDependants === 'yes';",
+                      "type": "panel",
+                      "breadcrumbClickable": false,
+                      "allowPrevious": false,
                       "input": false,
                       "tableView": false,
-                      "allowPrevious": false,
                       "components": [
                         {
                           "label": "dependantsSharedCustodyApplicationException",
                           "tableView": false,
-                          "calculateValue": "value = { ...value, fullName: row.fullName };",
+                          "calculateValue": "value = { ...value, fullName: row?.fullName };",
                           "calculateServer": true,
                           "validateWhenHidden": false,
                           "key": "dependantsSharedCustodyApplicationException",
@@ -4558,7 +4550,7 @@
                           "components": [
                             {
                               "label": "Exception Description - Dependant's shared custody",
-                              "calculateValue": "value = `Dependant's shared custody - ${row.fullName}`;",
+                              "calculateValue": "value = `Dependant's shared custody - ${row?.fullName}`;",
                               "calculateServer": true,
                               "key": "exceptionDescription",
                               "type": "hidden",
@@ -4710,8 +4702,7 @@
                             }
                           ]
                         }
-                      ],
-                      "hideLabel": true
+                      ]
                     }
                   ],
                   "inDataGrid": true
