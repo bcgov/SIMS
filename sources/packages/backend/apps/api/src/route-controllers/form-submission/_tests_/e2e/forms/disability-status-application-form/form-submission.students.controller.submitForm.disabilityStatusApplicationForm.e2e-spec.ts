@@ -198,8 +198,9 @@ describe(`FormSubmissionStudentsController(e2e)-submitForm-${FORM_DEFINITION_NAM
       student,
     });
     // Payload to validate the submission.
-    const payload = getDisabilityStatusFormData(formConfig.id, studentFile);
-    payload.items[0].formData.requestedDisabilityStatus = "InvalidStatus";
+    const payload = getDisabilityStatusFormData(formConfig.id, studentFile, {
+      requestedDisabilityStatus: "InvalidStatus",
+    });
 
     const endpoint = "/students/form-submission";
     const studentToken = await getStudentToken(
@@ -228,11 +229,14 @@ describe(`FormSubmissionStudentsController(e2e)-submitForm-${FORM_DEFINITION_NAM
  * Get the form data for disability status application form submission.
  * @param dynamicFormConfigId dynamic form configuration id for disability status application form.
  * @param studentFile student file information for the form submission.
+ * @param options optional values to override default form data used for test scenarios.
+ * - `requestedDisabilityStatus` requested disability status to include in the form data.
  * @returns form data.
  */
 function getDisabilityStatusFormData(
   dynamicFormConfigId: number,
   studentFile: StudentFile,
+  options?: { requestedDisabilityStatus?: string },
 ) {
   return {
     items: [
@@ -240,7 +244,7 @@ function getDisabilityStatusFormData(
         dynamicConfigurationId: dynamicFormConfigId,
         formData: {
           actions: ["UpdateDisabilityOnSubmission"],
-          requestedDisabilityStatus: "PD",
+          requestedDisabilityStatus: options?.requestedDisabilityStatus ?? "PD",
           disabilityCategories: {
             specificLearningDisorder: false,
             visualCondition: true,

@@ -201,7 +201,7 @@ export class StudentService extends RecordDataModelService<Student> {
         student.birthDate,
         studentSIN,
       );
-      this.importDisabilityStatusFromLegacy(sfasIndividual, student);
+      this.setStudentDisabilityStatusFromLegacy(sfasIndividual, student);
     } catch (error) {
       this.logger.error("Unable to get SFAS information of student.");
       this.logger.error(error);
@@ -813,11 +813,11 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Import disability status from legacy if legacy data and disability status exist.
+   * Set student disability status from legacy if legacy data and disability status exist.
    * @param sfasIndividual SFAS individual data.
    * @param student Student in sims.
    */
-  private importDisabilityStatusFromLegacy(
+  private setStudentDisabilityStatusFromLegacy(
     sfasIndividual: SFASIndividual | null,
     student: Student,
   ): void {
