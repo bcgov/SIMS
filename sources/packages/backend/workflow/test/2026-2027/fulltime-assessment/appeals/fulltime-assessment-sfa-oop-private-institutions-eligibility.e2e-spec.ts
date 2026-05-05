@@ -32,7 +32,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-oop-private-
       expectedData: {
         assessmentEligibilityBGPD: true,
         institutionEligibilityBGPD: false,
-        awardEligibilityBGPD: true,
+        awardEligibilityBGPD: false,
         assessmentEligibilitySBSD: true,
         institutionEligibilitySBSD: false,
         awardEligibilitySBSD: true,
@@ -119,7 +119,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-oop-private-
       expectedData: {
         assessmentEligibilityBGPD: true,
         institutionEligibilityBGPD: false,
-        awardEligibilityBGPD: true,
+        awardEligibilityBGPD: false,
         assessmentEligibilitySBSD: true,
         institutionEligibilitySBSD: false,
         awardEligibilitySBSD: true,
@@ -133,7 +133,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-oop-private-
         awardEligibilityBCSL: true,
         assessmentEligibilityCSGF: true,
         institutionEligibilityCSGF: false,
-        awardEligibilityCSGF: true,
+        awardEligibilityCSGF: false,
         assessmentEligibilityCSGD: false,
         institutionEligibilityCSGD: true,
         awardEligibilityCSGD: false,
