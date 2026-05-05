@@ -70,7 +70,7 @@ export const options: Options = {
       executor: "shared-iterations",
       vus: VIRTUAL_USERS,
       iterations: ITERATIONS,
-      maxDuration: "1h",
+      maxDuration: "30m",
     },
   },
 };
