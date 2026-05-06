@@ -866,3 +866,13 @@ td .formio-custom-tooltip:hover .tooltip-text {
   align-items: center;
   justify-content: center;
 }
+
+// In @formio/js's bundled CSS, .form-control has an explicit height set to
+// calc(1.4em + 2px + 0.75rem) ≈ 36.4px, which is shorter than .input-group-text's
+// natural height of 38px (based on line-height: 1.5). This causes prefix/suffix
+// boxes to extend slightly below the input field. Removing the explicit height
+// lets align-items: stretch on .input-group equalize the heights.
+// This can be removed if formio/js updates its bundled Bootstrap CSS.
+.ff-form-container .input-group > .form-control {
+  height: auto;
+}
