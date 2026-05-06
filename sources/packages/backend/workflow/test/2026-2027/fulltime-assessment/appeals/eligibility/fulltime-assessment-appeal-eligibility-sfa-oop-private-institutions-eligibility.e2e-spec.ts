@@ -14,7 +14,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
   const appealEligibilityScenarios = [
     {
       inputData: {
-        // The following values make some of the SFA funding (BCAG, BCAG2Year, SBSD, BCSL) eligible at assessment level.
+        // The following values make some of the SFA funding (BGPD, SBSD, BCSL) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
         // BC public institutions are eligible for all four awards and not eligible for the appeal.
@@ -28,7 +28,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make some of the SFA funding (BCAG, BCAG2Year, SBSD, BCSL) eligible at assessment level.
+        // The following values make some of the SFA funding (BGPD, SBSD, BCSL) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
         // BC private non-profit institutions are eligible for all four awards
@@ -43,7 +43,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make some of the SFA funding (BCAG, BCAG2Year, SBSD, BCSL) eligible at assessment level.
+        // The following values make some of the SFA funding (BGPD, SBSD, BCSL) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
         // BC private for-profit institutions are eligible for all four awards
@@ -57,7 +57,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make some of the SFA funding (BCAG, BCAG2Year, SBSD, BCSL) eligible at assessment level.
+        // The following values make some of the SFA funding (BGPD, SBSD, BCSL) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
         // Out of province Canadian public institutions are eligible for all four awards
@@ -72,7 +72,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make some of the SFA funding (BCAG, BCAG2Year, SBSD, BCSL) eligible at assessment level.
+        // The following values make some of the SFA funding (BGPD, SBSD, BCSL) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
         // Out of province Canadian private non-profit institutions are not eligible for some of the four awards
@@ -87,7 +87,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make some of the SFA funding (BCAG, BCAG2Year, SBSD, BCSL) eligible at assessment level.
+        // The following values make some of the SFA funding (BGPD, SBSD, BCSL) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
         // Out of province Canadian private for-profit institutions are not eligible for some of the four awards
@@ -101,7 +101,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make some of the SFA funding (BCAG, BCAG2Year, SBSD, BCSL) eligible at assessment level.
+        // The following values make some of the SFA funding (BGPD, SBSD, BCSL) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
         // International public institutions are eligible for all four awards
@@ -116,7 +116,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make some of the SFA funding (BCAG, BCAG2Year, SBSD, BCSL) eligible at assessment level.
+        // The following values make some of the SFA funding (BGPD, SBSD, BCSL) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
         // International private non-profit institutions are eligible for all four awards
@@ -131,7 +131,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make some of the SFA funding (BCAG, BCAG2Year, SBSD, BCSL) eligible at assessment level.
+        // The following values make some of the SFA funding (BGPD, SBSD, BCSL) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
         // International private for-profit institutions are not eligible for the appeal.
@@ -144,7 +144,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibili
     },
     {
       inputData: {
-        // The following values make none of the SFA funding (BCAG, BCAG2Year, SBSD, BCSL) eligible at assessment level.
+        // The following values make none of the SFA funding (BGPD, SBSD, BCSL) eligible at assessment level.
         studentDataTaxReturnIncome: 3000000,
         // Out-of-province Canadian private non-profit institutions are OOP private institutions,
         // but no SFA funding is eligible at assessment level so the appeal is not eligible.

@@ -15,10 +15,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-oop-private-
   const grantEligibilityScenarios = [
     {
       inputData: {
-        // The following values make some of the SFA funding (e.g. BCAG2Year, SBSD, BCSL) eligible at assessment level.
+        // The following values make some of the SFA funding (e.g. BGPD, SBSD, BCSL) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
-        // Out-of-province Canadian private not-for-profit institutions are not eligible for some of the SFA funding (e.g. BCAG2Year, SBSD, BCSL).
+        // Out-of-province Canadian private not-for-profit institutions are not eligible for some of the SFA funding (e.g. BGPD, SBSD, BCSL).
         // But if the application has an approved SFA OOP private institutions eligibility appeal, the SFA funding will be eligible.
         institutionCountry: "CA",
         institutionProvince: Provinces.Ontario,
@@ -32,7 +32,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-oop-private-
       expectedData: {
         assessmentEligibilityBGPD: true,
         institutionEligibilityBGPD: false,
-        awardEligibilityBGPD: false,
+        awardEligibilityBGPD: true,
         assessmentEligibilitySBSD: true,
         institutionEligibilitySBSD: false,
         awardEligibilitySBSD: true,
@@ -40,7 +40,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-oop-private-
         institutionEligibilityBCAG: false,
         awardEligibilityBCAG: false,
         assessmentEligibilityBCAG2Year: true,
-        awardEligibilityBCAG2Year: true,
+        awardEligibilityBCAG2Year: false,
         assessmentEligibilityBCSL: true,
         institutionEligibilityBCSL: false,
         awardEligibilityBCSL: true,
@@ -60,10 +60,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-oop-private-
     },
     {
       inputData: {
-        // The following values make some of the SFA funding (e.g. BCAG2Year, SBSD, BCSL) eligible at assessment level.
+        // The following values make some of the SFA funding (e.g. BGPD, SBSD, BCSL) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
-        // Out-of-province Canadian private not-for-profit institutions are not eligible for some of the SFA funding (e.g. BCAG2Year, SBSD, BCSL).
+        // Out-of-province Canadian private not-for-profit institutions are not eligible for some of the SFA funding (e.g. BGPD, SBSD, BCSL).
         // The application does not have an approved SFA OOP private institutions eligibility appeal, so the SFA funding will not be eligible.
         institutionCountry: "CA",
         institutionProvince: Provinces.Ontario,
@@ -103,10 +103,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-oop-private-
     },
     {
       inputData: {
-        // The following values make some of the SFA funding (e.g. BCAG2Year, SBSD, BCSL) eligible at assessment level.
+        // The following values make some of the SFA funding (e.g. BGPD, SBSD, BCSL) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
-        // Out-of-province Canadian private for-profit institutions are not eligible for some of the SFA funding (e.g. BCAG2Year, SBSD, BCSL).
+        // Out-of-province Canadian private for-profit institutions are not eligible for some of the SFA funding (e.g. BGPD, SBSD, BCSL).
         // But if the application has an approved SFA OOP private institutions eligibility appeal, the SFA funding will be eligible.
         institutionCountry: "CA",
         institutionProvince: Provinces.Ontario,
@@ -119,7 +119,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-oop-private-
       expectedData: {
         assessmentEligibilityBGPD: true,
         institutionEligibilityBGPD: false,
-        awardEligibilityBGPD: false,
+        awardEligibilityBGPD: true,
         assessmentEligibilitySBSD: true,
         institutionEligibilitySBSD: false,
         awardEligibilitySBSD: true,
@@ -127,7 +127,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-oop-private-
         institutionEligibilityBCAG: false,
         awardEligibilityBCAG: false,
         assessmentEligibilityBCAG2Year: true,
-        awardEligibilityBCAG2Year: true,
+        awardEligibilityBCAG2Year: false,
         assessmentEligibilityBCSL: true,
         institutionEligibilityBCSL: false,
         awardEligibilityBCSL: true,
@@ -147,10 +147,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-sfa-oop-private-
     },
     {
       inputData: {
-        // The following values make some of the SFA funding (e.g. BCAG2Year, SBSD, BCSL) eligible at assessment level.
+        // The following values make some of the SFA funding (e.g. BGPD, SBSD, BCSL) eligible at assessment level.
         studentDataApplicationPDPPDStatus: YesNoOptions.Yes,
         studentDataTaxReturnIncome: 30000,
-        // Out-of-province Canadian private for-profit institutions are not eligible for some of the SFA funding (e.g. BCAG2Year, SBSD, BCSL).
+        // Out-of-province Canadian private for-profit institutions are not eligible for some of the SFA funding (e.g. BGPD, SBSD, BCSL).
         // The application does not have an approved SFA OOP private institutions eligibility appeal, so the SFA funding will not be eligible.
         institutionCountry: "CA",
         institutionProvince: Provinces.Ontario,
