@@ -52,6 +52,11 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    versionApplicationId: {
+      type: Number,
+      required: false,
+      default: undefined,
+    },
   },
   setup(props) {
     const applicationDetail = ref({} as ApplicationBaseAPIOutDTO);
@@ -60,13 +65,12 @@ export default defineComponent({
     const isDataReady = ref(false);
 
     onMounted(async () => {
+      // When the application version is present load the given application version instead of the current application version.
+      const applicationId = props.versionApplicationId ?? props.applicationId;
       applicationDetail.value =
-        await ApplicationService.shared.getApplicationDetail(
-          props.applicationId,
-          {
-            studentId: props.studentId,
-          },
-        );
+        await ApplicationService.shared.getApplicationDetail(applicationId, {
+          studentId: props.studentId,
+        });
       selectedForm.value = applicationDetail.value.applicationFormName;
       initialData.value = {
         ...applicationDetail.value.data,
