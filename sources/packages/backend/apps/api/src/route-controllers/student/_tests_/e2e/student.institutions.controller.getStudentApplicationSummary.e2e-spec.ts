@@ -4,7 +4,6 @@ import { DataSource, Repository } from "typeorm";
 import {
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
-  createFakeLocation,
   createTestingAppModule,
   getAuthRelatedEntities,
   getInstitutionToken,
@@ -29,6 +28,8 @@ import { saveStudentApplicationForCollegeC } from "./student.institutions.utils"
 describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () => {
   let app: INestApplication;
   let appDataSource: DataSource;
+  let collegeE: Institution;
+  let collegeELocation: InstitutionLocation;
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
   let applicationRepo: Repository<Application>;
@@ -37,12 +38,20 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     appDataSource = dataSource;
+    // College E.
+    const { institution: institutionE } = await getAuthRelatedEntities(
+      appDataSource,
+      InstitutionTokenTypes.CollegeEAdminNonLegalSigningUser,
+    );
+    collegeE = institutionE;
+    collegeELocation = createFakeInstitutionLocation({ institution: collegeE });
+
     // College F.
-    const { institution } = await getAuthRelatedEntities(
+    const { institution: institutionF } = await getAuthRelatedEntities(
       appDataSource,
       InstitutionTokenTypes.CollegeFUser,
     );
-    collegeF = institution;
+    collegeF = institutionF;
     collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     await authorizeUserTokenForLocation(
       appDataSource,
@@ -52,331 +61,348 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
     applicationRepo = appDataSource.getRepository(Application);
   });
 
-  it(
-    "Should get the student application details as summary when student has a submitted application" +
-      "for the institution (application with location id saved).",
-    async () => {
-      // Arrange
+  it("Should get the Submitted application when the student has a Submitted application for the institution with a single version.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
 
-      // Student has a submitted application to the institution.
-      const student = await saveFakeStudent(appDataSource);
-
-      const savedApplication = await saveFakeApplication(appDataSource, {
+    // Submitted application for College F.
+    const savedApplication = await saveFakeApplication(
+      appDataSource,
+      {
         institution: collegeF,
         institutionLocation: collegeFLocation,
         student,
+      },
+      {
+        applicationStatus: ApplicationStatus.Submitted,
+      },
+    );
+
+    const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        results: [
+          {
+            id: savedApplication.id,
+            applicationNumber: savedApplication.applicationNumber,
+            isArchived: false,
+            studyStartPeriod:
+              savedApplication.currentAssessment?.offering?.studyStartDate,
+            studyEndPeriod:
+              savedApplication.currentAssessment?.offering?.studyEndDate,
+            status: savedApplication.applicationStatus,
+            parentApplicationId: savedApplication.id,
+            submittedDate: savedApplication.submittedDate?.toISOString(),
+            isChangeRequestAllowedForPY: false,
+            offeringIntensity: savedApplication.offeringIntensity,
+          },
+        ],
+        count: 1,
       });
+  });
 
-      const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10`;
-      const institutionUserToken = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeFUser,
-      );
+  it("Should get the Submitted application when the student has a Submitted application for the institution with multiple versions.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
 
-      // Act/Assert
-      await request(app.getHttpServer())
-        .get(endpoint)
-        .auth(institutionUserToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK)
-        .expect({
-          results: [
-            {
-              id: savedApplication.id,
-              applicationNumber: savedApplication.applicationNumber,
-              isArchived: false,
-              studyStartPeriod:
-                savedApplication.currentAssessment?.offering?.studyStartDate,
-              studyEndPeriod:
-                savedApplication.currentAssessment?.offering?.studyEndDate,
-              status: savedApplication.applicationStatus,
-              parentApplicationId: savedApplication.id,
-              submittedDate: savedApplication.submittedDate?.toISOString(),
-              isChangeRequestAllowedForPY: false,
-              offeringIntensity: savedApplication.offeringIntensity,
-            },
-          ],
-          count: 1,
-        });
-    },
-  );
+    // Edited application for College F.
+    const editedApplication = await saveFakeApplication(
+      appDataSource,
+      {
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        student,
+      },
+      { applicationStatus: ApplicationStatus.Edited },
+    );
+
+    // Submitted application for College F.
+    const submittedApplication = await saveFakeApplication(
+      appDataSource,
+      {
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        student,
+        parentApplication: editedApplication,
+        precedingApplication: editedApplication,
+      },
+      {
+        applicationStatus: ApplicationStatus.Submitted,
+      },
+    );
+
+    const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        results: [
+          {
+            id: submittedApplication.id,
+            applicationNumber: submittedApplication.applicationNumber,
+            isArchived: false,
+            studyStartPeriod:
+              submittedApplication.currentAssessment?.offering?.studyStartDate,
+            studyEndPeriod:
+              submittedApplication.currentAssessment?.offering?.studyEndDate,
+            status: submittedApplication.applicationStatus,
+            parentApplicationId: editedApplication.id,
+            submittedDate: editedApplication.submittedDate?.toISOString(),
+            isChangeRequestAllowedForPY: false,
+            offeringIntensity: submittedApplication.offeringIntensity,
+          },
+        ],
+        count: 1,
+      });
+  });
+
+  it("Should get the Submitted application when the student has a Submitted application and a Draft application for the institution", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
+
+    // Draft application for College F.
+    await saveFakeApplication(
+      appDataSource,
+      {
+        student,
+      },
+      { applicationStatus: ApplicationStatus.Draft },
+    );
+
+    // Submitted application for College F.
+    const submittedApplication = await saveFakeApplication(
+      appDataSource,
+      {
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        student,
+      },
+      {
+        applicationStatus: ApplicationStatus.Submitted,
+      },
+    );
+
+    const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        results: [
+          {
+            id: submittedApplication.id,
+            applicationNumber: submittedApplication.applicationNumber,
+            isArchived: false,
+            studyStartPeriod:
+              submittedApplication.currentAssessment?.offering?.studyStartDate,
+            studyEndPeriod:
+              submittedApplication.currentAssessment?.offering?.studyEndDate,
+            status: submittedApplication.applicationStatus,
+            parentApplicationId: submittedApplication.id,
+            submittedDate: submittedApplication.submittedDate?.toISOString(),
+            isChangeRequestAllowedForPY: false,
+            offeringIntensity: submittedApplication.offeringIntensity,
+          },
+        ],
+        count: 1,
+      });
+  });
+
+  it("Should get the Submitted application when the student has a Submitted application for the institution and another Submitted application for another institution.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
+
+    // Submitted application for College F.
+    const collegeFApplication = await saveFakeApplication(appDataSource, {
+      institution: collegeF,
+      institutionLocation: collegeFLocation,
+      student,
+    });
+
+    // Submitted application for College E.
+    await saveFakeApplication(appDataSource, {
+      institutionLocation: collegeELocation,
+      student,
+    });
+
+    const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        results: [
+          {
+            id: collegeFApplication.id,
+            applicationNumber: collegeFApplication.applicationNumber,
+            isArchived: false,
+            studyStartPeriod:
+              collegeFApplication.currentAssessment?.offering?.studyStartDate,
+            studyEndPeriod:
+              collegeFApplication.currentAssessment?.offering?.studyEndDate,
+            status: collegeFApplication.applicationStatus,
+            parentApplicationId: collegeFApplication.id,
+            submittedDate: collegeFApplication.submittedDate?.toISOString(),
+            isChangeRequestAllowedForPY: false,
+            offeringIntensity: collegeFApplication.offeringIntensity,
+          },
+        ],
+        count: 1,
+      });
+  });
+
+  it("Should get the Submitted application when the student has an Edited application for the institution and a subsequent Submitted application for another institution.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
+
+    // Edited application for College F.
+    const collegeFApplication = await saveFakeApplication(
+      appDataSource,
+      {
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        student,
+      },
+      {
+        applicationStatus: ApplicationStatus.Edited,
+      },
+    );
+
+    // Submitted application for college E.
+    const collegeEApplication = await saveFakeApplication(appDataSource, {
+      institution: collegeE,
+      institutionLocation: collegeELocation,
+      student,
+      parentApplication: collegeFApplication,
+      precedingApplication: collegeFApplication,
+    });
+
+    const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        results: [
+          {
+            id: collegeEApplication.id,
+            applicationNumber: collegeEApplication.applicationNumber,
+            isArchived: false,
+            studyStartPeriod:
+              collegeEApplication.currentAssessment?.offering?.studyStartDate,
+            studyEndPeriod:
+              collegeEApplication.currentAssessment?.offering?.studyEndDate,
+            status: collegeEApplication.applicationStatus,
+            parentApplicationId: collegeEApplication.parentApplication?.id,
+            submittedDate:
+              collegeEApplication.parentApplication?.submittedDate?.toISOString(),
+            isChangeRequestAllowedForPY: false,
+            offeringIntensity: collegeEApplication.offeringIntensity,
+          },
+        ],
+        count: 1,
+      });
+  });
+
+  it("Should get the first application when student has two Submitted/In Progress applications for the institution when pagination is 1.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
+
+    // Submitted application for college F.
+    const savedApplication1 = await saveFakeApplication(appDataSource, {
+      institution: collegeF,
+      institutionLocation: collegeFLocation,
+      student,
+    });
+
+    // In Progress application for college F.
+    await saveFakeApplication(
+      appDataSource,
+      {
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        student,
+      },
+      { applicationStatus: ApplicationStatus.InProgress },
+    );
+
+    // By default the application is sorted by status.
+    const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=1`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        results: [
+          {
+            id: savedApplication1.id,
+            applicationNumber: savedApplication1.applicationNumber,
+            isArchived: false,
+            studyStartPeriod:
+              savedApplication1.currentAssessment?.offering?.studyStartDate,
+            studyEndPeriod:
+              savedApplication1.currentAssessment?.offering?.studyEndDate,
+            status: savedApplication1.applicationStatus,
+            parentApplicationId: savedApplication1.id,
+            submittedDate: savedApplication1.submittedDate?.toISOString(),
+            isChangeRequestAllowedForPY: false,
+            offeringIntensity: savedApplication1.offeringIntensity,
+          },
+        ],
+        count: 2,
+      });
+  });
 
   it(
-    "Should get the student application details as summary when student has a submitted application with multiple versions" +
-      " for the institution (application with location id saved).",
+    `Should get both applications in ${FieldSortOrder.DESC} order of application number ` +
+      "when the student has two Submitted/In Progress applications for the institution " +
+      `and when sortField is application number and sortOrder is ${FieldSortOrder.DESC}. `,
     async () => {
       // Arrange
-
-      // Student has a submitted application to the institution.
       const student = await saveFakeStudent(appDataSource);
 
-      const application1 = await saveFakeApplication(
-        appDataSource,
-        {
-          institution: collegeF,
-          institutionLocation: collegeFLocation,
-          student,
-        },
-        { applicationStatus: ApplicationStatus.Edited },
-      );
-
-      const application2 = await saveFakeApplication(
-        appDataSource,
-        {
-          institution: collegeF,
-          institutionLocation: collegeFLocation,
-          student,
-          parentApplication: application1,
-          precedingApplication: application1,
-        },
-        {
-          applicationStatus: ApplicationStatus.Edited,
-        },
-      );
-
-      const application3 = await saveFakeApplication(
-        appDataSource,
-        {
-          institution: collegeF,
-          institutionLocation: collegeFLocation,
-          student,
-          parentApplication: application1,
-          precedingApplication: application2,
-        },
-        {
-          applicationStatus: ApplicationStatus.Submitted,
-        },
-      );
-
-      const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10`;
-      const institutionUserToken = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeFUser,
-      );
-
-      // Act/Assert
-      await request(app.getHttpServer())
-        .get(endpoint)
-        .auth(institutionUserToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK)
-        .expect({
-          results: [
-            {
-              id: application3.id,
-              applicationNumber: application3.applicationNumber,
-              isArchived: false,
-              studyStartPeriod:
-                application3.currentAssessment?.offering?.studyStartDate,
-              studyEndPeriod:
-                application3.currentAssessment?.offering?.studyEndDate,
-              status: application3.applicationStatus,
-              parentApplicationId: application1.id,
-              submittedDate: application1.submittedDate?.toISOString(),
-              isChangeRequestAllowedForPY: false,
-              offeringIntensity: application3.offeringIntensity,
-            },
-          ],
-          count: 1,
-        });
-    },
-  );
-
-  it(
-    "Should get the student application details belonging to the requested institution as summary when student has a submitted application " +
-      "for the institution and another submitted application for another institution.",
-    async () => {
-      // Arrange
-
-      // Student has a submitted application to the institution.
-      const student = await saveFakeStudent(appDataSource);
-      // Application 1 for college F.
+      // Submitted application for college F.
       const savedApplication1 = await saveFakeApplication(appDataSource, {
         institution: collegeF,
         institutionLocation: collegeFLocation,
         student,
       });
 
-      // Application 2 for another college.
-      const fakeInstitutionLocation = createFakeLocation();
-      await saveFakeApplication(appDataSource, {
-        institutionLocation: fakeInstitutionLocation,
-        student,
-      });
-
-      const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10`;
-      const institutionUserToken = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeFUser,
-      );
-
-      // Act/Assert
-      await request(app.getHttpServer())
-        .get(endpoint)
-        .auth(institutionUserToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK)
-        .expect({
-          results: [
-            {
-              id: savedApplication1.id,
-              applicationNumber: savedApplication1.applicationNumber,
-              isArchived: false,
-              studyStartPeriod:
-                savedApplication1.currentAssessment?.offering?.studyStartDate,
-              studyEndPeriod:
-                savedApplication1.currentAssessment?.offering?.studyEndDate,
-              status: savedApplication1.applicationStatus,
-              parentApplicationId: savedApplication1.id,
-              submittedDate: savedApplication1.submittedDate?.toISOString(),
-              isChangeRequestAllowedForPY: false,
-              offeringIntensity: savedApplication1.offeringIntensity,
-            },
-          ],
-          count: 1,
-        });
-    },
-  );
-
-  it(
-    "Should get the student application details belonging to the requested institution as summary when student has an Edited application " +
-      "for the institution and current Submitted application for another institution.",
-    async () => {
-      // Arrange
-      const student = await saveFakeStudent(appDataSource);
-
-      // Original (Edited) application for College F.
-      const collegeFApplication = await saveFakeApplication(
-        appDataSource,
-        {
-          institution: collegeF,
-          institutionLocation: collegeFLocation,
-          student,
-        },
-        {
-          applicationStatus: ApplicationStatus.Edited,
-        },
-      );
-
-      const { institution: collegeE } = await getAuthRelatedEntities(
-        appDataSource,
-        InstitutionTokenTypes.CollegeEReadOnlyUser,
-      );
-      let collegeELocation = createFakeInstitutionLocation({
-        institution: collegeE,
-      });
-      // Current (Submitted) Application for college E.
-      const collegeEApplication = await saveFakeApplication(appDataSource, {
-        institution: collegeE,
-        institutionLocation: collegeELocation,
-        student,
-        parentApplication: collegeFApplication,
-        precedingApplication: collegeFApplication,
-      });
-
-      const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=10`;
-      const institutionUserToken = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeFUser,
-      );
-
-      // Act/Assert
-      await request(app.getHttpServer())
-        .get(endpoint)
-        .auth(institutionUserToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK)
-        .expect({
-          results: [
-            {
-              id: collegeEApplication.id,
-              applicationNumber: collegeEApplication.applicationNumber,
-              isArchived: false,
-              studyStartPeriod:
-                collegeEApplication.currentAssessment?.offering?.studyStartDate,
-              studyEndPeriod:
-                collegeEApplication.currentAssessment?.offering?.studyEndDate,
-              status: collegeEApplication.applicationStatus,
-              parentApplicationId: collegeEApplication.parentApplication?.id,
-              submittedDate:
-                collegeEApplication.parentApplication?.submittedDate?.toISOString(),
-              isChangeRequestAllowedForPY: false,
-              offeringIntensity: collegeEApplication.offeringIntensity,
-            },
-          ],
-          count: 1,
-        });
-    },
-  );
-
-  it(
-    "Should get the first submitted student application details as summary when student has two submitted/Inprogress " +
-      "application for the institution when pagination is 1.",
-    async () => {
-      // Arrange
-
-      // Student has one submitted and one inprogress application to the institution.
-      const student = await saveFakeStudent(appDataSource);
-      // Application 1.
-      const savedApplication1 = await saveFakeApplication(appDataSource, {
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
-        student,
-      });
-
-      // Application 2.
-      await saveFakeApplication(
-        appDataSource,
-        {
-          institution: collegeF,
-          institutionLocation: collegeFLocation,
-          student,
-        },
-        { applicationStatus: ApplicationStatus.InProgress },
-      );
-
-      // By default the application is sorted by status.
-      const endpoint = `/institutions/student/${student.id}/application-summary?page=0&pageLimit=1`;
-      const institutionUserToken = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeFUser,
-      );
-
-      // Act/Assert
-      await request(app.getHttpServer())
-        .get(endpoint)
-        .auth(institutionUserToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.OK)
-        .expect({
-          results: [
-            {
-              id: savedApplication1.id,
-              applicationNumber: savedApplication1.applicationNumber,
-              isArchived: false,
-              studyStartPeriod:
-                savedApplication1.currentAssessment?.offering?.studyStartDate,
-              studyEndPeriod:
-                savedApplication1.currentAssessment?.offering?.studyEndDate,
-              status: savedApplication1.applicationStatus,
-              parentApplicationId: savedApplication1.id,
-              submittedDate: savedApplication1.submittedDate?.toISOString(),
-              isChangeRequestAllowedForPY: false,
-              offeringIntensity: savedApplication1.offeringIntensity,
-            },
-          ],
-          count: 2,
-        });
-    },
-  );
-
-  it(
-    `Should get all the two student application details in ${FieldSortOrder.DESC} order of application number ` +
-      "as summary when student has two submitted/Inprogress application for the institution " +
-      `and when sortField= is application number and sortOrder is ${FieldSortOrder.DESC}. `,
-    async () => {
-      // Arrange
-
-      // Student has a submitted application to the institution.
-      const student = await saveFakeStudent(appDataSource);
-      // Application 1.
-      const savedApplication1 = await saveFakeApplication(appDataSource, {
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
-        student,
-      });
-
-      // Application 2.
+      // In Progress application for college F.
       const savedApplication2 = await saveFakeApplication(
         appDataSource,
         {

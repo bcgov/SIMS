@@ -1078,9 +1078,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
         .createQueryBuilder("application")
         .select("1")
         .from(Application, "version")
+        .innerJoin("version.parentApplication", "vParentApplication")
         .innerJoin("version.location", "vLocation")
         .innerJoin("vLocation.institution", "vInstitution")
-        .where("version.parentApplication.id = parentApplication.id")
+        .where("vParentApplication.id = parentApplication.id")
         .andWhere("vInstitution.id = :institutionId")
         .getQuery();
       // // Use EXISTS to avoid duplicate rows when a parent application has multiple versions
@@ -1122,10 +1123,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .offset(pagination.page * pagination.pageLimit);
 
     // result
-
-    console.log("sql", applicationQuery.getSql());
-
-    return applicationQuery.getManyAndCount();
+    return applicationQuery.printSql().getManyAndCount();
   }
 
   /**

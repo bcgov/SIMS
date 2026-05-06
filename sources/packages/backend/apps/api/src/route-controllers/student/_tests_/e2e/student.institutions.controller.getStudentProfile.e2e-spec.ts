@@ -96,7 +96,7 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
       });
   });
 
-  it("Should get the student profile when student has an older application version (Edited) submitted for the institution.", async () => {
+  it("Should get the student profile when student has an application version (Edited) submitted for the institution.", async () => {
     // Arrange
 
     // Student who has application submitted to institution.

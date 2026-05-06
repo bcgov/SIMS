@@ -113,7 +113,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       ]);
   });
 
-  it("Should find the student by last name when student has an older application version (Edited) submitted for the institution.", async () => {
+  it("Should find the student by last name when student has an application version (Edited) submitted for the institution.", async () => {
     // Arrange
     const { application: previousApplication, student } =
       await saveStudentWithApplicationForCollegeF(ApplicationStatus.Edited);
