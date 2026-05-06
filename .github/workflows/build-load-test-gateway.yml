@@ -1,4 +1,4 @@
-name: Build - Load Test Gateway
+name: Load Test - Build Gateway
 run-name: Build Load Test Gateway from ${{ github.ref_name }}(build ${{ github.run_number }})
 permissions:
   contents: read

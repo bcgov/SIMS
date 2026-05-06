@@ -1,4 +1,4 @@
-name: Deploy - Load Test Gateway
+name: Load Test - Deploy Gateway
 run-name: Deploy Load Test Gateway from ${{ github.ref_name }} to ${{ inputs.environment }}
 permissions:
   contents: read
