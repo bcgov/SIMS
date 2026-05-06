@@ -826,14 +826,15 @@ export class StudentService extends RecordDataModelService<Student> {
       sfasIndividual &&
       (sfasIndividual.pdStatus || sfasIndividual.ppdStatus)
     ) {
+      const now = new Date();
       student.disabilityStatus = sfasIndividual.pdStatus
         ? DisabilityStatus.PD
         : DisabilityStatus.PPD;
       student.disabilityStatusEffectiveDate = sfasIndividual.pdStatus
-        ? new Date()
+        ? now
         : new Date(sfasIndividual.ppdStatusDate!);
       // Populate audit fields only if the disability status is imported.
-      student.disabilityStatusUpdatedOn = new Date();
+      student.disabilityStatusUpdatedOn = now;
       student.disabilityStatusUpdatedBy = this.systemUsersService.systemUser;
       return;
     }
