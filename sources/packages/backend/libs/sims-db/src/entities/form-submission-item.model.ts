@@ -82,6 +82,11 @@ export enum FormSubmissionActionType {
   CreateStudentAppealAssessment = "CreateStudentAppealAssessment",
   UpdateModifiedIndependent = "UpdateModifiedIndependent",
   UpdateNonPunitiveScholasticStandingWithdrawal = "UpdateNonPunitiveScholasticStandingWithdrawal",
+  /**
+   * Action to update the student's disability status when the disability
+   * status application form is submitted by the student.
+   */
+  UpdateDisabilityOnSubmission = "UpdateDisabilityOnSubmission",
 }
 
 export interface FormSubmissionSubmittedData extends Record<string, unknown> {

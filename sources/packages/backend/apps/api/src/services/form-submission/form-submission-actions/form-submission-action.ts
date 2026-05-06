@@ -2,11 +2,20 @@ import { EntityManager } from "typeorm";
 import {
   FormSubmissionActionType,
   FormSubmissionDecisionStatus,
+  FormSubmissionStatus,
 } from "@sims/sims-db";
 import {
   FormSubmissionActionModel,
   FormSubmissionItemActionModel,
 } from "./form-submission-action-models";
+
+/**
+ * Final form submission statuses after a ministry decision is made.
+ */
+const FINAL_FORM_SUBMISSION_STATUSES = new Set<FormSubmissionStatus>([
+  FormSubmissionStatus.Completed,
+  FormSubmissionStatus.Declined,
+]);
 
 /**
  * Actions that can be performed on form submissions during the Ministry approval/decline process.
@@ -83,5 +92,27 @@ export abstract class FormSubmissionAction {
         (!options?.decisionStatus ||
           request.decisionStatus === options.decisionStatus),
     );
+  }
+
+  /**
+   * Determines if the form submission has a final decision status.
+   * @param formSubmission the form submission to check.
+   * @returns true if the form submission has a final decision status, false otherwise.
+   */
+  protected hasFinalDecisionStatus(
+    formSubmission: FormSubmissionActionModel,
+  ): boolean {
+    return FINAL_FORM_SUBMISSION_STATUSES.has(formSubmission.submissionStatus);
+  }
+
+  /**
+   * Determines if the form submission is pending a final decision status.
+   * @param formSubmission the form submission to check.
+   * @returns true if the form submission is pending a final decision status, false otherwise.
+   */
+  protected isPendingFinalDecisionStatus(
+    formSubmission: FormSubmissionActionModel,
+  ): boolean {
+    return formSubmission.submissionStatus === FormSubmissionStatus.Pending;
   }
 }

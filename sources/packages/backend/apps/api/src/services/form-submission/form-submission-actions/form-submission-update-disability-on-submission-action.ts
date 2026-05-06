@@ -1,27 +1,30 @@
 import {
+  DisabilityStatus,
   FormCategory,
   FormSubmissionActionType,
-  FormSubmissionDecisionStatus,
-  ModifiedIndependentStatus,
   Student,
 } from "@sims/sims-db";
-import { EntityManager } from "typeorm";
+import { EntityManager, In, Not } from "typeorm";
 import { Injectable } from "@nestjs/common";
+import { LoggerService } from "@sims/utilities/logger";
 import { FormSubmissionAction } from "./form-submission-action";
 import { FormSubmissionActionModel } from "./form-submission-action-models";
 
 @Injectable()
-export class FormSubmissionUpdateModifiedIndependentAction extends FormSubmissionAction {
+export class FormSubmissionUpdateDisabilityOnSubmissionAction extends FormSubmissionAction {
+  constructor(private readonly logger: LoggerService) {
+    super();
+  }
   /**
    * Type of action being performed.
    */
   get actionType(): FormSubmissionActionType {
-    return FormSubmissionActionType.UpdateModifiedIndependent;
+    return FormSubmissionActionType.UpdateDisabilityOnSubmission;
   }
 
   /**
-   * Updates the student's modified independent status based on the approval status.
-   * @param formSubmission form submission to process.
+   * Update the student's disability status to "Requested" if the student's current disability status is not "PD" or "PPD".
+   * @param formSubmission the form submission to process actions for.
    * @param auditUserId ID of the user performing the action.
    * @param auditDate date the action is being performed.
    * @param entityManager entity manager to use for database operations.
@@ -38,22 +41,34 @@ export class FormSubmissionUpdateModifiedIndependentAction extends FormSubmissio
         `Unexpected number of submission items associated with the form submission action. Expected 1 but found ${submissionItems.length}.`,
       );
     }
-    const [submissionItem] = submissionItems;
-    const modifiedIndependentStatus =
-      submissionItem.decisionStatus === FormSubmissionDecisionStatus.Approved
-        ? ModifiedIndependentStatus.Approved
-        : ModifiedIndependentStatus.Declined;
     const auditUser = { id: auditUserId };
-    await entityManager.getRepository(Student).update(
-      { id: formSubmission.studentId },
+    const updateResult = await entityManager.getRepository(Student).update(
       {
-        modifiedIndependentStatus,
-        modifiedIndependentFormSubmissionItem: { id: submissionItem.id },
-        modifiedIndependentStatusUpdatedBy: auditUser,
-        modifiedIndependentStatusUpdatedOn: auditDate,
+        id: formSubmission.studentId,
+        disabilityStatus: Not(
+          In([
+            DisabilityStatus.PD,
+            DisabilityStatus.PPD,
+            DisabilityStatus.Requested,
+          ]),
+        ),
+      },
+      {
+        disabilityStatus: DisabilityStatus.Requested,
+        disabilityStatusUpdatedBy: auditUser,
+        disabilityStatusUpdatedOn: auditDate,
         modifier: auditUser,
         updatedAt: auditDate,
       },
+    );
+    if (updateResult.affected === 1) {
+      this.logger.log(
+        `Disability status updated to ${DisabilityStatus.Requested} for the student ID ${formSubmission.studentId} on submission.`,
+      );
+      return;
+    }
+    this.logger.log(
+      `Disability status not updated for the student ID ${formSubmission.studentId} on submission.`,
     );
   }
 
@@ -64,8 +79,8 @@ export class FormSubmissionUpdateModifiedIndependentAction extends FormSubmissio
    */
   protected appliesTo(formSubmission: FormSubmissionActionModel): boolean {
     return (
-      this.hasFinalDecisionStatus(formSubmission) &&
-      formSubmission.formCategory === FormCategory.StudentAppeal
+      this.isPendingFinalDecisionStatus(formSubmission) &&
+      formSubmission.formCategory === FormCategory.StudentForm
     );
   }
 }

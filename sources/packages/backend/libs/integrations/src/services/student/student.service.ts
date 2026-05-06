@@ -144,7 +144,10 @@ export class StudentService {
   ): Promise<UpdateResult> {
     return this.studentRepo.update(
       { id: studentId },
-      { disabilityStatus, studentPDUpdateAt: disabilityStatusUpdatedDate },
+      {
+        disabilityStatus,
+        disabilityStatusUpdatedOn: disabilityStatusUpdatedDate,
+      },
     );
   }
 

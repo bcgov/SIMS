@@ -27,6 +27,7 @@ import { DryRunSubmissionResult } from "../../types";
 import { FormSubmissionValidator } from "./form-submission-validator";
 import { SupplementaryDataLoader } from "./form-supplementary-data";
 import { NotificationActionsService } from "@sims/services/notifications";
+import { FormSubmissionActionProcessor } from "./form-submission-actions/form-submission-action-processor";
 
 /**
  * Manages how the form submissions are submitted, including the validations,
@@ -43,6 +44,7 @@ export class FormSubmissionSubmitService {
     private readonly formSubmissionValidator: FormSubmissionValidator,
     private readonly supplementaryDataLoader: SupplementaryDataLoader,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly formSubmissionActionProcessor: FormSubmissionActionProcessor,
   ) {}
 
   /**
@@ -125,7 +127,15 @@ export class FormSubmissionSubmitService {
         referenceSubmissionConfig.formCategory,
         entityManager,
       );
-      return entityManager.getRepository(FormSubmission).save(formSubmission);
+      await entityManager.getRepository(FormSubmission).save(formSubmission);
+      // Process the form submission actions applicable on submission.
+      await this.formSubmissionActionProcessor.processActions(
+        formSubmission.id,
+        auditUserId,
+        now,
+        entityManager,
+      );
+      return formSubmission;
     });
   }
 
