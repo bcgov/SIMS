@@ -29,8 +29,8 @@ export const createAuthHeader = (): AxiosRequestConfig => {
  * Checks if a form definition is already present on Form.IO server.
  * @param formAlias form alias to be checked.
  * @param authHeader authentication header.
- * @returns true if the form is present, otherwise false if a the
- * http response is not successful.
+ * @returns true if the form is present, otherwise false if the
+ * HTTP response is not successful.
  */
 export const isFormDeployed = async (
   formAlias: string,

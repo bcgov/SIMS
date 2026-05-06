@@ -52,7 +52,7 @@ objects:
                     secretKeyRef:
                       key: ${SIMS_DB_NAME}
                       name: ${MIGRATIONS_SECRET_NAME}
-                - name: FORMIO_API_KEY
+                - name: FORMS_API_KEY
                   valueFrom:
                     secretKeyRef:
                       key: ${FORMIO_API_KEY_NAME_KEY}
