@@ -126,15 +126,10 @@ objects:
                     secretKeyRef:
                       key: ${BCeID_WEB_SERVICE_AUTH_USER_PASSWORD_NAME_KEY}
                       name: ${API_SECRET_NAME}
-                - name: FORMS_SA_USER_NAME
+                - name: FORMIO_API_KEY
                   valueFrom:
                     secretKeyRef:
-                      key: ${FORMIO_ROOT_EMAIL_NAME_KEY}
-                      name: ${FORMS_SECRET_NAME}
-                - name: FORMS_SA_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${FORMIO_ROOT_PASSWORD_NAME_KEY}
+                      key: ${FORMIO_API_KEY_NAME_KEY}
                       name: ${FORMS_SECRET_NAME}
                 - name: FORMS_URL
                   value: "${FORMS_URL}"
@@ -527,10 +522,8 @@ parameters:
     value: bceid-web-service-auth-user-name
   - name: BCeID_WEB_SERVICE_AUTH_USER_PASSWORD_NAME_KEY
     value: bceid-web-service-auth-user-password
-  - name: FORMIO_ROOT_EMAIL_NAME_KEY
-    value: FORMIO_ROOT_EMAIL
-  - name: FORMIO_ROOT_PASSWORD_NAME_KEY
-    value: FORMIO_ROOT_PASSWORD
+  - name: FORMIO_API_KEY_NAME_KEY
+    value: FORMIO_API_KEY
   - name: SITE_MINDER_LOGOUT_URL
     require: true
   - name: IS_FULLTIME_ALLOWED

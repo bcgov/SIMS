@@ -44,8 +44,7 @@ services:
       - BCeID_WEB_SERVICE_AUTH_USER_NAME=${BCeID_WEB_SERVICE_AUTH_USER_NAME}
       - BCeID_WEB_SERVICE_AUTH_USER_PASSWORD=${BCeID_WEB_SERVICE_AUTH_USER_PASSWORD}
       - FORMS_URL=http://formio:3001
-      - FORMS_SA_USER_NAME=${FORMS_SA_USER_NAME}
-      - FORMS_SA_PASSWORD=${FORMS_SA_PASSWORD}
+      - FORMS_API_KEY=${FORMS_API_KEY}
       - DUMMY_BCeID_ACCOUNT_RESPONSE=${DUMMY_BCeID_ACCOUNT_RESPONSE}
       - SITE_MINDER_LOGOUT_URL=${SITE_MINDER_LOGOUT_URL}
       - ATBC_LOGIN_ENDPOINT=${ATBC_LOGIN_ENDPOINT}
@@ -115,6 +114,7 @@ services:
       NODE_CONFIG: '{"mongo": "mongodb://mongo:27017/formio"}'
       ROOT_EMAIL: ${FORMS_SA_USER_NAME}
       ROOT_PASSWORD: ${FORMS_SA_PASSWORD}
+      API_KEYS: ${FORMS_API_KEY}
     # The app will restart until Mongo is listening.
     restart: unless-stopped
     ports:

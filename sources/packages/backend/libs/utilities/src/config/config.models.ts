@@ -58,6 +58,7 @@ export interface ClientCredential {
 
 export interface FormsConfig {
   formsUrl: string;
+  apiKey: string;
   serviceAccountCredential: UserPasswordCredential;
 }
 
