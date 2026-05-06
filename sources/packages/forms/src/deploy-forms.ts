@@ -29,7 +29,7 @@ interface FormDeployInfo {
     console.info("No files found to be deployed!");
     return;
   }
-  console.info("Acquiring access token...");
+  console.info("Creating API key authentication header...");
   const authHeader = createAuthHeader();
   const formDeployStatuses: FormDeployInfo[] = [];
   for (const file of files) {
