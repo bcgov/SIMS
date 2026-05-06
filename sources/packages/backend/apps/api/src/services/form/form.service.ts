@@ -33,7 +33,7 @@ export class FormService {
     this.config = this.configService.forms;
     this.authHeader = {
       headers: {
-        [FORMIO_TOKEN_NAME]: this.configService.forms.apiKey,
+        [FORMIO_TOKEN_NAME]: this.config.apiKey,
       },
     };
   }

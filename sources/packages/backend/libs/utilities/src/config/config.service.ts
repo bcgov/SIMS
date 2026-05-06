@@ -70,10 +70,6 @@ export class ConfigService {
     return this.getCachedConfig("formsConfig", {
       formsUrl: process.env.FORMS_URL,
       apiKey: process.env.FORMS_API_KEY,
-      serviceAccountCredential: {
-        userName: process.env.FORMS_SA_USER_NAME,
-        password: process.env.FORMS_SA_PASSWORD,
-      },
     });
   }
 
