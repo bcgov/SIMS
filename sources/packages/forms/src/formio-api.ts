@@ -13,6 +13,11 @@ const FORMIO_TOKEN_NAME = "x-token";
  * @returns header to be added to HTTP request.
  */
 export const createAuthHeader = (): AxiosRequestConfig => {
+  if (!formsApiKey) {
+    throw new Error(
+      "Form API key is not set. Please set the FORMS_API_KEY environment variable.",
+    );
+  }
   return {
     headers: {
       [FORMIO_TOKEN_NAME]: formsApiKey,
