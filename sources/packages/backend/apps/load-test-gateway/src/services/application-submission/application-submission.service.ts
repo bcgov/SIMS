@@ -64,6 +64,23 @@ export interface ApplicationSetupData {
   programYearId: number;
 }
 
+/**
+ * Response returned by the setup endpoint containing all data required
+ * to run the application submission load test iterations.
+ */
+export interface ApplicationSubmissionSetupResponse {
+  /**
+   * Per-iteration application data for each draft application created.
+   */
+  applications: ApplicationSetupData[];
+  /**
+   * Base application data payload to use when submitting each application.
+   * The selectedOffering, selectedProgram, and selectedLocation fields must
+   * be overridden per iteration using the values from the applications array.
+   */
+  applicationData: Record<string, unknown>;
+}
+
 @Injectable()
 export class ApplicationSubmissionService {
   private readonly dataSources: E2EDataSources;
@@ -79,12 +96,12 @@ export class ApplicationSubmissionService {
    * triggering the study date overlap validation.
    * @param iterations number of draft applications to create.
    * @param studentUserName user name of the e2e test student.
-   * @returns per-iteration setup data containing application, offering and program IDs.
+   * @returns setup response containing per-iteration application data and the base application payload.
    */
   async createDraftApplications(
     iterations: number,
     studentUserName: string,
-  ): Promise<ApplicationSetupData[]> {
+  ): Promise<ApplicationSubmissionSetupResponse> {
     const student = await this.getOrCreateStudentByUserName(studentUserName);
     const programYear = await this.getProgramYear(LOAD_TEST_PROGRAM_YEAR);
     const setupItems: ApplicationSetupData[] = [];
@@ -141,7 +158,10 @@ export class ApplicationSubmissionService {
         },
       );
     }
-    return setupItems;
+    return {
+      applications: setupItems,
+      applicationData: APPLICATION_SUBMISSION_DATA as Record<string, unknown>,
+    };
   }
 
   /**

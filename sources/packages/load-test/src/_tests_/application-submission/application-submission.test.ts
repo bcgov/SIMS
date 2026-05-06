@@ -52,6 +52,7 @@ interface ApplicationSetupData {
 interface SetupData {
   setupItems: ApplicationSetupData[];
   studentCredentials: UserPasswordCredential;
+  applicationData: Record<string, unknown>;
 }
 
 /**
@@ -63,6 +64,7 @@ interface SetupData {
 export function setup(): SetupData {
   const gatewayCredentials = getLoadTestGatewayCredentials();
   const setupItems: ApplicationSetupData[] = [];
+  let applicationData: Record<string, unknown> = {};
   let remaining = ITERATIONS;
   while (remaining > 0) {
     const batchSize = Math.min(remaining, SETUP_BATCH_SIZE);
@@ -71,13 +73,17 @@ export function setup(): SetupData {
       gatewayCredentials,
       { payload: { studentUserName: E2E_TEST_STUDENT_USERNAME } },
     );
-    const batch = response.json() as unknown as ApplicationSetupData[];
-    for (const item of batch) {
+    const batch = response.json() as unknown as {
+      applications: ApplicationSetupData[];
+      applicationData: Record<string, unknown>;
+    };
+    for (const item of batch.applications) {
       setupItems.push(item);
     }
+    applicationData = batch.applicationData;
     remaining -= batchSize;
   }
-  return { setupItems, studentCredentials: getStudentCredentials() };
+  return { setupItems, studentCredentials: getStudentCredentials(), applicationData };
 }
 
 export const options: Options = {
@@ -103,7 +109,7 @@ export default function (setupData: SetupData) {
     associatedFiles: [] as string[],
     programYearId: Number(programYearId),
     data: {
-      ...APPLICATION_SUBMISSION_DATA,
+      ...setupData.applicationData,
       selectedOffering: offeringId,
       selectedProgram: programId,
       selectedLocation: locationId,
@@ -124,120 +130,3 @@ export default function (setupData: SetupData) {
   }
   sleep(1);
 }
-
-/**
- * Full-time student financial aid application data payload for the submit
- * endpoint. Aligned with the 2026-27 form schema. The selectedOffering,
- * selectedProgram, and selectedLocation fields are overridden per-iteration
- * with IDs returned from the gateway setup.
- */
-const APPLICATION_SUBMISSION_DATA = {
-  workflowName: "assessment-gateway-v2",
-  applicationExceptionsStrategy: "verify-unique-application-exceptions",
-  maxIncome: "100000000",
-  isChangeRequestApplication: false,
-  isProgramSectionReadOnly: false,
-  allowBetaInstitutionsOnly: false,
-  selectedLocation: 14,
-  mySchoolIsNotListed: false,
-  studentNumber: "",
-  programYear: "2026",
-  calculatedTaxYear: 2025,
-  selectedProgramDesc: {
-    id: 211,
-    name: "Computer Sciences",
-    description: "Computer science description",
-    credentialType: "graduateDiploma",
-    credentialTypeToDisplay: "Graduate Diploma",
-    deliveryMethod: "Onsite",
-  },
-  studyPeriodMaxDays: "365",
-  currentTaxYear: "2026",
-  programPersistentProperties: [
-    "selectedLocation",
-    "mySchoolIsNotListed",
-    "selectedProgram",
-    "myProgramNotListed",
-    "programName",
-    "programDescription",
-    "studystartDate",
-    "studyendDate",
-    "selectedOffering",
-    "myStudyPeriodIsntListed",
-    "studentNumber",
-    "pirResubmissionDate",
-  ],
-  selectedLocationProgramRestrictions: [] as unknown[],
-  isSelectedLocationProgramRestricted: false,
-  pirResubmissionDate: "",
-  studentGivenNames: "MATT",
-  studentDateOfBirth: "Nov 25 1985",
-  studentHomeAddress: "123 Humboldt St, Victoria, BC, V9V1V1, canada",
-  studentEmail: "simsfive@test.ca",
-  studentLastName: "FRANKY",
-  studentGender: "man",
-  studentPhoneNumber: "7789221234",
-  disabilityStatus: "Not requested",
-  studentProfileDisabilityStatusValue: "Not requested",
-  studentProfileModifiedIndependentStatusValue: "Not requested",
-  maxUploadedFiles: 25,
-  studentInfoConfirmed: true,
-  citizenship: "canadianCitizen",
-  relationshipStatus: "single",
-  indigenousStatus: "no",
-  youthInCare: "no",
-  everDeclaredBankruptcy: "no",
-  outOfHighSchoolFor4Years: "no",
-  whenDidYouGraduateOrLeaveHighSchool: "2023-10-03",
-  fulltimelabourForce: "no",
-  duringStudyCoopPaidWork: "no",
-  hasDependents: "no",
-  dependants: [] as unknown[],
-  applicationPDPPDStatus: "no",
-  addTrustContactToContactSABC: "no",
-  parentInformationStatus: "required",
-  dependantstatus: "dependant",
-  restrictions: [] as unknown[],
-  roiInformation: [
-    {
-      firstName: "",
-      lastName: "",
-      relationshipWithThisContact: "",
-    },
-  ],
-  craConsent: true,
-  childSupport: "no",
-  scholarshipsReceived: "no",
-  bcIncomeassistanceforDisabilities: "no",
-  governmentFunding: "no",
-  nonGovernmentFunding: "no",
-  parentvoluntaryContributions: "no",
-  livingAtHome: "no",
-  considerCostToRelocateToDifferentCity: "no",
-  additionalTransportRequested: "no",
-  studentAidBcConsent: true,
-  applicationId: "",
-  applicationStatus: "",
-  selectedLocationName: "Victoria College",
-  selectedProgramName: "Computer Sciences",
-  myProgramNotListed: { programnotListed: false },
-  myStudyPeriodIsntListed: { offeringnotListed: false },
-  programYearStartDate: "2026-08-01",
-  programYearEndDate: "2027-07-31",
-  fulltimeMonthsOfStudy: 0,
-  parentsDeceased: "no",
-  estrangedFromParents: "no",
-  parentbcResident: "yes",
-  taxReturnIncome: 15000,
-  parents: [
-    {
-      parentFullName: "Test Parent",
-      parentIsAbleToReport: "no",
-    },
-  ],
-  isReadOnly: false,
-  isFulltimeAllowed: true,
-  applicationOfferingIntensityValue: "Full Time",
-  citizenshipForBCResidencyApplicationException: {} as Record<string, unknown>,
-  parentsResidencyApplicationException: {} as Record<string, unknown>,
-};

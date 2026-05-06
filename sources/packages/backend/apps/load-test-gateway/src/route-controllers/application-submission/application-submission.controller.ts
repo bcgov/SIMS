@@ -1,7 +1,7 @@
 import { Body, Controller, Param, ParseIntPipe, Post } from "@nestjs/common";
 import { ApplicationSubmissionService } from "../../services";
 import { SetupApplicationSubmissionAPIInDTO } from "./models/application-submission.dto";
-import { ApplicationSetupData } from "../../services/application-submission/application-submission.service";
+import { ApplicationSubmissionSetupResponse } from "../../services/application-submission/application-submission.service";
 
 @Controller("application-submission")
 export class ApplicationSubmissionController {
@@ -17,13 +17,13 @@ export class ApplicationSubmissionController {
    * the study date overlap validation.
    * @param iterations number of draft applications to create.
    * @param payload setup payload containing the student user name.
-   * @returns per-iteration setup data containing application, offering and program IDs.
+   * @returns setup response with per-iteration application data and the base application payload.
    */
   @Post("setup/:iterations")
   async setup(
     @Param("iterations", ParseIntPipe) iterations: number,
     @Body() payload: SetupApplicationSubmissionAPIInDTO,
-  ): Promise<ApplicationSetupData[]> {
+  ): Promise<ApplicationSubmissionSetupResponse> {
     return this.applicationSubmissionService.createDraftApplications(
       iterations,
       payload.studentUserName,
