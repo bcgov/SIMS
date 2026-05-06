@@ -20,6 +20,8 @@ POSTGRES_DB=
 POSTGRES_PORT=5432
 DB_SCHEMA=sims
 DISABLE_ORM_CACHE=
+DB_POOL_MAX_CONNECTIONS=10 # Example maximum number of connections in the database pool.
+DB_CONNECTION_REQUEST_TIMEOUT=120000 # Example timeout in milliseconds to wait for a database connection.
 
 # KeyCloak
 KEYCLOAK_AUTH_URL=
