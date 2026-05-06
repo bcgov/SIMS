@@ -22,17 +22,17 @@ RUN apk update && \
 RUN git clone --filter=blob:none ${FORMIO_SOURCE_REPO_URL} formio && \
   git -C formio checkout ${FORMIO_SOURCE_REPO_REF}
 
+COPY src/patch-formio-vm.js /tmp/patch-formio-vm.js
+
 WORKDIR /formio
 
-#TODO: consider using the commit sha for the core.
-#RUN npm pkg set 'dependencies[@formio/core]'="${FORMIO_CORE_VERSION}" && \
-RUN npm pkg set 'dependencies[@formio/js]'="${FORMIO_JS_VERSION}" && \
+RUN node /tmp/patch-formio-vm.js
+
+RUN npm pkg set 'dependencies[@formio/core]'="${FORMIO_CORE_VERSION}" && \
+    npm pkg set 'dependencies[@formio/js]'="${FORMIO_JS_VERSION}" && \
     npm pkg set 'dependencies[@formio/vm]'="${FORMIO_VM_VERSION}" && \
     npm i && \
     apk del git
-
-#RUN npm i && \
-#    apk del git
 
 # Set this to inspect more from the application. Examples:
 #   DEBUG=formio:db (see index.js for more)
