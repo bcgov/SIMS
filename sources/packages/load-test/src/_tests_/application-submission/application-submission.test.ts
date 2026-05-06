@@ -20,7 +20,7 @@ import { E2E_TEST_STUDENT_USERNAME } from "../../../config.env";
  * Load test number of iterations to run.
  * Can be overridden via k6 -e ITERATIONS=<n>.
  */
-const ITERATIONS = parseInt(__ENV.ITERATIONS || "500");
+const ITERATIONS = Number.parseInt(__ENV.ITERATIONS || "500");
 /**
  * Virtual users to run load test.
  * Please ensure that the number of virtual users
@@ -28,7 +28,7 @@ const ITERATIONS = parseInt(__ENV.ITERATIONS || "500");
  * Can be overridden via k6 -e VIRTUAL_USERS=<n>.
  */
 const VIRTUAL_USERS = Math.min(
-  parseInt(__ENV.VIRTUAL_USERS || "15"),
+  Number.parseInt(__ENV.VIRTUAL_USERS || "15"),
   ITERATIONS,
 );
 /**
@@ -36,7 +36,7 @@ const VIRTUAL_USERS = Math.min(
  * Batching prevents HTTP and database timeouts when ITERATIONS is large.
  * Can be overridden via k6 -e SETUP_BATCH_SIZE=<n>.
  */
-const SETUP_BATCH_SIZE = parseInt(__ENV.SETUP_BATCH_SIZE || "500");
+const SETUP_BATCH_SIZE = Number.parseInt(__ENV.SETUP_BATCH_SIZE || "500");
 
 /**
  * Per-iteration data returned by the gateway setup endpoint.
@@ -83,7 +83,11 @@ export function setup(): SetupData {
     applicationData = batch.applicationData;
     remaining -= batchSize;
   }
-  return { setupItems, studentCredentials: getStudentCredentials(), applicationData };
+  return {
+    setupItems,
+    studentCredentials: getStudentCredentials(),
+    applicationData,
+  };
 }
 
 export const options: Options = {
@@ -102,7 +106,7 @@ export const options: Options = {
  * Part of the K6 life cycle.
  * @param setupData setup data returned by setup method.
  */
-export default function (setupData: SetupData) {
+export default function submitApplication(setupData: SetupData) {
   const { applicationId, offeringId, programId, locationId, programYearId } =
     setupData.setupItems[execution.scenario.iterationInTest];
   const payload = {
