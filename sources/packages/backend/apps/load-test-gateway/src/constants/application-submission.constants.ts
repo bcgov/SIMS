@@ -69,6 +69,9 @@ export const APPLICATION_SUBMISSION_DATA = {
   addTrustContactToContactSABC: "no",
   parentInformationStatus: "notRequired",
   dependantstatus: "independant",
+  bcResident: "yes",
+  taxReturnIncome: 10000,
+  parentvoluntaryContributions: "no",
   restrictions: [],
   roiInformation: [
     {
