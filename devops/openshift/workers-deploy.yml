@@ -125,7 +125,7 @@ objects:
         kind: Deployment
         name: ${NAME}
       minReplicas: "${{REPLICAS}}"
-      maxReplicas: 10
+      maxReplicas: 3
       metrics:
         - type: Resource
           resource:
