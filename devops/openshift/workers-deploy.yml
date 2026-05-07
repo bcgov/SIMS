@@ -109,12 +109,12 @@ objects:
                 failureThreshold: 3
                 successThreshold: 1
                 httpGet:
-                  path: /health/
+                  path: /health/timeout/3000
                   port: "${{PORT}}"
                   scheme: HTTP
                 initialDelaySeconds: 30
                 periodSeconds: 30
-                timeoutSeconds: 3
+                timeoutSeconds: 5
   - apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
     metadata:
