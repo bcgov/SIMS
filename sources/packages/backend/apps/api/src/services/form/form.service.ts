@@ -26,11 +26,11 @@ export class FormService {
   private readonly authHeader: AxiosRequestConfig;
 
   constructor(
-    private readonly configService: ConfigService,
     private readonly httpService: HttpService,
     private readonly logger: LoggerService,
+    configService: ConfigService,
   ) {
-    this.config = this.configService.forms;
+    this.config = configService.forms;
     this.authHeader = {
       headers: {
         [FORMIO_TOKEN_NAME]: this.config.apiKey,
