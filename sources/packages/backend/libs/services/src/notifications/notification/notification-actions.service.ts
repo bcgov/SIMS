@@ -39,6 +39,7 @@ import {
   StudentCOERequiredNearEndDateNotification,
   MinistryFormSubmittedNotification,
   MinistryStudentAppealNotification,
+  MinistryFileProcessingIssueNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { LoggerService } from "@sims/utilities/logger";
@@ -1613,36 +1614,39 @@ export class NotificationActionsService {
   }
 
   /**
-   * Creates a student notification when a form submission is completed.
+   * Creates a ministry notification when there is a CRA/SIN file processing issue.
+   * using the form category directly from the dynamic form configuration.
    * @param notification notification details.
-   * @param auditUserId user who completed the form submission.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveStudentFormCompletedNotification(
-    notification: StudentNotification,
-    auditUserId: number,
+  async saveMinistryFileProcessingIssueNotification(
+    notification: MinistryFileProcessingIssueNotification,
     entityManager: EntityManager,
   ): Promise<void> {
-    const { templateId } =
-      await this.notificationMessageService.getNotificationMessageDetails(
-        NotificationMessageType.StudentFormCompleted,
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId, emailContacts } =
+      await this.assertNotificationMessageDetails(
+        NotificationMessageType.MinistryFileProcessingIssue,
       );
-    const formCompletedNotification = {
-      userId: notification.userId,
-      messageType: NotificationMessageType.StudentFormCompleted,
+    if (!emailContacts?.length) {
+      return;
+    }
+
+    const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
+      userId: auditUser.id,
+      messageType: NotificationMessageType.MinistryFileProcessingIssue,
       messagePayload: {
-        email_address: notification.toAddress,
+        email_address: emailContact,
         template_id: templateId,
-        personalisation: {
-          givenNames: notification.givenNames ?? "",
-          lastName: notification.lastName,
-          date: this.getDateTimeOnPSTTimeZone(),
-        },
+        title: notification.title,
+        fileName: notification.fileName,
+        type: notification.type,
       },
-    };
+    }));
+    // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
-      [formCompletedNotification],
-      auditUserId,
+      ministryNotificationsToSend,
+      auditUser.id,
       { entityManager },
     );
   }

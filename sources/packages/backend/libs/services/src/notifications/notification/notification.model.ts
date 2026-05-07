@@ -273,3 +273,11 @@ export interface MinistryFormSubmittedNotification {
   formNames: string[];
   applicationNumber?: string;
 }
+
+export type FileProcessingIssueType = "CRA" | "SIN";
+
+export interface MinistryFileProcessingIssueNotification {
+  title: string;
+  fileName: string;
+  type: FileProcessingIssueType;
+}
