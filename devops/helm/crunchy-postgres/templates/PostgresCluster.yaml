@@ -201,6 +201,7 @@ spec:
           client_tls_sslmode: disable
           default_pool_size: {{ .Values.proxy.pgBouncer.defaultPoolSize | quote }}
           max_client_conn: {{ .Values.proxy.pgBouncer.maxClientConnections | quote }}
+          pool_mode: {{ .Values.proxy.pgBouncer.poolMode }}
       {{ if .Values.proxy.pgBouncer.image }}
       image: {{ .Values.proxy.pgBouncer.image }}
       {{ end }}

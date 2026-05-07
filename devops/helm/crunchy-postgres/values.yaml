@@ -127,6 +127,7 @@ proxy:
     replicas: 3
     defaultPoolSize: 20
     maxClientConnections: 100
+    poolMode: session # session (default) | transaction | statement
     requests:
       cpu: 50m
       memory: 128Mi

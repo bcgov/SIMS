@@ -93,6 +93,8 @@ proxy:
     image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
     replicas: 3
     defaultPoolSize: 30
+    maxClientConnections: 100
+    poolMode: transaction # session (default) | transaction | statement
     requests:
       cpu: 50m
       memory: 128Mi
