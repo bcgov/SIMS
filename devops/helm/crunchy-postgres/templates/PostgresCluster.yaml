@@ -199,6 +199,7 @@ spec:
       config:
         global:
           client_tls_sslmode: disable
+          default_pool_size: "{{ .Values.proxy.pgBouncer.defaultPoolSize }}"
       {{ if .Values.proxy.pgBouncer.image }}
       image: {{ .Values.proxy.pgBouncer.image }}
       {{ end }}
