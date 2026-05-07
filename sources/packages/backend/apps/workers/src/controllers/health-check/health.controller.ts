@@ -31,6 +31,8 @@ export class HealthController {
       () =>
         this.typeOrmHealthIndicator.pingCheck("sims-db", {
           connection: this.dataSource,
+          timeout:
+            Number.parseInt(process.env.DB_HEALTH_CHECK_TIMEOUT, 1000) || 3000,
         }),
       () => this.zeebeHealthIndicator.check("zeebe"),
     ]);
