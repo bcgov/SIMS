@@ -127,8 +127,8 @@ services:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3001/access || exit 1"]
       interval: 15s
       timeout: 10s
-      retries: 15
-      start_period: 60s
+      retries: 20
+      start_period: 120s
   # Workers
   workers:
     image: workers-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
