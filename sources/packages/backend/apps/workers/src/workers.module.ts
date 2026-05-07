@@ -1,4 +1,5 @@
-import { Module } from "@nestjs/common";
+import { Module, OnModuleInit } from "@nestjs/common";
+import { collectDefaultMetrics } from "prom-client";
 import { DatabaseModule } from "@sims/sims-db";
 import {
   AssessmentController,
@@ -8,6 +9,7 @@ import {
   CRAIntegrationController,
   DisbursementController,
   HealthController,
+  MetricsController,
 } from "./controllers";
 import {
   StudentAssessmentService,
@@ -63,6 +65,7 @@ import { TerminusModule } from "@nestjs/terminus";
     CRAIntegrationController,
     DisbursementController,
     HealthController,
+    MetricsController,
   ],
   providers: [
     ZeebeTransportStrategy,
@@ -91,4 +94,11 @@ import { TerminusModule } from "@nestjs/terminus";
     ProgramInfoRequestService,
   ],
 })
-export class WorkersModule {}
+export class WorkersModule implements OnModuleInit {
+  /**
+   * Initializes Prometheus default metrics collection for the workers application.
+   */
+  onModuleInit(): void {
+    collectDefaultMetrics();
+  }
+}

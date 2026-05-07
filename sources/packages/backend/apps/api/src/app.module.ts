@@ -1,4 +1,10 @@
-import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  OnModuleInit,
+} from "@nestjs/common";
+import { collectDefaultMetrics } from "prom-client";
 import { AppService } from "./app.service";
 import { APP_FILTER, APP_GUARD, RouterModule } from "@nestjs/core";
 import {
@@ -14,6 +20,7 @@ import {
   DynamicFormController,
   DynamicFormAESTController,
   HealthController,
+  MetricsController,
   SystemLookupConfigurationController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
@@ -98,6 +105,7 @@ import { SystemLookupConfigurationModule } from "@sims/services/system-lookup-co
   ],
   controllers: [
     HealthController,
+    MetricsController,
     ConfigController,
     DynamicFormController,
     AuditController,
@@ -120,9 +128,20 @@ import { SystemLookupConfigurationModule } from "@sims/services/system-lookup-co
     },
   ],
 })
-export class AppModule implements NestModule {
+export class AppModule implements NestModule, OnModuleInit {
+  /**
+   * Initializes Prometheus default metrics collection for the API application.
+   */
+  onModuleInit(): void {
+    collectDefaultMetrics();
+  }
+
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(AccessLoggerMiddleware).exclude("health").forRoutes("*");
+    consumer
+      .apply(AccessLoggerMiddleware)
+      .exclude("health")
+      .exclude("metrics")
+      .forRoutes("*");
     // Allow the configuration of the body parser for individual routes.
     consumer
       .apply(json({ limit: JSON_300KB }))
