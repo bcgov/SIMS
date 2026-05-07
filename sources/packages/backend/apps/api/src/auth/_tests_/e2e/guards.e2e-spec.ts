@@ -488,7 +488,7 @@ describe("Guards and Decorators - Authentication, Maintenance Mode, Throttler (e
     });
 
     it("Should allow requests exceeding the rate limit when a controller is decorated with @SkipThrottle.", async () => {
-      const endpoint = "/health";
+      const endpoint = "/health/timeout/1500";
 
       // Act and Assert - Make requests that exceeds the limit, all should pass
       for (let i = 0; i < throttleLimit + 1; i++) {
