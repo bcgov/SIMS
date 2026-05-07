@@ -1,66 +1,40 @@
 import * as dotenv from "dotenv";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { join } from "path";
 
 dotenv.config({ path: join(__dirname, "./../../../.env") });
 const formsUrl = process.env.FORMS_URL;
-const formsUserName = process.env.FORMS_SA_USER_NAME;
-const formsPassword = process.env.FORMS_SA_PASSWORD;
+const formsApiKey = process.env.FORMS_API_KEY;
 // Expected header name to send the authorization token to formio API.
-const FORMIO_TOKEN_NAME = "x-jwt-token";
+const FORMIO_TOKEN_NAME = "x-token";
 
 /**
  * Creates the expected authorization header to authorize the formio API.
  * @returns header to be added to HTTP request.
  */
-export const createAuthHeader = async (): Promise<{ headers: any }> => {
-  const token = await getAuthToken();
+export const createAuthHeader = (): AxiosRequestConfig => {
+  if (!formsApiKey) {
+    throw new Error(
+      "Form API key is not set. Please set the FORMS_API_KEY environment variable.",
+    );
+  }
   return {
     headers: {
-      [FORMIO_TOKEN_NAME]: token,
+      [FORMIO_TOKEN_NAME]: formsApiKey,
     },
   };
-};
-
-/**
- * Gets the authentication token value to authorize the formio API.
- * @returns the token that is needed to authentication on the formio API.
- */
-const getAuthToken = async (): Promise<string> => {
-  const authResponse = await getUserLogin();
-  return authResponse.headers[FORMIO_TOKEN_NAME];
-};
-
-/**
- * Executes the authentication on formio API.
- * @returns the result of a sucessfull authentication or thows an expection
- * in case the result is anything different from HTTP 200 code.
- */
-const getUserLogin = async (): Promise<AxiosResponse<any>> => {
-  try {
-    return await axios.post(`${formsUrl}/user/login`, {
-      data: {
-        email: formsUserName,
-        password: formsPassword,
-      },
-    });
-  } catch (error) {
-    console.error("Received exception while getting form SA token");
-    console.error(error);
-    throw error;
-  }
 };
 
 /**
  * Checks if a form definition is already present on Form.IO server.
  * @param formAlias form alias to be checked.
  * @param authHeader authentication header.
- * @returns true if the form is present, otherwise false if a the
- * http response is not successful.
+ * @returns true if the form is present, otherwise false if the
+ * HTTP response is not successful.
  */
 export const isFormDeployed = async (
   formAlias: string,
-  authHeader: any
+  authHeader: AxiosRequestConfig,
 ): Promise<boolean> => {
   try {
     const authRequest = await axios.get(`${formsUrl}/${formAlias}`, authHeader);
@@ -80,7 +54,7 @@ export const isFormDeployed = async (
 export const updateForm = async (
   formAlias: string,
   formDefinition: any,
-  authHeader: any
+  authHeader: AxiosRequestConfig,
 ): Promise<void> => {
   try {
     await axios.put(`${formsUrl}/${formAlias}`, formDefinition, authHeader);
@@ -99,7 +73,7 @@ export const updateForm = async (
  */
 export const createForm = async (
   formDefinition: any,
-  authHeader: any
+  authHeader: AxiosRequestConfig,
 ): Promise<void> => {
   try {
     await axios.post(`${formsUrl}/form`, formDefinition, authHeader);

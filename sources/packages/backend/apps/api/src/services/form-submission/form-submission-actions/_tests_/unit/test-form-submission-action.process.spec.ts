@@ -2,6 +2,7 @@ import {
   FormCategory,
   FormSubmissionActionType,
   FormSubmissionDecisionStatus,
+  FormSubmissionStatus,
   FormSubmissionSubmittedData,
 } from "@sims/sims-db";
 import { TestFormSubmissionAction } from "./test-form-submission-action";
@@ -22,6 +23,7 @@ describe("FormSubmissionAction-process", () => {
       id: 1,
       studentId: 2,
       formCategory: FormCategory.StudentAppeal,
+      submissionStatus: FormSubmissionStatus.Completed,
       applicationId: 3,
       currentOfferingId: 4,
       submissionItems: [
@@ -65,6 +67,7 @@ describe("FormSubmissionAction-process", () => {
       id: 1,
       studentId: 2,
       formCategory: FormCategory.StudentAppeal,
+      submissionStatus: FormSubmissionStatus.Completed,
       applicationId: 3,
       currentOfferingId: 4,
       submissionItems: [

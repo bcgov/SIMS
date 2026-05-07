@@ -32,6 +32,11 @@ import {
   FormSubmissionSubmitService,
   FormSubmissionService,
   FormSubmissionAuthorizationService,
+  FormSubmissionActionProcessor,
+  FormSubmissionUpdateDisabilityOnSubmissionAction,
+  FormSubmissionCreateAppealAssessmentAction,
+  FormSubmissionUpdateModifiedIndependentAction,
+  FormSubmissionUpdateNonPunitiveWithdrawalAction,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -191,6 +196,11 @@ import {
     // Form Submission Service.
     FormSubmissionSubmitService,
     FormSubmissionControllerService,
+    FormSubmissionUpdateNonPunitiveWithdrawalAction,
+    FormSubmissionUpdateModifiedIndependentAction,
+    FormSubmissionCreateAppealAssessmentAction,
+    FormSubmissionUpdateDisabilityOnSubmissionAction,
+    FormSubmissionActionProcessor,
     FormSubmissionService,
   ],
 })

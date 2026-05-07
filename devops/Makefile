@@ -690,7 +690,7 @@ deploy-web-dev:
 	@test -n "$(TLS_KEY)" || (echo "Error: TLS_KEY is not set" && exit 1)
 	@test -n "$(TLS_CA_CERTIFICATE)" || (echo "Error: TLS_CA_CERTIFICATE is not set" && exit 1)
 	$(MAKE) deploy-web \
-		NAMESPACE=0c27fb-dev \
+		NAMESPACE=e0a504-dev \
 		WEB_BUILD_REF=web-sims \
 		PROJECT_NAME=sims \
 		WEB=dev-web-sims \
@@ -718,6 +718,7 @@ deploy-forms:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(FORMIO_SOURCE_REPO_TAG)"
 	test -n "$(FORMIO_ROOT_EMAIL)"
+	test -n "$(FORMIO_API_KEY)"
 	test -n "$(MONGODB_URI)"
 	test -n "$(FORMIO_CPU_REQUEST)"
 	test -n "$(FORMIO_MEMORY_REQUEST)"
@@ -731,6 +732,7 @@ deploy-forms:
 	-p IMAGE_STREAM_TAG="$(FORMS_BUILD_REF):$(FORMIO_SOURCE_REPO_TAG)" \
 	-p FORMIO_ROOT_EMAIL=$(FORMIO_ROOT_EMAIL) \
 	-p FORMIO_ROOT_PASSWORD=$(FORMIO_ROOT_PASSWORD) \
+	-p FORMIO_API_KEY=$(FORMIO_API_KEY) \
 	-p MONGODB_URI=$(MONGODB_URI) \
 	-p CPU_REQUEST=$(FORMIO_CPU_REQUEST) \
 	-p MEMORY_REQUEST=$(FORMIO_MEMORY_REQUEST) \
@@ -740,15 +742,6 @@ deploy-forms:
 	$(call rollout_and_wait,deployment/$(FORMS_NAME))
 
 update-sysdig-team:
-	@echo "Updating Sysdig Team for license plate 0c27fb.\n"
-	@oc project 0c27fb-tools
-	@oc process -f openshift/sysdig-team.yml -p LICENSE_PLATE=0c27fb | oc apply -f -
-	@echo "Updating Sysdig Team for license plate a6ef19.\n"
-	@oc project a6ef19-tools
-	@oc process -f openshift/sysdig-team.yml -p LICENSE_PLATE=a6ef19 | oc apply -f -
-
-# TODO: Rename to update-sysdig-team after the migration is complete in prod and the silver license plates are no longer in use.
-update-sysdig-team-gold:
 	@echo "Updating Sysdig Team for license plate e0a504.\n"
 	@oc project e0a504-tools
 	@oc process -f openshift/sysdig-team.yml -p LICENSE_PLATE=e0a504 | oc apply -f -

@@ -44,6 +44,7 @@ export function createFakeSFASIndividual(options?: {
   sfasIndividual.lastName =
     options?.initialValues?.lastName ?? faker.person.lastName();
   sfasIndividual.sin = options?.initialValues?.sin ?? fakeSIN;
+  sfasIndividual.pdStatus = options?.initialValues?.pdStatus;
   sfasIndividual.unsuccessfulCompletion =
     options?.initialValues?.unsuccessfulCompletion ?? 0;
   sfasIndividual.neb = options?.initialValues?.neb ?? 0;

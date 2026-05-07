@@ -8,6 +8,7 @@ import {
   FormSubmission,
   FormSubmissionActionType,
   FormSubmissionDecisionStatus,
+  FormSubmissionStatus,
 } from "@sims/sims-db";
 
 describe("FormSubmissionActionProcessor-processActions", () => {
@@ -28,10 +29,12 @@ describe("FormSubmissionActionProcessor-processActions", () => {
     );
     // Allow setting the action types directly to avoid spying on getters
     // that would not work as expected for protected properties.
-    (formSubmissionCreateAppealAssessmentAction as object)["actionType"] =
-      FormSubmissionActionType.CreateStudentAppealAssessment;
-    (formSubmissionUpdateModifiedIndependentAction as object)["actionType"] =
-      FormSubmissionActionType.UpdateModifiedIndependent;
+    (formSubmissionCreateAppealAssessmentAction as Record<string, unknown>)[
+      "actionType"
+    ] = FormSubmissionActionType.CreateStudentAppealAssessment;
+    (formSubmissionUpdateModifiedIndependentAction as Record<string, unknown>)[
+      "actionType"
+    ] = FormSubmissionActionType.UpdateModifiedIndependent;
   });
 
   beforeEach(() => {
@@ -47,6 +50,7 @@ describe("FormSubmissionActionProcessor-processActions", () => {
       id: 1,
       student: { id: 2 },
       formCategory: FormCategory.StudentAppeal,
+      submissionStatus: FormSubmissionStatus.Completed,
       application: {
         id: 3,
         currentAssessment: {
@@ -83,13 +87,14 @@ describe("FormSubmissionActionProcessor-processActions", () => {
       id: mockedFormSubmission.id,
       studentId: mockedFormSubmission.student.id,
       formCategory: mockedFormSubmission.formCategory,
+      submissionStatus: mockedFormSubmission.submissionStatus,
       applicationId: mockedFormSubmission.application?.id,
       currentOfferingId:
         mockedFormSubmission.application?.currentAssessment?.offering?.id,
       submissionItems: mockedFormSubmission.formSubmissionItems.map((item) => ({
         id: item.id,
         actions: item.submittedData.actions ?? [],
-        decisionStatus: item.currentDecision.decisionStatus,
+        decisionStatus: item.currentDecision!.decisionStatus,
         submittedData: item.submittedData,
       })),
     };

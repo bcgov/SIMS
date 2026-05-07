@@ -144,6 +144,7 @@
           <zeebe:header key="appealsFTSFAInternationalInstitutionsEligibilityAppealData" value="appeals.ftsfainternationalinstitutionseligibilityappeal.submittedData.{&#34;isEligibilityRequested&#34;: isEligibilityRequested}" />
           <zeebe:header key="appealsFTCanadaStudentGrantEligibilityAppealData" value="appeals.ftcanadastudentgranteligibilityappeal.submittedData.{&#34;isEligibilityRequested&#34;: isEligibilityRequested}" />
           <zeebe:header key="appealsPTSFAEligibilityInternationalInstitutionsAppealData" value="appeals.ptsfaeligibilityinternationalinstitutionsappeal.submittedData.{&#34;isEligibilityRequested&#34;: isEligibilityRequested}" />
+          <zeebe:header key="appealsFTSFAEligibilityOutOfProvinceInstitutionsAppealData" value="appeals.ftsfaeligibilityoutofprovinceprivateinstitutionsappeal.submittedData.{&#34;isEligibilityRequested&#34;: isEligibilityRequested}" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1jdhbms</bpmn:incoming>

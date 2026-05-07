@@ -93,7 +93,7 @@ describe.skip("describeProcessorRootTest(QueueNames.ATBCResponseIntegration)", (
     );
     expect(pdReceivedStudent.disabilityStatus).toBe(DisabilityStatus.PD);
     expect(
-      formatDate(pdReceivedStudent.studentPDUpdateAt, ATBC_DATE_FORMAT),
+      formatDate(pdReceivedStudent.disabilityStatusUpdatedOn, ATBC_DATE_FORMAT),
     ).toBe(pdResponse.D8Y_DTE);
     // Validate the disability status and status updated date.
     const ppdReceivedStudent = await getStudentDisabilityStatusDetails(
@@ -102,7 +102,10 @@ describe.skip("describeProcessorRootTest(QueueNames.ATBCResponseIntegration)", (
     );
     expect(ppdReceivedStudent.disabilityStatus).toBe(DisabilityStatus.PPD);
     expect(
-      formatDate(ppdReceivedStudent.studentPDUpdateAt, ATBC_DATE_FORMAT),
+      formatDate(
+        ppdReceivedStudent.disabilityStatusUpdatedOn,
+        ATBC_DATE_FORMAT,
+      ),
     ).toBe(ppdResponse.D8Y_DTE);
   });
 
@@ -150,7 +153,7 @@ describe.skip("describeProcessorRootTest(QueueNames.ATBCResponseIntegration)", (
     );
     // Expect the disability status updated date not to be the ATBC response status updated date.
     expect(
-      formatDate(pdReceivedStudent.studentPDUpdateAt, ATBC_DATE_FORMAT),
+      formatDate(pdReceivedStudent.disabilityStatusUpdatedOn, ATBC_DATE_FORMAT),
     ).not.toBe(pdResponse.D8Y_DTE);
   });
 
@@ -170,7 +173,11 @@ async function getStudentDisabilityStatusDetails(
   studentId: number,
 ): Promise<Student> {
   return db.student.findOne({
-    select: { id: true, disabilityStatus: true, studentPDUpdateAt: true },
+    select: {
+      id: true,
+      disabilityStatus: true,
+      disabilityStatusUpdatedOn: true,
+    },
     where: { id: studentId },
   });
 }

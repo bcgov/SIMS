@@ -74,6 +74,7 @@ export class FormSubmissionCreateAppealAssessmentAction extends FormSubmissionAc
    */
   protected appliesTo(formSubmission: FormSubmissionActionModel): boolean {
     return (
+      this.hasFinalDecisionStatus(formSubmission) &&
       formSubmission.formCategory === FormCategory.StudentAppeal &&
       formSubmission.applicationId !== undefined
     );

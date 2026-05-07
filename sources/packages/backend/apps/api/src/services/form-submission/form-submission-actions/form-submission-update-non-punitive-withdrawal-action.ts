@@ -74,9 +74,13 @@ export class FormSubmissionUpdateNonPunitiveWithdrawalAction extends FormSubmiss
 
   /**
    * Determines if the action applies to the given form submission.
+   * @param formSubmission the form submission to check.
    * @returns true if the action applies, false otherwise.
    */
   protected appliesTo(formSubmission: FormSubmissionActionModel): boolean {
-    return formSubmission.formCategory === FormCategory.StudentForm;
+    return (
+      this.hasFinalDecisionStatus(formSubmission) &&
+      formSubmission.formCategory === FormCategory.StudentForm
+    );
   }
 }

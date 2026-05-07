@@ -31,8 +31,9 @@ services:
     environment:
       DEBUG: formio:*
       NODE_CONFIG: '{"mongo": "mongodb://mongo:27017/formio"}'
-      ROOT_EMAIL: admin@example.com
-      ROOT_PASSWORD: CHANGEME
+      ROOT_EMAIL: ${FORMS_SA_USER_NAME}
+      ROOT_PASSWORD: ${FORMS_SA_PASSWORD}
+      API_KEYS: ${FORMS_API_KEY}
     stdin_open: true # -i
     tty: true # -t
 

@@ -855,3 +855,8 @@ td .formio-custom-tooltip:hover .tooltip-text {
   border-color: transparent !important;
   padding: 5px 0px 5px 0px;
 }
+
+.fixed-height-declaration-large .formio-editor-read-only-content {
+  max-height: 600px;
+  overflow: auto;
+}
