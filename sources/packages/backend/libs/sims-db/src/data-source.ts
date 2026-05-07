@@ -102,7 +102,7 @@ interface ORMCacheConfig {
 export const ormConfig: ConnectionOptions = {
   type: "postgres",
   host: process.env.POSTGRES_HOST || "localhost",
-  port: parseInt(process.env.POSTGRES_PORT, 10) || 5432,
+  port: Number.parseInt(process.env.POSTGRES_PORT, 10) || 5432,
   database: process.env.POSTGRES_DB || "aest",
   username: process.env.POSTGRES_USER || "admin",
   password: process.env.POSTGRES_PASSWORD,
@@ -110,8 +110,12 @@ export const ormConfig: ConnectionOptions = {
   cache: getORMCacheConfig(),
   synchronize: false,
   extra: {
-    max: CONNECTION_POOL_MAX_CONNECTIONS,
-    connectionTimeoutMillis: CONNECTION_REQUEST_TIMEOUT,
+    max:
+      Number.parseInt(process.env.DB_POOL_MAX_CONNECTIONS, 10) ||
+      CONNECTION_POOL_MAX_CONNECTIONS,
+    connectionTimeoutMillis:
+      Number.parseInt(process.env.DB_CONNECTION_REQUEST_TIMEOUT, 10) ||
+      CONNECTION_REQUEST_TIMEOUT,
   },
 };
 

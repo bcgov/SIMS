@@ -1,4 +1,5 @@
 import {
+  FormCategory,
   FormSubmissionActionType,
   FormSubmissionDecisionStatus,
   ModifiedIndependentStatus,
@@ -58,9 +59,13 @@ export class FormSubmissionUpdateModifiedIndependentAction extends FormSubmissio
 
   /**
    * Determines if the action applies to the given form submission.
+   * @param formSubmission the form submission to check.
    * @returns true if the action applies, false otherwise.
    */
-  protected appliesTo(): boolean {
-    return true;
+  protected appliesTo(formSubmission: FormSubmissionActionModel): boolean {
+    return (
+      this.hasFinalDecisionStatus(formSubmission) &&
+      formSubmission.formCategory === FormCategory.StudentAppeal
+    );
   }
 }

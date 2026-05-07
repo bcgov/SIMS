@@ -8,6 +8,7 @@ import {
   mockJWTUserInfo,
   resetMockJWTUserInfo,
 } from "../../../../testHelpers";
+import MockDate from "mockdate";
 import {
   createE2EDataSources,
   createFakeSFASApplication,
@@ -19,7 +20,7 @@ import {
 import { TestingModule } from "@nestjs/testing";
 import { RestrictionCode, SystemUsersService } from "@sims/services";
 import { In } from "typeorm";
-import { IdentityProviders, NoteType } from "@sims/sims-db";
+import { DisabilityStatus, IdentityProviders, NoteType } from "@sims/sims-db";
 import { CreateStudentAPIInDTO } from "apps/api/src/route-controllers/student/models/student.dto";
 
 const SIN_NUMBER_A = "544962244";
@@ -43,6 +44,7 @@ describe("StudentStudentsController(e2e)-create", () => {
   });
 
   beforeEach(async () => {
+    MockDate.reset();
     await resetMockJWTUserInfo(appModule);
     await db.sinValidation.update(
       { sin: In([SIN_NUMBER_A, SIN_NUMBER_B, SIN_NUMBER_PARTIAL_MATCH]) },
@@ -305,6 +307,67 @@ describe("StudentStudentsController(e2e)-create", () => {
           id: systemUserId,
         },
       },
+    });
+  });
+
+  it(`Should create a BCSC student and import the disability status from SFAS when the student profile has SFAS matching record with disability status '${DisabilityStatus.PD}'.`, async () => {
+    // Arrange
+    const birthDate = "2000-01-01";
+    // Student creation payload.
+    const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_B });
+    // Mocked user info to populate the JWT token.
+    const user = createFakeUser();
+    // Create the SFAS individual that will match the student being created.
+    // Last name, will always be random, which will avoid conflicts with other tests.
+    await saveFakeSFASIndividual(db.dataSource, {
+      initialValues: {
+        lastName: user.lastName,
+        birthDate,
+        sin: SIN_NUMBER_B,
+        pdStatus: true,
+      },
+    });
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, { ...user, birthDate: birthDate });
+    // Get any student user token. The properties required for student creation
+    // are provided by the mocked user info and overridden using mockJWTUserInfo.
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    // Mock the current date to validate the disability status audit date.
+    const now = new Date();
+    MockDate.set(now);
+
+    // Act/Assert
+    let studentId: number;
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        studentId = response.body.id;
+        expect(studentId).toBeGreaterThan(0);
+      });
+    const createdStudent = await db.student.findOne({
+      select: {
+        id: true,
+        disabilityStatus: true,
+        disabilityStatusUpdatedBy: { id: true },
+        disabilityStatusUpdatedOn: true,
+      },
+      relations: { disabilityStatusUpdatedBy: true },
+      where: { id: studentId },
+      loadEagerRelations: false,
+    });
+    // Assert the disability status was imported as expected with audit information.
+    expect(createdStudent).toEqual({
+      id: studentId,
+      disabilityStatus: DisabilityStatus.PD,
+      disabilityStatusUpdatedBy: {
+        id: systemUserId,
+      },
+      disabilityStatusUpdatedOn: now,
     });
   });
 

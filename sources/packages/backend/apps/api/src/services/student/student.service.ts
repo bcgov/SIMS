@@ -84,7 +84,7 @@ export class StudentService extends RecordDataModelService<Student> {
         "student.gender",
         "student.contactInfo",
         "student.studentPDSentAt",
-        "student.studentPDUpdateAt",
+        "student.disabilityStatusUpdatedOn",
         "student.disabilityStatus",
         "student.modifiedIndependentStatus",
         "sinValidation.id",
@@ -201,17 +201,7 @@ export class StudentService extends RecordDataModelService<Student> {
         student.birthDate,
         studentSIN,
       );
-      // If SFAS individual exist with matching details, read the disability status and effective date.
-      if (sfasIndividual) {
-        student.disabilityStatus = this.getDisabilityStatus(
-          sfasIndividual.pdStatus,
-          sfasIndividual.ppdStatus,
-        );
-        student.disabilityStatusEffectiveDate = this.getDisabilityEffectiveDate(
-          sfasIndividual.ppdStatusDate,
-          student.disabilityStatus,
-        );
-      }
+      this.setStudentDisabilityStatusFromLegacy(sfasIndividual, student);
     } catch (error) {
       this.logger.error("Unable to get SFAS information of student.");
       this.logger.error(error);
@@ -823,40 +813,32 @@ export class StudentService extends RecordDataModelService<Student> {
   }
 
   /**
-   * Get student disability status.
-   * @param pdStatus SFAS PD status.
-   * @param ppdStatus SFAS PPD status.
-   * @returns disability status.
+   * Set student disability status from legacy if legacy data and disability status exist.
+   * @param sfasIndividual SFAS individual data.
+   * @param student Student in sims.
    */
-  private getDisabilityStatus(
-    pdStatus: boolean,
-    ppdStatus: boolean,
-  ): DisabilityStatus {
-    if (pdStatus) {
-      return DisabilityStatus.PD;
-    } else if (ppdStatus) {
-      return DisabilityStatus.PPD;
+  private setStudentDisabilityStatusFromLegacy(
+    sfasIndividual: SFASIndividual | null,
+    student: Student,
+  ): void {
+    // Check for possible disability status from legacy.
+    if (
+      sfasIndividual &&
+      (sfasIndividual.pdStatus || sfasIndividual.ppdStatus)
+    ) {
+      const now = new Date();
+      student.disabilityStatus = sfasIndividual.pdStatus
+        ? DisabilityStatus.PD
+        : DisabilityStatus.PPD;
+      student.disabilityStatusEffectiveDate = sfasIndividual.pdStatus
+        ? now
+        : new Date(sfasIndividual.ppdStatusDate!);
+      // Populate audit fields only if the disability status is imported.
+      student.disabilityStatusUpdatedOn = now;
+      student.disabilityStatusUpdatedBy = this.systemUsersService.systemUser;
+      return;
     }
-    return DisabilityStatus.NotRequested;
-  }
-
-  /**
-   * Gets the disability effective date based on the disability status.
-   * If the disability status is a PD status, the disability effective date should be the current date.
-   * If the disability status is a PPD status, the disability effective date should be the ppd status date.
-   * @param ppdStatusDate PPD status date.
-   * @param disabilityStatus student disability status.
-   */
-  private getDisabilityEffectiveDate(
-    ppdStatusDate: string,
-    disabilityStatus: DisabilityStatus,
-  ): Date | null {
-    if (disabilityStatus === DisabilityStatus.PD) {
-      return new Date();
-    } else if (disabilityStatus === DisabilityStatus.PPD) {
-      return new Date(ppdStatusDate);
-    }
-    return null;
+    student.disabilityStatus = DisabilityStatus.NotRequested;
   }
 
   /**
@@ -888,6 +870,8 @@ export class StudentService extends RecordDataModelService<Student> {
         {
           disabilityStatus,
           disabilityStatusEffectiveDate: now,
+          disabilityStatusUpdatedOn: now,
+          disabilityStatusUpdatedBy: auditUser,
           modifier: auditUser,
           updatedAt: now,
         },

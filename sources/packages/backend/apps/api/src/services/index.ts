@@ -71,4 +71,5 @@ export * from "./form-submission/form-submission-actions/form-submission-action-
 export * from "./form-submission/form-submission-actions/form-submission-create-appeal-assessment-action";
 export * from "./form-submission/form-submission-actions/form-submission-update-modified-independent-action";
 export * from "./form-submission/form-submission-actions/form-submission-update-non-punitive-withdrawal-action";
+export * from "./form-submission/form-submission-actions/form-submission-update-disability-on-submission-action";
 export * from "./msfaa-number/msfaa-number.service";

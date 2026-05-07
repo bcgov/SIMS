@@ -112,7 +112,7 @@
       "addAnotherPosition": "bottom",
       "layoutFixed": false,
       "enableRowGroups": false,
-      "initEmpty": false,
+      "initEmpty": true,
       "hideLabel": true,
       "tableView": false,
       "defaultValue": [
@@ -124,9 +124,9 @@
         }
       ],
       "clearOnHide": false,
-      "calculateValue": "value = data.parents;",
+      "calculateValue": "// Only initialize on a new form to avoid overwriting data on form load.\nif (!value?.length) {\n  value = data.parents;\n}\n",
       "validate": {
-        "custom": "let errorMessage;\r\n\r\n// Only validate if all parents have a value selected\r\nif (data.parentsIncome.every(parent => parent.hasCurrentYearParentIncome)) {\r\n\r\n  // Get allowed values from injected property 'parents'.\r\n  const allowedValues = !!data.parents\r\n   ? data.parents.map((parent) => parent.id)\r\n   : [];\r\n\r\n  if (!data.parentsIncome.some(parent => parent.hasCurrentYearParentIncome === 'yes')) {\r\n    errorMessage = 'An income appeal must be submitted for at least one parent.';\r\n  } else if (!data.parentsIncome.every(parent => allowedValues.includes(parent.id))) {\r\n    errorMessage = 'Invalid value for parent(s).';\r\n  }\r\n}\r\nvalid = errorMessage || true;"
+        "custom": "// Only validate if dataGrid is loaded and all rows have a value selected.\r\nif (!data.parentsIncome?.length || data.parentsIncome.some(parent => !parent.hasCurrentYearParentIncome)) {\r\n  return true;\r\n}\r\n\r\nlet errorMessage;\r\n\r\nif (data.parentsIncome.every(parent => parent.hasCurrentYearParentIncome)) {\r\n\r\n  // Get allowed values from injected property 'parents'.\r\n  const allowedValues = !!data.parents\r\n   ? data.parents.map((parent) => parent.id)\r\n   : [];\r\n\r\n  if (!data.parentsIncome.some(parent => parent.hasCurrentYearParentIncome === 'yes')) {\r\n    errorMessage = 'An income appeal must be submitted for at least one parent.';\r\n  } else if (!data.parentsIncome.every(parent => allowedValues.includes(parent.id))) {\r\n    errorMessage = 'Invalid value for parent(s).';\r\n  }\r\n}\r\nvalid = errorMessage || true;"
       },
       "validateWhenHidden": false,
       "key": "parentsIncome",
@@ -236,7 +236,6 @@
                   "applyMaskOn": "change",
                   "mask": false,
                   "tableView": false,
-                  "currency": "USD",
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
                   "validate": {
@@ -245,12 +244,11 @@
                   },
                   "validateWhenHidden": false,
                   "key": "currentYearParentIncome",
-                  "type": "currency",
+                  "type": "number",
                   "input": true,
                   "delimiter": true,
-                  "inputType": "text",
-                  "decimalLimit": 2,
-                  "requireDecimal": true
+                  "decimalLimit": 0,
+                  "requireDecimal": false
                 },
                 {
                   "label": "Select the reason that best describes the decrease in your parent’s gross income:",
