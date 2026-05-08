@@ -1,5 +1,6 @@
 import { Module, OnModuleInit } from "@nestjs/common";
-import { collectDefaultMetrics } from "prom-client";
+import { collectDefaultMetrics, register } from "prom-client";
+import { DEFAULT_METRICS_APP_LABEL } from "./controllers/metrics/metrics.models";
 import { DatabaseModule } from "@sims/sims-db";
 import {
   AssessmentController,
@@ -99,6 +100,7 @@ export class WorkersModule implements OnModuleInit {
    * Initializes Prometheus default metrics collection for the workers application.
    */
   onModuleInit(): void {
-    collectDefaultMetrics();
+    register.setDefaultLabels({ app: DEFAULT_METRICS_APP_LABEL });
+    collectDefaultMetrics({ labels: { app: DEFAULT_METRICS_APP_LABEL } });
   }
 }

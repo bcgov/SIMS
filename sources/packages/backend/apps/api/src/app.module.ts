@@ -4,7 +4,7 @@ import {
   NestModule,
   OnModuleInit,
 } from "@nestjs/common";
-import { collectDefaultMetrics } from "prom-client";
+import { collectDefaultMetrics, register } from "prom-client";
 import { AppService } from "./app.service";
 import { APP_FILTER, APP_GUARD, RouterModule } from "@nestjs/core";
 import {
@@ -49,6 +49,7 @@ import { JSON_300KB } from "./constants";
 import { AppAllExceptionsFilter } from "./app.exception.filter";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 import { SystemLookupConfigurationModule } from "@sims/services/system-lookup-configuration";
+import { DEFAULT_METRICS_APP_LABEL } from "./route-controllers/metrics/metrics.models";
 
 @Module({
   imports: [
@@ -133,7 +134,8 @@ export class AppModule implements NestModule, OnModuleInit {
    * Initializes Prometheus default metrics collection for the API application.
    */
   onModuleInit(): void {
-    collectDefaultMetrics();
+    register.setDefaultLabels({ app: DEFAULT_METRICS_APP_LABEL });
+    collectDefaultMetrics({ labels: { app: DEFAULT_METRICS_APP_LABEL } });
   }
 
   configure(consumer: MiddlewareConsumer): void {
