@@ -23,6 +23,10 @@ objects:
         type: RollingUpdate
       template:
         metadata:
+          annotations:
+            prometheus.io/scrape: "true"
+            prometheus.io/port: ${PORT}
+            prometheus.io/path: /metrics
           labels:
             app: ${NAME}
         spec:
