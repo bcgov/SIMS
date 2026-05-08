@@ -20,7 +20,7 @@ interface FormDeployInfo {
  */
 (async () => {
   console.info(
-    `**** Deploying Form IO Definitions to ${process.env.FORMS_URL} ****`
+    `**** Deploying Form IO Definitions to ${process.env.FORMS_URL} ****`,
   );
   const directory = path.resolve(__dirname, `../src/form-definitions`);
   console.info(`Getting form definitions from ${directory}`);
@@ -29,8 +29,8 @@ interface FormDeployInfo {
     console.info("No files found to be deployed!");
     return;
   }
-  console.info("Acquiring access token...");
-  const authHeader = await createAuthHeader();
+  console.info("Creating API key authentication header...");
+  const authHeader = createAuthHeader();
   const formDeployStatuses: FormDeployInfo[] = [];
   for (const file of files) {
     console.info(`Deploying ${file}`);
@@ -52,7 +52,7 @@ interface FormDeployInfo {
       formDeployStatus.result = "error";
       // Case an error happen, log and try to continue.
       console.error(
-        `Error while ${isDeployed ? "updating" : "creating"} form ${formAlias}`
+        `Error while ${isDeployed ? "updating" : "creating"} form ${formAlias}`,
       );
     }
     formDeployStatuses.push(formDeployStatus);
@@ -60,7 +60,7 @@ interface FormDeployInfo {
   console.table(formDeployStatuses);
   if (formDeployStatuses.some((status) => status.result === "error")) {
     throw new Error(
-      "At least one error happened during the deployment process. Please check the logs for further information."
+      "At least one error happened during the deployment process. Please check the logs for further information.",
     );
   }
 })();

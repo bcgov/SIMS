@@ -63,6 +63,7 @@ jobs:
       # Form.io credentials matching the ROOT_EMAIL/ROOT_PASSWORD set in the test Form.io container.
       FORMS_SA_USER_NAME: admin@example.com
       FORMS_SA_PASSWORD: CHANGEME
+      FORMS_API_KEY: some_api_key_for_e2e_tests
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch
