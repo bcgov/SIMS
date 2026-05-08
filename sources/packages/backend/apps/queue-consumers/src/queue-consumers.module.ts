@@ -84,6 +84,8 @@ import {
   StudentCOERequiredNearEndDateReminderNotification,
   CASInvoiceBatchService,
   CASInvoiceService,
+  CRAIncomeVerificationService,
+  SINValidationService,
 } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
@@ -195,6 +197,8 @@ import { LoggerModule } from "@sims/utilities/logger";
     T4AUploadEnqueuerScheduler,
     T4AUploadProcessor,
     FileProcessingIssueNotificationsScheduler,
+    CRAIncomeVerificationService,
+    SINValidationService,
   ],
   controllers: [HealthController, MetricsController],
 })

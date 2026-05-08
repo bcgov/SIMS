@@ -1676,6 +1676,7 @@ export class NotificationActionsService {
         title: notification.title,
         fileName: notification.fileName,
         type: notification.type,
+        dateSent: notification.dateSent,
       },
     }));
     // Save notifications to be sent to the ministry into the notification table.
