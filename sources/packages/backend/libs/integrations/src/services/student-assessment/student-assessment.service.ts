@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import {
   Application,
   ApplicationStatus,
+  DisbursementFeedbackErrors,
+  DisbursementSchedule,
   OfferingIntensity,
   StudentAssessment,
   User,
@@ -19,6 +21,10 @@ export class StudentAssessmentService {
     private readonly applicationRepo: Repository<Application>,
     @InjectRepository(StudentAssessment)
     private readonly studentAssessmentRepo: Repository<StudentAssessment>,
+    @InjectRepository(DisbursementSchedule)
+    private readonly disbursementScheduleRepo: Repository<DisbursementSchedule>,
+    @InjectRepository(DisbursementFeedbackErrors)
+    private readonly disbursementFeedbackErrorsRepo: Repository<DisbursementFeedbackErrors>,
   ) {}
 
   /**
@@ -148,22 +154,27 @@ export class StudentAssessmentService {
             }),
           )
             .orWhere(
-              new Brackets((qbInner) => {
-                qbInner
-                  .where("disbursementSchedule.updatedAt >= :modifiedSince")
-                  .andWhere("disbursementSchedule.updatedAt < :modifiedUntil");
-              }),
+              `EXISTS (${this.disbursementScheduleRepo
+                .createQueryBuilder("subDs")
+                .select("1")
+                .where(
+                  '"subDs"."student_assessment_id" = "currentAssessment"."id"',
+                )
+                .andWhere("subDs.updatedAt >= :modifiedSince")
+                .andWhere("subDs.updatedAt < :modifiedUntil")
+                .getQuery()})`,
             )
             .orWhere(
-              new Brackets((qbInner) => {
-                qbInner
-                  .where(
-                    "disbursementFeedbackError.updatedAt >= :modifiedSince",
-                  )
-                  .andWhere(
-                    "disbursementFeedbackError.updatedAt < :modifiedUntil",
-                  );
-              }),
+              `EXISTS (${this.disbursementFeedbackErrorsRepo
+                .createQueryBuilder("subDfe")
+                .select("1")
+                .innerJoin("subDfe.disbursementSchedule", "subDfeDs")
+                .where(
+                  '"subDfeDs"."student_assessment_id" = "currentAssessment"."id"',
+                )
+                .andWhere("subDfe.updatedAt >= :modifiedSince")
+                .andWhere("subDfe.updatedAt < :modifiedUntil")
+                .getQuery()})`,
             )
             .orWhere(
               new Brackets((qbInner) => {
