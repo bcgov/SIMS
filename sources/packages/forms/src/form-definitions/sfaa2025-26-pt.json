@@ -3793,7 +3793,7 @@
                       "components": [
                         {
                           "label": "dependantsIncomeTaxApplicationException",
-                          "calculateValue": "value = {\n exceptionDescription: `Dependant's income tax - ${data.dependants[rowIndex].fullName}`,\n pdDependentUpload: data.dependants[rowIndex][\"pdDependentUpload\"]\n}",
+                          "calculateValue": "value = {\n exceptionDescription: `Dependant's income tax - ${row?.fullName}`,\n pdDependentUpload: row?.pdDependentUpload\n}",
                           "calculateServer": true,
                           "key": "dependantsIncomeTaxApplicationException",
                           "type": "hidden",
@@ -3997,7 +3997,7 @@
                         {
                           "label": "dependantsSharedCustodyApplicationException",
                           "customDefaultValue": "value = [];",
-                          "calculateValue": "value = {\r\n  exceptionDescription: `Dependant's shared custody - ${data.dependants[rowIndex].fullName}`,\r\n  dependantCustodyFileUpload: data.dependants[rowIndex][\"dependantCustodyFileUpload\"]\r\n}",
+                          "calculateValue": "value = {\r\n  exceptionDescription: `Dependant's shared custody - ${row?.fullName}`,\r\n  dependantCustodyFileUpload: row?.dependantCustodyFileUpload\r\n}",
                           "calculateServer": true,
                           "key": "dependantsSharedCustodyApplicationException",
                           "type": "hidden",

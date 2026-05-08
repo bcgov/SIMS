@@ -218,9 +218,14 @@
                       "customClass": "\"customClass\": \"label-bold\""
                     },
                     {
-                      "key": "addDependantsUploadPanel",
-                      "input": false,
                       "title": "Upload panel",
+                      "collapsible": false,
+                      "hideLabel": true,
+                      "key": "addDependantsUploadPanel",
+                      "customConditional": "shwow = row.declaredOnTaxes === 'yes';",
+                      "type": "panel",
+                      "label": "Panel",
+                      "input": false,
                       "tableView": false,
                       "components": [
                         {
@@ -361,15 +366,7 @@
                           "lockKey": true
                         }
                       ],
-                      "type": "panel",
-                      "hideLabel": true,
-                      "conditional": {
-                        "show": "true",
-                        "when": "declaredOnTaxes",
-                        "eq": "yes"
-                      },
-                      "lockKey": true,
-                      "label": "Panel"
+                      "lockKey": true
                     }
                   ],
                   "type": "fieldset",
