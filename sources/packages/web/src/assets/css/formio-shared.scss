@@ -247,6 +247,8 @@
 .formio-component .fa {
   font-family: "BCSans", sans-serif;
   font-weight: $font-weight-normal;
+  width: auto;
+  text-align: left;
 }
 
 .formio-component-htmlelement.header-lg p,
@@ -580,6 +582,13 @@
 .ff-form-container .formio-panel-bg-secondary .card-body {
   background-color: $default-background;
 }
+// Global override to thin Bootstrap's table-bordered borders within form.io forms.
+.ff-form-container .formio-component-datagrid .datagrid-table,
+.ff-form-container .formio-component-datagrid .datagrid-table td,
+.ff-form-container .formio-component-datagrid .datagrid-table th {
+  border: 1px solid #ddd !important;
+}
+
 // CSS to override data grid table style.
 .ff-form-container .formio-datagrid-unset .table-bordered td,
 .ff-form-container .formio-datagrid-unset .table-bordered th,
