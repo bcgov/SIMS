@@ -4,5 +4,5 @@ VALUES
   (
     40,
     'Ministry notification for file processing issue.',
-    'c7ddbdd4-92b4-4842-8110-eff40e26fbfc'
+    'cb0efb5a-7540-4925-b017-e9d96852368f'
   );
