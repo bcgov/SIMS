@@ -685,7 +685,7 @@
                       "refreshOnChange": false,
                       "customClass": "banner-info",
                       "key": "html12",
-                      "customConditional": "show = data.myProgramNotListed.programnotListed || (data.myStudyPeriodIsntListed && data.myStudyPeriodIsntListed.offeringnotListed);",
+                      "customConditional": "show = !!data.myProgramNotListed?.programnotListed || !!data.myStudyPeriodIsntListed?.offeringnotListed;",
                       "type": "htmlelement",
                       "input": false,
                       "tableView": false,
@@ -3281,7 +3281,6 @@
                 },
                 {
                   "label": "<h4 class='category-header-medium-small'></h4>",
-                  "conditionalAddButton": "show = data.roiInformation.length < 2;",
                   "reorder": false,
                   "addAnother": "Add another trusted contact",
                   "addAnotherPosition": "bottom",
@@ -3296,6 +3295,10 @@
                       "relationshipWithThisContact": ""
                     }
                   ],
+                  "validate": {
+                    "maxLength": "2"
+                  },
+                  "validateWhenHidden": false,
                   "key": "roiInformation",
                   "type": "datagrid",
                   "defaultOpen": false,
@@ -3775,11 +3778,7 @@
                       "collapsible": false,
                       "hideLabel": true,
                       "key": "uploadPanel",
-                      "conditional": {
-                        "show": "true",
-                        "when": "declaredOnTaxes",
-                        "eq": "yes"
-                      },
+                      "customConditional": "show = row.declaredOnTaxes === 'yes';",
                       "type": "panel",
                       "label": "Upload panel",
                       "buttonSettings": {
@@ -3794,7 +3793,7 @@
                       "components": [
                         {
                           "label": "dependantsIncomeTaxApplicationException",
-                          "calculateValue": "value = {\n exceptionDescription: `Dependant's income tax - ${data.dependants[rowIndex].fullName}`,\n pdDependentUpload: data.dependants[rowIndex][\"pdDependentUpload\"]\n}",
+                          "calculateValue": "value = {\n exceptionDescription: `Dependant's income tax - ${row?.fullName}`,\n pdDependentUpload: row?.pdDependentUpload\n}",
                           "calculateServer": true,
                           "key": "dependantsIncomeTaxApplicationException",
                           "type": "hidden",
@@ -3988,11 +3987,7 @@
                       },
                       "collapsible": false,
                       "key": "dependentsThatYouSupportFinanciallyButDoNotHaveSoleCustody",
-                      "conditional": {
-                        "show": "true",
-                        "when": "supportnocustodyDependants",
-                        "eq": "yes"
-                      },
+                      "customConditional": "show = row.supportnocustodyDependants === 'yes';",
                       "type": "panel",
                       "label": "Dependents that you support financially but do not have sole custody",
                       "input": false,
@@ -4002,7 +3997,7 @@
                         {
                           "label": "dependantsSharedCustodyApplicationException",
                           "customDefaultValue": "value = [];",
-                          "calculateValue": "value = {\r\n  exceptionDescription: `Dependant's shared custody - ${data.dependants[rowIndex].fullName}`,\r\n  dependantCustodyFileUpload: data.dependants[rowIndex][\"dependantCustodyFileUpload\"]\r\n}",
+                          "calculateValue": "value = {\r\n  exceptionDescription: `Dependant's shared custody - ${row?.fullName}`,\r\n  dependantCustodyFileUpload: row?.dependantCustodyFileUpload\r\n}",
                           "calculateServer": true,
                           "key": "dependantsSharedCustodyApplicationException",
                           "type": "hidden",
