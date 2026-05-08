@@ -1,4 +1,6 @@
-import { Module } from "@nestjs/common";
+import { Module, OnModuleInit } from "@nestjs/common";
+import { collectDefaultMetrics, register } from "prom-client";
+import { DEFAULT_METRICS_APP_LABEL } from "./controllers/metrics/metrics.models";
 import { DatabaseModule } from "@sims/sims-db";
 import {
   AssessmentController,
@@ -8,6 +10,7 @@ import {
   CRAIntegrationController,
   DisbursementController,
   HealthController,
+  MetricsController,
 } from "./controllers";
 import {
   StudentAssessmentService,
@@ -63,6 +66,7 @@ import { TerminusModule } from "@nestjs/terminus";
     CRAIntegrationController,
     DisbursementController,
     HealthController,
+    MetricsController,
   ],
   providers: [
     ZeebeTransportStrategy,
@@ -91,4 +95,12 @@ import { TerminusModule } from "@nestjs/terminus";
     ProgramInfoRequestService,
   ],
 })
-export class WorkersModule {}
+export class WorkersModule implements OnModuleInit {
+  /**
+   * Initializes Prometheus default metrics collection for the workers application.
+   */
+  onModuleInit(): void {
+    register.setDefaultLabels({ app: DEFAULT_METRICS_APP_LABEL });
+    collectDefaultMetrics({ labels: { app: DEFAULT_METRICS_APP_LABEL } });
+  }
+}
