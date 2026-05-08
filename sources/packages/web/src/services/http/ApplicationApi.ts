@@ -27,6 +27,11 @@ export class ApplicationApi extends HttpBaseClient {
 
   async getApplicationData(
     applicationId: number,
+    options: { loadDynamicData?: boolean },
+  ): Promise<ApplicationSupplementalDataAPIOutDTO>;
+
+  async getApplicationData(
+    applicationId: number,
     options?: {
       studentId?: number;
       loadDynamicData?: boolean;

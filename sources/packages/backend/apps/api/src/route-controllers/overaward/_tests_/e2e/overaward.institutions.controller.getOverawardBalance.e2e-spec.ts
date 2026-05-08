@@ -78,7 +78,9 @@ describe("OverawardInstitutionsController(e2e)-getOverawardBalance", () => {
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({ overawardBalanceValues: { BCSL: 300 } });
+      .expect(({ body }) =>
+        expect(body).toEqual({ overawardBalanceValues: { BCSL: 300 } }),
+      );
   });
 
   it("Should throw a HttpStatus Forbidden (403) error when a non-public institution accesses the overawards balance.", async () => {
@@ -95,11 +97,13 @@ describe("OverawardInstitutionsController(e2e)-getOverawardBalance", () => {
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
-        error: "Forbidden",
-      });
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          statusCode: HttpStatus.FORBIDDEN,
+          message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+          error: "Forbidden",
+        }),
+      );
   });
 
   it("Should throw a HttpStatus Forbidden (403) error when the institution does not have access to the student.", async () => {
@@ -116,11 +120,13 @@ describe("OverawardInstitutionsController(e2e)-getOverawardBalance", () => {
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
-        error: "Forbidden",
-      });
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          statusCode: HttpStatus.FORBIDDEN,
+          message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
+          error: "Forbidden",
+        }),
+      );
   });
 
   afterAll(async () => {

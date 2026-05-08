@@ -67,7 +67,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       offeringIntensity: OfferingIntensity.fullTime,
     } as EducationProgramOffering;
 
-    // Create new application.
+    // Submitted application for College F.
     const savedApplication = await saveFakeApplication(
       db.dataSource,
       {
@@ -90,23 +90,25 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({
-        data: {},
-        id: savedApplication.id,
-        applicationStatus: savedApplication.applicationStatus,
-        applicationEditStatus: savedApplication.applicationEditStatus,
-        applicationNumber: savedApplication.applicationNumber,
-        isArchived: false,
-        applicationFormName: "SFAA2022-23",
-        applicationProgramYearID: savedApplication.programYear.id,
-        studentFullName: getUserFullName(savedApplication.student.user),
-        applicationOfferingIntensity: offeringInitialValues.offeringIntensity,
-        applicationStartDate: offeringInitialValues.studyStartDate,
-        applicationEndDate: offeringInitialValues.studyEndDate,
-        applicationInstitutionName:
-          savedApplication.location.institution.legalOperatingName,
-        isChangeRequestAllowedForPY: false,
-      });
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          data: {},
+          id: savedApplication.id,
+          applicationStatus: savedApplication.applicationStatus,
+          applicationEditStatus: savedApplication.applicationEditStatus,
+          applicationNumber: savedApplication.applicationNumber,
+          isArchived: false,
+          applicationFormName: "SFAA2022-23",
+          applicationProgramYearID: savedApplication.programYear.id,
+          studentFullName: getUserFullName(savedApplication.student.user),
+          applicationOfferingIntensity: offeringInitialValues.offeringIntensity,
+          applicationStartDate: offeringInitialValues.studyStartDate,
+          applicationEndDate: offeringInitialValues.studyEndDate,
+          applicationInstitutionName:
+            savedApplication.location.institution.legalOperatingName,
+          isChangeRequestAllowedForPY: false,
+        }),
+      );
   });
 
   it("Should throw a HttpStatus Forbidden (403) error when a non-public institution accesses the application.", async () => {
@@ -126,16 +128,18 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       .get(endpoint)
       .auth(institutionUserTokenCUser, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
-        error: "Forbidden",
-      });
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          statusCode: HttpStatus.FORBIDDEN,
+          message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+          error: "Forbidden",
+        }),
+      );
   });
 
-  it("Should not get the student application details when application is submitted for different institution.", async () => {
+  it("Should not get the student application details when application is submitted for a different institution.", async () => {
     // Arrange
-    // Create new application.
+    // Submitted application for College C.
     const savedApplication = await saveFakeApplication(db.dataSource, {
       institutionLocation: collegeCLocation,
     });
@@ -151,11 +155,13 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
-        error: "Forbidden",
-      });
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          statusCode: HttpStatus.FORBIDDEN,
+          message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
+          error: "Forbidden",
+        }),
+      );
   });
 
   it("Should get the student application details when student has an Edited application for the institution and a subsequent Submitted application for another institution.", async () => {
@@ -165,7 +171,8 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       studyEndDate: getISODateOnlyString(addDays(10)),
       offeringIntensity: OfferingIntensity.fullTime,
     } as EducationProgramOffering;
-    // Student has an original (Edited) application to the institution.
+
+    // Edited application for College F.
     const editedApplication = await saveFakeApplication(
       db.dataSource,
       {
@@ -175,7 +182,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
     );
     const student = editedApplication.student;
 
-    // Current Application (Submitted) for another college E.
+    // Subsequent Submitted application for College C.
     const submittedApplication = await saveFakeApplication(
       db.dataSource,
       {
@@ -201,23 +208,25 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({
-        data: {},
-        id: submittedApplication.id,
-        applicationStatus: submittedApplication.applicationStatus,
-        applicationEditStatus: submittedApplication.applicationEditStatus,
-        applicationNumber: submittedApplication.applicationNumber,
-        isArchived: false,
-        applicationFormName: "SFAA2022-23",
-        applicationProgramYearID: submittedApplication.programYear.id,
-        studentFullName: getUserFullName(submittedApplication.student.user),
-        applicationOfferingIntensity: offeringInitialValues.offeringIntensity,
-        applicationStartDate: offeringInitialValues.studyStartDate,
-        applicationEndDate: offeringInitialValues.studyEndDate,
-        applicationInstitutionName:
-          submittedApplication.location.institution.legalOperatingName,
-        isChangeRequestAllowedForPY: false,
-      });
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          data: {},
+          id: submittedApplication.id,
+          applicationStatus: submittedApplication.applicationStatus,
+          applicationEditStatus: submittedApplication.applicationEditStatus,
+          applicationNumber: submittedApplication.applicationNumber,
+          isArchived: false,
+          applicationFormName: "SFAA2022-23",
+          applicationProgramYearID: submittedApplication.programYear.id,
+          studentFullName: getUserFullName(submittedApplication.student.user),
+          applicationOfferingIntensity: offeringInitialValues.offeringIntensity,
+          applicationStartDate: offeringInitialValues.studyStartDate,
+          applicationEndDate: offeringInitialValues.studyEndDate,
+          applicationInstitutionName:
+            submittedApplication.location.institution.legalOperatingName,
+          isChangeRequestAllowedForPY: false,
+        }),
+      );
   });
 
   afterAll(async () => {

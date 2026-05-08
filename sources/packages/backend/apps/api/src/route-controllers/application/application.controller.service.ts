@@ -844,10 +844,9 @@ export class ApplicationControllerService {
     const currentApplication =
       this.transformToApplicationOverallDetailsAPIOutDTO(application);
     // Convert all the past versions of the application.
-    let previousVersions =
-      application.parentApplication?.versions.map((version) =>
-        this.transformToApplicationOverallDetailsAPIOutDTO(version),
-      ) ?? [];
+    let previousVersions = application.parentApplication!.versions.map(
+      (version) => this.transformToApplicationOverallDetailsAPIOutDTO(version),
+    );
     // Check if there is an in-progress change request for the application.
     const inProgressChangeRequest = previousVersions.find((version) =>
       APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES.includes(

@@ -17,7 +17,6 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 import {
-  Application,
   ApplicationStatus,
   Institution,
   InstitutionLocation,
@@ -70,30 +69,32 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({
-        firstName: student.user.firstName,
-        lastName: student.user.lastName,
-        fullName: getUserFullName(student.user),
-        email: student.user.email,
-        gender: student.gender,
-        dateOfBirth: getISODateOnlyString(student.birthDate),
-        contact: {
-          address: {
-            addressLine1: student.contactInfo.address.addressLine1,
-            provinceState: student.contactInfo.address.provinceState,
-            country: student.contactInfo.address.country,
-            city: student.contactInfo.address.city,
-            postalCode: student.contactInfo.address.postalCode,
-            canadaPostalCode: student.contactInfo.address.postalCode,
-            selectedCountry: student.contactInfo.address.selectedCountry,
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          firstName: student.user.firstName,
+          lastName: student.user.lastName,
+          fullName: getUserFullName(student.user),
+          email: student.user.email,
+          gender: student.gender,
+          dateOfBirth: getISODateOnlyString(student.birthDate),
+          contact: {
+            address: {
+              addressLine1: student.contactInfo.address.addressLine1,
+              provinceState: student.contactInfo.address.provinceState,
+              country: student.contactInfo.address.country,
+              city: student.contactInfo.address.city,
+              postalCode: student.contactInfo.address.postalCode,
+              canadaPostalCode: student.contactInfo.address.postalCode,
+              selectedCountry: student.contactInfo.address.selectedCountry,
+            },
+            phone: student.contactInfo.phone,
           },
-          phone: student.contactInfo.phone,
-        },
-        disabilityStatus: student.disabilityStatus,
-        modifiedIndependentStatus: ModifiedIndependentStatus.NotRequested,
-        validSin: student.sinValidation.isValidSIN,
-        sin: student.sinValidation.sin,
-      });
+          disabilityStatus: student.disabilityStatus,
+          modifiedIndependentStatus: ModifiedIndependentStatus.NotRequested,
+          validSin: student.sinValidation.isValidSIN,
+          sin: student.sinValidation.sin,
+        }),
+      );
   });
 
   it("Should get the student profile when student has an application version (Edited) submitted for the institution.", async () => {
@@ -125,8 +126,8 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
         institution: collegeE,
         institutionLocation: collegeELocation,
         student,
-        parentApplication: { id: previousApplication.id } as Application,
-        precedingApplication: { id: previousApplication.id } as Application,
+        parentApplication: previousApplication,
+        precedingApplication: previousApplication,
       },
       {
         applicationStatus: ApplicationStatus.Submitted,
@@ -143,30 +144,32 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({
-        firstName: student.user.firstName,
-        lastName: student.user.lastName,
-        fullName: getUserFullName(student.user),
-        email: student.user.email,
-        gender: student.gender,
-        dateOfBirth: getISODateOnlyString(student.birthDate),
-        contact: {
-          address: {
-            addressLine1: student.contactInfo.address.addressLine1,
-            provinceState: student.contactInfo.address.provinceState,
-            country: student.contactInfo.address.country,
-            city: student.contactInfo.address.city,
-            postalCode: student.contactInfo.address.postalCode,
-            canadaPostalCode: student.contactInfo.address.postalCode,
-            selectedCountry: student.contactInfo.address.selectedCountry,
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          firstName: student.user.firstName,
+          lastName: student.user.lastName,
+          fullName: getUserFullName(student.user),
+          email: student.user.email,
+          gender: student.gender,
+          dateOfBirth: getISODateOnlyString(student.birthDate),
+          contact: {
+            address: {
+              addressLine1: student.contactInfo.address.addressLine1,
+              provinceState: student.contactInfo.address.provinceState,
+              country: student.contactInfo.address.country,
+              city: student.contactInfo.address.city,
+              postalCode: student.contactInfo.address.postalCode,
+              canadaPostalCode: student.contactInfo.address.postalCode,
+              selectedCountry: student.contactInfo.address.selectedCountry,
+            },
+            phone: student.contactInfo.phone,
           },
-          phone: student.contactInfo.phone,
-        },
-        disabilityStatus: student.disabilityStatus,
-        modifiedIndependentStatus: ModifiedIndependentStatus.NotRequested,
-        validSin: student.sinValidation.isValidSIN,
-        sin: student.sinValidation.sin,
-      });
+          disabilityStatus: student.disabilityStatus,
+          modifiedIndependentStatus: ModifiedIndependentStatus.NotRequested,
+          validSin: student.sinValidation.isValidSIN,
+          sin: student.sinValidation.sin,
+        }),
+      );
   });
 
   it("Should throw forbidden error when the institution type is not BC Public.", async () => {
@@ -193,11 +196,13 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
       .get(endpoint)
       .auth(collegeCInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
-        error: "Forbidden",
-      });
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          statusCode: HttpStatus.FORBIDDEN,
+          message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+          error: "Forbidden",
+        }),
+      );
   });
 
   it("Should throw forbidden error when student does not have at least one application submitted for the institution.", async () => {
@@ -216,11 +221,47 @@ describe("StudentInstitutionsController(e2e)-getStudentProfile", () => {
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
-        error: "Forbidden",
-      });
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          statusCode: HttpStatus.FORBIDDEN,
+          message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
+          error: "Forbidden",
+        }),
+      );
+  });
+
+  it("Should throw forbidden error when student only has a draft application for the institution.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
+
+    // Draft application for College F.
+    await saveFakeApplication(
+      appDataSource,
+      {
+        student,
+      },
+      { applicationStatus: ApplicationStatus.Draft },
+    );
+
+    // College F is a BC Public institution.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    const endpoint = `/institutions/student/${student.id}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          statusCode: HttpStatus.FORBIDDEN,
+          message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
+          error: "Forbidden",
+        }),
+      );
   });
 
   afterAll(async () => {

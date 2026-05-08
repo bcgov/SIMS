@@ -61,7 +61,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
     applicationRepo = appDataSource.getRepository(Application);
   });
 
-  it("Should get the Submitted application when the student has a Submitted application for the institution with a single version.", async () => {
+  it("Should get the application summary when the student has a submitted application for the institution with a single version.", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
 
@@ -88,8 +88,8 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({
-        results: [
+      .expect(({ body }) => {
+        expect(body.results).toEqual([
           {
             id: savedApplication.id,
             applicationNumber: savedApplication.applicationNumber,
@@ -104,12 +104,12 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
             isChangeRequestAllowedForPY: false,
             offeringIntensity: savedApplication.offeringIntensity,
           },
-        ],
-        count: 1,
+        ]);
+        expect(body.count).toEqual(1);
       });
   });
 
-  it("Should get the Submitted application when the student has a Submitted application for the institution with multiple versions.", async () => {
+  it("Should get the application summary when the student has a submitted application for the institution with multiple versions.", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
 
@@ -149,8 +149,8 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({
-        results: [
+      .expect(({ body }) => {
+        expect(body.results).toEqual([
           {
             id: submittedApplication.id,
             applicationNumber: submittedApplication.applicationNumber,
@@ -165,12 +165,12 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
             isChangeRequestAllowedForPY: false,
             offeringIntensity: submittedApplication.offeringIntensity,
           },
-        ],
-        count: 1,
+        ]);
+        expect(body.count).toEqual(1);
       });
   });
 
-  it("Should get the Submitted application when the student has a Submitted application and a Draft application for the institution", async () => {
+  it("Should get the application summary when the student has a submitted application and a draft application for the institution", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
 
@@ -206,8 +206,8 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({
-        results: [
+      .expect(({ body }) => {
+        expect(body.results).toEqual([
           {
             id: submittedApplication.id,
             applicationNumber: submittedApplication.applicationNumber,
@@ -222,12 +222,12 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
             isChangeRequestAllowedForPY: false,
             offeringIntensity: submittedApplication.offeringIntensity,
           },
-        ],
-        count: 1,
+        ]);
+        expect(body.count).toEqual(1);
       });
   });
 
-  it("Should get the Submitted application when the student has a Submitted application for the institution and another Submitted application for another institution.", async () => {
+  it("Should get the application summary when the student has a submitted application for the institution and another submitted application for another institution.", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
 
@@ -254,8 +254,8 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({
-        results: [
+      .expect(({ body }) => {
+        expect(body.results).toEqual([
           {
             id: collegeFApplication.id,
             applicationNumber: collegeFApplication.applicationNumber,
@@ -270,12 +270,12 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
             isChangeRequestAllowedForPY: false,
             offeringIntensity: collegeFApplication.offeringIntensity,
           },
-        ],
-        count: 1,
+        ]);
+        expect(body.count).toEqual(1);
       });
   });
 
-  it("Should get the Submitted application when the student has an Edited application for the institution and a subsequent Submitted application for another institution.", async () => {
+  it("Should get the application summary when the student has an edited application for the institution and a subsequent submitted application for another institution.", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
 
@@ -311,8 +311,8 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({
-        results: [
+      .expect(({ body }) => {
+        expect(body.results).toEqual([
           {
             id: collegeEApplication.id,
             applicationNumber: collegeEApplication.applicationNumber,
@@ -328,12 +328,12 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
             isChangeRequestAllowedForPY: false,
             offeringIntensity: collegeEApplication.offeringIntensity,
           },
-        ],
-        count: 1,
+        ]);
+        expect(body.count).toEqual(1);
       });
   });
 
-  it("Should get the first application when student has two Submitted/In Progress applications for the institution when pagination is 1.", async () => {
+  it("Should get the first application when student has two submitted/in progress applications for the institution when pagination is 1.", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
 
@@ -366,8 +366,8 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({
-        results: [
+      .expect(({ body }) => {
+        expect(body.results).toEqual([
           {
             id: savedApplication1.id,
             applicationNumber: savedApplication1.applicationNumber,
@@ -382,14 +382,14 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
             isChangeRequestAllowedForPY: false,
             offeringIntensity: savedApplication1.offeringIntensity,
           },
-        ],
-        count: 2,
+        ]);
+        expect(body.count).toEqual(2);
       });
   });
 
   it(
     `Should get both applications in ${FieldSortOrder.DESC} order of application number ` +
-      "when the student has two Submitted/In Progress applications for the institution " +
+      "when the student has two submitted/in progress applications for the institution " +
       `and when sortField is application number and sortOrder is ${FieldSortOrder.DESC}. `,
     async () => {
       // Arrange
@@ -427,8 +427,8 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
         .get(endpoint)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
-        .expect({
-          results: [
+        .expect(({ body }) => {
+          expect(body.results).toEqual([
             {
               id: savedApplication2.id,
               applicationNumber: savedApplication2.applicationNumber,
@@ -457,8 +457,8 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
               isChangeRequestAllowedForPY: false,
               offeringIntensity: savedApplication1.offeringIntensity,
             },
-          ],
-          count: 2,
+          ]);
+          expect(body.count).toEqual(2);
         });
     },
   );
@@ -487,10 +487,12 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
       .get(endpoint)
       .auth(collegeCInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
-        error: "Forbidden",
+      .expect(({ body }) => {
+        expect(body).toEqual({
+          statusCode: HttpStatus.FORBIDDEN,
+          message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+          error: "Forbidden",
+        });
       });
   });
 
@@ -510,10 +512,12 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
-        error: "Forbidden",
+      .expect(({ body }) => {
+        expect(body).toEqual({
+          statusCode: HttpStatus.FORBIDDEN,
+          message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
+          error: "Forbidden",
+        });
       });
   });
 

@@ -1075,16 +1075,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // If institution id is present, get only the applications linked with the institution at any point in time.
     if (institutionId) {
       const versionExistsQuery = this.repo
-        .createQueryBuilder("application")
+        .createQueryBuilder("version")
         .select("1")
-        .from(Application, "version")
-        .innerJoin("version.parentApplication", "vParentApplication")
         .innerJoin("version.location", "vLocation")
-        .innerJoin("vLocation.institution", "vInstitution")
-        .where("vParentApplication.id = parentApplication.id")
-        .andWhere("vInstitution.id = :institutionId")
+        .where("version.parentApplication.id = parentApplication.id")
+        .andWhere("vLocation.institution.id = :institutionId")
         .getQuery();
-      // // Use EXISTS to avoid duplicate rows when a parent application has multiple versions
+      // Use EXISTS to avoid duplicate rows when a parent application has multiple versions
       applicationQuery.andWhere(`EXISTS(${versionExistsQuery})`, {
         institutionId,
       });
@@ -1123,7 +1120,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .offset(pagination.page * pagination.pageLimit);
 
     // result
-    return applicationQuery.printSql().getManyAndCount();
+    return applicationQuery.getManyAndCount();
   }
 
   /**
