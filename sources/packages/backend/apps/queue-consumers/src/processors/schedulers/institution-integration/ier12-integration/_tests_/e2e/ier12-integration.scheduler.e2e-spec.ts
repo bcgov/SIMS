@@ -16,7 +16,7 @@ import {
 } from "@sims/test-utils";
 import { getUploadedFile, getUploadedFiles } from "@sims/test-utils/mocks";
 import * as Client from "ssh2-sftp-client";
-import { ArrayContains, In, Not } from "typeorm";
+import { ArrayContains, Not } from "typeorm";
 import {
   ApplicationStatus,
   AssessmentTriggerType,
@@ -131,14 +131,8 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     jest.clearAllMocks();
     // Update all applications to Edited to ensure the SQL query to get the IER12 records will
     // select only the records created to the test scenarios in this file.
-    // Draft applications are excluded because they may have a null parent_application_id,
-    // which would violate the parent_application_id_constraint when changed to a non-Draft status.
     await db.application.update(
-      {
-        applicationStatus: Not(
-          In([ApplicationStatus.Edited, ApplicationStatus.Draft]),
-        ),
-      },
+      { applicationStatus: Not(ApplicationStatus.Edited) },
       { applicationStatus: ApplicationStatus.Edited },
     );
     // Avoid issues for queries relying on the application number (e.g. hasMultipleApplicationSubmissions).
