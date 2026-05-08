@@ -27,11 +27,13 @@ export class MetricsController {
   @Header("content-type", register.contentType)
   @Public()
   async getMetrics(): Promise<string> {
-    return register.metrics().catch((error) => {
+    try {
+      return await register.metrics();
+    } catch (error) {
       this.logger.error("Error while getting metrics.", error);
       throw new InternalServerErrorException(
         "Error while getting metrics. See server logs for details.",
       );
-    });
+    }
   }
 }
