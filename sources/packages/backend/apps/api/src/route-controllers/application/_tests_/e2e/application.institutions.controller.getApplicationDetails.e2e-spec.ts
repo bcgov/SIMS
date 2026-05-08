@@ -17,6 +17,7 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 import {
+  ApplicationEditStatus,
   ApplicationStatus,
   EducationProgramOffering,
   InstitutionLocation,
@@ -146,6 +147,51 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
 
     const student = savedApplication.student;
     const endpoint = `/institutions/application/student/${student.id}/application/${savedApplication.id}`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          statusCode: HttpStatus.FORBIDDEN,
+          message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
+          error: "Forbidden",
+        }),
+      );
+  });
+
+  it("Should not get the student application details when the application is a Change Request with edit status Change in progress.", async () => {
+    // Arrange
+    // Complete Application for College F.
+    const completedApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+      },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+    const student = completedApplication.student;
+    // Change Request Application for College F.
+    const changeRequestApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        institutionLocation: collegeFLocation,
+        student,
+      },
+      {
+        applicationStatus: ApplicationStatus.Edited,
+        applicationEditStatus: ApplicationEditStatus.ChangeInProgress,
+      },
+    );
+
+    const endpoint = `/institutions/application/student/${student.id}/application/${changeRequestApplication.id}`;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
