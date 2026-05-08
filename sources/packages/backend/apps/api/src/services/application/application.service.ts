@@ -937,8 +937,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param options object that should contain:
    * - `loadDynamicData` indicates if the dynamic data(JSONB) should be loaded.
    * - `studentId` student id.
-   * - `institutionId` institution id.
-   * - `allowEdited` indicates if Edited application is allowed.
    * - `entityManager` entity manager to be used for the query. Useful when
    * it needs to be executed in a transaction.
    * @returns student application.
@@ -948,16 +946,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
     options?: {
       loadDynamicData?: boolean;
       studentId?: number;
-      institutionId?: number;
-      allowEdited?: boolean;
       entityManager?: EntityManager;
     },
   ): Promise<Application> {
     const applicationRepo =
       options?.entityManager?.getRepository(Application) ?? this.repo;
-    const applicationStatus = options?.allowEdited
-      ? undefined
-      : Not(ApplicationStatus.Edited);
     return applicationRepo.findOne({
       select: {
         id: true,
@@ -1036,11 +1029,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       where: {
         id: applicationId,
-        applicationStatus,
         student: {
           id: options?.studentId,
         },
-        location: { institution: { id: options?.institutionId } },
       },
     });
   }
@@ -1080,16 +1071,20 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.applicationStatus != :editedStatus", {
         editedStatus: ApplicationStatus.Edited,
       });
-    // If institution id is present, get only the applications
-    // linked with the institution.
 
+    // If institution id is present, get only the applications linked with the institution at any point in time.
     if (institutionId) {
-      applicationQuery
-        .innerJoin("application.location", "institutionLocation")
-        .innerJoin("institutionLocation.institution", "institution")
-        .andWhere("institution.id = :institutionId", {
-          institutionId,
-        });
+      const versionExistsQuery = this.repo
+        .createQueryBuilder("version")
+        .select("1")
+        .innerJoin("version.location", "vLocation")
+        .where("version.parentApplication.id = parentApplication.id")
+        .andWhere("vLocation.institution.id = :institutionId")
+        .getQuery();
+      // Use EXISTS to avoid duplicate rows when a parent application has multiple versions
+      applicationQuery.andWhere(`EXISTS(${versionExistsQuery})`, {
+        institutionId,
+      });
     }
 
     // sorting

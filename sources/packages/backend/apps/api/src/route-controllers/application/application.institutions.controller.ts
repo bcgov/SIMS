@@ -21,7 +21,6 @@ import {
   AllowAuthorizedParty,
   HasStudentDataAccess,
   IsBCPublicInstitution,
-  UserToken,
 } from "../../auth/decorators";
 import {
   ApiNotFoundResponse,
@@ -30,7 +29,7 @@ import {
 } from "@nestjs/swagger";
 import { ClientTypeBaseRoute } from "../../types";
 import { ApplicationControllerService } from "./application.controller.service";
-import { AuthorizedParties, IInstitutionUserToken } from "../../auth";
+import { AuthorizedParties } from "../../auth";
 import { ApplicationStatus } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -51,8 +50,6 @@ export class ApplicationInstitutionsController extends BaseController {
    * This API will be used by institution users.
    * @param applicationId for the application.
    * @param studentId for the student.
-   * TODO Analyze whether the isParentApplication flag is necessary as it is not used in web.
-   * @param isParentApplication flag for if the application is a parent application.
    * @returns Application details.
    */
   @ApiNotFoundResponse({
@@ -63,27 +60,16 @@ export class ApplicationInstitutionsController extends BaseController {
   })
   @Get("student/:studentId/application/:applicationId")
   async getApplication(
-    @UserToken() userToken: IInstitutionUserToken,
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Param("studentId", ParseIntPipe) studentId: number,
-    @Query("isParentApplication", new DefaultValuePipe(false), ParseBoolPipe)
-    isParentApplication: boolean,
     @Query("loadDynamicData", new DefaultValuePipe(true), ParseBoolPipe)
     loadDynamicData: boolean,
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
-    // When the application is a parent application, get the current application by parent application id.
-    // Otherwise, set the current application id to the provided application id.
-    const currentApplicationId =
-      await this.applicationControllerService.getCurrentApplicationId(
-        applicationId,
-        isParentApplication,
-      );
     const application = await this.applicationService.getApplicationById(
-      currentApplicationId,
+      applicationId,
       {
         loadDynamicData,
         studentId: studentId,
-        institutionId: userToken.authorizations.institutionId,
       },
     );
     if (loadDynamicData) {
@@ -195,16 +181,9 @@ export class ApplicationInstitutionsController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<ApplicationOverallDetailsAPIOutDTO> {
-    const overallDetails =
-      await this.applicationControllerService.getApplicationOverallDetails(
-        applicationId,
-        { studentId },
-      );
-    // TODO Determine how previousVersions will be handled for Institution users.
-    // Temporarily modify the response to return only the currentApplication until the history requirements for Institution users are clarified.
-    return {
-      currentApplication: overallDetails.currentApplication,
-      previousVersions: [],
-    };
+    return await this.applicationControllerService.getApplicationOverallDetails(
+      applicationId,
+      { studentId, includeChangeRequest: false },
+    );
   }
 }

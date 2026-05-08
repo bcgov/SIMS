@@ -66,14 +66,11 @@ export class ApplicationAESTController extends BaseController {
    * This API will be used by ministry users.
    * @param applicationId application id.
    * @param loadDynamicData flag for if dynamic data should be loaded.
-   * TODO Analyze whether the isParentApplication flag is necessary as it is not used in web.
-   * @param isParentApplication flag for if the application is a parent application.
    * @returns Application details
    */
   @Get(":applicationId")
   @ApiNotFoundResponse({
-    description:
-      "Application not found or current application for provided parent application not found.",
+    description: "Application not found.",
   })
   @ApiUnprocessableEntityResponse({
     description: "Dynamic form configuration not found.",
@@ -82,19 +79,10 @@ export class ApplicationAESTController extends BaseController {
     @Param("applicationId", ParseIntPipe) applicationId: number,
     @Query("loadDynamicData", new DefaultValuePipe(true), ParseBoolPipe)
     loadDynamicData: boolean,
-    @Query("isParentApplication", new DefaultValuePipe(false), ParseBoolPipe)
-    isParentApplication: boolean,
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
-    // When the application is a parent application, get the current application by parent application id.
-    // Otherwise, set the current application id to the provided application id.
-    const currentApplicationId =
-      await this.applicationControllerService.getCurrentApplicationId(
-        applicationId,
-        isParentApplication,
-      );
     const application = await this.applicationService.getApplicationById(
-      currentApplicationId,
-      { loadDynamicData, allowEdited: true },
+      applicationId,
+      { loadDynamicData },
     );
     if (!application) {
       throw new NotFoundException(
@@ -286,6 +274,7 @@ export class ApplicationAESTController extends BaseController {
   ): Promise<ApplicationOverallDetailsAPIOutDTO> {
     return this.applicationControllerService.getApplicationOverallDetails(
       applicationId,
+      { includeChangeRequest: true },
     );
   }
 }

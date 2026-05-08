@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import {
   RecordDataModelService,
   Application,
-  ApplicationStatus,
   Student,
   User,
   Note,
@@ -666,11 +665,6 @@ export class StudentService extends RecordDataModelService<Student> {
     if (institutionId) {
       searchQuery.andWhere("institution.id = :institutionId", {
         institutionId,
-      });
-    }
-    if (institutionId || searchCriteria.appNumber) {
-      searchQuery.andWhere("application.applicationStatus != :editedStatus", {
-        editedStatus: ApplicationStatus.Edited,
       });
     }
     if (searchCriteria.sin) {

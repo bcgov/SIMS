@@ -71,7 +71,6 @@ export class ApplicationChangeRequestService {
       // Get the application by id.
       const changeRequestApplication =
         await this.applicationService.getApplicationById(applicationId, {
-          allowEdited: true,
           entityManager: transactionalEntityManager,
         });
       if (!changeRequestApplication) {

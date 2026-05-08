@@ -39,10 +39,11 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
     appDataSource = dataSource;
     studentRepo = dataSource.getRepository(Student);
     applicationRepo = dataSource.getRepository(Application);
-    const { institution: collegeF } = await getAuthRelatedEntities(
+    const { institution } = await getAuthRelatedEntities(
       appDataSource,
       InstitutionTokenTypes.CollegeFUser,
     );
+    collegeF = institution;
     collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
 
     await authorizeUserTokenForLocation(
@@ -72,15 +73,17 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .send(searchPayload)
       .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([
-        {
-          id: student.id,
-          firstName: student.user.firstName,
-          lastName: student.user.lastName,
-          birthDate: student.birthDate,
-          sin: student.sinValidation.sin,
-        },
-      ]);
+      .expect(({ body }) =>
+        expect(body).toEqual([
+          {
+            id: student.id,
+            firstName: student.user.firstName,
+            lastName: student.user.lastName,
+            birthDate: student.birthDate,
+            sin: student.sinValidation.sin,
+          },
+        ]),
+      );
   });
 
   it("Should find the student by last name when student has at least one application submitted for the institution.", async () => {
@@ -101,34 +104,51 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .send(searchPayload)
       .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body).toEqual(
-          expect.arrayContaining([
-            {
-              id: student.id,
-              firstName: student.user.firstName,
-              lastName: student.user.lastName,
-              birthDate: student.birthDate,
-              sin: student.sinValidation.sin,
-            },
-          ]),
-        );
-      });
+      .expect(({ body }) =>
+        expect(body).toEqual([
+          {
+            id: student.id,
+            firstName: student.user.firstName,
+            lastName: student.user.lastName,
+            birthDate: student.birthDate,
+            sin: student.sinValidation.sin,
+          },
+        ]),
+      );
   });
 
-  it("Should find the student by part of last name when student has at least one application submitted for the institution.", async () => {
+  it("Should find the student by last name when student has an application version (Edited) submitted for the institution.", async () => {
     // Arrange
-    const { student } = await saveStudentWithApplicationForCollegeF(
-      ApplicationStatus.Submitted,
+    const { application: previousApplication, student } =
+      await saveStudentWithApplicationForCollegeF(ApplicationStatus.Edited);
+
+    const { institution: collegeE } = await getAuthRelatedEntities(
+      appDataSource,
+      InstitutionTokenTypes.CollegeEReadOnlyUser,
     );
-    student.user.lastName =
-      "last name ef1c3bd5-4e8d-4ac4-adcb-3507a1cc7d43 ilike test";
-    await studentRepo.save(student);
+    let collegeELocation = createFakeInstitutionLocation({
+      institution: collegeE,
+    });
+
+    // Create a new version of the application for a different institution.
+    await saveFakeApplication(
+      appDataSource,
+      {
+        institution: collegeE,
+        institutionLocation: collegeELocation,
+        student,
+        parentApplication: { id: previousApplication.id } as Application,
+        precedingApplication: { id: previousApplication.id } as Application,
+      },
+      {
+        applicationStatus: ApplicationStatus.Submitted,
+      },
+    );
 
     const searchPayload = {
       appNumber: "",
       firstName: "",
-      lastName: "EF1C3BD5-4E8D-4AC4-ADCB-3507A1CC7D43",
+      lastName: student.user.lastName,
       sin: "",
     };
 
@@ -138,15 +158,50 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .send(searchPayload)
       .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([
-        {
-          id: student.id,
-          firstName: student.user.firstName,
-          lastName: student.user.lastName,
-          birthDate: student.birthDate,
-          sin: student.sinValidation.sin,
-        },
-      ]);
+      .expect(({ body }) =>
+        expect(body).toEqual([
+          {
+            id: student.id,
+            firstName: student.user.firstName,
+            lastName: student.user.lastName,
+            birthDate: student.birthDate,
+            sin: student.sinValidation.sin,
+          },
+        ]),
+      );
+  });
+
+  it("Should find the student by part of last name when student has at least one application submitted for the institution.", async () => {
+    // Arrange
+    const { student } = await saveStudentWithApplicationForCollegeF(
+      ApplicationStatus.Submitted,
+    );
+    await studentRepo.save(student);
+
+    const searchPayload = {
+      appNumber: "",
+      firstName: "",
+      lastName: student.user.lastName?.slice(0, 25),
+      sin: "",
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(searchPayload)
+      .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body).toEqual([
+          {
+            id: student.id,
+            firstName: student.user.firstName,
+            lastName: student.user.lastName,
+            birthDate: student.birthDate,
+            sin: student.sinValidation.sin,
+          },
+        ]),
+      );
   });
 
   it("Should find the student by first name when student has at least one application submitted for the institution.", async () => {
@@ -167,19 +222,17 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .send(searchPayload)
       .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        expect(response.body).toEqual(
-          expect.arrayContaining([
-            {
-              id: student.id,
-              firstName: student.user.firstName,
-              lastName: student.user.lastName,
-              birthDate: student.birthDate,
-              sin: student.sinValidation.sin,
-            },
-          ]),
-        );
-      });
+      .expect(({ body }) =>
+        expect(body).toEqual([
+          {
+            id: student.id,
+            firstName: student.user.firstName,
+            lastName: student.user.lastName,
+            birthDate: student.birthDate,
+            sin: student.sinValidation.sin,
+          },
+        ]),
+      );
   });
 
   it("Should find the student by part of first name when student has at least one application submitted for the institution.", async () => {
@@ -187,12 +240,10 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
     const { student } = await saveStudentWithApplicationForCollegeF(
       ApplicationStatus.Submitted,
     );
-    student.user.firstName =
-      "first name 77b83122-35a9-4492-8a27-c1e5cf4514cf ilike test";
     await studentRepo.save(student);
     const searchPayload = {
       appNumber: "",
-      firstName: "77B83122-35A9-4492-8A27-C1E5CF4514CF",
+      firstName: student.user.firstName?.slice(0, 25),
       lastName: "",
       sin: "",
     };
@@ -203,15 +254,17 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .send(searchPayload)
       .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([
-        {
-          id: student.id,
-          firstName: student.user.firstName,
-          lastName: student.user.lastName,
-          birthDate: student.birthDate,
-          sin: student.sinValidation.sin,
-        },
-      ]);
+      .expect(({ body }) =>
+        expect(body).toEqual([
+          {
+            id: student.id,
+            firstName: student.user.firstName,
+            lastName: student.user.lastName,
+            birthDate: student.birthDate,
+            sin: student.sinValidation.sin,
+          },
+        ]),
+      );
   });
 
   it("Should find the student by sin when student has at least one application submitted for the institution.", async () => {
@@ -232,15 +285,17 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .send(searchPayload)
       .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([
-        {
-          id: student.id,
-          firstName: student.user.firstName,
-          lastName: student.user.lastName,
-          birthDate: student.birthDate,
-          sin: student.sinValidation.sin,
-        },
-      ]);
+      .expect(({ body }) =>
+        expect(body).toEqual([
+          {
+            id: student.id,
+            firstName: student.user.firstName,
+            lastName: student.user.lastName,
+            birthDate: student.birthDate,
+            sin: student.sinValidation.sin,
+          },
+        ]),
+      );
   });
 
   it("Should not find the student when application cancelled as draft.", async () => {
@@ -265,7 +320,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .send(searchPayload)
       .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([]);
+      .expect(({ body }) => expect(body).toEqual([]));
   });
 
   it("Should find the student when application is cancelled after submission.", async () => {
@@ -285,15 +340,17 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .send(searchPayload)
       .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([
-        {
-          id: student.id,
-          firstName: student.user.firstName,
-          lastName: student.user.lastName,
-          birthDate: student.birthDate,
-          sin: student.sinValidation.sin,
-        },
-      ]);
+      .expect(({ body }) =>
+        expect(body).toEqual([
+          {
+            id: student.id,
+            firstName: student.user.firstName,
+            lastName: student.user.lastName,
+            birthDate: student.birthDate,
+            sin: student.sinValidation.sin,
+          },
+        ]),
+      );
   });
 
   it("Should not find the student when user is not active.", async () => {
@@ -316,7 +373,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .send(searchPayload)
       .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([]);
+      .expect(({ body }) => expect(body).toEqual([]));
   });
 
   it("Should not find the student when student does not have an application for that institution.", async () => {
@@ -345,7 +402,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .send(searchPayload)
       .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([]);
+      .expect(({ body }) => expect(body).toEqual([]));
   });
 
   it("Should not find the student when student has only a draft application.", async () => {
@@ -366,7 +423,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .send(searchPayload)
       .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([]);
+      .expect(({ body }) => expect(body).toEqual([]));
   });
 
   it("Should throw forbidden error when the institution type is not BC Public.", async () => {
@@ -389,11 +446,13 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .send(searchPayload)
       .auth(collegeCInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
-        error: "Forbidden",
-      });
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          statusCode: HttpStatus.FORBIDDEN,
+          message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+          error: "Forbidden",
+        }),
+      );
   });
 
   it("Should find the student by email address when there is an exact match.", async () => {
@@ -411,15 +470,17 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       .send(searchPayload)
       .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([
-        {
-          id: student.id,
-          firstName: student.user.firstName,
-          lastName: student.user.lastName,
-          birthDate: student.birthDate,
-          sin: student.sinValidation.sin,
-        },
-      ]);
+      .expect(({ body }) =>
+        expect(body).toEqual([
+          {
+            id: student.id,
+            firstName: student.user.firstName,
+            lastName: student.user.lastName,
+            birthDate: student.birthDate,
+            sin: student.sinValidation.sin,
+          },
+        ]),
+      );
   });
 
   /**

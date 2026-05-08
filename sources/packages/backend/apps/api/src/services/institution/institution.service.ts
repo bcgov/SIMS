@@ -12,10 +12,17 @@ import {
   IdentityProviders,
   getUserFullNameLikeSearch,
   Application,
-  ApplicationStatus,
   InstitutionType,
+  APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
 } from "@sims/sims-db";
-import { DataSource, EntityManager, IsNull, Not, Repository } from "typeorm";
+import {
+  DataSource,
+  EntityManager,
+  In,
+  IsNull,
+  Not,
+  Repository,
+} from "typeorm";
 import { InstitutionUserType, UserInfo } from "../../types";
 import { BCeIDService } from "../bceid/bceid.service";
 import { AccountDetails } from "../bceid/account-details.model";
@@ -963,8 +970,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
   }
 
   /**
-   * Find if the institution
-   * has access to student data of given student.
+   * Find if the institution has access to student data of given student.
    * @param institutionId institution.
    * @param studentId student.
    * @param options options for the query:
@@ -979,17 +985,24 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       applicationId?: number;
     },
   ): Promise<boolean> {
-    const institutionStudentDataAccess = await this.applicationRepo.findOne({
-      select: { id: true },
+    // BC public institutions should have access to the student's profile once the student has been attached/linked
+    // to the institution by any submitted (not draft) application even if it is edited.
+    // Applications which are pending Change Requests are not available to institutions.
+    return this.applicationRepo.exists({
       where: {
         student: { id: studentId },
-        location: { institution: { id: institutionId } },
-        applicationStatus: Not(ApplicationStatus.Edited),
+        parentApplication: {
+          versions: {
+            location: { institution: { id: institutionId } },
+          },
+        },
         id: options?.applicationId,
+        applicationEditStatus: Not(
+          In(APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES),
+        ),
       },
       cache: true,
     });
-    return !!institutionStudentDataAccess;
   }
 
   /**

@@ -2,7 +2,9 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import {
   createFakeDisbursementOveraward,
+  createFakeInstitutionLocation,
   saveFakeApplication,
+  saveFakeStudent,
 } from "@sims/test-utils";
 import { Repository, DataSource } from "typeorm";
 import {
@@ -11,9 +13,13 @@ import {
 } from "@sims/sims-db";
 
 import {
+  authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
+  getAuthRelatedEntities,
   getInstitutionToken,
+  INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+  INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
 
@@ -31,8 +37,22 @@ describe("OverawardInstitutionsController(e2e)-getOverawardsByStudent", () => {
 
   it("Should return student overawards when student has some overawards.", async () => {
     // Arrange
+    const { institution } = await getAuthRelatedEntities(
+      appDataSource,
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const collegeFLocation = createFakeInstitutionLocation({
+      institution,
+    });
+    await authorizeUserTokenForLocation(
+      appDataSource,
+      InstitutionTokenTypes.CollegeFUser,
+      collegeFLocation,
+    );
     // Prepare the student assessment to create overaward.
-    const application = await saveFakeApplication(appDataSource);
+    const application = await saveFakeApplication(appDataSource, {
+      institutionLocation: collegeFLocation,
+    });
     const student = application.student;
     const user = application.student.user;
     // Create an overaward.
@@ -56,17 +76,66 @@ describe("OverawardInstitutionsController(e2e)-getOverawardsByStudent", () => {
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect([
-        {
-          dateAdded: reassessmentOveraward.addedDate.toISOString(),
-          createdAt: reassessmentOveraward.createdAt.toISOString(),
-          overawardOrigin: reassessmentOveraward.originType,
-          awardValueCode: reassessmentOveraward.disbursementValueCode,
-          overawardValue: reassessmentOveraward.overawardValue,
-          applicationNumber: application.applicationNumber,
-          assessmentTriggerType: application.currentAssessment.triggerType,
-        },
-      ]);
+      .expect(({ body }) =>
+        expect(body).toEqual([
+          {
+            dateAdded: reassessmentOveraward.addedDate!.toISOString(),
+            createdAt: reassessmentOveraward.createdAt.toISOString(),
+            overawardOrigin: reassessmentOveraward.originType,
+            awardValueCode: reassessmentOveraward.disbursementValueCode,
+            overawardValue: reassessmentOveraward.overawardValue,
+            applicationNumber: application.applicationNumber,
+            assessmentTriggerType: application.currentAssessment?.triggerType,
+          },
+        ]),
+      );
+  });
+
+  it("Should throw a HttpStatus Forbidden (403) error when a non-public institution accesses the overawards.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
+
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCUser,
+    );
+
+    const endpoint = `/institutions/overaward/student/${student.id}`;
+
+    // Act/Assert.
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          statusCode: HttpStatus.FORBIDDEN,
+          message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+          error: "Forbidden",
+        }),
+      );
+  });
+
+  it("Should throw a HttpStatus Forbidden (403) error when the institution does not have access to the student.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
+
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const endpoint = `/institutions/overaward/student/${student.id}`;
+
+    // Act/Assert.
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          statusCode: HttpStatus.FORBIDDEN,
+          message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
+          error: "Forbidden",
+        }),
+      );
   });
 
   afterAll(async () => {

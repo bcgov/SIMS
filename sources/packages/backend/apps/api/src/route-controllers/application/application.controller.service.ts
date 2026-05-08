@@ -442,33 +442,6 @@ export class ApplicationControllerService {
   }
 
   /**
-   * Gets the current application id.
-   * @param applicationId application id.
-   * TODO Analyze whether the isParentApplication flag is necessary as it is not used in web.
-   * @param isParentApplication is parent application.
-   * @returns the current application id.
-   */
-  async getCurrentApplicationId(
-    applicationId: number,
-    isParentApplication: boolean,
-  ): Promise<number> {
-    let currentApplicationId = applicationId;
-    if (isParentApplication) {
-      const currentApplication =
-        await this.applicationService.getCurrentApplicationByParentApplicationId(
-          applicationId,
-        );
-      if (!currentApplication) {
-        throw new NotFoundException(
-          `Current application for provided parent application ${applicationId} was not found.`,
-        );
-      }
-      currentApplicationId = currentApplication.id;
-    }
-    return currentApplicationId;
-  }
-
-  /**
    * Check whether the selected location is designated or not.
    * If selected location is not designated, then make the
    * selectedLocation null.
@@ -851,11 +824,12 @@ export class ApplicationControllerService {
    * @param applicationId application ID.
    * @param options options.
    * - `studentId` student ID used for authorization.
+   * - `includeChangeRequest` indicates whether the in-progress change request details should be included in the response.
    * @returns application overall details.
    */
   async getApplicationOverallDetails(
     applicationId: number,
-    options?: { studentId?: number },
+    options?: { studentId?: number; includeChangeRequest: boolean },
   ): Promise<ApplicationOverallDetailsAPIOutDTO> {
     const application = await this.applicationService.getAllApplicationVersions(
       applicationId,
@@ -870,7 +844,7 @@ export class ApplicationControllerService {
     const currentApplication =
       this.transformToApplicationOverallDetailsAPIOutDTO(application);
     // Convert all the past versions of the application.
-    let previousVersions = application.parentApplication.versions.map(
+    let previousVersions = application.parentApplication!.versions.map(
       (version) => this.transformToApplicationOverallDetailsAPIOutDTO(version),
     );
     // Check if there is an in-progress change request for the application.
@@ -888,7 +862,9 @@ export class ApplicationControllerService {
     }
     return {
       currentApplication,
-      inProgressChangeRequest,
+      inProgressChangeRequest: options?.includeChangeRequest
+        ? inProgressChangeRequest
+        : undefined,
       previousVersions,
     };
   }

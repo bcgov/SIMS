@@ -46,7 +46,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationOverallDetails", 
     );
   });
 
-  it("Should get only the current application and no applications versions in overall details when there is one or more edited application associated with the given application.", async () => {
+  it("Should get the current application and all applications versions in overall details when there is one or more edited application associated with the given application.", async () => {
     // Arrange
     // Create the parent application and also the first application version.
     const firstVersionApplication = await saveFakeApplication(
@@ -69,7 +69,8 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationOverallDetails", 
         applicationStatus: ApplicationStatus.Edited,
         applicationNumber: firstVersionApplication.applicationNumber,
         offeringIntensity:
-          firstVersionApplication.currentAssessment.offering.offeringIntensity,
+          firstVersionApplication.currentAssessment!.offering!
+            .offeringIntensity,
         submittedDate: addDays(-1),
       },
     );
@@ -86,7 +87,8 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationOverallDetails", 
       {
         applicationNumber: firstVersionApplication.applicationNumber,
         offeringIntensity:
-          firstVersionApplication.currentAssessment.offering.offeringIntensity,
+          firstVersionApplication.currentAssessment!.offering!
+            .offeringIntensity,
         submittedDate: new Date(),
       },
     );
@@ -100,15 +102,34 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationOverallDetails", 
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({
-        currentApplication: {
-          id: currentApplication.id,
-          submittedDate: currentApplication.submittedDate.toISOString(),
-          applicationEditStatus: currentApplication.applicationEditStatus,
-          supportingUsers: [],
-        },
-        previousVersions: [],
-      });
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          currentApplication: {
+            id: currentApplication.id,
+            submittedDate: currentApplication.submittedDate?.toISOString(),
+            applicationEditStatus: currentApplication.applicationEditStatus,
+            supportingUsers: [],
+          },
+          previousVersions: [
+            {
+              id: secondVersionApplication.id,
+              submittedDate:
+                secondVersionApplication.submittedDate?.toISOString(),
+              applicationEditStatus:
+                secondVersionApplication.applicationEditStatus,
+              supportingUsers: [],
+            },
+            {
+              id: firstVersionApplication.id,
+              submittedDate:
+                firstVersionApplication.submittedDate?.toISOString(),
+              applicationEditStatus:
+                firstVersionApplication.applicationEditStatus,
+              supportingUsers: [],
+            },
+          ],
+        }),
+      );
   });
 
   it("Should get the original application and no application versions in overall details when there is no edited application associated with the given application.", async () => {
@@ -128,15 +149,17 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationOverallDetails", 
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({
-        currentApplication: {
-          id: originalApplication.id,
-          submittedDate: originalApplication.submittedDate.toISOString(),
-          applicationEditStatus: originalApplication.applicationEditStatus,
-          supportingUsers: [],
-        },
-        previousVersions: [],
-      });
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          currentApplication: {
+            id: originalApplication.id,
+            submittedDate: originalApplication.submittedDate?.toISOString(),
+            applicationEditStatus: originalApplication.applicationEditStatus,
+            supportingUsers: [],
+          },
+          previousVersions: [],
+        }),
+      );
   });
 
   it(
@@ -190,15 +213,17 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationOverallDetails", 
         .get(endpoint)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
-        .expect({
-          currentApplication: {
-            id: currentApplication.id,
-            submittedDate: currentApplication.submittedDate.toISOString(),
-            applicationEditStatus: currentApplication.applicationEditStatus,
-            supportingUsers: [],
-          },
-          previousVersions: [],
-        });
+        .expect(({ body }) =>
+          expect(body).toEqual({
+            currentApplication: {
+              id: currentApplication.id,
+              submittedDate: currentApplication.submittedDate?.toISOString(),
+              applicationEditStatus: currentApplication.applicationEditStatus,
+              supportingUsers: [],
+            },
+            previousVersions: [],
+          }),
+        );
     },
   );
 
