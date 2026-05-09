@@ -84,13 +84,20 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       },
     });
 
+    const submittedDataPayload = {
+      ...submittedData,
+      sinNumber: submittedData.sinNumber.replace(
+        /(\d{3})(\d{3})(\d{3})/,
+        "$1 $2 $3",
+      ),
+    };
     const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
-      .send(submittedData)
+      .send(submittedDataPayload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
       .then((response) => {
@@ -135,13 +142,20 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       },
     });
 
+    const submittedDataPayload = {
+      ...submittedData,
+      sinNumber: submittedData.sinNumber.replace(
+        /(\d{3})(\d{3})(\d{3})/,
+        "$1 $2 $3",
+      ),
+    };
     const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
-      .send(submittedData)
+      .send(submittedDataPayload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
       .then((response) => {
@@ -186,13 +200,20 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       },
     });
 
+    const submittedDataPayload = {
+      ...submittedData,
+      sinNumber: submittedData.sinNumber.replace(
+        /(\d{3})(\d{3})(\d{3})/,
+        "$1 $2 $3",
+      ),
+    };
     const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
-      .send(submittedData)
+      .send(submittedDataPayload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
       .then((response) => {

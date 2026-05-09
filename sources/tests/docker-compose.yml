@@ -109,7 +109,10 @@ services:
       dockerfile: Dockerfile.dev
       args:
         - FORMIO_SOURCE_REPO_URL=${FORMIO_SOURCE_REPO_URL}
-        - FORMIO_SOURCE_REPO_TAG=${FORMIO_SOURCE_REPO_TAG}
+        - FORMIO_SOURCE_REPO_REF=${FORMIO_SOURCE_REPO_REF}
+        - FORMIO_CORE_VERSION=${FORMIO_CORE_VERSION}
+        - FORMIO_JS_VERSION=${FORMIO_JS_VERSION}
+        - FORMIO_VM_VERSION=${FORMIO_VM_VERSION}
     environment:
       NODE_CONFIG: '{"mongo": "mongodb://mongo:27017/formio"}'
       ROOT_EMAIL: ${FORMS_SA_USER_NAME}
@@ -127,8 +130,8 @@ services:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3001/access || exit 1"]
       interval: 15s
       timeout: 10s
-      retries: 20
-      start_period: 120s
+      retries: 15
+      start_period: 60s
   # Workers
   workers:
     image: workers-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}

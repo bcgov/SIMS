@@ -31,7 +31,12 @@ export ALLOW_BETA_INSTITUTIONS_ONLY :=$(or $(ALLOW_BETA_INSTITUTIONS_ONLY), fals
 
 # Formio forms integration
 export FORMIO_SOURCE_REPO_URL := $(or $(FORMIO_SOURCE_REPO_URL), https://github.com/formio/formio.git)
-export FORMIO_SOURCE_REPO_TAG := $(or $(FORMIO_SOURCE_REPO_TAG), v4.3.2)
+# Form.io version targeting the API Server Version 9.7.5
+# see https://github.com/formio/enterprise-release/blob/master/API-Server-Change-Log.md#api-server-version-975
+export FORMIO_SOURCE_REPO_REF := $(or $(FORMIO_SOURCE_REPO_REF), f92dc5feab5cd0ff3ee30965141f11a8e552fe51)
+export FORMIO_CORE_VERSION := $(or $(FORMIO_CORE_VERSION), 2.6.3)
+export FORMIO_JS_VERSION := $(or $(FORMIO_JS_VERSION), 5.3.4)
+export FORMIO_VM_VERSION := $(or $(FORMIO_VM_VERSION), 2.0.2)
 
 backend-unit-tests:
 	@cd ../packages/backend && npm i && npm run test:cov
