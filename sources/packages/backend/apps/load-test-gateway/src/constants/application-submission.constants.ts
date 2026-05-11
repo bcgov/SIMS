@@ -102,6 +102,4 @@ export const APPLICATION_SUBMISSION_DATA = {
   isReadOnly: false,
   isFulltimeAllowed: true,
   applicationOfferingIntensityValue: "Full Time",
-  citizenshipForBCResidencyApplicationException: {},
-  parentsResidencyApplicationException: {},
 };
