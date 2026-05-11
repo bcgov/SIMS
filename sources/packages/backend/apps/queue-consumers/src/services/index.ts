@@ -10,5 +10,4 @@ export * from "./student-application-notification/student-application-notificati
 export * from "./student-application-notification/student-application-notification-processor";
 export * from "./cas-invoice-batch/cas-invoice-batch.service";
 export * from "./cas-invoice/cas-invoice.service";
-export * from "./cra-income-verification/cra-income-verification.service";
-export * from "./sin-validation/sin-validation.service";
+export * from "./file-processing-issue-notification/file-process-issue-notification.service";

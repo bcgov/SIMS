@@ -40,6 +40,7 @@ import {
   MinistryFormSubmittedNotification,
   MinistryStudentAppealNotification,
   MinistryFileProcessingIssueNotification,
+  SaveNotificationModel,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { LoggerService } from "@sims/utilities/logger";
@@ -1655,8 +1656,7 @@ export class NotificationActionsService {
    * @param entityManager entity manager to execute in transaction.
    */
   async saveMinistryFileProcessingIssueNotification(
-    notification: MinistryFileProcessingIssueNotification,
-    entityManager: EntityManager,
+    notifications: MinistryFileProcessingIssueNotification[],
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const { templateId, emailContacts } =
@@ -1666,24 +1666,26 @@ export class NotificationActionsService {
     if (!emailContacts?.length) {
       return;
     }
-
-    const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
-      userId: auditUser.id,
-      messageType: NotificationMessageType.MinistryFileProcessingIssue,
-      messagePayload: {
-        email_address: emailContact,
-        template_id: templateId,
-        title: notification.title,
-        fileName: notification.fileName,
-        type: notification.type,
-        dateSent: notification.dateSent,
-      },
-    }));
+    const ministryNotificationsToSend: SaveNotificationModel[] = [];
+    emailContacts.forEach((emailContact) => {
+      const notificationsToSend = notifications.map((notification) => ({
+        userId: auditUser.id,
+        messageType: NotificationMessageType.MinistryFileProcessingIssue,
+        messagePayload: {
+          email_address: emailContact,
+          template_id: templateId,
+          title: notification.title,
+          fileName: notification.fileName,
+          type: notification.type,
+          dateSent: notification.dateSent,
+        },
+      }));
+      ministryNotificationsToSend.push(...notificationsToSend);
+    });
     // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
       ministryNotificationsToSend,
       auditUser.id,
-      { entityManager },
     );
   }
 }
