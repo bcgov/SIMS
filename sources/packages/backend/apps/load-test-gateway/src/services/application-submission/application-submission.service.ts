@@ -242,8 +242,8 @@ export class ApplicationSubmissionService {
       }
       const savedOfferings =
         await this.dataSources.educationProgramOffering.save(offerings);
-      // Create applications in Submitted status so the queue-consumers
-      // scheduler picks them up and starts the Camunda workflow immediately.
+      // Create applications as Draft first to satisfy the DB constraint that
+      // requires parent_application_id IS NOT NULL for non-Draft applications.
       const applications: Application[] = savedOfferings.map((offering) =>
         createFakeApplication(
           {
@@ -256,39 +256,41 @@ export class ApplicationSubmissionService {
             initialValue: {
               data: APPLICATION_SUBMISSION_DATA as ApplicationData,
               offeringIntensity: OfferingIntensity.fullTime,
-              applicationStatus: ApplicationStatus.Submitted,
-              submittedDate: new Date(),
             },
           },
         ),
       );
       const savedApplications =
         await this.dataSources.application.save(applications);
+      // Update to Submitted status and set parent/preceding to self in a single
+      // save so the constraint (parent_application_id NOT NULL for non-Draft) is met.
+      const submittedDate = new Date();
       await this.dataSources.application.save(
         savedApplications.map((app) => ({
           ...app,
+          applicationStatus: ApplicationStatus.Submitted,
+          submittedDate,
           parentApplication: { id: app.id },
           precedingApplication: { id: app.id },
         })),
       );
       // Create assessments in Submitted status so the workflow enqueuer
       // picks them up on its next run and puts them in the start-assessment queue.
-      const assessments: StudentAssessment[] = savedApplications.map(
-        (app, i) =>
-          createFakeStudentAssessment(
-            {
-              auditUser: student.user,
-              application: app,
-              offering: savedOfferings[i],
+      const assessments: StudentAssessment[] = savedApplications.map((app, i) =>
+        createFakeStudentAssessment(
+          {
+            auditUser: student.user,
+            application: app,
+            offering: savedOfferings[i],
+          },
+          {
+            initialValue: {
+              studentAssessmentStatus: StudentAssessmentStatus.Submitted,
+              triggerType: AssessmentTriggerType.OriginalAssessment,
+              submittedDate: new Date(),
             },
-            {
-              initialValue: {
-                studentAssessmentStatus: StudentAssessmentStatus.Submitted,
-                triggerType: AssessmentTriggerType.OriginalAssessment,
-                submittedDate: new Date(),
-              },
-            },
-          ),
+          },
+        ),
       );
       const savedAssessments =
         await this.dataSources.studentAssessment.save(assessments);
