@@ -28,7 +28,8 @@ WORKDIR /formio
 
 RUN node /tmp/patch-formio-vm.js
 
-RUN npm pkg set 'dependencies[@formio/core]'="${FORMIO_CORE_VERSION}" && \
+RUN node /tmp/patch-formio-vm.js \
+    npm pkg set 'dependencies[@formio/core]'="${FORMIO_CORE_VERSION}" && \
     npm pkg set 'dependencies[@formio/js]'="${FORMIO_JS_VERSION}" && \
     npm pkg set 'dependencies[@formio/vm]'="${FORMIO_VM_VERSION}" && \
     npm i && \
