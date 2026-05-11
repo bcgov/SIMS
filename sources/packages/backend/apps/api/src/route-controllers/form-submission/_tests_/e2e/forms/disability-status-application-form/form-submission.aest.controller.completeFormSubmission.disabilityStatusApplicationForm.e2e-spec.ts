@@ -22,6 +22,7 @@ import {
   FormSubmissionActionType,
   FormSubmissionDecisionStatus,
   FormSubmissionStatus,
+  Student,
   User,
 } from "@sims/sims-db";
 import MockDate from "mockdate";
@@ -311,19 +312,19 @@ describe(`FormSubmissionAESTController(e2e)-completeFormSubmission-${FORM_DEFINI
           // Expect student disability status and audit information not to be updated.
           const notUpdatedStudent =
             await getStudentDisabilityStatusAndAuditInfo(db, student.id);
-          expect(notUpdatedStudent!.disabilityStatus).toBe(
+          expect(notUpdatedStudent.disabilityStatus).toBe(
             studentCurrentDisabilityStatus,
           );
           expect(
-            notUpdatedStudent!.disabilityStatusFormSubmissionItem,
+            notUpdatedStudent.disabilityStatusFormSubmissionItem,
           ).toBeNull();
-          expect(notUpdatedStudent!.disabilityStatusUpdatedBy).toBeNull();
-          expect(notUpdatedStudent!.disabilityStatusUpdatedOn).toBeNull();
-          expect(notUpdatedStudent!.disabilityStatusEffectiveDate).toBeNull();
-          expect(notUpdatedStudent!.modifier).not.toEqual({
+          expect(notUpdatedStudent.disabilityStatusUpdatedBy).toBeNull();
+          expect(notUpdatedStudent.disabilityStatusUpdatedOn).toBeNull();
+          expect(notUpdatedStudent.disabilityStatusEffectiveDate).toBeNull();
+          expect(notUpdatedStudent.modifier).not.toEqual({
             id: ministryAPIUser.id,
           });
-          expect(notUpdatedStudent!.updatedAt).not.toBe(now);
+          expect(notUpdatedStudent.updatedAt).not.toBe(now);
         },
       );
     },
@@ -343,8 +344,8 @@ describe(`FormSubmissionAESTController(e2e)-completeFormSubmission-${FORM_DEFINI
 function getStudentDisabilityStatusAndAuditInfo(
   db: E2EDataSources,
   studentId: number,
-) {
-  return db.student.findOne({
+): Promise<Student> {
+  return db.student.findOneOrFail({
     select: {
       id: true,
       disabilityStatus: true,
