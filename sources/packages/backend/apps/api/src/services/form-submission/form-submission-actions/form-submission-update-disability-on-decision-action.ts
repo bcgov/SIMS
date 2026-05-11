@@ -105,7 +105,8 @@ export class FormSubmissionUpdateDisabilityOnDecisionAction extends FormSubmissi
         `Update action lookup not found for decision status ${submissionItem.decisionStatus} and disability status ${submittedData.requestedDisabilityStatus}.`,
       );
     }
-    const updateDisabilityStatus =
+    //
+    const effectiveDisabilityStatus =
       submissionItem.decisionStatus === FormSubmissionDecisionStatus.Approved
         ? submittedData.requestedDisabilityStatus
         : DisabilityStatus.Declined;
@@ -115,7 +116,7 @@ export class FormSubmissionUpdateDisabilityOnDecisionAction extends FormSubmissi
         ...updateActionLookup.updateCriteria,
       },
       {
-        disabilityStatus: updateDisabilityStatus,
+        disabilityStatus: effectiveDisabilityStatus,
         disabilityStatusFormSubmissionItem: { id: submissionItem.id },
         disabilityStatusUpdatedBy: auditUser,
         disabilityStatusUpdatedOn: auditDate,
@@ -126,7 +127,7 @@ export class FormSubmissionUpdateDisabilityOnDecisionAction extends FormSubmissi
     );
     if (updateResult.affected === 1) {
       this.logger.log(
-        `Disability status updated to ${submittedData.requestedDisabilityStatus} for the student ID ${formSubmission.studentId} on decision.`,
+        `Disability status updated to ${effectiveDisabilityStatus} for the student ID ${formSubmission.studentId} on decision.`,
       );
       return;
     }

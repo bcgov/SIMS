@@ -25,6 +25,8 @@ export class FeatureTogglesService {
   /**
    * Check if a form is disabled based on the feature toggles configuration.
    * If a form is included in the feature toggle list, it is considered as disabled.
+   * To disable a form, the feature toggle should be in the format of `disable-{formDefinitionName}`.
+   * @param formDefinitionName form definition name to validate the toggle.
    * @returns true if the form is disabled, false otherwise.
    */
   isFormDisabled(formDefinitionName: string): boolean {
