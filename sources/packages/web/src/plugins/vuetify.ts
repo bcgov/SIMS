@@ -33,7 +33,7 @@ export default createVuetify({
     VDividerInsetOpaque: {
       thickness: 2,
       color: "secondary",
-      inset: true,
+      style: "margin-inline: 16px;",
     },
     VDividerVerticalOpaque: {
       thickness: 2,
