@@ -4,12 +4,12 @@ import { Job, Queue } from "bull";
 import { BaseScheduler } from "../base-scheduler";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { QueueNames } from "@sims/utilities";
-import { FileProcessingIssueNotificationService } from "apps/queue-consumers/src/services/file-processing-issue-notification/file-process-issue-notification.service";
+import { FileProcessingIssueNotificationService } from "../../../services";
 
-@Processor(QueueNames.FileProcessingIssueNotifications)
-export class FileProcessingIssueNotificationsScheduler extends BaseScheduler<void> {
+@Processor(QueueNames.FileProcessingIssueNotification)
+export class FileProcessingIssueNotificationScheduler extends BaseScheduler<void> {
   constructor(
-    @InjectQueue(QueueNames.FileProcessingIssueNotifications)
+    @InjectQueue(QueueNames.FileProcessingIssueNotification)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
     private readonly fileProcessingIssueNotificationService: FileProcessingIssueNotificationService,
@@ -28,10 +28,10 @@ export class FileProcessingIssueNotificationsScheduler extends BaseScheduler<voi
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string> {
-    await this.fileProcessingIssueNotificationService.notifyFileProcessingIssues();
+    await this.fileProcessingIssueNotificationService.notifyFileProcessingIssues(
+      processSummary,
+    );
 
-    console.log("process summary", processSummary);
-
-    return "Completed processing file processing issue notifications.";
+    return "Completed file processing issue notifications.";
   }
 }

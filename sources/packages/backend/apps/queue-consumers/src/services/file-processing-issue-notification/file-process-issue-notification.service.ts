@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { NotificationActionsService } from "@sims/services/notifications/notification/notification-actions.service";
 import { MinistryFileProcessingIssueNotification } from "@sims/services/notifications/notification/notification.model";
 import { CRAIncomeVerification, SINValidation } from "@sims/sims-db";
+import { ProcessSummary } from "@sims/utilities/logger";
 import { IsNull, LessThan, Repository } from "typeorm";
 
 @Injectable()
@@ -19,7 +20,9 @@ export class FileProcessingIssueNotificationService {
   // To account for weekends and stat holidays, we'll set this to 5 calendar days.
   OVERDUE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
 
-  async notifyFileProcessingIssues(): Promise<void> {
+  async notifyFileProcessingIssues(
+    processSummary: ProcessSummary,
+  ): Promise<void> {
     const craPromise = this.findOverdueCRAIncomeVerifications();
     const sinPromise = this.findOverdueSINValidations();
 
@@ -27,6 +30,13 @@ export class FileProcessingIssueNotificationService {
       craPromise,
       sinPromise,
     ]);
+
+    processSummary.info(
+      `Total overdue CRA income verifications: ${craNotifications.length}`,
+    );
+    processSummary.info(
+      `Total overdue SIN validations: ${sinNotifications.length}`,
+    );
 
     await this.notificationActionsService.saveMinistryFileProcessingIssueNotification(
       [...craNotifications, ...sinNotifications],

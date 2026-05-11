@@ -1651,9 +1651,7 @@ export class NotificationActionsService {
 
   /**
    * Creates a ministry notification when there is a CRA/SIN file processing issue.
-   * using the form category directly from the dynamic form configuration.
    * @param notification notification details.
-   * @param entityManager entity manager to execute in transaction.
    */
   async saveMinistryFileProcessingIssueNotification(
     notifications: MinistryFileProcessingIssueNotification[],
@@ -1674,10 +1672,12 @@ export class NotificationActionsService {
         messagePayload: {
           email_address: emailContact,
           template_id: templateId,
-          title: notification.title,
-          fileName: notification.fileName,
-          type: notification.type,
-          dateSent: notification.dateSent,
+          personalisation: {
+            title: notification.title,
+            fileName: notification.fileName,
+            dateSent: getDateOnlyFormat(notification.dateSent),
+            type: notification.type.toString(),
+          },
         },
       }));
       ministryNotificationsToSend.push(...notificationsToSend);
