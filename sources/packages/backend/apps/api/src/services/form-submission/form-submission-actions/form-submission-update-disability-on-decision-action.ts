@@ -2,7 +2,7 @@ import {
   DisabilityStatus,
   FormCategory,
   FormSubmissionActionType,
-  FormSubmissionStatus,
+  FormSubmissionDecisionStatus,
   Student,
 } from "@sims/sims-db";
 import { EntityManager, In, Not } from "typeorm";
@@ -16,41 +16,46 @@ const APPROVED_DISABILITY_STATUSES = [
   DisabilityStatus.PPD,
 ];
 
+const APPROVED_OR_DECLINED_DISABILITY_STATUSES = [
+  ...APPROVED_DISABILITY_STATUSES,
+  DisabilityStatus.Declined,
+];
+
 @Injectable()
 export class FormSubmissionUpdateDisabilityOnDecisionAction extends FormSubmissionAction {
   constructor(private readonly logger: LoggerService) {
     super();
   }
   /**
-   * Disability update criteria lookup.
+   * Disability update action lookup.
    */
-  private readonly disabilityUpdateCriteriaLookup = [
+  private readonly disabilityUpdateActionLookup = [
     {
-      formSubmissionStatus: FormSubmissionStatus.Completed,
-      disabilityStatus: DisabilityStatus.PD,
+      decisionStatus: FormSubmissionDecisionStatus.Approved,
+      requestedDisabilityStatus: DisabilityStatus.PD,
       updateCriteria: {
         disabilityStatus: Not(In([DisabilityStatus.PD])),
       },
     },
     {
-      formSubmissionStatus: FormSubmissionStatus.Completed,
-      disabilityStatus: DisabilityStatus.PPD,
+      decisionStatus: FormSubmissionDecisionStatus.Approved,
+      requestedDisabilityStatus: DisabilityStatus.PPD,
       updateCriteria: {
         disabilityStatus: Not(In(APPROVED_DISABILITY_STATUSES)),
       },
     },
     {
-      formSubmissionStatus: FormSubmissionStatus.Declined,
-      disabilityStatus: DisabilityStatus.PD,
+      decisionStatus: FormSubmissionDecisionStatus.Declined,
+      requestedDisabilityStatus: DisabilityStatus.PD,
       updateCriteria: {
-        disabilityStatus: Not(In(APPROVED_DISABILITY_STATUSES)),
+        disabilityStatus: Not(In(APPROVED_OR_DECLINED_DISABILITY_STATUSES)),
       },
     },
     {
-      formSubmissionStatus: FormSubmissionStatus.Declined,
-      disabilityStatus: DisabilityStatus.PPD,
+      decisionStatus: FormSubmissionDecisionStatus.Declined,
+      requestedDisabilityStatus: DisabilityStatus.PPD,
       updateCriteria: {
-        disabilityStatus: Not(In(APPROVED_DISABILITY_STATUSES)),
+        disabilityStatus: Not(In(APPROVED_OR_DECLINED_DISABILITY_STATUSES)),
       },
     },
   ];
@@ -86,26 +91,32 @@ export class FormSubmissionUpdateDisabilityOnDecisionAction extends FormSubmissi
     const [submissionItem] = submissionItems;
     const auditUser = { id: auditUserId };
     const submittedData = submissionItem.submittedData as {
-      disabilityStatus: DisabilityStatus;
+      requestedDisabilityStatus: DisabilityStatus;
     };
 
-    const updateCriteriaLookup = this.disabilityUpdateCriteriaLookup.find(
+    const updateActionLookup = this.disabilityUpdateActionLookup.find(
       (lookup) =>
-        lookup.formSubmissionStatus === formSubmission.submissionStatus &&
-        lookup.disabilityStatus === submittedData.disabilityStatus,
+        lookup.decisionStatus === submissionItem.decisionStatus &&
+        lookup.requestedDisabilityStatus ===
+          submittedData.requestedDisabilityStatus,
     );
-    if (!updateCriteriaLookup) {
+    if (!updateActionLookup) {
       throw new Error(
-        `Update criteria not found for form submission status ${formSubmission.submissionStatus} and disability status ${submittedData.disabilityStatus}.`,
+        `Update action lookup not found for decision status ${submissionItem.decisionStatus} and disability status ${submittedData.requestedDisabilityStatus}.`,
       );
     }
+    const updateDisabilityStatus =
+      submissionItem.decisionStatus === FormSubmissionDecisionStatus.Approved
+        ? submittedData.requestedDisabilityStatus
+        : DisabilityStatus.Declined;
     const updateResult = await entityManager.getRepository(Student).update(
       {
         id: formSubmission.studentId,
-        ...updateCriteriaLookup.updateCriteria,
+        ...updateActionLookup.updateCriteria,
       },
       {
-        disabilityStatus: submittedData.disabilityStatus,
+        disabilityStatus: updateDisabilityStatus,
+        disabilityStatusFormSubmissionItem: { id: submissionItem.id },
         disabilityStatusUpdatedBy: auditUser,
         disabilityStatusUpdatedOn: auditDate,
         modifier: auditUser,
@@ -114,7 +125,7 @@ export class FormSubmissionUpdateDisabilityOnDecisionAction extends FormSubmissi
     );
     if (updateResult.affected === 1) {
       this.logger.log(
-        `Disability status updated to ${submittedData.disabilityStatus} for the student ID ${formSubmission.studentId} on decision.`,
+        `Disability status updated to ${submittedData.requestedDisabilityStatus} for the student ID ${formSubmission.studentId} on decision.`,
       );
       return;
     }

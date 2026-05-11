@@ -10,44 +10,32 @@ import {
 } from "../../../../../../testHelpers";
 import {
   createE2EDataSources,
-  createFakeStudentScholasticStanding,
   createFakeUser,
   E2EDataSources,
-  saveFakeApplication,
   saveFakeFormSubmissionFromInputTestData,
+  saveFakeStudent,
 } from "@sims/test-utils";
 import {
-  ApplicationStatus,
-  AssessmentTriggerType,
+  DisabilityStatus,
+  DynamicFormConfiguration,
   FormCategory,
   FormSubmissionActionType,
   FormSubmissionDecisionStatus,
   FormSubmissionStatus,
-  ModifiedIndependentStatus,
-  NotificationMessageType,
-  StudentScholasticStandingChangeType,
   User,
 } from "@sims/sims-db";
-import {
-  createFakeFormConfigurations,
-  DynamicConfigurationTestData,
-  getEntitiesForMinistryCompleteFormSubmissionAssertion,
-} from "./form-submission-utils";
 import MockDate from "mockdate";
-import { getPSTPDTDateTime } from "@sims/utilities";
-import {
-  FORM_SUBMISSION_ITEM_OUTDATED,
-  FormSubmissionAuthRoles,
-} from "../../../../services";
+import { FormSubmissionAuthRoles } from "../../../../../../services";
 import { TestingModule } from "@nestjs/testing";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
+import { FORM_DEFINITION_NAME } from "./form-constants";
 
-describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
+describe(`FormSubmissionAESTController(e2e)-completeFormSubmission-${FORM_DEFINITION_NAME}`, () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let appModule: TestingModule;
-  let ministryAdminUser: User;
-  let formConfigs: DynamicConfigurationTestData;
+  let ministryAPIUser: User;
+  let ministryDecisionUser: User;
+  let formConfig: DynamicFormConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, module } =
@@ -55,644 +43,321 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
     app = nestApplication;
     appModule = module;
     db = createE2EDataSources(dataSource);
-    ministryAdminUser = await getAESTUser(
+    ministryDecisionUser = await db.user.save(createFakeUser());
+    ministryAPIUser = await getAESTUser(
       db.dataSource,
       AESTGroups.BusinessAdministrators,
     );
-    formConfigs = await createFakeFormConfigurations(app, db);
+    formConfig = await db.dynamicFormConfiguration.findOneOrFail({
+      select: { id: true, authorizationKey: true },
+      where: { formDefinitionName: FORM_DEFINITION_NAME },
+    });
   });
 
   beforeEach(async () => {
     MockDate.reset();
   });
 
-  it("Should complete a student appeal, create an appeal assessment, and generate a notification when all items have decisions and the user has approval authorization.", async () => {
-    // Arrange
-    const now = new Date();
-    MockDate.set(now);
-    const application = await saveFakeApplication(db.dataSource, undefined, {
-      initialValues: { applicationStatus: ApplicationStatus.Completed },
-    });
-    const student = application.student;
-    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
-      now,
-      application,
-      ministryAuditUser: ministryAdminUser,
-      formCategory: FormCategory.StudentAppeal,
-      submissionStatus: FormSubmissionStatus.Pending,
-      formSubmissionItems: [
-        {
-          dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
-          submittedData: {
-            actions: [FormSubmissionActionType.CreateStudentAppealAssessment],
-          },
-          decisions: [
-            { decisionStatus: FormSubmissionDecisionStatus.Approved },
-          ],
-        },
-        {
-          dynamicFormConfiguration: formConfigs.studentAppealApplicationB,
-          decisions: [
-            { decisionStatus: FormSubmissionDecisionStatus.Approved },
-          ],
-        },
-      ],
-    });
-    const [formSubmissionItemA, formSubmissionItemB] =
-      formSubmission.formSubmissionItems;
-    const payload = {
-      items: [
-        {
-          submissionItemId: formSubmissionItemA.id,
-          lastUpdateDate: formSubmissionItemA.updatedAt,
-        },
-        {
-          submissionItemId: formSubmissionItemB.id,
-          lastUpdateDate: formSubmissionItemB.updatedAt,
-        },
-      ],
-    };
-    const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    await authorizeDynamicFormConfigurations(
-      appModule,
-      [
-        formConfigs.studentAppealApplicationA,
-        formConfigs.studentAppealApplicationB,
-      ],
-      [FormSubmissionAuthRoles.AssessFinalDecision],
-    );
-    const ministryAuditUser = { id: ministryAdminUser.id };
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .patch(endpoint)
-      .send(payload)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-    // Validate database changes.
-    const [updatedFormSubmission, notification] =
-      await getEntitiesForMinistryCompleteFormSubmissionAssertion(
-        db,
-        formSubmission.id,
-        student.user.id,
-      );
-    // Validate form submission data is updated correctly.
-    expect(updatedFormSubmission).toEqual({
-      id: formSubmission.id,
-      submissionStatus: FormSubmissionStatus.Completed,
-      assessedDate: now,
-      assessedBy: ministryAuditUser,
-      modifier: ministryAuditUser,
-      updatedAt: now,
-      student: {
-        id: student.id,
-        notes: [
-          {
-            id: formSubmissionItemA.currentDecision!.decisionNote.id,
-          },
-          {
-            id: formSubmissionItemB.currentDecision!.decisionNote.id,
-          },
-        ],
-      },
-    });
-    // Validate notification.
-    expect(notification).toEqual({
-      id: expect.any(Number),
-      notificationMessage: {
-        id: NotificationMessageType.StudentFormCompleted,
-      },
-      creator: ministryAuditUser,
-      messagePayload: {
-        email_address: student.user.email,
-        template_id: GC_NOTIFY_TEMPLATE_IDS.StudentFormCompleted,
-        personalisation: {
-          givenNames: student.user.firstName,
-          lastName: student.user.lastName,
-          date: `${getPSTPDTDateTime(now)} PST/PDT`,
-        },
-      },
-    });
-    // Validate target action for the form submission.
-    const updatedApplication = await db.application.findOne({
-      select: {
-        id: true,
-        currentAssessment: {
-          id: true,
-          triggerType: true,
-          formSubmission: { id: true },
-        },
-      },
-      relations: {
-        currentAssessment: { formSubmission: true },
-      },
-      where: { id: application.id },
-    });
-    expect(updatedApplication).toEqual({
-      id: application.id,
-      currentAssessment: {
-        id: expect.any(Number),
-        triggerType: AssessmentTriggerType.StudentAppeal,
-        formSubmission: { id: formSubmission.id },
-      },
-    });
-  });
-
+  // Tests to validate that student disability status is updated based on form submission item decision, student current disability status
+  // and requested disability status when disability status application form is completed.
   [
     {
-      submissionStatus: FormSubmissionStatus.Completed,
+      studentCurrentDisabilityStatus: DisabilityStatus.Requested,
+      requestedDisabilityStatus: DisabilityStatus.PD,
       decisionStatus: FormSubmissionDecisionStatus.Approved,
-      modifiedIndependentStatus: ModifiedIndependentStatus.Approved,
+      expectedDisabilityStatus: DisabilityStatus.PD,
+      expectedFormSubmissionStatus: FormSubmissionStatus.Completed,
     },
     {
-      submissionStatus: FormSubmissionStatus.Declined,
+      studentCurrentDisabilityStatus: DisabilityStatus.PPD,
+      requestedDisabilityStatus: DisabilityStatus.PD,
+      decisionStatus: FormSubmissionDecisionStatus.Approved,
+      expectedDisabilityStatus: DisabilityStatus.PD,
+      expectedFormSubmissionStatus: FormSubmissionStatus.Completed,
+    },
+    {
+      studentCurrentDisabilityStatus: DisabilityStatus.Requested,
+      requestedDisabilityStatus: DisabilityStatus.PPD,
+      decisionStatus: FormSubmissionDecisionStatus.Approved,
+      expectedDisabilityStatus: DisabilityStatus.PPD,
+      expectedFormSubmissionStatus: FormSubmissionStatus.Completed,
+    },
+    {
+      studentCurrentDisabilityStatus: DisabilityStatus.Requested,
+      requestedDisabilityStatus: DisabilityStatus.PD,
       decisionStatus: FormSubmissionDecisionStatus.Declined,
-      modifiedIndependentStatus: ModifiedIndependentStatus.Declined,
+      expectedDisabilityStatus: DisabilityStatus.Declined,
+      expectedFormSubmissionStatus: FormSubmissionStatus.Declined,
+    },
+    {
+      studentCurrentDisabilityStatus: DisabilityStatus.Requested,
+      requestedDisabilityStatus: DisabilityStatus.PPD,
+      decisionStatus: FormSubmissionDecisionStatus.Declined,
+      expectedDisabilityStatus: DisabilityStatus.Declined,
+      expectedFormSubmissionStatus: FormSubmissionStatus.Declined,
     },
   ].forEach(
-    ({ submissionStatus, decisionStatus, modifiedIndependentStatus }) => {
-      it(`Should complete a student appeal submission, update the modified independent status to ${modifiedIndependentStatus}, and generate a notification when the user completes the form submission and the user has approval authorization.`, async () => {
-        // Arrange
-        const now = new Date();
-        MockDate.set(now);
-        const formSubmission = await saveFakeFormSubmissionFromInputTestData(
-          db,
-          {
-            now,
-            ministryAuditUser: ministryAdminUser,
-            formCategory: FormCategory.StudentAppeal,
-            submissionStatus: FormSubmissionStatus.Pending,
-            formSubmissionItems: [
-              {
-                dynamicFormConfiguration: formConfigs.studentAppealA,
-                submittedData: {
-                  actions: [FormSubmissionActionType.UpdateModifiedIndependent],
-                },
-                decisions: [{ decisionStatus }],
-              },
-            ],
-          },
-        );
-        const student = formSubmission.student;
-        const [formSubmissionItemA] = formSubmission.formSubmissionItems;
-        const payload = {
-          items: [
-            {
-              submissionItemId: formSubmissionItemA.id,
-              lastUpdateDate: formSubmissionItemA.updatedAt,
-            },
-          ],
-        };
-        const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
-        const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-        const ministryAuditUser = { id: ministryAdminUser.id };
-        await authorizeDynamicFormConfigurations(
-          appModule,
-          [formConfigs.studentAppealA],
-          [FormSubmissionAuthRoles.AssessFinalDecision],
-        );
-
-        // Act/Assert
-        await request(app.getHttpServer())
-          .patch(endpoint)
-          .send(payload)
-          .auth(token, BEARER_AUTH_TYPE)
-          .expect(HttpStatus.OK);
-        // Validate database changes.
-        const [updatedFormSubmission, notification] =
-          await getEntitiesForMinistryCompleteFormSubmissionAssertion(
+    ({
+      studentCurrentDisabilityStatus,
+      requestedDisabilityStatus,
+      decisionStatus,
+      expectedDisabilityStatus,
+      expectedFormSubmissionStatus,
+    }) => {
+      it(
+        `Should complete disability status application form with form submission status ${expectedFormSubmissionStatus}` +
+          ` and update student disability status to ${expectedDisabilityStatus}` +
+          ` when student current disability status is ${studentCurrentDisabilityStatus}, requested disability status is ${requestedDisabilityStatus}` +
+          ` and decision on form submission item is ${decisionStatus}.`,
+        async () => {
+          // Arrange
+          const student = await saveFakeStudent(db.dataSource, undefined, {
+            initialValue: { disabilityStatus: studentCurrentDisabilityStatus },
+          });
+          const formSubmission = await saveFakeFormSubmissionFromInputTestData(
             db,
-            formSubmission.id,
-            student.user.id,
+            {
+              student,
+              ministryAuditUser: ministryDecisionUser,
+              formCategory: FormCategory.StudentForm,
+              submissionStatus: FormSubmissionStatus.Pending,
+              formSubmissionItems: [
+                {
+                  dynamicFormConfiguration: formConfig,
+                  submittedData: {
+                    actions: [
+                      FormSubmissionActionType.UpdateDisabilityOnSubmission,
+                      FormSubmissionActionType.UpdateDisabilityOnDecision,
+                    ],
+                    requestedDisabilityStatus,
+                  },
+                  decisions: [{ decisionStatus }],
+                },
+              ],
+            },
           );
-        // Validate form submission data is updated correctly.
-        expect(updatedFormSubmission).toEqual({
-          id: formSubmission.id,
-          submissionStatus,
-          assessedDate: now,
-          assessedBy: ministryAuditUser,
-          modifier: ministryAuditUser,
-          updatedAt: now,
-          student: {
-            id: student.id,
-            notes: [
+          const [disabilityStatusFormSubmission] =
+            formSubmission.formSubmissionItems;
+          const payload = {
+            items: [
               {
-                id: formSubmissionItemA.currentDecision.decisionNote.id,
+                submissionItemId: disabilityStatusFormSubmission.id,
+                lastUpdateDate: disabilityStatusFormSubmission.updatedAt,
               },
             ],
-          },
-        });
-        // Validate notification.
-        expect(notification).toEqual({
-          id: expect.any(Number),
-          notificationMessage: {
-            id: NotificationMessageType.StudentFormCompleted,
-          },
-          creator: ministryAuditUser,
-          messagePayload: {
-            email_address: student.user.email,
-            template_id: GC_NOTIFY_TEMPLATE_IDS.StudentFormCompleted,
-            personalisation: {
-              givenNames: student.user.firstName,
-              lastName: student.user.lastName,
-              date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          };
+          const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
+          const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+          await authorizeDynamicFormConfigurations(
+            appModule,
+            [formConfig],
+            [FormSubmissionAuthRoles.AssessFinalDecision],
+          );
+          const now = new Date();
+          MockDate.set(now);
+
+          // Act/Assert
+          await request(app.getHttpServer())
+            .patch(endpoint)
+            .send(payload)
+            .auth(token, BEARER_AUTH_TYPE)
+            .expect(HttpStatus.OK);
+
+          // Validate form submission is completed with expected form submission status.
+          const isFormSubmissionCompleted = await db.formSubmission.exists({
+            where: {
+              id: formSubmission.id,
+              submissionStatus: expectedFormSubmissionStatus,
             },
-          },
-        });
-        // Validate target action for the form submission.
-        const updatedStudent = await db.student.findOne({
-          select: {
-            id: true,
-            modifiedIndependentStatus: true,
-            modifiedIndependentStatusUpdatedBy: { id: true },
-            modifiedIndependentStatusUpdatedOn: true,
-            modifiedIndependentFormSubmissionItem: { id: true },
-          },
-          relations: {
-            modifiedIndependentStatusUpdatedBy: true,
-            modifiedIndependentFormSubmissionItem: true,
-          },
-          where: { id: student.id },
-          loadEagerRelations: false,
-        });
-        // Modified independent status should be updated to Approved
-        // with reference to the form submission item and the user who made the update
-        // when the request was approved by the Ministry.
-        expect(updatedStudent).toEqual({
-          id: student.id,
-          modifiedIndependentStatus,
-          modifiedIndependentStatusUpdatedBy: ministryAuditUser,
-          modifiedIndependentStatusUpdatedOn: now,
-          modifiedIndependentFormSubmissionItem: { id: formSubmissionItemA.id },
-        });
-      });
+          });
+          expect(isFormSubmissionCompleted).toBe(true);
+          // Expect student disability status and audit information to be updated as expected.
+          const updatedStudent = await getStudentDisabilityStatusAndAuditInfo(
+            db,
+            student.id,
+          );
+          expect(updatedStudent).toEqual({
+            id: student.id,
+            disabilityStatus: expectedDisabilityStatus,
+            disabilityStatusFormSubmissionItem: {
+              id: disabilityStatusFormSubmission.id,
+            },
+            disabilityStatusUpdatedBy: {
+              id: ministryAPIUser.id,
+            },
+            disabilityStatusUpdatedOn: now,
+            modifier: { id: ministryAPIUser.id },
+            updatedAt: now,
+          });
+        },
+      );
     },
   );
 
-  it("Should complete a student form submission, update the non-punitive scholastic standing, and generate a notification when the user completes the form submission and the user has approval authorization.", async () => {
-    // Arrange
-    const now = new Date();
-    MockDate.set(now);
-    const institutionSubmittedByUser = await db.user.save(createFakeUser());
-    const application = await saveFakeApplication(db.dataSource, undefined, {
-      initialValues: {
-        applicationStatus: ApplicationStatus.Completed,
-      },
-    });
-    const savedScholasticStanding = await db.studentScholasticStanding.save(
-      createFakeStudentScholasticStanding(
-        { submittedBy: institutionSubmittedByUser, application },
-        {
-          initialValues: {
-            changeType:
-              StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-          },
-        },
-      ),
-    );
-    // Link the assessment to the scholastic standing.
-    const currentAssessment = application.currentAssessment!;
-    currentAssessment.studentScholasticStanding = savedScholasticStanding;
-    await db.studentAssessment.save(currentAssessment);
-    // Create form submission with an item that will update the scholastic standing to a non-punitive withdrawal.
-    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
-      now,
-      ministryAuditUser: ministryAdminUser,
-      formCategory: FormCategory.StudentForm,
-      submissionStatus: FormSubmissionStatus.Pending,
-      formSubmissionItems: [
-        {
-          dynamicFormConfiguration: formConfigs.studentFormA,
-          submittedData: {
-            actions: [
-              FormSubmissionActionType.UpdateNonPunitiveScholasticStandingWithdrawal,
+  // Tests to validate that student disability status is not updated based on form submission item decision, student current disability status
+  // and requested disability status when disability status application form is completed.
+  [
+    {
+      studentCurrentDisabilityStatus: DisabilityStatus.PD,
+      requestedDisabilityStatus: DisabilityStatus.PD,
+      decisionStatus: FormSubmissionDecisionStatus.Approved,
+      expectedFormSubmissionStatus: FormSubmissionStatus.Completed,
+    },
+    {
+      studentCurrentDisabilityStatus: DisabilityStatus.PD,
+      requestedDisabilityStatus: DisabilityStatus.PPD,
+      decisionStatus: FormSubmissionDecisionStatus.Approved,
+      expectedFormSubmissionStatus: FormSubmissionStatus.Completed,
+    },
+    {
+      studentCurrentDisabilityStatus: DisabilityStatus.PPD,
+      requestedDisabilityStatus: DisabilityStatus.PPD,
+      decisionStatus: FormSubmissionDecisionStatus.Approved,
+      expectedFormSubmissionStatus: FormSubmissionStatus.Completed,
+    },
+    {
+      studentCurrentDisabilityStatus: DisabilityStatus.PPD,
+      requestedDisabilityStatus: DisabilityStatus.PD,
+      decisionStatus: FormSubmissionDecisionStatus.Declined,
+      expectedFormSubmissionStatus: FormSubmissionStatus.Declined,
+    },
+    {
+      studentCurrentDisabilityStatus: DisabilityStatus.PD,
+      requestedDisabilityStatus: DisabilityStatus.PD,
+      decisionStatus: FormSubmissionDecisionStatus.Declined,
+      expectedFormSubmissionStatus: FormSubmissionStatus.Declined,
+    },
+    {
+      studentCurrentDisabilityStatus: DisabilityStatus.Declined,
+      requestedDisabilityStatus: DisabilityStatus.PD,
+      decisionStatus: FormSubmissionDecisionStatus.Declined,
+      expectedFormSubmissionStatus: FormSubmissionStatus.Declined,
+    },
+  ].forEach(
+    ({
+      studentCurrentDisabilityStatus,
+      requestedDisabilityStatus,
+      decisionStatus,
+      expectedFormSubmissionStatus,
+    }) => {
+      it(
+        `Should complete disability status application form with form submission status ${expectedFormSubmissionStatus}` +
+          ` but not update student disability status` +
+          ` when student current disability status is ${studentCurrentDisabilityStatus}, requested disability status is ${requestedDisabilityStatus}` +
+          ` and decision on form submission item is ${decisionStatus}.`,
+        async () => {
+          // Arrange
+          const student = await saveFakeStudent(db.dataSource, undefined, {
+            initialValue: { disabilityStatus: studentCurrentDisabilityStatus },
+          });
+          const formSubmission = await saveFakeFormSubmissionFromInputTestData(
+            db,
+            {
+              student,
+              ministryAuditUser: ministryDecisionUser,
+              formCategory: FormCategory.StudentForm,
+              submissionStatus: FormSubmissionStatus.Pending,
+              formSubmissionItems: [
+                {
+                  dynamicFormConfiguration: formConfig,
+                  submittedData: {
+                    actions: [
+                      FormSubmissionActionType.UpdateDisabilityOnSubmission,
+                      FormSubmissionActionType.UpdateDisabilityOnDecision,
+                    ],
+                    requestedDisabilityStatus,
+                  },
+                  decisions: [{ decisionStatus }],
+                },
+              ],
+            },
+          );
+          const [disabilityStatusFormSubmission] =
+            formSubmission.formSubmissionItems;
+          const payload = {
+            items: [
+              {
+                submissionItemId: disabilityStatusFormSubmission.id,
+                lastUpdateDate: disabilityStatusFormSubmission.updatedAt,
+              },
             ],
-            nonPunitiveWithdrawalId: savedScholasticStanding.id,
-          },
-          decisions: [
-            { decisionStatus: FormSubmissionDecisionStatus.Approved },
-          ],
-        },
-      ],
-    });
-    const student = formSubmission.student;
-    const [formSubmissionItemA] = formSubmission.formSubmissionItems;
-    const payload = {
-      items: [
-        {
-          submissionItemId: formSubmissionItemA.id,
-          lastUpdateDate: formSubmissionItemA.updatedAt,
-        },
-      ],
-    };
-    const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    const ministryAuditUser = { id: ministryAdminUser.id };
-    await authorizeDynamicFormConfigurations(
-      appModule,
-      [formConfigs.studentFormA],
-      [FormSubmissionAuthRoles.AssessFinalDecision],
-    );
+          };
+          const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
+          const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+          await authorizeDynamicFormConfigurations(
+            appModule,
+            [formConfig],
+            [FormSubmissionAuthRoles.AssessFinalDecision],
+          );
+          const now = new Date();
+          MockDate.set(now);
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .patch(endpoint)
-      .send(payload)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-    // Validate database changes.
-    const [updatedFormSubmission, notification] =
-      await getEntitiesForMinistryCompleteFormSubmissionAssertion(
-        db,
-        formSubmission.id,
-        student.user.id,
+          // Act/Assert
+          await request(app.getHttpServer())
+            .patch(endpoint)
+            .send(payload)
+            .auth(token, BEARER_AUTH_TYPE)
+            .expect(HttpStatus.OK);
+
+          // Validate form submission is completed with expected form submission status.
+          const isFormSubmissionCompleted = await db.formSubmission.exists({
+            where: {
+              id: formSubmission.id,
+              submissionStatus: expectedFormSubmissionStatus,
+            },
+          });
+          expect(isFormSubmissionCompleted).toBe(true);
+          // Expect student disability status and audit information not to be updated.
+          const notUpdatedStudent =
+            await getStudentDisabilityStatusAndAuditInfo(db, student.id);
+          expect(notUpdatedStudent!.disabilityStatus).toBe(
+            studentCurrentDisabilityStatus,
+          );
+          expect(
+            notUpdatedStudent!.disabilityStatusFormSubmissionItem,
+          ).toBeNull();
+          expect(notUpdatedStudent!.disabilityStatusUpdatedBy).toBeNull();
+          expect(notUpdatedStudent!.disabilityStatusUpdatedOn).toBeNull();
+          expect(notUpdatedStudent!.modifier).not.toEqual({
+            id: ministryAPIUser.id,
+          });
+          expect(notUpdatedStudent!.updatedAt).not.toBe(now);
+        },
       );
-    // Validate form submission data is updated correctly.
-    expect(updatedFormSubmission).toEqual({
-      id: formSubmission.id,
-      submissionStatus: FormSubmissionStatus.Completed,
-      assessedDate: now,
-      assessedBy: ministryAuditUser,
-      modifier: ministryAuditUser,
-      updatedAt: now,
-      student: {
-        id: student.id,
-        notes: [
-          {
-            id: formSubmissionItemA.currentDecision!.decisionNote.id,
-          },
-        ],
-      },
-    });
-    // Validate notification.
-    expect(notification).toEqual({
-      id: expect.any(Number),
-      notificationMessage: {
-        id: NotificationMessageType.StudentFormCompleted,
-      },
-      creator: ministryAuditUser,
-      messagePayload: {
-        email_address: student.user.email,
-        template_id: GC_NOTIFY_TEMPLATE_IDS.StudentFormCompleted,
-        personalisation: {
-          givenNames: student.user.firstName,
-          lastName: student.user.lastName,
-          date: `${getPSTPDTDateTime(now)} PST/PDT`,
-        },
-      },
-    });
-    // Validate target action for the form submission.
-    const updatedScholasticStanding =
-      await db.studentScholasticStanding.findOne({
-        select: {
-          id: true,
-          nonPunitiveFormSubmissionItem: { id: true },
-          updatedAt: true,
-          modifier: { id: true },
-        },
-        relations: {
-          nonPunitiveFormSubmissionItem: true,
-          modifier: true,
-        },
-        where: { id: savedScholasticStanding.id },
-        loadEagerRelations: false,
-      });
-    // The non-punitive scholastic standing should be updated with a reference to the completed form submission item.
-    expect(updatedScholasticStanding).toEqual({
-      id: savedScholasticStanding.id,
-      nonPunitiveFormSubmissionItem: { id: formSubmissionItemA.id },
-      modifier: ministryAuditUser,
-      updatedAt: now,
-    });
-  });
-
-  it("Should throw an unprocessable entity error when attempting to complete a student appeal but some items were updated.", async () => {
-    // Arrange
-    const application = await saveFakeApplication(db.dataSource, undefined, {
-      initialValues: { applicationStatus: ApplicationStatus.Completed },
-    });
-    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
-      application,
-      ministryAuditUser: ministryAdminUser,
-      formCategory: FormCategory.StudentAppeal,
-      submissionStatus: FormSubmissionStatus.Pending,
-      formSubmissionItems: [
-        {
-          dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
-          decisions: [
-            { decisionStatus: FormSubmissionDecisionStatus.Approved },
-          ],
-        },
-        {
-          dynamicFormConfiguration: formConfigs.studentAppealApplicationB,
-          decisions: [
-            { decisionStatus: FormSubmissionDecisionStatus.Approved },
-          ],
-        },
-      ],
-    });
-    const [formSubmissionItemA, formSubmissionItemB] =
-      formSubmission.formSubmissionItems;
-    const payload = {
-      items: [
-        {
-          submissionItemId: formSubmissionItemA.id,
-          lastUpdateDate: formSubmissionItemA.updatedAt,
-        },
-        {
-          submissionItemId: formSubmissionItemB.id,
-          // Force the submission item to have a different date from the one saved on DB.
-          lastUpdateDate: new Date(),
-        },
-      ],
-    };
-    const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    await authorizeDynamicFormConfigurations(
-      appModule,
-      [
-        formConfigs.studentAppealApplicationA,
-        formConfigs.studentAppealApplicationB,
-      ],
-      [FormSubmissionAuthRoles.AssessFinalDecision],
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .patch(endpoint)
-      .send(payload)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-      .expect({
-        message: `Form submission item with ID ${formSubmissionItemB.id} has been updated since it was last retrieved. Please refresh and try again.`,
-        errorType: FORM_SUBMISSION_ITEM_OUTDATED,
-      });
-  });
-
-  it("Should throw an unprocessable entity error when attempting to complete a student appeal but the application was edited.", async () => {
-    // Arrange
-    const application = await saveFakeApplication(db.dataSource, undefined, {
-      initialValues: { applicationStatus: ApplicationStatus.Edited },
-    });
-    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
-      application,
-      ministryAuditUser: ministryAdminUser,
-      formCategory: FormCategory.StudentAppeal,
-      submissionStatus: FormSubmissionStatus.Pending,
-      formSubmissionItems: [
-        {
-          dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
-          decisions: [
-            { decisionStatus: FormSubmissionDecisionStatus.Approved },
-          ],
-        },
-      ],
-    });
-    const [formSubmissionItemA] = formSubmission.formSubmissionItems;
-    const payload = {
-      items: [
-        {
-          submissionItemId: formSubmissionItemA.id,
-          lastUpdateDate: formSubmissionItemA.updatedAt,
-        },
-      ],
-    };
-    const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    await authorizeDynamicFormConfigurations(
-      appModule,
-      [formConfigs.studentAppealApplicationA],
-      [FormSubmissionAuthRoles.AssessFinalDecision],
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .patch(endpoint)
-      .send(payload)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-      .expect({
-        message:
-          "The application associated with the form submission is not in the expected status.",
-        error: "Unprocessable Entity",
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-      });
-  });
-
-  it("Should throw an unprocessable entity error when attempting to complete a student form but an item decision is pending.", async () => {
-    // Arrange
-    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
-      ministryAuditUser: ministryAdminUser,
-      formCategory: FormCategory.StudentForm,
-      submissionStatus: FormSubmissionStatus.Pending,
-      formSubmissionItems: [
-        {
-          dynamicFormConfiguration: formConfigs.studentFormA,
-          decisions: [{ decisionStatus: FormSubmissionDecisionStatus.Pending }],
-        },
-      ],
-    });
-    const [formSubmissionItemA] = formSubmission.formSubmissionItems;
-    const payload = {
-      items: [
-        {
-          submissionItemId: formSubmissionItemA.id,
-          lastUpdateDate: formSubmissionItemA.updatedAt,
-        },
-      ],
-    };
-    const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    await authorizeDynamicFormConfigurations(
-      appModule,
-      [formConfigs.studentFormA],
-      [FormSubmissionAuthRoles.AssessFinalDecision],
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .patch(endpoint)
-      .send(payload)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-      .expect({
-        message:
-          "Final decision cannot be made when some decisions are still pending.",
-        error: "Unprocessable Entity",
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-      });
-  });
-
-  it("Should throw a forbidden error when attempting to complete the form but the user lacks the necessary role on at least one item.", async () => {
-    // Arrange
-    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
-      ministryAuditUser: ministryAdminUser,
-      formCategory: FormCategory.StudentAppeal,
-      submissionStatus: FormSubmissionStatus.Pending,
-      formSubmissionItems: [
-        {
-          dynamicFormConfiguration: formConfigs.studentAppealA,
-          decisions: [
-            { decisionStatus: FormSubmissionDecisionStatus.Approved },
-          ],
-        },
-        {
-          dynamicFormConfiguration: formConfigs.studentAppealB,
-          decisions: [
-            { decisionStatus: FormSubmissionDecisionStatus.Approved },
-          ],
-        },
-      ],
-    });
-    const payload = {
-      items: [{ submissionItemId: 1, lastUpdateDate: new Date() }],
-    };
-    const endpoint = `/aest/form-submission/${formSubmission.id}/complete`;
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    await authorizeDynamicFormConfigurations(
-      appModule,
-      // Note that the user is not authorized for the form config of the second item.
-      [formConfigs.studentAppealA],
-      [FormSubmissionAuthRoles.AssessFinalDecision],
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .patch(endpoint)
-      .send(payload)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        message:
-          "User does not have the required role to provide the final decision.",
-        error: "Forbidden",
-        statusCode: HttpStatus.FORBIDDEN,
-      });
-  });
-
-  it("Should throw a not found error when attempting to complete a non-existent form submission.", async () => {
-    // Arrange
-    const payload = {
-      items: [{ submissionItemId: 1, lastUpdateDate: new Date() }],
-    };
-    const endpoint = `/aest/form-submission/9999999/complete`;
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .patch(endpoint)
-      .send(payload)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.NOT_FOUND)
-      .expect({
-        message: "Form submission with ID 9999999 not found.",
-        error: "Not Found",
-        statusCode: HttpStatus.NOT_FOUND,
-      });
-  });
+    },
+  );
 
   afterAll(async () => {
     await app?.close();
   });
 });
+
+/**
+ * Get student disability status and audit information related to disability status update.
+ * @param db E2EDataSources
+ * @param studentId number
+ * @returns Student disability status and audit information.
+ */
+function getStudentDisabilityStatusAndAuditInfo(
+  db: E2EDataSources,
+  studentId: number,
+) {
+  return db.student.findOne({
+    select: {
+      id: true,
+      disabilityStatus: true,
+      disabilityStatusFormSubmissionItem: { id: true },
+      disabilityStatusUpdatedBy: { id: true },
+      disabilityStatusUpdatedOn: true,
+      modifier: { id: true },
+      updatedAt: true,
+    },
+    relations: {
+      disabilityStatusFormSubmissionItem: true,
+      disabilityStatusUpdatedBy: true,
+      modifier: true,
+    },
+    loadEagerRelations: false,
+    where: { id: studentId },
+  });
+}
