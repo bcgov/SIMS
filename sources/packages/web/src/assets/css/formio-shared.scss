@@ -878,11 +878,16 @@ td .formio-custom-tooltip:hover .tooltip-text {
 // The form builder's .component-settings-button uses a fixed 18x18px box with
 // display: inline-block (Bootstrap .btn default), which leaves the icon glyph
 // top-aligned instead of centered. Switching to inline-flex fixes the alignment.
-// This can be removed if the form builder updates to a newer version of Bootstrap.
-.ff-form-container .component-btn-group .component-settings-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+// Setting top: 0 on .component-btn-group pins it to the top of its absolutely
+// positioned .builder-component ancestor, since formio does not set a top value.
+// These can be removed if @formio/js fixes its bundled CSS.
+.formbuilder .component-btn-group {
+  top: 0;
+  .component-settings-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 // In @formio/js's bundled CSS, .form-control has an explicit height set to
