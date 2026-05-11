@@ -99,6 +99,12 @@ services:
     container_name: mongo-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
     networks:
       - local-network-tests
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
   # - MongoDB
   # Form.io
   formio:
@@ -122,13 +128,14 @@ services:
     networks:
       - local-network-tests
     depends_on:
-      - mongo
+      mongo:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3001/access || exit 1"]
       interval: 15s
       timeout: 10s
-      retries: 20
-      start_period: 120s
+      retries: 15
+      start_period: 60s
   # Workers
   workers:
     image: workers-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
