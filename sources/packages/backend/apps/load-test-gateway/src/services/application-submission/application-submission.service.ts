@@ -262,18 +262,18 @@ export class ApplicationSubmissionService {
       );
       const savedApplications =
         await this.dataSources.application.save(applications);
-      // Update to Submitted status and set parent/preceding to self in a single
-      // save so the constraint (parent_application_id NOT NULL for non-Draft) is met.
+      // Mutate the saved entity objects directly (same pattern as saveFakeApplication
+      // in test-utils) so TypeORM issues UPDATEs rather than INSERTs on the second
+      // save, satisfying the constraint that parent_application_id must not be null
+      // for non-Draft applications.
       const submittedDate = new Date();
-      await this.dataSources.application.save(
-        savedApplications.map((app) => ({
-          ...app,
-          applicationStatus: ApplicationStatus.Submitted,
-          submittedDate,
-          parentApplication: { id: app.id },
-          precedingApplication: { id: app.id },
-        })),
-      );
+      for (const app of savedApplications) {
+        app.applicationStatus = ApplicationStatus.Submitted;
+        app.submittedDate = submittedDate;
+        app.parentApplication = { id: app.id } as Application;
+        app.precedingApplication = { id: app.id } as Application;
+      }
+      await this.dataSources.application.save(savedApplications);
       // Create assessments in Submitted status so the workflow enqueuer
       // picks them up on its next run and puts them in the start-assessment queue.
       const assessments: StudentAssessment[] = savedApplications.map((app, i) =>
