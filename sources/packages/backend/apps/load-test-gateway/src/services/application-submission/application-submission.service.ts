@@ -2,16 +2,21 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import {
   Application,
   ApplicationData,
+  ApplicationStatus,
+  AssessmentTriggerType,
   EducationProgramOffering,
   OfferingIntensity,
   ProgramYear,
   Student,
+  StudentAssessment,
+  StudentAssessmentStatus,
 } from "@sims/sims-db";
 import {
   E2EDataSources,
   createE2EDataSources,
   createFakeApplication,
   createFakeEducationProgramOffering,
+  createFakeStudentAssessment,
   createFakeUser,
   saveFakeStudent,
 } from "@sims/test-utils";
@@ -80,6 +85,21 @@ export interface ApplicationSubmissionSetupResponse {
    * be overridden per iteration using the values from the applications array.
    */
   applicationData: Record<string, unknown>;
+}
+
+/**
+ * Prefix used for fake student user names created for the workers stress load test.
+ */
+const WORKER_STRESS_STUDENT_USERNAME_PREFIX = "student_load_test_worker_";
+
+/**
+ * Response returned by the workers setup endpoint with a summary of the created applications.
+ */
+export interface WorkersSetupResponse {
+  /**
+   * Total number of submitted applications created across all fake students.
+   */
+  totalApplicationsCreated: number;
 }
 
 @Injectable()
@@ -168,6 +188,121 @@ export class ApplicationSubmissionService {
       applications: setupItems,
       applicationData: APPLICATION_SUBMISSION_DATA as Record<string, unknown>,
     };
+  }
+
+  /**
+   * Creates submitted applications across multiple fake students to stress-test the workers pipeline.
+   * Applications are written directly to the database in the Submitted state with assessments also
+   * in the Submitted state, so the queue-consumers scheduler will detect them and start the
+   * Camunda workflow instances without requiring any Keycloak token or API call per student.
+   * Distributing across multiple students prevents all workflow instances from sharing the same
+   * Camunda process tree, enabling better parallelism in the workers.
+   * @param iterations total number of submitted applications to create.
+   * @param numberOfStudents number of distinct fake students to spread applications across.
+   * @returns summary with the total number of submitted applications created.
+   */
+  async createSubmittedApplications(
+    iterations: number,
+    numberOfStudents: number,
+  ): Promise<WorkersSetupResponse> {
+    const programYear = await this.getProgramYear(LOAD_TEST_PROGRAM_YEAR);
+    const appsPerStudent = Math.ceil(iterations / numberOfStudents);
+    let totalCreated = 0;
+    for (
+      let studentIndex = 0;
+      studentIndex < numberOfStudents;
+      studentIndex++
+    ) {
+      const remaining = iterations - totalCreated;
+      if (remaining <= 0) {
+        break;
+      }
+      const studentApps = Math.min(appsPerStudent, remaining);
+      const studentUserName = `${WORKER_STRESS_STUDENT_USERNAME_PREFIX}${studentIndex + 1}`;
+      const student = await this.getOrCreateStudentByUserName(studentUserName);
+      // Create unique non-overlapping offerings for each application under this student.
+      const offerings: EducationProgramOffering[] = [];
+      for (let i = 0; i < studentApps; i++) {
+        const studyStartDate = getISODateOnlyString(
+          addDays(OFFERING_START_OFFSET_DAYS + i * OFFERING_DATE_SPACING_DAYS),
+        );
+        const studyEndDate = getISODateOnlyString(
+          addDays(
+            OFFERING_START_OFFSET_DAYS +
+              i * OFFERING_DATE_SPACING_DAYS +
+              OFFERING_DURATION_DAYS,
+          ),
+        );
+        offerings.push(
+          createFakeEducationProgramOffering(
+            { auditUser: student.user },
+            { initialValues: { studyStartDate, studyEndDate } },
+          ),
+        );
+      }
+      const savedOfferings =
+        await this.dataSources.educationProgramOffering.save(offerings);
+      // Create applications in Submitted status so the queue-consumers
+      // scheduler picks them up and starts the Camunda workflow immediately.
+      const applications: Application[] = savedOfferings.map((offering) =>
+        createFakeApplication(
+          {
+            student,
+            location: offering.institutionLocation,
+            applicationEditStatusUpdatedBy: student.user,
+            programYear,
+          },
+          {
+            initialValue: {
+              data: APPLICATION_SUBMISSION_DATA as ApplicationData,
+              offeringIntensity: OfferingIntensity.fullTime,
+              applicationStatus: ApplicationStatus.Submitted,
+              submittedDate: new Date(),
+            },
+          },
+        ),
+      );
+      const savedApplications =
+        await this.dataSources.application.save(applications);
+      await this.dataSources.application.save(
+        savedApplications.map((app) => ({
+          ...app,
+          parentApplication: { id: app.id },
+          precedingApplication: { id: app.id },
+        })),
+      );
+      // Create assessments in Submitted status so the workflow enqueuer
+      // picks them up on its next run and puts them in the start-assessment queue.
+      const assessments: StudentAssessment[] = savedApplications.map(
+        (app, i) =>
+          createFakeStudentAssessment(
+            {
+              auditUser: student.user,
+              application: app,
+              offering: savedOfferings[i],
+            },
+            {
+              initialValue: {
+                studentAssessmentStatus: StudentAssessmentStatus.Submitted,
+                triggerType: AssessmentTriggerType.OriginalAssessment,
+                submittedDate: new Date(),
+              },
+            },
+          ),
+      );
+      const savedAssessments =
+        await this.dataSources.studentAssessment.save(assessments);
+      // Link the currentAssessment on each application so the query
+      // condition currentProcessingAssessment != currentAssessment is satisfied.
+      await this.dataSources.application.save(
+        savedApplications.map((app, i) => ({
+          ...app,
+          currentAssessment: savedAssessments[i],
+        })),
+      );
+      totalCreated += studentApps;
+    }
+    return { totalApplicationsCreated: totalCreated };
   }
 
   /**
