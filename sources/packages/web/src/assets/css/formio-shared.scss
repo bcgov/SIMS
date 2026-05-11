@@ -300,31 +300,35 @@
   line-height: $font-content-lh;
 }
 
-.banner-alert p,
-.banner-alert div {
+.banner-base {
   @extend .banner-font;
-  background: $banner-background-error;
-  border: 2px solid $banner-color-error;
+  border-width: 2px;
+  border-style: solid;
   box-sizing: border-box;
   border-radius: 8px;
+  width: 100%;
+  text-align: left;
+}
+
+.banner-alert p,
+.banner-alert div {
+  @extend .banner-base;
+  background: $banner-background-error;
+  border-color: $banner-color-error;
 }
 
 .banner-warning p,
 .banner-warning div {
-  @extend .banner-font;
+  @extend .banner-base;
   background: $banner-background-warning;
-  border: 2px solid $banner-color-warning;
-  box-sizing: border-box;
-  border-radius: 8px;
+  border-color: $banner-color-warning;
 }
 
 .banner-info p,
 .banner-info div {
-  @extend .banner-font;
+  @extend .banner-base;
   background: $banner-background-info;
-  border: 2px solid $banner-color-info;
-  box-sizing: border-box;
-  border-radius: 8px;
+  border-color: $banner-color-info;
 }
 
 /**
