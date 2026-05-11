@@ -6,6 +6,7 @@ import {
   AssessmentTriggerType,
   EducationProgramOffering,
   OfferingIntensity,
+  ProgramInfoStatus,
   ProgramYear,
   Student,
   StudentAssessment,
@@ -272,6 +273,9 @@ export class ApplicationSubmissionService {
         app.submittedDate = submittedDate;
         app.parentApplication = { id: app.id } as Application;
         app.precedingApplication = { id: app.id } as Application;
+        // Setting pirStatus to notRequired tells the Camunda PIR worker
+        // to skip the PIR step and proceed directly to assessment.
+        app.pirStatus = ProgramInfoStatus.notRequired;
       }
       await this.dataSources.application.save(savedApplications);
       // Create assessments in Submitted status so the workflow enqueuer
