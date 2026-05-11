@@ -2,11 +2,11 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@sims/utilities/config";
 
 const FORMS_SUBMISSION = "FORMS_SUBMISSION";
+const TOGGLE_PREFIX_DISABLE = "disable";
 
 @Injectable()
 export class FeatureTogglesService {
   readonly isFormSubmissionEnabled: boolean = false;
-  private readonly FEATURE_TOGGLE_FORMS = ["disabilitystatusapplicationform"];
 
   constructor(private readonly configService: ConfigService) {
     this.isFormSubmissionEnabled =
@@ -23,15 +23,13 @@ export class FeatureTogglesService {
   }
 
   /**
-   * Check if a form is enabled based on the feature toggles configuration.
-   * Forms that are not part of the feature toggle list are considered enabled by default.
-   * @param formDefinitionName form definition name to check if it is enabled.
-   * @returns true if the form is enabled, false otherwise.
+   * Check if a form is disabled based on the feature toggles configuration.
+   * If a form is included in the feature toggle list, it is considered as disabled.
+   * @returns true if the form is disabled, false otherwise.
    */
-  isFormEnabled(formDefinitionName: string): boolean {
-    return (
-      !this.FEATURE_TOGGLE_FORMS.includes(formDefinitionName) ||
-      !!this.configService.featureToggles?.includes(formDefinitionName)
+  isFormDisabled(formDefinitionName: string): boolean {
+    return !!this.configService.featureToggles?.includes(
+      `${TOGGLE_PREFIX_DISABLE}-${formDefinitionName}`,
     );
   }
 }

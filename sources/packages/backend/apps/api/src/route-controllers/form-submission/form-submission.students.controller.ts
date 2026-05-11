@@ -67,8 +67,9 @@ export class FormSubmissionStudentsController extends BaseController {
   async getSubmissionForms(): Promise<FormSubmissionConfigurationsAPIOutDTO> {
     const studentForms = this.dynamicFormConfigurationService
       .getFormsByCategory(FormCategory.StudentForm, FormCategory.StudentAppeal)
-      .filter((form) =>
-        this.featureTogglesService.isFormEnabled(form.formDefinitionName),
+      .filter(
+        (form) =>
+          !this.featureTogglesService.isFormDisabled(form.formDefinitionName),
       );
     return {
       configurations: studentForms.map((configuration) => ({
