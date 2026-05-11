@@ -186,6 +186,7 @@ describe(`FormSubmissionAESTController(e2e)-completeFormSubmission-${FORM_DEFINI
               id: ministryAPIUser.id,
             },
             disabilityStatusUpdatedOn: now,
+            disabilityStatusEffectiveDate: now,
             modifier: { id: ministryAPIUser.id },
             updatedAt: now,
           });
@@ -318,6 +319,7 @@ describe(`FormSubmissionAESTController(e2e)-completeFormSubmission-${FORM_DEFINI
           ).toBeNull();
           expect(notUpdatedStudent!.disabilityStatusUpdatedBy).toBeNull();
           expect(notUpdatedStudent!.disabilityStatusUpdatedOn).toBeNull();
+          expect(notUpdatedStudent!.disabilityStatusEffectiveDate).toBeNull();
           expect(notUpdatedStudent!.modifier).not.toEqual({
             id: ministryAPIUser.id,
           });
@@ -349,6 +351,7 @@ function getStudentDisabilityStatusAndAuditInfo(
       disabilityStatusFormSubmissionItem: { id: true },
       disabilityStatusUpdatedBy: { id: true },
       disabilityStatusUpdatedOn: true,
+      disabilityStatusEffectiveDate: true,
       modifier: { id: true },
       updatedAt: true,
     },

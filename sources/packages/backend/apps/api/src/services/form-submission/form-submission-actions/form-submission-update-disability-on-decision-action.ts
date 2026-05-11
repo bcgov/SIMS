@@ -119,6 +119,7 @@ export class FormSubmissionUpdateDisabilityOnDecisionAction extends FormSubmissi
         disabilityStatusFormSubmissionItem: { id: submissionItem.id },
         disabilityStatusUpdatedBy: auditUser,
         disabilityStatusUpdatedOn: auditDate,
+        disabilityStatusEffectiveDate: auditDate,
         modifier: auditUser,
         updatedAt: auditDate,
       },
