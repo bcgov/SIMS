@@ -68,15 +68,35 @@ export function setup(): SetupData {
   let remaining = ITERATIONS;
   while (remaining > 0) {
     const batchSize = Math.min(remaining, SETUP_BATCH_SIZE);
-    const response = loadTestPostCall(
-      `application-submission/setup/${batchSize}`,
-      gatewayCredentials,
-      { payload: { studentUserName: E2E_TEST_STUDENT_USERNAME } },
-    );
-    const batch = response.json() as unknown as {
+    let response: ReturnType<typeof loadTestPostCall> | undefined;
+    // Retry up to 3 times on transient gateway/DB connection errors.
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      response = loadTestPostCall(
+        `application-submission/setup/${batchSize}`,
+        gatewayCredentials,
+        { payload: { studentUserName: E2E_TEST_STUDENT_USERNAME } },
+      );
+      if (response.status >= 200 && response.status < 300) {
+        break;
+      }
+      console.warn(
+        `Setup batch attempt ${attempt} failed — status: ${response.status}. Retrying...`,
+      );
+      if (attempt === 3) {
+        throw new Error(
+          `Setup batch failed after 3 attempts — status: ${response.status}, body: ${response.body}`,
+        );
+      }
+    }
+    const batch = response!.json() as unknown as {
       applications: ApplicationSetupData[];
       applicationData: Record<string, unknown>;
     };
+    if (!batch.applications) {
+      throw new Error(
+        `Setup batch returned unexpected shape: ${response!.body}`,
+      );
+    }
     for (const item of batch.applications) {
       setupItems.push(item);
     }
@@ -91,6 +111,7 @@ export function setup(): SetupData {
 }
 
 export const options: Options = {
+  setupTimeout: "5m",
   scenarios: {
     submitApplication: {
       executor: "shared-iterations",
@@ -107,8 +128,15 @@ export const options: Options = {
  * @param setupData setup data returned by setup method.
  */
 export default function submitApplication(setupData: SetupData) {
+  const item = setupData.setupItems[execution.scenario.iterationInTest];
+  if (!item) {
+    console.error(
+      `No setup data for iteration ${execution.scenario.iterationInTest} (total items: ${setupData.setupItems?.length ?? 0})`,
+    );
+    return;
+  }
   const { applicationId, offeringId, programId, locationId, programYearId } =
-    setupData.setupItems[execution.scenario.iterationInTest];
+    item;
   const payload = {
     associatedFiles: [] as string[],
     programYearId: Number(programYearId),

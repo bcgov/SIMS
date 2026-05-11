@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import {
   Application,
   ApplicationData,
+  EducationProgramOffering,
   OfferingIntensity,
   ProgramYear,
   Student,
@@ -105,7 +106,7 @@ export class ApplicationSubmissionService {
     const student = await this.getOrCreateStudentByUserName(studentUserName);
     const programYear = await this.getProgramYear(LOAD_TEST_PROGRAM_YEAR);
     const setupItems: ApplicationSetupData[] = [];
-    const applications: Application[] = [];
+    const offerings: EducationProgramOffering[] = [];
     for (let i = 0; i < iterations; i++) {
       const studyStartDate = getISODateOnlyString(
         addDays(OFFERING_START_OFFSET_DAYS + i * OFFERING_DATE_SPACING_DAYS),
@@ -117,16 +118,21 @@ export class ApplicationSubmissionService {
             OFFERING_DURATION_DAYS,
         ),
       );
-      const offering = createFakeEducationProgramOffering(
-        { auditUser: student.user },
-        { initialValues: { studyStartDate, studyEndDate } },
+      offerings.push(
+        createFakeEducationProgramOffering(
+          { auditUser: student.user },
+          { initialValues: { studyStartDate, studyEndDate } },
+        ),
       );
-      const savedOffering =
-        await this.dataSources.educationProgramOffering.save(offering);
-      const application = createFakeApplication(
+    }
+    // Bulk-save offerings in a single round-trip to avoid pgbouncer connection churn.
+    const savedOfferings =
+      await this.dataSources.educationProgramOffering.save(offerings);
+    const applications: Application[] = savedOfferings.map((savedOffering) =>
+      createFakeApplication(
         {
           student,
-          location: offering.institutionLocation,
+          location: savedOffering.institutionLocation,
           applicationEditStatusUpdatedBy: student.user,
           programYear,
         },
@@ -136,27 +142,27 @@ export class ApplicationSubmissionService {
             offeringIntensity: OfferingIntensity.fullTime,
           },
         },
-      );
-      applications.push(application);
-      setupItems.push({
-        applicationId: 0,
-        offeringId: savedOffering.id,
-        programId: savedOffering.educationProgram.id,
-        locationId: savedOffering.institutionLocation.id,
-        programYearId: programYear.id,
-      });
-    }
+      ),
+    );
+    // Bulk-save applications in a single round-trip.
     const savedApplications =
       await this.dataSources.application.save(applications);
+    // Bulk-update parentApplication and precedingApplication in one query.
+    await this.dataSources.application.save(
+      savedApplications.map((app) => ({
+        ...app,
+        parentApplication: { id: app.id },
+        precedingApplication: { id: app.id },
+      })),
+    );
     for (let i = 0; i < savedApplications.length; i++) {
-      setupItems[i].applicationId = savedApplications[i].id;
-      await this.dataSources.application.update(
-        { id: savedApplications[i].id },
-        {
-          parentApplication: { id: savedApplications[i].id },
-          precedingApplication: { id: savedApplications[i].id },
-        },
-      );
+      setupItems.push({
+        applicationId: savedApplications[i].id,
+        offeringId: savedOfferings[i].id,
+        programId: savedOfferings[i].educationProgram.id,
+        locationId: savedOfferings[i].institutionLocation.id,
+        programYearId: programYear.id,
+      });
     }
     return {
       applications: setupItems,

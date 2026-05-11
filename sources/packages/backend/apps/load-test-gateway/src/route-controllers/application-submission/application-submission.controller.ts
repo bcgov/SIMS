@@ -1,4 +1,4 @@
-import { Body, Controller, Param, ParseIntPipe, Post } from "@nestjs/common";
+import { Body, Controller, HttpCode, Param, ParseIntPipe, Post } from "@nestjs/common";
 import { ApplicationSubmissionService } from "../../services";
 import { SetupApplicationSubmissionAPIInDTO } from "./models/application-submission.dto";
 import { ApplicationSubmissionSetupResponse } from "../../services/application-submission/application-submission.service";
@@ -20,6 +20,7 @@ export class ApplicationSubmissionController {
    * @returns setup response with per-iteration application data and the base application payload.
    */
   @Post("setup/:iterations")
+  @HttpCode(200)
   async setup(
     @Param("iterations", ParseIntPipe) iterations: number,
     @Body() payload: SetupApplicationSubmissionAPIInDTO,
