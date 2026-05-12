@@ -11,10 +11,10 @@ on:
         required: true
         type: environment
       formioBuildTag:
-        description: "Previously built Form.io build tag (e.g., v9.7.5-99)."
+        description: "Previously built Form.io build tag (e.g., v9.7.7-99)."
         type: string
         required: true
-        default: "v9.7.5-0"
+        default: "v9.7.7-0"
 
 jobs:
   deploy:

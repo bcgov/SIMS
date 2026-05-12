@@ -40,8 +40,8 @@ export QUEUE_CONSUMERS_BUILD_REF := $(or ${QUEUE_CONSUMERS_BUILD_REF}, queue-con
 export LOAD_TEST_GATEWAY_BUILD_REF := $(or ${LOAD_TEST_GATEWAY_BUILD_REF}, load-test-gateway-${APP_NAME})
 export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
 export FORMS_BUILD_REF := $(or ${FORMS_BUILD_REF}, forms)
-# Form.io version targeting the API Server Version 9.7.5
-# see https://github.com/formio/enterprise-release/blob/master/API-Server-Change-Log.md#api-server-version-975
+# Form.io version targeting the API Server Version 9.7.7
+# see https://github.com/formio/enterprise-release/blob/master/API-Server-Change-Log.md#api-server-version-977
 export FORMIO_SOURCE_REPO_REF := $(or $(FORMIO_SOURCE_REPO_REF), f92dc5feab5cd0ff3ee30965141f11a8e552fe51)
 export FORMIO_CORE_VERSION := $(or $(FORMIO_CORE_VERSION), 2.6.5)
 export FORMIO_JS_VERSION := $(or $(FORMIO_JS_VERSION), 5.3.5)
