@@ -739,6 +739,8 @@ deploy-forms:
 	test -n "$(BUILD_NAMESPACE)"
 	test -n "$(FORMIO_BUILD_TAG)"
 	test -n "$(FORMIO_ROOT_EMAIL)"
+	test -n "$(FORMIO_ROOT_PASSWORD)"
+	test -n "$(FORMIO_API_KEY)"
 	test -n "$(MONGODB_URI)"
 	test -n "$(FORMIO_CPU_REQUEST)"
 	test -n "$(FORMIO_MEMORY_REQUEST)"
@@ -752,6 +754,7 @@ deploy-forms:
 	-p IMAGE_STREAM_TAG="$(FORMS_BUILD_REF):$(FORMIO_BUILD_TAG)" \
 	-p FORMIO_ROOT_EMAIL=$(FORMIO_ROOT_EMAIL) \
 	-p FORMIO_ROOT_PASSWORD=$(FORMIO_ROOT_PASSWORD) \
+	-p FORMIO_API_KEY=$(FORMIO_API_KEY) \
 	-p MONGODB_URI=$(MONGODB_URI) \
 	-p CPU_REQUEST=$(FORMIO_CPU_REQUEST) \
 	-p MEMORY_REQUEST=$(FORMIO_MEMORY_REQUEST) \
@@ -761,18 +764,6 @@ deploy-forms:
 	$(call rollout_and_wait,deployment/$(FORMS_NAME))
 
 update-sysdig-team:
-	@echo "Updating Sysdig Team for license plate 0c27fb.\n"
-	@oc project 0c27fb-tools
-	@oc process -f openshift/sysdig-team.yml -p LICENSE_PLATE=0c27fb | oc apply -f -
-	@echo "Updating Sysdig Team for license plate a6ef19.\n"
-	@oc project a6ef19-tools
-	@oc process -f openshift/sysdig-team.yml -p LICENSE_PLATE=a6ef19 | oc apply -f -
-
-# TODO: Rename to update-sysdig-team after the migration is complete in prod and the silver license plates are no longer in use.
-update-sysdig-team-gold:
 	@echo "Updating Sysdig Team for license plate e0a504.\n"
 	@oc project e0a504-tools
 	@oc process -f openshift/sysdig-team.yml -p LICENSE_PLATE=e0a504 | oc apply -f -
-	@echo "Updating Sysdig Team for license plate c85dee.\n"
-	@oc project c85dee-tools
-	@oc process -f openshift/sysdig-team.yml -p LICENSE_PLATE=c85dee | oc apply -f -
