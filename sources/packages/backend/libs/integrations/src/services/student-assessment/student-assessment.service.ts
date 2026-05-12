@@ -93,7 +93,10 @@ export class StudentAssessmentService {
         "disbursementSchedule.updatedAt",
         "disbursementSchedule.dateSent",
         "disbursementValue.id",
+        "disbursementValue.valueCode",
         "disbursementValue.valueAmount",
+        "disbursementValue.valueType",
+        "disbursementValue.restrictionAmountSubtracted",
         "disbursementReceipt.id",
         "disbursementReceipt.disburseDate",
         "disbursementFeedbackError.id",
@@ -194,11 +197,12 @@ export class StudentAssessmentService {
    * Get the current assessment award total per disbursement ID.
    * The total per disbursement is the sum of all disbursement values across
    * all disbursements belonging to the application's current assessment.
-   * @returns a map of disbursement ID to current assessment award total.
+   * @param applicationIds application IDs to include in the aggregation.
+   * @returns A map of disbursement ID to current assessment award total.
    */
-  async getDisbursementAwardTotalsForCurrentAssessments(): Promise<
-    Map<number, IERAward[]>
-  > {
+  async getDisbursementAwardTotalsForCurrentAssessments(
+    applicationIds: number[],
+  ): Promise<Map<number, IERAward[]>> {
     const applications = await this.applicationRepo.find({
       select: {
         id: true,
@@ -223,6 +227,9 @@ export class StudentAssessmentService {
           },
         },
       },
+      where: {
+        id: In(applicationIds),
+      },
     });
 
     const disbursementAwardTotals = new Map<number, IERAward[]>();
@@ -230,6 +237,7 @@ export class StudentAssessmentService {
     for (const application of applications) {
       const { disbursementSchedules = [] } =
         application.currentAssessment ?? {};
+      // assessmentAwards aggregates all the current assessment award values so each disbursement record can reuse the same totals.
       const assessmentAwards = disbursementSchedules
         .flatMap(
           (disbursementSchedule) =>

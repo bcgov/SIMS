@@ -86,8 +86,14 @@ export class IER12ProcessingService {
         modifiedSinceDate,
         modifiedUntilDate,
       );
+    const pendingApplicationIds = pendingApplications.map(
+      (application) => application.id,
+    );
+    // Get disbursement award details only for pending applications to populate IER 12 award values.
     const disbursementAwardTotals =
-      await this.studentAssessmentService.getDisbursementAwardTotalsForCurrentAssessments();
+      await this.studentAssessmentService.getDisbursementAwardTotalsForCurrentAssessments(
+        pendingApplicationIds,
+      );
     if (!pendingApplications.length) {
       processSummary.info("No assessments found for IER 12.");
       return [];
