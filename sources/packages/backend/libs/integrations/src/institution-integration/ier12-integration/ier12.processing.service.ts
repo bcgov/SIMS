@@ -91,7 +91,7 @@ export class IER12ProcessingService {
     );
     // Get application award details only for pending applications to populate IER 12 award values.
     const applicationAwardTotals =
-      await this.studentAssessmentService.getDisbursementAwardTotalsForCurrentAssessments(
+      await this.studentAssessmentService.getDisbursementAwardTotalsForApplications(
         pendingApplicationIds,
       );
     if (!pendingApplications.length) {
