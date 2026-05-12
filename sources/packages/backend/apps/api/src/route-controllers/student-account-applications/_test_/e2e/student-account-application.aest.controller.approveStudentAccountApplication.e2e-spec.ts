@@ -16,6 +16,7 @@ import {
 import { Notification, NotificationMessageType, User } from "@sims/sims-db";
 import { In, IsNull } from "typeorm";
 import { faker } from "@faker-js/faker";
+import { applySINNumberFormat } from "@sims/test-utils/utils";
 
 describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountApplication", () => {
   let app: INestApplication;
@@ -86,10 +87,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
 
     const submittedDataPayload = {
       ...submittedData,
-      sinNumber: submittedData.sinNumber.replace(
-        /(\d{3})(\d{3})(\d{3})/,
-        "$1 $2 $3",
-      ),
+      sinNumber: applySINNumberFormat(submittedData.sinNumber),
     };
     const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -144,10 +142,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
 
     const submittedDataPayload = {
       ...submittedData,
-      sinNumber: submittedData.sinNumber.replace(
-        /(\d{3})(\d{3})(\d{3})/,
-        "$1 $2 $3",
-      ),
+      sinNumber: applySINNumberFormat(submittedData.sinNumber),
     };
     const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -202,10 +197,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
 
     const submittedDataPayload = {
       ...submittedData,
-      sinNumber: submittedData.sinNumber.replace(
-        /(\d{3})(\d{3})(\d{3})/,
-        "$1 $2 $3",
-      ),
+      sinNumber: applySINNumberFormat(submittedData.sinNumber),
     };
     const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
