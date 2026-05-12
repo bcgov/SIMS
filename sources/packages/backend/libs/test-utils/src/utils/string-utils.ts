@@ -19,5 +19,5 @@ export function applySINNumberFormat(value: string): string {
   // Remove any non-digit characters.
   const digits = value.replace(/\D/g, "");
   // Format as XXX XXX XXX.
-  return digits.replace(/(\d{3})(\d{3})(\d{3})/, "$1-$2-$3");
+  return digits.replace(/(\d{3})(\d{3})(\d{3})/, "$1 $2 $3");
 }
