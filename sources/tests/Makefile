@@ -1,10 +1,11 @@
 -include ../../.env
 -include .env-e2e-tests
-
 export $(shell sed 's/=.*//' ../../.env)
+
 # Override values from the global .env file.
 export $(shell sed 's/=.*//' .env-e2e-tests)
-
+# Formio forms integration
+include ../../shared-env/formio-versions.mk
 # Fulltime Allowed
 export IS_FULLTIME_ALLOWED := $(or $(IS_FULLTIME_ALLOWED), true)
 
@@ -25,18 +26,8 @@ export APPLICATION_SUBMISSION_DEADLINE_WEEKS := $(or $(APPLICATION_SUBMISSION_DE
 
 # App Environment
 export APP_ENV := $(or $(APP_ENV), local)
-
 export ALLOW_BETA_USERS_ONLY :=$(or $(ALLOW_BETA_USERS_ONLY), false)
 export ALLOW_BETA_INSTITUTIONS_ONLY :=$(or $(ALLOW_BETA_INSTITUTIONS_ONLY), false)
-
-# Formio forms integration
-export FORMIO_SOURCE_REPO_URL := $(or $(FORMIO_SOURCE_REPO_URL), https://github.com/formio/formio.git)
-# Form.io version targeting the API Server Version 9.7.7
-# see https://github.com/formio/enterprise-release/blob/master/API-Server-Change-Log.md#api-server-version-977
-export FORMIO_SOURCE_REPO_REF := $(or $(FORMIO_SOURCE_REPO_REF), f92dc5feab5cd0ff3ee30965141f11a8e552fe51)
-export FORMIO_CORE_VERSION := $(or $(FORMIO_CORE_VERSION), 2.6.5)
-export FORMIO_JS_VERSION := $(or $(FORMIO_JS_VERSION), 5.3.5)
-export FORMIO_VM_VERSION := $(or $(FORMIO_VM_VERSION), 2.0.2)
 
 backend-unit-tests:
 	@cd ../packages/backend && npm i && npm run test:cov
