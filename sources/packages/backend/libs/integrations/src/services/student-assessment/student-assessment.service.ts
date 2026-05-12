@@ -194,13 +194,13 @@ export class StudentAssessmentService {
   }
 
   /**
-   * Get the current assessment award total per disbursement ID.
-   * The total per disbursement is the sum of all disbursement values across
+   * Get the current assessment award total per application ID.
+   * The total per application is the sum of all disbursement values across
    * all disbursements belonging to the application's current assessment.
    * @param applicationIds application IDs to include in the aggregation.
-   * @returns A map of disbursement ID to current assessment award total.
+   * @returns A map of application ID to current assessment award total.
    */
-  async getDisbursementAwardTotalsForCurrentAssessments(
+  async getDisbursementAwardTotalsForApplications(
     applicationIds: number[],
   ): Promise<Map<number, IERAward[]>> {
     const applications = await this.applicationRepo.find({
@@ -232,8 +232,7 @@ export class StudentAssessmentService {
       },
     });
 
-    const disbursementAwardTotals = new Map<number, IERAward[]>();
-
+    const applicationAwardTotals = new Map<number, IERAward[]>();
     for (const application of applications) {
       const { disbursementSchedules = [] } =
         application.currentAssessment ?? {};
@@ -250,13 +249,9 @@ export class StudentAssessmentService {
           restrictionAmountSubtracted:
             disbursementValue.restrictionAmountSubtracted,
         }));
-
-      for (const disbursementSchedule of disbursementSchedules) {
-        disbursementAwardTotals.set(disbursementSchedule.id, assessmentAwards);
-      }
+      applicationAwardTotals.set(application.id, assessmentAwards);
     }
-
-    return disbursementAwardTotals;
+    return applicationAwardTotals;
   }
 
   /**

@@ -89,8 +89,8 @@ export class IER12ProcessingService {
     const pendingApplicationIds = pendingApplications.map(
       (application) => application.id,
     );
-    // Get disbursement award details only for pending applications to populate IER 12 award values.
-    const disbursementAwardTotals =
+    // Get application award details only for pending applications to populate IER 12 award values.
+    const applicationAwardTotals =
       await this.studentAssessmentService.getDisbursementAwardTotalsForCurrentAssessments(
         pendingApplicationIds,
       );
@@ -109,7 +109,7 @@ export class IER12ProcessingService {
       }
       const ier12Records = await this.createIER12Record(
         application,
-        disbursementAwardTotals,
+        applicationAwardTotals.get(application.id),
       );
       fileRecords[institutionCode].push(...ier12Records);
     }
@@ -194,13 +194,12 @@ export class IER12ProcessingService {
    * the IER12 file. The awards map is used to populate the total assessment
    * award values for each record.
    * @param application application and its current assessment.
-   * @param disbursementAwardTotals map of disbursement ID to current assessment
-   * awards.
+   * @param assessmentAwards total current assessment award values for the application.
    * @returns IER 12 records for the student assessment.
    */
   private async createIER12Record(
     application: Application,
-    disbursementAwardTotals: Map<number, IERAward[]>,
+    assessmentAwards: IERAward[],
   ): Promise<IER12Record[]> {
     const pendingAssessment = application.currentAssessment;
     const student = application.student;
@@ -244,7 +243,6 @@ export class IER12ProcessingService {
     const ier12Records: IER12Record[] = [];
     // Create IER12 records per disbursement.
     for (const disbursement of disbursementSchedules) {
-      const assessmentAwards = disbursementAwardTotals.get(disbursement.id);
       const activeStudentRestriction = student.studentRestrictions
         ?.filter((studentRestriction) => studentRestriction.isActive)
         ?.map((eachRestriction) => eachRestriction.restriction.actionType);
