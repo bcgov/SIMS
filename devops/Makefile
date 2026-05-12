@@ -767,3 +767,6 @@ update-sysdig-team:
 	@echo "Updating Sysdig Team for license plate e0a504.\n"
 	@oc project e0a504-tools
 	@oc process -f openshift/sysdig-team.yml -p LICENSE_PLATE=e0a504 | oc apply -f -
+	@echo "Updating Sysdig Team for license plate c85dee.\n"
+	@oc project c85dee-tools
+	@oc process -f openshift/sysdig-team.yml -p LICENSE_PLATE=c85dee | oc apply -f -
