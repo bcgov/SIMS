@@ -15,7 +15,7 @@ export class SetupApplicationSubmissionAPIInDTO {
 /**
  * Payload required to set up the workers stress load test.
  */
-export class WorkersSetupAPIInDTO {
+export class SetupSubmittedApplicationAPIInDTO {
   /**
    * Number of distinct fake students to distribute the submitted applications across.
    * More students means more independent Camunda workflow branches, reducing

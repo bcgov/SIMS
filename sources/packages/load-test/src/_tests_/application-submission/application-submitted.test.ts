@@ -1,5 +1,5 @@
 /**
- * Workers stress test: creates submitted applications directly in the database
+ * Application submitted test: creates submitted applications directly in the database
  * across multiple fake students, bypassing the student API endpoint entirely.
  * Queue-consumers detect the submitted applications on their next scheduled run
  * and enqueue Camunda workflow instances, which workers then process.
@@ -35,9 +35,9 @@ const NUMBER_OF_STUDENTS = Number.parseInt(__ENV.NUMBER_OF_STUDENTS || "10");
 const SETUP_BATCH_SIZE = Number.parseInt(__ENV.SETUP_BATCH_SIZE || "500");
 
 /**
- * Response shape returned by the workers-setup gateway endpoint.
+ * Response shape returned by the setup/submitted gateway endpoint.
  */
-interface WorkersSetupResponse {
+interface ApplicationSubmittedSetupResponse {
   totalApplicationsCreated: number;
 }
 
@@ -56,7 +56,7 @@ export function setup(): number {
     // Retry up to 3 times on transient gateway/DB connection errors.
     for (let attempt = 1; attempt <= 3; attempt++) {
       response = loadTestPostCall(
-        `application-submission/workers-setup/${batchSize}`,
+        `application-submission/setup/submitted/${batchSize}`,
         gatewayCredentials,
         { payload: { numberOfStudents: NUMBER_OF_STUDENTS } },
       );
@@ -64,20 +64,21 @@ export function setup(): number {
         break;
       }
       console.warn(
-        `Workers setup batch attempt ${attempt} failed — status: ${response.status}. Retrying...`,
+        `Application submitted setup batch attempt ${attempt} failed — status: ${response.status}. Retrying...`,
       );
       if (attempt === 3) {
         throw new Error(
-          `Workers setup batch failed after 3 attempts — status: ${response.status}, body: ${response.body}`,
+          `Application submitted setup batch failed after 3 attempts — status: ${response.status}, body: ${response.body}`,
         );
       }
     }
-    const batch = response!.json() as unknown as WorkersSetupResponse;
+    const batch =
+      response!.json() as unknown as ApplicationSubmittedSetupResponse;
     totalCreated += batch.totalApplicationsCreated;
     remaining -= batchSize;
   }
   console.log(
-    `Workers stress test setup complete: ${totalCreated} submitted applications created across ${NUMBER_OF_STUDENTS} students.`,
+    `Application submitted test setup complete: ${totalCreated} submitted applications created across ${NUMBER_OF_STUDENTS} students.`,
   );
   return totalCreated;
 }
@@ -85,7 +86,7 @@ export function setup(): number {
 export const options: Options = {
   setupTimeout: "10m",
   scenarios: {
-    workersStress: {
+    applicationSubmitted: {
       executor: "shared-iterations",
       vus: 1,
       iterations: 1,
@@ -99,7 +100,7 @@ export const options: Options = {
  * The workers pipeline processes them independently once queue-consumers picks them up.
  * @param totalCreated total applications created by the setup phase.
  */
-export default function workersStress(totalCreated: number): void {
+export default function applicationSubmitted(totalCreated: number): void {
   check(totalCreated, {
     "All applications were created": (n) => n === ITERATIONS,
   });

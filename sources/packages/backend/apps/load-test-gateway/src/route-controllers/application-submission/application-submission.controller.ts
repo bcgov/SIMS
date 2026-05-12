@@ -9,7 +9,7 @@ import {
 import { ApplicationSubmissionService } from "../../services";
 import {
   SetupApplicationSubmissionAPIInDTO,
-  WorkersSetupAPIInDTO,
+  SetupSubmittedApplicationAPIInDTO,
 } from "./models/application-submission.dto";
 import {
   ApplicationSubmissionSetupResponse,
@@ -53,11 +53,11 @@ export class ApplicationSubmissionController {
    * @param payload payload containing the number of students to distribute applications across.
    * @returns summary with the total number of submitted applications created.
    */
-  @Post("workers-setup/:iterations")
+  @Post("setup/submitted/:iterations")
   @HttpCode(200)
   async workersSetup(
     @Param("iterations", ParseIntPipe) iterations: number,
-    @Body() payload: WorkersSetupAPIInDTO,
+    @Body() payload: SetupSubmittedApplicationAPIInDTO,
   ): Promise<WorkersSetupResponse> {
     return this.applicationSubmissionService.createSubmittedApplications(
       iterations,

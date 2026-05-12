@@ -187,7 +187,7 @@ export class ApplicationSubmissionService {
     }
     return {
       applications: setupItems,
-      applicationData: APPLICATION_SUBMISSION_DATA as Record<string, unknown>,
+      applicationData: APPLICATION_SUBMISSION_DATA,
     };
   }
 
