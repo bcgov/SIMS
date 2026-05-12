@@ -199,25 +199,31 @@ export class StudentAssessmentService {
   async getDisbursementAwardTotalsForCurrentAssessments(): Promise<
     Map<number, IERAward[]>
   > {
-    const applications = await this.applicationRepo
-      .createQueryBuilder("application")
-      .select([
-        "application.id",
-        "currentAssessment.id",
-        "disbursementSchedule.id",
-        "disbursementValue.id",
-        "disbursementValue.valueType",
-        "disbursementValue.valueCode",
-        "disbursementValue.valueAmount",
-        "disbursementValue.restrictionAmountSubtracted",
-      ])
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .innerJoin(
-        "currentAssessment.disbursementSchedules",
-        "disbursementSchedule",
-      )
-      .leftJoin("disbursementSchedule.disbursementValues", "disbursementValue")
-      .getMany();
+    const applications = await this.applicationRepo.find({
+      select: {
+        id: true,
+        currentAssessment: {
+          id: true,
+          disbursementSchedules: {
+            id: true,
+            disbursementValues: {
+              id: true,
+              valueType: true,
+              valueCode: true,
+              valueAmount: true,
+              restrictionAmountSubtracted: true,
+            },
+          },
+        },
+      },
+      relations: {
+        currentAssessment: {
+          disbursementSchedules: {
+            disbursementValues: true,
+          },
+        },
+      },
+    });
 
     const disbursementAwardTotals = new Map<number, IERAward[]>();
 
