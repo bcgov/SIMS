@@ -93,7 +93,12 @@ describe(`FormSubmissionStudentsController(e2e)-submitForm-${FORM_DEFINITION_NAM
         .then((response) => (createdSubmissionId = +response.body.id));
 
       // Assert the created form submission and form submission actions.
-      const formSubmissionPromise = db.formSubmission.exists({
+      const formSubmissionPromise = db.formSubmission.findOneOrFail({
+        select: {
+          id: true,
+          formSubmissionItems: { id: true, submittedData: true },
+        },
+        relations: { formSubmissionItems: true },
         where: { id: createdSubmissionId },
       });
       const studentPromise = db.student.findOne({
@@ -107,11 +112,16 @@ describe(`FormSubmissionStudentsController(e2e)-submitForm-${FORM_DEFINITION_NAM
         where: { id: student.id },
         loadEagerRelations: false,
       });
-      const [isFormSubmissionCreated, updatedStudent] = await Promise.all([
+      const [formSubmission, updatedStudent] = await Promise.all([
         formSubmissionPromise,
         studentPromise,
       ]);
-      expect(isFormSubmissionCreated).toBe(true);
+      expect(formSubmission.id).toBe(createdSubmissionId);
+      const [formSubmissionItem] = formSubmission.formSubmissionItems;
+      const [expectedFormSubmissionItem] = payload.items;
+      expect(formSubmissionItem.submittedData).toEqual(
+        expectedFormSubmissionItem.formData,
+      );
       expect(updatedStudent).toEqual({
         id: student.id,
         disabilityStatus: expectedDisabilityStatus,
@@ -163,7 +173,12 @@ describe(`FormSubmissionStudentsController(e2e)-submitForm-${FORM_DEFINITION_NAM
         .then((response) => (createdSubmissionId = +response.body.id));
 
       // Assert the created form submission and form submission actions.
-      const formSubmissionPromise = db.formSubmission.exists({
+      const formSubmissionPromise = db.formSubmission.findOneOrFail({
+        select: {
+          id: true,
+          formSubmissionItems: { id: true, submittedData: true },
+        },
+        relations: { formSubmissionItems: true },
         where: { id: createdSubmissionId },
       });
       const studentPromise = db.student.findOne({
@@ -177,11 +192,16 @@ describe(`FormSubmissionStudentsController(e2e)-submitForm-${FORM_DEFINITION_NAM
         where: { id: student.id },
         loadEagerRelations: false,
       });
-      const [isFormSubmissionCreated, updatedStudent] = await Promise.all([
+      const [formSubmission, updatedStudent] = await Promise.all([
         formSubmissionPromise,
         studentPromise,
       ]);
-      expect(isFormSubmissionCreated).toBe(true);
+      expect(formSubmission.id).toBe(createdSubmissionId);
+      const [formSubmissionItem] = formSubmission.formSubmissionItems;
+      const [expectedFormSubmissionItem] = payload.items;
+      expect(formSubmissionItem.submittedData).toEqual(
+        expectedFormSubmissionItem.formData,
+      );
       // Validate that disability status was not updated.
       expect(updatedStudent!.disabilityStatus).toBe(currentDisabilityStatus);
       // Validate that audit fields were not updated since disability status was not updated.
@@ -244,13 +264,16 @@ function getDisabilityStatusFormData(
       {
         dynamicConfigurationId: dynamicFormConfigId,
         formData: {
-          actions: ["UpdateDisabilityOnSubmission"],
+          actions: [
+            "UpdateDisabilityOnSubmission",
+            "UpdateDisabilityOnDecision",
+          ],
           requestedDisabilityStatus: options?.requestedDisabilityStatus ?? "PD",
           disabilityCategories: {
             specificLearningDisorder: false,
-            visualCondition: true,
-            auditoryCondition: true,
-            otherDisablingCondition: false,
+            visualConditions: true,
+            auditoryConditions: true,
+            otherDisablingConditions: false,
           },
           requiredDocuments: [
             {
