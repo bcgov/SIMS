@@ -2,14 +2,13 @@ import { Injectable } from "@nestjs/common";
 import {
   Application,
   ApplicationStatus,
-  DisbursementFeedbackErrors,
-  DisbursementSchedule,
   OfferingIntensity,
   StudentAssessment,
   User,
 } from "@sims/sims-db";
 import { Brackets, In, Repository, UpdateResult } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
+import { IERAward } from "../../institution-integration/ier12-integration/models/ier12-integration.model";
 
 /**
  * Manages the student assessment related operations.
@@ -21,10 +20,6 @@ export class StudentAssessmentService {
     private readonly applicationRepo: Repository<Application>,
     @InjectRepository(StudentAssessment)
     private readonly studentAssessmentRepo: Repository<StudentAssessment>,
-    @InjectRepository(DisbursementSchedule)
-    private readonly disbursementScheduleRepo: Repository<DisbursementSchedule>,
-    @InjectRepository(DisbursementFeedbackErrors)
-    private readonly disbursementFeedbackErrorsRepo: Repository<DisbursementFeedbackErrors>,
   ) {}
 
   /**
@@ -154,27 +149,22 @@ export class StudentAssessmentService {
             }),
           )
             .orWhere(
-              `EXISTS (${this.disbursementScheduleRepo
-                .createQueryBuilder("subDs")
-                .select("1")
-                .where(
-                  '"subDs"."student_assessment_id" = "currentAssessment"."id"',
-                )
-                .andWhere("subDs.updatedAt >= :modifiedSince")
-                .andWhere("subDs.updatedAt < :modifiedUntil")
-                .getQuery()})`,
+              new Brackets((qbInner) => {
+                qbInner
+                  .where("disbursementSchedule.updatedAt >= :modifiedSince")
+                  .andWhere("disbursementSchedule.updatedAt < :modifiedUntil");
+              }),
             )
             .orWhere(
-              `EXISTS (${this.disbursementFeedbackErrorsRepo
-                .createQueryBuilder("subDfe")
-                .select("1")
-                .innerJoin("subDfe.disbursementSchedule", "subDfeDs")
-                .where(
-                  '"subDfeDs"."student_assessment_id" = "currentAssessment"."id"',
-                )
-                .andWhere("subDfe.updatedAt >= :modifiedSince")
-                .andWhere("subDfe.updatedAt < :modifiedUntil")
-                .getQuery()})`,
+              new Brackets((qbInner) => {
+                qbInner
+                  .where(
+                    "disbursementFeedbackError.updatedAt >= :modifiedSince",
+                  )
+                  .andWhere(
+                    "disbursementFeedbackError.updatedAt < :modifiedUntil",
+                  );
+              }),
             )
             .orWhere(
               new Brackets((qbInner) => {
@@ -201,6 +191,58 @@ export class StudentAssessmentService {
       .orderBy("currentAssessment.assessmentDate", "ASC")
       .addOrderBy("disbursementSchedule.disbursementDate", "ASC")
       .getMany();
+  }
+
+  /**
+   * Get the current assessment award total per disbursement ID.
+   * The total per disbursement is the sum of all disbursement values across
+   * all disbursements belonging to the application's current assessment.
+   * @returns a map of disbursement ID to current assessment award total.
+   */
+  async getDisbursementAwardTotalsForCurrentAssessments(): Promise<
+    Map<number, IERAward[]>
+  > {
+    const applications = await this.applicationRepo
+      .createQueryBuilder("application")
+      .select([
+        "application.id",
+        "currentAssessment.id",
+        "disbursementSchedule.id",
+        "disbursementValue.id",
+        "disbursementValue.valueAmount",
+      ])
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin(
+        "currentAssessment.disbursementSchedules",
+        "disbursementSchedule",
+      )
+      .leftJoin("disbursementSchedule.disbursementValues", "disbursementValue")
+      .getMany();
+
+    const disbursementAwardTotals = new Map<number, IERAward[]>();
+
+    for (const application of applications) {
+      const { disbursementSchedules = [] } =
+        application.currentAssessment ?? {};
+      const assessmentAwards = disbursementSchedules
+        .flatMap(
+          (disbursementSchedule) =>
+            disbursementSchedule.disbursementValues ?? [],
+        )
+        .map<IERAward>((disbursementValue) => ({
+          valueType: disbursementValue.valueType,
+          valueCode: disbursementValue.valueCode,
+          valueAmount: disbursementValue.valueAmount,
+          restrictionAmountSubtracted:
+            disbursementValue.restrictionAmountSubtracted,
+        }));
+
+      for (const disbursementSchedule of disbursementSchedules) {
+        disbursementAwardTotals.set(disbursementSchedule.id, assessmentAwards);
+      }
+    }
+
+    return disbursementAwardTotals;
   }
 
   /**
