@@ -300,12 +300,6 @@ connect-stg-db:
 connect-prod-db:
 	@echo "Forward local port 5757 to Openshift simsdb-pgbouncer default port."
 	@echo "Use your preferred DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5757."
-	@oc project 0c27fb-prod
-	@oc port-forward services/simsdb-pgbouncer 5757:5432
-
-connect-prod-gold-db:
-	@echo "Forward local port 5757 to Openshift simsdb-pgbouncer default port."
-	@echo "Use your preferred DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 5757."
 	@oc project e0a504-prod
 	@oc port-forward services/simsdb-pgbouncer 5757:5432
 
@@ -328,12 +322,6 @@ connect-stg-db-superuser:
 	@oc port-forward $(MASTER_POD) 6060:5432
 
 connect-prod-db-superuser:
-	@echo "Forward local port 6161 to Openshift master pod default port."
-	@echo "Use your preferred DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 6161."
-	@oc project 0c27fb-prod
-	@oc port-forward $(MASTER_POD) 6161:5432
-
-connect-prod-gold-db-superuser:
 	@echo "Forward local port 6161 to Openshift master pod default port."
 	@echo "Use your preferred DB Manager (e.g. pgAdmin or DBeaver) to connect to the Postgres database using the local port 6161."
 	@oc project e0a504-prod
@@ -365,5 +353,5 @@ connect-prod-forms-db:
 	@echo "Forward local port 27021 to Openshift MongoDB HA headless service default port."
 	@echo "Use your preferred MongoDB client to connect to 27021."
 	@echo "Connection sample mongodb://username:password@localhost:27021/forms?authSource=forms&directConnection=true"
-	@oc project 0c27fb-prod
+	@oc project e0a504-prod
 	@oc port-forward svc/mongo-ha-headless 27021:27017
