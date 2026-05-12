@@ -93,10 +93,7 @@ export class StudentAssessmentService {
         "disbursementSchedule.updatedAt",
         "disbursementSchedule.dateSent",
         "disbursementValue.id",
-        "disbursementValue.valueCode",
         "disbursementValue.valueAmount",
-        "disbursementValue.valueType",
-        "disbursementValue.restrictionAmountSubtracted",
         "disbursementReceipt.id",
         "disbursementReceipt.disburseDate",
         "disbursementFeedbackError.id",
@@ -209,7 +206,10 @@ export class StudentAssessmentService {
         "currentAssessment.id",
         "disbursementSchedule.id",
         "disbursementValue.id",
+        "disbursementValue.valueType",
+        "disbursementValue.valueCode",
         "disbursementValue.valueAmount",
+        "disbursementValue.restrictionAmountSubtracted",
       ])
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin(
