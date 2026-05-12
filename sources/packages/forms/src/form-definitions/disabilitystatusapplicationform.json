@@ -9,8 +9,8 @@
     ],
     "components": [
         {
-            "label": "Actions: UpdateDisabilityOnSubmission",
-            "calculateValue": "value = [\"UpdateDisabilityOnSubmission\"];",
+            "label": "Actions: UpdateDisabilityOnSubmission, UpdateDisabilityOnDecision",
+            "calculateValue": "value = [\"UpdateDisabilityOnSubmission\",\"UpdateDisabilityOnDecision\"];",
             "calculateServer": true,
             "key": "actions",
             "type": "hidden",
@@ -30,7 +30,7 @@
         {
             "label": "Required documents bullet list",
             "persistent": false,
-            "calculateValue": "const selectedDisabilityCategoryKeys = Object.keys(data.disabilityCategories || {}).filter((key) => data.disabilityCategories[key]);\r\n\r\nif(selectedDisabilityCategoryKeys.length){\r\n  // Map of required document IDs to their corresponding HTML list items.\r\n  const requiredDocumentsMap = {\r\n    1: '<li>Verification of <a rel=\"noopener\" target=\"_blank\" href=\"https://studentaidbc.ca/sites/all/files/form-library/disability-verification.pdf\">disability form</a> completed by a valid assessor.</li>',\r\n    2: '<li>Psycho-education assessment completed within the last 5 years, or when you were 18 years of age or older.</li>',\r\n    3: '<li>A copy of your most recent visual acuity report.</li>',\r\n    4: '<li>A copy of your most recent audiology report.</li>',\r\n  };\r\n // Map of disability categories to their required document IDs.\r\n  const disabilityCategoryRequiredDocumentsMap = {\r\n    \"specificLearningDisorder\": [2],\r\n    \"visualCondition\": [1, 3],\r\n    \"auditoryCondition\": [1, 4],\r\n    \"otherDisablingCondition\": [1],\r\n  };\r\n  // Create a set to store unique required document IDs based on the selected disability categories.\r\n  const uniqueDocIds = new Set(\r\n    selectedDisabilityCategoryKeys.flatMap(\r\n      (category) => disabilityCategoryRequiredDocumentsMap[category] || []\r\n    )\r\n  );\r\n  value = [...uniqueDocIds]\r\n    .sort()\r\n    .map((id) => requiredDocumentsMap[id])\r\n    .filter(Boolean)\r\n    .join(\"\");\r\n}\r\nelse{\r\n  value =\"Please select one or more disability categories from the list above to determine the required document(s).\";\r\n}",
+            "calculateValue": "const selectedDisabilityCategoryKeys = Object.keys(data.disabilityCategories || {}).filter((key) => data.disabilityCategories[key]);\r\n\r\nif(selectedDisabilityCategoryKeys.length){\r\n  // Map of required document IDs to their corresponding HTML list items.\r\n  const requiredDocumentsMap = {\r\n    1: '<li>Verification of <a rel=\"noopener\" target=\"_blank\" href=\"https://studentaidbc.ca/sites/all/files/form-library/disability-verification.pdf\">disability form</a> completed by a valid assessor.</li>',\r\n    2: '<li>Psycho-education assessment completed within the last 5 years, or when you were 18 years of age or older.</li>',\r\n    3: '<li>A copy of your most recent visual acuity report.</li>',\r\n    4: '<li>A copy of your most recent audiology report.</li>',\r\n  };\r\n // Map of disability categories to their required document IDs.\r\n  const disabilityCategoryRequiredDocumentsMap = {\r\n    \"specificLearningDisorder\": [2],\r\n    \"visualConditions\": [1, 3],\r\n    \"auditoryConditions\": [1, 4],\r\n    \"otherDisablingConditions\": [1],\r\n  };\r\n  // Create a set to store unique required document IDs based on the selected disability categories.\r\n  const uniqueDocIds = new Set(\r\n    selectedDisabilityCategoryKeys.flatMap(\r\n      (category) => disabilityCategoryRequiredDocumentsMap[category] || []\r\n    )\r\n  );\r\n  value = [...uniqueDocIds]\r\n    .sort()\r\n    .map((id) => requiredDocumentsMap[id])\r\n    .filter(Boolean)\r\n    .join(\"\");\r\n}\r\nelse{\r\n  value =\"\";\r\n}",
             "key": "requiredDocumentsList",
             "type": "hidden",
             "input": true,
@@ -84,9 +84,9 @@
             "tableView": false,
             "defaultValue": {
                 "specificLearningDisorder": false,
-                "visualCondition": false,
-                "auditoryCondition": false,
-                "otherDisablingCondition": false
+                "visualConditions": false,
+                "auditoryConditions": false,
+                "otherDisablingConditions": false
             },
             "values": [
                 {
@@ -95,18 +95,18 @@
                     "shortcut": ""
                 },
                 {
-                    "label": "Visual condition",
-                    "value": "visualCondition",
+                    "label": "Visual conditions",
+                    "value": "visualConditions",
                     "shortcut": ""
                 },
                 {
-                    "label": "Auditory condition",
-                    "value": "auditoryCondition",
+                    "label": "Auditory conditions",
+                    "value": "auditoryConditions",
                     "shortcut": ""
                 },
                 {
-                    "label": "Any other disabling condition",
-                    "value": "otherDisablingCondition",
+                    "label": "Any other disabling conditions",
+                    "value": "otherDisablingConditions",
                     "shortcut": ""
                 }
             ],
@@ -125,6 +125,7 @@
             "collapsible": false,
             "hideLabel": true,
             "key": "panel",
+            "customConditional": "// Check if there is any disability category keys with value true is present.\nshow = Object.keys(data.disabilityCategories || {}).some((key) => data.disabilityCategories[key]);",
             "type": "panel",
             "label": "Panel",
             "input": false,
@@ -243,6 +244,7 @@
                     "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
                     "fileMaxSize": "15MB",
                     "multiple": true,
+                    "clearOnHide": false,
                     "validate": {
                         "required": true,
                         "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
@@ -251,8 +253,8 @@
                     "validateWhenHidden": false,
                     "key": "requiredDocuments",
                     "type": "file",
-                    "input": true,
-                    "url": "student/files"
+                    "url": "student/files",
+                    "input": true
                 },
                 {
                     "label": "Content",
