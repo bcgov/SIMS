@@ -25,7 +25,7 @@ export class NotificationMessageService extends RecordDataModelService<Notificat
   ): Promise<Pick<NotificationMessage, "templateId" | "emailContacts">> {
     const notificationMessageRepo =
       options?.entityManager?.getRepository(NotificationMessage) ?? this.repo;
-    return notificationMessageRepo.findOne({
+    return notificationMessageRepo.findOneOrFail({
       select: {
         templateId: true,
         emailContacts: true,

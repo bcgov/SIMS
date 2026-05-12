@@ -1287,9 +1287,7 @@ export class NotificationActionsService {
    */
   private async assertNotificationMessageDetails(
     notificationMessageTypeId: NotificationMessageType,
-  ): Promise<
-    Pick<NotificationMessage, "templateId" | "emailContacts"> | undefined
-  > {
+  ): Promise<Pick<NotificationMessage, "templateId" | "emailContacts">> {
     const { templateId, emailContacts } =
       await this.notificationMessageService.getNotificationMessageDetails(
         notificationMessageTypeId,
@@ -1673,9 +1671,8 @@ export class NotificationActionsService {
           email_address: emailContact,
           template_id: templateId,
           personalisation: {
-            title: notification.title,
             fileName: notification.fileName,
-            dateSent: getDateOnlyFormat(notification.dateSent),
+            dateSent: getPSTPDTDateTime(notification.dateSent),
             type: notification.type.toString(),
           },
         },

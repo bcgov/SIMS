@@ -22,12 +22,15 @@ export function createFakeSINValidation(
   sinValidation.sin =
     options?.initialValue?.sin ??
     faker.number.int({ min: 100000000, max: 899999999 }).toString();
-  sinValidation.dateSent = now;
+  sinValidation.dateSent =
+    options?.initialValue?.dateSent !== undefined
+      ? options.initialValue.dateSent
+      : now;
   sinValidation.dateReceived =
     options?.initialValue?.dateReceived !== undefined
       ? options.initialValue.dateReceived
       : now;
-  sinValidation.fileSent = null;
+  sinValidation.fileSent = options?.initialValue?.fileSent ?? null;
   sinValidation.fileReceived = null;
   sinValidation.givenNameSent = null;
   sinValidation.surnameSent = null;

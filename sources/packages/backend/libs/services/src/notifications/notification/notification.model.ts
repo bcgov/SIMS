@@ -277,7 +277,6 @@ export interface MinistryFormSubmittedNotification {
 export type FileProcessingIssueType = "CRA" | "SIN";
 
 export interface MinistryFileProcessingIssueNotification {
-  title: string;
   fileName: string;
   dateSent: Date;
   type: FileProcessingIssueType;

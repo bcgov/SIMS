@@ -3,22 +3,25 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { NotificationActionsService } from "@sims/services/notifications/notification/notification-actions.service";
 import { MinistryFileProcessingIssueNotification } from "@sims/services/notifications/notification/notification.model";
 import { CRAIncomeVerification, SINValidation } from "@sims/sims-db";
+import { ConfigService } from "@sims/utilities/config";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { IsNull, LessThan, Repository } from "typeorm";
 
 @Injectable()
 export class FileProcessingIssueNotificationService {
+  private readonly fileProcessingOverdueMS: number;
   constructor(
     @InjectRepository(CRAIncomeVerification)
     private readonly craIncomeVerificationRepo: Repository<CRAIncomeVerification>,
     @InjectRepository(SINValidation)
     private readonly sinValidationRepo: Repository<SINValidation>,
     private readonly notificationActionsService: NotificationActionsService,
-  ) {}
-
-  // CRA/SIN responses are typically 1-2 business days.
-  // To account for weekends and stat holidays, we'll set this to 5 calendar days.
-  OVERDUE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
+    private readonly configService: ConfigService,
+  ) {
+    // Convert from days to MS for DB queries.
+    this.fileProcessingOverdueMS =
+      this.configService.fileProcessingOverdueDays * 24 * 60 * 60 * 1000;
+  }
 
   async notifyFileProcessingIssues(
     processSummary: ProcessSummary,
@@ -54,12 +57,13 @@ export class FileProcessingIssueNotificationService {
         },
         where: {
           dateReceived: IsNull(),
-          dateSent: LessThan(new Date(Date.now() - this.OVERDUE_DAYS_MS)),
+          dateSent: LessThan(
+            new Date(Date.now() - this.fileProcessingOverdueMS),
+          ),
         },
       });
 
     return incomeVerifications.map((response) => ({
-      title: "TBD",
       fileName: response.fileSent!,
       dateSent: response.dateSent!,
       type: "CRA",
@@ -76,12 +80,11 @@ export class FileProcessingIssueNotificationService {
       },
       where: {
         dateReceived: IsNull(),
-        dateSent: LessThan(new Date(Date.now() - this.OVERDUE_DAYS_MS)),
+        dateSent: LessThan(new Date(Date.now() - this.fileProcessingOverdueMS)),
       },
     });
 
     return sinValidations.map((response) => ({
-      title: "TBD",
       fileName: response.fileSent!,
       dateSent: response.dateSent!,
       type: "SIN",
