@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {
   Application,
-  DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValue,
   FormYesNoOptions,
@@ -87,6 +86,14 @@ export class IER12ProcessingService {
         modifiedSinceDate,
         modifiedUntilDate,
       );
+    const pendingApplicationIds = pendingApplications.map(
+      (application) => application.id,
+    );
+    // Get application award details only for pending applications to populate IER 12 award values.
+    const applicationAwardTotals =
+      await this.studentAssessmentService.getDisbursementAwardTotalsForApplications(
+        pendingApplicationIds,
+      );
     if (!pendingApplications.length) {
       processSummary.info("No assessments found for IER 12.");
       return [];
@@ -100,7 +107,10 @@ export class IER12ProcessingService {
       if (!fileRecords[institutionCode]) {
         fileRecords[institutionCode] = [];
       }
-      const ier12Records = await this.createIER12Record(application);
+      const ier12Records = await this.createIER12Record(
+        application,
+        applicationAwardTotals.get(application.id),
+      );
       fileRecords[institutionCode].push(...ier12Records);
     }
     const uploadResult: IER12UploadResult[] = [];
@@ -180,11 +190,16 @@ export class IER12ProcessingService {
 
   /**
    * Create the Request content for the IER 12 file by populating the content.
+   * Only disbursements modified within the requested date range are written to
+   * the IER12 file. The awards map is used to populate the total assessment
+   * award values for each record.
    * @param application application and its current assessment.
+   * @param assessmentAwards list of all awards from all disbursements associated with the current application's assessment.
    * @returns IER 12 records for the student assessment.
    */
   private async createIER12Record(
     application: Application,
+    assessmentAwards: IERAward[],
   ): Promise<IER12Record[]> {
     const pendingAssessment = application.currentAssessment;
     const student = application.student;
@@ -195,9 +210,6 @@ export class IER12ProcessingService {
     const address = student.contactInfo.address;
     const applicationProgramYear = application.programYear;
     const [scholasticStanding] = application.studentScholasticStandings;
-    const assessmentAwards = this.getAssessmentAwards(
-      pendingAssessment.disbursementSchedules,
-    );
     const disbursementSchedules = pendingAssessment.disbursementSchedules;
     const addressInfo: IERAddressInfo = {
       addressLine1: address.addressLine1,
@@ -395,21 +407,6 @@ export class IER12ProcessingService {
       valueCode: disbursementValue.valueCode,
       valueAmount: disbursementValue.valueAmount,
     }));
-  }
-
-  /**
-   * Get all disbursement award details for IER of all disbursements that belong
-   * to a given assessment.
-   * @param disbursementSchedules disbursement schedules.
-   * @returns assessment award details.
-   */
-  private getAssessmentAwards(
-    disbursementSchedules: DisbursementSchedule[],
-  ): IERAward[] {
-    const assessmentAwards = disbursementSchedules.flatMap<IERAward>(
-      (disbursementSchedule) => disbursementSchedule.disbursementValues,
-    );
-    return assessmentAwards;
   }
 
   /**

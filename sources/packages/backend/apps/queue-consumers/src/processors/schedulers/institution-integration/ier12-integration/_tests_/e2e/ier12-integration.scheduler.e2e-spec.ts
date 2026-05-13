@@ -143,6 +143,114 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
   });
 
   it(
+    "Should generate IER12 record for only one disbursement but the application award totals must be the sum of the awards from both the disbursements of the current assessment of the application" +
+      " when there are two disbursements for the application but only one disbursement update is within the default IER generation range.",
+    async () => {
+      // Arrange
+      const defaultIERFileGenerationStartDate = new Date(
+        dateUtils.getISODateOnlyString(dateUtils.addDays(-1)),
+      );
+      const testInputData = {
+        student: {
+          ...JOHN_DOE_FROM_CANADA,
+          updatedAt: dateOutsideDefaultIERFileGenerationRange,
+        },
+        application: {
+          applicationNumber: defaultApplicationNumber,
+          studentNumber: "A1B2C3D4",
+          relationshipStatus: RelationshipStatus.Single,
+          applicationStatus: ApplicationStatus.Completed,
+          applicationStatusUpdatedOn: undefined,
+        },
+        assessment: {
+          triggerType: AssessmentTriggerType.OriginalAssessment,
+          assessmentDate: dateOutsideDefaultIERFileGenerationRange,
+          workflowData: WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS,
+          assessmentData: ASSESSMENT_DATA_SINGLE_INDEPENDENT,
+          disbursementSchedules: [
+            {
+              coeStatus: COEStatus.completed,
+              disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+              disbursementDate: undefined,
+              updatedAt: dateOutsideDefaultIERFileGenerationRange,
+              dateSent: undefined,
+              disbursementValues: AWARDS_ONE_OF_TWO_DISBURSEMENT,
+            },
+            {
+              coeStatus: COEStatus.required,
+              disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+              disbursementDate: undefined,
+              // Only one disbursement update is within the default IER generation range.
+              updatedAt: dateUtils.addHours(
+                1,
+                defaultIERFileGenerationStartDate,
+              ),
+              dateSent: undefined,
+              disbursementValues: AWARDS_TWO_OF_TWO_DISBURSEMENT,
+            },
+          ],
+        },
+        educationProgram:
+          PROGRAM_UNDERGRADUATE_CERTIFICATE_WITHOUT_INSTITUTION_PROGRAM_CODE,
+        offering: OFFERING_FULL_TIME,
+      };
+      const application = await saveIER12TestInputData(
+        db,
+        testInputData,
+        { institutionLocation: locationA },
+        {
+          programYearPrefix: sharedProgramYearPrefix,
+          submittedDate: referenceSubmissionDate,
+        },
+      );
+      // Ensure user update date is also outside the default IER generation range.
+      await db.user.update(application.student.user.id, {
+        updatedAt: dateOutsideDefaultIERFileGenerationRange,
+      });
+
+      // Queued job.
+      // Run the job with default IER file generation date (yesterday).
+      const mockedJob = createIER12SchedulerJobMock();
+
+      // Act
+      const ier12Results = await processor.processQueue(mockedJob.job);
+
+      // Assert
+      expect(ier12Results).toBeDefined();
+      const [timestampResult] = getFileNameAsCurrentTimestampMock.mock.results;
+      expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
+      expect(ier12Results).toStrictEqual([
+        getSuccessSummaryMessages(timestampResult.value, {
+          institutionCode: locationA.institutionCode,
+          expectedRecords: 1,
+        }),
+      ]);
+
+      const uploadedFile = getUploadedFile(sftpClientMock);
+      expect(uploadedFile.fileLines?.length).toBe(1);
+      const [line1] = uploadedFile.fileLines;
+      const [, secondDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const assessmentId = numberToText(application.currentAssessment.id);
+      const currentOfferingId = numberToText(
+        application.currentAssessment.offering.id,
+      );
+      const parentOfferingId = numberToText(
+        application.currentAssessment.offering.parentOffering.id,
+      );
+
+      const secondDisbursementId = numberToText(secondDisbursement.id);
+      const expectedApplicationEventDate = dayjs(
+        dateUtils.addHours(1, defaultIERFileGenerationStartDate),
+      ).format("YYYYMMDD");
+      expect(line1.length).toBe(IER_RECORD_EXPECTED_LENGTH);
+      expect(line1).toBe(
+        `${assessmentId}${secondDisbursementId}${defaultApplicationNumber}A1B2C3D4    242963189Doe                      John           19980113B   SI  NONENAddress Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program name                                                               undergraduateCertificate 0001    8   0512123401234ADR1                         6${currentOfferingId}${parentOfferingId}                              2000081620001205000033330000004444000000555500000066660050100F2000060120002001COMP20000601000010000000015161000008040500NNNNN            20000801        000002100000000000000000200000000000000000000000001NNN000000000000000000000000000000000000000000000000000000000000NN0000000000000144430000000115000000000000000000000000007777000000336667000009874600000000000000017500000000000000000000000000002200000120000100001500000009656600N0000000000000000000000000000000000000000000000000000000000000000000000COER${expectedApplicationEventDate}        Required  Pending   20001011                        CSLF0000000000BCSL0001516100CSGP0000123400CSGD0000597800CSGF0000910100CSGT0001213100BCAG0000181900SBSD0000002200BGPD0000202100    0000000000`,
+      );
+    },
+  );
+
+  it(
     "Should generate an IER12 file with two records for a single student with no dependents due to the update in student data" +
       " when the student application has two disbursements, one sent and one pending.",
     async () => {
