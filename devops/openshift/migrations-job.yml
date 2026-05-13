@@ -52,16 +52,10 @@ objects:
                     secretKeyRef:
                       key: ${SIMS_DB_NAME}
                       name: ${MIGRATIONS_SECRET_NAME}
-                - name: FORMS_SA_USER_NAME
+                - name: FORMS_API_KEY
                   valueFrom:
                     secretKeyRef:
-                      key: ${FORMIO_ROOT_EMAIL_NAME_KEY}
-                      name: ${FORMS_SECRET_NAME}
-                      optional: true
-                - name: FORMS_SA_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      key: ${FORMIO_ROOT_PASSWORD_NAME_KEY}
+                      key: ${FORMIO_API_KEY_NAME_KEY}
                       name: ${FORMS_SECRET_NAME}
                       optional: true
                 - name: FORMS_URL
@@ -136,10 +130,8 @@ parameters:
     required: true
   - name: FORMS_SECRET_NAME
     required: true
-  - name: FORMIO_ROOT_EMAIL_NAME_KEY
-    value: FORMIO_ROOT_EMAIL
-  - name: FORMIO_ROOT_PASSWORD_NAME_KEY
-    value: FORMIO_ROOT_PASSWORD
+  - name: FORMIO_API_KEY_NAME_KEY
+    value: FORMIO_API_KEY
   - name: FORMS_URL_NAME_KEY
     value: FORMS_URL
   - name: ZEEBE_GRPC_ADDRESS_KEY

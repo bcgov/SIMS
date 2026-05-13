@@ -8,6 +8,7 @@ import {
 } from "@sims/sims-db";
 import { Brackets, In, Repository, UpdateResult } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
+import { IERAward } from "../../institution-integration/ier12-integration/models/ier12-integration.model";
 
 /**
  * Manages the student assessment related operations.
@@ -190,6 +191,67 @@ export class StudentAssessmentService {
       .orderBy("currentAssessment.assessmentDate", "ASC")
       .addOrderBy("disbursementSchedule.disbursementDate", "ASC")
       .getMany();
+  }
+
+  /**
+   * Get the current assessment award total per application ID.
+   * The total per application is the sum of all disbursement values across
+   * all disbursements belonging to the application's current assessment.
+   * @param applicationIds application IDs to include in the aggregation.
+   * @returns A map of application ID to current assessment award total.
+   */
+  async getDisbursementAwardTotalsForApplications(
+    applicationIds: number[],
+  ): Promise<Map<number, IERAward[]>> {
+    const applications = await this.applicationRepo.find({
+      select: {
+        id: true,
+        currentAssessment: {
+          id: true,
+          disbursementSchedules: {
+            id: true,
+            disbursementValues: {
+              id: true,
+              valueType: true,
+              valueCode: true,
+              valueAmount: true,
+              restrictionAmountSubtracted: true,
+            },
+          },
+        },
+      },
+      relations: {
+        currentAssessment: {
+          disbursementSchedules: {
+            disbursementValues: true,
+          },
+        },
+      },
+      where: {
+        id: In(applicationIds),
+      },
+    });
+
+    const applicationAwardTotals = new Map<number, IERAward[]>();
+    for (const application of applications) {
+      const { disbursementSchedules = [] } =
+        application.currentAssessment ?? {};
+      // assessmentAwards aggregates all the current assessment award values so each disbursement record can reuse the same totals.
+      const assessmentAwards = disbursementSchedules
+        .flatMap(
+          (disbursementSchedule) =>
+            disbursementSchedule.disbursementValues ?? [],
+        )
+        .map<IERAward>((disbursementValue) => ({
+          valueType: disbursementValue.valueType,
+          valueCode: disbursementValue.valueCode,
+          valueAmount: disbursementValue.valueAmount,
+          restrictionAmountSubtracted:
+            disbursementValue.restrictionAmountSubtracted,
+        }));
+      applicationAwardTotals.set(application.id, assessmentAwards);
+    }
+    return applicationAwardTotals;
   }
 
   /**

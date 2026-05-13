@@ -23,6 +23,10 @@ objects:
         type: RollingUpdate
       template:
         metadata:
+          annotations:
+            prometheus.io/scrape: "true"
+            prometheus.io/port: ${PORT}
+            prometheus.io/path: /metrics
           labels:
             app: ${NAME}
         spec:
@@ -109,12 +113,12 @@ objects:
                 failureThreshold: 3
                 successThreshold: 1
                 httpGet:
-                  path: /health/
+                  path: /health/timeout/3000
                   port: "${{PORT}}"
                   scheme: HTTP
                 initialDelaySeconds: 30
                 periodSeconds: 30
-                timeoutSeconds: 3
+                timeoutSeconds: 5
   - apiVersion: autoscaling/v2
     kind: HorizontalPodAutoscaler
     metadata:
@@ -125,7 +129,7 @@ objects:
         kind: Deployment
         name: ${NAME}
       minReplicas: "${{REPLICAS}}"
-      maxReplicas: 10
+      maxReplicas: 3
       metrics:
         - type: Resource
           resource:

@@ -27,7 +27,7 @@ export class ApplicationApi extends HttpBaseClient {
 
   async getApplicationData(
     applicationId: number,
-    options: { loadDynamicData?: boolean; isParentApplication?: boolean },
+    options: { loadDynamicData?: boolean },
   ): Promise<ApplicationSupplementalDataAPIOutDTO>;
 
   async getApplicationData(
@@ -35,7 +35,6 @@ export class ApplicationApi extends HttpBaseClient {
     options?: {
       studentId?: number;
       loadDynamicData?: boolean;
-      isParentApplication?: boolean;
     },
   ): Promise<ApplicationDataAPIOutDTO | ApplicationSupplementalDataAPIOutDTO> {
     let url = this.addClientRoot("application");
@@ -47,12 +46,6 @@ export class ApplicationApi extends HttpBaseClient {
     const isLoadDynamicDataPresent = options?.loadDynamicData !== undefined;
     if (isLoadDynamicDataPresent) {
       url = `${url}?loadDynamicData=${options.loadDynamicData}`;
-    }
-    if (options?.isParentApplication) {
-      const query = isLoadDynamicDataPresent
-        ? `&isParentApplication=${options?.isParentApplication}`
-        : `?isParentApplication=${options?.isParentApplication}`;
-      url = `${url}${query}`;
     }
     return this.getCall<
       ApplicationDataAPIOutDTO | ApplicationSupplementalDataAPIOutDTO
@@ -140,22 +133,17 @@ export class ApplicationApi extends HttpBaseClient {
    * @param applicationId for the application.
    * @param options related options.
    * - `studentId` student id for the student.
-   * - `isParentApplication` is parent application if true, loads the parent application.
    * @returns application details.
    */
   async getApplicationDetails(
     applicationId: number,
     options?: {
       studentId?: number;
-      isParentApplication?: boolean;
     },
   ): Promise<ApplicationBaseAPIOutDTO> {
-    let url = options?.studentId
+    const url = options?.studentId
       ? `application/student/${options?.studentId}/application/${applicationId}`
       : `application/${applicationId}`;
-    if (options?.isParentApplication !== undefined) {
-      url = `${url}?isParentApplication=${options?.isParentApplication}`;
-    }
     return this.getCall<ApplicationBaseAPIOutDTO>(this.addClientRoot(url));
   }
 

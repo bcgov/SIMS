@@ -707,7 +707,7 @@
                       "refreshOnChange": false,
                       "customClass": "banner-info",
                       "key": "html12",
-                      "customConditional": "show = !data.allowBetaInstitutionsOnly && (data.myProgramNotListed.programnotListed || (data.myStudyPeriodIsntListed && data.myStudyPeriodIsntListed.offeringnotListed));",
+                      "customConditional": "show = !data.allowBetaInstitutionsOnly && (!!data.myProgramNotListed?.programnotListed || !!data.myStudyPeriodIsntListed?.offeringnotListed);",
                       "type": "htmlelement",
                       "input": false,
                       "tableView": false
@@ -3698,7 +3698,6 @@
                 },
                 {
                   "label": "<h4 class='category-header-medium-small'></h4>",
-                  "conditionalAddButton": "show = data.roiInformation.length < 2;",
                   "reorder": false,
                   "addAnother": "Add another trusted contact",
                   "addAnotherPosition": "bottom",
@@ -3713,6 +3712,10 @@
                       "relationshipWithThisContact": ""
                     }
                   ],
+                  "validate": {
+                    "maxLength": "2"
+                  },
+                  "validateWhenHidden": false,
                   "key": "roiInformation",
                   "type": "datagrid",
                   "defaultOpen": false,
@@ -4204,11 +4207,7 @@
                       "collapsible": false,
                       "hideLabel": true,
                       "key": "uploadPanel",
-                      "conditional": {
-                        "show": "true",
-                        "when": "declaredOnTaxes",
-                        "eq": "yes"
-                      },
+                      "customConditional": "show = row.declaredOnTaxes === 'yes';",
                       "type": "panel",
                       "label": "Upload panel",
                       "buttonSettings": {
@@ -4224,6 +4223,8 @@
                         {
                           "label": "dependantsIncomeTaxApplicationException",
                           "tableView": false,
+                          "calculateValue": "value = { ...value, fullName: row?.fullName };",
+                          "calculateServer": true,
                           "validateWhenHidden": false,
                           "key": "dependantsIncomeTaxApplicationException",
                           "type": "container",
@@ -4231,7 +4232,7 @@
                           "components": [
                             {
                               "label": "Exception Description - Dependant's income tax",
-                              "calculateValue": "value = `Dependant's income tax - ${data.dependants[rowIndex].fullName}`;",
+                              "calculateValue": "value = `Dependant's income tax - ${row?.fullName}`;",
                               "calculateServer": true,
                               "key": "exceptionDescription",
                               "type": "hidden",
@@ -4424,11 +4425,7 @@
                       },
                       "collapsible": false,
                       "key": "dependentsThatYouSupportFinanciallyButDoNotHaveSoleCustody",
-                      "conditional": {
-                        "show": "true",
-                        "when": "supportnocustodyDependants",
-                        "eq": "yes"
-                      },
+                      "customConditional": "show = row.supportnocustodyDependants === 'yes';",
                       "type": "panel",
                       "label": "Dependents that you support financially but do not have sole custody",
                       "input": false,
@@ -4438,6 +4435,8 @@
                         {
                           "label": "dependantsSharedCustodyApplicationException",
                           "tableView": false,
+                          "calculateValue": "value = { ...value, fullName: row?.fullName };",
+                          "calculateServer": true,
                           "validateWhenHidden": false,
                           "key": "dependantsSharedCustodyApplicationException",
                           "type": "container",
@@ -4445,7 +4444,7 @@
                           "components": [
                             {
                               "label": "Exception Description - Dependant's shared custody",
-                              "calculateValue": "value = `Dependant's shared custody - ${data.dependants[rowIndex].fullName}`;",
+                              "calculateValue": "value = `Dependant's shared custody - ${row?.fullName}`;",
                               "calculateServer": true,
                               "key": "exceptionDescription",
                               "type": "hidden",
@@ -6164,11 +6163,7 @@
                           "collapsible": false,
                           "hideLabel": true,
                           "key": "parentCurrentYearIncomeExceptionConfirmPanel",
-                          "conditional": {
-                            "show": true,
-                            "when": "parents.hasCurrentYearParentIncome",
-                            "eq": "yes"
-                          },
+                          "customConditional": "show = row.hasCurrentYearParentIncome === 'yes';",
                           "type": "panel",
                           "label": "Panel",
                           "input": false,
@@ -6183,7 +6178,7 @@
                                   "attr": ""
                                 }
                               ],
-                              "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou are requesting additional financial aid due to your  parent/step-parent/sponsor/legal guardian having or anticipating a significant decrease in gross income for {{data.currentTaxYear}}, due to one of the following circumstances:\n<li>Medical illness or injury</li>\n<li>Family emergency (e.g., death or injury)</li>\n<li>Natural disaster</li>\n<li>Layoff, strike, lockout or other reduction in earnings beyond the family’s control</li>",
+                              "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou are requesting additional financial aid due to your  parent/step-parent/sponsor/legal guardian having or anticipating a significant decrease in gross income for {{data.currentTaxYear}}, due to one of the following circumstances:\n<ul>\n  <li>Medical illness or injury</li>\n  <li>Family emergency (e.g., death or injury)</li>\n  <li>Natural disaster</li>\n  <li>Layoff, strike, lockout or other reduction in earnings beyond the family’s control</li>\n</ul>",
                               "refreshOnChange": false,
                               "key": "estimatedCurrentYearIncomeParentExceptionPanelContent",
                               "type": "htmlelement",
@@ -6218,11 +6213,7 @@
                       "collapsible": false,
                       "hideLabel": true,
                       "key": "parentIncomePanel1",
-                      "conditional": {
-                        "show": true,
-                        "when": "parents.parentCurrentYearIncomeConfirmation",
-                        "eq": "true"
-                      },
+                      "customConditional": "show = row.parentCurrentYearIncomeConfirmation === true;",
                       "type": "panel",
                       "label": "Panel",
                       "input": false,
@@ -6231,6 +6222,8 @@
                         {
                           "label": "currentYearParentIncomeApplicationException",
                           "tableView": false,
+                          "calculateValue": "value = { ...value, parentFullName: row?.parentFullName };",
+                          "calculateServer": true,
                           "validateWhenHidden": false,
                           "key": "currentYearParentIncomeApplicationException",
                           "type": "container",
@@ -6238,7 +6231,7 @@
                           "components": [
                             {
                               "label": "Exception Description - Parent current year income",
-                              "calculateValue": "value = `Parent current year income - ${data.parents[rowIndex].parentFullName}`;",
+                              "calculateValue": "value = `Parent current year income - ${row?.parentFullName}`;",
                               "calculateServer": true,
                               "key": "exceptionDescription",
                               "type": "hidden",

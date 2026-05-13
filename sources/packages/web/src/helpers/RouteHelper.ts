@@ -1,6 +1,7 @@
 import { AuthService } from "@/services/AuthService";
 import { IdentityProviders, AppRoutes, AuthStatus } from "../types";
 import { ClientIdType } from "../types/contracts/ConfigContract";
+import { RouteLocationNormalizedGeneric } from "vue-router";
 
 export class RouteHelper {
   /**
@@ -137,5 +138,29 @@ export class RouteHelper {
         click();
       };
     }
+  }
+
+  /**
+   * Convert the default route params in applications details version routes.
+   * @param route route with the parameters to be converted.
+   * @returns studentId, applicationId and versionApplicationId as numbers.
+   */
+  static defaultDetailsRoute(route: RouteLocationNormalizedGeneric) {
+    return {
+      studentId: Number.parseInt(route.params.studentId as string),
+      applicationId: Number.parseInt(route.params.applicationId as string),
+      versionApplicationId: Number.parseInt(
+        route.params.versionApplicationId as string,
+      ),
+    };
+  }
+
+  /**
+   * Creates the version route path for application details routes.
+   * @param baseRouteName base route name.
+   * @returns version route path.
+   */
+  static getVersionRoutePath(baseRouteName: string): string {
+    return `version/:versionApplicationId/${baseRouteName}`;
   }
 }

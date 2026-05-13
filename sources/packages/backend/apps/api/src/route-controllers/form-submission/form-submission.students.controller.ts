@@ -42,6 +42,7 @@ import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { CustomNamedError } from "@sims/utilities";
 import { SupplementaryDataLoader } from "../../services/form-submission/form-supplementary-data/form-supplementary-data-loader";
 import { FormSubmissionControllerService } from "./form-submission.controller.service";
+import { FeatureTogglesService } from "@sims/services";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -53,6 +54,7 @@ export class FormSubmissionStudentsController extends BaseController {
     private readonly formSubmissionSubmitService: FormSubmissionSubmitService,
     private readonly supplementaryDataLoader: SupplementaryDataLoader,
     private readonly formSubmissionControllerService: FormSubmissionControllerService,
+    private readonly featureTogglesService: FeatureTogglesService,
   ) {
     super();
   }
@@ -63,10 +65,11 @@ export class FormSubmissionStudentsController extends BaseController {
    */
   @Get("forms")
   async getSubmissionForms(): Promise<FormSubmissionConfigurationsAPIOutDTO> {
-    const studentForms =
-      this.dynamicFormConfigurationService.getFormsByCategory(
-        FormCategory.StudentForm,
-        FormCategory.StudentAppeal,
+    const studentForms = this.dynamicFormConfigurationService
+      .getFormsByCategory(FormCategory.StudentForm, FormCategory.StudentAppeal)
+      .filter(
+        (form) =>
+          !this.featureTogglesService.isFormDisabled(form.formDefinitionName),
       );
     return {
       configurations: studentForms.map((configuration) => ({

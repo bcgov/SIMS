@@ -31,6 +31,7 @@ import {
   ApplicationVersionAPIOutDTO,
 } from "@/services/http/dto";
 import useEmitterEvents from "@/composables/useEmitterEvents";
+import { DIVIDER_MENU_ITEM } from "@/constants";
 
 /**
  * Applications edit statuses where the assessment history
@@ -97,16 +98,6 @@ export default defineComponent({
     onBeforeUnmount(() => {
       refreshApplicationSidebarOff(handleSideBarRefresh);
     });
-
-    /**
-     * Basic divider for the sections.
-     */
-    const DIVIDER_MENU_ITEM: MenuItemModel = {
-      type: "divider",
-      props: {
-        class: "mx-2",
-      },
-    };
 
     /**
      * Get display name for supporting user with truncation.

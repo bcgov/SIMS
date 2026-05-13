@@ -44,7 +44,7 @@ import InstitutionSearchStudents from "@/views/institution/student/InstitutionSe
 import InstitutionStudentDetails from "@/views/institution/student/InstitutionStudentDetails.vue";
 import InstitutionStudentProfile from "@/views/institution/student/InstitutionStudentProfile.vue";
 import InstitutionStudentApplications from "@/views/institution/student/InstitutionStudentApplications.vue";
-import InstitutionApplicationView from "@/views/institution/student/InstitutionStudentApplicationView.vue";
+import InstitutionStudentApplicationView from "@/views/institution/student/InstitutionStudentApplicationView.vue";
 import InstitutionStudentRestrictions from "@/views/institution/student/InstitutionStudentRestrictions.vue";
 import InstitutionStudentFileUploads from "@/views/institution/student/InstitutionStudentFileUploads.vue";
 import InstitutionStudentBalances from "@/views/institution/student/InstitutionStudentBalances.vue";
@@ -782,7 +782,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             path: AppRoutes.ApplicationView,
             name: InstitutionRoutesConst.STUDENT_APPLICATION_DETAILS,
             props: true,
-            component: InstitutionApplicationView,
+            component: InstitutionStudentApplicationView,
           },
           {
             path: AppRoutes.AssessmentSummary,
@@ -813,6 +813,14 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             name: InstitutionRoutesConst.NOTICE_OF_ASSESSMENT_VIEW,
             props: true,
             component: NoticeOfAssessment,
+          },
+          {
+            path: RouteHelper.getVersionRoutePath(AppRoutes.ApplicationView),
+            name: InstitutionRoutesConst.APPLICATION_VERSION_DETAILS,
+            props: (route) => ({
+              ...RouteHelper.defaultDetailsRoute(route),
+            }),
+            component: InstitutionStudentApplicationView,
           },
         ],
       },

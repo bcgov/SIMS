@@ -11,3 +11,4 @@ export * from "./cra-integration/cra-integration.dto";
 export * from "./disbursement/disbursement.controller";
 export * from "./disbursement/disbursement.dto";
 export * from "./health-check/health.controller";
+export * from "./metrics/metrics.controller";
