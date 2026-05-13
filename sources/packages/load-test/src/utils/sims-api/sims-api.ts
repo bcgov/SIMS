@@ -12,7 +12,7 @@ import {
  * @param credentials user credentials.
  * @returns HTTP Get call response.
  */
-export function getAPICall(
+export function getInstitutionAPICall(
   endpoint: string,
   credentials: UserPasswordCredential,
 ): RefinedResponse<ResponseType> {
