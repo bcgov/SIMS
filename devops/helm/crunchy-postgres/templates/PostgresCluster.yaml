@@ -193,12 +193,16 @@ spec:
           min_wal_size: {{ .Values.patroni.postgresql.parameters.min_wal_size }}
           max_wal_size: {{ .Values.patroni.postgresql.parameters.max_wal_size }}
           max_slot_wal_keep_size: {{ .Values.patroni.postgresql.parameters.max_slot_wal_keep_size }}
+          max_connections: {{ .Values.patroni.postgresql.parameters.max_connections }}
   
   proxy:
     pgBouncer:
       config:
         global:
           client_tls_sslmode: disable
+          default_pool_size: {{ .Values.proxy.pgBouncer.defaultPoolSize | quote }}
+          max_client_conn: {{ .Values.proxy.pgBouncer.maxClientConnections | quote }}
+          pool_mode: {{ .Values.proxy.pgBouncer.poolMode }}
       {{ if .Values.proxy.pgBouncer.image }}
       image: {{ .Values.proxy.pgBouncer.image }}
       {{ end }}

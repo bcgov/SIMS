@@ -17,6 +17,7 @@ import { MenuItemModel } from "@/types";
 import { useApplication, useFormatters } from "@/composables";
 import { ApplicationService } from "@/services/ApplicationService";
 import { ApplicationVersionAPIOutDTO } from "@/services/http/dto";
+import { DIVIDER_MENU_ITEM } from "@/constants";
 
 const props = defineProps({
   studentId: {
@@ -42,6 +43,7 @@ const loadApplicationData = async () => {
     );
   menuItems.value = [
     ...createCurrentApplicationMenuItems(overallDetails.currentApplication),
+    ...createVersionsMenuItems(overallDetails.previousVersions),
   ];
 };
 
@@ -105,6 +107,61 @@ const createCurrentApplicationMenuItems = (
       },
     },
   ];
+};
+
+/**
+ * Create the menu for the past applications (Application History).
+ * @param versions application version information.
+ */
+const createVersionsMenuItems = (
+  versions: ApplicationVersionAPIOutDTO[],
+): MenuItemModel[] => {
+  if (!versions.length) {
+    return [];
+  }
+  const menuItems: MenuItemModel[] = [
+    DIVIDER_MENU_ITEM,
+    {
+      title: "Application History",
+      props: {
+        subtitle: "Past submitted applications",
+        slim: true,
+      },
+    },
+  ];
+  versions.forEach((version) => {
+    // Application history children menu.
+    // Initialized with the application itself that always will be present.
+    const children: MenuItemModel[] = [
+      {
+        title: "Application",
+        props: {
+          slim: true,
+          prependIcon: "mdi-school-outline",
+          subtitle: mapApplicationEditStatusForMinistryAndInstitution(
+            version.applicationEditStatus,
+          ),
+          to: {
+            name: InstitutionRoutesConst.APPLICATION_VERSION_DETAILS,
+            params: {
+              studentId: props.studentId,
+              applicationId: props.applicationId,
+              versionApplicationId: version.id,
+            },
+          },
+        },
+      },
+    ];
+    // Application history menu.
+    menuItems.push({
+      title: `${getISODateHourMinuteString(version.submittedDate)}`,
+      props: {
+        color: null,
+      },
+      children,
+    });
+  });
+  return menuItems;
 };
 
 // Re-register the handler when applicationId changes

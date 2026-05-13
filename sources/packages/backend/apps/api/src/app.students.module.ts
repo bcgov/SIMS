@@ -37,6 +37,7 @@ import {
   FormSubmissionCreateAppealAssessmentAction,
   FormSubmissionUpdateModifiedIndependentAction,
   FormSubmissionUpdateNonPunitiveWithdrawalAction,
+  FormSubmissionUpdateDisabilityOnDecisionAction,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -200,6 +201,7 @@ import {
     FormSubmissionUpdateModifiedIndependentAction,
     FormSubmissionCreateAppealAssessmentAction,
     FormSubmissionUpdateDisabilityOnSubmissionAction,
+    FormSubmissionUpdateDisabilityOnDecisionAction,
     FormSubmissionActionProcessor,
     FormSubmissionService,
   ],

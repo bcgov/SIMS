@@ -11,6 +11,7 @@ objects:
       DEBUG: formio:*
       FORMIO_ROOT_EMAIL: "${FORMIO_ROOT_EMAIL}"
       FORMIO_ROOT_PASSWORD: "${FORMIO_ROOT_PASSWORD}"
+      FORMIO_API_KEY: "${FORMIO_API_KEY}"
       MONGODB_URI: "${MONGODB_URI}"
       NODE_CONFIG: '{"mongo": "${MONGODB_URI}"}'
       FORMS_URL: "${FORMS_URL}"
@@ -63,6 +64,11 @@ objects:
                   valueFrom:
                     secretKeyRef:
                       key: FORMIO_ROOT_PASSWORD
+                      name: ${NAME}
+                - name: API_KEYS
+                  valueFrom:
+                    secretKeyRef:
+                      key: FORMIO_API_KEY
                       name: ${NAME}
                 - name: FORMIO_DOMAIN
                   valueFrom:
@@ -138,7 +144,7 @@ objects:
         kind: Deployment
         name: ${NAME}
       minReplicas: "${{REPLICAS}}"
-      maxReplicas: 6
+      maxReplicas: 10
       metrics:
         - type: Resource
           resource:
@@ -183,6 +189,9 @@ parameters:
     required: true
   - name: FORMIO_ROOT_PASSWORD
     description: FORMIO_ROOT_PASSWORD
+    required: true
+  - name: FORMIO_API_KEY
+    description: FORMIO_API_KEY
     required: true
   - name: FORMS_URL
     displayName: FORMS_URL

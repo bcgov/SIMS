@@ -218,9 +218,14 @@
                       "customClass": "\"customClass\": \"label-bold\""
                     },
                     {
-                      "key": "addDependantsUploadPanel",
-                      "input": false,
                       "title": "Upload panel",
+                      "collapsible": false,
+                      "hideLabel": true,
+                      "key": "addDependantsUploadPanel",
+                      "customConditional": "show = row.declaredOnTaxes === 'yes';",
+                      "type": "panel",
+                      "label": "Panel",
+                      "input": false,
                       "tableView": false,
                       "components": [
                         {
@@ -289,27 +294,31 @@
                           "tableView": false
                         },
                         {
-                          "input": true,
-                          "tableView": false,
                           "label": "PD Dependent",
-                          "key": "pdDependentUpload",
-                          "multiple": true,
+                          "tableView": false,
+                          "storage": "url",
+                          "dir": "PD Dependent",
+                          "webcam": false,
+                          "capture": false,
+                          "fileTypes": [
+                            {
+                              "label": "",
+                              "value": ""
+                            }
+                          ],
                           "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
                           "fileMaxSize": "15MB",
-                          "type": "file",
-                          "conditional": {
-                            "show": "true",
-                            "when": "declaredOnTaxes",
-                            "eq": "yes"
-                          },
-                          "storage": "url",
-                          "url": "student/files",
-                          "dir": "PD Dependent",
+                          "multiple": true,
                           "validate": {
                             "required": true,
                             "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
                             "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
                           },
+                          "validateWhenHidden": false,
+                          "key": "pdDependentUpload",
+                          "type": "file",
+                          "url": "student/files",
+                          "input": true,
                           "lockKey": true
                         },
                         {
@@ -361,15 +370,7 @@
                           "lockKey": true
                         }
                       ],
-                      "type": "panel",
-                      "hideLabel": true,
-                      "conditional": {
-                        "show": "true",
-                        "when": "declaredOnTaxes",
-                        "eq": "yes"
-                      },
-                      "lockKey": true,
-                      "label": "Panel"
+                      "lockKey": true
                     }
                   ],
                   "type": "fieldset",

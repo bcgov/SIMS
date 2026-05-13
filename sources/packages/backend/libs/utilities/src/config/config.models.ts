@@ -58,7 +58,7 @@ export interface ClientCredential {
 
 export interface FormsConfig {
   formsUrl: string;
-  serviceAccountCredential: UserPasswordCredential;
+  apiKey: string;
 }
 
 export interface SFTPConfig {

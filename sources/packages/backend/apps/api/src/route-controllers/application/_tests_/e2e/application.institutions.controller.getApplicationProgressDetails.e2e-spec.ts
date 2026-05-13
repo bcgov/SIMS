@@ -85,16 +85,18 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationProgressDetails",
         .get(endpoint)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
-        .expect({
-          applicationStatus: ApplicationStatus.InProgress,
-          applicationStatusUpdatedOn:
-            savedApplication.applicationStatusUpdatedOn.toISOString(),
-          pirStatus: ProgramInfoStatus.notRequired,
-          assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
-          hasBlockFundingFeedbackError: false,
-          hasECertFailedValidations: false,
-          currentAssessmentId: savedApplication.currentAssessment.id,
-        });
+        .expect(({ body }) =>
+          expect(body).toEqual({
+            applicationStatus: ApplicationStatus.InProgress,
+            applicationStatusUpdatedOn:
+              savedApplication.applicationStatusUpdatedOn.toISOString(),
+            pirStatus: ProgramInfoStatus.notRequired,
+            assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+            hasBlockFundingFeedbackError: false,
+            hasECertFailedValidations: false,
+            currentAssessmentId: savedApplication.currentAssessment!.id,
+          }),
+        );
     },
   );
 
@@ -114,11 +116,13 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationProgressDetails",
       .get(endpoint)
       .auth(institutionUserTokenCUser, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
-        error: "Forbidden",
-      });
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          statusCode: HttpStatus.FORBIDDEN,
+          message: INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
+          error: "Forbidden",
+        }),
+      );
   });
 
   it("Should throw a HttpStatus Forbidden (403) error when the application is submitted for different institution.", async () => {
@@ -137,40 +141,13 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationProgressDetails",
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
-        error: "Forbidden",
-      });
-  });
-
-  it("Should throw a HttpStatus Forbidden (403) error when the application has status Edited.", async () => {
-    // Arrange
-    const savedApplication = await saveFakeApplication(
-      db.dataSource,
-      {
-        institutionLocation: collegeFLocation,
-      },
-      {
-        applicationStatus: ApplicationStatus.Edited,
-      },
-    );
-
-    const endpoint = `/institutions/application/student/${savedApplication.student.id}/application/${savedApplication.id}/progress-details`;
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.FORBIDDEN)
-      .expect({
-        statusCode: HttpStatus.FORBIDDEN,
-        message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
-        error: "Forbidden",
-      });
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          statusCode: HttpStatus.FORBIDDEN,
+          message: INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
+          error: "Forbidden",
+        }),
+      );
   });
 
   afterAll(async () => {
