@@ -1649,7 +1649,7 @@ export class NotificationActionsService {
 
   /**
    * Creates a ministry notification when there is a CRA/SIN file processing issue.
-   * @param notification notification details.
+   * @param notifications notification details array.
    */
   async saveMinistryFileProcessingIssueNotification(
     notifications: MinistryFileProcessingIssueNotification[],

@@ -99,7 +99,7 @@ describe(
     ];
 
     positiveNotificationTests.forEach(({ daysPastSent }) => {
-      it(`Should generate notifications for CRA and SIN file processing issuse when the files were sent ${daysPastSent} days ago with no response files received.`, async () => {
+      it(`Should generate notifications for CRA and SIN file processing issues when the files were sent ${daysPastSent} days ago with no response files received.`, async () => {
         // Arrange
 
         // Create an in progress application.
@@ -226,7 +226,7 @@ describe(
           {
             initialValue: {
               dateReceived: dateReceived,
-              dateSent: addDays(daysPastSent, new Date()),
+              dateSent: addDays(-daysPastSent, new Date()),
               fileSent: "DUMMY_BYPASS_SIN_SENT_FILE.txt",
             },
           },
