@@ -194,7 +194,7 @@ export class IER12ProcessingService {
    * the IER12 file. The awards map is used to populate the total assessment
    * award values for each record.
    * @param application application and its current assessment.
-   * @param assessmentAwards total current assessment award values for the application.
+   * @param assessmentAwards list of all awards from all disbursements associated with the current application's assessment.
    * @returns IER 12 records for the student assessment.
    */
   private async createIER12Record(

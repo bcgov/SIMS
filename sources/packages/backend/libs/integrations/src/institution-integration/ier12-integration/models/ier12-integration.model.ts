@@ -88,7 +88,7 @@ export interface IER12Record {
   programYear: string;
   applicationStatus: ApplicationStatus;
   applicationStatusDate: Date;
-  assessmentAwards: IERAward[];
+  assessmentAwards: IERAward[]; // assessmentAwards aggregates all the current assessment award values so each disbursement record can reuse the same totals.
   hasProvincialDefaultRestriction: boolean;
   hasFederalDefaultRestriction: boolean;
   hasProvincialOveraward: boolean;

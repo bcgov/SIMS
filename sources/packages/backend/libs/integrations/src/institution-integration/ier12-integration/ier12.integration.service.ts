@@ -107,7 +107,7 @@ export class IER12IntegrationService extends SFTPIntegrationBase<void> {
       ierFileDetail.applicationStatusDate = ierRecord.applicationStatusDate;
       // Sum of all canada loan awards which belongs to an assessment.
       ierFileDetail.cslAmount = this.getSumOfAwards(
-        ierRecord.assessmentAwards, // assessmentAwards aggregates all the current assessment award values so each disbursement record can reuse the same totals.
+        ierRecord.assessmentAwards,
         { awardTypeInclusions: [DisbursementValueType.CanadaLoan] },
       );
       // Sum of all BC loan awards which belongs to an assessment.
