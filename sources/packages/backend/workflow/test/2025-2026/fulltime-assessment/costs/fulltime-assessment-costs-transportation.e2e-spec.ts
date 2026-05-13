@@ -183,182 +183,186 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
       calculatedAssessment.variables.calculatedDataTotalTransportationCost,
     ).toBe(0);
   });
-});
 
-it("Should determine max return transportation cost for two round trips (<=26 weeks).", async () => {
-  // Arrange
-  const assessmentConsolidatedData =
-    createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-  assessmentConsolidatedData.offeringWeeks = 26;
-  assessmentConsolidatedData.studentDataReturnTripHomeCost = 452;
-  assessmentConsolidatedData.studentDataLivingAtHome = YesNoOptions.Yes;
-  assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.Yes;
-  assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-    YesNoOptions.No;
-  // Act
-  const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
-    PROGRAM_YEAR,
-    assessmentConsolidatedData,
+  it("Should determine max return transportation cost for two round trips (<=26 weeks).", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.offeringWeeks = 26;
+    assessmentConsolidatedData.studentDataReturnTripHomeCost = 452;
+    assessmentConsolidatedData.studentDataLivingAtHome = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataAdditionalTransportRequested =
+      YesNoOptions.No;
+    // Act
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // Expect the return transportation cost to be $900 as the max for offerings up to 26 weeks.
+    // Student declared cost would be $452 x 2 (allowable round trips) = $904.
+    // Max is $900 for offerings 26 weeks or less.
+    expect(
+      calculatedAssessment.variables.calculatedDataReturnTransportationCost,
+    ).toBe(900);
+    // Expect the additional transportation cost to be null or undefined.
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataTotalAdditionalTransportationAllowance,
+    ).toBe(undefined);
+    // Expect the total transportation cost to be $900.
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalTransportationCost,
+    ).toBe(900);
+  });
+
+  it("Should determine max return transportation cost for two round trips (>=27 weeks).", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.offeringWeeks = 27;
+    assessmentConsolidatedData.studentDataReturnTripHomeCost = 1000;
+    assessmentConsolidatedData.studentDataLivingAtHome = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataAdditionalTransportRequested =
+      YesNoOptions.No;
+    // Act
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // Expect the return transportation cost to be $1800.
+    // Student declared cost would be $1000 x 2 (allowable round trips) = $2,000.
+    // Max is $1,800 for offerings 27 weeks or longer.
+    expect(
+      calculatedAssessment.variables.calculatedDataReturnTransportationCost,
+    ).toBe(1800);
+    // Expect the additional transportation cost to be null or undefined.
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataTotalAdditionalTransportationAllowance,
+    ).toBe(undefined);
+    // Expect the total transportation cost to be $1800.
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalTransportationCost,
+    ).toBe(1800);
+  });
+
+  it("Should determine return transportation cost below the maximum for two round trips (>=27 weeks).", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.offeringWeeks = 27;
+    assessmentConsolidatedData.studentDataReturnTripHomeCost = 600;
+    assessmentConsolidatedData.studentDataLivingAtHome = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataAdditionalTransportRequested =
+      YesNoOptions.No;
+    // Act
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // Expect the return transportation cost to be $1200.
+    // Student declared cost would be $600 x 2 (allowable round trips) = $1200.
+    // Max is $1,800 for offerings 27 weeks or longer.
+    expect(
+      calculatedAssessment.variables.calculatedDataReturnTransportationCost,
+    ).toBe(1200);
+    // Expect the additional transportation cost to be null or undefined.
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataTotalAdditionalTransportationAllowance,
+    ).toBe(undefined);
+    // Expect the total transportation cost to be $1200.
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalTransportationCost,
+    ).toBe(1200);
+  });
+
+  it("Should determine return transportation cost below the maximum for two round trips with previously claimed costs (>=27 weeks).", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.offeringWeeks = 27;
+    assessmentConsolidatedData.studentDataReturnTripHomeCost = 600;
+    assessmentConsolidatedData.programYearTotalFullTimeReturnTransportationCost = 1000;
+    assessmentConsolidatedData.studentDataLivingAtHome = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataAdditionalTransportRequested =
+      YesNoOptions.No;
+    // Act
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // Max is $1,800 for the program year.
+    // 1800 - 1000 (previously claimed) = 800 (remaining return transportation).
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataRemainingReturnTransportation,
+    ).toBe(800);
+    // Expect the return transportation cost to be lower of:
+    // Remaining return transportation cost ($800),
+    // application limit ($1800 for 27+ weeks), or
+    // Student declared cost ($600 x 2 allowable round trips = $1200).
+    expect(
+      calculatedAssessment.variables.calculatedDataReturnTransportationCost,
+    ).toBe(800);
+    // Expect the additional transportation cost to be null or undefined.
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataTotalAdditionalTransportationAllowance,
+    ).toBe(undefined);
+    // Expect the total transportation cost to be $1200.
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalTransportationCost,
+    ).toBe(800);
+  });
+
+  it.each([OfferingDeliveryOptions.Onsite, OfferingDeliveryOptions.Blended])(
+    "Should determine additional transportation cost for a %s offering.",
+    async (offeringDelivered) => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.offeringDelivered = offeringDelivered;
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportOwner =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
+      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
+        YesNoOptions.No;
+      // Act
+      const calculatedAssessment =
+        await executeFullTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      // 300 km * 0.34 = $102, capped at limit of $94 per week.
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataNetWeeklyAdditionalTransportCost,
+      ).toBe(94);
+      // $94 per week * 10 weeks = $940.
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalAdditionalTransportationAllowance,
+      ).toBe(940);
+    },
   );
-  // Assert
-  // Expect the return transportation cost to be $900 as the max for offerings up to 26 weeks.
-  // Student declared cost would be $452 x 2 (allowable round trips) = $904.
-  // Max is $900 for offerings 26 weeks or less.
-  expect(
-    calculatedAssessment.variables.calculatedDataReturnTransportationCost,
-  ).toBe(900);
-  // Expect the additional transportation cost to be null or undefined.
-  expect(
-    calculatedAssessment.variables
-      .calculatedDataTotalAdditionalTransportationAllowance,
-  ).toBe(undefined);
-  // Expect the total transportation cost to be $900.
-  expect(
-    calculatedAssessment.variables.calculatedDataTotalTransportationCost,
-  ).toBe(900);
-});
 
-it("Should determine max return transportation cost for two round trips (>=27 weeks).", async () => {
-  // Arrange
-  const assessmentConsolidatedData =
-    createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-  assessmentConsolidatedData.offeringWeeks = 27;
-  assessmentConsolidatedData.studentDataReturnTripHomeCost = 1000;
-  assessmentConsolidatedData.studentDataLivingAtHome = YesNoOptions.Yes;
-  assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.Yes;
-  assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-    YesNoOptions.No;
-  // Act
-  const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
-    PROGRAM_YEAR,
-    assessmentConsolidatedData,
-  );
-  // Assert
-  // Expect the return transportation cost to be $1800.
-  // Student declared cost would be $1000 x 2 (allowable round trips) = $2,000.
-  // Max is $1,800 for offerings 27 weeks or longer.
-  expect(
-    calculatedAssessment.variables.calculatedDataReturnTransportationCost,
-  ).toBe(1800);
-  // Expect the additional transportation cost to be null or undefined.
-  expect(
-    calculatedAssessment.variables
-      .calculatedDataTotalAdditionalTransportationAllowance,
-  ).toBe(undefined);
-  // Expect the total transportation cost to be $1800.
-  expect(
-    calculatedAssessment.variables.calculatedDataTotalTransportationCost,
-  ).toBe(1800);
-});
-
-it("Should determine return transportation cost below the maximum for two round trips (>=27 weeks).", async () => {
-  // Arrange
-  const assessmentConsolidatedData =
-    createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-  assessmentConsolidatedData.offeringWeeks = 27;
-  assessmentConsolidatedData.studentDataReturnTripHomeCost = 600;
-  assessmentConsolidatedData.studentDataLivingAtHome = YesNoOptions.Yes;
-  assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.Yes;
-  assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-    YesNoOptions.No;
-  // Act
-  const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
-    PROGRAM_YEAR,
-    assessmentConsolidatedData,
-  );
-  // Assert
-  // Expect the return transportation cost to be $1200.
-  // Student declared cost would be $600 x 2 (allowable round trips) = $1200.
-  // Max is $1,800 for offerings 27 weeks or longer.
-  expect(
-    calculatedAssessment.variables.calculatedDataReturnTransportationCost,
-  ).toBe(1200);
-  // Expect the additional transportation cost to be null or undefined.
-  expect(
-    calculatedAssessment.variables
-      .calculatedDataTotalAdditionalTransportationAllowance,
-  ).toBe(undefined);
-  // Expect the total transportation cost to be $1200.
-  expect(
-    calculatedAssessment.variables.calculatedDataTotalTransportationCost,
-  ).toBe(1200);
-});
-
-it("Should determine return transportation cost below the maximum for two round trips with previously claimed costs (>=27 weeks).", async () => {
-  // Arrange
-  const assessmentConsolidatedData =
-    createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-  assessmentConsolidatedData.offeringWeeks = 27;
-  assessmentConsolidatedData.studentDataReturnTripHomeCost = 600;
-  assessmentConsolidatedData.programYearTotalFullTimeReturnTransportationCost = 1000;
-  assessmentConsolidatedData.studentDataLivingAtHome = YesNoOptions.Yes;
-  assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.Yes;
-  assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-    YesNoOptions.No;
-  // Act
-  const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
-    PROGRAM_YEAR,
-    assessmentConsolidatedData,
-  );
-  // Assert
-  // Max is $1,800 for the program year.
-  // 1800 - 1000 (previously claimed) = 800 (remaining return transportation).
-  expect(
-    calculatedAssessment.variables.calculatedDataRemainingReturnTransportation,
-  ).toBe(800);
-  // Expect the return transportation cost to be lower of:
-  // Remaining return transportation cost ($800),
-  // application limit ($1800 for 27+ weeks), or
-  // Student declared cost ($600 x 2 allowable round trips = $1200).
-  expect(
-    calculatedAssessment.variables.calculatedDataReturnTransportationCost,
-  ).toBe(800);
-  // Expect the additional transportation cost to be null or undefined.
-  expect(
-    calculatedAssessment.variables
-      .calculatedDataTotalAdditionalTransportationAllowance,
-  ).toBe(undefined);
-  // Expect the total transportation cost to be $1200.
-  expect(
-    calculatedAssessment.variables.calculatedDataTotalTransportationCost,
-  ).toBe(800);
-});
-
-it("Should determine additional transportation allowance for a blended offering.", async () => {
-  // Arrange
-  const assessmentConsolidatedData =
-    createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-  assessmentConsolidatedData.offeringDelivered =
-    OfferingDeliveryOptions.Blended;
-  assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-    YesNoOptions.Yes;
-  assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
-    YesNoOptions.Yes;
-  assessmentConsolidatedData.studentDataAdditionalTransportOwner =
-    YesNoOptions.Yes;
-  assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
-  assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
-  assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
-    YesNoOptions.No;
-  // Act
-  const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
-    PROGRAM_YEAR,
-    assessmentConsolidatedData,
-  );
-  // Assert
-  // 300 km * 0.34 = $102, capped at limit of $94 per week.
-  expect(
-    calculatedAssessment.variables
-      .calculatedDataNetWeeklyAdditionalTransportCost,
-  ).toBe(94);
-  // $94 per week * 10 weeks = $940.
-  expect(
-    calculatedAssessment.variables
-      .calculatedDataTotalAdditionalTransportationAllowance,
-  ).toBe(940);
-});
-
-afterAll(async () => {
-  // Closes the singleton instance created during test executions.
-  await ZeebeMockedClient.getMockedZeebeInstance().close();
+  afterAll(async () => {
+    // Closes the singleton instance created during test executions.
+    await ZeebeMockedClient.getMockedZeebeInstance().close();
+  });
 });

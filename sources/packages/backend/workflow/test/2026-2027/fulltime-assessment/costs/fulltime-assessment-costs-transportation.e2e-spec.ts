@@ -323,39 +323,42 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
     ).toBe(800);
   });
 
-  it("Should determine additional transportation allowance for a blended offering.", async () => {
-    // Arrange
-    const assessmentConsolidatedData =
-      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.offeringDelivered =
-      OfferingDeliveryOptions.Blended;
-    assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-      YesNoOptions.Yes;
-    assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
-      YesNoOptions.Yes;
-    assessmentConsolidatedData.studentDataAdditionalTransportOwner =
-      YesNoOptions.Yes;
-    assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
-    assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
-    assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
-      YesNoOptions.No;
-    // Act
-    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
-      PROGRAM_YEAR,
-      assessmentConsolidatedData,
-    );
-    // Assert
-    // 300 km * 0.34 = $102, capped at limit of $94 per week.
-    expect(
-      calculatedAssessment.variables
-        .calculatedDataNetWeeklyAdditionalTransportCost,
-    ).toBe(94);
-    // $94 per week * 10 weeks = $940.
-    expect(
-      calculatedAssessment.variables
-        .calculatedDataTotalAdditionalTransportationAllowance,
-    ).toBe(940);
-  });
+  it.each([OfferingDeliveryOptions.Onsite, OfferingDeliveryOptions.Blended])(
+    "Should determine additional transportation cost for a %s offering.",
+    async (offeringDelivered) => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.offeringDelivered = offeringDelivered;
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportOwner =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
+      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
+        YesNoOptions.No;
+      // Act
+      const calculatedAssessment =
+        await executeFullTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      // 300 km * 0.34 = $102, capped at limit of $94 per week.
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataNetWeeklyAdditionalTransportCost,
+      ).toBe(94);
+      // $94 per week * 10 weeks = $940.
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalAdditionalTransportationAllowance,
+      ).toBe(940);
+    },
+  );
 
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
