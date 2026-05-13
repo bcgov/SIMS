@@ -267,6 +267,7 @@ export class ApplicationSubmissionService {
             initialValue: {
               data: APPLICATION_SUBMISSION_DATA as ApplicationData,
               offeringIntensity: OfferingIntensity.fullTime,
+              pirStatus: ProgramInfoStatus.notRequired,
             },
           },
         ),
@@ -286,7 +287,6 @@ export class ApplicationSubmissionService {
             submittedDate,
             parentApplication: { id: app.id },
             precedingApplication: { id: app.id },
-            pirStatus: ProgramInfoStatus.notRequired,
           }),
         ),
       );
