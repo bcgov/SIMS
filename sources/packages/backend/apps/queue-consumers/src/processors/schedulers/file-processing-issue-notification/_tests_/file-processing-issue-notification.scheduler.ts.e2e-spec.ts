@@ -76,340 +76,196 @@ describe(
       );
     });
 
-    it("Should generate a notification for a CRA file processing issue when the CRA Verification was sent 6 days ago with no file received.", async () => {
-      // Arrange
+    // The following scenarios should generate notifications.
+    const positiveNotificationTests = [
+      {
+        daysPastSent: 5,
+      },
+      {
+        daysPastSent: 6,
+      },
+    ];
 
-      // Create an in progress application.
-      const application = await saveFakeApplication(
-        db.dataSource,
-        { student },
-        {
-          applicationStatus: ApplicationStatus.InProgress,
-        },
-      );
+    // The following scenarios should not generate notifications.
+    const negativeNotificationTests = [
+      {
+        daysPastSent: 4,
+        dateReceived: undefined,
+      },
+      {
+        daysPastSent: 6,
+        dateReceived: addDays(-2, new Date()),
+      },
+    ];
 
-      const craVerification = createFakeCRAIncomeVerification(
-        {
-          application: application,
-        },
-        {
-          initialValues: {
-            dateReceived: undefined,
-            dateSent: addDays(-6, new Date()),
-            fileSent: "DUMMY_BYPASS_CRA_SENT_FILE.txt",
+    positiveNotificationTests.forEach(({ daysPastSent }) => {
+      it(`Should generate notifications for CRA and SIN file processing issuse when the files were sent ${daysPastSent} days ago with no response files received.`, async () => {
+        // Arrange
+
+        // Create an in progress application.
+        const application = await saveFakeApplication(
+          db.dataSource,
+          { student },
+          {
+            applicationStatus: ApplicationStatus.InProgress,
           },
-        },
-      );
-      await db.craIncomeVerification.save(craVerification);
+        );
 
-      // Queued job.
-      const mockedJob = mockBullJob<void>();
-
-      // Act
-      const result = await processor.processQueue(mockedJob.job);
-
-      expect(result).toStrictEqual([
-        "Completed file processing issue notifications.",
-      ]);
-
-      // Assert
-      expect(
-        mockedJob.containLogMessages([
-          "Total overdue CRA income verifications: 1",
-        ]),
-      ).toBe(true);
-      const notification = await db.notification.findOne({
-        select: {
-          id: true,
-          messagePayload: true,
-        },
-        relations: { notificationMessage: true },
-        where: {
-          notificationMessage: {
-            id: NotificationMessageType.MinistryFileProcessingIssue,
+        const craVerification = createFakeCRAIncomeVerification(
+          {
+            application: application,
           },
-          dateSent: IsNull(),
-          user: { id: systemUsersService.systemUser.id },
-        },
-      });
-      expect(notification).toBeDefined();
-      expect(notification!.messagePayload).toStrictEqual({
-        email_address: MINISTRY_EMAIL_ADDRESS,
-        template_id: "cb0efb5a-7540-4925-b017-e9d96852368f",
-        personalisation: {
-          dateSent: getPSTPDTDateTime(craVerification.dateSent!),
-          fileName: craVerification.fileSent,
-          type: "CRA",
-        },
-      });
-    });
-
-    it("Should not generate a notification for a CRA file processing issue when the CRA Verification was sent 4 days ago with no file received.", async () => {
-      // Arrange
-
-      // Create an in progress application.
-      const application = await saveFakeApplication(
-        db.dataSource,
-        { student },
-        {
-          applicationStatus: ApplicationStatus.InProgress,
-        },
-      );
-
-      const craVerification = createFakeCRAIncomeVerification(
-        {
-          application: application,
-        },
-        {
-          initialValues: {
-            dateReceived: undefined,
-            dateSent: addDays(-4, new Date()),
-            fileSent: "DUMMY_BYPASS_CRA_SENT_FILE.txt",
+          {
+            initialValues: {
+              dateReceived: undefined,
+              dateSent: addDays(-daysPastSent, new Date()),
+              fileSent: "DUMMY_BYPASS_CRA_SENT_FILE.txt",
+            },
           },
-        },
-      );
-      await db.craIncomeVerification.save(craVerification);
-
-      // Queued job.
-      const mockedJob = mockBullJob<void>();
-
-      // Act
-      const result = await processor.processQueue(mockedJob.job);
-
-      expect(result).toStrictEqual([
-        "Completed file processing issue notifications.",
-      ]);
-
-      // Assert
-      expect(
-        mockedJob.containLogMessages([
-          "Total overdue CRA income verifications: 0",
-        ]),
-      ).toBe(true);
-      const notificationExists = await db.notification.exists({
-        select: {
-          id: true,
-          messagePayload: true,
-        },
-        relations: { notificationMessage: true },
-        where: {
-          notificationMessage: {
-            id: NotificationMessageType.MinistryFileProcessingIssue,
+        );
+        await db.craIncomeVerification.save(craVerification);
+        const sinValidation = createFakeSINValidation(
+          {
+            student,
           },
-          dateSent: IsNull(),
-          user: { id: systemUsersService.systemUser.id },
-        },
-      });
-      expect(notificationExists).toBe(false);
-    });
-
-    it("Should not generate a notification for a CRA file processing issue when the CRA Verification was sent 6 days ago with a file received.", async () => {
-      // Arrange
-
-      // Create an in progress application.
-      const application = await saveFakeApplication(
-        db.dataSource,
-        { student },
-        {
-          applicationStatus: ApplicationStatus.InProgress,
-        },
-      );
-
-      const craVerification = createFakeCRAIncomeVerification(
-        {
-          application: application,
-        },
-        {
-          initialValues: {
-            dateReceived: addDays(-2, new Date()),
-            dateSent: addDays(-6, new Date()),
-            fileSent: "DUMMY_BYPASS_CRA_SENT_FILE.txt",
+          {
+            initialValue: {
+              dateReceived: null,
+              dateSent: addDays(-daysPastSent, new Date()),
+              fileSent: "DUMMY_BYPASS_SIN_SENT_FILE.txt",
+            },
           },
-        },
-      );
-      await db.craIncomeVerification.save(craVerification);
+        );
+        await db.sinValidation.save(sinValidation);
 
-      // Queued job.
-      const mockedJob = mockBullJob<void>();
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
 
-      // Act
-      const result = await processor.processQueue(mockedJob.job);
+        // Act
+        const result = await processor.processQueue(mockedJob.job);
 
-      expect(result).toStrictEqual([
-        "Completed file processing issue notifications.",
-      ]);
+        expect(result).toStrictEqual([
+          "Completed file processing issue notifications.",
+        ]);
 
-      // Assert
-      expect(
-        mockedJob.containLogMessages([
-          "Total overdue CRA income verifications: 0",
-        ]),
-      ).toBe(true);
-      const notificationExists = await db.notification.exists({
-        select: {
-          id: true,
-          messagePayload: true,
-        },
-        relations: { notificationMessage: true },
-        where: {
-          notificationMessage: {
-            id: NotificationMessageType.MinistryFileProcessingIssue,
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            "Total overdue CRA income verifications: 1",
+            "Total overdue SIN validations: 1",
+          ]),
+        ).toBe(true);
+
+        const notifications = await db.notification.find({
+          select: {
+            id: true,
+            messagePayload: true,
           },
-          dateSent: IsNull(),
-          user: { id: systemUsersService.systemUser.id },
-        },
-      });
-      expect(notificationExists).toBe(false);
-    });
-
-    it("Should generate a notification for a SIN file processing issue when the SIN Validation was sent 6 days ago with no file received.", async () => {
-      // Arrange
-      const sinValidation = createFakeSINValidation(
-        {
-          student,
-        },
-        {
-          initialValue: {
-            dateReceived: null,
-            dateSent: addDays(-6, new Date()),
-            fileSent: "DUMMY_BYPASS_SIN_SENT_FILE.txt",
+          relations: { notificationMessage: true },
+          where: {
+            notificationMessage: {
+              id: NotificationMessageType.MinistryFileProcessingIssue,
+            },
+            dateSent: IsNull(),
+            user: { id: systemUsersService.systemUser.id },
           },
-        },
-      );
-      await db.sinValidation.save(sinValidation);
-
-      // Queued job.
-      const mockedJob = mockBullJob<void>();
-
-      // Act
-      const result = await processor.processQueue(mockedJob.job);
-
-      expect(result).toStrictEqual([
-        "Completed file processing issue notifications.",
-      ]);
-
-      // Assert
-      expect(
-        mockedJob.containLogMessages(["Total overdue SIN validations: 1"]),
-      ).toBe(true);
-      const notification = await db.notification.findOne({
-        select: {
-          id: true,
-          messagePayload: true,
-        },
-        relations: { notificationMessage: true },
-        where: {
-          notificationMessage: {
-            id: NotificationMessageType.MinistryFileProcessingIssue,
+          order: { id: "ASC" },
+        });
+        expect(notifications.length).toEqual(2);
+        expect(notifications[0].messagePayload).toStrictEqual({
+          email_address: MINISTRY_EMAIL_ADDRESS,
+          template_id: "cb0efb5a-7540-4925-b017-e9d96852368f",
+          personalisation: {
+            dateSent: getPSTPDTDateTime(craVerification.dateSent!),
+            fileName: craVerification.fileSent,
+            type: "CRA",
           },
-          dateSent: IsNull(),
-          user: { id: systemUsersService.systemUser.id },
-        },
-      });
-      expect(notification).toBeDefined();
-      expect(notification!.messagePayload).toStrictEqual({
-        email_address: MINISTRY_EMAIL_ADDRESS,
-        template_id: "cb0efb5a-7540-4925-b017-e9d96852368f",
-        personalisation: {
-          dateSent: getPSTPDTDateTime(sinValidation.dateSent!),
-          fileName: sinValidation.fileSent,
-          type: "SIN",
-        },
+        });
+        expect(notifications[1].messagePayload).toStrictEqual({
+          email_address: MINISTRY_EMAIL_ADDRESS,
+          template_id: "cb0efb5a-7540-4925-b017-e9d96852368f",
+          personalisation: {
+            dateSent: getPSTPDTDateTime(sinValidation.dateSent!),
+            fileName: sinValidation.fileSent,
+            type: "SIN",
+          },
+        });
       });
     });
 
-    it("Should not generate a notification for a SIN file processing issue when the SIN Validation was sent 4 days ago with no file received.", async () => {
-      // Arrange
-      const sinValidation = createFakeSINValidation(
-        {
-          student,
-        },
-        {
-          initialValue: {
-            dateReceived: null,
-            dateSent: addDays(-4, new Date()),
-            fileSent: "DUMMY_BYPASS_SIN_SENT_FILE.txt",
+    negativeNotificationTests.forEach(({ daysPastSent, dateReceived }) => {
+      it(`Should not generate notifications for a CRA and SIN file processing issues when the files were sent ${daysPastSent} days ago with ${dateReceived ? "" : "no "}response files received.`, async () => {
+        // Arrange
+
+        // Create an in progress application.
+        const application = await saveFakeApplication(
+          db.dataSource,
+          { student },
+          {
+            applicationStatus: ApplicationStatus.InProgress,
           },
-        },
-      );
-      await db.sinValidation.save(sinValidation);
+        );
 
-      // Queued job.
-      const mockedJob = mockBullJob<void>();
-
-      // Act
-      const result = await processor.processQueue(mockedJob.job);
-
-      expect(result).toStrictEqual([
-        "Completed file processing issue notifications.",
-      ]);
-
-      // Assert
-      expect(
-        mockedJob.containLogMessages(["Total overdue SIN validations: 0"]),
-      ).toBe(true);
-      const notificationExists = await db.notification.exists({
-        select: {
-          id: true,
-          messagePayload: true,
-        },
-        relations: { notificationMessage: true },
-        where: {
-          notificationMessage: {
-            id: NotificationMessageType.MinistryFileProcessingIssue,
+        const craVerification = createFakeCRAIncomeVerification(
+          {
+            application: application,
           },
-          dateSent: IsNull(),
-          user: { id: systemUsersService.systemUser.id },
-        },
+          {
+            initialValues: {
+              dateReceived: dateReceived,
+              dateSent: addDays(-daysPastSent, new Date()),
+              fileSent: "DUMMY_BYPASS_CRA_SENT_FILE.txt",
+            },
+          },
+        );
+        await db.craIncomeVerification.save(craVerification);
+        const sinValidation = createFakeSINValidation(
+          {
+            student,
+          },
+          {
+            initialValue: {
+              dateReceived: dateReceived,
+              dateSent: addDays(daysPastSent, new Date()),
+              fileSent: "DUMMY_BYPASS_SIN_SENT_FILE.txt",
+            },
+          },
+        );
+        await db.sinValidation.save(sinValidation);
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        const result = await processor.processQueue(mockedJob.job);
+
+        expect(result).toStrictEqual([
+          "Completed file processing issue notifications.",
+        ]);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            "Total overdue CRA income verifications: 0",
+            "Total overdue SIN validations: 0",
+          ]),
+        ).toBe(true);
+        const notificationExists = db.notification.exists({
+          select: {
+            id: true,
+            messagePayload: true,
+          },
+          relations: { notificationMessage: true },
+          where: {
+            notificationMessage: {
+              id: NotificationMessageType.MinistryFileProcessingIssue,
+            },
+            dateSent: IsNull(),
+            user: { id: systemUsersService.systemUser.id },
+          },
+        });
+        expect(await notificationExists).toBe(false);
       });
-      expect(notificationExists).toBe(false);
-    });
-
-    it("Should not generate a notification for a SIN file processing issue when the SIN Validation was sent 6 days ago with a file received.", async () => {
-      // Arrange
-      const sinValidation = createFakeSINValidation(
-        {
-          student,
-        },
-        {
-          initialValue: {
-            dateReceived: addDays(-2, new Date()),
-            dateSent: addDays(-6, new Date()),
-            fileSent: "DUMMY_BYPASS_SIN_SENT_FILE.txt",
-          },
-        },
-      );
-      await db.sinValidation.save(sinValidation);
-
-      // Queued job.
-      const mockedJob = mockBullJob<void>();
-
-      // Act
-      const result = await processor.processQueue(mockedJob.job);
-
-      expect(result).toStrictEqual([
-        "Completed file processing issue notifications.",
-      ]);
-
-      // Assert
-      expect(
-        mockedJob.containLogMessages(["Total overdue SIN validations: 0"]),
-      ).toBe(true);
-      const notificationExists = await db.notification.exists({
-        select: {
-          id: true,
-          messagePayload: true,
-        },
-        relations: { notificationMessage: true },
-        where: {
-          notificationMessage: {
-            id: NotificationMessageType.MinistryFileProcessingIssue,
-          },
-          dateSent: IsNull(),
-          user: { id: systemUsersService.systemUser.id },
-        },
-      });
-      expect(notificationExists).toBe(false);
     });
   },
 );
