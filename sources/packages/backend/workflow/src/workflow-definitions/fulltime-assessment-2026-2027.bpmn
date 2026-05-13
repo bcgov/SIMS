@@ -771,7 +771,7 @@ If distance education/blended learning program or if married and claiming separa
       <bpmn:outgoing>Flow_0frefsk</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="Flow_19c3ckn" name="Eligible" sourceRef="Gateway_13yktch" targetRef="Event_1alhhyz">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataAdditionalTransportRequested = "yes" and studentDataAdditionalTransportListedDriver ="yes" and offeringDelivered = "onsite"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataAdditionalTransportRequested = "yes" and studentDataAdditionalTransportListedDriver ="yes" and (offeringDelivered = "onsite" or offeringDelivered = "blended")</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:intermediateThrowEvent id="Event_0n3kqyy" name="Exceptional Expense (Appeal)">
       <bpmn:extensionElements>
