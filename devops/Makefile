@@ -25,7 +25,6 @@ export MAINTENANCE_MODE_EXTERNAL := $(or $(MAINTENANCE_MODE_EXTERNAL), false)
 export BYPASS_APPLICATION_SUBMIT_VALIDATIONS := $(or $(BYPASS_APPLICATION_SUBMIT_VALIDATIONS), false)
 export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
 export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 365)
-export FILE_PROCESSING_OVERDUE_DAYS := $(or ${FILE_PROCESSING_OVERDUE_DAYS}, 5)
 export REDIS_PORT := $(or ${REDIS_PORT}, 6379)
 export CLAMAV_PORT := $(or ${CLAMAV_PORT}, 3310)
 export API_PORT := $(or ${API_PORT}, 7070)
@@ -76,6 +75,8 @@ export MIGRATIONS_OC_TIMEOUT := 300s
 
 # Maximum job duration limit in seconds for migration jobs.
 export MIGRATIONS_JOB_MAX_DURATION := 300
+# The number of days after which CRA/SIN file processing is considered overdue.
+export FILE_PROCESSING_OVERDUE_DAYS := $(or ${FILE_PROCESSING_OVERDUE_DAYS}, 5)
 
 define ZONE_B_SFTP_PRIVATE_KEY
 -----BEGIN OPENSSH PRIVATE KEY-----
@@ -601,11 +602,11 @@ deploy-queue-consumers:
 	test -n "$(ATBC_LOGIN_ENDPOINT)"
 	test -n "$(ATBC_ENDPOINT)"
 	test -n "$(APPLICATION_ARCHIVE_DAYS)"
-	test -n "$(FILE_PROCESSING_OVERDUE_DAYS)"
 	test -n "$(QUEUE_CONSUMERS_CPU_REQUEST)"
 	test -n "$(QUEUE_CONSUMERS_MEMORY_REQUEST)"
 	test -n "$(QUEUE_CONSUMERS_MEMORY_LIMIT)"
 	test -n "$(QUEUE_CONSUMERS_REPLICAS)"
+	test -n "$(FILE_PROCESSING_OVERDUE_DAYS)"
 	@echo "+\n++ Deploying Queues with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/queue-consumers-deploy.yml \
 		-p NAME=$(QUEUE_CONSUMERS) \
@@ -621,7 +622,6 @@ deploy-queue-consumers:
 		-p ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
 		-p APPLICATION_ARCHIVE_DAYS=$(APPLICATION_ARCHIVE_DAYS) \
 		-p IS_FULLTIME_ALLOWED=$(IS_FULLTIME_ALLOWED) \
-		-p FILE_PROCESSING_OVERDUE_DAYS=$(FILE_PROCESSING_OVERDUE_DAYS) \
 		-p TLS_CERTIFICATE=$(TLS_CERTIFICATE) \
 		-p TLS_KEY=$(TLS_KEY) \
 		-p TLS_CA_CERTIFICATE=$(TLS_CA_CERTIFICATE) \
@@ -629,6 +629,7 @@ deploy-queue-consumers:
 		-p MEMORY_REQUEST=$(QUEUE_CONSUMERS_MEMORY_REQUEST) \
 		-p MEMORY_LIMIT=$(QUEUE_CONSUMERS_MEMORY_LIMIT) \
 		-p REPLICAS=$(QUEUE_CONSUMERS_REPLICAS) \
+		-p FILE_PROCESSING_OVERDUE_DAYS=$(FILE_PROCESSING_OVERDUE_DAYS) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(QUEUE_CONSUMERS))
 
