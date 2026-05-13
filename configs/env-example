@@ -204,3 +204,6 @@ APP_ENV=
 # A comma-separated list of feature toggles to enable specific features in the application.
 # For example: "SOME_FEATURE_TOGGLE,ANOTHER_FEATURE_TOGGLE".
 FEATURE_TOGGLES=
+
+# The number of days after which CRA/SIN file processing is considered overdue.
+FILE_PROCESSING_OVERDUE_DAYS=
