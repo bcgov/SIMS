@@ -39,7 +39,9 @@ export function loadTestPostCall(
  * @param credentials load test gateway client credentials.
  * @returns auth header.
  */
-function getAuthHeader(credentials: ClientSecretCredential): Record<string, string> {
+function getAuthHeader(
+  credentials: ClientSecretCredential,
+): Record<string, string> {
   const cachedToken = getCachedToken(
     AuthorizedParties.LoadTestGateway,
     credentials,

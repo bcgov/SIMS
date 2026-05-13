@@ -46,7 +46,7 @@ export function setup(): SetupData {
 export default function (setupData: SetupData) {
   const response = getInstitutionAPICall(
     "institutions/institution",
-    setupData.credentials
+    setupData.credentials,
   );
   check(response, {
     "Retrieved with success": (r) => r.status === 200,

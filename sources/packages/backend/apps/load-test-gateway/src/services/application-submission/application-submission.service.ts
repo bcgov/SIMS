@@ -116,19 +116,19 @@ export class ApplicationSubmissionService {
    * Each application is associated with a unique offering with non-overlapping
    * study dates, allowing the real submit endpoint to be called without
    * triggering the study date overlap validation.
-   * @param iterations number of draft applications to create.
+   * @param batchSize number of draft applications to create in this batch.
    * @param studentUserName user name of the e2e test student.
    * @returns setup response containing per-iteration application data and the base application payload.
    */
   async createDraftApplications(
-    iterations: number,
+    batchSize: number,
     studentUserName: string,
   ): Promise<ApplicationSubmissionSetupResponse> {
     const student = await this.getOrCreateStudentByUserName(studentUserName);
     const programYear = await this.getProgramYear(LOAD_TEST_PROGRAM_YEAR);
     const setupItems: ApplicationSetupData[] = [];
     const offerings: EducationProgramOffering[] = [];
-    for (let i = 0; i < iterations; i++) {
+    for (let i = 0; i < batchSize; i++) {
       const studyStartDate = getISODateOnlyString(
         addDays(OFFERING_START_OFFSET_DAYS + i * OFFERING_DATE_SPACING_DAYS),
       );
@@ -146,9 +146,11 @@ export class ApplicationSubmissionService {
         ),
       );
     }
-    // Bulk-save offerings in a single round-trip to avoid pgbouncer connection churn.
-    const savedOfferings =
-      await this.dataSources.educationProgramOffering.save(offerings);
+    // Bulk-save offerings in chunks to avoid pgbouncer connection churn and DB timeouts.
+    const savedOfferings = await this.dataSources.educationProgramOffering.save(
+      offerings,
+      { chunk: 100 },
+    );
     const applications: Application[] = savedOfferings.map((savedOffering) =>
       createFakeApplication(
         {
@@ -165,16 +167,21 @@ export class ApplicationSubmissionService {
         },
       ),
     );
-    // Bulk-save applications in a single round-trip.
-    const savedApplications =
-      await this.dataSources.application.save(applications);
-    // Bulk-update parentApplication and precedingApplication in one query.
-    await this.dataSources.application.save(
-      savedApplications.map((app) => ({
-        ...app,
-        parentApplication: { id: app.id },
-        precedingApplication: { id: app.id },
-      })),
+    // Bulk-save applications in chunks.
+    const savedApplications = await this.dataSources.application.save(
+      applications,
+      { chunk: 100 },
+    );
+    // Link each application to itself as parent and preceding. The DB check constraint
+    // requires parent_application_id to be non-null for non-Draft applications, so the
+    // applications must be inserted as Draft first and then updated with their own IDs.
+    await Promise.all(
+      savedApplications.map((app) =>
+        this.dataSources.application.update(app.id, {
+          parentApplication: { id: app.id },
+          precedingApplication: { id: app.id },
+        }),
+      ),
     );
     for (let i = 0; i < savedApplications.length; i++) {
       setupItems.push({
@@ -198,23 +205,23 @@ export class ApplicationSubmissionService {
    * Camunda workflow instances without requiring any Keycloak token or API call per student.
    * Distributing across multiple students prevents all workflow instances from sharing the same
    * Camunda process tree, enabling better parallelism in the workers.
-   * @param iterations total number of submitted applications to create.
+   * @param batchSize total number of submitted applications to create in this batch.
    * @param numberOfStudents number of distinct fake students to spread applications across.
    * @returns summary with the total number of submitted applications created.
    */
   async createSubmittedApplications(
-    iterations: number,
+    batchSize: number,
     numberOfStudents: number,
   ): Promise<WorkersSetupResponse> {
     const programYear = await this.getProgramYear(LOAD_TEST_PROGRAM_YEAR);
-    const appsPerStudent = Math.ceil(iterations / numberOfStudents);
+    const appsPerStudent = Math.ceil(batchSize / numberOfStudents);
     let totalCreated = 0;
     for (
       let studentIndex = 0;
       studentIndex < numberOfStudents;
       studentIndex++
     ) {
-      const remaining = iterations - totalCreated;
+      const remaining = batchSize - totalCreated;
       if (remaining <= 0) {
         break;
       }
@@ -242,9 +249,12 @@ export class ApplicationSubmissionService {
         );
       }
       const savedOfferings =
-        await this.dataSources.educationProgramOffering.save(offerings);
-      // Create applications as Draft first to satisfy the DB constraint that
-      // requires parent_application_id IS NOT NULL for non-Draft applications.
+        await this.dataSources.educationProgramOffering.save(offerings, {
+          chunk: 100,
+        });
+      // Create applications as Draft first. The DB check constraint requires
+      // parent_application_id to be non-null for non-Draft applications, so the
+      // status and parent must be set in a subsequent update after the IDs are known.
       const applications: Application[] = savedOfferings.map((offering) =>
         createFakeApplication(
           {
@@ -261,23 +271,25 @@ export class ApplicationSubmissionService {
           },
         ),
       );
-      const savedApplications =
-        await this.dataSources.application.save(applications);
-      // Mutate the saved entity objects directly (same pattern as saveFakeApplication
-      // in test-utils) so TypeORM issues UPDATEs rather than INSERTs on the second
-      // save, satisfying the constraint that parent_application_id must not be null
-      // for non-Draft applications.
+      const savedApplications = await this.dataSources.application.save(
+        applications,
+        { chunk: 100 },
+      );
+      // Update each application to Submitted status and link it to itself as parent
+      // and preceding. Setting pirStatus to notRequired tells the Camunda PIR worker
+      // to skip the PIR step and proceed directly to assessment.
       const submittedDate = new Date();
-      for (const app of savedApplications) {
-        app.applicationStatus = ApplicationStatus.Submitted;
-        app.submittedDate = submittedDate;
-        app.parentApplication = { id: app.id } as Application;
-        app.precedingApplication = { id: app.id } as Application;
-        // Setting pirStatus to notRequired tells the Camunda PIR worker
-        // to skip the PIR step and proceed directly to assessment.
-        app.pirStatus = ProgramInfoStatus.notRequired;
-      }
-      await this.dataSources.application.save(savedApplications);
+      await Promise.all(
+        savedApplications.map((app) =>
+          this.dataSources.application.update(app.id, {
+            applicationStatus: ApplicationStatus.Submitted,
+            submittedDate,
+            parentApplication: { id: app.id },
+            precedingApplication: { id: app.id },
+            pirStatus: ProgramInfoStatus.notRequired,
+          }),
+        ),
+      );
       // Create assessments in Submitted status so the workflow enqueuer
       // picks them up on its next run and puts them in the start-assessment queue.
       const assessments: StudentAssessment[] = savedApplications.map((app, i) =>
@@ -296,15 +308,17 @@ export class ApplicationSubmissionService {
           },
         ),
       );
-      const savedAssessments =
-        await this.dataSources.studentAssessment.save(assessments);
-      // Link the currentAssessment on each application so the query
-      // condition currentProcessingAssessment != currentAssessment is satisfied.
-      await this.dataSources.application.save(
-        savedApplications.map((app, i) => ({
-          ...app,
-          currentAssessment: savedAssessments[i],
-        })),
+      const savedAssessments = await this.dataSources.studentAssessment.save(
+        assessments,
+        { chunk: 100 },
+      );
+      // Link the current assessment on each application.
+      await Promise.all(
+        savedApplications.map((app, i) =>
+          this.dataSources.application.update(app.id, {
+            currentAssessment: { id: savedAssessments[i].id },
+          }),
+        ),
       );
       totalCreated += studentApps;
     }
@@ -328,7 +342,8 @@ export class ApplicationSubmissionService {
     return programYear;
   }
 
-  /**, creating one if it does not
+  /**
+   * Looks up a student by user name, creating one if it does not
    * yet exist in the current database. Creating the student on demand allows the load
    * test to run against the local dev database where the e2e test student is not
    * pre-seeded, while still matching the Keycloak JWT that k6 obtains for that user.

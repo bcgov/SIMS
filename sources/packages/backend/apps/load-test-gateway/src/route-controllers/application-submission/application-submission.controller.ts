@@ -6,15 +6,15 @@ import {
   ParseIntPipe,
   Post,
 } from "@nestjs/common";
-import { ApplicationSubmissionService } from "../../services";
+import {
+  ApplicationSubmissionService,
+  ApplicationSubmissionSetupResponse,
+  WorkersSetupResponse,
+} from "../../services";
 import {
   SetupApplicationSubmissionAPIInDTO,
   SetupSubmittedApplicationAPIInDTO,
 } from "./models/application-submission.dto";
-import {
-  ApplicationSubmissionSetupResponse,
-  WorkersSetupResponse,
-} from "../../services/application-submission/application-submission.service";
 
 @Controller("application-submission")
 export class ApplicationSubmissionController {
@@ -28,18 +28,18 @@ export class ApplicationSubmissionController {
    * application owner. Each application receives a unique offering with
    * non-overlapping study dates to allow real API submission without triggering
    * the study date overlap validation.
-   * @param iterations number of draft applications to create.
+   * @param batchSize number of draft applications to create in this batch.
    * @param payload setup payload containing the student user name.
    * @returns setup response with per-iteration application data and the base application payload.
    */
-  @Post("setup/:iterations")
+  @Post("setup/:batchSize")
   @HttpCode(200)
   async setup(
-    @Param("iterations", ParseIntPipe) iterations: number,
+    @Param("batchSize", ParseIntPipe) batchSize: number,
     @Body() payload: SetupApplicationSubmissionAPIInDTO,
   ): Promise<ApplicationSubmissionSetupResponse> {
     return this.applicationSubmissionService.createDraftApplications(
-      iterations,
+      batchSize,
       payload.studentUserName,
     );
   }
@@ -49,18 +49,18 @@ export class ApplicationSubmissionController {
    * Applications and assessments are written directly in the Submitted state so the queue-consumers
    * scheduler picks them up without any Keycloak token per student, enabling high-volume workflow
    * instance creation across independent Camunda process branches.
-   * @param iterations number of submitted applications to create.
+   * @param batchSize number of submitted applications to create in this batch.
    * @param payload payload containing the number of students to distribute applications across.
    * @returns summary with the total number of submitted applications created.
    */
-  @Post("setup/submitted/:iterations")
+  @Post("setup/submitted/:batchSize")
   @HttpCode(200)
   async workersSetup(
-    @Param("iterations", ParseIntPipe) iterations: number,
+    @Param("batchSize", ParseIntPipe) batchSize: number,
     @Body() payload: SetupSubmittedApplicationAPIInDTO,
   ): Promise<WorkersSetupResponse> {
     return this.applicationSubmissionService.createSubmittedApplications(
-      iterations,
+      batchSize,
       payload.numberOfStudents,
     );
   }
