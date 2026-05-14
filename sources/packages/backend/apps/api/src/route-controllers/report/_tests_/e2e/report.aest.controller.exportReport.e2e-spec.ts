@@ -87,6 +87,14 @@ describe("ReportAestController(e2e)-exportReport", () => {
     };
   });
 
+  beforeEach(async () => {
+    const { dateWithinRange, dateOutsideRange } = getDesignationReportDates();
+    await db.designationAgreement.update(
+      { endDate: dateWithinRange },
+      { endDate: dateOutsideRange },
+    );
+  });
+
   it("Should generate the eCert Feedback Errors report when a report generation request is made with the appropriate offering intensity and date range.", async () => {
     // Arrange
     const application = await saveFakeApplicationDisbursements(
@@ -186,14 +194,15 @@ describe("ReportAestController(e2e)-exportReport", () => {
       });
   });
 
-  it("Should generate the Institution Designation report when a report generation request is made with the appropriate date range filters.", async () => {
+  it("Should generate the Institution Designation report when one or more designation requests with end date within the date range filters.", async () => {
     // Arrange
+    const { startDate, endDate, dateWithinRange } = getDesignationReportDates();
     const designationAgreement = await saveFakeDesignationAgreementLocation(
       db,
       {
         numberOfLocations: 2,
         initialValues: {
-          endDate: getISODateOnlyString(addDays(30, new Date())),
+          endDate: dateWithinRange,
         },
       },
     );
@@ -214,18 +223,12 @@ describe("ReportAestController(e2e)-exportReport", () => {
     const nonDesignatedPrimaryContact =
       nonDesignatedInstitutionLocation.primaryContact;
     const payload = {
-      reportName: "Institution_Designation_Report",
+      reportName: MinistryReportNames.InstitutionDesignation,
       params: {
-        startDate: new Date(),
-        endDate: addDays(31, new Date()),
+        startDate,
+        endDate,
       },
     };
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: FormNames.ExportFinancialReports,
-      data: { data: payload },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
     const endpoint = "/aest/report";
     const ministryUserToken = await getAESTToken(
       AESTGroups.BusinessAdministrators,
@@ -249,7 +252,11 @@ describe("ReportAestController(e2e)-exportReport", () => {
                 designatedInstitutionLocation.institution.operatingName,
               "Location Name": designatedInstitutionLocation.name,
               "Location Code": designatedInstitutionLocation.institutionCode,
-              "Institution Type": "BC Private",
+              Classification: "private",
+              "Organization Status": "profit",
+              Medical: "no",
+              Country: "Canada",
+              Province: "British Columbia",
               "Designation Status": designationAgreement.designationStatus,
               "Assessed Date": "",
               "Expiry Date": designationAgreement.endDate,
@@ -268,7 +275,11 @@ describe("ReportAestController(e2e)-exportReport", () => {
                 nonDesignatedInstitutionLocation.institution.operatingName,
               "Location Name": nonDesignatedInstitutionLocation.name,
               "Location Code": nonDesignatedInstitutionLocation.institutionCode,
-              "Institution Type": "BC Private",
+              Classification: "private",
+              "Organization Status": "profit",
+              Medical: "no",
+              Country: "Canada",
+              Province: "British Columbia",
               "Designation Status": designationAgreement.designationStatus,
               "Assessed Date": "",
               "Expiry Date": designationAgreement.endDate,
@@ -284,6 +295,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
             },
           ]),
         );
+        expect(parsedResult.data).toHaveLength(2);
       });
   });
 
@@ -1764,128 +1776,147 @@ describe("ReportAestController(e2e)-exportReport", () => {
         });
     },
   );
-
-  /**
-   * Converts education program offering object into a key-value pair object matching the result data.
-   * @param fakeOffering an education program offering record.
-   * @returns a key-value pair object matching the result data.
-   */
-  function offeringToResultData(fakeOffering: EducationProgramOffering): {
-    [key: string]: string | boolean;
-  } {
-    return {
-      "Institution Location Name": fakeOffering.institutionLocation.name,
-      "Program Name": fakeOffering.educationProgram.name,
-      "SABC Program Code": fakeOffering.educationProgram.sabcCode ?? "",
-      "Regulatory Body": fakeOffering.educationProgram.regulatoryBody,
-      "Credential Type": fakeOffering.educationProgram.credentialType,
-      "Program Length": fakeOffering.educationProgram.completionYears,
-      Delivery: "On-site",
-      "Credit or Hours": fakeOffering.educationProgram.courseLoadCalculation,
-      "Program Status": fakeOffering.educationProgram.programStatus,
-      "Program Deactivated?": (!fakeOffering.educationProgram
-        .isActive).toString(),
-      "Program Expiry Date":
-        fakeOffering.educationProgram.effectiveEndDate ?? "",
-      "Offering Name": fakeOffering.name,
-      "Study Start Date": fakeOffering.studyStartDate,
-      "Study End Date": fakeOffering.studyEndDate,
-      "Year of Study": fakeOffering.yearOfStudy.toString(),
-      "Offering Type": fakeOffering.offeringType,
-      "Offering Status": fakeOffering.offeringStatus,
-      "Offering Intensity": fakeOffering.offeringIntensity,
-    };
-  }
-
-  /**
-   * Converts education program object into a key-value pair object matching the result data
-   * for programs that have offerings outside the date range or don't have offerings.
-   * @param fakeOffering an education program record.
-   * @param fakeLocation an institution location record.
-   * @returns a key-value pair object matching the result data.
-   */
-  function programToResultData(
-    fakeProgram: EducationProgram,
-    fakeLocation: InstitutionLocation,
-  ): {
-    [key: string]: string | boolean;
-  } {
-    return {
-      "Institution Location Name": fakeLocation.name,
-      "Program Name": fakeProgram.name,
-      "SABC Program Code": fakeProgram.sabcCode ?? "",
-      "Regulatory Body": fakeProgram.regulatoryBody,
-      "Credential Type": fakeProgram.credentialType,
-      "Program Length": fakeProgram.completionYears,
-      Delivery: "On-site",
-      "Credit or Hours": fakeProgram.courseLoadCalculation,
-      "Program Status": fakeProgram.programStatus,
-      "Program Deactivated?": (!fakeProgram.isActive).toString(),
-      "Program Expiry Date": fakeProgram.effectiveEndDate ?? "",
-      "Offering Name": "",
-      "Study Start Date": "",
-      "Study End Date": "",
-      "Year of Study": "",
-      "Offering Type": "",
-      "Offering Status": "",
-      "Offering Intensity": "",
-    };
-  }
-
-  /**
-   * Build CAS Supplier maintenance updates report data.
-   * @param student student.
-   * @param options expected report data options.
-   * - `firstNameUpdated` indicates if the first name of the student is updated.
-   * - `lastNameUpdated` indicates if the last name of the student is updated.
-   * - `sinUpdated` indicates if the SIN number of the student is updated.
-   * - `addressLine1Updated` indicates if the address line 1 of the student is updated.
-   * - `cityUpdated` indicates if the city of the student is updated.
-   * - `provinceUpdated` indicates if the province of the student is updated.
-   * - `postalCodeUpdated` indicates if the postal code of the student is updated.
-   * - `countryUpdated` indicates if the country of the student is updated.
-   * @returns report data.
-   */
-  function buildCASSupplierMaintenanceUpdatesReport(
-    student: Student,
-    options?: {
-      firstNameUpdated?: boolean;
-      lastNameUpdated?: boolean;
-      sinUpdated?: boolean;
-      addressLine1Updated?: boolean;
-      cityUpdated?: boolean;
-      provinceUpdated?: boolean;
-      postalCodeUpdated?: boolean;
-      countryUpdated?: boolean;
-    },
-  ): Record<string, string> {
-    return {
-      "Given Names": student.user.firstName,
-      "Last Name": student.user.lastName,
-      SIN: student.sinValidation.sin,
-      "Address Line 1": student.contactInfo.address.addressLine1,
-      City: student.contactInfo.address.city,
-      Province: student.contactInfo.address.provinceState,
-      "Postal Code": student.contactInfo.address.postalCode,
-      Country: student.contactInfo.address.country,
-      "Disability Status": student.disabilityStatus,
-      "Profile Type": student.user.identityProviderType ?? "",
-      "Student Updated Date": getPSTPDTDateFormatted(student.updatedAt),
-      Supplier: student.casSupplier.supplierNumber,
-      Site: student.casSupplier.supplierAddress.supplierSiteCode,
-      "Protected Supplier": student.casSupplier.supplierProtected?.toString(),
-      "Protected Site": student.casSupplier.supplierAddress.siteProtected,
-      "Supplier Verified Date": getPSTPDTDateFormatted(
-        student.casSupplier.supplierStatusUpdatedOn,
-      ),
-      "First Name Updated": options?.firstNameUpdated ? "true" : "false",
-      "Last Name Updated": options?.lastNameUpdated ? "true" : "false",
-      "SIN Updated": options?.sinUpdated ? "true" : "false",
-      "Address Line 1 Updated": options?.addressLine1Updated ? "true" : "false",
-      "City Updated": options?.cityUpdated ? "true" : "false",
-      "Province Updated": options?.provinceUpdated ? "true" : "false",
-      "Postal Code Updated": options?.postalCodeUpdated ? "true" : "false",
-      "Country Updated": options?.countryUpdated ? "true" : "false",
-    };
-  }
+  afterAll(async () => {
+    await app?.close();
+  });
 });
+
+/**
+ * Converts education program offering object into a key-value pair object matching the result data.
+ * @param fakeOffering an education program offering record.
+ * @returns a key-value pair object matching the result data.
+ */
+function offeringToResultData(fakeOffering: EducationProgramOffering): {
+  [key: string]: string | boolean;
+} {
+  return {
+    "Institution Location Name": fakeOffering.institutionLocation.name,
+    "Program Name": fakeOffering.educationProgram.name,
+    "SABC Program Code": fakeOffering.educationProgram.sabcCode ?? "",
+    "Regulatory Body": fakeOffering.educationProgram.regulatoryBody,
+    "Credential Type": fakeOffering.educationProgram.credentialType,
+    "Program Length": fakeOffering.educationProgram.completionYears,
+    Delivery: "On-site",
+    "Credit or Hours": fakeOffering.educationProgram.courseLoadCalculation,
+    "Program Status": fakeOffering.educationProgram.programStatus,
+    "Program Deactivated?": (!fakeOffering.educationProgram
+      .isActive).toString(),
+    "Program Expiry Date": fakeOffering.educationProgram.effectiveEndDate ?? "",
+    "Offering Name": fakeOffering.name,
+    "Study Start Date": fakeOffering.studyStartDate,
+    "Study End Date": fakeOffering.studyEndDate,
+    "Year of Study": fakeOffering.yearOfStudy.toString(),
+    "Offering Type": fakeOffering.offeringType,
+    "Offering Status": fakeOffering.offeringStatus,
+    "Offering Intensity": fakeOffering.offeringIntensity,
+  };
+}
+
+/**
+ * Converts education program object into a key-value pair object matching the result data
+ * for programs that have offerings outside the date range or don't have offerings.
+ * @param fakeOffering an education program record.
+ * @param fakeLocation an institution location record.
+ * @returns a key-value pair object matching the result data.
+ */
+function programToResultData(
+  fakeProgram: EducationProgram,
+  fakeLocation: InstitutionLocation,
+): {
+  [key: string]: string | boolean;
+} {
+  return {
+    "Institution Location Name": fakeLocation.name,
+    "Program Name": fakeProgram.name,
+    "SABC Program Code": fakeProgram.sabcCode ?? "",
+    "Regulatory Body": fakeProgram.regulatoryBody,
+    "Credential Type": fakeProgram.credentialType,
+    "Program Length": fakeProgram.completionYears,
+    Delivery: "On-site",
+    "Credit or Hours": fakeProgram.courseLoadCalculation,
+    "Program Status": fakeProgram.programStatus,
+    "Program Deactivated?": (!fakeProgram.isActive).toString(),
+    "Program Expiry Date": fakeProgram.effectiveEndDate ?? "",
+    "Offering Name": "",
+    "Study Start Date": "",
+    "Study End Date": "",
+    "Year of Study": "",
+    "Offering Type": "",
+    "Offering Status": "",
+    "Offering Intensity": "",
+  };
+}
+
+/**
+ * Build CAS Supplier maintenance updates report data.
+ * @param student student.
+ * @param options expected report data options.
+ * - `firstNameUpdated` indicates if the first name of the student is updated.
+ * - `lastNameUpdated` indicates if the last name of the student is updated.
+ * - `sinUpdated` indicates if the SIN number of the student is updated.
+ * - `addressLine1Updated` indicates if the address line 1 of the student is updated.
+ * - `cityUpdated` indicates if the city of the student is updated.
+ * - `provinceUpdated` indicates if the province of the student is updated.
+ * - `postalCodeUpdated` indicates if the postal code of the student is updated.
+ * - `countryUpdated` indicates if the country of the student is updated.
+ * @returns report data.
+ */
+function buildCASSupplierMaintenanceUpdatesReport(
+  student: Student,
+  options?: {
+    firstNameUpdated?: boolean;
+    lastNameUpdated?: boolean;
+    sinUpdated?: boolean;
+    addressLine1Updated?: boolean;
+    cityUpdated?: boolean;
+    provinceUpdated?: boolean;
+    postalCodeUpdated?: boolean;
+    countryUpdated?: boolean;
+  },
+): Record<string, string> {
+  return {
+    "Given Names": student.user.firstName,
+    "Last Name": student.user.lastName,
+    SIN: student.sinValidation.sin,
+    "Address Line 1": student.contactInfo.address.addressLine1,
+    City: student.contactInfo.address.city,
+    Province: student.contactInfo.address.provinceState,
+    "Postal Code": student.contactInfo.address.postalCode,
+    Country: student.contactInfo.address.country,
+    "Disability Status": student.disabilityStatus,
+    "Profile Type": student.user.identityProviderType ?? "",
+    "Student Updated Date": getPSTPDTDateFormatted(student.updatedAt),
+    Supplier: student.casSupplier.supplierNumber,
+    Site: student.casSupplier.supplierAddress.supplierSiteCode,
+    "Protected Supplier": student.casSupplier.supplierProtected?.toString(),
+    "Protected Site": student.casSupplier.supplierAddress.siteProtected,
+    "Supplier Verified Date": getPSTPDTDateFormatted(
+      student.casSupplier.supplierStatusUpdatedOn,
+    ),
+    "First Name Updated": options?.firstNameUpdated ? "true" : "false",
+    "Last Name Updated": options?.lastNameUpdated ? "true" : "false",
+    "SIN Updated": options?.sinUpdated ? "true" : "false",
+    "Address Line 1 Updated": options?.addressLine1Updated ? "true" : "false",
+    "City Updated": options?.cityUpdated ? "true" : "false",
+    "Province Updated": options?.provinceUpdated ? "true" : "false",
+    "Postal Code Updated": options?.postalCodeUpdated ? "true" : "false",
+    "Country Updated": options?.countryUpdated ? "true" : "false",
+  };
+}
+
+/**
+ * Generates dates for designation report tests to not conflict with other tests and to be within a reasonable range.
+ * @returns dates for designation report tests.
+ */
+function getDesignationReportDates(): {
+  startDate: string;
+  endDate: string;
+  dateWithinRange: string;
+  dateOutsideRange: string;
+} {
+  const startDate = "2010-01-01";
+  const endDate = "2010-01-03";
+  const dateWithinRange = "2010-01-02";
+  const dateOutsideRange = getISODateOnlyString(new Date());
+  return { startDate, endDate, dateWithinRange, dateOutsideRange };
+}
