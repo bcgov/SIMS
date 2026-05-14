@@ -39,7 +39,7 @@ objects:
           dockerfilePath: "${DOCKER_FILE_PATH}"
           buildArgs:
             - name: DOCKER_REGISTRY
-              value: "artifacts.developer.gov.bc.ca/docker-remote/"
+              value: "artifacts.developer.gov.bc.ca/docker-remote"
           pullSecret:
             name: artifactory-secret-credential
         type: Docker
