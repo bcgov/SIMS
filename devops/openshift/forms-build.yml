@@ -39,8 +39,14 @@ objects:
           env:
             - name: FORMIO_SOURCE_REPO_URL
               value: "${FORMIO_SOURCE_REPO_URL}"
-            - name: FORMIO_SOURCE_REPO_TAG
-              value: "${FORMIO_SOURCE_REPO_TAG}"
+            - name: FORMIO_SOURCE_REPO_REF
+              value: "${FORMIO_SOURCE_REPO_REF}"
+            - name: FORMIO_CORE_VERSION
+              value: "${FORMIO_CORE_VERSION}"
+            - name: FORMIO_JS_VERSION
+              value: "${FORMIO_JS_VERSION}"
+            - name: FORMIO_VM_VERSION
+              value: "${FORMIO_VM_VERSION}"
         type: Docker
       triggers:
         - type: ImageChange
@@ -56,7 +62,13 @@ parameters:
     required: true
   - name: FORMIO_SOURCE_REPO_URL
     required: true
-  - name: FORMIO_SOURCE_REPO_TAG
+  - name: FORMIO_SOURCE_REPO_REF
+    required: true
+  - name: FORMIO_CORE_VERSION
+    required: true
+  - name: FORMIO_JS_VERSION
+    required: true
+  - name: FORMIO_VM_VERSION
     required: true
   - name: SOURCE_REPOSITORY_REF
     required: true

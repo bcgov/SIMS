@@ -1,6 +1,8 @@
 -include ../.env
-
 export $(shell sed 's/=.*//' ../.env)
+
+# Formio forms integration
+include ../shared-env/formio-versions.mk
 export GIT_LOCAL_BRANCH?=$(shell git rev-parse --abbrev-ref HEAD)
 export PROJECT_NAME := $(or $(PROJECT_NAME), aest-sims)
 export BUILD_REF :=  $(or $(BUILD_REF), dev)
@@ -55,9 +57,6 @@ export INSTITUTION_REQUEST_FOLDER := $(or $(INSTITUTION_REQUEST_FOLDER), OUT)
 export INSTITUTION_RESPONSE_FOLDER := $(or $(INSTITUTION_RESPONSE_FOLDER), IN)
 export SWAGGER_ENABLED := $(or ${SWAGGER_ENABLED}, true)
 export APPLICATION_ARCHIVE_DAYS := $(or ${APPLICATION_ARCHIVE_DAYS}, 365)
-#Formio forms integration
-export FORMIO_SOURCE_REPO_URL := $(or ${FORMIO_SOURCE_REPO_URL}, https://github.com/formio/formio.git)
-export FORMIO_SOURCE_REPO_TAG := $(or ${FORMIO_SOURCE_REPO_TAG}, v4.3.2)
 #ATBC Integration
 export ATBC_USERNAME := $(or $(ATBC_USERNAME), )
 export ATBC_PASSWORD := $(or $(ATBC_PASSWORD), )

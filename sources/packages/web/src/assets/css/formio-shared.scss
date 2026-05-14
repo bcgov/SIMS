@@ -300,31 +300,35 @@
   line-height: $font-content-lh;
 }
 
-.banner-alert p,
-.banner-alert div {
+.banner-base {
   @extend .banner-font;
-  background: $banner-background-error;
-  border: 2px solid $banner-color-error;
+  border-width: 2px;
+  border-style: solid;
   box-sizing: border-box;
   border-radius: 8px;
+  width: 100%;
+  text-align: left;
+}
+
+.banner-alert p,
+.banner-alert div {
+  @extend .banner-base;
+  background: $banner-background-error;
+  border-color: $banner-color-error;
 }
 
 .banner-warning p,
 .banner-warning div {
-  @extend .banner-font;
+  @extend .banner-base;
   background: $banner-background-warning;
-  border: 2px solid $banner-color-warning;
-  box-sizing: border-box;
-  border-radius: 8px;
+  border-color: $banner-color-warning;
 }
 
 .banner-info p,
 .banner-info div {
-  @extend .banner-font;
+  @extend .banner-base;
   background: $banner-background-info;
-  border: 2px solid $banner-color-info;
-  box-sizing: border-box;
-  border-radius: 8px;
+  border-color: $banner-color-info;
 }
 
 /**
@@ -859,4 +863,39 @@ td .formio-custom-tooltip:hover .tooltip-text {
 .fixed-height-declaration-large .formio-editor-read-only-content {
   max-height: 600px;
   overflow: auto;
+}
+
+// Global override to thin Bootstrap's table-bordered borders within form.io forms.
+.ff-form-container .formio-component-datagrid .datagrid-table {
+  border: 1px solid #ddd !important;
+  td,
+  th {
+    border: 1px solid #ddd !important;
+  }
+}
+
+// Bootstrap Icons (bi-*) render via ::before pseudo-elements using inline text flow.
+// The form builder's .component-settings-button uses a fixed 18x18px box with
+// display: inline-block (Bootstrap .btn default), which leaves the icon glyph
+// top-aligned instead of centered. Switching to inline-flex fixes the alignment.
+// Setting top: 0 on .component-btn-group pins it to the top of its absolutely
+// positioned .builder-component ancestor, since formio does not set a top value.
+// These can be removed if @formio/js fixes its bundled CSS.
+.formbuilder .component-btn-group {
+  top: 0;
+  .component-settings-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+// In @formio/js's bundled CSS, .form-control has an explicit height set to
+// calc(1.4em + 2px + 0.75rem) ≈ 36.4px, which is shorter than .input-group-text's
+// natural height of 38px (based on line-height: 1.5). This causes prefix/suffix
+// boxes to extend slightly below the input field. Removing the explicit height
+// lets align-items: stretch on .input-group equalize the heights.
+// This can be removed if formio/js updates its bundled Bootstrap CSS.
+.ff-form-container .input-group > .form-control {
+  height: auto;
 }

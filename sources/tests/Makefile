@@ -1,10 +1,11 @@
 -include ../../.env
 -include .env-e2e-tests
-
 export $(shell sed 's/=.*//' ../../.env)
+
 # Override values from the global .env file.
 export $(shell sed 's/=.*//' .env-e2e-tests)
-
+# Formio forms integration
+include ../../shared-env/formio-versions.mk
 # Fulltime Allowed
 export IS_FULLTIME_ALLOWED := $(or $(IS_FULLTIME_ALLOWED), true)
 
@@ -25,13 +26,8 @@ export APPLICATION_SUBMISSION_DEADLINE_WEEKS := $(or $(APPLICATION_SUBMISSION_DE
 
 # App Environment
 export APP_ENV := $(or $(APP_ENV), local)
-
 export ALLOW_BETA_USERS_ONLY :=$(or $(ALLOW_BETA_USERS_ONLY), false)
 export ALLOW_BETA_INSTITUTIONS_ONLY :=$(or $(ALLOW_BETA_INSTITUTIONS_ONLY), false)
-
-# Formio forms integration
-export FORMIO_SOURCE_REPO_URL := $(or $(FORMIO_SOURCE_REPO_URL), https://github.com/formio/formio.git)
-export FORMIO_SOURCE_REPO_TAG := $(or $(FORMIO_SOURCE_REPO_TAG), v4.3.2)
 
 backend-unit-tests:
 	@cd ../packages/backend && npm i && npm run test:cov

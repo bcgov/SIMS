@@ -16,6 +16,7 @@ import {
 import { Notification, NotificationMessageType, User } from "@sims/sims-db";
 import { In, IsNull } from "typeorm";
 import { faker } from "@faker-js/faker";
+import { applySINNumberFormat } from "@sims/test-utils/utils";
 
 describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountApplication", () => {
   let app: INestApplication;
@@ -84,13 +85,17 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       },
     });
 
+    const submittedDataPayload = {
+      ...submittedData,
+      sinNumber: applySINNumberFormat(submittedData.sinNumber),
+    };
     const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
-      .send(submittedData)
+      .send(submittedDataPayload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
       .then((response) => {
@@ -135,13 +140,17 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       },
     });
 
+    const submittedDataPayload = {
+      ...submittedData,
+      sinNumber: applySINNumberFormat(submittedData.sinNumber),
+    };
     const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
-      .send(submittedData)
+      .send(submittedDataPayload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
       .then((response) => {
@@ -186,13 +195,17 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       },
     });
 
+    const submittedDataPayload = {
+      ...submittedData,
+      sinNumber: applySINNumberFormat(submittedData.sinNumber),
+    };
     const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
-      .send(submittedData)
+      .send(submittedDataPayload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
       .then((response) => {
