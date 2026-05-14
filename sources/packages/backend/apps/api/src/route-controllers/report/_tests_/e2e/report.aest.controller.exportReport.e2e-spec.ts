@@ -5,9 +5,9 @@ import {
   createFakeDisbursementFeedbackError,
   createFakeDisbursementValue,
   createFakeEducationProgramOffering,
+  createFakeInstitution,
   createFakeInstitutionLocation,
   createFakeUser,
-  getProviderInstanceForModule,
   saveFakeApplicationDisbursements,
   saveFakeCASSupplier,
   saveFakeDesignationAgreementLocation,
@@ -22,9 +22,6 @@ import {
 } from "../../../../testHelpers";
 import { parse } from "papaparse";
 import * as request from "supertest";
-import { FormNames, FormService } from "../../../../services";
-import { AppAESTModule } from "../../../../app.aest.module";
-import { TestingModule } from "@nestjs/testing";
 import {
   ApplicationStatus,
   COEStatus,
@@ -58,26 +55,16 @@ import {
 
 describe("ReportAestController(e2e)-exportReport", () => {
   let app: INestApplication;
-  let appModule: TestingModule;
   let db: E2EDataSources;
   let appDataSource: DataSource;
-  let formService: FormService;
   let sharedCASSupplierUpdatedStudent: Student;
   let casSupplierMaintenanceUpdatesPayload: MinistryReportsFilterAPIInDTO;
 
   beforeAll(async () => {
-    const { nestApplication, module, dataSource } =
-      await createTestingAppModule();
+    const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
-    appModule = module;
     appDataSource = dataSource;
     db = createE2EDataSources(dataSource);
-    // Mock the form service to validate the dry-run submission result.
-    formService = await getProviderInstanceForModule(
-      appModule,
-      AppAESTModule,
-      FormService,
-    );
     // Shared student used for CAS Supplier maintenance updates report.
     sharedCASSupplierUpdatedStudent = await saveFakeStudent(db.dataSource);
     // Build payload for CAS Supplier maintenance updates report to use across tests.
@@ -137,12 +124,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
         endDate: "2024-10-01",
       },
     };
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: FormNames.ExportFinancialReports,
-      data: { data: payload },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
+
     const endpoint = "/aest/report";
     const ministryUserToken = await getAESTToken(
       AESTGroups.BusinessAdministrators,
@@ -220,12 +202,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
         endDate: addDays(31, new Date()),
       },
     };
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: FormNames.ExportFinancialReports,
-      data: { data: payload },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
+
     const endpoint = "/aest/report";
     const ministryUserToken = await getAESTToken(
       AESTGroups.BusinessAdministrators,
@@ -300,15 +277,15 @@ describe("ReportAestController(e2e)-exportReport", () => {
       "for an institution with one location and without any education program or offering.",
     async () => {
       // Arrange
-      const institutionLocation = createFakeInstitutionLocation();
-
+      const institution = await db.institution.save(createFakeInstitution());
+      const now = new Date();
       // Payload with both full time and part time options being checked
       const payload = {
         reportName: "Program_And_Offering_Status_Report",
         params: {
-          institution: institutionLocation.institution.id,
-          startDate: getISODateOnlyString(new Date()),
-          endDate: getISODateOnlyString(new Date()),
+          institution: institution.id,
+          startDate: getISODateOnlyString(now),
+          endDate: getISODateOnlyString(addDays(1, now)),
           offeringIntensity: {
             "Full Time": true,
             "Part Time": true,
@@ -316,12 +293,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
           sabcProgramCode: "",
         },
       };
-      const dryRunSubmissionMockFullTimeOnly = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FormNames.ExportFinancialReports,
-        data: { data: payload },
-      });
-      formService.dryRunSubmission = dryRunSubmissionMockFullTimeOnly;
+
       const endpoint = "/aest/report";
       const ministryUserToken = await getAESTToken(
         AESTGroups.BusinessAdministrators,
@@ -473,12 +445,6 @@ describe("ReportAestController(e2e)-exportReport", () => {
           sabcProgramCode: "",
         },
       };
-      const dryRunSubmissionMockFullTimeOnly = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FormNames.ExportFinancialReports,
-        data: { data: payloadFullTimeOnly },
-      });
-      formService.dryRunSubmission = dryRunSubmissionMockFullTimeOnly;
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -631,12 +597,6 @@ describe("ReportAestController(e2e)-exportReport", () => {
           sabcProgramCode: "",
         },
       };
-      const dryRunSubmissionMockPartTimeOnly = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FormNames.ExportFinancialReports,
-        data: { data: payloadPartTimeOnly },
-      });
-      formService.dryRunSubmission = dryRunSubmissionMockPartTimeOnly;
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -817,12 +777,6 @@ describe("ReportAestController(e2e)-exportReport", () => {
           sabcProgramCode: "",
         },
       };
-      const dryRunSubmissionMockFullTimePartTime = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FormNames.ExportFinancialReports,
-        data: { data: payloadFullTimePartTime },
-      });
-      formService.dryRunSubmission = dryRunSubmissionMockFullTimePartTime;
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -1040,12 +994,6 @@ describe("ReportAestController(e2e)-exportReport", () => {
           sabcProgramCode: "ABCD",
         },
       };
-      const dryRunSubmissionMockPartTimeOnlySABC = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FormNames.ExportFinancialReports,
-        data: { data: payloadPartTimeOnlySABC },
-      });
-      formService.dryRunSubmission = dryRunSubmissionMockPartTimeOnlySABC;
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -1084,7 +1032,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
       params: {
         institution: "",
         startDate: now,
-        endDate: now,
+        endDate: addDays(1, now),
         offeringIntensity: {
           "Full Time": true,
           "Part Time": true,
@@ -1092,12 +1040,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
         sabcProgramCode: "",
       },
     };
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: FormNames.ExportFinancialReports,
-      data: { data: payload },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
+
     const endpoint = "/aest/report";
     const ministryUserToken = await getAESTToken(
       AESTGroups.BusinessAdministrators,
@@ -1295,12 +1238,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
         endDate: "2020-02-01",
       },
     };
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: FormNames.ExportFinancialReports,
-      data: { data: payload },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
+
     const endpoint = "/aest/report";
     const ministryUserToken = await getAESTToken(
       AESTGroups.BusinessAdministrators,
@@ -1447,14 +1385,6 @@ describe("ReportAestController(e2e)-exportReport", () => {
       },
     };
 
-    // Mock the formio service dry run submission to return the payload.
-    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-      valid: true,
-      formName: FormNames.ExportFinancialReports,
-      data: { data: payload },
-    });
-    formService.dryRunSubmission = dryRunSubmissionMock;
-
     const endpoint = "/aest/report";
     const ministryUserToken = await getAESTToken(
       AESTGroups.BusinessAdministrators,
@@ -1519,13 +1449,6 @@ describe("ReportAestController(e2e)-exportReport", () => {
         AESTGroups.BusinessAdministrators,
       );
 
-      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FormNames.ExportFinancialReports,
-        data: { data: casSupplierMaintenanceUpdatesPayload },
-      });
-      formService.dryRunSubmission = dryRunSubmissionMock;
-
       // Act/Assert
       await request(app.getHttpServer())
         .post(endpoint)
@@ -1579,13 +1502,6 @@ describe("ReportAestController(e2e)-exportReport", () => {
         AESTGroups.BusinessAdministrators,
       );
 
-      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FormNames.ExportFinancialReports,
-        data: { data: casSupplierMaintenanceUpdatesPayload },
-      });
-      formService.dryRunSubmission = dryRunSubmissionMock;
-
       // Act/Assert
       await request(app.getHttpServer())
         .post(endpoint)
@@ -1636,13 +1552,6 @@ describe("ReportAestController(e2e)-exportReport", () => {
       const ministryUserToken = await getAESTToken(
         AESTGroups.BusinessAdministrators,
       );
-
-      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FormNames.ExportFinancialReports,
-        data: { data: casSupplierMaintenanceUpdatesPayload },
-      });
-      formService.dryRunSubmission = dryRunSubmissionMock;
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -1695,13 +1604,6 @@ describe("ReportAestController(e2e)-exportReport", () => {
         AESTGroups.BusinessAdministrators,
       );
 
-      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FormNames.ExportFinancialReports,
-        data: { data: casSupplierMaintenanceUpdatesPayload },
-      });
-      formService.dryRunSubmission = dryRunSubmissionMock;
-
       // Act/Assert
       await request(app.getHttpServer())
         .post(endpoint)
@@ -1752,13 +1654,6 @@ describe("ReportAestController(e2e)-exportReport", () => {
       const ministryUserToken = await getAESTToken(
         AESTGroups.BusinessAdministrators,
       );
-
-      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
-        valid: true,
-        formName: FormNames.ExportFinancialReports,
-        data: { data: casSupplierMaintenanceUpdatesPayload },
-      });
-      formService.dryRunSubmission = dryRunSubmissionMock;
 
       // Act/Assert
       await request(app.getHttpServer())
