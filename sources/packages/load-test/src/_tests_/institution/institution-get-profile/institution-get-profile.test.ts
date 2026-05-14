@@ -5,7 +5,7 @@
  * @see https://k6.io/docs/using-k6/k6-options
  */
 import { check, sleep } from "k6";
-import { getAPICall } from "../../../utils/sims-api/sims-api";
+import { getInstitutionAPICall } from "../../../utils/sims-api/sims-api";
 import { UserPasswordCredential } from "../../../utils/auth";
 import { getInstitutionAdminCredentials } from "../../../utils/sims-api";
 import { Options } from "k6/options";
@@ -44,9 +44,9 @@ export function setup(): SetupData {
  * @param setupData setup data returned by setup method.
  */
 export default function (setupData: SetupData) {
-  const response = getAPICall(
+  const response = getInstitutionAPICall(
     "institutions/institution",
-    setupData.credentials
+    setupData.credentials,
   );
   check(response, {
     "Retrieved with success": (r) => r.status === 200,

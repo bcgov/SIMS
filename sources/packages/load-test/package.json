@@ -7,7 +7,13 @@
     "form-io-application-submission": "npm run build && k6 run ./dist/form-io-application-submission.test.js",
     "form-io-get-application": "npm run build && k6 run ./dist/form-io-get-application.test.js",
     "institution-get-profile": "npm run build && k6 run ./dist/institution-get-profile.test.js",
-    "workflow-assessment-submission": "npm run build && k6 run ./dist/workflow-assessment-submission.test.js"
+    "workflow-assessment-submission": "npm run build && k6 run ./dist/workflow-assessment-submission.test.js",
+    "application-submission": "npm run build && k6 run ./dist/application-submission.test.js",
+    "application-submission:smoke": "npm run build && k6 run -e ITERATIONS=1 -e VIRTUAL_USERS=1 ./dist/application-submission.test.js",
+    "application-submission:stress": "npm run build && k6 run -e ITERATIONS=5000 -e VIRTUAL_USERS=200 ./dist/application-submission.test.js",
+    "application-submitted": "npm run build && k6 run ./dist/application-submitted.test.js",
+    "application-submitted:smoke": "npm run build && k6 run -e ITERATIONS=2 -e NUMBER_OF_STUDENTS=2 ./dist/application-submitted.test.js",
+    "application-submitted:stress": "npm run build && k6 run -e ITERATIONS=1000 -e NUMBER_OF_STUDENTS=1000 ./dist/application-submitted.test.js"
   },
   "license": "ISC",
   "devDependencies": {

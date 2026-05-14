@@ -1,12 +1,18 @@
 import { Module } from "@nestjs/common";
-import { WorkflowAssessmentSubmissionController } from "./route-controllers";
+import {
+  ApplicationSubmissionController,
+  WorkflowAssessmentSubmissionController,
+} from "./route-controllers";
 import { ConfigModule } from "@sims/utilities/config";
 import { DatabaseModule } from "@sims/sims-db";
-import { WorkflowDataLoadService } from "./services";
+import {
+  ApplicationSubmissionService,
+  WorkflowDataLoadService,
+} from "./services";
 import { ZeebeModule } from "@sims/services";
 import { LoadTestAuthModule } from "./auth/load-test-auth.module";
-import { LoadTestHttpModule } from "./load-test-http/load-test-http.module";
 import { LoggerModule } from "@sims/utilities/logger";
+import { LoadTestHttpModule } from "./load-test-http/load-test-http.module";
 import { APP_FILTER } from "@nestjs/core/constants";
 import { LoadTestAllExceptionsFilter } from "./load-test-exception.filter";
 
@@ -19,9 +25,13 @@ import { LoadTestAllExceptionsFilter } from "./load-test-exception.filter";
     LoggerModule,
     LoadTestHttpModule,
   ],
-  controllers: [WorkflowAssessmentSubmissionController],
+  controllers: [
+    WorkflowAssessmentSubmissionController,
+    ApplicationSubmissionController,
+  ],
   providers: [
     WorkflowDataLoadService,
+    ApplicationSubmissionService,
     {
       provide: APP_FILTER,
       useClass: LoadTestAllExceptionsFilter,
