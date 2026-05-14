@@ -35,183 +35,156 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
     ).toBe(0);
   });
 
-  it(
-    "Should determine no transportation cost when student does not request additional transportation and " +
-      "they are ineligible for return transportation due to online delivery.",
-    async () => {
-      // Arrange
-      const assessmentConsolidatedData =
-        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataReturnTripHomeCost = 1000;
-      assessmentConsolidatedData.offeringDelivered =
-        OfferingDeliveryOptions.Online;
-      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-        YesNoOptions.No;
-      // Act
-      const calculatedAssessment =
-        await executeFullTimeAssessmentForProgramYear(
-          PROGRAM_YEAR,
-          assessmentConsolidatedData,
-        );
-      // Assert
-      // Expect the return transportation cost to be 0.
-      expect(
-        calculatedAssessment.variables.calculatedDataReturnTransportationCost,
-      ).toBe(0);
-      // Expect the additional transportation cost to be null or undefined.
-      expect(
-        calculatedAssessment.variables
-          .calculatedDataTotalAdditionalTransportationAllowance,
-      ).toBe(undefined);
-      // Expect the total transportation cost to be 0.
-      expect(
-        calculatedAssessment.variables.calculatedDataTotalTransportationCost,
-      ).toBe(0);
-    },
-  );
+  it("Should determine no transportation cost when student does not request additional transportation and is ineligible for return transportation due to online delivery.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataReturnTripHomeCost = 1000;
+    assessmentConsolidatedData.offeringDelivered =
+      OfferingDeliveryOptions.Online;
+    assessmentConsolidatedData.studentDataAdditionalTransportRequested =
+      YesNoOptions.No;
+    // Act
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // Expect the return transportation cost to be 0.
+    expect(
+      calculatedAssessment.variables.calculatedDataReturnTransportationCost,
+    ).toBe(0);
+    // Expect the additional transportation cost to be null or undefined.
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataTotalAdditionalTransportationAllowance,
+    ).toBe(undefined);
+    // Expect the total transportation cost to be 0.
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalTransportationCost,
+    ).toBe(0);
+  });
 
-  it(
-    "Should determine no transportation cost when student does not request additional transportation and " +
-      "they are ineligible for return transportation due to living with partner.",
-    async () => {
-      // Arrange
-      const assessmentConsolidatedData =
-        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-        YesNoOptions.No;
-      assessmentConsolidatedData.studentDataReturnTripHomeCost = 1000;
-      assessmentConsolidatedData.studentDataLivingWithPartner =
-        YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
-      assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-      assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
-        YesNoOptions.No;
-      assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
-        YesNoOptions.No;
-      assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
-        YesNoOptions.No;
-      assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
-      // Act
-      const calculatedAssessment =
-        await executeFullTimeAssessmentForProgramYear(
-          PROGRAM_YEAR,
-          assessmentConsolidatedData,
-        );
-      // Assert
-      // Expect the return transportation cost to be 0.
-      expect(
-        calculatedAssessment.variables.calculatedDataReturnTransportationCost,
-      ).toBe(0);
-      // Expect the additional transportation cost to be null or undefined.
-      expect(
-        calculatedAssessment.variables
-          .calculatedDataTotalAdditionalTransportationAllowance,
-      ).toBe(undefined);
-      // Expect the total transportation cost to be 0.
-      expect(
-        calculatedAssessment.variables.calculatedDataTotalTransportationCost,
-      ).toBe(0);
-    },
-  );
+  it("Should determine no transportation cost when student does not request additional transportation and is ineligible for return transportation due to living with partner.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataAdditionalTransportRequested =
+      YesNoOptions.No;
+    assessmentConsolidatedData.studentDataReturnTripHomeCost = 1000;
+    assessmentConsolidatedData.studentDataLivingWithPartner = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
+    assessmentConsolidatedData.studentDataRelationshipStatus = "married";
+    assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
+      YesNoOptions.No;
+    assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
+      YesNoOptions.No;
+    assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
+      YesNoOptions.No;
+    assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
+    // Act
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // Expect the return transportation cost to be 0.
+    expect(
+      calculatedAssessment.variables.calculatedDataReturnTransportationCost,
+    ).toBe(0);
+    // Expect the additional transportation cost to be null or undefined.
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataTotalAdditionalTransportationAllowance,
+    ).toBe(undefined);
+    // Expect the total transportation cost to be 0.
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalTransportationCost,
+    ).toBe(0);
+  });
 
-  it(
-    "Should determine no transportation cost when student does not request additional transportation and " +
-      "they are ineligible for return transportation due to being a Single independant student at home.",
-    async () => {
-      // Arrange
-      const assessmentConsolidatedData =
-        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataReturnTripHomeCost = 1000;
-      assessmentConsolidatedData.studentDataLivingAtHome = YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataSelfContainedSuite =
-        YesNoOptions.No;
-      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-        YesNoOptions.No;
-      // Act
-      const calculatedAssessment =
-        await executeFullTimeAssessmentForProgramYear(
-          PROGRAM_YEAR,
-          assessmentConsolidatedData,
-        );
-      // Assert
-      // Expect the Living Category to be at Home (H).
-      expect(calculatedAssessment.variables.dmnFullTimeLivingCategory).toBe(
-        "SIH",
-      );
-      // Expect the return transportation cost to be 0.
-      expect(
-        calculatedAssessment.variables.calculatedDataReturnTransportationCost,
-      ).toBe(0);
-      // Expect the additional transportation cost to be null or undefined.
-      expect(
-        calculatedAssessment.variables
-          .calculatedDataTotalAdditionalTransportationAllowance,
-      ).toBe(undefined);
-      // Expect the total transportation cost to be 0.
-      expect(
-        calculatedAssessment.variables.calculatedDataTotalTransportationCost,
-      ).toBe(0);
-    },
-  );
+  it("Should determine no transportation cost when student does not request additional transportation and is ineligible for return transportation as single independent student at home.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataReturnTripHomeCost = 1000;
+    assessmentConsolidatedData.studentDataLivingAtHome = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.No;
+    assessmentConsolidatedData.studentDataAdditionalTransportRequested =
+      YesNoOptions.No;
+    // Act
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // Expect the Living Category to be at Home (H).
+    expect(calculatedAssessment.variables.dmnFullTimeLivingCategory).toBe(
+      "SIH",
+    );
+    // Expect the return transportation cost to be 0.
+    expect(
+      calculatedAssessment.variables.calculatedDataReturnTransportationCost,
+    ).toBe(0);
+    // Expect the additional transportation cost to be null or undefined.
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataTotalAdditionalTransportationAllowance,
+    ).toBe(undefined);
+    // Expect the total transportation cost to be 0.
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalTransportationCost,
+    ).toBe(0);
+  });
 
-  it(
-    "Should determine no transportation cost when student does not request additional transportation and " +
-      "they are ineligible for return transportation due to being a Single dependant living at home.",
-    async () => {
-      // Arrange
-      const assessmentConsolidatedData =
-        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
-        YesNoOptions.No;
-      assessmentConsolidatedData.studentDataReturnTripHomeCost = 1000;
-      assessmentConsolidatedData.studentDataLivingAtHome = YesNoOptions.Yes;
-      assessmentConsolidatedData.studentDataSelfContainedSuite =
-        YesNoOptions.No;
-      assessmentConsolidatedData.studentDataDependantstatus = "dependant";
-      assessmentConsolidatedData.parent1TotalIncome = 0;
-      assessmentConsolidatedData.parent1CppEmployment = 0;
-      assessmentConsolidatedData.parent1CppSelfemploymentOther = 0;
-      assessmentConsolidatedData.parent1Ei = 0;
-      assessmentConsolidatedData.parent1Tax = 0;
-      assessmentConsolidatedData.parent1Contributions = 0;
-      assessmentConsolidatedData.studentDataVoluntaryContributions = 0;
-      assessmentConsolidatedData.studentDataParents = [
-        {
-          parentIsAbleToReport: YesNoOptions.Yes,
-        },
-      ];
-      // Act
-      const calculatedAssessment =
-        await executeFullTimeAssessmentForProgramYear(
-          PROGRAM_YEAR,
-          assessmentConsolidatedData,
-        );
-      // Assert
-      // Expect the Living Category to be at Home (H).
-      expect(calculatedAssessment.variables.dmnFullTimeLivingCategory).toBe(
-        "SDH",
-      );
-      // Expect the return transportation cost to be 0.
-      expect(
-        calculatedAssessment.variables.calculatedDataReturnTransportationCost,
-      ).toBe(0);
-      // Expect the additional transportation cost to be null or undefined.
-      expect(
-        calculatedAssessment.variables
-          .calculatedDataTotalAdditionalTransportationAllowance,
-      ).toBe(undefined);
-      // Expect the total transportation cost to be 0.
-      expect(
-        calculatedAssessment.variables.calculatedDataTotalTransportationCost,
-      ).toBe(0);
-    },
-  );
-});
+  it("Should determine no transportation cost when student does not request additional transportation and is ineligible for return transportation as single dependant at home.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataAdditionalTransportRequested =
+      YesNoOptions.No;
+    assessmentConsolidatedData.studentDataReturnTripHomeCost = 1000;
+    assessmentConsolidatedData.studentDataLivingAtHome = YesNoOptions.Yes;
+    assessmentConsolidatedData.studentDataSelfContainedSuite = YesNoOptions.No;
+    assessmentConsolidatedData.studentDataDependantstatus = "dependant";
+    assessmentConsolidatedData.parent1TotalIncome = 0;
+    assessmentConsolidatedData.parent1CppEmployment = 0;
+    assessmentConsolidatedData.parent1CppSelfemploymentOther = 0;
+    assessmentConsolidatedData.parent1Ei = 0;
+    assessmentConsolidatedData.parent1Tax = 0;
+    assessmentConsolidatedData.parent1Contributions = 0;
+    assessmentConsolidatedData.studentDataVoluntaryContributions = 0;
+    assessmentConsolidatedData.studentDataParents = [
+      {
+        parentIsAbleToReport: YesNoOptions.Yes,
+      },
+    ];
+    // Act
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    // Expect the Living Category to be at Home (H).
+    expect(calculatedAssessment.variables.dmnFullTimeLivingCategory).toBe(
+      "SDH",
+    );
+    // Expect the return transportation cost to be 0.
+    expect(
+      calculatedAssessment.variables.calculatedDataReturnTransportationCost,
+    ).toBe(0);
+    // Expect the additional transportation cost to be null or undefined.
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataTotalAdditionalTransportationAllowance,
+    ).toBe(undefined);
+    // Expect the total transportation cost to be 0.
+    expect(
+      calculatedAssessment.variables.calculatedDataTotalTransportationCost,
+    ).toBe(0);
+  });
 
-it(
-  "Should determine max return transportation cost when an eligible student " +
-    "reports costs that would be higher than that for two round trips. (<=26 weeks) ",
-  async () => {
+  it("Should determine max return transportation cost when student reported cost higher than two round trips (<=26 weeks).", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -242,13 +215,9 @@ it(
     expect(
       calculatedAssessment.variables.calculatedDataTotalTransportationCost,
     ).toBe(900);
-  },
-);
+  });
 
-it(
-  "Should determine max return transportation cost when an eligible student " +
-    "reports costs that would be higher than that for two round trips (>=27 weeks).",
-  async () => {
+  it("Should determine max return transportation cost when student reported cost higher than two round trips (>=27 weeks).", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -279,13 +248,9 @@ it(
     expect(
       calculatedAssessment.variables.calculatedDataTotalTransportationCost,
     ).toBe(1800);
-  },
-);
+  });
 
-it(
-  "Should determine return transportation cost when an eligible student " +
-    "reports costs that would be lower than the maximum for two round trips (>=27 weeks).",
-  async () => {
+  it("Should determine return transportation cost below the maximum for two round trips (>=27 weeks).", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -316,14 +281,9 @@ it(
     expect(
       calculatedAssessment.variables.calculatedDataTotalTransportationCost,
     ).toBe(1200);
-  },
-);
+  });
 
-it(
-  "Should determine return transportation cost when an eligible student " +
-    "reports costs that would be lower than the maximum for two round trips (>=27 weeks) " +
-    "and has previously had return transportation costs.",
-  async () => {
+  it("Should determine return transportation cost below the maximum for two round trips with previously claimed costs (>=27 weeks).", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -362,10 +322,47 @@ it(
     expect(
       calculatedAssessment.variables.calculatedDataTotalTransportationCost,
     ).toBe(800);
-  },
-);
+  });
 
-afterAll(async () => {
-  // Closes the singleton instance created during test executions.
-  await ZeebeMockedClient.getMockedZeebeInstance().close();
+  it.each([OfferingDeliveryOptions.Onsite, OfferingDeliveryOptions.Blended])(
+    "Should determine additional transportation cost when offering delivered is %s.",
+    async (offeringDelivered) => {
+      // Arrange
+      const assessmentConsolidatedData =
+        createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+      assessmentConsolidatedData.offeringDelivered = offeringDelivered;
+      assessmentConsolidatedData.studentDataAdditionalTransportRequested =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportListedDriver =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportOwner =
+        YesNoOptions.Yes;
+      assessmentConsolidatedData.studentDataAdditionalTransportKm = 300;
+      assessmentConsolidatedData.studentDataAdditionalTransportWeeks = 10;
+      assessmentConsolidatedData.studentDataAdditionalTransportPlacement =
+        YesNoOptions.No;
+      // Act
+      const calculatedAssessment =
+        await executeFullTimeAssessmentForProgramYear(
+          PROGRAM_YEAR,
+          assessmentConsolidatedData,
+        );
+      // Assert
+      // 300 km * 0.34 = $102, capped at limit of $94 per week.
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataNetWeeklyAdditionalTransportCost,
+      ).toBe(94);
+      // $94 per week * 10 weeks = $940.
+      expect(
+        calculatedAssessment.variables
+          .calculatedDataTotalAdditionalTransportationAllowance,
+      ).toBe(940);
+    },
+  );
+
+  afterAll(async () => {
+    // Closes the singleton instance created during test executions.
+    await ZeebeMockedClient.getMockedZeebeInstance().close();
+  });
 });
