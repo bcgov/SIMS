@@ -1,7 +1,10 @@
 # Base Image
 # "builder" stage, based on Node.js, to build and compile the frontend.
-ARG DOCKER_REGISTRY=artifacts.developer.gov.bc.ca/docker-remote/
-FROM ${DOCKER_REGISTRY}node:25.9.0-alpine3.22 AS builder
+
+# Artifactory registry is passed as a build argument to avoid hardcoding it in the Dockerfile.
+# It allows dependabot to update the base image when an update is available.
+ARG DOCKER_REGISTRY
+FROM ${DOCKER_REGISTRY}/node:25.9.0-alpine3.22 AS builder
 
 # Application Port.
 ENV PORT=3030
@@ -25,7 +28,7 @@ RUN sed 's/${PORT}/'"${PORT}"'/g' nginx/default.conf.template > default.conf
 RUN npm run build
 
 # dependabot: FROM nginx:1.29.3-alpine3.22
-FROM artifacts.developer.gov.bc.ca/docker-remote/nginx:1.29.3-alpine3.22 AS deployer
+FROM ${DOCKER_REGISTRY}/nginx:1.29.3-alpine3.22 AS deployer
 
 # Copy the app built on builder stage to the resulting container.
 COPY --from=builder /app/dist /usr/share/nginx/html
