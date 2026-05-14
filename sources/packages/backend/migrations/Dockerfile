@@ -1,4 +1,5 @@
 # Base Image
+# Artifactory registry is passed as a build argument to avoid hardcoding it in the Dockerfile.
 # It allows dependabot to update the base image when an update is available.
 ARG DOCKER_REGISTRY
 FROM ${DOCKER_REGISTRY}/node:25.9.0-alpine3.22
