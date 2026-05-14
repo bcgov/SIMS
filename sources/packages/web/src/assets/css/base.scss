@@ -248,7 +248,7 @@ strong {
 
 // This class will restrict the container with max-width.
 .container-max-width {
-  max-width: 730px !important;
+  max-width: 960px !important;
 }
 
 // Btn font color white.
@@ -404,15 +404,7 @@ div.v-field__field input[type="date"] {
   text-transform: capitalize;
 }
 
-// Disclaimer block used on the landing page to flag unavailable features.
-.landing-page-disclaimer {
-  color: $brand-grey;
-  font-size: $font-size-xsmall;
-  line-height: $line-height-header-xsm;
-
-  &__icon {
-    color: $banner-color-warning;
-    font-size: $font-header-medium;
-    flex-shrink: 0;
-  }
+// Max width constraint for the landing page container.
+.landing-page-container-size {
+  max-width: 1000px;
 }

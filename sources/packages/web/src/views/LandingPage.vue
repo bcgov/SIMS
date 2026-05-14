@@ -1,5 +1,5 @@
 <template>
-  <v-container class="full-page-container-size mx-auto mt-10">
+  <v-container class="container-max-width mx-auto mt-10">
     <!-- For Students -->
     <v-card elevation="2" class="mb-6">
       <v-card-text>
@@ -41,7 +41,7 @@
               src="@/assets/images/girl-on-book.svg"
             />
           </v-col>
-          <v-col cols="12" md="7">
+          <v-col cols="12" md="6">
             <p class="category-header-medium mb-2">
               Old Student Dashboard Account
             </p>
@@ -60,14 +60,16 @@
               Access Old Dashboard Account
             </v-btn>
           </v-col>
-          <v-col cols="12" md="3">
-            <div class="d-flex align-start ga-2 landing-page-disclaimer">
-              <v-icon
-                icon="mdi-alert-circle-outline"
-                class="landing-page-disclaimer__icon"
-              />
-              <span>Not available to submit new applications</span>
-            </div>
+          <v-col cols="12" md="4" class="d-flex align-center">
+            <v-chip
+              class="font-weight-regular text-no-wrap"
+              color="warning"
+              variant="outlined"
+              size="small"
+              prepend-icon="fa:fa fa-circle-exclamation"
+            >
+              Not available to submit new applications
+            </v-chip>
           </v-col>
         </v-row>
       </v-card-text>
