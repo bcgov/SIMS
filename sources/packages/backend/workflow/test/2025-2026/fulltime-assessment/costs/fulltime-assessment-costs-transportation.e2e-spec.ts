@@ -35,7 +35,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
     ).toBe(0);
   });
 
-  it("Should determine no transportation cost when ineligible for return transportation due to online delivery.", async () => {
+  it("Should determine no transportation cost when student does not request additional transportation and is ineligible for return transportation due to online delivery.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -65,7 +65,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
     ).toBe(0);
   });
 
-  it("Should determine no transportation cost when ineligible for return transportation due to living with partner.", async () => {
+  it("Should determine no transportation cost when student does not request additional transportation and is ineligible for return transportation due to living with partner.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -103,7 +103,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
     ).toBe(0);
   });
 
-  it("Should determine no transportation cost when ineligible for return transportation as single independent student at home.", async () => {
+  it("Should determine no transportation cost when student does not request additional transportation and is ineligible for return transportation as single independent student at home.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -137,7 +137,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
     ).toBe(0);
   });
 
-  it("Should determine no transportation cost when ineligible for return transportation as single dependant at home.", async () => {
+  it("Should determine no transportation cost when student does not request additional transportation and is ineligible for return transportation as single dependant at home.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -184,7 +184,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
     ).toBe(0);
   });
 
-  it("Should determine max return transportation cost for two round trips (<=26 weeks).", async () => {
+  it("Should determine max return transportation cost when student reported cost higher than two round trips (<=26 weeks).", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -217,7 +217,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
     ).toBe(900);
   });
 
-  it("Should determine max return transportation cost for two round trips (>=27 weeks).", async () => {
+  it("Should determine max return transportation cost when student reported cost higher than two round trips (>=27 weeks).", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -325,7 +325,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
   });
 
   it.each([OfferingDeliveryOptions.Onsite, OfferingDeliveryOptions.Blended])(
-    "Should determine additional transportation cost for a %s offering.",
+    "Should determine additional transportation cost when offering delivered is %s.",
     async (offeringDelivered) => {
       // Arrange
       const assessmentConsolidatedData =

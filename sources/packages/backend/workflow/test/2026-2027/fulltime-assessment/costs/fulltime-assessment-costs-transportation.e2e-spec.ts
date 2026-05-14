@@ -324,7 +324,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
   });
 
   it.each([OfferingDeliveryOptions.Onsite, OfferingDeliveryOptions.Blended])(
-    "Should determine additional transportation cost for a %s offering.",
+    "Should determine additional transportation cost when offering delivered is %s.",
     async (offeringDelivered) => {
       // Arrange
       const assessmentConsolidatedData =
