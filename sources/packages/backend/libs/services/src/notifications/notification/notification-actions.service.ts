@@ -1125,7 +1125,7 @@ export class NotificationActionsService {
             sending_method: "attach",
           },
         },
-      } as NotificationEmailMessage,
+      },
     }));
 
     await this.notificationService.saveNotifications(
@@ -1531,41 +1531,6 @@ export class NotificationActionsService {
   }
 
   /**
-   * Creates a student notification when a form submission is completed.
-   * @param notification notification details.
-   * @param auditUserId user who completed the form submission.
-   * @param entityManager entity manager to execute in transaction.
-   */
-  async saveStudentFormCompletedNotification(
-    notification: StudentNotification,
-    auditUserId: number,
-    entityManager: EntityManager,
-  ): Promise<void> {
-    const { templateId } =
-      await this.notificationMessageService.getNotificationMessageDetails(
-        NotificationMessageType.StudentFormCompleted,
-      );
-    const formCompletedNotification = {
-      userId: notification.userId,
-      messageType: NotificationMessageType.StudentFormCompleted,
-      messagePayload: {
-        email_address: notification.toAddress,
-        template_id: templateId,
-        personalisation: {
-          givenNames: notification.givenNames ?? "",
-          lastName: notification.lastName,
-          date: this.getDateTimeOnPSTTimeZone(),
-        },
-      },
-    };
-    await this.notificationService.saveNotifications(
-      [formCompletedNotification],
-      auditUserId,
-      { entityManager },
-    );
-  }
-
-  /**
    * Creates a student notification when a change request review is completed by the ministry,
    * using the updated change request review completed template.
    * @param notification notification details.
@@ -1643,6 +1608,41 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       ministryNotificationsToSend,
       auditUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Creates a student notification when a form submission is completed.
+   * @param notification notification details.
+   * @param auditUserId user who completed the form submission.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveStudentFormCompletedNotification(
+    notification: StudentNotification,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const { templateId } =
+      await this.notificationMessageService.getNotificationMessageDetails(
+        NotificationMessageType.StudentFormCompleted,
+      );
+    const formCompletedNotification = {
+      userId: notification.userId,
+      messageType: NotificationMessageType.StudentFormCompleted,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          date: this.getDateTimeOnPSTTimeZone(),
+        },
+      },
+    };
+    await this.notificationService.saveNotifications(
+      [formCompletedNotification],
+      auditUserId,
       { entityManager },
     );
   }
