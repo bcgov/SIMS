@@ -30,8 +30,18 @@ export class MinistryCRAFileProcessingIssueNotification {
     const notificationLog = new ProcessSummary();
     processSummary.children(notificationLog);
 
-    const overdueCRANotifications =
-      await this.findOverdueCRAIncomeVerifications();
+    const overdueCRANotifications = await this.craIncomeVerificationRepo
+      .createQueryBuilder("craIncomeVerification")
+      .select([
+        "craIncomeVerification.dateSent",
+        "craIncomeVerification.fileSent",
+      ])
+      .distinctOn(["craIncomeVerification.fileSent"])
+      .where(
+        `craIncomeVerification.dateSent < NOW() - INTERVAL '${this.configService.craFileOverdueDays} day'`,
+      )
+      .andWhere("craIncomeVerification.dateReceived IS NULL")
+      .getMany();
 
     if (!overdueCRANotifications.length) {
       notificationLog.info(
@@ -56,25 +66,5 @@ export class MinistryCRAFileProcessingIssueNotification {
     notificationLog.info(
       `Total overdue CRA income verifications that generated notifications: ${notifications.length}`,
     );
-  }
-
-  private async findOverdueCRAIncomeVerifications(): Promise<
-    CRAIncomeVerification[]
-  > {
-    return await this.craIncomeVerificationRepo
-      .createQueryBuilder("craIncomeVerification")
-      .select([
-        "craIncomeVerification.dateSent",
-        "craIncomeVerification.fileSent",
-      ])
-      .distinctOn([
-        "craIncomeVerification.dateSent",
-        "craIncomeVerification.fileSent",
-      ])
-      .where(
-        `craIncomeVerification.dateSent < NOW() - INTERVAL '${this.configService.craFileOverdueDays} day'`,
-      )
-      .andWhere("craIncomeVerification.dateReceived IS NULL")
-      .getMany();
   }
 }

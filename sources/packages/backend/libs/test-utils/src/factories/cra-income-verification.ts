@@ -31,18 +31,14 @@ export function createFakeCRAIncomeVerification(
     relations?.application ?? createFakeApplication(relations);
   craIncomeVerification.taxYear = options?.initialValues?.taxYear ?? 2022;
   craIncomeVerification.craReportedIncome =
-    options?.initialValues?.craReportedIncome ?? undefined;
+    options?.initialValues?.craReportedIncome;
   craIncomeVerification.reportedIncome =
     options?.initialValues?.reportedIncome ?? 5000;
   craIncomeVerification.application = application;
-  craIncomeVerification.supportingUser = relations?.supportingUser ?? undefined;
-  craIncomeVerification.dateReceived =
-    options?.initialValues?.dateReceived ?? undefined;
-  craIncomeVerification.fileReceived =
-    options?.initialValues?.fileReceived ?? undefined;
-  craIncomeVerification.dateSent =
-    options?.initialValues?.dateSent ?? undefined;
-  craIncomeVerification.fileSent =
-    options?.initialValues?.fileSent ?? undefined;
+  craIncomeVerification.supportingUser = relations?.supportingUser;
+  craIncomeVerification.dateReceived = options?.initialValues?.dateReceived;
+  craIncomeVerification.fileReceived = options?.initialValues?.fileReceived;
+  craIncomeVerification.dateSent = options?.initialValues?.dateSent;
+  craIncomeVerification.fileSent = options?.initialValues?.fileSent;
   return craIncomeVerification;
 }

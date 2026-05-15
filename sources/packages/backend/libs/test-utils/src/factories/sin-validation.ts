@@ -15,21 +15,14 @@ export function createFakeSINValidation(
   },
   options?: { initialValue?: Partial<SINValidation> },
 ): SINValidation {
-  const now = new Date();
   const sinValidation = new SINValidation();
   // Generated an invalid SIN and avoiding a number starting with 9
   // to the SIN be considered not temporary by default.
   sinValidation.sin =
     options?.initialValue?.sin ??
     faker.number.int({ min: 100000000, max: 899999999 }).toString();
-  sinValidation.dateSent =
-    options?.initialValue?.dateSent !== undefined
-      ? options.initialValue.dateSent
-      : now;
-  sinValidation.dateReceived =
-    options?.initialValue?.dateReceived !== undefined
-      ? options.initialValue.dateReceived
-      : now;
+  sinValidation.dateSent = options?.initialValue?.dateSent;
+  sinValidation.dateReceived = options?.initialValue?.dateReceived;
   sinValidation.fileSent = options?.initialValue?.fileSent ?? null;
   sinValidation.fileReceived = null;
   sinValidation.givenNameSent = null;

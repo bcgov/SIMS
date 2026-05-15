@@ -6,7 +6,7 @@ import {
 } from "@sims/services";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { InjectRepository } from "@nestjs/typeorm";
-import { SINValidation } from "@sims/sims-db";
+import { Student } from "@sims/sims-db";
 import { Repository } from "typeorm";
 import { ConfigService } from "@sims/utilities/config";
 
@@ -16,8 +16,8 @@ import { ConfigService } from "@sims/utilities/config";
 @Injectable()
 export class MinistrySINFileProcessingIssueNotification {
   constructor(
-    @InjectRepository(SINValidation)
-    private readonly sinValidationRepo: Repository<SINValidation>,
+    @InjectRepository(Student)
+    private readonly studentRepo: Repository<Student>,
     private readonly configService: ConfigService,
     private readonly notificationActionsService: NotificationActionsService,
   ) {}
@@ -30,9 +30,22 @@ export class MinistrySINFileProcessingIssueNotification {
     const notificationLog = new ProcessSummary();
     processSummary.children(notificationLog);
 
-    const overdueSINNotifications = await this.findOverdueSINValidations();
+    const studentsWithOverdueSINValidations = await this.studentRepo
+      .createQueryBuilder("student")
+      .select([
+        "student.id",
+        "sinValidation.dateSent",
+        "sinValidation.fileSent",
+      ])
+      .innerJoin("student.sinValidation", "sinValidation")
+      .distinctOn(["sinValidation.fileSent"])
+      .where(
+        `sinValidation.dateSent < NOW() - INTERVAL '${this.configService.sinFileOverdueDays} day'`,
+      )
+      .andWhere("sinValidation.dateReceived IS NULL")
+      .getMany();
 
-    if (!overdueSINNotifications.length) {
+    if (!studentsWithOverdueSINValidations.length) {
       notificationLog.info(
         `No SIN validations ${this.configService.sinFileOverdueDays} days past due found to generate notifications.`,
       );
@@ -40,10 +53,10 @@ export class MinistrySINFileProcessingIssueNotification {
     }
 
     const notifications =
-      overdueSINNotifications.map<MinistryFileProcessingIssueNotification>(
-        (sinNotification) => ({
-          fileName: sinNotification.fileSent!,
-          dateSent: sinNotification.dateSent!,
+      studentsWithOverdueSINValidations.map<MinistryFileProcessingIssueNotification>(
+        (student) => ({
+          fileName: student.sinValidation!.fileSent!,
+          dateSent: student.sinValidation!.dateSent!,
           type: FileProcessingIssueType.SIN,
         }),
       );
@@ -55,17 +68,5 @@ export class MinistrySINFileProcessingIssueNotification {
     notificationLog.info(
       `Total overdue SIN validations that generated notifications: ${notifications.length}`,
     );
-  }
-
-  private async findOverdueSINValidations(): Promise<SINValidation[]> {
-    return await this.sinValidationRepo
-      .createQueryBuilder("sinValidation")
-      .select(["sinValidation.dateSent", "sinValidation.fileSent"])
-      .distinctOn(["sinValidation.dateSent", "sinValidation.fileSent"])
-      .where(
-        `sinValidation.dateSent < NOW() - INTERVAL '${this.configService.sinFileOverdueDays} day'`,
-      )
-      .andWhere("sinValidation.dateReceived IS NULL")
-      .getMany();
   }
 }

@@ -748,7 +748,6 @@ describe(
           },
           {
             initialValues: {
-              dateReceived: undefined,
               dateSent,
               fileSent: "DUMMY_BYPASS_CRA_SENT_FILE.txt",
             },
@@ -761,7 +760,6 @@ describe(
           },
           {
             initialValues: {
-              dateReceived: undefined,
               dateSent,
               fileSent: "DUMMY_BYPASS_CRA_SENT_FILE.txt",
             },
@@ -802,8 +800,15 @@ describe(
       it(`Should generate a notification for SIN file processing issues when the file was sent ${daysPastSent} days ago with no response file received.`, async () => {
         // Arrange
 
-        // Create an in progress application.
-        const application = await saveFakeApplication(
+        // Create two in progress applications.
+        const application1 = await saveFakeApplication(
+          db.dataSource,
+          {},
+          {
+            applicationStatus: ApplicationStatus.InProgress,
+          },
+        );
+        const application2 = await saveFakeApplication(
           db.dataSource,
           {},
           {
@@ -811,15 +816,17 @@ describe(
           },
         );
 
+        const student1 = application1.student;
+        const student2 = application2.student;
+
         const dateSent = addDays(-daysPastSent);
-        // Add two records for the same file. Only a single notification should be generated.
+        // Add two records for the same file. Only a single notification should be generated since the fileName is the same.
         const sinValidation1 = createFakeSINValidation(
           {
-            student: application.student,
+            student: student1,
           },
           {
             initialValue: {
-              dateReceived: null,
               dateSent,
               fileSent: "DUMMY_BYPASS_SIN_SENT_FILE.txt",
             },
@@ -828,17 +835,34 @@ describe(
         await db.sinValidation.save(sinValidation1);
         const sinValidation2 = createFakeSINValidation(
           {
-            student: application.student,
+            student: student2,
           },
           {
             initialValue: {
-              dateReceived: null,
               dateSent,
               fileSent: "DUMMY_BYPASS_SIN_SENT_FILE.txt",
             },
           },
         );
         await db.sinValidation.save(sinValidation2);
+        // Add an older side validation for student1 to ensure only the most recent one is considered.
+        createFakeSINValidation(
+          {
+            student: student1,
+          },
+          {
+            initialValue: {
+              dateSent: addDays(-3, dateSent),
+              fileSent: "DUMMY_BYPASS_SIN_SENT_FILE_OLD.txt",
+            },
+          },
+        );
+        await db.sinValidation.save(sinValidation1);
+
+        student1.sinValidation = sinValidation1;
+        await db.student.save(student1);
+        student2.sinValidation = sinValidation2;
+        await db.student.save(student2);
 
         // Queued job.
         const mockedJob = mockBullJob<void>();
