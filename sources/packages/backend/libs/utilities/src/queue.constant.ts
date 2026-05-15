@@ -37,5 +37,4 @@ export enum QueueNames {
   ECertCancellationResponseIntegration = "e-cert-cancellation-response-integration",
   T4AUploadEnqueuer = "t4a-upload-enqueuer",
   T4AUpload = "t4a-upload",
-  FileProcessingIssueNotification = "file-processing-issue-notification",
 }

@@ -35,7 +35,6 @@ import {
   ECertCancellationResponseIntegrationScheduler,
   T4AUploadEnqueuerScheduler,
   T4AUploadProcessor,
-  FileProcessingIssueNotificationScheduler,
 } from "./processors";
 import {
   DisbursementScheduleSharedService,
@@ -82,9 +81,10 @@ import {
   StudentPDPPDReminderNotification,
   StudentSecondDisbursementReminderNotification,
   StudentCOERequiredNearEndDateReminderNotification,
+  MinistryCRAFileProcessingIssueNotification,
+  MinistrySINFileProcessingIssueNotification,
   CASInvoiceBatchService,
   CASInvoiceService,
-  FileProcessingIssueNotificationService,
 } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
@@ -188,6 +188,8 @@ import { LoggerModule } from "@sims/utilities/logger";
     StudentPDPPDReminderNotification,
     StudentSecondDisbursementReminderNotification,
     StudentCOERequiredNearEndDateReminderNotification,
+    MinistryCRAFileProcessingIssueNotification,
+    MinistrySINFileProcessingIssueNotification,
     CASInvoiceBatchService,
     CASInvoiceService,
     CASInvoicesBatchesCreationScheduler,
@@ -195,8 +197,6 @@ import { LoggerModule } from "@sims/utilities/logger";
     ECertCancellationResponseIntegrationScheduler,
     T4AUploadEnqueuerScheduler,
     T4AUploadProcessor,
-    FileProcessingIssueNotificationScheduler,
-    FileProcessingIssueNotificationService,
   ],
   controllers: [HealthController, MetricsController],
 })

@@ -82,6 +82,7 @@ services:
       - THROTTLE_TIME=${THROTTLE_TIME}
       - THROTTLE_LIMIT=${THROTTLE_LIMIT}
       - FEATURE_TOGGLES=${FEATURE_TOGGLES}
+      - FILE_PROCESSING_OVERDUE_DAYS=${FILE_PROCESSING_OVERDUE_DAYS}
     networks:
       - local-network-tests
     restart: always

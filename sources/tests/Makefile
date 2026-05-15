@@ -33,6 +33,9 @@ export ALLOW_BETA_INSTITUTIONS_ONLY :=$(or $(ALLOW_BETA_INSTITUTIONS_ONLY), fals
 export FORMIO_SOURCE_REPO_URL := $(or $(FORMIO_SOURCE_REPO_URL), https://github.com/formio/formio.git)
 export FORMIO_SOURCE_REPO_TAG := $(or $(FORMIO_SOURCE_REPO_TAG), v4.3.2)
 
+# The number of days after which CRA/SIN file processing is considered overdue.
+export FILE_PROCESSING_OVERDUE_DAYS := $(or ${FILE_PROCESSING_OVERDUE_DAYS}, 5)
+
 backend-unit-tests:
 	@cd ../packages/backend && npm i && npm run test:cov
 

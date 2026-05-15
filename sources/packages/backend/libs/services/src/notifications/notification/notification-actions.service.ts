@@ -1125,7 +1125,7 @@ export class NotificationActionsService {
             sending_method: "attach",
           },
         },
-      },
+      } as NotificationEmailMessage,
     }));
 
     await this.notificationService.saveNotifications(

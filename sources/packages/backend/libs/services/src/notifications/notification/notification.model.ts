@@ -274,7 +274,10 @@ export interface MinistryFormSubmittedNotification {
   applicationNumber?: string;
 }
 
-export type FileProcessingIssueType = "CRA" | "SIN";
+export enum FileProcessingIssueType {
+  CRA = "CRA",
+  SIN = "SIN",
+}
 
 export interface MinistryFileProcessingIssueNotification {
   fileName: string;
