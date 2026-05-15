@@ -165,7 +165,7 @@ jobs:
       - name: Setup Nodejs
         uses: actions/setup-node@v6
         with:
-          node-version: "25.x"
+          node-version: "26.x"
       # Run units tests and generate the coverage report.
       - name: Run Tests
         working-directory: "./sources/tests/"
