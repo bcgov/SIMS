@@ -83,6 +83,7 @@
                 color="warning"
                 variant="outlined"
                 size="small"
+                label
                 prepend-icon="fa:fa fa-circle-exclamation"
               >
                 Not available to submit new applications
