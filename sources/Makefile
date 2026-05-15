@@ -107,8 +107,11 @@ export ALLOW_BETA_USERS_ONLY := $(or $(ALLOW_BETA_USERS_ONLY), false)
 # Allow full-time application submissions only for beta institution locations if true.
 export ALLOW_BETA_INSTITUTIONS_ONLY := $(or $(ALLOW_BETA_INSTITUTIONS_ONLY), false)
 
-# The number of days after which CRA/SIN file processing is considered overdue.
-export FILE_PROCESSING_OVERDUE_DAYS := $(or $(FILE_PROCESSING_OVERDUE_DAYS), 5)
+# The number of days after which CRA file processing is considered overdue.
+export CRA_FILE_OVERDUE_DAYS := $(or $(CRA_FILE_OVERDUE_DAYS), 5)
+
+# The number of days after which SIN file processing is considered overdue.
+export SIN_FILE_OVERDUE_DAYS := $(or $(SIN_FILE_OVERDUE_DAYS), 5)
 
 # Starts all applications: SIMS application (Web Portals, SIMS Api, Workers, Queue Consumers),
 # and also Form.io server, and Camunda related services.

@@ -118,7 +118,8 @@ env:
   THROTTLE_TIME: ${{ vars.THROTTLE_TIME }}
   THROTTLE_LIMIT: ${{ vars.THROTTLE_LIMIT }}
   FEATURE_TOGGLES: ${{ vars.FEATURE_TOGGLES }}
-  FILE_PROCESSING_OVERDUE_DAYS: ${{ vars.FILE_PROCESSING_OVERDUE_DAYS }}
+  CRA_FILE_OVERDUE_DAYS: ${{ vars.CRA_FILE_OVERDUE_DAYS }}
+  SIN_FILE_OVERDUE_DAYS: ${{ vars.SIN_FILE_OVERDUE_DAYS }}
 jobs:
   env-setup:
     name: Setup Dynamic Environment Variables

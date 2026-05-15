@@ -34,7 +34,7 @@ export class MinistrySINFileProcessingIssueNotification {
 
     if (!overdueSINNotifications.length) {
       notificationLog.info(
-        `No SIN validations ${this.configService.fileProcessingOverdueDays} days past due found to generate notifications.`,
+        `No SIN validations ${this.configService.sinFileOverdueDays} days past due found to generate notifications.`,
       );
       return;
     }
@@ -63,7 +63,7 @@ export class MinistrySINFileProcessingIssueNotification {
       .select(["sinValidation.dateSent", "sinValidation.fileSent"])
       .distinctOn(["sinValidation.dateSent", "sinValidation.fileSent"])
       .where(
-        `sinValidation.dateSent < NOW() - INTERVAL '${this.configService.fileProcessingOverdueDays} day'`,
+        `sinValidation.dateSent < NOW() - INTERVAL '${this.configService.sinFileOverdueDays} day'`,
       )
       .andWhere("sinValidation.dateReceived IS NULL")
       .getMany();

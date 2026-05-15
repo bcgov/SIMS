@@ -249,6 +249,10 @@ APP_ENV=
 
 FEATURE_TOGGLES=
 
-# The number of days after which CRA/SIN file processing is considered overdue.
+# The number of days after which CRA file processing is considered overdue.
 
-FILE_PROCESSING_OVERDUE_DAYS=
+CRA_FILE_OVERDUE_DAYS=
+
+# The number of days after which SIN file processing is considered overdue.
+
+SIN_FILE_OVERDUE_DAYS=

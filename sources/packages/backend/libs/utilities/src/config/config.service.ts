@@ -531,13 +531,24 @@ export class ConfigService {
   }
 
   /**
-   * Gets the number of days after which CRA/SIN file processing is considered overdue.
-   * @returns number of days after which CRA/SIN file processing is considered overdue.
+   * Gets the number of days after which CRA file processing is considered overdue.
+   * @returns number of days after which CRA file processing is considered overdue.
    */
-  get fileProcessingOverdueDays(): number {
+  get craFileOverdueDays(): number {
     return this.getCachedConfig(
-      "fileProcessingOverdueDaysConfig",
-      +process.env.FILE_PROCESSING_OVERDUE_DAYS || 5,
+      "craFileProcessingOverdueDaysConfig",
+      +process.env.CRA_FILE_OVERDUE_DAYS || 5,
+    );
+  }
+
+  /**
+   * Gets the number of days after which SIN file processing is considered overdue.
+   * @returns number of days after which SIN file processing is considered overdue.
+   */
+  get sinFileOverdueDays(): number {
+    return this.getCachedConfig(
+      "sinFileProcessingOverdueDaysConfig",
+      +process.env.SIN_FILE_OVERDUE_DAYS || 5,
     );
   }
 }

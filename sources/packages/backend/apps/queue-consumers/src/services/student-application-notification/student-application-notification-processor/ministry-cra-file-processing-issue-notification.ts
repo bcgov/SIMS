@@ -35,7 +35,7 @@ export class MinistryCRAFileProcessingIssueNotification {
 
     if (!overdueCRANotifications.length) {
       notificationLog.info(
-        `No CRA income verifications ${this.configService.fileProcessingOverdueDays} days past due found to generate notifications.`,
+        `No CRA income verifications ${this.configService.craFileOverdueDays} days past due found to generate notifications.`,
       );
       return;
     }
@@ -72,7 +72,7 @@ export class MinistryCRAFileProcessingIssueNotification {
         "craIncomeVerification.fileSent",
       ])
       .where(
-        `craIncomeVerification.dateSent < NOW() - INTERVAL '${this.configService.fileProcessingOverdueDays} day'`,
+        `craIncomeVerification.dateSent < NOW() - INTERVAL '${this.configService.craFileOverdueDays} day'`,
       )
       .andWhere("craIncomeVerification.dateReceived IS NULL")
       .getMany();
