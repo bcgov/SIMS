@@ -796,6 +796,52 @@ describe(
       });
     });
 
+    negativeNotificationData.forEach(({ daysPastSent, dateReceived }) => {
+      it(`Should not generate a notification for CRA file processing issues when the file was sent ${daysPastSent} days ago with response file received ${dateReceived ? getPSTPDTDateTime(dateReceived) : "never"}.`, async () => {
+        // Arrange
+
+        // Create an in progress application.
+        const application = await saveFakeApplication(
+          db.dataSource,
+          {},
+          {
+            applicationStatus: ApplicationStatus.InProgress,
+          },
+        );
+
+        const craVerification = createFakeCRAIncomeVerification(
+          {
+            application: application,
+          },
+          {
+            initialValues: {
+              dateReceived: dateReceived,
+              dateSent: addDays(-daysPastSent),
+              fileSent: "DUMMY_BYPASS_CRA_SENT_FILE.txt",
+            },
+          },
+        );
+        await db.craIncomeVerification.save(craVerification);
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        const result = await processor.processQueue(mockedJob.job);
+
+        expect(result).toStrictEqual(["Process finalized with success."]);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            "No CRA income verifications 5 days past due found to generate notifications.",
+          ]),
+        ).toBe(true);
+        const hasNotification = await notificationExists();
+        expect(hasNotification).toBe(false);
+      });
+    });
+
     positiveNotificationData.forEach(({ daysPastSent }) => {
       it(`Should generate a notification for SIN file processing issues when the file was sent ${daysPastSent} days ago with no response file received.`, async () => {
         // Arrange
@@ -846,7 +892,7 @@ describe(
         );
         await db.sinValidation.save(sinValidation2);
         // Add an older side validation for student1 to ensure only the most recent one is considered.
-        createFakeSINValidation(
+        const sinValidation3 = createFakeSINValidation(
           {
             student: student1,
           },
@@ -857,7 +903,7 @@ describe(
             },
           },
         );
-        await db.sinValidation.save(sinValidation1);
+        await db.sinValidation.save(sinValidation3);
 
         student1.sinValidation = sinValidation1;
         await db.student.save(student1);
@@ -894,53 +940,7 @@ describe(
     });
 
     negativeNotificationData.forEach(({ daysPastSent, dateReceived }) => {
-      it(`Should not generate a notification for CRA file processing issues when the file was sent ${daysPastSent} days ago with response file received ${dateReceived ? getPSTPDTDateTime(dateReceived) : "never"}.`, async () => {
-        // Arrange
-
-        // Create an in progress application.
-        const application = await saveFakeApplication(
-          db.dataSource,
-          {},
-          {
-            applicationStatus: ApplicationStatus.InProgress,
-          },
-        );
-
-        const craVerification = createFakeCRAIncomeVerification(
-          {
-            application: application,
-          },
-          {
-            initialValues: {
-              dateReceived: dateReceived,
-              dateSent: addDays(-daysPastSent),
-              fileSent: "DUMMY_BYPASS_CRA_SENT_FILE.txt",
-            },
-          },
-        );
-        await db.craIncomeVerification.save(craVerification);
-
-        // Queued job.
-        const mockedJob = mockBullJob<void>();
-
-        // Act
-        const result = await processor.processQueue(mockedJob.job);
-
-        expect(result).toStrictEqual(["Process finalized with success."]);
-
-        // Assert
-        expect(
-          mockedJob.containLogMessages([
-            "No CRA income verifications 5 days past due found to generate notifications.",
-          ]),
-        ).toBe(true);
-        const hasNotification = await notificationExists();
-        expect(hasNotification).toBe(false);
-      });
-    });
-
-    negativeNotificationData.forEach(({ daysPastSent, dateReceived }) => {
-      it(`Should not generate a notification for CRA file processing issues when the file was sent ${daysPastSent} days ago with response file received ${dateReceived ? getPSTPDTDateTime(dateReceived) : "never"}.`, async () => {
+      it(`Should not generate a notification for SIN file processing issues when the file was sent ${daysPastSent} days ago with response file received ${dateReceived ? getPSTPDTDateTime(dateReceived) : "never"}.`, async () => {
         // Arrange
 
         // Create an in progress application.

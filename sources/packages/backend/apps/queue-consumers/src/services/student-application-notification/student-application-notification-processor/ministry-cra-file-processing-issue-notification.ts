@@ -38,7 +38,10 @@ export class MinistryCRAFileProcessingIssueNotification {
       ])
       .distinctOn(["craIncomeVerification.fileSent"])
       .where(
-        `craIncomeVerification.dateSent < NOW() - INTERVAL '${this.configService.craFileOverdueDays} day'`,
+        "craIncomeVerification.dateSent < NOW() - (:craFileOverdueDays * INTERVAL '1 day')",
+        {
+          craFileOverdueDays: this.configService.craFileOverdueDays,
+        },
       )
       .andWhere("craIncomeVerification.dateReceived IS NULL")
       .getMany();

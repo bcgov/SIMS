@@ -40,7 +40,8 @@ export class MinistrySINFileProcessingIssueNotification {
       .innerJoin("student.sinValidation", "sinValidation")
       .distinctOn(["sinValidation.fileSent"])
       .where(
-        `sinValidation.dateSent < NOW() - INTERVAL '${this.configService.sinFileOverdueDays} day'`,
+        "sinValidation.dateSent < NOW() - (:sinFileOverdueDays * INTERVAL '1 day')",
+        { sinFileOverdueDays: this.configService.sinFileOverdueDays },
       )
       .andWhere("sinValidation.dateReceived IS NULL")
       .getMany();

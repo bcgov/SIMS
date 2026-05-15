@@ -536,7 +536,7 @@ export class ConfigService {
    */
   get craFileOverdueDays(): number {
     return this.getCachedConfig(
-      "craFileProcessingOverdueDaysConfig",
+      "craFileOverdueDaysConfig",
       +process.env.CRA_FILE_OVERDUE_DAYS || 5,
     );
   }
@@ -547,7 +547,7 @@ export class ConfigService {
    */
   get sinFileOverdueDays(): number {
     return this.getCachedConfig(
-      "sinFileProcessingOverdueDaysConfig",
+      "sinFileOverdueDaysConfig",
       +process.env.SIN_FILE_OVERDUE_DAYS || 5,
     );
   }

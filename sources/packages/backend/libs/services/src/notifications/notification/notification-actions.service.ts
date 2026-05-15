@@ -1282,7 +1282,7 @@ export class NotificationActionsService {
 
   /**
    * Asserts the notification message details of a notification message.
-   * @param notificationMessageTypeId id of the user who will receive the message.
+   * @param notificationMessageTypeId id of the notification message.
    * @returns notification details of the notification message.
    */
   private async assertNotificationMessageDetails(
