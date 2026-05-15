@@ -49,10 +49,13 @@ describe(
     it("Should skip process SIN response file when no SIN validation was updated because the record id is already present.", async () => {
       // Arrange
       // Create a SIN record with REFERENCE_IDX = 600000001
+      const now = new Date();
       const validSinStudent = await saveFakeStudent(db.dataSource, undefined, {
         sinValidationInitialValue: {
           sin: "100000001",
           isValidSIN: true,
+          dateSent: now,
+          dateReceived: now,
         },
       });
       mockDownloadFiles(
