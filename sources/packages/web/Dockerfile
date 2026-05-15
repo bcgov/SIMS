@@ -2,8 +2,8 @@
 # "builder" stage, based on Node.js, to build and compile the frontend.
 
 # Artifactory registry is passed as a build argument to avoid hardcoding it in the Dockerfile.
-# It allows dependabot to update the base image when an update is available.
-ARG DOCKER_REGISTRY
+# The default value (docker.io) allows dependabot to resolve and update the base image when an update is available.
+ARG DOCKER_REGISTRY=docker.io
 FROM ${DOCKER_REGISTRY}/node:25.9.0-alpine3.22 AS builder
 
 # Application Port.
@@ -27,7 +27,6 @@ RUN sed 's/${PORT}/'"${PORT}"'/g' nginx/default.conf.template > default.conf
 # Building app
 RUN npm run build
 
-# dependabot: FROM nginx:1.29.3-alpine3.22
 FROM ${DOCKER_REGISTRY}/nginx:1.29.3-alpine3.22 AS deployer
 
 # Copy the app built on builder stage to the resulting container.
