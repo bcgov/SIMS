@@ -248,7 +248,12 @@ strong {
 
 // This class will restrict the container with max-width.
 .container-max-width {
-  max-width: 960px !important;
+  max-width: 730px !important;
+}
+
+// Max width constraint for the landing page container.
+.landing-page-container-size {
+  max-width: 900px !important;
 }
 
 // Btn font color white.
