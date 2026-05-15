@@ -162,6 +162,7 @@ export enum AppRoutes {
   Balances = "balances",
   StudentDetail = "student/:studentId",
   StudentProfile = "profile",
+  StudentDisabilityProfile = "disability-profile",
   Applications = "applications",
   Restrictions = "restrictions",
   FileUploads = "files",

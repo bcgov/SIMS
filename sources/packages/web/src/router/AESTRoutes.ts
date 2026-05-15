@@ -5,6 +5,7 @@ import AESTDashboard from "@/views/aest/AESTDashboard.vue";
 import SearchStudents from "@/views/aest/SearchStudents.vue";
 import StudentDetails from "@/views/aest/student/StudentDetails.vue";
 import StudentProfile from "@/views/aest/student/Profile.vue";
+import DisabilityProfile from "@/views/aest/student/DisabilityProfile.vue";
 import StudentApplications from "@/views/aest/student/Applications.vue";
 import ProgramDetails from "@/views/aest/institution/ProgramDetails.vue";
 import SearchInstitutions from "@/views/aest/SearchInstitutions.vue";
@@ -128,6 +129,15 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             name: AESTRoutesConst.STUDENT_PROFILE,
             props: true,
             component: StudentProfile,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
+            path: AppRoutes.StudentDisabilityProfile,
+            name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE,
+            props: true,
+            component: DisabilityProfile,
             meta: {
               clientType: ClientIdType.AEST,
             },

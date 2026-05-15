@@ -57,6 +57,14 @@ export default defineComponent({
         }),
       },
       {
+        label: "Disability",
+        icon: "fa:fa fa-wheelchair",
+        command: () => ({
+          name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE,
+          params: { studentId: props.studentId },
+        }),
+      },
+      {
         label: "Applications",
         icon: "fa:far fa-folder-open",
         command: () => ({
