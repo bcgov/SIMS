@@ -33,7 +33,7 @@ function needRenewJwtToken(jwtExp: number, maxSecondsToExpired = 0): boolean {
   const jwtExpMilliseconds = jwtExp * 1000; // Convert to milliseconds.
   const maxSecondsToExpiredMilliseconds = maxSecondsToExpired * 1000; // Convert to milliseconds.
   const expiredDate = new Date(
-    jwtExpMilliseconds - maxSecondsToExpiredMilliseconds
+    jwtExpMilliseconds - maxSecondsToExpiredMilliseconds,
   );
   return new Date() > expiredDate;
 }
@@ -55,7 +55,7 @@ function needRenewJwtToken(jwtExp: number, maxSecondsToExpired = 0): boolean {
 export function getCachedToken(
   authorizedParty: AuthorizedParties,
   credentials: AuthenticationCredential,
-  options?: { uniqueTokenCache?: string }
+  options?: { uniqueTokenCache?: string },
 ): string {
   let credentialTokenKey: string = authorizedParty;
   if (authorizedParty !== AuthorizedParties.LoadTestGateway) {
@@ -68,7 +68,7 @@ export function getCachedToken(
     !tokenCache[tokenCacheKey] ||
     needRenewJwtToken(
       tokenCache[tokenCacheKey].expiresIn,
-      TOKEN_RENEWAL_SECONDS
+      TOKEN_RENEWAL_SECONDS,
     )
   ) {
     const accessToken = getToken(authorizedParty, credentials);
@@ -89,7 +89,7 @@ export function getCachedToken(
  */
 export function getToken(
   authorizedParty: AuthorizedParties,
-  credentials: AuthenticationCredential
+  credentials: AuthenticationCredential,
 ): string {
   const headers = { "Content-Type": "application/x-www-form-urlencoded" };
   const payload = getTokenPayload(authorizedParty, credentials);
@@ -98,8 +98,11 @@ export function getToken(
   });
   if (response.status !== 200) {
     throw new Error(
-      `Error while acquiring token. Error code: ${response.status_text}`
+      `Error while acquiring token. Error code: ${response.status_text}`,
     );
+  }
+  if (!response.body) {
+    throw new Error("Error while acquiring token. Empty response body.");
   }
   const responseBody = JSON.parse(response.body.toString());
   return responseBody.access_token;
@@ -113,8 +116,8 @@ export function getToken(
  */
 function getTokenPayload(
   authorizedParty: AuthorizedParties,
-  credentials: AuthenticationCredential
-) {
+  credentials: AuthenticationCredential,
+): Record<string, string> {
   if (authorizedParty === AuthorizedParties.LoadTestGateway) {
     const clientSecretCredential = credentials as ClientSecretCredential;
     return {

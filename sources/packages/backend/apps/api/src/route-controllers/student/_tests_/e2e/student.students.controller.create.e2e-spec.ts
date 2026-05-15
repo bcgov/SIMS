@@ -22,6 +22,7 @@ import { RestrictionCode, SystemUsersService } from "@sims/services";
 import { In } from "typeorm";
 import { DisabilityStatus, IdentityProviders, NoteType } from "@sims/sims-db";
 import { CreateStudentAPIInDTO } from "apps/api/src/route-controllers/student/models/student.dto";
+import { applySINNumberFormat } from "@sims/test-utils/utils";
 
 const SIN_NUMBER_A = "544962244";
 const SIN_NUMBER_B = "317149003";
@@ -394,7 +395,7 @@ function createFakeStudentPayload(options: {
     postalCode: "V5K0A1",
     canadaPostalCode: "V5K0A1",
     phone: "123-456-7890",
-    sinNumber: options.sinNumber,
+    sinNumber: applySINNumberFormat(options.sinNumber),
     sinConsent: true,
     gender: "man",
   };

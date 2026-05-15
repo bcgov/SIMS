@@ -1,8 +1,11 @@
 # Use Node image, maintained by Docker: hub.docker.com/r/_/node.
-FROM node:20-alpine3.20
+FROM node:24-alpine3.23
 
 ARG FORMIO_SOURCE_REPO_URL
-ARG FORMIO_SOURCE_REPO_TAG
+ARG FORMIO_SOURCE_REPO_REF
+ARG FORMIO_CORE_VERSION
+ARG FORMIO_JS_VERSION
+ARG FORMIO_VM_VERSION
 
 # "bcrypt" requires python/make/g++, all must be installed in alpine.
 # Note: using pinned versions to ensure immutable build environment.
@@ -14,15 +17,21 @@ RUN apk update && \
   apk add git && \
   apk cache clean
 
-# Clone code into formio folder, by default.
-RUN git clone ${FORMIO_SOURCE_REPO_URL} -b ${FORMIO_SOURCE_REPO_TAG} --single-branch
+# Clone with a blobless filter to skip downloading file contents until checkout.
+# This makes it very fast while fully supporting tags, branches, and partial SHAs.
+RUN git clone --filter=blob:none ${FORMIO_SOURCE_REPO_URL} formio && \
+  git -C formio checkout ${FORMIO_SOURCE_REPO_REF}
 
-RUN apk del git
+COPY src/patch-formio-vm.js /tmp/patch-formio-vm.js
 
 WORKDIR /formio
 
-# Use install as-is from package.json.
-RUN npm i
+RUN node /tmp/patch-formio-vm.js && \
+    npm pkg set 'dependencies[@formio/core]'="${FORMIO_CORE_VERSION}" && \
+    npm pkg set 'dependencies[@formio/js]'="${FORMIO_JS_VERSION}" && \
+    npm pkg set 'dependencies[@formio/vm]'="${FORMIO_VM_VERSION}" && \
+    npm i && \
+    apk del git
 
 # Set this to inspect more from the application. Examples:
 #   DEBUG=formio:db (see index.js for more)

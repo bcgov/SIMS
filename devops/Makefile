@@ -2,6 +2,9 @@
 export $(shell sed 's/=.*//' ../.env)
 
 .DEFAULT_GOAL := default
+
+# Formio forms integration
+include ../shared-env/formio-versions.mk
 export GIT_LOCAL_BRANCH?=$(shell git rev-parse --abbrev-ref HEAD)
 export NAMESPACE := $(or $(NAMESPACE), $$NS)
 export APP_NAME := $(or $(PROJECT_NAME), sims)
@@ -40,7 +43,7 @@ export QUEUE_CONSUMERS_BUILD_REF := $(or ${QUEUE_CONSUMERS_BUILD_REF}, queue-con
 export LOAD_TEST_GATEWAY_BUILD_REF := $(or ${LOAD_TEST_GATEWAY_BUILD_REF}, load-test-gateway-${APP_NAME})
 export WEB_BUILD_REF := $(or ${WEB_BUILD_REF}, web-${APP_NAME})
 export FORMS_BUILD_REF := $(or ${FORMS_BUILD_REF}, forms)
-export FORMIO_SOURCE_REPO_TAG := $(or $(FORMIO_SOURCE_REPO_TAG), v4.3.2)
+
 export FORMIO_ROOT_EMAIL := $(or ${FORMIO_ROOT_EMAIL}, dev_sabc@gov.bc.ca)
 export MONGODB_URI := $(or ${MONGODB_URI}, $$MONGODB_URI)
 export QUEUE_PREFIX := $(or $(QUEUE_PREFIX), {sims-local})
@@ -145,10 +148,6 @@ endef
 
 define SOURCE_REPOSITORY_URL
 "https://github.com/bcgov/SIMS.git"
-endef
-
-define FORMIO_SOURCE_REPO_URL
-"https://github.com/formio/formio.git"
 endef
 
 define SOURCE_CONTEXT_DIR
@@ -277,63 +276,6 @@ init-secrets:
 		-p S3_DEFAULT_BUCKET=$(S3_DEFAULT_BUCKET) \
 		-p S3_REGION=$(S3_REGION) \
 		| oc -n $(NAMESPACE) apply -f -
-
-export-secrets:
-	@oc -n $(NAMESPACE) create secret generic exported-sims-secrets \
-		--from-literal=API_PORT=$(API_PORT) \
-		--from-literal=ATBC_APP=$(ATBC_APP) \
-		--from-literal=ATBC_ENDPOINT=$(ATBC_ENDPOINT) \
-		--from-literal=ATBC_LOGIN_ENDPOINT=$(ATBC_LOGIN_ENDPOINT) \
-		--from-literal=ATBC_PASSWORD=$(ATBC_PASSWORD) \
-		--from-literal=ATBC_USERNAME=$(ATBC_USERNAME) \
-		--from-literal=BCEID_WEB_SERVICE_AUTH_USER_NAME=$(BCEID_WEB_SERVICE_AUTH_USER_NAME) \
-		--from-literal=BCEID_WEB_SERVICE_AUTH_USER_PASSWORD=$(BCEID_WEB_SERVICE_AUTH_USER_PASSWORD) \
-		--from-literal=BCEID_WEB_SERVICE_ONLINE_SERVICE_ID=$(BCEID_WEB_SERVICE_ONLINE_SERVICE_ID) \
-		--from-literal=BCEID_WEB_SERVICE_REQUESTER_USER_GUID=$(BCEID_WEB_SERVICE_REQUESTER_USER_GUID) \
-		--from-literal=BCEID_WEB_SERVICE_WSDL=$(BCEID_WEB_SERVICE_WSDL) \
-		--from-literal=BYPASS_APPLICATION_SUBMIT_VALIDATIONS=$(BYPASS_APPLICATION_SUBMIT_VALIDATIONS) \
-		--from-literal=BYPASS_CRA_INCOME_VERIFICATION=$(BYPASS_CRA_INCOME_VERIFICATION) \
-		--from-literal=CAMUNDA_OAUTH_URL=$(CAMUNDA_OAUTH_URL) \
-		--from-literal=CAS_BASE_URL=$(CAS_BASE_URL) \
-		--from-literal=CAS_CLIENT_ID=$(CAS_CLIENT_ID) \
-		--from-literal=CAS_CLIENT_SECRET=$(CAS_CLIENT_SECRET) \
-		--from-literal=CRA_ENVIRONMENT_CODE=$(CRA_ENVIRONMENT_CODE) \
-		--from-literal=CRA_PROGRAM_AREA_CODE=$(CRA_PROGRAM_AREA_CODE) \
-		--from-literal=CRA_REQUEST_FOLDER=$(CRA_REQUEST_FOLDER) \
-		--from-literal=CRA_RESPONSE_FOLDER=$(CRA_RESPONSE_FOLDER) \
-		--from-literal=ESDC_ENVIRONMENT_CODE=$(ESDC_ENVIRONMENT_CODE) \
-		--from-literal=ESDC_REQUEST_FOLDER=$(ESDC_REQUEST_FOLDER) \
-		--from-literal=ESDC_RESPONSE_FOLDER=$(ESDC_RESPONSE_FOLDER) \
-		--from-literal=FORMS_DB_PASSWORD=$(FORMS_DB_PASSWORD) \
-		--from-literal=FORMS_DB_USER=$(FORMS_DB_USER) \
-		--from-literal=FORMS_SA_USER_NAME=$(FORMS_SA_USER_NAME) \
-		--from-literal=FORMS_SA_PASSWORD=$(FORMS_SA_PASSWORD) \
-		--from-literal=FORMS_SECRET_NAME=$(FORMS_SECRET_NAME) \
-		--from-literal=GC_NOTIFY_API_KEY=$(GC_NOTIFY_API_KEY) \
-		--from-literal=GC_NOTIFY_URL=$(GC_NOTIFY_URL) \
-		--from-literal=HOST_PREFIX=$(HOST_PREFIX) \
-		--from-literal=INSTITUTION_REQUEST_FOLDER=$(INSTITUTION_REQUEST_FOLDER) \
-		--from-literal=INSTITUTION_RESPONSE_FOLDER=$(INSTITUTION_RESPONSE_FOLDER) \
-		--from-literal=KEYCLOAK_AUTH_URL=$(KEYCLOAK_AUTH_URL) \
-		--from-literal=MONGODB_URI=$(MONGODB_URI) \
-		--from-literal=OPENSHIFT_ENV_NAMESPACE=$(OPENSHIFT_ENV_NAMESPACE) \
-		--from-literal=OPENSHIFT_SIMS_CREDS_NAME=$(OPENSHIFT_SIMS_CREDS_NAME) \
-		--from-literal=QUEUE_DASHBOARD_TOKEN_SECRET=$(QUEUE_DASHBOARD_TOKEN_SECRET) \
-		--from-literal=QUEUE_PREFIX=$(QUEUE_PREFIX) \
-		--from-literal=S3_ACCESS_KEY_ID=$(S3_ACCESS_KEY_ID) \
-		--from-literal=S3_DEFAULT_BUCKET=$(S3_DEFAULT_BUCKET) \
-		--from-literal=S3_ENDPOINT=$(S3_ENDPOINT) \
-		--from-literal=S3_REGION=$(S3_REGION) \
-		--from-literal=S3_SECRET_ACCESS_KEY=$(S3_SECRET_ACCESS_KEY) \
-		--from-literal=SFAS_RECEIVE_FOLDER=$(SFAS_RECEIVE_FOLDER) \
-		--from-literal=SIMS_DB_NAME=$(SIMS_DB_NAME) \
-		--from-literal=SITE_MINDER_LOGOUT_URL=$(SITE_MINDER_LOGOUT_URL) \
-		--from-literal=WEB_PORT=$(WEB_PORT) \
-		--from-literal=ZEEBE_ADDRESS=$(ZEEBE_ADDRESS) \
-		--from-literal=ZEEBE_CLIENT_ID=$(ZEEBE_CLIENT_ID) \
-		--from-literal=ZEEBE_CLIENT_SECRET=$(ZEEBE_CLIENT_SECRET) \
-		--from-literal=ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS=$(ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS) \
-		--dry-run=client -o yaml | oc -n $(NAMESPACE) apply -f -
 
 deploy-zone-b-sftp-secret:
 	test -n "$(NAMESPACE)"
@@ -706,13 +648,29 @@ deploy-web-dev:
 
 build-forms:
 	test -n "$(BUILD_NAMESPACE)"
+	test -n "$(FORMS_BUILD_REF)"
 	test -n "$(BUILD_REF)"
 	test -n "$(SOURCE_CONTEXT_DIR)"
 	test -n "$(SOURCE_REPOSITORY_URL)"
 	test -n "$(FORMIO_SOURCE_REPO_URL)"
-	test -n "$(FORMIO_SOURCE_REPO_TAG)"
-	@echo "+\n++ BUILDING $(FORMS_BUILD_REF) DIR: $(SOURCE_CONTEXT_DIR)forms BUILD_TAG:$(FORMIO_SOURCE_REPO_TAG)\n+"
-	@oc -n $(BUILD_NAMESPACE) process -f openshift/forms-build.yml -p NAME=$(FORMS_BUILD_REF) -p TAG=$(FORMIO_SOURCE_REPO_TAG) -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) -p FORMIO_SOURCE_REPO_TAG=$(FORMIO_SOURCE_REPO_TAG) -p SOURCE_REPOSITORY_URL=$(SOURCE_REPOSITORY_URL) -p SOURCE_REPOSITORY_REF=$(BUILD_REF) -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)forms| oc -n $(BUILD_NAMESPACE) apply -f -
+	test -n "$(FORMIO_SOURCE_REPO_REF)"
+	test -n "$(FORMIO_CORE_VERSION)"
+	test -n "$(FORMIO_JS_VERSION)"
+	test -n "$(FORMIO_VM_VERSION)"
+	test -n "$(FORMIO_BUILD_TAG)"
+	@echo "+\n++ BUILDING $(FORMS_BUILD_REF) DIR: $(SOURCE_CONTEXT_DIR)forms Git reference:$(FORMIO_SOURCE_REPO_REF)\n+"
+	@oc -n $(BUILD_NAMESPACE) process -f openshift/forms-build.yml \
+	 -p NAME=$(FORMS_BUILD_REF) \
+	 -p TAG=$(FORMIO_BUILD_TAG) \
+	 -p FORMIO_SOURCE_REPO_URL=$(FORMIO_SOURCE_REPO_URL) \
+	 -p FORMIO_SOURCE_REPO_REF=$(FORMIO_SOURCE_REPO_REF) \
+	 -p FORMIO_CORE_VERSION=$(FORMIO_CORE_VERSION) \
+	 -p FORMIO_JS_VERSION=$(FORMIO_JS_VERSION) \
+	 -p FORMIO_VM_VERSION=$(FORMIO_VM_VERSION) \
+	 -p SOURCE_REPOSITORY_URL=$(SOURCE_REPOSITORY_URL) \
+	 -p SOURCE_REPOSITORY_REF=$(BUILD_REF) \
+	 -p SOURCE_CONTEXT_DIR=$(SOURCE_CONTEXT_DIR)forms \
+	 | oc -n $(BUILD_NAMESPACE) apply -f -
 	@oc -n $(BUILD_NAMESPACE) start-build bc/$(FORMS_BUILD_REF) --wait
 
 deploy-forms:
@@ -720,20 +678,21 @@ deploy-forms:
 	test -n "$(FORMS_NAME)"
 	test -n "$(FORMS_URL)"
 	test -n "$(BUILD_NAMESPACE)"
-	test -n "$(FORMIO_SOURCE_REPO_TAG)"
+	test -n "$(FORMIO_BUILD_TAG)"
 	test -n "$(FORMIO_ROOT_EMAIL)"
+	test -n "$(FORMIO_ROOT_PASSWORD)"
 	test -n "$(FORMIO_API_KEY)"
 	test -n "$(MONGODB_URI)"
 	test -n "$(FORMIO_CPU_REQUEST)"
 	test -n "$(FORMIO_MEMORY_REQUEST)"
 	test -n "$(FORMIO_MEMORY_LIMIT)"
 	test -n "$(FORMIO_REPLICAS)"
-	@echo "+\n++ Deploying forms with tag: $(FORMIO_SOURCE_REPO_TAG)\n+"
+	@echo "+\n++ Deploying forms with build tag: $(FORMIO_BUILD_TAG)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/forms-deploy.yml \
 	-p NAME=$(FORMS_NAME) \
 	-p FORMS_URL=$(FORMS_URL) \
 	-p TOOLS_NAMESPACE=$(BUILD_NAMESPACE) \
-	-p IMAGE_STREAM_TAG="$(FORMS_BUILD_REF):$(FORMIO_SOURCE_REPO_TAG)" \
+	-p IMAGE_STREAM_TAG="$(FORMS_BUILD_REF):$(FORMIO_BUILD_TAG)" \
 	-p FORMIO_ROOT_EMAIL=$(FORMIO_ROOT_EMAIL) \
 	-p FORMIO_ROOT_PASSWORD=$(FORMIO_ROOT_PASSWORD) \
 	-p FORMIO_API_KEY=$(FORMIO_API_KEY) \

@@ -1,0 +1,40 @@
+name: Load Test - Build Gateway
+run-name: Build Load Test Gateway from ${{ github.ref_name }}(build ${{ github.run_number }})
+permissions:
+  contents: read
+  actions: read
+
+on:
+  workflow_dispatch:
+
+env:
+  BUILD_NAMESPACE: ${{ vars.BUILD_NAMESPACE }}
+  BUILD_REF: ${{ github.ref_name }}
+  SA_TOKEN: ${{ secrets.SA_TOKEN }}
+  OPENSHIFT_CLUSTER_URL: ${{ vars.OPENSHIFT_CLUSTER_URL }}
+
+jobs:
+  build-load-test-gateway:
+    name: Build Load Test Gateway
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install CLI tools from OpenShift Mirror
+        uses: redhat-actions/openshift-tools-installer@v1
+        with:
+          oc: "4"
+      - name: Print env
+        run: |
+          echo BUILD NAMESPACE: $BUILD_NAMESPACE
+          echo BRANCH: ${{ env.BUILD_REF }}
+          echo OC CLI Version: $(oc version)
+      - name: Checkout Target Branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ env.BUILD_REF }}
+      - name: Log in to OpenShift
+        run: |
+          oc login --token="$SA_TOKEN" --server="$OPENSHIFT_CLUSTER_URL"
+      - name: Build Load Test Gateway Image
+        working-directory: "./devops"
+        run: |
+          make oc-build-load-test-gateway

@@ -19,12 +19,15 @@ const LOAD_TEST_GATEWAY_CLIENT_HTTP_TIMEOUT = "120s";
 export function loadTestPostCall(
   endpoint: string,
   credentials: ClientSecretCredential,
-  options?: { payload?: unknown }
+  options?: { payload?: unknown },
 ): RefinedResponse<ResponseType> {
   const payload = options?.payload
     ? JSON.stringify(options.payload)
     : undefined;
-  const headers = getAuthHeader(credentials);
+  const headers: Record<string, string> = getAuthHeader(credentials);
+  if (payload) {
+    headers["Content-Type"] = "application/json";
+  }
   return http.post(`${BASE_LOAD_TEST_GATEWAY_URL}/${endpoint}`, payload, {
     headers,
     timeout: LOAD_TEST_GATEWAY_CLIENT_HTTP_TIMEOUT,
@@ -36,12 +39,12 @@ export function loadTestPostCall(
  * @param credentials load test gateway client credentials.
  * @returns auth header.
  */
-function getAuthHeader(credentials: ClientSecretCredential): {
-  Authorization: string;
-} {
+function getAuthHeader(
+  credentials: ClientSecretCredential,
+): Record<string, string> {
   const cachedToken = getCachedToken(
     AuthorizedParties.LoadTestGateway,
-    credentials
+    credentials,
   );
   return {
     Authorization: `Bearer ${cachedToken}`,
