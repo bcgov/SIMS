@@ -4,6 +4,8 @@ import {
   StudentPDPPDReminderNotification,
   StudentSecondDisbursementReminderNotification,
   StudentCOERequiredNearEndDateReminderNotification,
+  MinistryCRAFileProcessingIssueNotification,
+  MinistrySINFileProcessingIssueNotification,
 } from "./student-application-notification-processor";
 
 @Injectable()
@@ -12,6 +14,8 @@ export class StudentApplicationNotificationService {
     private readonly studentPdPpdReminderNotification: StudentPDPPDReminderNotification,
     private readonly studentSecondDisbursementReminderNotification: StudentSecondDisbursementReminderNotification,
     private readonly studentCOERequiredNearEndDateNotification: StudentCOERequiredNearEndDateReminderNotification,
+    private readonly ministryCRAFileProcessingIssueNotification: MinistryCRAFileProcessingIssueNotification,
+    private readonly ministrySINFileProcessingIssueNotification: MinistrySINFileProcessingIssueNotification,
   ) {}
 
   /**
@@ -25,6 +29,8 @@ export class StudentApplicationNotificationService {
       this.studentPdPpdReminderNotification,
       this.studentSecondDisbursementReminderNotification,
       this.studentCOERequiredNearEndDateNotification,
+      this.ministryCRAFileProcessingIssueNotification,
+      this.ministrySINFileProcessingIssueNotification,
     ].map((notification) => notification.createNotification(processSummary));
     await Promise.allSettled(notifications);
   }

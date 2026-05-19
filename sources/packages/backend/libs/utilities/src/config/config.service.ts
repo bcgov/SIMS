@@ -95,6 +95,7 @@ export class ConfigService {
       ftpResponseFolder: process.env.CRA_RESPONSE_FOLDER,
       programAreaCode: process.env.CRA_PROGRAM_AREA_CODE,
       environmentCode: process.env.CRA_ENVIRONMENT_CODE,
+      fileOverdueDays: Number(process.env.CRA_FILE_OVERDUE_DAYS) || 5,
     });
   }
 
@@ -129,6 +130,7 @@ export class ConfigService {
       ftpRequestFolder: process.env.ESDC_REQUEST_FOLDER,
       ftpResponseFolder: process.env.ESDC_RESPONSE_FOLDER,
       environmentCode: process.env.ESDC_ENVIRONMENT_CODE,
+      fileOverdueDays: Number(process.env.ESDC_FILE_OVERDUE_DAYS) || 5,
     });
   }
 

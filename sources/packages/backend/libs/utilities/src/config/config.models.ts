@@ -74,6 +74,7 @@ export interface CRAIntegrationConfig {
   ftpResponseFolder: string;
   programAreaCode: string;
   environmentCode: string;
+  fileOverdueDays: number;
 }
 
 /**
@@ -108,6 +109,7 @@ export interface ESDCIntegrationConfig {
   ftpRequestFolder: string;
   ftpResponseFolder: string;
   environmentCode: string;
+  fileOverdueDays: number;
 }
 
 export interface SFASIntegrationConfig {

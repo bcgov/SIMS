@@ -39,6 +39,8 @@ import {
   StudentCOERequiredNearEndDateNotification,
   MinistryFormSubmittedNotification,
   MinistryStudentAppealNotification,
+  MinistryFileProcessingIssueNotification,
+  SaveNotificationModel,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { LoggerService } from "@sims/utilities/logger";
@@ -1280,14 +1282,12 @@ export class NotificationActionsService {
 
   /**
    * Asserts the notification message details of a notification message.
-   * @param notificationMessageTypeId id of the user who will receive the message.
+   * @param notificationMessageTypeId id of the notification message.
    * @returns notification details of the notification message.
    */
   private async assertNotificationMessageDetails(
     notificationMessageTypeId: NotificationMessageType,
-  ): Promise<
-    Pick<NotificationMessage, "templateId" | "emailContacts"> | undefined
-  > {
+  ): Promise<Pick<NotificationMessage, "templateId" | "emailContacts">> {
     const { templateId, emailContacts } =
       await this.notificationMessageService.getNotificationMessageDetails(
         notificationMessageTypeId,
@@ -1644,6 +1644,45 @@ export class NotificationActionsService {
       [formCompletedNotification],
       auditUserId,
       { entityManager },
+    );
+  }
+
+  /**
+   * Creates a ministry notification when there is a CRA/SIN file processing issue.
+   * @param notifications notification details array.
+   */
+  async saveMinistryFileProcessingIssueNotification(
+    notifications: MinistryFileProcessingIssueNotification[],
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId, emailContacts } =
+      await this.assertNotificationMessageDetails(
+        NotificationMessageType.MinistryFileProcessingIssue,
+      );
+    if (!emailContacts?.length) {
+      return;
+    }
+    const ministryNotificationsToSend: SaveNotificationModel[] = [];
+    emailContacts.forEach((emailContact) => {
+      const notificationsToSend = notifications.map((notification) => ({
+        userId: auditUser.id,
+        messageType: NotificationMessageType.MinistryFileProcessingIssue,
+        messagePayload: {
+          email_address: emailContact,
+          template_id: templateId,
+          personalisation: {
+            fileName: notification.fileName,
+            dateSent: getPSTPDTDateTime(notification.dateSent),
+            type: notification.type.toString(),
+          },
+        },
+      }));
+      ministryNotificationsToSend.push(...notificationsToSend);
+    });
+    // Save notifications to be sent to the ministry into the notification table.
+    await this.notificationService.saveNotifications(
+      ministryNotificationsToSend,
+      auditUser.id,
     );
   }
 }

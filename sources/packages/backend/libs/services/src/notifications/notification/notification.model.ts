@@ -273,3 +273,14 @@ export interface MinistryFormSubmittedNotification {
   formNames: string[];
   applicationNumber?: string;
 }
+
+export enum FileProcessingIssueType {
+  CRA = "CRA",
+  SIN = "SIN",
+}
+
+export interface MinistryFileProcessingIssueNotification {
+  fileName: string;
+  dateSent: Date;
+  type: FileProcessingIssueType;
+}
