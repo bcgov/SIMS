@@ -17,15 +17,17 @@
           <v-card flat border="1" href="/student/login">
             <v-card-text>
               <v-row align="center">
-                <v-col cols="12" sm="2" class="d-flex justify-center">
+                <v-col cols="12" sm="3" class="d-flex justify-center">
                   <v-img
-                    height="100"
-                    width="100"
+                    min-height="150"
+                    min-width="150"
+                    height="150"
+                    width="150"
                     alt="An illustration of a student."
                     src="@/assets/images/image_student_welcome.svg"
                   />
                 </v-col>
-                <v-col cols="12" sm="10" class="text-center text-sm-left">
+                <v-col cols="12" sm="9" class="text-center text-sm-left">
                   <p class="category-header-medium mb-2">New Student Account</p>
                   <p class="mb-4">
                     <strong>If applying after June 19, 2026</strong>, use the
@@ -51,15 +53,17 @@
           >
             <v-card-text>
               <v-row align="center">
-                <v-col cols="12" sm="2" class="d-flex justify-center">
+                <v-col cols="12" sm="3" class="d-flex justify-center">
                   <v-img
-                    height="100"
-                    width="100"
+                    min-height="150"
+                    min-width="150"
+                    height="150"
+                    width="150"
                     alt="An illustration of a student with a book."
                     src="@/assets/images/girl-on-book.svg"
                   />
                 </v-col>
-                <v-col cols="12" sm="10" class="text-center text-sm-left">
+                <v-col cols="12" sm="9" class="text-center text-sm-left">
                   <p class="category-header-medium mb-2">
                     Old Student Dashboard Account
                   </p>
@@ -112,15 +116,17 @@
           <v-card border="1" flat href="/institution/login">
             <v-card-text>
               <v-row align="center">
-                <v-col cols="12" sm="2" class="d-flex justify-center">
+                <v-col cols="12" sm="3" class="d-flex justify-center">
                   <v-img
-                    height="100"
-                    width="100"
+                    min-height="150"
+                    min-width="150"
+                    height="150"
+                    width="150"
                     alt="An illustration of an institution building."
                     src="@/assets/images/image_institution_welcome.svg"
                   />
                 </v-col>
-                <v-col cols="12" sm="10" class="text-center text-sm-left">
+                <v-col cols="12" sm="9" class="text-center text-sm-left">
                   <p class="category-header-medium mb-2">Institution Account</p>
                   <p class="mb-4">
                     Create and manage your institution account using your
