@@ -87,13 +87,7 @@
                     </v-chip>
                   </div>
                   <div class="d-flex justify-center justify-sm-start">
-                    <v-btn
-                      color="primary"
-                      variant="outlined"
-                      href="https://studentaidbc.ca/dashboard/login"
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
+                    <v-btn color="primary" variant="outlined">
                       Access Old Dashboard Account
                     </v-btn>
                   </div>
