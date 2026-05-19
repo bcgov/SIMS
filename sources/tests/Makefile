@@ -33,7 +33,7 @@ export ALLOW_BETA_INSTITUTIONS_ONLY :=$(or $(ALLOW_BETA_INSTITUTIONS_ONLY), fals
 export CRA_FILE_OVERDUE_DAYS := $(or ${CRA_FILE_OVERDUE_DAYS}, 5)
 
 # The number of days after which SIN file processing is considered overdue.
-export SIN_FILE_OVERDUE_DAYS := $(or ${SIN_FILE_OVERDUE_DAYS}, 5)
+export ESDC_FILE_OVERDUE_DAYS := $(or ${ESDC_FILE_OVERDUE_DAYS}, 5)
 
 backend-unit-tests:
 	@cd ../packages/backend && npm i && npm run test:cov

@@ -778,11 +778,12 @@ describe(
         // Assert
         expect(
           mockedJob.containLogMessages([
-            "Total overdue CRA income verifications that generated notifications: 1",
+            "Overdue CRA income verifications that generated notifications: DUMMY_BYPASS_CRA_SENT_FILE.txt",
           ]),
         ).toBe(true);
 
-        const notification = await findNotification();
+        const notification =
+          await findMinistryFileProcessingIssueNotification();
         expect(notification).toBeDefined();
         expect(notification!.messagePayload).toStrictEqual({
           email_address: MINISTRY_EMAIL_ADDRESS,
@@ -791,6 +792,90 @@ describe(
             dateSent: getPSTPDTDateTime(craVerification1.dateSent!),
             fileName: craVerification1.fileSent,
             type: FileProcessingIssueType.CRA,
+          },
+        });
+      });
+      it(`Should generate a notification for SIN file processing issues when the file was sent ${daysPastSent} days ago with no response file received.`, async () => {
+        // Arrange
+        const dateSent = addDays(-daysPastSent);
+
+        // Create students with SIN validations with the same sent file and date to ensure only a single notification is generated.
+        const student1 = await saveFakeStudent(
+          db.dataSource,
+          {},
+          {
+            sinValidationInitialValue: {
+              dateSent,
+              fileSent: "DUMMY_BYPASS_SIN_SENT_FILE.txt",
+            },
+          },
+        );
+        const student2 = await saveFakeStudent(
+          db.dataSource,
+          {},
+          {
+            sinValidationInitialValue: {
+              dateSent,
+              fileSent: "DUMMY_BYPASS_SIN_SENT_FILE.txt",
+            },
+          },
+        );
+
+        // Create two in progress applications.
+        await saveFakeApplication(
+          db.dataSource,
+          { student: student1 },
+          {
+            applicationStatus: ApplicationStatus.InProgress,
+          },
+        );
+        await saveFakeApplication(
+          db.dataSource,
+          { student: student2 },
+          {
+            applicationStatus: ApplicationStatus.InProgress,
+          },
+        );
+
+        // Add an older side validation for student1 to ensure only the most recent one is considered.
+        const olderSinValidation = createFakeSINValidation(
+          {
+            student: student1,
+          },
+          {
+            initialValue: {
+              dateSent: addDays(-3, dateSent),
+              fileSent: "DUMMY_BYPASS_SIN_SENT_FILE_OLD.txt",
+            },
+          },
+        );
+        await db.sinValidation.save(olderSinValidation);
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        const result = await processor.processQueue(mockedJob.job);
+
+        expect(result).toStrictEqual(["Process finalized with success."]);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            "Overdue SIN validations that generated notifications: DUMMY_BYPASS_SIN_SENT_FILE.txt",
+          ]),
+        ).toBe(true);
+
+        const notification =
+          await findMinistryFileProcessingIssueNotification();
+        expect(notification).toBeDefined();
+        expect(notification!.messagePayload).toStrictEqual({
+          email_address: MINISTRY_EMAIL_ADDRESS,
+          template_id: "cb0efb5a-7540-4925-b017-e9d96852368f",
+          personalisation: {
+            dateSent: getPSTPDTDateTime(student1.sinValidation.dateSent!),
+            fileName: student1.sinValidation.fileSent,
+            type: FileProcessingIssueType.SIN,
           },
         });
       });
@@ -837,109 +922,10 @@ describe(
             "No CRA income verifications 5 days past due found to generate notifications.",
           ]),
         ).toBe(true);
-        const hasNotification = await notificationExists();
+        const hasNotification =
+          await ministryFileProcessingIssueNotificationExists();
         expect(hasNotification).toBe(false);
       });
-    });
-
-    positiveNotificationData.forEach(({ daysPastSent }) => {
-      it(`Should generate a notification for SIN file processing issues when the file was sent ${daysPastSent} days ago with no response file received.`, async () => {
-        // Arrange
-
-        // Create two in progress applications.
-        const application1 = await saveFakeApplication(
-          db.dataSource,
-          {},
-          {
-            applicationStatus: ApplicationStatus.InProgress,
-          },
-        );
-        const application2 = await saveFakeApplication(
-          db.dataSource,
-          {},
-          {
-            applicationStatus: ApplicationStatus.InProgress,
-          },
-        );
-
-        const student1 = application1.student;
-        const student2 = application2.student;
-
-        const dateSent = addDays(-daysPastSent);
-        // Add two records for the same file. Only a single notification should be generated since the fileName is the same.
-        const sinValidation1 = createFakeSINValidation(
-          {
-            student: student1,
-          },
-          {
-            initialValue: {
-              dateSent,
-              fileSent: "DUMMY_BYPASS_SIN_SENT_FILE.txt",
-            },
-          },
-        );
-        await db.sinValidation.save(sinValidation1);
-        const sinValidation2 = createFakeSINValidation(
-          {
-            student: student2,
-          },
-          {
-            initialValue: {
-              dateSent,
-              fileSent: "DUMMY_BYPASS_SIN_SENT_FILE.txt",
-            },
-          },
-        );
-        await db.sinValidation.save(sinValidation2);
-        // Add an older side validation for student1 to ensure only the most recent one is considered.
-        const sinValidation3 = createFakeSINValidation(
-          {
-            student: student1,
-          },
-          {
-            initialValue: {
-              dateSent: addDays(-3, dateSent),
-              fileSent: "DUMMY_BYPASS_SIN_SENT_FILE_OLD.txt",
-            },
-          },
-        );
-        await db.sinValidation.save(sinValidation3);
-
-        student1.sinValidation = sinValidation1;
-        await db.student.save(student1);
-        student2.sinValidation = sinValidation2;
-        await db.student.save(student2);
-
-        // Queued job.
-        const mockedJob = mockBullJob<void>();
-
-        // Act
-        const result = await processor.processQueue(mockedJob.job);
-
-        expect(result).toStrictEqual(["Process finalized with success."]);
-
-        // Assert
-        expect(
-          mockedJob.containLogMessages([
-            "Total overdue SIN validations that generated notifications: 1",
-          ]),
-        ).toBe(true);
-
-        const notification = await findNotification();
-        expect(notification).toBeDefined();
-        expect(notification!.messagePayload).toStrictEqual({
-          email_address: MINISTRY_EMAIL_ADDRESS,
-          template_id: "cb0efb5a-7540-4925-b017-e9d96852368f",
-          personalisation: {
-            dateSent: getPSTPDTDateTime(sinValidation1.dateSent!),
-            fileName: sinValidation1.fileSent,
-            type: FileProcessingIssueType.SIN,
-          },
-        });
-      });
-    });
-
-    negativeNotificationData.forEach(({ daysPastSent, dateReceived }) => {
       it(`Should not generate a notification for SIN file processing issues when the file was sent ${daysPastSent} days ago with response file received ${dateReceived ? getPSTPDTDateTime(dateReceived) : "never"}.`, async () => {
         // Arrange
 
@@ -980,12 +966,17 @@ describe(
             "No SIN validations 5 days past due found to generate notifications.",
           ]),
         ).toBe(true);
-        const hasNotification = await notificationExists();
+        const hasNotification =
+          await ministryFileProcessingIssueNotificationExists();
         expect(hasNotification).toBe(false);
       });
     });
 
-    async function findNotification(): Promise<Notification | null> {
+    /**
+     * Helper function to find a Ministry File Processing Issue notification for assertions.
+     * @returns The notification if found, otherwise null.
+     */
+    async function findMinistryFileProcessingIssueNotification(): Promise<Notification | null> {
       return await db.notification.findOne({
         select: {
           id: true,
@@ -1002,7 +993,11 @@ describe(
       });
     }
 
-    async function notificationExists(): Promise<boolean> {
+    /**
+     * Helper function to check if a Ministry File Processing Issue notification exists for assertions.
+     * @returns True if the notification exists, otherwise false.
+     */
+    async function ministryFileProcessingIssueNotificationExists(): Promise<boolean> {
       return await db.notification.exists({
         select: {
           id: true,

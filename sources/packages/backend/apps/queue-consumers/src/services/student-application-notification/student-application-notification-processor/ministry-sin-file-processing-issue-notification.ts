@@ -40,15 +40,15 @@ export class MinistrySINFileProcessingIssueNotification {
       .innerJoin("student.sinValidation", "sinValidation")
       .distinctOn(["sinValidation.fileSent"])
       .where(
-        "sinValidation.dateSent < NOW() - (:sinFileOverdueDays * INTERVAL '1 day')",
-        { sinFileOverdueDays: this.configService.sinFileOverdueDays },
+        "sinValidation.dateSent < NOW() - (:fileOverdueDays * INTERVAL '1 day')",
+        { fileOverdueDays: this.configService.esdcIntegration.fileOverdueDays },
       )
       .andWhere("sinValidation.dateReceived IS NULL")
       .getMany();
 
     if (!studentsWithOverdueSINValidations.length) {
       notificationLog.info(
-        `No SIN validations ${this.configService.sinFileOverdueDays} days past due found to generate notifications.`,
+        `No SIN validations ${this.configService.esdcIntegration.fileOverdueDays} days past due found to generate notifications.`,
       );
       return;
     }
@@ -56,8 +56,8 @@ export class MinistrySINFileProcessingIssueNotification {
     const notifications =
       studentsWithOverdueSINValidations.map<MinistryFileProcessingIssueNotification>(
         (student) => ({
-          fileName: student.sinValidation!.fileSent!,
-          dateSent: student.sinValidation!.dateSent!,
+          fileName: student.sinValidation.fileSent!,
+          dateSent: student.sinValidation.dateSent!,
           type: FileProcessingIssueType.SIN,
         }),
       );
@@ -67,7 +67,7 @@ export class MinistrySINFileProcessingIssueNotification {
     );
 
     notificationLog.info(
-      `Total overdue SIN validations that generated notifications: ${notifications.length}`,
+      `Overdue SIN validations that generated notifications: ${notifications.map((notification) => notification.fileName).join(", ")}.`,
     );
   }
 }

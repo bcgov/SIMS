@@ -267,8 +267,8 @@ objects:
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: CRA_FILE_OVERDUE_DAYS
                   value: ${CRA_FILE_OVERDUE_DAYS}
-                - name: SIN_FILE_OVERDUE_DAYS
-                  value: ${SIN_FILE_OVERDUE_DAYS}
+                - name: ESDC_FILE_OVERDUE_DAYS
+                  value: ${ESDC_FILE_OVERDUE_DAYS}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -531,5 +531,5 @@ parameters:
     value: "true"
   - name: CRA_FILE_OVERDUE_DAYS
     required: true
-  - name: SIN_FILE_OVERDUE_DAYS
+  - name: ESDC_FILE_OVERDUE_DAYS
     required: true

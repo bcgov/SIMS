@@ -30,7 +30,7 @@ export class MinistryCRAFileProcessingIssueNotification {
     const notificationLog = new ProcessSummary();
     processSummary.children(notificationLog);
 
-    const overdueCRANotifications = await this.craIncomeVerificationRepo
+    const overdueCRAVerifications = await this.craIncomeVerificationRepo
       .createQueryBuilder("craIncomeVerification")
       .select([
         "craIncomeVerification.dateSent",
@@ -38,26 +38,26 @@ export class MinistryCRAFileProcessingIssueNotification {
       ])
       .distinctOn(["craIncomeVerification.fileSent"])
       .where(
-        "craIncomeVerification.dateSent < NOW() - (:craFileOverdueDays * INTERVAL '1 day')",
+        "craIncomeVerification.dateSent < NOW() - (:fileOverdueDays * INTERVAL '1 day')",
         {
-          craFileOverdueDays: this.configService.craFileOverdueDays,
+          fileOverdueDays: this.configService.craIntegration.fileOverdueDays,
         },
       )
       .andWhere("craIncomeVerification.dateReceived IS NULL")
       .getMany();
 
-    if (!overdueCRANotifications.length) {
+    if (!overdueCRAVerifications.length) {
       notificationLog.info(
-        `No CRA income verifications ${this.configService.craFileOverdueDays} days past due found to generate notifications.`,
+        `No CRA income verifications ${this.configService.craIntegration.fileOverdueDays} days past due found to generate notifications.`,
       );
       return;
     }
 
     const notifications =
-      overdueCRANotifications.map<MinistryFileProcessingIssueNotification>(
-        (craNotification) => ({
-          fileName: craNotification.fileSent!,
-          dateSent: craNotification.dateSent!,
+      overdueCRAVerifications.map<MinistryFileProcessingIssueNotification>(
+        (craVerification) => ({
+          fileName: craVerification.fileSent!,
+          dateSent: craVerification.dateSent!,
           type: FileProcessingIssueType.CRA,
         }),
       );
@@ -67,7 +67,7 @@ export class MinistryCRAFileProcessingIssueNotification {
     );
 
     notificationLog.info(
-      `Total overdue CRA income verifications that generated notifications: ${notifications.length}`,
+      `Overdue CRA income verifications that generated notifications: ${notifications.map((notification) => notification.fileName).join(", ")}.`,
     );
   }
 }
