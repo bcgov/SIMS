@@ -14,7 +14,7 @@
           </h1>
 
           <!-- New Student Account -->
-          <v-card hover>
+          <v-card flat border="1" href="/student/login">
             <v-card-text>
               <v-row align="center">
                 <v-col cols="12" sm="2" class="d-flex justify-center">
@@ -33,9 +33,7 @@
                     manage your student aid applications.
                   </p>
                   <div class="d-flex justify-center justify-sm-start">
-                    <v-btn color="primary" href="/student/login">
-                      Access New Student Account
-                    </v-btn>
+                    <v-btn color="primary"> Access New Student Account </v-btn>
                   </div>
                 </v-col>
               </v-row>
@@ -44,7 +42,13 @@
 
           <v-divider class="my-8" />
           <!-- Old Student Dashboard -->
-          <v-card hover>
+          <v-card
+            flat
+            border="1"
+            href="https://studentaidbc.ca/dashboard/login"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <v-card-text>
               <v-row align="center">
                 <v-col cols="12" sm="2" class="d-flex justify-center">
@@ -67,6 +71,7 @@
                   </p>
                   <div class="d-flex justify-center justify-sm-start mb-4">
                     <v-chip
+                      border="1"
                       class="font-weight-regular text-no-wrap"
                       color="warning"
                       variant="tonal"
@@ -104,7 +109,7 @@
           </h1>
 
           <!-- Institution Account -->
-          <v-card hover>
+          <v-card border="1" flat href="/institution/login">
             <v-card-text>
               <v-row align="center">
                 <v-col cols="12" sm="2" class="d-flex justify-center">
@@ -122,9 +127,7 @@
                     Business or Basic BCeID User ID.
                   </p>
                   <div class="d-flex justify-center justify-sm-start">
-                    <v-btn color="primary" href="/institution/login">
-                      Access Institution Account
-                    </v-btn>
+                    <v-btn color="primary"> Access Institution Account </v-btn>
                   </div>
                 </v-col>
               </v-row>
