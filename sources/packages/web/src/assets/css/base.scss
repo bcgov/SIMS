@@ -251,6 +251,11 @@ strong {
   max-width: 730px !important;
 }
 
+// Max width constraint for the landing page container.
+.landing-page-container-size {
+  max-width: 900px !important;
+}
+
 // Btn font color white.
 .btn-font-color-light .v-btn__content {
   color: $button-font-color;

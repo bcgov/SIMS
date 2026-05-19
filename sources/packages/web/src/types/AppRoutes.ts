@@ -151,6 +151,7 @@ export enum AppRoutes {
   ParentSupportingInfo = "supporting-info/parent",
   PartnerSupportingInfo = "supporting-info/partner",
   // Shared
+  LandingPage = "/",
   Login = "login",
   DisabledUser = "login/disabled-user",
   UnknownUser = "login/unknown-user",
