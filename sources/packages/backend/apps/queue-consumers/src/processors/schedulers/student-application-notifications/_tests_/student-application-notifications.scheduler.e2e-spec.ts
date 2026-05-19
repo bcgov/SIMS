@@ -810,7 +810,7 @@ describe(
             },
           },
         );
-        const student2 = await saveFakeStudent(
+        await saveFakeStudent(
           db.dataSource,
           {},
           {
@@ -818,22 +818,6 @@ describe(
               dateSent,
               fileSent: "DUMMY_BYPASS_SIN_SENT_FILE.txt",
             },
-          },
-        );
-
-        // Create two in progress applications.
-        await saveFakeApplication(
-          db.dataSource,
-          { student: student1 },
-          {
-            applicationStatus: ApplicationStatus.InProgress,
-          },
-        );
-        await saveFakeApplication(
-          db.dataSource,
-          { student: student2 },
-          {
-            applicationStatus: ApplicationStatus.InProgress,
           },
         );
 
@@ -929,28 +913,18 @@ describe(
       it(`Should not generate a notification for SIN file processing issues when the file was sent ${daysPastSent} days ago with response file received ${dateReceived ? getPSTPDTDateTime(dateReceived) : "never"}.`, async () => {
         // Arrange
 
-        // Create an in progress application.
-        const application = await saveFakeApplication(
+        // Create a student with a SIN validation
+        await saveFakeStudent(
           db.dataSource,
           {},
           {
-            applicationStatus: ApplicationStatus.InProgress,
-          },
-        );
-
-        const sinValidation = createFakeSINValidation(
-          {
-            student: application.student,
-          },
-          {
-            initialValue: {
+            sinValidationInitialValue: {
               dateReceived,
               dateSent: addDays(-daysPastSent),
               fileSent: "DUMMY_BYPASS_SIN_SENT_FILE.txt",
             },
           },
         );
-        await db.sinValidation.save(sinValidation);
 
         // Queued job.
         const mockedJob = mockBullJob<void>();
