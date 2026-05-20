@@ -146,6 +146,7 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
       province: payload.province,
       classification: payload.classification,
       organizationStatus: payload.organizationStatus,
+      medicalSchoolStatus: null,
     });
   });
 
