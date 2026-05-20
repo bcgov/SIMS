@@ -6,6 +6,7 @@ import {
   addDays,
   formatDate,
   getISODateOnlyString,
+  isAfter,
 } from "@sims/utilities";
 import {
   createTestingAppModule,
@@ -226,7 +227,7 @@ describe(
       // Enable integration for institution location used for test.
       await enableIntegration(locationCONF, db);
       const confirmEnrolmentResponseFile = path.join(
-        process.env.INSTITUTION_RESPONSE_FOLDER ?? "",
+        process.env.INSTITUTION_RESPONSE_FOLDER!,
         CONR_008_CONF_FILE,
       );
 
@@ -240,9 +241,8 @@ describe(
       );
 
       const [disbursement] =
-        application.currentAssessment?.disbursementSchedules ?? [];
-      const [referenceDisbursementValue] =
-        disbursement?.disbursementValues ?? [];
+        application.currentAssessment!.disbursementSchedules!;
+      const [referenceDisbursementValue] = disbursement!.disbursementValues!;
 
       // Queued job.
       const mockedJob = mockBullJob<void>();
@@ -278,7 +278,7 @@ describe(
       const result = await processor.processQueue(mockedJob.job);
 
       const notifications = await getUnsentECEResponseNotifications(db);
-      const [emailAddress] = locationCONF.integrationContacts ?? [];
+      const [emailAddress] = locationCONF.integrationContacts!;
       const updatedDisbursement = await db.disbursementSchedule.findOneOrFail({
         select: { coeStatus: true, updatedAt: true, coeUpdatedAt: true },
         where: { id: disbursement.id },
@@ -348,13 +348,9 @@ describe(
         getISODateOnlyString(pastCoeDate),
       );
       // Expect updated_at to reflect the actual processing time.
-      expect(updatedDisbursement.updatedAt.getTime()).toBeGreaterThanOrEqual(
-        now.getTime(),
-      );
+      expect(isAfter(updatedDisbursement.updatedAt, now)).toBe(true);
       // Expect the application updated_at to also reflect the processing time.
-      expect(updatedApplication.updatedAt.getTime()).toBeGreaterThanOrEqual(
-        now.getTime(),
-      );
+      expect(isAfter(updatedApplication.updatedAt, now)).toBe(true);
     });
 
     it(
