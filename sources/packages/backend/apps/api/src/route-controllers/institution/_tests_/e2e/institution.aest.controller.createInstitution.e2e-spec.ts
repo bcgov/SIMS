@@ -149,7 +149,7 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
     });
   });
 
-  it("Should return bad request when institution country is not canada and medical status is not provided.", async () => {
+  it("Should return bad request when country is not Canada and medical status is not provided.", async () => {
     // Arrange
     const payload = {
       legalOperatingName: "Create Institution legal operating name",
