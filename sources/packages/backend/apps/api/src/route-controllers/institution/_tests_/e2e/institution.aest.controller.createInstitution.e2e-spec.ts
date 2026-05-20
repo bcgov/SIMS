@@ -9,7 +9,6 @@ import {
 import { E2EDataSources, createE2EDataSources } from "@sims/test-utils";
 import {
   InstitutionClassification,
-  InstitutionMedicalSchoolStatus,
   InstitutionOrganizationStatus,
 } from "@sims/sims-db";
 import {
@@ -42,7 +41,6 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
       province: BC_PROVINCE_CODE,
       classification: InstitutionClassification.Public,
       organizationStatus: InstitutionOrganizationStatus.Profit,
-      medicalSchoolStatus: InstitutionMedicalSchoolStatus.No,
       primaryContactFirstName: "Primary",
       primaryContactLastName: "Contact",
       primaryContactEmail: "test@test.ca",
@@ -73,6 +71,7 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
         institutionId = response.body.id;
       });
     const savedInstitution = await db.institution.findOne({
+      loadEagerRelations: false,
       select: {
         id: true,
         businessGuid: true,
@@ -148,7 +147,6 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
       province: payload.province,
       classification: payload.classification,
       organizationStatus: payload.organizationStatus,
-      medicalSchoolStatus: payload.medicalSchoolStatus,
     });
   });
 
