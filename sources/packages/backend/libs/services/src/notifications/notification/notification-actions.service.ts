@@ -1685,4 +1685,40 @@ export class NotificationActionsService {
       auditUser.id,
     );
   }
+
+  /**
+   * Create assessment ready for review and acceptance reminder notification to notify student
+   * when the application been has assessed at least 7 days and they are unblocked.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveStudentAssessmentReminderNotification(
+    notifications: StudentNotification[],
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId } =
+      await this.notificationMessageService.getNotificationMessageDetails(
+        NotificationMessageType.StudentAssessmentReminder,
+      );
+
+    const notificationsToSend = notifications.map((notification) => ({
+      userId: notification.userId,
+      messageType: NotificationMessageType.StudentAssessmentReminder,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          applicationNumber: notification.applicationNumber!,
+        },
+      },
+      metadata: { assessmentId: notification.assessmentId },
+    }));
+    // Save notifications to be sent to the students into the notification table.
+    await this.notificationService.saveNotifications(
+      notificationsToSend,
+      auditUser.id,
+    );
+  }
 }

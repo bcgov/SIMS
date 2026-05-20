@@ -65,7 +65,9 @@ export function createFakeStudentAssessment(
     );
   assessment.studentAppeal = relations?.studentAppeal ?? null;
   assessment.studentScholasticStanding = null;
-  assessment.noaApprovalStatus = null;
+  assessment.noaApprovalStatus = options?.initialValue?.noaApprovalStatus;
+  assessment.noaApprovalStatusUpdatedOn =
+    options?.initialValue?.noaApprovalStatusUpdatedOn;
   assessment.disbursementSchedules = [];
   assessment.studentAssessmentStatus =
     options?.initialValue?.studentAssessmentStatus ??
