@@ -71,7 +71,6 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
         institutionId = response.body.id;
       });
     const savedInstitution = await db.institution.findOne({
-      loadEagerRelations: false,
       select: {
         id: true,
         businessGuid: true,
