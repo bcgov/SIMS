@@ -6,7 +6,6 @@ import {
   addDays,
   formatDate,
   getISODateOnlyString,
-  isAfter,
 } from "@sims/utilities";
 import {
   createTestingAppModule,
@@ -66,6 +65,7 @@ import {
 } from "./ece-response-helper";
 import { FILE_PARSING_ERROR } from "@sims/services/constants";
 import { IsNull } from "typeorm";
+import MockDate from "mockdate";
 
 describe(
   describeProcessorRootTest(QueueNames.ECEProcessResponseIntegration),
@@ -248,7 +248,7 @@ describe(
       const mockedJob = mockBullJob<void>();
 
       // A past COE date simulates a CONR file with a COE date different from
-      // the actual processing time
+      // the actual processing time.
       const pastCoeDate = addDays(-1);
 
       // Modify the data in mock file to have the correct values for
@@ -272,8 +272,10 @@ describe(
         },
       );
 
-      // Capture processing start time before executing the processor
+      // Capture processing start time before executing the processor.
       const now = new Date();
+      MockDate.set(now);
+
       // Act
       const result = await processor.processQueue(mockedJob.job);
 
@@ -348,9 +350,9 @@ describe(
         getISODateOnlyString(pastCoeDate),
       );
       // Expect updated_at to reflect the actual processing time.
-      expect(isAfter(updatedDisbursement.updatedAt, now)).toBe(true);
+      expect(updatedDisbursement.updatedAt).toEqual(now);
       // Expect the application updated_at to also reflect the processing time.
-      expect(isAfter(updatedApplication.updatedAt, now)).toBe(true);
+      expect(updatedApplication.updatedAt).toEqual(now);
     });
 
     it(
