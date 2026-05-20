@@ -5,6 +5,7 @@ import {
   NotificationActionsService,
   StudentNotification,
 } from "@sims/services";
+import { STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS } from "@sims/services/constants/system-configurations-constants";
 
 /**
  * Creates a assessment ready for review and acceptance reminder notification to notify student
@@ -30,7 +31,7 @@ export class StudentAssessmentReminderNotification {
 
     if (!overdueAssessments.length) {
       notificationLog.info(
-        "No overdue assessments found to generate reminder notifications.",
+        `No assessments ${STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS} days past due found to generate reminder notifications.`,
       );
       return;
     }
@@ -42,6 +43,7 @@ export class StudentAssessmentReminderNotification {
         lastName: assessment.application.student.user.lastName,
         toAddress: assessment.application.student.user.email,
         applicationNumber: assessment.application.applicationNumber,
+        assessmentId: assessment.id,
       }),
     );
 

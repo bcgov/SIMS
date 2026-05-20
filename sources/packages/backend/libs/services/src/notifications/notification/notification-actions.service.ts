@@ -1687,10 +1687,9 @@ export class NotificationActionsService {
   }
 
   /**
-   * Create assessment ready for review and acceptance reminder notification to notify student
+   * Creates an assessment reminder notification to notify student
    * when the application been has assessed at least 7 days and they are unblocked.
-   * @param notification notification details.
-   * @param entityManager entity manager to execute in transaction.
+   * @param notifications notification details array.
    */
   async saveStudentAssessmentReminderNotification(
     notifications: StudentNotification[],
