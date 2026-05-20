@@ -33,12 +33,12 @@ class AllowIfConstraint implements ValidatorConstraintInterface {
  * @param propertyDisplayName property display name.
  * @param validationOptions validations options.
  */
-export function AllowIf(
-  condition: (object: unknown) => boolean,
+export function AllowIf<T extends Object>(
+  condition: (object: T) => boolean,
   propertyDisplayName?: string,
   validationOptions?: ValidationOptions,
 ) {
-  return (object: unknown, propertyName: string) => {
+  return (object: T, propertyName: string) => {
     registerDecorator({
       name: "AllowIf",
       target: object.constructor,

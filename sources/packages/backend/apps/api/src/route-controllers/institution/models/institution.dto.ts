@@ -68,8 +68,8 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
       input.country === CANADA_COUNTRY_CODE || !!input.province,
   )
   @AllowIf(
-    (input) =>
-      (input as InstitutionProfileAPIInDTO).country === CANADA_COUNTRY_CODE,
+    (input: InstitutionProfileAPIInDTO) =>
+      input.country === CANADA_COUNTRY_CODE,
   )
   @IsNotEmpty()
   @Length(2, 2)
@@ -79,8 +79,8 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   @IsEnum(InstitutionOrganizationStatus)
   organizationStatus: InstitutionOrganizationStatus;
   @AllowIf(
-    (input) =>
-      (input as InstitutionProfileAPIInDTO).country !== CANADA_COUNTRY_CODE,
+    (input: InstitutionProfileAPIInDTO) =>
+      input.country !== CANADA_COUNTRY_CODE,
   )
   @ValidateIf(
     (input: InstitutionProfileAPIInDTO) =>
