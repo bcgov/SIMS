@@ -214,6 +214,7 @@ spec:
           max_slot_wal_keep_size: {{ .Values.patroni.postgresql.parameters.max_slot_wal_keep_size }}
           max_connections: {{ .Values.patroni.postgresql.parameters.max_connections }}
           shared_preload_libraries: {{ .Values.patroni.postgresql.parameters.shared_preload_libraries }}
+          pgmonitor_bgw.dbname: "simsdb"
   
   proxy:
     pgBouncer:
