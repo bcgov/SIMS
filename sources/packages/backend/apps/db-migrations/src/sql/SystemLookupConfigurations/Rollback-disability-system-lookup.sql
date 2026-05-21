@@ -4,5 +4,5 @@ WHERE
     lookup_category IN (
         'Disability category',
         'Disability type',
-        'Disability impairments'
+        'Disability impairment'
     );

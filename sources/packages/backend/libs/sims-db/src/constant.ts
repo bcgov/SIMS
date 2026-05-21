@@ -12,6 +12,9 @@ export const ColumnNames = {
 export const TableNames = {
   User: "users",
   Student: "students",
+  StudentDisabilityProfiles: "student_disability_profiles",
+  StudentDisabilityProfileDisabilities:
+    "student_disability_profile_disabilities",
   StudentUser: "student_users",
   StudentAccountApplications: "student_account_applications",
   Institution: "institutions",
