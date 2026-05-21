@@ -35,7 +35,7 @@
         v-for="(disability, index) in disabilities"
         :key="disability.id"
         :student-id="studentId"
-        :disability-priority="index + 1"
+        :disability-model="disability"
         :max-disability-priority="disabilities.length"
         :read-only="readOnly"
         @move-up="moveDisabilityUp(index)"
@@ -65,8 +65,7 @@
 import { defineComponent, ref } from "vue";
 import StudentDisabilityProfileDisability from "@/components/common/students/StudentDisabilityProfileDisability.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-
-type DisabilityItem = { id: number };
+import { StudentDisability } from "@/types";
 
 export default defineComponent({
   components: { StudentDisabilityProfileDisability },
@@ -83,14 +82,42 @@ export default defineComponent({
   },
   setup() {
     let nextId = 4;
-    const disabilities = ref<DisabilityItem[]>([
-      { id: 1 },
-      { id: 2 },
-      { id: 3 },
+    const disabilities = ref<StudentDisability[]>([
+      {
+        id: 1,
+        disabilityPriority: 1,
+        disabilityCategory: "",
+        disabilityType: "",
+        diagnosis: "",
+        impairments: [],
+      },
+      {
+        id: 2,
+        disabilityPriority: 2,
+        disabilityCategory: "",
+        disabilityType: "",
+        diagnosis: "",
+        impairments: [],
+      },
+      {
+        id: 3,
+        disabilityPriority: 3,
+        disabilityCategory: "",
+        disabilityType: "",
+        diagnosis: "",
+        impairments: [],
+      },
     ]);
 
     const addDisability = () => {
-      disabilities.value.push({ id: nextId++ });
+      disabilities.value.push({
+        id: nextId++,
+        disabilityPriority: disabilities.value.length + 1,
+        disabilityCategory: "",
+        disabilityType: "",
+        diagnosis: "",
+        impairments: [],
+      });
     };
 
     const moveDisabilityUp = (index: number) => {

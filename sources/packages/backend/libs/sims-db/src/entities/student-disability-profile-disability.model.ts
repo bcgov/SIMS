@@ -42,17 +42,17 @@ export class StudentDisabilityProfileDisability extends RecordDataModel {
    * for disability category.
    */
   @Column({
-    name: "disability_type",
+    name: "disability_category",
   })
-  disabilityType: string;
+  disabilityCategory: string;
   /**
    * Designation of the disability (e.g. Permanent, Persistent or prolonged), validated
    * against the system lookup configuration for disability type.
    */
   @Column({
-    name: "disability_designation",
+    name: "disability_type",
   })
-  disabilityDesignation: string;
+  disabilityType: string;
   /**
    * Additional notes describing the disability. Required when disability type is OTHER.
    */
@@ -62,8 +62,8 @@ export class StudentDisabilityProfileDisability extends RecordDataModel {
   })
   disabilityNotes?: string;
   /**
-   * List of functional impairments associated with this disability, stored as an array
-   * of values present in the system lookup configuration for disability impairments.
+   * List of functional impairments associated with this disability. The available list of
+   * impairments is stored in the system lookup configuration for disability impairments.
    */
   @Column({
     name: "impairments",

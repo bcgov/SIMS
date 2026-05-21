@@ -2,15 +2,15 @@ CREATE TABLE sims.student_disability_profile_disabilities(
   id SERIAL PRIMARY KEY,
   student_disability_profile_id INT REFERENCES sims.student_disability_profiles(id) NOT NULL,
   disability_priority SMALLINT NOT NULL,
-  disability_type VARCHAR(100) NOT NULL CHECK (
+  disability_category VARCHAR(100) NOT NULL CHECK (
     sims.is_valid_system_lookup_key(
-      disability_type :: TEXT,
+      disability_category :: TEXT,
       'Disability category' :: TEXT
     )
   ),
-  disability_designation VARCHAR(100) NOT NULL CHECK (
+  disability_type VARCHAR(100) NOT NULL CHECK (
     sims.is_valid_system_lookup_key(
-      disability_designation :: TEXT,
+      disability_type :: TEXT,
       'Disability type' :: TEXT
     )
   ),
@@ -42,15 +42,15 @@ COMMENT ON COLUMN sims.student_disability_profile_disabilities.student_disabilit
 
 COMMENT ON COLUMN sims.student_disability_profile_disabilities.disability_priority IS 'Order of the disability within the profile, where 1 indicates the primary disability and higher values indicate additional disabilities.';
 
-COMMENT ON COLUMN sims.student_disability_profile_disabilities.disability_type IS 'Category of the disability, validated against the system lookup configuration for disability category.';
+COMMENT ON COLUMN sims.student_disability_profile_disabilities.disability_category IS 'Category of the disability, validated against the system lookup configuration for disability category.';
 
-COMMENT ON COLUMN sims.student_disability_profile_disabilities.disability_designation IS 'Designation of the disability (e.g. Permanent, Persistent or prolonged), validated against the system lookup configuration for disability type.';
+COMMENT ON COLUMN sims.student_disability_profile_disabilities.disability_type IS 'Type of the disability, validated against the system lookup configuration for disability type.';
 
 COMMENT ON COLUMN sims.student_disability_profile_disabilities.disability_notes IS 'Additional notes describing the disability. Required when disability type is OTHER.';
 
-COMMENT ON COLUMN sims.student_disability_profile_disabilities.impairments IS 'List of functional impairments associated with this disability. The impairments are stored as an array of values present in the system lookup configuration for disability impairments.';
+COMMENT ON COLUMN sims.student_disability_profile_disabilities.impairments IS 'List of functional impairments associated with this disability. The available list of impairments is stored in the system lookup configuration for disability impairments.';
 
-COMMENT ON COLUMN sims.student_disability_profile_disabilities.impairments_notes IS 'Additional notes related to the listed impairments.';
+COMMENT ON COLUMN sims.student_disability_profile_disabilities.impairments_notes IS 'Additional notes related to the listed impairments. Full list of available impairments is stored in the system lookup configuration for disability impairments.';
 
 COMMENT ON COLUMN sims.student_disability_profile_disabilities.diagnosis IS 'Primary diagnosis information for this disability.';
 

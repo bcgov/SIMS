@@ -9,7 +9,7 @@
             </span>
             <div>
               {{
-                disabilityPriority === 1
+                isPrimaryDisability
                   ? "Primary disability"
                   : "Additional disability"
               }}
@@ -30,13 +30,13 @@
             <v-btn
               prepend-icon="mdi-arrow-up"
               @click.stop="$emit('moveUp')"
-              v-if="disabilityPriority !== 1"
+              v-if="!isPrimaryDisability"
               >Up</v-btn
             >
             <v-btn
               prepend-icon="mdi-arrow-down"
               @click.stop="$emit('moveDown')"
-              v-if="disabilityPriority !== maxDisabilityPriority"
+              v-if="!isLastDisability"
               >Down</v-btn
             >
             <v-btn
@@ -60,10 +60,10 @@
               <v-select
                 :readonly="readOnly"
                 v-model="selectedDisabilityCategory"
-                :items="disabilityCategoryOptions"
+                :items="disabilityCategoryLookup"
                 label="Disability category"
-                item-title="text"
-                item-value="value"
+                item-title="lookupValue"
+                item-value="lookupKey"
                 density="compact"
                 variant="outlined"
                 hide-details
@@ -73,10 +73,10 @@
               <v-select
                 :readonly="readOnly"
                 v-model="selectedDisabilityType"
-                :items="disabilityTypeOptions"
+                :items="disabilityTypeLookup"
                 label="Disability type"
-                item-title="text"
-                item-value="value"
+                item-title="lookupValue"
+                item-value="lookupKey"
                 density="compact"
                 variant="outlined"
                 hide-details
@@ -85,6 +85,7 @@
             <v-col cols="12"
               ><v-textarea
                 :readonly="readOnly"
+                v-model="disabilityNotes"
                 label="Disability details notes"
                 variant="outlined"
                 rows="3"
@@ -111,6 +112,7 @@
             <v-col cols="12"
               ><v-textarea
                 :readonly="readOnly"
+                v-model="diagnosisNotes"
                 label="Diagnosis notes"
                 variant="outlined"
                 rows="3"
@@ -125,8 +127,8 @@
               <v-divider />
             </v-col>
             <v-col
-              v-for="option in IMPAIRMENTS"
-              :key="option"
+              v-for="option in impairmentLookup"
+              :key="option.lookupKey"
               cols="12"
               sm="6"
               class="py-0"
@@ -134,9 +136,9 @@
               <v-checkbox
                 :readonly="readOnly"
                 color="primary"
-                v-model="selected"
-                :label="option"
-                :value="option"
+                v-model="selectedImpairments"
+                :label="option.lookupValue"
+                :value="option.lookupKey"
                 density="compact"
                 hide-details
               />
@@ -144,6 +146,7 @@
             <v-col cols="12"
               ><v-textarea
                 :readonly="readOnly"
+                v-model="impairmentsNotes"
                 label="Impairments notes"
                 variant="outlined"
                 rows="3"
@@ -160,6 +163,7 @@
             <v-col cols="12"
               ><v-textarea
                 :readonly="readOnly"
+                v-model="additionalNotes"
                 label="Notes"
                 variant="outlined"
                 rows="3"
@@ -173,73 +177,24 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, watch, computed } from "vue";
-import { useFormatters } from "@/composables";
-import { AddressAPIOutDTO } from "@/services/http/dto";
-import { Role, BannerTypes } from "@/types";
+import { ref, defineComponent, computed, watchEffect, watch } from "vue";
+import { useSnackBar } from "@/composables";
+import { SystemLookupEntryAPIOutDTO } from "@/services/http/dto";
+import { BannerTypes, Role, SystemLookupCategory } from "@/types";
+import { SystemLookupConfigurationService } from "@/services/SystemLookupConfigurationService";
 
-const IMPAIRMENTS = [
-  "Ascend/Descend stairs",
-  "Following instructions",
-  "Completing tasks on time",
-  "Lifting/Carrying/Holding/Reaching",
-  "Sitting",
-  "Taking notes in class",
-  "Handwriting",
-  "Other",
-  "Speaking/Communicating",
-  "Using Stairs",
-  "Attending classes",
-  "Hearing",
-  "Reading",
-  "Standing",
-  "Vision",
-  "Focus and concentration",
-  "Keyboarding/Typing",
-  "Remembering information",
-  "Staying on task",
-  "Walking",
-];
-
-const DISABILITY_CATEGORY_OPTIONS = [
-  "Acquired brain injury",
-  "ADHD",
-  "Autism spectrum disorder",
-  "Blind or low vision",
-  "Deaf or hard of hearing",
-  "Learning disability",
-  "Mental health impairment",
-  "Mobility impairment",
-  "Other",
-  "Pervasive development disorder",
-  "Speech impairment",
-].map((option) => ({ text: option, value: option }));
-
-const DISABILITY_TYPE_OPTIONS = ["Permanent", "Persistent or prolonged"].map(
-  (option) => ({ text: option, value: option }),
-);
-
-type DisabilityDetail = {
+type DisabilityModel = {
   id: number;
+  disabilityPriority: number;
   disabilityCategory: string;
   disabilityType: string;
+  disabilityNotes?: string;
+  diagnosis: string;
+  diagnosisNotes?: string;
+  impairments: string[];
+  impairmentsNotes?: string;
+  additionalNotes?: string;
 };
-
-type DiagnosisDetail = {
-  id: number;
-  information: string;
-};
-
-const DISABILITY_DETAIL_HEADERS = [
-  { title: "Disability category", key: "disabilityCategory" },
-  { title: "Disability type", key: "disabilityType" },
-  { title: "Actions", key: "actions", sortable: false, width: 120 },
-];
-
-const DIAGNOSIS_DETAIL_HEADERS = [
-  { title: "Diagnosis information", key: "information" },
-  { title: "Actions", key: "actions", sortable: false, width: 120 },
-];
 
 export default defineComponent({
   props: {
@@ -247,12 +202,12 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    disabilityPriority: {
+    maxDisabilityPriority: {
       type: Number,
       required: true,
     },
-    maxDisabilityPriority: {
-      type: Number,
+    disabilityModel: {
+      type: Object as () => DisabilityModel,
       required: true,
     },
     readOnly: {
@@ -261,103 +216,110 @@ export default defineComponent({
       default: false,
     },
   },
-  emits: [
-    "secondaryDisabilityChanged",
-    "moveUp",
-    "moveDown",
-    "deleteDisability",
-  ],
+  emits: ["update:disabilityModel", "moveUp", "moveDown", "deleteDisability"],
   setup(props, { emit }) {
-    const address = ref({} as AddressAPIOutDTO);
-    const selected = ref<string[]>([]);
-    const selectedDisabilityCategory = ref("");
-    const selectedDisabilityType = ref("");
-    const disabilityDetails = ref<DisabilityDetail[]>([]);
-    let nextDisabilityDetailId = 1;
-    const hasSecondaryDisability = ref(false);
+    const snackBar = useSnackBar();
 
-    const isPrimary = computed(() => props.disabilityPriority === 1);
+    const isLookupLoaded = ref(false);
+    const disabilityCategoryLookup = ref<SystemLookupEntryAPIOutDTO[]>();
+    const disabilityTypeLookup = ref<SystemLookupEntryAPIOutDTO[]>();
+    const impairmentLookup = ref<SystemLookupEntryAPIOutDTO[]>();
 
-    const addDisabilityDetail = () => {
-      if (!selectedDisabilityCategory.value || !selectedDisabilityType.value) {
-        return;
-      }
+    // Local reactive copies initialized from the model prop.
+    const selectedDisabilityCategory = ref(
+      props.disabilityModel.disabilityCategory,
+    );
+    const selectedDisabilityType = ref(props.disabilityModel.disabilityType);
+    const disabilityNotes = ref(props.disabilityModel.disabilityNotes ?? "");
+    const diagnosisText = ref(props.disabilityModel.diagnosis);
+    const diagnosisNotes = ref(props.disabilityModel.diagnosisNotes ?? "");
+    const selectedImpairments = ref<string[]>([
+      ...props.disabilityModel.impairments,
+    ]);
+    const impairmentsNotes = ref(props.disabilityModel.impairmentsNotes ?? "");
+    const additionalNotes = ref(props.disabilityModel.additionalNotes ?? "");
 
-      disabilityDetails.value.push({
-        id: nextDisabilityDetailId,
+    const isPrimaryDisability = computed(
+      () => props.disabilityModel.disabilityPriority === 1,
+    );
+
+    const isLastDisability = computed(
+      () =>
+        props.disabilityModel.disabilityPriority ===
+        props.maxDisabilityPriority,
+    );
+
+    // Emit the full updated model to the parent whenever any field changes.
+    const emitUpdate = () => {
+      emit("update:disabilityModel", {
+        ...props.disabilityModel,
         disabilityCategory: selectedDisabilityCategory.value,
         disabilityType: selectedDisabilityType.value,
+        disabilityNotes: disabilityNotes.value || undefined,
+        diagnosis: diagnosisText.value,
+        diagnosisNotes: diagnosisNotes.value || undefined,
+        impairments: selectedImpairments.value,
+        impairmentsNotes: impairmentsNotes.value || undefined,
+        additionalNotes: additionalNotes.value || undefined,
       });
-      nextDisabilityDetailId += 1;
-      selectedDisabilityCategory.value = "";
-      selectedDisabilityType.value = "";
     };
 
-    const removeDisabilityDetail = (id: number) => {
-      disabilityDetails.value = disabilityDetails.value.filter(
-        (detail) => detail.id !== id,
-      );
-    };
+    watch(
+      [
+        selectedDisabilityCategory,
+        selectedDisabilityType,
+        disabilityNotes,
+        diagnosisText,
+        diagnosisNotes,
+        selectedImpairments,
+        impairmentsNotes,
+        additionalNotes,
+      ],
+      emitUpdate,
+      { deep: true },
+    );
 
-    const diagnosisText = ref("");
-    const diagnosisDetails = ref<DiagnosisDetail[]>([]);
-    let nextDiagnosisDetailId = 1;
-
-    const addDiagnosisDetail = () => {
-      if (!diagnosisText.value.trim()) {
-        return;
+    const loadLookup = async () => {
+      try {
+        const [disabilityCategory, disabilityType, disabilityImpairment] =
+          await Promise.all([
+            SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
+              SystemLookupCategory.DisabilityCategory,
+            ),
+            SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
+              SystemLookupCategory.DisabilityType,
+            ),
+            SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
+              SystemLookupCategory.DisabilityImpairment,
+            ),
+          ]);
+        disabilityCategoryLookup.value = disabilityCategory.items;
+        disabilityTypeLookup.value = disabilityType.items;
+        impairmentLookup.value = disabilityImpairment.items;
+        isLookupLoaded.value = true;
+      } catch {
+        snackBar.error("Unexpected error while loading data.");
       }
-
-      diagnosisDetails.value.push({
-        id: nextDiagnosisDetailId,
-        information: diagnosisText.value,
-      });
-      nextDiagnosisDetailId += 1;
-      diagnosisText.value = "";
     };
-
-    const removeDiagnosisDetail = (id: number) => {
-      diagnosisDetails.value = diagnosisDetails.value.filter(
-        (detail) => detail.id !== id,
-      );
-    };
-
-    const {
-      genderDisplayFormat,
-      sinDisplayFormat,
-      emptyStringFiller,
-      dateOnlyLongString,
-    } = useFormatters();
-
-    watch(hasSecondaryDisability, (value) => {
-      emit("secondaryDisabilityChanged", value);
-    });
+    watchEffect(loadLookup);
 
     return {
-      isPrimary,
-      address,
-      sinDisplayFormat,
-      genderDisplayFormat,
-      dateOnlyLongString,
-      emptyStringFiller,
+      isLookupLoaded,
+      isPrimaryDisability,
+      isLastDisability,
       Role,
       BannerTypes,
-      IMPAIRMENTS,
-      selected,
-      disabilityCategoryOptions: DISABILITY_CATEGORY_OPTIONS,
-      disabilityTypeOptions: DISABILITY_TYPE_OPTIONS,
       selectedDisabilityCategory,
       selectedDisabilityType,
-      disabilityDetailHeaders: DISABILITY_DETAIL_HEADERS,
-      disabilityDetails,
-      addDisabilityDetail,
-      removeDisabilityDetail,
-      diagnosisDetailHeaders: DIAGNOSIS_DETAIL_HEADERS,
+      disabilityNotes,
       diagnosisText,
-      diagnosisDetails,
-      addDiagnosisDetail,
-      removeDiagnosisDetail,
-      hasSecondaryDisability,
+      diagnosisNotes,
+      selectedImpairments,
+      impairmentsNotes,
+      additionalNotes,
+      disabilityCategoryLookup,
+      disabilityTypeLookup,
+      impairmentLookup,
     };
   },
 });
