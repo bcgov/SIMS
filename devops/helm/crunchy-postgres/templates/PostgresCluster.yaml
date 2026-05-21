@@ -27,6 +27,10 @@ spec:
       metadata:
         labels:
           app.kubernetes.io/part-of: {{ template "crunchy-postgres.fullname" . }}
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/port: "9187"
+          prometheus.io/path: "/metrics"
       resources:
         requests:
           cpu: {{ .Values.instances.requests.cpu }}
