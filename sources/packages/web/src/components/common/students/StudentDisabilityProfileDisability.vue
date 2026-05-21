@@ -18,7 +18,7 @@
           </div>
           <v-btn-group
             :style="{ minWidth: 'fit-content' }"
-            v-if="maxDisabilityPriority > 1"
+            v-if="!readOnly && maxDisabilityPriority > 1"
             rounded="lg"
             :border="true"
             class="mr-4"
@@ -58,6 +58,7 @@
             </v-col>
             <v-col cols="6">
               <v-select
+                :readonly="readOnly"
                 v-model="selectedDisabilityCategory"
                 :items="disabilityCategoryOptions"
                 label="Disability category"
@@ -70,6 +71,7 @@
             </v-col>
             <v-col cols="6">
               <v-select
+                :readonly="readOnly"
                 v-model="selectedDisabilityType"
                 :items="disabilityTypeOptions"
                 label="Disability type"
@@ -82,6 +84,7 @@
             </v-col>
             <v-col cols="12"
               ><v-textarea
+                :readonly="readOnly"
                 label="Disability details notes"
                 variant="outlined"
                 rows="3"
@@ -98,6 +101,7 @@
             <v-col cols="12"
               ><v-text-field
                 v-model="diagnosisText"
+                :readonly="readOnly"
                 label="Diagnosis information"
                 placeholder="Enter diagnosis details..."
                 density="compact"
@@ -106,6 +110,7 @@
             /></v-col>
             <v-col cols="12"
               ><v-textarea
+                :readonly="readOnly"
                 label="Diagnosis notes"
                 variant="outlined"
                 rows="3"
@@ -127,6 +132,7 @@
               class="py-0"
             >
               <v-checkbox
+                :readonly="readOnly"
                 color="primary"
                 v-model="selected"
                 :label="option"
@@ -137,6 +143,7 @@
             </v-col>
             <v-col cols="12"
               ><v-textarea
+                :readonly="readOnly"
                 label="Impairments notes"
                 variant="outlined"
                 rows="3"
@@ -152,6 +159,7 @@
             </v-col>
             <v-col cols="12"
               ><v-textarea
+                :readonly="readOnly"
                 label="Notes"
                 variant="outlined"
                 rows="3"
@@ -246,6 +254,11 @@ export default defineComponent({
     maxDisabilityPriority: {
       type: Number,
       required: true,
+    },
+    readOnly: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   emits: [

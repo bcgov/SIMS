@@ -16,17 +16,9 @@
       <template #header>
         <body-header
           title="Disability Profile"
-          sub-title="Current version created by Some User on May 1, 2024"
+          sub-title="Created by Some User on May 1, 2024, edited by Another User on June 1, 2024"
         >
-          <template #actions>
-            <v-btn
-              prepend-icon="fas fa-plus"
-              class="float-right"
-              color="primary"
-              variant="outlined"
-              @click="addDisability"
-              >Add new disability</v-btn
-            >
+          <template #actions v-if="!readOnly">
             <v-btn
               prepend-icon="fas fa-save"
               class="float-right mr-2"
@@ -38,21 +30,33 @@
         </body-header>
       </template>
     </body-header-container>
-    <student-disability-profile-disability
-      v-for="(disability, index) in disabilities"
-      :key="disability.id"
-      :student-id="studentId"
-      :disability-priority="index + 1"
-      :max-disability-priority="disabilities.length"
-      @move-up="moveDisabilityUp(index)"
-      @move-down="moveDisabilityDown(index)"
-      @delete-disability="deleteDisability(index)"
-    />
+    <content-group>
+      <student-disability-profile-disability
+        v-for="(disability, index) in disabilities"
+        :key="disability.id"
+        :student-id="studentId"
+        :disability-priority="index + 1"
+        :max-disability-priority="disabilities.length"
+        :read-only="readOnly"
+        @move-up="moveDisabilityUp(index)"
+        @move-down="moveDisabilityDown(index)"
+        @delete-disability="deleteDisability(index)"
+      />
+      <v-row class="mt-2" v-if="!readOnly" justify="end">
+        <v-col cols="auto">
+          <v-btn
+            prepend-icon="fas fa-plus"
+            color="primary"
+            variant="outlined"
+            @click="addDisability"
+            >Add new disability</v-btn
+          >
+        </v-col>
+      </v-row>
+    </content-group>
     <footer-buttons
-      class="mt-4"
+      v-if="!readOnly"
       primary-label="Complete change"
-      secondary-button-variant="outlined"
-      secondary-button-color="danger"
     ></footer-buttons>
   </full-page-container>
 </template>
@@ -70,6 +74,11 @@ export default defineComponent({
     studentId: {
       type: Number,
       required: true,
+    },
+    readOnly: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   setup() {
