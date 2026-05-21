@@ -6,6 +6,7 @@ import SearchStudents from "@/views/aest/SearchStudents.vue";
 import StudentDetails from "@/views/aest/student/StudentDetails.vue";
 import StudentProfile from "@/views/aest/student/Profile.vue";
 import DisabilityProfile from "@/views/aest/student/DisabilityProfile.vue";
+import DisabilityProfileDisabilityEdit from "@/views/aest/student/DisabilityProfileDisabilityEdit.vue";
 import StudentApplications from "@/views/aest/student/Applications.vue";
 import ProgramDetails from "@/views/aest/institution/ProgramDetails.vue";
 import SearchInstitutions from "@/views/aest/SearchInstitutions.vue";
@@ -228,6 +229,20 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             },
           },
         ],
+      },
+      {
+        path: AppRoutes.StudentDisabilityProfileDisabilityEdit,
+        name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE_DISABILITY_EDIT,
+        props: (route) => ({
+          studentId: Number.parseInt(route.params.studentId as string),
+          disabilityProfileId: Number.parseInt(
+            route.params.disabilityProfileId as string,
+          ),
+        }),
+        component: DisabilityProfileDisabilityEdit,
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
       },
       {
         path: AppRoutes.StudentAppealRequest,

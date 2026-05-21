@@ -27,51 +27,15 @@ FROM
         VALUES
             (
                 'Disability type',
-                'Mental Health Disorder',
-                'MENTHLTH',
+                'Permanent Disability (PD)',
+                'PD',
                 1
             ),
             (
                 'Disability type',
-                'Blind or Visually Impaired',
-                'BLINDVI',
+                'Persistent or Prolonged Disability (PPD)',
+                'PPD',
                 2
-            ),
-            (
-                'Disability type',
-                'Attention Deficit Hyperactivity Disorder (ADHD)',
-                'ADHD',
-                3
-            ),
-            (
-                'Disability type',
-                'Deaf or Hard of Hearing',
-                'DEAFHARD',
-                4
-            ),
-            (
-                'Disability type',
-                'Autism Spectrum Disorder (ASD)',
-                'ASD',
-                5
-            ),
-            (
-                'Disability type',
-                'Neurological Disability',
-                'NEURODISX',
-                6
-            ),
-            (
-                'Disability type',
-                'Physical Disability / Mobility Impairment',
-                'PHYSDISAB',
-                7
-            ),
-            (
-                'Disability type',
-                'Other',
-                'OTHER',
-                8
             )
     ) AS lookup_data(
         lookup_category,

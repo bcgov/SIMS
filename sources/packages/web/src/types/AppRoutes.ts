@@ -163,6 +163,7 @@ export enum AppRoutes {
   StudentDetail = "student/:studentId",
   StudentProfile = "profile",
   StudentDisabilityProfile = "disability-profile",
+  StudentDisabilityProfileDisabilityEdit = "student/:studentId/disability-profile/edit",
   Applications = "applications",
   Restrictions = "restrictions",
   FileUploads = "files",

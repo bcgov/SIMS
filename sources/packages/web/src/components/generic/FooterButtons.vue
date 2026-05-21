@@ -15,9 +15,10 @@
         :disabled="processing || disablePrimaryButton"
         v-if="showPrimaryButton"
         class="ml-2"
-        variant="elevated"
         data-cy="primaryFooterButton"
+        :prepend-icon="primaryButtonIcon"
         :color="primaryButtonColor"
+        :variant="primaryButtonVariant"
         @click="$emit('primaryClick')"
         :loading="processing"
       >
@@ -65,6 +66,24 @@ export default defineComponent({
       type: String,
       required: false,
       default: "primary",
+    },
+    primaryButtonIcon: {
+      type: String,
+      required: false,
+      default: undefined,
+    },
+    primaryButtonVariant: {
+      type: String as PropType<
+        | "elevated"
+        | "outlined"
+        | "text"
+        | "flat"
+        | "tonal"
+        | "plain"
+        | undefined
+      >,
+      required: false,
+      default: "elevated",
     },
     secondaryButtonVariant: {
       type: String as PropType<

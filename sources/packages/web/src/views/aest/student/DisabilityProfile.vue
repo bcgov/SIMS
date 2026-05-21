@@ -1,21 +1,16 @@
 <template>
-  <tab-container>
-    <body-header-container>
-      <template #header>
-        <body-header title="Disability Profile" />
-      </template>
-      <student-disability-profile
-        :student-id="studentId"
-        :allow-update-actions="true"
-        :show-legacy-match="true"
-      />
-    </body-header-container>
+  <tab-container :enable-card-view="false">
+    <student-disability-profile
+      :student-id="studentId"
+      :allow-update-actions="true"
+      :show-legacy-match="true"
+    />
   </tab-container>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import StudentDisabilityProfile from "@/components/common/students/StudentDisabilityProfileProfile.vue";
+import StudentDisabilityProfile from "@/components/common/students/StudentDisabilityProfile.vue";
 
 export default defineComponent({
   components: { StudentDisabilityProfile },
