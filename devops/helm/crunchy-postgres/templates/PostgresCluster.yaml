@@ -99,6 +99,21 @@ spec:
         - --db-include=simsdb
   {{ end }}
 
+  {{- if .Values.crunchy.pgmonitor.enabled }}
+  monitoring:
+    pgmonitor:
+      exporter:
+        {{ if .Values.crunchy.pgmonitor.exporter.image }}
+        image: {{ .Values.crunchy.pgmonitor.exporter.image }}
+        {{ end }}
+        resources:
+          requests:
+            cpu: {{ .Values.crunchy.pgmonitor.exporter.requests.cpu }}
+            memory: {{ .Values.crunchy.pgmonitor.exporter.requests.memory }}
+          limits:
+            memory: {{ .Values.crunchy.pgmonitor.exporter.limits.memory }}
+  {{ end }}
+
   backups:
     pgbackrest:
       restore:
