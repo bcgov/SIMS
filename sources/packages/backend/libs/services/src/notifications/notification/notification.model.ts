@@ -285,7 +285,7 @@ export interface MinistryFileProcessingIssueNotification {
   type: FileProcessingIssueType;
 }
 
-export interface StudentAssessmentNotification {
+export interface StudentAssessmentOverdueReminderNotification {
   givenNames?: string;
   lastName: string;
   toAddress: string;

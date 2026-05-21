@@ -409,7 +409,7 @@ export class ApplicationService {
   }
 
   /**
-   * Retrieve applications with overdue assessments that have been assessed at least 7 days and are unblocked.
+   * Retrieve applications with overdue assessments that have been assessed at least 7 days.
    * Only assessments that haven't already been notified should be included.
    * @returns overdue assessments.
    */

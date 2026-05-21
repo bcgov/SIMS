@@ -26,6 +26,10 @@ describe("AssessmentController(e2e)-updateNOAStatus", () => {
     systemUsersService = nestApplication.get(SystemUsersService);
   });
 
+  beforeEach(async () => {
+    MockDate.reset();
+  });
+
   it("Should update NOA status when noa approval status is null.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);

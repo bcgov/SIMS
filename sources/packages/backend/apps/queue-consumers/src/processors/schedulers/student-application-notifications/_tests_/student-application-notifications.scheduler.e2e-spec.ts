@@ -75,7 +75,7 @@ describe(
 
     describe("StudentPDPPDReminderNotification", () => {
       beforeEach(async () => {
-        markNotificationsSent(
+        await markNotificationsSent(
           NotificationMessageType.StudentPDPPDApplicationNotification,
         );
       });
@@ -312,7 +312,7 @@ describe(
 
     describe("StudentSecondDisbursementReminderNotification", () => {
       beforeEach(async () => {
-        markNotificationsSent(
+        await markNotificationsSent(
           NotificationMessageType.StudentSecondDisbursementNotification,
         );
       });
@@ -482,7 +482,7 @@ describe(
 
     describe("StudentCOERequiredNearEndDateReminderNotification", () => {
       beforeEach(async () => {
-        markNotificationsSent(
+        await markNotificationsSent(
           NotificationMessageType.StudentCOERequiredNearEndDateNotification,
         );
       });
@@ -706,7 +706,7 @@ describe(
             },
             { dateReceived: new Date() },
           );
-          markNotificationsSent(
+          await markNotificationsSent(
             NotificationMessageType.MinistryFileProcessingIssue,
           );
         });
@@ -840,7 +840,7 @@ describe(
           },
           { dateReceived: new Date() },
         );
-        markNotificationsSent(
+        await markNotificationsSent(
           NotificationMessageType.MinistryFileProcessingIssue,
         );
       });
@@ -1045,7 +1045,7 @@ describe(
         // Assert
         expect(
           mockedJob.containLogMessages([
-            ` No assessments 7 days past due found to generate reminder notifications.`,
+            `No assessments 7 days past due found to generate reminder notifications.`,
           ]),
         ).toBe(true);
 
@@ -1181,9 +1181,9 @@ describe(
           db.dataSource,
           {},
           {
-            applicationStatus: ApplicationStatus.Enrolment,
+            applicationStatus: ApplicationStatus.Assessment,
             currentAssessmentInitialValues: {
-              noaApprovalStatus: AssessmentStatus.completed,
+              noaApprovalStatus: AssessmentStatus.required,
               noaApprovalStatusUpdatedOn: addDays(-10),
               offering,
             },

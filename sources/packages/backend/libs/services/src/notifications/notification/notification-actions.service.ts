@@ -41,7 +41,7 @@ import {
   MinistryStudentAppealNotification,
   MinistryFileProcessingIssueNotification,
   SaveNotificationModel,
-  StudentAssessmentNotification,
+  StudentAssessmentOverdueReminderNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { LoggerService } from "@sims/utilities/logger";
@@ -1688,12 +1688,12 @@ export class NotificationActionsService {
   }
 
   /**
-   * Creates an assessment reminder notification to notify student
-   * when the application been has assessed at least 7 days and they are unblocked.
+   * Creates an assessment reminder notification for a student whose application
+   * has been in assessment for at least 7 days.
    * @param notifications notification details array.
    */
   async saveStudentAssessmentReminderNotification(
-    notifications: StudentAssessmentNotification[],
+    notifications: StudentAssessmentOverdueReminderNotification[],
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const { templateId } =
@@ -1710,7 +1710,7 @@ export class NotificationActionsService {
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
-          applicationNumber: notification.applicationNumber!,
+          applicationNumber: notification.applicationNumber,
         },
       },
       metadata: { assessmentId: notification.assessmentId },
