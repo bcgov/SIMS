@@ -415,6 +415,11 @@
           },
           "validateWhenHidden": false,
           "key": "medicalSchoolStatus",
+          "conditional": {
+            "show": false,
+            "when": "country",
+            "eq": "CA"
+          },
           "type": "radio",
           "input": true
         },

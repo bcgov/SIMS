@@ -78,8 +78,16 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   classification: InstitutionClassification;
   @IsEnum(InstitutionOrganizationStatus)
   organizationStatus: InstitutionOrganizationStatus;
+  @AllowIf(
+    (input: InstitutionProfileAPIInDTO) =>
+      input.country !== CANADA_COUNTRY_CODE,
+  )
+  @ValidateIf(
+    (input: InstitutionProfileAPIInDTO) =>
+      input.country !== CANADA_COUNTRY_CODE,
+  )
   @IsEnum(InstitutionMedicalSchoolStatus)
-  medicalSchoolStatus: InstitutionMedicalSchoolStatus;
+  medicalSchoolStatus?: InstitutionMedicalSchoolStatus;
 }
 
 /**

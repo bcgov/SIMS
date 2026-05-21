@@ -477,6 +477,11 @@
           },
           "validateWhenHidden": false,
           "key": "medicalSchoolStatus",
+          "conditional": {
+            "show": false,
+            "when": "country",
+            "eq": "CA"
+          },
           "logic": [
             {
               "name": "Set component to not required when full update is not allowed",
