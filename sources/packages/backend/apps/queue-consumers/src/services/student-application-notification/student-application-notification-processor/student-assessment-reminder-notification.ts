@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { StudentAssessmentService } from "../../";
+import { ApplicationService } from "../../";
 import { ProcessSummary } from "@sims/utilities/logger";
 import {
   NotificationActionsService,
-  StudentNotification,
+  StudentAssessmentNotification,
 } from "@sims/services";
 import { STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS } from "@sims/services/constants/system-configurations-constants";
 
@@ -14,7 +14,7 @@ import { STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS } from "@sims/services/con
 @Injectable()
 export class StudentAssessmentReminderNotification {
   constructor(
-    private readonly studentAssessmentService: StudentAssessmentService,
+    private readonly applicationService: ApplicationService,
     private readonly notificationActionsService: NotificationActionsService,
   ) {}
 
@@ -26,24 +26,24 @@ export class StudentAssessmentReminderNotification {
     const notificationLog = new ProcessSummary();
     processSummary.children(notificationLog);
 
-    const overdueAssessments =
-      await this.studentAssessmentService.getOverdueAssessments();
+    const applications =
+      await this.applicationService.getApplicationsWithOverdueAssessments();
 
-    if (!overdueAssessments.length) {
+    if (!applications.length) {
       notificationLog.info(
         `No assessments ${STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS} days past due found to generate reminder notifications.`,
       );
       return;
     }
 
-    const notifications = overdueAssessments.map<StudentNotification>(
-      (assessment) => ({
-        userId: assessment.application.student.user.id,
-        givenNames: assessment.application.student.user.firstName,
-        lastName: assessment.application.student.user.lastName,
-        toAddress: assessment.application.student.user.email,
-        applicationNumber: assessment.application.applicationNumber,
-        assessmentId: assessment.id,
+    const notifications = applications.map<StudentAssessmentNotification>(
+      (application) => ({
+        userId: application.student.user.id,
+        givenNames: application.student.user.firstName,
+        lastName: application.student.user.lastName,
+        toAddress: application.student.user.email,
+        applicationNumber: application.applicationNumber,
+        assessmentId: application.currentAssessment!.id,
       }),
     );
 
@@ -52,8 +52,8 @@ export class StudentAssessmentReminderNotification {
     );
 
     notificationLog.info(
-      `Overdue application assessments that generated reminder notifications: ${overdueAssessments
-        .map((assessment) => assessment.application.applicationNumber)
+      `Overdue application assessments that generated reminder notifications: ${applications
+        .map((application) => application.applicationNumber)
         .join(", ")}`,
     );
   }

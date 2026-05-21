@@ -13,6 +13,7 @@ import { AssessmentStatus } from "@sims/sims-db";
  */
 export function createFakeUpdateNOAStatusPayload(
   assessmentId: number,
+  status: AssessmentStatus = AssessmentStatus.required,
 ): Readonly<
   ZeebeJob<UpdateNOAStatusJobInDTO, UpdateNOAStatusHeaderDTO, IOutputVariables>
 > {
@@ -22,6 +23,6 @@ export function createFakeUpdateNOAStatusPayload(
     IOutputVariables
   >({
     variables: { assessmentId },
-    customHeaders: { status: AssessmentStatus.completed },
+    customHeaders: { status },
   });
 }

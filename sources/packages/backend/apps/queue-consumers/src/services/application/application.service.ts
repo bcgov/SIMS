@@ -13,10 +13,16 @@ import {
   DisbursementSchedule,
   COEStatus,
   ApplicationEditStatus,
+  AssessmentStatus,
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectRepository } from "@nestjs/typeorm";
-import { addDays, DISABILITY_NOTIFICATION_DAYS_LIMIT, STUDENT_COE_REQUIRED_NOTIFICATION_END_DATE_DAYS } from "@sims/utilities";
+import {
+  addDays,
+  DISABILITY_NOTIFICATION_DAYS_LIMIT,
+  STUDENT_COE_REQUIRED_NOTIFICATION_END_DATE_DAYS,
+} from "@sims/utilities";
+import { STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS } from "@sims/services/constants";
 
 interface SecondDisbursementStillPending {
   assessmentId: number;
@@ -400,5 +406,58 @@ export class ApplicationService {
         coeStatusRequired: COEStatus.required,
       })
       .getRawMany();
+  }
+
+  /**
+   * Retrieve applications with overdue assessments that have been assessed at least 7 days and are unblocked.
+   * Only assessments that haven't already been notified should be included.
+   * @returns overdue assessments.
+   */
+  async getApplicationsWithOverdueAssessments(): Promise<Application[]> {
+    // Sub query to defined if a notification was already sent to the current assessment.
+    const notificationExistsQuery = this.notificationRepo
+      .createQueryBuilder("notification")
+      .select("1")
+      .innerJoin("notification.notificationMessage", "notificationMessage")
+      .where("notificationMessage.id = :notificationMessageId")
+      .andWhere(
+        "notification.metadata->>'assessmentId' = assessment.id :: text",
+      )
+      .getQuery();
+
+    return this.applicationRepo
+      .createQueryBuilder("application")
+      .select([
+        "application.id",
+        "application.applicationNumber",
+        "assessment.id",
+        "student.id",
+        "user.id",
+        "user.firstName",
+        "user.lastName",
+        "user.email",
+      ])
+      .innerJoin("application.currentAssessment", "assessment")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .innerJoin("assessment.offering", "offering")
+      .where("assessment.noaApprovalStatus = :noaApprovalStatus", {
+        noaApprovalStatus: AssessmentStatus.required,
+      })
+      .andWhere(
+        "assessment.noaApprovalStatusUpdatedOn < NOW() - (:overdueDays * INTERVAL '1 day')",
+        {
+          overdueDays: STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS,
+        },
+      )
+      .andWhere("offering.studyEndDate >= NOW()::date")
+      .andWhere("application.applicationStatus = :applicationStatus", {
+        applicationStatus: ApplicationStatus.Assessment,
+      })
+      .andWhere(`NOT EXISTS (${notificationExistsQuery})`, {
+        notificationMessageId:
+          NotificationMessageType.StudentAssessmentReminder,
+      })
+      .getMany();
   }
 }

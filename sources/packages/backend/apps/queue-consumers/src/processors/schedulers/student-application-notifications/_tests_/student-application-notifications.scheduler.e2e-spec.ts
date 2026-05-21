@@ -15,6 +15,7 @@ import {
   createE2EDataSources,
   createFakeCRAIncomeVerification,
   createFakeDisbursementSchedule,
+  createFakeEducationProgramOffering,
   createFakeNotification,
   createFakeSINValidation,
   createFakeStudentAssessment,
@@ -1102,6 +1103,71 @@ describe(
             currentAssessmentInitialValues: {
               noaApprovalStatus: AssessmentStatus.completed,
               noaApprovalStatusUpdatedOn: addDays(-10),
+            },
+          },
+        );
+
+        // Create a notification
+        const notification = createFakeNotification(
+          {
+            user: application.student.user,
+            notificationMessage: {
+              id: NotificationMessageType.StudentAssessmentReminder,
+            } as NotificationMessage,
+          },
+          {
+            initialValue: {
+              dateSent: new Date(),
+              metadata: {
+                assessmentId: application.currentAssessment!.id,
+              },
+            },
+          },
+        );
+        await db.notification.save(notification);
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await processor.processQueue(mockedJob.job);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            `No assessments 7 days past due found to generate reminder notifications.`,
+          ]),
+        ).toBe(true);
+        const exists = await notificationExists(
+          NotificationMessageType.StudentAssessmentReminder,
+        );
+        expect(exists).toBe(false);
+      });
+
+      it("Should not generate a notification for overdue assessment reminder when the application status is assessment and the NOA status is required and the offering end date has passed.", async () => {
+        // Arrange
+        // Create an expired offering
+        const offering = createFakeEducationProgramOffering(
+          { auditUser: systemUsersService.systemUser },
+          {
+            initialValues: {
+              studyStartDate: getISODateOnlyString(addDays(-30)),
+              studyEndDate: getISODateOnlyString(addDays(-1)),
+            },
+          },
+        );
+        await db.educationProgramOffering.save(offering);
+
+        // Create an application
+        const application = await saveFakeApplication(
+          db.dataSource,
+          {},
+          {
+            applicationStatus: ApplicationStatus.Enrolment,
+            currentAssessmentInitialValues: {
+              noaApprovalStatus: AssessmentStatus.completed,
+              noaApprovalStatusUpdatedOn: addDays(-10),
+              offering,
             },
           },
         );

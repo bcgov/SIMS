@@ -78,7 +78,6 @@ export interface StudentNotification {
   toAddress: string;
   userId: number;
   applicationNumber?: string;
-  assessmentId?: number;
 }
 
 export interface DisbursementBlockedNotification {
@@ -284,4 +283,13 @@ export interface MinistryFileProcessingIssueNotification {
   fileName: string;
   dateSent: Date;
   type: FileProcessingIssueType;
+}
+
+export interface StudentAssessmentNotification {
+  givenNames?: string;
+  lastName: string;
+  toAddress: string;
+  userId: number;
+  applicationNumber: string;
+  assessmentId: number;
 }

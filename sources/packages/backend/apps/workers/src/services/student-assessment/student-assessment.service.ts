@@ -249,7 +249,11 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         .getRepository(StudentAssessment)
         .update(
           { id: assessmentId, noaApprovalStatus: IsNull() },
-          { noaApprovalStatus: status, modifier: auditUser },
+          {
+            noaApprovalStatus: status,
+            modifier: auditUser,
+            noaApprovalStatusUpdatedOn: new Date(),
+          },
         );
 
       if (updateResult.affected === 1) {
