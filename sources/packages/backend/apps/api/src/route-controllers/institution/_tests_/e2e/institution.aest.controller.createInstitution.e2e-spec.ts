@@ -45,6 +45,7 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
       primaryContactLastName: "Contact",
       primaryContactEmail: "test@test.ca",
       primaryContactPhone: "7785367878",
+      medicalSchoolStatus: "",
       mailingAddress: {
         addressLine1: "123 Gorge Rd E",
         addressLine2: "",
@@ -146,7 +147,7 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
       province: payload.province,
       classification: payload.classification,
       organizationStatus: payload.organizationStatus,
-      medicalSchoolStatus: null,
+      medicalSchoolStatus: "",
     });
   });
 

@@ -26,6 +26,7 @@ import {
 import { OTHER_REGULATING_BODY_MAX_LENGTH } from "../../../constants";
 import { CANADA_COUNTRY_CODE } from "@sims/sims-db/constant";
 import { AllowIf } from "../../../utilities/class-validation";
+import { Optional } from "@nestjs/common";
 
 export class InstitutionContactAPIInDTO {
   @IsNotEmpty()
@@ -78,14 +79,11 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   classification: InstitutionClassification;
   @IsEnum(InstitutionOrganizationStatus)
   organizationStatus: InstitutionOrganizationStatus;
-  @AllowIf(
-    (input: InstitutionProfileAPIInDTO) =>
-      input.country !== CANADA_COUNTRY_CODE,
-  )
   @ValidateIf(
     (input: InstitutionProfileAPIInDTO) =>
       input.country !== CANADA_COUNTRY_CODE,
   )
+  @Optional()
   @IsEnum(InstitutionMedicalSchoolStatus)
   medicalSchoolStatus?: InstitutionMedicalSchoolStatus;
 }
