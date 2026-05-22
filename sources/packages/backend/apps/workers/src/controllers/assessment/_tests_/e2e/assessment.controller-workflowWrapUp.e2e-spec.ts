@@ -271,10 +271,6 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
       studentAssessmentStatus: StudentAssessmentStatus.Completed,
       workflowData,
     });
-    console.log(
-      "Workflow data persisted during wrap-up:",
-      updatedAssessment.workflowData,
-    );
   });
 
   it("Should find the next impacted assessment and create a reassessment when there is an application for the same student and program year in the future.", async () => {
