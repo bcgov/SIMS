@@ -2,7 +2,10 @@ import { ASSESSMENT_ID } from "@sims/services/workflow/variables/assessment-gate
 import {
   ApplicationStatus,
   AssessmentTriggerType,
+  OfferingIntensity,
   ProgramInfoStatus,
+  StudentAssessmentStatus,
+  WorkflowData,
 } from "@sims/sims-db";
 import { AssessmentConsolidatedData } from "../../models";
 import {
@@ -37,8 +40,21 @@ import {
   PROGRAM_YEAR,
   PROGRAM_YEAR_BASE_ID,
 } from "../constants/program-year.constants";
-import { AssessmentDataType, YesNoOptions } from "@sims/test-utils";
+import {
+  AssessmentDataType,
+  createE2EDataSources,
+  E2EDataSources,
+  saveFakeApplication,
+  YesNoOptions,
+} from "@sims/test-utils";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
+import { createTestingAppModule } from "../../../../apps/workers/test/helpers";
+import { AssessmentController } from "../../../../apps/workers/src/controllers/assessment/assessment.controller";
+import { createFakeWorkflowWrapUpPayload } from "../../../../apps/workers/src/controllers/assessment/_tests_/e2e/workflow-wrap-up-factory";
+import {
+  FakeWorkerJobResult,
+  MockedZeebeJobResult,
+} from "../../../../apps/workers/test/utils/worker-job-mock";
 
 describe(`E2E Test Workflow assessment gateway on original assessment for ${PROGRAM_YEAR}`, () => {
   let zeebeClientProvider: ZeebeGrpcClient;
@@ -100,6 +116,85 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       WorkflowServiceTasks.UpdateNOAStatusToRequired,
       WorkflowServiceTasks.VerifyAssessmentCalculationOrderTask,
     );
+  });
+
+  it(`Should generate workflow data from ${DEFAULT_ASSESSMENT_GATEWAY} and persist the same values during wrap-up for ${OfferingIntensity.fullTime} applications.`, async () => {
+    // Arrange
+    const { nestApplication, dataSource } = await createTestingAppModule();
+    const db: E2EDataSources = createE2EDataSources(dataSource);
+    const assessmentController = nestApplication.get(AssessmentController);
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      undefined,
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        currentAssessmentInitialValues: {
+          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+        },
+      },
+    );
+    const currentAssessmentId = savedApplication.currentAssessment?.id;
+    expect(currentAssessmentId).toBeDefined();
+    if (!currentAssessmentId) {
+      throw new Error("Current assessment id not found.");
+    }
+    const assessmentConsolidatedData: AssessmentConsolidatedData = {
+      assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+      ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
+      ...createFakeSingleIndependentStudentData(),
+      // Application with PIR not required.
+      studentDataSelectedOffering: 1,
+    };
+
+    const workersMockedData = createWorkersMockedData([
+      createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
+      createProgramInfoNotRequiredTaskMock(),
+      createVerifyApplicationExceptionsTaskMock(),
+      createIncomeRequestTaskMock({
+        incomeVerificationId: incomeVerificationId++,
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
+      createCheckIncomeRequestTaskMock({
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
+      createVerifyAssessmentCalculationOrderTaskMock(),
+    ]);
+
+    // Act
+    const assessmentGatewayResponse =
+      await zeebeClientProvider.createProcessInstanceWithResult({
+        bpmnProcessId: DEFAULT_ASSESSMENT_GATEWAY,
+        variables: {
+          [ASSESSMENT_ID]: currentAssessmentId,
+          ...workersMockedData,
+        },
+        requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+      });
+    const workflowData = assessmentGatewayResponse.variables
+      .workflowData as unknown as WorkflowData;
+    const result = await assessmentController.workflowWrapUp(
+      createFakeWorkflowWrapUpPayload(currentAssessmentId, {
+        workflowData,
+      }),
+    );
+
+    // Assert
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    const updatedAssessment = await db.studentAssessment.findOne({
+      select: {
+        id: true,
+        studentAssessmentStatus: true,
+        workflowData: true,
+      },
+      where: { id: currentAssessmentId },
+    });
+    expect(updatedAssessment).toEqual({
+      id: currentAssessmentId,
+      studentAssessmentStatus: StudentAssessmentStatus.Completed,
+      workflowData,
+    });
   });
 
   it("Should update NOA status to not required when the application is completed.", async () => {
@@ -425,7 +520,6 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
       ...createFakeSingleIndependentStudentData(),
       // Application with PIR required.
-      studentDataSelectedOffering: null,
       applicationStatus: ApplicationStatus.InProgress,
     };
 
