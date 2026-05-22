@@ -10,4 +10,6 @@ export const GC_NOTIFY_TEMPLATE_IDS = {
   StudentChangeRequestReviewCompleted: "9a4855d1-4f9a-4293-9868-cd853a8e4061",
   MinistryFormSubmitted: "296aa2ea-dfa7-4285-9d5b-315b2a4911d6",
   StudentFormCompleted: "fed6b26e-d1f2-4a8c-bfe5-5cb66c00458b",
+  InstitutionAddsPendingProgramNotification:
+    "98b38e6b-a015-48e8-8058-1e21402bb1b6",
 } as const;

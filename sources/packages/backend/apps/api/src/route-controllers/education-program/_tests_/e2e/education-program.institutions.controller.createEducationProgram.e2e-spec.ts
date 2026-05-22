@@ -3,6 +3,7 @@ import {
   EducationProgram,
   Institution,
   InstitutionLocation,
+  NotificationMessageType,
   ProgramStatus,
   User,
 } from "@sims/sims-db";
@@ -23,6 +24,8 @@ import {
 import * as request from "supertest";
 import { faker } from "@faker-js/faker";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
+import { IsNull } from "typeorm";
+import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
 
 describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", () => {
   let app: INestApplication;
@@ -30,6 +33,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
   let collegeFUser: User;
+  const MINISTRY_EMAIL_ADDRESS = "dummy@some.domain";
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -47,6 +51,26 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       collegeFLocation,
     );
     collegeFUser = institutionUser;
+
+    // Update fake email contacts to send ministry notifications.
+    await db.notificationMessage.update(
+      {
+        id: NotificationMessageType.InstitutionAddsPendingProgramNotification,
+      },
+      { emailContacts: [MINISTRY_EMAIL_ADDRESS] },
+    );
+  });
+
+  beforeEach(async () => {
+    // Mark all existing change request review completed notifications as sent to isolate test assertions.
+    await db.notification.update(
+      {
+        notificationMessage: {
+          id: NotificationMessageType.InstitutionAddsPendingProgramNotification,
+        },
+      },
+      { dateSent: new Date() },
+    );
   });
 
   it("Should create an education program when valid data is passed.", async () => {
@@ -180,6 +204,53 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         isExpired: false,
       }),
     );
+  });
+
+  it("Should create an education program pending notification when the program is pending.", async () => {
+    // Arrange
+    const sabcCode = `${faker.string.alpha({ length: 3, casing: "upper" })}1`;
+    const payload = getPayload(sabcCode);
+    // Set program status to pending to trigger creation of pending notification by setting course load calculation to 'yes'.
+    payload.courseLoadCalculation = "hours";
+    payload.minHoursWeek = "no";
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const endpoint = "/institutions/education-program";
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+      });
+
+    const createdNotification = await db.notification.findOne({
+      select: { id: true, messagePayload: true },
+      where: {
+        notificationMessage: {
+          id: NotificationMessageType.InstitutionAddsPendingProgramNotification,
+        },
+        dateSent: IsNull(),
+      },
+    });
+    expect(createdNotification).toBeDefined();
+    expect(createdNotification.messagePayload).toStrictEqual({
+      email_address: MINISTRY_EMAIL_ADDRESS,
+      template_id:
+        GC_NOTIFY_TEMPLATE_IDS.InstitutionAddsPendingProgramNotification,
+      personalisation: {
+        dateTime: expect.any(String),
+        institutionName: collegeF.legalOperatingName,
+        institutionOperatingName: collegeF.operatingName,
+        institutionPrimaryEmail: collegeF.primaryEmail,
+        programName: payload.name,
+        email: collegeFUser.email,
+      },
+    });
   });
 
   it("Should not create an education program when user is read-only.", async () => {
@@ -364,6 +435,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       hasTravel: "no",
       hasIntlExchange: "no",
       programDeclaration: true,
+      minHoursWeek: "",
     };
   }
 

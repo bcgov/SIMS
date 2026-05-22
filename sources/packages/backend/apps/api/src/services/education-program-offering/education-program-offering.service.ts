@@ -77,7 +77,7 @@ import {
   InstitutionAddsPendingOfferingNotification,
   NotificationActionsService,
 } from "@sims/services";
-import { InstitutionRestrictionService } from "../../services";
+import { InstitutionRestrictionService, UserService } from "../../services";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -86,6 +86,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     private readonly offeringValidationService: EducationProgramOfferingValidationService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly institutionRestrictionService: InstitutionRestrictionService,
+    private readonly userService: UserService,
     private readonly logger: LoggerService,
   ) {
     super(dataSource.getRepository(EducationProgramOffering));
@@ -109,6 +110,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     const programOffering = this.populateProgramOffering(
       offeringValidation.offeringModel,
     );
+    const user = await this.userService.getUserById(userId);
     programOffering.offeringStatus = offeringValidation.offeringStatus;
     const auditUser = { id: userId } as User;
     programOffering.creator = auditUser;
@@ -123,11 +125,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       primaryEmail: educationProgramOffering.primaryEmail,
       programOfferingStatus: programOffering.offeringStatus,
       institutionLocationName: educationProgramOffering.locationName,
+      email: user.email,
     };
     try {
       return await this.dataSource.transaction(
         async (transactionalEntityManager) => {
-          await this.saveEducationProgramOfferingNotification(
+          await this.saveEducationProgramPendingOfferingNotification(
             educationProgramOfferingNotificationData,
             transactionalEntityManager,
           );
@@ -212,6 +215,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       offeringRepo,
       auditUserId,
     );
+    const user = await this.userService.getUserById(auditUserId);
     const educationProgramOfferingNotificationData = {
       offeringName: validatedOffering.offeringModel.offeringName,
       programName: validatedOffering.offeringModel.programContext.name,
@@ -220,11 +224,13 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       primaryEmail: validatedOffering.offeringModel.primaryEmail,
       programOfferingStatus: validatedOffering.offeringStatus,
       institutionLocationName: validatedOffering.offeringModel.locationName,
+      email: user.email,
     };
-    const notificationPromise = this.saveEducationProgramOfferingNotification(
-      educationProgramOfferingNotificationData,
-      entityManager,
-    );
+    const notificationPromise =
+      this.saveEducationProgramPendingOfferingNotification(
+        educationProgramOfferingNotificationData,
+        entityManager,
+      );
     const [newOffering] = await Promise.all([
       newOfferingPromise,
       notificationPromise,
@@ -238,7 +244,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
    * @param notificationData notification data required to create the notification.
    * @param entityManager entity manager to be part of the transaction.
    */
-  private async saveEducationProgramOfferingNotification(
+  private async saveEducationProgramPendingOfferingNotification(
     notificationData: EducationProgramOfferingNotification,
     entityManager: EntityManager,
   ): Promise<void> {
@@ -254,6 +260,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       programName: notificationData.programName,
       offeringName: notificationData.offeringName,
       institutionPrimaryEmail: notificationData.primaryEmail,
+      email: notificationData.email,
     };
     await this.notificationActionsService.saveInstitutionAddsPendingOfferingNotification(
       ministryNotification,
@@ -575,6 +582,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     const programOffering = this.populateProgramOffering(
       offeringValidation.offeringModel,
     );
+    const user = await this.userService.getUserById(userId);
     programOffering.offeringStatus = offeringValidation.offeringStatus;
     programOffering.modifier = { id: userId } as User;
     const educationProgramOfferingNotificationData = {
@@ -585,11 +593,12 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       primaryEmail: educationProgramOffering.primaryEmail,
       programOfferingStatus: programOffering.offeringStatus,
       institutionLocationName: educationProgramOffering.locationName,
+      email: user.email,
     };
     try {
       return await this.dataSource.transaction(
         async (transactionalEntityManager) => {
-          await this.saveEducationProgramOfferingNotification(
+          await this.saveEducationProgramPendingOfferingNotification(
             educationProgramOfferingNotificationData,
             transactionalEntityManager,
           );

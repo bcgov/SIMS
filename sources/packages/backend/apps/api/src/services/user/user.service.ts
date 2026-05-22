@@ -37,6 +37,10 @@ export class UserService extends DataModelService<User> {
     });
   }
 
+  async getUserById(userId: number): Promise<User> {
+    return this.repo.findOneOrFail({ where: { id: userId } });
+  }
+
   /**
    * Gets basic information from the user to be used during authorization process.
    * @param userName User name (same from Keycloak).
