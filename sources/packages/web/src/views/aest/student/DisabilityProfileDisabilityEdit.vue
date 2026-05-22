@@ -35,7 +35,7 @@
         v-for="(disability, index) in disabilities"
         :key="disability.id"
         :student-id="studentId"
-        :disability-model="disability"
+        v-model="disabilities[index]"
         :max-disability-priority="disabilities.length"
         :read-only="readOnly"
         @move-up="moveDisabilityUp(index)"

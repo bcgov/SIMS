@@ -206,7 +206,7 @@ export default defineComponent({
       type: Number,
       required: true,
     },
-    disabilityModel: {
+    modelValue: {
       type: Object as () => DisabilityModel,
       required: true,
     },
@@ -216,7 +216,7 @@ export default defineComponent({
       default: false,
     },
   },
-  emits: ["update:disabilityModel", "moveUp", "moveDown", "deleteDisability"],
+  emits: ["update:modelValue", "moveUp", "moveDown", "deleteDisability"],
   setup(props, { emit }) {
     const snackBar = useSnackBar();
 
@@ -226,33 +226,29 @@ export default defineComponent({
     const impairmentLookup = ref<SystemLookupEntryAPIOutDTO[]>();
 
     // Local reactive copies initialized from the model prop.
-    const selectedDisabilityCategory = ref(
-      props.disabilityModel.disabilityCategory,
-    );
-    const selectedDisabilityType = ref(props.disabilityModel.disabilityType);
-    const disabilityNotes = ref(props.disabilityModel.disabilityNotes ?? "");
-    const diagnosisText = ref(props.disabilityModel.diagnosis);
-    const diagnosisNotes = ref(props.disabilityModel.diagnosisNotes ?? "");
+    const selectedDisabilityCategory = ref(props.modelValue.disabilityCategory);
+    const selectedDisabilityType = ref(props.modelValue.disabilityType);
+    const disabilityNotes = ref(props.modelValue.disabilityNotes ?? "");
+    const diagnosisText = ref(props.modelValue.diagnosis);
+    const diagnosisNotes = ref(props.modelValue.diagnosisNotes ?? "");
     const selectedImpairments = ref<string[]>([
-      ...props.disabilityModel.impairments,
+      ...props.modelValue.impairments,
     ]);
-    const impairmentsNotes = ref(props.disabilityModel.impairmentsNotes ?? "");
-    const additionalNotes = ref(props.disabilityModel.additionalNotes ?? "");
+    const impairmentsNotes = ref(props.modelValue.impairmentsNotes ?? "");
+    const additionalNotes = ref(props.modelValue.additionalNotes ?? "");
 
     const isPrimaryDisability = computed(
-      () => props.disabilityModel.disabilityPriority === 1,
+      () => props.modelValue.disabilityPriority === 1,
     );
 
     const isLastDisability = computed(
-      () =>
-        props.disabilityModel.disabilityPriority ===
-        props.maxDisabilityPriority,
+      () => props.modelValue.disabilityPriority === props.maxDisabilityPriority,
     );
 
     // Emit the full updated model to the parent whenever any field changes.
     const emitUpdate = () => {
-      emit("update:disabilityModel", {
-        ...props.disabilityModel,
+      emit("update:modelValue", {
+        ...props.modelValue,
         disabilityCategory: selectedDisabilityCategory.value,
         disabilityType: selectedDisabilityType.value,
         disabilityNotes: disabilityNotes.value || undefined,
