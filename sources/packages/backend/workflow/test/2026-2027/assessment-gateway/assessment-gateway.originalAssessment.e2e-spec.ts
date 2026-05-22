@@ -4,7 +4,6 @@ import {
   AssessmentTriggerType,
   OfferingIntensity,
   ProgramInfoStatus,
-  StudentAssessmentStatus,
   WorkflowData,
 } from "@sims/sims-db";
 import { AssessmentConsolidatedData } from "../../models";
@@ -40,21 +39,8 @@ import {
   PROGRAM_YEAR,
   PROGRAM_YEAR_BASE_ID,
 } from "../constants/program-year.constants";
-import {
-  AssessmentDataType,
-  createE2EDataSources,
-  E2EDataSources,
-  saveFakeApplication,
-  YesNoOptions,
-} from "@sims/test-utils";
+import { AssessmentDataType, YesNoOptions } from "@sims/test-utils";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
-import { createTestingAppModule } from "../../../../apps/workers/test/helpers";
-import { AssessmentController } from "../../../../apps/workers/src/controllers/assessment/assessment.controller";
-import { createFakeWorkflowWrapUpPayload } from "../../../../apps/workers/src/controllers/assessment/_tests_/e2e/workflow-wrap-up-factory";
-import {
-  FakeWorkerJobResult,
-  MockedZeebeJobResult,
-} from "../../../../apps/workers/test/utils/worker-job-mock";
 
 describe(`E2E Test Workflow assessment gateway on original assessment for ${PROGRAM_YEAR}`, () => {
   let zeebeClientProvider: ZeebeGrpcClient;
@@ -120,38 +106,58 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
 
   it(`Should generate workflow data from ${DEFAULT_ASSESSMENT_GATEWAY} and persist the same values during wrap-up for ${OfferingIntensity.fullTime} applications.`, async () => {
     // Arrange
-    const { nestApplication, dataSource } = await createTestingAppModule();
-    const db: E2EDataSources = createE2EDataSources(dataSource);
-    const assessmentController = nestApplication.get(AssessmentController);
-    const savedApplication = await saveFakeApplication(
-      db.dataSource,
-      undefined,
-      {
-        offeringIntensity: OfferingIntensity.fullTime,
-        currentAssessmentInitialValues: {
-          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
-        },
-      },
-    );
-    const currentAssessmentId = savedApplication.currentAssessment.id;
-    const assessmentConsolidatedData: AssessmentConsolidatedData = {
+    const currentAssessmentId = assessmentId++;
+    const parent1SupportingUserId = supportingUserId++;
+    // Assessment consolidated mocked data.
+    const dataOnSubmit: AssessmentConsolidatedData = {
       assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
       ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
-      ...createFakeSingleIndependentStudentData(),
+      ...createIdentifiableParentsData({ numberOfParents: 1 }),
       // Application with PIR not required.
       studentDataSelectedOffering: 1,
     };
+    const dataPreAssessment: AssessmentConsolidatedData = {
+      assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+      ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
+      ...createParentsData({
+        dataType: AssessmentDataType.PreAssessment,
+        numberOfParents: 1,
+      }),
+    };
 
     const workersMockedData = createWorkersMockedData([
-      createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
+      createLoadAssessmentDataTaskMock({
+        assessmentConsolidatedData: dataOnSubmit,
+        subprocess:
+          WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment,
+      }),
+      createLoadAssessmentDataTaskMock({
+        assessmentConsolidatedData: dataPreAssessment,
+        subprocess: WorkflowSubprocesses.LoadConsolidatedDataPreAssessment,
+      }),
       createProgramInfoNotRequiredTaskMock(),
       createVerifyApplicationExceptionsTaskMock(),
+      createIdentifiableParentTaskMock({
+        createdSupportingUserId: parent1SupportingUserId,
+        parent: 1,
+      }),
+      createCheckSupportingUserResponseTaskMock({
+        totalIncome: 1,
+        subprocesses: WorkflowSubprocesses.RetrieveSupportingInfoParent1,
+      }),
       createIncomeRequestTaskMock({
         incomeVerificationId: incomeVerificationId++,
         subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
       }),
+      createIncomeRequestTaskMock({
+        incomeVerificationId: incomeVerificationId++,
+        subprocesses: WorkflowSubprocesses.Parent1IncomeVerification,
+      }),
       createCheckIncomeRequestTaskMock({
         subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
+      createCheckIncomeRequestTaskMock({
+        subprocesses: WorkflowSubprocesses.Parent1IncomeVerification,
       }),
       createVerifyAssessmentCalculationOrderTaskMock(),
     ]);
@@ -168,28 +174,68 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       });
     const workflowData = assessmentGatewayResponse.variables
       .workflowData as unknown as WorkflowData;
-    const result = await assessmentController.workflowWrapUp(
-      createFakeWorkflowWrapUpPayload(currentAssessmentId, {
-        workflowData,
-      }),
-    );
-
-    // Assert
-    expect(FakeWorkerJobResult.getResultType(result)).toBe(
-      MockedZeebeJobResult.Complete,
-    );
-    const updatedAssessment = await db.studentAssessment.findOne({
-      select: {
-        id: true,
-        studentAssessmentStatus: true,
-        workflowData: true,
+    expect(workflowData).toEqual({
+      studentData: {
+        bcResident: null,
+        citizenship: null,
+        dependantStatus: "dependant",
+        relationshipStatus: "single",
+        numberOfParents: 1,
+        livingWithParents: "no",
+        estrangedFromParents: null,
+        taxReturnIncome: 40000,
+        governmentFundingCosts: 0,
       },
-      where: { id: currentAssessmentId },
-    });
-    expect(updatedAssessment).toEqual({
-      id: currentAssessmentId,
-      studentAssessmentStatus: StudentAssessmentStatus.Completed,
-      workflowData,
+      dmnValues: { lifetimeMaximumCSLP: null, livingCategory: "SDA" },
+      calculatedData: {
+        dependants12YearsOverOnTaxes: null,
+        totalSpouseContribution: null,
+        totalFederalFSC: 1384.6153846153845,
+        dependantDeclaredOnTaxesQuantity: null,
+        totalRoomAndBoardAmount: null,
+        totalEligibleDependents: 0,
+        totalDaycareCosts12YearsOrOver: null,
+        totalNetFamilyIncome: 70966,
+        totalProvincialFSC: 2117.630769230769,
+        interfaceChildCareCosts: null,
+        studentTotalIncome: 40000,
+        studentSpouseContributionWeeks: null,
+        interfaceNeed: null,
+        dependantPostSecondaryQuantity: null,
+        totalChildcareDependants: null,
+        parentalAssets: null,
+        interfaceAdditionalTransportationAmount: null,
+        totalDaycareCosts11YearsOrUnder: null,
+        totalChildCareCost: null,
+        federalFSCExempt: false,
+        dependantInfantQuantity: null,
+        returnTransportationCost: 0,
+        parentalAssetContribution: 0,
+        totalAdditionalTransportationAllowance: null,
+        dependants11YearsOrUnder: null,
+        totalBookCost: 1500,
+        pdppdStatus: false,
+        interfaceEducationCosts: null,
+        parentDiscretionaryIncome: 12999,
+        spousalContributionExempt: null,
+        totalNonEducationalCost: 8656,
+        exemptScholarshipsBursaries: null,
+        dependantTotalMSOLAllowance: 0,
+        studentMaritalStatusCode: "SI",
+        interfaceTransportationAmount: null,
+        dependantChildQuantity: null,
+        familySize: 2,
+        parent1TotalIncome: 75000,
+        dependantChildInDaycareQuantity: null,
+        parent2TotalIncome: null,
+        studentMSOLAllowance: 8656,
+        provincialFSCExempt: false,
+        partner1TotalIncome: null,
+        totalTargetedResources: 0,
+        parentalContribution: 10000,
+        interfacePolicyApplies: false,
+        partnerStudyWeeks: null,
+      },
     });
   });
 
