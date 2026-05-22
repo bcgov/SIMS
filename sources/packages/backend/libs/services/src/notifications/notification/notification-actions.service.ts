@@ -1041,6 +1041,7 @@ export class NotificationActionsService {
           offeringName: notification.offeringName,
           institutionPrimaryEmail: notification.institutionPrimaryEmail,
           dateTime: this.getDateTimeOnPSTTimeZone(),
+          email: notification.email,
         },
       },
     }));
