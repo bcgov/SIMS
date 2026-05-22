@@ -24,20 +24,6 @@
       <v-col>
         <title-value
           :property-value="
-            formatCurrency(overawardBalance.overawardBalanceValues?.CSLP)
-          "
-        >
-          <template #title>
-            {{ PartTimeAwardTypes.CSLP }}
-            <tooltip-icon>{{
-              getAwardDescription(PartTimeAwardTypes.CSLP)
-            }}</tooltip-icon></template
-          ></title-value
-        >
-      </v-col>
-      <v-col>
-        <title-value
-          :property-value="
             formatCurrency(overawardBalance.overawardBalanceValues?.BCSL)
           "
         >

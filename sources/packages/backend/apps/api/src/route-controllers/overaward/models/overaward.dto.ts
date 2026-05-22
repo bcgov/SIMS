@@ -3,17 +3,14 @@ import {
   DisbursementOverawardOriginType,
   NOTE_DESCRIPTION_MAX_LENGTH,
 } from "@sims/sims-db";
+import { MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE } from "../../../utilities";
 import {
-  AWARD_VALUE_CODE_LENGTH,
-  MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
-} from "../../../utilities";
-import {
-  Length,
   Max,
   Min,
   NotEquals,
   IsNotEmpty,
   MaxLength,
+  IsIn,
 } from "class-validator";
 
 export class OverawardBalanceAPIOutDTO {
@@ -35,7 +32,7 @@ export class AESTOverawardAPIOutDTO extends StudentsOverawardAPIOutDTO {
 }
 
 export class OverawardManualRecordAPIInDTO {
-  @Length(AWARD_VALUE_CODE_LENGTH, AWARD_VALUE_CODE_LENGTH)
+  @IsIn(["BCSL", "CSLF"])
   awardValueCode: string;
   @Min(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE * -1)
   @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)
