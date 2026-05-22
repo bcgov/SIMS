@@ -133,11 +133,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         },
       },
     );
-    const currentAssessmentId = savedApplication.currentAssessment?.id;
-    expect(currentAssessmentId).toBeDefined();
-    if (!currentAssessmentId) {
-      throw new Error("Current assessment id not found.");
-    }
+    const currentAssessmentId = savedApplication.currentAssessment.id;
     const assessmentConsolidatedData: AssessmentConsolidatedData = {
       assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
       ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
