@@ -50,11 +50,7 @@
 import { onMounted, ref, defineComponent } from "vue";
 import { OverawardService } from "@/services/OverawardService";
 import { useFormatters } from "@/composables";
-import {
-  AWARDS,
-  FullTimeAwardTypes,
-  PartTimeAwardTypes,
-} from "@/constants/award-constants";
+import { AWARDS, FullTimeAwardTypes } from "@/constants/award-constants";
 import { OverawardBalanceAPIOutDTO } from "@/services/http/dto";
 import OverawardDetails from "@/components/common/OverawardDetails.vue";
 
@@ -98,7 +94,6 @@ export default defineComponent({
       getAwardDescription,
       loadOverawardBalance,
       FullTimeAwardTypes,
-      PartTimeAwardTypes,
     };
   },
 });

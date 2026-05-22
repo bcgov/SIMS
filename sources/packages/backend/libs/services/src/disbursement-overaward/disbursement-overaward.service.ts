@@ -42,7 +42,7 @@ export class DisbursementOverawardService {
   /**
    * Sum the total overawards per value code (e.g. CSLF, BCSL) for the student,
    * and returns any positive or negative balance found.
-   * @param studentId student to get the balance.
+   * @param studentIds students to get the balance.
    * @param options options:
    * - `awardTypes` optionally filter the balance results to specific award types (e.g. CSLF, BCSL).
    * - `entityManager` optionally used to execute the queries in the same transaction.
@@ -72,7 +72,7 @@ export class DisbursementOverawardService {
         studentIds: distinctStudentIds,
       });
 
-    if (options?.awardTypes) {
+    if (options?.awardTypes?.length) {
       overwardQuery.andWhere(
         "disbursementOveraward.disbursementValueCode IN (:...awardTypes)",
         {

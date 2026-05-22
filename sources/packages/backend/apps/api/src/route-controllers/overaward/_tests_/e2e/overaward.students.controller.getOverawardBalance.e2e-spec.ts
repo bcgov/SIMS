@@ -65,10 +65,10 @@ describe("OverawardStudentsController(e2e)-getOverawardBalance", () => {
       DisbursementOverawardOriginType.ManualRecord;
 
     // Create a manual BCSL overaward deduction.
-    const manualOverawardCSLP = createFakeDisbursementOveraward({ student });
-    manualOverawardCSLP.disbursementValueCode = "BCSL";
-    manualOverawardCSLP.overawardValue = 99;
-    manualOverawardCSLP.originType =
+    const manualOverawardBCSL = createFakeDisbursementOveraward({ student });
+    manualOverawardBCSL.disbursementValueCode = "BCSL";
+    manualOverawardBCSL.overawardValue = 99;
+    manualOverawardBCSL.originType =
       DisbursementOverawardOriginType.ManualRecord;
 
     // Create an award deducted CSLP overaward. CSLP should not be returned in the balances.
@@ -82,7 +82,7 @@ describe("OverawardStudentsController(e2e)-getOverawardBalance", () => {
     await disbursementOverawardRepo.save([
       legacyOverawardCSLF,
       manualOverawardCSLF,
-      manualOverawardCSLP,
+      manualOverawardBCSL,
       awardDeductedCSLP,
     ]);
     const endpoint = "/students/overaward/balance";

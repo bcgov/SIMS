@@ -86,7 +86,7 @@ describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
     const savedManualOveraward =
       await disbursementOverawardRepo.save(manualOveraward);
 
-    // Create an award deducted CSLP overaward. CSLP should not be returned in the balances.
+    // Create an award deducted CSLP overaward. CSLP should not be returned in the overawards.
     const awardDeductedCSLP = createFakeDisbursementOveraward({ student });
     awardDeductedCSLP.disbursementValueCode = "CSLP";
     awardDeductedCSLP.overawardValue = 300;
