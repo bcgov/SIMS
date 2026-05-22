@@ -50,7 +50,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     zeebeClientProvider = ZeebeMockedClient.getMockedZeebeInstance();
   });
 
-  it(`Should generate workflow data from ${DEFAULT_ASSESSMENT_GATEWAY} and persist the same values during wrap-up for ${OfferingIntensity.fullTime} applications.`, async () => {
+  it(`Should generate workflow data from ${DEFAULT_ASSESSMENT_GATEWAY} for ${OfferingIntensity.fullTime} applications.`, async () => {
     // Arrange
     const currentAssessmentId = assessmentId++;
     const parent1SupportingUserId = supportingUserId++;
