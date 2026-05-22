@@ -48,6 +48,7 @@ import {
 import { getISODateOnlyString } from "@sims/utilities";
 import { InstitutionUserTypes } from "../../../../auth";
 import { IsNull } from "typeorm";
+import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants/notification.constants";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", () => {
   let app: INestApplication;
@@ -329,14 +330,18 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       },
     });
     expect(createdNotification).toBeDefined();
-    expect(createdNotification.messagePayload).toStrictEqual({
+    expect(createdNotification!.messagePayload).toStrictEqual({
       email_address: MINISTRY_EMAIL_ADDRESS,
-      template_id: "", //GC_NOTIFY_TEMPLATE_IDS.InstitutionAddsPendingOfferingNotification
+      template_id:
+        GC_NOTIFY_TEMPLATE_IDS.InstitutionAddsPendingOfferingNotification,
       personalisation: {
         dateTime: expect.any(String),
         institutionName: collegeF.legalOperatingName,
         institutionOperatingName: collegeF.operatingName,
         institutionPrimaryEmail: collegeF.primaryEmail,
+        institutionLocationName: collegeFLocation.name,
+        offeringName: createdEducationProgramOffering!.name,
+        programName: savedFakeEducationProgram.name,
         email: collegeFUser.email,
       },
     });
