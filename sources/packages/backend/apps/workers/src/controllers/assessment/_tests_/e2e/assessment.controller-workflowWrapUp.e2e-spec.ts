@@ -16,6 +16,7 @@ import {
 import { createTestingAppModule } from "../../../../../test/helpers";
 import { createFakeWorkflowWrapUpPayload } from "./workflow-wrap-up-factory";
 import { AssessmentController } from "../../assessment.controller";
+import { ASSESSMENT_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import {
   Application,
   ApplicationStatus,
@@ -36,6 +37,22 @@ import {
 import { addDays, getISODateOnlyString, isAfter } from "@sims/utilities";
 import { StudentAssessmentService } from "../../../../services";
 import { WorkflowWrapUpType } from "../../assessment.dto";
+import {
+  createFakeConsolidatedFulltimeData,
+  createFakeSingleIndependentStudentData,
+  WorkflowSubprocesses,
+  ZeebeMockedClient,
+} from "../../../../../../../workflow/test/test-utils";
+import {
+  createCheckIncomeRequestTaskMock,
+  createIncomeRequestTaskMock,
+  createLoadAssessmentDataTaskMock,
+  createProgramInfoNotRequiredTaskMock,
+  createVerifyApplicationExceptionsTaskMock,
+  createVerifyAssessmentCalculationOrderTaskMock,
+  createWorkersMockedData,
+} from "../../../../../../../workflow/test/test-utils/mock";
+import { DEFAULT_ASSESSMENT_GATEWAY } from "../../../../../../../workflow/test/2026-2027/constants/program-year.constants";
 
 describe("AssessmentController(e2e)-workflowWrapUp", () => {
   let db: E2EDataSources;
@@ -46,6 +63,7 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
   let workflowClientService: WorkflowClientService;
   let now: Date;
   let auditUser: User;
+  let incomeVerificationId = 10000;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -184,6 +202,80 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
       ).toBe(true);
     },
   );
+
+  it(`Should generate workflow data from ${DEFAULT_ASSESSMENT_GATEWAY} and persist the same values during wrap-up for ${OfferingIntensity.fullTime} applications.`, async () => {
+    // Arrange
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      undefined,
+      {
+        offeringIntensity: OfferingIntensity.fullTime,
+        currentAssessmentInitialValues: {
+          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+        },
+      },
+    );
+    const assessmentConsolidatedData = {
+      ...createFakeConsolidatedFulltimeData("2026-2027"),
+      ...createFakeSingleIndependentStudentData(),
+      studentDataSelectedOffering: 1,
+    };
+    const workersMockedData = createWorkersMockedData([
+      createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
+      createProgramInfoNotRequiredTaskMock(),
+      createVerifyApplicationExceptionsTaskMock(),
+      createIncomeRequestTaskMock({
+        incomeVerificationId: incomeVerificationId++,
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
+      createCheckIncomeRequestTaskMock({
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
+      createVerifyAssessmentCalculationOrderTaskMock(),
+    ]);
+    const zeebeClient = ZeebeMockedClient.getMockedZeebeInstance();
+    const processVariables = {
+      [ASSESSMENT_ID]: savedApplication.currentAssessment.id,
+      ...workersMockedData,
+    };
+
+    // Act
+    const assessmentGatewayResponse =
+      await zeebeClient.createProcessInstanceWithResult({
+        bpmnProcessId: DEFAULT_ASSESSMENT_GATEWAY,
+        variables: processVariables,
+        requestTimeout: 8000,
+      });
+    const workflowData = assessmentGatewayResponse.variables
+      .workflowData as unknown as WorkflowData;
+    const result = await assessmentController.workflowWrapUp(
+      createFakeWorkflowWrapUpPayload(savedApplication.currentAssessment.id, {
+        workflowData,
+      }),
+    );
+
+    // Assert
+    expect(FakeWorkerJobResult.getResultType(result)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+    const updatedAssessment = await db.studentAssessment.findOne({
+      select: {
+        id: true,
+        studentAssessmentStatus: true,
+        workflowData: true as unknown,
+      },
+      where: { id: savedApplication.currentAssessment.id },
+    });
+    expect(updatedAssessment).toEqual({
+      id: savedApplication.currentAssessment.id,
+      studentAssessmentStatus: StudentAssessmentStatus.Completed,
+      workflowData,
+    });
+    console.log(
+      "Workflow data persisted during wrap-up:",
+      updatedAssessment.workflowData,
+    );
+  });
 
   it("Should find the next impacted assessment and create a reassessment when there is an application for the same student and program year in the future.", async () => {
     // Arrange
