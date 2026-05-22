@@ -62,7 +62,7 @@ export class DisbursementOverawardService {
     // This query supports up to 65000 students.
     const distinctStudentIds = [...new Set(studentIds)];
 
-    const overwardQuery = repo
+    const overawardQuery = repo
       .createQueryBuilder("disbursementOveraward")
       .select("student.id", "studentId")
       .addSelect("disbursementOveraward.disbursementValueCode", "valueCode")
@@ -73,7 +73,7 @@ export class DisbursementOverawardService {
       });
 
     if (options?.awardTypes?.length) {
-      overwardQuery.andWhere(
+      overawardQuery.andWhere(
         "disbursementOveraward.disbursementValueCode IN (:...awardTypes)",
         {
           awardTypes: options.awardTypes,
@@ -81,24 +81,22 @@ export class DisbursementOverawardService {
       );
     }
 
-    overwardQuery
+    overawardQuery
       .groupBy("student.id")
       .addGroupBy("disbursementOveraward.disbursementValueCode")
       .having("SUM(disbursementOveraward.overawardValue) <> 0");
     // The total is returned from DB as string, needs to be converted to a number,
     // since overawardValue is defined as numeric in the DB.
 
-    const totalAwards = await overwardQuery.getRawMany<{
+    const totalAwards = await overawardQuery.getRawMany<{
       studentId: number;
       valueCode: string;
       total: string;
     }>();
     const result: StudentOverawardBalance = {};
-    for (const totalAward of totalAwards) {
-      if (!result[totalAward.studentId]) {
-        result[totalAward.studentId] = {};
-      }
-      result[totalAward.studentId]![totalAward.valueCode] = +totalAward.total;
+    for (const { studentId, valueCode, total } of totalAwards) {
+      const awardBalance = (result[studentId] ??= {});
+      awardBalance[valueCode] = +total;
     }
     return result;
   }
