@@ -33,13 +33,13 @@
     <content-group>
       <student-disability-profile-disability
         v-for="(disability, index) in disabilities"
-        :key="disability.id"
+        :key="disability.uniqueKey"
         :student-id="studentId"
         v-model="disabilities[index]"
         :max-disability-priority="disabilities.length"
         :read-only="readOnly"
-        @move-up="moveDisabilityUp(index)"
-        @move-down="moveDisabilityDown(index)"
+        @move-up="moveDisability(index, 'up')"
+        @move-down="moveDisability(index, 'down')"
         @delete-disability="deleteDisability(index)"
       />
       <v-row class="mt-2" v-if="!readOnly" justify="end">
@@ -81,9 +81,15 @@ export default defineComponent({
     },
   },
   setup() {
-    let nextId = 4;
+    /**
+     * Used as a stable Vue component key, independent of the server-assigned id.
+     * Allow swapping and deleting disabilities without losing component state or causing rendering issues,
+     * even for disabilities that haven't been saved to the server yet (and thus don't have an id).
+     */
+    let nextUniqueKey = 1;
     const disabilities = ref<StudentDisability[]>([
       {
+        uniqueKey: nextUniqueKey++,
         id: 1,
         disabilityPriority: 1,
         disabilityCategory: "",
@@ -92,6 +98,7 @@ export default defineComponent({
         impairments: [],
       },
       {
+        uniqueKey: nextUniqueKey++,
         id: 2,
         disabilityPriority: 2,
         disabilityCategory: "",
@@ -99,48 +106,61 @@ export default defineComponent({
         diagnosis: "",
         impairments: [],
       },
-      {
-        id: 3,
-        disabilityPriority: 3,
-        disabilityCategory: "",
-        disabilityType: "",
-        diagnosis: "",
-        impairments: [],
-      },
     ]);
 
-    const addDisability = () => {
-      disabilities.value.push({
-        id: nextId++,
+    /**
+     * Create a new disability with default values and add it to the list.
+     */
+    const addDisability = (): void => {
+      const newDisability: StudentDisability = {
+        uniqueKey: nextUniqueKey++,
+        id: undefined,
         disabilityPriority: disabilities.value.length + 1,
         disabilityCategory: "",
         disabilityType: "",
         diagnosis: "",
         impairments: [],
+      };
+      disabilities.value.push(newDisability);
+    };
+
+    /**
+     * After moving a disability up or down, we need to normalize the priorities so that
+     * they are in sequential order starting from 1. This ensures that the disability priorities
+     * remain consistent and accurate after any reordering operations, allowing the components
+     * to adjust their available actions (e.g., "move up", "move down") based on the updated priorities.
+     */
+    const normalizePriorities = () => {
+      disabilities.value.forEach((disability, index) => {
+        disability.disabilityPriority = index + 1;
       });
     };
 
-    const moveDisabilityUp = (index: number) => {
-      if (index === 0) return;
+    /**
+     * Swaps the disability at the given index with the one above it, then normalizes priorities.
+     * @param index the index of the disability to move.
+     * @param direction The direction to move the disability ("up" or "down").
+     */
+    const moveDisability = (index: number, direction: "up" | "down"): void => {
       const items = disabilities.value;
-      [items[index - 1], items[index]] = [items[index], items[index - 1]];
+      const targetIndex = index + (direction === "up" ? -1 : 1);
+      [items[targetIndex], items[index]] = [items[index], items[targetIndex]];
+      normalizePriorities();
     };
 
-    const moveDisabilityDown = (index: number) => {
-      if (index === disabilities.value.length - 1) return;
-      const items = disabilities.value;
-      [items[index], items[index + 1]] = [items[index + 1], items[index]];
-    };
-
-    const deleteDisability = (index: number) => {
+    /**
+     * Removes a disability from the list based on its index, then normalizes priorities.
+     * @param index the index of the disability to remove.
+     */
+    const deleteDisability = (index: number): void => {
       disabilities.value.splice(index, 1);
+      normalizePriorities();
     };
 
     return {
       disabilities,
       addDisability,
-      moveDisabilityUp,
-      moveDisabilityDown,
+      moveDisability,
       deleteDisability,
       AESTRoutesConst,
     };

@@ -5,7 +5,7 @@
         <div class="d-flex align-center justify-space-between w-100">
           <div>
             <span class="category-header-medium brand-gray-text">
-              {{ selectedDisabilityCategory || "Select disability category" }}
+              {{ disabilityCategoryLabel }}
             </span>
             <div>
               {{
@@ -13,7 +13,7 @@
                   ? "Primary disability"
                   : "Additional disability"
               }}
-              ({{ selectedDisabilityType || "Select disability type" }})
+              - {{ disabilityTypeLabel }}
             </div>
           </div>
           <v-btn-group
@@ -180,21 +180,13 @@
 import { ref, defineComponent, computed, watchEffect, watch } from "vue";
 import { useSnackBar } from "@/composables";
 import { SystemLookupEntryAPIOutDTO } from "@/services/http/dto";
-import { BannerTypes, Role, SystemLookupCategory } from "@/types";
+import {
+  BannerTypes,
+  Role,
+  StudentDisability,
+  SystemLookupCategory,
+} from "@/types";
 import { SystemLookupConfigurationService } from "@/services/SystemLookupConfigurationService";
-
-type DisabilityModel = {
-  id: number;
-  disabilityPriority: number;
-  disabilityCategory: string;
-  disabilityType: string;
-  disabilityNotes?: string;
-  diagnosis: string;
-  diagnosisNotes?: string;
-  impairments: string[];
-  impairmentsNotes?: string;
-  additionalNotes?: string;
-};
 
 export default defineComponent({
   props: {
@@ -207,7 +199,7 @@ export default defineComponent({
       required: true,
     },
     modelValue: {
-      type: Object as () => DisabilityModel,
+      type: Object as () => StudentDisability,
       required: true,
     },
     readOnly: {
@@ -236,6 +228,20 @@ export default defineComponent({
     ]);
     const impairmentsNotes = ref(props.modelValue.impairmentsNotes ?? "");
     const additionalNotes = ref(props.modelValue.additionalNotes ?? "");
+
+    const disabilityCategoryLabel = computed(() => {
+      const category = disabilityCategoryLookup.value?.find(
+        (c) => c.lookupKey === selectedDisabilityCategory.value,
+      );
+      return category ? category.lookupValue : "Select disability category";
+    });
+
+    const disabilityTypeLabel = computed(() => {
+      const type = disabilityTypeLookup.value?.find(
+        (t) => t.lookupKey === selectedDisabilityType.value,
+      );
+      return type ? type.lookupValue : "Select disability type";
+    });
 
     const isPrimaryDisability = computed(
       () => props.modelValue.disabilityPriority === 1,
@@ -306,7 +312,9 @@ export default defineComponent({
       Role,
       BannerTypes,
       selectedDisabilityCategory,
+      disabilityCategoryLabel,
       selectedDisabilityType,
+      disabilityTypeLabel,
       disabilityNotes,
       diagnosisText,
       diagnosisNotes,
