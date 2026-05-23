@@ -54,20 +54,21 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
     // Arrange
     const currentAssessmentId = assessmentId++;
     const parent1SupportingUserId = supportingUserId++;
+    const parent2SupportingUserId = supportingUserId++;
     // Assessment consolidated mocked data.
     const dataOnSubmit: AssessmentConsolidatedData = {
       assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
       ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
-      ...createIdentifiableParentsData({ numberOfParents: 1 }),
+      ...createIdentifiableParentsData({ numberOfParents: 2 }),
       // Application with PIR not required.
       studentDataSelectedOffering: 1,
     };
     const dataPreAssessment: AssessmentConsolidatedData = {
       assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
       ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
-      ...createParentsData({
+      ...createIdentifiableParentsData({
         dataType: AssessmentDataType.PreAssessment,
-        numberOfParents: 1,
+        numberOfParents: 2,
       }),
     };
 
@@ -87,10 +88,18 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         createdSupportingUserId: parent1SupportingUserId,
         parent: 1,
       }),
+      createIdentifiableParentTaskMock({
+        createdSupportingUserId: parent2SupportingUserId,
+        parent: 2,
+      }),
       createCheckSupportingUserResponseTaskMock({
         totalIncome: 1,
         subprocesses: WorkflowSubprocesses.RetrieveSupportingInfoParent1,
       }),
+      createCheckSupportingUserResponseTaskMock({
+        totalIncome: 1,
+        subprocesses: WorkflowSubprocesses.RetrieveSupportingInfoParent2,
+      }),
       createIncomeRequestTaskMock({
         incomeVerificationId: incomeVerificationId++,
         subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
@@ -99,11 +108,18 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         incomeVerificationId: incomeVerificationId++,
         subprocesses: WorkflowSubprocesses.Parent1IncomeVerification,
       }),
+      createIncomeRequestTaskMock({
+        incomeVerificationId: incomeVerificationId++,
+        subprocesses: WorkflowSubprocesses.Parent2IncomeVerification,
+      }),
       createCheckIncomeRequestTaskMock({
         subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
       }),
       createCheckIncomeRequestTaskMock({
         subprocesses: WorkflowSubprocesses.Parent1IncomeVerification,
+      }),
+      createCheckIncomeRequestTaskMock({
+        subprocesses: WorkflowSubprocesses.Parent2IncomeVerification,
       }),
       createVerifyAssessmentCalculationOrderTaskMock(),
     ]);
@@ -126,7 +142,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         citizenship: null,
         dependantStatus: "dependant",
         relationshipStatus: "single",
-        numberOfParents: 1,
+        numberOfParents: 2,
         livingWithParents: "no",
         estrangedFromParents: null,
         taxReturnIncome: 40000,
@@ -141,8 +157,8 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         totalRoomAndBoardAmount: null,
         totalEligibleDependents: 0,
         totalDaycareCosts12YearsOrOver: null,
-        totalNetFamilyIncome: 71132,
-        totalProvincialFSC: 2193.369230769231,
+        totalNetFamilyIncome: 142264,
+        totalProvincialFSC: 6556.015384615384,
         interfaceChildCareCosts: null,
         studentTotalIncome: 40000,
         studentSpouseContributionWeeks: null,
@@ -162,7 +178,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         totalBookCost: 1500,
         pdppdStatus: false,
         interfaceEducationCosts: null,
-        parentDiscretionaryIncome: 14595,
+        parentDiscretionaryIncome: 68816,
         spousalContributionExempt: null,
         totalNonEducationalCost: 9008,
         exemptScholarshipsBursaries: null,
@@ -170,15 +186,15 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         studentMaritalStatusCode: "SI",
         interfaceTransportationAmount: null,
         dependantChildQuantity: null,
-        familySize: 2,
+        familySize: 3,
         parent1TotalIncome: 75000,
         dependantChildInDaycareQuantity: null,
-        parent2TotalIncome: null,
+        parent2TotalIncome: 75000,
         studentMSOLAllowance: 9008,
         provincialFSCExempt: false,
         partner1TotalIncome: null,
         totalTargetedResources: 0,
-        parentalContribution: 10000,
+        parentalContribution: 20000,
         interfacePolicyApplies: false,
         partnerStudyWeeks: null,
       },
