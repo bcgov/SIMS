@@ -48,4 +48,5 @@ export enum Role {
   StudentUpdateModifiedIndependentStatus = "student-update-modified-independent-status",
   StudentReverseScholasticStanding = "student-reverse-scholastic-standing",
   StudentDeleteRestriction = "student-delete-restriction",
+  StudentEditDisabilityProfile = "student-edit-disability-profile",
 }

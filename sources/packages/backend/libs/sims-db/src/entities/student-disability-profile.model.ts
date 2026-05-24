@@ -6,7 +6,11 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
-import { RecordDataModel, Student } from ".";
+import {
+  RecordDataModel,
+  Student,
+  StudentDisabilityProfileDisability,
+} from ".";
 import { DisabilityProfileStatus } from "./disability-profile-status.type";
 
 /**
@@ -47,4 +51,15 @@ export class StudentDisabilityProfile extends RecordDataModel {
     nullable: true,
   })
   deletedAt?: Date;
+  /**
+   * Disabilities associated with this profile.
+   */
+  @ManyToOne(() => StudentDisabilityProfileDisability, {
+    cascade: ["insert", "update"],
+  })
+  @JoinColumn({
+    name: "id",
+    referencedColumnName: "studentDisabilityProfileId",
+  })
+  disabilities: StudentDisabilityProfileDisability[];
 }

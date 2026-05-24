@@ -74,3 +74,5 @@ export * from "./form-submission/form-submission-actions/form-submission-update-
 export * from "./form-submission/form-submission-actions/form-submission-update-disability-on-submission-action";
 export * from "./form-submission/form-submission-actions/form-submission-update-disability-on-decision-action";
 export * from "./msfaa-number/msfaa-number.service";
+export * from "./disability-profile/disability-profile.models";
+export * from "./disability-profile/disability-profile.service";
