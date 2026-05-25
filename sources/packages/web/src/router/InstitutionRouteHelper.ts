@@ -2,11 +2,11 @@ import {
   InstitutionRoutesConst,
   SharedRouteConst,
 } from "@/constants/routes/RouteConstants";
+import { AppConfigService } from "@/services/AppConfigService";
 import { AuthService } from "@/services/AuthService";
 import store from "@/store";
 import { ClientIdType } from "@/types";
 import {
-  useFeatureToggles,
   useInstitutionAuth,
   BULK_WITHDRAWAL_UPLOAD_FEATURE_TOGGLE,
 } from "@/composables";
@@ -37,7 +37,7 @@ export async function validateInstitutionUserAccess(
   await AuthService.shared.initialize(ClientIdType.Institution);
 
   if (AuthService.shared.keycloak?.authenticated) {
-    if (isInstitutionUserAllowed(to)) {
+    if ((await isInstitutionRouteAllowed(to)) && isInstitutionUserAllowed(to)) {
       next();
       return;
     }
@@ -50,6 +50,24 @@ export async function validateInstitutionUserAccess(
       name: InstitutionRoutesConst.LOGIN,
     });
   }
+}
+
+/**
+ * Validates access based on route-specific feature toggles.
+ * @param to the route where user is navigated to.
+ * @returns true when route is allowed by feature toggle rules.
+ */
+async function isInstitutionRouteAllowed(
+  to: RouteLocationNormalized,
+): Promise<boolean> {
+  if (to.name !== InstitutionRoutesConst.WITHDRAWAL_UPLOAD) {
+    return true;
+  }
+
+  const appConfig = await AppConfigService.shared.config();
+  return appConfig.featureToggles.includes(
+    BULK_WITHDRAWAL_UPLOAD_FEATURE_TOGGLE,
+  );
 }
 
 /**
@@ -66,7 +84,6 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
     isBCPublic,
     hasLocationAccess,
   } = useInstitutionAuth(store);
-  const { isFeatureToggleEnabled } = useFeatureToggles();
 
   // If the user is identified to be a business bceid user
   // who's institution and the user themselves not exist in sims
@@ -90,15 +107,6 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
   // If the route is suppose to be accessible only for BC Public institutions
   // reject the access for other institution types.
   if (to.meta.allowOnlyBCPublic && !isBCPublic.value) {
-    return false;
-  }
-
-  // If the withdrawal upload feature is disabled,
-  // reject access to withdrawal upload route.
-  if (
-    to.name === InstitutionRoutesConst.WITHDRAWAL_UPLOAD &&
-    !isFeatureToggleEnabled(BULK_WITHDRAWAL_UPLOAD_FEATURE_TOGGLE)
-  ) {
     return false;
   }
 
