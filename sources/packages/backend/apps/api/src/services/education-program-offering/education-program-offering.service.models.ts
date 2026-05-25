@@ -52,4 +52,5 @@ export interface EducationProgramOfferingNotification {
   primaryEmail: string;
   programOfferingStatus: OfferingStatus;
   institutionLocationName: string;
+  email: string;
 }
