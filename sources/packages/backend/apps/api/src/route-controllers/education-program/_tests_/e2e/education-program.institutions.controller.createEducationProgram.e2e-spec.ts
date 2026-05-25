@@ -62,7 +62,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
   });
 
   beforeEach(async () => {
-    // Mark all existing change request review completed notifications as sent to isolate test assertions.
+    // Mark all existing pending program notifications as sent to isolate test assertions.
     await db.notification.update(
       {
         notificationMessage: {
@@ -210,7 +210,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     // Arrange
     const sabcCode = `${faker.string.alpha({ length: 3, casing: "upper" })}1`;
     const payload = getPayload(sabcCode);
-    // Set program status to pending to trigger creation of pending notification by setting course load calculation to 'yes'.
+    // Set program status to pending to trigger creation of pending notification by setting course load calculation to 'hours'.
     payload.courseLoadCalculation = "hours";
     payload.minHoursWeek = "no";
     const institutionUserToken = await getInstitutionToken(

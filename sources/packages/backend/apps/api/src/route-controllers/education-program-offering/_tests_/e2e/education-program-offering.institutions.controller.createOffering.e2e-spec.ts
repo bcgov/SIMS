@@ -179,7 +179,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       restriction: { id: stopOfferingCreateRestriction.id },
     });
 
-    // Mark all existing change request review completed notifications as sent to isolate test assertions.
+    // Mark all existing institution adds pending offering notifications as sent to isolate test assertions.
     await db.notification.update(
       {
         notificationMessage: {
