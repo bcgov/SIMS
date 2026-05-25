@@ -39,3 +39,4 @@ export * from "@/services/http/dto/ProgramYear.dto";
 export * from "@/services/http/dto/SystemLookupConfiguration.dto";
 export * from "@/services/http/dto/FormSubmission.dto";
 export * from "@/services/http/dto/MSFAANumber.dto";
+export * from "@/services/http/dto/DisabilityProfile.dto";

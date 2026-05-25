@@ -13,6 +13,17 @@ CREATE TABLE student_disability_profiles(
   modifier INT DEFAULT NULL REFERENCES sims.users(id)
 );
 
+-- Ensures only one non-deleted draft disability profile exists per student at a time.
+CREATE UNIQUE INDEX student_disability_profiles_unique_draft_per_student ON sims.student_disability_profiles(student_id)
+WHERE
+  disability_profile_status = 'Draft'
+  AND deleted_at IS NULL;
+
+-- Ensures only one active disability profile exists per student at a time.
+CREATE UNIQUE INDEX student_disability_profiles_unique_active_per_student ON sims.student_disability_profiles(student_id)
+WHERE
+  disability_profile_status = 'Active';
+
 COMMENT ON TABLE sims.student_disability_profiles IS 'Disability profiles, current and historical. Each profile can have multiple disabilities.';
 
 COMMENT ON COLUMN sims.student_disability_profiles.id IS 'Auto-generated sequential primary key column.';
@@ -30,3 +41,7 @@ COMMENT ON COLUMN sims.student_disability_profiles.updated_at IS 'Record update 
 COMMENT ON COLUMN sims.student_disability_profiles.creator IS 'Creator of the record.';
 
 COMMENT ON COLUMN sims.student_disability_profiles.modifier IS 'Modifier of the record.';
+
+COMMENT ON INDEX sims.student_disability_profiles_unique_active_per_student IS 'Enforces that only one active disability profile can exist for a student at any given time.';
+
+COMMENT ON INDEX sims.student_disability_profiles_unique_draft_per_student IS 'Enforces that only one non-deleted draft disability profile can exist for a student at any given time.';

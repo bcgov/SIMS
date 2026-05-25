@@ -1,6 +1,6 @@
 <template>
   <v-expansion-panels class="mt-5">
-    <v-expansion-panel>
+    <v-expansion-panel eager>
       <template #title>
         <div class="d-flex align-center justify-space-between w-100">
           <div>
@@ -66,7 +66,9 @@
                 item-value="lookupKey"
                 density="compact"
                 variant="outlined"
-                hide-details
+                hide-details="auto"
+                clearable
+                :rules="[(v) => checkNullOrEmptyRule(v, 'Disability category')]"
               />
             </v-col>
             <v-col cols="6">
@@ -79,7 +81,9 @@
                 item-value="lookupKey"
                 density="compact"
                 variant="outlined"
-                hide-details
+                hide-details="auto"
+                clearable
+                :rules="[(v) => checkNullOrEmptyRule(v, 'Disability type')]"
               />
             </v-col>
             <v-col cols="12"
@@ -89,7 +93,17 @@
                 label="Disability details notes"
                 variant="outlined"
                 rows="3"
-                hide-details
+                hide-details="auto"
+                :rules="[
+                  (v) =>
+                    selectedDisabilityCategory !== 'OTHER' ||
+                    checkLengthRule(
+                      v,
+                      500,
+                      'Disability details notes',
+                      selectedDisabilityCategory === 'OTHER',
+                    ),
+                ]"
             /></v-col>
           </v-row>
           <v-row dense>
@@ -107,7 +121,11 @@
                 placeholder="Enter diagnosis details..."
                 density="compact"
                 variant="outlined"
-                hide-details
+                hide-details="auto"
+                :rules="[
+                  (v) =>
+                    checkLengthRule(v, 100, 'Diagnosis information', false),
+                ]"
             /></v-col>
             <v-col cols="12"
               ><v-textarea
@@ -116,7 +134,6 @@
                 label="Diagnosis notes"
                 variant="outlined"
                 rows="3"
-                hide-details
             /></v-col>
           </v-row>
           <v-row dense>
@@ -143,6 +160,16 @@
                 hide-details
               />
             </v-col>
+            <v-col cols="12">
+              <v-input
+                :model-value="selectedImpairments"
+                :rules="[
+                  (v) =>
+                    v.length > 0 || 'At least one impairment must be selected.',
+                ]"
+                hide-details="auto"
+              />
+            </v-col>
             <v-col cols="12"
               ><v-textarea
                 :readonly="readOnly"
@@ -150,7 +177,16 @@
                 label="Impairments notes"
                 variant="outlined"
                 rows="3"
-                hide-details
+                hide-details="auto"
+                :rules="[
+                  (v) =>
+                    checkLengthRule(
+                      v,
+                      500,
+                      'Impairments notes',
+                      selectedImpairments.includes('OTHER'),
+                    ),
+                ]"
             /></v-col>
           </v-row>
           <v-row dense>
@@ -168,6 +204,9 @@
                 variant="outlined"
                 rows="3"
                 hide-details
+                :rules="[
+                  (v) => checkLengthRule(v, 'Additional notes', 1000, false),
+                ]"
             /></v-col>
           </v-row>
         </content-group>
@@ -178,7 +217,7 @@
 
 <script lang="ts">
 import { ref, defineComponent, computed, watchEffect, watch } from "vue";
-import { useSnackBar } from "@/composables";
+import { useRules, useSnackBar } from "@/composables";
 import { SystemLookupEntryAPIOutDTO } from "@/services/http/dto";
 import {
   BannerTypes,
@@ -211,7 +250,7 @@ export default defineComponent({
   emits: ["update:modelValue", "moveUp", "moveDown", "deleteDisability"],
   setup(props, { emit }) {
     const snackBar = useSnackBar();
-
+    const { checkNullOrEmptyRule, checkLengthRule } = useRules();
     const isLookupLoaded = ref(false);
     const disabilityCategoryLookup = ref<SystemLookupEntryAPIOutDTO[]>();
     const disabilityTypeLookup = ref<SystemLookupEntryAPIOutDTO[]>();
@@ -324,6 +363,8 @@ export default defineComponent({
       disabilityCategoryLookup,
       disabilityTypeLookup,
       impairmentLookup,
+      checkNullOrEmptyRule,
+      checkLengthRule,
     };
   },
 });

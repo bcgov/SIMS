@@ -12,7 +12,7 @@ import {
 import { SystemLookupConfigurationService } from "@sims/services/system-lookup-configuration";
 import { CustomNamedError } from "@sims/utilities";
 import {
-  DISABILITY_PROFILE_DRAFT_ALREADY_EXISTS,
+  DISABILITY_PROFILE_COMPLETE_WHEN_DRAFT_ALREADY_EXISTS,
   DISABILITY_PROFILE_DRAFT_NOT_FOUND,
   DISABILITY_PROFILE_INVALID_CATEGORY,
   DISABILITY_PROFILE_INVALID_DISABILITY_TYPE,
@@ -27,22 +27,129 @@ export class DisabilityProfileService {
     private readonly systemLookupConfigurationService: SystemLookupConfigurationService,
   ) {}
 
-  // TODO: Unify the create and update operations for disability profiles, taking into consideration the status.
-  async createDisabilityProfile(
+  async saveDraftProfile(
     studentId: number,
     disabilities: StudentDisabilityModel[],
     auditUserId: number,
+    disabilityProfileId?: number,
   ): Promise<StudentDisabilityProfile> {
-    this.validateLookupData(disabilities);
     this.validateDisabilitiesPriorities(disabilities);
+    this.validateLookupData(disabilities);
     return this.dataSource.transaction(async (entityManager) => {
-      const now = new Date();
-      const auditUser = { id: auditUserId } as User;
-      // Set the current active disability profile to archived status.
-      // If a draft profile exists, no action should be taken related to it.
       const studentDisabilityProfileRepo = entityManager.getRepository(
         StudentDisabilityProfile,
       );
+      const now = new Date();
+      const auditUser = { id: auditUserId } as User;
+      let disabilityProfile: StudentDisabilityProfile | null = null;
+      // Update the existing profile.
+      disabilityProfile = await studentDisabilityProfileRepo.findOne({
+        select: {
+          id: true,
+          disabilityProfileStatus: true,
+        },
+        where: {
+          student: {
+            id: studentId,
+          },
+          disabilityProfileStatus: DisabilityProfileStatus.Draft,
+        },
+      });
+      if (
+        disabilityProfileId &&
+        disabilityProfile?.id !== disabilityProfileId
+      ) {
+        throw new CustomNamedError(
+          `The provided draft disability profile ID ${disabilityProfileId} does not match the existing draft profile ID.`,
+          DISABILITY_PROFILE_DRAFT_NOT_FOUND,
+        );
+      }
+      if (disabilityProfile) {
+        // Draft profile exists, update the modifier and updatedAt fields,
+        // the disabilities will be updated later in the process.
+        disabilityProfile.modifier = auditUser;
+        disabilityProfile.updatedAt = now;
+      } else {
+        // If an existing draft profile does not exist a new draft profile will
+        // be created and the existing active profile will be archived (if exists).
+        disabilityProfile = new StudentDisabilityProfile();
+        disabilityProfile.disabilityProfileStatus =
+          DisabilityProfileStatus.Draft;
+        disabilityProfile.student = { id: studentId } as Student;
+        disabilityProfile.creator = auditUser;
+        disabilityProfile.createdAt = now;
+      }
+      disabilityProfile.disabilities = this.prepareProfileDisabilities(
+        disabilities,
+        disabilityProfile.disabilities,
+        auditUser,
+        now,
+      );
+      return studentDisabilityProfileRepo.save(disabilityProfile);
+    });
+  }
+
+  async saveActiveProfile(
+    studentId: number,
+    disabilities: StudentDisabilityModel[],
+    auditUserId: number,
+    disabilityProfileId?: number,
+  ): Promise<StudentDisabilityProfile> {
+    this.validateDisabilitiesPriorities(disabilities);
+    this.validateLookupData(disabilities);
+    return this.dataSource.transaction(async (entityManager) => {
+      const studentDisabilityProfileRepo = entityManager.getRepository(
+        StudentDisabilityProfile,
+      );
+      const now = new Date();
+      const auditUser = { id: auditUserId } as User;
+      let disabilityProfile: StudentDisabilityProfile | null =
+        await studentDisabilityProfileRepo.findOne({
+          select: {
+            id: true,
+            disabilityProfileStatus: true,
+          },
+          where: {
+            student: {
+              id: studentId,
+            },
+            disabilityProfileStatus: DisabilityProfileStatus.Draft,
+          },
+        });
+      // Validate if the draft profile exists when a disabilityProfileId is provided.
+      if (disabilityProfileId && !disabilityProfile) {
+        throw new CustomNamedError(
+          `Draft disability profile with ID ${disabilityProfileId} not found for the student.`,
+          DISABILITY_PROFILE_DRAFT_NOT_FOUND,
+        );
+      }
+      // Validate if the draft was found and it is the expected draft to be completed.
+      if (disabilityProfile?.id !== disabilityProfileId) {
+        throw new CustomNamedError(
+          `A draft profile ID ${disabilityProfileId} exists for this student and it must be either cancelled or completed before creating a new active profile.`,
+          DISABILITY_PROFILE_COMPLETE_WHEN_DRAFT_ALREADY_EXISTS,
+        );
+      }
+      if (disabilityProfile) {
+        // Draft profile exists and will be updated.
+        disabilityProfile.modifier = auditUser;
+        disabilityProfile.updatedAt = now;
+      } else {
+        // Draft profile does not exist, create a new profile with active status.
+        disabilityProfile = new StudentDisabilityProfile();
+        disabilityProfile.student = { id: studentId } as Student;
+        disabilityProfile.creator = auditUser;
+        disabilityProfile.createdAt = now;
+      }
+      disabilityProfile.disabilityProfileStatus =
+        DisabilityProfileStatus.Active;
+      disabilityProfile.disabilities = this.prepareProfileDisabilities(
+        disabilities,
+        disabilityProfile?.disabilities,
+        auditUser,
+        now,
+      );
+      // Update the current active profile (if exists) to archived status, since only one active profile is allowed.
       await studentDisabilityProfileRepo.update(
         {
           student: {
@@ -56,86 +163,29 @@ export class DisabilityProfileService {
           updatedAt: now,
         },
       );
-      // Create the new disability profile with active status.
-      const newDisabilityProfile = new StudentDisabilityProfile();
-      newDisabilityProfile.student = { id: studentId } as Student;
-      newDisabilityProfile.disabilityProfileStatus =
-        DisabilityProfileStatus.Active;
-      newDisabilityProfile.creator = auditUser;
-      newDisabilityProfile.createdAt = now;
-      newDisabilityProfile.disabilities = disabilities.map((disability) => {
-        const newDisability = new StudentDisabilityProfileDisability();
-        newDisability.disabilityType = disability.disabilityType;
-        newDisability.disabilityCategory = disability.disabilityCategory;
-        newDisability.impairments = disability.impairments;
-        return newDisability;
-      });
-      return studentDisabilityProfileRepo.save(newDisabilityProfile);
+      return studentDisabilityProfileRepo.save(disabilityProfile);
     });
   }
 
-  // TODO: Unify the create and update operations for disability profiles, taking into consideration the status.
-  async saveDisabilityProfileDraft(
-    studentId: number,
-    status: DisabilityProfileStatus.Active | DisabilityProfileStatus.Draft,
-    disabilities: StudentDisabilityModel[],
-    auditUserId: number,
-    disabilityProfileId?: number,
-  ): Promise<StudentDisabilityProfile> {
-    this.validateLookupData(disabilities);
-    this.validateDisabilitiesPriorities(disabilities);
-    return this.dataSource.transaction(async (entityManager) => {
-      const studentDisabilityProfileRepo = entityManager.getRepository(
-        StudentDisabilityProfile,
-      );
-      let draftProfile = await studentDisabilityProfileRepo.findOne({
-        select: {
-          id: true,
-        },
-        where: {
-          id: disabilityProfileId,
-          student: {
-            id: studentId,
-          },
-          disabilityProfileStatus: DisabilityProfileStatus.Draft,
-        },
-      });
-      if (disabilityProfileId && draftProfile?.id !== disabilityProfileId) {
-        throw new CustomNamedError(
-          "Draft disability profile not found for the student.",
-          DISABILITY_PROFILE_DRAFT_NOT_FOUND,
-        );
-      }
-      if (!disabilityProfileId && draftProfile) {
-        throw new CustomNamedError(
-          "Draft disability profile already exists for the student.",
-          DISABILITY_PROFILE_DRAFT_ALREADY_EXISTS,
-        );
-      }
-      // Upsert draft profile.
-      const now = new Date();
-      const auditUser = { id: auditUserId } as User;
-      if (!draftProfile) {
-        // Insert a new draft profile if it doesn't exist.
-        draftProfile = new StudentDisabilityProfile();
-        draftProfile.student = { id: studentId } as Student;
-        draftProfile.disabilityProfileStatus = DisabilityProfileStatus.Draft;
-        draftProfile.creator = auditUser;
-        draftProfile.createdAt = now;
-      } else {
-        // Update the existing draft profile.
-        draftProfile = draftProfile ?? new StudentDisabilityProfile();
-        draftProfile.modifier = auditUser;
-        draftProfile.updatedAt = now;
-      }
-      draftProfile.disabilities = disabilities.map((disability) => {
-        const newDisability = new StudentDisabilityProfileDisability();
-        newDisability.disabilityType = disability.disabilityType;
-        newDisability.disabilityCategory = disability.disabilityCategory;
-        newDisability.impairments = disability.impairments;
+  private prepareProfileDisabilities(
+    disabilitiesToSave: StudentDisabilityModel[],
+    existingDisabilities: StudentDisabilityProfileDisability[] | undefined,
+    auditUser: User,
+    now: Date,
+  ): StudentDisabilityProfileDisability[] {
+    return disabilitiesToSave.map((disability) => {
+      const newDisability = new StudentDisabilityProfileDisability();
+      newDisability.disabilityType = disability.disabilityType;
+      newDisability.disabilityCategory = disability.disabilityCategory;
+      newDisability.impairments = disability.impairments;
+      if (existingDisabilities?.find((d) => d.id === disability.id)) {
+        newDisability.modifier = auditUser;
+        newDisability.updatedAt = now;
         return newDisability;
-      });
-      return studentDisabilityProfileRepo.save(draftProfile);
+      }
+      newDisability.creator = auditUser;
+      newDisability.createdAt = now;
+      return newDisability;
     });
   }
 

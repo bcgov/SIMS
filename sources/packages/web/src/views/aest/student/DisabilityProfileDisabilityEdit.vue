@@ -24,36 +24,39 @@
               class="float-right mr-2"
               color="primary"
               variant="outlined"
+              @click="saveDraft"
               >Save draft</v-btn
             >
           </template>
         </body-header>
       </template>
     </body-header-container>
-    <content-group>
-      <student-disability-profile-disability
-        v-for="(disability, index) in disabilities"
-        :key="disability.uniqueKey"
-        :student-id="studentId"
-        v-model="disabilities[index]"
-        :max-disability-priority="disabilities.length"
-        :read-only="readOnly"
-        @move-up="moveDisability(index, 'up')"
-        @move-down="moveDisability(index, 'down')"
-        @delete-disability="deleteDisability(index)"
-      />
-      <v-row class="mt-2" v-if="!readOnly" justify="end">
-        <v-col cols="auto">
-          <v-btn
-            prepend-icon="fas fa-plus"
-            color="primary"
-            variant="outlined"
-            @click="addDisability"
-            >Add new disability</v-btn
-          >
-        </v-col>
-      </v-row>
-    </content-group>
+    <v-form ref="disabilitiesForm">
+      <content-group>
+        <student-disability-profile-disability
+          v-for="(disability, index) in disabilities"
+          :key="disability.uniqueKey"
+          :student-id="studentId"
+          v-model="disabilities[index]"
+          :max-disability-priority="disabilities.length"
+          :read-only="readOnly"
+          @move-up="moveDisability(index, 'up')"
+          @move-down="moveDisability(index, 'down')"
+          @delete-disability="deleteDisability(index)"
+        />
+        <v-row class="mt-2" v-if="!readOnly" justify="end">
+          <v-col cols="auto">
+            <v-btn
+              prepend-icon="fas fa-plus"
+              color="primary"
+              variant="outlined"
+              @click="addDisability"
+              >Add new disability</v-btn
+            >
+          </v-col>
+        </v-row>
+      </content-group>
+    </v-form>
     <footer-buttons
       v-if="!readOnly"
       primary-label="Complete change"
@@ -65,7 +68,9 @@
 import { defineComponent, ref } from "vue";
 import StudentDisabilityProfileDisability from "@/components/common/students/StudentDisabilityProfileDisability.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { StudentDisability } from "@/types";
+import { StudentDisability, VForm } from "@/types";
+import ApiClient from "@/services/http/ApiClient";
+import { SaveStudentDisabilityProfileAPIInDTO } from "@/services/http/dto";
 
 export default defineComponent({
   components: { StudentDisabilityProfileDisability },
@@ -80,7 +85,8 @@ export default defineComponent({
       default: false,
     },
   },
-  setup() {
+  setup(props) {
+    const disabilitiesForm = ref({} as VForm);
     /**
      * Used as a stable Vue component key, independent of the server-assigned id.
      * Allow swapping and deleting disabilities without losing component state or causing rendering issues,
@@ -90,17 +96,8 @@ export default defineComponent({
     const disabilities = ref<StudentDisability[]>([
       {
         uniqueKey: nextUniqueKey++,
-        id: 1,
+        id: undefined,
         disabilityPriority: 1,
-        disabilityCategory: "",
-        disabilityType: "",
-        diagnosis: "",
-        impairments: [],
-      },
-      {
-        uniqueKey: nextUniqueKey++,
-        id: 2,
-        disabilityPriority: 2,
         disabilityCategory: "",
         disabilityType: "",
         diagnosis: "",
@@ -157,11 +154,34 @@ export default defineComponent({
       normalizePriorities();
     };
 
+    const saveDraft = async (): Promise<void> => {
+      const validationResult = await disabilitiesForm.value.validate();
+      if (!validationResult.valid) {
+        return;
+      }
+      const payload: SaveStudentDisabilityProfileAPIInDTO = {
+        disabilities: disabilities.value.map((disability) => ({
+          id: disability.id,
+          disabilityPriority: disability.disabilityPriority,
+          disabilityCategory: disability.disabilityCategory,
+          disabilityType: disability.disabilityType,
+          disabilityNotes: disability.disabilityNotes,
+          diagnosis: disability.diagnosis,
+          diagnosisNotes: disability.diagnosisNotes,
+          impairments: disability.impairments,
+          additionalNotes: disability.additionalNotes,
+        })),
+      };
+      ApiClient.DisabilityProfileApi.saveDraftProfile(props.studentId, payload);
+    };
+
     return {
       disabilities,
+      disabilitiesForm,
       addDisability,
       moveDisability,
       deleteDisability,
+      saveDraft,
       AESTRoutesConst,
     };
   },

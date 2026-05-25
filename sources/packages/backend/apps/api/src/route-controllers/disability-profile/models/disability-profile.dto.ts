@@ -1,4 +1,3 @@
-import { DisabilityProfileStatus } from "@sims/sims-db";
 import { Type } from "class-transformer";
 import {
   ArrayMinSize,
@@ -7,7 +6,8 @@ import {
   Length,
   MaxLength,
   IsNotEmpty,
-  IsIn,
+  IsOptional,
+  IsPositive,
 } from "class-validator";
 
 export class StudentDisabilityAPIInDTO {
@@ -37,9 +37,13 @@ export class StudentDisabilityAPIInDTO {
   additionalNotes?: string;
 }
 
-export class StudentDisabilitiesAPIInDTO {
-  @IsIn([DisabilityProfileStatus.Draft, DisabilityProfileStatus.Active])
-  status: DisabilityProfileStatus;
+export class SaveStudentDisabilityProfileAPIInDTO {
+  /**
+   * Required when updating an existing draft profile, or completing a draft profile to active status.
+   */
+  @IsOptional()
+  @IsPositive()
+  disabilityProfileId?: number;
   @ArrayMinSize(1)
   @ArrayMaxSize(100)
   @ValidateNested({ each: true })

@@ -37,6 +37,7 @@ import { DisbursementScheduleApi } from "@/services/http/DisbursementScheduleApi
 import { SystemLookupConfigurationApi } from "@/services/http/SystemLookupConfigurationApi";
 import { FormSubmissionApi } from "@/services/http/FormSubmissionApi";
 import { MSFAANumberApi } from "@/services/http/MSFAANumberApi";
+import { DisabilityProfileApi } from "@/services/http/DisabilityProfileApi";
 
 const ApiClient = {
   AuditApi: new AuditApi(),
@@ -79,6 +80,7 @@ const ApiClient = {
   SystemLookupConfigurationApi: new SystemLookupConfigurationApi(),
   FormSubmissionApi: new FormSubmissionApi(),
   MSFAANumberApi: new MSFAANumberApi(),
+  DisabilityProfileApi: new DisabilityProfileApi(),
 };
 
 export default ApiClient;
