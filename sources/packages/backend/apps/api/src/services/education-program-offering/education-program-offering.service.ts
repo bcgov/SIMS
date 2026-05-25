@@ -110,7 +110,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     const programOffering = this.populateProgramOffering(
       offeringValidation.offeringModel,
     );
-    const user = await this.userService.getUserById(userId);
+    const userEmail = await this.userService.getUserEmail(userId);
     programOffering.offeringStatus = offeringValidation.offeringStatus;
     const auditUser = { id: userId } as User;
     programOffering.creator = auditUser;
@@ -125,7 +125,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       primaryEmail: educationProgramOffering.primaryEmail,
       programOfferingStatus: programOffering.offeringStatus,
       institutionLocationName: educationProgramOffering.locationName,
-      email: user.email,
+      email: userEmail,
     };
     try {
       return await this.dataSource.transaction(
@@ -587,7 +587,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     const programOffering = this.populateProgramOffering(
       offeringValidation.offeringModel,
     );
-    const user = await this.userService.getUserById(userId);
+    const userEmail = await this.userService.getUserEmail(userId);
     programOffering.offeringStatus = offeringValidation.offeringStatus;
     programOffering.modifier = { id: userId } as User;
     const educationProgramOfferingNotificationData = {
@@ -598,7 +598,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       primaryEmail: educationProgramOffering.primaryEmail,
       programOfferingStatus: programOffering.offeringStatus,
       institutionLocationName: educationProgramOffering.locationName,
-      email: user.email,
+      email: userEmail,
     };
     try {
       return await this.dataSource.transaction(
