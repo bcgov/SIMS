@@ -998,6 +998,7 @@ export class NotificationActionsService {
           institutionPrimaryEmail: notification.institutionPrimaryEmail,
           programName: notification.programName,
           dateTime: this.getDateTimeOnPSTTimeZone(),
+          email: notification.email,
         },
       },
     }));
@@ -1041,6 +1042,7 @@ export class NotificationActionsService {
           offeringName: notification.offeringName,
           institutionPrimaryEmail: notification.institutionPrimaryEmail,
           dateTime: this.getDateTimeOnPSTTimeZone(),
+          email: notification.email,
         },
       },
     }));

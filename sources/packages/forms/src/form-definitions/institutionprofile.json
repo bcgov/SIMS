@@ -500,6 +500,29 @@
                   "state": false
                 }
               ]
+            },
+            {
+              "name": "Set required based on country",
+              "trigger": {
+                "type": "simple",
+                "simple": {
+                  "show": true,
+                  "when": "country",
+                  "eq": "CA"
+                }
+              },
+              "actions": [
+                {
+                  "name": "Set required as false",
+                  "type": "property",
+                  "property": {
+                    "label": "Required",
+                    "value": "validate.required",
+                    "type": "boolean"
+                  },
+                  "state": false
+                }
+              ]
             }
           ],
           "type": "radio",

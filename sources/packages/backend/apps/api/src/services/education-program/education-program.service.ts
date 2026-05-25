@@ -55,6 +55,7 @@ import {
 import {
   InstitutionService,
   EducationProgramOfferingService,
+  UserService,
 } from "../../services";
 import {
   InstitutionAddsPendingProgramNotification,
@@ -74,6 +75,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     private readonly noteSharedService: NoteSharedService,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly institutionService: InstitutionService,
+    private readonly userService: UserService,
     private readonly notificationActionsService: NotificationActionsService,
   ) {
     super(dataSource.getRepository(EducationProgram));
@@ -271,6 +273,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       await this.saveInstitutionAddsPendingProgramNotification(
         { name: program.name, programStatus: program.programStatus },
         institutionId,
+        auditUserId,
         transactionalEntityManager,
       );
       return transactionalEntityManager
@@ -1105,6 +1108,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   private async saveInstitutionAddsPendingProgramNotification(
     program: Pick<EducationProgram, "name" | "programStatus">,
     institutionId: number,
+    userId: number,
     entityManager: EntityManager,
   ): Promise<void> {
     if (program.programStatus !== ProgramStatus.Pending) {
@@ -1114,11 +1118,16 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       institutionId,
       { entityManager },
     );
+
+    const userEmail = await this.userService.getUserEmail(userId, {
+      entityManager,
+    });
     const ministryNotification: InstitutionAddsPendingProgramNotification = {
       institutionName: institution.legalOperatingName,
       institutionOperatingName: institution.operatingName,
       programName: program.name,
       institutionPrimaryEmail: institution.primaryEmail,
+      email: userEmail,
     };
     await this.notificationActionsService.saveInstitutionAddsPendingProgramNotification(
       ministryNotification,

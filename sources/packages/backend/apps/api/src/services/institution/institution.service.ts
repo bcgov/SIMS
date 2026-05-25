@@ -281,7 +281,9 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     institution.province = institutionModel.province ?? null;
     institution.classification = institutionModel.classification;
     institution.organizationStatus = institutionModel.organizationStatus;
-    institution.medicalSchoolStatus = institutionModel.medicalSchoolStatus;
+    institution.medicalSchoolStatus = !institutionModel.medicalSchoolStatus
+      ? null
+      : institutionModel.medicalSchoolStatus;
     // Institution Primary Contact Information.
     institution.institutionPrimaryContact = {
       firstName: institutionModel.primaryContactFirstName,
@@ -896,7 +898,9 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       institution.province = updateInstitution.province ?? null;
       institution.classification = updateInstitution.classification;
       institution.organizationStatus = updateInstitution.organizationStatus;
-      institution.medicalSchoolStatus = updateInstitution.medicalSchoolStatus;
+      institution.medicalSchoolStatus = !updateInstitution.medicalSchoolStatus
+        ? null
+        : updateInstitution.medicalSchoolStatus;
     }
     institution.institutionPrimaryContact = {
       firstName: updateInstitution.primaryContactFirstName,
