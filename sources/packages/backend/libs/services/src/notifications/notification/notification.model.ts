@@ -172,6 +172,7 @@ export interface InstitutionRequestsDesignationNotification {
   institutionPrimaryEmail: string;
 }
 
+
 export interface InstitutionAddsPendingProgramNotification {
   institutionName: string;
   institutionOperatingName: string;
@@ -179,6 +180,7 @@ export interface InstitutionAddsPendingProgramNotification {
   institutionPrimaryEmail: string;
   email: string;
 }
+
 
 export interface InstitutionAddsPendingOfferingNotification {
   institutionName: string;

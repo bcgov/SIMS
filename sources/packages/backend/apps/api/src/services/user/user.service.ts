@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import {
   DataSource,
+  EntityManager,
   IsNull,
   LessThanOrEqual,
   Raw,
@@ -37,8 +38,26 @@ export class UserService extends DataModelService<User> {
     });
   }
 
-  async getUserById(userId: number): Promise<User> {
-    return this.repo.findOneOrFail({ where: { id: userId } });
+  /**
+   * Retrieves a user email by the user ID, returning only the fields needed for notification (e.g., email).
+   * Used to fetch the requester email for notifications.
+   * Throws an error if the user does not exist (findOneOrFail).
+   * @param userId The user ID to look up.
+   * @param options Optional parameters for transaction-safe queries.
+   * @returns User email string.
+   */
+  async getUserEmail(
+    userId: number,
+    options?: { entityManager?: EntityManager },
+  ): Promise<string> {
+    const repo = options?.entityManager
+      ? options.entityManager.getRepository(User)
+      : this.repo;
+    const user = await repo.findOneOrFail({
+      select: ["email"],
+      where: { id: userId },
+    });
+    return user.email;
   }
 
   /**

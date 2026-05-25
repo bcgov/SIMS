@@ -1118,14 +1118,16 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       institutionId,
       { entityManager },
     );
-    // In your controller/service method
-    const user = await this.userService.getUserById(userId);
+
+    const userEmail = await this.userService.getUserEmail(userId, {
+      entityManager,
+    });
     const ministryNotification: InstitutionAddsPendingProgramNotification = {
       institutionName: institution.legalOperatingName,
       institutionOperatingName: institution.operatingName,
       programName: program.name,
       institutionPrimaryEmail: institution.primaryEmail,
-      email: user.email,
+      email: userEmail,
     };
     await this.notificationActionsService.saveInstitutionAddsPendingProgramNotification(
       ministryNotification,

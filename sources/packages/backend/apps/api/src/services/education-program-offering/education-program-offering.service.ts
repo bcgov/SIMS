@@ -172,12 +172,17 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       const offeringRepo = entityManager.getRepository(
         EducationProgramOffering,
       );
+      const userEmail = await this.userService.getUserEmail(auditUserId, {
+        entityManager,
+      });
+
       return processInParallel(
         (validatedOffering) =>
           this.createOffering(
             validatedOffering,
             offeringRepo,
             auditUserId,
+            userEmail,
             entityManager,
           ),
         validatedOfferings,
@@ -208,6 +213,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     validatedOffering: OfferingValidationResult,
     offeringRepo: Repository<EducationProgramOffering>,
     auditUserId: number,
+    auditUserEmail: string,
     entityManager: EntityManager,
   ): Promise<CreateValidatedOfferingResult> {
     const newOfferingPromise = this.createFromValidatedOffering(
@@ -215,7 +221,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       offeringRepo,
       auditUserId,
     );
-    const user = await this.userService.getUserById(auditUserId);
     const educationProgramOfferingNotificationData = {
       offeringName: validatedOffering.offeringModel.offeringName,
       programName: validatedOffering.offeringModel.programContext.name,
@@ -224,7 +229,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       primaryEmail: validatedOffering.offeringModel.primaryEmail,
       programOfferingStatus: validatedOffering.offeringStatus,
       institutionLocationName: validatedOffering.offeringModel.locationName,
-      email: user.email,
+      email: auditUserEmail,
     };
     const notificationPromise =
       this.saveEducationProgramPendingOfferingNotification(
