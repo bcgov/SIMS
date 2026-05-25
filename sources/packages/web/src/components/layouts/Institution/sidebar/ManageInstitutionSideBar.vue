@@ -26,15 +26,16 @@
   </v-navigation-drawer>
 </template>
 <script lang="ts">
-import { ref, defineComponent } from "vue";
+import { computed, ref, defineComponent } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { MenuItemModel } from "@/types";
-import { useInstitutionAuth } from "@/composables";
+import { useFeatureToggles, useInstitutionAuth } from "@/composables";
 
 export default defineComponent({
   components: {},
   setup() {
     const { isBCPublic } = useInstitutionAuth();
+    const { isBulkWithdrawalUploadEnabled } = useFeatureToggles();
     const items = ref<MenuItemModel[]>([
       {
         title: "Manage Profile",
@@ -73,7 +74,7 @@ export default defineComponent({
         },
       },
     ]);
-    const sidebarBottomItems = ref<MenuItemModel[]>([
+    const sidebarBottomItems = computed<MenuItemModel[]>(() => [
       {
         title: "Offerings Upload",
         props: {
@@ -83,27 +84,33 @@ export default defineComponent({
           },
         },
       },
+      ...(isBCPublic.value && isBulkWithdrawalUploadEnabled.value
+        ? [
+            {
+              title: "Withdrawal Upload",
+              props: {
+                prependIcon: "fa:fa-solid fa-upload",
+                to: {
+                  name: InstitutionRoutesConst.WITHDRAWAL_UPLOAD,
+                },
+              },
+            },
+          ]
+        : []),
+      ...(isBCPublic.value
+        ? [
+            {
+              title: "Reports",
+              props: {
+                prependIcon: "fa:fa-regular fa-copy",
+                to: {
+                  name: InstitutionRoutesConst.REPORTS,
+                },
+              },
+            },
+          ]
+        : []),
     ]);
-    if (isBCPublic.value) {
-      sidebarBottomItems.value.push({
-        title: "Withdrawal Upload",
-        props: {
-          prependIcon: "fa:fa-solid fa-upload",
-          to: {
-            name: InstitutionRoutesConst.WITHDRAWAL_UPLOAD,
-          },
-        },
-      });
-      sidebarBottomItems.value.push({
-        title: "Reports",
-        props: {
-          prependIcon: "fa:fa-regular fa-copy",
-          to: {
-            name: InstitutionRoutesConst.REPORTS,
-          },
-        },
-      });
-    }
 
     return {
       items,

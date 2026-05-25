@@ -5,7 +5,11 @@ import {
 import { AuthService } from "@/services/AuthService";
 import store from "@/store";
 import { ClientIdType } from "@/types";
-import { useInstitutionAuth } from "@/composables";
+import {
+  useFeatureToggles,
+  useInstitutionAuth,
+  BULK_WITHDRAWAL_UPLOAD_FEATURE_TOGGLE,
+} from "@/composables";
 import { RouteLocationNormalized, NavigationGuardNext } from "vue-router";
 /**
  * Institution route params.
@@ -62,6 +66,7 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
     isBCPublic,
     hasLocationAccess,
   } = useInstitutionAuth(store);
+  const { isFeatureToggleEnabled } = useFeatureToggles();
 
   // If the user is identified to be a business bceid user
   // who's institution and the user themselves not exist in sims
@@ -85,6 +90,15 @@ function isInstitutionUserAllowed(to: RouteLocationNormalized): boolean {
   // If the route is suppose to be accessible only for BC Public institutions
   // reject the access for other institution types.
   if (to.meta.allowOnlyBCPublic && !isBCPublic.value) {
+    return false;
+  }
+
+  // If the withdrawal upload feature is disabled,
+  // reject access to withdrawal upload route.
+  if (
+    to.name === InstitutionRoutesConst.WITHDRAWAL_UPLOAD &&
+    !isFeatureToggleEnabled(BULK_WITHDRAWAL_UPLOAD_FEATURE_TOGGLE)
+  ) {
     return false;
   }
 
