@@ -41,7 +41,7 @@ import {
   MinistryStudentAppealNotification,
   MinistryFileProcessingIssueNotification,
   SaveNotificationModel,
-  StudentAssessmentOverdueReminderNotification,
+  StudentAcceptAssessmentReminderNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { LoggerService } from "@sims/utilities/logger";
@@ -1693,7 +1693,7 @@ export class NotificationActionsService {
    * @param notifications notification details array.
    */
   async saveStudentAssessmentReminderNotification(
-    notifications: StudentAssessmentOverdueReminderNotification[],
+    notifications: StudentAcceptAssessmentReminderNotification[],
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const { templateId } =

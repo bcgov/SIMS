@@ -57,6 +57,7 @@ describe("AssessmentController(e2e)-updateNOAStatus", () => {
         noaApprovalStatus: true,
         noaApprovalStatusUpdatedOn: true,
         modifier: { id: true },
+        updatedAt: true,
       },
       relations: { modifier: true },
       where: { id: currentAssessment.id },
@@ -67,6 +68,7 @@ describe("AssessmentController(e2e)-updateNOAStatus", () => {
       noaApprovalStatus: AssessmentStatus.required,
       noaApprovalStatusUpdatedOn: now,
       modifier: { id: auditUser.id },
+      updatedAt: now,
     });
   });
 });

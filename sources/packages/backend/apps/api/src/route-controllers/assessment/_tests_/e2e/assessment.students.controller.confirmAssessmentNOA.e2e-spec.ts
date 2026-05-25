@@ -123,7 +123,7 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
     expect(updatedApplication).toEqual({
       applicationStatus: ApplicationStatus.Enrolment,
       id: application.id,
-      applicationStatusUpdatedOn: expect.any(Date),
+      applicationStatusUpdatedOn: now,
     });
   });
 

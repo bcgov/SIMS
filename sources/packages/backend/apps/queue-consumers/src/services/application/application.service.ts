@@ -23,6 +23,7 @@ import {
   STUDENT_COE_REQUIRED_NOTIFICATION_END_DATE_DAYS,
 } from "@sims/utilities";
 import { STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS } from "@sims/services/constants";
+import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 
 interface SecondDisbursementStillPending {
   assessmentId: number;
@@ -54,6 +55,7 @@ export class ApplicationService {
 
   constructor(
     private readonly configService: ConfigService,
+    private readonly eCertPreValidationService: ECertPreValidationService,
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
     @InjectRepository(StudentAssessment)
@@ -421,36 +423,36 @@ export class ApplicationService {
       .innerJoin("notification.notificationMessage", "notificationMessage")
       .where("notificationMessage.id = :notificationMessageId")
       .andWhere(
-        "notification.metadata->>'assessmentId' = assessment.id :: text",
+        "notification.metadata->>'assessmentId' = currentAssessment.id :: text",
       )
       .getQuery();
 
-    return this.applicationRepo
+    const applications = await this.applicationRepo
       .createQueryBuilder("application")
       .select([
         "application.id",
         "application.applicationNumber",
-        "assessment.id",
+        "currentAssessment.id",
         "student.id",
         "user.id",
         "user.firstName",
         "user.lastName",
         "user.email",
       ])
-      .innerJoin("application.currentAssessment", "assessment")
+      .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin("application.student", "student")
       .innerJoin("student.user", "user")
-      .innerJoin("assessment.offering", "offering")
-      .where("assessment.noaApprovalStatus = :noaApprovalStatus", {
+      .innerJoin("currentAssessment.offering", "offering")
+      .where("currentAssessment.noaApprovalStatus = :noaApprovalStatus", {
         noaApprovalStatus: AssessmentStatus.required,
       })
       .andWhere(
-        "assessment.noaApprovalStatusUpdatedOn < NOW() - (:overdueDays * INTERVAL '1 day')",
+        "currentAssessment.noaApprovalStatusUpdatedOn < NOW() - (:overdueDays * INTERVAL '1 day')",
         {
           overdueDays: STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS,
         },
       )
-      .andWhere("offering.studyEndDate >= NOW()::date")
+      .andWhere("offering.studyEndDate >= NOW()")
       .andWhere("application.applicationStatus = :applicationStatus", {
         applicationStatus: ApplicationStatus.Assessment,
       })
@@ -459,5 +461,17 @@ export class ApplicationService {
           NotificationMessageType.StudentAssessmentReminder,
       })
       .getMany();
+
+    const validationResults = await Promise.all(
+      applications.map((application) =>
+        this.eCertPreValidationService.executePreValidations(
+          application.id,
+          true,
+        ),
+      ),
+    );
+    return applications.filter(
+      (_, index) => validationResults[index].canAcceptAssessment,
+    );
   }
 }

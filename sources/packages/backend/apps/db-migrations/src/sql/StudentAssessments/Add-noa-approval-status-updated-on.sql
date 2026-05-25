@@ -8,15 +8,11 @@ COMMENT ON COLUMN sims.student_assessments.noa_approval_status_updated_on IS 'Da
 -- Migrate noa_approval_status_updated_on where noa_approval_status is 'Required' using application_status_updated_on since it is set right before the noa_approval_status is updated to 'Required'.
 -- This will allow existing Assessments to get notified according to schedule.
 UPDATE
-    sims.student_assessments sa
+    sims.student_assessments student_assessments
 SET
-    noa_approval_status_updated_on = (
-        SELECT
-            application_status_updated_on
-        FROM
-            sims.applications
-        WHERE
-            current_assessment_id = sa.id
-    )
+    noa_approval_status_updated_on = applications.application_status_updated_on
+FROM
+    sims.applications applications
 WHERE
-    sa.noa_approval_status = 'Required';
+    applications.current_assessment_id = student_assessments.id
+    AND student_assessments.noa_approval_status = 'Required';

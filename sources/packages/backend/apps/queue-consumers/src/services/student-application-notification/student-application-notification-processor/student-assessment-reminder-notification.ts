@@ -3,7 +3,7 @@ import { ApplicationService } from "../../";
 import { ProcessSummary } from "@sims/utilities/logger";
 import {
   NotificationActionsService,
-  StudentAssessmentOverdueReminderNotification,
+  StudentAcceptAssessmentReminderNotification,
 } from "@sims/services";
 import { STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS } from "@sims/services/constants/system-configurations-constants";
 
@@ -31,13 +31,13 @@ export class StudentAssessmentReminderNotification {
 
     if (!applications.length) {
       notificationLog.info(
-        `No assessments ${STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS} days past due found to generate reminder notifications.`,
+        `No assessments awaiting acceptance ${STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS} days past due found to generate reminder notifications.`,
       );
       return;
     }
 
     const notifications =
-      applications.map<StudentAssessmentOverdueReminderNotification>(
+      applications.map<StudentAcceptAssessmentReminderNotification>(
         (application) => ({
           userId: application.student.user.id,
           givenNames: application.student.user.firstName,
@@ -53,7 +53,7 @@ export class StudentAssessmentReminderNotification {
     );
 
     notificationLog.info(
-      `Overdue application assessments that generated reminder notifications: ${applications
+      `Overdue assessments awaiting acceptance that generated reminder notifications: ${applications
         .map((application) => application.applicationNumber)
         .join(", ")}`,
     );

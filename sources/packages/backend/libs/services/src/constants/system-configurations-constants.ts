@@ -97,6 +97,6 @@ export const BLOCKED_DISBURSEMENT_MAXIMUM_NOTIFICATIONS_TO_SEND = 3;
 export const BULL_BOARD_ROUTE = "admin/queues";
 
 /**
- * Number of days after which a student assessment is considered overdue and a notification should be sent to the student.
+ * Number of days after which acceptance of a student assessment is considered overdue and a notification should be sent to the student.
  */
 export const STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS = 7;
