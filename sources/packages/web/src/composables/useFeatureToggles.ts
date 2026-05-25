@@ -3,7 +3,7 @@ import { AppConfig } from "@/types/contracts/ConfigContract";
 import { computed, ref } from "vue";
 
 const FORMS_SUBMISSION_FEATURE_TOGGLE = "FORMS_SUBMISSION";
-export const BULK_WITHDRAWAL_UPLOAD_FEATURE_TOGGLE = "BULK_WITHDRAWAL_UPLOAD";
+const BULK_WITHDRAWAL_UPLOAD_FEATURE_TOGGLE = "BULK_WITHDRAWAL_UPLOAD";
 
 export function useFeatureToggles() {
   /**

@@ -2,14 +2,10 @@ import {
   InstitutionRoutesConst,
   SharedRouteConst,
 } from "@/constants/routes/RouteConstants";
-import { AppConfigService } from "@/services/AppConfigService";
 import { AuthService } from "@/services/AuthService";
 import store from "@/store";
 import { ClientIdType } from "@/types";
-import {
-  useInstitutionAuth,
-  BULK_WITHDRAWAL_UPLOAD_FEATURE_TOGGLE,
-} from "@/composables";
+import { useInstitutionAuth } from "@/composables";
 import { RouteLocationNormalized, NavigationGuardNext } from "vue-router";
 /**
  * Institution route params.
@@ -37,7 +33,7 @@ export async function validateInstitutionUserAccess(
   await AuthService.shared.initialize(ClientIdType.Institution);
 
   if (AuthService.shared.keycloak?.authenticated) {
-    if ((await isInstitutionRouteAllowed(to)) && isInstitutionUserAllowed(to)) {
+    if (isInstitutionUserAllowed(to)) {
       next();
       return;
     }
@@ -50,24 +46,6 @@ export async function validateInstitutionUserAccess(
       name: InstitutionRoutesConst.LOGIN,
     });
   }
-}
-
-/**
- * Validates access based on route-specific feature toggles.
- * @param to the route where user is navigated to.
- * @returns true when route is allowed by feature toggle rules.
- */
-async function isInstitutionRouteAllowed(
-  to: RouteLocationNormalized,
-): Promise<boolean> {
-  if (to.name !== InstitutionRoutesConst.WITHDRAWAL_UPLOAD) {
-    return true;
-  }
-
-  const appConfig = await AppConfigService.shared.config();
-  return appConfig.featureToggles.includes(
-    BULK_WITHDRAWAL_UPLOAD_FEATURE_TOGGLE,
-  );
 }
 
 /**
