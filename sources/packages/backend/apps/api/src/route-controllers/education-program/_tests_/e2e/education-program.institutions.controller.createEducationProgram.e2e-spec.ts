@@ -62,7 +62,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
   });
 
   beforeEach(async () => {
-    // Mark all existing change request review completed notifications as sent to isolate test assertions.
+    // Mark all existing pending program notifications as sent to isolate test assertions.
     await db.notification.update(
       {
         notificationMessage: {
