@@ -72,7 +72,7 @@ import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 const MINIMUM_AWARD_AMOUNT = 0.01;
 const MAXIMUM_AWARD_AMOUNT = 100000;
-const ALLOWABLE_AWARD_TYPES = new Set([
+const AVAILABLE_AWARD_TYPES = new Set([
   FullTimeAwardTypes.CSLF,
   FullTimeAwardTypes.BCSL,
 ]);
@@ -95,7 +95,7 @@ export default defineComponent({
     const addManualOverawardForm = ref({} as VForm);
     const formModel = reactive({} as OverawardManualRecordAPIInDTO);
     const awardTypeItems = AWARDS.filter((award) =>
-      ALLOWABLE_AWARD_TYPES.has(award.awardType as FullTimeAwardTypes),
+      AVAILABLE_AWARD_TYPES.has(award.awardType as FullTimeAwardTypes),
     ).map((award) => ({
       title: `${award.awardType} (${award.description})`,
       value: award.awardType,

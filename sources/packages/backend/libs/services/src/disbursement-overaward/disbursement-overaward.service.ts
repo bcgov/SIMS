@@ -87,7 +87,6 @@ export class DisbursementOverawardService {
       .having("SUM(disbursementOveraward.overawardValue) <> 0");
     // The total is returned from DB as string, needs to be converted to a number,
     // since overawardValue is defined as numeric in the DB.
-
     const totalAwards = await overawardQuery.getRawMany<{
       studentId: number;
       valueCode: string;
