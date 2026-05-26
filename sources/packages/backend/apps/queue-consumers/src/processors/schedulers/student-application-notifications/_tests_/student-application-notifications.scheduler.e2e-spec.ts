@@ -1148,7 +1148,7 @@ describe(
         expect(hasNotification).toBe(false);
       });
 
-      it.only("Should not generate a notification for overdue assessment reminder when the application status is assessment and the NOA status is required and the offering end date has passed.", async () => {
+      it("Should not generate a notification for overdue assessment reminder when the application status is assessment and the NOA status is required and the offering end date has passed.", async () => {
         // Arrange
         // Create an expired offering
         const offering = createFakeEducationProgramOffering(
@@ -1193,60 +1193,60 @@ describe(
         );
         expect(hasNotification).toBe(false);
       });
-    });
 
-    it("Should not generate a notification for overdue assessment reminder when the disbursement is blocked because the student is estranged from parents but the modified independent status is Not requested.", async () => {
-      // Arrange
-      const student = await saveFakeStudent(db.dataSource, undefined, {
-        initialValue: {
-          modifiedIndependentStatus: ModifiedIndependentStatus.NotRequested,
-        },
+      it("Should not generate a notification for overdue assessment reminder when the disbursement is blocked because the student is estranged from parents but the modified independent status is Not requested.", async () => {
+        // Arrange
+        const student = await saveFakeStudent(db.dataSource, undefined, {
+          initialValue: {
+            modifiedIndependentStatus: ModifiedIndependentStatus.NotRequested,
+          },
+        });
+
+        // Create an application with disbursements.
+        await saveFakeApplicationDisbursements(
+          db.dataSource,
+          { student },
+          {
+            offeringIntensity: OfferingIntensity.fullTime,
+            applicationStatus: ApplicationStatus.Assessment,
+            currentAssessmentInitialValues: {
+              assessmentData: { weeks: 5 } as Assessment,
+              assessmentDate: new Date(),
+              noaApprovalStatus: AssessmentStatus.required,
+              noaApprovalStatusUpdatedOn: addDays(-10),
+              workflowData: {
+                studentData: {
+                  estrangedFromParents: FormYesNoOptions.Yes,
+                },
+                calculatedData: {
+                  pdppdStatus: false,
+                },
+              } as WorkflowData,
+            },
+            firstDisbursementInitialValues: {
+              coeStatus: COEStatus.required,
+            },
+          },
+        );
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await processor.processQueue(mockedJob.job);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            `No assessments awaiting acceptance 7 days past due found to generate reminder notifications.`,
+          ]),
+        ).toBe(true);
+        const hasNotification = await notificationExists(
+          NotificationMessageType.StudentAssessmentReminder,
+          student.user.id,
+        );
+        expect(hasNotification).toBe(false);
       });
-
-      // Create an application with disbursements.
-      await saveFakeApplicationDisbursements(
-        db.dataSource,
-        { student },
-        {
-          offeringIntensity: OfferingIntensity.fullTime,
-          applicationStatus: ApplicationStatus.Assessment,
-          currentAssessmentInitialValues: {
-            assessmentData: { weeks: 5 } as Assessment,
-            assessmentDate: new Date(),
-            noaApprovalStatus: AssessmentStatus.required,
-            noaApprovalStatusUpdatedOn: addDays(-10),
-            workflowData: {
-              studentData: {
-                estrangedFromParents: FormYesNoOptions.Yes,
-              },
-              calculatedData: {
-                pdppdStatus: false,
-              },
-            } as WorkflowData,
-          },
-          firstDisbursementInitialValues: {
-            coeStatus: COEStatus.required,
-          },
-        },
-      );
-
-      // Queued job.
-      const mockedJob = mockBullJob<void>();
-
-      // Act
-      await processor.processQueue(mockedJob.job);
-
-      // Assert
-      expect(
-        mockedJob.containLogMessages([
-          `No assessments awaiting acceptance 7 days past due found to generate reminder notifications.`,
-        ]),
-      ).toBe(true);
-      const hasNotification = await notificationExists(
-        NotificationMessageType.StudentAssessmentReminder,
-        student.user.id,
-      );
-      expect(hasNotification).toBe(false);
     });
 
     /**

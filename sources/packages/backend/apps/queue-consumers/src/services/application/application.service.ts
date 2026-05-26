@@ -20,6 +20,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import {
   addDays,
   DISABILITY_NOTIFICATION_DAYS_LIMIT,
+  processInParallel,
   STUDENT_COE_REQUIRED_NOTIFICATION_END_DATE_DAYS,
 } from "@sims/utilities";
 import { STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS } from "@sims/services/constants";
@@ -452,7 +453,7 @@ export class ApplicationService {
           overdueDays: STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS,
         },
       )
-      .andWhere("offering.studyEndDate >= NOW()")
+      .andWhere("offering.studyEndDate >= CURRENT_DATE")
       .andWhere("application.applicationStatus = :applicationStatus", {
         applicationStatus: ApplicationStatus.Assessment,
       })
@@ -462,16 +463,17 @@ export class ApplicationService {
       })
       .getMany();
 
-    const validationResults = await Promise.all(
-      applications.map((application) =>
-        this.eCertPreValidationService.executePreValidations(
+    const eligibleApplications: Application[] = [];
+    await processInParallel(async (application) => {
+      const validationResult =
+        await this.eCertPreValidationService.executePreValidations(
           application.id,
           true,
-        ),
-      ),
-    );
-    return applications.filter(
-      (_, index) => validationResults[index].canAcceptAssessment,
-    );
+        );
+      if (validationResult.canAcceptAssessment) {
+        eligibleApplications.push(application);
+      }
+    }, applications);
+    return eligibleApplications;
   }
 }
