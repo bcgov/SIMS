@@ -32,6 +32,12 @@ instances:
       memory: 128Mi
     limits:
       memory: 512Mi
+  metadata:
+    annotations:
+      # The following annotations applicable only if the pgMonitor exporter is enabled.
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "9187"
+      prometheus.io/path: "/metrics"
 
 # If we need to restore the cluster from a backup, we need to set the following values
 # assuming restore from repo2 (s3), adjust as needed if your S3 repo is different.
@@ -102,9 +108,9 @@ proxy:
 pgmonitor:
   enabled: true
   exporter:
-    image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
+    image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default.
     requests:
       cpu: 10m
-      memory: 128Mi # Seems to require 128Mi to run properly. If I set to 64Mi then I don't see any metrics in Sysdig
+      memory: 128Mi
     limits:
       memory: 256Mi

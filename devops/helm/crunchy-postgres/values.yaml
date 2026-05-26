@@ -44,11 +44,6 @@ instances:
       memory: 128Mi
     limits:
       memory: 512Mi
-  metadata:
-    annotations:
-      prometheus.io/scrape: "true"
-      prometheus.io/port: "9187"
-      prometheus.io/path: "/metrics"
 
 # If we need to restore the cluster from a backup, we need to set the following values
 # assuming restore from repo2 (s3), adjust as needed if your S3 repo is different
