@@ -27,10 +27,10 @@ spec:
       metadata:
         labels:
           app.kubernetes.io/part-of: {{ template "crunchy-postgres.fullname" . }}
+        {{- if .Values.instances.metadata.annotations }}
         annotations:
-          prometheus.io/scrape: "true"
-          prometheus.io/port: "9187"
-          prometheus.io/path: "/metrics"
+          {{- toYaml .Values.instances.metadata.annotations | nindent 8 }}
+        {{- end }}
       resources:
         requests:
           cpu: {{ .Values.instances.requests.cpu }}
@@ -207,14 +207,7 @@ spec:
         pg_hba:
           - {{ .Values.patroni.postgresql.pg_hba }}
         parameters:
-          shared_buffers: {{ .Values.patroni.postgresql.parameters.shared_buffers }}
-          wal_buffers: {{ .Values.patroni.postgresql.parameters.wal_buffers }}
-          min_wal_size: {{ .Values.patroni.postgresql.parameters.min_wal_size }}
-          max_wal_size: {{ .Values.patroni.postgresql.parameters.max_wal_size }}
-          max_slot_wal_keep_size: {{ .Values.patroni.postgresql.parameters.max_slot_wal_keep_size }}
-          max_connections: {{ .Values.patroni.postgresql.parameters.max_connections }}
-          shared_preload_libraries: {{ .Values.patroni.postgresql.parameters.shared_preload_libraries }}
-          pgmonitor_bgw.dbname: "simsdb"
+          {{- toYaml .Values.patroni.postgresql.parameters | nindent 10 }}
   
   proxy:
     pgBouncer:

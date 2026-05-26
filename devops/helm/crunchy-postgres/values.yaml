@@ -44,6 +44,11 @@ instances:
       memory: 128Mi
     limits:
       memory: 512Mi
+  metadata:
+    annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "9187"
+      prometheus.io/path: "/metrics"
 
 # If we need to restore the cluster from a backup, we need to set the following values
 # assuming restore from repo2 (s3), adjust as needed if your S3 repo is different
@@ -122,6 +127,7 @@ patroni:
       max_slot_wal_keep_size: 128MB # default is -1, allowing unlimited wal growth when replicas fall behind
       max_connections: 125 # default is 100
       shared_preload_libraries: "pg_stat_statements,pgmonitor_bgw" # specify any libraries that need to be preloaded. Separate multiple libraries with a comma. For example: "pg_stat_statements,auto_explain"
+      pgmonitor_bgw.dbname: "simsdb"
 
 proxy:
   pgBouncer:
