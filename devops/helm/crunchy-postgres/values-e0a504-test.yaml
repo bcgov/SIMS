@@ -104,7 +104,7 @@ proxy:
     limits:
       memory: 256Mi
 
-# Postgres Cluster resource values:
+# pgMonitor values:
 pgmonitor:
   enabled: true
   exporter:
