@@ -114,3 +114,8 @@ pgmonitor:
       memory: 128Mi
     limits:
       memory: 256Mi
+    metrics:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9187"
+        prometheus.io/path: "/metrics"
