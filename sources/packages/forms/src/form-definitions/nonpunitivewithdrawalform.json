@@ -69,16 +69,9 @@
             "label": "Please indicate which of the following circumstances applies to you.",
             "optionsLabelPosition": "right",
             "tableView": false,
-            "defaultValue": {
-                "didNotAttendClasses": false,
-                "attendedClassesFor10DaysOrLess": false,
-                "completedFirstSemester": false,
-                "withdrawnFromStudies": false,
-                "noneOfTheAbove": false
-            },
             "values": [
                 {
-                    "label": " I did not attend classes at all and repaid the funding in full within 30 days of the start of classes.",
+                    "label": "I did not attend classes at all and repaid the funding in full within 30 days of the start of classes.",
                     "value": "didNotAttendClasses",
                     "shortcut": ""
                 },
@@ -105,14 +98,12 @@
             ],
             "validate": {
                 "required": true,
-                "onlyAvailableItems": true,
-                "custom": "const shouldSelectOneOfTheAboveOrAnotherOption =\r\n  !!data.eligibleCircumstances.noneOfTheAbove &&\r\n  Object.values(data.eligibleCircumstances).filter(item => !!item).length > 1;\r\nvalid = shouldSelectOneOfTheAboveOrAnotherOption\r\n  ? \"Please select either one or more of the circumstances or 'None of the above apply.', but not both.\"\r\n  : true;"
+                "onlyAvailableItems": true
             },
             "validateWhenHidden": false,
             "key": "eligibleCircumstances",
-            "type": "selectboxes",
-            "input": true,
-            "inputType": "checkbox"
+            "type": "radio",
+            "input": true
         },
         {
             "label": "Eligible Circumstances Banner",
@@ -124,10 +115,14 @@
                     "value": ""
                 }
             ],
-            "content": "<strong> A non-punitive change to the study period end date may only be processed if one of the conditions above is met.\r\nIf none of the conditions apply, then the withdrawal is not eligible to be changed to non-punitive status. </strong>",
+            "content": "<strong> If you withdrew from your studies for one of the reasons listed above, your withdrawal may be changed to a non-punitive withdrawal. This means the withdrawal will not affect your eligibility for further StudentAid BC funding. Your withdrawal must be reported to StudentAid BC by your institution before you can submit this form.</strong>",
             "refreshOnChange": false,
             "key": "html1",
-            "customConditional": "show = !!data.eligibleCircumstances.noneOfTheAbove;",
+            "conditional": {
+                "show": true,
+                "when": "eligibleCircumstances",
+                "eq": "noneOfTheAbove"
+            },
             "type": "htmlelement",
             "input": false,
             "tableView": false
