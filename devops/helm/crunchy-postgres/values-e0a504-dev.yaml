@@ -108,7 +108,7 @@ proxy:
 pgmonitor:
   enabled: true
   exporter:
-    image: artifacts.developer.gov.bc.ca/bcgov-docker-local/crunchy-postgres-exporter:ubi9-0.18.1-2547
+    image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default.
     requests:
       cpu: 10m
       memory: 128Mi
