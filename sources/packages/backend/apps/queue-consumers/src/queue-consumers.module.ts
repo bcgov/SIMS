@@ -83,6 +83,7 @@ import {
   StudentCOERequiredNearEndDateReminderNotification,
   MinistryCRAFileProcessingIssueNotification,
   MinistrySINFileProcessingIssueNotification,
+  StudentAssessmentReminderNotification,
   CASInvoiceBatchService,
   CASInvoiceService,
 } from "./services";
@@ -188,6 +189,7 @@ import { LoggerModule } from "@sims/utilities/logger";
     StudentPDPPDReminderNotification,
     StudentSecondDisbursementReminderNotification,
     StudentCOERequiredNearEndDateReminderNotification,
+    StudentAssessmentReminderNotification,
     MinistryCRAFileProcessingIssueNotification,
     MinistrySINFileProcessingIssueNotification,
     CASInvoiceBatchService,

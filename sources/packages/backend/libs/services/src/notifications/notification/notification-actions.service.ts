@@ -41,6 +41,7 @@ import {
   MinistryStudentAppealNotification,
   MinistryFileProcessingIssueNotification,
   SaveNotificationModel,
+  StudentAcceptAssessmentReminderNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { LoggerService } from "@sims/utilities/logger";
@@ -1684,6 +1685,41 @@ export class NotificationActionsService {
     // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
       ministryNotificationsToSend,
+      auditUser.id,
+    );
+  }
+
+  /**
+   * Creates an assessment reminder notification for a student whose application
+   * has been in assessment for at least 7 days.
+   * @param notifications notification details array.
+   */
+  async saveStudentAssessmentReminderNotification(
+    notifications: StudentAcceptAssessmentReminderNotification[],
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId } =
+      await this.notificationMessageService.getNotificationMessageDetails(
+        NotificationMessageType.StudentAssessmentReminder,
+      );
+
+    const notificationsToSend = notifications.map((notification) => ({
+      userId: notification.userId,
+      messageType: NotificationMessageType.StudentAssessmentReminder,
+      messagePayload: {
+        email_address: notification.toAddress,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          applicationNumber: notification.applicationNumber,
+        },
+      },
+      metadata: { assessmentId: notification.assessmentId },
+    }));
+    // Save notifications to be sent to the students into the notification table.
+    await this.notificationService.saveNotifications(
+      notificationsToSend,
       auditUser.id,
     );
   }

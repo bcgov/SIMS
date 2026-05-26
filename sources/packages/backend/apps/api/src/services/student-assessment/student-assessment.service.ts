@@ -219,6 +219,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     const auditUser = { id: auditUserId } as User;
     const now = new Date();
     assessment.noaApprovalStatus = AssessmentStatus.completed;
+    assessment.noaApprovalStatusUpdatedOn = now;
     assessment.application.applicationStatus = ApplicationStatus.Enrolment;
     assessment.application.applicationStatusUpdatedOn = now;
     // Populate the audit fields.

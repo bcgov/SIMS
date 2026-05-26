@@ -288,3 +288,12 @@ export interface MinistryFileProcessingIssueNotification {
   dateSent: Date;
   type: FileProcessingIssueType;
 }
+
+export interface StudentAcceptAssessmentReminderNotification {
+  givenNames?: string;
+  lastName: string;
+  toAddress: string;
+  userId: number;
+  applicationNumber: string;
+  assessmentId: number;
+}

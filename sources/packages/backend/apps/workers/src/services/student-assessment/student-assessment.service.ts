@@ -245,11 +245,17 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   ): Promise<UpdateResult> {
     const auditUser = this.systemUsersService.systemUser;
     return this.dataSource.transaction(async (transactionalEntityManager) => {
+      const now = new Date();
       const updateResult = await transactionalEntityManager
         .getRepository(StudentAssessment)
         .update(
           { id: assessmentId, noaApprovalStatus: IsNull() },
-          { noaApprovalStatus: status, modifier: auditUser },
+          {
+            noaApprovalStatus: status,
+            modifier: auditUser,
+            updatedAt: now,
+            noaApprovalStatusUpdatedOn: now,
+          },
         );
 
       if (updateResult.affected === 1) {

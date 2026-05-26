@@ -167,6 +167,15 @@ export class StudentAssessment extends RecordDataModel {
   })
   noaApprovalStatus?: AssessmentStatus;
   /**
+   * Date and time when the noa_approval_status column was updated.
+   */
+  @Column({
+    name: "noa_approval_status_updated_on",
+    type: "timestamptz",
+    nullable: true,
+  })
+  noaApprovalStatusUpdatedOn?: Date;
+  /**
    * Disbursements related to this assessment.
    */
   @OneToMany(

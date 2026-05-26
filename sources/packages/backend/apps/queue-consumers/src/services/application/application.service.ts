@@ -13,10 +13,18 @@ import {
   DisbursementSchedule,
   COEStatus,
   ApplicationEditStatus,
+  AssessmentStatus,
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectRepository } from "@nestjs/typeorm";
-import { addDays, DISABILITY_NOTIFICATION_DAYS_LIMIT, STUDENT_COE_REQUIRED_NOTIFICATION_END_DATE_DAYS } from "@sims/utilities";
+import {
+  addDays,
+  DISABILITY_NOTIFICATION_DAYS_LIMIT,
+  processInParallel,
+  STUDENT_COE_REQUIRED_NOTIFICATION_END_DATE_DAYS,
+} from "@sims/utilities";
+import { STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS } from "@sims/services/constants";
+import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 
 interface SecondDisbursementStillPending {
   assessmentId: number;
@@ -48,6 +56,7 @@ export class ApplicationService {
 
   constructor(
     private readonly configService: ConfigService,
+    private readonly eCertPreValidationService: ECertPreValidationService,
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
     @InjectRepository(StudentAssessment)
@@ -400,5 +409,71 @@ export class ApplicationService {
         coeStatusRequired: COEStatus.required,
       })
       .getRawMany();
+  }
+
+  /**
+   * Retrieve applications with overdue assessments that have been assessed at least 7 days.
+   * Only assessments that haven't already been notified should be included.
+   * @returns overdue assessments.
+   */
+  async getApplicationsWithOverdueAssessments(): Promise<Application[]> {
+    // Sub query to defined if a notification was already sent to the current assessment.
+    const notificationExistsQuery = this.notificationRepo
+      .createQueryBuilder("notification")
+      .select("1")
+      .innerJoin("notification.notificationMessage", "notificationMessage")
+      .where("notificationMessage.id = :notificationMessageId")
+      .andWhere(
+        "notification.metadata->>'assessmentId' = currentAssessment.id :: text",
+      )
+      .getQuery();
+
+    const applications = await this.applicationRepo
+      .createQueryBuilder("application")
+      .select([
+        "application.id",
+        "application.applicationNumber",
+        "currentAssessment.id",
+        "student.id",
+        "user.id",
+        "user.firstName",
+        "user.lastName",
+        "user.email",
+      ])
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .innerJoin("currentAssessment.offering", "offering")
+      .where("currentAssessment.noaApprovalStatus = :noaApprovalStatus", {
+        noaApprovalStatus: AssessmentStatus.required,
+      })
+      .andWhere(
+        "currentAssessment.noaApprovalStatusUpdatedOn < NOW() - (:overdueDays * INTERVAL '1 day')",
+        {
+          overdueDays: STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS,
+        },
+      )
+      .andWhere("offering.studyEndDate >= CURRENT_DATE")
+      .andWhere("application.applicationStatus = :applicationStatus", {
+        applicationStatus: ApplicationStatus.Assessment,
+      })
+      .andWhere(`NOT EXISTS (${notificationExistsQuery})`, {
+        notificationMessageId:
+          NotificationMessageType.StudentAssessmentReminder,
+      })
+      .getMany();
+
+    const eligibleApplications: Application[] = [];
+    await processInParallel(async (application) => {
+      const validationResult =
+        await this.eCertPreValidationService.executePreValidations(
+          application.id,
+          true,
+        );
+      if (validationResult.canAcceptAssessment) {
+        eligibleApplications.push(application);
+      }
+    }, applications);
+    return eligibleApplications;
   }
 }

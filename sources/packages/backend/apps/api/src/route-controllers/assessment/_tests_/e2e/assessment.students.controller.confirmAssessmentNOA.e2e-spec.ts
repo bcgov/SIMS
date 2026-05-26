@@ -36,6 +36,7 @@ import {
   User,
   WorkflowData,
 } from "@sims/sims-db";
+import MockDate from "mockdate";
 import { TestingModule } from "@nestjs/testing";
 
 describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
@@ -54,6 +55,10 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
     sharedMinistryUser = await db.user.save(createFakeUser());
   });
 
+  beforeEach(async () => {
+    MockDate.reset();
+  });
+
   it("Should allow NOA approval for the current application assessment when the application has multiple assessments.", async () => {
     // Arrange
     const { currentAssessmentId } = await createApplicationAndAssessments();
@@ -61,6 +66,9 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
     const studentUserToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
+
+    const now = new Date();
+    MockDate.set(now);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -72,6 +80,7 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       select: {
         id: true,
         noaApprovalStatus: true,
+        noaApprovalStatusUpdatedOn: true,
       },
       where: { id: currentAssessmentId },
     });
@@ -79,6 +88,7 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
     expect(updatedAssessment).toEqual({
       id: currentAssessmentId,
       noaApprovalStatus: AssessmentStatus.completed,
+      noaApprovalStatusUpdatedOn: now,
     });
   });
 
@@ -91,8 +101,8 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
 
-    // Set timestamps for comparison.
-    const referenceDateBeforeConfirmation = new Date();
+    const now = new Date();
+    MockDate.set(now);
 
     // Act
     await request(app.getHttpServer())
@@ -110,13 +120,11 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       where: { id: application.id },
     });
 
-    expect(updatedApplication.applicationStatus).toBe(
-      ApplicationStatus.Enrolment,
-    );
-    expect(updatedApplication.applicationStatusUpdatedOn).toBeDefined();
-    expect(
-      updatedApplication.applicationStatusUpdatedOn.getTime(),
-    ).toBeGreaterThan(referenceDateBeforeConfirmation.getTime());
+    expect(updatedApplication).toEqual({
+      applicationStatus: ApplicationStatus.Enrolment,
+      id: application.id,
+      applicationStatusUpdatedOn: now,
+    });
   });
 
   it("Should not allow NOA approval for old application assessments when the application has multiple assessments.", async () => {
@@ -232,6 +240,10 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
     const studentUserToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
+
+    const now = new Date();
+    MockDate.set(now);
+
     const endpoint = `/students/assessment/${application.currentAssessment.id}/confirm-assessment`;
 
     // Act/Assert
@@ -245,12 +257,14 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       select: {
         id: true,
         noaApprovalStatus: true,
+        noaApprovalStatusUpdatedOn: true,
       },
       where: { id: application.currentAssessment.id },
     });
     expect(updatedAssessment).toEqual({
       id: application.currentAssessment.id,
       noaApprovalStatus: AssessmentStatus.completed,
+      noaApprovalStatusUpdatedOn: now,
     });
   });
 
