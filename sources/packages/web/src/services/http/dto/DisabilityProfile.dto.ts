@@ -43,6 +43,6 @@ export interface SaveStudentDisabilityProfileAPIInDTO {
   /**
    * Required when updating an existing draft profile, or completing a draft profile to active status.
    */
-  disabilityProfileId?: number;
+  id?: number;
   disabilities: StudentDisabilityAPIInDTO[];
 }

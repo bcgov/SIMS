@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -46,7 +47,7 @@ export class StudentDisabilityProfile extends RecordDataModel {
   /**
    * Timestamp when the profile was soft-deleted. Can only be set while the profile is in Draft status.
    */
-  @Column({
+  @DeleteDateColumn({
     name: "deleted_at",
     type: "timestamptz",
     nullable: true,

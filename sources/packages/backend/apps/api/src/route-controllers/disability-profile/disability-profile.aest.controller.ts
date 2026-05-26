@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -158,7 +159,7 @@ export class DisabilityProfileAESTController extends BaseController {
         studentId,
         saveStudentDisabilities.disabilities,
         userToken.userId!,
-        saveStudentDisabilities.disabilityProfileId,
+        saveStudentDisabilities.id,
       );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
@@ -206,7 +207,7 @@ export class DisabilityProfileAESTController extends BaseController {
         studentId,
         saveStudentDisabilities.disabilities,
         userToken.userId!,
-        saveStudentDisabilities.disabilityProfileId,
+        saveStudentDisabilities.id,
       );
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
@@ -218,6 +219,38 @@ export class DisabilityProfileAESTController extends BaseController {
           case DISABILITY_PROFILE_INVALID_CATEGORY:
           case DISABILITY_PROFILE_INVALID_IMPAIRMENT:
             throw new UnprocessableEntityException(error.message);
+        }
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Deletes a disability profile for the student. Only draft profiles can be deleted.
+   * @param studentId ID of the student.
+   * @param disabilityProfileId ID of the disability profile to be deleted.
+   */
+  @Roles(Role.StudentEditDisabilityProfile)
+  @Delete("student/:studentId/disability-profile/:disabilityProfileId")
+  @ApiNoContentResponse({
+    description: "Draft disability profile not found for the student.",
+  })
+  async deleteDraftProfile(
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Param("disabilityProfileId", ParseIntPipe) disabilityProfileId: number,
+    @UserToken() userToken: IUserToken,
+  ): Promise<void> {
+    try {
+      await this.disabilityProfileService.deleteDraftProfile(
+        studentId,
+        disabilityProfileId,
+        userToken.userId!,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case DISABILITY_PROFILE_DRAFT_NOT_FOUND:
+            throw new NotFoundException(error.message);
         }
       }
       throw error;

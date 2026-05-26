@@ -31,7 +31,7 @@ CREATE TABLE sims.student_disability_profile_disabilities(
   CONSTRAINT student_disability_profile_id_disability_priority_unique UNIQUE (
     student_disability_profile_id,
     disability_priority
-  )
+  ) DEFERRABLE INITIALLY DEFERRED
 );
 
 COMMENT ON TABLE sims.student_disability_profile_disabilities IS 'Individual disability entries associated with a student disability profile.';

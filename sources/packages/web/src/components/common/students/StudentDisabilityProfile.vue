@@ -1,146 +1,70 @@
 <template>
   <body-header-container :enable-card-view="true">
     <template #header>
-      <body-header
-        title="Disability Profile"
-        sub-title="Current version created by Some User on May 1, 2024"
-      >
+      <body-header title="Disability Profile">
+        <template #subtitle>
+          <span v-if="activeProfile">
+            See below the current disability profile for this student.
+          </span>
+          <span v-else-if="!draftProfile">
+            Click 'Edit profile' to create a new disability profile.</span
+          >
+        </template>
         <template #actions>
           <v-btn class="float-right" color="primary" @click="editProfile"
-            >Edit current version</v-btn
+            >Edit profile</v-btn
           >
         </template>
       </body-header>
       <banner
+        v-if="draftProfile"
         class="mb-2"
         type="warning"
-        header="Draft in progress"
-        summary="A draft version exists for this disability profile. The draft can be converted to the current version or deleted, if no longer needed."
+        header="Draft profile"
+        summary="A draft version exists for this disability profile. The draft can be updated to be completed or deleted, if no longer needed."
       >
         <template #actions>
-          <v-btn color="danger" class="mr-2">Delete draft</v-btn>
-          <v-btn color="primary">View draft</v-btn>
+          <v-btn color="danger" class="mr-2" @click="deleteDraft"
+            >Delete draft</v-btn
+          >
+          <v-btn color="primary" @click="viewDraft">View draft</v-btn>
         </template>
       </banner>
     </template>
     <content-group>
-      <v-row dense>
-        <v-col cols="12">
-          <h4 class="category-header-medium brand-gray-text mb-0">
-            Disability details
-          </h4>
-          <v-divider></v-divider>
-        </v-col>
-        <v-col cols="6">
-          <v-select
-            v-model="selectedDisabilityCategory"
-            :items="disabilityCategoryOptions"
-            label="Disability category"
-            item-title="text"
-            item-value="value"
-            density="compact"
-            variant="outlined"
-            hide-details
-          />
-        </v-col>
-        <v-col cols="6">
-          <v-select
-            v-model="selectedDisabilityType"
-            :items="disabilityTypeOptions"
-            label="Disability type"
-            item-title="text"
-            item-value="value"
-            density="compact"
-            variant="outlined"
-            hide-details
-          />
-        </v-col>
-        <v-col cols="12"
-          ><v-textarea
-            label="Disability details notes"
-            variant="outlined"
-            rows="3"
-            hide-details
-        /></v-col>
-      </v-row>
-      <v-row dense>
-        <v-col cols="12"
-          ><h4 class="category-header-medium brand-gray-text mb-0 mt-4">
-            Diagnosis
-          </h4>
-          <v-divider></v-divider
-        ></v-col>
-        <v-col cols="12"
-          ><v-text-field
-            v-model="diagnosisText"
-            label="Diagnosis information"
-            placeholder="Enter diagnosis details..."
-            density="compact"
-            variant="outlined"
-            hide-details
-        /></v-col>
-        <v-col cols="12"
-          ><v-textarea
-            label="Diagnosis notes"
-            variant="outlined"
-            rows="3"
-            hide-details
-        /></v-col>
-      </v-row>
-      <v-row dense>
-        <v-col cols="12">
-          <h4 class="category-header-medium brand-gray-text mb-0 mt-4">
-            Impairments
-          </h4>
-          <v-divider />
-        </v-col>
-        <v-col>
-          <ul>
-            <li>Difficulty with vision</li>
-            <li>Difficulty with hearing</li>
-            <li>Difficulty with manual dexterity</li>
-            <li>Difficulty with speaking</li>
-            <li>Difficulty with ascending/descending stairs</li>
-            <li>Difficulty walking short distances</li>
-            <li>Difficulty walking long distances</li>
-            <li>Difficulty using public transportation</li>
-          </ul>
-        </v-col>
-        <v-col cols="12"
-          >Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only
-          five centuries, but also the leap into electronic typesetting,
-          remaining essentially unchanged. It was popularised in the 1960s with
-          the release of Letraset sheets containing Lorem Ipsum passages, and
-          more recently with desktop publishing software like Aldus PageMaker
-          including versions of Lorem Ipsum.</v-col
-        >
-      </v-row>
-      <v-row dense>
-        <v-col cols="12">
-          <h4 class="category-header-medium brand-gray-text mb-0 mt-4">
-            Additional notes
-          </h4>
-          <v-divider />
-        </v-col>
-        <v-col cols="12"
-          ><v-textarea label="Notes" variant="outlined" rows="3" hide-details
-        /></v-col>
-      </v-row>
+      <toggle-content
+        :toggled="activeDisabilities?.length === 0"
+        message="The disability profile for this student is not set yet."
+      >
+        <student-disability-disabilities
+          :student-id="studentId"
+          v-model="activeDisabilities"
+          :read-only="true"
+        />
+      </toggle-content>
     </content-group>
   </body-header-container>
+  <confirm-modal
+    title="Delete draft"
+    ref="deleteDraftModal"
+    ok-label="Delete draft"
+    text="Are you sure you want to delete the draft disability profile?"
+  />
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
-import StudentDisabilityProfileDisability from "@/components/common/students/StudentDisabilityProfileDisability.vue";
+import { defineComponent, ref, watchEffect } from "vue";
+import StudentDisabilityDisabilities from "@/components/common/students/StudentDisabilityDisabilities.vue";
+import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import { useRouter } from "vue-router";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
+import { DisabilityProfileStatus, StudentDisability } from "@/types";
+import { DisabilityProfileService } from "@/services/DisabilityProfileService";
+import { StudentDisabilityProfileAPIOutDTO } from "@/services/http/dto";
+import { ModalDialog, useSnackBar } from "@/composables";
 
 export default defineComponent({
-  components: { StudentDisabilityProfileDisability },
+  components: { StudentDisabilityDisabilities, ConfirmModal },
   props: {
     studentId: {
       type: Number,
@@ -148,8 +72,14 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const snackBar = useSnackBar();
+    const deleteDraftModal = ref({} as ModalDialog<boolean>);
     const hasSecondaryDisability = ref(false);
     const router = useRouter();
+    const activeDisabilities = ref<StudentDisability[]>([]);
+    const activeProfile = ref<StudentDisabilityProfileAPIOutDTO>();
+    const draftProfile = ref<StudentDisabilityProfileAPIOutDTO>();
+    const archivedProfiles = ref<StudentDisabilityProfileAPIOutDTO[]>([]);
 
     const onSecondaryDisabilityChanged = (value: boolean) => {
       hasSecondaryDisability.value = value;
@@ -160,14 +90,85 @@ export default defineComponent({
         name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE_DISABILITY_EDIT,
         params: {
           studentId: props.studentId,
+          disabilityProfileId: activeProfile.value?.id,
         },
       });
     };
+
+    const viewDraft = () => {
+      router.push({
+        name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE_DISABILITY_EDIT,
+        params: {
+          studentId: props.studentId,
+          disabilityProfileId: draftProfile.value?.id,
+        },
+      });
+    };
+
+    const deleteDraft = async () => {
+      const confirmed = await deleteDraftModal.value.showModal();
+      if (!confirmed) {
+        return;
+      }
+      try {
+        await DisabilityProfileService.shared.deleteDraftProfile(
+          props.studentId,
+          draftProfile.value!.id,
+        );
+        snackBar.success("Draft deleted successfully.");
+        await loadProfiles();
+      } catch {
+        snackBar.error(
+          "An unexpected error occurred while deleting the draft disability profile.",
+        );
+      }
+    };
+
+    let nextUniqueKey = 1;
+
+    const loadProfiles = async () => {
+      try {
+        const { profiles } =
+          await DisabilityProfileService.shared.getStudentDisabilityProfiles(
+            props.studentId,
+          );
+        activeProfile.value = profiles.find(
+          (profile) => profile.status === DisabilityProfileStatus.Active,
+        );
+        draftProfile.value = profiles.find(
+          (profile) => profile.status === DisabilityProfileStatus.Draft,
+        );
+        archivedProfiles.value = profiles.filter(
+          (profile) => profile.status === DisabilityProfileStatus.Archived,
+        );
+        activeDisabilities.value = activeProfile.value
+          ? activeProfile.value.disabilities.map((disability) => ({
+              ...disability,
+              uniqueKey: nextUniqueKey++,
+            }))
+          : [];
+      } catch {
+        snackBar.error(
+          "An unexpected error occurred while loading the student's disability profiles.",
+        );
+      }
+    };
+
+    watchEffect(async () => {
+      await loadProfiles();
+    });
 
     return {
       hasSecondaryDisability,
       onSecondaryDisabilityChanged,
       editProfile,
+      viewDraft,
+      deleteDraft,
+      deleteDraftModal,
+      activeProfile,
+      draftProfile,
+      archivedProfiles,
+      activeDisabilities,
     };
   },
 });

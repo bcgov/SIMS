@@ -85,6 +85,7 @@ export default defineComponent({
         return;
       }
       const payload: SaveStudentDisabilityProfileAPIInDTO = {
+        id: props.disabilityProfileId,
         disabilities: disabilities.value.map((disability) => ({
           id: disability.id,
           disabilityPriority: disability.disabilityPriority,

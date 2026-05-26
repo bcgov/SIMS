@@ -74,4 +74,19 @@ export class DisabilityProfileService {
       saveStudentDisabilities,
     );
   }
+
+  /**
+   * Deletes a disability profile for the student. Only draft profiles can be deleted.
+   * @param studentId ID of the student.
+   * @param disabilityProfileId ID of the disability profile to be deleted.
+   */
+  async deleteDraftProfile(
+    studentId: number,
+    disabilityProfileId: number,
+  ): Promise<void> {
+    await ApiClient.DisabilityProfileApi.deleteDraftProfile(
+      studentId,
+      disabilityProfileId,
+    );
+  }
 }

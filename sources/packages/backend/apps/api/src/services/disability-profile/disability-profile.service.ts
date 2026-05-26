@@ -102,6 +102,12 @@ export class DisabilityProfileService {
         select: {
           id: true,
           disabilityProfileStatus: true,
+          disabilities: {
+            id: true,
+          },
+        },
+        relations: {
+          disabilities: true,
         },
         where: {
           student: {
@@ -160,6 +166,12 @@ export class DisabilityProfileService {
           select: {
             id: true,
             disabilityProfileStatus: true,
+            disabilities: {
+              id: true,
+            },
+          },
+          relations: {
+            disabilities: true,
           },
           where: {
             student: {
@@ -303,6 +315,29 @@ export class DisabilityProfileService {
           );
         }
       }
+    }
+  }
+
+  async deleteDraftProfile(
+    studentId: number,
+    disabilityProfileId: number,
+    auditUserId: number,
+  ): Promise<void> {
+    const now = new Date();
+    const auditUser = { id: auditUserId } as User;
+    const result = await this.studentDisabilityProfileRepo.update(
+      {
+        id: disabilityProfileId,
+        student: { id: studentId },
+        disabilityProfileStatus: DisabilityProfileStatus.Draft,
+      },
+      { deletedAt: now, modifier: auditUser, updatedAt: now },
+    );
+    if (!result.affected) {
+      throw new CustomNamedError(
+        `Draft disability profile not found for student ID ${studentId}`,
+        DISABILITY_PROFILE_DRAFT_NOT_FOUND,
+      );
     }
   }
 }

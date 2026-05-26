@@ -235,9 +235,9 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE_DISABILITY_EDIT,
         props: (route) => ({
           studentId: Number.parseInt(route.params.studentId as string),
-          disabilityProfileId: Number.parseInt(
-            route.params.disabilityProfileId as string,
-          ),
+          disabilityProfileId: route.params.disabilityProfileId
+            ? Number.parseInt(route.params.disabilityProfileId as string)
+            : undefined,
         }),
         component: DisabilityProfileDisabilityEdit,
         meta: {

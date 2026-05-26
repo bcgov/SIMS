@@ -71,4 +71,20 @@ export class DisabilityProfileApi extends HttpBaseClient {
       saveStudentDisabilities,
     );
   }
+
+  /**
+   * Deletes a disability profile for the student. Only draft profiles can be deleted.
+   * @param studentId ID of the student.
+   * @param disabilityProfileId ID of the disability profile to be deleted.
+   */
+  async deleteDraftProfile(
+    studentId: number,
+    disabilityProfileId: number,
+  ): Promise<void> {
+    await this.deleteCall(
+      this.addClientRoot(
+        `disability-profile/student/${studentId}/disability-profile/${disabilityProfileId}`,
+      ),
+    );
+  }
 }

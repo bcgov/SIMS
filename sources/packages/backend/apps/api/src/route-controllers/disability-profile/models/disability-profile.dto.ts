@@ -41,6 +41,9 @@ export class StudentDisabilityProfilesAPIOutDTO {
 }
 
 export class StudentDisabilityAPIInDTO {
+  @IsOptional()
+  @IsPositive()
+  id?: number;
   @Min(1)
   @Max(100)
   disabilityPriority: number;
@@ -77,7 +80,7 @@ export class SaveStudentDisabilityProfileAPIInDTO {
    */
   @IsOptional()
   @IsPositive()
-  disabilityProfileId?: number;
+  id?: number;
   @ArrayMinSize(1)
   @ArrayMaxSize(100)
   @ValidateNested({ each: true })

@@ -1,15 +1,17 @@
 <template>
-  <student-disability-profile-disability
-    v-for="(disability, index) in disabilities"
-    :key="disability.uniqueKey"
-    :student-id="studentId"
-    v-model="disabilities[index]"
-    :max-disability-priority="disabilities.length"
-    :read-only="readOnly"
-    @move-up="moveDisability(index, 'up')"
-    @move-down="moveDisability(index, 'down')"
-    @delete-disability="deleteDisability(index)"
-  />
+  <v-expansion-panels class="mt-5" multiple>
+    <student-disability-profile-disability
+      v-for="(disability, index) in disabilities"
+      :key="disability.uniqueKey"
+      :student-id="studentId"
+      v-model="disabilities[index]"
+      :max-disability-priority="disabilities.length"
+      :read-only="readOnly"
+      @move-up="moveDisability(index, 'up')"
+      @move-down="moveDisability(index, 'down')"
+      @delete-disability="deleteDisability(index)"
+    />
+  </v-expansion-panels>
   <v-row class="mt-2" v-if="!readOnly" justify="end">
     <v-col cols="auto">
       <v-btn
@@ -49,7 +51,8 @@ export default defineComponent({
     },
     modelValue: {
       type: Array as () => StudentDisability[],
-      required: true,
+      required: false,
+      default: undefined,
     },
   },
   emits: ["update:modelValue"],
@@ -60,7 +63,7 @@ export default defineComponent({
      * even for disabilities that haven't been saved to the server yet (and thus don't have an id).
      */
     let nextUniqueKey = 1;
-    const disabilities = ref<StudentDisability[]>(props.modelValue);
+    const disabilities = ref<StudentDisability[]>(props.modelValue || []);
 
     // Notify the parent whenever the disabilities list or any of its items change,
     // allowing the parent to collect the current state for submission via v-model.
@@ -130,7 +133,7 @@ export default defineComponent({
     };
 
     watchEffect(async () => {
-      if (!props.disabilityProfileId) {
+      if (!props.disabilityProfileId && !props.readOnly) {
         disabilities.value = [
           {
             uniqueKey: nextUniqueKey++,
@@ -142,6 +145,9 @@ export default defineComponent({
             impairments: [],
           },
         ];
+        return;
+      }
+      if (!props.disabilityProfileId) {
         return;
       }
       const disabilityProfile =
