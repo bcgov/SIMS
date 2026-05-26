@@ -123,7 +123,7 @@ patroni:
       max_wal_size: 1GB # default is 1GB
       max_slot_wal_keep_size: 128MB # default is -1, allowing unlimited wal growth when replicas fall behind
       max_connections: 125 # default is 100
-      shared_preload_libraries: "pg_stat_statements,pgmonitor_bgw" # specify any libraries that need to be preloaded. Separate multiple libraries with a comma. For example: "pg_stat_statements,auto_explain"
+      shared_preload_libraries: '"pg_stat_statements,pgmonitor_bgw"' # specify any libraries that need to be preloaded. Separate multiple libraries with a comma. For example: "pg_stat_statements,auto_explain"
       pgmonitor_bgw.dbname: "simsdb"
 
 proxy:
