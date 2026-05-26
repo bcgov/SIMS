@@ -55,3 +55,4 @@ export * from "@/types/contracts/SystemLookupConfiguration";
 export * from "@/types/contracts/FormSubmissionContracts";
 export * from "@/types/RouteNavigation";
 export * from "@/types/contracts/StudentDisabilityProfile";
+export * from "@/types/contracts/DisabilityProfile";

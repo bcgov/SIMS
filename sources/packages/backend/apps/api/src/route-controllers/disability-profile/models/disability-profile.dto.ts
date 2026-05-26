@@ -1,17 +1,48 @@
+import { DisabilityProfileStatus } from "@sims/sims-db";
 import { Type } from "class-transformer";
 import {
   ArrayMinSize,
   ArrayMaxSize,
-  ValidateNested,
-  Length,
   MaxLength,
   IsNotEmpty,
   IsOptional,
   IsPositive,
+  IsString,
+  ValidateNested,
+  Min,
+  Max,
 } from "class-validator";
 
+export class StudentDisabilityAPIOutDTO {
+  id: number;
+  disabilityPriority: number;
+  disabilityCategory: string;
+  disabilityType: string;
+  diagnosis: string;
+  diagnosisNotes?: string;
+  impairments: string[];
+  disabilityNotes?: string;
+  impairmentsNotes?: string;
+  additionalNotes?: string;
+}
+
+export class StudentDisabilityProfileAPIOutDTO {
+  id: number;
+  status: DisabilityProfileStatus;
+  disabilities: StudentDisabilityAPIOutDTO[];
+  creator: string;
+  createdAt: Date;
+  modifier?: string;
+  updatedAt?: Date;
+}
+
+export class StudentDisabilityProfilesAPIOutDTO {
+  profiles: StudentDisabilityProfileAPIOutDTO[];
+}
+
 export class StudentDisabilityAPIInDTO {
-  @Length(1, 100)
+  @Min(1)
+  @Max(100)
   disabilityPriority: number;
   @IsNotEmpty()
   @MaxLength(100)
@@ -22,17 +53,20 @@ export class StudentDisabilityAPIInDTO {
   @IsNotEmpty()
   @MaxLength(250)
   diagnosis: string;
+  @IsOptional()
   @MaxLength(1000)
   diagnosisNotes?: string;
   @ArrayMinSize(1)
   @ArrayMaxSize(100)
-  @ValidateNested({ each: true })
-  @Type(() => String)
+  @IsString({ each: true })
   impairments: string[];
+  @IsOptional()
   @MaxLength(1000)
   disabilityNotes?: string;
+  @IsOptional()
   @MaxLength(1000)
   impairmentsNotes?: string;
+  @IsOptional()
   @MaxLength(1000)
   additionalNotes?: string;
 }

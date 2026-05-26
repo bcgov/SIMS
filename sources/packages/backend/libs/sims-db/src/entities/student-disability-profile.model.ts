@@ -3,6 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
@@ -54,12 +55,13 @@ export class StudentDisabilityProfile extends RecordDataModel {
   /**
    * Disabilities associated with this profile.
    */
-  @ManyToOne(() => StudentDisabilityProfileDisability, {
-    cascade: ["insert", "update"],
-  })
-  @JoinColumn({
-    name: "id",
-    referencedColumnName: "studentDisabilityProfileId",
-  })
+  @OneToMany(
+    () => StudentDisabilityProfileDisability,
+    (studentDisabilityProfileDisability) =>
+      studentDisabilityProfileDisability.studentDisabilityProfile,
+    {
+      cascade: ["insert", "update"],
+    },
+  )
   disabilities: StudentDisabilityProfileDisability[];
 }

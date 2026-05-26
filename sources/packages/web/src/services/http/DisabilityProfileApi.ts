@@ -1,10 +1,42 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
-import { SaveStudentDisabilityProfileAPIInDTO } from "@/services/http/dto";
+import {
+  SaveStudentDisabilityProfileAPIInDTO,
+  StudentDisabilityProfileAPIOutDTO,
+  StudentDisabilityProfilesAPIOutDTO,
+} from "@/services/http/dto";
 
 /**
  * Http API client for Student Disability Profiles.
  */
 export class DisabilityProfileApi extends HttpBaseClient {
+  /**
+   * Retrieves the disability profiles for the student.
+   * @param studentId ID of the student.
+   */
+  async getStudentDisabilityProfiles(
+    studentId: number,
+  ): Promise<StudentDisabilityProfilesAPIOutDTO> {
+    return this.getCall(
+      this.addClientRoot(`disability-profile/student/${studentId}`),
+    );
+  }
+
+  /**
+   * Retrieves a specific disability profile for the student.
+   * @param studentId ID of the student.
+   * @param disabilityProfileId ID of the disability profile.
+   */
+  async getStudentDisabilityProfile(
+    studentId: number,
+    disabilityProfileId: number,
+  ): Promise<StudentDisabilityProfileAPIOutDTO> {
+    return this.getCall(
+      this.addClientRoot(
+        `disability-profile/student/${studentId}/disability-profile/${disabilityProfileId}`,
+      ),
+    );
+  }
+
   /**
    * Updates an existing disability draft profile for the student, or creates a new one if it doesn't exist.
    * Only one draft profile can exist for a student at a time.

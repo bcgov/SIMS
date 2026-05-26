@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { StudentDisabilityModel } from "./disability-profile.models";
 import {
   DisabilityProfileStatus,
@@ -19,13 +19,68 @@ import {
   DISABILITY_PROFILE_INVALID_IMPAIRMENT,
   DISABILITY_PROFILE_INVALID_PRIORITY,
 } from "../../constants";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class DisabilityProfileService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly systemLookupConfigurationService: SystemLookupConfigurationService,
+    @InjectRepository(StudentDisabilityProfile)
+    private readonly studentDisabilityProfileRepo: Repository<StudentDisabilityProfile>,
   ) {}
+
+  async getStudentDisabilityProfiles(
+    studentId: number,
+    options?: { disabilityProfileId?: number },
+  ): Promise<StudentDisabilityProfile[] | null> {
+    return this.studentDisabilityProfileRepo.find({
+      select: {
+        id: true,
+        disabilityProfileStatus: true,
+        disabilities: {
+          id: true,
+          disabilityPriority: true,
+          disabilityCategory: true,
+          disabilityType: true,
+          disabilityNotes: true,
+          impairments: true,
+          impairmentsNotes: true,
+          diagnosis: true,
+          diagnosisNotes: true,
+          additionalNotes: true,
+        },
+        creator: {
+          id: true,
+          firstName: true,
+          lastName: true,
+        },
+        createdAt: true,
+        modifier: {
+          id: true,
+          firstName: true,
+          lastName: true,
+        },
+        updatedAt: true,
+      },
+      relations: {
+        disabilities: true,
+        creator: true,
+        modifier: true,
+      },
+      where: {
+        student: {
+          id: studentId,
+        },
+        id: options?.disabilityProfileId,
+      },
+      order: {
+        disabilities: {
+          disabilityPriority: "ASC",
+        },
+      },
+    });
+  }
 
   async saveDraftProfile(
     studentId: number,
@@ -55,10 +110,7 @@ export class DisabilityProfileService {
           disabilityProfileStatus: DisabilityProfileStatus.Draft,
         },
       });
-      if (
-        disabilityProfileId &&
-        disabilityProfile?.id !== disabilityProfileId
-      ) {
+      if (disabilityProfile?.id !== disabilityProfileId) {
         throw new CustomNamedError(
           `The provided draft disability profile ID ${disabilityProfileId} does not match the existing draft profile ID.`,
           DISABILITY_PROFILE_DRAFT_NOT_FOUND,
@@ -173,19 +225,26 @@ export class DisabilityProfileService {
     auditUser: User,
     now: Date,
   ): StudentDisabilityProfileDisability[] {
-    return disabilitiesToSave.map((disability) => {
-      const newDisability = new StudentDisabilityProfileDisability();
-      newDisability.disabilityType = disability.disabilityType;
-      newDisability.disabilityCategory = disability.disabilityCategory;
-      newDisability.impairments = disability.impairments;
-      if (existingDisabilities?.find((d) => d.id === disability.id)) {
-        newDisability.modifier = auditUser;
-        newDisability.updatedAt = now;
-        return newDisability;
+    return disabilitiesToSave.map((disabilitiesToSave) => {
+      const disability = new StudentDisabilityProfileDisability();
+      disability.diagnosis = disabilitiesToSave.diagnosis;
+      disability.diagnosisNotes = disabilitiesToSave.diagnosisNotes;
+      disability.disabilityPriority = disabilitiesToSave.disabilityPriority;
+      disability.disabilityType = disabilitiesToSave.disabilityType;
+      disability.disabilityCategory = disabilitiesToSave.disabilityCategory;
+      disability.impairments = disabilitiesToSave.impairments;
+      const existingDisability = existingDisabilities?.find(
+        (d) => d.id === disabilitiesToSave.id,
+      );
+      if (existingDisability) {
+        disability.id = existingDisability.id;
+        disability.modifier = auditUser;
+        disability.updatedAt = now;
+        return disability;
       }
-      newDisability.creator = auditUser;
-      newDisability.createdAt = now;
-      return newDisability;
+      disability.creator = auditUser;
+      disability.createdAt = now;
+      return disability;
     });
   }
 

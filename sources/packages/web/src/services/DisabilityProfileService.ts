@@ -1,5 +1,9 @@
 import ApiClient from "@/services/http/ApiClient";
-import { SaveStudentDisabilityProfileAPIInDTO } from "@/services/http/dto";
+import {
+  SaveStudentDisabilityProfileAPIInDTO,
+  StudentDisabilityProfileAPIOutDTO,
+  StudentDisabilityProfilesAPIOutDTO,
+} from "@/services/http/dto";
 
 export class DisabilityProfileService {
   // Share Instance
@@ -7,6 +11,33 @@ export class DisabilityProfileService {
 
   static get shared(): DisabilityProfileService {
     return this.instance || (this.instance = new this());
+  }
+
+  /**
+   * Retrieves the disability profiles for the student.
+   * @param studentId ID of the student.
+   */
+  async getStudentDisabilityProfiles(
+    studentId: number,
+  ): Promise<StudentDisabilityProfilesAPIOutDTO> {
+    return ApiClient.DisabilityProfileApi.getStudentDisabilityProfiles(
+      studentId,
+    );
+  }
+
+  /**
+   * Retrieves a specific disability profile for the student.
+   * @param studentId ID of the student.
+   * @param disabilityProfileId ID of the disability profile.
+   */
+  async getStudentDisabilityProfile(
+    studentId: number,
+    disabilityProfileId: number,
+  ): Promise<StudentDisabilityProfileAPIOutDTO> {
+    return ApiClient.DisabilityProfileApi.getStudentDisabilityProfile(
+      studentId,
+      disabilityProfileId,
+    );
   }
 
   /**

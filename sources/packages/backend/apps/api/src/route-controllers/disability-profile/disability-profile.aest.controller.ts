@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   NotFoundException,
   Param,
   ParseIntPipe,
@@ -23,7 +24,11 @@ import { ClientTypeBaseRoute } from "../../types";
 import { AuthorizedParties, IUserToken, Role, UserGroups } from "../../auth";
 import { CustomNamedError } from "@sims/utilities";
 import { DisabilityProfileService } from "../../services";
-import { SaveStudentDisabilityProfileAPIInDTO } from "./models/disability-profile.dto";
+import {
+  SaveStudentDisabilityProfileAPIInDTO,
+  StudentDisabilityProfileAPIOutDTO,
+  StudentDisabilityProfilesAPIOutDTO,
+} from "./models/disability-profile.dto";
 import {
   DISABILITY_PROFILE_DRAFT_NOT_FOUND,
   DISABILITY_PROFILE_INVALID_CATEGORY,
@@ -31,6 +36,7 @@ import {
   DISABILITY_PROFILE_INVALID_IMPAIRMENT,
   DISABILITY_PROFILE_INVALID_PRIORITY,
 } from "apps/api/src/constants/error-code.constants";
+import { getUserFullName } from "apps/api/src/utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -41,6 +47,86 @@ export class DisabilityProfileAESTController extends BaseController {
     private readonly disabilityProfileService: DisabilityProfileService,
   ) {
     super();
+  }
+
+  /**
+   * Retrieves the disability profiles for the student.
+   * @param studentId ID of the student.
+   */
+  @Get("student/:studentId")
+  async getStudentDisabilityProfiles(
+    @Param("studentId", ParseIntPipe) studentId: number,
+  ): Promise<StudentDisabilityProfilesAPIOutDTO> {
+    const studentProfiles =
+      await this.disabilityProfileService.getStudentDisabilityProfiles(
+        studentId,
+      );
+    return {
+      profiles:
+        studentProfiles?.map((profile) => ({
+          id: profile.id,
+          status: profile.disabilityProfileStatus,
+          disabilities: profile.disabilities.map((disability) => ({
+            id: disability.id,
+            disabilityPriority: disability.disabilityPriority,
+            disabilityCategory: disability.disabilityCategory,
+            disabilityType: disability.disabilityType,
+            diagnosis: disability.diagnosis,
+            diagnosisNotes: disability.diagnosisNotes,
+            impairments: disability.impairments,
+            disabilityNotes: disability.disabilityNotes,
+            impairmentsNotes: disability.impairmentsNotes,
+            additionalNotes: disability.additionalNotes,
+          })),
+          creator: getUserFullName(profile.creator),
+          createdAt: profile.createdAt,
+          modifier: getUserFullName(profile.modifier),
+          updatedAt: profile.updatedAt,
+        })) ?? [],
+    };
+  }
+
+  /**
+   * Retrieves a specific disability profile for the student.
+   * @param studentId ID of the student.
+   * @param disabilityProfileId ID of the disability profile.
+   */
+  @Get("student/:studentId/disability-profile/:disabilityProfileId")
+  async getStudentDisabilityProfile(
+    @Param("studentId", ParseIntPipe) studentId: number,
+    @Param("disabilityProfileId", ParseIntPipe) disabilityProfileId: number,
+  ): Promise<StudentDisabilityProfileAPIOutDTO> {
+    const profiles =
+      await this.disabilityProfileService.getStudentDisabilityProfiles(
+        studentId,
+        { disabilityProfileId },
+      );
+    if (!profiles?.length) {
+      throw new NotFoundException(
+        `Disability profile with ID ${disabilityProfileId} not found for the student.`,
+      );
+    }
+    const [profile] = profiles;
+    return {
+      id: profile.id,
+      status: profile.disabilityProfileStatus,
+      disabilities: profile.disabilities.map((disability) => ({
+        id: disability.id,
+        disabilityPriority: disability.disabilityPriority,
+        disabilityCategory: disability.disabilityCategory,
+        disabilityType: disability.disabilityType,
+        diagnosis: disability.diagnosis,
+        diagnosisNotes: disability.diagnosisNotes,
+        impairments: disability.impairments,
+        disabilityNotes: disability.disabilityNotes,
+        impairmentsNotes: disability.impairmentsNotes,
+        additionalNotes: disability.additionalNotes,
+      })),
+      creator: getUserFullName(profile.creator),
+      createdAt: profile.createdAt,
+      modifier: getUserFullName(profile.modifier),
+      updatedAt: profile.updatedAt,
+    };
   }
 
   /**
