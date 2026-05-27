@@ -148,6 +148,33 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
       .expect(HttpStatus.BAD_REQUEST);
   });
 
+  it("Should throw bad request error when submitting CSLP.", async () => {
+    // Arrange
+    const student = await studentRepo.save(createFakeStudent());
+    const endpoint = `/aest/overaward/student/${student.id}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({
+        awardValueCode: "CSLP",
+        overawardValue: 500,
+        overawardNotes: "Overaward notes...",
+      })
+      .auth(
+        await getAESTToken(AESTGroups.BusinessAdministrators),
+        BEARER_AUTH_TYPE,
+      )
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message: [
+          "awardValueCode must be one of the following values: CSLF, BCSL",
+        ],
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
+  });
+
   afterAll(async () => {
     await app?.close();
   });

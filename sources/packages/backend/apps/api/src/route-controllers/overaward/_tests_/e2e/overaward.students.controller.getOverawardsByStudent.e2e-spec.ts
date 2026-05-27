@@ -66,10 +66,10 @@ describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
     );
     application.currentAssessment = studentAssessment;
     await applicationRepo.save(application);
-    // Create an overaward.
+    // Create a reassessment CSLF overaward.
     const reassessmentOveraward = createFakeDisbursementOveraward({ student });
     reassessmentOveraward.studentAssessment = studentAssessment;
-    reassessmentOveraward.disbursementValueCode = "CSLP";
+    reassessmentOveraward.disbursementValueCode = "CSLF";
     reassessmentOveraward.overawardValue = 500;
     reassessmentOveraward.originType =
       DisbursementOverawardOriginType.ReassessmentOveraward;
@@ -77,15 +77,22 @@ describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
     const savedReassessmentOveraward = await disbursementOverawardRepo.save(
       reassessmentOveraward,
     );
-    // Create a manual overaward deduction.
+    // Create a manual CSLF overaward deduction.
     const manualOveraward = createFakeDisbursementOveraward({ student });
-    manualOveraward.disbursementValueCode = "CSLP";
+    manualOveraward.disbursementValueCode = "CSLF";
     manualOveraward.overawardValue = -123;
     manualOveraward.originType = DisbursementOverawardOriginType.ManualRecord;
     manualOveraward.addedDate = new Date();
-    const savedManualOveraward = await disbursementOverawardRepo.save(
-      manualOveraward,
-    );
+    const savedManualOveraward =
+      await disbursementOverawardRepo.save(manualOveraward);
+
+    // Create an award deducted CSLP overaward. CSLP should not be returned in the overawards.
+    const awardDeductedCSLP = createFakeDisbursementOveraward({ student });
+    awardDeductedCSLP.disbursementValueCode = "CSLP";
+    awardDeductedCSLP.overawardValue = 300;
+    awardDeductedCSLP.originType =
+      DisbursementOverawardOriginType.AwardDeducted;
+    await disbursementOverawardRepo.save(awardDeductedCSLP);
 
     const endpoint = "/students/overaward";
 
@@ -96,14 +103,14 @@ describe("OverawardStudentsController(e2e)-getOverawardsByStudent", () => {
       .expect(HttpStatus.OK)
       .expect([
         {
-          dateAdded: savedManualOveraward.addedDate.toISOString(),
+          dateAdded: savedManualOveraward.addedDate!.toISOString(),
           createdAt: savedManualOveraward.createdAt.toISOString(),
           overawardOrigin: savedManualOveraward.originType,
           awardValueCode: savedManualOveraward.disbursementValueCode,
           overawardValue: savedManualOveraward.overawardValue,
         },
         {
-          dateAdded: savedReassessmentOveraward.addedDate.toISOString(),
+          dateAdded: savedReassessmentOveraward.addedDate!.toISOString(),
           createdAt: savedReassessmentOveraward.createdAt.toISOString(),
           overawardOrigin: savedReassessmentOveraward.originType,
           awardValueCode: savedReassessmentOveraward.disbursementValueCode,

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { EntityManager, Repository, DataSource } from "typeorm";
+import { EntityManager, Repository, DataSource, In } from "typeorm";
 import {
   DisbursementOveraward,
   DisbursementOverawardOriginType,
@@ -7,12 +7,10 @@ import {
   Student,
   User,
 } from "@sims/sims-db";
-import {
-  AwardOverawardBalance,
-  StudentOverawardBalance,
-} from "./disbursement-overaward.models";
+import { StudentOverawardBalance } from "./disbursement-overaward.models";
 import { InjectRepository } from "@nestjs/typeorm";
 import { NoteSharedService } from "../note/note.shared.service";
+import { OVERAWARD_BALANCE_AWARDS } from "@sims/services/constants";
 
 /**
  * Service layer for Student Application disbursement schedules.
@@ -45,21 +43,27 @@ export class DisbursementOverawardService {
   /**
    * Sum the total overawards per value code (e.g. CSLF, BCSL) for the student,
    * and returns any positive or negative balance found.
-   * @param studentId student to get the balance.
-   * @param entityManager optionally used to execute the queries in the same transaction.
+   * @param studentIds students to get the balance.
+   * @param options options:
+   * - `awardTypes` optionally filter the balance results to specific award types (e.g. CSLF, BCSL).
+   * - `entityManager` optionally used to execute the queries in the same transaction.
    * @returns the sum of the overawards grouped by the award type and them by
    * the student ID. Only students with a non-zero balance will be returned.
    */
   async getOverawardBalance(
     studentIds: number[],
-    entityManager?: EntityManager,
+    options?: {
+      awardTypes?: string[];
+      entityManager?: EntityManager;
+    },
   ): Promise<StudentOverawardBalance> {
     const repo =
-      entityManager?.getRepository(DisbursementOveraward) ??
+      options?.entityManager?.getRepository(DisbursementOveraward) ??
       this.disbursementOverawardRepo;
     // This query supports up to 65000 students.
     const distinctStudentIds = [...new Set(studentIds)];
-    const totalAwards = await repo
+
+    const overawardQuery = repo
       .createQueryBuilder("disbursementOveraward")
       .select("student.id", "studentId")
       .addSelect("disbursementOveraward.disbursementValueCode", "valueCode")
@@ -67,19 +71,32 @@ export class DisbursementOverawardService {
       .innerJoin("disbursementOveraward.student", "student")
       .where("student.id IN (:...studentIds)", {
         studentIds: distinctStudentIds,
-      })
+      });
+
+    if (options?.awardTypes?.length) {
+      overawardQuery.andWhere(
+        "disbursementOveraward.disbursementValueCode IN (:...awardTypes)",
+        {
+          awardTypes: options.awardTypes,
+        },
+      );
+    }
+
+    overawardQuery
       .groupBy("student.id")
       .addGroupBy("disbursementOveraward.disbursementValueCode")
-      .having("SUM(disbursementOveraward.overawardValue) <> 0")
-      // The total is returned from DB as string, needs to be converted to a number,
-      // since overawardValue is defined as numeric in the DB.
-      .getRawMany<{ studentId: number; valueCode: string; total: string }>();
+      .having("SUM(disbursementOveraward.overawardValue) <> 0");
+    // The total is returned from DB as string, needs to be converted to a number,
+    // since overawardValue is defined as numeric in the DB.
+    const totalAwards = await overawardQuery.getRawMany<{
+      studentId: number;
+      valueCode: string;
+      total: string;
+    }>();
     const result: StudentOverawardBalance = {};
-    for (const totalAward of totalAwards) {
-      if (!result[totalAward.studentId]) {
-        result[totalAward.studentId] = {} as AwardOverawardBalance;
-      }
-      result[totalAward.studentId][totalAward.valueCode] = +totalAward.total;
+    for (const { studentId, valueCode, total } of totalAwards) {
+      const awardBalance = (result[studentId] ??= {});
+      awardBalance[valueCode] = +total;
     }
     return result;
   }
@@ -100,7 +117,7 @@ export class DisbursementOverawardService {
   }
 
   /**
-   * Get all overawards which belong to a student.
+   * Get BCSL and CSLF overawards which belong to a student.
    * @param studentId student.
    * @returns overaward details of a student.
    */
@@ -127,6 +144,7 @@ export class DisbursementOverawardService {
       },
       where: {
         student: { id: studentId },
+        disbursementValueCode: In(OVERAWARD_BALANCE_AWARDS),
       },
       order: {
         createdAt: "DESC",
