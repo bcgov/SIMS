@@ -2859,7 +2859,7 @@
             {
               "label": "Are you a resident of B.C.?",
               "optionsLabelPosition": "right",
-              "tooltip": "As a student you are a considered to be a resident of B.C. if one of the following criteria are met:\n\nB.C. is the province where you last lived for 12 continuous months, as of your study start date, not including months of full-time post-secondary study; or\n\nYou are an independent permanent resident, or designated as a protected person, living in B.C. at the time of application and will spend the study period in B.C. but have not lived in any one province for at least 12 continuous months. For example, if an independent student arrived in Canada as a permanent resident less than 12 months before the start date of classes, and intends to study in B.C., the student would be considered a resident of B.C. for student financial assistance purposes.",
+              "tooltip": "As a student, you are considered a resident of B.C. if any of the following criteria are met:\n\nB.C. is the province where you last lived for 12 continuous months, as of your study start date, not including months of full-time post-secondary study; or\n\nYou are an independent permanent resident, or designated as a protected person, living in B.C. at the time of application and will spend the study period in B.C. but have not lived in any one province for at least 12 continuous months. For example, if an independent student arrived in Canada as a permanent resident less than 12 months before the start date of classes, and intends to study in B.C., the student would be considered a resident of B.C. for student financial assistance purposes.\n\nEligible students who do not meet any of the previously mentioned residency criteria are considered residents of the province or territory in which they currently live.",
               "inline": false,
               "tableView": true,
               "values": [
@@ -2879,6 +2879,7 @@
                 "onlyAvailableItems": true,
                 "customMessage": "Have lived in B.C. for at least 12 consecutive months"
               },
+              "validateWhenHidden": false,
               "key": "bcResident",
               "attributes": {
                 "data-cy": "bcResident"
