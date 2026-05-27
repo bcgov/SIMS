@@ -65,10 +65,10 @@ import { ref } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import type { StudentDisability } from "@/types";
 import { SaveStudentDisabilityProfileAPIInDTO } from "@/services/http/dto";
-import StudentDisabilityDisabilities from "@/components/common/students/StudentDisabilityDisabilities.vue";
 import { DisabilityProfileService } from "@/services/DisabilityProfileService";
 import { ModalDialog, useSnackBar } from "@/composables";
 import { useRouter } from "vue-router";
+import StudentDisabilityDisabilities from "@/components/common/students/StudentDisabilityDisabilities.vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 
 interface Props {
@@ -106,12 +106,12 @@ const createPayload = (): SaveStudentDisabilityProfileAPIInDTO => ({
     diagnosisNotes: disability.diagnosisNotes,
     impairments: disability.impairments,
     impairmentsNotes: disability.impairmentsNotes,
-    additionalNotes: disability.additionalNotes,
+    finalNotes: disability.finalNotes,
   })),
 });
 
 const saveDraftProfile = async (): Promise<void> => {
-  const isValid = await disabilitiesComponent.value?.validatePanelForms();
+  const isValid = await disabilitiesComponent.value?.validateDisabilityForms();
   if (!isValid) {
     snackBar.warn(
       "Some mandatory fields are missing or contain invalid values. Please review the form and try again.",
@@ -142,7 +142,7 @@ const saveDraftProfile = async (): Promise<void> => {
 };
 
 const completeProfile = async (): Promise<void> => {
-  const isValid = await disabilitiesComponent.value?.validatePanelForms();
+  const isValid = await disabilitiesComponent.value?.validateDisabilityForms();
   if (!isValid) {
     snackBar.warn(
       "Some mandatory fields are missing or contain invalid values. Please review the form and try again.",

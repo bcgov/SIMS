@@ -18,12 +18,12 @@ export class StudentDisabilityAPIOutDTO {
   disabilityPriority: number;
   disabilityCategory: string;
   disabilityType: string;
-  diagnosis: string;
+  diagnosis: string[];
   diagnosisNotes?: string;
   impairments: string[];
   disabilityNotes?: string;
   impairmentsNotes?: string;
-  additionalNotes?: string;
+  finalNotes?: string;
 }
 
 export class StudentDisabilityProfileAPIOutDTO {
@@ -57,7 +57,8 @@ export class StudentDisabilityAPIInDTO {
   disabilityType: string;
   @IsNotEmpty()
   @MaxLength(250)
-  diagnosis: string;
+  @IsString({ each: true })
+  diagnosis: string[];
   @IsOptional()
   @MaxLength(1000)
   diagnosisNotes?: string;
@@ -73,7 +74,7 @@ export class StudentDisabilityAPIInDTO {
   impairmentsNotes?: string;
   @IsOptional()
   @MaxLength(1000)
-  additionalNotes?: string;
+  finalNotes?: string;
 }
 
 export class SaveStudentDisabilityProfileAPIInDTO {

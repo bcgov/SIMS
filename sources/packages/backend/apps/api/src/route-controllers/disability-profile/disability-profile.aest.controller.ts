@@ -80,7 +80,7 @@ export class DisabilityProfileAESTController extends BaseController {
             diagnosisNotes: disability.diagnosisNotes,
             impairments: disability.impairments,
             impairmentsNotes: disability.impairmentsNotes,
-            additionalNotes: disability.additionalNotes,
+            finalNotes: disability.finalNotes,
           })),
           creator: getUserFullName(profile.creator),
           createdAt: profile.createdAt,
@@ -126,7 +126,7 @@ export class DisabilityProfileAESTController extends BaseController {
         impairments: disability.impairments,
         disabilityNotes: disability.disabilityNotes,
         impairmentsNotes: disability.impairmentsNotes,
-        additionalNotes: disability.additionalNotes,
+        finalNotes: disability.finalNotes,
       })),
       creator: getUserFullName(profile.creator),
       createdAt: profile.createdAt,
@@ -143,7 +143,7 @@ export class DisabilityProfileAESTController extends BaseController {
    * disabilities and optionally the draft profile ID to be updated.
    */
   @Roles(Role.StudentEditDisabilityProfile)
-  @Put("student/:studentId/draft")
+  @Put("student/:studentId/draft") // Upsert
   @ApiNoContentResponse({
     description: "Draft disability profile not found for the student.",
   })

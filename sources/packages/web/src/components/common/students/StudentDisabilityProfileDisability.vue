@@ -1,13 +1,13 @@
 <template>
-  <v-expansion-panel
-    eager
-    :class="{ 'disability-panel-error': hasValidationErrors }"
-  >
+  <v-expansion-panel eager>
     <template #title>
-      <div class="d-flex align-center justify-space-between w-100">
+      <div class="d-flex align-center justify-space-between w-100 error">
         <div>
-          <span class="category-header-medium brand-gray-text">
-            {{ disabilityCategoryLabel }}
+          <span
+            class="category-header-medium"
+            :class="hasValidationErrors ? 'text-error' : 'brand-gray-text'"
+          >
+            {{ disabilityCategoryLabel }}{{ hasValidationErrors ? " *" : "" }}
           </span>
           <div>
             {{
@@ -50,7 +50,7 @@
       </div>
     </template>
     <v-expansion-panel-text>
-      <v-form ref="panelForm">
+      <v-form ref="disabilityForm">
         <content-group>
           <v-row dense>
             <v-col cols="12">
@@ -116,19 +116,82 @@
               <v-divider></v-divider
             ></v-col>
             <v-col cols="12"
-              ><v-text-field
-                v-model="diagnosisText"
-                :readonly="readOnly"
-                label="Diagnosis information"
-                placeholder="Enter diagnosis details..."
-                density="compact"
-                variant="outlined"
+              ><v-row dense>
+                <v-col>
+                  <v-text-field
+                    v-if="!readOnly"
+                    v-model="diagnosisEntryInput"
+                    :readonly="readOnly"
+                    label="Diagnosis information"
+                    placeholder="Enter diagnosis and click Add or press Enter"
+                    :persistent-placeholder="true"
+                    density="compact"
+                    variant="outlined"
+                    hide-details="auto"
+                    :rules="[
+                      (v) =>
+                        checkLengthRule(
+                          v,
+                          DIAGNOSIS_ENTRY_MAX_LENGTH,
+                          'Diagnosis information',
+                          false,
+                        ),
+                    ]"
+                    @keydown.enter.prevent="addDiagnosisEntry"
+                  />
+                </v-col>
+                <v-col cols="auto">
+                  <v-btn
+                    v-if="!readOnly"
+                    color="primary"
+                    variant="outlined"
+                    @click="addDiagnosisEntry"
+                  >
+                    Add
+                  </v-btn>
+                </v-col>
+              </v-row>
+
+              <v-table density="compact" class="mt-2">
+                <thead>
+                  <tr>
+                    <th class="text-left">Diagnosis entries</th>
+                    <th v-if="!readOnly" class="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-if="!diagnosisItems.length">
+                    <td
+                      :colspan="readOnly ? 1 : 2"
+                      class="text-medium-emphasis"
+                    >
+                      No diagnosis entries added.
+                    </td>
+                  </tr>
+                  <tr
+                    v-for="(diagnosisItem, index) in diagnosisItems"
+                    :key="`${diagnosisItem}-${index}`"
+                  >
+                    <td>{{ diagnosisItem }}</td>
+                    <td v-if="!readOnly" class="text-right pa-0">
+                      <v-btn
+                        color="error"
+                        variant="plain"
+                        size="large"
+                        @click="removeDiagnosisEntry(index)"
+                      >
+                        <v-icon>mdi-close</v-icon>
+                      </v-btn>
+                    </td>
+                  </tr>
+                </tbody>
+              </v-table>
+              <v-input
+                :model-value="diagnosisItems"
+                :rules="[validateDiagnosisItems]"
                 hide-details="auto"
-                :rules="[
-                  (v) =>
-                    checkLengthRule(v, 100, 'Diagnosis information', false),
-                ]"
-            /></v-col>
+              />
+            </v-col>
             <v-col cols="12"
               ><v-textarea
                 :readonly="readOnly"
@@ -211,7 +274,7 @@
             <v-col cols="12"
               ><v-textarea
                 :readonly="readOnly"
-                v-model="additionalNotes"
+                v-model="finalNotes"
                 label="Notes"
                 variant="outlined"
                 rows="3"
@@ -247,6 +310,7 @@ import {
 const OTHER_CATEGORY_KEY = "OTHER";
 const REGULAR_NOTE_MAX_LENGTH = 500;
 const ADDITIONAL_NOTE_MAX_LENGTH = 1000;
+const DIAGNOSIS_ENTRY_MAX_LENGTH = 100;
 
 interface Props {
   studentId: number;
@@ -268,7 +332,7 @@ const emit = defineEmits<{
 
 const snackBar = useSnackBar();
 const { checkNullOrEmptyRule, checkLengthRule } = useRules();
-const panelForm = ref({} as VForm);
+const disabilityForm = ref({} as VForm);
 const hasValidationErrors = ref(false);
 const isLookupLoaded = ref(false);
 const disabilityCategoryLookup = ref<SystemLookupEntryAPIOutDTO[]>();
@@ -279,11 +343,69 @@ const impairmentLookup = ref<SystemLookupEntryAPIOutDTO[]>();
 const selectedDisabilityCategory = ref(props.modelValue.disabilityCategory);
 const selectedDisabilityType = ref(props.modelValue.disabilityType);
 const disabilityNotes = ref(props.modelValue.disabilityNotes ?? "");
-const diagnosisText = ref(props.modelValue.diagnosis);
+const diagnosisItems = ref<string[]>(
+  props.modelValue.diagnosis ? [props.modelValue.diagnosis] : [],
+);
+const diagnosisEntryInput = ref("");
 const diagnosisNotes = ref(props.modelValue.diagnosisNotes ?? "");
 const selectedImpairments = ref<string[]>([...props.modelValue.impairments]);
 const impairmentsNotes = ref(props.modelValue.impairmentsNotes ?? "");
-const additionalNotes = ref(props.modelValue.additionalNotes ?? "");
+const finalNotes = ref(props.modelValue.finalNotes ?? "");
+
+/**
+ * Validates diagnosis entries ensuring each item stays within the allowed max length.
+ * @param diagnosisItems List of diagnosis entries from the combobox.
+ * @returns True when all entries are valid, otherwise an error message.
+ */
+const validateDiagnosisItems = (diagnosisItems: string[]): true | string => {
+  const hasInvalidItem = diagnosisItems.some(
+    (diagnosisItem) =>
+      checkLengthRule(
+        diagnosisItem,
+        DIAGNOSIS_ENTRY_MAX_LENGTH,
+        "Diagnosis information",
+        false,
+      ) !== true,
+  );
+
+  if (!hasInvalidItem) {
+    return true;
+  }
+
+  return `Each diagnosis entry must be ${DIAGNOSIS_ENTRY_MAX_LENGTH} characters or less.`;
+};
+
+/**
+ * Adds a diagnosis entry to the list after validation.
+ */
+const addDiagnosisEntry = (): void => {
+  const diagnosisEntry = diagnosisEntryInput.value.trim();
+  if (!diagnosisEntry) {
+    return;
+  }
+
+  const validationResult = checkLengthRule(
+    diagnosisEntry,
+    DIAGNOSIS_ENTRY_MAX_LENGTH,
+    "Diagnosis information",
+    false,
+  );
+  if (validationResult !== true) {
+    snackBar.error(validationResult as string);
+    return;
+  }
+
+  diagnosisItems.value.push(diagnosisEntry);
+  diagnosisEntryInput.value = "";
+};
+
+/**
+ * Removes one diagnosis entry by index.
+ * @param index Index of the entry to remove.
+ */
+const removeDiagnosisEntry = (index: number): void => {
+  diagnosisItems.value.splice(index, 1);
+};
 
 const disabilityCategoryLabel = computed(() => {
   const category = disabilityCategoryLookup.value?.find(
@@ -314,11 +436,11 @@ const emitUpdate = (): void => {
     disabilityCategory: selectedDisabilityCategory.value,
     disabilityType: selectedDisabilityType.value,
     disabilityNotes: disabilityNotes.value || undefined,
-    diagnosis: diagnosisText.value,
+    diagnosis: diagnosisItems.value,
     diagnosisNotes: diagnosisNotes.value || undefined,
     impairments: selectedImpairments.value,
     impairmentsNotes: impairmentsNotes.value || undefined,
-    additionalNotes: additionalNotes.value || undefined,
+    finalNotes: finalNotes.value || undefined,
   });
 };
 
@@ -327,11 +449,11 @@ watch(
     selectedDisabilityCategory,
     selectedDisabilityType,
     disabilityNotes,
-    diagnosisText,
+    diagnosisItems,
     diagnosisNotes,
     selectedImpairments,
     impairmentsNotes,
-    additionalNotes,
+    finalNotes,
   ],
   emitUpdate,
   { deep: true },
@@ -369,7 +491,7 @@ watchEffect(() => {
  * @returns True when panel form is valid.
  */
 const validatePanel = async (): Promise<boolean> => {
-  const validationResult = await panelForm.value.validate();
+  const validationResult = await disabilityForm.value.validate();
   hasValidationErrors.value = !validationResult.valid;
   return validationResult.valid;
 };
@@ -377,18 +499,12 @@ const validatePanel = async (): Promise<boolean> => {
 /**
  * Clears the panel validation highlight state.
  */
-const clearValidationPanelHighlight = (): void => {
+const clearValidation = (): void => {
   hasValidationErrors.value = false;
 };
 
 defineExpose({
   validatePanel,
-  clearValidationPanelHighlight,
+  clearValidation,
 });
 </script>
-
-<style scoped>
-.disability-panel-error :deep(.v-expansion-panel-title) {
-  background-color: rgba(var(--v-theme-error), 0.08) !important;
-}
-</style>

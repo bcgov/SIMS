@@ -6,9 +6,6 @@
           <span v-if="activeProfile">
             See below the current disability profile for this student.
           </span>
-          <span v-else-if="!draftProfile">
-            Click <b>Edit profile</b> to create a new disability profile.</span
-          >
         </template>
         <template #actions>
           <v-btn
@@ -16,7 +13,7 @@
             :disabled="!!draftProfile"
             color="primary"
             @click="editProfile"
-            >Edit profile</v-btn
+            >{{ activeProfile ? "Edit profile" : "Create profile" }}</v-btn
           >
         </template>
       </body-header>

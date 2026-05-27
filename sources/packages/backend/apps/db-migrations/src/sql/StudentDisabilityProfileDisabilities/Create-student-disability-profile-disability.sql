@@ -18,21 +18,25 @@ CREATE TABLE sims.student_disability_profile_disabilities(
     disability_type != 'OTHER'
     OR disability_notes IS NOT NULL
   ),
+  diagnosis varchar(100) [] NOT NULL,
+  diagnosis_notes VARCHAR(1000),
   impairments VARCHAR(100) [] NOT NULL,
   impairments_notes VARCHAR(1000),
-  diagnosis VARCHAR(250) NOT NULL,
-  diagnosis_notes VARCHAR(1000),
-  additional_notes VARCHAR(1000),
+  final_notes VARCHAR(1000),
   -- Audit columns.
+  deleted_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   creator INT NOT NULL REFERENCES sims.users(id),
-  modifier INT DEFAULT NULL REFERENCES sims.users(id),
-  CONSTRAINT student_disability_profile_id_disability_priority_unique UNIQUE (
-    student_disability_profile_id,
-    disability_priority
-  ) DEFERRABLE INITIALLY DEFERRED
+  modifier INT DEFAULT NULL REFERENCES sims.users(id)
 );
+
+CREATE UNIQUE INDEX student_disability_profile_id_disability_priority_unique ON sims.student_disability_profile_disabilities (
+  student_disability_profile_id,
+  disability_priority
+)
+WHERE
+  deleted_at IS NULL;
 
 COMMENT ON TABLE sims.student_disability_profile_disabilities IS 'Individual disability entries associated with a student disability profile.';
 
@@ -56,7 +60,9 @@ COMMENT ON COLUMN sims.student_disability_profile_disabilities.diagnosis IS 'Pri
 
 COMMENT ON COLUMN sims.student_disability_profile_disabilities.diagnosis_notes IS 'Additional notes related to the diagnosis.';
 
-COMMENT ON COLUMN sims.student_disability_profile_disabilities.additional_notes IS 'Any additional notes relevant to this disability entry.';
+COMMENT ON COLUMN sims.student_disability_profile_disabilities.final_notes IS 'Any additional notes relevant to this disability entry.';
+
+COMMENT ON COLUMN sims.student_disability_profile_disabilities.deleted_at IS 'Timestamp when the disability entry was soft-deleted. Intended to be used only when a draft disability profile is being updated.';
 
 COMMENT ON COLUMN sims.student_disability_profile_disabilities.created_at IS 'Record creation timestamp.';
 
@@ -66,4 +72,4 @@ COMMENT ON COLUMN sims.student_disability_profile_disabilities.creator IS 'Creat
 
 COMMENT ON COLUMN sims.student_disability_profile_disabilities.modifier IS 'Modifier of the record.';
 
-COMMENT ON CONSTRAINT student_disability_profile_id_disability_priority_unique ON sims.student_disability_profile_disabilities IS 'Ensures each disability priority value is unique within a given disability profile. The primary disability must have a priority of 1, and any additional disabilities must have incrementing priority values (e.g. 2, 3, etc.) without gaps.';
+COMMENT ON INDEX sims.student_disability_profile_id_disability_priority_unique IS 'Ensures each disability priority value is unique within a given disability profile only for active (non-deleted) records. The primary disability must have a priority of 1, and any additional disabilities must have incrementing priority values (e.g. 2, 3, etc.) without gaps.';

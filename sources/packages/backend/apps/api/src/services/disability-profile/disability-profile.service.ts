@@ -54,7 +54,7 @@ export class DisabilityProfileService {
           impairmentsNotes: true,
           diagnosis: true,
           diagnosisNotes: true,
-          additionalNotes: true,
+          finalNotes: true,
         },
         creator: {
           id: true,
@@ -248,30 +248,48 @@ export class DisabilityProfileService {
     auditUser: User,
     now: Date,
   ): StudentDisabilityProfileDisability[] {
-    return disabilitiesToSave.map((disabilitiesToSave) => {
+    const updatedDisabilities: StudentDisabilityProfileDisability[] = [];
+    for (const disabilityToSave of disabilitiesToSave ?? []) {
+      // Upsert all disabilities included in the request.
       const disability = new StudentDisabilityProfileDisability();
-      disability.disabilityPriority = disabilitiesToSave.disabilityPriority;
-      disability.disabilityCategory = disabilitiesToSave.disabilityCategory;
-      disability.disabilityType = disabilitiesToSave.disabilityType;
-      disability.disabilityNotes = disabilitiesToSave.disabilityNotes;
-      disability.diagnosis = disabilitiesToSave.diagnosis;
-      disability.diagnosisNotes = disabilitiesToSave.diagnosisNotes;
-      disability.impairments = disabilitiesToSave.impairments;
-      disability.impairmentsNotes = disabilitiesToSave.impairmentsNotes;
-      disability.additionalNotes = disabilitiesToSave.additionalNotes;
+      disability.disabilityPriority = disabilityToSave.disabilityPriority;
+      disability.disabilityCategory = disabilityToSave.disabilityCategory;
+      disability.disabilityType = disabilityToSave.disabilityType;
+      disability.disabilityNotes = disabilityToSave.disabilityNotes;
+      disability.diagnosis = disabilityToSave.diagnosis;
+      disability.diagnosisNotes = disabilityToSave.diagnosisNotes;
+      disability.impairments = disabilityToSave.impairments;
+      disability.impairmentsNotes = disabilityToSave.impairmentsNotes;
+      disability.finalNotes = disabilityToSave.finalNotes;
       const existingDisability = existingDisabilities?.find(
-        (d) => d.id === disabilitiesToSave.id,
+        (d) => d.id === disabilityToSave.id,
       );
       if (existingDisability) {
         disability.id = existingDisability.id;
         disability.modifier = auditUser;
         disability.updatedAt = now;
-        return disability;
+      } else {
+        disability.creator = auditUser;
+        disability.createdAt = now;
       }
-      disability.creator = auditUser;
-      disability.createdAt = now;
-      return disability;
-    });
+      updatedDisabilities.push(disability);
+    }
+    if (!existingDisabilities) {
+      return updatedDisabilities;
+    }
+    // Check for disabilities that were removed in the update and mark them as deleted.
+    const updatedDisabilitiesIDs = updatedDisabilities.map(
+      (disability) => disability.id,
+    );
+    existingDisabilities
+      .filter((disability) => !updatedDisabilitiesIDs.includes(disability.id))
+      .forEach((disability) => {
+        disability.deletedAt = now;
+        disability.modifier = auditUser;
+        disability.updatedAt = now;
+        updatedDisabilities.push(disability);
+      });
+    return updatedDisabilities;
   }
 
   private validateDisabilitiesPriorities(

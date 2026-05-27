@@ -1,29 +1,34 @@
 <template>
-  <v-expansion-panels class="mt-5" multiple>
-    <student-disability-profile-disability
-      v-for="(disability, index) in disabilities"
-      :key="disability.uniqueKey"
-      :ref="(component) => setPanelComponentRef(component, index)"
-      :student-id="studentId"
-      v-model="disabilities[index]"
-      :max-disability-priority="disabilities.length"
-      :read-only="readOnly"
-      @move-up="moveDisability(index, 'up')"
-      @move-down="moveDisability(index, 'down')"
-      @delete-disability="deleteDisability(index)"
-    />
-  </v-expansion-panels>
-  <v-row class="mt-2" v-if="!readOnly" justify="end">
-    <v-col cols="auto">
-      <v-btn
-        prepend-icon="fas fa-plus"
-        color="primary"
-        variant="outlined"
-        @click="addDisability"
-        >Add new disability</v-btn
-      >
-    </v-col>
-  </v-row>
+  <v-skeleton-loader :loading="loading" type="list-item-three-line@3">
+    <v-expansion-panels class="mt-5" multiple>
+      <student-disability-profile-disability
+        v-for="(disability, index) in disabilities"
+        :key="disability.uniqueKey"
+        :ref="
+          (component) =>
+            setDisabilityComponentRef(component, disability.uniqueKey)
+        "
+        :student-id="studentId"
+        v-model="disabilities[index]"
+        :max-disability-priority="disabilities.length"
+        :read-only="readOnly"
+        @move-up="moveDisability(index, 'up')"
+        @move-down="moveDisability(index, 'down')"
+        @delete-disability="deleteDisability(index)"
+      />
+    </v-expansion-panels>
+    <v-row class="mt-2" v-if="!readOnly" justify="end">
+      <v-col cols="auto">
+        <v-btn
+          prepend-icon="fas fa-plus"
+          color="primary"
+          variant="outlined"
+          @click="addDisability"
+          >Add new disability</v-btn
+        >
+      </v-col>
+    </v-row>
+  </v-skeleton-loader>
 </template>
 
 <script setup lang="ts">
@@ -34,7 +39,7 @@ import StudentDisabilityProfileDisability from "@/components/common/students/Stu
 
 type DisabilityPanelComponent = {
   validatePanel: () => Promise<boolean>;
-  clearValidationPanelHighlight: () => void;
+  clearValidation: () => void;
 };
 
 interface Props {
@@ -61,22 +66,48 @@ const emit = defineEmits<{
  */
 let nextUniqueKey = 1;
 const disabilities = ref<StudentDisability[]>(props.modelValue || []);
-const panelComponentRefs = ref<DisabilityPanelComponent[]>([]);
+const disabilityComponentRefs = ref(
+  new Map<number, DisabilityPanelComponent>(),
+);
+const loading = ref(false);
+const uniqueKeysByDisabilityId = new Map<number, number>();
+
+/**
+ * Returns a stable local key for a persisted disability id.
+ * The same disability id always gets the same key to avoid unnecessary remounts.
+ * @param disabilityId persisted disability id.
+ * @returns Stable local key used by Vue v-for.
+ */
+const getStableUniqueKey = (disabilityId: number): number => {
+  const existingKey = uniqueKeysByDisabilityId.get(disabilityId);
+  if (existingKey) {
+    return existingKey;
+  }
+  const newKey = nextUniqueKey++;
+  uniqueKeysByDisabilityId.set(disabilityId, newKey);
+  return newKey;
+};
 
 onBeforeUpdate(() => {
-  panelComponentRefs.value = [];
+  disabilityComponentRefs.value.clear();
 });
 
 /**
- * Captures a panel component instance for later bulk validation.
- * @param component panel component instance.
- * @param index index in the disabilities array.
+ * Captures the disability component instance for later bulk validation.
+ * @param component disability component instance.
+ * @param uniqueKey stable disability key.
  */
-const setPanelComponentRef = (component: unknown, index: number): void => {
+const setDisabilityComponentRef = (
+  component: unknown,
+  uniqueKey: number,
+): void => {
   if (!component) {
     return;
   }
-  panelComponentRefs.value[index] = component as DisabilityPanelComponent;
+  disabilityComponentRefs.value.set(
+    uniqueKey,
+    component as DisabilityPanelComponent,
+  );
 };
 
 // Notify the parent whenever the disabilities list or any of its items change,
@@ -90,11 +121,11 @@ watch(disabilities, (value) => emit("update:modelValue", value), {
 watch(
   () => props.modelValue,
   (value) => {
-    if (value) {
+    if (value && value !== disabilities.value) {
       disabilities.value = value;
     }
   },
-  { deep: true },
+  { deep: false },
 );
 
 /**
@@ -102,7 +133,7 @@ watch(
  */
 const addDisability = (): void => {
   const newDisability: StudentDisability = {
-    uniqueKey: disabilities.value.length + 1,
+    uniqueKey: nextUniqueKey++,
     id: undefined,
     disabilityPriority: disabilities.value.length + 1,
     disabilityCategory: "",
@@ -164,13 +195,14 @@ const loadDisabilities = async (): Promise<void> => {
   if (!props.disabilityProfileId) {
     return;
   }
+  loading.value = true;
   const disabilityProfile =
     await DisabilityProfileService.shared.getStudentDisabilityProfile(
       props.studentId,
       props.disabilityProfileId,
     );
   disabilities.value = disabilityProfile.disabilities.map((disability) => ({
-    uniqueKey: nextUniqueKey++,
+    uniqueKey: getStableUniqueKey(disability.id),
     id: disability.id,
     disabilityPriority: disability.disabilityPriority,
     disabilityCategory: disability.disabilityCategory,
@@ -180,8 +212,9 @@ const loadDisabilities = async (): Promise<void> => {
     impairments: disability.impairments,
     disabilityNotes: disability.disabilityNotes,
     impairmentsNotes: disability.impairmentsNotes,
-    additionalNotes: disability.additionalNotes,
+    finalNotes: disability.finalNotes,
   }));
+  loading.value = false;
 };
 
 watchEffect(async () => {
@@ -190,25 +223,29 @@ watchEffect(async () => {
 
 /**
  * Validates every disability panel form and updates panel highlight colors.
- * @returns True when all panel forms are valid.
+ * @returns True when all disability forms are valid.
  */
-const validatePanelForms = async (): Promise<boolean> => {
-  const validationResults = await Promise.all(
-    panelComponentRefs.value.map((panelComponent) =>
-      panelComponent.validatePanel(),
-    ),
-  );
-  const isValid = validationResults.every((result) => result);
-  if (isValid) {
-    panelComponentRefs.value.forEach((panelComponent) => {
-      panelComponent.clearValidationPanelHighlight();
-    });
+const validateDisabilityForms = async (): Promise<boolean> => {
+  let isValid = true;
+  for (const disability of disabilities.value) {
+    const component = disabilityComponentRefs.value.get(disability.uniqueKey);
+    if (!component) {
+      continue;
+    }
+    const isComponentValid = await component.validatePanel();
+    if (isComponentValid) {
+      component.clearValidation();
+      continue;
+    }
+    if (isValid) {
+      isValid = false;
+    }
   }
   return isValid;
 };
 
 defineExpose({
   reloadData: loadDisabilities,
-  validatePanelForms,
+  validateDisabilityForms,
 });
 </script>

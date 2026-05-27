@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -84,8 +85,10 @@ export class StudentDisabilityProfileDisability extends RecordDataModel {
    */
   @Column({
     name: "diagnosis",
+    type: "varchar",
+    array: true,
   })
-  diagnosis: string;
+  diagnosis: string[];
   /**
    * Additional notes related to the diagnosis.
    */
@@ -98,8 +101,18 @@ export class StudentDisabilityProfileDisability extends RecordDataModel {
    * Any additional notes relevant to this disability entry.
    */
   @Column({
-    name: "additional_notes",
+    name: "final_notes",
     nullable: true,
   })
-  additionalNotes?: string;
+  finalNotes?: string;
+  /**
+   * Timestamp when the disability was soft-deleted.
+   * Intended to be used only when a draft disability profile is being updated.
+   */
+  @DeleteDateColumn({
+    name: "deleted_at",
+    type: "timestamptz",
+    nullable: true,
+  })
+  deletedAt?: Date;
 }

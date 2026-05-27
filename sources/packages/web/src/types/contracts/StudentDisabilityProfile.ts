@@ -7,10 +7,10 @@ export interface StudentDisability {
   disabilityPriority: number;
   disabilityCategory: string;
   disabilityType: string;
-  diagnosis: string;
+  diagnosis: string[];
   diagnosisNotes?: string;
   impairments: string[];
   disabilityNotes?: string;
   impairmentsNotes?: string;
-  additionalNotes?: string;
+  finalNotes?: string;
 }

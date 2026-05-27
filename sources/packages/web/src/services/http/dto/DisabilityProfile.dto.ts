@@ -5,12 +5,12 @@ export interface StudentDisabilityAPIOutDTO {
   disabilityPriority: number;
   disabilityCategory: string;
   disabilityType: string;
-  diagnosis: string;
+  diagnosis: string[];
   diagnosisNotes?: string;
   impairments: string[];
   disabilityNotes?: string;
   impairmentsNotes?: string;
-  additionalNotes?: string;
+  finalNotes?: string;
 }
 
 export interface StudentDisabilityProfileAPIOutDTO {
@@ -33,12 +33,12 @@ export interface StudentDisabilityAPIInDTO {
   disabilityPriority: number;
   disabilityCategory: string;
   disabilityType: string;
-  diagnosis: string;
+  diagnosis: string[];
   diagnosisNotes?: string;
   impairments: string[];
   disabilityNotes?: string;
   impairmentsNotes?: string;
-  additionalNotes?: string;
+  finalNotes?: string;
 }
 
 export interface SaveStudentDisabilityProfileAPIInDTO {
