@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pg-custom-bloat-queries
+  namespace: your-postgres-namespace
+data:
+  queries.yml: |
+    pg_table_bloat:
+      query: |
+        SELECT
+        schemaname,
+        relname AS tablename,
+        n_dead_tup AS deadtuples,
+        n_live_tup AS livetuples
+        FROM pg_stat_user_tables
+        where n_dead_tup > 0
+        ORDER BY n_dead_tup DESC LIMIT 20;
+      metrics:
+        - schemaname:
+            usage: "LABEL"
+            description: "Name of the schema"
+        - tablename:
+            usage: "LABEL"
+            description: "Name of the table"
+        - deadtuples:
+            usage: "GAUGE"
+            description: "Estimated dead tuples of the table"
+        - livetuples:
+            usage: "GAUGE"
+            description: "Estimated live tuples of the table"

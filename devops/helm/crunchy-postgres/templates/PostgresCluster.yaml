@@ -116,8 +116,9 @@ spec:
             memory: {{ .Values.pgmonitor.exporter.requests.memory }}
           limits:
             memory: {{ .Values.pgmonitor.exporter.limits.memory }}
-        args:
-          - "--collector.stat_checkpointer"
+        configuration:
+          - configMap:
+              name: pg-custom-bloat-queries
   {{ end }}
 
   backups:
