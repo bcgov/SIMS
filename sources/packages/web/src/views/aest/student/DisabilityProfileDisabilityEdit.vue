@@ -30,16 +30,15 @@
         </body-header>
       </template>
     </body-header-container>
-    <v-form ref="disabilitiesForm">
-      <content-group>
-        <student-disability-disabilities
-          :student-id="studentId"
-          :disability-profile-id="disabilityProfileId"
-          :read-only="readOnly"
-          v-model="disabilities"
-        />
-      </content-group>
-    </v-form>
+    <content-group>
+      <student-disability-disabilities
+        ref="disabilitiesComponent"
+        :student-id="studentId"
+        :disability-profile-id="disabilityProfileId"
+        :read-only="readOnly"
+        v-model="disabilities"
+      />
+    </content-group>
     <footer-buttons
       v-if="!readOnly"
       primary-label="Complete change"
@@ -61,11 +60,10 @@
     text="Are you sure you want to complete the change to the disability profile? This will make this version of the profile active."
   />
 </template>
-
-<script lang="ts">
-import { defineComponent, ref } from "vue";
+<script setup lang="ts">
+import { ref } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { StudentDisability, VForm } from "@/types";
+import type { StudentDisability } from "@/types";
 import { SaveStudentDisabilityProfileAPIInDTO } from "@/services/http/dto";
 import StudentDisabilityDisabilities from "@/components/common/students/StudentDisabilityDisabilities.vue";
 import { DisabilityProfileService } from "@/services/DisabilityProfileService";
@@ -73,153 +71,135 @@ import { ModalDialog, useSnackBar } from "@/composables";
 import { useRouter } from "vue-router";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 
-export default defineComponent({
-  components: { StudentDisabilityDisabilities, ConfirmModal },
-  props: {
-    studentId: {
-      type: Number,
-      required: true,
-    },
-    disabilityProfileId: {
-      type: Number,
-      required: false,
-      default: undefined,
-    },
-    readOnly: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    isDraft: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-  },
-  setup(props) {
-    const snackBar = useSnackBar();
-    const router = useRouter();
-    const disabilitiesForm = ref({} as VForm);
-    const disabilities = ref<StudentDisability[]>([]);
-    const deleteDraftModal = ref({} as ModalDialog<boolean>);
-    const completeChangeModal = ref({} as ModalDialog<boolean>);
+interface Props {
+  studentId: number;
+  disabilityProfileId?: number;
+  readOnly?: boolean;
+  isDraft?: boolean;
+}
 
-    const createPayload = (): SaveStudentDisabilityProfileAPIInDTO => ({
-      // Only include the id in the payload if it's a draft that must be updated to be active,
-      // otherwise the API will create a new active profile instead of updating the existing draft profile.
-      id: props.isDraft ? props.disabilityProfileId : undefined,
-      disabilities: disabilities.value.map((disability) => ({
-        id: disability.id,
-        disabilityPriority: disability.disabilityPriority,
-        disabilityCategory: disability.disabilityCategory,
-        disabilityType: disability.disabilityType,
-        disabilityNotes: disability.disabilityNotes,
-        diagnosis: disability.diagnosis,
-        diagnosisNotes: disability.diagnosisNotes,
-        impairments: disability.impairments,
-        impairmentsNotes: disability.impairmentsNotes,
-        additionalNotes: disability.additionalNotes,
-      })),
-    });
-
-    const saveDraftProfile = async (): Promise<void> => {
-      const validationResult = await disabilitiesForm.value.validate();
-      if (!validationResult.valid) {
-        return;
-      }
-      try {
-        const result = await DisabilityProfileService.shared.saveDraftProfile(
-          props.studentId,
-          createPayload(),
-        );
-        if (props.isDraft) {
-          snackBar.success("Draft saved successfully.");
-          return;
-        }
-        snackBar.success("Draft created successfully.");
-        await router.push({
-          name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE_DISABILITY_DRAFT,
-          params: {
-            studentId: props.studentId,
-            disabilityProfileId: result.id,
-          },
-        });
-      } catch {
-        snackBar.error("Unexpected error occurred while saving the draft.");
-      }
-    };
-
-    const completeProfile = async (): Promise<void> => {
-      const validationResult = await disabilitiesForm.value.validate();
-      if (!validationResult.valid) {
-        return;
-      }
-      const confirmed = await completeChangeModal.value.showModal();
-      if (!confirmed) {
-        return;
-      }
-      try {
-        await DisabilityProfileService.shared.saveActiveProfile(
-          props.studentId,
-          createPayload(),
-        );
-        snackBar.success("Profile completed successfully.");
-        await router.push({
-          name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE,
-          params: {
-            studentId: props.studentId,
-          },
-        });
-      } catch {
-        snackBar.error(
-          "Unexpected error occurred while completing the profile.",
-        );
-      }
-    };
-
-    const cancelProfile = async (): Promise<void> => {
-      if (!props.isDraft) {
-        await router.push({
-          name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE,
-          params: {
-            studentId: props.studentId,
-          },
-        });
-        return;
-      }
-      const confirmed = await deleteDraftModal.value.showModal();
-      if (!confirmed) {
-        return;
-      }
-      try {
-        await DisabilityProfileService.shared.deleteDraftProfile(
-          props.studentId,
-          props.disabilityProfileId!,
-        );
-        snackBar.success("Draft deleted successfully.");
-        await router.push({
-          name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE,
-          params: {
-            studentId: props.studentId,
-          },
-        });
-      } catch {
-        snackBar.error(
-          "An unexpected error occurred while deleting the draft disability profile.",
-        );
-      }
-    };
-
-    return {
-      disabilitiesForm,
-      disabilities,
-      saveDraftProfile,
-      cancelProfile,
-      completeProfile,
-      AESTRoutesConst,
-      deleteDraftModal,
-      completeChangeModal,
-    };
-  },
+const props = withDefaults(defineProps<Props>(), {
+  disabilityProfileId: undefined,
+  readOnly: false,
+  isDraft: false,
 });
+
+const snackBar = useSnackBar();
+const router = useRouter();
+const disabilitiesComponent =
+  ref<InstanceType<typeof StudentDisabilityDisabilities>>();
+const disabilities = ref<StudentDisability[]>([]);
+const deleteDraftModal = ref({} as ModalDialog<boolean>);
+const completeChangeModal = ref({} as ModalDialog<boolean>);
+
+const createPayload = (): SaveStudentDisabilityProfileAPIInDTO => ({
+  // Only include the id in the payload if it's a draft that must be updated to be active,
+  // otherwise the API will create a new active profile instead of updating the existing draft profile.
+  id: props.isDraft ? props.disabilityProfileId : undefined,
+  disabilities: disabilities.value.map((disability) => ({
+    id: disability.id,
+    disabilityPriority: disability.disabilityPriority,
+    disabilityCategory: disability.disabilityCategory,
+    disabilityType: disability.disabilityType,
+    disabilityNotes: disability.disabilityNotes,
+    diagnosis: disability.diagnosis,
+    diagnosisNotes: disability.diagnosisNotes,
+    impairments: disability.impairments,
+    impairmentsNotes: disability.impairmentsNotes,
+    additionalNotes: disability.additionalNotes,
+  })),
+});
+
+const saveDraftProfile = async (): Promise<void> => {
+  const isValid = await disabilitiesComponent.value?.validatePanelForms();
+  if (!isValid) {
+    snackBar.warn(
+      "Some mandatory fields are missing or contain invalid values. Please review the form and try again.",
+    );
+    return;
+  }
+  try {
+    const result = await DisabilityProfileService.shared.saveDraftProfile(
+      props.studentId,
+      createPayload(),
+    );
+    if (props.isDraft) {
+      await disabilitiesComponent.value?.reloadData();
+      snackBar.success("Draft saved successfully.");
+      return;
+    }
+    snackBar.success("Draft created successfully.");
+    await router.push({
+      name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE_DISABILITY_DRAFT,
+      params: {
+        studentId: props.studentId,
+        disabilityProfileId: result.id,
+      },
+    });
+  } catch {
+    snackBar.error("Unexpected error occurred while saving the draft.");
+  }
+};
+
+const completeProfile = async (): Promise<void> => {
+  const isValid = await disabilitiesComponent.value?.validatePanelForms();
+  if (!isValid) {
+    snackBar.warn(
+      "Some mandatory fields are missing or contain invalid values. Please review the form and try again.",
+    );
+    return;
+  }
+  const confirmed = await completeChangeModal.value.showModal();
+  if (!confirmed) {
+    return;
+  }
+  try {
+    await DisabilityProfileService.shared.saveActiveProfile(
+      props.studentId,
+      createPayload(),
+    );
+    snackBar.success("Profile completed successfully.");
+    await router.push({
+      name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE,
+      params: {
+        studentId: props.studentId,
+      },
+    });
+  } catch {
+    snackBar.error("Unexpected error occurred while completing the profile.");
+  }
+};
+
+const cancelProfile = async (): Promise<void> => {
+  if (!props.isDraft) {
+    await router.push({
+      name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE,
+      params: {
+        studentId: props.studentId,
+      },
+    });
+    return;
+  }
+  const confirmed = await deleteDraftModal.value.showModal();
+  if (!confirmed) {
+    return;
+  }
+  try {
+    await DisabilityProfileService.shared.deleteDraftProfile(
+      props.studentId,
+      props.disabilityProfileId!,
+    );
+    snackBar.success("Draft deleted successfully.");
+    await router.push({
+      name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE,
+      params: {
+        studentId: props.studentId,
+      },
+    });
+  } catch {
+    snackBar.error(
+      "An unexpected error occurred while deleting the draft disability profile.",
+    );
+  }
+};
 </script>

@@ -8,17 +8,7 @@
   </tab-container>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
 import StudentDisabilityProfile from "@/components/common/students/StudentDisabilityProfile.vue";
-
-export default defineComponent({
-  components: { StudentDisabilityProfile },
-  props: {
-    studentId: {
-      type: Number,
-      required: true,
-    },
-  },
-});
+defineProps<{ studentId: number }>();
 </script>
