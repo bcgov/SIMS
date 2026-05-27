@@ -36,8 +36,9 @@ import {
   DISABILITY_PROFILE_INVALID_DISABILITY_TYPE,
   DISABILITY_PROFILE_INVALID_IMPAIRMENT,
   DISABILITY_PROFILE_INVALID_PRIORITY,
-} from "apps/api/src/constants/error-code.constants";
-import { getUserFullName } from "apps/api/src/utilities";
+} from "../../constants/error-code.constants";
+import { getUserFullName } from "../../utilities";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -67,15 +68,17 @@ export class DisabilityProfileAESTController extends BaseController {
         studentProfiles?.map((profile) => ({
           id: profile.id,
           status: profile.disabilityProfileStatus,
+          completedBy: getUserFullName(profile.completedBy),
+          completedAt: profile.completedAt,
           disabilities: profile.disabilities.map((disability) => ({
             id: disability.id,
             disabilityPriority: disability.disabilityPriority,
             disabilityCategory: disability.disabilityCategory,
             disabilityType: disability.disabilityType,
+            disabilityNotes: disability.disabilityNotes,
             diagnosis: disability.diagnosis,
             diagnosisNotes: disability.diagnosisNotes,
             impairments: disability.impairments,
-            disabilityNotes: disability.disabilityNotes,
             impairmentsNotes: disability.impairmentsNotes,
             additionalNotes: disability.additionalNotes,
           })),
@@ -111,6 +114,8 @@ export class DisabilityProfileAESTController extends BaseController {
     return {
       id: profile.id,
       status: profile.disabilityProfileStatus,
+      completedBy: getUserFullName(profile.completedBy),
+      completedAt: profile.completedAt,
       disabilities: profile.disabilities.map((disability) => ({
         id: disability.id,
         disabilityPriority: disability.disabilityPriority,
@@ -153,14 +158,15 @@ export class DisabilityProfileAESTController extends BaseController {
     @Param("studentId", ParseIntPipe) studentId: number,
     @Body() saveStudentDisabilities: SaveStudentDisabilityProfileAPIInDTO,
     @UserToken() userToken: IUserToken,
-  ): Promise<void> {
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
     try {
-      await this.disabilityProfileService.saveDraftProfile(
+      const savedDraft = await this.disabilityProfileService.saveDraftProfile(
         studentId,
         saveStudentDisabilities.disabilities,
         userToken.userId!,
         saveStudentDisabilities.id,
       );
+      return { id: savedDraft.id };
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {

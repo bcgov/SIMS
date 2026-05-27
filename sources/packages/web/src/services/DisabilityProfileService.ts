@@ -1,5 +1,6 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
+  PrimaryIdentifierAPIOutDTO,
   SaveStudentDisabilityProfileAPIInDTO,
   StudentDisabilityProfileAPIOutDTO,
   StudentDisabilityProfilesAPIOutDTO,
@@ -50,8 +51,8 @@ export class DisabilityProfileService {
   async saveDraftProfile(
     studentId: number,
     saveStudentDisabilities: SaveStudentDisabilityProfileAPIInDTO,
-  ): Promise<void> {
-    await ApiClient.DisabilityProfileApi.saveDraftProfile(
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return ApiClient.DisabilityProfileApi.saveDraftProfile(
       studentId,
       saveStudentDisabilities,
     );

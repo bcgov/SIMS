@@ -164,6 +164,8 @@ export enum AppRoutes {
   StudentProfile = "profile",
   StudentDisabilityProfile = "disability-profile",
   StudentDisabilityProfileDisabilityEdit = "student/:studentId/disability-profile/edit/:disabilityProfileId?",
+  StudentDisabilityProfileDisabilityDraft = "student/:studentId/disability-profile/draft/:disabilityProfileId?",
+  StudentDisabilityProfileDisabilityView = "student/:studentId/disability-profile/view/:disabilityProfileId",
   Applications = "applications",
   Restrictions = "restrictions",
   FileUploads = "files",

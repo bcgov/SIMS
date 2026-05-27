@@ -38,6 +38,12 @@ export class DisabilityProfileService {
       select: {
         id: true,
         disabilityProfileStatus: true,
+        completedBy: {
+          id: true,
+          firstName: true,
+          lastName: true,
+        },
+        completedAt: true,
         disabilities: {
           id: true,
           disabilityPriority: true,
@@ -64,6 +70,7 @@ export class DisabilityProfileService {
         updatedAt: true,
       },
       relations: {
+        completedBy: true,
         disabilities: true,
         creator: true,
         modifier: true,
@@ -116,20 +123,21 @@ export class DisabilityProfileService {
           disabilityProfileStatus: DisabilityProfileStatus.Draft,
         },
       });
-      if (disabilityProfile?.id !== disabilityProfileId) {
-        throw new CustomNamedError(
-          `The provided draft disability profile ID ${disabilityProfileId} does not match the existing draft profile ID.`,
-          DISABILITY_PROFILE_DRAFT_NOT_FOUND,
-        );
-      }
       if (disabilityProfile) {
-        // Draft profile exists, update the modifier and updatedAt fields,
-        // the disabilities will be updated later in the process.
+        // A draft profile exists for the student.
+        if (disabilityProfile.id !== disabilityProfileId) {
+          // Since a draft profile exists, it must be either updated or deleted.
+          // A new draft profile cannot be created if there is an existing draft profile.
+          throw new CustomNamedError(
+            `The provided draft disability profile ID ${disabilityProfileId} does not match the existing draft profile ID.`,
+            DISABILITY_PROFILE_DRAFT_NOT_FOUND,
+          );
+        }
+        // Draft profile exists and will be updated.
         disabilityProfile.modifier = auditUser;
         disabilityProfile.updatedAt = now;
       } else {
-        // If an existing draft profile does not exist a new draft profile will
-        // be created and the existing active profile will be archived (if exists).
+        // If an existing draft profile does not exist a new draft profile will be created.
         disabilityProfile = new StudentDisabilityProfile();
         disabilityProfile.disabilityProfileStatus =
           DisabilityProfileStatus.Draft;
@@ -174,23 +182,24 @@ export class DisabilityProfileService {
             disabilities: true,
           },
           where: {
-            student: {
-              id: studentId,
-            },
+            student: { id: studentId },
             disabilityProfileStatus: DisabilityProfileStatus.Draft,
           },
         });
-      // Validate if the draft profile exists when a disabilityProfileId is provided.
-      if (disabilityProfileId && !disabilityProfile) {
+      if (
+        disabilityProfileId &&
+        disabilityProfileId !== disabilityProfile?.id
+      ) {
+        // The disabilityProfileId does not represent a draft profile for the student.
         throw new CustomNamedError(
           `Draft disability profile with ID ${disabilityProfileId} not found for the student.`,
           DISABILITY_PROFILE_DRAFT_NOT_FOUND,
         );
       }
-      // Validate if the draft was found and it is the expected draft to be completed.
-      if (disabilityProfile?.id !== disabilityProfileId) {
+      if (!disabilityProfileId && disabilityProfile) {
+        // The student has a draft profile that must be completed or deleted.
         throw new CustomNamedError(
-          `A draft profile ID ${disabilityProfileId} exists for this student and it must be either cancelled or completed before creating a new active profile.`,
+          `The student profile has a draft ${disabilityProfile.id} that must be completed or deleted before creating a new active profile.`,
           DISABILITY_PROFILE_COMPLETE_WHEN_DRAFT_ALREADY_EXISTS,
         );
       }
@@ -207,6 +216,8 @@ export class DisabilityProfileService {
       }
       disabilityProfile.disabilityProfileStatus =
         DisabilityProfileStatus.Active;
+      disabilityProfile.completedBy = auditUser;
+      disabilityProfile.completedAt = now;
       disabilityProfile.disabilities = this.prepareProfileDisabilities(
         disabilities,
         disabilityProfile?.disabilities,
@@ -239,12 +250,15 @@ export class DisabilityProfileService {
   ): StudentDisabilityProfileDisability[] {
     return disabilitiesToSave.map((disabilitiesToSave) => {
       const disability = new StudentDisabilityProfileDisability();
+      disability.disabilityPriority = disabilitiesToSave.disabilityPriority;
+      disability.disabilityCategory = disabilitiesToSave.disabilityCategory;
+      disability.disabilityType = disabilitiesToSave.disabilityType;
+      disability.disabilityNotes = disabilitiesToSave.disabilityNotes;
       disability.diagnosis = disabilitiesToSave.diagnosis;
       disability.diagnosisNotes = disabilitiesToSave.diagnosisNotes;
-      disability.disabilityPriority = disabilitiesToSave.disabilityPriority;
-      disability.disabilityType = disabilitiesToSave.disabilityType;
-      disability.disabilityCategory = disabilitiesToSave.disabilityCategory;
       disability.impairments = disabilitiesToSave.impairments;
+      disability.impairmentsNotes = disabilitiesToSave.impairmentsNotes;
+      disability.additionalNotes = disabilitiesToSave.additionalNotes;
       const existingDisability = existingDisabilities?.find(
         (d) => d.id === disabilitiesToSave.id,
       );

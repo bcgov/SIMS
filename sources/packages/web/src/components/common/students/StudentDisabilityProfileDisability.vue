@@ -95,12 +95,11 @@
               hide-details="auto"
               :rules="[
                 (v) =>
-                  selectedDisabilityCategory !== 'OTHER' ||
                   checkLengthRule(
                     v,
-                    500,
+                    REGULAR_NOTE_MAX_LENGTH,
                     'Disability details notes',
-                    selectedDisabilityCategory === 'OTHER',
+                    selectedDisabilityCategory === OTHER_CATEGORY_KEY,
                   ),
               ]"
           /></v-col>
@@ -132,6 +131,16 @@
               label="Diagnosis notes"
               variant="outlined"
               rows="3"
+              hide-details="auto"
+              :rules="[
+                (v) =>
+                  checkLengthRule(
+                    v,
+                    REGULAR_NOTE_MAX_LENGTH,
+                    'Diagnosis notes',
+                    false,
+                  ),
+              ]"
           /></v-col>
         </v-row>
         <v-row dense>
@@ -150,7 +159,7 @@
           >
             <v-checkbox
               :readonly="readOnly"
-              color="primary"
+              :color="readOnly ? 'secondary' : 'primary'"
               v-model="selectedImpairments"
               :label="option.lookupValue"
               :value="option.lookupKey"
@@ -180,9 +189,9 @@
                 (v) =>
                   checkLengthRule(
                     v,
-                    500,
+                    REGULAR_NOTE_MAX_LENGTH,
                     'Impairments notes',
-                    selectedImpairments.includes('OTHER'),
+                    selectedImpairments.includes(OTHER_CATEGORY_KEY),
                   ),
               ]"
           /></v-col>
@@ -201,9 +210,15 @@
               label="Notes"
               variant="outlined"
               rows="3"
-              hide-details
+              hide-details="auto"
               :rules="[
-                (v) => checkLengthRule(v, 'Additional notes', 1000, false),
+                (v) =>
+                  checkLengthRule(
+                    v,
+                    ADDITIONAL_NOTE_MAX_LENGTH,
+                    'Additional notes',
+                    false,
+                  ),
               ]"
           /></v-col>
         </v-row>
@@ -223,6 +238,10 @@ import {
   SystemLookupCategory,
 } from "@/types";
 import { SystemLookupConfigurationService } from "@/services/SystemLookupConfigurationService";
+
+const OTHER_CATEGORY_KEY = "OTHER";
+const REGULAR_NOTE_MAX_LENGTH = 500;
+const ADDITIONAL_NOTE_MAX_LENGTH = 1000;
 
 export default defineComponent({
   props: {
@@ -252,7 +271,6 @@ export default defineComponent({
     const disabilityCategoryLookup = ref<SystemLookupEntryAPIOutDTO[]>();
     const disabilityTypeLookup = ref<SystemLookupEntryAPIOutDTO[]>();
     const impairmentLookup = ref<SystemLookupEntryAPIOutDTO[]>();
-
     // Local reactive copies initialized from the model prop.
     const selectedDisabilityCategory = ref(props.modelValue.disabilityCategory);
     const selectedDisabilityType = ref(props.modelValue.disabilityType);
@@ -339,9 +357,11 @@ export default defineComponent({
         snackBar.error("Unexpected error while loading data.");
       }
     };
+
     watchEffect(loadLookup);
 
     return {
+      OTHER_CATEGORY_KEY,
       isLookupLoaded,
       isPrimaryDisability,
       isLastDisability,
@@ -362,6 +382,8 @@ export default defineComponent({
       impairmentLookup,
       checkNullOrEmptyRule,
       checkLengthRule,
+      REGULAR_NOTE_MAX_LENGTH,
+      ADDITIONAL_NOTE_MAX_LENGTH,
     };
   },
 });

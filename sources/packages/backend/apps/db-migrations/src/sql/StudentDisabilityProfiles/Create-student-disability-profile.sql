@@ -2,6 +2,8 @@ CREATE TABLE student_disability_profiles(
   id SERIAL PRIMARY KEY,
   student_id INT REFERENCES sims.students(id) NOT NULL,
   disability_profile_status sims.disability_profile_status NOT NULL,
+  completed_by INT REFERENCES sims.users(id),
+  completed_at TIMESTAMP WITH TIME ZONE,
   deleted_at TIMESTAMP WITH TIME ZONE CHECK (
     deleted_at IS NULL
     OR disability_profile_status = 'Draft' :: sims.disability_profile_status
@@ -10,7 +12,15 @@ CREATE TABLE student_disability_profiles(
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
   creator INT NOT NULL REFERENCES sims.users(id),
-  modifier INT DEFAULT NULL REFERENCES sims.users(id)
+  modifier INT DEFAULT NULL REFERENCES sims.users(id),
+  -- Ensures completed_by and completed_at are populated once the profile leaves Draft status.
+  CONSTRAINT completed_required_when_not_draft CHECK (
+    disability_profile_status = 'Draft' :: sims.disability_profile_status
+    OR (
+      completed_by IS NOT NULL
+      AND completed_at IS NOT NULL
+    )
+  )
 );
 
 -- Ensures only one non-deleted draft disability profile exists per student at a time.
@@ -31,6 +41,10 @@ COMMENT ON COLUMN sims.student_disability_profiles.id IS 'Auto-generated sequent
 COMMENT ON COLUMN sims.student_disability_profiles.student_id IS 'Student associated with this disability profile.';
 
 COMMENT ON COLUMN sims.student_disability_profiles.disability_profile_status IS 'Current lifecycle status of the disability profile.';
+
+COMMENT ON COLUMN sims.student_disability_profiles.completed_by IS 'User who completed the profile.';
+
+COMMENT ON COLUMN sims.student_disability_profiles.completed_at IS 'Timestamp when the profile was completed.';
 
 COMMENT ON COLUMN sims.student_disability_profiles.deleted_at IS 'Timestamp when the profile was soft-deleted. Can only be set while the profile is in Draft status.';
 

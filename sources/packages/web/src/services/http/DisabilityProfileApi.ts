@@ -1,5 +1,6 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
+  PrimaryIdentifierAPIOutDTO,
   SaveStudentDisabilityProfileAPIInDTO,
   StudentDisabilityProfileAPIOutDTO,
   StudentDisabilityProfilesAPIOutDTO,
@@ -47,8 +48,8 @@ export class DisabilityProfileApi extends HttpBaseClient {
   async saveDraftProfile(
     studentId: number,
     saveStudentDisabilities: SaveStudentDisabilityProfileAPIInDTO,
-  ): Promise<void> {
-    await this.putCall(
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return this.putCall(
       this.addClientRoot(`disability-profile/student/${studentId}/draft`),
       saveStudentDisabilities,
     );

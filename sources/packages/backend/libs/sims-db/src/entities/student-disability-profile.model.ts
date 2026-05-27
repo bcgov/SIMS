@@ -12,6 +12,7 @@ import {
   RecordDataModel,
   Student,
   StudentDisabilityProfileDisability,
+  User,
 } from ".";
 import { DisabilityProfileStatus } from "./disability-profile-status.type";
 
@@ -45,7 +46,25 @@ export class StudentDisabilityProfile extends RecordDataModel {
   })
   disabilityProfileStatus: DisabilityProfileStatus;
   /**
-   * Timestamp when the profile was soft-deleted. Can only be set while the profile is in Draft status.
+   * User who completed the profile. Populated once the profile leaves Draft status.
+   */
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({
+    name: "completed_by",
+    referencedColumnName: ColumnNames.ID,
+  })
+  completedBy?: User;
+  /**
+   * Timestamp when the profile was completed.
+   */
+  @Column({
+    name: "completed_at",
+    type: "timestamptz",
+    nullable: true,
+  })
+  completedAt?: Date;
+  /**
+   * Timestamp when the profile was soft-deleted.
    */
   @DeleteDateColumn({
     name: "deleted_at",

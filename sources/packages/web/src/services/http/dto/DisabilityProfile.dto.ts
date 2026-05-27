@@ -16,6 +16,8 @@ export interface StudentDisabilityAPIOutDTO {
 export interface StudentDisabilityProfileAPIOutDTO {
   id: number;
   status: DisabilityProfileStatus;
+  completedBy?: string;
+  completedAt?: Date;
   disabilities: StudentDisabilityAPIOutDTO[];
   creator: string;
   createdAt: Date;

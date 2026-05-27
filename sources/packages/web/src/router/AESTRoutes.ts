@@ -245,6 +245,37 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: AppRoutes.StudentDisabilityProfileDisabilityDraft,
+        name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE_DISABILITY_DRAFT,
+        props: (route) => ({
+          studentId: Number.parseInt(route.params.studentId as string),
+          disabilityProfileId: route.params.disabilityProfileId
+            ? Number.parseInt(route.params.disabilityProfileId as string)
+            : undefined,
+          isDraft: true,
+        }),
+        component: DisabilityProfileDisabilityEdit,
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.StudentDisabilityProfileDisabilityView,
+        name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE_DISABILITY_VIEW,
+        props: (route) => ({
+          studentId: Number.parseInt(route.params.studentId as string),
+          disabilityProfileId: route.params.disabilityProfileId
+            ? Number.parseInt(route.params.disabilityProfileId as string)
+            : undefined,
+          isDraft: false,
+          readOnly: true,
+        }),
+        component: DisabilityProfileDisabilityEdit,
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
         path: AppRoutes.StudentAppealRequest,
         name: AESTRoutesConst.STUDENT_APPEAL_REQUESTS_APPROVAL,
         props: true,

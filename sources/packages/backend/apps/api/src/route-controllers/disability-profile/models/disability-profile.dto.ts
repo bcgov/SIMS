@@ -29,6 +29,8 @@ export class StudentDisabilityAPIOutDTO {
 export class StudentDisabilityProfileAPIOutDTO {
   id: number;
   status: DisabilityProfileStatus;
+  completedBy?: string;
+  completedAt?: Date;
   disabilities: StudentDisabilityAPIOutDTO[];
   creator: string;
   createdAt: Date;
