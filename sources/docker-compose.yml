@@ -302,7 +302,7 @@ services:
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql
     command: -p ${POSTGRES_PORT}
     networks:
       - local-network
