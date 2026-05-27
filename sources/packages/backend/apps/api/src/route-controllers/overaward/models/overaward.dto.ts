@@ -12,6 +12,7 @@ import {
   MaxLength,
   IsIn,
 } from "class-validator";
+import { OVERAWARD_BALANCE_AWARDS } from "@sims/services/constants";
 
 export class OverawardBalanceAPIOutDTO {
   overawardBalanceValues: Record<string, number>;
@@ -32,7 +33,7 @@ export class AESTOverawardAPIOutDTO extends StudentsOverawardAPIOutDTO {
 }
 
 export class OverawardManualRecordAPIInDTO {
-  @IsIn(["BCSL", "CSLF"])
+  @IsIn(OVERAWARD_BALANCE_AWARDS)
   awardValueCode: string;
   @Min(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE * -1)
   @Max(MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE)

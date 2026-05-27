@@ -148,7 +148,7 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
       .expect(HttpStatus.BAD_REQUEST);
   });
 
-  it("Should throw bad request error when submitting CSLP", async () => {
+  it("Should throw bad request error when submitting CSLP.", async () => {
     // Arrange
     const student = await studentRepo.save(createFakeStudent());
     const endpoint = `/aest/overaward/student/${student.id}`;
@@ -168,7 +168,7 @@ describe("OverawardAESTController(e2e)-addManualOveraward", () => {
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
         message: [
-          "awardValueCode must be one of the following values: BCSL, CSLF",
+          "awardValueCode must be one of the following values: CSLF, BCSL",
         ],
         error: "Bad Request",
         statusCode: HttpStatus.BAD_REQUEST,
