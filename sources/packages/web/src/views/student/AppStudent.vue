@@ -228,7 +228,7 @@ export default defineComponent({
                     title: "Appeals",
                     props: {
                       to: {
-                        name: StudentRoutesConst.STUDENT_APPEAL,
+                        name: StudentRoutesConst.STUDENT_APPEAL_SUBMISSION,
                       },
                     },
                   },
