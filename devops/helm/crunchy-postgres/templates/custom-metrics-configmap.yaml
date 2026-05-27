@@ -2,7 +2,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: pg-custom-bloat-queries
-  namespace: your-postgres-namespace
 data:
   queries.yml: |
     pg_table_bloat:
