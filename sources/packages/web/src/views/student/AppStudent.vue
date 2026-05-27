@@ -212,14 +212,27 @@ export default defineComponent({
                 },
               },
             },
-            {
-              title: "Appeals",
-              props: {
-                to: {
-                  name: StudentRoutesConst.STUDENT_APPEAL,
-                },
-              },
-            },
+            ...(isFormSubmissionEnabled.value
+              ? [
+                  {
+                    title: "Forms",
+                    props: {
+                      to: {
+                        name: StudentRoutesConst.STUDENT_FORMS_SELECTOR,
+                      },
+                    },
+                  },
+                ]
+              : [
+                  {
+                    title: "Appeals",
+                    props: {
+                      to: {
+                        name: StudentRoutesConst.STUDENT_APPEAL,
+                      },
+                    },
+                  },
+                ]),
             {
               title: "File Uploader",
               props: {
