@@ -829,7 +829,13 @@ export const PendingProgramsHeaders = [
 ];
 
 export const DisabilityProfileArchivedHeaders = [
-  { title: "Date complete", sortable: true, key: "completedAt" },
+  {
+    title: "Date complete",
+    sortable: true,
+    key: "completedAt",
+    width: "100px",
+  },
   { title: "Completed by", sortable: true, key: "completedBy" },
-  { title: "Actions", sortable: false, key: "actions" },
+  { title: "Disabilities", sortable: false, key: "disabilities" },
+  { title: "Actions", sortable: false, key: "actions", width: "100px" },
 ];

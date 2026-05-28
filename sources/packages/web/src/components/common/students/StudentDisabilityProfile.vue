@@ -73,16 +73,28 @@
           :hide-default-footer="archivedProfiles.length <= 10"
         >
           <template #[`item.completedAt`]="{ item }">
-            {{ getISODateHourMinuteString(item.completedAt) }}
+            <span style="white-space: nowrap">{{
+              getISODateHourMinuteString(item.completedAt)
+            }}</span>
           </template>
           <template #[`item.completedBy`]="{ item }">
             {{ item.completedBy }}
           </template>
+          <template #[`item.disabilities`]="{ item }">
+            <div style="display: flex; flex-wrap: wrap; gap: 4px">
+              <v-chip
+                v-for="disability in item.disabilities"
+                :key="disability.disabilityPriority"
+                size="small"
+                color="secondary"
+                variant="tonal"
+              >
+                {{ disability.disabilityCategoryDescription }}
+              </v-chip>
+            </div>
+          </template>
           <template #[`item.actions`]="{ item }">
-            <v-btn
-              color="primary"
-              variant="text"
-              @click="viewArchivedProfile(item.id)"
+            <v-btn color="primary" @click="viewArchivedProfile(item.id)"
               >View</v-btn
             >
           </template>

@@ -39,6 +39,8 @@ import {
 } from "../../constants/error-code.constants";
 import { getUserFullName } from "../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
+import { SystemLookupConfigurationService } from "@sims/services/system-lookup-configuration";
+import { SystemLookupCategory } from "@sims/sims-db";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -47,6 +49,7 @@ import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 export class DisabilityProfileAESTController extends BaseController {
   constructor(
     private readonly disabilityProfileService: DisabilityProfileService,
+    private readonly systemLookupConfigurationService: SystemLookupConfigurationService,
   ) {
     super();
   }
@@ -74,6 +77,11 @@ export class DisabilityProfileAESTController extends BaseController {
             id: disability.id,
             disabilityPriority: disability.disabilityPriority,
             disabilityCategory: disability.disabilityCategory,
+            disabilityCategoryDescription:
+              this.systemLookupConfigurationService.getSystemLookup(
+                SystemLookupCategory.DisabilityCategory,
+                disability.disabilityCategory,
+              )?.lookupValue ?? disability.disabilityCategory,
             disabilityType: disability.disabilityType,
             disabilityNotes: disability.disabilityNotes,
             diagnosis: disability.diagnosis,
@@ -120,6 +128,11 @@ export class DisabilityProfileAESTController extends BaseController {
         id: disability.id,
         disabilityPriority: disability.disabilityPriority,
         disabilityCategory: disability.disabilityCategory,
+        disabilityCategoryDescription:
+          this.systemLookupConfigurationService.getSystemLookup(
+            SystemLookupCategory.DisabilityCategory,
+            disability.disabilityCategory,
+          )?.lookupValue ?? disability.disabilityCategory,
         disabilityType: disability.disabilityType,
         diagnosis: disability.diagnosis,
         diagnosisNotes: disability.diagnosisNotes,

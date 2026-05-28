@@ -4,6 +4,7 @@ export interface StudentDisabilityAPIOutDTO {
   id: number;
   disabilityPriority: number;
   disabilityCategory: string;
+  disabilityCategoryDescription: string;
   disabilityType: string;
   diagnosis: string[];
   diagnosisNotes?: string;

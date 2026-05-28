@@ -82,6 +82,7 @@ export class DisabilityProfileService {
         id: options?.disabilityProfileId,
       },
       order: {
+        completedAt: "DESC",
         disabilities: {
           disabilityPriority: "ASC",
         },
