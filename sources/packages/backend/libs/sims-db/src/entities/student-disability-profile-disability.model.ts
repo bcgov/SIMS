@@ -1,0 +1,126 @@
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { ColumnNames, TableNames } from "../constant";
+import { RecordDataModel } from ".";
+import { StudentDisabilityProfile } from "./student-disability-profile.model";
+
+export const DIAGNOSIS_MAX_LENGTH = 250;
+export const DISABILITY_NOTES_MAX_LENGTH = 500;
+export const IMPAIRMENTS_NOTES_MAX_LENGTH = 500;
+export const FINAL_NOTES_MAX_LENGTH = 1000;
+
+/**
+ * Individual disability entries associated with a student disability profile.
+ */
+@Entity({ name: TableNames.StudentDisabilityProfileDisabilities })
+export class StudentDisabilityProfileDisability extends RecordDataModel {
+  /**
+   * Auto-generated sequential primary key column.
+   */
+  @PrimaryGeneratedColumn()
+  id: number;
+  /**
+   * Disability profile this disability entry belongs to.
+   */
+  @ManyToOne(() => StudentDisabilityProfile, { nullable: false })
+  @JoinColumn({
+    name: "student_disability_profile_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  studentDisabilityProfile: StudentDisabilityProfile;
+  /**
+   * Order of the disability within the profile, where 1 indicates the primary disability
+   * and higher values indicate additional disabilities.
+   */
+  @Column({
+    name: "disability_priority",
+    type: "smallint",
+  })
+  disabilityPriority: number;
+  /**
+   * Category of the disability, validated against the system lookup configuration
+   * for disability category.
+   */
+  @Column({
+    name: "disability_category",
+  })
+  disabilityCategory: string;
+  /**
+   * Designation of the disability (e.g. Permanent, Persistent or prolonged), validated
+   * against the system lookup configuration for disability type.
+   */
+  @Column({
+    name: "disability_type",
+  })
+  disabilityType: string;
+  /**
+   * Additional notes describing the disability. Required when disability type is OTHER.
+   */
+  @Column({
+    name: "disability_notes",
+    nullable: true,
+    length: DISABILITY_NOTES_MAX_LENGTH,
+  })
+  disabilityNotes?: string;
+  /**
+   * List of functional impairments associated with this disability. The available list of
+   * impairments is stored in the system lookup configuration for disability impairments.
+   */
+  @Column({
+    name: "impairments",
+    type: "varchar",
+    array: true,
+  })
+  impairments: string[];
+  /**
+   * Additional notes related to the listed impairments.
+   */
+  @Column({
+    name: "impairments_notes",
+    nullable: true,
+    length: IMPAIRMENTS_NOTES_MAX_LENGTH,
+  })
+  impairmentsNotes?: string;
+  /**
+   * Primary diagnosis information for this disability.
+   */
+  @Column({
+    name: "diagnosis",
+    type: "varchar",
+    array: true,
+  })
+  diagnosis: string[];
+  /**
+   * Additional notes related to the diagnosis.
+   */
+  @Column({
+    name: "diagnosis_notes",
+    nullable: true,
+    length: DISABILITY_NOTES_MAX_LENGTH,
+  })
+  diagnosisNotes?: string;
+  /**
+   * Any additional notes relevant to this disability entry.
+   */
+  @Column({
+    name: "final_notes",
+    nullable: true,
+  })
+  finalNotes?: string;
+  /**
+   * Timestamp when the disability was soft-deleted.
+   * Intended to be used only when a draft disability profile is being updated.
+   */
+  @DeleteDateColumn({
+    name: "deleted_at",
+    type: "timestamptz",
+    nullable: true,
+  })
+  deletedAt?: Date;
+}

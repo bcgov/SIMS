@@ -1,0 +1,1 @@
+DROP TABLE sims.student_disability_profile_disabilities;
