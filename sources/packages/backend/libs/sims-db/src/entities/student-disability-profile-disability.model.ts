@@ -28,7 +28,7 @@ export class StudentDisabilityProfileDisability extends RecordDataModel {
   /**
    * Disability profile this disability entry belongs to.
    */
-  @ManyToOne(() => StudentDisabilityProfile, { nullable: false })
+  @ManyToOne(() => StudentDisabilityProfile)
   @JoinColumn({
     name: "student_disability_profile_id",
     referencedColumnName: ColumnNames.ID,
