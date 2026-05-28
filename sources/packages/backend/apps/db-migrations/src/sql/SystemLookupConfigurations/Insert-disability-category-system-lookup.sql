@@ -27,51 +27,69 @@ FROM
         VALUES
             (
                 'Disability category',
-                'Mental Health Disorder',
-                'MENTHLTH',
+                'Acquired brain injury',
+                'ACQ_BRAIN_INJURY',
                 1
             ),
             (
                 'Disability category',
-                'Blind or Visually Impaired',
-                'BLINDVI',
-                2
-            ),
-            (
-                'Disability category',
-                'Attention Deficit Hyperactivity Disorder (ADHD)',
                 'ADHD',
-                3
+                'ADHD',
+                1
             ),
             (
                 'Disability category',
-                'Deaf or Hard of Hearing',
-                'DEAFHARD',
-                4
+                'Autism spectrum disorder',
+                'AUTISM_SPECTRUM',
+                1
             ),
             (
                 'Disability category',
-                'Autism Spectrum Disorder (ASD)',
-                'ASD',
-                5
+                'Blind or low vision',
+                'BLIND_LOW_VISION',
+                1
             ),
             (
                 'Disability category',
-                'Neurological Disability',
-                'NEURODISX',
-                6
+                'Deaf or hard of hearing',
+                'DEAF_HARD_HEARING',
+                1
             ),
             (
                 'Disability category',
-                'Physical Disability / Mobility Impairment',
-                'PHYSDISAB',
-                7
+                'Learning disability',
+                'LEARNING_DISABILITY',
+                1
+            ),
+            (
+                'Disability category',
+                'Mental health impairment',
+                'MENTAL_HEALTH_IMPAIR',
+                1
+            ),
+            (
+                'Disability category',
+                'Mobility impairment',
+                'MOBILITY_IMPAIRMENT',
+                1
+            ),
+            (
+                'Disability category',
+                'Pervasive development disorder',
+                'PERVASIVE_DEV_DIS',
+                1
+            ),
+            (
+                'Disability category',
+                'Speech impairment',
+                'SPEECH_IMPAIRMENT',
+                1
             ),
             (
                 'Disability category',
                 'Other',
                 'OTHER',
-                8
+                2
             )
     ) AS lookup_data(
         lookup_category,

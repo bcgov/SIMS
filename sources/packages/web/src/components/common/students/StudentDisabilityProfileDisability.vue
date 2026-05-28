@@ -89,13 +89,14 @@
                 :rules="[(v) => checkNullOrEmptyRule(v, 'Disability type')]"
               />
             </v-col>
-            <v-col cols="12"
+            <v-col class="mt-4"
               ><v-textarea
                 :readonly="readOnly"
                 v-model="disabilityNotes"
                 label="Disability details notes"
                 variant="outlined"
-                rows="3"
+                :rows="readOnly ? 1 : undefined"
+                auto-grow
                 hide-details="auto"
                 :rules="[
                   (v) =>
@@ -109,96 +110,105 @@
             /></v-col>
           </v-row>
           <v-row dense>
-            <v-col cols="12"
+            <v-col
               ><h4 class="category-header-medium brand-gray-text mb-0 mt-4">
-                Diagnosis
+                Diagnosis information
               </h4>
+              <h6 v-if="!readOnly">
+                Please add each diagnosis relevant to the student's disability.
+              </h6>
               <v-divider></v-divider
             ></v-col>
-            <v-col cols="12"
-              ><v-row dense>
-                <v-col>
-                  <v-text-field
-                    v-if="!readOnly"
-                    v-model="diagnosisEntryInput"
-                    :readonly="readOnly"
-                    label="Diagnosis information"
-                    placeholder="Enter diagnosis and click Add or press Enter"
-                    :persistent-placeholder="true"
-                    density="compact"
-                    variant="outlined"
-                    hide-details="auto"
-                    :rules="[
-                      (v) =>
-                        checkLengthRule(
-                          v,
-                          DIAGNOSIS_ENTRY_MAX_LENGTH,
-                          'Diagnosis information',
-                          false,
-                        ),
-                    ]"
-                    @keydown.enter.prevent="addDiagnosisEntry"
-                  />
-                </v-col>
-                <v-col cols="auto">
-                  <v-btn
-                    v-if="!readOnly"
-                    color="primary"
-                    variant="outlined"
-                    @click="addDiagnosisEntry"
-                  >
-                    Add
-                  </v-btn>
-                </v-col>
-              </v-row>
-
-              <v-table density="compact" class="mt-2">
-                <thead>
-                  <tr>
-                    <th class="text-left">Diagnosis entries</th>
-                    <th v-if="!readOnly" class="text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-if="!diagnosisItems.length">
-                    <td
-                      :colspan="readOnly ? 1 : 2"
-                      class="text-medium-emphasis"
+            <v-col cols="12">
+              <content-group>
+                <v-row dense v-if="!readOnly">
+                  <v-col>
+                    <v-text-field
+                      v-if="!readOnly"
+                      v-model.trim="diagnosisEntryInput"
+                      :readonly="readOnly"
+                      label="Diagnosis information"
+                      placeholder="Enter diagnosis and click Add or press Enter"
+                      :persistent-placeholder="true"
+                      density="compact"
+                      variant="outlined"
+                      hide-details="auto"
+                      :rules="[
+                        (v) =>
+                          checkLengthRule(
+                            v,
+                            DIAGNOSIS_ENTRY_MAX_LENGTH,
+                            'Diagnosis information',
+                            false,
+                          ),
+                      ]"
+                      @keydown.enter.prevent="addDiagnosisEntry"
+                    />
+                  </v-col>
+                  <v-col cols="auto">
+                    <v-btn
+                      v-if="!readOnly"
+                      prepend-icon="fas fa-plus"
+                      color="primary"
+                      variant="outlined"
+                      @click="addDiagnosisEntry"
                     >
-                      No diagnosis entries added.
-                    </td>
-                  </tr>
-                  <tr
-                    v-for="(diagnosisItem, index) in diagnosisItems"
-                    :key="`${diagnosisItem}-${index}`"
-                  >
-                    <td>{{ diagnosisItem }}</td>
-                    <td v-if="!readOnly" class="text-right pa-0">
-                      <v-btn
-                        color="error"
-                        variant="plain"
-                        size="large"
-                        @click="removeDiagnosisEntry(index)"
+                      Add diagnosis
+                    </v-btn>
+                  </v-col>
+                </v-row>
+                <v-table striped="even" :class="readOnly ? 'mt-n4' : 'mt-2'">
+                  <thead>
+                    <tr>
+                      <th class="text-left">
+                        <v-icon icon="mdi-stethoscope" class="mr-1" size="18" />
+                        Diagnosis entries
+                      </th>
+                      <th v-if="!readOnly" class="text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-if="!diagnosisItems.length">
+                      <td
+                        :colspan="readOnly ? 1 : 2"
+                        class="text-medium-emphasis"
                       >
-                        <v-icon>mdi-close</v-icon>
-                      </v-btn>
-                    </td>
-                  </tr>
-                </tbody>
-              </v-table>
+                        No diagnosis entries added.
+                      </td>
+                    </tr>
+                    <tr
+                      v-for="(diagnosisItem, index) in diagnosisItems"
+                      :key="`${diagnosisItem}-${index}`"
+                    >
+                      <td>{{ diagnosisItem }}</td>
+                      <td v-if="!readOnly" class="text-right pa-0">
+                        <v-btn
+                          color="error"
+                          variant="plain"
+                          size="large"
+                          @click="removeDiagnosisEntry(index)"
+                        >
+                          <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                      </td>
+                    </tr>
+                  </tbody>
+                </v-table>
+              </content-group>
               <v-input
                 :model-value="diagnosisItems"
                 :rules="[validateDiagnosisItems]"
                 hide-details="auto"
               />
             </v-col>
-            <v-col cols="12"
+            <v-col class="mt-4"
               ><v-textarea
                 :readonly="readOnly"
                 v-model="diagnosisNotes"
                 label="Diagnosis notes"
                 variant="outlined"
-                rows="3"
+                :rows="readOnly ? 1 : undefined"
+                auto-grow
                 hide-details="auto"
                 :rules="[
                   (v) =>
@@ -214,8 +224,9 @@
           <v-row dense>
             <v-col cols="12">
               <h4 class="category-header-medium brand-gray-text mb-0 mt-4">
-                Impairments
+                Impairments to academic tasks
               </h4>
+              <h6 v-if="!readOnly">Please select all that apply.</h6>
               <v-divider />
             </v-col>
             <v-col
@@ -251,7 +262,8 @@
                 v-model="impairmentsNotes"
                 label="Impairments notes"
                 variant="outlined"
-                rows="3"
+                :rows="readOnly ? 1 : undefined"
+                auto-grow
                 hide-details="auto"
                 :rules="[
                   (v) =>
@@ -267,7 +279,7 @@
           <v-row dense>
             <v-col cols="12">
               <h4 class="category-header-medium brand-gray-text mb-0 mt-4">
-                Additional notes
+                Final notes
               </h4>
               <v-divider />
             </v-col>
@@ -277,14 +289,15 @@
                 v-model="finalNotes"
                 label="Notes"
                 variant="outlined"
-                rows="3"
+                :rows="readOnly ? 1 : undefined"
+                auto-grow
                 hide-details="auto"
                 :rules="[
                   (v) =>
                     checkLengthRule(
                       v,
-                      ADDITIONAL_NOTE_MAX_LENGTH,
-                      'Additional notes',
+                      FINAL_NOTES_MAX_LENGTH,
+                      'Final notes',
                       false,
                     ),
                 ]"
@@ -306,11 +319,12 @@ import {
   type StudentDisability,
   type VForm,
 } from "@/types";
+import ContentGroup from "@/components/generic/ContentGroup.vue";
 
+const DIAGNOSIS_ENTRY_MAX_LENGTH = 250;
 const OTHER_CATEGORY_KEY = "OTHER";
 const REGULAR_NOTE_MAX_LENGTH = 500;
-const ADDITIONAL_NOTE_MAX_LENGTH = 1000;
-const DIAGNOSIS_ENTRY_MAX_LENGTH = 100;
+const FINAL_NOTES_MAX_LENGTH = 1000;
 
 interface Props {
   studentId: number;
@@ -343,9 +357,7 @@ const impairmentLookup = ref<SystemLookupEntryAPIOutDTO[]>();
 const selectedDisabilityCategory = ref(props.modelValue.disabilityCategory);
 const selectedDisabilityType = ref(props.modelValue.disabilityType);
 const disabilityNotes = ref(props.modelValue.disabilityNotes ?? "");
-const diagnosisItems = ref<string[]>(
-  props.modelValue.diagnosis ? [props.modelValue.diagnosis] : [],
-);
+const diagnosisItems = ref<string[]>([...props.modelValue.diagnosis]);
 const diagnosisEntryInput = ref("");
 const diagnosisNotes = ref(props.modelValue.diagnosisNotes ?? "");
 const selectedImpairments = ref<string[]>([...props.modelValue.impairments]);
@@ -358,44 +370,20 @@ const finalNotes = ref(props.modelValue.finalNotes ?? "");
  * @returns True when all entries are valid, otherwise an error message.
  */
 const validateDiagnosisItems = (diagnosisItems: string[]): true | string => {
-  const hasInvalidItem = diagnosisItems.some(
-    (diagnosisItem) =>
-      checkLengthRule(
-        diagnosisItem,
-        DIAGNOSIS_ENTRY_MAX_LENGTH,
-        "Diagnosis information",
-        false,
-      ) !== true,
-  );
-
-  if (!hasInvalidItem) {
-    return true;
+  if (diagnosisItems?.length === 0) {
+    return "At least one diagnosis entry is required.";
   }
-
-  return `Each diagnosis entry must be ${DIAGNOSIS_ENTRY_MAX_LENGTH} characters or less.`;
+  return true;
 };
 
 /**
  * Adds a diagnosis entry to the list after validation.
  */
 const addDiagnosisEntry = (): void => {
-  const diagnosisEntry = diagnosisEntryInput.value.trim();
-  if (!diagnosisEntry) {
+  if (!diagnosisEntryInput.value) {
     return;
   }
-
-  const validationResult = checkLengthRule(
-    diagnosisEntry,
-    DIAGNOSIS_ENTRY_MAX_LENGTH,
-    "Diagnosis information",
-    false,
-  );
-  if (validationResult !== true) {
-    snackBar.error(validationResult as string);
-    return;
-  }
-
-  diagnosisItems.value.push(diagnosisEntry);
+  diagnosisItems.value.push(diagnosisEntryInput.value);
   diagnosisEntryInput.value = "";
 };
 

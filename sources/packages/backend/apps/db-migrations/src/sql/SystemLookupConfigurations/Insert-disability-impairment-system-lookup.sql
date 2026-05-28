@@ -27,123 +27,123 @@ FROM
         VALUES
             (
                 'Disability impairment',
+                'Ascend/Descend stairs',
+                'ASC_DESC_STAIRS',
+                1
+            ),
+            (
+                'Disability impairment',
+                'Attending classes',
+                'ATTENDING_CLASSES',
+                1
+            ),
+            (
+                'Disability impairment',
+                'Completing tasks on time',
+                'COMPLETE_TASKS_TIME',
+                1
+            ),
+            (
+                'Disability impairment',
+                'Focus and concentration',
+                'FOCUS_CONCENTRATION',
+                1
+            ),
+            (
+                'Disability impairment',
+                'Following instructions',
+                'FOLLOWING_INSTRUCT',
+                1
+            ),
+            (
+                'Disability impairment',
+                'Handwriting',
+                'HANDWRITING',
+                1
+            ),
+            (
+                'Disability impairment',
+                'Hearing',
+                'HEARING',
+                1
+            ),
+            (
+                'Disability impairment',
+                'Keyboarding/Typing',
+                'KEYBOARDING_TYPING',
+                1
+            ),
+            (
+                'Disability impairment',
+                'Lifting/Carrying/Holding/Reaching',
+                'LIFT_CARRY_REACH',
+                1
+            ),
+            (
+                'Disability impairment',
+                'Reading',
+                'READING',
+                1
+            ),
+            (
+                'Disability impairment',
+                'Remembering information',
+                'REMEMBERING_INFO',
+                1
+            ),
+            (
+                'Disability impairment',
+                'Sitting',
+                'SITTING',
+                1
+            ),
+            (
+                'Disability impairment',
+                'Speaking/Communicating',
+                'SPEAK_COMMUNICATE',
+                1
+            ),
+            (
+                'Disability impairment',
                 'Standing',
-                'STAND',
+                'STANDING',
+                1
+            ),
+            (
+                'Disability impairment',
+                'Staying on task',
+                'STAYING_ON_TASK',
+                1
+            ),
+            (
+                'Disability impairment',
+                'Taking notes in class',
+                'TAKING_NOTES_CLASS',
+                1
+            ),
+            (
+                'Disability impairment',
+                'Using Stairs',
+                'USING_STAIRS',
                 1
             ),
             (
                 'Disability impairment',
                 'Vision',
                 'VISION',
-                2
-            ),
-            (
-                'Disability impairment',
-                'Sitting',
-                'SIT',
-                3
-            ),
-            (
-                'Disability impairment',
-                'Hearing',
-                'HEAR',
-                4
+                1
             ),
             (
                 'Disability impairment',
                 'Walking',
-                'WALK',
-                5
-            ),
-            (
-                'Disability impairment',
-                'Following instructions',
-                'FOLLOWINST',
-                6
-            ),
-            (
-                'Disability impairment',
-                'Using Stairs',
-                'STAIRS',
-                7
-            ),
-            (
-                'Disability impairment',
-                'Organizing Thoughts',
-                'ORGTHGHT',
-                8
-            ),
-            (
-                'Disability impairment',
-                'Attending Classes',
-                'ATTCLASS',
-                9
-            ),
-            (
-                'Disability impairment',
-                'Speaking/Communicating',
-                'SPEAKING',
-                10
-            ),
-            (
-                'Disability impairment',
-                'Lifting/Carrying/Holding/Reaching',
-                'LIFTING',
-                11
-            ),
-            (
-                'Disability impairment',
-                'Focus and Concentration',
-                'FOCUS',
-                12
-            ),
-            (
-                'Disability impairment',
-                'Handwriting',
-                'HANDWRITE',
-                13
-            ),
-            (
-                'Disability impairment',
-                'Remembering Information',
-                'REMEMBER',
-                14
-            ),
-            (
-                'Disability impairment',
-                'Keyboarding/Typing',
-                'KEYBOARD',
-                15
-            ),
-            (
-                'Disability impairment',
-                'Staying on Task',
-                'STAYONTASK',
-                16
-            ),
-            (
-                'Disability impairment',
-                'Taking Notes in Class',
-                'TAKENOTES',
-                17
-            ),
-            (
-                'Disability impairment',
-                'Completing Tasks on Time',
-                'COMPTASK',
-                18
-            ),
-            (
-                'Disability impairment',
-                'Reading',
-                'READ',
-                19
+                'WALKING',
+                1
             ),
             (
                 'Disability impairment',
                 'Other',
                 'OTHER',
-                20
+                2
             )
     ) AS lookup_data(
         lookup_category,

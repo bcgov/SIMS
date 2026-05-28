@@ -4,12 +4,12 @@
       <header-navigator
         title="Disability Profile"
         :sub-title="
-          isDraft ? 'Student Disabilities - Draft' : 'Student Disabilities'
+          isDraft ? 'Student Disabilities Draft' : 'Student Disabilities Edit'
         "
         :route-location="{
           name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE,
           params: {
-            studentId: studentId,
+            studentId: props.studentId,
           },
         }"
       />
@@ -17,7 +17,7 @@
     <body-header-container :enable-card-view="false">
       <template #header>
         <body-header title="Disability Profile">
-          <template #actions v-if="!readOnly">
+          <template #actions>
             <v-btn
               prepend-icon="fas fa-save"
               class="float-right mr-2"
@@ -33,14 +33,13 @@
     <content-group>
       <student-disability-disabilities
         ref="disabilitiesComponent"
-        :student-id="studentId"
-        :disability-profile-id="disabilityProfileId"
-        :read-only="readOnly"
+        :student-id="props.studentId"
+        :disability-profile-id="props.disabilityProfileId"
+        :read-only="false"
         v-model="disabilities"
       />
     </content-group>
     <footer-buttons
-      v-if="!readOnly"
       primary-label="Complete change"
       @primary-click="completeProfile"
       @secondary-click="cancelProfile"
@@ -74,13 +73,11 @@ import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 interface Props {
   studentId: number;
   disabilityProfileId?: number;
-  readOnly?: boolean;
   isDraft?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   disabilityProfileId: undefined,
-  readOnly: false,
   isDraft: false,
 });
 

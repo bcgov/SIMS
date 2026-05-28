@@ -10,6 +10,11 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from ".";
 import { StudentDisabilityProfile } from "./student-disability-profile.model";
 
+export const DIAGNOSIS_MAX_LENGTH = 250;
+export const DISABILITY_NOTES_MAX_LENGTH = 500;
+export const IMPAIRMENTS_NOTES_MAX_LENGTH = 500;
+export const FINAL_NOTES_MAX_LENGTH = 1000;
+
 /**
  * Individual disability entries associated with a student disability profile.
  */
@@ -60,6 +65,7 @@ export class StudentDisabilityProfileDisability extends RecordDataModel {
   @Column({
     name: "disability_notes",
     nullable: true,
+    length: DISABILITY_NOTES_MAX_LENGTH,
   })
   disabilityNotes?: string;
   /**
@@ -78,6 +84,7 @@ export class StudentDisabilityProfileDisability extends RecordDataModel {
   @Column({
     name: "impairments_notes",
     nullable: true,
+    length: IMPAIRMENTS_NOTES_MAX_LENGTH,
   })
   impairmentsNotes?: string;
   /**
@@ -95,6 +102,7 @@ export class StudentDisabilityProfileDisability extends RecordDataModel {
   @Column({
     name: "diagnosis_notes",
     nullable: true,
+    length: DISABILITY_NOTES_MAX_LENGTH,
   })
   diagnosisNotes?: string;
   /**

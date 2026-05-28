@@ -27,13 +27,13 @@ FROM
         VALUES
             (
                 'Disability type',
-                'Permanent Disability (PD)',
+                'Permanent',
                 'PD',
                 1
             ),
             (
                 'Disability type',
-                'Persistent or Prolonged Disability (PPD)',
+                'Persistent or prolonged',
                 'PPD',
                 2
             )

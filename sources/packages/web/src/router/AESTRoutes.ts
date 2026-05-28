@@ -7,6 +7,7 @@ import StudentDetails from "@/views/aest/student/StudentDetails.vue";
 import StudentProfile from "@/views/aest/student/Profile.vue";
 import DisabilityProfile from "@/views/aest/student/DisabilityProfile.vue";
 import DisabilityProfileDisabilityEdit from "@/views/aest/student/DisabilityProfileDisabilityEdit.vue";
+import DisabilityProfileDisabilityView from "@/views/aest/student/DisabilityProfileDisabilityView.vue";
 import StudentApplications from "@/views/aest/student/Applications.vue";
 import ProgramDetails from "@/views/aest/institution/ProgramDetails.vue";
 import SearchInstitutions from "@/views/aest/SearchInstitutions.vue";
@@ -264,13 +265,11 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE_DISABILITY_VIEW,
         props: (route) => ({
           studentId: Number.parseInt(route.params.studentId as string),
-          disabilityProfileId: route.params.disabilityProfileId
-            ? Number.parseInt(route.params.disabilityProfileId as string)
-            : undefined,
-          isDraft: false,
-          readOnly: true,
+          disabilityProfileId: Number.parseInt(
+            route.params.disabilityProfileId as string,
+          ),
         }),
-        component: DisabilityProfileDisabilityEdit,
+        component: DisabilityProfileDisabilityView,
         meta: {
           clientType: ClientIdType.AEST,
         },

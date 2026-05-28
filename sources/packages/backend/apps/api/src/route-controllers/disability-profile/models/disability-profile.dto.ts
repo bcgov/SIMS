@@ -1,4 +1,11 @@
-import { DisabilityProfileStatus } from "@sims/sims-db";
+import {
+  DIAGNOSIS_MAX_LENGTH,
+  DISABILITY_NOTES_MAX_LENGTH,
+  DisabilityProfileStatus,
+  FINAL_NOTES_MAX_LENGTH,
+  IMPAIRMENTS_NOTES_MAX_LENGTH,
+  LOOKUP_KEY_MAX_LENGTH,
+} from "@sims/sims-db";
 import { Type } from "class-transformer";
 import {
   ArrayMinSize,
@@ -12,6 +19,10 @@ import {
   Min,
   Max,
 } from "class-validator";
+
+const MAX_DISABILITIES_PER_PROFILE = 25;
+const MAX_DIAGNOSIS_ENTRIES = 50;
+const MAX_IMPAIRMENTS_ENTRIES = 50;
 
 export class StudentDisabilityAPIOutDTO {
   id: number;
@@ -47,33 +58,34 @@ export class StudentDisabilityAPIInDTO {
   @IsPositive()
   id?: number;
   @Min(1)
-  @Max(100)
+  @Max(MAX_DISABILITIES_PER_PROFILE)
   disabilityPriority: number;
   @IsNotEmpty()
-  @MaxLength(100)
+  @MaxLength(LOOKUP_KEY_MAX_LENGTH)
   disabilityCategory: string;
   @IsNotEmpty()
-  @MaxLength(100)
+  @MaxLength(LOOKUP_KEY_MAX_LENGTH)
   disabilityType: string;
-  @IsNotEmpty()
-  @MaxLength(250)
+  @ArrayMinSize(1)
+  @ArrayMaxSize(MAX_DIAGNOSIS_ENTRIES)
   @IsString({ each: true })
+  @MaxLength(DIAGNOSIS_MAX_LENGTH, { each: true })
   diagnosis: string[];
   @IsOptional()
-  @MaxLength(1000)
+  @MaxLength(DIAGNOSIS_MAX_LENGTH)
   diagnosisNotes?: string;
   @ArrayMinSize(1)
-  @ArrayMaxSize(100)
+  @ArrayMaxSize(MAX_IMPAIRMENTS_ENTRIES)
   @IsString({ each: true })
   impairments: string[];
   @IsOptional()
-  @MaxLength(1000)
+  @MaxLength(DISABILITY_NOTES_MAX_LENGTH)
   disabilityNotes?: string;
   @IsOptional()
-  @MaxLength(1000)
+  @MaxLength(IMPAIRMENTS_NOTES_MAX_LENGTH)
   impairmentsNotes?: string;
   @IsOptional()
-  @MaxLength(1000)
+  @MaxLength(FINAL_NOTES_MAX_LENGTH)
   finalNotes?: string;
 }
 
@@ -85,7 +97,7 @@ export class SaveStudentDisabilityProfileAPIInDTO {
   @IsPositive()
   id?: number;
   @ArrayMinSize(1)
-  @ArrayMaxSize(100)
+  @ArrayMaxSize(MAX_DISABILITIES_PER_PROFILE)
   @ValidateNested({ each: true })
   @Type(() => StudentDisabilityAPIInDTO)
   disabilities: StudentDisabilityAPIInDTO[];

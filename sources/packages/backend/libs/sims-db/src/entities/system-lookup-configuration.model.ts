@@ -2,6 +2,8 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { RecordDataModel, SystemLookupCategory } from ".";
 import { TableNames } from "../constant";
 
+export const LOOKUP_KEY_MAX_LENGTH = 100;
+
 /**
  * System lookup configurations to store lookup data based on lookup category.
  */
@@ -26,6 +28,7 @@ export class SystemLookupConfiguration extends RecordDataModel {
    */
   @Column({
     name: "lookup_key",
+    length: LOOKUP_KEY_MAX_LENGTH,
   })
   lookupKey: string;
 

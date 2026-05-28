@@ -281,15 +281,17 @@ export class DisabilityProfileService {
     const updatedDisabilitiesIDs = updatedDisabilities.map(
       (disability) => disability.id,
     );
-    existingDisabilities
+    const deletedDisabilities = existingDisabilities
       .filter((disability) => !updatedDisabilitiesIDs.includes(disability.id))
-      .forEach((disability) => {
+      .map((disability) => {
         disability.deletedAt = now;
         disability.modifier = auditUser;
         disability.updatedAt = now;
-        updatedDisabilities.push(disability);
+        return disability;
       });
-    return updatedDisabilities;
+    // Ensures the deleted disabilities are updated first, avoiding
+    // unique constraint conflicts with the updated disabilities.
+    return [...deletedDisabilities, ...updatedDisabilities];
   }
 
   private validateDisabilitiesPriorities(

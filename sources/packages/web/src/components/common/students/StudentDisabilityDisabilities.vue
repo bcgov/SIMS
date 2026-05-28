@@ -138,8 +138,12 @@ const addDisability = (): void => {
     disabilityPriority: disabilities.value.length + 1,
     disabilityCategory: "",
     disabilityType: "",
-    diagnosis: "",
+    diagnosis: [],
+    diagnosisNotes: undefined,
     impairments: [],
+    disabilityNotes: undefined,
+    impairmentsNotes: undefined,
+    finalNotes: undefined,
   };
   disabilities.value.push(newDisability);
 };
