@@ -177,6 +177,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
             id: pendingStudentAppeal.id,
             applicationId: application.id,
             applicationNumber: application.applicationNumber,
+            studentId: student.id,
+            studentFullName: `${student.user.firstName} ${student.user.lastName}`,
             formCategory: FormCategory.StudentAppeal,
             status: FormSubmissionStatus.Pending,
             submittedDate: pendingStudentAppeal.submittedDate.toISOString(),
@@ -212,6 +214,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
           {
             canViewFormSubmittedData: false,
             id: completedStudentAppeal.id,
+            studentId: student.id,
+            studentFullName: `${student.user.firstName} ${student.user.lastName}`,
             formCategory: FormCategory.StudentAppeal,
             status: FormSubmissionStatus.Completed,
             submittedDate: completedStudentAppeal.submittedDate.toISOString(),
@@ -236,6 +240,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
             id: completedStudentForm.id,
             formCategory: FormCategory.StudentForm,
             status: FormSubmissionStatus.Completed,
+            studentId: student.id,
+            studentFullName: `${student.user.firstName} ${student.user.lastName}`,
             submittedDate: completedStudentForm.submittedDate.toISOString(),
             assessedDate: completedStudentForm.assessedDate.toISOString(),
             submissionItems: [
@@ -322,6 +328,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
             status: FormSubmissionStatus.Pending,
             submittedDate: pendingStudentAppeal.submittedDate.toISOString(),
             assessedDate: null,
+            studentId: pendingStudentAppeal.student.id,
+            studentFullName: `${pendingStudentAppeal.student.user.firstName} ${pendingStudentAppeal.student.user.lastName}`,
             submissionItems: [
               {
                 id: pendingStudentAppealSavedItem2.id,
@@ -401,6 +409,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
             status: FormSubmissionStatus.Pending,
             submittedDate: pendingStudentAppeal.submittedDate.toISOString(),
             assessedDate: null,
+            studentId: pendingStudentAppeal.student.id,
+            studentFullName: `${pendingStudentAppeal.student.user.firstName} ${pendingStudentAppeal.student.user.lastName}`,
             submissionItems: [
               {
                 id: authorizedStudentAppeal.id,
