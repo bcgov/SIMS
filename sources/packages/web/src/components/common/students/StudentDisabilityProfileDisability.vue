@@ -253,7 +253,6 @@ import {
   type StudentDisability,
   type VForm,
 } from "@/types";
-import ContentGroup from "@/components/generic/ContentGroup.vue";
 import StudentDisabilityProfileDiagnosis from "@/components/common/students/StudentDisabilityProfileDiagnosis.vue";
 
 const OTHER_CATEGORY_KEY = "OTHER";

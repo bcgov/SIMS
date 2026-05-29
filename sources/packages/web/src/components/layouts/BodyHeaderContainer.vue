@@ -7,20 +7,15 @@
       </v-container>
     </v-card>
     <div v-else>
-      <slot name="header"
-        ><body-header
-          :title="props.title"
-          :sub-title="props.hideSubTitle ? undefined : props.subTitle"
-          :title-header-level="props.titleHeaderLevel"
-          :header-size="props.headerSize"
-          :header-color="props.headerColor"
-      /></slot>
+      <slot name="header"><body-header v-bind="headerProps" /></slot>
       <slot></slot>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+
 interface Props {
   enableCardView?: boolean;
   title?: string;
@@ -39,5 +34,15 @@ const props = withDefaults(defineProps<Props>(), {
   hideSubTitle: false,
   headerSize: "large",
   headerColor: "primary",
+});
+
+const headerProps = computed(() => {
+  return {
+    title: props.title,
+    subTitle: props.hideSubTitle ? undefined : props.subTitle,
+    titleHeaderLevel: props.titleHeaderLevel,
+    headerSize: props.headerSize,
+    headerColor: props.headerColor,
+  };
 });
 </script>

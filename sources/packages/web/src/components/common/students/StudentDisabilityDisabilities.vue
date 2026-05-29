@@ -1,6 +1,6 @@
 <template>
   <v-skeleton-loader :loading="loading" type="list-item-three-line@3">
-    <v-expansion-panels class="mt-5" multiple>
+    <v-expansion-panels class="mt-5" multiple v-model="expandedPanels">
       <student-disability-profile-disability
         v-for="(disability, index) in disabilities"
         :key="disability.uniqueKey"
@@ -53,6 +53,8 @@ const props = withDefaults(defineProps<Props>(), {
   readOnly: false,
 });
 
+const expandedPanels = ref<number[]>([]);
+
 /**
  * Used as a stable Vue component key, independent of the server-assigned id.
  * Allow swapping and deleting disabilities without losing component state or causing rendering issues,
@@ -96,6 +98,7 @@ const getStableUniqueKey = (disabilityId: number): number => {
     return existingKey;
   }
   const newKey = nextUniqueKey++;
+
   uniqueKeysByDisabilityId.set(disabilityId, newKey);
   return newKey;
 };
@@ -124,6 +127,17 @@ const setDisabilityComponentRef = (
     uniqueKey,
     component as DisabilityPanelComponent,
   );
+};
+
+/**
+ * If a single disability is present, which is common for most student disability profiles,
+ * expand the panel by default to show all details without requiring an extra click.
+ */
+const expandPanelIfOnlyOne = (): void => {
+  if (!props.readOnly || disabilities.value.length !== 1) {
+    return;
+  }
+  expandedPanels.value = [0];
 };
 
 /**
@@ -194,6 +208,7 @@ const loadDisabilities = async (): Promise<void> => {
     finalNotes: disability.finalNotes,
   }));
   loading.value = false;
+  expandPanelIfOnlyOne();
 };
 
 watchEffect(async () => {
