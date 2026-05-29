@@ -112,8 +112,8 @@ const createPayload = (
 const saveDraftProfile = async (): Promise<void> => {
   const isValid = await disabilitiesComponent.value?.validateDisabilityForms();
   if (!isValid) {
-    snackBar.warn(
-      "Some mandatory fields are missing or contain invalid values. Please review the form and try again.",
+    snackBar.error(
+      "The draft was not saved. Please review the validation messages.",
     );
     return;
   }
@@ -143,8 +143,8 @@ const saveDraftProfile = async (): Promise<void> => {
 const completeProfile = async (): Promise<void> => {
   const isValid = await disabilitiesComponent.value?.validateDisabilityForms();
   if (!isValid) {
-    snackBar.warn(
-      "Some mandatory fields are missing or contain invalid values. Please review the form and try again.",
+    snackBar.error(
+      "The profile was not completed. Please review the validation messages.",
     );
     return;
   }

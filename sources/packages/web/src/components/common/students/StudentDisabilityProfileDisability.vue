@@ -7,15 +7,10 @@
             class="category-header-medium primary-color"
             :class="hasValidationErrors ? 'text-error' : 'brand-gray-text'"
           >
-            {{ disabilityCategoryLabel }}{{ hasValidationErrors ? "*" : "" }}
+            {{ disabilityCategoryLabel }}
           </span>
           <div>
-            {{
-              isPrimaryDisability
-                ? "Primary disability"
-                : "Additional disability"
-            }}
-            - {{ disabilityTypeLabel }}
+            {{ disabilityTypeLabel }}
           </div>
         </div>
         <v-btn-group
@@ -304,18 +299,13 @@ const disabilityCategoryLabel = computed(() => {
   const category = disabilityCategoryLookup.value?.find(
     (lookupItem) => lookupItem.lookupKey === selectedDisabilityCategory.value,
   );
-  return category ? category.lookupValue : "Select disability category";
-});
-
-/**
- * User friendly label for the selected disability type,
- * or a placeholder if none is selected.
- */
-const disabilityTypeLabel = computed(() => {
-  const type = disabilityTypeLookup.value?.find(
-    (lookupItem) => lookupItem.lookupKey === selectedDisabilityType.value,
-  );
-  return type ? type.lookupValue : "Select disability type";
+  const disabilityCategory = category
+    ? category.lookupValue
+    : "Select disability category";
+  if (hasValidationErrors.value) {
+    return `${disabilityCategory} *`;
+  }
+  return disabilityCategory;
 });
 
 /**
@@ -334,16 +324,19 @@ const isLastDisability = computed(
 );
 
 /**
- * Validates diagnosis entries ensuring each item stays within the allowed max length.
- * @param diagnosisItems List of diagnosis entries from the combobox.
- * @returns True when all entries are valid, otherwise an error message.
+ * User friendly label for the selected disability type,
+ * or a placeholder if none is selected.
  */
-const validateDiagnosisItems = (diagnosisItems: string[]): true | string => {
-  if (diagnosisItems?.length === 0) {
-    return "At least one diagnosis entry is required.";
-  }
-  return true;
-};
+const disabilityTypeLabel = computed(() => {
+  const type = disabilityTypeLookup.value?.find(
+    (lookupItem) => lookupItem.lookupKey === selectedDisabilityType.value,
+  );
+  const disabilityPriorityType = isPrimaryDisability.value
+    ? "Primary disability"
+    : "Additional disability";
+  const disabilityType = type ? type.lookupValue : "Select disability type";
+  return `${disabilityPriorityType} - ${disabilityType}`;
+});
 
 /**
  * Emit the full updated model to the parent whenever any field changes.
