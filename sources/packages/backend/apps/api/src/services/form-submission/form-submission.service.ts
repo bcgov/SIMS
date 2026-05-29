@@ -224,6 +224,7 @@ export class FormSubmissionService {
         submittedDate: true,
         assessedDate: true,
         formCategory: true,
+        student: { id: true, user: { firstName: true, lastName: true } },
         application: {
           id: true,
           applicationNumber: true,
@@ -258,6 +259,7 @@ export class FormSubmissionService {
       },
       relations: {
         application: true,
+        student: { user: true },
         formSubmissionItems: {
           dynamicFormConfiguration: true,
           currentDecision: { decisionBy: true, decisionNote: true },

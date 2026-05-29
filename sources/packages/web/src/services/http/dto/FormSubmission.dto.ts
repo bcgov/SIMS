@@ -41,6 +41,8 @@ interface FormSubmissionBaseAPIOutDTO {
   applicationNumber?: string;
   submittedDate: Date;
   assessedDate?: Date;
+  studentId: number;
+  studentFullName: string;
 }
 
 /**

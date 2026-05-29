@@ -4,22 +4,29 @@
       <p>
         <strong>Instructions:</strong>
       </p>
-      <ul v-if="formSubmission.formCategory === FormCategory.StudentAppeal">
-        <li>Review the appeal(s) and any supporting documentation.</li>
+      <ul>
         <li>
-          If there is more than one appeal you must add a decision for each.
+          Review all applicable information to adjudicate and record a decision
+          for the form submission.
         </li>
         <li>
-          Once all appeals have a decision you can complete your review by
-          selecting Submit final decision.
+          Students may resubmit forms and any changes will overwrite the
+          previous version.
+          <ul>
+            <li>
+              Application appeals only: Any appeals not included in the current
+              submission will overwrite previous versions and no longer affect
+              the assessment.
+            </li>
+          </ul>
         </li>
-      </ul>
-      <ul v-else>
-        <li>Review the form and any supporting documentation.</li>
-        <li>Add a decision for the form.</li>
         <li>
-          Once a decision has been added, complete your review by selecting
-          Submit final decision.
+          Where multiple items are present, all items must have a decision saved
+          before a final decision can be submitted.
+        </li>
+        <li>
+          Once all required decisions have been saved, click the submission
+          button to complete the review.
         </li>
       </ul>
     </template>
@@ -32,9 +39,8 @@
   </body-header>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { FormCategory } from "@/types";
+<script setup lang="ts">
+import { PropType } from "vue";
 import { FormSubmissionMinistryAPIOutDTO } from "@/services/http/dto";
 import StatusChipFormSubmission from "@/components/generic/StatusChipFormSubmission.vue";
 
@@ -43,24 +49,14 @@ type FormSubmission = Pick<
   "formCategory" | "status"
 >;
 
-export default defineComponent({
-  components: {
-    StatusChipFormSubmission,
+defineProps({
+  formSubmission: {
+    type: Object as PropType<FormSubmission>,
+    required: true,
   },
-  props: {
-    formSubmission: {
-      type: Object as PropType<FormSubmission>,
-      required: true,
-    },
-    loading: {
-      type: Boolean,
-      required: true,
-    },
-  },
-  setup() {
-    return {
-      FormCategory,
-    };
+  loading: {
+    type: Boolean,
+    required: true,
   },
 });
 </script>

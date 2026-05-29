@@ -116,6 +116,8 @@ export class FormSubmissionControllerService {
       applicationNumber: submission.application?.applicationNumber,
       submittedDate: submission.submittedDate,
       assessedDate: submission.assessedDate,
+      studentId: submission.student.id,
+      studentFullName: getUserFullName(submission.student.user),
       submissionItems: submission.formSubmissionItems.map((item) => ({
         id: item.id,
         formType: item.dynamicFormConfiguration.formType,
@@ -276,6 +278,8 @@ export class FormSubmissionControllerService {
       applicationId: submission.application?.id,
       applicationNumber: submission.application?.applicationNumber,
       submittedDate: submission.submittedDate,
+      studentId: submission.student.id,
+      studentFullName: getUserFullName(submission.student.user),
       submissionItems,
     };
   }
