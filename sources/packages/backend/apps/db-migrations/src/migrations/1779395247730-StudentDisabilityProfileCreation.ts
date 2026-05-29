@@ -5,6 +5,12 @@ export class StudentDisabilityProfileCreation1779395247730 implements MigrationI
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
+        "Create-function-is-valid-system-lookup-key-array.sql",
+        "Functions",
+      ),
+    );
+    await queryRunner.query(
+      getSQLFileData(
         "Insert-disability-category-system-lookup.sql",
         "SystemLookupConfigurations",
       ),
@@ -58,6 +64,12 @@ export class StudentDisabilityProfileCreation1779395247730 implements MigrationI
       getSQLFileData(
         "Rollback-disability-system-lookup.sql",
         "SystemLookupConfigurations",
+      ),
+    );
+    await queryRunner.query(
+      getSQLFileData(
+        "Rollback-create-function-is-valid-system-lookup-key-array.sql",
+        "Functions",
       ),
     );
   }

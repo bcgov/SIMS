@@ -20,7 +20,12 @@ CREATE TABLE sims.student_disability_profile_disabilities(
   ),
   diagnosis varchar(250) [] NOT NULL,
   diagnosis_notes VARCHAR(500),
-  impairments VARCHAR(100) [] NOT NULL,
+  impairments VARCHAR(100) [] NOT NULL  CHECK (
+    sims.is_valid_system_lookup_key_array(
+      impairments :: TEXT[],
+      'Disability impairment' :: TEXT
+    )
+  ),
   impairments_notes VARCHAR(500),
   final_notes VARCHAR(1000),
   -- Audit columns.
