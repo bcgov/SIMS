@@ -361,8 +361,13 @@ const emitUpdate = async (): Promise<void> => {
     impairmentsNotes: impairmentsNotes.value || undefined,
     finalNotes: finalNotes.value || undefined,
   });
+  if (!hasValidationErrors.value) {
+    // Avoid validating on every change when the validation error was not validated yet.
+    // It will prevent to trigger validation before the user has a chance to fill in the form.
+    return;
+  }
   await nextTick();
-  await validatePanel();
+  await validateDisabilityData();
 };
 
 watch(
@@ -414,7 +419,7 @@ watchEffect(async () => {
  * Validates the panel form and updates the panel error highlight state.
  * @returns True when panel form is valid.
  */
-const validatePanel = async (): Promise<boolean> => {
+const validateDisabilityData = async (): Promise<boolean> => {
   const validationResult = await disabilityForm.value.validate();
   hasValidationErrors.value = !validationResult.valid;
   return validationResult.valid;
@@ -428,7 +433,7 @@ const clearValidation = (): void => {
 };
 
 defineExpose({
-  validatePanel,
+  validateDisabilityData,
   clearValidation,
 });
 </script>

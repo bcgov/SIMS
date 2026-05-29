@@ -47,7 +47,7 @@
       >
         <student-disability-disabilities
           :student-id="studentId"
-          :disability-profile-id="activeProfile?.id"
+          :input-disabilities="activeProfile?.disabilities"
           :read-only="true"
         />
       </toggle-content>

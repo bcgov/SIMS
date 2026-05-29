@@ -34,25 +34,44 @@
 <script setup lang="ts">
 import { onBeforeUpdate, ref, watchEffect, nextTick } from "vue";
 import type { StudentDisability } from "@/types";
+import type { StudentDisabilityAPIOutDTO } from "@/services/http/dto";
 import { DisabilityProfileService } from "@/services/DisabilityProfileService";
 import StudentDisabilityProfileDisability from "@/components/common/students/StudentDisabilityProfileDisability.vue";
+import { useSnackBar } from "@/composables";
 
 type DisabilityPanelComponent = {
-  validatePanel: () => Promise<boolean>;
+  validateDisabilityData: () => Promise<boolean>;
   clearValidation: () => void;
 };
 
 interface Props {
   studentId: number;
+  /**
+   * Profile ID to allow the component to fetch the disabilities from the server.
+   * Not required when disabilities are provided directly via `inputDisabilities`.
+   */
   disabilityProfileId?: number;
+  /**
+   * Optional list of disabilities to display, used when the parent component already has
+   * the disability data and wants to pass it directly without requiring this component
+   * to fetch it again from the server.
+   * When this prop is provided, `disabilityProfileId` is not required.
+   */
+  inputDisabilities?: StudentDisabilityAPIOutDTO[];
+  /**
+   * When true, disables all editing capabilities and hides action buttons,
+   * making the component read-only.
+   */
   readOnly?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   disabilityProfileId: undefined,
+  inputDisabilities: undefined,
   readOnly: false,
 });
 
+const snackBar = useSnackBar();
 const expandedPanels = ref<number[]>([]);
 
 /**
@@ -180,21 +199,10 @@ const deleteDisability = (index: number): void => {
   normalizePriorities();
 };
 
-const loadDisabilities = async (): Promise<void> => {
-  if (!props.disabilityProfileId && !props.readOnly) {
-    disabilities.value = [createEmptyDisability()];
-    return;
-  }
-  if (!props.disabilityProfileId) {
-    return;
-  }
-  loading.value = true;
-  const disabilityProfile =
-    await DisabilityProfileService.shared.getStudentDisabilityProfile(
-      props.studentId,
-      props.disabilityProfileId,
-    );
-  disabilities.value = disabilityProfile.disabilities.map((disability) => ({
+const covertDisabilitiesToModel = (
+  disabilities: StudentDisabilityAPIOutDTO[],
+): StudentDisability[] => {
+  return disabilities.map((disability) => ({
     uniqueKey: getStableUniqueKey(disability.id),
     id: disability.id,
     disabilityPriority: disability.disabilityPriority,
@@ -207,12 +215,41 @@ const loadDisabilities = async (): Promise<void> => {
     impairmentsNotes: disability.impairmentsNotes,
     finalNotes: disability.finalNotes,
   }));
-  loading.value = false;
-  expandPanelIfOnlyOne();
+};
+
+const setDisabilities = async (): Promise<void> => {
+  if (props.inputDisabilities) {
+    // If disabilities are provided as props, use them directly without fetching from the server.
+    disabilities.value = covertDisabilitiesToModel(props.inputDisabilities);
+    expandPanelIfOnlyOne();
+    return;
+  }
+  if (!props.disabilityProfileId && !props.readOnly) {
+    disabilities.value = [createEmptyDisability()];
+    return;
+  }
+  if (!props.disabilityProfileId) {
+    return;
+  }
+  try {
+    loading.value = true;
+    const disabilityProfile =
+      await DisabilityProfileService.shared.getStudentDisabilityProfile(
+        props.studentId,
+        props.disabilityProfileId,
+      );
+    disabilities.value = covertDisabilitiesToModel(
+      disabilityProfile.disabilities,
+    );
+    loading.value = false;
+    expandPanelIfOnlyOne();
+  } catch {
+    snackBar.error("Unexpected error while loading disabilities.");
+  }
 };
 
 watchEffect(async () => {
-  await loadDisabilities();
+  await setDisabilities();
 });
 
 /**
@@ -228,7 +265,7 @@ const validateDisabilityForms = async (): Promise<boolean> => {
     if (!component) {
       continue;
     }
-    const isComponentValid = await component.validatePanel();
+    const isComponentValid = await component.validateDisabilityData();
     if (isComponentValid) {
       component.clearValidation();
       continue;
@@ -245,7 +282,7 @@ const getDisabilities = (): StudentDisability[] => {
 };
 
 defineExpose({
-  reloadData: loadDisabilities,
+  reloadData: setDisabilities,
   validateDisabilityForms,
   getDisabilities,
 });
