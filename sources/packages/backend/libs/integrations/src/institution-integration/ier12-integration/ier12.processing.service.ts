@@ -63,29 +63,59 @@ export class IER12ProcessingService {
    * for the IER 12 sent File.
    * 4. Upload the content to the zoneB SFTP server.
    * @param processSummary process summary for logging.
-   * @param generatedDate date for which the IER 12 file is generated.
+   * @param modifiedSince date for which the IER 12 file is generated.
    * @returns processing IER 12 result.
    */
   async processIER12File(
     processSummary: ProcessSummary,
-    generatedDate?: string,
+    modifiedSince?: string,
+    institutionCode?: string,
   ): Promise<IER12UploadResult[]> {
+    // Validate job data.
+    if (modifiedSince !== undefined) {
+      const oneYearAgo = addDays(-365, getISODateOnlyString(new Date()));
+      if (new Date(modifiedSince) < new Date(oneYearAgo)) {
+        processSummary.info(
+          "Modified since date cannot be more than one year in the past.",
+        );
+      }
+    }
+    if (institutionCode !== undefined && institutionCode.length !== 4) {
+      processSummary.info(
+        `Job data institutionCode must be exactly 4 characters.`,
+      );
+      return [];
+    }
+
     processSummary.info(
-      "Retrieving application current assessment details for IER 12.",
+      `Retrieving application current assessment details for IER 12${this.displayInstitutionCode(institutionCode)}.`,
     );
-    // By default, the generation start date is the previous day from today.
-    const modifiedSinceDate = generatedDate
-      ? new Date(generatedDate)
-      : addDays(-1, getISODateOnlyString(new Date()));
-    const modifiedUntilDate = addDays(1, modifiedSinceDate);
+    // By default, the modifiedSince date is the previous day from today.
+    const today = getISODateOnlyString(new Date());
+    const modifiedSinceDate = modifiedSince
+      ? new Date(modifiedSince)
+      : addDays(-1, today);
+    // If a modifiedSince date is provided, the modifiedUntilDate include all data up until the execution time to ensure that a current snapshot is sent.
+    // If not provided, the modifiedUntilDate is set to start of day today so that the default execution sends exactly one day of data.
+    const modifiedUntilDate = modifiedSince ? new Date() : new Date(today);
     processSummary.info(
-      `Retrieving data related to IER 12 created or modified between ${modifiedSinceDate} and ${modifiedUntilDate}.`,
+      `Retrieving data related to IER 12 created or modified between ${modifiedSinceDate} and ${modifiedUntilDate}${this.displayInstitutionCode(institutionCode)}.`,
     );
     const pendingApplications =
       await this.studentAssessmentService.getPendingApplicationsCurrentAssessment(
         modifiedSinceDate,
         modifiedUntilDate,
+        institutionCode,
       );
+    if (!pendingApplications.length) {
+      processSummary.info(
+        `No assessments found for IER 12${this.displayInstitutionCode(institutionCode)}.`,
+      );
+      return [];
+    }
+    processSummary.info(
+      `Found ${pendingApplications.length} assessment(s)${this.displayInstitutionCode(institutionCode)}.`,
+    );
     const pendingApplicationIds = pendingApplications.map(
       (application) => application.id,
     );
@@ -94,22 +124,17 @@ export class IER12ProcessingService {
       await this.studentAssessmentService.getDisbursementAwardTotalsForApplications(
         pendingApplicationIds,
       );
-    if (!pendingApplications.length) {
-      processSummary.info("No assessments found for IER 12.");
-      return [];
-    }
-    processSummary.info(`Found ${pendingApplications.length} assessment(s).`);
     const fileRecords: Record<string, IER12Record[]> = {};
     for (const application of pendingApplications) {
       const institutionCode =
-        application.currentAssessment.offering.institutionLocation
-          .institutionCode;
+        application.currentAssessment!.offering!.institutionLocation
+          .institutionCode!;
       if (!fileRecords[institutionCode]) {
         fileRecords[institutionCode] = [];
       }
       const ier12Records = await this.createIER12Record(
         application,
-        applicationAwardTotals.get(application.id),
+        applicationAwardTotals.get(application.id) ?? [],
       );
       fileRecords[institutionCode].push(...ier12Records);
     }
@@ -127,7 +152,7 @@ export class IER12ProcessingService {
         uploadResult.push(ierUploadResult);
       }
     } catch (error: unknown) {
-      const errorMessage = "Error while uploading content for IER 12.";
+      const errorMessage = `Error while uploading content for IER 12${this.displayInstitutionCode(institutionCode)}.`;
       this.logger.error(errorMessage, error);
       processSummary.error(errorMessage, error);
     }
@@ -444,5 +469,14 @@ export class IER12ProcessingService {
     return studentOverawardsBalance
       ? studentOverawardsBalance[awardType] > 0
       : false;
+  }
+
+  /**
+   * Helper method to display institution code in the log messages if provided.
+   * @param institutionCode institution code to be displayed in the log message.
+   * @returns formatted string with institution code if provided, otherwise an empty string.
+   */
+  private displayInstitutionCode(institutionCode?: string): string {
+    return institutionCode ? ` with institution code ${institutionCode}` : "";
   }
 }

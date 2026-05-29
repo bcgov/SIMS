@@ -1343,7 +1343,206 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
   });
 
+  it("Should generate an IER12 file for a specific location when the institution code is valid and matching applications exist.", async () => {
+    // Arrange
+    const testInputDataLocationA = {
+      student: JOHN_DOE_FROM_CANADA,
+      application: {
+        applicationNumber: defaultApplicationNumber,
+        studentNumber: undefined,
+        relationshipStatus: RelationshipStatus.Married,
+        applicationStatus: ApplicationStatus.Completed,
+        applicationStatusUpdatedOn: undefined,
+      },
+      assessment: {
+        triggerType: AssessmentTriggerType.OriginalAssessment,
+        assessmentDate: referenceSubmissionDate,
+        workflowData: WORKFLOW_DATA_MARRIED_WITH_DEPENDENTS,
+        assessmentData: ASSESSMENT_DATA_MARRIED,
+        disbursementSchedules: [
+          {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            disbursementDate: undefined,
+            updatedAt: undefined,
+            dateSent: undefined,
+            disbursementValues:
+              AWARDS_SINGLE_DISBURSEMENT_RESTRICTION_WITHHELD_FUNDS,
+          },
+        ],
+      },
+      educationProgram:
+        PROGRAM_UNDERGRADUATE_CERTIFICATE_WITHOUT_INSTITUTION_PROGRAM_CODE,
+      offering: OFFERING_FULL_TIME,
+    };
+    const applicationA = await saveIER12TestInputData(
+      db,
+      testInputDataLocationA,
+      { institutionLocation: locationA },
+      {
+        programYearPrefix: sharedProgramYearPrefix,
+        submittedDate: referenceSubmissionDate,
+      },
+    );
+
+    // Queued job.
+    const mockedJob = createIER12SchedulerJobMock(
+      referenceSubmissionDate,
+      locationA.institutionCode,
+    );
+
+    // Act
+    const ier12Results = await processor.processQueue(mockedJob.job);
+
+    // Assert
+    // Assert process result.
+    expect(ier12Results).toBeDefined();
+    // File timestamp.
+    const [firstTimestampResult] =
+      getFileNameAsCurrentTimestampMock.mock.results;
+    expect(isValidFileTimestamp(firstTimestampResult.value)).toBe(true);
+    expect(ier12Results).toStrictEqual([
+      getSuccessSummaryMessages(firstTimestampResult.value, {
+        institutionCode: locationA.institutionCode!,
+      }),
+    ]);
+    // Assert file output.
+    const [fileA] = getUploadedFiles(sftpClientMock);
+    // Location A file validation.
+    expect(fileA).toBeDefined();
+    expect(fileA.fileLines?.length).toBe(1);
+    const [fileALine1] = fileA.fileLines;
+    const [firstDisbursementA] =
+      applicationA.currentAssessment!.disbursementSchedules!;
+    const assessmentAId = numberToText(applicationA.currentAssessment!.id);
+    // Line 1 validations.
+    const firstDisbursementAId = numberToText(firstDisbursementA.id);
+    const currentOfferingIdForApplicationA = numberToText(
+      applicationA.currentAssessment!.offering!.id,
+    );
+    const parentOfferingIdA = numberToText(
+      applicationA.currentAssessment!.offering!.parentOffering!.id,
+    );
+    expect(fileALine1.length).toBe(IER_RECORD_EXPECTED_LENGTH);
+    expect(fileALine1).toBe(
+      `${assessmentAId}${firstDisbursementAId}${defaultApplicationNumber}            242963189Doe                      John           19980113B   MA  NONENAddress Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program name                                                               undergraduateCertificate 0001    8   0512123401234ADR1                         6${currentOfferingIdForApplicationA}${parentOfferingIdA}                              2000081620001010000033330000004444000000555500000066660019100F2000060120002001COMP20000601000010000000006598000000032400NNNNN            20000601        000002850000000000000000400000006002001003000003005NNY000000000000000000000000000000000000000000000000000000000000NY0000000000000144430000000000000000000000000000000000007777000000150056000000000000000000000000000000000000000000003000000000050000000065430000001700000000792200N0000000000000000000000000000000000000000000000000000000000000000000000DISW2000081520000815Completed Sent      20000816                        CSLF0000100000BCSL0000659800CSGP0000000000CSGD0000000000CSGF0000000000CSGT0000000000BCAG0000032400SBSD0000000000BGPD0000000000    0000000000`,
+    );
+  });
+
+  it.only("Should not generate an IER12 file for a specific location when the institution code is valid but no matching applications exist.", async () => {
+    // Arrange
+    const testInputDataLocationA = {
+      student: JOHN_DOE_FROM_CANADA,
+      application: {
+        applicationNumber: defaultApplicationNumber,
+        studentNumber: undefined,
+        relationshipStatus: RelationshipStatus.Married,
+        applicationStatus: ApplicationStatus.Completed,
+        applicationStatusUpdatedOn: undefined,
+      },
+      assessment: {
+        triggerType: AssessmentTriggerType.OriginalAssessment,
+        assessmentDate: referenceSubmissionDate,
+        workflowData: WORKFLOW_DATA_MARRIED_WITH_DEPENDENTS,
+        assessmentData: ASSESSMENT_DATA_MARRIED,
+        disbursementSchedules: [
+          {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            disbursementDate: undefined,
+            updatedAt: undefined,
+            dateSent: undefined,
+            disbursementValues:
+              AWARDS_SINGLE_DISBURSEMENT_RESTRICTION_WITHHELD_FUNDS,
+          },
+        ],
+      },
+      educationProgram:
+        PROGRAM_UNDERGRADUATE_CERTIFICATE_WITHOUT_INSTITUTION_PROGRAM_CODE,
+      offering: OFFERING_FULL_TIME,
+    };
+    // Create data for a different location than the one that will be provided in the job data.
+    // This data should not be picked up in the IER12 file.
+    await saveIER12TestInputData(
+      db,
+      testInputDataLocationA,
+      { institutionLocation: locationA },
+      {
+        programYearPrefix: sharedProgramYearPrefix,
+        submittedDate: referenceSubmissionDate,
+      },
+    );
+
+    // Queued job.
+    const institutionCode = "ABCD";
+    const mockedJob = createIER12SchedulerJobMock(undefined, institutionCode);
+
+    // Act
+    const ier12Results = await processor.processQueue(mockedJob.job);
+
+    // Assert logs
+    const today = dayjs().startOf("day").toDate();
+    const modifiedSince = dateUtils.addDays(-1, today);
+    expect(
+      mockedJob.containLogMessages([
+        `Retrieving application current assessment details for IER 12 with institution code ${institutionCode}.`,
+        `Retrieving data related to IER 12 created or modified between ${modifiedSince} and ${today} with institution code ${institutionCode}.`,
+        `No assessments found for IER 12 with institution code ${institutionCode}.`,
+      ]),
+    ).toBe(true);
+
+    // Assert process result.
+    assertEmptyResults(ier12Results);
+  });
+
+  it("Should not generate an IER12 file for a specific location when the modified since date is defaulted and the institution code is invalid.", async () => {
+    // Queued job.
+    const institutionCode = "ABCDE";
+    const mockedJob = createIER12SchedulerJobMock(undefined, institutionCode);
+
+    // Act
+    const ier12Results = await processor.processQueue(mockedJob.job);
+
+    // Assert logs
+    expect(
+      mockedJob.containLogMessages([
+        "Job data institutionCode must be exactly 4 characters.",
+      ]),
+    ).toBe(true);
+
+    // Assert process result.
+    assertEmptyResults(ier12Results);
+  });
+
+  it("Should not generate an IER12 file when the modified since date is over 1 year in the past.", async () => {
+    // Queued job.
+    const modifiedSinceDate = dayjs()
+      .subtract(1, "year")
+      .subtract(1, "day")
+      .toDate();
+    const mockedJob = createIER12SchedulerJobMock(modifiedSinceDate);
+
+    // Act
+    const ier12Results = await processor.processQueue(mockedJob.job);
+
+    // Assert logs
+    expect(
+      mockedJob.containLogMessages([
+        "Modified since date cannot be more than one year in the past.",
+      ]),
+    ).toBe(true);
+
+    // Assert process result.
+    assertEmptyResults(ier12Results);
+  });
+
   afterAll(async () => {
     await app?.close();
   });
 });
+
+function assertEmptyResults(ier12Results: string | string[]) {
+  expect(ier12Results).toBeDefined();
+  expect(ier12Results.length).toEqual(1);
+  expect(ier12Results[0]).toEqual("No IER12 files were generated.");
+}

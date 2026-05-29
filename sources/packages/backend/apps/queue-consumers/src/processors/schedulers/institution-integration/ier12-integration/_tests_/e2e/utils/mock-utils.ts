@@ -1,5 +1,5 @@
 import { getISODateOnlyString } from "@sims/utilities";
-import { GeneratedDateQueueInDTO } from "../../../models/ier.model";
+import { IER12IntegrationQueueInDTO } from "../../../models/ier.model";
 import {
   mockBullJob,
   MockBullJobResult,
@@ -7,16 +7,19 @@ import {
 
 /**
  * Creates the mocked IER12 job payload for the scheduler.
- * @param date optional date of processing.
+ * @param modifiedSince Include modifications to IER12 related data made since this date (inclusive).
+ * @param institutionCode Institution code to limit applications to a specific institution.
  * @returns mocked IER12 payload.
  */
 export function createIER12SchedulerJobMock(
-  date?: string | Date,
-): MockBullJobResult<GeneratedDateQueueInDTO> {
+  modifiedSince?: string | Date,
+  institutionCode?: string,
+): MockBullJobResult<IER12IntegrationQueueInDTO> {
   // Queued job.
-  const data = {} as GeneratedDateQueueInDTO;
-  if (date) {
-    data.generatedDate = getISODateOnlyString(date);
+  const data = {} as IER12IntegrationQueueInDTO;
+  if (modifiedSince) {
+    data.modifiedSince = getISODateOnlyString(modifiedSince);
   }
-  return mockBullJob<GeneratedDateQueueInDTO>(data);
+  data.institutionCode = institutionCode;
+  return mockBullJob<IER12IntegrationQueueInDTO>(data);
 }

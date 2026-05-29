@@ -27,13 +27,15 @@ export class StudentAssessmentService {
    * between the given period.
    * @param modifiedSince Inclusive date since the application or student data was modified.
    * @param modifiedUntil Exclusive date until the application or student data was modified.
+   * @param institutionCode Optional institution code to limit the applications to a specific institution.
    * @returns application details for current assessment.
    */
   async getPendingApplicationsCurrentAssessment(
     modifiedSince: Date,
     modifiedUntil: Date,
+    institutionCode?: string,
   ): Promise<Application[]> {
-    return this.applicationRepo
+    const query = this.applicationRepo
       .createQueryBuilder("application")
       .select([
         "application.id",
@@ -181,7 +183,14 @@ export class StudentAssessmentService {
               }),
             );
         }),
-      )
+      );
+    // Optionally limit applications to a specific institution.
+    if (institutionCode) {
+      query.andWhere("institutionLocation.institutionCode = :institutionCode", {
+        institutionCode,
+      });
+    }
+    query
       .setParameters({
         offeringIntensityFullTime: OfferingIntensity.fullTime,
         applicationStatusEdited: ApplicationStatus.Edited,
@@ -189,8 +198,8 @@ export class StudentAssessmentService {
         modifiedUntil,
       })
       .orderBy("currentAssessment.assessmentDate", "ASC")
-      .addOrderBy("disbursementSchedule.disbursementDate", "ASC")
-      .getMany();
+      .addOrderBy("disbursementSchedule.disbursementDate", "ASC");
+    return await query.getMany();
   }
 
   /**
