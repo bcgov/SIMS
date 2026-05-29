@@ -4,10 +4,10 @@
       <div class="d-flex align-center justify-space-between w-100 error">
         <div>
           <span
-            class="category-header-medium"
+            class="category-header-medium primary-color"
             :class="hasValidationErrors ? 'text-error' : 'brand-gray-text'"
           >
-            {{ disabilityCategoryLabel }}{{ hasValidationErrors ? " *" : "" }}
+            {{ disabilityCategoryLabel }}{{ hasValidationErrors ? "*" : "" }}
           </span>
           <div>
             {{
@@ -51,266 +51,200 @@
     </template>
     <v-expansion-panel-text>
       <v-form ref="disabilityForm">
-        <content-group>
-          <v-row dense>
-            <v-col cols="12">
-              <h4 class="category-header-medium brand-gray-text mb-0">
-                Disability details
-              </h4>
-              <v-divider></v-divider>
-            </v-col>
-            <v-col cols="6">
-              <v-select
-                :readonly="readOnly"
-                v-model="selectedDisabilityCategory"
-                :items="disabilityCategoryLookup"
-                label="Disability category"
-                item-title="lookupValue"
-                item-value="lookupKey"
-                density="compact"
-                variant="outlined"
-                hide-details="auto"
-                clearable
-                :rules="[(v) => checkNullOrEmptyRule(v, 'Disability category')]"
-              />
-            </v-col>
-            <v-col cols="6">
-              <v-select
-                :readonly="readOnly"
-                v-model="selectedDisabilityType"
-                :items="disabilityTypeLookup"
-                label="Disability type"
-                item-title="lookupValue"
-                item-value="lookupKey"
-                density="compact"
-                variant="outlined"
-                hide-details="auto"
-                clearable
-                :rules="[(v) => checkNullOrEmptyRule(v, 'Disability type')]"
-              />
-            </v-col>
-            <v-col class="mt-4"
-              ><v-textarea
-                :readonly="readOnly"
-                v-model="disabilityNotes"
-                label="Disability details notes"
-                variant="outlined"
-                :rows="readOnly ? 1 : undefined"
-                auto-grow
-                hide-details="auto"
-                :rules="[
-                  (v) =>
-                    checkLengthRule(
-                      v,
-                      REGULAR_NOTE_MAX_LENGTH,
-                      'Disability details notes',
-                      selectedDisabilityCategory === OTHER_CATEGORY_KEY,
-                    ),
-                ]"
-            /></v-col>
-          </v-row>
-          <v-row dense>
-            <v-col
-              ><h4 class="category-header-medium brand-gray-text mb-0 mt-4">
-                Diagnosis information
-              </h4>
-              <h6 v-if="!readOnly">
-                Please add each diagnosis relevant to the student's disability.
-              </h6>
-              <v-divider></v-divider
-            ></v-col>
-            <v-col cols="12">
-              <content-group>
-                <v-row dense v-if="!readOnly">
-                  <v-col>
-                    <v-text-field
-                      v-if="!readOnly"
-                      v-model.trim="diagnosisEntryInput"
-                      :readonly="readOnly"
-                      label="Diagnosis information"
-                      placeholder="Enter diagnosis and click Add or press Enter"
-                      :persistent-placeholder="true"
-                      density="compact"
-                      variant="outlined"
-                      hide-details="auto"
-                      :rules="[
-                        (v) =>
-                          checkLengthRule(
-                            v,
-                            DIAGNOSIS_ENTRY_MAX_LENGTH,
-                            'Diagnosis information',
-                            false,
-                          ),
-                      ]"
-                      @keydown.enter.prevent="addDiagnosisEntry"
-                    />
-                  </v-col>
-                  <v-col cols="auto">
-                    <v-btn
-                      v-if="!readOnly"
-                      prepend-icon="fas fa-plus"
-                      color="primary"
-                      variant="outlined"
-                      @click="addDiagnosisEntry"
-                    >
-                      Add diagnosis
-                    </v-btn>
-                  </v-col>
-                </v-row>
-                <v-table striped="even" :class="readOnly ? 'mt-n4' : 'mt-2'">
-                  <thead>
-                    <tr>
-                      <th class="text-left">
-                        <v-icon icon="mdi-stethoscope" class="mr-1" size="18" />
-                        Diagnosis entries
-                      </th>
-                      <th v-if="!readOnly" class="text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-if="!diagnosisItems.length">
-                      <td
-                        :colspan="readOnly ? 1 : 2"
-                        class="text-medium-emphasis"
-                      >
-                        No diagnosis entries added.
-                      </td>
-                    </tr>
-                    <tr
-                      v-for="(diagnosisItem, index) in diagnosisItems"
-                      :key="`${diagnosisItem}-${index}`"
-                    >
-                      <td>{{ diagnosisItem }}</td>
-                      <td v-if="!readOnly" class="text-right pa-0">
-                        <v-btn
-                          color="error"
-                          variant="plain"
-                          size="large"
-                          @click="removeDiagnosisEntry(index)"
-                        >
-                          <v-icon>mdi-close</v-icon>
-                        </v-btn>
-                      </td>
-                    </tr>
-                  </tbody>
-                </v-table>
-              </content-group>
-              <v-input
-                :model-value="diagnosisItems"
-                :rules="[validateDiagnosisItems]"
-                hide-details="auto"
-              />
-            </v-col>
-            <v-col class="mt-4"
-              ><v-textarea
-                :readonly="readOnly"
-                v-model="diagnosisNotes"
-                label="Diagnosis notes"
-                variant="outlined"
-                :rows="readOnly ? 1 : undefined"
-                auto-grow
-                hide-details="auto"
-                :rules="[
-                  (v) =>
-                    checkLengthRule(
-                      v,
-                      REGULAR_NOTE_MAX_LENGTH,
-                      'Diagnosis notes',
-                      false,
-                    ),
-                ]"
-            /></v-col>
-          </v-row>
-          <v-row dense>
-            <v-col cols="12">
-              <h4 class="category-header-medium brand-gray-text mb-0 mt-4">
-                Impairments to academic tasks
-              </h4>
-              <h6 v-if="!readOnly">Please select all that apply.</h6>
-              <v-divider />
-            </v-col>
-            <v-col
-              v-for="option in impairmentLookup"
-              :key="option.lookupKey"
-              cols="12"
-              sm="6"
-              class="py-0"
-            >
-              <v-checkbox
-                :readonly="readOnly"
-                :color="readOnly ? 'secondary' : 'primary'"
-                v-model="selectedImpairments"
-                :label="option.lookupValue"
-                :value="option.lookupKey"
-                density="compact"
-                hide-details
-              />
-            </v-col>
-            <v-col cols="12">
-              <v-input
-                :model-value="selectedImpairments"
-                :rules="[
-                  (v) =>
-                    v.length > 0 || 'At least one impairment must be selected.',
-                ]"
-                hide-details="auto"
-              />
-            </v-col>
-            <v-col cols="12"
-              ><v-textarea
-                :readonly="readOnly"
-                v-model="impairmentsNotes"
-                label="Impairments notes"
-                variant="outlined"
-                :rows="readOnly ? 1 : undefined"
-                auto-grow
-                hide-details="auto"
-                :rules="[
-                  (v) =>
-                    checkLengthRule(
-                      v,
-                      REGULAR_NOTE_MAX_LENGTH,
-                      'Impairments notes',
-                      selectedImpairments.includes(OTHER_CATEGORY_KEY),
-                    ),
-                ]"
-            /></v-col>
-          </v-row>
-          <v-row dense>
-            <v-col cols="12">
-              <h4 class="category-header-medium brand-gray-text mb-0 mt-4">
-                Final notes
-              </h4>
-              <v-divider />
-            </v-col>
-            <v-col cols="12"
-              ><v-textarea
-                :readonly="readOnly"
-                v-model="finalNotes"
-                label="Notes"
-                variant="outlined"
-                :rows="readOnly ? 1 : undefined"
-                auto-grow
-                hide-details="auto"
-                :rules="[
-                  (v) =>
-                    checkLengthRule(
-                      v,
-                      FINAL_NOTES_MAX_LENGTH,
-                      'Final notes',
-                      false,
-                    ),
-                ]"
-            /></v-col>
-          </v-row>
-        </content-group>
+        <body-header-container
+          header-size="medium"
+          header-color="secondary"
+          :enable-card-view="false"
+          title="Disability details"
+        >
+          <content-group>
+            <v-row dense>
+              <v-col cols="12"> </v-col>
+              <v-col cols="6">
+                <v-select
+                  :readonly="readOnly"
+                  v-model="selectedDisabilityCategory"
+                  :items="disabilityCategoryLookup"
+                  label="Disability category"
+                  item-title="lookupValue"
+                  item-value="lookupKey"
+                  density="compact"
+                  variant="outlined"
+                  hide-details="auto"
+                  clearable
+                  :rules="[
+                    (v) => checkNullOrEmptyRule(v, 'Disability category'),
+                  ]"
+                />
+              </v-col>
+              <v-col cols="6">
+                <v-select
+                  :readonly="readOnly"
+                  v-model="selectedDisabilityType"
+                  :items="disabilityTypeLookup"
+                  label="Disability type"
+                  item-title="lookupValue"
+                  item-value="lookupKey"
+                  density="compact"
+                  variant="outlined"
+                  hide-details="auto"
+                  clearable
+                  :rules="[(v) => checkNullOrEmptyRule(v, 'Disability type')]"
+                />
+              </v-col>
+              <v-col class="mt-4" v-if="disabilityNotes || !readOnly"
+                ><v-textarea
+                  :readonly="readOnly"
+                  v-model="disabilityNotes"
+                  label="Disability details notes"
+                  variant="outlined"
+                  :rows="readOnly ? 1 : undefined"
+                  auto-grow
+                  hide-details="auto"
+                  :rules="[
+                    (v) =>
+                      checkLengthRule(
+                        v,
+                        REGULAR_NOTE_MAX_LENGTH,
+                        'Disability details notes',
+                        selectedDisabilityCategory === OTHER_CATEGORY_KEY,
+                      ),
+                  ]"
+              /></v-col>
+            </v-row>
+          </content-group>
+        </body-header-container>
+        <body-header-container
+          :enable-card-view="false"
+          title="Diagnosis information"
+          header-size="medium"
+          header-color="secondary"
+          sub-title="Please add each diagnosis relevant to the student's disability."
+          :hide-sub-title="readOnly"
+        >
+          <content-group>
+            <v-row dense>
+              <v-col cols="12">
+                <student-disability-profile-diagnosis
+                  v-model="diagnosisItems"
+                  :read-only="readOnly"
+                />
+              </v-col>
+              <v-col class="mt-4" v-if="diagnosisNotes || !readOnly"
+                ><v-textarea
+                  :readonly="readOnly"
+                  v-model="diagnosisNotes"
+                  label="Diagnosis notes"
+                  variant="outlined"
+                  :rows="readOnly ? 1 : undefined"
+                  auto-grow
+                  hide-details="auto"
+                  :rules="[
+                    (v) =>
+                      checkLengthRule(
+                        v,
+                        REGULAR_NOTE_MAX_LENGTH,
+                        'Diagnosis notes',
+                        false,
+                      ),
+                  ]"
+              /></v-col>
+            </v-row>
+          </content-group>
+        </body-header-container>
+        <body-header-container
+          :enable-card-view="false"
+          header-size="medium"
+          header-color="secondary"
+          title="Impairments to academic tasks"
+          sub-title="Please select all that apply."
+          :hide-sub-title="readOnly"
+        >
+          <content-group>
+            <v-row dense>
+              <v-col
+                v-for="option in impairmentLookup"
+                :key="option.lookupKey"
+                cols="12"
+                sm="6"
+                class="py-0"
+              >
+                <v-checkbox
+                  :readonly="readOnly"
+                  :color="readOnly ? 'secondary' : 'primary'"
+                  v-model="selectedImpairments"
+                  :label="option.lookupValue"
+                  :value="option.lookupKey"
+                  density="compact"
+                  hide-details
+                />
+              </v-col>
+              <v-col cols="12">
+                <v-input
+                  :model-value="selectedImpairments"
+                  :rules="[
+                    (v) =>
+                      v.length > 0 ||
+                      'At least one impairment must be selected.',
+                  ]"
+                  hide-details="auto"
+                />
+              </v-col>
+              <v-col cols="12" v-if="impairmentsNotes || !readOnly"
+                ><v-textarea
+                  :readonly="readOnly"
+                  v-model="impairmentsNotes"
+                  label="Impairments notes"
+                  variant="outlined"
+                  :rows="readOnly ? 1 : undefined"
+                  auto-grow
+                  hide-details="auto"
+                  :rules="[
+                    (v) =>
+                      checkLengthRule(
+                        v,
+                        REGULAR_NOTE_MAX_LENGTH,
+                        'Impairments notes',
+                        selectedImpairments.includes(OTHER_CATEGORY_KEY),
+                      ),
+                  ]"
+              /></v-col>
+            </v-row>
+          </content-group>
+        </body-header-container>
+        <body-header-container
+          v-if="finalNotes || !readOnly"
+          :enable-card-view="false"
+          title="Final notes"
+          header-size="medium"
+          header-color="secondary"
+        >
+          <v-textarea
+            :readonly="readOnly"
+            v-model="finalNotes"
+            label="Notes"
+            variant="outlined"
+            :rows="readOnly ? 1 : undefined"
+            auto-grow
+            hide-details="auto"
+            :rules="[
+              (v) =>
+                checkLengthRule(
+                  v,
+                  FINAL_NOTES_MAX_LENGTH,
+                  'Final notes',
+                  false,
+                ),
+            ]"
+          />
+        </body-header-container>
       </v-form>
     </v-expansion-panel-text>
   </v-expansion-panel>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, watchEffect } from "vue";
+import { computed, nextTick, ref, watch, watchEffect } from "vue";
 import { useRules, useSnackBar } from "@/composables";
 import { SystemLookupConfigurationService } from "@/services/SystemLookupConfigurationService";
 import type { SystemLookupEntryAPIOutDTO } from "@/services/http/dto";
@@ -320,8 +254,8 @@ import {
   type VForm,
 } from "@/types";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
+import StudentDisabilityProfileDiagnosis from "@/components/common/students/StudentDisabilityProfileDiagnosis.vue";
 
-const DIAGNOSIS_ENTRY_MAX_LENGTH = 250;
 const OTHER_CATEGORY_KEY = "OTHER";
 const REGULAR_NOTE_MAX_LENGTH = 500;
 const FINAL_NOTES_MAX_LENGTH = 1000;
@@ -358,11 +292,47 @@ const selectedDisabilityCategory = ref(props.modelValue.disabilityCategory);
 const selectedDisabilityType = ref(props.modelValue.disabilityType);
 const disabilityNotes = ref(props.modelValue.disabilityNotes ?? "");
 const diagnosisItems = ref<string[]>([...props.modelValue.diagnosis]);
-const diagnosisEntryInput = ref("");
 const diagnosisNotes = ref(props.modelValue.diagnosisNotes ?? "");
 const selectedImpairments = ref<string[]>([...props.modelValue.impairments]);
 const impairmentsNotes = ref(props.modelValue.impairmentsNotes ?? "");
 const finalNotes = ref(props.modelValue.finalNotes ?? "");
+
+/**
+ * User friendly label for the selected disability category,
+ * or a placeholder if none is selected.
+ */
+const disabilityCategoryLabel = computed(() => {
+  const category = disabilityCategoryLookup.value?.find(
+    (lookupItem) => lookupItem.lookupKey === selectedDisabilityCategory.value,
+  );
+  return category ? category.lookupValue : "Select disability category";
+});
+
+/**
+ * User friendly label for the selected disability type,
+ * or a placeholder if none is selected.
+ */
+const disabilityTypeLabel = computed(() => {
+  const type = disabilityTypeLookup.value?.find(
+    (lookupItem) => lookupItem.lookupKey === selectedDisabilityType.value,
+  );
+  return type ? type.lookupValue : "Select disability type";
+});
+
+/**
+ * Primary disability has different labels and action button rules.
+ * All other disabilities are considered "additional".
+ */
+const isPrimaryDisability = computed(
+  () => props.modelValue.disabilityPriority === 1,
+);
+
+/**
+ * Last disability has action button rules.
+ */
+const isLastDisability = computed(
+  () => props.modelValue.disabilityPriority === props.maxDisabilityPriority,
+);
 
 /**
  * Validates diagnosis entries ensuring each item stays within the allowed max length.
@@ -377,48 +347,10 @@ const validateDiagnosisItems = (diagnosisItems: string[]): true | string => {
 };
 
 /**
- * Adds a diagnosis entry to the list after validation.
+ * Emit the full updated model to the parent whenever any field changes.
+ * Also triggers validation to update the error highlight state of the panel.
  */
-const addDiagnosisEntry = (): void => {
-  if (!diagnosisEntryInput.value) {
-    return;
-  }
-  diagnosisItems.value.push(diagnosisEntryInput.value);
-  diagnosisEntryInput.value = "";
-};
-
-/**
- * Removes one diagnosis entry by index.
- * @param index Index of the entry to remove.
- */
-const removeDiagnosisEntry = (index: number): void => {
-  diagnosisItems.value.splice(index, 1);
-};
-
-const disabilityCategoryLabel = computed(() => {
-  const category = disabilityCategoryLookup.value?.find(
-    (lookupItem) => lookupItem.lookupKey === selectedDisabilityCategory.value,
-  );
-  return category ? category.lookupValue : "Select disability category";
-});
-
-const disabilityTypeLabel = computed(() => {
-  const type = disabilityTypeLookup.value?.find(
-    (lookupItem) => lookupItem.lookupKey === selectedDisabilityType.value,
-  );
-  return type ? type.lookupValue : "Select disability type";
-});
-
-const isPrimaryDisability = computed(
-  () => props.modelValue.disabilityPriority === 1,
-);
-
-const isLastDisability = computed(
-  () => props.modelValue.disabilityPriority === props.maxDisabilityPriority,
-);
-
-// Emit the full updated model to the parent whenever any field changes.
-const emitUpdate = (): void => {
+const emitUpdate = async (): Promise<void> => {
   emit("update:modelValue", {
     ...props.modelValue,
     disabilityCategory: selectedDisabilityCategory.value,
@@ -430,6 +362,8 @@ const emitUpdate = (): void => {
     impairmentsNotes: impairmentsNotes.value || undefined,
     finalNotes: finalNotes.value || undefined,
   });
+  await nextTick();
+  await validatePanel();
 };
 
 watch(
@@ -447,6 +381,9 @@ watch(
   { deep: true },
 );
 
+/**
+ * Load lookup values for disability categories, types, and impairments.
+ */
 const loadLookup = async (): Promise<void> => {
   try {
     const [disabilityCategory, disabilityType, disabilityImpairment] =
@@ -470,8 +407,8 @@ const loadLookup = async (): Promise<void> => {
   }
 };
 
-watchEffect(() => {
-  void loadLookup();
+watchEffect(async () => {
+  await loadLookup();
 });
 
 /**

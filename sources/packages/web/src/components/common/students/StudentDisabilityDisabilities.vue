@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUpdate, ref, watch, watchEffect } from "vue";
+import { onBeforeUpdate, ref, watchEffect, nextTick } from "vue";
 import type { StudentDisability } from "@/types";
 import { DisabilityProfileService } from "@/services/DisabilityProfileService";
 import StudentDisabilityProfileDisability from "@/components/common/students/StudentDisabilityProfileDisability.vue";
@@ -46,18 +46,12 @@ interface Props {
   studentId: number;
   disabilityProfileId?: number;
   readOnly?: boolean;
-  modelValue?: StudentDisability[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   disabilityProfileId: undefined,
   readOnly: false,
-  modelValue: undefined,
 });
-
-const emit = defineEmits<{
-  "update:modelValue": [value: StudentDisability[]];
-}>();
 
 /**
  * Used as a stable Vue component key, independent of the server-assigned id.
@@ -65,7 +59,25 @@ const emit = defineEmits<{
  * even for disabilities that haven't been saved to the server yet (and thus don't have an id).
  */
 let nextUniqueKey = 1;
-const disabilities = ref<StudentDisability[]>(props.modelValue || []);
+
+const createEmptyDisability = (
+  disabilityPriority: number = 1,
+): StudentDisability => ({
+  uniqueKey: nextUniqueKey++,
+  id: undefined,
+  disabilityPriority,
+  disabilityCategory: "",
+  disabilityType: "",
+  diagnosis: [],
+  diagnosisNotes: undefined,
+  impairments: [],
+  disabilityNotes: undefined,
+  impairmentsNotes: undefined,
+  finalNotes: undefined,
+});
+
+const disabilities = ref<StudentDisability[]>([]);
+
 const disabilityComponentRefs = ref(
   new Map<number, DisabilityPanelComponent>(),
 );
@@ -88,6 +100,10 @@ const getStableUniqueKey = (disabilityId: number): number => {
   return newKey;
 };
 
+/**
+ * Keeps the disability component refs map in sync with the disabilities
+ * list by clearing all refs before each component update.
+ */
 onBeforeUpdate(() => {
   disabilityComponentRefs.value.clear();
 });
@@ -110,42 +126,11 @@ const setDisabilityComponentRef = (
   );
 };
 
-// Notify the parent whenever the disabilities list or any of its items change,
-// allowing the parent to collect the current state for submission via v-model.
-watch(disabilities, (value) => emit("update:modelValue", value), {
-  deep: true,
-});
-
-// Allow the consumer to push changes into this component (e.g. adding a new item)
-// by watching the modelValue prop and syncing it back into the internal ref.
-watch(
-  () => props.modelValue,
-  (value) => {
-    if (value && value !== disabilities.value) {
-      disabilities.value = value;
-    }
-  },
-  { deep: false },
-);
-
 /**
  * Create a new disability with default values and add it to the list.
  */
 const addDisability = (): void => {
-  const newDisability: StudentDisability = {
-    uniqueKey: nextUniqueKey++,
-    id: undefined,
-    disabilityPriority: disabilities.value.length + 1,
-    disabilityCategory: "",
-    disabilityType: "",
-    diagnosis: [],
-    diagnosisNotes: undefined,
-    impairments: [],
-    disabilityNotes: undefined,
-    impairmentsNotes: undefined,
-    finalNotes: undefined,
-  };
-  disabilities.value.push(newDisability);
+  disabilities.value.push(createEmptyDisability(disabilities.value.length + 1));
 };
 
 /**
@@ -183,17 +168,7 @@ const deleteDisability = (index: number): void => {
 
 const loadDisabilities = async (): Promise<void> => {
   if (!props.disabilityProfileId && !props.readOnly) {
-    disabilities.value = [
-      {
-        uniqueKey: nextUniqueKey++,
-        id: undefined,
-        disabilityPriority: 1,
-        disabilityCategory: "",
-        disabilityType: "",
-        diagnosis: "",
-        impairments: [],
-      },
-    ];
+    disabilities.value = [createEmptyDisability()];
     return;
   }
   if (!props.disabilityProfileId) {
@@ -230,6 +205,8 @@ watchEffect(async () => {
  * @returns True when all disability forms are valid.
  */
 const validateDisabilityForms = async (): Promise<boolean> => {
+  // Ensure refs are set after any DOM update before validating.
+  await nextTick();
   let isValid = true;
   for (const disability of disabilities.value) {
     const component = disabilityComponentRefs.value.get(disability.uniqueKey);
@@ -248,8 +225,13 @@ const validateDisabilityForms = async (): Promise<boolean> => {
   return isValid;
 };
 
+const getDisabilities = (): StudentDisability[] => {
+  return [...disabilities.value];
+};
+
 defineExpose({
   reloadData: loadDisabilities,
   validateDisabilityForms,
+  getDisabilities,
 });
 </script>

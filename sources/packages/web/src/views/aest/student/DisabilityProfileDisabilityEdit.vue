@@ -36,7 +36,6 @@
         :student-id="props.studentId"
         :disability-profile-id="props.disabilityProfileId"
         :read-only="false"
-        v-model="disabilities"
       />
     </content-group>
     <footer-buttons
@@ -85,27 +84,30 @@ const snackBar = useSnackBar();
 const router = useRouter();
 const disabilitiesComponent =
   ref<InstanceType<typeof StudentDisabilityDisabilities>>();
-const disabilities = ref<StudentDisability[]>([]);
 const deleteDraftModal = ref({} as ModalDialog<boolean>);
 const completeChangeModal = ref({} as ModalDialog<boolean>);
 
-const createPayload = (): SaveStudentDisabilityProfileAPIInDTO => ({
-  // Only include the id in the payload if it's a draft that must be updated to be active,
-  // otherwise the API will create a new active profile instead of updating the existing draft profile.
-  id: props.isDraft ? props.disabilityProfileId : undefined,
-  disabilities: disabilities.value.map((disability) => ({
-    id: disability.id,
-    disabilityPriority: disability.disabilityPriority,
-    disabilityCategory: disability.disabilityCategory,
-    disabilityType: disability.disabilityType,
-    disabilityNotes: disability.disabilityNotes,
-    diagnosis: disability.diagnosis,
-    diagnosisNotes: disability.diagnosisNotes,
-    impairments: disability.impairments,
-    impairmentsNotes: disability.impairmentsNotes,
-    finalNotes: disability.finalNotes,
-  })),
-});
+const createPayload = (
+  disabilities: StudentDisability[],
+): SaveStudentDisabilityProfileAPIInDTO => {
+  return {
+    // Only include the ID in the payload if it's a draft that must be updated to be active,
+    // otherwise the API will create a new active profile instead of updating the existing draft profile.
+    id: props.isDraft ? props.disabilityProfileId : undefined,
+    disabilities: disabilities.map((disability) => ({
+      id: disability.id,
+      disabilityPriority: disability.disabilityPriority,
+      disabilityCategory: disability.disabilityCategory,
+      disabilityType: disability.disabilityType,
+      disabilityNotes: disability.disabilityNotes,
+      diagnosis: disability.diagnosis,
+      diagnosisNotes: disability.diagnosisNotes,
+      impairments: disability.impairments,
+      impairmentsNotes: disability.impairmentsNotes,
+      finalNotes: disability.finalNotes,
+    })),
+  };
+};
 
 const saveDraftProfile = async (): Promise<void> => {
   const isValid = await disabilitiesComponent.value?.validateDisabilityForms();
@@ -118,7 +120,7 @@ const saveDraftProfile = async (): Promise<void> => {
   try {
     const result = await DisabilityProfileService.shared.saveDraftProfile(
       props.studentId,
-      createPayload(),
+      createPayload(disabilitiesComponent.value?.getDisabilities() ?? []),
     );
     if (props.isDraft) {
       await disabilitiesComponent.value?.reloadData();
@@ -153,7 +155,7 @@ const completeProfile = async (): Promise<void> => {
   try {
     await DisabilityProfileService.shared.saveActiveProfile(
       props.studentId,
-      createPayload(),
+      createPayload(disabilitiesComponent.value?.getDisabilities() ?? []),
     );
     snackBar.success("Profile completed successfully.");
     await router.push({

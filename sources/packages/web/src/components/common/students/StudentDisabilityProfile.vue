@@ -10,6 +10,7 @@
             class="float-right"
             :disabled="!!draftProfile"
             color="primary"
+            prepend-icon="fa:fa fa-edit"
             @click="editProfile"
             >{{ activeProfile ? "Edit profile" : "Create profile" }}</v-btn
           >
@@ -41,12 +42,12 @@
         </template>
       </banner>
       <toggle-content
-        :toggled="activeDisabilities?.length === 0"
+        :toggled="!activeProfile"
         message="No disability profile set."
       >
         <student-disability-disabilities
           :student-id="studentId"
-          v-model="activeDisabilities"
+          :disability-profile-id="activeProfile?.id"
           :read-only="true"
         />
       </toggle-content>
@@ -58,48 +59,46 @@
     ok-label="Delete draft"
     text="Are you sure you want to delete the draft disability profile?"
   />
-  <body-header-container :enable-card-view="true">
+  <body-header-container
+    :enable-card-view="true"
+    v-if="archivedProfiles.length"
+  >
     <template #header>
       <body-header title="History" sub-title="Disability profile history." />
     </template>
     <content-group>
-      <toggle-content
-        :toggled="archivedProfiles.length === 0"
-        message="No profile history is currently available."
+      <v-data-table
+        :headers="DisabilityProfileArchivedHeaders"
+        :items="archivedProfiles"
+        :hide-default-footer="archivedProfiles.length <= 10"
       >
-        <v-data-table
-          :headers="DisabilityProfileArchivedHeaders"
-          :items="archivedProfiles"
-          :hide-default-footer="archivedProfiles.length <= 10"
-        >
-          <template #[`item.completedAt`]="{ item }">
-            <span style="white-space: nowrap">{{
-              getISODateHourMinuteString(item.completedAt)
-            }}</span>
-          </template>
-          <template #[`item.completedBy`]="{ item }">
-            {{ item.completedBy }}
-          </template>
-          <template #[`item.disabilities`]="{ item }">
-            <div style="display: flex; flex-wrap: wrap; gap: 4px">
-              <v-chip
-                v-for="disability in item.disabilities"
-                :key="disability.disabilityPriority"
-                size="small"
-                color="secondary"
-                variant="tonal"
-              >
-                {{ disability.disabilityCategoryDescription }}
-              </v-chip>
-            </div>
-          </template>
-          <template #[`item.actions`]="{ item }">
-            <v-btn color="primary" @click="viewArchivedProfile(item.id)"
-              >View</v-btn
+        <template #[`item.completedAt`]="{ item }">
+          <span style="white-space: nowrap">{{
+            getISODateHourMinuteString(item.completedAt)
+          }}</span>
+        </template>
+        <template #[`item.completedBy`]="{ item }">
+          {{ item.completedBy }}
+        </template>
+        <template #[`item.disabilities`]="{ item }">
+          <div style="display: flex; flex-wrap: wrap; gap: 4px">
+            <v-chip
+              v-for="disability in item.disabilities"
+              :key="disability.disabilityPriority"
+              size="small"
+              color="secondary"
+              variant="tonal"
             >
-          </template>
-        </v-data-table>
-      </toggle-content>
+              {{ disability.disabilityCategoryDescription }}
+            </v-chip>
+          </div>
+        </template>
+        <template #[`item.actions`]="{ item }">
+          <v-btn color="primary" @click="viewArchivedProfile(item.id)"
+            >View</v-btn
+          >
+        </template>
+      </v-data-table>
     </content-group>
   </body-header-container>
 </template>
@@ -112,7 +111,6 @@ import { useRouter } from "vue-router";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import {
   DisabilityProfileStatus,
-  StudentDisability,
   DisabilityProfileArchivedHeaders,
 } from "@/types";
 import { DisabilityProfileService } from "@/services/DisabilityProfileService";
@@ -130,7 +128,6 @@ const snackBar = useSnackBar();
 const { getISODateHourMinuteString } = useFormatters();
 const deleteDraftModal = ref({} as ModalDialog<boolean>);
 const router = useRouter();
-const activeDisabilities = ref<StudentDisability[]>([]);
 const activeProfile = ref<StudentDisabilityProfileAPIOutDTO>();
 const draftProfile = ref<StudentDisabilityProfileAPIOutDTO>();
 const archivedProfiles = ref<StudentDisabilityProfileAPIOutDTO[]>([]);
@@ -184,8 +181,6 @@ const deleteDraft = async (): Promise<void> => {
   }
 };
 
-let nextUniqueKey = 1;
-
 const loadProfiles = async (): Promise<void> => {
   try {
     const { profiles } =
@@ -201,12 +196,6 @@ const loadProfiles = async (): Promise<void> => {
     archivedProfiles.value = profiles.filter(
       (profile) => profile.status === DisabilityProfileStatus.Archived,
     );
-    activeDisabilities.value = activeProfile.value
-      ? activeProfile.value.disabilities.map((disability) => ({
-          ...disability,
-          uniqueKey: nextUniqueKey++,
-        }))
-      : [];
   } catch {
     snackBar.error(
       "An unexpected error occurred while loading the student's disability profiles.",
