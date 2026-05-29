@@ -106,6 +106,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           id: formSubmission.id,
           applicationId: application.id,
           applicationNumber: application.applicationNumber,
+          studentId: application.student.id,
+          studentFullName: `${application.student.user.firstName} ${application.student.user.lastName}`,
           formCategory: FormCategory.StudentAppeal,
           status: FormSubmissionStatus.Pending,
           submittedDate: formSubmission.submittedDate.toISOString(),
@@ -201,6 +203,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           id: formSubmission.id,
           formCategory: FormCategory.StudentAppeal,
           status: FormSubmissionStatus.Pending,
+          studentId: formSubmission.student.id,
+          studentFullName: `${formSubmission.student.user.firstName} ${formSubmission.student.user.lastName}`,
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
@@ -262,6 +266,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           id: formSubmission.id,
           formCategory: FormCategory.StudentAppeal,
           status: FormSubmissionStatus.Completed,
+          studentId: formSubmission.student.id,
+          studentFullName: `${formSubmission.student.user.firstName} ${formSubmission.student.user.lastName}`,
           submittedDate: formSubmission.submittedDate.toISOString(),
           submissionItems: [
             {
@@ -345,6 +351,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           canAssessFinalDecision: false,
           applicationId: application.id,
           applicationNumber: application.applicationNumber,
+          studentId: application.student.id,
+          studentFullName: `${application.student.user.firstName} ${application.student.user.lastName}`,
           id: formSubmission.id,
           formCategory: FormCategory.StudentAppeal,
           status: FormSubmissionStatus.Pending,
@@ -438,6 +446,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           formCategory: FormCategory.StudentForm,
           status: FormSubmissionStatus.Completed,
           submittedDate: formSubmission.submittedDate.toISOString(),
+          studentId: formSubmission.student.id,
+          studentFullName: `${formSubmission.student.user.firstName} ${formSubmission.student.user.lastName}`,
           submissionItems: [
             {
               canAssessItemDecision: true,
@@ -531,6 +541,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           id: formSubmission.id,
           applicationId: application.id,
           applicationNumber: application.applicationNumber,
+          studentId: application.student.id,
+          studentFullName: `${application.student.user.firstName} ${application.student.user.lastName}`,
           formCategory: FormCategory.StudentAppeal,
           status: FormSubmissionStatus.Completed,
           submittedDate: formSubmission.submittedDate.toISOString(),
