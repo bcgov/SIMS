@@ -41,12 +41,6 @@ export class StudentDisabilityProfileCreation1779395247730 implements MigrationI
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Rollback-disability-system-lookup.sql",
-        "SystemLookupConfigurations",
-      ),
-    );
-    await queryRunner.query(
-      getSQLFileData(
         "Rollback-create-student-disability-profile-disability.sql",
         "StudentDisabilityProfileDisabilities",
       ),
@@ -59,6 +53,12 @@ export class StudentDisabilityProfileCreation1779395247730 implements MigrationI
     );
     await queryRunner.query(
       getSQLFileData("Rollback-create-disability-profile-status.sql", "Types"),
+    );
+    await queryRunner.query(
+      getSQLFileData(
+        "Rollback-disability-system-lookup.sql",
+        "SystemLookupConfigurations",
+      ),
     );
   }
 }

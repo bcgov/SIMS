@@ -60,7 +60,7 @@ export class StudentDisabilityProfileDisability extends RecordDataModel {
   })
   disabilityType: string;
   /**
-   * Additional notes describing the disability. Required when disability type is OTHER.
+   * Additional notes describing the disability. Required when disability category is OTHER.
    */
   @Column({
     name: "disability_notes",
@@ -88,7 +88,7 @@ export class StudentDisabilityProfileDisability extends RecordDataModel {
   })
   impairmentsNotes?: string;
   /**
-   * Primary diagnosis information for this disability.
+   * List of diagnosis information for this disability.
    */
   @Column({
     name: "diagnosis",
@@ -111,6 +111,7 @@ export class StudentDisabilityProfileDisability extends RecordDataModel {
   @Column({
     name: "final_notes",
     nullable: true,
+    length: FINAL_NOTES_MAX_LENGTH,
   })
   finalNotes?: string;
   /**

@@ -15,7 +15,7 @@ CREATE TABLE sims.student_disability_profile_disabilities(
     )
   ),
   disability_notes VARCHAR(500) CHECK (
-    disability_type != 'OTHER'
+    disability_category != 'OTHER'
     OR disability_notes IS NOT NULL
   ),
   diagnosis varchar(250) [] NOT NULL,
@@ -53,13 +53,13 @@ COMMENT ON COLUMN sims.student_disability_profile_disabilities.disability_catego
 
 COMMENT ON COLUMN sims.student_disability_profile_disabilities.disability_type IS 'Type of the disability, validated against the system lookup configuration for disability type.';
 
-COMMENT ON COLUMN sims.student_disability_profile_disabilities.disability_notes IS 'Additional notes describing the disability. Required when disability type is OTHER.';
+COMMENT ON COLUMN sims.student_disability_profile_disabilities.disability_notes IS 'Additional notes describing the disability. Required when disability category is OTHER.';
 
 COMMENT ON COLUMN sims.student_disability_profile_disabilities.impairments IS 'List of functional impairments associated with this disability. The available list of impairments is stored in the system lookup configuration for disability impairments.';
 
 COMMENT ON COLUMN sims.student_disability_profile_disabilities.impairments_notes IS 'Additional notes related to the listed impairments. Full list of available impairments is stored in the system lookup configuration for disability impairments.';
 
-COMMENT ON COLUMN sims.student_disability_profile_disabilities.diagnosis IS 'Primary diagnosis information for this disability.';
+COMMENT ON COLUMN sims.student_disability_profile_disabilities.diagnosis IS 'List of diagnosis information for this disability.';
 
 COMMENT ON COLUMN sims.student_disability_profile_disabilities.diagnosis_notes IS 'Additional notes related to the diagnosis.';
 
