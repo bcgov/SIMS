@@ -42,7 +42,7 @@ export class ApplyOverawardsBalanceStep implements ECertProcessStep {
     const overawardsBalance =
       await this.disbursementOverawardService.getOverawardBalance(
         [eCertDisbursement.studentId],
-        entityManager,
+        { entityManager },
       );
     const studentBalance = overawardsBalance[eCertDisbursement.studentId];
     // Check is some adjustment is needed.

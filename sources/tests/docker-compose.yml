@@ -82,6 +82,8 @@ services:
       - THROTTLE_TIME=${THROTTLE_TIME}
       - THROTTLE_LIMIT=${THROTTLE_LIMIT}
       - FEATURE_TOGGLES=${FEATURE_TOGGLES}
+      - CRA_FILE_OVERDUE_DAYS=${CRA_FILE_OVERDUE_DAYS}
+      - ESDC_FILE_OVERDUE_DAYS=${ESDC_FILE_OVERDUE_DAYS}
     networks:
       - local-network-tests
     restart: always

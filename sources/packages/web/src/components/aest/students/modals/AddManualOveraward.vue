@@ -65,18 +65,17 @@ import { PropType, ref, reactive, defineComponent, computed } from "vue";
 import { useModalDialog, useRules, useFormatters } from "@/composables";
 import { Role, VForm } from "@/types";
 import { OverawardManualRecordAPIInDTO } from "@/services/http/dto";
-import { BannerTypes } from "@/types/contracts/Banner";
-import {
-  AWARDS,
-  FullTimeAwardTypes,
-  PartTimeAwardTypes,
-} from "@/constants/award-constants";
+import { AWARDS, FullTimeAwardTypes } from "@/constants/award-constants";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 
 const MINIMUM_AWARD_AMOUNT = 0.01;
 const MAXIMUM_AWARD_AMOUNT = 100000;
+const AVAILABLE_AWARD_TYPES = new Set([
+  FullTimeAwardTypes.CSLF,
+  FullTimeAwardTypes.BCSL,
+]);
 
 export default defineComponent({
   components: { ModalDialogBase, CheckPermissionRole, ErrorSummary },
@@ -96,11 +95,7 @@ export default defineComponent({
     const addManualOverawardForm = ref({} as VForm);
     const formModel = reactive({} as OverawardManualRecordAPIInDTO);
     const awardTypeItems = AWARDS.filter((award) =>
-      [
-        FullTimeAwardTypes.CSLF,
-        PartTimeAwardTypes.CSLP,
-        FullTimeAwardTypes.BCSL,
-      ].includes(award.awardType),
+      AVAILABLE_AWARD_TYPES.has(award.awardType as FullTimeAwardTypes),
     ).map((award) => ({
       title: `${award.awardType} (${award.description})`,
       value: award.awardType,
@@ -143,7 +138,6 @@ export default defineComponent({
       submit,
       addManualOverawardForm,
       formModel,
-      BannerTypes,
       numberRangeRule,
       checkNullOrEmptyRule,
       checkNotesLengthRule,

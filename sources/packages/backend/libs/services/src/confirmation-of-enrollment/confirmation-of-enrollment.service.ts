@@ -380,6 +380,7 @@ export class ConfirmationOfEnrollmentService {
   ): Promise<void> {
     const auditUser = { id: userId } as User;
     const coeConfirmationDate = enrolmentConfirmationDate ?? new Date();
+    const now = new Date();
 
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       const documentNumber = await this.getNextDocumentNumber(
@@ -396,7 +397,7 @@ export class ConfirmationOfEnrollmentService {
           coeUpdatedBy: auditUser,
           coeUpdatedAt: coeConfirmationDate,
           modifier: auditUser,
-          updatedAt: coeConfirmationDate,
+          updatedAt: now,
           tuitionRemittanceRequestedAmount: tuitionRemittanceRequestedAmount,
         })
         .where("id = :disbursementScheduleId", { disbursementScheduleId })
@@ -411,7 +412,7 @@ export class ConfirmationOfEnrollmentService {
             applicationStatus: ApplicationStatus.Completed,
             applicationStatusUpdatedOn: coeConfirmationDate,
             modifier: auditUser,
-            updatedAt: coeConfirmationDate,
+            updatedAt: now,
           })
           .where("id = :applicationId", { applicationId })
           .execute();

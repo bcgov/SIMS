@@ -29,6 +29,12 @@ export APP_ENV := $(or $(APP_ENV), local)
 export ALLOW_BETA_USERS_ONLY :=$(or $(ALLOW_BETA_USERS_ONLY), false)
 export ALLOW_BETA_INSTITUTIONS_ONLY :=$(or $(ALLOW_BETA_INSTITUTIONS_ONLY), false)
 
+# The number of days after which CRA file processing is considered overdue.
+export CRA_FILE_OVERDUE_DAYS := $(or ${CRA_FILE_OVERDUE_DAYS}, 5)
+
+# The number of days after which SIN file processing is considered overdue.
+export ESDC_FILE_OVERDUE_DAYS := $(or ${ESDC_FILE_OVERDUE_DAYS}, 5)
+
 backend-unit-tests:
 	@cd ../packages/backend && npm i && npm run test:cov
 

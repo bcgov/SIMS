@@ -172,12 +172,15 @@ export interface InstitutionRequestsDesignationNotification {
   institutionPrimaryEmail: string;
 }
 
+
 export interface InstitutionAddsPendingProgramNotification {
   institutionName: string;
   institutionOperatingName: string;
   programName: string;
   institutionPrimaryEmail: string;
+  email: string;
 }
+
 
 export interface InstitutionAddsPendingOfferingNotification {
   institutionName: string;
@@ -186,6 +189,7 @@ export interface InstitutionAddsPendingOfferingNotification {
   programName: string;
   offeringName: string;
   institutionPrimaryEmail: string;
+  email: string;
 }
 
 export interface DailyDisbursementReportProcessingNotification {
@@ -272,4 +276,24 @@ export interface MinistryFormSubmittedNotification {
   formCategory: FormCategory;
   formNames: string[];
   applicationNumber?: string;
+}
+
+export enum FileProcessingIssueType {
+  CRA = "CRA",
+  SIN = "SIN",
+}
+
+export interface MinistryFileProcessingIssueNotification {
+  fileName: string;
+  dateSent: Date;
+  type: FileProcessingIssueType;
+}
+
+export interface StudentAcceptAssessmentReminderNotification {
+  givenNames?: string;
+  lastName: string;
+  toAddress: string;
+  userId: number;
+  applicationNumber: string;
+  assessmentId: number;
 }

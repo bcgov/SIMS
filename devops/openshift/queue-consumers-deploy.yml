@@ -265,6 +265,10 @@ objects:
                     secretKeyRef:
                       key: ${S3_REGION_KEY}
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: CRA_FILE_OVERDUE_DAYS
+                  value: ${CRA_FILE_OVERDUE_DAYS}
+                - name: ESDC_FILE_OVERDUE_DAYS
+                  value: ${ESDC_FILE_OVERDUE_DAYS}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -525,3 +529,7 @@ parameters:
     required: true
   - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
     value: "true"
+  - name: CRA_FILE_OVERDUE_DAYS
+    required: true
+  - name: ESDC_FILE_OVERDUE_DAYS
+    required: true

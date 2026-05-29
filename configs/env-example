@@ -248,3 +248,11 @@ APP_ENV=
 # For example: "SOME_FEATURE_TOGGLE,ANOTHER_FEATURE_TOGGLE".
 
 FEATURE_TOGGLES=
+
+# The number of days after which CRA file processing is considered overdue.
+
+CRA_FILE_OVERDUE_DAYS=
+
+# The number of days after which ESDC SIN file processing is considered overdue.
+
+ESDC_FILE_OVERDUE_DAYS=

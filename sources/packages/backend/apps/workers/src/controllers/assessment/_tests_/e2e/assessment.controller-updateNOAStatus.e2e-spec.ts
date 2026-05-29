@@ -9,10 +9,10 @@ import {
 } from "../../../../../test/utils/worker-job-mock";
 import { createTestingAppModule } from "../../../../../test/helpers";
 import { AssessmentController } from "../../assessment.controller";
-import {} from "../../assessment.dto";
 import { AssessmentStatus } from "@sims/sims-db";
 import { createFakeUpdateNOAStatusPayload } from "./update-noa-status-factory";
 import { SystemUsersService } from "@sims/services";
+import MockDate from "mockdate";
 
 describe("AssessmentController(e2e)-updateNOAStatus", () => {
   let db: E2EDataSources;
@@ -26,13 +26,22 @@ describe("AssessmentController(e2e)-updateNOAStatus", () => {
     systemUsersService = nestApplication.get(SystemUsersService);
   });
 
+  beforeEach(async () => {
+    MockDate.reset();
+  });
+
   it("Should update NOA status when noa approval status is null.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
 
+    const now = new Date();
+    MockDate.set(now);
+
+    const currentAssessment = savedApplication.currentAssessment!;
+
     // Act
     const result = await assessmentController.updateNOAStatus(
-      createFakeUpdateNOAStatusPayload(savedApplication.currentAssessment.id),
+      createFakeUpdateNOAStatusPayload(currentAssessment.id),
     );
 
     // Asserts
@@ -46,15 +55,20 @@ describe("AssessmentController(e2e)-updateNOAStatus", () => {
       select: {
         id: true,
         noaApprovalStatus: true,
+        noaApprovalStatusUpdatedOn: true,
         modifier: { id: true },
+        updatedAt: true,
       },
       relations: { modifier: true },
-      where: { id: savedApplication.currentAssessment.id },
+      where: { id: currentAssessment.id },
     });
-    expect(expectedAssessment.noaApprovalStatus).toBe(
-      AssessmentStatus.completed,
-    );
     const auditUser = systemUsersService.systemUser;
-    expect(expectedAssessment.modifier).toEqual(auditUser);
+    expect(expectedAssessment).toEqual({
+      id: currentAssessment.id,
+      noaApprovalStatus: AssessmentStatus.required,
+      noaApprovalStatusUpdatedOn: now,
+      modifier: { id: auditUser.id },
+      updatedAt: now,
+    });
   });
 });

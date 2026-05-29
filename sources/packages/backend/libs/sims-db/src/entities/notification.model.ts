@@ -253,4 +253,12 @@ export enum NotificationMessageType {
    * Student notification when a form submission is completed.
    */
   StudentFormCompleted = 39,
+  /**
+   * Ministry notification when there is a file processing issue.
+   */
+  MinistryFileProcessingIssue = 40,
+  /**
+   * Student notification for assessment reminder.
+   */
+  StudentAssessmentReminder = 41,
 }

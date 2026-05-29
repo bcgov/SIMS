@@ -3021,7 +3021,7 @@
             {
               "label": "Are you a resident of B.C.?",
               "optionsLabelPosition": "right",
-              "tooltip": "As a student you are a considered to be a resident of B.C. if one of the following criteria are met:\n\nB.C. is the province where you last lived for 12 continuous months, as of your study start date, not including months of full-time post-secondary study; or\n\nYou are an independent permanent resident, or designated as a protected person, living in B.C. at the time of application and will spend the study period in B.C. but have not lived in any one province for at least 12 continuous months. For example, if an independent student arrived in Canada as a permanent resident less than 12 months before the start date of classes, and intends to study in B.C., the student would be considered a resident of B.C. for student financial assistance purposes.",
+              "tooltip": "As a student, you are considered a resident of B.C. if any of the following criteria are met:\n\nB.C. is the province where you last lived for 12 continuous months, as of your study start date, not including months of full-time post-secondary study; or\n\nYou are an independent permanent resident, or designated as a protected person, living in B.C. at the time of application and will spend the study period in B.C. but have not lived in any one province for at least 12 continuous months. For example, if an independent student arrived in Canada as a permanent resident less than 12 months before the start date of classes, and intends to study in B.C., the student would be considered a resident of B.C. for student financial assistance purposes.\n\nEligible students who do not meet any of the previously mentioned residency criteria are considered residents of the province or territory in which they currently live.",
               "inline": false,
               "tableView": true,
               "values": [
@@ -3041,9 +3041,10 @@
                 "onlyAvailableItems": true,
                 "customMessage": "Have lived in B.C. for at least 12 consecutive months"
               },
+              "validateWhenHidden": false,
               "key": "bcResident",
               "conditional": {
-                "show": "true",
+                "show": true,
                 "when": "dependantstatus",
                 "eq": "independant"
               },
@@ -3380,10 +3381,11 @@
               "hideLabel": true
             },
             {
-              "input": true,
-              "tableView": false,
               "label": "Is your parent(s)/step-parent/sponsor/legal guardian a resident of B.C.?",
-              "key": "parentbcResident",
+              "optionsLabelPosition": "right",
+              "tooltip": "The official residence of dependent students is determined by the residence of their parent(s) or by their sponsor if the student is under sponsorship. B.C. is considered the province of residence if it is the last province in which the parent(s) or sponsor lived for 12 consecutive months, as of the start of the student’s study period.\r\n\r\nA student who is a permanent resident and lives in B.C. while their sponsor lives in another province is considered to be a resident of the province where their sponsor lives.\r\n\r\nA dependent student who is also a Permanent Resident that is sponsored by an individual (other than a parent or spouse) is considered to be a dependent upon the sponsor and will have residency determined based on sponsor.\r\n\r\nIf the student was previously funded under StudentAid BC while under sponsorship and the student’s parents live in B.C., but their sponsor lives in another province, the student will be exempt from the B.C. residency requirement if the student’s situation has not changed from the previous year.\r\n\r\nIf the student’s parent(s) have resided in another province for 12 consecutive months, but the student remains in B.C. to begin or continue post-secondary education, then the province may accept the student as having B.C. residency for purposes of student financial assistance, even though the new province in which the parent(s) resides would normally be the true province of residence.",
+              "inline": false,
+              "tableView": false,
               "values": [
                 {
                   "value": "yes",
@@ -3399,13 +3401,15 @@
               "validate": {
                 "required": true
               },
-              "type": "radio",
-              "optionsLabelPosition": "right",
+              "validateWhenHidden": false,
+              "key": "parentbcResident",
               "conditional": {
-                "show": "true",
+                "show": true,
                 "when": "dependantstatus",
                 "eq": "dependant"
               },
+              "type": "radio",
+              "input": true,
               "lockKey": true
             },
             {

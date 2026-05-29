@@ -50,7 +50,7 @@ export interface InstitutionFormModel {
   province?: string;
   classification: InstitutionClassification;
   organizationStatus: InstitutionOrganizationStatus;
-  medicalSchoolStatus: InstitutionMedicalSchoolStatus;
+  medicalSchoolStatus?: InstitutionMedicalSchoolStatus;
   primaryContactFirstName: string;
   primaryContactLastName: string;
   primaryContactEmail: string;

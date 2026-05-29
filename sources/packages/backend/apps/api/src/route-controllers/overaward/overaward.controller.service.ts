@@ -17,7 +17,7 @@ export class OverawardControllerService {
   ) {}
 
   /**
-   * Get the overaward balance of a student.
+   * Get the BCSL and CSLF overaward balance of a student.
    * @param studentId student.
    * @returns overaward balance for student.
    */
@@ -25,12 +25,14 @@ export class OverawardControllerService {
     studentId: number,
   ): Promise<OverawardBalanceAPIOutDTO> {
     const overawardBalance =
-      await this.disbursementOverawardService.getOverawardBalance([studentId]);
-    return { overawardBalanceValues: overawardBalance[studentId] };
+      await this.disbursementOverawardService.getOverawardBalance([studentId], {
+        awardTypes: ["BCSL", "CSLF"],
+      });
+    return { overawardBalanceValues: overawardBalance[studentId] ?? {} };
   }
 
   /**
-   * Get all overawards which belong to a student.
+   * Get BCSL and CSLF overawards which belong to a student.
    * @param studentId student.
    * @param includeAddedBy include added by.
    * @returns overaward details of a student.
@@ -47,9 +49,10 @@ export class OverawardControllerService {
       overawardOrigin: overaward.originType,
       awardValueCode: overaward.disbursementValueCode,
       overawardValue: overaward.overawardValue,
-      addedByUser: options?.audit
-        ? getUserFullName(overaward.addedBy)
-        : undefined,
+      addedByUser:
+        options?.audit && overaward.addedBy
+          ? getUserFullName(overaward.addedBy)
+          : undefined,
       applicationNumber:
         overaward.studentAssessment?.application.applicationNumber,
       assessmentTriggerType: overaward.studentAssessment?.triggerType,

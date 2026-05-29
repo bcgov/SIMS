@@ -78,6 +78,10 @@ export MIGRATIONS_OC_TIMEOUT := 300s
 
 # Maximum job duration limit in seconds for migration jobs.
 export MIGRATIONS_JOB_MAX_DURATION := 300
+# The number of days after which CRA file processing is considered overdue.
+export CRA_FILE_OVERDUE_DAYS := $(or ${CRA_FILE_OVERDUE_DAYS}, 5)
+# The number of days after which ESDC SIN file processing is considered overdue.
+export ESDC_FILE_OVERDUE_DAYS := $(or ${ESDC_FILE_OVERDUE_DAYS}, 5)
 
 define ZONE_B_SFTP_PRIVATE_KEY
 -----BEGIN OPENSSH PRIVATE KEY-----
@@ -546,6 +550,8 @@ deploy-queue-consumers:
 	test -n "$(QUEUE_CONSUMERS_MEMORY_REQUEST)"
 	test -n "$(QUEUE_CONSUMERS_MEMORY_LIMIT)"
 	test -n "$(QUEUE_CONSUMERS_REPLICAS)"
+	test -n "$(CRA_FILE_OVERDUE_DAYS)"
+	test -n "$(ESDC_FILE_OVERDUE_DAYS)"
 	@echo "+\n++ Deploying Queues with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/queue-consumers-deploy.yml \
 		-p NAME=$(QUEUE_CONSUMERS) \
@@ -568,6 +574,8 @@ deploy-queue-consumers:
 		-p MEMORY_REQUEST=$(QUEUE_CONSUMERS_MEMORY_REQUEST) \
 		-p MEMORY_LIMIT=$(QUEUE_CONSUMERS_MEMORY_LIMIT) \
 		-p REPLICAS=$(QUEUE_CONSUMERS_REPLICAS) \
+		-p CRA_FILE_OVERDUE_DAYS=$(CRA_FILE_OVERDUE_DAYS) \
+		-p ESDC_FILE_OVERDUE_DAYS=$(ESDC_FILE_OVERDUE_DAYS) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(QUEUE_CONSUMERS))
 

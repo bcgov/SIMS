@@ -1,4 +1,4 @@
-CREATE TABLE student_disability_profiles(
+CREATE TABLE sims.student_disability_profiles(
   id SERIAL PRIMARY KEY,
   student_id INT REFERENCES sims.students(id) NOT NULL,
   disability_profile_status sims.disability_profile_status NOT NULL,

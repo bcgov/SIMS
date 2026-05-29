@@ -50,32 +50,40 @@ describe("OverawardStudentsController(e2e)-getOverawardBalance", () => {
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
 
-    // Create an overaward.
+    // Create a legacy CSLF overaward.
     const legacyOverawardCSLF = createFakeDisbursementOveraward({ student });
     legacyOverawardCSLF.disbursementValueCode = "CSLF";
     legacyOverawardCSLF.overawardValue = 500;
     legacyOverawardCSLF.originType =
       DisbursementOverawardOriginType.LegacyOveraward;
 
-    // Create a manual overaward deduction.
+    // Create a manual CSLF overaward deduction.
     const manualOverawardCSLF = createFakeDisbursementOveraward({ student });
     manualOverawardCSLF.disbursementValueCode = "CSLF";
     manualOverawardCSLF.overawardValue = -100;
     manualOverawardCSLF.originType =
       DisbursementOverawardOriginType.ManualRecord;
 
-    // Create a manual overaward deduction.
-    const manualOverawardCSLP = createFakeDisbursementOveraward({ student });
-    manualOverawardCSLP.disbursementValueCode = "CSLP";
-    manualOverawardCSLP.overawardValue = 99;
-    manualOverawardCSLP.originType =
+    // Create a manual BCSL overaward deduction.
+    const manualOverawardBCSL = createFakeDisbursementOveraward({ student });
+    manualOverawardBCSL.disbursementValueCode = "BCSL";
+    manualOverawardBCSL.overawardValue = 99;
+    manualOverawardBCSL.originType =
       DisbursementOverawardOriginType.ManualRecord;
+
+    // Create an award deducted CSLP overaward. CSLP should not be returned in the balances.
+    const awardDeductedCSLP = createFakeDisbursementOveraward({ student });
+    awardDeductedCSLP.disbursementValueCode = "CSLP";
+    awardDeductedCSLP.overawardValue = 300;
+    awardDeductedCSLP.originType =
+      DisbursementOverawardOriginType.AwardDeducted;
 
     // Persist the overawards.
     await disbursementOverawardRepo.save([
       legacyOverawardCSLF,
       manualOverawardCSLF,
-      manualOverawardCSLP,
+      manualOverawardBCSL,
+      awardDeductedCSLP,
     ]);
     const endpoint = "/students/overaward/balance";
 
@@ -84,10 +92,10 @@ describe("OverawardStudentsController(e2e)-getOverawardBalance", () => {
       .get(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({ overawardBalanceValues: { CSLF: 400, CSLP: 99 } });
+      .expect({ overawardBalanceValues: { CSLF: 400, BCSL: 99 } });
   });
 
-  it("Should not return a balance when student has a $0 dollar balance.", async () => {
+  it("Should not return a balance when student has a 0 dollar balance.", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
 
@@ -125,7 +133,7 @@ describe("OverawardStudentsController(e2e)-getOverawardBalance", () => {
       .get(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({});
+      .expect({ overawardBalanceValues: {} });
   });
 
   afterAll(async () => {

@@ -222,6 +222,7 @@ export const SupportingUserRoutesConst = {
  * Shared Routes Names
  */
 export const SharedRouteConst = {
+  LANDING_PAGE: Symbol(),
   PAGE_NOT_FOUND: Symbol(),
   FORBIDDEN_USER: Symbol(),
   MAINTENANCE_PAGE: Symbol(),

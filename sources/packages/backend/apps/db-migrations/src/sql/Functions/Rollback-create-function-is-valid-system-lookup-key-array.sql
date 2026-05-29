@@ -1,0 +1,1 @@
+DROP FUNCTION sims.is_valid_system_lookup_key_array(input_keys TEXT[], input_category TEXT);

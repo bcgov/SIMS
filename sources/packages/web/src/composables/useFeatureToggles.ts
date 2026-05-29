@@ -3,6 +3,7 @@ import { AppConfig } from "@/types/contracts/ConfigContract";
 import { computed, ref } from "vue";
 
 const FORMS_SUBMISSION_FEATURE_TOGGLE = "FORMS_SUBMISSION";
+const BULK_WITHDRAWAL_UPLOAD_FEATURE_TOGGLE = "BULK_WITHDRAWAL_UPLOAD";
 
 export function useFeatureToggles() {
   /**
@@ -39,8 +40,16 @@ export function useFeatureToggles() {
     isFeatureToggleEnabled(FORMS_SUBMISSION_FEATURE_TOGGLE),
   );
 
+  /**
+   * Bulk withdrawal upload feature toggle.
+   */
+  const isBulkWithdrawalUploadEnabled = computed(() =>
+    isFeatureToggleEnabled(BULK_WITHDRAWAL_UPLOAD_FEATURE_TOGGLE),
+  );
+
   return {
     isFormSubmissionEnabled,
+    isBulkWithdrawalUploadEnabled,
     isFeatureToggleEnabled,
   };
 }

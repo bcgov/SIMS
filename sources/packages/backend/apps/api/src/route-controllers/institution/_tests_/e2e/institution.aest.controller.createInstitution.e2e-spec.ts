@@ -9,7 +9,6 @@ import {
 import { E2EDataSources, createE2EDataSources } from "@sims/test-utils";
 import {
   InstitutionClassification,
-  InstitutionMedicalSchoolStatus,
   InstitutionOrganizationStatus,
 } from "@sims/sims-db";
 import {
@@ -42,11 +41,11 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
       province: BC_PROVINCE_CODE,
       classification: InstitutionClassification.Public,
       organizationStatus: InstitutionOrganizationStatus.Profit,
-      medicalSchoolStatus: InstitutionMedicalSchoolStatus.No,
       primaryContactFirstName: "Primary",
       primaryContactLastName: "Contact",
       primaryContactEmail: "test@test.ca",
       primaryContactPhone: "7785367878",
+      medicalSchoolStatus: "",
       mailingAddress: {
         addressLine1: "123 Gorge Rd E",
         addressLine2: "",
@@ -148,10 +147,53 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
       province: payload.province,
       classification: payload.classification,
       organizationStatus: payload.organizationStatus,
-      medicalSchoolStatus: payload.medicalSchoolStatus,
+      medicalSchoolStatus: null,
     });
   });
 
+  it("Should throw bad request error when country is not Canada and medical status is not provided.", async () => {
+    // Arrange
+    const payload = {
+      legalOperatingName: "Create Institution legal operating name",
+      operatingName: "Create Institution operating name",
+      regulatingBody: "icbc",
+      establishedDate: "2023-06-01",
+      primaryEmail: "test@test.ca",
+      primaryPhone: "7785367878",
+      website: "https://www.test.ca",
+      country: "BR",
+      classification: InstitutionClassification.Public,
+      organizationStatus: InstitutionOrganizationStatus.Profit,
+      primaryContactFirstName: "Primary",
+      primaryContactLastName: "Contact",
+      primaryContactEmail: "test@test.ca",
+      primaryContactPhone: "7785367878",
+      mailingAddress: {
+        addressLine1: "123 Gorge Rd E",
+        addressLine2: "",
+        selectedCountry: "Brazil",
+        country: "Brazil",
+        city: "Victoria",
+        postalCode: "V1V1V1",
+        provinceState: "BC",
+        canadaPostalCode: "V1V1V1",
+      },
+    };
+    const endpoint = "/aest/institution";
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect(({ body }) =>
+        expect(body.message).toEqual([
+          "medicalSchoolStatus must be one of the following values: yes, no",
+        ]),
+      );
+  });
   afterAll(async () => {
     await app?.close();
   });
