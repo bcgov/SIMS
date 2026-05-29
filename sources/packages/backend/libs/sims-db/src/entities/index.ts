@@ -126,3 +126,6 @@ export * from "./form-submission-decision-status.type";
 export * from "./form-submission.model";
 export * from "./form-submission-item.model";
 export * from "./form-submission-item-decision.model";
+export * from "./disability-profile-status.type";
+export * from "./student-disability-profile.model";
+export * from "./student-disability-profile-disability.model";

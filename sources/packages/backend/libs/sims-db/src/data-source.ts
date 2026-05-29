@@ -71,6 +71,8 @@ import {
   FormSubmission,
   FormSubmissionItem,
   FormSubmissionItemDecision,
+  StudentDisabilityProfile,
+  StudentDisabilityProfileDisability,
 } from "./entities";
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import {
@@ -244,4 +246,6 @@ export const DBEntities = [
   FormSubmission,
   FormSubmissionItem,
   FormSubmissionItemDecision,
+  StudentDisabilityProfileDisability,
+  StudentDisabilityProfile,
 ];
