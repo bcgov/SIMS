@@ -98,7 +98,9 @@ const emit = defineEmits<{
 const { checkLengthRule } = useRules();
 const diagnosisEntryInput = ref("");
 
-// Local reactive copies initialized from the model prop.
+/**
+ * Local reactive copies initialized from the model prop.
+ */
 const diagnosisItems = ref<string[]>([...props.modelValue]);
 
 /**

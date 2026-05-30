@@ -85,7 +85,7 @@
           :hide-default-footer="archivedProfiles.length <= 10"
         >
           <template #[`item.completedAt`]="{ item }">
-            <span style="white-space: nowrap">{{
+            <span class="text-nowrap">{{
               getISODateHourMinuteString(item.completedAt)
             }}</span>
           </template>

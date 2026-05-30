@@ -62,7 +62,10 @@
 import { computed, ref } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import type { StudentDisability } from "@/types";
-import { SaveStudentDisabilityProfileAPIInDTO } from "@/services/http/dto";
+import {
+  SaveStudentDisabilityProfileAPIInDTO,
+  StudentDisabilityAPIInDTO,
+} from "@/services/http/dto";
 import { DisabilityProfileService } from "@/services/DisabilityProfileService";
 import { ModalDialog, useSnackBar } from "@/composables";
 import { useRouter } from "vue-router";
@@ -102,14 +105,20 @@ const bodyHeaderSubtitle = computed(() => {
   return "Changes to the current disability profile can be completed directly, or saved as a draft if more time is needed before finalizing.";
 });
 
+/**
+ * Convert the UI disability data into the format expected by the API.
+ * @param disabilities the list of disabilities in the UI model.
+ * @returns the payload in the API format.
+ */
 const createPayload = (
   disabilities: StudentDisability[],
 ): SaveStudentDisabilityProfileAPIInDTO => {
   return {
-    // Only include the ID in the payload if it's a draft that must be updated to be active,
-    // otherwise the API will create a new active profile instead of updating the existing draft profile.
+    // Only include the ID in the payload if it's a draft.
+    // A draft will be either updated or converted to active, depending
+    // on the user's action, which will invoke different API endpoints.
     id: props.isDraft ? props.disabilityProfileId : undefined,
-    disabilities: disabilities.map((disability) => ({
+    disabilities: disabilities.map<StudentDisabilityAPIInDTO>((disability) => ({
       id: disability.id,
       disabilityPriority: disability.disabilityPriority,
       disabilityCategory: disability.disabilityCategory,
@@ -124,6 +133,9 @@ const createPayload = (
   };
 };
 
+/**
+ * Upsert the disability profile as a draft.
+ */
 const saveDraftProfile = async (): Promise<void> => {
   const isValid = await disabilitiesComponent.value?.validateDisabilityForms();
   if (!isValid) {
@@ -158,6 +170,10 @@ const saveDraftProfile = async (): Promise<void> => {
   }
 };
 
+/**
+ * Upsert the disability profile as active, either by converting a draft
+ * to active or by directly saving changes to the active profile.
+ */
 const completeProfile = async (): Promise<void> => {
   const isValid = await disabilitiesComponent.value?.validateDisabilityForms();
   if (!isValid) {
@@ -190,6 +206,11 @@ const completeProfile = async (): Promise<void> => {
   }
 };
 
+/**
+ * Cancel the current editing action.
+ * If it's a draft, confirm cancellation and delete the draft.
+ * If it's not a draft, simply navigate back to the disability profile.
+ */
 const cancelProfile = async (): Promise<void> => {
   if (!props.isDraft) {
     await router.push({

@@ -1,7 +1,7 @@
 <template>
   <v-expansion-panel eager>
     <template #title>
-      <div class="d-flex align-center justify-space-between w-100 error">
+      <div class="d-flex align-center justify-space-between w-100">
         <div>
           <span
             class="category-header-medium primary-color"
@@ -49,12 +49,10 @@
         <body-header-container
           header-size="medium"
           header-color="secondary"
-          :enable-card-view="false"
           title="Disability details"
         >
           <content-group>
             <v-row dense>
-              <v-col cols="12"> </v-col>
               <v-col cols="6">
                 <v-select
                   :readonly="readOnly"
@@ -110,7 +108,6 @@
           </content-group>
         </body-header-container>
         <body-header-container
-          :enable-card-view="false"
           title="Diagnosis information"
           header-size="medium"
           header-color="secondary"
@@ -148,7 +145,6 @@
           </content-group>
         </body-header-container>
         <body-header-container
-          :enable-card-view="false"
           header-size="medium"
           header-color="secondary"
           title="Impairments to academic tasks"
@@ -209,7 +205,6 @@
         </body-header-container>
         <body-header-container
           v-if="finalNotes || !readOnly"
-          :enable-card-view="false"
           title="Final notes"
           header-size="medium"
           header-color="secondary"
@@ -403,10 +398,6 @@ const loadLookup = async (): Promise<void> => {
   }
 };
 
-watchEffect(async () => {
-  await loadLookup();
-});
-
 /**
  * Validates the panel form and updates the panel error highlight state.
  * @returns True when panel form is valid.
@@ -427,5 +418,9 @@ const clearValidation = (): void => {
 defineExpose({
   validateDisabilityData,
   clearValidation,
+});
+
+watchEffect(async () => {
+  await loadLookup();
 });
 </script>

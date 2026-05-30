@@ -116,7 +116,6 @@ const getStableUniqueKey = (disabilityId: number): number => {
     return existingKey;
   }
   const newKey = nextUniqueKey++;
-
   uniqueKeysByDisabilityId.set(disabilityId, newKey);
   return newKey;
 };
@@ -198,6 +197,11 @@ const deleteDisability = (index: number): void => {
   normalizePriorities();
 };
 
+/**
+ * Converts the API model to the UI model.
+ * @param disabilities the list of disabilities in the API model.
+ * @returns the list of disabilities in the UI model.
+ */
 const covertDisabilitiesToModel = (
   disabilities: StudentDisabilityAPIOutDTO[],
 ): StudentDisability[] => {
@@ -216,6 +220,10 @@ const covertDisabilitiesToModel = (
   }));
 };
 
+/**
+ * Defines how the disabilities are set when the component is mounted or when the disabilityProfileId prop changes.
+ * The disabilities can come from the inputDisabilities prop or be fetched from the server using the disabilityProfileId prop.
+ */
 const setDisabilities = async (): Promise<void> => {
   if (props.inputDisabilities) {
     // If disabilities are provided as props, use them directly without fetching from the server.
@@ -245,10 +253,6 @@ const setDisabilities = async (): Promise<void> => {
     snackBar.error("Unexpected error while loading disabilities.");
   }
 };
-
-watchEffect(async () => {
-  await setDisabilities();
-});
 
 /**
  * Validates every disability panel form and updates panel highlight colors.
@@ -283,5 +287,9 @@ defineExpose({
   reloadData: setDisabilities,
   validateDisabilityForms,
   getDisabilities,
+});
+
+watchEffect(async () => {
+  await setDisabilities();
 });
 </script>
