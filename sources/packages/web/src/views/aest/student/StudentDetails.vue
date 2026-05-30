@@ -150,7 +150,7 @@ export default defineComponent({
       ) {
         menuItems.splice(1, 0, {
           label: "Disability",
-          icon: "fa:fa fa-wheelchair",
+          icon: "fa:fa fa-universal-access",
           command: () => ({
             name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE,
             params: { studentId: props.studentId },
