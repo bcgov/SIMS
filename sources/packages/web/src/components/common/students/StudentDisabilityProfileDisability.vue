@@ -88,7 +88,7 @@
               <v-col class="mt-4" v-if="disabilityNotes || !readOnly"
                 ><v-textarea
                   :readonly="readOnly"
-                  v-model="disabilityNotes"
+                  v-model.trim="disabilityNotes"
                   label="Disability details notes"
                   variant="outlined"
                   :rows="readOnly ? 1 : undefined"
@@ -125,7 +125,7 @@
               <v-col class="mt-4" v-if="diagnosisNotes || !readOnly"
                 ><v-textarea
                   :readonly="readOnly"
-                  v-model="diagnosisNotes"
+                  v-model.trim="diagnosisNotes"
                   label="Diagnosis notes"
                   variant="outlined"
                   :rows="readOnly ? 1 : undefined"
@@ -184,7 +184,7 @@
               <v-col cols="12" v-if="impairmentsNotes || !readOnly"
                 ><v-textarea
                   :readonly="readOnly"
-                  v-model="impairmentsNotes"
+                  v-model.trim="impairmentsNotes"
                   label="Impairments notes"
                   variant="outlined"
                   :rows="readOnly ? 1 : undefined"
@@ -211,7 +211,7 @@
         >
           <v-textarea
             :readonly="readOnly"
-            v-model="finalNotes"
+            v-model.trim="finalNotes"
             label="Notes"
             variant="outlined"
             :rows="readOnly ? 1 : undefined"
