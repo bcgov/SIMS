@@ -130,26 +130,11 @@ export class DisabilityProfileService {
       );
       const now = new Date();
       const auditUser = { id: auditUserId } as User;
-      let disabilityProfile: StudentDisabilityProfile | null = null;
       // Retrieve the existing draft disability profile for the student, if exists.
-      disabilityProfile = await studentDisabilityProfileRepo.findOne({
-        select: {
-          id: true,
-          disabilityProfileStatus: true,
-          disabilities: {
-            id: true,
-          },
-        },
-        relations: {
-          disabilities: true,
-        },
-        where: {
-          student: {
-            id: studentId,
-          },
-          disabilityProfileStatus: DisabilityProfileStatus.Draft,
-        },
-      });
+      let disabilityProfile = await this.getStudentDraftProfile(
+        studentId,
+        studentDisabilityProfileRepo,
+      );
       if (disabilityProfile) {
         // A draft profile exists for the student.
         if (disabilityProfile.id !== disabilityProfileId) {
@@ -209,27 +194,10 @@ export class DisabilityProfileService {
       const now = new Date();
       const auditUser = { id: auditUserId } as User;
       // Retrieve the existing draft disability profile for the student, if exists.
-      // This serves multiple purposes using a single query:
-      // - validating the provided disabilityProfileId (if provided) represents a draft profile for the student,
-      // - retrieving the existing draft profile to be updated (if disabilityProfileId is provided), or
-      // - validating that there is no existing draft profile when creating a new active profile (when disabilityProfileId is not provided).
-      let disabilityProfile: StudentDisabilityProfile | null =
-        await studentDisabilityProfileRepo.findOne({
-          select: {
-            id: true,
-            disabilityProfileStatus: true,
-            disabilities: {
-              id: true,
-            },
-          },
-          relations: {
-            disabilities: true,
-          },
-          where: {
-            student: { id: studentId },
-            disabilityProfileStatus: DisabilityProfileStatus.Draft,
-          },
-        });
+      let disabilityProfile = await this.getStudentDraftProfile(
+        studentId,
+        studentDisabilityProfileRepo,
+      );
       if (
         disabilityProfileId &&
         disabilityProfileId !== disabilityProfile?.id
@@ -283,6 +251,35 @@ export class DisabilityProfileService {
         },
       );
       return studentDisabilityProfileRepo.save(disabilityProfile);
+    });
+  }
+
+  /**
+   * Get the existing draft disability profile for the student, if exists.
+   * It allows executing multiple validations while saving the draft or active profile.
+   * @param studentId ID of the student to get the draft disability profile for.
+   * @param studentDisabilityProfileRepo repository to allow the query in the same DB transaction.
+   * @returns the draft disability profile for the student, or null if none exists.
+   */
+  private async getStudentDraftProfile(
+    studentId: number,
+    studentDisabilityProfileRepo: Repository<StudentDisabilityProfile>,
+  ): Promise<StudentDisabilityProfile | null> {
+    return studentDisabilityProfileRepo.findOne({
+      select: {
+        id: true,
+        disabilityProfileStatus: true,
+        disabilities: {
+          id: true,
+        },
+      },
+      relations: {
+        disabilities: true,
+      },
+      where: {
+        student: { id: studentId },
+        disabilityProfileStatus: DisabilityProfileStatus.Draft,
+      },
     });
   }
 

@@ -15,9 +15,9 @@ export class DisabilityProfileControllerService {
   /**
    * Gets the disability profiles for the student.
    * @param options filter the disability profiles. At least one filter option must be provided.
-   * - `studentId`: ID of the student to get the disability profiles for.
-   * - `disabilityProfileId`: ID of the specific disability profile to get.
-   * @returns A list of disability profiles matching the provided options.
+   * - `studentId` ID of the student to get the disability profiles for.
+   * - `disabilityProfileId` ID of the specific disability profile to get.
+   * @returns a list of disability profiles matching the provided options.
    */
   async getStudentDisabilityProfiles(options?: {
     studentId?: number;
