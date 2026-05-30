@@ -68,6 +68,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   disabilityProfileId: undefined,
   inputDisabilities: undefined,
+  externalLoading: false,
   readOnly: false,
 });
 
@@ -235,7 +236,6 @@ const setDisabilities = async (): Promise<void> => {
     loading.value = true;
     const disabilityProfile =
       await DisabilityProfileService.shared.getStudentDisabilityProfile(
-        props.studentId,
         props.disabilityProfileId,
       );
     disabilities.value = covertDisabilitiesToModel(

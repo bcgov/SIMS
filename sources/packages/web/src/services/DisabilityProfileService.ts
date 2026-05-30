@@ -16,6 +16,8 @@ export class DisabilityProfileService {
 
   /**
    * Retrieves the disability profiles for the student.
+   * The student usually may have up to one active and one draft disability profile.
+   * Archived provides may vary but are not expected to be more than a few for a student.
    * @param studentId ID of the student.
    */
   async getStudentDisabilityProfiles(
@@ -28,15 +30,12 @@ export class DisabilityProfileService {
 
   /**
    * Retrieves a specific disability profile for the student.
-   * @param studentId ID of the student.
    * @param disabilityProfileId ID of the disability profile.
    */
   async getStudentDisabilityProfile(
-    studentId: number,
     disabilityProfileId: number,
   ): Promise<StudentDisabilityProfileAPIOutDTO> {
     return ApiClient.DisabilityProfileApi.getStudentDisabilityProfile(
-      studentId,
       disabilityProfileId,
     );
   }
@@ -59,9 +58,7 @@ export class DisabilityProfileService {
   }
 
   /**
-   * Creates or updates an active disability profile for the student. If a draft profile exists,
-   * it will be completed and become the active profile.
-   * If no draft profile exists, a new active profile will be created with the provided disabilities.
+   * Creates new active profile or converts a draft profile to an active profile.
    * @param studentId ID of the student.
    * @param saveStudentDisabilities information of the disability profile to be saved as active,
    * including the disabilities and optionally the draft profile ID to be completed.
@@ -78,15 +75,10 @@ export class DisabilityProfileService {
 
   /**
    * Deletes a disability profile for the student. Only draft profiles can be deleted.
-   * @param studentId ID of the student.
    * @param disabilityProfileId ID of the disability profile to be deleted.
    */
-  async deleteDraftProfile(
-    studentId: number,
-    disabilityProfileId: number,
-  ): Promise<void> {
+  async deleteDraftProfile(disabilityProfileId: number): Promise<void> {
     await ApiClient.DisabilityProfileApi.deleteDraftProfile(
-      studentId,
       disabilityProfileId,
     );
   }

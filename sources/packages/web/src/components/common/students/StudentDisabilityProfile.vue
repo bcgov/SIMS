@@ -8,7 +8,7 @@
         <template #actions>
           <v-btn
             class="float-right"
-            :disabled="!!draftProfile"
+            :disabled="!!draftProfile || processing"
             color="primary"
             prepend-icon="fa:fa fa-edit"
             @click="editProfile"
@@ -18,38 +18,47 @@
       </body-header>
     </template>
     <content-group>
-      <banner
-        v-if="draftProfile"
-        class="mb-2"
-        type="warning"
-        header="Draft profile"
-      >
+      <banner v-if="draftProfile" class="mb-2" type="warning">
         <template #content>
           <span
-            >A draft version exists for this disability profile. The draft can
-            be updated to be completed or deleted, if no longer needed.<br />The
-            <b>Edit profile</b> button is not available until the draft is
-            completed or deleted.</span
+            >A draft version exists for this disability profile, last updated on
+            <b>{{ getISODateHourMinuteString(draftProfile.updatedAt) }}</b> by
+            <b>{{ draftProfile.modifier ?? draftProfile.creator }}</b
+            >.<br />
+            The draft can be updated to be completed or deleted, if no longer
+            needed.<br />The <b>Edit profile</b> button is not available until
+            the draft is completed or deleted.</span
           >
         </template>
         <template #actions>
           <v-btn color="primary" class="mr-2" @click="viewDraft"
             >View draft</v-btn
           >
-          <v-btn color="danger" @click="deleteDraft">
+          <v-btn color="danger" @click="deleteDraft" :disabled="processing">
             <v-icon icon="fas fa-trash" />
           </v-btn>
         </template>
       </banner>
       <toggle-content
-        :toggled="!activeProfile"
+        :toggled="!activeProfile && !processing"
         message="No disability profile set."
       >
-        <student-disability-disabilities
-          :student-id="studentId"
-          :input-disabilities="activeProfile?.disabilities"
-          :read-only="true"
-        />
+        <v-skeleton-loader
+          :loading="processing"
+          type="heading,subtitle,heading,subtitle"
+        >
+          <student-disability-disabilities
+            :student-id="studentId"
+            :input-disabilities="activeProfile?.disabilities"
+            :read-only="true"
+          />
+          <p class="mt-4 mb-0 secondary-color-light">
+            Completed on
+            <b>{{ getISODateHourMinuteString(activeProfile?.completedAt) }}</b>
+            by
+            <b>{{ activeProfile?.completedBy }}</b>
+          </p>
+        </v-skeleton-loader>
       </toggle-content>
     </content-group>
   </body-header-container>
@@ -81,13 +90,14 @@
           {{ item.completedBy }}
         </template>
         <template #[`item.disabilities`]="{ item }">
-          <div style="display: flex; flex-wrap: wrap; gap: 4px">
+          <div>
             <v-chip
               v-for="disability in item.disabilities"
               :key="disability.disabilityPriority"
               size="small"
               color="secondary"
               variant="tonal"
+              class="mr-2"
             >
               {{ disability.disabilityCategoryDescription }}
             </v-chip>
@@ -105,7 +115,6 @@
 
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
-import StudentDisabilityDisabilities from "@/components/common/students/StudentDisabilityDisabilities.vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import { useRouter } from "vue-router";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
@@ -117,6 +126,7 @@ import { DisabilityProfileService } from "@/services/DisabilityProfileService";
 import type { StudentDisabilityProfileAPIOutDTO } from "@/services/http/dto";
 import { useFormatters, useSnackBar } from "@/composables";
 import type { ModalDialog } from "@/composables";
+import StudentDisabilityDisabilities from "@/components/common/students/StudentDisabilityDisabilities.vue";
 
 interface Props {
   studentId: number;
@@ -131,6 +141,7 @@ const router = useRouter();
 const activeProfile = ref<StudentDisabilityProfileAPIOutDTO>();
 const draftProfile = ref<StudentDisabilityProfileAPIOutDTO>();
 const archivedProfiles = ref<StudentDisabilityProfileAPIOutDTO[]>([]);
+const processing = ref(true);
 
 const editProfile = (): void => {
   void router.push({
@@ -168,8 +179,8 @@ const deleteDraft = async (): Promise<void> => {
     return;
   }
   try {
+    processing.value = true;
     await DisabilityProfileService.shared.deleteDraftProfile(
-      props.studentId,
       draftProfile.value!.id,
     );
     snackBar.success("Draft deleted successfully.");
@@ -178,11 +189,14 @@ const deleteDraft = async (): Promise<void> => {
     snackBar.error(
       "An unexpected error occurred while deleting the draft disability profile.",
     );
+  } finally {
+    processing.value = false;
   }
 };
 
 const loadProfiles = async (): Promise<void> => {
   try {
+    processing.value = true;
     const { profiles } =
       await DisabilityProfileService.shared.getStudentDisabilityProfiles(
         props.studentId,
@@ -200,6 +214,8 @@ const loadProfiles = async (): Promise<void> => {
     snackBar.error(
       "An unexpected error occurred while loading the student's disability profiles.",
     );
+  } finally {
+    processing.value = false;
   }
 };
 

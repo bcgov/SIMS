@@ -3,9 +3,7 @@
     <template #header>
       <header-navigator
         title="Disability Profile"
-        :sub-title="
-          isDraft ? 'Student Disabilities Draft' : 'Student Disabilities Edit'
-        "
+        sub-title="Student Disabilities"
         :route-location="{
           name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE,
           params: {
@@ -16,13 +14,15 @@
     </template>
     <body-header-container :enable-card-view="false">
       <template #header>
-        <body-header title="Disability Profile">
+        <body-header :title="bodyHeaderTitle" :sub-title="bodyHeaderSubtitle">
           <template #actions>
             <v-btn
               prepend-icon="fas fa-save"
               class="float-right mr-2"
               color="primary"
               variant="outlined"
+              :loading="processing"
+              :disabled="processing"
               @click="saveDraftProfile"
               >{{ isDraft ? "Save draft" : "Save as draft" }}</v-btn
             >
@@ -35,7 +35,7 @@
         ref="disabilitiesComponent"
         :student-id="props.studentId"
         :disability-profile-id="props.disabilityProfileId"
-        :read-only="false"
+        :read-only="false || processing"
       />
     </content-group>
     <footer-buttons
@@ -43,6 +43,7 @@
       @primary-click="completeProfile"
       @secondary-click="cancelProfile"
       :secondary-label="isDraft ? 'Cancel draft' : 'Cancel'"
+      :processing="processing"
     ></footer-buttons>
   </full-page-container>
   <confirm-modal
@@ -59,7 +60,7 @@
   />
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import type { StudentDisability } from "@/types";
 import { SaveStudentDisabilityProfileAPIInDTO } from "@/services/http/dto";
@@ -86,6 +87,21 @@ const disabilitiesComponent =
   ref<InstanceType<typeof StudentDisabilityDisabilities>>();
 const deleteDraftModal = ref({} as ModalDialog<boolean>);
 const completeChangeModal = ref({} as ModalDialog<boolean>);
+const processing = ref(false);
+
+const bodyHeaderTitle = computed(() => {
+  if (props.isDraft) {
+    return "Draft Disability Profile";
+  }
+  return "Current Disability Profile";
+});
+
+const bodyHeaderSubtitle = computed(() => {
+  if (props.isDraft) {
+    return "Drafts can be saved and updated repeatedly until you choose to complete or delete them.";
+  }
+  return "Changes to the current disability profile can be completed directly, or saved as a draft if more time is needed before finalizing.";
+});
 
 const createPayload = (
   disabilities: StudentDisability[],
@@ -118,6 +134,7 @@ const saveDraftProfile = async (): Promise<void> => {
     return;
   }
   try {
+    processing.value = true;
     const result = await DisabilityProfileService.shared.saveDraftProfile(
       props.studentId,
       createPayload(disabilitiesComponent.value?.getDisabilities() ?? []),
@@ -137,6 +154,8 @@ const saveDraftProfile = async (): Promise<void> => {
     });
   } catch {
     snackBar.error("Unexpected error occurred while saving the draft.");
+  } finally {
+    processing.value = false;
   }
 };
 
@@ -153,6 +172,7 @@ const completeProfile = async (): Promise<void> => {
     return;
   }
   try {
+    processing.value = true;
     await DisabilityProfileService.shared.saveActiveProfile(
       props.studentId,
       createPayload(disabilitiesComponent.value?.getDisabilities() ?? []),
@@ -166,6 +186,8 @@ const completeProfile = async (): Promise<void> => {
     });
   } catch {
     snackBar.error("Unexpected error occurred while completing the profile.");
+  } finally {
+    processing.value = false;
   }
 };
 
@@ -184,8 +206,8 @@ const cancelProfile = async (): Promise<void> => {
     return;
   }
   try {
+    processing.value = true;
     await DisabilityProfileService.shared.deleteDraftProfile(
-      props.studentId,
       props.disabilityProfileId!,
     );
     snackBar.success("Draft deleted successfully.");
@@ -199,6 +221,8 @@ const cancelProfile = async (): Promise<void> => {
     snackBar.error(
       "An unexpected error occurred while deleting the draft disability profile.",
     );
+  } finally {
+    processing.value = false;
   }
 };
 </script>

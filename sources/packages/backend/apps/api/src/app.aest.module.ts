@@ -118,6 +118,7 @@ import {
   MSFAANumberAESTController,
   FormSubmissionControllerService,
   DisabilityProfileAESTController,
+  DisabilityProfileControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -279,6 +280,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     FormSubmissionActionProcessor,
     FormSubmissionApprovalService,
     DisabilityProfileService,
+    DisabilityProfileControllerService,
   ],
 })
 export class AppAESTModule {}

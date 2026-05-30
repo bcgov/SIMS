@@ -14,7 +14,11 @@
     </template>
     <body-header-container :enable-card-view="false">
       <template #header>
-        <body-header title="Disability Profile History"> </body-header>
+        <body-header
+          title="Disability Profile"
+          sub-title="Historical Student Disability"
+        >
+        </body-header>
       </template>
     </body-header-container>
     <content-group>
