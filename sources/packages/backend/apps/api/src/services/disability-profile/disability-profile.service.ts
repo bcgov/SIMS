@@ -328,11 +328,11 @@ export class DisabilityProfileService {
       return updatedDisabilities;
     }
     // Check for disabilities that were removed in the update and mark them as deleted.
-    const updatedDisabilitiesIDs = updatedDisabilities.map(
-      (disability) => disability.id,
+    const updatedDisabilitiesIDs = new Set(
+      updatedDisabilities.map((disability) => disability.id),
     );
     const deletedDisabilities = existingDisabilities
-      .filter((disability) => !updatedDisabilitiesIDs.includes(disability.id))
+      .filter((disability) => !updatedDisabilitiesIDs.has(disability.id))
       .map((disability) => {
         disability.deletedAt = now;
         disability.modifier = auditUser;

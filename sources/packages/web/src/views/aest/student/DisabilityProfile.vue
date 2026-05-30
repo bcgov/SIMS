@@ -148,7 +148,7 @@ const archivedProfiles = ref<StudentDisabilityProfileAPIOutDTO[]>([]);
 const processing = ref(true);
 
 const editProfile = (): void => {
-  void router.push({
+  router.push({
     name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE_DISABILITY_EDIT,
     params: {
       studentId: props.studentId,
@@ -158,7 +158,7 @@ const editProfile = (): void => {
 };
 
 const viewDraft = (): void => {
-  void router.push({
+  router.push({
     name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE_DISABILITY_DRAFT,
     params: {
       studentId: props.studentId,
@@ -168,7 +168,7 @@ const viewDraft = (): void => {
 };
 
 const viewArchivedProfile = (profileId: number): void => {
-  void router.push({
+  router.push({
     name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE_DISABILITY_VIEW,
     params: {
       studentId: props.studentId,
