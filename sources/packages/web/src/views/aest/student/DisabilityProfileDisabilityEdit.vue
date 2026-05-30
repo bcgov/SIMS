@@ -33,7 +33,6 @@
     <content-group>
       <student-disability-disabilities
         ref="disabilitiesComponent"
-        :student-id="props.studentId"
         :disability-profile-id="props.disabilityProfileId"
         :read-only="false || processing"
       />

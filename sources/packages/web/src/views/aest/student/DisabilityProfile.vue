@@ -50,7 +50,6 @@
             type="heading,subtitle,heading,subtitle"
           >
             <student-disability-disabilities
-              :student-id="studentId"
               :input-disabilities="activeProfile?.disabilities"
               :read-only="true"
             />

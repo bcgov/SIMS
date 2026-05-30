@@ -8,7 +8,6 @@
           (component) =>
             setDisabilityComponentRef(component, disability.uniqueKey)
         "
-        :student-id="studentId"
         v-model="disabilities[index]"
         :max-disability-priority="disabilities.length"
         :read-only="readOnly"
@@ -45,7 +44,6 @@ type DisabilityPanelComponent = {
 };
 
 interface Props {
-  studentId: number;
   /**
    * Profile ID to allow the component to fetch the disabilities from the server.
    * Not required when disabilities are provided directly via `inputDisabilities`.

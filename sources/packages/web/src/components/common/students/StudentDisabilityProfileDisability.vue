@@ -255,7 +255,6 @@ const REGULAR_NOTE_MAX_LENGTH = 500;
 const FINAL_NOTES_MAX_LENGTH = 1000;
 
 interface Props {
-  studentId: number;
   maxDisabilityPriority: number;
   modelValue: StudentDisability;
   readOnly?: boolean;

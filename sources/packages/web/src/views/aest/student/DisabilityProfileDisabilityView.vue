@@ -23,7 +23,6 @@
     </body-header-container>
     <content-group>
       <student-disability-disabilities
-        :student-id="props.studentId"
         :disability-profile-id="props.disabilityProfileId"
         :read-only="true"
       />
