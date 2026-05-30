@@ -3,7 +3,7 @@ import { DisabilityProfileService } from "../../services";
 import { getUserFullName } from "../../utilities";
 import { SystemLookupConfigurationService } from "@sims/services/system-lookup-configuration";
 import { SystemLookupCategory } from "@sims/sims-db";
-import { StudentDisabilityProfilesAPIOutDTO } from "apps/api/src/route-controllers/disability-profile/models/disability-profile.dto";
+import { StudentDisabilityProfilesAPIOutDTO } from "./models/disability-profile.dto";
 
 @Injectable()
 export class DisabilityProfileControllerService {
@@ -15,8 +15,8 @@ export class DisabilityProfileControllerService {
   /**
    * Gets the disability profiles for the student.
    * @param options filter the disability profiles. At least one filter option must be provided.
-   * - `studentId`: ID of the student to get the disability profiles for. If not provided, all disability profiles will be returned.
-   * - `disabilityProfileId`: ID of the specific disability profile to get. If not provided, all disability profiles for the student will be returned.
+   * - `studentId`: ID of the student to get the disability profiles for.
+   * - `disabilityProfileId`: ID of the specific disability profile to get.
    * @returns A list of disability profiles matching the provided options.
    */
   async getStudentDisabilityProfiles(options?: {
@@ -36,7 +36,7 @@ export class DisabilityProfileControllerService {
         status: profile.disabilityProfileStatus,
         completedBy: getUserFullName(profile.completedBy),
         completedAt: profile.completedAt,
-        disabilities: profile.disabilities!.map((disability) => ({
+        disabilities: profile.disabilities.map((disability) => ({
           id: disability.id,
           disabilityPriority: disability.disabilityPriority,
           disabilityCategory: disability.disabilityCategory,

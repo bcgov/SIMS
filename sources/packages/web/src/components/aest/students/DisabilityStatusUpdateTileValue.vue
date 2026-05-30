@@ -27,7 +27,7 @@ import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
 import { DisabilityStatus, Role } from "@/types";
 import UpdateDisabilityStatusModal from "@/components/aest/students/modals/UpdateDisabilityStatusModal.vue";
 import { UpdateDisabilityStatusAPIInDTO } from "@/services/http/dto";
-import useStudentDetailsEmitter from "@/composables/useStudentSearchProfileEmitter";
+import useStudentSearchProfileEmitter from "@/composables/useStudentSearchProfileEmitter";
 
 export default defineComponent({
   components: { UpdateDisabilityStatusModal },
@@ -50,7 +50,7 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const { refreshStudentSearchProfile } = useStudentDetailsEmitter();
+    const { refreshStudentSearchProfile } = useStudentSearchProfileEmitter();
     const { disabilityStatusToDisplay } = useFormatters();
     const updateDisabilityStatusModal = ref(
       {} as ModalDialog<UpdateDisabilityStatusAPIInDTO | false>,

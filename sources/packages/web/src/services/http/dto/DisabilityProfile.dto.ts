@@ -42,6 +42,12 @@ export interface StudentDisabilityAPIInDTO {
   finalNotes?: string;
 }
 
+/**
+ * Shared payload for creating and updating student disability profiles,
+ * draft or active. The presence of the id field indicates that a record
+ * is expected to be updated, either a draft, or a draft to be completed
+ * to active.
+ */
 export interface SaveStudentDisabilityProfileAPIInDTO {
   /**
    * Required when updating an existing draft profile, or completing a draft profile to active status.

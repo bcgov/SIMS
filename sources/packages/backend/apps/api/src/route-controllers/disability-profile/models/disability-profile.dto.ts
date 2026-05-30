@@ -21,8 +21,20 @@ import {
   Max,
 } from "class-validator";
 
+/**
+ * Limit the max number of disabilities per profile to prevent abuse.
+ * No business rule defined for this.
+ */
 const MAX_DISABILITIES_PER_PROFILE = 25;
+/**
+ * Limit the max number of diagnosis entries per disability to prevent abuse.
+ * No business rule defined for this.
+ */
 const MAX_DIAGNOSIS_ENTRIES = 50;
+/**
+ * Limit the max number of impairments entries per disability to prevent abuse.
+ * No business rule defined for this.
+ */
 const MAX_IMPAIRMENTS_ENTRIES = 50;
 
 export class StudentDisabilityAPIOutDTO {
@@ -68,6 +80,9 @@ export class StudentDisabilityAPIInDTO {
   @IsNotEmpty()
   @MaxLength(LOOKUP_KEY_MAX_LENGTH)
   disabilityType: string;
+  @IsOptional()
+  @MaxLength(DISABILITY_NOTES_MAX_LENGTH)
+  disabilityNotes?: string;
   @ArrayMinSize(1)
   @ArrayMaxSize(MAX_DIAGNOSIS_ENTRIES)
   @IsString({ each: true })
@@ -79,10 +94,9 @@ export class StudentDisabilityAPIInDTO {
   @ArrayMinSize(1)
   @ArrayMaxSize(MAX_IMPAIRMENTS_ENTRIES)
   @IsString({ each: true })
+  @MaxLength(LOOKUP_KEY_MAX_LENGTH, { each: true })
   impairments: string[];
-  @IsOptional()
-  @MaxLength(DISABILITY_NOTES_MAX_LENGTH)
-  disabilityNotes?: string;
+
   @IsOptional()
   @MaxLength(IMPAIRMENTS_NOTES_MAX_LENGTH)
   impairmentsNotes?: string;
@@ -91,6 +105,12 @@ export class StudentDisabilityAPIInDTO {
   finalNotes?: string;
 }
 
+/**
+ * Shared payload for creating and updating student disability profiles,
+ * draft or active. The presence of the id field indicates that a record
+ * is expected to be updated, either a draft, or a draft to be completed
+ * to active.
+ */
 export class SaveStudentDisabilityProfileAPIInDTO {
   /**
    * Required when updating an existing draft profile, or completing a draft profile to active status.

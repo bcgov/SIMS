@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -16,6 +17,7 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import {
+  ApiBadRequestResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiTags,
@@ -35,8 +37,10 @@ import {
   DISABILITY_PROFILE_COMPLETE_WHEN_DRAFT_ALREADY_EXISTS,
   DISABILITY_PROFILE_DRAFT_NOT_FOUND,
   DISABILITY_PROFILE_INVALID_CATEGORY,
+  DISABILITY_PROFILE_INVALID_CATEGORY_NOTES,
   DISABILITY_PROFILE_INVALID_DISABILITY_TYPE,
   DISABILITY_PROFILE_INVALID_IMPAIRMENT,
+  DISABILITY_PROFILE_INVALID_IMPAIRMENTS_NOTES,
   DISABILITY_PROFILE_INVALID_PRIORITY,
 } from "../../constants/error-code.constants";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
@@ -100,6 +104,11 @@ export class DisabilityProfileAESTController extends BaseController {
    * @param saveStudentDisabilities information of the disability profile to be saved as draft, including the
    * disabilities and optionally the draft profile ID to be updated.
    */
+  @ApiBadRequestResponse({
+    description:
+      "Diagnosis notes must be provided when diagnosis includes OTHER, or " +
+      "impairments notes must be provided when impairments includes OTHER.",
+  })
   @ApiUnprocessableEntityResponse({
     description:
       "Draft disability profile not found to be updated, or " +
@@ -125,6 +134,9 @@ export class DisabilityProfileAESTController extends BaseController {
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
+          case DISABILITY_PROFILE_INVALID_CATEGORY_NOTES:
+          case DISABILITY_PROFILE_INVALID_IMPAIRMENTS_NOTES:
+            throw new BadRequestException(error.message);
           case DISABILITY_PROFILE_DRAFT_NOT_FOUND:
           case DISABILITY_PROFILE_INVALID_PRIORITY:
           case DISABILITY_PROFILE_INVALID_DISABILITY_TYPE:
@@ -144,6 +156,11 @@ export class DisabilityProfileAESTController extends BaseController {
    * including the disabilities and optionally the draft profile ID to be completed.
    */
   @Put("student/:studentId/active")
+  @ApiBadRequestResponse({
+    description:
+      "Diagnosis notes must be provided when diagnosis includes OTHER, or " +
+      "impairments notes must be provided when impairments includes OTHER.",
+  })
   @ApiUnprocessableEntityResponse({
     description:
       "Draft disability profile not found to be updated to complete, or " +
@@ -168,6 +185,9 @@ export class DisabilityProfileAESTController extends BaseController {
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
+          case DISABILITY_PROFILE_INVALID_CATEGORY_NOTES:
+          case DISABILITY_PROFILE_INVALID_IMPAIRMENTS_NOTES:
+            throw new BadRequestException(error.message);
           case DISABILITY_PROFILE_DRAFT_NOT_FOUND:
           case DISABILITY_PROFILE_COMPLETE_WHEN_DRAFT_ALREADY_EXISTS:
           case DISABILITY_PROFILE_INVALID_PRIORITY:
@@ -185,7 +205,6 @@ export class DisabilityProfileAESTController extends BaseController {
    * Deletes a disability profile. Only draft profiles can be deleted.
    * @param disabilityProfileId ID of the disability profile to be deleted.
    */
-
   @Delete(":disabilityProfileId")
   @ApiNoContentResponse({
     description: "Draft disability profile not found.",
@@ -200,11 +219,11 @@ export class DisabilityProfileAESTController extends BaseController {
         userToken.userId!,
       );
     } catch (error: unknown) {
-      if (error instanceof CustomNamedError) {
-        switch (error.name) {
-          case DISABILITY_PROFILE_DRAFT_NOT_FOUND:
-            throw new NotFoundException(error.message);
-        }
+      if (
+        error instanceof CustomNamedError &&
+        error.name === DISABILITY_PROFILE_DRAFT_NOT_FOUND
+      ) {
+        throw new NotFoundException(error.message);
       }
       throw error;
     }
