@@ -160,6 +160,7 @@ export default abstract class HttpBaseClient {
    * @param url API endpoint URI.
    * @param payload data to be sent.
    * @param suppressErrorHandler optionally skip the global error handling.
+   * @returns the response data from the API call, if any.
    */
   protected async putCall<T, TResult = void>(
     url: string,

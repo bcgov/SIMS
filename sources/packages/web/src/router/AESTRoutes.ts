@@ -138,7 +138,9 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           {
             path: AppRoutes.StudentDisabilityProfile,
             name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE,
-            props: true,
+            props: (route) => ({
+              studentId: Number.parseInt(route.params.studentId as string),
+            }),
             component: DisabilityProfile,
             meta: {
               clientType: ClientIdType.AEST,
