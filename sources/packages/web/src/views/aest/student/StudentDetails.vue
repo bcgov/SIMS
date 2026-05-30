@@ -44,7 +44,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StudentRestrictionChip from "@/components/generic/StudentRestrictionChip.vue";
 import { AESTStudentProfileAPIOutDTO } from "@/services/http/dto";
 import { DisabilityStatus, Role } from "@/types";
-import useStudentSearchProfileEmitter from "@/composables/useStudentSearchProfileEmitter";
+import useEmitterEvents from "@/composables/useEmitterEvents";
 import { useAuth } from "@/composables";
 
 export default defineComponent({
@@ -58,7 +58,7 @@ export default defineComponent({
   setup(props) {
     const { hasRole } = useAuth();
     const { refreshStudentSearchProfileOn, refreshStudentSearchProfileOff } =
-      useStudentSearchProfileEmitter();
+      useEmitterEvents();
     const studentDetails = ref({} as AESTStudentProfileAPIOutDTO);
     const items = computed(() => {
       const menuItems = [

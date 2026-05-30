@@ -96,7 +96,6 @@ export class StudentDisabilityAPIInDTO {
   @IsString({ each: true })
   @MaxLength(LOOKUP_KEY_MAX_LENGTH, { each: true })
   impairments: string[];
-
   @IsOptional()
   @MaxLength(IMPAIRMENTS_NOTES_MAX_LENGTH)
   impairmentsNotes?: string;
