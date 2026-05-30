@@ -38,15 +38,15 @@
   <v-table striped="even" :class="readOnly ? 'mt-n4' : 'mt-2'">
     <thead>
       <tr>
-        <th class="text-left">
+        <th id="diagnosis-entries" class="text-left">
           <v-icon icon="mdi-stethoscope" class="mr-1" size="18" />
           Diagnosis entries
         </th>
-        <th v-if="!readOnly" class="text-right">Actions</th>
+        <th id="actions" v-if="!readOnly" class="text-right">Actions</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-if="!diagnosisItems.length">
+      <tr headers="diagnosis-entries" v-if="!diagnosisItems.length">
         <td :colspan="readOnly ? 1 : 2" class="text-medium-emphasis">
           No diagnosis entries added.
         </td>
@@ -55,8 +55,8 @@
         v-for="(diagnosisItem, index) in diagnosisItems"
         :key="`${diagnosisItem}-${index}`"
       >
-        <td>{{ diagnosisItem }}</td>
-        <td v-if="!readOnly" class="text-right pa-0">
+        <td headers="diagnosis-entries">{{ diagnosisItem }}</td>
+        <td headers="actions" v-if="!readOnly" class="text-right pa-0">
           <v-btn
             color="error"
             variant="plain"
