@@ -1,5 +1,6 @@
 import {
   DIAGNOSIS_MAX_LENGTH,
+  DIAGNOSIS_NOTES_MAX_LENGTH,
   DISABILITY_NOTES_MAX_LENGTH,
   DisabilityProfileStatus,
   FINAL_NOTES_MAX_LENGTH,
@@ -73,7 +74,7 @@ export class StudentDisabilityAPIInDTO {
   @MaxLength(DIAGNOSIS_MAX_LENGTH, { each: true })
   diagnosis: string[];
   @IsOptional()
-  @MaxLength(DIAGNOSIS_MAX_LENGTH)
+  @MaxLength(DIAGNOSIS_NOTES_MAX_LENGTH)
   diagnosisNotes?: string;
   @ArrayMinSize(1)
   @ArrayMaxSize(MAX_IMPAIRMENTS_ENTRIES)

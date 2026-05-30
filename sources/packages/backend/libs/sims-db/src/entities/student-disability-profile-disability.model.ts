@@ -12,6 +12,7 @@ import { StudentDisabilityProfile } from "./student-disability-profile.model";
 
 export const DIAGNOSIS_MAX_LENGTH = 250;
 export const DISABILITY_NOTES_MAX_LENGTH = 500;
+export const DIAGNOSIS_NOTES_MAX_LENGTH = 500;
 export const IMPAIRMENTS_NOTES_MAX_LENGTH = 500;
 export const FINAL_NOTES_MAX_LENGTH = 1000;
 
@@ -102,7 +103,7 @@ export class StudentDisabilityProfileDisability extends RecordDataModel {
   @Column({
     name: "diagnosis_notes",
     nullable: true,
-    length: DISABILITY_NOTES_MAX_LENGTH,
+    length: DIAGNOSIS_NOTES_MAX_LENGTH,
   })
   diagnosisNotes?: string;
   /**
