@@ -424,18 +424,18 @@ export class DisabilityProfileService {
         );
       }
       // Impairments
-      for (const impairment of disability.impairments) {
-        const hasValidImpairment =
-          this.systemLookupConfigurationService.isValidSystemLookup(
+      const invalidImpairments = disability.impairments.filter(
+        (impairment) =>
+          !this.systemLookupConfigurationService.isValidSystemLookup(
             SystemLookupCategory.DisabilityImpairment,
             impairment,
-          );
-        if (!hasValidImpairment) {
-          throw new CustomNamedError(
-            `Invalid disability impairment: ${impairment}`,
-            DISABILITY_PROFILE_INVALID_IMPAIRMENT,
-          );
-        }
+          ),
+      );
+      if (invalidImpairments.length) {
+        throw new CustomNamedError(
+          `Invalid disability impairment(s): ${invalidImpairments.join(", ")}`,
+          DISABILITY_PROFILE_INVALID_IMPAIRMENT,
+        );
       }
     }
   }
