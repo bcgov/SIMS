@@ -154,6 +154,40 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
     expect(calculatedAssessment.variables.awardEligibilityCSGF).toBe(false);
   });
 
+  it("Should cap CSGF at the 6300 annual maximum when offering weeks exceed the limit in 2025-2026.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.programCredentialType =
+      CredentialType.UnderGraduateCertificate;
+    assessmentConsolidatedData.programLength =
+      ProgramLengthOptions.TwoToThreeYears;
+    assessmentConsolidatedData.offeringWeeks = 60;
+    assessmentConsolidatedData.studentDataTaxReturnIncome = 0;
+
+    // Act
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+
+    // Assert
+    const expectedWeeklyAmount = 121.15;
+    const annualCap = 6300;
+    const uncappedAmount =
+      expectedWeeklyAmount * assessmentConsolidatedData.offeringWeeks;
+
+    expect(calculatedAssessment.variables.awardEligibilityCSGF).toBe(true);
+    // 121.15 * 60 weeks = 7269, which is above the annual cap and should be capped to 6300.
+    expect(uncappedAmount).toBeGreaterThan(annualCap);
+    expect(
+      calculatedAssessment.variables.federalAwardNetCSGFAmount,
+    ).toBeCloseTo(annualCap, 2);
+    expect(
+      calculatedAssessment.variables.federalAwardNetCSGFAmount,
+    ).toBeLessThan(uncappedAmount);
+  });
+
   afterAll(async () => {
     // Closes the singleton instance created during test executions.
     await ZeebeMockedClient.getMockedZeebeInstance().close();

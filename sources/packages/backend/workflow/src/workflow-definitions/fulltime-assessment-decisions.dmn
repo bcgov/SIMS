@@ -2835,10 +2835,10 @@
           <text>100</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1rq1wim">
-          <text>4200</text>
+          <text>6300</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_069pmc5">
-          <text>round half up(4200 * (1/8) * 12 * (1/52),2)</text>
+          <text>round half up(6300 * (1/52),2)</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1ktze4j">
           <text>0</text>
@@ -2894,10 +2894,10 @@
           <text>100</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_11xiwxw">
-          <text>4200</text>
+          <text>6300</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1i0ci8q">
-          <text>round half up(4200 * (1/8) * 12 * (1/52),2)</text>
+          <text>round half up(6300 * (1/52),2)</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_00kdff9">
           <text>0</text>
