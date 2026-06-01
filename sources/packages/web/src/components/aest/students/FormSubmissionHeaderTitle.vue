@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, ref, watchEffect } from "vue";
+import { computed, PropType, ref, watchEffect } from "vue";
 import {
   ApplicationSupplementalDataAPIOutDTO,
   FormSubmissionAPIOutDTO,
@@ -32,27 +32,24 @@ const props = defineProps({
     required: false,
     default: undefined,
   },
-  formSubmissionItems: {
-    type: Array as PropType<FormSubmissionItem[]>,
+  formSubmissionItem: {
+    type: Object as PropType<FormSubmissionItem>,
     required: false,
     default: undefined,
   },
 });
 
-const headerMap = ref<Record<string, string | undefined>>({});
-
-const mapValues = (): Record<string, string | undefined> => {
+const headerMap = computed((): Record<string, string | undefined> => {
   let formName: string | undefined = undefined;
   let studentFullName: string | undefined = undefined;
   let formCategory: FormCategory | undefined =
-    props.formSubmissionItems?.at(0)?.category;
+    props.formSubmissionItem?.category;
   if (formSubmissionData.value) {
     studentFullName = formSubmissionData.value.studentFullName;
     formCategory = formSubmissionData.value?.formCategory;
   }
   let studyDates: string | undefined = undefined;
   if (applicationData.value) {
-    studentFullName = applicationData.value.studentFullName;
     studyDates = dateOnlyLongPeriodString(
       applicationData.value?.applicationStartDate,
       applicationData.value?.applicationEndDate,
@@ -61,7 +58,7 @@ const mapValues = (): Record<string, string | undefined> => {
     // Form name is only displayed if no application data is available (forms or other appeals)
     formName =
       formSubmissionData.value?.submissionItems?.at(0)?.formType ??
-      props.formSubmissionItems?.at(0)?.formType;
+      props.formSubmissionItem?.formType;
   }
 
   let formType: string | undefined = undefined;
@@ -79,7 +76,7 @@ const mapValues = (): Record<string, string | undefined> => {
       formSubmissionData.value?.submittedDate,
     ),
   };
-};
+});
 
 const loadValues = async () => {
   if (props.formSubmissionId) {
@@ -99,7 +96,6 @@ const loadValues = async () => {
       },
     );
   }
-  headerMap.value = mapValues();
 };
 // Adding watch effect instead of onMounted because
 // formSubmissionId may not be available on load.

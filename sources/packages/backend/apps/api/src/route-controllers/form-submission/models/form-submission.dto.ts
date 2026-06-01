@@ -66,8 +66,6 @@ abstract class FormSubmissionBaseAPIOutDTO {
   applicationNumber?: string;
   submittedDate: Date;
   assessedDate?: Date;
-  studentId: number;
-  studentFullName: string;
 }
 
 /**
@@ -172,6 +170,8 @@ export class FormSubmissionMinistryAPIOutDTO extends FormSubmissionBaseAPIOutDTO
    */
   canAssessFinalDecision?: boolean;
   submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
+  studentId: number;
+  studentFullName: string;
 }
 
 /**

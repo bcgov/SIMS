@@ -9,7 +9,7 @@
       />
       <form-submission-header-title
         :application-id="applicationId"
-        :form-submission-items="formSubmissionItems"
+        :form-submission-item="formSubmissionItems?.at(0)"
       />
     </template>
     <body-header-container>
