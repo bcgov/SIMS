@@ -66,7 +66,6 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   disabilityProfileId: undefined,
   inputDisabilities: undefined,
-  externalLoading: false,
   readOnly: false,
 });
 
@@ -202,7 +201,7 @@ const deleteDisability = (index: number): void => {
  * @param disabilities the list of disabilities in the API model.
  * @returns the list of disabilities in the UI model.
  */
-const covertDisabilitiesToModel = (
+const convertDisabilitiesToModel = (
   disabilities: StudentDisabilityAPIOutDTO[],
 ): StudentDisability[] => {
   return disabilities.map((disability) => ({
@@ -227,7 +226,7 @@ const covertDisabilitiesToModel = (
 const setDisabilities = async (): Promise<void> => {
   if (props.inputDisabilities) {
     // If disabilities are provided as props, use them directly without fetching from the server.
-    disabilities.value = covertDisabilitiesToModel(props.inputDisabilities);
+    disabilities.value = convertDisabilitiesToModel(props.inputDisabilities);
     expandPanelIfOnlyOne();
     return;
   }
@@ -244,7 +243,7 @@ const setDisabilities = async (): Promise<void> => {
       await DisabilityProfileService.shared.getStudentDisabilityProfile(
         props.disabilityProfileId,
       );
-    disabilities.value = covertDisabilitiesToModel(
+    disabilities.value = convertDisabilitiesToModel(
       disabilityProfile.disabilities,
     );
     loading.value = false;

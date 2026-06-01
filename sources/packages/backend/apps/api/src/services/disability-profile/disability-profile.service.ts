@@ -346,7 +346,7 @@ export class DisabilityProfileService {
 
   /**
    * Validate the optional notes fields for the disabilities.
-   * If the disability category includes "OTHER", the diagnosis notes must be provided.
+   * If the disability category includes "OTHER", the disability notes must be provided.
    * If the disability impairments includes "OTHER", the impairments notes must be provided.
    * @param disabilities the list of disabilities to validate the optional notes fields.
    */
@@ -354,10 +354,10 @@ export class DisabilityProfileService {
     for (const disability of disabilities) {
       if (
         disability.disabilityCategory.includes(OTHER_OPTION_VALUE) &&
-        !disability.diagnosisNotes
+        !disability.disabilityNotes
       ) {
         throw new CustomNamedError(
-          `Diagnosis notes must be provided when diagnosis includes ${OTHER_OPTION_VALUE}.`,
+          `Disability category notes must be provided when category is ${OTHER_OPTION_VALUE}.`,
           DISABILITY_PROFILE_INVALID_CATEGORY_NOTES,
         );
       }

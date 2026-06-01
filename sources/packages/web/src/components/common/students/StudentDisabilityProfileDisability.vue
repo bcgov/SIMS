@@ -64,7 +64,7 @@
                   density="compact"
                   variant="outlined"
                   hide-details="auto"
-                  clearable
+                  :clearable="!readOnly"
                   :rules="[
                     (v) => checkNullOrEmptyRule(v, 'Disability category'),
                   ]"
@@ -81,7 +81,7 @@
                   density="compact"
                   variant="outlined"
                   hide-details="auto"
-                  clearable
+                  :clearable="!readOnly"
                   :rules="[(v) => checkNullOrEmptyRule(v, 'Disability type')]"
                 />
               </v-col>

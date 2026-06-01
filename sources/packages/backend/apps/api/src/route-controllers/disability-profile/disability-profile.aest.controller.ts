@@ -18,7 +18,6 @@ import {
 } from "../../auth/decorators";
 import {
   ApiBadRequestResponse,
-  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
@@ -62,7 +61,7 @@ export class DisabilityProfileAESTController extends BaseController {
   /**
    * Retrieves the disability profiles for the student.
    * The student usually may have up to one active and one draft disability profile.
-   * Archived provides may vary but are not expected to be more than a few for a student.
+   * Archived profiles may vary but are not expected to be more than a few for a student.
    * @param studentId ID of the student.
    */
   @Get("student/:studentId")
@@ -106,7 +105,7 @@ export class DisabilityProfileAESTController extends BaseController {
    */
   @ApiBadRequestResponse({
     description:
-      "Diagnosis notes must be provided when diagnosis includes OTHER, or " +
+      "Disability category notes must be provided when category is OTHER, or " +
       "impairments notes must be provided when impairments includes OTHER.",
   })
   @ApiUnprocessableEntityResponse({
@@ -158,7 +157,7 @@ export class DisabilityProfileAESTController extends BaseController {
   @Put("student/:studentId/active")
   @ApiBadRequestResponse({
     description:
-      "Diagnosis notes must be provided when diagnosis includes OTHER, or " +
+      "Disability category notes must be provided when category is OTHER, or " +
       "impairments notes must be provided when impairments includes OTHER.",
   })
   @ApiUnprocessableEntityResponse({
@@ -206,7 +205,7 @@ export class DisabilityProfileAESTController extends BaseController {
    * @param disabilityProfileId ID of the disability profile to be deleted.
    */
   @Delete(":disabilityProfileId")
-  @ApiNoContentResponse({
+  @ApiNotFoundResponse({
     description: "Draft disability profile not found.",
   })
   async deleteDraftProfile(

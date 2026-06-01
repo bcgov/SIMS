@@ -34,7 +34,7 @@
       <student-disability-disabilities
         ref="disabilitiesComponent"
         :disability-profile-id="props.disabilityProfileId"
-        :read-only="false || processing"
+        :read-only="processing"
       />
     </content-group>
     <footer-buttons
