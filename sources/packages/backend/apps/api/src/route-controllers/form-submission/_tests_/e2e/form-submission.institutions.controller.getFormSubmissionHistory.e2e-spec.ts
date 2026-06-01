@@ -208,8 +208,6 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmissionHistory", (
             id: pendingStudentAppeal.id,
             applicationId: authorizedApplication.id,
             applicationNumber: authorizedApplication.applicationNumber,
-            studentId: student.id,
-            studentFullName: `${student.user.firstName} ${student.user.lastName}`,
             formCategory: FormCategory.StudentAppeal,
             status: FormSubmissionStatus.Pending,
             submittedDate: pendingStudentAppeal.submittedDate.toISOString(),
@@ -246,8 +244,6 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmissionHistory", (
             id: completedStudentAppeal.id,
             formCategory: FormCategory.StudentAppeal,
             status: FormSubmissionStatus.Completed,
-            studentId: student.id,
-            studentFullName: `${student.user.firstName} ${student.user.lastName}`,
             submittedDate: completedStudentAppeal.submittedDate.toISOString(),
             assessedDate: completedStudentAppeal.assessedDate.toISOString(),
             submissionItems: [
@@ -269,8 +265,6 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmissionHistory", (
             id: completedStudentForm.id,
             formCategory: FormCategory.StudentForm,
             status: FormSubmissionStatus.Completed,
-            studentId: student.id,
-            studentFullName: `${student.user.firstName} ${student.user.lastName}`,
             submittedDate: completedStudentForm.submittedDate.toISOString(),
             assessedDate: completedStudentForm.assessedDate.toISOString(),
             submissionItems: [
