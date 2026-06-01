@@ -128,7 +128,7 @@ const removeDiagnosisEntry = (index: number): void => {
  * @returns True when all entries are valid, otherwise an error message.
  */
 const validateDiagnosisItems = (diagnosisItems: string[]): true | string => {
-  if (diagnosisItems?.length === 0) {
+  if (!diagnosisItems?.length) {
     return "At least one diagnosis entry is required.";
   }
   return true;
