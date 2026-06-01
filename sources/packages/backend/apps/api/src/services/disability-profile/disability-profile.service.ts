@@ -149,6 +149,13 @@ export class DisabilityProfileService {
         disabilityProfile.modifier = auditUser;
         disabilityProfile.updatedAt = now;
       } else {
+        if (disabilityProfileId) {
+          // A disabilityProfileId was provided but a draft was not found to be updated.
+          throw new CustomNamedError(
+            `The provided draft disability profile ID ${disabilityProfileId} was not found.`,
+            DISABILITY_PROFILE_DRAFT_NOT_FOUND,
+          );
+        }
         // If an existing draft profile does not exist a new draft profile will be created.
         disabilityProfile = new StudentDisabilityProfile();
         disabilityProfile.disabilityProfileStatus =
