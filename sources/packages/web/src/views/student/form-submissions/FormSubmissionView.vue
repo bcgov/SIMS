@@ -13,7 +13,6 @@
       <form-submission-header-title
         :application-id="applicationId"
         :form-submission-id="formSubmissionId"
-        :form-submission-item="formSubmissionItems?.at(0)"
       />
     </template>
     <body-header-container>

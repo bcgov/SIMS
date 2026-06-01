@@ -41,10 +41,8 @@ defineProps({
   },
 });
 
-let formSubmission: FormSubmissionMinistryAPIOutDTO | undefined;
 const subtitle = ref("Submission");
 const submissionLoaded = (submission: FormSubmissionMinistryAPIOutDTO) => {
-  formSubmission = submission;
   subtitle.value =
     submission.formCategory === FormCategory.StudentAppeal
       ? "Appeal submission"

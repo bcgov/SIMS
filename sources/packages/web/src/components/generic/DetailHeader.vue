@@ -5,9 +5,7 @@
       :key="headerKey"
       class="d-inline-flex"
     >
-      <span class="label-bold-normal ml-2 and ml-md-0"
-        >{{ headerKey }}:&nbsp;</span
-      >
+      <span class="label-bold-normal ml-2 ml-md-0 pr-2">{{ headerKey }}:</span>
       <span class="label-value-normal">{{ headerValue }}</span>
       <span
         v-if="index < headerEntries.length - 1"
