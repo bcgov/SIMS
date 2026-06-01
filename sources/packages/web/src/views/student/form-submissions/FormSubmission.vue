@@ -80,7 +80,7 @@ import {
   FormSubmissionItemSubmitted,
 } from "@/types";
 import { useSnackBar } from "@/composables";
-import FormSubmissionHeaderTitle from "@/components/aest/students/FormSubmissionHeaderTitle.vue";
+import FormSubmissionHeaderTitle from "@/components/form-submissions/FormSubmissionHeaderTitle.vue";
 import FormSubmissionItems from "@/components/form-submissions/FormSubmissionItems.vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";

@@ -11,7 +11,6 @@ import {
 } from "@/services/http/dto";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
 import { FormCategory, FormSubmissionItem } from "@/types";
-import { FormSubmissionService } from "@/services/FormSubmissionService";
 import { useFormatters } from "@/composables";
 import { ApplicationService } from "@/services/ApplicationService";
 
@@ -22,8 +21,10 @@ const formSubmissionData = ref<
   FormSubmissionMinistryAPIOutDTO | FormSubmissionAPIOutDTO
 >();
 const props = defineProps({
-  formSubmissionId: {
-    type: Number,
+  formSubmission: {
+    type: Object as PropType<
+      FormSubmissionMinistryAPIOutDTO | FormSubmissionAPIOutDTO
+    >,
     required: false,
     default: undefined,
   },
@@ -55,7 +56,7 @@ const headerMap = computed((): Record<string, string | undefined> => {
       applicationData.value?.applicationEndDate,
     );
   } else {
-    // Form name is only displayed if no application data is available (forms or other appeals)
+    // Form name is only displayed if no application data is available (forms or other appeals).
     formName =
       formSubmissionData.value?.submissionItems?.at(0)?.formType ??
       props.formSubmissionItem?.formType;
@@ -79,11 +80,8 @@ const headerMap = computed((): Record<string, string | undefined> => {
 });
 
 const loadValues = async () => {
-  if (props.formSubmissionId) {
-    formSubmissionData.value =
-      await FormSubmissionService.shared.getFormSubmission(
-        props.formSubmissionId,
-      );
+  if (props.formSubmission) {
+    formSubmissionData.value = props.formSubmission;
   }
 
   const applicationId =

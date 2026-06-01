@@ -6,7 +6,7 @@
         :sub-title="subtitle"
         :back-target="backTarget"
       />
-      <form-submission-header-title :form-submission-id="formSubmissionId" />
+      <form-submission-header-title :form-submission="formSubmission" />
     </template>
     <form-submission-approval
       :form-submission-id="formSubmissionId"
@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import { PropType, ref } from "vue";
 import FormSubmissionApproval from "@/components/form-submissions/FormSubmissionApproval.vue";
-import FormSubmissionHeaderTitle from "@/components/aest/students/FormSubmissionHeaderTitle.vue";
+import FormSubmissionHeaderTitle from "@/components/form-submissions/FormSubmissionHeaderTitle.vue";
 import { FormSubmissionMinistryAPIOutDTO } from "@/services/http/dto";
 import { BackTarget, FormCategory } from "@/types";
 
@@ -42,10 +42,12 @@ defineProps({
 });
 
 const subtitle = ref("Submission");
+const formSubmission = ref<FormSubmissionMinistryAPIOutDTO>();
 const submissionLoaded = (submission: FormSubmissionMinistryAPIOutDTO) => {
   subtitle.value =
     submission.formCategory === FormCategory.StudentAppeal
       ? "Appeal submission"
       : "Form submission";
+  formSubmission.value = submission;
 };
 </script>

@@ -12,7 +12,7 @@
       />
       <form-submission-header-title
         :application-id="applicationId"
-        :form-submission-id="formSubmissionId"
+        :form-submission="formSubmission"
       />
     </template>
     <body-header-container>
@@ -52,7 +52,7 @@ import { FormSubmissionAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar } from "@/composables";
 import StatusChipFormSubmission from "@/components/generic/StatusChipFormSubmission.vue";
-import FormSubmissionHeaderTitle from "@/components/aest/students/FormSubmissionHeaderTitle.vue";
+import FormSubmissionHeaderTitle from "@/components/form-submissions/FormSubmissionHeaderTitle.vue";
 
 const props = defineProps({
   formSubmissionId: {
