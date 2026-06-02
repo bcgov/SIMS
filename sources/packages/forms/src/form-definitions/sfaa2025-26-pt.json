@@ -6000,6 +6000,8 @@
                   "label": "I confirm I am eligible for this exception category and understand that this process requires ministry review and will lead to delays in my funding.",
                   "customClass": "formio-component-weight-bold",
                   "tableView": true,
+                  "defaultValue": false,
+                  "redrawOn": "additionalTransportRequested",
                   "validate": {
                     "required": true,
                     "customMessage": "You must confirm you understand the exception eligibility criteria."
@@ -6007,11 +6009,9 @@
                   "validateWhenHidden": false,
                   "key": "additionalTransportationConfirmation",
                   "type": "checkbox",
-                  "dataGridLabel": false,
                   "input": true,
                   "lockKey": true,
-                  "hideOnChildrenHidden": false,
-                  "defaultValue": false
+                  "hideOnChildrenHidden": false
                 }
               ],
               "lockKey": true
