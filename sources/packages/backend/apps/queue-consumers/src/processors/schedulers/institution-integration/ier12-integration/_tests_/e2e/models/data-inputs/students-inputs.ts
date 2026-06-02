@@ -1,5 +1,8 @@
 import { DisabilityStatus } from "@sims/sims-db";
 import { IER12Student } from "./data-inputs.models";
+import { addDays } from "@sims/utilities";
+
+const TWO_YEARS_IN_DAYS = 365 * 2;
 
 export const JOHN_DOE_FROM_CANADA: IER12Student = {
   lastName: "Doe",
@@ -15,8 +18,8 @@ export const JOHN_DOE_FROM_CANADA: IER12Student = {
   },
   disabilityStatus: DisabilityStatus.NotRequested,
   // Set updatedAt and userUpdatedAt to a date outside the max range so they aren't picked up as updates by default.
-  updatedAt: new Date("2025-06-01"),
-  userUpdatedAt: new Date("2025-06-01"),
+  updatedAt: addDays(-TWO_YEARS_IN_DAYS),
+  userUpdatedAt: addDays(-TWO_YEARS_IN_DAYS),
 };
 
 export const JANE_MONONYMOUS_FROM_OTHER_COUNTRY: IER12Student = {
@@ -33,6 +36,6 @@ export const JANE_MONONYMOUS_FROM_OTHER_COUNTRY: IER12Student = {
   },
   disabilityStatus: DisabilityStatus.NotRequested,
   // Set updatedAt and userUpdatedAt to a date outside the max range so they aren't picked up as updates by default.
-  updatedAt: new Date("2025-06-01"),
-  userUpdatedAt: new Date("2025-06-01"),
+  updatedAt: addDays(-TWO_YEARS_IN_DAYS),
+  userUpdatedAt: addDays(-TWO_YEARS_IN_DAYS),
 };

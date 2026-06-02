@@ -41,6 +41,7 @@ import {
 } from "./utils-service";
 import {
   IER12_INSTITUTION_CODE_INVALID,
+  IER12_MODIFIED_SINCE_DATE_INVALID,
   IER12_MODIFIED_SINCE_DATE_OVER_ONE_YEAR,
 } from "../../constants";
 
@@ -488,8 +489,13 @@ export class IER12ProcessingService {
   ): boolean {
     // Validate job data.
     if (modifiedSince !== undefined) {
+      const modifiedSinceDate = new Date(modifiedSince);
+      if (Number.isNaN(modifiedSinceDate.getTime())) {
+        processSummary.info(IER12_MODIFIED_SINCE_DATE_INVALID);
+        return false;
+      }
       const oneYearAgo = addDays(-365, getISODateOnlyString(new Date()));
-      if (new Date(modifiedSince) < new Date(oneYearAgo)) {
+      if (modifiedSinceDate < oneYearAgo) {
         processSummary.info(IER12_MODIFIED_SINCE_DATE_OVER_ONE_YEAR);
         return false;
       }
