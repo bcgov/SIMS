@@ -131,7 +131,7 @@ export class DisabilityProfileService {
       );
       const now = new Date();
       const auditUser = { id: auditUserId } as User;
-      // Retrieve the existing draft disability profile for the student, if exists.
+      // Retrieve the existing draft disability profile for the student, if it exists.
       let disabilityProfile = await this.getStudentDraftProfile(
         studentId,
         studentDisabilityProfileRepo,
@@ -201,7 +201,7 @@ export class DisabilityProfileService {
       );
       const now = new Date();
       const auditUser = { id: auditUserId } as User;
-      // Retrieve the existing draft disability profile for the student, if exists.
+      // Retrieve the existing draft disability profile for the student, if it exists.
       let disabilityProfile = await this.getStudentDraftProfile(
         studentId,
         studentDisabilityProfileRepo,
@@ -263,7 +263,7 @@ export class DisabilityProfileService {
   }
 
   /**
-   * Get the existing draft disability profile for the student, if exists.
+   * Get the existing draft disability profile for the student, if it exists.
    * It allows executing multiple validations while saving the draft or active profile.
    * @param studentId ID of the student to get the draft disability profile for.
    * @param studentDisabilityProfileRepo repository to allow the query in the same DB transaction.

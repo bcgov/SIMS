@@ -7,7 +7,7 @@ import {
 } from "@/services/http/dto";
 
 export class DisabilityProfileService {
-  // Share Instance
+  // Shared Instance
   private static instance: DisabilityProfileService;
 
   static get shared(): DisabilityProfileService {

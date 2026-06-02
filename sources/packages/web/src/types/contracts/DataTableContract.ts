@@ -830,10 +830,10 @@ export const PendingProgramsHeaders = [
 
 export const DisabilityProfileArchivedHeaders = [
   {
-    title: "Date complete",
+    title: "Date completed",
     sortable: true,
     key: "completedAt",
-    width: "100px",
+    width: "150px",
   },
   { title: "Completed by", sortable: true, key: "completedBy" },
   { title: "Disabilities", sortable: false, key: "disabilities" },
