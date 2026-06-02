@@ -276,6 +276,8 @@ export class FormSubmissionControllerService {
       applicationId: submission.application?.id,
       applicationNumber: submission.application?.applicationNumber,
       submittedDate: submission.submittedDate,
+      studentId: submission.student.id,
+      studentFullName: getUserFullName(submission.student.user),
       submissionItems,
     };
   }

@@ -10,6 +10,10 @@
         }"
         :back-target="backTarget"
       />
+      <form-submission-header-title
+        :application-id="applicationId"
+        :form-submission="formSubmission"
+      />
     </template>
     <body-header-container>
       <template #header>
@@ -39,8 +43,8 @@
   </student-page-container>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType, ref, watchEffect } from "vue";
+<script setup lang="ts">
+import { PropType, ref, watchEffect } from "vue";
 import FormSubmissionItems from "@/components/form-submissions/FormSubmissionItems.vue";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
 import { BackTarget, FormSubmissionItem } from "@/types";
@@ -48,72 +52,57 @@ import { FormSubmissionAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import { useSnackBar } from "@/composables";
 import StatusChipFormSubmission from "@/components/generic/StatusChipFormSubmission.vue";
+import FormSubmissionHeaderTitle from "@/components/form-submissions/FormSubmissionHeaderTitle.vue";
 
-export default defineComponent({
-  components: {
-    FormSubmissionItems,
-    StatusChipFormSubmission,
+const props = defineProps({
+  formSubmissionId: {
+    type: Number,
+    required: true,
   },
-  props: {
-    formSubmissionId: {
-      type: Number,
-      required: true,
-    },
-    applicationId: {
-      type: Number,
-      required: false,
-      default: undefined,
-    },
-    backTarget: {
-      type: Object as PropType<BackTarget>,
-      required: false,
-      default: undefined,
-    },
+  applicationId: {
+    type: Number,
+    required: false,
+    default: undefined,
   },
-  setup(props) {
-    const snackBar = useSnackBar();
-    const formSubmission = ref<FormSubmissionAPIOutDTO>();
-    const formSubmissionItems = ref([] as FormSubmissionItem[]);
-    const loading = ref(true);
+  backTarget: {
+    type: Object as PropType<BackTarget>,
+    required: false,
+    default: undefined,
+  },
+});
+const snackBar = useSnackBar();
+const formSubmission = ref<FormSubmissionAPIOutDTO>();
+const formSubmissionItems = ref([] as FormSubmissionItem[]);
+const loading = ref(true);
 
-    watchEffect(async () => {
-      try {
-        loading.value = true;
-        // Submission data.
-        const submission =
-          (await FormSubmissionService.shared.getFormSubmission(
-            props.formSubmissionId,
-          )) as FormSubmissionAPIOutDTO;
-        formSubmission.value = submission;
-        // Convert submission items to be displayed.
-        formSubmissionItems.value =
-          submission.submissionItems.map<FormSubmissionItem>(
-            (item) =>
-              ({
-                dynamicConfigurationId: item.dynamicFormConfigurationId,
-                formData: item.submissionData,
-                category: item.formCategory,
-                formType: item.formType,
-                formName: item.formDefinitionName,
-                files: [],
-                decision: {
-                  decisionStatus: item.currentDecision?.decisionStatus,
-                },
-              }) as FormSubmissionItem,
-          );
-      } catch {
-        snackBar.error("Error while loading form submission data.");
-      } finally {
-        loading.value = false;
-      }
-    });
-
-    return {
-      formSubmissionItems,
-      StudentRoutesConst,
-      loading,
-      formSubmission,
-    };
-  },
+watchEffect(async () => {
+  try {
+    loading.value = true;
+    // Submission data.
+    const submission = (await FormSubmissionService.shared.getFormSubmission(
+      props.formSubmissionId,
+    )) as FormSubmissionAPIOutDTO;
+    formSubmission.value = submission;
+    // Convert submission items to be displayed.
+    formSubmissionItems.value =
+      submission.submissionItems.map<FormSubmissionItem>(
+        (item) =>
+          ({
+            dynamicConfigurationId: item.dynamicFormConfigurationId,
+            formData: item.submissionData,
+            category: item.formCategory,
+            formType: item.formType,
+            formName: item.formDefinitionName,
+            files: [],
+            decision: {
+              decisionStatus: item.currentDecision?.decisionStatus,
+            },
+          }) as FormSubmissionItem,
+      );
+  } catch {
+    snackBar.error("Error while loading form submission data.");
+  } finally {
+    loading.value = false;
+  }
 });
 </script>

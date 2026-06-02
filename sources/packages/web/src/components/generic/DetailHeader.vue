@@ -1,33 +1,31 @@
 <template>
-  <span
-    v-for="([headerKey, headerValue], index) in headerEntries"
-    :key="headerKey"
-  >
-    <span class="label-bold-normal">{{ headerKey }}: </span>
-    <span class="label-value-normal"> {{ headerValue }} </span>
-    <span v-if="index < headerEntries.length - 1" class="mx-1 brand-gray-text"
-      >|</span
+  <div class="d-flex flex-column flex-md-row">
+    <span
+      v-for="([headerKey, headerValue], index) in headerEntries"
+      :key="headerKey"
+      class="d-inline-flex"
     >
-  </span>
+      <span class="label-bold-normal ml-2 ml-md-0 pr-2">{{ headerKey }}:</span>
+      <span class="label-value-normal">{{ headerValue }}</span>
+      <span
+        v-if="index < headerEntries.length - 1"
+        class="d-none d-md-inline mx-1 brand-gray-text"
+        >|</span
+      >
+    </span>
+  </div>
 </template>
 
-<script lang="ts">
-import { PropType, computed, defineComponent } from "vue";
+<script setup lang="ts">
+import { PropType, computed } from "vue";
 
-export default defineComponent({
-  props: {
-    headerMap: {
-      type: Object as PropType<Record<string, string | undefined>>,
-      required: true,
-    },
-  },
-  setup(props) {
-    const headerEntries = computed(() =>
-      Object.entries(props.headerMap).filter(
-        ([, headerValue]) => !!headerValue,
-      ),
-    );
-    return { headerEntries };
+const props = defineProps({
+  headerMap: {
+    type: Object as PropType<Record<string, string | undefined>>,
+    required: true,
   },
 });
+const headerEntries = computed(() =>
+  Object.entries(props.headerMap).filter(([, headerValue]) => !!headerValue),
+);
 </script>

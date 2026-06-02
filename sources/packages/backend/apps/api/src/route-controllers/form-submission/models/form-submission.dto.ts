@@ -170,6 +170,8 @@ export class FormSubmissionMinistryAPIOutDTO extends FormSubmissionBaseAPIOutDTO
    */
   canAssessFinalDecision?: boolean;
   submissionItems: FormSubmissionItemMinistryAPIOutDTO[];
+  studentId: number;
+  studentFullName: string;
 }
 
 /**
