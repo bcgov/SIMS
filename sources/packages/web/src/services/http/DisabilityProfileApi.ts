@@ -15,6 +15,7 @@ export class DisabilityProfileApi extends HttpBaseClient {
    * The student usually may have up to one active and one draft disability profile.
    * Archived profiles may vary but are not expected to be more than a few for a student.
    * @param studentId ID of the student.
+   * @return disability profiles of the student.
    */
   async getStudentDisabilityProfiles(
     studentId: number,
@@ -27,6 +28,7 @@ export class DisabilityProfileApi extends HttpBaseClient {
   /**
    * Retrieves a specific disability profile for the student.
    * @param disabilityProfileId ID of the disability profile.
+   * @return disability profile of the student.
    */
   async getStudentDisabilityProfile(
     disabilityProfileId: number,
@@ -42,6 +44,7 @@ export class DisabilityProfileApi extends HttpBaseClient {
    * @param studentId ID of the student.
    * @param saveStudentDisabilities information of the disability profile to be saved as draft, including the
    * disabilities and optionally the draft profile ID to be updated.
+   * @return the ID of the saved draft disability profile.
    */
   async saveDraftProfile(
     studentId: number,
