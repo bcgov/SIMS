@@ -4,7 +4,7 @@
     <template #header>
       <header-navigator
         title="Forms"
-        :sub-title="referenceForm?.category"
+        :sub-title="referenceForm?.formCategory"
         :route-location="backRouteLocation"
       />
       <form-submission-header-title
@@ -151,7 +151,7 @@ watchEffect(async () => {
         return {
           dynamicConfigurationId: formConfiguration.id,
           formType: formConfiguration.formType,
-          category: formConfiguration.formCategory,
+          formCategory: formConfiguration.formCategory,
           formName: formConfiguration.formDefinitionName,
           formData: {},
           files: [],
