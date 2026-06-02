@@ -396,3 +396,9 @@ export const DISABILITY_PROFILE_INVALID_CATEGORY_NOTES =
  */
 export const DISABILITY_PROFILE_INVALID_IMPAIRMENTS_NOTES =
   "DISABILITY_PROFILE_INVALID_IMPAIRMENTS_NOTES";
+/**
+ * A student disability included in the disability profile was expected to be found
+ * to be updated but was not found in the existing profile disabilities.
+ */
+export const DISABILITY_PROFILE_DISABILITY_NOT_FOUND =
+  "DISABILITY_PROFILE_DISABILITY_NOT_FOUND";

@@ -13,6 +13,7 @@ import { SystemLookupConfigurationService } from "@sims/services/system-lookup-c
 import { CustomNamedError } from "@sims/utilities";
 import {
   DISABILITY_PROFILE_COMPLETE_WHEN_DRAFT_ALREADY_EXISTS,
+  DISABILITY_PROFILE_DISABILITY_NOT_FOUND,
   DISABILITY_PROFILE_DRAFT_NOT_FOUND,
   DISABILITY_PROFILE_INVALID_CATEGORY,
   DISABILITY_PROFILE_INVALID_CATEGORY_NOTES,
@@ -306,7 +307,16 @@ export class DisabilityProfileService {
     now: Date,
   ): StudentDisabilityProfileDisability[] {
     const updatedDisabilities: StudentDisabilityProfileDisability[] = [];
-    for (const disabilityToSave of disabilitiesToSave ?? []) {
+    for (const disabilityToSave of disabilitiesToSave) {
+      const existingDisability = existingDisabilities?.find(
+        (d) => d.id === disabilityToSave.id,
+      );
+      if (disabilityToSave.id && !existingDisability) {
+        throw new CustomNamedError(
+          `The provided disability ID ${disabilityToSave.id} was not found in the existing profile to be updated.`,
+          DISABILITY_PROFILE_DISABILITY_NOT_FOUND,
+        );
+      }
       // Upsert all disabilities included in the request.
       const disability = new StudentDisabilityProfileDisability();
       disability.disabilityPriority = disabilityToSave.disabilityPriority;
@@ -318,9 +328,6 @@ export class DisabilityProfileService {
       disability.impairments = disabilityToSave.impairments;
       disability.impairmentsNotes = disabilityToSave.impairmentsNotes;
       disability.finalNotes = disabilityToSave.finalNotes;
-      const existingDisability = existingDisabilities?.find(
-        (d) => d.id === disabilityToSave.id,
-      );
       if (existingDisability) {
         disability.id = existingDisability.id;
         disability.modifier = auditUser;

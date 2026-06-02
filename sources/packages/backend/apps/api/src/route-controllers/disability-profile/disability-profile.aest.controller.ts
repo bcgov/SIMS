@@ -34,6 +34,7 @@ import {
 } from "./models/disability-profile.dto";
 import {
   DISABILITY_PROFILE_COMPLETE_WHEN_DRAFT_ALREADY_EXISTS,
+  DISABILITY_PROFILE_DISABILITY_NOT_FOUND,
   DISABILITY_PROFILE_DRAFT_NOT_FOUND,
   DISABILITY_PROFILE_INVALID_CATEGORY,
   DISABILITY_PROFILE_INVALID_CATEGORY_NOTES,
@@ -141,6 +142,7 @@ export class DisabilityProfileAESTController extends BaseController {
           case DISABILITY_PROFILE_INVALID_DISABILITY_TYPE:
           case DISABILITY_PROFILE_INVALID_CATEGORY:
           case DISABILITY_PROFILE_INVALID_IMPAIRMENT:
+          case DISABILITY_PROFILE_DISABILITY_NOT_FOUND:
             throw new UnprocessableEntityException(error.message);
         }
       }
@@ -193,6 +195,7 @@ export class DisabilityProfileAESTController extends BaseController {
           case DISABILITY_PROFILE_INVALID_DISABILITY_TYPE:
           case DISABILITY_PROFILE_INVALID_CATEGORY:
           case DISABILITY_PROFILE_INVALID_IMPAIRMENT:
+          case DISABILITY_PROFILE_DISABILITY_NOT_FOUND:
             throw new UnprocessableEntityException(error.message);
         }
       }
