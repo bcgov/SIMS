@@ -31,11 +31,21 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, defineComponent } from "vue";
+import {
+  ref,
+  defineComponent,
+  computed,
+  watchEffect,
+  onMounted,
+  onUnmounted,
+} from "vue";
 import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StudentRestrictionChip from "@/components/generic/StudentRestrictionChip.vue";
 import { AESTStudentProfileAPIOutDTO } from "@/services/http/dto";
+import { DisabilityStatus, Role } from "@/types";
+import useEmitterEvents from "@/composables/useEmitterEvents";
+import { useAuth } from "@/composables";
 
 export default defineComponent({
   components: { StudentRestrictionChip },
@@ -46,8 +56,11 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const { hasRole } = useAuth();
+    const { refreshStudentSearchProfileOn, refreshStudentSearchProfileOff } =
+      useEmitterEvents();
     const studentDetails = ref({} as AESTStudentProfileAPIOutDTO);
-    const items = ref([
+    const items = computed(() => [
       {
         label: "Profile",
         icon: "fa:far fa-address-book",
@@ -56,6 +69,19 @@ export default defineComponent({
           params: { studentId: props.studentId },
         }),
       },
+      ...(hasRole(Role.StudentEditDisabilityProfile) &&
+      studentDetails.value.disabilityStatus !== DisabilityStatus.NotRequested
+        ? [
+            {
+              label: "Disability",
+              icon: "fa:fa fa-universal-access",
+              command: () => ({
+                name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE,
+                params: { studentId: props.studentId },
+              }),
+            },
+          ]
+        : []),
       {
         label: "Applications",
         icon: "fa:far fa-folder-open",
@@ -130,10 +156,22 @@ export default defineComponent({
       },
     ]);
 
-    onMounted(async () => {
+    const loadStudentDetails = async () => {
       studentDetails.value = (await StudentService.shared.getStudentProfile(
         props.studentId,
       )) as AESTStudentProfileAPIOutDTO;
+    };
+
+    watchEffect(async () => {
+      await loadStudentDetails();
+    });
+
+    onMounted(() => {
+      refreshStudentSearchProfileOn(loadStudentDetails);
+    });
+
+    onUnmounted(() => {
+      refreshStudentSearchProfileOff(loadStudentDetails);
     });
 
     return {

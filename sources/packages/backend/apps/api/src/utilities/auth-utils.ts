@@ -60,7 +60,7 @@ export function setGlobalPipes(app: INestApplication) {
  * @param user object with firstName and lastName.
  * @returns user full name.
  */
-export function getUserFullName(user: {
+export function getUserFullName(user?: {
   firstName?: string;
   lastName: string;
 }): string {

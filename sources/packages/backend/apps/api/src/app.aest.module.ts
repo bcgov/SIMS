@@ -52,6 +52,7 @@ import {
   FormSubmissionAuthorizationService,
   FormSubmissionUpdateDisabilityOnSubmissionAction,
   FormSubmissionUpdateDisabilityOnDecisionAction,
+  DisabilityProfileService,
 } from "./services";
 import {
   ConfigurationContextValidator,
@@ -116,6 +117,8 @@ import {
   FormSubmissionAESTController,
   MSFAANumberAESTController,
   FormSubmissionControllerService,
+  DisabilityProfileAESTController,
+  DisabilityProfileControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
@@ -174,6 +177,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     DisbursementScheduleAESTController,
     FormSubmissionAESTController,
     MSFAANumberAESTController,
+    DisabilityProfileAESTController,
   ],
   providers: [
     ApplicationExceptionControllerService,
@@ -275,6 +279,8 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     FormSubmissionUpdateDisabilityOnDecisionAction,
     FormSubmissionActionProcessor,
     FormSubmissionApprovalService,
+    DisabilityProfileService,
+    DisabilityProfileControllerService,
   ],
 })
 export class AppAESTModule {}

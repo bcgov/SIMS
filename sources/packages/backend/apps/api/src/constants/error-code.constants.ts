@@ -347,3 +347,58 @@ export const FIELD_REQUIREMENTS_NOT_VALID = "FIELD_REQUIREMENTS_NOT_VALID";
  */
 export const NOTE_CREATION_NOT_AUTHORIZED_FOR_NOTE_CATEGORY =
   "NOTE_CREATION_NOT_AUTHORIZED_FOR_NOTE_CATEGORY";
+
+/**
+ * Student disability profile should have its disabilities ordered
+ * by priority, starting with 1 and without skipping numbers.
+ */
+export const DISABILITY_PROFILE_INVALID_PRIORITY =
+  "DISABILITY_PROFILE_INVALID_PRIORITY";
+/**
+ * Student disability profile has invalid disability type when checking
+ * the available disability types from the system lookup.
+ */
+export const DISABILITY_PROFILE_INVALID_DISABILITY_TYPE =
+  "DISABILITY_PROFILE_INVALID_DISABILITY_TYPE";
+/**
+ * Student disability profile has invalid category type when checking
+ * the available category types from the system lookup.
+ */
+export const DISABILITY_PROFILE_INVALID_CATEGORY =
+  "DISABILITY_PROFILE_INVALID_CATEGORY";
+/**
+ * Student disability profile has invalid impairment type when checking
+ * the available impairment types from the system lookup.
+ */
+export const DISABILITY_PROFILE_INVALID_IMPAIRMENT =
+  "DISABILITY_PROFILE_INVALID_IMPAIRMENT";
+/**
+ * Student disability profile has a draft that is expected to be updated
+ * but it was not found.
+ */
+export const DISABILITY_PROFILE_DRAFT_NOT_FOUND =
+  "DISABILITY_PROFILE_DRAFT_NOT_FOUND";
+/**
+ * Student disability profile has a draft that is expected to be completed
+ * or deleted, but a new active profile is trying to be created.
+ */
+export const DISABILITY_PROFILE_COMPLETE_WHEN_DRAFT_ALREADY_EXISTS =
+  "DISABILITY_PROFILE_COMPLETE_WHEN_DRAFT_ALREADY_EXISTS";
+/**
+ * Student disability profile diagnosis category is set as OTHER
+ * but the diagnosis notes were not provided.
+ */
+export const DISABILITY_PROFILE_INVALID_CATEGORY_NOTES =
+  "DISABILITY_PROFILE_INVALID_CATEGORY_NOTES";
+/**
+ * Student disability profile impairments is set as OTHER
+ * but the impairments notes were not provided.
+ */
+export const DISABILITY_PROFILE_INVALID_IMPAIRMENTS_NOTES =
+  "DISABILITY_PROFILE_INVALID_IMPAIRMENTS_NOTES";
+/**
+ * A student disability included in the disability profile was expected to be found
+ * to be updated but was not found in the existing profile disabilities.
+ */
+export const DISABILITY_PROFILE_DISABILITY_NOT_FOUND =
+  "DISABILITY_PROFILE_DISABILITY_NOT_FOUND";

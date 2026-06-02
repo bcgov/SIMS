@@ -27,6 +27,7 @@ import { useFormatters, ModalDialog, useSnackBar } from "@/composables";
 import { DisabilityStatus, Role } from "@/types";
 import UpdateDisabilityStatusModal from "@/components/aest/students/modals/UpdateDisabilityStatusModal.vue";
 import { UpdateDisabilityStatusAPIInDTO } from "@/services/http/dto";
+import useEmitterEvents from "@/composables/useEmitterEvents";
 
 export default defineComponent({
   components: { UpdateDisabilityStatusModal },
@@ -49,6 +50,7 @@ export default defineComponent({
     },
   },
   setup(props, context) {
+    const { refreshStudentSearchProfile } = useEmitterEvents();
     const { disabilityStatusToDisplay } = useFormatters();
     const updateDisabilityStatusModal = ref(
       {} as ModalDialog<UpdateDisabilityStatusAPIInDTO | false>,
@@ -68,6 +70,7 @@ export default defineComponent({
           snackBar.success("Disability status updated successfully.");
           context.emit("disabilityStatusUpdated");
           updateDisabilityStatusModal.value.hideModal();
+          refreshStudentSearchProfile();
         } catch {
           snackBar.error("An error happened while updating disability status.");
           updateDisabilityStatusModal.value.loading = false;

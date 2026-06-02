@@ -5,6 +5,9 @@ import AESTDashboard from "@/views/aest/AESTDashboard.vue";
 import SearchStudents from "@/views/aest/SearchStudents.vue";
 import StudentDetails from "@/views/aest/student/StudentDetails.vue";
 import StudentProfile from "@/views/aest/student/Profile.vue";
+import DisabilityProfile from "@/views/aest/student/DisabilityProfile.vue";
+import DisabilityProfileDisabilityEdit from "@/views/aest/student/DisabilityProfileDisabilityEdit.vue";
+import DisabilityProfileDisabilityView from "@/views/aest/student/DisabilityProfileDisabilityView.vue";
 import StudentApplications from "@/views/aest/student/Applications.vue";
 import ProgramDetails from "@/views/aest/institution/ProgramDetails.vue";
 import SearchInstitutions from "@/views/aest/SearchInstitutions.vue";
@@ -133,6 +136,17 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             },
           },
           {
+            path: AppRoutes.StudentDisabilityProfile,
+            name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE,
+            props: (route) => ({
+              studentId: Number.parseInt(route.params.studentId as string),
+            }),
+            component: DisabilityProfile,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
             path: AppRoutes.Applications,
             name: AESTRoutesConst.STUDENT_APPLICATIONS,
             props: true,
@@ -218,6 +232,49 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             },
           },
         ],
+      },
+      {
+        path: AppRoutes.StudentDisabilityProfileDisabilityEdit,
+        name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE_DISABILITY_EDIT,
+        props: (route) => ({
+          studentId: Number.parseInt(route.params.studentId as string),
+          disabilityProfileId: route.params.disabilityProfileId
+            ? Number.parseInt(route.params.disabilityProfileId as string)
+            : undefined,
+        }),
+        component: DisabilityProfileDisabilityEdit,
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.StudentDisabilityProfileDisabilityDraft,
+        name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE_DISABILITY_DRAFT,
+        props: (route) => ({
+          studentId: Number.parseInt(route.params.studentId as string),
+          disabilityProfileId: route.params.disabilityProfileId
+            ? Number.parseInt(route.params.disabilityProfileId as string)
+            : undefined,
+          isDraft: true,
+        }),
+        component: DisabilityProfileDisabilityEdit,
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.StudentDisabilityProfileDisabilityView,
+        name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE_DISABILITY_VIEW,
+        props: (route) => ({
+          studentId: Number.parseInt(route.params.studentId as string),
+          disabilityProfileId: Number.parseInt(
+            route.params.disabilityProfileId as string,
+          ),
+        }),
+        component: DisabilityProfileDisabilityView,
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
       },
       {
         path: AppRoutes.StudentAppealRequest,

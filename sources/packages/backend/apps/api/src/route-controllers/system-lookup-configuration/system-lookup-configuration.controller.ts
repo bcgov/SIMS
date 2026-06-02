@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseEnumPipe } from "@nestjs/common";
+import { Controller, Get, Header, Param, ParseEnumPipe } from "@nestjs/common";
 import BaseController from "../BaseController";
 import {
   AllowAuthorizedParty,
@@ -34,6 +34,7 @@ export class SystemLookupConfigurationController extends BaseController {
    * @param lookupCategory lookup category.
    * @returns system lookup entries.
    */
+  @Header("Cache-Control", "public, max-age=1800")
   @Get("lookup-category/:lookupCategory")
   async getSystemLookupEntriesByCategory(
     @Param("lookupCategory", new ParseEnumPipe(SystemLookupCategory))

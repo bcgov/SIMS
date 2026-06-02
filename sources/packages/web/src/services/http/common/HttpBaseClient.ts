@@ -160,10 +160,19 @@ export default abstract class HttpBaseClient {
    * @param url API endpoint URI.
    * @param payload data to be sent.
    * @param suppressErrorHandler optionally skip the global error handling.
+   * @returns the response data from the API call, if any.
    */
-  protected async putCall<T>(url: string, payload: T): Promise<void> {
+  protected async putCall<T, TResult = void>(
+    url: string,
+    payload: T,
+  ): Promise<TResult> {
     try {
-      await this.apiClient.put(url, payload, this.addAuthHeader());
+      const response = await this.apiClient.put(
+        url,
+        payload,
+        this.addAuthHeader(),
+      );
+      return response.data as TResult;
     } catch (error: unknown) {
       this.handleRequestError(error);
       throw error;
