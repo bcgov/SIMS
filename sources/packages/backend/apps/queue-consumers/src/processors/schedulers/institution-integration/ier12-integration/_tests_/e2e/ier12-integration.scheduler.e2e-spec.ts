@@ -930,8 +930,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
   });
 
-  // TODO Fix this test.
-  it.skip("Should generate an IER12 file with one record for a student when there is one sent disbursement that had some funds withheld due to a restriction (DISW).", async () => {
+  it("Should generate an IER12 file with one record for a student when there is one sent disbursement that had some funds withheld due to a restriction (DISW).", async () => {
     // Arrange
     const testInputData = {
       student: JOHN_DOE_FROM_CANADA,
@@ -1020,10 +1019,14 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
 
     const parentOfferingId = numberToText(offering!.parentOffering!.id);
     // Line 1 validations.
+    const expectedAssessmentDate = dateUtils.addDays(
+      1,
+      referenceSubmissionDate,
+    );
     const firstDisbursementId = numberToText(firstDisbursement.id);
     expect(line1.length).toBe(IER_RECORD_EXPECTED_LENGTH);
     expect(line1).toBe(
-      `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}            242963189Doe                      John           19980113B   MA  NONENAddress Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program name                                                               undergraduateCertificate 0001    8   0512123401234ADR1                         6${currentOfferingId}${parentOfferingId}                              2000081620001010000033330000004444000000555500000066660019100F2000060120002001COMP20000601000010000000006598000000032400NNNNN            20000602        000002850000000000000000400000006002001003000003005NNY000000000000000000000000000000000000000000000000000000000000NY0000000000000144430000000000000000000000000000000000007777000000150056000000000000000000000000000000000000000000003000000000050000000065430000001700000000792200N0000000000000000000000000000000000000000000000000000000000000000000000DISW2000081520000815Completed Sent      20000816                        CSLF0000100000BCSL0000659800CSGP0000000000CSGD0000000000CSGF0000000000CSGT0000000000BCAG0000032400SBSD0000000000BGPD0000000000    0000000000`,
+      `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}            242963189Doe                      John           19980113B   MA  NONENAddress Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program name                                                               undergraduateCertificate 0001    8   0512123401234ADR1                         6${currentOfferingId}${parentOfferingId}                              2025081620251010000033330000004444000000555500000066660019100F${formatIER12Date(referenceSubmissionDate)}20252026COMP${formatIER12Date(referenceSubmissionDate)}000010000000006598000000032400NNNNN            ${formatIER12Date(expectedAssessmentDate)}        000002850000000000000000400000006002001003000003005NNY000000000000000000000000000000000000000000000000000000000000NY0000000000000144430000000000000000000000000000000000007777000000150056000000000000000000000000000000000000000000003000000000050000000065430000001700000000792200N0000000000000000000000000000000000000000000000000000000000000000000000DISW2025081520250815Completed Sent      20250816                        CSLF0000100000BCSL0000659800CSGP0000000000CSGD0000000000CSGF0000000000CSGT0000000000BCAG0000032400SBSD0000000000BGPD0000000000    0000000000`,
     );
   });
 
