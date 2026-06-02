@@ -7,11 +7,10 @@ import { computed, PropType, ref, watchEffect } from "vue";
 import {
   ApplicationSupplementalDataAPIOutDTO,
   FormSubmissionAPIOutDTO,
-  FormSubmissionItemAPIOutDTO,
   FormSubmissionMinistryAPIOutDTO,
 } from "@/services/http/dto";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
-import { FormCategory } from "@/types";
+import { FormCategory, FormSubmissionItem } from "@/types";
 import { useFormatters } from "@/composables";
 import { ApplicationService } from "@/services/ApplicationService";
 
@@ -35,16 +34,19 @@ const props = defineProps({
     default: undefined,
   },
   formSubmissionItem: {
-    type: Object as PropType<FormSubmissionItemAPIOutDTO>,
+    type: Object as PropType<FormSubmissionItem>,
     required: false,
     default: undefined,
   },
 });
 
 const headerMap = computed((): Record<string, string | undefined> => {
-  const referenceForm =
-    props.formSubmissionItem ??
-    formSubmissionData?.value?.submissionItems?.at(0);
+  const formCategory =
+    props.formSubmissionItem?.category ??
+    formSubmissionData?.value?.submissionItems?.at(0)?.formCategory;
+  const formType =
+    props.formSubmissionItem?.formType ??
+    formSubmissionData?.value?.submissionItems?.at(0)?.formType;
   const studyDates = applicationData.value
     ? dateOnlyLongPeriodString(
         applicationData.value.applicationStartDate,
@@ -59,11 +61,9 @@ const headerMap = computed((): Record<string, string | undefined> => {
     "Application #": applicationData.value?.applicationNumber,
     Institution: applicationData.value?.applicationInstitutionName,
     "Study dates": studyDates,
-    "Form name": applicationData.value ? undefined : referenceForm?.formType,
+    "Form name": applicationData.value ? undefined : formType,
     "Form type":
-      referenceForm?.formCategory === FormCategory.StudentAppeal
-        ? "Appeal"
-        : "Form",
+      formCategory === FormCategory.StudentAppeal ? "Appeal" : "Form",
     "Form submission date": formSubmissionDate,
   };
 });
