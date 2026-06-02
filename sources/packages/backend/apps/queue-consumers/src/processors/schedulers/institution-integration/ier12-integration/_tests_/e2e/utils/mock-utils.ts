@@ -7,7 +7,7 @@ import {
 
 /**
  * Creates the mocked IER12 job payload for the scheduler.
- * @param modifiedSince Include modifications to IER12 related data made since this date (inclusive).
+ * @param modifiedSince Inclusive date since the application or student data was modified.
  * @param institutionCode Institution code to limit applications to a specific institution.
  * @returns mocked IER12 payload.
  */

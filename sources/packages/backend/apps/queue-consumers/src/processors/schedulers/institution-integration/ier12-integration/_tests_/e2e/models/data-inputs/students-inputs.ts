@@ -14,6 +14,9 @@ export const JOHN_DOE_FROM_CANADA: IER12Student = {
     postalCode: "Z1Z1Z1",
   },
   disabilityStatus: DisabilityStatus.NotRequested,
+  // Set updatedAt and userUpdatedAt to a date outside the max range so they aren't picked up as updates by default.
+  updatedAt: new Date("2025-06-01"),
+  userUpdatedAt: new Date("2025-06-01"),
 };
 
 export const JANE_MONONYMOUS_FROM_OTHER_COUNTRY: IER12Student = {
@@ -29,4 +32,7 @@ export const JANE_MONONYMOUS_FROM_OTHER_COUNTRY: IER12Student = {
     postalCode: "SOME POSTAL CODE",
   },
   disabilityStatus: DisabilityStatus.NotRequested,
+  // Set updatedAt and userUpdatedAt to a date outside the max range so they aren't picked up as updates by default.
+  updatedAt: new Date("2025-06-01"),
+  userUpdatedAt: new Date("2025-06-01"),
 };

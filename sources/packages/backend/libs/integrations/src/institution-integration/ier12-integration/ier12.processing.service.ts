@@ -39,6 +39,10 @@ import {
   ApplicationEventCodeUtilsService,
   ApplicationEventDateUtilsService,
 } from "./utils-service";
+import {
+  IER12_INSTITUTION_CODE_INVALID,
+  IER12_MODIFIED_SINCE_DATE_OVER_ONE_YEAR,
+} from "../../constants";
 
 @Injectable()
 export class IER12ProcessingService {
@@ -63,7 +67,8 @@ export class IER12ProcessingService {
    * for the IER 12 sent File.
    * 4. Upload the content to the zoneB SFTP server.
    * @param processSummary process summary for logging.
-   * @param modifiedSince date for which the IER 12 file is generated.
+   * @param modifiedSince Inclusive date since the application or student data was modified.
+   * @param institutionCode Institution code to limit applications to a specific institution.
    * @returns processing IER 12 result.
    */
   async processIER12File(
@@ -72,18 +77,7 @@ export class IER12ProcessingService {
     institutionCode?: string,
   ): Promise<IER12UploadResult[]> {
     // Validate job data.
-    if (modifiedSince !== undefined) {
-      const oneYearAgo = addDays(-365, getISODateOnlyString(new Date()));
-      if (new Date(modifiedSince) < new Date(oneYearAgo)) {
-        processSummary.info(
-          "Modified since date cannot be more than one year in the past.",
-        );
-      }
-    }
-    if (institutionCode !== undefined && institutionCode.length !== 4) {
-      processSummary.info(
-        `Job data institutionCode must be exactly 4 characters.`,
-      );
+    if (!this.validateJobData(processSummary, modifiedSince, institutionCode)) {
       return [];
     }
 
@@ -126,17 +120,17 @@ export class IER12ProcessingService {
       );
     const fileRecords: Record<string, IER12Record[]> = {};
     for (const application of pendingApplications) {
-      const institutionCode =
+      const locationInstitutionCode =
         application.currentAssessment!.offering!.institutionLocation
           .institutionCode!;
-      if (!fileRecords[institutionCode]) {
-        fileRecords[institutionCode] = [];
+      if (!fileRecords[locationInstitutionCode]) {
+        fileRecords[locationInstitutionCode] = [];
       }
       const ier12Records = await this.createIER12Record(
         application,
         applicationAwardTotals.get(application.id) ?? [],
       );
-      fileRecords[institutionCode].push(...ier12Records);
+      fileRecords[locationInstitutionCode].push(...ier12Records);
     }
     const uploadResult: IER12UploadResult[] = [];
     try {
@@ -478,5 +472,32 @@ export class IER12ProcessingService {
    */
   private displayInstitutionCode(institutionCode?: string): string {
     return institutionCode ? ` with institution code ${institutionCode}` : "";
+  }
+
+  /**
+   * Validate the job data for IER 12 processing.
+   * @param processSummary process summary for logging.
+   * @param modifiedSince Inclusive date since the application or student data was modified.
+   * @param institutionCode Institution code to limit applications to a specific institution.
+   * @returns boolean indicating whether the job data is valid or not.
+   */
+  private validateJobData(
+    processSummary: ProcessSummary,
+    modifiedSince?: string,
+    institutionCode?: string,
+  ): boolean {
+    // Validate job data.
+    if (modifiedSince !== undefined) {
+      const oneYearAgo = addDays(-365, getISODateOnlyString(new Date()));
+      if (new Date(modifiedSince) < new Date(oneYearAgo)) {
+        processSummary.info(IER12_MODIFIED_SINCE_DATE_OVER_ONE_YEAR);
+        return false;
+      }
+    }
+    if (institutionCode !== undefined && institutionCode.length !== 4) {
+      processSummary.info(IER12_INSTITUTION_CODE_INVALID);
+      return false;
+    }
+    return true;
   }
 }
