@@ -31,6 +31,7 @@ export interface StudentDisabilityProfilesAPIOutDTO {
 }
 
 export interface StudentDisabilityAPIInDTO {
+  id?: number;
   disabilityPriority: number;
   disabilityCategory: string;
   disabilityType: string;
