@@ -1372,7 +1372,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
   });
 
-  it("Should generate a single IER12 file for records for two students with assessments updated at different times over the past month when a one month time frame is provided.", async () => {
+  it("Should generate an IER12 file with two records for different students with assessments updated at different times over the past month when a one month time frame is provided.", async () => {
     const assessmentJohnDate = dateUtils.addDays(-21);
     const assessmentJaneDate = dateUtils.addDays(-14);
 
@@ -1688,6 +1688,25 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     assertEmptyResults(ier12Results);
   });
 
+  it("Should not generate an IER12 file when the modified since date is not a valid date.", async () => {
+    // Queued job.
+    const modifiedSinceDate = "ABC-12-3456";
+    const mockedJob = createIER12SchedulerJobMock(modifiedSinceDate);
+
+    // Act
+    const ier12Results = await processor.processQueue(mockedJob.job);
+
+    // Assert logs
+    expect(
+      mockedJob.containLogMessages([
+        "Job data modifiedSince must be a valid ISO date (YYYY-MM-DD).",
+      ]),
+    ).toBe(true);
+
+    // Assert process result.
+    assertEmptyResults(ier12Results);
+  });
+
   it("Should not generate an IER12 file when the modified since date is over 1 year in the past.", async () => {
     // Queued job.
     const modifiedSinceDate = dayjs()
@@ -1702,7 +1721,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     // Assert logs
     expect(
       mockedJob.containLogMessages([
-        "Modified since date cannot be more than one year in the past.",
+        "Job data modifiedSince cannot be more than one year in the past.",
       ]),
     ).toBe(true);
 
@@ -1716,9 +1735,10 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
 });
 
 function assertEmptyResults(ier12Results: string | string[]) {
-  expect(ier12Results).toBeDefined();
-  expect(ier12Results.length).toEqual(1);
-  expect(ier12Results[0]).toEqual("No IER12 files were generated.");
+  const results = Array.isArray(ier12Results) ? ier12Results : [ier12Results];
+  expect(results).toBeDefined();
+  expect(results).toHaveLength(1);
+  expect(results[0]).toBe("No IER12 files were generated.");
 }
 
 function formatIER12Date(date: Date) {
