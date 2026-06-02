@@ -7,10 +7,11 @@ import { computed, PropType, ref, watchEffect } from "vue";
 import {
   ApplicationSupplementalDataAPIOutDTO,
   FormSubmissionAPIOutDTO,
+  FormSubmissionItemAPIOutDTO,
   FormSubmissionMinistryAPIOutDTO,
 } from "@/services/http/dto";
 import DetailHeader from "@/components/generic/DetailHeader.vue";
-import { FormCategory, FormSubmissionItem } from "@/types";
+import { FormCategory } from "@/types";
 import { useFormatters } from "@/composables";
 import { ApplicationService } from "@/services/ApplicationService";
 
@@ -34,48 +35,36 @@ const props = defineProps({
     default: undefined,
   },
   formSubmissionItem: {
-    type: Object as PropType<FormSubmissionItem>,
+    type: Object as PropType<FormSubmissionItemAPIOutDTO>,
     required: false,
     default: undefined,
   },
 });
 
 const headerMap = computed((): Record<string, string | undefined> => {
-  let formName: string | undefined = undefined;
-  let studentFullName: string | undefined = undefined;
-  let formCategory: FormCategory | undefined =
-    props.formSubmissionItem?.category;
-  if (formSubmissionData.value) {
-    studentFullName = formSubmissionData.value.studentFullName;
-    formCategory = formSubmissionData.value?.formCategory;
-  }
-  let studyDates: string | undefined = undefined;
-  if (applicationData.value) {
-    studyDates = dateOnlyLongPeriodString(
-      applicationData.value?.applicationStartDate,
-      applicationData.value?.applicationEndDate,
-    );
-  } else {
-    // Form name is only displayed if no application data is available (forms or other appeals).
-    formName =
-      formSubmissionData.value?.submissionItems?.at(0)?.formType ??
-      props.formSubmissionItem?.formType;
-  }
-
-  let formType: string | undefined = undefined;
-  if (formCategory) {
-    formType = formCategory === FormCategory.StudentAppeal ? "Appeal" : "Form";
-  }
+  const referenceForm =
+    props.formSubmissionItem ??
+    formSubmissionData?.value?.submissionItems?.at(0);
+  const studyDates = applicationData.value
+    ? dateOnlyLongPeriodString(
+        applicationData.value.applicationStartDate,
+        applicationData.value.applicationEndDate,
+      )
+    : undefined;
+  const formSubmissionDate = formSubmissionData.value
+    ? dateOnlyLongString(formSubmissionData.value?.submittedDate)
+    : undefined;
   return {
-    Name: studentFullName,
+    Name: props.formSubmission?.studentFullName,
     "Application #": applicationData.value?.applicationNumber,
     Institution: applicationData.value?.applicationInstitutionName,
     "Study dates": studyDates,
-    "Form name": formName,
-    "Form type": formType,
-    "Form submission date": dateOnlyLongString(
-      formSubmissionData.value?.submittedDate,
-    ),
+    "Form name": applicationData.value ? undefined : referenceForm?.formType,
+    "Form type":
+      referenceForm?.formCategory === FormCategory.StudentAppeal
+        ? "Appeal"
+        : "Form",
+    "Form submission date": formSubmissionDate,
   };
 });
 
