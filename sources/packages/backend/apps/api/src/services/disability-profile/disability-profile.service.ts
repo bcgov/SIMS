@@ -311,7 +311,7 @@ export class DisabilityProfileService {
       const existingDisability = existingDisabilities?.find(
         (d) => d.id === disabilityToSave.id,
       );
-      if (disabilityToSave.id && !existingDisability) {
+      if (disabilityToSave.id && existingDisabilities && !existingDisability) {
         throw new CustomNamedError(
           `The provided disability ID ${disabilityToSave.id} was not found in the existing profile to be updated.`,
           DISABILITY_PROFILE_DISABILITY_NOT_FOUND,
@@ -322,12 +322,12 @@ export class DisabilityProfileService {
       disability.disabilityPriority = disabilityToSave.disabilityPriority;
       disability.disabilityCategory = disabilityToSave.disabilityCategory;
       disability.disabilityType = disabilityToSave.disabilityType;
-      disability.disabilityNotes = disabilityToSave.disabilityNotes;
+      disability.disabilityNotes = disabilityToSave.disabilityNotes ?? null;
       disability.diagnosis = disabilityToSave.diagnosis;
-      disability.diagnosisNotes = disabilityToSave.diagnosisNotes;
+      disability.diagnosisNotes = disabilityToSave.diagnosisNotes ?? null;
       disability.impairments = disabilityToSave.impairments;
-      disability.impairmentsNotes = disabilityToSave.impairmentsNotes;
-      disability.finalNotes = disabilityToSave.finalNotes;
+      disability.impairmentsNotes = disabilityToSave.impairmentsNotes ?? null;
+      disability.finalNotes = disabilityToSave.finalNotes ?? null;
       if (existingDisability) {
         disability.id = existingDisability.id;
         disability.modifier = auditUser;

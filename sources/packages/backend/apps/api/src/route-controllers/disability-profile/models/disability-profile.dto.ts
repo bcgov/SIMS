@@ -19,6 +19,7 @@ import {
   ValidateNested,
   Min,
   Max,
+  Length,
 } from "class-validator";
 
 /**
@@ -81,7 +82,7 @@ export class StudentDisabilityAPIInDTO {
   @MaxLength(LOOKUP_KEY_MAX_LENGTH)
   disabilityType: string;
   @IsOptional()
-  @MaxLength(DISABILITY_NOTES_MAX_LENGTH)
+  @Length(1, DISABILITY_NOTES_MAX_LENGTH)
   disabilityNotes?: string;
   @ArrayMinSize(1)
   @ArrayMaxSize(MAX_DIAGNOSIS_ENTRIES)
@@ -89,7 +90,7 @@ export class StudentDisabilityAPIInDTO {
   @MaxLength(DIAGNOSIS_MAX_LENGTH, { each: true })
   diagnosis: string[];
   @IsOptional()
-  @MaxLength(DIAGNOSIS_NOTES_MAX_LENGTH)
+  @Length(1, DIAGNOSIS_NOTES_MAX_LENGTH)
   diagnosisNotes?: string;
   @ArrayMinSize(1)
   @ArrayMaxSize(MAX_IMPAIRMENTS_ENTRIES)
@@ -97,10 +98,10 @@ export class StudentDisabilityAPIInDTO {
   @MaxLength(LOOKUP_KEY_MAX_LENGTH, { each: true })
   impairments: string[];
   @IsOptional()
-  @MaxLength(IMPAIRMENTS_NOTES_MAX_LENGTH)
+  @Length(1, IMPAIRMENTS_NOTES_MAX_LENGTH)
   impairmentsNotes?: string;
   @IsOptional()
-  @MaxLength(FINAL_NOTES_MAX_LENGTH)
+  @Length(1, FINAL_NOTES_MAX_LENGTH)
   finalNotes?: string;
 }
 

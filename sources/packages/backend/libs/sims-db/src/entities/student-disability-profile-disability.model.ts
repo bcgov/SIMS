@@ -68,7 +68,7 @@ export class StudentDisabilityProfileDisability extends RecordDataModel {
     nullable: true,
     length: DISABILITY_NOTES_MAX_LENGTH,
   })
-  disabilityNotes?: string;
+  disabilityNotes?: string | null;
   /**
    * List of functional impairments associated with this disability. The available list of
    * impairments is stored in the system lookup configuration for disability impairments.
@@ -87,7 +87,7 @@ export class StudentDisabilityProfileDisability extends RecordDataModel {
     nullable: true,
     length: IMPAIRMENTS_NOTES_MAX_LENGTH,
   })
-  impairmentsNotes?: string;
+  impairmentsNotes?: string | null;
   /**
    * List of diagnosis information for this disability.
    */
@@ -105,7 +105,7 @@ export class StudentDisabilityProfileDisability extends RecordDataModel {
     nullable: true,
     length: DIAGNOSIS_NOTES_MAX_LENGTH,
   })
-  diagnosisNotes?: string;
+  diagnosisNotes?: string | null;
   /**
    * Any additional notes relevant to this disability entry.
    */
@@ -114,7 +114,7 @@ export class StudentDisabilityProfileDisability extends RecordDataModel {
     nullable: true,
     length: FINAL_NOTES_MAX_LENGTH,
   })
-  finalNotes?: string;
+  finalNotes?: string | null;
   /**
    * Timestamp when the disability was soft-deleted.
    * Intended to be used only when a draft disability profile is being updated.
