@@ -21,16 +21,16 @@
       <content-group>
         <banner v-if="draftProfile" class="mb-2" type="warning">
           <template #content>
-            <span
-              >A draft version exists for this disability profile, last updated
+            <p>
+              A draft version exists for this disability profile, last updated
               on
               <b>{{ getISODateHourMinuteString(draftProfile.updatedAt) }}</b> by
               <b>{{ draftProfile.modifier ?? draftProfile.creator }}</b
               >.<br />
               The draft can be updated to be completed or deleted, if no longer
               needed.<br />The <b>Edit profile</b> button is not available until
-              the draft is completed or deleted.</span
-            >
+              the draft is completed or deleted.
+            </p>
           </template>
           <template #actions>
             <v-btn color="primary" class="mr-2" @click="viewDraft"
