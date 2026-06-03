@@ -24,8 +24,7 @@ export function createFakeStudentDisabilityProfile(
     disabilities?: StudentDisabilityProfileDisability[];
   },
   options?: {
-    disabilityProfileStatus?: DisabilityProfileStatus;
-    completedAt?: Date;
+    initialValues?: Partial<StudentDisabilityProfile>;
     now?: Date;
   },
 ): StudentDisabilityProfile {
@@ -33,13 +32,14 @@ export function createFakeStudentDisabilityProfile(
   const disabilityProfile = new StudentDisabilityProfile();
   disabilityProfile.student = relations.student;
   disabilityProfile.disabilityProfileStatus =
-    options?.disabilityProfileStatus ?? DisabilityProfileStatus.Draft;
+    options?.initialValues?.disabilityProfileStatus ??
+    DisabilityProfileStatus.Draft;
   disabilityProfile.completedBy = relations?.completedBy;
-  disabilityProfile.completedAt = options?.completedAt;
+  disabilityProfile.completedAt = options?.initialValues?.completedAt;
   disabilityProfile.creator = relations.creator ?? relations.student?.user;
   disabilityProfile.createdAt = now;
   disabilityProfile.updatedAt = now;
-  disabilityProfile.deletedAt = undefined;
+  disabilityProfile.deletedAt = options?.initialValues?.deletedAt;
   disabilityProfile.disabilities = relations.disabilities ?? [];
   return disabilityProfile;
 }
@@ -50,6 +50,7 @@ export async function saveFakeStudentDisabilityProfile(
     ministryUser: User;
     student?: Student;
     disabilityProfileStatus?: DisabilityProfileStatus;
+    disabilities?: StudentDisabilityProfileDisability[];
     now?: Date;
   },
 ): Promise<StudentDisabilityProfile> {
@@ -57,30 +58,34 @@ export async function saveFakeStudentDisabilityProfile(
   const disabilityProfileStatus =
     options?.disabilityProfileStatus ?? DisabilityProfileStatus.Active;
   const student = options?.student ?? (await saveFakeStudent(db.dataSource));
-  const disability = createFakeStudentDisabilityProfileDisability(
-    {
-      creator: student.user,
-    },
-    {
-      initialValues: {
-        disabilityCategory: DisabilityCategories.LearningDisability,
-        disabilityType: DisabilityTypes.Permanent,
-        impairments: [
-          DisabilityImpairments.AscendDescendStairs,
-          DisabilityImpairments.Other,
-        ],
+  const disabilities = options?.disabilities ?? [
+    createFakeStudentDisabilityProfileDisability(
+      {
+        creator: options.ministryUser,
       },
-      now,
-    },
-  );
+      {
+        initialValues: {
+          disabilityCategory: DisabilityCategories.LearningDisability,
+          disabilityType: DisabilityTypes.Permanent,
+          impairments: [
+            DisabilityImpairments.AscendDescendStairs,
+            DisabilityImpairments.Other,
+          ],
+        },
+        now,
+      },
+    ),
+  ];
   const studentDisabilityProfile = createFakeStudentDisabilityProfile(
     {
       student,
       creator: options.ministryUser,
-      disabilities: [disability],
+      disabilities,
     },
     {
-      disabilityProfileStatus,
+      initialValues: {
+        disabilityProfileStatus,
+      },
       now,
     },
   );

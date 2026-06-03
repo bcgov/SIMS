@@ -13,19 +13,28 @@ import {
   saveFakeStudent,
   saveFakeStudentDisabilityProfile,
 } from "@sims/test-utils";
-import { DisabilityProfileStatus, User } from "@sims/sims-db";
+import {
+  DIAGNOSIS_NOTES_MAX_LENGTH,
+  DISABILITY_NOTES_MAX_LENGTH,
+  DisabilityProfileStatus,
+  FINAL_NOTES_MAX_LENGTH,
+  IMPAIRMENTS_NOTES_MAX_LENGTH,
+  LOOKUP_KEY_MAX_LENGTH,
+  User,
+} from "@sims/sims-db";
 import {
   DiagnosisSamples,
   DisabilityCategories,
   DisabilityImpairments,
   DisabilityTypes,
 } from "@sims/test-utils/models/student-disability-profile.model";
+import { faker } from "@faker-js/faker";
 
 describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let ministryUser: User;
-  let unprocessableEntityStudentEndpointURL: string;
+  let nonDataPersistentErrorStudentEndpointURL: string;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -38,7 +47,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
     const sharedStudentUnprocessableEntityErrors = await saveFakeStudent(
       db.dataSource,
     );
-    unprocessableEntityStudentEndpointURL = `/aest/disability-profile/student/${sharedStudentUnprocessableEntityErrors.id}/active`;
+    nonDataPersistentErrorStudentEndpointURL = `/aest/disability-profile/student/${sharedStudentUnprocessableEntityErrors.id}/active`;
   });
 
   it("Should create a new active disability profile when there is no existing draft.", async () => {
@@ -250,6 +259,129 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
     });
   });
 
+  it("Should set an existing one-disability draft profile to active when the draft ID is provided and the existing disability is replaced by a new one.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    const existingDraft = await saveFakeStudentDisabilityProfile(db, {
+      ministryUser,
+      student,
+      disabilityProfileStatus: DisabilityProfileStatus.Draft,
+    });
+    // Existing disability will be deleted as it's not included in the payload, and a new one will be created.
+    const [existingDisability] = existingDraft.disabilities;
+    const endpoint = `/aest/disability-profile/student/${student.id}/active`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const payload = {
+      id: existingDraft.id,
+      disabilities: [
+        {
+          disabilityPriority: 1,
+          disabilityCategory: DisabilityCategories.SpeechImpairment,
+          disabilityType: DisabilityTypes.PersistentOrProlonged,
+          diagnosis: [DiagnosisSamples.SampleB],
+          diagnosisNotes: "Updated diagnosis note.",
+          impairments: [DisabilityImpairments.FollowingInstructions],
+          impairmentsNotes: "Updated impairments note.",
+          finalNotes: "Updated final note.",
+        },
+      ],
+    };
+
+    // Act
+    await request(app.getHttpServer())
+      .put(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    // Assert
+    const updatedProfile = await db.studentDisabilityProfile.findOne({
+      select: {
+        id: true,
+        disabilityProfileStatus: true,
+        modifier: { id: true },
+        completedBy: { id: true },
+        completedAt: true,
+        disabilities: {
+          id: true,
+          disabilityPriority: true,
+          disabilityCategory: true,
+          disabilityType: true,
+          disabilityNotes: true,
+          diagnosis: true,
+          diagnosisNotes: true,
+          impairments: true,
+          impairmentsNotes: true,
+          finalNotes: true,
+          createdAt: true,
+          creator: { id: true },
+          updatedAt: true,
+          modifier: { id: true },
+          deletedAt: true,
+        },
+      },
+      relations: {
+        modifier: true,
+        completedBy: true,
+        disabilities: { creator: true, modifier: true },
+      },
+      where: {
+        id: existingDraft.id,
+      },
+      order: { disabilities: { id: "ASC" } },
+      loadEagerRelations: false,
+      withDeleted: true,
+    });
+    expect(updatedProfile).toEqual({
+      id: existingDraft.id,
+      disabilityProfileStatus: DisabilityProfileStatus.Active,
+      modifier: { id: ministryUser.id },
+      completedBy: { id: ministryUser.id },
+      completedAt: expect.any(Date),
+      disabilities: [
+        {
+          // This record will not be updated, only marked as deleted.
+          // The values must remain the ones originally created, except for the deletedAt and modifier fields.
+          id: existingDisability.id,
+          disabilityPriority: 1,
+          disabilityCategory: DisabilityCategories.LearningDisability,
+          disabilityType: DisabilityTypes.Permanent,
+          disabilityNotes: "Some notes about the disability.",
+          diagnosis: [DiagnosisSamples.SampleA],
+          diagnosisNotes: "Some notes about the diagnosis.",
+          impairments: [
+            DisabilityImpairments.AscendDescendStairs,
+            DisabilityImpairments.Other,
+          ],
+          impairmentsNotes: "Some notes about the impairments.",
+          finalNotes: "Some final notes.",
+          createdAt: expect.any(Date),
+          creator: { id: ministryUser.id },
+          updatedAt: expect.any(Date),
+          modifier: { id: ministryUser.id },
+          deletedAt: expect.any(Date),
+        },
+        {
+          id: expect.any(Number),
+          disabilityPriority: 1,
+          disabilityCategory: DisabilityCategories.SpeechImpairment,
+          disabilityType: DisabilityTypes.PersistentOrProlonged,
+          disabilityNotes: null,
+          diagnosis: [DiagnosisSamples.SampleB],
+          diagnosisNotes: "Updated diagnosis note.",
+          impairments: [DisabilityImpairments.FollowingInstructions],
+          impairmentsNotes: "Updated impairments note.",
+          finalNotes: "Updated final note.",
+          createdAt: expect.any(Date),
+          creator: { id: ministryUser.id },
+          updatedAt: expect.any(Date),
+          modifier: null,
+          deletedAt: null,
+        },
+      ],
+    });
+  });
+
   it("Should throw an unprocessable entity error when trying to create a new active disability profile when there is an existing draft.", async () => {
     // Arrange
     // Create the draft profile that will cause the unprocessable entity error.
@@ -300,7 +432,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
     };
     // Act
     await request(app.getHttpServer())
-      .put(unprocessableEntityStudentEndpointURL)
+      .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -335,7 +467,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
     };
     // Act
     await request(app.getHttpServer())
-      .put(unprocessableEntityStudentEndpointURL)
+      .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -364,7 +496,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
     };
     // Act
     await request(app.getHttpServer())
-      .put(unprocessableEntityStudentEndpointURL)
+      .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -399,7 +531,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
     };
     // Act
     await request(app.getHttpServer())
-      .put(unprocessableEntityStudentEndpointURL)
+      .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -428,7 +560,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
 
     // Act
     await request(app.getHttpServer())
-      .put(unprocessableEntityStudentEndpointURL)
+      .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -456,7 +588,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
 
     // Act
     await request(app.getHttpServer())
-      .put(unprocessableEntityStudentEndpointURL)
+      .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -487,7 +619,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
 
     // Act
     await request(app.getHttpServer())
-      .put(unprocessableEntityStudentEndpointURL)
+      .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -495,6 +627,187 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
         message: `Invalid disability impairment(s): ${DisabilityImpairments.Invalid1}, ${DisabilityImpairments.Invalid2}`,
         error: "Unprocessable Entity",
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
+  it("Should throw a bad request error when trying to create a new profile with category defined as OTHER without the required notes.", async () => {
+    // Arrange
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const payload = {
+      disabilities: [
+        {
+          disabilityPriority: 1,
+          disabilityCategory: DisabilityCategories.Other,
+          disabilityType: DisabilityTypes.Permanent,
+          diagnosis: [DiagnosisSamples.SampleA],
+          impairments: [
+            DisabilityImpairments.Invalid1,
+            DisabilityImpairments.Invalid2,
+          ],
+        },
+      ],
+    };
+
+    // Act
+    await request(app.getHttpServer())
+      .put(nonDataPersistentErrorStudentEndpointURL)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message:
+          "Disability category notes must be provided when category is OTHER.",
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
+  });
+
+  it("Should throw a bad request error when trying to create a new profile with impairments containing OTHER without the required notes.", async () => {
+    // Arrange
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const payload = {
+      disabilities: [
+        {
+          disabilityPriority: 1,
+          disabilityCategory: DisabilityCategories.LearningDisability,
+          disabilityType: DisabilityTypes.Permanent,
+          diagnosis: [DiagnosisSamples.SampleA],
+          impairments: [
+            DisabilityImpairments.AscendDescendStairs,
+            DisabilityImpairments.Other,
+          ],
+        },
+      ],
+    };
+
+    // Act
+    await request(app.getHttpServer())
+      .put(nonDataPersistentErrorStudentEndpointURL)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message:
+          "Impairments notes must be provided when impairments includes OTHER.",
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
+  });
+
+  it("Should throw a bad request error when trying to create a new profile with duplicated impairments.", async () => {
+    // Arrange
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const payload = {
+      disabilities: [
+        {
+          disabilityPriority: 1,
+          disabilityCategory: DisabilityCategories.LearningDisability,
+          disabilityType: DisabilityTypes.Permanent,
+          diagnosis: [DiagnosisSamples.SampleA],
+          impairments: [
+            DisabilityImpairments.AscendDescendStairs,
+            DisabilityImpairments.AscendDescendStairs,
+          ],
+        },
+      ],
+    };
+
+    // Act
+    await request(app.getHttpServer())
+      .put(nonDataPersistentErrorStudentEndpointURL)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message: ["disabilities.0.All impairments's elements must be unique"],
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
+  });
+
+  it("Should throw a bad request error when trying to create a new profile with empty notes.", async () => {
+    // Arrange
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const payload = {
+      disabilities: [
+        {
+          disabilityPriority: 1,
+          disabilityCategory: DisabilityCategories.LearningDisability,
+          disabilityType: DisabilityTypes.Permanent,
+          diagnosis: [DiagnosisSamples.SampleA],
+          impairments: [DisabilityImpairments.AscendDescendStairs],
+          disabilityNotes: "",
+          diagnosisNotes: "",
+          impairmentsNotes: "",
+          finalNotes: "",
+        },
+      ],
+    };
+
+    // Act
+    await request(app.getHttpServer())
+      .put(nonDataPersistentErrorStudentEndpointURL)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message: [
+          "disabilities.0.disabilityNotes must be longer than or equal to 1 characters",
+          "disabilities.0.diagnosisNotes must be longer than or equal to 1 characters",
+          "disabilities.0.impairmentsNotes must be longer than or equal to 1 characters",
+          "disabilities.0.finalNotes must be longer than or equal to 1 characters",
+        ],
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
+  });
+
+  it("Should throw a bad request error when trying to create a new profile with strings that are exceeding notes.", async () => {
+    // Arrange
+    const lookupKeyExceedingMaxLength = faker.string.alphanumeric(
+      LOOKUP_KEY_MAX_LENGTH + 1,
+    );
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const payload = {
+      disabilities: [
+        {
+          disabilityPriority: 1,
+          disabilityCategory: lookupKeyExceedingMaxLength,
+          disabilityType: lookupKeyExceedingMaxLength,
+          diagnosis: [DiagnosisSamples.SampleA],
+          impairments: [lookupKeyExceedingMaxLength],
+          disabilityNotes: faker.string.alphanumeric(
+            DISABILITY_NOTES_MAX_LENGTH + 1,
+          ),
+          diagnosisNotes: faker.string.alphanumeric(
+            DIAGNOSIS_NOTES_MAX_LENGTH + 1,
+          ),
+          impairmentsNotes: faker.string.alphanumeric(
+            IMPAIRMENTS_NOTES_MAX_LENGTH + 1,
+          ),
+          finalNotes: faker.string.alphanumeric(FINAL_NOTES_MAX_LENGTH + 1),
+        },
+      ],
+    };
+
+    // Act
+    await request(app.getHttpServer())
+      .put(nonDataPersistentErrorStudentEndpointURL)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message: [
+          "disabilities.0.disabilityCategory must be shorter than or equal to 100 characters",
+          "disabilities.0.disabilityType must be shorter than or equal to 100 characters",
+          "disabilities.0.disabilityNotes must be shorter than or equal to 500 characters",
+          "disabilities.0.diagnosisNotes must be shorter than or equal to 500 characters",
+          "disabilities.0.each value in impairments must be shorter than or equal to 100 characters",
+          "disabilities.0.impairmentsNotes must be shorter than or equal to 500 characters",
+          "disabilities.0.finalNotes must be shorter than or equal to 1000 characters",
+        ],
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
       });
   });
 

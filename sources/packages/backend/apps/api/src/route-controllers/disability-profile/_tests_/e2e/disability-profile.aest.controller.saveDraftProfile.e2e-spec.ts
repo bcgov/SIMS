@@ -259,7 +259,9 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
         disabilities: [firstDisability, secondDisability],
       },
       {
-        disabilityProfileStatus: DisabilityProfileStatus.Draft,
+        initialValues: {
+          disabilityProfileStatus: DisabilityProfileStatus.Draft,
+        },
         now,
       },
     );
