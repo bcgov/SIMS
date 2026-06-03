@@ -3,7 +3,7 @@
     <template #header>
       <body-header :title="studentName">
         <template #subtitle
-          ><detail-header :headerMap="headerDetailsData"
+          ><detail-header :header-map="headerDetailsData"
         /></template>
         <template #status-chip>
           <status-chip-application-offering-change
@@ -17,9 +17,9 @@
     <h2 class="category-header-large primary-color">Application Details</h2>
     <p>Review the active program and offering details below.</p>
     <offering-view
-      :offeringId="offeringId"
-      :locationId="locationId"
-      :studyCostAccess="true"
+      :offering-id="offeringId"
+      :location-id="locationId"
+      :study-cost-access="true"
     />
     <hr class="horizontal-divider" />
     <h2 class="category-header-large primary-color">Request details</h2>
@@ -55,18 +55,22 @@ export default defineComponent({
     offeringId: {
       type: Number,
       required: false,
+      default: undefined,
     },
     studentName: {
       type: String,
       required: false,
+      default: undefined,
     },
     applicationNumber: {
       type: String,
       required: false,
+      default: undefined,
     },
     status: {
       type: String as PropType<ApplicationOfferingChangeRequestStatus>,
       required: false,
+      default: undefined,
     },
   },
   setup(props) {
@@ -75,7 +79,7 @@ export default defineComponent({
     const headerDetailsData = computed(
       () =>
         ({
-          "Application #": props.applicationNumber ?? "",
+          Application: props.applicationNumber ?? "",
           Location: getLocationName(props.locationId),
         } as Record<string, string>),
     );

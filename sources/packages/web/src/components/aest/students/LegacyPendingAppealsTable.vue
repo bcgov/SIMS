@@ -7,7 +7,7 @@
     <template #actions>
       <v-text-field
         density="compact"
-        label="Search name or application #"
+        label="Search name or application number"
         variant="outlined"
         v-model="searchCriteria"
         @keyup.enter="searchAppeals"
