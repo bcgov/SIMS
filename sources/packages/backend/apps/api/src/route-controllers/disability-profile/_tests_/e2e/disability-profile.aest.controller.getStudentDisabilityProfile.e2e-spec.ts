@@ -30,25 +30,27 @@ describe("DisabilityProfileAESTController(e2e)-getStudentDisabilityProfile", () 
     );
   });
 
-  it("Should get an active disability profile when there is an active disability profile available.", async () => {
-    // Arrange
-    const now = new Date();
-    const activeProfile = await saveFakeStudentDisabilityProfile(db, {
-      ministryUser,
-      disabilityProfileStatus: DisabilityProfileStatus.Active,
-      now,
-    });
-    const endpoint = `/aest/disability-profile/${activeProfile.id}`;
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+  Object.values(DisabilityProfileStatus).forEach((status) => {
+    it(`Should get a disability profile with status ${status} when there is a disability profile with that status available.`, async () => {
+      // Arrange
+      const now = new Date();
+      const activeProfile = await saveFakeStudentDisabilityProfile(db, {
+        ministryUser,
+        disabilityProfileStatus: status,
+        now,
+      });
+      const endpoint = `/aest/disability-profile/${activeProfile.id}`;
+      const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect(({ body }) =>
-        expect(body).toEqual(createExpectedProfile(activeProfile)),
-      );
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect(({ body }) =>
+          expect(body).toEqual(createExpectedProfile(activeProfile)),
+        );
+    });
   });
 
   it("Should throw a not found error when the disability profile does not exist.", async () => {

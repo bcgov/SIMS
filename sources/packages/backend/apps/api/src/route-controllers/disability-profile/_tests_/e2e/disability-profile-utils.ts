@@ -14,7 +14,6 @@ import {
 export function createExpectedProfile(
   disabilityProfile: StudentDisabilityProfile,
 ): unknown {
-  const disability = disabilityProfile.disabilities[0];
   return {
     id: disabilityProfile.id,
     status: disabilityProfile.disabilityProfileStatus,
@@ -24,27 +23,25 @@ export function createExpectedProfile(
     completedAt: disabilityProfile.completedAt
       ? disabilityProfile.completedAt.toISOString()
       : null,
-    disabilities: [
-      {
-        id: disability.id,
-        disabilityPriority: disability.disabilityPriority,
-        disabilityCategory: disability.disabilityCategory,
-        disabilityCategoryDescription:
-          DISABILITY_CATEGORY_DESCRIPTIONS[
-            disability.disabilityCategory as DisabilityCategories
-          ],
-        disabilityType: disability.disabilityType,
-        disabilityNotes: disability.disabilityNotes,
-        diagnosis: [DiagnosisSamples.SampleA],
-        diagnosisNotes: disability.diagnosisNotes,
-        impairments: [
-          DisabilityImpairments.AscendDescendStairs,
-          DisabilityImpairments.Other,
+    disabilities: disabilityProfile.disabilities.map((disability) => ({
+      id: disability.id,
+      disabilityPriority: disability.disabilityPriority,
+      disabilityCategory: disability.disabilityCategory,
+      disabilityCategoryDescription:
+        DISABILITY_CATEGORY_DESCRIPTIONS[
+          disability.disabilityCategory as DisabilityCategories
         ],
-        impairmentsNotes: disability.impairmentsNotes,
-        finalNotes: disability.finalNotes,
-      },
-    ],
+      disabilityType: disability.disabilityType,
+      disabilityNotes: disability.disabilityNotes,
+      diagnosis: [DiagnosisSamples.SampleA],
+      diagnosisNotes: disability.diagnosisNotes,
+      impairments: [
+        DisabilityImpairments.AscendDescendStairs,
+        DisabilityImpairments.Other,
+      ],
+      impairmentsNotes: disability.impairmentsNotes,
+      finalNotes: disability.finalNotes,
+    })),
     creator: `${disabilityProfile.creator.firstName} ${disabilityProfile.creator.lastName}`,
     createdAt: disabilityProfile.createdAt.toISOString(),
     updatedAt: disabilityProfile.updatedAt.toISOString(),
