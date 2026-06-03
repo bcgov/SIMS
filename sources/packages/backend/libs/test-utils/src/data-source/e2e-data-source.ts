@@ -68,6 +68,8 @@ import {
   FormSubmission,
   FormSubmissionItem,
   FormSubmissionItemDecision,
+  StudentDisabilityProfileDisability,
+  StudentDisabilityProfile,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 
@@ -154,6 +156,12 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     studentAppeal: dataSource.getRepository(StudentAppeal),
     studentAppealRequest: dataSource.getRepository(StudentAppealRequest),
     studentAssessment: dataSource.getRepository(StudentAssessment),
+    studentDisabilityProfile: dataSource.getRepository(
+      StudentDisabilityProfile,
+    ),
+    studentDisabilityProfileDisability: dataSource.getRepository(
+      StudentDisabilityProfileDisability,
+    ),
     studentFile: dataSource.getRepository(StudentFile),
     studentRestriction: dataSource.getRepository(StudentRestriction),
     studentScholasticStanding: dataSource.getRepository(
@@ -241,6 +249,8 @@ export interface E2EDataSources {
   studentAppeal: Repository<StudentAppeal>;
   studentAppealRequest: Repository<StudentAppealRequest>;
   studentAssessment: Repository<StudentAssessment>;
+  studentDisabilityProfile: Repository<StudentDisabilityProfile>;
+  studentDisabilityProfileDisability: Repository<StudentDisabilityProfileDisability>;
   studentFile: Repository<StudentFile>;
   studentRestriction: Repository<StudentRestriction>;
   studentScholasticStanding: Repository<StudentScholasticStanding>;

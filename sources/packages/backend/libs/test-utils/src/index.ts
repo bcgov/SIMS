@@ -54,3 +54,5 @@ export * from "./factories/system-lookup-configuration";
 export * from "./factories/form-submission";
 export * from "./factories/form-submission-item";
 export * from "./factories/form-submission-item-decision";
+export * from "./factories/student-disability-profile";
+export * from "./factories/student-disability-profile-disability";

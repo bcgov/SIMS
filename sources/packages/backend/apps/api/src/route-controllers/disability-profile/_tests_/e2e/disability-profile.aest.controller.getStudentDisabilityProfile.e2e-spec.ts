@@ -1,0 +1,77 @@
+import { HttpStatus, INestApplication } from "@nestjs/common";
+import * as request from "supertest";
+import {
+  AESTGroups,
+  BEARER_AUTH_TYPE,
+  createTestingAppModule,
+  getAESTToken,
+  getAESTUser,
+} from "../../../../testHelpers";
+import {
+  createE2EDataSources,
+  E2EDataSources,
+  saveFakeStudentDisabilityProfile,
+} from "@sims/test-utils";
+import { DisabilityProfileStatus, User } from "@sims/sims-db";
+import { createExpectedProfile } from "./disability-profile-utils";
+
+describe("DisabilityProfileAESTController(e2e)-getStudentDisabilityProfile", () => {
+  let app: INestApplication;
+  let db: E2EDataSources;
+  let ministryUser: User;
+
+  beforeAll(async () => {
+    const { nestApplication, dataSource } = await createTestingAppModule();
+    app = nestApplication;
+    db = createE2EDataSources(dataSource);
+    ministryUser = await getAESTUser(
+      dataSource,
+      AESTGroups.BusinessAdministrators,
+    );
+  });
+
+  it("Should get an active disability profile when there is an active disability profile available.", async () => {
+    // Arrange
+    const now = new Date();
+
+    const activeProfile = await saveFakeStudentDisabilityProfile(db, {
+      ministryUser,
+      disabilityProfileStatus: DisabilityProfileStatus.Active,
+      now,
+    });
+
+    const endpoint = `/aest/disability-profile/${activeProfile.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body).toEqual(createExpectedProfile(activeProfile)),
+      );
+  });
+
+  it("Should throw NotFoundException when the disability profile does not exist.", async () => {
+    // Arrange
+    const nonExistentDisabilityProfileId = 999999;
+    const endpoint = `/aest/disability-profile/${nonExistentDisabilityProfileId}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: `Disability profile with ID ${nonExistentDisabilityProfileId} not found.`,
+        error: "Not Found",
+      });
+  });
+
+  afterAll(async () => {
+    await app?.close();
+  });
+});
