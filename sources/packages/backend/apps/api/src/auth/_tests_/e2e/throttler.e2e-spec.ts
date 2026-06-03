@@ -13,6 +13,10 @@ describe("Guards and Decorators - Throttler (e2e)", () => {
   const throttleLimit = 10;
 
   beforeAll(async () => {
+    // Keep THROTTLE_TIME and THROTTLE_LIMIT low for testing purposes
+    // avoiding consuming its values from the global configuration,
+    // which would make the tests more fragile.
+    process.env.THROTTLE_TIME = "100";
     process.env.THROTTLE_LIMIT = throttleLimit.toString();
     await KeycloakConfig.load();
     moduleFixture = await Test.createTestingModule({
