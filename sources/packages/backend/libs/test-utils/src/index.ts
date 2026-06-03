@@ -24,6 +24,7 @@ export * from "./factories/student-file-uploads";
 export * from "./factories/student-restriction";
 export * from "./factories/sfas-individuals";
 export * from "./models/common.model";
+export * from "./models/student-disability-profile.model";
 export * from "./modules/modules-utils";
 export * from "./data-source/e2e-data-source";
 export * from "./factories/disbursement-receipt";

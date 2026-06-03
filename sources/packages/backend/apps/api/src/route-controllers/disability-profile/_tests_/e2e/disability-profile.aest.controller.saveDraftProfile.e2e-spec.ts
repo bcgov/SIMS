@@ -402,6 +402,24 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
     });
   });
 
+  it("Should throw a forbidden error when the user does not have permission.", async () => {
+    // Arrange
+    const token = await getAESTToken(AESTGroups.Operations);
+    const endpoint = "/aest/disability-profile/student/999999/draft";
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .put(endpoint)
+      .send({})
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        message: "Forbidden resource",
+        error: "Forbidden",
+        statusCode: HttpStatus.FORBIDDEN,
+      });
+  });
+
   afterAll(async () => {
     await app?.close();
   });

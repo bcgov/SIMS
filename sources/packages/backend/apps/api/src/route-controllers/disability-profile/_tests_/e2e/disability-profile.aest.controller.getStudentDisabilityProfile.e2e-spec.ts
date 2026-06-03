@@ -33,13 +33,11 @@ describe("DisabilityProfileAESTController(e2e)-getStudentDisabilityProfile", () 
   it("Should get an active disability profile when there is an active disability profile available.", async () => {
     // Arrange
     const now = new Date();
-
     const activeProfile = await saveFakeStudentDisabilityProfile(db, {
       ministryUser,
       disabilityProfileStatus: DisabilityProfileStatus.Active,
       now,
     });
-
     const endpoint = `/aest/disability-profile/${activeProfile.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -53,7 +51,7 @@ describe("DisabilityProfileAESTController(e2e)-getStudentDisabilityProfile", () 
       );
   });
 
-  it("Should throw NotFoundException when the disability profile does not exist.", async () => {
+  it("Should throw a not found error when the disability profile does not exist.", async () => {
     // Arrange
     const nonExistentDisabilityProfileId = 999999;
     const endpoint = `/aest/disability-profile/${nonExistentDisabilityProfileId}`;
@@ -68,6 +66,24 @@ describe("DisabilityProfileAESTController(e2e)-getStudentDisabilityProfile", () 
         statusCode: HttpStatus.NOT_FOUND,
         message: `Disability profile with ID ${nonExistentDisabilityProfileId} not found.`,
         error: "Not Found",
+      });
+  });
+
+  it("Should throw a forbidden error when the user does not have permission.", async () => {
+    // Arrange
+    const nonExistentDisabilityProfileId = 999999;
+    const endpoint = `/aest/disability-profile/${nonExistentDisabilityProfileId}`;
+    const token = await getAESTToken(AESTGroups.Operations);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        message: "Forbidden resource",
+        error: "Forbidden",
+        statusCode: HttpStatus.FORBIDDEN,
       });
   });
 

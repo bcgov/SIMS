@@ -1,15 +1,19 @@
 import { StudentDisabilityProfile } from "@sims/sims-db";
 import {
-  DisabilityCategories,
-  DisabilityCategoryDescriptions,
-  DisabilityTypes,
   DiagnosisSamples,
   DisabilityImpairments,
-} from "@sims/test-utils/models/student-disability-profile.model";
+  DISABILITY_CATEGORY_DESCRIPTIONS,
+  DisabilityCategories,
+} from "@sims/test-utils";
 
+/**
+ * Creates an expected profile object based on the given disability profile.
+ * @param disabilityProfile The disability profile to create the expected profile from.
+ * @returns the expected profile object.
+ */
 export function createExpectedProfile(
   disabilityProfile: StudentDisabilityProfile,
-) {
+): unknown {
   const disability = disabilityProfile.disabilities[0];
   return {
     id: disabilityProfile.id,
@@ -24,10 +28,12 @@ export function createExpectedProfile(
       {
         id: disability.id,
         disabilityPriority: disability.disabilityPriority,
-        disabilityCategory: DisabilityCategories.LearningDisability,
+        disabilityCategory: disability.disabilityCategory,
         disabilityCategoryDescription:
-          DisabilityCategoryDescriptions.LearningDisability,
-        disabilityType: DisabilityTypes.Permanent,
+          DISABILITY_CATEGORY_DESCRIPTIONS[
+            disability.disabilityCategory as DisabilityCategories
+          ],
+        disabilityType: disability.disabilityType,
         disabilityNotes: disability.disabilityNotes,
         diagnosis: [DiagnosisSamples.SampleA],
         diagnosisNotes: disability.diagnosisNotes,

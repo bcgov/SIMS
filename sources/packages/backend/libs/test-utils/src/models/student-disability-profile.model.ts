@@ -9,11 +9,15 @@ export enum DisabilityCategories {
   Invalid = "INVALID_CATEGORY",
 }
 
-export enum DisabilityCategoryDescriptions {
-  LearningDisability = "Learning disability",
-  SpeechImpairment = "Speech impairment",
-  Other = "Other",
-}
+/**
+ * Allow mapping disability category to description for better readability in tests.
+ */
+export const DISABILITY_CATEGORY_DESCRIPTIONS = {
+  [DisabilityCategories.LearningDisability]: "Learning disability",
+  [DisabilityCategories.SpeechImpairment]: "Speech impairment",
+  [DisabilityCategories.Other]: "Other",
+  [DisabilityCategories.Invalid]: "Invalid category",
+} satisfies Record<DisabilityCategories, string>;
 
 /**
  * Disability types for a student disability profile.
@@ -37,6 +41,9 @@ export enum DisabilityImpairments {
   Invalid2 = "INVALID_IMPAIRMENT_2",
 }
 
+/**
+ * Sample valid diagnosis entries for a student disability profile to be used in tests.
+ */
 export enum DiagnosisSamples {
   SampleA = "Attention Deficit Hyperactivity Disorder (ADHD), combined presentation.",
   SampleB = "Specific Learning Disorder with impairment in reading (dyslexia).",
