@@ -25,7 +25,6 @@ export function createFakeStudentDisabilityProfileDisability(
   if (relations?.studentDisabilityProfile) {
     disability.studentDisabilityProfile = relations.studentDisabilityProfile;
   }
-  disability.disabilityType = "Fake Disability Type";
   disability.disabilityPriority =
     options?.initialValues?.disabilityPriority ?? 1;
   disability.disabilityCategory =

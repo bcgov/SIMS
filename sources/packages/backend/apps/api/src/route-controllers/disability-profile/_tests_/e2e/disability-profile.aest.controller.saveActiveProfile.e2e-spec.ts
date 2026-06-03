@@ -235,7 +235,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
           impairmentsNotes: "Updated impairments note.",
           finalNotes: "Updated final note.",
           createdAt: expect.any(Date),
-          creator: { id: existingDisability.creator!.id },
+          creator: { id: existingDisability.creator.id },
           updatedAt: expect.any(Date),
           modifier: { id: ministryUser.id },
         },
