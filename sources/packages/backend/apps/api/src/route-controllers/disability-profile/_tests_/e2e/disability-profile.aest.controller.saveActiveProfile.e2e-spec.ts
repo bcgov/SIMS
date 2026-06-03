@@ -8,6 +8,10 @@ import {
   getAESTUser,
 } from "../../../../testHelpers";
 import {
+  DiagnosisSamples,
+  DisabilityCategories,
+  DisabilityImpairments,
+  DisabilityTypes,
   createE2EDataSources,
   E2EDataSources,
   saveFakeStudent,
@@ -22,12 +26,6 @@ import {
   LOOKUP_KEY_MAX_LENGTH,
   User,
 } from "@sims/sims-db";
-import {
-  DiagnosisSamples,
-  DisabilityCategories,
-  DisabilityImpairments,
-  DisabilityTypes,
-} from "@sims/test-utils";
 import { faker } from "@faker-js/faker";
 import MockDate from "mockdate";
 

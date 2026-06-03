@@ -9,8 +9,6 @@ import {
   createFakeStudentDisabilityProfileDisability,
   E2EDataSources,
   saveFakeStudent,
-} from "@sims/test-utils";
-import {
   DisabilityCategories,
   DisabilityTypes,
   DisabilityImpairments,
