@@ -10,7 +10,7 @@
       <span class="label-bold-normal ml-2 ml-lg-0 pr-2 text-no-wrap"
         >{{ headerKey }}:</span
       >
-      <span class="label-value-normal d-inline-block text-truncate">
+      <span class="label-value-normal d-inline-block text-truncate" :title="headerValue">
         {{ headerValue }}
       </span>
       <span
