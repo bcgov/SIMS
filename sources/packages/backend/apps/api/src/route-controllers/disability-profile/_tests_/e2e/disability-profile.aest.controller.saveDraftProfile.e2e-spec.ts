@@ -288,8 +288,6 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
     );
     draftProfile.disabilities = [firstDisability, secondDisability];
     const existingDraft = await db.studentDisabilityProfile.save(draftProfile);
-    const [savedFirstDisability, savedSecondDisability] =
-      existingDraft.disabilities;
     const updateNow = new Date();
     MockDate.set(updateNow);
     const endpoint = `/aest/disability-profile/student/${student.id}/draft`;
@@ -298,7 +296,7 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
       id: existingDraft.id,
       disabilities: [
         {
-          id: savedFirstDisability.id,
+          id: firstDisability.id,
           disabilityPriority: 2,
           disabilityCategory: DisabilityCategories.SpeechImpairment,
           disabilityType: DisabilityTypes.PersistentOrProlonged,
@@ -309,7 +307,7 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
           finalNotes: "First final note UPDATED.",
         },
         {
-          id: savedSecondDisability.id,
+          id: secondDisability.id,
           disabilityPriority: 1,
           disabilityCategory: DisabilityCategories.LearningDisability,
           disabilityType: DisabilityTypes.Permanent,
@@ -374,7 +372,7 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
       completedAt: null,
       disabilities: [
         {
-          id: savedSecondDisability.id,
+          id: secondDisability.id,
           disabilityPriority: 1,
           disabilityCategory: DisabilityCategories.LearningDisability,
           disabilityType: DisabilityTypes.Permanent,
@@ -388,7 +386,7 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
           updatedAt: updateNow,
         },
         {
-          id: savedFirstDisability.id,
+          id: firstDisability.id,
           disabilityPriority: 2,
           disabilityCategory: DisabilityCategories.SpeechImpairment,
           disabilityType: DisabilityTypes.PersistentOrProlonged,
