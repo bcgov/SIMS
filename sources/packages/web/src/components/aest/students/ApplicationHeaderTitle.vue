@@ -33,7 +33,7 @@ export default defineComponent({
     ): Record<string, string | undefined> => {
       return {
         Name: application.studentFullName,
-        "Application number": application.applicationNumber,
+        Application: application.applicationNumber,
         Institution: application.applicationInstitutionName,
         "Study dates": dateOnlyLongPeriodString(
           application.applicationStartDate,
