@@ -34,12 +34,12 @@ describe("DisabilityProfileAESTController(e2e)-getStudentDisabilityProfile", () 
     it(`Should get a disability profile with status ${status} when there is a disability profile with that status available.`, async () => {
       // Arrange
       const now = new Date();
-      const activeProfile = await saveFakeStudentDisabilityProfile(db, {
+      const profile = await saveFakeStudentDisabilityProfile(db, {
         ministryUser,
         disabilityProfileStatus: status,
         now,
       });
-      const endpoint = `/aest/disability-profile/${activeProfile.id}`;
+      const endpoint = `/aest/disability-profile/${profile.id}`;
       const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
       // Act/Assert
@@ -48,7 +48,7 @@ describe("DisabilityProfileAESTController(e2e)-getStudentDisabilityProfile", () 
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
         .expect(({ body }) =>
-          expect(body).toEqual(createExpectedProfile(activeProfile)),
+          expect(body).toEqual(createExpectedProfile(profile)),
         );
     });
   });
