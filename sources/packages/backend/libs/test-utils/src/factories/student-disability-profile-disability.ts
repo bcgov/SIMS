@@ -1,19 +1,23 @@
-import {
-  StudentDisabilityProfile,
-  StudentDisabilityProfileDisability,
-  User,
-} from "@sims/sims-db";
+import { StudentDisabilityProfileDisability, User } from "@sims/sims-db";
 import {
   DiagnosisSamples,
   DisabilityCategories,
   DisabilityImpairments,
   DisabilityTypes,
-} from "@sims/test-utils/models/student-disability-profile.model";
+} from "@sims/test-utils";
 
+/**
+ * Creates a fake student disability profile disability for testing purposes.
+ * @param relations the related entities required to create the disability.
+ * - `creator`: the user who created the disability entry.
+ * @param options optional parameters to customize the created disability.
+ * - `initialValues`: allows overriding specific fields of the created disability.
+ * - `now`: allows setting a specific date for createdAt and updatedAt fields.
+ * @returns a fake disability ready to be saved to the database.
+ */
 export function createFakeStudentDisabilityProfileDisability(
   relations: {
     creator: User;
-    studentDisabilityProfile?: StudentDisabilityProfile;
   },
   options?: {
     initialValues?: Partial<StudentDisabilityProfileDisability>;
@@ -22,18 +26,15 @@ export function createFakeStudentDisabilityProfileDisability(
 ): StudentDisabilityProfileDisability {
   const now = options?.now ?? new Date();
   const disability = new StudentDisabilityProfileDisability();
-  if (relations?.studentDisabilityProfile) {
-    disability.studentDisabilityProfile = relations.studentDisabilityProfile;
-  }
   disability.disabilityPriority =
     options?.initialValues?.disabilityPriority ?? 1;
   disability.disabilityCategory =
-    options?.initialValues?.disabilityCategory || DisabilityCategories.Other;
+    options?.initialValues?.disabilityCategory ?? DisabilityCategories.Other;
   disability.disabilityType =
-    options?.initialValues?.disabilityType ||
+    options?.initialValues?.disabilityType ??
     DisabilityTypes.PersistentOrProlonged;
   disability.disabilityNotes = "Some notes about the disability.";
-  disability.impairments = options?.initialValues?.impairments || [
+  disability.impairments = options?.initialValues?.impairments ?? [
     DisabilityImpairments.Other,
   ];
   disability.impairmentsNotes = "Some notes about the impairments.";
@@ -42,7 +43,6 @@ export function createFakeStudentDisabilityProfileDisability(
   disability.finalNotes = "Some final notes.";
   disability.deletedAt = undefined;
   disability.creator = relations.creator;
-  disability.modifier = relations.creator;
   disability.createdAt = now;
   disability.updatedAt = now;
   return disability;

@@ -21,7 +21,7 @@ import {
   DisabilityCategories,
   DisabilityImpairments,
   DisabilityTypes,
-} from "@sims/test-utils/models/student-disability-profile.model";
+} from "@sims/test-utils";
 
 describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
   let app: INestApplication;
@@ -89,13 +89,15 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
           impairments: true,
           impairmentsNotes: true,
           finalNotes: true,
+          createdAt: true,
+          creator: { id: true },
         },
       },
       relations: {
         student: true,
         creator: true,
         completedBy: true,
-        disabilities: true,
+        disabilities: { creator: true },
       },
       where: {
         id: response.body.id,
@@ -121,6 +123,8 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
           impairments: [DisabilityImpairments.Other],
           impairmentsNotes: "Impairment other note.",
           finalNotes: "Final note.",
+          createdAt: expect.any(Date),
+          creator: { id: ministryUser.id },
         },
       ],
     });
@@ -184,12 +188,17 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
           impairments: true,
           impairmentsNotes: true,
           finalNotes: true,
+          updatedAt: true,
+          modifier: { id: true },
         },
       },
       relations: {
         modifier: true,
         completedBy: true,
-        disabilities: true,
+        disabilities: {
+          creator: true,
+          modifier: true,
+        },
       },
       where: {
         id: existingDraft.id,
@@ -213,6 +222,8 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
           impairments: [DisabilityImpairments.FollowingInstructions],
           impairmentsNotes: "Updated impairments note.",
           finalNotes: "Updated final note.",
+          modifier: { id: ministryUser.id },
+          updatedAt: expect.any(Date),
         },
       ],
     });
@@ -331,12 +342,17 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
           impairments: true,
           impairmentsNotes: true,
           finalNotes: true,
+          modifier: { id: true },
+          updatedAt: true,
         },
       },
       relations: {
         modifier: true,
         completedBy: true,
-        disabilities: true,
+        disabilities: {
+          creator: true,
+          modifier: true,
+        },
       },
       where: {
         id: existingDraft.id,
@@ -385,6 +401,8 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
           impairments: [DisabilityImpairments.Other],
           impairmentsNotes: "Second impairments note.",
           finalNotes: "Second final note.",
+          modifier: { id: ministryUser.id },
+          updatedAt: expect.any(Date),
         },
         {
           id: savedFirstDisability.id,
@@ -397,6 +415,8 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
           impairments: [DisabilityImpairments.FollowingInstructions],
           impairmentsNotes: "Updated impairments note.",
           finalNotes: "First final note UPDATED.",
+          modifier: { id: ministryUser.id },
+          updatedAt: expect.any(Date),
         },
       ],
     });

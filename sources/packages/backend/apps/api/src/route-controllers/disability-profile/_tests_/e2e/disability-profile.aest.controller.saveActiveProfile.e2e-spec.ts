@@ -27,7 +27,7 @@ import {
   DisabilityCategories,
   DisabilityImpairments,
   DisabilityTypes,
-} from "@sims/test-utils/models/student-disability-profile.model";
+} from "@sims/test-utils";
 import { faker } from "@faker-js/faker";
 
 describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
@@ -97,13 +97,15 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
           impairments: true,
           impairmentsNotes: true,
           finalNotes: true,
+          createdAt: true,
+          creator: { id: true },
         },
       },
       relations: {
         student: true,
         creator: true,
         completedBy: true,
-        disabilities: true,
+        disabilities: { creator: true },
       },
       where: {
         student: { id: student.id },
@@ -132,6 +134,8 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
           impairments: [DisabilityImpairments.Other],
           impairmentsNotes: "Impairment other note.",
           finalNotes: "Final note.",
+          createdAt: expect.any(Date),
+          creator: { id: ministryUser.id },
         },
       ],
     });
@@ -152,6 +156,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       id: existingDraft.id,
       disabilities: [
         {
+          // Existing disability will be updated with the new values.
           id: existingDisability.id,
           disabilityPriority: 1,
           disabilityCategory: DisabilityCategories.SpeechImpairment,
@@ -163,6 +168,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
           finalNotes: "Updated final note.",
         },
         {
+          // New disability to be created with the provided values.
           disabilityPriority: 2,
           disabilityCategory: DisabilityCategories.Other,
           disabilityType: DisabilityTypes.Permanent,
@@ -275,6 +281,8 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       id: existingDraft.id,
       disabilities: [
         {
+          // New disability to be created with the provided values, replacing the
+          // existing disability as it's not included in the payload (id is not present).
           disabilityPriority: 1,
           disabilityCategory: DisabilityCategories.SpeechImpairment,
           disabilityType: DisabilityTypes.PersistentOrProlonged,
@@ -362,6 +370,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
           deletedAt: expect.any(Date),
         },
         {
+          // Will be created with the provided values.
           id: expect.any(Number),
           disabilityPriority: 1,
           disabilityCategory: DisabilityCategories.SpeechImpairment,
@@ -474,35 +483,6 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       .expect({
         message:
           "Disability priorities must start at 1, be unique, and have no gaps in the sequence.",
-        error: "Unprocessable Entity",
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-      });
-  });
-
-  it("Should throw an unprocessable entity error when trying to complete a draft profile but the draft ID is invalid.", async () => {
-    // Arrange
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    const payload = {
-      id: 99999,
-      disabilities: [
-        {
-          disabilityPriority: 1,
-          disabilityCategory: DisabilityCategories.LearningDisability,
-          disabilityType: DisabilityTypes.Permanent,
-          diagnosis: [DiagnosisSamples.SampleA],
-          impairments: [DisabilityImpairments.AscendDescendStairs],
-        },
-      ],
-    };
-    // Act
-    await request(app.getHttpServer())
-      .put(nonDataPersistentErrorStudentEndpointURL)
-      .send(payload)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-      .expect({
-        message:
-          "Draft disability profile ID 99999 not found to be updated to complete.",
         error: "Unprocessable Entity",
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });
@@ -808,6 +788,36 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
         ],
         error: "Bad Request",
         statusCode: HttpStatus.BAD_REQUEST,
+      });
+  });
+
+  it("Should throw an unprocessable entity error when trying to complete a draft profile but the draft ID is invalid.", async () => {
+    // Arrange
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const payload = {
+      id: 99999,
+      disabilities: [
+        {
+          disabilityPriority: 1,
+          disabilityCategory: DisabilityCategories.LearningDisability,
+          disabilityType: DisabilityTypes.Permanent,
+          diagnosis: [DiagnosisSamples.SampleA],
+          impairments: [DisabilityImpairments.AscendDescendStairs],
+        },
+      ],
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .put(nonDataPersistentErrorStudentEndpointURL)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "Draft disability profile ID 99999 not found to be updated to complete.",
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });
   });
 
