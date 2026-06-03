@@ -58,8 +58,8 @@ jobs:
       E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
       E2E_TEST_EXTERNAL_USER_CLIENT_SECRET: ${{ secrets.E2E_TEST_EXTERNAL_USER_CLIENT_SECRET }}
       # Throttling settings for tests use a shorter time window to allow the throttle window to expire quickly between test cases, making tests run faster.
-      THROTTLE_TIME: 1000 # in milliseconds
-      THROTTLE_LIMIT: 10
+      THROTTLE_TIME: 100 # in milliseconds
+      THROTTLE_LIMIT: 50
       # Form.io credentials matching the ROOT_EMAIL/ROOT_PASSWORD set in the test Form.io container.
       FORMS_SA_USER_NAME: admin@example.com
       FORMS_SA_PASSWORD: CHANGEME
