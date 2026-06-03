@@ -76,14 +76,13 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       ],
     };
 
-    // Act
+    // Act/Assert
     await request(app.getHttpServer())
       .put(endpoint)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
-    // Assert
     const savedActiveProfiles = await db.studentDisabilityProfile.find({
       select: {
         id: true,
@@ -188,14 +187,13 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       ],
     };
 
-    // Act
+    // Act/Assert
     await request(app.getHttpServer())
       .put(endpoint)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
-    // Assert
     const updatedProfile = await db.studentDisabilityProfile.findOne({
       select: {
         id: true,
@@ -308,14 +306,13 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       ],
     };
 
-    // Act
+    // Act/Assert
     await request(app.getHttpServer())
       .put(endpoint)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
-    // Assert
     const updatedProfile = await db.studentDisabilityProfile.findOne({
       select: {
         id: true,
@@ -404,6 +401,48 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
     });
   });
 
+  it("Should throw an unprocessable entity error when trying to activate an existing one-disability draft profile and the disability ID does not belong to the draft.", async () => {
+    // Arrange
+    const draftCreationNow = new Date();
+    const student = await saveFakeStudent(db.dataSource);
+    const existingDraft = await saveFakeStudentDisabilityProfile(db, {
+      ministryUser,
+      student,
+      disabilityProfileStatus: DisabilityProfileStatus.Draft,
+      now: draftCreationNow,
+    });
+    const endpoint = `/aest/disability-profile/student/${student.id}/active`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const profileCompletionNow = new Date();
+    MockDate.set(profileCompletionNow);
+    const payload = {
+      id: existingDraft.id,
+      disabilities: [
+        {
+          id: 9999,
+          disabilityPriority: 1,
+          disabilityCategory: DisabilityCategories.SpeechImpairment,
+          disabilityType: DisabilityTypes.PersistentOrProlonged,
+          diagnosis: [DiagnosisSamples.SampleB],
+          impairments: [DisabilityImpairments.FollowingInstructions],
+        },
+      ],
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .put(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "The provided disability ID 9999 was not found in the existing profile to be updated.",
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
   it("Should throw an unprocessable entity error when trying to create a new active disability profile when there is an existing draft.", async () => {
     // Arrange
     // Create the draft profile that will cause the unprocessable entity error.
@@ -425,7 +464,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       ],
     };
 
-    // Act
+    // Act/Assert
     await request(app.getHttpServer())
       .put(endpoint)
       .send(payload)
@@ -452,7 +491,8 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
         },
       ],
     };
-    // Act
+
+    // Act/Assert
     await request(app.getHttpServer())
       .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)
@@ -487,7 +527,8 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
         },
       ],
     };
-    // Act
+
+    // Act/Assert
     await request(app.getHttpServer())
       .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)
@@ -522,7 +563,8 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
         },
       ],
     };
-    // Act
+
+    // Act/Assert
     await request(app.getHttpServer())
       .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)
@@ -536,7 +578,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       });
   });
 
-  it("Should throw an unprocessable entity error when trying to create a new profile with a invalid category lookup.", async () => {
+  it("Should throw an unprocessable entity error when trying to create a new profile with an invalid category lookup.", async () => {
     // Arrange
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const payload = {
@@ -551,7 +593,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       ],
     };
 
-    // Act
+    // Act/Assert
     await request(app.getHttpServer())
       .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)
@@ -564,7 +606,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       });
   });
 
-  it("Should throw an unprocessable entity error when trying to create a new profile with a invalid category type lookup.", async () => {
+  it("Should throw an unprocessable entity error when trying to create a new profile with an invalid category type lookup.", async () => {
     // Arrange
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const payload = {
@@ -579,7 +621,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       ],
     };
 
-    // Act
+    // Act/Assert
     await request(app.getHttpServer())
       .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)
@@ -592,7 +634,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       });
   });
 
-  it("Should throw an unprocessable entity error when trying to create a new profile with a invalid impairment lookup.", async () => {
+  it("Should throw an unprocessable entity error when trying to create a new profile with an invalid impairment lookup.", async () => {
     // Arrange
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const payload = {
@@ -610,7 +652,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       ],
     };
 
-    // Act
+    // Act/Assert
     await request(app.getHttpServer())
       .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)
@@ -623,7 +665,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       });
   });
 
-  it("Should throw a bad request error when trying to create a new profile with category defined as OTHER without the required notes.", async () => {
+  it("Should throw a bad request error when trying to create a new profile with a category defined as OTHER without the required notes.", async () => {
     // Arrange
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const payload = {
@@ -641,7 +683,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       ],
     };
 
-    // Act
+    // Act/Assert
     await request(app.getHttpServer())
       .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)
@@ -673,7 +715,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       ],
     };
 
-    // Act
+    // Act/Assert
     await request(app.getHttpServer())
       .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)
@@ -705,7 +747,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       ],
     };
 
-    // Act
+    // Act/Assert
     await request(app.getHttpServer())
       .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)
@@ -737,7 +779,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       ],
     };
 
-    // Act
+    // Act/Assert
     await request(app.getHttpServer())
       .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)
@@ -755,7 +797,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       });
   });
 
-  it("Should throw a bad request error when trying to create a new profile with strings that are exceeding notes.", async () => {
+  it("Should throw a bad request error when trying to create a new profile with strings that exceed the notes.", async () => {
     // Arrange
     const lookupKeyExceedingMaxLength = faker.string.alphanumeric(
       LOOKUP_KEY_MAX_LENGTH + 1,
@@ -783,7 +825,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       ],
     };
 
-    // Act
+    // Act/Assert
     await request(app.getHttpServer())
       .put(nonDataPersistentErrorStudentEndpointURL)
       .send(payload)

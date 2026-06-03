@@ -38,13 +38,12 @@ describe("DisabilityProfileAESTController(e2e)-deleteDraftProfile", () => {
     const endpoint = `/aest/disability-profile/${draftProfile.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    // Act
+    // Act/Assert
     await request(app.getHttpServer())
       .delete(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
-    // Assert
     const deletedDraftProfile = await db.studentDisabilityProfile.findOne({
       select: {
         id: true,
@@ -82,7 +81,7 @@ describe("DisabilityProfileAESTController(e2e)-deleteDraftProfile", () => {
     const endpoint = `/aest/disability-profile/${draftProfile.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    // Act
+    // Act/Assert
     await request(app.getHttpServer())
       .delete(endpoint)
       .auth(token, BEARER_AUTH_TYPE)

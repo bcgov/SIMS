@@ -71,7 +71,7 @@ describe("DisabilityProfileAESTController(e2e)-getStudentDisabilityProfiles", ()
       );
   });
 
-  it("Should get an empty disability profiles list when student has no profiles.", async () => {
+  it("Should get an empty disability profiles list when the student has no profiles.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const endpoint = `/aest/disability-profile/student/${student.id}`;

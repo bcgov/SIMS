@@ -64,14 +64,13 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
     const now = new Date();
     MockDate.set(now);
 
-    // Act
+    // Act/Assert
     const response = await request(app.getHttpServer())
       .put(endpoint)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
-    // Assert
     expect(response.body).toEqual({
       id: expect.any(Number),
     });
@@ -169,14 +168,13 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
     const now = new Date();
     MockDate.set(now);
 
-    // Act
+    // Act/Assert
     const response = await request(app.getHttpServer())
       .put(endpoint)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
-    // Assert
     expect(response.body).toEqual({
       id: existingDraft.id,
     });
@@ -241,7 +239,7 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
     });
   });
 
-  it("Should update an existing draft with two disabilities when only its priorities changed among themselves.", async () => {
+  it("Should update an existing draft with two disabilities when only their priorities have changed among themselves.", async () => {
     // Arrange
     const now = new Date();
     const student = await saveFakeStudent(db.dataSource);
@@ -325,14 +323,13 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
       ],
     };
 
-    // Act
+    // Act/Assert
     const response = await request(app.getHttpServer())
       .put(endpoint)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
 
-    // Assert
     expect(response.body).toEqual({
       id: existingDraft.id,
     });
