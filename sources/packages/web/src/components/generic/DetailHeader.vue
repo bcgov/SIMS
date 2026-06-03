@@ -1,6 +1,6 @@
 <template>
   <div
-    class="d-flex flex-column flex-lg-row flex-lg-wrap align-start align-lg-center"
+    class="d-flex flex-column flex-lg-row flex-wrap align-start align-lg-center"
   >
     <span
       v-for="([headerKey, headerValue], index) in headerEntries"
