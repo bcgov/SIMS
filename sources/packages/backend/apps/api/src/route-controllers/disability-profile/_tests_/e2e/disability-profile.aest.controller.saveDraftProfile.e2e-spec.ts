@@ -22,6 +22,7 @@ import {
   DisabilityImpairments,
   DisabilityTypes,
 } from "@sims/test-utils";
+import MockDate from "mockdate";
 
 describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
   let app: INestApplication;
@@ -36,6 +37,10 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
       dataSource,
       AESTGroups.BusinessAdministrators,
     );
+  });
+
+  beforeEach(async () => {
+    MockDate.reset();
   });
 
   it("Should create a new disability draft profile when no existing draft is provided.", async () => {
@@ -58,6 +63,8 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
         },
       ],
     };
+    const now = new Date();
+    MockDate.set(now);
 
     // Act
     const response = await request(app.getHttpServer())
@@ -76,6 +83,7 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
         disabilityProfileStatus: true,
         student: { id: true },
         creator: { id: true },
+        createdAt: true,
         completedBy: { id: true },
         completedAt: true,
         disabilities: {
@@ -109,6 +117,7 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
       disabilityProfileStatus: DisabilityProfileStatus.Draft,
       student: { id: student.id },
       creator: { id: ministryUser.id },
+      createdAt: now,
       completedBy: null,
       completedAt: null,
       disabilities: [
@@ -123,7 +132,7 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
           impairments: [DisabilityImpairments.Other],
           impairmentsNotes: "Impairment other note.",
           finalNotes: "Final note.",
-          createdAt: expect.any(Date),
+          createdAt: now,
           creator: { id: ministryUser.id },
         },
       ],
@@ -159,6 +168,9 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
       ],
     };
 
+    const now = new Date();
+    MockDate.set(now);
+
     // Act
     const response = await request(app.getHttpServer())
       .put(endpoint)
@@ -175,6 +187,7 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
         id: true,
         disabilityProfileStatus: true,
         modifier: { id: true },
+        updatedAt: true,
         completedBy: { id: true },
         completedAt: true,
         disabilities: {
@@ -196,18 +209,19 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
         modifier: true,
         completedBy: true,
         disabilities: {
-          creator: true,
           modifier: true,
         },
       },
       where: {
         id: existingDraft.id,
       },
+      loadEagerRelations: false,
     });
-    expect(updatedDraft).toMatchObject({
+    expect(updatedDraft).toEqual({
       id: existingDraft.id,
       disabilityProfileStatus: DisabilityProfileStatus.Draft,
       modifier: { id: ministryUser.id },
+      updatedAt: now,
       completedBy: null,
       completedAt: null,
       disabilities: [
@@ -223,7 +237,7 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
           impairmentsNotes: "Updated impairments note.",
           finalNotes: "Updated final note.",
           modifier: { id: ministryUser.id },
-          updatedAt: expect.any(Date),
+          updatedAt: now,
         },
       ],
     });
@@ -276,12 +290,12 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
         now,
       },
     );
-
     draftProfile.disabilities = [firstDisability, secondDisability];
     const existingDraft = await db.studentDisabilityProfile.save(draftProfile);
-
     const [savedFirstDisability, savedSecondDisability] =
       existingDraft.disabilities;
+    const updateNow = new Date();
+    MockDate.set(updateNow);
     const endpoint = `/aest/disability-profile/student/${student.id}/draft`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const payload = {
@@ -349,10 +363,7 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
       relations: {
         modifier: true,
         completedBy: true,
-        disabilities: {
-          creator: true,
-          modifier: true,
-        },
+        disabilities: { modifier: true },
       },
       where: {
         id: existingDraft.id,
@@ -360,30 +371,7 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
       order: { disabilities: { disabilityPriority: "ASC" } },
       loadEagerRelations: false,
     });
-    const updatedDraftForAssertion = {
-      id: updatedDraft?.id,
-      disabilityProfileStatus: updatedDraft?.disabilityProfileStatus,
-      modifier: updatedDraft?.modifier
-        ? { id: updatedDraft.modifier.id }
-        : null,
-      completedBy: updatedDraft?.completedBy
-        ? { id: updatedDraft.completedBy.id }
-        : null,
-      completedAt: updatedDraft?.completedAt,
-      disabilities: updatedDraft?.disabilities.map((disability) => ({
-        id: disability.id,
-        disabilityPriority: disability.disabilityPriority,
-        disabilityCategory: disability.disabilityCategory,
-        disabilityType: disability.disabilityType,
-        disabilityNotes: disability.disabilityNotes,
-        diagnosis: disability.diagnosis,
-        diagnosisNotes: disability.diagnosisNotes,
-        impairments: disability.impairments,
-        impairmentsNotes: disability.impairmentsNotes,
-        finalNotes: disability.finalNotes,
-      })),
-    };
-    expect(updatedDraftForAssertion).toEqual({
+    expect(updatedDraft).toEqual({
       id: existingDraft.id,
       disabilityProfileStatus: DisabilityProfileStatus.Draft,
       modifier: { id: ministryUser.id },
@@ -402,7 +390,7 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
           impairmentsNotes: "Second impairments note.",
           finalNotes: "Second final note.",
           modifier: { id: ministryUser.id },
-          updatedAt: expect.any(Date),
+          updatedAt: updateNow,
         },
         {
           id: savedFirstDisability.id,
@@ -416,7 +404,7 @@ describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
           impairmentsNotes: "Updated impairments note.",
           finalNotes: "First final note UPDATED.",
           modifier: { id: ministryUser.id },
-          updatedAt: expect.any(Date),
+          updatedAt: updateNow,
         },
       ],
     });

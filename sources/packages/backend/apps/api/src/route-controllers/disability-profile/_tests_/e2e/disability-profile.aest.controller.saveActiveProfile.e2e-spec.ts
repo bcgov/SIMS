@@ -29,6 +29,7 @@ import {
   DisabilityTypes,
 } from "@sims/test-utils";
 import { faker } from "@faker-js/faker";
+import MockDate from "mockdate";
 
 describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
   let app: INestApplication;
@@ -50,8 +51,14 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
     nonDataPersistentErrorStudentEndpointURL = `/aest/disability-profile/student/${sharedStudentUnprocessableEntityErrors.id}/active`;
   });
 
+  beforeEach(async () => {
+    MockDate.reset();
+  });
+
   it("Should create a new active disability profile when there is no existing draft.", async () => {
     // Arrange
+    const now = new Date();
+    MockDate.set(now);
     const student = await saveFakeStudent(db.dataSource);
     const endpoint = `/aest/disability-profile/student/${student.id}/active`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -122,7 +129,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       student: { id: student.id },
       creator: { id: ministryUser.id },
       completedBy: { id: ministryUser.id },
-      completedAt: expect.any(Date),
+      completedAt: now,
       disabilities: [
         {
           disabilityPriority: 1,
@@ -134,7 +141,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
           impairments: [DisabilityImpairments.Other],
           impairmentsNotes: "Impairment other note.",
           finalNotes: "Final note.",
-          createdAt: expect.any(Date),
+          createdAt: now,
           creator: { id: ministryUser.id },
         },
       ],
@@ -143,15 +150,19 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
 
   it("Should set an existing one-disability draft profile to active when the draft ID is provided, updating the existing disability and creating a new one.", async () => {
     // Arrange
+    const draftCreationNow = new Date();
     const student = await saveFakeStudent(db.dataSource);
     const existingDraft = await saveFakeStudentDisabilityProfile(db, {
       ministryUser,
       student,
       disabilityProfileStatus: DisabilityProfileStatus.Draft,
+      now: draftCreationNow,
     });
     const [existingDisability] = existingDraft.disabilities;
     const endpoint = `/aest/disability-profile/student/${student.id}/active`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const profileCompletionNow = new Date();
+    MockDate.set(profileCompletionNow);
     const payload = {
       id: existingDraft.id,
       disabilities: [
@@ -227,7 +238,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       disabilityProfileStatus: DisabilityProfileStatus.Active,
       modifier: { id: ministryUser.id },
       completedBy: { id: ministryUser.id },
-      completedAt: expect.any(Date),
+      completedAt: profileCompletionNow,
       disabilities: [
         {
           id: existingDisability.id,
@@ -240,9 +251,9 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
           impairments: [DisabilityImpairments.FollowingInstructions],
           impairmentsNotes: "Updated impairments note.",
           finalNotes: "Updated final note.",
-          createdAt: expect.any(Date),
+          createdAt: draftCreationNow,
           creator: { id: existingDisability.creator.id },
-          updatedAt: expect.any(Date),
+          updatedAt: profileCompletionNow,
           modifier: { id: ministryUser.id },
         },
         {
@@ -256,7 +267,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
           impairments: [DisabilityImpairments.FollowingInstructions],
           impairmentsNotes: null,
           finalNotes: null,
-          createdAt: expect.any(Date),
+          createdAt: profileCompletionNow,
           creator: { id: ministryUser.id },
           updatedAt: expect.any(Date),
           modifier: null,
@@ -267,16 +278,20 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
 
   it("Should set an existing one-disability draft profile to active when the draft ID is provided and the existing disability is replaced by a new one.", async () => {
     // Arrange
+    const draftCreationNow = new Date();
     const student = await saveFakeStudent(db.dataSource);
     const existingDraft = await saveFakeStudentDisabilityProfile(db, {
       ministryUser,
       student,
       disabilityProfileStatus: DisabilityProfileStatus.Draft,
+      now: draftCreationNow,
     });
     // Existing disability will be deleted as it's not included in the payload, and a new one will be created.
     const [existingDisability] = existingDraft.disabilities;
     const endpoint = `/aest/disability-profile/student/${student.id}/active`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const profileCompletionNow = new Date();
+    MockDate.set(profileCompletionNow);
     const payload = {
       id: existingDraft.id,
       disabilities: [
@@ -345,7 +360,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       disabilityProfileStatus: DisabilityProfileStatus.Active,
       modifier: { id: ministryUser.id },
       completedBy: { id: ministryUser.id },
-      completedAt: expect.any(Date),
+      completedAt: profileCompletionNow,
       disabilities: [
         {
           // This record will not be updated, only marked as deleted.
@@ -363,11 +378,11 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
           ],
           impairmentsNotes: "Some notes about the impairments.",
           finalNotes: "Some final notes.",
-          createdAt: expect.any(Date),
+          createdAt: draftCreationNow,
           creator: { id: ministryUser.id },
-          updatedAt: expect.any(Date),
+          updatedAt: profileCompletionNow,
           modifier: { id: ministryUser.id },
-          deletedAt: expect.any(Date),
+          deletedAt: profileCompletionNow,
         },
         {
           // Will be created with the provided values.
@@ -381,7 +396,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
           impairments: [DisabilityImpairments.FollowingInstructions],
           impairmentsNotes: "Updated impairments note.",
           finalNotes: "Updated final note.",
-          createdAt: expect.any(Date),
+          createdAt: profileCompletionNow,
           creator: { id: ministryUser.id },
           updatedAt: expect.any(Date),
           modifier: null,
