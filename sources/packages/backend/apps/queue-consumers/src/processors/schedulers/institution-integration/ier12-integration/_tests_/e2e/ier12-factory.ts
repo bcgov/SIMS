@@ -102,7 +102,7 @@ export async function saveIER12TestInputData(
     programYear,
     createSecondDisbursement,
     referenceSubmission,
-    program!,
+    program ?? undefined,
     testInputData.offering.offeringIntensity,
   );
   // Assessment and its awards.
