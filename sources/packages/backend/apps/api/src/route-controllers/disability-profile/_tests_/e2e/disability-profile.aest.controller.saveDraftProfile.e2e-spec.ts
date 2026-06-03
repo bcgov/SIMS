@@ -14,14 +14,12 @@ import {
   createFakeStudentDisabilityProfile,
   saveFakeStudent,
   saveFakeStudentDisabilityProfile,
-} from "@sims/test-utils";
-import { DisabilityProfileStatus, User } from "@sims/sims-db";
-import {
   DiagnosisSamples,
   DisabilityCategories,
   DisabilityImpairments,
   DisabilityTypes,
 } from "@sims/test-utils";
+import { DisabilityProfileStatus, User } from "@sims/sims-db";
 import MockDate from "mockdate";
 
 describe("DisabilityProfileAESTController(e2e)-saveDraftProfile", () => {
