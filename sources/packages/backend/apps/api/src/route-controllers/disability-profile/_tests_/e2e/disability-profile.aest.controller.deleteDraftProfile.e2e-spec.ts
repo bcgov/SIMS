@@ -13,6 +13,7 @@ import {
   saveFakeStudentDisabilityProfile,
 } from "@sims/test-utils";
 import { DisabilityProfileStatus, User } from "@sims/sims-db";
+import MockDate from "mockdate";
 
 describe("DisabilityProfileAESTController(e2e)-deleteDraftProfile", () => {
   let app: INestApplication;
@@ -29,11 +30,18 @@ describe("DisabilityProfileAESTController(e2e)-deleteDraftProfile", () => {
     );
   });
 
+  beforeEach(() => {
+    MockDate.set(new Date());
+  });
+
   it("Should delete a draft disability profile and set deletedAt when the profile exists.", async () => {
     // Arrange
+    const now = new Date();
+    MockDate.set(now);
     const draftProfile = await saveFakeStudentDisabilityProfile(db, {
       ministryUser,
       disabilityProfileStatus: DisabilityProfileStatus.Draft,
+      now,
     });
     const endpoint = `/aest/disability-profile/${draftProfile.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -64,11 +72,11 @@ describe("DisabilityProfileAESTController(e2e)-deleteDraftProfile", () => {
     });
     expect(deletedDraftProfile).toEqual({
       id: draftProfile.id,
-      deletedAt: expect.any(Date),
+      deletedAt: now,
       modifier: {
         id: ministryUser.id,
       },
-      updatedAt: expect.any(Date),
+      updatedAt: now,
     });
   });
 
