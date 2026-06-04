@@ -6,7 +6,7 @@ import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
 import { IER12IntegrationQueueInDTO } from "./models/ier.model";
-import { INSTITUTION_LOCATION_CODE_MAX_LENGTH } from "@sims/sims-db/entities/institution.model";
+import { INSTITUTION_LOCATION_CODE_MAX_LENGTH } from "@sims/sims-db";
 
 @Processor(QueueNames.IER12Integration)
 export class IER12IntegrationScheduler extends BaseScheduler<IER12IntegrationQueueInDTO> {
