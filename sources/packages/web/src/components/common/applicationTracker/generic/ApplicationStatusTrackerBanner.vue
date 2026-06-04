@@ -9,7 +9,7 @@
       <v-icon class="mt-1" :icon="icon" :size="20" :color="iconColor" />
     </template>
     <template #title>
-      <h3 class="category-header-medium mb-3 label">
+      <h3 class="category-header-medium mb-3 label my-0">
         {{ label }}
       </h3>
     </template>

@@ -1,15 +1,19 @@
-import "@mdi/font/css/materialdesignicons.css";
-import "@fortawesome/fontawesome-free/css/all.css";
-import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "vuetify/styles";
+import "../assets/css/reset.scss";
+import "@mdi/font/css/materialdesignicons.css";
+import "@fortawesome/fontawesome-free/css/all.css";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { aliases, fa } from "vuetify/iconsets/fa";
 import { mdi } from "vuetify/iconsets/mdi";
-import { VDivider, VDataTableServer, VDataTable } from "vuetify/components";
-import { VDateInput } from "vuetify/labs/VDateInput";
+import {
+  VDivider,
+  VDataTableServer,
+  VDataTable,
+  VDateInput,
+} from "vuetify/components";
 
 export default createVuetify({
   components: {
@@ -42,6 +46,7 @@ export default createVuetify({
     },
   },
   theme: {
+    defaultTheme: "light",
     themes: {
       light: {
         dark: false,

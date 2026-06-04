@@ -131,7 +131,11 @@
     ],
   },
   "settings": {
-    "eslint.workingDirectories": [{ "mode": "auto" }],
+    "eslint.workingDirectories": [
+      {
+        "mode": "auto",
+      },
+    ],
     "search.exclude": {
       "**/bin": true,
       "**/obj": true,
@@ -269,5 +273,14 @@
     ],
     "jest.runMode": "on-demand",
     "jest.jestCommandLine": "npm run test:e2e:all:local --",
+    "mcp": {
+      "servers": {
+        "vuetify-mcp": {
+          "url": "https://mcp.vuetifyjs.com/mcp",
+          "type": "http",
+        },
+      },
+      "inputs": [],
+    },
   },
 }
