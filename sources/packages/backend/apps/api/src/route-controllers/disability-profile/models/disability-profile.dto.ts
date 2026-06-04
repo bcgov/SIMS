@@ -68,6 +68,24 @@ export class StudentDisabilityProfilesAPIOutDTO {
   profiles: StudentDisabilityProfileAPIOutDTO[];
 }
 
+export class DisabilityExternalAPIOutDTO {
+  disabilityCategory: string;
+  disabilityType: string;
+  disabilityNotes?: string;
+  diagnosis: string[];
+  diagnosisNotes?: string;
+  impairments: string[];
+  impairmentsNotes?: string;
+  finalNotes?: string;
+}
+
+export class DisabilityProfileExternalAPIOutDTO {
+  firstName?: string;
+  lastName: string;
+  sin: string;
+  disabilities: DisabilityExternalAPIOutDTO[];
+}
+
 export class StudentDisabilityAPIInDTO {
   @IsOptional()
   @IsPositive()

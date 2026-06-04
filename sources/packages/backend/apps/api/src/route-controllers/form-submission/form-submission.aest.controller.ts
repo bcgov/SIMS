@@ -27,7 +27,7 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { AuthorizedParties, IUserToken, UserGroups } from "../../auth";
+import { AuthorizedParties, MinistryUserToken, UserGroups } from "../../auth";
 import {
   FormSubmissionCompletionAPIInDTO,
   FormSubmissionItemDecisionAPIInDTO,
@@ -63,7 +63,7 @@ export class FormSubmissionAESTController extends BaseController {
    */
   @Get("pending")
   async getPendingFormSubmissions(
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: MinistryUserToken,
     @Query() pagination: FormSubmissionPendingPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<FormSubmissionPendingSummaryAPIOutDTO>> {
     const pendingSubmissions =
@@ -94,7 +94,7 @@ export class FormSubmissionAESTController extends BaseController {
    */
   @Get("student/:studentId")
   async getFormSubmissionHistory(
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: MinistryUserToken,
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<FormSubmissionsAPIOutDTO> {
     const submissions =
@@ -123,7 +123,7 @@ export class FormSubmissionAESTController extends BaseController {
   })
   @Get(":formSubmissionId")
   async getFormSubmission(
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: MinistryUserToken,
     @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
     @Query("itemId", new ParseIntPipe({ optional: true })) itemId?: number,
   ): Promise<FormSubmissionMinistryAPIOutDTO> {
@@ -153,7 +153,7 @@ export class FormSubmissionAESTController extends BaseController {
   async submitItemDecision(
     @Param("formSubmissionItemId", ParseIntPipe) formSubmissionItemId: number,
     @Body() payload: FormSubmissionItemDecisionAPIInDTO,
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: MinistryUserToken,
   ): Promise<void> {
     try {
       await this.formSubmissionApprovalService.saveFormSubmissionItem(
@@ -204,7 +204,7 @@ export class FormSubmissionAESTController extends BaseController {
   @Patch(":formSubmissionId/complete")
   async completeFormSubmission(
     @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: MinistryUserToken,
     @Body() payload: FormSubmissionCompletionAPIInDTO,
   ): Promise<void> {
     try {

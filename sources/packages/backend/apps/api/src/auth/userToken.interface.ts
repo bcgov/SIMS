@@ -1,13 +1,13 @@
 import { InstitutionUserAuthorizations } from "../services/institution-user-auth/institution-user-auth.models";
-import { AuthorizedParties, Role } from ".";
+import { AuthorizedParties, ClientRole, Role } from ".";
 import { IdentityProviders, SpecificIdentityProviders } from "@sims/sims-db";
 
 /**
  * User Roles extracted from the token during the
  * authentication process on JwtStrategy validate method.
  */
-export interface Roles {
-  roles: string[];
+export interface ClientRoles {
+  roles: ClientRole[];
 }
 
 /**
@@ -15,7 +15,7 @@ export interface Roles {
  * authentication process on JwtStrategy validate method.
  */
 export interface ResourceAccess {
-  aest: Roles;
+  [key: string]: ClientRoles;
 }
 
 /**
@@ -76,7 +76,7 @@ export interface IUserToken {
    * The roles are expected to be defined as a property under the resource_access object
    * corresponding to the authorized party (client ID).
    */
-  roles: Role[];
+  roles: ClientRole[];
   /**
    * Available only for BCeID authenticated users.
    * For instance, "SIMS_COLLC" as opposed to Keycloak userName
@@ -127,6 +127,10 @@ export interface StudentUserToken extends IUserToken {
   studentId?: number;
 }
 
+export interface MinistryUserToken extends IUserToken {
+  roles: Role[];
+}
+
 /**
  * Extracts the user roles from the token resource access based on the authorized party (client ID).
  * The roles are expected to be defined as a property under the resource_access object
@@ -135,7 +139,7 @@ export interface StudentUserToken extends IUserToken {
  * @returns an array of roles extracted from the token resource access for the authorized party,
  * or an empty array if no roles information are present.
  */
-export function extractRolesFromToken(token: IUserToken): Role[] {
+export function extractRolesFromToken(token: IUserToken): ClientRole[] {
   if (!token.resource_access || !token.azp) {
     return [];
   }

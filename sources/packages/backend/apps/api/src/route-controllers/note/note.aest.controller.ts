@@ -25,7 +25,7 @@ import {
   Groups,
   Roles,
 } from "../../auth/decorators";
-import { IUserToken } from "../../auth/userToken.interface";
+import { IUserToken, MinistryUserToken } from "../../auth/userToken.interface";
 import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
@@ -145,7 +145,7 @@ export class NoteAESTController extends BaseController {
   })
   @Post("student/:studentId")
   async addStudentNote(
-    @UserToken() userToken: IUserToken,
+    @UserToken() userToken: MinistryUserToken,
     @Param("studentId", ParseIntPipe) studentId: number,
     @Body() payload: NoteAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {

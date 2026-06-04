@@ -1,5 +1,5 @@
 /**
- * Application roles to be used in alongside with RolesGuard.
+ * Ministry user roles to control the access of ministry API endpoints.
  */
 export enum Role {
   /**
@@ -50,3 +50,17 @@ export enum Role {
   StudentDeleteRestriction = "student-delete-restriction",
   StudentEditDisabilityProfile = "student-edit-disability-profile",
 }
+
+/**
+ * External user roles to control the access of external API endpoints.
+ */
+export enum ExternalRole {
+  StudentActiveSins = "student-active-sins",
+  StudentDetailsSearch = "student-details-search",
+  StudentDisabilityProfiles = "student-disability-profiles",
+}
+
+/**
+ * Client role is the combination of all the roles including the ministry user roles and external user roles.
+ */
+export type ClientRole = Role | ExternalRole;

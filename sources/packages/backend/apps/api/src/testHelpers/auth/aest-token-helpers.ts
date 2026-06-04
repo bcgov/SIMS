@@ -98,7 +98,7 @@ export async function authorizeDynamicFormConfigurations(
         roles.map((role) =>
           createFormRole(dynamicFormConfiguration.authorizationKey!, role),
         ),
-    );
+    ) as Role[];
     payload.resource_access[AuthorizedParties.aest].roles.push(...formRoles);
   });
 }
@@ -121,7 +121,7 @@ export async function authorizeMultipleDynamicFormConfigurations(
         roles.map((role) =>
           createFormRole(formConfiguration.authorizationKey!, role),
         ),
-    );
+    ) as Role[];
     payload.resource_access[AuthorizedParties.aest].roles.push(...formRoles);
   });
 }
