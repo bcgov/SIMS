@@ -102,14 +102,14 @@ export async function saveIER12TestInputData(
     programYear,
     createSecondDisbursement,
     referenceSubmission,
-    program,
+    program ?? undefined,
     testInputData.offering.offeringIntensity,
   );
   // Assessment and its awards.
   const assessment = await saveIER12AssessmentFromTestInput(
     db,
     testInputData.assessment,
-    application.currentAssessment,
+    application.currentAssessment!,
     studyStartDate,
     studyEndDate,
     referenceSubmission,
@@ -117,17 +117,20 @@ export async function saveIER12TestInputData(
   // Program
   await updateIER12ProgramFromTestInput(
     db,
-    assessment.offering.educationProgram.id,
+    assessment.offering!.educationProgram.id,
     testInputData.educationProgram,
   );
+  const updatedProgram = await db.educationProgram.findOneByOrFail({
+    id: assessment.offering!.educationProgram.id,
+  });
 
   // Parent offering, if needed.
   const parentOffering = testInputData.parentOfferingAvailable
     ? await db.educationProgramOffering.save(
         createFakeEducationProgramOffering({
-          institutionLocation: assessment.offering.institutionLocation,
-          auditUser: assessment.offering.submittedBy,
-          program: assessment.offering.educationProgram,
+          institutionLocation: assessment.offering!.institutionLocation,
+          auditUser: assessment.offering!.submittedBy,
+          program: updatedProgram,
         }),
       )
     : undefined;
@@ -135,7 +138,7 @@ export async function saveIER12TestInputData(
   // Offering
   await updateIER12OfferingFromTestInput(
     db,
-    assessment.offering.id,
+    assessment.offering!.id,
     testInputData.offering,
     studyStartDate,
     studyEndDate,
@@ -271,7 +274,7 @@ async function saveIER12AssessmentFromTestInput(
   assessment.workflowData = testInputAssessment.workflowData as WorkflowData;
   // Schedules and awards mapping.
   const [firstDisbursement, secondDisbursement] =
-    assessment.disbursementSchedules;
+    assessment.disbursementSchedules || [];
   const [firstDisbursementTestInput, secondDisbursementTestInput] =
     testInputAssessment.disbursementSchedules;
   mapTestInputToDisbursementAndAwards(
@@ -374,7 +377,7 @@ async function updateIER12OfferingFromTestInput(
   studyStartDate: string,
   studyEndDate: string,
   relations?: {
-    parentOffering: EducationProgramOffering;
+    parentOffering?: EducationProgramOffering;
   },
 ): Promise<void> {
   const offeringUpdate = {
