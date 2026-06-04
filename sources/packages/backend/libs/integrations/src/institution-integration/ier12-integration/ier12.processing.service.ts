@@ -39,11 +39,6 @@ import {
   ApplicationEventCodeUtilsService,
   ApplicationEventDateUtilsService,
 } from "./utils-service";
-import {
-  IER12_INSTITUTION_CODE_INVALID,
-  IER12_MODIFIED_SINCE_DATE_INVALID,
-  IER12_MODIFIED_SINCE_DATE_OVER_ONE_YEAR,
-} from "../../constants";
 
 @Injectable()
 export class IER12ProcessingService {
@@ -77,13 +72,8 @@ export class IER12ProcessingService {
     modifiedSince?: string,
     institutionCode?: string,
   ): Promise<IER12UploadResult[]> {
-    // Validate job data.
-    if (!this.validateJobData(processSummary, modifiedSince, institutionCode)) {
-      return [];
-    }
-
     processSummary.info(
-      `Retrieving application current assessment details for IER 12${this.displayInstitutionCode(institutionCode)}.`,
+      "Retrieving application current assessment details for IER 12.",
     );
     // By default, the modifiedSince date is the previous day from today.
     const today = getISODateOnlyString(new Date());
@@ -94,8 +84,14 @@ export class IER12ProcessingService {
     // If not provided, the modifiedUntilDate is set to start of day today so that the default execution sends exactly one day of data.
     const modifiedUntilDate = modifiedSince ? new Date() : new Date(today);
     processSummary.info(
-      `Retrieving data related to IER 12 created or modified between ${modifiedSinceDate} and ${modifiedUntilDate}${this.displayInstitutionCode(institutionCode)}.`,
+      `Retrieving data related to IER 12 created or modified between ${modifiedSinceDate} and ${modifiedUntilDate}.`,
     );
+    if (institutionCode) {
+      processSummary.info(
+        `Filtering assessments for institution code: ${institutionCode}`,
+      );
+    }
+
     const pendingApplications =
       await this.studentAssessmentService.getPendingApplicationsCurrentAssessment(
         modifiedSinceDate,
@@ -103,14 +99,10 @@ export class IER12ProcessingService {
         institutionCode,
       );
     if (!pendingApplications.length) {
-      processSummary.info(
-        `No assessments found for IER 12${this.displayInstitutionCode(institutionCode)}.`,
-      );
+      processSummary.info("No assessments found for IER 12.");
       return [];
     }
-    processSummary.info(
-      `Found ${pendingApplications.length} assessment(s)${this.displayInstitutionCode(institutionCode)}.`,
-    );
+    processSummary.info(`Found ${pendingApplications.length} assessment(s).`);
     const pendingApplicationIds = pendingApplications.map(
       (application) => application.id,
     );
@@ -147,7 +139,7 @@ export class IER12ProcessingService {
         uploadResult.push(ierUploadResult);
       }
     } catch (error: unknown) {
-      const errorMessage = `Error while uploading content for IER 12${this.displayInstitutionCode(institutionCode)}.`;
+      const errorMessage = "Error while uploading content for IER 12.";
       this.logger.error(errorMessage, error);
       processSummary.error(errorMessage, error);
     }
@@ -464,46 +456,5 @@ export class IER12ProcessingService {
     return studentOverawardsBalance
       ? studentOverawardsBalance[awardType] > 0
       : false;
-  }
-
-  /**
-   * Helper method to display institution code in the log messages if provided.
-   * @param institutionCode institution code to be displayed in the log message.
-   * @returns formatted string with institution code if provided, otherwise an empty string.
-   */
-  private displayInstitutionCode(institutionCode?: string): string {
-    return institutionCode ? ` with institution code ${institutionCode}` : "";
-  }
-
-  /**
-   * Validate the job data for IER 12 processing.
-   * @param processSummary process summary for logging.
-   * @param modifiedSince Inclusive date since the application or student data was modified.
-   * @param institutionCode Institution code to limit applications to a specific institution.
-   * @returns boolean indicating whether the job data is valid or not.
-   */
-  private validateJobData(
-    processSummary: ProcessSummary,
-    modifiedSince?: string,
-    institutionCode?: string,
-  ): boolean {
-    // Validate job data.
-    if (modifiedSince !== undefined) {
-      const modifiedSinceDate = new Date(modifiedSince);
-      if (Number.isNaN(modifiedSinceDate.getTime())) {
-        processSummary.info(IER12_MODIFIED_SINCE_DATE_INVALID);
-        return false;
-      }
-      const oneYearAgo = addDays(-365, getISODateOnlyString(new Date()));
-      if (modifiedSinceDate < oneYearAgo) {
-        processSummary.info(IER12_MODIFIED_SINCE_DATE_OVER_ONE_YEAR);
-        return false;
-      }
-    }
-    if (institutionCode !== undefined && institutionCode.length !== 4) {
-      processSummary.info(IER12_INSTITUTION_CODE_INVALID);
-      return false;
-    }
-    return true;
   }
 }

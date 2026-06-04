@@ -199,7 +199,7 @@ export class StudentAssessmentService {
       })
       .orderBy("currentAssessment.assessmentDate", "ASC")
       .addOrderBy("disbursementSchedule.disbursementDate", "ASC");
-    return await query.getMany();
+    return query.getMany();
   }
 
   /**

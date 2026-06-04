@@ -7,19 +7,22 @@ import {
 
 /**
  * Creates the mocked IER12 job payload for the scheduler.
- * @param modifiedSince Inclusive date since the application or student data was modified.
- * @param institutionCode Institution code to limit applications to a specific institution.
+ *  @param options options.
+ * - `modifiedSince` Inclusive date since the application or student data was modified.
+ * - `institutionCode` Institution code to limit applications to a specific institution.
  * @returns mocked IER12 payload.
  */
-export function createIER12SchedulerJobMock(
-  modifiedSince?: string | Date,
-  institutionCode?: string,
-): MockBullJobResult<IER12IntegrationQueueInDTO> {
+export function createIER12SchedulerJobMock(options?: {
+  modifiedSince?: string | Date;
+  institutionCode?: string;
+}): MockBullJobResult<IER12IntegrationQueueInDTO> {
   // Queued job.
   const data = {} as IER12IntegrationQueueInDTO;
-  if (modifiedSince) {
-    data.modifiedSince = getISODateOnlyString(modifiedSince);
+  if (options?.modifiedSince) {
+    data.modifiedSince = getISODateOnlyString(options.modifiedSince);
   }
-  data.institutionCode = institutionCode;
+  if (options?.institutionCode) {
+    data.institutionCode = options.institutionCode;
+  }
   return mockBullJob<IER12IntegrationQueueInDTO>(data);
 }

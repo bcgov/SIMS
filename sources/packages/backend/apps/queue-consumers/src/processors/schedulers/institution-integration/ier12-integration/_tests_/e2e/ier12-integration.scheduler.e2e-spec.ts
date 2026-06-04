@@ -502,9 +502,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       );
 
       // Queued job.
-      const mockedJob = createIER12SchedulerJobMock(
-        application.currentAssessment.assessmentDate,
-      );
+      const mockedJob = createIER12SchedulerJobMock({
+        modifiedSince: application.currentAssessment!.assessmentDate,
+      });
 
       // Act
       const ier12Results = await processor.processQueue(mockedJob.job);
@@ -588,9 +588,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
 
     // Queued job.
-    const mockedJob = createIER12SchedulerJobMock(
-      application.currentAssessment.assessmentDate,
-    );
+    const mockedJob = createIER12SchedulerJobMock({
+      modifiedSince: application.currentAssessment!.assessmentDate,
+    });
 
     // Act
     const ier12Results = await processor.processQueue(mockedJob.job);
@@ -687,9 +687,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     });
 
     // Queued job.
-    const mockedJob = createIER12SchedulerJobMock(
-      application.currentAssessment!.assessmentDate,
-    );
+    const mockedJob = createIER12SchedulerJobMock({
+      modifiedSince: application.currentAssessment!.assessmentDate,
+    });
 
     // Act
     const ier12Results = await processor.processQueue(mockedJob.job);
@@ -783,9 +783,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     });
 
     // Queued job.
-    const mockedJob = createIER12SchedulerJobMock(
-      application.currentAssessment!.assessmentDate,
-    );
+    const mockedJob = createIER12SchedulerJobMock({
+      modifiedSince: application.currentAssessment!.assessmentDate,
+    });
 
     // Act
     const ier12Results = await processor.processQueue(mockedJob.job);
@@ -974,9 +974,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
 
     // Queued job.
-    const mockedJob = createIER12SchedulerJobMock(
-      application.currentAssessment!.assessmentDate,
-    );
+    const mockedJob = createIER12SchedulerJobMock({
+      modifiedSince: application.currentAssessment!.assessmentDate,
+    });
 
     // Act
     const ier12Results = await processor.processQueue(mockedJob.job);
@@ -1116,7 +1116,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
 
     // Queued job.
-    const mockedJob = createIER12SchedulerJobMock(referenceSubmissionDate);
+    const mockedJob = createIER12SchedulerJobMock({
+      modifiedSince: referenceSubmissionDate,
+    });
 
     // Act
     const ier12Results = await processor.processQueue(mockedJob.job);
@@ -1236,9 +1238,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
 
     // Queued job.
-    const mockedJob = createIER12SchedulerJobMock(
-      application.currentAssessment!.assessmentDate,
-    );
+    const mockedJob = createIER12SchedulerJobMock({
+      modifiedSince: application.currentAssessment!.assessmentDate,
+    });
 
     // Act
     const ier12Results = await processor.processQueue(mockedJob.job);
@@ -1329,9 +1331,9 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
 
     // Queued job.
-    const mockedJob = createIER12SchedulerJobMock(
-      application.currentAssessment!.assessmentDate,
-    );
+    const mockedJob = createIER12SchedulerJobMock({
+      modifiedSince: application.currentAssessment!.assessmentDate,
+    });
 
     // Act
     const ier12Results = await processor.processQueue(mockedJob.job);
@@ -1428,7 +1430,6 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       },
       assessment: {
         triggerType: AssessmentTriggerType.OriginalAssessment,
-
         assessmentDate: assessmentJaneDate,
         workflowData: WORKFLOW_DATA_MARRIED_WITH_DEPENDENTS,
         assessmentData: ASSESSMENT_DATA_MARRIED,
@@ -1460,7 +1461,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     // Get one month's worth of data
     const modifiedSince = dateUtils.addDays(-31);
     // Queued job.
-    const mockedJob = createIER12SchedulerJobMock(modifiedSince);
+    const mockedJob = createIER12SchedulerJobMock({ modifiedSince });
 
     // Act
     const ier12Results = await processor.processQueue(mockedJob.job);
@@ -1560,10 +1561,10 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
 
     // Queued job.
-    const mockedJob = createIER12SchedulerJobMock(
-      referenceSubmissionDate,
-      locationA.institutionCode,
-    );
+    const mockedJob = createIER12SchedulerJobMock({
+      modifiedSince: referenceSubmissionDate,
+      institutionCode: locationA.institutionCode,
+    });
 
     // Act
     const ier12Results = await processor.processQueue(mockedJob.job);
@@ -1571,6 +1572,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     // Assert
     // Assert process result.
     expect(ier12Results).toBeDefined();
+
     // File timestamp.
     const [firstTimestampResult] =
       getFileNameAsCurrentTimestampMock.mock.results;
@@ -1649,7 +1651,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
 
     // Queued job.
     const institutionCode = "ABCD";
-    const mockedJob = createIER12SchedulerJobMock(undefined, institutionCode);
+    const mockedJob = createIER12SchedulerJobMock({ institutionCode });
 
     // Act
     const ier12Results = await processor.processQueue(mockedJob.job);
@@ -1659,9 +1661,10 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const modifiedSince = dateUtils.addDays(-1, today);
     expect(
       mockedJob.containLogMessages([
-        `Retrieving application current assessment details for IER 12 with institution code ${institutionCode}.`,
-        `Retrieving data related to IER 12 created or modified between ${modifiedSince} and ${today} with institution code ${institutionCode}.`,
-        `No assessments found for IER 12 with institution code ${institutionCode}.`,
+        `Retrieving application current assessment details for IER 12.`,
+        `Filtering assessments for institution code: ${institutionCode}`,
+        `Retrieving data related to IER 12 created or modified between ${modifiedSince} and ${today}.`,
+        `No assessments found for IER 12.`,
       ]),
     ).toBe(true);
 
@@ -1672,7 +1675,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
   it("Should not generate an IER12 file for a specific location when the institution code is invalid.", async () => {
     // Queued job.
     const institutionCode = "ABCDE";
-    const mockedJob = createIER12SchedulerJobMock(undefined, institutionCode);
+    const mockedJob = createIER12SchedulerJobMock({ institutionCode });
 
     // Act
     const ier12Results = await processor.processQueue(mockedJob.job);
@@ -1685,13 +1688,13 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     ).toBe(true);
 
     // Assert process result.
-    assertEmptyResults(ier12Results);
+    assertEmptyResults(ier12Results, "Invalid job data.");
   });
 
   it("Should not generate an IER12 file when the modified since date is not a valid date.", async () => {
     // Queued job.
-    const modifiedSinceDate = "ABC-12-3456";
-    const mockedJob = createIER12SchedulerJobMock(modifiedSinceDate);
+    const modifiedSince = "ABC-12-3456";
+    const mockedJob = createIER12SchedulerJobMock({ modifiedSince });
 
     // Act
     const ier12Results = await processor.processQueue(mockedJob.job);
@@ -1704,16 +1707,16 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     ).toBe(true);
 
     // Assert process result.
-    assertEmptyResults(ier12Results);
+    assertEmptyResults(ier12Results, "Invalid job data.");
   });
 
   it("Should not generate an IER12 file when the modified since date is over 1 year in the past.", async () => {
     // Queued job.
-    const modifiedSinceDate = dayjs()
+    const modifiedSince = dayjs()
       .subtract(1, "year")
       .subtract(1, "day")
       .toDate();
-    const mockedJob = createIER12SchedulerJobMock(modifiedSinceDate);
+    const mockedJob = createIER12SchedulerJobMock({ modifiedSince });
 
     // Act
     const ier12Results = await processor.processQueue(mockedJob.job);
@@ -1726,7 +1729,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     ).toBe(true);
 
     // Assert process result.
-    assertEmptyResults(ier12Results);
+    assertEmptyResults(ier12Results, "Invalid job data.");
   });
 
   afterAll(async () => {
@@ -1734,13 +1737,26 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
   });
 });
 
-function assertEmptyResults(ier12Results: string | string[]) {
+/**
+ * Asserts that the IER12 results indicate that no files were generated.
+ * @param ier12Results The results of the IER12 processing.
+ * @param expectedMessage The expected message to assert.
+ */
+function assertEmptyResults(
+  ier12Results: string | string[],
+  expectedMessage = "No IER12 files were generated.",
+) {
   const results = Array.isArray(ier12Results) ? ier12Results : [ier12Results];
   expect(results).toBeDefined();
   expect(results).toHaveLength(1);
-  expect(results[0]).toBe("No IER12 files were generated.");
+  expect(results[0]).toBe(expectedMessage);
 }
 
+/**
+ * Formats a date in the IER12 required format of YYYYMMDD.
+ * @param date The date to format.
+ * @returns The formatted date string.
+ */
 function formatIER12Date(date: Date) {
   return dayjs(date).format("YYYYMMDD");
 }
