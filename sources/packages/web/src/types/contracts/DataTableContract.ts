@@ -833,7 +833,7 @@ export const DisabilityProfileArchivedHeaders = [
     title: "Date completed",
     sortable: true,
     key: "completedAt",
-    width: "150px",
+    width: "180px",
   },
   { title: "Completed by", sortable: true, key: "completedBy" },
   { title: "Disabilities", sortable: false, key: "disabilities" },
