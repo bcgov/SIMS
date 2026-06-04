@@ -797,7 +797,7 @@ describe("DisabilityProfileAESTController(e2e)-saveActiveProfile", () => {
       });
   });
 
-  it("Should throw a bad request error when trying to create a new profile with strings that exceed the notes.", async () => {
+  it("Should throw a bad request error when trying to create a new profile with strings that exceed the notes maximum length.", async () => {
     // Arrange
     const lookupKeyExceedingMaxLength = faker.string.alphanumeric(
       LOOKUP_KEY_MAX_LENGTH + 1,
