@@ -902,8 +902,8 @@ td .formio-custom-tooltip:hover .tooltip-text {
   height: auto;
 }
 
-// Force any formio banners which use .alert-danger to have width: 100% instead width: var(--fa-width, 1.25em) which comes from the fa class.
-// Currently this impacts only sfaa2025-2026-ft.json and sfaa2026-2027-ft.json and can be removed once the ALLOW_BETA_INSTITUTIONS_ONLY flag is removed.
+// Force any formio banners which use .alert-danger to have width: 100% instead of width: var(--fa-width, 1.25em), which comes from the .fa class.
+// Currently this impacts only sfaa2025-26-ft.json and sfaa2026-27-ft.json and can be removed once the ALLOW_BETA_INSTITUTIONS_ONLY flag is removed.
 .formio-component > .alert-danger {
   width: 100%;
 }
