@@ -118,7 +118,7 @@ export function useAssessment() {
     assessment: AssessmentDetailHeader,
   ): Record<string, string> => {
     return {
-      "Application #": assessment.applicationNumber,
+      Application: assessment.applicationNumber,
       Institution: assessment.institutionName,
       "Study dates": `${assessment.offeringStudyStartDate} - ${assessment.offeringStudyEndDate}`,
       Type: assessment.offeringIntensity,

@@ -1,10 +1,10 @@
 <template>
-  <tab-container :enableCardView="false" class="mt-n1">
+  <tab-container :enable-card-view="false" class="mt-n1">
     <body-header-container>
       <template #header>
         <body-header :title="studentFullName">
           <template #subtitle
-            ><detail-header :headerMap="headerDetailsData"
+            ><detail-header :header-map="headerDetailsData"
           /></template>
           <template #status-chip>
             <status-chip-application-offering-change
@@ -21,7 +21,7 @@
         <span class="font-bold">active application details</span> by switching
         tabs located above.
       </p>
-      <offering-view :offeringId="changeRequest.requestedOfferingId" />
+      <offering-view :offering-id="changeRequest.requestedOfferingId" />
       <hr class="horizontal-divider" />
       <h2 class="category-header-large primary-color">Request details</h2>
       <p v-if="changeRequestInProgressWithStudent">
@@ -76,7 +76,7 @@ export default defineComponent({
     const headerDetailsData = computed(
       () =>
         ({
-          "Application #": changeRequest.value.applicationNumber ?? "",
+          Application: changeRequest.value.applicationNumber ?? "",
           Location: changeRequest.value.locationName,
         } as Record<string, string>),
     );

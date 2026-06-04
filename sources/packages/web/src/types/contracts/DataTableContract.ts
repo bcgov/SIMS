@@ -172,7 +172,7 @@ export const AvailableToChangeOfferingChangeSummaryHeaders = [
     key: "studyStartDate",
   },
   {
-    title: "Application #",
+    title: "Application",
     key: "applicationNumber",
   },
   {
@@ -196,7 +196,7 @@ export const InProgressOfferingChangeSummaryHeaders = [
     key: "studyStartDate",
   },
   {
-    title: "Application #",
+    title: "Application",
     key: "applicationNumber",
   },
   {
@@ -230,7 +230,7 @@ export const CompletedOfferingChangeSummaryHeaders = [
     key: "studyStartDate",
   },
   {
-    title: "Application #",
+    title: "Application",
     key: "applicationNumber",
   },
   {
@@ -259,7 +259,7 @@ export const AllInProgressOfferingChangeSummaryHeaders = [
     key: "fullName",
   },
   {
-    title: "Application #",
+    title: "Application",
     sortable: false,
     key: "applicationNumber",
   },
@@ -572,7 +572,7 @@ export const StudentAppealsHistoryHeaders = [
  */
 export const OverawardAdjustmentsHeaders = [
   { title: "Date Added", sortable: false, key: "dateAdded" },
-  { title: "Application #", sortable: false, key: "applicationNumber" },
+  { title: "Application", sortable: false, key: "applicationNumber" },
   { title: "Origin", sortable: false, key: "overawardOrigin" },
   { title: "Added By", sortable: false, key: "addedByUser" },
   { title: "Award", sortable: false, key: "awardValueCode" },
@@ -648,7 +648,7 @@ export const StudentRestrictionsHeaders = [
 export const StudentFileUploadsHeaders = [
   { title: "Document Purpose", sortable: true, key: "groupName" },
   { title: "Uploaded by", sortable: false, key: "uploadedBy" },
-  { title: "Application #", sortable: false, key: "applicationNumber" },
+  { title: "Application", sortable: false, key: "applicationNumber" },
   { title: "Date Submitted", sortable: false, key: "createdAt" },
   { title: "File", sortable: false, key: "fileName" },
 ];
@@ -766,7 +766,7 @@ export const UnapprovedChangesHeaders = [
 export const ReportAChangeApplicationsHeaders = [
   { title: "Name", sortable: true, key: "fullName" },
   { title: "Study dates", sortable: false, key: "studyDates" },
-  { title: "Application #", sortable: true, key: "applicationNumber" },
+  { title: "Application", sortable: true, key: "applicationNumber" },
   { title: "Status", sortable: false, key: "applicationStatus" },
   { title: "Action", sortable: false, key: "action" },
 ];
@@ -778,7 +778,7 @@ export const ExceptionRequestsHeaders = [
   { title: "Date submitted", sortable: true, key: "submittedDate" },
   { title: "Given names", sortable: true, key: "givenNames" },
   { title: "Last name", sortable: true, key: "lastName" },
-  { title: "Application #", sortable: true, key: "applicationNumber" },
+  { title: "Application", sortable: true, key: "applicationNumber" },
   { title: "Action", sortable: false, key: "action" },
 ];
 

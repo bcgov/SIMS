@@ -58,7 +58,7 @@ const headerMap = computed((): Record<string, string | undefined> => {
     : undefined;
   return {
     Name: props.formSubmission?.studentFullName,
-    "Application #": applicationData.value?.applicationNumber,
+    Application: applicationData.value?.applicationNumber,
     Institution: applicationData.value?.applicationInstitutionName,
     "Study dates": studyDates,
     "Form name": applicationData.value ? undefined : formType,

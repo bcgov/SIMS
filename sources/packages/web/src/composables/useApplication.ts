@@ -47,7 +47,7 @@ export function useApplication() {
     }
 
     return {
-      "Application #": application.applicationNumber ?? "-",
+      Application: application.applicationNumber ?? "-",
       Institution: application.applicationInstitutionName ?? "-",
       "Study dates": studyDates ?? "-",
       Type: application.applicationOfferingIntensity,
