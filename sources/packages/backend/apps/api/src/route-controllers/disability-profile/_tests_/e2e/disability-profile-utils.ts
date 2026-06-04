@@ -1,7 +1,5 @@
 import { StudentDisabilityProfile } from "@sims/sims-db";
 import {
-  DiagnosisSamples,
-  DisabilityImpairments,
   DISABILITY_CATEGORY_DESCRIPTIONS,
   DisabilityCategories,
 } from "@sims/test-utils";
@@ -33,12 +31,9 @@ export function createExpectedProfile(
         ],
       disabilityType: disability.disabilityType,
       disabilityNotes: disability.disabilityNotes,
-      diagnosis: [DiagnosisSamples.SampleA],
+      diagnosis: disability.diagnosis,
       diagnosisNotes: disability.diagnosisNotes,
-      impairments: [
-        DisabilityImpairments.AscendDescendStairs,
-        DisabilityImpairments.Other,
-      ],
+      impairments: disability.impairments,
       impairmentsNotes: disability.impairmentsNotes,
       finalNotes: disability.finalNotes,
     })),

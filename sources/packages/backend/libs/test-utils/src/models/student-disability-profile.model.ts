@@ -1,6 +1,7 @@
 /**
  * Disability categories for a student disability profile.
- * This represents a subset of the possible categories defined in the system.
+ * This represents a subset of the possible categories defined in the system,
+ * and includes an invalid category for testing purposes.
  */
 export enum DisabilityCategories {
   LearningDisability = "LEARNING_DISABILITY",
@@ -21,7 +22,8 @@ export const DISABILITY_CATEGORY_DESCRIPTIONS = {
 
 /**
  * Disability types for a student disability profile.
- * This represents a subset of the possible types defined in the system.
+ * This represents a subset of the possible types defined in the system,
+ * and includes an invalid type for testing purposes.
  */
 export enum DisabilityTypes {
   Permanent = "PD",
@@ -31,7 +33,8 @@ export enum DisabilityTypes {
 
 /**
  * Disability impairment types for a student disability profile.
- * This represents a subset of the possible impairments defined in the system.
+ * This represents a subset of the possible impairments defined in the system,
+ * and includes invalid impairments for testing purposes.
  */
 export enum DisabilityImpairments {
   AscendDescendStairs = "ASC_DESC_STAIRS",
