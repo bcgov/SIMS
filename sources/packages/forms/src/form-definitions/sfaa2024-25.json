@@ -20,6 +20,7 @@
       "collapsible": false,
       "key": "page1",
       "type": "panel",
+      "clearOnHide": true,
       "label": "Welcome",
       "components": [
         {
@@ -178,6 +179,7 @@
         "width": "350px"
       },
       "type": "panel",
+      "clearOnHide": true,
       "label": "Program",
       "components": [
         {
@@ -220,6 +222,7 @@
           "hideLabel": true,
           "key": "institutionSelectionPanel",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -308,6 +311,7 @@
           "key": "panel2",
           "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!!data.mySchoolIsNotListed) ||\n  !!data.isReadOnly;",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -352,6 +356,7 @@
               "key": "program",
               "customConditional": "show = \n  (data.howWillYouBeAttendingTheProgram === 'Full Time' ||\n   data.howWillYouBeAttendingTheProgram === 'Part Time')",
               "type": "panel",
+              "clearOnHide": true,
               "label": "Panel",
               "input": false,
               "tableView": false,
@@ -422,6 +427,7 @@
                   "key": "customProgramAndOffering",
                   "customConditional": "show = (data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) ||\n        (data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false);",
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "Custom program and offering",
                   "input": false,
                   "tableView": false,
@@ -654,6 +660,7 @@
                   "key": "programDesc",
                   "customConditional": "show =\r\n  ((!!data.selectedProgram &&\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\r\n  ) || (data.isReadOnly && data.selectedProgramDesc?.id));\r\n",
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "programDesc",
                   "buttonSettings": {
                     "previous": true,
@@ -929,6 +936,7 @@
             "eq": "Part Time"
           },
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -1151,6 +1159,7 @@
           "hideLabel": true,
           "key": "additonalInformationPanel",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -1323,6 +1332,7 @@
       "collapsible": false,
       "key": "page2",
       "type": "panel",
+      "clearOnHide": true,
       "label": "Personal Information",
       "components": [
         {
@@ -1371,6 +1381,7 @@
           "hideLabel": true,
           "key": "StudentAidBCPersonalInfoPanel",
           "type": "panel",
+          "clearOnHide": true,
           "label": "StudentAid BC Personal Info Panel",
           "input": false,
           "tableView": false,
@@ -1550,6 +1561,7 @@
           "hideLabel": true,
           "key": "personalInformationPanel",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -1620,6 +1632,7 @@
               "key": "citizenshipProofPanel",
               "customConditional": "show = (data.citizenship === 'protectedPerson' || data.citizenship === 'permanentResident');",
               "type": "panel",
+              "clearOnHide": true,
               "label": "Citizenship Proof Panel",
               "input": false,
               "tableView": false,
@@ -1675,6 +1688,7 @@
                     "eq": "permanentResident"
                   },
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "Panel",
                   "input": false,
                   "tableView": false,
@@ -1725,6 +1739,7 @@
                     "eq": "protectedPerson"
                   },
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "Panel",
                   "input": false,
                   "tableView": false,
@@ -1902,6 +1917,7 @@
                 "eq": "no"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Not a BC Resident Panel",
               "input": false,
               "tableView": false,
@@ -2046,6 +2062,7 @@
                   "key": "uploadSupportingDocuments",
                   "customConditional": "show = data['bclivingSituation'];",
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "Upload supporting documents",
                   "buttonSettings": {
                     "previous": true,
@@ -2255,6 +2272,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Indigenous Panel",
               "input": false,
               "tableView": false,
@@ -2381,6 +2399,7 @@
                 }
               ],
               "type": "panel",
+              "clearOnHide": true,
               "hideLabel": true,
               "conditional": {
                 "show": "true",
@@ -2463,6 +2482,7 @@
           "collapsible": false,
           "key": "disabilityInformationPanel",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -2568,6 +2588,7 @@
             "eq": "Full Time"
           },
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -2623,6 +2644,7 @@
           "hideLabel": true,
           "key": "shareInformationWithTrustedContact",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -2690,6 +2712,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Trusted Contact Panel",
               "input": false,
               "tableView": false,
@@ -2822,6 +2845,7 @@
                   "hideLabel": true,
                   "key": "panel4",
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "Panel",
                   "input": false,
                   "tableView": false,
@@ -2967,6 +2991,7 @@
       "collapsible": false,
       "key": "page8",
       "type": "panel",
+      "clearOnHide": true,
       "label": "Family Information",
       "input": false,
       "tableView": false,
@@ -3010,6 +3035,7 @@
           "hideLabel": true,
           "key": "familyDetails",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -3117,6 +3143,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Add Dependants Panel",
               "input": false,
               "tableView": false,
@@ -3309,6 +3336,7 @@
                           "key": "uploadPanel",
                           "customConditional": "show = row.declaredOnTaxes === 'yes';",
                           "type": "panel",
+                          "clearOnHide": true,
                           "label": "Upload panel",
                           "buttonSettings": {
                             "previous": true,
@@ -3525,6 +3553,7 @@
               "key": "dependentsThatYouSupportFinanciallyButDoNotHaveSoleCustody",
               "customConditional": "show = row.supportnocustodyDependants === 'yes';",
               "type": "panel",
+              "clearOnHide": true,
               "label": "Dependents that you support financially but do not have sole custody",
               "input": false,
               "tableView": false,
@@ -3712,6 +3741,7 @@
         "eq": "married"
       },
       "type": "panel",
+      "clearOnHide": true,
       "label": "Partner Information",
       "buttonSettings": {
         "previous": false,
@@ -3772,6 +3802,7 @@
           "hideLabel": true,
           "key": "panel3",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -3887,6 +3918,7 @@
                 }
               ],
               "type": "panel",
+              "clearOnHide": true,
               "hideLabel": true,
               "label": "Panel"
             },
@@ -3957,6 +3989,7 @@
             "eq": "false"
           },
           "type": "panel",
+          "clearOnHide": true,
           "label": "Partner Income Panel",
           "input": false,
           "tableView": false,
@@ -4136,6 +4169,7 @@
                     }
                   ],
                   "type": "panel",
+                  "clearOnHide": true,
                   "hideLabel": true,
                   "conditional": {
                     "show": "true",
@@ -4320,6 +4354,7 @@
                 }
               ],
               "type": "panel",
+              "clearOnHide": true,
               "hideLabel": true,
               "conditional": {
                 "show": "true",
@@ -4567,6 +4602,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "If your partner will be a full-time student, how many weeks of your study period will they also be in studies Panel",
               "input": false,
               "tableView": false,
@@ -4648,6 +4684,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Panel",
               "input": false,
               "tableView": false,
@@ -4730,6 +4767,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Panel",
               "input": false,
               "tableView": false,
@@ -4808,6 +4846,7 @@
         "eq": "true"
       },
       "type": "panel",
+      "clearOnHide": true,
       "label": "Parental information",
       "buttonSettings": {
         "previous": false,
@@ -4858,6 +4897,7 @@
           "hideLabel": true,
           "key": "parentDetails",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -5033,6 +5073,7 @@
                 "eq": "no"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Parental Info Request ",
               "buttonSettings": {
                 "previous": false,
@@ -5226,6 +5267,7 @@
                     "eq": "yes"
                   },
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "Your Siblings and other Dependents Panel",
                   "input": false,
                   "tableView": false,
@@ -5390,6 +5432,7 @@
             "eq": "estranged"
           },
           "type": "panel",
+          "clearOnHide": true,
           "label": "Estranged details panel",
           "input": false,
           "tableView": false,
@@ -5610,6 +5653,7 @@
                 "eq": "no"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Parent is not a BC Resident",
               "input": false,
               "tableView": false,
@@ -5875,6 +5919,7 @@
       "collapsible": false,
       "key": "page4",
       "type": "panel",
+      "clearOnHide": true,
       "label": "Financial Information",
       "components": [
         {
@@ -5923,6 +5968,7 @@
           "hideLabel": true,
           "key": "TaxReturnIncomePanel",
           "type": "panel",
+          "clearOnHide": true,
           "label": "2020 Tax Return Income Panel",
           "input": false,
           "tableView": false,
@@ -5988,6 +6034,7 @@
               "hideLabel": true,
               "key": "craConsentPanel",
               "type": "panel",
+              "clearOnHide": true,
               "label": "Panel",
               "input": false,
               "tableView": false,
@@ -6064,6 +6111,7 @@
             "eq": "Part Time"
           },
           "type": "panel",
+          "clearOnHide": true,
           "label": "2020 Tax Return Income Panel",
           "input": false,
           "tableView": false,
@@ -6142,6 +6190,7 @@
           "hideLabel": true,
           "key": "financialCircumstancesPanel",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -6225,6 +6274,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Decrease in Income. Panel",
               "input": false,
               "tableView": false,
@@ -6364,6 +6414,7 @@
                     "eq": "other"
                   },
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "Other exceptional circumstance Panel",
                   "input": false,
                   "tableView": false,
@@ -6552,6 +6603,7 @@
             "eq": "Full Time"
           },
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -6634,6 +6686,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Panel",
               "input": false,
               "tableView": false,
@@ -6896,6 +6949,7 @@
           "key": "dependantCareCostsPanel",
           "customConditional": "show = (data.howWillYouBeAttendingTheProgram === \"Full Time\" \n            || data.hasDependents === \"yes\");",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -6969,6 +7023,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Daycare costs that you incur for your child(ren) age 11 years or under Panel",
               "input": false,
               "tableView": false,
@@ -7052,6 +7107,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Total unsubsidized day-care costs during class hours for the proposed study period for disabled/infirmed dependents 12 years of age and older Panel",
               "input": false,
               "tableView": false,
@@ -7135,6 +7191,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Panel",
               "input": false,
               "tableView": false,
@@ -7180,6 +7237,7 @@
             "eq": "Full Time"
           },
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -7240,6 +7298,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Panel",
               "input": false,
               "tableView": false,
@@ -7315,6 +7374,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Panel",
               "input": false,
               "tableView": false,
@@ -7390,6 +7450,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Panel",
               "input": false,
               "tableView": false,
@@ -7465,6 +7526,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Panel",
               "input": false,
               "tableView": false,
@@ -7535,6 +7597,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Panel",
               "input": false,
               "tableView": false,
@@ -7579,6 +7642,7 @@
             "eq": "Full Time"
           },
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -7641,6 +7705,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Panel",
               "input": false,
               "tableView": false,
@@ -7695,6 +7760,7 @@
                     "eq": "yes"
                   },
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "Panel",
                   "input": false,
                   "tableView": false,
@@ -7942,6 +8008,7 @@
             "eq": "Full Time"
           },
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -8007,6 +8074,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "If you must relocate to a different city to attend school and you will return home at least once during your study period, what is the cost of one return trip home Panel",
               "input": false,
               "tableView": false,
@@ -8047,6 +8115,7 @@
           "hideLabel": true,
           "key": "additionalTransportationCost",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -8176,6 +8245,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Panel",
               "input": false,
               "tableView": false,
@@ -8315,6 +8385,7 @@
                   "key": "additionTransportationPanel",
                   "customConditional": "show = (data.transportationcostsituation === 'noLimit' || data.transportationcostsituation === 'special' || data.transportationcostsituation === 'educationPlacement');",
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "Addition Transportation Panel",
                   "input": false,
                   "tableView": false,
@@ -8513,6 +8584,7 @@
       "collapsible": false,
       "key": "page5",
       "type": "panel",
+      "clearOnHide": true,
       "label": "Confirm Submission",
       "components": [
         {
@@ -8560,6 +8632,7 @@
             "eq": "Full Time"
           },
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -8628,6 +8701,7 @@
             "eq": "Part Time"
           },
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
