@@ -65,6 +65,8 @@
         <v-menu v-if="isAuthenticated">
           <template #activator="{ props }">
             <v-btn
+              width="46"
+              height="46"
               class="mr-5 nav-item-label"
               rounded="xl"
               icon="fa:fa fa-user"
@@ -84,6 +86,7 @@
           >
             <template v-for="(item, index) in menuItems" :key="index">
               <v-list-item
+                class="my-2"
                 :value="index"
                 @click="item.command"
                 :to="item.props?.to"

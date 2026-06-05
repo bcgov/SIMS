@@ -13,13 +13,13 @@
         {{ label }}
       </h3>
     </template>
-    <span class="label-value-normal">
+    <span class="label-value-normal m-0 p-0">
       <slot name="content">
-        <v-row>
+        <v-row class="m-0 p-0" no-gutters compact>
           <v-col md="auto">
             <span>{{ content }}</span>
           </v-col>
-          <v-col offset-md="5" class="mt-n8">
+          <v-col offset-md="5">
             <slot name="image"></slot>
           </v-col>
         </v-row>

@@ -6,14 +6,14 @@
           <h1 class="category-header-large primary-color">
             Welcome to StudentAid BC
           </h1>
-          <p class="mb-5">
+          <p class="mb-4">
             Access your student account to apply for student financial
             assistance.
           </p>
           <content-group>
             <v-row>
               <v-col>
-                <h2 class="category-header-medium primary-color">
+                <h2 class="category-header-medium primary-color mb-2">
                   Log in or Register
                 </h2>
                 <p class="sign-in-description">
@@ -21,6 +21,7 @@
                   using the BC Services Card account.
                 </p>
                 <v-btn
+                  class="mt-2"
                   color="primary"
                   @click="login(IdentityProviders.BCSC)"
                   prepend-icon="fa:fa fa-user"
@@ -43,7 +44,7 @@
   </v-card>
   <v-card elevation="2" class="mx-auto mt-6" max-width="670px" outlined>
     <v-card-text>
-      <h2 class="category-header-medium primary-color">
+      <h2 class="category-header-medium primary-color mb-2">
         Frequently asked questions
       </h2>
       <v-expansion-panels>
@@ -107,6 +108,7 @@
               and provide further instructions via email.
             </p>
             <v-btn
+              class="mt-2"
               color="primary"
               @click="login(IdentityProviders.BCeIDBoth)"
               prepend-icon="fa:fa fa-user"

@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row no-gutters>
-      <v-col cols="auto" class="mr-2">
+      <v-col cols="auto" class="mr-2 mb-2">
         <dynamic-header
           :title="fullTitleMessage"
           :level="titleHeaderLevel"

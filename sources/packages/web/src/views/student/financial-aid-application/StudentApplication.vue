@@ -55,7 +55,7 @@
           :loading="loadingAvailableProgramYears"
         ></v-select>
         <v-btn
-          class="ma-2"
+          class="my-4"
           variant="elevated"
           data-cy="primaryFooterButton"
           color="primary"
@@ -93,7 +93,7 @@ import {
   LayoutTemplates,
   ApiProcessError,
   OfferingIntensity,
-  DynamicFormType
+  DynamicFormType,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -237,7 +237,7 @@ export default defineComponent({
       offeringIntensityOptions,
       offeringIntensityUpdated,
       loadingAvailableProgramYears,
-      hasValidSIN
+      hasValidSIN,
     };
   },
 });
