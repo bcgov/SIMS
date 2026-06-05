@@ -4,11 +4,13 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
   RequiresUserAccount,
+  Roles,
 } from "../../auth/decorators";
 import { DisabilityProfileService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { DisabilityProfileExternalAPIOutDTO } from "./models/disability-profile.dto";
+import { ExternalRole } from "../../auth";
 
 /**
  * Disability profile controller for external client.
@@ -28,6 +30,7 @@ export class DisabilityProfileExternalController extends BaseController {
    * Gets all active disability profiles for the students with valid SIN numbers.
    * @returns all active disability profiles.
    */
+  @Roles(ExternalRole.StudentDisabilityProfiles)
   @Get()
   async getAllDisabilityProfiles(): Promise<
     DisabilityProfileExternalAPIOutDTO[]
