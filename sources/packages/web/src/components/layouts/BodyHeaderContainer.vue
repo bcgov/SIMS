@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-5">
+  <div class="mb-3">
     <v-card v-if="props.enableCardView">
       <v-container :fluid="true">
         <slot name="header"></slot>

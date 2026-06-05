@@ -1,6 +1,6 @@
 <template>
   <v-skeleton-loader :loading="loading" type="list-item-three-line@3">
-    <v-expansion-panels class="mt-5" multiple v-model="expandedPanels">
+    <v-expansion-panels multiple v-model="expandedPanels">
       <student-disability-profile-disability
         v-for="(disability, index) in disabilities"
         :key="disability.uniqueKey"
