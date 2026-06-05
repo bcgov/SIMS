@@ -10,9 +10,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-current-
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.appealsStudentCurrentYearIncomeAppealData = null;
+    assessmentConsolidatedData.appealsStudentCurrentYearIncomeAppealData =
+      undefined;
     assessmentConsolidatedData.studentDataTaxReturnIncome = 1234;
-    assessmentConsolidatedData.studentDataCRAReportedIncome = null;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = undefined;
 
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
@@ -34,7 +35,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-current-
       currentYearIncome: 20001,
     };
     assessmentConsolidatedData.studentDataTaxReturnIncome = 100002;
-    assessmentConsolidatedData.studentDataCRAReportedIncome = null;
+    assessmentConsolidatedData.studentDataCRAReportedIncome = undefined;
 
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(

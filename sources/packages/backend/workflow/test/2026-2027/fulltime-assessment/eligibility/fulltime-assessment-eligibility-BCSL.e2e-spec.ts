@@ -169,7 +169,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL
           testEligibility.expectedData.expectedAssessmentEligibility,
         );
         expect(
-          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility
+          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
             .isEligibleBCSL,
         ).toBe(testEligibility.expectedData.expectedInstitutionEligibility);
         expect(calculatedAssessment.variables.awardEligibilityBCSL).toBe(

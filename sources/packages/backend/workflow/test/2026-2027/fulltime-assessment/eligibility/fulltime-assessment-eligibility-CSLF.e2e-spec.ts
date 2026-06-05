@@ -127,7 +127,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSLF
           testEligibility.expectedData.expectedAssessmentEligibility,
         );
         expect(
-          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility
+          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
             .isEligibleCSLF,
         ).toBe(testEligibility.expectedData.expectedInstitutionEligibility);
         expect(calculatedAssessment.variables.awardEligibilityCSLF).toBe(

@@ -1,3 +1,4 @@
+import { IOutputVariables } from "@camunda8/sdk/dist/zeebe/types";
 import { WorkflowMultiInstanceProcess } from "..";
 import {
   WorkflowServiceTasks,
@@ -17,7 +18,7 @@ export type WorkflowExpectedTask =
  * @param serviceTasks service tasks to verify.
  */
 export function expectToPassThroughServiceTasks(
-  workflowResultVariables: unknown,
+  workflowResultVariables: IOutputVariables,
   ...expectedTasks: WorkflowExpectedTask[]
 ) {
   expectedTasks.forEach((expectedTask) => {
@@ -42,7 +43,7 @@ export function expectToPassThroughServiceTasks(
  * @param serviceTasks service tasks to verify.
  */
 export function expectNotToPassThroughServiceTasks(
-  workflowResultVariables: unknown,
+  workflowResultVariables: IOutputVariables,
   ...expectedTasks: WorkflowExpectedTask[]
 ) {
   expectedTasks.forEach((expectedTask) => {

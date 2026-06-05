@@ -70,7 +70,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-total-partner-in
       assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
       assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 15000;
       // No income verification happened as student self reported partner's tax return income.
-      assessmentConsolidatedData.partner1CRAReportedIncome = null;
+      assessmentConsolidatedData.partner1CRAReportedIncome = undefined;
 
       // Act
       const calculatedAssessment =

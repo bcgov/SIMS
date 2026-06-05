@@ -163,13 +163,13 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
 
     // Interface need should be the sum of the education costs, child care costs, transportation amount, and additional transportation amount less any Government Funding.
     expect(calculatedAssessment.variables.calculatedDataInterfaceNeed).toBe(
-      calculatedAssessment.variables.calculatedDataInterfaceEducationCosts +
-        calculatedAssessment.variables.calculatedDataInterfaceChildCareCosts +
+      calculatedAssessment.variables.calculatedDataInterfaceEducationCosts! +
+        calculatedAssessment.variables.calculatedDataInterfaceChildCareCosts! +
         calculatedAssessment.variables
-          .calculatedDataInterfaceTransportationAmount +
+          .calculatedDataInterfaceTransportationAmount! +
         calculatedAssessment.variables
-          .calculatedDataInterfaceAdditionalTransportationAmount -
-        calculatedAssessment.variables.studentDataGovernmentFundingCosts,
+          .calculatedDataInterfaceAdditionalTransportationAmount! -
+        calculatedAssessment.variables.studentDataGovernmentFundingCosts!,
     );
 
     // The provincial and federal assessed need should be the same as the interface need.

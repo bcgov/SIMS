@@ -11,7 +11,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-transporta
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.studentDataReturnTripHomeCost = null;
+    assessmentConsolidatedData.studentDataReturnTripHomeCost = undefined;
     assessmentConsolidatedData.studentDataAdditionalTransportRequested =
       YesNoOptions.No;
     // Act

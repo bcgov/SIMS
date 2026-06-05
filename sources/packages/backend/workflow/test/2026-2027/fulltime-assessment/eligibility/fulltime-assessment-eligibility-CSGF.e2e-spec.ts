@@ -80,7 +80,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGF
           testEligibility.expectedData.expectedAssessmentEligibility,
         );
         expect(
-          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility
+          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
             .isEligibleCSGF,
         ).toBe(testEligibility.expectedData.expectedInstitutionEligibility);
         expect(calculatedAssessment.variables.awardEligibilityCSGF).toBe(

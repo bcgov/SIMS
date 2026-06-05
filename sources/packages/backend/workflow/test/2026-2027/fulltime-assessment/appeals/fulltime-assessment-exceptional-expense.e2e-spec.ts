@@ -10,7 +10,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-exceptional-expe
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.appealsExceptionalExpenseAppealData = null;
+    assessmentConsolidatedData.appealsExceptionalExpenseAppealData = undefined;
 
     // Act
     const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(

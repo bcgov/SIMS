@@ -100,7 +100,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCAG
           testEligibility.expectedData.expectedAssessmentEligibility,
         );
         expect(
-          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility
+          calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
             .isEligibleBCAG,
         ).toBe(testEligibility.expectedData.expectedInstitutionEligibility);
         expect(calculatedAssessment.variables.awardEligibilityBCAG).toBe(

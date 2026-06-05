@@ -4,7 +4,7 @@ import {
   createFakeConsolidatedPartTimeData,
   executePartTimeAssessmentForProgramYear,
 } from "../../../test-utils";
-import { AssessmentConsolidatedData } from "workflow/test/models";
+import { AssessmentConsolidatedData } from "../../../models";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CSLP.`, () => {
   let sharedAssessmentConsolidatedData: AssessmentConsolidatedData;
@@ -79,7 +79,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeLessThan(
-      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables!
         .limitAwardCSLPThresholdIncome,
     );
     expect(

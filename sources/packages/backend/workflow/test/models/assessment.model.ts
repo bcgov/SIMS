@@ -134,8 +134,8 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   studentDataTaxReturnIncome: number;
   studentDataIndigenousStatus: YesNoOptions;
   studentDataHasDependents: YesNoOptions;
-  studentDataLivingAtHome: YesNoOptions;
-  studentDataSelfContainedSuite: YesNoOptions;
+  studentDataLivingAtHome?: YesNoOptions;
+  studentDataSelfContainedSuite?: YesNoOptions;
   studentDataYouthInCare: YesNoOptions | "preferNotToAnswer";
   studentTaxYear: number;
   institutionLocationProvince: Provinces;
@@ -232,24 +232,24 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   partner1PartnerCaringForDependant?: YesNoOptions;
   partner1BCEAIncomeAssistanceAmount?: number;
   assessmentId?: number;
-  studentDataSelectedOffering: number;
+  studentDataSelectedOffering?: number;
   studentDataApplicationPDPPDStatus: string;
   studentDataAdditionalTransportRequested: YesNoOptions;
-  studentDataAdditionalTransportListedDriver: YesNoOptions;
-  studentDataAdditionalTransportOwner: YesNoOptions;
-  studentDataAdditionalTransportKm: number;
-  studentDataAdditionalTransportWeeks: number;
-  studentDataAdditionalTransportPlacement: YesNoOptions;
-  programYearTotalPartTimeCSGD: number;
-  programYearTotalPartTimeSBSD: number;
-  programYearTotalFullTimeSBSD: number;
-  programYearTotalPartTimeCSGP: number;
-  programYearTotalFullTimeCSGP: number;
-  latestCSLPBalance: number;
+  studentDataAdditionalTransportListedDriver?: YesNoOptions;
+  studentDataAdditionalTransportOwner?: YesNoOptions;
+  studentDataAdditionalTransportKm?: number;
+  studentDataAdditionalTransportWeeks?: number;
+  studentDataAdditionalTransportPlacement?: YesNoOptions;
+  programYearTotalPartTimeCSGD?: number;
+  programYearTotalPartTimeSBSD?: number;
+  programYearTotalFullTimeSBSD?: number;
+  programYearTotalPartTimeCSGP?: number;
+  programYearTotalFullTimeCSGP?: number;
+  latestCSLPBalance?: number;
   applicationId: number;
   applicationStatus: string;
   applicationEditStatus: ApplicationEditStatus;
-  applicationHasNOAApproval: boolean;
+  applicationHasNOAApproval?: boolean;
   studentDataPartnerHasEmploymentInsuranceBenefits?: YesNoOptions; // No longer used in PY 26/27 and beyond.
   studentDataPartnerHasFedralProvincialPDReceipt?: YesNoOptions; // No longer used in PY 26/27 and beyond.
   studentDataPartnerHasTotalIncomeAssistance?: YesNoOptions; // No longer used in PY 26/27 and beyond.
@@ -259,18 +259,18 @@ export interface AssessmentConsolidatedData extends JSONDoc {
   partner1HasFedralProvincialPDReceipt?: YesNoOptions;
   partner1HasTotalIncomeAssistance?: YesNoOptions;
   studentDataExceptionalExpense?: number;
-  programYearTotalPartTimeScholarshipsBursaries: number;
-  programYearTotalFullTimeScholarshipsBursaries: number;
-  programYearTotalPartTimeSpouseContributionWeeks: number;
-  programYearTotalFullTimeSpouseContributionWeeks: number;
-  programYearTotalPartTimeFederalFSC: number;
-  programYearTotalFullTimeFederalFSC: number;
-  programYearTotalPartTimeProvincialFSC: number;
-  programYearTotalFullTimeProvincialFSC: number;
-  programYearTotalPartTimeBooksAndSuppliesCost: number;
-  programYearTotalFullTimeBooksAndSuppliesCost: number;
-  programYearTotalPartTimeReturnTransportationCost: number;
-  programYearTotalFullTimeReturnTransportationCost: number;
+  programYearTotalPartTimeScholarshipsBursaries?: number;
+  programYearTotalFullTimeScholarshipsBursaries?: number;
+  programYearTotalPartTimeSpouseContributionWeeks?: number;
+  programYearTotalFullTimeSpouseContributionWeeks?: number;
+  programYearTotalPartTimeFederalFSC?: number;
+  programYearTotalFullTimeFederalFSC?: number;
+  programYearTotalPartTimeProvincialFSC?: number;
+  programYearTotalFullTimeProvincialFSC?: number;
+  programYearTotalPartTimeBooksAndSuppliesCost?: number;
+  programYearTotalFullTimeBooksAndSuppliesCost?: number;
+  programYearTotalPartTimeReturnTransportationCost?: number;
+  programYearTotalFullTimeReturnTransportationCost?: number;
   studentDataParents?: IdentifiableParentData[];
 }
 
@@ -285,7 +285,7 @@ interface ConfigureDisbursementData extends JSONDoc {
   // Shared awards.
   awardEligibilityCSGP: boolean;
   awardEligibilityCSGD: boolean;
-  awardEligibilityBCAG: boolean;
+  awardEligibilityBCAG?: boolean;
   awardEligibilitySBSD: boolean;
   // Shared final award amounts.
   finalFederalAwardNetCSGPAmount: number;
@@ -344,8 +344,8 @@ export interface AssessmentModel {
   federalAssessmentNeed: number;
   exceptionalEducationCost: number;
   provincialAssessmentNeed: number;
-  parentAssessedContribution: number;
-  partnerAssessedContribution: number;
+  parentAssessedContribution?: number;
+  partnerAssessedContribution?: number;
   studentTotalFederalContribution: number;
   studentTotalProvincialContribution: number;
 }

@@ -28,7 +28,10 @@ async function mockTaskHandler(
   job: ZeebeJob<IInputVariables, ICustomHeaders, IOutputVariables>,
 ) {
   const serviceTaskId = getNormalizedServiceTaskId(job.elementId);
-  const serviceTaskMock = job.variables[serviceTaskId] ?? {};
+  const serviceTaskMock = (job.variables[serviceTaskId] ?? {}) as Record<
+    string,
+    any
+  >;
   let mockedData = serviceTaskMock;
   const isMultiInstance = !!serviceTaskMock[IS_MULTI_INSTANCE];
   if (isMultiInstance) {

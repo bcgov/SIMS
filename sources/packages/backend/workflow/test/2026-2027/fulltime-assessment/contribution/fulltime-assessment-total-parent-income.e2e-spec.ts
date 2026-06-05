@@ -54,7 +54,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
         calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
       ).toBe(
         calculatedAssessment.variables.calculatedDataTotalParentIncome -
-          calculatedAssessment.variables.calculatedDataTotalParentDeductions,
+          calculatedAssessment.variables.calculatedDataTotalParentDeductions!,
       );
     },
   );
@@ -106,7 +106,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
         calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
       ).toBe(
         calculatedAssessment.variables.calculatedDataTotalParentIncome -
-          calculatedAssessment.variables.calculatedDataTotalParentDeductions,
+          calculatedAssessment.variables.calculatedDataTotalParentDeductions!,
       );
     },
   );
@@ -159,7 +159,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
         calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
       ).toBe(
         calculatedAssessment.variables.calculatedDataTotalParentIncome -
-          calculatedAssessment.variables.calculatedDataTotalParentDeductions,
+          calculatedAssessment.variables.calculatedDataTotalParentDeductions!,
       );
     },
   );
@@ -216,7 +216,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
         calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
       ).toBe(
         calculatedAssessment.variables.calculatedDataTotalParentIncome -
-          calculatedAssessment.variables.calculatedDataTotalParentDeductions,
+          calculatedAssessment.variables.calculatedDataTotalParentDeductions!,
       );
     },
   );
@@ -281,8 +281,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
       expect(
         calculatedAssessment.variables.calculatedDataTotalParentDeductions,
       ).toBe(
-        calculatedAssessment.variables.calculatedDataParent1IncomeDeductions +
-          calculatedAssessment.variables.calculatedDataParent2IncomeDeductions,
+        calculatedAssessment.variables.calculatedDataParent1IncomeDeductions! +
+          calculatedAssessment.variables.calculatedDataParent2IncomeDeductions!,
       );
       // Calculated total family income should be the gross parent income.
       expect(
@@ -293,7 +293,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
         calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
       ).toBe(
         calculatedAssessment.variables.calculatedDataTotalParentIncome -
-          calculatedAssessment.variables.calculatedDataTotalParentDeductions,
+          calculatedAssessment.variables.calculatedDataTotalParentDeductions!,
       );
     },
   );
@@ -371,7 +371,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
         calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
       ).toBe(
         calculatedAssessment.variables.calculatedDataTotalParentIncome -
-          calculatedAssessment.variables.calculatedDataTotalParentDeductions,
+          calculatedAssessment.variables.calculatedDataTotalParentDeductions!,
       );
     },
   );
@@ -432,7 +432,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-inc
         calculatedAssessment.variables.calculatedDataTotalNetFamilyIncome,
       ).toBe(
         calculatedAssessment.variables.calculatedDataTotalParentIncome -
-          calculatedAssessment.variables.calculatedDataTotalParentDeductions,
+          calculatedAssessment.variables.calculatedDataTotalParentDeductions!,
       );
     },
   );

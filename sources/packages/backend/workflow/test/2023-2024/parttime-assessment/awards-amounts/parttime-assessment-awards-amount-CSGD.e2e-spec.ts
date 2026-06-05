@@ -47,7 +47,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeLessThan(
-      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables!
         .limitAwardCSGDIncomeCap,
     );
     expect(calculatedAssessment.variables.federalAwardNetCSGDAmount).toBe(1260);
@@ -89,16 +89,16 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeGreaterThan(
-      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables!
         .limitAwardCSGDIncomeCap,
     );
     const nestedCalculation = Math.max(
-      calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
+      calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits!
         .limitAwardCSGD3OrMoreChildAmount -
         (calculatedAssessment.variables.calculatedDataTotalFamilyIncome -
-          calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+          calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables!
             .limitAwardCSGDIncomeCap) *
-          calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+          calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables!
             .limitAwardCSGD3OrMoreChildSlope,
       0,
     );
@@ -110,7 +110,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       ) / 10000;
     const maxComparisonCalculation = Math.max(
       offeringWeeksAmount,
-      calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
+      calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits!
         .limitAwardCSGD2OrLessChildAmount,
     );
     expect(
@@ -120,7 +120,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     ).toBe(
       Math.min(
         maxComparisonCalculation,
-        calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
+        calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits!
           .limitAwardCSGDAmount,
       ),
     );
@@ -153,7 +153,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       // Dependent(s) born after study end date are not considered
       // as eligible for any calculation.
       createFakeStudentDependentBornAfterStudyEndDate(
-        assessmentConsolidatedData.offeringStudyEndDate,
+        assessmentConsolidatedData.offeringStudyEndDate!,
       ),
     ];
     // Act
@@ -170,7 +170,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeLessThan(
-      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables!
         .limitAwardCSGDIncomeCap,
     );
     expect(calculatedAssessment.variables.federalAwardMaxCSGDAmount).toBe(840);
@@ -202,16 +202,16 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeGreaterThan(
-      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables!
         .limitAwardCSGDIncomeCap,
     );
     const nestedCalculation = Math.max(
-      calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
+      calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits!
         .limitAwardCSGD2OrLessChildAmount -
         (calculatedAssessment.variables.calculatedDataTotalFamilyIncome -
-          calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+          calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables!
             .limitAwardCSGDIncomeCap) *
-          calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+          calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables!
             .limitAwardCSGD2OrLessChildSlope,
       0,
     );
@@ -223,7 +223,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
       ) / 10000;
     const maxComparisonCalculation = Math.max(
       offeringWeeksAmount,
-      calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
+      calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits!
         .limitAwardCSGD2OrLessChildAmount,
     );
     expect(
@@ -233,7 +233,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     ).toBe(
       Math.min(
         maxComparisonCalculation,
-        calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
+        calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits!
           .limitAwardCSGDAmount,
       ),
     );

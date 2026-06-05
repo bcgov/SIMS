@@ -41,8 +41,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}.`, () => {
       exceptionalEducationCost:
         assessmentConsolidatedData.offeringExceptionalExpenses,
       provincialAssessmentNeed: 47996.70769230769,
-      parentAssessedContribution: null,
-      partnerAssessedContribution: null,
+      parentAssessedContribution: undefined,
+      partnerAssessedContribution: undefined,
       studentTotalFederalContribution: 1255.2923076923078,
       studentTotalProvincialContribution: 1255.2923076923078,
     };

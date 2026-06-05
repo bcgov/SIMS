@@ -99,7 +99,8 @@ const JSON_LOG_INDENTATION = 2;
         decisionFilename,
       });
       deploymentResult.deployments.forEach((deployment: Deployment) => {
-        switch (deployment[DEPLOYMENT_METADATA_PROPERTY_NAME]) {
+        const metadata = (deployment as any)[DEPLOYMENT_METADATA_PROPERTY_NAME];
+        switch (metadata) {
           case DeploymentMetadataTypes.DecisionRequirements:
             {
               const decisionRequirement =
@@ -109,7 +110,7 @@ const JSON_LOG_INDENTATION = 2;
                 requirementsId: decision.dmnDecisionRequirementsId,
                 requirementsName: decision.dmnDecisionRequirementsName,
                 requirementsKey: decision.decisionRequirementsKey,
-                metadata: deployment[DEPLOYMENT_METADATA_PROPERTY_NAME],
+                metadata: metadata,
                 resourceName: path.basename(decision.resourceName),
                 version: decision.version,
                 deploymentKey: deploymentResult.key,
@@ -124,7 +125,7 @@ const JSON_LOG_INDENTATION = 2;
                 requirementsId: decision.dmnDecisionId,
                 requirementsName: decision.dmnDecisionName,
                 requirementsKey: decision.decisionRequirementsKey,
-                metadata: deployment[DEPLOYMENT_METADATA_PROPERTY_NAME],
+                metadata: metadata,
                 resourceName: undefined,
                 version: decision.version,
                 deploymentKey: deploymentResult.key,

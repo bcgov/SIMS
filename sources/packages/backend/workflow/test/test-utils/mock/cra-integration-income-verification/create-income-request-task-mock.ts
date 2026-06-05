@@ -37,7 +37,7 @@ export function createIncomeRequestTaskMock(options: {
           timeToLive: PUBLISH_MESSAGE_TIME_TO_LEAVE_SECONDS,
         },
       ],
-      subprocesses: [options?.subprocesses],
+      subprocesses: options?.subprocesses ? [options.subprocesses] : undefined,
     },
   };
 }

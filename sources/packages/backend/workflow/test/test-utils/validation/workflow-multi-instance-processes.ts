@@ -4,6 +4,7 @@ import {
   WorkflowServiceTasks,
   WorkflowSubprocesses,
 } from "../constants/workflow-variables-constants";
+import { IOutputVariables } from "@camunda8/sdk/dist/zeebe/types";
 
 /**
  * Represents the information required to assert if a flow passthrough a multi-instance process iteration.
@@ -27,11 +28,13 @@ export class WorkflowMultiInstanceProcess {
    * @param workflowResultVariables workflow result variable.
    * @returns passthrough value for the current multi-instance process iteration output variable.
    */
-  getPassthroughValue(workflowResultVariables: unknown): boolean | undefined {
+  getPassthroughValue(
+    workflowResultVariables: IOutputVariables,
+  ): boolean | undefined {
     const passthrough = getPassthroughTaskId(this.subprocess);
-    return workflowResultVariables[this.process]?.[this.loopCounter - 1]?.[
-      passthrough
-    ];
+    return (workflowResultVariables[this.process] as any)?.[
+      this.loopCounter - 1
+    ]?.[passthrough];
   }
 }
 

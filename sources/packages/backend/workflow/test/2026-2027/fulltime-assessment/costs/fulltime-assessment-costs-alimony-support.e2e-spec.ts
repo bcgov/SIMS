@@ -16,7 +16,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataChildSupportAndOrSpousalSupport =
-        null;
+        undefined;
 
       // Act
       const calculatedAssessment =
@@ -99,7 +99,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-alimony-s
       const assessmentConsolidatedData =
         createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
       assessmentConsolidatedData.studentDataChildSupportAndOrSpousalSupport = 3500;
-      assessmentConsolidatedData.partner1ChildSpousalSupportCost = null;
+      assessmentConsolidatedData.partner1ChildSpousalSupportCost = undefined;
       assessmentConsolidatedData.studentDataRelationshipStatus = "married";
       assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
         YesNoOptions.No;

@@ -57,7 +57,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeGreaterThan(
-      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables!
         .limitAwardSBSDThresholdIncome,
     );
     expect(
@@ -154,7 +154,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-SBSD
           testEligibility.expectedData.expectedAssessmentEligibility,
         );
         expect(
-          calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility
+          calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility!
             .isEligibleSBSD,
         ).toBe(testEligibility.expectedData.expectedInstitutionEligibility);
         expect(calculatedAssessment.variables.awardEligibilitySBSD).toBe(

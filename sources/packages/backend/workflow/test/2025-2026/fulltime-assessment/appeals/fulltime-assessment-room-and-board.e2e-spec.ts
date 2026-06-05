@@ -10,7 +10,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-room-and-board.`
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.appealsRoomAndBoardCostsAppealData = null;
+    assessmentConsolidatedData.appealsRoomAndBoardCostsAppealData = undefined;
 
     // Act
     const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(

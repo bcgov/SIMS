@@ -5,7 +5,7 @@ import {
   executePartTimeAssessmentForProgramYear,
 } from "../../../../test-utils";
 import { YesNoOptions } from "@sims/test-utils";
-import { RelationshipStatusType } from "workflow/test/models";
+import { RelationshipStatusType } from "../../../../models";
 
 describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-appeal-eligibility-partner-current-year-income.`, () => {
   const appealEligibilityScenarios = [

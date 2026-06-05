@@ -22,11 +22,11 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible0To11YearsOld,
-          assessmentConsolidatedData.offeringStudyStartDate,
+          assessmentConsolidatedData.offeringStudyStartDate!,
         ),
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible12YearsAndOver,
-          assessmentConsolidatedData.offeringStudyStartDate,
+          assessmentConsolidatedData.offeringStudyStartDate!,
         ),
       ];
       assessmentConsolidatedData.appealsStudentFinancialInformationAppealData =
@@ -70,11 +70,11 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible0To11YearsOld,
-          assessmentConsolidatedData.offeringStudyStartDate,
+          assessmentConsolidatedData.offeringStudyStartDate!,
         ),
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible12YearsAndOver,
-          assessmentConsolidatedData.offeringStudyStartDate,
+          assessmentConsolidatedData.offeringStudyStartDate!,
         ),
       ];
       assessmentConsolidatedData.appealsStudentFinancialInformationAppealData =
@@ -108,11 +108,11 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible0To11YearsOld,
-          assessmentConsolidatedData.offeringStudyStartDate,
+          assessmentConsolidatedData.offeringStudyStartDate!,
         ),
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible12YearsAndOver,
-          assessmentConsolidatedData.offeringStudyStartDate,
+          assessmentConsolidatedData.offeringStudyStartDate!,
         ),
       ];
       assessmentConsolidatedData.appealsStudentFinancialInformationAppealData =
@@ -151,7 +151,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-financia
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataCRAReportedIncome = null;
+      assessmentConsolidatedData.studentDataCRAReportedIncome = undefined;
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
       assessmentConsolidatedData.appealsStudentFinancialInformationAppealData =
         {

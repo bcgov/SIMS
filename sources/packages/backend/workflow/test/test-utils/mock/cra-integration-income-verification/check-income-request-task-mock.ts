@@ -18,7 +18,7 @@ export function createCheckIncomeRequestTaskMock(options?: {
       jobCompleteMock: {
         incomeVerificationCompleted: true,
       },
-      subprocesses: [options?.subprocesses],
+      subprocesses: options?.subprocesses ? [options.subprocesses] : undefined,
     },
   };
 }

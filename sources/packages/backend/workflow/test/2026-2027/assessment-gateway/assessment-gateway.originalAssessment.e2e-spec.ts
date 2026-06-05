@@ -235,7 +235,6 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         parentalContribution: 10000,
         interfacePolicyApplies: false,
         partnerStudyWeeks: null,
-        eligibleDependantsForCSGD: null,
       },
     });
   });

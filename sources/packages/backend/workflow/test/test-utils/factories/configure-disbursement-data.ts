@@ -1,7 +1,7 @@
 import {
   ConfigureDisbursementDataFullTime,
   ConfigureDisbursementDataPartTime,
-} from "workflow/test/models";
+} from "../../models";
 
 /**
  * Create fake data for configure disbursement part time workflow.

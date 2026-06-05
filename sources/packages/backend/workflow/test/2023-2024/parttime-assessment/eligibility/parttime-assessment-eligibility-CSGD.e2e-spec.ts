@@ -96,7 +96,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentBornAfterStudyEndDate(
-        assessmentConsolidatedData.offeringStudyEndDate,
+        assessmentConsolidatedData.offeringStudyEndDate!,
       ),
     ];
     // Act

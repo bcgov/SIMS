@@ -26,7 +26,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible0To11YearsOld,
-          assessmentConsolidatedData.offeringStudyStartDate,
+          assessmentConsolidatedData.offeringStudyStartDate!,
         ),
       ];
 
@@ -56,7 +56,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible12YearsAndOver,
-          assessmentConsolidatedData.offeringStudyStartDate,
+          assessmentConsolidatedData.offeringStudyStartDate!,
         ),
       ];
 
@@ -82,7 +82,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentNotEligibleForChildcareCost(
-        assessmentConsolidatedData.offeringStudyStartDate,
+        assessmentConsolidatedData.offeringStudyStartDate!,
       ),
     ];
 
@@ -150,7 +150,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentBornAfterStudyEndDate(
-        assessmentConsolidatedData.offeringStudyEndDate,
+        assessmentConsolidatedData.offeringStudyEndDate!,
       ),
     ];
     // Act

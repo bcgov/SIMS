@@ -15,7 +15,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-stepparent-waive
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.appealsStepParentWaiverAppealData = null;
+    assessmentConsolidatedData.appealsStepParentWaiverAppealData = undefined;
     assessmentConsolidatedData.studentDataDependantstatus = "dependant";
     assessmentConsolidatedData.studentDataVoluntaryContributions = 0;
     assessmentConsolidatedData.studentDataParents = [

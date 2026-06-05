@@ -174,7 +174,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSPT
           testEligibility.expectedData.expectedAssessmentEligibility,
         );
         expect(
-          calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility
+          calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility!
             .isEligibleCSPT,
         ).toBe(testEligibility.expectedData.expectedInstitutionEligibility);
         expect(calculatedAssessment.variables.awardEligibilityCSPT).toBe(

@@ -240,7 +240,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-disbursements`, 
     configureDisbursementData.offeringStudyEndDate = getISODateOnlyString(
       addDays(240),
     );
-    configureDisbursementData.awardEligibilityBCAG = undefined;
+    configureDisbursementData.awardEligibilityBCAG = false;
     // Act
     const calculatedAssessment = await executeFullTimeConfigureDisbursement(
       configureDisbursementData,

@@ -23,14 +23,14 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeLessThan(
-      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables!
         .limitAwardCSPTIncomeCap,
     );
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(
       43000,
     );
     expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(
-      calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits
+      calculatedAssessment.variables.dmnPartTimeAwardAllowableLimits!
         .limitAwardCSPTAmount,
     );
     expect(calculatedAssessment.variables.federalAwardCSPTAmount).toBe(2520);
@@ -53,7 +53,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(
       calculatedAssessment.variables.calculatedDataTotalFamilyIncome,
     ).toBeGreaterThan(
-      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables
+      calculatedAssessment.variables.dmnPartTimeAwardFamilySizeVariables!
         .limitAwardCSPTIncomeCap,
     );
     expect(calculatedAssessment.variables.calculatedDataTotalFamilyIncome).toBe(

@@ -577,7 +577,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
       ...createFakeSingleIndependentStudentData(),
       // Application with PIR required.
-      studentDataSelectedOffering: null,
+      studentDataSelectedOffering: undefined,
       applicationStatus: ApplicationStatus.InProgress,
     };
 

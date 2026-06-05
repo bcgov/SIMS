@@ -211,35 +211,35 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-institution-elig
         );
       // Assert
       expect(
-        calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility
+        calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
           .isEligibleBCSL,
       ).toBe(testEligibility.expectedData.expectedEligibilityBCSL);
       expect(
-        calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility
+        calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
           .isEligibleCSLF,
       ).toBe(testEligibility.expectedData.expectedEligibilityCSLF);
       expect(
-        calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility
+        calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
           .isEligibleCSGP,
       ).toBe(testEligibility.expectedData.expectedEligibilityCSGP);
       expect(
-        calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility
+        calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
           .isEligibleCSGD,
       ).toBe(testEligibility.expectedData.expectedEligibilityCSGD);
       expect(
-        calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility
+        calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
           .isEligibleCSGF,
       ).toBe(testEligibility.expectedData.expectedEligibilityCSGF);
       expect(
-        calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility
+        calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
           .isEligibleBCAG,
       ).toBe(testEligibility.expectedData.expectedEligibilityBCAG);
       expect(
-        calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility
+        calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
           .isEligibleSBSD,
       ).toBe(testEligibility.expectedData.expectedEligibilitySBSD);
       expect(
-        calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility
+        calculatedAssessment.variables.dmnFullTimeAwardInstitutionEligibility!
           .isEligibleBGPD,
       ).toBe(testEligibility.expectedData.expectedEligibilityBGPD);
     });

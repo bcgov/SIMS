@@ -127,27 +127,27 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-institution-elig
         );
       // Assert
       expect(
-        calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility
+        calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility!
           .isEligibleSBSD,
       ).toBe(testEligibility.expectedData.expectedEligibilitySBSD);
       expect(
-        calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility
+        calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility!
           .isEligibleBCAG,
       ).toBe(testEligibility.expectedData.expectedEligibilityBCAG);
       expect(
-        calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility
+        calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility!
           .isEligibleCSPT,
       ).toBe(testEligibility.expectedData.expectedEligibilityCSPT);
       expect(
-        calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility
+        calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility!
           .isEligibleCSGP,
       ).toBe(testEligibility.expectedData.expectedEligibilityCSGP);
       expect(
-        calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility
+        calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility!
           .isEligibleCSGD,
       ).toBe(testEligibility.expectedData.expectedEligibilityCSGD);
       expect(
-        calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility
+        calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility!
           .isEligibleCSLP,
       ).toBe(testEligibility.expectedData.expectedEligibilityCSLP);
     });

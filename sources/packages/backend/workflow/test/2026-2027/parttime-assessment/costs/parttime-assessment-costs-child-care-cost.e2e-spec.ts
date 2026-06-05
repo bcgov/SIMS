@@ -32,11 +32,11 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible0To11YearsOld,
-          assessmentConsolidatedData.offeringStudyStartDate,
+          assessmentConsolidatedData.offeringStudyStartDate!,
         ),
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible12YearsAndOver,
-          assessmentConsolidatedData.offeringStudyStartDate,
+          assessmentConsolidatedData.offeringStudyStartDate!,
         ),
       ];
       const totalChildcareCostEnteredInApplication =
@@ -89,11 +89,11 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible0To11YearsOld,
-          assessmentConsolidatedData.offeringStudyStartDate,
+          assessmentConsolidatedData.offeringStudyStartDate!,
         ),
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible12YearsAndOver,
-          assessmentConsolidatedData.offeringStudyStartDate,
+          assessmentConsolidatedData.offeringStudyStartDate!,
         ),
       ];
       const totalChildcareCostEnteredInApplication =
@@ -147,11 +147,11 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible0To11YearsOld,
-          assessmentConsolidatedData.offeringStudyStartDate,
+          assessmentConsolidatedData.offeringStudyStartDate!,
         ),
         createFakeStudentDependentEligibleForChildcareCost(
           DependentChildCareEligibility.Eligible12YearsAndOver,
-          assessmentConsolidatedData.offeringStudyStartDate,
+          assessmentConsolidatedData.offeringStudyStartDate!,
         ),
       ];
       // Act
@@ -186,7 +186,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
       assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
       assessmentConsolidatedData.studentDataDependants = [
         createFakeStudentDependentNotEligibleForChildcareCost(
-          assessmentConsolidatedData.offeringStudyStartDate,
+          assessmentConsolidatedData.offeringStudyStartDate!,
         ),
       ];
       // Act
@@ -229,7 +229,7 @@ describe(`E2E Test Workflow part-time-assessment-${PROGRAM_YEAR}-costs-child-car
     assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.Yes;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentBornAfterStudyEndDate(
-        assessmentConsolidatedData.offeringStudyEndDate,
+        assessmentConsolidatedData.offeringStudyEndDate!,
       ),
     ];
     // Act

@@ -166,23 +166,25 @@ export function createWorkersMockedData(
     // Creates a subprocess hierarchy to store the worker mock assuming
     // that the hierarchy could be partially created already due to another
     // subprocess for the same service task id.
-    let mockedData = rootMockedData[serviceTaskId];
+    let mockedData = rootMockedData[serviceTaskId] as Record<string, unknown>;
     mockedWorker.options.subprocesses?.forEach((subprocess) => {
       const subprocessId = getNormalizedServiceTaskId(subprocess);
       if (!mockedData[subprocessId]) {
         mockedData[subprocessId] = {};
       }
-      mockedData = mockedData[subprocessId];
+      mockedData = mockedData[subprocessId] as Record<string, unknown>;
     });
     // Create result mocked object.
     const isMultiInstance = !!mockedWorker.options.multiInstanceLoopCounter;
-    let mockedDataValue: unknown = mockedData;
+    let mockedDataValue: Record<string, unknown> = mockedData;
     if (isMultiInstance) {
       mockedData[IS_MULTI_INSTANCE] = isMultiInstance;
-      mockedData[INSTANCES] ??= [];
-      const instanceIndex = mockedWorker.options.multiInstanceLoopCounter - 1;
+
+      const instances = (mockedData[INSTANCES] ??= []) as unknown[];
+      const instanceIndex = mockedWorker.options.multiInstanceLoopCounter! - 1;
+
       mockedDataValue = {};
-      mockedData[INSTANCES][instanceIndex] = mockedDataValue;
+      instances[instanceIndex] = mockedDataValue;
     }
     if (mockedWorker.options.jobCompleteMock) {
       mockedDataValue[JOB_COMPLETED_RESULT_SUFFIX] =

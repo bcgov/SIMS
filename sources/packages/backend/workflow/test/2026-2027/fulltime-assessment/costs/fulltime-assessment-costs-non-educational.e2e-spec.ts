@@ -16,17 +16,17 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-non-educat
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     // Return transportation and additional transportation costs should be included in the non-educational costs calculation.
-    assessmentConsolidatedData.studentDataReturnTripHomeCost = null;
+    assessmentConsolidatedData.studentDataReturnTripHomeCost = undefined;
     assessmentConsolidatedData.studentDataAdditionalTransportRequested =
       YesNoOptions.No;
     // Exceptional expenses are included in the non-educational costs calculation.
-    assessmentConsolidatedData.appealsExceptionalExpenseAppealData = null;
+    assessmentConsolidatedData.appealsExceptionalExpenseAppealData = undefined;
     // Second Residence costs are included in the non-educational costs calculation.
     assessmentConsolidatedData.studentDataLivingWithPartner = YesNoOptions.Yes;
     // Child care costs are included in the non-educational costs calculation.
     assessmentConsolidatedData.studentDataChildCareCosts = undefined;
     // Child support and spousal support are included in the non-educational costs calculation.
-    assessmentConsolidatedData.studentDataChildSpousalSupportCost = null;
+    assessmentConsolidatedData.studentDataChildSpousalSupportCost = undefined;
     // Partner fields that impact non-educational costs.
     assessmentConsolidatedData.partner1TotalStudentLoan = undefined;
     assessmentConsolidatedData.partner1PartnerCaringForDependant = undefined;
@@ -82,7 +82,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-costs-non-educat
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligibleForChildcareCost(
         DependentChildCareEligibility.Eligible0To11YearsOld,
-        assessmentConsolidatedData.offeringStudyStartDate,
+        assessmentConsolidatedData.offeringStudyStartDate!,
       ),
     ];
     // Child support and spousal support are included in the non-educational costs calculation.

@@ -21,7 +21,7 @@ export function createCheckSupportingUserResponseTaskMock(options: {
       jobCompleteMock: {
         totalIncome: options.totalIncome,
       },
-      subprocesses: [options?.subprocesses],
+      subprocesses: options?.subprocesses ? [options.subprocesses] : undefined,
     },
   };
 }

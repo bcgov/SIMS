@@ -24,19 +24,19 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligibleForChildcareCost(
         DependentChildCareEligibility.Eligible0To11YearsOld,
-        assessmentConsolidatedData.offeringStudyStartDate,
+        assessmentConsolidatedData.offeringStudyStartDate!,
       ),
       createFakeStudentDependentEligibleForChildcareCost(
         DependentChildCareEligibility.Eligible0To11YearsOld,
-        assessmentConsolidatedData.offeringStudyStartDate,
+        assessmentConsolidatedData.offeringStudyStartDate!,
       ),
       createFakeStudentDependentEligibleForChildcareCost(
         DependentChildCareEligibility.Eligible12YearsAndOver,
-        assessmentConsolidatedData.offeringStudyStartDate,
+        assessmentConsolidatedData.offeringStudyStartDate!,
       ),
       createFakeStudentDependentEligibleForChildcareCost(
         DependentChildCareEligibility.Eligible12YearsAndOver,
-        assessmentConsolidatedData.offeringStudyStartDate,
+        assessmentConsolidatedData.offeringStudyStartDate!,
       ),
       createFakeStudentDependentEligible(
         DependentEligibility.Eligible18To22YearsOldAttendingHighSchool,
@@ -82,7 +82,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-CSGD
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligibleForChildcareCost(
         DependentChildCareEligibility.Eligible0To11YearsOld,
-        assessmentConsolidatedData.offeringStudyStartDate,
+        assessmentConsolidatedData.offeringStudyStartDate!,
       ),
     ];
     // Act

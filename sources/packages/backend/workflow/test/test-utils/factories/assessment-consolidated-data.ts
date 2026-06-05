@@ -20,6 +20,8 @@ import {
   OfferingIntensity,
 } from "@sims/sims-db";
 
+const DEFAULT_APPLICATION_ID = 1;
+
 /**
  * Create fake consolidated data
  * based on program year.
@@ -32,6 +34,7 @@ export function createFakeAssessmentConsolidatedData(
   const [programStartYear] = programYear.split("-");
   return {
     ...getDefaultAssessmentConsolidatedData(),
+    applicationId: DEFAULT_APPLICATION_ID,
     applicationEditStatus: ApplicationEditStatus.Original,
     studentDataDependantstatus: "independant",
     programYear,
@@ -42,6 +45,7 @@ export function createFakeAssessmentConsolidatedData(
     studentDataHasDependents: YesNoOptions.No,
     studentDataLivingAtHome: YesNoOptions.No,
     studentDataYouthInCare: YesNoOptions.No,
+    studentDataAdditionalTransportRequested: YesNoOptions.No,
     studentTaxYear: +programStartYear - 1,
     institutionLocationProvince: Provinces.BritishColumbia,
     institutionType: InstitutionTypes.BCPublic,
@@ -75,6 +79,9 @@ export function createFakePartTimeAssessmentConsolidatedData(
   const [programStartYear] = programYear.split("-");
   return {
     ...getDefaultAssessmentConsolidatedData(),
+    applicationId: DEFAULT_APPLICATION_ID,
+    applicationEditStatus: ApplicationEditStatus.Original,
+    applicationStatus: ApplicationStatus.Assessment,
     studentDataDependantstatus: "independant",
     programYear,
     programYearStartDate: `${programStartYear}-08-02`,
@@ -118,89 +125,91 @@ export function createFakePartTimeAssessmentConsolidatedData(
  * to be set as null.
  * @returns assessment consolidated default values.
  */
-function getDefaultAssessmentConsolidatedData(): AssessmentConsolidatedData {
+function getDefaultAssessmentConsolidatedData(): Partial<AssessmentConsolidatedData> {
   return {
-    appealsStudentIncomeAppealData: null, // No longer used in PY 26/27 and beyond.
-    appealsPartnerIncomeAppealData: null, // No longer used in PY 26/27 and beyond.
-    appealsStudentDisabilityAppealData: null, // No longer used in PY 26/27 and beyond.
-    appealsStudentAdditionalTransportationAppealData: null, // No longer used in PY 26/27 and beyond.
-    appealsPartnerInformationAndIncomeAppealData: null, // No longer used in PY 26/27 and beyond.
-    appealsStudentFinancialInformationAppealData: null, // No longer used in PY 26/27 and beyond.
-    appealsStudentHasDependentsAppealData: null, // No longer used in PY 26/27 and beyond.
-    appealsStudentDependantsAppealData: null, // No longer used in PY 26/27 and beyond.
-    appealsRoomAndBoardCostsAppealData: null,
-    appealsStepParentWaiverAppealData: null,
-    studentDataIsYourPartnerAbleToReport: null, // No longer used in PY 26/27 and beyond.
-    studentDataParentValidSinNumber: null,
-    studentDataNumberOfParents: null,
-    studentDataEstimatedSpouseIncome: null, // No longer used in PY 26/27 and beyond.
-    studentDataLivingWithPartner: null,
-    studentDataCRAReportedIncome: null,
-    studentDataDependants: null,
-    studentDataGovernmentFundingCosts: null,
-    studentDataNonGovernmentFundingCosts: null,
-    studentDataParentVoluntaryContributionsCosts: null,
-    studentDataPartnerStudyWeeks: null, // No longer used in PY 26/27 and beyond.
-    studentDataPartnerEmploymentInsurance: null, // No longer used in PY 26/27 and beyond.
-    studentDataPartnerFedralProvincialPDReceiptCost: null, // No longer used in PY 26/27 and beyond.
-    studentDataPartnerChildSupportCosts: null, // No longer used in PY 26/27 and beyond.
-    studentDataPartnerBCEAIncomeAssistanceAmount: null, // No longer used in PY 26/27 and beyond.
-    studentDataPartnerCaringForDependant: null, // No longer used in PY 26/27 and beyond.
-    studentDataPartnerTotalIncomeAssistance: null, // No longer used in PY 26/27 and beyond.
-    studentDataVoluntaryContributions: null,
-    studentDataScholarshipAmount: null,
-    studentDataChildSupportAndOrSpousalSupport: null,
-    studentDataDaycareCosts11YearsOrUnder: null,
-    studentDataDaycareCosts12YearsOrOver: null,
-    studentDataLivingAtHomeRent: null,
-    studentDataSelectedOffering: null,
-    studentDataAdditionalTransportKm: null,
-    studentDataAdditionalTransportWeeks: null,
-    studentDataAdditionalTransportPlacement: null,
-    studentDataCurrentYearIncome: null,
-    studentDataPartnerIsAbleToReport: null,
-    offeringCourseLoad: null,
-    parent1Contributions: null,
-    parent1Ei: null,
-    parent1NetAssets: null,
-    parent1Tax: null,
-    parent1TotalIncome: null,
+    appealsStudentIncomeAppealData: undefined, // No longer used in PY 26/27 and beyond.
+    appealsPartnerIncomeAppealData: undefined, // No longer used in PY 26/27 and beyond.
+    appealsStudentDisabilityAppealData: undefined, // No longer used in PY 26/27 and beyond.
+    appealsStudentAdditionalTransportationAppealData: undefined, // No longer used in PY 26/27 and beyond.
+    appealsPartnerInformationAndIncomeAppealData: undefined, // No longer used in PY 26/27 and beyond.
+    appealsStudentFinancialInformationAppealData: undefined, // No longer used in PY 26/27 and beyond.
+    appealsStudentHasDependentsAppealData: undefined, // No longer used in PY 26/27 and beyond.
+    appealsStudentDependantsAppealData: undefined, // No longer used in PY 26/27 and beyond.
+    appealsRoomAndBoardCostsAppealData: undefined,
+    appealsStepParentWaiverAppealData: undefined,
+    studentDataIsYourPartnerAbleToReport: undefined, // No longer used in PY 26/27 and beyond.
+    studentDataParentValidSinNumber: undefined,
+    studentDataNumberOfParents: undefined,
+    studentDataEstimatedSpouseIncome: undefined, // No longer used in PY 26/27 and beyond.
+    studentDataLivingWithPartner: undefined,
+    studentDataCRAReportedIncome: undefined,
+    studentDataDependants: undefined,
+    studentDataGovernmentFundingCosts: undefined,
+    studentDataNonGovernmentFundingCosts: undefined,
+    studentDataParentVoluntaryContributionsCosts: undefined,
+    studentDataPartnerStudyWeeks: undefined, // No longer used in PY 26/27 and beyond.
+    studentDataPartnerEmploymentInsurance: undefined, // No longer used in PY 26/27 and beyond.
+    studentDataPartnerFedralProvincialPDReceiptCost: undefined, // No longer used in PY 26/27 and beyond.
+    studentDataPartnerChildSupportCosts: undefined, // No longer used in PY 26/27 and beyond.
+    studentDataPartnerBCEAIncomeAssistanceAmount: undefined, // No longer used in PY 26/27 and beyond.
+    studentDataPartnerCaringForDependant: undefined, // No longer used in PY 26/27 and beyond.
+    studentDataPartnerTotalIncomeAssistance: undefined, // No longer used in PY 26/27 and beyond.
+    studentDataVoluntaryContributions: undefined,
+    studentDataScholarshipAmount: undefined,
+    studentDataChildSupportAndOrSpousalSupport: undefined,
+    studentDataDaycareCosts11YearsOrUnder: undefined,
+    studentDataDaycareCosts12YearsOrOver: undefined,
+    studentDataLivingAtHome: YesNoOptions.No,
+    studentDataLivingAtHomeRent: undefined,
+    studentDataSelectedOffering: undefined,
+    studentDataAdditionalTransportRequested: YesNoOptions.No,
+    studentDataAdditionalTransportKm: undefined,
+    studentDataAdditionalTransportWeeks: undefined,
+    studentDataAdditionalTransportPlacement: undefined,
+    studentDataCurrentYearIncome: undefined,
+    studentDataPartnerIsAbleToReport: undefined,
+    offeringCourseLoad: undefined,
+    parent1Contributions: undefined,
+    parent1Ei: undefined,
+    parent1NetAssets: undefined,
+    parent1Tax: undefined,
+    parent1TotalIncome: undefined,
     parent1DependentTable: [],
-    parent1CRAReportedIncome: null,
-    parent1CppEmployment: null,
-    parent1CppSelfemploymentOther: null,
-    parent2Contributions: null,
-    parent2CppSelfemploymentOther: null,
+    parent1CRAReportedIncome: undefined,
+    parent1CppEmployment: undefined,
+    parent1CppSelfemploymentOther: undefined,
+    parent2Contributions: undefined,
+    parent2CppSelfemploymentOther: undefined,
     parent2DependentTable: [],
-    parent2Ei: null,
-    parent2NetAssets: null,
-    parent2Tax: null,
-    parent2TotalIncome: null,
-    parent2CRAReportedIncome: null,
-    parent2CppEmployment: null,
-    partner1SocialAssistance: null,
-    partner1EmploymentInsuranceBenefits: null,
-    partner1TotalStudentLoan: null,
-    partner1PermanentDisabilityBenefits: null,
-    partner1StudentStudyWeeks: null,
-    partner1TotalIncome: null,
-    partner1CRAReportedIncome: null,
-    partner1PartnerCaringForDependant: null,
-    assessmentId: null,
-    applicationStatus: null,
-    applicationEditStatus: null,
-    applicationHasNOAApproval: null,
-    studentDataPartnerHasEmploymentInsuranceBenefits: null, // No longer used in PY 26/27 and beyond.
-    studentDataPartnerHasFedralProvincialPDReceipt: null, // No longer used in PY 26/27 and beyond.
-    studentDataPartnerHasTotalIncomeAssistance: null, // No longer used in PY 26/27 and beyond.
-    partner1HasEmploymentInsuranceBenefits: null,
-    partner1HasFedralProvincialPDReceipt: null,
-    partner1HasTotalIncomeAssistance: null,
-    institutionCountry: null,
-    institutionProvince: null,
-    institutionClassification: null,
-    institutionOrganizationStatus: null,
-  } as AssessmentConsolidatedData;
+    parent2Ei: undefined,
+    parent2NetAssets: undefined,
+    parent2Tax: undefined,
+    parent2TotalIncome: undefined,
+    parent2CRAReportedIncome: undefined,
+    parent2CppEmployment: undefined,
+    partner1SocialAssistance: undefined,
+    partner1EmploymentInsuranceBenefits: undefined,
+    partner1TotalStudentLoan: undefined,
+    partner1PermanentDisabilityBenefits: undefined,
+    partner1StudentStudyWeeks: undefined,
+    partner1TotalIncome: undefined,
+    partner1CRAReportedIncome: undefined,
+    partner1PartnerCaringForDependant: undefined,
+    assessmentId: undefined,
+    applicationStatus: undefined,
+    applicationEditStatus: undefined,
+    applicationHasNOAApproval: undefined,
+    studentDataPartnerHasEmploymentInsuranceBenefits: undefined, // No longer used in PY 26/27 and beyond.
+    studentDataPartnerHasFedralProvincialPDReceipt: undefined, // No longer used in PY 26/27 and beyond.
+    studentDataPartnerHasTotalIncomeAssistance: undefined, // No longer used in PY 26/27 and beyond.
+    partner1HasEmploymentInsuranceBenefits: undefined,
+    partner1HasFedralProvincialPDReceipt: undefined,
+    partner1HasTotalIncomeAssistance: undefined,
+    institutionCountry: undefined,
+    institutionProvince: undefined,
+    institutionClassification: undefined,
+    institutionOrganizationStatus: undefined,
+  };
 }
 
 /**
@@ -288,7 +297,7 @@ export function createParentsData(options?: {
   validSinNumber?: YesNoOptions;
 }): Partial<AssessmentConsolidatedData> {
   // Default values for options when not provided.
-  const dataType = options.dataType ?? AssessmentDataType.Submit;
+  const dataType = options?.dataType ?? AssessmentDataType.Submit;
   const numberOfParents = options?.numberOfParents ?? 1;
   const validSinNumber = options?.validSinNumber ?? YesNoOptions.Yes;
   // Make the student a dependant.
@@ -308,10 +317,10 @@ export function createParentsData(options?: {
   for (let i = 1; i <= numberOfParents; i++) {
     parentsData[`parent${i}NetAssests`] = 300000;
     parentsData[`parent${i}TotalIncome`] = 75000;
-    parentsData[`parent${i}CRAReportedIncome`] = null;
+    parentsData[`parent${i}CRAReportedIncome`] = undefined;
     parentsData[`parent${i}CppEmployment`] = 5000;
     parentsData[`parent${i}Contributions`] = 10000;
-    parentsData[`parent${i}DependentTable`] = null;
+    parentsData[`parent${i}DependentTable`] = undefined;
     parentsData[`parent${i}Ei`] = 0;
     parentsData[`parent${i}Tax`] = 0;
     parentsData[`parent${i}CppSelfemploymentOther`] = 200;
@@ -335,7 +344,7 @@ export function createIdentifiableParentsData(options?: {
   numberOfParents?: 1 | 2;
 }): Partial<AssessmentConsolidatedData> {
   // Default values for options when not provided.
-  const dataType = options.dataType ?? AssessmentDataType.Submit;
+  const dataType = options?.dataType ?? AssessmentDataType.Submit;
   // Make the student a dependant.
   const parentsData = {} as Partial<AssessmentConsolidatedData>;
   parentsData.studentDataDependantstatus = "dependant";
@@ -360,10 +369,10 @@ export function createIdentifiableParentsData(options?: {
   for (let i = 1; i <= parentsData.studentDataParents.length; i++) {
     parentsData[`parent${i}NetAssests`] = 300000;
     parentsData[`parent${i}TotalIncome`] = 75000;
-    parentsData[`parent${i}CRAReportedIncome`] = null;
+    parentsData[`parent${i}CRAReportedIncome`] = undefined;
     parentsData[`parent${i}CppEmployment`] = 5000;
     parentsData[`parent${i}Contributions`] = 10000;
-    parentsData[`parent${i}DependentTable`] = null;
+    parentsData[`parent${i}DependentTable`] = undefined;
     parentsData[`parent${i}Ei`] = 0;
     parentsData[`parent${i}Tax`] = 0;
     parentsData[`parent${i}CppSelfemploymentOther`] = 200;

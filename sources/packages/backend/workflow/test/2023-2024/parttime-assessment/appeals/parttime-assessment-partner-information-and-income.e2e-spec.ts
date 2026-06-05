@@ -9,7 +9,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-partner-informat
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.partner1CRAReportedIncome = null;
+    assessmentConsolidatedData.partner1CRAReportedIncome = undefined;
     assessmentConsolidatedData.appealsPartnerInformationAndIncomeAppealData = {
       relationshipStatus: "married",
       partnerEstimatedIncome: 12345,
@@ -80,7 +80,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-partner-informat
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.partner1CRAReportedIncome = null;
+    assessmentConsolidatedData.partner1CRAReportedIncome = undefined;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 4321;
 
@@ -103,7 +103,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-partner-informat
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-    assessmentConsolidatedData.partner1CRAReportedIncome = null;
+    assessmentConsolidatedData.partner1CRAReportedIncome = undefined;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
     assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 4321;
     assessmentConsolidatedData.appealsPartnerInformationAndIncomeAppealData = {

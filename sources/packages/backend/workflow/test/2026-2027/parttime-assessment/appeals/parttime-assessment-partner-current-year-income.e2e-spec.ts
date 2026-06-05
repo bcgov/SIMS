@@ -11,9 +11,10 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-partner-current-
     const assessmentConsolidatedData =
       createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.appealsPartnerCurrentYearIncomeAppealData = null;
+    assessmentConsolidatedData.appealsPartnerCurrentYearIncomeAppealData =
+      undefined;
     assessmentConsolidatedData.partner1TotalIncome = 1234;
-    assessmentConsolidatedData.partner1CRAReportedIncome = null;
+    assessmentConsolidatedData.partner1CRAReportedIncome = undefined;
 
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(
@@ -36,7 +37,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-partner-current-
       currentYearIncome: 20001,
     };
     assessmentConsolidatedData.partner1TotalIncome = 100002;
-    assessmentConsolidatedData.partner1CRAReportedIncome = null;
+    assessmentConsolidatedData.partner1CRAReportedIncome = undefined;
 
     // Act
     const calculatedAssessment = await executePartTimeAssessmentForProgramYear(

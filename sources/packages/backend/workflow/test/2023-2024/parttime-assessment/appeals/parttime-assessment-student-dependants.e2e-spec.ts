@@ -18,7 +18,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-student-dependan
       // Arrange
       const assessmentConsolidatedData =
         createFakeConsolidatedPartTimeData(PROGRAM_YEAR);
-      assessmentConsolidatedData.studentDataHasDependents = null;
+      assessmentConsolidatedData.studentDataHasDependents = YesNoOptions.No;
       assessmentConsolidatedData.appealsStudentHasDependentsAppealData =
         YesNoOptions.Yes;
       assessmentConsolidatedData.appealsStudentDependantsAppealData = [

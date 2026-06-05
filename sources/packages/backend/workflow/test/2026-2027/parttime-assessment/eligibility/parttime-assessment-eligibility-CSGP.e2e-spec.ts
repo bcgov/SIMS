@@ -146,7 +146,7 @@ describe(`E2E Test Workflow parttime-assessment-${PROGRAM_YEAR}-eligibility-CSGP
           testEligibility.expectedData.expectedAssessmentEligibility,
         );
         expect(
-          calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility
+          calculatedAssessment.variables.dmnPartTimeAwardInstitutionEligibility!
             .isEligibleCSGP,
         ).toBe(testEligibility.expectedData.expectedInstitutionEligibility);
         expect(calculatedAssessment.variables.awardEligibilityCSGP).toBe(

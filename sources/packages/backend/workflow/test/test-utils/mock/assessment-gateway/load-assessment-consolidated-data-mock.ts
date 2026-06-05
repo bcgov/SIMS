@@ -15,7 +15,7 @@ export function createLoadAssessmentDataTaskMock(options: {
     | WorkflowSubprocesses.LoadConsolidatedDataSubmitOrReassessment
     | WorkflowSubprocesses.LoadConsolidatedDataPreAssessment;
 }): WorkerMockedData {
-  const subprocesses = options.subprocess ? [options.subprocess] : null;
+  const subprocesses = options.subprocess ? [options.subprocess] : undefined;
   return {
     serviceTaskId: WorkflowServiceTasks.LoadAssessmentConsolidatedData,
     options: {
