@@ -3904,6 +3904,7 @@
                           "storage": "url",
                           "dir": "PD Dependent",
                           "webcam": false,
+                          "capture": false,
                           "fileTypes": [
                             {
                               "label": "",
@@ -3919,15 +3920,12 @@
                             "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
                             "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
                           },
+                          "validateWhenHidden": false,
                           "key": "pdDependentUpload",
                           "type": "file",
                           "url": "student/files",
                           "input": true,
-                          "conditional": {
-                            "show": "true",
-                            "when": "declaredOnTaxes",
-                            "eq": "yes"
-                          }
+                          "options": {}
                         },
                         {
                           "input": false,
@@ -4110,6 +4108,7 @@
                           "storage": "url",
                           "dir": "Dependant custody",
                           "webcam": false,
+                          "capture": false,
                           "fileTypes": [
                             {
                               "label": "",
@@ -4124,15 +4123,12 @@
                             "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
                             "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
                           },
+                          "validateWhenHidden": false,
                           "key": "dependantCustodyFileUpload",
-                          "conditional": {
-                            "show": "true",
-                            "when": "supportnocustodyDependants",
-                            "eq": "yes"
-                          },
                           "type": "file",
                           "url": "student/files",
-                          "input": true
+                          "input": true,
+                          "options": {}
                         },
                         {
                           "label": "Columns",
@@ -4608,7 +4604,7 @@
                           "attr": ""
                         }
                       ],
-                      "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou are requesting additional financial aid due to your spouse/common-law partner having or anticipating a significant decrease in gross income for {{data.currentTaxYear}}, due to one of the following circumstances:\n<li>Medical illness or injury</li>\n<li>Family emergency (e.g., death or injury)</li>\n<li>Natural disaster</li>\n<li>Layoff, strike, lockout or other reduction in earnings beyond the family’s control</li>",
+                      "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou are requesting additional financial aid due to your spouse/common-law partner having or anticipating a significant decrease in gross income for {{data.currentTaxYear}}, due to one of the following circumstances:\n<ul>\n<li>Medical illness or injury</li>\n<li>Family emergency (e.g., death or injury)</li>\n<li>Natural disaster</li>\n<li>Layoff, strike, lockout or other reduction in earnings beyond the family’s control</li>\n</ul>",
                       "refreshOnChange": false,
                       "key": "partnerCurrentYearIncomeExceptionPanelContent",
                       "type": "htmlelement",
@@ -5505,7 +5501,7 @@
                       "attr": ""
                     }
                   ],
-                  "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou are requesting additional financial aid due to having or anticipating a significant decrease in gross income for {{data.currentTaxYear}}, due to one of the following circumstances:\n<li>Medical illness or injury</li>\n<li>Family emergency (e.g., death or injury)</li>\n<li>Natural disaster</li>\n<li>Layoff, strike, lockout or other reduction in earnings beyond the family’s control</li>",
+                  "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou are requesting additional financial aid due to having or anticipating a significant decrease in gross income for {{data.currentTaxYear}}, due to one of the following circumstances:\n<ul>\n<li>Medical illness or injury</li>\n<li>Family emergency (e.g., death or injury)</li>\n<li>Natural disaster</li>\n<li>Layoff, strike, lockout or other reduction in earnings beyond the family’s control</li>\n</ul>",
                   "refreshOnChange": false,
                   "key": "estimatedCurrentYearIncomeExceptionPanelContent",
                   "type": "htmlelement",
@@ -6042,7 +6038,7 @@
                       "attr": ""
                     }
                   ],
-                  "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou require additional financial support for transportation due to one of the following criteria:\n<li>Public transit takes more than two hours from your neighborhood to your school and back by the quickest/most direct route.</li>\n<li>I am in a clinical or practicum placement that requires additional travel.</li>\n<li>I have special circumstances that require additional travel (work, family responsibilities, living distance from school).</li>",
+                  "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou require additional financial support for transportation due to one of the following criteria:\n<ul>\n<li>Public transit takes more than two hours from your neighborhood to your school and back by the quickest/most direct route.</li>\n<li>I am in a clinical or practicum placement that requires additional travel.</li>\n<li>I have special circumstances that require additional travel (work, family responsibilities, living distance from school).</li>\n</ul>",
                   "refreshOnChange": false,
                   "key": "additionalTransportationExceptionPanelContent",
                   "type": "htmlelement",
