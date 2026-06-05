@@ -349,6 +349,7 @@
 
 .alert-banner-container div {
   border: none;
+  text-align: left;
 }
 
 .alert-banner-container .alert {
@@ -466,6 +467,7 @@
   font-weight: 700 !important;
   font-size: 12px !important;
   color: $brand-black;
+  width: fit-content !important;
 }
 .formio-status-chip.fa-circle::before {
   margin-right: 6px;
@@ -898,4 +900,10 @@ td .formio-custom-tooltip:hover .tooltip-text {
 // This can be removed if formio/js updates its bundled Bootstrap CSS.
 .ff-form-container .input-group > .form-control {
   height: auto;
+}
+
+// Force any formio banners which use .alert-danger to have width: 100% instead of width: var(--fa-width, 1.25em), which comes from the .fa class.
+// Currently this impacts only sfaa2025-26-ft.json and sfaa2026-27-ft.json and can be removed once the ALLOW_BETA_INSTITUTIONS_ONLY flag is removed.
+.formio-component > .alert-danger {
+  width: 100%;
 }
