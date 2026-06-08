@@ -68,6 +68,7 @@
               </v-list>
               <v-input
                 :model-value="selectedApplicationAppealsForms"
+                hide-details="auto"
                 :rules="[(v) => checkNullOrEmptyRule(v, 'At least one appeal')]"
               >
               </v-input>
@@ -125,6 +126,7 @@
             </v-list>
             <v-input
               :model-value="selectedStandaloneAppealsForm"
+              hide-details="auto"
               :rules="[(v) => checkNullOrEmptyRule(v, 'At least one appeal')]"
             >
             </v-input>

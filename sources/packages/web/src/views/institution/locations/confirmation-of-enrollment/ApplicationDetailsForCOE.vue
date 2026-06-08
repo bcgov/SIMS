@@ -28,7 +28,7 @@
               color="primary"
             >
               <template v-for="(item, index) in items" :key="index">
-                <v-list-item :value="index" @click="item.command">
+                <v-list-item :value="index" @click="item.command" class="my-2">
                   <v-list-item-title>
                     <span class="label-bold">{{ item.label }}</span>
                   </v-list-item-title>

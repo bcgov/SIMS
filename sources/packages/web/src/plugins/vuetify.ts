@@ -10,6 +10,7 @@ import { aliases, fa } from "vuetify/iconsets/fa";
 import { mdi } from "vuetify/iconsets/mdi";
 import {
   VDivider,
+  VBtn,
   VDataTableServer,
   VDataTable,
   VDateInput,
@@ -26,6 +27,7 @@ export default createVuetify({
     VDividerOpaque: VDivider,
     VDividerInsetOpaque: VDivider,
     VDividerVerticalOpaque: VDivider,
+    VAppBarAccountBtn: VBtn,
   },
   directives,
   default: {},
@@ -43,6 +45,15 @@ export default createVuetify({
       thickness: 2,
       color: "secondary",
       vertical: true,
+    },
+    VAppBarAccountBtn: {
+      width: 46,
+      height: 46,
+      rounded: "xl",
+      icon: "fa:fa fa-user",
+      variant: "outlined",
+      elevation: 1,
+      color: "secondary",
     },
   },
   theme: {

@@ -49,6 +49,7 @@
             </v-list>
             <v-input
               :model-value="selectedStandaloneForm"
+              hide-details="auto"
               :rules="[
                 (v) => checkNullOrEmptyRule(v, 'At least one selected form'),
               ]"

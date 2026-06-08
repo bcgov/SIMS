@@ -26,7 +26,7 @@
             hide-details="auto"
           >
             <template #item="{ props, item }">
-              <v-list-item v-bind="props" title="">
+              <v-list-item v-bind="props" title="" class="my-2">
                 {{ item.title }}
                 <chip-tag
                   color="black"

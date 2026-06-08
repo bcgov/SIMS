@@ -1,5 +1,5 @@
 <template>
-  <IdleTimeChecker :clientIdType="ClientIdType.Institution">
+  <IdleTimeChecker :client-id-type="ClientIdType.Institution">
     <v-app-bar color="white">
       <b-c-logo subtitle="Institutions" />
       <v-btn-toggle
@@ -39,9 +39,11 @@
           >My Profile</v-btn
         >
         <v-menu v-if="isAuthenticated">
-          <template v-slot:activator="{ props }">
+          <template #activator="{ props }">
             <v-btn
-              class="nav-item-label"
+              width="46"
+              height="46"
+              class="mr-5 nav-item-label"
               rounded="xl"
               icon="fa:fa fa-user"
               variant="outlined"
@@ -59,7 +61,7 @@
             color="primary"
           >
             <template v-for="(item, index) in menuItems" :key="index">
-              <v-list-item :value="index" @click="item.command">
+              <v-list-item :value="index" @click="item.command" class="my-2">
                 <v-list-item-title>
                   <span class="label-bold" data-cy="settingsButton">{{
                     item.label
