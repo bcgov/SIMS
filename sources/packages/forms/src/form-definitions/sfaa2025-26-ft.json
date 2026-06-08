@@ -8590,7 +8590,7 @@
                       "attr": ""
                     }
                   ],
-                  "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou require additional financial support for transportation due to one of the following criteria:\n<li>Public transit takes more than two hours from your neighborhood to your school and back by the quickest/most direct route.</li>\n<li>I am in a clinical or practicum placement that requires additional travel.</li>\n<li>I have special circumstances that require additional travel (work, family responsibilities, living distance from school).</li>",
+                  "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou require additional financial support for transportation due to one of the following criteria:\n<ul>\n<li>Public transit takes more than two hours from your neighborhood to your school and back by the quickest/most direct route.</li>\n<li>I am in a clinical or practicum placement that requires additional travel.</li>\n<li>I have special circumstances that require additional travel (work, family responsibilities, living distance from school).</li>\n</ul>",
                   "refreshOnChange": false,
                   "key": "additionalTransportExceptionPanelContent",
                   "type": "htmlelement",
