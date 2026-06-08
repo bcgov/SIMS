@@ -187,13 +187,6 @@ strong {
   border: 1px solid #e8e8e8;
 }
 
-//TODO: This style has been temporarily used to fix the alignment and responsiveness issue
-//TODO: as an outcome of Vuetify beta upgrade.
-.v-dialog .v-overlay__content {
-  max-height: none !important;
-  max-width: none !important;
-}
-
 .muted-content-strong {
   color: $color-muted;
   font-weight: $font-weight-bold;
@@ -293,6 +286,16 @@ strong {
   opacity: unset;
 }
 
+.modal-dialog-fullscreen {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  margin: 0 !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  width: 100% !important;
+}
+
 // Modal height. 102px is the min height of header and footer of the modal.
 .modal-height {
   max-height: calc(100vh - 50px) !important;
@@ -300,7 +303,7 @@ strong {
 
 // Min height for modal header.
 .modal-height .v-card-title {
-  min-height: 50px;
+  min-height: 50px !important;
 }
 
 // Tracker slider thumb.

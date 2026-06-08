@@ -1,3 +1,5 @@
+// This file is a controlled Bootstrap build for Form.io compatibility in a Vuetify app,
+// with a deliberate import sequence to make overrides work and avoid style collisions.
 @import "bootstrap/scss/functions";
 
 // Align Bootstrap semantic colors with the Vuetify theme palette.
