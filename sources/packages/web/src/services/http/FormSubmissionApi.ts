@@ -12,88 +12,8 @@ import {
   FormSubmissionAPIOutDTO,
   FormSubmissionsAPIOutDTO,
 } from "@/services/http/dto";
-import {
-  FormCategory,
-  FormSubmissionDecisionStatus,
-  FormSubmissionStatus,
-  PaginationOptions,
-} from "@/types";
+import { FormCategory, PaginationOptions } from "@/types";
 import { getPaginationQueryString } from "@/helpers";
-
-const MOCKED_SUBMISSIONS: FormSubmissionAPIOutDTO[] = [
-  {
-    id: 1,
-    formCategory: FormCategory.StudentAppeal,
-    status: FormSubmissionStatus.Completed,
-    applicationId: 123,
-    applicationNumber: "2025000001",
-    submittedDate: new Date("2025-01-01T10:00:00Z"),
-    submissionItems: [
-      {
-        id: 1,
-        formType: "Room and board costs",
-        formCategory: FormCategory.StudentAppeal,
-        dynamicFormConfigurationId: 71,
-        submissionData: {},
-        formDefinitionName: "roomandboardcostsappeal",
-        currentDecision: {
-          decisionStatus: FormSubmissionDecisionStatus.Approved,
-        },
-      },
-      {
-        id: 2,
-        formType: "Step-parent waiver",
-        formCategory: FormCategory.StudentAppeal,
-        dynamicFormConfigurationId: 72,
-        submissionData: {},
-        formDefinitionName: "stepparentwaiverappeal",
-        currentDecision: {
-          decisionStatus: FormSubmissionDecisionStatus.Approved,
-        },
-      },
-    ],
-  },
-  {
-    id: 2,
-    formCategory: FormCategory.StudentAppeal,
-    status: FormSubmissionStatus.Pending,
-    applicationId: 456,
-    applicationNumber: "2025000002",
-    submittedDate: new Date("2025-01-01T10:00:00Z"),
-    submissionItems: [
-      {
-        id: 3,
-        formType: "Modified independent",
-        formCategory: FormCategory.StudentAppeal,
-        dynamicFormConfigurationId: 73,
-        submissionData: {},
-        formDefinitionName: "modifiedindependentappeal",
-        currentDecision: {
-          decisionStatus: FormSubmissionDecisionStatus.Pending,
-        },
-      },
-    ],
-  },
-  {
-    id: 3,
-    formCategory: FormCategory.StudentForm,
-    status: FormSubmissionStatus.Declined,
-    submittedDate: new Date("2025-01-01T10:00:00Z"),
-    submissionItems: [
-      {
-        id: 4,
-        formType: "Non-punitive withdrawal",
-        formCategory: FormCategory.StudentForm,
-        dynamicFormConfigurationId: 74,
-        submissionData: {},
-        formDefinitionName: "nonpunitivewithdrawalform",
-        currentDecision: {
-          decisionStatus: FormSubmissionDecisionStatus.Declined,
-        },
-      },
-    ],
-  },
-];
 
 /**
  * Http API client for Form Submissions.

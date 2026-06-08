@@ -43,10 +43,10 @@ export class InstitutionUserService {
     institutionUser: InstitutionUserAPIOutDTO,
   ): InstitutionUserViewModel {
     const roles = institutionUser.authorizations
-      .filter((user) => !!user.authType.role)
-      .map((user) => user.authType.role);
+      .map((authorization) => authorization.authType.role)
+      .filter((role): role is InstitutionUserRoles => role != null);
     const userTypes = institutionUser.authorizations.map(
-      (user) => user.authType.type,
+      (authorization) => authorization.authType.type,
     );
     const isAdmin = userTypes.includes(InstitutionUserTypes.admin);
     const userType = isAdmin
@@ -141,7 +141,7 @@ export class InstitutionUserService {
             ({
               locationId: locationAccess.id,
               userType: locationAccess.userAccess,
-            } as UserPermissionAPIInDTO),
+            }) as UserPermissionAPIInDTO,
         );
     }
 
