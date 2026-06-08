@@ -1,4 +1,5 @@
-import { DataSource, DataSourceOptions } from "typeorm";
+import { DataSource } from "typeorm";
+import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 import {
   Announcement,
   ApplicationExceptionRequest,
@@ -84,9 +85,9 @@ import {
 import { ConfigService } from "@sims/utilities/config";
 import { PoolConfig } from "pg";
 
-type ConnectionOptions = Extract<DataSourceOptions, { type: "postgres" }> & {
+interface ConnectionOptions extends PostgresConnectionOptions {
   extra: PoolConfig;
-};
+}
 interface ORMCacheConfig {
   type: "database" | "ioredis" | "ioredis/cluster";
   options?:
@@ -109,9 +110,6 @@ export const ormConfig: ConnectionOptions = {
   password: process.env.POSTGRES_PASSWORD,
   schema: process.env.DB_SCHEMA || "sims",
   cache: getORMCacheConfig(),
-  invalidWhereValuesBehavior: {
-    undefined: "ignore",
-  },
   synchronize: false,
   extra: {
     max:

@@ -1,6 +1,6 @@
 import { LogLevel } from "typeorm";
 import "../../../env-setup";
-import type { DataSourceOptions } from "typeorm";
+import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 
 /**
  * Allow enable the log for all operations for troubleshooting.
@@ -8,7 +8,7 @@ import type { DataSourceOptions } from "typeorm";
 const logging =
   process.env.LOG_ALL === "true" ? "all" : (["error", "warn"] as LogLevel[]);
 
-export const ormConfig: Extract<DataSourceOptions, { type: "postgres" }> = {
+export const ormConfig: PostgresConnectionOptions = {
   type: "postgres",
   host: process.env.POSTGRES_HOST || "localhost",
   port: parseInt(process.env.POSTGRES_PORT, 10) || 5432,
