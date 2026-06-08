@@ -1,5 +1,4 @@
 import { DataSource } from "typeorm";
-import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 import {
   Announcement,
   ApplicationExceptionRequest,

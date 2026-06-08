@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Connection } from "typeorm";
+import { DataSource } from "typeorm";
 import { RecordDataModelService, ReportConfig } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import { ReportsFilterModel } from "./report.models";
@@ -11,7 +11,7 @@ import { unparse } from "papaparse";
  */
 @Injectable()
 export class ReportService extends RecordDataModelService<ReportConfig> {
-  constructor(private readonly connection: Connection) {
+  constructor(private readonly connection: DataSource) {
     super(connection.getRepository(ReportConfig));
   }
 
