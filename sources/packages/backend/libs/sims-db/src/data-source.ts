@@ -109,6 +109,9 @@ export const ormConfig: ConnectionOptions = {
   password: process.env.POSTGRES_PASSWORD,
   schema: process.env.DB_SCHEMA || "sims",
   cache: getORMCacheConfig(),
+  invalidWhereValuesBehavior: {
+    undefined: "ignore",
+  },
   synchronize: false,
   extra: {
     max:
