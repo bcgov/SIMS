@@ -6,6 +6,8 @@
     "strictPropertyInitialization": false,
     "jsx": "preserve",
     "importHelpers": true,
+    "moduleResolution": "bundler",
+    "noEmit": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "esModuleInterop": true,

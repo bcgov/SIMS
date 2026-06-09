@@ -43,10 +43,10 @@ export class InstitutionUserService {
     institutionUser: InstitutionUserAPIOutDTO,
   ): InstitutionUserViewModel {
     const roles = institutionUser.authorizations
-      .map((authorization) => authorization.authType.role)
-      .filter((role): role is InstitutionUserRoles => role != null);
+      .filter((user) => !!user.authType.role)
+      .map((user) => user.authType.role) as InstitutionUserRoles[];
     const userTypes = institutionUser.authorizations.map(
-      (authorization) => authorization.authType.type,
+      (user) => user.authType.type,
     );
     const isAdmin = userTypes.includes(InstitutionUserTypes.admin);
     const userType = isAdmin
@@ -124,7 +124,7 @@ export class InstitutionUserService {
           userRole: isLegalSigningAuthority
             ? InstitutionUserRoles.legalSigningAuthority
             : undefined,
-        } as UserPermissionAPIInDTO,
+        },
       ];
     } else {
       // User is not an admin and will have the permission assigned to the individual locations.
@@ -136,13 +136,10 @@ export class InstitutionUserService {
             locationAccess.userAccess === LocationUserAccess.User ||
             locationAccess.userAccess === LocationUserAccess.ReadOnlyUser,
         )
-        .map(
-          (locationAccess) =>
-            ({
-              locationId: locationAccess.id,
-              userType: locationAccess.userAccess,
-            }) as UserPermissionAPIInDTO,
-        );
+        .map((locationAccess) => ({
+          locationId: locationAccess.id,
+          userType: locationAccess.userAccess,
+        }));
     }
 
     return permissions;
