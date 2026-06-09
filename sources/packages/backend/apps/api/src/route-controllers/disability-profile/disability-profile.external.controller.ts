@@ -1,4 +1,4 @@
-import { Controller, Get } from "@nestjs/common";
+import { BadRequestException, Controller, Get, Query } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
@@ -9,8 +9,13 @@ import {
 import { DisabilityProfileService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
-import { DisabilityProfileExternalAPIOutDTO } from "./models/disability-profile.dto";
+import {
+  DisabilityProfileExternalAPIOutDTO,
+  DisabilityProfilesQueryExternalAPIInDTO,
+} from "./models/disability-profile.dto";
 import { ExternalRole } from "../../auth";
+import { addDays, isAfter, isBeforeDate } from "@sims/utilities";
+import { DISABILITY_PROFILES_MODIFIED_SINCE_MAX_DAYS } from "../../utilities";
 
 /**
  * Disability profile controller for external client.
@@ -28,16 +33,34 @@ export class DisabilityProfileExternalController extends BaseController {
 
   /**
    * Gets all active disability profiles for the students with valid SIN numbers.
+   * @param disabilityProfilesQuery query parameters to retrieve the disability profiles.
    * @returns all active disability profiles.
    */
   @Roles(ExternalRole.StudentDisabilityProfiles)
   @Get()
-  async getAllDisabilityProfiles(): Promise<
-    DisabilityProfileExternalAPIOutDTO[]
-  > {
+  async getAllDisabilityProfiles(
+    @Query() disabilityProfilesQuery: DisabilityProfilesQueryExternalAPIInDTO,
+  ): Promise<DisabilityProfileExternalAPIOutDTO[]> {
+    const modifiedUntil = new Date();
+    const modifiedSince = new Date(disabilityProfilesQuery.modifiedSince);
+    // The minimum date-time value that modifiedSince can have.
+    const minModifiedSince = addDays(
+      -DISABILITY_PROFILES_MODIFIED_SINCE_MAX_DAYS,
+      modifiedUntil,
+    );
+    // Validates that the modifiedSince must be within allowed number of days and not in the future.
+    const isModifiedSinceValid =
+      isAfter(minModifiedSince, modifiedSince) &&
+      isBeforeDate(modifiedSince, modifiedUntil);
+    if (!isModifiedSinceValid) {
+      throw new BadRequestException(
+        `Modified since must be a date within the last ${DISABILITY_PROFILES_MODIFIED_SINCE_MAX_DAYS} days and not in the future.`,
+      );
+    }
     const activeDisabilityProfiles =
       await this.disabilityProfileService.getAllActiveDisabilityProfiles(
-        new Date("2024-01-01"),
+        modifiedSince,
+        modifiedUntil,
       );
     return activeDisabilityProfiles.map<DisabilityProfileExternalAPIOutDTO>(
       (disabilityProfile) => ({

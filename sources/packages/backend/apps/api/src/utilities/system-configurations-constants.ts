@@ -151,3 +151,9 @@ export const AVIATION_RESTRICTION_CODES: RestrictionCode[] = [
  * active student SINs for the external API.
  */
 export const ACTIVE_SINS_DAYS = 90;
+
+/**
+ * Number of days to limit the modifiedSince query parameter for the disability profiles external API
+ * to avoid performance issues and very large data sets being returned.
+ */
+export const DISABILITY_PROFILES_MODIFIED_SINCE_MAX_DAYS = 180;

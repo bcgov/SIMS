@@ -14,6 +14,7 @@ import {
   MaxLength,
   IsNotEmpty,
   IsOptional,
+  IsDateString,
   IsPositive,
   IsString,
   ValidateNested,
@@ -66,6 +67,12 @@ export class StudentDisabilityProfileAPIOutDTO {
 
 export class StudentDisabilityProfilesAPIOutDTO {
   profiles: StudentDisabilityProfileAPIOutDTO[];
+}
+
+export class DisabilityProfilesQueryExternalAPIInDTO {
+  @IsNotEmpty()
+  @IsDateString({ strict: true, strictSeparator: true })
+  modifiedSince: string;
 }
 
 export class DisabilityExternalAPIOutDTO {
