@@ -60,11 +60,6 @@
                       v-model="decision.decisionStatus"
                       class="btn-toggle"
                       selected-class="selected-btn-toggle"
-                      :disabled="
-                        readOnly ||
-                        decision.saveDecisionInProgress ||
-                        decision.decisionSaved
-                      "
                       mandatory
                     >
                       <v-btn
@@ -73,6 +68,11 @@
                         class="text-white"
                         :color="decisionStatus.color"
                         :value="decisionStatus.value"
+                        :readonly="
+                          readOnly ||
+                          decision.saveDecisionInProgress ||
+                          decision.decisionSaved
+                        "
                         >{{ decisionStatus.value }}</v-btn
                       >
                     </v-btn-toggle>

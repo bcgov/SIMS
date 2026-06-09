@@ -875,7 +875,9 @@ td .formio-custom-tooltip:hover .tooltip-text {
 
 // Global override to thin Bootstrap's table-bordered borders within form.io forms.
 .ff-form-container .formio-component-datagrid .datagrid-table {
-  border: 1px solid #ddd !important;
+  border-spacing: 0;
+  border: 0px !important;
+  padding: 0 !important;
   td,
   th {
     border: 1px solid #ddd !important;
@@ -912,4 +914,12 @@ td .formio-custom-tooltip:hover .tooltip-text {
 // Currently this impacts only sfaa2025-26-ft.json and sfaa2026-27-ft.json and can be removed once the ALLOW_BETA_INSTITUTIONS_ONLY flag is removed.
 .formio-component > .alert-danger {
   width: 100%;
+}
+
+// Strips default browser fieldset  globally.
+.formio-component fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
 }
