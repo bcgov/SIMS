@@ -11,8 +11,8 @@ import { unparse } from "papaparse";
  */
 @Injectable()
 export class ReportService extends RecordDataModelService<ReportConfig> {
-  constructor(private readonly connection: DataSource) {
-    super(connection.getRepository(ReportConfig));
+  constructor(private readonly dataSource: DataSource) {
+    super(dataSource.getRepository(ReportConfig));
   }
 
   /**
@@ -50,7 +50,7 @@ export class ReportService extends RecordDataModelService<ReportConfig> {
         parameters.push(this.convertFilterDataAsParameter(filterParams[key]));
       }
     });
-    const reportData = await this.connection.query(reportQuery, parameters);
+    const reportData = await this.dataSource.query(reportQuery, parameters);
     return unparse(reportData);
   }
 
