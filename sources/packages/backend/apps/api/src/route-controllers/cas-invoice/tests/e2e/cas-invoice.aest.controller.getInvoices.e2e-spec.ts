@@ -1,5 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import * as request from "supertest";
+import request from "supertest";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
@@ -21,7 +21,7 @@ import {
   OfferingIntensity,
   SupplierStatus,
 } from "@sims/sims-db";
-import { CASInvoiceAPIOutDTO } from "apps/api/src/route-controllers/cas-invoice/models/cas-invoice.dto";
+import { CASInvoiceAPIOutDTO } from "../../models/cas-invoice.dto";
 import { addDays } from "@sims/utilities";
 import { Between, In } from "typeorm";
 

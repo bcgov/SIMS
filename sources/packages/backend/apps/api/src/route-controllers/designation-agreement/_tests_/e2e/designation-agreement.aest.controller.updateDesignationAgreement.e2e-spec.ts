@@ -1,5 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import * as request from "supertest";
+import request from "supertest";
 import { DesignationAgreementStatus, NoteType, User } from "@sims/sims-db";
 import {
   AESTGroups,

@@ -1,4 +1,4 @@
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 import * as fs from "fs";
 import * as path from "path";
 import { SshService } from "@sims/integrations/services";

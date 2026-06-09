@@ -21,7 +21,7 @@ import {
   getAuthRelatedEntities,
   createFakeEducationProgram,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import { faker } from "@faker-js/faker";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { IsNull } from "typeorm";

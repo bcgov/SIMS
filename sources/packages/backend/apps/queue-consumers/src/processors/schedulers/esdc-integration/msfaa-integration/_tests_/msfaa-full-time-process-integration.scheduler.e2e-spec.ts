@@ -23,7 +23,7 @@ import {
   getMSFAASequenceGroupName,
   getProcessDateFromMSFAARequestContent,
 } from "./msfaa-helper";
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 
 describe(describeProcessorRootTest(QueueNames.FullTimeMSFAAIntegration), () => {
   let app: INestApplication;

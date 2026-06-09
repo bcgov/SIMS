@@ -12,7 +12,7 @@ import {
   createFakeUser,
 } from "@sims/test-utils";
 import { User } from "@sims/sims-db";
-import * as request from "supertest";
+import request from "supertest";
 import { OfferingValidationWarnings } from "../../../../services";
 
 describe("EducationProgramOfferingAESTController(e2e)-getOfferingDetails", () => {

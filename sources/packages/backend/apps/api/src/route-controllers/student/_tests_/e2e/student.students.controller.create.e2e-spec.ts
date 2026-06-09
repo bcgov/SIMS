@@ -1,5 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import * as request from "supertest";
+import request from "supertest";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
@@ -21,7 +21,7 @@ import { TestingModule } from "@nestjs/testing";
 import { RestrictionCode, SystemUsersService } from "@sims/services";
 import { In } from "typeorm";
 import { DisabilityStatus, IdentityProviders, NoteType } from "@sims/sims-db";
-import { CreateStudentAPIInDTO } from "apps/api/src/route-controllers/student/models/student.dto";
+import { CreateStudentAPIInDTO } from "../../models/student.dto";
 import { applySINNumberFormat } from "@sims/test-utils/utils";
 
 const SIN_NUMBER_A = "544962244";

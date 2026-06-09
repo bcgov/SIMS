@@ -14,7 +14,7 @@ import {
   createFakeUser,
 } from "@sims/test-utils";
 import { ProgramStatus, User } from "@sims/sims-db";
-import * as request from "supertest";
+import request from "supertest";
 import { addDays } from "@sims/utilities";
 import { faker } from "@faker-js/faker/locale/zu_ZA";
 

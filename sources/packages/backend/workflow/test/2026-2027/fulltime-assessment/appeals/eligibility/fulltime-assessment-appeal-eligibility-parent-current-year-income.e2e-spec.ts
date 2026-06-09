@@ -4,8 +4,8 @@ import {
   createFakeConsolidatedFulltimeData,
   executeFullTimeAssessmentForProgramYear,
 } from "../../../../test-utils";
-import { DependantStatusType } from "workflow/test/models";
 import { YesNoOptions } from "@sims/test-utils";
+import { DependantStatusType } from "../../../../models";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibility-parent-current-year-income.`, () => {
   const appealEligibilityScenarios = [

@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { faker } from "@faker-js/faker";
-import * as request from "supertest";
+import request from "supertest";
 import {
   AESTGroups,
   authorizeDynamicFormConfigurations,

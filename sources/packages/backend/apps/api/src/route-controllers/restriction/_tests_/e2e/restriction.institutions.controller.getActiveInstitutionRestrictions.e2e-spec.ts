@@ -26,7 +26,7 @@ import {
   getInstitutionToken,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import { In } from "typeorm";
 
 describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestrictions.", () => {

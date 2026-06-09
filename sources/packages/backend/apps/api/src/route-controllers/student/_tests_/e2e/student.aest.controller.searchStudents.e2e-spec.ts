@@ -1,5 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import * as request from "supertest";
+import request from "supertest";
 import { DataSource, Repository } from "typeorm";
 import { saveFakeStudent } from "@sims/test-utils";
 import { Student } from "@sims/sims-db";

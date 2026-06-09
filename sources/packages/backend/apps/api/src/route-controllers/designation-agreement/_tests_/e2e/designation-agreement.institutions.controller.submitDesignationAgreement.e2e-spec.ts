@@ -19,7 +19,7 @@ import {
   authorizeUserTokenForLocation,
   getAuthRelatedEntities,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import { NO_LOCATION_SELECTED_FOR_DESIGNATION } from "../../../../constants/error-code.constants";
 
 describe("DesignationAgreementInstitutionsController(e2e)-submitDesignationAgreement", () => {

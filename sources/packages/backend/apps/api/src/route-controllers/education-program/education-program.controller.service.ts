@@ -27,7 +27,7 @@ import { ApiProcessError } from "../../types";
 import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
 import { InstitutionService } from "../../services/institution/institution.service";
 import { InstitutionUserTypes } from "../../auth";
-import { OptionItemAPIOutDTO } from "apps/api/src/route-controllers/models/common.dto";
+import { OptionItemAPIOutDTO } from "../models/common.dto";
 
 @Injectable()
 export class EducationProgramControllerService {

@@ -22,7 +22,7 @@ import {
   INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
   InstitutionTokenTypes,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import { getUserFullName } from "../../../../utilities";
 import { RESTRICTION_NOT_FOUND_ERROR_MESSAGE } from "../../../../services/restriction/constants";
 

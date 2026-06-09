@@ -12,7 +12,7 @@ import {
   getAESTToken,
   getAESTUser,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import { NoteType, RestrictionType, User } from "@sims/sims-db";
 
 describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => {

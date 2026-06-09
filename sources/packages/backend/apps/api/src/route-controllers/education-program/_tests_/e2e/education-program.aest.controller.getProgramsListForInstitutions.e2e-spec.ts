@@ -13,7 +13,7 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import { ProgramStatus, User } from "@sims/sims-db";
-import * as request from "supertest";
+import request from "supertest";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 
 describe("EducationProgramAESTController(e2e)-getProgramsListForInstitutions", () => {

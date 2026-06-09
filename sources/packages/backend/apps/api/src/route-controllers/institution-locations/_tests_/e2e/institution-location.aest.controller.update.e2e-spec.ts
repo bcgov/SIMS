@@ -1,5 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import * as request from "supertest";
+import request from "supertest";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
@@ -134,7 +134,7 @@ describe("InstitutionLocationAESTController(e2e)-update", () => {
     const endpoint = `/aest/location/${savedLocationB.id}`;
     const address = savedLocationB.data.address;
 
-    // Act/Assert — attempt to assign locationA's code to locationB.
+    // Act/Assert â€” attempt to assign locationA's code to locationB.
     await request(app.getHttpServer())
       .patch(endpoint)
       .auth(token, BEARER_AUTH_TYPE)

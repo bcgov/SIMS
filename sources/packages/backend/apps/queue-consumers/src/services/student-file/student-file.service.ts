@@ -8,7 +8,7 @@ import {
 import { CustomNamedError } from "@sims/utilities";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { ClamAVError, ClamAVService, SystemUsersService } from "@sims/services";
-import * as path from "path";
+import path from "path";
 import {
   CONNECTION_FAILED,
   EMPTY_FILE,

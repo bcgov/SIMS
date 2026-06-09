@@ -31,7 +31,7 @@ import {
   UserInfoMatchData,
 } from "./student.service.models";
 import { SFASIndividualService } from "@sims/services/sfas";
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 import {
   MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED,
   STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,

@@ -13,7 +13,7 @@ import {
   createTestingAppModule,
   getAESTToken,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import {
   ApplicationStatus,
   NoteType,

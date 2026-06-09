@@ -20,13 +20,13 @@ import {
   getAuthRelatedEntities,
   createFakeEducationProgram,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import MockDate from "mockdate";
 import { beforeEach } from "node:test";
 import {
   StudyBreakAPIOutDTO,
   StudyBreaksAndWeeksOutDTO,
-} from "apps/api/src/route-controllers/education-program-offering/models/education-program-offering.dto";
+} from "../../models/education-program-offering.dto";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-requestChange", () => {
   let app: INestApplication;

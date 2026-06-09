@@ -25,7 +25,7 @@ import {
   getAuthRelatedEntities,
   createFakeEducationProgram,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import * as path from "path";
 import { In } from "typeorm";
 import { OFFERING_VALIDATION_CRITICAL_ERROR } from "../../../../constants";
@@ -34,7 +34,7 @@ import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
 } from "../../../../utilities";
-import { PrimaryIdentifierAPIOutDTO } from "apps/api/src/route-controllers/models/primary.identifier.dto";
+import { PrimaryIdentifierAPIOutDTO } from "../../../models/primary.identifier.dto";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () => {
   let app: INestApplication;
@@ -237,7 +237,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       // create an 'Creation pending' offering when inserted.
 
       expect(offeringSBC1).toEqual({
-        name: "Test áéíóú",
+        name: "Test Ã¡Ã©Ã­Ã³Ãº",
         offeringStatus: OfferingStatus.CreationPending,
       });
       expect(offeringSBC2).toHaveProperty(

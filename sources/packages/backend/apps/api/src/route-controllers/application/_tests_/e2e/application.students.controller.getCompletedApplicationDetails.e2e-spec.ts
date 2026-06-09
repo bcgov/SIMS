@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { TestingModule } from "@nestjs/testing";
-import * as request from "supertest";
+import request from "supertest";
 import { ArrayContains, DataSource, IsNull, Repository } from "typeorm";
 import {
   BEARER_AUTH_TYPE,

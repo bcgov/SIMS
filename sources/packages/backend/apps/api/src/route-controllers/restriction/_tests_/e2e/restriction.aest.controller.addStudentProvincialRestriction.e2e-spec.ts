@@ -10,7 +10,7 @@ import {
   createTestingAppModule,
   getAESTToken,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import { RestrictionNotificationType, RestrictionType } from "@sims/sims-db";
 
 describe("RestrictionAESTController(e2e)-addStudentProvincialRestriction.", () => {

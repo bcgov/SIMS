@@ -1,5 +1,4 @@
 import { DataSource } from "typeorm";
-import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 import {
   Announcement,
   ApplicationExceptionRequest,
@@ -84,6 +83,7 @@ import {
 } from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config";
 import { PoolConfig } from "pg";
+import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions.js";
 
 interface ConnectionOptions extends PostgresConnectionOptions {
   extra: PoolConfig;

@@ -1,5 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import * as request from "supertest";
+import request from "supertest";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
@@ -27,7 +27,7 @@ import {
   StudentAssessmentStatus,
   User,
 } from "@sims/sims-db";
-import { OfferingChangeAssessmentAPIInDTO } from "apps/api/src/route-controllers/education-program-offering/models/education-program-offering.dto";
+import { OfferingChangeAssessmentAPIInDTO } from "../../models/education-program-offering.dto";
 import { In } from "typeorm";
 
 describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeRequest", () => {

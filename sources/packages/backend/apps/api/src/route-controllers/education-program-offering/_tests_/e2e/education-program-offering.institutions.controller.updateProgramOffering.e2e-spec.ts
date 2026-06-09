@@ -29,7 +29,7 @@ import {
   createFakeEducationProgramOffering,
   getAuthorizedLocation,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import { faker } from "@faker-js/faker";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,
@@ -37,7 +37,7 @@ import {
 } from "../../../../utilities";
 import { getISODateOnlyString, isAfter } from "@sims/utilities";
 import { InstitutionUserTypes } from "../../../../auth";
-import { EducationProgramOfferingAPIInDTO } from "apps/api/src/route-controllers/education-program-offering/models/education-program-offering.dto";
+import { EducationProgramOfferingAPIInDTO } from "../../models/education-program-offering.dto";
 import {
   OfferingYesNoOptions,
   OnlineInstructionModeOptions,

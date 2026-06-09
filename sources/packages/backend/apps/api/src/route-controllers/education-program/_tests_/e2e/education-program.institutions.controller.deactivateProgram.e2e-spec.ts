@@ -9,7 +9,7 @@ import {
   getAuthRelatedEntities,
   createFakeEducationProgram,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 
 describe("EducationProgramInstitutionsController(e2e)-deactivateProgram", () => {
   let app: INestApplication;
