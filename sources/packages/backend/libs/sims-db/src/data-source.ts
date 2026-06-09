@@ -1,5 +1,4 @@
-import { DataSource } from "typeorm";
-import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
+import { DataSource, DataSourceOptions } from "typeorm";
 import {
   Announcement,
   ApplicationExceptionRequest,
@@ -85,9 +84,9 @@ import {
 import { ConfigService } from "@sims/utilities/config";
 import { PoolConfig } from "pg";
 
-interface ConnectionOptions extends PostgresConnectionOptions {
+type ConnectionOptions = Extract<DataSourceOptions, { type: "postgres" }> & {
   extra: PoolConfig;
-}
+};
 interface ORMCacheConfig {
   type: "database" | "ioredis" | "ioredis/cluster";
   options?:

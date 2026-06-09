@@ -20,6 +20,7 @@
       "collapsible": false,
       "key": "page1",
       "type": "panel",
+      "clearOnHide": true,
       "label": "Welcome",
       "components": [
         {
@@ -147,6 +148,7 @@
             }
           ],
           "type": "panel",
+          "clearOnHide": true,
           "hideLabel": true,
           "conditional": {
             "show": "true",
@@ -282,6 +284,7 @@
             }
           ],
           "type": "panel",
+          "clearOnHide": true,
           "hideLabel": true,
           "conditional": {
             "show": "true",
@@ -385,6 +388,7 @@
         "width": "350px"
       },
       "type": "panel",
+      "clearOnHide": true,
       "label": "Program",
       "breadcrumbClickable": true,
       "buttonSettings": {
@@ -394,6 +398,24 @@
       },
       "scrollToTop": true,
       "components": [
+        {
+          "label": "Has selected location",
+          "calculateValue": "value = !!data.selectedLocation || !!(data.selectedLocationName?.trim());",
+          "calculateServer": true,
+          "key": "hasSelectedLocation",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
+        },
+        {
+          "label": "Has selected program",
+          "calculateValue": "value = !!data.selectedProgram || !!(data.selectedProgramName?.trim());",
+          "calculateServer": true,
+          "key": "hasSelectedProgram",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
+        },
         {
           "label": "HTML",
           "className": "alert alert-warning fa fa-exclamation-triangle w-100",
@@ -456,6 +478,7 @@
           "hideLabel": true,
           "key": "institutionSelectionPanel",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -545,8 +568,9 @@
           "collapsible": false,
           "hideLabel": true,
           "key": "panel2",
-          "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!!data.mySchoolIsNotListed) ||\n  !!data.isReadOnly;",
+          "customConditional": "show =\n  (data.hasSelectedLocation &&\n  !!!data.mySchoolIsNotListed) ||\n  !!data.isReadOnly;",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -564,7 +588,7 @@
               "content": "Program selection",
               "refreshOnChange": false,
               "key": "html40",
-              "customConditional": "show =\r\n  (!!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed) ||\r\n  !!data.isReadOnly;\r\n\r\n",
+              "customConditional": "show =\r\n  (data.hasSelectedLocation &&\r\n  !!!data.mySchoolIsNotListed) ||\r\n  !!data.isReadOnly;\r\n\r\n",
               "type": "htmlelement",
               "input": false,
               "tableView": false
@@ -575,6 +599,7 @@
               "hideLabel": true,
               "key": "program",
               "type": "panel",
+              "clearOnHide": true,
               "label": "Panel",
               "input": false,
               "tableView": false,
@@ -591,7 +616,7 @@
                   },
                   "validateWhenHidden": false,
                   "key": "selectedProgram",
-                  "customConditional": "show =\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\r\n  !data.isProgramSectionReadOnly;\r\n  \r\n\r\n",
+                  "customConditional": "show =\r\n  data.hasSelectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\r\n  !data.isProgramSectionReadOnly;\r\n  \r\n\r\n",
                   "type": "select",
                   "input": true,
                   "lockKey": true,
@@ -648,7 +673,7 @@
                     }
                   ],
                   "key": "myProgramNotListed",
-                  "customConditional": "show = (!!data.selectedLocation && !!!data.mySchoolIsNotListed);",
+                  "customConditional": "show = (data.hasSelectedLocation && !!!data.mySchoolIsNotListed);",
                   "type": "selectboxes",
                   "input": true,
                   "inputType": "checkbox",
@@ -668,6 +693,7 @@
                   "key": "customProgramAndOffering",
                   "customConditional": "show = (data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) ||\n        (data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false);",
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "Custom program and offering",
                   "input": false,
                   "tableView": false,
@@ -899,8 +925,9 @@
                   "collapsible": false,
                   "hideLabel": true,
                   "key": "programDesc",
-                  "customConditional": "show =\r\n  ((!!data.selectedProgram &&\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\r\n  ) || (data.isReadOnly && data.selectedProgramDesc?.id));\r\n",
+                  "customConditional": "show =\r\n  ((data.hasSelectedProgram &&\r\n  data.hasSelectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\r\n  ) || (data.isReadOnly && data.selectedProgramDesc?.id));\r\n",
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "programDesc",
                   "buttonSettings": {
                     "previous": true,
@@ -1094,7 +1121,7 @@
                   },
                   "validateWhenHidden": false,
                   "key": "selectedOffering",
-                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\n  !(data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false) &&\n  !data.isProgramSectionReadOnly\n  );",
+                  "customConditional": "show =\n  (data.hasSelectedLocation &&\n  data.hasSelectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\n  !(data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false) &&\n  !data.isProgramSectionReadOnly\n  );",
                   "type": "select",
                   "input": true,
                   "searchThreshold": 0.3
@@ -1125,7 +1152,7 @@
                     }
                   ],
                   "key": "myStudyPeriodIsntListed",
-                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\n  );\n\n",
+                  "customConditional": "show =\n  (data.hasSelectedLocation &&\n  data.hasSelectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\n  );\n\n",
                   "type": "selectboxes",
                   "input": true,
                   "inputType": "checkbox",
@@ -1142,6 +1169,7 @@
                   "key": "panel5",
                   "customConditional": "// The box and area should only appear if the student previously approved/positively completed PIR\n// The check box question should disappear if the student attaches a program and offering and is no longer on the PIR path\n// The checkbox is not displayed during initial application submission\n// The check box question is only accessible by students during an edit and does not appear during a change request\nconst programOrStudyPeriodNotListed = (data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) ||\n        (data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false);\nshow = !data.isReadOnly && data.hasPreviouslyCompletedPIR && programOrStudyPeriodNotListed &&  !data.isChangeRequestApplication;",
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "Panel",
                   "input": false,
                   "tableView": false,
@@ -1206,6 +1234,7 @@
           "hideLabel": true,
           "key": "panel1",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -1428,6 +1457,7 @@
           "hideLabel": true,
           "key": "additonalInformationPanel",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -1624,6 +1654,7 @@
       "collapsible": false,
       "key": "page2",
       "type": "panel",
+      "clearOnHide": true,
       "label": "Personal Information",
       "components": [
         {
@@ -1672,6 +1703,7 @@
           "hideLabel": true,
           "key": "StudentAidBCPersonalInfoPanel",
           "type": "panel",
+          "clearOnHide": true,
           "label": "StudentAid BC Personal Info Panel",
           "input": false,
           "tableView": false,
@@ -1851,6 +1883,7 @@
           "hideLabel": true,
           "key": "personalInformationPanel",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -1921,6 +1954,7 @@
               "key": "citizenshipProofPanel",
               "customConditional": "show = (data.citizenship === 'protectedPerson' || data.citizenship === 'permanentResident');",
               "type": "panel",
+              "clearOnHide": true,
               "label": "Citizenship Proof Panel",
               "input": false,
               "tableView": false,
@@ -1976,6 +2010,7 @@
                     "eq": "permanentResident"
                   },
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "Panel",
                   "input": false,
                   "tableView": false,
@@ -2105,6 +2140,7 @@
                     "eq": "protectedPerson"
                   },
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "Panel",
                   "input": false,
                   "tableView": false,
@@ -2281,6 +2317,7 @@
                 }
               ],
               "type": "panel",
+              "clearOnHide": true,
               "conditional": {
                 "show": "true",
                 "when": "relationshipStatus",
@@ -2308,6 +2345,7 @@
                 "eq": "true"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Not a BC Resident Panel",
               "input": false,
               "tableView": false,
@@ -2336,6 +2374,7 @@
                       "collapsible": false,
                       "key": "marriedCommonLawDomesticViolenceExceptionSupportingDocumentsPanel",
                       "type": "panel",
+                      "clearOnHide": true,
                       "label": "Upload supporting documents",
                       "buttonSettings": {
                         "previous": true,
@@ -2498,6 +2537,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Indigenous Panel",
               "input": false,
               "tableView": false,
@@ -2729,6 +2769,7 @@
             }
           ],
           "type": "panel",
+          "clearOnHide": true,
           "hideLabel": true,
           "lockKey": true,
           "label": "Panel"
@@ -2738,6 +2779,7 @@
           "collapsible": false,
           "key": "disabilityInformationPanel",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -2905,6 +2947,7 @@
                 "eq": "no"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Not a BC Resident Panel",
               "input": false,
               "tableView": false,
@@ -3061,6 +3104,7 @@
                         "when": "citizenshipForBCResidencyApplicationException.bclivingSituation"
                       },
                       "type": "panel",
+                      "clearOnHide": true,
                       "label": "Upload supporting documents",
                       "breadcrumbClickable": true,
                       "buttonSettings": {
@@ -3223,6 +3267,7 @@
             }
           ],
           "type": "panel",
+          "clearOnHide": true,
           "hideLabel": true,
           "lockKey": true,
           "label": "Panel"
@@ -3233,6 +3278,7 @@
           "hideLabel": true,
           "key": "shareInformationWithTrustedContact",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -3300,6 +3346,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Trusted Contact Panel",
               "input": false,
               "tableView": false,
@@ -3432,6 +3479,7 @@
                   "hideLabel": true,
                   "key": "panel4",
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "Panel",
                   "input": false,
                   "tableView": false,
@@ -3602,6 +3650,7 @@
         "eq": "yes"
       },
       "type": "panel",
+      "clearOnHide": true,
       "label": "Dependant information",
       "input": false,
       "tableView": false,
@@ -3650,6 +3699,7 @@
           "collapsible": false,
           "key": "addDependantsPanel",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Add Dependants Panel",
           "input": false,
           "tableView": false,
@@ -3873,6 +3923,7 @@
                       "key": "uploadPanel",
                       "customConditional": "show = row.declaredOnTaxes === 'yes';",
                       "type": "panel",
+                      "clearOnHide": true,
                       "label": "Upload panel",
                       "breadcrumbClickable": true,
                       "buttonSettings": {
@@ -4086,6 +4137,7 @@
                       "key": "dependentsThatYouSupportFinanciallyButDoNotHaveSoleCustody",
                       "customConditional": "show = row.supportnocustodyDependants === 'yes';",
                       "type": "panel",
+                      "clearOnHide": true,
                       "label": "Dependents that you support financially but do not have sole custody",
                       "breadcrumbClickable": false,
                       "allowPrevious": false,
@@ -4343,6 +4395,7 @@
                     "eq": "yes"
                   },
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "Daycare costs that you incur for your child(ren) age 11 years or under Panel",
                   "input": false,
                   "tableView": false,
@@ -4426,6 +4479,7 @@
                     "eq": "yes"
                   },
                   "type": "panel",
+                  "clearOnHide": true,
                   "label": "Total unsubsidized day-care costs during class hours for the proposed study period for disabled/infirmed dependents 12 years of age and older Panel",
                   "input": false,
                   "tableView": false,
@@ -4461,6 +4515,7 @@
                 }
               ],
               "type": "panel",
+              "clearOnHide": true,
               "hideLabel": true,
               "lockKey": true,
               "label": "Panel"
@@ -4480,6 +4535,7 @@
         "eq": "married"
       },
       "type": "panel",
+      "clearOnHide": true,
       "label": "Partner Information",
       "buttonSettings": {
         "previous": false,
@@ -4530,6 +4586,7 @@
           "hideLabel": true,
           "key": "panel3",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -4685,6 +4742,7 @@
       "collapsible": false,
       "key": "page4",
       "type": "panel",
+      "clearOnHide": true,
       "label": "Financial Information",
       "components": [
         {
@@ -4726,6 +4784,7 @@
           "hideLabel": true,
           "key": "TaxReturnIncomePanel",
           "type": "panel",
+          "clearOnHide": true,
           "label": "2020 Tax Return Income Panel",
           "breadcrumbClickable": false,
           "allowPrevious": false,
@@ -4799,6 +4858,7 @@
               "hideLabel": true,
               "key": "craConsentPanel",
               "type": "panel",
+              "clearOnHide": true,
               "label": "Panel",
               "input": false,
               "tableView": false,
@@ -4869,6 +4929,7 @@
           "hideLabel": true,
           "key": "PartTimeAwardTypePanel",
           "type": "panel",
+          "clearOnHide": true,
           "label": "2020 Tax Return Income Panel",
           "input": false,
           "tableView": false,
@@ -4947,6 +5008,7 @@
           "hideLabel": true,
           "key": "additionalTransportationCost",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
@@ -5053,6 +5115,7 @@
                 "eq": "yes"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Panel",
               "input": false,
               "tableView": false,
@@ -5129,6 +5192,7 @@
                 "eq": "true"
               },
               "type": "panel",
+              "clearOnHide": true,
               "label": "Panel",
               "input": false,
               "tableView": false,
@@ -5291,6 +5355,7 @@
                         "when": "transportationApplicationException.transportationcostsituation"
                       },
                       "type": "panel",
+                      "clearOnHide": true,
                       "label": "Addition Transportation Panel",
                       "breadcrumbClickable": false,
                       "allowPrevious": false,
@@ -5489,6 +5554,7 @@
       "collapsible": false,
       "key": "page5",
       "type": "panel",
+      "clearOnHide": true,
       "label": "Confirm Submission",
       "components": [
         {
@@ -5531,6 +5597,7 @@
           "hideLabel": true,
           "key": "declarationsPanel2",
           "type": "panel",
+          "clearOnHide": true,
           "label": "Panel",
           "input": false,
           "tableView": false,
