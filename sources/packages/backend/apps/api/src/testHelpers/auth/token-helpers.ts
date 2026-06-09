@@ -1,6 +1,6 @@
 import { JwtService } from "@nestjs/jwt";
 import { UserPasswordCredential } from "@sims/utilities/config";
-import { AuthorizedParties, IUserToken } from "../../auth";
+import { IUserToken } from "../../auth";
 import { TOKEN_RENEWAL_SECONDS } from "../../services";
 import { TokenCacheResponse } from "../../services/auth/token-cache.service.models";
 import { needRenewJwtToken } from "../../utilities";
@@ -30,14 +30,14 @@ const tokenCache: Record<string, TokenCacheResponse> = {};
  * Get a token for a Keycloak client optionally using a different
  * cache key when there are variations of a token under the same client.
  * For instance, for the Ministry, a token for each group can be acquired.
- * @param authorizedParty Keycloak client.
+ * @param clientId Keycloak client id.
  * @param options options
  * - `userPasswordCredential` credential to obtain authentication token.
  * - `uniqueTokenCache` different cache key when there are variations of
  *    a token under the same client.
  */
 export async function getCachedToken(
-  authorizedParty: AuthorizedParties,
+  clientId: string,
   options: {
     userPasswordCredential: UserPasswordCredential;
     uniqueTokenCache?: string;
@@ -48,14 +48,14 @@ export async function getCachedToken(
  * Get a token for a Keycloak client optionally using a different
  * cache key when there are variations of a token under the same client.
  * For instance, for the Ministry, a token for each group can be acquired.
- * @param authorizedParty keycloak client.
+ * @param clientId Keycloak client id.
  * @param options options
  * - `clientSecret` client secret to obtain authentication token.
  * - `uniqueTokenCache` different cache key when there are variations of
  *    a token under the same client.
  */
 export async function getCachedToken(
-  authorizedParty: AuthorizedParties,
+  clientId: string,
   options: {
     clientSecret: string;
     uniqueTokenCache?: string;
@@ -66,7 +66,7 @@ export async function getCachedToken(
  * Get a token for a Keycloak client optionally using a different
  * cache key when there are variations of a token under the same client.
  * For instance, for the Ministry, a token for each group can be acquired.
- * @param authorizedParty Keycloak client.
+ * @param clientId Keycloak client id.
  * @param options options
  * - `userPasswordCredential` credential to obtain authentication token.
  * - `clientSecret` client secret to obtain authentication token.
@@ -76,7 +76,7 @@ export async function getCachedToken(
  * used only for E2E tests.
  */
 export async function getCachedToken(
-  authorizedParty: AuthorizedParties,
+  clientId: string,
   options: {
     userPasswordCredential?: UserPasswordCredential;
     clientSecret?: string;
@@ -84,7 +84,7 @@ export async function getCachedToken(
   },
 ): Promise<string> {
   const uniqueTokenCache = options.uniqueTokenCache ?? "";
-  const tokenCacheKey = `e2e_token_cache_${authorizedParty}${uniqueTokenCache}`;
+  const tokenCacheKey = `e2e_token_cache_${clientId}${uniqueTokenCache}`;
   if (
     !tokenCache[tokenCacheKey] ||
     needRenewJwtToken(
@@ -93,10 +93,7 @@ export async function getCachedToken(
     )
   ) {
     await KeycloakConfig.load();
-    const aestToken = await KeycloakService.shared.getToken(
-      authorizedParty,
-      options,
-    );
+    const aestToken = await KeycloakService.shared.getToken(clientId, options);
     const decodedToken = jwtService.decode(aestToken.access_token);
     tokenCache[tokenCacheKey] = {
       accessToken: aestToken.access_token,

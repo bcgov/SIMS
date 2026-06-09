@@ -482,6 +482,7 @@ export class DisabilityProfileService {
   /**
    * Get all active disability profiles for the students with valid SIN numbers.
    * @param modifiedSince disability profile modified since this date.
+   * @param modifiedUntil disability profile modified until this date.
    * @returns all active disability profiles for the students with valid SIN numbers.
    */
   getAllActiveDisabilityProfiles(
