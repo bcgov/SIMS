@@ -11,6 +11,7 @@ import { Type } from "class-transformer";
 import {
   ArrayMinSize,
   ArrayMaxSize,
+  ArrayUnique,
   MaxLength,
   IsNotEmpty,
   IsOptional,
@@ -119,6 +120,7 @@ export class StudentDisabilityAPIInDTO {
   diagnosisNotes?: string;
   @ArrayMinSize(1)
   @ArrayMaxSize(MAX_IMPAIRMENTS_ENTRIES)
+  @ArrayUnique()
   @IsString({ each: true })
   @MaxLength(LOOKUP_KEY_MAX_LENGTH, { each: true })
   impairments: string[];

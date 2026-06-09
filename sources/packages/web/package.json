@@ -14,7 +14,7 @@
   "dependencies": {
     "@bcgov/bc-sans": "^2.1.0",
     "@formio/bootstrap": "^3.2.2",
-    "@formio/js": "^5.3.5",
+    "@formio/js": "^5.4.0",
     "@mdi/font": "^7.4.47",
     "@mdi/js": "^7.4.47",
     "axios": "^1.16.1",

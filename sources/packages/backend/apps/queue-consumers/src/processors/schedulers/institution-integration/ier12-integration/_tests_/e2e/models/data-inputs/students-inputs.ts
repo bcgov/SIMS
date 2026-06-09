@@ -1,5 +1,8 @@
 import { DisabilityStatus } from "@sims/sims-db";
 import { IER12Student } from "./data-inputs.models";
+import * as dayjs from "dayjs";
+
+const twoYearsAgo = dayjs().subtract(2, "year").toDate();
 
 export const JOHN_DOE_FROM_CANADA: IER12Student = {
   lastName: "Doe",
@@ -14,6 +17,9 @@ export const JOHN_DOE_FROM_CANADA: IER12Student = {
     postalCode: "Z1Z1Z1",
   },
   disabilityStatus: DisabilityStatus.NotRequested,
+  // Set updatedAt and userUpdatedAt to a date outside the max range so they aren't picked up as updates by default.
+  updatedAt: twoYearsAgo,
+  userUpdatedAt: twoYearsAgo,
 };
 
 export const JANE_MONONYMOUS_FROM_OTHER_COUNTRY: IER12Student = {
@@ -29,4 +35,7 @@ export const JANE_MONONYMOUS_FROM_OTHER_COUNTRY: IER12Student = {
     postalCode: "SOME POSTAL CODE",
   },
   disabilityStatus: DisabilityStatus.NotRequested,
+  // Set updatedAt and userUpdatedAt to a date outside the max range so they aren't picked up as updates by default.
+  updatedAt: twoYearsAgo,
+  userUpdatedAt: twoYearsAgo,
 };

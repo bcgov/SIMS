@@ -6,7 +6,7 @@
   />
   <search-table
     v-model="searchCriteria"
-    search-label="Search name or application #"
+    search-label="Search name or application number"
     :loading="isLoading"
     @search="searchAppeals"
   >

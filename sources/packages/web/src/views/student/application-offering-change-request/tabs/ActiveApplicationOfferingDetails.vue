@@ -1,18 +1,18 @@
 <template>
-  <tab-container :enableCardView="false" class="mt-n1">
+  <tab-container :enable-card-view="false" class="mt-n1">
     <body-header-container>
       <template #header>
         <body-header :title="studentFullName">
           <template #subtitle
             ><detail-header
-              :headerMap="activeApplicationOfferingHeaderDetailsData"
+              :header-map="activeApplicationOfferingHeaderDetailsData"
           /></template>
         </body-header>
       </template>
       <hr class="horizontal-divider" />
       <h2 class="category-header-large primary-color">Application Details</h2>
       <offering-view
-        :offeringId="activeApplicationOfferingDetails.activeOfferingId"
+        :offering-id="activeApplicationOfferingDetails.activeOfferingId"
       />
     </body-header-container>
   </tab-container>
@@ -50,7 +50,7 @@ export default defineComponent({
     const activeApplicationOfferingHeaderDetailsData = computed(
       () =>
         ({
-          "Application #":
+          Application:
             activeApplicationOfferingDetails.value.applicationNumber ?? "",
           Location: activeApplicationOfferingDetails.value.locationName,
         } as Record<string, string>),

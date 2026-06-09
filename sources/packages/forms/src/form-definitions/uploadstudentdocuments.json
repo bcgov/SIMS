@@ -117,7 +117,7 @@
             {
               "components": [
                 {
-                  "label": "Application #",
+                  "label": "Application number",
                   "tableView": true,
                   "key": "applicationNumber",
                   "type": "textfield",
