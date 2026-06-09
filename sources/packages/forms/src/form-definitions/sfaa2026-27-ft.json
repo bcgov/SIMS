@@ -406,6 +406,24 @@
       "scrollToTop": true,
       "components": [
         {
+          "label": "Has selected location",
+          "calculateValue": "value = !!data.selectedLocation || !!(data.selectedLocationName?.trim());",
+          "calculateServer": true,
+          "key": "hasSelectedLocation",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
+        },
+        {
+          "label": "Has selected program",
+          "calculateValue": "value = !!data.selectedProgram || !!(data.selectedProgramName?.trim());",
+          "calculateServer": true,
+          "key": "hasSelectedProgram",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
+        },
+        {
           "label": "HTML",
           "className": "alert alert-warning fa fa-exclamation-triangle w-100",
           "attrs": [
@@ -571,7 +589,7 @@
           "collapsible": false,
           "hideLabel": true,
           "key": "panel2",
-          "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!!data.mySchoolIsNotListed) ||\n  !!data.isReadOnly;",
+          "customConditional": "show =\n  (data.hasSelectedLocation &&\n  !!!data.mySchoolIsNotListed) ||\n  !!data.isReadOnly;",
           "type": "panel",
           "clearOnHide": true,
           "label": "Panel",
@@ -591,7 +609,7 @@
               "content": "Program selection",
               "refreshOnChange": false,
               "key": "html40",
-              "customConditional": "show =\r\n  (!!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed) ||\r\n  !!data.isReadOnly;\r\n\r\n",
+              "customConditional": "show =\r\n  (data.hasSelectedLocation &&\r\n  !!!data.mySchoolIsNotListed) ||\r\n  !!data.isReadOnly;\r\n\r\n",
               "type": "htmlelement",
               "input": false,
               "tableView": false
@@ -619,7 +637,7 @@
                   },
                   "validateWhenHidden": false,
                   "key": "selectedProgram",
-                  "customConditional": "show =\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\r\n  !data.isProgramSectionReadOnly;\r\n  \r\n\r\n",
+                  "customConditional": "show =\r\n  data.hasSelectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\r\n  !data.isProgramSectionReadOnly;\r\n  \r\n\r\n",
                   "type": "select",
                   "input": true,
                   "lockKey": true,
@@ -676,7 +694,7 @@
                     }
                   ],
                   "key": "myProgramNotListed",
-                  "customConditional": "show = (!!data.selectedLocation && !!!data.mySchoolIsNotListed);",
+                  "customConditional": "show = (data.hasSelectedLocation && !!!data.mySchoolIsNotListed);",
                   "type": "selectboxes",
                   "input": true,
                   "inputType": "checkbox",
@@ -950,7 +968,7 @@
                   "collapsible": false,
                   "hideLabel": true,
                   "key": "programDesc",
-                  "customConditional": "show =\r\n  ((!!data.selectedProgram &&\r\n  !!data.selectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\r\n  ) || (data.isReadOnly && data.selectedProgramDesc?.id));\r\n",
+                  "customConditional": "show =\r\n  ((data.hasSelectedProgram &&\r\n  data.hasSelectedLocation &&\r\n  !!!data.mySchoolIsNotListed &&\r\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\r\n  ) || (data.isReadOnly && data.selectedProgramDesc?.id));\r\n",
                   "type": "panel",
                   "clearOnHide": true,
                   "label": "programDesc",
@@ -1146,7 +1164,7 @@
                   },
                   "validateWhenHidden": false,
                   "key": "selectedOffering",
-                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\n  !(data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false) &&\n  !data.isProgramSectionReadOnly\n  );",
+                  "customConditional": "show =\n  (data.hasSelectedLocation &&\n  data.hasSelectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\n  !(data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false) &&\n  !data.isProgramSectionReadOnly\n  );",
                   "type": "select",
                   "input": true,
                   "searchThreshold": 0.3
@@ -1177,7 +1195,7 @@
                     }
                   ],
                   "key": "myStudyPeriodIsntListed",
-                  "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\n  );\n\n",
+                  "customConditional": "show =\n  (data.hasSelectedLocation &&\n  data.hasSelectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false)\n  );\n\n",
                   "type": "selectboxes",
                   "input": true,
                   "inputType": "checkbox",

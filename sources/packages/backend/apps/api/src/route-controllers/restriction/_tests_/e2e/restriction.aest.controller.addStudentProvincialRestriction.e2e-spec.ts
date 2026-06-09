@@ -96,7 +96,7 @@ describe("RestrictionAESTController(e2e)-addStudentProvincialRestriction.", () =
       });
 
     // Assert
-    const existsNotification = await db.notification.exist({
+    const existsNotification = await db.notification.exists({
       where: { user: { id: student.user.id } },
     });
     expect(existsNotification).toBeFalsy();
