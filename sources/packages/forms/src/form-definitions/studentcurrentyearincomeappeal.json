@@ -230,7 +230,7 @@
         }
       ],
       "className": "category-header-medium primary-color",
-      "content": "Upload Supporting Documents",
+      "content": "Upload supporting documents",
       "type": "htmlelement",
       "customClass": "header-md",
       "tableView": false
