@@ -287,13 +287,13 @@ strong {
 }
 
 .modal-dialog-fullscreen {
-  position: fixed !important;
+  position: fixed;
   top: 0 !important;
   left: 0 !important;
-  margin: 0 !important;
-  height: 100dvh !important;
+  margin: 0;
+  height: 100dvh;
   max-height: 100dvh !important;
-  width: 100% !important;
+  width: 100%;
 }
 
 // Modal height. 102px is the min height of header and footer of the modal.

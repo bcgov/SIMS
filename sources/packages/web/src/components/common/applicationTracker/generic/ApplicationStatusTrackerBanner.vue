@@ -15,7 +15,7 @@
     </template>
     <span class="label-value-normal m-0 p-0">
       <slot name="content">
-        <v-row class="m-0 p-0" no-gutters compact>
+        <v-row class="m-0 p-0" no-gutters>
           <v-col md="auto">
             <span>{{ content }}</span>
           </v-col>
