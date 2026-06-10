@@ -83,7 +83,6 @@ import {
 } from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config";
 import { PoolConfig } from "pg";
-import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions.js";
 
 type ConnectionOptions = Extract<DataSourceOptions, { type: "postgres" }> & {
   extra: PoolConfig;
