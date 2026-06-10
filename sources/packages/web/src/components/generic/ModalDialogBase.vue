@@ -12,7 +12,7 @@
       elevation="10"
       :max-width="showFullScreen ? undefined : maxWidth"
       :min-width="showFullScreen ? undefined : minWidth"
-      height="modal-height"
+      class="modal-height"
     >
       <v-card-title>
         <slot name="header">
