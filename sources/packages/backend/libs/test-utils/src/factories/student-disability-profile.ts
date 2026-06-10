@@ -71,6 +71,8 @@ export async function saveFakeStudentDisabilityProfile(
     ministryUser: User;
     student?: Student;
     disabilityProfileStatus?: DisabilityProfileStatus;
+    disabilitiesInitialValues?: Partial<StudentDisabilityProfileDisability>[];
+    completedAt?: Date;
     now?: Date;
   },
 ): Promise<StudentDisabilityProfile> {
@@ -78,13 +80,10 @@ export async function saveFakeStudentDisabilityProfile(
   const disabilityProfileStatus =
     options?.disabilityProfileStatus ?? DisabilityProfileStatus.Active;
   const student = options?.student ?? (await saveFakeStudent(db.dataSource));
-  const disabilities = [
-    createFakeStudentDisabilityProfileDisability(
-      {
-        creator: options.ministryUser,
-      },
-      {
-        initialValues: {
+  const disabilitiesInitialValues = options?.disabilitiesInitialValues?.length
+    ? options?.disabilitiesInitialValues
+    : [
+        {
           disabilityCategory: DisabilityCategories.LearningDisability,
           disabilityType: DisabilityTypes.Permanent,
           impairments: [
@@ -92,10 +91,19 @@ export async function saveFakeStudentDisabilityProfile(
             DisabilityImpairments.Other,
           ],
         },
+      ];
+  const disabilities = disabilitiesInitialValues.map((initialValues) =>
+    createFakeStudentDisabilityProfileDisability(
+      {
+        creator: options.ministryUser,
+      },
+      {
+        initialValues,
         now,
       },
     ),
-  ];
+  );
+
   const studentDisabilityProfile = createFakeStudentDisabilityProfile(
     {
       student,
@@ -111,7 +119,7 @@ export async function saveFakeStudentDisabilityProfile(
   );
   if (disabilityProfileStatus !== DisabilityProfileStatus.Draft) {
     studentDisabilityProfile.completedBy = options?.ministryUser;
-    studentDisabilityProfile.completedAt = now;
+    studentDisabilityProfile.completedAt = options?.completedAt ?? now;
   }
   return db.studentDisabilityProfile.save(studentDisabilityProfile);
 }

@@ -71,6 +71,10 @@ export class StudentDisabilityProfilesAPIOutDTO {
 }
 
 export class DisabilityProfilesQueryExternalAPIInDTO {
+  /**
+   * Modified since date.
+   * Should be a valid ISO 8601 date string.
+   */
   @IsNotEmpty()
   @IsDateString({ strict: true, strictSeparator: true })
   modifiedSince: string;
