@@ -8,7 +8,7 @@ import {
 import { CustomNamedError } from "@sims/utilities";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { ClamAVError, ClamAVService, SystemUsersService } from "@sims/services";
-import path from "path";
+import { parse } from "node:path";
 import {
   CONNECTION_FAILED,
   EMPTY_FILE,
@@ -99,7 +99,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     let fileName = studentFile.fileName;
     if (isInfected) {
       processSummary.warn("Virus found.");
-      const fileInfo = path.parse(studentFile.fileName);
+      const fileInfo = parse(studentFile.fileName);
       fileName = `${fileInfo.name}${INFECTED_FILENAME_SUFFIX}${fileInfo.ext}`;
     } else {
       processSummary.info("No virus found.");
