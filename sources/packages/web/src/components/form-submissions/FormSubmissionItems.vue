@@ -22,6 +22,8 @@
         v-for="submissionItem in submissionItems"
         :key="submissionItem.dynamicConfigurationId"
         :value="submissionItem.dynamicConfigurationId"
+        collapse-icon="$expanderCollapseIcon"
+        expand-icon="$expanderExpandIcon"
       >
         <template #title>
           <v-row>

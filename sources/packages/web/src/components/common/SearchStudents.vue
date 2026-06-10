@@ -1,7 +1,7 @@
 <template>
   <v-form ref="searchStudentsForm">
     <content-group class="mb-8">
-      <v-row>
+      <v-row density="compact">
         <v-col cols="12" lg="2">
           <v-text-field
             label="Email address"
@@ -56,17 +56,9 @@
           />
         </v-col>
         <v-col cols="12" lg="2">
-          <v-btn
-            color="primary"
-            class="p-button-raised"
-            data-cy="searchStudents"
-            @click="searchStudents()"
-          >
-            Search
-          </v-btn>
+          <v-btn color="primary" @click="searchStudents()"> Search </v-btn>
         </v-col>
       </v-row>
-
       <v-input
         :rules="[isValidSearch()]"
         hide-details="auto"
@@ -107,7 +99,6 @@
           <template #[`item.action`]="{ item }">
             <v-btn
               color="primary"
-              class="p-button-raised"
               data-cy="viewStudent"
               @click="$emit('goToStudentView', item.id)"
               >View</v-btn

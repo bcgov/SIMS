@@ -1,10 +1,14 @@
 <template>
   <v-form ref="assessApplicationChangeRequestForm">
-    <modal-dialog-base :showDialog="showDialog" :title="title" :maxWidth="860">
+    <modal-dialog-base
+      :show-dialog="showDialog"
+      :title="title"
+      :max-width="860"
+    >
       <template #content
         ><error-summary :errors="assessApplicationChangeRequestForm.errors" />
-        <div class="mt-5">
-          <ul class="ml-0 pl-4">
+        <div>
+          <ul class="ml-0 pl-4 pt-0 mt-0">
             <li>
               View the change request and any supporting documentation on the
               student application.
@@ -40,10 +44,10 @@
           <template #="{ notAllowed }">
             <footer-buttons
               :processing="loading"
-              :primaryLabel="primaryLabel"
-              @secondaryClick="cancel"
-              @primaryClick="assessChange"
-              :disablePrimaryButton="notAllowed"
+              :primary-label="primaryLabel"
+              @secondary-click="cancel"
+              @primary-click="assessChange"
+              :disable-primary-button="notAllowed"
             />
           </template>
         </check-permission-role>

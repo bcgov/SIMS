@@ -3,15 +3,15 @@
     <template #header>
       <header-navigator
         title="Program detail"
-        :routeLocation="routeLocation"
-        subTitle="Edit Offering"
+        :route-location="routeLocation"
+        sub-title="Edit Offering"
       >
         <template #buttons>
           <v-row class="p-0 m-0">
             <v-menu
               v-if="hasExistingApplication && !isReadOnlyUser(locationId)"
             >
-              <template v-slot:activator="{ props }">
+              <template #activator="{ props }">
                 <v-btn
                   class="ml-2"
                   color="primary"
@@ -27,7 +27,7 @@
                 color="primary"
               >
                 <template v-for="(item, index) in items" :key="index">
-                  <v-list-item :value="index">
+                  <v-list-item :value="index" class="my-2">
                     <v-list-item-title @click="item.command">
                       <span class="label-bold">{{ item.label }}</span>
                     </v-list-item-title>
@@ -54,19 +54,19 @@
     </template>
     <template #details-header>
       <program-offering-detail-header
-        :headerDetails="{
+        :header-details="{
           ...initialData,
           status: initialData.offeringStatus,
         }"
       />
     </template>
     <offering-form-submit
-      submitLabel="Update offering now"
+      submit-label="Update offering now"
       :data="initialData"
-      :formMode="formMode"
-      :locationId="locationId"
-      :programId="programId"
-      :enableValidationsOnInit="true"
+      :form-mode="formMode"
+      :location-id="locationId"
+      :program-id="programId"
+      :enable-validations-on-init="true"
       @submit="submit"
       @cancel="goBack"
     ></offering-form-submit>

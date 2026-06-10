@@ -1,12 +1,10 @@
 <template>
-  <v-row :justify="justify" class="mt-2 mb-1 mx-0">
+  <v-row :justify="justify" class="mt-2 mb-1" density="compact">
     <v-btn
       :disabled="processing"
       :color="secondaryButtonColor"
       :variant="secondaryButtonVariant"
-      class="mr-2"
       v-if="showSecondaryButton"
-      data-cy="secondaryFooterButton"
       @click="$emit('secondaryClick')"
       >{{ secondaryLabel }}</v-btn
     >
@@ -14,12 +12,11 @@
       <v-btn
         :disabled="processing || disablePrimaryButton"
         v-if="showPrimaryButton"
-        class="ml-2"
         variant="elevated"
-        data-cy="primaryFooterButton"
         :color="primaryButtonColor"
         @click="$emit('primaryClick')"
         :loading="processing"
+        :prepend-icon="primaryPrependIcon"
       >
         {{ primaryLabel }}</v-btn
       >
@@ -35,6 +32,11 @@ export default defineComponent({
       type: String,
       required: true,
       default: "Submit",
+    },
+    primaryPrependIcon: {
+      type: String,
+      required: false,
+      default: undefined,
     },
     secondaryLabel: {
       type: String,
@@ -87,7 +89,6 @@ export default defineComponent({
         | "space-between"
         | "space-evenly"
         | "start"
-        | "stretch"
         | undefined
       >,
       required: false,

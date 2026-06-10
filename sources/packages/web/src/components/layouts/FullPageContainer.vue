@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-5">
+  <div class="mx-2">
     <header>
       <slot name="header"></slot>
       <slot name="sub-header"></slot>
@@ -8,7 +8,7 @@
       <slot name="details-header"></slot>
     </div>
     <slot name="alerts"></slot>
-    <v-container :fluid="fullWidth">
+    <v-container fluid>
       <template v-if="layoutTemplate === LayoutTemplates.CenteredCard">
         <v-row justify="center">
           <v-card class="mt-4 p-4 w-100" :class="widthClass">

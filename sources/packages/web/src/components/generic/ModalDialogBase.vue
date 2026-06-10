@@ -6,6 +6,7 @@
     :no-click-animation="true"
     scrollable
     :fullscreen="showFullScreen"
+    :content-class="showFullScreen ? 'modal-dialog-fullscreen' : undefined"
   >
     <v-card
       elevation="10"
@@ -21,15 +22,14 @@
         </slot>
       </v-card-title>
       <v-divider-inset-opaque class="my-1" />
-      <v-card-text class="pt-0">
+      <v-card-text class="p-4">
         <div class="pb-2" v-if="subTitle">{{ subTitle }}</div>
         <slot name="content">Please add the modal content here!</slot>
       </v-card-text>
       <v-divider-inset-opaque />
-
       <v-card-actions>
         <v-spacer></v-spacer>
-        <div class="mx-4 mb-2">
+        <div class="mx-2 mb-2">
           <slot name="footer"></slot>
         </div>
       </v-card-actions>
@@ -66,6 +66,7 @@ export default defineComponent({
     subTitle: {
       type: String,
       required: false,
+      default: undefined,
     },
   },
 

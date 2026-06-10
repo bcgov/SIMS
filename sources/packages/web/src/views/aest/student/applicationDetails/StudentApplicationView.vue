@@ -46,7 +46,7 @@
       </header-navigator>
       <application-header-title :application-id="applicationId" />
     </template>
-    <h2 class="color-blue pb-4">Student Application Details</h2>
+    <h2 class="color-blue">Student Application Details</h2>
     <StudentApplication
       @render="formRender"
       :selected-form="selectedForm"

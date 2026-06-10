@@ -3,12 +3,11 @@
     <v-container>
       <body-header
         title="Unapproved changes"
-        class="m-1"
         sub-title="Pending or declined requests submitted by the student or institution."
         :records-count="requestedAssessments.length"
       >
       </body-header>
-      <content-group class="mt-4">
+      <content-group>
         <toggle-content
           :toggled="!requestedAssessments.length"
           message="No requests found."

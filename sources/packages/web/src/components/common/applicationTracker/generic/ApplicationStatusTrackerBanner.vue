@@ -9,17 +9,17 @@
       <v-icon class="mt-1" :icon="icon" :size="20" :color="iconColor" />
     </template>
     <template #title>
-      <h3 class="category-header-medium mb-3 label">
+      <h3 class="category-header-medium mb-3 label my-0">
         {{ label }}
       </h3>
     </template>
-    <span class="label-value-normal">
+    <span class="label-value-normal m-0 p-0">
       <slot name="content">
-        <v-row>
+        <v-row class="m-0 p-0" no-gutters>
           <v-col md="auto">
             <span>{{ content }}</span>
           </v-col>
-          <v-col offset-md="5" class="mt-n8">
+          <v-col offset-md="5">
             <slot name="image"></slot>
           </v-col>
         </v-row>

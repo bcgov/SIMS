@@ -1,21 +1,21 @@
 <template>
   <div>
-    <v-row no-gutters>
-      <v-col cols="auto" class="mr-2">
+    <v-row no-gutters density="compact">
+      <v-col cols="auto">
         <dynamic-header
           :title="fullTitleMessage"
           :level="titleHeaderLevel"
           :class="headerClass"
         />
       </v-col>
-      <v-col cols="auto" class="mr-2">
+      <v-col cols="auto">
         <slot name="status-chip"></slot>
       </v-col>
       <v-col>
         <slot name="actions"></slot>
       </v-col>
     </v-row>
-    <v-row no-gutters class="mb-2">
+    <v-row density="compact">
       <v-col>
         <slot name="subtitle">{{ subTitle }}</slot>
       </v-col>

@@ -1,49 +1,24 @@
 <template>
-  <v-card elevation="2" class="mx-auto mt-12" max-width="670px" outlined>
-    <v-card-text>
-      <v-row no-gutters>
-        <v-col cols="9">
-          <h1 class="category-header-large primary-color">
-            Welcome to StudentAid BC
-          </h1>
-          <p class="mb-5">
-            Access your student account to apply for student financial
-            assistance.
-          </p>
-          <content-group>
-            <v-row>
-              <v-col>
-                <h2 class="category-header-medium primary-color">
-                  Log in or Register
-                </h2>
-                <p class="sign-in-description">
-                  Whether you are a new or returning user—log in or register
-                  using the BC Services Card account.
-                </p>
-                <v-btn
-                  color="primary"
-                  @click="login(IdentityProviders.BCSC)"
-                  prepend-icon="fa:fa fa-user"
-                >
-                  Log in/Register
-                </v-btn>
-              </v-col>
-            </v-row>
-          </content-group>
-        </v-col>
-        <v-col
-          ><v-img
-            height="260"
-            class="ml-2"
-            alt="Happy student waving"
-            src="@/assets/images/happy-student.svg"
-        /></v-col>
-      </v-row>
-    </v-card-text>
-  </v-card>
+  <shared-login
+    title="Welcome to StudentAid BC"
+    subtitle="Access your student account to apply for student financial assistance."
+    login-area-title="Log in or Register"
+    login-area-text="Whether you are a new or returning user—log in or register using the BC Services Card account."
+    login-area-button="Log in/Register"
+    @login="login(IdentityProviders.BCSC)"
+  >
+    <template #image>
+      <v-img
+        max-height="250"
+        class="ml-2"
+        alt="Happy student waving"
+        src="@/assets/images/happy-student.svg"
+      />
+    </template>
+  </shared-login>
   <v-card elevation="2" class="mx-auto mt-6" max-width="670px" outlined>
     <v-card-text>
-      <h2 class="category-header-medium primary-color">
+      <h2 class="category-header-medium primary-color mb-2">
         Frequently asked questions
       </h2>
       <v-expansion-panels>
@@ -107,6 +82,7 @@
               and provide further instructions via email.
             </p>
             <v-btn
+              class="mt-2"
               color="primary"
               @click="login(IdentityProviders.BCeIDBoth)"
               prepend-icon="fa:fa fa-user"
@@ -131,20 +107,15 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
 import { useAuth } from "@/composables";
 import { IdentityProviders, ClientIdType } from "@/types";
 import { AuditService } from "@/services/AuditService";
+import SharedLogin from "@/components/common/SharedLogin.vue";
 
-export default defineComponent({
-  setup() {
-    const { executeLogin } = useAuth();
-    const login = async (idp: IdentityProviders) => {
-      AuditService.userLoginTriggered();
-      await executeLogin(ClientIdType.Student, idp);
-    };
-    return { IdentityProviders, login };
-  },
-});
+const { executeLogin } = useAuth();
+const login = async (idp: IdentityProviders) => {
+  AuditService.userLoginTriggered();
+  await executeLogin(ClientIdType.Student, idp);
+};
 </script>

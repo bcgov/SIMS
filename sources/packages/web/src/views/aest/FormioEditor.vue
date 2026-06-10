@@ -1,7 +1,10 @@
 <template>
   <full-page-container :full-width="true">
     <template #header>
-      <header-navigator title="Dynamic Forms Editor" subTitle="Dynamic Forms" />
+      <header-navigator
+        title="Dynamic Forms Editor"
+        sub-title="Dynamic Forms"
+      />
     </template>
     <body-header-container>
       <template #header>
@@ -58,16 +61,16 @@
           density="compact"
           hide-details="auto"
           class="mb-4"
-          @update:modelValue="formSelected"
+          @update:model-value="formSelected"
         >
-          <template v-slot:selection="{ item }">
-            <span>{{ item.title }} ({{ item.value }})</span>
+          <template #selection="{ item }">
+            <span>{{ item.title }} ({{ item.path }})</span>
           </template>
-          <template v-slot:item="{ item, props }">
-            <v-list-item v-bind="props">
+          <template #item="{ item, props }">
+            <v-list-item v-bind="props" class="my-2">
               <v-list-item-content>
                 <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
-                <v-list-item-subtitle v-text="item.value" />
+                <v-list-item-subtitle v-text="item.path" />
               </v-list-item-content>
             </v-list-item>
           </template>
@@ -100,9 +103,9 @@
                 <content-group>
                   <v-textarea v-model="formDefinition" rows="20"></v-textarea>
                   <footer-buttons
-                    primaryLabel="Apply form definition to editor"
-                    @primaryClick="applyDynamicFormDefinition"
-                    :showSecondaryButton="false"
+                    primary-label="Apply form definition to editor"
+                    @primary-click="applyDynamicFormDefinition"
+                    :show-secondary-button="false"
                     justify="end"
                     class="mr-1"
                   />
@@ -116,15 +119,15 @@
   <confirm-modal
     title="Save dynamic form"
     ref="saveDynamicFormModal"
-    okLabel="Save"
-    cancelLabel="Cancel"
+    ok-label="Save"
+    cancel-label="Cancel"
     text="Are you sure you want to save this version of the dynamic form?"
   />
   <confirm-modal
     title="Apply dynamic form definition"
     ref="applyDynamicFormDefinitionModal"
-    okLabel="Apply"
-    cancelLabel="Cancel"
+    ok-label="Apply"
+    cancel-label="Cancel"
     text="Are you sure you want to override the current form definition in the editor by the new one provided here?"
   />
 </template>

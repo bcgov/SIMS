@@ -7,7 +7,11 @@
       />
     </template>
     <v-expansion-panels class="mt-5" v-model="selectedAppealType">
-      <v-expansion-panel :value="AppealTypes.Application">
+      <v-expansion-panel
+        :value="AppealTypes.Application"
+        collapse-icon="$expanderCollapseIcon"
+        expand-icon="$expanderExpandIcon"
+      >
         <template #title
           ><div>
             <span
@@ -68,6 +72,7 @@
               </v-list>
               <v-input
                 :model-value="selectedApplicationAppealsForms"
+                hide-details="auto"
                 :rules="[(v) => checkNullOrEmptyRule(v, 'At least one appeal')]"
               >
               </v-input>
@@ -82,7 +87,11 @@
           />
         </template>
       </v-expansion-panel>
-      <v-expansion-panel :value="AppealTypes.Other">
+      <v-expansion-panel
+        :value="AppealTypes.Other"
+        collapse-icon="$expanderCollapseIcon"
+        expand-icon="$expanderExpandIcon"
+      >
         <template #title
           ><div>
             <span class="category-header-medium brand-gray-text"
@@ -125,6 +134,7 @@
             </v-list>
             <v-input
               :model-value="selectedStandaloneAppealsForm"
+              hide-details="auto"
               :rules="[(v) => checkNullOrEmptyRule(v, 'At least one appeal')]"
             >
             </v-input>

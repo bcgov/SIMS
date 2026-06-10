@@ -3,13 +3,13 @@
     <template #header>
       <header-navigator
         title="Applications"
-        :routeLocation="{
+        :route-location="{
           name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
         }"
-        subTitle="Financial Aid Application"
+        sub-title="Financial Aid Application"
         ><template #buttons>
           <v-menu>
-            <template v-slot:activator="{ props }"
+            <template #activator="{ props }"
               ><v-btn
                 color="primary"
                 v-bind="props"
@@ -26,12 +26,13 @@
             >
               <template v-for="(item, index) in items" :key="index">
                 <v-list-item
+                  class="my-2"
                   :value="index"
                   @click="item.command"
                   :disabled="item.disabled"
                   tabindex="0"
                 >
-                  <template v-slot:prepend>
+                  <template #prepend>
                     <v-icon :icon="item.icon" :color="item.iconColor"></v-icon>
                   </template>
                   <v-list-item-title :class="item.textColor">
@@ -48,7 +49,7 @@
         </template>
       </header-navigator>
       <detail-header
-        :headerMap="headerMap"
+        :header-map="headerMap"
         v-if="applicationDetails.applicationStatus !== ApplicationStatus.Draft"
       />
     </template>
@@ -57,9 +58,12 @@
       class="mb-5"
       :application-id="id"
       :are-application-actions-allowed="true"
-      @editApplication="editApplication"
+      @edit-application="editApplication"
     />
-    <student-assessment-details :applicationId="id" v-if="showViewAssessment" />
+    <student-assessment-details
+      :application-id="id"
+      v-if="showViewAssessment"
+    />
   </student-page-container>
 
   <confirm-edit-application ref="editApplicationModal" />

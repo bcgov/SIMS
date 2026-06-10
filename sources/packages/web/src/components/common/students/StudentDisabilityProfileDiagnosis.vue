@@ -1,5 +1,5 @@
 <template>
-  <v-row dense v-if="!readOnly">
+  <v-row density="compact" v-if="!readOnly">
     <v-col>
       <v-text-field
         v-if="!readOnly"

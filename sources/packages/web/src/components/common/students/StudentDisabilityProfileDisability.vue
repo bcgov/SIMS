@@ -1,5 +1,9 @@
 <template>
-  <v-expansion-panel eager>
+  <v-expansion-panel
+    collapse-icon="$expanderCollapseIcon"
+    expand-icon="$expanderExpandIcon"
+    eager
+  >
     <template #title>
       <div class="d-flex align-center justify-space-between w-100">
         <div>
@@ -52,7 +56,7 @@
           title="Disability details"
         >
           <content-group>
-            <v-row dense>
+            <v-row density="compact">
               <v-col cols="6">
                 <v-select
                   :readonly="readOnly"
@@ -115,7 +119,7 @@
           :hide-sub-title="readOnly"
         >
           <content-group>
-            <v-row dense>
+            <v-row density="compact">
               <v-col cols="12">
                 <student-disability-profile-diagnosis
                   v-model="diagnosisItems"
@@ -152,7 +156,7 @@
           :hide-sub-title="readOnly"
         >
           <content-group>
-            <v-row dense>
+            <v-row density="compact" no-gutters>
               <v-col
                 v-for="option in impairmentLookup"
                 :key="option.lookupKey"
@@ -183,6 +187,7 @@
               </v-col>
               <v-col cols="12" v-if="impairmentsNotes || !readOnly"
                 ><v-textarea
+                  class="mt-4"
                   :readonly="readOnly"
                   v-model.trim="impairmentsNotes"
                   label="Impairments notes"

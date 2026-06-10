@@ -60,7 +60,7 @@
           >
             <v-card-item>
               <v-card-title>
-                <v-row>
+                <v-row class="my-2">
                   <v-col cols="auto"
                     ><span class="category-header-medium color-blue mr-2">{{
                       submission.formCategory

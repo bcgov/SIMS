@@ -1,27 +1,27 @@
 <template>
-  <body-header-container :enableCardView="true">
-    <trigger-reassessment-modal ref="reassessmentModal" />
+  <body-header-container :enable-card-view="true">
     <template #header>
       <body-header
         title="Trigger Reassessment Manually"
-        subTitle="Manual system trigger to re-perform assessment using existing application inputs. This should be used as a means of triggering the assessment or other downstream actions (COE requests, eCert requests) without requiring the student to edit and resubmit their application."
+        sub-title="Manual system trigger to re-perform assessment using existing application inputs. This should be used as a means of triggering the assessment or other downstream actions (COE requests, eCert requests) without requiring the student to edit and resubmit their application."
       />
     </template>
-    <content-group class="mt-4 pb-16">
+    <content-group>
       <check-permission-role :role="Role.AESTManualTriggerReassessment">
         <template #="{ notAllowed }">
-          <v-btn
-            class="ml-2 float-right"
-            color="primary"
-            prepend-icon="fa:fa fa-refresh"
-            :disabled="notAllowed || openModalButtonDisabled"
+          <footer-buttons
+            justify="end"
+            :show-secondary-button="false"
+            primary-label="Trigger reassessment"
+            :disable-primary-button="notAllowed || openModalButtonDisabled"
             @click="openTriggerReassessmentModal"
+            primary-prepend-icon="fa:fa fa-refresh"
           >
-            Trigger reassessment
-          </v-btn>
+          </footer-buttons>
         </template>
       </check-permission-role>
     </content-group>
+    <trigger-reassessment-modal ref="reassessmentModal" />
   </body-header-container>
 </template>
 <script lang="ts">

@@ -131,7 +131,11 @@
     ],
   },
   "settings": {
-    "eslint.workingDirectories": [{ "mode": "auto" }],
+    "eslint.workingDirectories": [
+      {
+        "mode": "auto",
+      },
+    ],
     "search.exclude": {
       "**/bin": true,
       "**/obj": true,
@@ -180,6 +184,7 @@
       "DATATABLE",
       "DBLO",
       "dependants",
+      "disabilitystatusapplicationform",
       "ecert",
       "ENRL",
       "enrolment",
@@ -188,6 +193,7 @@
       "Formio",
       "ftaccessibilitygranteligibilityappeal",
       "ftcanadastudentgranteligibilityappeal",
+      "ftsfaeligibilityoutofprovinceprivateinstitutionsappeal",
       "ftsfainternationalinstitutionseligibilityappeal",
       "golevelup",
       "healthcheck",
@@ -211,7 +217,6 @@
       "overawards",
       "parentcurrentyearincomeappeal",
       "partnerinformationandincomeappeal",
-      "disabilitystatusapplicationform",
       "parttime",
       "PDAP",
       "PDPPD",
@@ -224,6 +229,7 @@
       "PSFS",
       "PSTPDT",
       "ptaccessibilitygranteligibilityappeal",
+      "ptsfaeligibilityinternationalinstitutionsappeal",
       "PTSSR",
       "PTWTHD",
       "roomandboardcostsappeal",
@@ -237,8 +243,6 @@
       "studentdependantsappeal",
       "studentdisabilityappeal",
       "studentfinancialinformationappeal",
-      "ftsfaeligibilityoutofprovinceprivateinstitutionsappeal",
-      "ptsfaeligibilityinternationalinstitutionsappeal",
       "supplieraddress",
       "suppliername",
       "suppliernumber",
@@ -249,6 +253,7 @@
       "unparse",
       "unzipper",
       "VALD",
+      "vuetify",
       "WTHD",
       "Zeebe",
     ],
@@ -269,5 +274,14 @@
     ],
     "jest.runMode": "on-demand",
     "jest.jestCommandLine": "npm run test:e2e:all:local --",
+    "mcp": {
+      "servers": {
+        "vuetify-mcp": {
+          "url": "https://mcp.vuetifyjs.com/mcp",
+          "type": "http",
+        },
+      },
+      "inputs": [],
+    },
   },
 }

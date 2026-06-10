@@ -4,7 +4,7 @@
       <template #header>
         <body-header
           title="All Programs"
-          :recordsCount="institutionProgramsSummary.count"
+          :records-count="institutionProgramsSummary.count"
         >
           <template #actions>
             <v-row>
@@ -41,13 +41,7 @@
                 </v-select>
               </v-col>
               <v-col cols="1">
-                <v-btn
-                  color="primary"
-                  class="p-button-raised"
-                  @click="goToSearch()"
-                >
-                  Search
-                </v-btn>
+                <v-btn color="primary" @click="goToSearch()"> Search </v-btn>
               </v-col>
             </v-row>
           </template>

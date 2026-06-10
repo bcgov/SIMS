@@ -9,9 +9,9 @@
         />
       </slot>
     </v-row>
-    <v-row justify="center" class="mt-5">
+    <v-row justify="center" class="mt-2">
       <slot name="message">
-        <h5 class="muted-content-strong">{{ message }}</h5>
+        <h3 class="muted-content-strong">{{ message }}</h3>
       </slot>
     </v-row>
   </div>

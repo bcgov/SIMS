@@ -1,5 +1,5 @@
 <template>
-  <component :is="headingTag">{{ title }}</component>
+  <component :is="headingTag" class="m-0 p-0">{{ title }}</component>
 </template>
 
 <script lang="ts">

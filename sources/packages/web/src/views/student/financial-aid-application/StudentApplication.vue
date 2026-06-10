@@ -11,59 +11,56 @@
       </header-navigator>
     </template>
     <v-form ref="startApplicationForm">
-      <h2 class="category-header-large primary-color pb-4">
-        Apply for funding
-      </h2>
-      <content-group
-        ><p class="category-header-medium-small pa-2">
-          Financial Aid Application
-        </p>
-        <p class="px-2">
-          In what capacity will you be attending this program?
-          <tooltip-icon
-            >A student is considered to be in part-time studies when taking
-            between 20% and 59% of a full-time course load in a course or
-            continuous period of study.</tooltip-icon
-          >
-        </p>
-        <v-select
-          v-model="offeringIntensity"
-          :items="offeringIntensityOptions"
-          variant="outlined"
-          density="compact"
-          label="Select offering intensity"
-          class="px-2 pb-4"
-          :rules="[(v) => checkNullOrEmptyRule(v, 'Offering intensity')]"
-          hide-details="auto"
-          @update:model-value="offeringIntensityUpdated"
-          required
-        ></v-select>
-        <p class="px-2">
-          Please select your program year. This is for students attending
-          full-time or part-time studies.
-        </p>
-        <v-select
-          v-model="programYearId"
-          :items="programYearOptions"
-          variant="outlined"
-          density="compact"
-          label="Select program year"
-          class="px-2 pb-4"
-          :rules="[(v) => checkNullOrEmptyRule(v, 'Year')]"
-          hide-details="auto"
-          required
-          :loading="loadingAvailableProgramYears"
-        ></v-select>
-        <v-btn
-          class="ma-2"
-          variant="elevated"
-          data-cy="primaryFooterButton"
-          color="primary"
-          :disabled="!hasValidSIN"
-          @click="startApplication"
-          >Start Application</v-btn
-        >
-      </content-group>
+      <body-header-container title="Apply for funding">
+        <content-group
+          ><p class="category-header-medium-small pb-2">
+            Financial Aid Application
+          </p>
+          <p class="pb-3">
+            In what capacity will you be attending this program?
+            <tooltip-icon
+              >A student is considered to be in part-time studies when taking
+              between 20% and 59% of a full-time course load in a course or
+              continuous period of study.</tooltip-icon
+            >
+          </p>
+          <v-select
+            v-model="offeringIntensity"
+            :items="offeringIntensityOptions"
+            variant="outlined"
+            density="compact"
+            label="Select offering intensity"
+            class="px-2 pb-4"
+            :rules="[(v) => checkNullOrEmptyRule(v, 'Offering intensity')]"
+            hide-details="auto"
+            @update:model-value="offeringIntensityUpdated"
+            required
+          ></v-select>
+          <p class="pb-3">
+            Please select your program year. This is for students attending
+            full-time or part-time studies.
+          </p>
+          <v-select
+            v-model="programYearId"
+            :items="programYearOptions"
+            variant="outlined"
+            density="compact"
+            label="Select program year"
+            class="px-2 pb-4"
+            :rules="[(v) => checkNullOrEmptyRule(v, 'Year')]"
+            hide-details="auto"
+            required
+            :loading="loadingAvailableProgramYears"
+          ></v-select>
+        </content-group>
+        <footer-buttons
+          justify="end"
+          :show-secondary-button="false"
+          primary-label="Start Application"
+          :disable-primary-button="!hasValidSIN"
+          @primary-click="startApplication"
+        />
+      </body-header-container>
     </v-form>
   </student-page-container>
   <confirm-modal
@@ -93,7 +90,7 @@ import {
   LayoutTemplates,
   ApiProcessError,
   OfferingIntensity,
-  DynamicFormType
+  DynamicFormType,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -237,7 +234,7 @@ export default defineComponent({
       offeringIntensityOptions,
       offeringIntensityUpdated,
       loadingAvailableProgramYears,
-      hasValidSIN
+      hasValidSIN,
     };
   },
 });

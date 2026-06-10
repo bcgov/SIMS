@@ -1,5 +1,6 @@
 import "@bcgov/bc-sans/css/BCSans.css";
 import "./assets/css/base.scss";
+import "./assets/css/bootstrap-formio.scss";
 import "./assets/css/formio-shared.scss";
 import "./assets/css/vuetify.scss";
 import "@formio/js/dist/formio.full.min.css";

@@ -1,5 +1,5 @@
 <template>
-  <IdleTimeChecker :clientIdType="ClientIdType.AEST">
+  <idle-time-checker :client-id-type="ClientIdType.AEST">
     <v-app-bar color="white">
       <b-c-logo :subtitle="MINISTRY_NAME"></b-c-logo>
       <v-btn-toggle
@@ -33,20 +33,15 @@
           </template>
         </check-permission-role>
         <v-menu v-if="isAuthenticated">
-          <template v-slot:activator="{ props }">
-            <v-btn
-              class="nav-item-label"
-              rounded="xl"
-              icon="fa:fa fa-user"
-              variant="outlined"
-              elevation="1"
-              color="secondary"
-              v-bind="props"
-              aria-label="Account"
-            ></v-btn>
+          <template #activator="{ props }">
+            <v-app-bar-account-btn v-bind="props" />
           </template>
           <v-list>
-            <v-list-item :value="menuItem.label" @click="menuItem.command">
+            <v-list-item
+              :value="menuItem.label"
+              @click="menuItem.command"
+              class="my-2"
+            >
               <v-list-item-title @click="menuItem.command">
                 <span class="label-bold">{{ menuItem.label }}</span>
               </v-list-item-title>
@@ -61,7 +56,7 @@
         <router-view></router-view>
       </v-container>
     </v-main>
-  </IdleTimeChecker>
+  </idle-time-checker>
 </template>
 
 <script lang="ts">
