@@ -138,11 +138,7 @@
   background: $brand-grey !important;
 }
 
-.v-expansion-panel-title {
-  text-align: left;
-}
-
-.v-expansion-panel-title .v-icon {
+.v-expansion-panel-title .v-expansion-panel-title__icon {
   color: $brand-blue;
 }
 

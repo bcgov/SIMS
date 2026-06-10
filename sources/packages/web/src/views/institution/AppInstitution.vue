@@ -40,19 +40,7 @@
         >
         <v-menu v-if="isAuthenticated">
           <template #activator="{ props }">
-            <v-btn
-              width="46"
-              height="46"
-              class="mr-5 nav-item-label"
-              rounded="xl"
-              icon="fa:fa fa-user"
-              variant="outlined"
-              elevation="1"
-              color="secondary"
-              v-bind="props"
-              aria-label="settings"
-              data-cy="settings"
-            ></v-btn>
+            <v-app-bar-account-btn v-bind="props" />
           </template>
           <v-list
             active-class="active-list-item"

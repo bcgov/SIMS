@@ -2,7 +2,7 @@
   <v-card elevation="2" class="mx-auto mt-12" max-width="670px" outlined>
     <v-card-text>
       <template v-if="isMobile">
-        <v-row dense no-gutters>
+        <v-row no-gutters>
           <v-col md="9">
             <h1 class="category-header-large primary-color">
               {{ props.title }}
@@ -32,9 +32,8 @@
           </v-col>
         </v-row>
       </template>
-
       <template v-else>
-        <v-row dense no-gutters>
+        <v-row no-gutters>
           <v-col md="9">
             <h1 class="category-header-large primary-color">
               {{ props.title }}

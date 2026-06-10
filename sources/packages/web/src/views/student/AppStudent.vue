@@ -1,5 +1,5 @@
 <template>
-  <IdleTimeChecker :client-id-type="ClientIdType.Student">
+  <idle-time-checker :client-id-type="ClientIdType.Student">
     <v-app-bar color="white">
       <b-c-logo subtitle="Student Application" @click="logoClick" />
       <v-spacer />
@@ -64,18 +64,7 @@
         >
         <v-menu v-if="isAuthenticated">
           <template #activator="{ props }">
-            <v-btn
-              width="46"
-              height="46"
-              class="mr-5 nav-item-label"
-              rounded="xl"
-              icon="fa:fa fa-user"
-              variant="outlined"
-              elevation="1"
-              color="secondary"
-              v-bind="props"
-              aria-label="Account"
-            ></v-btn>
+            <v-app-bar-account-btn v-bind="props" />
           </template>
           <v-list
             v-show="isAuthenticated"
@@ -141,7 +130,7 @@
         <router-view></router-view>
       </v-container>
     </v-main>
-  </IdleTimeChecker>
+  </idle-time-checker>
 </template>
 
 <script lang="ts">

@@ -1,5 +1,5 @@
 <template>
-  <v-row :justify="justify" class="mt-2 mb-1" dense>
+  <v-row :justify="justify" class="mt-2 mb-1" density="compact">
     <v-btn
       :disabled="processing"
       :color="secondaryButtonColor"
