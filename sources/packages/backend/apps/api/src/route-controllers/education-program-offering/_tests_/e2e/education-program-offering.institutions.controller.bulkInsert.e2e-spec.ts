@@ -237,7 +237,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       // create an 'Creation pending' offering when inserted.
 
       expect(offeringSBC1).toEqual({
-        name: "Test Ã¡Ã©Ã­Ã³Ãº",
+        name: "Test áéíóú",
         offeringStatus: OfferingStatus.CreationPending,
       });
       expect(offeringSBC2).toHaveProperty(
