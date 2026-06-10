@@ -49,7 +49,6 @@ describe("StudentExternalController(e2e)-getActiveSINs", () => {
       },
     );
     const token = await getExternalUserToken();
-    console.log(token);
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
