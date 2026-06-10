@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-5">
+  <div class="mx-2">
     <header>
       <slot name="header"></slot>
       <slot name="sub-header"></slot>

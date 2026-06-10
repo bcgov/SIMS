@@ -15,7 +15,7 @@
         <slot name="actions"></slot>
       </v-col>
     </v-row>
-    <v-row density="compact" v-if="subTitle">
+    <v-row density="compact">
       <v-col>
         <slot name="subtitle">{{ subTitle }}</slot>
       </v-col>

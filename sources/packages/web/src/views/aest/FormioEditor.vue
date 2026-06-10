@@ -64,13 +64,13 @@
           @update:model-value="formSelected"
         >
           <template #selection="{ item }">
-            <span>{{ item.title }} ({{ item.value }})</span>
+            <span>{{ item.title }} ({{ item.path }})</span>
           </template>
           <template #item="{ item, props }">
             <v-list-item v-bind="props" class="my-2">
               <v-list-item-content>
                 <!-- eslint-disable-next-line vue/no-v-text-v-html-on-component -->
-                <v-list-item-subtitle v-text="item.value" />
+                <v-list-item-subtitle v-text="item.path" />
               </v-list-item-content>
             </v-list-item>
           </template>
