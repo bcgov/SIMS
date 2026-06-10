@@ -11,6 +11,7 @@ import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
   DisabilityProfileExternalAPIOutDTO,
+  DisabilityProfilesExternalAPIOutDTO,
   DisabilityProfilesQueryExternalAPIInDTO,
 } from "./models/disability-profile.dto";
 import { ExternalRole } from "../../auth";
@@ -40,7 +41,7 @@ export class DisabilityProfileExternalController extends BaseController {
   @Get()
   async getAllDisabilityProfiles(
     @Query() disabilityProfilesQuery: DisabilityProfilesQueryExternalAPIInDTO,
-  ): Promise<DisabilityProfileExternalAPIOutDTO[]> {
+  ): Promise<DisabilityProfilesExternalAPIOutDTO> {
     const modifiedUntil = new Date();
     const modifiedSince = new Date(disabilityProfilesQuery.modifiedSince);
     // The minimum date-time value that modifiedSince can have.
@@ -62,22 +63,36 @@ export class DisabilityProfileExternalController extends BaseController {
         modifiedSince,
         modifiedUntil,
       );
-    return activeDisabilityProfiles.map<DisabilityProfileExternalAPIOutDTO>(
-      (disabilityProfile) => ({
-        firstName: disabilityProfile.student.user.firstName,
-        lastName: disabilityProfile.student.user.lastName,
-        sin: disabilityProfile.student.sinValidation.sin,
-        disabilities: disabilityProfile.disabilities.map((disability) => ({
-          disabilityCategory: disability.disabilityCategory,
-          disabilityType: disability.disabilityType,
-          disabilityNotes: disability.disabilityNotes || undefined,
-          diagnosis: disability.diagnosis,
-          diagnosisNotes: disability.diagnosisNotes || undefined,
-          impairments: disability.impairments,
-          impairmentsNotes: disability.impairmentsNotes || undefined,
-          finalNotes: disability.finalNotes || undefined,
-        })),
-      }),
-    );
+    const profiles =
+      activeDisabilityProfiles.map<DisabilityProfileExternalAPIOutDTO>(
+        (disabilityProfile) => ({
+          firstName: disabilityProfile.student.user.firstName,
+          lastName: disabilityProfile.student.user.lastName,
+          sin: disabilityProfile.student.sinValidation.sin,
+          address: {
+            addressLine1:
+              disabilityProfile.student.contactInfo.address.addressLine1,
+            addressLine2:
+              disabilityProfile.student.contactInfo.address.addressLine2,
+            city: disabilityProfile.student.contactInfo.address.city,
+            provinceState:
+              disabilityProfile.student.contactInfo.address.provinceState,
+            country: disabilityProfile.student.contactInfo.address.country,
+            postalCode:
+              disabilityProfile.student.contactInfo.address.postalCode,
+          },
+          disabilities: disabilityProfile.disabilities.map((disability) => ({
+            disabilityCategory: disability.disabilityCategory,
+            disabilityType: disability.disabilityType,
+            disabilityNotes: disability.disabilityNotes || undefined,
+            diagnosis: disability.diagnosis,
+            diagnosisNotes: disability.diagnosisNotes || undefined,
+            impairments: disability.impairments,
+            impairmentsNotes: disability.impairmentsNotes || undefined,
+            finalNotes: disability.finalNotes || undefined,
+          })),
+        }),
+      );
+    return { profiles, metadata: { modifiedUntil } };
   }
 }

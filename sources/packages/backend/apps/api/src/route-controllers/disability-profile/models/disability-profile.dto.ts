@@ -7,6 +7,7 @@ import {
   IMPAIRMENTS_NOTES_MAX_LENGTH,
   LOOKUP_KEY_MAX_LENGTH,
 } from "@sims/sims-db";
+import { AddressAPIOutDTO } from "apps/api/src/route-controllers/models/common.dto";
 import { Type } from "class-transformer";
 import {
   ArrayMinSize,
@@ -95,7 +96,17 @@ export class DisabilityProfileExternalAPIOutDTO {
   firstName?: string;
   lastName: string;
   sin: string;
+  address: AddressAPIOutDTO;
   disabilities: DisabilityExternalAPIOutDTO[];
+}
+
+export class DisabilityProfileMetadataExternalAPIOutDTO {
+  modifiedUntil: Date;
+}
+
+export class DisabilityProfilesExternalAPIOutDTO {
+  profiles: DisabilityProfileExternalAPIOutDTO[];
+  metadata: DisabilityProfileMetadataExternalAPIOutDTO;
 }
 
 export class StudentDisabilityAPIInDTO {

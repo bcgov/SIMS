@@ -15,6 +15,7 @@ import {
   DisabilityImpairments,
   DisabilityTypes,
   E2EDataSources,
+  saveFakeStudent,
   saveFakeStudentDisabilityProfile,
 } from "@sims/test-utils";
 import { DISABILITY_PROFILES_MODIFIED_SINCE_MAX_DAYS } from "../../../../utilities";
@@ -54,6 +55,9 @@ describe("DisabilityProfileExternalController(e2e)-getAllDisabilityProfiles", ()
       const dateWithinRange = addDays(-3, now);
       // Date outside before modified since.
       const dateBeforeModifiedSince = addDays(-1, modifiedSince);
+      const student = await saveFakeStudent(db.dataSource, undefined, {
+        includeAddressLine2: true,
+      });
       const [priority1DisabilityValues, priority2DisabilityValues] = [
         {
           disabilityCategory: DisabilityCategories.Other,
@@ -76,21 +80,20 @@ describe("DisabilityProfileExternalController(e2e)-getAllDisabilityProfiles", ()
           finalNotes: "Secondary final notes.",
         },
       ];
-      const profileCreatedWithinRange = await saveFakeStudentDisabilityProfile(
-        db,
-        {
-          ministryUser: user,
-          disabilityProfileStatus: DisabilityProfileStatus.Active,
-          disabilitiesInitialValues: [
-            {
-              ...priority1DisabilityValues,
-              disabilityPriority: 1,
-            },
-            { ...priority2DisabilityValues, disabilityPriority: 2 },
-          ],
-          completedAt: dateWithinRange,
-        },
-      );
+      // Profile within range that should be returned.
+      await saveFakeStudentDisabilityProfile(db, {
+        student,
+        ministryUser: user,
+        disabilityProfileStatus: DisabilityProfileStatus.Active,
+        disabilitiesInitialValues: [
+          {
+            ...priority1DisabilityValues,
+            disabilityPriority: 1,
+          },
+          { ...priority2DisabilityValues, disabilityPriority: 2 },
+        ],
+        completedAt: dateWithinRange,
+      });
       // Profile created before modifiedSince that should not be returned.
       await saveFakeStudentDisabilityProfile(db, {
         ministryUser: user,
@@ -111,17 +114,28 @@ describe("DisabilityProfileExternalController(e2e)-getAllDisabilityProfiles", ()
         .auth(token, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
         .expect(({ body }) =>
-          expect(body).toEqual([
-            {
-              firstName: profileCreatedWithinRange.student.user.firstName,
-              lastName: profileCreatedWithinRange.student.user.lastName,
-              sin: profileCreatedWithinRange.student.sinValidation.sin,
-              disabilities: [
-                priority1DisabilityValues,
-                priority2DisabilityValues,
-              ],
-            },
-          ]),
+          expect(body).toStrictEqual({
+            profiles: [
+              {
+                firstName: student.user.firstName,
+                lastName: student.user.lastName,
+                sin: student.sinValidation.sin,
+                address: {
+                  addressLine1: student.contactInfo.address.addressLine1,
+                  addressLine2: student.contactInfo.address.addressLine2,
+                  city: student.contactInfo.address.city,
+                  provinceState: student.contactInfo.address.provinceState,
+                  country: student.contactInfo.address.country,
+                  postalCode: student.contactInfo.address.postalCode,
+                },
+                disabilities: [
+                  priority1DisabilityValues,
+                  priority2DisabilityValues,
+                ],
+              },
+            ],
+            metadata: { modifiedUntil: now.toISOString() },
+          }),
         );
     },
   );
