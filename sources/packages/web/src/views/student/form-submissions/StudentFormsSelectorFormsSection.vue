@@ -7,7 +7,10 @@
       />
     </template>
     <v-expansion-panels class="mt-5">
-      <v-expansion-panel>
+      <v-expansion-panel
+        collapse-icon="$expanderCollapseIcon"
+        expand-icon="$expanderExpandIcon"
+      >
         <template #title
           ><div>
             <span class="category-header-medium brand-gray-text"
