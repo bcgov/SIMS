@@ -1,6 +1,5 @@
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "vuetify/styles";
-import "../assets/css/reset.scss";
 import "@mdi/font/css/materialdesignicons.css";
 import "@fortawesome/fontawesome-free/css/all.css";
 import { createVuetify } from "vuetify";

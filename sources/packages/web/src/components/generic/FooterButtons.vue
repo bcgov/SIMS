@@ -16,6 +16,7 @@
         :color="primaryButtonColor"
         @click="$emit('primaryClick')"
         :loading="processing"
+        :prepend-icon="primaryPrependIcon"
       >
         {{ primaryLabel }}</v-btn
       >
@@ -31,6 +32,11 @@ export default defineComponent({
       type: String,
       required: true,
       default: "Submit",
+    },
+    primaryPrependIcon: {
+      type: String,
+      required: false,
+      default: undefined,
     },
     secondaryLabel: {
       type: String,
