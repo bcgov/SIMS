@@ -178,7 +178,7 @@ describe("DisabilityProfileExternalController(e2e)-getAllDisabilityProfiles", ()
         .expect(HttpStatus.BAD_REQUEST)
         .expect({
           message:
-            "Modified since must be a date within the last 180 days and not in the future.",
+            "Modified since must be a date within the last 180 days and not in the future or current timestamp.",
           error: "Bad Request",
           statusCode: HttpStatus.BAD_REQUEST,
         });
@@ -186,6 +186,7 @@ describe("DisabilityProfileExternalController(e2e)-getAllDisabilityProfiles", ()
   );
 
   afterAll(async () => {
+    MockDate.reset();
     await app?.close();
   });
 });

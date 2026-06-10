@@ -15,7 +15,7 @@ import {
   DisabilityProfilesQueryExternalAPIInDTO,
 } from "./models/disability-profile.dto";
 import { ExternalRole } from "../../auth";
-import { addDays, isAfter, isBeforeDate } from "@sims/utilities";
+import { addDays, isBeforeDate, isSameOrAfterDate } from "@sims/utilities";
 import { DISABILITY_PROFILES_MODIFIED_SINCE_MAX_DAYS } from "../../utilities";
 
 /**
@@ -49,13 +49,13 @@ export class DisabilityProfileExternalController extends BaseController {
       -DISABILITY_PROFILES_MODIFIED_SINCE_MAX_DAYS,
       modifiedUntil,
     );
-    // Validates that the modifiedSince must be within allowed number of days and not in the future.
+    // Validates that the modifiedSince must be within allowed number of days and not in the future or current timestamp.
     const isModifiedSinceValid =
-      isAfter(minModifiedSince, modifiedSince) &&
+      isSameOrAfterDate(minModifiedSince, modifiedSince) &&
       isBeforeDate(modifiedSince, modifiedUntil);
     if (!isModifiedSinceValid) {
       throw new BadRequestException(
-        `Modified since must be a date within the last ${DISABILITY_PROFILES_MODIFIED_SINCE_MAX_DAYS} days and not in the future.`,
+        `Modified since must be a date within the last ${DISABILITY_PROFILES_MODIFIED_SINCE_MAX_DAYS} days and not in the future or current timestamp.`,
       );
     }
     const activeDisabilityProfiles =

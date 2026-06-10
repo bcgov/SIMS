@@ -61,6 +61,8 @@ export function createFakeStudentDisabilityProfile(
  * - `ministryUser`: the user who is performing the operation.
  * - `student`: the student to whom the profile belongs.
  * - `disabilityProfileStatus`: the status of the disability profile.
+ * - `disabilitiesInitialValues`: allows setting the initial values for the disabilities associated with the profile.
+ * - `completedAt`: allows setting a specific completion date for the profile.
  * - `disabilities`: the disabilities associated with the profile.
  * - `now`: allows setting a specific date for createdAt and updatedAt fields.
  * @returns the saved student disability profile.
