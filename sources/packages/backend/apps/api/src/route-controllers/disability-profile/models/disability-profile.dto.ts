@@ -74,7 +74,7 @@ export class StudentDisabilityProfilesAPIOutDTO {
 export class DisabilityProfilesQueryExternalAPIInDTO {
   /**
    * Modified since date.
-   * Should be a valid ISO 8601 date string.
+   * Should be a valid ISO 8601 utc date string, e.g. "2024-01-01T00:00:00.000Z".
    */
   @IsNotEmpty()
   @IsDateString({ strict: true, strictSeparator: true })
