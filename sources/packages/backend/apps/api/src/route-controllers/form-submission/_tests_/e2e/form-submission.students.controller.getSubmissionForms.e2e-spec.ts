@@ -64,7 +64,7 @@ describe("FormSubmissionStudentsController(e2e)-getSubmissionForms", () => {
             {
               id: expect.any(Number),
               formDefinitionName: "partnercurrentyearincomeappeal",
-              formType: "Partner current year income",
+              formType: "Spouse/common-law partner current year income",
               formCategory: "Student appeal",
               formDescription:
                 "If your spouse/common-law partner has had, or is anticipated to have, a significant decrease in gross income, you may submit this appeal to request assessment using their current year estimated gross income.",
