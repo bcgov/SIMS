@@ -1,24 +1,19 @@
 <template>
-  <v-card>
-    <v-container :fluid="true">
-      <program-details
-        :program-id="programId"
-        :location-id="locationId"
-        :education-program="educationProgram"
-        :allow-edit="allowEdit && isProgramEditable"
-        :allow-deactivate="allowDeactivate && isProgramEditable"
-        :can-create-offering="canCreateOffering"
-        @program-data-updated="$emit('programDataUpdated')"
-      />
-      <hr class="horizontal-divider" />
-      <offering-summary
-        :program-id="programId"
-        :location-id="locationId"
-        :allow-edit="allowEdit && isProgramEditable"
-        :institution-id="institutionId"
-      />
-    </v-container>
-  </v-card>
+  <program-details
+    :program-id="programId"
+    :location-id="locationId"
+    :education-program="educationProgram"
+    :allow-edit="allowEdit && isProgramEditable"
+    :allow-deactivate="allowDeactivate && isProgramEditable"
+    :can-create-offering="canCreateOffering"
+    @program-data-updated="$emit('programDataUpdated')"
+  />
+  <offering-summary
+    :program-id="programId"
+    :location-id="locationId"
+    :allow-edit="allowEdit && isProgramEditable"
+    :institution-id="institutionId"
+  />
 </template>
 
 <script lang="ts">

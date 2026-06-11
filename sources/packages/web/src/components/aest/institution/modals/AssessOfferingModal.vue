@@ -1,6 +1,6 @@
 <template>
   <v-form ref="assessOfferingForm">
-    <modal-dialog-base :showDialog="showDialog" :title="title">
+    <modal-dialog-base :show-dialog="showDialog" :title="title">
       <template #content>
         <error-summary :errors="assessOfferingForm.errors" />
         <div class="pb-2">
@@ -12,6 +12,7 @@
           v-model="formModel.assessmentNotes"
           variant="outlined"
           :rules="[checkNotesLengthRule]"
+          hide-details="auto"
         />
       </template>
       <template #footer>
@@ -19,10 +20,10 @@
           <template #="{ notAllowed }">
             <footer-buttons
               :processing="processing"
-              :primaryLabel="primaryLabel"
-              @primaryClick="submit"
-              @secondaryClick="cancel"
-              :disablePrimaryButton="notAllowed"
+              :primary-label="primaryLabel"
+              @primary-click="submit"
+              @secondary-click="cancel"
+              :disable-primary-button="notAllowed"
           /></template>
         </check-permission-role>
       </template>

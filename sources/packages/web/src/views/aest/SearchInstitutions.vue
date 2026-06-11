@@ -1,5 +1,5 @@
 <template>
-  <full-page-container>
+  <full-page-container full-width="true">
     <body-header-container
       title="Search Institution"
       sub-title="Look up an institution by entering their information below."

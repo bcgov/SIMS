@@ -1,6 +1,6 @@
 <template>
   <v-form ref="declineProgramForm">
-    <modal-dialog-base title="Decline program" :showDialog="showDialog">
+    <modal-dialog-base title="Decline program" :show-dialog="showDialog">
       <template #content>
         <error-summary :errors="declineProgramForm.errors" />
         <div class="pb-2">
@@ -15,16 +15,17 @@
           v-model="formModel.declinedNote"
           variant="outlined"
           :rules="[checkNotesLengthRule]"
+          hide-details="auto"
       /></template>
       <template #footer>
         <check-permission-role :role="Role.InstitutionApproveDeclineProgram">
           <template #="{ notAllowed }">
             <footer-buttons
               :processing="processing"
-              primaryLabel="Decline now"
-              @primaryClick="submit"
-              @secondaryClick="cancel"
-              :disablePrimaryButton="notAllowed"
+              primary-label="Decline now"
+              @primary-click="submit"
+              @secondary-click="cancel"
+              :disable-primary-button="notAllowed"
             />
           </template>
         </check-permission-role>

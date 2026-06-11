@@ -3,37 +3,35 @@
     <template #header>
       <header-navigator
         title="Study period offerings"
-        :routeLocation="programRoute"
-        subTitle="View Request"
+        :route-location="programRoute"
+        sub-title="View Request"
       >
         <template #buttons v-if="showActionButtons">
-          <v-row class="m-0 p-0">
-            <check-permission-role
-              :role="Role.InstitutionApproveDeclineOffering"
-            >
-              <template #="{ notAllowed }">
-                <v-btn
-                  variant="outlined"
-                  :disabled="notAllowed"
-                  color="primary"
-                  @click="assessOffering(OfferingStatus.CreationDeclined)"
-                  >Decline</v-btn
-                >
-                <v-btn
-                  class="ml-2"
-                  color="primary"
-                  :disabled="notAllowed"
-                  @click="assessOffering(OfferingStatus.Approved)"
-                  >Approve offering</v-btn
-                >
-              </template>
-            </check-permission-role>
-          </v-row>
+          <check-permission-role :role="Role.InstitutionApproveDeclineOffering">
+            <template #="{ notAllowed }">
+              <v-btn
+                variant="outlined"
+                :disabled="notAllowed"
+                color="primary"
+                @click="assessOffering(OfferingStatus.CreationDeclined)"
+                >Decline</v-btn
+              >
+              <v-btn
+                class="ml-2"
+                color="primary"
+                :disabled="notAllowed"
+                @click="assessOffering(OfferingStatus.Approved)"
+                >Approve offering</v-btn
+              >
+            </template>
+          </check-permission-role>
         </template>
       </header-navigator>
+    </template>
+    <template #details-header>
       <program-offering-detail-header
         class="m-4"
-        :headerDetails="{
+        :header-details="{
           ...initialData,
           status: initialData.offeringStatus,
         }"
@@ -42,7 +40,7 @@
     <offering-form :data="initialData"></offering-form>
     <assess-offering-modal
       ref="assessOfferingModalRef"
-      :offeringStatus="offeringApprovalStatus"
+      :offering-status="offeringApprovalStatus"
     />
   </full-page-container>
 </template>

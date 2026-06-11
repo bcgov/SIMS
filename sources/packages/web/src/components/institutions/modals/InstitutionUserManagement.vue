@@ -1,33 +1,33 @@
 <!-- Shared modal content for modals AddInstitutionUserModal and EditInstitutionUserModal -->
 <template>
   <error-summary :errors="errors" />
-  <content-group>
+  <content-group class="mb-3">
     <v-row no-gutters>
       <v-row align="center" no-gutters>
-        <v-col cols="auto">
+        <v-col cols="12">
           <!-- This slot holds the BCeID basic(plain text)/business(dropdown) and readonly views(plain readonly text input). -->
-          <slot name="user-name" :formModel="formModel" />
+          <slot name="user-name" :form-model="formModel" />
         </v-col>
-        <v-col cols="auto">
+        <v-col cols="6">
           <v-switch
+            size="small"
             hide-details
             label="Admin"
             color="primary"
             inset
             class="mr-3"
             v-model="formModel.isAdmin"
-            data-cy="isAdmin"
           ></v-switch>
         </v-col>
-        <v-col cols="auto">
+        <v-col cols="6">
           <v-switch
+            size="small"
             hide-details
             :disabled="!formModel.isAdmin"
             label="Legal Signing Authority"
             inset
             color="primary"
             v-model="formModel.isLegalSigningAuthority"
-            data-cy="isLegalSigningAuthority"
           ></v-switch>
         </v-col>
       </v-row>
@@ -38,57 +38,56 @@
     >
     </v-input>
   </content-group>
-  <h3
-    class="category-header-medium primary-color mt-4 mb-2"
+  <body-header-container
+    title="Assign user to locations"
+    header-size="medium"
     v-if="!formModel.isAdmin"
-    data-cy="assignLocationToUser"
   >
-    Assign user to locations
-  </h3>
-  <content-group v-if="!formModel.isAdmin">
-    <toggle-content :toggled="!formModel.locationAuthorizations.length">
-      <v-row class="mb-1"
-        ><v-col><strong>Locations</strong> </v-col
-        ><v-col>
-          <strong>Roles</strong>
-        </v-col>
-      </v-row>
-      <v-row
-        no-gutters
-        v-for="location in formModel.locationAuthorizations"
-        :key="location.id"
-        class="mb-2"
-        data-cy="location"
-        ><v-col>
-          <div>{{ location.name }}</div>
-          {{ location.address }}
-        </v-col>
-        <v-col>
-          <v-radio-group
-            hide-details
-            inline
-            v-model="location.userAccess"
-            color="primary"
-            class="mt-2"
-            data-cy="userAccess"
-          >
-            <v-radio label="User" value="user" color="primary"></v-radio>
-            <v-radio
-              label="Read-only"
-              value="read-only-user"
+    <content-group>
+      <toggle-content :toggled="!formModel.locationAuthorizations.length">
+        <v-row class="mb-1"
+          ><v-col><strong>Locations</strong> </v-col
+          ><v-col>
+            <strong>Roles</strong>
+          </v-col>
+        </v-row>
+        <v-row
+          no-gutters
+          v-for="location in formModel.locationAuthorizations"
+          :key="location.id"
+          class="mb-2"
+          data-cy="location"
+          ><v-col>
+            <div>{{ location.name }}</div>
+            {{ location.address }}
+          </v-col>
+          <v-col>
+            <v-radio-group
+              hide-details
+              inline
+              v-model="location.userAccess"
               color="primary"
-            ></v-radio>
-            <v-radio label="No access" value="none" color="primary"></v-radio>
-          </v-radio-group>
-        </v-col>
-      </v-row>
-      <v-input
-        :rules="[hasLocationAuthorizationValidationRule()]"
-        hide-details="auto"
-      >
-      </v-input>
-    </toggle-content>
-  </content-group>
+              class="mt-2"
+              data-cy="userAccess"
+            >
+              <v-radio label="User" value="user" color="primary"></v-radio>
+              <v-radio
+                label="Read-only"
+                value="read-only-user"
+                color="primary"
+              ></v-radio>
+              <v-radio label="No access" value="none" color="primary"></v-radio>
+            </v-radio-group>
+          </v-col>
+        </v-row>
+        <v-input
+          :rules="[hasLocationAuthorizationValidationRule()]"
+          hide-details="auto"
+        >
+        </v-input>
+      </toggle-content>
+    </content-group>
+  </body-header-container>
 </template>
 
 <script lang="ts">
