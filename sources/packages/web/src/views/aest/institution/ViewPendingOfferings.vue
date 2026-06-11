@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator title="Institution requests" sub-title="Offerings" />
     </template>
-    <body-header-container :enable-card-view="true">
+    <body-header-container>
       <template #header>
         <body-header
           title="Pending offerings"

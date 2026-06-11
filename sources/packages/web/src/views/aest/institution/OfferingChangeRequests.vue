@@ -3,46 +3,47 @@
     <template #header>
       <header-navigator
         title="Institution requests"
-        subTitle="Offering Change Requests"
+        sub-title="Offering Change Requests"
       />
     </template>
-    <body-header
+    <body-header-container
       title="Pending offering change requests"
-      :recordsCount="offeringChangeRequests.length"
-      subTitle="Offering change requests that require ministry review."
-    />
-    <content-group>
-      <toggle-content
-        :toggled="
-          !offeringChangeRequests.length && !offeringChangeRequestsLoading
-        "
-        message="No offering change requests found."
-      >
-        <v-data-table
-          :headers="PendingOfferingChangeRequestsHeaders"
-          :items="offeringChangeRequests"
-          :items-per-page="DEFAULT_PAGE_LIMIT"
-          :items-per-page-options="ITEMS_PER_PAGE"
-          :loading="offeringChangeRequestsLoading"
+      :records-count="offeringChangeRequests.length"
+      sub-title="Offering change requests that require ministry review."
+    >
+      <content-group>
+        <toggle-content
+          :toggled="
+            !offeringChangeRequests.length && !offeringChangeRequestsLoading
+          "
+          message="No offering change requests found."
         >
-          <template #[`item.submittedDate`]="{ item }">
-            <span>
-              {{ dateOnlyLongString(item.submittedDate) }}
-            </span>
-          </template>
-          <template #[`item.actions`]="{ item }">
-            <v-btn
-              color="primary"
-              @click="
-                viewOfferingChangeRequest(item.offeringId, item.programId)
-              "
-            >
-              View request
-            </v-btn>
-          </template>
-        </v-data-table>
-      </toggle-content>
-    </content-group>
+          <v-data-table
+            :headers="PendingOfferingChangeRequestsHeaders"
+            :items="offeringChangeRequests"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            :loading="offeringChangeRequestsLoading"
+          >
+            <template #[`item.submittedDate`]="{ item }">
+              <span>
+                {{ dateOnlyLongString(item.submittedDate) }}
+              </span>
+            </template>
+            <template #[`item.actions`]="{ item }">
+              <v-btn
+                color="primary"
+                @click="
+                  viewOfferingChangeRequest(item.offeringId, item.programId)
+                "
+              >
+                View request
+              </v-btn>
+            </template>
+          </v-data-table>
+        </toggle-content>
+      </content-group>
+    </body-header-container>
   </full-page-container>
 </template>
 <script lang="ts">
