@@ -55,7 +55,7 @@ export enum Role {
  * External user roles to control the access of external API endpoints.
  */
 export enum ExternalRole {
-  StudentActiveSins = "student-active-sins",
+  StudentActiveSINs = "student-active-sins",
   StudentDetailsSearch = "student-details-search",
   StudentDisabilityProfiles = "student-disability-profiles",
 }

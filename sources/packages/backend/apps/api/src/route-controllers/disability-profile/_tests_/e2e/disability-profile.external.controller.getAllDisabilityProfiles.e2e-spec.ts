@@ -161,7 +161,7 @@ describe("DisabilityProfileExternalController(e2e)-getAllDisabilityProfiles", ()
 
   it(
     "Should throw a bad request error when the modifiedSince query parameter is not within" +
-      ` the last ${DISABILITY_PROFILES_MODIFIED_SINCE_MAX_DAYS} days`,
+      ` the last ${DISABILITY_PROFILES_MODIFIED_SINCE_MAX_DAYS} days.`,
     async () => {
       // Arrange
       const token = await getExternalUserToken();

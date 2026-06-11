@@ -120,7 +120,7 @@ export class StudentExternalController extends BaseController {
    * Only valid SINs are returned for SIMS students, and duplicate SINs are excluded.
    * @returns active SINs from both SIMS and SFAS.
    */
-  @Roles(ExternalRole.StudentActiveSins)
+  @Roles(ExternalRole.StudentActiveSINs)
   @Get("active-sins")
   async getActiveSINs(): Promise<ActiveSINsAPIOutDTO> {
     const [simsSINs, sfasSINs] = await Promise.all([

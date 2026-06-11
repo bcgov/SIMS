@@ -1,5 +1,5 @@
 import { UserPasswordCredential } from "@sims/utilities/config";
-import { AuthorizedParties, IUserToken, Role } from "../../auth";
+import { AuthorizedParties, ClientRole, IUserToken, Role } from "../../auth";
 import { getCachedToken, mockJWTToken } from "./token-helpers";
 import { TestingModule } from "@nestjs/testing";
 import { FormSubmissionAuthRoles } from "../../services";
@@ -67,17 +67,21 @@ export async function getAESTToken(group?: AESTGroups): Promise<string> {
 /**
  * Removes the provided roles from the JWT token.
  * @param testingModule nest testing module.
- * @param rolesToRemove roles to be removed from the token payload.
+ * @param rolesToRemove client roles to be removed from the token payload.
+ * @param azp the authorized party (client ID) from which the roles will be removed, default is "aest".
  */
 export async function removeJWTUserRoles(
   testingModule: TestingModule,
-  rolesToRemove: Role[],
+  rolesToRemove: ClientRole[],
+  azp = AuthorizedParties.aest,
 ): Promise<void> {
   await mockJWTToken(testingModule, (payload: IUserToken) => {
-    const roles = payload.resource_access[AuthorizedParties.aest].roles;
-    payload.resource_access[AuthorizedParties.aest].roles = roles.filter(
-      (role: Role) => !rolesToRemove.includes(role),
-    );
+    const roles = payload.resource_access[azp]?.roles;
+    if (roles && roles.length) {
+      payload.resource_access[azp] = {
+        roles: roles.filter((role) => !rolesToRemove.includes(role)),
+      };
+    }
   });
 }
 
@@ -99,7 +103,7 @@ export async function authorizeDynamicFormConfigurations(
           createFormRole(dynamicFormConfiguration.authorizationKey!, role),
         ),
     ) as Role[];
-    payload.resource_access[AuthorizedParties.aest].roles.push(...formRoles);
+    payload.resource_access[AuthorizedParties.aest]?.roles.push(...formRoles);
   });
 }
 
@@ -122,7 +126,7 @@ export async function authorizeMultipleDynamicFormConfigurations(
           createFormRole(formConfiguration.authorizationKey!, role),
         ),
     ) as Role[];
-    payload.resource_access[AuthorizedParties.aest].roles.push(...formRoles);
+    payload.resource_access[AuthorizedParties.aest]?.roles.push(...formRoles);
   });
 }
 

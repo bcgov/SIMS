@@ -1,5 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, Raw, Repository } from "typeorm";
+import {
+  And,
+  DataSource,
+  LessThanOrEqual,
+  MoreThan,
+  Repository,
+} from "typeorm";
 import { StudentDisabilityModel } from "./disability-profile.models";
 import {
   DisabilityProfileStatus,
@@ -498,9 +504,9 @@ export class DisabilityProfileService {
           sinValidation: { id: true, sin: true },
           contactInfo: true,
         },
-        completedAt: true,
         disabilities: {
           id: true,
+          disabilityPriority: true,
           disabilityCategory: true,
           disabilityType: true,
           disabilityNotes: true,
@@ -511,18 +517,17 @@ export class DisabilityProfileService {
           finalNotes: true,
         },
       },
-      where: {
-        disabilityProfileStatus: DisabilityProfileStatus.Active,
-        completedAt: Raw(
-          (completedAt) =>
-            `${completedAt} > :modifiedSince AND ${completedAt} <= :modifiedUntil`,
-          { modifiedSince, modifiedUntil },
-        ),
-        student: { sinValidation: { isValidSIN: true } },
-      },
       relations: {
         student: { user: true, sinValidation: true },
         disabilities: true,
+      },
+      where: {
+        disabilityProfileStatus: DisabilityProfileStatus.Active,
+        completedAt: And(
+          MoreThan(modifiedSince),
+          LessThanOrEqual(modifiedUntil),
+        ),
+        student: { sinValidation: { isValidSIN: true } },
       },
       order: {
         completedAt: "ASC",

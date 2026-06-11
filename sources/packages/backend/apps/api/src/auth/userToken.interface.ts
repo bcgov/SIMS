@@ -14,9 +14,7 @@ export interface ClientRoles {
  * Resource Access extracted from the token during the
  * authentication process on JwtStrategy validate method.
  */
-export interface ResourceAccess {
-  [key: string]: ClientRoles;
-}
+export type ResourceAccess = Partial<Record<AuthorizedParties, ClientRoles>>;
 
 /**
  * User information extracted from the token during the
@@ -61,8 +59,8 @@ export interface IUserToken {
   /**
    * Access per resource, for instance, for every client, from received token
    * and defined on Keycloak.
-   * So far, used only to define the Ministry roles that are associated with
-   * an user authenticated using an IDIR.
+   * So far, used only to define the client roles that are associated with
+   * an user authenticated using for the client.
    */
   resource_access: ResourceAccess;
   /**
