@@ -3,8 +3,8 @@
     <template #header>
       <header-navigator
         title="Program info requests"
-        :routeLocation="goBackRouteParams"
-        subTitle="View Application"
+        :route-location="goBackRouteParams"
+        sub-title="View Application"
       />
     </template>
     <template #alerts>
@@ -23,21 +23,21 @@
       </banner>
     </template>
     <formio-container
-      formName="programInformationRequest"
-      :formData="initialData"
+      form-name="programInformationRequest"
+      :form-data="initialData"
       @loaded="formLoaded"
       @changed="formChanged"
       @submitted="submitted"
-      @customEvent="customEventCallback"
+      @custom-event="customEventCallback"
     >
       <template #actions="{ submit }">
         <footer-buttons
           :processing="processing"
-          primaryLabel="Complete program info request"
-          @primaryClick="submit"
-          @secondaryClick="goBack"
-          :disablePrimaryButton="isReadOnlyUser(locationId)"
-          :showPrimaryButton="
+          primary-label="Complete program info request"
+          @primary-click="submit"
+          @secondary-click="goBack"
+          :disable-primary-button="isReadOnlyUser(locationId)"
+          :show-primary-button="
             initialData.pirStatus === ProgramInfoStatus.required
           "
         /> </template
@@ -66,6 +66,7 @@ import {
   FormIOForm,
   ProgramInfoStatus,
   BannerTypes,
+  FormIOChangeEvent,
 } from "@/types";
 import {
   STUDY_DATE_OVERLAP_ERROR,
@@ -75,11 +76,9 @@ import {
   CompleteProgramInfoRequestAPIInDTO,
   DenyProgramInfoRequestAPIInDTO,
   ProgramInfoRequestAPIOutDTO,
+  ProgramInfoRequestFormData,
 } from "@/services/http/dto";
 import { AppConfigService } from "@/services/AppConfigService";
-type ProgramInfoRequestFormData = ProgramInfoRequestAPIOutDTO & {
-  applicationSubmissionDeadlineWeeks: number;
-};
 export default defineComponent({
   props: {
     locationId: {
@@ -122,7 +121,9 @@ export default defineComponent({
       ),
     );
 
-    const loadOfferingsForProgram = async (form: any) => {
+    const loadOfferingsForProgram = async (
+      form: FormIOForm<ProgramInfoRequestFormData>,
+    ) => {
       selectedProgramId = formioUtils.getComponentValueByKey(
         form,
         PROGRAMS_DROPDOWN_KEY,
@@ -142,7 +143,7 @@ export default defineComponent({
       formioUtils.redrawComponent(form, OFFERINGS_DROPDOWN_KEY);
     };
 
-    const formLoaded = async (form: any) => {
+    const formLoaded = async (form: FormIOForm<ProgramInfoRequestFormData>) => {
       const { applicationSubmissionDeadlineWeeks } =
         await AppConfigService.shared.config();
       programRequestData.value =
@@ -204,7 +205,10 @@ export default defineComponent({
       await loadOfferingsForProgram(form);
     };
 
-    const formChanged = async (form: any, event: any) => {
+    const formChanged = async (
+      form: FormIOForm<ProgramInfoRequestFormData>,
+      event: FormIOChangeEvent,
+    ) => {
       if (event.changed?.component?.key === PROGRAMS_DROPDOWN_KEY) {
         // Reset the selected offering details and
         // offerings dropdown when selected program is changed.
@@ -224,7 +228,7 @@ export default defineComponent({
           +event.changed.value,
           SELECTED_OFFERING_END_DATE_KEY,
           props.locationId,
-          selectedProgramId,
+          selectedProgramId!,
         );
       }
       // If Deny PIR is checked after offering being selected
@@ -238,16 +242,20 @@ export default defineComponent({
       await formioDataLoader.loadPIRDeniedReasonList(form, "pirDenyReasonId");
     };
 
-    const resetSelectedOfferingDetails = (form: FormIOForm) => {
+    const resetSelectedOfferingDetails = (
+      form: FormIOForm<ProgramInfoRequestFormData>,
+    ) => {
       formioUtils.setComponentValue(form, SELECTED_OFFERING_END_DATE_KEY, "");
     };
 
-    const resetOfferingDropdownValue = (form: FormIOForm) => {
+    const resetOfferingDropdownValue = (
+      form: FormIOForm<ProgramInfoRequestFormData>,
+    ) => {
       formioUtils.setComponentValue(form, OFFERINGS_DROPDOWN_KEY, "");
     };
 
     const customEventCallback = async (
-      _form: any,
+      _form: FormIOForm<ProgramInfoRequestFormData>,
       event: FormIOCustomEvent,
     ) => {
       if (event.type === FormIOCustomEventTypes.RouteToCreateProgram) {
@@ -257,10 +265,19 @@ export default defineComponent({
             locationId: props.locationId,
           },
         });
+        return;
+      }
+      if (event.type === FormIOCustomEventTypes.RouteToCreateOffering) {
+        router.push({
+          name: InstitutionRoutesConst.ADD_LOCATION_OFFERINGS,
+          params: {
+            locationId: props.locationId,
+            programId: selectedProgramId,
+          },
+        });
       }
     };
-    // todo: use proper interface
-    const submitted = async (form: FormIOForm<any>) => {
+    const submitted = async (form: FormIOForm<ProgramInfoRequestFormData>) => {
       try {
         processing.value = true;
         if (form.data.denyProgramInformationRequest) {

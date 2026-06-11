@@ -85,6 +85,7 @@ export enum FormIOCustomEventTypes {
   RouteToPartnerInformation = "routeToPartnerInformation",
   RouteToProgramInformationRequestSummaryPage = "routeToProgramInformationRequestSummaryPage",
   ReissueMSFAA = "reissueMSFAA",
+  RouteToCreateOffering = "routeToCreateOffering",
 }
 
 /**
