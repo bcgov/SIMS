@@ -467,12 +467,12 @@
                       "shortcut": ""
                     },
                     {
-                      "label": "Legal Guardian",
+                      "label": "Legal guardian",
                       "value": "legalGuardian",
                       "shortcut": ""
                     },
                     {
-                      "label": "Step Parent",
+                      "label": "Step-parent",
                       "value": "stepParent",
                       "shortcut": ""
                     }
