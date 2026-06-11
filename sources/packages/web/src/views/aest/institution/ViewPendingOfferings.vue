@@ -3,76 +3,80 @@
     <template #header>
       <header-navigator title="Institution requests" sub-title="Offerings" />
     </template>
-    <body-header
-      title="Pending offerings"
-      :records-count="offeringsAndCount?.count"
-    >
-      <template #subtitle>
-        Offering requests that require Ministry review.
-      </template>
-      <template #actions>
-        <v-text-field
-          density="compact"
-          label="Search offering name"
-          variant="outlined"
-          v-model="searchCriteria"
-          @keyup.enter="searchOfferings"
-          prepend-inner-icon="mdi-magnify"
-          hide-details="auto"
+    <body-header-container :enable-card-view="true">
+      <template #header>
+        <body-header
+          title="Pending offerings"
+          :records-count="offeringsAndCount?.count"
         >
-        </v-text-field>
+          <template #subtitle>
+            Offering requests that require Ministry review.
+          </template>
+          <template #actions>
+            <v-text-field
+              density="compact"
+              label="Search offering name"
+              variant="outlined"
+              v-model="searchCriteria"
+              @keyup.enter="searchOfferings"
+              prepend-inner-icon="mdi-magnify"
+              hide-details="auto"
+            >
+            </v-text-field>
+          </template>
+        </body-header>
       </template>
-    </body-header>
-    <content-group>
-      <toggle-content :toggled="!offeringsAndCount?.count && !loading">
-        <v-data-table-server
-          :headers="PendingOfferingsHeaders"
-          :items="offeringsAndCount?.results"
-          :items-length="offeringsAndCount?.count"
-          :loading="loading"
-          item-value="id"
-          :items-per-page="DEFAULT_PAGE_LIMIT"
-          :items-per-page-options="ITEMS_PER_PAGE"
-          :mobile="isMobile"
-          @update:options="pageSortEvent"
-        >
-          <template #loading>
-            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
-          </template>
-          <template #[`item.submittedDate`]="{ item }">
-            {{ dateOnlyLongString(item.submittedDate) }}
-          </template>
-          <template #[`item.locationName`]="{ item }">
-            {{ item.locationName }}
-          </template>
-          <template #[`item.programName`]="{ item }">
-            {{ item.programName }}
-          </template>
-          <template #[`item.name`]="{ item }">
-            {{ item.name }}
-          </template>
-          <template #[`item.studyDates`]="{ item }">
-            {{
-              dateOnlyLongPeriodString(item.studyStartDate, item.studyEndDate)
-            }}
-          </template>
-          <template #[`item.offeringIntensity`]="{ item }">
-            {{ mapOfferingIntensity(item.offeringIntensity) }}
-          </template>
-          <template #[`item.offeringType`]="{ item }">
-            {{ item.offeringType }}
-          </template>
-          <template #[`item.offeringDelivered`]="{ item }">
-            <div class="p-text-capitalize">
-              {{ item.offeringDelivered }}
-            </div>
-          </template>
-          <template #[`item.actions`]="{ item }">
-            <v-btn color="primary" @click="viewOffering(item)">View</v-btn>
-          </template>
-        </v-data-table-server>
-      </toggle-content>
-    </content-group>
+      <content-group>
+        <toggle-content :toggled="!offeringsAndCount?.count && !loading">
+          <v-data-table-server
+            :headers="PendingOfferingsHeaders"
+            :items="offeringsAndCount?.results"
+            :items-length="offeringsAndCount?.count"
+            :loading="loading"
+            item-value="id"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            :mobile="isMobile"
+            @update:options="pageSortEvent"
+          >
+            <template #loading>
+              <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+            </template>
+            <template #[`item.submittedDate`]="{ item }">
+              {{ dateOnlyLongString(item.submittedDate) }}
+            </template>
+            <template #[`item.locationName`]="{ item }">
+              {{ item.locationName }}
+            </template>
+            <template #[`item.programName`]="{ item }">
+              {{ item.programName }}
+            </template>
+            <template #[`item.name`]="{ item }">
+              {{ item.name }}
+            </template>
+            <template #[`item.studyDates`]="{ item }">
+              {{
+                dateOnlyLongPeriodString(item.studyStartDate, item.studyEndDate)
+              }}
+            </template>
+            <template #[`item.offeringIntensity`]="{ item }">
+              {{ mapOfferingIntensity(item.offeringIntensity) }}
+            </template>
+            <template #[`item.offeringType`]="{ item }">
+              {{ item.offeringType }}
+            </template>
+            <template #[`item.offeringDelivered`]="{ item }">
+              <div class="p-text-capitalize">
+                {{ item.offeringDelivered }}
+              </div>
+            </template>
+            <template #[`item.actions`]="{ item }">
+              <v-btn color="primary" @click="viewOffering(item)">View</v-btn>
+            </template>
+          </v-data-table-server>
+        </toggle-content>
+      </content-group>
+    </body-header-container>
   </full-page-container>
 </template>
 

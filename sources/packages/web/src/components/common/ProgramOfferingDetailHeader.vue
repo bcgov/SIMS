@@ -3,7 +3,7 @@
     <!-- Basic details -->
     <div class="row">
       <header-title-value title="Submitted" :value="submitted" />
-      <v-divider-vertical-opaque class="mx-2 my-0" />
+      <v-divider-vertical-opaque />
       <header-title-value title="Institution name"
         ><template #value
           ><span class="link-primary" @click="goToInstitutionProfile()">

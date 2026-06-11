@@ -2,7 +2,6 @@
   <body-header :title="educationProgram.name" data-cy="programName">
     <template #status-chip>
       <status-chip-program
-        class="ml-2 mb-2"
         :status="educationProgram.programStatus"
         :is-active="educationProgram.isActive && !educationProgram.isExpired"
         data-cy="programStatus"

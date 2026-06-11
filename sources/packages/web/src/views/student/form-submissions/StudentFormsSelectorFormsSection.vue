@@ -1,12 +1,10 @@
 <template>
-  <body-header-container :enable-card-view="true">
-    <template #header>
-      <body-header
-        title="Student forms"
-        sub-title="Standard forms to be submitted for StudentAid BC review."
-      />
-    </template>
-    <v-expansion-panels class="mt-5">
+  <body-header-container
+    :enable-card-view="true"
+    title="Student forms"
+    sub-title="Standard forms to be submitted for StudentAid BC review."
+  >
+    <v-expansion-panels>
       <v-expansion-panel
         collapse-icon="$expanderCollapseIcon"
         expand-icon="$expanderExpandIcon"
@@ -60,7 +58,6 @@
             </v-input>
           </v-form>
           <footer-buttons
-            class="mt-4"
             primary-label="Fill form"
             justify="end"
             @primary-click="fillStudentForm"

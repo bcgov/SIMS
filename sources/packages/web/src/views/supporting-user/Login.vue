@@ -3,7 +3,7 @@
     title="Welcome to StudentAid BC"
     subtitle="We help with the cost of post-secondary education through student loans, grants, and other financial assistance programs."
     login-area-title="Log in or Register"
-    login-area-text="Whether you are a new or returning user—log in or register using the BC Services Card account."
+    login-area-text="Whether you are a new or returning user-log in or register using the BC Services Card account."
     login-area-button="Log in/Register"
     @login="login"
   >
