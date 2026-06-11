@@ -1,72 +1,66 @@
 <template>
-  <v-card>
-    <v-container>
-      <body-header
-        title="Completed changes"
-        class="m-1"
-        sub-title="Any events that resulted in a change to the students assessment."
-        :records-count="assessmentHistory.length"
+  <body-header-container
+    enable-card-view="true"
+    title="Completed changes"
+    sub-title="Any events that resulted in a change to the students assessment."
+    :records-count="assessmentHistory.length"
+  >
+    <content-group>
+      <toggle-content
+        :toggled="!assessmentHistory.length"
+        message="No assessments found."
       >
-      </body-header>
-      <content-group class="mt-4">
-        <toggle-content
-          :toggled="!assessmentHistory.length"
-          message="No assessments found."
+        <v-data-table
+          :headers="CompletedChangesHeaders"
+          :items="assessmentHistory"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          :mobile="isMobile"
         >
-          <v-data-table
-            :headers="CompletedChangesHeaders"
-            :items="assessmentHistory"
-            :items-per-page="DEFAULT_PAGE_LIMIT"
-            :items-per-page-options="ITEMS_PER_PAGE"
-            :mobile="isMobile"
-          >
-            <template #[`item.submittedDate`]="{ item }">
-              {{ dateOnlyLongString(item.submittedDate) }}
-            </template>
-            <template #[`item.triggerType`]="{ item }">
-              {{ item.triggerType }}
-            </template>
-            <template #[`item.tags`]="{ item }">
-              <assessment-tags :assessment="item" />
-            </template>
-            <template #[`item.requestForm`]="{ item }">
-              <template v-if="canShowViewRequest(item)">
-                <v-btn
-                  @click="viewRequest(item)"
-                  color="primary"
-                  variant="text"
-                  class="text-decoration-underline"
-                  prepend-icon="fa:far fa-file-alt"
-                >
-                  {{ getViewRequestLabel(item) }}</v-btn
-                >
-              </template>
-            </template>
-            <template #[`item.status`]="{ item }">
-              <status-chip-assessment-history :status="item.status" />
-            </template>
-            <template #[`item.assessmentDate`]="{ item }">
-              {{
-                emptyStringFiller(
-                  getISODateHourMinuteString(item.assessmentDate),
-                )
-              }}
-            </template>
-            <template #[`item.assessment`]="{ item }">
+          <template #[`item.submittedDate`]="{ item }">
+            {{ dateOnlyLongString(item.submittedDate) }}
+          </template>
+          <template #[`item.triggerType`]="{ item }">
+            {{ item.triggerType }}
+          </template>
+          <template #[`item.tags`]="{ item }">
+            <assessment-tags :assessment="item" />
+          </template>
+          <template #[`item.requestForm`]="{ item }">
+            <template v-if="canShowViewRequest(item)">
               <v-btn
-                v-if="!item.hasUnsuccessfulWeeks"
-                :disabled="!item.assessmentDate"
-                @click="$emit('viewAssessment', item.assessmentId)"
+                @click="viewRequest(item)"
                 color="primary"
+                variant="text"
+                class="text-decoration-underline"
+                prepend-icon="fa:far fa-file-alt"
               >
-                View</v-btn
+                {{ getViewRequestLabel(item) }}</v-btn
               >
             </template>
-          </v-data-table>
-        </toggle-content>
-      </content-group>
-    </v-container>
-  </v-card>
+          </template>
+          <template #[`item.status`]="{ item }">
+            <status-chip-assessment-history :status="item.status" />
+          </template>
+          <template #[`item.assessmentDate`]="{ item }">
+            {{
+              emptyStringFiller(getISODateHourMinuteString(item.assessmentDate))
+            }}
+          </template>
+          <template #[`item.assessment`]="{ item }">
+            <v-btn
+              v-if="!item.hasUnsuccessfulWeeks"
+              :disabled="!item.assessmentDate"
+              @click="$emit('viewAssessment', item.assessmentId)"
+              color="primary"
+            >
+              View</v-btn
+            >
+          </template>
+        </v-data-table>
+      </toggle-content>
+    </content-group>
+  </body-header-container>
 </template>
 <script lang="ts">
 import {
