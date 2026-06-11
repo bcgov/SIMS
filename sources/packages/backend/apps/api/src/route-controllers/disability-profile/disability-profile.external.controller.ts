@@ -33,9 +33,12 @@ export class DisabilityProfileExternalController extends BaseController {
   }
 
   /**
-   * Gets all active disability profiles for the students with valid SIN numbers.
+   * Retrieves all active disability profiles that were created or modified within a strictly bounded time window and belong to students with valid SIN number.
+   * * **Time window boundaries:**
+   * - `modifiedSince`: Provided by the client as query parameter. The profiles returned are created or modified after this date.
+   * - `modifiedUntil`: Automatically captured as the current server timestamp when the request is processed. The profiles returned are created or modified on or before this date.
    * @param disabilityProfilesQuery query parameters to retrieve the disability profiles.
-   * @returns all active disability profiles.
+   * @returns all active disability profiles with metadata including the `modifiedUntil` timestamp.
    */
   @Roles(ExternalRole.StudentDisabilityProfiles)
   @Get()
