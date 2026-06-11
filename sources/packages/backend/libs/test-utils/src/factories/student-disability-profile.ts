@@ -61,6 +61,8 @@ export function createFakeStudentDisabilityProfile(
  * - `ministryUser`: the user who is performing the operation.
  * - `student`: the student to whom the profile belongs.
  * - `disabilityProfileStatus`: the status of the disability profile.
+ * - `disabilitiesInitialValues`: allows setting the initial values for the disabilities associated with the profile.
+ * - `completedAt`: allows setting a specific completion date for the profile.
  * - `disabilities`: the disabilities associated with the profile.
  * - `now`: allows setting a specific date for createdAt and updatedAt fields.
  * @returns the saved student disability profile.
@@ -71,6 +73,8 @@ export async function saveFakeStudentDisabilityProfile(
     ministryUser: User;
     student?: Student;
     disabilityProfileStatus?: DisabilityProfileStatus;
+    disabilitiesInitialValues?: Partial<StudentDisabilityProfileDisability>[];
+    completedAt?: Date;
     now?: Date;
   },
 ): Promise<StudentDisabilityProfile> {
@@ -78,13 +82,10 @@ export async function saveFakeStudentDisabilityProfile(
   const disabilityProfileStatus =
     options?.disabilityProfileStatus ?? DisabilityProfileStatus.Active;
   const student = options?.student ?? (await saveFakeStudent(db.dataSource));
-  const disabilities = [
-    createFakeStudentDisabilityProfileDisability(
-      {
-        creator: options.ministryUser,
-      },
-      {
-        initialValues: {
+  const disabilitiesInitialValues = options?.disabilitiesInitialValues?.length
+    ? options?.disabilitiesInitialValues
+    : [
+        {
           disabilityCategory: DisabilityCategories.LearningDisability,
           disabilityType: DisabilityTypes.Permanent,
           impairments: [
@@ -92,10 +93,19 @@ export async function saveFakeStudentDisabilityProfile(
             DisabilityImpairments.Other,
           ],
         },
+      ];
+  const disabilities = disabilitiesInitialValues.map((initialValues) =>
+    createFakeStudentDisabilityProfileDisability(
+      {
+        creator: options.ministryUser,
+      },
+      {
+        initialValues,
         now,
       },
     ),
-  ];
+  );
+
   const studentDisabilityProfile = createFakeStudentDisabilityProfile(
     {
       student,
@@ -111,7 +121,7 @@ export async function saveFakeStudentDisabilityProfile(
   );
   if (disabilityProfileStatus !== DisabilityProfileStatus.Draft) {
     studentDisabilityProfile.completedBy = options?.ministryUser;
-    studentDisabilityProfile.completedAt = now;
+    studentDisabilityProfile.completedAt = options?.completedAt ?? now;
   }
   return db.studentDisabilityProfile.save(studentDisabilityProfile);
 }

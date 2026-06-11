@@ -113,3 +113,4 @@ export * from "./form-submission/form-submission.institutions.controller";
 export * from "./msfaa-number/msfaa-number.aest.controller";
 export * from "./disability-profile/disability-profile.controller.service";
 export * from "./disability-profile/disability-profile.aest.controller";
+export * from "./disability-profile/disability-profile.external.controller";

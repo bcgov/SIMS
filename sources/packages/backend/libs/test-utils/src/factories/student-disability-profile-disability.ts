@@ -33,14 +33,22 @@ export function createFakeStudentDisabilityProfileDisability(
   disability.disabilityType =
     options?.initialValues?.disabilityType ??
     DisabilityTypes.PersistentOrProlonged;
-  disability.disabilityNotes = "Some notes about the disability.";
+  disability.disabilityNotes =
+    options?.initialValues?.disabilityNotes ??
+    "Some notes about the disability.";
   disability.impairments = options?.initialValues?.impairments ?? [
     DisabilityImpairments.Other,
   ];
-  disability.impairmentsNotes = "Some notes about the impairments.";
-  disability.diagnosis = [DiagnosisSamples.SampleA];
-  disability.diagnosisNotes = "Some notes about the diagnosis.";
-  disability.finalNotes = "Some final notes.";
+  disability.impairmentsNotes =
+    options?.initialValues?.impairmentsNotes ??
+    "Some notes about the impairments.";
+  disability.diagnosis = options?.initialValues?.diagnosis ?? [
+    DiagnosisSamples.SampleA,
+  ];
+  disability.diagnosisNotes =
+    options?.initialValues?.diagnosisNotes ?? "Some notes about the diagnosis.";
+  disability.finalNotes =
+    options?.initialValues?.finalNotes ?? "Some final notes.";
   disability.deletedAt = undefined;
   disability.creator = relations.creator;
   disability.createdAt = now;

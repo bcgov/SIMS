@@ -13,6 +13,7 @@ import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
   RequiresUserAccount,
+  Roles,
 } from "../../auth/decorators";
 import BaseController from "../BaseController";
 import { StudentInformationService } from "../../services";
@@ -25,6 +26,7 @@ import { StudentExternalControllerService } from "./student.external.controller.
 import { SFASApplication } from "@sims/sims-db";
 import { LoggerService } from "@sims/utilities/logger";
 import { ACTIVE_SINS_DAYS } from "../../utilities";
+import { ExternalRole } from "../../auth";
 
 /**
  * Student controller for external client.
@@ -48,6 +50,7 @@ export class StudentExternalController extends BaseController {
    * @param payload payload with SIN to retrieve the student details.
    * @returns student details.
    */
+  @Roles(ExternalRole.StudentDetailsSearch)
   @Post()
   @ApiNotFoundResponse({ description: "Student not found." })
   @HttpCode(HttpStatus.OK)
@@ -117,6 +120,7 @@ export class StudentExternalController extends BaseController {
    * Only valid SINs are returned for SIMS students, and duplicate SINs are excluded.
    * @returns active SINs from both SIMS and SFAS.
    */
+  @Roles(ExternalRole.StudentActiveSINs)
   @Get("active-sins")
   async getActiveSINs(): Promise<ActiveSINsAPIOutDTO> {
     const [simsSINs, sfasSINs] = await Promise.all([

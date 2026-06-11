@@ -1,5 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, Repository } from "typeorm";
+import {
+  And,
+  DataSource,
+  LessThanOrEqual,
+  MoreThan,
+  Repository,
+} from "typeorm";
 import { StudentDisabilityModel } from "./disability-profile.models";
 import {
   DisabilityProfileStatus,
@@ -478,5 +484,55 @@ export class DisabilityProfileService {
         DISABILITY_PROFILE_DRAFT_NOT_FOUND,
       );
     }
+  }
+  /**
+   * Get all active disability profiles for the students with valid SIN numbers.
+   * @param modifiedSince disability profile modified since this date.
+   * @param modifiedUntil disability profile modified until this date.
+   * @returns all active disability profiles for the students with valid SIN numbers.
+   */
+  getAllActiveDisabilityProfiles(
+    modifiedSince: Date,
+    modifiedUntil: Date,
+  ): Promise<StudentDisabilityProfile[]> {
+    return this.studentDisabilityProfileRepo.find({
+      select: {
+        id: true,
+        student: {
+          id: true,
+          user: { id: true, firstName: true, lastName: true },
+          sinValidation: { id: true, sin: true },
+          contactInfo: true,
+        },
+        disabilities: {
+          id: true,
+          disabilityPriority: true,
+          disabilityCategory: true,
+          disabilityType: true,
+          disabilityNotes: true,
+          diagnosis: true,
+          diagnosisNotes: true,
+          impairments: true,
+          impairmentsNotes: true,
+          finalNotes: true,
+        },
+      },
+      relations: {
+        student: { user: true, sinValidation: true },
+        disabilities: true,
+      },
+      where: {
+        disabilityProfileStatus: DisabilityProfileStatus.Active,
+        completedAt: And(
+          MoreThan(modifiedSince),
+          LessThanOrEqual(modifiedUntil),
+        ),
+        student: { sinValidation: { isValidSIN: true } },
+      },
+      order: {
+        completedAt: "ASC",
+        disabilities: { disabilityPriority: "ASC" },
+      },
+    });
   }
 }

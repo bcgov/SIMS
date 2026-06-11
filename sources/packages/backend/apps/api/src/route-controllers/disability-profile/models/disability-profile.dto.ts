@@ -7,6 +7,7 @@ import {
   IMPAIRMENTS_NOTES_MAX_LENGTH,
   LOOKUP_KEY_MAX_LENGTH,
 } from "@sims/sims-db";
+import { AddressAPIOutDTO } from "../../models/common.dto";
 import { Type } from "class-transformer";
 import {
   ArrayMinSize,
@@ -15,6 +16,7 @@ import {
   MaxLength,
   IsNotEmpty,
   IsOptional,
+  IsDateString,
   IsPositive,
   IsString,
   ValidateNested,
@@ -67,6 +69,49 @@ export class StudentDisabilityProfileAPIOutDTO {
 
 export class StudentDisabilityProfilesAPIOutDTO {
   profiles: StudentDisabilityProfileAPIOutDTO[];
+}
+
+export class DisabilityProfilesQueryExternalAPIInDTO {
+  /**
+   * Modified since date.
+   * Should be a valid ISO 8601 utc date string, e.g. "2024-01-01T00:00:00.000Z".
+   */
+  @IsNotEmpty()
+  @IsDateString({ strict: true, strictSeparator: true })
+  modifiedSince: string;
+}
+
+export class DisabilityExternalAPIOutDTO {
+  /**
+   * The priority of the disability within the profile, where 1 indicates the primary disability
+   * and other values indicate secondary disabilities.
+   */
+  disabilityPriority: number;
+  disabilityCategory: string;
+  disabilityType: string;
+  disabilityNotes?: string;
+  diagnosis: string[];
+  diagnosisNotes?: string;
+  impairments: string[];
+  impairmentsNotes?: string;
+  finalNotes?: string;
+}
+
+export class DisabilityProfileExternalAPIOutDTO {
+  firstName?: string;
+  lastName: string;
+  sin: string;
+  address: AddressAPIOutDTO;
+  disabilities: DisabilityExternalAPIOutDTO[];
+}
+
+export class DisabilityProfileMetadataExternalAPIOutDTO {
+  modifiedUntil: Date;
+}
+
+export class DisabilityProfilesExternalAPIOutDTO {
+  profiles: DisabilityProfileExternalAPIOutDTO[];
+  metadata: DisabilityProfileMetadataExternalAPIOutDTO;
 }
 
 export class StudentDisabilityAPIInDTO {

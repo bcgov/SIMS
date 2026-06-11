@@ -1,11 +1,13 @@
 import { Module } from "@nestjs/common";
 import {
+  DisabilityProfileExternalController,
   StudentExternalController,
   StudentExternalControllerService,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import {
   ApplicationRestrictionBypassService,
+  DisabilityProfileService,
   StudentInformationService,
   StudentRestrictionService,
   StudentService,
@@ -20,7 +22,7 @@ import {
 
 @Module({
   imports: [AuthModule],
-  controllers: [StudentExternalController],
+  controllers: [StudentExternalController, DisabilityProfileExternalController],
   providers: [
     StudentService,
     SFASIndividualService,
@@ -32,6 +34,7 @@ import {
     StudentRestrictionService,
     ApplicationRestrictionBypassService,
     RestrictionSharedService,
+    DisabilityProfileService,
   ],
 })
 export class AppExternalModule {}
