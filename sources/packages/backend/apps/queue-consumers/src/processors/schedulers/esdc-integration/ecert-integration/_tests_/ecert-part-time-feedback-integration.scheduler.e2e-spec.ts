@@ -23,8 +23,8 @@ import {
 import { INestApplication } from "@nestjs/common";
 import { QueueNames } from "@sims/utilities";
 import { DeepMocked } from "@golevelup/ts-jest";
-import * as Client from "ssh2-sftp-client";
-import * as path from "path";
+import Client from "ssh2-sftp-client";
+import { join } from "node:path";
 import { PartTimeECertFeedbackIntegrationScheduler } from "../ecert-part-time-feedback-integration.scheduler";
 import { IsNull } from "typeorm";
 
@@ -47,7 +47,7 @@ describe(
 
     beforeAll(async () => {
       // Set the ESDC response folder to the mock folder.
-      process.env.ESDC_RESPONSE_FOLDER = path.join(
+      process.env.ESDC_RESPONSE_FOLDER = join(
         __dirname,
         "e-cert-feedback-error-files",
       );
@@ -88,7 +88,7 @@ describe(
       await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
-      const downloadedFile = path.join(
+      const downloadedFile = join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEEDBACK_ERROR_FILE_SINGLE_RECORD,
       );
@@ -120,7 +120,7 @@ describe(
       await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
-      const downloadedFile = path.join(
+      const downloadedFile = join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEEDBACK_ERROR_FILE_SINGLE_RECORD,
       );
@@ -152,7 +152,7 @@ describe(
       await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
-      const downloadedFile = path.join(
+      const downloadedFile = join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEEDBACK_ERROR_FILE_SINGLE_RECORD,
       );
@@ -184,7 +184,7 @@ describe(
       await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
-      const downloadedFile = path.join(
+      const downloadedFile = join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEEDBACK_ERROR_FILE_SINGLE_RECORD,
       );

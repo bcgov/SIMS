@@ -7,7 +7,7 @@ import {
 import { INestApplication } from "@nestjs/common";
 import { getPSTPDTDateTime, QueueNames } from "@sims/utilities";
 import { DeepMocked } from "@golevelup/ts-jest";
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 import { join, parse } from "node:path";
 import { FederalRestrictionsIntegrationScheduler } from "../federal-restrictions-integration.scheduler";
 import {

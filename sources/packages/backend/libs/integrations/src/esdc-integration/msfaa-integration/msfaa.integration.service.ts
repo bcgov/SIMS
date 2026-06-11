@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 import {
   MSFAASFTPResponseFile,
   ReceivedStatusCode,

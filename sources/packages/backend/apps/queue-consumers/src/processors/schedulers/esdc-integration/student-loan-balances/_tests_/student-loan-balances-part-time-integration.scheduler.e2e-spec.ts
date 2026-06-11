@@ -14,8 +14,8 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import { mockDownloadFiles } from "@sims/test-utils/mocks";
-import * as Client from "ssh2-sftp-client";
-import * as path from "path";
+import Client from "ssh2-sftp-client";
+import { join } from "node:path";
 import { StudentLoanBalancesPartTimeIntegrationScheduler } from "../student-loan-balances-part-time-integration.scheduler";
 import { faker } from "@faker-js/faker";
 import { Student } from "@sims/sims-db";
@@ -43,7 +43,7 @@ describe(
     let studentLoanBalancesDownloadFolder: string;
 
     beforeAll(async () => {
-      studentLoanBalancesDownloadFolder = path.join(
+      studentLoanBalancesDownloadFolder = join(
         __dirname,
         "student-loan-balances-files",
       );

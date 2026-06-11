@@ -15,7 +15,7 @@ import {
   createFakeInstitutionLocation,
 } from "@sims/test-utils";
 import { getUploadedFile, getUploadedFiles } from "@sims/test-utils/mocks";
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 import { ArrayContains, Not } from "typeorm";
 import {
   ApplicationStatus,

@@ -44,7 +44,7 @@ import { INestApplication } from "@nestjs/common";
 import { QueueNames, addDays, getISODateOnlyString } from "@sims/utilities";
 import { DeepMocked } from "@golevelup/ts-jest";
 import { PartTimeECertProcessIntegrationScheduler } from "../ecert-part-time-process-integration.scheduler";
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 import dayjs from "dayjs";
 import { DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS } from "@sims/services/constants";
 import { PartTimeCertRecordParser } from "./parsers/part-time-e-cert-record-parser";
@@ -2394,6 +2394,5 @@ describe(
     afterAll(async () => {
       await app?.close();
     });
-
   },
 );

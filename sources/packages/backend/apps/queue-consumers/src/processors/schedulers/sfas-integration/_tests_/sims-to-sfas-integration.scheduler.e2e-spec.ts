@@ -27,7 +27,7 @@ import {
   saveFakeStudent,
   saveFakeStudentRestriction,
 } from "@sims/test-utils";
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 import { SIMSToSFASIntegrationScheduler } from "../sims-to-sfas-integration.scheduler";
 import {
   Application,

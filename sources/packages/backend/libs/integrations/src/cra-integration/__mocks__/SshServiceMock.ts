@@ -1,6 +1,6 @@
 import Client from "ssh2-sftp-client";
-import * as fs from "fs";
-import * as path from "path";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { SshService } from "@sims/integrations/services";
 import { FILE_DEFAULT_ENCODING } from "@sims/utilities";
 
@@ -23,10 +23,8 @@ jest.spyOn(sshClientMock, "list").mockImplementation(() => {
 // Mock get method. This method accepts the file name input and returns
 // the content of the mocked file on folder __mocks__/response-folder.
 jest.spyOn(sshClientMock, "get").mockImplementation((filePath: string) => {
-  const mockedFilePath = path.resolve(__dirname, filePath);
-  return Promise.resolve(
-    fs.readFileSync(mockedFilePath, FILE_DEFAULT_ENCODING),
-  );
+  const mockedFilePath = resolve(__dirname, filePath);
+  return Promise.resolve(readFileSync(mockedFilePath, FILE_DEFAULT_ENCODING));
 });
 // // Mock createClient method.
 jest.spyOn(SshServiceMock, "createClient").mockImplementation(() => {

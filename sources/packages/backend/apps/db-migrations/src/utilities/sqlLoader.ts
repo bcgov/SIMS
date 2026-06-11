@@ -1,12 +1,12 @@
-import * as fs from "fs";
-import * as path from "path";
+import { existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
 const sqlDirPath = "apps/db-migrations/src/sql";
 
 /**
  * @description Get SQL dir path
  * @returns The SQL files container dir from resources folder
  */
-export const getSQLDirPath = () => path.resolve(sqlDirPath);
+export const getSQLDirPath = () => resolve(sqlDirPath);
 
 /**
  * @description Get SQL file content
@@ -21,8 +21,8 @@ export const getSQLFileData = (fileName: string, subDirPath?: string) => {
   } else {
     path = `${path}/${fileName}`;
   }
-  if (fs.existsSync(path)) {
-    return fs.readFileSync(path, { encoding: "utf8" });
+  if (existsSync(path)) {
+    return readFileSync(path, { encoding: "utf8" });
   } else {
     throw new Error(`getSQLFileData: No file exists in path: ${path}`);
   }

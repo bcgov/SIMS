@@ -26,8 +26,8 @@ import {
   getStructuredRecords,
   mockDownloadFiles,
 } from "@sims/test-utils/mocks";
-import * as Client from "ssh2-sftp-client";
-import * as path from "node:path";
+import Client from "ssh2-sftp-client";
+import { join } from "node:path";
 import { SFASIntegrationScheduler } from "../sfas-integration.scheduler";
 import {
   DisbursementOverawardOriginType,
@@ -93,7 +93,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   let sharedStudent: Student;
 
   beforeAll(async () => {
-    sfasDownloadFolder = path.join(__dirname, "sfas-files");
+    sfasDownloadFolder = join(__dirname, "sfas-files");
     // Set the SFAS folder to the files mocks folders.
     process.env.SFAS_RECEIVE_FOLDER = sfasDownloadFolder;
     const { nestApplication, dataSource, sshClientMock } =
@@ -555,7 +555,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       await processor.processQueue(mockedJob.job);
 
       // Assert
-      const downloadedFile = path.join(
+      const downloadedFile = join(
         process.env.SFAS_RECEIVE_FOLDER,
         SFAS_INDIVIDUAL_VALID_RECORDS_FILENAME,
       );
@@ -710,7 +710,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       await processor.processQueue(mockedJob.job);
 
       // Assert
-      const downloadedFile = path.join(
+      const downloadedFile = join(
         process.env.SFAS_RECEIVE_FOLDER,
         SFAS_INDIVIDUAL_VALID_RECORD_OVERAWARD_FILENAME,
       );

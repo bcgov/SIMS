@@ -9,7 +9,7 @@ import {
 import { FullTimeMSFAAProcessIntegrationScheduler } from "../msfaa-full-time-process-integration.scheduler";
 import { E2EDataSources, createE2EDataSources } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 import { In, IsNull } from "typeorm";
 import { saveMSFAATestInputsData } from "./msfaa-factory";
 import {

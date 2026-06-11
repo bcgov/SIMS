@@ -1,5 +1,5 @@
 import { BadRequestException } from "@nestjs/common";
-import * as path from "path";
+import { extname } from "node:path";
 
 const MAX_FILE_SIZE = +process.env.FILE_UPLOAD_MAX_FILE_SIZE;
 const ALLOWED_FILE_EXTENSIONS =
@@ -72,7 +72,7 @@ const fileFilter = (
     ? options?.allowedMimeType.includes(file.mimetype)
     : true;
 
-  const extension = path.extname(file.originalname).toLowerCase();
+  const extension = extname(file.originalname).toLowerCase();
   if (allowedFileExtensions.includes(extension) && isValidMimeType) {
     callback(null, true);
   } else {

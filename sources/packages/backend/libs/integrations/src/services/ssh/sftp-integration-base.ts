@@ -1,7 +1,7 @@
 import { LoggerService } from "@sims/utilities/logger";
 import { SshService } from "./ssh.service";
-import * as Client from "ssh2-sftp-client";
-import * as path from "path";
+import Client from "ssh2-sftp-client";
+import { extname, join, parse } from "node:path";
 import { SFTPConfig } from "@sims/utilities/config";
 import {
   FixedFormatFileLine,
@@ -103,7 +103,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
           (!options?.itemType || item.type === options.itemType),
       );
       return filesToProcess
-        .map((file) => path.join(remoteDownloadFolder, file.name))
+        .map((file) => join(remoteDownloadFolder, file.name))
         .sort((a, b) => a.localeCompare(b));
     } catch (error) {
       this.logger.error(
@@ -165,7 +165,7 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     this.logger.log(`Downloading file ${remoteFilePath}.`);
     let client: Client | undefined = undefined;
     try {
-      const fileExtension = path.extname(remoteFilePath).toLowerCase();
+      const fileExtension = extname(remoteFilePath).toLowerCase();
       const isCompressed = fileExtension === ".zip";
       const encoding = isCompressed ? null : FILE_DEFAULT_ENCODING;
       client = await this.getClient();
@@ -264,17 +264,14 @@ export abstract class SFTPIntegrationBase<DownloadType> {
     remoteFilePath: string,
     options?: { client?: Client; absoluteArchiveDirectory?: string },
   ): Promise<void> {
-    const fileInfo = path.parse(remoteFilePath);
+    const fileInfo = parse(remoteFilePath);
     const timestamp = getFileNameAsExtendedCurrentTimestamp();
     const fileBaseName = `${fileInfo.name}_${timestamp}${fileInfo.ext}`;
     let newRemoteFilePath: string;
     if (options?.absoluteArchiveDirectory) {
-      newRemoteFilePath = path.join(
-        options.absoluteArchiveDirectory,
-        fileBaseName,
-      );
+      newRemoteFilePath = join(options.absoluteArchiveDirectory, fileBaseName);
     } else {
-      newRemoteFilePath = path.join(
+      newRemoteFilePath = join(
         fileInfo.dir,
         SFTP_ARCHIVE_DIRECTORY,
         fileBaseName,

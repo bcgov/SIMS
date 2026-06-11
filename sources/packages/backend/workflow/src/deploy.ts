@@ -1,6 +1,6 @@
 import "../../env-setup";
-import * as fs from "fs";
-import * as path from "path";
+import { readdirSync } from "node:fs";
+import { basename, extname, join, resolve } from "node:path";
 import {
   DecisionDeploymentResult,
   DECISIONS_EXTENSION,
@@ -40,16 +40,14 @@ const JSON_LOG_INDENTATION = 2;
   console.info(`**** Deploying to Camunda ****\n`);
   console.info(`Deploying to Zeebe address ${process.env.ZEEBE_GRPC_ADDRESS}`);
 
-  const directory = path.resolve(__dirname, `./workflow-definitions`);
+  const directory = resolve(__dirname, `./workflow-definitions`);
   console.info(`Getting resources from ${directory}`);
-  const fileNames: string[] = fs.readdirSync(directory);
+  const fileNames: string[] = readdirSync(directory);
   if (fileNames.length === 0) {
     console.info("No files found to be deployed!");
     return;
   }
-  const filesPaths = fileNames.map((fileName) =>
-    path.join(directory, fileName),
-  );
+  const filesPaths = fileNames.map((fileName) => join(directory, fileName));
 
   console.info(`\nFiles found:`);
   console.table(fileNames);
@@ -91,10 +89,10 @@ const JSON_LOG_INDENTATION = 2;
     // Deploy all decision files (BPMNs).
     const decisionDeploymentResults: DecisionDeploymentResult[] = [];
     const decisionsFileNames = filesPaths.filter(
-      (filePath) => path.extname(filePath) === DECISIONS_EXTENSION,
+      (filePath) => extname(filePath) === DECISIONS_EXTENSION,
     );
     for (const decisionFilename of decisionsFileNames) {
-      console.info(`Deploying decision: ${path.basename(decisionFilename)}`);
+      console.info(`Deploying decision: ${basename(decisionFilename)}`);
       const deploymentResult = await zeebeClient.deployResource({
         decisionFilename,
       });
@@ -110,7 +108,7 @@ const JSON_LOG_INDENTATION = 2;
                 requirementsName: decision.dmnDecisionRequirementsName,
                 requirementsKey: decision.decisionRequirementsKey,
                 metadata: deployment[DEPLOYMENT_METADATA_PROPERTY_NAME],
-                resourceName: path.basename(decision.resourceName),
+                resourceName: basename(decision.resourceName),
                 version: decision.version,
                 deploymentKey: deploymentResult.key,
               });
@@ -142,17 +140,17 @@ const JSON_LOG_INDENTATION = 2;
     // Deploy all processes (BPMNs).
     const processesDeploymentResults: ProcessDeploymentResult[] = [];
     const processes = filesPaths.filter(
-      (filePath) => path.extname(filePath) === PROCESSES_EXTENSION,
+      (filePath) => extname(filePath) === PROCESSES_EXTENSION,
     );
     for (const processFilename of processes) {
-      console.info(`Deploying process: ${path.basename(processFilename)}`);
+      console.info(`Deploying process: ${basename(processFilename)}`);
       const deploymentResult = await zeebeClient.deployResource({
         processFilename,
       });
       const results = deploymentResult.deployments.map((deployment) => ({
         bpmnProcessId: deployment.process.bpmnProcessId,
         processDefinitionKey: deployment.process.processDefinitionKey,
-        resourceName: path.basename(deployment.process.resourceName),
+        resourceName: basename(deployment.process.resourceName),
         version: deployment.process.version,
         deploymentKey: deploymentResult.key,
       }));
