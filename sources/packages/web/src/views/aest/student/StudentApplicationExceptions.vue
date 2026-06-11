@@ -3,64 +3,68 @@
     <template #header>
       <header-navigator title="Student requests" sub-title="Exceptions" />
     </template>
-    <body-header
-      title="Pending exception requests"
-      :records-count="applicationExceptions.count"
-      sub-title="Exception requests that require ministry review."
-    >
-      <template #actions>
-        <v-text-field
-          density="compact"
-          label="Search name or application #"
-          variant="outlined"
-          v-model="searchCriteria"
-          data-cy="searchExceptions"
-          @keyup.enter="searchExceptions"
-          prepend-inner-icon="mdi-magnify"
-          hide-details="auto"
+    <body-header-container>
+      <template #header>
+        <body-header
+          title="Pending exception requests"
+          :records-count="applicationExceptions.count"
+          sub-title="Exception requests that require ministry review."
         >
-        </v-text-field>
-      </template>
-    </body-header>
-    <content-group>
-      <toggle-content
-        :toggled="!applicationExceptions.results?.length && !loading"
-        message="No pending exception requests."
-      >
-        <v-data-table-server
-          v-if="applicationExceptions?.count"
-          :headers="ExceptionRequestsHeaders"
-          :items="applicationExceptions?.results"
-          :items-length="applicationExceptions?.count"
-          :loading="loading"
-          :items-per-page="DEFAULT_PAGE_LIMIT"
-          :items-per-page-options="ITEMS_PER_PAGE"
-          @update:options="pageSortEvent"
-        >
-          <template #loading>
-            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
-          </template>
-          <template #[`item.submittedDate`]="{ item }">
-            {{ dateOnlyLongString(item.submittedDate) }}
-          </template>
-          <template #[`item.givenNames`]="{ item }">
-            {{ item.givenNames }}
-          </template>
-          <template #[`item.lastName`]="{ item }">
-            {{ item.lastName }}
-          </template>
-          <template #[`item.action`]="{ item }">
-            <v-btn
-              color="primary"
-              @click="
-                goToAssessmentsSummary(item.applicationId, item.studentId)
-              "
-              >View</v-btn
+          <template #actions>
+            <v-text-field
+              density="compact"
+              label="Search name or application #"
+              variant="outlined"
+              v-model="searchCriteria"
+              data-cy="searchExceptions"
+              @keyup.enter="searchExceptions"
+              prepend-inner-icon="mdi-magnify"
+              hide-details="auto"
             >
+            </v-text-field>
           </template>
-        </v-data-table-server>
-      </toggle-content>
-    </content-group>
+        </body-header>
+      </template>
+      <content-group>
+        <toggle-content
+          :toggled="!applicationExceptions.results?.length && !loading"
+          message="No pending exception requests."
+        >
+          <v-data-table-server
+            v-if="applicationExceptions?.count"
+            :headers="ExceptionRequestsHeaders"
+            :items="applicationExceptions?.results"
+            :items-length="applicationExceptions?.count"
+            :loading="loading"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            @update:options="pageSortEvent"
+          >
+            <template #loading>
+              <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+            </template>
+            <template #[`item.submittedDate`]="{ item }">
+              {{ dateOnlyLongString(item.submittedDate) }}
+            </template>
+            <template #[`item.givenNames`]="{ item }">
+              {{ item.givenNames }}
+            </template>
+            <template #[`item.lastName`]="{ item }">
+              {{ item.lastName }}
+            </template>
+            <template #[`item.action`]="{ item }">
+              <v-btn
+                color="primary"
+                @click="
+                  goToAssessmentsSummary(item.applicationId, item.studentId)
+                "
+                >View</v-btn
+              >
+            </template>
+          </v-data-table-server>
+        </toggle-content>
+      </content-group>
+    </body-header-container>
   </full-page-container>
 </template>
 

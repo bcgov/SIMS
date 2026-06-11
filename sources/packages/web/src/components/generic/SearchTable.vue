@@ -1,6 +1,6 @@
 <template>
   <content-group>
-    <v-row class="m-0 p-0 mb-2" align="center">
+    <v-row density="compact">
       <v-col md="auto" class="flex-grow-1 pa-0 pr-2 mb-1">
         <!--
           Custom search input slot. When provided, it replaces the default
@@ -18,12 +18,12 @@
           />
         </slot>
       </v-col>
-      <v-col cols="auto" class="pa-0 pr-2 mb-1">
+      <v-col cols="auto">
         <v-btn color="primary" :loading="loading" @click="$emit('search')"
           >Search</v-btn
         >
       </v-col>
-      <v-col cols="auto" class="pa-0 mb-1">
+      <v-col cols="auto">
         <!--
           On medium and larger screens the append-search slot content is shown
           inline. On smaller screens it collapses into a dropdown menu to avoid
