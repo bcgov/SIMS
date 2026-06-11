@@ -1,98 +1,97 @@
 <template>
   <full-page-container>
-    <body-header
+    <body-header-container
       title="Search Institution"
       sub-title="Look up an institution by entering their information below."
-    >
-    </body-header>
-    <v-form ref="searchInstitutionsForm">
-      <content-group class="mb-8">
-        <v-row>
-          <v-col cols="12" md>
-            <v-text-field
-              density="compact"
-              label="Legal name"
-              variant="outlined"
-              v-model="legalName"
-              data-cy="legalName"
-              @keyup.enter="searchInstitutions"
-              hide-details
-            />
-          </v-col>
-          <v-col cols="12" md>
-            <v-text-field
-              density="compact"
-              label="Operating name"
-              variant="outlined"
-              v-model="operatingName"
-              data-cy="operatingName"
-              @keyup.enter="searchInstitutions"
-              hide-details
-            />
-          </v-col>
-          <v-col cols="12" md>
-            <v-text-field
-              density="compact"
-              label="Institution location code"
-              variant="outlined"
-              :maxlength="4"
-              :model-value="locationCode"
-              @update:model-value="locationCode = $event?.toUpperCase() ?? ''"
-              @keyup.enter="searchInstitutions"
-              hide-details
-            />
-          </v-col>
-          <v-col cols="12" md="auto" class="d-flex justify-end">
-            <v-btn
-              color="primary"
-              data-cy="searchInstitutions"
-              @click="searchInstitutions"
-            >
-              Search
-            </v-btn>
-          </v-col>
-        </v-row>
-        <v-input :rules="[isValidSearch()]" hide-details="auto" error />
+      ><content-group>
+        <v-form ref="searchInstitutionsForm">
+          <v-row>
+            <v-col cols="12" md>
+              <v-text-field
+                density="compact"
+                label="Legal name"
+                variant="outlined"
+                v-model="legalName"
+                data-cy="legalName"
+                @keyup.enter="searchInstitutions"
+                hide-details
+              />
+            </v-col>
+            <v-col cols="12" md>
+              <v-text-field
+                density="compact"
+                label="Operating name"
+                variant="outlined"
+                v-model="operatingName"
+                data-cy="operatingName"
+                @keyup.enter="searchInstitutions"
+                hide-details
+              />
+            </v-col>
+            <v-col cols="12" md>
+              <v-text-field
+                density="compact"
+                label="Institution location code"
+                variant="outlined"
+                :maxlength="4"
+                :model-value="locationCode"
+                @update:model-value="locationCode = $event?.toUpperCase() ?? ''"
+                @keyup.enter="searchInstitutions"
+                hide-details
+              />
+            </v-col>
+            <v-col cols="12" md="auto" class="d-flex justify-end">
+              <v-btn
+                color="primary"
+                data-cy="searchInstitutions"
+                @click="searchInstitutions"
+              >
+                Search
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-input :rules="[isValidSearch()]" hide-details="auto" error />
+        </v-form>
       </content-group>
-    </v-form>
-    <template v-if="institutionsFound">
-      <body-header title="Results" />
-      <content-group>
-        <v-data-table
-          v-if="institutionsFound"
-          :headers="SearchInstitutionsHeaders"
-          :items="institutions"
-          :items-per-page="DEFAULT_PAGE_LIMIT"
-          :items-per-page-options="ITEMS_PER_PAGE"
-          :mobile="isMobile"
-        >
-          <template #[`item.operatingName`]="{ item }">
-            <div class="p-text-capitalize">
-              {{ item.operatingName }}
-            </div>
-          </template>
-          <template #[`item.legalName`]="{ item }">
-            <div class="p-text-capitalize">
-              {{ item.legalName }}
-            </div>
-          </template>
-          <template #[`item.country`]="{ item }">
-            {{ emptyStringFiller(item.country) }}
-          </template>
-          <template #[`item.classification`]="{ item }">
-            {{ getClassificationToDisplay(item.classification) }}
-          </template>
-          <template #[`item.action`]="{ item }">
-            <v-btn
-              color="primary"
-              data-cy="viewInstitution"
-              @click="goToViewInstitution(item.id)"
-              >View</v-btn
-            >
-          </template>
-        </v-data-table>
-      </content-group>
-    </template>
+      <template v-if="institutionsFound">
+        <body-header title="Results" class="mt-2" />
+        <content-group>
+          <v-data-table
+            v-if="institutionsFound"
+            :headers="SearchInstitutionsHeaders"
+            :items="institutions"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            :mobile="isMobile"
+          >
+            <template #[`item.operatingName`]="{ item }">
+              <div class="p-text-capitalize">
+                {{ item.operatingName }}
+              </div>
+            </template>
+            <template #[`item.legalName`]="{ item }">
+              <div class="p-text-capitalize">
+                {{ item.legalName }}
+              </div>
+            </template>
+            <template #[`item.country`]="{ item }">
+              {{ emptyStringFiller(item.country) }}
+            </template>
+            <template #[`item.classification`]="{ item }">
+              {{ getClassificationToDisplay(item.classification) }}
+            </template>
+            <template #[`item.action`]="{ item }">
+              <v-btn
+                color="primary"
+                data-cy="viewInstitution"
+                @click="goToViewInstitution(item.id)"
+                >View</v-btn
+              >
+            </template>
+          </v-data-table>
+        </content-group>
+      </template>
+    </body-header-container>
   </full-page-container>
 </template>
 <script setup lang="ts">

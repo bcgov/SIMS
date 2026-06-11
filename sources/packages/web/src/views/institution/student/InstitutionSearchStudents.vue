@@ -1,13 +1,6 @@
 <template>
   <full-page-container :full-width="true">
-    <body-header-container>
-      <template #header>
-        <body-header title="Search Students">
-          <template #subtitle
-            >Lookup students by entering their information below.</template
-          >
-        </body-header>
-      </template>
+    <body-header-container title="Search Students" subtitle="">
     </body-header-container>
     <search-students @go-to-student-view="goToStudentView" />
   </full-page-container>

@@ -7,7 +7,7 @@
           :records-count="institutionProgramsSummary.count"
         >
           <template #actions>
-            <v-row>
+            <v-row density="compact">
               <v-col>
                 <v-text-field
                   density="compact"

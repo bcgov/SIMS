@@ -1,6 +1,6 @@
 <template>
   <v-form ref="searchStudentsForm">
-    <content-group class="mb-8">
+    <content-group class="mb-2">
       <v-row density="compact">
         <v-col cols="12" lg="2">
           <v-text-field
