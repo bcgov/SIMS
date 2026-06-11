@@ -82,6 +82,11 @@ export class DisabilityProfilesQueryExternalAPIInDTO {
 }
 
 export class DisabilityExternalAPIOutDTO {
+  /**
+   * The priority of the disability within the profile, where 1 indicates the primary disability
+   * and other values indicate secondary disabilities.
+   */
+  disabilityPriority: number;
   disabilityCategory: string;
   disabilityType: string;
   disabilityNotes?: string;

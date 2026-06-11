@@ -60,6 +60,7 @@ describe("DisabilityProfileExternalController(e2e)-getAllDisabilityProfiles", ()
       });
       const [priority1DisabilityValues, priority2DisabilityValues] = [
         {
+          disabilityPriority: 1,
           disabilityCategory: DisabilityCategories.Other,
           disabilityType: DisabilityTypes.PersistentOrProlonged,
           disabilityNotes: "Primary disability notes.",
@@ -70,6 +71,7 @@ describe("DisabilityProfileExternalController(e2e)-getAllDisabilityProfiles", ()
           finalNotes: "Primary final notes.",
         },
         {
+          disabilityPriority: 2,
           disabilityCategory: DisabilityCategories.LearningDisability,
           disabilityType: DisabilityTypes.Permanent,
           disabilityNotes: "Secondary disability notes.",
@@ -86,11 +88,8 @@ describe("DisabilityProfileExternalController(e2e)-getAllDisabilityProfiles", ()
         ministryUser: user,
         disabilityProfileStatus: DisabilityProfileStatus.Active,
         disabilitiesInitialValues: [
-          {
-            ...priority1DisabilityValues,
-            disabilityPriority: 1,
-          },
-          { ...priority2DisabilityValues, disabilityPriority: 2 },
+          priority1DisabilityValues,
+          priority2DisabilityValues,
         ],
         completedAt: dateWithinRange,
       });

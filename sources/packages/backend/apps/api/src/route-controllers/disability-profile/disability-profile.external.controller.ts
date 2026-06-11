@@ -82,6 +82,7 @@ export class DisabilityProfileExternalController extends BaseController {
               disabilityProfile.student.contactInfo.address.postalCode,
           },
           disabilities: disabilityProfile.disabilities.map((disability) => ({
+            disabilityPriority: disability.disabilityPriority,
             disabilityCategory: disability.disabilityCategory,
             disabilityType: disability.disabilityType,
             disabilityNotes: disability.disabilityNotes || undefined,

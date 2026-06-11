@@ -77,7 +77,7 @@ export async function removeJWTUserRoles(
 ): Promise<void> {
   await mockJWTToken(testingModule, (payload: IUserToken) => {
     const roles = payload.resource_access[azp]?.roles;
-    if (roles && roles.length) {
+    if (roles?.length) {
       payload.resource_access[azp] = {
         roles: roles.filter((role) => !rolesToRemove.includes(role)),
       };
