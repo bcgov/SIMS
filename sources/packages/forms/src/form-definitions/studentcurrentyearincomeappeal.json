@@ -230,7 +230,7 @@
         }
       ],
       "className": "category-header-medium primary-color",
-      "content": "Upload supporting documents for current year estimated gross income.",
+      "content": "Upload supporting documents",
       "type": "htmlelement",
       "customClass": "header-md",
       "tableView": false
@@ -258,27 +258,10 @@
           "attr": ""
         }
       ],
-      "content": "<h4 class=\"category-header-medium-small\">Provide the following:</h4>\n<ul><li>A letter explaining the circumstances that meet one or more of the criteria (see above).</li></ul>",
+      "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<ul>\n<li>A letter explaining the circumstances that meet one or more of the Appeal Criteria (see above), and if your gross income is estimated, a detailed breakdown of how you calculated this estimate.</li>\n<li>All relevant supporting documentation of the circumstance(s) causing the reduction in gross income (e.g., medical records, letter from physician, record of employment, layoff or strike, etc.).</li>\n<li>(If the year matching your application number is still in progress): All relevant supporting documentation of estimated total gross income for the current year, including all year-to-date gross income (e.g., pay stubs, invoices, Employment Insurance benefit statements, Record of Employment, etc.).</li>\n<li>(If the year matching your application number is complete): CRA Notice of Assessment for the year matching your application number, or all applicable tax slips (T4, T5, etc.) if your taxes have not yet been filed.</li>\n</ul>",
       "refreshOnChange": false,
       "customClass": "align-bullets",
       "key": "decreaseInIncomePanelContent3",
-      "type": "htmlelement",
-      "input": false,
-      "hideLabel": true,
-      "tableView": false
-    },
-    {
-      "label": "Content",
-      "attrs": [
-        {
-          "value": "",
-          "attr": ""
-        }
-      ],
-      "content": "<h4 class=\"category-header-medium-small\">Provide at least one of the following:</h4>\n<ul>\n<li>All relevant supporting documentation of the circumstance(s) (medical records, letter from the physician, record of employment, layoff or strike, invoices from damages, etc.).</li>\n<li>The more recent CRA Income Tax Return and gross income information for the year matching the student financial assistance application number (with relevant supporting documentation to show the decrease in gross income), if available.</li>\n<li>All relevant supporting documentation of estimated total gross income for the year matching the student financial assistance application number, if applicable (pay stubs, invoices, bank statements, Employment Insurance benefit statements, Record of Employment, etc.).</li></ul>",
-      "refreshOnChange": false,
-      "customClass": "align-bullets",
-      "key": "decreaseInIncomePanelContent4",
       "type": "htmlelement",
       "input": false,
       "hideLabel": true,
