@@ -26,8 +26,8 @@ import {
   getStructuredRecords,
   mockDownloadFiles,
 } from "@sims/test-utils/mocks";
-import * as Client from "ssh2-sftp-client";
-import * as path from "path";
+import Client from "ssh2-sftp-client";
+import { join } from "node:path";
 import {
   ApplicationStatus,
   COEStatus,
@@ -87,10 +87,7 @@ describe(
     let remitRestriction: Restriction;
 
     beforeAll(async () => {
-      eceResponseMockDownloadFolder = path.join(
-        __dirname,
-        "ece-response-files",
-      );
+      eceResponseMockDownloadFolder = join(__dirname, "ece-response-files");
       // Set the institution response folder to the mock folder.
       process.env.INSTITUTION_RESPONSE_FOLDER = eceResponseMockDownloadFolder;
       const { nestApplication, dataSource, sshClientMock } =
@@ -148,7 +145,7 @@ describe(
       // Arrange
       // Enable integration for institution location used for test.
       await enableIntegration(locationWARN, db);
-      const confirmEnrolmentResponseFile = path.join(
+      const confirmEnrolmentResponseFile = join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         CONR_008_WARN_FILE,
       );
@@ -226,7 +223,7 @@ describe(
       // Arrange
       // Enable integration for institution location used for test.
       await enableIntegration(locationCONF, db);
-      const confirmEnrolmentResponseFile = path.join(
+      const confirmEnrolmentResponseFile = join(
         process.env.INSTITUTION_RESPONSE_FOLDER!,
         CONR_008_CONF_FILE,
       );
@@ -362,7 +359,7 @@ describe(
         // Arrange
         // Enable integration for institution location used for test.
         await enableIntegration(locationCONF, db);
-        const confirmEnrolmentResponseFile = path.join(
+        const confirmEnrolmentResponseFile = join(
           process.env.INSTITUTION_RESPONSE_FOLDER,
           CONR_008_CONF_FILE,
         );
@@ -454,7 +451,7 @@ describe(
         // Arrange
         // Enable integration for institution location used for test.
         await enableIntegration(locationCONF, db);
-        const confirmEnrolmentResponseFile = path.join(
+        const confirmEnrolmentResponseFile = join(
           process.env.INSTITUTION_RESPONSE_FOLDER,
           CONR_008_CONF_FILE,
         );
@@ -555,7 +552,7 @@ describe(
         // Arrange
         // Enable integration for institution location used for test.
         await enableIntegration(locationCONF, db);
-        const confirmEnrolmentResponseFile = path.join(
+        const confirmEnrolmentResponseFile = join(
           process.env.INSTITUTION_RESPONSE_FOLDER,
           CONR_008_CONF_FILE,
         );
@@ -649,7 +646,7 @@ describe(
       // Arrange
       // Enable integration for institution location used for test.
       await enableIntegration(locationMULT, db);
-      const confirmEnrolmentResponseFile = path.join(
+      const confirmEnrolmentResponseFile = join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         CONR_008_MULT_FILE,
       );
@@ -767,7 +764,7 @@ describe(
       // Arrange
       // Enable integration for institution location used for test.
       await enableIntegration(locationVALD, db);
-      const confirmEnrolmentResponseFile = path.join(
+      const confirmEnrolmentResponseFile = join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         CONR_008_VALD_FILE,
       );
@@ -885,7 +882,7 @@ describe(
       // Arrange
       // Enable integration for institution location used for test.
       await enableIntegration(locationDECL, db);
-      const confirmEnrolmentResponseFile = path.join(
+      const confirmEnrolmentResponseFile = join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         CONR_008_DECL_FILE,
       );
@@ -970,7 +967,7 @@ describe(
       // Arrange
       // Enable integration for institution location used for test.
       await enableIntegration(locationSKIP, db);
-      const confirmEnrolmentResponseFile = path.join(
+      const confirmEnrolmentResponseFile = join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         CONR_008_SKIP_FILE,
       );
@@ -1049,7 +1046,7 @@ describe(
       // Arrange
       // Enable integration for institution location used for test.
       await enableIntegration(locationSKIP, db);
-      const confirmEnrolmentResponseFile = path.join(
+      const confirmEnrolmentResponseFile = join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         CONR_008_SKIP_FILE,
       );
@@ -1116,7 +1113,7 @@ describe(
       // Arrange
       // Enable integration for institution location used for test.
       await enableIntegration(locationSKIP, db);
-      const confirmEnrolmentResponseFile = path.join(
+      const confirmEnrolmentResponseFile = join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         CONR_008_SKIP_FILE,
       );
@@ -1194,7 +1191,7 @@ describe(
       // Arrange
       // Enable integration for institution location used for test.
       await enableIntegration(locationFAIL, db);
-      const confirmEnrolmentResponseFile = path.join(
+      const confirmEnrolmentResponseFile = join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         CONR_008_FAIL_FILE,
       );
@@ -1243,7 +1240,7 @@ describe(
       // Arrange
       // Enable integration for institution location used for test.
       await enableIntegration(locationFAIL, db);
-      const confirmEnrolmentResponseFile = path.join(
+      const confirmEnrolmentResponseFile = join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         CONR_008_FAIL_FILE,
       );
@@ -1295,7 +1292,7 @@ describe(
       // Arrange
       // Enable integration for institution location used for test.
       await enableIntegration(locationFAIL, db);
-      const confirmEnrolmentResponseFile = path.join(
+      const confirmEnrolmentResponseFile = join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         CONR_008_FAIL_FILE,
       );
@@ -1346,7 +1343,7 @@ describe(
       // Arrange
       // Enable integration for institution location used for test.
       await enableIntegration(locationFAIL, db);
-      const confirmEnrolmentResponseFile = path.join(
+      const confirmEnrolmentResponseFile = join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         CONR_008_FAIL_FILE,
       );
@@ -1397,7 +1394,7 @@ describe(
       // Arrange
       // Enable integration for institution location used for test.
       await enableIntegration(locationSKIP, db);
-      const confirmEnrolmentResponseFile = path.join(
+      const confirmEnrolmentResponseFile = join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         CONR_008_SKIP_FILE,
       );
@@ -1459,7 +1456,7 @@ describe(
       // and other disbursements are processed.
       // Enable integration for institution location used for test.
       await enableIntegration(locationCONF, db);
-      const confirmEnrolmentResponseFile = path.join(
+      const confirmEnrolmentResponseFile = join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         CONR_008_CONF_FILE,
       );
@@ -1543,7 +1540,7 @@ describe(
       // and other disbursements are processed.
       // Enable integration for institution location used for test.
       await enableIntegration(locationDBLO, db);
-      const confirmEnrolmentResponseFile = path.join(
+      const confirmEnrolmentResponseFile = join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         CONR_008_DBLO_FILE,
       );
@@ -1639,7 +1636,7 @@ describe(
       // Arrange
       // Enable integration for institution location used for test.
       await enableIntegration(locationCONF, db);
-      const confirmEnrolmentResponseFile = path.join(
+      const confirmEnrolmentResponseFile = join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         CONR_008_CONF_FILE,
       );
@@ -1724,7 +1721,7 @@ describe(
       // Arrange
       // Enable integration for institution location used for test.
       await enableIntegration(locationCONF, db);
-      const confirmEnrolmentResponseFile = path.join(
+      const confirmEnrolmentResponseFile = join(
         process.env.INSTITUTION_RESPONSE_FOLDER,
         CONR_008_CONF_FILE,
       );

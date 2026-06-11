@@ -20,7 +20,7 @@ import {
   getAuthRelatedEntities,
   createFakeEducationProgram,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import { faker } from "@faker-js/faker";
 import { getISODateOnlyString } from "@sims/utilities";
 

@@ -13,7 +13,7 @@ import {
   getAESTUser,
   AESTGroups,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import { Institution, User } from "@sims/sims-db";
 
 describe("EducationProgramAESTController(e2e)-deactivateProgram", () => {

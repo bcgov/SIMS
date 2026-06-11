@@ -1,4 +1,4 @@
-const path = require("path");
+const { join } = require("node:path");
 const GlobEntries = require("webpack-glob-entries");
 
 module.exports = {
@@ -17,7 +17,7 @@ module.exports = {
     extensions: [".ts", ".js"],
   },
   output: {
-    path: path.join(__dirname, "dist"),
+    path: join(__dirname, "dist"),
     libraryTarget: "commonjs",
     filename: "[name].js",
   },

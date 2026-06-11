@@ -14,7 +14,7 @@ import {
   ProcessSftpResponseResult,
 } from "./cra-integration.models";
 import { getUTCNow, parseJSONError } from "@sims/utilities";
-import * as path from "path";
+import { basename } from "node:path";
 import { ConfigService } from "@sims/utilities/config";
 import { CRAIntegrationService } from "./cra.integration.service";
 import { CRAIncomeVerificationsService } from "../services";
@@ -241,7 +241,7 @@ export class CRAIncomeVerificationProcessingService {
     );
 
     // Get only the file name for logging.
-    const fileName = path.basename(remoteFilePath);
+    const fileName = basename(remoteFilePath);
     for (const statusRecord of responseFile.statusRecords) {
       try {
         // Use the tag 'VERIFICATION_ID' to ensure that the record is related to a previously requested

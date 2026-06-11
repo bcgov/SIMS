@@ -1,11 +1,11 @@
-import * as fs from "fs";
+import { existsSync } from "node:fs";
 
 // Target module
 import { getSQLDirPath, getSQLFileData } from "./sqlLoader";
 
 describe("Test SQL Loader", () => {
   it("should exist sql dir", () => {
-    expect(fs.existsSync(getSQLDirPath()));
+    expect(existsSync(getSQLDirPath()));
   });
 
   it("should get sql file data", () => {

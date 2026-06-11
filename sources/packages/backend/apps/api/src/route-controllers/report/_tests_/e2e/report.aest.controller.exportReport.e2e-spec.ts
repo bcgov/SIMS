@@ -21,7 +21,7 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import { parse } from "papaparse";
-import * as request from "supertest";
+import request from "supertest";
 import {
   ApplicationStatus,
   COEStatus,

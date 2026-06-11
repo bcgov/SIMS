@@ -8,7 +8,7 @@ import {
 import { COEApprovalPeriodStatus } from "../../../services/disbursement-schedule/disbursement-schedule.models";
 import { MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE } from "../../../utilities";
 import { COE_DENIED_REASON_OTHER_ID } from "@sims/utilities";
-import { YesNoOptions } from "apps/api/src/services/education-program-offering/education-program-offering-import-csv.models";
+import { YesNoOptions } from "../../../services/education-program-offering/education-program-offering-import-csv.models";
 
 export class ApplicationDetailsForCOEAPIOutDTO {
   applicationProgramName: string;

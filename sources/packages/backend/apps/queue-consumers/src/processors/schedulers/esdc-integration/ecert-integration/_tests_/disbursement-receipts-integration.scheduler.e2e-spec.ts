@@ -26,9 +26,9 @@ import {
 import { INestApplication } from "@nestjs/common";
 import { END_OF_LINE, QueueNames, base64Encode } from "@sims/utilities";
 import { DeepMocked } from "@golevelup/ts-jest";
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 import { DisbursementReceiptsFileIntegrationScheduler } from "../disbursement-receipts-integration.scheduler";
-import * as path from "path";
+import { join } from "node:path";
 import { In, IsNull } from "typeorm";
 
 const FEDERAL_PROVINCIAL_FULL_TIME_FILE =
@@ -57,7 +57,7 @@ describe(
 
     beforeAll(async () => {
       // Set the ESDC response folder to the mock folder.
-      process.env.ESDC_RESPONSE_FOLDER = path.join(
+      process.env.ESDC_RESPONSE_FOLDER = join(
         __dirname,
         "e-cert-feedback-files",
       );
@@ -137,7 +137,7 @@ describe(
           return createFileFromStructuredRecords(file);
         },
       );
-      const expectedFileName = path.join(
+      const expectedFileName = join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEDERAL_ONLY_FULL_TIME_FILE,
       );
@@ -172,7 +172,7 @@ describe(
         },
       );
       // Expected file name.
-      const expectedFileName = path.join(
+      const expectedFileName = join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEDERAL_ONLY_FULL_TIME_FILE,
       );
@@ -203,7 +203,7 @@ describe(
           return createFileFromStructuredRecords(file);
         },
       );
-      const expectedFileName = path.join(
+      const expectedFileName = join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEDERAL_ONLY_FULL_TIME_FILE,
       );
@@ -242,7 +242,7 @@ describe(
       expect(result).toStrictEqual([
         "Completed disbursement receipts integration.",
       ]);
-      const downloadedFile = path.join(
+      const downloadedFile = join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEDERAL_PROVINCIAL_FULL_TIME_FILE,
       );
@@ -373,7 +373,7 @@ describe(
       expect(result).toStrictEqual([
         "Completed disbursement receipts integration.",
       ]);
-      const downloadedFile = path.join(
+      const downloadedFile = join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEDERAL_ONLY_FULL_TIME_FILE,
       );
@@ -460,7 +460,7 @@ describe(
       const result = await processor.processQueue(mockedJob.job);
 
       // Assert
-      const downloadedFile = path.join(
+      const downloadedFile = join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEDERAL_PROVINCIAL_PART_TIME_FILE,
       );
@@ -596,7 +596,7 @@ describe(
       expect(result).toStrictEqual([
         "Completed disbursement receipts integration.",
       ]);
-      const downloadedFile = path.join(
+      const downloadedFile = join(
         process.env.ESDC_RESPONSE_FOLDER,
         FEDERAL_PROVINCIAL_FULL_TIME_PART_TIME_FILE,
       );
@@ -733,7 +733,7 @@ describe(
       expect(result).toStrictEqual([
         "Completed disbursement receipts integration.",
       ]);
-      const downloadedFile = path.join(
+      const downloadedFile = join(
         process.env.ESDC_RESPONSE_FOLDER,
         NON_MATCHING_RECORDS_FILE,
       );

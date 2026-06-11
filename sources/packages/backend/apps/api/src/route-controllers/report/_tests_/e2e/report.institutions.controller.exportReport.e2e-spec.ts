@@ -38,7 +38,7 @@ import {
   mockInstitutionUserAuthorization,
 } from "../../../../testHelpers";
 import { parse } from "papaparse";
-import * as request from "supertest";
+import request from "supertest";
 import { InstitutionUserAuthorizations } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 import { getISODateOnlyString, getPSTPDTDateTime } from "@sims/utilities";

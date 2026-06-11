@@ -1,5 +1,5 @@
-import * as unzipper from "unzipper";
-import * as readline from "node:readline";
+import { Entry, Parse } from "unzipper";
+import { createInterface } from "node:readline";
 
 /**
  * Processes a readable stream line by line, supporting both compressed (zip) and uncompressed files.
@@ -21,8 +21,8 @@ export async function processStreamLineByLine(
   const getProgress = trackProgress(input, options.fileSize);
   if (options.isCompressed) {
     const zipStream = input.pipe(
-      unzipper.Parse({ forceStream: true }),
-    ) as AsyncIterable<unzipper.Entry>;
+      Parse({ forceStream: true }),
+    ) as AsyncIterable<Entry>;
     // Read the zip file entries one by one and process only the first file entry line by line.
     let firstFileProcessed = false;
     for await (const entry of zipStream) {
@@ -52,7 +52,7 @@ async function readLinesFromStream(
   fileLineProcessor: (line: string, progress?: number) => Promise<void> | void,
   getProgress: () => number | undefined,
 ): Promise<void> {
-  const lineReader = readline.createInterface({
+  const lineReader = createInterface({
     input,
     crlfDelay: Infinity,
   });

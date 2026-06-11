@@ -11,7 +11,7 @@ import {
   createZeebeModuleMock,
   BullBoardQueuesModuleMock,
 } from "@sims/test-utils/mocks";
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { QueueModule } from "@sims/services/queue";

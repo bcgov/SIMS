@@ -13,7 +13,7 @@ import {
   getAESTToken,
   getAESTUser,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import { NoteType, RestrictionType, User } from "@sims/sims-db";
 import MockDate from "mockdate";
 import { addDays } from "@sims/utilities";

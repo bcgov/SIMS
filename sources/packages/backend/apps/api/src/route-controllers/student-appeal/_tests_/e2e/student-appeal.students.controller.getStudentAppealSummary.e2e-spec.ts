@@ -1,5 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import * as request from "supertest";
+import request from "supertest";
 import { LessThan, MoreThanOrEqual } from "typeorm";
 import {
   BEARER_AUTH_TYPE,

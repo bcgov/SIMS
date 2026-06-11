@@ -4,7 +4,7 @@ import { NestFactory } from "@nestjs/core";
 import { QueueConsumersModule } from "./queue-consumers.module";
 import { LoggerService } from "@sims/utilities/logger";
 import { SystemUsersService } from "@sims/services";
-import * as cookieParser from "cookie-parser";
+import cookieParser from "cookie-parser";
 
 (async () => {
   const app = await NestFactory.create(QueueConsumersModule);

@@ -30,7 +30,7 @@ import {
   createFakeEducationProgramOffering,
   getAuthorizedLocation,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import { faker } from "@faker-js/faker";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,

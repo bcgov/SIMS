@@ -11,7 +11,7 @@ import {
   T4AUploadQueueInDTO,
 } from "@sims/services/queue";
 import { DeepMocked } from "@golevelup/ts-jest";
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 import { Queue } from "bull";
 import { getQueueProviderName } from "@sims/test-utils/mocks";
 import MockDate from "mockdate";

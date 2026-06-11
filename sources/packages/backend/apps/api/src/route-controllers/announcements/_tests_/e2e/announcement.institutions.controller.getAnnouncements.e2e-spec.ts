@@ -1,5 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import * as request from "supertest";
+import request from "supertest";
 import { ArrayOverlap, Repository } from "typeorm";
 import { Announcement } from "@sims/sims-db";
 import { addDays } from "@sims/utilities";

@@ -14,7 +14,7 @@ import {
   authorizeUserTokenForLocation,
   getAuthRelatedEntities,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import { createFakeEducationProgram } from "@sims/test-utils/factories/education-program";
 import { getISODateOnlyString } from "@sims/utilities";
 

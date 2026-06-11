@@ -21,7 +21,7 @@ import { ECertIntegrationService } from "./e-cert.integration.service";
 import { ConfigService } from "@sims/utilities/config";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { ECertResponseRecord } from "./e-cert-files/e-cert-response-record";
-import * as path from "path";
+import { basename } from "node:path";
 import { CreateRequestFileNameResult } from "../models/esdc-integration.model";
 
 /**
@@ -338,7 +338,7 @@ export abstract class ECertFileHandler extends ESDCFileHandler {
         return;
       }
       // Get the file name from the file path.
-      const feedbackFileName = path.basename(filePath);
+      const feedbackFileName = basename(filePath);
       for (const eCertFeedbackResponseRecord of eCertFeedbackResponseRecords) {
         const recordProcessSummary = new ProcessSummary();
         processSummary.children(recordProcessSummary);

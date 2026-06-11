@@ -1,6 +1,6 @@
 import { DisabilityStatus } from "@sims/sims-db";
 import { IER12Student } from "./data-inputs.models";
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 
 const twoYearsAgo = dayjs().subtract(2, "year").toDate();
 

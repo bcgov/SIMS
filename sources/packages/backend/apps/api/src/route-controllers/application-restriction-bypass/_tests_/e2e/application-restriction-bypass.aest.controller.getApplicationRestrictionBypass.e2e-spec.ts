@@ -14,7 +14,7 @@ import {
   createTestingAppModule,
   getAESTToken,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import { OfferingIntensity, RestrictionActionType, User } from "@sims/sims-db";
 import { getUserFullName } from "../../../../utilities";
 import { RestrictedParty } from "@sims/services";

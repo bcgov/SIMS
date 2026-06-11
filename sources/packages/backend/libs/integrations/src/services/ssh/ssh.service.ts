@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { SSHError, SSHErrorCodes } from "@sims/integrations/services/ssh";
 import { SFTPConfig } from "@sims/utilities/config";
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 
 @Injectable()
 export class SshService {

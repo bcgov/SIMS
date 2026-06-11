@@ -30,6 +30,9 @@ export class RouteHelper {
         return AppRoutes.AESTRoot;
       case ClientIdType.SupportingUsers:
         return AppRoutes.SupportingUsersRoot;
+      default: {
+        throw new Error(`Unsupported client type: ${clientType}`);
+      }
     }
   }
 
@@ -66,6 +69,8 @@ export class RouteHelper {
         return idp === IdentityProviders.BCeIDBoth;
       case ClientIdType.AEST:
         return idp === IdentityProviders.IDIR;
+      default:
+        throw new Error(`Unsupported client type: ${clientType}`);
     }
   }
 

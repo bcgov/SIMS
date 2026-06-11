@@ -14,7 +14,7 @@ import {
   mockJWTUserInfo,
   resetMockJWTUserInfo,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import { saveFakeSFASIndividual } from "@sims/test-utils/factories/sfas-individuals";
 import { TestingModule } from "@nestjs/testing";
 import { OfferingIntensity } from "@sims/sims-db";

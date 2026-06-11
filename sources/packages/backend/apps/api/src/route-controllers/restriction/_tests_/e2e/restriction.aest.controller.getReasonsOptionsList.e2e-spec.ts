@@ -11,13 +11,13 @@ import {
   createTestingAppModule,
   getAESTToken,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import {
   FieldRequirementType,
   Restriction,
   RestrictionType,
 } from "@sims/sims-db";
-import { RestrictionAPIOutDTO } from "apps/api/src/route-controllers/restriction/models/restriction.dto";
+import { RestrictionAPIOutDTO } from "../../models/restriction.dto";
 import { In } from "typeorm";
 
 /**

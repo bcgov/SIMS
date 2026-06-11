@@ -8,7 +8,7 @@ import {
   BEARER_AUTH_TYPE,
   getAESTToken,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import { NoteAPIInDTO } from "../../models/note.dto";
 
 describe("NoteAESTController(e2e)-addInstitutionNote", () => {

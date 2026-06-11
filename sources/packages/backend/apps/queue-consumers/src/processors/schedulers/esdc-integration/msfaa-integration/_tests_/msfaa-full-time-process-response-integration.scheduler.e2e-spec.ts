@@ -27,8 +27,8 @@ import {
   OfferingIntensity,
   NotificationMessageType,
 } from "@sims/sims-db";
-import * as Client from "ssh2-sftp-client";
-import * as path from "path";
+import Client from "ssh2-sftp-client";
+import { join } from "node:path";
 import { FULL_TIME_SAMPLE_MSFAA_NUMBER } from "./msfaa-process-integration.scheduler.models";
 import { IsNull } from "typeorm";
 
@@ -42,7 +42,7 @@ describe(
     let msfaaMocksDownloadFolder: string;
 
     beforeAll(async () => {
-      msfaaMocksDownloadFolder = path.join(__dirname, "msfaa-receive-files");
+      msfaaMocksDownloadFolder = join(__dirname, "msfaa-receive-files");
       // Set the ESDC response folder to the files mocks folders.
       process.env.ESDC_RESPONSE_FOLDER = msfaaMocksDownloadFolder;
       const { nestApplication, dataSource, sshClientMock } =

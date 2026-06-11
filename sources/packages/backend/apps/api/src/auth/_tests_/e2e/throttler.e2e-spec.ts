@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import * as request from "supertest";
+import request from "supertest";
 import { KeycloakConfig } from "@sims/auth/config";
 import { createZeebeModuleMock } from "@sims/test-utils/mocks";
 import { AppModule } from "../../../app.module";

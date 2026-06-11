@@ -13,8 +13,8 @@ import {
   saveFakeApplication,
   saveFakeStudent,
 } from "@sims/test-utils";
-import * as Client from "ssh2-sftp-client";
-import * as path from "path";
+import Client from "ssh2-sftp-client";
+import { join } from "node:path";
 import { CRAResponseIntegrationScheduler } from "../cra-response-integration.scheduler";
 import {
   createFileFromStructuredRecords,
@@ -33,7 +33,7 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
   let craResponseFolder: string;
 
   beforeAll(async () => {
-    craResponseFolder = path.join(__dirname, "cra-receive-files");
+    craResponseFolder = join(__dirname, "cra-receive-files");
     process.env.CRA_RESPONSE_FOLDER = craResponseFolder;
     const { nestApplication, dataSource, sshClientMock } =
       await createTestingAppModule();
@@ -79,10 +79,7 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     // Act
     const processResult = await processor.processQueue(mockedJob.job);
     // Assert
-    const downloadedFile = path.join(
-      process.env.CRA_RESPONSE_FOLDER,
-      CRA_FILENAME,
-    );
+    const downloadedFile = join(process.env.CRA_RESPONSE_FOLDER, CRA_FILENAME);
 
     // Assert
     expect(processResult).toEqual(["Processed CRA response files."]);

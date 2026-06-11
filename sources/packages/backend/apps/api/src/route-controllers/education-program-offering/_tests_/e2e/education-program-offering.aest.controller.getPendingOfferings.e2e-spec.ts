@@ -19,7 +19,7 @@ import {
   OfferingTypes,
   User,
 } from "@sims/sims-db";
-import * as request from "supertest";
+import request from "supertest";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 
 const PAST_SUBMITTED_DATE = new Date("2000-01-01");

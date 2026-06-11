@@ -16,7 +16,7 @@ import {
 import { T4AUploadProcessor } from "../../../";
 import { join } from "node:path";
 import { v4 as uuid } from "uuid";
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 import { DeepMocked } from "@golevelup/ts-jest";
 import { getQueueProviderName } from "@sims/test-utils/mocks";
 import { Queue } from "bull";

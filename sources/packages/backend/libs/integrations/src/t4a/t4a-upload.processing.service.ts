@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { T4AIntegrationService } from "@sims/integrations/t4a/t4a.integration.service";
 import { getISODateOnlyString } from "@sims/utilities";
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 import { SshService, StudentService } from "@sims/integrations/services";
 import {
   NotificationActionsService,

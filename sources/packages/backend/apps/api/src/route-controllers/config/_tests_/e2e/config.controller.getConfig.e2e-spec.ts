@@ -2,7 +2,7 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigModule } from "@sims/utilities/config";
 import { setGlobalPipes } from "../../../../utilities";
-import * as request from "supertest";
+import request from "supertest";
 import { ConfigController } from "../../config.controller";
 
 describe("ConfigController(e2e)-getConfig", () => {

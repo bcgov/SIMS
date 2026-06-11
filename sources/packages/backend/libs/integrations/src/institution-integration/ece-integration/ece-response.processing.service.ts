@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import * as path from "path";
+import { basename } from "node:path";
 import { LoggerService } from "@sims/utilities/logger";
 import { ECEResponseIntegrationService } from "./ece-response.integration.service";
 import {
@@ -111,7 +111,7 @@ export class ECEResponseProcessingService {
   ): Map<string, string[]> {
     const filesByInstitution = new Map<string, string[]>();
     for (const filePath of filePaths) {
-      const fileName = path.basename(filePath);
+      const fileName = basename(filePath);
       // The file name is expected to match the pattern 'CONR-008-XXXX-....'.
       // The institution code is the 4 alpha characters after 'CONR-008-'.
       const institutionCode = fileName.substring(9, 13);
@@ -136,7 +136,7 @@ export class ECEResponseProcessingService {
     const processSummary = new ProcessSummaryResult();
     // Log the files to be processed for the institution.
     processSummary.summary.push(
-      `Processing file(s) for institution code: ${institutionCode}, files: ${remoteFilePaths.map((filePath) => path.basename(filePath)).join(", ")}.`,
+      `Processing file(s) for institution code: ${institutionCode}, files: ${remoteFilePaths.map((filePath) => basename(filePath)).join(", ")}.`,
     );
     const integrationLocation =
       await this.institutionLocationService.getIntegrationLocation(

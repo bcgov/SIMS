@@ -14,7 +14,7 @@ import { ClamAVError, ClamAVService } from "@sims/services";
 import { VirusScanQueueInDTO } from "@sims/services/queue";
 import { VirusScanProcessor } from "../virus-scan.processor";
 import { VirusScanStatus } from "@sims/sims-db";
-import * as path from "path";
+import { parse } from "node:path";
 import { INFECTED_FILENAME_SUFFIX } from "../../../services";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
 import {
@@ -261,7 +261,7 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     expect(scannedStudentFile.virusScanStatus).toBe(
       VirusScanStatus.VirusDetected,
     );
-    const fileInfo = path.parse(studentFile.fileName);
+    const fileInfo = parse(studentFile.fileName);
     const infectedFileName = `${fileInfo.name}${INFECTED_FILENAME_SUFFIX}${fileInfo.ext}`;
     expect(scannedStudentFile.fileName).toBe(infectedFileName);
   });

@@ -22,7 +22,7 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 import {
   Application,
   ApplicationStatus,
@@ -40,7 +40,7 @@ import {
   APPLICATION_CHANGES_DATE_TIME_FORMAT,
 } from "@sims/integrations/esdc-integration";
 import MockDate from "mockdate";
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 
 describe(
   describeProcessorRootTest(QueueNames.ApplicationChangesReportIntegration),

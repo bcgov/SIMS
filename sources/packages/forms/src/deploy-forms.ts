@@ -1,5 +1,5 @@
-import * as fs from "fs";
-import * as path from "path";
+import { readdirSync, readFileSync } from "node:fs";
+import { extname, join, resolve } from "node:path";
 import {
   createAuthHeader,
   isFormDeployed,
@@ -22,9 +22,9 @@ interface FormDeployInfo {
   console.info(
     `**** Deploying Form IO Definitions to ${process.env.FORMS_URL} ****`,
   );
-  const directory = path.resolve(__dirname, `../src/form-definitions`);
+  const directory = resolve(__dirname, `../src/form-definitions`);
   console.info(`Getting form definitions from ${directory}`);
-  const files: string[] = fs.readdirSync(directory);
+  const files: string[] = readdirSync(directory);
   if (files.length === 0) {
     console.info("No files found to be deployed!");
     return;
@@ -34,10 +34,10 @@ interface FormDeployInfo {
   const formDeployStatuses: FormDeployInfo[] = [];
   for (const file of files) {
     console.info(`Deploying ${file}`);
-    const filePath = path.join(directory, file);
-    const fileContent = fs.readFileSync(filePath, { encoding: "utf8" });
+    const filePath = join(directory, file);
+    const fileContent = readFileSync(filePath, { encoding: "utf8" });
     const jsonContent = JSON.parse(fileContent);
-    const formAlias = file.replace(path.extname(file), "");
+    const formAlias = file.replace(extname(file), "");
     const isDeployed = await isFormDeployed(formAlias, authHeader);
     const formDeployStatus = { formAlias } as FormDeployInfo;
     try {

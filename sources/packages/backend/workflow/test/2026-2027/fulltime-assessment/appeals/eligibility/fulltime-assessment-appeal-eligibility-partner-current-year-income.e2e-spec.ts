@@ -8,7 +8,7 @@ import { YesNoOptions } from "@sims/test-utils";
 import {
   DependantStatusType,
   RelationshipStatusType,
-} from "workflow/test/models";
+} from "../../../../models";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-appeal-eligibility-partner-current-year-income.`, () => {
   const appealEligibilityScenarios = [

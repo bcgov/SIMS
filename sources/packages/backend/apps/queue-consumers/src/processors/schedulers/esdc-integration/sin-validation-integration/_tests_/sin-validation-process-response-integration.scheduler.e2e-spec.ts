@@ -11,8 +11,8 @@ import {
   createE2EDataSources,
   saveFakeStudent,
 } from "@sims/test-utils";
-import * as Client from "ssh2-sftp-client";
-import * as path from "path";
+import Client from "ssh2-sftp-client";
+import { join } from "node:path";
 import { SINValidationResponseIntegrationScheduler } from "../sin-validation-process-response-integration.scheduler";
 import {
   createFileFromStructuredRecords,
@@ -32,7 +32,7 @@ describe(
     let sinValidationResponseFolder: string;
 
     beforeAll(async () => {
-      sinValidationResponseFolder = path.join(__dirname, "sin-receive-files");
+      sinValidationResponseFolder = join(__dirname, "sin-receive-files");
       process.env.ESDC_RESPONSE_FOLDER = sinValidationResponseFolder;
       const { nestApplication, dataSource, sshClientMock } =
         await createTestingAppModule();
@@ -79,7 +79,7 @@ describe(
       const processResult = await processor.processQueue(mockedJob.job);
 
       // Assert
-      const downloadedFile = path.join(
+      const downloadedFile = join(
         process.env.ESDC_RESPONSE_FOLDER,
         SIN_VALIDATION_FILENAME,
       );
@@ -126,7 +126,7 @@ describe(
       // Act
       const processResult = await processor.processQueue(mockedJob.job);
       // Assert
-      const downloadedFile = path.join(
+      const downloadedFile = join(
         process.env.ESDC_RESPONSE_FOLDER,
         SIN_VALIDATION_FILENAME,
       );

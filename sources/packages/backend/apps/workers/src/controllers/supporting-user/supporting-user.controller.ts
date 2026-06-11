@@ -42,7 +42,7 @@ import {
 } from "@sims/services";
 import { Application, SupportingUserType } from "@sims/sims-db";
 import { DataSource, EntityManager } from "typeorm";
-import * as jsonata from "jsonata";
+import jsonata from "jsonata";
 
 @Controller()
 export class SupportingUserController {

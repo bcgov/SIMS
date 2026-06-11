@@ -1,7 +1,7 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { OfferingIntensity, ProgramYear } from "@sims/sims-db";
 import { createFakeProgramYear } from "@sims/test-utils";
-import * as request from "supertest";
+import request from "supertest";
 import { DataSource } from "typeorm";
 import {
   BEARER_AUTH_TYPE,

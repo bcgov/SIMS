@@ -16,7 +16,7 @@ import {
   getAuthRelatedEntities,
   getInstitutionToken,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import { InstitutionLocation, OfferingIntensity } from "@sims/sims-db";
 import { saveFakeSFASIndividual } from "@sims/test-utils/factories/sfas-individuals";
 

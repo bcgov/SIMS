@@ -4,7 +4,7 @@ import { Injectable } from "@nestjs/common";
 import { LoggerService } from "@sims/utilities/logger";
 import { T4AFileInfo } from "./models/t4a.models";
 import { basename, dirname, extname, join } from "node:path";
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 
 @Injectable()
 export class T4AIntegrationService extends SFTPIntegrationBase<Buffer> {

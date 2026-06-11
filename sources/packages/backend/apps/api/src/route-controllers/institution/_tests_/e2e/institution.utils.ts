@@ -4,7 +4,7 @@ import {
   InstitutionMedicalSchoolStatus,
 } from "@sims/sims-db";
 import { CANADA_COUNTRY_CODE, BC_PROVINCE_CODE } from "@sims/sims-db/constant";
-import { InstitutionProfileAPIInDTO } from "apps/api/src/route-controllers/institution/models/institution.dto";
+import { InstitutionProfileAPIInDTO } from "../../models/institution.dto";
 
 /**
  * Get the institution profile payload.

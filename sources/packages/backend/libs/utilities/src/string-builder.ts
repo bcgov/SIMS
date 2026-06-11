@@ -1,4 +1,4 @@
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 
 export const END_OF_LINE = "\r\n";
 /**

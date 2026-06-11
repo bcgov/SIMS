@@ -8,7 +8,7 @@ import {
   SINValidationResponseResult,
   SINValidationUploadResult,
 } from "./models/sin-validation-models";
-import * as path from "path";
+import { basename } from "node:path";
 import { EntityManager } from "typeorm";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { ESDC_SIN_VALIDATION_SEQUENCE_GROUP_NAME } from "@sims/services/constants";
@@ -181,7 +181,7 @@ export class SINValidationProcessingService {
       `File contains ${responseResult.records.length} SIN validations.`,
     );
     // Get only the file name for logging.
-    const fileName = path.basename(remoteFilePath);
+    const fileName = basename(remoteFilePath);
     for (const sinValidationRecord of responseResult.records) {
       try {
         const updatedResult =

@@ -1,4 +1,4 @@
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 
 /**
  * Checks if a string has a valid date timestamp file format.

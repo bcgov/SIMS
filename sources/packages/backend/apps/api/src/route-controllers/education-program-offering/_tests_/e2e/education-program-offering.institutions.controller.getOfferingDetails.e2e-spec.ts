@@ -20,7 +20,7 @@ import {
   OnlineInstructionModeOptions,
   OfferingYesNoOptions,
 } from "../../../../services";
-import * as request from "supertest";
+import request from "supertest";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingDetails", () => {
   let app: INestApplication;

@@ -6,7 +6,7 @@ import {
   StudentService,
   StudentLoanBalanceService,
 } from "@sims/integrations/services";
-import * as path from "path";
+import { basename } from "node:path";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import { DataSource } from "typeorm";
@@ -70,7 +70,7 @@ export class StudentLoanBalancesProcessingService {
     childrenProcessSummary.info(`Processing file ${remoteFilePath}.`);
     let studentLoanBalancesSFTPResponseFile: StudentLoanBalancesSFTPResponseFile;
     // Get only the file name for logging.
-    const fileName = path.basename(remoteFilePath);
+    const fileName = basename(remoteFilePath);
     let lineNumber: number;
     try {
       studentLoanBalancesSFTPResponseFile =

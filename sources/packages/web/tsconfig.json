@@ -6,7 +6,8 @@
     "strictPropertyInitialization": false,
     "jsx": "preserve",
     "importHelpers": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "noEmit": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -15,10 +16,9 @@
     "noImplicitThis": false,
     "useUnknownInCatchVariables": false,
     "sourceMap": true,
-    "baseUrl": ".",
     "types": ["vite/client", "vue"],
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
   },

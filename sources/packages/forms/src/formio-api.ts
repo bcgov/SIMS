@@ -1,8 +1,8 @@
-import * as dotenv from "dotenv";
+import { config } from "dotenv";
 import axios, { AxiosRequestConfig } from "axios";
-import { join } from "path";
+import { join } from "node:path";
 
-dotenv.config({ path: join(__dirname, "./../../../.env") });
+config({ path: join(__dirname, "./../../../.env") });
 const formsUrl = process.env.FORMS_URL;
 const formsApiKey = process.env.FORMS_API_KEY;
 // Expected header name to send the authorization token to formio API.

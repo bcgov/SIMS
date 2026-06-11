@@ -15,7 +15,7 @@ import {
   saveFakeApplication,
   saveFakeStudent,
 } from "@sims/test-utils";
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 import { CRAProcessIntegrationScheduler } from "../cra-process-integration.scheduler";
 import {
   ApplicationStatus,

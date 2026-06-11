@@ -17,8 +17,8 @@ import {
 import { INestApplication } from "@nestjs/common";
 import { QueueNames } from "@sims/utilities";
 import { DeepMocked } from "@golevelup/ts-jest";
-import * as Client from "ssh2-sftp-client";
-import * as path from "path";
+import Client from "ssh2-sftp-client";
+import { join } from "node:path";
 import { ECertCancellationResponseIntegrationScheduler } from "../ecert-cancellation-response-integration.scheduler";
 import { In } from "typeorm";
 import {
@@ -48,7 +48,7 @@ describe(
 
     beforeAll(async () => {
       // Set the ESDC response folder to the mock folder.
-      process.env.ESDC_RESPONSE_FOLDER = path.join(
+      process.env.ESDC_RESPONSE_FOLDER = join(
         __dirname,
         "e-cert-cancellation-response-files",
       );
@@ -90,7 +90,7 @@ describe(
       await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
-      const downloadedFile = path.join(
+      const downloadedFile = join(
         process.env.ESDC_RESPONSE_FOLDER,
         PART_TIME_CANCELLATION_RESPONSE_FILE,
       );
@@ -124,7 +124,7 @@ describe(
       await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
-      const downloadedFile = path.join(
+      const downloadedFile = join(
         process.env.ESDC_RESPONSE_FOLDER,
         PART_TIME_CANCELLATION_RESPONSE_FILE,
       );
@@ -161,7 +161,7 @@ describe(
         await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
           "One or more errors were reported during the process, please see logs for details.",
         );
-        const downloadedFile = path.join(
+        const downloadedFile = join(
           process.env.ESDC_RESPONSE_FOLDER,
           PART_TIME_CANCELLATION_RESPONSE_FILE,
         );
@@ -223,7 +223,7 @@ describe(
         await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
           "One or more errors were reported during the process, please see logs for details.",
         );
-        const downloadedFile = path.join(
+        const downloadedFile = join(
           process.env.ESDC_RESPONSE_FOLDER,
           PART_TIME_CANCELLATION_RESPONSE_FILE,
         );
@@ -312,7 +312,7 @@ describe(
         await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
           "One or more errors were reported during the process, please see logs for details.",
         );
-        const downloadedFile = path.join(
+        const downloadedFile = join(
           process.env.ESDC_RESPONSE_FOLDER,
           PART_TIME_CANCELLATION_RESPONSE_FILE,
         );
@@ -395,7 +395,7 @@ describe(
           "Process finalized with success.",
           "Received cancellation files: 1.",
         ]);
-        const downloadedFile = path.join(
+        const downloadedFile = join(
           process.env.ESDC_RESPONSE_FOLDER,
           PART_TIME_CANCELLATION_RESPONSE_FILE,
         );
@@ -494,7 +494,7 @@ describe(
           "Process finalized with success.",
           "Received cancellation files: 1.",
         ]);
-        const downloadedFile = path.join(
+        const downloadedFile = join(
           process.env.ESDC_RESPONSE_FOLDER,
           PART_TIME_CANCELLATION_RESPONSE_FILE,
         );
@@ -620,7 +620,7 @@ describe(
           "Process finalized with success.",
           "Received cancellation files: 1.",
         ]);
-        const downloadedFile = path.join(
+        const downloadedFile = join(
           process.env.ESDC_RESPONSE_FOLDER,
           FULL_TIME_CANCELLATION_RESPONSE_FILE,
         );
@@ -759,7 +759,7 @@ describe(
           "Process finalized with success.",
           "Received cancellation files: 1.",
         ]);
-        const downloadedFile = path.join(
+        const downloadedFile = join(
           process.env.ESDC_RESPONSE_FOLDER,
           FULL_TIME_CANCELLATION_RESPONSE_FILE,
         );

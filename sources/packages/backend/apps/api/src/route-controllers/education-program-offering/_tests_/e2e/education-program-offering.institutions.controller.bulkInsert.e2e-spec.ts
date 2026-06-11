@@ -25,8 +25,8 @@ import {
   getAuthRelatedEntities,
   createFakeEducationProgram,
 } from "../../../../testHelpers";
-import * as request from "supertest";
-import * as path from "path";
+import request from "supertest";
+import { join } from "node:path";
 import { In } from "typeorm";
 import { OFFERING_VALIDATION_CRITICAL_ERROR } from "../../../../constants";
 import { OfferingValidationWarnings } from "../../../../services";
@@ -34,7 +34,7 @@ import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
 } from "../../../../utilities";
-import { PrimaryIdentifierAPIOutDTO } from "apps/api/src/route-controllers/models/primary.identifier.dto";
+import { PrimaryIdentifierAPIOutDTO } from "../../../models/primary.identifier.dto";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () => {
   let app: INestApplication;
@@ -198,7 +198,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       // Upload file with 2 lines.
       // The upload file line 1 has location code YESK and program SABC code SBC1.
       // The upload file line 2 has location code KSEY and program SABC code SBC2.
-      const multipleOfferingFilePath = path.join(
+      const multipleOfferingFilePath = join(
         __dirname,
         "bulk-insert/multiple-upload.csv",
       );
@@ -255,7 +255,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       // Arrange
       // Upload file with 1 line.
       // The upload file line 1 has location code YESK and program SABC code SBC1.
-      const singleOfferingWithValidationErrorsFilePath = path.join(
+      const singleOfferingWithValidationErrorsFilePath = join(
         __dirname,
         "bulk-insert/single-upload-with-validation-errors.csv",
       );
@@ -305,7 +305,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     // Arrange
     // Upload file with 1 line.
     // The upload file line 1 has location code YESK and program SABC code SBC3.
-    const singleOfferingFilePath = path.join(
+    const singleOfferingFilePath = join(
       __dirname,
       "bulk-insert/single-upload-example1.csv",
     );
@@ -348,7 +348,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       const csvLocationCodeAESK = "AESK";
       // Upload file with 1 line.
       // The upload file line 1 has location code AESK and program SABC code SBC1.
-      const singleOfferingFilePath = path.join(
+      const singleOfferingFilePath = join(
         __dirname,
         "bulk-insert/single-upload-example2.csv",
       );
@@ -399,7 +399,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       // Arrange
       // Upload file with 1 line.
       // The upload file line 1 has location code YESK and program SABC code SBC9.
-      const singleOfferingWithMaxExceedingOfferingCost = path.join(
+      const singleOfferingWithMaxExceedingOfferingCost = join(
         __dirname,
         "bulk-insert/single-upload-warning-when-max-exceeding-offering-cost.csv",
       );
@@ -444,7 +444,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       // Arrange
       // Upload file with 1 line.
       // The upload file line 1 has location code YESK and program SABC code SBC9.
-      const singleOfferingErrorWhenOfferingCostExceedMax = path.join(
+      const singleOfferingErrorWhenOfferingCostExceedMax = join(
         __dirname,
         "bulk-insert/single-upload-error-when-offering-cost-exceed-max.csv",
       );
@@ -486,7 +486,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
 
     // Upload file with 2 lines.
     // The upload file line 1 and 2 has location code YESK and program SABC code SBC1.
-    const multipleOfferingWithDuplicateValidationErrorsFilePath = path.join(
+    const multipleOfferingWithDuplicateValidationErrorsFilePath = join(
       __dirname,
       "bulk-insert/multiple-upload-with-duplicate-offering-validation-errors.csv",
     );
@@ -527,7 +527,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
 
       // Upload file with 2 lines.
       // The upload file line 1 has and line 2 has location code SEYK and program SABC code SBC4.
-      const multipleOfferingFilePath = path.join(
+      const multipleOfferingFilePath = join(
         __dirname,
         "bulk-insert/multiple-upload-with-total-funded-weeks-less-than-minimum-allowed-weeks.csv",
       );
@@ -625,7 +625,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       // Upload file with 2 lines.
       // The upload file line 1 has location code YESK and program SABC code SBC1.
       // The upload file line 2 has location code KSEY and program SABC code SBC2.
-      const multipleOfferingFilePath = path.join(
+      const multipleOfferingFilePath = join(
         __dirname,
         "bulk-insert/multiple-upload.csv",
       );

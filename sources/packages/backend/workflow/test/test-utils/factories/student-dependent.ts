@@ -1,4 +1,4 @@
-import { StudentDependent } from "workflow/test/models";
+import { StudentDependent } from "../../models";
 import { addToDateOnlyString } from "@sims/utilities";
 import { DependantRelationship, YesNoOptions } from "@sims/test-utils";
 

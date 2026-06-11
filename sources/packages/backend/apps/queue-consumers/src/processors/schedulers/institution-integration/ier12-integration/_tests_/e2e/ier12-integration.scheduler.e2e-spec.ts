@@ -15,7 +15,7 @@ import {
   createFakeInstitutionLocation,
 } from "@sims/test-utils";
 import { getUploadedFile, getUploadedFiles } from "@sims/test-utils/mocks";
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 import { ArrayContains, Not } from "typeorm";
 import {
   ApplicationStatus,
@@ -57,7 +57,7 @@ import {
 import { createIER12SchedulerJobMock } from "./utils";
 import { isValidFileTimestamp } from "@sims/test-utils/utils";
 import { FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 
 describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
   let app: INestApplication;
@@ -225,7 +225,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
       expect(ier12Results).toStrictEqual([
         getSuccessSummaryMessages(timestampResult.value, {
-          institutionCode: locationA.institutionCode!,
+          institutionCode: locationA.institutionCode,
           expectedRecords: 1,
         }),
       ]);
@@ -234,13 +234,13 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       expect(uploadedFile.fileLines?.length).toBe(1);
       const [line1] = uploadedFile.fileLines;
       const [, secondDisbursement] =
-        application.currentAssessment!.disbursementSchedules ?? [];
-      const assessmentId = numberToText(application.currentAssessment!.id);
+        application.currentAssessment.disbursementSchedules ?? [];
+      const assessmentId = numberToText(application.currentAssessment.id);
       const currentOfferingId = numberToText(
-        application.currentAssessment!.offering!.id,
+        application.currentAssessment.offering.id,
       );
       const parentOfferingId = numberToText(
-        application.currentAssessment!.offering!.parentOffering!.id,
+        application.currentAssessment.offering.parentOffering.id,
       );
 
       const secondDisbursementId = numberToText(secondDisbursement.id);
@@ -321,7 +321,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
       expect(ier12Results).toStrictEqual([
         getSuccessSummaryMessages(timestampResult.value, {
-          institutionCode: locationA.institutionCode!,
+          institutionCode: locationA.institutionCode,
           expectedRecords: 2,
         }),
       ]);
@@ -330,13 +330,13 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       expect(uploadedFile.fileLines?.length).toBe(2);
       const [line1, line2] = uploadedFile.fileLines;
       const [firstDisbursement, secondDisbursement] =
-        application.currentAssessment!.disbursementSchedules || [];
-      const assessmentId = numberToText(application.currentAssessment!.id);
+        application.currentAssessment.disbursementSchedules || [];
+      const assessmentId = numberToText(application.currentAssessment.id);
       const currentOfferingId = numberToText(
-        application.currentAssessment!.offering!.id,
+        application.currentAssessment.offering.id,
       );
       const parentOfferingId = numberToText(
-        application.currentAssessment!.offering!.parentOffering!.id,
+        application.currentAssessment.offering.parentOffering.id,
       );
       // Line 1 validations
       const firstDisbursementId = numberToText(firstDisbursement.id);
@@ -418,7 +418,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
       expect(ier12Results).toStrictEqual([
         getSuccessSummaryMessages(timestampResult.value, {
-          institutionCode: locationB.institutionCode!,
+          institutionCode: locationB.institutionCode,
         }),
       ]);
       // Assert file output.
@@ -426,13 +426,13 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       expect(uploadedFile.fileLines?.length).toBe(1);
       const [line1] = uploadedFile.fileLines;
       const [firstDisbursement] =
-        application.currentAssessment!.disbursementSchedules || [];
-      const assessmentId = numberToText(application.currentAssessment!.id);
+        application.currentAssessment.disbursementSchedules || [];
+      const assessmentId = numberToText(application.currentAssessment.id);
       const currentOfferingId = numberToText(
-        application.currentAssessment!.offering!.id,
+        application.currentAssessment.offering.id,
       );
       const parentOfferingId = numberToText(
-        application.currentAssessment!.offering!.parentOffering!.id,
+        application.currentAssessment.offering.parentOffering.id,
       );
       // Line 1 validations.
       const firstDisbursementId = numberToText(firstDisbursement.id);
@@ -503,7 +503,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
 
       // Queued job.
       const mockedJob = createIER12SchedulerJobMock({
-        modifiedSince: application.currentAssessment!.assessmentDate,
+        modifiedSince: application.currentAssessment.assessmentDate,
       });
 
       // Act
@@ -517,7 +517,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
       expect(ier12Results).toStrictEqual([
         getSuccessSummaryMessages(timestampResult.value, {
-          institutionCode: locationB.institutionCode!,
+          institutionCode: locationB.institutionCode,
         }),
       ]);
       // Assert file output.
@@ -525,13 +525,13 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       expect(uploadedFile.fileLines?.length).toBe(1);
       const [line1] = uploadedFile.fileLines;
       const [firstDisbursement] =
-        application.currentAssessment!.disbursementSchedules || [];
-      const assessmentId = numberToText(application.currentAssessment!.id);
+        application.currentAssessment.disbursementSchedules || [];
+      const assessmentId = numberToText(application.currentAssessment.id);
       const currentOfferingId = numberToText(
-        application.currentAssessment!.offering!.id,
+        application.currentAssessment.offering.id,
       );
       const parentOfferingId = numberToText(
-        application.currentAssessment!.offering!.parentOffering!.id,
+        application.currentAssessment.offering.parentOffering.id,
       );
       // Line 1 validations.
       const expectedAssessmentDate = dateUtils.addDays(
@@ -589,7 +589,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
 
     // Queued job.
     const mockedJob = createIER12SchedulerJobMock({
-      modifiedSince: application.currentAssessment!.assessmentDate,
+      modifiedSince: application.currentAssessment.assessmentDate,
     });
 
     // Act
@@ -603,7 +603,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
     expect(ier12Results).toStrictEqual([
       getSuccessSummaryMessages(timestampResult.value, {
-        institutionCode: locationA.institutionCode!,
+        institutionCode: locationA.institutionCode,
       }),
     ]);
     // Assert file output.
@@ -611,13 +611,13 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(uploadedFile.fileLines?.length).toBe(1);
     const [line1] = uploadedFile.fileLines;
     const [firstDisbursement] =
-      application.currentAssessment!.disbursementSchedules || [];
-    const assessmentId = numberToText(application.currentAssessment!.id);
+      application.currentAssessment.disbursementSchedules || [];
+    const assessmentId = numberToText(application.currentAssessment.id);
     const currentOfferingId = numberToText(
-      application.currentAssessment!.offering!.id,
+      application.currentAssessment.offering.id,
     );
     const parentOfferingId = numberToText(
-      application.currentAssessment!.offering!.parentOffering!.id,
+      application.currentAssessment.offering.parentOffering.id,
     );
     // Line 1 validations.
     const expectedAssessmentDate = dateUtils.addDays(
@@ -683,12 +683,12 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     await saveFakeStudentRestriction(db.dataSource, {
       student: application.student,
       application,
-      restriction: stopFullTimeDisbursementRestriction!,
+      restriction: stopFullTimeDisbursementRestriction,
     });
 
     // Queued job.
     const mockedJob = createIER12SchedulerJobMock({
-      modifiedSince: application.currentAssessment!.assessmentDate,
+      modifiedSince: application.currentAssessment.assessmentDate,
     });
 
     // Act
@@ -702,7 +702,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
     expect(ier12Results).toStrictEqual([
       getSuccessSummaryMessages(timestampResult.value, {
-        institutionCode: locationB.institutionCode!,
+        institutionCode: locationB.institutionCode,
       }),
     ]);
     // Assert file output.
@@ -710,13 +710,13 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(uploadedFile.fileLines?.length).toBe(1);
     const [line1] = uploadedFile.fileLines;
     const [firstDisbursement] =
-      application.currentAssessment!.disbursementSchedules || [];
-    const assessmentId = numberToText(application.currentAssessment!.id);
+      application.currentAssessment.disbursementSchedules || [];
+    const assessmentId = numberToText(application.currentAssessment.id);
     const currentOfferingId = numberToText(
-      application.currentAssessment!.offering!.id,
+      application.currentAssessment.offering.id,
     );
     const parentOfferingId = numberToText(
-      application.currentAssessment!.offering!.parentOffering!.id,
+      application.currentAssessment.offering.parentOffering.id,
     );
     // Line 1 validations.
     const expectedAssessmentDate = dateUtils.addDays(
@@ -779,12 +779,12 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     await saveFakeStudentRestriction(db.dataSource, {
       student: application.student,
       application,
-      restriction: stopFullTimeDisbursementRestriction!,
+      restriction: stopFullTimeDisbursementRestriction,
     });
 
     // Queued job.
     const mockedJob = createIER12SchedulerJobMock({
-      modifiedSince: application.currentAssessment!.assessmentDate,
+      modifiedSince: application.currentAssessment.assessmentDate,
     });
 
     // Act
@@ -798,7 +798,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
     expect(ier12Results).toStrictEqual([
       getSuccessSummaryMessages(timestampResult.value, {
-        institutionCode: locationB.institutionCode!,
+        institutionCode: locationB.institutionCode,
       }),
     ]);
     // Assert file output.
@@ -806,13 +806,13 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(uploadedFile.fileLines?.length).toBe(1);
     const [line1] = uploadedFile.fileLines;
     const [firstDisbursement] =
-      application.currentAssessment!.disbursementSchedules || [];
-    const assessmentId = numberToText(application.currentAssessment!.id);
+      application.currentAssessment.disbursementSchedules || [];
+    const assessmentId = numberToText(application.currentAssessment.id);
     const currentOfferingId = numberToText(
-      application.currentAssessment!.offering!.id,
+      application.currentAssessment.offering.id,
     );
     const parentOfferingId = numberToText(
-      application.currentAssessment!.offering!.parentOffering!.id,
+      application.currentAssessment.offering.parentOffering.id,
     );
     // Line 1 validations.
     const expectedAssessmentDate = dateUtils.addDays(
@@ -868,12 +868,12 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     // Create a feedback error associated with the disbursement.
     const [errorCode] = FULL_TIME_DISBURSEMENT_FEEDBACK_ERRORS;
     const [disbursementSchedule] =
-      application.currentAssessment!.disbursementSchedules || [];
+      application.currentAssessment.disbursementSchedules || [];
     // Assign a full-time e-Cert feedback error for the expected error code.
-    const eCertFeedbackError = (await db.eCertFeedbackError.findOne({
+    const eCertFeedbackError = await db.eCertFeedbackError.findOne({
       select: { id: true },
       where: { errorCode, offeringIntensity: OfferingIntensity.fullTime },
-    }))!;
+    });
     const feedbackError = createFakeDisbursementFeedbackError(
       { disbursementSchedule, eCertFeedbackError },
       {
@@ -899,7 +899,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
     expect(ier12Results).toStrictEqual([
       getSuccessSummaryMessages(timestampResult.value, {
-        institutionCode: locationA.institutionCode!,
+        institutionCode: locationA.institutionCode,
       }),
     ]);
     // Assert file output.
@@ -907,13 +907,13 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(uploadedFile.fileLines?.length).toBe(1);
     const [line1] = uploadedFile.fileLines;
     const [firstDisbursement] =
-      application.currentAssessment!.disbursementSchedules || [];
-    const assessmentId = numberToText(application.currentAssessment!.id);
+      application.currentAssessment.disbursementSchedules || [];
+    const assessmentId = numberToText(application.currentAssessment.id);
     const currentOfferingId = numberToText(
-      application.currentAssessment!.offering!.id,
+      application.currentAssessment.offering.id,
     );
     const parentOfferingId = numberToText(
-      application.currentAssessment!.offering!.parentOffering!.id,
+      application.currentAssessment.offering.parentOffering.id,
     );
     // Line 1 validations.
     const expectedAssessmentDate = dateUtils.addDays(
@@ -975,7 +975,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
 
     // Queued job.
     const mockedJob = createIER12SchedulerJobMock({
-      modifiedSince: application.currentAssessment!.assessmentDate,
+      modifiedSince: application.currentAssessment.assessmentDate,
     });
 
     // Act
@@ -989,7 +989,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
     expect(ier12Results).toStrictEqual([
       getSuccessSummaryMessages(timestampResult.value, {
-        institutionCode: locationB.institutionCode!,
+        institutionCode: locationB.institutionCode,
       }),
     ]);
     // Assert file output.
@@ -997,10 +997,10 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(uploadedFile.fileLines?.length).toBe(1);
     const [line1] = uploadedFile.fileLines;
     const [firstDisbursement] =
-      application.currentAssessment!.disbursementSchedules || [];
-    const assessmentId = numberToText(application.currentAssessment!.id);
+      application.currentAssessment.disbursementSchedules || [];
+    const assessmentId = numberToText(application.currentAssessment.id);
     const currentOfferingId = numberToText(
-      application.currentAssessment!.offering!.id,
+      application.currentAssessment.offering.id,
     );
     const offering = await db.educationProgramOffering.findOne({
       select: {
@@ -1010,14 +1010,14 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
         },
       },
       where: {
-        id: application.currentAssessment!.offering!.id,
+        id: application.currentAssessment.offering.id,
       },
       relations: {
         parentOffering: true,
       },
     });
 
-    const parentOfferingId = numberToText(offering!.parentOffering!.id);
+    const parentOfferingId = numberToText(offering.parentOffering.id);
     // Line 1 validations.
     const expectedAssessmentDate = dateUtils.addDays(
       1,
@@ -1133,10 +1133,10 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(isValidFileTimestamp(secondTimestampResult.value)).toBe(true);
     expect(ier12Results).toStrictEqual([
       getSuccessSummaryMessages(firstTimestampResult.value, {
-        institutionCode: locationA.institutionCode!,
+        institutionCode: locationA.institutionCode,
       }),
       getSuccessSummaryMessages(secondTimestampResult.value, {
-        institutionCode: locationB.institutionCode!,
+        institutionCode: locationB.institutionCode,
       }),
     ]);
     // Assert file output.
@@ -1146,15 +1146,15 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(fileA.fileLines?.length).toBe(1);
     const [fileALine1] = fileA.fileLines;
     const [firstDisbursementA] =
-      applicationA.currentAssessment!.disbursementSchedules || [];
-    const assessmentAId = numberToText(applicationA.currentAssessment!.id);
+      applicationA.currentAssessment.disbursementSchedules || [];
+    const assessmentAId = numberToText(applicationA.currentAssessment.id);
     // Line 1 validations.
     const firstDisbursementAId = numberToText(firstDisbursementA.id);
     const currentOfferingIdForApplicationA = numberToText(
-      applicationA.currentAssessment!.offering!.id,
+      applicationA.currentAssessment.offering.id,
     );
     const parentOfferingIdA = numberToText(
-      applicationA.currentAssessment!.offering!.parentOffering!.id,
+      applicationA.currentAssessment.offering.parentOffering.id,
     );
     expect(fileALine1.length).toBe(IER_RECORD_EXPECTED_LENGTH);
     expect(fileALine1).toBe(
@@ -1165,15 +1165,15 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(fileB.fileLines?.length).toBe(1);
     const [fileBLine1] = fileB.fileLines;
     const [firstDisbursementB] =
-      applicationB.currentAssessment!.disbursementSchedules || [];
-    const assessmentBId = numberToText(applicationB.currentAssessment!.id);
+      applicationB.currentAssessment.disbursementSchedules || [];
+    const assessmentBId = numberToText(applicationB.currentAssessment.id);
     // Line 1 validations.
     const firstDisbursementBId = numberToText(firstDisbursementB.id);
     const currentOfferingIdForApplicationB = numberToText(
-      applicationB.currentAssessment!.offering!.id,
+      applicationB.currentAssessment.offering.id,
     );
     const parentOfferingIdB = numberToText(
-      applicationB.currentAssessment!.offering!.parentOffering!.id,
+      applicationB.currentAssessment.offering.parentOffering.id,
     );
 
     expect(fileBLine1.length).toBe(IER_RECORD_EXPECTED_LENGTH);
@@ -1239,7 +1239,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
 
     // Queued job.
     const mockedJob = createIER12SchedulerJobMock({
-      modifiedSince: application.currentAssessment!.assessmentDate,
+      modifiedSince: application.currentAssessment.assessmentDate,
     });
 
     // Act
@@ -1253,7 +1253,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
     expect(ier12Results).toStrictEqual([
       getSuccessSummaryMessages(timestampResult.value, {
-        institutionCode: locationB.institutionCode!,
+        institutionCode: locationB.institutionCode,
       }),
     ]);
     // Assert file output.
@@ -1261,13 +1261,13 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(uploadedFile.fileLines?.length).toBe(1);
     const [line1] = uploadedFile.fileLines;
     const [firstDisbursement] =
-      application.currentAssessment!.disbursementSchedules || [];
-    const assessmentId = numberToText(application.currentAssessment!.id);
+      application.currentAssessment.disbursementSchedules || [];
+    const assessmentId = numberToText(application.currentAssessment.id);
     const currentOfferingId = numberToText(
-      application.currentAssessment!.offering!.id,
+      application.currentAssessment.offering.id,
     );
     const parentOfferingId = numberToText(
-      application.currentAssessment!.offering!.parentOffering!.id,
+      application.currentAssessment.offering.parentOffering.id,
     );
     // Line 1 validations.
     const expectedAssessmentDate = dateUtils.addDays(
@@ -1332,7 +1332,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
 
     // Queued job.
     const mockedJob = createIER12SchedulerJobMock({
-      modifiedSince: application.currentAssessment!.assessmentDate,
+      modifiedSince: application.currentAssessment.assessmentDate,
     });
 
     // Act
@@ -1346,7 +1346,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
     expect(ier12Results).toStrictEqual([
       getSuccessSummaryMessages(timestampResult.value, {
-        institutionCode: locationB.institutionCode!,
+        institutionCode: locationB.institutionCode,
       }),
     ]);
     // Assert file output.
@@ -1354,13 +1354,13 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(uploadedFile.fileLines?.length).toBe(1);
     const [line1] = uploadedFile.fileLines;
     const [firstDisbursement] =
-      application.currentAssessment!.disbursementSchedules || [];
-    const assessmentId = numberToText(application.currentAssessment!.id);
+      application.currentAssessment.disbursementSchedules || [];
+    const assessmentId = numberToText(application.currentAssessment.id);
     const currentOfferingId = numberToText(
-      application.currentAssessment!.offering!.id,
+      application.currentAssessment.offering.id,
     );
     const parentOfferingId = numberToText(
-      application.currentAssessment!.offering!.parentOffering!.id,
+      application.currentAssessment.offering.parentOffering.id,
     );
     // Line 1 validations.
     const expectedAssessmentDate = dateUtils.addDays(
@@ -1473,7 +1473,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
     expect(ier12Results).toStrictEqual([
       getSuccessSummaryMessages(timestampResult.value, {
-        institutionCode: locationA.institutionCode!,
+        institutionCode: locationA.institutionCode,
         expectedRecords: 2,
       }),
     ]);
@@ -1483,15 +1483,13 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const [line1, line2] = uploadedFile.fileLines;
 
     const [disbursementJohn] =
-      applicationJohn.currentAssessment!.disbursementSchedules || [];
-    const assessmentJohnId = numberToText(
-      applicationJohn.currentAssessment!.id,
-    );
+      applicationJohn.currentAssessment.disbursementSchedules || [];
+    const assessmentJohnId = numberToText(applicationJohn.currentAssessment.id);
     const currentOfferingJohnId = numberToText(
-      applicationJohn.currentAssessment!.offering!.id,
+      applicationJohn.currentAssessment.offering.id,
     );
     const parentOfferingJohnId = numberToText(
-      applicationJohn.currentAssessment!.offering!.parentOffering!.id,
+      applicationJohn.currentAssessment.offering.parentOffering.id,
     );
     // Line 1 (John) validations
     const disbursementJohnId = numberToText(disbursementJohn.id);
@@ -1500,15 +1498,13 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       `${assessmentJohnId}${disbursementJohnId}${defaultApplicationNumber}            242963189Doe                      John           19980113B   MA  NONENAddress Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program name                                                               undergraduateCertificate 0001    8   0512123401234ADR1                         6${currentOfferingJohnId}${parentOfferingJohnId}                              2025081620251010000033330000004444000000555500000066660019100F${formatIER12Date(referenceSubmissionDate)}20252026COMP${formatIER12Date(referenceSubmissionDate)}000000000000000000000000000000NNNNN            ${formatIER12Date(assessmentJohnDate)}        000002850000000000000000400000006002001003000003005NNY000000000000000000000000000000000000000000000000000000000000NY0000000000000144430000000000000000000000000000000000007777000000150056000000000000000000000000000000000000000000003000000000050000000065430000001700000000000000N0000000000000000000000000000000000000000000000000000000000000000000000DISS2025081520250815Completed Sent      20250816                        CSLF0000000000BCSL0000000000CSGP0000000000CSGD0000000000CSGF0000000000CSGT0000000000BCAG0000000000SBSD0000000000BGPD0000000000    0000000000`,
     );
     const [disbursementJane] =
-      applicationJane.currentAssessment!.disbursementSchedules || [];
-    const assessmentJaneId = numberToText(
-      applicationJane.currentAssessment!.id,
-    );
+      applicationJane.currentAssessment.disbursementSchedules || [];
+    const assessmentJaneId = numberToText(applicationJane.currentAssessment.id);
     const currentOfferingJaneId = numberToText(
-      applicationJane.currentAssessment!.offering!.id,
+      applicationJane.currentAssessment.offering.id,
     );
     const parentOfferingJaneId = numberToText(
-      applicationJane.currentAssessment!.offering!.parentOffering!.id,
+      applicationJane.currentAssessment.offering.parentOffering.id,
     );
     // Line 2 (Jane) validations.
     const disbursementJaneId = numberToText(disbursementJane.id);
@@ -1579,7 +1575,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(isValidFileTimestamp(firstTimestampResult.value)).toBe(true);
     expect(ier12Results).toStrictEqual([
       getSuccessSummaryMessages(firstTimestampResult.value, {
-        institutionCode: locationA.institutionCode!,
+        institutionCode: locationA.institutionCode,
       }),
     ]);
     // Assert file output.
@@ -1589,15 +1585,15 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     expect(fileA.fileLines?.length).toBe(1);
     const [fileALine1] = fileA.fileLines;
     const [firstDisbursementA] =
-      application.currentAssessment!.disbursementSchedules!;
-    const assessmentAId = numberToText(application.currentAssessment!.id);
+      application.currentAssessment.disbursementSchedules;
+    const assessmentAId = numberToText(application.currentAssessment.id);
     // Line 1 validations.
     const firstDisbursementAId = numberToText(firstDisbursementA.id);
     const currentOfferingIdForApplicationA = numberToText(
-      application.currentAssessment!.offering!.id,
+      application.currentAssessment.offering.id,
     );
     const parentOfferingIdA = numberToText(
-      application.currentAssessment!.offering!.parentOffering!.id,
+      application.currentAssessment.offering.parentOffering.id,
     );
     expect(fileALine1.length).toBe(IER_RECORD_EXPECTED_LENGTH);
     expect(fileALine1).toBe(
@@ -1745,7 +1741,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
 function assertEmptyResults(
   ier12Results: string | string[],
   expectedMessage = "No IER12 files were generated.",
-) {
+): void {
   const results = Array.isArray(ier12Results) ? ier12Results : [ier12Results];
   expect(results).toBeDefined();
   expect(results).toHaveLength(1);
@@ -1757,6 +1753,6 @@ function assertEmptyResults(
  * @param date The date to format.
  * @returns The formatted date string.
  */
-function formatIER12Date(date: Date) {
+function formatIER12Date(date: Date): string {
   return dayjs(date).format("YYYYMMDD");
 }

@@ -13,7 +13,7 @@ import {
   mockJWTUserInfo,
   resetMockJWTUserInfo,
 } from "../../../../testHelpers";
-import * as request from "supertest";
+import request from "supertest";
 import { TestingModule } from "@nestjs/testing";
 import { AssessmentTriggerType, OfferingIntensity } from "@sims/sims-db";
 import { deliveryMethod } from "../../../../utilities";

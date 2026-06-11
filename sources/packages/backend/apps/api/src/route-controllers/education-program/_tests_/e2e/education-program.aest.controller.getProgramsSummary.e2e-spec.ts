@@ -19,7 +19,7 @@ import {
   ProgramStatus,
   User,
 } from "@sims/sims-db";
-import * as request from "supertest";
+import request from "supertest";
 import { faker } from "@faker-js/faker";
 
 describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {

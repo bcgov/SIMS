@@ -1,5 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import * as request from "supertest";
+import request from "supertest";
 import { IsNull } from "typeorm";
 import {
   BEARER_AUTH_TYPE,

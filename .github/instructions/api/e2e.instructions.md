@@ -33,7 +33,7 @@ Use this template as a starting point for new e2e tests for the AEST client type
 
 ```typescript
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import * as request from "supertest";
+import request from "supertest";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
@@ -81,7 +81,7 @@ Use this template as a starting point for new e2e tests for the Student client t
 
 ```typescript
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import * as request from "supertest";
+import request from "supertest";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
@@ -148,7 +148,7 @@ Use this template as a starting point for new e2e tests for the Institutions cli
 
 ```typescript
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import * as request from "supertest";
+import request from "supertest";
 import {
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,

@@ -1,4 +1,4 @@
-import * as Client from "ssh2-sftp-client";
+import Client from "ssh2-sftp-client";
 import { uuidV4Matcher } from "@sims/test-utils/matchers";
 import { join } from "node:path";
 
