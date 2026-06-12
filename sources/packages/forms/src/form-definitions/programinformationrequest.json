@@ -432,6 +432,18 @@
           "hideLabel": true,
           "lockKey": true,
           "tableView": false
+        },
+        {
+          "label": "Create offering",
+          "action": "custom",
+          "showValidations": false,
+          "leftIcon": "fa fa-plus-circle",
+          "tableView": false,
+          "key": "createOffering",
+          "customConditional": "show = data.isReadOnlyUser !== true && data.selectedProgram;",
+          "type": "button",
+          "custom": "form.emit('customEvent', {\n  type: \"routeToCreateOffering\"\n});",
+          "input": true
         }
       ]
     },
