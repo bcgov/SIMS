@@ -22,9 +22,13 @@ import {
   EducationProgramOffering,
   InstitutionLocation,
   OfferingIntensity,
+  ProgramInfoStatus,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
-import { getUserFullName } from "../../../../utilities";
+import {
+  getUserFullName,
+  getOfferingNameAndPeriod,
+} from "../../../../utilities";
 
 describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
   let app: INestApplication;
@@ -273,6 +277,82 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
           isChangeRequestAllowedForPY: false,
         }),
       );
+  });
+
+  it("Should return PIR summary fields in application data when the application has PIR status completed.", async () => {
+    // Arrange
+    const offeringInitialValues = {
+      name: "Test PIR Offering Name",
+      studyStartDate: "2024-09-01",
+      studyEndDate: "2025-04-30",
+      yearOfStudy: 2,
+    } as Partial<EducationProgramOffering>;
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      { institutionLocation: collegeFLocation },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        offeringIntensity: OfferingIntensity.fullTime,
+        pirStatus: ProgramInfoStatus.completed,
+        offeringInitialValues,
+      },
+    );
+    // Load the offering with its education program to build expected values.
+    const savedOffering = await db.educationProgramOffering.findOne({
+      where: { id: savedApplication.currentAssessment.offering.id },
+      relations: { educationProgram: true },
+      select: {
+        id: true,
+        name: true,
+        studyStartDate: true,
+        studyEndDate: true,
+        yearOfStudy: true,
+        educationProgram: { id: true, name: true },
+      },
+    });
+    const student = savedApplication.student;
+    const endpoint = `/institutions/application/student/${student.id}/application/${savedApplication.id}`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    const response = await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+    expect(response.body.data.pirSummaryProgramName).toBe(
+      savedOffering.educationProgram.name,
+    );
+    expect(response.body.data.pirSummaryOfferingName).toBe(
+      getOfferingNameAndPeriod(savedOffering),
+    );
+  });
+
+  it("Should not return PIR summary fields in application data when the application does not have PIR status completed.", async () => {
+    // Arrange
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      { institutionLocation: collegeFLocation },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        offeringIntensity: OfferingIntensity.fullTime,
+        pirStatus: ProgramInfoStatus.notRequired,
+      },
+    );
+    const student = savedApplication.student;
+    const endpoint = `/institutions/application/student/${student.id}/application/${savedApplication.id}`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    const response = await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+    expect(response.body.data.pirSummaryProgramName).toBeUndefined();
+    expect(response.body.data.pirSummaryOfferingName).toBeUndefined();
   });
 
   afterAll(async () => {

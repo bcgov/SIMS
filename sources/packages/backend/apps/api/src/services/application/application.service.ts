@@ -939,6 +939,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * - `studentId` student id.
    * - `entityManager` entity manager to be used for the query. Useful when
    * it needs to be executed in a transaction.
+   * - `loadPIRSummaryData` indicates if the data needed for the PIR outcome summary should be loaded.
    * @returns student application.
    */
   async getApplicationById(
@@ -947,6 +948,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       loadDynamicData?: boolean;
       studentId?: number;
       entityManager?: EntityManager;
+      loadPIRSummaryData?: boolean;
     },
   ): Promise<Application> {
     const applicationRepo =
@@ -1015,6 +1017,23 @@ export class ApplicationService extends RecordDataModelService<Application> {
             lastName: true,
           },
         },
+        ...(options?.loadPIRSummaryData && {
+          studentAssessments: {
+            id: true,
+            triggerType: true,
+            offering: {
+              id: true,
+              name: true,
+              studyStartDate: true,
+              studyEndDate: true,
+              yearOfStudy: true,
+              educationProgram: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        }),
       },
       relations: {
         applicationException: true,
@@ -1026,6 +1045,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         precedingApplication: {
           currentAssessment: { offering: true, studentAppeal: true },
         },
+        ...(options?.loadPIRSummaryData && {
+          studentAssessments: { offering: { educationProgram: true } },
+        }),
       },
       where: {
         id: applicationId,
