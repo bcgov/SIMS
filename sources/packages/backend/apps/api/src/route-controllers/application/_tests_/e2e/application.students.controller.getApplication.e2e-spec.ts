@@ -17,10 +17,12 @@ import {
 import {
   Application,
   ApplicationStatus,
+  EducationProgramOffering,
   OfferingIntensity,
   ProgramInfoStatus,
   Student,
 } from "@sims/sims-db";
+import { getOfferingNameAndPeriod } from "../../../../utilities";
 import { getDateOnlyFormat } from "@sims/utilities";
 import { TestingModule } from "@nestjs/testing";
 
@@ -203,6 +205,11 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
           programName: "My Program",
           workflowName: "",
           programDescription: "This is my program.",
+          pirSummaryProgramName:
+            application.currentAssessment?.offering?.educationProgram.name,
+          pirSummaryOfferingName: getOfferingNameAndPeriod(
+            application.currentAssessment?.offering,
+          ),
         },
         applicationStatus: application.applicationStatus,
         applicationEditStatus: application.applicationEditStatus,
@@ -306,6 +313,82 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
         isChangeRequestAllowedForPY: false,
         hasPreviouslyCompletedPIR: true,
       });
+  });
+
+  it("Should return PIR summary fields in application data when the application has PIR status completed.", async () => {
+    // Arrange
+    const offeringInitialValues = {
+      name: "Test PIR Offering Name",
+      studyStartDate: "2024-09-01",
+      studyEndDate: "2025-04-30",
+      yearOfStudy: 2,
+    } as Partial<EducationProgramOffering>;
+    const application = await saveFakeApplication(
+      db.dataSource,
+      { student },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        offeringIntensity: OfferingIntensity.fullTime,
+        pirStatus: ProgramInfoStatus.completed,
+        offeringInitialValues,
+      },
+    );
+    // Load the offering with its education program to build expected values.
+    const savedOffering = await db.educationProgramOffering.findOne({
+      where: { id: application.currentAssessment.offering.id },
+      relations: { educationProgram: true },
+      select: {
+        id: true,
+        name: true,
+        studyStartDate: true,
+        studyEndDate: true,
+        yearOfStudy: true,
+        educationProgram: { id: true, name: true },
+      },
+    });
+    const endpoint = `/students/application/${application.id}`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    await mockJWTUserInfo(appModule, application.student.user);
+
+    // Act/Assert
+    const response = await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+    expect(response.body.data.pirSummaryProgramName).toBe(
+      savedOffering.educationProgram.name,
+    );
+    expect(response.body.data.pirSummaryOfferingName).toBe(
+      getOfferingNameAndPeriod(savedOffering),
+    );
+  });
+
+  it("Should not return PIR summary fields in application data when the application does not have PIR status completed.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      { student },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        offeringIntensity: OfferingIntensity.fullTime,
+        pirStatus: ProgramInfoStatus.notRequired,
+      },
+    );
+    const endpoint = `/students/application/${application.id}`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    await mockJWTUserInfo(appModule, application.student.user);
+
+    // Act/Assert
+    const response = await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+    expect(response.body.data.pirSummaryProgramName).toBeUndefined();
+    expect(response.body.data.pirSummaryOfferingName).toBeUndefined();
   });
 
   afterAll(async () => {
