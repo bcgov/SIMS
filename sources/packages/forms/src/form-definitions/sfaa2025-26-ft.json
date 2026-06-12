@@ -1205,6 +1205,52 @@
                   "lockKey": true
                 },
                 {
+                  "key": "pirSummaryPanel",
+                  "label": "Program information request summary",
+                  "input": false,
+                  "customConditional": "show = !!data.pirSummaryProgramName;",
+                  "type": "panel",
+                  "hideLabel": true,
+                  "tableView": false,
+                  "collapsible": false,
+                  "components": [
+                    {
+                      "label": "HTML",
+                      "tag": "h4",
+                      "className": "category-header-medium-small",
+                      "attrs": [{ "attr": "", "value": "" }],
+                      "content": "Program information request summary",
+                      "refreshOnChange": false,
+                      "key": "pirSummaryHeader",
+                      "type": "htmlelement",
+                      "input": false,
+                      "tableView": false
+                    },
+                    {
+                      "label": "Program name",
+                      "disabled": true,
+                      "tableView": true,
+                      "persistent": false,
+                      "validateWhenHidden": false,
+                      "key": "pirSummaryProgramName",
+                      "type": "textfield",
+                      "input": true,
+                      "lockKey": true
+                    },
+                    {
+                      "label": "Offering name",
+                      "disabled": true,
+                      "tableView": true,
+                      "persistent": false,
+                      "validateWhenHidden": false,
+                      "key": "pirSummaryOfferingName",
+                      "type": "textfield",
+                      "input": true,
+                      "lockKey": true
+                    }
+                  ]
+                },
+                {
                   "title": "PIR Resubmission",
                   "customClass": "panel-border-none",
                   "collapsible": false,

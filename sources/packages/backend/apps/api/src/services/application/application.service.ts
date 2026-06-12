@@ -947,6 +947,11 @@ export class ApplicationService extends RecordDataModelService<Application> {
       loadDynamicData?: boolean;
       studentId?: number;
       entityManager?: EntityManager;
+      /**
+       * When true, loads the student assessments with offering and program details
+       * needed to display the PIR outcome summary.
+       */
+      loadPIRSummaryData?: boolean;
     },
   ): Promise<Application> {
     const applicationRepo =
@@ -1015,6 +1020,23 @@ export class ApplicationService extends RecordDataModelService<Application> {
             lastName: true,
           },
         },
+        ...(options?.loadPIRSummaryData && {
+          studentAssessments: {
+            id: true,
+            triggerType: true,
+            offering: {
+              id: true,
+              name: true,
+              studyStartDate: true,
+              studyEndDate: true,
+              yearOfStudy: true,
+              educationProgram: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        }),
       },
       relations: {
         applicationException: true,
@@ -1026,6 +1048,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         precedingApplication: {
           currentAssessment: { offering: true, studentAppeal: true },
         },
+        ...(options?.loadPIRSummaryData && {
+          studentAssessments: { offering: { educationProgram: true } },
+        }),
       },
       where: {
         id: applicationId,

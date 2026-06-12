@@ -68,7 +68,9 @@ import {
   StudentAppealStatus,
   ApplicationEditStatusInProgress,
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
+  AssessmentTriggerType,
   DynamicFormType,
+  ProgramInfoStatus,
   StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { ApiProcessError } from "../../types";
@@ -105,6 +107,34 @@ export class ApplicationControllerService {
     private readonly dynamicFormConfigurationService: DynamicFormConfigurationService,
     private readonly userService: UserService,
   ) {}
+
+  /**
+   * Enriches the application form data with PIR outcome summary fields when the PIR
+   * has been completed. The summary fields are sourced from the original assessment
+   * offering so they always reflect the state at the time PIR was completed, regardless
+   * of subsequent reassessments.
+   * @param application application entity loaded with student assessments, offering, and
+   * education program data (requires loadPIRSummaryData option when calling getApplicationById).
+   * @param formData form data object to be enriched with PIR summary fields.
+   */
+  addPIRSummaryToFormData(
+    application: Application,
+    formData: ApplicationFormData,
+  ): void {
+    if (application.pirStatus !== ProgramInfoStatus.completed) {
+      return;
+    }
+    const originalAssessment = application.studentAssessments?.find(
+      (assessment) =>
+        assessment.triggerType === AssessmentTriggerType.OriginalAssessment,
+    );
+    const offering = originalAssessment?.offering;
+    if (!offering) {
+      return;
+    }
+    formData.pirSummaryProgramName = offering.educationProgram?.name;
+    formData.pirSummaryOfferingName = getOfferingNameAndPeriod(offering);
+  }
 
   /**
    * Add location, program and offering labels
