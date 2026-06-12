@@ -1,13 +1,11 @@
 <template>
-  <body-header-container :enable-card-view="true">
-    <template #header>
-      <body-header
-        title="Part-Time monthly loan balance"
-        sub-title="Balance of part-time Canada Student Loan outstanding between the student and NSLSC at any given time.
+  <body-header-container
+    :enable-card-view="true"
+    title="Part-Time monthly loan balance"
+    sub-title="Balance of part-time Canada Student Loan outstanding between the student and NSLSC at any given time.
         This amount is updated once per month, and affects a student's eligibility for future funding, as a student 
         cannot exceed the maximum limit in total outstanding balance."
-      />
-    </template>
+  >
     <content-group>
       <toggle-content
         :toggled="!studentLoanBalanceDetails.length"

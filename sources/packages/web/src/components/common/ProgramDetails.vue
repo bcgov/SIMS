@@ -1,122 +1,130 @@
 <template>
-  <body-header :title="educationProgram.name" data-cy="programName">
-    <template #status-chip>
-      <status-chip-program
-        class="ml-2 mb-2"
-        :status="educationProgram.programStatus"
-        :is-active="educationProgram.isActive && !educationProgram.isExpired"
-        data-cy="programStatus"
-      ></status-chip-program>
-    </template>
-    <template #actions>
-      <v-menu class="label-bold-menu">
-        <template #activator="{ props }">
+  <body-header-container>
+    <template #header>
+      <body-header :title="educationProgram.name" data-cy="programName">
+        <template #status-chip>
+          <status-chip-program
+            :status="educationProgram.programStatus"
+            :is-active="
+              educationProgram.isActive && !educationProgram.isExpired
+            "
+            data-cy="programStatus"
+          ></status-chip-program>
+        </template>
+        <template #actions>
+          <v-menu class="label-bold-menu">
+            <template #activator="{ props }">
+              <v-btn
+                color="primary"
+                v-bind="props"
+                prepend-icon="fa:fa fa-chevron-circle-down"
+                class="float-right"
+              >
+                Program actions
+              </v-btn>
+            </template>
+            <v-list
+              active-class="active-list-item"
+              density="compact"
+              bg-color="default"
+              color="primary"
+            >
+              <v-list-item @click="goToProgram" :title="programActionLabel" />
+              <v-divider-inset-opaque />
+              <check-permission-role
+                :role="Role.InstitutionDeactivateEducationProgram"
+              >
+                <template #="{ notAllowed }">
+                  <v-list-item
+                    :disabled="!allowDeactivate || notAllowed"
+                    base-color="danger"
+                    @click="deactivate"
+                    title="Deactivate"
+                  />
+                </template>
+              </check-permission-role>
+            </v-list>
+          </v-menu>
           <v-btn
+            v-if="allowEdit"
+            class="mr-4 float-right"
+            @click="goToAddNewOffering()"
             color="primary"
-            v-bind="props"
-            prepend-icon="fa:fa fa-chevron-circle-down"
-            class="float-right"
+            prepend-icon="fa:fa fa-plus-circle"
+            data-cy="addNewOfferingButton"
+            :disabled="!canCreateOffering"
           >
-            Program actions
+            Add offering
           </v-btn>
         </template>
-        <v-list
-          active-class="active-list-item"
-          density="compact"
-          bg-color="default"
-          color="primary"
-        >
-          <v-list-item @click="goToProgram" :title="programActionLabel" />
-          <v-divider-inset-opaque />
-          <check-permission-role
-            :role="Role.InstitutionDeactivateEducationProgram"
-          >
-            <template #="{ notAllowed }">
-              <v-list-item
-                :disabled="!allowDeactivate || notAllowed"
-                base-color="danger"
-                @click="deactivate"
-                title="Deactivate"
-              />
-            </template>
-          </check-permission-role>
-        </v-list>
-      </v-menu>
-      <v-btn
-        v-if="allowEdit"
-        class="mr-4 float-right"
-        @click="goToAddNewOffering()"
-        color="primary"
-        prepend-icon="fa:fa fa-plus-circle"
-        data-cy="addNewOfferingButton"
-        :disabled="!canCreateOffering"
-      >
-        Add offering
-      </v-btn>
+      </body-header>
     </template>
-  </body-header>
-  <v-row>
-    <v-col md="5">
-      <title-value
-        property-title="Description"
-        :property-value="educationProgram.description"
-        data-cy="programDescription"
-      />
-    </v-col>
-    <v-col md="4">
-      <title-value property-title="Offering" data-cy="programOffering" />
-      <p class="label-value muted-content clearfix">
-        <span
-          v-if="
-            educationProgram.programIntensity ===
-              ProgramIntensity.fullTimePartTime ||
-            educationProgram.programIntensity === ProgramIntensity.fullTime
-          "
-        >
-          {{ mapOfferingIntensity(OfferingIntensity.fullTime) }}
-        </span>
-        <br />
-        <span
-          v-if="
-            educationProgram.programIntensity ===
-            ProgramIntensity.fullTimePartTime
-          "
-        >
-          {{ mapOfferingIntensity(OfferingIntensity.partTime) }}
-        </span>
-      </p>
-    </v-col>
-    <v-col>
-      <title-value
-        property-title="Credential Type"
-        :property-value="educationProgram.credentialTypeToDisplay"
-        data-cy="programCredential"
-      />
-    </v-col>
-  </v-row>
-  <v-row>
-    <v-col md="5">
-      <title-value
-        property-title="Classification of Instructional Programs (CIP)"
-        :property-value="educationProgram.cipCode"
-        data-cy="programCIP"
-      />
-    </v-col>
-    <v-col md="4"
-      ><title-value
-        property-title="National Occupational Classification (NOC)"
-        :property-value="educationProgram.nocCode"
-        data-cy="programNOCCode"
-      />
-    </v-col>
-    <v-col
-      ><title-value
-        property-title="Institution Program Code"
-        :property-value="educationProgram.institutionProgramCode"
-        data-cy="programCode"
-      />
-    </v-col>
-  </v-row>
+    <content-group>
+      <v-row>
+        <v-col md="5">
+          <title-value
+            property-title="Description"
+            :property-value="educationProgram.description"
+            data-cy="programDescription"
+          />
+        </v-col>
+        <v-col md="4">
+          <title-value property-title="Offering" data-cy="programOffering" />
+          <p class="label-value muted-content clearfix">
+            <span
+              v-if="
+                educationProgram.programIntensity ===
+                  ProgramIntensity.fullTimePartTime ||
+                educationProgram.programIntensity === ProgramIntensity.fullTime
+              "
+            >
+              {{ mapOfferingIntensity(OfferingIntensity.fullTime) }}
+            </span>
+            <br />
+            <span
+              v-if="
+                educationProgram.programIntensity ===
+                ProgramIntensity.fullTimePartTime
+              "
+            >
+              {{ mapOfferingIntensity(OfferingIntensity.partTime) }}
+            </span>
+          </p>
+        </v-col>
+        <v-col>
+          <title-value
+            property-title="Credential Type"
+            :property-value="educationProgram.credentialTypeToDisplay"
+            data-cy="programCredential"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col md="5">
+          <title-value
+            property-title="Classification of Instructional Programs (CIP)"
+            :property-value="educationProgram.cipCode"
+            data-cy="programCIP"
+          />
+        </v-col>
+        <v-col md="4"
+          ><title-value
+            property-title="National Occupational Classification (NOC)"
+            :property-value="educationProgram.nocCode"
+            data-cy="programNOCCode"
+          />
+        </v-col>
+        <v-col
+          ><title-value
+            property-title="Institution Program Code"
+            :property-value="educationProgram.institutionProgramCode"
+            data-cy="programCode"
+          />
+        </v-col>
+      </v-row>
+    </content-group>
+  </body-header-container>
+
   <education-program-deactivation-modal
     ref="deactivateEducationProgramModal"
     :notes-required="notesRequired"

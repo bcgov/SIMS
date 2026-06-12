@@ -16,20 +16,23 @@
           v-model="selectedCategory"
           variant="outlined"
           @update:model-value="categoryReasonItems()"
-          :rules="[(v) => !!v || 'Category is required.']" />
+          :rules="[(v) => !!v || 'Category is required.']"
+          hide-details="auto" />
         <v-select
           label="Reason"
           density="compact"
           :items="restrictionReasons"
           v-model="formModel.restrictionId"
           variant="outlined"
-          :rules="[(v) => !!v || 'Reason is required.']" />
+          :rules="[(v) => !!v || 'Reason is required.']"
+          hide-details="auto" />
         <v-textarea
           label="Notes"
           placeholder="Long text..."
           v-model="formModel.noteDescription"
           variant="outlined"
           :rules="[checkNotesLengthRule]"
+          hide-details="auto"
       /></template>
       <template #footer>
         <check-permission-role :role="allowedRole">

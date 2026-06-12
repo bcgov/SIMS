@@ -18,108 +18,122 @@
         </template>
       </body-header>
     </template>
-    <h3 class="category-header-medium">Student profile</h3>
-    <content-group>
-      <v-row>
-        <v-col
-          ><title-value
-            property-title="Given names"
-            :property-value="emptyStringFiller(studentDetail.firstName)"
-          />
-        </v-col>
-        <v-col
-          ><title-value
-            property-title="Last name"
-            :property-value="studentDetail.lastName"
-          />
-        </v-col>
-        <v-col>
-          <title-value
-            property-title="Date of birth"
-            :property-value="studentDetail.birthDateFormatted"
-        /></v-col>
-      </v-row>
-      <v-row>
-        <v-col
-          ><title-value
-            property-title="Gender"
-            :property-value="genderDisplayFormat(studentDetail.gender)"
-          />
-        </v-col>
-        <v-col
-          ><title-value
-            property-title="Email"
-            :property-value="studentDetail.email"
-          />
-        </v-col>
-        <v-col>
-          <disability-status-update-tile-value
-            :student-id="studentId"
-            :allow-disability-status-update="allowUpdateActions"
-            :disability-status="studentDetail.disabilityStatus"
-            @disability-status-updated="loadStudentProfile"
-          />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <modified-independent-status-title-value
-            :student-id="studentId"
-            :modified-independent-status="
-              studentDetail.modifiedIndependentStatus
-            "
-            :allow-update-actions="allowUpdateActions"
-            @modified-independent-status-updated="loadStudentProfile"
-          />
-        </v-col>
-        <v-col cols="8"
-          ><title-value
-            property-title="SIN"
-            :property-value="sinDisplayFormat(studentDetail.sin)"
-        /></v-col>
-      </v-row>
-    </content-group>
-    <h3 class="category-header-medium mt-4">Contact information</h3>
-    <content-group
-      ><v-row>
-        <v-col
-          ><title-value
-            property-title="Address line 1"
-            :property-value="address.addressLine1"
-          />
-        </v-col>
-        <v-col
-          ><title-value
-            property-title="Address line 2"
-            :property-value="emptyStringFiller(address.addressLine2)"
-          />
-        </v-col>
-        <v-col>
-          <title-value property-title="City" :property-value="address.city"
-        /></v-col>
-      </v-row>
-      <v-row>
-        <v-col
-          ><title-value
-            property-title="Province"
-            :property-value="address.provinceState"
-          />
-        </v-col>
-        <v-col
-          ><title-value
-            property-title="Postal/Zip Code"
-            :property-value="address.postalCode"
-          />
-        </v-col>
-        <v-col>
-          <title-value
-            property-title="Phone number"
-            :property-value="studentDetail.contact?.phone"
-        /></v-col>
-      </v-row>
-    </content-group>
-    <template v-if="showLegacyMatch">
-      <h3 class="category-header-medium mt-4">Legacy match</h3>
+    <body-header-container
+      title="Student profile"
+      header-size="medium"
+      header-color="secondary"
+    >
+      <content-group>
+        <v-row>
+          <v-col
+            ><title-value
+              property-title="Given names"
+              :property-value="emptyStringFiller(studentDetail.firstName)"
+            />
+          </v-col>
+          <v-col
+            ><title-value
+              property-title="Last name"
+              :property-value="studentDetail.lastName"
+            />
+          </v-col>
+          <v-col>
+            <title-value
+              property-title="Date of birth"
+              :property-value="studentDetail.birthDateFormatted"
+          /></v-col>
+        </v-row>
+        <v-row>
+          <v-col
+            ><title-value
+              property-title="Gender"
+              :property-value="genderDisplayFormat(studentDetail.gender)"
+            />
+          </v-col>
+          <v-col
+            ><title-value
+              property-title="Email"
+              :property-value="studentDetail.email"
+            />
+          </v-col>
+          <v-col>
+            <disability-status-update-tile-value
+              :student-id="studentId"
+              :allow-disability-status-update="allowUpdateActions"
+              :disability-status="studentDetail.disabilityStatus"
+              @disability-status-updated="loadStudentProfile"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <modified-independent-status-title-value
+              :student-id="studentId"
+              :modified-independent-status="
+                studentDetail.modifiedIndependentStatus
+              "
+              :allow-update-actions="allowUpdateActions"
+              @modified-independent-status-updated="loadStudentProfile"
+            />
+          </v-col>
+          <v-col cols="8"
+            ><title-value
+              property-title="SIN"
+              :property-value="sinDisplayFormat(studentDetail.sin)"
+          /></v-col>
+        </v-row>
+      </content-group>
+    </body-header-container>
+    <body-header-container
+      title="Contact information"
+      header-size="medium"
+      header-color="secondary"
+    >
+      <content-group
+        ><v-row>
+          <v-col
+            ><title-value
+              property-title="Address line 1"
+              :property-value="address.addressLine1"
+            />
+          </v-col>
+          <v-col
+            ><title-value
+              property-title="Address line 2"
+              :property-value="emptyStringFiller(address.addressLine2)"
+            />
+          </v-col>
+          <v-col>
+            <title-value property-title="City" :property-value="address.city"
+          /></v-col>
+        </v-row>
+        <v-row>
+          <v-col
+            ><title-value
+              property-title="Province"
+              :property-value="address.provinceState"
+            />
+          </v-col>
+          <v-col
+            ><title-value
+              property-title="Postal/Zip Code"
+              :property-value="address.postalCode"
+            />
+          </v-col>
+          <v-col>
+            <title-value
+              property-title="Phone number"
+              :property-value="studentDetail.contact?.phone"
+          /></v-col>
+        </v-row>
+      </content-group>
+    </body-header-container>
+    <body-header-container
+      v-if="showLegacyMatch"
+      title="Legacy match"
+      header-size="medium"
+      header-color="secondary"
+    >
       <content-group>
         <student-profile-legacy-matches
           :student-id="studentId"
@@ -127,7 +141,7 @@
           @legacy-profile-linked="loadStudentProfile"
         />
       </content-group>
-    </template>
+    </body-header-container>
     <edit-student-profile-modal
       ref="studentEditProfile"
     ></edit-student-profile-modal>

@@ -16,13 +16,16 @@
     >
       <v-card-title>
         <slot name="header">
-          <h2 v-if="title" class="category-header-large primary-color mt-3">
+          <h2
+            v-if="title"
+            class="category-header-large primary-color mt-2 mb-0"
+          >
             {{ title }}
           </h2>
         </slot>
       </v-card-title>
-      <v-divider-inset-opaque class="my-1" />
-      <v-card-text class="p-4">
+      <v-divider-inset-opaque />
+      <v-card-text class="px-4">
         <div class="pb-2" v-if="subTitle">{{ subTitle }}</div>
         <slot name="content">Please add the modal content here!</slot>
       </v-card-text>

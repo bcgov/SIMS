@@ -1,59 +1,64 @@
 <template>
   <full-page-container :full-width="true">
     <template #header>
-      <header-navigator title="Institution requests" subTitle="Change Requests" />
+      <header-navigator
+        title="Institution requests"
+        sub-title="Change Requests"
+      />
     </template>
-    <body-header
-      title="Pending change requests"
-      :recordsCount="applications?.count"
-    >
-      <template #subtitle>
-        Change requests that require ministry review.
-      </template>
-      <template #actions>
-        <v-text-field
-          density="compact"
-          label="Search name or application #"
-          variant="outlined"
-          v-model="searchCriteria"
-          @keyup.enter="searchApplicationOfferingChangeRecords"
-          prepend-inner-icon="mdi-magnify"
-          hide-details="auto"
+    <body-header-container>
+      <template #header>
+        <body-header
+          title="Pending change requests"
+          sub-title="Change requests that require ministry review."
+          :records-count="applications?.count"
         >
-        </v-text-field>
+          <template #actions>
+            <v-text-field
+              density="compact"
+              label="Search name or application #"
+              variant="outlined"
+              v-model="searchCriteria"
+              @keyup.enter="searchApplicationOfferingChangeRecords"
+              prepend-inner-icon="mdi-magnify"
+              hide-details="auto"
+            >
+            </v-text-field>
+          </template>
+        </body-header>
       </template>
-    </body-header>
-    <content-group>
-      <toggle-content :toggled="!applications?.count">
-        <v-data-table-server
-          v-if="applications?.count"
-          :headers="AllInProgressOfferingChangeSummaryHeaders"
-          :items="applications?.results"
-          :items-length="applications.count"
-          :loading="loading"
-          item-value="applicationId"
-          v-model:items-per-page="DEFAULT_PAGE_LIMIT"
-          :items-per-page-options="ITEMS_PER_PAGE"
-          @update:options="paginationAndSortEvent"
-        >
-          <template #[`item.dateSubmitted`]="{ item }">
-            {{ dateOnlyLongString(item.createdAt) }}
-          </template>
-          <template #[`item.fullName`]="{ item }">
-            {{ item.fullName }}
-          </template>
-          <template #[`item.applicationNumber`]="{ item }">
-            {{ item.applicationNumber }}
-          </template>
-          <template #[`item.status`]="{ item }">
-            <status-chip-application-offering-change :status="item.status" />
-          </template>
-          <template #[`item.id`]="{ item }">
-            <v-btn color="primary" @click="viewAssessment(item)">View</v-btn>
-          </template>
-        </v-data-table-server>
-      </toggle-content>
-    </content-group>
+      <content-group>
+        <toggle-content :toggled="!applications?.count">
+          <v-data-table-server
+            v-if="applications?.count"
+            :headers="AllInProgressOfferingChangeSummaryHeaders"
+            :items="applications?.results"
+            :items-length="applications.count"
+            :loading="loading"
+            item-value="applicationId"
+            v-model:items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            @update:options="paginationAndSortEvent"
+          >
+            <template #[`item.dateSubmitted`]="{ item }">
+              {{ dateOnlyLongString(item.createdAt) }}
+            </template>
+            <template #[`item.fullName`]="{ item }">
+              {{ item.fullName }}
+            </template>
+            <template #[`item.applicationNumber`]="{ item }">
+              {{ item.applicationNumber }}
+            </template>
+            <template #[`item.status`]="{ item }">
+              <status-chip-application-offering-change :status="item.status" />
+            </template>
+            <template #[`item.id`]="{ item }">
+              <v-btn color="primary" @click="viewAssessment(item)">View</v-btn>
+            </template>
+          </v-data-table-server>
+        </toggle-content>
+      </content-group>
+    </body-header-container>
   </full-page-container>
 </template>
 <script lang="ts">

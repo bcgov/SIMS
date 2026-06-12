@@ -7,7 +7,7 @@
             <h1 class="category-header-large primary-color">
               {{ props.title }}
             </h1>
-            <p class="my-2">
+            <p>
               <slot name="subtitle">{{ props.subtitle }}</slot>
             </p>
           </v-col>
@@ -21,7 +21,6 @@
               </h2>
               <p>{{ props.loginAreaText }}</p>
               <v-btn
-                class="mt-4"
                 color="primary"
                 @click="login"
                 prepend-icon="fa:fa fa-user"
@@ -33,21 +32,20 @@
         </v-row>
       </template>
       <template v-else>
-        <v-row no-gutters>
+        <v-row no-gutters density="compact">
           <v-col md="9">
-            <h1 class="category-header-large primary-color">
+            <h1 class="category-header-large primary-color mb-0">
               {{ props.title }}
             </h1>
             <p class="my-2">
               <slot name="subtitle">{{ props.subtitle }}</slot>
             </p>
             <content-group>
-              <h2 class="category-header-medium primary-color mb-2">
+              <h2 class="category-header-medium primary-color m-0 p-0">
                 {{ props.loginAreaTitle }}
               </h2>
               <p>{{ props.loginAreaText }}</p>
               <v-btn
-                class="mt-4"
                 color="primary"
                 @click="login"
                 prepend-icon="fa:fa fa-user"

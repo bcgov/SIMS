@@ -3,13 +3,9 @@
     <modal-dialog-base title="Create new note" :show-dialog="showDialog">
       <template #content>
         <error-summary :errors="addNewNoteForm.errors" />
-        <div class="pb-2">
-          <span class="label-value"
-            >Add a note with relevant decisions or actions taken on this
-            account.</span
-          >
-        </div>
-        <!-- TODO add placeholder for v-select when we have stable vuetify 3.-->
+        <p class="mt-0">
+          Add a note with relevant decisions or actions taken on this account.
+        </p>
         <v-select
           label="Note type"
           density="compact"
@@ -23,6 +19,7 @@
           v-model="formModel.description"
           variant="outlined"
           :rules="[checkNotesLengthRule]"
+          hide-details="auto"
       /></template>
       <template #footer>
         <check-permission-role :role="allowedRole">

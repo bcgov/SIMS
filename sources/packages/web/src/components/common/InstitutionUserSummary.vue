@@ -36,9 +36,8 @@
             </li>
           </ul>
         </template>
-
         <template #actions>
-          <v-row class="m-0 p-0">
+          <v-row density="compact">
             <v-text-field
               density="compact"
               label="Search name"

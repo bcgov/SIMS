@@ -2,7 +2,7 @@
   <div class="mb-3">
     <v-card v-if="props.enableCardView">
       <v-container :fluid="true">
-        <slot name="header"></slot>
+        <slot name="header"><body-header v-bind="headerProps" /></slot>
         <div class="mt-2">
           <slot></slot>
         </div>
@@ -28,6 +28,7 @@ interface Props {
   hideSubTitle?: boolean;
   headerSize?: "large" | "medium" | "small" | "x-small";
   headerColor?: "primary" | "secondary" | "secondary-light";
+  recordsCount?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -38,6 +39,7 @@ const props = withDefaults(defineProps<Props>(), {
   hideSubTitle: false,
   headerSize: "large",
   headerColor: "primary",
+  recordsCount: undefined,
 });
 
 const headerProps = computed(() => {
@@ -47,6 +49,7 @@ const headerProps = computed(() => {
     titleHeaderLevel: props.titleHeaderLevel,
     headerSize: props.headerSize,
     headerColor: props.headerColor,
+    recordsCount: props.recordsCount,
   };
 });
 </script>

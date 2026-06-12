@@ -8,10 +8,10 @@
           :class="headerClass"
         />
       </v-col>
-      <v-col cols="auto">
+      <v-col cols="auto" v-if="$slots['status-chip']" class="ml-2">
         <slot name="status-chip"></slot>
       </v-col>
-      <v-col>
+      <v-col v-if="$slots['actions']" class="ml-2">
         <slot name="actions"></slot>
       </v-col>
     </v-row>

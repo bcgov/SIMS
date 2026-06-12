@@ -1,18 +1,18 @@
 <template>
-  <v-container>
-    <header-navigator
-      title="Profile"
-      sub-title="Edit Profile"
-      :route-location="institutionProfileRoute"
-    />
-    <full-page-container>
-      <institution-profile-form
-        :profile-data="institutionProfileModel"
-        @submit-institution-profile="updateInstitution"
-        :allowed-role="Role.InstitutionEditProfile"
-      ></institution-profile-form>
-    </full-page-container>
-  </v-container>
+  <full-page-container>
+    <template #header>
+      <header-navigator
+        title="Profile"
+        sub-title="Edit Profile"
+        :route-location="institutionProfileRoute"
+      />
+    </template>
+    <institution-profile-form
+      :profile-data="institutionProfileModel"
+      @submit-institution-profile="updateInstitution"
+      :allowed-role="Role.InstitutionEditProfile"
+    ></institution-profile-form>
+  </full-page-container>
 </template>
 
 <script lang="ts">

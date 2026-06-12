@@ -46,20 +46,20 @@
       </header-navigator>
       <application-header-title :application-id="applicationId" />
     </template>
-    <h2 class="color-blue">Student Application Details</h2>
-    <StudentApplication
-      @render="formRender"
-      :selected-form="selectedForm"
-      :initial-data="initialData"
-      :program-year-id="applicationDetail.applicationProgramYearID"
-      :is-read-only="true"
-      :is-data-ready="isDataReady"
-    />
+    <body-header-container title="Student Application Details">
+      <StudentApplication
+        @render="formRender"
+        :selected-form="selectedForm"
+        :initial-data="initialData"
+        :program-year-id="applicationDetail.applicationProgramYearID"
+        :is-read-only="true"
+        :is-data-ready="isDataReady"
+      />
+    </body-header-container>
     <assess-application-change-request-modal
       ref="assessApplicationChangeRequestModal"
     />
   </full-page-container>
-  <router-view />
 </template>
 <script lang="ts">
 import { onMounted, ref, defineComponent } from "vue";

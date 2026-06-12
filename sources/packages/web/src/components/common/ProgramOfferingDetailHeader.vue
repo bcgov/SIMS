@@ -1,59 +1,51 @@
 <template>
-  <div>
-    <!-- Basic details -->
-    <div class="row">
-      <header-title-value title="Submitted" :value="submitted" />
-      <v-divider-vertical-opaque class="mx-2 my-0" />
-      <header-title-value title="Institution name"
-        ><template #value
-          ><span class="link-primary" @click="goToInstitutionProfile()">
-            {{ headerDetails.institutionName }}
-          </span>
-        </template></header-title-value
-      >
-      <v-divider-vertical-opaque
-        v-if="headerDetails.locationName"
-        class="mx-2 my-0"
-      />
-      <header-title-value
-        v-if="headerDetails.locationName"
-        title="Location"
-        :value="headerDetails.locationName"
-      /><v-divider-vertical-opaque
-        v-if="headerDetails.parentOfferingId"
-        class="mx-2 my-0"
-      />
-      <header-title-value
-        v-if="headerDetails.parentOfferingId"
-        title="Parent offering ID"
-        :value="headerDetails.parentOfferingId"
-      />
-    </div>
-    <!-- Assessment details if assessed by ministry -->
-    <div class="row mt-1" v-if="showApprovalDetails">
-      <header-title-value
-        :title="approvalLabel.assessedByLabel"
-        :value="headerDetails.assessedBy"
-      />
-      <v-divider-vertical-opaque
-        v-if="headerDetails.assessedDate"
-        class="mx-2 my-0"
-      />
-      <header-title-value
-        :title="approvalLabel.assessedDateLabel"
-        v-if="headerDetails.assessedDate"
-        :value="dateOnlyLongString(headerDetails.assessedDate)"
-      />
-      <v-divider-vertical-opaque
-        v-if="headerDetails.effectiveEndDate"
-        class="mx-2 my-0"
-      />
-      <header-title-value
-        v-if="headerDetails.effectiveEndDate"
-        title="Effective end date"
-        :value="dateOnlyLongString(headerDetails.effectiveEndDate)"
-      />
-    </div>
+  <!-- Basic details -->
+  <div class="row">
+    <header-title-value title="Submitted" :value="submitted" />
+    <v-divider-vertical-opaque />
+    <header-title-value title="Institution name"
+      ><template #value
+        ><span class="link-primary" @click="goToInstitutionProfile()">
+          {{ headerDetails.institutionName }}
+        </span>
+      </template></header-title-value
+    >
+    <v-divider-vertical-opaque v-if="headerDetails.locationName" />
+    <header-title-value
+      v-if="headerDetails.locationName"
+      title="Location"
+      :value="headerDetails.locationName"
+    /><v-divider-vertical-opaque v-if="headerDetails.parentOfferingId" />
+    <header-title-value
+      v-if="headerDetails.parentOfferingId"
+      title="Parent offering ID"
+      :value="headerDetails.parentOfferingId"
+    />
+  </div>
+  <!-- Assessment details if assessed by ministry -->
+  <div class="row mt-1" v-if="showApprovalDetails">
+    <header-title-value
+      :title="approvalLabel.assessedByLabel"
+      :value="headerDetails.assessedBy"
+    />
+    <v-divider-vertical-opaque
+      v-if="headerDetails.assessedDate"
+      class="mx-2 my-0"
+    />
+    <header-title-value
+      :title="approvalLabel.assessedDateLabel"
+      v-if="headerDetails.assessedDate"
+      :value="dateOnlyLongString(headerDetails.assessedDate)"
+    />
+    <v-divider-vertical-opaque
+      v-if="headerDetails.effectiveEndDate"
+      class="mx-2 my-0"
+    />
+    <header-title-value
+      v-if="headerDetails.effectiveEndDate"
+      title="Effective end date"
+      :value="dateOnlyLongString(headerDetails.effectiveEndDate)"
+    />
   </div>
 </template>
 
