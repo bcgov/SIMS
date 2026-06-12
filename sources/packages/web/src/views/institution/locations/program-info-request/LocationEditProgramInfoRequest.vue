@@ -67,6 +67,7 @@ import {
   ProgramInfoStatus,
   BannerTypes,
   FormIOChangeEvent,
+  ProgramInfoRequestFormData,
 } from "@/types";
 import {
   STUDY_DATE_OVERLAP_ERROR,
@@ -76,7 +77,6 @@ import {
   CompleteProgramInfoRequestAPIInDTO,
   DenyProgramInfoRequestAPIInDTO,
   ProgramInfoRequestAPIOutDTO,
-  ProgramInfoRequestFormData,
 } from "@/services/http/dto";
 import { AppConfigService } from "@/services/AppConfigService";
 export default defineComponent({

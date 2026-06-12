@@ -65,14 +65,3 @@ export class DenyProgramInfoRequestAPIInDTO {
   @Expose()
   otherReasonDesc?: string;
 }
-
-/**
- * Form data for Program Information Request. This is limited to user entered fields.
- */
-export interface ProgramInfoRequestFormData {
-  denyProgramInformationRequest: boolean;
-  selectedProgram?: number;
-  selectedOffering?: number;
-  pirDenyReasonId?: number;
-  otherReasonDesc?: string;
-}
