@@ -24,8 +24,9 @@
               hide-details="auto"
             >
             </v-text-field>
-          </template> </body-header
-      ></template>
+          </template>
+        </body-header>
+      </template>
       <content-group>
         <toggle-content :toggled="!applications?.count">
           <v-data-table-server
