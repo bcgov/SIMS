@@ -25,7 +25,7 @@
         </slot>
       </v-card-title>
       <v-divider-inset-opaque />
-      <v-card-text class="p-4">
+      <v-card-text class="px-4">
         <div class="pb-2" v-if="subTitle">{{ subTitle }}</div>
         <slot name="content">Please add the modal content here!</slot>
       </v-card-text>

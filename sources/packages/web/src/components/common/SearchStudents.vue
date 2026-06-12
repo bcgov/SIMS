@@ -55,7 +55,7 @@
             hide-details
           />
         </v-col>
-        <v-col cols="12" lg="2">
+        <v-col cols="auto">
           <v-btn color="primary" @click="searchStudents()"> Search </v-btn>
         </v-col>
       </v-row>

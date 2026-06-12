@@ -1,11 +1,11 @@
 <template>
-  <full-page-container full-width="true">
+  <full-page-container :full-width="true">
     <body-header-container
       title="Search Institution"
       sub-title="Look up an institution by entering their information below."
       ><content-group>
         <v-form ref="searchInstitutionsForm">
-          <v-row>
+          <v-row density="compact">
             <v-col cols="12" md>
               <v-text-field
                 density="compact"
