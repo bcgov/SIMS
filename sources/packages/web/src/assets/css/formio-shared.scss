@@ -802,6 +802,7 @@ td .formio-custom-tooltip:hover .tooltip-text {
   border-radius: 5px;
   border: 1px solid $application-changed-value-color;
   padding: 4px;
+  margin-top: 10px;
 }
 
 .changed-value-content-base {
@@ -877,8 +878,6 @@ td .formio-custom-tooltip:hover .tooltip-text {
 
 // Global override to thin Bootstrap's table-bordered borders within form.io forms.
 .ff-form-container .formio-component-datagrid .datagrid-table {
-  width: 100%;
-  max-width: 100%;
   border-spacing: 0;
   border: 0px !important;
   padding: 0 !important;
