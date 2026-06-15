@@ -71,6 +71,7 @@ import {
   DynamicFormType,
   ProgramInfoStatus,
   StudentScholasticStandingChangeType,
+  AssessmentTriggerType,
 } from "@sims/sims-db";
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
@@ -131,9 +132,10 @@ export class ApplicationControllerService {
 
   /**
    * Enriches the application form data with the PIR outcome summary when the PIR
-   * has been completed. The summary data is sourced from the current assessment
-   * offering which holds the PIR-approved program and offering information.
-   * @param application application entity loaded with current assessment offering
+   * has been completed. The summary data is sourced from the original assessment
+   * offering, since PIR is assessed once per application and is tied to the
+   * original submission, regardless of any subsequent reassessments.
+   * @param application application entity loaded with the original assessment offering
    * and education program data.
    * @param formData form data object to be enriched with the PIR summary.
    */
@@ -144,10 +146,14 @@ export class ApplicationControllerService {
     if (application?.pirStatus !== ProgramInfoStatus.completed) {
       return;
     }
-    const offering = application.currentAssessment?.offering;
-    if (!offering) {
+    const originalAssessment = application.studentAssessments?.find(
+      (assessment) =>
+        assessment.triggerType === AssessmentTriggerType.OriginalAssessment,
+    );
+    if (!originalAssessment?.offering) {
       return;
     }
+    const offering = originalAssessment.offering;
     formData.pirSummary = {
       programName: offering.educationProgram.name,
       offeringName: getOfferingNameAndPeriod(offering),

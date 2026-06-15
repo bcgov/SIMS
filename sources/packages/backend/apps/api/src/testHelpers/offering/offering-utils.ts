@@ -1,7 +1,5 @@
 import { EducationProgramOffering } from "@sims/sims-db";
-import dayjs from "dayjs";
-
-const DATE_ONLY_FORMAT = "MMM DD YYYY";
+import { getDateOnlyFormat } from "@sims/utilities/date-utils";
 
 /**
  * Builds the expected offering name string for test assertions, independent
@@ -16,7 +14,7 @@ export function getExpectedOfferingNameAndPeriod(
     "name" | "studyStartDate" | "studyEndDate" | "yearOfStudy"
   >,
 ): string {
-  const startDate = dayjs(offering.studyStartDate).format(DATE_ONLY_FORMAT);
-  const endDate = dayjs(offering.studyEndDate).format(DATE_ONLY_FORMAT);
+  const startDate = getDateOnlyFormat(offering.studyStartDate);
+  const endDate = getDateOnlyFormat(offering.studyEndDate);
   return `${offering.name} (${startDate} - ${endDate}) - Year ${offering.yearOfStudy}`;
 }

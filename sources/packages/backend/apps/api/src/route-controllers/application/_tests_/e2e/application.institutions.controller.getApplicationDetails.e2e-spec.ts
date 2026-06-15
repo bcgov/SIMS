@@ -26,9 +26,7 @@ import {
   ProgramInfoStatus,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
-import {
-  getUserFullName,
-} from "../../../../utilities";
+import { getUserFullName } from "../../../../utilities";
 
 describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
   let app: INestApplication;

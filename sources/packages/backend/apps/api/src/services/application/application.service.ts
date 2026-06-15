@@ -937,7 +937,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param options object that should contain:
    * - `loadDynamicData` indicates if the dynamic data(JSONB) should be loaded. When true,
    * also loads the additional offering details (name, year of study, and education program)
-   * needed to display the PIR outcome summary.
+   * from the original assessment needed to display the PIR outcome summary.
    * - `studentId` student id.
    * - `entityManager` entity manager to be used for the query. Useful when
    * it needs to be executed in a transaction.
@@ -1025,6 +1025,25 @@ export class ApplicationService extends RecordDataModelService<Application> {
             lastName: true,
           },
         },
+        ...(options?.loadDynamicData
+          ? {
+              studentAssessments: {
+                id: true,
+                triggerType: true,
+                offering: {
+                  id: true,
+                  name: true,
+                  yearOfStudy: true,
+                  studyStartDate: true,
+                  studyEndDate: true,
+                  educationProgram: {
+                    id: true,
+                    name: true,
+                  },
+                },
+              },
+            }
+          : {}),
       },
       relations: {
         applicationException: true,
@@ -1040,6 +1059,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
         precedingApplication: {
           currentAssessment: { offering: true, studentAppeal: true },
         },
+        ...(options?.loadDynamicData
+          ? { studentAssessments: { offering: { educationProgram: true } } }
+          : {}),
       },
       where: {
         id: applicationId,
