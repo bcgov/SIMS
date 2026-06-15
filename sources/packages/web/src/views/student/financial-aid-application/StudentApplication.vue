@@ -13,10 +13,10 @@
     <v-form ref="startApplicationForm">
       <body-header-container title="Apply for funding">
         <content-group
-          ><p class="category-header-medium-small pb-2">
+          ><p class="category-header-medium-small mt-0">
             Financial Aid Application
           </p>
-          <p class="pb-3">
+          <p>
             In what capacity will you be attending this program?
             <tooltip-icon
               >A student is considered to be in part-time studies when taking
@@ -30,13 +30,12 @@
             variant="outlined"
             density="compact"
             label="Select offering intensity"
-            class="px-2 pb-4"
             :rules="[(v) => checkNullOrEmptyRule(v, 'Offering intensity')]"
             hide-details="auto"
             @update:model-value="offeringIntensityUpdated"
             required
           ></v-select>
-          <p class="pb-3">
+          <p>
             Please select your program year. This is for students attending
             full-time or part-time studies.
           </p>
@@ -46,7 +45,6 @@
             variant="outlined"
             density="compact"
             label="Select program year"
-            class="px-2 pb-4"
             :rules="[(v) => checkNullOrEmptyRule(v, 'Year')]"
             hide-details="auto"
             required

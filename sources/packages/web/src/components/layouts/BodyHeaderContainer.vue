@@ -1,12 +1,10 @@
 <template>
   <div class="mb-3">
-    <v-card v-if="props.enableCardView">
-      <v-container :fluid="true">
-        <slot name="header"></slot>
-        <div class="mt-2">
-          <slot></slot>
-        </div>
-      </v-container>
+    <v-card v-if="props.enableCardView" class="p-3" elevation="2">
+      <slot name="header"><body-header v-bind="headerProps" /></slot>
+      <div class="mt-1">
+        <slot></slot>
+      </div>
     </v-card>
     <div v-else class="mb-3">
       <slot name="header"><body-header v-bind="headerProps" /></slot>
