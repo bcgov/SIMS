@@ -75,7 +75,6 @@ export class ApplicationInstitutionsController extends BaseController {
     if (loadDynamicData) {
       application.data =
         await this.applicationControllerService.generateApplicationFormData(
-          application.data,
           application,
         );
     }

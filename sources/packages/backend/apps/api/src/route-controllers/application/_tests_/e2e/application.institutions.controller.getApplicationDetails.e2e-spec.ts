@@ -5,6 +5,7 @@ import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAuthRelatedEntities,
+  getExpectedOfferingNameAndPeriod,
   getInstitutionToken,
   INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
   INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
@@ -27,7 +28,6 @@ import {
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import {
   getUserFullName,
-  getOfferingNameAndPeriod,
 } from "../../../../utilities";
 
 describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
@@ -281,12 +281,6 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
 
   it("Should return PIR summary in application data when the application has PIR status completed.", async () => {
     // Arrange
-    const offeringInitialValues = {
-      name: "Test PIR Offering Name",
-      studyStartDate: "2024-09-01",
-      studyEndDate: "2025-04-30",
-      yearOfStudy: 2,
-    } as Partial<EducationProgramOffering>;
     const savedApplication = await saveFakeApplication(
       db.dataSource,
       { institutionLocation: collegeFLocation },
@@ -294,7 +288,6 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         applicationStatus: ApplicationStatus.Assessment,
         offeringIntensity: OfferingIntensity.fullTime,
         pirStatus: ProgramInfoStatus.completed,
-        offeringInitialValues,
       },
     );
     const savedOffering = savedApplication.currentAssessment!.offering!;
@@ -313,8 +306,8 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         expect(body).toMatchObject({
           data: {
             pirSummary: {
-              programName: savedOffering!.educationProgram.name,
-              offeringName: getOfferingNameAndPeriod(savedOffering!),
+              programName: savedOffering.educationProgram.name,
+              offeringName: getExpectedOfferingNameAndPeriod(savedOffering),
             },
           },
         }),

@@ -119,15 +119,14 @@ export class ApplicationControllerService {
    * @returns ApplicationFormData.
    */
   async generateApplicationFormData(
-    data: ApplicationData,
-    application?: Application,
+    application: Application,
   ): Promise<ApplicationFormData> {
     const additionalFormData = {} as ApplicationFormData;
-    await this.processSelectedLocation(data, additionalFormData);
-    await this.processSelectedProgram(data, additionalFormData);
-    await this.processSelectedOffering(data, additionalFormData);
+    await this.processSelectedLocation(application.data, additionalFormData);
+    await this.processSelectedProgram(application.data, additionalFormData);
+    await this.processSelectedOffering(application.data, additionalFormData);
     this.processPIRSummary(application, additionalFormData);
-    return { ...data, ...additionalFormData };
+    return { ...application.data, ...additionalFormData };
   }
 
   /**

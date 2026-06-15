@@ -5,6 +5,7 @@ import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
+  getExpectedOfferingNameAndPeriod,
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
@@ -19,10 +20,7 @@ import {
   OfferingIntensity,
   ProgramInfoStatus,
 } from "@sims/sims-db";
-import {
-  getUserFullName,
-  getOfferingNameAndPeriod,
-} from "../../../../utilities";
+import { getUserFullName } from "../../../../utilities";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 
 describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
@@ -261,12 +259,6 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
 
   it("Should return PIR summary in application data when the application has PIR status completed and dynamic data is loaded.", async () => {
     // Arrange
-    const offeringInitialValues = {
-      name: "Test PIR Offering Name",
-      studyStartDate: "2024-09-01",
-      studyEndDate: "2025-04-30",
-      yearOfStudy: 2,
-    } as Partial<EducationProgramOffering>;
     const application = await saveFakeApplication(
       db.dataSource,
       {},
@@ -274,7 +266,6 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
         applicationStatus: ApplicationStatus.Assessment,
         offeringIntensity: OfferingIntensity.fullTime,
         pirStatus: ProgramInfoStatus.completed,
-        offeringInitialValues,
       },
     );
 
@@ -292,7 +283,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
           data: {
             pirSummary: {
               programName: savedOffering.educationProgram.name,
-              offeringName: getOfferingNameAndPeriod(savedOffering),
+              offeringName: getExpectedOfferingNameAndPeriod(savedOffering),
             },
           },
         }),

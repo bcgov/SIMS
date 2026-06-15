@@ -118,7 +118,6 @@ export class ApplicationStudentsController extends BaseController {
 
     const applicationDataPromise =
       this.applicationControllerService.generateApplicationFormData(
-        application.data,
         application,
       );
     const firstCOEPromise =

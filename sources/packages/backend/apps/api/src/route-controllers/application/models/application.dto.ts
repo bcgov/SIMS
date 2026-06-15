@@ -109,12 +109,12 @@ export interface ApplicationFormData extends ApplicationData {
    */
   pirSummary?: {
     /**
-     * Program name from the completed PIR's current assessment offering.
+     * Program name from the completed PIR in the application's original assessment.
      */
     programName?: string;
     /**
      * Formatted offering name (including year of study and dates) from the
-     * completed PIR's current assessment offering.
+     * completed PIR in the application's original assessment.
      */
     offeringName?: string;
   };

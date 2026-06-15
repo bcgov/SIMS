@@ -4,6 +4,7 @@ import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   FakeStudentUsersTypes,
+  getExpectedOfferingNameAndPeriod,
   getStudentToken,
   mockJWTUserInfo,
   resetMockJWTUserInfo,
@@ -17,12 +18,10 @@ import {
 import {
   Application,
   ApplicationStatus,
-  EducationProgramOffering,
   OfferingIntensity,
   ProgramInfoStatus,
   Student,
 } from "@sims/sims-db";
-import { getOfferingNameAndPeriod } from "../../../../utilities";
 import { getDateOnlyFormat } from "@sims/utilities";
 import { TestingModule } from "@nestjs/testing";
 
@@ -208,7 +207,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
           pirSummary: {
             programName:
               application.currentAssessment!.offering!.educationProgram.name,
-            offeringName: getOfferingNameAndPeriod(
+            offeringName: getExpectedOfferingNameAndPeriod(
               application.currentAssessment!.offering!,
             ),
           },
@@ -319,12 +318,6 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
 
   it("Should return PIR summary in application data when the application has PIR status completed.", async () => {
     // Arrange
-    const offeringInitialValues = {
-      name: "Test PIR Offering Name",
-      studyStartDate: "2024-09-01",
-      studyEndDate: "2025-04-30",
-      yearOfStudy: 2,
-    } as Partial<EducationProgramOffering>;
     const application = await saveFakeApplication(
       db.dataSource,
       { student },
@@ -332,7 +325,6 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
         applicationStatus: ApplicationStatus.Assessment,
         offeringIntensity: OfferingIntensity.fullTime,
         pirStatus: ProgramInfoStatus.completed,
-        offeringInitialValues,
       },
     );
     const savedOffering = application.currentAssessment!.offering!;
@@ -352,7 +344,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
           data: {
             pirSummary: {
               programName: savedOffering.educationProgram.name,
-              offeringName: getOfferingNameAndPeriod(savedOffering),
+              offeringName: getExpectedOfferingNameAndPeriod(savedOffering),
             },
           },
         }),
