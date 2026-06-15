@@ -6,60 +6,64 @@
         sub-title="Change Requests (2025-2026 and later)"
       />
     </template>
-    <body-header
-      title="Pending change requests"
-      :records-count="changeRequests.count"
-      sub-title="Change requests that require ministry review."
-    >
-      <template #actions>
-        <v-text-field
-          density="compact"
-          label="Search name or application #"
-          variant="outlined"
-          v-model="searchCriteria"
-          @keyup.enter="resetPageAndLoadApplications"
-          prepend-inner-icon="mdi-magnify"
-          hide-details="auto"
-        />
-      </template>
-    </body-header>
-    <content-group>
-      <toggle-content :toggled="!changeRequests.count && !isLoading">
-        <v-data-table-server
-          :headers="PendingChangeRequestsTableHeaders"
-          :items="changeRequests.results"
-          :items-length="changeRequests.count"
-          :loading="isLoading"
-          :items-per-page="DEFAULT_PAGE_LIMIT"
-          :items-per-page-options="ITEMS_PER_PAGE"
-          @update:options="paginationAndSortEvent"
+    <body-header-container>
+      <template #header>
+        <body-header
+          title="Pending change requests"
+          :records-count="changeRequests.count"
+          sub-title="Change requests that require ministry review."
         >
-          <template #loading>
-            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+          <template #actions>
+            <v-text-field
+              density="compact"
+              label="Search name or application #"
+              variant="outlined"
+              v-model="searchCriteria"
+              @keyup.enter="resetPageAndLoadApplications"
+              prepend-inner-icon="mdi-magnify"
+              hide-details="auto"
+            />
           </template>
-          <template #[`item.submittedDate`]="{ item }">
-            {{ dateOnlyLongString(item.submittedDate) }}
-          </template>
-          <template #[`item.firstName`]="{ item }">
-            {{ emptyStringFiller(item.firstName) }}
-          </template>
-          <template #[`item.action`]="{ item }">
-            <v-btn
-              color="primary"
-              @click="
-                navigateToApplicationVersion(
-                  item.applicationId,
-                  item.studentId,
-                  item.precedingApplicationId,
-                )
-              "
-            >
-              View
-            </v-btn>
-          </template>
-        </v-data-table-server>
-      </toggle-content>
-    </content-group>
+        </body-header>
+      </template>
+      <content-group>
+        <toggle-content :toggled="!changeRequests.count && !isLoading">
+          <v-data-table-server
+            :headers="PendingChangeRequestsTableHeaders"
+            :items="changeRequests.results"
+            :items-length="changeRequests.count"
+            :loading="isLoading"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            @update:options="paginationAndSortEvent"
+          >
+            <template #loading>
+              <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+            </template>
+            <template #[`item.submittedDate`]="{ item }">
+              {{ dateOnlyLongString(item.submittedDate) }}
+            </template>
+            <template #[`item.firstName`]="{ item }">
+              {{ emptyStringFiller(item.firstName) }}
+            </template>
+            <template #[`item.action`]="{ item }">
+              <v-btn
+                color="primary"
+                @click="
+                  navigateToApplicationVersion(
+                    item.applicationId,
+                    item.studentId,
+                    item.precedingApplicationId,
+                  )
+                "
+              >
+                View
+              </v-btn>
+            </template>
+          </v-data-table-server>
+        </toggle-content>
+      </content-group>
+    </body-header-container>
   </full-page-container>
 </template>
 

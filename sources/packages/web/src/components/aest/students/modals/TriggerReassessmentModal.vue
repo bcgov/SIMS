@@ -1,8 +1,8 @@
 <template>
   <v-form ref="reassessmentForm">
-    <modal-dialog-base :showDialog="showDialog" title="Trigger Reassessment">
+    <modal-dialog-base :show-dialog="showDialog" title="Trigger Reassessment">
       <template #content>
-        <p class="pt-1 brand-gray-text">
+        <p class="brand-gray-text mt-0">
           Triggering reassessment will not change student's application inputs
           currently on file. This will rerun the student's assessment,
           potentially requiring a school to reconfirm enrolment, and potentially
@@ -21,9 +21,9 @@
       <template #footer>
         <footer-buttons
           :processing="loading"
-          primaryLabel="Trigger reassessment"
-          @secondaryClick="cancel"
-          @primaryClick="triggerReassessment"
+          primary-label="Trigger reassessment"
+          @secondary-click="cancel"
+          @primary-click="triggerReassessment"
         />
       </template>
     </modal-dialog-base>

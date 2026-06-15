@@ -215,6 +215,7 @@
 }
 
 .formio-component .col-form-label {
+  display: block;
   font-weight: $font-weight-bold;
 }
 
@@ -801,6 +802,7 @@ td .formio-custom-tooltip:hover .tooltip-text {
   border-radius: 5px;
   border: 1px solid $application-changed-value-color;
   padding: 4px;
+  margin-top: 10px;
 }
 
 .changed-value-content-base {
@@ -879,9 +881,19 @@ td .formio-custom-tooltip:hover .tooltip-text {
   border-spacing: 0;
   border: 0px !important;
   padding: 0 !important;
+
+  // Datagrid rows can include Bootstrap .row with negative side margins.
+  // Resetting margins here prevents horizontal overflow inside table cells.
+  .row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
   td,
   th {
     border: 1px solid #ddd !important;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 }
 
@@ -923,4 +935,19 @@ td .formio-custom-tooltip:hover .tooltip-text {
   margin: 0;
   padding: 0;
   min-width: 0;
+}
+
+.formio-component h1,
+.formio-component h2,
+.formio-component h3,
+.formio-component h4,
+.formio-component h5,
+.formio-component h6 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.formio-component p {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
 }

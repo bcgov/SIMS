@@ -1,51 +1,57 @@
 <template>
-  <body-header
-    :title="pageTitle"
-    :records-count="applicationAppeals.count"
-    :sub-title="pageDescription"
-  >
-    <template #actions>
-      <v-text-field
-        density="compact"
-        label="Search name or application number"
-        variant="outlined"
-        v-model="searchCriteria"
-        @keyup.enter="searchAppeals"
-        prepend-inner-icon="mdi-magnify"
-        hide-details="auto"
+  <body-header-container>
+    <template #header>
+      <body-header
+        :title="pageTitle"
+        :records-count="applicationAppeals.count"
+        :sub-title="pageDescription"
       >
-      </v-text-field>
+        <template #actions>
+          <v-text-field
+            density="compact"
+            label="Search name or application number"
+            variant="outlined"
+            v-model="searchCriteria"
+            @keyup.enter="searchAppeals"
+            prepend-inner-icon="mdi-magnify"
+            hide-details="auto"
+          >
+          </v-text-field>
+        </template>
+      </body-header>
     </template>
-  </body-header>
-  <content-group>
-    <toggle-content :toggled="!applicationAppeals.count && !isLoading">
-      <v-data-table-server
-        :headers="PendingChangeRequestsTableHeaders"
-        :items="applicationAppeals.results"
-        :items-length="applicationAppeals.count"
-        :loading="isLoading"
-        :items-per-page="DEFAULT_PAGE_LIMIT"
-        :items-per-page-options="ITEMS_PER_PAGE"
-        @update:options="pageSortEvent"
-      >
-        <template #loading>
-          <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
-        </template>
-        <template #[`item.submittedDate`]="{ item }">
-          {{ dateOnlyLongString(item.submittedDate) }}
-        </template>
-        <template #[`item.firstName`]="{ item }">
-          {{ emptyStringFiller(item.firstName) }}
-        </template>
-        <template #[`item.applicationNumber`]="{ item }">
-          {{ emptyStringFiller(item.applicationNumber) }}
-        </template>
-        <template #[`item.action`]="{ item }">
-          <v-btn color="primary" @click="goToAppealsApproval(item)">View</v-btn>
-        </template>
-      </v-data-table-server>
-    </toggle-content>
-  </content-group>
+    <content-group>
+      <toggle-content :toggled="!applicationAppeals.count && !isLoading">
+        <v-data-table-server
+          :headers="PendingChangeRequestsTableHeaders"
+          :items="applicationAppeals.results"
+          :items-length="applicationAppeals.count"
+          :loading="isLoading"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          @update:options="pageSortEvent"
+        >
+          <template #loading>
+            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+          </template>
+          <template #[`item.submittedDate`]="{ item }">
+            {{ dateOnlyLongString(item.submittedDate) }}
+          </template>
+          <template #[`item.firstName`]="{ item }">
+            {{ emptyStringFiller(item.firstName) }}
+          </template>
+          <template #[`item.applicationNumber`]="{ item }">
+            {{ emptyStringFiller(item.applicationNumber) }}
+          </template>
+          <template #[`item.action`]="{ item }">
+            <v-btn color="primary" @click="goToAppealsApproval(item)"
+              >View</v-btn
+            >
+          </template>
+        </v-data-table-server>
+      </toggle-content>
+    </content-group>
+  </body-header-container>
 </template>
 
 <script setup lang="ts">

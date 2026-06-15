@@ -1,63 +1,68 @@
 <template>
-  <body-header
+  <body-header-container
     title="Pending appeals"
     :records-count="applicationAppeals.count"
     sub-title="Appeals that require ministry review."
-  />
-  <search-table
-    v-model="searchCriteria"
-    search-label="Search name or application number"
-    :loading="isLoading"
-    @search="searchAppeals"
   >
-    <template #append-search>
-      <v-btn-toggle
-        v-model="selectedFilter"
-        color="primary"
-        density="compact"
-        class="btn-toggle"
-        selected-class="selected-btn-toggle"
-        @update:model-value="onFilterChange"
-      >
-        <v-btn value="all" rounded="xl" color="primary" class="mr-2">All</v-btn>
-        <v-btn :value="true" rounded="xl" color="primary" class="mr-2"
-          >Application</v-btn
+    <search-table
+      v-model="searchCriteria"
+      search-label="Search name or application number"
+      :loading="isLoading"
+      @search="searchAppeals"
+    >
+      <template #append-search>
+        <v-btn-toggle
+          v-model="selectedFilter"
+          color="primary"
+          density="compact"
+          class="btn-toggle"
+          selected-class="selected-btn-toggle"
+          @update:model-value="onFilterChange"
         >
-        <v-btn :value="false" rounded="xl" color="primary">Other</v-btn>
-      </v-btn-toggle>
-    </template>
-    <toggle-content :toggled="!applicationAppeals.count && !isLoading">
-      <v-data-table-server
-        :headers="PendingAppealsTableHeaders"
-        :items="applicationAppeals.results"
-        :items-length="applicationAppeals.count"
-        :loading="isLoading"
-        :items-per-page="DEFAULT_PAGE_LIMIT"
-        :items-per-page-options="ITEMS_PER_PAGE"
-        @update:options="pageSortEvent"
-        :mobile="isMobile"
-      >
-        <template #loading>
-          <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
-        </template>
-        <template #[`item.submittedDate`]="{ item }">
-          {{ dateOnlyLongString(item.submittedDate) }}
-        </template>
-        <template #[`item.firstName`]="{ item }">
-          {{ emptyStringFiller(item.firstName) }}
-        </template>
-        <template #[`item.applicationNumber`]="{ item }">
-          {{ emptyStringFiller(item.applicationNumber) }}
-        </template>
-        <template #[`item.appealType`]="{ item }">
-          {{ item.applicationId ? "Application" : "Other" }}
-        </template>
-        <template #[`item.action`]="{ item }">
-          <v-btn color="primary" @click="goToAppealsApproval(item)">View</v-btn>
-        </template>
-      </v-data-table-server>
-    </toggle-content>
-  </search-table>
+          <v-btn value="all" rounded="xl" color="primary" class="mr-2"
+            >All</v-btn
+          >
+          <v-btn :value="true" rounded="xl" color="primary" class="mr-2"
+            >Application</v-btn
+          >
+          <v-btn :value="false" rounded="xl" color="primary">Other</v-btn>
+        </v-btn-toggle>
+      </template>
+      <toggle-content :toggled="!applicationAppeals.count && !isLoading">
+        <v-data-table-server
+          :headers="PendingAppealsTableHeaders"
+          :items="applicationAppeals.results"
+          :items-length="applicationAppeals.count"
+          :loading="isLoading"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          @update:options="pageSortEvent"
+          :mobile="isMobile"
+        >
+          <template #loading>
+            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+          </template>
+          <template #[`item.submittedDate`]="{ item }">
+            {{ dateOnlyLongString(item.submittedDate) }}
+          </template>
+          <template #[`item.firstName`]="{ item }">
+            {{ emptyStringFiller(item.firstName) }}
+          </template>
+          <template #[`item.applicationNumber`]="{ item }">
+            {{ emptyStringFiller(item.applicationNumber) }}
+          </template>
+          <template #[`item.appealType`]="{ item }">
+            {{ item.applicationId ? "Application" : "Other" }}
+          </template>
+          <template #[`item.action`]="{ item }">
+            <v-btn color="primary" @click="goToAppealsApproval(item)"
+              >View</v-btn
+            >
+          </template>
+        </v-data-table-server>
+      </toggle-content>
+    </search-table>
+  </body-header-container>
 </template>
 
 <script setup lang="ts">

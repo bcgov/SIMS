@@ -1,24 +1,27 @@
 <template>
-  <body-header title="Export reports" />
-  <formio
-    formName="exportfinancialreports"
-    @loaded="formLoaded"
-    @changed="formChanged"
-    @submitted="exportReport"
-  ></formio>
-  <v-row class="justify-center m-4">
-    <check-permission-role :role="Role.AESTReports">
-      <template #="{ notAllowed }">
-        <v-btn
-          color="primary"
-          @click="submitForm"
-          :disabled="notAllowed"
-          :loading="loading"
-          >Export CSV file</v-btn
-        >
+  <body-header-container title="Export reports">
+    <formio
+      form-name="exportfinancialreports"
+      @loaded="formLoaded"
+      @changed="formChanged"
+      @submitted="exportReport"
+    ></formio>
+    <footer-buttons :show-secondary-button="false">
+      <template #primary-buttons>
+        <check-permission-role :role="Role.AESTReports">
+          <template #="{ notAllowed }">
+            <v-btn
+              color="primary"
+              @click="submitForm"
+              :disabled="notAllowed"
+              :loading="loading"
+              >Export CSV file</v-btn
+            >
+          </template>
+        </check-permission-role>
       </template>
-    </check-permission-role>
-  </v-row>
+    </footer-buttons>
+  </body-header-container>
 </template>
 
 <script lang="ts">

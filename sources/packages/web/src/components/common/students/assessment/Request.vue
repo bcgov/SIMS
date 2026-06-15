@@ -1,50 +1,48 @@
 <template>
-  <v-card v-if="requestedAssessments.length || showWhenEmpty">
-    <v-container>
-      <body-header
-        title="Unapproved changes"
-        sub-title="Pending or declined requests submitted by the student or institution."
-        :records-count="requestedAssessments.length"
+  <body-header-container
+    enable-card-view="true"
+    v-if="requestedAssessments.length || showWhenEmpty"
+    title="Unapproved changes"
+    sub-title="Pending or declined requests submitted by the student or institution."
+    :records-count="requestedAssessments.length"
+  >
+    <content-group>
+      <toggle-content
+        :toggled="!requestedAssessments.length"
+        message="No requests found."
       >
-      </body-header>
-      <content-group>
-        <toggle-content
-          :toggled="!requestedAssessments.length"
-          message="No requests found."
+        <v-data-table
+          :headers="UnapprovedChangesHeaders"
+          :items="requestedAssessments"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          :mobile="isMobile"
         >
-          <v-data-table
-            :headers="UnapprovedChangesHeaders"
-            :items="requestedAssessments"
-            :items-per-page="DEFAULT_PAGE_LIMIT"
-            :items-per-page-options="ITEMS_PER_PAGE"
-            :mobile="isMobile"
-          >
-            <template #[`item.submittedDate`]="{ item }">
-              {{ dateOnlyLongString(item.submittedDate) }}
-            </template>
-            <template #[`item.requestType`]="{ item }">
-              {{ getRequestTypeToDisplay(item.requestType) }}
-            </template>
-            <template #[`item.requestForm`]="{ item }">
-              <v-btn
-                v-if="canShowViewRequest(item)"
-                @click="viewRequestForm(item)"
-                color="primary"
-                variant="text"
-                class="text-decoration-underline"
-                prepend-icon="fa:far fa-file-alt"
-              >
-                View request</v-btn
-              >
-            </template>
-            <template #[`item.status`]="{ item }">
-              <status-chip-requested-assessment :status="item.status" />
-            </template>
-          </v-data-table>
-        </toggle-content>
-      </content-group>
-    </v-container>
-  </v-card>
+          <template #[`item.submittedDate`]="{ item }">
+            {{ dateOnlyLongString(item.submittedDate) }}
+          </template>
+          <template #[`item.requestType`]="{ item }">
+            {{ getRequestTypeToDisplay(item.requestType) }}
+          </template>
+          <template #[`item.requestForm`]="{ item }">
+            <v-btn
+              v-if="canShowViewRequest(item)"
+              @click="viewRequestForm(item)"
+              color="primary"
+              variant="text"
+              class="text-decoration-underline"
+              prepend-icon="fa:far fa-file-alt"
+            >
+              View request</v-btn
+            >
+          </template>
+          <template #[`item.status`]="{ item }">
+            <status-chip-requested-assessment :status="item.status" />
+          </template>
+        </v-data-table>
+      </toggle-content>
+    </content-group>
+  </body-header-container>
 </template>
 <script lang="ts">
 import {

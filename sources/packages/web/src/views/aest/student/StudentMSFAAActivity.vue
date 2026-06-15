@@ -1,9 +1,9 @@
 <template>
   <tab-container>
-    <body-header-container>
-      <template #header>
-        <body-header title="Activity" :records-count="msfaaActivity?.length" />
-      </template>
+    <body-header-container
+      title="Activity"
+      :records-count="msfaaActivity?.length"
+    >
       <content-group>
         <toggle-content
           :toggled="!msfaaActivity?.length && !isLoading"

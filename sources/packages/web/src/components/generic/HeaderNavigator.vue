@@ -23,10 +23,8 @@
         <slot name="sub-title-details"></slot>
       </span>
     </v-col>
-    <v-col>
-      <div class="float-right header-button">
-        <slot name="buttons"> </slot>
-      </div>
+    <v-col class="d-flex justify-end">
+      <slot name="buttons"></slot>
     </v-col>
   </v-row>
 </template>
