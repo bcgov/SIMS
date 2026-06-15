@@ -3,56 +3,60 @@
     <template #header>
       <header-navigator title="Institution requests" sub-title="Designations" />
     </template>
-    <body-header
-      title="Pending designation requests"
-      sub-title="Pending designation requests that require ministry review."
-      :records-count="designations?.length"
-    >
-      <template #actions>
-        <v-text-field
-          label="Search Designations"
-          density="compact"
-          v-model="searchCriteria"
-          variant="outlined"
-          @keyup.enter="searchDesignations"
-          prepend-inner-icon="mdi-magnify"
-          hide-details="auto"
-        />
-      </template>
-    </body-header>
-    <content-group>
-      <toggle-content
-        :toggled="!designations.length"
-        message="No pending designation requests found."
-      >
-        <v-data-table
-          :headers="PendingDesignationsHeaders"
-          :items="designations"
-          :items-per-page="DEFAULT_PAGE_LIMIT"
-          :items-per-page-options="ITEMS_PER_PAGE"
-          :mobile="isMobile"
+    <body-header-container>
+      <template #header>
+        <body-header
+          title="Pending designation requests"
+          sub-title="Pending designation requests that require ministry review."
+          :records-count="designations?.length"
         >
-          <template #[`item.legalOperatingName`]="{ item }">
-            {{ item.legalOperatingName }}
-          </template>
-          <template #[`item.submittedDate`]="{ item }">
-            {{ dateOnlyLongString(item.submittedDate) }}
-          </template>
-          <template #[`item.designationStatus`]="{ item }">
-            <status-chip-designation :status="item.designationStatus" />
-          </template>
-          <template #[`item.designationId`]="{ item }">
-            <v-btn
+          <template #actions>
+            <v-text-field
+              label="Search Designations"
+              density="compact"
+              v-model="searchCriteria"
               variant="outlined"
-              color="primary"
-              @click="goToViewDesignation(item.designationId)"
-            >
-              View
-            </v-btn>
+              @keyup.enter="searchDesignations"
+              prepend-inner-icon="mdi-magnify"
+              hide-details="auto"
+            />
           </template>
-        </v-data-table>
-      </toggle-content>
-    </content-group>
+        </body-header>
+      </template>
+      <content-group>
+        <toggle-content
+          :toggled="!designations.length"
+          message="No pending designation requests found."
+        >
+          <v-data-table
+            :headers="PendingDesignationsHeaders"
+            :items="designations"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            :mobile="isMobile"
+          >
+            <template #[`item.legalOperatingName`]="{ item }">
+              {{ item.legalOperatingName }}
+            </template>
+            <template #[`item.submittedDate`]="{ item }">
+              {{ dateOnlyLongString(item.submittedDate) }}
+            </template>
+            <template #[`item.designationStatus`]="{ item }">
+              <status-chip-designation :status="item.designationStatus" />
+            </template>
+            <template #[`item.designationId`]="{ item }">
+              <v-btn
+                variant="outlined"
+                color="primary"
+                @click="goToViewDesignation(item.designationId)"
+              >
+                View
+              </v-btn>
+            </template>
+          </v-data-table>
+        </toggle-content>
+      </content-group>
+    </body-header-container>
   </full-page-container>
 </template>
 

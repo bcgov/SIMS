@@ -1,6 +1,6 @@
 <template>
   <v-form ref="approveProgramForm">
-    <modal-dialog-base title="Approve program" :showDialog="showDialog">
+    <modal-dialog-base title="Approve program" :show-dialog="showDialog">
       <template #content>
         <error-summary :errors="approveProgramForm.errors" />
         <div class="pb-2">
@@ -24,6 +24,7 @@
           v-model="formModel.approvedNote"
           variant="outlined"
           :rules="[checkNotesLengthRule]"
+          hide-details="auto"
         />
       </template>
       <template #footer>
@@ -31,10 +32,10 @@
           <template #="{ notAllowed }">
             <footer-buttons
               :processing="processing"
-              primaryLabel="Approve now"
-              @primaryClick="submit"
-              @secondaryClick="cancel"
-              :disablePrimaryButton="notAllowed"
+              primary-label="Approve now"
+              @primary-click="submit"
+              @secondary-click="cancel"
+              :disable-primary-button="notAllowed"
             />
           </template>
         </check-permission-role>

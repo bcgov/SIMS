@@ -73,6 +73,7 @@
           v-model="formModel.note"
           variant="outlined"
           :rules="[checkNotesLengthRule]"
+          hide-details="auto"
         />
       </template>
       <template #footer>

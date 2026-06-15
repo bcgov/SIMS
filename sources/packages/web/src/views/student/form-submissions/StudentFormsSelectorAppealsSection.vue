@@ -1,12 +1,10 @@
 <template>
-  <body-header-container :enable-card-view="true">
-    <template #header>
-      <body-header
-        title="Appeal forms"
-        sub-title="There are two appeal paths available. Please review the options below and select the appropriate path."
-      />
-    </template>
-    <v-expansion-panels class="mt-5" v-model="selectedAppealType">
+  <body-header-container
+    :enable-card-view="true"
+    title="Appeal forms"
+    sub-title="There are two appeal paths available. Please review the options below and select the appropriate path."
+  >
+    <v-expansion-panels v-model="selectedAppealType">
       <v-expansion-panel
         :value="AppealTypes.Application"
         collapse-icon="$expanderCollapseIcon"
@@ -79,7 +77,6 @@
             </template>
           </v-form>
           <footer-buttons
-            class="mt-4"
             primary-label="Request appeal(s)"
             justify="end"
             @primary-click="fillApplicationAppeals"
@@ -140,7 +137,6 @@
             </v-input>
           </v-form>
           <footer-buttons
-            class="mt-4"
             primary-label="Request appeal"
             justify="end"
             @primary-click="fillStudentAppeals"

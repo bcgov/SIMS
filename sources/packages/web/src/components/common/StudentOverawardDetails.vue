@@ -1,41 +1,41 @@
 <template>
-  <body-header-container :enable-card-view="true">
-    <template #header>
-      <body-header
-        title="Overaward balances"
-        sub-title="A balance of overawards broken down by award type"
-      />
-    </template>
-    <v-row>
-      <v-col>
-        <title-value
-          :property-value="
-            formatCurrency(overawardBalance.overawardBalanceValues?.CSLF)
-          "
-        >
-          <template #title>
-            {{ FullTimeAwardTypes.CSLF }}
-            <tooltip-icon>{{
-              getAwardDescription(FullTimeAwardTypes.CSLF)
-            }}</tooltip-icon></template
-          ></title-value
-        >
-      </v-col>
-      <v-col>
-        <title-value
-          :property-value="
-            formatCurrency(overawardBalance.overawardBalanceValues?.BCSL)
-          "
-        >
-          <template #title>
-            {{ FullTimeAwardTypes.BCSL }}
-            <tooltip-icon>{{
-              getAwardDescription(FullTimeAwardTypes.BCSL)
-            }}</tooltip-icon></template
+  <body-header-container
+    :enable-card-view="true"
+    title="Overaward balances"
+    sub-title="A balance of overawards broken down by award type"
+  >
+    <content-group>
+      <v-row>
+        <v-col>
+          <title-value
+            :property-value="
+              formatCurrency(overawardBalance.overawardBalanceValues?.CSLF)
+            "
           >
-        </title-value>
-      </v-col>
-    </v-row>
+            <template #title>
+              {{ FullTimeAwardTypes.CSLF }}
+              <tooltip-icon>{{
+                getAwardDescription(FullTimeAwardTypes.CSLF)
+              }}</tooltip-icon></template
+            ></title-value
+          >
+        </v-col>
+        <v-col>
+          <title-value
+            :property-value="
+              formatCurrency(overawardBalance.overawardBalanceValues?.BCSL)
+            "
+          >
+            <template #title>
+              {{ FullTimeAwardTypes.BCSL }}
+              <tooltip-icon>{{
+                getAwardDescription(FullTimeAwardTypes.BCSL)
+              }}</tooltip-icon></template
+            >
+          </title-value>
+        </v-col>
+      </v-row>
+    </content-group>
   </body-header-container>
 
   <overaward-details

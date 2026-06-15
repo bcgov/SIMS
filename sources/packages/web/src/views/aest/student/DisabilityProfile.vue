@@ -72,12 +72,11 @@
       text="Are you sure you want to delete the draft disability profile?"
     />
     <body-header-container
-      :enable-card-view="true"
       v-if="archivedProfiles.length"
+      :enable-card-view="true"
+      title="History"
+      sub-title="Disability profile history."
     >
-      <template #header>
-        <body-header title="History" sub-title="Disability profile history." />
-      </template>
       <content-group>
         <v-data-table
           :headers="DisabilityProfileArchivedHeaders"

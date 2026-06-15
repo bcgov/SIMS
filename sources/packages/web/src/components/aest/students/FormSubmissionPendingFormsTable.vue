@@ -1,46 +1,49 @@
 <template>
-  <body-header
+  <body-header-container
     title="Pending forms"
     :records-count="pendingForms.count"
     sub-title="Forms that require ministry review."
-  />
-  <search-table
-    v-model="searchCriteria"
-    search-label="Search name"
-    :loading="isLoading"
-    @search="searchForms"
   >
-    <toggle-content :toggled="!pendingForms.count && !isLoading">
-      <v-data-table-server
-        :headers="PendingFormsTableHeaders"
-        :items="pendingForms.results"
-        :items-length="pendingForms.count"
-        :loading="isLoading"
-        :items-per-page="DEFAULT_PAGE_LIMIT"
-        :items-per-page-options="ITEMS_PER_PAGE"
-        @update:options="pageSortEvent"
-        :mobile="isMobile"
-      >
-        <template #loading>
-          <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
-        </template>
-        <template #[`item.submittedDate`]="{ item }">
-          {{ dateOnlyLongString(item.submittedDate) }}
-        </template>
-        <template #[`item.firstName`]="{ item }">
-          {{ emptyStringFiller(item.firstName) }}
-        </template>
-        <template #[`item.formNames`]="{ item }">
-          <div v-for="formName in item.formNames" :key="formName">
-            {{ formName }}
-          </div>
-        </template>
-        <template #[`item.action`]="{ item }">
-          <v-btn color="primary" @click="goToFormSubmission(item)">View</v-btn>
-        </template>
-      </v-data-table-server>
-    </toggle-content>
-  </search-table>
+    <search-table
+      v-model="searchCriteria"
+      search-label="Search name"
+      :loading="isLoading"
+      @search="searchForms"
+    >
+      <toggle-content :toggled="!pendingForms.count && !isLoading">
+        <v-data-table-server
+          :headers="PendingFormsTableHeaders"
+          :items="pendingForms.results"
+          :items-length="pendingForms.count"
+          :loading="isLoading"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          @update:options="pageSortEvent"
+          :mobile="isMobile"
+        >
+          <template #loading>
+            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+          </template>
+          <template #[`item.submittedDate`]="{ item }">
+            {{ dateOnlyLongString(item.submittedDate) }}
+          </template>
+          <template #[`item.firstName`]="{ item }">
+            {{ emptyStringFiller(item.firstName) }}
+          </template>
+          <template #[`item.formNames`]="{ item }">
+            <div v-for="formName in item.formNames" :key="formName">
+              {{ formName }}
+            </div>
+          </template>
+          <template #[`item.action`]="{ item }">
+            <v-btn color="primary" @click="goToFormSubmission(item)"
+              >View</v-btn
+            >
+          </template>
+        </v-data-table-server>
+      </toggle-content>
+    </search-table>
+  </body-header-container>
 </template>
 
 <script setup lang="ts">
@@ -64,6 +67,7 @@ import {
 } from "@/services/http/dto";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
 import { useDisplay } from "vuetify";
+import BodyHeaderContainer from "@/components/layouts/BodyHeaderContainer.vue";
 
 const { mobile: isMobile } = useDisplay();
 

@@ -7,7 +7,7 @@
             <h1 class="category-header-large primary-color">
               {{ props.title }}
             </h1>
-            <p class="my-2">
+            <p>
               <slot name="subtitle">{{ props.subtitle }}</slot>
             </p>
           </v-col>
@@ -21,7 +21,6 @@
               </h2>
               <p>{{ props.loginAreaText }}</p>
               <v-btn
-                class="mt-4"
                 color="primary"
                 @click="login"
                 prepend-icon="fa:fa fa-user"
@@ -33,7 +32,7 @@
         </v-row>
       </template>
       <template v-else>
-        <v-row no-gutters>
+        <v-row no-gutters density="compact">
           <v-col md="9">
             <body-header-container
               :title="props.title"

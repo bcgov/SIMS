@@ -1,12 +1,9 @@
 <!-- This component is shared between ministry and institution users. -->
 <template>
-  <body-header-container>
-    <template #header>
-      <body-header
-        title="Applications"
-        :records-count="applicationsAndCount.count"
-      ></body-header>
-    </template>
+  <body-header-container
+    title="Applications"
+    :records-count="applicationsAndCount.count"
+  >
     <content-group>
       <toggle-content
         :toggled="!applicationsAndCount.count"

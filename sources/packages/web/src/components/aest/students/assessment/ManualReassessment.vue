@@ -1,11 +1,9 @@
 <template>
-  <body-header-container :enable-card-view="true">
-    <template #header>
-      <body-header
-        title="Trigger Reassessment Manually"
-        sub-title="Manual system trigger to re-perform assessment using existing application inputs. This should be used as a means of triggering the assessment or other downstream actions (COE requests, eCert requests) without requiring the student to edit and resubmit their application."
-      />
-    </template>
+  <body-header-container
+    :enable-card-view="true"
+    title="Trigger Reassessment Manually"
+    sub-title="Manual system trigger to re-perform assessment using existing application inputs. This should be used as a means of triggering the assessment or other downstream actions (COE requests, eCert requests) without requiring the student to edit and resubmit their application."
+  >
     <content-group>
       <check-permission-role :role="Role.AESTManualTriggerReassessment">
         <template #="{ notAllowed }">

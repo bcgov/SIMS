@@ -1,12 +1,9 @@
 <!-- This component is student specific. -->
 <template>
-  <body-header-container>
-    <template #header>
-      <body-header
-        title="Applications"
-        :records-count="applicationsAndCount.count"
-      ></body-header>
-    </template>
+  <body-header-container
+    title="Applications"
+    :records-count="applicationsAndCount.count"
+  >
     <content-group>
       <toggle-content
         :toggled="!applicationsAndCount.count"
@@ -232,7 +229,8 @@ export default defineComponent({
           StudentAppealService.shared.getEligibleApplicationsForAppeal(),
         ]);
         applicationsAndCount.value = applicationsResult;
-        eligibleApplicationsForAppeal.value = eligibleAppealsResult.applications;
+        eligibleApplicationsForAppeal.value =
+          eligibleAppealsResult.applications;
       } finally {
         loading.value = false;
       }

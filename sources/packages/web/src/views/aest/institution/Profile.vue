@@ -20,142 +20,155 @@
           </template>
         </body-header>
       </template>
-      <p class="category-header-medium">Institution profile</p>
-      <content-group>
-        <v-row>
-          <v-col>
-            <title-value
-              property-title="Legal operating name"
-              :property-value="institutionProfileDetail.legalOperatingName"
-            />
-            <title-value
-              property-title="Institution name"
-              :property-value="institutionProfileDetail.operatingName"
-            />
-            <title-value
-              property-title="Primary phone number"
-              :property-value="institutionProfileDetail.primaryPhone"
-            />
-            <title-value
-              property-title="Primary email"
-              :property-value="institutionProfileDetail.primaryEmail"
-            />
-            <title-value
-              property-title="Website"
-              :property-value="institutionProfileDetail.website"
-            />
-            <title-value
-              property-title="Established date"
-              :property-value="institutionProfileDetail.establishedDate"
-            />
-          </v-col>
-          <v-divider :thickness="2" vertical />
-          <v-col>
-            <title-value
-              property-title="Regulatory body"
-              :property-value="
-                getRegulatoryBodyToDisplay(
-                  institutionProfileDetail.regulatingBody,
-                )
-              "
-            />
-            <title-value
-              v-if="institutionProfileDetail.regulatingBody === 'other'"
-              property-title="Other regulatory body"
-              :property-value="institutionProfileDetail.otherRegulatingBody"
-            />
-            <title-value
-              property-title="Country"
-              :property-value="
-                emptyStringFiller(institutionProfileDetail.countryName)
-              "
-            />
-            <title-value
-              property-title="Province"
-              :property-value="
-                emptyStringFiller(institutionProfileDetail.provinceName)
-              "
-            />
-            <title-value
-              property-title="Classification"
-              :property-value="
-                getClassificationToDisplay(
-                  institutionProfileDetail.classification,
-                )
-              "
-            />
-            <title-value
-              property-title="Organization status"
-              :property-value="
-                getOrganizationStatusToDisplay(
-                  institutionProfileDetail.organizationStatus,
-                )
-              "
-            />
-            <title-value
-              property-title="Medical"
-              :property-value="
-                getMedicalSchoolStatusToDisplay(
-                  institutionProfileDetail.medicalSchoolStatus,
-                )
-              "
-            />
-          </v-col>
-        </v-row>
-      </content-group>
-      <p class="category-header-medium mt-5">Contact information</p>
-      <v-row>
-        <v-col
-          ><content-group
-            ><span class="label-bold">Institution primary contact</span>
-            <v-row class="mt-1 mb-2 ml-0 text-muted">
-              {{ institutionProfileDetail.primaryContactFirstName }}
-              {{ institutionProfileDetail.primaryContactLastName }}
-            </v-row>
-            <v-row class="mt-1 mb-2 ml-0 text-muted">
-              {{ institutionProfileDetail.primaryContactEmail }}
-            </v-row>
-            <v-row class="mt-1 mb-2 ml-0 text-muted">
-              {{ institutionProfileDetail.primaryContactPhone }}
-            </v-row>
-          </content-group></v-col
-        >
-      </v-row>
-      <p class="category-header-medium mt-5">Mailing address</p>
-      <content-group>
-        <title-value
-          property-title="Address line 1"
-          :property-value="
-            institutionProfileDetail.mailingAddress?.addressLine1
-          "
-        />
-        <title-value
-          property-title="Address line 2"
-          :property-value="
-            emptyStringFiller(
-              institutionProfileDetail.mailingAddress?.addressLine2,
-            )
-          "
-        />
-        <title-value
-          property-title="City"
-          :property-value="institutionProfileDetail.mailingAddress?.city"
-        />
-        <title-value
-          property-title="Postal Code"
-          :property-value="institutionProfileDetail.mailingAddress?.postalCode"
-        />
-        <title-value
-          property-title="Province"
-          :property-value="
-            institutionProfileDetail.mailingAddress?.provinceState
-          "
-        />
-        <title-value
-          property-title="Country"
-          :property-value="institutionProfileDetail.mailingAddress?.country"
-        />
-      </content-group>
+      <body-header-container
+        title="Institution profile"
+        header-size="medium"
+        header-color="secondary"
+      >
+        <content-group>
+          <v-row>
+            <v-col>
+              <title-value
+                property-title="Legal operating name"
+                :property-value="institutionProfileDetail.legalOperatingName"
+              />
+              <title-value
+                property-title="Institution name"
+                :property-value="institutionProfileDetail.operatingName"
+              />
+              <title-value
+                property-title="Primary phone number"
+                :property-value="institutionProfileDetail.primaryPhone"
+              />
+              <title-value
+                property-title="Primary email"
+                :property-value="institutionProfileDetail.primaryEmail"
+              />
+              <title-value
+                property-title="Website"
+                :property-value="institutionProfileDetail.website"
+              />
+              <title-value
+                property-title="Established date"
+                :property-value="institutionProfileDetail.establishedDate"
+              />
+            </v-col>
+            <v-divider :thickness="2" vertical />
+            <v-col>
+              <title-value
+                property-title="Regulatory body"
+                :property-value="
+                  getRegulatoryBodyToDisplay(
+                    institutionProfileDetail.regulatingBody,
+                  )
+                "
+              />
+              <title-value
+                v-if="institutionProfileDetail.regulatingBody === 'other'"
+                property-title="Other regulatory body"
+                :property-value="institutionProfileDetail.otherRegulatingBody"
+              />
+              <title-value
+                property-title="Country"
+                :property-value="
+                  emptyStringFiller(institutionProfileDetail.countryName)
+                "
+              />
+              <title-value
+                property-title="Province"
+                :property-value="
+                  emptyStringFiller(institutionProfileDetail.provinceName)
+                "
+              />
+              <title-value
+                property-title="Classification"
+                :property-value="
+                  getClassificationToDisplay(
+                    institutionProfileDetail.classification,
+                  )
+                "
+              />
+              <title-value
+                property-title="Organization status"
+                :property-value="
+                  getOrganizationStatusToDisplay(
+                    institutionProfileDetail.organizationStatus,
+                  )
+                "
+              />
+              <title-value
+                property-title="Medical"
+                :property-value="
+                  getMedicalSchoolStatusToDisplay(
+                    institutionProfileDetail.medicalSchoolStatus,
+                  )
+                "
+              />
+            </v-col>
+          </v-row>
+        </content-group>
+      </body-header-container>
+      <body-header-container
+        title="Contact information"
+        header-size="medium"
+        header-color="secondary"
+      >
+        <content-group
+          ><span class="label-bold">Institution primary contact</span>
+          <v-row class="mt-1 mb-2 ml-0 text-muted">
+            {{ institutionProfileDetail.primaryContactFirstName }}
+            {{ institutionProfileDetail.primaryContactLastName }}
+          </v-row>
+          <v-row class="mt-1 mb-2 ml-0 text-muted">
+            {{ institutionProfileDetail.primaryContactEmail }}
+          </v-row>
+          <v-row class="mt-1 mb-2 ml-0 text-muted">
+            {{ institutionProfileDetail.primaryContactPhone }}
+          </v-row>
+        </content-group>
+      </body-header-container>
+      <body-header-container
+        title="Mailing address"
+        header-size="medium"
+        header-color="secondary"
+      >
+        <content-group>
+          <title-value
+            property-title="Address line 1"
+            :property-value="
+              institutionProfileDetail.mailingAddress?.addressLine1
+            "
+          />
+          <title-value
+            property-title="Address line 2"
+            :property-value="
+              emptyStringFiller(
+                institutionProfileDetail.mailingAddress?.addressLine2,
+              )
+            "
+          />
+          <title-value
+            property-title="City"
+            :property-value="institutionProfileDetail.mailingAddress?.city"
+          />
+          <title-value
+            property-title="Postal Code"
+            :property-value="
+              institutionProfileDetail.mailingAddress?.postalCode
+            "
+          />
+          <title-value
+            property-title="Province"
+            :property-value="
+              institutionProfileDetail.mailingAddress?.provinceState
+            "
+          />
+          <title-value
+            property-title="Country"
+            :property-value="institutionProfileDetail.mailingAddress?.country"
+          />
+        </content-group>
+      </body-header-container>
     </body-header-container>
   </tab-container>
 </template>

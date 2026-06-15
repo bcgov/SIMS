@@ -1,11 +1,11 @@
 <template>
   <body-header-container
-    :enable-card-view="true"
+    enable-card-view="true"
     title="Completed changes"
     sub-title="Any events that resulted in a change to the students assessment."
     :records-count="assessmentHistory.length"
   >
-    <content-group class="mt-4">
+    <content-group>
       <toggle-content
         :toggled="!assessmentHistory.length"
         message="No assessments found."

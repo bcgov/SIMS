@@ -3,57 +3,61 @@
     <template #header>
       <header-navigator title="Institution requests" sub-title="Programs" />
     </template>
-    <body-header
-      title="Pending programs"
-      :records-count="programsAndCount?.count"
-    >
-      <template #subtitle>
-        Program requests that require Ministry review.
-      </template>
-      <template #actions>
-        <v-text-field
-          density="compact"
-          label="Search program or institution name"
-          variant="outlined"
-          v-model="searchCriteria"
-          @keyup.enter="searchPrograms"
-          prepend-inner-icon="mdi-magnify"
-          hide-details="auto"
+    <body-header-container>
+      <template #header>
+        <body-header
+          title="Pending programs"
+          :records-count="programsAndCount?.count"
         >
-        </v-text-field>
+          <template #subtitle>
+            Program requests that require Ministry review.
+          </template>
+          <template #actions>
+            <v-text-field
+              density="compact"
+              label="Search program or institution name"
+              variant="outlined"
+              v-model="searchCriteria"
+              @keyup.enter="searchPrograms"
+              prepend-inner-icon="mdi-magnify"
+              hide-details="auto"
+            >
+            </v-text-field>
+          </template>
+        </body-header>
       </template>
-    </body-header>
-    <content-group>
-      <toggle-content :toggled="!programsAndCount?.count && !loading">
-        <v-data-table-server
-          :headers="PendingProgramsHeaders"
-          :items="programsAndCount?.results"
-          :items-length="programsAndCount?.count"
-          :loading="loading"
-          item-value="id"
-          :items-per-page="DEFAULT_PAGE_LIMIT"
-          :items-per-page-options="ITEMS_PER_PAGE"
-          :mobile="isMobile"
-          @update:options="pageSortEvent"
-        >
-          <template #loading>
-            <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
-          </template>
-          <template #[`item.institutionOperatingName`]="{ item }">
-            {{ item.institutionOperatingName }}
-          </template>
-          <template #[`item.programName`]="{ item }">
-            {{ item.programName }}
-          </template>
-          <template #[`item.submittedDate`]="{ item }">
-            {{ dateOnlyLongString(item.submittedDate) }}
-          </template>
-          <template #[`item.actions`]="{ item }">
-            <v-btn color="primary" @click="viewProgram(item)">View</v-btn>
-          </template>
-        </v-data-table-server>
-      </toggle-content>
-    </content-group>
+      <content-group>
+        <toggle-content :toggled="!programsAndCount?.count && !loading">
+          <v-data-table-server
+            :headers="PendingProgramsHeaders"
+            :items="programsAndCount?.results"
+            :items-length="programsAndCount?.count"
+            :loading="loading"
+            item-value="id"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            :mobile="isMobile"
+            @update:options="pageSortEvent"
+          >
+            <template #loading>
+              <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+            </template>
+            <template #[`item.institutionOperatingName`]="{ item }">
+              {{ item.institutionOperatingName }}
+            </template>
+            <template #[`item.programName`]="{ item }">
+              {{ item.programName }}
+            </template>
+            <template #[`item.submittedDate`]="{ item }">
+              {{ dateOnlyLongString(item.submittedDate) }}
+            </template>
+            <template #[`item.actions`]="{ item }">
+              <v-btn color="primary" @click="viewProgram(item)">View</v-btn>
+            </template>
+          </v-data-table-server>
+        </toggle-content>
+      </content-group>
+    </body-header-container>
   </full-page-container>
 </template>
 

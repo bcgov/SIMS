@@ -3,48 +3,48 @@
     <template #header>
       <header-navigator title="Student requests" sub-title="Accounts" />
     </template>
-    <body-header
+    <body-header-container
       title="Pending account requests"
       sub-title="Basic BCeID account requests that require ministry review."
       :records-count="accountApplications?.length"
     >
-    </body-header>
-    <content-group>
-      <toggle-content
-        :toggled="!accountApplications.length"
-        message="No pending account requests found."
-      >
-        <v-data-table
-          :headers="StudentAccountRequestsHeaders"
-          :items="accountApplications"
-          :items-per-page="DEFAULT_PAGE_LIMIT"
-          :items-per-page-options="ITEMS_PER_PAGE"
-          :mobile="isMobile"
+      <content-group>
+        <toggle-content
+          :toggled="!accountApplications.length"
+          message="No pending account requests found."
         >
-          <template #[`item.submittedDate`]="{ item }">
-            {{ dateOnlyLongString(item.submittedDate) }}
-          </template>
-          <template #[`item.givenNames`]="{ item }">
-            {{ item.givenNames }}
-          </template>
-          <template #[`item.lastName`]="{ item }">
-            {{ item.lastName }}
-          </template>
-          <template #[`item.dateOfBirth`]="{ item }">
-            {{ dateOnlyLongString(item.dateOfBirth) }}
-          </template>
-          <template #[`item.action`]="{ item }">
-            <v-btn
-              color="primary"
-              @click="goToStudentAccountApplication(item.id)"
-              data-cy="viewStudentAccountApplicationMobile"
-            >
-              View
-            </v-btn>
-          </template>
-        </v-data-table>
-      </toggle-content>
-    </content-group>
+          <v-data-table
+            :headers="StudentAccountRequestsHeaders"
+            :items="accountApplications"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            :mobile="isMobile"
+          >
+            <template #[`item.submittedDate`]="{ item }">
+              {{ dateOnlyLongString(item.submittedDate) }}
+            </template>
+            <template #[`item.givenNames`]="{ item }">
+              {{ item.givenNames }}
+            </template>
+            <template #[`item.lastName`]="{ item }">
+              {{ item.lastName }}
+            </template>
+            <template #[`item.dateOfBirth`]="{ item }">
+              {{ dateOnlyLongString(item.dateOfBirth) }}
+            </template>
+            <template #[`item.action`]="{ item }">
+              <v-btn
+                color="primary"
+                @click="goToStudentAccountApplication(item.id)"
+                data-cy="viewStudentAccountApplicationMobile"
+              >
+                View
+              </v-btn>
+            </template>
+          </v-data-table>
+        </toggle-content>
+      </content-group>
+    </body-header-container>
   </full-page-container>
 </template>
 

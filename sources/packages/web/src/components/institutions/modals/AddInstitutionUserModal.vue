@@ -1,7 +1,7 @@
 <template>
   <v-form ref="addUserForm">
     <modal-dialog-base
-      :showDialog="showDialog"
+      :show-dialog="showDialog"
       data-cy="addNewUserModal"
       title="Add new user"
     >
@@ -9,7 +9,7 @@
         <institution-user-management
           ref="institutionUserManagement"
           :errors="addUserForm.errors"
-          :initialData="initialData"
+          :initial-data="initialData"
         >
           <template #user-name="{ formModel }">
             <!-- Business BCeID  -->
@@ -18,7 +18,6 @@
               v-if="hasBusinessGuid && canSearchBCeIDUsers"
               v-model="formModel.selectedBCeIDUser"
               :items="bceidUsers"
-              class="mr-3 bceid-input"
               density="compact"
               variant="outlined"
               label="Business BCeID user Id"
@@ -30,7 +29,6 @@
               hide-details="auto"
               v-else
               v-model.trim="formModel.selectedBCeIDUser"
-              class="mr-3 bceid-input"
               density="compact"
               variant="outlined"
               :label="userNameLabel"
@@ -44,11 +42,11 @@
           <template #="{ notAllowed }">
             <footer-buttons
               :processing="processing"
-              primaryLabel="Add user now"
+              primary-label="Add user now"
               data-cy="addNewUserModal"
-              @primaryClick="submit"
-              @secondaryClick="cancel"
-              :disablePrimaryButton="notAllowed"
+              @primary-click="submit"
+              @secondary-click="cancel"
+              :disable-primary-button="notAllowed"
             />
           </template>
         </check-permission-role>
@@ -216,9 +214,3 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
-.bceid-input {
-  /* Temporary fix for v-text-field/v-autocomplete. To be review in upcoming vuetify versions. */
-  width: 300px;
-}
-</style>

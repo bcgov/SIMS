@@ -1,21 +1,24 @@
 <template>
-  <v-container>
-    <header-navigator
-      title="Back all programs"
-      :route-location="{
-        name: AESTRoutesConst.INSTITUTION_PROGRAMS,
-        params: { institutionId: institutionId },
-      }"
-      sub-title="View program"
-    >
-      <template #buttons>
-        <v-row class="p-0 m-0" v-if="isPendingProgram">
-          <check-permission-role :role="Role.InstitutionApproveDeclineProgram">
+  <full-page-container full-width="true">
+    <template #header>
+      <header-navigator
+        title="Back all programs"
+        :route-location="{
+          name: AESTRoutesConst.INSTITUTION_PROGRAMS,
+          params: { institutionId: institutionId },
+        }"
+        sub-title="View program"
+      >
+        <template #buttons>
+          <check-permission-role
+            v-if="isPendingProgram"
+            :role="Role.InstitutionApproveDeclineProgram"
+          >
             <template #="{ notAllowed }">
               <v-btn
+                class="mr-2"
                 variant="outlined"
                 color="primary"
-                class="mr-2"
                 @click="declineProgram"
                 :disabled="notAllowed"
                 >Decline</v-btn
@@ -28,21 +31,24 @@
               >
             </template>
           </check-permission-role>
-        </v-row>
-      </template>
-    </header-navigator>
-    <program-offering-detail-header
-      class="m-4"
-      :header-details="{
-        ...educationProgram,
-        status: educationProgram.programStatus,
-      }"
-    />
-    <institution-restriction-banner
-      :location-id="locationId"
-      :program-id="programId"
-      :institution-id="institutionId"
-    />
+        </template>
+      </header-navigator>
+    </template>
+    <template #details-header>
+      <program-offering-detail-header
+        :header-details="{
+          ...educationProgram,
+          status: educationProgram.programStatus,
+        }"
+      />
+    </template>
+    <template #alerts>
+      <institution-restriction-banner
+        :location-id="locationId"
+        :program-id="programId"
+        :institution-id="institutionId"
+      />
+    </template>
     <manage-program-and-offering-summary
       :program-id="programId"
       :location-id="locationId"
@@ -53,10 +59,10 @@
       @program-data-updated="programDataUpdated"
     />
     <!-- approve program modal -->
-    <ApproveProgramModal ref="approveProgramModal" />
+    <approve-program-modal ref="approveProgramModal" />
     <!-- decline program modal -->
-    <DeclineProgramModal ref="declineProgramModal" />
-  </v-container>
+    <decline-program-modal ref="declineProgramModal" />
+  </full-page-container>
 </template>
 
 <script lang="ts">

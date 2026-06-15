@@ -1,12 +1,10 @@
 <template>
-  <body-header-container :enable-card-view="true">
-    <template #header>
-      <body-header
-        title="Manual Intervention Invoices"
-        sub-title="Please see below the list of manual intervention invoices."
-        :records-count="paginatedInvoices.count"
-      />
-    </template>
+  <body-header-container
+    :enable-card-view="true"
+    title="Manual Intervention Invoices"
+    sub-title="Please see below the list of manual intervention invoices."
+    :records-count="paginatedInvoices.count"
+  >
     <content-group>
       <toggle-content :toggled="!paginatedInvoices.count && !invoiceLoading">
         <v-data-table-server
