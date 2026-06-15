@@ -1208,7 +1208,7 @@
                   "key": "pirSummaryPanel",
                   "label": "Program information request summary",
                   "input": false,
-                  "customConditional": "show = !!(data.pirSummary && data.pirSummary.programName);",
+                  "customConditional": "show = !!data.pirSummary;",
                   "type": "panel",
                   "hideLabel": true,
                   "tableView": false,
@@ -1218,7 +1218,12 @@
                       "label": "HTML",
                       "tag": "h4",
                       "className": "category-header-medium-small",
-                      "attrs": [{ "attr": "", "value": "" }],
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
                       "content": "Program information request summary",
                       "refreshOnChange": false,
                       "key": "pirSummaryHeader",
