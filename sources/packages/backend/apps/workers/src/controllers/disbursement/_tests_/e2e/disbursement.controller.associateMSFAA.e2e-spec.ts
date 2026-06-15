@@ -263,7 +263,7 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     expect(cancelledMSFAANumber.cancelledDate).not.toBe(null);
   });
 
-  it("Should create a new MSFAA number for part-time applications when the valid SFAS part-time application does not have a part-time MSFAA number.", async () => {
+  it("Should import the MSFAA number for part-time application when the valid SFAS part-time application has a part-time MSFAA number.", async () => {
     // Arrange
     const legacyApplicationStartDate = addDays(-100);
     const legacyApplicationEndDate = addDays(-10);
@@ -281,14 +281,8 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     const savedSFASIndividual = await saveFakeSFASIndividual(db.dataSource, {
       initialValues: { student },
     });
-    await db.sfasIndividual
-      .createQueryBuilder()
-      .update()
-      .set({ partTimeMSFAANumber: () => "NULL" })
-      .where("id = :id", { id: savedSFASIndividual.id })
-      .execute();
 
-    await db.sfasPartTimeApplications.save(
+    const savedSFASPartTimeApplication = await db.sfasPartTimeApplications.save(
       createFakeSFASPartTimeApplication(
         { individual: savedSFASIndividual },
         {
@@ -313,7 +307,7 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
       MockedZeebeJobResult.Complete,
     );
 
-    const createdMSFAANumber = await db.msfaaNumber.findOne({
+    const importedMSFAANumber = await db.msfaaNumber.findOne({
       select: {
         id: true,
         msfaaNumber: true,
@@ -346,12 +340,12 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
       },
     });
 
-    expect(disbursementSchedule.msfaaNumber.id).toBe(createdMSFAANumber.id);
-    expect(createdMSFAANumber).toEqual({
+    expect(disbursementSchedule.msfaaNumber.id).toBe(importedMSFAANumber.id);
+    expect(importedMSFAANumber).toEqual({
       id: expect.any(Number),
-      msfaaNumber: disbursementSchedule.msfaaNumber.msfaaNumber,
+      msfaaNumber: savedSFASIndividual.partTimeMSFAANumber,
       referenceApplication: { id: application.id },
-      dateSigned: null,
+      dateSigned: savedSFASPartTimeApplication.endDate,
       serviceProviderReceivedDate: null,
       dateRequested: null,
     });
