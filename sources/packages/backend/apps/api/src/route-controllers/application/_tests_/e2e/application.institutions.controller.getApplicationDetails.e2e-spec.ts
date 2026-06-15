@@ -279,7 +279,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
       );
   });
 
-  it("Should return PIR summary fields in application data when the application has PIR status completed.", async () => {
+  it("Should return PIR summary in application data when the application has PIR status completed.", async () => {
     // Arrange
     const offeringInitialValues = {
       name: "Test PIR Offering Name",
@@ -297,19 +297,7 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
         offeringInitialValues,
       },
     );
-    // Load the offering with its education program to build expected values.
-    const savedOffering = await db.educationProgramOffering.findOne({
-      where: { id: savedApplication.currentAssessment.offering.id },
-      relations: { educationProgram: true },
-      select: {
-        id: true,
-        name: true,
-        studyStartDate: true,
-        studyEndDate: true,
-        yearOfStudy: true,
-        educationProgram: { id: true, name: true },
-      },
-    });
+    const savedOffering = savedApplication.currentAssessment!.offering!;
     const student = savedApplication.student;
     const endpoint = `/institutions/application/student/${student.id}/application/${savedApplication.id}`;
     const institutionUserToken = await getInstitutionToken(
@@ -317,19 +305,23 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
     );
 
     // Act/Assert
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-    expect(response.body.data.pirSummaryProgramName).toBe(
-      savedOffering.educationProgram.name,
-    );
-    expect(response.body.data.pirSummaryOfferingName).toBe(
-      getOfferingNameAndPeriod(savedOffering),
-    );
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body).toMatchObject({
+          data: {
+            pirSummary: {
+              programName: savedOffering!.educationProgram.name,
+              offeringName: getOfferingNameAndPeriod(savedOffering!),
+            },
+          },
+        }),
+      );
   });
 
-  it("Should not return PIR summary fields in application data when the application does not have PIR status completed.", async () => {
+  it("Should not return PIR summary in application data when the application does not have PIR status completed.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(
       db.dataSource,
@@ -347,12 +339,13 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
     );
 
     // Act/Assert
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-    expect(response.body.data.pirSummaryProgramName).toBeUndefined();
-    expect(response.body.data.pirSummaryOfferingName).toBeUndefined();
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => {
+        expect(body.data.pirSummary).toBeUndefined();
+      });
   });
 
   afterAll(async () => {

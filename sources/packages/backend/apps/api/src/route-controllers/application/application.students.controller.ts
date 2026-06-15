@@ -108,7 +108,6 @@ export class ApplicationStudentsController extends BaseController {
       {
         loadDynamicData: true,
         studentId: userToken.studentId,
-        loadPIRSummaryData: true,
       },
     );
     if (!application) {
@@ -120,6 +119,7 @@ export class ApplicationStudentsController extends BaseController {
     const applicationDataPromise =
       this.applicationControllerService.generateApplicationFormData(
         application.data,
+        application,
       );
     const firstCOEPromise =
       this.confirmationOfEnrollmentService.getFirstDisbursementScheduleByApplication(
@@ -135,10 +135,6 @@ export class ApplicationStudentsController extends BaseController {
         hasPreviouslyCompletedPIRPromise,
       ]);
 
-    this.applicationControllerService.addPIRSummaryToFormData(
-      application,
-      applicationData,
-    );
     application.data = applicationData;
     return this.applicationControllerService.transformToApplicationDetailForStudentDTO(
       application,

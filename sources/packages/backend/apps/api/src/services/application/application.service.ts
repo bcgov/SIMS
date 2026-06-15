@@ -935,11 +935,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * Student id/ institution id can be provided for authorization purposes.
    * @param applicationId application id.
    * @param options object that should contain:
-   * - `loadDynamicData` indicates if the dynamic data(JSONB) should be loaded.
+   * - `loadDynamicData` indicates if the dynamic data(JSONB) should be loaded. When true,
+   * also loads the additional offering details (name, year of study, and education program)
+   * needed to display the PIR outcome summary.
    * - `studentId` student id.
    * - `entityManager` entity manager to be used for the query. Useful when
    * it needs to be executed in a transaction.
-   * - `loadPIRSummaryData` indicates if the data needed for the PIR outcome summary should be loaded.
    * @returns student application.
    */
   async getApplicationById(
@@ -948,7 +949,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       loadDynamicData?: boolean;
       studentId?: number;
       entityManager?: EntityManager;
-      loadPIRSummaryData?: boolean;
     },
   ): Promise<Application> {
     const applicationRepo =
@@ -989,6 +989,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
             studyStartDate: true,
             studyEndDate: true,
             offeringStatus: true,
+            ...(options?.loadDynamicData && {
+              name: true,
+              yearOfStudy: true,
+              educationProgram: {
+                id: true,
+                name: true,
+              },
+            }),
           },
         },
         location: {
@@ -1017,27 +1025,14 @@ export class ApplicationService extends RecordDataModelService<Application> {
             lastName: true,
           },
         },
-        ...(options?.loadPIRSummaryData && {
-          studentAssessments: {
-            id: true,
-            triggerType: true,
-            offering: {
-              id: true,
-              name: true,
-              studyStartDate: true,
-              studyEndDate: true,
-              yearOfStudy: true,
-              educationProgram: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        }),
       },
       relations: {
         applicationException: true,
-        currentAssessment: { offering: true },
+        currentAssessment: {
+          offering: options?.loadDynamicData
+            ? { educationProgram: true }
+            : true,
+        },
         location: { institution: true },
         pirDeniedReasonId: true,
         programYear: true,
@@ -1045,9 +1040,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         precedingApplication: {
           currentAssessment: { offering: true, studentAppeal: true },
         },
-        ...(options?.loadPIRSummaryData && {
-          studentAssessments: { offering: { educationProgram: true } },
-        }),
       },
       where: {
         id: applicationId,

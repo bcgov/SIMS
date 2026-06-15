@@ -82,7 +82,7 @@ export class ApplicationAESTController extends BaseController {
   ): Promise<ApplicationSupplementalDataAPIOutDTO> {
     const application = await this.applicationService.getApplicationById(
       applicationId,
-      { loadDynamicData, loadPIRSummaryData: true },
+      { loadDynamicData },
     );
     if (!application) {
       throw new NotFoundException(
@@ -101,6 +101,7 @@ export class ApplicationAESTController extends BaseController {
       const currentReadOnlyDataPromise =
         this.applicationControllerService.generateApplicationFormData(
           application.data,
+          application,
         );
       // If there is a previous application, generate its read-only data.
       const previousReadOnlyDataPromise =
@@ -113,10 +114,6 @@ export class ApplicationAESTController extends BaseController {
         currentReadOnlyDataPromise,
         previousReadOnlyDataPromise,
       ]);
-      this.applicationControllerService.addPIRSummaryToFormData(
-        application,
-        currentReadOnlyData,
-      );
       application.data = currentReadOnlyData;
     }
     return this.applicationControllerService.transformToApplicationDTO(

@@ -259,7 +259,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
     ]);
   });
 
-  it("Should return PIR summary fields in application data when the application has PIR status completed and dynamic data is loaded.", async () => {
+  it("Should return PIR summary in application data when the application has PIR status completed and dynamic data is loaded.", async () => {
     // Arrange
     const offeringInitialValues = {
       name: "Test PIR Offering Name",
@@ -277,36 +277,29 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
         offeringInitialValues,
       },
     );
-    // Load the offering with its education program to build expected values.
-    const savedOffering = await db.educationProgramOffering.findOne({
-      where: { id: application.currentAssessment.offering.id },
-      relations: { educationProgram: true },
-      select: {
-        id: true,
-        name: true,
-        studyStartDate: true,
-        studyEndDate: true,
-        yearOfStudy: true,
-        educationProgram: { id: true, name: true },
-      },
-    });
+
+    const savedOffering = application.currentAssessment!.offering!;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = `/aest/application/${application.id}`;
 
     // Act/Assert
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-    expect(response.body.data.pirSummaryProgramName).toBe(
-      savedOffering.educationProgram.name,
-    );
-    expect(response.body.data.pirSummaryOfferingName).toBe(
-      getOfferingNameAndPeriod(savedOffering),
-    );
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body).toMatchObject({
+          data: {
+            pirSummary: {
+              programName: savedOffering.educationProgram.name,
+              offeringName: getOfferingNameAndPeriod(savedOffering),
+            },
+          },
+        }),
+      );
   });
 
-  it("Should not return PIR summary fields in application data when the application does not have PIR status completed.", async () => {
+  it("Should not return PIR summary in application data when the application does not have PIR status completed.", async () => {
     // Arrange
     const application = await saveFakeApplication(
       db.dataSource,
@@ -321,12 +314,11 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
     const endpoint = `/aest/application/${application.id}`;
 
     // Act/Assert
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-    expect(response.body.data.pirSummaryProgramName).toBeUndefined();
-    expect(response.body.data.pirSummaryOfferingName).toBeUndefined();
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => expect(body.data.pirSummary).toBeUndefined());
   });
 
   afterAll(async () => {

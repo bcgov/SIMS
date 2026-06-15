@@ -895,7 +895,7 @@
                   "key": "pirSummaryPanel",
                   "label": "Program information request summary",
                   "input": false,
-                  "customConditional": "show = !!data.pirSummaryProgramName;",
+                  "customConditional": "show = !!(data.pirSummary && data.pirSummary.programName);",
                   "type": "panel",
                   "hideLabel": true,
                   "tableView": false,
@@ -914,26 +914,37 @@
                       "tableView": false
                     },
                     {
-                      "label": "Program name",
-                      "disabled": true,
-                      "tableView": true,
-                      "persistent": false,
-                      "validateWhenHidden": false,
-                      "key": "pirSummaryProgramName",
-                      "type": "textfield",
+                      "type": "container",
+                      "key": "pirSummary",
                       "input": true,
-                      "lockKey": true
-                    },
-                    {
-                      "label": "Offering name",
-                      "disabled": true,
-                      "tableView": true,
+                      "tableView": false,
+                      "label": "PIR Summary",
+                      "hideLabel": true,
                       "persistent": false,
-                      "validateWhenHidden": false,
-                      "key": "pirSummaryOfferingName",
-                      "type": "textfield",
-                      "input": true,
-                      "lockKey": true
+                      "components": [
+                        {
+                          "label": "Program name",
+                          "disabled": true,
+                          "tableView": true,
+                          "persistent": false,
+                          "validateWhenHidden": false,
+                          "key": "programName",
+                          "type": "textfield",
+                          "input": true,
+                          "lockKey": true
+                        },
+                        {
+                          "label": "Offering name",
+                          "disabled": true,
+                          "tableView": true,
+                          "persistent": false,
+                          "validateWhenHidden": false,
+                          "key": "offeringName",
+                          "type": "textfield",
+                          "input": true,
+                          "lockKey": true
+                        }
+                      ]
                     }
                   ]
                 },

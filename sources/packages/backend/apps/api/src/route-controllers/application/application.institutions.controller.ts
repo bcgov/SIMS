@@ -70,19 +70,14 @@ export class ApplicationInstitutionsController extends BaseController {
       {
         loadDynamicData,
         studentId: studentId,
-        loadPIRSummaryData: true,
       },
     );
     if (loadDynamicData) {
-      const applicationFormData =
+      application.data =
         await this.applicationControllerService.generateApplicationFormData(
           application.data,
+          application,
         );
-      this.applicationControllerService.addPIRSummaryToFormData(
-        application,
-        applicationFormData,
-      );
-      application.data = applicationFormData;
     }
     return this.applicationControllerService.transformToApplicationDTO(
       application,

@@ -68,7 +68,6 @@ import {
   StudentAppealStatus,
   ApplicationEditStatusInProgress,
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
-  AssessmentTriggerType,
   DynamicFormType,
   ProgramInfoStatus,
   StudentScholasticStandingChangeType,
@@ -109,49 +108,51 @@ export class ApplicationControllerService {
   ) {}
 
   /**
-   * Enriches the application form data with PIR outcome summary fields when the PIR
-   * has been completed. The summary fields are sourced from the original assessment
-   * offering so they always reflect the state at the time PIR was completed, regardless
-   * of subsequent reassessments.
-   * @param application application entity loaded with student assessments, offering, and
-   * education program data (requires loadPIRSummaryData option when calling getApplicationById).
-   * @param formData form data object to be enriched with PIR summary fields.
-   */
-  addPIRSummaryToFormData(
-    application: Application,
-    formData: ApplicationFormData,
-  ): void {
-    if (application.pirStatus !== ProgramInfoStatus.completed) {
-      return;
-    }
-    const originalAssessment = application.studentAssessments?.find(
-      (assessment) =>
-        assessment.triggerType === AssessmentTriggerType.OriginalAssessment,
-    );
-    const offering = originalAssessment?.offering;
-    if (!offering) {
-      return;
-    }
-    formData.pirSummaryProgramName = offering.educationProgram?.name;
-    formData.pirSummaryOfferingName = getOfferingNameAndPeriod(offering);
-  }
-
-  /**
    * Add location, program and offering labels
    * and reset the dropdown value for non
    * designated location and not approved
-   * programs.
-   * @param data application data
-   * @returns ApplicationFormData
+   * programs. When application is provided, also enriches the form data
+   * with the PIR outcome summary when the PIR has been completed.
+   * @param data application data.
+   * @param application application entity. When provided, the PIR outcome
+   * summary is added to the form data if the PIR status is completed.
+   * @returns ApplicationFormData.
    */
   async generateApplicationFormData(
     data: ApplicationData,
+    application?: Application,
   ): Promise<ApplicationFormData> {
     const additionalFormData = {} as ApplicationFormData;
     await this.processSelectedLocation(data, additionalFormData);
     await this.processSelectedProgram(data, additionalFormData);
     await this.processSelectedOffering(data, additionalFormData);
+    this.processPIRSummary(application, additionalFormData);
     return { ...data, ...additionalFormData };
+  }
+
+  /**
+   * Enriches the application form data with the PIR outcome summary when the PIR
+   * has been completed. The summary data is sourced from the current assessment
+   * offering which holds the PIR-approved program and offering information.
+   * @param application application entity loaded with current assessment offering
+   * and education program data.
+   * @param formData form data object to be enriched with the PIR summary.
+   */
+  private processPIRSummary(
+    application: Application | undefined,
+    formData: ApplicationFormData,
+  ): void {
+    if (application?.pirStatus !== ProgramInfoStatus.completed) {
+      return;
+    }
+    const offering = application.currentAssessment?.offering;
+    if (!offering) {
+      return;
+    }
+    formData.pirSummary = {
+      programName: offering.educationProgram.name,
+      offeringName: getOfferingNameAndPeriod(offering),
+    };
   }
 
   /**
