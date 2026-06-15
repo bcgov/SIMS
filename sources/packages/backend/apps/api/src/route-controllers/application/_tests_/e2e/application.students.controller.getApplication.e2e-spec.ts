@@ -205,11 +205,13 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
           programName: "My Program",
           workflowName: "",
           programDescription: "This is my program.",
-          pirSummaryProgramName:
-            application.currentAssessment?.offering?.educationProgram.name,
-          pirSummaryOfferingName: getOfferingNameAndPeriod(
-            application.currentAssessment?.offering,
-          ),
+          pirSummary: {
+            programName:
+              application.currentAssessment!.offering!.educationProgram.name,
+            offeringName: getOfferingNameAndPeriod(
+              application.currentAssessment!.offering!,
+            ),
+          },
         },
         applicationStatus: application.applicationStatus,
         applicationEditStatus: application.applicationEditStatus,
