@@ -35,19 +35,19 @@
       <template v-else>
         <v-row no-gutters>
           <v-col md="9">
-            <h1 class="category-header-large primary-color">
-              {{ props.title }}
-            </h1>
-            <p class="my-2">
-              <slot name="subtitle">{{ props.subtitle }}</slot>
-            </p>
+            <body-header-container
+              :title="props.title"
+              :sub-title="props.subtitle"
+            >
+            </body-header-container>
             <content-group>
-              <h2 class="category-header-medium primary-color mb-2">
-                {{ props.loginAreaTitle }}
-              </h2>
-              <p>{{ props.loginAreaText }}</p>
+              <body-header-container
+                :title="props.loginAreaTitle"
+                :sub-title="props.loginAreaText"
+                header-size="medium"
+              >
+              </body-header-container>
               <v-btn
-                class="mt-4"
                 color="primary"
                 @click="login"
                 prepend-icon="fa:fa fa-user"
@@ -59,7 +59,7 @@
           <v-col cols="3" align-self="end"><slot name="image" /></v-col>
         </v-row>
       </template>
-      <v-row>
+      <v-row v-if="$slots['banner-message']">
         <v-col cols="12">
           <slot name="banner-message" />
         </v-col>
