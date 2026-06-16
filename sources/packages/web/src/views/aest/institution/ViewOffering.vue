@@ -60,6 +60,12 @@ import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDeta
 import OfferingForm from "@/components/common/OfferingForm.vue";
 import AssessOfferingModal from "@/components/aest/institution/modals/AssessOfferingModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+const ASSESS_OFFERING_SUCCESS_MESSAGES = {
+  [OfferingStatus.Approved]:
+    "The given offering has been approved and notes added.",
+  [OfferingStatus.CreationDeclined]:
+    "The given offering has been declined and notes added.",
+};
 
 export default defineComponent({
   components: {
@@ -111,7 +117,9 @@ export default defineComponent({
         );
     };
 
-    const assessOffering = async (offeringStatus: OfferingStatus) => {
+    const assessOffering = async (
+      offeringStatus: OfferingStatus.Approved | OfferingStatus.CreationDeclined,
+    ) => {
       offeringApprovalStatus.value = offeringStatus;
       const responseData = await assessOfferingModalRef.value.showModal();
       if (responseData) {
@@ -120,9 +128,7 @@ export default defineComponent({
             props.offeringId,
             responseData as OfferingAssessmentAPIInDTO,
           );
-          snackBar.success(
-            `The given offering has been ${offeringStatus.toLowerCase()} and notes added.`,
-          );
+          snackBar.success(ASSESS_OFFERING_SUCCESS_MESSAGES[offeringStatus]);
           await loadFormData();
         } catch {
           snackBar.error(
