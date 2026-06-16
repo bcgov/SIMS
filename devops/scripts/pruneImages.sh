@@ -57,6 +57,8 @@ do
         echo "Processing \"${trimmed_app}\""
         if [ "${TYPE}" == "JOB" ]; then
             SCRIPT="./fetchOldJobTags.sh"
+        elif [ "${TYPE}" == "RELEASE" ]; then
+            SCRIPT="./fetchOldReleaseTags.sh"
         else
             SCRIPT="./fetchOldTags.sh"
         fi

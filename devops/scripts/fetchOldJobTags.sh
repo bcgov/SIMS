@@ -79,7 +79,7 @@ if [ -z "$JOB_BUILD_ID" ]; then
   exit 1
 fi
 
-# Process ImageStream Tags and output those prior to the deployed version
+# Process ImageStream Tags and output those prior to the deployed version.
 oc get is/$IS_NAME -n $IS_NAMESPACE -o json | jq -r --arg JOB_BUILD_ID "$JOB_BUILD_ID" --arg PREFIX "$PREFIX" --arg IS_NAME "$IS_NAME" --argjson MIN_TAGS "$MIN_TAGS" '
   .status.tags
   | map(select(.tag | startswith($PREFIX) and test(".*-[0-9]+$")))
@@ -88,5 +88,14 @@ oc get is/$IS_NAME -n $IS_NAMESPACE -o json | jq -r --arg JOB_BUILD_ID "$JOB_BUI
   | sort_by(capture(".*-(?<id>[0-9]+)$").id | tonumber)
   | if $MIN_TAGS > 0 then .[:-$MIN_TAGS] else . end
   | .[]
+  | "\($IS_NAME):\(.)"
+'
+
+# Output all tags that do not start with the specified PREFIX or with "v" (release tags).
+# These tags (e.g., from feature branches) are fully pruned with no minimum retention.
+oc get is/$IS_NAME -n $IS_NAMESPACE -o json | jq -r --arg PREFIX "$PREFIX" --arg IS_NAME "$IS_NAME" '
+  .status.tags
+  | map(select(.tag | (startswith($PREFIX) or startswith("v")) | not))
+  | .[].tag
   | "\($IS_NAME):\(.)"
 '
