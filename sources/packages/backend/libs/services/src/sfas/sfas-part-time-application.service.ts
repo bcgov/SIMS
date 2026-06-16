@@ -84,7 +84,10 @@ export class SFASPartTimeApplicationsService extends DataModelService<SFASPartTi
       },
       where: {
         applicationCancelDate: IsNull(),
-        individual: { student: { id: studentId }, msfaaNumber: Not(IsNull()) },
+        individual: {
+          student: { id: studentId },
+          partTimeMSFAANumber: Not(IsNull()),
+        },
         endDate: MoreThanOrEqual(getISODateOnlyString(minMSFAAValidDate)),
       },
       order: {

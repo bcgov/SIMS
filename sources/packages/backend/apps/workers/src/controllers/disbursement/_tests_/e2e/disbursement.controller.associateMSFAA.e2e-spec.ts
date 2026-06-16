@@ -263,6 +263,96 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
     expect(cancelledMSFAANumber.cancelledDate).not.toBe(null);
   });
 
+  it("Should import the MSFAA number for part-time application when the valid SFAS part-time application has a part-time MSFAA number.", async () => {
+    // Arrange
+    const legacyApplicationStartDate = addDays(-100);
+    const legacyApplicationEndDate = addDays(-10);
+
+    const student = await saveFakeStudent(db.dataSource);
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student },
+      {
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
+
+    const savedSFASIndividual = await saveFakeSFASIndividual(db.dataSource, {
+      initialValues: { student },
+    });
+
+    const savedSFASPartTimeApplication = await db.sfasPartTimeApplications.save(
+      createFakeSFASPartTimeApplication(
+        { individual: savedSFASIndividual },
+        {
+          initialValues: {
+            startDate: getISODateOnlyString(legacyApplicationStartDate),
+            endDate: getISODateOnlyString(legacyApplicationEndDate),
+          },
+        },
+      ),
+    );
+
+    // Act
+    const associateMSFAAPayload = createFakeAssociateMSFAAPayload({
+      assessmentId: application.currentAssessment.id,
+    });
+    const saveResult = await disbursementController.associateMSFAA(
+      associateMSFAAPayload,
+    );
+
+    // Asserts
+    expect(FakeWorkerJobResult.getResultType(saveResult)).toBe(
+      MockedZeebeJobResult.Complete,
+    );
+
+    const importedMSFAANumber = await db.msfaaNumber.findOne({
+      select: {
+        id: true,
+        msfaaNumber: true,
+        dateSigned: true,
+        dateRequested: true,
+        serviceProviderReceivedDate: true,
+        referenceApplication: { id: true },
+      },
+      relations: {
+        referenceApplication: true,
+      },
+      where: {
+        student: { id: student.id },
+      },
+      order: {
+        id: "DESC",
+      },
+    });
+    const disbursementSchedule = await db.disbursementSchedule.findOne({
+      select: {
+        id: true,
+        msfaaNumber: { id: true, msfaaNumber: true },
+      },
+      relations: {
+        msfaaNumber: true,
+        studentAssessment: true,
+      },
+      where: {
+        studentAssessment: { id: application.currentAssessment.id },
+      },
+    });
+
+    expect(disbursementSchedule.msfaaNumber.msfaaNumber).toBe(
+      importedMSFAANumber.msfaaNumber,
+    );
+    expect(importedMSFAANumber).toEqual({
+      id: disbursementSchedule.msfaaNumber.id,
+      msfaaNumber: savedSFASIndividual.partTimeMSFAANumber,
+      referenceApplication: { id: application.id },
+      dateSigned: savedSFASPartTimeApplication.endDate,
+      serviceProviderReceivedDate: null,
+      dateRequested: null,
+    });
+  });
+
   it("Should create a new MSFAA number for part-time applications by creating and activating in SIMS when MSFAA is not found or invalid SFAS application offering end date.", async () => {
     // Arrange
     const firstLegacyApplicationStartDate = addDays(-MAX_MSFAA_VALID_DAYS + 10);
