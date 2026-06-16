@@ -69,7 +69,9 @@ import {
   ApplicationEditStatusInProgress,
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
   DynamicFormType,
+  ProgramInfoStatus,
   StudentScholasticStandingChangeType,
+  AssessmentTriggerType,
 } from "@sims/sims-db";
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
@@ -110,18 +112,52 @@ export class ApplicationControllerService {
    * Add location, program and offering labels
    * and reset the dropdown value for non
    * designated location and not approved
-   * programs.
-   * @param data application data
-   * @returns ApplicationFormData
+   * programs. When application is provided, also enriches the form data
+   * with the PIR outcome summary when the PIR has been completed.
+   * @param data application data.
+   * @param application application entity. When provided, the PIR outcome
+   * summary is added to the form data if the PIR status is completed.
+   * @returns ApplicationFormData.
    */
   async generateApplicationFormData(
-    data: ApplicationData,
+    application: Application,
   ): Promise<ApplicationFormData> {
     const additionalFormData = {} as ApplicationFormData;
-    await this.processSelectedLocation(data, additionalFormData);
-    await this.processSelectedProgram(data, additionalFormData);
-    await this.processSelectedOffering(data, additionalFormData);
-    return { ...data, ...additionalFormData };
+    await this.processSelectedLocation(application.data, additionalFormData);
+    await this.processSelectedProgram(application.data, additionalFormData);
+    await this.processSelectedOffering(application.data, additionalFormData);
+    this.processPIRSummary(application, additionalFormData);
+    return { ...application.data, ...additionalFormData };
+  }
+
+  /**
+   * Enriches the application form data with the PIR outcome summary when the PIR
+   * has been completed. The summary data is sourced from the original assessment
+   * offering, since PIR is assessed once per application and is tied to the
+   * original submission, regardless of any subsequent reassessments.
+   * @param application application entity loaded with the original assessment offering
+   * and education program data.
+   * @param formData form data object to be enriched with the PIR summary.
+   */
+  private processPIRSummary(
+    application: Application | undefined,
+    formData: ApplicationFormData,
+  ): void {
+    if (application?.pirStatus !== ProgramInfoStatus.completed) {
+      return;
+    }
+    const originalAssessment = application.studentAssessments?.find(
+      (assessment) =>
+        assessment.triggerType === AssessmentTriggerType.OriginalAssessment,
+    );
+    if (!originalAssessment?.offering) {
+      return;
+    }
+    const offering = originalAssessment.offering;
+    formData.pirSummary = {
+      programName: offering.educationProgram.name,
+      offeringName: getOfferingNameAndPeriod(offering),
+    };
   }
 
   /**

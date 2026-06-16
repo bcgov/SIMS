@@ -5,6 +5,7 @@ import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAuthRelatedEntities,
+  getExpectedOfferingNameAndPeriod,
   getInstitutionToken,
   INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
   INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
@@ -22,6 +23,7 @@ import {
   EducationProgramOffering,
   InstitutionLocation,
   OfferingIntensity,
+  ProgramInfoStatus,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { getUserFullName } from "../../../../utilities";
@@ -273,6 +275,68 @@ describe("ApplicationInstitutionsController(e2e)-getApplicationDetails", () => {
           isChangeRequestAllowedForPY: false,
         }),
       );
+  });
+
+  it("Should return PIR summary in application data when the application has PIR status completed.", async () => {
+    // Arrange
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      { institutionLocation: collegeFLocation },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        offeringIntensity: OfferingIntensity.fullTime,
+        pirStatus: ProgramInfoStatus.completed,
+      },
+    );
+    const savedOffering = savedApplication.currentAssessment!.offering!;
+    const student = savedApplication.student;
+    const endpoint = `/institutions/application/student/${student.id}/application/${savedApplication.id}`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body).toMatchObject({
+          data: {
+            pirSummary: {
+              programName: savedOffering.educationProgram.name,
+              offeringName: getExpectedOfferingNameAndPeriod(savedOffering),
+            },
+          },
+        }),
+      );
+  });
+
+  it("Should not return PIR summary in application data when the application does not have PIR status completed.", async () => {
+    // Arrange
+    const savedApplication = await saveFakeApplication(
+      db.dataSource,
+      { institutionLocation: collegeFLocation },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        offeringIntensity: OfferingIntensity.fullTime,
+        pirStatus: ProgramInfoStatus.notRequired,
+      },
+    );
+    const student = savedApplication.student;
+    const endpoint = `/institutions/application/student/${student.id}/application/${savedApplication.id}`;
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => {
+        expect(body.data.pirSummary).toBeUndefined();
+      });
   });
 
   afterAll(async () => {

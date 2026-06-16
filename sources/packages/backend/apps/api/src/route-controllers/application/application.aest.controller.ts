@@ -100,13 +100,13 @@ export class ApplicationAESTController extends BaseController {
         ));
       const currentReadOnlyDataPromise =
         this.applicationControllerService.generateApplicationFormData(
-          application.data,
+          application,
         );
       // If there is a previous application, generate its read-only data.
       const previousReadOnlyDataPromise =
         previousApplicationVersion &&
         this.applicationControllerService.generateApplicationFormData(
-          previousApplicationVersion.data,
+          previousApplicationVersion,
         );
       // Wait for both promises to resolve.
       [currentReadOnlyData, previousReadOnlyData] = await Promise.all([

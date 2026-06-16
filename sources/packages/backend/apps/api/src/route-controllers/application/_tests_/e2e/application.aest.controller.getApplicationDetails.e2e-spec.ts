@@ -5,9 +5,12 @@ import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
+  getExpectedOfferingNameAndPeriod,
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
+  createFakeEducationProgramOffering,
+  createFakeStudentAssessment,
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
@@ -15,8 +18,10 @@ import {
   Application,
   ApplicationData,
   ApplicationStatus,
+  AssessmentTriggerType,
   EducationProgramOffering,
   OfferingIntensity,
+  ProgramInfoStatus,
 } from "@sims/sims-db";
 import { getUserFullName } from "../../../../utilities";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
@@ -253,6 +258,118 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
         key: "selectedOfferingName",
       },
     ]);
+  });
+
+  it("Should return PIR summary in application data when the application has PIR status completed and dynamic data is loaded.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {},
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        offeringIntensity: OfferingIntensity.fullTime,
+        pirStatus: ProgramInfoStatus.completed,
+      },
+    );
+
+    const savedOffering = application.currentAssessment!.offering!;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/application/${application.id}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body).toMatchObject({
+          data: {
+            pirSummary: {
+              programName: savedOffering.educationProgram.name,
+              offeringName: getExpectedOfferingNameAndPeriod(savedOffering),
+            },
+          },
+        }),
+      );
+  });
+
+  it("Should not return PIR summary in application data when the application does not have PIR status completed.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {},
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        offeringIntensity: OfferingIntensity.fullTime,
+        pirStatus: ProgramInfoStatus.notRequired,
+      },
+    );
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/application/${application.id}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => expect(body.data.pirSummary).toBeUndefined());
+  });
+
+  it("Should return the PIR summary from the original assessment offering even when the application has a later reassessment with a different offering.", async () => {
+    // Arrange
+    // Create an application with PIR completed (original assessment).
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {},
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        offeringIntensity: OfferingIntensity.fullTime,
+        pirStatus: ProgramInfoStatus.completed,
+      },
+    );
+    const originalOffering = application.currentAssessment!.offering!;
+    // Create a different offering for the reassessment to confirm that the
+    // PIR summary always reflects the original assessment's offering.
+    // PIR is assessed once per application (tied to the original assessment),
+    // so a subsequent reassessment with a new offering must not affect the PIR summary.
+    const differentOffering = createFakeEducationProgramOffering({
+      auditUser: application.student.user,
+    });
+    differentOffering.parentOffering = differentOffering;
+    const savedDifferentOffering =
+      await db.educationProgramOffering.save(differentOffering);
+    const reassessment = createFakeStudentAssessment(
+      {
+        auditUser: application.student.user,
+        application,
+        offering: savedDifferentOffering,
+      },
+      {
+        initialValue: {
+          triggerType: AssessmentTriggerType.StudentAppeal,
+        },
+      },
+    );
+    application.currentAssessment = reassessment;
+    await db.application.save(application);
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/application/${application.id}`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body).toMatchObject({
+          data: {
+            pirSummary: {
+              programName: originalOffering.educationProgram.name,
+              offeringName: getExpectedOfferingNameAndPeriod(originalOffering),
+            },
+          },
+        }),
+      );
   });
 
   afterAll(async () => {

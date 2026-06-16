@@ -102,6 +102,22 @@ export interface ApplicationFormData extends ApplicationData {
     id?: number;
     name?: string;
   };
+
+  /**
+   * PIR outcome summary data injected for the read-only PIR summary section
+   * in the application form. Only populated when pirStatus is completed.
+   */
+  pirSummary?: {
+    /**
+     * Program name from the completed PIR in the application's original assessment.
+     */
+    programName?: string;
+    /**
+     * Formatted offering name (including year of study and dates) from the
+     * completed PIR in the application's original assessment.
+     */
+    offeringName?: string;
+  };
 }
 
 class SupportingUserParentAPIOutDTO {

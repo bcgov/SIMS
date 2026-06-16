@@ -4,6 +4,7 @@ import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   FakeStudentUsersTypes,
+  getExpectedOfferingNameAndPeriod,
   getStudentToken,
   mockJWTUserInfo,
   resetMockJWTUserInfo,
@@ -203,6 +204,13 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
           programName: "My Program",
           workflowName: "",
           programDescription: "This is my program.",
+          pirSummary: {
+            programName:
+              application.currentAssessment!.offering!.educationProgram.name,
+            offeringName: getExpectedOfferingNameAndPeriod(
+              application.currentAssessment!.offering!,
+            ),
+          },
         },
         applicationStatus: application.applicationStatus,
         applicationEditStatus: application.applicationEditStatus,
@@ -306,6 +314,66 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
         isChangeRequestAllowedForPY: false,
         hasPreviouslyCompletedPIR: true,
       });
+  });
+
+  it("Should return PIR summary in application data when the application has PIR status completed.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      { student },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        offeringIntensity: OfferingIntensity.fullTime,
+        pirStatus: ProgramInfoStatus.completed,
+      },
+    );
+    const savedOffering = application.currentAssessment!.offering!;
+    const endpoint = `/students/application/${application.id}`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    await mockJWTUserInfo(appModule, application.student.user);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body).toMatchObject({
+          data: {
+            pirSummary: {
+              programName: savedOffering.educationProgram.name,
+              offeringName: getExpectedOfferingNameAndPeriod(savedOffering),
+            },
+          },
+        }),
+      );
+  });
+
+  it("Should not return PIR summary in application data when the application does not have PIR status completed.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      { student },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        offeringIntensity: OfferingIntensity.fullTime,
+        pirStatus: ProgramInfoStatus.notRequired,
+      },
+    );
+    const endpoint = `/students/application/${application.id}`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    await mockJWTUserInfo(appModule, application.student.user);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => expect(body.data.pirSummary).toBeUndefined());
   });
 
   afterAll(async () => {
