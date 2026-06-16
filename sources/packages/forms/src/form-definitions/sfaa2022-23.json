@@ -897,9 +897,14 @@
                   "components": [
                     {
                       "label": "HTML",
-                      "tag": "h4",
-                      "className": "category-header-medium-small",
-                      "attrs": [{ "attr": "", "value": "" }],
+                      "tag": "h3",
+                      "className": "category-header-medium primary-color",
+                      "attrs": [
+                        {
+                          "attr": "",
+                          "value": ""
+                        }
+                      ],
                       "content": "Program information request summary",
                       "refreshOnChange": false,
                       "key": "pirSummaryHeader",

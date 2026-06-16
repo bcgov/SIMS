@@ -1216,8 +1216,8 @@
                   "components": [
                     {
                       "label": "HTML",
-                      "tag": "h4",
-                      "className": "category-header-medium-small",
+                      "tag": "h3",
+                      "className": "category-header-medium primary-color",
                       "attrs": [
                         {
                           "attr": "",
