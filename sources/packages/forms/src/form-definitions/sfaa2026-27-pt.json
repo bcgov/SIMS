@@ -1194,6 +1194,7 @@
                       "input": true,
                       "tableView": false,
                       "label": "PIR Summary",
+                      "hideLabel": true,
                       "persistent": false,
                       "components": [
                         {
