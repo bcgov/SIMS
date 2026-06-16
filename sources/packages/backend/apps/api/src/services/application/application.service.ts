@@ -989,14 +989,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
             studyStartDate: true,
             studyEndDate: true,
             offeringStatus: true,
-            ...(options?.loadDynamicData && {
-              name: true,
-              yearOfStudy: true,
-              educationProgram: {
-                id: true,
-                name: true,
-              },
-            }),
           },
         },
         location: {
@@ -1047,11 +1039,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       },
       relations: {
         applicationException: true,
-        currentAssessment: {
-          offering: options?.loadDynamicData
-            ? { educationProgram: true }
-            : true,
-        },
+        currentAssessment: { offering: true },
         location: { institution: true },
         pirDeniedReasonId: true,
         programYear: true,
