@@ -342,7 +342,7 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
 
     expect(disbursementSchedule.msfaaNumber.id).toBe(importedMSFAANumber.id);
     expect(importedMSFAANumber).toEqual({
-      id: expect.any(Number),
+      id: disbursementSchedule.msfaaNumber.id,
       msfaaNumber: savedSFASIndividual.partTimeMSFAANumber,
       referenceApplication: { id: application.id },
       dateSigned: savedSFASPartTimeApplication.endDate,
