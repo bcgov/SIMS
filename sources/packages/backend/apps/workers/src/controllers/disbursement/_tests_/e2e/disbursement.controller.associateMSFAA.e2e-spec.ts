@@ -340,7 +340,9 @@ describe("DisbursementController(e2e)-associateMSFAA", () => {
       },
     });
 
-    expect(disbursementSchedule.msfaaNumber.id).toBe(importedMSFAANumber.id);
+    expect(disbursementSchedule.msfaaNumber.msfaaNumber).toBe(
+      importedMSFAANumber.msfaaNumber,
+    );
     expect(importedMSFAANumber).toEqual({
       id: disbursementSchedule.msfaaNumber.id,
       msfaaNumber: savedSFASIndividual.partTimeMSFAANumber,
