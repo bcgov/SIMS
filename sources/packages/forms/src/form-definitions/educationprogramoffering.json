@@ -9,6 +9,22 @@
   ],
   "components": [
     {
+      "label": "Array of offerings warnings calculated on the server and used to display warnings banners",
+      "persistent": "client-only",
+      "key": "validationWarnings",
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
+      "label": "Array of offerings information (banners) calculated on the server and used to display warnings banners",
+      "persistent": "client-only",
+      "key": "validationInfos",
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
       "label": "HTML",
       "tag": "h2",
       "className": "category-header-large primary-color",
@@ -1035,7 +1051,7 @@
                   "addAnotherPosition": "bottom",
                   "layoutFixed": false,
                   "enableRowGroups": false,
-                  "initEmpty": false,
+                  "initEmpty": true,
                   "tableView": false,
                   "defaultValue": [
                     {
@@ -1050,6 +1066,7 @@
                     "required": true,
                     "maxLength": "5"
                   },
+                  "validateWhenHidden": false,
                   "key": "studyBreaks",
                   "tags": [
                     "execute-validation",
@@ -1775,22 +1792,6 @@
     {
       "label": "Modes (editable | readonly | assessment-data-readonly)",
       "key": "mode",
-      "type": "hidden",
-      "input": true,
-      "tableView": false
-    },
-    {
-      "label": "Array of offerings warnings calculated on the server and used to display warnings banners",
-      "persistent": "client-only",
-      "key": "validationWarnings",
-      "type": "hidden",
-      "input": true,
-      "tableView": false
-    },
-    {
-      "label": "Array of offerings information (banners) calculated on the server and used to display warnings banners",
-      "persistent": "client-only",
-      "key": "validationInfos",
       "type": "hidden",
       "input": true,
       "tableView": false
