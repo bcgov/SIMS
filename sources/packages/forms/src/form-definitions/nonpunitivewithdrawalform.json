@@ -58,7 +58,7 @@
       "customOptions": "",
       "validate": {
         "required": true,
-        "custom": "// Ensure the selected value is one of the available ones to be selected.\r\nconst isAvailableItem = data.scholasticStandingWithdrawals.filter(item => item.scholasticStandingId === value).length === 1;\r\nvalid = isAvailableItem || \"The selected item is not present in the list of available items.\""
+        "custom": "// Ensure the selected value is one of the available ones to be selected.\r\nconst isAvailableItem =\r\n  Array.isArray(data.scholasticStandingWithdrawals) &&\r\n  data.scholasticStandingWithdrawals.filter(\r\n    (item) => item.scholasticStandingId === input\r\n  ).length === 1;\r\nvalid =\r\n  isAvailableItem ||\r\n  \"The selected item is not present in the list of available items.\";"
       },
       "validateWhenHidden": false,
       "key": "nonPunitiveWithdrawalId",
