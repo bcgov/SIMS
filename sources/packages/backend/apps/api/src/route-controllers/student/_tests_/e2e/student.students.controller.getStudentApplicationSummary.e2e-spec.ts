@@ -16,6 +16,7 @@ import {
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
 import { ApplicationStatus, ProgramYear } from "@sims/sims-db";
+import { addDays } from "@sims/utilities";
 
 describe("StudentStudentsController(e2e)-getStudentApplicationSummary", () => {
   let app: INestApplication;
@@ -67,6 +68,7 @@ describe("StudentStudentsController(e2e)-getStudentApplicationSummary", () => {
             status: ApplicationStatus.Submitted,
             parentApplicationId: savedApplication.id,
             submittedDate: savedApplication.submittedDate.toISOString(),
+            lastSubmittedDate: savedApplication.submittedDate.toISOString(),
             isChangeRequestAllowedForPY: true,
             offeringIntensity: savedApplication.offeringIntensity,
           },
@@ -119,6 +121,7 @@ describe("StudentStudentsController(e2e)-getStudentApplicationSummary", () => {
               status: ApplicationStatus.Completed,
               parentApplicationId: savedApplication.id,
               submittedDate: savedApplication.submittedDate.toISOString(),
+              lastSubmittedDate: savedApplication.submittedDate.toISOString(),
               isChangeRequestAllowedForPY: true,
               offeringIntensity: savedApplication.offeringIntensity,
             },
@@ -127,6 +130,78 @@ describe("StudentStudentsController(e2e)-getStudentApplicationSummary", () => {
         });
     },
   );
+
+  it("Should use original submission date in descending order as default tie-breaker when application statuses are the same.", async () => {
+    // Arrange
+    const olderSubmittedDate = addDays(-2);
+    const newerSubmittedDate = addDays(-1);
+    const olderSubmittedApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        programYear: recentActiveProgramYear,
+      },
+      { submittedDate: olderSubmittedDate },
+    );
+    const newerSubmittedApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        programYear: recentActiveProgramYear,
+        student: olderSubmittedApplication.student,
+      },
+      { submittedDate: newerSubmittedDate },
+    );
+
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, olderSubmittedApplication.student.user);
+
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const endpoint = `/students/student/application-summary?page=0&pageLimit=10`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        results: [
+          {
+            id: newerSubmittedApplication.id,
+            applicationNumber: newerSubmittedApplication.applicationNumber,
+            isArchived: false,
+            studyStartPeriod:
+              newerSubmittedApplication.currentAssessment.offering
+                .studyStartDate,
+            studyEndPeriod:
+              newerSubmittedApplication.currentAssessment.offering.studyEndDate,
+            status: ApplicationStatus.Submitted,
+            parentApplicationId: newerSubmittedApplication.id,
+            submittedDate: newerSubmittedDate.toISOString(),
+            lastSubmittedDate: newerSubmittedDate.toISOString(),
+            isChangeRequestAllowedForPY: true,
+            offeringIntensity: newerSubmittedApplication.offeringIntensity,
+          },
+          {
+            id: olderSubmittedApplication.id,
+            applicationNumber: olderSubmittedApplication.applicationNumber,
+            isArchived: false,
+            studyStartPeriod:
+              olderSubmittedApplication.currentAssessment.offering
+                .studyStartDate,
+            studyEndPeriod:
+              olderSubmittedApplication.currentAssessment.offering.studyEndDate,
+            status: ApplicationStatus.Submitted,
+            parentApplicationId: olderSubmittedApplication.id,
+            submittedDate: olderSubmittedDate.toISOString(),
+            lastSubmittedDate: olderSubmittedDate.toISOString(),
+            isChangeRequestAllowedForPY: true,
+            offeringIntensity: olderSubmittedApplication.offeringIntensity,
+          },
+        ],
+        count: 2,
+      });
+  });
 
   afterAll(async () => {
     await app?.close();

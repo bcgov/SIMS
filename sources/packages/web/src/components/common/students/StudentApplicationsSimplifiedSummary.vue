@@ -10,7 +10,7 @@
         message="No applications are currently available."
       >
         <v-data-table-server
-          :headers="StudentApplicationsSimplifiedSummaryHeaders"
+          :headers="applicationsSummaryHeaders"
           :items="applicationsAndCount.results"
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
@@ -26,6 +26,16 @@
             {{
               emptyStringFiller(getISODateHourMinuteString(item.submittedDate))
             }}
+          </template>
+          <template #[`item.lastSubmitted`]="{ item }">
+            {{
+              emptyStringFiller(
+                getISODateHourMinuteString(item.lastSubmittedDate),
+              )
+            }}
+          </template>
+          <template #[`item.offeringIntensity`]="{ item }">
+            {{ mapOfferingIntensity(item.offeringIntensity) }}
           </template>
           <template #[`item.studyStartPeriod`]="{ item }">
             {{
@@ -58,6 +68,7 @@ import {
   DEFAULT_PAGE_LIMIT,
   StudentApplicationFields,
   StudentApplicationsSimplifiedSummaryHeaders,
+  StudentApplicationsSimplifiedSummaryMinistryHeaders,
   ITEMS_PER_PAGE,
   DataTableOptions,
   PaginationOptions,
@@ -65,7 +76,7 @@ import {
   DataTableSortByOrder,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
-import { useFormatters } from "@/composables";
+import { useFormatters, useOffering } from "@/composables";
 import StatusChipApplication from "@/components/generic/StatusChipApplication.vue";
 import {
   ApplicationSummaryAPIOutDTO,
@@ -86,10 +97,16 @@ export default defineComponent({
       required: false,
       default: undefined,
     },
+    isMinistryView: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props) {
     const loading = ref(false);
     const { mobile: isMobile } = useDisplay();
+    const { mapOfferingIntensity } = useOffering();
     const applicationsAndCount = ref(
       {} as PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>,
     );
@@ -98,6 +115,9 @@ export default defineComponent({
       dateOnlyLongPeriodString,
       emptyStringFiller,
     } = useFormatters();
+    const applicationsSummaryHeaders = props.isMinistryView
+      ? StudentApplicationsSimplifiedSummaryMinistryHeaders
+      : StudentApplicationsSimplifiedSummaryHeaders;
     const DEFAULT_SORT_FIELD = StudentApplicationFields.Status;
     const currentPagination: PaginationOptions = {
       page: DEFAULT_DATATABLE_PAGE_NUMBER,
@@ -149,9 +169,10 @@ export default defineComponent({
       ITEMS_PER_PAGE,
       loading,
       StudentApplicationFields,
-      StudentApplicationsSimplifiedSummaryHeaders,
+      applicationsSummaryHeaders,
       isMobile,
       paginationAndSortEvent,
+      mapOfferingIntensity,
     };
   },
 });

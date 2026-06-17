@@ -1079,6 +1079,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "application.isArchived",
         "application.id",
         "application.offeringIntensity",
+        "application.submittedDate",
         "parentApplication.id",
         "parentApplication.submittedDate",
         "currentAssessment.id",
@@ -1136,6 +1137,9 @@ export class ApplicationService extends RecordDataModelService<Application> {
             END`,
         pagination.sortOrder,
       );
+      // Keep the default status sort while making the newest original submissions appear first
+      // when records are tied by status.
+      applicationQuery.addOrderBy("parentApplication.submittedDate", "DESC");
     }
 
     // pagination
