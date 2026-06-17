@@ -19,26 +19,18 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { useAuth } from "@/composables";
-import { defineComponent } from "vue";
-export default defineComponent({
-  props: {
-    subtitle: {
-      type: String,
-      required: true,
-    },
-  },
-  emits: ["click"],
-  setup(_props, context) {
-    const { executeLogout } = useAuth();
-    const logoClick = () => {
-      context.emit("click");
-    };
-    return {
-      executeLogout,
-      logoClick,
-    };
-  },
-});
+<script setup lang="ts">
+interface Props {
+  subtitle: string;
+}
+
+defineProps<Props>();
+
+const emit = defineEmits<{
+  click: [];
+}>();
+
+const logoClick = () => {
+  emit("click");
+};
 </script>

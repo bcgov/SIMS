@@ -84,3 +84,12 @@ export interface BCeIDParsedToken extends ApplicationToken {
   givenNames: string;
   email: string;
 }
+
+/**
+ * Minimal interface for the token response from Keycloak when invoked directly via axios.
+ */
+export interface KeycloakTokenResponse {
+  access_token: string;
+  refresh_token: string;
+  id_token: string;
+}

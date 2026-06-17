@@ -1,4 +1,5 @@
 import Keycloak from "keycloak-js";
+import axios from "axios";
 import store from "@/store";
 import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AppConfigService } from "./AppConfigService";
@@ -9,6 +10,7 @@ import {
   IdentityProviders,
   ApplicationToken,
   Role,
+  KeycloakTokenResponse,
 } from "@/types";
 import { RouteHelper } from "@/helpers";
 import { LocationAsRelativeRaw } from "vue-router";
@@ -112,11 +114,13 @@ export class AuthService {
     });
 
     try {
+      // Explicitly request client-roles which is now optional in the token to allow for a minimal token on logout.
       await this.keycloak.init({
         onLoad: "check-sso",
         responseMode: "query",
         checkLoginIframe: false,
         pkceMethod: "S256",
+        scope: "client-roles",
       });
 
       if (this.keycloak.authenticated) {
@@ -315,7 +319,7 @@ export class AuthService {
         if (options?.notAllowedUser) {
           redirectUri += "/login/not-allowed-user";
         }
-        await this.executeSiteminderLogoff(redirectUri);
+        await this.executeSiteminderLogoff(redirectUri, true);
         break;
       }
       case ClientIdType.Student: {
@@ -345,13 +349,25 @@ export class AuthService {
    * out using the SiteMinder logout endpoint. The result with your current flow
    * is that although the Keycloak session is destroyed, the SM session is
    * retained so when the login endpoint is clicked the user is logged in seamlessly.
-   * @see https://stackoverflow.developer.gov.bc.ca/questions/83
+   * @see https://github.com/bcgov/bcgov-community-discussions/discussions/10
    * @param redirectUri application redirect URI.
+   * @param useMinimalToken indicates whether a minimal token without roles should be created to fix logout issues with large tokens.
    */
-  private async executeSiteminderLogoff(redirectUri: string) {
+  private async executeSiteminderLogoff(
+    redirectUri: string,
+    useMinimalToken = false,
+  ) {
     if (!this.keycloak) {
       throw new Error("Keycloak not initialized.");
     }
+
+    // Get a minimal token without roles to pass in as the id_token_hint. This avoids passing the full token to SiteMinder
+    // and possibly causing a 414 Request-URI Too Long error
+    if (useMinimalToken) {
+      await this.createMinimalToken();
+    }
+
+    // This call will use the new id token without roles as the id_token_hint.
     const logoutURL = encodeURIComponent(
       this.keycloak.createLogoutUrl({
         redirectUri,
@@ -360,7 +376,46 @@ export class AuthService {
     const config = await AppConfigService.shared.config();
     const externalLogoutUrl = config.authConfig.externalSiteMinderLogoutUrl;
     const siteMinderLogoutURL = `${externalLogoutUrl}?retnow=1&returl=${logoutURL}`;
+
     window.location.href = siteMinderLogoutURL;
+  }
+
+  /**
+   * Creates a minimal token without optional scopes which minimizes the id_token size.
+   */
+  private async createMinimalToken() {
+    if (!this.keycloak) {
+      throw new Error("Keycloak not initialized.");
+    }
+
+    const { authServerUrl, realm, clientId, refreshToken } = this.keycloak;
+    if (!authServerUrl || !realm || !clientId || !refreshToken) {
+      throw new Error(
+        "Unable to refresh Keycloak token due to missing session details.",
+      );
+    }
+
+    const tokenEndpoint = `${authServerUrl}realms/${realm}/protocol/openid-connect/token`;
+    // At least one scope is required otherwise the previous scopes will be carried over
+    const params = new URLSearchParams({
+      grant_type: "refresh_token",
+      client_id: clientId,
+      refresh_token: refreshToken,
+      scope: "openid",
+    });
+
+    const { data } = await axios.post<KeycloakTokenResponse>(
+      tokenEndpoint,
+      params.toString(),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      },
+    );
+
+    // Just replace the idToken for use in logout. The new access_token isn't of much use because of the reduced scope.
+    this.keycloak.idToken = data.id_token;
   }
 
   async renewTokenIfExpired() {
