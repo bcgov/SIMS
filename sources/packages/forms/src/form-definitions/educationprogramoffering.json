@@ -1164,7 +1164,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "{{ row.summary?.totalDays }}",
+                      "content": "{{ row?.summary?.totalDays ?? \"\" }}",
                       "refreshOnChange": true,
                       "dataGridLabel": true,
                       "key": "html",
@@ -1182,7 +1182,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "{{ row.summary?.eligibleDays }}",
+                      "content": "{{ row?.summary?.eligibleDays ?? \"\" }}",
                       "refreshOnChange": true,
                       "dataGridLabel": true,
                       "key": "eligibleDays",
@@ -1200,7 +1200,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "{{ row.summary?.ineligibleDays }}",
+                      "content": "{{ row?.summary?.ineligibleDays ?? \"\" }}",
                       "refreshOnChange": true,
                       "dataGridLabel": true,
                       "key": "eligibleDays1",
@@ -1211,6 +1211,7 @@
                     {
                       "label": "study Breaks Summary",
                       "persistent": "client-only",
+                      "redrawOn": "data",
                       "calculateValue": "// Total days.\r\nlet totalDays = 0;\r\nif (row.breakStartDate && row.breakEndDate) {\r\n  const diffDays = moment(row.breakEndDate, \"YYYY-MM-DD\").diff(\r\n    moment(row.breakStartDate, \"YYYY-MM-DD\"),\r\n    \"days\"\r\n  ) + 1 ;\r\n  totalDays = Math.max(diffDays, 0);\r\n}\r\n// Maximum of 21 days per break are eligible.\r\n// Any days over 21 consecutive days must be unfunded\r\nconst eligibleDays = (totalDays > 21) ? 21 : totalDays;\r\n// Breaks days (each) over 21 consecutive days must be unfunded.\r\nconst ineligibleDays = totalDays - eligibleDays;\r\n\r\nvalue = { totalDays, eligibleDays, ineligibleDays }\r\n\r\n",
                       "key": "summary",
                       "type": "hidden",
