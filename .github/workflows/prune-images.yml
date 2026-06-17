@@ -30,7 +30,7 @@ on:
       minTags:
         description: "Minimum number of Tags to keep"
         required: false
-        default: "2"
+        default: "5"
       minReleaseTags:
         description: "Minimum number of release (v) Tags to keep per Image Stream"
         required: false
@@ -48,7 +48,7 @@ jobs:
           echo "APPLICATIONS=${{ inputs.applications || 'web-sims, api-sims, queue-consumers-sims, workers-sims' }}" >> $GITHUB_ENV
           echo "OCJOBS=${{ inputs.ocjobs || 'migrations-job' }}" >> $GITHUB_ENV
           echo "PREFIX=${{ inputs.prefix || 'main' }}" >> $GITHUB_ENV
-          echo "MIN_TAGS=${{ inputs.minTags || '2' }}" >> $GITHUB_ENV
+          echo "MIN_TAGS=${{ inputs.minTags || '5' }}" >> $GITHUB_ENV
           echo "MIN_RELEASE_TAGS=${{ inputs.minReleaseTags || '10' }}" >> $GITHUB_ENV
 
       - name: Install CLI tools from OpenShift Mirror
