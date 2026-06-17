@@ -90,12 +90,3 @@ oc get is/$IS_NAME -n $IS_NAMESPACE -o json | jq -r --arg JOB_BUILD_ID "$JOB_BUI
   | .[]
   | "\($IS_NAME):\(.)"
 '
-
-# Output all tags that do not start with the specified PREFIX or with "v" (release tags).
-# These tags (e.g., from feature branches) are fully pruned with no minimum retention.
-oc get is/$IS_NAME -n $IS_NAMESPACE -o json | jq -r --arg PREFIX "$PREFIX" --arg IS_NAME "$IS_NAME" '
-  .status.tags
-  | map(select(.tag | (startswith($PREFIX) or startswith("v")) | not))
-  | .[].tag
-  | "\($IS_NAME):\(.)"
-'
