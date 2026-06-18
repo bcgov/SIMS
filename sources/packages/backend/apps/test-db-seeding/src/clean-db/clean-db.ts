@@ -17,10 +17,15 @@ export class CleanDatabase {
     const dropIsValidSystemLookupKeyFunctionPromise = this.dataSource.query(
       "DROP FUNCTION IF EXISTS sims.is_valid_system_lookup_key(TEXT,TEXT)",
     );
+    const dropIsValidSystemLookupKeyArrayFunctionPromise =
+      this.dataSource.query(
+        "DROP FUNCTION IF EXISTS sims.is_valid_system_lookup_key_array(input_keys TEXT[], input_category TEXT)",
+      );
     await Promise.all([
       dropExtensionPGTRGMPromise,
       dropCreateHistoryEntryFunctionPromise,
       dropIsValidSystemLookupKeyFunctionPromise,
+      dropIsValidSystemLookupKeyArrayFunctionPromise,
     ]);
   }
 }
