@@ -60,7 +60,7 @@ describe(`FormSubmissionStudentsController(e2e)-submitForm-${FORM_DEFINITION_NAM
   });
 
   it(
-    `Should submit non punitive withdrawal form for an application with scholastic standing type ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}` +
+    `Should submit non-punitive withdrawal form for an application with scholastic standing type ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}` +
       " when the scholastic standing change is active and not already marked as non-punitive.",
     async () => {
       // Arrange
@@ -142,6 +142,7 @@ describe(`FormSubmissionStudentsController(e2e)-submitForm-${FORM_DEFINITION_NAM
         statusCode: HttpStatus.BAD_REQUEST,
       });
   });
+
   afterAll(async () => {
     await app?.close();
   });
@@ -192,6 +193,7 @@ async function createApplicationsWithWithdrawal(
   }
   return { student, applications };
 }
+
 /**
  * Gets the form submission data for non-punitive withdrawal form.
  * @param dynamicFormConfigId The ID of the dynamic form configuration.
