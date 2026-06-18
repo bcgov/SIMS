@@ -187,23 +187,12 @@ export async function deleteTag(
   }
 }
 
-/**
- * Prunes old ImageStream tags for a Deployment-backed application.
- * Deletes prefix tags (e.g., main-*) older than the currently deployed tag
- * (minus a configurable safety buffer) and all feature branch tags.
- * @param appName The application name matching both the ImageStream name and the Deployment name suffix.
- * @returns A promise that resolves when deployment tag pruning completes.
- */
-export async function pruneDeploymentApp(appName: string): Promise<void> {
+async function pruneTags(
+  imageStream: ImageStreamResource,
+  deployedTag: ImageStreamTag,
+  appIdentifier: string,
+): Promise<void> {
   const { config } = getRuntimeContext();
-
-  const { deployedTag, imageStream } = (await getDeploymentTag(appName)) ?? {};
-  if (!deployedTag || !imageStream) {
-    console.warn(
-      `Skipping ${appName} (deployed tag was not found on ImageStream).`,
-    );
-    return;
-  }
 
   const oldPrefixTags = imageStream.status?.tags
     ?.filter(
@@ -241,21 +230,39 @@ export async function pruneDeploymentApp(appName: string): Promise<void> {
 
   for (const tag of prefixTagsToDelete) {
     console.log(
-      `${appName}:${tag.tag} (Older than deployed tag, created ${getTagCreatedAt(tag)})`,
+      `  ${appIdentifier}:${tag.tag} (Older than deployed tag, created ${getTagCreatedAt(tag)})`,
     );
     await deleteTag(tag, imageStream);
   }
 
   for (const tag of featureTagsToDelete) {
     console.log(
-      `${appName}:${tag.tag} (Feature tag, created ${getTagCreatedAt(tag)})`,
+      `  ${appIdentifier}:${tag.tag} (Feature tag, created ${getTagCreatedAt(tag)})`,
     );
     await deleteTag(tag, imageStream);
   }
 
   console.log(
-    `Total of ${featureTagsToDelete.length + prefixTagsToDelete.length} tag(s).`,
+    `  Total of ${featureTagsToDelete.length + prefixTagsToDelete.length} tag(s) deleted.`,
   );
+}
+
+/**
+ * Prunes old ImageStream tags for a Deployment-backed application.
+ * Deletes prefix tags (e.g., main-*) older than the currently deployed tag
+ * (minus a configurable safety buffer) and all feature branch tags.
+ * @param appName The application name matching both the ImageStream name and the Deployment name suffix.
+ * @returns A promise that resolves when deployment tag pruning completes.
+ */
+export async function pruneDeploymentApp(appName: string): Promise<void> {
+  const { deployedTag, imageStream } = (await getDeploymentTag(appName)) ?? {};
+  if (!deployedTag || !imageStream) {
+    console.warn(
+      `Skipping ${appName} (deployed tag was not found on ImageStream).`,
+    );
+    return;
+  }
+  await pruneTags(imageStream, deployedTag, appName);
 }
 
 /**
@@ -268,8 +275,6 @@ export async function pruneDeploymentApp(appName: string): Promise<void> {
  * @returns A promise that resolves when job tag pruning completes.
  */
 export async function pruneJobApp(appName: string): Promise<void> {
-  const { config } = getRuntimeContext();
-
   const { deployedTag, imageStream } = await getJobTag(appName);
   if (!deployedTag || !imageStream) {
     console.warn(
@@ -277,56 +282,5 @@ export async function pruneJobApp(appName: string): Promise<void> {
     );
     return;
   }
-
-  const oldPrefixTags = imageStream.status?.tags
-    ?.filter(
-      // Filter tags that match the prefix (main-*)
-      (tag) => tag.tag.startsWith(config.prefix) && /.*-\d+$/.test(tag.tag),
-    )
-    .filter(
-      // Exclude the currently deployed tag.
-      (tag) => tag.tag !== deployedTag.tag,
-    )
-    .sort(
-      // Sort by creation date ascending (oldest first)
-      (left, right) =>
-        getTagCreatedAtTimestamp(left) - getTagCreatedAtTimestamp(right),
-    );
-
-  // Select tags to delete, keeping at least `config.minTags` most recent ones.
-  const prefixTagsToDelete =
-    oldPrefixTags?.slice(
-      0,
-      Math.max(0, oldPrefixTags.length - config.minTags),
-    ) ?? [];
-
-  // Select tags to delete that don't match the prefix (main-*) and don't look like release tags (v*).
-  const featureTagsToDelete: ImageStreamTag[] =
-    imageStream.status?.tags?.filter(
-      (tag) => !tag.tag.startsWith(config.prefix) && !tag.tag.startsWith("v"),
-    ) ?? [];
-
-  if (featureTagsToDelete.length === 0 && prefixTagsToDelete.length === 0) {
-    console.log("No tags to delete.");
-    return;
-  }
-
-  for (const tag of prefixTagsToDelete) {
-    console.log(
-      `${imageStream.metadata.name}:${tag.tag} (Older than deployed tag, created ${getTagCreatedAt(tag)})`,
-    );
-
-    await deleteTag(tag, imageStream);
-  }
-
-  for (const tag of featureTagsToDelete) {
-    console.log(
-      `${imageStream.metadata.name}:${tag.tag} (Feature tag, created ${getTagCreatedAt(tag)})`,
-    );
-    await deleteTag(tag, imageStream);
-  }
-
-  console.log(
-    `Total of ${featureTagsToDelete.length + prefixTagsToDelete.length} tag(s) deleted.`,
-  );
+  await pruneTags(imageStream, deployedTag, imageStream.metadata.name || "");
 }
