@@ -74,11 +74,13 @@ function getTagCreatedAt(tag: ImageStreamTag): string {
 }
 
 function getTagCreatedAtTimestamp(tag: ImageStreamTag): number {
-  const createdAtTimestamp = Date.parse(getTagCreatedAt(tag));
+  const createdAt = getTagCreatedAt(tag);
+  const createdAtTimestamp = Date.parse(createdAt);
   if (Number.isNaN(createdAtTimestamp)) {
-    throw new TypeError(
-      `Invalid creation timestamp for tag ${tag.tag}: ${getTagCreatedAt(tag)}.`,
+    console.warn(
+      `Invalid creation timestamp for tag ${tag.tag}: ${createdAt}. Treating as oldest.`,
     );
+    return 0;
   }
 
   return createdAtTimestamp;
@@ -189,15 +191,28 @@ export async function deleteTag(
 
 /**
  * Prunes old ImageStream tags for a Deployment-backed application.
- * Deletes prefix tags (e.g., main-*) older than the currently deployed tag
- * (minus a configurable safety buffer) and all feature branch tags.
+ * Retains the currently deployed tag and keeps the most recent `config.minTags` prefix tags
+ * (e.g., main-*), deleting older prefix tags by creation time. It also deletes non-prefix,
+ * non-release (v*) feature tags.
  * @param appName The application name matching both the ImageStream name and the Deployment name suffix.
  * @returns A promise that resolves when deployment tag pruning completes.
  */
 export async function pruneDeploymentApp(appName: string): Promise<void> {
   const { config } = getRuntimeContext();
 
-  const { deployedTag, imageStream } = (await getDeploymentTag(appName)) ?? {};
+  let deployedTag: ImageStreamTag | undefined;
+  let imageStream: ImageStreamResource | undefined;
+
+  try {
+    ({ deployedTag, imageStream } = await getDeploymentTag(appName));
+  } catch (error) {
+    console.warn(
+      `Skipping ${appName} (deployment not found or inaccessible):`,
+      error,
+    );
+    return;
+  }
+
   if (!deployedTag || !imageStream) {
     console.warn(
       `Skipping ${appName} (deployed tag was not found on ImageStream).`,
@@ -270,7 +285,16 @@ export async function pruneDeploymentApp(appName: string): Promise<void> {
 export async function pruneJobApp(appName: string): Promise<void> {
   const { config } = getRuntimeContext();
 
-  const { deployedTag, imageStream } = await getJobTag(appName);
+  let deployedTag: ImageStreamTag | undefined;
+  let imageStream: ImageStreamResource | undefined;
+
+  try {
+    ({ deployedTag, imageStream } = await getJobTag(appName));
+  } catch (error) {
+    console.warn(`Skipping ${appName} (job not found or inaccessible):`, error);
+    return;
+  }
+
   if (!deployedTag || !imageStream) {
     console.warn(
       `Skipping ${appName} (deployed tag was not found on ImageStream).`,

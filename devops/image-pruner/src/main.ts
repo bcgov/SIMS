@@ -43,10 +43,22 @@ function loadConfig(): PruneConfig {
     environment,
     applications: (process.env.APPLICATIONS ?? "")
       .split(",")
-      .map((value) => value.trim()),
-    ocJobs: (process.env.OCJOBS ?? "").split(",").map((value) => value.trim()),
+      .map((value) => value.trim())
+      .filter(Boolean),
+    ocJobs: (process.env.OCJOBS ?? "")
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean),
     prefix: process.env.PREFIX ?? "main",
-    minTags: Number.parseInt(process.env.MIN_TAGS ?? "2"),
+    minTags: (() => {
+      const parsed = Number.parseInt(process.env.MIN_TAGS ?? "2", 10);
+      if (Number.isNaN(parsed) || parsed < 0) {
+        throw new Error(
+          `MIN_TAGS must be a non-negative integer. Got: ${process.env.MIN_TAGS}.`,
+        );
+      }
+      return parsed;
+    })(),
     dryRun,
   };
 }
