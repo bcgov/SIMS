@@ -149,9 +149,10 @@ describe(`FormSubmissionStudentsController(e2e)-submitForm-${FORM_DEFINITION_NAM
 
 /**
  * Create applications with reported scholastic standing change type withdrawal for a student.
- * @param db e2e data sources.
- * @param auditUser audit user to create scholastic standing.
- * @returns the created application and the scholastic standing withdrawal id.
+ * @param db E2E data sources.
+ * @param auditUser Audit user to create scholastic standing.
+ * @param applicationsCount Number of applications to be created with withdrawal for a student.
+ * @returns Student and applications with withdrawal.
  */
 async function createApplicationsWithWithdrawal(
   db: E2EDataSources,
@@ -180,10 +181,10 @@ async function createApplicationsWithWithdrawal(
           },
         ),
       );
-    // Link the assessment to the scholastic standing.
-    const currentAssessment = application.currentAssessment!;
-    currentAssessment.studentScholasticStanding = scholasticStandingWithdrawal;
-    await db.studentAssessment.save(currentAssessment);
+    // Link the current assessment to the scholastic standing.
+    application.currentAssessment!.studentScholasticStanding =
+      scholasticStandingWithdrawal;
+    await db.application.save(application);
     applications.push({
       application,
       scholasticStandingWithdrawal,
@@ -196,8 +197,8 @@ async function createApplicationsWithWithdrawal(
  * @param dynamicFormConfigId The ID of the dynamic form configuration.
  * @param eligibleApplications The list of eligible applications with withdrawal information.
  * @param scholasticStandingWithdrawalId The ID of the scholastic standing withdrawal.
- * @param options options to generate the form data.
- * - `eligibleCircumstances` eligible circumstances for the non-punitive withdrawal.
+ * @param options Options to generate the form data.
+ * - `eligibleCircumstances` Eligible circumstances for the non-punitive withdrawal.
  * @returns The form submission data.
  */
 function getNonPunitiveWithdrawalFormData(
