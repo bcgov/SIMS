@@ -74,11 +74,13 @@ function getTagCreatedAt(tag: ImageStreamTag): string {
 }
 
 function getTagCreatedAtTimestamp(tag: ImageStreamTag): number {
-  const createdAtTimestamp = Date.parse(getTagCreatedAt(tag));
+  const createdAt = getTagCreatedAt(tag);
+  const createdAtTimestamp = Date.parse(createdAt);
   if (Number.isNaN(createdAtTimestamp)) {
-    throw new TypeError(
-      `Invalid creation timestamp for tag ${tag.tag}: ${getTagCreatedAt(tag)}.`,
+    console.warn(
+      `Invalid creation timestamp for tag ${tag.tag}: ${createdAt}. Treating as oldest.`,
     );
+    return 0;
   }
 
   return createdAtTimestamp;
@@ -255,13 +257,26 @@ async function pruneTags(
  * @returns A promise that resolves when deployment tag pruning completes.
  */
 export async function pruneDeploymentApp(appName: string): Promise<void> {
-  const { deployedTag, imageStream } = (await getDeploymentTag(appName)) ?? {};
+  let deployedTag: ImageStreamTag | undefined;
+  let imageStream: ImageStreamResource | undefined;
+
+  try {
+    ({ deployedTag, imageStream } = await getDeploymentTag(appName));
+  } catch (error) {
+    console.warn(
+      `Skipping ${appName} (deployment not found or inaccessible):`,
+      error,
+    );
+    return;
+  }
+
   if (!deployedTag || !imageStream) {
     console.warn(
       `Skipping ${appName} (deployed tag was not found on ImageStream).`,
     );
     return;
   }
+
   await pruneTags(imageStream, deployedTag, appName);
 }
 
@@ -275,7 +290,16 @@ export async function pruneDeploymentApp(appName: string): Promise<void> {
  * @returns A promise that resolves when job tag pruning completes.
  */
 export async function pruneJobApp(appName: string): Promise<void> {
-  const { deployedTag, imageStream } = await getJobTag(appName);
+  let deployedTag: ImageStreamTag | undefined;
+  let imageStream: ImageStreamResource | undefined;
+
+  try {
+    ({ deployedTag, imageStream } = await getJobTag(appName));
+  } catch (error) {
+    console.warn(`Skipping ${appName} (job not found or inaccessible):`, error);
+    return;
+  }
+
   if (!deployedTag || !imageStream) {
     console.warn(
       `Skipping ${appName} (deployed tag was not found on ImageStream).`,
