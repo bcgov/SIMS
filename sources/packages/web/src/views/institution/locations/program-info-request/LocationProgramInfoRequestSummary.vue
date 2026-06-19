@@ -13,7 +13,7 @@
       :records-count="applications.count"
     >
       <template #actions>
-        <v-row class="justify-end">
+        <v-row class="justify-end" density="compact">
           <v-col cols="auto">
             <v-btn-toggle
               v-model="intensityFilter"
@@ -40,7 +40,7 @@
               >
             </v-btn-toggle>
           </v-col>
-          <v-col cols="3">
+          <v-col>
             <v-text-field
               density="compact"
               label="Search by name or application"
