@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import request from "supertest";
-import { DataSource, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import {
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
@@ -10,37 +10,46 @@ import {
   InstitutionTokenTypes,
   INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
   INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
+  getRecentActiveProgramYear,
 } from "../../../../testHelpers";
 import {
   createFakeInstitutionLocation,
   saveFakeStudent,
   saveFakeApplication,
+  createE2EDataSources,
+  E2EDataSources,
 } from "@sims/test-utils";
 import {
   Application,
   ApplicationStatus,
   Institution,
   InstitutionLocation,
+  ProgramYear,
 } from "@sims/sims-db";
 import { FieldSortOrder } from "@sims/utilities";
 import { saveStudentApplicationForCollegeC } from "./student.institutions.utils";
+import { TestingModule } from "@nestjs/testing";
 
 describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () => {
   let app: INestApplication;
-  let appDataSource: DataSource;
+  let db: E2EDataSources;
+  let appModule: TestingModule;
   let collegeE: Institution;
   let collegeELocation: InstitutionLocation;
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
   let applicationRepo: Repository<Application>;
+  let recentActiveProgramYear: ProgramYear;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, dataSource, module } =
+      await createTestingAppModule();
     app = nestApplication;
-    appDataSource = dataSource;
+    db = createE2EDataSources(dataSource);
+    appModule = module;
     // College E.
     const { institution: institutionE } = await getAuthRelatedEntities(
-      appDataSource,
+      db.dataSource,
       InstitutionTokenTypes.CollegeEAdminNonLegalSigningUser,
     );
     collegeE = institutionE;
@@ -48,26 +57,27 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
 
     // College F.
     const { institution: institutionF } = await getAuthRelatedEntities(
-      appDataSource,
+      db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
     );
     collegeF = institutionF;
     collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     await authorizeUserTokenForLocation(
-      appDataSource,
+      db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
-    applicationRepo = appDataSource.getRepository(Application);
+    applicationRepo = db.dataSource.getRepository(Application);
+    recentActiveProgramYear = await getRecentActiveProgramYear(db);
   });
 
   it("Should get the application summary when the student has a submitted application for the institution with a single version.", async () => {
     // Arrange
-    const student = await saveFakeStudent(appDataSource);
+    const student = await saveFakeStudent(db.dataSource);
 
     // Submitted application for College F.
     const savedApplication = await saveFakeApplication(
-      appDataSource,
+      db.dataSource,
       {
         institution: collegeF,
         institutionLocation: collegeFLocation,
@@ -112,11 +122,11 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
 
   it("Should get the application summary when the student has a submitted application for the institution with multiple versions.", async () => {
     // Arrange
-    const student = await saveFakeStudent(appDataSource);
+    const student = await saveFakeStudent(db.dataSource);
 
     // Edited application for College F.
     const editedApplication = await saveFakeApplication(
-      appDataSource,
+      db.dataSource,
       {
         institution: collegeF,
         institutionLocation: collegeFLocation,
@@ -127,7 +137,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
 
     // Submitted application for College F.
     const submittedApplication = await saveFakeApplication(
-      appDataSource,
+      db.dataSource,
       {
         institution: collegeF,
         institutionLocation: collegeFLocation,
@@ -163,7 +173,8 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
             status: submittedApplication.applicationStatus,
             parentApplicationId: editedApplication.id,
             submittedDate: editedApplication.submittedDate?.toISOString(),
-            lastSubmittedDate: submittedApplication.submittedDate?.toISOString(),
+            lastSubmittedDate:
+              submittedApplication.submittedDate?.toISOString(),
             isChangeRequestAllowedForPY: false,
             offeringIntensity: submittedApplication.offeringIntensity,
           },
@@ -174,11 +185,11 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
 
   it("Should get the application summary when the student has a submitted application and a draft application for the institution", async () => {
     // Arrange
-    const student = await saveFakeStudent(appDataSource);
+    const student = await saveFakeStudent(db.dataSource);
 
     // Draft application for College F.
     await saveFakeApplication(
-      appDataSource,
+      db.dataSource,
       {
         student,
       },
@@ -187,7 +198,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
 
     // Submitted application for College F.
     const submittedApplication = await saveFakeApplication(
-      appDataSource,
+      db.dataSource,
       {
         institution: collegeF,
         institutionLocation: collegeFLocation,
@@ -221,7 +232,8 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
             status: submittedApplication.applicationStatus,
             parentApplicationId: submittedApplication.id,
             submittedDate: submittedApplication.submittedDate?.toISOString(),
-            lastSubmittedDate: submittedApplication.submittedDate?.toISOString(),
+            lastSubmittedDate:
+              submittedApplication.submittedDate?.toISOString(),
             isChangeRequestAllowedForPY: false,
             offeringIntensity: submittedApplication.offeringIntensity,
           },
@@ -232,17 +244,17 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
 
   it("Should get the application summary when the student has a submitted application for the institution and another submitted application for another institution.", async () => {
     // Arrange
-    const student = await saveFakeStudent(appDataSource);
+    const student = await saveFakeStudent(db.dataSource);
 
     // Submitted application for College F.
-    const collegeFApplication = await saveFakeApplication(appDataSource, {
+    const collegeFApplication = await saveFakeApplication(db.dataSource, {
       institution: collegeF,
       institutionLocation: collegeFLocation,
       student,
     });
 
     // Submitted application for College E.
-    await saveFakeApplication(appDataSource, {
+    await saveFakeApplication(db.dataSource, {
       institutionLocation: collegeELocation,
       student,
     });
@@ -281,11 +293,11 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
 
   it("Should get the application summary when the student has an edited application for the institution and a subsequent submitted application for another institution.", async () => {
     // Arrange
-    const student = await saveFakeStudent(appDataSource);
+    const student = await saveFakeStudent(db.dataSource);
 
     // Edited application for College F.
     const collegeFApplication = await saveFakeApplication(
-      appDataSource,
+      db.dataSource,
       {
         institution: collegeF,
         institutionLocation: collegeFLocation,
@@ -297,7 +309,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
     );
 
     // Submitted application for college E.
-    const collegeEApplication = await saveFakeApplication(appDataSource, {
+    const collegeEApplication = await saveFakeApplication(db.dataSource, {
       institution: collegeE,
       institutionLocation: collegeELocation,
       student,
@@ -340,10 +352,10 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
 
   it("Should get the first application when student has two submitted/in progress applications for the institution when pagination is 1.", async () => {
     // Arrange
-    const student = await saveFakeStudent(appDataSource);
+    const student = await saveFakeStudent(db.dataSource);
 
     // Submitted application for college F.
-    const savedApplication1 = await saveFakeApplication(appDataSource, {
+    const savedApplication1 = await saveFakeApplication(db.dataSource, {
       institution: collegeF,
       institutionLocation: collegeFLocation,
       student,
@@ -351,7 +363,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
 
     // In Progress application for college F.
     await saveFakeApplication(
-      appDataSource,
+      db.dataSource,
       {
         institution: collegeF,
         institutionLocation: collegeFLocation,
@@ -399,10 +411,10 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
       `and when sortField is application number and sortOrder is ${FieldSortOrder.DESC}. `,
     async () => {
       // Arrange
-      const student = await saveFakeStudent(appDataSource);
+      const student = await saveFakeStudent(db.dataSource);
 
       // Submitted application for college F.
-      const savedApplication1 = await saveFakeApplication(appDataSource, {
+      const savedApplication1 = await saveFakeApplication(db.dataSource, {
         institution: collegeF,
         institutionLocation: collegeFLocation,
         student,
@@ -410,7 +422,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
 
       // In Progress application for college F.
       const savedApplication2 = await saveFakeApplication(
-        appDataSource,
+        db.dataSource,
         {
           institution: collegeF,
           institutionLocation: collegeFLocation,
@@ -475,10 +487,10 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
     // Arrange
     // Student submitting an application to College C.
     const { student, collegeCApplication } =
-      await saveStudentApplicationForCollegeC(appDataSource);
+      await saveStudentApplicationForCollegeC(db.dataSource);
 
     await authorizeUserTokenForLocation(
-      appDataSource,
+      db.dataSource,
       InstitutionTokenTypes.CollegeCUser,
       collegeCApplication.location,
     );
@@ -506,7 +518,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
 
   it("Should throw forbidden error when student does not have at least one application submitted for the institution.", async () => {
     // Arrange
-    const student = await saveFakeStudent(appDataSource);
+    const student = await saveFakeStudent(db.dataSource);
 
     // College F is a BC Public institution.
     const institutionUserToken = await getInstitutionToken(

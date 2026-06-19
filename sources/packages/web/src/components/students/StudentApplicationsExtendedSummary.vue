@@ -32,16 +32,6 @@
               emptyStringFiller(getISODateHourMinuteString(item.submittedDate))
             }}
           </template>
-          <template #[`item.lastSubmitted`]="{ item }">
-            {{
-              emptyStringFiller(
-                getISODateHourMinuteString(item.lastSubmittedDate),
-              )
-            }}
-          </template>
-          <template #[`item.offeringIntensity`]="{ item }">
-            {{ mapOfferingIntensity(item.offeringIntensity) }}
-          </template>
           <template #[`item.studyStartPeriod`]="{ item }">
             {{ dateOnlyLongString(item.studyStartPeriod) }} -
             {{ dateOnlyLongString(item.studyEndPeriod) }}
@@ -170,7 +160,7 @@ import {
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
 import { StudentAppealService } from "@/services/StudentAppealService";
-import { useFormatters, useOffering, useStudentStore } from "@/composables";
+import { useFormatters, useStudentStore } from "@/composables";
 import StatusChipApplication from "@/components/generic/StatusChipApplication.vue";
 import StudentApplicationsVersion from "@/components/students/StudentApplicationsVersion.vue";
 import {
@@ -217,7 +207,6 @@ export default defineComponent({
       getISODateHourMinuteString,
       emptyStringFiller,
     } = useFormatters();
-    const { mapOfferingIntensity } = useOffering();
     const { hasValidSIN } = useStudentStore();
 
     const DEFAULT_SORT_FIELD = StudentApplicationFields.Status;
@@ -343,7 +332,6 @@ export default defineComponent({
       paginationAndSortEvent,
       versionsExpanderClick,
       expandedItems,
-      mapOfferingIntensity,
     };
   },
 });
