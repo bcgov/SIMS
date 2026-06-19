@@ -37,8 +37,7 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
   let applicationRepo: Repository<Application>;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource, module } =
-      await createTestingAppModule();
+    const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
     // College E.

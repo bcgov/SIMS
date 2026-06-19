@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, defineComponent } from "vue";
+import { onMounted, ref, defineComponent, computed } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
   StudentApplicationFields,
@@ -115,9 +115,11 @@ export default defineComponent({
       dateOnlyLongPeriodString,
       emptyStringFiller,
     } = useFormatters();
-    const applicationsSummaryHeaders = props.isMinistryView
-      ? StudentApplicationsSimplifiedSummaryMinistryHeaders
-      : StudentApplicationsSimplifiedSummaryHeaders;
+    const applicationsSummaryHeaders = computed(() =>
+      props.isMinistryView
+        ? StudentApplicationsSimplifiedSummaryMinistryHeaders
+        : StudentApplicationsSimplifiedSummaryHeaders,
+    );
     const DEFAULT_SORT_FIELD = StudentApplicationFields.Status;
     const currentPagination: PaginationOptions = {
       page: DEFAULT_DATATABLE_PAGE_NUMBER,
