@@ -64,41 +64,44 @@ function loadConfig(): PruneConfig {
 }
 
 /**
- * Runs the image tag pruning flow for all configured applications and jobs.
- * @returns A promise that resolves when all configured pruning work completes.
+ * Script main execution method.
  */
-async function runPruner(): Promise<void> {
-  const config = loadConfig();
-  const client = await createOpenShiftClient(config);
-  initializePruner(client, config);
+(async () => {
+  try {
+    const config = loadConfig();
+    const client = await createOpenShiftClient(config);
+    initializePruner(client, config);
 
-  console.log("Starting image tag pruning...");
-  console.log(`Environment       : ${config.environment}`);
-  console.log(`License plate     : ${config.licensePlate}`);
-  console.log(`Applications      : ${config.applications.join(", ")}`);
-  console.log(`Jobs              : ${config.ocJobs.join(", ")}`);
-  console.log(`Tag prefix        : ${config.prefix}`);
-  console.log(`Min prefix tags   : ${config.minTags}`);
-  console.log(`Dry run           : ${config.dryRun}`);
+    console.log("Starting image tag pruning...");
+    console.table([
+      {
+        environment: config.environment,
+        licensePlate: config.licensePlate,
+        applications: config.applications.join(", "),
+        jobs: config.ocJobs.join(", "),
+        tagPrefix: config.prefix,
+        minPrefixTags: config.minTags,
+        dryRun: config.dryRun,
+      },
+    ]);
 
-  // Prune image tags for each application (api-sims, web-app, queue-consumers, etc.).
-  for (const application of config.applications) {
-    await pruneDeploymentApp(application);
+    // Prune image tags for each application (api-sims, web-app, queue-consumers, etc.).
+    for (const application of config.applications) {
+      await pruneDeploymentApp(application);
+    }
+
+    // Prune image tags for each oc job (e.g. migration-job).
+    for (const job of config.ocJobs) {
+      await pruneJobApp(job);
+    }
+
+    console.log("\n" + "=".repeat(80));
+    console.log(
+      `Image tag pruning completed. ${config.dryRun ? "DRY RUN - NO CHANGES WERE MADE TO THE CLUSTER!" : ""}`,
+    );
+    console.log("\n" + "=".repeat(80));
+  } catch (error: unknown) {
+    console.error("Image tag pruning failed:", error);
+    process.exit(1);
   }
-
-  // Prune image tags for each oc job (e.g. migration-job).
-  for (const job of config.ocJobs) {
-    await pruneJobApp(job);
-  }
-
-  console.log("\n" + "=".repeat(80));
-  console.log(
-    `Image tag pruning completed. ${config.dryRun ? "DRY RUN - NO CHANGES WERE MADE TO THE CLUSTER!" : ""}`,
-  );
-  console.log("\n" + "=".repeat(80));
-}
-
-void runPruner().catch((error: unknown) => {
-  console.error("Image tag pruning failed:", error);
-  process.exit(1);
-});
+})();
