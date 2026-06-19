@@ -655,11 +655,6 @@
   border-collapse: collapse;
 }
 
-// Formio table style for horizontal row separators.
-.formio-bordered table tbody tr td {
-  border-top: 1px solid $common-border-color;
-}
-
 // Formio figma style for the nth child (like total).
 .formio-table-last-col-background table tbody tr:last-child {
   background-color: $default-background;
@@ -667,6 +662,7 @@
 
 // Formio table style for alignment.
 .formio-bordered table tbody tr td {
+  border-top: 1px solid $common-border-color;
   max-width: 70px;
 }
 
