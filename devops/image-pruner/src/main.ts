@@ -74,15 +74,13 @@ function loadConfig(): PruneConfig {
 
     console.log("Starting image tag pruning...");
     console.table([
-      {
-        environment: config.environment,
-        licensePlate: config.licensePlate,
-        applications: config.applications.join(", "),
-        jobs: config.ocJobs.join(", "),
-        tagPrefix: config.prefix,
-        minPrefixTags: config.minTags,
-        dryRun: config.dryRun,
-      },
+      { setting: "Environment", value: config.environment },
+      { setting: "License plate", value: config.licensePlate },
+      { setting: "Apps", value: config.applications.join(", ") || "(none)" },
+      { setting: "Jobs", value: config.ocJobs.join(", ") || "(none)" },
+      { setting: "Tag prefix", value: config.prefix },
+      { setting: "Min prefix tags", value: String(config.minTags) },
+      { setting: "Dry run", value: String(config.dryRun) },
     ]);
 
     // Prune image tags for each application (api-sims, web-app, queue-consumers, etc.).
