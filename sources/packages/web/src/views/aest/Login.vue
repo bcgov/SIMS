@@ -15,11 +15,10 @@
         src="@/assets/images/person-seeing-screen.svg"
       />
     </template>
-    <template #banner-message>
+    <template #banner-message v-if="showNotAllowedUser">
       <banner
         class="mt-2"
         :type="BannerTypes.Error"
-        v-if="showNotAllowedUser"
         summary="The user was validated successfully but is not currently allowed to
         have access to this application. Please contact the Administrator for
         more information."
