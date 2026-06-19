@@ -10,7 +10,6 @@ import {
   InstitutionTokenTypes,
   INSTITUTION_BC_PUBLIC_ERROR_MESSAGE,
   INSTITUTION_STUDENT_DATA_ACCESS_ERROR_MESSAGE,
-  getRecentActiveProgramYear,
 } from "../../../../testHelpers";
 import {
   createFakeInstitutionLocation,
@@ -24,29 +23,24 @@ import {
   ApplicationStatus,
   Institution,
   InstitutionLocation,
-  ProgramYear,
 } from "@sims/sims-db";
 import { FieldSortOrder } from "@sims/utilities";
 import { saveStudentApplicationForCollegeC } from "./student.institutions.utils";
-import { TestingModule } from "@nestjs/testing";
 
 describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let appModule: TestingModule;
   let collegeE: Institution;
   let collegeELocation: InstitutionLocation;
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
   let applicationRepo: Repository<Application>;
-  let recentActiveProgramYear: ProgramYear;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, module } =
       await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    appModule = module;
     // College E.
     const { institution: institutionE } = await getAuthRelatedEntities(
       db.dataSource,
@@ -68,7 +62,6 @@ describe("StudentInstitutionsController(e2e)-getStudentApplicationSummary", () =
       collegeFLocation,
     );
     applicationRepo = db.dataSource.getRepository(Application);
-    recentActiveProgramYear = await getRecentActiveProgramYear(db);
   });
 
   it("Should get the application summary when the student has a submitted application for the institution with a single version.", async () => {
