@@ -9,7 +9,7 @@ import {
   ValidateNested,
 } from "class-validator";
 import { OmitType } from "@nestjs/mapped-types";
-import { Type } from "class-transformer";
+import { Transform, Type } from "class-transformer";
 import { DesignationStatus } from "../../../route-controllers/institution-locations/models/institution-location.dto";
 import {
   AddressDetailsAPIInDTO,
@@ -64,6 +64,7 @@ export class InstitutionProfileAPIInDTO extends InstitutionContactAPIInDTO {
   @IsNotEmpty()
   @Length(2, 2)
   country: string;
+  @Transform(({ value }) => value || null)
   @ValidateIf(
     (input: InstitutionProfileAPIInDTO) =>
       input.country === CANADA_COUNTRY_CODE || !!input.province,
