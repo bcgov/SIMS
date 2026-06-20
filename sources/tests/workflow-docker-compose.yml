@@ -17,13 +17,6 @@ services:
     ports:
       - "26500:26500"
       - "9600:9600"
-    environment:
-      # - JAVA_TOOL_OPTIONS="-XX:+PrintFlagsFinal"
-      # - CAMUNDA_SECURITY_UNPROTECTED_API=true
-      # - CAMUNDA_DATA_SECONDARY_STORAGE_TYPE=rdbms
-      # - CAMUNDA_RDBMS_URL=jdbc:h2:file:./camunda-data/h2db;DB_CLOSE_DELAY=-1
-      # - CAMUNDA_RDBMS_USERNAME=sa
-      # - CAMUNDA_RDBMS_PASSWORD=
     mem_limit: 1g
     restart: always
     healthcheck:
