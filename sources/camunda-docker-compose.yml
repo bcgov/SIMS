@@ -28,7 +28,7 @@ services:
     ports:
       - "26500:26500"
       - "9600:9600"
-      - "8080:8080"
+      - "8081:8080"
     environment:
       - JAVA_TOOL_OPTIONS="-XX:+PrintFlagsFinal"
     mem_limit: 1g
@@ -51,7 +51,7 @@ services:
       - source: orchestration-config
         target: /usr/local/camunda/config/application.yaml
     networks:
-      - camunda
+      - local-network
     depends_on:
       camunda-data-init:
         condition: service_completed_successfully
@@ -84,7 +84,7 @@ services:
       - source: connectors-config
         target: application.yaml
     networks:
-      - camunda
+      - local-network
     depends_on:
       orchestration:
         # Wait for orchestration service to be healthy, otherwise we get a lot of noisy logs from connection errors
@@ -116,7 +116,7 @@ services:
     volumes:
       - elastic:/usr/share/elasticsearch/data
     networks:
-      - camunda
+      - local-network
 
 volumes:
   camunda:
@@ -124,8 +124,8 @@ volumes:
   elastic:
 
 networks:
-  camunda:
-    name: camunda
+  local-network:
+    external: true
 
 configs:
   connectors-config:
@@ -137,4 +137,35 @@ configs:
           rest-address: http://orchestration:8080
 
   orchestration-config:
-    file: ./configuration/${ORCHESTRATION_CONFIG_FILE:-application-h2.yaml}
+    content: |
+      management.endpoints.configprops.show-values: always
+      camunda:
+        backup:
+          webapps:
+            enabled: false
+        system:
+          cpu-thread-count: "3"
+          io-thread-count: "3"
+        security:
+          authentication:
+            method: "basic"
+            unprotectedApi: true
+          authorizations:
+            enabled: false
+          initialization:
+            users:
+              - username: "demo"
+                password: "demo"
+                name: "Demo User"
+                email: "demo@demo.com"
+            defaultRoles.admin.users:
+              - "demo"
+        data:
+          secondary-storage:
+            type: elasticsearch
+            elasticsearch:
+              cluster-name: elasticsearch
+              url: "http://elasticsearch:9200"
+              number-of-replicas: 0
+        mcp:
+          enabled: true

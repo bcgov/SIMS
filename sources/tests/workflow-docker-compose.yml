@@ -1,25 +1,51 @@
 services:
-  zeebe:
-    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION}
-    container_name: zeebe-test
+  camunda-data-init:
+    image: camunda/camunda:8.9.2
+    user: "0:0"
+    entrypoint:
+      [
+        "/bin/sh",
+        "-c",
+        "chown -R 1001:1001 /usr/local/camunda/camunda-data && chmod 775 /usr/local/camunda/camunda-data",
+      ]
+    volumes:
+      - camunda-data:/usr/local/camunda/camunda-data
+    restart: "no"
+  orchestration:
+    image: camunda/camunda:8.9.2
+    container_name: orchestration
     ports:
       - "26500:26500"
       - "9600:9600"
     environment:
-      - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998
-      - ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK=0.999
-      - "JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m"
+      # - JAVA_TOOL_OPTIONS="-XX:+PrintFlagsFinal"
+      # - CAMUNDA_SECURITY_UNPROTECTED_API=true
+      # - CAMUNDA_DATA_SECONDARY_STORAGE_TYPE=rdbms
+      # - CAMUNDA_RDBMS_URL=jdbc:h2:file:./camunda-data/h2db;DB_CLOSE_DELAY=-1
+      # - CAMUNDA_RDBMS_USERNAME=sa
+      # - CAMUNDA_RDBMS_PASSWORD=
+    mem_limit: 1g
     restart: always
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "timeout 10s bash -c ':> /dev/tcp/127.0.0.1/9600' || exit 1",
+          "bash -c 'exec 3<>/dev/tcp/127.0.0.1/9600 && echo -e \"GET /actuator/health/status HTTP/1.1\r\nHost: localhost\r\n\r\n\" >&3 && head -n 1 <&3'",
         ]
       interval: 30s
       timeout: 5s
       retries: 5
       start_period: 30s
+    # volumes:
+    #   - camunda:/usr/local/camunda/data
+    #   - camunda-data:/usr/local/camunda/camunda-data
+    #   - ./driver-lib:/driver-lib:ro
+    configs:
+      - source: orchestration-config
+        target: /usr/local/camunda/config/application.yaml
+    depends_on:
+      camunda-data-init:
+        condition: service_completed_successfully
   workflow:
     image: workflow-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: workers-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
@@ -28,9 +54,46 @@ services:
       dockerfile: ./workflow/Dockerfile.dev
     environment:
       - NODE_ENV=docker
-      - ZEEBE_GRPC_ADDRESS=grpc://zeebe:26500
+      - ZEEBE_GRPC_ADDRESS=grpc://orchestration:26500
       - CAMUNDA_OAUTH_DISABLED=${CAMUNDA_OAUTH_DISABLED}
       - ZEEBE_CLIENT_MAX_RETRIES=20
     restart: always
     depends_on:
-      - zeebe
+      - orchestration
+volumes:
+  camunda-data:
+
+configs:
+  orchestration-config:
+    content: |
+      management.endpoints.configprops.show-values: always
+      camunda:
+        backup:
+          webapps:
+            enabled: false
+        system:
+          cpu-thread-count: "3"
+          io-thread-count: "3"
+        security:
+          authentication:
+            method: "basic"
+            unprotectedApi: true
+          authorizations:
+            enabled: false
+          initialization:
+            users:
+              - username: "demo"
+                password: "demo"
+                name: "Demo User"
+                email: "demo@demo.com"
+            defaultRoles.admin.users:
+              - "demo"
+        data:
+          secondary-storage:
+            type: rdbms
+            rdbms:
+              url: jdbc:h2:file:./camunda-data/h2db
+              username: sa
+              password:
+              flushInterval: PT0.5S
+              queueSize: 1000
