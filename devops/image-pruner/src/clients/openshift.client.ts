@@ -135,12 +135,4 @@ export class OpenshiftClient {
       name: `${imageStreamName}:${tag}`,
     });
   }
-
-  /**
-   * Returns the configured OpenShift API URL.
-   * @returns The OpenShift API URL.
-   */
-  get openShiftUrl(): string {
-    return this.options.config.openShiftUrl;
-  }
 }
