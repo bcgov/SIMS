@@ -1,27 +1,10 @@
 name: Prune Images
-run-name: Pruning all but the most recent ${{ inputs.minTags }} tags prior to what is deployed in dev, version tags are not pruned.
+run-name: Pruning stale image tags
 permissions:
   contents: read
 
 on:
   workflow_dispatch:
-    inputs:
-      applications:
-        description: "Comma separated list of application Image Streams to prune"
-        required: true
-        default: "web-sims, api-sims, queue-consumers-sims, workers-sims"
-      ocjobs:
-        description: "Comma separated list of job Image Streams to prune"
-        required: true
-        default: "migrations-job"
-      prefix:
-        description: "Branch prefix to restrict pruning to"
-        required: false
-        default: "main"
-      minTags:
-        description: "Minimum number of prefix (main) tags to keep per Image Stream"
-        required: false
-        default: "2"
   schedule:
     - cron: "0 14 * * *" # Runs at 6 AM Pacific every day
 
@@ -31,11 +14,6 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: "26.x"
 
       - name: Install dependencies
         run: npm ci
@@ -48,8 +26,3 @@ jobs:
           SA_TOKEN: ${{ secrets.SA_TOKEN }}
           OPENSHIFT_URL: ${{ vars.OPENSHIFT_CLUSTER_URL }}
           LICENSE_PLATE: ${{ vars.OPENSHIFT_LICENSE_PLATE }}
-          ENVIRONMENT: "dev"
-          APPLICATIONS: ${{ inputs.applications || 'web-sims, api-sims, queue-consumers-sims, workers-sims' }}
-          OCJOBS: ${{ inputs.ocjobs || 'migrations-job' }}
-          PREFIX: ${{ inputs.prefix || 'main' }}
-          MIN_TAGS: ${{ inputs.minTags || '2' }}

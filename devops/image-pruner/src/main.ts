@@ -3,12 +3,22 @@ import { OpenshiftClient } from "./clients/openshift.client.ts";
 import { ImagePruner } from "./pruner.ts";
 import type { PruneConfig } from "./models/prune.model.ts";
 
+const DEFAULT_ENVIRONMENT = "dev";
+const DEFAULT_APPLICATIONS = [
+  "web-sims",
+  "api-sims",
+  "queue-consumers-sims",
+  "workers-sims",
+];
+const DEFAULT_OC_JOBS = ["migrations-job"];
+const DEFAULT_PREFIX = "main";
+const DEFAULT_MIN_TAGS = 2;
+
 /**
  * Loads and validates the pruner configuration from environment variables and command line arguments.
  * @returns The validated prune configuration.
  */
 function loadConfig(): PruneConfig {
-  const environment = process.env.ENVIRONMENT;
   const saToken = process.env.SA_TOKEN;
   const openShiftUrl = process.env.OPENSHIFT_URL?.replace(/\/$/, "");
   const licensePlate = process.env.LICENSE_PLATE;
@@ -22,39 +32,18 @@ function loadConfig(): PruneConfig {
   if (!licensePlate) {
     throw new Error("Missing required environment variable: LICENSE_PLATE.");
   }
-  if (!environment) {
-    throw new Error("Missing required environment variable: ENVIRONMENT.");
-  }
-  if (!["dev", "test", "prod"].includes(environment)) {
-    throw new Error(
-      `ENVIRONMENT must be one of: dev, test, prod. Got: ${environment}.`,
-    );
-  }
-
-  const minTags = Number.parseInt(process.env.MIN_TAGS ?? "2", 10);
-  if (Number.isNaN(minTags) || minTags < 0) {
-    throw new Error(
-      `MIN_TAGS must be a non-negative integer. Got: ${process.env.MIN_TAGS}.`,
-    );
-  }
 
   return {
     saToken,
     openShiftUrl,
     licensePlate,
     toolsNamespace: `${licensePlate}-tools`,
-    appNamespace: `${licensePlate}-${environment}`,
-    environment,
-    applications: (process.env.APPLICATIONS ?? "")
-      .split(",")
-      .map((value) => value.trim())
-      .filter(Boolean),
-    ocJobs: (process.env.OCJOBS ?? "")
-      .split(",")
-      .map((value) => value.trim())
-      .filter(Boolean),
-    prefix: process.env.PREFIX ?? "main",
-    minTags,
+    appNamespace: `${licensePlate}-${DEFAULT_ENVIRONMENT}`,
+    environment: DEFAULT_ENVIRONMENT,
+    applications: DEFAULT_APPLICATIONS,
+    ocJobs: DEFAULT_OC_JOBS,
+    prefix: DEFAULT_PREFIX,
+    minTags: DEFAULT_MIN_TAGS,
     dryRun: !process.argv.includes("--confirm"),
   };
 }
